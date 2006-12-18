@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
 	msgtime		TIMESTAMP (14) DEFAULT NOW(),
 	msgfor		INT UNSIGNED,
 	msgrecip	TEXT,
-	msgpatient	INT UNSIGNED,
+	msgpatient	BIGINT UNSIGNED,
 	msgperson	VARCHAR (50),
 	msgurgency	INT UNSIGNED DEFAULT 3,
 	msgsubject	VARCHAR (75),

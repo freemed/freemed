@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `letters` (
 	letterenc		BLOB,
 	lettertext		TEXT,
 	lettersent		INT UNSIGNED NOT NULL DEFAULT 0,
-	letterpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	letterpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	lettertypist		VARCHAR (50),
 	locked			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,

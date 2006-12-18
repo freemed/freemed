@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `labs` (
-	labpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	labpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	labfiller		TEXT,
 	labstatus		CHAR (2),
 	labprovider		INT UNSIGNED NOT NULL DEFAULT 0,

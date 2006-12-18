@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 CREATE TABLE IF NOT EXISTS `allergies` (
 	allergy			VARCHAR (150) NOT NULL,
 	severity		VARCHAR (150) NOT NULL,
-	patient			INT UNSIGNED NOT NULL DEFAULT 0,
+	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	reviewed		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	id			SERIAL,
 

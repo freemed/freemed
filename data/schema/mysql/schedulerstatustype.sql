@@ -28,6 +28,19 @@ CREATE TABLE IF NOT EXISTS `schedulerstatustype` (
 	id			SERIAL
 ) ENGINE=InnoDB;
 
-#	Version 0.2
-ALTER IGNORE TABLE schedulerstatustype ADD COLUMN sage INT UNSIGNED NOT NULL DEFAULT 1 AFTER scolor;
+
+DROP PROCEDURE IF EXISTS schedulerstatustype_Upgrade;
+DELIMITER //
+CREATE PROCEDURE schedulerstatustype_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+
+	#	Version 0.2
+	ALTER IGNORE TABLE schedulerstatustype ADD COLUMN sage INT UNSIGNED NOT NULL DEFAULT 1 AFTER scolor;
+END
+//
+DELIMITER ;
+CALL schedulerstatustype_Upgrade( );
 

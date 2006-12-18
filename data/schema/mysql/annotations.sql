@@ -26,8 +26,9 @@ SOURCE data/schema/mysql/_functions.sql
 
 CREATE TABLE IF NOT EXISTS `annotations` (
 	atimestamp		TIMESTAMP (14) DEFAULT NOW(),
-	apatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	apatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	amodule			VARCHAR (150) NOT NULL,
+	atable			VARCHAR (150) NOT NULL,
 	aid			INT UNSIGNED NOT NULL,
 	auser			INT UNSIGNED NOT NULL,
 	annotation		TEXT,
@@ -64,9 +65,7 @@ CREATE TRIGGER annotations_Delete
 	AFTER DELETE ON annotations
 	FOR EACH ROW BEGIN
 		DECLARE a TEXT;
-		DECLARE t VARCHAR(50);
-		SELECT module_table INTO t FROM `modules` WHERE LOWER(module_class) = OLD.amodule;
-		SELECT annotation INTO a FROM `patient_emr` WHERE module=t AND oid=OLD.aid;
+		SELECT annotation INTO a FROM `patient_emr` WHERE module=OLD.atable AND oid=OLD.aid;
 		DELETE FROM `patient_emr` WHERE module='annotations' AND oid=OLD.id;
 		UPDATE `patient_emr` SET annotation=REMOVE_FROM_SET( a, OLD.id ) WHERE module=t AND oid=OLD.aid;
 	END;
@@ -76,14 +75,12 @@ CREATE TRIGGER annotations_Insert
 	AFTER INSERT ON annotations
 	FOR EACH ROW BEGIN
 		DECLARE a TEXT;
-		DECLARE t VARCHAR(50);
-		SELECT module_table INTO t FROM `modules` WHERE LOWER(module_class) = NEW.amodule;
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'annotations', NEW.apatient, NEW.id, NEW.atimestamp, NEW.annotation );
 		SELECT annotation INTO a FROM `patient_emr` WHERE module=t AND oid=NEW.aid;
 		IF ISNULL(a) THEN
-			UPDATE `patient_emr` SET annotation=NEW.id WHERE module=t AND oid=NEW.aid;
+			UPDATE `patient_emr` SET annotation=NEW.id WHERE module=NEW.atable AND oid=NEW.aid;
 		ELSE
-			UPDATE `patient_emr` SET annotation=CONCAT(a, ',', NEW.id) WHERE module=t AND oid=NEW.aid;
+			UPDATE `patient_emr` SET annotation=CONCAT(a, ',', NEW.id) WHERE module=NEW.atable AND oid=NEW.aid;
 		END IF;
 	END;
 //

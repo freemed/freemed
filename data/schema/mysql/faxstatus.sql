@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `faxstatus` (
 	fsid			VARCHAR (16) NOT NULL,
 	fsmodule		VARCHAR (50) NOT NULL,
 	fsrecord		INT UNSIGNED NOT NULL DEFAULT 0,
-	fspatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	fspatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	fsdestination		VARCHAR (50) NOT NULL,
 	fsstatus		VARCHAR (255),
 	id			SERIAL,

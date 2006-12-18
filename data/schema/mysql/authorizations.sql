@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 CREATE TABLE IF NOT EXISTS `authorizations` (
 	authdtadd		DATE NOT NULL,
 	authdtmod		DATE NOT NULL,
-	authpatient		INT UNSIGNED NOT NULL,
+	authpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	authdtbegin		DATE,
 	authdtend		DATE,
 	authnum			VARCHAR (25),

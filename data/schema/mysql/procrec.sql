@@ -26,9 +26,9 @@ SOURCE data/schema/mysql/physician.sql
 SOURCE data/schema/mysql/cpt.sql
 
 CREATE TABLE IF NOT EXISTS `procrec` (
-	procpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	procpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	proceoc			TEXT,
-	proccpt			INT UNSIGNED DEFAULT 0,
+	proccpt			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	proccptmod		INT UNSIGNED DEFAULT 0,
 	proccptmod2		INT UNSIGNED DEFAULT 0,
 	proccptmod3		INT UNSIGNED DEFAULT 0,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	proccharges		REAL DEFAULT 0.0,
 	procunits		REAL DEFAULT 1.0,
 	procvoucher		VARCHAR (25),
-	procphysician		INT UNSIGNED DEFAULT 0,
+	procphysician		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	procdt			DATE,
 	procpos			INT UNSIGNED DEFAULT 0,
 	proccomment		TEXT,

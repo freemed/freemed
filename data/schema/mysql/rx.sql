@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	rxdtadd			DATE NOT NULL,
 	rxdtmod			DATE,
 	rxphy			INT UNSIGNED NOT NULL,
-	rxpatient		INT UNSIGNED NOT NULL,
+	rxpatient		BIGINT UNSIGNED NOT NULL,
 	rxdtfrom		DATE,
 	rxdrug			VARCHAR (150) NOT NULL,
 	rxform			VARCHAR (32),

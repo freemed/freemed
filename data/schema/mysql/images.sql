@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `images` (
 	imagedt			DATE,
-	imagepat		INT UNSIGNED NOT NULL DEFAULT 0,
+	imagepat		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	imagetype		VARCHAR (50),
 	imagecat		VARCHAR (50) DEFAULT '',
 	imagedesc		VARCHAR (150),

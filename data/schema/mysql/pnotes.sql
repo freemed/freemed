@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `pnotes` (
 	pnotesdt		DATE,
 	pnotesdtadd		DATE,
 	pnotesdtmod		DATE,
-	pnotespat		INT UNSIGNED NOT NULL,
+	pnotespat		BIGINT UNSIGNED NOT NULL,
 	pnotesdescrip		VARCHAR (100),
 	pnotesdoc		INT UNSIGNED NOT NULL,
 	pnoteseoc		INT UNSIGNED,

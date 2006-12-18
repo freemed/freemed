@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 CREATE TABLE IF NOT EXISTS `chronic_problems` (
 	pdate			DATE NOT NULL,
 	problem			VARCHAR (250) NOT NULL DEFAULT '',
-	ppatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	ppatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	#	Define keys

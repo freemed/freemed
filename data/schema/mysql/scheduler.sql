@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calfacility		INT UNSIGNED,
 	calroom			INT UNSIGNED,
 	calphysician		INT UNSIGNED,
-	calpatient		INT UNSIGNED,
+	calpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	calcptcode		INT UNSIGNED,
 	calstatus		ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled',
 	calprenote		VARCHAR (250),
@@ -48,8 +48,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 
 	# Define keys
 
-	KEY			( caldateof, calhour, calminute ),
-	FOREIGN KEY		( calpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	KEY			( caldateof, calhour, calminute )
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS scheduler_Upgrade;
@@ -87,6 +86,8 @@ DELIMITER ;
 CALL scheduler_Upgrade( );
 
 #----- Triggers
+
+# FIXME: triggers need to check for type of patient, temp patients shouldn't do this. also, patient and callin tables need to remove records from here ON DELETE since we can't cascade this table
 
 DELIMITER //
 

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
 	ndescrip		TEXT,
 	nuser			INT UNSIGNED NOT NULL DEFAULT 0,
 	nfor			INT UNSIGNED NOT NULL DEFAULT 0,
-	npatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	npatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	#	Default key
@@ -38,45 +38,45 @@ CREATE TABLE IF NOT EXISTS `notification` (
 	FOREIGN KEY		( npatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-DROP PROCEDURE IF EXISTS notifications_Upgrade;
+DROP PROCEDURE IF EXISTS notification_Upgrade;
 DELIMITER //
-CREATE PROCEDURE notifications_Upgrade ( )
+CREATE PROCEDURE notification_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Remove triggers
-	DROP TRIGGER notifications_Delete;
-	DROP TRIGGER notifications_Insert;
-	DROP TRIGGER notifications_Update;
+	DROP TRIGGER notification_Delete;
+	DROP TRIGGER notification_Insert;
+	DROP TRIGGER notification_Update;
 
 	#----- Upgrades
 END
 //
 DELIMITER ;
-CALL notifications_Upgrade( );
+CALL notification_Upgrade( );
 
 #----- Triggers
 
 DELIMITER //
 
-CREATE TRIGGER notifications_Delete
-	AFTER DELETE ON notifications
+CREATE TRIGGER notification_Delete
+	AFTER DELETE ON notification
 	FOR EACH ROW BEGIN
-		DELETE FROM `patient_emr` WHERE module='notifications' AND oid=OLD.id;
+		DELETE FROM `patient_emr` WHERE module='notification' AND oid=OLD.id;
 	END;
 //
 
-CREATE TRIGGER notifications_Insert
-	AFTER INSERT ON notifications
+CREATE TRIGGER notification_Insert
+	AFTER INSERT ON notification
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'notifications', NEW.npatient, NEW.id, NOW(), NEW.ndescrip );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'notification', NEW.npatient, NEW.id, NOW(), NEW.ndescrip );
 	END;
 //
 
-CREATE TRIGGER notifications_Update
-	AFTER UPDATE ON notifications
+CREATE TRIGGER notification_Update
+	AFTER UPDATE ON notification
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.npatient, summary=NEW.ndescrip WHERE module='notifications' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.npatient, summary=NEW.ndescrip WHERE module='notification' AND oid=NEW.id;
 	END;
 //
 

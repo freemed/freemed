@@ -24,8 +24,8 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/labs.sql
 
 CREATE TABLE IF NOT EXISTS `labresults` (
-	labid			INT UNSIGNED NOT NULL,
-	labpatient		INT UNSIGNED NOT NULL,
+	labid			BIGINT UNSIGNED NOT NULL,
+	labpatient		BIGINT UNSIGNED NOT NULL,
 	labobsnote		TEXT,
 	labobscode		VARCHAR (150),
 	labobsdescrip		VARCHAR (250),

@@ -36,6 +36,18 @@ CREATE TABLE IF NOT EXISTS `room` (
 	KEY			( roomname, roompos )
 ) ENGINE=InnoDB;
 
-#	Version 0.2
-ALTER IGNORE TABLE room ADD COLUMN roomequipment BLOB AFTER roomdefphy;
+DROP PROCEDURE IF EXISTS room_Upgrade;
+DELIMITER //
+CREATE PROCEDURE room_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+
+	#	Version 0.2
+	ALTER IGNORE TABLE room ADD COLUMN roomequipment BLOB AFTER roomdefphy;
+END
+//
+DELIMITER ;
+CALL room_Upgrade( );
 

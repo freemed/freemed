@@ -88,9 +88,10 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptreligion		INT UNSIGNED,
 	ptarchive		INT UNSIGNED,
 	iso			VARCHAR (15),
-	id			SERIAL,
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
 	#	Define keys
-	KEY			( ptlname, ptfname, ptmname, ptid, ptdob )
+	KEY			( ptlname, ptfname, ptmname, ptid, ptdob ),
+	PRIMARY KEY		( id )
 ) ENGINE=InnoDB;
 

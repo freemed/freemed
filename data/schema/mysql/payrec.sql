@@ -27,10 +27,10 @@ SOURCE data/schema/mysql/procrec.sql
 CREATE TABLE IF NOT EXISTS `payrec` (
 	payrecdtadd		DATE,
 	payrecdtmod		DATE,
-	payrecpatient		INT UNSIGNED NOT NULL,
+	payrecpatient		BIGINT UNSIGNED NOT NULL,
 	payrecdt		DATE,
 	payreccat		INT UNSIGNED,
-	payrecproc		INT UNSIGNED,
+	payrecproc		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	payrecsource		INT UNSIGNED,
 	payreclink		INT UNSIGNED,
 	payrectype		INT UNSIGNED,

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `unreadfax` (
 	urfdate			DATE NOT NULL,
 	urffilename		VARCHAR (150) NOT NULL,
 	urftype			VARCHAR (50),
-	urfpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	urfpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	urfphysician		INT UNSIGNED NOT NULL DEFAULT 0,
 	urfnote			TEXT,
 	id			SERIAL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `unreadfax` (
 	#	Define keys
 
 	KEY			( urfphysician, urfpatient ),
-	FOREIGN KEY		( urfpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( urfpatient ) REFERENCES `patient` ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS unreadfax_Upgrade;

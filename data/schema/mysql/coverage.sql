@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 CREATE TABLE IF NOT EXISTS `coverage` (
 	covdtadd		DATE,
 	covdtmod		DATE,
-	covpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	covpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	coveffdt		TEXT,
 	covinsco		INT UNSIGNED,
 	covpatinsno		VARCHAR (50),

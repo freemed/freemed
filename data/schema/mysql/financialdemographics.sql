@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `financialdemographics` (
 	fdtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	fdpatient		INT UNSIGNED NOT NULL,
+	fdpatient		BIGINT UNSIGNED NOT NULL,
 	fdincome		INT UNSIGNED,
 	fdidtype		VARCHAR (50),
 	fdidissuer		VARCHAR (50),

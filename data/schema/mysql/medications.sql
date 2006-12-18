@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	mdrug			VARCHAR (150),
 	mdosage			VARCHAR (150),
 	mroute			VARCHAR (150),
-	mpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	mpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	mdate			DATE,
 	id			SERIAL,
 

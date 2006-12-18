@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `translation` (
 	ttimestamp		TIMESTAMP (14) DEFAULT NOW(),
-	tpatient		INT UNSIGNED NOT NULL DEFAULT 0,
+	tpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	tmodule			VARCHAR (150) NOT NULL,
 	tid			INT UNSIGNED NOT NULL,
 	tuser			INT UNSIGNED NOT NULL,

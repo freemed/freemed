@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `certifications` (
-	certpatient		INT UNSIGNED NOT NULL,
+	certpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	certtype		INT UNSIGNED NOT NULL,
 	certformnum		INT UNSIGNED,
 	certdesc		VARCHAR (20),

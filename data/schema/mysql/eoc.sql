@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `eoc` (
-	eocpatient		INT UNSIGNED NOT NULL,
+	eocpatient		BIGINT UNSIGNED NOT NULL,
 	eocdescrip		VARCHAR (100),
 	eocstartdate		DATE,
 	eocdtlastsimilar	DATE,
