@@ -1,56 +1,57 @@
-<!--
-	// $Id$
-	// $Author$
-	// $Log$
-	// Revision 1.1  2004/03/09 20:02:17  rufustfirefly
-	// Fixed help system to work with newskin and new location.
-	//
-	// Revision 1.1  2001/11/21 21:03:27  rufustfirefly
-	// all helpfiles had .php removed
-	//
-	// Revision 1.2  2001/11/20 22:00:29  rufustfirefly
-	// cleanup and helpfile updates
-	//
-	// Revision 1.1  2001/11/19 22:54:41  rufustfirefly
-	// new system for interlinked documentation (substitution via percents)
-	//
--->
-
-This is the <I>Administration Menu</I> of FreeMED. It can be
-reached either through the <I>Main Menu</I> or via the menu bar on
-the left side of the screen using the default theme.
-
-<P>
-
+Administration Menu:</br>
+You can reach this menu by clicking on Main -> Administration Menu.</br>
+"Action" is just a header naming the categories of the Administration Menu</br>
 <UL>
-
-	<LI><I>Import/Export Databases</I> - This gives you the ability to
-	import and export FreeMED's low-level databases to CSV type
-	files, which can be read by most programs. This is good for
-	exchanging data with other programs that cannot use FreeMED's
-	XML-RPC capabilities.
-
-	<LI><I>Module Information</I> - Provides a list of the installed
-	loadable modules on the system and basic information about them.
-
-	<LI><I>Reinitialize Database</I> - This is the first step that you
-	should take when creating a new installation of FreeMED. It
-	wipes all of the tables in the database and has the option to reload
-	the stock data tables that come with FreeMED. This should
-	<U>never</U> be used on a running system, or else complete loss of
-	data will occur.
-
-	<LI>%%Update Config,admin,cfgform%% - Set the parameters
-	that FreeMED uses to define various portions of its behavior.
-
-	<LI><I>User Maintenance</I> - Add and remove users from the system.
-	Please note that you <U>cannot</U> remove the root user from the
-	system.
-
-</UL>
-
-Some of the functions in this menu require superuser access. The information
-for your "superuser" account (by default called "root") should never be given
-out, and should be guarded closely, as it has an incredible amount of power
-to modify the system.
-
+<LI><I>A. Export Databases</I> This allows you to export or save portions of the Database table before you work on it.</br>
+<LI><I>B. Import Databases</I> This allows you to import saved database sections. </LI>
+<LI><I>C. Module Information</I> This is a listing of the modules and who created them. A few of the modules have decriptions. 
+                              Most do not.</LI>
+<LI><I>D. System Configuration:</I> This section allows you to configure the behavior of FreeMED for all users on the system.</LI>
+<UL>
+    <LI><I>a. Standard Configuration:</I></br>
+<UL>
+              1. Graphics Enhanced - There used to be symobls on the Main Screen of older versions of FreeMED. You could decide whether to 
+	         see these symbols or not. This feature is no longer in use.</br>
+	      2. Scheduling Start Time - The time when the daily schedule will start on calendars, etc..</br>
+              3. Scheduling End Time - The time when the daily schedule will end on calendars, etc..</br>
+              4. Calendar Overbooking - This feature allows you to book more than one appointment for a provider in the same time slot</br>
+	      5. Date Format - Self explanatory</br>
+	      6. Phone number format - Allows you to set the format for phone numbers. Useful for European users.</br>
+	      7. Default area code - If you are entering patient registration data or physician registration data, this allows you to set 
+	         the default area code. The chosen area code will be entered into the registration screens.</br>
+	      8. Prescription Drug Widget - Combo with past drugs - allows you to easily choose a prescriptions that you have written 
+	         before.</br>
+	         Prescription Drug Widget - rx.list.com - allows you to pick a drug from a list of drugs at rxlist.com</br>
+	      9. Date Widget - javascript widget. When entering a date, a calendar will be displayed from which you can chose the date.</br>
+	     10. Fold multipage forms - No - when the new patient registration entry screen is displayed, it will all be on one long 
+	         page.</br> 
+	         Fold multipage forms - Yes - when the new patient registration entry screen is displayed, sections of the entry screen 
+		 can be chosen with tabs.</br>
+	     11. Show tips - yes - if one is entering data and the mouse pointer is put over the entry screen, a yellow box containing entry 
+	         intructions will appear.</br>
+	     12. Fax Cover Page - Attach cover page - this will send a cover page when you send a fax from FreeMED.</br>
+	     13. Lock Override - Once a note is written and proofread, it should be locked so that it cannot be altered. However, 
+	         occasionally, the typist makes an error and locks the record. If the administrator has lock override priviledges, then the 
+		 note can be erased and rewritten.</UL>
+  <LI><I>b. ICD Maintenance</I> - This allows you to chose whether you will be using ICD 9 or ICD 10</br>
+  <LI><I>c. Access Control lists</I> - This is a very restrictive system that allows specific users access to specified areas of the medical 
+            record. This feature is not working properly on the http://www.freemed.info site and should not be set at that site.
+  <LI><I>d. Work lists</I> - One can choose who will see the clinic's daily work lists.</br>
+  <LI><I>e. Remitt Billing system</I> - Users who will be allowed to have access to the billing system can be set here. It is possible for 
+            different clinics to have separate access to the billing system.</br>
+  <LI><I>f. Financial Demographics</I> - Allows one to set parameters for sliding scale billing. This easily allows one to determine the 
+            financial obligation of a patient who is below the federal poverty level.</br>
+  <LI><I>g. Group Calendar</I> - One can set specific templates for booking appointments that have nothing to do with patient care. The 
+            default is travel. Others can be added here</br>
+  <LI><I>h. CD/RW Backup</I> - This allows you to set parameters to perform direct backups of /usr/share/freemed and the database. It depends
+            on the having sudo capability. Also one has to add %www-data ALL=NOPASSWD:/usr/bin/cdrecord to the /etc/sudoers file. Also make 
+	    sure that the line $_devices = `sudo cdrecord -scanbus dev=ATAPI 2>&1 | grep CD`; is in the 
+	    /usr/share/freemed/modules/cdrw_backup.admin.module.php file. Once all of the parameters are chosen, insert a CD into the drive, 
+	    and click on Main -> Administration Menu -> Administration. Then click on "CD/RW" button once. The CD will then be created and a 
+	    dump of any error messages are sent to the screen.</br>
+  <LI><I>i. Messages</I> - Enable This allows direct deletion of messages. If set to Disable, messages are not deleted.</br>
+  <LI><I>j. Unfiled Faxes</I> - Here one sets which staff members will see unfiled faxes. This then allows them to file the Unfiled 
+            Faxes.</br></UL>
+<LI><I>E. User Maintenace</I> - Here is where the administrator adds new users or makes changes to the users file.</br>
+<LI><I>D. CD/RW Backup</I> - By pushing on this button (once!!), one can create a backup CD containing the /usr/share/freemed directory, all 
+        the subdirectories and the database. Make sure to configure the CD/CDRW drive before you do this. This is explained above.</br>
