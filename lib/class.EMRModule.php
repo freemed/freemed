@@ -1091,6 +1091,25 @@ class EMRModule extends BaseModule {
 		return html_form::select_widget($varname, $return);
 	} // end method widget
 
+	function to_text ( $id, $field='id' ) {
+		if (!$id) { return __("NONE"); }
+		$r = freemed::get_link_rec($id, $this->table_name);
+		if (!(strpos($this->widget_hash, "##") === false)) {
+			$value = '';
+			$hash_split = explode('##', $this->widget_hash);
+			foreach ($hash_split AS $_k => $_v) {
+				if (!($_k & 1)) { 
+					$value .= prepare($_v);
+				} else {
+					$value .= prepare($r[$_v]);
+				}
+			}
+		} else {
+			$value = $r[$this->widget_hash];
+		}
+		return $value;
+	} // end method to_text
+
 	// Method: _recent_record
 	//
 	//	Return most recent record, possibly qualified by a
