@@ -127,7 +127,7 @@ function ajax_expand_module_html ( $content_id, $module, $method, $param ) {
 function x_<?php print $content_id; ?>_toggle ( ) {
 	var check_toggle = document.getElementById('<?php print $expand_id; ?>').innerHTML;
 	if (check_toggle == '+') {
-		x_module_html('<?php print $module; ?>', '<?php print $method; ?>', '<?php print addslashes($param); ?>', x_<?php print $content_id; ?>_expand_div);
+		x_module_html('<?php print $module; ?>', '<?php print $method; ?>', <?php print ( strpos($param, '(') === false ? "'".addslashes($param)."'" : $param ); ?>, x_<?php print $content_id; ?>_expand_div);
 	} else {
 		x_<?php print $content_id; ?>_contract_div();
 	}
