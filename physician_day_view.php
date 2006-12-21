@@ -73,7 +73,7 @@ $display_buffer .= "
    </TD><TD VALIGN=\"CENTER\" ALIGN=\"CENTER\">
    <A HREF=\"physician_week_view.php?physician=".urlencode($physician)."&".
 	"for_date=".urlencode($for_date)."\"
-	<FONT COLOR=\"#ffffff\">".__("Week View")."</FONT></A>
+	><FONT COLOR=\"#ffffff\">".__("Week View")."</FONT></A>
    </TD><TD VALIGN=CENTER ALIGN=RIGHT>
    <A HREF=\"$page_name?selected_date=$next_date&physician=$physician\"
     ><FONT COLOR=\"#ffffff\">&gt;</FONT></A>
