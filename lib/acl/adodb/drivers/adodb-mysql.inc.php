@@ -340,9 +340,9 @@ class ADODB_mysql extends ADOConnection {
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		if (ADODB_PHPVER >= 0x4300)
-			$this->_connectionID = mysql_pconnect($argHostname,$argUsername,$argPassword,$this->clientFlags);
+			$this->_connectionID = @mysql_pconnect($argHostname,$argUsername,$argPassword,$this->clientFlags);
 		else
-			$this->_connectionID = mysql_pconnect($argHostname,$argUsername,$argPassword);
+			$this->_connectionID = @mysql_pconnect($argHostname,$argUsername,$argPassword);
 		if ($this->_connectionID === false) return false;
 		if ($this->autoRollback) $this->RollbackTrans();
 		if ($argDatabasename) return $this->SelectDB($argDatabasename);
