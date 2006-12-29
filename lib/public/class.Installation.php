@@ -46,10 +46,20 @@ class Installation {
 			return false;
 		}
 
-		$link = @mysql_connect( $host, $user, $pass );
-		if ( !$link ) { return false; }
+		ob_start();
+		//syslog(LOG_INFO, "DEBUG: CheckDbCredentials: mysql_connect ( $host, $user, $pass ) with name = $name");
+		$link = mysql_connect( $host, $user, $pass );
+		//syslog(LOG_INFO, "DEBUG: CheckDbCredentials: mysql_connect printed: ".ob_get_contents());
+		ob_end_clean();
 		
-		return mysql_select_db( $name, $link );
+		if ( !$link ) {
+			syslog(LOG_INFO, "DEBUG: CheckDbCredentials: failed to get link");
+			return false;
+		}
+		
+		$select = mysql_select_db( $name, $link );
+		syslog(LOG_INFO, "DEBUG: CheckDbCredentials: select = $select");
+		return $select;
 	} // end method CheckDbCredentials
 
 	// Method: CheckPhpMysqlEnabled
@@ -140,9 +150,10 @@ class Installation {
 		$smarty->left_delimiter = '<{';
 		$smarty->right_delimiter = '}>';
 
+		//syslog(LOG_INFO, "CreateSettingsFile: params = ".serialize($params));
 		foreach ( $params AS $k => $v ) { $smarty->assign( $k, $v ); }
 
-		$return = @file_put_contents( $smarty->fetch( 'settings.php.tpl' ), PHYSICAL_LOCATION.'/lib/settings.php' );
+		$return = @file_put_contents( PHYSICAL_LOCATION.'/lib/settings.php', $smarty->fetch( 'settings.php.tpl' ) );
 		return $return ? true : false;
 	} // end method CreateSettingsFile
 
