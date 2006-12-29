@@ -43,16 +43,23 @@ class Relay_Json extends Relay {
 	//	* params (always an array)
 	//
 	public function deserialize_request ( $request ) {
-		syslog(LOG_INFO, "request = $request");
+		//syslog(LOG_INFO, "request = $request");
+		if (is_array($request)) {
+			foreach ($request AS $k => $v) {
+				//syslog(LOG_INFO, "deserialize_request [ $k ] = $v");
+			}
+		}
 		if (function_exists( 'json_decode' )) {
 			// Try the JSON PECL native function first
-			$return = json_decode( $request, true );
+			$return = json_decode( stripslashes($request), true );
+			//syslog(LOG_INFO, "json_decode = $return");
 		} else {
 			$json = CreateObject('net.php.pear.Services_JSON');
-			$return = $json->decode( $request );
+			$return = $json->decode( stripslashes($request) );
+			//syslog(LOG_INFO, "json->decode = $return");
 		}
 		if (!$return) {
-			return array ( $_REQUEST );
+			return $request;
 		} else {
 			return $return;
 		}
@@ -61,10 +68,10 @@ class Relay_Json extends Relay {
 	// Method: extract_parameters
 	public function extract_parameters ( $data, $post ) {
 		// First, extract parameters from data
-		if ( is_array( $data['params'] ) ) { return $data['params']; }
+		if ( is_array( $data['params'] ) ) { return $this->deserialize_parameters( $data['params'] ); }
 
 		// Use param[] next
-		if ( is_array( $post['param'] ) ) { return $post['param']; }
+		if ( is_array( $post['param'] ) ) { return $this->deserialize_parameters( $post['param'] ); }
 
 		// Use param1 ... paramN
 		if ( isset( $post['param0'] ) ) {
@@ -72,7 +79,8 @@ class Relay_Json extends Relay {
 				if ( substr( $k, 0, 5 ) == 'param' ) {
 					$key = substr( $k, 5, strlen($k) - 5 );
 					if ( ( $key == '0' ) or ( ($key + 0) > 0 ) ) {
-						$r[$key] = $v;
+						$r[$key+0] = $this->deserialize_request( $v );
+						//syslog(LOG_INFO, "r[ $key ] = ".$r[$key]);
 					}
 				} // end if substr(param)
 			} // end foreach
