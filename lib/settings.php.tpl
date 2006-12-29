@@ -24,7 +24,7 @@
 define ('INSTALLATION', "<{$installation|escape}>"); // installation name
 define ('DB_HOST', "<{$host|escape}>"); // database (SQL) host location
 define ('DB_NAME', "<{$name|escape}>"); // database name
-define ('DB_USER', "<{$name|escape}>"); // SQL server username
+define ('DB_USER', "<{$username|escape}>"); // SQL server username
 define ('DB_PASSWORD', "<{$password|escape}>"); // SQL server password
 define ('PATID_PREFIX', "<{$patientidprefix|escape}>"); // used to generate internal practice ID
 define ('UI', "dojo");	// set default template
