@@ -68,7 +68,7 @@ function CallMethod ( $namespace ) {
 	} else {
 		return call_user_func_array ( array ( &$obj, $method ), $argv );
 	}
-} // end function CreateObject
+} // end function CallMethod
 
 // Function: CreateObject
 //
