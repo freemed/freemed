@@ -25,6 +25,9 @@
 <html>
 <head>
 	<title><!--{t}-->FreeMED Installation Wizard<!--{/t}--></title>
+	<script type="text/javascript">
+		djConfig = { isDebug: true };
+	</script>
 	<script type="text/javascript" src="<!--{$base_uri}-->/lib/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		dojo.require("dojo.io.*");
@@ -102,9 +105,11 @@
 					alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
 				},
 				load: function(type, data, evt) {
-					if (!data) {
+					if (data != true) {
 						okay = false;
 						messages += "<!--{t}-->Credentials are not valid.<!--{/t}-->\n";
+					} else {
+						okay = true;
 					}
 				},
 				mimetype: "text/json"
@@ -115,7 +120,30 @@
 	} // end function verifyDatabasePane
 
 	function verifySystemPane ( ) {
-		return true;
+		// Configure ...
+		dojo.io.bind({
+			method : 'POST',
+			sync : true,
+			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateSettingsFile',
+			content: {
+				param0: {
+					host: document.getElementById('host').value,
+					name: document.getElementById('name').value,
+					username: document.getElementById('username').value,
+					password: document.getElementById('password').value,
+					installation: document.getElementById('installation').value,
+					//starttime: document.getElementById('host').value,
+					//endtime: document.getElementById('host').value,
+				}
+			},
+			error: function(type, data, evt) {
+				return "<!--{t}-->Please try again, data error.<!--{/t}-->";
+			},
+			load: function(type, data, evt) {
+				return data;
+			},
+			mimetype: "text/json"
+		});
 	} // end function verifySystemPane
 
 	function verifyAdministrationPane ( ) {
@@ -138,32 +166,6 @@
 			okay = false;
 			messages += "<!--{t}-->Password do not match.<!--{/t}-->\n";
 		}
-
-		// If something is wrong already, don't run check.
-		if ( okay ) {
-			// Functional check; needs to run synchronous, otherwise we
-			// won't be able to wait for the status of 'okay' variable.
-			dojo.io.bind({
-				method : 'POST',
-				sync : true,
-				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateAdminAccount',
-				content: {
-					param0: document.getElementById('adminuser').value,
-					param1: document.getElementById('adminpass').value
-				},
-				error: function(type, data, evt) {
-					alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
-				},
-				load: function(type, data, evt) {
-					if (!data) {
-						okay = false;
-						messages += "<!--{t}-->Administrative account creation failed.<!--{/t}-->\n";
-					}
-				},
-				mimetype: "text/json"
-			});
-		}
-
 		if (!okay) { return messages; }
 	} // end function verifyAdministrationPane
 
@@ -179,8 +181,53 @@
 		}
 	} // end function checkpwconfirm
 
+	function CreateDatabase ( ) {
+		dojo.io.bind({
+			method : 'POST',
+			sync : true,
+			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateDatabase',
+			content: { },
+			error: function(type, data, evt) {
+				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+			},
+			load: function(type, data, evt) {
+				if (!data) {
+					return false;
+				} else {
+					return true;
+				}
+			},
+			mimetype: "text/json"
+		});
+	} // end function CreateDatabase
+
 	function done ( ) {
-		alert('done');
+		dojo.io.bind({
+			method : 'POST',
+			sync : true,
+			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateSettings',
+			content: {
+				param0: {
+					engine: document.getElementById('engine').value,
+					host: document.getElementById('host').value,
+					username: document.getElementById('username').value,
+					password: document.getElementById('password').value,
+					name: document.getElementById('name').value
+				}
+			},
+			error: function(type, data, evt) {
+				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+			},
+			load: function(type, data, evt) {
+				if (!data) {
+					okay = false;
+					messages += "<!--{t}-->Settings creation failed.<!--{/t}-->\n";
+				} else {
+					return CreateDatabase();
+				}
+			},
+			mimetype: "text/json"
+		});
 	} // end function done
 
 </script>
@@ -309,6 +356,10 @@
 			<tr>
 				<td align="right"><!--{t}-->Administrative Password<!--{/t}--></td>
 				<td align="left"><input type="password" id="adminpass" name="adminpass" size="50" maxlength="50" value="" /></td>
+			</tr>
+			<tr>
+				<td align="right"><!--{t}-->Administrative Password (confirm)<!--{/t}--></td>
+				<td align="left"><input type="password" id="adminpass_confirm" name="adminpass_confirm" size="50" maxlength="50" value="" /></td>
 			</tr>
 		</table>
 	</div>
