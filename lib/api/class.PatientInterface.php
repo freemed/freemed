@@ -29,6 +29,55 @@ class PatientInterface {
 
 	public function __constructor ( ) { }
 
+	// Method: EmrAttachmentsByPatient
+	//
+	//	Get all patient attachments. Has support for caching.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function EmrAttachmentsByPatient ( $patient ) {
+		static $_cache;
+		if ( !isset( $_cache[$patient] ) ) {
+			$query = "SELECT * FROM patient_emr WHERE patient = ".$GLOBALS['sql']->quote( $patient );
+			$_cache[$patient] = $GLOBALS['sql']->queryAll( $query );
+		}
+		return $_cache[$patient];
+	} // end method EmrAttachmentsByPatient
+
+	// Method: EmrAttachmentsByPatientTable
+	//
+	//	Get all patient EMR attachments by table name.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$table - Table name
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	// SeeAlso:
+	//
+	//	<EmrAttachmentsByPatient>
+	//
+	public function EmrAttachmentsByPatientTable ( $patient, $table ) {
+		$raw = EmrAttachmentsByPatient ( $patient );
+		foreach ( $raw AS $r ) {
+			if ( $r['module'] == $table ) {
+				$result[] = $r;
+			}
+		}
+		return $result;
+	} // end method EmrAttachmentsByPatientTable
+
 	// Method: picklist
 	//
 	//	Generate associative array of patient table id to patient
