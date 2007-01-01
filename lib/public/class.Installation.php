@@ -185,6 +185,19 @@ class Installation {
 		return true;
 	} // end method CreateDatabase
 
+	// Method: SetHealthyStatus
+	//
+	//	Sets the system to be useable by "touching" the data/cache/healthy indicator.
+	//
+	// Returns:
+	//
+	//	Boolean, indicator of success.
+	//
+	public function SetHealthyStatus ( ) {
+		$touched = touch ( dirname(dirname(dirname(__FILE__))) . '/data/cache/healthy' );
+		return $touched ? true : false;
+	} // end method SetHealthyStatus
+
 } // end class Installation
 
 ?>
