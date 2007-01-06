@@ -154,10 +154,20 @@ function showOverlay(divid, hour, min) {
 
 	newDiv.innerHTML +=
 	'<div align=\"center\">'+
+	'<form action=\"book_appointment.php\" method=\"post\" style=\"margin: 0;\">'+
 	'<input type=\"hidden\" name=\"selected_date\" value=\"".urlencode($selected_date)."\">'+
 	'<input type=\"hidden\" name=\"physician\" value=\"".urlencode($physician)."\">'+
 	'<input type=\"hidden\" name=\"hour\" value=\"'+ hour +'\">'+
 	'<input type=\"hidden\" name=\"minute\" value=\"'+ min +'\">'+
+	'<input type=\"hidden\" name=\"patient\" value=\"'+ pat +'\">'+
+	'<input type=\"hidden\" name=\"selected_date\" value=\"".urlencode($selected_date)."\"/>'+
+	'<input type=\"hidden\" name=\"group\" value=\"".urlencode($group)."\"/>'+
+	'<input type=\"hidden\" name=\"physician\" value=\"".urlencode($physician)."\"/>'+
+	'<input type=\"hidden\" name=\"hour\" value=\"'+ hour +'\"/>'+
+	'<input type=\"hidden\" name=\"minute\" value=\"'+ min +'\"/>'+
+	'<input type=\"hidden\" name=\"stage\" value=\"3\"/>'+
+	'<input type=\"hidden\" name=\"been_here\" value=\"1\"/>'+
+	'<input type=\"hidden\" name=\"return\" value=\"dayview\"/>'+
 	'<table border=\"0\">'+
 	'<tr>'+
 		'<td colspan=\"2\"'+ hour +':'+ min +'</td>'+
@@ -169,15 +179,17 @@ function showOverlay(divid, hour, min) {
 	'<tr>'+
 		'<td>".__("Duration")."</td>'+ \n";
 	foreach ($ds AS $dur => $dis) {
-		$display_buffer .= "'<a class=\"button\" href=\"book_appointment.php?patient=' + pat + '&selected_date=".urlencode($selected_date)."&group=".urlencode($group)."&physician=".urlencode($physician)."&duration=".urlencode($dur)."&hour='+ hour +'&minute='+ min +'&stage=3&been_here=1&return=dayview\">".$dis."</a>&nbsp'+ \n";
+		$display_buffer .= "'<input type=\"radio\" name=\"duration\" value=\"".urlencode($dur)."\" id=\"dur_${dur}\" /><label for=\"dur_${dur}\">${dis}</label>&nbsp;'+ \n";
 	}
 	$display_buffer .= "'</td></tr>'+
 	'<tr>'+
 	'<td colspan=\"2\">'+
+	'<input type=\"submit\" class=\"button\" value=\"Book\" />'+
 	'<input type=\"button\" class=\"button\" value=\"Close\" onClick=\"document.getElementById(\''+currentOverlayDiv+'\').removeChild(document.getElementById(\''+currentOverlayDiv+'_form\')); return true;\">'+
 	'</td>'+
 	'</tr>'+
 	'</table>'+
+	'</form>'+
 	'</div>';
 	// Add overlay to DOM table
 	document.getElementById(currentOverlayDiv).appendChild(newDiv);
