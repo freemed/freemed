@@ -160,7 +160,7 @@ class EpisodeOfCare extends EMRModule {
 		$this->summary_options = SUMMARY_VIEW;
 
 		global $action, $module;
-		if (strtolower($module)==get_class($this)) {
+		if (strtolower($_REQUEST['module'])==strtolower(get_class($this))) {
 			switch ($_REQUEST['submit_action']) {
 				case __("Cancel"):
 					$action = "";
