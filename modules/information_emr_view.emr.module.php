@@ -79,7 +79,7 @@ class InformationEMRView extends EMRModule {
 			" : "" )."
 			".($this_patient->local_record['ptpcp'] > 0 ? "
 			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("PCP")."</b> :</td> 
-			<td ALIGN=\"LEFT\">".prepare($pcp->fullName())."</td></tr>
+			<td ALIGN=\"LEFT\" onMouseOver=\"tooltip('".__("Phone:").' '.$pcp->practicePhoneNumber()."'); return true;\" onMouseOut=\"hidetooltip(); return true;\">".prepare($pcp->fullName())."</td></tr>
 			" : "" )."
 			".($this_patient->local_record['ptrefdoc'] > 0 ? "
 			<tr><td ALIGN=\"RIGHT\" VALIGN=\"MIDDLE\" WIDTH=\"50%\"><b>".__("Referring")."</b>:</td> 
