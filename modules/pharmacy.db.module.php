@@ -103,7 +103,7 @@ class PharmacyMaintenance extends MaintenanceModule {
 		<div ALIGN=\"CENTER\">
 		<input class=\"button\" TYPE=\"SUBMIT\" VALUE=\" ".
 		( ($action=="addform") ? __("Add") : __("Modify") )." \"/>
-		<input class=\"button\" NAME=\"submit\" TYPE=\"SUBMIT\" ".
+		<input class=\"button\" NAME=\"__submit\" TYPE=\"SUBMIT\" ".
 			"VALUE=\"".__("Cancel")."\"/>
 		</div></form>
 		";

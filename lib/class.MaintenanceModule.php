@@ -128,10 +128,10 @@ class MaintenanceModule extends BaseModule {
 	// - generic main function
 	function main ($nullvar = "") {
 		global $display_buffer;
-		global $action, $__submit;
+		global $action;
 
 		// Handle a "Cancel" button being pushed
-		if ($__submit==__("Cancel")) {
+		if ($_REQUEST['__submit'] == __("Cancel")) {
 			$action = "";
 			$this->view();
 			return NULL;
