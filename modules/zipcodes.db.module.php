@@ -78,6 +78,51 @@ class Zipcodes extends SupportModule {
 		) * $r;
 	} // end function CalculateDistance
 
+	// Method: CityStateZipPicklist
+	//
+	//	Give picklist based on criteria given
+	//
+	// Parameters:
+	//
+	//	$param - Textual query
+	//
+	// Returns:
+	//
+	//	Array of results containing fully formed "C, S Z" field.
+	//
+	public function CityStateZipPicklist ( $param ) {
+		// If two letters then a space, st city
+		if ( strlen($param) >= 4 and substr($param, 2, 1) == ' ' ) {
+			$where = "state = UPPER(".$GLOBALS['sql']->quote(substr($param, 0, 2)).") AND city LIKE '%".addslashes(substr($param, -(strlen($param)-3)))."%'";
+		} elseif ( strlen($param) >= 4 and substr($param, strlen($param)-3, 1) == ' ' ) {
+			// Handle city st or city, st
+			$where = "state = UPPER(".$GLOBALS['sql']->quote(substr($param, -2)).") AND city LIKE '%".addslashes(str_replace(',', '', substr($param, 0, strlen($param)-3)))."%'";
+		} elseif ( (strlen($param) >= 3) and ($param+0) == 0 ) {
+			$where = "city LIKE '%".addslashes($param)."%'";
+		}
+
+		// Handle zip code entry
+		if ( ($param + 0) != 0 and empty($where) ) {
+			if (strlen($param) < 3) { return array(); }
+			if (strlen($param) < 5) {
+				$where = "zip LIKE '".addslashes($param)."%'";
+			} else {
+				$where = "zip=".$GLOBALS['sql']->quote( $param );
+			}
+		}
+
+		// Ignore blanks
+		if ( $where == '' ) { return array(); }
+
+		$query = "SELECT CONCAT(city, ', ', state, ' ', zip) AS v FROM ".$this->table_name." WHERE ${where} LIMIT 20";
+
+		$a = $GLOBALS['sql']->queryCol( $query );
+		foreach ($a AS $r) {
+			$return[$r] = $r;
+		}
+		return $return;
+	} // end function CityStateZipPicklist
+
 } // end class Zipcodes
 
 register_module("Zipcodes");
