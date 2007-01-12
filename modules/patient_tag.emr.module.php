@@ -100,6 +100,24 @@ class PatientTag extends SupportModule {
 		$GLOBALS['sql']->query( $query );
 	} // end method ExpireTag
 
+	// Method: TagsForPatient
+	//
+	//	Get list of all tags associated with a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient record id.
+	//
+	// Returns:
+	//
+	//	Array of tags.
+	//
+	public function TagsForPatient ( $patient ) {
+		$query = "SELECT tag FROM `".$this->table_name."` WHERE patient=".$GLOBALS['sql']->quote( $patient )." AND dateexpire < NOW()";
+		$return = $GLOBALS['sql']->queryCol( $query );
+		return is_array($return) ? $return : array($return);
+	} // end method TagsForPatient
+
 	// Method: SimpleTagSearch
 	//
 	//	Tag search function.
