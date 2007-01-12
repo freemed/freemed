@@ -28,7 +28,8 @@
 <script language="javascript">
 	function freemedPatientLoad ( patient ) {
 		var contentPane = dojo.widget.getWidgetById('freemedContent');
-		contentPane.setUrl( "<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient );
+		//contentPane.setUrl( "<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient );
+		window.location = "<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient;
 		return true;
 	}
 </script>
