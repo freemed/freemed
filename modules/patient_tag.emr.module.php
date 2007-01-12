@@ -83,6 +83,7 @@ class PatientTag extends SupportModule {
 			);
 			$GLOBALS['sql']->query( $query );
 		}
+		return true;
 	} // end method CreateTag
 
 	// Method: ExpireTag
@@ -98,6 +99,7 @@ class PatientTag extends SupportModule {
 	public function ExpireTag ( $patient, $tag ) {
 		$query = "UPDATE `".$this->table_name."` SET dateexpire=NOW() WHERE patient=".$GLOBALS['sql']->quote( $patient )." AND tag=".$GLOBALS['sql']->quote( $tag );
 		$GLOBALS['sql']->query( $query );
+		return true;
 	} // end method ExpireTag
 
 	// Method: TagsForPatient
@@ -113,7 +115,8 @@ class PatientTag extends SupportModule {
 	//	Array of tags.
 	//
 	public function TagsForPatient ( $patient ) {
-		$query = "SELECT tag FROM `".$this->table_name."` WHERE patient=".$GLOBALS['sql']->quote( $patient )." AND dateexpire < NOW()";
+		$query = "SELECT tag FROM `".$this->table_name."` WHERE patient=".$GLOBALS['sql']->quote( $patient )." AND ( dateexpire = 0 OR dateexpire > NOW() )";
+		syslog(LOG_INFO, $query);
 		$return = $GLOBALS['sql']->queryCol( $query );
 		return is_array($return) ? $return : array($return);
 	} // end method TagsForPatient
