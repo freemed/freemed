@@ -44,16 +44,72 @@
 		text-decoration: none;
 		}
 
-	.tagLink:hover {
+	.tagLink:hover, .tagRemoveLink:hover {
 		font-weight: bold;
 		cursor: pointer;
 		}
+
+	.form {
+		margin: 0;
+		}
+
 </style>
 <script language="javascript">
+	var globalTagSpan = 0;
+
+	function addTag ( tag ) {
+		if (tag.length < 3) {
+			return false;
+		}
+		document.getElementById('tagSubmit').disabled = true;
+		dojo.addOnLoad(function(){
+			dojo.io.bind({
+				method: 'GET',
+				content: {
+					param0: '<!--{$patient}-->',
+					param1: tag
+				},
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.CreateTag',
+				load: function(type, data, evt) {
+					// Add tag to list of displayed tags
+					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'; return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;';
+
+					// Remove previous value
+					document.getElementById('tagSubmit').disabled = false;
+					document.getElementById('tagSubmit').value = '';
+					return true;
+				},
+				mimetype: "text/json"
+			});
+		});
+	} // end function addTag
+
+	function expireTag ( obj, tag ) {
+		dojo.addOnLoad(function(){
+			dojo.io.bind({
+				method: 'GET',
+				content: {
+					param0: '<!--{$patient}-->',
+					param1: tag
+				},
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.ExpireTag',
+				error: function(type, err) {
+					alert (err.message);
+				},
+				load: function(type, data, evt) {
+					// Remove this from display after it is expired
+					document.getElementById(obj).style.display = 'none';
+					return true;
+				},
+				mimetype: 'text/json'
+			});
+		});
+	} // end function expireTag
+
 	// Autoloading routine
 	dojo.addOnLoad(function(){
 		dojo.io.bind({
-			method: 'POST',
+			method: 'GET',
 			content: {
 				param0: '<!--{$patient}-->'
 			},
@@ -65,9 +121,10 @@
 				if (data) {
 					var buf = '';
 					for (var i=0; i<data.length; i++) {
-						buf += '<a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'; return true;">' + data[i] + '</a> &nbsp;';
+						globalTagSpan += 1;
+						buf += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'; return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;';
 					}
-					document.getElementById('patientTagContainerDiv').innerHTML += buf;
+					document.getElementById('patientTagContainerInnerDiv').innerHTML += buf;
 				}
 			},
 			mimetype: "text/json"
@@ -75,5 +132,7 @@
 	});
 </script>
 <div id="patientTagContainerDiv" class="patientTagContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center"><!--{t}-->Patient Tags<!--{/t}--></div>
+	<div align="center" width="100%" style="background-color: #cccccc; border-bottom: 1px solid #aaaaaa;"><!--{t}-->Patient Tags<!--{/t}--></div>
+	<div id="patientTagContainerInnerDiv"></div>
+	<div id="formDiv"><input type="input" id="tagSubmit" onBlur="addTag(this.value); return true;" onSubmit="addTag(this.value); return false;" onKeyUp="if (event.keyCode == 13) { addTag(this.value); } return true;" /></div>
 </div>
