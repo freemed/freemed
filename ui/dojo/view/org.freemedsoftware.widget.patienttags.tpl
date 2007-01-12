@@ -71,6 +71,9 @@
 				},
 				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.CreateTag',
 				load: function(type, data, evt) {
+					// Increment global counter
+					globalTagSpan += 1;
+
 					// Add tag to list of displayed tags
 					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'; return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;';
 
@@ -108,6 +111,8 @@
 
 	// Autoloading routine
 	dojo.addOnLoad(function(){
+		// Show loading
+		document.getElementById('patientTagContainerInnerDiv').innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" /> <b><!--{t}-->Loading<!--{/t}--></b> ... ';
 		dojo.io.bind({
 			method: 'GET',
 			content: {
@@ -115,9 +120,10 @@
 			},
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.TagsForPatient',
 			error: function(type, data, evt) {
-				alert('error');
+				alert('Error refreshing');
 			},
 			load: function(type, data, evt) {
+				document.getElementById('patientTagContainerInnerDiv').innerHTML = '';
 				if (data) {
 					var buf = '';
 					for (var i=0; i<data.length; i++) {
@@ -136,3 +142,4 @@
 	<div id="patientTagContainerInnerDiv"></div>
 	<div id="formDiv"><input type="input" id="tagSubmit" onBlur="addTag(this.value); return true;" onSubmit="addTag(this.value); return false;" onKeyUp="if (event.keyCode == 13) { addTag(this.value); } return true;" /></div>
 </div>
+
