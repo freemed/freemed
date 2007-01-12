@@ -75,7 +75,7 @@
 					globalTagSpan += 1;
 
 					// Add tag to list of displayed tags
-					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'; return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
+					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'; return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+tag+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
 
 					// Remove previous value
 					obj.enable();
@@ -89,6 +89,7 @@
 	} // end function addTag
 
 	function expireTag ( obj, tag ) {
+		if (!confirm("<!--{t}-->Are you sure you want to remove this tag?<!--{/t}-->")) { return false; }
 		dojo.addOnLoad(function(){
 			dojo.io.bind({
 				method: 'GET',
@@ -129,7 +130,7 @@
 					var buf = '';
 					for (var i=0; i<data.length; i++) {
 						globalTagSpan += 1;
-						buf += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'; return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;<span>';
+						buf += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'; return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
 					}
 					document.getElementById('patientTagContainerInnerDiv').innerHTML += buf;
 				}
