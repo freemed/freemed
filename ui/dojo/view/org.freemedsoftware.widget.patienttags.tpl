@@ -57,11 +57,11 @@
 <script language="javascript">
 	var globalTagSpan = 0;
 
-	function addTag ( tag ) {
+	function addTag ( obj, tag ) {
 		if (tag.length < 3) {
 			return false;
 		}
-		document.getElementById('tagSubmit').disabled = true;
+		obj.disable();
 		dojo.addOnLoad(function(){
 			dojo.io.bind({
 				method: 'GET',
@@ -75,11 +75,12 @@
 					globalTagSpan += 1;
 
 					// Add tag to list of displayed tags
-					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'; return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;';
+					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'; return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
 
 					// Remove previous value
-					document.getElementById('tagSubmit').disabled = false;
-					document.getElementById('tagSubmit').value = '';
+					obj.enable();
+					obj.setValue('');
+					obj.setLabel('');
 					return true;
 				},
 				mimetype: "text/json"
@@ -128,7 +129,7 @@
 					var buf = '';
 					for (var i=0; i<data.length; i++) {
 						globalTagSpan += 1;
-						buf += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'; return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;';
+						buf += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="window.location=\'<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'; return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;<span>';
 					}
 					document.getElementById('patientTagContainerInnerDiv').innerHTML += buf;
 				}
@@ -140,6 +141,14 @@
 <div id="patientTagContainerDiv" class="patientTagContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
 	<div align="center" width="100%" style="background-color: #cccccc; border-bottom: 1px solid #aaaaaa;"><!--{t}-->Patient Tags<!--{/t}--></div>
 	<div id="patientTagContainerInnerDiv"></div>
-	<div id="formDiv"><input type="input" id="tagSubmit" onBlur="addTag(this.value); return true;" onSubmit="addTag(this.value); return false;" onKeyUp="if (event.keyCode == 13) { addTag(this.value); } return true;" /></div>
+	<div id="formDiv">
+	<input dojoType="Select"
+		autocomplete="false"
+		id="tagSumbit"
+		style="width: 150px;"
+		dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
+		setValue="addTag(this, arguments[0]);"
+		mode="remote" />
+	</div>
 </div>
 

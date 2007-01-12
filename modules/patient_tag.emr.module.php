@@ -36,7 +36,8 @@ class PatientTag extends SupportModule {
 	var $table_name  = "patienttag";
 	var $order_field = "datecreate,dateexpire";
 
-	var $widget_hash = "##tag## (##datecreate## - ##dateexpire##)";
+	//var $widget_hash = "##tag## (##datecreate## - ##dateexpire##)";
+	var $widget_hash = "tag";
 
 	var $variables = array (
 		"tag",
@@ -61,6 +62,31 @@ class PatientTag extends SupportModule {
 	protected function add_pre ( &$date ) {
 		$date['datecreate'] = '';
 	}
+
+	// Method: ListTags
+	//
+	//	Get list of tags based on criteria.
+	//
+	// Parameters:
+	//
+	//	$criteria - Criteria
+	//
+	// Returns:
+	//
+	//	Array of key = value hashes.
+	//
+	public function ListTags ( $criteria ) {
+		if (strlen($criteria) < 3) { return array(); }
+		$query = "SELECT DISTINCT(tag) AS tag FROM ".$this->table_name." WHERE tag LIKE '%".$GLOBALS['sql']->escape( $criteria )."%' ORDER BY tag LIMIT 20";
+		$result = $GLOBALS['sql']->queryCol( $query );
+		$found = false;
+		foreach ( $result AS $entry ) {
+			if (strtolower($entry) == strtolower($criteria)) { $found = true; }
+			$return[$entry] = $entry;
+		}
+		if (!$found) { $return[$criteria] = $criteria; }
+		return $return;
+	} // end method ListTags
 
 	// Method: CreateTag
 	//
