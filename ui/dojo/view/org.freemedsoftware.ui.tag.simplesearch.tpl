@@ -104,6 +104,23 @@
 
 <script language="javascript">
 	dojo.addOnLoad(function() {
+		// Define selection event for table
+		dojo.event.connect(dojo.widget.byId('tagSimpleTable'), "onSelect", function () {
+			var val;
+			if (dojo.widget.byId('tagSimpleTable').getSelectedData().length > 0) {
+				dojo.debug("found getSelectedData()");
+				val = dojo.widget.byId('tagSimpleTable').getSelectedData()[0].patient_record;
+				
+			}
+			dojo.debug(dojo.json.serialize(dojo.widget.byId('tagSimpleTable').getSelectedData()[0]));
+			if (val) {
+				// Move to the patient EMR record in question
+				dojo.widget.byId('tagSimpleTable').disable();
+				window.location='<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val;
+				return true;
+			}
+		});
+		// Initial load of data for search.
 		dojo.io.bind({
 			method : 'POST',
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.SimpleTagSearch?param0=<!--{$tag}-->',
@@ -126,12 +143,12 @@
 </div>
 
 <div class="tableContainer">
-	<table dojoType="FilteringTable" widgetId="tagSimpleTable" headClass="fixedHeader"
+	<table dojoType="FilteringTable" id="tagSimpleTable" widgetId="tagSimpleTable" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-	 border="0" onSelect="window.location='<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + dojo.widget.byId('tagSimpleTable').getSelectedData().patient_record; return true;">
+	 valueField="patient_record"
+	 border="0" multiple="no">
 	<thead>
 		<tr>
-			<th field="patient_record" dataType="Number"></th>
 			<th field="patient_id" dataType="String">Record</th>
 			<th field="last_name" dataType="String">Last</th>
 			<th field="first_name" dataType="String">First</th>
@@ -142,13 +159,13 @@
 	</thead>
 	<tbody>
 <!--{*
-        //      * patient_record - Patient record id
-        //      * patient_id - Practice ID for patient
-        //      * last_seen - Date last seen/next appointment
-        //      * first_name - First name of patient
-        //      * last_name - Last name of patient
-        //      * middle_name - Middle name of patient
-        //      * date_of_birth - Patient's date of birth
+        * patient_record - Patient record id
+        * patient_id - Practice ID for patient
+        * last_seen - Date last seen/next appointment
+        * first_name - First name of patient
+        * last_name - Last name of patient
+        * middle_name - Middle name of patient
+        * date_of_birth - Patient's date of birth
 *}-->
 	</tbody>
 	</table>
