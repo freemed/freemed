@@ -162,75 +162,6 @@ class SupportModule extends BaseModule {
 		return $data;
 	} // end protected function prepare
 
-	// function main
-	// - generic main function
-	function main ($nullvar = "") {
-		global $display_buffer;
-		global $action, $__submit;
-
-		// Handle a "Cancel" button being pushed
-		if ($__submit==__("Cancel")) {
-			$action = "";
-			$this->view();
-			return NULL;
-		}
-
-		switch ($action) {
-			case "add":
-				if (!$this->acl_access('add') and !$this->defeat_acl) {
-					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
-				}
-				$this->add();
-				break;
-
-			case "addform":
-				if (!$this->acl_access('add') and !$this->defeat_acl) {
-					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
-				}
-				if ($_REQUEST['return'] == 'close') {
-					$GLOBALS['__freemed']['no_template_display'] = true;
-				}
-				$this->addform();
-				break;
-
-			case "del":
-			case "delete":
-				if (!$this->acl_access('delete') and !$this->defeat_acl) {
-					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
-				}
-				$this->del();
-				break;
-
-			case "mod":
-			case "modify":
-				if (!$this->acl_access('modify') and !$this->defeat_acl) {
-					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
-				}
-				$this->mod();
-				break;
-
-			case "modform":
-				if (!$this->acl_access('modify') and !$this->defeat_acl) {
-					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
-				}
-				global $id;
-				if (empty($id) or ($id<1)) {
-					template_display();
-				}
-				$this->modform();
-				break;
-
-			case "view":
-			default:
-				if (!$this->acl_access('view') and !$this->defeat_acl) {
-					trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
-				}
-				$action = "";
-				$this->view();
-				break;
-		} // end switch action
-	} // end function main
-
 	// Method: acl_access
 	//
 	//	Should be overridden by any module which needs different
@@ -347,49 +278,40 @@ class SupportModule extends BaseModule {
 
 	// Method: picklist
 	//
-	//	Generic picklist for XML-RPC.
+	//	Generic picklist.
 	//
 	// Parameters:
 	//
-	//	$criteria - (optional) Hash of criteria fields to narrow
-	//	the search
+	//	$criteria - (optional) String to narrow search.
 	//
 	// Returns:
 	//
 	//	Array of hashes
 	//
 	function picklist ( $criteria = NULL ) {
-		// Do not execute if there is no field map
-		if (!is_array($this->rpc_field_map)) {
-			return false;
-		}
-
-		// Map criteria from rpc_field_map
-		if (is_array($criteria)) {
-			foreach ($criteria AS $k => $v) {
-				if (!empty($this->rpc_field_map[$k])) {
-					$c[] = "LOWER(".$this->rpc_field_map[$k].") LIKE '%".addslashes(strtolower($v))."%'";
+		if (!(strpos($this->widget_hash, "##") === false)) {
+			$value = '';
+			$hash_split = explode('##', $this->widget_hash);
+			foreach ($hash_split AS $_k => $_v) {
+				if ($_k & 1) {
+					$c[] = "LOWER(". $_v .") LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
 				}
 			}
+		} else {
+			$c[] = "LOWER(".$this->widget_hash.") LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
 		}
 
 		$query = "SELECT * FROM ".$this->table_name.
-			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
-			( $this->order_field ? " ORDER BY ".$this->order_field : "" );
+			( is_array($c) ? " WHERE ".join(' OR ',$c) : "" ).
+			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
+			" LIMIT 20";
 		//syslog(LOG_INFO, $query);
-		$result = $GLOBALS['sql']->query($query);
-		if (!$GLOBALS['sql']->results($result)) {
-			return '';
+		$result = $GLOBALS['sql']->queryAll($query);
+		if (!count($result)) { return array(); }
+		foreach ($result AS $r) {
+			$return[$r['id']] = trim( $this->to_text( $r ) );
 		}
-		return rpc_generate_sql_hash(
-			$this->table_name,
-			array_merge(
-				$this->rpc_field_map,
-				array ( 'id' => 'id' )
-			),
-			( is_array($c) ? " WHERE ".join(' AND ',$c) : "" ).
-			' ORDER BY '.$this->order_field
-		);
+		return $return;
 	} // end method picklist
 
 	// Method: distinct
@@ -443,7 +365,7 @@ class SupportModule extends BaseModule {
 	//
 	// Parameters:
 	//
-	//	$id - Record id
+	//	$id - Record id or array containing record hash
 	//
 	//	$field - (optional) Defaults to id for the identifying field.
 	//
@@ -453,7 +375,11 @@ class SupportModule extends BaseModule {
 	//
 	public function to_text ( $id, $field='id' ) {
 		if (!$id) { return __("NO RECORD FOUND"); }
-		$r = $GLOBALS['sql']->get_link( $this->table_name, $rec );
+		if (is_array($id)) {
+			$r = $id;
+		} else {
+			$r = $GLOBALS['sql']->get_link( $this->table_name, $rec );
+		}
 		if (!(strpos($this->widget_hash, "##") === false)) {
 			$value = '';
 			$hash_split = explode('##', $this->widget_hash);
