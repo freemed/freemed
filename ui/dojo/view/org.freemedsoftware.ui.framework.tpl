@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,11 @@
 <!--{* ***** Style Elements ***** *}-->
 
 <link rel="stylesheet" type="text/css" src="<!--{$htdocs}-->/stylesheet.css" />
+<!--{if $DEBUG}-->
+<script language="JavaScript" type="text/javascript">
+var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
+</script>
+<!--{/if}-->
 <script type="text/javascript" src="<!--{$base_uri}-->/lib/dojo/dojo.js"></script>
 <script language="JavaScript" type="text/javascript">
 	dojo.require("dojo.widget.LayoutContainer");
@@ -47,7 +52,7 @@
 
 	function openHelpPage ( ) {
 		// TODO: make sure to open help for the current topic, as stored by a global JS variable ...
-		var popup = window.open('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=500,width=300,resizable=yes');
+		var popup = window.open('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=500,width=300,resizable=yes,alwaysRaised=yes');
 	}
 
 	function freemedLogout ( ) {
@@ -72,6 +77,13 @@
 		freemedLoad( "org.freemedsoftware.view.login" );
 		return true;
 	}
+
+	function freemedLoadPage ( url ) {
+		dojo.widget.getWidgetById('freemedLoadingDialog').show();
+		window.location = url;
+		return true;
+	} // end function freemedLoadPage
+
 </script>
 
 	<!--{* ***** Style Elements ***** *}-->
@@ -97,8 +109,78 @@
 		background-color: #ffffff;
 		padding: 2em;
 	}
-	.euDockBar { z-index: 1000; }
+	.euDockBar { z-index: 10000; }
 	#rightPane { margin: 0; }
+
+	table {
+		width: 100%;
+		}
+
+	* html div.tableContainer {	/* IE only hack */
+		width:95%;
+		/* border:1px solid #ccc; */
+		height: 285px;
+		overflow-x:hidden;
+		overflow-y: auto;
+		}
+
+	* html div.tableContainer table {
+		width:100%; border:1px solid #ccc; cursor:default;
+		}
+
+	div.tableContainer table td,
+	div.tableContainer table th{
+		border-right:1px solid #999;
+		padding:2px;
+		font-weight:normal;
+		}
+	table thead td, table thead th {
+		background:#94BEFF;
+		}
+		
+	* html div.tableContainer table thead tr td,
+	* html div.tableContainer table thead tr th{
+		/* IE Only hacks */
+		position:relative;
+		top:expression(dojo.html.getFirstAncestorByTag(this,'table').parentNode.scrollTop-2);
+		}
+		
+	html>body tbody.scrollContent {
+		height: 262px;
+		overflow-x:hidden;
+		overflow-y: auto;
+		}
+
+	tbody.scrollContent td, tbody.scrollContent tr td {
+		background: #FFF;
+		padding: 2px;
+		}
+
+	tbody.scrollContent tr.alternateRow td {
+		background: #e3edfa;
+		padding: 2px;
+		}
+
+	tbody.scrollContent tr.selected td {
+		background: yellow;
+		padding: 2px;
+		}
+	tbody.scrollContent tr:hover td {
+		background: #a6c2e7;
+		padding: 2px;
+		}
+	tbody.scrollContent tr.selected:hover td {
+		background: #ffff33;
+		padding: 2px;
+		}
+
+	.searchHeader {
+		width: 100%;
+		border: 1px solid #000000;
+		background: #ccccff;
+		padding: 5px;
+		text-decoration: small-caps;
+		}
 </style>
 
 <!-- Include dock -->
@@ -110,7 +192,7 @@
 
 	<!--{* ***** Hidden things ***** *}-->
 
-<div dojoType="dialog" id="freemedLoadingDialog" bgOpacity="0.5" toggle="fade" toggleDuration="500" blockDuration="2000">
+<div dojoType="dialog" id="freemedLoadingDialog" bgOpacity="0.5" toggle="fade" toggleDuration="500" blockDuration="2000" style="display:none;">
 	<table border="0" cellpadding="5">
 		<tr>
 			<td valign="middle"><img src="<!--{$htdocs}-->/images/loading.gif" border="0" /></td>
@@ -119,7 +201,7 @@
 	</table>
 </div>
 
-<div dojoType="dialog" id="freemedLogoutDialog" bgOpacity="0.5" toggle="fade" toggleDuration="250" blockDuration="2000">
+<div dojoType="dialog" id="freemedLogoutDialog" bgOpacity="0.5" toggle="fade" toggleDuration="250" blockDuration="2000" style="display:none;">
 	<table border="0" cellpadding="5">
 		<tr>
 			<td valign="middle"><img src="<!--{$htdocs}-->/images/loading.gif" border="0" /></td>
@@ -140,40 +222,48 @@
 				</td>
 				<td align="middle" width="33%">
 					<font size="2" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">Version <!--{$VERSION}--></font><br/>
-					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2006 by the FreeMED Software Foundation</font>
+					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2007 by the FreeMED Software Foundation</font>
 				</td>
 				<td align="middle" width="33%">
 					<div id="euDockContainer">
-					<script language="javascript">
-//					euEnv.imageBasePath="<!--{$htdocs}-->/";
-					var dock = new euDock ();
-					dock.setBar({
-						left      :{euImage:{image:"<!--{$htdocs}-->/barImages/dockBg-l.png"}},
-						horizontal:{euImage:{image:"<!--{$htdocs}-->/barImages/dockBg-c-o.gif"}},
-						right     :{euImage:{image:"<!--{$htdocs}-->/barImages/dockBg-r.png"}}
-
-					});
-					dock.setIconsOffset(5);
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Quick-Cal.png"}}),
-{code:"freemedLoad('org.freemedsoftware.ui.user.form');"});
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Stocks.png"}}),
-{link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.billing"});
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Rolodex.png"}}),
-{link:"http://eudock.jules.it"});
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Stickies.png"}}),
-{link:"http://eudock.jules.it"});
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Rolodex.png"}}),
-{link:"http://eudock.jules.it"});
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Rolodex.png"}}),
-{link:"http://eudock.jules.it"});
-dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Yellow-Pages.png"}}),
-{link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe"});
-					dock.setScreenAlign(euTOP, 5);
-					</script>
+<script language="javascript">
+//	euEnv.imageBasePath="<!--{$htdocs}-->/";
+	var dock = new euDock ();
+	dock.setBar({
+		left      :{euImage:{image:"<!--{$htdocs}-->/euDock/barImages/dockBg-l.png"}},
+		horizontal:{euImage:{image:"<!--{$htdocs}-->/euDock/barImages/dockBg-c-o.gif"}},
+		right     :{euImage:{image:"<!--{$htdocs}-->/euDock/barImages/dockBg-r.png"}}
+	});
+	dock.setIconsOffset(5);
+	dock.addIcon(
+		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/Quick-Cal.png" } } ),
+		{ code:"freemedLoad('org.freemedsoftware.ui.user.form');" }
+	);
+	dock.addIcon(
+		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stocks.png" } } ),
+		{ link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.billing"}
+	);
+	dock.addIcon(
+		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Rolodex.png" } } ),
+		{ link:"http://eudock.jules.it" }
+	);
+	dock.addIcon(
+		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stickies.png" } } ),
+		{ link:"http://eudock.jules.it" }
+	);
+	dock.addIcon(
+		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Yellow-Pages.png" } } ),
+		{ link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe" }
+	);
+//	dock.setScreenAlign(euDOWN, 5);
+</script>
 					</div>
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
-					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton"/><img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" onClick="openHelpPage(); return true;" /><img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
+					<img src="<!--{$htdocs}-->/images/notes.png" alt="" width="73" height="30" border="0" id="notesButton" />
+					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton" />
+					<img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" onClick="openHelpPage(); return true;" />
+					<img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
 					<!-- Tooltips -->
 					<span dojoType="tooltip" connectId="supportButton" toggle="explode" toggleDuration="100"><!--{t}-->Access technical support<!--{/t}--></span>
 					<span dojoType="tooltip" connectId="manualButton" toggle="explode" toggleDuration="100"><!--{t}-->View online FreeMED documentation<!--{/t}--></span>
@@ -185,3 +275,4 @@ dock.addIcon(new Array({euImage:{image:"<!--{$htdocs}-->/images/Yellow-Pages.png
 
 <!--{* ***** Content will go in here ***** *}-->
 
+<!--{if $DEBUG}--><div id="dojoDebugOutput" /><!--{/if}-->
