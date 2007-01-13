@@ -25,6 +25,7 @@ SOURCE data/schema/mysql/patient.sql
 CREATE TABLE IF NOT EXISTS `patienttag` (
 	tag			VARCHAR (100) NOT NULL,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	user			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	datecreate		TIMESTAMP (14) DEFAULT NOW(),
 	dateexpire		TIMESTAMP (14),
 	id			SERIAL,

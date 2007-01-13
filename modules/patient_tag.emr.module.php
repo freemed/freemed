@@ -39,13 +39,6 @@ class PatientTag extends SupportModule {
 	//var $widget_hash = "##tag## (##datecreate## - ##dateexpire##)";
 	var $widget_hash = "tag";
 
-	var $variables = array (
-		"tag",
-		"patient",
-		"datecreate",
-		"dateexpire"
-	);
-
 	public function __construct ( ) {
 		// __("Patient Tag")
 	
@@ -53,6 +46,15 @@ class PatientTag extends SupportModule {
 			__("Tag") => 'tag',
 			__("Date Created") => 'datecreate',
 			__("Date Expires") => 'dateexpire'
+		);
+
+		$user = freemed::user_cache();
+		$this->variables = array (
+			"tag",
+			"patient",
+			"user" => $user->user_number,
+			"datecreate",
+			"dateexpire"
 		);
 
 		// Run parent constructor
@@ -100,9 +102,11 @@ class PatientTag extends SupportModule {
 	//
 	public function CreateTag ( $patient, $tag ) {
 		if ($patient and $tag) {
+			$user = freemed::user_cache();
 			$query = $GLOBALS['sql']->insert_query (
 				$this->table_name,
 				array (
+					'user' => $user->user_number,
 					'patient' => $patient,
 					'tag' => $tag
 				)
