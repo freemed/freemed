@@ -66,9 +66,11 @@ class Authentication_Basic {
 		// Check password
 		if ($credentials['password'] == $r['userpassword']) {
 			// Set session vars
+			unset($r['userpassword']);
 			$_SESSION['authdata'] = array (
 				"username" => $credentials['username'],
-				"user" => $r['id']
+				"user" => $r['id'],
+				"user_record" => $r
 			);
 			// Set ipaddr for SESSION_PROTECTION
 			$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
