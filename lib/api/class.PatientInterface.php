@@ -78,6 +78,46 @@ class PatientInterface {
 		return $result;
 	} // end method EmrAttachmentsByPatientTable
 
+	// Method: Search
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function Search ( $criteria ) {
+		if (!count($criteria)) { return array(); }
+
+		foreach ($criteria AS $k => $v) {
+			switch ($k) {
+				case 'ssn':
+				if ($v) { $c[] = "p.ptssn LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'age':
+				if ($v) { $c[] = "CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) = ".$GLOBALS['sql']->quote($v+0); }
+				break;
+
+				default: break;
+			}
+		} // end foreach
+
+		if (!count($c)) { return array(); }
+		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p WHERE ".join(' AND ', $c)." ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method Search
+
+	// Method: TotalInSystem
+	//
+	//	Get total number of active patients in the system.
+	//
+	// Returns:
+	//
+	//	Integer, number of active patients in the system.
+	//
+	public function TotalInSystem ( ) {
+		return $GLOBALS['sql']->queryOne("SELECT COUNT(*) FROM patient WHERE ptarchive=0");
+	} // end method TotalInSystem
+
 	// Method: picklist
 	//
 	//	Generate associative array of patient table id to patient

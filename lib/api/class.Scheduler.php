@@ -87,6 +87,8 @@ class Scheduler {
 	//
 	//	$date - (optional) Date to get appointments for. Defaults to current date.
 	//
+	//	$provider - (optional) Provider number
+	//
 	// Returns:
 	//
 	//	Hash of daily appointments
@@ -97,9 +99,11 @@ class Scheduler {
 	//	* provider_id
 	//	* note
 	//	* hour
-	public function GetDailyAppointments ( $date = NULL ) {
-		$this_date = $date ? $date : date('Y-m-d');
-		$query = "SELECT s.caldateof AS date_of, s.calhour AS hour, s.calminute AS minute, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') AS patient, pa.id AS patient_id, s.calprenote AS note, s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id WHERE s.caldateof='".addslashes($this_date)."' AND s.calstatus != 'cancelled' ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician";
+	//	* minute
+	//	* appointment_time
+	public function GetDailyAppointments ( $date = NULL, $provider = 0 ) {
+		$this_date = $date ? $this->ImportDate($date) : date('Y-m-d');
+		$query = "SELECT s.caldateof AS date_of, s.calhour AS hour, s.calminute AS minute, CONCAT(s.calhour, ':',LPAD(s.calminute, 2, '0')) AS appointment_time, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') AS patient, pa.id AS patient_id, s.calprenote AS note, s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id WHERE s.caldateof='".addslashes($this_date)."' AND s.calstatus != 'cancelled' ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician";
 		return $GLOBALS['sql']->queryAll ( $query );
 	} // end method GetDailyAppointments
 
@@ -1111,6 +1115,40 @@ class Scheduler {
 		}
 		return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
 	} // end function scroll_next_month
+
+	// Method: ImportDate
+	//
+	//	Import date to internal FreeMED format.
+	//
+	// Parameters:
+	//
+	//	$input - Input date.
+	//
+	// Returns:
+	//
+	//	YYYY-MM-DD formatted date
+	//
+	public function ImportDate ( $input ) {
+		$data = $input;
+		switch (true) {
+			case ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $data, $regs):
+			return sprintf('%04d-%02d-%02d', $regs[1], $regs[2], $regs[3]);
+			break;
+
+			case ereg("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})", $data, $regs):
+			if ($regs[3] < 30) {
+				$regs[3] += 2000;
+			} elseif ($regs[3] < 1800) {
+				$regs[3] += 1900;
+			}
+			return sprintf('%04d-%02d-%02d', $regs[3], $regs[1], $regs[2]);
+			break;
+
+			default:
+			return false;
+			break;
+		}
+	} // end method ImportDate
 
 } // end method Scheduler
 
