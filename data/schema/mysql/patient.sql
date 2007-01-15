@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2006 FreeMED Software Foundation
+# Copyright (C) 1999-2007 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptcountry		VARCHAR (50),
 	pthphone		VARCHAR (16),
 	ptwphone		VARCHAR (16),
+	ptmphone		VARCHAR (16),
 	ptfax			VARCHAR (16),
 	ptemail			VARCHAR (80),
 	ptsex			ENUM( 'm', 'f', 't' ) NOT NULL,
@@ -94,4 +95,19 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	KEY			( ptlname, ptfname, ptmname, ptid, ptdob ),
 	PRIMARY KEY		( id )
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS patient_Upgrade;
+DELIMITER //
+CREATE PROCEDURE patient_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+
+	#	Version 0.9.0
+	ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;
+END
+//
+DELIMITER ;
+CALL patient_Upgrade( );
 
