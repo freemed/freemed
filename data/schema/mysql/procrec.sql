@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2006 FreeMED Software Foundation
+# Copyright (C) 1999-2007 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/physician.sql
 SOURCE data/schema/mysql/cpt.sql
+SOURCE data/schema/mysql/dxhistory.sql
 
 CREATE TABLE IF NOT EXISTS `procrec` (
 	procpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -66,7 +67,8 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	procstatus		VARCHAR (50),
 	procslidingscale	CHAR (1),
 	proctosoverride		INT UNSIGNED DEFAULT 0,
-	id			SERIAL,
+	id			BIGINT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY		( id ),
 
 	#	Define keys
 
@@ -100,6 +102,7 @@ CREATE TRIGGER procrec_Delete
 	AFTER DELETE ON procrec
 	FOR EACH ROW BEGIN
 		DELETE FROM `patient_emr` WHERE module='procrec' AND oid=OLD.id;
+		DELETE FROM `dxhistory` WHERE procrec=OLD.id;
 	END;
 //
 
@@ -109,6 +112,27 @@ CREATE TRIGGER procrec_Insert
 		DECLARE c VARCHAR(250);
 		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'procrec', NEW.procpatient, NEW.id, NEW.procdt, c );
+
+		#	Diagnosis 1
+		IF NEW.procdiag1 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag1, NEW.procdt );
+		END IF;
+
+		#	Diagnosis 2
+		IF NEW.procdiag2 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag2, NEW.procdt );
+		END IF;
+
+		#	Diagnosis 3
+		IF NEW.procdiag3 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag3, NEW.procdt );
+		END IF;
+
+		#	Diagnosis 4
+		IF NEW.procdiag4 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdt );
+		END IF;
+
 	END;
 //
 
@@ -118,6 +142,31 @@ CREATE TRIGGER procrec_Update
 		DECLARE c VARCHAR(250);
 		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
 		UPDATE `patient_emr` SET stamp=NEW.procdt, patient=NEW.procpatient, summary=c WHERE module='procrec' AND oid=NEW.id;
+
+		#	Diagnosis 1
+		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag1;
+		IF NEW.procdiag1 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag1, NEW.procdt );
+		END IF;
+
+		#	Diagnosis 2
+		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag2;
+		IF NEW.procdiag2 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag2, NEW.procdt );
+		END IF;
+
+		#	Diagnosis 3
+		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag3;
+		IF NEW.procdiag3 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag3, NEW.procdt );
+		END IF;
+
+		#	Diagnosis 4
+		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag4;
+		IF NEW.procdiag4 > 0 THEN
+			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdt );
+		END IF;
+
 	END;
 //
 
