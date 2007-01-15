@@ -129,6 +129,13 @@ class SupportModule extends BaseModule {
 	//
 	var $distinct_fields;
 
+	// Variable: $this->acl_category
+	//
+	//	Category of ACL query to be performed by module functions.
+	//	Defaults to 'support'.
+	//
+	var $acl_category = 'support';
+
 	// contructor method
 	public function __construct () {
 		// Store the rpc map in the meta information
@@ -168,7 +175,7 @@ class SupportModule extends BaseModule {
 	//	access checks.
 	//
 	protected function acl_access ( $type ) { 
-		return freemed::acl_patient('support', $type);
+		return freemed::acl($this->acl_category, $type);
 	} // end method acl_access
 	
 	// Method: add
@@ -192,15 +199,15 @@ class SupportModule extends BaseModule {
 			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
-		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
+		$ourdata = $this->prepare( $data );
+		$this->add_pre( &$ourdata );
+		$GLOBALS['sql']->load_data( $ourdata );
 
-		$this->add_pre( &$data );
-		$result = $GLOBALS['sql']->query (
-			$GLOBALS['sql']->insert_query (
-				$this->table_name,
-				$this->variables
-			)
+		$query = $GLOBALS['sql']->insert_query (
+			$this->table_name,
+			$this->variables
 		);
+		$result = $GLOBALS['sql']->query ( $query );
 
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
 		$this->add_post( $new_id );
@@ -210,7 +217,7 @@ class SupportModule extends BaseModule {
 	protected function add_pre ( $data ) { }
 	protected function add_post ( $id ) { }
 
-	// Method: _del
+	// Method: del
 	//
 	//	Basic superclass deletion routine.
 	//
@@ -259,8 +266,9 @@ class SupportModule extends BaseModule {
 
 		if ( !$data['id'] ) { return false; }
 
-		$this->mod_pre( &$data );
-		$GLOBALS['sql']->load_data( $this->prepare( $data ) );
+		$ourdata = $this->prepare( $data );
+		$this->mod_pre( &$ourdata );
+		$GLOBALS['sql']->load_data( $ourdata );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
 				$this->table_name,
@@ -268,7 +276,7 @@ class SupportModule extends BaseModule {
 				array ( "id" => $id )
 			)
 		);
-		$this->mod_post( &$data );
+		$this->mod_post( &$ourdata );
 
 		return $result ? true : false;
 	} // end function mod
