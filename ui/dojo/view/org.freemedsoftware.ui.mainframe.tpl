@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,9 @@
 		layoutAlign="client"
 	>
 		<!-- this pane contains the actual application -->
-		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="70" href="<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe?piece=defaultpane"></div>
+		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="70">
+			<!--{include file="org.freemedsoftware.ui.scheduler.dailyappointments.tpl" MODE='widget'}-->
+		</div>
 		<div dojoType="LinkPane" id="rightPane" style="width: 250px; background-image: url(<!--{$htdocs}-->/images/stipedbg.png); overflow: auto;" href="<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe?piece=links" layoutAlign="right"></div>
 	</div>
 
