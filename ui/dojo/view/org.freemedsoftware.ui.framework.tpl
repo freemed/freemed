@@ -66,7 +66,6 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 			},
 			load: function(type, data, evt) {
 				if (data) {
-					logoutDialog.hide();
 					location.href = '<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.login';	
 				} else {
 					logoutDialog.hide();
@@ -111,6 +110,36 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	}
 	.euDockBar { z-index: 10000; }
 	#rightPane { margin: 0; }
+
+	.buttonContainer {
+		margin-top: .5em;
+		margin-bottom: .5em;
+		}
+	a.button {
+		padding: 3px;
+		border: 1px solid #0000ff;
+		background: #ccccff
+		}
+	a.button:hover {
+		background: #0000ff;
+		color: #ffffff;
+		cursor: pointer;
+		}
+
+	div.infoBox {
+		border: 1px solid #000000;
+		size: 8pt;
+		background: #ddddff;
+		padding: .5em;
+		max-width: 250px;
+		}
+
+	h3 {
+		text-align: center;
+		background-color: #ccccff;
+		border: 1px solid #0000ff;
+		padding: 5px;
+		}
 
 	table {
 		width: 100%;

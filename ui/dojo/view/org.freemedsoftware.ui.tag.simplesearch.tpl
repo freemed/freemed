@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -23,84 +23,14 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<!--{if $MODE ne 'widget'}-->
 <!--{include file="org.freemedsoftware.ui.framework.tpl"}-->
+<!--{/if}-->
 
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.FilteringTable");
 </script>
-
-<style type="text/css">
-	table {
-		width: 100%;
-		}
-
-	* html div.tableContainer {	/* IE only hack */
-		width:95%;
-		/* border:1px solid #ccc; */
-		height: 285px;
-		overflow-x:hidden;
-		overflow-y: auto;
-		}
-
-	* html div.tableContainer table {
-		width:100%; border:1px solid #ccc; cursor:default;
-		}
-
-	div.tableContainer table td,
-	div.tableContainer table th{
-		border-right:1px solid #999;
-		padding:2px;
-		font-weight:normal;
-		}
-	table thead td, table thead th {
-		background:#94BEFF;
-		}
-		
-	* html div.tableContainer table thead tr td,
-	* html div.tableContainer table thead tr th{
-		/* IE Only hacks */
-		position:relative;
-		top:expression(dojo.html.getFirstAncestorByTag(this,'table').parentNode.scrollTop-2);
-		}
-		
-	html>body tbody.scrollContent {
-		height: 262px;
-		overflow-x:hidden;
-		overflow-y: auto;
-		}
-
-	tbody.scrollContent td, tbody.scrollContent tr td {
-		background: #FFF;
-		padding: 2px;
-		}
-
-	tbody.scrollContent tr.alternateRow td {
-		background: #e3edfa;
-		padding: 2px;
-		}
-
-	tbody.scrollContent tr.selected td {
-		background: yellow;
-		padding: 2px;
-		}
-	tbody.scrollContent tr:hover td {
-		background: #a6c2e7;
-		padding: 2px;
-		}
-	tbody.scrollContent tr.selected:hover td {
-		background: #ffff33;
-		padding: 2px;
-		}
-
-	.searchHeader {
-		width: 100%;
-		border: 1px solid #000000;
-		background: #ccccff;
-		padding: 5px;
-		text-decoration: small-caps;
-		}
-</style>
 
 <script language="javascript">
 	dojo.addOnLoad(function() {
@@ -110,13 +40,12 @@
 			if (dojo.widget.byId('tagSimpleTable').getSelectedData().length > 0) {
 				dojo.debug("found getSelectedData()");
 				val = dojo.widget.byId('tagSimpleTable').getSelectedData()[0].patient_record;
-				
 			}
 			dojo.debug(dojo.json.serialize(dojo.widget.byId('tagSimpleTable').getSelectedData()[0]));
 			if (val) {
 				// Move to the patient EMR record in question
 				dojo.widget.byId('tagSimpleTable').disable();
-				window.location='<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val;
+				freemedLoadPage('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
 				return true;
 			}
 		});
@@ -170,4 +99,8 @@
 	</tbody>
 	</table>
 </div>
+
+<!--{if $MODE ne 'widget'}-->
+<!--{include file="org.freemedsoftware.ui.footer.tpl"}-->
+<!--{/if}-->
 
