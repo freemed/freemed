@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -60,9 +60,7 @@
 		-moz-border-radius-bottomright: 10px;
 		background-color: #ffffff;
 		padding: 2em;
-	}
-	.euDockBar { z-index: 1000; }
-	#rightPane { margin: 0; }
+		}
 </style>
 
 </head>
@@ -80,7 +78,7 @@
 				</td>
 				<td align="middle" width="33%">
 					<font size="2" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">Version <!--{$VERSION}--></font><br/>
-					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2006 by the FreeMED Software Foundation</font>
+					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2007 by the FreeMED Software Foundation</font>
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
 					<img src="<!--{$htdocs}-->/images/close.png" alt="" border="0" id="closeButton" onClick="window.close(); return true;" />
