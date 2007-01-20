@@ -433,6 +433,23 @@ class EMRModule extends BaseModule {
 		return $result ? true : false;
 	} // end public function lock
 
+	// Method: GetRecord
+	//
+	//	Retrieve database record associated with this module's
+	//	data.
+	//
+	// Parameters:
+	//
+	//	$id - Database ID
+	//
+	// Returns:
+	//
+	//	Hash.
+	//
+	public function GetRecord ( $id ) {
+		return $GLOBALS['sql']->get_link( $this->table_name, $id );
+	} // end method GetRecord
+
 	// Method: _setup
 	public function _setup ( ) {
 		if (!$this->create_table()) { return false; }

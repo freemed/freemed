@@ -194,6 +194,10 @@ class SupportModule extends BaseModule {
 	//	specified, _add will return the id number if successful
 	//	or false if unsuccessful.
 	//
+	// SeeAlso:
+	//	<add_pre>
+	//	<add_post>
+	//
 	public function add ( $data ) {
 		if (!$this->acl_access('add') and !$this->defeat_acl) {
 			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
@@ -233,7 +237,7 @@ class SupportModule extends BaseModule {
 	//	depending on whether it is successful.
 	//
 	// See Also:
-	//	<predel>
+	//	<del_pre>
 	//
 	public function del ( $id ) {
 		if ( !$this->acl_access( 'delete' ) ) {
@@ -253,11 +257,11 @@ class SupportModule extends BaseModule {
 	//
 	// Parameters:
 	//
-	//	$data - 
+	//	$data - Hash of data to pass.
 	//
 	// See Also:
-	//	<premod>
-	//	<postmod>
+	//	<mod_pre>
+	//	<mod_post>
 	//
 	public function mod ( $data ) {
 		if ( !$this->acl_access( 'modify' ) ) {
@@ -283,6 +287,23 @@ class SupportModule extends BaseModule {
 
 	private function mod_pre ( $data ) { }
 	private function mod_post ( $data ) { }
+
+	// Method: GetRecord
+	//
+	//	Retrieve database record associated with this module's
+	//	data.
+	//
+	// Parameters:
+	//
+	//	$id - Database ID
+	//
+	// Returns:
+	//
+	//	Hash.
+	//
+	public function GetRecord ( $id ) {
+		return $GLOBALS['sql']->get_link( $this->table_name, $id );
+	} // end method GetRecord
 
 	// Method: picklist
 	//
