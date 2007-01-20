@@ -28,7 +28,7 @@ class Translations extends EMRModule {
 	var $MODULE_NAME = "Translations";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
-	var $MODULE_UID = "58b7eb4e-a4dc-46db-841f-4e2bf3b64ddd";
+	var $MODULE_UID = "a1273c34-ee52-41c1-bd08-ab4cbe8d538b";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
