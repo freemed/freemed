@@ -113,7 +113,7 @@ class Installation {
 		return $res ? true : false;
 	} // end method CreateAdministrationAccount
 
-	// Method: CreateSettingsFile
+	// Method: CreateSettings
 	//
 	//	Generate lib/settings.php file.
 	//
@@ -132,7 +132,7 @@ class Installation {
 	//
 	//	Boolean.
 	//
-	public function CreateSettingsFile ( $params ) {
+	public function CreateSettings ( $params ) {
 		// Make sure we don't help out hack attempts
 		if ( file_exists ( PHYSICAL_LOCATION . '/data/cache/healthy' ) ) {
 			return false;
@@ -150,12 +150,12 @@ class Installation {
 		$smarty->left_delimiter = '<{';
 		$smarty->right_delimiter = '}>';
 
-		//syslog(LOG_INFO, "CreateSettingsFile: params = ".serialize($params));
+		//syslog(LOG_INFO, "CreateSettings: params = ".serialize($params));
 		foreach ( $params AS $k => $v ) { $smarty->assign( $k, $v ); }
 
 		$return = @file_put_contents( PHYSICAL_LOCATION.'/lib/settings.php', $smarty->fetch( 'settings.php.tpl' ) );
 		return $return ? true : false;
-	} // end method CreateSettingsFile
+	} // end method CreateSettings
 
 	// Method: CreateDatabase
 	//
@@ -166,7 +166,8 @@ class Installation {
 	//	Boolean.
 	//
 	public function CreateDatabase ( ) {
-		if ( ! ( is_defined('DB_USER') && is_defined('DB_PASSWORD') && is_defined('DB_NAME') ) ) {
+		syslog(LOG_INFO, "CreateDatabase() invoked");
+		if ( ! ( defined('DB_USER') && defined('DB_PASSWORD') && defined('DB_NAME') ) ) {
 			return false;
 		}
 		// Make sure we don't help out hack attempts
@@ -175,11 +176,18 @@ class Installation {
 		}
 	
 		// Create initial modules table	
+		syslog(LOG_INFO, "CreateDatabase(): modules table creation");
 		$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
 	        system ( $command );
 
+		// Check for SQL object
+		if (!is_object($GLOBALS['sql'])) {
+			syslog(LOG_INFO, "CreateDatabase(): creating sql object");
+			$GLOBALS['sql'] = CreateObject ( 'org.freemedsoftware.core.FreemedDb' );
+		}
+
 		// Load module index, which should cause complete initialization
-		$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true );
+		$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, true );
 
 		// Return success status
 		return true;
