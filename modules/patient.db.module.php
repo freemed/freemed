@@ -35,12 +35,79 @@ class PatientModule extends SupportModule {
 
 	var $table_name = "patient";
 
+	var $acl_category = 'emr';
+
+	var $variables = array (
+		'ptdtadd',
+		'ptdtmod',
+		'ptdoc',
+		'ptrefdoc',
+		'ptpcp',
+		'ptphy1',
+		'ptphy2',
+		'ptphy3',
+		'ptphy4',
+		'ptsalut',
+		'ptlname',
+		'ptmaidenname',
+		'ptfname',
+		'ptmname',
+		'ptsuffix',
+		'ptaddr1',
+		'ptaddr2',
+		'ptcity',
+		'ptstate',
+		'ptzip',
+		'ptcountry',
+		'pthphone',
+		'ptwphone',
+		'ptmphone',
+		'ptfax',
+		'ptemail',
+		'ptsex',
+		'ptdob',
+		'ptssn',
+		'ptdmv',
+		'ptstatus',
+		'ptid',
+		'ptdiag1',
+		'ptdiag2',
+		'ptdiag3',
+		'ptdiag4',
+		'ptmarital',
+		'ptempl',
+		'ptnextofkin',
+		'ptpharmacy',
+		'ptrace',
+		'ptreligion',
+		'ptarchive',
+		'iso'
+	);
+
 	public function __construct ( ) {
 		// __("Patient Module")
+
+		// DEBUG TESTING: $this->defeat_acl = true;
 
 		// Call parent constructor
 		parent::__construct ( );
 	} // end constructor PatientModule
+
+	protected function add_pre ( &$data ) {
+		$s = CreateObject('org.freemedsoftware.api.Scheduler');
+
+		// Handle DOB
+		$data['ptdob'] = $s->ImportDate( $data['ptdob'] );
+
+		// Split city, state zip if it's one field
+		if ($data['ptcsz']) {
+			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['ptcsz'], $reg)) {
+				$data['ptcity'] = $reg[1];
+				$data['ptstate'] = $reg[2];
+				$data['ptzip'] = $reg[3];
+			}
+		}
+	} // end method add_pre
 
 	// Method: Search
 	//
