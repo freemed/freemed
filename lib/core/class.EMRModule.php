@@ -318,7 +318,9 @@ class EMRModule extends BaseModule {
 			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 		}
 
-		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
+		$ourdata = $this->prepare( $data );
+		$this->add_pre( &$ourdata );
+		$GLOBALS['sql']->load_data( $ourdata );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->insert_query (
 				$this->table_name,
@@ -326,9 +328,13 @@ class EMRModule extends BaseModule {
 			)
 		);
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+		$this->add_post( $new_id );
 
 		return $new_id;
 	} // end public function add
+
+	protected function add_pre( &$data ) { }
+	protected function add_post( $id ) { }
 
 	// Function: del
 	//
@@ -346,10 +352,13 @@ class EMRModule extends BaseModule {
 			if ($this->locked($id)) return false;
 		}
 
+		$this->del_pre( $id );
 		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id )."'";
 		$result = $GLOBALS['sql']->query( $query );
 		return $result ? true : false;
 	} // end public function del
+
+	protected function del_pre( $id ) { }
 
 	// Method: mod
 	public function mod ( $data ) {
@@ -372,7 +381,9 @@ class EMRModule extends BaseModule {
 			$lock->LockRock( $data['id'] );
 		}
 
-		$GLOBALS['sql']->load_data( $this->prepare ( $data ) );
+		$ourdata = $this->prepare( $data );
+		$this->mod_pre( &$ourdata );
+		$GLOBALS['sql']->load_data( $ourdata );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
 				$this->table_name,
@@ -382,12 +393,16 @@ class EMRModule extends BaseModule {
 				)
 			)
 		);
+		$this->mod_post( &$ourdata );
 
 		// Unlock row, since update is done
 		$lock->UnlockRow( $data['id'] );
 
 		return $result ? true : false;
 	} // end public function mod
+
+	protected function mod_pre ( &$data ) { }
+	protected function mod_post ( &$data ) { }
 
 	// Method: lock
 	//
