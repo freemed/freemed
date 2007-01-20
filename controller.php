@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -52,7 +52,11 @@ if (!file_exists(dirname(__FILE__)."/ui/".strtolower(${layout})."/controller/con
 	include_once(dirname(__FILE__)."/ui/".strtolower($layout)."/controller/controller.default.php");
 	$controller_name = 'controller_default';
 	$controller = new ${controller_name};
-	$controller->action ( $piece );
+	if ( CallMethod ( 'org.freemedsoftware.public.Login.LoggedIn' ) ) {
+		$controller->action ( $piece );
+	} else {
+		$controller->load_default ( );
+	}
 	exit;
 }
 
