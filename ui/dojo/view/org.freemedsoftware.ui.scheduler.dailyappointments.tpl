@@ -89,6 +89,7 @@
 			<th field="appointment_time" dataType="String">Time</th>
 			<th field="patient" dataType="String">Patient</th>
 			<th field="provider" dataType="String">Provider</th>
+			<th field="status" dataType="String">Status</th>
 			<th field="note" dataType="String">Note</th>
 		</tr>
 	</thead>
