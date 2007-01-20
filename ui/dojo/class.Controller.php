@@ -4,7 +4,8 @@
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -65,6 +66,7 @@ class Controller {
 		$this->smarty->assign ( "base_uri", $base_uri );
 		$this->smarty->assign ( "htdocs", "${base_uri}/ui/${ui}/htdocs" );
 		$this->smarty->assign ( "ui", $ui );
+		$this->smarty->assign ( "SESSION", $_SESSION );
 	} // end public function initialize
 
 	public function load ( $template ) {
