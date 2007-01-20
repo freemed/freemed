@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptstate			VARCHAR (20),
 	ptzip			CHAR (10),
 	ptcountry		VARCHAR (50),
+	ptprefcontact		VARCHAR (10) NOT NULL DEFAULT 'home',
 	pthphone		VARCHAR (16),
 	ptwphone		VARCHAR (16),
 	ptmphone		VARCHAR (16),
@@ -81,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptblood			CHAR (3),
 	ptdead			INT UNSIGNED NOT NULL DEFAULT 0,
 	ptdeaddt		DATE,
-	pttimestamp		TIMESTAMP (16),
+	pttimestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	ptemritimestamp		TIMESTAMP (16),
 	ptemriversion		BLOB,
 	ptpharmacy		INT UNSIGNED,
@@ -106,6 +107,7 @@ BEGIN
 
 	#	Version 0.9.0
 	ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;
+	ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;
 END
 //
 DELIMITER ;
