@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2006 FreeMED Software Foundation
+# Copyright (C) 1999-2007 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	phydea			VARCHAR (16),
 	phyclia			VARCHAR (32),
 	
-	id			SERIAL,
+	id			BIGINT NOT NULL AUTO_INCREMENT,
 
 	#	Define keys
 	KEY			( phylname, phyfname, phymname )
