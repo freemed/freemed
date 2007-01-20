@@ -23,21 +23,14 @@
 
 include_once (dirname(__FILE__).'/../class.Controller.php');
 
-class controller_org_freemedsoftware_controller_patient_form extends Controller {
+class controller_org_freemedsoftware_controller_patient_overview extends Controller {
 
 	public function action ( ) {
 		if ($_REQUEST['patient'] > 0) {
-			// Load defaults for patient
-		}
-		switch ($_REQUEST['page']) {
-			case 'contact':
-			case 'demographics':
-			$this->load('org.freemedsoftware.ui.patient.form.'.$_REQUEST['page']);
-			break;
-
-			default:
-			$this->load('org.freemedsoftware.ui.patient.form');
-			break;
+			$this->load('org.freemedsoftware.ui.patient.overview');
+		} else {
+			// Load the search screen if nothing is requested
+			$this->load('org.freemedsoftware.ui.patient.searchscreen');
 		}
 	}
 

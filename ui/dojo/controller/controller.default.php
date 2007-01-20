@@ -4,7 +4,8 @@
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
