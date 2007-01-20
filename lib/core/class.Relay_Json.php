@@ -49,9 +49,9 @@ class Relay_Json extends Relay {
 				//syslog(LOG_INFO, "deserialize_request [ $k ] = $v");
 			}
 		}
-		if (function_exists( 'json_decode' )) {
+		if (function_exists( 'json_decode' ) and (0==1)) {
 			// Try the JSON PECL native function first
-			$return = json_decode( stripslashes($request), true );
+			$return = utf8_decode(json_decode( stripslashes($request), true ));
 			//syslog(LOG_INFO, "json_decode = $return");
 		} else {
 			$json = CreateObject('net.php.pear.Services_JSON');
