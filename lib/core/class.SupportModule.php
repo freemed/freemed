@@ -429,12 +429,13 @@ class SupportModule extends BaseModule {
 	//
 	//	Internal method called by the module superclass, which
 	//	executes initial table creation from <create_table> and
-	//	initial data import from <freemed_import_stock_data>.
+	//	initial data import.
 	//
 	public function _setup () {
-		global $display_buffer;
+		//syslog(LOG_INFO, get_class($this)." : _setup()");
 		if (!$this->create_table()) { return false; }
-		return freemed_import_stock_data ($this->table_name);
+		//syslog(LOG_INFO, get_class($this)." : done with create_table");
+		return CallMethod( 'org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup
 
 	// Method: create_table
@@ -448,13 +449,16 @@ class SupportModule extends BaseModule {
 	//	Boolean, false if failed.
 	//
 	protected function create_table ( ) {
-		// Check for data/schema/(version)/(table_name).sql
-		$path = dirname(__FILE__).'/../../data/schema/'.VERSION.'/'.$this->table_name.'.sql';
-		if ( file_exists ( $path ) ) {
+		//syslog(LOG_INFO, get_class($this)." : create_table");
+
+		// Check to see if the current version exits
+		$path = dirname(__FILE__).'/../../data/schema/mysql/'.$this->table_name.'.sql';
+		if (file_exists( $path )) {
 			$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
 			system ( $command );
 			return true;
 		} else {
+			//syslog(LOG_INFO, get_class($this)." : no definition found for ${path}");
 			return false;
 		}
 	} // end function create_table
