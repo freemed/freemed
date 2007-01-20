@@ -249,7 +249,8 @@ class ACL extends SupportModule {
 		// Translate XML to contain proper prefix
 		$xml = $this->_file_get_contents($orig_xml_file);
 		if (!$xml) {
-			die('ACL: failed to read '.$orig_xml_file);
+			syslog(LOG_INFO, 'ACL: failed to read '.$orig_xml_file);
+			return false;
 		}
 		$xml = preg_replace('/#PREFIX#/i', 'acl_', $xml);
 
@@ -260,7 +261,7 @@ class ACL extends SupportModule {
 		syslog(LOG_INFO, "ACL| executing schema");
 		$result = $schema->ExecuteSchema($sql, true);
 		if ($result != 2) {
-			print "ACL: table creation error<br/>\n";
+			//print "ACL: table creation error<br/>\n";
 			syslog(LOG_INFO, "ACL| table creation error");
 		}
 
@@ -349,7 +350,7 @@ class ACL extends SupportModule {
 	private function _file_put_contents ( $filename, $content ) {
 		$fp = fopen($filename, 'w');
 		if (!$fp) {
-			die('ACL: unable to open '.$filename.' for writing');
+			syslog(LOG_INFO, 'ACL: unable to open '.$filename.' for writing');
 		}
 		fwrite($fp, $content);
 		fclose($fp);
