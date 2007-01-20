@@ -27,6 +27,7 @@ class controller_org_freemedsoftware_controller_patient_overview extends Control
 
 	public function action ( ) {
 		if ($_REQUEST['patient'] > 0) {
+			$this->smarty->assign( 'record', $GLOBALS['sql']->get_link( 'patient', $_REQUEST['patient']+0 ) );
 			$this->load('org.freemedsoftware.ui.patient.overview');
 		} else {
 			// Load the search screen if nothing is requested

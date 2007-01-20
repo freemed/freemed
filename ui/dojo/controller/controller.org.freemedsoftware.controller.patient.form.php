@@ -28,17 +28,9 @@ class controller_org_freemedsoftware_controller_patient_form extends Controller 
 	public function action ( ) {
 		if ($_REQUEST['patient'] > 0) {
 			// Load defaults for patient
+			$this->smarty->assign( 'record', $GLOBALS['sql']->get_link( 'patient', $_REQUEST['patient']+0 ) );
 		}
-		switch ($_REQUEST['page']) {
-			case 'contact':
-			case 'demographics':
-			$this->load('org.freemedsoftware.ui.patient.form.'.$_REQUEST['page']);
-			break;
-
-			default:
-			$this->load('org.freemedsoftware.ui.patient.form');
-			break;
-		}
+		$this->load('org.freemedsoftware.ui.patient.form');
 	}
 
 }

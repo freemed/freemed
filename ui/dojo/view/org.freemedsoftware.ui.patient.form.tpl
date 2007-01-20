@@ -62,6 +62,9 @@
 			return false;
 		}
 
+		// Disable submit button
+		dojo.widget.byId('patientFormCommitChangesButton').disable();
+
 		// Determine action
 		var action = 'add'
 		try {
@@ -78,6 +81,7 @@
 			},
 			error: function(type, data, evt) {
 				alert('FreeMED has encountered an error. Please try again.');
+				dojo.widget.byId('patientFormCommitChangesButton').enable();
 			},
 			load: function(type, data, evt) {
 				if (data) {
@@ -86,6 +90,7 @@
 					}
 				} else {
 					alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
+					dojo.widget.byId('patientFormCommitChangesButton').enable();
 				}
 			},
 			mimetype: "text/json"
@@ -103,7 +108,7 @@
 	<tr>
 		<td><!--{t}-->Name (Last, First Middle)<!--{/t}--></td>
 		<td>
-			<select dojoType="Select" id="ptsalut" name="ptsalut" style="width: 100px;" autocomplete="false" name="ptsalut">
+			<select dojoType="Select" id="ptsalut" name="ptsalut" style="width: 100px;" autocomplete="false">
 				<option value="">--</option>
 				<option value="Mr" <!--{if $record.ptsalut == 'Mr'}-->selected<!--{/if}-->>Mr</option>
 				<option value="Mrs" <!--{if $record.ptsalut == 'Mrs'}-->selected<!--{/if}-->>Mrs</option>
@@ -114,6 +119,14 @@
 			<input type="text" id="ptlname" name="ptlname" value="<!--{$record.ptlname|escape}-->" size="20" maxlength="50" /> <b>,</b>
 			<input type="text" id="ptfname" name="ptfname" value="<!--{$record.ptfname|escape}-->" size="20" maxlength="50" />
 			<input type="text" id="ptmname" name="ptmname" value="<!--{$record.ptmname|escape}-->" size="10" />
+			<select dojoType="Select" id="ptsuffix" name="ptsuffix" style="width: 4em;" autocomplete="false">
+				<option value=""></option>
+				<option value="Sr" <!--{if $record.ptsuffix == 'Sr'}-->selected<!--{/if}-->>Sr</option>
+				<option value="Jr" <!--{if $record.ptsuffix == 'Jr'}-->selected<!--{/if}-->>Jr</option>
+				<option value="II" <!--{if $record.ptsuffix == 'II'}-->selected<!--{/if}-->>II</option>
+				<option value="III" <!--{if $record.ptsuffix == 'III'}-->selected<!--{/if}-->>III</option>
+				<option value="IV" <!--{if $record.ptsuffix == 'IV'}-->selected<!--{/if}-->>IV</option>
+			</select>
 		</td>
 	</tr>
 	
@@ -161,6 +174,17 @@
 	<div dojoType="ContentPane" id="patientContactPane" label="Contact">
 	<table style="border: 0; padding: 1em;">
 	<tr>
+		<td><!--{t}-->Preferred Contact<!--{/t}--></td>
+		<td>
+			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptprefcontact" name="ptprefcontact">
+				<option value="home" <!--{if $record.ptprefcontact == 'home'}-->selected<!--{/if}-->><!--{t}-->Home<!--{/t}--></option>
+				<option value="work" <!--{if $record.ptprefcontact == 'work'}-->selected<!--{/if}-->><!--{t}-->Work<!--{/t}--></option>
+				<option value="mobile" <!--{if $record.ptprefcontact == 'mobile'}-->selected<!--{/if}-->><!--{t}-->Mobile<!--{/t}--></option>
+				<option value="email" <!--{if $record.ptprefcontact == 'email'}-->selected<!--{/if}-->><!--{t}-->Email<!--{/t}--></option>
+			</select>
+		</td>
+	</tr>
+	<tr>
 		<td><!--{t}-->Home Phone<!--{/t}--></td>
 		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="pthphone" id="pthphone" size="16" maxlength="16" value="<!--{$record.pthphone|escape}-->" /></td>
 	</tr>
@@ -188,7 +212,7 @@
 	<tr>
 		<td><!--{t}-->Marital Status<!--{/t}--></td>
 		<td>
-			<select dojoType="Select" style="width: 100px;" autocomplete="false" name="ptmarital">
+			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptmarital" name="ptmarital">
 				<option value="single" <!--{if $record.ptmarital == 'single'}-->selected<!--{/if}-->><!--{t}-->Single<!--{/t}--></option>
 				<option value="married" <!--{if $record.ptmarital == 'married'}-->selected<!--{/if}-->><!--{t}-->Married<!--{/t}--></option>
 				<option value="divorced" <!--{if $record.ptmarital == 'divorced'}-->selected<!--{/if}-->><!--{t}-->Divorced<!--{/t}--></option>
@@ -200,7 +224,7 @@
 	<tr>
 		<td><!--{t}-->Employment Status<!--{/t}--></td>
 		<td>
-			<select dojoType="Select" style="width: 100px;" autocomplete="false" name="ptempl">
+			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptempl" name="ptempl">
 				<option value="u" <!--{if $record.ptempl == 'u'}-->selected<!--{/if}-->><!--{t}-->Unknown<!--{/t}--></option>
 				<option value="y" <!--{if $record.ptempl == 'y'}-->selected<!--{/if}-->><!--{t}-->Yes<!--{/t}--></option>
 				<option value="n" <!--{if $record.ptempl == 'n'}-->selected<!--{/if}-->><!--{t}-->No<!--{/t}--></option>
@@ -285,9 +309,18 @@
 </div>
 <br clear="all" />
 <div align="center">
-	<button dojoType="Button" type="button" onClick="patientFormCommitChanges(); return true;">
+	<table border="0" style="width:200px;">
+	<tr><td align="<!--{if $patient > 0}-->right<!--{else}-->center<!--{/if}-->">
+	<button dojoType="Button" type="button" id="patientFormCommitChangesButton" widgetId="patientFormCommitChangesButton" onClick="patientFormCommitChanges(); return true;">
 		<div><!--{t}-->Commit Changes<!--{/t}--></div>
 	</button>
+	<!--{if $patient > 0}-->
+	</td><td align="left">
+	<button dojoType="Button" type="button" id="patientFormCancelButton" widgetId="patientFormCancelButton" onClick="freemedLoadPage('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->'); return true;">
+		<div><!--{t}-->Cancel<!--{/t}--></div>
+	</button>
+	<!--{/if}-->
+	</td></tr></table>
 </div>
 
 </form>
