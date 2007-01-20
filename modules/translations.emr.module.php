@@ -33,7 +33,7 @@ class Translations extends EMRModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $record_name = "Translations";
-	var $table_name = 'translations';
+	var $table_name = 'translation';
 	var $patient_field = 'tpatient';
 
 	public function __construct () {
