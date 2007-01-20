@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 		dojo.require("dojo.widget.Tooltip");
 		dojo.require("dojo.widget.Select");
 		dojo.require("dojo.widget.Button");
+		dojo.require("dojo.widget.ProgressBar");
 		dojo.require("dojo.widget.TimePicker");
 	</script>
 
@@ -54,8 +55,14 @@
 			}
 
 		/* Hide minutes for time selection and "any" container */
-		.minutes, .minutesHeading, .anyTimeContainer { display: none; }
+		.minutes, .minutesHeading, .anyTimeContainer, .timeOptions { display: none; }
 
+		.dojoDialog {
+			background-image: url(<!--{$htdocs}-->/images/stipedbg.png);
+			border : 1px solid #999999;
+			padding : 4px;
+			-moz-border-radius : 5px;
+		}
 	</style>
 </head>
 <body>
@@ -119,33 +126,6 @@
 		if (!okay) { return messages; }
 	} // end function verifyDatabasePane
 
-	function verifySystemPane ( ) {
-		// Configure ...
-		dojo.io.bind({
-			method : 'POST',
-			sync : true,
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateSettingsFile',
-			content: {
-				param0: {
-					host: document.getElementById('host').value,
-					name: document.getElementById('name').value,
-					username: document.getElementById('username').value,
-					password: document.getElementById('password').value,
-					installation: document.getElementById('installation').value,
-					//starttime: document.getElementById('host').value,
-					//endtime: document.getElementById('host').value,
-				}
-			},
-			error: function(type, data, evt) {
-				return "<!--{t}-->Please try again, data error.<!--{/t}-->";
-			},
-			load: function(type, data, evt) {
-				return data;
-			},
-			mimetype: "text/json"
-		});
-	} // end function verifySystemPane
-
 	function verifyAdministrationPane ( ) {
 		var okay = true;
 		var messages = '';
@@ -181,27 +161,23 @@
 		}
 	} // end function checkpwconfirm
 
+	function setProgressBar ( progress, text ) {
+		var p = dojo.widget.byId('ProgressBar');
+		var t = document.getElementById('ProgressBarText');
+		t.innerHTML = text;
+		p.setProgressValue( progress );
+	} // end function setProgressBar
+
 	function CreateDatabase ( ) {
-		dojo.io.bind({
-			method : 'POST',
-			sync : true,
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateDatabase',
-			content: { },
-			error: function(type, data, evt) {
-				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
-			},
-			load: function(type, data, evt) {
-				if (!data) {
-					return false;
-				} else {
-					return true;
-				}
-			},
-			mimetype: "text/json"
-		});
 	} // end function CreateDatabase
 
 	function done ( ) {
+		// Show the actual dialog box
+		dojo.widget.byId('DoneDialog').show();
+
+		setProgressBar( 10, "<!--{t}-->Creating configuration file<!--{/t}-->" );
+
+		// Start initial
 		dojo.io.bind({
 			method : 'POST',
 			sync : true,
@@ -212,27 +188,78 @@
 					host: document.getElementById('host').value,
 					username: document.getElementById('username').value,
 					password: document.getElementById('password').value,
-					name: document.getElementById('name').value
+					name: document.getElementById('name').value,
+					installation: document.getElementById('installation').value
 				}
 			},
 			error: function(type, data, evt) {
 				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				dojo.widget.byId('DoneDialog').hide();
+				return false;
 			},
 			load: function(type, data, evt) {
 				if (!data) {
-					okay = false;
-					messages += "<!--{t}-->Settings creation failed.<!--{/t}-->\n";
-				} else {
-					return CreateDatabase();
+					alert("<!--{t}-->Settings creation failed.<!--{/t}-->");
+					dojo.widget.byId('DoneDialog').hide();
+					return false;
 				}
 			},
 			mimetype: "text/json"
 		});
+		
+		setProgressBar( 30, "<!--{t}-->Initializing database<!--{/t}-->" );
+		dojo.io.bind({
+			method : 'POST',
+			sync : true,
+			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateDatabase',
+			content: { },
+			error: function(type, data, evt) {
+				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				dojo.widget.byId('DoneDialog').hide();
+				return false;
+			},
+			load: function(type, data, evt) {
+				if (!data) {
+					alert("<!--{t}-->Failed to create the database.<!--{/t}-->");
+					dojo.widget.byId('DoneDialog').hide();
+					return false;
+				}
+			},
+			mimetype: "text/json"
+		});
+
+
+		setProgressBar( 95, "<!--{t}-->Making FreeMED usable<!--{/t}-->" );
+		dojo.io.bind({
+			method : 'POST',
+			sync : true,
+			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.SetHealthyStatus',
+			content: { },
+			error: function(type, data, evt) {
+				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				dojo.widget.byId('DoneDialog').hide();
+				return false;
+			},
+			load: function(type, data, evt) {
+				if (!data) {
+					alert("<!--{t}-->Failed to create the database.<!--{/t}-->");
+					dojo.widget.byId('DoneDialog').hide();
+					return false;
+				}
+			},
+			mimetype: "text/json"
+		});
+
+		// Wait so we can see what happens ...
+		setProgressBar( 100, "<!--{t}-->Installation completed.<!--{/t}-->" );
+		setTimeout( null, 3000 );
+		dojo.widget.byId('DoneDialog').hide();
+		return true;
 	} // end function done
 
 </script>
 
-<div id="installWizard" dojoType="WizardContainer" style="width: 95%; height: 80%;" nextButtonLabel="<!--{t}-->Next<!--{/t}--> &gt;&gt;" previousButtonLabel="&lt;&lt; <!--{t}-->Previous<!--{/t}-->" cancelButtonLabel="<!--{t}-->Cancel<!--{/t}-->" cancelFunction="cancel" >
+<div id="installWizard" dojoType="WizardContainer" style="width: 95%; height: 80%;" nextButtonLabel="<!--{t}-->Next<!--{/t}--> &gt;&gt;" previousButtonLabel="&lt;&lt; <!--{t}-->Previous<!--{/t}-->" cancelButtonLabel="<!--{t}-->Cancel<!--{/t}-->" cancelFunction="cancel" hideDisabledButtons="true">
 	<div dojoType="WizardPane" label="Welcome to FreeMED" passFunction="initialCheck">
 		<h1><!--{t}-->Welcome to FreeMED!<!--{/t}--></h1>
 
@@ -282,7 +309,7 @@
 		</p>
 	</div>
 
-	<div dojoType="WizardPane" label="Database Configuration" passFunction="verifyDatabasePane">
+	<div dojoType="WizardPane" label="Database Configuration" passFunction="verifyDatabasePane" canGoBack="false">
 		<h1><!--{t}-->Database Configuration<!--{/t}--></h1>
 
 		<div class="description">
@@ -328,9 +355,9 @@
 
 		<span dojoType="tooltip" connectId="engine" toggle="explode" toggleDuration="100"><!--{t escape="no"}-->Select the database engine which is to be used by <b>FreeMED</b>. <b>mysql</b> is the default.<!--{/t}--></span>
 		<span dojoType="tooltip" connectId="host" toggle="explode" toggleDuration="100"><!--{t escape="no"}-->Hostname for the SQL server. This is usually "<b>localhost</b>" for most installs.<!--{/t}--></span>
-		<span dojoType="tooltip" connectId="username" toggle="explode" toggleDuration="100"><!--{t escape="no"}--><!--{/t}--></span>
-		<span dojoType="tooltip" connectId="password" toggle="explode" toggleDuration="100"><!--{t escape="no"}--><!--{/t}--></span>
-		<span dojoType="tooltip" connectId="password_confirm" toggle="explode" toggleDuration="100"><!--{t}--><!--{/t}--></span>
+		<span dojoType="tooltip" connectId="username" toggle="explode" toggleDuration="100"><!--{t escape="no"}-->MySQL username<!--{/t}--></span>
+		<span dojoType="tooltip" connectId="password" toggle="explode" toggleDuration="100"><!--{t escape="no"}-->MySQL password<!--{/t}--></span>
+		<span dojoType="tooltip" connectId="password_confirm" toggle="explode" toggleDuration="100"><!--{t}-->Duplicate of the MySQL password field, to ensure that you meant to type that password.<!--{/t}--></span>
 
 		<script language="javascript">
 		dojo.addOnLoad( function () {
@@ -341,7 +368,7 @@
 		</script>
 	</div>
 
-	<div dojoType="WizardPane" label="Administration Configuration" passFunction="verifyAdministrationPane">
+	<div dojoType="WizardPane" label="Administration Configuration" passFunction="verifyAdministrationPane" canGoBack="false">
 		<h1><!--{t}-->Administration Configuration<!--{/t}--></h1>
 
 		<div>
@@ -364,7 +391,7 @@
 		</table>
 	</div>
 
-	<div dojoType="WizardPane" label="System Configuration" passFunction="verifySystemPane">
+	<div dojoType="WizardPane" label="System Configuration" doneFunction="verifySystemPane" canGoBack="false">
 		<h1><!--{t}-->System Configuration<!--{/t}--></h1>
 
 		<div>
@@ -395,14 +422,16 @@
 		</table>
 	</div>
 
-	<div dojoType="WizardPane" label="Confirm Configuration" doneFunction="done">
-		<h1><!--{t}-->Confirm Configuration<!--{/t}--></h1>
+</div>
 
-		<div>
-		<!--{t}--><!--{/t}-->	
-		</div>
-
+<!--{* Create finishing progress bar etc *}-->
+<div dojoType="dialog" id="DoneDialog" toggle="fade" style="display: none;">
+	<div align="center">
+	<div dojoType="ProgressBar" width="440" height="20"
+		hasText="false" isVertical="false" maxProgressValue="100"
+		id="ProgressBar"></div>
 	</div>
+	<div align="center" id="ProgressBarText" style="font-weight: bold;"><!--{t}-->Installing ...<!--{/t}--></div>
 </div>
 
 </body>
