@@ -165,19 +165,24 @@ class Installation {
 	//
 	//	Boolean.
 	//
-	public function CreateDatabase ( ) {
+	public function CreateDatabase ( $admin_username, $admin_password ) {
 		syslog(LOG_INFO, "CreateDatabase() invoked");
 		if ( ! ( defined('DB_USER') && defined('DB_PASSWORD') && defined('DB_NAME') ) ) {
+			syslog(LOG_INFO, "CreateDatabase() failing due to inadequate DB setup");
 			return false;
 		}
 		// Make sure we don't help out hack attempts
 		if ( file_exists ( PHYSICAL_LOCATION . '/data/cache/healthy' ) ) {
+			syslog(LOG_INFO, "CreateDatabase() failing due to healthy system in place");
 			return false;
 		}
 	
 		// Create initial modules table	
 		syslog(LOG_INFO, "CreateDatabase(): modules table creation");
 		$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+	        system ( $command );
+		syslog(LOG_INFO, "CreateDatabase(): user table creation");
+		$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('user').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
 	        system ( $command );
 
 		// Check for SQL object
@@ -189,7 +194,12 @@ class Installation {
 		// Load module index, which should cause complete initialization
 		$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, true );
 
+		// Set admin username / password
+		$user = CreateObject( 'org.freemedsoftware.core.User' );
+		$user->CreateAdminUser( $admin_username, $admin_password );
+
 		// Return success status
+		syslog(LOG_INFO, "CreateDatabase(): completed");
 		return true;
 	} // end method CreateDatabase
 

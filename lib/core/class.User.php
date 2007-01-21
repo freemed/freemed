@@ -382,7 +382,7 @@ class User {
 		return count($result);
 	} // end function newMessages
 
-	// Method: init
+	// Method: CreateAdminUser
 	//
 	//	Creates user database table and populates it with
 	//	required data. This is not "default" or "useful
@@ -391,41 +391,24 @@ class User {
 	//
 	// Parameters:
 	//
+	//	$adminuser - New administrative user
+	//
 	//	$adminpassword - New administrative password.
 	//
-	public function init ( $adminpassword ) {
-		// Database Clean
-		$result = $GLOBALS['sql']->query("DROP TABLE user"); 
+	public function CreateAdminUser ( $adminuser, $adminpassword ) {
+		// Sanity check ...
+		$x = $GLOBALS['sql']->queryOne("SELECT COUNT(*) FROM user WHERE id=1");
+		if ($x > 0) {
+			syslog(LOG_INFO, "User.init| admin user already exists");
+			return false;
+		}
 
-		// Database Rebuild
-		$result = $GLOBALS['sql']->query($GLOBALS['sql']->create_table_query(
-			'user',
-			array(
-				'username' => SQL__NOT_NULL(SQL__VARCHAR(16)),
-				'userpassword' => SQL__NOT_NULL(SQL__VARCHAR(32)),
-				'userdescrip' => SQL__VARCHAR(50),
-				'userlevel' => SQL__BLOB,
-				'usertype' => SQL__ENUM (array(
-					"phy",
-					"misc",
-					"super"
-				)),
-				'userfac' => SQL__BLOB,
-				'userphy' => SQL__BLOB,
-				'userphygrp' => SQL__BLOB,
-				'userrealphy' => SQL__INT_UNSIGNED(0),
-				'usermanageopt' => SQL__BLOB,
-				'id' => SQL__SERIAL
-			), array ('id', 'username')
-		));
-
-		// Required Data!!
-
-		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+		syslog(LOG_INFO, "User.init| creating admin user");
+		$query = $GLOBALS['sql']->insert_query(
 			"user",
 			array (
 	    			"username" => "admin",
-				"userpassword" => $adminpassword,
+				"userpassword" => md5($adminpassword),
 				"userdescrip" => __("Administrator"),
 				"userlevel" => "admin",
 				"usertype" => "misc",
@@ -435,10 +418,12 @@ class User {
 				"userrealphy" => "0",
 				"usermanageopt" => 'a:6:{s:1:" ";N;s:22:"automatic_refresh_time";s:0:"";s:15:"display_columns";s:1:"3";s:17:"num_summary_items";s:1:"1";s:17:"static_components";a:6:{s:12:"appointments";a:2:{s:6:"static";s:12:"appointments";s:5:"order";i:5;}s:14:"custom_reports";a:2:{s:6:"static";s:14:"custom_reports";s:5:"order";i:5;}s:19:"medical_information";a:2:{s:6:"static";s:19:"medical_information";s:5:"order";i:5;}s:9:" messages";a:2:{s:6:"static";s:9:" messages";s:5:"order";i:5;}s:19:"patient_information";a:2:{s:6:"static";s:19:"patient_information";s:5:"order";i:5;}s:21:"photo_id__action_last";a:2:{s:6:"static";s:21:"photo_id__action_last";s:5:"order";i:5;}}s:18:"modular_components";a:20:{s:12:"appointments";a:2:{s:6:"static";s:12:"appointments";s:5:"order";i:5;}s:14:"custom_reports";a:2:{s:6:"static";s:14:"custom_reports";s:5:"order";i:5;}s:19:"medical_information";a:2:{s:6:"static";s:19:"medical_information";s:5:"order";i:5;}s:9:" messages";a:2:{s:6:"static";s:9:" messages";s:5:"order";i:5;}s:19:"patient_information";a:2:{s:6:"static";s:19:"patient_information";s:5:"order";i:5;}s:21:"photo_id__action_last";a:2:{s:6:"static";s:21:"photo_id__action_last";s:5:"order";i:5;}s:15:"AllergiesModule";a:2:{s:6:"module";s:15:"AllergiesModule";s:5:"order";i:5;}s:21:"ChronicProblemsModule";a:2:{s:6:"module";s:21:"ChronicProblemsModule";s:5:"order";i:5;}s:21:"CurrentProblemsModule";a:2:{s:6:"module";s:21:"CurrentProblemsModule";s:5:"order";i:5;}s:13:"EpisodeOfCare";a:2:{s:6:"module";s:13:"EpisodeOfCare";s:5:"order";i:5;}s:20:"AuthorizationsModule";a:2:{s:6:"module";s:20:"AuthorizationsModule";s:5:"order";i:5;}s:13:"LettersModule";a:2:{s:6:"module";s:13:"LettersModule";s:5:"order";i:5;}s:15:"QuickmedsModule";a:2:{s:6:"module";s:15:"QuickmedsModule";s:5:"order";i:5;}s:22:"PatientCoveragesModule";a:2:{s:6:"module";s:22:"PatientCoveragesModule";s:5:"order";i:5;}s:13:"PatientImages";a:2:{s:6:"module";s:13:"PatientImages";s:5:"order";i:5;}s:13:"PaymentModule";a:2:{s:6:"module";s:13:"PaymentModule";s:5:"order";i:5;}s:18:"PrescriptionModule";a:2:{s:6:"module";s:18:"PrescriptionModule";s:5:"order";i:5;}s:24:"PreviousOperationsModule";a:2:{s:6:"module";s:24:"PreviousOperationsModule";s:5:"order";i:5;}s:15:"ProcedureModule";a:2:{s:6:"module";s:15:"ProcedureModule";s:5:"order";i:5;}s:13:"ProgressNotes";a:2:{s:6:"module";s:13:"ProgressNotes";s:5:"order";i:5;}}}'
 	    		)
-	    	));
+	    	);
+		$result = $GLOBALS['sql']->query( $query );
+		syslog(LOG_INFO, "User.init| result = ${result}");
 
 		return $result;
-	} // end method init
+	} // end method CreateAdminUser
 
 } // end class User
 

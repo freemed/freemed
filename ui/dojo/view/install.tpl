@@ -55,7 +55,7 @@
 			}
 
 		/* Hide minutes for time selection and "any" container */
-		.minutes, .minutesHeading, .anyTimeContainer, .timeOptions { display: none; }
+		.minutes, .minutesHeading { display: none; }
 
 		.dojoDialog {
 			background-image: url(<!--{$htdocs}-->/images/stipedbg.png);
@@ -168,10 +168,9 @@
 		p.setProgressValue( progress );
 	} // end function setProgressBar
 
-	function CreateDatabase ( ) {
-	} // end function CreateDatabase
-
 	function done ( ) {
+		var failedToInstall = false;
+
 		// Show the actual dialog box
 		dojo.widget.byId('DoneDialog').show();
 
@@ -184,17 +183,19 @@
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateSettings',
 			content: {
 				param0: {
-					engine: document.getElementById('engine').value,
+					engine: dojo.widget.byId('engine').getValue(),
 					host: document.getElementById('host').value,
 					username: document.getElementById('username').value,
 					password: document.getElementById('password').value,
 					name: document.getElementById('name').value,
-					installation: document.getElementById('installation').value
+					installation: document.getElementById('installation').value,
+					language: document.getElementById('language').options[document.getElementById('language').selectedIndex].value
 				}
 			},
 			error: function(type, data, evt) {
 				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
 				dojo.widget.byId('DoneDialog').hide();
+				failedToInstall = true;
 				return false;
 			},
 			load: function(type, data, evt) {
@@ -206,13 +207,18 @@
 			},
 			mimetype: "text/json"
 		});
-		
+
+		if (failedToInstall) { return false; }
+		setTimeout( null, 3000 );
 		setProgressBar( 30, "<!--{t}-->Initializing database<!--{/t}-->" );
 		dojo.io.bind({
 			method : 'POST',
 			sync : true,
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.CreateDatabase',
-			content: { },
+			content: {
+				param0 : document.getElementById('adminuser').value,
+				param1 : document.getElementById('adminpass').value
+			},
 			error: function(type, data, evt) {
 				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
 				dojo.widget.byId('DoneDialog').hide();
@@ -228,7 +234,8 @@
 			mimetype: "text/json"
 		});
 
-
+		if (failedToInstall) { return false; }
+		setTimeout( null, 3000 );
 		setProgressBar( 95, "<!--{t}-->Making FreeMED usable<!--{/t}-->" );
 		dojo.io.bind({
 			method : 'POST',
@@ -250,10 +257,13 @@
 			mimetype: "text/json"
 		});
 
+		if (failedToInstall) { return false; }
+
 		// Wait so we can see what happens ...
 		setProgressBar( 100, "<!--{t}-->Installation completed.<!--{/t}-->" );
 		setTimeout( null, 3000 );
-		dojo.widget.byId('DoneDialog').hide();
+		setProgressBar( 100, "<a class=\"button\" href=\"<!--{$base_uri}-->/index.php\"><!--{t}-->Click here to start using FreeMED<!--{/t}--></a>");
+		//dojo.widget.byId('DoneDialog').hide();
 		return true;
 	} // end function done
 
@@ -320,7 +330,7 @@
 			<tr>
 				<td align="right"><!--{t}-->Database Engine<!--{/t}--></td>
 				<td align="left">
-					<select dojoType="Select" id="engine" name="engine">
+					<select dojoType="Select" id="engine" name="engine" widgetId="engine">
 						<option value="mysql" selected>mysql</option>
 					</select>
 				</td>
@@ -391,7 +401,7 @@
 		</table>
 	</div>
 
-	<div dojoType="WizardPane" label="System Configuration" doneFunction="verifySystemPane" canGoBack="false">
+	<div dojoType="WizardPane" label="System Configuration" doneFunction="done" canGoBack="false">
 		<h1><!--{t}-->System Configuration<!--{/t}--></h1>
 
 		<div>
@@ -405,7 +415,11 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Default Language<!--{/t}--></td>
-				<td align="left"></td>
+				<td align="left"><select id="language" name="language">
+					<option value="en_US">English (United States)</option>
+					<option value="fr_FR">Fran&#184;ais (France)</option>
+					<option value="de_DE">Deutsch (Germany)</option>
+				</select></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Default Language<!--{/t}--></td>
@@ -413,11 +427,11 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Scheduler Start Time<!--{/t}--></td>
-				<td align="left"><div name="starttime" dojoType="TimePicker"></div></td>
+				<td align="left"><div id="starttime" name="starttime" dojoType="TimePicker"></div></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Scheduler End Time<!--{/t}--></td>
-				<td align="left"><div name="endtime" dojoType="TimePicker"></div></td>
+				<td align="left"><div id="endtime" name="endtime" dojoType="TimePicker"></div></td>
 			</tr>
 		</table>
 	</div>
