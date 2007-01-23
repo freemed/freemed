@@ -51,7 +51,7 @@ class Relay {
 
 		// TODO: call appropriate method:
 		// $output = CallMethod ( $data['method'], $data['params'] );
-		$output = call_user_func_array ( 'CallMethod', array_merge ( array ( $method ), $p ) );
+		$output = @call_user_func_array ( 'CallMethod', array_merge ( array ( $method ), $p ) );
 
 		// Reserialize and return the appropriate data
 		return $this->serialize_response( $output );
