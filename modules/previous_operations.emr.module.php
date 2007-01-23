@@ -20,7 +20,7 @@ class PreviousOperationsModule extends EMRModule {
 	var $summary_items = array ( 1,2,3 );
 	var $date_field = 'id';
 	var $table_name = 'previous_operations';
-	var $order_fields = 'odate,operation';
+	var $order_fields = 'odate DESC,operation';
 	var $widget_hash = '##odate## ##operation##';
 
 	function PreviousOperationsModule () {
@@ -34,89 +34,56 @@ class PreviousOperationsModule extends EMRModule {
 		$this->variables = array (
 			'operation',
 			'opatient' => $_REQUEST['patient'],
-			'odate' => fm_date_assemble('odate')
+			'odate'
 		);
-		
+	
+	        $this->summary_vars = array (
+		        __("Date") => '_odate',
+			__("Operation") => 'operation'
+		);
+		$this->summary_query = array (
+		        "DATE_FORMAT(odate, '%m/%d/%Y') AS _odate"
+		);
+		$this->summary_order_by = $this->order_fields;
+		$this->summary_options |= SUMMARY_DELETE;
+
 		// call parent constructor
 		$this->EMRModule();
 	} // end constructor PreviousOperationsModule
 
-	// The EMR box; probably the most important part of this module
-	function summary ($patient, $dummy_items) {
-		$my_result = $GLOBALS['sql']->query(
-			"SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->order_fields
+	function add () {
+		// Save original values
+		$v = array(
+			'operation' => $_REQUEST['operation'],
+			'odate' => fm_date_assemble('odate')
 		);
-
-		// Check to see if it's set (show listings if it is)
-		if ($GLOBALS['sql']->results($my_result)) {
-			// Show menu bar
-			$buffer .= "
-			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
-			"CELLPADDING=\"2\">
-			<tr CLASS=\"menubar_info\">
-			<td><b>".__("Date")."</b></td>
-			<td><b>".__("Operation")."</b></td>
-			<td><b>".__("Action")."</b></td>
-			</tr>
-			";
-
-			// Loop thru and display operations
-			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
-				$buffer .= "
-				<tr>
-				<td ALIGN=\"LEFT\"><small>".prepare($my_r['odate'])."</small></td>
-				<td ALIGN=\"LEFT\"><small>".prepare($my_r['operation'])."</small></td>
-				<td ALIGN=\"LEFT\">".
-				template::summary_modify_link($this,
-				"module_loader.php?".
-				"module=".get_class($this)."&".
-				"action=modform&patient=".urlencode($patient).
-				"&return=manage&id=".urlencode($my_r['id'])).
-				template::summary_delete_link($this,
-				"module_loader.php?".
-				"module=".get_class($this)."&".
-				"action=del&patient=".urlencode($patient).
-				"&return=manage&id=".urlencode($my_r['id']))."</td>
-				</tr>
-				";
-			} // end looping thru operations
-
-			// End table
-			$buffer .= "
-			</table>
-			";
-		} else {
-			$buffer .= "
-			<div ALIGN=\"CENTER\">
-			<b>".__("No data entered.")."</b>
-			</div>
-			";
+		// Loop through all possibles
+		for ($i=2; $i<=8; $i++) {
+			// Only add if it looks like we have values
+			if ($_REQUEST['operation'.$i]) {
+				$this->_add(array(
+					'operation' => $_REQUEST['operation'.$i],
+					'odate' => fm_date_assemble('odate'.$i)
+				));
+			}
 		}
 
-		$buffer .= "
-			<div ALIGN=\"CENTER\">
-			<form ACTION=\"module_loader.php\" METHOD=\"POST\">
-			<input TYPE=\"HIDDEN\" NAME=\"module\" VALUE=\"".
-			prepare($this->MODULE_CLASS)."\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"".
-			"add\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"return\" VALUE=\"".
-			"manage\"/>
-			<input TYPE=\"HIDDEN\" NAME=\"patient\" VALUE=\"".
-			prepare($patient)."\"/>
-			".fm_date_entry('odate')."
-			".html_form::text_widget("operation", 40, 150)."
-			<input TYPE=\"SUBMIT\" VALUE=\"".__("Add")."\" class=\"button\"/>
-			</form>
-			</div>
-			";
-		return $buffer;
-	} // end method summary
+		// Restore from saved values
+		foreach ($v as $key => $value) {
+			$_REQUEST[$key] = $GLOBALS[$key] = $value;
+		}
+		// Call the regular way, so we get good handling...
+		$this->_add();
+	}
+	function _preadd($p) {
+		$this->variables = array (
+			'operation' => $p['operation'],
+			'opatient' => $_REQUEST['patient'],
+			'odate' => $p['odate']
+		);
+	}
 
-	function summary_bar() { }
-
+/*
 	function form_table ( ) {
 		return array (
 			__("Date") =>
@@ -125,6 +92,23 @@ class PreviousOperationsModule extends EMRModule {
 			__("Operation") =>
 			html_form::text_widget('operation', 128)
 		);
+	} // end method form_table
+*/
+
+	function form_table ( ) {
+		$a = array (
+			__("Date")." 1" => fm_date_entry('odate'),
+			__("Operation")." 1" => html_form::text_widget('operation', 128)
+		);
+		for ($i=2; $i<=8; $i++) {
+		$a = array_merge($a,
+			array (
+			__("Date")." $i" => fm_date_entry('odate'.$i),
+			__("Operation")." $i" => html_form::text_widget('operation'.$i, 128)
+		)
+		);
+		}
+		return $a;
 	} // end method form_table
 
 	function recent_text ( $patient, $recent_date = NULL ) {
@@ -140,6 +124,27 @@ class PreviousOperationsModule extends EMRModule {
 		}
 		return @join(', ', $m);
 	} // end method recent_text
+
+	function view ( ) {
+		global $display_buffer;
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE (".$this->patient_field."='".addslashes($_REQUEST['patient'])."') ".
+			freemed::itemlist_conditions(false)." ".
+			( $condition ? 'AND '.$condition : '' )." ".
+			"ORDER BY ".$this->order_fields;
+		$result = $GLOBALS['sql']->query( $query );
+		$display_buffer .= freemed_display_itemlist (
+			$result,
+			$this->page_name,
+			array (
+				__("Date") => 'odate',
+				__("Operation") => 'operation'
+			),
+			array ( '', '' ),
+			NULL, NULL, NULL,
+			ITEMLIST_DEL
+		);
+	}
 
 	function _update ( ) {
 		$version = freemed::module_version($this->MODULE_NAME);
