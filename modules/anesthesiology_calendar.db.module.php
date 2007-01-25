@@ -23,9 +23,9 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class AnesthesiologyCalendarTable extends SupportModule {
+class AnesthesiologyCalendar extends SupportModule {
 
-	var $MODULE_NAME = "Anesthesiology Scheduler Table";
+	var $MODULE_NAME = "Anesthesiology Scheduler";
 	var $MODULE_VERSION = "0.6.0";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "fb8deddf-f81c-4ce6-b2fc-805760b1798c";
@@ -36,39 +36,68 @@ class AnesthesiologyCalendarTable extends SupportModule {
 	var $table_name = "anesth";
 
 	public function __construct () {
-		// __("Anesthesiology Scheduler Table")
+		// __("Anesthesiology Scheduler")
 
 		// Call parent constructor
 		parent::__construct ( );
 	} // end constructor AnesthTable
 
-	// Use _update to update table definitions with new versions
-	function _update () {
-		$version = freemed::module_version($this->MODULE_NAME);
-		/* 
-			// Example of how to upgrade with ALTER TABLE
-			// Successive instances change the structure of the table
-			// into whatever its current version is, without having
-			// to reload the table at all. This pulls in all of the
-			// changes a version at a time. (You can probably use
-			// REMOVE COLUMN as well, but I'm steering away for now.)
+	function SingleBook ( $physician, $facility, $selected_date ) {
+		// Determine if day is already booked for this person,
+		// if so, change it.
+		$old = $sql->queryRow("SELECT * FROM $this->table_name ".
+			"WHERE andate='".addslashes($selected_date)."' AND ".
+			"anphysician='".addslashes($physician)."'");
+		if (is_array($old)) {
+			$old = $GLOBALS['sql']->fetch_array($result);
+			$result = $GLOBALS['sql']->query(
+				$GLOBALS['sql']->update_query(
+					$this->table_name,
+					array (
+						"anfacility" => $facility
+					),
+					array ( "id" => $old[id] )
+				)
+			);
+		} else {
+			$result = $GLOBALS['sql']->query(
+				$GLOBALS['sql']->insert_query(
+					$this->table_name,
+					array (
+						"andate" => $selected_date,
+						"anphysician" => $physician,
+						"anfacility" => $facility
+					)
+				)
+			);
+		}
+	} // end method SingleBook
 
-		if (!version_check($version, '0.1.0')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN ptglucose INT UNSIGNED AFTER id');
-		}
-		if (!version_check($version, '0.1.1')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN somedescrip TEXT AFTER ptglucose');
-		}
-		if (!version_check($version, '0.1.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN fakefield AFTER ptglucose');
-		}
-		*/
-	} // end function _update
+	function DeleteDate( $anesth, $date ) {
+		$query = "DELETE FROM ".$this->table_name." ".
+			"WHERE anphysician=".$GLOBALS['sql']->quote( $anesth )." AND ".
+			"andate=".$GLOBALS['sql']->quote( $date );
+		$result = $GLOBALS['sql']->query( $query );
+	} // end method DeleteDate
+
+	/*
+	function bulk_book() {
+		// Globalize
+		foreach ($GLOBALS AS $k => $v) global ${$k};
+		global $mark;
+
+		// Insert a travel entry in the appropriate spot
+		$query = $sql->insert_query(
+			$this->table_name,
+			array(
+			)
+		);
+		$result = $sql->query($query);
+	} // end method bulk_book
+	*/
+
 }
 
-register_module('AnesthesiologyCalendarTable');
+register_module('AnesthesiologyCalendar');
 
 ?>
