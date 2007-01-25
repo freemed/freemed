@@ -8,7 +8,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.5";
+	var $MODULE_VERSION = "0.3.6";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -58,7 +58,8 @@ class ProviderModule extends MaintenanceModule {
 	"phyanesth",
 	"phyhl7id",
 	"phydea",
-	"phyclia"
+	"phyclia",
+	"phynpi"
 	); // end of variables list
 	var $order_field = 'phylname, phyfname';
 
@@ -129,6 +130,7 @@ class ProviderModule extends MaintenanceModule {
 			'phyhl7id' => SQL__VARCHAR(16),
 			'phydea' => SQL__VARCHAR(16),
 			'phyclia' => SQL__VARCHAR(32),
+			'phynpi' => SQL__VARCHAR(32),
 			'id' => SQL__SERIAL
 		);
 
@@ -185,7 +187,7 @@ class ProviderModule extends MaintenanceModule {
 			array (
 			"phylname", "phyfname", "phytitle", "phymname",
 			"phytitle", "phypracname", "phyid1", "phystatus",
-			"phypracein"
+			"phypracein", "phynpi"
 			),
 			html_form::form_table(array(
 	__("Last Name") =>
@@ -208,6 +210,9 @@ class ProviderModule extends MaintenanceModule {
 
 	__("Internal ID #") =>
 	html_form::text_widget("phyid1", 10),
+
+	__("NPI") =>
+	html_form::text_widget("phynpi", 32, 32),
 
 	__("Status") =>
 	freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
@@ -631,6 +636,15 @@ class ProviderModule extends MaintenanceModule {
 				'ADD COLUMN phyclia VARCHAR(32) AFTER phydea');
 			$sql->query('UPDATE '.$this->table_name.' SET '.
 				'phyclia=\'\' WHERE id>0');
+		}
+
+		// Version 0.3.6
+		//
+		//	Add NPI number
+		//
+		if (!version_check($version, '0.3.6')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN phynpi VARCHAR(32) NOT NULL DEFAULT \'\' AFTER phyclia');
 		}
 
 	} // end method _update
