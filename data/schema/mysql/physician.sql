@@ -63,12 +63,29 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	phygrpprac		INT UNSIGNED,
 	phyanesth		INT UNSIGNED NOT NULL DEFAULT 0,
 	phyhl7id		VARCHAR (16) DEFAULT '',
-	phydea			VARCHAR (16),
-	phyclia			VARCHAR (32),
+	phydea			VARCHAR (16) NOT NULL DEFAULT '',
+	phyclia			VARCHAR (32) NOT NULL DEFAULT '',
+	phynpi			VARCHAR (32) NOT NULL DEFAULT '',
 	
 	id			BIGINT NOT NULL AUTO_INCREMENT,
 
 	#	Define keys
+	PRIMARY KEY		( id ),
 	KEY			( phylname, phyfname, phymname )
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS physician_Upgrade;
+DELIMITER //
+CREATE PROCEDURE physician_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+
+	# Version 0.3.6
+	ALTER IGNORE TABLE physician ADD COLUMN phynpi VARCHAR(32) NOT NULL DEFAULT '' AFTER phyclia;
+END
+//
+DELIMITER ;
+CALL physician_Upgrade( );
 

@@ -874,6 +874,7 @@ class Remitt {
 		$buffer .= $this->_tag('ipn', $p['phyupin'], true);
 		$buffer .= $this->_tag('clia', $p['phyclia'], true);
 		$buffer .= $this->_tag('dea', $p['phydea'], true);
+		$buffer .= $this->_tag('npi', $p['phynpi'], true);
 	
 		$buffer .= "</provider>\n";
 		return $buffer;		

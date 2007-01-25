@@ -25,8 +25,8 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
 class ProviderModule extends SupportModule {
 
-	var $MODULE_NAME    = "Provider Maintenance";
-	var $MODULE_VERSION = "0.3.5";
+	var $MODULE_NAME    = "Provider";
+	var $MODULE_VERSION = "0.3.6";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID     = "d7eeac23-fa84-410a-af46-36a67b7813a1";
 
@@ -77,7 +77,8 @@ class ProviderModule extends SupportModule {
 		"phyanesth",
 		"phyhl7id",
 		"phydea",
-		"phyclia"
+		"phyclia",
+		"phynpi"
 	); // end of variables list
 	var $order_field = 'phylname, phyfname';
 
@@ -94,7 +95,7 @@ class ProviderModule extends SupportModule {
 	var $widget_hash = '##phylname##, ##phyfname## ##phymname## (##phypracname##)';
 
 	public function __contruct () {
-		// For i18n: __("Provider Maintenance")
+		// For i18n: __("Provider")
 
 		$this->list_view = array (
 			__("Last Name") => "phylname",
@@ -134,70 +135,6 @@ class ProviderModule extends SupportModule {
 		$phy = CreateObject('org.freemedsoftware.core.Physician', $id);
 		return $phy->fullName( $full );
 	} // end method fullName
-
-	function _update ( ) {
-		$version = freemed::module_version($this->MODULE_NAME);
-
-		// Version 0.3
-		//
-		//	Add hl7 id field
-		//
-		if (!version_check($version, '0.3')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN phyhl7id INT UNSIGNED AFTER phyanesth');
-		}
-
-		// Version 0.3.1
-		//
-		//	Add DEA number for drugs
-		//	Change practice name to max 45 characters
-		//
-		if (!version_check($version, '0.3.1')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN phydea VARCHAR(16) AFTER phyhl7id');
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN phypracname phypracname VARCHAR(45)');
-		}
-
-		// Version 0.3.2
-		//
-		//	Add practice EIN number
-		//
-		if (!version_check($version, '0.3.2')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN phypracein VARCHAR(16) AFTER phypracname');
-		}
-
-		// Version 0.3.3
-		//
-		//	HL7 ID needs to be alpha
-		//
-		if (!version_check($version, '0.3.3')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN phyhl7id phyhl7id VARCHAR(16)');
-		}
-
-		// Version 0.3.4
-		//
-		//	Extend practice name to 80 chars
-		//
-		if (!version_check($version, '0.3.4')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN phypracname phypracname VARCHAR(80)');
-		}
-
-		// Version 0.3.5
-		//
-		//	Add CLIA number
-		//
-		if (!version_check($version, '0.3.5')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN phyclia VARCHAR(32) AFTER phydea');
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' SET '.
-				'phyclia=\'\' WHERE id>0');
-		}
-
-	} // end method _update
 
 } // end class ProviderModule
 
