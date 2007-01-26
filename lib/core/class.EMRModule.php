@@ -453,6 +453,8 @@ class EMRModule extends BaseModule {
 	// Method: _setup
 	public function _setup ( ) {
 		if (!$this->create_table()) { return false; }
+		$c = $GLOBALS['sql']->queryOne( "SELECT COUNT(*) FROM ".$this->table_name );
+		if ( $c > 0 ) { return false; }
 		return CallMethod('org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup
 

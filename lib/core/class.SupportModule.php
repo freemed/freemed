@@ -435,6 +435,8 @@ class SupportModule extends BaseModule {
 		//syslog(LOG_INFO, get_class($this)." : _setup()");
 		if (!$this->create_table()) { return false; }
 		//syslog(LOG_INFO, get_class($this)." : done with create_table");
+		$c = $GLOBALS['sql']->queryOne( "SELECT COUNT(*) FROM ".$this->table_name );
+		if ( $c > 0 ) { return false; }
 		return CallMethod( 'org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup
 
