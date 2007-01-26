@@ -1,81 +1,77 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //	Fred Forester <fforest@netcarrier.com>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.GraphModule');
+LoadObjectDependency('org.freemedsoftware.core.GraphModule');
 
 class ReceivablesGraph extends GraphModule {
 
 	var $MODULE_NAME = "Receivables Graph";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "c1f1926e-c604-4b59-954b-07edf6eef025";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
-	function ReceivablesGraph () {
+	public function __construct ( ) {
 		$this->graph_text = __("Select Receivables Graph Dates");
-		$this->GraphModule();
+		$this->parameters = array (
+			'start_dt' => array (
+				'text' => __("Starting Date"),
+				'type' => 'date',
+				'required' => true
+			),
+			'end_dt' => array (
+				'text' => __("Ending Date"),
+				'type' => 'date',
+				'required' => true
+			)
+		);
+
+		parent::__construct( );
 	} // end constructor ReceivablesGraph
 
-	function display() {
-		global $sql, $display_buffer;
-		$start_dt = fm_date_assemble("start_dt");
-		$end_dt = fm_date_assemble("end_dt");
+	protected function GenerateReport ( $params ) {
+		$start_dt = $params['start_dt'];
+		$end_dt = $params['end_dt'];
 
 		$query = "SELECT payrecamt,payrecsource,payreccat FROM payrec ".
-				 "WHERE payrecdt>='".addslashes($start_dt)."' ".
-				 "AND payrecdt<='".addslashes($end_dt)."' ".
+				 "WHERE payrecdt >= ".$GLOBALS['sql']->quote( $start_dt )." ".
+				 "AND payrecdt <= ".$GLOBALS['sql']->quote( $end_dt )." ".
 				 "AND (payreccat='".PAYMENT."' OR payreccat='".COPAY."') ";
-		$result = $sql->query($query) or DIE("Query failed");
-		if ($sql->num_rows($result) > 0) {
-			$this->view();
-			$display_buffer .= "<p/>\n";
-			$display_buffer .= "<center><img src=\"".$this->AssembleURL(
-				array (
-					'graphmode' => 1,
-					'action' => 'image'
-				)
-			)."\" border=\"0\" alt=\"\"/></center>\n";
-		} else {
-			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= __("No receivables found.")."\n";
-			$display_buffer .= "</div>\n";
-			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= "<a href=\"reports.php\">".
-				__("Reports")."</a>\n";
-			$display_buffer .= "</div>\n";
-		}
+		$result = $GLOBALS['sql']->queryAll( $query );
 
-	}
-
-	function image()
-	{
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$start_dt = fm_date_assemble("start_dt");
-		$end_dt = fm_date_assemble("end_dt");
-
-		$query = "SELECT payrecamt,payrecsource,payreccat FROM payrec ".
-				 "WHERE payrecdt>='".addslashes($start_dt)."' ".
-				 "AND payrecdt<='".addslashes($end_dt)."' ".
-				 "AND (payreccat='".PAYMENT."' OR payreccat='".COPAY."') ";
-	
-		
-		$result = $sql->query($query);// or DIE("Query failed");
 		$titleb = __("Receivables Graph From")." $start_dt ".__("To")." $end_dt";
 		$titlep = __("Receivables Pie Chart From")." $start_dt ".__("To")." $end_dt";
-		if ($sql->num_rows($result) > 0)
-		{
-			$tot_copay=0;
-			$tot_patpay=0;
-			$tot_inspay=0;
-			while ($row = $sql->fetch_array($result))
-			{
-				$copay=0;
-				$patpay=0;
-				$inspay=0;
+		if (count( $result ) > 0) {
+			$tot_copay = 0;
+			$tot_patpay = 0;
+			$tot_inspay = 0;
+			foreach ( $result AS $row ) {
+				$copay = 0;
+				$patpay = 0;
+				$inspay = 0;
 				if ($row[payrecsource] == 0) {
 					if ($row[payreccat] == COPAY) {
 						$copay = bcadd($row[payrecamt],0,2);
@@ -92,13 +88,13 @@ class ReceivablesGraph extends GraphModule {
 				$tot_inspay = bcadd($tot_inspay,$inspay,2);
 				$tot_patpay = bcadd($tot_patpay,$patpay,2);
 			}
-			$grand=0;
+			$grand = 0;
 			$grand = bcadd($tot_inspay,$grand,2);
 			$grand = bcadd($tot_copay,$grand,2);
 			$grand = bcadd($tot_patpay,$grand,2);
 			$bar_data[] = array("",$tot_patpay,$tot_copay,$tot_inspay,$grand);
 
-			$graph = CreateObject('FreeMED.PHPlot',500,500); // (x,y) or (w,h)
+			$graph = CreateObject('org.freemedsoftware.core.PHPlot',500,500); // (x,y) or (w,h)
 
 			// bar
 			$graph->SetPrintImage(0);
@@ -131,7 +127,7 @@ class ReceivablesGraph extends GraphModule {
 			$graph->DrawGraph();
 			$graph->PrintImage();
 		}
-	} // end image
+	} // end GenerateReport
 
 } // end class ReceivablesGraph
 

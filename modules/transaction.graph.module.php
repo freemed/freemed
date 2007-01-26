@@ -1,90 +1,78 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //	Fred Forester <fforest@netcarrier.com>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.GraphModule');
+LoadObjectDependency('org.freemedsoftware.core.GraphModule');
 
 class TransactionGraph extends GraphModule {
 
 	var $MODULE_NAME = "Transaction Graph";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.2.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "620a04e9-6e9e-4734-a6d0-d59a0d55523d";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
-	function TransactionGraph () {
+	public function __construct ( ) {
 		$this->graph_text = __("Select Transaction Graph Dates");
-		$this->GraphModule();
+		$this->parameters = array (
+			'start_dt' => array (
+				'text' => __("Starting Date"),
+				'type' => 'date',
+				'required' => true
+			),
+			'end_dt' => array (
+				'text' => __("Ending Date"),
+				'type' => 'date',
+				'required' => true
+			)
+		);
+
+		parent::__construct( );
 	} // end constructor TransactionGraph
 
-	function display () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$start_dt = fm_date_assemble("start_dt");
-		$end_dt = fm_date_assemble("end_dt");
+	protected function GenerateReport ( $params ) {
+		$start_dt = $params['start_dt'];
+		$end_dt = $params['end_dt'];
 
 		$query = "SELECT SUM(payrecamt) as payrectot,payreccat,payrecpatient ".
 				"FROM payrec ".
-				"WHERE payrecdt>='".addslashes($start_dt)."' ".
-				"AND payrecdt<='".addslashes($end_dt)."' ".
+				"WHERE payrecdt >= ".$GLOBALS['sql']->quote( $start_dt )." ".
+				"AND payrecdt <= ".$GLOBALS['sql']->quote( $end_dt )." ".
 				"GROUP BY payreccat ORDER BY payreccat";
 		
-		$result = $sql->query($query) or DIE("Query failed");
-		if ($sql->num_rows($result) > 0) {
-			$display_buffer .= $this->view();
-			$display_buffer .= "<p/>\n";
-			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= "<a href=\"".$this->AssembleURL(array(
-				'graphmode' => 1,
-				'action' => 'image'
-			))."\" target=\"print\">".__("Printable")."</a>\n";
-			$display_buffer .= "</div>\n";
-			$display_buffer .= "<p/>\n";
-			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= "<img src=\"".$this->AssembleURL(array(
-				'graphmode' => 1,
-				'action' => 'image'
-			))."\" border=\"0\" alt=\"\"/>\n";
-			$display_buffer .= "</div>\n";
-		} else {
-			$display_buffer .= $this->view();
-			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= __("No Records found")."\n";
-			$display_buffer .= "</div>\n";
-			$display_buffer .= "<div align=\"center\">\n";
-			$display_buffer .= "<a href=\"reports.php\">".
-				__("Reports")."</a>\n";
-			$display_buffer .= "</div>\n";
-		}
-	} // end function TransactionGraph->display()
+		$result = $sql->query($query);
 
-	function image () {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$start_dt = fm_date_assemble("start_dt");
-		$end_dt = fm_date_assemble("end_dt");
-
-		$query = "SELECT SUM(payrecamt) as payrectot,payreccat,payrecpatient ".
-				"FROM payrec ".
-				"WHERE payrecdt>='".addslashes($start_dt)."' ".
-				"AND payrecdt<='".addslashes($end_dt)."' ".
-				"GROUP BY payreccat ORDER BY payreccat";
-		
-		$result = $sql->query($query) or DIE("Query failed");
 		$title = __("Transaction Graph From")." $start_dt ".__("To")." $end_dt";
-		if ($sql->num_rows($result) > 0)
-		{
-			while ($row = $sql->fetch_array($result))
-			{
+		if (count($result) > 0) {
+			foreach ( $result AS $row ) {
 				$max = $row['payrectot'] > $max ? $row['payrectot'] : $max;
 				$graph_data[] = array($TRANS_TYPES[$row[payreccat]],bcadd($row[payrectot],0,2));
 			}
 
 			// bar graph
-			$graph = CreateObject('FreeMED.PHPlot', 800, 600);
+			$graph = CreateObject('org.freemedsoftware.core.PHPlot', 800, 600);
 			$graph->SetDataValues($graph_data);
 			$graph->SetDataColors(array("yellow"));
 			$graph->SetBackgroundColor("white");
@@ -103,7 +91,7 @@ class TransactionGraph extends GraphModule {
 			$graph->PrintImage();
 */
 		}
-	} // end method TransactionGraph->image
+	} // end method GenerateReport
 
 } // end class TransactionGraph
 
