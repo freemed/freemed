@@ -1,123 +1,116 @@
 <?php
-	// $Id$
-	// $Author$
+ // $Id$
+ //
+ // Authors:
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //	Fred Forester <fforest@netcarrier.com>
+ //
+ // FreeMED Electronic Medical Record and Practice Management System
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
+ //
+ // This program is free software; you can redistribute it and/or modify
+ // it under the terms of the GNU General Public License as published by
+ // the Free Software Foundation; either version 2 of the License, or
+ // (at your option) any later version.
+ //
+ // This program is distributed in the hope that it will be useful,
+ // but WITHOUT ANY WARRANTY; without even the implied warranty of
+ // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ // GNU General Public License for more details.
+ //
+ // You should have received a copy of the GNU General Public License
+ // along with this program; if not, write to the Free Software
+ // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('_FreeMED.GraphModule');
+LoadObjectDependency('org.freemedsoftware.core.GraphModule');
 
 class ChargesGraph extends GraphModule {
 
 	var $MODULE_NAME = "Charges Graph";
 	var $MODULE_AUTHOR = "Fred Forester (fforest@netcarrier.com)";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
+	var $MODULE_UID = "999e20ff-2206-4bf3-8207-b12bc0e94d7a";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
-	function ChargesGraph () {
+	public function __construct ( ) {
 		$this->graph_text = __("Select Charges Graph Dates");
-		$this->graph_opts = array(
-			__("Chart Type") =>
-			html_form::select_widget(
-				'type',
-				array('bar', 'pie'),
-				array('refresh' => true)
+		$this->parameters = array (
+			'start_dt' => array (
+				'text' => __("Starting Date"),
+				'type' => 'date',
+				'required' => true
+			),
+			'end_dt' => array (
+				'text' => __("Ending Date"),
+				'type' => 'date',
+				'required' => true
+			),
+			'type' => array (
+				'text' => __("Chart Type"),
+				'type' => 'select',
+				'options' => 'bar,pie',
+				'required' => true
 			)
 		);
-		$this->GraphModule();
+		parent::__construct( );
 	} // end constructor ChargesGraph
 
 	function display()
 	{
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		// Check for gd
-		if (!function_exists('imagecreate')) {
-			$display_buffer .= 
-			__("The PHP gd extension must be installed for this report to work.")."<br/>\n";
-			return false;
-		} // end gd check
-
 		// Assemble ...
 		$sqlcharges = implode(",",$CHARGE_TYPES);
 
-		$start_dt = fm_date_assemble("start_dt");
-		$end_dt = fm_date_assemble("end_dt");
+		$start_dt = $params["start_dt"];
+		$end_dt = $params["end_dt"];
 
-		global $type; if (!$type) { $type = 'bar'; }
-
-		$display_buffer .= $this->GetGraphOptions(
-			__("Select Charges Graph Dates"),
-			// Our modifications to the form
-			array(
-				__("Chart Type") =>
-				html_form::select_widget(
-					'type',
-					array('bar', 'pie'),
-					array('refresh' => true)
-				)
-			)
-		);
-		
-
-		$display_buffer .= "<p/>\n";
-		$display_buffer .= "<div align=\"center\"><a href=\"".$this->AssembleURL(
-			array(
-				'graphmode' => 1,
-				'action' => 'image',
-				'type' => $type
-			))."\" target=\"print\" class=\"button\" ".
-			">".__("Printable")."</a></div>\n";
-		$display_buffer .= "<p/>\n";
-		$display_buffer .= "<img src=\"".$this->AssembleURL(
-			array(
-				'action' => 'image',
-				'type' => $type
-			))."\" border=\"0\" alt=\"\"/>\n";
-	} // end display
-
-	function image() {
-		global $display_buffer;
-		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
-
-		$sqlcharges = implode(",",$CHARGE_TYPES);
-
-		$start_dt = fm_date_assemble("start_dt");
-		$end_dt = fm_date_assemble("end_dt");
+		$type = $params['type'] ? $params['type'] : 'bar';
 
 		$query = "SELECT payrecamt,payreccat FROM payrec ".
-				 "WHERE payrecdt>='".addslashes($start_dt)."' ".
-				 "AND payrecdt<='".addslashes($end_dt)."'".
+				 "WHERE payrecdt >= ".$GLOBALS['sql']->quote( $start_dt )." ".
+				 "AND payrecdt <= ".$GLOBALS['sql']->quote( $end_dt )." ".
 				 ( !empty($sqlcharges) ?
-				 " AND payreccat in($sqlcharges)" : "" );
+				 " AND payreccat IN ($sqlcharges)" : "" );
 
-		$result = $sql->query($query);
+		$result = $GLOBALS['sql']->queryAll( $query );
 		$titleb = __("Charges Graph From")." $start_dt ".__("To")." $end_dt";
 		$titlep = __("Charges Pie Chart From")." $start_dt ".__("To")." $end_dt";
-		if ($sql->num_rows($result) > 0)
-		{
-			$tot_denial=0;
-			$tot_withhold=0;
-			$tot_deduct=0;
-			$tot_feeadj=0;
-			$tot_writeoff=0;
-			while ($row = $sql->fetch_array($result))
-			{
-				$denial=0;
-				$withhold=0;
-				$deduct=0;
-				$feeadj=0;
-				$writeoff=0;
-				if ($row[payreccat] == DENIAL)
-					$denial = bcadd($row[payrecamt],0,2);
-				if ($row[payreccat] == WITHHOLD)
-					$withhold = bcadd($row[payrecamt],0,2);
-				if ($row[payreccat] == DEDUCTABLE)
-					$deduct = bcadd($row[payrecamt],0,2);
-				if ($row[payreccat] == FEEADJUST)
-					$feeadj = bcadd($row[payrecamt],0,2);
-				if ($row[payreccat] == WRITEOFF)
-					$writeoff = bcadd($row[payrecamt],0,2);
+		if (count($result) > 0) {
+			$tot_denial = 0;
+			$tot_withhold = 0;
+			$tot_deduct = 0;
+			$tot_feeadj = 0;
+			$tot_writeoff = 0;
+			foreach ( $result AS $row ) {
+				$denial = 0;
+				$withhold = 0;
+				$deduct = 0;
+				$feeadj = 0;
+				$writeoff = 0;
+				switch ( $row['payreccat'] ) {
+					case DENIAL:
+					$denial = bcadd($row['payrecamt'],0,2);
+					break;
+
+					case WITHHOLD:
+					$withhold = bcadd($row['payrecamt'],0,2);
+					break;
+
+					case DEDUCTABLE:
+					$deduct = bcadd($row['payrecamt'],0,2);
+					break;
+
+					case FEEADJUST:
+					$feeadj = bcadd($row['payrecamt'],0,2);
+					break;
+
+					case WRITEOFF:
+					$writeoff = bcadd($row['payrecamt'],0,2);
+					break;
+
+					default: break;
+				}
 
 				$pie_data[] = array("",$deduct,$denial,$withhold,$feeadj,$writeoff);
 				$tot_denial = bcadd($tot_denial,$denial,2);
@@ -126,7 +119,7 @@ class ChargesGraph extends GraphModule {
 				$tot_feeadj = bcadd($tot_feeadj,$feeadj,2);
 				$tot_writeoff = bcadd($tot_writeoff,$writeoff,2);
 			}
-			$grand=0;
+			$grand = 0;
 			$grand = bcadd($tot_deduct,$grand,2);
 			$grand = bcadd($tot_denial,$grand,2);
 			$grand = bcadd($tot_withhold,$grand,2);
@@ -134,8 +127,7 @@ class ChargesGraph extends GraphModule {
 			$grand = bcadd($tot_writeoff,$grand,2);
 			$bar_data[] = array("",$tot_withhold,$tot_denial,$tot_deduct,$tot_feeadj,$tot_writeoff,$grand);
 
-			$graph = CreateObject('FreeMED.PHPlot', 500, 500); // (x,y) or (w,h)
-			global $type;
+			$graph = CreateObject('org.freemedsoftware.core.PHPlot', 500, 500); // (x,y) or (w,h)
 			switch ($type) {
 				case "bar":
 				// bar
@@ -160,6 +152,7 @@ class ChargesGraph extends GraphModule {
 				$graph->SetPlotType('pie');
 				$graph->SetBackgroundColor("white");
 				$graph->SetDataValues($pie_data);
+				$graph->SetDrawDataLabels('1');
 				$graph->SetDataColors(array("pink","cyan","yellow","orange","gray"));
 				$graph->SetLegend(array("Deductible","Denial","Withhold","Allowed","Writeoff"));
 				$graph->SetLabelScalePosition(1.3);
@@ -168,11 +161,11 @@ class ChargesGraph extends GraphModule {
 				break;
 
 				default:
-				die();
+				$this->GraphError(__("Invalid graph type."));
 				break;
 			}
 		}
-	} // end image
+	} // end GenerateReport
 
 } // end class ChargesGraph
 
