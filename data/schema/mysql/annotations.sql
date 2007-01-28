@@ -66,7 +66,6 @@ CREATE TRIGGER annotations_Delete
 	FOR EACH ROW BEGIN
 		DECLARE a TEXT;
 		SELECT annotation INTO a FROM `patient_emr` WHERE module=OLD.atable AND oid=OLD.aid;
-		DELETE FROM `patient_emr` WHERE module='annotations' AND oid=OLD.id;
 		UPDATE `patient_emr` SET annotation=REMOVE_FROM_SET( a, OLD.id ) WHERE module=t AND oid=OLD.aid;
 	END;
 //
@@ -75,7 +74,6 @@ CREATE TRIGGER annotations_Insert
 	AFTER INSERT ON annotations
 	FOR EACH ROW BEGIN
 		DECLARE a TEXT;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'annotations', NEW.apatient, NEW.id, NEW.atimestamp, NEW.annotation );
 		SELECT annotation INTO a FROM `patient_emr` WHERE module=t AND oid=NEW.aid;
 		IF ISNULL(a) THEN
 			UPDATE `patient_emr` SET annotation=NEW.id WHERE module=NEW.atable AND oid=NEW.aid;
