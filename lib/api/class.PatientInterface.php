@@ -44,7 +44,7 @@ class PatientInterface {
 	public function EmrAttachmentsByPatient ( $patient ) {
 		static $_cache;
 		if ( !isset( $_cache[$patient] ) ) {
-			$query = "SELECT * FROM patient_emr WHERE patient = ".$GLOBALS['sql']->quote( $patient );
+			$query = "SELECT p.patient AS patient, p.module AS module, p.oid AS oid, p.annotation AS annotation, p.summary AS summary, p.stamp AS stamp, m.module_name AS type, p.id AS id FROM patient_emr p LEFT OUTER JOIN modules m ON m.module_table = p.module WHERE patient = ".$GLOBALS['sql']->quote( $patient );
 			$_cache[$patient] = $GLOBALS['sql']->queryAll( $query );
 		}
 		return $_cache[$patient];
