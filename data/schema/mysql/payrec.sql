@@ -77,14 +77,14 @@ CREATE TRIGGER payrec_Delete
 CREATE TRIGGER payrec_Insert
 	AFTER INSERT ON payrec
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip, NEW.locked );
 	END;
 //
 
 CREATE TRIGGER payrec_Update
 	AFTER UPDATE ON payrec
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip WHERE module='payrec' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip, locked=NEW.locked WHERE module='payrec' AND oid=NEW.id;
 	END;
 //
 

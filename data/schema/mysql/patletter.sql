@@ -72,7 +72,7 @@ CREATE TRIGGER patletter_Insert
 	FOR EACH ROW BEGIN
 		DECLARE p VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterfrom;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'patletter', NEW.letterpatient, NEW.id, NEW.letterdt, p );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'patletter', NEW.letterpatient, NEW.id, NEW.letterdt, p, NEW.locked );
 	END;
 //
 
@@ -81,7 +81,7 @@ CREATE TRIGGER patletter_Update
 	FOR EACH ROW BEGIN
 		DECLARE p VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterfrom;
-		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p WHERE module='patletter' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p, locked=NEW.locked WHERE module='patletter' AND oid=NEW.id;
 	END;
 //
 

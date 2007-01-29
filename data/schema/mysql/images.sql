@@ -89,14 +89,14 @@ CREATE TRIGGER images_Delete
 CREATE TRIGGER images_Insert
 	AFTER INSERT ON images
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc, NEW.locked );
 	END;
 //
 
 CREATE TRIGGER images_Update
 	AFTER UPDATE ON images
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc WHERE module='images' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc, locked=NEW.locked WHERE module='images' AND oid=NEW.id;
 	END;
 //
 

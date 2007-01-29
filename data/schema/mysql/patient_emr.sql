@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	oid			INT UNSIGNED NOT NULL,
 	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	summary			VARCHAR (250) NOT NULL,
+	locked			BOOL DEFAULT FALSE,
 	annotation		TEXT,
 	id			SERIAL,
 
