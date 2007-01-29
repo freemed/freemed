@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class LabsModule extends EMRModule {
 
-	var $MODULE_NAME    = "Labs";
+	var $MODULE_NAME    = "Lab";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "Lab reports";
 	var $MODULE_FILE = __FILE__;

@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Medications extends EMRModule {
 
-	var $MODULE_NAME = "Medications";
+	var $MODULE_NAME = "Medication";
 	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "11644a0c-9efb-4db2-857f-3e4d86b1b2ea";

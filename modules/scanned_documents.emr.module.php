@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class ScannedDocuments extends EMRModule {
 
-	var $MODULE_NAME = "Scanned Documents";
+	var $MODULE_NAME = "Scanned Document";
 	var $MODULE_VERSION = "0.4.3";
 	var $MODULE_DESCRIPTION = "Allows images to be stored, as if they were in a paper chart.";
 	var $MODULE_FILE = __FILE__;

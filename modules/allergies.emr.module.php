@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Allergies extends EMRModule {
 
-	var $MODULE_NAME = "Allergies";
+	var $MODULE_NAME = "Allergy";
 	var $MODULE_VERSION = "0.2.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "e58a3f17-817f-4444-b573-c8827fa38a16";

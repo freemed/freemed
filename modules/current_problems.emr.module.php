@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class CurrentProblems extends EMRModule {
 
-	var $MODULE_NAME = "Current Problems";
+	var $MODULE_NAME = "Current Problem";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "435a3c8a-3a10-4212-b3fc-cd6a531cf583";

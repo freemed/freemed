@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Annotations extends EMRModule {
 
-	var $MODULE_NAME = "Annotations";
+	var $MODULE_NAME = "Annotation";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "58b7eb4e-a4dc-46db-841f-4e2bf3b64ddd";

@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class ChronicProblems extends EMRModule {
 
-	var $MODULE_NAME = "Chronic Problems";
+	var $MODULE_NAME = "Chronic Problem";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "6645734d-9213-4df0-b165-a47a309f1f83";

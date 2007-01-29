@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Forms extends EMRModule {
 
-	var $MODULE_NAME    = "Forms";
+	var $MODULE_NAME    = "Form";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_DESCRIPTION = "Custom forms module";
 	var $MODULE_FILE = __FILE__;

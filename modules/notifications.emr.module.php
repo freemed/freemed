@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Notifications extends EMRModule {
 
-	var $MODULE_NAME = "Notifications";
+	var $MODULE_NAME = "Notification";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "a49608f4-6383-43d2-9910-7be07ad36d96";

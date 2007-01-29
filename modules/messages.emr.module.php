@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class MessagesTable extends EMRModule {
 
-	var $MODULE_NAME = "Messages";
+	var $MODULE_NAME = "Message";
 	var $MODULE_VERSION = "0.8.0";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "03633733-9ec0-4535-b233-83a1686318ff";

@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Translations extends EMRModule {
 
-	var $MODULE_NAME = "Translations";
+	var $MODULE_NAME = "Translation";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "a1273c34-ee52-41c1-bd08-ab4cbe8d538b";

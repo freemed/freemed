@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class PaymentModule extends EMRModule {
 
-	var $MODULE_NAME    = "Transactions";
+	var $MODULE_NAME    = "Transaction";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID	    = "715acf0f-9fd8-40cd-932c-1e864099d0e3";

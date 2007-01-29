@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class AuthorizationsModule extends EMRModule {
 
-	var $MODULE_NAME    = "Insurance Authorizations";
+	var $MODULE_NAME    = "Insurance Authorization";
 	var $MODULE_VERSION = "0.1.2";
 	var $MODULE_DESCRIPTION = "
 		Insurance authorizations are used to track whether

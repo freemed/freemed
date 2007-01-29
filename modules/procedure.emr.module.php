@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class ProcedureModule extends EMRModule {
 
-	var $MODULE_NAME = "Procedures";
+	var $MODULE_NAME = "Procedure";
 	var $MODULE_VERSION = "0.5.0";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "e8191c41-cd13-4297-8271-f95e1d1ddd85";

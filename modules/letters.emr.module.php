@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class Letters extends EMRModule {
 
-	var $MODULE_NAME    = "Letters";
+	var $MODULE_NAME    = "Letter";
 	var $MODULE_VERSION = "0.3.5";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID = "791918e6-092a-44ec-9477-f87b50345659";
