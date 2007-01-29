@@ -67,5 +67,9 @@
 	</tr></table>
 </div>
 
-<!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient float='right'}-->
+<table border="0"><tr><td valign="top">
+<!--{include file="org.freemedsoftware.widget.patientemrattachments.tpl" patient=$patient}-->
+</td><td width="250" valign="top">
+<!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient}-->
+</td></tr></table>
 
