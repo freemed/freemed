@@ -166,6 +166,9 @@ class EMRModule extends BaseModule {
 		if (!empty($this->rpc_field_map)) {
 			$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		}
+		if (! $this->MODULE_HIDDEN ) {
+			$this->_SetHandler( 'EmrSummary', null );
+		}
 
 		// Call parent constructor
 		parent::__construct();
@@ -418,17 +421,15 @@ class EMRModule extends BaseModule {
 		// Check for record locking
 		if ($this->locked( $id )) { return false; }
 
-		$result = $GLOBALS['sql']->query (
-			$GLOBALS['sql']->update_query (
-				$this->table_name,
-				array (
-					"locked" => $this->this_user->user_number
-				),
-				array (
-					"id" => $id
-				)
-			)
+		$this_user = freemed::user_cache();
+		$query = $GLOBALS['sql']->update_query (
+			$this->table_name,
+			array (
+				"locked" => $this_user->user_number
+			),
+			array ( "id" => $id )
 		);
+		$result = $GLOBALS['sql']->query ( $query );
 
 		return $result ? true : false;
 	} // end public function lock

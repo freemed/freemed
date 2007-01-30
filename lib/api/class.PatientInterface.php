@@ -44,7 +44,7 @@ class PatientInterface {
 	public function EmrAttachmentsByPatient ( $patient ) {
 		static $_cache;
 		if ( !isset( $_cache[$patient] ) ) {
-			$query = "SELECT p.patient AS patient, p.module AS module, p.oid AS oid, p.annotation AS annotation, p.summary AS summary, p.stamp AS stamp, m.module_name AS type, p.id AS id FROM patient_emr p LEFT OUTER JOIN modules m ON m.module_table = p.module WHERE patient = ".$GLOBALS['sql']->quote( $patient );
+			$query = "SELECT p.patient AS patient, p.module AS module, p.oid AS oid, p.annotation AS annotation, p.summary AS summary, p.stamp AS stamp, DATE_FORMAT(p.stamp, '%m/%d/%Y') AS date_mdy, m.module_name AS type, m.module_class AS module_namespace, p.locked AS locked, p.id AS id FROM patient_emr p LEFT OUTER JOIN modules m ON m.module_table = p.module WHERE patient = ".$GLOBALS['sql']->quote( $patient );
 			$_cache[$patient] = $GLOBALS['sql']->queryAll( $query );
 		}
 		return $_cache[$patient];
@@ -77,6 +77,22 @@ class PatientInterface {
 		}
 		return $result;
 	} // end method EmrAttachmentsByPatientTable
+
+	// Method: EmrModules
+	//
+	//	Form list of presentable EMR modules.
+	//
+	// Returns:
+	//
+	//	Hash of values.
+	//
+	public function EmrModules ( ) {
+		$query = "SELECT module_name, module_table FROM modules WHERE FIND_IN_SET( module_handlers, 'EmrSummary') ORDER BY module_name";
+		foreach ( $GLOBALS['sql']->queryAll( $query ) AS $r ) {
+			$return[$r['module_table']] = $r['module_name'];
+		}
+		return $return;
+	} // end method EmrModules
 
 	// Method: Search
 	//
