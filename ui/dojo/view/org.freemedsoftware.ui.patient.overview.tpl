@@ -23,7 +23,9 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<!--{if $MODE ne 'widget'}-->
 <!--{include file="org.freemedsoftware.ui.framework.tpl"}-->
+<!--{/if}-->
 
 <script language="javascript">
 	dojo.require("dojo.widget.DropdownContainer");
@@ -32,7 +34,17 @@
 	});
 </script>
 
-<div style="border: 1px solid #555555; background-color: #ccccff; padding: 5px;">
+<style type="text/css">
+	#patientInfoBar {
+		border: 1px solid #555555;
+		background-color: #ccccff;
+		padding: 5px;
+		-moz-border-radius-bottomright: 15px;
+		-moz-border-radius-bottomleft: 15px;
+	}
+</style>
+
+<div id="patientInfoBar">
 	<table width="100%" border="0" cellspacing="0" cellpadding="3"><tr>
 	<td><b>Patient : </b> <!--{method namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}--></td>
 		<!--{* Form a contact "box" *}-->
@@ -72,4 +84,8 @@
 </td><td width="250" valign="top">
 <!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient}-->
 </td></tr></table>
+
+<!--{if $MODE ne 'widget'}-->
+<!--{include file="org.freemedsoftware.ui.footer.tpl"}-->
+<!--{/if}-->
 
