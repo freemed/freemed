@@ -29,7 +29,37 @@
 	dojo.require('dojo.widget.DropdownDatePicker');
 
 	function patientEmrAction ( action, id ) {
-		alert( "TODO: " + action + " " + id );
+		// Extract from data store...
+		var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( id );
+
+		switch ( action ) {
+			case 'lock':
+			if (!confirm("<!--{t}-->Are you sure you want to lock this record?<!--{/t}-->")) {
+				return false;
+			}
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: x.oid
+					},
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.' + x.module_namespace + '.lock',
+				error: function() { },
+				load: function( type, data, evt ) {
+					if (data) {
+						// Force reload
+						patientLoadEmrAttachments();
+					} else {
+						alert('<!--{t}-->Failed to lock record.<!--{/t}-->');
+					}
+				},
+				mimetype: "text/json"
+			});
+			break;
+
+			default:
+			alert( "TODO: " + action + " " + id );
+			break;
+		}
 	} // end patientEmrAction
 
 	function patientLoadEmrAttachments ( ) {
@@ -46,8 +76,15 @@
 				if (typeof(data) == 'object') {
 					for (i=0; i<data.length; i++) {	
 						data[i]['actions'] = '';
-						data[i]['actions'] += "<a onClick=\"patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border\"0\" /></a>";
 						data[i]['actions'] += "<a onClick=\"patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border\"0\" /></a>";
+						if (data[i]['locked'] == 0) {
+							// All unlocked actions go here:
+							data[i]['actions'] += "<a onClick=\"patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border\"0\" /></a>";
+							data[i]['actions'] += "<a onClick=\"patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border\"0\" /></a>";
+						} else {
+							// All locked stuff goes here:
+							data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border\"0\" /></a>";
+						}
 					}
 					dojo.widget.byId('patientEmrAttachments').store.setData( data );
 				}
@@ -56,9 +93,28 @@
 		});
 	}
 
+	function emrDateFilter ( dt ) { 
+		return (dt > new Date('6/20/05') && dt < new Date('11/17/08'));
+		//return (dt >= new Date(dojo.widget.byId('emrRangeBegin').inputNode.value) && dt <= new Date(dojo.widget.byId('emrRangeEnd').inputNode.value));
+	}
+
 	dojo.addOnLoad(patientLoadEmrAttachments);
 
 </script>
+
+<div>
+<table width="100%" border="0">
+<tr>
+	<td><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').clearFilters();"><!--{t}-->Reset<!--{/t}--></button></td>
+	<td><!--{t}-->Date Range:<!--{/t}-->
+		<input dojoType="DropdownDatePicker" id="emrRangeBegin" />
+		-
+		<input dojoType="DropdownDatePicker" id="emrRangeEnd" />
+	</td>
+	<td><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').setFilter('date_mdy', emrDateFilter);">Apply</button></td>
+</tr>
+</table>
+</div>
 
 <div class="tableContainer">
 	<table dojoType="FilteringTable" id="patientEmrAttachments" widgetId="patientEmrAttachments" headClass="fixedHeader"
@@ -66,11 +122,11 @@
 	 valueField="id" border="0" multiple="yes">
 	<thead>
 		<tr>
-			<th field="stamp" dataType="String">Date/Time</th>
-			<th field="summary" dataType="String">Summary</th>
-			<th field="type" dataType="String">Type</th>
-			<th field="notes" dataType="Html">Notes</th>
-			<th field="actions" dataType="Html">Actions</th>
+			<th field="date_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
+			<th field="summary" dataType="String"><!--{t}-->Summary<!--{/t}--></th>
+			<th field="type" dataType="String"><!--{t}-->Type<!--{/t}--></th>
+			<th field="notes" dataType="Html"><!--{t}-->Notes<!--{/t}--></th>
+			<th field="actions" dataType="Html"><!--{t}-->Actions<!--{/t}--></th>
 		</tr>
 	</thead>
 	<tbody></tbody>
