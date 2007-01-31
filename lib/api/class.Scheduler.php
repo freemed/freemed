@@ -102,11 +102,53 @@ class Scheduler {
 	//	* minute
 	//	* appointment_time
 	//	* status
+	//
+	// SeeAlso:
+	//	<GetDailyAppointmentsRange>
+	//
 	public function GetDailyAppointments ( $date = NULL, $provider = 0 ) {
-		$this_date = $date ? $this->ImportDate($date) : date('Y-m-d');
-		$query = "SELECT s.caldateof AS date_of, s.calhour AS hour, s.calminute AS minute, CONCAT(s.calhour, ':',LPAD(s.calminute, 2, '0')) AS appointment_time, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') AS patient, pa.id AS patient_id, s.calprenote AS note, st.sname AS status, s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id WHERE s.caldateof='".addslashes($this_date)."' AND s.calstatus != 'cancelled' ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csstamp ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician";
-		return $GLOBALS['sql']->queryAll ( $query );
+		return $this->GetDailyAppointmentsRange( $date, $date, $provider );
 	} // end method GetDailyAppointments
+
+	// Method: GetDailyAppointmentsRange
+	//
+	// Parameters:
+	//
+	//	$datefrom - Starting date.
+	//
+	//	$dateto - Ending date.
+	//
+	//	$provider - (optional) Provider number
+	//
+	// Returns:
+	//
+	//	Hash of daily appointments
+	//	* scheduler_id
+	//	* patient
+	//	* patient_id
+	//	* provider
+	//	* provider_id
+	//	* note
+	//	* hour
+	//	* minute
+	//	* appointment_time
+	//	* status
+	//
+	// SeeAlso:
+	//	<GetDailyAppointments>
+	//
+	public function GetDailyAppointmentsRange ( $datefrom = NULL, $dateto = NULL, $provider = 0 ) {
+		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
+		if ($dateto != NULL) {
+			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
+		} else {
+			// Single date query ....
+			$r_q = "s.caldateof = '".addslashes($this_date)."'";
+			
+		}
+		$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(s.calhour, ':',LPAD(s.calminute, 2, '0')) AS appointment_time, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') AS patient, pa.id AS patient_id, s.calprenote AS note, st.sname AS status, s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id WHERE ( ${r_q} ) AND s.calstatus != 'cancelled' ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csstamp ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician";
+		return $GLOBALS['sql']->queryAll ( $query );
+	} // end method GetDailyAppointmentsRange
 
 	// Method: CopyAppointment
 	//
