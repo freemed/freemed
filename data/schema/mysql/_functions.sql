@@ -56,3 +56,44 @@ END//
 
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS SUBSTR_COUNT;
+
+DELIMITER //
+
+# Function: SUBSTR_COUNT
+#
+#	MySQL UDF to count instances of a substring, from MySQL user manual
+#
+# Parameters:
+#
+#	s - Value to examine. VARCHAR(255)
+#
+#	ss - String to search for. VARCHAR(255)
+#
+# Returns:
+#
+#	TINYINT(3) UNSIGNED, number of occurrances of ss in s
+#
+CREATE FUNCTION SUBSTR_COUNT ( s VARCHAR(255), ss VARCHAR(255) ) RETURNS TINYINT(3) UNSIGNED
+	LANGUAGE SQL
+	NOT DETERMINISTIC
+	READS SQL DATA
+BEGIN
+	DECLARE count TINYINT(3) UNSIGNED;
+	DECLARE offset TINYINT(3) UNSIGNED;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET s = NULL;
+
+	SET count = 0;
+	SET offset = 1;
+
+	REPEAT
+		IF NOT ISNULL(s) AND offset > 0 THEN
+			SET offset = LOCATE(ss, s, offset);
+			IF offset > 0 THEN
+				SET count = count + 1;
+				SET offset = offset + 1;
+			END IF;
+		END IF;
+	UNTIL ISNULL(s) OR offset = 0 END REPEAT;
+	RETURN count;
+END//
