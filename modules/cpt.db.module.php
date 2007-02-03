@@ -23,7 +23,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class CptMaintenance extends SupportModule {
+class CptCodes extends SupportModule {
 
 	var $MODULE_NAME = "CPT Codes";
 	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
@@ -65,7 +65,7 @@ class CptMaintenance extends SupportModule {
 	
 		// Run parent constructor
 		parent::__construct();
-	} // end constructor CptMaintenance
+	} // end constructor CptCodes
 
 	protected function prepare ( $data ) {
 		$d = $data;
@@ -74,8 +74,8 @@ class CptMaintenance extends SupportModule {
 		return $d;
 	} // end method prepare
 
-} // end class CptMaintenance
+} // end class CptCodes
 
-register_module ("CptMaintenance");
+register_module ("CptCodes");
 
 ?>
