@@ -108,15 +108,38 @@ class SuperBill extends EMRModule {
 	//
 	public function GetForDates( $dtbegin, $dtend ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
-		$query = "SELECT s.dateofservice AS dateofservice, CONCAT(pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')') AS patient_name, pt.id AS patient_id, s.reviewed AS reviewed, s.procs AS procs, SUBSTR_COUNT(s.procs, ',')+1 AS procs_count FROM superbill s LEFT OUTER JOIN patient pt ON pt.id=s.patient WHERE s.dateofservice>=".$GLOBALS['sql']->quote( $s->ImportDate( $dtbegin ) )." AND s.dateofservice <=".$GLOBALS['sql']->quote( $s->ImportDate( $dtend ) );
+		$query = "SELECT s.id AS id, s.dateofservice AS dateofservice, CONCAT(pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')') AS patient_name, CONCAT(pr.phylname, ', ', pr.phyfname) AS provider_name, pr.id AS provider_id, pt.id AS patient_id, s.reviewed AS reviewed, s.procs AS procs, SUBSTR_COUNT(s.procs, ',')+1 AS procs_count FROM superbill s LEFT OUTER JOIN patient pt ON pt.id=s.patient LEFT OUTER JOIN physician pr ON s.provider=pr.id WHERE s.dateofservice>=".$GLOBALS['sql']->quote( $s->ImportDate( $dtbegin ) )." AND s.dateofservice <=".$GLOBALS['sql']->quote( $s->ImportDate( $dtend ) );
 		$res = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $res AS $r ) {
 			$p_query = "SELECT cptcode FROM cpt WHERE FIND_IN_SET(id, ".$GLOBALS['sql']->quote( $r['procs'] ).")";
 			$p = $GLOBALS['sql']->queryCol( $p_query );
 			$r['cpt'] = join(',', $p );
+			$result[] = $r;
 		}
-		return $r;
+		return is_array($result) ? $result : array();
 	} // end method GetForDates
+
+	// Method: MarkAsHandled
+	//
+	//	Mark a superbill as being handled
+	//
+	// Parameters:
+	//
+	//	$id - Record id of the superbill in question
+	//
+	// Returns:
+	//
+	//	Boolean, successful.
+	//
+	public function MarkAsHandled ( $id ) {
+		$user = freemed::user_cache( );
+		$query = $GLOBALS['sql']->update_query( 
+			$this->table_name,
+			array( 'reviewed' => $user->user_number ),
+			array( 'id' => $id + 0 )
+		);
+		return $query ? true : false;
+	} // end method MarkAsHandled`
 
 } // end class SuperBill
 
