@@ -321,15 +321,14 @@ class EMRModule extends BaseModule {
 			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 		}
 
-		$ourdata = $this->prepare( $data );
+		$ourdata = $this->prepare( (array) $data );
 		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
-		$result = $GLOBALS['sql']->query (
-			$GLOBALS['sql']->insert_query (
-				$this->table_name,
-				$this->variables
-			)
+		$query = $GLOBALS['sql']->insert_query (
+			$this->table_name,
+			$this->variables
 		);
+		$result = $GLOBALS['sql']->query ( $query );
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
 		$this->add_post( $new_id );
 
@@ -369,22 +368,27 @@ class EMRModule extends BaseModule {
 			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
 		}
 
-		if (!$data['id']) { return false; }
+		if ( !is_array($data) and !is_object($data) ) {
+			return false;
+		}
+		$ourdata = (array) $data;
+
+		if (!$ourdata['id']) { return false; }
 
 		// Check for modification locking
 		if (!freemed::lock_override()) {
-			if ($this->locked($data['id'])) { return false; }
+			if ($this->locked($ourdata['id'])) { return false; }
 		}
 
 		// Handle row-level locking mechanism
 		$lock = CreateObject('org.freemedsoftware.core.RecordLock', $this->table_name);
-		if ( $lock->IsLocked( $data['id'] ) ) {
+		if ( $lock->IsLocked( $ourdata['id'] ) ) {
 			return false;
 		} else {
-			$lock->LockRock( $data['id'] );
+			$lock->LockRock( $ourdata['id'] );
 		}
 
-		$ourdata = $this->prepare( $data );
+		$ourdata = $this->prepare( $ourdata );
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$result = $GLOBALS['sql']->query (

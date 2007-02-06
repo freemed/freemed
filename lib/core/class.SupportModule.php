@@ -203,7 +203,7 @@ class SupportModule extends BaseModule {
 			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
-		$ourdata = $this->prepare( $data );
+		$ourdata = $this->prepare( (array) $data );
 		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 
@@ -268,9 +268,15 @@ class SupportModule extends BaseModule {
 			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
-		if ( !$data['id'] ) { return false; }
+		if ( is_array( $data ) ) {
+			if ( !$data['id'] ) { return false; }
+		} elseif ( is_object( $data ) ) {
+			if ( ! $data->id ) { return false; }
+		} else {
+			return false;
+		}
 
-		$ourdata = $this->prepare( $data );
+		$ourdata = $this->prepare( (array) $data );
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$result = $GLOBALS['sql']->query (
