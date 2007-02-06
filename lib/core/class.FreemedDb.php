@@ -77,7 +77,7 @@ class FreemedDb extends MDB2 {
 	//	$values - hash of data
 	//
 	public function load_data ( $values ) {
-		if ( !is_array ( $values ) ) { return false; }
+		if ( !is_array( $values ) and !is_object( $values ) ) { return false; }
 		unset ($this->data);
 		foreach ( $values AS $k => $v ) {
 			$this->data[$k] = $v;
