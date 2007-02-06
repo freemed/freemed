@@ -117,6 +117,22 @@ class Messages {
 		return $result;
 	} // end method remove
 
+	// Method: ListOfUsers
+	//
+	//	Create list of users in the system.
+	//
+	// Returns:
+	//
+	//	Array of hashes containing:
+	//	* id - User id
+	//	* username - Name of the user in question
+	//
+	function ListOfUsers ( ) {
+		$query = "SELECT username, id FROM user WHERE id > 1 ORDER BY username";
+		$res = $GLOBALS['sql']->queryAll( $query );
+		return $res;
+	} // end method
+
 	// Method: send
 	//
 	//	Send a message using the FreeMED messaging system
@@ -130,17 +146,18 @@ class Messages {
 	//
 	//	Boolean, successful
 	//
-	function send ($message) {
-		global $this_user;
-		if (!is_object($this_user)) $this_user = CreateObject('org.freemedsoftware.core.User');
+	function send ($m) {
+		$message = (array) $m;
+		$this_user = freemed::user_cache();
 
 		// Check for error conditions
 		if (($message['patient'] < 1) and (empty($message['person']))) { 
+			syslog( LOG_INFO, "Messages| did not find patient or person" );
 			return false;
 		}
 
 		// Insert the appropriate record
-		$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+		$query = $GLOBALS['sql']->insert_query(
 			"messages",
 			array(
 				"msgby"      => ( $message['system'] ? 0 : $this_user->user_number ),
@@ -156,7 +173,10 @@ class Messages {
 				"msgunique"  => mktime(),
 				"msgtime"    => SQL__NOW
 			)
-		));
+		);
+
+		syslog( LOG_INFO, "Messages.send| query = $query" );
+		$result = $GLOBALS['sql']->query( $query );
 		return $result;
 	} // end method send
 
