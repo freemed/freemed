@@ -177,7 +177,7 @@ class Messages {
 
 		syslog( LOG_INFO, "Messages.send| query = $query" );
 		$result = $GLOBALS['sql']->query( $query );
-		return $result;
+		return ( $result ? true : false );
 	} // end method send
 
 	// Method: view
