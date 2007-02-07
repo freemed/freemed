@@ -156,7 +156,7 @@ class FreemedDb extends MDB2 {
 			if ("${v}" == SQL__NOW) {
 				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->now();
 			} else {
-				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->quote( is_array($v) ? join(',', $v) : $v );
+				$values_hash .= ( $in_loop ? ", " : " " ).( "${v}" == "" ? "''" : $this->db->quote( is_array($v) ? join(',', $v) : $v ) );
 			}
 			$cols_hash .= ( $in_loop ? ", " : " " )."`".$this->db->escape( $k )."`";
 			$in_loop = true;
@@ -192,7 +192,7 @@ class FreemedDb extends MDB2 {
 			if ("${v}" == SQL__NOW) {
 				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->now();
 			} else {
-				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->quote( is_array( $v ) ? join(',', $v) : $v );
+				$values_clause[] = "`".$this->db->escape($k)."` = ".( "${v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
 			}
 		}
 
