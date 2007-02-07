@@ -153,7 +153,7 @@ class FreemedDb extends MDB2 {
 			}
 
 			// Handle timestamp
-			if ($v == SQL__NOW) {
+			if ("${v}" == SQL__NOW) {
 				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->now();
 			} else {
 				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->quote( is_array($v) ? join(',', $v) : $v );
@@ -189,7 +189,7 @@ class FreemedDb extends MDB2 {
 			}
 
 			// Handle timestamp
-			if ($v == SQL__NOW) {
+			if ("${v}" == SQL__NOW) {
 				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->now();
 			} else {
 				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->quote( is_array( $v ) ? join(',', $v) : $v );
