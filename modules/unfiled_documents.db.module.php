@@ -170,13 +170,25 @@ class UnfiledDocuments extends SupportModule {
 		$GLOBALS['sql']->query("DELETE FROM `".$this->table_name."` WHERE id='".addslashes($data['id'])."'");
 	} // end method mod_post
 
-	public function numberOfPages ( $id ) {
+	// Method: NumberOfPages
+	//
+	//	Expose the number of pages of a Djvu document
+	//
+	// Parameters:
+	//
+	//	$id - Table record id
+	//
+	// Returns:
+	//
+	//	Integer, number of pages in the specified document
+	//
+	public function NumberOfPages ( $id ) {
 		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$r['ufffilename']);
 		return $djvu->NumberOfPages();
-	} // end method numberOfPages
+	} // end method NumberOfPages
 
 	// Method: batchSplit
 	//
@@ -260,7 +272,7 @@ class UnfiledDocuments extends SupportModule {
 		unlink($dir_prefix);
 	} // end method batchSplit
 
-	// Method: getDocumentPage
+	// Method: GetDocumentPage
 	//
 	//	Get fax/document page image as JPEG.
 	//
@@ -270,18 +282,22 @@ class UnfiledDocuments extends SupportModule {
 	//
 	//	$page - Page number
 	//
+	//	$thumbnail - (optional) Boolean, if image is to be rendered
+	//	as a thumbnail. Defaults to false.
+	//
 	// Returns:
 	//
 	//	BLOB data containing jpeg image.
 	//
-	public function getDocumentPage( $id, $page ) {
+	public function GetDocumentPage( $id, $page, $thumbnail = false ) {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
 			$r['ufffilename']);
-		return $djvu->GetPageThumbnail($page);
-	} // end method getDocumentPage
+
+		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
+	} // end method GetDocumentPage
 
 	// Method: faxback
 	//
