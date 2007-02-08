@@ -139,6 +139,12 @@ class UnfiledFaxes extends MaintenanceModule {
 			global $date;
 			$date = $r['uffdate'];
 		}
+
+		// Create object
+		include_once(freemed::template_file('djvuviewer.php'));
+		$djvu = CreateObject('_FreeMED.Djvu', 'data/fax/unfiled/'.$r['ufffilename'] );
+		$pages = $djvu->NumberOfPages();
+
 		$display_buffer .= "
 		<!-- Javascript for form validation -->
 		<script language=\"javascript\">
@@ -209,14 +215,11 @@ class UnfiledFaxes extends MaintenanceModule {
 		"class=\"button\" value=\"".__("Delete")."\"/>
 		</div>
 		<br/><br/><br/>
+
+		<!-- Djvu Viewer, DHTML Style -->
+
 		<div align=\"center\">
-                <embed SRC=\"data/fax/unfiled/".$r['ufffilename']."\"
-		BORDER=\"0\"
-		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=stretch\"
-                PLUGINSPAGE=\"".COMPLETE_URL."support/\"
-                TYPE=\"image/x.djvu\" WIDTH=\"".
-		( $GLOBALS['__freemed']['Mozilla'] ? '800' : '100%' ).
-		"\" HEIGHT=\"800\"></embed>
+		".djvu_widget($r['ufffilename'], 'unfiled')."
 		</div>
 
 		</form>
@@ -242,6 +245,8 @@ class UnfiledFaxes extends MaintenanceModule {
 
 	// Modify method
 	function mod () {
+		if (!$_REQUEST['physician']) { trigger_error("No provider specified."); }
+	
 		$id = $_REQUEST['id'];
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);
@@ -313,6 +318,7 @@ class UnfiledFaxes extends MaintenanceModule {
 	} // end method mod
 
 	function mod_direct ($_id = -1, $remove_first = false) {
+		if (!$_REQUEST['physician']) { trigger_error("No provider specified."); }
 		$id = $_REQUEST['id'];
 		$rec = freemed::get_link_rec($id, $this->table_name);
 		$filename = freemed::secure_filename($rec['ufffilename']);

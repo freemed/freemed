@@ -160,6 +160,7 @@ class UnreadFaxes extends MaintenanceModule {
 			$this->table_name." WHERE id='".addslashes($_REQUEST['id'])."'");
 		$r = $GLOBALS['sql']->fetch_array($result);
 		$this_patient = CreateObject('FreeMED.Patient', $r['urfpatient']);
+		include_once(freemed::template_file('djvuviewer.php'));
 		$display_buffer .= "
 		<form action=\"".$this->page_name."\" method=\"post\" name=\"myform\">
 		<input type=\"hidden\" name=\"id\" value=\"".prepare($_REQUEST['id'])."\"/>
@@ -168,6 +169,8 @@ class UnreadFaxes extends MaintenanceModule {
 		<input type=\"hidden\" name=\"date\" value=\"".prepare($r['urfdate'])."\"/>
 		<input type=\"hidden\" name=\"been_here\" value=\"1\"/>
 		<div align=\"center\" style=\"z-index:20; margin-top:90px\">
+		".djvu_widget($r['urffilename'], 'unread')."
+		<!--
                 <embed SRC=\"data/fax/unread/".$r['urffilename']."\"
 		BORDER=\"0\" 
 		FLAGS=\"width=100% height=100% passive=yes toolbar=yes keyboard=yes zoom=page \"
@@ -175,6 +178,7 @@ class UnreadFaxes extends MaintenanceModule {
                 TYPE=\"image/x.djvu\" WIDTH=\"".
 		( $GLOBALS['__freemed']['Mozilla'] ? '800' : '100%' ).
 		"\" HEIGHT=\"800\"></embed>
+		-->
 
 		</div>
 		<div align=\"center\">
