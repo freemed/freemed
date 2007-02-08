@@ -146,6 +146,9 @@ function register_module ($module_name) {
 
 	// Only do this if we are currently caching modules
 	if ($GLOBALS['__freemed']['modules_caching']) {
+		// Run baked-in setup routine
+		$this_module->setup();
+
 		// Check the index to see if something is in there
 		//print $data['MODULE_UID']." = UID\n";
 		foreach ($index AS $m) {
