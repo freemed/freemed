@@ -26,7 +26,6 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class CptCodes extends SupportModule {
 
 	var $MODULE_NAME = "CPT Codes";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "884f604b-b5c0-475a-9cfa-5c912111f80e";

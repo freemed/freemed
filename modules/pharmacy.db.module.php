@@ -26,7 +26,6 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class PharmacyMaintenance extends SupportModule {
 
 	var $MODULE_NAME    = "Pharmacy Maintenance";
-	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID     = "47941b4e-cf68-431d-881a-79c5c63885e2";

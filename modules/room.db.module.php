@@ -26,7 +26,6 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class RoomMaintenance extends SupportModule {
 
 	var $MODULE_NAME = "Room Maintenance";
-	var $MODULE_AUTHOR = "jeff b (jeff@ourexchange.net)";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "b3992bbd-4920-4243-bc5f-97f333edbc44";
