@@ -77,24 +77,27 @@ class Djvu {
 	//	$force_ps - (optional) Boolean, force no JPEG conversion. Defaults
 	//	to false.
 	//
+	//	$force_rotate - (optional) Boolean, force 90 degree rotation
+	//
 	// Returns:
 	//
 	//	Either JPEG image of file in string or name of temporary file.
 	//
-	function GetPage ( $page, $contents = false, $force_ps = false ) {
+	function GetPage ( $page, $contents = false, $force_ps = false, $force_rotation = true ) {
 		$filename = $this->filename;
 
 		$s = $size."x".$size;
 
 		$_t = tempnam('/tmp', 'fmdjvu');
+		$rotate = $force_rotation ? " -rotate 90 " : "";
 		if ($force_ps) {
 			// No conversion ...
 			$t = $_t.'.ps';
-			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - -rotate 90 "$t"`;
+			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - ${rotate} "$t"`;
 		} else {
 			// Force convert to JPEG
 			$t = $_t.'.jpg';
-			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - -rotate 90 "$t"`;
+			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - ${rotate} "$t"`;
 		}
 
 		if ($contents) {
