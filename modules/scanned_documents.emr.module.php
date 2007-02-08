@@ -196,8 +196,10 @@ class ScannedDocuments extends EMRModule {
 	function display () {
 		global $sql, $id, $patient, $display_buffer, $return;
 		if (!$patient or !$id) return false;
+		include_once(freemed::template_file('djvuviewer.php'));
 		$display_buffer .= "
 		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
+		<!--
 		<embed SRC=\"patient_image_handler.php?".
 		"patient=".urlencode($patient)."&".
 		"id=".urlencode($id)."\" BORDER=\"0\"
@@ -206,6 +208,8 @@ class ScannedDocuments extends EMRModule {
 		TYPE=\"image/x.djvu\" WIDTH=\"".
 		( $GLOBALS['__freemed']['Mozilla'] ? '600' : '100%' ).
 		"\" HEIGHT=\"800\"></embed>
+		-->
+		".djvu_widget( $id, $patient )."
 		</div>
 		<div ALIGN=\"CENTER\" VALIGN=\"MIDDLE\">
 		<a class=\"button\" HREF=\"";
