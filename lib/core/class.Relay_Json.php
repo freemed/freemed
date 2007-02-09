@@ -49,7 +49,7 @@ class Relay_Json extends Relay {
 				//syslog(LOG_INFO, "deserialize_request [ $k ] = $v");
 			}
 		}
-		if (function_exists( 'json_decode' ) and (0==1)) {
+		if (function_exists( 'json_decode' )) {
 			// Try the JSON PECL native function first
 			$return = utf8_decode(json_decode( stripslashes($request), true ));
 			//syslog(LOG_INFO, "json_decode = $return");
@@ -61,11 +61,27 @@ class Relay_Json extends Relay {
 		if (!$return) {
 			return $request;
 		} else {
-			return $return;
+			// Check for object, convert to array
+			if ( is_object( $return ) ) {
+				return (array) $return;
+			} else {
+				return $return;
+			}
 		}
 	} // end public function deserialize_request
 
 	// Method: extract_parameters
+	//
+	// Parameters:
+	//
+	//	$data -
+	//
+	//	$post -
+	//
+	// Returns:
+	//
+	//	Parameters array.
+	//
 	public function extract_parameters ( $data, $post ) {
 		// First, extract parameters from data
 		if ( is_array( $data['params'] ) ) { return $this->deserialize_parameters( $data['params'] ); }
