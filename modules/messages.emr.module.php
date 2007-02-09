@@ -23,7 +23,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class MessagesTable extends EMRModule {
+class MessagesModule extends EMRModule {
 
 	var $MODULE_NAME = "Message";
 	var $MODULE_VERSION = "0.8.0";
@@ -37,6 +37,21 @@ class MessagesTable extends EMRModule {
 	var $patient_field = "msgpatient";
 	var $order_by      = "msgunique DESC";
 	var $widget_hash   = "##msgsubject## [##msgtime##]";
+
+	var $variables = array (
+		'msgby',
+		'msgtime',
+		'msgfor',
+		'msgrecip',
+		'msgpatient',
+		'msgperson',
+		'msgurgency',
+		'msgsubject',
+		'msgtext',
+		'msgread',
+		'msgunique',
+		'msgtag'
+	);
 
 	public function __construct () {
 		// Set configuration stuff
@@ -60,7 +75,7 @@ class MessagesTable extends EMRModule {
 
 		// Call parent constructor
 		parent::__construct();
-	} // end constructor MessagesTable
+	} // end constructor MessagesModule
 
 	public function UnreadMessages ( ) {
 		// Ask the API how many messages we have
@@ -68,6 +83,11 @@ class MessagesTable extends EMRModule {
 		if (!$m->view_per_user(true)) { return false; }
 		return count($m->view_per_user(true));
 	} // end method UnreadMessages
+
+	function add_pre ( &$data ) {
+		$this_user = freemed::user_cache();
+		$data['msgby'] = $this_user->user_number;
+	}
 
 	protected function additional_move ( $id, $from, $to ) {
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
@@ -84,8 +104,8 @@ class MessagesTable extends EMRModule {
 		return true;
 	} // end method additional_move
 
-} // end class MessagesTable
+} // end class MessagesModule
 
-register_module('MessagesTable');
+register_module('MessagesModule');
 
 ?>
