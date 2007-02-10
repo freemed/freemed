@@ -690,6 +690,39 @@ ORDER BY
 		return $return;
 	} // end method procedure_status_list
 
+	// Method: RebillByPayer
+	//
+	//	Set all procedures to be rebilled which are associated with
+	//	a payer id.
+	//
+	// Parameters:
+	//
+	//	$insco - Payer id
+	//
+	public function RebillByPayer ( $insco ) {
+		$query = "UPDATE procrec p, coverage c SET p.procbilled=0 WHERE p.proccurcovid=c.id AND p.procbalcurrent>0 AND c.covinsco=". ($insco+0);
+		$result = $GLOBALS['sql']->query( $query );
+		return ( $result ? true : false );
+	} // end method RebillByPayer
+
+	// Method: RebillDistinctPayers
+	//
+	//	Form picklist of payers who still have unpaid outstanding
+	//	items.
+	//
+	// Returns:
+	//
+	//	Array.
+	//
+	public function RebillDistinctPayers ( ) {
+		$query = "SELECT DISTINCT i,id, i.insconame FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE p.procbalcurrent > 0 AND p.procbilled = 1 ORDER BY i.insconame";
+		$result = $GLOBALS['sql']->queryAll( $query );
+		foreach ( $result AS $r ) {
+			$return[$r['id'] + 0] = $r['insconame'];
+		}
+		return $return;
+	} // end method RebillDistinctPayers
+
 	// Method: set_rebill
 	//
 	//	Add a rebill to the claim log.
