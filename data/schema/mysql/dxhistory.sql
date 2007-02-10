@@ -20,10 +20,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#SOURCE data/schema/mysql/patient.sql
-#SOURCE data/schema/mysql/patient_emr.sql
-#SOURCE data/schema/mysql/physician.sql
-#SOURCE data/schema/mysql/icd9.sql
+SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/physician.sql
+SOURCE data/schema/mysql/icd9.sql
 
 CREATE TABLE IF NOT EXISTS `dxhistory` (
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `dxhistory` (
 	procrec			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	stamp			TIMESTAMP (14) DEFAULT NOW(),
 	dx			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	id			SERIAL,
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY		( id ),
 
 	#	Define keys
