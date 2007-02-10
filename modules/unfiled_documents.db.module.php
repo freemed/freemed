@@ -31,7 +31,7 @@ class UnfiledDocuments extends SupportModule {
 	var $MODULE_UID = "edcf764c-1c99-4abd-924a-39d795541b44";
 	var $PACKAGE_MINIMUM_VERSION = "0.7.0";
 
-	var $table_name = 'unfiledfax';
+	var $table_name = 'unfileddocuments';
 
 	public function __construct ( ) {
 		// __("Unfiled Documents")
@@ -67,7 +67,7 @@ class UnfiledDocuments extends SupportModule {
 		$filename = freemed::secure_filename($rec['ufffilename']);
 
 		// Remove file name
-		unlink('data/fax/unfiled/'.$filename);
+		unlink('data/documents/unfiled/'.$filename);
 	} // end method del_pre
 
 	protected function mod_pre ( $data ) {
@@ -76,12 +76,12 @@ class UnfiledDocuments extends SupportModule {
 		$filename = freemed::secure_filename( $rec['ufffilename'] );
 
 		// Catch multiple people using the same document
-		if (!file_exists('data/fax/unfiled/'.$filename)) {
+		if (!file_exists('data/documents/unfiled/'.$filename)) {
 			trigger_error(__("Document file does not exist!"));
 		}
 
 		if ($data['flip'] == 1) {
-			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/fax/unfiled/${filename}\"";
+			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/documents/unfiled/${filename}\"";
 			system("$command");
 		}
 
@@ -102,13 +102,13 @@ class UnfiledDocuments extends SupportModule {
 
 		// If we're removing the first page, do that now
 		if ($data['withoutfirstpage']) {
-			$command = "/usr/bin/djvm -d ".escapeshellarg("data/fax/unfiled/${filename}")." 1";
+			$command = "/usr/bin/djvm -d ".escapeshellarg("data/documents/unfiled/${filename}")." 1";
 			system("$command");
 		}
 
 		// Move actual file to new location
-		//echo "mv data/fax/unfiled/$filename data/fax/unread/$filename -f";
-		if ($filename) { system('mv '.escapeshellarg("data/fax/unfiled/${filename}").' '.escapeshellarg("data/fax/unread/${filename}").' -f'); }
+		//echo "mv data/documents/unfiled/$filename data/documents/unread/$filename -f";
+		if ($filename) { system('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f'); }
 
 		if ($data['filedirectly']) {
 			// Extract type and category
@@ -143,14 +143,14 @@ class UnfiledDocuments extends SupportModule {
 			);
 
 			// Move actual file to new location
-			//echo "mv data/fax/unfiled/$filename $new_filename -f<br/>\n";
+			//echo "mv data/documents/unfiled/$filename $new_filename -f<br/>\n";
 			$dirname = dirname($new_filename);
 			system('mkdir -p '.escapeshellarg($dirname));
-			if ($filename) { system('mv '.escapeshellarg("data/fax/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f'); syslog(LOG_INFO, "UnfiledDocument| mv data/fax/unfiled/$filename $new_filename -f"); }
+			if ($filename) { system('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f'); syslog(LOG_INFO, "UnfiledDocument| mv data/documents/unfiled/$filename $new_filename -f"); }
 		} else {
 			// Insert new table query in unread
 			$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
-				'unreadfax',
+				'unreaddocuments',
 				array (
 					"urfdate" => $data['date'],
 					"urffilename" => $filename,
@@ -185,7 +185,7 @@ class UnfiledDocuments extends SupportModule {
 	public function NumberOfPages ( $id ) {
 		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
 			$r['ufffilename']);
 		return $djvu->NumberOfPages();
 	} // end method NumberOfPages
@@ -206,7 +206,7 @@ class UnfiledDocuments extends SupportModule {
 		// Get page information
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
 			$r['ufffilename']);
 		$pages = $djvu->NumberOfPages();
 		$chunks = $djvu->StoredChunks();
@@ -293,7 +293,7 @@ class UnfiledDocuments extends SupportModule {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
 			$r['ufffilename']);
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
@@ -313,7 +313,7 @@ class UnfiledDocuments extends SupportModule {
 
 		// Analyze File
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/fax/unfiled/'.
+			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
 			$filename);
 		$pages = $djvu->NumberOfPages( );
 

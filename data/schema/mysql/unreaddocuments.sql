@@ -23,7 +23,7 @@
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
-CREATE TABLE IF NOT EXISTS `unreadfax` (
+CREATE TABLE IF NOT EXISTS `unreaddocuments` (
 	urfdate			DATE NOT NULL,
 	urffilename		VARCHAR (150) NOT NULL,
 	urftype			VARCHAR (50),
@@ -38,45 +38,45 @@ CREATE TABLE IF NOT EXISTS `unreadfax` (
 	FOREIGN KEY		( urfpatient ) REFERENCES `patient` ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-DROP PROCEDURE IF EXISTS unreadfax_Upgrade;
+DROP PROCEDURE IF EXISTS unreaddocuments_Upgrade;
 DELIMITER //
-CREATE PROCEDURE unreadfax_Upgrade ( )
+CREATE PROCEDURE unreaddocuments_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Remove triggers
-	DROP TRIGGER unreadfax_Delete;
-	DROP TRIGGER unreadfax_Insert;
-	DROP TRIGGER unreadfax_Update;
+	DROP TRIGGER unreaddocuments_Delete;
+	DROP TRIGGER unreaddocuments_Insert;
+	DROP TRIGGER unreaddocuments_Update;
 
 	#----- Upgrades
 END
 //
 DELIMITER ;
-CALL unreadfax_Upgrade( );
+CALL unreaddocuments_Upgrade( );
 
 #----- Triggers
 
 DELIMITER //
 
-CREATE TRIGGER unreadfax_Delete
-	AFTER DELETE ON unreadfax
+CREATE TRIGGER unreaddocuments_Delete
+	AFTER DELETE ON unreaddocuments
 	FOR EACH ROW BEGIN
-		DELETE FROM `patient_emr` WHERE module='unreadfax' AND oid=OLD.id;
+		DELETE FROM `patient_emr` WHERE module='unreaddocuments' AND oid=OLD.id;
 	END;
 //
 
-CREATE TRIGGER unreadfax_Insert
-	AFTER INSERT ON unreadfax
+CREATE TRIGGER unreaddocuments_Insert
+	AFTER INSERT ON unreaddocuments
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'unreadfax', NEW.urfpatient, NEW.id, NEW.urfdate, NEW.urfnote );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'unreaddocuments', NEW.urfpatient, NEW.id, NEW.urfdate, NEW.urfnote );
 	END;
 //
 
-CREATE TRIGGER unreadfax_Update
-	AFTER UPDATE ON unreadfax
+CREATE TRIGGER unreaddocuments_Update
+	AFTER UPDATE ON unreaddocuments
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.urfdate, patient=NEW.urfpatient, summary=NEW.urfnote WHERE module='unreadfax' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.urfdate, patient=NEW.urfpatient, summary=NEW.urfnote WHERE module='unreaddocuments' AND oid=NEW.id;
 	END;
 //
 

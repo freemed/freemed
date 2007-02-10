@@ -25,13 +25,13 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
 class UnreadDocuments extends SupportModule {
 
-	var $MODULE_NAME = "Unread Documents";
+	var $MODULE_NAME = "Unread Document";
 	var $MODULE_HIDDEN = true;
 
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "0905d8f4-b07c-43de-bcac-510812987e10";
 
-	var $table_name = 'unreaddocument';
+	var $table_name = 'unreaddocuments';
 
 	public function __construct ( ) {
 		// Set menu notify on the sidebar (or wherever the current
@@ -58,13 +58,13 @@ class UnreadDocuments extends SupportModule {
 		// If user isn't a physician, no handler required
 		if (!$user->isPhysician()) return false;
 
-		// Get number of unread documentes from table
+		// Get number of unread documents from table
 		$count = $GLOBALS['sql']->queryOne("SELECT COUNT(*) AS count ".
 			"FROM ".$this->table_name." ".
 			"WHERE urfphysician='".addslashes($user->getPhysician())."'");
 		if ($count < 1) { return false; }
 
-		return array (sprintf(__("You have %d unread documentes"), $count), 
+		return array (sprintf(__("You have %d unread documents"), $count), 
 			"module_loader.php?module=".urlencode(get_class($this)).
 			"&action=display");
 	} // end method notify
@@ -80,7 +80,7 @@ class UnreadDocuments extends SupportModule {
 			return false;
 		}
 
-		// Get number of unread documentes from table
+		// Get number of unread documents from table
 		$r = $GLOBALS['sql']->queryOne("SELECT COUNT(*) AS count ".
 			"FROM ".$this->table_name." ".
 			"WHERE urfphysician='".addslashes($GLOBALS['this_user']->getPhysician())."'");
@@ -90,7 +90,7 @@ class UnreadDocuments extends SupportModule {
 			__("Unread Documents"),
 			( $r==1 ?
 			__("There is currently 1 unread document in the system.") :
-			sprintf(__("There are currently %d unread documentes in the system."), $unfiled) )." ".
+			sprintf(__("There are currently %d unread documents in the system."), $unfiled) )." ".
 			"<a href=\"module_loader.php?module=".urlencode(get_class($this))."&action=display\">".
 			"[".__("Read")."]</a>",
 			"img/facsimile_icon.png"
@@ -114,7 +114,7 @@ class UnreadDocuments extends SupportModule {
 		$filename = freemed::secure_filename( $rec['urffilename'] );
 
 		// Document sanity check
-		if ( ! file_exists('data/document/unread/'.$filename) or empty($filename) ) {
+		if ( ! file_exists('data/documents/unread/'.$filename) or empty($filename) ) {
 			syslog(LOG_INFO, "UnreadDocument| attempted to file document that doesn't exist ($filename)");
 			return false;
 		}
@@ -133,7 +133,7 @@ class UnreadDocuments extends SupportModule {
 		$filename = freemed::secure_filename( $data['urffilename'] );
 
 		// Document sanity check
-		if (!file_exists('data/document/unread/'.$filename) or empty($filename)) {
+		if (!file_exists('data/documents/unread/'.$filename) or empty($filename)) {
 			syslog(LOG_INFO, "UnreadDocument| attempted to file document that doesn't exist ($filename)");
 			return false;
 		}
@@ -175,11 +175,11 @@ class UnreadDocuments extends SupportModule {
 		syslog(LOG_INFO, "UnreadDocument| query = $query, result = $result");
 
 		// Move actual file to new location
-		//echo "mv data/document/unread/$filename $new_filename -f<br/>\n";
+		//echo "mv data/documents/unread/$filename $new_filename -f<br/>\n";
 		$dirname = dirname($new_filename);
 		`mkdir -p "$dirname"`;
 		//echo "mkdir -p $dirname";
-		`mv "data/document/unread/$filename" "$new_filename" -f`;
+		`mv "data/documents/unread/$filename" "$new_filename" -f`;
 
 		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." WHERE id='".addslashes($data['id'])."'");
 	} // end method mod_pre

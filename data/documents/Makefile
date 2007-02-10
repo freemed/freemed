@@ -20,18 +20,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-THISDIR=data
-SUBDIR=backup cache config documents en_US keys ui report tex
+THISDIR=data/documents
+SUBDIR=unread unfiled
 
 all:
 	# Nothing
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
+	#cp -vf .ht* *.php $(INSTDIR)/$(THISDIR)
 	for d in $(SUBDIR); do \
-		cp -vrf $$d $(INSTDIR)/$(THISDIR); \
+		make -C $$d install INSTDIR=$(INSTDIR); \
 	done
-	cp -vf .ht* *.php $(INSTDIR)/$(THISDIR)
 
 clean:
 	# Nothing

@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE IF NOT EXISTS `unfiledfax` (
+CREATE TABLE IF NOT EXISTS `unfileddocuments` (
 	uffdate			DATE NOT NULL,
 	ufffilename		VARCHAR (150) NOT NULL,
 	id			SERIAL
