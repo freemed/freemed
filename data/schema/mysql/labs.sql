@@ -44,6 +44,28 @@ CREATE TABLE IF NOT EXISTS `labs` (
 	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `labresults` (
+	labid			BIGINT UNSIGNED NOT NULL,
+	labpatient		BIGINT UNSIGNED NOT NULL,
+	labobsnote		TEXT,
+	labobscode		VARCHAR (150),
+	labobsdescrip		VARCHAR (250),
+	labobsvalue		TEXT,
+	labobsunit		VARCHAR (150),
+	labobsranges		VARCHAR (50),
+	labobsabnormal		CHAR (5),
+	labobsstatus		CHAR (1),
+	labobsreported		TIMESTAMP (14),
+	labobsfiller		VARCHAR (60),
+	id			SERIAL,
+
+	#	Define keys
+
+	KEY			( labpatient, labid ),
+	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
+	FOREIGN KEY		( labid ) REFERENCES labs ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 DROP PROCEDURE IF EXISTS labs_Upgrade;
 DELIMITER //
 CREATE PROCEDURE labs_Upgrade ( )
