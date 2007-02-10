@@ -63,8 +63,6 @@ class BaseModule extends Module {
 		T_textdomain( strtolower( get_class( $this ) ) );
 		// Push acl information, if there is any
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
-		// Run setup if necessary
-		$this->setup();
 	} // end constructor BaseModule
 
 	// Method: _print
@@ -272,22 +270,25 @@ class BaseModule extends Module {
 	//	FreeMED to run either _setup() on first run, or _update()
 	//	if the module has an older version installed.
 	//
-	function setup () {
+	public function setup () {
+		syslog(LOG_INFO, get_class($this)." : setup(), ".$this->MODULE_UID." ".$this->MODULE_VERSION);
 		if (!freemed::module_check($this->MODULE_UID, $this->MODULE_VERSION)) {
+			syslog(LOG_INFO, get_class($this)." : not installed?"); 
 			// check if it is installed *AT ALL*
 			if (!freemed::module_check($this->MODULE_UID)) {
 				// run internal setup routine
 				$val = $this->_setup();
-			} else {
-				// run internal update routine
-				$val = $this->_update();
+				syslog(LOG_INFO, get_class($this)." : _setup returned ${val}");
 			} // end checking to see if installed at all
 
 			// register module
+			syslog(LOG_INFO, get_class($this)." : call module_register"); 
 			freemed::module_register($this->MODULE_UID, $this->MODULE_VERSION);
 
+			syslog(LOG_INFO, get_class($this)." : exiting setup() with ${val}");
 			return $val;
 		} // end checking for module
+		syslog(LOG_INFO, get_class($this)." : exiting setup()");
 	} // end function setup
 
 	// _setup (in this case, wrapped in classes...)
