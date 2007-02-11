@@ -66,6 +66,8 @@ class Controller {
 		$this->smarty->assign ( "base_uri", $base_uri );
 		$this->smarty->assign ( "htdocs", "${base_uri}/ui/${ui}/htdocs" );
 		$this->smarty->assign ( "ui", $ui );
+		$this->smarty->assign ( "controller", "${base_uri}/controller.php/${ui}" );
+		$this->smarty->assign ( "relay", "${base_uri}/relay.php/json" );
 		$this->smarty->assign ( "SESSION", $_SESSION );
 	} // end public function initialize
 
