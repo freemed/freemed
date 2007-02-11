@@ -77,11 +77,12 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 		return true;
 	}
 
-	function freemedLoadPage ( url ) {
-		dojo.widget.getWidgetById('freemedLoadingDialog').show();
-		window.location = url;
+	function freemedLoad ( url ) {
+		//dojo.widget.getWidgetById('freemedLoadingDialog').show();
+		//window.location = url;
+		dojo.widget.byId( 'freemedContent' ).setUrl( url );
 		return true;
-	} // end function freemedLoadPage
+	} // end function freemedLoad
 
 </script>
 
@@ -98,117 +99,9 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 		margin: 0 0 0 0;
 		background-image: url(<!--{$htdocs}-->/images/stipedbg.png);
 		}
-	.dojoSplitPane { margin: 5px; }
-	.dojoToolTip { background: #ccccff; padding: 2px; }
-	.dojoDialog { 
-		width: 30%;
-		border: 3px solid #555555;
-		-moz-border-radius-topleft: 10px;
-		-moz-border-radius-bottomright: 10px;
-		background-color: #ffffff;
-		padding: 2em;
-	}
-	.euDockBar { z-index: 10000; }
-	#rightPane { margin: 0; }
 
-	.buttonContainer {
-		margin-top: .5em;
-		margin-bottom: .5em;
-		}
-	a.button {
-		padding: 3px;
-		border: 1px solid #0000ff;
-		background: #ccccff
-		}
-	a.button:hover {
-		background: #0000ff;
-		color: #ffffff;
-		cursor: pointer;
-		}
-
-	div.infoBox {
-		border: 1px solid #000000;
-		size: 8pt;
-		background: #ddddff;
-		padding: .5em;
-		max-width: 250px;
-		}
-
-	h3 {
-		text-align: center;
-		background-color: #ccccff;
-		border: 1px solid #0000ff;
-		padding: 5px;
-		}
-
-	table {
-		width: 100%;
-		}
-
-	* html div.tableContainer {	/* IE only hack */
-		width:95%;
-		/* border:1px solid #ccc; */
-		height: 285px;
-		overflow-x:hidden;
-		overflow-y: auto;
-		}
-
-	* html div.tableContainer table {
-		width:100%; border:1px solid #ccc; cursor:default;
-		}
-
-	div.tableContainer table td,
-	div.tableContainer table th{
-		border-right:1px solid #999;
-		padding:2px;
-		font-weight:normal;
-		}
-	table thead td, table thead th {
-		background:#94BEFF;
-		}
-		
-	* html div.tableContainer table thead tr td,
-	* html div.tableContainer table thead tr th{
-		/* IE Only hacks */
-		position:relative;
-		top:expression(dojo.html.getFirstAncestorByTag(this,'table').parentNode.scrollTop-2);
-		}
-		
-	html>body tbody.scrollContent {
-		height: 262px;
-		overflow-x:hidden;
-		overflow-y: auto;
-		}
-
-	tbody.scrollContent td, tbody.scrollContent tr td {
-		background: #FFF;
-		padding: 2px;
-		}
-
-	tbody.scrollContent tr.alternateRow td {
-		background: #e3edfa;
-		padding: 2px;
-		}
-
-	tbody.scrollContent tr.selected td {
-		background: yellow;
-		padding: 2px;
-		}
-	tbody.scrollContent tr:hover td {
-		background: #a6c2e7;
-		padding: 2px;
-		}
-	tbody.scrollContent tr.selected:hover td {
-		background: #ffff33;
-		padding: 2px;
-		}
-
-	.searchHeader {
-		width: 100%;
-		border: 1px solid #000000;
-		background: #ccccff;
-		padding: 5px;
-		text-decoration: small-caps;
+	.basicPane {
+		background-image: url(<!--{$htdocs}-->/images/stipedbg.png);
 		}
 </style>
 
