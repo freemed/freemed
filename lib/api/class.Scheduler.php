@@ -170,7 +170,7 @@ class Scheduler {
 	//
 	public function CopyAppointment ( $id, $date ) {
 		$appointment = $this->get_appointment ( $id );
-		$appointment['caldateof'] = $date;
+		$appointment['caldateof'] = $this->ImportDate( $date );
 		$result = $this->SetAppointment ( $appointment );
 		return $result;
 	} // end method CopyAppointment
@@ -192,7 +192,7 @@ class Scheduler {
 	//	<CopyAppointment>
 	//
 	public function CopyGroupAppointment ( $group_id, $date ) {
-		$group_appointments = $this->FindGroupAppointments($group_id);
+		$group_appointments = $this->FindGroupAppointments( $group_id );
 		$result = true;
 		foreach ($group_appointments AS $appointment) {
 			$temp_result = $this->copy_appointment ( $appointment, $date );
@@ -221,7 +221,7 @@ class Scheduler {
 	public function date_add ( $starting, $interval ) {
 		if ($interval < 1) { return $starting; }
 		$q = $GLOBALS['sql']->queryOne("SELECT DATE_ADD('".
-			addslashes($starting)."', INTERVAL ".
+			addslashes($this->ImportDate( $starting ))."', INTERVAL ".
 			($interval+0)." DAY) AS mydate");
 		return $q;
 	} // end method date_add
@@ -245,9 +245,9 @@ class Scheduler {
 	//
 	public function date_in_range ($checkdate, $dtbegin, $dtend) {
 		// split all dates into component parts
-		list ($begin_y, $begin_m, $begin_d) = explode('-', $dtbegin);
-		list ($end_y, $end_m, $end_d) = explode('-', $dtend);
-		list ($cur_y, $cur_m, $cur_d) = explode('-', $checkdate);
+		list ($begin_y, $begin_m, $begin_d) = explode('-', $this->ImportDate( $dtbegin ));
+		list ($end_y, $end_m, $end_d) = explode('-', $this->ImportDate( $dtend ));
+		list ($cur_y, $cur_m, $cur_d) = explode('-', $this->ImportDate( $checkdate ));
 
 		$end = $end_y . $end_m . $end_d;
 		$start = $begin_y . $begin_m . $begin_d;
@@ -274,7 +274,7 @@ class Scheduler {
 	//
 	public function date_in_the_past ( $datestamp ) {
 		list ($y_c, $m_c, $d_c) = explode ('-', date('Y-m-d'));
-		list ($y, $m, $d) = explode ('-', $datestamp);
+		list ($y, $m, $d) = explode ('-', $this->ImportDate( $datestamp ));
 
 		if ($y < $y_c) {
 			return true;
@@ -388,7 +388,7 @@ class Scheduler {
 	//
 	public function FindDateAppointments ( $date, $provider = -1 ) {
 		$query = "SELECT * FROM scheduler WHERE ".
-			"(caldateof = '".addslashes($date)."' ".
+			"(caldateof = '".addslashes( $this->ImportDate( $date ) )."' ".
 			"AND calstatus != 'cancelled' ".
 			( $provider != -1 ? 
 				"AND calphysician = '".prepare($provider)."'" :
@@ -434,10 +434,7 @@ class Scheduler {
 	//	Associative array containing appointment information
 	//
 	public function GetAppointment ( $id ) {
-		$query = "SELECT * FROM scheduler WHERE ".
-			" ( id = '".addslashes($id)."' ) ";
-		$result = $GLOBALS['sql']->query( $query );
-		return $result->fetchRow( );
+		return $GLOBALS['sql']->get_link( 'scheduler', $id );
 	} // end method GetAppointment
 	public function get_appointment ( $id ) { return $this->GetAppointment( $id ); }
 
@@ -659,6 +656,7 @@ class Scheduler {
 		}
 
 		// Set modify
+		$fields['caldateof'] = $this->ImportDate( $fields['caldateof'] );
 		$fields['calmodified'] = SQL__NOW;
 
 		$query = $GLOBALS['sql']->update_query (
@@ -839,7 +837,7 @@ class Scheduler {
 		$duration = $_criteria['duration'] ? $_criteria['duration'] : 5;
 
 		// Loop through days to create c_days array
-		$i_cur = $_criteria['date'] ? $_criteria['date'] : date('Y-m-d');
+		$i_cur = $_criteria['date'] ? $this->ImportDate( $_criteria['date'] ) : date('Y-m-d');
 		$i_add = true;
 		list ($i_y, $i_m, $i_d) = explode ('-', $i_cur);
 		// Check for criteria ...
@@ -979,6 +977,7 @@ class Scheduler {
 		// Set add and modify
 		$fields['calcreated'] = SQL__NOW;
 		$fields['calmodified'] = SQL__NOW;
+		$fields['caldateof'] = $this->ImportDate( $fields['caldateof'] );
 
 		$query = $GLOBALS['sql']->insert_query (
 			'scheduler',
@@ -1117,10 +1116,7 @@ class Scheduler {
 	//
 	public function scroll_prev_month ($given_date="") {
 		$cur_date = date("Y-m-d");
-		$this_date = (
-			(empty($given_date) or !strpos($given_date, "-")) ?
-			$cur_date :
-			$given_date );
+		$this_date = $given_date ? $this->ImportDate( $given_date ) : date('Y-m-d');
 		list ($y, $m, $d) = explode ("-", $this_date);
 		$m--;
 		if ($m < 1) { $m = 12; $y--; }
@@ -1146,10 +1142,7 @@ class Scheduler {
 	//
 	public function scroll_next_month ($given_date="") {
 		$cur_date = date("Y-m-d");
-		$this_date = (
-			(empty($given_date) or !strpos($given_date, "-")) ?
-			$cur_date :
-			$given_date );
+		$this_date = $given_date ? $this->ImportDate( $given_date ) : date('Y-m-d');
 		list ($y, $m, $d) = explode ("-", $this_date);
 		$m++;
 		if ($m > 12) { $m -= 12; $y++; }
