@@ -138,6 +138,32 @@ class ScannedDocuments extends EMRModule {
 		return true;
 	} // end method additional_move
 
+	// Method: GetDocumentPage
+	//
+	//	Get fax/document page image as JPEG.
+	//
+	// Parameters:
+	//
+	//	$id - Record id of document
+	//
+	//	$page - Page number
+	//
+	//	$thumbnail - (optional) Boolean, if image is to be rendered
+	//	as a thumbnail. Defaults to false.
+	//
+	// Returns:
+	//
+	//	BLOB data containing jpeg image.
+	//
+	public function GetDocumentPage( $id, $page, $thumbnail = false ) {
+		// Return image ...
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
+			PHYSICAL_LOCATION . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
+
+		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
+	} // end method GetDocumentPage
+
 	function tc_picklist ( ) {
 		return array (
 			__("Operative Report") => "op_report/misc",

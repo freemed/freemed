@@ -97,6 +97,33 @@ class UnreadDocuments extends SupportModule {
 		); 
 	} // end method MainMenuNotify
 
+	// Method: GetDocumentPage
+	//
+	//	Get fax/document page image as JPEG.
+	//
+	// Parameters:
+	//
+	//	$id - Record id of unread document
+	//
+	//	$page - Page number
+	//
+	//	$thumbnail - (optional) Boolean, if image is to be rendered
+	//	as a thumbnail. Defaults to false.
+	//
+	// Returns:
+	//
+	//	BLOB data containing jpeg image.
+	//
+	public function GetDocumentPage( $id, $page, $thumbnail = false ) {
+		// Return image ...
+		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
+			PHYSICAL_LOCATION . '/data/documents/unread/' .
+			$r['urffilename']);
+
+		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
+	} // end method GetDocumentPage
+
 	// Method: MoveToAnotherProvider
 	//
 	//	Moves an unread document to be associated with another provider in

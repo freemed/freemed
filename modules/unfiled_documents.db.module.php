@@ -185,7 +185,7 @@ class UnfiledDocuments extends SupportModule {
 	public function NumberOfPages ( $id ) {
 		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
+			PHYSICAL_LOCATION . '/data/documents/unfiled/' .
 			$r['ufffilename']);
 		return $djvu->NumberOfPages();
 	} // end method NumberOfPages
@@ -278,7 +278,7 @@ class UnfiledDocuments extends SupportModule {
 	//
 	// Parameters:
 	//
-	//	$id - Record id of unfiled fax
+	//	$id - Record id of unfiled document
 	//
 	//	$page - Page number
 	//
