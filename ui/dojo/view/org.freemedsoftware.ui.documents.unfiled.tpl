@@ -45,23 +45,27 @@
 	// Special scope variable because of ContentPane
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
+		saveValue: 0,
 		cancelDocument: function ( ) {
 			// Hide form, unload djvu viewer
 			document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
 			dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/blank');
 
-			// Reset widget to initial state with reload
-			loadUnfiledDocuments();
+			// Unset all selections...
+			dojo.widget.byId('unfiledDocuments').resetSelections();
+			dojo.widget.byId('unfiledDocuments').renderSelections();
+			this.saveValue = 0;
 		},
 		selectUnfiledDocument: function ( ) {
 			var w = dojo.widget.byId('unfiledDocuments');
-			var val;
-			if (w.getSelectedData().length > 0) {
-				val = w.getSelectedData()[0].id;
-			}
-			if (val) {
+			var val = w.getSelectedData();
+			if (val != 'undefined') {
+				// Save the value
+				this.saveValue = val.id;
+
+				// Populate/display
 				document.getElementById('unfiledDocumentsFormDiv').style.display = 'block';
-				dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.widget.djvuviewer?MODE=widget&type=UnfiledDocuments&id=' + val);
+				dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.widget.djvuviewer?MODE=widget&type=UnfiledDocuments&id=' + val.id);
 				return true;
 			}
 		}
@@ -89,7 +93,7 @@
 		<div class="tableContainer">
 			<table dojoType="FilteringTable" id="unfiledDocuments" widgetId="unfiledDocuments" headClass="fixedHeader"
 			 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-			 valueField="id" border="0" multiple="no">
+			 valueField="id" border="0" multiple="false" maxSelect="1">
 			<thead>
 				<tr>
 					<th field="uffdate_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
