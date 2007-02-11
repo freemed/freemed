@@ -45,7 +45,7 @@
 			if (val) {
 				// Move to the patient EMR record in question
 				dojo.widget.byId('tagSimpleTable').disable();
-				freemedLoadPage('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
 				return true;
 			}
 		});

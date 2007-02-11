@@ -72,7 +72,7 @@
 	};
 
 	// Make sure we load this upon page load
-	dojo.addOnLoad(loadUnfiledDocuments);
+	_container_.addOnLoad(loadUnfiledDocuments);
 
 	// Handle in context loading for these widgets
 	_container_.addOnLoad(function(){
@@ -85,6 +85,8 @@
 	});
 
 </script>
+
+<h3><!--{t}-->Unfiled Documents<!--{/t}--></h3>
 
 <div dojoType="SplitContainer" orientation="horizontal" sizerWidth="5" activeSizing="0" layoutAlign="client" style="height: 100%;">
 

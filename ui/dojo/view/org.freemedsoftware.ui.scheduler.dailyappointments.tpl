@@ -61,7 +61,7 @@
 				val = w.getSelectedData()[0].patient_id;
 			}
 			if (val) {
-				freemedLoadPage('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
 				return true;
 			}
 		});

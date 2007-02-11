@@ -35,7 +35,6 @@
 </style>
 
 <script type="text/javascript">
-
 	dojo.require("dojo.widget.Form");
 	dojo.require("dojo.widget.TabContainer");
 //	dojo.require("dojo.widget.Tooltip");
@@ -97,6 +96,32 @@
 		});
 	} // end patientFormCommitChanges
 
+	function patientFormPopulate ( id ) {
+		dojo.io.bind({
+			method : 'POST',
+			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientModule.GetRecord',
+			content: { param0: id },
+			error: function(type, data, evt) {
+				alert('<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->');
+				dojo.widget.byId('patientFormCommitChangesButton').enable();
+			},
+			load: function(type, data, evt) {
+				if (data) {
+					dojo.widget.byId('patientForm').setValues(data);
+				} else {
+					alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
+				}
+			},
+			mimetype: "text/json"
+		});
+	} // end patientFormPopulate
+
+<!--{if $patient > 0}-->
+	dojo.addOnLoad(function(){
+		//TODO: make this work properly to load via "AJAX"
+		//patientFormPopulate(<!--{$patient}-->);
+	});
+<!--{/if}-->
 </script>
 
 <form dojoType="Form" id="patientForm" style="height: auto;">
@@ -316,7 +341,7 @@
 	</button>
 	<!--{if $patient > 0}-->
 	</td><td align="left">
-	<button dojoType="Button" type="button" id="patientFormCancelButton" widgetId="patientFormCancelButton" onClick="freemedLoadPage('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->'); return true;">
+	<button dojoType="Button" type="button" id="patientFormCancelButton" widgetId="patientFormCancelButton" onClick="freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->'); return true;">
 		<div><!--{t}-->Cancel<!--{/t}--></div>
 	</button>
 	<!--{/if}-->
