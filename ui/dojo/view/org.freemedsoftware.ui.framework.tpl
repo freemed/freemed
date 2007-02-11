@@ -29,7 +29,7 @@
 
 <!--{* ***** Style Elements ***** *}-->
 
-<link rel="stylesheet" type="text/css" src="<!--{$htdocs}-->/stylesheet.css" />
+<link rel="stylesheet" type="text/css" href="<!--{$htdocs}-->/stylesheet.css" />
 <!--{if $DEBUG}-->
 <script language="JavaScript" type="text/javascript">
 var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
@@ -52,7 +52,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 
 	function openHelpPage ( ) {
 		// TODO: make sure to open help for the current topic, as stored by a global JS variable ...
-		var popup = window.open('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=500,width=300,resizable=yes,alwaysRaised=yes');
+		var popup = window.open('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
 	}
 
 	function freemedLogout ( ) {
