@@ -23,17 +23,13 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.framework.tpl"}-->
-<!--{/if}-->
-
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.FilteringTable");
 </script>
 
 <script language="javascript">
-	dojo.addOnLoad(function() {
+	_container_.addOnLoad(function() {
 		// Define selection event for table
 		dojo.event.connect(dojo.widget.byId('tagSimpleTable'), "onSelect", function () {
 			var val;
@@ -45,14 +41,14 @@
 			if (val) {
 				// Move to the patient EMR record in question
 				dojo.widget.byId('tagSimpleTable').disable();
-				freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
 				return true;
 			}
 		});
 		// Initial load of data for search.
 		dojo.io.bind({
 			method : 'POST',
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientTag.SimpleTagSearch?param0=<!--{$tag}-->',
+			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientTag.SimpleTagSearch?param0=<!--{$tag}-->',
 			error: function() { },
 			load: function(type, data, evt) {
 				if (data) {
@@ -67,7 +63,7 @@
 <div class="searchHeader">
 	<table border="0" cellpadding="0" cellspacing="0" width="98%"><tr>
 	<td align="left"><b><!--{t}-->Tags found for<!--{/t}--></b>: "<!--{$tag|escape}-->"</td>
-	<td align="right" style="padding-right: 10px;"><img src="<!--{$htdocs}-->/images/magnifying_glass.png" border="0" onClick="window.location='<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.tag.searchform'; return true;" /></td>
+	<td align="right" style="padding-right: 10px;"><img src="<!--{$htdocs}-->/images/magnifying_glass.png" border="0" onClick="window.location='<!--{$controller}-->/org.freemedsoftware.ui.tag.searchform'; return true;" /></td>
 	</tr></table>
 </div>
 
@@ -99,8 +95,4 @@
 	</tbody>
 	</table>
 </div>
-
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.footer.tpl"}-->
-<!--{/if}-->
 

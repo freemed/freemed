@@ -33,7 +33,7 @@
 		dojo.io.bind({
 			method: 'POST',
 			content: { },
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.UnfiledDocuments.GetAll',
+			url: '<!--{$relay}-->/org.freemedsoftware.module.UnfiledDocuments.GetAll',
 			error: function() { },
 			load: function( type, data, evt ) {
 				dojo.widget.byId('unfiledDocuments').store.setData( data );
@@ -49,12 +49,35 @@
 		cancelDocument: function ( ) {
 			// Hide form, unload djvu viewer
 			document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
-			dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/blank');
+			dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$controller}-->/blank');
 
 			// Unset all selections...
 			dojo.widget.byId('unfiledDocuments').resetSelections();
 			dojo.widget.byId('unfiledDocuments').renderSelections();
 			this.saveValue = 0;
+		},
+		deleteDocument: function ( ) {
+			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
+			if (x) {
+				dojo.io.bind({
+					method: 'POST',
+					url: '<!--{$relay}-->/org.freemedsoftware.module.UnfiledDocuments.del',
+					content: {
+						param0: this.saveValue
+					},
+					error: function( type, data, event ) {
+						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+					},
+					load: function( type, data, event ) {
+						loadUnfiledDocuments();
+						this.saveValue = 0;
+
+						// Hide form, unload djvu viewer
+						document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
+						dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$controller}-->/blank');
+					}
+				});
+			}
 		},
 		selectUnfiledDocument: function ( ) {
 			var w = dojo.widget.byId('unfiledDocuments');
@@ -65,7 +88,7 @@
 
 				// Populate/display
 				document.getElementById('unfiledDocumentsFormDiv').style.display = 'block';
-				dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.widget.djvuviewer?MODE=widget&type=UnfiledDocuments&id=' + val.id);
+				dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$controller}-->/org.freemedsoftware.widget.djvuviewer?MODE=widget&type=UnfiledDocuments&id=' + val.id);
 				return true;
 			}
 		}
@@ -78,10 +101,12 @@
 	_container_.addOnLoad(function(){
 		dojo.event.connect(dojo.widget.byId('unfiledDocuments'), "onSelect", o, "selectUnfiledDocument");
 		dojo.event.connect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
+		dojo.event.connect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
 	});
 	_container_.addOnUnLoad(function(){
 		dojo.event.disconnect(dojo.widget.byId('unfiledDocuments'), "onSelect", o, "selectUnfiledDocument");
 		dojo.event.disconnect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
+		dojo.event.disconnect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
 	});
 
 </script>
@@ -142,7 +167,7 @@
 				<td><button dojoType="Button"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
 				<td><button dojoType="Button"><!--{t}-->Split Batch<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="cancelButton"><!--{t}-->Cancel<!--{/t}--></button></td>
-				<td><button dojoType="Button"><!--{t}-->Delete Document<!--{/t}--></button></td>
+				<td><button dojoType="Button" id="deleteButton"><!--{t}-->Delete Document<!--{/t}--></button></td>
 			</tr>
 		</table>
 		</div>
