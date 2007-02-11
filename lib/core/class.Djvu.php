@@ -39,7 +39,7 @@ class Djvu {
 	public function __construct ( $filename ) {
 		$this->filename = $filename;
 		if (!file_exists($filename)) { die ("Djvu: file does not exist \"$filename\""); }
-		$md5 = $this->MD5Checksum();
+		$this->md5 = $this->MD5Checksum();
 	} // end constructor
 
 	// Method: MD5Checksum
