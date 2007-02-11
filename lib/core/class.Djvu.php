@@ -27,7 +27,8 @@
 //
 class Djvu {
 
-	var $filename;
+	protected $filename;
+	protected $md5;
 
 	// Constructor: Djvu
 	//
@@ -35,10 +36,23 @@ class Djvu {
 	//
 	//	$filename - Filename of source DjVu file.
 	//
-	function Djvu ( $filename ) {
+	public function __construct ( $filename ) {
 		$this->filename = $filename;
 		if (!file_exists($filename)) { die ("Djvu: file does not exist \"$filename\""); }
+		$md5 = $this->MD5Checksum();
 	} // end constructor
+
+	// Method: MD5Checksum
+	//
+	//	Get MD5 checksum for the current file.
+	//
+	// Returns:
+	//
+	//	32 character MD5 hash
+	//
+	protected function MD5Checksum ( ) {
+		return substr( exec( "md5sum " . escapeshellarg( $this->filename ) ), 0, 32 );
+	} // end method MD5Checksum
 
 	// Method: NumberOfPages
 	//
@@ -46,7 +60,7 @@ class Djvu {
 	//
 	//	Number of pages in the current Djvu document.
 	//
-	function NumberOfPages ( ) {
+	public function NumberOfPages ( ) {
 		$filename = $this->filename;
 
 		// Get basic info dump from file
@@ -83,36 +97,23 @@ class Djvu {
 	//
 	//	Either JPEG image of file in string or name of temporary file.
 	//
-	function GetPage ( $page, $contents = false, $force_ps = false, $force_rotation = true ) {
+	public function GetPage ( $page, $contents = false, $force_ps = false, $force_rotation = true ) {
 		$filename = $this->filename;
+		$cache_name = PHYSICAL_LOCATION . '/data/cache/djvu/' . $this->md5 . '.' . $page . '.' . ( $force_rotation ? 'rotated.' : '' ) . ( $force_ps ? 'ps' : 'jpg' );
 
-		$s = $size."x".$size;
-
-		$_t = tempnam('/tmp', 'fmdjvu');
-		$rotate = $force_rotation ? " -rotate 90 " : "";
-		if ($force_ps) {
-			// No conversion ...
-			$t = $_t.'.ps';
-			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - ${rotate} "$t"`;
-		} else {
-			// Force convert to JPEG
-			$t = $_t.'.jpg';
-			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - ${rotate} "$t"`;
+		if ( ! file_exists( $cache_name ) ) {
+			$rotate = $force_rotation ? " -rotate 90 " : "";
+			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - ${rotate} "${cache_name}"`;
 		}
 
 		if ($contents) {
-			ob_start();
-			readfile($t);
-			$c = ob_get_contents();
-			ob_end_clean();
-
-			unlink ($_t);
-			unlink ($t);
-		
+			ob_start( );
+			readfile( $cache_name );
+			$c = ob_get_contents( );
+			ob_end_clean( );
 			return $c;
 		} else {
-			unlink ($_t);
-			return $t;
+			return $cache_name;
 		}
 	} // end method GetPage
 
@@ -130,22 +131,21 @@ class Djvu {
 	//
 	//	String containing JPEG thumbnail of specified page.
 	//
-	function GetPageThumbnail ( $page, $size=300 ) {
+	public function GetPageThumbnail ( $page, $size=300 ) {
 		$filename = $this->filename;
+		$cache_name = PHYSICAL_LOCATION . '/data/cache/djvu/' . $this->md5 . '.' . $page . '.' . $size . '.jpg';
 
 		$s = $size."x".$size;
 
-		$_t = tempnam('/tmp', 'fmdjvu');
-		$t = $_t.'.jpg';
-		$temp = `djvups -page=$page "$filename" | convert - -scale $s "$t"`;
-		ob_start();
-		readfile($t);
-		$contents = ob_get_contents();
-		ob_end_clean();
+		if ( ! file_exists( $cache_name ) ) {
+			$temp = `djvups -page=$page "$filename" | convert - -scale $s "${cache_name}"`;
+		}
 
-		unlink ($_t);
-		unlink ($t);
-		
+		ob_start();
+		readfile( $cache_name );
+		$contents = ob_get_contents( );
+		ob_end_clean( );
+
 		return $contents;
 	} // end method GetPageThumbnail
 
@@ -157,7 +157,7 @@ class Djvu {
 	//
 	//	Array of chunk names.
 	//
-	function StoredChunks ( ) {
+	protected function StoredChunks ( ) {
 		$filename = $this->filename;
 
 		$raw = `djvm -l "$filename"`;
@@ -192,7 +192,7 @@ class Djvu {
 	//
 	//	PDF file data or file name, depending on parameters
 	//
-	function ToPDF ( $to_file = false ) {
+	public function ToPDF ( $to_file = false ) {
 		$filename = $this->filename;
 
 		$t = tempnam('/tmp', 'fmdjvu');
