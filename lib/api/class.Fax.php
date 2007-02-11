@@ -44,7 +44,7 @@ class Fax {
 	function AddLocalFile ( $filename ) {
 		$result = $GLOBALS['sql']->query(
 			$GLOBALS['sql']->insert_query(
-				'unfiledfax',
+				'unfileddocuments',
 				array (
 					'uffdate' => date('Y-m-d'),
 					// If we don't trim this, it will
