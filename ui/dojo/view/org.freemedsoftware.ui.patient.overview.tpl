@@ -23,13 +23,9 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.framework.tpl"}-->
-<!--{/if}-->
-
 <script language="javascript">
 	dojo.require("dojo.widget.DropdownContainer");
-	dojo.addOnLoad(function(){
+	_container_.addOnLoad(function(){
 		dojo.widget.byId('contactDropdown').inputNode.style.display = 'none';
 	});
 </script>
@@ -74,7 +70,7 @@
 	</div></td>
 		<!--{* Icon bar for easy actions *}-->
 	<td>
-		<span onClick="freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
+		<span onClick="freemedLoad('<!--{controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
 	</td>
 	</tr></table>
 </div>
@@ -84,8 +80,4 @@
 </td><td width="250" valign="top">
 <!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient}-->
 </td></tr></table>
-
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.footer.tpl"}-->
-<!--{/if}-->
 

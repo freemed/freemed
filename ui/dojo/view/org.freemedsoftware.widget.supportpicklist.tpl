@@ -41,7 +41,7 @@
 	id="<!--{$varname|escape}-->_widget" widgetId="<!--{$varname|escape}-->_widget"
 	setValue="if (arguments[0]) { document.getElementById('<!--{$varname|escape}-->').value = arguments[0]; }"
 	style="width: 300px;"
-	dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.<!--{$module|escape}-->.picklist?param0=%{searchString}"
+	dataUrl="<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.picklist?param0=%{searchString}"
 	mode="remote" />
 <input type="hidden" id="<!--{$varname|escape}-->" name="<!--{$varname|escape}-->" value="0" />
 

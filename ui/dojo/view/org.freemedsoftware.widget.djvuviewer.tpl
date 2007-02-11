@@ -46,7 +46,7 @@
 </td>
 </tr>
 <tr>
-<td><img src="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.<!--{$type|escape:'url'}-->.GetDocumentPage?param0=<!--{$id|escape:'url'}-->&param1=1" height="800" width="600" border="0" id="djvuViewer_<!--{$id|escape}-->" /></td>
+<td><img src="<!--{$relay}-->/org.freemedsoftware.module.<!--{$type|escape:'url'}-->.GetDocumentPage?param0=<!--{$id|escape:'url'}-->&param1=1" height="800" width="600" border="0" id="djvuViewer_<!--{$id|escape}-->" /></td>
 </tr>
 <tr><td align="center">
 <input type="button" id="djvuPagePrevBottom_<!--{$id|escape}-->" value=" &lt; " onClick="djvuChangePage(currentDjvuPage_<!--{$id|escape}--> - 1);" disabled="disabled" />
@@ -66,7 +66,7 @@
 			content: {
 				param0: '<!--{$id|escape}-->'
 			},
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.<!--{$type|escape:'url'}-->.NumberOfPages',
+			url: '<!--{$relay}-->/org.freemedsoftware.module.<!--{$type|escape:'url'}-->.NumberOfPages',
 			load: function( type, data, evt ) {
 				totalDjvuPages_<!--{$id|escape}--> = data;
 				document.getElementById('djvuTotalPageTop_<!--{$id|escape}-->').innerHTML = totalDjvuPages;
@@ -79,7 +79,7 @@
 
 	function djvuChangePage( page ) {
 		currentDjvuPage_<!--{$id|escape}--> = page;
-		document.getElementById('djvuViewer_<!--{$id|escape}-->').src = '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.<!--{$type|escape:'url'}-->.GetDocumentPage?param0=<!--{$id|escape:'url'}-->&param1=' + currentDjvuPage_<!--{$id|escape}-->;
+		document.getElementById('djvuViewer_<!--{$id|escape}-->').src = '<!--{$relay}-->/org.freemedsoftware.module.<!--{$type|escape:'url'}-->.GetDocumentPage?param0=<!--{$id|escape:'url'}-->&param1=' + currentDjvuPage_<!--{$id|escape}-->;
 
 		// Handle enable/disabled
 		document.getElementById('djvuCurrentPageTop_<!--{$id|escape}-->').innerHTML = currentDjvuPage;
