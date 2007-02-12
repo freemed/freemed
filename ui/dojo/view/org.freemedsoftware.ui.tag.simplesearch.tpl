@@ -63,7 +63,7 @@
 <div class="searchHeader">
 	<table border="0" cellpadding="0" cellspacing="0" width="98%"><tr>
 	<td align="left"><b><!--{t}-->Tags found for<!--{/t}--></b>: "<!--{$tag|escape}-->"</td>
-	<td align="right" style="padding-right: 10px;"><img src="<!--{$htdocs}-->/images/magnifying_glass.png" border="0" onClick="window.location='<!--{$controller}-->/org.freemedsoftware.ui.tag.searchform'; return true;" /></td>
+	<td align="right" style="padding-right: 10px;"><img src="<!--{$htdocs}-->/images/magnifying_glass.png" border="0" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.tag.searchform'); return true;" /></td>
 	</tr></table>
 </div>
 
@@ -71,7 +71,7 @@
 	<table dojoType="FilteringTable" id="tagSimpleTable" widgetId="tagSimpleTable" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
 	 valueField="patient_record"
-	 border="0" multiple="no">
+	 border="0" multiple="false">
 	<thead>
 		<tr>
 			<th field="patient_id" dataType="String">Record</th>
