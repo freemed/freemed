@@ -70,10 +70,13 @@ class UnfiledDocuments extends SupportModule {
 		unlink('data/documents/unfiled/'.$filename);
 	} // end method del_pre
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		$id = $data['id'];
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::secure_filename( $rec['ufffilename'] );
+
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$data['date'] = $s->ImportDate( $data['date'] );
 
 		// Catch multiple people using the same document
 		if (!file_exists('data/documents/unfiled/'.$filename)) {
@@ -81,15 +84,18 @@ class UnfiledDocuments extends SupportModule {
 		}
 
 		if ($data['flip'] == 1) {
+			syslog(LOG_INFO, "flip");
 			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/documents/unfiled/${filename}\"";
 			system("$command");
 		}
 
 		if (!empty($data['faxback'])) {
+			syslog(LOG_INFO, "faxback");
 			$this->faxback( $data['id'], $data['faxback'] );
 		}
 
 		if ($data['notify']+0 > 0) {
+			syslog(LOG_INFO, "notify");
 			$msg = CreateObject('org.freemedsoftware.api.Messages');
 			$msg->send(array(
 				'patient' => $data['patient'],
@@ -102,6 +108,7 @@ class UnfiledDocuments extends SupportModule {
 
 		// If we're removing the first page, do that now
 		if ($data['withoutfirstpage']) {
+			syslog(LOG_INFO, "remove 1st page");
 			$command = "/usr/bin/djvm -d ".escapeshellarg("data/documents/unfiled/${filename}")." 1";
 			system("$command");
 		}
@@ -110,18 +117,19 @@ class UnfiledDocuments extends SupportModule {
 		//echo "mv data/documents/unfiled/$filename data/documents/unread/$filename -f";
 		if ($filename) { system('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f'); }
 
+		// Figure category / type
+		$cat = $GLOBALS['sql']->get_link( 'documents_tc', $data['category'] );
+
 		if ($data['filedirectly']) {
-			// Extract type and category
-			list ($type, $cat) = explode('/', $data['type']);
-		
+			syslog(LOG_INFO, "directly");
 			// Insert new table query in unread
 			$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 				'images',
 				array (
 					"imagedt" => $data['date'],
 					"imagepat" => $data['patient'],
-					"imagetype" => $type,
-					"imagecat" => $cat,
+					"imagetype" => $cat['type'],
+					"imagecat" => $cat['category'],
 					"imagedesc" => $data['note'],
 					"imagephy" => $data['physician'],
 					"imagereviewed" => 0
@@ -156,18 +164,24 @@ class UnfiledDocuments extends SupportModule {
 					"urffilename" => $filename,
 					"urfpatient" => $data['patient'],
 					"urfphysician" => $data['physician'],
-					"urftype" => $data['type'],
+					"urftype" => $data['category'],
 					"urfnote" => $data['note']
 				)
 			));
 		}
 
-		$new_id = $GLOBALS['sql']->lastInsertID( $this->table_name, 'id' );
+		// Remove old entry	
+		$GLOBALS['sql']->query("DELETE FROM `".$this->table_name."` WHERE id='".addslashes($data['id'])."'");
+
+		//$new_id = $GLOBALS['sql']->lastInsertID( $this->table_name, 'id' );
+
+		$this->save_variables = $this->variables;
+		unset ( $this->variables );
 	} // end method mod_pre
 
 	function mod_post ( $data ) {
-		// Don't use the delete method, because we don't want to remove files
-		$GLOBALS['sql']->query("DELETE FROM `".$this->table_name."` WHERE id='".addslashes($data['id'])."'");
+		// Restore variables
+		$this->variables = $this->save_variables;
 	} // end method mod_post
 
 	// Method: NumberOfPages
@@ -298,6 +312,19 @@ class UnfiledDocuments extends SupportModule {
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
+
+	// Method: GetAll
+	//
+	//	Get all records.
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function GetAll ( ) {
+		$query = "SELECT *,DATE_FORMAT(uffdate, '%m/%d/%Y') AS uffdate_mdy FROM ".$this->table_name." ORDER BY id DESC";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method GetAll
 
 	// Method: faxback
 	//

@@ -69,15 +69,63 @@
 						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
 					},
 					load: function( type, data, event ) {
-						loadUnfiledDocuments();
-						this.saveValue = 0;
-
-						// Hide form, unload djvu viewer
-						document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
-						dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$controller}-->/blank');
-					}
+						this.resetForm();
+					},
+					mimetype: "text/json"
 				});
 			}
+		},
+		modifyDocument: function ( review, dropfirst ) {
+			var p = {
+				id: this.saveValue,
+				date: document.getElementById('uffdate').value,
+				category: document.getElementById('uffcategory').value,
+				patient: document.getElementById('uffpatient').value,
+				physician: document.getElementById('uffprovider').value,
+				note: document.getElementById('uffnote').value,
+				withoutfirstpage: dropfirst ? 1 : 0,
+				flip: document.getElementById('uffflip').checked ? 1 : 0
+			};
+
+			// Some validation
+			var messages = '';
+			if ( ! p.date ) { messages += "<!--{t}-->No date has been selected.<!--{/t}-->\n"; }
+			if ( p.category == 0 ) { messages += "<!--{t}-->No category has been chosen.<!--{/t}-->\n"; }
+			if ( p.patient == 0 ) { messages += "<!--{t}-->No patient has been selected.<!--{/t}-->\n"; }
+			if ( p.physician == 0 ) { messages += "<!--{t}-->No provider has been selected.<!--{/t}-->\n"; }
+			if ( ! p.note ) { messages += "<!--{t}-->No note has been entered.<!--{/t}-->\n"; }
+			if ( messages != '' ) {
+				alert( messages );
+				return false;
+			}
+
+			dojo.io.bind({
+				method: 'POST',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.UnfiledDocuments.mod',
+				content: {
+					param0: p
+				},
+				error: function( type, data, event ) {
+					alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+				},
+				load: function( type, data, event ) {
+					this.resetForm();
+				},
+				mimetype: "text/json"
+			});
+		},
+		// specialty button actions here:
+		modifyToProvider: function ( ) { this.modifyDocument( true, false ); },
+		modifyToProviderNoCover: function ( ) { this.modifyDocument( true, true ); },
+		modifyDirectly: function ( ) { this.modifyDocument( false, false ); },
+		modifyDirectlyNoCover: function ( ) { this.modifyDocument( false, true ); },
+		resetForm: function ( ) {
+			loadUnfiledDocuments();
+			this.saveValue = 0;
+
+			// Hide form, unload djvu viewer
+			document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
+			dojo.widget.byId('unfiledDocumentViewPane').setUrl('<!--{$controller}-->/blank');
 		},
 		selectUnfiledDocument: function ( ) {
 			var w = dojo.widget.byId('unfiledDocuments');
@@ -102,11 +150,19 @@
 		dojo.event.connect(dojo.widget.byId('unfiledDocuments'), "onSelect", o, "selectUnfiledDocument");
 		dojo.event.connect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
 		dojo.event.connect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
+		dojo.event.connect(dojo.widget.byId('modifyToProviderButton'), "onClick", o, "modifyToProvider");
+		dojo.event.connect(dojo.widget.byId('modifyToProviderNoCoverButton'), "onClick", o, "modifyToProviderNoCover");
+		dojo.event.connect(dojo.widget.byId('modifyDirectlyButton'), "onClick", o, "modifyDirectly");
+		dojo.event.connect(dojo.widget.byId('modifyDirectlyNoCoverButton'), "onClick", o, "modifyDirectlyNoCover");
 	});
 	_container_.addOnUnLoad(function(){
 		dojo.event.disconnect(dojo.widget.byId('unfiledDocuments'), "onSelect", o, "selectUnfiledDocument");
 		dojo.event.disconnect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
 		dojo.event.disconnect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
+		dojo.event.disconnect(dojo.widget.byId('modifyToProviderButton'), "onClick", o, "modifyToProvider");
+		dojo.event.disconnect(dojo.widget.byId('modifyToProviderNoCoverButton'), "onClick", o, "modifyToProviderNoCover");
+		dojo.event.disconnect(dojo.widget.byId('modifyDirectlyButton'), "onClick", o, "modifyDirectly");
+		dojo.event.disconnect(dojo.widget.byId('modifyDirectlyNoCoverButton'), "onClick", o, "modifyDirectlyNoCover");
 	});
 
 </script>
@@ -149,8 +205,16 @@
 				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="uffprovider"}--></td>
 			</tr>
 			<tr>
-				<td><!--{t}--><!--{/t}--></td>
-				<td></td>
+				<td><!--{t}-->Category<!--{/t}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="DocumentCategory" varname="uffcategory"}--></td>
+			</tr>
+			<tr>
+				<td><!--{t}-->Note<!--{/t}--></td>
+				<td><input type="text" id="uffnote" name="uffnote" value="" /></td>
+			</tr>
+			<tr>
+				<td><label for="uffflip"><!--{t}-->Flip Document?<!--{/t}--></label></td>
+				<td><input type="checkbox" id="uffflip" name="uffflip" value="1" /></td>
 			</tr>
 			<tr>
 				<td><!--{t}--><!--{/t}--></td>
@@ -161,10 +225,10 @@
 		<div align="center">
 		<table border="0">
 			<tr>
-				<td><button dojoType="Button"><!--{t}-->Send to Provider<!--{/t}--></button></td>
-				<td><button dojoType="Button"><!--{t}-->Send to Provider<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
-				<td><button dojoType="Button"><!--{t}-->File Directly<!--{/t}--></button></td>
-				<td><button dojoType="Button"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
+				<td><button dojoType="Button" id="modifyToProviderButton" widgetId="modifyToProviderButton"><!--{t}-->Send to Provider<!--{/t}--></button></td>
+				<td><button dojoType="Button" id="modifyToProviderNoCoverButton" widgetId="modifyToProviderNoCoverButton"><!--{t}-->Send to Provider<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
+				<td><button dojoType="Button" id="modifyDirectlyButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--></button></td>
+				<td><button dojoType="Button" id="modifyDirectlyNoCoverButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
 				<td><button dojoType="Button"><!--{t}-->Split Batch<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="cancelButton"><!--{t}-->Cancel<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="deleteButton"><!--{t}-->Delete Document<!--{/t}--></button></td>
