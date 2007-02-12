@@ -103,7 +103,11 @@ class Djvu {
 
 		if ( ! file_exists( $cache_name ) ) {
 			$rotate = $force_rotation ? " -rotate 90 " : "";
-			$temp = `djvups -page=$page "$filename" | /usr/bin/convert - ${rotate} "${cache_name}"`;
+			$command = "djvups -page=" . ($page+0) . " " . escapeshellarg($filename) . " | /usr/bin/convert - ${rotate} " . escapeshellarg( $cache_name );
+			exec( $command );
+		} else {
+			// Touch it to avoid reaping if it has been accessed
+			exec( "touch " . escapeshellarg( $cache_name ) );
 		}
 
 		if ($contents) {
