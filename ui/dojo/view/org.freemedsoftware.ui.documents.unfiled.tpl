@@ -176,7 +176,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="unfiledDocumentViewPane">
+	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="unfiledDocumentViewPane" style="overflow: scroll;">
 	</div>
 </div>
 

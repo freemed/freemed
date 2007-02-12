@@ -42,7 +42,7 @@
 <tr><td align="center" style="background-image: url('<!--{$htdocs}-->/images/brushed.gif');">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>
 		<td align="left"><button dojoType="Button" id="djvuPagePrevTop" widgetId="djvuPagePrevTop" value=" &lt; " disabled="true">&lt;</button></td>
-		<td align="center"><span id="djvuCurrentPageTop">1</span> of <span id="djvuTotalPageTop">1</span></td>
+		<td align="center"><span id="djvuCurrentPageTop">1</span> of <span id="djvuTotalPageTop">i<img src="<!--{$htdocs}-->/images/loading.gif" border="0" /></span></td>
 		<td align="right"><button dojoType="Button" id="djvuPageNextTop" widgetId="djvuPageNextTop" value=" &gt; " disabled="true">&gt;</button></td>
 	</tr></table>
 </td></tr>
@@ -52,7 +52,7 @@
 <tr><td align="center" style="background-image: url('<!--{$htdocs}-->/images/brushed.gif');">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr>
 		<td align="left"><button dojoType="Button" id="djvuPagePrevBottom" widgetId="djvuPagePrevBottom" value=" &lt; " disabled="true">&lt;</button></td>
-		<td align="center"><span id="djvuCurrentPageBottom">1</span> of <span id="djvuTotalPageBottom">1</span></td>
+		<td align="center"><span id="djvuCurrentPageBottom">1</span> of <span id="djvuTotalPageBottom"><img src="<!--{$htdocs}-->/images/loading.gif" border="0" /></span></td>
 		<td align="right"><button dojoType="Button" id="djvuPageNextBottom" widgetId="djvuPageNextBottom" value=" &gt; " disabled="true">&gt;</button></td>
 	</tr></table>
 </td></tr>
