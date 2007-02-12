@@ -42,7 +42,7 @@
 	>
 		<div dojoType="ContentPane" id="leftPane" style="width: 100px; background-image: url(<!--{$htdocs}-->/images/stipedbg.png); overflow: auto;" href="<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.taskpane" layoutAlign="left" executeScripts="true"></div>
 		<!-- this pane contains the actual application -->
-		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="80">
+		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false">
 			<!--{include file="org.freemedsoftware.ui.scheduler.dailyappointments.tpl" MODE='widget'}-->
 		</div>
 	</div>
