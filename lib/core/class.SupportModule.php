@@ -279,13 +279,15 @@ class SupportModule extends BaseModule {
 		$ourdata = $this->prepare( (array) $data );
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
-		$result = $GLOBALS['sql']->query (
-			$GLOBALS['sql']->update_query (
-				$this->table_name,
-				$this->variables,
-				array ( "id" => $id )
-			)
-		);
+		if ( is_array( $this->variables ) ) {
+			$result = $GLOBALS['sql']->query (
+				$GLOBALS['sql']->update_query (
+					$this->table_name,
+					$this->variables,
+					array ( "id" => $id )
+				)
+			);
+		}
 		$this->mod_post( &$ourdata );
 
 		return $result ? true : false;
