@@ -84,6 +84,7 @@
 				physician: document.getElementById('uffprovider').value,
 				note: document.getElementById('uffnote').value,
 				withoutfirstpage: dropfirst ? 1 : 0,
+				filedirectly: review ? 0 : 1,
 				flip: document.getElementById('uffflip').checked ? 1 : 0
 			};
 
@@ -106,7 +107,8 @@
 					param0: p
 				},
 				error: function( type, data, event ) {
-					alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+					//alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+					this.resetForm();
 				},
 				load: function( type, data, event ) {
 					this.resetForm();
@@ -227,7 +229,7 @@
 			<tr>
 				<td><button dojoType="Button" id="modifyToProviderButton" widgetId="modifyToProviderButton"><!--{t}-->Send to Provider<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="modifyToProviderNoCoverButton" widgetId="modifyToProviderNoCoverButton"><!--{t}-->Send to Provider<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
-				<td><button dojoType="Button" id="modifyDirectlyButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--></button></td>
+				<td><button dojoType="Button" id="modifyDirectlyButton" widgetId="modifyDirectlyButton"><!--{t}-->File Directly<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="modifyDirectlyNoCoverButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
 				<td><button dojoType="Button"><!--{t}-->Split Batch<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="cancelButton"><!--{t}-->Cancel<!--{/t}--></button></td>
