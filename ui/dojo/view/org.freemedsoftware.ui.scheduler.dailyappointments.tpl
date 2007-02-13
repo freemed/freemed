@@ -61,11 +61,11 @@
 				val = w.getSelectedData()[0].patient_id;
 			}
 			if (val) {
-				freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
 				return true;
 			}
 		});
-		dailyCalendarSetDate(dojo.widget.byId('dailyAppointmentsDate').inputNode.value);
+		//dailyCalendarSetDate(dojo.widget.byId('dailyAppointmentsDate').inputNode.value);
 	});
 
 </script>
@@ -85,7 +85,7 @@
 	 valueField="scheduler_id" border="0" multiple="no">
 	<thead>
 		<tr>
-			<th field="date_of" dataType="String">Date</th>
+			<th field="date_of_mdy" dataType="Date">Date</th>
 			<th field="appointment_time" dataType="String">Time</th>
 			<th field="patient" dataType="String">Patient</th>
 			<th field="provider" dataType="String">Provider</th>
