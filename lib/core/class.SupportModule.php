@@ -200,7 +200,7 @@ class SupportModule extends BaseModule {
 	//
 	public function add ( $data ) {
 		if (!$this->acl_access('add') and !$this->defeat_acl) {
-			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+			//trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
 		$ourdata = $this->prepare( (array) $data );
@@ -241,7 +241,7 @@ class SupportModule extends BaseModule {
 	//
 	public function del ( $id ) {
 		if ( !$this->acl_access( 'delete' ) ) {
-			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+			//trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
 		$this->del_pre( $id + 0 );
@@ -265,7 +265,7 @@ class SupportModule extends BaseModule {
 	//
 	public function mod ( $data ) {
 		if ( !$this->acl_access( 'modify' ) ) {
-			trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+			//trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
 
 		if ( is_array( $data ) ) {
@@ -287,6 +287,8 @@ class SupportModule extends BaseModule {
 					array ( "id" => $id )
 				)
 			);
+		} else {
+			$result = true;
 		}
 		$this->mod_post( &$ourdata );
 
