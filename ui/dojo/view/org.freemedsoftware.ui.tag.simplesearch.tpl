@@ -29,22 +29,19 @@
 </script>
 
 <script language="javascript">
-	_container_.addOnLoad(function() {
-		// Define selection event for table
-		dojo.event.connect(dojo.widget.byId('tagSimpleTable'), "onSelect", function () {
-			var val;
-			if (dojo.widget.byId('tagSimpleTable').getSelectedData().length > 0) {
-				dojo.debug("found getSelectedData()");
-				val = dojo.widget.byId('tagSimpleTable').getSelectedData()[0].patient_record;
-			}
-			dojo.debug(dojo.json.serialize(dojo.widget.byId('tagSimpleTable').getSelectedData()[0]));
-			if (val) {
+	var tagSearch = {
+		selectPatient: function ( ) {
+			var val = dojo.widget.byId('tagSimpleTable').getSelectedData();
+			if (val != 'undefined') {
 				// Move to the patient EMR record in question
 				dojo.widget.byId('tagSimpleTable').disable();
-				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val.patient_record);
 				return true;
 			}
-		});
+		}
+	};
+
+	_container_.addOnLoad(function() {
 		// Initial load of data for search.
 		dojo.io.bind({
 			method : 'POST',
@@ -57,6 +54,12 @@
 			},
 			mimetype: "text/json"
 		});
+
+		dojo.event.connect(dojo.widget.byId('tagSimpleTable'), "onSelect", tagSearch, "selectPatient");
+	});
+
+	_container_.addOnUnLoad(function() {
+		dojo.event.disconnect(dojo.widget.byId('tagSimpleTable'), "onSelect", tagSearch, "selectPatient");
 	});
 </script>
 

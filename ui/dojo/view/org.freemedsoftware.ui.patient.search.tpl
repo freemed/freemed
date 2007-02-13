@@ -49,7 +49,7 @@
 			var val = dojo.widget.byId('patientSearch').getSelectedData();
 			if (val != 'undefined') {
 				dojo.widget.byId('patientSearch').disable();
-				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val.id);
 				return true;
 			}
 		}
