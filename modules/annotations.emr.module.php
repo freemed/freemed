@@ -29,6 +29,7 @@ class Annotations extends EMRModule {
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "58b7eb4e-a4dc-46db-841f-4e2bf3b64ddd";
+	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
@@ -68,47 +69,39 @@ class Annotations extends EMRModule {
 
 	public function mod ( $data ) { return false; }
 
-	// Method: createAnnotation
+	// Method: NewAnnotation
 	//
-	//	Create an annotation.
+	//	Append an annotation on an EMR attachment.
 	//
 	// Parameters:
 	//
-	//	$module - Module to create annotation in
+	//	$id - patient_emr table id for this EMR attachment
 	//
-	//	$id - ID number
+	//	$text - Text of the annotation to be added.
 	//
-	//	$text - Text to annotate
+	// Returns:
 	//
-	//	$patient - (optional) Patient number
+	//	Boolean, success.
 	//
-	function createAnnotation ($module, $id, $text, $patient = NULL) {
-		global $this_user;
-		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
+	public function NewAnnotation ( $id, $text ) {
+		$this_user = freemed::user_cache( );
+		$emr_query = "SELECT a.patient AS patient, m.module_table AS module_table, m.module_class AS module_class, a.oid AS oid FROM patient_emr a LEFT OUTER JOIN modules m ON m.module_table = a.module WHERE id=".($id+0);
+		$emr = $GLOBALS['sql']->queryRow( $emr_query );
 		$q = $GLOBALS['sql']->insert_query(
 			$this->table_name,
 			array(
-				'amodule' => strtolower($module),
-				'aid' => $id,
+				'amodule' => strtolower($emr['module_class']),
+				'aid' => $emr['oid'],
 				'atimestamp' => SQL__NOW,
-				'apatient' => ( $patient ? $patient : $this->lookupPatient($module, $id) ),
-				'atable' => $this->resolve_module_to_table($module),
+				'apatient' => $emr['patient'],
+				'atable' => $emr['module_table'],
 				'auser' => $this_user->user_number,
 				'annotation' => $text
 			)
 		);
 		$res = $GLOBALS['sql']->query($q);
-	} // end method createAnnotation
-
-	private function resolve_module_to_table ( $module ) {
-		$cache = freemed::module_cache();
-		foreach ( $cache AS $v ) {
-			if (strtolower($v['MODULE_CLASS']) == strtolower($module)) {
-				return $v['META_INFORMATION']['table_name'];
-			}
-		}
-		trigger_error(__("Could not resolve table name!"), E_USER_ERROR);
-	} // end method resolve_module_to_table
+		return true;
+	} // end method NewAnnotation
 
 	// Method: getAnnotations
 	//
