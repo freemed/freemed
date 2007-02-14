@@ -82,7 +82,7 @@
 					this.globalTagSpan += 1;
 	
 					// Add tag to list of displayed tags
-					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+this.globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'); return true;">' + tag + '</a><a class="tagRemoveLink" onClick="o.scriptScope.expireTag(\'tagspan'+this.globalTagSpan+'\', \''+tag+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
+					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+this.globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'); return true;">' + tag + '</a><a class="tagRemoveLink" onClick="patientTags.expireTag(\'tagspan'+this.globalTagSpan+'\', \''+tag+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
 	
 					// Remove previous value
 					obj.enable();
@@ -133,19 +133,19 @@
 				if (data) {
 					var buf = '';
 					for (var i=0; i<data.length; i++) {
-						this.globalTagSpan += 1;
-						buf += '<span id="tagspan'+this.globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'); return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="o.expireTag(\'tagspan'+this.globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
+						patientTags.globalTagSpan += 1;
+						buf += '<span id="tagspan'+patientTags.globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'); return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="patientTags.expireTag(\'tagspan'+patientTags.globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
 					}
 					document.getElementById('patientTagContainerInnerDiv').innerHTML += buf;
 				}
 			},
 			mimetype: "text/json"
 		});
-		//dojo.event.connect(dojo.widget.byId('tagSubmit'), "setValue", o, "addTag");
+		dojo.widget.byId('tagSubmit').inputNode.value = '';
 	});
 
 	_container_.addOnUnLoad(function(){
-		//dojo.event.disconnect(dojo.widget.byId('tagSubmit'), "setValue", o, "addTag");
+		dojo.widget.byId('tagSubmit').inputNode.value = '';
 	});
 
 </script>
