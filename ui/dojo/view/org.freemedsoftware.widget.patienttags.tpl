@@ -38,6 +38,12 @@
 		border: 1px solid #000000;
 		background-color: #ffffff;
 		width: 300px;
+		-moz-border-radius: 10px;
+		padding: 5px;
+		}
+
+	.patientTagHeader {
+		border-bottom: 1px solid #000000;
 		}
 
 	.tagLink {
@@ -55,57 +61,59 @@
 
 </style>
 <script language="javascript">
-	var globalTagSpan = 0;
-
-	function addTag ( obj, tag ) {
-		if (tag.length < 3) {
-			return false;
-		}
-		obj.disable();
-		dojo.io.bind({
-			method: 'POST',
-			content: {
-				param0: '<!--{$patient}-->',
-				param1: tag
-			},
-			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientTag.CreateTag',
-			load: function(type, data, evt) {
-				// Increment global counter
-				globalTagSpan += 1;
-
-				// Add tag to list of displayed tags
-				document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'); return true;">' + tag + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+tag+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
-
-				// Remove previous value
-				obj.enable();
-				obj.setValue('');
-				obj.setLabel('');
-				return true;
-			},
-			mimetype: "text/json"
-		});
-	} // end function addTag
-
-	function expireTag ( obj, tag ) {
-		if (!confirm("<!--{t}-->Are you sure you want to remove this tag?<!--{/t}-->")) { return false; }
-		dojo.io.bind({
-			method: 'GET',
-			content: {
-				param0: '<!--{$patient}-->',
-				param1: tag
-			},
-			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ExpireTag',
-			error: function(type, err) {
-				alert (err.message);
-			},
-			load: function(type, data, evt) {
-				// Remove this from display after it is expired
-				document.getElementById(obj).style.display = 'none';
-				return true;
-			},
-			mimetype: 'text/json'
-		});
-	} // end function expireTag
+	patientTags = {
+		globalTagSpan: 0,
+		addTag: function ( obj, tag ) {
+			//val obj = dojo.widget.byId('tagSubmit');
+			//tag = obj.getValue();
+			if (tag.length < 3) {
+				return false;
+			}
+			obj.disable();
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: '<!--{$patient}-->',
+					param1: tag
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientTag.CreateTag',
+				load: function(type, data, evt) {
+					// Increment global counter
+					this.globalTagSpan += 1;
+	
+					// Add tag to list of displayed tags
+					document.getElementById('patientTagContainerInnerDiv').innerHTML += '<span id="tagspan'+this.globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+tag+'\'); return true;">' + tag + '</a><a class="tagRemoveLink" onClick="o.scriptScope.expireTag(\'tagspan'+this.globalTagSpan+'\', \''+tag+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
+	
+					// Remove previous value
+					obj.enable();
+					obj.setValue('');
+					obj.setLabel('');
+					return true;
+				},
+				mimetype: "text/json"
+			});
+		}, // end function addTag
+		expireTag: function ( obj, tag ) {
+			if (!confirm("<!--{t}-->Are you sure you want to remove this tag?<!--{/t}-->")) { return false; }
+			dojo.io.bind({
+				method: 'GET',
+				content: {
+					param0: '<!--{$patient}-->',
+					param1: tag
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ExpireTag',
+				error: function(type, err) {
+					alert (err.message);
+				},
+				load: function(type, data, evt) {
+					// Remove this from display after it is expired
+					document.getElementById(obj).style.display = 'none';
+					return true;
+				},
+				mimetype: 'text/json'
+			});
+		} // end function expireTag
+	}; // end patientTags
 
 	// Autoloading routine
 	_container_.addOnLoad(function(){
@@ -125,26 +133,32 @@
 				if (data) {
 					var buf = '';
 					for (var i=0; i<data.length; i++) {
-						globalTagSpan += 1;
-						buf += '<span id="tagspan'+globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'); return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="expireTag(\'tagspan'+globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
+						this.globalTagSpan += 1;
+						buf += '<span id="tagspan'+this.globalTagSpan+'"><a class="tagLink" onClick="freemedLoad(\'<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag='+data[i]+'\'); return true;">' + data[i] + '</a><a class="tagRemoveLink" onClick="o.expireTag(\'tagspan'+this.globalTagSpan+'\', \''+data[i]+'\'); return true;"><sup>X</sup></a> &nbsp;</span>';
 					}
 					document.getElementById('patientTagContainerInnerDiv').innerHTML += buf;
 				}
 			},
 			mimetype: "text/json"
 		});
+		//dojo.event.connect(dojo.widget.byId('tagSubmit'), "setValue", o, "addTag");
 	});
+
+	_container_.addOnUnLoad(function(){
+		//dojo.event.disconnect(dojo.widget.byId('tagSubmit'), "setValue", o, "addTag");
+	});
+
 </script>
 <div id="patientTagContainerDiv" class="patientTagContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center" width="100%" style="background-color: #cccccc; border-bottom: 1px solid #aaaaaa;"><!--{t}-->Patient Tags<!--{/t}--></div>
+	<div align="center" width="100%" class="patientTagHeader"><!--{t}-->Patient Tags<!--{/t}--></div>
 	<div id="patientTagContainerInnerDiv"></div>
 	<div id="formDiv">
 	<input dojoType="Select"
 		autocomplete="false"
-		id="tagSumbit"
+		id="tagSumbit" widgetId="tagSumbit"
 		style="width: 150px;"
 		dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
-		setValue="addTag(this, arguments[0]);"
+		setValue="patientTags.addTag(this, arguments[0]);"
 		mode="remote" />
 	</div>
 </div>
