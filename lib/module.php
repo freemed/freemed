@@ -141,7 +141,8 @@ function register_module ($module_name) {
 		'module_stamp' => $lstat[7],
 		'module_handlers' => is_array($data['META_INFORMATION']['__handler']) ? join(',', array_keys($data['META_INFORMATION']['__handler'])) : '',
 		'module_associations' => is_array($data['META_INFORMATION']['__associations_list']) ? join(',', $data['META_INFORMATION']['__associations_list']) : '',
-		'module_meta' => serialize($data['META_INFORMATION'])
+		'module_meta' => serialize($data['META_INFORMATION']),
+		'module_hidden' => $data['MODULE_HIDDEN']
 	);
 
 	// Only do this if we are currently caching modules
