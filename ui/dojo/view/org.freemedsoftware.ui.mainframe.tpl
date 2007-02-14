@@ -28,8 +28,8 @@
 <script language="javascript">
 	function freemedPatientLoad ( patient ) {
 		var contentPane = dojo.widget.getWidgetById('freemedContent');
-		//contentPane.setUrl( "<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient );
-		window.location = "<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient;
+		contentPane.setUrl( "<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient );
+		//window.location = "<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=" + patient;
 		return true;
 	}
 </script>
@@ -40,7 +40,7 @@
 		activeSizing="0"
 		layoutAlign="client"
 	>
-		<div dojoType="ContentPane" id="leftPane" style="width: 100px; background-image: url(<!--{$htdocs}-->/images/stipedbg.png); overflow: auto;" href="<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.taskpane" layoutAlign="left" executeScripts="true"></div>
+		<div dojoType="ContentPane" id="leftPane" style="width: 100px; background-image: url(<!--{$htdocs}-->/images/stipedbg.png); overflow: auto;" href="<!--{$controller}-->/org.freemedsoftware.ui.taskpane" layoutAlign="left" executeScripts="true"></div>
 		<!-- this pane contains the actual application -->
 		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false">
 			<!--{include file="org.freemedsoftware.ui.scheduler.dailyappointments.tpl" MODE='widget'}-->

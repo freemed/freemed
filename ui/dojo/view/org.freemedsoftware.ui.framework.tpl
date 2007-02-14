@@ -52,7 +52,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 
 	function openHelpPage ( ) {
 		// TODO: make sure to open help for the current topic, as stored by a global JS variable ...
-		var popup = window.open('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
+		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
 	}
 
 	function freemedLogout ( ) {
@@ -60,13 +60,13 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 		logoutDialog.show();
 		dojo.io.bind({
 			method : 'POST',
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Login.Logout',
+			url: '<!--{$relay}-->/org.freemedsoftware.public.Login.Logout',
 			error: function(type, data, evt) {
 				alert('FreeMED has encountered an error. Please try again.');
 			},
 			load: function(type, data, evt) {
 				if (data) {
-					location.href = '<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.login';	
+					location.href = '<!--{$controller}-->/org.freemedsoftware.ui.login';	
 				} else {
 					logoutDialog.hide();
 				}
@@ -159,11 +159,11 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	dock.setIconsOffset(5);
 	dock.addIcon(
 		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/Quick-Cal.png" } } ),
-		{ code:"freemedLoad('org.freemedsoftware.ui.user.form');" }
+		{ code:"freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.user.form');" }
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stocks.png" } } ),
-		{ link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.ui.billing"}
+		{ code:"freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing');"}
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Rolodex.png" } } ),
@@ -175,7 +175,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Yellow-Pages.png" } } ),
-		{ link:"<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe" }
+		{ code:"freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.mainframe');" }
 	);
 //	dock.setScreenAlign(euDOWN, 5);
 </script>
