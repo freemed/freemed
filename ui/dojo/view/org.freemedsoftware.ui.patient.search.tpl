@@ -56,6 +56,8 @@
 	};
 
 	_container_.addOnLoad(function() {
+		dojo.widget.byId('smartSearch').setValue('');
+		dojo.widget.byId('patientTags').setValue('');
 		dojo.widget.byId('smartSearch').textInputNode.focus();
 		dojo.event.connect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.connect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
@@ -64,6 +66,8 @@
 	_container_.addOnUnLoad(function() {
 		dojo.event.disconnect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.disconnect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
+		dojo.widget.byId('smartSearch').setValue('');
+		dojo.widget.byId('patientTags').setValue('');
 	});
 
 </script>
@@ -107,7 +111,7 @@
 		<!--{t}-->Tag Search<!--{/t}--> :
 		<input dojoType="Select" value=""
 		 autocomplete="false"
-		 id="patientTags"
+		 id="patientTags" widgetId="patientTags"
 		 setValue="if (arguments[0]) { freemedLoad( '<!--{$controller}-->/org.freemedsoftware.ui.tag.simplesearch?tag=' + arguments[0] ); }"
 		 style="width: 300px;"
 		 dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
