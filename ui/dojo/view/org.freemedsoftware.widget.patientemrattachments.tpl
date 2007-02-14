@@ -28,40 +28,60 @@
 	dojo.require("dojo.widget.FilteringTable");
 	dojo.require('dojo.widget.DropdownDatePicker');
 
-	function patientEmrAction ( action, id ) {
-		// Extract from data store...
-		var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( id );
-
-		switch ( action ) {
-			case 'lock':
-			if (!confirm("<!--{t}-->Are you sure you want to lock this record?<!--{/t}-->")) {
+	patientEmrAttachments = {
+		itemsToPrint: [],
+		patientEmrAction: function ( action, id ) {
+			// Extract from data store...
+			var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( id );
+	
+			switch ( action ) {
+				case 'lock':
+				if (!confirm("<!--{t}-->Are you sure you want to lock this record?<!--{/t}-->")) {
+					return false;
+				}
+				dojo.io.bind({
+					method: 'POST',
+					content: {
+						param0: x.oid
+						},
+					url: '<!--{$relay}-->/org.freemedsoftware.module.' + x.module_namespace + '.lock',
+					error: function() { },
+					load: function( type, data, evt ) {
+						if (data) {
+							// Force reload
+							patientLoadEmrAttachments();
+						} else {
+							alert('<!--{t}-->Failed to lock record.<!--{/t}-->');
+						}
+					},
+					mimetype: "text/json"
+				});
+				break;
+	
+				default:
+				alert( "TODO: " + action + " " + id );
+				break;
+			}
+		}, // end patientEmrAction
+		emrDateFilter: function ( dt ) { 
+			//return (dt > new Date('6/20/05') && dt < new Date('11/17/08'));
+			return (dt >= new Date(dojo.widget.byId('emrRangeBegin').inputNode.value) && dt <= new Date(dojo.widget.byId('emrRangeEnd').inputNode.value));
+		},
+		printMultiple: function ( ) {
+			var w = dojo.widget.byId('patientEmrAttachments');
+			var val = w.getSelectedData();
+			if ( val.length == 0 ) {
+				alert("<!--{t}-->No EMR attachments were selected.<!--{/t}-->");
 				return false;
 			}
-			dojo.io.bind({
-				method: 'POST',
-				content: {
-					param0: x.oid
-					},
-				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.' + x.module_namespace + '.lock',
-				error: function() { },
-				load: function( type, data, evt ) {
-					if (data) {
-						// Force reload
-						patientLoadEmrAttachments();
-					} else {
-						alert('<!--{t}-->Failed to lock record.<!--{/t}-->');
-					}
-				},
-				mimetype: "text/json"
-			});
-			break;
-
-			default:
-			alert( "TODO: " + action + " " + id );
-			break;
+			this.itemsToPrint = [];
+			for (i=0; i<val.length; i++) {
+				this.itemsToPrint[i] = val[i].id;
+				dojo.widget.byId('emrPrintDialog').show();
+			}
 		}
-	} // end patientEmrAction
-
+	};
+	
 	function patientLoadEmrAttachments ( ) {
 		// Initial data load
 		dojo.io.bind({
@@ -76,14 +96,14 @@
 				if (typeof(data) == 'object') {
 					for (i=0; i<data.length; i++) {	
 						data[i]['actions'] = '';
-						data[i]['actions'] += "<a onClick=\"patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border\"0\" /></a>";
+						data[i]['actions'] += "<a onClick=\"patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" /></a>";
 						if (data[i]['locked'] == 0) {
 							// All unlocked actions go here:
-							data[i]['actions'] += "<a onClick=\"patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border\"0\" /></a>";
-							data[i]['actions'] += "<a onClick=\"patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border\"0\" /></a>";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" /></a>";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" /></a>";
 						} else {
 							// All locked stuff goes here:
-							data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border\"0\" /></a>";
+							data[i]['actions'] += "<a href=\"\"><img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" /></a>";
 						}
 					}
 					dojo.widget.byId('patientEmrAttachments').store.setData( data );
@@ -93,12 +113,7 @@
 		});
 	}
 
-	function emrDateFilter ( dt ) { 
-		return (dt > new Date('6/20/05') && dt < new Date('11/17/08'));
-		//return (dt >= new Date(dojo.widget.byId('emrRangeBegin').inputNode.value) && dt <= new Date(dojo.widget.byId('emrRangeEnd').inputNode.value));
-	}
-
-	dojo.addOnLoad(patientLoadEmrAttachments);
+	_container_.addOnLoad(patientLoadEmrAttachments);
 
 </script>
 
@@ -111,7 +126,8 @@
 		-
 		<input dojoType="DropdownDatePicker" id="emrRangeEnd" />
 	</td>
-	<td><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').setFilter('date_mdy', emrDateFilter);">Apply</button></td>
+	<td align="right"><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').setFilter('date_mdy', patientEmrAttachments.emrDateFilter);"><!--{t}-->Apply<!--{/t}--></button></td>
+	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.printMultiple();"><!--{t}-->Print<!--{/t}--></button></td>
 </tr>
 </table>
 </div>
@@ -131,5 +147,20 @@
 	</thead>
 	<tbody></tbody>
 	</table>
+</div>
+
+<div dojoType="Dialog" style="display: none;" id="emrPrintDialog" widgetId="emrPrintDialog">
+	<form>
+	<table border="0">
+		<tr>
+			<td colspan="2" align="center">
+				<table border="0" align="center"><tr>
+				<td align="right"><button dojoType="Button"><!--{t}-->Print<!--{/t}--></button></td>
+				<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('emrPrintDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button></td>
+				</tr></table>
+			</td>
+		</tr>
+	</table>
+	</form>
 </div>
 
