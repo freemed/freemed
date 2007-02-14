@@ -66,7 +66,7 @@
 <div class="searchHeader">
 	<table border="0" cellpadding="0" cellspacing="0" width="98%"><tr>
 	<td align="left"><b><!--{t}-->Tags found for<!--{/t}--></b>: "<!--{$tag|escape}-->"</td>
-	<td align="right" style="padding-right: 10px;"><img src="<!--{$htdocs}-->/images/magnifying_glass.png" border="0" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.tag.searchform'); return true;" /></td>
+	<td align="right" style="padding-right: 10px;"><img src="<!--{$htdocs}-->/images/magnifying_glass.png" border="0" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.search'); return true;" /></td>
 	</tr></table>
 </div>
 
