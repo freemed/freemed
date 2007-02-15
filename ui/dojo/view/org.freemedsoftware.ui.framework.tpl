@@ -42,6 +42,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	dojo.require("dojo.widget.LinkPane");
 	dojo.require("dojo.widget.SplitContainer");
 	dojo.require("dojo.widget.Tooltip");
+	dojo.require("dojo.widget.Toaster");
 	dojo.require("dojo.widget.Select");
 	dojo.require("dojo.widget.Dialog");
 	dojo.hostenv.writeIncludes();
@@ -53,6 +54,24 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	function openHelpPage ( ) {
 		// TODO: make sure to open help for the current topic, as stored by a global JS variable ...
 		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
+	}
+
+	function freemedMessage( message, type ) {
+		var duration;
+		switch (type) {
+			case 'ERROR':
+			duration = 3000;
+			break;
+
+			case 'WARNING':
+			default:
+			duration = 1000;
+			break;
+		}
+		dojo.event.topic.publish(
+			"freemedMessage",
+			{message: message, type: type, duration: duration}
+		);
 	}
 
 	function freemedLogout ( ) {

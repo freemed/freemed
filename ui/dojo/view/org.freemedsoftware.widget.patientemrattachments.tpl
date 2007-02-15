@@ -48,6 +48,7 @@
 						this.currentItem = 0;
 						// Force reload
 						patientLoadEmrAttachments();
+						freemedMessage("<!--{t}-->Added annotation.<!--{/t}-->", "INFO");
 					} else {
 						alert('<!--{t}-->Failed to annotate record.<!--{/t}-->');
 					}

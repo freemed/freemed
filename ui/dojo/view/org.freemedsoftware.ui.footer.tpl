@@ -25,5 +25,9 @@
 
 </div>
 
+<!-- Toaster -->
+
+<div dojoType="Toaster" id="freemedToaster" positionDirection="br-left" duration="1000" messageTopic="freemedMessage"></div>
+
 </body>
 </html>

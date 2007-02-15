@@ -150,3 +150,10 @@ tbody.scrollContent tr.selected:hover td {
 	background-color: #ccccff;
 	}
 
+/* Force dojo buttons to have some padding */
+.dojoButtonContents div { padding: 5px; }
+
+/* A little bit of styling for toaster notifications */
+.dojoToasterContainer {
+	border: 2px solid #000000;
+	}
