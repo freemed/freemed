@@ -97,6 +97,26 @@ class UnreadDocuments extends SupportModule {
 		); 
 	} // end method MainMenuNotify
 
+	// Method: NumberOfPages
+	//
+	//	Expose the number of pages of a Djvu document
+	//
+	// Parameters:
+	//
+	//	$id - Table record id
+	//
+	// Returns:
+	//
+	//	Integer, number of pages in the specified document
+	//
+	public function NumberOfPages ( $id ) {
+		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
+			PHYSICAL_LOCATION . '/data/documents/unread/' .
+			$r['urffilename']);
+		return $djvu->NumberOfPages();
+	} // end method NumberOfPages
+
 	// Method: GetDocumentPage
 	//
 	//	Get fax/document page image as JPEG.
@@ -123,6 +143,22 @@ class UnreadDocuments extends SupportModule {
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
+
+	// Method: GetAll
+	//
+	//	Get all records for the current user.
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function GetAll ( ) {
+		$user = freemed::user_cache( );
+		$provider = $user->getPhysician();
+		if (! $provider ) { return array(); }
+		$query = "SELECT u.*,DATE_FORMAT(u.urfdate, '%m/%d/%Y') AS urfdate_mdy, c.description AS category, CONCAT(p.ptfname, ' ', p.ptlname, ' (', p.ptid, ')') AS patient FROM ".$this->table_name." u LEFT OUTER JOIN documents_tc c ON c.id = u.urftype LEFT OUTER JOIN patient p ON p.id=u.urfpatient WHERE urfphysician=".($provider+0)." ORDER BY id DESC";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method GetAll
 
 	// Method: MoveToAnotherProvider
 	//

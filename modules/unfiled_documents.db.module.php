@@ -113,10 +113,6 @@ class UnfiledDocuments extends SupportModule {
 			system("$command");
 		}
 
-		// Move actual file to new location
-		//echo "mv data/documents/unfiled/$filename data/documents/unread/$filename -f";
-		if ($filename) { system('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f'); }
-
 		// Figure category / type
 		$cat = $GLOBALS['sql']->get_link( 'documents_tc', $data['category'] );
 
@@ -153,9 +149,22 @@ class UnfiledDocuments extends SupportModule {
 			// Move actual file to new location
 			//echo "mv data/documents/unfiled/$filename $new_filename -f<br/>\n";
 			$dirname = dirname($new_filename);
-			system('mkdir -p '.escapeshellarg($dirname));
-			if ($filename) { system('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f'); syslog(LOG_INFO, "UnfiledDocument| mv data/documents/unfiled/$filename $new_filename -f"); }
+			$output = system('mkdir -p '.escapeshellarg($dirname));
+			syslog(LOG_INFO, 'mkdir -p '.escapeshellarg($dirname));
+			syslog(LOG_INFO, "DEBUG: $output");
+			if ($filename) {
+				$output = exec('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f');
+				syslog(LOG_INFO, "UnfiledDocument| mv data/documents/unfiled/$filename $new_filename -f"); }
+				syslog(LOG_INFO, "DEBUG: $output");
 		} else {
+			// Move actual file to new location
+			//echo "mv data/documents/unfiled/$filename data/documents/unread/$filename -f";
+			if ($filename) {
+				$output = exec('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f');
+				syslog(LOG_INFO, 'mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f');
+				syslog(LOG_INFO, "DEBUG: $output");
+			}
+
 			// Insert new table query in unread
 			$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 				'unreaddocuments',
