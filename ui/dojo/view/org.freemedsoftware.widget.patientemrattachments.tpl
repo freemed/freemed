@@ -56,6 +56,10 @@
 				mimetype: "text/json"
 			});
 		},
+		showAnnotations: function ( id ) {
+			dojo.widget.byId('emrSimpleDialog').show();
+			dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.ui.annotation.show?id=' + id );
+		},
 		patientEmrAction: function ( action, id ) {
 			// Extract from data store...
 			var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( id );
@@ -129,17 +133,21 @@
 				if (typeof(data) == 'object') {
 					for (i=0; i<data.length; i++) {	
 						data[i]['actions'] = '';
-						data[i]['actions'] += "<a onClick=\"patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>";
+						data[i]['actions'] += "<a onClick=\"patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
 						if (data[i]['locked'] == 0) {
 							// All unlocked actions go here:
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>";
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
 						} else {
 							// All locked stuff goes here:
-							data[i]['actions'] += "<a href=\"\"><img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}--> /></a>";
+							data[i]['actions'] += "<a href=\"\"><img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}--> /></a>&nbsp;";
+						}
+						if (data[i]['annotation'] != null) {
+							data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}--> /></a>";
+			
 						}
 						// Common things
-						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>";
+						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;";
 					}
 					dojo.widget.byId('patientEmrAttachments').store.setData( data );
 				}
@@ -184,6 +192,8 @@
 	</table>
 </div>
 
+<!-- Print dialog -->
+
 <div dojoType="Dialog" style="display: none;" id="emrPrintDialog" widgetId="emrPrintDialog">
 	<form>
 	<table border="0">
@@ -214,6 +224,8 @@
 	</form>
 </div>
 
+<!-- Annotation creation dialog -->
+
 <div dojoType="Dialog" style="display: none;" id="emrAnnotationDialog" widgetId="emrAnnotationDialog">
 	<form>
 	<table border="0">
@@ -230,5 +242,14 @@
 		</tr>
 	</table>
 	</form>
+</div>
+
+<!-- All purpose, simple dialog -->
+
+<div dojoType="Dialog" style="display: none;" id="emrSimpleDialog" widgetId="emrSimpleDialog">
+	<div dojoType="ContentPane" id="emrSimpleDialogContent" cacheContent="false" executeScripts="true" adjustPaths="false" style="height: 100%; width: 100%;"></div>	
+	<div align="center">
+		<button dojoType="Button" onClick="dojo.widget.byId('emrSimpleDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button>
+	</div>
 </div>
 

@@ -103,13 +103,11 @@ class Annotations extends EMRModule {
 		return true;
 	} // end method NewAnnotation
 
-	// Method: getAnnotations
+	// Method: GetAnnotations
 	//
 	//	Get annotations, if present.
 	//
 	// Parameters:
-	//
-	//	$module - Module to examine for annotations
 	//
 	//	$id - ID number
 	//
@@ -117,13 +115,11 @@ class Annotations extends EMRModule {
 	//
 	//	Array of annotations, otherwise false.
 	//
-	public function getAnnotations ($module, $id) {
-		$q = "SELECT * FROM ".$this->table_name." ".
-			"WHERE amodule = '".addslashes($module)."' ".
-			"AND aid = '".addslashes($id)."'";
-		$res = $GLOBALS['sql']->queryAll( $q );
-		return $res;
-	} // end method getAnnotations
+	public function GetAnnotations ( $id ) {
+		$emr = $GLOBALS['sql']->queryOne( "SELECT annotation FROM patient_emr WHERE id=". ($id + 0) );
+		$q = "SELECT a.*, u.userdescrip AS user_description FROM annotations a LEFT OUTER JOIN user u ON a.auser=u.id WHERE FIND_IN_SET( a.id, '${emr}' )";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAnnotations
 
 	// Method: outputAnnotations
 	//
