@@ -34,17 +34,6 @@
 
 *}-->
 <style type="text/css">
-	.patientTagContainer {
-		border: 1px solid #000000;
-		background-color: #ffffff;
-		width: 300px;
-		-moz-border-radius: 10px;
-		padding: 5px;
-		}
-
-	.patientTagHeader {
-		border-bottom: 1px solid #000000;
-		}
 
 	.tagLink {
 		text-decoration: none;
@@ -53,10 +42,6 @@
 	.tagLink:hover, .tagRemoveLink:hover {
 		font-weight: bold;
 		cursor: pointer;
-		}
-
-	.form {
-		margin: 0;
 		}
 
 </style>
@@ -149,8 +134,8 @@
 	});
 
 </script>
-<div id="patientTagContainerDiv" class="patientTagContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center" width="100%" class="patientTagHeader"><!--{t}-->Patient Tags<!--{/t}--></div>
+<div id="patientTagContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
+	<div align="center" width="100%" class="patientEmrWidgetHeader"><b><!--{t}-->Patient Tags<!--{/t}--></b></div>
 	<div id="patientTagContainerInnerDiv"></div>
 	<div id="formDiv">
 	<input dojoType="Select"

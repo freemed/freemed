@@ -26,6 +26,10 @@ html, body {
 	size: 8pt;
 	}
 
+form {
+	margin: 0;
+	}
+
 .dojoSplitPane { margin: 5px; }
 .dojoToolTip { background: #ccccff; padding: 2px; }
 .dojoDialog { 
@@ -157,3 +161,16 @@ tbody.scrollContent tr.selected:hover td {
 .dojoToasterContainer {
 	border: 2px solid #000000;
 	}
+
+.patientEmrWidgetContainer {
+	border: 1px solid #000000;
+	background-color: #ffffff;
+	width: 300px;
+	-moz-border-radius: 10px;
+	padding: 5px;
+	}
+
+.patientEmrWidgetHeader {
+	border-bottom: 1px solid #000000;
+	}
+ 
