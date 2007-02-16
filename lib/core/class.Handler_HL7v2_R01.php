@@ -61,6 +61,7 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 
 		$obr_count = -1; $orc_reached = false;
 		foreach ($this->parser->map AS $pos => $element) {
+			$element['type'] = trim($element['type']);
 			if ($element['type'] == 'ORC') { $orc_reached = true; }
 			// Increment at OBR (record break)
 			if ($element['type'] == 'OBR') { $obr_count++; }
@@ -68,7 +69,7 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 			if ($element['type'] != 'NTE') { $last_segment = $element['type']; }
 			switch ($element['type']) {
 				case 'OBR':
-				$local[$obr_count]['OBR'] = $this->parser->message[$element['type']][$element['position']];
+				$local[$obr_count]['OBR'] = $this->parser->message[$element['type']][$element['position']-1];
 				break; // OBR
 
 				case 'OBX':
@@ -115,7 +116,8 @@ class Handler_HL7v2_R01 extends Handler_HL7v2 {
 			}
 			die("No orc");
 		} else {
-			die("orc, assume lab data");
+			syslog( LOG_INFO, get_class($this)."| ORC found, assuming lab data" );
+			//die("orc, assume lab data");
 		}
 
 		// Now loop through locals and add them as labs/labresults

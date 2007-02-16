@@ -128,6 +128,7 @@ class Parser_HL7v2 {
 		// Loop through messages
 		$count = 0;
 		foreach ($segments AS $segment) {
+			$segment = trim( $segment );
 			$count++;
 
 			// Log segment
