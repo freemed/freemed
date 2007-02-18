@@ -36,7 +36,8 @@
 <script language="javascript">
 	var patientReferrals = {
 		addReferralForm: function ( ) {
-			alert('Referral add form display');
+			dojo.widget.byId('emrSimpleDialog').show();
+			dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.module.referrals.form' );
 		},
 		initialLoad: function ( ) {
 			dojo.io.bind({
@@ -50,7 +51,7 @@
 				},
 				load: function(type, data, evt) {
 					document.getElementById('patientReferralContainerInnerDiv').innerHTML = '';
-					if (data) {
+					if (data.length > 0) {
 						var buf = '';
 						buf += "<table border=\"0\"><tr><th><!--{t}-->Provider<!--{/t}--></th><th><!--{t}-->Date<!--{/t}--></th></tr>";
 						for (var i=0; i<data.length; i++) {
@@ -59,6 +60,10 @@
 						}
 						buf += "</table>";
 						document.getElementById('patientReferralContainerInnerDiv').innerHTML += buf;
+					} else {
+						var buf = "<center><!--{t}-->No active referrals.<!--{/t}--></center>";
+						document.getElementById('patientReferralContainerInnerDiv').innerHTML = buf;
+
 					}
 				},
 				mimetype: "text/json"
