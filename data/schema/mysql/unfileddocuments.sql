@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `unfileddocuments` (
+	uffstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	uffdate			DATE NOT NULL,
 	ufffilename		VARCHAR (150) NOT NULL,
 	id			SERIAL
