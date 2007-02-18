@@ -27,16 +27,30 @@
 	style="overflow: hidden; width: 100%; height: 100%;"
 	containerNodeClass="accordionBody">
 
-	<div dojoType="ContentPane" selected="true" label="<!--{t}-->Patients<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" selected="true" label="<!--{t}-->System<!--{/t}-->" class="basicPane">
 
-			<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.search');">
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.dashboard');">
+			<img src="<!--{$htdocs}-->/images/home_icon.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Dashboard<!--{/t}-->
+		</div>
+
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.dailyappointments');">
+			<img src="<!--{$htdocs}-->/images/pda_icon.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Day Schedule<!--{/t}-->
+		</div>
+
+	</div>
+
+	<div dojoType="ContentPane" label="<!--{t}-->Patients<!--{/t}-->" class="basicPane">
+
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.search?clear=1');">
 			<img src="<!--{$htdocs}-->/images/search.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Search<!--{/t}-->
 		</div>
 
 	</div>
 
-	<div dojoType="ContentPane" selected="true" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unfiled');">
 			<img src="<!--{$htdocs}-->/images/unfiled.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Unfiled<!--{/t}-->

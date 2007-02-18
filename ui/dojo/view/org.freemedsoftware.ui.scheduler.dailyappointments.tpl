@@ -23,37 +23,33 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.framework.tpl"}-->
-<!--{/if}-->
-
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.FilteringTable");
 	dojo.require('dojo.widget.DropdownDatePicker');
 
-	function dailyCalendarSetDate ( date ) {
-		// Initial data load
-		dojo.io.bind({
-			method: 'POST',
-			content: {
-				param0: date,
-				param1: '<!--{$SESSION.authdata.user_record.userrealphy}-->'
-
-			},
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointments',
-			error: function() { },
-			load: function( type, data, evt ) {
-				if (data) {
-					dojo.widget.byId('dailyPatientAppointments').store.setData( data );
-				}
-			},
-			mimetype: "text/json"
-		});
-	}
-
-	dojo.addOnLoad(function() {
-		dojo.event.connect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", function () {
+	var o = {
+		dailyCalendarSetDate: function ( ) {
+			var date = dojo.widget.byId('dailyAppointmentsDate').inputNode.value;
+			// Initial data load
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: date,
+					param1: '<!--{$SESSION.authdata.user_record.userrealphy}-->'
+	
+				},
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointments',
+				error: function() { },
+				load: function( type, data, evt ) {
+					if (data) {
+						dojo.widget.byId('dailyPatientAppointments').store.setData( data );
+					}
+				},
+				mimetype: "text/json"
+			});
+		},
+		onSelect: function () {
 			var w = dojo.widget.byId('dailyPatientAppointments');
 			var val;
 			if (w.getSelectedData().length > 0) {
@@ -64,17 +60,26 @@
 				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
 				return true;
 			}
-		});
-		//dailyCalendarSetDate(dojo.widget.byId('dailyAppointmentsDate').inputNode.value);
+		}
+	};
+
+	_container_.addOnLoad(function() {
+		alert('onload');
+		dojo.event.connect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
+		dojo.event.connect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
 	});
 
+	_container_.addOnUnLoad(function() {
+		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
+		dojo.event.disconnect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
+	});
 </script>
 
 <div align="center" style="size: 10pt; border: 1px solid #5555ff; padding: 5px; background-color: #aaaaff;">
 <table border="0">
 	<tr>
 		<td><b>Today's Patients</b></td>
-		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" onValueChanged="dailyCalendarSetDate(dojo.widget.byId('dailyAppointmentsDate').inputNode.value);"></td>
+		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" widgetId="dailyAppointmentsDate" /></td>
 	</tr>
 </table>
 </div>
@@ -106,8 +111,4 @@
 	</tbody>
 	</table>
 </div>
-
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.footer.tpl"}-->
-<!--{/if}-->
 
