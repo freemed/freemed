@@ -35,3 +35,5 @@
 
 <!--{/if}-->
 
+<!--{include file="org.freemedsoftware.widget.dashboard.messagesmodule.tpl"}-->
+

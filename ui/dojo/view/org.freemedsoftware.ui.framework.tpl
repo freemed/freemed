@@ -122,6 +122,10 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	.basicPane {
 		background-image: url(<!--{$htdocs}-->/images/stipedbg.png);
 		}
+
+	.dashboardWidgetContainer {
+		background-image: url(<!--{$htdocs}-->/images/brushed.gif);
+		}
 </style>
 
 <!-- Include dock -->

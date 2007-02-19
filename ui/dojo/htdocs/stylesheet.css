@@ -172,5 +172,37 @@ tbody.scrollContent tr.selected:hover td {
 
 .patientEmrWidgetHeader {
 	border-bottom: 1px solid #000000;
+	font-weight: bold;
 	}
- 
+
+/* ----------------- Dashboard Container -------------------- */
+
+.dashboardWidgetContainer {
+	/* Dialog box-looking stuff */
+	width: 30%;
+	border: 2px solid #555555;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-bottomright: 10px;
+	padding: 0px;
+	font-family: sans-serif;
+	/* Alignment stuff */
+	float: left;
+	height: 200px;
+	margin: .5em;
+	}
+
+.dashboardWidgetContainer h4 {
+	margin: 0px;
+	padding: 5px;
+	text-align: right;
+	text-weight: bold;
+	font-size: 10pt;
+	background: #000000;
+	color: #ffffff;
+	}
+
+.dashboardWidgetContainer div {
+	padding: 5px;
+	font-size: 10pt;
+	}
+

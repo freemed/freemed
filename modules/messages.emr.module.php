@@ -77,11 +77,59 @@ class MessagesModule extends EMRModule {
 		parent::__construct();
 	} // end constructor MessagesModule
 
-	public function UnreadMessages ( ) {
-		// Ask the API how many messages we have
-		$m = CreateObject('org.freemedsoftware.api.Messages');
-		if (!$m->view_per_user(true)) { return false; }
-		return count($m->view_per_user(true));
+	// Method: GetAllByTag
+	//
+	//	Grab hash of messages based on tags.
+	//
+	// Parameters:
+	//
+	//	$tag - (optional) Tag to search for, defaults to none.
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function GetAllByTag ( $tag = '' ) {
+		$this_user = freemed::user_cache();
+		$q = "SELECT m.id AS id, m.msgread AS read_status, CASE m.msgby WHEN 0 THEN 'System' ELSE u.userdescrip END AS from_user, m.msgtime AS stamp, DATE_FORMAT(m.msgtime, '%m/%d/%Y') AS stamp_mdy, CASE m.msgpatient WHEN 0 THEN m.msgperson ELSE CONCAT( pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')' ) END AS regarding, m.msgpatient AS patient_id, m.msgsubject AS subject, m.msgurgency AS urgency, m.msgtext AS content FROM messages m LEFT OUTER JOIN patient pt ON pt.id=m.msgpatient LEFT OUTER JOIN user u ON m.msgby=u.id WHERE m.msgtag='".addslashes( $tag )."' AND m.msgfor=".( $this_user->user_number + 0 );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAllByTag
+
+	// Method: MessageTags
+	//
+	//	List of all message tags associated with a user.
+	//
+	// Returns:
+	//
+	//	Array of tags
+	//
+	public function MessageTags ( ) {
+		$this_user = freemed::user_cache();
+		$q = "SELECT DISTINCT msgtag AS tag FROM messages WHERE msgfor=".( $this_user->user_number + 0 )." AND LENGTH(msgtag) > 1 ORDER BY msgtag";
+		$r = $GLOBALS['sql']->queryCol( $q );
+		$return[] = array ( "INBOX", '' );
+		foreach ( $r AS $v ) {
+			$return[] = array ( $v, $v );
+		}
+		return $return;
+	} // end method MessageTags
+
+	// Method: UnreadMessages
+	//
+	//	Number of unread messages.
+	//
+	// Parameters:
+	//
+	//	$ts - (optional) Timestamp to use as marker.
+	//
+	// Returns:
+	//
+	//	Number of unread messages for the current user
+	//
+	public function UnreadMessages ( $ts = false ) {
+		$this_user = freemed::user_cache();
+		$q = "SELECT COUNT(*) AS count FROM messages WHERE msgfor=".( $this_user->user_number + 0 )." AND msgread=0 AND msgtag='' ".( $ts ? " AND msgstamp >= ".( $ts + 0 ) : "" );
+		return $GLOBALS['sql']->queryOne( $q ) + 0;
 	} // end method UnreadMessages
 
 	function add_pre ( &$data ) {
