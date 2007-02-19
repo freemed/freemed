@@ -205,9 +205,8 @@ class Messages {
 	//	<view_per_patient>
 	//	<view_per_user>
 	//
-	function view ($unread_only=false, $patient=NULL) {
-		global $this_user;
-		if (!is_object($this_user)) $this_user = CreateObject('org.freemedsoftware.core.User');
+	public function view ($unread_only=false, $patient=NULL) {
+		$this_user = freemed::user_cache();
 
 		// Perform search
 		if ($patient != NULL) {
@@ -221,7 +220,7 @@ class Messages {
 			"msgfor='".addslashes($this_user->user_number)."'".
 			($unread_only ? " AND msgread='0' AND msgtag=''" : "" );
 		}
-		$result = $GLOBALS['sql']->query($query);
+		$result = $GLOBALS['sql']->queryAll($query);
 
 		if (count($result)) {
 			foreach ($result AS $r) {
@@ -263,7 +262,7 @@ class Messages {
 	//	<view>
 	//	<view_per_user>
 	//
-	function view_per_patient ( $patient, $unread_only = false ) {
+	public function view_per_patient ( $patient, $unread_only = false ) {
 		return $this->view ( $unread_only, $patient );
 	} // end method view_per_patient
 
@@ -284,7 +283,7 @@ class Messages {
 	//	<view>
 	//	<view_per_patient>
 	//
-	function view_per_user ( $unread_only = false ) {
+	public function view_per_user ( $unread_only = false ) {
 		return $this->view ( $unread_only );
 	} // end method view_per_user
 
