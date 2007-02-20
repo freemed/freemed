@@ -1,0 +1,6 @@
+$Id$
+
+CHTML Format is just a tarball (.tar.gz) file with the extension .chtml . It
+contains a directory of files, HTML and supporting files, in its root
+directory.
+
