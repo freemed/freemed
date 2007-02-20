@@ -38,6 +38,7 @@
 
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
+	dojo.require("dojo.widget.Editor2");
 	dojo.require("dojo.widget.FilteringTable");
 
 	// Special scope variable because of ContentPane
@@ -50,10 +51,12 @@
 			// Clear HTML
 			document.getElementById('messageViewPaneDiv').innerHTML = '';
 			// Grab messages
+			var val = dojo.widget.byId('messagesTag').getValue();
+			if ( val == 'INBOX' ) { val = ''; }
 			dojo.io.bind({
 				method: 'POST',
 				content: {
-					param0: dojo.widget.byId('messagesTag').getValue()
+					param0: val
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.GetAllByTag',
 				error: function() { },
@@ -69,7 +72,8 @@
 			d.innerHTML = '<pre>' + data.content + '</pre>';
 		},
 		newMessage: function ( ) {
-			alert('newMessage');
+			dojo.widget.byId('newMessageDialog').show();
+			document.getElementById('msgsubject').focus();
 		},
 		deleteMessage: function ( ) {
 			var msg = this.getSelectedMessage();
@@ -94,18 +98,43 @@
 			} else {
 				alert('select tag view');
 			}
+		},
+		createMessageCallback: function ( ) {
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: {
+						user: dojo.widget.byId('msgfor').getValue(),
+						subject: document.getElementById('msgsubject').value,
+						patient: document.getElementById('msgpatient').value,
+						text: document.getElementById('msgtext').value
+					}
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.send',
+				error: function( type, data, evt ) {
+					//alert("<!--{t}-->Unable to complete.<!--{/t}-->");
+					dojo.widget.byId('newMessageDialog').hide();
+					this.loadMessages();
+				},
+				load: function( type, data, evt ) {
+					dojo.widget.byId('newMessageDialog').hide();
+					this.loadMessages();
+				},
+				mimetype: "text/json"
+			});
 		}
 	};
 
 	// Handle in context loading for these widgets
 	_container_.addOnLoad(function(){
-		dojo.widget.byId('messagesTag').setSelectedValue( 'INBOX' );
+		dojo.widget.byId('messagesTag').setValue( 'INBOX' );
 		o.loadMessages();
 		dojo.event.connect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
 		dojo.event.connect(dojo.widget.byId('messageNewButton'), "onClick", o, "newMessage");
 		dojo.event.connect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
+		dojo.event.connect(dojo.widget.byId('createMessageButton'), "onClick", o, "createMessageCallback");
 	});
 	_container_.addOnUnLoad(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
@@ -113,6 +142,7 @@
 		dojo.event.disconnect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
 		dojo.event.disconnect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.disconnect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
+		dojo.event.disconnect(dojo.widget.byId('createMessageButton'), "onClick", o, "createMessageCallback");
 	});
 
 </script>
@@ -184,3 +214,39 @@
 	</div>
 </div>
 
+<div dojoType="Dialog" id="newMessageDialog" widgetId="newMessageDialog" style="display: none;">
+	<h3><!--{t}-->Create Message<!--{/t}--></h3>
+	<table border="0">
+		<tr>
+			<td valign="top" align="right"><!--{t}-->Recipient<!--{/t}--> : </td>
+			<td>
+				<select dojoType="Select"
+				 id="msgfor" widgetId="msgfor"
+				 style="width: 150px;"
+				 mode="remote" autocomplete="false"
+				 dataUrl="<!--{$relay}-->/org.freemedsoftware.api.UserInterface.GetUsers?param0=%{searchString}"
+				 /></select>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="right"><!--{t}-->Patient<!--{/t}--> : </td>
+			<td>
+				<!--{include file="org.freemedsoftware.widget.patientpicklist.tpl" varname="msgpatient"}-->
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="right"><!--{t}-->Subject<!--{/t}--> : </td>
+			<td><input type="text" id="msgsubject" name="msgsubject" size="50" value="" /></td>
+		</tr>
+		<tr>
+			<td valign="top" align="right"><!--{t}-->Message<!--{/t}--> : </td>
+			<td><textarea dojoType="Editor2" id="msgtext" widgetId="msgtext" cols="60" rows="6"></textarea></td>
+		</tr>
+	</table>
+	<div align="center">
+		<table border="0"><tr>
+			<td align="right"><button dojoType="Button" id="createMessageButton" widgetId="createMessageButton"><!--{t}-->Create<!--{/t}--></button></td>
+			<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('newMessageDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button></td>
+		</tr></table>
+	</div>
+</div>
