@@ -1,9 +1,8 @@
-<!--{* Smarty *}-->
-<!--{*
+<?php
  // $Id$
  //
  // Authors:
- //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2007 FreeMED Software Foundation
@@ -21,11 +20,18 @@
  // You should have received a copy of the GNU General Public License
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*}-->
 
-<h3><!--{t}-->Dashboard<!--{/t}--></h3>
+include_once (dirname(__FILE__).'/../class.Controller.php');
 
-<!--{foreach from=$COMPONENTS item=component}-->
-<!--{include file="org.freemedsoftware.widget.dashboard.$component.tpl"}-->
-<!--{/foreach}-->
+class controller_org_freemedsoftware_controller_dashboard extends Controller {
 
+	public function action ( ) {
+		// Load dashboard components
+		$components = freemed::module_handler( 'Dashboard' );
+		$this->smarty->assign( 'COMPONENTS', $components );
+		$this->load('org.freemedsoftware.ui.dashboard');
+	}
+
+}
+
+?>

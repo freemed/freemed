@@ -29,7 +29,7 @@
 
 	<div dojoType="ContentPane" selected="true" label="<!--{t}-->System<!--{/t}-->" class="basicPane">
 
-		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.dashboard');">
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.dashboard');">
 			<img src="<!--{$htdocs}-->/images/home_icon.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Dashboard<!--{/t}-->
 		</div>

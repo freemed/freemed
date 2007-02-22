@@ -71,6 +71,7 @@ class MessagesModule extends EMRModule {
 	*/
 
 		// Add main menu handler item
+		$this->_SetHandler('Dashboard', get_class($this));
 		$this->_SetHandler('MainMenu', 'UnreadMessages');
 
 		// Call parent constructor
