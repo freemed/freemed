@@ -35,8 +35,10 @@ class WorkListsModule extends BaseModule {
 		// __("Work Lists")
 
 		// Add main menu notification handlers
+		$this->_SetHandler( 'Dashboard', get_class($this) );
 		$this->_SetHandler('MainMenu', 'notify');
 
+		/*
 		// Form proper configuration information
 		$this->_SetMetaInformation('global_config_vars', array(
 			'worklist_enabled',
@@ -60,6 +62,7 @@ class WorkListsModule extends BaseModule {
 				'false )'
 			)
 		);
+		*/
 		
 		// Call parent constructor
 		parent::__construct ( );
@@ -139,9 +142,11 @@ class WorkListsModule extends BaseModule {
 
 	// Method: ProcessChange
 	//
+	//	Enact a change in scheduler status.
+	//
 	// Parameters:
 	//
-	//	$status -
+	//	$status - Status id
 	//
 	//	$appt - Scheduler id
 	//
@@ -153,9 +158,7 @@ class WorkListsModule extends BaseModule {
 	//	* descrip
 	//
 	public function ProcessChange ( $status, $appt ) {
-		if (!is_object($GLOBALS['this_user'])) {
-			$GLOBALS['this_user'] = CreateObject('org.freemedsoftware.core.User');
-		}
+		$this_user = freemed::user_cache();
 
 		// Keep funky things from happening
 		if ($status+0 == 0) { return ''; }
@@ -170,16 +173,50 @@ class WorkListsModule extends BaseModule {
 					'cspatient' => $a['calpatient'],
 					'csappt' => $appt,
 					'csstatus' => $status,
-					'csuser' => $GLOBALS['this_user']->user_number
+					'csuser' => $this_user->user_number
 				)
 			)
 		);
 
 		// Return status color properly
-		$q = $GLOBALS['sql']->query("SELECT scolor AS color, sname AS name, sdescrip AS descrip FROM schedulerstatustype WHERE id='".addslashes($status)."'");
-		$r = $GLOBALS['sql']->fetchRow( $q );
+		$r = $GLOBALS['sql']->queryRow("SELECT scolor AS color, sname AS name, sdescrip AS descrip FROM schedulerstatustype WHERE id='".addslashes($status)."'");
 		return $r;
 	} // end method ProcessChange
+
+	// Method: GenerateWorklists
+	//
+	//	Retrieve all data associated with provider worklists for
+	//	a date.
+	//
+	// Parameters:
+	//
+	//	$date - (optional) Date
+	//
+	// Returns:
+	//
+	//	Array of array of hashes.
+	//
+	// SeeAlso:
+	//	<GenerateWorklist>
+	//
+	public function GenerateWorklists ( $date = '' ) {
+		$this_user = freemed::user_cache();
+
+		// Handle eventuality of this being a provider
+		if ($this_user->isPhysician()) {
+			return array ( $this_user->user_phy => $this->GenerateWorklist( $this_user->user_phy, $date ) );
+		}
+
+		// TODO: Get providers from user profile
+		// FIXME: THIS IS HORRIBLY BROKEN FOR TESTING PURPOSES
+		$_providers = array ( 1,2,3 );
+
+		foreach ( $_providers AS $p ) {
+			$return[$p] = $this->GenerateWorklist( $p, $date ); 
+		}
+
+		return $return;
+	} // end method GenerateWorklists
 
 	// Method: GenerateWorklist
 	//
@@ -187,25 +224,39 @@ class WorkListsModule extends BaseModule {
 	//
 	//	$provider - Provider id
 	//
+	//	$date - (optional) Date, defaults to current date
+	//
 	// Returns:
 	//
-	public function GenerateWorklist ( $provider ) {
-		$date = date('Y-m-d');
+	public function GenerateWorklist ( $provider, $date = '' ) {
+		static $lookup_cache, $s;
+
+		if (!is_object( $s )) {
+			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		}
+
+		if ( !$date ) {
+			$_date = date('Y-m-d');
+		} else {
+			$_date = $s->ImportDate( $date );
+		}
 
 		// Load lookup table
-		$q = $GLOBALS['sql']->queryAll( "SELECT * FROM schedulerstatustype" );
-		foreach ( $q AS $r ) {
+		if (!isset($lookup_cache)) {
+			$lookup_cache = $GLOBALS['sql']->queryAll( "SELECT * FROM schedulerstatustype" );
+		}
+
+		foreach ( $lookup_cache AS $r ) {
 			$lookup[$r['id']] = $r['scolor'];
 			$name_lookup[$r['id']] = $r['sname'];
 			$fullname_lookup[$r['id']] = $r['sdescrip'];
 			$age_lookup[$r['id']] = $r['sage'];
 		}
-		unset ($q); unset ($r);
+		unset ($r);
 
 		$pobj = CreateObject( 'org.freemedsoftware.core.Physician', $provider );
-		LoadObjectDependency( 'org.freemedsoftware.api.Scheduler' );
 
-		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient WHERE s.caldateof='".addslashes($date)."' AND s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
+		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration, CONCAT(phy.phyfname, ' ', phy.phylname) AS s_provider FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient LEFT OUTER JOIN physician phy ON phy.id=s.calphysician WHERE s.caldateof='".addslashes($_date)."' AND s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
 		$q = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $q AS $r ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
@@ -219,9 +270,11 @@ class WorkListsModule extends BaseModule {
 				'status_name' => $name_lookup[$current_status[0]],
 				'status_fullname' => $fullname_lookup[$current_status[0]],
 				'status_color' => ( $current_status ? $lookup[$current_status[0]] : "" ),
+				'provider' => $r['s_provider'],
 				'patient' => $r['s_patient_id'],
+				'patient_name' => $r['s_patient'],
 				'hour' => $r['s_hour'],
-				'minute' => $r['s_minute'],
+				'minute' => sprintf( '%02d', $r['s_minute'] ),
 				'expired' => ( $expired ? true : false )
 			);
 		} // end get array
