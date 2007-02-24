@@ -13,8 +13,8 @@
 ( \
 	cd /usr/share/freemed/scripts/fax_import/; \
 	for f in /var/spool/hylafax/recvq/*.tif*; do \
-		if ! `lsof | grep "$f"`; then \
-			echo "importing $f"; \
+		if [ "$(lsof | grep "$f")" == "" ]; then \
+			echo "Importing $f"; \
 			mv $f .; \
 			./import_fax.pl `basename $f`; \
 		fi; \
