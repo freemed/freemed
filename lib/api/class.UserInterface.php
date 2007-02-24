@@ -45,6 +45,27 @@ class UserInterface {
 		return $this->user->getDescription();
 	} // end method GetCurrentUsername
 
+	// Method: GetUsers
+	//
+	//	Get picklist formatted user information.
+	//
+	// Parameters:
+	//
+	//	$param - Substring to search for. Defaults to ''.
+	//
+	// Returns:
+	//
+	//	Array of arrays containing ( user description, id ).
+	//
+	public function GetUsers ( $param = '' ) {
+		$q = "SELECT u.userdescrip AS description, u.id AS id FROM user u WHERE u.userdescrip LIKE '".addslashes( $param )."%' ORDER BY u.userdescrip";
+		$res = $GLOBALS['sql']->queryAll( $q );
+		foreach ( $res AS $r ) {
+			$return[] = array ( $r['description'], $r['id'] );
+		}
+		return $return;
+	} // end method GetUsers
+
 	// Method: GetEMRConfiguration
 	public function GetEMRConfiguration ( ) {
 		return $this->user->manage_config;
