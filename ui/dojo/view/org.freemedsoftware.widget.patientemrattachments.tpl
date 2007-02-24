@@ -94,6 +94,11 @@
 					mimetype: "text/json"
 				});
 				break;
+
+				case 'modify':
+				dojo.widget.byId('emrSimpleDialog').show();
+				dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid );
+				break;
 	
 				default:
 				alert( "TODO: " + action + " " + id );
@@ -230,7 +235,7 @@
 	<form>
 	<table border="0">
 		<tr align="center">
-			<textarea dojoType="Editor2" id="emrAnnotation" name="emrAnnotation" rows="5" cols="60"></textarea>
+			<textarea dojoType="Editor2" id="emrAnnotation" name="emrAnnotation" rows="5" cols="60" htmlEditing="true" useActiveX="true" shareToolbar="false" toolbarAlwaysVisible="true"></textarea>
 		</tr>
 		<tr>
 			<td align="center">
