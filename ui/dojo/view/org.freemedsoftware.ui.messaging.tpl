@@ -80,7 +80,17 @@
 			if ( typeof msg == 'undefined' ) {
 				alert("<!--{t}-->A message must be selected.<!--{/t}-->");
 			} else {
-				alert('delete message');
+				dojo.io.bind({
+					method: 'POST',
+					content: {
+						param0: msg.id
+					},
+					url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.del',
+					load: function( type, data, evt ) {
+						o.loadMessages();
+					},
+					mimetype: "text/json"
+				});
 			}
 		},
 		modifyTag: function ( ) {
@@ -156,14 +166,14 @@
 		<div id="messagesBar">
 			<table border="0"><tr>
 				<td width="30">
-					<div dojoType="Button" class="messageButton" id="messageNewButton" widgetId="messageNewButton">
+					<button dojoType="Button" class="messageButton" id="messageNewButton" widgetId="messageNewButton">
 						<img src="<!--{$htdocs}-->/images/summary_envelope.png" border="0" />
-					</div>
+					</button>
 				</td>
 				<td width="30">
-					<div dojoType="Button" class="messageButton" id="messageDeleteButton" widgetId="messageDeleteButton">
+					<button dojoType="Button" class="messageButton" id="messageDeleteButton" widgetId="messageDeleteButton">
 						<img src="<!--{$htdocs}-->/images/summary_delete.png" border="0" />
-					</div>
+					</button>
 				</td>
 				<td width="100">
 					<!--{t}-->Location<!--{/t}-->:
@@ -178,14 +188,14 @@
 					 />
 				</td>
 				<td width="30">
-					<div dojoType="Button" class="messageButton" id="messageMoveButton" widgetId="messageMoveButton">
+					<button dojoType="Button" class="messageButton" id="messageMoveButton" widgetId="messageMoveButton">
 						<img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" />
-					</div>
+					</button>
 				</td>
 				<td width="30">
-					<div dojoType="Button" class="messageButton" id="messageTagButton" widgetId="messageTagButton">
+					<button dojoType="Button" class="messageButton" id="messageTagButton" widgetId="messageTagButton">
 						<img src="<!--{$htdocs}-->/images/summary_view.png" border="0" />
-					</div>
+					</button>
 				</td>
 				<td></td>
 			</tr></table>
