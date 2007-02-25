@@ -198,10 +198,6 @@ class EMRModule extends BaseModule {
 	//
 	//	$id - Record id to be checked
 	//
-	//	$quiet - (optional) Boolean. If set to true, this value
-	//	will cause a denial screen to be displayed. Defaults to
-	//	false.
-	//
 	// Returns:
 	//
 	//	Boolean, whether the record is locked or not.
@@ -211,21 +207,18 @@ class EMRModule extends BaseModule {
 	//	if ($this->locked($id)) return false;
 	//
 	function locked ($id, $quiet = false) {
-		global $display_buffer;
 		static $locked;
 
 		// If there is no table_name, we can skip this altogether
 		if (empty($this->table_name)) { return false; }
 
-		if (!isset($locked)) {
-			$query = "SELECT COUNT(*) AS lock_count ".
-				"FROM ".$this->table_name." WHERE ".
-				"id='".addslashes($id)."' AND (locked > 0)";
+		if (!isset($locked['id_'.$id])) {
+			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id='".addslashes($id)."' AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
-			$locked = ($result > 0);
+			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'MDB2_Error' ) );
 		}
 
-		return $locked ? true : false;
+		return $locked['id_'.$id] ? true : false;
 	} // end function locked
 
 	// Method: prepare
