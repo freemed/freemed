@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptbilltype		ENUM( 'sta', 'mon', 'chg' ) NOT NULL,
 	ptbudg			REAL,
 	ptsalut			VARCHAR (8),
-	ptlname			VARCHAR (50),
+	ptlname			VARCHAR (50) NOT NULL,
 	ptmaidenname		VARCHAR (50),
-	ptfname			VARCHAR (50),
+	ptfname			VARCHAR (50) NOT NULL,
 	ptmname			VARCHAR (50),
 	ptsuffix		VARCHAR (10),
 	ptaddr1			VARCHAR (45),
@@ -103,6 +103,9 @@ CREATE PROCEDURE patient_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
+	#----- Remove triggers
+	DROP TRIGGER patient_Update;
+
 	#----- Upgrades
 
 	#	Version 0.9.0
@@ -112,4 +115,107 @@ END
 //
 DELIMITER ;
 CALL patient_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+CREATE TRIGGER patient_Update
+	AFTER UPDATE ON patient
+	FOR EACH ROW BEGIN
+		IF
+				OLD.ptlname<>NEW.ptlname OR
+				OLD.ptfname<>NEW.ptfname OR
+				OLD.ptmname<>NEW.ptmname OR
+				OLD.ptmaidenname<>NEW.ptmaidenname OR
+				OLD.ptsuffix<>NEW.ptsuffix OR
+				OLD.ptaddr1<>NEW.ptaddr1 OR
+				OLD.ptaddr2<>NEW.ptaddr2 OR
+				OLD.ptcity<>NEW.ptcity OR
+				OLD.ptstate<>NEW.ptstate OR
+				OLD.ptzip<>NEW.ptzip OR
+				OLD.ptcountry<>NEW.ptcountry OR
+				OLD.ptprefcontact<>NEW.ptprefcontact OR
+				OLD.pthphone<>NEW.pthphone OR
+				OLD.ptwphone<>NEW.ptwphone OR
+				OLD.ptmphone<>NEW.ptmphone OR
+				OLD.ptfax<>NEW.ptfax OR
+				OLD.ptemail<>NEW.ptemail OR
+				OLD.ptmarital<>NEW.ptmarital THEN
+			INSERT INTO `patient_prior` (
+					patient,
+					ptlname,
+					ptfname,
+					ptmname,
+					ptmaidenname,
+					ptsuffix,
+					ptaddr1,
+					ptaddr2,
+					ptcity,
+					ptstate,
+					ptzip,
+					ptcountry,
+					ptprefcontact,
+					pthphone,
+					ptwphone,
+					ptmphone,
+					ptfax,
+					ptemail,
+					ptmarital
+				) VALUES (
+					NEW.id,
+					OLD.ptlname,
+					OLD.ptfname,
+					OLD.ptmname,
+					OLD.ptmaidenname,
+					OLD.ptsuffix,
+					OLD.ptaddr1,
+					OLD.ptaddr2,
+					OLD.ptcity,
+					OLD.ptstate,
+					OLD.ptzip,
+					OLD.ptcountry,
+					OLD.ptprefcontact,
+					OLD.pthphone,
+					OLD.ptwphone,
+					OLD.ptmphone,
+					OLD.ptfax,
+					OLD.ptemail,
+					OLD.ptmarital
+				);
+		END IF;
+	END;
+//
+DELIMITER ;
+
+#----- Prior demographics holding table
+
+CREATE TABLE IF NOT EXISTS `patient_prior` (
+	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+
+	ptlname			VARCHAR (50) NOT NULL,
+	ptmaidenname		VARCHAR (50),
+	ptfname			VARCHAR (50) NOT NULL,
+	ptmname			VARCHAR (50),
+	ptsuffix		VARCHAR (10),
+	ptaddr1			VARCHAR (45),
+	ptaddr2			VARCHAR (45),
+	ptcity			VARCHAR (45),
+	ptstate			VARCHAR (20),
+	ptzip			CHAR (10),
+	ptcountry		VARCHAR (50),
+	ptprefcontact		VARCHAR (10) NOT NULL DEFAULT 'home',
+	pthphone		VARCHAR (16),
+	ptwphone		VARCHAR (16),
+	ptmphone		VARCHAR (16),
+	ptfax			VARCHAR (16),
+	ptemail			VARCHAR (80),
+	ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' ),
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+	#	Define keys
+
+	PRIMARY KEY		( id ),
+	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
