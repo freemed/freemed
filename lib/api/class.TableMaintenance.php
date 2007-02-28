@@ -27,6 +27,14 @@ class TableMaintenance {
 
 	public function __construct ( ) { }
 
+	// Method: ExportStockData
+	//
+	//	Export data for a table.
+	//
+	// Parameters:
+	//
+	//	$table - Table name
+	//
 	public function ExportStockData ( $table ) {
 		// Produce a physical location
 		$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE .
@@ -48,7 +56,15 @@ class TableMaintenance {
 		return true;
 	} // end public function ExportStockData
 
-	public function ImportStockData ( $table ) {
+	// Method: ImportStockData
+	//
+	//	Import data for a table.
+	//
+	// Parameters:
+	//
+	//	$table_name - Table name
+	//
+	public function ImportStockData ( $table_name ) {
 		// Produce a physical location
 		$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE .
 			"/" .  $table_name . "." . DEFAULT_LANGUAGE . ".data";
