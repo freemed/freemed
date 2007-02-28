@@ -33,7 +33,9 @@ class ACL extends SupportModule {
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "a6ac7151-bc5a-4ae1-853a-cec0b53a2ea6";
 
-	function ACL ( ) {
+	var $table_name = 'acl';
+
+	public function __construct ( ) {
 		$this->_SetMetaInformation('global_config_vars', array ( 'acl_enable', 'acl_patient' ) );
 		$this->_SetMetaInformation('global_config', array (
 			__("Enable ACL System") =>
@@ -94,7 +96,7 @@ class ACL extends SupportModule {
 		// If this fails, we die out here
 		if (!$axo) { trigger_error(__("Failed to create patient AXO ACL control object."), E_ERROR); }
 		// Create user object if it doesn't exist yet
-		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
+		$this_user = freemed::user_cache( );
 
 		$_pat = $GLOBALS['sql']->get_link( 'patient', $pid );
 
@@ -224,75 +226,26 @@ class ACL extends SupportModule {
 		return $_cache[$phy];
 	} // end method get_user_from_phy
 
-	// Method: _setup
+	// Method: UserGroups
 	//
-	//	Overrides the default _setup method to wrap phpgacl's
-	//	bizarre XML-based schema setup.
+	//	Get list of user groups (AROs)
 	//
-	function _setup ( ) {
-		syslog(LOG_INFO, "ACL| loading _setup");
-
-		// Load gacl_api instead of gacl, since we have to emulate
-		// the admin module that they have. We don't load the
-		// dependency, as it was loaded in lib/acl.php for the
-		// global $acl object.
+	// Returns:
+	//
+	//	Array of array [ key, value ]
+	//
+	public function UserGroups ( ) {
 		$acl = $this->acl_object();
-
-		// Until we figure out what is going on, include this
-		// verbatim
-		include_once (ADODB_DIR.'/adodb-xmlschema.inc.php');
-
-		// Create schema object and build query array
-		$schema = new adoSchema ( &$acl->db, true );
-		$orig_xml_file = 'lib/acl/schema.xml';
-	
-		// Translate XML to contain proper prefix
-		$xml = $this->_file_get_contents($orig_xml_file);
-		if (!$xml) {
-			syslog(LOG_INFO, 'ACL: failed to read '.$orig_xml_file);
-			return false;
+		$raw = $acl->sort_groups('ARO');
+		foreach ($raw[0] AS $key => $value) {
+			if ($value=='Users') { $users = $key; }
 		}
-		$xml = preg_replace('/#PREFIX#/i', 'acl_', $xml);
-
-		// Build the actual SQL array
-		$sql = $schema->ParseSchemaString($xml);
-
-		// Execute the SQL schema that has been built
-		syslog(LOG_INFO, "ACL| executing schema");
-		$result = $schema->ExecuteSchema($sql, true);
-		if ($result != 2) {
-			//print "ACL: table creation error<br/>\n";
-			syslog(LOG_INFO, "ACL| table creation error");
+		if (!isset($users)) { trigger_error("Should never get here!", E_USER_ERROR); }
+		foreach ( $raw[$users] AS $k => $v ) {
+			$return[] = array ( $v, $k );
 		}
-
-		// Cleanup
-		$schema->Destroy();
-
-		// Call _set_defaults
-		$this->_set_defaults();
-	} // end method _setup
-
-	// Method: _set_defaults
-	//
-	//	Method used to set the default ACL values for a new
-	//	FreeMED installation, since the ACL system is very
-	//	complex and cannot use the default table information
-	//	and methods.
-	//
-	function _set_defaults ( ) {
-		syslog(LOG_INFO, "ACL| running _set_defaults");
-		$acl = $this->acl_object();
-		include_once (ADODB_DIR.'/adodb-xmlschema.inc.php');
-		$schema = new adoSchema ( &$acl->db, true );
-		$sql = $schema->ParseSchemaFile('lib/acl/freemed-acl-defaults.xml');
-		$result = $schema->ExecuteSchema($sql, true);
-		//print "result = "; print_r($result); print "<br/>\n";
-		if ($result != 2) {
-			//print "ACL: data import error<br/>\n";
-			syslog(LOG_INFO, "ACL| data import error");
-		}
-		$schema->Destroy();
-	} // end method _set_defaults
+		return $return;
+	} // end method UserGroups
 
 	function _drop_old_tables () {
 		$tables = array (
@@ -328,83 +281,6 @@ class ACL extends SupportModule {
 			$GLOBALS['sql']->query('DROP TABLE acl_'.$t);
 		}
 	} // end method _drop_old_tables
-
-	// ----- Internal helper functions
-	private function _file_get_contents ( $filename ) {
-		if (function_exists('file_get_contents')) {
-			return file_get_contents($filename);
-		} else {
-			$fp = fopen($filename, 'r');
-			if ($fp) {
-				while (!feof($fp)) {
-					$buffer .= fgets($fp, 4096);
-				}
-				fclose ($fp);
-				return $buffer;
-			} else {
-				return false;
-			}
-		}
-	} // end method _file_get_contents
-
-	private function _file_put_contents ( $filename, $content ) {
-		$fp = fopen($filename, 'w');
-		if (!$fp) {
-			syslog(LOG_INFO, 'ACL: unable to open '.$filename.' for writing');
-		}
-		fwrite($fp, $content);
-		fclose($fp);
-		return true;
-	} // end method _file_put_contents
-
-	function _update ( ) {
-		$version = freemed::module_version($this->MODULE_NAME);
-
-		// Version 0.7.3
-		//
-		//	Fix namespace collision in admin configuration
-		//
-		if (!version_check($version, '0.7.3')) {
-			$GLOBALS['sql']->query('UPDATE config '.
-				'SET c_option = \'acl_enable\' '.
-				'WHERE c_option = \'acl\'');
-		}
-
-		// Version 0.8.0.1
-		//
-		//	Perform actual table changes for ACL
-		//
-		if (!version_check($version, '0.8.0.1')) {
-			//print "drop old tables<br/>\n";
-			$this->_drop_old_tables();
-			//print "setup<br/>\n";
-			$this->_setup();
-
-			// Go through all existing user records and make sure
-			// that there are existing ACL ARO objects
-			$result = $GLOBALS['sql']->queryAll('SELECT * FROM user');
-			if (count($result) > 0) {
-				// Only loop if there are users
-				foreach ( $result AS $r ) {
-					//print "importing user ".$r['id']."<br/>\n";
-					// For each user, add ACL record
-					$u[] = $this->acl_user_add($r['id']);
-				}
-			}
-
-			// Go through all existing patient records and make
-			// sure that there are existing ACL AXO objects
-			$result = $GLOBALS['sql']->queryAll('SELECT * FROM patient');
-			if (count($result) > 0) {
-				// Only loop if there are users
-				foreach ( $result AS $r ) {
-					//print "importing patient ".$r['id']."<br/>\n";
-					// For each user, add ACL record, but without current user perms (security fix)
-					$p[] = $this->acl_patient_add($r['id'], false);
-				}
-			}
-		}
-	} // end method _update
 
 } // end class ACL
 
