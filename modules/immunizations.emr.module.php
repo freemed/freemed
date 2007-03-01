@@ -44,9 +44,17 @@ class Immunizations extends EMRModule {
 			__("Description") =>	"pnotesdescrip"
 		);
 		$this->summary_options |= SUMMARY_LOCK | SUMMARY_DELETE;
-		$this->summary_query = array("DATE_FORMAT(dateof, '%m/%d/%Y') AS my_date");
+		$this->summary_query = array(
+			"DATE_FORMAT(dateof, '%M %d, %Y') AS full_date",
+			"DATE_FORMAT(dateof, '%m/%d/%Y') AS my_date"
+		);
 		$this->summary_query_link = array ( 'immunization' => 'bccdc' );
-		$this->summary_order_by = 'dateof DESC,id';
+		$this->summary_order_by = 'dateof DESC,immunization.id';
+		$this->loinc_mapping = '11369-6';
+		$this->loinc_display = array (
+			"Immunization" => 'description',
+			"Date" => 'full_date'
+		);
 
 		// Set associations
 		$this->_SetAssociation('EpisodeOfCare');
