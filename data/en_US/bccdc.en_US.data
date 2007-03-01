@@ -1,0 +1,62 @@
+61,aP,Acellular Pertussis
+187,RHOGAM,Anti-Rho (D) Immune Globulin
+15,BAtox,Botulism Antitoxin
+19,CHOL,Cholera
+194,CHOL+ETEC,Cholera and Enterotoxigenic E.Coli
+24,D,Diptheria
+21,DAtox,Diptheria Antitoxin
+27,DT,Diptheria Tetanus - Paediatric
+13,DTP,Diptheria Tetanus Polio - Paed
+26,DTwP-P,Diptheria Tetanus wPertussis, iPolio
+53,SCHK,Diptheria Toxin for Schick Test
+25,DTwP,Diptheria\, Tetanus wPertussis - Paed
+193,DTaP,Diptheria\, Tetanus\, acellular Pertussis
+59,DTaP-P,Diptheria\, Tetanus\, aPertussis\, iPolio
+58,DTaP-P-Hib,Diptheria\, Tetanus\, aPertussis\, iPolio\, Hib
+7,DTwP-P-s,Diptheria\, Tetanus\, Pertussis\, iPolio (study)
+191,DTwP-P-H-s,Diptheria\, Tetanus\, wPertussis\, iPolio\, Hib (study)
+44,DTwP-P-Hib,Diptheria\, Tetanus\, wPertussis\, iPolio\, Hib
+33,Hib,Haemophilus influenzae type b
+31,HA,Hepatitis A
+63,HAHB,Hepatitis A and B
+32,Hepatitis B
+52,Hepatitis B (study)
+30,HBIG,Hepatitis B Immune Globulin
+35,Hib study,Hib study
+37,Ig,Immune Globulin
+36,IPV,Inactivated Polio Vaccine (study)
+10,E,Japanese Encephalitis
+38,M,Measles
+40,MMR,Measles Mumps Rubella
+8,MR,Measles Rubella
+184,MEN-C-C,Meningococcal-Conjugate-C
+183,MEN-P-AC,Meningococcal-Polusaccharide-AC
+39,MEN-P-ACWY,Meningococcal-Polysaccharide-ACWY
+31,Mu,Mumps
+46,PLAG,Plague
+186,PNEU-C-7,Pneumococcal Conjugate C-7
+62,PNEU-P-23,Pneumococcal-Polysaccharide-23
+42,OPV,Polio
+197,MEN-ACWY-s,Quadravelent Meningococcal (study)
+47,RAB,Rabies
+49,RIG,Rabies Immune Globulin
+65,RSVIg,Respiratory Syncytial Virus Immune Globulin
+50,R,Rubella
+48,SnakAven,Snake Antivenom
+17,spidAven,Spider Antivenom
+14,T,Tetanus
+192,TdaP,Tetanus Diptheria aPertussis - adults
+1,TIG,Tetanus Immune Globulin
+55,Td,Tetanus\, Diptheria - adult
+196,TdcP-s,Tetanus\, Diptheria\, control Pertussis (study)
+56,TdP,Tetanus\, Diptheria\, Polio - adults
+51,TdwP-s,Tetanus\, Diptheria\, wPertussis - (study)
+54,TBN,Tuberculin Purified Protein Derivative
+16,BCG,Tuberculosis Vaccine (Bacille Calmette-Guerin)
+11,TYPH-IM,Typhoid Intramuscular
+12,TYPH-O,Typhoid Oral
+2,TYPH,Typhoid Vaccine (discontinued)
+64,VZ,Varicella Zoster
+3,VZIG,Varicella Zoster Immune Globulin
+45,wP,wPertussis
+4,YF,Yellow Fever
