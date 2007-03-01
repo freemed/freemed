@@ -37,7 +37,7 @@ class TableMaintenance {
 	//
 	public function ExportStockData ( $table ) {
 		// Produce a physical location
-		$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE .
+		$physical_file = PHYSICAL_LOCATION . "/data/locale/" . DEFAULT_LANGUAGE .
 			"/" .  $table_name . "." . DEFAULT_LANGUAGE . ".data.".
 			date("Ymd");
 
@@ -66,7 +66,7 @@ class TableMaintenance {
 	//
 	public function ImportStockData ( $table_name ) {
 		// Produce a physical location
-		$physical_file = PHYSICAL_LOCATION . "/data/" . DEFAULT_LANGUAGE .
+		$physical_file = PHYSICAL_LOCATION . "/data/locale/" . DEFAULT_LANGUAGE .
 			"/" .  $table_name . "." . DEFAULT_LANGUAGE . ".data";
 
 		// Die if the phile doesn't exist

@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 THISDIR=data
-SUBDIR=backup cache config documents en_US keys ui report tex
+SUBDIR=backup cache config documents keys locale ui report tex
 
 all:
 	# Nothing
