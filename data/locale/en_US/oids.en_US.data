@@ -1,0 +1,472 @@
+2.16.840.1.113883.5.1,AdministrativeGender,Administrative Gender,Complete
+2.16.840.1.113883.5.2,MaritalStatus,Marital status,Complete
+2.16.840.1.113883.5.1001,ActMood,Act mood code; as specified by the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1002,ActRelationshipType,Act relationship type code,Complete
+2.16.840.1.113883.5.1003,Service actor type,Service actor type code; as specified by the Version 3 Data Types specification.,Unknown
+2.16.840.1.113883.5.1004,Service target type,Service target type code; as specified by the Version 3 Data Types specification.,Unknown
+2.16.840.1.113883.5.1007,DataType,Data type code; as specified by the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1008,NullFlavor,Flavors of null.  As specified in  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1009,CompressionALgorithm,Compression codes.  As specified by of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1010,IntegrityCheckAlgorithm,Integrity check algorithm.  As specified by  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1011,TelecommunicationAddressUse,Telecommunication address use code.  As specified in  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1012,PostalAddressUse,Postal Address use code.  As defined by  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1013,Postal Address part type,Postal Address part type code.  As defined by  of the Version 3 Data Types specification.,Retired
+2.16.840.1.113883.5.1014,Person Name part type,Person Name part type as defined by  of the Version 3 Data Types specification.,Retired
+2.16.840.1.113883.5.1015,Person Name part type,Person Name part qualifier as defined by  of the Version 3 Data Types specification.,Retired
+2.16.840.1.113883.5.1016,OrganizationNameType,Organization name type code as defined by  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1017,CalendarType,Calendar type.  As specified in  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1018,Calendar cycle one letter code,Calendar cycle one letter code.  As specified in  of the Version 3 Data Types specification.,Retired
+2.16.840.1.113883.5.1019,Calendar cycle two letter code,Calendar cycle two letter code.  As specified in  of the Version 3 Data Types specification.,Retired
+2.16.840.1.113883.5.1020,ProbabilityDistributionType,Probability distribution type code.  As specified in  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1021,PeriodicIntervalOfTimeAbbreviation,Periodic Interval of Time literal abbreviations.  As specified in of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1022,GTSAbbreviation,GTS literal abbreviation.  As specified in  of the Version 3 Data Types specification.,Complete
+2.16.840.1.113883.5.1023,Event code,Event codes for event-related periodic intervals.  As specified in  of the Version 3 Data Types specification.,Unknown
+2.16.840.1.113883.6.1,LN,Logical Observation Identifier Names and Codes (LOINC),Complete
+2.16.840.1.113883.6.4,ICD10PCS,The International Classification of Diseases\, 10th Revision\, Procedure Coding System (ICD-10-PCS)\, describes the classification of inpatient procedures for statistical purposes and for the indexing of healthcare records by procedures. The ICD-10-PCS codes can be used as the value of the Act.cd attribute,Complete
+2.16.840.1.113883.6.5,SNM,Systemized Nomenclature in Medicine Reference Terminology (SNOMED RT),Complete
+2.16.840.1.113883.6.6,RC,Clinical Terms Version 3 - The Read Codes - contains over 200\,000 coded concepts arranged in a sub-type hierarchical structure.  Top level hierarchy sections:	Disorders Findings Morphology Surgical procedures Regimes & therapies Investigations Stages & scales Occupations Organisms Units Drugs Appliances & equipment,Complete
+2.16.840.1.113883.6.7,NAACCR,NAACCR Cancer Registry,Complete
+2.16.840.1.113883.6.8,UCUM,Unified Code for Units of Measure,Complete
+2.16.840.1.113883.6.9,ISO4217,ISO 4217 currency code,Complete
+2.16.840.1.113883.6.10,MIME,IETF MIME media types,Complete
+2.16.840.1.113883.6.11,URL,Universal Resource Locator (URL) schemes.  Currently there is no single authority for URL schemes.  The authority for URL scheme assignments clearly lies within IANA or W3C and it is likely that a formal URL/URI assigning authority will be formed soon.,Complete
+2.16.840.1.113883.6.12,C4,American Medical Association�s Current Procedure Terminology 4 (CPT-4) codes.,Complete
+2.16.840.1.113883.6.13,CD2,American Dental Association�s Current Dental Terminology 2 (CDT-2) codes.,Complete
+2.16.840.1.113883.6.14,HPC,Healthcare Financing Administration (HCFA) Common Procedure Coding System (HCPCS).  Is composed of three �levels�.  Level I is CPT-4\, level II is CDT-2\, and level 3 are the HCPCS modifiers.  Only the HCPCS modifiers are maintained by the Alpha-Numeric Editorial Panel\, consisting of the Health Insurance Association of America and the Blue Cross and Blue Shield Association.,Complete
+2.16.840.1.113883.6.15,NIC,NIC provides names and values for procedures/orders/service intent related to the treatment activities of nurses and other providers who may perform the same treatment activities.  Names\, definitions\, and associated codes are attached for 486 interventions.  Defining activities (anywhere from ten to several dozen) are listed for each of the interventions in the NIC classification book but are not attached to this document.,Complete
+2.16.840.1.113883.6.16,NOC,NOC - Nursing Outcome Codes,Complete
+2.16.840.1.113883.6.18,IB,ISBT 128 is a coding system for blood components\, hematopoietic progenitor cells and other tissues. It is comprised of an overall Application Specification\, and labeling and coding documents for the separate sections: blood components\, hematopoietic progenitor cells (draft)\, source plasma (draft) and tissues (draft). The documentation is supported by databases: Country/Collection Facility\, Product Code (blood components)\, Product Code (hematopoietic progenitor sells)\, Product Code (source plasma)\, Product Code (tissues) and Special Testing. ISBT 128 is designed as a series of data structures that are designed to be technology-independent and can be used for bar coding\, radio frequency tag encoding and electronic data interchange. The HL7 Blood Bank SIG is currently designing example messages that incorporate ISBT 128 coding. No changes of any kind will be needed to use ISBT 128 in HL7 messages.,Complete
+2.16.840.1.113883.6.19,CAMNCVS,CAM & Nursing Coding Vocabulary Set,Complete
+2.16.840.1.113883.6.20,NDA,The terminology consists of standardized terms and codes for patient problems or life processes expressed as nursing diagnoses. These data elements would be classified by HL7 as �observations�. The taxonomy is  multi-axial. It consists of 12 domains and 36 classes. All domains and classes are defined. There are 7 axes with definitions for each. Each nursing diagnosis consists of: a concept label or term expressed as a noun or a noun phrase; a definition of the term; a set of defining characteristics (signs and symptoms) of the diagnostic term; an approved list of modifiers of the term; a set of risk factors with definitions; and a set of related factors (or etiologies) for the term.  The system preserves semantics by having robust review procedures and policies to ensure against semantic drift in the meanings of the encoded terms over time. NANDA as an organization is committed to updating the terminology on a regular biannual basis.  NANDA has been in existence since 1973 and is thus the oldest developer of standardized language in nursing. Most other nursing language systems use many of the older NANDA terms in their vocabularies. The express purpose of the organization is to develop a comprehensive standardized nursing language that captures the conclusions that nurses make based on observations � in effect\, the nursing diagnoses. The work is a continuing effort and diagnoses are revised\, retired or added bi-annually. The codes are simple integers and are not linked to each other. If a diagnostic term is retired\, the code is also retired. If a new diagnosis is added a new code is given to that term. If a diagnostic term is revised\, the code is kept intact but the date of the revision is published alongside the term. Domains and classes are not coded.,Complete
+2.16.840.1.113883.5.18,AcknowledgementType,AcknowledgementType,Complete
+2.16.840.1.113883.5.6,ActClass,ActClass,Complete
+2.16.840.1.113883.5.3,Act,Act,Retired
+2.16.840.1.113883.5.4,ActCode,ActCode,Complete
+2.16.840.1.113883.5.5,ActInterpretation,ActInterpretation,Retired
+2.16.840.1.113883.5.7,ActPriority,ActPriority,Complete
+2.16.840.1.113883.5.8,ActReason,ActReason,Complete
+2.16.840.1.113883.5.10,ActRelationshipCheckpoint,ActRelationshipCheckpoint,Complete
+2.16.840.1.113883.5.11,ActRelationshipConjunction,ActRelationshipConjunction,Retired
+2.16.840.1.113883.5.12,ActRelationshipJoin,ActRelationshipJoin,Complete
+2.16.840.1.113883.5.13,ActRelationshipSplit,ActRelationshipSplit,Complete
+2.16.840.1.113883.5.14,ActStatus,ActStatus,Complete
+2.16.840.1.113883.5.15,ActType,ActType,Retired
+2.16.840.1.113883.5.16,AddressPartType,AddressPartType,Complete
+2.16.840.1.113883.5.17,AddressUse,AddressUse,Complete
+2.16.840.1.113883.5.9,CalendarCycle,CalendarCycle,Complete
+2.16.840.1.113883.5.21,Charset,Charset,Complete
+2.16.840.1.113883.5.22,CodeSystem,CodeSystem,Complete
+2.16.840.1.113883.5.24,ConceptGenerality,ConceptGenerality,Complete
+2.16.840.1.113883.5.25,Confidentiality,Confidentiality,Complete
+2.16.840.1.113883.5.26,ContainerCap,ContainerCap,Complete
+2.16.840.1.113883.5.27,ContainerSeparator,ContainerSeparator,Complete
+2.16.840.1.113883.5.28,Country,Country,Complete
+2.16.840.1.113883.5.30,EntityDeterminer,EntityDeterminer,Complete
+2.16.840.1.113883.5.31,DeviceAlertLevel,DeviceAlertLevel,Complete
+2.16.840.1.113883.5.32,DietService,DietService,Retired
+2.16.840.1.113883.5.33,DocumentCompletion,DocumentCompletion,Complete
+2.16.840.1.113883.5.34,DocumentStorage,DocumentStorage,Complete
+2.16.840.1.113883.5.35,EditStatus,EditStatus,Complete
+2.16.840.1.113883.5.36,EncounterAccident,EncounterAccident,Complete
+2.16.840.1.113883.5.37,EncounterAdmissionSource,EncounterAdmissionSource,Complete
+2.16.840.1.113883.5.38,EncounterAdmissionPriority,EncounterAdmissionPriority,Retired
+2.16.840.1.113883.5.39,EncounterReferralSource,EncounterReferralSource,Complete
+2.16.840.1.113883.5.40,EncounterSpecialCourtesy,EncounterSpecialCourtesy,Complete
+2.16.840.1.113883.5.41,EntityClass,EntityClass,Complete
+2.16.840.1.113883.5.42,EntityHandling,EntityHandling,Complete
+2.16.840.1.113883.5.43,EntityNamePartQualifier,EntityNamePartQualifier,Complete
+2.16.840.1.113883.5.44,EntityNamePartType,EntityNamePartType,Complete
+2.16.840.1.113883.5.45,EntityNameUse,EntityNameUse,Complete
+2.16.840.1.113883.5.46,EntityRisk,EntityRisk,Complete
+2.16.840.1.113883.5.47,EntityRoleRelationshipType,EntityRoleRelationshipType,Retired
+2.16.840.1.113883.5.48,EntityType,EntityType,Retired
+2.16.840.1.113883.5.49,EquipmentAlertLevel,EquipmentAlertLevel,Complete
+2.16.840.1.113883.5.50,Ethnicity,Ethnicity,Complete
+2.16.840.1.113883.5.51,GenderStatus,GenderStatus,Complete
+2.16.840.1.113883.5.53,HealthcareProviderTaxonomyHIPAA,HealthcareProviderTaxonomyHIPAA,Complete
+2.16.840.1.113883.5.54,HL7CommitteeIDInRIM,HL7CommitteeIDInRIM,Complete
+2.16.840.1.113883.5.55,HL7ConformanceInclusion,HL7ConformanceInclusion,Complete
+2.16.840.1.113883.5.56,HL7DefinedRoseProperty,HL7DefinedRoseProperty,Complete
+2.16.840.1.113883.5.57,HL7UpdateMode,HL7UpdateMode,Complete
+2.16.840.1.113883.5.58,HtmlLinkType,HtmlLinkType,Complete
+2.16.840.1.113883.5.60,LanguageAbilityMode,LanguageAbilityMode,Complete
+2.16.840.1.113883.5.61,LanguageAbilityProficiency,LanguageAbilityProficiency,Complete
+2.16.840.1.113883.5.62,ListType,ListType,Retired
+2.16.840.1.113883.5.63,LivingArrangement,LivingArrangement,Complete
+2.16.840.1.113883.5.64,LivingSubjectProductionClass,LivingSubjectProductionClass,Retired
+2.16.840.1.113883.5.65,LocalMarkupIgnore,LocalMarkupIgnore,Complete
+2.16.840.1.113883.5.66,LocalRemoteControlState,LocalRemoteControlState,Complete
+2.16.840.1.113883.5.67,MapRelationship,MapRelationship,Complete
+2.16.840.1.113883.5.69,MaterialDanger,MaterialDanger,Retired
+2.16.840.1.113883.5.70,MaterialHandling,MaterialHandling,Retired
+2.16.840.1.113883.5.71,MaterialRelationship,MaterialRelationship,Retired
+2.16.840.1.113883.5.72,MaterialResponsibility,MaterialResponsibility,Retired
+2.16.840.1.113883.5.73,MaterialType,MaterialType,Complete
+2.16.840.1.113883.5.74,MDFAttributeType,MDFAttributeType,Complete
+2.16.840.1.113883.5.75,MdfHmdMetSourceType,MdfHmdMetSourceType,Complete
+2.16.840.1.113883.5.76,MdfHmdRowType,MdfHmdRowType,Complete
+2.16.840.1.113883.5.77,MdfRmimRowType,MdfRmimRowType,Complete
+2.16.840.1.113883.5.78,MDFSubjectAreaPrefix,MDFSubjectAreaPrefix,Complete
+2.16.840.1.113883.5.79,MediaType,MediaType,Complete
+2.16.840.1.113883.5.80,MessageCondition,MessageCondition,Complete
+2.16.840.1.113883.5.81,ModifyIndicator,ModifyIndicator,Complete
+2.16.840.1.113883.5.83,ObservationInterpretation,ObservationInterpretation,Complete
+2.16.840.1.113883.5.84,ObservationMethod,ObservationMethod,Complete
+2.16.840.1.113883.5.85,OrderableDrugForm,OrderableDrugForm,Complete
+2.16.840.1.113883.5.87,ParameterizedDataType,ParameterizedDataType,Complete
+2.16.840.1.113883.5.88,ParticipationFunction,ParticipationFunction,Complete
+2.16.840.1.113883.5.89,ParticipationSignature,ParticipationSignature,Complete
+2.16.840.1.113883.5.90,ParticipationType,ParticipationType,Complete
+2.16.840.1.113883.5.91,PaymentTerms,PaymentTerms,Complete
+2.16.840.1.113883.5.93,PersonDisabilityType,PersonDisabilityType,Complete
+2.16.840.1.113883.5.96,PersonNamePurpose,PersonNamePurpose,Retired
+2.16.840.1.113883.5.98,PracticeSetting,PracticeSetting,Retired
+2.16.840.1.113883.5.100,ProcessingID,ProcessingID,Complete
+2.16.840.1.113883.5.101,ProcessingMode,ProcessingMode,Complete
+2.16.840.1.113883.5.102,QueryPriority,QueryPriority,Complete
+2.16.840.1.113883.5.103,QueryStatusCode,QueryStatusCode,Complete
+2.16.840.1.113883.5.104,Race,Race,Complete
+2.16.840.1.113883.5.105,RelationalOperator,RelationalOperator,Complete
+2.16.840.1.113883.5.106,RelationshipConjunction,RelationshipConjunction,Complete
+2.16.840.1.113883.5.107,RoleLinkType,RoleLinkType,Complete
+2.16.840.1.113883.5.108,ResponseLevel,ResponseLevel,Complete
+2.16.840.1.113883.5.109,ResponseModality,ResponseModality,Complete
+2.16.840.1.113883.5.110,RoleClass,RoleClass,Complete
+2.16.840.1.113883.5.111,RoleCode,RoleCode,Complete
+2.16.840.1.113883.5.112,RouteOfAdministration,RouteOfAdministration,Complete
+2.16.840.1.113883.5.113,Sequencing,Sequencing,Complete
+2.16.840.1.113883.5.114,Service,Service,Retired
+2.16.840.1.113883.5.115,ParticipationActor,ParticipationActor,Retired
+2.16.840.1.113883.5.116,ServiceActorFunction,ServiceActorFunction,Retired
+2.16.840.1.113883.5.117,ServiceActorSignature,ServiceActorSignature,Retired
+2.16.840.1.113883.5.118,ServiceConfidentiality,ServiceConfidentiality,Retired
+2.16.840.1.113883.5.119,ServiceInterpretation,ServiceInterpretation,Retired
+2.16.840.1.113883.5.120,ServiceListType,ServiceListType,Retired
+2.16.840.1.113883.5.121,ServiceMood,ServiceMood,Retired
+2.16.840.1.113883.5.122,ServicePriority,ServicePriority,Retired
+2.16.840.1.113883.5.123,ServiceRelationshipType,ServiceRelationshipType,Retired
+2.16.840.1.113883.5.124,ServiceRelationshipCheckPoint,ServiceRelationshipCheckPoint,Retired
+2.16.840.1.113883.5.125,ServiceRelationshipConjunction,ServiceRelationshipConjunction,Retired
+2.16.840.1.113883.5.126,ServiceRelationshipJoin,ServiceRelationshipJoin,Unknown
+2.16.840.1.113883.5.127,ServiceRelationshipSplit,ServiceRelationshipSplit,Retired
+2.16.840.1.113883.5.128,ServiceTargetType,ParticipationType,Retired
+2.16.840.1.113883.5.129,SpecimenType,SpecimenType,Complete
+2.16.840.1.113883.5.130,SupplyService,SupplyService,Retired
+2.16.840.1.113883.5.131,TableCellHorizontalAlign,TableCellHorizontalAlign,Complete
+2.16.840.1.113883.5.132,TableCellScope,TableCellScope,Complete
+2.16.840.1.113883.5.133,TableCellVerticalAlign,TableCellVerticalAlign,Complete
+2.16.840.1.113883.5.134,TableFrame,TableFrame,Complete
+2.16.840.1.113883.5.135,TableRowGroupType,TableRowGroupType,Retired
+2.16.840.1.113883.5.136,TableRules,TableRules,Complete
+2.16.840.1.113883.5.137,TargetAwareness,TargetAwareness,Complete
+2.16.840.1.113883.5.139,TimingEvent,TimingEvent,Complete
+2.16.840.1.113883.5.140,TribalEntityUS,TribalEntityUS,Complete
+2.16.840.1.113883.5.141,UnitsOfMeasure,UnitsOfMeasure,Complete
+2.16.840.1.113883.5.142,UnitsOfMeasureCaseSensitive,UnitsOfMeasureCaseSensitive,Retired
+2.16.840.1.113883.5.143,URLScheme,URLScheme,Complete
+2.16.840.1.113883.5.144,VaccineManufacturer,VaccineManufacturer,Complete
+2.16.840.1.113883.5.145,VaccineType,VaccineType,Complete
+2.16.840.1.113883.5.146,ValueSetOperator,ValueSetOperator,Complete
+2.16.840.1.113883.5.147,VocabularyDomainQualifier,VocabularyDomainQualifier,Complete
+2.16.840.1.113883.6.21,NUBC-UB92,National Uniform Billing Council\, UB 92,Complete
+2.16.840.1.113883.6.22,PNDS,The PNDS provides standardized terms and codes for patient problems/nursing diagnoses\, nursing interventions including actual or expected (goal) outcomes.   The PNDS provides standardized terms and codes for nursing diagnoses (a subset of NANDA)\, nursing interventions and outcomes. The outcomes and interventions are in a relational database. The PNDS intervention and outcome statements are attached in an Access Database. The NANDA diagnoses in the PNDS have already been registered by HL7.,Complete
+2.16.840.1.113883.6.23,NMMDS,The NMMDS is the minimum set of items of information with uniform definitions and categories concerning the specific dimension of the context of patient care delivery.  It represents the minimum data used to support the management and administration of patient/nursing care delivery across all types of settings.  The NMMDS is composed of seventeen (17) data elements organized into three categories: environment\, nurse resources\, and financial resources.  See Tables 1-3 for the elements and related definitions organized by each categories.  The NMMDS most appropriately focuses at the first level of accountability for patient/client/family/community nursing care: this may be the delivery unit\, service\, or center of excellence level.  The NMMDS supports numerous constructed variables as well as aggregation of data at the unit\, institution\, network\, and system\, etc levels.  This minimum data set provides the structure for the collection of uniform information that influences quality of patient care\, directly and indirectly.,Complete
+2.16.840.1.113883.6.24,MDC,The nomenclature relates primarily to vital signs monitoring\, but also includes semantics of other medical devices that are commonly used in acute care settings.  There are multiple coding partitions each of which has a systematic name consisting of a set of base concepts and differentiating criteria.,Complete
+2.16.840.1.113883.6.25,ABCcodes,These codes fit into standard message formats for HCPCS codes that are a named standard.,Complete
+2.16.840.1.113883.5.1100,AcknowledgementDetailCode,AcknowledgementDetailCode,Complete
+2.16.840.1.113883.5.1091,Version identifiers,,Complete
+2.16.840.1.113883.19.5.1,Example code systems,Example code systems,Complete
+2.16.840.1.113883.6.30,AS4,ASTM E1238/ E1467 Universal,Pending
+2.16.840.1.113883.6.76,ACR,American College of Radiology finding codes,Pending
+2.16.840.1.113883.6.77,ATC,American Type Culture Collection,Pending
+2.16.840.1.113883.6.78,AS4E,AS4 Neurophysiology Codes,Pending
+2.16.840.1.113883.6.79,CDS,CDC Surveillance,Pending
+2.16.840.1.113883.6.80,CE,CEN ECG diagnostic codes,Pending
+2.16.840.1.113883.6.81,CLP,CLIP,Pending
+2.16.840.1.113883.6.82,C5,CPT-5,Pending
+2.16.840.1.113883.6.83,DCL,DICOM Class Label; note these are now deprecated and are superceded by 1.2.840.10008.2.16.4,Deprecated
+2.16.840.1.113883.6.31,DCM,DICOM modality codes; note these are now deprecated and are superceded by 1.2.840.10008.2.16.4,Deprecated
+2.16.840.1.113883.6.32,DQL,DICOM Query Label; note these are now deprecated and are superceded by 1.2.840.10008.2.16.4,Deprecated
+2.16.840.1.113883.6.33,ENZC,Enzyme Codes,Pending
+2.16.840.1.113883.6.34,E,EUCLIDES,Pending
+2.16.840.1.113883.6.35,E5,Euclides  quantity codes,Pending
+2.16.840.1.113883.6.36,E6,Euclides Lab method codes,Pending
+2.16.840.1.113883.6.37,E7,Euclides Lab equipment codes,Pending
+2.16.840.1.113883.6.38,FDK,FDA K10,Pending
+2.16.840.1.113883.6.39,HI,Health Outcomes,Pending
+2.16.840.1.113883.6.40,HB,HIBCC,Pending
+2.16.840.1.113883.6.41,ICS,ICCS,Pending
+2.16.840.1.113883.6.42,I9,ICD9,Pending
+2.16.840.1.113883.6.43,ICDO,International Classification of Diseases for Oncology,Pending
+2.16.840.1.113883.6.44,IC2,ICHPPC-2,Pending
+2.16.840.1.113883.6.45,ICSD,International Classification of Sleep Disorders,Pending
+2.16.840.1.113883.6.46,IUPP,IUPAC/IFCC Property Codes,Pending
+2.16.840.1.113883.6.47,IUPC,IUPAC/IFCC Component Codes,Pending
+2.16.840.1.113883.6.48,JC8,Japanese Chemistry,Pending
+2.16.840.1.113883.6.49,OHA,Omaha System,Pending
+2.16.840.1.113883.6.50,POS,POS Codes,Pending
+2.16.840.1.113883.6.51,SNM3,SNOMED International,Pending
+2.16.840.1.113883.6.52,SNT,SNOMED topology codes (anatomic sites),Pending
+2.16.840.1.113883.6.53,SDM,SNOMED- DICOM Microglossary,Pending
+2.16.840.1.113883.6.54,UC,UCDS,Pending
+2.16.840.1.113883.6.55,UPC,Universal Product Code,Pending
+2.16.840.1.113883.6.56,UML,Unified Medical Language,Pending
+2.16.840.1.113883.6.57,CDCA,CDC Analyte Codes,Pending
+2.16.840.1.113883.6.58,CDCM,CDC Methods/Instruments Codes,Pending
+2.16.840.1.113883.6.59,CVX,CDC Vaccine Codes,Pending
+2.16.840.1.113883.6.60,MVX,CDC Vaccine Manufacturer Codes,Pending
+2.16.840.1.113883.6.61,CAS,Chemical abstract codes,Pending
+2.16.840.1.113883.6.62,CST,COSTART,Pending
+2.16.840.1.113883.6.63,FDDX,First DataBank Diagnostic Codes,Pending
+2.16.840.1.113883.6.64,FDDC,First DataBank Drug Codes,Pending
+2.16.840.1.113883.6.65,MDDX,Medispan Diagnostic Codes,Pending
+2.16.840.1.113883.6.66,MEDX,Medical Economics Diagnostic Codes,Pending
+2.16.840.1.113883.6.67,MEDC,Medical Economics Drug Codes,Pending
+2.16.840.1.113883.6.68,MGPI,Medispan GPI,Pending
+2.16.840.1.113883.6.69,NDC,National drug codes,Pending
+2.16.840.1.113883.6.70,MEDR,Medical Dictionary for Drug Regulatory Affairs (ME,Pending
+2.16.840.1.113883.6.71,W1-W2,WHO rec# drug codes,Pending
+2.16.840.1.113883.6.72,W4,WHO rec# code with ASTM extension,Pending
+2.16.840.1.113883.6.73,WC,WHO ATC,Pending
+2.16.840.1.113883.6.74,ART,WHO Adverse Reaction Terms,Pending
+2.16.840.1.113883.6.75,UMD,MDNS,Pending
+2.16.840.1.113883.5.1050,AcknowledgementCondition,,Complete
+2.16.840.1.113883.5.1051,ActInvoiceElementModifier,Processing consideration and clarification codes.,Complete
+2.16.840.1.113883.5.1052,ActSite,An anatomical location on an organism which can be the focus of an act.,Complete
+2.16.840.1.113883.5.1053,ActUncertainty,,Complete
+2.16.840.1.113883.5.1054,AmericanIndianAlaskaNativeLanguages,American Indian and Alaska Native languages currently being used in the United States.,Complete
+2.16.840.1.113883.5.1055,Calendar,,Complete
+2.16.840.1.113883.5.1056,CommunicationFunctionType,Describes the type of communication function that the associated entity plays in the associated transmission.,Complete
+2.16.840.1.113883.5.1057,ContextControl,This table contains the control codes that are used to manage the propagation and scope of a particular ActRelationship or Participation  within a set of Acts.,Complete
+2.16.840.1.113883.5.1058,Currency,The currency unit as defined in ISO 4217,Complete
+2.16.840.1.113883.5.1059,EmployeeJobClass,,Complete
+2.16.840.1.113883.5.1060,EntityCode,,Complete
+2.16.840.1.113883.5.1061,EntityStatus,The status of an instance of the RIM Entity class.,Complete
+2.16.840.1.113883.5.1062,ManagedParticipationStatus,The status of an instance of the RIM Participation class.,Complete
+2.16.840.1.113883.5.1063,ObservationValue,This domain is the root domain to which all HL7-recognized value sets for the Observation.value attribute will be linked when Observation.value has a coded data type.,Complete
+2.16.840.1.113883.5.1064,ParticipationMode,Identifies the primary means by which an Entity participates in an Act.,Complete
+2.16.840.1.113883.5.1065,ProcedureMethod,Identifies the technique used to perform a procedure.,Complete
+2.16.840.1.113883.5.1066,QueryQuantityUnit,Values in this domain specify the units of a query quantity limited request.,Complete
+2.16.840.1.113883.5.1067,QueryResponse,Values in this domain allow a query response system to return a precise response status.,Complete
+2.16.840.1.113883.5.1068,RoleStatus,The status of an instance of the RIM Role class.,Complete
+2.16.840.1.113883.5.1069,SetOperator,,Complete
+2.16.840.1.113883.5.1070,SubstanceAdminSubstitution,Identifies what sort of change is permitted or has occurred between the therapy that was ordered and the therapy that was/will be provided.,Complete
+2.16.840.1.113883.5.1071,SubstitutionCondition,Identifies what sort of change is permitted or has occurred between the item that was ordered/requested and the one that was/will be provided.,Complete
+2.16.840.1.113883.5.1072,UnitOfMeasurePrefix,Decimal Multiplier Prefix for units of measure,Complete
+2.16.840.1.113883.5.1073,UnitOfMeasurePrefixCaseSensitive,Decimal Multiplier Prefix for units of measure - case sensitive,Retired
+2.16.840.1.113883.6.84,IETF1766,Tags for the identification of languages,Pending
+2.16.1,ISO3166-1,ISO 3166-1 2 Country codes.  Note that ISO 3166-1 has numeric. 2-character\, and 3-characters codes (synonyms)\, but HL7 has agreed that only the 2-character form is to be used (In v3 this will be done using value set machinery).,Complete
+2.16.2,ISO3166-2,ISO 3166-2 Country subdivision codes.,Complete
+2.16.3,ISO3166-3,ISO 3166-3 Obsolete country codes.   Note that this may be used when a country that no longer has a code in 3166-1 must be transmitted (historical records).,Complete
+2.16.840.1.113883.5.1074,CodingRationale,CodingRationale,Proposed
+2.16.840.1.113883.5.1075,PatientImportance,Patient Importance Codes,Proposed
+2.16.840.1.113883.5.1076,ReligiousAffiliation,ReligiousAffiliation,Proposed
+2.16.840.1.113883.5.1077,EducationLevel,Education Level,Proposed
+2.16.840.1.113883.6.86,UMLS,UMLS codes as CUIs making up the values in a coding system,Pending
+2.16.840.1.113883.6.87,NMDS,The NMDS is the minimum set of items of information with uniform definitions and categories concerning the specific dimension of the context of patient care delivery.  It represents the minimum data used to support the management and administration of patient/nursing care delivery across all types of settings.,Complete
+2.16.840.1.113883.6.89,DEEDS(old),retired root for DEEDs from earlier work.  Superceded.,Pending
+2.16.840.1.113883.6.90,ICD10CM,The International Classification of Diseases\, 10th Revision\, Clinical Modification (ICD-10-CM)\, describes the classification of morbidity and mortality information for statistical purposes and for the indexing of healthcare records by diseases. The ICD-10-CM codes can be used as the value of the Act.cd attribute.,Complete
+2.16.840.1.113883.5.1078,QueryEventStatus,Education Level,Proposed
+2.16.840.1.113883.5.1079,HL7V3,Complete HL7 Version 3 internal coding system,Proposed
+2.16.840.1.113883.5.1080,Dentition,Dentition,Pending
+2.16.840.1.113883.5.1081,CIHIAdj,CIHI Adjudication Information Codes,Pending
+2.16.840.1.113883.5.1082,AcknowledgementDetailType,Acknowledgement Detail Type,Pending
+2.16.840.1.113883.5.1083,MessageWaitingPriority,Message Waiting Priority,Pending
+2.16.840.1.113883.5.1084,EncounterAcuity,Encounter Acuity,Pending
+2.16.840.1.113883.5.1085,CodeSystemType,HL7 Code System Type,Pending
+2.16.840.1.113883.5.1086,ConceptStatus,HL7 Coded Concept Status,Pending
+2.16.840.1.113883.5.1087,ConceptProperty,HL7 Value Set and Coded Concept Property Codes,Pending
+2.16.840.1.113883.5.1088,ConceptCodeRelationship,Possible Concept Code Relationships,Pending
+2.16.840.1.113883.5.1089,Dentition,Dentition,Pending
+2.16.840.1.113883.5.1090,CalendarCycleOneLetter,One letter calendar cycle identifiers,Retired
+2.16.840.1.113883.6.91,FIPSPUB92,FIPSPUB92 - GUIDELINE FOR STANDARD OCCUPATIONAL CLASSIFICATION (SOC) CODES\, version 1983 February 24,Pending
+2.16.840.1.113883.6.92,FIPSPUB2,FIPSPUB-2 - CODES FOR THE IDENTIFICATION OF THE STATES\, THE DISTRICT OF COLUMBIA AND THE OUTLYING AREAS OF THE UNITED STATES\, AND ASSOCIATED AREAS\, version 1987 May 28,Pending
+2.16.840.1.113883.6.93,FIPSPUB6-4,FIPSPUB6-4 - Counties and Equivalent Entities of the United States\, Its Possessions\, and Associated Areas\, version 1990 August 31,Pending
+2.16.840.1.113883.6.94,ICD10-Ca,ICD10 with Canadian modifications,Pending
+2.16.840.1.113883.6.95,CCI,Canadian Classification of Health Interventions,Complete
+2.16.840.1.113883.6.98,OMS,The Omaha System provides standardized terms\, definitions\, and codes for observations and procedures\, specifically for client problems\, multidisciplinary interventions including those focusing on assessment and care\, and problem-specific client outcomes.,Complete
+2.16.840.1.113883.6.99,ISO639-1,Codes for the Representation of Names of Languages Part 1: Alpha-2 Code.  Used as part of the IETF 3066 specification for languages throughout the HL7 specification.,Complete
+2.16.840.1.113883.6.100,ISO639-2,Codes for the Representation of Names of Languages Part 2: Alpha-3 Code.  Used as part of the IETF 3066 specification for languages throughout the HL7 specification.,Complete
+2.16.840.1.113883.5.1092,HL7ITSVersionCode,Code to hold the version of the HL7 Implementation Technology Specification,Complete
+2.16.840.1.113883.6.101,NUCC Provider Codes,Codes from the National Uniform Claim Committee for Provider Types (Provider Taxonomy),Complete
+2.16.840.1.113883.6.102,DEEDS,root for the DEEDS code sets,Complete
+2.16.840.1.113883.6.102.2.10,DEEDS2.10,Code for ED Practitioner Role,Complete
+2.16.840.1.113883.6.102.4.2,DEEDS4.02,Mode of transport to ED,Complete
+2.16.840.1.113883.6.102.4.5,DEEDS4.05,ED Source of Referral,Complete
+2.16.840.1.113883.6.102.4.7,DEEDS4.07,Code for Initial Healthcare Encounter for Chief Complaint,Complete
+2.16.840.1.113883.6.102.4.8,DEEDS4.08,Code for Acuity Assessment,Complete
+2.16.840.1.113883.6.102.4.14,DEEDS4.14,Glasgow eye opening assessment,Complete
+2.16.840.1.113883.6.102.4.15,DEEDS4.15,Glasgow verbal component assessment,Complete
+2.16.840.1.113883.6.102.4.16,DEEDS4.16,Glasgow motor component assessment,Complete
+2.16.840.1.113883.6.102.4.18,DEEDS4.18,Systolic blood pressure special situation,Complete
+2.16.840.1.113883.6.102.4.22,DEEDS4.22,Heart rate method,Complete
+2.16.840.1.113883.6.102.4.24,DEEDS4.24,Respiratory rate special circumstances codes,Complete
+2.16.840.1.113883.6.102.4.27,DEEDS4.27,Patient temperature route,Complete
+2.16.840.1.113883.6.102.5.6,DEEDS5.06,Injury Activity,Complete
+2.16.840.1.113883.6.102.5.8,DEEDS5.08,Safety Equipment Use,Complete
+2.16.840.1.113883.6.102.5.19,DEEDS5.19,Clinical Finding Data Source,Complete
+2.16.840.1.113883.6.102.4.12,DEEDS4.12,ED Responsiveness Assessment,Complete
+2.16.840.1.113883.6.103,ICD-9CM (diagnosis codes),The International Classification of Diseases\, 9th Revision\, Clinical Modification (ICD-9-CM)\, Volumes I\, II (diagnoses) and III (procedures) describes the classification of morbidity and mortality information for statistical purposes and for the indexing of healthcare records by diseases and procedures. The ICD-9-CM codes can be used as the value of the Act.cd attribute.,Complete
+2.16.840.1.113883.6.104,ICD-9CM (procedure codes),The International Classification of Diseases\, 9th Revision\, Clinical Modification (ICD-9-CM)\, Volumes I\, II (diagnoses) and III (procedures) describes the classification of morbidity and mortality information for statistical purposes and for the indexing of healthcare records by diseases and procedures. The ICD-9-CM codes can be used as the value of the Act.cd attribute.,Complete
+2.16.840.1.113883.5.1093,TranslationQuality,The relationship between two concepts (e.g. broader\, narrower),Pending
+2.16.840.1.113883.5.1094,MatchAlgorithm,An algorithm used for matching text,Pending
+2.16.840.1.113883.6.111,ALT,Alternative Billing Concepts (Altlink). Version 2004\, sixth edition. Contact: Alternative Link LLC; 1065 Main St.\, Bldg. C\, Las Cruces\, NM 88005; phone: (505) 527-0636; http://www.alternativelink.com; mail@alternativelink.com.,Pending
+2.16.840.1.113883.6.112,AOD,Alcohol and Other Drug Thesaurus: A Guide to Concepts and Terminology in Substance Abuse and Addiction. 3rd. ed. [4 Volumes.] Bethesda\, MD: National Institute on Alcohol Abuse and Alcoholism (NIAAA) and Center for Substance Abuse Prevention (CSAP)\, 2000,Pending
+2.16.840.1.113883.6.113,BI,Beth Israel OMR Clinical Problem List Vocabulary. Version 1.0. Boston (MA): Beth Israel Deaconess Medical Center\, 1999. Contact: Howard Goldberg\, MD.; http://clinquery.bidmc.harvard.edu.,Pending
+2.16.840.1.113883.6.114,CCPSS,Canonical Clincial Problem Statement System\, Version 1.0 June 23\, 1999. Contact: sbrown@vumclib.mc.vanderbilt.edu,Pending
+2.16.840.1.113883.6.115,CCS,Clinical Classifications Software (CCS). Agency for Healthcare Research and Quality (AHRQ)\, Rockville\, MD. Release Date: April 2003. URL: http://www.ahcpr.gov/data/hcup/ccsfact.htm Phone: 301-594-1364.,Pending
+2.16.840.1.113883.6.116,CDT,Version of Current Dental Terminology (CDT) version 4\, included in the Healthcare Common Procedure Coding System (HCPCS).,Pending
+2.16.840.1.113883.6.117,COSTAR,Computer-Stored Ambulatory Records (COSTAR). Boston (MA): Massachusetts General Hospital\, 1989-1995.,Pending
+2.16.840.1.113883.6.118,CPM,Medical Entities Dictionary (CPM)\, Columbia Presbyterian Medical Center Medical Entities Dictionary. New York (NY): Columbia Presbyterian Medical Center\, 2003,Pending
+2.16.840.1.113883.6.119,FMA,Digital Anatomist Foundational Model of Anatomy (FMA),Pending
+2.16.840.1.113883.6.12.1,CPTSP,Current Procedural Terminology (CPT)\, Spanish Translation. 4th ed. Chicago (IL): American Medical Association\, 2000. http://www.ama-assn.org.,Pending
+2.16.840.1.113883.6.120,CSP,Computer Retrieval of Information on Scientific Projects (CRISP). Bethesda (MD): National Institutes of Health\, Division of Research Grants\, Research Documentation Section\, 2004.,Pending
+2.16.840.1.113883.6.122,DDB,Diseases Database 2000. May\, 2000. London (England): Medical Object Oriented Software Enterprises Ltd.\, 2000. Contact: Malcolm Duncan <mhduncan@compuserve.com>; http://www.diseasesdatabase.com/.,Pending
+2.16.840.1.113883.6.125,DSM3R,Diagnostic and Statistical Manual of Mental Disorders (DSM-III-R). 3rd ed. rev. Washington (DC): American Psychiatric Association\, 1987.,Pending
+2.16.840.1.113883.6.126,DSM4,Diagnostic and Statistical Manual of Mental Disorders (DSM-IV). 4th ed. Washington (DC): American Psychiatric Association\, 1994.,Pending
+2.16.840.1.113883.6.127,DXP,DXplain (An expert diagnosis program). Boston (MA): Massachusetts General Hospital\, 1994.,Pending
+2.16.840.1.113883.6.128,GO,Gene Ontology: tool for the unification of biology. The Gene Ontology Consortium (2000) Nature Genet. 25: 25-29\, http://www.geneontology.org/#cite_go.,Pending
+2.16.840.1.113883.6.129,HCDT,Version of Current Dental Terminology (CDT) version 4\, included in the Healthcare Common Procedure Coding System (HCPCS).,Pending
+2.16.840.1.113883.6.130,HCPT,Version of Physicians' Current Procedural Terminology (CPT) included in the Healthcare Common Procedure Coding System (HCPCS)\, 2004.,Pending
+2.16.840.1.113883.6.132,HLREL,ICPC2E-ICD10 relationships from Dr. Henk Lamberts (HLREL)\, 1998. University of Amsterdam. Contact: H.Lamberts@AMC.UVA.NL.,Pending
+2.16.840.1.113883.6.133,HUGO,HUGO Gene Nomenclature\, HUGO Gene Nomenclature Committee\, Department of Biology\, University College London\, Wolfson House\, 4 Stephenson Way\, London NW1 2HE\, UK. Tel: 44-20-7679-5027 Fax: 44-20-7387-3496 e-mail: nome@galton.ucl.ac.uk,Pending
+2.16.840.1.113883.6.135,ICD10AM,International Statistical Classification of Diseases and Related Health Problems\, 10th Revision\, Australian Modification; 2nd Edition\, published January 2000. Developed and Maintained by the National Centre for Classification in Health\, University of Sydn,Pending
+2.16.840.1.113883.6.135.1,ICD10AMAE,International Statistical Classification of Diseases and Related Health Problems\, Australian Modification (ICD-10-AM)\, Americanized English Equivalents\, produced by NLM. Bethesda (MD): National Library of Medicine\, UMLS project\, 2000,Pending
+2.16.840.1.113883.6.138,ICPC,The International Classification of Primary Care (ICPC). Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.1,ICPCBAQ,The International Classification of Primary Care (ICPC). Basque Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.10,ICPCNOR,The International Classification of Primary Care (ICPC). Norwegian Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.11,ICPCPOR,The International Classification of Primary Care (ICPC). Portuguese Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.12,ICPCSPA,The International Classification of Primary Care (ICPC). Spanish Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.13,ICPCSWE,The International Classification of Primary Care (ICPC). Swedish Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.2,ICPCDAN,The International Classification of Primary Care (ICPC). Danish Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.3,ICPCDUT,The International Classification of Primary Care (ICPC). Dutch Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.4,ICPCFIN,The International Classification of Primary Care (ICPC). Finnish Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.5,ICPCFRE,The International Classification of Primary Care (ICPC). French Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.6,ICPCGER,The International Classification of Primary Care (ICPC). German Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.7,ICPCHEB,The International Classification of Primary Care (ICPC). Hebrew Translation\, Denmark: World Organisation of Family Doctors\, 1993,Pending
+2.16.840.1.113883.6.138.8,ICPCHUN,The International Classification of Primary Care (ICPC). Hungarian Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.138.9,ICPCITA,The International Classification of Primary Care (ICPC). Italian Translation. Denmark: World Organisation of Family Doctors\, 1993.,Pending
+2.16.840.1.113883.6.139,ICPC2EENG,International Classification of Primary Care / prepared by the Classification Committee of the World Organization of National Colleges\, Academies and Academic Associations of General Practitioners/Family Physicians (WONCA)\, known more briefly as the World,Pending
+2.16.840.1.113883.6.139.1,ICPC2EDUT,Hirs\, W.\, H.W. Becker\, C. van Boven\, S.K. Oskam\, I.M. Okkes\, H. Lamberts. International Classification of Primary Care 2E: 2nd ed. electronic. Dutch Translation. Amsterdam: Department of General Practice\, Academic Medical Center/University of Amsterdam\, D,Pending
+2.16.840.1.113883.6.139.2,MTHICPC2EAE,Henk Lamberts and Inge Hofmans-Okkes. International Classification of Primary Care 2nd Edition\, Electronic\, 2E\, American English Equivalents. Amsterdam: International Classification of Primary Care / prepared by the Classification Committee of the World O,Pending
+2.16.840.1.113883.6.140.1,ICPCPAE,International Classification of Primary Care\, Version 2-Plus\, Australian Modification. Americanized English Equivalents\, January\, 2000. Produced by NLM. Bethesda (MD): National Library of Medicine\, UMLS project,Pending
+2.16.840.1.113883.6.140.2,ICPC2P,International Classification of Primary Care\, Version 2-Plus\, Australian Modification. January\, 2000,Pending
+2.16.840.1.113883.6.142,ICPC2ICD10ENG,Becker\, H.W.\, C. van Boven\, S.K. Oskam\, I.M. Okkes\, W. Hirs\, H. Lamberts. ICPC2 - ICD10 Thesaurus\, Version March\, 2004. Amsterdam: Project "Adaptation ICPC\, integration and implementation of ICPC2 and ICD10(-CM)." Department of General Practice\, Academic ,Pending
+2.16.840.1.113883.6.142.1,ICPC2ICD10DUT,International Classification of Primary Care / prepared by the Classification Committee of the World Organization of National Colleges\, Academies and Academic Associations of General Practitioners/Family Physicians (WONCA)\, known more briefly as the World,Pending
+2.16.840.1.113883.6.142.2,MTHICPC2ICD107B,International Classification of Primary Care / prepared by the Classification Committee of the World Organization of National Colleges\, Academies and Academic Associations of General Practitioners/Family Physicians (WONCA)\, known more briefly as the World,Pending
+2.16.840.1.113883.6.142.3,MTHICPC2ICD10AE,International Classification of Primary Care / prepared by the Classification Committee of the World Organization of National Colleges\, Academies and Academic Associations of General Practitioners/Family Physicians (WONCA)\, known more briefly as the World,Pending
+2.16.840.1.113883.6.158,JABL,Online Congenital Multiple Anomaly/Mental Retardation Syndromes\, 1999.,Pending
+2.16.840.1.113883.6.159,LCH,Library of Congress Subject Headings. 12th ed. Washington (DC): Library of Congress\, 1989.,Pending
+2.16.840.1.113883.6.160,MBD,MEDLINE Backfiles (1994-1998). Bethesda (MD): National Library of Medicine. Contact: http://www.nlm.nih.gov.,Pending
+2.16.840.1.113883.6.161,MCM,Glossary of Methodologic Terms for Clinical Epidemiologic Studies of Human Disorders. Canada: McMaster University\, 1992.,Pending
+2.16.840.1.113883.6.162,MDDB,Master Drug Data Base\, 2003,Pending
+2.16.840.1.113883.6.163.1,MDRAE,Medical Dictionary for Regulatory Activities Terminology (MedDRA)\, American English Equivalents\, Version 7.0. Bethesda\, MD: National Library of Medicine\, March 1\, 2004  This is the English language version as encapsulated in the UMLS..,Complete
+2.16.840.1.113883.6.163.2,MDRDUT,Medical Dictionary for Regulatory Activities Terminology (MedDRA) Version 7.0\, Dutch Edition. International conference on Harmonization of Technical Requirements for Registration of Pharmaceuticals for Human Use (ICH). Reston\, VA: MedDRA MSSO\, March 1\, 2004  This is the Dutch language version as encapsulated in the UMLS..,Complete
+2.16.840.1.113883.6.163.3,MDRFRE,Medical Dictionary for Regulatory Activities Terminology (MedDRA) Version 7.0\, French Edition. International conference on Harmonization of Technical Requirements for Registration of Pharmaceuticals for Human Use (ICH). Reston\, VA: MedDRA MSSO\, March 1\, 2004  This is the French  language version as encapsulated in the UMLS..,Complete
+2.16.840.1.113883.6.163.4,MDRGER,Medical Dictionary for Regulatory Activities Terminology (MedDRA) Version 7.0\, German Edition. International conference on Harmonization of Technical Requirements for Registration of Pharmaceuticals for Human Use (ICH). Reston\, VA: MedDRA MSSO\, March 1\, 2004  This is the German language version as encapsulated in the UMLS..,Complete
+2.16.840.1.113883.6.163.5,MDRPOR,Medical Dictionary for Regulatory Activities Terminology (MedDRA) Version 7.0\, Portuguese Edition. International conference on Harmonization of Technical Requirements for Registration of Pharmaceuticals for Human Use (ICH). Reston\, VA: MedDRA MSSO\, March 1\, 2004.  This is the Portuguese language version as encapsulated in the UMLS..,Complete
+2.16.840.1.113883.6.163.6,MDRSPA,Medical Dictionary for Regulatory Activities Terminology (MedDRA) Version 7.0\, Spanish Edition. International conference on Harmonization of Technical Requirements for Registration of Pharmaceuticals for Human Use (ICH). Reston\, VA: MedDRA MSSO\, March 1\, 2004.  This is the Spanish language version as encapsulated in the UMLS..,Complete
+2.16.840.1.113883.6.164,MDREX,Medical Dictionary for Regulatory Activities Terminology (MedDRA)\, with expanded abbreviations\, Version 7.0. Bethesda\, MD: National Library of Medicine\, March 1\, 2004.,Complete
+2.16.840.1.113883.6.164.1,MDREA,Medical Dictionary for Regulatory Activities Terminology (MedDRA)\, American English Equivalents with expanded abbreviations\, Version 7.0. Bethesda\, MD: National Library of Medicine\, March 1\, 2004.,Complete
+2.16.840.1.113883.6.165,MTHMDRSPA,Metathesaurus Forms of Medical Dictionary for Regulatory Activities Terminology (MedDRA) Version 7.0\, Spanish Edition. Bethesda\, MD: National Library of Medicine\, March 2004.,Complete
+2.16.840.1.113883.6.172,MED,MEDLINE Current Files (1999-2004). Bethesda (MD): National Library of Medicine. Contact: http://www.nlm.nih.gov.,Pending
+2.16.840.1.113883.6.173,MEDLINEPLUS,MedlinePlus Health Topics. Bethesda (MD): National Library of Medicine\, August 14\, 2004.,Pending
+2.16.840.1.113883.6.174,MIM,Online Mendelian Inheritance in Man (OMIM). Baltimore (MD): Johns Hopkins University\, Center for Biotechnology Information\, 1994.,Pending
+2.16.840.1.113883.6.175,MMSL,Medisource Lexicon. Multum Information Services\, Inc.\, Denver\, CO. Release Date: March 1\, 2004. URL: http://www.multum.com/ Phone: 888-633-4772 x1420.,Pending
+2.16.840.1.113883.6.176,MMX,Micromedex DRUGDEX\, 2001. URL: http://www.micromedex.com/ Phone: 800-525-9083.,Pending
+2.16.840.1.113883.6.177,MSH,Medical Subject Headings (MeSH). Bethesda (MD): National Library of Medicine\, 2004,Pending
+2.16.840.1.113883.6.177.1,MSHCZE,Czech translation of Medical Subject Headings (MeSH) 2003. Prague: Dept. of Bibliography\, National Library of Medicine\, 2003.,Pending
+2.16.840.1.113883.6.177.10,MSHSPA,Descriptores en Ciencias de la Salud [Spanish translation of Medical Subject Headings (MeSH)]\, 2004. Sao Paulo: Latin American and Caribbean Center on Health Sciences Information. BIREME/PAHO/WHO\, 2004.,Pending
+2.16.840.1.113883.6.177.11,MSHSWE,Swedish translation of Medical Subject Headings (MeSH)\, 2004. Stockholm: Karolinska Institutet\, 2004.,Pending
+2.16.840.1.113883.6.177.2,MSHDUT,Nederlandse vertaling van MeSH [Dutch translation of MeSH)\, 2004. Amsterdam: Nederlands Tijdschrift voor Geneeskunde [Dutch Journal of Medicine]\, 2004.,Pending
+2.16.840.1.113883.6.177.3,MSHFIN,Finnish translations of Medical Subject Headings (MeSH)\, 2004. Helsinki: Finnish Medical Society Duodecim\, 2004.,Pending
+2.16.840.1.113883.6.177.4,MSHFRE,Thesaurus Biomedical Francais/Anglais [French translation of MeSH]\, 2004. Paris: Institut National de la Sante et Recherche Medicale\, 2004.,Pending
+2.16.840.1.113883.6.177.5,MSHGER,German translation of Medical Subject Headings (MeSH)\, 2004. Cologne: Deutsches Institut fur Medizinische Dokumentation und Information\, 2004.,Pending
+2.16.840.1.113883.6.177.6,MSHITA,Italian translation of Medical Subject Headings (MeSH)\, 2004. Rome: Istituto Superiore di Sanita\, Settore Documentazione\, 2004.,Pending
+2.16.840.1.113883.6.177.7,MSHJPN,JAMAS Japanese Medical Thesaurus (JJMT). Tokyo: Japan Medical Abstracts Society; Igaku-Chuo-Zasshi\, 2004.,Pending
+2.16.840.1.113883.6.177.8,MSHPOR,Descritores em Ciencias da Saude [Portuguese translation of Medical Subject Headings (MeSH)]\, 2004. Sao Paulo (Brazil): Latin American and Caribbean Center on Health Sciences Information. BIREME/PAHO/WHO\, 2004.,Pending
+2.16.840.1.113883.6.177.9,MSHRUS,Russian Translation of Medical Subject Headings (MeSH). Moscow: State Central Scientific Medical Library\, 2004,Pending
+2.16.840.1.113883.6.189,MTH,UMLS Metathesaurus. Bethesda\, MD: National Library of Medicine.,Pending
+2.16.840.1.113883.6.190,MTHCH,Metathesaurus Hierarchical CPT Terms. Bethesda\, MD: National Library of Medicine\, 2004,Pending
+2.16.840.1.113883.6.191,MTHFDA,Metathesaurus Forms of FDA National Drug Code Directory\, 2004_01. Bethesda\, MD: National Library of Medicine\, 2004.,Pending
+2.16.840.1.113883.6.192,MTHHH,Metathesaurus Hierarchical HCPCS Terms (These terms were created by the NLM to provide contextual information for HCPCS). Bethesda\, MD: National Library of Medicine\, 2004.,Pending
+2.16.840.1.113883.6.193,MTHICD9,Metathesaurus additional entry terms for ICD-9-CM [computer file]: international classification of diseases\, ninth revision\, clinical modification. Version 22. Bethesda\, MD: U.S. Dept. of Health and Human Services\, Public Health Service\, National Institut,Pending
+2.16.840.1.113883.6.198,MTHMST,Metathesaurus Version of Minimal Standard Terminology Digestive Endoscopy. Bethesda\, MD: National Library of Medicine\, 2001.,Pending
+2.16.840.1.113883.6.198.1,MTHMSTFRE,Metathesaurus Version of Minimal Standard Terminology Digestive Endoscopy\, French Translation. Bethesda\, MD: National Library of Medicine\, 2001.,Pending
+2.16.840.1.113883.6.198.2,MTHMSTITA,Metathesaurus Version of Minimal Standard Terminology Digestive Endoscopy\, Italian Translation. Bethesda\, MD: National Library of Medicine\, 2001.,Pending
+2.16.840.1.113883.6.201,MTHPDQ,Metathesaurus Forms of Physician Data Query (PDQ)\, 2004. Bethesda\, MD: National Library of Medicine\, 2004.,Pending
+2.16.840.1.113883.6.202,MTHSCT,Metathesaurus forms of SNOMED Clinical Terms. Bethesda (MD): National Library of Medicine\, July 31\, 2004.,Pending
+2.16.840.1.113883.6.202.1,MTHSCTSPA,Metathesaurus forms of Spanish SNOMED Clinical Terms. Bethesda (MD): National Library of Medicine\, April 30\, 2004.,Pending
+2.16.840.1.113883.6.204,NAN,Sparks Ralph\, Sheila\, Craft-Rosenberg\, Martha\, Herdman\, T. Heather\, Lavin\, Mary Ann\, editors. NANDA nursing diagnoses: definitions and classification 2003-2004. Philadelphia: NANDA International\, 2003.,Pending
+2.16.840.1.113883.6.205,NCBI,NCBI Taxonomy. National Center for Biotechnology Information\, National Library of Medicine\, Bethesda\, MD\, 2001. http://www.ncbi.nlm.nih.gov/Taxonomy/,Pending
+2.16.840.1.113883.6.206,NCI,NCI Thesaurus\, 2004. Bethesda\, MD: National Cancer Institute\, National Institutes of Health\, July 2004.,Pending
+2.16.840.1.113883.6.207,NCISEER,NCI Surveillance\, Epidemiology\, and End Results (SEER) conversions between ICD-9-CM and ICD-10 neoplasm codes. National Cancer Institute\, Bethesda\, MD. Release Date: June 1999. URL: http://www-seer.ims.nci.nih.gov/Admin/ConvProgs/ Phone: 301-496-8510.,Pending
+2.16.840.1.113883.6.208,NDDF,National Drug Data File Plus Source Vocabulary 2004. San Bruno\, CA: First DataBank\, March 11\, 2004.,Pending
+2.16.840.1.113883.6.209,NDFRT,National Drug File - Reference Terminology\, 2004_01. Washington\, DC: U.S. Department of Veterans Affairs\, Veterans Health Administration\, January 2004.,Pending
+2.16.840.1.113883.6.210,NEU,Bowden\, Douglas M.\, Martin\, Richard F.\, Dubach\, Joev G. Neuronames Brain Hierarchy. Seattle (WA): University of Washington\, Primate Information Center\, 1999. http://rprcsgi.rprc.washington.edu/neuronames/,Pending
+2.16.840.1.113883.6.211,NLM-MED,National Library of Medicine (NLM) Medline Data. Bethesda (MD): National Library of Medicine. Contact: http://www.nlm.nih.gov.,Pending
+2.16.840.1.113883.6.212,PCDS,Ozbolt\, Judy Grace. Patient Data Care Set (PCDS)\, Version 4.0\, 1998.Contact: judy.ozbolt@mcmail.vanderbilt.edu; Vanderbilt University School of Nursing; 400-C Godchaux Hall; Nashville\, TN 37240-0008; Telephone 615-343-3291,Pending
+2.16.840.1.113883.6.213,PDQ,Physician Data Query (PDQ). Bethesda\, MD: National Cancer Institute\, 2004.,Pending
+2.16.840.1.113883.6.214,PPAC,Pharmacy Practice Activity Classification (PPAC). Version 1. Washington (DC): American Pharmaceutical Association\, 1998.,Pending
+2.16.840.1.113883.6.215,PSY,Thesaurus of Psychological Index Terms\, Ninth Edition. Washington (DC): American Psychological Association\, 2001.,Pending
+2.16.840.1.113883.6.216,QMR,Quick Medical Reference (QMR). San Bruno (CA): First DataBank\, 1997.,Pending
+2.16.840.1.113883.6.217,RAM,QMR clinically related terms from Randolf A. Miller\, 1999.,Pending
+2.16.840.1.113883.6.220,RCDSY,Synthesized Read terms (without initial bracketed letters) of the Clinical Terms Version 3 (Q1\, 1999)\, produced by NLM. Bethesda (MD): National Library of Medicine\, UMLS project\, 1999.,Pending
+2.16.840.1.113883.6.220.1,RCDSA,American English equivalent of synthesized terms from the Clinical Terms Version 3 (Q1\, 1999)\, produced by NLM. Bethesda (MD): National Library of Medicine\, UMLS project\, 1999.,Pending
+2.16.840.1.113883.6.220.2,RCDAE,American English equivalent of the Clinical Terms Version 3 (Q1\, 1999)\, produced by NLM. Bethesda (MD): National Library of Medicine\, UMLS project\, 1999.,Pending
+2.16.840.1.113883.6.224,SPN,Standard Product Nomenclature (SPN). Rockville\, (MD); U.S. Food and Drug Administration\, 2003,Pending
+2.16.840.1.113883.6.226,ULT,Bell\, Douglas. Ultrasound Structured Attribute Reporting (UltraSTAR). Boston (MA): Brigham & Womens Hospital\, 1993.,Pending
+2.16.840.1.113883.6.227,UMD,UniversalMedical Device Nomenclature System: Product Category Thesaurus. Plymouth Meeting (PA): ECRI\, 2004.,Pending
+2.16.840.1.113883.6.227.1,DMDUMD,Die Nomenklatur fuer Medizinprodukte UMDNS [German translation of UMDNS]. Germany: Deutsches Institut fuer Medizinische Dokumentation und Information\, 1996.,Pending
+2.16.840.1.113883.6.228,UWDA,University of Washington Digital Anatomist\, (UWDA). Seattle (WA): University of Washinton\, Version 1.7.3\, March\, 2003. Jose Mejino\, M.D.; email: onard@biostr.washington.edu,Pending
+2.16.840.1.113883.6.229,VANDF,U.S. Department of Veterns Affairs\, Veterans Health Administration National Drug File. Department of Veterans Affairs\, Washington\, DC. URL: http://www.vapbm.org/PBM/natform.htm,Pending
+2.16.840.1.113883.6.230,WHO,WHO Adverse Drug Reaction Terminology (WHOART). Uppsala (Sweden): WHO Collaborating Centre for International Drug Monitoring\, 1997.,Pending
+2.16.840.1.113883.6.230.1,WHOFRE,WHO Adverse Drug Reaction Terminology (WHOART). French Translation. Uppsala (Sweden): WHO Collaborating Centre for International Drug Monitoring\, 1997.,Pending
+2.16.840.1.113883.6.230.2,WHOGER,WHO Adverse Drug Reaction Terminology (WHOART). German Translation. Uppsala (Sweden): WHO Collaborating Centre for International Drug Monitoring\, 1997.,Pending
+2.16.840.1.113883.6.230.3,WHOPOR,WHO Adverse Drug Reaction Terminology (WHOART). Portuguese Translation. Uppsala (Sweden): WHO Collaborating Centre for International Drug Monitoring\, 1997.,Pending
+2.16.840.1.113883.6.230.4,WHOSPA,WHO Adverse Drug Reaction Terminology (WHOART). Spanish Translation. Uppsala (Sweden): WHO Collaborating Centre for International Drug Monitoring\, 1997.,Pending
+2.16.840.1.113883.6.3.1,ICD10AE,International Statistical Classification of Diseases and Related Health Problems (ICD-10): Americanized Version. 10th rev. Geneva (Switzerland): World Health Organization\, 1998.,Pending
+2.16.840.1.113883.6.3.2,ICD10DUT,Hirs\, W.\, H.W. Becker\, C. van Boven\, S.K. Oskam\, I.M. Okkes\, H. Lamberts. ICD-10\, Dutch Translation\, 200403. Amsterdam: Department of General Practice\, Academic Medical Center/University of Amsterdam\, Dutch College of General Practitioners (NHG)\, March 20,Pending
+2.16.840.1.113883.6.3.3,DMDICD10,Internationale Klassifikation der Krankheiten 10 [German translation of ICD10]. Germany: Deutsches Institut fuer Medizinische Dokumentation und Information\, 1998.,Pending
+2.16.840.1.113883.6.96.1,SCTSPA,College of American Pathologists\, SNOMED Clinical Terms\, Spanish Language Edition\, April 30\, 2004. SNOMED International\, 325 Waukegan Road\, Northfield\, IL 60093-2750. Phone: 800-323-4040 ext. 7700. Email: snomed@cap.org. URL: http://www.snomed.org,Pending
+2.16.840.1.113883.6.121,IETF3066,IETF Network Working Group RFC 3066 - Tags for the Identification of Langugages\, Alverstrand\, 2001.  (Obsoletes IETF 1766),Pending
+2.16.840.1.113883.6.231,US ZIPCODES,Coding system of defined postal zip codes for the United States of America.,Complete
+2.16.840.1.113883.6.232,SIC,The Standard Industrial Classification Codes that appear in a company's disseminated EDGAR filings indicate the company's type of business. These codes are also used in the Division of Corporation Finance as a basis for assigning review responsibility for the company's filings. For example\, a company whose business was Metal Mining (SIC 1000) would have its filings reviewed by staffers in A/D Office 4.,Complete
+2.16.840.1.113883.6.234,AHFS,The AHFS Pharmacologic-Therapeutic Classification has been in use in hospitals in the United States since its inception in 1959. An integral part of the American Hospital Formulary Service\, the AHFS classification allows the grouping of drugs with similar pharmacologic\, therapeutic\, and/or chemical characteristics. Today\, the AHFS classification is used by many people outside of hospitals.,Complete
+2.16.840.1.113883.5.1096,QueryParameterValue,The domain of coded values used as parameters within QueryByParameter queries.,Pending
+2.16.840.1.113883.5.1097,HL7StandardVersionCode,HL7StandardVersionCode,Complete
+2.16.840.1.113883.5.1098,StyleType,StyleType,Complete
+2.16.840.1.113883.5.1099,ActRelationshipSubset,ActRelationshipSubset,Complete
+2.16.840.1.113883.6.235,CSAID,CAN/CSA-Z795-96,Complete
+2.16.840.1.113883.6.238,PH_RaceAndEthnicity_CDC,Codes for Race\, authored and maintained by the CDC,Complete
+2.16.840.1.113883.19.6.1,SpecialArrangement,A code indicating the type of special arrangements provided for a patient encounter (e.g.\, wheelchair\, stretcher\, interpreter\, attendant\, seeing eye dog). For encounters in intention moods\, this information can be used to identify special arrangements that will need to be made for the incoming patient.,Pending
+2.16.840.1.113883.19.7.1,Artefact Type: HL7 V3 Message,This OID identifies an artefact as an HL7 V3 message.  Used as a root\, in conjuntion with the V3 artefact ID\, it identifies the message within the directory catalogue for removable media transport.,Pending
+2.16.840.1.113883.6.247,ETHNICITY,Relating to large groups of people classed according to common racial\, national\, tribal\, religious\, or cultural origin or background,Pending
+2.16.840.1.113883.19.8.1,Artefact Type: HL7 V2 Message,This OID identifies an artefact as an HL7 V2 message.  Used as a root\, in conjuntion with components 1 and 2 of MSH-9\, it identifies the message within the directory catalogue for removable media transport.,Pending
+2.16.840.1.113883.19.9.1,Artefact Type: CDA Document,This OID identifies an artefact as an HL7 CDA document.  Used as a root\, in conjuntion with the CDA document ID\, it identifies the document within the directory catalogue for removable media transport.,Pending
+2.16.840.1.113883.6.236,CCC,Clinical Care Classification System (formerly Home Health Care Classification system) codes.  The Clinical Care Classification (CCC) consists of two taxonomies: CCC of Nursing Diagnoses and CCC of Nursing Interventions both of which are classified by 21 Care Components.   Each of these are classified by Care Components which provide a standardized framework for documenting patient care in hospitals\, home health agencies\, ambulatory care clinics\, and other health care settings.,Complete
+2.16.840.1.113883.6.239,CDA_RUS,Coding system intended for use in the Russian clinical documents,Complete
+2.16.840.1.113883.6.240,US_COC,Coding system of United States Census Occupation Codes\, published by the US Governmetn Bureau of the Census.  Doucmentation and Crosswalk mapping between the COC and the SOC and NAICS code systems available at http://www.census.gov/hhes/www/ioindex/view.html,Complete
+2.16.840.1.113883.5.1101,HL7Domains,Coding system of HL7 Domains\, used internally by HL7 machinery,Complete
+2.16.840.1.113883.3.26.1.5,NCI Version of NDF-RT,The National Drug File RT (NDF-RT) is published by the US Veterans' Administration (VA). NDF-RT covers clinical drugs used at the VA. The NCI version of NDF-RT is used by NCI to provide automated terminology access to the Food and Drug Administration (FDA) Structured Product Label (SPL) initiative. NCI makes its version of NDF-RT available publicly thru the Web\, download via FTP and  via open APIs for Java\, SOAP and HTTP.,Complete
+2.16.840.1.113883.5.1102,Online Product Identification Number Index of Nova Scotia,http://www.atlanticpharmaceutical.ca,Pending
+2.16.840.1.113883.5.1103,Active Ingredient Code,http://www.hc-sc.gc.ca/dhp-mps/prodpharma/databasdon/index_e.html,Pending
+2.16.840.1.113883.5.1104,Active Ingredient Group Code,http://www.hc-sc.gc.ca/dhp-mps/prodpharma/databasdon/index_e.html,Pending
+2.16.840.1.113883.5.1106,Active Ingredient Group Number,http://www.hc-sc.gc.ca/dhp-mps/prodpharma/databasdon/index_e.html,Pending
+2.16.840.1.113883.5.1108,Encode-FM,http://www.insite-fm.com/Products/ENCODE-FM,Pending
+2.16.840.1.113883.6.241,SCDHEC GIS Spatial Accuracy Tiers,The South Carolina Department of Health and Environmental Control GIS Spatial Data Accuracy Tiers have been derived from the National Standard for Spatial Data Accuracy as a means to categorize the accuracy of spatial data assignment utilizing a variety of tools for capturing coordinates including digitizers\, geocoding software and global positioning system devices.,Pending
+2.16.840.1.113883.6.242,EPSG Geodetic parameter dataset,The EPSG (European Petroleum Survey Group) dataset represents all Datums\, coordinate references (projected and 2D geographic) and coordinate systems (including Cartesian coordinate systems) used in surveying worldwide.  Each record includes a 4-8 digit unique identifier. The current version is available from http://www.epsg.org/.  The database contains over 4000 records covering spatial data applications worldwide.,Pending
+2.16.840.1.113883.6.244,D1CS,DiagnosisONE Coding System.,Pending
+2.16.840.1.113883.6.245,U.S. Board on Geographic Names ,The U.S. Board on Geographic Names is a Federal body created in 1890 and established in its present form by Public Law in 1947 to maintain uniform geographic name usage throughout the Federal Government. The Board comprises representatives of Federal agencies concerned with geographic information\, population\, ecology\, and management of public lands. Sharing its responsibilities with the Secretary of the Interior\, the Board promulgates official geographic feature names with locative attributes as well as principles\, policies\, and procedures governing the use of domestic names\, foreign names\, Antarctic names\, and undersea feature names.,Pending
+2.16.840.1.113883.6.246,Telin,CDM messaging,Pending
+2.16.840.1.113883.6.248,FIRST NATIONS STATUS,Status indicator used to determine whether the individual lives or does not live on an Indian Reserve,Pending
+2.16.840.1.113883.6.249,METABOLIC SYNDROME,A collection of metabolic risk factors in one individual. The root causes of metabolic syndrome are overweight / obesity\, physical inactivity\, and genetic factors. Various risk factors have been included in metabolic syndrome. Factors generally accepted as being characteristic of this syndrome include abdominal obesity\, atherogenic dyslipidemia\, raised blood pressure\, insulin resistence with or without glucose intolerance\, prothrombotic state\, and proinflammatory state.,Pending
+2.16.840.1.113883.6.250,RETINOPATHY INTERPRETATION,Many times in addition to (or possibly instead of) reporting a physical measurement\, a laboratory will indicate that the reported value is 'high'\, 'low'\, 'normal'\, or some other coded interpretation. Even when there is a value\, interpretation is often offered to help convey the significance of a particular result.,Pending
+2.16.840.1.113883.6.251,SMOKER,The person's use of and exposure to tobacco both in the past and currently. Questions to be answered include: Are they currently smoking ("current")\, have they never smoked ("never")\, have they smoked in the past but now stopped ("past")\, or are they living with someone who smokes or being exposed to cigarette smoke frequently at home or in the work place ("passive").,Pending
+2.16.840.1.113883.6.252,DIAGNOSTIC IMAGE METHOD CODE,Indicates the means or technique used to perform the imaging,Pending
+2.16.840.1.113883.5.1110,ContentProcessingMode,Identifies the order in which content should be processed.,Pending
+2.16.840.1.113883.6.253,MDDID,Medispan Drug Descriptor ID,Pending
+2.16.840.1.113883.6.254,ICF,ICF describes how people live with their health condition. ICF is a classification of health and health related domains that describe body functions and structures\, activities and participation. The domains are classified from body\, individual and societal perspectives. Since an individual's functioning and disability occurs in a context\, ICF also includes a list of environmental factors. ICF  is useful to understand and measure health outcomes. It can be used in clinical settings\, health services or surveys at the individual or population level. Thus ICF complements ICD-10 \, The International Statistical Classification of Diseases and Related Health Problems and therefore is looking beyond mortality and disease.,Pending
+2.16.840.1.113883.6.255.4010,X12N.3-4010,Please delete this request.,Edited
+2.16.840.1.113883.6.255.1336,X12N-1336,Insurance Type Code ,Pending
+2.16.840.1.113883.5.1111,TransmissionRelationshipTypeCode,A code specifying the meaning and purpose of every TransmissionRelationship instance. Each of its values implies specific constraints to what kinds of Transmission objects can be related and in which way.,Pending
