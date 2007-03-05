@@ -596,7 +596,7 @@ ORDER BY
 		return $GLOBALS['sql']->lastInsertId ( 'claimlog', 'id' );
 	} // end method log_event
 
-	// Method: mark_billed
+	// Method: MarkAsBilled 
 	//
 	//	Mark all procedures in a billkey as being billed. The
 	//	billing interface should use this function.
@@ -609,7 +609,7 @@ ORDER BY
 	//
 	//	Boolean, if successful.
 	//
-	function mark_billed ( $billkeys ) {
+	function MarkAsBilled ( $billkeys ) {
 		$keys = array();
 		$_billkeys = is_array($billkeys) ? $billkeys : array($billkeys);
 		foreach ($_billkeys AS $something => $billkey) {
@@ -640,9 +640,9 @@ ORDER BY
 		$result = $GLOBALS['sql']->query ( $query );
 
 		return $result;
-	} // end method mark_billed
+	} // end method MarkAsBilled
 
-	// Method: mark_billed_array
+	// Method: MarkClaimsAsBilled
 	//
 	//	Mark all procedures in an array as being billed. The
 	//	billing interface should use this function.
@@ -655,19 +655,28 @@ ORDER BY
 	//
 	//	Boolean, if successful.
 	//
-	function mark_billed_array ( $procs ) {
+	public function MarkClaimsAsBilled ( $procs ) {
+		// Sanitize data
+		if (!is_array($procs)) { return false; }
+
+		foreach ( $procs AS $p ) {
+			if ( ($p+0) + 0 ) {
+				$sanitized[] = $p + 0;
+			}
+		}
+		if ( count($sanitized) < 1 ) { return false; }
+
 		// Create procedure set
-		$set = join(',', $procs);
+		$set = join( ',', $sanitized );
 		
 		// Perform update to procedure table
 		$query = 'UPDATE procrec SET '.
-			'procbilled = \'1\' '.
+			'procbilled = 1 '.
 			'WHERE FIND_IN_SET(id, \''.$set.'\')';
-		//$GLOBALS['display_buffer'] .= "query = $query<br/>\n";
 		$result = $GLOBALS['sql']->query ( $query );
 
-		return $result;
-	} // end method mark_billed_array
+		return ! ( $result instanceof MDB2_Error );
+	} // end method MarkClaimsAsBilled 
 
 	// Method: procedure_status_list
 	//
@@ -721,6 +730,31 @@ ORDER BY
 		}
 		return $return;
 	} // end method RebillDistinctPayers
+
+	// Method: RebillClaims
+	//
+	//	Set rebilling status for multiple claims.
+	//
+	// Parameters:
+	//
+	//	$claims - Array of claim ids.
+	//
+	// Returns:
+	//
+	//	Boolean, whether or not everything is okay.
+	//
+	public function RebillClaims ( $claims ) {
+		if ( !is_array($claims) or count($claims) < 1 ) {
+			return false;
+		}
+		$res = true;
+		foreach ( $claims AS $claim ) {
+			if ( ($claim + 0) > 0 ) {
+				$res &= $this->set_rebill($claim, __("Marked for Rebill"));
+			}
+		}
+		return $res;
+	} // end method RebillClaims
 
 	// Method: set_rebill
 	//

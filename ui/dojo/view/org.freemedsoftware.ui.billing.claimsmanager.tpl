@@ -42,6 +42,8 @@
 			var crit = { };
 			if ( document.getElementById('criteriaLastName').value != '' ) { crit.last_name = document.getElementById('criteriaLastName').value; haveCrit = 1; }
 			if ( document.getElementById('criteriaFirstName').value != '' ) { crit.first_name = document.getElementById('criteriaFirstName').value; haveCrit = 1; }
+			if ( dojo.widget.byId('criteriaDate').inputNode.value != '' ) { crit.date = dojo.widget.byId('criteriaDate').inputNode.value; haveCrit = 1; }
+			if ( dojo.widget.byId('criteriaPayer_widget').getValue() != 0 ) { crit.payer = dojo.widget.byId('criteriaPayer_widget').getValue(); haveCrit = 1; }
 			//alert( dojo.json.serialize(crit) );
 
 			// Do not allow us to proceed if there are no qualifiers, otherwise we can really jam up the browser
@@ -58,21 +60,90 @@
 				},
 				mimetype: "text/json"
 			});
+		},
+		postCheck: function ( ) {
+			var claims = this.getSelectedClaims();
+			if ( typeof( claims ) == 'undefined' ) { return false; }
+			alert('postCheck STUB');
+		},
+		rebill: function ( ) {
+			var claims = this.getSelectedClaims();
+			if ( typeof( claims ) == 'undefined' ) { return false; }
+
+			dojo.io.bind({
+				method: 'POST',
+				content: { param0: claims },
+				url: "<!--{$relay}-->/org.freemedsoftware.api.ClaimLog.RebillClaims",
+				load: function ( type, data, evt ) {
+					alert("<!--{t}-->Marked the selected claims for rebill.<!--{/t}-->");
+					this.selectNone();
+				},
+				mimetype: "text/json"
+			});
+		},
+		markAsBilled: function ( ) {
+			var claims = this.getSelectedClaims();
+			if ( typeof( claims ) == 'undefined' ) { return false; }
+			dojo.io.bind({
+				method: 'POST',
+				content: { param0: claims },
+				url: "<!--{$relay}-->/org.freemedsoftware.api.ClaimLog.MarkClaimsAsBilled",
+				load: function ( type, data, evt ) {
+					alert("<!--{t}-->Marked the selected claims as billed.<!--{/t}-->");
+					this.selectNone();
+				},
+				mimetype: "text/json"
+			});
+		},
+		selectAll: function ( ) {
+			var w = dojo.widget.byId('claimsManagerTable');
+			w.selectAll();
+			w.renderSelections();
+		},
+		selectNone: function ( ) {
+			var w = dojo.widget.byId('claimsManagerTable');
+			w.resetSelections();
+			w.renderSelections();
+		},
+		getSelectedClaims: function ( ) {
+			var w = dojo.widget.byId('claimsManagerTable');
+			var c = w.getSelectedData();
+			if ( typeof(c)!='object' || c.length < 1 ) {
+				return undefined;
+			}
+			var count = 0;
+			var res = [];
+			for ( var i in c ) {
+				res[count] = c[i].claim;
+				count++;
+			}
+			return res;
 		}
 	};
 
 	_container_.addOnLoad(function(){
 		dojo.event.connect( dojo.widget.byId('claimsManagerUpdateButton'), "onClick", claimsManager, "loadData" );
+		//dojo.event.connect( dojo.widget.byId('claimsManagerTable'), "onSelect", claimsManager, "selectClaim" );
+		dojo.event.connect( dojo.widget.byId('claimsManagerPostCheckButton'), "onClick", claimsManager, "postCheck" );
+		dojo.event.connect( dojo.widget.byId('claimsManagerRebillButton'), "onClick", claimsManager, "rebill" );
+		dojo.event.connect( dojo.widget.byId('claimsManagerMarkAsBilledButton'), "onClick", claimsManager, "markAsBilled" );
+		dojo.event.connect( dojo.widget.byId('claimsManagerSelectAllButton'), "onClick", claimsManager, "selectAll" );
+		dojo.event.connect( dojo.widget.byId('claimsManagerSelectNoneButton'), "onClick", claimsManager, "selectNone" );
 	});
 	_container_.addOnUnLoad(function(){
 		dojo.event.disconnect( dojo.widget.byId('claimsManagerUpdateButton'), "onClick", claimsManager, "loadData" );
+		dojo.event.disconnect( dojo.widget.byId('claimsManagerPostCheckButton'), "onClick", claimsManager, "postCheck" );
+		dojo.event.disconnect( dojo.widget.byId('claimsManagerRebillButton'), "onClick", claimsManager, "rebill" );
+		dojo.event.disconnect( dojo.widget.byId('claimsManagerMarkAsBilledButton'), "onClick", claimsManager, "markAsBilled" );
+		dojo.event.disconnect( dojo.widget.byId('claimsManagerSelectAllButton'), "onClick", claimsManager, "selectAll" );
+		dojo.event.disconnect( dojo.widget.byId('claimsManagerSelectNoneButton'), "onClick", claimsManager, "selectNone" );
 	});
 
 </script>
 
-<div dojoType="SplitContainer" orientation="vertical" sizerWidth="5" activeSizing="0" layoutAlign="client">
+<div dojoType="SplitContainer" orientation="vertical" sizerWidth="0" activeSizing="1" layoutAlign="client">
 
-	<div dojoType="ContentPane" id="claimsManagerFormPane" layoutAlign="top" sizeShare="40">
+	<div dojoType="ContentPane" id="claimsManagerFormPane" layoutAlign="top" sizeShare="60">
 
 		<h3><!--{t}-->Claims Manager<!--{/t}--></h3>
 
@@ -103,6 +174,17 @@
 			</tr>
 
 			<tr>
+				<td align="right" valign="top"><b><!--{t}-->Payer<!--{/t}--></b></td>
+				<td align="left" valign="top">
+					<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" varname="criteriaPayer" module="insurancecompanymodule"}-->
+				</td>
+				<td align="right" valign="top"><b><!--{t}-->Date of Service<!--{/t}--></b></td>
+				<td align="left" valign="top">
+					<input dojoType="DropdownDatePicker" value="" id="criteriaDate" widgetId="criteriaDate" />
+				</td>
+			</tr>
+
+			<tr>
 				<td align="right" valign="top"><b><!--{t}--><!--{/t}--></b></td>
 				<td align="left" valign="top"></td>
 				<td align="right" valign="top"><b><!--{t}--><!--{/t}--></b></td>
@@ -122,10 +204,24 @@
 
 	</div>
 
-	<div dojoType="ContentPane" sizeShare="60" layoutAlign="bottom">
+	<div dojoType="ContentPane" sizeShare="15">
+		<div align="center">
+		<table border="0" style="width:auto;">
+			<tr>
+				<td><div dojoType="Button" id="claimsManagerPostCheckButton"><!--{t}-->Post Check<!--{/t}--></div></td>
+				<td><div dojoType="Button" id="claimsManagerRebillButton"><!--{t}-->Rebill<!--{/t}--></div></td>
+				<td><div dojoType="Button" id="claimsManagerMarkAsBilledButton"><!--{t}-->Mark As Billed<!--{/t}--></div></td>
+				<td><div dojoType="Button" id="claimsManagerSelectAllButton"><!--{t}-->Select All<!--{/t}--></div></td>
+				<td><div dojoType="Button" id="claimsManagerSelectNoneButton"><!--{t}-->Select None<!--{/t}--></div></td>
+			</tr>
+		</table>
+		</div>
+	</div>
+
+	<div dojoType="ContentPane" sizeShare="40" layoutAlign="bottom">
 
 		<div class="tableContainer">
-	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="false">
+	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="true">
 				<thead>
 					<tr>
 						<th field="date_of_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
