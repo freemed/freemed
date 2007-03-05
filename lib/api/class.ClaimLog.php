@@ -71,7 +71,9 @@ class ClaimLog {
 	//
 	//	Array of associative arrays containing aging information.
 	//
-	function aging_report_qualified ( $criteria ) {
+	function AgingReportQualified ( $criteria ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+
 		foreach ($criteria AS $k => $v) {
 			//print "criteria key = $k, value = $v<hr/>\n";
 			switch ($k) {
@@ -87,8 +89,8 @@ class ClaimLog {
 					break;
 				} // end inner aging switch
 				if ($upper) $q[] =
-				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).") AND ".
-				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).")";
+				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($s->ImportDate($lower)).") AND ".
+				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($s->ImportDate($upper)).")";
 				break; // end aging case
 
 				case 'billed':
@@ -96,7 +98,7 @@ class ClaimLog {
 				break; // end billed case
 
 				case 'date':
-				if ($v) $q[] = "p.procdt = '".addslashes($v)."'";
+				if ($v) $q[] = "p.procdt = '".addslashes($s->ImportDate($v))."'";
 				break; // end date
 
 				case 'patient':
@@ -128,32 +130,29 @@ class ClaimLog {
 		//print "debug: criteria = ".join(' AND ', $q)." <br/>\n";
 
 		$query = "SELECT CONCAT(pt.ptlname, ', ', pt.ptfname, ".
-			"' ', pt.ptmname) AS patient_name, ".
+			"' ', pt.ptmname) AS patient, ".
 			"pt.id AS patient_id, ".
 			"p.procdt AS date_of, ".
+			"DATE_FORMAT(p.procdt,'%m/%d/%Y') AS date_of_mdy, ".
 			"p.procstatus AS status, ".
 			"p.procbilled AS billed, ".
-			"p.procphysician AS _provider, ".
+			"p.procphysician AS provider_id, ".
 			"p.id AS claim, ".
 			"c.covpatinsno AS insured_id, ".
-			"c.covinsco AS payer, ".
+			"c.covinsco AS payer_id, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
-				"i.inscostate, ')') AS payer_name, ".
+				"i.inscostate, ')') AS payer, ".
 			"i.inscoidmap AS id_map, ".
 			"p.procamtpaid AS paid, ".
 			"p.procbalcurrent AS balance ".
-			"FROM ".
-				"procrec AS p, ".
-				"coverage AS c, ".
-				"insco AS i, ".
-				"patient AS pt ".
+			"FROM procrec p ".
+				"LEFT OUTER JOIN coverage c ON p.proccurcovid = c.id ".
+				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
+				"LEFT OUTER JOIN patient pt ON p.procpatient = pt.id ".
 			"WHERE ".
-			"c.covinsco = i.id AND ".
-			"p.procpatient = pt.id AND ".
-			"p.proccurcovid = c.id AND ".
 			"p.procbalcurrent > 0 AND ".
 			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
-			"ORDER BY patient_name, balance DESC";
+			"ORDER BY patient, balance DESC";
 		//print "<hr/>query = \"$query\"<hr/>\n";
 		$result = $GLOBALS['sql']->queryAll ( $query );
 		$return = array ( );
@@ -164,7 +163,7 @@ class ClaimLog {
 			// huge waste of processor time...
 			if (is_array(@unserialize($r['id_map']))) {
 				$id_map = unserialize($r['id_map']);
-				$r['id_map'] = $id_map[$r['_provider']];
+				$r['id_map'] = $id_map[$r['provider_id']];
 			} else {
 				$id_map = array ();
 			}
@@ -172,7 +171,7 @@ class ClaimLog {
 			 // patient, claims, paid, balance, ratio
 		} 
 		return $return;
-	} // end method aging_report_qualified
+	} // end method AgingReportQualified
 
 	// Method: aging_summary_payer_full
 	//
@@ -275,7 +274,7 @@ FROM procrec AS p, coverage AS c, insco AS i WHERE p.proccurcovid=c.id AND c.cov
 
 PATIENT:
 
-SELECT CONCAT(pt.ptlname, ', ',pt.ptfname, ' ', pt.ptmname) AS patient_name,
+SELECT CONCAT(pt.ptlname, ', ',pt.ptfname, ' ', pt.ptmname) AS patient,
 pt.id AS patient_id,
 i.insconame AS payer, COUNT(p.id) AS claims, 
 SUM(p.procamtpaid) AS paid, 
@@ -290,7 +289,7 @@ ORDER BY patient;
 
 
 SELECT 
-	CONCAT(pt.ptlname, ', ',pt.ptfname, ' ', pt.ptmname) AS patient_name,
+	CONCAT(pt.ptlname, ', ',pt.ptfname, ' ', pt.ptmname) AS patient,
 	COUNT(p.id) AS claims,
 	covinsco AS payer,
 	SUM(p.procbalcurrent) AS balance,
@@ -405,7 +404,7 @@ ORDER BY
 	function claim_information ( $proc, $payrec = NULL ) {
 		$query = "SELECT ".
 			"CONCAT(pt.ptlname, ', ', pt.ptfname, ".
-				"' ', pt.ptmname) AS patient_name, ".
+				"' ', pt.ptmname) AS patient, ".
 			"pt.ptdob AS patient_dob, ".
 			"pt.id AS patient_id, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
