@@ -247,6 +247,7 @@ class SupportModule extends BaseModule {
 		$this->del_pre( $id + 0 );
 		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
 		$result = $GLOBALS['sql']->query ( $query );
+		return true;
 	} // end function del
 
 	protected function del_pre ( $id ) { }
