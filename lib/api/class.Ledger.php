@@ -27,7 +27,7 @@ class Ledger {
 	// STUB constructor
 	public function __constructor ( ) { }
 
-	// Method: aging_report_qualified
+	// Method: AgingReportQualified
 	//
 	//	Provide an "aging summary" (with number of claims and
 	//	amount due) for a range of agings, grouped by patient.
@@ -45,7 +45,8 @@ class Ledger {
 	//
 	//	Array of associative arrays containing aging information.
 	//
-	function aging_report_qualified ( $criteria ) {
+	public function AgingReportQualified ( $criteria ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		foreach ($criteria AS $k => $v) {
 			//print "criteria key = $k, value = $v<hr/>\n";
 			switch ($k) {
@@ -61,8 +62,8 @@ class Ledger {
 					break;
 				} // end inner aging switch
 				if ($upper) $q[] =
-				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".addslashes($lower).") AND ".
-				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".addslashes($upper).")";
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".addslashes($s->ImportDate( $lower )).") AND ".
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".addslashes($s->ImportDate( $upper )).")";
 				break; // end aging case
 
 				case 'billed':
@@ -70,7 +71,7 @@ class Ledger {
 				break; // end billed case
 
 				case 'date':
-				if ($v) $q[] = "pa.payrecdt = '".addslashes($v)."'";
+				if ($v) $q[] = "pa.payrecdt = '".addslashes($s->ImportDate( $v ))."'";
 				break; // end date
 
 				case 'procedure':
@@ -106,13 +107,16 @@ class Ledger {
 			"pt.ptfname AS first_name, ".
 			"pt.ptmname AS middle_name, ".
 			"pt.id AS patient_id, ".
+			"CONCAT(pr.phyfname, ' ', pr.phylname) AS provider, ".
 			"pr.id AS provider_id, ".
 			"ROUND(p.procamtpaid, 2) AS total_amount_paid, ".
 			"ROUND(p.procbalcurrent, 2) AS total_balance, ".
+			// Simulate double ledger....
 			"ROUND(IF(FIND_IN_SET(pa.payreccat, '0,1,7,8,11'), pa.payrecamt, 0), 2) AS money_in, ".
 			"ROUND(IF(FIND_IN_SET(pa.payreccat, '0,1,7,8,11'), 0, pa.payrecamt), 2) AS money_out, ".
 			"p.id AS procedure_id, ".
-			"p.procdt AS procedure_date, ".
+			"p.procdt AS date_of, ".
+			"DATE_FORMAT(p.procdt, '%m/%d/%Y') AS date_of_mdy, ".
 			"pa.payrecdt AS payment_date, ".
 			"pa.payreccat AS item_type_id, ".
 			"CASE pa.payreccat ".
@@ -131,18 +135,13 @@ class Ledger {
 				"WHEN 12 THEN '".addslashes(__("Writeoff"))."' ".
 				"ELSE '".__("Unknown")."' END AS item_type, ".
 			"pa.id AS item ".
-			"FROM ".
-			"procrec   AS p, ".
-			"payrec    AS pa, ".
-			"patient   AS pt, ".
-			"physician AS pr ".
+			"FROM procrec p ".
+			"LEFT OUTER JOIN payrec pa ON pa.payrecproc=p.id ".
+			"LEFT OUTER JOIN patient pt ON pt.id=p.procpatient ".
+			"LEFT OUTER JOIN physician pr ON pr.id=p.procphysician ".
 			"WHERE ".
-			"p.id = pa.payrecproc AND ".
-			"pt.id = p.procpatient AND ".
-			"pr.id = p.procphysician AND ".
 			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
-			"ORDER BY ".
-			"procedure_date DESC, item";
+			"ORDER BY date_of DESC, item";
 		//print "<hr/>query = \"$query\"<hr/>\n";
 		$result = $GLOBALS['sql']->queryAll ( $query );
 		$return = array ( );
@@ -161,7 +160,7 @@ class Ledger {
 			 // patient, claims, paid, balance, ratio
 		} 
 		return $return;
-	} // end method aging_report_qualified
+	} // end method AgingReportQualified
 
 	// Method: collection_warning
 	//
