@@ -42,19 +42,19 @@ DELIMITER //
 CREATE PROCEDURE Callin_Convert_From_Patient ( callinpatient INT UNSIGNED )
 BEGIN
 	DECLARE newPatientId INT UNSIGNED;
-	DECLARE cilname VARCHAR (50);
-	DECLARE cimname VARCHAR (50);
-	DECLARE cifname VARCHAR (50);
-	DECLARE cihphone VARCHAR (16);
-	DECLARE ciwphone VARCHAR (16);
-	DECLARE cidob DATE;
-	DECLARE ciphysician INT UNSIGNED;
+	DECLARE _cilname VARCHAR (50);
+	DECLARE _cimname VARCHAR (50);
+	DECLARE _cifname VARCHAR (50);
+	DECLARE _cihphone VARCHAR (16);
+	DECLARE _ciwphone VARCHAR (16);
+	DECLARE _cidob DATE;
+	DECLARE _ciphysician INT UNSIGNED;
 
 	#	Get the old record
 	SELECT
 		cilname, cifname, cimname, cidob, ciphysician, cihphone, ciwphone
 	INTO
-		cilname, cifname, cimname, cidob, ciphysician, cihphone, ciwphone
+		_cilname, _cifname, _cimname, _cidob, _ciphysician, _cihphone, _ciwphone
 	FROM callin
 	WHERE id=callinpatient;
 
@@ -68,13 +68,13 @@ BEGIN
 		pthphone,
 		ptwphone
 	) VALUES (
-		cilname,
-		cifname,
-		cimname,
-		cidob,
-		ciphysician,
-		cihphone,
-		ciwphone
+		_cilname,
+		_cifname,
+		_cimname,
+		_cidob,
+		_ciphysician,
+		_cihphone,
+		_ciwphone
 	);
 	SELECT MAX(id) INTO newPatientId FROM patient;
 
