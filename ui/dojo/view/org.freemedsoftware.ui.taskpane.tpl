@@ -53,6 +53,11 @@
 			<!--{t}-->Search<!--{/t}-->
 		</div>
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.callin.manage');">
+			<img src="<!--{$htdocs}-->/images/landline.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Call-in<!--{/t}-->
+		</div>
+
 	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">

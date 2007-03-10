@@ -51,20 +51,24 @@
 		},
 		onSelect: function () {
 			var w = dojo.widget.byId('dailyPatientAppointments');
-			var val;
+			var val; var type;
 			if (w.getSelectedData().length > 0) {
 				dojo.debug("found getSelectedData()");
 				val = w.getSelectedData()[0].patient_id;
+				type = w.getSelectedData()[0].resource_type;
 			}
 			if (val) {
-				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				if ( type == 'temp' ) {
+					freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.callin.overview?patient=' + val);
+				} else {
+					freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				}
 				return true;
 			}
 		}
 	};
 
 	_container_.addOnLoad(function() {
-		alert('onload');
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
 		dojo.event.connect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
 	});
