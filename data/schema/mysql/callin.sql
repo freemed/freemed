@@ -37,3 +37,56 @@ CREATE TABLE IF NOT EXISTS `callin` (
 	id			SERIAL
 ) ENGINE=InnoDB;
 
+DROP PROCEDURE IF EXISTS Callin_Convert_From_Patient;
+DELIMITER //
+CREATE PROCEDURE Callin_Convert_From_Patient ( callinpatient INT UNSIGNED )
+BEGIN
+	DECLARE newPatientId INT UNSIGNED;
+	DECLARE cilname VARCHAR (50);
+	DECLARE cimname VARCHAR (50);
+	DECLARE cifname VARCHAR (50);
+	DECLARE cihphone VARCHAR (16);
+	DECLARE ciwphone VARCHAR (16);
+	DECLARE cidob DATE;
+	DECLARE ciphysician INT UNSIGNED;
+
+	#	Get the old record
+	SELECT
+		cilname, cifname, cimname, cidob, ciphysician, cihphone, ciwphone
+	INTO
+		cilname, cifname, cimname, cidob, ciphysician, cihphone, ciwphone
+	FROM callin
+	WHERE id=callinpatient;
+
+	#	Create a new patient record
+	INSERT INTO `patient` (
+		ptlname,
+		ptfname,
+		ptmname,
+		ptdob,
+		ptdoc,
+		pthphone,
+		ptwphone
+	) VALUES (
+		cilname,
+		cifname,
+		cimname,
+		cidob,
+		ciphysician,
+		cihphone,
+		ciwphone
+	);
+	SELECT MAX(id) INTO newPatientId FROM patient;
+
+	#	Convert all scheduler entries over
+	UPDATE scheduler SET
+		calpatient = newPatientId, caltype = 'pat'
+	WHERE
+		calpatient = callinpatient AND caltype = 'temp';
+
+	#	Send back this value
+	SELECT newPatientId;
+END
+//
+DELIMITER ;
+
