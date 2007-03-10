@@ -84,6 +84,9 @@ BEGIN
 	WHERE
 		calpatient = callinpatient AND caltype = 'temp';
 
+	#	Alter the original record to point here
+	UPDATE callin SET cipatient=newPatientId WHERE id=callinpatient;
+
 	#	Send back this value
 	SELECT newPatientId;
 END
