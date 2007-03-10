@@ -23,7 +23,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class CallinTable extends SupportModule {
+class Callin extends SupportModule {
 
 	var $MODULE_NAME = "Call-in";
 	var $MODULE_VERSION = "0.7";
@@ -36,27 +36,27 @@ class CallinTable extends SupportModule {
 	var $table_name = "callin";
 
 	public function __construct ( ) {
-		// __("Call-in Table")
+		// __("Call-in Patients")
 
 		// Call parent constructor
 		parent::__construct();
-	} // end constructor CallinTable
+	} // end constructor Callin
 
-	// Use _update to update table definitions with new versions
-	function _update () {
-		$version = freemed::module_version($this->MODULE_NAME);
+	// Method: GetAll
+	//
+	//	Get array of all call-in patient records.
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAll ( ) {
+		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work FROM callin ORDER BY cidatestamp DESC";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAll
 
-		// Version 0.7
-		//
-		//	Add ciuser field
-		//
-		if (!version_check($version, '0.7')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN ciuser INT UNSIGNED AFTER ciphysician');
-		}
-	} // end function _update
 }
 
-register_module('CallinTable');
+register_module('Callin');
 
 ?>
