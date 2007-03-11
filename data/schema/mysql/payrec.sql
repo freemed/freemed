@@ -77,14 +77,49 @@ CREATE TRIGGER payrec_Delete
 CREATE TRIGGER payrec_Insert
 	AFTER INSERT ON payrec
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip, NEW.locked );
+		# EMR aggregation
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip, NEW.payreclock );
+
+		#----- Procedure modification
+
+		# Deductable (8), Withholding (7)
+		IF FIND_IN_SET( NEW.payreccat, '7,8' ) THEN
+			UPDATE procrec SET proccharges = proccharges - ABS(NEW.payrecamt), procbalcurrent = procbalcurrent - ABS(procamtpaid) WHERE id=NEW.payrecproc;
+		END IF;
+
+		# Feeadjust (1)
+		IF NEW.payreccat = 1 THEN
+			UPDATE procrec SET procamtallowed = proccharges - NEW.payrecamt, proccharges = proccharges - NEW.payrecamt WHERE id=NEW.payrecproc;
+			UPDATE procrec SET procbalcurrent = proccharges - procamtpaid WHERE id=NEW.payrecproc;
+		END IF;
+
+		# Refund (2)
+		IF NEW.payreccat = 2 THEN
+			UPDATE procrec SET procbalcurrent = proccharges - procamtpaid, proccharges = proccharges - NEW.payrecamt WHERE id=NEW.payrecproc;
+		END IF;
+
+		# Rebill (4)
+		IF NEW.payreccat = 4 THEN
+			UPDATE procrec SET procbilled=0 WHERE id=NEW.payrecproc;
+		END IF;
+
+		# Tranfer (6)
+		IF NEW.payreccat = 6 THEN
+			UPDATE procrec SET proccurcovtp=NEW.payrecsource, proccurcovid=NEW.payreclink WHERE id=NEW.payrecproc;
+		END IF;
+
+		# Payment (0), Copayment (11)
+		IF FIND_IN_SET( NEW.payreccat, '0,11' ) THEN
+			UPDATE procrec SET procamtpaid = procamtpaid + ABS(NEW.payrecamt), procbalcurrent = proccharges - ( procamtpaid + ABS(NEW.payrecamt) ) WHERE id=NEW.payrecproc;
+		END IF;
+
 	END;
 //
 
 CREATE TRIGGER payrec_Update
 	AFTER UPDATE ON payrec
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip, locked=NEW.locked WHERE module='payrec' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip, locked=NEW.payreclock WHERE module='payrec' AND oid=NEW.id;
 	END;
 //
 
