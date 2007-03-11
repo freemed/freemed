@@ -62,14 +62,14 @@ CALL dxhistory_Upgrade( );
 DELIMITER //
 
 CREATE TRIGGER dxhistory_Delete
-	AFTER DELETE ON procrec
+	AFTER DELETE ON dxhistory
 	FOR EACH ROW BEGIN
 		DELETE FROM `patient_emr` WHERE module='dxhistory' AND oid=OLD.id;
 	END;
 //
 
 CREATE TRIGGER dxhistory_Insert
-	AFTER INSERT ON procrec
+	AFTER INSERT ON dxhistory
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
 		SELECT CONCAT( icd9code, ' (', icd9descrip, ')' ) INTO c FROM icd9 WHERE id=NEW.dx;
@@ -78,11 +78,11 @@ CREATE TRIGGER dxhistory_Insert
 //
 
 CREATE TRIGGER dxhistory_Update
-	AFTER UPDATE ON procrec
+	AFTER UPDATE ON dxhistory
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
 		SELECT CONCAT( icd9code, ' (', icd9descrip, ')' ) INTO c FROM icd9 WHERE id=NEW.dx;
-		UPDATE `patient_emr` SET stamp=NEW.procdt, patient=NEW.patient, summary=c WHERE module='dxhistory' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.stamp, patient=NEW.patient, summary=c WHERE module='dxhistory' AND oid=NEW.id;
 	END;
 //
 
