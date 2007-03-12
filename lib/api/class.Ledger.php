@@ -103,9 +103,7 @@ class Ledger {
 		//print "debug: criteria = ".join(' AND ', $q)." <br/>\n";
 
 		$query = "SELECT ".
-			"pt.ptlname AS last_name, ".
-			"pt.ptfname AS first_name, ".
-			"pt.ptmname AS middle_name, ".
+			"CONCAT(pt.ptlname, ', ', pt.ptfname, ' ', pt.ptmname) AS patient, ".
 			"pt.id AS patient_id, ".
 			"CONCAT(pr.phyfname, ' ', pr.phylname) AS provider, ".
 			"pr.id AS provider_id, ".
@@ -118,6 +116,7 @@ class Ledger {
 			"p.procdt AS date_of, ".
 			"DATE_FORMAT(p.procdt, '%m/%d/%Y') AS date_of_mdy, ".
 			"pa.payrecdt AS payment_date, ".
+			"DATE_FORMAT(pa.payrecdt, '%m/%d/%Y') AS payment_date_mdy, ".
 			"pa.payreccat AS item_type_id, ".
 			"CASE pa.payreccat ".
 				"WHEN 0 THEN '".addslashes(__("Payment"))."' ".
@@ -757,7 +756,7 @@ class Ledger {
 		return $this->post_payment ( $data );		
 	} // end method post_payment_credit_card
 
-	// Method: post_writeoff
+	// Method: PostWriteoff
 	//
 	//	Post a write-off of a particular type to the system for
 	//	the specified procedure.
@@ -778,8 +777,7 @@ class Ledger {
 	//
 	//	Boolean, if successful
 	//
-	function post_writeoff ( $procedure, $comment = '' ,
-				$category = WRITEOFF ) {
+	public function PostWriteoff ( $procedure, $comment = '', $category = WRITEOFF ) {
 		// Get information about this procedure
 		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
@@ -807,16 +805,8 @@ class Ledger {
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
-		$query = $GLOBALS['sql']->update_query(
-			'procrec',
-			array (
-				'procbalcurrent' => '0'
-			), array ( 'id' => $procedure )
-		);
-		$proc_result = $GLOBALS['sql']->query ( $query );
-
-		return ($proc_result and $pay_result);
-	} // end method post_writeoff
+		return true;
+	} // end method PostWriteoff
 
 	// Method: unpostable
 	//
@@ -842,7 +832,7 @@ class Ledger {
 		);
 	} // end method unpostable
 
-	// Method: writeoff_array
+	// Method: WriteoffItems 
 	//
 	//	Write off an array of items
 	//
@@ -854,11 +844,8 @@ class Ledger {
 	//
 	//	Boolean, successful
 	//
-	function writeoff_array ( $a ) {
-		$query = "SELECT pr.id AS procedure_id ".
-			"FROM payrec AS p, procrec AS pr ".
-			"WHERE FIND_IN_SET(p.id, '".addslashes(join(',', $a))."') AND ".
-			"p.payrecproc = pr.id";
+	public function WriteoffItems ( $a ) {
+		$query = "SELECT pr.id AS procedure_id FROM payrec AS p LEFT OUTER JOIN procrec pr ON p.payrecproc=pr.id WHERE FIND_IN_SET(p.id, '".addslashes(join(',', $a))."') AND p.payrecproc = pr.id";
 		$res = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $res AS $r ) {
 			$items[$r['procedure_id']] = $r['procedure_id'];
@@ -866,10 +853,10 @@ class Ledger {
 
 		$result = true;
 		foreach ($items AS $v) {
-			$result &= $this->post_writeoff ( $v );
+			$result &= $this->PostWriteoff ( $v );
 		}
 		return $result;
-	} // end method writeoff_array
+	} // end method WriteoffItems
 
 	//------------------------------------- INTERNAL METHODS ------------
 

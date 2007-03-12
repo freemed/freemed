@@ -74,6 +74,11 @@
 
 	<div dojoType="ContentPane" label="<!--{t}-->Billing<!--{/t}-->" class="basicPane">
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.accountsreceivable');">
+			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Accounts Receivable<!--{/t}-->
+		</div>
+
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.claimsmanager');">
 			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Claims Manager<!--{/t}-->
