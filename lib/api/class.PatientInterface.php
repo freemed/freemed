@@ -87,7 +87,8 @@ class PatientInterface {
 	//	Hash of values.
 	//
 	public function EmrModules ( ) {
-		$query = "SELECT module_name, module_table FROM modules WHERE FIND_IN_SET( module_handlers, 'EmrSummary') ORDER BY module_name";
+		$query = "SELECT module_name, module_class FROM modules WHERE FIND_IN_SET( module_handlers, 'EmrSummary') AND module_hidden = 0 ORDER BY module_name";
+		return $GLOBALS['sql']->queryAll( $query );
 		foreach ( $GLOBALS['sql']->queryAll( $query ) AS $r ) {
 			$return[$r['module_table']] = $r['module_name'];
 		}

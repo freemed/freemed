@@ -29,6 +29,7 @@ class SchedulerPatientStatus extends EMRModule {
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "f58a3945-4b47-42de-b74c-6e43608dd98e";
+	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 

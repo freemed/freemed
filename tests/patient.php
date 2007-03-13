@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -26,5 +26,6 @@ include_once ( dirname(__FILE__).'/bootstrap.test.php' );
 t("org.freemedsoftware.api.PatientInterface.picklist", CallMethod("org.freemedsoftware.api.PatientInterface.picklist", 'john'));
 t("org.freemedsoftware.api.PatientInterface.ProceduresToBill", CallMethod("org.freemedsoftware.api.PatientInterface.ProceduresToBill"));
 t("org.freemedsoftware.api.PatientInterface.ToText", CallMethod("org.freemedsoftware.api.PatientInterface.ToText", 1 ));
+t("org.freemedsoftware.api.PatientInterface.EmrModules", CallMethod("org.freemedsoftware.api.PatientInterface.EmrModules"));
 
 ?>
