@@ -82,15 +82,22 @@ class PatientInterface {
 	//
 	//	Form list of presentable EMR modules.
 	//
+	// Parameters:
+	//
+	//	$part - Piece of name, to be used in completion pick widgets.
+	//
+	//	$same - (optional) Boolean, whether key and value should be the same,
+	//	defaults to false.
+	//
 	// Returns:
 	//
 	//	Hash of values.
 	//
-	public function EmrModules ( ) {
-		$query = "SELECT module_name, module_class FROM modules WHERE FIND_IN_SET( module_handlers, 'EmrSummary') AND module_hidden = 0 ORDER BY module_name";
-		return $GLOBALS['sql']->queryAll( $query );
+	public function EmrModules ( $part, $same = false ) {
+		$query = "SELECT module_name, module_class FROM modules WHERE FIND_IN_SET( module_handlers, 'EmrSummary') AND module_hidden = 0 ".( $part ? " AND module_name LIKE '%".$GLOBALS['sql']->escape($part)."%'" : '' )." ORDER BY module_name";
 		foreach ( $GLOBALS['sql']->queryAll( $query ) AS $r ) {
-			$return[$r['module_table']] = $r['module_name'];
+			//$return[$r['module_class']] = $r['module_name'];
+			$return[] = $same ? array ( $r['module_name'], $r['module_name'] ) : $return[] = array ( $r['module_name'], $r['module_class'] );
 		}
 		return $return;
 	} // end method EmrModules

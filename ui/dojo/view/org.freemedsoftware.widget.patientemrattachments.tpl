@@ -105,9 +105,21 @@
 				break;
 			}
 		}, // end patientEmrAction
+		setFilters: function ( ) {
+			dojo.widget.byId('patientEmrAttachments').setFilter('date_mdy', this.emrDateFilter);
+			dojo.widget.byId('patientEmrAttachments').setFilter('type', this.emrModuleFilter);
+			return true;
+		},
 		emrDateFilter: function ( dt ) { 
-			//return (dt > new Date('6/20/05') && dt < new Date('11/17/08'));
+			// If not set, return true by default
+			if (dojo.widget.byId('emrRangeBegin').inputNode.value.length < 4) { return true; }
+			if (dojo.widget.byId('emrRangeEnd').inputNode.value.length < 4) { return true; }
 			return (dt >= new Date(dojo.widget.byId('emrRangeBegin').inputNode.value) && dt <= new Date(dojo.widget.byId('emrRangeEnd').inputNode.value));
+		},
+		emrModuleFilter: function ( m ) {
+			// If not set, return true by default
+			if (document.getElementById('emrSection').value.length < 5) { return true; }
+			return ( m == document.getElementById('emrSection').value );
 		},
 		printMultiple: function ( ) {
 			var w = dojo.widget.byId('patientEmrAttachments');
@@ -145,11 +157,10 @@
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
 						} else {
 							// All locked stuff goes here:
-							data[i]['actions'] += "<a href=\"\"><img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}--> /></a>&nbsp;";
+							data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}-->\" />&nbsp;";
 						}
 						if (data[i]['annotation'] != null) {
-							data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}--> /></a>";
-			
+							data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}-->\" /></a>";
 						}
 						// Common things
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;";
@@ -174,7 +185,18 @@
 		-
 		<input dojoType="DropdownDatePicker" id="emrRangeEnd" />
 	</td>
-	<td align="right"><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').setFilter('date_mdy', patientEmrAttachments.emrDateFilter);"><!--{t}-->Apply<!--{/t}--></button></td>
+	<td>
+		<input dojoType="Select"
+			autocomplete="false"
+			id="emrSection_widget" widgetId="emrSection_widget"
+			style="width: 150px;"
+			dataUrl="<!--{$relay}-->/org.freemedsoftware.api.PatientInterface.EmrModules?param0=%{searchString}&param1=1"
+			setValue="document.getElementById('emrSection').value = arguments[0];"
+			mode="remote" value="" />
+		</div>
+		<input type="hidden" id="emrSection" name="emrSection" value="" />
+	</td>
+	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.setFilters();"><!--{t}-->Apply<!--{/t}--></button></td>
 	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.printMultiple();"><!--{t}-->Print<!--{/t}--></button></td>
 </tr>
 </table>
