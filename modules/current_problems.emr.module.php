@@ -44,9 +44,10 @@ class CurrentProblemsModule extends EMRModule {
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
 		$my_result = $GLOBALS['sql']->query(
-			"SELECT * FROM ".$this->table_name." ".
+			"SELECT *,DATE_FORMAT(pdate, '%m/%d/%Y') AS my_date ".
+			"FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->order_fields
+			"ORDER BY pdate DESC,".$this->order_fields
 		);
 
 		// Check to see if it's set (show listings if it is)
@@ -56,7 +57,7 @@ class CurrentProblemsModule extends EMRModule {
 			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
 			<tr CLASS=\"menubar_info\">
-			<td><b>".__("Date")."</b></td>
+			<td><b>".__("Reviewed")."</b></td>
 			<td><b>".__("Problem")."</b></td>
 			<td><b>".__("Action")."</b></td>
 			</tr>
@@ -66,7 +67,7 @@ class CurrentProblemsModule extends EMRModule {
 			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
 				$buffer .= "
 				<tr>
-				<td ALIGN=\"LEFT\"><small>".prepare($my_r['pdate'])."</small></td>
+				<td ALIGN=\"LEFT\"><small>".prepare($my_r['my_date'])."</small></td>
 				<td ALIGN=\"LEFT\"><small>".prepare($my_r['problem'])."</small></td>
 				<td ALIGN=\"LEFT\">".
 				template::summary_modify_link($this,
@@ -94,7 +95,7 @@ class CurrentProblemsModule extends EMRModule {
 			</div>
 			";
 		}
-
+/*
 		$buffer .= "
 			<div ALIGN=\"CENTER\">
 			<form ACTION=\"module_loader.php\" METHOD=\"POST\">
@@ -111,16 +112,81 @@ class CurrentProblemsModule extends EMRModule {
 			</form>
 			</div>
 			";
+*/
 		return $buffer;
 	} // end method summary
 
-	function summary_bar() { }
+	//function summary_bar() { }
+
+	function add () {
+		// Save original values
+		$v = array(
+			'problem' => $_REQUEST['problem']
+		);
+		// Loop through all possibles
+		for ($i=2; $i<=8; $i++) {
+			// Only add if it looks like we have values
+			if ($_REQUEST['problem'.$i]) {
+				$this->_add(array(
+					'problem' => $_REQUEST['problem'.$i]
+				));
+			}
+		}
+
+		// Restore from saved values
+		foreach ($v as $key => $value) {
+			$_REQUEST[$key] = $GLOBALS[$key] = $value;
+		}
+		// Call the regular way, so we get good handling...
+		$this->_add();
+	}
+	function _preadd($p) {
+		$this->variables = array (
+			'problem' => $p['problem'],
+			'ppatient' => $_REQUEST['patient'],
+			'pdate' => date('Y-m-d')
+		);
+	}
+
+	function view ($condition = false) {
+		global $display_buffer;
+		global $patient, $action;
+
+		$query = "SELECT * FROM ".$this->table_name." ".
+			"WHERE (".$this->patient_field."='".addslashes($patient)."') ".
+			freemed::itemlist_conditions(false)." ".
+			( $condition ? 'AND '.$condition : '' )." ".
+			"ORDER BY ".$this->order_fields;
+		$result = $GLOBALS['sql']->query ($query);
+
+		$display_buffer .= freemed_display_itemlist(
+			$result,
+			$this->page_name,
+			array (
+				__("Date")        => "pdate",
+				__("Problem") => "problem"
+			), // array
+			array ( "", ""),
+			NULL, NULL, NULL,
+			ITEMLIST_MOD | ITEMLIST_DEL
+		);
+		$display_buffer .= "\n<p/>\n";
+	} // end method view
 
 	function form_table ( ) {
-		return array (
-			__("Problem") =>
+		$a = array (
+			__("Problem").' 1' =>
 			html_form::text_widget('problem', 128)
 		);
+		for ($i=2; $i<=8; $i++) {
+		$a = array_merge($a,
+			array (
+			__("Problem")." $i" =>
+			html_form::text_widget('problem'.$i, 128)
+		)
+		);
+		}
+		return $a;
 	} // end method form_table
 
 	function recent_text ( $patient, $recent_date = NULL ) {
@@ -131,11 +197,10 @@ class CurrentProblemsModule extends EMRModule {
 		$res = $GLOBALS['sql']->query($query);
 
 		// Get problems, and extract to an array
-		$m[] ="\n\nCURRENT PROBLEMS:\n";
 		while ($r = $GLOBALS['sql']->fetch_array($res)) {
-			$m[] = trim($r['junkpdate'].' '.$r['problem']);
+			$m[] = trim($r['problem']);
 		}
-		return @join("\n", $m);
+		return @join(', ', $m);
 	} // end method recent_text
 
 	function _update ( ) {
@@ -150,10 +215,10 @@ class CurrentProblemsModule extends EMRModule {
 			$GLOBALS['sql']->query($GLOBALS['sql']->create_table_query($this->table_name, $this->table_definition, array('id')));
 
 			// Migrate old entries
-			$q = $GLOBALS['sql']->query('SELECT ptproblems,id FROM patient WHERE LENGTH(ptproblems) > 3');
+			$q = $GLOBALS['sql']->query('SELECT ptcproblems,id FROM patient WHERE LENGTH(ptcproblems) > 3');
 			while ($r = $GLOBALS['sql']->fetch_array($q)) {
-				$e = sql_expand($r['ptproblems']);
-				if (!is_array($e)) { $e = array ( $e ); }
+				$e = sql_expand($r['ptcproblems']);
+				if (!is_array($e)) { $e = array ($e); }
 				foreach ($e AS $a) {
 					$GLOBALS['sql']->query(
 						$GLOBALS['sql']->insert_query(

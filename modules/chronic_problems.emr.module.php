@@ -44,9 +44,10 @@ class ChronicProblemsModule extends EMRModule {
 	// The EMR box; probably the most important part of this module
 	function summary ($patient, $dummy_items) {
 		$my_result = $GLOBALS['sql']->query(
-			"SELECT * FROM ".$this->table_name." ".
+			"SELECT *,DATE_FORMAT(pdate, '%m/%d/%Y') AS my_date ".
+			"FROM ".$this->table_name." ".
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->order_fields
+			"ORDER BY pdate DESC,".$this->order_fields
 		);
 
 		// Check to see if it's set (show listings if it is)
@@ -56,7 +57,7 @@ class ChronicProblemsModule extends EMRModule {
 			<table BORDER=\"0\" CELLSPACING=\"0\" WIDTH=\"100%\" ".
 			"CELLPADDING=\"2\">
 			<tr CLASS=\"menubar_info\">
-			<td><b>".__("Date")."</b></td>
+			<td><b>".__("Reviewed")."</b></td>
 			<td><b>".__("Problem")."</b></td>
 			<td><b>".__("Action")."</b></td>
 			</tr>
@@ -66,7 +67,7 @@ class ChronicProblemsModule extends EMRModule {
 			while ($my_r = $GLOBALS['sql']->fetch_array($my_result)) {
 				$buffer .= "
 				<tr>
-				<td ALIGN=\"LEFT\"><small>".prepare($my_r['pdate'])."</small></td>
+				<td ALIGN=\"LEFT\"><small>".prepare($my_r['my_date'])."</small></td>
 				<td ALIGN=\"LEFT\"><small>".prepare($my_r['problem'])."</small></td>
 				<td ALIGN=\"LEFT\">".
 				template::summary_modify_link($this,
@@ -94,7 +95,7 @@ class ChronicProblemsModule extends EMRModule {
 			</div>
 			";
 		}
-
+/*
 		$buffer .= "
 			<div ALIGN=\"CENTER\">
 			<form ACTION=\"module_loader.php\" METHOD=\"POST\">
@@ -111,16 +112,56 @@ class ChronicProblemsModule extends EMRModule {
 			</form>
 			</div>
 			";
+*/
 		return $buffer;
 	} // end method summary
 
-	function summary_bar() { }
+	//function summary_bar() { }
+
+	function add () {
+		// Save original values
+		$v = array(
+			'problem' => $_REQUEST['problem']
+		);
+		// Loop through all possibles
+		for ($i=2; $i<=8; $i++) {
+			// Only add if it looks like we have values
+			if ($_REQUEST['problem'.$i]) {
+				$this->_add(array(
+					'problem' => $_REQUEST['problem'.$i]
+				));
+			}
+		}
+
+		// Restore from saved values
+		foreach ($v as $key => $value) {
+			$_REQUEST[$key] = $GLOBALS[$key] = $value;
+		}
+		// Call the regular way, so we get good handling...
+		$this->_add();
+	}
+	function _preadd($p) {
+		$this->variables = array (
+			'problem' => $p['problem'],
+			'ppatient' => $_REQUEST['patient'],
+			'pdate' => date('Y-m-d')
+		);
+	}
 
 	function form_table ( ) {
-		return array (
-			__("Problem") =>
+		$a = array (
+			__("Problem").' 1' =>
 			html_form::text_widget('problem', 128)
 		);
+		for ($i=2; $i<=8; $i++) {
+		$a = array_merge($a,
+			array (
+			__("Problem")." $i" =>
+			html_form::text_widget('problem'.$i, 128)
+		)
+		);
+		}
+		return $a;
 	} // end method form_table
 
 	function recent_text ( $patient, $recent_date = NULL ) {
@@ -131,11 +172,10 @@ class ChronicProblemsModule extends EMRModule {
 		$res = $GLOBALS['sql']->query($query);
 
 		// Get problems, and extract to an array
-                        $m[]="\n\nCHRONIC PROBLEMS:\n"; 
-	        while ($r = $GLOBALS['sql']->fetch_array($res)) {
-			$m[] = trim($r['junkpdate'].' '.$r['problem']);
+		while ($r = $GLOBALS['sql']->fetch_array($res)) {
+			$m[] = trim($r['problem']);
 		}
-		return @join("\n", $m);
+		return @join(', ', $m);
 	} // end method recent_text
 
 	function _update ( ) {
