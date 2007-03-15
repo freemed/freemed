@@ -1,7 +1,26 @@
-FreeMED README
-Written by Jeff Buchbinder
-(jeff@freemedsoftware.com)
-(c) 1999-2005 FreeMED Software Foundation (GPL)
+$Id$
+
+Authors:
+	Jeff Buchbinder <jeff@freemedsoftware.org>
+
+FreeMED Electronic Medical Record and Practice Management System
+Copyright (C) 1999-2007 FreeMED Software Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+---------------------------------------------------------------------------
 
 Please note that this README file is meant to help with initially setting up
 FreeMED. If you are still having trouble, try the FreeMED support list,
@@ -13,14 +32,9 @@ support@freemedsoftware.org for community-based support.
 * These are to be installed in /usr/share/freemed, and a virtual directory
   alias should be made in the Apache2 configuration files, as well as
   giving read perms to Apache.
-* If something doesn't work after you upgrade to a new tarball, visit
-  the database maintenance screen to force the modules to update their
-  corresponding database tables. If that still gives you issues, remove
-  data/cache/modules and visit the aforementioned screen.
 * Code is annotated with an author if the primary author is other than
   jeff b <jeff@freemedsoftware.com>
-* MySQL version 4.1 is required for the timestamp-related display functions to
-  work properly.
+* MySQL version 5.0.20+ is required.
 * Since FreeMED involves a fairly hefty codebase, php optimizing tricks,
   such as the bware_cache module or the Zend Optimizer should be used to
   minimize load times. APC is also available (apc.communityconnect.com), as
@@ -49,15 +63,12 @@ support@freemedsoftware.org for community-based support.
    You can also install from the subversion repository:
 
    # cd /usr/share
-   # svn co http://svn.freemedsoftware.org/freemed/trunk freemed
+   # svn co http://svn.freemedsoftware.org/freemed/branch/BRANCH freemed
 
-   will install the development version.
+   will install the development version, where BRANCH is the code series.
+   For example, BRANCH=0.8.x will check out the 0.8 series.
 
-4) Edit the /usr/share/freemed/lib/settings.php file to make sure that all
-   settings are correct for your machine. (There is a setup wizard in the
-   works that performs this step for you, using a web browser.)
-
-5) Edit your Apache configuration files to associate .php files with php, as
+4) Edit your Apache configuration files to associate .php files with php, as
    well as setting index.php to be one of the default indexes. Also set up
    access and a directory alias for FreeMED. This is accomplished with the
    following lines:
@@ -75,11 +86,11 @@ support@freemedsoftware.org for community-based support.
      allow from all
    </Directory>
 
-6) HUP apache (killall -1 httpd) to force it to reload its configuration
+5) HUP apache (killall -1 httpd) to force it to reload its configuration
    files. Optionally you can use "/etc/init.d/apache2 restart" or its equivalent
    in your distribution.
 
-7) NOTE: THIS STEP IS SUPPOSED TO BE PERFORMED BY FREEMED. IF IT IS NOT, YOU
+6) NOTE: THIS STEP IS SUPPOSED TO BE PERFORMED BY FREEMED. IF IT IS NOT, YOU
    WILL HAVE TO DO THIS MANUALLY.
    Create the database with the command "mysqladmin -p create freemed"
    (if you are using MySQL). (The setup wizard also does this.) Please
@@ -90,8 +101,8 @@ support@freemedsoftware.org for community-based support.
    default set to 8M, which causes errors, since FreeMED requires more
    memory than that for some of its functions.
 
-8) Try to load http://localhost/freemed/ in your web browser. This should
-   take you through a wizard which will help you set up FreeMED.
+7) Try to load http://localhost/freemed/install.php in your web browser.
+   This should take you through a wizard which will help you set up FreeMED.
    You may now use FreeMED. Congratulations!
 
 
@@ -109,14 +120,4 @@ A: Try using the commandline clients for your SQL server. (For MySQL, this is
    not work, there is a chance that the machine or account that FreeMED is
    using does not have proper access rights on the SQL server. Please consult
    your SQL server documentation if this is the case.
-
-Q: Why isn't FreeMED letting me log in! I entered everything in correctly,
-   but it still gives me an error, with a menubar to the left.
-A: Your version of PHP is probably broken in regard to sessions support. This
-   problem has been noted on PHP 4.1.2, but your version may also have this
-   problem. Use the newest version of PHP available to you. (For one reason
-   or another, global variable registration changed from on to off by
-   default in newer versions of PHP, supposedly for security reasons. This
-   assumption has been known to break PHP code, so you can go into your
-   php.ini file and enable register_globals if you still have problems.)
 
