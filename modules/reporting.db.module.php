@@ -40,6 +40,63 @@ class Reporting extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
+
+	// Method: GetReports
+	//
+	//	Get list of reports.
+	//
+	// Parameters:
+	//
+	//	$locale - (optional) Locale of reports to look up. Defaults to
+	//	DEFAULT_LANGUAGE as defined in lib/settings.php
+	//
+	// Returns:
+	//
+	//	Array of hashes containing:
+	//	* report_name
+	//	* report_desc
+	//	* report_uuid
+	//
+	public function GetReports ( $locale = NULL ) {
+		$query = "SELECT report_name, report_desc, report_uuid FROM reporting WHERE report_locale=". $GLOBALS['sql']->quote( $locale == NULL ? DEFAULT_LANGUAGE : $locale ). " ORDER BY report_name";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method GetReports
+
+	// Method: GetReportParameters
+	//
+	//	Get information on this report, including parameters.
+	//
+	// Parameters:
+	//
+	//	$uuid - UUID of designated report
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetReportParameters ( $uuid ) {
+		$query = "SELECT * FROM reporting WHERE report_uuid=".$GLOBALS['sql']->quote( $uuid );
+		$r = $GLOBALS['sql']->queryRow( $query );
+		$return = array ();
+		$return['report_name'] = $r['report_name'];
+		$return['report_desc'] = $r['report_desc'];
+		if ($r['report_param_count'] == 0) {
+			$return['params'] = array();
+		} else {
+			$names = explode( ',', $r['report_param_names'] );
+			$types = explode( ',', $r['report_param_types'] );
+			$optional = explode( ',', $r['report_param_optional'] );
+			for ( $p = 0; $p < $r['report_param_count'] ; $p++ ) {
+				$return['params'][$p] = array (
+					'name' => $names[$p],
+					'types' => $types[$p],
+					'optional' => ( $optional[$p] ? true : false )
+				);
+			}
+		}
+		return $return;
+	} // end method GetReportParameters
+
 } // end class Reporting
 
 register_module("Reporting");
