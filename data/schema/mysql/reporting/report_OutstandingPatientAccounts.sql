@@ -62,12 +62,14 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
-		report_sp
+		report_sp,
+		report_param_count
 	) VALUES (
 		'Outstanding Patient Accounts',
 		'b9f7f1f0-445b-4c1e-a45b-af18caed9db5',
 		'en_US',
 		'',
-		'report_OutstandingPatientAccounts_en_US'
+		'report_OutstandingPatientAccounts_en_US',
+		0
 	);
 

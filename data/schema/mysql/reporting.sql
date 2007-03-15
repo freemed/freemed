@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	report_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
 	report_desc			TEXT,
 	report_sp			VARCHAR (150) NOT NULL,
+	report_param_count		TINYINT(3) NOT NULL DEFAULT 0,
 	report_param_names		TEXT,
 	report_param_types		TEXT,
 	report_param_optional		TEXT,
@@ -40,4 +41,5 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 #	Load packaged reports
 
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
+SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
 

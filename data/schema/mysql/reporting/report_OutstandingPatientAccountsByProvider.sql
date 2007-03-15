@@ -63,12 +63,14 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
-		report_sp
+		report_sp,
+		report_param_count
 	) VALUES (
 		'Outstanding Patient Accounts By Provider',
 		'5ddd29ae-e0e2-47cc-a321-316be9c831b5',
 		'en_US',
 		'',
-		'report_OutstandingPatientAccountsByProvider_en_US'
+		'report_OutstandingPatientAccountsByProvider_en_US',
+		0
 	);
 
