@@ -53,6 +53,11 @@
 			<!--{t}-->Search<!--{/t}-->
 		</div>
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.form');">
+			<img src="<!--{$htdocs}-->/images/messages_icon.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Patient Entry<!--{/t}-->
+		</div>
+
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.callin.manage');">
 			<img src="<!--{$htdocs}-->/images/landline.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Call-in<!--{/t}-->
@@ -82,6 +87,15 @@
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.claimsmanager');">
 			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Claims Manager<!--{/t}-->
+		</div>
+
+	</div>
+
+	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">
+
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.reporting.engine');">
+			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Reporting Engine<!--{/t}-->
 		</div>
 
 	</div>

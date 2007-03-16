@@ -23,17 +23,6 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.framework.tpl"}-->
-<!--{/if}-->
-
-<style type="text/css">
-
-	/* Force dojo buttons to have some padding */
-	.dojoButtonContents div { padding: 5px; }
-
-</style>
-
 <script type="text/javascript">
 	dojo.require("dojo.widget.Form");
 	dojo.require("dojo.widget.TabContainer");
@@ -74,7 +63,7 @@
 
 		dojo.io.bind({
 			method : 'POST',
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientModule.' + action,
+			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.' + action,
 			content: {
 				param0: dojo.widget.byId('patientForm').getValues()
 			},
@@ -99,7 +88,7 @@
 	function patientFormPopulate ( id ) {
 		dojo.io.bind({
 			method : 'POST',
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.PatientModule.GetRecord',
+			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.GetRecord',
 			content: { param0: id },
 			error: function(type, data, evt) {
 				alert('<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->');
@@ -117,14 +106,21 @@
 	} // end patientFormPopulate
 
 <!--{if $patient > 0}-->
-	dojo.addOnLoad(function(){
+	_container_.addOnLoad(function(){
 		//TODO: make this work properly to load via "AJAX"
-		//patientFormPopulate(<!--{$patient}-->);
+		patientFormPopulate(<!--{$patient}-->);
 	});
 <!--{/if}-->
 </script>
 
 <form dojoType="Form" id="patientForm" style="height: auto;">
+
+<!--{if $patient > 0}-->
+<h3><!--{t}-->Change Patient Details<!--{/t}--></h3>
+<!--{else}-->
+<h3><!--{t}-->Patient Entry<!--{/t}--></h3>
+<!--{/if}-->
+
 
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 20em;">
 	<div dojoType="ContentPane" id="patientDemographicsPane" label="Demographics">
@@ -135,11 +131,11 @@
 		<td>
 			<select dojoType="Select" id="ptsalut" name="ptsalut" style="width: 100px;" autocomplete="false">
 				<option value="">--</option>
-				<option value="Mr" <!--{if $record.ptsalut == 'Mr'}-->selected<!--{/if}-->>Mr</option>
-				<option value="Mrs" <!--{if $record.ptsalut == 'Mrs'}-->selected<!--{/if}-->>Mrs</option>
-				<option value="Ms" <!--{if $record.ptsalut == 'Ms'}-->selected<!--{/if}-->>Ms</option>
-				<option value="Dr" <!--{if $record.ptsalut == 'Dr'}-->selected<!--{/if}-->>Dr</option>
-				<option value="Fr" <!--{if $record.ptsalut == 'Fr'}-->selected<!--{/if}-->>Fr</option>
+				<option value="Mr">Mr</option>
+				<option value="Mrs">Mrs</option>
+				<option value="Ms">Ms</option>
+				<option value="Dr">Dr</option>
+				<option value="Fr">Fr</option>
 			</select>
 			<input type="text" id="ptlname" name="ptlname" value="<!--{$record.ptlname|escape}-->" size="20" maxlength="50" /> <b>,</b>
 			<input type="text" id="ptfname" name="ptfname" value="<!--{$record.ptfname|escape}-->" size="20" maxlength="50" />
@@ -170,7 +166,7 @@
 			autocomplete="false"
 			id="ptcsz_widget"
 			style="width: 300px;"
-			dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.Zipcodes.CityStateZipPicklist?param0=%{searchString}"
+			dataUrl="<!--{$relay}-->/org.freemedsoftware.module.Zipcodes.CityStateZipPicklist?param0='%{searchString}'"
 			setValue="document.getElementById('ptcsz').value = arguments[0];"
 			mode="remote" />
 			<input type="hidden" id="ptcsz" name="ptcsz" value="<!--{$record.ptcity|escape}-->, <!--{$record.ptstate|escape}--> <!--{$record.ptzip|escape}-->" />
@@ -284,40 +280,19 @@
 	<tr>
 		<td><!--{t}-->In House Provider<!--{/t}--></td>
 		<td>
-			<input dojoType="Select"
-			autocomplete="false"
-			id="ptdoc_widget"
-			style="width: 300px;"
-			dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.ProviderModule.picklist?param0=%{searchString}"
-			setValue="document.getElementById('ptdoc').value = arguments[0];"
-			mode="remote" />
-			<input type="hidden" id="ptdoc" name="ptdoc" value="<!--{$record.ptdoc|escape}-->" />
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptdoc"}-->
 		</td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Referring Provider<!--{/t}--></td>
 		<td>
-			<input dojoType="Select"
-			autocomplete="false"
-			id="ptref_widget"
-			style="width: 300px;"
-			dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.ProviderModule.picklist?param0=%{searchString}"
-			setValue="document.getElementById('ptref').value = arguments[0];"
-			mode="remote" />
-			<input type="hidden" id="ptref" name="ptref" value="<!--{$record.ptref|escape}-->" />
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptref"}-->
 		</td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Primary Care Provider<!--{/t}--></td>
 		<td>
-			<input dojoType="Select"
-			autocomplete="false"
-			id="ptpcp_widget"
-			style="width: 300px;"
-			dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.module.ProviderModule.picklist?param0=%{searchString}"
-			setValue="document.getElementById('ptpcp').value = arguments[0];"
-			mode="remote" />
-			<input type="hidden" id="ptpcp" name="ptpcp" value="<!--{$record.ptpcp|escape}-->" />
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptpcp"}-->
 		</td>
 	</tr>
 	<tr>
@@ -341,7 +316,7 @@
 	</button>
 	<!--{if $patient > 0}-->
 	</td><td align="left">
-	<button dojoType="Button" type="button" id="patientFormCancelButton" widgetId="patientFormCancelButton" onClick="freemedLoad('<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->'); return true;">
+	<button dojoType="Button" type="button" id="patientFormCancelButton" widgetId="patientFormCancelButton" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->'); return true;">
 		<div><!--{t}-->Cancel<!--{/t}--></div>
 	</button>
 	<!--{/if}-->
@@ -349,8 +324,4 @@
 </div>
 
 </form>
-
-<!--{if $MODE ne 'widget'}-->
-<!--{include file="org.freemedsoftware.ui.footer.tpl"}-->
-<!--{/if}-->
 
