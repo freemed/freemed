@@ -56,6 +56,8 @@ class CSV {
 				} else {	
 					$r[$k] = str_replace("\n", "", $r[$k]);
 					$r[$k] = str_replace("\r", "", $r[$k]);
+					$r[$k] = str_replace("\"", "\\\"", $r[$k]);
+					$r[$k] = '"' . $r[$k] . '"';
 				}
 			}
 
