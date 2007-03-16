@@ -40,7 +40,6 @@ class Reporting extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-
 	// Method: GetReports
 	//
 	//	Get list of reports.
@@ -80,6 +79,7 @@ class Reporting extends SupportModule {
 		$return = array ();
 		$return['report_name'] = $r['report_name'];
 		$return['report_desc'] = $r['report_desc'];
+		$return['report_sp'] = $r['report_sp'];
 		if ($r['report_param_count'] == 0) {
 			$return['params'] = array();
 		} else {
@@ -96,6 +96,103 @@ class Reporting extends SupportModule {
 		}
 		return $return;
 	} // end method GetReportParameters
+
+	// Method: GenerateReport
+	//
+	//	Actual reporting generation routine.
+	//
+	// Parameters:
+	//
+	//	$uuid - Report UUID
+	//
+	//	$format - Format to return the report in
+	//
+	//	$param - Array of parameters
+	//
+	// Returns:
+	//
+	//	Report
+	//
+	public function GenerateReport ( $uuid, $format, $param ) {
+		$report = $this->GetReportParameters( $uuid );
+
+		// Sanity checking
+		if (!$report['report_name']) { return false; }
+
+		$s = CreateObject('org.freemedsoftware.api.Scheduler');
+		foreach ($report['params'] AS $k => $v) {
+			if ( !$v['optional'] and !$param[$k] ) {
+				syslog(LOG_INFO, get_class($this)."| parameter $k failed for report $uuid");
+				return false;
+			}
+
+			switch ($v['type']) {
+				case 'Date':
+				$pass[] = $GLOBALS['sql']->quote( $s->ImportDate( $param[$k] ) );
+				break;
+
+				default:
+				$pass[] = $GLOBALS['sql']->quote( $param[$k] );
+				break;
+			}
+		}
+
+		// Form query
+		$query = "CALL ".$report['report_sp']." ( ". @join( ', ', $pass )." ); ";
+		//print_r($result); die();
+
+		switch ( strtolower( $format ) ) {
+			case 'csv':
+			$csv = CreateObject( 'org.freemedsoftware.core.CSV' );
+			$csv->ImportSQLQuery( $query );
+			$csv->Export();
+			break; // csv
+
+			case 'html':
+			$result = $GLOBALS['sql']->queryAll( $query );
+			$buf = "<html><head><title>".htmlentities( $report['report_name'] )."</title></head>\n";
+			$buf .= "<body>";
+			$buf .= "<h1>".htmlentities( $report['report_name'] )."</h1>\n";
+			$buf .= "<table>\n";
+			$buf .= "\t<thead>\n";
+			$buf .= "\t\t<tr>\n";
+			foreach ( $result[0] AS $k => $v ) {
+				$buf .= "\t\t\t<th>".htmlentities( $k )."</th>\n";
+			}
+			$buf .= "\t\t</tr>\n";
+			$buf .= "\t</thead>\n";
+			$buf .= "\t<tbody>\n";
+			foreach ( $result AS $v ) {
+				$buf .= "\t\t<tr>\n";
+				foreach ( $v AS $val ) {
+					$buf .= "\t\t\t<td>".htmlentities( $val )."</td>\n";
+				}
+				$buf .= "\t\t</tr>\n";
+			}
+			$buf .= "\t</tbody>\n";
+			$buf .= "</table>\n";
+			$buf .= "</body></html>";
+			die ( $buf );
+			break; // html
+
+			case 'xml':
+			$result = $GLOBALS['sql']->queryAll( $query );
+			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\ Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
+			foreach ($result AS $r ) {
+				$row = $xml->addChild( 'Record' );
+				foreach ( $r AS $column => $value ) {
+					$column = ereg_replace( '[^A-Za-z0-9]+', '', $column );
+					$row->$column = "$value";
+				}
+			}
+			die( $xml->asXML( ) );
+			break; // xml
+	
+			default:
+			return $result;
+			break;
+		}
+	} // end method GenerateReport
 
 } // end class Reporting
 
