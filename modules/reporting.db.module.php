@@ -177,7 +177,7 @@ class Reporting extends SupportModule {
 
 			case 'xml':
 			$result = $GLOBALS['sql']->queryAll( $query );
-			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\ Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
+			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
 			foreach ($result AS $r ) {
 				$row = $xml->addChild( 'Record' );
 				foreach ( $r AS $column => $value ) {
