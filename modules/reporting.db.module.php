@@ -89,7 +89,7 @@ class Reporting extends SupportModule {
 			for ( $p = 0; $p < $r['report_param_count'] ; $p++ ) {
 				$return['params'][$p] = array (
 					'name' => $names[$p],
-					'types' => $types[$p],
+					'type' => $types[$p],
 					'optional' => ( $optional[$p] ? true : false )
 				);
 			}
