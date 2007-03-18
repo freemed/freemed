@@ -28,7 +28,7 @@
 	<script type="text/javascript">
 		djConfig = { isDebug: true };
 	</script>
-	<script type="text/javascript" src="<!--{$base_uri}-->/lib/dojo/dojo.js"></script>
+	<script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		dojo.require("dojo.io.*");
 		dojo.require("dojo.widget.Wizard");

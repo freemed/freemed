@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 THISDIR=lib
-SUBDIR=acl agata7 api core dojo pear perl php-gettext public tex xmlrpc
+SUBDIR=acl agata7 api core pear perl php-gettext public tex
 
 all:
 	# Nothing

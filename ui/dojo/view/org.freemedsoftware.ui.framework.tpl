@@ -35,7 +35,7 @@
 var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 </script>
 <!--{/if}-->
-<script type="text/javascript" src="<!--{$base_uri}-->/lib/dojo/dojo.js"></script>
+<script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 <script language="JavaScript" type="text/javascript">
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
@@ -102,6 +102,47 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 		dojo.widget.byId( 'freemedContent' ).setUrl( url );
 		return true;
 	} // end function freemedLoad
+
+	// "Global Namespace" functions and settings
+	freemedGlobal = {
+		interval: 600, // seconds between polls
+		intervalCallback: function ( ) {
+			return '';
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: freemedGlobal.intervalStamp
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.SystemNotifications.GetFromTimestamp",
+				load: function(type, data, evt) {
+					if (data) {
+						// Save interval passed back
+						freemedGlobal.intervalStamp = data.timestamp;
+					}
+				},
+				mimetype: "text/json"
+			});
+		}
+	};
+
+	// Initialization
+	dojo.addOnLoad(function(){
+		return true;
+		dojo.io.bind({
+			method: "POST",
+			content: { },
+			url: "<!--{$relay}-->/org.freemedsoftware.module.SystemNotifications.GetTimestamp",
+			load: function(type, data, evt) {
+				if (data) {
+					// Save interval passed back
+					freemedGlobal.intervalStamp = data;
+				}
+			},
+			sync: true,
+			mimetype: "text/json"
+		});
+		window.setInterval( freemedGlobal.intervalCallback, 1000 * freemedGlobal.interval );
+	});
 
 </script>
 
