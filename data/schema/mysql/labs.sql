@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS `labs` (
 	labtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	labresultstatus		CHAR (1),
 	labnotes		TEXT,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -78,6 +80,8 @@ BEGIN
 	DROP TRIGGER labs_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE labs ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER labnotes;
+	ALTER IGNORE TABLE labs ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -97,14 +101,14 @@ CREATE TRIGGER labs_Delete
 CREATE TRIGGER labs_Insert
 	AFTER INSERT ON labs
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'labs', NEW.labpatient, NEW.id, NEW.labtimestamp, CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ) );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'labs', NEW.labpatient, NEW.id, NEW.labtimestamp, CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER labs_Update
 	AFTER UPDATE ON labs
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.labtimestamp, patient=NEW.labpatient, summary=CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ) WHERE module='labs' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.labtimestamp, patient=NEW.labpatient, summary=CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ), user=NEW.user, active=NEW.active WHERE module='labs' AND oid=NEW.id;
 	END;
 //
 

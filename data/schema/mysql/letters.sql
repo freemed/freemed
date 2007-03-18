@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS `letters` (
 	letterpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	lettertypist		VARCHAR (50),
 	locked			INT UNSIGNED NOT NULL DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -55,6 +57,8 @@ BEGIN
 	DROP TRIGGER letters_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE letters ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER IGNORE TABLE letters ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -76,7 +80,7 @@ CREATE TRIGGER letters_Insert
 	FOR EACH ROW BEGIN
 		DECLARE p VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterto;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'letters', NEW.letterpatient, NEW.id, NEW.letterdt, p, NEW.locked );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'letters', NEW.letterpatient, NEW.id, NEW.letterdt, p, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
@@ -85,7 +89,7 @@ CREATE TRIGGER letters_Update
 	FOR EACH ROW BEGIN
 		DECLARE p VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterto;
-		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p, locked=NEW.locked WHERE module='letters' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='letters' AND oid=NEW.id;
 	END;
 //
 

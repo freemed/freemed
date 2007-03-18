@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `previous_operations` (
 	odate			DATE NOT NULL,
 	operation		VARCHAR (250) NOT NULL DEFAULT '',
 	opatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	#	Define keys
@@ -47,6 +48,7 @@ BEGIN
 	DROP TRIGGER previous_operations_Uodate;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE previous_operations ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER opatient;
 END
 //
 DELIMITER ;
@@ -66,14 +68,14 @@ CREATE TRIGGER previous_operations_Delete
 CREATE TRIGGER previous_operations_Insert
 	AFTER INSERT ON previous_operations
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'previous_operations', NEW.opatient, NEW.id, NEW.odate, NEW.operation );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'previous_operations', NEW.opatient, NEW.id, NEW.odate, NEW.operation, NEW.user );
 	END;
 //
 
 CREATE TRIGGER previous_operations_Uodate
 	AFTER UPDATE ON previous_operations
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.odate, patient=NEW.opatient, summary=NEW.operation WHERE module='previous_operations' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.odate, patient=NEW.opatient, summary=NEW.operation, user=NEW.user WHERE module='previous_operations' AND oid=NEW.id;
 	END;
 //
 

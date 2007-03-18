@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 	severity		VARCHAR (150) NOT NULL,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	reviewed		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -50,7 +52,9 @@ BEGIN
 	#----- Upgrades
 
 	#	Version 0.2.1
-	ALTER TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+	ALTER IGNORE TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+	ALTER IGNORE TABLE allergies ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER reviewed;
+	ALTER IGNORE TABLE allergies ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -70,14 +74,14 @@ CREATE TRIGGER allergies_Delete
 CREATE TRIGGER allergies_Insert
 	AFTER INSERT ON allergies
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergy );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergy, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER allergies_Update
 	AFTER UPDATE ON allergies
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.reviewed, patient=NEW.patient, summary=NEW.allergy WHERE module='allergies' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.reviewed, patient=NEW.patient, summary=NEW.allergy,user=NEW.user,active=NEW.active WHERE module='allergies' AND oid=NEW.id;
 	END;
 //
 

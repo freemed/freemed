@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS `immunization` (
 	immunization		INT UNSIGNED NOT NULL DEFAULT 0,
 	notes			TEXT,
 	locked			INT UNSIGNED,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -50,6 +52,8 @@ BEGIN
 	DROP TRIGGER immunization_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE immunization ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER IGNORE TABLE immunization ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -71,7 +75,7 @@ CREATE TRIGGER immunization_Insert
 	FOR EACH ROW BEGIN
 		DECLARE i VARCHAR (250);
 		SELECT description INTO i FROM bccdc WHERE id=NEW.immunization;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'immunization', NEW.patient, NEW.id, NEW.dateof, i, NEW.locked );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'immunization', NEW.patient, NEW.id, NEW.dateof, i, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
@@ -80,7 +84,7 @@ CREATE TRIGGER immunization_Update
 	FOR EACH ROW BEGIN
 		DECLARE i VARCHAR (250);
 		SELECT description INTO i FROM bccdc WHERE id=NEW.immunization;
-		UPDATE `patient_emr` SET stamp=NEW.dateof, patient=NEW.patient, summary=i, locked=NEW.locked WHERE module='immunization' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.dateof, patient=NEW.patient, summary=i, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='immunization' AND oid=NEW.id;
 	END;
 //
 

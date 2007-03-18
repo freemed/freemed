@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS `certifications` (
 	certformnum		INT UNSIGNED,
 	certdesc		VARCHAR (20),
 	certformdata		TEXT,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -49,6 +51,8 @@ BEGIN
 	DROP TRIGGER certifications_Update;
 
 	#----- Upgrades
+	ALTER TABLE certifications ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER certformdata;
+	ALTER TABLE certifications ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -68,14 +72,14 @@ CREATE TRIGGER certifications_Delete
 CREATE TRIGGER certifications_Insert
 	AFTER INSERT ON certifications
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'certifications', NEW.certpatient, NEW.id, NOW(), NEW.certdesc );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'certifications', NEW.certpatient, NEW.id, NOW(), NEW.certdesc, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER certifications_Update
 	AFTER UPDATE ON certifications
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.certpatient, summary=NEW.certdesc WHERE module='certifications' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.certpatient, summary=NEW.certdesc, user=NEW.user, active=NEW.active WHERE module='certifications' AND oid=NEW.id;
 	END;
 //
 

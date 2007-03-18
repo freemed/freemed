@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	mroute			VARCHAR (150),
 	mpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	mdate			DATE,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -49,6 +51,8 @@ BEGIN
 	DROP TRIGGER medications_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE medications ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER mdate;
+	ALTER IGNORE TABLE medications ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -68,14 +72,14 @@ CREATE TRIGGER medications_Delete
 CREATE TRIGGER medications_Insert
 	AFTER INSERT ON medications
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, CONCAT(NEW.mdrug, ' ', NEW.mdosage) );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, CONCAT(NEW.mdrug, ' ', NEW.mdosage), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER medications_Update
 	AFTER UPDATE ON medications
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=CONCAT(NEW.mdrug, ' ', NEW.mdosage) WHERE module='medications' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=CONCAT(NEW.mdrug, ' ', NEW.mdosage), user=NEW.user, active=NEW.active WHERE module='medications' AND oid=NEW.id;
 	END;
 //
 

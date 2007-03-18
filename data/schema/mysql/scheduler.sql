@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calrecurnote		VARCHAR (100),
 	calrecurid		INT UNSIGNED NOT NULL DEFAULT 0,
 	calappttemplate		INT UNSIGNED NOT NULL DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	# Define keys
@@ -80,6 +81,8 @@ BEGIN
 
 	#	Version 0.6.6
 	ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;
+
+	ALTER IGNORE TABLE scheduler ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER calappttemplate;
 END
 //
 DELIMITER ;
@@ -87,28 +90,32 @@ CALL scheduler_Upgrade( );
 
 #----- Triggers
 
-# FIXME: triggers need to check for type of patient, temp patients shouldn't do this. also, patient and callin tables need to remove records from here ON DELETE since we can't cascade this table
-
 DELIMITER //
 
 CREATE TRIGGER scheduler_Delete
 	AFTER DELETE ON scheduler
 	FOR EACH ROW BEGIN
-		DELETE FROM `patient_emr` WHERE module='scheduler' AND oid=OLD.id;
+		IF OLD.caltype = 'pat' THEN
+			DELETE FROM `patient_emr` WHERE module='scheduler' AND oid=OLD.id;
+		END IF;
 	END;
 //
 
 CREATE TRIGGER scheduler_Insert
 	AFTER INSERT ON scheduler
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, NEW.calprenote );
+		IF NEW.caltype = 'pat' THEN
+			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, NEW.calprenote, NEW.user );
+		END IF;
 	END;
 //
 
 CREATE TRIGGER scheduler_Update
 	AFTER UPDATE ON scheduler
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=NEW.calprenote WHERE module='scheduler' AND oid=NEW.id;
+		IF NEW.caltype = 'pat' THEN
+			UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=NEW.calprenote, user=NEW.user WHERE module='scheduler' AND oid=NEW.id;
+		END IF;
 	END;
 //
 

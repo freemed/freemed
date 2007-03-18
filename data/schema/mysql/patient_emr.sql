@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	summary			VARCHAR (250) NOT NULL,
 	locked			BOOL DEFAULT FALSE,
 	annotation		TEXT,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	status			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys

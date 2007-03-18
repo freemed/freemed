@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	rxorigrx		INT UNSIGNED,
 	rxnote			TEXT,
 	locked			INT UNSIGNED DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Default key
@@ -61,6 +63,8 @@ BEGIN
 	DROP TRIGGER rx_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE rx ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER IGNORE TABLE rx ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -80,14 +84,14 @@ CREATE TRIGGER rx_Delete
 CREATE TRIGGER rx_Insert
 	AFTER INSERT ON rx
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), NEW.rxdrug, NEW.locked );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), NEW.rxdrug, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER rx_Update
 	AFTER UPDATE ON rx
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=NEW.rxdrug, locked=NEW.locked WHERE module='rx' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=NEW.rxdrug, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='rx' AND oid=NEW.id;
 	END;
 //
 

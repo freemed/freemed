@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS `authorizations` (
 	authvisitsused		INT UNSIGNED,
 	authvisitsremain	INT UNSIGNED,
 	authcomment		VARCHAR (100),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	# Define keys
@@ -58,6 +60,8 @@ BEGIN
 	DROP TRIGGER authorizations_Update;
 
 	#----- Upgrades
+	ALTER TABLE authorizations ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER authcomment;
+	ALTER TABLE authorizations ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -77,14 +81,14 @@ CREATE TRIGGER authorizations_Delete
 CREATE TRIGGER authorizations_Insert
 	AFTER INSERT ON authorizations
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'authorizations', NEW.authpatient, NEW.id, NEW.authdtadd, CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')') );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'authorizations', NEW.authpatient, NEW.id, NEW.authdtadd, CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')'), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER authorizations_Update
 	AFTER UPDATE ON authorizations
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.authdtmod, patient=NEW.authpatient, summary=CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')') WHERE module='authorizations' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.authdtmod, patient=NEW.authpatient, summary=CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')'), user=NEW.user, active=NEW.active WHERE module='authorizations' AND oid=NEW.id;
 	END;
 //
 

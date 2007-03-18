@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS `images` (
 	imagephy		INT UNSIGNED DEFAULT 0,
 	imagereviewed		INT UNSIGNED DEFAULT 0,
 	locked			INT UNSIGNED DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -70,6 +72,9 @@ BEGIN
 
 	#	Version 0.4.3
 	ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
+
+	ALTER IGNORE TABLE images ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -89,14 +94,14 @@ CREATE TRIGGER images_Delete
 CREATE TRIGGER images_Insert
 	AFTER INSERT ON images
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc, NEW.locked );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER images_Update
 	AFTER UPDATE ON images
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc, locked=NEW.locked WHERE module='images' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='images' AND oid=NEW.id;
 	END;
 //
 

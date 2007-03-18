@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS `pnotes` (
 	pnotesbmi		INT UNSIGNED,
 	iso			VARCHAR (15),
 	locked			INT UNSIGNED,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -67,6 +69,8 @@ BEGIN
 	DROP TRIGGER pnotes_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE pnotes ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER IGNORE TABLE pnotes ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -86,14 +90,14 @@ CREATE TRIGGER pnotes_Delete
 CREATE TRIGGER pnotes_Insert
 	AFTER INSERT ON pnotes
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'pnotes', NEW.pnotespat, NEW.id, NEW.pnotesdt, NEW.pnotesdescrip, NEW.locked );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'pnotes', NEW.pnotespat, NEW.id, NEW.pnotesdt, NEW.pnotesdescrip, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER pnotes_Update
 	AFTER UPDATE ON pnotes
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.pnotesdt, patient=NEW.pnotespat, summary=NEW.pnotesdescrip, locked=NEW.locked WHERE module='pnotes' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.pnotesdt, patient=NEW.pnotespat, summary=NEW.pnotesdescrip, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='pnotes' AND oid=NEW.id;
 	END;
 //
 

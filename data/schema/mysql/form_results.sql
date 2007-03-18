@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS `form_results` (
 	fr_timestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	fr_template		VARCHAR (50),
 	fr_formname		VARCHAR (50),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -48,6 +50,8 @@ BEGIN
 	DROP TRIGGER form_results_Update;
 
 	#----- Upgrades
+	ALTER TABLE form_results ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER fr_formname;
+	ALTER TABLE form_results ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -67,14 +71,14 @@ CREATE TRIGGER form_results_Delete
 CREATE TRIGGER form_results_Insert
 	AFTER INSERT ON form_results
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'form_results', NEW.fr_patient, NEW.id, NEW.fr_timestamp, NEW.fr_template );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'form_results', NEW.fr_patient, NEW.id, NEW.fr_timestamp, NEW.fr_template, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER form_results_Update
 	AFTER UPDATE ON form_results
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.fr_timestamp, patient=NEW.fr_patient, summary=NEW.fr_template WHERE module='form_results' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.fr_timestamp, patient=NEW.fr_patient, summary=NEW.fr_template, user=NEW.user, active=NEW.active WHERE module='form_results' AND oid=NEW.id;
 	END;
 //
 

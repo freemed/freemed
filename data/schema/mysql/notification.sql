@@ -69,14 +69,14 @@ CREATE TRIGGER notification_Delete
 CREATE TRIGGER notification_Insert
 	AFTER INSERT ON notification
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'notification', NEW.npatient, NEW.id, NOW(), NEW.ndescrip );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'notification', NEW.npatient, NEW.id, NOW(), NEW.ndescrip, NEW.nuser, 'active' );
 	END;
 //
 
 CREATE TRIGGER notification_Update
 	AFTER UPDATE ON notification
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.npatient, summary=NEW.ndescrip WHERE module='notification' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.npatient, summary=NEW.ndescrip, user=NEW.nuser WHERE module='notification' AND oid=NEW.id;
 	END;
 //
 

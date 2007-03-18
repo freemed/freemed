@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS `payrec` (
 	payrecamt		REAL,
 	payrecdescrip		TEXT,
 	payreclock		ENUM ( 'unlocked', 'locked' ),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -58,6 +60,8 @@ BEGIN
 	DROP TRIGGER payrec_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE payrec ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER payreclock;
+	ALTER IGNORE TABLE payrec ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -78,7 +82,7 @@ CREATE TRIGGER payrec_Insert
 	AFTER INSERT ON payrec
 	FOR EACH ROW BEGIN
 		# EMR aggregation
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip, NEW.payreclock );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip, NEW.payreclock, NEW.user, NEW.active );
 
 		#----- Procedure modification
 
@@ -119,7 +123,7 @@ CREATE TRIGGER payrec_Insert
 CREATE TRIGGER payrec_Update
 	AFTER UPDATE ON payrec
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip, locked=NEW.payreclock WHERE module='payrec' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.payrecpatient, summary=NEW.payrecdescrip, locked=NEW.payreclock, user=NEW.user, active=NEW.active WHERE module='payrec' AND oid=NEW.id;
 	END;
 //
 

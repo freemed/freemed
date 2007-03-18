@@ -69,14 +69,14 @@ CREATE TRIGGER scheduler_status_Delete
 CREATE TRIGGER scheduler_status_Insert
 	AFTER INSERT ON scheduler_status
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'scheduler_status', NEW.cspatient, NEW.id, NEW.csstamp, NEW.csnote );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler_status', NEW.cspatient, NEW.id, NEW.csstamp, NEW.csnote, NEW.csuser );
 	END;
 //
 
 CREATE TRIGGER scheduler_status_Update
 	AFTER UPDATE ON scheduler_status
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.csstamp, patient=NEW.cspatient, summary=NEW.csnote WHERE module='scheduler_status' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.csstamp, patient=NEW.cspatient, summary=NEW.csnote, user=NEW.csuser WHERE module='scheduler_status' AND oid=NEW.id;
 	END;
 //
 

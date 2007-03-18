@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `unreaddocuments` (
 	urfpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	urfphysician		INT UNSIGNED NOT NULL DEFAULT 0,
 	urfnote			TEXT,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	#	Define keys
@@ -51,6 +52,7 @@ BEGIN
 	DROP TRIGGER unreaddocuments_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE unreaddocuments ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER urfnote;
 END
 //
 DELIMITER ;
@@ -70,14 +72,14 @@ CREATE TRIGGER unreaddocuments_Delete
 CREATE TRIGGER unreaddocuments_Insert
 	AFTER INSERT ON unreaddocuments
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'unreaddocuments', NEW.urfpatient, NEW.id, NEW.urfdate, NEW.urfnote );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'unreaddocuments', NEW.urfpatient, NEW.id, NEW.urfdate, NEW.urfnote, NEW.user );
 	END;
 //
 
 CREATE TRIGGER unreaddocuments_Update
 	AFTER UPDATE ON unreaddocuments
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.urfdate, patient=NEW.urfpatient, summary=NEW.urfnote WHERE module='unreaddocuments' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.urfdate, patient=NEW.urfpatient, summary=NEW.urfnote, user=NEW.user WHERE module='unreaddocuments' AND oid=NEW.id;
 	END;
 //
 

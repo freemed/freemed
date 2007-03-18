@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	covpatinsno		VARCHAR (50),
 	covpatgrpno		VARCHAR (50),
 	covtype			INT UNSIGNED,
-	covstatus		INT UNSIGNED,
+	covstatus		INT UNSIGNED DEFAULT 0,
 	covrel			CHAR (2) NOT NULL DEFAULT 'S',
 	covlname		VARCHAR (50),
 	covfname		VARCHAR (50),
@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	covemployer		VARCHAR (50),
 	covcopay		REAL,
 	covdeduct		REAL,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL,
 
 	#	Define keys
@@ -76,6 +77,7 @@ BEGIN
 	DROP TRIGGER coverage_Update;
 
 	#----- Upgrades
+	ALTER TABLE coverage ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER covdeduct;
 END
 //
 DELIMITER ;
@@ -95,14 +97,14 @@ CREATE TRIGGER coverage_Delete
 CREATE TRIGGER coverage_Insert
 	AFTER INSERT ON coverage
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'coverage', NEW.covpatient, NEW.id, NEW.covdtadd, CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ) );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary,user, active ) VALUES ( 'coverage', NEW.covpatient, NEW.id, NEW.covdtadd, CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ), NEW.user, IF( NEW.covstatus = 1, 'inactive', 'active' ) );
 	END;
 //
 
 CREATE TRIGGER coverage_Update
 	AFTER UPDATE ON coverage
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.covdtmod, patient=NEW.covpatient, summary=CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ) WHERE module='coverage' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.covdtmod, patient=NEW.covpatient, summary=CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ), user=NEW.user, active=IF( NEW.covstatus=1, 'inactive', 'active' ) WHERE module='coverage' AND oid=NEW.id;
 	END;
 //
 

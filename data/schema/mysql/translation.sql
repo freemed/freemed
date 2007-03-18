@@ -70,14 +70,14 @@ CREATE TRIGGER translation_Delete
 CREATE TRIGGER translation_Insert
 	AFTER INSERT ON translation
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'translation', NEW.tpatient, NEW.id, NEW.ttimestamp, NEW.tlanguage );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'translation', NEW.tpatient, NEW.id, NEW.ttimestamp, NEW.tlanguage, NEW.tuser );
 	END;
 //
 
 CREATE TRIGGER translation_Update
 	AFTER UPDATE ON translation
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.ttimestamp, patient=NEW.tpatient, summary=NEW.tlanguage WHERE module='translation' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.ttimestamp, patient=NEW.tpatient, summary=NEW.tlanguage, user=NEW.tuser WHERE module='translation' AND oid=NEW.id;
 	END;
 //
 

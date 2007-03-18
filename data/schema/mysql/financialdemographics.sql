@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS `financialdemographics` (
 	fdother			INT UNSIGNED,
 	fdfreetext		TEXT,
 	fdentry			VARCHAR (75),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -57,6 +59,8 @@ BEGIN
 	DROP TRIGGER financialdemographics_Update;
 
 	#----- Upgrades
+	ALTER TABLE financialdemographics ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER fdentry;
+	ALTER TABLE financialdemographics ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -76,14 +80,14 @@ CREATE TRIGGER financialdemographics_Delete
 CREATE TRIGGER financialdemographics_Insert
 	AFTER INSERT ON financialdemographics
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'financialdemographics', NEW.fdpatient, NEW.id, NEW.fdtimestamp, NEW.fdentry );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'financialdemographics', NEW.fdpatient, NEW.id, NEW.fdtimestamp, NEW.fdentry, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER financialdemographics_Update
 	AFTER UPDATE ON financialdemographics
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.fdtimestamp, patient=NEW.fdpatient, summary=NEW.fdentry WHERE module='financialdemographics' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.fdtimestamp, patient=NEW.fdpatient, summary=NEW.fdentry, user=NEW.user, active=NEW.active WHERE module='financialdemographics' AND oid=NEW.id;
 	END;
 //
 

@@ -74,6 +74,8 @@ CREATE TABLE IF NOT EXISTS `eoc` (
 	eochosadmdt		DATE,
 	eochosdischrgdt		DATE,
 	eocrelautotime		CHAR (8),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
@@ -94,6 +96,8 @@ BEGIN
 	DROP TRIGGER eoc_Update;
 
 	#----- Upgrades
+	ALTER TABLE eoc ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER eocrelautotime;
+	ALTER TABLE eoc ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -113,14 +117,14 @@ CREATE TRIGGER eoc_Delete
 CREATE TRIGGER eoc_Insert
 	AFTER INSERT ON eoc
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'eoc', NEW.eocpatient, NEW.id, NOW(), NEW.eocdescrip );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'eoc', NEW.eocpatient, NEW.id, NOW(), NEW.eocdescrip, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER eoc_Update
 	AFTER UPDATE ON eoc
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.eocpatient, summary=NEW.eocdescrip WHERE module='eoc' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.eocpatient, summary=NEW.eocdescrip, user=NEW.user, active=NEW.active WHERE module='eoc' AND oid=NEW.id;
 	END;
 //
 

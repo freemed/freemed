@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	procstatus		VARCHAR (50),
 	procslidingscale	CHAR (1),
 	proctosoverride		INT UNSIGNED DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY		( id ),
 
@@ -89,6 +90,7 @@ BEGIN
 	DROP TRIGGER procrec_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE procrec ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER proctosoverride;
 END
 //
 DELIMITER ;
@@ -111,7 +113,7 @@ CREATE TRIGGER procrec_Insert
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
 		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'procrec', NEW.procpatient, NEW.id, NEW.procdt, c );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'procrec', NEW.procpatient, NEW.id, NEW.procdt, c, NEW.user );
 
 		#	Diagnosis 1
 		IF NEW.procdiag1 > 0 THEN
@@ -141,7 +143,7 @@ CREATE TRIGGER procrec_Update
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
 		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
-		UPDATE `patient_emr` SET stamp=NEW.procdt, patient=NEW.procpatient, summary=c WHERE module='procrec' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.procdt, patient=NEW.procpatient, summary=c, user=NEW.user WHERE module='procrec' AND oid=NEW.id;
 
 		#	Diagnosis 1
 		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag1;

@@ -74,7 +74,7 @@ CREATE TRIGGER rxrefillrequest_Delete
 CREATE TRIGGER rxrefillrequest_Insert
 	AFTER INSERT ON rxrefillrequest
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked ) VALUES ( 'rxrefillrequest', NEW.patient, NEW.id, NEW.stamp, NEW.note, NEW.locked );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user ) VALUES ( 'rxrefillrequest', NEW.patient, NEW.id, NEW.stamp, NEW.note, NEW.locked, NEW.user );
 		INSERT INTO `systemnotification` ( stamp, nuser, ntext, nmodule, npatient ) VALUES ( NEW.stamp, NEW.user, NEW.note, 'rxrefillrequest', NEW.patient );
 	END;
 //
@@ -82,7 +82,7 @@ CREATE TRIGGER rxrefillrequest_Insert
 CREATE TRIGGER rxrefillrequest_Update
 	AFTER UPDATE ON rxrefillrequest
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.stamp, patient=NEW.patient, summary=NEW.note, locked=NEW.locked WHERE module='rxrefillrequest' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.stamp, patient=NEW.patient, summary=NEW.note, locked=NEW.locked, user=NEW.user WHERE module='rxrefillrequest' AND oid=NEW.id;
 	END;
 //
 
