@@ -145,8 +145,12 @@
 		},
 		buildParameters: function ( ) {
 			var b = new Array ( );
-			if ( this.reportParameters.params.length < 1 ) {
-				return b;
+			try {
+				if ( this.reportParameters.params.length < 1 ) {
+					return b;
+				}
+			} catch (err) {
+				return b
 			}
 			for ( var i=0; i<this.reportParameters.params.length; i++) {
 				switch ( this.reportParameters.params[i].type ) {
@@ -167,7 +171,17 @@
 			var params = this.buildParameters( );
 			var uri = "<!--{$relay}-->/org.freemedsoftware.module.Reporting.GenerateReport?param0=" + encodeURIComponent( myReport ) + "&param1=" + type.toLowerCase() + "&param2=" + encodeURIComponent( dojo.json.serialize( params ) );
 
-			document.getElementById('reportView').src = uri;
+			switch ( type ) {
+				case 'HTML': case 'XML':
+				// Open browser-viewable things in new tab/window
+				window.open( uri );
+				break;
+
+				default:
+				// Handle in hidden iFrame
+				document.getElementById('reportView').src = uri;
+				break;
+			}
 		},
 
 		// Individual button callbacks

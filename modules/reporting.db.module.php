@@ -185,6 +185,7 @@ class Reporting extends SupportModule {
 					$row->$column = "$value";
 				}
 			}
+			Header('Content-type: text/xml');
 			die( $xml->asXML( ) );
 			break; // xml
 	
