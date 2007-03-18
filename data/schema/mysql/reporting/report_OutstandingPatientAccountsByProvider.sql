@@ -69,7 +69,7 @@ INSERT INTO `reporting` (
 		'Outstanding Patient Accounts By Provider',
 		'5ddd29ae-e0e2-47cc-a321-316be9c831b5',
 		'en_US',
-		'',
+		'Summary of patient account amounts per provider.',
 		'report_OutstandingPatientAccountsByProvider_en_US',
 		0
 	);

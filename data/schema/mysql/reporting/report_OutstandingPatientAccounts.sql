@@ -68,7 +68,7 @@ INSERT INTO `reporting` (
 		'Outstanding Patient Accounts',
 		'b9f7f1f0-445b-4c1e-a45b-af18caed9db5',
 		'en_US',
-		'',
+		'List of all patients with outstanding account balances.',
 		'report_OutstandingPatientAccounts_en_US',
 		0
 	);

@@ -22,7 +22,7 @@
 
 CREATE TABLE IF NOT EXISTS `reporting` (
 	report_name			VARCHAR (100) NOT NULL,
-	report_uuid			CHAR (32) NOT NULL,
+	report_uuid			CHAR (36) NOT NULL,
 	report_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
 	report_desc			TEXT,
 	report_sp			VARCHAR (150) NOT NULL,
@@ -42,4 +42,5 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
+SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql
 
