@@ -20,9 +20,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-SOURCE data/schema/mysql/patient.sql
-SOURCE data/schema/mysql/patient_emr.sql
-
 CREATE TABLE IF NOT EXISTS `documents_tc` (
 	type			VARCHAR (250) NOT NULL,
 	category		VARCHAR (250) NOT NULL DEFAULT 'misc',
