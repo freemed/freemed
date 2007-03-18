@@ -231,6 +231,7 @@
 				<td><button dojoType="Button" id="modifyToProviderNoCoverButton" widgetId="modifyToProviderNoCoverButton"><!--{t}-->Send to Provider<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="modifyDirectlyButton" widgetId="modifyDirectlyButton"><!--{t}-->File Directly<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="modifyDirectlyNoCoverButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
+			</tr><tr>
 				<td><button dojoType="Button"><!--{t}-->Split Batch<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="cancelButton"><!--{t}-->Cancel<!--{/t}--></button></td>
 				<td><button dojoType="Button" id="deleteButton"><!--{t}-->Delete Document<!--{/t}--></button></td>
