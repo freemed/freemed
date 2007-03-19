@@ -56,6 +56,24 @@ class TableMaintenance {
 		return true;
 	} // end public function ExportStockData
 
+	// Method: GetModules
+	//
+	//	Get list of modules based on their associations.
+	//
+	// Parameters:
+	//
+	//	$assoc - Association
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function GetModules ( $assoc ) {
+		$query = "SELECT module_name, module_version, module_class FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote( $assoc ).", module_associations )";
+		$result = $GLOBALS['sql']->queryAll( $query );
+		return $result;
+	} // end method GetModules
+
 	// Method: ImportStockData
 	//
 	//	Import data for a table.

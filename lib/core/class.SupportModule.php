@@ -142,6 +142,9 @@ class SupportModule extends BaseModule {
 		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		$this->_SetMetaInformation('distinct_fields', $this->distinct_fields);
 		$this->_SetMetaInformation('table_name', $this->table_name);
+		if (!$this->MODULE_HIDDEN) {
+			$this->_SetAssociation('SupportModule');
+		}
 
 		// Call parent constructor
 		parent::__construct();
