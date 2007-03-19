@@ -51,7 +51,7 @@ class Callin extends SupportModule {
 	//	Array of hashes
 	//
 	public function GetAll ( ) {
-		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work FROM callin ORDER BY cidatestamp DESC";
+		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin ORDER BY cidatestamp DESC";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
