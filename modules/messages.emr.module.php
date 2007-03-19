@@ -137,6 +137,7 @@ class MessagesModule extends EMRModule {
 	function add_pre ( &$data ) {
 		$this_user = freemed::user_cache();
 		$data['msgby'] = $this_user->user_number;
+		$data['user'] = $this_user->user_number;
 	}
 
 	protected function additional_move ( $id, $from, $to ) {
@@ -153,10 +154,6 @@ class MessagesModule extends EMRModule {
 		}
 		return true;
 	} // end method additional_move
-
-	protected function add_pre ( &$data ) {
-		$data['user'] = freemed::user_cache()->user_number;
-	}
 
 	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
