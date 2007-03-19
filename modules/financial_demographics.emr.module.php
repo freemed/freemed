@@ -76,7 +76,8 @@ class FinancialDemographics extends EMRModule {
 			'fdspouse',
 			'fdchild',
 			'fdother',
-			'fdfreetext'
+			'fdfreetext',
+			'user'
 		);
 
 		$this->acl = array ( 'bill', 'emr' );
@@ -99,6 +100,14 @@ class FinancialDemographics extends EMRModule {
 		// Run parent constructor
 		parent::__construct();
 	} // end constructor FinancialDemographics
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class FinancialDemographics
 

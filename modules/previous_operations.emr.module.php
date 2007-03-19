@@ -40,18 +40,25 @@ class PreviousOperationsModule extends EMRModule {
 	var $order_fields = 'odate,operation';
 	var $widget_hash = '##odate## ##operation##';
 
+	var $variables = array (
+		'odate',
+		'operation',
+		'opatient',
+		'user'
+	);
+
 	public function __construct () {
 		parent::__construct( );
 	} // end constructor PreviousOperationsModule
 
 	protected function add_pre ( &$data ) {
-		$s = CreateObject('org.freemedsoftware.api.Scheduler');
-		$data['odate'] = $s->ImportDate( $data['odate'] );
+		$data['odate'] = CreateObject('org.freemedsoftware.api.Scheduler')->ImportDate( $data['odate'] );
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	protected function mod_pre ( &$data ) {
-		$s = CreateObject('org.freemedsoftware.api.Scheduler');
-		$data['odate'] = $s->ImportDate( $data['odate'] );
+		$data['odate'] = CreateObject('org.freemedsoftware.api.Scheduler')->ImportDate( $data['odate'] );
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	function recent_text ( $patient, $recent_date = NULL ) {

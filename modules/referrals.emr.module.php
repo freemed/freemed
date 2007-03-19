@@ -39,6 +39,22 @@ class Referrals extends EMRModule {
 	var $widget_hash   = "##refstamp##"; 
 
 	var $variables = array (
+		'refpatient',
+		'refprovorig',
+		'refprovdest',
+		'refstamp',
+		'refdx',
+		'refpayor',
+		'refcoverage',
+		'refreasons',
+		'refstatus',
+		'refurgency',
+		'refentered',
+		'refapptblob',
+		'refdirection',
+		'refpayorapproval',
+		'refcomorbids',
+		'user'
 	);
 
 	public function __construct () {
@@ -49,6 +65,11 @@ class Referrals extends EMRModule {
 	function add_pre ( &$data ) {
 		$this_user = freemed::user_cache();
 		$data['refentered'] = $this_user->user_number;
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	// Method: GetAllActiveByPatient

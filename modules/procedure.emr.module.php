@@ -73,7 +73,8 @@ class ProcedureModule extends EMRModule {
 		'procmedicaidresub',
 		'proclabcharges',
 		'procslidingscale',
-		'proctosoverride'
+		'proctosoverride',
+		'user'
 	);    
 
 	function ProcedureModule () {
@@ -114,8 +115,9 @@ class ProcedureModule extends EMRModule {
 		$data['procbalcurrent'] = $data['procbalorig'];
 		$data['procamtpaid'] = 0;
 		$data['procbilled'] = 0;
+		$data['user'] = freemed::user_cache()->user_number;
 	} // end add_pre
-				
+
 	function add_post ( $id ) {
 		$data = $GLOBALS['sql']->get_link( $this->table_name, $id );
 
@@ -189,7 +191,8 @@ class ProcedureModule extends EMRModule {
 		$data['procbalcurrent'] = $data['procbalorig'];
 		$data['procamtpaid'] = 0;
 		$data['procbilled'] = 0;
-
+		$data['user'] = freemed::user_cache()->user_number;
+				
 		// Save old record for authorization update
 		$tmp = $GLOBALS['sql']->get_link( 'procrec', $data['id'] );
 		$data['procauthsaved'] = $tmp['procauth'];

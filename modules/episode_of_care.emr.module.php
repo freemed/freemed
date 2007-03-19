@@ -89,7 +89,8 @@ class EpisodeOfCare extends EMRModule {
 		"eocdisworkdt",
 		"eochosadmdt",
 		"eochosdischrgdt",
-		"eocrelautotime"
+		"eocrelautotime",
+		"user"
 	);
 
 	public function __construct ( ) {
@@ -122,18 +123,13 @@ class EpisodeOfCare extends EMRModule {
 		);
 	} // end method EpisodeOfCare->widget
 
-	// ----- Auto-updating of tables
-	function _update ( ) {
-		global $sql;
-		$version = freemed::module_version($this->MODULE_NAME);
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
-		// Upgrade to 0.3.1
-		// - Fix table definition problems
-		if (!version_check($version, '0.6.1')) {
-			$sql->query('ALTER TABLE eoc CHANGE eocrelpregcyle '.
-				'eocrelpregcycle INT UNSIGNED');
-		}
-	} // end method _update
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class EpisodeOfCare
 

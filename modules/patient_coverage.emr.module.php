@@ -37,6 +37,42 @@ class PatientCoverages extends EMRModule {
 	var $record_name   = "Patient Coverage";
 	var $patient_field = "covpatient";
 
+	var $variables = array (
+		'covdtadd',
+		'covdtmod',
+		'covpatient',
+		'coveffdt',
+		'covinsco',
+		'covpatinsno',
+		'covpatgrpno',
+		'covtype',
+		'covstatus',
+		'covrel',
+		'covlname',
+		'covfname',
+		'covmname',
+		'covaddr1',
+		'covaddr2',
+		'covcity',
+		'covstate',
+		'covzip',
+		'covdob',
+		'covsex',
+		'covssn',
+		'covinstp',
+		'covprovasgn',
+		'covbenasgn',
+		'covrelinfo',
+		'covrelinfodt',
+		'covplanname',
+		'covisassigning',
+		'covschool',
+		'covemployer',
+		'covcopay',
+		'covdeduct',
+		'user'
+	);
+
 	// contructor method
 	public function __construct ( ) {
 		// __("Patient Coverage")
@@ -63,11 +99,13 @@ class PatientCoverages extends EMRModule {
 		$data['covstatus'] = ACTIVE;
 		$data['covdtadd'] = date('Y-m-d');
 		$data['covdtmod'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	protected function mod_pre ( &$data ) {
 		$data['covstatus'] = ACTIVE;
 		$data['covdtmod'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	// Method: RemoveOldCoverage
@@ -85,54 +123,10 @@ class PatientCoverages extends EMRModule {
 	//	Boolean, if successful.
 	//
 	public function RemoveOldCoverage ( $patient, $covtype ) {
-		$query = "UPDATE coverage SET covstatus='".DELETED."' ".
-			"WHERE covtype='".addslashes($covtype)."' ".
-			"AND covpatient='".addslashes($patient)."'";
+		$query = "UPDATE coverage SET covstatus=".$GLOBALS['sql']->quote( DELETED )." WHERE covtype=".$GLOBALS['sql']->quote( $covtype )." AND covpatient=".$GLOBALS['sql']->quote( $patient );
 		$result = $GLOBALS['sql']->query( $query );
 		return ( $result ? true : false );
 	} // end method RemoveOldCoverage
-
-	function _update( ) {
-		global $sql;
-		$version = freemed::module_version($this->MODULE_NAME);
-
-		// Version 0.3
-		//
-		//	Add assigning, school name and employer name for
-		//		HCFA and X12 forms and billing stuff.
-		//
-		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN covisassigning INT UNSIGNED AFTER covplanname');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN covschool INT UNSIGNED AFTER covisassigning');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN covemployer INT UNSIGNED AFTER covschool');
-		}
-
-		// Version 0.3.1
-		//
-		//	Added covssn, which claims manager was depending on.
-		//
-		if (!version_check($version, '0.3.1')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN covssn CHAR(9) AFTER covsex');
-		}
-
-		// Version 0.3.2
-		//
-		//	Added covcopay and covdeduct to track copay and
-		//	deductable per coverage
-		//
-		if (!version_check($version, '0.3.2')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN covcopay REAL AFTER covemployer');
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN covdeduct REAL AFTER covcopay');
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
-				'SET covcopay=0, covdeduct=0 WHERE id>0');
-		}
-	} // end method _update
 
 } // end class PatientCoverages
 

@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `referrals` (
 	refdirection		ENUM ( 'inbound', 'outbound' ) DEFAULT 'outbound',
 	refpayorapproval	ENUM ( 'unknown', 'denied', 'approved' ) DEFAULT 'unknown',
 	refcomorbids		VARCHAR(255),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
 	#	Define keys
@@ -82,7 +83,7 @@ CREATE TRIGGER referrals_Insert
 		DECLARE rTo VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO rFrom FROM physician WHERE id=NEW.refprovorig;
 		SELECT CONCAT(phyfname, ' ', phylname) INTO rTo FROM physician WHERE id=NEW.refprovdest;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary ) VALUES ( 'referrals', NEW.refpatient, NEW.id, NEW.refstamp, CONCAT(rFrom, ' > ', rTo) );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'referrals', NEW.refpatient, NEW.id, NEW.refstamp, CONCAT(rFrom, ' > ', rTo), NEW.user );
 	END;
 //
 
@@ -93,7 +94,7 @@ CREATE TRIGGER referrals_Update
 		DECLARE rTo VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO rFrom FROM physician WHERE id=NEW.refprovorig;
 		SELECT CONCAT(phyfname, ' ', phylname) INTO rTo FROM physician WHERE id=NEW.refprovdest;
-		UPDATE `patient_emr` SET stamp=NEW.refstamp, patient=NEW.refpatient, summary=CONCAT(rFrom, ' > ', rTo) WHERE module='referrals' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.refstamp, patient=NEW.refpatient, summary=CONCAT(rFrom, ' > ', rTo), user=NEW.user WHERE module='referrals' AND oid=NEW.id;
 	END;
 //
 

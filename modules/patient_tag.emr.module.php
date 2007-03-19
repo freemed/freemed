@@ -52,7 +52,7 @@ class PatientTag extends SupportModule {
 		$this->variables = array (
 			"tag",
 			"patient",
-			"user" => $user->user_number,
+			"user",
 			"datecreate",
 			"dateexpire"
 		);
@@ -61,8 +61,13 @@ class PatientTag extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$date ) {
+	protected function add_pre ( &$data ) {
 		$date['datecreate'] = '';
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	// Method: ListTags

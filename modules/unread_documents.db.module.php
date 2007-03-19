@@ -193,6 +193,9 @@ class UnreadDocuments extends SupportModule {
 	} // end method MoveToAnotherProvider
 
 	protected function mod_pre ( &$data ) {
+		// Create user object
+		$this_user = CreateObject('org.freemedsoftware.core.User');
+		
 		$filename = freemed::secure_filename( $data['urffilename'] );
 
 		// Document sanity check
@@ -204,9 +207,8 @@ class UnreadDocuments extends SupportModule {
 		// Extract type and category
 		list ($type, $cat) = explode('/', $data['urftype']);
 
-		// Create user object
-		$this_user = CreateObject('org.freemedsoftware.core.User');
-		
+		$data['user'] = $this_user->user_number;
+
 		// Insert new table query in unread
 		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 			'images',

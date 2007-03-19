@@ -46,6 +46,7 @@ class Medications extends EMRModule {
 			'mroute',
 			'mpatient',
 			'mdate',
+			'user'
 		);
 
 		$this->summary_vars = array (
@@ -58,10 +59,6 @@ class Medications extends EMRModule {
 		// call parent constructor
 		parent::__construct( );
 	} // end constructor Medications
-
-	protected function add_pre ( &$data ) {
-		$data['mdate'] = date('Y-m-d');
-	}
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
@@ -76,36 +73,14 @@ class Medications extends EMRModule {
 		return @join("\n", $m);
 	} // end method recent_text
 
-	// Update
-	function _update ( ) {
-		$version = freemed::module_version($this->MODULE_NAME);
-		// Version 0.3
-		//
-		//	Migrated to seperate table ...
-		//
-		if (!version_check($version, '0.3')) {
-			// Create new table
-			$GLOBAKS['sql']->query($GLOBALS['sql']->create_table_query($this->table_name, $this->table_definition, array('id')));
-			// Migrate old entries
-			$q = $GLOBALS['sql']->queryAll("SELECT ptquickmeds,id FROM patient WHERE LENGTH(ptquickmeds) > 3");
-			if (count($q)) {
-				foreach ( $q AS $r ) {
-					$e = sql_expand($r['ptquickmeds']);
-					foreach ($e AS $a) {
-						$GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
-							$this->table_name,
-							array(
-								'mdrug' => $a,
-								'mdosage' => '',
-								'mroute' => '',
-								'mpatient' => $r['id']	
-							)
-						));
-					} // end foreach entry
-				} // end loop through patient entries
-			} // end checking for results
-		}	
-	} // end method _update
+	protected function add_pre ( &$data ) {
+		$data['mdate'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class Medications
 

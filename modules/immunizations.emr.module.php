@@ -37,6 +37,16 @@ class Immunizations extends EMRModule {
 	var $patient_field = "patient";
 	var $widget_hash   = "##my_date##";
 
+	var $variables = array (
+		'dateof',
+		'patient',
+		'provider',
+		'eoc',
+		'immunization',
+		'notes',
+		'user'
+	);
+
 	public function __construct ( ) {
 		$this->summary_vars = array (
 			__("Date")        =>	"my_date",
@@ -63,6 +73,14 @@ class Immunizations extends EMRModule {
 		// Call parent constructor
 		parent::__construct( );
 	} // end constructor Immunizations
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class Immunizations
 

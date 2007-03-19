@@ -45,6 +45,14 @@ class Certifications extends SupportModule {
 		parent::__construct ( );
 	} // end constructor Certifications
 
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
 	// Use _update to update table definitions with new versions
 	function _update () {
 		$version = freemed::module_version($this->MODULE_NAME);

@@ -58,6 +58,19 @@ class LabsModule extends EMRModule {
 
 		$this->variables = array (
 			'labtimestamp' => SQL__NOW,
+			'labpatient',
+			'labfiller',
+			'labstatus',
+			'labprovider',
+			'labordercode',
+			'laborderdescrip',
+			'labcomponentcode',
+			'labcomponentdescrip',
+			'labfillernum',
+			'labplacernum',
+			'labresultstatus',
+			'labnotes',
+			'user'
 		);
 
 		$this->acl = array ( 'emr' );
@@ -89,6 +102,14 @@ class LabsModule extends EMRModule {
 		$result = $GLOBALS['sql']->queryAll($query);
 		return $result;
 	} // end method GetLabValues
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class LabsModule
 

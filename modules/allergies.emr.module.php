@@ -45,7 +45,8 @@ class Allergies extends EMRModule {
 			'allergy',
 			'severity',
 			'patient',
-			'reviewed' => SQL__NOW
+			'reviewed' => SQL__NOW,
+			'user'
 		);
 
 		$this->summary_vars = array (
@@ -73,6 +74,14 @@ class Allergies extends EMRModule {
 		}
 		return @join(', ', $m);
 	} // end method recent_text
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class Allergies
 

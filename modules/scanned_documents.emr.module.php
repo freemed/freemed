@@ -50,6 +50,7 @@ class ScannedDocuments extends EMRModule {
 		'imageformat',
 		'imagephy',
 		'imagereviewed',
+		'user'
 	);
 
 	public function __construct () {
@@ -84,6 +85,7 @@ class ScannedDocuments extends EMRModule {
 	protected function add_pre ( &$data ) {
 		list ( $data['imagetype'], $data['imagecat'] ) = explode('/', $data['imagetypecat']);
 		$data['imagereviewed'] = 0;
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	protected function add_post ( $id ) {
@@ -111,6 +113,7 @@ class ScannedDocuments extends EMRModule {
 
 	protected function mod_pre ( &$data ) {
 		list ( $data['imagetype'], $data['imagecat'] ) = explode('/', $data['imagetypecat']);
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	function additional_move ( $id, $from, $to ) {

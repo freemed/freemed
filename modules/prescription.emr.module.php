@@ -92,7 +92,8 @@ class PrescriptionModule extends EMRModule {
 			"rxperrefill",
 			"rxnote",
 			"rxorigrx",
-			"locked" => '0'
+			"locked" => '0',
+			"user"
 		);
 		$this->acl = array ('emr');
 		parent::__construct();
@@ -101,10 +102,12 @@ class PrescriptionModule extends EMRModule {
 	protected function add_pre ( &$data ) {
 		$data['rxdtadd'] = date('Y-m-d');
 		$data['rxdtmod'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 
 	protected function mod_pre ( &$data ) {
 		$data['rxdtmod'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
 	} // end method mod_pre
 
 	function fax_widget ( $varname, $id ) {

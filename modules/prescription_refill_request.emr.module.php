@@ -37,10 +37,29 @@ class RxRefillRequest extends EMRModule {
 	var $patient_field = 'patient';
 	var $order_field = 'stamp';
 
+	var $variables = array (
+		'stamp',
+		'user',
+		'patient',
+		'provider',
+		'rxorig',
+		'note',
+		'approved',
+		'user'
+	);
+
 	public function __construct () {
 		// call parent constructor
 		parent::__construct( );
 	} // end constructor
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class RxRefillRequest
 

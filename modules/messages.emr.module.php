@@ -50,7 +50,8 @@ class MessagesModule extends EMRModule {
 		'msgtext',
 		'msgread',
 		'msgunique',
-		'msgtag'
+		'msgtag',
+		'user'
 	);
 
 	public function __construct () {
@@ -152,6 +153,14 @@ class MessagesModule extends EMRModule {
 		}
 		return true;
 	} // end method additional_move
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class MessagesModule
 

@@ -44,6 +44,33 @@ class ProgressNotes extends EMRModule {
 
 	var $print_template = 'progress_notes';
 
+	var $variables = array (
+		'pnotesdt',
+		'pnotesdtadd',
+		'pnotesdtmod',
+		'pnotespat',
+		'pnotesdescrip',
+		'pnotesdoc',
+		'pnoteseoc',
+		'pnotes_S',
+		'pnotes_O',
+		'pnotes_A',
+		'pnotes_P',
+		'pnotes_I',
+		'pnotes_E',
+		'pnotes_R',
+		'pnotessbp',
+		'pnotesdbp',
+		'pnotestemp',
+		'pnotesheartrate',
+		'pnotesresprate',
+		'pnotesweight',
+		'pnotesheight',
+		'pnotesbmi',
+		'iso',
+		'user'
+	);
+
 	public function __construct ( ) {
 		// Define variables for EMR summary
 		$this->summary_vars = array (
@@ -83,11 +110,6 @@ class ProgressNotes extends EMRModule {
 		}
 	} // end method CalculateBMI
 
-	protected function add_pre ( &$data ) {
-        	$data['pnotesdtadd'] = date('Y-m-d');
-        	$data['pnotesdtmod'] = date('Y-m-d');
-	}
-
 	// Method: NoteForDate
 	//
 	//	Determines if a progress note was entered for a particular
@@ -116,40 +138,16 @@ class ProgressNotes extends EMRModule {
 		}
 	} // end method NoteForDate
 
-	function _update() {
-		global $sql;
-		$version = freemed::module_version($this->MODULE_NAME);
-		// Version 0.3
-		//
-		//	Vitals information added
-		//
-		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotessbp INT UNSIGNED AFTER pnotes_R');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotesdbp INT UNSIGNED AFTER pnotessbp');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotestemp INT UNSIGNED AFTER pnotesdbp');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotesheartrate INT UNSIGNED AFTER pnotestemp');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotesresprate INT UNSIGNED AFTER pnotesheartrate');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotesweight INT UNSIGNED AFTER pnotesresprate');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotesheight INT UNSIGNED AFTER pnotesweight');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN pnotesbmi INT UNSIGNED AFTER pnotesheight');
-		} // end version 0.3 updates
-		// Version 0.3.1
-		//
-		//	Temperature should be a REAL
-		//
-		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN pnotestemp pnotestemp REAL');
-		} // end version 0.3.1 update
-	} // end _update
+	protected function add_pre ( &$data ) {
+        	$data['pnotesdtadd'] = date('Y-m-d');
+        	$data['pnotesdtmod'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
 } // end of class ProgressNotes
 
 register_module ("ProgressNotes");

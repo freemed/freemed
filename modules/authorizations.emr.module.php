@@ -45,23 +45,6 @@ class AuthorizationsModule extends EMRModule {
 	var $order_fields   = "authdtbegin,authdtend";
 	var $widget_hash    = "##authdtbegin##-##authdtend## (##authvisitsremain##/##authvisits##)";
 
-	var $variables = array (
-		"authdtmod",
-		"authdtbegin",
-		"authdtend",
-		"authnum",
-		"authtype",
-		"authprov",
-		"authprovid",
-		"authinsco",
-		"authvisits",
-		"authvisitsused",
-		"authvisitsremain",
-		"authcomment",
-		"authpatient",
-		"authdtadd"
-	);
-
 	public function __construct () {
 		// __("Insurance Authorizations")
 	
@@ -71,6 +54,24 @@ class AuthorizationsModule extends EMRModule {
 			__("To")   => "authdtend",
 			__("Remaining") => "_remaining"
 		);
+		$this->variables = array (
+			"authdtmod",
+			"authdtbegin",
+			"authdtend",
+			"authnum",
+			"authtype",
+			"authprov",
+			"authprovid",
+			"authinsco",
+			"authvisits",
+			"authvisitsused",
+			"authvisitsremain",
+			"authcomment",
+			"authpatient",
+			"authdtadd",
+			"user"
+		);
+
 		$this->additional_query = array (
 			"IF(authvisits>0,CONCAT(authvisitsremain,'/',authvisits),CONCAT(TO_DAYS(authdtend)-TO_DAYS(NOW()),' days')) AS _remaining"
 		);
@@ -89,10 +90,12 @@ class AuthorizationsModule extends EMRModule {
 
 	protected function add_pre ( &$data ) {
 		$data['authdtadd'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	protected function mod_pre ( &$data ) {
 		$data['authdtmod'] = date('Y-m-d');
+		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 } // end class AuthorizationsModule

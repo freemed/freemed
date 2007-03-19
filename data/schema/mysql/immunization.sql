@@ -75,7 +75,7 @@ CREATE TRIGGER immunization_Insert
 	FOR EACH ROW BEGIN
 		DECLARE i VARCHAR (250);
 		SELECT description INTO i FROM bccdc WHERE id=NEW.immunization;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'immunization', NEW.patient, NEW.id, NEW.dateof, i, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active, provider ) VALUES ( 'immunization', NEW.patient, NEW.id, NEW.dateof, i, NEW.locked, NEW.user, NEW.active, NEW.provider );
 	END;
 //
 
@@ -84,7 +84,7 @@ CREATE TRIGGER immunization_Update
 	FOR EACH ROW BEGIN
 		DECLARE i VARCHAR (250);
 		SELECT description INTO i FROM bccdc WHERE id=NEW.immunization;
-		UPDATE `patient_emr` SET stamp=NEW.dateof, patient=NEW.patient, summary=i, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='immunization' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.dateof, patient=NEW.patient, summary=i, locked=NEW.locked, user=NEW.user, active=NEW.active, provider=NEW.provider WHERE module='immunization' AND oid=NEW.id;
 	END;
 //
 

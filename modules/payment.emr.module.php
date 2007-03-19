@@ -52,7 +52,8 @@ class PaymentModule extends EMRModule {
 		"payrecnum",
 		"payrecamt",
 		"payrecdescrip",
-		"payreclock"
+		"payreclock",
+		"user"
 	);
 
 	public function __construct ( ) {
@@ -1264,6 +1265,14 @@ class PaymentModule extends EMRModule {
 			'used' => $auth['used']
 		);
 	} // end method IsAuthorized
+
+	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class PaymentModule
 

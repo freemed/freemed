@@ -54,9 +54,9 @@ class Notifications extends EMRModule {
 	} // end constructor AllergiesModule
 
 	protected function add_pre ( &$data ) {
-		if (!is_object($GLOBALS['this_user'])) { $GLOBALS['this_user'] = CreateObject('org.freemedsoftware.core.User'); }
 		$data['noriginal'] = date('Y-m-d');
 		$data['nuser'] = $GLOBALS['this_user']->user_number;
+		$data['nuser'] = freemed::user_cache()->user_number;
 	}
 
 	public function notify_user ( $params = NULL ) {

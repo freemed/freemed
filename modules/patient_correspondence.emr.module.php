@@ -45,7 +45,8 @@ class PatientCorrespondence extends EMRModule {
 		"letterfrom",
 		"lettertext",
 		"letterpatient",
-		"locked" => '0'
+		"locked" => '0',
+		"user"
 	);
 
 	public function __construct () {
@@ -71,6 +72,7 @@ class PatientCorrespondence extends EMRModule {
 	} // end constructor PatientCorrespondence
 
 	protected function add_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
 		if ($data['worddoc']) {
 			$docfile = tempnam ( '/tmp', 'wordconv' );
 			file_put_contents ( $docfile, $data['worddoc'] );
@@ -84,20 +86,9 @@ class PatientCorrespondence extends EMRModule {
 		} // end checking for uploaded msworddoc
 	}
 
-	// ----- Internal update
-
-	function _update() {
-		global $sql;
-		$version = freemed::module_version($this->MODULE_NAME);
-		// Version xxxx
-		//
-		/*
-		if (!version_check($version, '0.2')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN locked INT UNSIGNED AFTER letterpatient');
-		}
-		*/
-	} // end method _update
+	protected function mod_pre ( &$data ) {
+		$data['user'] = freemed::user_cache()->user_number;
+	}
 
 } // end class PatientCorrespondence
 
