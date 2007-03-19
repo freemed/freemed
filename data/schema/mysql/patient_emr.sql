@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	locked			BOOL DEFAULT FALSE,
 	annotation		TEXT,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	provider		INT UNSIGNED NOT NULL DEFAULT 0,
 	status			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
@@ -39,4 +40,32 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	KEY			( patient, module, oid ),
 	FOREIGN KEY		( patient ) REFERENCES `patient` ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS patient_emr_Upgrade;
+DELIMITER //
+CREATE PROCEDURE patient_emr_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Remove triggers
+	DROP TRIGGER patient_emr_Insert;
+END;
+
+CREATE TRIGGER patient_emr_Insert
+	AFTER INSERT ON patient_emr
+	FOR EACH ROW BEGIN
+		DECLARE prov INT UNSIGNED;
+
+		#	Handle resolving providers from user table
+		IF NEW.provider = 0 THEN
+			SELECT userrealphy INTO prov FROM user WHERE id=NEW.user;
+			IF prov > 0 THEN
+				UPDATE patient_emr SET provider=prov WHERE id=NEW.id;
+			END IF;
+		END IF;
+	END;
+//
+DELIMITER ;
+
+CALL patient_emr_Upgrade ( );
 
