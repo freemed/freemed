@@ -100,5 +100,14 @@
 
 	</div>
 
+	<div dojoType="ContentPane" label="<!--{t}-->Utilities<!--{/t}-->" class="basicPane">
+
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.supportdata');">
+			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Support Data<!--{/t}-->
+		</div>
+
+	</div>
+
 </div>
 
