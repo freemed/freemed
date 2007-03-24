@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	report_param_count		TINYINT(3) NOT NULL DEFAULT 0,
 	report_param_names		TEXT,
 	report_param_types		TEXT,
+	report_param_options		TEXT,
 	report_param_optional		TEXT,
 	report_acl			VARCHAR (150),
 
