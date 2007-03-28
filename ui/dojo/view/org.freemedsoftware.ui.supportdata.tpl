@@ -44,6 +44,12 @@
 		onAddClick: function ( ) {
 			alert('STUB: add click');
 		},
+		onModifyClick: function ( ) {
+			alert('STUB: modify click');
+		},
+		onDeleteClick: function ( ) {
+			alert('STUB: delete click');
+		},
 		onFilterClick: function ( ) {
 			alert('STUB: filter click');
 		},
@@ -100,6 +106,22 @@
 			}
 			//alert(dojo.json.serialize(w.columns));
 			w.init();
+
+			// Load initial data set
+			this.populateTable( module, w );
+		},
+		populateTable: function ( module, widget ) {
+			dojo.io.bind({
+				method: 'POST',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.' + module + '.GetRecords',
+				content: {
+					param0: 1000
+				},
+				load: function ( type, data, event ) {
+					widget.store.setData( data );
+				},
+				mimetype: "text/json"
+			});
 		}
 	};
 
@@ -107,12 +129,16 @@
 		supportData.populateList();
 		dojo.event.connect( dojo.widget.byId('supportDataSelector'), 'onSelect', supportData, 'createMaintenance' );
 		dojo.event.connect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
+		dojo.event.connect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
+		dojo.event.connect( dojo.widget.byId('supportDeleteButton'), 'onClick', supportData, 'onDeleteClick' );
 		dojo.event.connect( dojo.widget.byId('supportFilterButton'), 'onClick', supportData, 'onFilterClick' );
 	});
 
 	_container_.addOnUnLoad(function(){
 		dojo.event.disconnect( dojo.widget.byId('supportDataSelector'), 'onSelect', supportData, 'createMaintenance' );
 		dojo.event.disconnect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
+		dojo.event.disconnect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
+		dojo.event.disconnect( dojo.widget.byId('supportDeleteButton'), 'onClick', supportData, 'onDeleteClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportFilterButton'), 'onClick', supportData, 'onFilterClick' );
 	});
 
@@ -151,6 +177,8 @@
 			<table border="0">
 				<tr>
 					<td><button dojoType="Button" id="supportAddButton" widgetId="supportAddButton"><!--{t}-->Add<!--{/t}--></button></td>
+					<td><button dojoType="Button" id="supportModifyButton" widgetId="supportModifyButton"><!--{t}-->Modify<!--{/t}--></button></td>
+					<td><button dojoType="Button" id="supportDeleteButton" widgetId="supportDeleteButton"><!--{t}-->Delete<!--{/t}--></button></td>
 					<td>
 						<select id="supportFilterSelect" name="supportFilterSelect">
 							<option></option>
@@ -165,8 +193,7 @@
 		</div>
 
 		<div class="tableContainer">
-			<table id="supportDataHolder" multiple="false">
-			</table>
+			<table id="supportDataHolder" multiple="false"></table>
 		</div>
 
 	</div>

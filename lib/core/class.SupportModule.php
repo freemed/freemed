@@ -155,6 +155,21 @@ class SupportModule extends BaseModule {
 		return true;
 	} // end function check_vars
 
+	// Method: GetMaintenanceStructure
+	//
+	//	Get structure used in display of SupportData maintenance
+	//	screens.
+	//
+	// Returns:
+	//
+	//	Hash.
+	//	* key = Column name
+	//	* val = sql name
+	//
+	public function GetMaintenanceStructure ( ) {
+		return $this->list_view;
+	} // end method GetMaintenanceStructure
+
 	// Method: prepare
 	//
 	//	Prepare data for insertion into SQL using variables mapping. Must be
@@ -318,6 +333,23 @@ class SupportModule extends BaseModule {
 	public function GetRecord ( $id ) {
 		return $GLOBALS['sql']->get_link( $this->table_name, $id );
 	} // end method GetRecord
+
+	// Method: GetRecords
+	//
+	//	Get list of records for this maintenance table.
+	//
+	// Parameters:
+	//
+	//	$limit - (optional) Limit to maximum number of records to return
+	//
+	// Return:
+	//
+	//	Array of hashes.
+	//
+	public function GetRecords ( $limit = 1000 ) {
+		$q = "SELECT * FROM `".$this->table_name."` ORDER BY ".$this->order_field." LIMIT ${limit}";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetRecords
 
 	// Method: picklist
 	//
