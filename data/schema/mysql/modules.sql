@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `modules` (
 	module_class			VARCHAR (100) NOT NULL,
 	module_table			VARCHAR (100) NOT NULL,
 	module_version			VARCHAR (50) NOT NULL,
-	module_version_installed	VARCHAR (50),
+	module_version_installed	INT UNSIGNED NOT NULL DEFAULT 0,
 	module_category			VARCHAR (50) NOT NULL,
 	module_path			VARCHAR (250) NOT NULL,
 	module_stamp			INT UNSIGNED NOT NULL,
