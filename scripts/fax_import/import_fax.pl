@@ -39,8 +39,8 @@ unlink($original.'.djvu');
 # Run the convert program to process into jpeg images, then process
 # each jpeg into pbms. This has to be done, since convert does not
 # create multiple pbm images for a multipage tiff.
-print "/usr/bin/convert $original -resample 98x98 -scale 1728x2291 $original.jpg\n";
-`/usr/bin/convert $original -resample 98x98 -scale 1728x2291 $original.jpg`;
+print "/usr/bin/convert $original -resample 98x98 -scale 1728x2291 $original.%03d.jpg\n";
+`/usr/bin/convert $original -resample 98x98 -scale 1728x2291 $original.%03d.jpg`;
 print "for i in $original*jpg*; do convert \$i \$i.pbm; done\n";
 `for i in $original*jpg*; do convert \$i \$i.pbm; done`;
 
