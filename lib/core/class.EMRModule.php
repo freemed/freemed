@@ -685,6 +685,29 @@ class EMRModule extends BaseModule {
 		return $res;
 	} // end public function recent_record
 
+	// Method: RenderSinglePDF
+	//
+	//	Creates a single record PDF which is returned with headers to
+	//	the browser.
+	//
+	// Parameters:
+	//
+	//	$id - ID for the record associated with the current module.
+	//
+	// Returns:
+	//
+	//	PDF document with headers et al
+	//
+	public function RenderSinglePDF ( $id ) {
+		Header('Content-type: application/x-freemed-print-pdf');
+		Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
+		$file = $this->RenderToPDF( $id );
+		if (!file_exists($file)) { die ('no file'); }
+		readfile ( $file );
+		unlink ( $file );
+		die();
+	} // end method RenderSinglePDF
+	
 	// Method: RenderToPDF
 	//
 	//	Render internal record for printing directly to a PDF file.
@@ -710,7 +733,6 @@ class EMRModule extends BaseModule {
 		} else {
 			// Create TeX object for patient
 			$TeX = CreateObject('org.freemedsoftware.core.TeX', array());
-
 			// Actual renderer for formatting array
 			if ($this->patient_field) {
 				// If this is an EMR module with additional

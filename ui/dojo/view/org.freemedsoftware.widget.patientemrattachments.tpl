@@ -63,11 +63,11 @@
 		patientEmrAction: function ( action, id ) {
 			// Extract from data store...
 			var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( id );
+			// Store locally
+			patientEmrAttachments.currentItem = id;
 	
 			switch ( action ) {
 				case 'annotate':
-				// Store locally
-				this.currentItem = id;
 				dojo.widget.byId('emrAnnotationDialog').show();
 				document.getElementById('emrAnnotation').focus();
 				break;
@@ -100,6 +100,10 @@
 				dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid );
 				break;
 	
+				case 'print':
+				patientEmrAttachments.printMultiple();
+				break;
+	
 				default:
 				alert( "TODO: " + action + " " + id );
 				break;
@@ -128,11 +132,27 @@
 				alert("<!--{t}-->No EMR attachments were selected.<!--{/t}-->");
 				return false;
 			}
-			this.itemsToPrint = [];
 			for (i=0; i<val.length; i++) {
 				this.itemsToPrint[i] = val[i].id;
 				dojo.widget.byId('emrPrintDialog').show();
 			}
+		},
+		OnPrintSingle: function ( ) {
+		},
+		OnPrint: function ( ) {
+			var url;
+			if (patientEmrAttachments.itemsToPrint.length == 1) {
+				var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
+				url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".RenderSinglePDF?param0=" + encodeURIComponent( patientEmrAttachments.itemsToPrint[0] );
+			} else {
+				alert('multiple');
+				url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) );
+			}
+
+			// Load in hidden frame
+			//window.open( url )
+			alert('url = ' + url );
+			document.getElementById('patientPrintView').src = url;
 		}
 	};
 	
@@ -150,7 +170,7 @@
 				if (typeof(data) == 'object') {
 					for (i=0; i<data.length; i++) {	
 						data[i]['actions'] = '';
-						data[i]['actions'] += "<a onClick=\"patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
+						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
 						if (data[i]['locked'] == 0) {
 							// All unlocked actions go here:
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
@@ -170,9 +190,17 @@
 			},
 			mimetype: "text/json"
 		});
+
 	}
 
-	_container_.addOnLoad(patientLoadEmrAttachments);
+	_container_.addOnLoad(function() {
+		patientLoadEmrAttachments();
+		dojo.event.connect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
+	});
+
+	_container_.addOnUnLoad(function() {
+		dojo.event.disconnect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
+	});
 
 </script>
 
@@ -242,7 +270,7 @@
 		<tr>
 			<td colspan="3" align="center">
 				<table border="0" align="center"><tr>
-				<td align="right"><button dojoType="Button"><!--{t}-->Print<!--{/t}--></button></td>
+				<td align="right"><button dojoType="Button" id="emrPrintButton" widgetId="emrPrintButton"><!--{t}-->Print<!--{/t}--></button></td>
 				<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('emrPrintDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button></td>
 				</tr></table>
 			</td>
@@ -279,4 +307,8 @@
 		<button dojoType="Button" onClick="dojo.widget.byId('emrSimpleDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button>
 	</div>
 </div>
+
+<!-- Hidden frame for printing -->
+
+<iframe id="patientPrintView" style="display: none;"></iframe>
 

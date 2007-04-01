@@ -96,7 +96,7 @@ class TeX {
 	//	TeX document (not rendered into a result format).
 	//
 	public function RenderFromTemplate ( $template, $rec ) {
-		if (!file_exists('data/tex/'.$template.'.tex')) {
+		if (!file_exists(dirname(__FILE__)."/../../data/tex/${template}.tex")) {
 			die("Could not load $template TeX template.");
 		}
 
@@ -120,7 +120,7 @@ class TeX {
 		}
 
 		// Get the important part into the buffer
-		$buffer = $this->smarty->fetch($template.'.tex');
+		$buffer = $this->smarty->fetch( "${template}.tex" );
 
 		// Return processed string
 		return $buffer;
