@@ -71,6 +71,7 @@
 		<!--{* Icon bar for easy actions *}-->
 	<td>
 		<span onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
+		<span onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/rightarrowglassbutton.png" height="18" width="18" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
 	</td>
 	</tr></table>
 </div>

@@ -80,7 +80,18 @@
 
 </script>
 
-<h3><!--{t}-->Patient Encounter Console<!--{/t}--> [ <span id="patientEncounterPatientName"></span> ]</h3>
+<style type="text/css">
+	#patientEncounterPatientName {
+		color: #555555;
+		text-decoration: underline;
+		}
+	#patientEncounterPatientName:hover {
+		color: #ff5555;
+		cursor: pointer;
+		}
+</style>
+
+<h3><!--{t}-->Patient Encounter Console<!--{/t}--> [ <a onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->');"><span id="patientEncounterPatientName"></span></a> ]</h3>
 
 <div dojoType="TabContainer" id="patientEncounterTabContainer" style="width: 100%; height: 100%;">
 
