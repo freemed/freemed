@@ -40,6 +40,17 @@ class PatientInterface {
 	// Returns:
 	//
 	//	Array of hashes.
+	//	* patient
+	//	* module
+	//	* oid
+	//	* annotation
+	//	* summary
+	//	* stamp
+	//	* date_mdy
+	//	* type
+	//	* module_namespace
+	//	* locked
+	//	* id
 	//
 	public function EmrAttachmentsByPatient ( $patient ) {
 		static $_cache;
@@ -92,6 +103,8 @@ class PatientInterface {
 	// Returns:
 	//
 	//	Hash of values.
+	//	* module_name - Textual name of a module
+	//	* module_class - Class of the module in question
 	//
 	public function EmrModules ( $part, $same = false ) {
 		$query = "SELECT module_name, module_class FROM modules WHERE FIND_IN_SET( module_handlers, 'EmrSummary') AND module_hidden = 0 ".( $part ? " AND module_name LIKE '%".$GLOBALS['sql']->escape($part)."%'" : '' )." ORDER BY module_name";
@@ -103,6 +116,12 @@ class PatientInterface {
 	} // end method EmrModules
 
 	// Method: Search
+	//
+	// Parameters:
+	//
+	//	$criteria - Hash containing one or more of the following qualifiers:
+	//	* ssn - Social security number
+	//	* age - Age in years
 	//
 	// Returns:
 	//
@@ -129,6 +148,30 @@ class PatientInterface {
 		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p WHERE ".join(' AND ', $c)." ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method Search
+
+	// Method: PatientInformation
+	//
+	//	Basic patient information for a single patient. Useful for summary
+	//	screens and other informational displays.
+	//
+	// Parameters:
+	//
+	//	$id - Patient id
+	//
+	// Returns:
+	//
+	//	Hash. Contains:
+	//	* patient_name
+	//	* patient_id
+	//	* date_of_birth
+	//	* date_of_birth_mdy
+	//	* age
+	//	* csz
+	//
+	public function PatientInformation( $id ) {
+		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, CONCAT( p.ptcity, ', ', p.ptstate, ' ', p.ptzip ) AS csz FROM patient p WHERE p.id = " . ( $id + 0 );
+		return $GLOBALS['sql']->queryRow( $q );
+	} // end method PatientInformation
 
 	// Method: TotalInSystem
 	//
