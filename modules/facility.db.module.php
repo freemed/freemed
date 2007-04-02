@@ -2,7 +2,7 @@
  // $Id$
  // note: facility database functions
  // code: jeff b (jeff@univrel.pr.uconn.edu)
- //       small mods by max k <amk@span.ch>
+ //       small mods by max k <amk@span.ch>, jc.boursiquot@b-mas.com
  // lic : GPL, v2
 
 LoadObjectDependency('_FreeMED.MaintenanceModule');
@@ -11,7 +11,7 @@ class FacilityModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Facility Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.3.1";
 	var $MODULE_DESCRIPTION = "
 		Facilities are used by FreeMED to describe locations where 
 		services are performed. Any physician/provider can do work 
@@ -25,7 +25,7 @@ class FacilityModule extends MaintenanceModule {
 	var $table_name     = "facility";
 	var $order_by       = "psrname";
 
-	var $widget_hash = "##psrname## ##psrnote## (##psrcity##, ##psrstate##)";
+	var $widget_hash = "##psrname##: ##psrnote## (##psrcity##, ##psrstate##)";
 
 	var $variables = array (
 		"psrname",
@@ -41,6 +41,8 @@ class FacilityModule extends MaintenanceModule {
 		"psrfax",
 		"psremail",
 		"psrein",
+		"psrnpi",
+		"psrtaxonomy",
 		"psrintext",
 		"psrpos",
 		'psrx12id',
@@ -85,6 +87,8 @@ class FacilityModule extends MaintenanceModule {
 			'psrfax' => SQL__VARCHAR(16),
 			'psremail' => SQL__VARCHAR(25),
 			'psrein' => SQL__VARCHAR(9),
+			'psrnpi' => SQL__VARCHAR(25),
+			'psrtaxonomy' => SQL__VARCHAR(25),
 			'psrintext' => SQL__INT_UNSIGNED(0),
 			'psrpos' => SQL__INT_UNSIGNED(0),
 			'psrx12id' => SQL__VARCHAR(24),
@@ -152,7 +156,7 @@ class FacilityModule extends MaintenanceModule {
     $book->add_page (
       __("Details"),
       array (
-        "psrnote", "psrdefphy", "psrein", "psrintext", "psrpos"
+        "psrnote", "psrdefphy", "psrein", "psrnpi", "psrtaxonomy", "psrintext", "psrpos"
       ),
       html_form::form_table ( array (
         __("Description") =>
@@ -174,6 +178,12 @@ class FacilityModule extends MaintenanceModule {
 	
         __("Employer Identification Number") =>
 	html_form::text_widget("psrein", 9),
+
+        __("Rendering NPI Number") =>
+	html_form::text_widget("psrnpi", 10),
+
+        __("Rendering Taxonomy Number") =>
+	html_form::text_widget("psrtaxonomy", 10),
 
         __("Internal or External Facility") =>
 	html_form::select_widget(
@@ -295,6 +305,18 @@ class FacilityModule extends MaintenanceModule {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
 				'ADD COLUMN psrx12idtype VARCHAR(10) AFTER psrx12id');
 		}
+
+		// Version 0.3.1
+		//
+		//	Added npi and taxonomy fields
+		//
+		if (!version_check($version, '0.3.1')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN psrnpi VARCHAR(32) AFTER psrein');
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN psrtaxonomy VARCHAR(32) AFTER psrnpi');
+		}
+
 	} // end method _update
 
 } // end class FacilityModule

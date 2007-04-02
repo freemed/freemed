@@ -1,6 +1,7 @@
 <?php
 	// $Id$
 	// code: jeff b (jeff@ourexchange.net), adam b (gdrago23@yahoo.com)
+	// code modified: JC Boursiquot (jc.boursiquot@b-mas.com) - NPI modification
 
 LoadObjectDependency('_FreeMED.MaintenanceModule');
 
@@ -8,7 +9,7 @@ class ProviderModule extends MaintenanceModule {
 
 	var $MODULE_NAME    = "Provider Maintenance";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.6";
+	var $MODULE_VERSION = "0.3.7";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -59,7 +60,8 @@ class ProviderModule extends MaintenanceModule {
 	"phyhl7id",
 	"phydea",
 	"phyclia",
-	"phynpi"
+	"phynpi",	
+	"phytaxonomy"	
 	); // end of variables list
 	var $order_field = 'phylname, phyfname';
 
@@ -130,7 +132,8 @@ class ProviderModule extends MaintenanceModule {
 			'phyhl7id' => SQL__VARCHAR(16),
 			'phydea' => SQL__VARCHAR(16),
 			'phyclia' => SQL__VARCHAR(32),
-			'phynpi' => SQL__VARCHAR(32),
+			'phynpi' => SQL__VARCHAR(10),
+			'phytaxonomy' => SQL__VARCHAR(32),
 			'id' => SQL__SERIAL
 		);
 
@@ -187,7 +190,7 @@ class ProviderModule extends MaintenanceModule {
 			array (
 			"phylname", "phyfname", "phytitle", "phymname",
 			"phytitle", "phypracname", "phyid1", "phystatus",
-			"phypracein", "phynpi"
+			"phypracein"
 			),
 			html_form::form_table(array(
 	__("Last Name") =>
@@ -210,9 +213,6 @@ class ProviderModule extends MaintenanceModule {
 
 	__("Internal ID #") =>
 	html_form::text_widget("phyid1", 10),
-
-	__("NPI") =>
-	html_form::text_widget("phynpi", 32, 32),
 
 	__("Status") =>
 	freemed_display_selectbox($stat_r, "#phystatus#", "phystatus")
@@ -343,7 +343,7 @@ class ProviderModule extends MaintenanceModule {
 				"phydeg1", "phydeg2", "phydeg3",
 				"physpe1", "physpe2", "physpe3",
 				"phyanesth", "phyhl7id", "phydea",
-				"phyclia"
+				"phyclia", "phynpi","phytaxonomy"
 			),
 			html_form::form_table(array(
 		__("UPIN Number") =>
@@ -405,6 +405,11 @@ class ProviderModule extends MaintenanceModule {
 		__("CLIA Number") =>
 		html_form::text_widget( 'phyclia' ),
 
+		__("NPI Number") =>
+		html_form::text_widget( 'phynpi' ),
+		
+		__("Taxonomy Number") =>
+		html_form::text_widget( 'phytaxonomy' ),
 			))
 		);
 
@@ -640,11 +645,20 @@ class ProviderModule extends MaintenanceModule {
 
 		// Version 0.3.6
 		//
-		//	Add NPI number
+		//      Add NPI number
 		//
 		if (!version_check($version, '0.3.6')) {
 			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN phynpi VARCHAR(32) NOT NULL DEFAULT \'\' AFTER phyclia');
+				'ADD COLUMN phynpi VARCHAR(10) NOT NULL DEFAULT \'\' AFTER phyclia');
+		}
+
+		// Version 0.3.7
+		//
+		//      Add taxonomy
+		//
+		if (!version_check($version, '0.3.7')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN phytaxonomy VARCHAR(32) NOT NULL DEFAULT \'\' AFTER phynpi');
 		}
 
 	} // end method _update

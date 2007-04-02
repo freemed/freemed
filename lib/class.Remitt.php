@@ -1,6 +1,7 @@
 <?php
 	// $Id$
 	// $Author$
+	// Modified: jc.boursiquot@b-mas.com 2007-03-09
 
 // Class: FreeMED.Remitt
 //
@@ -382,6 +383,7 @@ class Remitt {
 			}
 			$b['procedures'] = $c;
 		}
+
 		$query = $GLOBALS['sql']->insert_query (
 			'billkey',
 			array(
@@ -705,7 +707,9 @@ class Remitt {
 		$buffer .= $this->_tag('hcfacode', !$f['psrpos'] ? 11 : freemed::get_link_field($f['psrpos'], 'pos', 'posname'), true);
 		$buffer .= $this->_tag('x12code', !$f['psrpos'] ? 11 : freemed::get_link_field($f['psrpos'], 'pos', 'posname'), true);
 		$buffer .= $this->_tag('ein', $f['psrein'], true);
-
+		$buffer .= $this->_tag('npi', $f['psrnpi'], true);
+		$buffer .= $this->_tag('taxonomy', $f['psrtaxonomy'], true);
+		
 		$buffer .= "</facility>\n";
 		return $buffer;
 	} // end method _RenderFacility
@@ -863,8 +867,9 @@ class Remitt {
 		$buffer .= $this->_tag('tin', $p['physsn'], true);
 		$buffer .= $this->_tag('ipn', $p['phyupin'], true);
 		$buffer .= $this->_tag('clia', $p['phyclia'], true);
-		$buffer .= $this->_tag('dea', $p['phydea'], true);
 		$buffer .= $this->_tag('npi', $p['phynpi'], true);
+		$buffer .= $this->_tag('dea', $p['phydea'], true);
+		$buffer .= $this->_tag('taxonomy', $p['phytaxonomy'], true);
 	
 		$buffer .= "</provider>\n";
 		return $buffer;		
