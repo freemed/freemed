@@ -52,7 +52,8 @@ BEGIN
 		SET res = REPLACE( CONCAT( ',', strlist, ',' ), CONCAT( ',', str, ',' ), ',' );
 		RETURN SUBSTRING( res, 2, LENGTH(res) - 2 );
 	END IF;
-END//
+END;
+//
 
 DELIMITER ;
 
@@ -96,4 +97,8 @@ BEGIN
 		END IF;
 	UNTIL ISNULL(s) OR offset = 0 END REPEAT;
 	RETURN count;
-END//
+END;
+//
+
+DELIMITER ;
+
