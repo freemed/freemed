@@ -89,6 +89,11 @@
 			<!--{t}-->Claims Manager<!--{/t}-->
 		</div>
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.remitt');">
+			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->REMITT Billing<!--{/t}-->
+		</div>
+
 	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">

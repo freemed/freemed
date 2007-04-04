@@ -212,273 +212,34 @@ class RemittBillingTransport extends BillingModule {
 		return $result;
 	} // end method ProcessStatement
 
-	function process ( $single = NULL ) {
-		// Create new Remitt instance
+	// Method: GetStatus
+	//
+	//	Get current status by REMITT unique identifiers
+	//
+	// Parameters:
+	//
+	//	$uniques - Array of REMITT unique identifiers
+	//
+	// Returns:
+	//
+	//	Hash with key being the unique identifier and value being the REMITT
+	//	return code.
+	//
+	public function GetStatus ( $uniques = NULL ) {
 		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
-		$remitt->Login(
-			freemed::config_value('remitt_user'),
-			freemed::config_value('remitt_pass')
-		);	
-
-		// Create new ClaimLog instance
-		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
-
-		// Create Bill Key
-		extract($_REQUEST);
-
-		// Make sure we don't have someone passing us bupkus
-		unset($billkey);
-
-		// If we're doing a single claim, handle seperately
-		if ($single != NULL) {
-			// We always pass these ...
-			//print "<br/><br/><hr/>processing single = $single<br/>\n";
-			$billkey['contact'] = $_REQUEST['contact'];
-			$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
-			$billkey['service'] = $_REQUEST['service'];
-
-			// Create single array of stuff
-			$billkey['procedures'][] = $single;
-			$this_billkey = $remitt->StoreBillKey( $billkey );
-
-			// Add to list to be marked
-			$__billkeys[] = $this_billkey;
-
-			// Get format and target from default
-			list ($my_format, $my_target) =
-				$this->MediaToFormatTarget($single, $_REQUEST['media'][$single]);
-			//print_r($this->MediaToFormatTarget($single, $_REQUEST['media'][$single]));
-				
-			$result = $remitt->ProcessBill( $this_billkey, $my_format, $my_target );
-
-			$buffer .= "<div class=\"section\">".
-				__("Remitt Billing Sent")."</div><br/>\n";
-
-			// Refresh to status screen
-			global $refresh;
-			$refresh = page_name()."?".
-				"module=".$_REQUEST['module']."&".
-				"type=".$_REQUEST['type']."&".
-				"action=".$_REQUEST['action']."&".
-				"billing_action=status&".
-				"uniques=".urlencode(serialize(array($this_billkey => $result)));
-
-			$buffer .= __("Refreshing")." ... ";
-
-			//print "DEBUG: format = ".$format[$single]." target = ".$target[$single]."<br/>\n";
-			//print "DEBUG: "; print_r($result); print "<br/>\n";
-			//$buffer .= "Should have returned $result.<br/>\n";
-			// Add to claimlog
-			$result = $claimlog->log_billing (
-				$this_billkey,
-				$my_format,
-				$my_target,
-				__("Remitt billing run sent")
-			);
-			/* $mark = $claimlog->mark_billed ( $this_billkey ); */
-			$buffer .= __("If you are satisfied with your bills, mark them as sent.")."<br/>".
-			"<a href=\"".page_name()."?".
-			"module=".urlencode($_REQUEST['module'])."&".
-			"action=".urlencode($_REQUEST['action'])."&".
-			"type=".urlencode($_REQUEST['type'])."&".
-			"billing_action=mark&".
-			"keys=".urlencode(serialize($__billkeys)).
-			"\" class=\"button\">".__("Mark All Batches as Billed")."</a>\n";
-
-			return $buffer;
-		}
-
-		// Create master hash to work with for all procedures, etc
-		$bill_hash = array ();
-		foreach ($claim AS $my_claim => $to_bill) {
-			// First, form hash key
-			list ($my_format, $my_target) =
-				$this->MediaToFormatTarget($my_claim, $_REQUEST['media'][$my_claim]);
-			$hash_key = $my_format.'__'.$my_target;
-			//print "hash key = $hash_key<br/>\n";
-
-			// Only process if the claim is to be billed
-			// (also check for null hash key)
-			if (($to_bill == 1) and ($hash_key != '__')) {
-				// And the patient is supposed to be billed
-		//TODO Jeff, this check does not belong here. It should not display a claim that is 
-		// not set to be billed in the interface.
-			//	if ($bill[$claim_owner[$my_claim]] == 1) {
-					// Add the procedure to that hash
-					$bill_hash[$hash_key]['procedures'][] = is_array($my_claim) ? $my_claim : array($my_claim);
-				}
-			//}
-		}
-
-		// Once we have created these hashes, we loop through the list
-		// of them and process each one
-		$buffer .= "<div class=\"section\">".
-			__("Remitt Billing Sent")."</div><br/>\n";
-		foreach ($bill_hash AS $my_key => $billkey) {
-			// Get format and target
-			list ($my_format, $my_target) = explode ('__', $my_key);
-			//print "processing key = $my_key<br/>\n";
-			if ($my_format and $my_target) {
-
-			// Add contact, clearinghouse, and service info
-			$billkey['contact'] = $_REQUEST['contact'];
-			$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
-			$billkey['service'] = $_REQUEST['service'];
-
-			// Lastly, we serialize the bill key
-			$key = $remitt->StoreBillKey($billkey);
-
-			// ... and send it to Remitt, to see what we get for a result
-			$unique_key = $remitt->ProcessBill($key, $my_format, $my_target);
-			// Add to claimlog
-			$result = $claimlog->log_billing (
-				$key,
-				$my_format,
-				$my_target,
-				__("Remitt billing run sent")
-			);
-
-			// Add to the list of bill keys
-			$__billkeys[] = $key;
-			$uniques[$key] = $unique_key;
-
-			/*
-			$mark = $claimlog->mark_billed ( $this_billkey );
-			*/
-
-			// DEBUG: Show what we got
-			//print "DEBUG: "; print_r($result); print "<br/>\n";
-
-			} // end verifying format and target
-		}
-
-
-		// Show something
-		if (!is_array($__billkeys)) {
-			$__billkeys = array ($__billkeys);
-			//$uniques = array ( $__billkeys => $result );
-		}
-
-		// Refresh to status screen
-		global $refresh;
-		$refresh = page_name()."?".
-			"module=".$_REQUEST['module']."&".
-			"type=".$_REQUEST['type']."&".
-			"action=".$_REQUEST['action']."&".
-			"billing_action=status&".
-			"uniques=".urlencode(serialize($uniques));
-
-		$buffer .= __("Refreshing")." ... ";
-
-/*
-		$buffer .= __("If you are satisfied with your bills, mark them as sent.")."<br/>".
-			"<a href=\"".page_name()."?".
-			"module=".urlencode($_REQUEST['module'])."&".
-			"action=".urlencode($_REQUEST['action'])."&".
-			"type=".urlencode($_REQUEST['type'])."&".
-			"billing_action=mark&".
-			"keys=".urlencode(serialize($__billkeys)).
-			"\" class=\"button\">".__("Mark as Billed")."</a>\n";
-*/
-
-		return $buffer;
-	} // end method process
-
-	function status ( $_uniques = NULL ) {
-		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
-
-		// Use optional parameter for first display only
-		if ($_uniques != NULL) {
-			$uniques = $_uniques;
-		} else {
-			// If passed by POST/GET, they are serialized
-			$uniques = unserialize(stripslashes($_REQUEST['uniques']));
-		}
 
 		// Handle invalid uniques
 		if (!is_array($uniques)) {
-			return __("Invalid keys passed to status function!")."<br/>\n";
+			die (__("Invalid keys passed to status function!"));
 		}
 
-		$buffer .= "
-		<table border=\"0\">
-		<tr>
-		<td class=\"DataHead\">".__("Identifier")."</td>
-		<td class=\"DataHead\">".__("Status")."</td>
-		<td class=\"DataHead\">".__("Report")."</td>
-		<td class=\"DataHead\">".__("Action")."</td>
-		</tr>
-		";
-		$alldone = true;
 		foreach ($uniques AS $b => $u) {
-			// If we have an error from REMITT, show as such
-			if (is_array($u)) {
-				$buffer .= "
-				<tr>
-				<td>".prepare($b)."</td>
-				<td>".__("ERROR")."</td>
-				<td>".prepare($u['faultString'])."</td>
-				<td>&nbsp;</td>
-				</tr>
-				";
-			} else {
-				// Add to $billkeys
-				$billkeys[] = $b;
-
-				// Get individual status
-				$s = $remitt->GetStatus($u);
-				if (empty($s)) { $alldone = false; }
-				$buffer .= "
-				<tr>
-				<td>".prepare($b)." (".prepare($u).")</td>
-				<td>".( empty($s) ?
-					__("Processing") :
-					__("Completed") )."</td>
-				<td>".( empty($s) ? "&nbsp;" :
-					"<a href=\"".page_name()."?".
-					"module=".urlencode( $_REQUEST['module'] )."&".
-					"type=".urlencode( $_REQUEST['type'] )."&".
-					"action=".urlencode( $_REQUEST['action'] )."&".
-					"billing_action=display_report&".
-					"file_type=report&".
-					"report=".urlencode( basename($s) ) . "\" ".
-					"target=\"_view\">".prepare($s)."</a>" )."</td>
-				<td>".( empty($s) ? "&nbsp;" :
-					( $_SESSION['mark_as_billed'][$b] ?
-					__("Marked as Billed") :
-					"<a href=\"".page_name()."?".
-					"module=".urlencode( $_REQUEST['module'] )."&".
-					"action=".urlencode( $_REQUEST['action'] )."&".
-					"type=".urlencode( $_REQUEST['type'] )."&".
-					"billing_action=mark&".
-					"return=".urlencode($_SERVER['REQUEST_URI'])."&".
-					"keys=".urlencode(serialize(array( $b ))).
-					"\" class=\"button\">".__("Mark as Billed")."</a>" ))."</td>
-				</tr>
-				";
-			}
+			// Get individual status
+			$status[$u] = $remitt->GetStatus( $u );
 		} // end foreach uniques
-		$buffer .= "</table>\n";
 
-		// Handle refreshing
-		if (!$alldone) {
-			global $refresh;
-			$GLOBALS['__freemed']['automatic_refresh'] = '15';
-		} else {
-			// Show mark as billed with reformed billkeys array
-			$buffer .= "<p/>".
-			__("If you are satisfied with your bills, mark them as sent.")."<br/>".
-			"<a href=\"".page_name()."?".
-			"module=".urlencode($_REQUEST['module'])."&".
-			"action=".urlencode($_REQUEST['action'])."&".
-			"type=".urlencode($_REQUEST['type'])."&".
-			"billing_action=mark&".
-			"keys=".urlencode(serialize($billkeys)).
-			"\" class=\"button\">".__("Mark All Batches as Billed")."</a>\n";
-		}
-		
-		return $buffer;
-	} // end method status
+		return $status;
+	} // end method GetStatus
 
 	function mark ( ) {
 		$claimlog = CreateObject ('FreeMED.ClaimLog');
@@ -550,49 +311,6 @@ class RemittBillingTransport extends BillingModule {
 		return $buffer;
 	} // end method rebillkey
 
-	//--------------------------------------------------------------------
-	// Helper and other internal functions
-	//--------------------------------------------------------------------
-
-	function MediaToFormatTarget ( $claim, $media ) {
-		global $coverage;
-		$cov = $_REQUEST['coverage'][$claim] ? $_REQUEST['coverage'][$claim] :
-			$coverage[$claim];
-		$this_coverage = CreateObject('FreeMED.Coverage', $cov);
-		switch ($media) {
-			case 'paper':
-			$format = $this_coverage->covinsco->local_record['inscodefformat'];
-			$target = $this_coverage->covinsco->local_record['inscodeftarget'];
-			break;
-
-			case 'electronic':
-			$format = $this_coverage->covinsco->local_record['inscodefformate'];
-			$target = $this_coverage->covinsco->local_record['inscodeftargete'];
-			break;
-
-			default:
-			// This should *not* happen
-			break;
-		}
-		return array ($format, $target);
-	}
-
-	function MediaWidgetOptions ( $media, $index ) {
-		global $coverage;
-		$this_coverage = CreateObject('FreeMED.Coverage', $coverage[$index]);
-		$l = $this_coverage->covinsco->local_record;
-		return "<option value=\"electronic\" ".
-			( ( $media[$index] == 'electronic' ) ? 'SELECTED' : '' ).
-			">".__("Electronic")." - ".
-			$l['inscodefformate'].'/'.$l['inscodeftargete'].
-			"</option>\n".
-			"<option value=\"paper\" ".
-			( ( $media[$index] == 'paper' ) ? 'SELECTED' : '' ).
-			">".__("Paper")." - ".
-			$l['inscodefformat'].'/'.$l['inscodeftarget'].
-			"</option>\n";
-	}
-
 	function PatientCoverages ( $claim, $default_coverage ) {
 		// Get all patient coverages associated with a procedure
 		$rec = freemed::get_link_rec($claim, 'procrec');
@@ -610,50 +328,166 @@ class RemittBillingTransport extends BillingModule {
 		return $coverage;
 	} // end method PatientCoverages
 
-	function PatientsToBill ( ) {
+	// Method: PatientsToBill
+	//
+	//	Get list of all patients to bill with claims.
+	//
+	// Returns:
+	//
+	//	Hash containing:
+	//	* patient_id - Internal FreeMED record ID for this patient
+	//	* claim_count - Number of claims for this patient
+	//	* claims - Array of claim ids for this patient
+	//	* patient - Human readable patient name
+	//	* date_of_birth - Date of birth in YYYY-MM-DD format
+	//	* date_of_birth_mdy - Date of birth in MM/DD/YYYY format
+	//
+	public function PatientsToBill ( ) {
 		// This is a *huge* select hack so that the query returns
 		// patients in a quasi-alphabetical order. Any better
 		// suggestions are welcomed.  - Jeff
-		$query = "SELECT DISTINCT(a.procpatient) AS patient, ".
-			// Hack to get global claim counts
-			"COUNT(a.id) AS claims ".
-			"FROM procrec AS a, patient AS b ".
-			// Needs to have a balance of over 0
-			"WHERE a.procbalcurrent > '0' AND ".
-			// Make sure the association is made
-			"a.procpatient = b.id AND ".
-			// Needs to be billable (at all) -- examine this one!
-			//"a.procbillable = '0' AND ".
-			// Must be *insurance* billable, otherwise we
-			// shouldn't be billing this with REMITT
-			"a.proccurcovtp > 0 AND ".
-			// (Not sure) Needs not to be billed already
-			"a.procbilled = '0' ".
-			// Last little bit of the global claim count hack
-			"GROUP BY a.procpatient ".
-			// Here's the ordering magic, using patient table:
-			"ORDER BY b.ptlname,b.ptfname,b.ptmname,b.ptdob";
+		$query = "SELECT DISTINCT(a.procpatient) AS patient_id, COUNT(a.id) AS claim_count, GROUP_CONCAT(a.id) AS claims, CONCAT(b.ptlname, ', ', b.ptfname, ' ', b.ptmname, ' [', b.ptid, ']') AS patient, b.ptdob AS date_of_birth, DATE_FORMAT(b.ptdob, '%m/%d/%Y') AS date_of_birth_mdy FROM procrec a LEFT OUTER JOIN patient b ON a.procpatient=b.id WHERE a.procbalcurrent > '0' AND a.proccurcovtp > 0 AND a.procbilled = '0' GROUP BY a.procpatient ORDER BY b.ptlname,b.ptfname,b.ptmname,b.ptdob";
 
-		$result = $GLOBALS['sql']->query($query);
-		
-		// Simple hack to make sure that no results return no answers
-		if (!$GLOBALS['sql']->results($result)) {
-			return false;
+		$res = $GLOBALS['sql']->queryAll($query);
+
+		// Present 'claims' as an array
+		foreach ( $res AS $k => $v) {
+			$res[$k]['claims'] = explode(',', $v['claims']);	
 		}
-
-		$return = array ();
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
-			$return[] = $r['patient'];
-			$this->number_of_claims[$r['patient']] = $r['claims'];
-		}
-
-		return $return;
+		return $res;
 	} // end method PatientsToBill
 
-	function NumberOfClaimsForPatient ( $p ) {
-		$x = $this->PatientsToBill();
-		return $this->number_of_claims[$p];
-	}
+	// Method: GetClaimInformation
+	//
+	//	Resolve additional bill information for a list of claim ids.
+	//
+	// Parameters:
+	//
+	//	$claims - Array of claim ids
+	//
+	// Returns:
+	//
+	//	Array of hashes containing:
+	//	* claim
+	//	* claim_date
+	//	* claim_date_mdy
+	//	* output_format
+	//	* paper_format
+	//	* paper_target
+	//	* electronic_format
+	//	* electronic_target
+	//
+	public function GetClaimInformation ( $claims ) {
+		$q = "SELECT p.id AS claim, p.procdt AS claim_date, DATE_FORMAT(p.procdt, '%m/%d/%Y') AS claim_date_mdy, i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE FIND_IN_SET(p.id, ".$GLOBALS['sql']->quote(join(',', $claims)).")";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetClaimInformation
+
+	// Method: ProcessClaims
+	//
+	//	Input jobs into the claims queue for REMITT.
+	//
+	// Parameters:
+	//
+	//	$patients - Array of patients for whom billing is enabled.
+	//
+	//	$claims - Array of claims for which we are billing
+	//
+	//	$overrides (optional) - Array of media changes and other exceptions (TODO)
+	//
+	// Returns:
+	//
+	//	Array of hashes containing:
+	//	* Billkey number
+	//	* Number of claims in billkey
+	//
+	public function ProcessClaims ( $patients, $claims, $overrides=NULL ) {
+		// Boiler plate for dealing with REMITT
+		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
+		$remitt->Login(
+			freemed::config_value('remitt_user'),
+			freemed::config_value('remitt_pass')
+		);	
+
+		// Create new ClaimLog instance
+		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
+
+		$claim_limit = 500;
+		$q = "SELECT p.id AS claim, i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE FIND_IN_SET(p.procpatient, ".$GLOBALS['sql']->quote(join(',', $patients)).") AND FIND_IN_SET(p.id, ".$GLOBALS['sql']->quote(join(',', $claims)).")";
+		$res = $GLOBALS['sql']->queryAll( $q );
+
+		foreach ( $res AS $r ) {
+			// TODO: handle overrides
+
+			switch ($r['output_format']) {
+				case 'paper':
+				$s[ $r['paper_format'] . '/' . $r['paper_target'] . '/0' ][] = $r['claim'];
+				break;
+
+				case 'electronic':
+				$s[ $r['electronic_format'] . '/' . $r['electronic_target'] . '/0' ][] = $r['claim'];
+				break;
+
+				default: /* do nothing */ break;
+			}
+		}
+
+		// Now, postprocessing to make sure that we split anything above a certain number of claims
+		foreach ( $s AS $k => $t ) {
+			if ( count($t) > $claim_limit ) {
+				// Transfer into a temporary array, then kill the original
+				$temp = $t;
+				unset( $s[$k ]);
+
+				// Pull out the components to make more
+				list ( $_format, $_target, $_count ) = explode ( '/', $k );
+				$pos = 0; $stack = 0;
+				for ($i=0; $i<count($temp); $i++) {
+					$cur_key = $_format . '/' . $_target . '/' . $stack;
+					$s[$cur_key][] = $temp[$i];
+					if ( count($s[$cur_key]) >= $claim_limit ) { $stack++; }
+				}
+
+				// Clean up to avoid unsightly leakage
+				unset ( $temp ); unset ( $cur_key );
+			}
+		}
+
+		// Everything is done, pass on
+		foreach ( $s AS $k => $v) {
+			// Create new billkey
+			$billkey = array ( );
+
+			// TODO : extract this information from the system
+			//$billkey['contact'] = $_REQUEST['contact'];
+			//$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
+			//$billkey['service'] = $_REQUEST['service'];
+
+			// Create single array of stuff
+			$billkey['procedures'] = $v;
+			$this_billkey = $remitt->StoreBillKey( $billkey );
+
+			// Add to list to be marked
+			//$billkeys[] = $this_billkey;
+
+			// Get format and target from default
+			list ( $my_format, $my_target, $batch_id ) = explode ( '/', $k );
+			$results[] = array (
+				'result' => $remitt->ProcessBill( $this_billkey, $my_format, $my_target ),
+				'billkey' => $this_billkey
+			);
+
+			// Log to the claim log
+			$claimlog->log_billing (
+				$this_billkey,
+				$my_format,
+				$my_target,
+				__("Remitt billing run sent")
+			);
+		}
+
+		// Return what we have
+		return $results;
+	} // end method ProcessClaims
 
 	function MediaForProcedure ( $p ) {
 		$this_coverage = CreateObject('org.freemedsoftware.core.Coverage', $curcov);
