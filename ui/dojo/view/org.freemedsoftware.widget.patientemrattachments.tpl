@@ -126,12 +126,19 @@
 			return ( m == document.getElementById('emrSection').value );
 		},
 		printMultiple: function ( ) {
+			if ( patientEmrAttachments.currentItem ) {
+				this.itemsToPrint = [];
+				this.itemsToPrint[0] = patientEmrAttachments.currentItem;
+				dojo.widget.byId('emrPrintDialog').show();
+				return false;
+			}
 			var w = dojo.widget.byId('patientEmrAttachments');
 			var val = w.getSelectedData();
 			if ( val.length == 0 ) {
 				alert("<!--{t}-->No EMR attachments were selected.<!--{/t}-->");
 				return false;
 			}
+			this.itemsToPrint = [];
 			for (i=0; i<val.length; i++) {
 				this.itemsToPrint[i] = val[i].id;
 				dojo.widget.byId('emrPrintDialog').show();
@@ -143,15 +150,17 @@
 			var url;
 			if (patientEmrAttachments.itemsToPrint.length == 1) {
 				var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
-				url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".RenderSinglePDF?param0=" + encodeURIComponent( patientEmrAttachments.itemsToPrint[0] );
+				url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".RenderSinglePDF?param0=" + encodeURIComponent( x.oid );
 			} else {
 				alert('multiple');
 				url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) );
 			}
 
+			// Hide beforehand so it actually gets done
+			dojo.widget.byId('emrPrintDialog').hide();
+
 			// Load in hidden frame
 			//window.open( url )
-			alert('url = ' + url );
 			document.getElementById('patientPrintView').src = url;
 		}
 	};
