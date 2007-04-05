@@ -121,6 +121,24 @@
 			}
 			remitt.patientsEnabled[ id ] = ! remitt.patientsEnabled[ id ];
 		},
+		OnSelectAll: function ( ) {
+			for ( var i in remitt.patients ) {
+				// Set to be enabled
+				remitt.patientsEnabled[ i ] = true;
+				try {
+					document.getElementById('patient_check_' + i).checked = true;
+				} catch (err) { }
+			}
+		},
+		OnSelectNone: function ( ) {
+			for ( var i in remitt.patients ) {
+				// Set to be enabled
+				remitt.patientsEnabled[ i ] = false;
+				try {
+					document.getElementById('patient_check_' + i).checked = false;
+				} catch (err) { }
+			}
+		},
 		OnTogglePatient: function ( evt ) {
 			var id = this.id.replace( 'toggle_patient_', '' );
 			remitt.currentId = id;
@@ -195,20 +213,38 @@
 
 	_container_.addOnLoad(function(){
 		remitt.loadPatients();
+		dojo.event.connect( dojo.widget.byId('remittBillSelectAll'), "onClick", remitt, "OnSelectAll" );
+		dojo.event.connect( dojo.widget.byId('remittBillSelectNone'), "onClick", remitt, "OnSelectNone" );
 	});
 	_container_.addOnUnLoad(function(){
-
+		dojo.event.disconnect( dojo.widget.byId('remittBillSelectAll'), "onClick", remitt, "OnSelectAll" );
+		dojo.event.disconnect( dojo.widget.byId('remittBillSelectNone'), "onClick", remitt, "OnSelectNone" );
 	});
 
 </script>
 
 <h3><!--{t}-->REMITT Billing: Perform Billing<!--{/t}--></h3>
 
-<table border="0">
+<table border="0" style="width: auto;">
 	<tr>
 		<td>
 			<div dojoType="button" id="remittProcessBilling" widgetId="remittProcessBilling">
 				<!--{t}-->Process<!--{/t}-->
+			</div>
+		</td>
+		<td>
+			<div dojoType="button" id="remittBillSelectAll" widgetId="remittBillSelectAll">
+				<!--{t}-->Select All<!--{/t}-->
+			</div>
+		</td>
+		<td>
+			<div dojoType="button" id="remittBillSelectNone" widgetId="remittBillSelectNone">
+				<!--{t}-->Select None<!--{/t}-->
+			</div>
+		</td>
+		<td>
+			<div dojoType="button" id="remittBillToMenu" widgetId="remittBillToMenu" onClick="freemedLoad('org.freemedsoftware.ui.billing.remitt');">
+				<!--{t}-->Return to Menu<!--{/t}-->
 			</div>
 		</td>
 	</tr>
