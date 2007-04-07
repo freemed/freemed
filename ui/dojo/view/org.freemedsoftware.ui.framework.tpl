@@ -52,8 +52,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	//
 
 	function openHelpPage ( ) {
-		// TODO: make sure to open help for the current topic, as stored by a global JS variable ...
-		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chmbrowser', 'chmBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
+		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chtmlbrowser', 'chtmlBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
 	}
 
 	function freemedMessage( message, type ) {
@@ -81,7 +80,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 			method : 'POST',
 			url: '<!--{$relay}-->/org.freemedsoftware.public.Login.Logout',
 			error: function(type, data, evt) {
-				alert('FreeMED has encountered an error. Please try again.');
+				alert( "<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->" ));
 			},
 			load: function(type, data, evt) {
 				if (data) {
@@ -97,14 +96,18 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	}
 
 	function freemedLoad ( url ) {
-		//dojo.widget.getWidgetById('freemedLoadingDialog').show();
-		//window.location = url;
+		// Set the URL for the contentPane to load the appropriate content
 		dojo.widget.byId( 'freemedContent' ).setUrl( url );
+
+		// Push current help topic value
+		freemedGlobal.currentHelpTopic = url;
+
 		return true;
 	} // end function freemedLoad
 
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
+		currentHelpTopic: undefined,
 		interval: 600, // seconds between polls
 		intervalCallback: function ( ) {
 			return '';
@@ -122,7 +125,9 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 				},
 				mimetype: "text/json"
 			});
-		}
+		},
+		//---- Catch all "state" namespace for storing state variables
+		state: { }
 	};
 
 	// Initialization
@@ -182,7 +187,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	<table border="0" cellpadding="5">
 		<tr>
 			<td valign="middle"><img src="<!--{$htdocs}-->/images/loading.gif" border="0" /></td>
-			<td valign="middle"><b> Loading ... </b></td>
+			<td valign="middle"><b> <!--{t}-->Loading ...<!--{/t}--> </b></td>
 		</tr>
 	</table>
 </div>
@@ -191,7 +196,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	<table border="0" cellpadding="5">
 		<tr>
 			<td valign="middle"><img src="<!--{$htdocs}-->/images/loading.gif" border="0" /></td>
-			<td valign="middle"><b> Logging out of FreeMED </b></td>
+			<td valign="middle"><b> <!--{t}-->Logging out of FreeMED<!--{/t}--> </b></td>
 		</tr>
 	</table>
 </div>
@@ -223,11 +228,11 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	dock.setIconsOffset(5);
 	dock.addIcon(
 		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/Quick-Cal.png" } } ),
-		{ code:"freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.user.form');" }
+		{ code:"freemedLoad('org.freemedsoftware.ui.user.form');" }
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stocks.png" } } ),
-		{ code:"freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing');"}
+		{ code:"freemedLoad('/org.freemedsoftware.ui.billing');"}
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Rolodex.png" } } ),
@@ -239,7 +244,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Yellow-Pages.png" } } ),
-		{ code:"freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.mainframe');" }
+		{ code:"freemedLoad('org.freemedsoftware.controller.mainframe');" }
 	);
 //	dock.setScreenAlign(euDOWN, 5);
 </script>
