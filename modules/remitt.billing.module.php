@@ -139,43 +139,6 @@ class RemittBillingTransport extends BillingModule {
 		return $report;
 	} // end method GetReport
 
-	public function GetPatientClaims ( $patient ) {
-		$these_claims = $this->ProceduresToBill($patient);
-		//print "these claims = "; print_r($these_claims); print "<br/>\n";
-		// Loop through claims
-		global $coverage;
-		foreach ($these_claims AS $__garbage => $c) {
-			$coverages = $this->PatientCoverages($c, &$curcov);
-			$coverage[$c] = $curcov;
-			$__temp = CreateObject( 'org.freemedsoftware.core.Coverage', $coverage[$c] );
-			$media[$c] = $__temp->covinsco->local_record['inscodefoutput'];
-			unset($__temp);
-
-			// Get claim record information from procrec
-			$_record = $GLOBALS['sql']->get_link ( 'procrec', $c );
-
-			$buffer .= $this->MediaWidgetOptions($media, $c);
-
-			$buffer .= "
-			</select>
-			</td>
-			<td class=\"Data\" width=\"35%\">
-			<select name=\"coverage[".$c."]\">
-			";
-
-			// Depending on coverage from procedure,
-			// we put together a list of everything
-			foreach ($coverages AS $__garbage => $cov) {
-				$this_coverage = CreateObject('org.freemedsoftware.core.Coverage', $cov);
-				$covoptions[] = $this_coverage->covinsco->insconame." ".
-				( $this_coverage->covtype==1 ? __("(Primary)") : '' ).
-				( $this_coverage->covtype==2 ? __("(Secondary)") : '' );
-			}
-		}
-
-		// TODO: FIXME FIXME FIXME	
-	} // end method GetPatientClaims
-
 	public function ProcessStatement ( $procs = NULL ) {
 		// Create new Remitt instance
 		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
@@ -241,34 +204,35 @@ class RemittBillingTransport extends BillingModule {
 		return $status;
 	} // end method GetStatus
 
-	function mark ( ) {
-		$claimlog = CreateObject ('FreeMED.ClaimLog');
-		$billkeys = unserialize(stripslashes($_REQUEST['keys']));
+	// Method: MarkAsBilled
+	//
+	//	Mark a list of billkeys as being billed.
+	//
+	// Parameters:
+	//
+	//	$billkeys - Array of billkeys
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function MarkAsBilled ( $billkeys ) {
+		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
+		if ( !is_array( $billkeys ) ) { return $claimlog->mark_billed( $billkeys ); }
 		$mark = true;
-		foreach ($billkeys AS $key) {
-			//print "marking key $key<br/>\n";
+		foreach ( $billkeys AS $key ) {
 			$mark &= $claimlog->mark_billed ( $key );
-			$_SESSION['mark_as_billed'][$key] = 1;
 		}
-		if ($mark) {
-			$buffer .=  __("Bills were successfully marked as billed.");
-		} else {
-			$buffer .=  __("Bills were not able to be marked as billed.");
-		}
-
-		if ($_REQUEST['return']) {
-			global $refresh ; $refresh = $_REQUEST['return'];
-		}
-		return $buffer;
-	} // end method mark
+		return $mark;
+	} // end method MarkAsBilled
 
 	function rebillkey ( ) {
-		$remitt = CreateObject('FreeMED.Remitt', freemed::config_value('remitt_server'));
+		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
 		$remitt->Login(
 			freemed::config_value('remitt_user'),
 			freemed::config_value('remitt_pass')
 		);	
-		$claimlog = CreateObject('FreeMED.ClaimLog');
+		$claimlog = CreateObject('org.freemedsoftware.api.ClaimLog');
 	
 		// Get format and target from claimlog
 		$query = "SELECT * FROM claimlog WHERE ".
@@ -310,23 +274,6 @@ class RemittBillingTransport extends BillingModule {
 		/* $mark = $claimlog->mark_billed ( $this_billkey ); */
 		return $buffer;
 	} // end method rebillkey
-
-	function PatientCoverages ( $claim, $default_coverage ) {
-		// Get all patient coverages associated with a procedure
-		$rec = freemed::get_link_rec($claim, 'procrec');
-		for ($i=1; $i<=4; $i++) {
-			if ($rec['proccov'.$i] > 0) {
-				$coverage[] = $rec['proccov'.$i];
-			}
-		}
-
-		// Get the "default" coverage, and set $default_coverage to it
-		$default_coverage = $rec['proccurcovid'];
-		//print "default_coverage = $default_coverage<br/>\n";
-
-		// Return coverages
-		return $coverage;
-	} // end method PatientCoverages
 
 	// Method: PatientsToBill
 	//
@@ -376,9 +323,11 @@ class RemittBillingTransport extends BillingModule {
 	//	* paper_target
 	//	* electronic_format
 	//	* electronic_target
+	//	* cpt_code
+	//	* cpt_description
 	//
 	public function GetClaimInformation ( $claims ) {
-		$q = "SELECT p.id AS claim, p.procdt AS claim_date, DATE_FORMAT(p.procdt, '%m/%d/%Y') AS claim_date_mdy, i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE FIND_IN_SET(p.id, ".$GLOBALS['sql']->quote(join(',', $claims)).")";
+		$q = "SELECT p.id AS claim, p.procdt AS claim_date, DATE_FORMAT(p.procdt, '%m/%d/%Y') AS claim_date_mdy, i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target, a.cptcode AS cpt_code, a.cptnameint AS cpt_description FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id LEFT OUTER JOIN cpt a ON p.proccpt=a.id WHERE FIND_IN_SET(p.id, ".$GLOBALS['sql']->quote(join(',', $claims)).")";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetClaimInformation
 
@@ -473,7 +422,9 @@ class RemittBillingTransport extends BillingModule {
 			list ( $my_format, $my_target, $batch_id ) = explode ( '/', $k );
 			$results[] = array (
 				'result' => $remitt->ProcessBill( $this_billkey, $my_format, $my_target ),
-				'billkey' => $this_billkey
+				'billkey' => $this_billkey,
+				'format' => $my_format,
+				'target' => $my_target
 			);
 
 			// Log to the claim log
@@ -488,39 +439,6 @@ class RemittBillingTransport extends BillingModule {
 		// Return what we have
 		return $results;
 	} // end method ProcessClaims
-
-	function MediaForProcedure ( $p ) {
-		$this_coverage = CreateObject('org.freemedsoftware.core.Coverage', $curcov);
-		$media = $this_coverage->covinsco->local_record['inscodefoutput'];
-	}
-
-	function ProceduresToBill ( $patient ) {
-		$query = "SELECT id FROM procrec ".
-			// Needs to have a balance of over 0
-			"WHERE procbalcurrent > '0' AND ".
-			// And patient must jive
-			"procpatient = '".addslashes($patient)."' AND ".
-			// Needs to be billable (at all) -- examine this one!
-			//"procbillable = '0' AND ".
-			// (Not sure) Needs not to be billed already
-			"procbilled = '0' ".
-			// Order by date of procedure
-			"ORDER BY procdt";
-
-		$result = $GLOBALS['sql']->query($query);
-		
-		// Simple hack to make sure that no results return no answers
-		if (!$GLOBALS['sql']->results($result)) {
-			return array ();
-		}
-
-		$return = array ();
-		while ($r = $GLOBALS['sql']->fetch_array($result)) {
-			$return[] = $r['id'];
-		}
-
-		return $return;
-	} // end method ProceduresToBill
 
 } // end class RemittBillingTransport
 
