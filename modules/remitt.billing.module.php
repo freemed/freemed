@@ -388,17 +388,18 @@ class RemittBillingTransport extends BillingModule {
 			// Loop through procedures
 			$buffer .= "<select name=\"billkeydetail_".$r['id']."\" multiple size=\"5\" style=\"width: 300px;\">\n";
 			foreach ($bk['procedures'] AS $_g => $proc) {
-				if ($proc[0] > 0) {
+				$p = is_array($proc) ? $proc[0] : $proc;
+				if ($p > 0) {
 					$_q = "SELECT proc.procdt AS procdt, CONCAT(pt.ptlname, ".
 					"', ', pt.ptfname, ' ', pt.ptmname) AS patient_name, ".
+					"c.cptcode AS cpt_code, c.cptnameint AS cpt_description, ".
 					"pt.id AS patient_id ".
-					"FROM procrec AS proc, patient AS pt ".
-					"WHERE proc.procpatient=pt.id AND ".
-					"proc.id='".addslashes($proc[0])."'";
+					"FROM procrec proc LEFT OUTER JOIN patient pt ON proc.procpatient=pt.id LEFT OUTER JOIN cpt c ON c.id=proc.proccpt ".
+					"WHERE proc.id='".addslashes($p)."'";
 					$_r = $GLOBALS['sql']->query($_q);
 					$this_proc = $GLOBALS['sql']->fetch_array($_r);
 					$buffer .= "<option>".$this_proc['procdt']." - ".
-					prepare($this_proc['patient_name'])."</option>\n";
+					prepare($this_proc['patient_name'])." (".prepare($this_proc['cpt_code']).")</option>\n";
 				}
 			}
 			$buffer .= "</select>\n";
