@@ -80,7 +80,7 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 			method : 'POST',
 			url: '<!--{$relay}-->/org.freemedsoftware.public.Login.Logout',
 			error: function(type, data, evt) {
-				alert( "<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->" ));
+				alert( "<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->" );
 			},
 			load: function(type, data, evt) {
 				if (data) {
