@@ -31,6 +31,7 @@
 		claimsEnabled: { },
 		downloaded: { },
 		expanded: { },
+		destinationOverride: { },
 		currentId: 0,
 
 		//----- Functions
@@ -112,6 +113,12 @@
 			//alert ( 'OnClaimCheckbox ' + id );
 			remitt.claimsEnabled[ id ] = ! remitt.claimsEnabled[ id ];
 		},
+		OnDestinationOverride: function ( evt ) {
+			var id = this.id.replace( 'destination_override_', '' );
+			//alert ( 'OnDestinationOverride ' + id );
+			remitt.destinationOverride[ id ] = document.getElementById( 'destination_override_' + id ).value;
+			//alert ( 'DEBUG: ' + dojo.json.serialize( remitt.destinationOverride ) );
+		},
 		OnPatientCheckbox: function ( evt ) {
 			var id = this.id.replace( 'patient_check_', '' );
 			//alert ( 'OnPatientCheckbox ' + id );
@@ -120,6 +127,60 @@
 				remitt.expanded[ id ] = false;
 			}
 			remitt.patientsEnabled[ id ] = ! remitt.patientsEnabled[ id ];
+		},
+		OnProcessBilling: function ( ) {
+			// Check to make sure we have *something* checked
+			var anyPatientsEnabled = false;
+			for ( var i in remitt.patientsEnabled ) {
+				if ( remitt.patientsEnabled[ i ] ) { anyPatientsEnabled = true; }
+			}
+			if ( ! anyPatientsEnabled ) {
+				alert("<!--{t}-->Please select one or more patients to bill.<!--{/t}-->");
+				return false;
+			}
+
+			// TODO : Perhaps check to make sure some claims are checked?
+
+			// Form the parameters we need to push in
+			var pEnabled = [ ];
+			var cEnabled = [ ];
+			var fOverride = [ ];
+
+			for ( var i for remitt.patientsEnabled ) {
+				if ( remitt.patientsEnabled[ i ] ) {
+					pEnabled.push( i );
+				}
+			}
+			for ( var i for remitt.claimsEnabled ) {
+				if ( remitt.claimsEnabled[ i ] ) {
+					cEnabled.push( i );
+				}
+			}
+
+			return false; // FIXME FIXME FIXME
+
+			// Make IO call
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: pEnabled,
+					param1: cEnabled,
+					param2: fOverride
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.RemittBillingTransport.ProcessClaims",
+				load: function ( type, data, evt ) {
+					if ( data.length ) {
+						// Store state
+						freemedGlobal.state[ 'remittRunningBatches' ] = data;
+
+						// View status ...
+						freemedLoad( 'org.freemedsoftware.ui.billing.remitt.status' );
+					} else {
+						alert("<!--{t}-->An error occurred processing the claims. Please contact your system administrator.<!--{/t}-->");
+					}
+				},
+				mimetype: "text/json"
+			});
 		},
 		OnSelectAll: function ( ) {
 			for ( var i in remitt.patients ) {
@@ -155,6 +216,7 @@
 					load: function ( type, data, evt ) {
 						if ( data.length ) {
 							var div = document.getElementById( 'patient_inner_div_' + remitt.currentId );
+							div.style.backgroundColor = '#ffffff';
 							var table = document.createElement( 'table' );
 							var headerRow = document.createElement( 'tr' );
 							var headerCells = new Array ();
@@ -182,14 +244,32 @@
 								cb.checked = true;
 								cb.onclick = remitt.OnClaimCheckbox;
 
+								var selectBox = document.createElement('select');
+								var op = new Array ();
+								selectBox.id = 'destination_override_' + data[i].claim;
+								selectBox.onchange = remitt.OnDestinationOverride;
+								op[0] = document.createElement('option');
+								op[0].value = 'electronic';
+								op[0].innerHTML = "<!--{t}-->Electronic<!--{/t}--> (" + data[i].electronic_format + ' / ' + data[i].electronic_target + ')';
+								selectBox.appendChild(op[0]);
+								op[1] = document.createElement('option');
+								op[1].value = 'paper';
+								op[1].innerHTML = "<!--{t}-->Paper<!--{/t}--> (" + data[i].paper_format + ' / ' + data[i].paper_target + ')';
+								selectBox.appendChild(op[1]);
+								if ( data[i].output_format == 'paper' ) {
+									selectBox.selectedIndex = 1;
+								} else {
+									selectBox.selectedIndex = 0;
+								}
+
 								cells[0] = document.createElement( 'td' );
 								cells[0].appendChild( cb );
 								row.appendChild( cells[0] );
 								cells[1] = document.createElement( 'td' );
-								cells[1].innerHTML = data[i].claim_date_mdy;
+								cells[1].innerHTML = '<label for="claim_check_' + data[i].claim + '">' + data[i].cpt_code + ' ' + data[i].cpt_description + ' (' + data[i].claim_date_mdy + ')</label>';
 								row.appendChild( cells[1] );
 								cells[2] = document.createElement( 'td' );
-								cells[2].innerHTML = data[i].output_format;
+								cells[2].appendChild( selectBox );
 								row.appendChild( cells[2] );
 								
 								table.appendChild( row );
@@ -213,17 +293,19 @@
 
 	_container_.addOnLoad(function(){
 		remitt.loadPatients();
+		dojo.event.connect( dojo.widget.byId('remittProcessBilling'), "onClick", remitt, "OnProcessBilling" );
 		dojo.event.connect( dojo.widget.byId('remittBillSelectAll'), "onClick", remitt, "OnSelectAll" );
 		dojo.event.connect( dojo.widget.byId('remittBillSelectNone'), "onClick", remitt, "OnSelectNone" );
 	});
 	_container_.addOnUnLoad(function(){
+		dojo.event.disconnect( dojo.widget.byId('remittProcessBilling'), "onClick", remitt, "OnProcessBilling" );
 		dojo.event.disconnect( dojo.widget.byId('remittBillSelectAll'), "onClick", remitt, "OnSelectAll" );
 		dojo.event.disconnect( dojo.widget.byId('remittBillSelectNone'), "onClick", remitt, "OnSelectNone" );
 	});
 
 </script>
 
-<h3><!--{t}-->REMITT Billing: Perform Billing<!--{/t}--></h3>
+<h3><!--{t}-->REMITT Billing<!--{/t}-->: <!--{t}-->Perform Billing<!--{/t}--></h3>
 
 <table border="0" style="width: auto;">
 	<tr>
