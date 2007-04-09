@@ -102,3 +102,53 @@ END;
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS FreeMED_Module_UpdateVersion;
+
+DELIMITER //
+
+# Procedure: FreeMED_Module_UpdateVersion
+#
+#	Update internal version of FreeMED module for table versioning.
+#
+# Parameters:
+#
+#	t - IN VARCHAR(255), Table name of module
+#
+#	v - IN INT UNSIGNED, New version number
+#
+CREATE PROCEDURE FreeMED_Module_UpdateVersion ( IN t VARCHAR(255), IN v INT UNSIGNED )
+	LANGUAGE SQL
+	NOT DETERMINISTIC
+	MODIFIES SQL DATA
+BEGIN
+	UPDATE modules SET module_version_installed = v WHERE module_table = t;
+END;
+//
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS FreeMED_Module_GetVersion;
+
+DELIMITER //
+
+# Procedure: FreeMED_Module_GetVersion
+#
+#	Lookup internal version of FreeMED module table
+#
+# Parameters:
+#
+#	t - IN VARCHAR(255), Table name of module
+#
+#	v - OUT INT UNSIGNED, Version
+#
+CREATE PROCEDURE FreeMED_Module_GetVersion ( IN t VARCHAR(255), OUT v INT UNSIGNED )
+	LANGUAGE SQL
+	NOT DETERMINISTIC
+	READS SQL DATA
+BEGIN
+	SELECT IF(ISNULL(module_version_installed), 0, module_version_installed) INTO v FROM modules WHERE module_table = t;
+END;
+//
+
+DELIMITER ;
+
