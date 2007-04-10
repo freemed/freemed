@@ -22,7 +22,41 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<script language="javascript">
+
+	var remittMenu = {
+		status: false,
+		init: function ( ) {
+			dojo.io.bind({
+				method: "POST",
+				content: { },
+				url: "<!--{$relay}-->/org.freemedsoftware.api.Remitt.GetServerStatus",
+				load: function ( type, data, evt ) {
+					if ( data ) {
+						remittMenu.status = true;
+						document.getElementById('remittServerStatus').innerHTML = "<!--{t}-->REMITT Server Running<!--{/t}-->";
+					} else {
+						remittMenu.status = false;
+						document.getElementById('remittServerStatus').innerHTML = "<span style=\"color: #ff0000;\"><!--{t}-->REMITT Server NOT Running<!--{/t}--></span>";
+					}
+				},
+				mimetype: "text/json",
+				sync: true
+			});
+		}
+	};
+
+	_container_.addOnLoad(function() {
+		remittMenu.init();
+	});
+
+</script>
+
 <h3><!--{t}-->REMITT Billing<!--{/t}--></h3>
+
+<div style="padding: 1em; border: 1px solid #0000ff; background: #aaaaff; width: auto; text-align: center; margin: 1em;" id="remittServerStatus">
+	<img src="<!--{$htdocs}-->/images/loading.gif" border="0" />
+</div>
 
 <table border="0" cellpadding="5" cellspacing="0">
 
