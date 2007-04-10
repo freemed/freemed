@@ -66,6 +66,15 @@ div.infoBox {
 	max-width: 250px;
 	}
 
+.clickable {
+	font-weight: bold;
+	text-decoration: underline;
+	}
+.clickable:hover {
+	cursor: pointer;
+	text-decoration: none;
+	}
+
 h3 {
 	text-align: center;
 	background-color: #ccccff;
