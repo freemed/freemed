@@ -46,9 +46,15 @@
 					} else {
 						var pc = document.getElementById('remittPatientContainer');
 						var t = document.createElement('table');
+						var tBody = document.createElement('tbody');
+						tBody.style.height = '95%';
+						tBody.className = 'scrollContent';
 						pc.appendChild( t );
+						t.appendChild( tBody );
 						var cellCount = 4;
+						var alt = true;
 						for (var i=0; i<data.length; i++) {
+							alt = ! alt;
 							var patient = data[i].patient_id;
 							// Add to aggregators
 							remitt.patients[ patient ] = data[i];
@@ -71,6 +77,7 @@
 							// Create blank rows
 							for (var c=0; c<cellCount; c++) {
 								cells[c] = document.createElement('td');
+								cells[c].className = alt ? 'alternateRow' : '';
 								cells[c].valign = 'top';
 								row.appendChild( cells[c] );
 							}
@@ -100,7 +107,7 @@
 							cells[1].appendChild( divInner );
 
 							// Tack on to the end
-							t.appendChild( row );
+							tBody.appendChild( row );
 						}
 					}
 				},
@@ -146,12 +153,12 @@
 			var cEnabled = [ ];
 			var fOverride = [ ];
 
-			for ( var i for remitt.patientsEnabled ) {
+			for ( var i in remitt.patientsEnabled ) {
 				if ( remitt.patientsEnabled[ i ] ) {
 					pEnabled.push( i );
 				}
 			}
-			for ( var i for remitt.claimsEnabled ) {
+			for ( var i in remitt.claimsEnabled ) {
 				if ( remitt.claimsEnabled[ i ] ) {
 					cEnabled.push( i );
 				}

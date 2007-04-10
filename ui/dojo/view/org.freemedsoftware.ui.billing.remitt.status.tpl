@@ -79,7 +79,10 @@
 					cells[1].innerHTML = '<label for="billkey_mark_' + cur.billkey + '">' + cur.billkey + '</label>';
 					cells[2].innerHTML = '<label for="billkey_mark_' + cur.billkey + '">' + cur.format + '</label>';
 					cells[3].innerHTML = '<label for="billkey_mark_' + cur.billkey + '">' + cur.target + '</label>';
-					cells[4].innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" height="24" width="24" />'; // cur.result;
+					var d = document.createElement('div');
+					d.id = 'status_div_' + cur.billkey;
+					cells[4].appendChild( d );
+					d.innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" height="24" width="24" />'; // cur.result;
 					tBody.appendChild( row );
 
 					// Add to internal lists
@@ -100,8 +103,30 @@
 				return true;
 			}
 
+			// Fetch
+			var transientStatus = [ ];
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					// Pass currently processing keys
+					param0: remittStatus.billkeysProcessing
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.RemittBillingTransport.GetStatus",
+				load: function ( type, data, evt ) {
+					transientStatus = data;
+				},
+				mimetype: "text/dojo",
+				sync: true
+			});
+
 			// Check for outstanding status
-			for ( var i=0; i<remittStatus.billkeysProcessing.length
+			for ( var i=0; i<transientStatus.length; i++ ) {
+				var e = transientStatus[ i ];
+				if ( e.status != -1 ) {
+					var d = document.getElementById( 'status_div_' + e.billkey );
+					d.innerHTML = e.status;
+				}
+			}
 		},
 		OnMark: function ( evt ) {
 			var key = this.id.replace( 'billkey_mark_', '' );
