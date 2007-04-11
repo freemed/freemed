@@ -23,6 +23,27 @@
 CREATE TABLE IF NOT EXISTS `billkey` (
 	billkeydate		TIMESTAMP (14) DEFAULT NOW(),
 	billkey			BLOB,
+	bkprocs			TEXT,
 	id			SERIAL
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS billkey_Upgrade;
+DELIMITER //
+CREATE PROCEDURE billkey_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+	CALL FreeMED_Module_GetVersion( 'billkey', @V );
+
+	#----- Upgrades
+
+	# Version 1
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE billkey ADD COLUMN bkprocs TEXT AFTER billkey;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'billkey', 1 );
+END
+//
+DELIMITER ;
+CALL billkey_Upgrade( );
 
