@@ -385,7 +385,11 @@ class Remitt {
 	//
 	// Parameters:
 	//
-	//	$billkey - Data to be serialized
+	//	$billkey - Data to be serialized, hash containing:
+	//	* procedures - Array of procedure ids
+	//	* clearinghouse - Id of billing clearinghouse (optional)
+	//	* contact - Id of billing contact (optional)
+	//	* service - Id of billing service (optional)
 	//
 	// Returns:
 	//
@@ -395,8 +399,9 @@ class Remitt {
 		$query = $GLOBALS['sql']->insert_query (
 			'billkey',
 			array(
-				'billkeydate' => date('Y-m-d'),
-				'billkey' => serialize($billkey)
+				'billkeydate' => date( 'Y-m-d' ),
+				'billkey' => serialize( $billkey ),
+				'bkprocs' => $billkey[ 'procedures' ]
 			)
 		);
 		$result = $GLOBALS['sql']->query($query);
