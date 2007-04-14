@@ -64,13 +64,23 @@ class TableMaintenance {
 	//
 	//	$assoc - Association
 	//
+	//	$like - (optional) String to search names for
+	//
+	//	$picklist - (optional) Return in picklist format ( k, v )
+	//
 	// Returns:
 	//
 	//	Array of hashes.
 	//
-	public function GetModules ( $assoc ) {
-		$query = "SELECT module_name, module_version, module_class FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote( $assoc ).", module_associations )";
+	public function GetModules ( $assoc, $like = NULL, $picklist = false ) {
+		$query = "SELECT module_name, module_version, module_class FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote( $assoc ).", module_associations ) ". ( $like ? " AND LOWER(module_name) LIKE '%".$GLOBALS['sql']->escape( strtolower($like) )."%'" : "" );
 		$result = $GLOBALS['sql']->queryAll( $query );
+		if ( $picklist ) {
+			foreach ( $result AS $v ) {
+				$r[] = array ( $v['module_class'], $v['module_name'] );
+			}
+			return $r;
+		}
 		return $result;
 	} // end method GetModules
 
