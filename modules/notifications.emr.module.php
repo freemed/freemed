@@ -37,6 +37,15 @@ class Notifications extends EMRModule {
 	var $patient_field = 'npatient';
 	var $order_field = 'ntarget';
 
+	var $variables = array (
+		'noriginal',
+		'ntarget',
+		'ndescrip',
+		'nuser',
+		'nfor',
+		'npatient'
+	);
+
 	public function __construct () {
 		$this->summary_vars = array (
 			__("Date") => 'ntarget',
@@ -46,17 +55,28 @@ class Notifications extends EMRModule {
 
 		$this->acl = array ( 'bill', 'emr' );
 
+		$this->_SetAssociation('EmrModule');
+		$this->_SetAssociation('EpisodeOfCare');
+
 		// Set up a tickler, so we can send messages to the user
 		$this->_SetHandler('Tickler', 'notify_user');
 
 		// call parent constructor
 		parent::__construct( );
-	} // end constructor AllergiesModule
+	} // end constructor
 
 	protected function add_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['noriginal'] = date('Y-m-d');
-		$data['nuser'] = $GLOBALS['this_user']->user_number;
 		$data['nuser'] = freemed::user_cache()->user_number;
+		if ( empty($data['ntarget']) and $data['noffset'] > 0 ) {
+			$data['ntarget'] = $s->date_add( $s->ImportDate( date('Y-m-d') ), $data['noffset'] + 0 );
+		} else {
+			$data['ntarget'] = $s->ImportDate( $data['ntarget'] );
+		}
+		if ( ! $data['nfor'] ) {
+			$data['nfor'] = $data['nuser'];
+		}
 	}
 
 	public function notify_user ( $params = NULL ) {
