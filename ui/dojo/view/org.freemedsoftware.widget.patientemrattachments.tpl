@@ -162,6 +162,15 @@
 			// Load in hidden frame
 			//window.open( url )
 			document.getElementById('patientPrintView').src = url;
+		},
+		OnAdd: function ( ) {
+			var m = document.getElementById('emrSection').value;
+			if ( ! m.length ) {
+				alert( "<!--{t}-->You must select a module first.<!--{/t}-->" );
+				return false;
+			}
+			dojo.widget.byId('emrSimpleDialog').show();
+			dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.module.' + m.toLowerCase() + '.form?patient=<!--{$patient|escape}-->' );
 		}
 	};
 	
@@ -205,10 +214,12 @@
 	_container_.addOnLoad(function() {
 		patientLoadEmrAttachments();
 		dojo.event.connect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
+		dojo.event.connect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 	});
 
 	_container_.addOnUnLoad(function() {
 		dojo.event.disconnect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
+		dojo.event.disconnect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 	});
 
 </script>
@@ -223,16 +234,17 @@
 		<input dojoType="DropdownDatePicker" id="emrRangeEnd" />
 	</td>
 	<td>
-		<input dojoType="Select"
+		<input dojoType="ComboBox"
 			autocomplete="false"
 			id="emrSection_widget" widgetId="emrSection_widget"
 			style="width: 150px;"
-			dataUrl="<!--{$relay}-->/org.freemedsoftware.api.PatientInterface.EmrModules?param0=%{searchString}&param1=1"
+			dataUrl="<!--{$relay}-->/org.freemedsoftware.api.TableMaintenance.GetModules?param0=EmrModule&param1=%{searchString}&param2=1"
 			setValue="document.getElementById('emrSection').value = arguments[0];"
 			mode="remote" value="" />
 		</div>
 		<input type="hidden" id="emrSection" name="emrSection" value="" />
 	</td>
+	<td align="left"><button dojoType="button" id="emrAddButton" widgetId="emrAddButton"><!--{t}-->Add<!--{/t}--></button></td>
 	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.setFilters();"><!--{t}-->Apply<!--{/t}--></button></td>
 	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.printMultiple();"><!--{t}-->Print<!--{/t}--></button></td>
 </tr>
