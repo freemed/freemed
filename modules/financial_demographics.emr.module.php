@@ -126,7 +126,7 @@ class FinancialDemographics extends EMRModule {
 			html_form::text_widget('fdidnumber', 50),
 
 			__("Expiration") =>
-			html_form::text_widget('fdidnumber', 50),
+			html_form::text_widget('fdidexpire', 50),
 
 			__("Size of Household") =>
 			html_form::number_pulldown('fdhousehold', 0, 30),
