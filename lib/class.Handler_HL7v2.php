@@ -87,6 +87,55 @@ class Handler_HL7v2 {
 		}
 	} // end method _PIDToPatient
 
+	// Method: Handler_HL7v2->_IN1ToPayer
+	//
+	//	Resolve or create and resolve a payer record (insco table)
+	//	from an HL7 v2.3 IN1 segment.
+	//
+	// Parameters:
+	//
+	//	$in1 - IN1 segment array
+	//
+	// Returns:
+	//
+	//	Id number for new or old record.
+	//
+	function _IN1ToPayer ( $in1 ) {
+		// Check for company name
+		$result = $GLOBALS['sql']->query( "SELECT * FROM insco WHERE LOWER(insconame)=LOWER('".$in1[4]."')" );
+		if ($GLOBALS['sql']->num_rows( $result ) > 1 ) {
+			// Further qualify
+			//$result = $GLOBALS['sql']->query( "SELECT * FROM insco WHERE LOWER(insconame)=LOWER('".$in1[4]."')" );
+			die("TODO: futher qualify\n");
+		} elseif ($GLOBALS['sql']->num_rows( $result ) == 1 ) {
+			// Found, return
+			$r = $GLOBALS['sql']->fetch_array( $result );
+			return $r['id'];
+		} else {
+			// Create, not found
+			$query = $GLOBALS['sql']->insert_query(
+				'insco',
+				array (
+					'insconame' => $in1[4],
+					'inscoaddr1' => $in1[5][0],
+					'inscoaddr2' => $in1[5][1],
+					'inscocity' => $in1[5][2],
+					'inscostate' => $in1[5][3],
+					'inscozip' => $in1[5][4],
+					'inscophone' => $this->_StripToNumeric( $in1[7] )
+				)
+			);
+			return $GLOBALS['sql']->last_record ( $result );
+		}
+	} // end method _IN1ToPayer
+
+	// Method: Handler_HL7v2->_ResolveICDCode
+	function _ResolveICDCode ( $code ) {
+		$result = $GLOBALS['sql']->query( "SELECT id FROM icd9 WHERE icd9code='".addslashes($code)."' " );
+		$r = $GLOBALS['sql']->fetch_array ( $result );
+		return $r['id'];
+	} // end method _ResolveICDCode
+
 	// Method: Handler_HL7v2->_StripToNumeric
 	//
 	//	Strip all non-numeric characters from a string

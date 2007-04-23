@@ -28,7 +28,7 @@ class Handler_HL7v2_A04 extends Handler_HL7v2 {
 			if ($pv1[HL7v2_PV1_REFERRING][HL7v2_PV1_REFERRING_ID]) {
 				syslog(LOG_INFO, 'HL7 parser| PV1 - for ID #'.$pv1[HL7v2_PV1_REFERRING][HL7v2_PV1_REFERRING_ID].' found '.$this->parser->__composite_to_provider($pv1[HL7v2_PV1_REFERRING]));
 			}
-			
+
 			// Create array of variables
 			$variables = array (
 				'ptlname' => $v[HL7v2_PID_NAME][HL7v2_PID_NAME_LAST],
@@ -55,6 +55,17 @@ class Handler_HL7v2_A04 extends Handler_HL7v2 {
 			if ($pv1[HL7v2_PV1_REFERRING]) {
 				$variables['ptrefdoc'] = $this->parser->__composite_to_provider($pv1[HL7v2_PV1_REFERRING]);
 			}
+
+			// Check for diagnoses
+			if (is_array($this->parser->message['DG1'])) {
+				foreach ($this->parser->message['DG1'] AS $dg1) {
+					// $dg1[1] = diagnosis position
+					if ($dg1 > 0 and $dg1 <= 4) {
+						$variables['ptdiag'.($dg1 + 0)] = $this->_ResolveICDCode($dg1[3]);
+					}
+				}
+			}
+			
 			if ($GLOBALS['sql']->results($exist_query)) {
 				// Exists, proceed with A08
 				$query = $GLOBALS['sql']->update_query(
