@@ -36,7 +36,9 @@ define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)) );
 if (file_exists(dirname(__FILE__).'/settings.php')) {
 	include_once(dirname(__FILE__).'/settings.php');
 } else {
-	die("FreeMED cannot find the configuration file <b>lib/settings.php</b>.");
+	if (!defined('SKIP_SQL_INIT')) {
+		die("FreeMED cannot find the configuration file <b>lib/settings.php</b>.");
+	}
 }
 
 //----- Make sure we have enough memory without having to edit {php,php4,php5}.ini
@@ -110,7 +112,9 @@ if (!defined('SESSION_DISABLE')) {
 	include_once (dirname(__FILE__)."/i18n.php");
 
 	// Load ACL routines
-	include_once (dirname(__FILE__)."/acl.php");
+	if (!defined('SKIP_SQL_INIT')) {
+		include_once (dirname(__FILE__)."/acl.php");
+	}
 }
 // ***************************************************************
 
