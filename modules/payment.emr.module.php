@@ -668,13 +668,32 @@ class PaymentModule extends EMRModule {
 					
                     break; // end refund category (add)
                 case DENIAL: // denial category (add) 3
-					$payrecamt = 0; // default
-                    if ($payreclink==1) // adjust to zero
-                    {
-                        $payrecamt = freemed::get_link_field ($payrecproc, "procrec",
-                                                               "procbalcurrent");
-                        //$payrecamt   = -(abs($amount_left));
-                    }
+			$l = CreateObject('_FreeMED.Ledger');
+
+			// Where is this going?
+			$where = $l->next_coverage($payrecproc);
+
+			// Move to the next coverage in the ledger
+			$l->move_to_next_coverage (
+				$payrecproc,
+				0
+			);
+			$payrecamt = 0; // default
+
+			// TODO: Add "denial" record
+			
+			$GLOBALS['display_buffer'] = "Moved to next coverage.<br/>\n";
+            $display_buffer .= "
+            </CENTER>
+            <P>
+            <CENTER>
+            <A HREF=\"$this->page_name?been_here=1&viewaction=refresh".
+            "&action=addform&item=$payrecproc&patient=$patient&module=$module\">
+            ".__("Back")."</A>
+            </CENTER>
+            <P>
+            ";
+			return false;
                     break; // end denial category (add)
 
                 case WRITEOFF: // writeoff entire balance
@@ -761,23 +780,6 @@ class PaymentModule extends EMRModule {
 							 procbalcurrent = '$procbalcurrent'
                              WHERE id='$payrecproc'";
                     break; // end refund category (add)
-
-                case DENIAL: // denial category (add) 3
-                    if ($payreclink==1)  // adjust to zero?
-                    {
-						// this should force it to 0 naturally
-						$proccharges = $proccharges - $payrecamt;
-						$procbalcurrent = $proccharges - $procamtpaid;
-                        $query = "UPDATE procrec SET
-                             proccharges    = '$proccharges',
-							 procbalcurrent = '$procbalcurrent'
-                             WHERE id='$payrecproc'";
-                    }
-                    else
-                    { // if no adjust
-                        $query = "";
-                    } // end checking for adjust to zero
-                    break; // end denial category (add)
 
                 case WRITEOFF: // writeoff entire balance
 					// this should force it to 0 naturally
