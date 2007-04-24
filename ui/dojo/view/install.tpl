@@ -25,9 +25,11 @@
 <html>
 <head>
 	<title><!--{t}-->FreeMED Installation Wizard<!--{/t}--></title>
+<!--{*
 	<script type="text/javascript">
 		djConfig = { isDebug: true };
 	</script>
+*}-->
 	<script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 	<script type="text/javascript">
 		dojo.require("dojo.io.*");
@@ -341,7 +343,7 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Username<!--{/t}--></td>
-				<td align="left"><input type="input" id="username" name="username" /></td>
+				<td align="left"><input type="input" id="username" name="username" value="admin" /></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Password<!--{/t}--></td>
