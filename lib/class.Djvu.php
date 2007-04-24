@@ -58,6 +58,8 @@ class Djvu {
 	//	$force_ps - (optional) Boolean, force no JPEG conversion. Defaults
 	//	to false.
 	//
+	//	$force_rotate - (optional) Boolean, force 90 degree rotation
+	//
 	// Returns:
 	//
 	//	Either JPEG image of file in string or name of temporary file.
