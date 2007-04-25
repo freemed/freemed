@@ -87,10 +87,6 @@
 			okay = false;
 			messages += "<!--{t}-->Username has not been set.<!--{/t}-->\n";
 		}
-		if ( ! document.getElementById('password').value ) {
-			okay = false;
-			messages += "<!--{t}-->Password has not been set.<!--{/t}-->\n";
-		}
 		if ( document.getElementById('password').value != document.getElementById('password_confirm').value ) {
 			okay = false;
 			messages += "<!--{t}-->Password do not match.<!--{/t}-->\n";
