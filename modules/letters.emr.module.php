@@ -69,6 +69,7 @@ class Letters extends EMRModule {
 		);
 
 		// Set associations
+		$this->_SetAssociation('EmrModule');
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'lettereoc');
 
