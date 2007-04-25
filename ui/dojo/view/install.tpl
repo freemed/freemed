@@ -420,10 +420,6 @@
 				</select></td>
 			</tr>
 			<tr>
-				<td align="right"><!--{t}-->Default Language<!--{/t}--></td>
-				<td align="left"></td>
-			</tr>
-			<tr>
 				<td align="right"><!--{t}-->Scheduler Start Time<!--{/t}--></td>
 				<td align="left"><div id="starttime" name="starttime" dojoType="TimePicker"></div></td>
 			</tr>
