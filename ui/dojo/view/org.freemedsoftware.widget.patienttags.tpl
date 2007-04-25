@@ -126,11 +126,15 @@
 			},
 			mimetype: "text/json"
 		});
-		dojo.widget.byId('tagSubmit').inputNode.value = '';
+		try {
+			dojo.widget.byId('tagSubmit').inputNode.value = '';
+		} catch ( err ) { }
 	});
 
-	_container_.addOnUnLoad(function(){
-		dojo.widget.byId('tagSubmit').inputNode.value = '';
+	_container_.addOnUnload(function(){
+		try {
+			dojo.widget.byId('tagSubmit').inputNode.value = '';
+		} catch ( err ) { }
 	});
 
 </script>
@@ -140,11 +144,11 @@
 	<div id="formDiv">
 	<input dojoType="Select"
 		autocomplete="false"
-		id="tagSumbit" widgetId="tagSumbit"
+		id="tagSubmit" widgetId="tagSubmit"
 		style="width: 150px;"
 		dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
 		setValue="patientTags.addTag(this, arguments[0]);"
-		mode="remote" />
+		mode="remote" value="" />
 	</div>
 </div>
 

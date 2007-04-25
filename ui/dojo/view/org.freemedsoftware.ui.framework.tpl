@@ -32,11 +32,14 @@
 <link rel="stylesheet" type="text/css" href="<!--{$htdocs}-->/stylesheet.css" />
 <!--{if $DEBUG}-->
 <script language="JavaScript" type="text/javascript">
-var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
+var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 </script>
 <!--{/if}-->
 <script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 <script language="JavaScript" type="text/javascript">
+	<!--{if $DEBUG}-->
+	dojo.require( 'dojo.debug.Firebug' );
+	<!--{/if}-->
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
 	dojo.require("dojo.widget.LinkPane");
@@ -106,11 +109,15 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 	} // end function freemedLoad
 
 	function freemedPatientContentLoad ( url ) {
-		// Set the URL for the contentPane to load the appropriate content
-		dojo.widget.byId( 'freemedPatientContent' ).setUrl( url );
+		try {
+			// Set the URL for the contentPane to load the appropriate content
+			dojo.widget.byId( 'freemedPatientContent' ).setUrl( url );
 
-		// Push current help topic value
-		freemedGlobal.currentHelpTopic = url;
+			// Push current help topic value
+			freemedGlobal.currentHelpTopic = url;
+		} catch (err) {
+			dojo.debug('Caught error in freemedPatientContentLoad() for ' + url);
+		}
 
 		return true;
 	} // end function freemedLoad

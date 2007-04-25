@@ -126,7 +126,7 @@
 		djvuViewer.OnLoad();
 	});
 
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('djvuPagePrevTop'), "onClick", djvuViewer, "prevPage");
 		dojo.event.disconnect(dojo.widget.byId('djvuPagePrevBottom'), "onClick", djvuViewer, "prevPage");
 		dojo.event.disconnect(dojo.widget.byId('djvuPageNextTop'), "onClick", djvuViewer, "nextPage");

@@ -25,8 +25,8 @@
 
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
-	dojo.require("dojo.widget.Editor2");
 	dojo.require("dojo.widget.FilteringTable");
+	dojo.require("dojo.widget.RichText");
 	dojo.require('dojo.widget.DropdownDatePicker');
 
 	patientEmrAttachments = {
@@ -96,8 +96,7 @@
 				break;
 
 				case 'modify':
-				dojo.widget.byId('emrSimpleDialog').show();
-				dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid );
+				freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid );
 				break;
 	
 				case 'print':
@@ -169,8 +168,7 @@
 				alert( "<!--{t}-->You must select a module first.<!--{/t}-->" );
 				return false;
 			}
-			dojo.widget.byId('emrSimpleDialog').show();
-			dojo.widget.byId('emrSimpleDialogContent').setUrl( '<!--{$controller}-->/org.freemedsoftware.module.' + m.toLowerCase() + '.form?patient=<!--{$patient|escape}-->' );
+			freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + m.toLowerCase() + '.form?patient=<!--{$patient|escape}-->' );
 		}
 	};
 	
@@ -217,7 +215,7 @@
 		dojo.event.connect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 	});
 
-	_container_.addOnUnLoad(function() {
+	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
 		dojo.event.disconnect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 	});
@@ -306,7 +304,7 @@
 	<form>
 	<table border="0">
 		<tr align="center">
-			<textarea dojoType="Editor2" id="emrAnnotation" name="emrAnnotation" rows="5" cols="60" htmlEditing="true" useActiveX="true" shareToolbar="false" toolbarAlwaysVisible="true"></textarea>
+			<textarea dojoType="RichText" id="emrAnnotation" name="emrAnnotation" rows="5" cols="60" htmlEditing="true" useActiveX="true" shareToolbar="false" toolbarAlwaysVisible="true"></textarea>
 		</tr>
 		<tr>
 			<td align="center">

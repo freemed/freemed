@@ -79,7 +79,7 @@
 		dojo.event.connect( dojo.widget.byId("patientReferralAdd"), "onClick", patientReferrals, "addReferralForm" );
 	});
 
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId("patientReferralAdd"), "onClick", patientReferrals, "addReferralForm" );
 	});
 
