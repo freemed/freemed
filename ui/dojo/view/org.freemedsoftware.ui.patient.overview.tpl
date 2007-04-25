@@ -25,6 +25,7 @@
 
 <script language="javascript">
 	dojo.require("dojo.widget.DropdownContainer");
+
 	_container_.addOnLoad(function(){
 		dojo.widget.byId('contactDropdown').inputNode.style.display = 'none';
 	});
@@ -42,7 +43,7 @@
 
 <div id="patientInfoBar">
 	<table width="100%" border="0" cellspacing="0" cellpadding="3"><tr>
-	<td><b>Patient : </b> <!--{method namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}--></td>
+	<td><b><!--{t}-->Patient<!--{/t}--> : </b> <!--{method namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}--></td>
 		<!--{* Form a contact "box" *}-->
 	<td>
 	<!--{if $record.ptprefcontact == 'home'}-->
@@ -71,16 +72,10 @@
 		<!--{* Icon bar for easy actions *}-->
 	<td>
 		<span onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
-		<span onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/rightarrowglassbutton.png" height="18" width="18" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
+		<span onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/rightarrowglassbutton.png" height="18" width="18" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
 	</td>
 	</tr></table>
 </div>
 
-<table border="0"><tr><td valign="top">
-<!--{include file="org.freemedsoftware.widget.patientemrattachments.tpl" patient=$patient}-->
-</td><td width="250" valign="top">
-<!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient}-->
-<br clear="all" />
-<!--{include file="org.freemedsoftware.widget.patientreferrals.tpl" patient=$patient}-->
-</td></tr></table>
+<div id="freemedPatientContent" dojoType="ContentPane" style="width: 100%; height: 100%;" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false" adjustPaths="false" href="<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->"></div>
 

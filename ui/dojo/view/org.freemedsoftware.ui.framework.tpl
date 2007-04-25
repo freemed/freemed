@@ -105,6 +105,16 @@ var djConfig = { isDebug: true, debugContainerId : "dojoDebugOutput" };
 		return true;
 	} // end function freemedLoad
 
+	function freemedPatientContentLoad ( url ) {
+		// Set the URL for the contentPane to load the appropriate content
+		dojo.widget.byId( 'freemedPatientContent' ).setUrl( url );
+
+		// Push current help topic value
+		freemedGlobal.currentHelpTopic = url;
+
+		return true;
+	} // end function freemedLoad
+
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
 		currentHelpTopic: undefined,

@@ -44,7 +44,7 @@
 				mimetype: "text/json",
 				sync: true
 			});
-			this.populate('patientEncounterPatientName', 'patient_name');
+			//this.populate('patientEncounterPatientName', 'patient_name');
 			this.populate('patientEncounter.patientName', 'patient_name');
 			this.populate('patientEncounter.dateOfBirth', 'date_of_birth_mdy');
 			this.populate('patientEncounter.age', 'age');
@@ -72,26 +72,26 @@
 	//	Initialization / Event Connection
 	_container_.addOnLoad(function(){
 		patientEncounter.loadPatientInformation( );
-		dojo.event.connect( dojo.widget.byId('superbillTemplate_widget'), 'onSelect', patientEncounter, loadSuperbill );
+		dojo.event.connect( dojo.widget.byId('superbillTemplate_widget'), 'onSelect', patientEncounter, 'loadSuperbill' );
 	});
 	_container_.addOnUnLoad(function(){
-		dojo.event.disconnect( dojo.widget.byId('superbillTemplate_widget'), 'onSelect', patientEncounter, loadSuperbill );
+		dojo.event.disconnect( dojo.widget.byId('superbillTemplate_widget'), 'onSelect', patientEncounter, 'loadSuperbill' );
 	});
 
 </script>
 
 <style type="text/css">
-	#patientEncounterPatientName {
+	#patientEncounterClose {
 		color: #555555;
 		text-decoration: underline;
 		}
-	#patientEncounterPatientName:hover {
+	#patientEncounterClose:hover {
 		color: #ff5555;
 		cursor: pointer;
 		}
 </style>
 
-<h3><!--{t}-->Patient Encounter Console<!--{/t}--> [ <a onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=<!--{$patient}-->');"><span id="patientEncounterPatientName"></span></a> ]</h3>
+<h3><!--{t}-->Patient Encounter Console<!--{/t}--> [ <a onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');" id="patientEncounterClose">X</a> ]</h3>
 
 <div dojoType="TabContainer" id="patientEncounterTabContainer" style="width: 100%; height: 100%;">
 
