@@ -70,6 +70,7 @@ INSERT INTO `reporting` (
 		report_param_count,
 		report_param_names,
 		report_param_types,
+		report_param_options,
 		report_param_optional
 	) VALUES (
 		'Patient Account Activity',
@@ -80,6 +81,7 @@ INSERT INTO `reporting` (
 		2,
 		'Starting Date,Ending Date',
 		'Date,Date',
+		'Start,End',
 		'0,0'
 	);
 
