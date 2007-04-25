@@ -156,7 +156,7 @@
 		dojo.event.connect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
 		dojo.event.connect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('unreadDocuments'), "onSelect", o, "selectUnreadDocument");
 		dojo.event.disconnect(dojo.widget.byId('fileUnreadDocumentButton'), "onClick", o, "fileUnreadDocument");
 		dojo.event.disconnect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");

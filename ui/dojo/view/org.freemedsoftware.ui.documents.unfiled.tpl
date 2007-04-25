@@ -157,7 +157,7 @@
 		dojo.event.connect(dojo.widget.byId('modifyDirectlyButton'), "onClick", o, "modifyDirectly");
 		dojo.event.connect(dojo.widget.byId('modifyDirectlyNoCoverButton'), "onClick", o, "modifyDirectlyNoCover");
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('unfiledDocuments'), "onSelect", o, "selectUnfiledDocument");
 		dojo.event.disconnect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
 		dojo.event.disconnect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");

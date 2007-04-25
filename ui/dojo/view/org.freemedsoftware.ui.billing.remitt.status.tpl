@@ -141,7 +141,7 @@
 		// Set interval polling every 15 seconds
 		remittStatus.interval = setInterval( remittStatus.intervalCallback, 1000 * 15 );
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		if ( remittStatus.interval ) { clearInterval( remittStatus.interval ); }
 	});
 

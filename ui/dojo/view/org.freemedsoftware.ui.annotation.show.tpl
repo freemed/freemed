@@ -49,7 +49,7 @@
 	};
 
 	_container_.addOnLoad(function(){
-		document.getElementById('annotationContainerDiv').innerHTML = 'Initial';
+		document.getElementById('annotationContainerDiv').innerHTML = '';
 		annotationShow.initialLoad();
 	});
 

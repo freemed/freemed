@@ -304,7 +304,7 @@
 		dojo.event.connect( dojo.widget.byId('remittBillSelectAll'), "onClick", remitt, "OnSelectAll" );
 		dojo.event.connect( dojo.widget.byId('remittBillSelectNone'), "onClick", remitt, "OnSelectNone" );
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('remittProcessBilling'), "onClick", remitt, "OnProcessBilling" );
 		dojo.event.disconnect( dojo.widget.byId('remittBillSelectAll'), "onClick", remitt, "OnSelectAll" );
 		dojo.event.disconnect( dojo.widget.byId('remittBillSelectNone'), "onClick", remitt, "OnSelectNone" );

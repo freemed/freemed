@@ -106,7 +106,7 @@
 		dojo.event.connect( dojo.widget.byId('accountsReceivableSelectAllButton'), "onClick", accountsReceivable, "selectAll" );
 		dojo.event.connect( dojo.widget.byId('accountsReceivableSelectNoneButton'), "onClick", accountsReceivable, "selectNone" );
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('accountsReceivableUpdateButton'), "onClick", accountsReceivable, "loadData" );
 		dojo.event.disconnect( dojo.widget.byId('accountsReceivableWriteoffButton'), "onClick", accountsReceivable, "markAsBilled" );
 		dojo.event.disconnect( dojo.widget.byId('accountsReceivableSelectAllButton'), "onClick", accountsReceivable, "selectAll" );

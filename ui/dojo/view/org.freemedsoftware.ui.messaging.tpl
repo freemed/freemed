@@ -146,7 +146,7 @@
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
 		dojo.event.connect(dojo.widget.byId('createMessageButton'), "onClick", o, "createMessageCallback");
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
 		dojo.event.disconnect(dojo.widget.byId('messageNewButton'), "onClick", o, "newMessage");
 		dojo.event.disconnect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");

@@ -58,7 +58,7 @@
 		dojo.event.connect(dojo.widget.byId('tagSimpleTable'), "onSelect", tagSearch, "selectPatient");
 	});
 
-	_container_.addOnUnLoad(function() {
+	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('tagSimpleTable'), "onSelect", tagSearch, "selectPatient");
 	});
 </script>

@@ -73,7 +73,7 @@
 		dojo.event.connect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
 	});
 
-	_container_.addOnUnLoad(function() {
+	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
 		dojo.event.disconnect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
 	});

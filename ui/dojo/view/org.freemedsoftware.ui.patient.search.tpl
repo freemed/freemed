@@ -63,7 +63,7 @@
 		dojo.event.connect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
 	});
 
-	_container_.addOnUnLoad(function() {
+	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.disconnect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
 		dojo.widget.byId('smartSearch').setValue('');

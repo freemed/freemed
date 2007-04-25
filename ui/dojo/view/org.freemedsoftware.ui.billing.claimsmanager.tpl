@@ -130,7 +130,7 @@
 		dojo.event.connect( dojo.widget.byId('claimsManagerSelectAllButton'), "onClick", claimsManager, "selectAll" );
 		dojo.event.connect( dojo.widget.byId('claimsManagerSelectNoneButton'), "onClick", claimsManager, "selectNone" );
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('claimsManagerUpdateButton'), "onClick", claimsManager, "loadData" );
 		dojo.event.disconnect( dojo.widget.byId('claimsManagerPostCheckButton'), "onClick", claimsManager, "postCheck" );
 		dojo.event.disconnect( dojo.widget.byId('claimsManagerRebillButton'), "onClick", claimsManager, "rebill" );
@@ -221,7 +221,7 @@
 	<div dojoType="ContentPane" sizeShare="40" layoutAlign="bottom">
 
 		<div class="tableContainer">
-	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="true">
+	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="true" style="height: 100%;">
 				<thead>
 					<tr>
 						<th field="date_of_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>

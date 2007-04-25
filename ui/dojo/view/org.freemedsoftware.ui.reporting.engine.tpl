@@ -198,7 +198,7 @@
 		dojo.event.connect(dojo.widget.byId('reportSubmitXML'), "onClick", reportingEngine, 'generateXML');
 	});
 
-	_container_.addOnUnLoad(function() {
+	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');

@@ -74,7 +74,7 @@
 		patientEncounter.loadPatientInformation( );
 		dojo.event.connect( dojo.widget.byId('superbillTemplate_widget'), 'onSelect', patientEncounter, 'loadSuperbill' );
 	});
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('superbillTemplate_widget'), 'onSelect', patientEncounter, 'loadSuperbill' );
 	});
 

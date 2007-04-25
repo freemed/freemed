@@ -47,7 +47,7 @@
 		o.loadData();
 	});
 
-	_container_.addOnUnLoad(function () {
+	_container_.addOnUnload(function () {
 	});
 
 </script>

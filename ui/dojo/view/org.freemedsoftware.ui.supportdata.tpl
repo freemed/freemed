@@ -134,7 +134,7 @@
 		dojo.event.connect( dojo.widget.byId('supportFilterButton'), 'onClick', supportData, 'onFilterClick' );
 	});
 
-	_container_.addOnUnLoad(function(){
+	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('supportDataSelector'), 'onSelect', supportData, 'createMaintenance' );
 		dojo.event.disconnect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
