@@ -94,7 +94,7 @@
 	<tr>
 		<td align="right"><!--{t}-->Letter<!--{/t}--></td>
 		<td>
-			<div dojoType="RichText" id="letterText" widgetId="letterText" style="border: 1px solid black; background-color: #ffffff;"></div>
+			<div dojoType="RichText" id="letterText" widgetId="letterText" style="border: 1px solid black; background-color: #ffffff; width: 30em;" height="15em" inheritWidth="true"></div>
 		</td>
 	</tr>
 

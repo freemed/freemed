@@ -28,8 +28,8 @@
 	var notifications = {
 		handleResponse: function ( data ) {
 			if (data) {
-				dojo.widget.byId('emrSimpleDialog').hide();
 				freemedMessage( "<!--{t}-->Added notifications.<!--{/t}-->", "INFO" );
+				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
 			}
@@ -83,16 +83,19 @@
 	_container_.addOnLoad(function() {
 		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notifications, 'submit' );
 	});
-	_container_.addOnUnLoad(function() {
+	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notifications, 'submit' );
 	});
 
 </script>
 
+<h3><!--{t}-->Notification<!--{/t}--></h3>
+
 <table border="0" style="width: auto;">
 
 	<tr>
 		<td align="right"><!--{t}-->Target Date<!--{/t}--></td>
+		<td>
 		<select dojoType="ComboBox" id="notifications.targetDate" widgetId="notifications.targetDate">
 			<option value="1">1 <!--{t}-->Day<!--{/t}--></option>
 			<option value="2">2 <!--{t}-->Days<!--{/t}--></option>
@@ -124,6 +127,7 @@
 			<option value="3285">9 <!--{t}-->Years<!--{/t}--></option>
 			<option value="3650">10 <!--{t}-->Years<!--{/t}--></option>
 		</select>
+		</td>
 	</tr>
 
 	<tr>
@@ -152,7 +156,7 @@
 	                <div><!--{t}-->Commit Changes<!--{/t}--></div>
 	        </button>
         </td><td align="left">
-        	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="dojo.widget.byId('emrSimpleDialog').hide();">
+        	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedPatientContentLoad('org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');">
         	        <div><!--{t}-->Cancel<!--{/t}--></div>
         	</button>
         </td></tr></table>
