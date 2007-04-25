@@ -632,7 +632,9 @@ dojo.widget.defineWidget(
 
 					dojo.html.removeNode(tmpContent);
 					this.document.body.innerHTML = html;
-					this.document.designMode = "on";
+					try {
+						this.document.designMode = "on";
+					} catch(e) {} 
 					try{
 						var currentDomain = (new dojo.uri.Uri(dojo.doc().location)).host;
 						if(dojo.doc().domain!=currentDomain){
