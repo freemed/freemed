@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 	imageformat		CHAR (4) NOT NULL DEFAULT 'djvu',
 	imagephy		INT UNSIGNED DEFAULT 0,
 	imagereviewed		INT UNSIGNED DEFAULT 0,
+	imagetext		TEXT,
 	locked			INT UNSIGNED DEFAULT 0,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
@@ -57,24 +58,35 @@ BEGIN
 	DROP TRIGGER images_Update;
 
 	#----- Upgrades
+	CALL FreeMED_Module_GetVersion( 'images', @V );
 
-	#	Version 0.3
-	ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
+	# Version 1
+	IF @V < 1 THEN
+		#	Version 0.3
+		ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
 
-	#	Version 0.4
-	ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
+		#	Version 0.4
+		ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
 
-	#	Version 0.4.1
-	ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+		#	Version 0.4.1
+		ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
 
-	#	Version 0.4.2
-	ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+		#	Version 0.4.2
+		ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
 
-	#	Version 0.4.3
-	ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
+		#	Version 0.4.3
+		ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
 
-	ALTER IGNORE TABLE images ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
-	ALTER TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+		ALTER IGNORE TABLE images ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+		ALTER TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	END IF;
+
+	# Version 2
+	IF @V < 2 THEN
+		ALTER TABLE images ADD COLUMN imagetext TEXT AFTER imagereviewed;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'images', 2 );
 END
 //
 DELIMITER ;
@@ -94,14 +106,14 @@ CREATE TRIGGER images_Delete
 CREATE TRIGGER images_Insert
 	AFTER INSERT ON images
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER images_Update
 	AFTER UPDATE ON images
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='images' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='images' AND oid=NEW.id;
 	END;
 //
 
