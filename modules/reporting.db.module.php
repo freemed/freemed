@@ -153,6 +153,7 @@ class Reporting extends SupportModule {
 			$buf = "<html><head><title>".htmlentities( $report['report_name'] )."</title></head>\n";
 			$buf .= "<body>";
 			$buf .= "<h1>".htmlentities( $report['report_name'] )."</h1>\n";
+			$buf .= "<h3>". __("Printed on") . " " . date('r') . "</h3>\n";
 			$buf .= "<table>\n";
 			$buf .= "\t<thead>\n";
 			$buf .= "\t\t<tr>\n";
