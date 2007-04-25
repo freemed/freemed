@@ -82,6 +82,8 @@ class FinancialDemographics extends EMRModule {
 
 		$this->acl = array ( 'bill', 'emr' );
 
+		$this->_SetAssociation('EmrModule');
+
 		// Set configuration variables for sliding fee scale
 		$this->_SetMetaInformation('global_config_vars', array (
 			'sliding_fee', 'fed_pov_level', 'fed_pov_inc'
