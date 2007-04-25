@@ -312,7 +312,7 @@ class BaseModule extends Module {
 	//
 	//	Filename of PDF file containing render.
 	//
-	function print_override ( $id ) {
+	protected function print_override ( $id ) {
 		return false; // STUB, so we don't use it most of the time
 	} // end method print_override
 

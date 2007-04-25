@@ -50,6 +50,7 @@ class ScannedDocuments extends EMRModule {
 		'imageformat',
 		'imagephy',
 		'imagereviewed',
+		'imagetext',
 		'user'
 	);
 
@@ -206,7 +207,7 @@ class ScannedDocuments extends EMRModule {
 		);
 	} // end method tc_picklist
 
-	function print_override ( $id ) {
+	protected function print_override ( $id ) {
 		// Create djvu object
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = freemed::image_filename($rec[$this->patient_field], $id, 'djvu');
