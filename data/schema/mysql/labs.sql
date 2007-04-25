@@ -101,14 +101,14 @@ CREATE TRIGGER labs_Delete
 CREATE TRIGGER labs_Insert
 	AFTER INSERT ON labs
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'labs', NEW.labpatient, NEW.id, NEW.labtimestamp, CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ), NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'labs', NEW.labpatient, NEW.id, NEW.labtimestamp, CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER labs_Update
 	AFTER UPDATE ON labs
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.labtimestamp, patient=NEW.labpatient, summary=CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ), user=NEW.user, active=NEW.active WHERE module='labs' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.labtimestamp, patient=NEW.labpatient, summary=CONCAT( NEW.labordercode, ' - ', NEW.laborderdescrip ), user=NEW.user, status=NEW.active WHERE module='labs' AND oid=NEW.id;
 	END;
 //
 

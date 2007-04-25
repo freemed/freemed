@@ -74,7 +74,7 @@ CREATE TRIGGER allergies_Delete
 CREATE TRIGGER allergies_Insert
 	AFTER INSERT ON allergies
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergy, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergy, NEW.user, NEW.active );
 	END;
 //
 

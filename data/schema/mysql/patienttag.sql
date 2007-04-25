@@ -92,14 +92,14 @@ CREATE TRIGGER patienttag_Delete
 CREATE TRIGGER patienttag_Insert
 	AFTER INSERT ON patienttag
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'patienttag', NEW.patient, NEW.id, NEW.datecreate, NEW.tag, NEW.user, 'active' );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'patienttag', NEW.patient, NEW.id, NEW.datecreate, NEW.tag, NEW.user, 'active' );
 	END;
 //
 
 CREATE TRIGGER patienttag_Update
 	AFTER UPDATE ON patienttag
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.datecreate, patient=NEW.patient, summary=NEW.tag, user=NEW.user, active=IF(IFNULL(NEW.dateexpire, 'null')='null', 'active', 'inactive') WHERE module='patienttag' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.datecreate, patient=NEW.patient, summary=NEW.tag, user=NEW.user, status=IF(IFNULL(NEW.dateexpire, 'null')='null', 'active', 'inactive') WHERE module='patienttag' AND oid=NEW.id;
 	END;
 //
 

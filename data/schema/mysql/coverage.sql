@@ -97,14 +97,14 @@ CREATE TRIGGER coverage_Delete
 CREATE TRIGGER coverage_Insert
 	AFTER INSERT ON coverage
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary,user, active ) VALUES ( 'coverage', NEW.covpatient, NEW.id, NEW.covdtadd, CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ), NEW.user, IF( NEW.covstatus = 1, 'inactive', 'active' ) );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary,user, status ) VALUES ( 'coverage', NEW.covpatient, NEW.id, NEW.covdtadd, CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ), NEW.user, IF( NEW.covstatus = 1, 'inactive', 'active' ) );
 	END;
 //
 
 CREATE TRIGGER coverage_Update
 	AFTER UPDATE ON coverage
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.covdtmod, patient=NEW.covpatient, summary=CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ), user=NEW.user, active=IF( NEW.covstatus=1, 'inactive', 'active' ) WHERE module='coverage' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.covdtmod, patient=NEW.covpatient, summary=CONCAT( NEW.covplanname, '[', NEW.covrel, ']' ), user=NEW.user, status=IF( NEW.covstatus=1, 'inactive', 'active' ) WHERE module='coverage' AND oid=NEW.id;
 	END;
 //
 

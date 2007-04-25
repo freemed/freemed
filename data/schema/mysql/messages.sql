@@ -78,7 +78,7 @@ CREATE TRIGGER messages_Insert
 	AFTER INSERT ON messages
 	FOR EACH ROW BEGIN
 		IF NEW.msgpatient > 0 THEN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'messages', NEW.msgpatient, NEW.id, NEW.msgtime, NEW.msgsubject, NEW.msgby, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'messages', NEW.msgpatient, NEW.id, NEW.msgtime, NEW.msgsubject, NEW.msgby, NEW.active );
 		END IF;
 	END;
 //
@@ -87,7 +87,7 @@ CREATE TRIGGER messages_Update
 	AFTER UPDATE ON messages
 	FOR EACH ROW BEGIN
 		IF NEW.msgpatient > 0 THEN
-		UPDATE `patient_emr` SET stamp=NEW.msgtime, patient=NEW.msgpatient, summary=NEW.msgsubject, user=NEW.msgby, active=NEW.active WHERE module='messages' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.msgtime, patient=NEW.msgpatient, summary=NEW.msgsubject, user=NEW.msgby, status=NEW.active WHERE module='messages' AND oid=NEW.id;
 		END IF;
 	END;
 //

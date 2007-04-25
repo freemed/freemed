@@ -72,14 +72,14 @@ CREATE TRIGGER certifications_Delete
 CREATE TRIGGER certifications_Insert
 	AFTER INSERT ON certifications
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'certifications', NEW.certpatient, NEW.id, NOW(), NEW.certdesc, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'certifications', NEW.certpatient, NEW.id, NOW(), NEW.certdesc, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER certifications_Update
 	AFTER UPDATE ON certifications
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.certpatient, summary=NEW.certdesc, user=NEW.user, active=NEW.active WHERE module='certifications' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.certpatient, summary=NEW.certdesc, user=NEW.user, status=NEW.active WHERE module='certifications' AND oid=NEW.id;
 	END;
 //
 

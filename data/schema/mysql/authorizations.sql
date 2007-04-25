@@ -81,14 +81,14 @@ CREATE TRIGGER authorizations_Delete
 CREATE TRIGGER authorizations_Insert
 	AFTER INSERT ON authorizations
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'authorizations', NEW.authpatient, NEW.id, NEW.authdtadd, CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')'), NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'authorizations', NEW.authpatient, NEW.id, NEW.authdtadd, CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')'), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER authorizations_Update
 	AFTER UPDATE ON authorizations
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.authdtmod, patient=NEW.authpatient, summary=CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')'), user=NEW.user, active=NEW.active WHERE module='authorizations' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.authdtmod, patient=NEW.authpatient, summary=CONCAT(NEW.authdtbegin,' - ',NEW.authdtend,' (',NEW.authnum,')'), user=NEW.user, status=NEW.active WHERE module='authorizations' AND oid=NEW.id;
 	END;
 //
 

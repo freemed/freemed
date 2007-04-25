@@ -84,14 +84,14 @@ CREATE TRIGGER rx_Delete
 CREATE TRIGGER rx_Insert
 	AFTER INSERT ON rx
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, active ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), NEW.rxdrug, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), NEW.rxdrug, NEW.locked, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER rx_Update
 	AFTER UPDATE ON rx
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=NEW.rxdrug, locked=NEW.locked, user=NEW.user, active=NEW.active WHERE module='rx' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=NEW.rxdrug, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='rx' AND oid=NEW.id;
 	END;
 //
 

@@ -72,14 +72,14 @@ CREATE TRIGGER medications_Delete
 CREATE TRIGGER medications_Insert
 	AFTER INSERT ON medications
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, CONCAT(NEW.mdrug, ' ', NEW.mdosage), NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, CONCAT(NEW.mdrug, ' ', NEW.mdosage), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER medications_Update
 	AFTER UPDATE ON medications
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=CONCAT(NEW.mdrug, ' ', NEW.mdosage), user=NEW.user, active=NEW.active WHERE module='medications' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=CONCAT(NEW.mdrug, ' ', NEW.mdosage), user=NEW.user, status=NEW.active WHERE module='medications' AND oid=NEW.id;
 	END;
 //
 

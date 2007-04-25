@@ -80,14 +80,14 @@ CREATE TRIGGER financialdemographics_Delete
 CREATE TRIGGER financialdemographics_Insert
 	AFTER INSERT ON financialdemographics
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'financialdemographics', NEW.fdpatient, NEW.id, NEW.fdtimestamp, NEW.fdentry, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'financialdemographics', NEW.fdpatient, NEW.id, NEW.fdtimestamp, NEW.fdentry, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER financialdemographics_Update
 	AFTER UPDATE ON financialdemographics
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.fdtimestamp, patient=NEW.fdpatient, summary=NEW.fdentry, user=NEW.user, active=NEW.active WHERE module='financialdemographics' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.fdtimestamp, patient=NEW.fdpatient, summary=NEW.fdentry, user=NEW.user, status=NEW.active WHERE module='financialdemographics' AND oid=NEW.id;
 	END;
 //
 

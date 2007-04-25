@@ -71,14 +71,14 @@ CREATE TRIGGER form_results_Delete
 CREATE TRIGGER form_results_Insert
 	AFTER INSERT ON form_results
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'form_results', NEW.fr_patient, NEW.id, NEW.fr_timestamp, NEW.fr_template, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'form_results', NEW.fr_patient, NEW.id, NEW.fr_timestamp, NEW.fr_template, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER form_results_Update
 	AFTER UPDATE ON form_results
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.fr_timestamp, patient=NEW.fr_patient, summary=NEW.fr_template, user=NEW.user, active=NEW.active WHERE module='form_results' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.fr_timestamp, patient=NEW.fr_patient, summary=NEW.fr_template, user=NEW.user, status=NEW.active WHERE module='form_results' AND oid=NEW.id;
 	END;
 //
 

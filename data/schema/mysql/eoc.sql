@@ -117,14 +117,14 @@ CREATE TRIGGER eoc_Delete
 CREATE TRIGGER eoc_Insert
 	AFTER INSERT ON eoc
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, active ) VALUES ( 'eoc', NEW.eocpatient, NEW.id, NOW(), NEW.eocdescrip, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'eoc', NEW.eocpatient, NEW.id, NOW(), NEW.eocdescrip, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER eoc_Update
 	AFTER UPDATE ON eoc
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.eocpatient, summary=NEW.eocdescrip, user=NEW.user, active=NEW.active WHERE module='eoc' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.eocpatient, summary=NEW.eocdescrip, user=NEW.user, status=NEW.active WHERE module='eoc' AND oid=NEW.id;
 	END;
 //
 
