@@ -128,6 +128,7 @@ class UnfiledDocuments extends SupportModule {
 					"imagecat" => $cat['category'],
 					"imagedesc" => $data['note'],
 					"imagephy" => $data['physician'],
+					"imagetext" => $data['text'],
 					"imagereviewed" => 0
 				)
 			));

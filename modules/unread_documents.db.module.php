@@ -219,6 +219,7 @@ class UnreadDocuments extends SupportModule {
 				"imagecat" => $cat,
 				"imagedesc" => $data['urfnote'],
 				"imagephy" => $data['urfphysician'],
+				"imagetext" => $data['urftext'],
 				"imagereviewed" => $this_user->user_number
 			)
 		));
