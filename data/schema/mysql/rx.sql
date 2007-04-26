@@ -44,10 +44,11 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	locked			INT UNSIGNED DEFAULT 0,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
 	#	Default key
 
+	PRIMARY KEY		( id ),
 	FOREIGN KEY		( rxpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
