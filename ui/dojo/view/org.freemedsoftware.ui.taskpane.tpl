@@ -30,7 +30,7 @@
 	<div dojoType="ContentPane" selected="true" label="<!--{t}-->System<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.dashboard');">
-			<img src="<!--{$htdocs}-->/images/home_icon.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/dashboard.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Dashboard<!--{/t}-->
 		</div>
 
@@ -49,7 +49,7 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Patients<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.search?clear=1');">
-			<img src="<!--{$htdocs}-->/images/search.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/search.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Search<!--{/t}-->
 		</div>
 
@@ -59,7 +59,7 @@
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.callin.manage');">
-			<img src="<!--{$htdocs}-->/images/landline.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/callin.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Call-in<!--{/t}-->
 		</div>
 
@@ -67,12 +67,12 @@
 
 	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unfiled');">
-			<img src="<!--{$htdocs}-->/images/unfiled.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/unfiled.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Unfiled<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unread');">
-			<img src="<!--{$htdocs}-->/images/unread.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/unread.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Unread<!--{/t}-->
 		</div>
 	</div>
