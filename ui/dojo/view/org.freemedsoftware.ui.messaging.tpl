@@ -69,7 +69,7 @@
 		selectMessage: function ( ) {
 			var d = document.getElementById('messageViewPaneDiv');
 			var data = dojo.widget.byId('messagesTable').getSelectedData();
-			d.innerHTML = '<pre>' + data.content + '</pre>';
+			d.innerHTML = '<tt>' + data.content.replace(/\n/g, "<br/>\n").replace(/\\/g, "") + '</tt>';
 		},
 		newMessage: function ( ) {
 			dojo.widget.byId('newMessageDialog').show();
