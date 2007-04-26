@@ -232,7 +232,7 @@
 		<input dojoType="DropdownDatePicker" id="emrRangeEnd" />
 	</td>
 	<td>
-		<input dojoType="ComboBox"
+		<input dojoType="Select"
 			autocomplete="false"
 			id="emrSection_widget" widgetId="emrSection_widget"
 			style="width: 150px;"
