@@ -21,6 +21,26 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #----------------------------------------------------------------------------
+#	Upgrade table primary keys
+#----------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS upgrade_08x_keys;
+DELIMITER //
+CREATE PROCEDURE upgrade_08x_keys ( )
+BEGIN
+	#	Handle SQL exceptions and bad states
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = 1;
+
+	#	Change key fields which we will be relying upon
+	ALTER TABLE patient CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;
+	ALTER TABLE physician CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;
+	ALTER TABLE procrec CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;
+END//
+
+DELIMITER ;
+
+#----------------------------------------------------------------------------
 #	Allergies (allergies)
 #----------------------------------------------------------------------------
 
@@ -305,6 +325,7 @@ DELIMITER ;
 #----------------------------------------------------------------------------
 
 LOCK TABLES;
+CALL upgrade_08x_keys ( );
 CALL upgrade_08x_allergies ( );
 CALL upgrade_08x_images ( );
 CALL upgrade_08x_labs ( );
