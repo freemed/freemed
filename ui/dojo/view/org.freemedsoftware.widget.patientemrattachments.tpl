@@ -122,7 +122,8 @@
 		emrModuleFilter: function ( m ) {
 			// If not set, return true by default
 			if (document.getElementById('emrSection').value.length < 5) { return true; }
-			return ( m == document.getElementById('emrSection').value );
+			//dojo.debug ( m + ' == ' + dojo.widget.byId('emrSection_widget').getLabel() );
+			return ( m == dojo.widget.byId('emrSection_widget').getLabel() );
 		},
 		printMultiple: function ( ) {
 			if ( patientEmrAttachments.currentItem ) {
