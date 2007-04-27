@@ -186,6 +186,7 @@
 			load: function( type, data, evt ) {
 				if (typeof(data) == 'object') {
 					for (i=0; i<data.length; i++) {	
+						data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
 						data[i]['actions'] = '';
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
 						if (data[i]['locked'] == 0) {
