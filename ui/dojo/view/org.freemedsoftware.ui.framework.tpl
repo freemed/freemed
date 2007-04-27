@@ -143,7 +143,22 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 				mimetype: "text/json"
 			});
 		},
+		addPatientToHistory: function ( id, patient_name ) {
+			try {
+				// Avoid dupes
+				if ( freemedGlobal.patientHistory.length > 0 ) {
+					for (var i=0; i<freemedGlobal.patientHistory.length; i++) {
+						if (freemedGlobal.patientHistory[i][0] == id) {
+							// Already there
+							return true;
+						}
+					}
+				}
+				freemedGlobal.patientHistory.push([ id, patient_name ]);
+			} catch (err) { }
+		},
 		//---- Catch all "state" namespace for storing state variables
+		patientHistory: [ ],
 		state: { }
 	};
 

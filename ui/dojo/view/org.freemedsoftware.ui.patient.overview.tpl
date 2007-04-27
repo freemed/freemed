@@ -28,6 +28,9 @@
 
 	_container_.addOnLoad(function(){
 		dojo.widget.byId('contactDropdown').inputNode.style.display = 'none';
+
+		// Push this into the history
+		freemedGlobal.addPatientToHistory( '<!--{$patient}-->', '<!--{method namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}-->' );
 	});
 </script>
 
