@@ -48,6 +48,7 @@
 			} catch ( err ) { }
 			var myContent = {
 				letterdt: dojo.widget.byId('letters.dateOf').getValue(),
+				letterfrom: parseInt( document.getElementById('letters.fromProvider').value ),
 				letterto: parseInt( document.getElementById('letters.toProvider').value ),
 				lettertext: dojo.widget.byId('letterText').getValue(),
 				letterpatient: '<!--{$patient|escape}-->'
@@ -84,6 +85,11 @@
 	<tr>
 		<td align="right"><!--{t}-->Date<!--{/t}--></td>
 		<td><input dojoType="DropdownDatePicker" id="letters.dateOf" /></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->From<!--{/t}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="letters.fromProvider"}--></td>
 	</tr>
 
 	<tr>
