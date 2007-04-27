@@ -52,6 +52,15 @@
 				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val.id);
 				return true;
 			}
+		},
+		goToPatientHistorical: function () {
+			var i = document.getElementById('patientSearchHistorical').selectedIndex;
+			var val = document.getElementById('patientSearchHistorical').options[i].value;
+			if (val != 'undefined') {
+				if ( val == 0 ) { return false; }
+				freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
+				return true;
+			}
 		}
 	};
 
@@ -61,6 +70,26 @@
 		dojo.widget.byId('smartSearch').textInputNode.focus();
 		dojo.event.connect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.connect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
+
+		// If ...
+		if ( freemedGlobal.patientHistory.length ) {
+			var sWidget = document.createElement( 'select' );
+			sWidget.id = 'patientSearchHistorical';
+			sWidget.onchange = patientSearch.goToPatientHistorical;
+			var o = new Array ();
+			var oOrig = document.createElement( 'option' );
+			oOrig.value = 0;
+			oOrig.innerHTML = '-----';
+			sWidget.appendChild( oOrig );
+			for ( var i=0; i < freemedGlobal.patientHistory.length; i++ ) {
+				o[i] = document.createElement( 'option' );
+				o[i].value = freemedGlobal.patientHistory[i][0];
+				o[i].innerHTML = freemedGlobal.patientHistory[i][1];
+				sWidget.appendChild( o[i] );
+			}
+			document.getElementById('patientHistorySpan').appendChild( sWidget );
+			document.getElementById('patientHistoryDiv').style.display = 'block';
+		}
 	});
 
 	_container_.addOnUnload(function() {
@@ -116,6 +145,11 @@
 		 style="width: 300px;"
 		 dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
 		 mode="remote" />
+	</div>
+
+	<div style="margin: .5em; display: none;" id="patientHistoryDiv">
+		<!--{t}-->Last Patients<!--{/t}--> :
+		<span id="patientHistorySpan"></span>
 	</div>
 
 </div>
