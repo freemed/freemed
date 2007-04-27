@@ -20,6 +20,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+SOURCE data/schema/mysql/patient_emr.sql
+
 #----------------------------------------------------------------------------
 #	Upgrade table primary keys
 #----------------------------------------------------------------------------
@@ -30,7 +32,6 @@ CREATE PROCEDURE upgrade_08x_keys ( )
 BEGIN
 	#	Handle SQL exceptions and bad states
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
-	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = 1;
 
 	#	Change key fields which we will be relying upon
 	ALTER TABLE patient CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;
@@ -89,6 +90,7 @@ BEGIN
 	DECLARE t_stamp TIMESTAMP (16);
 	DECLARE t_summary VARCHAR (250) DEFAULT '';
 	DECLARE t_patient BIGINT UNSIGNED DEFAULT 0;
+	DECLARE t_locked INT DEFAULT 0;
 
 	DECLARE done INT DEFAULT 0;
 	DECLARE cur CURSOR FOR
@@ -325,7 +327,6 @@ DELIMITER ;
 #	Execute stored PROCEDUREs
 #----------------------------------------------------------------------------
 
-LOCK TABLES;
 CALL upgrade_08x_keys ( );
 CALL upgrade_08x_allergies ( );
 CALL upgrade_08x_images ( );
@@ -335,5 +336,4 @@ CALL upgrade_08x_pnotes ( );
 CALL upgrade_08x_procrec ( );
 CALL upgrade_08x_rx ( );
 CALL upgrade_08x_scheduler ( );
-UNLOCK TABLES;
 
