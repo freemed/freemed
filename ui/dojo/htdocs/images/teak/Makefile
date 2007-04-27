@@ -21,7 +21,12 @@
 
 all: clean
 	@echo "Building icons ... "
-	@for i in *.svg; do echo " - $$i "; rsvg -w 64 -h 64 -f png "$$i" `echo "$$i" | sed -e 's/\.svg//;'`.64x64.png; done
+	@for i in *.svg; do \
+		echo -n " - $$i "; \
+		rsvg -w 64 -h 64 -f png "$$i" `echo "$$i" | sed -e 's/\.svg//;'`.64x64.png; echo -n " [64x64 ] "; \
+		rsvg -w 32 -h 32 -f png "$$i" `echo "$$i" | sed -e 's/\.svg//;'`.32x32.png; echo -n " [32x32 ] "; \
+		echo " "; \
+	done
 	@echo "Finished."
 
 clean:
