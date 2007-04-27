@@ -105,6 +105,9 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 		// Push current help topic value
 		freemedGlobal.currentHelpTopic = url;
 
+		// Add page to history
+		freemedGlobal.pageHistory.push( url );
+
 		return true;
 	} // end function freemedLoad
 
@@ -158,6 +161,7 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 			} catch (err) { }
 		},
 		//---- Catch all "state" namespace for storing state variables
+		pageHistory: [ ],
 		patientHistory: [ ],
 		state: { }
 	};
