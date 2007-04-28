@@ -77,7 +77,7 @@ class TableMaintenance {
 		$result = $GLOBALS['sql']->queryAll( $query );
 		if ( $picklist ) {
 			foreach ( $result AS $v ) {
-				$r[] = array ( $v['module_class'], $v['module_name'] );
+				$r[] = array ( $v['module_name'], $v['module_class'] );
 			}
 			return $r;
 		}
