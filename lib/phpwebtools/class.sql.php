@@ -522,6 +522,13 @@ class sql {
 		( ($this->DB_ENGINE != SQL_SQLITE) ? " NOT NULL" : "" ) : "" );
 	 break; // end SQL__DATE
 
+        case SQL__TIME:
+         $query .= ( $in_loop ? ", " : " " ).addslashes($k)." TIME".
+			// check for NOT NULL
+		( ((($v>>(SQL__BIT_SHIFT*3))&2) == 2 ) ?
+		( ($this->DB_ENGINE != SQL_SQLITE) ? " NOT NULL" : "" ) : "" );
+	 break; // end SQL__TIME
+
 	case SQL__DOUBLE(0):
          $query .= ( $in_loop ? ", " : " " ).addslashes($k).
 	  " DOUBLE". ( ($bit_shifted>0) ? "(".($bit_shifted + 0).")" : "" );

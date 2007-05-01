@@ -38,6 +38,7 @@ function SQL__VARCHAR ($size) 		{ return 9 + ($size<<SQL__BIT_SHIFT); }
 define ( 'SQL__REAL',			10);
 function SQL__TIMESTAMP ($size) 		{ return 11 + ($size<<SQL__BIT_SHIFT); }
 define ( 'SQL__SERIAL',			12);
+define ( 'SQL__TIME',			13);
 
 function SQL__AUTO_INCREMENT ($var)	{ return ($var) + (1<<(SQL__BIT_SHIFT*3)); } 
 function SQL__NOT_NULL ($var)	{ return ($var) + (2<<(SQL__BIT_SHIFT*3)); } 
