@@ -56,6 +56,9 @@ class Installation {
 			syslog(LOG_INFO, "DEBUG: CheckDbCredentials: failed to get link");
 			return false;
 		}
+
+		// Hack to create the database if it has not been created yet
+		mysql_query( "CREATE DATABASE '".addslashes( $name )."'" );
 		
 		$select = mysql_select_db( $name, $link );
 		syslog(LOG_INFO, "DEBUG: CheckDbCredentials: select = $select");
