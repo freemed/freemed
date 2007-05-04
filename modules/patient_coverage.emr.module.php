@@ -51,8 +51,8 @@ class PatientCoveragesModule extends EMRModule {
 			'covisassigning' => SQL__INT_UNSIGNED(0),
 			'covschool' => SQL__VARCHAR(50),
 			'covemployer' => SQL__VARCHAR(50),
-			'covcopay' => SQL_REAL,
-			'covdeduct' => SQL_REAL,
+			'covcopay' => SQL__REAL,
+			'covdeduct' => SQL__REAL,
 			'id' => SQL__SERIAL
 		);
 	
