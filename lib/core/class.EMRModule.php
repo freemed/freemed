@@ -302,9 +302,15 @@ class EMRModule extends BaseModule {
 	
 	// Method: in_use
 	//
+	//	Determine if the record is locked, and therefore "in use".
+	//
 	// Parameters:
 	//
-	//	 $id -
+	//	$id - Record ID.
+	//
+	// Returns:
+	//
+	//	Boolean, locked status.
 	//
 	public function in_use ( $id ) {
 		// Check for record locking
@@ -380,6 +386,17 @@ class EMRModule extends BaseModule {
 	protected function del_pre( $id ) { }
 
 	// Method: mod
+	//
+	//	Modify EMR record segment
+	//
+	// Parameters:
+	//
+	//	$data - Hash of data
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
 	public function mod ( $data ) {
 		if ( !$this->acl_access( 'modify', $patient ) ) {
 			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
@@ -628,6 +645,24 @@ class EMRModule extends BaseModule {
 		return $this->qualified_query ( $patient, $items, $conditional );
 	} // end method GetList
 
+	// Method: qualified_query
+	//
+	//	Internal method allowing queries based on the "summary" view. This
+	//	method is protected, and cannot be called externally.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//	$items - (optional) Maximum number of items to return.
+	//
+	//	$conditional - (optional) Hash of additional items to check for. Key
+	//	is field name, value is value to look for.
+	//
+	// Return:
+	//
+	//	Array of hashes.
+	//
 	protected function qualified_query ( $patient, $items = NULL, $conditional = NULL ) {
 		if (is_array($this->summary_query_link)) {
 			foreach ($this->summary_query_link AS $my_k => $my_v) {
@@ -661,7 +696,7 @@ class EMRModule extends BaseModule {
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end protected function qualified_query
 
-	// Method: recent_record
+	// Method: GetRecentRecord
 	//
 	//	Return most recent record, possibly qualified by a
 	//	particular date.
@@ -676,14 +711,14 @@ class EMRModule extends BaseModule {
 	//
 	//	Associative array (hash) of record
 	//
-	public function recent_record ( $patient, $recent_date = NULL ) {
+	public function GetRecentRecord ( $patient, $recent_date = NULL ) {
 		$query = "SELECT * FROM `".$this->table_name."` ".
 			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ".
 			( $recent_date ? " AND `".$this->date_field."` <= '".addslashes($recent_date)."' " : "" ).
 			"ORDER BY ".$this->date_field." DESC, id DESC";
 		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
-	} // end public function recent_record
+	} // end method GetRecentRecord
 
 	// Method: RenderSinglePDF
 	//
