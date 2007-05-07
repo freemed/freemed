@@ -26,10 +26,7 @@ CREATE TABLE IF NOT EXISTS `superbill_template` (
 	st_user			INT UNSIGNED NOT NULL DEFAULT 0,
 	st_dx			TEXT,
 	st_px			TEXT,
-	id			SERIAL,
-
-	#	Define keys
-	PRIMARY_KEY		( id )
+	id			SERIAL
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS superbill_template_Upgrade;
