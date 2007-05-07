@@ -53,6 +53,28 @@ class SuperbillTemplate extends SupportModule {
 		parent::__construct( );
 	} // end constructor
 
+	// Method: GetTemplate
+	//
+	//	Retrieve complete superbill template.
+	//
+	// Parameters:
+	//
+	//	$id - Record ID of superbill template.
+	//
+	//	$patient - Patient ID
+	//
+	// Returns:
+	//
+	//	Hash containing:
+	//	* dx
+	//	* px
+	//
+	public function GetTemplate ( $id, $patient ) {
+		$hash['dx'] = $GLOBALS['sql']->queryAll( " ( SELECT d.icd9code AS code, d.icd9descrip AS descrip, dx.dx AS id, '1' AS previous FROM dxhistory dx LEFT OUTER JOIN icd9 d ON dx.dx=d.id WHERE dx.patient=" . $GLOBALS['sql']->quote( $patient ) . " GROUP BY dx ORDER BY dx.stamp DESC LIMIT 4 ) UNION ( SELECT dx.icd9code AS code, dx.icd9descrip AS descrip, dx.id AS id, '0' AS previous FROM icd9 dx LEFT OUTER JOIN superbill_template st ON FIND_IN_SET( dx.id, st.st_dx ) WHERE st.id = " . $GLOBALS['sql']->quote( $id ) . ' ) ' );
+		$hash['px'] = $GLOBALS['sql']->queryAll( "SELECT px.cptcode AS code, px.cptnameint AS descrip, px.id AS id FROM cpt px LEFT OUTER JOIN superbill_template st ON FIND_IN_SET( px.id, st.st_px ) WHERE st.id = " . $GLOBALS['sql']->quote( $id ) );
+		return $hash;
+	} // end method GetTemplate
+
 } // end class SuperbillTemplate
 
 register_module ("SuperbillTemplate");
