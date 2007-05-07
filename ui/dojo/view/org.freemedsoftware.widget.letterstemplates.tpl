@@ -35,7 +35,33 @@
 
 *}-->
 <script language="javascript">
+
 	var <!--{$varname}-->_namespace = {
+		add: function() {
+			//dojo.widget.byId('lettersTemplateAddDialog_<!--{$varname}-->').show();
+			// Use the injection target as the source
+			var s = dojo.widget.byId("<!--{$inject}-->").getValue();
+
+			// Ask the user for a name
+			var l = prompt( "<!--{t}-->Please enter a descriptive name for this template.<!--{/t}-->" );
+			if ( l.length == 0 ) { return false; }
+
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: {
+						ltname: l,
+						lttext: s
+					}
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.LettersTemplates.add',
+				load: function ( type, data, evt ) {
+					freemedMessage( "<!--{t}-->Added template.<!--{/t}-->", "INFO" );
+				},
+				mimetype: 'text/json'
+			});
+		
+		},
 		use: function() {
 			var v;
 			try {
@@ -63,9 +89,11 @@
 	};
 	_container_.addOnLoad(function(){
 		dojo.event.connect( dojo.widget.byId('inject_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'use' );
+		dojo.event.connect( dojo.widget.byId('add_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'add' );
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('inject_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'use' );
+		dojo.event.disconnect( dojo.widget.byId('add_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'add' );
 	});
 </script>
 <table border="0" cellspacing="0" style="width: auto;">
@@ -76,7 +104,11 @@
 				<!--{t}-->Use<!--{/t}-->
 			</button>
 		</td>
-		<td>[ADD]</td>
+		<td>
+			<button dojoType="Button" id="add_<!--{$varname}-->" widgetId="add_<!--{$varname}-->">
+				<!--{t}-->Add<!--{/t}-->
+			</button>
+		</td>
 	</tr>
 </table>
 
