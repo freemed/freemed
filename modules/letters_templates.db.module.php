@@ -34,7 +34,7 @@ class LettersTemplates extends SupportModule {
 
 	var $record_name = "Letter Template";
 	var $table_name = "letters_templates";
-	var $order_fields = "ltname";
+	var $order_field = "ltname";
 	var $widget_hash = "##ltname##";
 
 	public function __construct () {
