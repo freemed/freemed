@@ -75,10 +75,10 @@
 
 				// Populate label, bolding previous dx's
 				if ( parseInt(dx[d].previous) == 1 ) {
-					var i = ' <b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</b> ';
+					var i = ' <label for="superbill_dx_' + thisId + '"><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</b></label> ';
 					tSpan.innerHTML = i;
 				} else {
-					var i = ' ' + dx[d].code + ' ( ' + dx[d].descrip + ' ) ';
+					var i = ' <label for="superbill_dx_' + thisId + '">' + dx[d].code + ' ( ' + dx[d].descrip + ' )</label> ';
 					tSpan.innerHTML = i;
 				}
 
@@ -107,7 +107,7 @@
 				patientEncounter.superbillPx[ thisId ] = 0;
 
 				// Populate label, bolding previous dx's
-				var i = ' ' + px[p].code + ' ( ' + px[p].descrip + ' ) ';
+				var i = ' <label for="superbill_px_' + thisId + '">' + px[p].code + ' ( ' + px[p].descrip + ' )</label> ';
 				tSpan.innerHTML = i;
 
 				// Assemble objects
@@ -130,7 +130,7 @@
 					px.push( i );
 				}
 			}
-			if ( ! px.length or ! dx.length ) {
+			if ( ! px.length || ! dx.length ) {
 				alert ( "<!--{t}-->Both procedures and diagnoses must be present to create a superbill.<!--{/t}-->" );
 				return false;
 			}
@@ -147,7 +147,7 @@
 				load: function( type, data, evt ) {
 					freemedMessage( "<!--{t}-->Added superbill.<!--{/t}-->", "INFO" );
 				},
-				mimetype: "text/json"
+				mimetype: 'text/json'
 			});
 		},
 		loadSuperbill: function( ) {
