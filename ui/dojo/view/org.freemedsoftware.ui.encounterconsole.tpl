@@ -77,6 +77,9 @@
 				if ( parseInt(dx[d].previous) == 1 ) {
 					var i = ' <label for="superbill_dx_' + thisId + '"><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</b></label> ';
 					tSpan.innerHTML = i;
+
+					// Previous dx should be selected by default
+					cb.checked = true;
 				} else {
 					var i = ' <label for="superbill_dx_' + thisId + '">' + dx[d].code + ' ( ' + dx[d].descrip + ' )</label> ';
 					tSpan.innerHTML = i;
