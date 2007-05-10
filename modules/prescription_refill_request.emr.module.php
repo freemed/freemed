@@ -21,7 +21,7 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('org.freemedsoftware.core.SupportModule');
+LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
 class RxRefillRequest extends EMRModule {
 
