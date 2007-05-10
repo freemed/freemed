@@ -719,8 +719,7 @@ class ProgressNotes extends EMRModule {
        ";
       if (strlen($pnotes_P) > 7) $display_buffer .= "
        <TABLE BGCOLOR=#ffffff BORDER=1 WIDTH=\"100%\"><TR BGCOLOR=$darker_bgcolor>
-       <TD ALIGN=CENTER><CENTER><FONT COLOR=#ffffff>
-        <B>".__("Plan")."</B></FONT></CENTER></TD></TR>
+       <TD ALIGN=CENTER><B>".__("Plan")."</B></TD></TR>
        <TR BGCOLOR=#ffffff><TD>
 		".( eregi("<[A-Z/]*>", $pnotes_P) ?
 		prepare($pnotes_P) :
