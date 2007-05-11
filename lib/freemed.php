@@ -37,7 +37,7 @@ if (file_exists(dirname(__FILE__).'/settings.php')) {
 	include_once(dirname(__FILE__).'/settings.php');
 } else {
 	if (!defined('SKIP_SQL_INIT')) {
-		die("FreeMED cannot find the configuration file <b>lib/settings.php</b>.");
+		die("FreeMED cannot find the configuration file <b>lib/settings.php</b>. Make sure you have run the <a href=\"install.php\">installer</a> before proceeding.");
 	}
 }
 
