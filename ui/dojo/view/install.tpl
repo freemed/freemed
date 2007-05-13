@@ -339,7 +339,7 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Username<!--{/t}--></td>
-				<td align="left"><input type="input" id="username" name="username" value="admin" /></td>
+				<td align="left"><input type="input" id="username" name="username" value="root" /></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Password<!--{/t}--></td>
@@ -347,7 +347,8 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Password (confirm)<!--{/t}--></td>
-				<td align="left"><input type="password" id="password_confirm" name="password_confirm" onKeyUp="checkpwconfirm('password', 'password_confirm', 'pwconfirm');" /><span id="pwconfirm" style="border: 1px solid #000000; padding: 2px; color: #ff0000; display: none;"></span></td>
+				<td align="left"><input type="password" id="password_confirm" name="password_confirm" onKeyUp="checkpwconfirm('password', 'password_confirm', 'pwconfirm');" /></td>
+				<td><span id="pwconfirm" style="border: 1px solid #000000; padding: 2px; color: #ff0000; display: none;"></span></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Database Name<!--{/t}--></td>
@@ -380,7 +381,7 @@
 		<h1><!--{t}-->Administration Configuration<!--{/t}--></h1>
 
 		<div>
-		<!--{t}-->Please configure the administrative account for this system. We recomment that you use the name "admin", but please select a relatively complex password, as this account has full access to all system data and functions.<!--{/t}-->	
+		<!--{t}-->Please configure the administrative account for this system. We recommend that you use the name "admin", but please select a relatively complex password, as this account has full access to all system data and functions.<!--{/t}-->	
 		</div>
 
 		<table border="0">
@@ -390,11 +391,12 @@
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Administrative Password<!--{/t}--></td>
-				<td align="left"><input type="password" id="adminpass" name="adminpass" size="50" maxlength="50" value="" /></td>
+				<td align="left"><input type="password" id="adminpass" name="adminpass" onKeyUp="checkpwconfirm('adminpass', 'adminpass_confirm', 'adminpwconfirm');" /></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Administrative Password (confirm)<!--{/t}--></td>
-				<td align="left"><input type="password" id="adminpass_confirm" name="adminpass_confirm" size="50" maxlength="50" value="" /></td>
+				<td align="left"><input type="password" id="adminpass_confirm" name="adminpass_confirm" onKeyUp="checkpwconfirm('adminpass', 'adminpass_confirm', 'adminpwconfirm');" /></td>
+				<td><span id="adminpwconfirm" style="border: 1px solid #000000; padding: 2px; color: #ff0000; display: none;"></span></td>
 			</tr>
 		</table>
 	</div>
