@@ -30,15 +30,23 @@ if [ ! -f ./scripts/tsmarty2c.php ]; then
 	exit
 fi
 
+VERSION=$( cat lib/freemed.php | grep DISPLAY_VERSION | cut -d'"' -f2 )
+
 for UI in ui/*; do
+
+	if [ -d ${UI} ] ; then
 
 	echo " * Processing interface ${UI}"
 
 	echo -n " - Creating translation catalog ... "
-	php ./scripts/tsmarty2c.php ${UI}/view | xgettext --language=C - - > "locale/$(basename "${UI}").pot"
+	php ./scripts/tsmarty2c.php ${UI}/view | xgettext --language=C -o - - > "locale/$(basename "${UI}").pot"
 	echo "[done]"
 
+	perl -pi -e "s/PACKAGE VERSION/FreeMED v${VERSION}/;" "locale/$(basename "${UI}").pot"
+
 	echo " "
+
+	fi
 
 done
 
