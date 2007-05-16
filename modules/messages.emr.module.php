@@ -124,13 +124,15 @@ class MessagesModule extends EMRModule {
 	//
 	//	$ts - (optional) Timestamp to use as marker.
 	//
+	//	$all - (optional) Show *all* messages, not just unread. Defaults to false.
+	//
 	// Returns:
 	//
 	//	Number of unread messages for the current user
 	//
-	public function UnreadMessages ( $ts = false ) {
+	public function UnreadMessages ( $ts = false, $all = false ) {
 		$this_user = freemed::user_cache();
-		$q = "SELECT COUNT(*) AS count FROM messages WHERE msgfor=".( $this_user->user_number + 0 )." AND msgread=0 AND msgtag='' ".( $ts ? " AND msgstamp >= ".( $ts + 0 ) : "" );
+		$q = "SELECT COUNT(*) AS count FROM messages WHERE msgfor=".( $this_user->user_number + 0 )." ".( $all ? "" : " AND msgread=0 " )." AND msgtag='' ".( $ts ? " AND msgtime >= ".( $ts + 0 ) : "" );
 		return $GLOBALS['sql']->queryOne( $q ) + 0;
 	} // end method UnreadMessages
 
