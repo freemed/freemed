@@ -37,6 +37,7 @@
 	dojo.require("dojo.widget.DropdownDatePicker");
 
 	var claimsManager = {
+		saveUpdateLabel: '',
 		loadData: function ( ) {
 			var haveCrit = 0;
 			var crit = { };
@@ -51,12 +52,15 @@
 				alert ("<!--{t}-->Please select the criteria for the claims you are trying to work with.<!--{/t}-->");
 				return false;
 			}
+			claimsManager.saveUpdateLabel = document.getElementById('updateButtonText').innerHTML;
+			document.getElementById('updateButtonText').innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" />';
 			dojo.io.bind({
 				method: 'POST',
 				content: { param0: crit },
 				url: "<!--{$relay}-->/org.freemedsoftware.api.ClaimLog.AgingReportQualified",
 				load: function ( type, data, evt ) {
 					dojo.widget.byId('claimsManagerTable').store.setData( data );
+					document.getElementById('updateButtonText').innerHTML = claimsManager.saveUpdateLabel;
 				},
 				mimetype: "text/json"
 			});
@@ -141,9 +145,9 @@
 
 </script>
 
-<div dojoType="SplitContainer" orientation="vertical" sizerWidth="0" activeSizing="1" layoutAlign="client">
+<div dojoType="SplitContainer" orientation="vertical" sizerWidth="0" layoutAlign="client">
 
-	<div dojoType="ContentPane" id="claimsManagerFormPane" layoutAlign="top" sizeShare="60">
+	<div dojoType="ContentPane" id="claimsManagerFormPane" layoutAlign="top" style="height: 20em;" sizeShare="60">
 
 		<h3><!--{t}-->Claims Manager<!--{/t}--></h3>
 
@@ -194,7 +198,7 @@
 			<tr>
 				<td colspan="4" align="center">
 					<div dojoType="Button" id="claimsManagerUpdateButton">
-						<!--{t}-->Update<!--{/t}-->
+						<span id="updateButtonText"><!--{t}-->Update<!--{/t}--></span>
 					</div>
 				</td>
 			</tr>
@@ -221,7 +225,7 @@
 	<div dojoType="ContentPane" sizeShare="40" layoutAlign="bottom">
 
 		<div class="tableContainer">
-	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="true" style="height: 100%;">
+	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="true">
 				<thead>
 					<tr>
 						<th field="date_of_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
