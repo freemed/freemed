@@ -30,7 +30,7 @@
 <!--{* ***** Style Elements ***** *}-->
 
 <link rel="stylesheet" type="text/css" src="<!--{$htdocs}-->/stylesheet.css" />
-<script type="text/javascript" src="<!--{$base_uri}-->/lib/dojo/dojo.js"></script>
+<script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 <script language="JavaScript" type="text/javascript">
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
