@@ -891,7 +891,9 @@ class RemittBillingTransport extends BillingModule {
 			$key = $remitt->StoreBillKey($billkey);
 
 			// ... and send it to Remitt, to see what we get for a result
+			unset( $unique_key );
 			$unique_key = $remitt->ProcessBill($key, $my_format, $my_target);
+
 			// Add to claimlog
 			$result = $claimlog->log_billing (
 				$key,
@@ -1220,6 +1222,8 @@ class RemittBillingTransport extends BillingModule {
 			"procpatient = '".addslashes($patient)."' AND ".
 			// Needs to be billable (at all) -- examine this one!
 			//"procbillable = '0' AND ".
+			// No patient responsibility bills
+			"proccurcovtp > 0 AND ".
 			// (Not sure) Needs not to be billed already
 			"procbilled = '0' ".
 			// Order by date of procedure
