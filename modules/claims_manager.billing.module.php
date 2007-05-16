@@ -985,10 +985,11 @@ class ClaimsManager extends BillingModule {
 
 			// Check for adjustment
 			if ($_REQUEST['adj'][$k] > 0) {
-				$l->post_adjustment (
+				$l->post_fee_adjustment (
 					$k,
+					$proc['proccurcovid'],
 					($_REQUEST['adj'][$k] + 0),
-					__("Adjustment")
+					__("Fee Adjustment")
 				);
 
 				// Record in individual claim log
