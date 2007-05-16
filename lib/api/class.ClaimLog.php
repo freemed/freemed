@@ -157,8 +157,8 @@ class ClaimLog {
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate, ')') AS payer, ".
 			"i.inscoidmap AS id_map, ".
-			"p.procamtpaid AS paid, ".
-			"p.procbalcurrent AS balance ".
+			"TRUNCATE(p.procamtpaid, 2) AS paid, ".
+			"TRUNCATE(p.procbalcurrent, 2) AS balance ".
 			"FROM procrec p ".
 				"LEFT OUTER JOIN coverage c ON p.proccurcovid = c.id ".
 				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".

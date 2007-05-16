@@ -169,7 +169,7 @@ class PatientInterface {
 	//	* csz
 	//
 	public function PatientInformation( $id ) {
-		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, CONCAT( p.ptcity, ', ', p.ptstate, ' ', p.ptzip ) AS csz FROM patient p WHERE p.id = " . ( $id + 0 );
+		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, CONCAT( p.ptcity, ', ', p.ptstate, ' ', p.ptzip ) AS csz, p.* FROM patient p WHERE p.id = " . ( $id + 0 );
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation
 
