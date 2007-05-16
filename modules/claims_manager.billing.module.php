@@ -71,7 +71,7 @@ class ClaimsManager extends BillingModule {
 			$found_criteria = false;
 			if (is_array($_REQUEST['criteria'])) {
 				foreach ($_REQUEST['criteria'] AS $k => $v) {
-					if ($v and !($v==-1 and $k=='billed')) {
+					if ($v or ($k=='billed' AND $v!=-1)) {
 						 $found_criteria = true; 
 					}
 				}
