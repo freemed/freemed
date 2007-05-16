@@ -34,6 +34,7 @@ class InsuranceCompanyGroup extends SupportModule {
 
 	var $table_name		= "inscogroup";
 	var $record_name	= "Insurance Company Group";
+	var $widget_hash	= '##inscogroup##';
 
 	var $variables		= array (
 		"inscogroup"

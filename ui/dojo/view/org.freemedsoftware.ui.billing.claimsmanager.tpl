@@ -45,6 +45,7 @@
 			if ( document.getElementById('criteriaFirstName').value != '' ) { crit.first_name = document.getElementById('criteriaFirstName').value; haveCrit = 1; }
 			if ( dojo.widget.byId('criteriaDate').inputNode.value != '' ) { crit.date = dojo.widget.byId('criteriaDate').inputNode.value; haveCrit = 1; }
 			if ( dojo.widget.byId('criteriaPayer_widget').getValue() != 0 ) { crit.payer = dojo.widget.byId('criteriaPayer_widget').getValue(); haveCrit = 1; }
+			if ( dojo.widget.byId('criteriaPayerGroup_widget').getValue() != 0 ) { crit.payergroup = dojo.widget.byId('criteriaPayerGroup_widget').getValue(); haveCrit = 1; }
 			//alert( dojo.json.serialize(crit) );
 
 			// Do not allow us to proceed if there are no qualifiers, otherwise we can really jam up the browser
@@ -189,8 +190,10 @@
 			</tr>
 
 			<tr>
-				<td align="right" valign="top"><b><!--{t}--><!--{/t}--></b></td>
-				<td align="left" valign="top"></td>
+				<td align="right" valign="top"><b><!--{t}-->Payer Group<!--{/t}--></b></td>
+				<td align="left" valign="top">
+					<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" varname="criteriaPayerGroup" module="insurancecompanygroup"}-->
+				</td>
 				<td align="right" valign="top"><b><!--{t}--><!--{/t}--></b></td>
 				<td align="left" valign="top"></td>
 			</tr>

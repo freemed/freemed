@@ -66,6 +66,16 @@ class ClaimLog {
 	//
 	//	$criteria - Associative array of criteria types as
 	//	keys and parameters as values.
+	//	* aging - Aging date range. ( 0-30, 31-60, 61-90, 91-120, 120+ )
+	//	* billed - Billed or not. ( 0, 1 )
+	//	* date - Date of service
+	//	* patient - Patient id
+	//	* first_name - Textual patient first name substring
+	//	* last_name - Textual patient last name substring
+	//	* payer - Insurace company id
+	//	* payergroup - Insurance company group id
+	//	* plan - Plan name
+	//	* status - Billing status
 	//
 	// Returns:
 	//
@@ -116,6 +126,10 @@ class ClaimLog {
 				case 'payer':
 				if ($v) $q[] = "c.covinsco = '".addslashes($v)."'";
 				break; // end payer case
+
+				case 'payergroup':
+				if ($v) $q[] = "i.inscogroup = '".addslashes($v)."'";
+				break; // end payergroup case
 
 				case 'plan':
 				if ($v) $q[] = "c.covplanname = '".addslashes($v)."'";
