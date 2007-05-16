@@ -29,14 +29,17 @@
 		dojo.io.bind({
 			method: "POST",
 			url: "<!--{$relay}-->/org.freemedsoftware.module.messagesmodule.UnreadMessages",
-			content: { },
+			content: {
+				param0: false,
+				param1: true
+			},
 			error: function ( ) { },
 			load: function ( type, data, evt ) {
 				var w = document.getElementById('dashboardWidgetMessagesModule');
 				if (data > 0) {
-					w.innerHTML = "<div align=\"center\"><a onClick=\"freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.messaging');\"><img src=\"<!--{$htdocs}-->/images/messages_icon.png\" border=\"0\" /><br/>" + data + " <!--{t}-->new messages found.<!--{/t}--></a></div>";
+					w.innerHTML = "<div align=\"center\"><a onClick=\"freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.messaging');\"><img src=\"<!--{$htdocs}-->/images/messages_icon.png\" border=\"0\" /><br/>" + data + " <!--{t}-->message(s) in your box.<!--{/t}--></a></div>";
 				} else {
-					w.innerHTML = "<div align=\"center\"><!--{t}-->No new messages.<!--{/t}--></div>";
+					w.innerHTML = "<div align=\"center\"><!--{t}-->No messages in your box.<!--{/t}--></div>";
 				}
 			},
 			mimetype: "text/json"
