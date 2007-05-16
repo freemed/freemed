@@ -198,6 +198,25 @@ class Ledger {
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method get_list
 
+	// Method: GetClaims
+	//
+	//	Retrieve a list of claims from the system.
+	//
+	// Parameters:
+	//
+	//	$p - Array of procedure ids
+	//
+	// Returns:
+	//
+	//	Array of hashes containing procedure data.
+	//
+	public function GetClaims ( $p ) {
+		$use = array();
+		foreach ($p AS $v ) { $use[] = $v + 0; }
+		$q = "SELECT pr.id AS claim_id, pr.procdt AS date_of_service, DATE_FORMAT(pr.procdt, '%m/%d/%Y') AS date_of_service_mdy, TRUNCATE(pr.proccharges, 2) AS billed_amount, CONCAT( c.cptcode, ' (', c.cptnameint, ')' ) AS cpt, pr.procamtpaid AS amount_paid FROM procrec pr LEFT OUTER JOIN cpt c ON c.id=pr.proccpt WHERE FIND_IN_SET(pr.id, ".$GLOBALS['sql']->quote(join(',', $use)).")";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetClaims
+
 	// Method: move_to_next_coverage
 	//
 	//	Moves a procedure to the next available coverage.

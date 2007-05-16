@@ -69,7 +69,7 @@
 		postCheck: function ( ) {
 			var claims = this.getSelectedClaims();
 			if ( typeof( claims ) == 'undefined' ) { return false; }
-			alert('postCheck STUB');
+			freemedLoad( 'org.freemedsoftware.ui.billing.postcheck?claims=' + dojo.json.serialize( claims ) );
 		},
 		rebill: function ( ) {
 			var claims = this.getSelectedClaims();
