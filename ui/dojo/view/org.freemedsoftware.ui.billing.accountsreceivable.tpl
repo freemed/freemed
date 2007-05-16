@@ -117,7 +117,7 @@
 
 <div dojoType="SplitContainer" orientation="vertical" sizerWidth="0" activeSizing="1" layoutAlign="client">
 
-	<div dojoType="ContentPane" id="accountsReceivableFormPane" layoutAlign="top" sizeShare="60">
+	<div dojoType="ContentPane" id="accountsReceivableFormPane" layoutAlign="top" sizeShare="60" style="height: 20em;">
 
 		<h3><!--{t}-->Accounts Receivable<!--{/t}--></h3>
 
@@ -177,7 +177,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" sizeShare="15">
+	<div dojoType="ContentPane" sizeShare="15" style="height: 3em;">
 		<div align="center">
 		<table border="0" style="width:auto;">
 			<tr>
