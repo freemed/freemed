@@ -854,16 +854,20 @@ class RemittBillingTransport extends BillingModule {
 
 		// Create master hash to work with for all procedures, etc
 		$bill_hash = array ();
+		$key_counts = array ();
 		foreach ($claim AS $my_claim => $to_bill) {
 			// First, form hash key
 			list ($my_format, $my_target) =
 				$this->MediaToFormatTarget($my_claim, $_REQUEST['media'][$my_claim]);
 			$hash_key = $my_format.'__'.$my_target;
+			$key_counts[ $hash_key ] += 1;
+			$remainder = floor( ( $key_counts[ $hash_key ] + 1 ) / 500 );
+			$hash_key .= "__${remainder}";
 			//print "hash key = $hash_key<br/>\n";
 
 			// Only process if the claim is to be billed
 			// (also check for null hash key)
-			if (($to_bill == 1) and ($hash_key != '__')) {
+			if (($to_bill == 1) and (substr($hash_key,0,2) != '__')) {
 				// And the patient is supposed to be billed
 				if ($bill[$claim_owner[$my_claim]] == 1) {
 					// Add the procedure to that hash
