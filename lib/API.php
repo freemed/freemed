@@ -3681,7 +3681,7 @@ function patient_history_list () {
 		// $v processing by checking if it's an array.
 		if (!is_array($v)) {
 			// Get patient information
-			$this_patient = CreateObject('FreeMED.Patient', $v);
+			$this_patient = CreateObject('_FreeMED.Patient', $v);
 	
 			// Form Lastname, Firstname, ID list item
 			$key = $this_patient->fullName(true) . " (".$v.")";
