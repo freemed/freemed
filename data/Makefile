@@ -2,7 +2,7 @@
 # $Author$
 
 THISDIR=data
-SUBDIR=backup cache config en_US fax keys ui report
+SUBDIR=backup cache config en_US fax form keys report
 
 all:
 	# Nothing
@@ -12,7 +12,7 @@ install:
 	for d in $(SUBDIR); do \
 		cp -vrf $$d $(INSTDIR)/$(THISDIR); \
 	done
-	cp -vf .ht* *.php $(INSTDIR)/$(THISDIR)
+	cp -vf .ht* $(INSTDIR)/$(THISDIR)
 
 clean:
 	# Nothing

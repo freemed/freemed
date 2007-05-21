@@ -8,7 +8,7 @@ all:
 
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	cp -rvf [A-Z]* $(INSTDIR)/$(THISDIR)
+	cp -rvf [A-Z]* naturaldocs $(INSTDIR)/$(THISDIR)
 	#	No installation for apache 1.x anymore by default
 	#mkdir -p $(DESTDIR)/etc/apache/conf.d
 	#cp -vf freemed.apache.conf $(DESTDIR)/etc/apache/conf.d/freemed.conf
