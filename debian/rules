@@ -84,8 +84,12 @@ binary-arch: build install
 	dh_fixperms
 	# Quick patch to allow me to have world writeable cache and
 	# backup directories, as well as an image store, etc... - Jeff
-	chown -Rvf www-data.www-data debian/freemed/usr/share/freemed/data/{cache,backup,store}
-	chmod ug+w -Rvf debian/freemed/usr/share/freemed/data{cache,backup,store}
+	chown -Rvf www-data.www-data debian/freemed/usr/share/freemed/data/cache
+	chown -Rvf www-data.www-data debian/freemed/usr/share/freemed/data/backup
+	chown -Rvf www-data.www-data debian/freemed/usr/share/freemed/img/store
+	chmod ug+w -Rvf debian/freemed/usr/share/freemed/data/cache
+	chmod ug+w -Rvf debian/freemed/usr/share/freemed/data/backup
+	chmod ug+w -Rvf debian/freemed/usr/share/freemed/img/store
 #	dh_perl
 #	dh_python
 #	dh_makeshlibs
