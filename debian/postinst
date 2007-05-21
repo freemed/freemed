@@ -19,7 +19,9 @@ echo "[done]"
 
 # Change writeable permissions for data/, img/store, etc
 echo -n "Updating permissions ... "
-chmod -Rf a+w /usr/share/freemed/data/{cache,backup,store}
+chmod -Rf a+w /usr/share/freemed/data/cache
+chmod -Rf a+w /usr/share/freemed/data/backup
+chmod -Rf a+w /usr/share/freemed/img/store
 echo "[done]"
 
 # Attempt to create freemed mysql database ... will have no password if
