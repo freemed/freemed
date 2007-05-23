@@ -103,10 +103,12 @@
 			<!--{/if}-->
 		},
 		OnLoadRecent: function ( ) {
+			var prev = document.getElementById( 'prevProgressNoteDate' ).value;
 			dojo.io.bind({
 				method: "POST",
 				content: {
-					param0: "<!--{$patient|escape}-->"
+					param0: "<!--{$patient|escape}-->",
+					param1: prev
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.GetRecentRecord',
 				load: function( type, data, evt ) {
@@ -154,9 +156,18 @@
 		<!--{if not $id}-->
 		<tr>
 			<td align="right"></td>
-			<td><button dojoType="Button" id="importPreviousProgressNote" widgetId="importPreviousProgressNote">
-				<!--{t}-->Import Previous Notes<!--{/t}-->
-			</button></td>
+			<td><table border="0"><tr><td><button dojoType="Button" id="importPreviousProgressNote" widgetId="importPreviousProgressNote">
+				<!--{t}-->Import Previous Notes for <!--{/t}-->
+			</button></td><td>
+			<input dojoType="Select"
+			autocomplete="false"
+			id="prevProgressNoteDate_widget" widgetId="prevProgressNoteDate_widget"
+			setValue="if (arguments[0]) { document.getElementById('prevProgressNoteDate').value = arguments[0]; }"
+			style="width: 100px;"
+			dataUrl="<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.RecentDates?param0=<!--{$patient|escape}-->&param1=%{searchString}"
+			mode="remote"
+			/></td></tr></table></td>
+			<input type="hidden" id="prevProgressNoteDate" />
 		</tr>
 		<!--{/if}-->
 

@@ -713,13 +713,40 @@ class EMRModule extends BaseModule {
 	//	Associative array (hash) of record
 	//
 	public function GetRecentRecord ( $patient, $recent_date = NULL ) {
+		if ( $recent_date ) {
+			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+			$rDate = $s->ImportDate( $recent_date );
+		} else {
+			$rDate = NULL;
+		}
 		$query = "SELECT * FROM `".$this->table_name."` ".
 			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ".
-			( $recent_date ? " AND `".$this->date_field."` <= '".addslashes($recent_date)."' " : "" ).
+			( $rDate ? " AND `".$this->date_field."` <= '".addslashes($rDate)."' " : "" ).
 			"ORDER BY ".$this->date_field." DESC, id DESC";
 		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
 	} // end method GetRecentRecord
+
+	// Method: RecentDates
+	//
+	//	List of previous date fields for this distinct record date.
+	//
+	// Parameters:
+	//
+	//	$patient - Id of patient record
+	//
+	// Returns:
+	//
+	//	Associative array of dates, where key = value for all elements.
+	//
+	public function RecentDates ( $patient, $param = NULL ) {
+		$query = "SELECT DISTINCT(".$this->date_field.") FROM ".$this->table_name." ORDER BY ".$this->date_field." DESC";
+		$res = $GLOBALS['sql']->queryCol( $query ); 
+		foreach ( $res AS $v ) {
+			$result[$v] = $v;
+		}
+		return $result;
+	} // end method RecentDates
 
 	// Method: RenderSinglePDF
 	//
