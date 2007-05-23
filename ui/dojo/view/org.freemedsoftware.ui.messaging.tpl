@@ -97,16 +97,26 @@
 			if ( typeof msg == 'undefined' ) {
 				alert("<!--{t}-->A message must be selected.<!--{/t}-->");
 			} else {
-				alert('modify tag ' + dojo.widget.byId('messagesTag').getValue() );
+				var newTag = dojo.widget.byId('messagesTag').getValue();
+				if ( newTag == 'INBOX' ) { newTag = ''; }
+				dojo.io.bind({
+					method: 'POST',
+					content: {
+						param0: msg.id,
+						param1: newTag
+					},
+					url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.TagModify',
+					load: function( type, data, evt ) {
+						freemedMessage( "<!--{t}-->Message moved successfully.<!--{/t}-->", 'INFO' );
+						// Force reload
+						o.loadMessages();
+					},
+					mimetype: "text/json"
+				});
 			}
 		},
 		selectTagView: function ( ) {
-			var msg = this.getSelectedMessage();
-			if ( typeof msg == 'undefined' ) {
-				alert("<!--{t}-->A message must be selected.<!--{/t}-->");
-			} else {
-				alert('select tag view');
-			}
+			o.loadMessages();
 		},
 		createMessageCallback: function ( ) {
 			dojo.io.bind({
@@ -143,7 +153,6 @@
 		dojo.event.connect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
-		dojo.event.connect(dojo.widget.byId('createMessageButton'), "onClick", o, "createMessageCallback");
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
@@ -151,7 +160,6 @@
 		dojo.event.disconnect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
 		dojo.event.disconnect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.disconnect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
-		dojo.event.disconnect(dojo.widget.byId('createMessageButton'), "onClick", o, "createMessageCallback");
 	});
 
 </script>
@@ -223,39 +231,3 @@
 	</div>
 </div>
 
-<div dojoType="Dialog" id="newMessageDialog" widgetId="newMessageDialog" style="display: none;">
-	<h3><!--{t}-->Create Message<!--{/t}--></h3>
-	<table border="0">
-		<tr>
-			<td valign="top" align="right"><!--{t}-->Recipient<!--{/t}--> : </td>
-			<td>
-				<select dojoType="Select"
-				 id="msgfor" widgetId="msgfor"
-				 style="width: 150px;"
-				 mode="remote" autocomplete="false"
-				 dataUrl="<!--{$relay}-->/org.freemedsoftware.api.UserInterface.GetUsers?param0=%{searchString}"
-				 /></select>
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" align="right"><!--{t}-->Patient<!--{/t}--> : </td>
-			<td>
-				<!--{include file="org.freemedsoftware.widget.patientpicklist.tpl" varname="msgpatient"}-->
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" align="right"><!--{t}-->Subject<!--{/t}--> : </td>
-			<td><input type="text" id="msgsubject" name="msgsubject" size="50" value="" /></td>
-		</tr>
-		<tr>
-			<td valign="top" align="right"><!--{t}-->Message<!--{/t}--> : </td>
-			<td><textarea dojoType="Editor2" id="msgtext" widgetId="msgtext" cols="60" rows="6"></textarea></td>
-		</tr>
-	</table>
-	<div align="center">
-		<table border="0"><tr>
-			<td align="right"><button dojoType="Button" id="createMessageButton" widgetId="createMessageButton"><!--{t}-->Create<!--{/t}--></button></td>
-			<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('newMessageDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button></td>
-		</tr></table>
-	</div>
-</div>

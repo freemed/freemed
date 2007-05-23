@@ -180,6 +180,31 @@ class Messages {
 		return ( $result ? true : false );
 	} // end method send
 
+	// Method: TagModify
+	//
+	//	Change the tagging associated with a message.
+	//
+	// Parameters:
+	//
+	//	$message - Message table ID
+	//
+	//	$tag - Tag to associate with this message
+	//
+	// Returns:
+	//
+	//	Boolean, successful
+	//
+	public function TagModify ( $message, $tag ) {
+		$q = $GLOBALS['sql']->update_query(
+			"messages",
+			array (
+				"msgtag" => $tag
+			), array ( "id" => $message + 0 )
+		);
+		$result = $GLOBALS['sql']->query( $q );
+		return ( $result ? true : false );
+	} // end method TagModify
+
 	// Method: view
 	//
 	//	Get all messages for this user or patient. Use
