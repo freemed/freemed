@@ -59,6 +59,25 @@
 		fileUnreadDocument: function ( ) {
 			alert ( " file : " + this.saveValue );
 		},
+		wrongUnreadDocument: function ( ) {
+			dojo.widget.byId('sendToProviderDialog').show();
+		},
+		sendToAnotherProvider: function ( ) {
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: this.saveValue,
+					param1: parseInt( document.getElementById('sendToProvider').value )
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.SendToAnotherProvider",
+				load: function ( type, data, evt ) {
+					freemedMessage( "<!--{t}-->Document moved to another provider.<!--{/t}-->", 'INFO' );
+					dojo.widget.byId('sendToProviderDialog').hide();
+					this.resetForm();
+				},
+				mimetype: "text/json"
+			});
+		},
 		deleteDocument: function ( ) {
 			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
 			if (x) {
@@ -153,12 +172,16 @@
 	_container_.addOnLoad(function(){
 		dojo.event.connect(dojo.widget.byId('unreadDocuments'), "onSelect", o, "selectUnreadDocument");
 		dojo.event.connect(dojo.widget.byId('fileUnreadDocumentButton'), "onClick", o, "fileUnreadDocument");
+		dojo.event.connect(dojo.widget.byId('wrongUnreadDocumentButton'), "onClick", o, "wrongUnreadDocument");
+		dojo.event.connect(dojo.widget.byId('sendToProviderButton'), "onClick", o, "sendToAnotherProvider");
 		dojo.event.connect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
 		dojo.event.connect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('unreadDocuments'), "onSelect", o, "selectUnreadDocument");
 		dojo.event.disconnect(dojo.widget.byId('fileUnreadDocumentButton'), "onClick", o, "fileUnreadDocument");
+		dojo.event.disconnect(dojo.widget.byId('wrongUnreadDocumentButton'), "onClick", o, "wrongUnreadDocument");
+		dojo.event.disconnect(dojo.widget.byId('sendToProviderButton'), "onClick", o, "sendToAnotherProvider");
 		dojo.event.disconnect(dojo.widget.byId('cancelButton'), "onClick", o, "cancelDocument");
 		dojo.event.disconnect(dojo.widget.byId('deleteButton'), "onClick", o, "deleteDocument");
 	});
@@ -212,12 +235,15 @@
 			</tr>
 		</table>
 
-		<div align="center">
+		<div align="center" id="unreadButtons">
 		<table border="0">
 			<tr>
 				<td align="right"><button dojoType="Button" id="fileUnreadDocumentButton" widgetId="fileUnreadDocumentButton"><!--{t}-->Sign<!--{/t}--></button></td>
-				<td align="center"><button dojoType="Button" id="modifyDirectlyNoCoverButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
 				<td align="left"><button dojoType="Button" id="cancelButton"><!--{t}-->Cancel<!--{/t}--></button></td>
+			</tr>
+			<tr>
+				<td align="right"><button dojoType="Button" id="wrongUnreadDocumentButton" widgetId="wrongUnreadDocumentButton"><!--{t}-->Send to<!--{/t}--><br/><!--{t}-->Another Provider<!--{/t}--></button></td>
+				<td align="left"><button dojoType="Button" id="modifyDirectlyNoCoverButton" widgetId="modifyDirectlyNoCoverButton"><!--{t}-->File Directly<!--{/t}--><br/><!--{t}-->(w/o first page)<!--{/t}--></button></td>
 			</tr>
 		</table>
 		</div>
@@ -230,3 +256,30 @@
 	</div>
 </div>
 
+<!--{* Hidden dialog *}-->
+
+<div dojoType="Dialog" style="display: none;" id="sendToProviderDialog" widgetId="sendToProviderDialog">
+	<h3><!--{t}-->Send to Another Provider<!--{/t}--></h3>
+
+	<p><!--{t}-->Please choose another provider who should receive this document.<!--{/t}--></p>
+
+	<p>
+		<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="sendToProvider"}-->
+	</p>
+
+	<table border="0">
+		<tr>
+			<td align="right">
+				<button dojoType="Button" id="sendToProviderButton" widgetId="sendToProviderButton">
+					<!--{t}-->Send<!--{/t}-->
+				</button>
+			</td>
+
+			<td align="left">
+				<button dojoType="Button" id="cancelSendToProviderButton" onClick="dojo.widget.byId('sendToProviderDialog').hide();">
+					<!--{t}-->Cancel<!--{/t}-->
+				</button>
+			</td>
+		</tr>
+	</table>
+</div>
