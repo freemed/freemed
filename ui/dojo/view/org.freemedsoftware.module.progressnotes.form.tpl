@@ -72,14 +72,22 @@
 					mimetype: "text/json"
 				});
 			}
+		},
+		OnSelectTab: function( id ) {
+			var myId = id.widgetId.replace('Pane', '');
+			try {
+				document.getElementById(myId).focus();
+			} catch (e) { }
 		}
 	};
 
 	_container_.addOnLoad(function() {
 		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', letters, 'submit' );
+		dojo.event.topic.subscribe ( 'noteTabContainer-selectChild', letters, "OnSelectTab" );
 	});
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', letters, 'submit' );
+		dojo.event.topic.unsubscribe ( 'noteTabContainer-selectChild', letters, "OnSelectTab" );
 	});
 
 </script>
