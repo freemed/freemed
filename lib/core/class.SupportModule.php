@@ -453,7 +453,7 @@ class SupportModule extends BaseModule {
 		if (is_array($id)) {
 			$r = $id;
 		} else {
-			$r = $GLOBALS['sql']->get_link( $this->table_name, $rec );
+			$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		}
 		if (!(strpos($this->widget_hash, "##") === false)) {
 			$value = '';
