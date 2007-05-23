@@ -262,7 +262,7 @@
 	 valueField="id" border="0" multiple="yes" style="height: 100%;">
 	<thead>
 		<tr>
-			<th field="date_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
+			<th field="date_mdy" dataType="Date" sort="desc"><!--{t}-->Date<!--{/t}--></th>
 			<th field="summary" dataType="String"><!--{t}-->Summary<!--{/t}--></th>
 			<th field="type" dataType="String"><!--{t}-->Type<!--{/t}--></th>
 			<th field="notes" dataType="Html"><!--{t}-->Notes<!--{/t}--></th>
