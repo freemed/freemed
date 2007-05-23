@@ -24,9 +24,8 @@
 
 <script type="text/javascript">
 	dojo.require( 'dojo.event.*' );
-	dojo.require( 'dojo.widget.RichText' );
 
-	var letters = {
+	var notes = {
 		handleResponse: function ( data ) {
 			if (data) {
 				freemedMessage( "<!--{t}-->Added progress note.<!--{/t}-->", "INFO" );
@@ -47,6 +46,9 @@
 				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
 			} catch ( err ) { }
 			var myContent = {
+				<!--{if $id}-->
+				id: "<!--{$id|escape}-->",
+				<!--{/if}-->
 				pnotesdt: dojo.widget.byId('note.dateOf').getValue(),
 				pnotesdoc: parseInt( document.getElementById('note.provider').value ),
 				pnotesdescrip: document.getElementById('note.descrip').value,
@@ -59,19 +61,43 @@
 				pnotes_R: document.getElementById('note_R').value,
 				pnotespat: '<!--{$patient|escape}-->'
 			};
-			if (letters.validate( myContent )) {
+			if (notes.validate( myContent )) {
 				dojo.io.bind({
-					method: "POST",
+					method: "GET",
 					content: {
 						param0: myContent
 					},
-					url: "<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.add",
+					url: "<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
 					load: function ( type, data, evt ) {
-						letters.handleResponse( data );
+						notes.handleResponse( data );
 					},
 					mimetype: "text/json"
 				});
 			}
+		},
+		initialLoad: function ( ) {
+			<!--{if $id}-->
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: "<!--{$id|escape}-->"
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.GetRecord",
+				load: function ( type, data, evt ) {
+					dojo.widget.byId('note.dateOf').setValue( data['pnotesdt'] );
+					document.getElementById('note.descrip').value = data['pnotesdescrip'];
+					document.getElementById('note_S').value = data['pnotes_S'];
+					document.getElementById('note_O').value = data['pnotes_O'];
+					document.getElementById('note_A').value = data['pnotes_A'];
+					document.getElementById('note_P').value = data['pnotes_P'];
+					document.getElementById('note_I').value = data['pnotes_I'];
+					document.getElementById('note_E').value = data['pnotes_E'];
+					document.getElementById('note_R').value = data['pnotes_R'];
+					dojo.event.topic.publish( 'note.provider-assign', data['pnotesdoc'] );
+				},
+				mimetype: "text/json"
+			});
+			<!--{/if}-->
 		},
 		OnSelectTab: function( id ) {
 			var myId = id.widgetId.replace('Pane', '');
@@ -82,12 +108,13 @@
 	};
 
 	_container_.addOnLoad(function() {
-		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', letters, 'submit' );
-		dojo.event.topic.subscribe ( 'noteTabContainer-selectChild', letters, "OnSelectTab" );
+		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notes, 'submit' );
+		dojo.event.topic.subscribe ( 'noteTabContainer-selectChild', notes, "OnSelectTab" );
+		<!--{if $id}-->notes.initialLoad();<!--{/if}-->
 	});
 	_container_.addOnUnload(function() {
-		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', letters, 'submit' );
-		dojo.event.topic.unsubscribe ( 'noteTabContainer-selectChild', letters, "OnSelectTab" );
+		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notes, 'submit' );
+		dojo.event.topic.unsubscribe ( 'noteTabContainer-selectChild', notes, "OnSelectTab" );
 	});
 
 </script>
