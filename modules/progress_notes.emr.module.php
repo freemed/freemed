@@ -88,6 +88,7 @@ class ProgressNotes extends EMRModule {
 		);
 
 		// Set associations
+		$this->_SetAssociation('EmrModule');
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'pnoteseoc');
 
@@ -139,12 +140,16 @@ class ProgressNotes extends EMRModule {
 	} // end method NoteForDate
 
 	protected function add_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$data['pnotesdt'] = $s->ImportDate( $data['pnotesdt'] );
         	$data['pnotesdtadd'] = date('Y-m-d');
         	$data['pnotesdtmod'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	protected function mod_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$data['pnotesdt'] = $s->ImportDate( $data['pnotesdt'] );
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
