@@ -103,6 +103,10 @@
 				patientEmrAttachments.printMultiple();
 				break;
 	
+				case 'view':
+				freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.view?id=' + x.oid + '&patient=<!--{$patient|escape}-->' );
+				break;
+	
 				default:
 				alert( "TODO: " + action + " " + id );
 				break;
@@ -188,6 +192,7 @@
 					for (i=0; i<data.length; i++) {	
 						data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
 						data[i]['actions'] = '';
+						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
 						if (data[i]['locked'] == 0) {
 							// All unlocked actions go here:
