@@ -63,7 +63,7 @@
 			};
 			if (notes.validate( myContent )) {
 				dojo.io.bind({
-					method: "GET",
+					method: "POST",
 					content: {
 						param0: myContent
 					},
@@ -75,6 +75,18 @@
 				});
 			}
 		},
+		loadData: function ( data ) {
+			dojo.widget.byId('note.dateOf').setValue( data['pnotesdt'] );
+			document.getElementById('note.descrip').value = data['pnotesdescrip'];
+			document.getElementById('note_S').value = data['pnotes_S'];
+			document.getElementById('note_O').value = data['pnotes_O'];
+			document.getElementById('note_A').value = data['pnotes_A'];
+			document.getElementById('note_P').value = data['pnotes_P'];
+			document.getElementById('note_I').value = data['pnotes_I'];
+			document.getElementById('note_E').value = data['pnotes_E'];
+			document.getElementById('note_R').value = data['pnotes_R'];
+			dojo.event.topic.publish( 'note.provider-assign', data['pnotesdoc'] );
+		},
 		initialLoad: function ( ) {
 			<!--{if $id}-->
 			dojo.io.bind({
@@ -84,20 +96,26 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.GetRecord",
 				load: function ( type, data, evt ) {
-					dojo.widget.byId('note.dateOf').setValue( data['pnotesdt'] );
-					document.getElementById('note.descrip').value = data['pnotesdescrip'];
-					document.getElementById('note_S').value = data['pnotes_S'];
-					document.getElementById('note_O').value = data['pnotes_O'];
-					document.getElementById('note_A').value = data['pnotes_A'];
-					document.getElementById('note_P').value = data['pnotes_P'];
-					document.getElementById('note_I').value = data['pnotes_I'];
-					document.getElementById('note_E').value = data['pnotes_E'];
-					document.getElementById('note_R').value = data['pnotes_R'];
-					dojo.event.topic.publish( 'note.provider-assign', data['pnotesdoc'] );
+					notes.loadData( data );
 				},
 				mimetype: "text/json"
 			});
 			<!--{/if}-->
+		},
+		OnLoadRecent: function ( ) {
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: "<!--{$patient|escape}-->"
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.GetRecentRecord',
+				load: function( type, data, evt ) {
+					try {
+						notes.loadData( data );
+					} catch (e) { }
+				},
+				mimetype: "text/json"
+			});
 		},
 		OnSelectTab: function( id ) {
 			var myId = id.widgetId.replace('Pane', '');
@@ -111,10 +129,16 @@
 		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notes, 'submit' );
 		dojo.event.topic.subscribe ( 'noteTabContainer-selectChild', notes, "OnSelectTab" );
 		<!--{if $id}-->notes.initialLoad();<!--{/if}-->
+		<!--{if not $id}-->
+		dojo.event.connect( dojo.widget.byId( 'importPreviousProgressNote' ), 'onClick', notes, 'OnLoadRecent' );
+		<!--{/if}-->
 	});
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notes, 'submit' );
 		dojo.event.topic.unsubscribe ( 'noteTabContainer-selectChild', notes, "OnSelectTab" );
+		<!--{if not $id}-->
+		dojo.event.disconnect( dojo.widget.byId( 'importPreviousProgressNote' ), 'onClick', notes, 'OnLoadRecent' );
+		<!--{/if}-->
 	});
 
 </script>
@@ -126,6 +150,15 @@
         <div dojoType="ContentPane" id="noteSummaryPane" label="<!--{t}-->Summary<!--{/t}-->">
 
 		<table border="0" style="width: auto;">
+
+		<!--{if not $id}-->
+		<tr>
+			<td align="right"></td>
+			<td><button dojoType="Button" id="importPreviousProgressNote" widgetId="importPreviousProgressNote">
+				<!--{t}-->Import Previous Notes<!--{/t}-->
+			</button></td>
+		</tr>
+		<!--{/if}-->
 
 		<tr>
 			<td align="right"><!--{t}-->Date<!--{/t}--></td>
