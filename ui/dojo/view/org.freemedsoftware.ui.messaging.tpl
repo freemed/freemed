@@ -72,8 +72,7 @@
 			d.innerHTML = '<tt>' + data.content.replace(/\n/g, "<br/>\n").replace(/\\/g, "") + '</tt>';
 		},
 		newMessage: function ( ) {
-			dojo.widget.byId('newMessageDialog').show();
-			document.getElementById('msgsubject').focus();
+			freemedLoad( 'org.freemedsoftware.ui.messaging.compose' );
 		},
 		deleteMessage: function ( ) {
 			var msg = this.getSelectedMessage();
