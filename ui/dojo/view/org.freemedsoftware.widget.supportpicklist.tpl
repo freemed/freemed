@@ -36,6 +36,35 @@
 
 *}-->
 
+<script language="javascript">
+
+	var <!--{$varname|replace:'.':''}--> = {
+		onAssign: function ( id ) {
+			// Do reverse lookup from assignment
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: id
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.to_text",
+				load: function ( type, data, evt ) {
+					dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id );
+					dojo.widget.byId('<!--{$varname|escape}-->_widget').setLabel( data );
+				},
+				mimetype: "text/json"
+			});
+		}
+	};
+
+	_container_.addOnLoad(function(){
+		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
+	});
+	_container_.addOnUnload(function(){
+		dojo.event.topic.unsubscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
+	});
+
+</script>
+
 <input dojoType="Select" value=""
 	autocomplete="false"
 	id="<!--{$varname|escape}-->_widget" widgetId="<!--{$varname|escape}-->_widget"
