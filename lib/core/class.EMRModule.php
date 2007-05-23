@@ -403,11 +403,12 @@ class EMRModule extends BaseModule {
 		}
 
 		if ( !is_array($data) and !is_object($data) ) {
+			syslog(LOG_INFO, get_class($this)."| no data presented");
 			return false;
 		}
 		$ourdata = (array) $data;
 
-		if (!$ourdata['id']) { return false; }
+		if (!$ourdata['id']) { syslog(LOG_INFO, get_class($this)."| no id presented"); return false; }
 
 		// Check for modification locking
 		if (!freemed::lock_override()) {
@@ -419,7 +420,7 @@ class EMRModule extends BaseModule {
 		if ( $lock->IsLocked( $ourdata['id'] ) ) {
 			return false;
 		} else {
-			$lock->LockRock( $ourdata['id'] );
+			$lock->LockRow( $ourdata['id'] );
 		}
 
 		$ourdata = $this->prepare( $ourdata );
