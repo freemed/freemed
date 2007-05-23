@@ -36,7 +36,7 @@ class RecordLock {
 	//
 	//	$table - Table name
 	//
-	function RecordLock ( $table ) {
+	public function __construct ( $table ) {
 		$this->table = $table;
 		$this->user = CreateObject('org.freemedsoftware.core.User');
 		$this->expiry = (RECORD_LOCK_TIMEOUT + 0) ? RECORD_LOCK_TIMEOUT : 180;
@@ -56,7 +56,7 @@ class RecordLock {
 	//	returns false.
 	//
 	function IsLocked ( $row ) {
-		if ( !$row ) { return false }
+		if ( !$row ) { return false; }
 		$query = "SELECT * FROM recordlock WHERE ".
 			"locksession <> '".session_id()."' AND ".
 			"locktable='".addslashes($this->table)."' AND ".
