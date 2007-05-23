@@ -46,9 +46,9 @@
 						// Hide annotations box
 						dojo.widget.byId('emrAnnotationDialog').hide();
 						this.currentItem = 0;
-						// Force reload
-						patientLoadEmrAttachments();
 						freemedMessage("<!--{t}-->Added annotation.<!--{/t}-->", "INFO");
+						// Force reload
+						freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 					} else {
 						alert('<!--{t}-->Failed to annotate record.<!--{/t}-->');
 					}
@@ -70,6 +70,7 @@
 				case 'annotate':
 				dojo.widget.byId('emrAnnotationDialog').show();
 				document.getElementById('emrAnnotation').focus();
+				return true;
 				break;
 
 				case 'lock':
@@ -96,7 +97,7 @@
 				break;
 
 				case 'modify':
-				freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid );
+				freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid + '&patient=<!--{$patient|escape}-->' );
 				break;
 	
 				case 'print':
@@ -311,7 +312,7 @@
 	<form>
 	<table border="0">
 		<tr align="center">
-			<textarea dojoType="RichText" id="emrAnnotation" name="emrAnnotation" rows="5" cols="60" htmlEditing="true" useActiveX="true" shareToolbar="false" toolbarAlwaysVisible="true"></textarea>
+			<textarea id="emrAnnotation" rows="5" cols="40"></textarea>
 		</tr>
 		<tr>
 			<td align="center">
