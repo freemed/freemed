@@ -92,9 +92,9 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 					logoutDialog.hide();
 				}
 			},
-			mimetype: "text/json"
+			mimetype: "text/json",
+			sync: true
 		});
-		freemedLoad( "org.freemedsoftware.view.login" );
 		return true;
 	}
 
