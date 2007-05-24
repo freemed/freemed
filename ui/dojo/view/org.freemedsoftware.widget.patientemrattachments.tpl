@@ -157,16 +157,40 @@
 				var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
 				url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".RenderSinglePDF?param0=" + encodeURIComponent( x.oid );
 			} else {
-				alert('multiple');
 				url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) );
 			}
 
 			// Hide beforehand so it actually gets done
 			dojo.widget.byId('emrPrintDialog').hide();
 
-			// Load in hidden frame
-			//window.open( url )
-			document.getElementById('patientPrintView').src = url;
+			if ( document.getElementById('printMethodBrowser').checked ) {
+				// Load in hidden frame
+				freemedMessage("<!--{t}-->Sending document to your web browser.<!--{/t}-->", "INFO");
+				document.getElementById('patientPrintView').src = url;
+				return true;
+			}
+			if ( document.getElementById('printMethodFax').checked ) {
+				alert('STUB: print to fax');
+				return true;
+			}
+			if ( document.getElementById('printMethodPrinter').checked ) {
+				if (patientEmrAttachments.itemsToPrint.length == 1) {
+					var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
+					url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".PrintSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&param1=printer";
+				} else {
+					url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) ) + "&param1=printer";
+				}
+				// Make async call to print
+				dojo.io.bind({
+					method: "POST",
+					url: url,
+					load: function( type, data, evt ) {
+						freemedMessage("<!--{t}-->Sending document to printer<!--{/t}-->: " + document.getElementById('emrPrinter').value, "INFO");
+					},
+					mimetype: "text/json"
+				});
+				return true;
+			}
 		},
 		OnAdd: function ( ) {
 			var m = document.getElementById('emrSection').value;
@@ -247,7 +271,6 @@
 			dataUrl="<!--{$relay}-->/org.freemedsoftware.api.TableMaintenance.GetModules?param0=EmrModule&param1=%{searchString}&param2=1"
 			setValue="document.getElementById('emrSection').value = arguments[0];"
 			mode="remote" value="" />
-		</div>
 		<input type="hidden" id="emrSection" name="emrSection" value="" />
 	</td>
 	<td align="left"><button dojoType="button" id="emrAddButton" widgetId="emrAddButton"><!--{t}-->Add<!--{/t}--></button></td>
@@ -282,7 +305,16 @@
 		<tr>
 			<td width="25"><input type="radio" id="printMethodPrinter" name="printMethod" value="printer" /></td>
 			<td align="right"><label for="printMethodPrinter"><!--{t}-->Printer<!--{/t}--></label</td>
-			<td align="left"></td>
+			<td align="left">
+				<input dojoType="Select"
+					autocomplete="true"
+					id="emrPrinter_widget" widgetId="emrPrinter_widget"
+					style="width: 200px;"
+					dataUrl="<!--{$relay}-->/org.freemedsoftware.api.Printing.GetPrinters?param0=%{searchString}"
+					setValue="document.getElementById('emrPrinter').value = arguments[0]; document.getElementById('printMethodPrinter').checked = true;"
+					mode="remote" value="" />
+				<input type="hidden" id="emrPrinter" name="emrPrinter" value="" />
+			</td>
 		</tr>
 		<tr>
 			<td width="25"><input type="radio" id="printMethodFax" name="printMethod" value="fax" /></td>
