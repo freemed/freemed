@@ -44,6 +44,12 @@
 			<!--{t}-->Messaging<!--{/t}-->
 		</div>
 
+		<!--{* ----- Non-static items ----- *}-->
+		<!--{get_templates var=systemItems glob='org.freemedsoftware.hook.task.system.*.tpl'}-->
+		<!--{foreach from=$systemItems item=component}-->
+		<!--{include file="$component"}-->
+		<!--{/foreach}-->
+
 	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Patients<!--{/t}-->" class="basicPane">
@@ -63,6 +69,13 @@
 			<!--{t}-->Call-in<!--{/t}-->
 		</div>
 
+		<!--{* ----- Non-static items ----- *}-->
+		<!--{get_templates var=patientItems glob='org.freemedsoftware.hook.task.patient.*.tpl'}-->
+		<!--{foreach from=$patientItems item=component}-->
+		<!--{include file="$component"}-->
+		<!--{/foreach}-->
+
+	</div>
 	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
@@ -94,6 +107,12 @@
 			<!--{t}-->REMITT Billing<!--{/t}-->
 		</div>
 
+		<!--{* ----- Non-static items ----- *}-->
+		<!--{get_templates var=billingItems glob='org.freemedsoftware.hook.task.billing.*.tpl'}-->
+		<!--{foreach from=$billingItems item=component}-->
+		<!--{include file="$component"}-->
+		<!--{/foreach}-->
+
 	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">
@@ -103,6 +122,12 @@
 			<!--{t}-->Reporting Engine<!--{/t}-->
 		</div>
 
+		<!--{* ----- Non-static items ----- *}-->
+		<!--{get_templates var=reportingItems glob='org.freemedsoftware.hook.task.reporting.*.tpl'}-->
+		<!--{foreach from=$reportingItems item=component}-->
+		<!--{include file="$component"}-->
+		<!--{/foreach}-->
+
 	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Utilities<!--{/t}-->" class="basicPane">
@@ -111,6 +136,12 @@
 			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Support Data<!--{/t}-->
 		</div>
+
+		<!--{* ----- Non-static items ----- *}-->
+		<!--{get_templates var=utilityItems glob='org.freemedsoftware.hook.task.utilities.*.tpl'}-->
+		<!--{foreach from=$utilityItems item=component}-->
+		<!--{include file="$component"}-->
+		<!--{/foreach}-->
 
 	</div>
 
