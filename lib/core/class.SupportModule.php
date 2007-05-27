@@ -118,6 +118,17 @@ class SupportModule extends BaseModule {
 	//
 	var $rpc_field_map;
 
+	// Variable: $this->table_join
+	//
+	//	Additional join fields, used in widgets, where the keys are
+	//	the associated fields in the local table, and the values are
+	//	the names of the foreign tables.
+	//
+	// Example:
+	//
+	//	$this->table_join = array ( 'covpatient' => 'patient' );
+	//
+
 	// Variable: $this->distinct_fields
 	//
 	//	Specifies the field names which are allowed to have
@@ -351,6 +362,30 @@ class SupportModule extends BaseModule {
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 
+	// Method: FormJoinClause
+	//
+	//	Internal protected method to form the SQL LEFT OUTER JOIN
+	//	clause needed by the module if it is required.
+	//
+	// Returns:
+	//
+	//	SQL query fragment
+	//
+	protected function FormJoinClause ( ) {
+		// Create join clause if there is one
+		$join = '';
+		if (is_array($this->table_join)) {
+			$j = array();
+			foreach ( $this->table_join AS $k => $v ) {
+				if ( ($k+0) == 0 ) {
+					$j[] = "LEFT OUTER JOIN ${v} ON ".$this->table_name.".${k} = ${v}.id";
+				}
+			}
+			$join = join(' ', $j);
+		}
+		return $join;
+	} // end method FormJoinClause
+
 	// Method: picklist
 	//
 	//	Generic picklist.
@@ -377,6 +412,7 @@ class SupportModule extends BaseModule {
 		}
 
 		$query = "SELECT * FROM ".$this->table_name.
+			" ".$this->FormJoinClause()." ".
 			( is_array($c) ? " WHERE ".join(' OR ',$c) : "" ).
 			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
 			" LIMIT 20";
