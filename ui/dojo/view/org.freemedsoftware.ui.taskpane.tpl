@@ -76,7 +76,6 @@
 		<!--{/foreach}-->
 
 	</div>
-	</div>
 
 	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unfiled');">
