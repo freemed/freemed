@@ -42,11 +42,25 @@
 			if ( m.length > 1 ) { alert( m ); }
 			return r;
 		},
+		initialLoad: function ( ) {
+			<!--{if $id}-->
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: "<!--{$id|escape}-->"
+					url: "<!--{$relay}-->/org.freemedsoftware.module.Letters.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
+				},
+				mimetype: "text/json",
+				sync: true
+			});
+			<!--{/if}-->
+		},
 		submit: function ( ) {
 			try {
 				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
 			} catch ( err ) { }
 			var myContent = {
+				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
 				letterdt: dojo.widget.byId('letters.dateOf').getValue(),
 				letterfrom: parseInt( document.getElementById('letters.fromProvider').value ),
 				letterto: parseInt( document.getElementById('letters.toProvider').value ),
@@ -59,7 +73,7 @@
 					content: {
 						param0: myContent
 					},
-					url: "<!--{$relay}-->/org.freemedsoftware.module.Letters.add",
+					url: "<!--{$relay}-->/org.freemedsoftware.module.Letters.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
 					load: function ( type, data, evt ) {
 						letters.handleResponse( data );
 					},
@@ -70,6 +84,7 @@
 	};
 
 	_container_.addOnLoad(function() {
+		letters.initialLoad();
 		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', letters, 'submit' );
 	});
 	_container_.addOnUnload(function() {
