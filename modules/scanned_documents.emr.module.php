@@ -74,6 +74,7 @@ class ScannedDocuments extends EMRModule {
 		$this->summary_order_by = "imagedt";
 
 		// Set associations
+		$this->_SetAssociation('EmrModule');
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'imageeoc');
 
@@ -167,6 +168,25 @@ class ScannedDocuments extends EMRModule {
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
+
+	// Method: NumberOfPages
+	//
+	//	Expose the number of pages of a Djvu document
+	//
+	// Parameters:
+	//
+	//	$id - Table record id
+	//
+	// Returns:
+	//
+	//	Integer, number of pages in the specified document
+	//
+	public function NumberOfPages ( $id ) {
+		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
+			PHYSICAL_LOCATION . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
+		return $djvu->NumberOfPages();
+	} // end method NumberOfPages
 
 	function tc_picklist ( ) {
 		return array (
