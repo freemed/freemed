@@ -23,6 +23,17 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<style type="text/css">
+
+	.dateSelectionHeader {
+		size: 10pt;
+		border: 1px solid #5555ff;
+		padding: 5px;
+		background-color: #aaaaff;
+		}
+
+</style>
+
 <script type="text/javascript">
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.FilteringTable");
@@ -49,41 +60,87 @@
 				mimetype: "text/json"
 			});
 		},
-		onSelect: function () {
-			var w = dojo.widget.byId('dailyPatientAppointments');
-			var val; var type;
-			if (w.getSelectedData().length > 0) {
-				dojo.debug("found getSelectedData()");
-				val = w.getSelectedData()[0].patient_id;
-				type = w.getSelectedData()[0].resource_type;
+		setAtomicStatus: function ( evt ) {
+			if ( parseInt(evt) > 0 ) {
+				// Check to see if anything is selected
+				try {
+					var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
+					var d = {
+						csstatus: parseInt( evt ),
+						csappt: parseInt( s.scheduler_id ),
+						cspatient: parseInt( s.patient_id )
+					};
+					dojo.io.bind({
+						method: "GET",
+						content: {
+							param0: d
+						},
+						url: '<!--{$relay}-->/org.freemedsoftware.module.schedulerpatientstatus.add',
+						load: function( type, data, evt ) {
+							if (data) {
+								freemedMessage( "<!--{t}-->Status updated.<!--{/t}-->", 'INFO' );
+								o.resetAtomicStatus();
+								// Reload calendar by force
+								o.dailyCalendarSetDate();
+							}
+						}
+					});
+				} catch (err) { }
 			}
-			if (val) {
-				if ( type == 'temp' ) {
-					freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.callin.overview?patient=' + val);
-				} else {
-					freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + val);
-				}
-				return true;
-			}
+		},
+		viewPatient: function ( ) {
+			try {
+				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
+				freemedLoad( 'org.freemedsoftware.controller.patient.overview?patient=' + s.patient_id );
+			} catch (err) { }
+		},
+		resetAtomicStatus: function () {
+			dojo.widget.byId('atomicStatusWidget').setLabel('');
+			dojo.widget.byId('atomicStatusWidget').setValue('');
 		}
 	};
 
 	_container_.addOnLoad(function() {
+		o.resetAtomicStatus();
+		dojo.event.connect(dojo.widget.byId('atomicStatusWidget'), "onValueChanged", o, "setAtomicStatus");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
-		dojo.event.connect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
+		dojo.event.connect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
 	});
 
 	_container_.addOnUnload(function() {
+		dojo.event.disconnect(dojo.widget.byId('atomicStatusWidget'), "onValueChanged", o, "setAtomicStatus");
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
-		dojo.event.disconnect(dojo.widget.byId('dailyPatientAppointments'), "onSelect", o, "onSelect");
+		dojo.event.disconnect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
 	});
 </script>
 
-<div align="center" style="size: 10pt; border: 1px solid #5555ff; padding: 5px; background-color: #aaaaff;">
+<div align="center" class="dateSelectionHeader">
 <table border="0">
 	<tr>
 		<td><b>Today's Patients</b></td>
 		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" widgetId="dailyAppointmentsDate" /></td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center">
+			<table style="width: auto;" border="0">
+				<tr>
+					<td><button dojoType="Button" id="noshowButton" widgetId="nosnowButton"><!--{t}-->No Show<!--{/t}--></button></td>
+					<td>
+						<input dojoType="Select" value=""
+						autocomplete="false"
+						id="atomicStatusWidget" widgetId="atomicStatusWidget"
+						style="width: 300px;"
+						dataUrl="<!--{$relay}-->/org.freemedsoftware.module.schedulerstatustype.picklist?param0=%{searchString}"
+						mode="remote" />
+					</td>
+					<td><button dojoType="Button" id="viewPatientButton" widgetId="viewPatientButton"><!--{t}-->View Patient<!--{/t}--></button></td>
+				<!--
+					<td><button dojoType="Button" id="noshowButton" widgetId="nosnowButton"><!--{t}--><!--{/t}--></button></td>
+					<td><button dojoType="Button" id="noshowButton" widgetId="nosnowButton"><!--{t}--><!--{/t}--></button></td>
+				-->
+				</tr>
+			</table>
+		</td>
 	</tr>
 </table>
 </div>
@@ -91,11 +148,11 @@
 <div class="tableContainer">
 	<table dojoType="FilteringTable" id="dailyPatientAppointments" widgetId="dailyPatientAppointments" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-	 valueField="scheduler_id" border="0" multiple="no">
+	 valueField="scheduler_id" border="0" multiple="false">
 	<thead>
 		<tr>
 			<th field="date_of_mdy" dataType="Date">Date</th>
-			<th field="appointment_time" dataType="String">Time</th>
+			<th field="appointment_time" dataType="String" sort="asc">Time</th>
 			<th field="patient" dataType="String">Patient</th>
 			<th field="provider" dataType="String">Provider</th>
 			<th field="status" dataType="String">Status</th>
