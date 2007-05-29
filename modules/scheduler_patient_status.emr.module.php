@@ -36,6 +36,13 @@ class SchedulerPatientStatus extends EMRModule {
 	var $record_name = "Scheduler Patient Status";
 	var $table_name = 'scheduler_status';
 	var $patient_field = 'cspatient';
+	var $variables = array (
+		'cspatient',
+		'csstatus',
+		'csnote',
+		'csuser',
+		'csappt'
+	);
 
 	public function __construct ( ) {
 		// __("Scheduler Patient Status")
