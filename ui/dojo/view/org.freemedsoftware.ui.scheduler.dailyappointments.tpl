@@ -85,7 +85,10 @@
 							}
 						}
 					});
-				} catch (err) { }
+				} catch (err) {
+					// Nothing selected, reset
+					o.resetAtomicStatus();
+				}
 			}
 		},
 		viewPatient: function ( ) {
