@@ -853,6 +853,8 @@ var euOPAQUE      = 16;
 				if (this.isAbsoluteInside(x,y)){
 					if (this.link)					
 						document.location.href=this.link;
+					else if (this.code)
+						eval(this.code);
 					else if (this.mouseInsideClick)
 						this.mouseInsideClick(x,y);						
 				}
