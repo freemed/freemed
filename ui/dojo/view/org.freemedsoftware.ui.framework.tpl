@@ -264,11 +264,11 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	dock.setIconsOffset(5);
 	dock.addIcon(
 		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/Quick-Cal.png" } } ),
-		{ code:"freemedLoad('org.freemedsoftware.ui.user.form');" }
+		{ code:"freemedLoad('org.freemedsoftware.ui.scheduler.dailyappointments');" }
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stocks.png" } } ),
-		{ code:"freemedLoad('/org.freemedsoftware.ui.billing');"}
+		{ code:"freemedLoad('org.freemedsoftware.ui.billing');"}
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Rolodex.png" } } ),
