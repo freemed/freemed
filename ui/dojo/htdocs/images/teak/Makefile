@@ -27,6 +27,15 @@ all: clean
 		rsvg -w 32 -h 32 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.32x32.png; echo -n " [32x32 ] "; \
 		echo " "; \
 	done
+	@echo "Crushing ... "
+	@for i in *.png; do \
+		echo " - $$i "; \
+		j=`echo $$i | sed 's/\.png//g;'`.orig.png; \
+		mv $$i $$j -v; \
+		pngcrush $$j $$i; \
+		rm -vf $$j; \
+		echo "-----------------------------------------"; \
+	done
 	@echo "Finished."
 
 clean:
