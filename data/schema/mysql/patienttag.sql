@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `patienttag` (
 	tag			VARCHAR (100) NOT NULL,
@@ -33,6 +34,14 @@ CREATE TABLE IF NOT EXISTS `patienttag` (
 	#	Define keys
 	KEY			( patient, tag ),
 	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+#	Define aggregation table for set operations
+CREATE TABLE IF NOT EXISTS `patienttaglookup` (
+	lastupdated		TIMESTAMP(14) NOT NULL,
+	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	tags			TEXT,
+	PRIMARY KEY		( patient )
 ) ENGINE=InnoDB;
 
 #	Define stored procedures
@@ -61,6 +70,41 @@ BEGIN
 END//
 DELIMITER ;
 
+-- Update aggregation table
+DROP PROCEDURE IF EXISTS patientTagUpdateLookup;
+DELIMITER //
+CREATE PROCEDURE patientTagUpdateLookup ( IN pt BIGINT UNSIGNED )
+BEGIN
+	DECLARE cFound INT UNSIGNED;
+	DECLARE tAll TEXT;
+
+	#	Get everything
+	SELECT
+		GROUP_CONCAT( t.tag ) INTO tAll
+	FROM patienttag t
+	WHERE
+		( t.dateexpire = 0 OR t.dateexpire > NOW() ) AND
+		t.patient = pt
+	GROUP BY t.patient;
+
+	#	Check for update or insert
+	SELECT COUNT(*) INTO cFound FROM patienttaglookup WHERE patient=pt;
+	IF cFound < 1 THEN
+		INSERT INTO patienttaglookup (
+			lastupdated,
+			patient,
+			tags
+		) VALUES (
+			NOW(),
+			pt,
+			tAll
+		);
+	ELSE
+		UPDATE patienttaglookup SET lastupdated=NOW(), tags=tAll WHERE patient=pt;
+	END IF;
+END//
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS patienttag_Upgrade;
 DELIMITER //
 CREATE PROCEDURE patienttag_Upgrade ( )
@@ -86,6 +130,7 @@ CREATE TRIGGER patienttag_Delete
 	AFTER DELETE ON patienttag
 	FOR EACH ROW BEGIN
 		DELETE FROM `patient_emr` WHERE module='patienttag' AND oid=OLD.id;
+		CALL patientTagUpdateLookup( OLD.patient );
 	END;
 //
 
@@ -93,6 +138,7 @@ CREATE TRIGGER patienttag_Insert
 	AFTER INSERT ON patienttag
 	FOR EACH ROW BEGIN
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'patienttag', NEW.patient, NEW.id, NEW.datecreate, NEW.tag, NEW.user, 'active' );
+		CALL patientTagUpdateLookup( NEW.patient );
 	END;
 //
 
@@ -100,6 +146,7 @@ CREATE TRIGGER patienttag_Update
 	AFTER UPDATE ON patienttag
 	FOR EACH ROW BEGIN
 		UPDATE `patient_emr` SET stamp=NEW.datecreate, patient=NEW.patient, summary=NEW.tag, user=NEW.user, status=IF(IFNULL(NEW.dateexpire, 'null')='null', 'active', 'inactive') WHERE module='patienttag' AND oid=NEW.id;
+		CALL patientTagUpdateLookup( NEW.patient );
 	END;
 //
 
