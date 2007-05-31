@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `schedulingrules` (
 	dateend			DATE,
 	timebegin		TIME,
 	timeend			TIME,
+	newpatient		BOOL,
 	id			SERIAL
 ) ENGINE=InnoDB;
 
@@ -47,14 +48,36 @@ CALL schedulingrules_Upgrade( );
 
 DROP PROCEDURE IF EXISTS checkSchedulingRules;
 DELIMITER //
-CREATE PROCEDURE checkSchedulingRules ( IN phy INT UNSIGNED, IN dt DATE, IN tm TIME )
+CREATE PROCEDURE checkSchedulingRules ( IN pat INT UNSIGNED, IN phy INT UNSIGNED, IN dt DATE, IN tm TIME )
 BEGIN
+	DECLARE ptstatus INT UNSIGNED;
+
+	IF pat > 0 THEN
+		#	Figure out patient status
+		SELECT
+			COUNT(*) INTO ptstatus
+		FROM scheduler s
+		WHERE
+			s.caldateof < dt AND
+			s.calpatient = pat AND
+			s.caltype = 'pat' AND
+			s.calstatus != 'cancelled';
+	END IF;
+
 	SELECT
 		reason
 	FROM schedulingrules s
 	WHERE
+		#	Provider rules
 		( FIND_IN_SET( phy, s.provider ) OR s.provider = phy OR s.provider = 0 OR ISNULL(s.provider) ) 
 		AND (
+			#	Handle no patient status
+			ISNULL( s.newpatient )
+			#	Handle new patients only
+			OR ( s.newpatient = TRUE AND ptstatus > 0 )
+			#	Handle no new patients only
+			OR ( s.newpatient = FALSE AND ptstatus = 0 )
+		) AND (
 			#	Only day of week range, no actual dates or times
 			( ISNULL(s.datebegin) AND ISNULL(s.timebegin) AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 			#	Full date ranges ( times are null ), no DOW
