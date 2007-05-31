@@ -88,6 +88,7 @@
 				} catch (err) {
 					// Nothing selected, reset
 					o.resetAtomicStatus();
+					alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
 				}
 			}
 		},
@@ -95,7 +96,9 @@
 			try {
 				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
 				freemedLoad( 'org.freemedsoftware.controller.patient.overview?patient=' + s.patient_id );
-			} catch (err) { }
+			} catch (err) {
+				alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+			}
 		},
 		resetAtomicStatus: function () {
 			dojo.widget.byId('atomicStatusWidget').setLabel('');
