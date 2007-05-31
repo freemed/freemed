@@ -174,12 +174,12 @@
 			<table border="0"><tr>
 				<td width="30">
 					<button dojoType="Button" class="messageButton" id="messageNewButton" widgetId="messageNewButton">
-						<img src="<!--{$htdocs}-->/images/summary_envelope.png" border="0" />
+						<img src="<!--{$htdocs}-->/images/summary_envelope.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="30">
 					<button dojoType="Button" class="messageButton" id="messageDeleteButton" widgetId="messageDeleteButton">
-						<img src="<!--{$htdocs}-->/images/summary_delete.png" border="0" />
+						<img src="<!--{$htdocs}-->/images/summary_delete.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="100">
@@ -196,12 +196,12 @@
 				</td>
 				<td width="30">
 					<button dojoType="Button" class="messageButton" id="messageMoveButton" widgetId="messageMoveButton">
-						<img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" />
+						<img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="30">
 					<button dojoType="Button" class="messageButton" id="messageTagButton" widgetId="messageTagButton">
-						<img src="<!--{$htdocs}-->/images/summary_view.png" border="0" />
+						<img src="<!--{$htdocs}-->/images/summary_view.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td></td>
