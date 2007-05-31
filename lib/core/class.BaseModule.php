@@ -65,6 +65,18 @@ class BaseModule extends Module {
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
 
+	// Method: GetModuleName
+	//
+	//	Return module name
+	//
+	// Returns:
+	//
+	//	Textual name of the current module.
+	//
+	public function GetModuleName ( ) {
+		return $this->MODULE_NAME;
+	} // end method GetModuleName
+
 	// Method: _print
 	//
 	//	Provides basic printing interface
