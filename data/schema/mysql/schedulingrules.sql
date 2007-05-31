@@ -22,7 +22,7 @@
 
 CREATE TABLE IF NOT EXISTS `schedulingrules` (
 	user			INT UNSIGNED,
-	provider		INT UNSIGNED,
+	provider		VARCHAR (250),
 	reason			VARCHAR (150),
 	dowbegin		INT UNSIGNED,
 	dowend			INT UNSIGNED,
@@ -53,7 +53,7 @@ BEGIN
 		reason
 	FROM schedulingrules s
 	WHERE
-		( s.provider = phy OR s.provider = 0 OR ISNULL(s.provider) ) 
+		( FIND_IN_SET( phy, s.provider ) OR s.provider = phy OR s.provider = 0 OR ISNULL(s.provider) ) 
 		AND (
 			#	Only day of week range, no actual dates or times
 			( ISNULL(s.datebegin) AND ISNULL(s.timebegin) AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
