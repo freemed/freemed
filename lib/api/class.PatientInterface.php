@@ -29,6 +29,36 @@ class PatientInterface {
 
 	public function __constructor ( ) { }
 
+	// Method: CheckForDuplicatePatient
+	//
+	//	Check for duplicate patients existing based on provided criteria.
+	//
+	// Parameters:
+	//
+	//	$criteria - Hash.
+	//	* ptlname - Last name
+	//	* ptfname - First name
+	//	* ptmname - Middle name
+	//	* ptdob - Date of birth
+	//
+	// Returns:
+	//
+	//	False if there are no matches, the patient id if there are.
+	//
+	public function CheckForDuplicatePatient ( $criteria ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$q = "SELECT * FROM patient p WHERE ".
+			"ptlname=".$GLOBALS['sql']->quote( $criteria['ptlname'] )." AND ".
+			"ptfname=".$GLOBALS['sql']->quote( $criteria['ptfname'] )." AND ".
+			"ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND ".
+			"ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND ".
+			"ptarchive=0";
+		$res = $GLOBALS['sql']->queryAll( $q );
+		if ( count ( $res ) > 0 ) {
+			return $res[0]['ptid'];
+		}
+	} // end method CheckForDuplicatePatient
+
 	// Method: EmrAttachmentsByPatient
 	//
 	//	Get all patient attachments. Has support for caching.

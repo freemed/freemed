@@ -105,10 +105,48 @@
 		});
 	} // end patientFormPopulate
 
+	var pForm = {
+		checkForDupes: function () {
+			var d = {
+				ptlname: document.getElementById('ptlname').value,
+				ptfname: document.getElementById('ptfname').value,
+				ptmname: document.getElementById('ptmname').value,
+				ptdob: dojo.widget.byId( 'ptdob' ).getValue()
+			};
+			var dMsg = document.getElementById( 'dupeMessage' );
+			dojo.io.bind({
+				method: 'GET',
+				content: {
+					param0: d
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.api.PatientInterface.CheckForDuplicatePatient",
+				load: function ( type, data, evt ) {
+					if (data) {
+						dMsg.innerHTML = "<!--{t}-->Patient exists in the system with ID<!--{/t}--> " + data;
+						
+					} else {
+						dMsg.innerHTML = "<!--{t}-->No duplicate patients found.<!--{/t}-->";
+					}
+				},
+				mimetype: 'text/json'
+			});
+		},
+		clearDupe: function () {
+			document.getElementById( 'dupeMessage' ).innerHTML = '';
+		}
+	};
+
 <!--{if $patient > 0}-->
 	_container_.addOnLoad(function(){
 		//TODO: make this work properly to load via "AJAX"
 		patientFormPopulate(<!--{$patient}-->);
+	});
+<!--{else}-->
+	_container_.addOnLoad(function(){
+		dojo.event.connect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
+	});
+	_container_.addOnUnload(function(){
+		dojo.event.disconnect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
 	});
 <!--{/if}-->
 </script>
@@ -178,8 +216,9 @@
 		<td>
 			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptsex" name="ptsex" widgetId="ptsex">
 				<option value=""></option>
-				<option value="f" <!--{if $record.ptsex == 'f'}-->selected<!--{/if}-->>Female</option>
-				<option value="m" <!--{if $record.ptsex == 'm'}-->selected<!--{/if}-->>Male</option>
+				<option value="f" <!--{if $record.ptsex == 'f'}-->selected<!--{/if}-->><!--{t}-->Female<!--{/t}--></option>
+				<option value="m" <!--{if $record.ptsex == 'm'}-->selected<!--{/if}-->><!--{t}-->Male<!--{/t}--></option>
+				<option value="t" <!--{if $record.ptsex == 't'}-->selected<!--{/if}-->><!--{t}-->Transgendered<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
@@ -188,6 +227,16 @@
 		<td><!--{t}-->Date of Birth<!--{/t}--></td>
 		<td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" date="<!--{$record.ptdob}-->" containerToggle="wipe"></div></td>
 	</tr>
+
+<!--{* Verify if patient exists already based on L, F M and DOB *}-->
+<!--{if not $patient}-->
+	<tr>
+		<td colspan="2"><button dojoType="Button" id="dupeButton" widgetId="dupeButton"><!--{t}-->Check for duplicate patient records<!--{/t}--></button></td>
+	</tr>
+	<tr>
+		<td colspan="2"><div id="dupeMessage"></div></td>
+	</tr>
+<!--{/if}-->
 
 	</table>
 	</div>
@@ -312,7 +361,12 @@
 	<table border="0" style="width:200px;">
 	<tr><td align="<!--{if $patient > 0}-->right<!--{else}-->center<!--{/if}-->">
 	<button dojoType="Button" type="button" id="patientFormCommitChangesButton" widgetId="patientFormCommitChangesButton" onClick="patientFormCommitChanges(); return true;">
+<!--{if $patient > 0}-->
 		<div><!--{t}-->Commit Changes<!--{/t}--></div>
+<!--{else}-->
+		<div><!--{t}-->Create Patient<!--{/t}--></div>
+<!--{/if}-->
+
 	</button>
 	<!--{if $patient > 0}-->
 	</td><td align="left">
