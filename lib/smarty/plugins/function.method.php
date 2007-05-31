@@ -24,9 +24,16 @@
 function smarty_function_method ( $params, &$smarty ) {
 	if ( !isset ( $params['namespace'] ) ) { $smarty->error ( "Namespace not specified" ); }
 	if ( count ( $params['param'] ) > 0 ) {
-		return call_user_func_array ( 'CallMethod', array ( $params['namespace'], $params['param'] ) );
+		$x = call_user_func_array ( 'CallMethod', array ( $params['namespace'], $params['param'] ) );
 	} else {
-		return CallMethod ( $params['namespace'] );
+		$x = CallMethod ( $params['namespace'] );
+	}
+
+	// Handle optional variable return policy
+	if ( $params['var'] ) {
+		$smarty->assign( $params['var'], $x );
+	} else {
+		return $x;
 	}
 } // end function smarty_function_method
 
