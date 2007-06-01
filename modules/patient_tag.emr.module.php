@@ -84,7 +84,7 @@ class PatientTag extends SupportModule {
 	//
 	public function ListTags ( $criteria ) {
 		if (strlen($criteria) < 3) { return array(); }
-		$query = "SELECT DISTINCT(tag) AS tag FROM ".$this->table_name." WHERE tag LIKE '%".$GLOBALS['sql']->escape( $criteria )."%' ORDER BY tag LIMIT 20";
+		$query = "SELECT DISTINCT(tag) AS tag FROM ".$this->table_name." WHERE tag LIKE '%".$GLOBALS['sql']->escape( $criteria )."%' AND ( dateexpire = 0 OR dateexpire > NOW() ) ORDER BY tag LIMIT 20";
 		$result = $GLOBALS['sql']->queryCol( $query );
 		$found = false;
 		foreach ( $result AS $entry ) {
