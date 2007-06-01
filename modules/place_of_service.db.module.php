@@ -35,6 +35,7 @@ class PlaceOfService extends SupportModule {
 	var $record_name = "Place of Service";
 	var $table_name  = "pos";
 	var $order_field = "posname,posdescrip";
+	var $widget_hash = "##posname## (##posdescrip##)";
 
 	var $variables = array (
 		"posname",
