@@ -55,7 +55,8 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	//
 
 	function openHelpPage ( ) {
-		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chtmlbrowser', 'chtmlBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
+		var topic = freemedGlobal.currentHelpTopic;
+		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chtmlbrowser?topic=' + topic, 'chtmlBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
 	}
 
 	function freemedMessage( message, type ) {
@@ -103,7 +104,12 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 		dojo.widget.byId( 'freemedContent' ).setUrl( url );
 
 		// Push current help topic value
-		freemedGlobal.currentHelpTopic = url;
+		var x = url.replace( "<!--{$controller}-->/", '' );
+		if ( x.match('=') ) {
+			var p = x.indexOf( '?' );
+			x = x.slice( 0, p );
+		}
+		freemedGlobal.currentHelpTopic = x;
 
 		// Add page to history
 		freemedGlobal.pageHistory.push( url );
@@ -291,10 +297,12 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton" />
 					<img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" onClick="openHelpPage(); return true;" />
 					<img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
+					<!--{*
 					<!-- Tooltips -->
 					<span dojoType="tooltip" connectId="supportButton" toggle="explode" toggleDuration="100"><!--{t}-->Access technical support<!--{/t}--></span>
 					<span dojoType="tooltip" connectId="manualButton" toggle="explode" toggleDuration="100"><!--{t}-->View online FreeMED documentation<!--{/t}--></span>
 					<span dojoType="tooltip" connectId="logoffButton" toggle="explode" toggleDuration="100"><!--{t}-->Terminate your current FreeMED session<!--{/t}--></span>
+					*}-->
 				</td>
 			</tr>
 		</table>

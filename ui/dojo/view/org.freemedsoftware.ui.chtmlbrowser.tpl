@@ -82,15 +82,16 @@
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
 					<img src="<!--{$htdocs}-->/images/close.png" alt="" border="0" id="closeButton" onClick="window.close(); return true;" />
+					<!--{*
 					<!-- Tooltips -->
 					<span dojoType="tooltip" connectId="closeButton" toggle="explode" toggleDuration="100"><!--{t}-->Close Help Browser<!--{/t}--></span>
+					*}-->
 				</td>
 			</tr>
 		</table>
 	</div>
-	<div dojoType="ContentPane" layoutAlign="top" style="color: #ffffff;">
-		<iframe width="100%" height="100%">
-		</iframe>
+	<div dojoType="ContentPane" layoutAlign="top" id="chtmlContent" widgetId="chtmlContent" style="height: auto;">
+		<iframe width="100%" height="100%" src="<!--{$base_uri}-->/chtml.php/dojo_en_US/<!--{$topic}-->.html" frameborder="0"></iframe>
 	</div>
 </div>
 
