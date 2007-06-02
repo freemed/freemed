@@ -136,6 +136,11 @@
 			<!--{t}-->Support Data<!--{/t}-->
 		</div>
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.configuration');">
+			<img src="<!--{$htdocs}-->/images/teak/settings.64x64.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->System Configuration<!--{/t}-->
+		</div>
+
 		<!--{* ----- Non-static items ----- *}-->
 		<!--{get_templates var=utilityItems glob='org.freemedsoftware.hook.task.utilities.*.tpl'}-->
 		<!--{foreach from=$utilityItems item=component}-->
