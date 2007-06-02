@@ -34,7 +34,7 @@
 
 	var supportData = {
 		onAddClick: function ( ) {
-			freemedLoad( 'org.freemedsoftware.module.<!--{$module|escape}-->.form' );
+			freemedLoad( 'org.freemedsoftware.module.<!--{$module|lower|escape}-->.form?module=<!--{$module|escape}-->' );
 		},
 		onModifyClick: function ( ) {
 			var v;
@@ -44,7 +44,7 @@
 				alert("<!--{t}-->Please select a record.<!--{/t}-->");
 				return false;
 			}
-			freemedLoad( 'org.freemedsoftware.module.<!--{$module|escape}-->.form?id=' + v );
+			freemedLoad( 'org.freemedsoftware.module.<!--{$module|lower|escape}-->.form?module=<!--{$module|escape}-->&id=' + v );
 		},
 		onDeleteClick: function ( ) {
 			var v;
