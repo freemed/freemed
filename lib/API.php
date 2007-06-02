@@ -55,49 +55,16 @@ class freemed {
 	//	Boolean, depending on whether the resource is allowed or denied.
 	//
 	public function acl ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
-		// For now, we test with just the user group specified. We
-		// can expand to do internet addresses, et cetera, from
-		// inside this.
+		static $user;
+		if ( !isset( $user ) ) {
+			$user = freemed::user_cache()->user_number;
+		}
 
-		// Derive user group(s)
-		global $this_user;
-		if (!is_object($this_user)) { $this_user = CreateObject('org.freemedsoftware.core.User'); }
-
-		// Split groups up into array
-		$groups = explode(',', $this_user->local_record['userlevel']);
-
-		// Add "group" with the current user ARO object
-		$groups[] = 'user_'.$this_user->user_number;
-
-		// Loop for each one
-		foreach ($groups as $user_group) {
-			//global $display_buffer; $display_buffer .= "group = $user_group<br/>\n";
-			// Test most granular to least granular
-			if ($axo_group AND $axo_item) {
-				// Query with AXO
-				$a = $GLOBALS['acl']->acl_query (
-					$category,
-					$permission,
-					'individual',
-					$user_group,
-					$axo_group,
-					$axo_item
-				);
-				if ($a['allow'] == 1) { return true; }
-			} else {
-				// Query, no AXO
-				$a = $GLOBALS['acl']->acl_query (
-					$category,
-					$permission,
-					'user',
-					$user_group
-				);
-				if ($a['allow'] == 1) { return true; }
-			}
-		} // end foreach user group
-
-		// If all else fails, return false
-		return false;
+		if ( $axo_group != NULL ) {
+			return $GLOBALS['acl']->acl_check( $category, $permission, 'user', $user, $axo_group, $axo_item );
+		} else {
+			return $GLOBALS['acl']->acl_check( $category, $permission, 'user', $user );
+		}
 	} // end function freemed::acl
 
 	// Function: freemed::acl_patient
@@ -127,8 +94,8 @@ class freemed {
 	public function acl_patient ( $category, $permission, $pid ) {
 		if (freemed::config_value('acl_patient')) {
 			// Advanced check for patient ACL as well
-			$r_acl = freemed::acl($category, $permission);
-			$p_acl = freemed::acl($category, $permission, 'patient', 'patient_'.$pid);
+			$r_acl = freemed::acl( $category, $permission );
+			$p_acl = freemed::acl( $category, $permission, 'patient', $pid );
 			// Decide on combination of regular and patient ACLs
 			if ($p_acl == 1) {
 				return true;
@@ -136,7 +103,7 @@ class freemed {
 			return false;
 		} else {
 			// Basic perms check
-			return freemed::acl($category, $permission);
+			return freemed::acl( $category, $permission );
 		}
 	} // end function freemed::acl_patient
 
