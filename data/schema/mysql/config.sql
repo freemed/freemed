@@ -23,6 +23,7 @@
 CREATE TABLE IF NOT EXISTS `config` (
 	c_option		CHAR (64) UNIQUE NOT NULL,
 	c_value			VARCHAR (100),
+	c_title			VARCHAR (100),
 	c_section		VARCHAR (100),
 	c_type			VARCHAR (100) NOT NULL,
 	c_options		TEXT,
@@ -36,7 +37,8 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Upgrades
-	ALTER IGNORE TABLE config ADD COLUMN c_section VARCHAR (100) AFTER c_value;
+	ALTER IGNORE TABLE config ADD COLUMN c_title VARCHAR (100) AFTER c_value;
+	ALTER IGNORE TABLE config ADD COLUMN c_section VARCHAR (100) AFTER c_title;
 	ALTER IGNORE TABLE config ADD COLUMN c_type VARCHAR (100) NOT NULL AFTER c_section;
 	ALTER IGNORE TABLE config ADD COLUMN c_options TEXT AFTER c_type;
 END
@@ -57,21 +59,28 @@ DELIMITER //
 #
 #	IN defaultValue - Default value for this option. VARCHAR (100).
 #
+#	IN title - Textual name for this option. VARCHAR (100).
+#
 #	IN section - Optional section name for this option. VARCHAR (100).
 #
 #	IN type - Type of configuration widget. VARCHAR (100).
 #
 #	IN options - Options, if needed by widget. TEXT.
 #
-CREATE PROCEDURE config_Register ( IN name CHAR(64), IN defaultValue VARCHAR(100), IN section VARCHAR(100), IN type VARCHAR(100), IN options TEXT )
+CREATE PROCEDURE config_Register ( IN name CHAR(64), IN defaultValue VARCHAR(100), IN title VARCHAR(100), IN section VARCHAR(100), IN type VARCHAR(100), IN options TEXT )
 BEGIN
 	DECLARE found BOOL;
+	DECLARE defined BOOL;
 	SELECT ( COUNT(*) > 0 ) INTO found FROM config WHERE c_option=name;
 
 	IF found THEN
-		UPDATE config SET c_section=section, c_type=type, c_options=options WHERE c_option=name;
+		UPDATE config SET c_title=title, c_section=section, c_type=type, c_options=options WHERE c_option=name;
+		SELECT ( ISNULL( c_value ) OR c_value = '' ) INTO defined FROM config WHERE c_option=name;
+		IF NOT defined AND LENGTH(defaultValue) > 0 THEN
+			UPDATE config SET c_value=defaultValue WHERE c_option=name;
+		END IF;
 	ELSE
-		INSERT INTO config ( c_option, c_value, c_section, c_type, c_options ) VALUES ( name, defaultValue, section, type, options );
+		INSERT INTO config ( c_option, c_value, c_title, c_section, c_type, c_options ) VALUES ( name, defaultValue, title, section, type, options );
 	END IF;
 END
 //

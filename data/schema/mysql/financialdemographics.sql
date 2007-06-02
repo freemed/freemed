@@ -20,6 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+SOURCE data/schema/mysql/config.sql
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
@@ -57,6 +58,32 @@ BEGIN
 	DROP TRIGGER financialdemographics_Delete;
 	DROP TRIGGER financialdemographics_Insert;
 	DROP TRIGGER financialdemographics_Update;
+
+	#----- Configuration options
+	CALL config_Register (
+		'sliding_fee',
+		'0',
+		'Sliding Fee Enabled',
+		'Financial Demographics',
+		'YesNo',
+		''
+	);
+	CALL config_Register (
+		'fed_pov_level',
+		'0',
+		'Federal Poverty Level',
+		'Financial Demographics',
+		'Number',
+		''
+	);
+	CALL config_Register (
+		'fed_pov_inc',
+		'0',
+		'Federal Poverty Increment',
+		'Financial Demographics',
+		'Number',
+		''
+	);
 
 	#----- Upgrades
 	ALTER TABLE financialdemographics ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER fdentry;
