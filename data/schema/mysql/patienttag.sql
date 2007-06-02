@@ -145,7 +145,7 @@ CREATE TRIGGER patienttag_Insert
 CREATE TRIGGER patienttag_Update
 	AFTER UPDATE ON patienttag
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.datecreate, patient=NEW.patient, summary=NEW.tag, user=NEW.user, status=IF(IFNULL(NEW.dateexpire, 'null')='null', 'active', 'inactive') WHERE module='patienttag' AND oid=NEW.id;
+		DELETE FROM `patient_emr` WHERE module='patienttag' AND oid=OLD.id;
 		CALL patientTagUpdateLookup( NEW.patient );
 	END;
 //
