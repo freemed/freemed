@@ -29,6 +29,28 @@ class SystemConfig {
 
 	public function __construct ( ) { }
 
+	// Method: GetAll
+	//
+	//	Get entire list of configuration slots for building a configuration
+	//	interface.
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function GetAll( ) {
+		$q = "SELECT * FROM config WHERE NOT ISNULL(c_title) ORDER BY c_title";
+		$res = $GLOBALS['sql']->queryAll( $q );
+		$result = array ( );
+		foreach ( $res AS $r ) {
+			$result[] = array_merge(
+				$r,
+				array( 'options' => explode( ',', $r['c_options'] ) )
+			);
+		}
+		return $result;
+	} // end method GetAll
+
 	// Method: GetValue
 	//
 	// Parameters:
