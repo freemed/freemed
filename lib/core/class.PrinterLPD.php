@@ -1,5 +1,5 @@
 <?php
- // $Id: class.PrinterLPD.php 2200 2005-09-14 17:07:23Z jeff $
+ // $Id$
  //
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
