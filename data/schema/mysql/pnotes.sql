@@ -90,14 +90,14 @@ CREATE TRIGGER pnotes_Delete
 CREATE TRIGGER pnotes_Insert
 	AFTER INSERT ON pnotes
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'pnotes', NEW.pnotespat, NEW.id, NEW.pnotesdt, NEW.pnotesdescrip, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, provider, user, status ) VALUES ( 'pnotes', NEW.pnotespat, NEW.id, NEW.pnotesdt, NEW.pnotesdescrip, NEW.locked, NEW.pnotesdoc, NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER pnotes_Update
 	AFTER UPDATE ON pnotes
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.pnotesdt, patient=NEW.pnotespat, summary=NEW.pnotesdescrip, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='pnotes' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.pnotesdt, patient=NEW.pnotespat, summary=NEW.pnotesdescrip, provider=NEW.pnotesdoc, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='pnotes' AND oid=NEW.id;
 	END;
 //
 
