@@ -69,6 +69,13 @@ class Controller {
 		$this->smarty->assign ( "controller", "${base_uri}/controller.php/${ui}" );
 		$this->smarty->assign ( "relay", "${base_uri}/relay.php/json" );
 		$this->smarty->assign ( "SESSION", $_SESSION );
+
+		// Theming options
+		if ( defined ( 'LOGIN_IMAGE' ) ) {
+			$this->smarty->assign ( "LOGIN_IMAGE", LOGIN_IMAGE );
+		} else {
+			$this->smarty->assign ( "LOGIN_IMAGE", false );
+		}
 	} // end public function initialize
 
 	public function load ( $template ) {

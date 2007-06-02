@@ -72,11 +72,28 @@
 	</script>
 
 	<style type="text/css">
+<!--{if $LOGIN_IMAGE}-->
+		body {
+			background-color: transparent;
+			font-family : sans-serif;
+			font-size: 9pt;
+			overflow-x: none;
+			overflow-y: none;
+		}
+		.backgroundImage {
+			z-index: -1;
+		}
+		.backgroundImageDiv {
+			overflow-x: none;
+			overflow-y: none;
+		}
+<!--{else}-->
 		body {
 			background: url(<!--{$htdocs}-->/images/brushed.gif);
 			font-family : sans-serif;
-			font-size: 10pt;
+			font-size: 9pt;
 		}
+<!--{/if}-->
 		.dojoButton {
 			font-size: 10pt;
 			padding : 4px;
@@ -102,7 +119,15 @@
 		}
 	</style>
 </head>
+
+<!--{if $LOGIN_IMAGE}-->
+<body style="overflow-x: none; overflow-y: none;" >
+<div id="backgroundImageDiv" style="height: 98%; width: 98%;" align="center">
+	<img id="backgroundImage" src="<!--{$htdocs}-->/images/<!--{$LOGIN_IMAGE}-->" border="0" alt="" style="height: 98%; width: 98%;" />
+</div>
+<!--{else}-->
 <body>
+<!--{/if}-->
 
 <div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250">
 	<form onsubmit="return false;">

@@ -32,6 +32,9 @@ define ('VERSION', "0.8.8");	// current version
 define ('DISPLAY_VERSION', "0.9.0-dev");
 define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)) );
 
+//	Override to allow login image
+//define ('LOGIN_IMAGE', 'login-image.png');
+
 //----- Import settings
 if (file_exists(dirname(__FILE__).'/settings.php')) {
 	include_once(dirname(__FILE__).'/settings.php');
