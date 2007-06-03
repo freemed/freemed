@@ -69,6 +69,24 @@
 			tR.appendChild( tD2 );
 			table.appendChild( tR );
 		},
+		getValue: function ( key ) {
+			var item;
+			for ( var i=0; i<config.corpus.length; i++) {
+				if ( config.corpus[i].c_option == key ) {
+					item = config.corpus[i];
+				}
+			}
+			switch ( item.c_type ) {
+				case 'Number':
+				case 'YesNo':
+				return document.getElementById( item.c_option ).value;
+				break;
+
+				default:
+				return 'FIXME: NO VALUE';
+				break;
+			}
+		},
 		populateTabContainer: function( data ) {
 			for (var i=0; i<data.length; i++) {
 				var item = data[i];
@@ -108,7 +126,26 @@
 			});
 		},
 		onCommit: function ( ) {
-			alert('stub: onCommit');
+			// Form information, collate
+			var hash = { };
+			for( var i=0; i<config.vars.length; i++ ) {
+				hash[ config.vars[i] ] = config.getValue( config.vars[i] );
+			}
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: hash
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.api.SystemConfig.SetValues',
+				load: function( type, data, evt ) {
+					if ( data ) {
+						freemedMessage( "<!--{t}-->Saved configuration values.<!--{/t}-->", 'INFO' );
+					} else {
+						freemedMessage( "<!--{t}-->Failed to change configuration values.<!--{/t}-->", 'ERROR' );
+					}
+				},
+				mimetype: 'text/json'
+			});
 		}
 	};
 
@@ -135,17 +172,11 @@
 <div align="center">
 	<table border="0" style="width: auto;">
 		<tr>
-			<td align="right">
+			<td>
 				<button dojoType="Button" type="button" id="configCommitButton" widgetId="configCommitButton">
-					<div><!--{t}-->Commit Changes<!--{/t}--></div>
+					<div><!--{t}-->Save Changes<!--{/t}--></div>
 				</button>
 			</td>
-			<td align="left">
-				<button dojoType="Button" type="button" id="configCancelButton" widgetId="configCancelButton">
-					<div><!--{t}-->Cancel<!--{/t}--></div>
-				</button>
-			</td>
-	
 		</tr>
 	</table>
 </div>
