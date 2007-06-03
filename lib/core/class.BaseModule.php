@@ -65,6 +65,32 @@ class BaseModule extends Module {
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
 
+	// Method: SplitCSZ
+	//
+	//	Intelligently cut apart city state zip fields.
+	//
+	// Parameters:
+	//
+	//	$csz - City state zip field
+	//
+	// Returns:
+	//
+	//	Array with elements:
+	//	0: city
+	//	1: state
+	//	2: zip
+	//
+	protected function SplitCSZ ( $csz ) {
+		// Split city, state zip if it's one field
+		if ( $csz ) {
+			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $csz, $reg)) {
+				return array ( $reg[1], $reg[2], $reg[3] );
+			}
+		} else {
+			return array ();
+		}
+	} // end method SplitCSZ
+
 	// Method: GetModuleName
 	//
 	//	Return module name

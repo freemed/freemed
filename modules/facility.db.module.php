@@ -27,11 +27,7 @@ class FacilityModule extends SupportModule {
 
 	var $MODULE_NAME    = "Facility";
 	var $MODULE_VERSION = "0.3";
-	var $MODULE_DESCRIPTION = "
-		Facilities are used by FreeMED to describe locations where 
-		services are performed. Any physician/provider can do work 
-		at one or more of these facilities.
-	";
+	var $MODULE_DESCRIPTION = "Facilities are used by FreeMED to describe locations where services are performed. Any physician/provider can do work at one or more of these facilities.";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "8acd5dcf-784f-4441-81a0-fa599c8f03ef";
 
@@ -59,6 +55,8 @@ class FacilityModule extends SupportModule {
 		"psrein",
 		"psrintext",
 		"psrpos",
+		"psrnpi",
+		"psrtaxonomy",
 		'psrx12id',
 		'psrx12idtype'
 	);
@@ -94,43 +92,17 @@ class FacilityModule extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	//----- XML-RPC Methods
-	function picklist () {
-		global $sql;
-		$result = $sql->query("SELECT * FROM ".$this->table_name." ".
-			"ORDER BY ".$this->order_by);
-		if (!$sql->results($result)) {
-			return CreateObject('PHP.xmlrpcresp',
-				CreateObject('PHP.xmlrpcval', 'error', 'string')
-			);
+	protected function add_pre( &$data ) {
+		if ( $data['psrcsz'] ) {
+			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSV( $data['psrcsz'] );
 		}
-		return rpc_generate_sql_hash(
-			$this->table_name,
-			array (
-				"name" => 'psrname',
-				"city" => 'psrcity',
-				"state" => 'psrstate',
-				"id"
-			),
-			"ORDER BY ".$this->order_by
-		);
-	} // end function FacilityModule->picklist
+	}
 
-	function _update ( ) {
-		global $sql;
- 		$version = freemed::module_version($this->MODULE_NAME);
-
-		// Version 0.3
-		//
-		//	Added X12 fields (id and idtype)
-		//
-		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN psrx12id VARCHAR(24) AFTER psrpos');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN psrx12idtype VARCHAR(10) AFTER psrx12id');
+	protected function mod_pre( &$data ) {
+		if ( $data['psrcsz'] ) {
+			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSV( $data['psrcsz'] );
 		}
-	} // end method _update
+	}
 
 } // end class FacilityModule
 

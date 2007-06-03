@@ -29,7 +29,11 @@
 	var m = {
 		handleResponse: function ( data ) {
 			if (data) {
+				<!--{if $id}-->
+				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
+				<!--{else}-->
 				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				<!--{/if}-->
 				freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
@@ -51,7 +55,24 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.facilitymodule.GetRecord",
 				load: function ( type, data, evt ) {
-					m.handleResponse( data );
+					document.getElementById( 'psrname' ).value = data['psrname'];
+					document.getElementById( 'psraddr1' ).value = data['psraddr1'];
+					document.getElementById( 'psraddr2' ).value = data['psraddr2'];
+					dojo.widget.byId( 'psrcsz_widget' ).setLabel( data['psrcity'] + ', ' + data['psrstate'] + ' ' + data['psrzip'] );
+					dojo.widget.byId( 'psrcsz_widget' ).setValue( data['psrcity'] + ', ' + data['psrstate'] + ' ' + data['psrzip'] );
+					document.getElementById( 'psrcountry' ).value = data['psrcountry'];
+					document.getElementById( 'psrnote' ).value = data['psrnote'];
+					dojo.event.topic.publish( 'psrdefphy-assign', data['psrdefphy'] );
+					dojo.event.topic.publish( 'psrpos-assign', data['psrpos'] );
+					document.getElementById( 'psrein' ).value = data['psrein'];
+					document.getElementById( 'psrnpi' ).value = data['psrnpi'];
+					document.getElementById( 'psrtaxonomy' ).value = data['psrtaxonomy'];
+					dojo.widget.byId( 'psrphone' ).setValue( data['psrphone'] );
+					dojo.widget.byId( 'psrfax' ).setValue( data['psrfax'] );
+					document.getElementById( 'psremail' ).value = data['psremail'];
+					document.getElementById( 'psrintext' ).selectedIndex = data['psrintext'];
+					document.getElementById( 'psrx12id' ).value = data['psrx12id'];
+					document.getElementById( 'psrx12idtype' ).value = data['psrx12idtype'];
 				},
 				mimetype: "text/json",
 				sync: true
@@ -64,9 +85,23 @@
 			} catch ( err ) { }
 			var myContent = {
 				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
-				atname: document.getElementById('atname').value,
-				atduration: document.getElementById('atduration').value,
-				atequipment: document.getElementById('atequipment').value
+				psrname: document.getElementById( 'psrname' ).value,
+				psraddr1: document.getElementById( 'psraddr1' ).value,
+				psraddr2: document.getElementById( 'psraddr2' ).value,
+				psrcsz: document.getElementById( 'psrcsz' ).value,
+				psrcountry: document.getElementById( 'psrcountry' ).value,
+				psrnote: document.getElementById( 'psrnote' ).value,
+				psrdefphy: parseInt( document.getElementById( 'psrdefphy' ).value ),
+				psrpos: parseInt( document.getElementById( 'psrpos' ).value ),
+				psrein: document.getElementById( 'psrein' ).value,
+				psrnpi: document.getElementById( 'psrnpi' ).value
+				psrtaxonomy: document.getElementById( 'psrtaxonomy' ).value,
+				psrphone: dojo.widget.byId( 'psrphone' ).getValue( ),
+				psrfax: dojo.widget.byId( 'psrfax' ).getValue( ),
+				psremail: document.getElementById( 'psremail' ).value,
+				psrintext: document.getElementById( 'psrintext' ).value,
+				psrx12id: document.getElementById( 'psrx12id' ).value,
+				psrx12idtype: document.getElementById( 'psrx12idtype' ).value
 			};
 			if (m.validate( myContent )) {
 				dojo.io.bind({
@@ -191,17 +226,17 @@
 
 			<tr>
 				<td align="right"><!--{t}-->Phone Number<!--{/t}--></td>
-				<td align="left"><input dojoType="UsPhoneNumberTextbox" type="text" id="psrphone" size="16" maxlength="16" value="" /></td>
+				<td align="left"><input dojoType="UsPhoneNumberTextbox" type="text" id="psrphone" widgetId="psrphone" size="16" maxlength="16" value="" /></td>
 			</tr>
 
 			<tr>
 				<td align="right"><!--{t}-->Fax Number<!--{/t}--></td>
-				<td align="left"><input dojoType="UsPhoneNumberTextbox" type="text" id="psrfax" size="16" maxlength="16" value="" /></td>
+				<td align="left"><input dojoType="UsPhoneNumberTextbox" type="text" id="psrfax" widgetId="psrphone" size="16" maxlength="16" value="" /></td>
 			</tr>
 
 			<tr>
 				<td align="right"><!--{t}-->Email Address<!--{/t}--></td>
-				<td align="left"><input dojoType="EmailTextbox" type="text" id="psremail" size="50" maxlength="50" value="" /></td>
+				<td align="left"><input dojoType="EmailTextbox" type="text" id="psremail" widgetId="psremail" size="50" maxlength="50" value="" /></td>
 			</tr>
 
 		</table>
@@ -212,17 +247,12 @@
 
 			<tr>
 				<td align="right"><!--{t}-->X12 Identifier<!--{/t}--></td>
-				<td align="left"><input type="text" id="psrname" size="30" maxlength="100" /></td>
+				<td align="left"><input type="text" id="psrx12id" size="30" maxlength="100" /></td>
 			</tr>
 
 			<tr>
 				<td align="right"><!--{t}-->X12 Identifier Type<!--{/t}--></td>
-				<td align="left"></td>
-			</tr>
-
-			<tr>
-				<td align="right"><!--{t}-->Email Address<!--{/t}--></td>
-				<td align="left"></td>
+				<td align="left"><input type="text" id="psrx12idtype" size="30" maxlength="100" /></td>
 			</tr>
 
 		</table>
