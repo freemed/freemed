@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS `facility` (
 	psrfax			VARCHAR (16),
 	psremail		VARCHAR (25),
 	psrein			VARCHAR (9),
+	psrnpi			VARCHAR (32),
+	psrtaxonomy		VARCHAR (32),
 	psrintext		INT UNSIGNED NOT NULL DEFAULT 0,
 	psrpos			INT UNSIGNED NOT NULL DEFAULT 0,
 	psrx12id		VARCHAR (24),
