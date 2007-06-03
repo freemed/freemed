@@ -357,8 +357,19 @@ class SupportModule extends BaseModule {
 	//
 	//	Array of hashes.
 	//
-	public function GetRecords ( $limit = 1000 ) {
-		$q = "SELECT * FROM `".$this->table_name."` ORDER BY ".$this->order_field." LIMIT ${limit}";
+	public function GetRecords ( $limit = 100, $criteria_field = NULL, $criteria = NULL ) {
+		// Check to make sure that if $criteria_field is declared that it's valid
+		if ( $criteria_field ) {
+			$found = false;
+			foreach ( $this->variables AS $v ) {
+				if ( $v == $criteria_field ) { $found = true; }
+			}
+			if ( ! $found ) {
+				syslog( LOG_INFO, "GetRecords| invalid value ${criteria_field} attempted for indexing value" );
+				return false;
+			}
+		}
+		$q = "SELECT * FROM `".$this->table_name."` ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ORDER BY ".$this->order_field." LIMIT ${limit}";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 

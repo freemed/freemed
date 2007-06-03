@@ -29,9 +29,6 @@
 <!--{method var='moduleStructure' namespace="org.freemedsoftware.module.$module.GetMaintenanceStructure"}-->
 
 <script language="javascript">
-	dojo.require('dojo.event.*');
-	dojo.require('dojo.widget.FilteringTable');
-
 	var supportData = {
 		onAddClick: function ( ) {
 			freemedLoad( 'org.freemedsoftware.module.<!--{$module|lower|escape}-->.form?module=<!--{$module|escape}-->' );
@@ -58,7 +55,7 @@
 				dojo.io.bind({
 					method: 'POST',
 					content: {
-						id: v
+						param0: v
 					},
 					url: '<!--{$relay}-->/org.freemedsoftware.module.<!--{$module}-->.del',
 					load: function ( type, data, evt ) {
@@ -71,27 +68,36 @@
 			}
 		},
 		onFilterClick: function ( ) {
-			var filterField = document.getElementById( 'supportFilterSelect' ).value;
-			dojo.widget.byId( 'supportDataHolder' ).setFilter( filterField, supportData.filterCallback );
+			supportData.loadData();
 		},
 		onBackClick: function ( ) {
 			freemedLoad( 'org.freemedsoftware.ui.supportdata' );
 		},
-		filterCallback: function ( v ) {
-			var a = document.getElementById( 'supportFilterText' ).value;
-			if ( ! a.length ) { return true; }
-			return v.toLowerCase().match( a.toLowerCase() );
-		},
 		moduleData: null,
+		currentFilter: 0,
 		loadData: function ( ) {
 			// Load initial data set
 			var w = dojo.widget.byId('supportDataHolder');
+			var c; var currentFilter;
+
+			// See if we're loaded
+			if ( document.getElementById( 'supportFilterText' ).value.length ) {
+				var x = document.getElementById( 'supportFilterSelect' ).value + ',' + document.getElementById( 'supportFilterText' ).value;
+				cFilter = x.length;
+			} else {
+				cFilter = 0;
+			}
+
+			supportData.currentFilter = cFilter;
+
 			dojo.io.bind({
 				method: 'POST',
-				url: '<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.GetRecords',
 				content: {
-					param0: 1000
+					param0: 100,
+					param1: document.getElementById( 'supportFilterSelect' ).value ? document.getElementById( 'supportFilterSelect' ).value : '',
+					param2: document.getElementById( 'supportFilterText' ).value
 				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.GetRecords',
 				load: function ( type, data, event ) {
 					w.store.setData( data );
 				},
@@ -105,15 +111,15 @@
 		dojo.event.connect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
 		dojo.event.connect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
 		dojo.event.connect( dojo.widget.byId('supportDeleteButton'), 'onClick', supportData, 'onDeleteClick' );
-		dojo.event.connect( dojo.widget.byId('supportFilterButton'), 'onClick', supportData, 'onFilterClick' );
 		dojo.event.connect( dojo.widget.byId('supportBackButton'), 'onClick', supportData, 'onBackClick' );
+		document.getElementById( 'supportFilterSelect' ).onchange = supportData.loadData;
+		document.getElementById( 'supportFilterText' ).onkeyup = supportData.loadData;
 	});
 
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportDeleteButton'), 'onClick', supportData, 'onDeleteClick' );
-		dojo.event.disconnect( dojo.widget.byId('supportFilterButton'), 'onClick', supportData, 'onFilterClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportBackButton'), 'onClick', supportData, 'onBackClick' );
 	});
 
@@ -137,7 +143,6 @@
 			<td>
 				<input type="text" id="supportFilterText" name="supportFilterText" value="" />
 			</td>
-			<td><button dojoType="Button" id="supportFilterButton" widgetId="supportFilterButton"><!--{t}-->Filter<!--{/t}--></button></td>
 			<td><button dojoType="Button" id="supportBackButton" widgetId="supportBackButton"><!--{t}-->Back<!--{/t}--></button></td>
 		</tr>
 	</table>
