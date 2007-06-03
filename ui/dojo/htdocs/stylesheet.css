@@ -161,6 +161,7 @@ tbody.scrollContent tr.selected:hover td {
 
 .paddedIcon:hover {
 	background-color: #ccccff;
+	cursor: pointer;
 	}
 
 /* Force dojo buttons to have some padding */
