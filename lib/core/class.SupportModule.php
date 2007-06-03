@@ -307,6 +307,7 @@ class SupportModule extends BaseModule {
 		}
 
 		$ourdata = $this->prepare( (array) $data );
+
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		if ( is_array( $this->variables ) ) {
@@ -314,7 +315,7 @@ class SupportModule extends BaseModule {
 				$GLOBALS['sql']->update_query (
 					$this->table_name,
 					$this->variables,
-					array ( "id" => $id )
+					array ( "id" => $data['id'] )
 				)
 			);
 		} else {
@@ -369,7 +370,7 @@ class SupportModule extends BaseModule {
 				return false;
 			}
 		}
-		$q = "SELECT * FROM `".$this->table_name."` ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ORDER BY ".$this->order_field." LIMIT ${limit}";
+		$q = "SELECT * FROM `".$this->table_name."` ".$this->FormJoinClause()." ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ORDER BY ".$this->order_field." LIMIT ${limit}";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 
