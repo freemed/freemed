@@ -152,7 +152,7 @@
         <table dojoType="FilteringTable" id="supportDataHolder"
          widgetId="supportDataHolder" headClass="fixedHeader"
          tbodyClass="scrollContent" enableAlternateRows="true"
-         valueField="module_class" border="0" multiple="false"
+         valueField="id" border="0" multiple="false"
          rowAlternateClass="alternateRow" style="height: 100%;">
 	<thead>
 		<tr>

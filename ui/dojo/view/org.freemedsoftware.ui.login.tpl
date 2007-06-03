@@ -158,7 +158,7 @@
 			</tr>
 			<tr>
 				<td colspan="2" align="center">
-					<input type="image" style="background: #ffffff;" src="<!--{$htdocs}-->/images/login.png" id="loginImage" border="0" onMouseOver="document.getElementById('loginImage').src='<!--{$htdocs}-->/images/login_over.png';" onMouseOut="document.getElementById('loginImage').src='<!--{$htdocs}-->/images/login.png';" onClick="doFreemedLogin();" />
+					<input type="image" style="background: #ffffff;" src="<!--{$htdocs}-->/images/login.png" id="loginImage" border="0" onMouseOver="document.getElementById('loginImage').src='<!--{$htdocs}-->/images/login_over.png';" onMouseOut="try {document.getElementById('loginImage').src='<!--{$htdocs}-->/images/login.png'; } catch (e) { }" onClick="doFreemedLogin();" />
 				</td>
 			</tr>
 		</table>
