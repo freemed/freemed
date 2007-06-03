@@ -117,7 +117,7 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.reporting.engine');">
-			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/reporting.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Reporting Engine<!--{/t}-->
 		</div>
 
