@@ -26,7 +26,11 @@
 	var m = {
 		handleResponse: function ( data ) {
 			if (data) {
+				<!--{if $id}-->
+				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
+				<!--{else}-->
 				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				<!--{/if}-->
 				freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
@@ -45,7 +49,12 @@
 				method: "POST",
 				content: {
 					param0: "<!--{$id|escape}-->"
-					url: "<!--{$relay}-->/org.freemedsoftware.module.appointmenttemplates.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.appointmenttemplates.GetRecord",
+				load: function ( type, data, evt ) {
+					document.getElementById( 'atname' ).value = data.atname;
+					document.getElementById( 'atduration' ).value = data.atduration;
+					dojo.event.topic.publish( 'atequipment-assign', data.atequipment );
 				},
 				mimetype: "text/json",
 				sync: true
