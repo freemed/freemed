@@ -29,7 +29,6 @@ class Referrals extends EMRModule {
 	var $MODULE_VERSION = "0.8.0";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "03633733-9ec0-4535-b233-83a1686318ff";
-	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -58,6 +57,8 @@ class Referrals extends EMRModule {
 	);
 
 	public function __construct () {
+		$this->_SetAssociation( 'EmrModule' );
+
 		// Call parent constructor
 		parent::__construct();
 	} // end constructor Referrals

@@ -49,11 +49,12 @@ class ProviderGroups extends SupportModule {
 	public function __construct () {
 		// For i18n: __("Provider Groups")
 
-		global $phygroupdtmod;
-
+		$this->table_join = array (
+			'phygroupfac' => 'facility'
+		);
 		$this->list_view = array (
 			__("Physician Group Name") => "phygroupname",
-			__("Default Facility")     => "phygroupfac"
+			__("Default Facility")     => "psrname"
 		);
 
 		// Run constructor

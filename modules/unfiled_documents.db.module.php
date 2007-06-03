@@ -29,6 +29,8 @@ class UnfiledDocuments extends SupportModule {
 	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "edcf764c-1c99-4abd-924a-39d795541b44";
+	var $MODULE_HIDDEN = true;
+
 	var $PACKAGE_MINIMUM_VERSION = "0.7.0";
 
 	var $table_name = 'unfileddocuments';

@@ -42,6 +42,13 @@ class ProviderCertifications extends SupportModule {
 	);
 
 	// For i18n: __("Provider Certifications")
+	public function __construct ( ) {
+		$this->list_view = array(
+			__("Degree") => 'degdegree',
+			__("Name") => 'degname'
+		);
+		parent::__construct( );
+	}
 
 	protected function add_pre ( &$data ) {
 		$data['degdate'] = date ('Y-m-d');

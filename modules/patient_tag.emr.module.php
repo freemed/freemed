@@ -29,6 +29,7 @@ class PatientTag extends SupportModule {
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "1c34f308-1503-4478-9179-896248067fb4";
+	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 

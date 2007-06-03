@@ -29,6 +29,7 @@ class LettersTemplates extends SupportModule {
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "afbb6579-d81a-4020-8050-791daf464a00";
+	var $MODULE_HIDDEN = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 

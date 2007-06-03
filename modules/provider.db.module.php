@@ -94,7 +94,7 @@ class ProviderModule extends SupportModule {
 	);
 	var $widget_hash = '##phylname##, ##phyfname## ##phymname## (##phypracname##)';
 
-	public function __contruct () {
+	public function __construct () {
 		// For i18n: __("Provider")
 
 		$this->list_view = array (
