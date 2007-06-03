@@ -104,6 +104,38 @@ class SystemConfig {
 		}
 	} // end public function SetValue
 
+	// Method: SetValues
+	//
+	//	Batch set configuration values.
+	//
+	// Parameters:
+	//
+	//	$hash - Hash of configuration values.
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function SetValues( $hash ) {
+		if (! freemed::acl ( 'admin', 'config' ) ) { 
+			syslog(LOG_INFO, "Attempted SystemConfig.SetValues without authorization");
+			return false;
+		}
+
+		if ( ! is_object( $hash ) && ! is_array( $hash ) ) {
+			return false;
+		}
+
+		$h = (array) $hash;
+
+		foreach ( $h AS $k => $v ) {
+			$q = "UPDATE config SET c_value=".$GLOBALS['sql']->quote( $v )." WHERE c_option=".$GLOBALS['sql']->quote( $k );
+			$GLOBALS['sql']->query( $q );
+		}
+
+		return true;
+	} // end method SetValues
+
 } // end class Config
 
 ?>
