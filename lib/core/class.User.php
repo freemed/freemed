@@ -107,10 +107,6 @@ class User {
 		return ($this->user_descrip);
 	} // end function getDescription
 
-	public function getLevel ($no_parameters = "") {
-		return ($this->user_level)+0;
-	} // end function getLevel
-
 	// Method: getPhysician
 	//
 	//	Get the provider associated with the current user object.
@@ -123,6 +119,31 @@ class User {
 	public function getPhysician ($no_parameters = "") {
 		return ($this->user_phy)+0;
 	} // end function getPhysician
+
+	// Method: CachedACL
+	//
+	//	Cached simple ACL lookups.
+	//
+	// Parameters:
+	//
+	//	$category - 
+	//
+	//	$permission -
+	//
+	// Returns:
+	//
+	//	Boolean.
+	//
+	public function CachedACL( $category, $permission ) {
+		static $cache;
+		$key = "${category}:${permission}";
+
+		if ( !isset( $cache[ $key ] ) ) {
+			$cache[ $key ] = freemed::acl( $category, $permission );
+		}
+
+		return $cache[ $key ];
+	} // end method CachedACL
 
 	// Method: getFaxesInQueue
 	//
@@ -317,7 +338,7 @@ class User {
 		$my_query = $GLOBALS['sql']->update_query(
 			"user",
 			array (
-				"userpassword" => $md5( $password )
+				"userpassword" => md5( $password )
 			), array ( "id" => $id )
 		);
 		if((LOGLEVEL<1)||LOG_SQL){syslog(LOG_INFO,"setPassword query=$my_query");}	
