@@ -42,3 +42,26 @@ CREATE TABLE IF NOT EXISTS `facility` (
 	id			SERIAL
 ) ENGINE=InnoDB;
 
+DROP PROCEDURE IF EXISTS facility_Upgrade;
+DELIMITER //
+CREATE PROCEDURE facility_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+	CALL FreeMED_Module_GetVersion( 'facility', @V );
+
+	# Version 1
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE facility ADD COLUMN psrx12id VARCHAR (24) AFTER psrpos;
+		ALTER IGNORE TABLE facility ADD COLUMN psrx12idtype VARCHAR (10) AFTER psrx12id;
+		ALTER IGNORE TABLE facility ADD COLUMN psrnpi VARCHAR(32) AFTER psrein;
+		ALTER IGNORE TABLE facility ADD COLUMN psrtaxonomy VARCHAR(32) AFTER psrnpi;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'facility', 1 );
+END
+//
+DELIMITER ;
+CALL facility_Upgrade( );
+
