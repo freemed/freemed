@@ -35,6 +35,7 @@ class InsuranceModifiers extends SupportModule {
 	var $table_name = "insmod";
 	var $record_name = "Insurance Modifiers";
 	var $order_field = "insmoddesc";
+	var $widget_hash = "##insmod## - ##insmoddesc##";
  
 	var $variables = array (
 		"insmod",

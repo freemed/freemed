@@ -27,13 +27,7 @@ class DiagnosisFamily extends SupportModule {
 
 	var $MODULE_NAME    = "Diagnosis Family";
 	var $MODULE_VERSION = "0.2";
-	var $MODULE_DESCRIPTION = "
-		Diagnosis families are part of FreeMED's attempt to
-		make practice management more powerful through outcomes
-		management. Diagnosis families are used to group
-		diagnoses more intelligently, allowing FreeMED to
-		analyze treatment patterns.
-	";
+	var $MODULE_DESCRIPTION = "Diagnosis families are part of FreeMED's attempt to make practice management more powerful through outcomes management. Diagnosis families are used to group diagnoses more intelligently, allowing FreeMED to analyze treatment patterns.";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "8af17933-d92b-43d6-a989-67a96c03f1cf";
 

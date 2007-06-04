@@ -51,9 +51,17 @@ class PlaceOfService extends SupportModule {
 		);
 
 		parent::__construct( );
-	} // end constructor PlaceOfService	
+	} // end constructor PlaceOfService
 
-} // end of class PlaceOfService
+	protected function add_pre ( &$data ) {
+		$data['posdtadd'] = date( 'Y-m-d' );
+	}
+
+	protected function mod_pre ( &$data ) {
+		$data['posdtmod'] = date( 'Y-m-d' );
+	}
+
+} // end class PlaceOfService
 
 register_module ("PlaceOfService");
 

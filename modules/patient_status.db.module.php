@@ -40,6 +40,8 @@ class patientStatus extends SupportModule {
 		"ptstatusdescrip"
 	);
 
+	var $widget_hash        = "##ptstatus## - ##ptstatusdescrip##";
+
 	public function __construct ( ) {
 		// __("Patient Status")
 

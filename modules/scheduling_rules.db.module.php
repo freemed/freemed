@@ -60,11 +60,17 @@ class SchedulingRules extends SupportModule {
 	} // end constructor
 
 	protected function add_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['user'] = freemed::user_cache()->user_number;
+		$data['datebegin'] = $data['datebegin'] ? $s->ImportDate( $data['datebegin'] ) : '' ;
+		$data['dateend'] = $data['dateend'] ? $s->ImportDate( $data['dateend'] ) : '' ;
 	}
 
 	protected function mod_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['user'] = freemed::user_cache()->user_number;
+		$data['datebegin'] = $data['datebegin'] ? $s->ImportDate( $data['datebegin'] ) : '' ;
+		$data['dateend'] = $data['dateend'] ? $s->ImportDate( $data['dateend'] ) : '' ;
 	}
 
 } // end class SchedulingRules

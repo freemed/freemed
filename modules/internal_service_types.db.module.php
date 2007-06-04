@@ -35,6 +35,7 @@ class InternalServiceTypes extends SupportModule {
 	var $table_name     = "intservtype";
 	var $record_name    = "Internal Service Type";
 	var $order_field    = "intservtype";
+	var $widget_hash    = "##intservtype##";
  
 	var $variables      = array (
 		"intservtype"
