@@ -52,7 +52,7 @@ class SchedulingRules extends SupportModule {
 		// For i18n: __("Scheduling Rules")
 
 		$this->list_view = array (
-			__("Comment") => 'comment'
+			__("Comment") => 'reason'
 		);
 
 		// Run parent constructor
