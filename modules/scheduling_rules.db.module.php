@@ -45,7 +45,8 @@ class SchedulingRules extends SupportModule {
 		"datebegin",
 		"dateend",
 		"timebegin",
-		"timeend"
+		"timeend",
+		"newpatient"
 	); 
 
 	public function __construct ( ) {
@@ -61,6 +62,9 @@ class SchedulingRules extends SupportModule {
 
 	protected function add_pre ( &$data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		if ( is_array( $data['provider'] ) or is_object( $data['provider'] ) ) {
+			$data['provider'] = join( ',', $data['provider'] );
+		}
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['datebegin'] = $data['datebegin'] ? $s->ImportDate( $data['datebegin'] ) : '' ;
 		$data['dateend'] = $data['dateend'] ? $s->ImportDate( $data['dateend'] ) : '' ;
@@ -68,6 +72,9 @@ class SchedulingRules extends SupportModule {
 
 	protected function mod_pre ( &$data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		if ( is_array( $data['provider'] ) or is_object( $data['provider'] ) ) {
+			$data['provider'] = join( ',', $data['provider'] );
+		}
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['datebegin'] = $data['datebegin'] ? $s->ImportDate( $data['datebegin'] ) : '' ;
 		$data['dateend'] = $data['dateend'] ? $s->ImportDate( $data['dateend'] ) : '' ;
