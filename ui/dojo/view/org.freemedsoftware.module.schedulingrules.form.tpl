@@ -56,8 +56,8 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.schedulingrules.GetRecord",
 				load: function ( type, data, evt ) {
-					if ( parseInt (data.provider) > 0 ) {
-						dojo.event.topic.publish( 'provider-assign', parseInt( data.provider ) );
+					if ( data.provider ) {
+						provider.onAssign( data.provider );
 					}
 					document.getElementById( 'reason' ).value = data.reason;
 					if ( parseInt( data.dowbegin ) > 0 ) {
@@ -81,7 +81,7 @@
 			} catch ( err ) { }
 			var myContent = {
 				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
-				provider: document.getElementById('provider').value,
+				provider: provider.getValue(),
 				reason: document.getElementById('reason').value,
 				dowbegin: document.getElementById('dowbegin').value,
 				dowend: document.getElementById('dowend').value,
@@ -121,7 +121,7 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Provider<!--{/t}--></td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="provider"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" module="ProviderModule" varname="provider"}--></td>
 	</tr>
 
 	<tr>

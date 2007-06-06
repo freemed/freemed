@@ -41,11 +41,6 @@
 	var <!--{$varname|replace:'.':''}--> = {
 		count: 0,
 		store: { },
-		<!--{if $DEBUG}-->
-		showValue: function () {
-			alert( dojo.json.serialize( <!--{$varname|replace:'.':''}-->.getValue() ) );
-		},
-		<!--{/if}-->
 		getValue: function ( ) {
 			var r = [];
 			for( var i in <!--{$varname|replace:'.':''}-->.store ) {
@@ -65,9 +60,20 @@
 					} catch (e) { }
 				}
 			} else {
-				try {
-					if ( id ) { Assign( id ); }
-				} catch (e) { }
+				if ( id.match(',') ) {
+					var x = id.split(',');
+					for ( var i=0; i<x.length; i++ ) {
+						try {
+							if ( x[i] ) {
+								<!--{$varname|replace:'.':''}-->.Assign( x[i] );
+							}
+						} catch (e) { }
+					}
+				} else {
+					try {
+						if ( id ) { Assign( id ); }
+					} catch (e) { }
+				}
 			}
 		},
 		Assign: function ( id ) {
@@ -127,10 +133,6 @@
 	_container_.addOnLoad(function(){
 		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
 		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-setValue", <!--{$varname|replace:'.':''}-->, "onAddValue" );
-		dojo.event.topic.publish( '<!--{$varname|escape}-->-assign', [ 1, 2, 3 ] );
-		<!--{if $DEBUG}-->
-		document.getElementById('DEBUGDIV').onclick = <!--{$varname|replace:'.':''}-->.showValue;
-		<!--{/if}-->
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.topic.unsubscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
@@ -147,6 +149,4 @@
 	setValue="if (arguments[0]) { dojo.event.topic.publish( '<!--{$varname|escape}-->-setValue', arguments[0] ); }"
 	dataUrl="<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.picklist?param0=%{searchString}"
 	mode="remote" />
-<!--{if $DEBUG}-->
-<div class="clickable" id="DEBUGDIV">TEST TEST TEST</div>
-<!--{/if}-->
+
