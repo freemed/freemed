@@ -71,7 +71,7 @@
 					}
 				} else {
 					try {
-						if ( id ) { Assign( id ); }
+						if ( id ) { <!--{$varname|replace:'.':''}-->.Assign( id ); }
 					} catch (e) { }
 				}
 			}
