@@ -133,6 +133,9 @@
 	_container_.addOnLoad(function(){
 		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
 		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-setValue", <!--{$varname|replace:'.':''}-->, "onAddValue" );
+		// Clear selection box
+		dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( '' );
+		dojo.widget.byId('<!--{$varname|escape}-->_widget').setLabel( '' );
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.topic.unsubscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
