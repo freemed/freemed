@@ -54,7 +54,7 @@
 				load: function ( type, data, evt ) {
 					document.getElementById( 'atname' ).value = data.atname;
 					document.getElementById( 'atduration' ).value = data.atduration;
-					dojo.event.topic.publish( 'atequipment-assign', data.atequipment );
+					if ( data.atequipment ) { atequipment.onAssign( data.atequipment ); }
 				},
 				mimetype: "text/json",
 				sync: true
@@ -69,7 +69,7 @@
 				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
 				atname: document.getElementById('atname').value,
 				atduration: document.getElementById('atduration').value,
-				atequipment: document.getElementById('atequipment').value
+				atequipment: atequipment.getValue()
 			};
 			if (m.validate( myContent )) {
 				dojo.io.bind({
@@ -113,7 +113,7 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Required Equipment<!--{/t}--></td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="RoomEquipment" varname="atequipment"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" module="RoomEquipment" varname="atequipment"}--></td>
 	</tr>
 
 	<tr>
