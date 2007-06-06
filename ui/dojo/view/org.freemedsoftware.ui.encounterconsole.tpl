@@ -128,11 +128,19 @@
 					dx.push( i );
 				}
 			}
+			try {
+				var x = document.getElementById( 'superbillDxCustom' ).value;
+				if ( x > 0 ) { dx.push( x ); }
+			} catch (e) { }
 			for ( var i in patientEncounter.superbillPx ) {
 				if ( patientEncounter.superbillPx[ i ] ) {
 					px.push( i );
 				}
 			}
+			try {
+				var x = document.getElementById( 'superbillPxCustom' ).value;
+				if ( x > 0 ) { px.push( x ); }
+			} catch (e) { }
 			if ( ! px.length || ! dx.length ) {
 				alert ( "<!--{t}-->Both procedures and diagnoses must be present to create a superbill.<!--{/t}-->" );
 				return false;
@@ -195,9 +203,11 @@
 	_container_.addOnLoad(function(){
 		patientEncounter.loadPatientInformation( );
 		dojo.event.connect( dojo.widget.byId('superbillTemplateChoose'), 'onClick', patientEncounter, 'loadSuperbill' );
+		dojo.event.connect( dojo.widget.byId('superbillTemplateSave'), 'onClick', patientEncounter, 'saveSuperbill' );
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('superbillTemplateChoose'), 'onClick', patientEncounter, 'loadSuperbill' );
+		dojo.event.disconnect( dojo.widget.byId('superbillTemplateSave'), 'onClick', patientEncounter, 'saveSuperbill' );
 	});
 
 </script>
@@ -261,6 +271,9 @@
 						<td id="superbillDxCol1"></td>
 						<td id="superbillDxCol2"></td>
 					</tr>
+					<tr>
+						<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="IcdCodes" varname="superbillDxCustom"}--></td>
+					</tr>
 				</tbody>
 			</table>
 
@@ -272,8 +285,15 @@
 						<td id="superbillPxCol1"></td>
 						<td id="superbillPxCol2"></td>
 					</tr>
+					<tr>
+						<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="CptCodes" varname="superbillPxCustom"}--></td>
+					</tr>
 				</tbody>
 			</table>
+
+			<div align="center">
+				<button dojoType="Button" id="superbillTemplateSave" widgetId="superbillTemplateSave"><!--{t}-->Commit Superbill<!--{/t}--></button>
+			</div>
 
 		</div>
 	</div>
