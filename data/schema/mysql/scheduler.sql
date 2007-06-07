@@ -22,6 +22,7 @@
 
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/workflow_status.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler` (
 	caldateof		DATE,
@@ -64,25 +65,31 @@ BEGIN
 	DROP TRIGGER scheduler_Update;
 
 	#----- Upgrades
+        CALL FreeMED_Module_GetVersion( 'scheduler', @V );
 
-	#	Version 0.6.3
-	ALTER IGNORE TABLE scheduler ADD COLUMN calgroupid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calmark;
-	ALTER IGNORE TABLE scheduler ADD COLUMN calrecurnote VARCHAR (100) AFTER calgroupid;
-	ALTER IGNORE TABLE scheduler ADD COLUMN calrecurid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurnote;
-	ALTER IGNORE TABLE scheduler CHANGE COLUMN caltype caltype ENUM ( 'temp', 'pat', 'block' );
-	ALTER IGNORE TABLE scheduler CHANGE COLUMN calstatus caltype ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled';
+        # Version 1
+        IF @V < 1 THEN
+		#	Version 0.6.3
+		ALTER IGNORE TABLE scheduler ADD COLUMN calgroupid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calmark;
+		ALTER IGNORE TABLE scheduler ADD COLUMN calrecurnote VARCHAR (100) AFTER calgroupid;
+		ALTER IGNORE TABLE scheduler ADD COLUMN calrecurid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurnote;
+		ALTER IGNORE TABLE scheduler CHANGE COLUMN caltype caltype ENUM ( 'temp', 'pat', 'block' );
+		ALTER IGNORE TABLE scheduler CHANGE COLUMN calstatus caltype ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled';
 
-	#	Version 0.6.3.1
-	ALTER IGNORE TABLE scheduler CHANGE COLUMN calprenote calprenote VARCHAR (250);
+		#	Version 0.6.3.1
+		ALTER IGNORE TABLE scheduler CHANGE COLUMN calprenote calprenote VARCHAR (250);
 
-	#	Version 0.6.5
-	ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP (16) AFTER caldateof;
-	ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP (16) AFTER calcreated;
+		#	Version 0.6.5
+		ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP (16) AFTER caldateof;
+		ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP (16) AFTER calcreated;
 
-	#	Version 0.6.6
-	ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;
+		#	Version 0.6.6
+		ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;
 
-	ALTER IGNORE TABLE scheduler ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER calappttemplate;
+		ALTER IGNORE TABLE scheduler ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER calappttemplate;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'scheduler', 2 );
 END
 //
 DELIMITER ;
@@ -97,6 +104,8 @@ CREATE TRIGGER scheduler_Delete
 	FOR EACH ROW BEGIN
 		IF OLD.caltype = 'pat' THEN
 			DELETE FROM `patient_emr` WHERE module='scheduler' AND oid=OLD.id;
+			DELETE FROM `workflow_status` WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = OLD.caldateof AND patient = OLD.calpatient;
+			DELETE FROM `workflow_status_summary` WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = OLD.caldateof AND patient = OLD.calpatient;
 		END IF;
 	END;
 //
@@ -106,6 +115,7 @@ CREATE TRIGGER scheduler_Insert
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
 			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, NEW.calprenote, NEW.user );
+			CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
 		END IF;
 	END;
 //
@@ -115,6 +125,7 @@ CREATE TRIGGER scheduler_Update
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
 			UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=NEW.calprenote, user=NEW.user WHERE module='scheduler' AND oid=NEW.id;
+			CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
 		END IF;
 	END;
 //
