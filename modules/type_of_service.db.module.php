@@ -24,7 +24,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class TypeOfServiceMaintenance extends SupportModule {
+class TypeOfService extends SupportModule {
 
 	var $MODULE_NAME = "Type of Service";
 	var $MODULE_VERSION = "0.2";
@@ -62,8 +62,8 @@ class TypeOfServiceMaintenance extends SupportModule {
 		$data['tosdtmod'] = date('Y-m-d');
 	}
 
-} // end class TypeOfServiceMaintenance
+} // end class TypeOfService
 
-register_module ("TypeOfServiceMaintenance");
+register_module ("TypeOfService");
 
 ?>
