@@ -66,7 +66,9 @@
 
 	_container_.addOnLoad(function() {
 		dojo.widget.byId('smartSearch').setValue('');
+		dojo.widget.byId('smartSearch').setLabel('');
 		dojo.widget.byId('patientTags').setValue('');
+		dojo.widget.byId('patientTags').setLabel('');
 		dojo.widget.byId('smartSearch').textInputNode.focus();
 		dojo.event.connect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.connect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
@@ -96,7 +98,9 @@
 		dojo.event.disconnect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.disconnect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
 		dojo.widget.byId('smartSearch').setValue('');
+		dojo.widget.byId('smartSearch').setLabel('');
 		dojo.widget.byId('patientTags').setValue('');
+		dojo.widget.byId('patientTags').setLabel('');
 	});
 
 </script>
