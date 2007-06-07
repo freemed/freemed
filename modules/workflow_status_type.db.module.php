@@ -58,6 +58,18 @@ class WorkflowStatusType extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
+	protected function add_pre ( &$data ) {
+		if (!ereg("^[[:alpha:]]+$", $data['status_module'] )) {
+			$data['status_module'] = '';
+		}
+	}
+
+	protected function mod_pre ( &$data ) {
+		if (!ereg("^[[:alpha:]]+$", $data['status_module'] )) {
+			$data['status_module'] = '';
+		}
+	}
+
 } // end class WorkflowStatusType
 
 register_module ("WorkflowStatusType");
