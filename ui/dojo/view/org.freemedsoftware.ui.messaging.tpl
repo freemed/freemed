@@ -211,7 +211,7 @@
 		<div class="tableContainer">
 			<table dojoType="FilteringTable" id="messagesTable" widgetId="messagesTable" headClass="fixedHeader"
 			 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-			 valueField="id" border="0" multiple="false" maxSelect="1">
+			 valueField="id" border="0" multiple="false" maxSelect="1" style="height: 250px;">
 			<thead>
 				<tr>
 					<th field="stamp_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>

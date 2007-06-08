@@ -75,7 +75,7 @@
 			<th field="module_version" dataType="String"><!--{t}-->Version<!--{/t}--></th>
 		</tr>
 	</thead>
-	<tbody></tbody>
+	<tbody style="height: 75ex;"></tbody>
 	</table>
 
 </div>
