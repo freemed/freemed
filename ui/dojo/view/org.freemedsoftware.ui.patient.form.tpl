@@ -160,7 +160,7 @@
 <!--{/if}-->
 
 
-<div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 20em;">
+<div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em;">
 	<div dojoType="ContentPane" id="patientDemographicsPane" label="Demographics">
 	<table style="border: 0; padding: 1em;">
 
