@@ -67,6 +67,26 @@ class freemed {
 		}
 	} // end function freemed::acl
 
+	// Function: freemed::acl_enforce
+	//
+	//	Wrapper for <freemed::acl> which errors out if a certain access
+	//	level isn't matched.
+	//
+	// Parameters:
+	//
+	//	Same as <freemed::acl>
+	//
+	public function acl_enforce ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
+		$v = freemed::acl( $category, $permission, $axo_group, $axo_item );
+		if ( ! $v ) {
+			$user = freemed::user_cache()->user_number;
+			syslog( LOG_INFO, "ACL| ${category}/${permission}/${axo_group}/${axo_item} failed for ${user}" );
+			trigger_error( __("Access denied."), E_USER_ERROR );
+			return false;
+		}
+		return true;
+	} // end function freemed::acl_enforce
+
 	// Function: freemed::acl_patient
 	//
 	//	Check ACLs, optionally with patient access. Note that this

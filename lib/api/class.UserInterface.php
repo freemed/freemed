@@ -30,7 +30,7 @@ class UserInterface {
 	protected $user;
 
 	public function __construct ( ) {
-		$this->user = CreateObject('org.freemedsoftware.core.User');
+		$this->user = freemed::user_cache();
 	}
 
 	// Method: GetCurrentUsername
@@ -86,8 +86,60 @@ class UserInterface {
 	//	$value - Configuration value
 	//
 	public function SetConfigValue ( $key, $value ) {
+		freemed::acl_enforce( 'admin', 'config' );
 		return $this->user->setManageConfig ( $key, $value );
 	} // end method SetConfigValue
+
+	// Method: GetRecord
+	//
+	//	Get user record.
+	//
+	// Parameters:
+	//
+	//	$id - User record id
+	//
+	// Returns:
+	//
+	//	Associative array
+	//
+	public function GetRecord ( $id ) {
+		freemed::acl_enforce( 'admin', 'config' );
+		return $GLOBALS['sql']->queryRow( 'SELECT * FROM user WHERE id=' . $GLOBALS['sql']->quote( $id ).' AND id>1' );
+	} // end method GetRecord
+
+	// Method: GetRecords
+	//
+	//	Get list of records for the user table.
+	//
+	// Parameters:
+	//
+	//	$limit - (optional) Limit to maximum number of records to return
+	//
+	// Return:
+	//
+	//	Array of hashes.
+	//
+	public function GetRecords ( $limit = 100, $criteria_field = NULL, $criteria = NULL ) {
+		freemed::acl_enforce( 'admin', 'config' );
+
+		// Check to make sure that if $criteria_field is declared that it's valid
+		$variables = array (
+			'username',
+			'userdescrip'
+		);
+		if ( $criteria_field and $criteria ) {
+			$found = false;
+			foreach ( $variables AS $v ) {
+				if ( $v == $criteria_field ) { $found = true; }
+			}
+			if ( ! $found ) {
+				syslog( LOG_INFO, "GetRecords| invalid value ${criteria_field} attempted for indexing value" );
+				return false;
+			}
+		}
+		$q = "SELECT * FROM user ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." AND id>1 ORDER BY username LIMIT ${limit}";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetRecords
 
 } // end class UserInterface
 
