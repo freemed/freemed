@@ -52,7 +52,7 @@ execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_
 execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
 printHeader( "Include aggregation table definition" );
-execSql( "SOURCE data/schema/mysql/patient_emr" );
+execSql( "SOURCE data/schema/mysql/patient_emr,sql" );
 
 printHeader( "Build aggregation tables" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'allergies', patient, id, reviewed, allergy, 'active' FROM allergies;" );
@@ -80,5 +80,8 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status
 
 printHeader( "Force module definition upgrades" );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
+
+printHeader( "Wipe and upgrade ACL tables" );
+execSql( "SOURCE data/schema/mysql/acl.sql" );
 
 ?>
