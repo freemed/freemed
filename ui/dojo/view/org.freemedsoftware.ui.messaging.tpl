@@ -153,6 +153,12 @@
 		dojo.event.connect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
+		try {
+			var x = dojo.widget.byId( 'messagesTablePane' );
+			var node = x.containerNode || x.domNode;
+			var h = parseInt( node.style.height ) - 55;
+			document.getElementById( 'messagesTableBody' ).style.height = h + 'px';
+		} catch ( e ) { }
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
@@ -168,7 +174,7 @@
 
 <div dojoType="SplitContainer" orientation="vertical" sizerWidth="5" activeSizing="0" layoutAlign="client" style="height: 100%;">
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" style="height: 100%;">
+	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" style="height: 50%;" widgetId="messagesTablePane" id="messageTablePane">
 
 		<div id="messagesBar">
 			<table border="0"><tr>
@@ -211,7 +217,7 @@
 		<div class="tableContainer">
 			<table dojoType="FilteringTable" id="messagesTable" widgetId="messagesTable" headClass="fixedHeader"
 			 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-			 valueField="id" border="0" multiple="false" maxSelect="1" style="height: 250px;">
+			 valueField="id" border="0" multiple="false" maxSelect="1">
 			<thead>
 				<tr>
 					<th field="stamp_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
@@ -220,13 +226,13 @@
 					<th field="subject" dataType="String"><!--{t}-->Note<!--{/t}--></th>
 				</tr>
 			</thead>
-			<tbody></tbody>
+			<tbody id="messagesTableBody"></tbody>
 			</table>
 		</div>
 
 	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="messagesViewPane" style="overflow: scroll;">
+	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="messagesViewPane" style="overflow: scroll; background-color: #ffffff;">
 		<div id="messageViewPaneDiv"></div>
 	</div>
 </div>
