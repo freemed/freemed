@@ -165,7 +165,7 @@
 	<table style="border: 0; padding: 1em;">
 
 	<tr>
-		<td><!--{t}-->Name (Last, First Middle)<!--{/t}--></td>
+		<td><!--{t}-->Title<!--{/t}--></td>
 		<td>
 			<select dojoType="Select" id="ptsalut" name="ptsalut" style="width: 100px;" autocomplete="false">
 				<option value="">--</option>
@@ -175,9 +175,29 @@
 				<option value="Dr">Dr</option>
 				<option value="Fr">Fr</option>
 			</select>
-			<input type="text" id="ptlname" name="ptlname" value="<!--{$record.ptlname|escape}-->" size="20" maxlength="50" /> <b>,</b>
+		</td>
+	</tr>
+	<tr>
+		<td><!--{t}-->Last Name<!--{/t}--></td>
+		<td>
+			<input type="text" id="ptlname" name="ptlname" value="<!--{$record.ptlname|escape}-->" size="20" maxlength="50" />
+		</td>
+	</tr>
+	<tr>
+		<td><!--{t}-->First Name<!--{/t}--></td>
+		<td>
 			<input type="text" id="ptfname" name="ptfname" value="<!--{$record.ptfname|escape}-->" size="20" maxlength="50" />
+		</td>
+	</tr>
+	<tr>
+		<td><!--{t}-->Middle Name<!--{/t}--></td>
+		<td>
 			<input type="text" id="ptmname" name="ptmname" value="<!--{$record.ptmname|escape}-->" size="10" />
+		</td>
+	</tr>
+	<tr>
+		<td><!--{t}-->Suffix<!--{/t}--></td>
+		<td>
 			<select dojoType="Select" id="ptsuffix" name="ptsuffix" style="width: 4em;" autocomplete="false">
 				<option value=""></option>
 				<option value="Sr" <!--{if $record.ptsuffix == 'Sr'}-->selected<!--{/if}-->>Sr</option>
