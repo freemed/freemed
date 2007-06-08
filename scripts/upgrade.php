@@ -33,6 +33,7 @@ print "(c) 2007 FreeMED Software Foundation\n\n";
 function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
 function printHeader ( $x ) { print "\n\n ----->> ${x} <<-----\n\n"; }
+function loadSchema ( $s  ) { $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
 
 if ( ! file_exists ( './scripts/upgrade.php' ) ) {
 	print "You must run this from the root directory of your FreeMED install.\n\n";
@@ -52,7 +53,11 @@ execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_
 execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
 printHeader( "Include aggregation table definition" );
-execSql( "SOURCE data/schema/mysql/patient_emr,sql" );
+loadSchema( 'patient_emr' );
+
+printHeader( "Load admin table definitions" );
+loadSchema( 'modules' );
+loadSchema( 'user' );
 
 printHeader( "Build aggregation tables" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'allergies', patient, id, reviewed, allergy, 'active' FROM allergies;" );
@@ -78,10 +83,10 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'rx', rxpatient, id, NOW(), rxdrug, locked, 'active' FROM rx;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, calprenote, 'active' FROM scheduler WHERE caltype='pat';" );
 
+printHeader( "Wipe and upgrade ACL tables" );
+loadSchema( 'acl' );
+
 printHeader( "Force module definition upgrades" );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
-
-printHeader( "Wipe and upgrade ACL tables" );
-execSql( "SOURCE data/schema/mysql/acl.sql" );
 
 ?>
