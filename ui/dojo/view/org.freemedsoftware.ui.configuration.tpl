@@ -23,6 +23,16 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<!--{method var='configSections' namespace="org.freemedsoftware.api.SystemConfig.GetConfigSections"}-->
+
+<style type="text/css">
+
+	.configPane {
+		margin: 1ex;
+		}
+
+</style>
+
 <script language="javascript">
 
 	var config = {
@@ -95,19 +105,8 @@
 				var tabId = item.c_section.replace(' ', '');
 				var tableId = tabId + '_table';
 
-				// FIXME: this hack is here until building dynamic tags works properly...
-				tabId = 'mainTab';
-				tableId = 'mainTab_table';
-
-				if ( typeof config.tabs[tabId] == 'undefined' ) {
-					var tC = dojo.widget.byId( 'configTabContainer' );
-					var contentPane = dojo.widget.createWidget( 'dojo.widget.ContentPane', { id: tabId, widgetId: tabId } );
-					tC.appendChild( contentPane );
-					var t = document.createElement( 'table' );
-					contentPane.setContent( t );
-					
-					config.tabs[tabId] = 1;
-				}
+				//tabId = 'mainTab';
+				//tableId = 'mainTab_table';
 
 				var p = document.getElementById( tableId );
 				config.appendItem( p, item );
@@ -164,8 +163,14 @@
 <div dojoType="TabContainer" widgetId="configTabContainer" style="height: 85%; width: 100%;">
 
 	<div dojoType="ContentPane" label="System" widgetId="mainTab">
-		<table id="mainTab_table"></table>
+		<table style="configPane" id="mainTab_table"></table>
 	</div>
+
+	<!--{foreach from=$configSections item='val'}-->
+	<div dojoType="ContentPane" label="<!--{$val|escape}-->" widgetId="<!--{$val|escape|replace:' ':''}-->Tab">
+		<table style="configPane" id="<!--{$val|escape|replace:' ':''}-->_table"></table>
+	</div>
+	<!--{/foreach}-->
 
 </div>
 

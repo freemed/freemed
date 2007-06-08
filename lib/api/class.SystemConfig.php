@@ -68,6 +68,19 @@ class SystemConfig {
 		return $result;
 	} // end public function GetValue
 
+	// Method: GetConfigSections
+	//
+	//	Get list of configuration sections
+	//
+	// Returns:
+	//
+	//	Array of configuration sections.
+	//
+	public function GetConfigSections ( ) {
+		$q = "SELECT DISTINCT( c_section ) AS s FROM config WHERE NOT ISNULL( c_section ) ORDER BY s";
+		return $GLOBALS['sql']->queryCol( $q );
+	} // end method GetConfigSections
+
 	// Method: SetValue
 	//
 	//	Set global configuration value
@@ -117,10 +130,7 @@ class SystemConfig {
 	//	Boolean, success.
 	//
 	public function SetValues( $hash ) {
-		if (! freemed::acl ( 'admin', 'config' ) ) { 
-			syslog(LOG_INFO, "Attempted SystemConfig.SetValues without authorization");
-			return false;
-		}
+		freemed::acl_enforce( 'admin', 'config' );
 
 		if ( ! is_object( $hash ) && ! is_array( $hash ) ) {
 			return false;
