@@ -90,7 +90,7 @@ table {
 * html div.tableContainer {	/* IE only hack */
 	width:95%;
 	/* border:1px solid #ccc; */
-	height: 100%;
+	height: auto;
 	overflow-x:hidden;
 	overflow-y: auto;
 	}
@@ -117,7 +117,7 @@ table thead td, table thead th {
 	}
 		
 html>body tbody.scrollContent {
-	height: 100%;
+	height: auto;
 	overflow-x:hidden;
 	overflow-y: auto;
 	}
