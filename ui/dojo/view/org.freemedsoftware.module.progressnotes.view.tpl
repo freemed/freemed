@@ -22,6 +22,14 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<style type="text/css">
+
+	#pnotesScroll {
+		overflow-y: auto;
+		}
+
+</style>
+
 <script type="text/javascript">
 	//	Functions
 	var o = {
@@ -65,6 +73,12 @@
 	//	Initialization / Event Connection
 	_container_.addOnLoad(function(){
 		o.loadView( );
+		try {
+			var x = dojo.widget.byId( 'freemedContent' );
+			var node = x.containerNode || x.domNode;
+			var h = parseInt( node.style.height ) - 80;
+			document.getElementById( 'pnotesScroll' ).style.height = h + 'px';
+		} catch ( e ) { }
 	});
 	_container_.addOnUnload(function(){
 	});
@@ -89,6 +103,8 @@
 
 <h3><!--{t}-->Progress Note<!--{/t}--> [ <a onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');" id="viewClose">X</a> ]</h3>
 
+<div id="pnotesScroll">
+
 <div><b><!--{t}-->Date<!--{/t}--></b> : <span id="note.relevantDate"></span><br/></div>
 
 <div id="note.subjective" class="notesContainer">
@@ -111,5 +127,7 @@
 </div>
 <div id="note.rx" class="notesContainer">
 	<h4><!--{t}-->Rx<!--{/t}--></h4>
+</div>
+
 </div>
 
