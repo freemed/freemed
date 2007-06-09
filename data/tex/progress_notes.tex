@@ -84,42 +84,49 @@ PRINTED: &	\today \\
 \sheading{Temperature} & {[$pnotestemp]} \\
 {[/if]}
 \  &  \  
-\end{tabular} \\
 \par
+\end{tabular} \\
 
 {[if strlen($pnotes_S) ge 10]}
 \noindent\sheading{SUBJECTIVE} {[$pnotes_S|texize]}
 \par
+\medskip
 {[/if]}
 
 {[if strlen($pnotes_O) ge 10]}
 \noindent\sheading{OBJECTIVE} {[$pnotes_O|texize]}
 \par
+\medskip
 {[/if]}
 
 {[if strlen($pnotes_A) ge 10]}
 \noindent\sheading{ASSESSMENT} {[$pnotes_A|texize]}
 \par
+\medskip
 {[/if]}
 
 {[if strlen($pnotes_P) ge 10]}
 \noindent\sheading{PLAN} {[$pnotes_P|texize]}
 \par
+\medskip
 {[/if]}
 
 {[if strlen($pnotes_I) ge 10]}
 \noindent\sheading{INTERVAL} {[$pnotes_I|texize]}
 \par
+\medskip
 {[/if]}
 
 {[if strlen($pnotes_E) ge 10]}
 \noindent\sheading{EDUCATION} {[$pnotes_E|texize]}
 \par
+\medskip
 {[/if]}
 
 {[if strlen($pnotes_R) ge 10]}
 \noindent\sheading{RX} {[$pnotes_R|texize]}
 \par
+\medskip
 {[/if]}
 
 \end{document}
