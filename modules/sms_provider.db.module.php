@@ -57,6 +57,27 @@ class SmsProvider extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
+	// Method: SendSMSToUser
+	//
+	//	Send an SMS message to a user.
+	//
+	// Parameters:
+	//
+	//	$userId - User ID
+	//
+	//	$message - Message to send
+	//
+	// Returns:
+	//
+	//	Boolean, based on success of PHP mail() call.	
+	//
+	public function SendSMSToUser ( $userId, $message ) {
+		$u = CreateObject( 'org.freemedsoftware.core.User', $userId + 0 );
+		$sms = $GLOBALS['sql']->get_link( 'smsprovider', $u->local_record['usersmsprovider'] );
+		$mailAddress = $u->local_record['usersms'] . '@' . $sms['mailgwaddr'];
+		return mail( $mailAddress, '', $message );
+	} // end method SendSMS
+
 } // end class SmsProvider
 
 register_module ("SmsProvider");
