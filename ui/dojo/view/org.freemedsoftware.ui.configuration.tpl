@@ -38,7 +38,6 @@
 	var config = {
 		corpus: [],
 		vars: [],
-		tabs: { 'mainTab': document.getElementById( 'mainTab_table' ) },
 		appendItem: function( table, item ) {
 			var tR = document.createElement( 'tr' );
 			var tD1 = document.createElement( 'td' );
@@ -54,9 +53,11 @@
 
 			switch ( item.c_type ) {
 				case 'Number':
+				case 'Text':
 				var widget = document.createElement( 'input' );
 				widget.id = item.c_option;
 				widget.type = 'text';
+				widget.value = item.c_value;
 				tD2.appendChild( widget );
 				break;
 
@@ -64,8 +65,9 @@
 				var widget = document.createElement( 'select' );
 				widget.id = item.c_option;
 				widget.options.length = 0;
-				widget.options[widget.options.length] = new Option( 'Yes', 1 );
 				widget.options[widget.options.length] = new Option( 'No', 0 );
+				widget.options[widget.options.length] = new Option( 'Yes', 1 );
+				widget.selectedIndex = item.c_value;
 				tD2.appendChild( widget );
 				break;
 
@@ -88,6 +90,7 @@
 			}
 			switch ( item.c_type ) {
 				case 'Number':
+				case 'Text':
 				case 'YesNo':
 				return document.getElementById( item.c_option ).value;
 				break;
@@ -102,11 +105,18 @@
 				var item = data[i];
 
 				// Figure out tab, do we have to make it?
-				var tabId = item.c_section.replace(' ', '');
-				var tableId = tabId + '_table';
+				var tabId;
+				var tableId;
 
-				//tabId = 'mainTab';
-				//tableId = 'mainTab_table';
+				try {
+					tabId = item.c_section.replace(' ', '');
+					tableId = tabId + '_table';
+				} catch ( e ) { }
+
+				if ( ! item.c_section ) {
+					tabId = 'mainTab';
+					tableId = 'mainTab_table';
+				}
 
 				var p = document.getElementById( tableId );
 				config.appendItem( p, item );
