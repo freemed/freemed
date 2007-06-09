@@ -96,7 +96,17 @@
 			},
 			load: function(type, data, evt) {
 				if (data) {
+					// Catch all for populating form data
 					dojo.widget.byId('patientForm').setValues(data);
+
+					// City, State Zip hack
+					dojo.widget.byId('ptcsz_widget').setLabel( data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip );
+					document.getElementById('ptcsz').value = data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip;
+
+					// Picklists
+					dojo.event.topic.publish( 'ptref-assign', data.ptref );
+					dojo.event.topic.publish( 'ptdoc-assign', data.ptdoc );
+					dojo.event.topic.publish( 'ptpcp-assign', data.ptpcp );
 				} else {
 					alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
 				}
@@ -180,19 +190,19 @@
 	<tr>
 		<td><!--{t}-->Last Name<!--{/t}--></td>
 		<td>
-			<input type="text" id="ptlname" name="ptlname" value="<!--{$record.ptlname|escape}-->" size="20" maxlength="50" />
+			<input type="text" id="ptlname" name="ptlname" size="20" maxlength="50" />
 		</td>
 	</tr>
 	<tr>
 		<td><!--{t}-->First Name<!--{/t}--></td>
 		<td>
-			<input type="text" id="ptfname" name="ptfname" value="<!--{$record.ptfname|escape}-->" size="20" maxlength="50" />
+			<input type="text" id="ptfname" name="ptfname" size="20" maxlength="50" />
 		</td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Middle Name<!--{/t}--></td>
 		<td>
-			<input type="text" id="ptmname" name="ptmname" value="<!--{$record.ptmname|escape}-->" size="10" />
+			<input type="text" id="ptmname" name="ptmname" size="10" />
 		</td>
 	</tr>
 	<tr>
@@ -200,11 +210,11 @@
 		<td>
 			<select dojoType="Select" id="ptsuffix" name="ptsuffix" style="width: 4em;" autocomplete="false">
 				<option value=""></option>
-				<option value="Sr" <!--{if $record.ptsuffix == 'Sr'}-->selected<!--{/if}-->>Sr</option>
-				<option value="Jr" <!--{if $record.ptsuffix == 'Jr'}-->selected<!--{/if}-->>Jr</option>
-				<option value="II" <!--{if $record.ptsuffix == 'II'}-->selected<!--{/if}-->>II</option>
-				<option value="III" <!--{if $record.ptsuffix == 'III'}-->selected<!--{/if}-->>III</option>
-				<option value="IV" <!--{if $record.ptsuffix == 'IV'}-->selected<!--{/if}-->>IV</option>
+				<option value="Sr">Sr</option>
+				<option value="Jr">Jr</option>
+				<option value="II">II</option>
+				<option value="III">III</option>
+				<option value="IV">IV</option>
 			</select>
 		</td>
 	</tr>
@@ -212,8 +222,8 @@
 	<tr>
 		<td valign="top"><!--{t}-->Address<!--{/t}--></td>
 		<td valign="top">
-			<input type="text" id="ptaddr1" name="ptaddr1" value="<!--{$record.ptaddr1|escape}-->" size="50" maxlength="50" /><br/>
-			<input type="text" id="ptaddr2" name="ptaddr2" value="<!--{$record.ptaddr2|escape}-->" size="50" maxlength="50" /><br/>
+			<input type="text" id="ptaddr1" name="ptaddr1" size="50" maxlength="50" /><br/>
+			<input type="text" id="ptaddr2" name="ptaddr2" size="50" maxlength="50" /><br/>
 		</td>
 	</tr>
 
@@ -227,7 +237,7 @@
 			dataUrl="<!--{$relay}-->/org.freemedsoftware.module.Zipcodes.CityStateZipPicklist?param0='%{searchString}'"
 			setValue="document.getElementById('ptcsz').value = arguments[0];"
 			mode="remote" />
-			<input type="hidden" id="ptcsz" name="ptcsz" value="<!--{$record.ptcity|escape}-->, <!--{$record.ptstate|escape}--> <!--{$record.ptzip|escape}-->" />
+			<input type="hidden" id="ptcsz" name="ptcsz" value="" />
 		</td>
 	</tr>
 
@@ -236,16 +246,16 @@
 		<td>
 			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptsex" name="ptsex" widgetId="ptsex">
 				<option value=""></option>
-				<option value="f" <!--{if $record.ptsex == 'f'}-->selected<!--{/if}-->><!--{t}-->Female<!--{/t}--></option>
-				<option value="m" <!--{if $record.ptsex == 'm'}-->selected<!--{/if}-->><!--{t}-->Male<!--{/t}--></option>
-				<option value="t" <!--{if $record.ptsex == 't'}-->selected<!--{/if}-->><!--{t}-->Transgendered<!--{/t}--></option>
+				<option value="f"><!--{t}-->Female<!--{/t}--></option>
+				<option value="m"><!--{t}-->Male<!--{/t}--></option>
+				<option value="t"><!--{t}-->Transgendered<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
 
 	<tr>
 		<td><!--{t}-->Date of Birth<!--{/t}--></td>
-		<td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" date="<!--{$record.ptdob}-->" containerToggle="wipe"></div></td>
+		<td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" containerToggle="wipe"></div></td>
 	</tr>
 
 <!--{* Verify if patient exists already based on L, F M and DOB *}-->
@@ -267,32 +277,32 @@
 		<td><!--{t}-->Preferred Contact<!--{/t}--></td>
 		<td>
 			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptprefcontact" name="ptprefcontact">
-				<option value="home" <!--{if $record.ptprefcontact == 'home'}-->selected<!--{/if}-->><!--{t}-->Home<!--{/t}--></option>
-				<option value="work" <!--{if $record.ptprefcontact == 'work'}-->selected<!--{/if}-->><!--{t}-->Work<!--{/t}--></option>
-				<option value="mobile" <!--{if $record.ptprefcontact == 'mobile'}-->selected<!--{/if}-->><!--{t}-->Mobile<!--{/t}--></option>
-				<option value="email" <!--{if $record.ptprefcontact == 'email'}-->selected<!--{/if}-->><!--{t}-->Email<!--{/t}--></option>
+				<option value="home"><!--{t}-->Home<!--{/t}--></option>
+				<option value="work"><!--{t}-->Work<!--{/t}--></option>
+				<option value="mobile"><!--{t}-->Mobile<!--{/t}--></option>
+				<option value="email"><!--{t}-->Email<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Home Phone<!--{/t}--></td>
-		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="pthphone" id="pthphone" size="16" maxlength="16" value="<!--{$record.pthphone|escape}-->" /></td>
+		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="pthphone" id="pthphone" size="16" maxlength="16" /></td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Work Phone<!--{/t}--></td>
-		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="ptwphone" id="ptwphone" size="16" maxlength="16" value="<!--{$record.ptwphone|escape}-->" /></td>
+		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="ptwphone" id="ptwphone" size="16" maxlength="16" /></td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Fax Phone<!--{/t}--></td>
-		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="ptfax" id="ptfax" size="16" maxlength="16" value="<!--{$record.ptfax|escape}-->" /></td>
+		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="ptfax" id="ptfax" size="16" maxlength="16" /></td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Mobile Phone<!--{/t}--></td>
-		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="ptmphone" id="ptmphone" size="16" maxlength="16" value="<!--{$record.ptmphone|escape}-->" /></td>
+		<td><input dojoType="UsPhoneNumberTextbox" type="text" name="ptmphone" id="ptmphone" size="16" maxlength="16" /></td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Email Address<!--{/t}--></td>
-		<td><input dojoType="EmailTextbox" type="text" name="ptemail" id="ptemail" size="50" maxlength="50" value="<!--{$record.ptemail|escape}-->" /></td>
+		<td><input dojoType="EmailTextbox" type="text" name="ptemail" id="ptemail" size="50" maxlength="50" /></td>
 	</tr>
 	</table>
 	</div>
@@ -303,11 +313,11 @@
 		<td><!--{t}-->Marital Status<!--{/t}--></td>
 		<td>
 			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptmarital" name="ptmarital">
-				<option value="single" <!--{if $record.ptmarital == 'single'}-->selected<!--{/if}-->><!--{t}-->Single<!--{/t}--></option>
-				<option value="married" <!--{if $record.ptmarital == 'married'}-->selected<!--{/if}-->><!--{t}-->Married<!--{/t}--></option>
-				<option value="divorced" <!--{if $record.ptmarital == 'divorced'}-->selected<!--{/if}-->><!--{t}-->Divorced<!--{/t}--></option>
-				<option value="separated" <!--{if $record.ptmarital == 'separated'}-->selected<!--{/if}-->><!--{t}-->Separated<!--{/t}--></option>
-				<option value="windowed" <!--{if $record.ptmarital == 'windowed'}-->selected<!--{/if}-->><!--{t}-->Windowed<!--{/t}--></option>
+				<option value="single"><!--{t}-->Single<!--{/t}--></option>
+				<option value="married"><!--{t}-->Married<!--{/t}--></option>
+				<option value="divorced"><!--{t}-->Divorced<!--{/t}--></option>
+				<option value="separated"><!--{t}-->Separated<!--{/t}--></option>
+				<option value="windowed"><!--{t}-->Windowed<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
@@ -315,31 +325,23 @@
 		<td><!--{t}-->Employment Status<!--{/t}--></td>
 		<td>
 			<select dojoType="Select" style="width: 100px;" autocomplete="false" id="ptempl" name="ptempl">
-				<option value="u" <!--{if $record.ptempl == 'u'}-->selected<!--{/if}-->><!--{t}-->Unknown<!--{/t}--></option>
-				<option value="y" <!--{if $record.ptempl == 'y'}-->selected<!--{/if}-->><!--{t}-->Yes<!--{/t}--></option>
-				<option value="n" <!--{if $record.ptempl == 'n'}-->selected<!--{/if}-->><!--{t}-->No<!--{/t}--></option>
-				<option value="p" <!--{if $record.ptempl == 'p'}-->selected<!--{/if}-->><!--{t}-->Part<!--{/t}--></option>
-				<option value="s" <!--{if $record.ptempl == 's'}-->selected<!--{/if}-->><!--{t}-->Self<!--{/t}--></option>
-				<option value="r" <!--{if $record.ptempl == 'r'}-->selected<!--{/if}-->><!--{t}-->Retired<!--{/t}--></option>
-				<option value="m" <!--{if $record.ptempl == 'm'}-->selected<!--{/if}-->><!--{t}-->Military<!--{/t}--></option>
+				<option value="u"><!--{t}-->Unknown<!--{/t}--></option>
+				<option value="y"><!--{t}-->Yes<!--{/t}--></option>
+				<option value="n"><!--{t}-->No<!--{/t}--></option>
+				<option value="p"><!--{t}-->Part<!--{/t}--></option>
+				<option value="s"><!--{t}-->Self<!--{/t}--></option>
+				<option value="r"><!--{t}-->Retired<!--{/t}--></option>
+				<option value="m"><!--{t}-->Military<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Social Security Number<!--{/t}--></td>
-		<td><input dojoType="UsSocialSecurityNumberTextbox" type="text" name="ptssn" id="ptssn" size="10" maxlength="9" value="<!--{$record.ptssn|escape}-->" /></td>
+		<td><input dojoType="UsSocialSecurityNumberTextbox" type="text" name="ptssn" id="ptssn" size="10" maxlength="9" /></td>
 	</tr>
 	<tr>
 		<td><!--{t}-->Drivers License<!--{/t}--></td>
-		<td><input type="text" name="ptdmv" id="ptdmv" size="10" maxlength="9" value="<!--{$record.ptdmv|escape}-->" /></td>
-	</tr>
-	<tr>
-		<td><!--{t}--><!--{/t}--></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td><!--{t}--><!--{/t}--></td>
-		<td></td>
+		<td><input type="text" name="ptdmv" id="ptdmv" size="10" maxlength="9" /></td>
 	</tr>
 	</table>
 	</div>
@@ -363,14 +365,6 @@
 		<td>
 			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptpcp"}-->
 		</td>
-	</tr>
-	<tr>
-		<td><!--{t}--><!--{/t}--></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td><!--{t}--><!--{/t}--></td>
-		<td></td>
 	</tr>
 	</table>
 	</div>

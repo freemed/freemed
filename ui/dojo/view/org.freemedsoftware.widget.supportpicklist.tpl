@@ -40,6 +40,11 @@
 
 	var <!--{$varname|replace:'.':''}--> = {
 		onAssign: function ( id ) {
+			// Don't assign if we have no value
+			try {
+				if ( ! id ) { return false; }
+			} catch ( err ) { }
+
 			// Do reverse lookup from assignment
 			dojo.io.bind({
 				method: "POST",
