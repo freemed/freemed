@@ -62,6 +62,10 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	function freemedMessage( message, type ) {
 		var duration;
 		switch (type) {
+			case 'MESSAGE':
+			duration = 10000;
+			break;
+
 			case 'ERROR':
 			duration = 3000;
 			break;
@@ -73,7 +77,7 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 		}
 		dojo.event.topic.publish(
 			"freemedMessage",
-			{message: message, type: type, duration: duration}
+			{message: message, type: type, delay: duration}
 		);
 	}
 
@@ -106,8 +110,7 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 		// Push current help topic value
 		var x = url.replace( "<!--{$controller}-->/", '' );
 		if ( x.match('=') ) {
-			var p = x.indexOf( '?' );
-			x = x.slice( 0, p );
+			x = x.slice( 0, x.indexOf( '?' ) );
 		}
 		freemedGlobal.currentHelpTopic = x;
 
@@ -123,7 +126,11 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 			dojo.widget.byId( 'freemedPatientContent' ).setUrl( url );
 
 			// Push current help topic value
-			freemedGlobal.currentHelpTopic = url;
+			var x = url.replace( "<!--{$controller}-->/", '' );
+			if ( x.match('=') ) {
+				x = x.slice( 0, x.indexOf( '?' ) );
+			}
+			freemedGlobal.currentHelpTopic = x;
 		} catch (err) {
 			dojo.debug('Caught error in freemedPatientContentLoad() for ' + url);
 		}
@@ -134,9 +141,8 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
 		currentHelpTopic: undefined,
-		interval: 600, // seconds between polls
+		interval: 60, // seconds between polls
 		intervalCallback: function ( ) {
-			return '';
 			dojo.io.bind({
 				method: "POST",
 				content: {
@@ -145,12 +151,22 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 				url: "<!--{$relay}-->/org.freemedsoftware.module.SystemNotifications.GetFromTimestamp",
 				load: function(type, data, evt) {
 					if (data) {
+						// Handle everything
+						if ( data.count > 0 ) {
+							freemedGlobal.onSystemNotifications( data.items );
+						}
+
 						// Save interval passed back
 						freemedGlobal.intervalStamp = data.timestamp;
 					}
 				},
 				mimetype: "text/json"
 			});
+		},
+		onSystemNotifications: function ( data ) {
+			for (var i=0; i<data.length; i++) {
+				freemedMessage( "<a class=\"clickable\" onclick=\"freemedLoad('org.freemedsoftware.controller.patient.overview?patient=" + data[i].npatient + "');\">" + data[i].ntext + "</a>", 'MESSAGE' );
+			}
 		},
 		addPatientToHistory: function ( id, patient_name ) {
 			try {
@@ -174,7 +190,6 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 
 	// Initialization
 	dojo.addOnLoad(function(){
-		return true;
 		dojo.io.bind({
 			method: "POST",
 			content: { },
@@ -183,12 +198,12 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 				if (data) {
 					// Save interval passed back
 					freemedGlobal.intervalStamp = data;
+					// Set window interval
+					window.setInterval( freemedGlobal.intervalCallback, 1000 * freemedGlobal.interval );
 				}
 			},
-			sync: true,
 			mimetype: "text/json"
 		});
-		window.setInterval( freemedGlobal.intervalCallback, 1000 * freemedGlobal.interval );
 	});
 
 </script>
