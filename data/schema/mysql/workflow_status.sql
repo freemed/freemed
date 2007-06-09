@@ -140,12 +140,12 @@ BEGIN
 	SET fClause = '';
 	WHILE NOT done DO
 		SET fClause_tmp = fClause;
-		SET fClause = CONCAT( fClause_tmp, ", CASE FIND_IN_SET( completed, '", t_id, "' ) WHEN TRUE THEN TRUE ELSE FALSE END AS '", t_status_module, "' " );
+		SET fClause = CONCAT( fClause_tmp, ", CASE FIND_IN_SET( w.completed, '", t_id, "' ) WHEN TRUE THEN TRUE ELSE FALSE END AS '", t_status_module, "' " );
 		FETCH cur INTO t_id, t_status_name, t_status_module;
 	END WHILE;
 	CLOSE cur;
 	SET @sql = CONCAT(
-		"SELECT patient ", fClause, " FROM workflow_status_summary WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = '", dt, "'"
+		"SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname, ' (', p.ptid, ')' ) AS patient, w.patient AS patient_id ", fClause, " FROM workflow_status_summary w LEFT OUTER JOIN patient p ON w.patient=p.id WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = '", dt, "'"
 	) ;
 
 	PREPARE s FROM @sql ;
