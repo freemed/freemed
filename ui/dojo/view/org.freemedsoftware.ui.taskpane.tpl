@@ -92,7 +92,7 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Billing<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.accountsreceivable');">
-			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/accounts_receivable.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Accounts Receivable<!--{/t}-->
 		</div>
 
@@ -102,7 +102,7 @@
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.remitt');">
-			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/remitt.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->REMITT Billing<!--{/t}-->
 		</div>
 
@@ -132,7 +132,7 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Utilities<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.supportdata');">
-			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/modules.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Support Data<!--{/t}-->
 		</div>
 
