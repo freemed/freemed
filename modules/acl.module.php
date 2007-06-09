@@ -252,6 +252,34 @@ class ACL extends SupportModule {
 		return $return;
 	} // end method UserGroups
 
+	// Method: UserInGroup
+	//
+	//	Determine if the specified user is a member of the 
+	//	ACL ARO group specified.
+	//
+	// Parameters:
+	//
+	//	$user - User ID
+	//
+	//	$group - ACL ARO group ID
+	//
+	// Returns:
+	//
+	//	Boolean, membership status.
+	//
+	public function UserInGroup( $user, $group ) {
+		$obj = $this->acl_object( );
+		$items = $obj->get_group_objects( $group, 'ARO' );
+		if ( is_array( $items['user'] ) ) {
+			foreach ( $items['user'] AS $i ) {
+				if ( $i == $user ) { return true; }
+			}
+		}
+
+		// All else fails, return false
+		return false;
+	} // end method UserInGroup
+
 	function _drop_old_tables () {
 		$tables = array (
 			'acl',
