@@ -122,7 +122,9 @@
 			// If not set, return true by default
 			if (dojo.widget.byId('emrRangeBegin').inputNode.value.length < 4) { return true; }
 			if (dojo.widget.byId('emrRangeEnd').inputNode.value.length < 4) { return true; }
-			return (dt >= new Date(dojo.widget.byId('emrRangeBegin').inputNode.value) && dt <= new Date(dojo.widget.byId('emrRangeEnd').inputNode.value));
+			var dtB = dojo.widget.byId( 'emrRangeBegin' ).getDate();
+			var dtE = dojo.widget.byId( 'emrRangeEnd' ).getDate();
+			return ( dt >= dtB && dt <= dtE );
 		},
 		emrModuleFilter: function ( m ) {
 			// If not set, return true by default
