@@ -31,9 +31,26 @@ CREATE TABLE IF NOT EXISTS `user` (
 	userphygrp			BLOB,
 	userrealphy			INT UNSIGNED NOT NULL DEFAULT 0,
 	usermanageopt			BLOB,
+	useremail			VARCHAR (250),
+	usersms				VARCHAR (25),
+	usersmsprovider			INT UNSIGNED NOT NULL DEFAULT 0,
 	id				SERIAL,
 
 	#	Define keys
 	PRIMARY KEY 			( id )
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS user_Upgrade;
+DELIMITER //
+CREATE PROCEDURE user_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	ALTER IGNORE TABLE user ADD COLUMN useremail VARCHAR (250) AFTER usermanageopt;
+	ALTER IGNORE TABLE user ADD COLUMN usersms VARCHAR (25) AFTER useremail;
+	ALTER IGNORE TABLE user ADD COLUMN usersmsprovider INT UNSIGNED NOT NULL DEFAULT 0 AFTER usersms;
+END
+//
+DELIMITER ;
+CALL user_Upgrade( );
 
