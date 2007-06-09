@@ -23,6 +23,9 @@
 
 include_once ( 'lib/freemed.php' );
 
+error_reporting ( );
+set_error_handler("chtml_standard_error_handler");
+
 unset ( $parts ); unset ( $file );
 $parts = explode ( '/', $_SERVER['PATH_INFO'] );
 $file = $parts[1];
@@ -35,6 +38,24 @@ if ( !file_exists( dirname(__FILE__)."/doc/${file}.chtml" ) ) {
 
 unset ( $chtml );
 $chtml = CreateObject ( "org.freemedsoftware.core.CHTMLReader", dirname(__FILE__)."/doc/${file}.chtml" );
+
+// Strip leading slash if it exists ...
+if ( substr( $path, 0, 1 ) == '/' ) {
+	$path = substr ( $path, - (strlen($path)-1) );
+}
+
 print $chtml->GetResource ( $path );
+
+//----------------- Functions ----------------------------------------------
+
+function chtml_standard_error_handler ($no, $str, $file, $line, $context) {
+	switch ($no) {
+		case E_USER_ERROR:
+		die('
+			<div style="border: 1px solid #000000; background-color: #ffff00; color: #000000; font-family: sans-serif; padding: 1em; font-size: 8pt;">'.$str.'</div>
+		');
+		break;
+	}
+}
 
 ?>
