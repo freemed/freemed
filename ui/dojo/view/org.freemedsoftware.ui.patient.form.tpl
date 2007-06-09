@@ -26,96 +26,99 @@
 <script type="text/javascript">
 	dojo.require("dojo.widget.Form");
 	dojo.require("dojo.widget.TabContainer");
-//	dojo.require("dojo.widget.Tooltip");
 	dojo.require("dojo.widget.ContentPane");
-	dojo.require("dojo.widget.Button");
 	dojo.require("dojo.widget.InternetTextbox");
 	dojo.require("dojo.widget.UsTextbox");
 
-	function patientFormTabTo( tabpane ) {
-		if ( event.keyCode == 9 ) {
-			dojo.widget.byId('mainTabContainer').selectTab( tabpane );
-		}
-	} // end patientFormTabTo
-
-	function patientFormCommitChanges ( ) {
-		// Verify form
-		var message = '';
-		if (document.getElementById('ptfname').value.length <= 3) {
-			message += "No first name\n";
-		}
-
-		if (message.length > 0) {
-			alert(message);
-			return false;
-		}
-
-		// Disable submit button
-		dojo.widget.byId('patientFormCommitChangesButton').disable();
-
-		// Determine action
-		var action = 'add'
-		try {
-			if (document.getElementById('id').value) {
-				action = 'mod';
-			}
-		} catch (err) { }
-
-		dojo.io.bind({
-			method : 'POST',
-			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.' + action,
-			content: {
-				param0: dojo.widget.byId('patientForm').getValues()
-			},
-			error: function(type, data, evt) {
-				alert('FreeMED has encountered an error. Please try again.');
-				dojo.widget.byId('patientFormCommitChangesButton').enable();
-			},
-			load: function(type, data, evt) {
-				if (data) {
-					if ((data + 0) > 0) {
-						freemed
-					}
-				} else {
-					alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
-					dojo.widget.byId('patientFormCommitChangesButton').enable();
-				}
-			},
-			mimetype: "text/json"
-		});
-	} // end patientFormCommitChanges
-
-	function patientFormPopulate ( id ) {
-		dojo.io.bind({
-			method : 'POST',
-			url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.GetRecord',
-			content: { param0: id },
-			error: function(type, data, evt) {
-				alert('<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->');
-				dojo.widget.byId('patientFormCommitChangesButton').enable();
-			},
-			load: function(type, data, evt) {
-				if (data) {
-					// Catch all for populating form data
-					dojo.widget.byId('patientForm').setValues(data);
-
-					// City, State Zip hack
-					dojo.widget.byId('ptcsz_widget').setLabel( data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip );
-					document.getElementById('ptcsz').value = data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip;
-
-					// Picklists
-					dojo.event.topic.publish( 'ptref-assign', data.ptref );
-					dojo.event.topic.publish( 'ptdoc-assign', data.ptdoc );
-					dojo.event.topic.publish( 'ptpcp-assign', data.ptpcp );
-				} else {
-					alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
-				}
-			},
-			mimetype: "text/json"
-		});
-	} // end patientFormPopulate
-
 	var pForm = {
+		commitChanges: function ( ) {
+			// Verify form
+			var message = '';
+			if (document.getElementById('ptfname').value.length <= 3) {
+				message += "<!--{t}-->No first name.<!--{/t}-->\n";
+			}
+	
+			if (message.length > 0) {
+				alert(message);
+				return false;
+			}
+
+			// Disable submit button
+			dojo.widget.byId('patientFormCommitChangesButton').disable();
+	
+			// Determine action
+			var action = 'add'
+			try {
+				if (document.getElementById('id').value) {
+					action = 'mod';
+				}
+			} catch (err) { }
+	
+			dojo.io.bind({
+				method : 'POST',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.' + action,
+				content: {
+					param0: dojo.widget.byId('patientForm').getValues()
+				},
+				error: function(type, data, evt) {
+					alert('FreeMED has encountered an error. Please try again.');
+					dojo.widget.byId('patientFormCommitChangesButton').enable();
+				},
+				load: function(type, data, evt) {
+					if (data) {
+						if ((data + 0) > 0) {
+							freemed
+						}
+					} else {
+						alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
+						dojo.widget.byId('patientFormCommitChangesButton').enable();
+					}
+				},
+				mimetype: "text/json"
+			});
+		},
+		Populate: function ( id ) {
+			dojo.io.bind({
+				method : 'POST',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.GetRecord',
+				content: { param0: id },
+				error: function(type, data, evt) {
+					alert('<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->');
+					dojo.widget.byId('patientFormCommitChangesButton').enable();
+				},
+				load: function(type, data, evt) {
+					if (data) {
+						// Catch all for populating form data
+						dojo.widget.byId('patientForm').setValues(data);
+	
+						// City, State Zip hack
+						dojo.widget.byId('ptcsz_widget').setLabel( data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip );
+						document.getElementById('ptcsz').value = data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip;
+	
+						// Picklists
+						dojo.event.topic.publish( 'ptref-assign', data.ptref );
+						dojo.event.topic.publish( 'ptdoc-assign', data.ptdoc );
+						dojo.event.topic.publish( 'ptpcp-assign', data.ptpcp );
+
+						// DOB
+						dojo.widget.byId( 'ptdob' ).setValue( data.ptdob );
+
+						// Select boxes
+						dojo.widget.byId( 'ptsex' ).setValue( data.ptsex );
+						switch( data.ptsex ) {
+							case 'm': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t}-->Male<!--{/t}-->" ); break;
+							case 'f': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t}-->Female<!--{/t}-->" ); break;
+							case 't': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t}-->Transgendered<!--{/t}-->" ); break;
+							break;
+							default: break;
+						}
+					} else {
+						alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
+					}
+				},
+				mimetype: "text/json"
+			});
+		},
 		checkForDupes: function () {
 			var d = {
 				ptlname: document.getElementById('ptlname').value,
@@ -149,14 +152,16 @@
 <!--{if $patient > 0}-->
 	_container_.addOnLoad(function(){
 		//TODO: make this work properly to load via "AJAX"
-		patientFormPopulate(<!--{$patient}-->);
+		pForm.Populate(<!--{$patient}-->);
 	});
 <!--{else}-->
 	_container_.addOnLoad(function(){
 		dojo.event.connect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
+		dojo.event.connect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
+		dojo.event.disconnect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
 	});
 <!--{/if}-->
 </script>
@@ -374,7 +379,7 @@
 <div align="center">
 	<table border="0" style="width:200px;">
 	<tr><td align="<!--{if $patient > 0}-->right<!--{else}-->center<!--{/if}-->">
-	<button dojoType="Button" type="button" id="patientFormCommitChangesButton" widgetId="patientFormCommitChangesButton" onClick="patientFormCommitChanges(); return true;">
+	<button dojoType="Button" type="button" id="patientFormCommitChangesButton" widgetId="patientFormCommitChangesButton">
 <!--{if $patient > 0}-->
 		<div><!--{t}-->Commit Changes<!--{/t}--></div>
 <!--{else}-->
