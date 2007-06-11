@@ -8,7 +8,7 @@ class LettersModule extends EMRModule {
 
 	var $MODULE_NAME    = "Letters";
 	var $MODULE_AUTHOR  = "jeff b (jeff@ourexchange.net)";
-	var $MODULE_VERSION = "0.3.5";
+	var $MODULE_VERSION = "0.3.6";
 	var $MODULE_FILE    = __FILE__;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
@@ -25,7 +25,8 @@ class LettersModule extends EMRModule {
 		$this->summary_vars = array (
 			__("Date") => "my_date",
 			__("From")   => "letterfrom:physician",
-			__("To")   => "letterto:physician"
+			__("To")   => "letterto:physician",
+			__("Subject") => "lettersubject"
 		);
 		$this->summary_options = SUMMARY_VIEW | SUMMARY_VIEW_NEWWINDOW
 			| SUMMARY_PRINT | SUMMARY_LOCK | SUMMARY_DELETE;
@@ -46,6 +47,7 @@ class LettersModule extends EMRModule {
 			"letterdt" => fm_date_assemble("letterdt"),
 			"lettereoc",
 			"letterfrom",
+			"lettersubject",
 			"letterto",
 			"lettercc" => ( is_array($_REQUEST['lettercc']) ?
 				join(',', $_REQUEST['lettercc']) :
@@ -53,6 +55,7 @@ class LettersModule extends EMRModule {
 			"letterenc" => ( is_array($_REQUEST['letterenc']) ?
 				join(',', $_REQUEST['letterenc']) :
 				$_REQUEST['letterenc'] ),
+			"letterencseperately",
 			"lettertext",
 			"letterpatient" => $patient,
 			"lettertypist" => html_form::combo_assemble('lettertypist'),
@@ -64,9 +67,11 @@ class LettersModule extends EMRModule {
 			"letterdt" => SQL__DATE,
 			"lettereoc" => SQL__TEXT,
 			"letterfrom" => SQL__VARCHAR(150),
+			"lettersubject" => SQL__VARCHAR(150),
 			"letterto" => SQL__VARCHAR(150),
 			"lettercc" => SQL__BLOB,
 			"letterenc" => SQL__BLOB,
+			"letterencseperately" => SQL__INT_UNSIGNED(0),
 			"lettertext" => SQL__TEXT,
 			"lettersent" => SQL__INT_UNSIGNED(0),
 			"letterpatient" => SQL__INT_UNSIGNED(0),
@@ -79,14 +84,13 @@ class LettersModule extends EMRModule {
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'lettereoc');
 
-		$this->acl = array ( 'bill', 'emr' );
-
 		// Run parent constructor
 		$this->EMRModule();
 	} // end constructor LettersModule
 
 	function additional_summary_icons ( $patient, $id ) {
-		return "\n"."<a onClick=\"printWindow=".
+		$return =
+			"\n"."<a onClick=\"printWindow=".
 			"window.open('".$this->page_name."?".
 			"module=".get_class($this)."&action=print&".
 			"print_template=envelope&id=".urlencode($id)."&".
@@ -95,10 +99,24 @@ class LettersModule extends EMRModule {
 			"'width=400,height=200,menubar=no,titlebar=no'); ".
 			"printWindow.opener=self; return true;\" ".
 			"><img SRC=\"lib/template/default/img/summary_envelope.png\"
-			BORDER=\"0\" ALT=\"".__("Print Envelope")."\"/></a>";
+			BORDER=\"0\" ALT=\"".__("Print Envelope")."\"/></a>".
+			"\n"."<a onClick=\"printWindow=".
+			"window.open('".$this->page_name."?".
+			"module=".get_class($this)."&action=print&".
+			"print_template=letters_nosignature&id=".urlencode($id)."&".
+			"patient=".urlencode($patient)."', ".
+			"'printWindow', ".
+			"'width=400,height=200,menubar=no,titlebar=no'); ".
+			"printWindow.opener=self; return true;\" ".
+			"><img SRC=\"lib/template/default/img/summary_nosignature.png\"
+			BORDER=\"0\" ALT=\"".__("Print No Signature")."\"/></a>";
+		return $return;
 	} // end method additional_summary_icons
 
 	function add () {
+		global $this_user;
+		if (!is_object($this_user)) { $this_user = CreateObject('_FreeMED.User'); }
+	
 		// Check for submit as add, else drop
 		switch ($_REQUEST['my_submit']) {
 			case __("Send to Provider"):
@@ -107,8 +125,12 @@ class LettersModule extends EMRModule {
 			return $l->_add();
 			break;
 
+			case __("File and Fax Directly"): case __("Add"):
+			$fax = true;
+			break;
+
 			case __("File Directly"):
-			case __("Add"):
+			$fax = false;
 			break;
 
 			default:
@@ -134,7 +156,40 @@ class LettersModule extends EMRModule {
 		} // end checking for uploaded msworddoc
 
 		// Call wrapped function
-		$this->_add();
+		$new_id = $this->_add($_REQUEST);
+
+		// If we're supposed to, send fax
+		if ($fax and $_REQUEST['letterfax']) {
+			// Start up TeX renderer
+			$TeX = CreateObject('FreeMED.TeX', array (
+				'title' => $title,
+				'heading' => $heading,
+				'physician' => $physician
+			));
+			$TeX->_buffer = $TeX->RenderFromTemplate(
+				$this->print_template,
+				freemed::get_link_rec($new_id, $this->table_name)
+			);
+
+			// Render to PDF and send
+			$file = $TeX->RenderToPDF(true);
+			if (!file_exists($file)) {
+				trigger_error(__("Letter disappeared before it could be sent!"));
+			}
+			$fax = CreateObject('_FreeMED.Fax', $file, array (
+				'sender' => $this_user->user_descrip,
+				'comment' => __("HIPPA Compliance Notice: This transmission contains sensitive medical data.")
+			));
+			$output = $fax->Send($_REQUEST['letterfax']);
+			$this_user->setFaxInQueue(
+				$output,
+				$_REQUEST['patient'],
+				$_REQUEST['fax_number'],
+				get_class($this),
+				$new_id
+				);
+			unlink($file);
+		}
 
 		// If this is management, refresh properly
 		if ($_REQUEST['return'] == 'manage') {
@@ -245,27 +300,37 @@ class LettersModule extends EMRModule {
 		fm_date_entry("letterdt"),
 
 		__("From") =>
+		module_function('ProviderModule', 'widget', array('letterfrom')),
+		/*
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM physician WHERE phyref='no' ".
 				"ORDER BY phylname"),
 			"#phylname#, #phyfname#",
 			"letterfrom"
 		),
+		*/
 		
 
 		__("To") =>
+		module_function('ProviderModule', 'widget', array('letterto')),
+		/*
 		freemed_display_selectbox(
 			$sql->query("SELECT * FROM physician ORDER BY phylname"),
 			"#phylname#, #phyfname#",
 			"letterto",
 			3
 		),
+		*/
+
+		__("Subject") =>
+		html_form::text_widget("lettersubject", 30, 150),
 
 		__("CC") =>
 		$this->cc_widget('lettercc'),
 
 		__("Enclosures") =>
-		$this->enc_widget('letterenc'),
+		$this->enc_widget('letterenc')." ".
+		html_form::checkbox_widget('letterencseperately', '1', __("Enclosures sent separately")),
 
 		__("Text") =>
 		//html_form::text_area("lettertext", 'VIRTUAL', 25, 70),
@@ -281,7 +346,11 @@ class LettersModule extends EMRModule {
 		),
 
 		( check_module('LettersRepository') ? __("Fax Number") : "" ) =>
-		html_form::text_widget( 'letterfax', 16 ),
+			module_function('providermodule',
+				'widget',
+				array ( 'letterfax', false, 'phyfaxa' )
+			),
+		//html_form::text_widget( 'letterfax', 16 ),
 
 		)));
 
@@ -298,12 +367,14 @@ class LettersModule extends EMRModule {
 		<div ALIGN=\"CENTER\">
 		";
 
-		if (check_module('LettersRepository') and $action != 'modform') {
+		if (check_module('LettersRepository') and ($action=='addform')) {
 			$display_buffer .= "
 		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
 			"VALUE=\"".__("Send to Provider")."\"/>
 		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
 			"VALUE=\"".__("File Directly")."\"/>
+		<input class=\"button\" name=\"my_submit\" TYPE=\"SUBMIT\" ".
+			"VALUE=\"".__("File and Fax Directly")."\"/>
 			";
 		} else {
 			$display_buffer .= "
@@ -414,6 +485,7 @@ class LettersModule extends EMRModule {
 			array (
 				__("Date") => "letterdt",
 				__("From") => "letterfrom",
+				__("Subject") => "lettersubject",
 				__("To") => "letterto",
 				__("Typist") => "lettertypist"
 			),
@@ -457,7 +529,7 @@ class LettersModule extends EMRModule {
 				substr($phf['phyfaxa'], 0, 3).'-'.
 				substr($phf['phyfaxa'], 3, 3).'-'.
 				substr($phf['phyfaxa'], 6, 4) ),
-			'signature' => ( file_exists('/usr/share/freemed/lib/tex/img/'.$phf['id'].'.pdf') ? '\\includegraphics{/usr/share/freemed/lib/tex/img/'.$phf['id'].'}'."\n" : '\\bigskip'."\n" ),
+			'signature' => ( file_exists('/usr/share/freemed/lib/tex/img/'.$phf['id'].'.pdf') ? '\\includegraphics[height=2em]{/usr/share/freemed/lib/tex/img/'.$phf['id'].'.pdf}'."\n" : '\\bigskip'."\n" ),
 			'physicianid' => $phf['id'],
 			'tophysicianpractice' => $TeX->_SanitizeText($pht['phypracname']),
 			'tophysician' => $TeX->_SanitizeText($tophyobj->fullName(true)),
@@ -521,6 +593,125 @@ class LettersModule extends EMRModule {
 		return $buffer;
 	} // end method enc_widget
 
+	function _divine_provider_address ( $id ) {
+		if ($_SESSION['default_facility'] > 0) {
+			// Take from session
+			$f = freemed::get_link_rec($_SESSION['default_facility']+0, 'facility');
+			return $f['psraddr1'];
+		} else {
+			// Take from record
+			$r = freemed::get_link_rec($id, $this->table_name);
+			$f = freemed::get_link_rec($r['letterfrom'], 'physician');
+			return $f['phyaddr1a'];
+		}
+	}
+
+	function _divine_provider_csz ( $id ) {
+		if ($_SESSION['default_facility'] > 0) {
+			// Take from session
+			$f = freemed::get_link_rec($_SESSION['default_facility']+0, 'facility');
+			return $f['psrcity'].', '.$f['psrstate'].' '.$f['psrzip'];
+		} else {
+			// Take from record
+			$r = freemed::get_link_rec($id, $this->table_name);
+			$f = freemed::get_link_rec($r['letterfrom'], 'physician');
+			return $f['phycitya'].', '.$f['phystatea'].' '.$f['phyzipa'];
+		}
+	}
+
+	function _divine_provider_phone ( $id ) {
+		if ($_SESSION['default_facility'] > 0) {
+			// Take from session
+			$f = freemed::get_link_rec($_SESSION['default_facility']+0, 'facility');
+			$phone = $f['psrphone'];
+		} else {
+			// Take from record
+			$r = freemed::get_link_rec($id, $this->table_name);
+			$f = freemed::get_link_rec($r['letterfrom'], 'physician');
+			$phone = $f['phyphonea'];
+		}
+		return '('.substr($phone,0,3).') '.substr($phone,3,3).'-'.substr($phone,6,4);
+	}
+
+	function _divine_provider_fax ( $id ) {
+		if ($_SESSION['default_facility'] > 0) {
+			// Take from session
+			$f = freemed::get_link_rec($_SESSION['default_facility']+0, 'facility');
+			$phone = $f['psrfax'];
+		} else {
+			// Take from record
+			$r = freemed::get_link_rec($id, $this->table_name);
+			$f = freemed::get_link_rec($r['letterfrom'], 'physician');
+			$phone = $f['phyfaxa'];
+		}
+		return '('.substr($phone,0,3).') '.substr($phone,3,3).'-'.substr($phone,6,4);
+	}
+
+	// Figure out prefix
+	function _divine_prefix ( $id ) {
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
+		$age_res = $GLOBALS['sql']->query("SELECT ".
+			"TO_DAYS(DATE_ADD(ptdob, INTERVAL 18 YEAR)) > TO_DAYS('".date('Y-m-d')."') AS under18 ".
+			"FROM patient WHERE id='".addslashes($r[$this->patient_field])."'");
+		$age_r = $GLOBALS['sql']->fetch_array($age_res);
+		if ($age_r['under18'] and strlen($pt['ptglname'])>2) {
+			$g = true;
+		} else {
+			$g = false;
+		}
+
+		if ($g) { $_g = 'ptgsalut'; } else { $_g = 'ptsalut'; }
+		if ($pt[$_g]) {
+			$prefix = $pt[$_g].'. ';
+		} else {
+			if ($pt['ptsex'] != 'f') {
+				$prefix = 'Mr. ';
+			} else {
+				switch ($pt['ptmarital']) {
+					case 'married':
+					case 'widowed':
+					case 'separated':
+					case 'divorced':
+						$prefix = 'Mrs. ';
+						break;
+
+					case 'single':
+					default:
+						$prefix = 'Ms. ';
+						break;
+				}
+			}
+		} // end creating name prefix for patient
+		return $prefix;
+	} // end _divine_prefix
+
+	function _divine_lastname ( $id ) {
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$pt = freemed::get_link_rec($r[$this->patient_field], 'patient');
+		$age_res = $GLOBALS['sql']->query("SELECT ".
+			"TO_DAYS(DATE_ADD(ptdob, INTERVAL 18 YEAR)) > TO_DAYS('".date('Y-m-d')."') AS under18 ".
+			"FROM patient WHERE id='".addslashes($r[$this->patient_field])."'");
+		$age_r = $GLOBALS['sql']->fetch_array($age_res);
+		if ($age_r['under18'] and strlen($pt['ptglname'])>2) {
+			$g = true;
+		} else {
+			$g = false;
+		}
+		return $this->uc($pt[( $g ? 'ptglname' : 'ptlname' )]);
+	} // end _divine_lastname
+
+	function fax_widget ( $varname, $id ) {
+		global $sql, ${$varname};
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$phy = freemed::get_link_rec($r['letterto'], 'physician');
+		${$varname} = $phy['phyfaxa'];
+		return module_function('faxcontacts',
+			'widget',
+			array ( $varname, false, 'phyfaxa' )
+		);
+	} // end method fax_widget
+
 	// ----- Internal update
 
 	function _update() {
@@ -542,6 +733,18 @@ class LettersModule extends EMRModule {
 			$sql->query('UPDATE '.$this->table_name.' SET '.
 				'locked = \'0\'');
 		}
+
+		// Version 0.3.2
+		//
+		//      Added subject line (lettersubject)
+		//
+		if (!version_check($version, '0.3.2')) {
+		        $sql->query('ALTER TABLE '.$this->table_name.' '.
+			        'ADD COLUMN lettersubject VARCHAR(150) AFTER letterfrom');
+			// Make sure they are all not null
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+			        'lettersubject = \'\'');
+		}		
 
 		// Version 0.3.3
 		//
@@ -577,6 +780,17 @@ class LettersModule extends EMRModule {
 			// Make sure they are all not null
 			$sql->query('UPDATE '.$this->table_name.' SET '.
 				'lettertypist = \'\'');
+		}
+
+		// Version 0.3.6
+		//
+		//	Added enclosures seperate
+		//
+		if (!version_check($version, '0.3.6')) {
+			$sql->query('ALTER TABLE '.$this->table_name.' '.
+				'ADD COLUMN letterencseperately INT UNSIGNED AFTER letterenc');
+			$sql->query('UPDATE '.$this->table_name.' SET '.
+				'letterencseperately = \'0\'');
 		}
 
 	} // end method _update
