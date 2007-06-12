@@ -29,6 +29,19 @@ class UserInterface {
 
 	protected $user;
 
+	protected $variables = array (
+		'username',
+		'userpassword',
+		'userdescrip',
+		'userlevel',
+		'usertype',
+		'userrealphy',
+		'usermanageopt',
+		'useremail',
+		'usersms',
+		'usersmsprovider'
+	);
+
 	public function __construct ( ) {
 		$this->user = freemed::user_cache();
 	}
@@ -140,6 +153,125 @@ class UserInterface {
 		$q = "SELECT * FROM user ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." AND id>1 ORDER BY username LIMIT ${limit}";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
+
+	// Method: add
+	//
+	//	User addition routine.
+	//
+	// Parameters:
+	//
+	//	$_param - (optional) Associative array of values. If
+	//	specified, _add will run quiet. The associative array
+	//	is in the format of sql_name => sql_value.
+	//
+	// Returns:
+	//
+	//	Nothing if there are no parameters. If $_param is
+	//	specified, _add will return the id number if successful
+	//	or false if unsuccessful.
+	//
+	public function add ( $data ) {
+		freemed::acl_enforce( 'admin', 'config' );
+
+		$ourdata = $this->prepare( (array) $data );
+		$GLOBALS['sql']->load_data( $ourdata );
+
+		$query = $GLOBALS['sql']->insert_query (
+			'user',
+			$this->variables
+		);
+		$result = $GLOBALS['sql']->query ( $query );
+
+		$new_id = $GLOBALS['sql']->lastInsertId( 'user', 'id' );
+
+		// Create user ACL object
+		module_function( 'ACL', 'UserAdd', array( $new_id ) );
+
+		// ACL routine for adding all ACL groups
+		if ( is_array( $ourdata['useracl'] ) ) {
+			foreach ( $ourdata['useracl'] AS $acl ) {
+				$o = module_function( 'ACL', 'AddUserToGroup', array ( $acl, $new_id ) );
+			}
+		}
+
+		// Return user ID
+		return $new_id;
+	} // end function add
+
+	// Method: del
+	//
+	//	User deletion id
+	//
+	// Parameters:
+	//
+	//	$_param - (optional) Id number for the record to
+	//	be deleted. 
+	//
+	// Returns:
+	//
+	//	Nothing if there are no parameters. If $_param is
+	//	specified, _del will return boolean true or false
+	//	depending on whether it is successful.
+	//
+	// See Also:
+	//	<del_pre>
+	//
+	public function del ( $id ) {
+		freemed::acl_enforce( 'admin', 'config' );
+
+		// Protect admin user
+		if ( $id + 0 == 1 ) { return false; }
+
+		$this->del_pre( $id + 0 );
+		$query = "DELETE FROM user WHERE id = '".addslashes( $id+0 )."'";
+		$result = $GLOBALS['sql']->query ( $query );
+		return true;
+	} // end function del
+
+	protected function del_pre ( $id ) { }
+
+	// Method: mod
+	//
+	//	User modification routine
+	//
+	// Parameters:
+	//
+	//	$data - Hash of data to pass.
+	//
+	// See Also:
+	//	<mod_pre>
+	//	<mod_post>
+	//
+	public function mod ( $data ) {
+		freemed::acl_enforce( 'admin', 'config' );
+
+		if ( is_array( $data ) ) {
+			if ( !$data['id'] ) { return false; }
+		} elseif ( is_object( $data ) ) {
+			if ( ! $data->id ) { return false; }
+		} else {
+			return false;
+		}
+
+		// Protect admin user
+		if ( $id + 0 == 1 ) { return false; }
+
+		$ourdata = $this->prepare( (array) $data );
+
+		$this->mod_pre( &$ourdata );
+		$GLOBALS['sql']->load_data( $ourdata );
+		$result = $GLOBALS['sql']->query (
+			$GLOBALS['sql']->update_query (
+				'user',
+				$this->variables,
+				array ( "id" => $data['id'] )
+			)
+		);
+
+		return $result ? true : false;
+	} // end function mod
+
+	private function mod_pre ( $data ) { }
 
 } // end class UserInterface
 

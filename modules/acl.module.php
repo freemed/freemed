@@ -147,10 +147,7 @@ class ACL extends SupportModule {
 	//	$id - Record ID for the user in question
 	//
 	public function UserAdd ( $id ) {
-		if ( ! freemed::acl('admin', 'config') ) {
-			syslog( LOG_INFO, "ACL.UserAdd attempted without permission" );
-			return false;
-		}
+		freemed::acl_enforce( 'admin', 'config' );
 
 		// Get the user record in question to play with
 		$user = CreateObject('org.freemedsoftware.core.User', $id);
@@ -160,8 +157,8 @@ class ACL extends SupportModule {
 
 		// Create an ARO object
 		$acl_id = $acl->add_object(
-			'Users', // ARO group name
-			$user->local_record['userdescrip'], // Proper name
+			'user', // ARO group name
+			$user->local_record['username'], // Proper name
 			$id, // ACL identifier
 			0, // display order
 			0, // hidden
@@ -172,6 +169,31 @@ class ACL extends SupportModule {
 		// Send back the new ID, in case we need it for anything
 		return $acl_id;
 	} // end method UserAdd
+
+	// Method: AddUserToGroup
+	//
+	// Parameters:
+	//
+	//	$user - User ID
+	//
+	//	$group - Group ID
+	//
+	// Returns:
+	//
+	//	Boolean, successful.
+	//
+	public function AddUserToGroup ( $user, $group ) {
+		freemed::acl_enforce( 'admin', 'config' );
+
+		$o = $this->acl_object( );
+		return $o->add_group_object(
+			$group, // $group_id,
+			'user', // $object_section_value,
+			$user, // $object_value, 
+			'ARO'
+		);
+
+	} // end method AddUserToGroup
 
 	// Method: acl_object
 	//
