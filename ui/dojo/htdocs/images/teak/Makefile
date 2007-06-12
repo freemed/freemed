@@ -23,8 +23,10 @@ all: clean
 	@echo "Building icons ... "
 	@for i in *.svg.gz; do \
 		echo -n " - $$i "; \
-		rsvg -w 64 -h 64 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.64x64.png; echo -n " [64x64 ] "; \
-		rsvg -w 32 -h 32 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.32x32.png; echo -n " [32x32 ] "; \
+		rsvg -w 64 -h 64 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.64x64.png; echo -n " [ 64x64 ] "; \
+		rsvg -w 32 -h 32 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.32x32.png; echo -n " [ 32x32 ] "; \
+		rsvg -w 24 -h 24 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.24x24.png; echo -n " [ 24x24 ] "; \
+		rsvg -w 16 -h 16 -f png "$$i" `echo "$$i" | sed -e 's/\.svg\.gz//;'`.16x16.png; echo -n " [ 16x16 ] "; \
 		echo " "; \
 	done
 	@echo "Crushing ... "
