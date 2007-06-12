@@ -71,15 +71,15 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'form_results', fr_patient, id, fr_timestamp, fr_template, 'active' FROM form_results;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'images', imagepat, id, imagedt, imagedesc, locked, 'active' FROM images;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'labs', labpatient, id, labtimestamp, CONCAT( labordercode, ' - ', laborderdescrip ), 'active' FROM labs;" );
-execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'letters', letterpatient, id, letterdt, CONCAT( p.phyfname, ' ', p.phylname), locked, 'active' FROM letters LEFT OUTER JOIN physician p ON letters.letterto=p.id;" );
+execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'letters', letterpatient, l.id, letterdt, CONCAT( p.phyfname, ' ', p.phylname), locked, 'active' FROM letters l LEFT OUTER JOIN physician p ON letters.letterto=p.id;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'medications', mpatient, id, mdate, CONCAT( mdrug, ' ', mdosage ), 'active' FROM medications;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, user, status ) SELECT 'messages', msgpatient, id, msgtime, msgsubject, msgby, 'active' FROM messages GROUP BY msgunique;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, user, status ) SELECT 'notification', npatient, id, noriginal, ndescrip, nuser, 'active' FROM notification;" );
-execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'patletter', letterpatient, id, letterdt, CONCAT( p.phyfname, ' ', p.phylname ), locked, 'active' FROM patletter LEFT OUTER JOIN physician p ON patletter.letterfrom=p.id;" );
+execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'patletter', letterpatient, l.id, letterdt, CONCAT( p.phyfname, ' ', p.phylname ), locked, 'active' FROM patletter l LEFT OUTER JOIN physician p ON patletter.letterfrom=p.id;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'payrec', payrecpatient, id, NOW(), payrecdescrip, payreclock, 'active' FROM payrec;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, provider, status ) SELECT 'pnotes', pnotespat, id, pnotesdt, pnotesdescrip, locked, pnotesdoc, 'active' FROM pnotes;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'previous_operations', opatient, id, odate, operation, 'active' FROM previous_operations;" );
-execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'procrec', procpatient, id,procdt, CONCAT( c.cptcode, ' - ', c.cptdescrip), 'active' FROM procrec LEFT OUTER JOIN cpt c ON procrec.proccpt=c.id;" );
+execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'procrec', procpatient, p.id, procdt, CONCAT( c.cptcode, ' - ', c.cptdescrip), 'active' FROM procrec p LEFT OUTER JOIN cpt c ON procrec.proccpt=c.id;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'rx', rxpatient, id, rxdatefrom, rxdrug, locked, 'active' FROM rx;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, calprenote, 'active' FROM scheduler WHERE caltype='pat';" );
 
