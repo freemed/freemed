@@ -89,6 +89,7 @@
 		</div>
 	</div>
 
+	<!--{acl category="financial" permission="menu"}-->
 	<div dojoType="ContentPane" label="<!--{t}-->Billing<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.accountsreceivable');">
@@ -113,7 +114,9 @@
 		<!--{/foreach}-->
 
 	</div>
+	<!--{/acl}-->
 
+	<!--{acl category="reporting" permission="menu"}-->
 	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.reporting.engine');">
@@ -128,6 +131,7 @@
 		<!--{/foreach}-->
 
 	</div>
+	<!--{/acl}-->
 
 	<div dojoType="ContentPane" label="<!--{t}-->Utilities<!--{/t}-->" class="basicPane">
 
@@ -140,6 +144,13 @@
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.configuration');">
 			<img src="<!--{$htdocs}-->/images/teak/settings.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->System Configuration<!--{/t}-->
+		</div>
+		<!--{/acl}-->
+
+		<!--{acl category="admin" permission="user"}-->
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.user');">
+			<img src="<!--{$htdocs}-->/images/teak/settings.64x64.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->User Administration<!--{/t}-->
 		</div>
 		<!--{/acl}-->
 

@@ -219,12 +219,18 @@
 					for (i=0; i<data.length; i++) {	
 						data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
 						data[i]['actions'] = '';
+						<!--{acl category="emr" permission="view"}-->
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
+						<!--{/acl}-->
 						if (data[i]['locked'] == 0) {
 							// All unlocked actions go here:
+							<!--{acl category="emr" permission="lock"}-->
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
+							<!--{/acl}-->
+							<!--{acl category="emr" permission="modify"}-->
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
+							<!--{/acl}-->
 						} else {
 							// All locked stuff goes here:
 							data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}-->\" />&nbsp;";
