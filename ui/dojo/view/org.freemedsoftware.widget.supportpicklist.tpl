@@ -42,7 +42,7 @@
 		onAssign: function ( id ) {
 			// Don't assign if we have no value
 			try {
-				if ( ! id ) { return false; }
+				if ( parseInt( id ) < 1 ) { return false; }
 			} catch ( err ) { }
 
 			// Do reverse lookup from assignment
