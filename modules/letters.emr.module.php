@@ -46,6 +46,7 @@ class Letters extends EMRModule {
 		"letterto",
 		"lettercc",
 		"letterenc",
+		"lettersubject",
 		"lettertext",
 		"letterpatient",
 		"lettertypist",

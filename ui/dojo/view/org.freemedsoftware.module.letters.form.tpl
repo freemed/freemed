@@ -29,7 +29,11 @@
 	var letters = {
 		handleResponse: function ( data ) {
 			if (data) {
-				freemedMessage( "<!--{t}-->Added letter.<!--{/t}-->", "INFO" );
+				<!--{if $id}-->
+				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
+				<!--{else}-->
+				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				<!--{/if}-->
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
@@ -48,10 +52,17 @@
 				method: "POST",
 				content: {
 					param0: "<!--{$id|escape}-->"
-					url: "<!--{$relay}-->/org.freemedsoftware.module.Letters.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
 				},
-				mimetype: "text/json",
-				sync: true
+				url: "<!--{$relay}-->/org.freemedsoftware.module.Letters.GetRecord",
+				load: function ( type, data, evt ) {
+					dojo.widget.byId('letters.dateOf').setValue( data.letterdt );
+					lettersfromProvider.onAssign( data.letterfrom );
+					letterstoProvider.onAssign( data.letterto );
+					dojo.widget.byId('letterText').setValue( data.lettertext );
+					document.getElementById( 'lettersubject' ).value = data.lettersubject;
+				},
+				sync: true,
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},
@@ -65,6 +76,7 @@
 				letterfrom: parseInt( document.getElementById('letters.fromProvider').value ),
 				letterto: parseInt( document.getElementById('letters.toProvider').value ),
 				lettertext: dojo.widget.byId('letterText').getValue(),
+				lettersubject: document.getElementById( 'lettersubject' ).value,
 				letterpatient: '<!--{$patient|escape}-->'
 			};
 			if (letters.validate( myContent )) {
@@ -110,6 +122,11 @@
 	<tr>
 		<td align="right"><!--{t}-->To<!--{/t}--></td>
 		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="letters.toProvider"}--></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Subject<!--{/t}--></td>
+		<td><input type="text" id="lettersubject" size="50" /></td>
 	</tr>
 
 	<tr>

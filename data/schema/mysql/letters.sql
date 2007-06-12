@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `letters` (
 	letterto		INT UNSIGNED NOT NULL DEFAULT 0,
 	lettercc		BLOB,
 	letterenc		BLOB,
+	lettersubject		VARCHAR (250),
 	lettertext		TEXT,
 	lettersent		INT UNSIGNED NOT NULL DEFAULT 0,
 	letterpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -57,8 +58,16 @@ BEGIN
 	DROP TRIGGER letters_Update;
 
 	#----- Upgrades
-	ALTER IGNORE TABLE letters ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
-	ALTER IGNORE TABLE letters ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	CALL FreeMED_Module_GetVersion( 'letters', @V );
+
+	# Version 1
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE letters ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+		ALTER IGNORE TABLE letters ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+		ALTER IGNORE TABLE letters ADD COLUMN lettersubject VARCHAR (250) AFTER letterenc;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'letters', 1 );
 END
 //
 DELIMITER ;
