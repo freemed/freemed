@@ -78,8 +78,12 @@ CREATE TRIGGER messages_Insert
 	AFTER INSERT ON messages
 	FOR EACH ROW BEGIN
 		IF NEW.msgpatient > 0 THEN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'messages', NEW.msgpatient, NEW.id, NEW.msgtime, NEW.msgsubject, NEW.msgby, NEW.active );
+			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'messages', NEW.msgpatient, NEW.id, NEW.msgtime, NEW.msgsubject, NEW.msgby, NEW.active );
+			SELECT CONCAT( ptlname, ', ', ptfname, ' ', ptmname, ' (', ptid, ')' ) INTO @re FROM patient WHERE id = NEW.msgpatient;
+		ELSE
+			SET @re = NEW.msgsubject;
 		END IF;
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient ) VALUES ( NEW.msgtime, NEW.msgfor, CONCAT( 'Msg RE: ', @re ), 'messages', NEW.msgpatient );
 	END;
 //
 
