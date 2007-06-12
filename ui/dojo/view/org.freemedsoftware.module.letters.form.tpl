@@ -55,13 +55,14 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.Letters.GetRecord",
 				load: function ( type, data, evt ) {
+					try {
 					dojo.widget.byId('letters.dateOf').setValue( data.letterdt );
-					lettersfromProvider.onAssign( data.letterfrom );
-					letterstoProvider.onAssign( data.letterto );
 					dojo.widget.byId('letterText').setValue( data.lettertext );
 					document.getElementById( 'lettersubject' ).value = data.lettersubject;
+					lettersfromProvider.onAssign( data.letterfrom );
+					letterstoProvider.onAssign( data.letterto );
+					} catch (e) { alert(e); }
 				},
-				sync: true,
 				mimetype: "text/json"
 			});
 			<!--{/if}-->
