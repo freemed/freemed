@@ -322,7 +322,7 @@
 				<option value="married"><!--{t}-->Married<!--{/t}--></option>
 				<option value="divorced"><!--{t}-->Divorced<!--{/t}--></option>
 				<option value="separated"><!--{t}-->Separated<!--{/t}--></option>
-				<option value="windowed"><!--{t}-->Windowed<!--{/t}--></option>
+				<option value="widowed"><!--{t}-->Widowed<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
