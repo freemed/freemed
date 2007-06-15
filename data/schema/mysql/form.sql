@@ -44,6 +44,6 @@ CREATE TABLE IF NOT EXISTS `form_element` (
 	fe_conditional		VARCHAR (250) NOT NULL DEFAULT '',
 	fe_confidential		ENUM ( 'no', 'yes' ) DEFAULT 'no',
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	FOREIGN KEY		( fe_id ) REFERENCES form ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( fe_id ) REFERENCES form.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

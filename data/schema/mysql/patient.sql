@@ -216,6 +216,6 @@ CREATE TABLE IF NOT EXISTS `patient_prior` (
 	#	Define keys
 
 	PRIMARY KEY		( id ),
-	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

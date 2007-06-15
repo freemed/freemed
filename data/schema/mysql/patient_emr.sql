@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	#	Define keys
 
 	KEY			( patient, module, oid ),
-	FOREIGN KEY		( patient ) REFERENCES `patient` ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS patient_emr_Upgrade;

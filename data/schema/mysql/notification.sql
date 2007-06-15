@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
 	#	Default key
 
 	KEY			( nuser, npatient, nfor, ntarget ),
-	FOREIGN KEY		( npatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( npatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS notification_Upgrade;

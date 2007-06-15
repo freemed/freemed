@@ -38,9 +38,9 @@ CREATE TABLE IF NOT EXISTS `rxrefillrequest` (
 	id			SERIAL,
 
 	#	Define keys
-	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE,
-	FOREIGN KEY		( provider ) REFERENCES physician ( id ) ON DELETE CASCADE,
-	FOREIGN KEY		( rxorig ) REFERENCES rx ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE,
+	FOREIGN KEY		( provider ) REFERENCES physician.id ON DELETE CASCADE,
+	FOREIGN KEY		( rxorig ) REFERENCES rx.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS rxrefillrequest_Upgrade;

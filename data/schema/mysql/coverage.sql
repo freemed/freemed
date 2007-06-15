@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	#	Define keys
 
 	KEY			( covpatient, covinsco, covrel ),
-	FOREIGN KEY		( covpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( covpatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS coverage_Upgrade;

@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 	#	Define keys
 
 	KEY			( imagepat, imagetype, imagecat, imagedt ),
-	FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( imagepat ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS images_Upgrade;
@@ -78,7 +78,7 @@ BEGIN
 		ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
 
 		ALTER IGNORE TABLE images ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
-		ALTER TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+		ALTER IGNORE TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 	END IF;
 
 	# Version 2

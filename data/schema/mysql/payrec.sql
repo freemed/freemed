@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `payrec` (
 
 	#	Define keys
 	KEY			( payrecpatient, payrecproc ),
-	FOREIGN KEY		( payrecpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
-	FOREIGN KEY		( payrecproc ) REFERENCES procrec ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( payrecpatient ) REFERENCES patient.id ON DELETE CASCADE,
+	FOREIGN KEY		( payrecproc ) REFERENCES procrec.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS payrec_Upgrade;

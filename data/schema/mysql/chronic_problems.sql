@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `chronic_problems` (
 	#	Define keys
 
 	KEY			( ppatient, pdate ),
-	FOREIGN KEY		( ppatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( ppatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS chronic_problems_Upgrade;

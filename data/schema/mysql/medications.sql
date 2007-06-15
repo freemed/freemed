@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	#	Define keys
 
 	KEY			( mpatient, mdate ),
-	FOREIGN KEY		( mpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( mpatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS medications_Upgrade;

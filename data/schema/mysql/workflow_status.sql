@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `workflow_status` (
 
 	#	Define keys
 
-	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
 
 	#	Define keys
 
-	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS patientWorkflowStatusUpdateLookup;

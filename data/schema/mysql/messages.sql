@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
 	#	Define keys
 
 	KEY 		( msgfor ),
-	FOREIGN KEY	( msgpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY	( msgpatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS messages_Upgrade;

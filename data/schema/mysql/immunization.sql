@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `immunization` (
 
 	#	Define keys
 	KEY			( patient, dateof, provider ),
-	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS immunization_Upgrade;

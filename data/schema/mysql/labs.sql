@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `labs` (
 
 	#	Define keys
 	KEY			( labpatient, labprovider, labtimestamp ),
-	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `labresults` (
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS `labresults` (
 	#	Define keys
 
 	KEY			( labpatient, labid ),
-	FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE,
-	FOREIGN KEY		( labid ) REFERENCES labs ( id ) ON DELETE CASCADE
+	FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE,
+	FOREIGN KEY		( labid ) REFERENCES labs.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS labs_Upgrade;
