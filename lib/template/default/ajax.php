@@ -61,6 +61,7 @@ function setCaretToPos (input, pos) {
 	setSelectionRange(input, pos, pos);
 }
 function replaceSelection (input, replaceString) {
+	var scrollPos = input.scrollTop;
 	if (input.setSelectionRange) {
 		var selectionStart = input.selectionStart;
 		var selectionEnd = input.selectionEnd;
@@ -84,6 +85,7 @@ function replaceSelection (input, replaceString) {
 			}
 		}
 	}
+	input.scrollTop = scrollPos;
 }
 
 function hilight ( t, s ) {
