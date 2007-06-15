@@ -311,6 +311,7 @@ a:hover {
 }
 .button_text, .button_text:hover {
 	text-decoration: none;
+	cursor: pointer;
 }
 .button_text:hover {
 	color: #000000;
