@@ -858,7 +858,14 @@ function generate_calendar_mini ($scheduler, $given_date) {
 	} // end of day row
 	$buffer .= "<td colspan=\"1\">&nbsp;</td>\n".
 	"</tr><tr>\n".
-	"<td COLSPAN=\"9\" ALIGN=\"RIGHT\" class=\"button_style\">\n".
+	"<td COLSPAN=\"4\" ALIGN=\"LEFT\" class=\"button_style\">\n".
+	"<a onClick=\"goToDate('".date( 'Y-m-d', mktime( 0, 0, 0, $this_month, $this_day, $this_year )-86400 ).
+         "'); document.myform.submit();\" class=\"button_text\" ".
+	"><small>&lt;</small></a> &nbsp;\n".
+	"<a onClick=\"goToDate('".date( 'Y-m-d', mktime( 0, 0, 0, $this_month, $this_day, $this_year )+86400 ).
+         "'); document.myform.submit();\" class=\"button_text\" ".
+	"><small>&gt;</small></a> &nbsp;</td>\n".
+	"<td COLSPAN=\"5\" ALIGN=\"RIGHT\" class=\"button_style\">\n".
 	"<a onClick=\"goToDate('".date("Y-m-d") .
          "'); document.myform.submit();\" class=\"button_text\" ".
 	"><small>".__("go to today")."</small></a>\n".
