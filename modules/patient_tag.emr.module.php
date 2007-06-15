@@ -151,10 +151,9 @@ class PatientTag extends SupportModule {
 	//	Array of tags.
 	//
 	public function TagsForPatient ( $patient ) {
-		$query = "SELECT tag FROM `".$this->table_name."` WHERE patient=".$GLOBALS['sql']->quote( $patient )." AND ( dateexpire = 0 OR dateexpire > NOW() )";
-		syslog(LOG_INFO, $query);
-		$return = $GLOBALS['sql']->queryCol( $query );
-		return is_array($return) ? $return : array($return);
+		$query = "SELECT tags FROM patienttaglookup WHERE patient=".$GLOBALS['sql']->quote( $patient );
+		$return = $GLOBALS['sql']->queryOne( $query );
+		return explode( ',', $return );
 	} // end method TagsForPatient
 
 	// Method: SimpleTagSearch
@@ -247,9 +246,10 @@ class PatientTag extends SupportModule {
 	//	* last_name - Last name of patient
 	//	* middle_name - Middle name of patient
 	//	* date_of_birth - Patient's date of birth
+	//	* tags - CSV list of patient tags
 	//
 	protected function SearchEngine ( $clause, $include_inactive = false ) {
-		$query = "SELECT p.id AS patient_record, p.ptid AS patient_id, MAX(c.caldateof) AS last_seen, p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptdob AS date_of_birth FROM patient p LEFT OUTER JOIN patienttag t ON p.id=t.patient LEFT OUTER JOIN scheduler c ON p.id=c.calpatient WHERE ".( !$include_inactive ? "( t.dateexpire=0 OR t.dateexpire>NOW() ) AND" : "" )." ( ${clause} ) GROUP BY p.id";
+		$query = "SELECT p.id AS patient_record, p.ptid AS patient_id, MAX(c.caldateof) AS last_seen, p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptdob AS date_of_birth, tl.tags AS tags FROM patient p LEFT OUTER JOIN patienttag t ON p.id=t.patient LEFT OUTER JOIN scheduler c ON p.id=c.calpatient LEFT OUTER JOIN patienttaglookup tl ON tl.patient=p.id WHERE ".( !$include_inactive ? "( t.dateexpire=0 OR t.dateexpire>NOW() ) AND" : "" )." ( ${clause} ) GROUP BY p.id";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method SearchEngine
 
