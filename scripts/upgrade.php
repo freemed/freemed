@@ -86,6 +86,9 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
 
+printHeader( "Create 'healthy system' status" );
+`touch ./data/cache/healthy`;
+
 printHeader( "Force module definition upgrades" );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
 
