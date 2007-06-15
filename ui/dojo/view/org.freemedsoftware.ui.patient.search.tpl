@@ -45,6 +45,25 @@
 				mimetype: "text/json"
 			});
 		},
+		fieldSearchPopulate: function ( ) {
+			if ( document.getElementById( 'fieldSearchText' ).value.length < 2 ) { return false; }
+			var hash = { };
+			hash[ document.getElementById( 'fieldSearchField' ).value ] = document.getElementById( 'fieldSearchText' ).value;
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: hash
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.api.PatientInterface.Search',
+				error: function () { },
+				load: function(type, data, evt) {
+					if (data) {
+						dojo.widget.byId('patientSearch').store.setData( data );
+					}
+				},
+				mimetype: "text/json"
+			});
+		},
 		goToPatient: function () {
 			var val = dojo.widget.byId('patientSearch').getSelectedData();
 			if (val != 'undefined') {
@@ -72,6 +91,8 @@
 		dojo.widget.byId('smartSearch').textInputNode.focus();
 		dojo.event.connect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.connect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
+		//dojo.event.connect(dojo.widget.byId('fieldSearchButton'), "onClick", patientSearch, 'fieldSearchPopulate');
+		document.getElementById( 'fieldSearchText' ).onkeyup = patientSearch.fieldSearchPopulate;
 
 		// If ...
 		if ( freemedGlobal.patientHistory.length ) {
@@ -97,6 +118,7 @@
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.disconnect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
+		//dojo.event.disconnect(dojo.widget.byId('fieldSearchButton'), "onClick", patientSearch, 'fieldSearchPopulate');
 		dojo.widget.byId('smartSearch').setValue('');
 		dojo.widget.byId('smartSearch').setLabel('');
 		dojo.widget.byId('patientTags').setValue('');
@@ -149,6 +171,29 @@
 		 style="width: 300px;"
 		 dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
 		 mode="remote" />
+	</div>
+
+	<div style="margin: .5em;">
+		<table border="0" style="width:auto;"><tr>
+		<td>
+			<!--{t}-->Field Search<!--{/t}--> :
+		</td>
+		<td>
+			<select id="fieldSearchField">
+				<option value="ptid"><!--{t}-->Patient ID<!--{/t}--></option>
+				<option value="ssn"><!--{t}-->Social Security Number<!--{/t}--></option>
+				<option value="dmv"><!--{t}-->Drivers License<!--{/t}--></option>
+				<option value="email"><!--{t}-->Drivers License<!--{/t}--></option>
+				<option value="city"><!--{t}-->City<!--{/t}--></option>
+				<option value="zip"><!--{t}-->Zip/Postal Code<!--{/t}--></option>
+				<option value="hphone"><!--{t}-->Home Phone Number<!--{/t}--></option>
+				<option value="wphone"><!--{t}-->Work Phone Number<!--{/t}--></option>
+			</select>
+		</td>
+		<td>
+			<input type="text" id="fieldSearchText" width="30" />
+		</td>
+		</tr></table>
 	</div>
 
 	<div style="margin: .5em; display: none;" id="patientHistoryDiv">

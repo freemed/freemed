@@ -147,11 +147,20 @@ class PatientInterface {
 
 	// Method: Search
 	//
+	//	Public patient search engine interface.
+	//
 	// Parameters:
 	//
 	//	$criteria - Hash containing one or more of the following qualifiers:
+	//	* ptid - Patient ID
 	//	* ssn - Social security number
 	//	* age - Age in years
+	//	* hphone - Home phone number
+	//	* wphone - Work phone number
+	//	* zip - Zip code
+	//	* city - City name
+	//	* dmv - Drivers license number
+	//	* email - Email address
 	//
 	// Returns:
 	//
@@ -162,8 +171,18 @@ class PatientInterface {
 
 		foreach ($criteria AS $k => $v) {
 			switch ($k) {
+				case 'hphone':
+				case 'wphone':
+				case 'zip':
+				case 'city':
 				case 'ssn':
-				if ($v) { $c[] = "p.ptssn LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				case 'dmv':
+				case 'email':
+				if ($v) { $c[] = "p.pt${k} LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'ptid':
+				if ($v) { $c[] = "p.ptid LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
 				break;
 
 				case 'age':
