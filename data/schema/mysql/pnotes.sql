@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `pnotes` (
 	pnotesheight		INT UNSIGNED,
 	pnotesbmi		INT UNSIGNED,
 	iso			VARCHAR (15),
-	locked			INT UNSIGNED,
+	locked			INT UNSIGNED NOT NULL DEFAULT 0,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
@@ -69,8 +69,15 @@ BEGIN
 	DROP TRIGGER pnotes_Update;
 
 	#----- Upgrades
-	ALTER IGNORE TABLE pnotes ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
-	ALTER IGNORE TABLE pnotes ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	CALL FreeMED_Module_GetVersion( 'pnotes', @V );
+
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE pnotes ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+		ALTER IGNORE TABLE pnotes ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+		ALTER IGNORE TABLE pnotes CHANGE COLUMN locked locked INT UNSIGNED NOT NULL DEFAULT 0;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'pnotes', 1 );
 END
 //
 DELIMITER ;
