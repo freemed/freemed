@@ -87,13 +87,15 @@ class MessagesModule extends EMRModule {
 	//
 	//	$tag - (optional) Tag to search for, defaults to none.
 	//
+	//	$all - (optional) Get all messages, not just unread, defaults to false
+	//
 	// Returns:
 	//
 	//	Array of hashes.
 	//
-	public function GetAllByTag ( $tag = '' ) {
+	public function GetAllByTag ( $tag = '', $all = false ) {
 		$this_user = freemed::user_cache();
-		$q = "SELECT m.id AS id, m.msgread AS read_status, CASE m.msgby WHEN 0 THEN 'System' ELSE u.userdescrip END AS from_user, m.msgtime AS stamp, DATE_FORMAT(m.msgtime, '%m/%d/%Y') AS stamp_mdy, CASE m.msgpatient WHEN 0 THEN m.msgperson ELSE CONCAT( pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')' ) END AS regarding, m.msgpatient AS patient_id, m.msgsubject AS subject, m.msgurgency AS urgency, m.msgtext AS content FROM messages m LEFT OUTER JOIN patient pt ON pt.id=m.msgpatient LEFT OUTER JOIN user u ON m.msgby=u.id WHERE m.msgtag='".addslashes( $tag )."' AND m.msgfor=".( $this_user->user_number + 0 );
+		$q = "SELECT m.id AS id, m.msgread AS read_status, CASE m.msgby WHEN 0 THEN 'System' ELSE u.userdescrip END AS from_user, m.msgtime AS stamp, DATE_FORMAT(m.msgtime, '%m/%d/%Y') AS stamp_mdy, CASE m.msgpatient WHEN 0 THEN m.msgperson ELSE CONCAT( pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')' ) END AS regarding, m.msgpatient AS patient_id, m.msgsubject AS subject, m.msgurgency AS urgency, m.msgtext AS content FROM messages m LEFT OUTER JOIN patient pt ON pt.id=m.msgpatient LEFT OUTER JOIN user u ON m.msgby=u.id WHERE m.msgtag='".addslashes( $tag )."' AND m.msgfor=".( $this_user->user_number + 0 )." ".( ( $tag=='' and !$all ) ? " AND m.msgread=0" : "" );
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAllByTag
 
