@@ -173,6 +173,14 @@ tbody.scrollContent tr.selected:hover td {
 /* Force dojo buttons to have some padding */
 .dojoButtonContents div { padding: 5px; }
 
+/* Force combo box items to be a reasonable size */
+.dojoComboBoxItem {
+	font-size: 8pt;
+	}
+.dojoComboBoxItemEven {
+	font-size: 8pt;
+	}
+
 /* A little bit of styling for toaster notifications */
 .dojoToasterContainer {
 	border: 2px solid #000000;
