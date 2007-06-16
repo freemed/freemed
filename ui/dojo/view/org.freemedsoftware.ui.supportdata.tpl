@@ -37,6 +37,15 @@
 				},
 				load: function ( type, data, event ) {
 					dojo.widget.byId('supportDataSelector').store.setData( data );
+					try {
+						var x = dojo.widget.byId( 'freemedContent' );
+						var node = x.containerNode || x.domNode;
+						var h = parseInt( node.offsetHeight ) - document.getElementById( 'supportDataHeader' ).offsetHeight;
+						document.getElementById('containerDiv').style.height = h + 'px';
+	
+						var j = ( h - document.getElementById( 'tHeader' ).offsetHeight ) - 5;
+						document.getElementById( 'tBody' ).style.height = j + 'px';
+					} catch ( e ) { }
 				},
 				mimetype: "text/json"
 			});
@@ -59,9 +68,9 @@
 
 </script>
 
-<h3><!--{t}-->Support Data<!--{/t}--></h3>
+<h3 id="supportDataHeader"><!--{t}-->Support Data<!--{/t}--></h3>
 
-<div class="tableContainer">
+<div class="tableContainer" id="containerDiv">
 
 	<table dojoType="FilteringTable" id="supportDataSelector"
 	 widgetId="supportDataSelector" headClass="fixedHeader"
@@ -69,13 +78,13 @@
 	 valueField="module_class" border="0" multiple="false"
 	 maxSelect="1" rowAlternateClass="alternateRow" sizerWidth="2"
 	 style="height: 100%;">
-	<thead>
+	<thead id="tHeader">
 		<tr>
 			<th field="module_name" dataType="String"><!--{t}-->Module<!--{/t}--></th>
 			<th field="module_version" dataType="String"><!--{t}-->Version<!--{/t}--></th>
 		</tr>
 	</thead>
-	<tbody style="height: 75ex;"></tbody>
+	<tbody id="tBody"></tbody>
 	</table>
 
 </div>
