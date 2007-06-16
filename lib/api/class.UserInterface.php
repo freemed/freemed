@@ -173,7 +173,7 @@ class UserInterface {
 	public function add ( $data ) {
 		freemed::acl_enforce( 'admin', 'config' );
 
-		$ourdata = $this->prepare( (array) $data );
+		$ourdata = (array) $data;
 		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 
@@ -191,7 +191,7 @@ class UserInterface {
 		// ACL routine for adding all ACL groups
 		if ( is_array( $ourdata['useracl'] ) ) {
 			foreach ( $ourdata['useracl'] AS $acl ) {
-				$o = module_function( 'ACL', 'AddUserToGroup', array ( $acl, $new_id ) );
+				$o = module_function( 'ACL', 'AddUserToGroup', array ( $new_id, $acl ) );
 			}
 		}
 
@@ -260,10 +260,10 @@ class UserInterface {
 			return false;
 		}
 
-		// Protect admin user
-		if ( $id + 0 == 1 ) { return false; }
+		$ourdata = (array) $data;
 
-		$ourdata = $this->prepare( (array) $data );
+		// Protect admin user
+		if ( $ourdata['id'] + 0 == 1 ) { return false; }
 
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
@@ -274,6 +274,26 @@ class UserInterface {
 				array ( "id" => $data['id'] )
 			)
 		);
+
+		if ( is_array( $data['useracl'] ) ) {
+			$groups = module_function ( 'ACL', 'UserGroups' );
+			foreach ( $groups AS $group ) {
+				$found = false;
+				foreach ( $data['useracl'] AS $acl_id ) {
+					if ( $group[1] == $acl_id ) { $found = true; }
+				}
+				
+				$inThisGroup = module_function ( 'ACL', 'UserInGroup', array( $data['id'], $group[1] ) );
+				if ( $found && !$inThisGroup ) {
+					// Need to add
+					$o = module_function( 'ACL', 'AddUserToGroup', array ( $data['id'], $group[1] ) );
+				}
+				if ( !$found && $inThisGroup ) {
+					// Need to remove
+					$o = module_function( 'ACL', 'RemoveUserFromGroup', array ( $data['id'], $group[1] ) );
+				}
+			}
+		}
 
 		return $result ? true : false;
 	} // end function mod
