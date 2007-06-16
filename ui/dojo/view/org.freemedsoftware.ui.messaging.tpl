@@ -56,7 +56,8 @@
 			dojo.io.bind({
 				method: 'POST',
 				content: {
-					param0: val
+					param0: val,
+					param1: false
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.GetAllByTag',
 				error: function() { },
