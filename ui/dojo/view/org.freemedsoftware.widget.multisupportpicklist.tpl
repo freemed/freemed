@@ -118,6 +118,7 @@
 				var spanB = document.createElement( 'a' );
 				i.id = "<!--{$varname|escape}-->_div_" + value;
 				spanA.innerHTML = label + ' ';
+				spanA.className = "hoverHilightText";
 				spanB.id = "<!--{$varname|escape}-->_remove_" + value.toString();
 				spanB.innerHTML = "[X]";
 				spanB.className = "clickable";
@@ -144,6 +145,21 @@
 
 </script>
 
+<style type="text/css">
+
+	#<!--{$varname|escape}-->_container_outer {
+		padding: 1ex;
+		border: 1px solid #5555ff;
+	}
+
+	#<!--{$varname|escape}-->_container * {
+		size: 8pt;
+		font-size: 8pt;
+	}
+
+</style>
+
+<div id="<!--{$varname|escape}-->_container_outer">
 <div id="<!--{$varname|escape}-->_container"></div>
 <input dojoType="Select" value=""
 	autocomplete="false"
@@ -152,4 +168,5 @@
 	setValue="if (arguments[0]) { dojo.event.topic.publish( '<!--{$varname|escape}-->-setValue', arguments[0] ); }"
 	dataUrl="<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.picklist?param0=%{searchString}"
 	mode="remote" />
+</div>
 

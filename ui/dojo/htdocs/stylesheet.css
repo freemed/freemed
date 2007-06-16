@@ -75,6 +75,12 @@ div.infoBox {
 	text-decoration: none;
 	}
 
+.hoverHilightText:hover {
+	background-color: #0000ff;
+	color: #ffffff;
+	}
+
+
 h3 {
 	text-align: center;
 	background-color: #ccccff;
