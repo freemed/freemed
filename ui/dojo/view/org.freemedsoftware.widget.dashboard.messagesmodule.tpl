@@ -31,7 +31,7 @@
 			url: "<!--{$relay}-->/org.freemedsoftware.module.messagesmodule.UnreadMessages",
 			content: {
 				param0: false,
-				param1: true
+				param1: false
 			},
 			error: function ( ) { },
 			load: function ( type, data, evt ) {
