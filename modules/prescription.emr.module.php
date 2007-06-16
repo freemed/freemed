@@ -23,17 +23,13 @@
 
 LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class PrescriptionModule extends EMRModule {
+class Prescription extends EMRModule {
 
 	var $MODULE_NAME    = "Prescription";
 	var $MODULE_VERSION = "0.4.0";
-	var $MODULE_DESCRIPTION = "
-		The prescription module allows prescriptions to be written 
-		for patients from any drug in the local formulary or in the 
-		Multum drug database (if access to that database is 
-		available.";
+	var $MODULE_DESCRIPTION = "The prescription module allows prescriptions to be written for patients from any drug in the local formulary or in the Multum drug database (if access to that database is available.";
 	var $MODULE_FILE    = __FILE__;
-	var $MODULE_UID = "956beba2-9fbe-4674-93d1-c38ad3e6f9f1";
+	var $MODULE_UID     = "956beba2-9fbe-4674-93d1-c38ad3e6f9f1";
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
@@ -92,10 +88,10 @@ class PrescriptionModule extends EMRModule {
 			"rxperrefill",
 			"rxnote",
 			"rxorigrx",
-			"locked" => '0',
+			"locked",
 			"user"
 		);
-		$this->acl = array ('emr');
+		$this->_SetAssociation( 'EmrModule' );
 		parent::__construct();
 	} // end constructor
 
@@ -103,6 +99,7 @@ class PrescriptionModule extends EMRModule {
 		$data['rxdtadd'] = date('Y-m-d');
 		$data['rxdtmod'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
+		$data['locked'] = 0;
 	} // end method add_pre
 
 	protected function mod_pre ( &$data ) {
@@ -134,81 +131,8 @@ class PrescriptionModule extends EMRModule {
 		return @join(', ', $m);
 	} // end method recent_text
 
-	// Updates
-	function _update() {
-		global $sql;
-		$version = freemed::module_version($this->MODULE_NAME);
-		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN rxphy INT UNSIGNED AFTER rxdtfrom');
-		}
-		// Version 0.3.3
-		//
-		//	Add prescription locking
-		//
-		if (!version_check($version, '0.3.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN locked INT UNSIGNED AFTER rxnote');
-			// Patch existing data to be unlocked
-			$sql->query('UPDATE '.$this->table_name.' SET '.
-				'locked = \'0\'');
-		}
+} // end class Prescription
 
-		// Version 0.3.4
-		//
-		//	Add extra intervals
-		//
-		if (!version_check($version, '0.3.4')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN rxinterval rxinterval ENUM (
-				"b.i.d.",
-				"t.i.d.",
-				"q.i.d.",
-				"q. 3h",
-				"q. 4h",
-				"q. 5h",
-				"q. 6h",
-				"q. 8h",
-				"q.d.",
-				"h.s.",
-				"q.h.s.",
-				"q.A.M.",
-				"q.P.M.",
-				"a.c.",
-				"p.c.",
-				"p.r.n."
-			)');
-		}
-
-		// Version 0.3.5
-		//
-		//	Change prescription format
-		//
-		if (!version_check($version, '0.3.5')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN rxform rxform VARCHAR(32)');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN rxunit rxunit VARCHAR(32)');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN rxsize rxsize REAL');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN rxdosage rxdosage VARCHAR(128)');
-			$sql->query('UPDATE '.$this->table_name.' '.
-				'SET rxdosage = concat(rxdosage, \' \', rxinterval)');
-		}
-
-		// Version 0.4.0
-		//
-		//	Allow repeats of prescriptions ...
-		//
-		if (!version_check($version, '0.4.0')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN rxorigrx INT UNSIGNED AFTER rxperrefill');
-		}
-	} // end method _update
-
-} // end class PrescriptionModule
-
-register_module ("PrescriptionModule");
+register_module ("Prescription");
 
 ?>
