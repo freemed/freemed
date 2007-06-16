@@ -74,8 +74,7 @@
 					document.getElementById( 'psrx12id' ).value = data['psrx12id'];
 					document.getElementById( 'psrx12idtype' ).value = data['psrx12idtype'];
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},
