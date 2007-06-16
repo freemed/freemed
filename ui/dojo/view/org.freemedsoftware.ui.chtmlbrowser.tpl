@@ -35,6 +35,15 @@
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
 	dojo.require("dojo.widget.Tooltip");
+
+	dojo.addOnLoad(function() {
+		try {
+			var x = dojo.widget.byId( 'chtmlContent' );
+			var node = x.containerNode || x.domNode;
+			var h = parseInt( node.offsetHeight ) - 60;
+			document.getElementById( 'iFrame' ).style.height = h + 'px';
+		} catch ( e ) { }
+	});
 </script>
 
 	<!--{* ***** Style Elements ***** *}-->
