@@ -81,11 +81,9 @@
 					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2007 by the FreeMED Software Foundation</font>
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
-					<img src="<!--{$htdocs}-->/images/close.png" alt="" border="0" id="closeButton" onClick="window.close(); return true;" />
-					<!--{*
-					<!-- Tooltips -->
-					<span dojoType="tooltip" connectId="closeButton" toggle="explode" toggleDuration="100"><!--{t}-->Close Help Browser<!--{/t}--></span>
-					*}-->
+					<div onClick="window.close();">
+					<img src="<!--{$htdocs}-->/images/close.png" alt="" border="0" id="closeButton" />
+					</div>
 				</td>
 			</tr>
 		</table>
