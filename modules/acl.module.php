@@ -192,8 +192,31 @@ class ACL extends SupportModule {
 			$user, // $object_value, 
 			'ARO'
 		);
-
 	} // end method AddUserToGroup
+
+	// Method: RemoveUserFromGroup
+	//
+	// Parameters:
+	//
+	//	$user - User ID
+	//
+	//	$group - Group ID
+	//
+	// Returns:
+	//
+	//	Boolean, successful.
+	//
+	public function RemoveUserFromGroup ( $user, $group ) {
+		freemed::acl_enforce( 'admin', 'config' );
+
+		$o = $this->acl_object( );
+		return $o->del_group_object(
+			$group, // $group_id,
+			'user', // $object_section_value,
+			$user, // $object_value, 
+			'ARO'
+		);
+	} // end method RemoveUserFromGroup
 
 	// Method: acl_object
 	//

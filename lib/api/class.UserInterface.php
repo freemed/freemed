@@ -174,6 +174,7 @@ class UserInterface {
 		freemed::acl_enforce( 'admin', 'config' );
 
 		$ourdata = $this->prepare( (array) $data );
+		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 
 		$query = $GLOBALS['sql']->insert_query (
@@ -197,6 +198,13 @@ class UserInterface {
 		// Return user ID
 		return $new_id;
 	} // end function add
+
+	private function add_pre ( $data ) { 
+		// Handle MD5 hashing
+		if ( strlen($data['userpassword']) != 32 ) {
+			$data['userpassword'] = md5( $data['userpassword'] );
+		}
+	}
 
 	// Method: del
 	//
@@ -240,7 +248,6 @@ class UserInterface {
 	//
 	// See Also:
 	//	<mod_pre>
-	//	<mod_post>
 	//
 	public function mod ( $data ) {
 		freemed::acl_enforce( 'admin', 'config' );
@@ -271,7 +278,12 @@ class UserInterface {
 		return $result ? true : false;
 	} // end function mod
 
-	private function mod_pre ( $data ) { }
+	private function mod_pre ( $data ) { 
+		// Handle MD5 hashing
+		if ( strlen($data['userpassword']) != 32 ) {
+			$data['userpassword'] = md5( $data['userpassword'] );
+		}
+	}
 
 } // end class UserInterface
 
