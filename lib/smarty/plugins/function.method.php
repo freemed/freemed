@@ -25,7 +25,7 @@ function smarty_function_method ( $params, &$smarty ) {
 	if ( !isset ( $params['namespace'] ) ) { $smarty->error ( "Namespace not specified" ); }
 	if ( isset ( $params['param'] ) ) {
 		$x = call_user_func_array ( 'CallMethod', array ( $params['namespace'], $params['param'] ) );
-	} elseif ( isset( $post['param0'] ) ) {
+	} elseif ( isset( $params['param0'] ) ) {
                 // Use param1 ... paramN
 		foreach ($params AS $k => $v) {
 			if ( substr( $k, 0, 5 ) == 'param' ) {
@@ -37,7 +37,7 @@ function smarty_function_method ( $params, &$smarty ) {
 		} // end foreach
 
 		ksort( $r );
-		$x = call_user_func_array ( 'CallMethod', array ( $params['namespace'], $r ) );
+		$x = call_user_func_array ( 'CallMethod', array_merge ( array ( $params['namespace'] ), $r ) );
 	} else {
 
 		$x = CallMethod ( $params['namespace'] );
