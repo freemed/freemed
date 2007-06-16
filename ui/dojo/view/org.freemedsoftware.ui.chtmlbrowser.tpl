@@ -35,7 +35,6 @@
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
 	dojo.require("dojo.widget.Tooltip");
-	dojo.hostenv.writeIncludes();
 </script>
 
 	<!--{* ***** Style Elements ***** *}-->
@@ -81,9 +80,8 @@
 					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2007 by the FreeMED Software Foundation</font>
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
-					<div onClick="window.close();">
-					<img src="<!--{$htdocs}-->/images/close.png" alt="" border="0" id="closeButton" />
-					</div>
+					&nbsp;
+					<!-- <img src="<!--{$htdocs}-->/images/close.png" alt="" border="0" id="closeButton" /> -->
 				</td>
 			</tr>
 		</table>
