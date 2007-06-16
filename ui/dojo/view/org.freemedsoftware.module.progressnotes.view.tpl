@@ -101,7 +101,9 @@
 		}
 </style>
 
+<!--{if $embed ne 1}-->
 <h3><!--{t}-->Progress Note<!--{/t}--> [ <a onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');" id="viewClose">X</a> ]</h3>
+<!--{/if}-->
 
 <div id="pnotesScroll">
 

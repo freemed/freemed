@@ -302,6 +302,12 @@
 
 	</div>
 
+	<!--{method var='recentProgressNote' namespace='org.freemedsoftware.module.progressnotes.GetRecentRecord' param0=$patient}-->
+	<!--{if $recentProgressNote.id}-->
+	<div dojoType="ContentPane" id="patientEncounterProgressNotesPane" label="<!--{t}-->Recent Notes<!--{/t}-->" href="<!--{$controller}-->/org.freemedsoftware.module.progressnotes.view?id=<!--{$recentProgressNote.id}-->&patient=<!--{$patient}-->&embed=1" executeScripts="true" cacheContent="false" adjustPaths="false">
+	</div>
+	<!--{/if}-->
+
 <!--
 	<div dojoType="ContentPane" id="patientEncounterPane" label="<!--{t}--><!--{/t}-->">
 	</div>
