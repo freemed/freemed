@@ -33,7 +33,7 @@
 				<!--{else}-->
 				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
 				<!--{/if}-->
-				freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );
+				freemedLoad( 'org.freemedsoftware.ui.user' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
 			}
@@ -61,13 +61,12 @@
 					document.getElementById( 'userpassword' ).value = data.userpassword;
 					document.getElementById( 'userpasswordverify' ).value = data.userpassword;
 					document.getElementById( 'userdescrip' ).value = data.userdescrip;
-					dojo.event.topic.publish( 'userrealphy-assign', data.userrealphy );
 					<!--{foreach from=$aclGroups item='x'}-->
-					<!--{method namespace='org.freemedsoftware.module.ACL.UserInGroup' param0=$id param1=$x.1}-->
-					<!--{if $y}-->
-					document.getElementById( 'acl_<!--{$x.1}-->' ).checked = true;
-					<!--{/if}-->
+					<!--{assign var="grpTmp" value=$x.1}-->
+					<!--{method var='y' namespace='org.freemedsoftware.module.ACL.UserInGroup' param0=$id param1=$grpTmp}-->
+					<!--{if $y}-->document.getElementById( 'acl_<!--{$grpTmp}-->' ).checked = true;<!--{/if}-->
 					<!--{/foreach}-->
+					userrealphy.onAssign( data.userrealphy );
 				},
 				mimetype: "text/json"
 			});
@@ -89,16 +88,16 @@
 				username: document.getElementById( 'username' ).value,
 				userpassword: document.getElementById( 'userpassword' ).value,
 				userdescrip: document.getElementById( 'userdescrip' ).value,
-				usertype: document.getElementById( 'usertype' ).value,
+				usertype: dojo.widget.byId( 'usertype' ).getValue(),
 				useracl: useracl
 			};
 			if (m.validate( myContent )) {
 				dojo.io.bind({
-					method: "POST",
+					method: "GET",
 					content: {
 						param0: myContent
 					},
-					url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.add",
+					url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
 					load: function ( type, data, evt ) {
 						m.handleResponse( data );
 					},
