@@ -87,9 +87,6 @@
 					param1: tag
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ExpireTag',
-				error: function(type, err) {
-					alert (err.message);
-				},
 				load: function(type, data, evt) {
 					// Remove this from display after it is expired
 					document.getElementById(obj).style.display = 'none';

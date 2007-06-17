@@ -46,9 +46,6 @@
 					param0: '<!--{$patient}-->'
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Referrals.GetAllActiveByPatient',
-				error: function(type, data, evt) {
-					alert('Error refreshing');
-				},
 				load: function(type, data, evt) {
 					document.getElementById('patientReferralContainerInnerDiv').innerHTML = '';
 					if (data.length > 0) {
