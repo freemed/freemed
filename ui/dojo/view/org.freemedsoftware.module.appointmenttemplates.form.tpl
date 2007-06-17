@@ -56,8 +56,7 @@
 					document.getElementById( 'atduration' ).value = data.atduration;
 					if ( data.atequipment ) { atequipment.onAssign( data.atequipment ); }
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

@@ -62,8 +62,7 @@
 					document.getElementById( 'posname' ).value = data.posname;
 					document.getElementById( 'posdescrip' ).value = data.posdescrip;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

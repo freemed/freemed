@@ -62,8 +62,7 @@
 					document.getElementById( 'reqname' ).value = data.reqname;
 					document.getElementById( 'reqdescrip' ).value = data.reqdescrip;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

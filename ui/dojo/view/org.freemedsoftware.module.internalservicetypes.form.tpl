@@ -57,8 +57,7 @@
 				load: function ( type, data, evt ) {
 					document.getElementById( 'intservtype' ).value = data.intservtype;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

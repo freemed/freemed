@@ -45,8 +45,7 @@
 				load: function( type, data, evt ) {
 					o.data = data;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			this.populate( 'note.relevantDate', 'pnotesdt' );
 			this.populate( 'note.subjective', 'pnotes_S' );

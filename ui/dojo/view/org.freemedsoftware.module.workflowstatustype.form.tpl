@@ -64,8 +64,7 @@
 					document.getElementById( 'status_module' ).value = data.status_module;
 					document.getElementById( 'active' ).selectedIndex = parseInt( data.active ) + 0;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

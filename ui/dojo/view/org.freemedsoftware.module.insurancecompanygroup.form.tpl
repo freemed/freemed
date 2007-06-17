@@ -57,8 +57,7 @@
 				load: function ( type, data, evt ) {
 					document.getElementById( 'inscogroup' ).value = data.inscogroup;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

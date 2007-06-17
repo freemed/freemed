@@ -70,8 +70,7 @@
 						document.getElementById( 'newpatient' ).selectedIndex = parseInt( data.newpatient ) + 1;
 					}
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

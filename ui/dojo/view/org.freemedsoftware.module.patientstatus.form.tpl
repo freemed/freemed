@@ -62,8 +62,7 @@
 					document.getElementById( 'ptstatus' ).value = data.ptstatus;
 					document.getElementById( 'ptstatusdescrip' ).value = data.ptstatusdescrip;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

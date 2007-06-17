@@ -57,8 +57,7 @@
 				load: function ( type, data, evt ) {
 					document.getElementById( 'enclosure' ).value = data.enclosure;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

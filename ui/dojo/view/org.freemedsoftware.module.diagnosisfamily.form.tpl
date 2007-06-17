@@ -62,8 +62,7 @@
 					document.getElementById( 'dfname' ).value = data.dfname;
 					document.getElementById( 'dfdescrip' ).value = data.dfdescrip;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

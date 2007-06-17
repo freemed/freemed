@@ -67,8 +67,7 @@
 					document.getElementById( 'category' ).value = data.category;
 					document.getElementById( 'description' ).value = data.description;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

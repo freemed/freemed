@@ -58,8 +58,7 @@
 					document.getElementById( 'insmod' ).value = data.insmod;
 					document.getElementById( 'insmoddesc' ).value = data.insmoddesc;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

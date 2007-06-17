@@ -63,8 +63,7 @@
 					document.getElementById( 'sdescrip' ).value = data.sdescrip;
 					document.getElementById( 'sage' ).value = data.sage;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

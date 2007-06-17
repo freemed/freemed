@@ -62,8 +62,7 @@
 					document.getElementById( 'cptmod' ).value = data.cptmod;
 					document.getElementById( 'cptmoddescrip' ).value = data.cptmoddescrip;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},

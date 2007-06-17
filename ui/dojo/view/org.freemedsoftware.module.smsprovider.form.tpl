@@ -64,8 +64,7 @@
 					document.getElementById( 'mailgwaddr' ).value = data.mailgwaddr;
 					document.getElementById( 'countrycode' ).selectedIndex = data.countrycode;
 				},
-				mimetype: "text/json",
-				sync: true
+				mimetype: "text/json"
 			});
 			<!--{/if}-->
 		},
