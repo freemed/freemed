@@ -1,0 +1,52 @@
+<table cellspacing="1" cellpadding="1" border="0" width="100%">
+	<tr>
+		<td style="width:65%;">
+			<span>Subject:</span><br />
+			<input dojoAttachPoint="ne_subject" style="width:100%;" type="text" /></td>
+		<td>
+			<span>Type:</span><br />
+			<select dojoAttachPoint="ne_type" style="width:100%;"></select></td>
+	</tr>
+	<tr>
+		<td>
+			<span>Location:</span><br />
+			<input dojoAttachPoint="ne_location" style="width:100%;" type="text" /></td>
+		<td>
+			<span>Categories:</span><br />
+			<input dojoAttachPoint="ne_categories" style="width:100%;" /></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<span>Start time:</span><br />
+						<input dojoAttachPoint="ne_starttime" style="width:150px;" type="text" /></td>
+					<td>
+						<span>&nbsp;</span><br />
+						<input dojoAttachPoint="ne_alldayevent" type="checkbox" value="1" dojoAttachEvent='onClick:alldayclicked'>All day event</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<span>End time:</span><br />
+						<input dojoAttachPoint="ne_endtime" style="width:150px;" type="text" /></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<span>&nbsp;</span><br />
+			<textarea dojoAttachPoint="ne_body" style="width:100%; height:100px;"></textarea></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<table>
+				<tr>
+					<td><button dojoType='Button' dojoAttachEvent='onClick:ok'>OK</button></td>
+					<td><button dojoType='Button' dojoAttachEvent='onClick:cancel'>Cancel</button></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>

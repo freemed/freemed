@@ -1,0 +1,41 @@
+<table cellspacing="0" cellpadding="0" class="calendarContainer">
+	<thead>
+		<tr>
+			<td class="prevLabel" dojoAttachPoint="prevLabelNode" dojoAttachEvent="onClick: onIncrementCalendar;"></td>
+			<td class="fillCell"></td>
+			<td class="currentMonthLabel" dojoAttachPoint="currentMonthLabelNode" dojoAttachEvent="onClick: showMenu;"></td>
+			<td class="currentYearLabel" dojoAttachPoint="currentYearLabelNode" dojoAttachEvent="onClick: showMenu;"></td>
+			<td class="fillCell"></td>
+			<td class="nextLabel" dojoAttachPoint="nextLabelNode" dojoAttachEvent="onClick: onIncrementCalendar;"></td>
+		</tr>
+		<tr>
+			<td colspan="6" align="center">
+				<table cellspacing="0" cellpadding="0">
+					<tbody>
+						<tr>
+							<td class="selecticon dayicon" dojoAttachPoint="dayLabelNode" dojoAttachEvent="onClick: onSetCalendarType;"></td>
+							<td class="selecticon weekicon" dojoAttachPoint="weekLabelNode" dojoAttachEvent="onClick: onSetCalendarType;"></td>
+							<td class="selecticon monthicon" dojoAttachPoint="monthLabelNode" dojoAttachEvent="onClick: onSetCalendarType;"></td>
+							<td class="selecticon todayicon" dojoAttachPoint="todayLabelNode" dojoAttachEvent="onClick: onMoveToDate;"></td>
+							<td class="selecticon timezoneicon" dojoAttachPoint="timezoneLabelNode" dojoAttachEvent="onClick: showTimeZone;"></td>
+							<td class="selecticon newentryicon" dojoAttachPoint="newEntryLabelNode" dojoAttachEvent="onClick: createNewEntry;"></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="6">
+				<table dojoAttachPoint="calendarNode" class="calendarBodyContainer" cellspacing="2" cellpadding="2" border="0">
+					<thead dojoAttachPoint="calendarHeadNode">
+					</thead>
+					<tbody dojoAttachPoint="calendarBodyNode">
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+	<tfoot dojoAttachPoint="calendarFootNode"></tfoot>
+</table>

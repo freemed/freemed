@@ -1,0 +1,224 @@
+.calendarContainer {
+	width: 100%;
+	/*background-color: #CCCCCC;*/
+	height:100%;
+}
+.calendarContainer thead tr td {
+	color:#000000;
+	font-size: 0.75em;
+	padding:0.25em;
+	height:15px;
+	text-transform:capitalize;
+	white-space:nowrap;
+}
+.prevLabel {
+	text-align:left;
+	cursor:pointer;
+	cursor:hand;
+	padding-left: 18px !important;
+	background: url(calimages/prev.gif) no-repeat left;
+}
+.nextLabel {
+	text-align:right;
+	cursor:pointer;
+	cursor:hand;
+	padding-right: 18px !important;
+	background: url(calimages/next.gif) no-repeat right;
+}
+.currentMonthLabel {
+	text-align:right;
+	cursor:pointer;
+	cursor:hand;
+	font-weight:bold;
+}
+.currentYearLabel {
+	text-align:left;
+	cursor:pointer;
+	cursor:hand;
+	font-weight:bold;
+}
+.fillCell{
+	width:50%;
+}
+
+.selecticon {
+	width: 16px;
+	height: 16px;
+	cursor:pointer;
+	cursor:hand;
+	text-align: center;
+}
+
+.dayicon {
+	background: url(calimages/calendar_view_day.gif) no-repeat center;;
+}
+.weekicon {
+	background: url(calimages/calendar_view_week.gif) no-repeat center;;
+}
+.monthicon {
+	background: url(calimages/calendar_view_month.gif) no-repeat center;;
+}
+.todayicon {
+	background: url(calimages/calendar_view_today.gif) no-repeat center;;
+}
+.newentryicon {
+	background: url(calimages/calendar_add.gif) no-repeat center;
+}
+.timezoneicon {
+	background: url(calimages/timezone.gif) no-repeat center;
+}
+
+.calendarBodyContainer {
+	width:100%;
+	/*background-color: #7591bc;*/
+	height:100%;
+}
+
+.calendarBodyContainer thead tr td {
+	color:#000000;
+	font-size: 0.75em;
+	font-weight: bold;
+	text-align:center;
+	padding:0.25em;
+	height:10px;
+	text-transform:capitalize;
+	width:14.28%;
+}
+
+.calendarBodyContainer tbody tr td {
+	font-size: 0.7em;
+	/*text-align:center;
+	padding:0.4em;*/
+	
+	/*height:16%;*/
+	vertical-align: top;
+	/*cursor:pointer;
+	cursor:hand;*/
+}
+
+.allDayEvent {
+	border: 1px solid #6782a8;
+	padding: 2px;
+	margin-bottom: 3px;
+	background-color: #FFFFFF;
+}
+
+ul.listItems {
+	margin: 0;
+	padding: 0;
+	/*border: 1px solid #6782a8;*/
+	min-height:20px;
+	height:auto !important;
+	height:20px;
+}
+li.listItem {
+	position: relative;
+	list-style: none;
+	font-weight: normal;
+	/*cursor: move;*/
+}
+li.listItem span {
+	padding-right: 5px;
+}
+li.listItem span.timetext {
+	cursor: move;
+}
+li.listItem span.titletext {
+	cursor: default;
+}
+li.listItem span a:link, li.listItem span a:visited {
+	color: #000000;
+	text-decoration: none;
+}
+li.listItem span a:hover {
+	text-decoration: underline;
+}
+
+.toolkittime {
+	margin-top: 3px;
+}
+.toolkittitle {
+	font-weight: bold;
+	font-size: 1.0em;
+	margin-top: 3px;
+}
+.toolkitbody {
+	margin-top: 3px;
+	padding-top: 2px;
+	border-top: 1px solid #6782a8;
+	width: 250px;
+}
+.toolkitattributes {
+	font-style: italic;
+	margin-top: 3px;
+	width: 250px;
+}
+
+.clickDate{
+	cursor:pointer;
+	cursor:hand;
+}
+
+.currentMonth {
+	background-color: #E2EEFC;
+}
+
+.otherMonth {
+	background-color:#6782a8;
+}
+
+.currentDate {
+	background-color:#fff !important;
+	font-weight: bold;
+}
+
+.weekDay {
+	vertical-align: top;
+	width: 50%;
+	/*height:33%;*/
+}
+
+.weekRow {
+	vertical-align: top;
+}
+
+.weekRow td {
+	/**width: 50%;*/
+}
+
+.weekDate {
+	color:#000000;
+	font-size:2em;
+	font-weight: bold;
+	padding: 3px 3px 0px 3px;
+	float: left;
+}
+
+.weekMonth {
+	color:#000000;
+	font-size: 0.8em;
+	line-height: 1.0em;
+	font-weight: normal;
+	text-transform:capitalize;
+	padding: 5px 5px 0px 5px;
+	float: left;
+}
+
+.calendarItems {
+	clear: both;
+	padding: 0px 3px 0px 3px;
+	/*height: 40px;*/
+	overflow: auto;
+}
+
+.dojoTooltip {
+	/* We override the class from the tooltip template */
+	border: solid #6782a8 2px;
+	background: white;
+	color: black;
+	position: absolute;
+	font-size: small;
+	padding: 3px 3px 3px 3px;
+	z-index: 10;
+	display: block;
+}
