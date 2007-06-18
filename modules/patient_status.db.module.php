@@ -23,7 +23,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class patientStatus extends SupportModule {
+class PatientStatus extends SupportModule {
 
 	var $MODULE_NAME = "Patient Status";
 	var $MODULE_VERSION = "0.1";

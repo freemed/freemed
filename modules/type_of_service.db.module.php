@@ -29,9 +29,9 @@ class TypeOfService extends SupportModule {
 	var $MODULE_NAME = "Type of Service";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
-	var $MODULE_UID = "1c34f308-1503-4478-9179-896248067fb4";
+	var $MODULE_UID = "cfe3da34-bea9-414a-8491-4d4c543eed00";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name = "Type of Service";
 	var $table_name  = "tos";
@@ -57,6 +57,10 @@ class TypeOfService extends SupportModule {
 		// Run parent constructor
 		parent::__construct();
 	} // end constructor
+
+	protected function add_pre ( &$data ) {
+		$data['tosdtadd'] = date('Y-m-d');
+	}
 
 	protected function mod_pre ( &$data ) {
 		$data['tosdtmod'] = date('Y-m-d');

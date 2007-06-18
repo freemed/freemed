@@ -27,11 +27,7 @@ class ProgressNotes extends EMRModule {
 
 	var $MODULE_NAME = "Progress Notes";
 	var $MODULE_VERSION = "0.3.1";
-	var $MODULE_DESCRIPTION = "
-		FreeMED Progress Notes allow physicians and
-		providers to track patient activity through
-		SOAPIER style notes.
-	";
+	var $MODULE_DESCRIPTION = "FreeMED Progress Notes allow physicians and providers to track patient activity through SOAPIER style notes.";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "33cd25ad-48e2-4d5a-9652-6b8104fceeb2";
 
@@ -69,7 +65,8 @@ class ProgressNotes extends EMRModule {
 		'pnotesheight',
 		'pnotesbmi',
 		'iso',
-		'user'
+		'user',
+		'locked'
 	);
 
 	public function __construct ( ) {
