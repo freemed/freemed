@@ -22,87 +22,34 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<script type="text/javascript">
-	var m = {
-		handleResponse: function ( data ) {
-			if (data) {
-				<!--{if $id}-->
-				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
-				<!--{else}-->
-				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
-				<!--{/if}-->
-				freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );
-			} else {
-				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
-			}
-		},
-		validate: function ( content ) {
-			var r = true;
-			var m = "";
-			if ( content.dfname.length < 2 ) {
-				m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
-				r = false;
-			}
-			if ( content.dfdescrip.length < 2 ) {
-				m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
-				r = false;
-			}
-			if ( m.length > 1 ) { alert( m ); }
-			return r;
-		},
-		initialLoad: function ( ) {
-			<!--{if $id}-->
-			dojo.io.bind({
-				method: "POST",
-				content: {
-					param0: "<!--{$id|escape}-->"
-				},
-				url: "<!--{$relay}-->/org.freemedsoftware.module.diagnosisfamily.GetRecord",
-				load: function ( type, data, evt ) {
-					document.getElementById( 'dfname' ).value = data.dfname;
-					document.getElementById( 'dfdescrip' ).value = data.dfdescrip;
-				},
-				mimetype: "text/json"
-			});
-			<!--{/if}-->
-		},
-		submit: function ( ) {
-			try {
-				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
-			} catch ( err ) { }
-			var myContent = {
-				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
-				dfname: document.getElementById('dfname').value,
-				dfdescrip: document.getElementById('dfdescrip').value
-			};
-			if (m.validate( myContent )) {
-				dojo.io.bind({
-					method: "POST",
-					content: {
-						param0: myContent
-					},
-					url: "<!--{$relay}-->/org.freemedsoftware.module.diagnosisfamily.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
-					load: function ( type, data, evt ) {
-						m.handleResponse( data );
-					},
-					mimetype: "text/json"
-				});
-			}
-		}
-	};
+<!--{assign var='module' value='diagnosisfamily'}-->
 
-	_container_.addOnLoad(function() {
-		m.initialLoad();
-		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', m, 'submit' );
-	});
-	_container_.addOnUnload(function() {
-		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', m, 'submit' );
-	});
+<!--{assign_block var='moduleName'}-->
+	<!--{t}-->Diagnosis Family<!--{/t}-->
+<!--{/assign_block}-->
 
-</script>
+<!--{assign_block var='validation'}-->
+	if ( content.dfname.length < 2 ) {
+		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		r = false;
+	}
+	if ( content.dfdescrip.length < 2 ) {
+		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		r = false;
+	}
+<!--{/assign_block}-->
 
-<h3><!--{t}-->Diagnosis Family<!--{/t}--></h3>
+<!--{assign_block var='initialLoad'}-->
+	document.getElementById( 'dfname' ).value = data.dfname;
+	document.getElementById( 'dfdescrip' ).value = data.dfdescrip;
+<!--{/assign_block}-->
 
+<!--{assign_block var='collectDataArray'}-->
+	dfname: document.getElementById('dfname').value,
+	dfdescrip: document.getElementById('dfdescrip').value
+<!--{/assign_block}-->
+
+<!--{assign_block var='moduleForm'}-->
 <table border="0" style="width: auto;">
 
 	<tr>
@@ -116,17 +63,7 @@
 	</tr>
 
 </table>
+<!--{/assign_block}-->
 
-<div align="center">
-        <table border="0" style="width:200px;">
-        <tr><td align="center">
-	        <button dojoType="Button" id="ModuleFormCommitChangesButton" widgetId="ModuleFormCommitChangesButton">
-	                <div><!--{t}-->Commit Changes<!--{/t}--></div>
-	        </button>
-        </td><td align="left">
-        	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );">
-        	        <div><!--{t}-->Cancel<!--{/t}--></div>
-        	</button>
-        </td></tr></table>
-</div>
+<!--{include file="org.freemedsoftware.module.supportmodule.form.tpl" module=$module moduleName=$moduleName moduleForm=$moduleForm collectDataArray=$collectDataArray initialLoad=$initialLoad validation=$validation}-->
 

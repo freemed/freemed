@@ -22,31 +22,33 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<!--{assign var='module' value='claimtypes'}-->
+<!--{assign var='module' value='usergroups'}-->
 
 <!--{assign_block var='moduleName'}-->
-	<!--{t}-->Claim Type<!--{/t}-->
+	<!--{t}-->User Group<!--{/t}-->
 <!--{/assign_block}-->
 
 <!--{assign_block var='validation'}-->
-	if ( content.clmtpname.length < 1 ) {
+	if ( content.usergroupname.length < 2 ) {
 		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
-		r = false;
-	}
-	if ( content.clmtpdescrip.length < 1 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->
 
 <!--{assign_block var='initialLoad'}-->
-	document.getElementById( 'clmtpname' ).value = data.clmtpname;
-	document.getElementById( 'clmtpdescrip' ).value = data.clmtpdescrip;
+	document.getElementById( 'usergroupname' ).value = data.usergroupname;
+	if ( data.usergroupfac ) {
+		usergroupfac.onAssign( data.usergroupfac );
+	}
+	if ( data.usergroup ) {
+		usergroup.onAssign( data.usergroup );
+	}
 <!--{/assign_block}-->
 
 <!--{assign_block var='collectDataArray'}-->
-	clmtpname: document.getElementById('clmtpname').value,
-	clmtpdescrip: document.getElementById('clmtpdescrip').value
+	usergroupname: document.getElementById('usergroupname').value,
+	usergroupfac: document.getElementById('usergroupfac').value,
+	usergroup: usergroup.getValue()
 <!--{/assign_block}-->
 
 <!--{assign_block var='moduleForm'}-->
@@ -54,12 +56,17 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Name<!--{/t}--></td>
-		<td><input type="text" id="clmtpname" size="20" /></td>
+		<td><input type="text" id="usergroupname" size="20" /></td>
 	</tr>
 
 	<tr>
-		<td align="right"><!--{t}-->Description<!--{/t}--></td>
-		<td><input type="text" id="clmtpdescrip" size="50" /></td>
+		<td align="right"><!--{t}-->Facility<!--{/t}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="FacilityModule" varname="usergroupfac"}--></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Group Members<!--{/t}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" module="ProviderModule" varname="usergroup"}--></td>
 	</tr>
 
 </table>
