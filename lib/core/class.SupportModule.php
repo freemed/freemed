@@ -370,7 +370,7 @@ class SupportModule extends BaseModule {
 				return false;
 			}
 		}
-		$q = "SELECT * FROM `".$this->table_name."` ".$this->FormJoinClause()." ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ORDER BY ".$this->order_field." LIMIT ${limit}";
+		$q = "SELECT *,".$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ORDER BY ".$this->order_field." LIMIT ${limit}";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 
