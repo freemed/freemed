@@ -23,7 +23,7 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class ProviderSpecialtiesMaintenance extends SupportModule {
+class ProviderSpecialties extends SupportModule {
 
 	var $MODULE_NAME    = "Provider Specialties";
 	var $MODULE_VERSION = "0.1.1";
@@ -55,8 +55,8 @@ class ProviderSpecialtiesMaintenance extends SupportModule {
 
 	function form () { $this->view(); }
 
-} // end class ProviderSpecialtiesMaintenance
+} // end class ProviderSpecialties
 
-register_module ("ProviderSpecialtiesMaintenance");
+register_module ("ProviderSpecialties");
 
 ?>

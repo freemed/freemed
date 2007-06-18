@@ -23,9 +23,9 @@
 
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class PharmacyMaintenance extends SupportModule {
+class Pharmacy extends SupportModule {
 
-	var $MODULE_NAME    = "Pharmacy Maintenance";
+	var $MODULE_NAME    = "Pharmacy";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID     = "47941b4e-cf68-431d-881a-79c5c63885e2";
@@ -48,7 +48,7 @@ class PharmacyMaintenance extends SupportModule {
 		'phmethod'
 	);
 
-	function PharmacyMaintenance () {
+	public function __construct ( ) {
 		// For i18n: __("Pharmacies")
 		// TODO: add ability to have additional query pieces ...
 		$this->list_view = array (
@@ -59,8 +59,8 @@ class PharmacyMaintenance extends SupportModule {
 		parent::__construct();
 	} // end constructor Pharmacies
 
-} // end class PharmacyMaintenance
+} // end class Pharmacy
 
-register_module ("PharmacyMaintenance");
+register_module ("Pharmacy");
 
 ?>

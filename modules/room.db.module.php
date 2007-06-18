@@ -23,9 +23,9 @@
  
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
-class RoomMaintenance extends SupportModule {
+class RoomModule extends SupportModule {
 
-	var $MODULE_NAME = "Room Maintenance";
+	var $MODULE_NAME = "Room";
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "b3992bbd-4920-4243-bc5f-97f333edbc44";
@@ -35,6 +35,7 @@ class RoomMaintenance extends SupportModule {
 	var $record_name = "Room";
 	var $table_name = "room";
 	var $order_field = 'roomname';
+	var $widget_hash = '##roomname## ##roomdescrip##';
 
 	var $variables  = array (
 		"roomname",
@@ -48,7 +49,7 @@ class RoomMaintenance extends SupportModule {
 	);
 
 	public function __construct ( ) {
-		// For i18n: __("Room Maintenance")
+		// For i18n: __("Room")
 
 		$this->list_view = array (
 			__("Name")		=>	"roomname",
@@ -57,10 +58,10 @@ class RoomMaintenance extends SupportModule {
 
 		// Run constructor
 		parent::__construct();
-	} // end constructor RoomMaintenance
+	} // end constructor RoomModule
 
-} // end class RoomMaintenance
+} // end class RoomModule
 
-register_module ("RoomMaintenance");
+register_module ("RoomModule");
 
 ?>
