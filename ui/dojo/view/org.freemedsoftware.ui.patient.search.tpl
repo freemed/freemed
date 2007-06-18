@@ -183,7 +183,7 @@
 				<option value="ptid"><!--{t}-->Patient ID<!--{/t}--></option>
 				<option value="ssn"><!--{t}-->Social Security Number<!--{/t}--></option>
 				<option value="dmv"><!--{t}-->Drivers License<!--{/t}--></option>
-				<option value="email"><!--{t}-->Drivers License<!--{/t}--></option>
+				<option value="email"><!--{t}-->Email Address<!--{/t}--></option>
 				<option value="city"><!--{t}-->City<!--{/t}--></option>
 				<option value="zip"><!--{t}-->Zip/Postal Code<!--{/t}--></option>
 				<option value="hphone"><!--{t}-->Home Phone Number<!--{/t}--></option>
