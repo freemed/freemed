@@ -47,10 +47,10 @@ if ( getInput( '%s' ) != 'yes' ) {
 }
 
 printHeader( "Upgrade Keys" );
-execSql( "ALTER TABLE patient CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;" );
-execSql( "ALTER TABLE physician CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;" );
-execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;" );
-execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER TABLE patient CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER TABLE physician CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
 printHeader( "Include aggregation table definition" );
 loadSchema( 'patient_emr' );
@@ -88,6 +88,14 @@ execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/sto
 
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
+include_once( dirname(__FILE__).'/../modules/acl.module.php' );
+$acl = new ACL();
+$q = "SELECT username, id FROM user WHERE id > 0";
+$r = $GLOBALS['sql]->queryAll( $q );
+foreach ( $r AS $user ) {
+	print " - Adding ACL record for user $r[username] ($r[id]) \n";
+	$acl->UserAdd( $r['id'] );
+}
 
 printHeader( "Create 'healthy system' status" );
 `touch ./data/cache/healthy`;
