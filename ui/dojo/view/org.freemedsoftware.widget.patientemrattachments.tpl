@@ -219,10 +219,8 @@
 					for (i=0; i<data.length; i++) {	
 						data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
 						data[i]['actions'] = '';
-						<!--{acl category="emr" permission="view"}-->
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
-						<!--{/acl}-->
 						if (data[i]['locked'] == 0) {
 							// All unlocked actions go here:
 							<!--{acl category="emr" permission="lock"}-->
@@ -242,6 +240,12 @@
 						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;";
 					}
 					dojo.widget.byId('patientEmrAttachments').store.setData( data );
+					try {
+						var x = dojo.widget.byId( 'freemedPatientContent' );
+						var node = x.containerNode || x.domNode;
+						var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'patientParamBar' ).style.height + document.getElementById( 'patientEmrAttachmentsHead' ).style.height + 100 );
+						document.getElementById( 'patientEmrAttachmentsBody' ).style.height = h + 'px';
+					} catch ( e ) { }
 				}
 			},
 			mimetype: "text/json"
@@ -262,7 +266,7 @@
 
 </script>
 
-<div>
+<div id="patientParamBar">
 <table width="100%" border="0">
 <tr>
 	<td><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').clearFilters();"><!--{t}-->Reset<!--{/t}--></button></td>
@@ -292,7 +296,7 @@
 	<table dojoType="FilteringTable" id="patientEmrAttachments" widgetId="patientEmrAttachments" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
 	 valueField="id" border="0" multiple="yes" style="height: 100%;">
-	<thead>
+	<thead id="patientEmrAttachmentsHead">
 		<tr>
 			<th field="date_mdy" dataType="Date" sort="desc"><!--{t}-->Date<!--{/t}--></th>
 			<th field="summary" dataType="String"><!--{t}-->Summary<!--{/t}--></th>
@@ -301,7 +305,7 @@
 			<th field="actions" dataType="Html"><!--{t}-->Actions<!--{/t}--></th>
 		</tr>
 	</thead>
-	<tbody></tbody>
+	<tbody id="patientEmrAttachmentsBody"></tbody>
 	</table>
 </div>
 
