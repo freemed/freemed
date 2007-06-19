@@ -52,8 +52,9 @@ class UserGroups extends SupportModule {
 
 		$this->list_view = array (
 			__("User Group Name") => "usergroupname",
-			__("Facility")     => "usergroupfac"
+			__("Facility")     => "psrname"
 		);
+		$this->table_join = array ( 'usergroupfac' => 'facility' );
 
 		// Run constructor
 		parent::__construct();
