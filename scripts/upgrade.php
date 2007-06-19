@@ -83,6 +83,9 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'rx', rxpatient, id, rxdatefrom, rxdrug, locked, 'active' FROM rx;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, calprenote, 'active' FROM scheduler WHERE caltype='pat';" );
 
+printHeader( "Update Djvu storage paths" );
+execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/store/');" );
+
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
 
