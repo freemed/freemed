@@ -164,7 +164,7 @@ class ScannedDocuments extends EMRModule {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
+			PHYSICAL_LOCATION . '/' . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
@@ -184,7 +184,7 @@ class ScannedDocuments extends EMRModule {
 	public function NumberOfPages ( $id ) {
 		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
+			PHYSICAL_LOCATION . '/' . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
 		return $djvu->NumberOfPages();
 	} // end method NumberOfPages
 
