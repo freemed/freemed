@@ -107,12 +107,15 @@ table {
 
 div.tableContainer table td,
 div.tableContainer table th{
-	border-right:1px solid #999;
-	padding:2px;
-	font-weight:normal;
+	border-right: 1px solid #999;
+	padding: 2px;
+	font-weight: normal;
+	font-size: 8pt;
 	}
 table thead td, table thead th {
-	background:#94BEFF;
+	background: #94BEFF;
+	font-size: 8pt;
+	font-weight: bold;
 	}
 		
 * html div.tableContainer table thead tr td,
