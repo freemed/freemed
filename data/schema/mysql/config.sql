@@ -20,6 +20,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+#	Import external functions and procedures
+SOURCE data/schema/mysql/_functions.sql
+SOURCE data/schema/mysql/_hl7.sql
+
 CREATE TABLE IF NOT EXISTS `config` (
 	c_option		CHAR (64) UNIQUE NOT NULL,
 	c_value			VARCHAR (100),
@@ -85,4 +89,24 @@ BEGIN
 END
 //
 DELIMITER ;
+
+#----- Define basic configuration values
+
+CALL config_Register (
+	'remitt_server',
+	'127.0.0.1',
+	'Remitt Server Hostname',
+	'REMITT Billing',
+	'Text',
+	''
+);
+
+CALL config_Register (
+	'fax_nocover',
+	'0',
+	'Remove fax cover pages?',
+	NULL,
+	'YesNo',
+	''
+);
 

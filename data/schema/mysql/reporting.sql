@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	report_uuid			CHAR (36) NOT NULL,
 	report_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
 	report_desc			TEXT,
+	report_type			VARCHAR (150) NOT NULL DEFAULT 'standard',
 	report_sp			VARCHAR (150) NOT NULL,
 	report_param_count		TINYINT(3) NOT NULL DEFAULT 0,
 	report_param_names		TEXT,
@@ -38,6 +39,22 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	PRIMARY KEY			( report_uuid ),
 	KEY				( report_name, report_locale )
 ) ENGINE=InnoDB;
+
+DROP PROCEDURE IF EXISTS reporting_Upgrade;
+DELIMITER //
+CREATE PROCEDURE reporting_Upgrade ( ) 
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+	CALL FreeMED_Module_GetVersion( 'reporting', @V );
+
+	ALTER IGNORE TABLE reporting ADD COLUMN report_type VARCHAR (150) NOT NULL DEFAULT 'standard' AFTER report_desc;
+
+	CALL FreeMED_Module_UpdateVersion( 'reporting', 1 );
+END//
+DELIMITER ;
+CALL reporting_Upgrade;
 
 #	Load packaged reports
 
