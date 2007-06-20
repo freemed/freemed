@@ -967,9 +967,8 @@ class freemed {
 	//	$varname - The variable name describing the file that was
 	//	posted using the HTTP POST method.
 	//
-	//	$type - (optional) This is either 'identification' in the
-	//	case of an identifying photograph, or the record number
-	//	of this document in the scanned documents table
+	//	$type - (optional) Record number of the identifying record
+	//	or array ( type, id ) if from another table.
 	//
 	//	$encoding - (optional) Type of DjVu encoding. Currently
 	//	'cjb2' and 'c44' encodings are supported.
@@ -978,7 +977,7 @@ class freemed {
 	//
 	//	Name of file if successful.
 	//
-	function store_image ( $patient_id=0, $varname, $type="identification", $encoding='cjb2' ) {
+	function store_image ( $patient_id=0, $varname, $type=0, $encoding='cjb2' ) {
 		global ${$varname};
 
 		// Check for valid patient id
@@ -997,13 +996,21 @@ class freemed {
 		// If temp name doesn't exist, return false
 		if (empty($image)) return false;
 
+		if (is_array($type)) {
+			$id = $type[1];
+			$ext = 'id.djvu';
+		} else {
+			$id = $type;
+			$ext = 'djvu';
+		}
+
 		// Create proper path
 		$mkdir_command = 'mkdir -p '.PHYSICAL_LOCATION.'/'.
 			dirname(
 				freemed::image_filename(
 					$patient_id,
-					$type,
-					'djvu'
+					$id,
+					$ext
 				)
 			);
 		//print "mkdir_command = $mkdir_command<br/>\n";
@@ -1018,8 +1025,8 @@ class freemed {
 				// Simple JPEG handler: copy
 				$name = freemed::image_filename(
 					$patient_id,
-					$type,
-					'djvu'
+					$id,
+					$ext
 				);
 				copy ($image, "./".$name);
 				return $name;
@@ -1030,8 +1037,8 @@ class freemed {
 				// More complex: use imagemagick
 				$name = freemed::image_filename(
 					$patient_id,
-					$type,
-					'djvu'
+					$id,
+					$ext
 				);
 				// Convert to PBM
 				$command = "/usr/bin/convert ".
@@ -1039,8 +1046,8 @@ class freemed {
 					" ".PHYSICAL_LOCATION."/".
 					freemed::image_filename(
 						$patient_id,
-						$type,
-						'djvu.'.
+						$id,
+						$ext.'.'.
 						( $encoding=='c44' ?
 						'jpg' : 'pbm' )
 					);
@@ -1062,16 +1069,16 @@ class freemed {
 					PHYSICAL_LOCATION."/".
 					freemed::image_filename(
 						$patient_id,
-						$type,
-						'djvu.'.
+						$id,
+						$ext.'.'.
 						( $encoding=='c44' ?
 						'jpg' : 'pbm' )
 					)." ".
 					PHYSICAL_LOCATION."/".
 					freemed::image_filename(
 						$patient_id,
-						$type,
-						'djvu'
+						$id,
+						$ext
 					);
 				//print "command = $command<br/>\n";
 				//print "<br/>".exec ($command)."<br/>\n";
@@ -1082,8 +1089,8 @@ class freemed {
 				unlink(PHYSICAL_LOCATION.'/'.
 					freemed::image_filename(
 						$patient_id,
-						$type,
-						'djvu.'.
+						$id,
+						$ext.'.'.
 						( $encoding=='c44' ?
 						'jpg' : 'pbm' )
 					)
@@ -1092,64 +1099,6 @@ class freemed {
 				break; // end handle others
 		} // end checking by extension
 	} // end function freemed::store_image
-
-	// Function: freemed::user_flag
-	//
-	//	Determine if a particular user flag is set for the current
-	//	user.
-	//
-	// Parameters:
-	//
-	//	$flag - The flag in question. This should be something
-	//	like USER_ADMIN, USER_DELETE, etc.
-	//
-	// Returns:
-	//
-	//	True if the flag is set for the current user.
-	//
-	function user_flag ( $flag ) {
-		static $userlevel;
-
-		// Extract authdata from SESSION
-		$authdata = $_SESSION['authdata'];
-
-		// Check for cached userlevel
-		if (isset($userlevel)) { return ($userlevel & $flag); }
-
-		// Check for null user
-		if (($authdata["user"]<1) or (!isset($authdata["user"]))) {
-			$userlevel = 0;
-			return false; // if no user, return 0
-		}
-
-		if ($authdata["user"] == 1) {
-			// Anything but disabled user, return true
-			if ($flag == USER_DISABLED) {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			$result = $GLOBALS['sql']->queryRow( "SELECT * FROM user WHERE id='".addslashes($authdata["user"])."'" );
-
-			// Check for improper results, return "unauthorized"
-			if (!$r['id']) {
-				// Set so that nothing works
-				$userlevel = USER_DISABLED;
-				if ($flag == USER_DISABLED) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-
-			// Set $userlevel (which is cached)
-			$userlevel = $r["userlevel"];
-
-			// Return the answer...
-			return ($userlevel & $flag);
-		} // end else loop checking for name
-	} // end function user_flag
 
 	// Function: freemed::lock_override
 	//
@@ -1162,10 +1111,7 @@ class freemed {
 	//	permissions.
 	//
 	function lock_override () {
-		global $this_user;
-		if (!is_object($this_user)) {
-			$this_user = CreateObject('org.freemedsoftware.core.User');
-		}
+		$this_user = freemed::user_cache();
 
 		$a = explode(',', freemed::config_value('lock_override'));
 		foreach ($a as $u) {
