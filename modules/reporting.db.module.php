@@ -176,6 +176,12 @@ class Reporting extends SupportModule {
 			die ( $buf );
 			break; // html
 
+			case 'pdf':
+			$pdf = CreateObject( 'org.freemedsoftware.core.FPDF_Report' );
+			$pdf->LoadData( $report['report_name'], $query );
+			$pdf->Export();
+			break; // pdf
+
 			case 'xml':
 			$result = $GLOBALS['sql']->queryAll( $query );
 			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");

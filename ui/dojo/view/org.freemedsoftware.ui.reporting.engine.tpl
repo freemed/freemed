@@ -172,7 +172,7 @@
 			var uri = "<!--{$relay}-->/org.freemedsoftware.module.Reporting.GenerateReport?param0=" + encodeURIComponent( myReport ) + "&param1=" + type.toLowerCase() + "&param2=" + encodeURIComponent( dojo.json.serialize( params ) );
 
 			switch ( type ) {
-				case 'HTML': case 'XML':
+				case 'HTML': case 'XML': case 'PDF':
 				// Open browser-viewable things in new tab/window
 				window.open( uri );
 				break;
@@ -187,6 +187,7 @@
 		// Individual button callbacks
 		generateCSV: function ( ) { this.generate('CSV'); },
 		generateHTML: function ( ) { this.generate('HTML'); },
+		generatePDF: function ( ) { this.generate('PDF'); },
 		generateXML: function ( ) { this.generate('XML'); }
 	};
 
@@ -195,6 +196,7 @@
 		dojo.event.connect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
 		dojo.event.connect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.connect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');
+		dojo.event.connect(dojo.widget.byId('reportSubmitPDF'), "onClick", reportingEngine, 'generatePDF');
 		dojo.event.connect(dojo.widget.byId('reportSubmitXML'), "onClick", reportingEngine, 'generateXML');
 	});
 
@@ -202,6 +204,7 @@
 		dojo.event.disconnect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');
+		dojo.event.disconnect(dojo.widget.byId('reportSubmitPDF'), "onClick", reportingEngine, 'generatePDF');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitXML'), "onClick", reportingEngine, 'generateXML');
 	});
 
@@ -239,6 +242,7 @@
 				<table border="0" style="width: auto;"><tr>
 					<td><div dojoType="Button" id="reportSubmitCSV">CSV</div></td>
 					<td><div dojoType="Button" id="reportSubmitHTML">HTML</div></td>
+					<td><div dojoType="Button" id="reportSubmitPDF">PDF</div></td>
 					<td><div dojoType="Button" id="reportSubmitXML">XML</div></td>
 				</tr></table>
 
