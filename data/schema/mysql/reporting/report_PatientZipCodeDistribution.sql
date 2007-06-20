@@ -33,7 +33,7 @@ CREATE PROCEDURE report_PatientZipCodeDistribution_en_US ( )
 BEGIN
 	SELECT COUNT(*) INTO @C FROM patient WHERE ptarchive=0;
 	SET @sql = CONCAT(
-		"SELECT CONCAT(ptcity, ', ', ptstate) AS 'City', ptzip AS 'Zip', ROUND(( COUNT( ptzip ) / ", @C, " ) * 100, 2) AS 'Percentage' FROM patient WHERE ptarchive=0 GROUP BY ptzip ORDER BY 'Percentage' DESC;"
+		"SELECT CONCAT(ptcity, ', ', ptstate) AS 'City', ptzip AS 'Zip', ROUND(( COUNT( ptzip ) / ", @C, " ) * 100, 2) AS 'Percentage', COUNT(ptid) AS 'Count' FROM patient WHERE ptarchive=0 GROUP BY ptzip ORDER BY 'Percentage' DESC;"
 	) ;
 
 	PREPARE s FROM @sql ;
