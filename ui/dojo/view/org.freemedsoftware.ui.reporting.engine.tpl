@@ -240,10 +240,10 @@
 			<div id="reportEngineFormStatic" align="center">
 
 				<table border="0" style="width: auto;"><tr>
-					<td><div dojoType="Button" id="reportSubmitCSV">CSV</div></td>
-					<td><div dojoType="Button" id="reportSubmitHTML">HTML</div></td>
-					<td><div dojoType="Button" id="reportSubmitPDF">PDF</div></td>
-					<td><div dojoType="Button" id="reportSubmitXML">XML</div></td>
+					<td><div dojoType="Button" id="reportSubmitCSV"><img src="<!--{$htdocs}-->/images/csv.32x32.png" border="0" height="32" width="32" /><br/>CSV</div></td>
+					<td><div dojoType="Button" id="reportSubmitHTML"><img src="<!--{$htdocs}-->/images/html.32x32.png" border="0" height="32" width="32" /><br/>HTML</div></td>
+					<td><div dojoType="Button" id="reportSubmitPDF"><img src="<!--{$htdocs}-->/images/pdf.32x32.png" border="0" height="32" width="32" /><br/>PDF</div></td>
+					<td><div dojoType="Button" id="reportSubmitXML"><img src="<!--{$htdocs}-->/images/xml.32x32.png" border="0" height="32" width="32" /><br/>XML</div></td>
 				</tr></table>
 
 			</div>
