@@ -112,8 +112,7 @@ class FPDF_Report extends FPDF {
 
 	protected function TableHeader ( ) {
 		// Create adjustment table based on maximum length
-		//$ratio = ( $this->wPt / $this->_totalsize );
-		$ratio = 2.5;
+		$ratio = ( ( $this->w - ($this->lMargin*2) ) / $this->_totalsize );
 		foreach ( $this->_keys AS $v ) {
 			$this->_aSize[ $v ] = ( $this->_maxlength[ $v ] * $ratio );
 		}
