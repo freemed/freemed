@@ -44,24 +44,24 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.progressnotes.GetRecord',
 				load: function( type, data, evt ) {
 					o.data = data;
+					o.populate( 'note.relevantDate', 'pnotesdt' );
+					o.populate( 'note.subjective', 'pnotes_S' );
+					o.populate( 'note.objective', 'pnotes_O' );
+					o.populate( 'note.assessment', 'pnotes_A' );
+					o.populate( 'note.plan', 'pnotes_P' );
+					o.populate( 'note.interval', 'pnotes_I' );
+					o.populate( 'note.education', 'pnotes_E' );
+					o.populate( 'note.rx', 'pnotes_R' );
 				},
 				mimetype: "text/json"
 			});
-			this.populate( 'note.relevantDate', 'pnotesdt' );
-			this.populate( 'note.subjective', 'pnotes_S' );
-			this.populate( 'note.objective', 'pnotes_O' );
-			this.populate( 'note.assessment', 'pnotes_A' );
-			this.populate( 'note.plan', 'pnotes_P' );
-			this.populate( 'note.interval', 'pnotes_I' );
-			this.populate( 'note.education', 'pnotes_E' );
-			this.populate( 'note.rx', 'pnotes_R' );
 		},
 		populate: function ( domName, keyName ) {
 			document.getElementById(domName).style.display = 'none';
 			try {
-				if ( typeof this.data[keyName] != 'undefined' ) {
-					if ( this.data[keyName].length > 1 ) {
-						document.getElementById(domName).innerHTML += this.data[keyName];
+				if ( typeof o.data[keyName] != 'undefined' ) {
+					if ( o.data[keyName].length > 1 ) {
+						document.getElementById(domName).innerHTML += o.data[keyName];
 						document.getElementById(domName).style.display = 'block';
 					}
 				}
