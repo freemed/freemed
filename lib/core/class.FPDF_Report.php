@@ -34,6 +34,7 @@ class FPDF_Report extends FPDF {
 	private $_totalsize;
 	private $_reportName;
 	private $_aSize;
+	private $_timestamp;
 
 	// Method: LoadData
 	//
@@ -126,9 +127,10 @@ class FPDF_Report extends FPDF {
 
 	public function Header ( ) {
 		$this->SetFont( 'Arial', 'B', 12 );
-		$this->Cell( 0, 10, $this->_reportName, 'TB', 2, 0, 'C' );
-		$this->Ln( );
-		//$this->Cell( 0, 10, "Test date", 'B', 1, 0, 'C' ); $this->Ln( );
+		$this->Cell( 0, 7, $this->_reportName, 'T', 1, 0, 'C' );
+		$this->SetFont( 'Arial', 'I', 8 );
+		$this->Cell( 0, 5, __("Generated on").' '.$this->_timestamp.' / '.
+			__("Page").' '.$this->page, 'B', 1, 0, 'C' ); $this->Ln( );
 		$this->TableHeader();
 	}
 
@@ -147,6 +149,8 @@ class FPDF_Report extends FPDF {
 
 		Header ("Content-type: application/x-pdf");
 		Header ("Content-Disposition: inline; filename=\"".mktime().".pdf\"");
+
+		$this->_timestamp = date( 'r' );
 
 		$this->DefOrientation = 'L';
 		$this->AddPage( );
