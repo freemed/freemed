@@ -142,10 +142,9 @@ class Reporting extends SupportModule {
 		$query = "CALL ".$report['report_sp']." ( ". @join( ', ', $pass )." ); ";
 		//print_r($result); die();
 
-		// Handle graphing
-		if ( $report['report_type'] == 'graph' ) {
-			$this->GenerateGraph( $report, $query );
-			die();
+		// Handle graphing, or at least non-standard, reports
+		if ( $report['report_type'] != 'standard' ) {
+			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $query ) );
 		}
 
 		switch ( strtolower( $format ) ) {
@@ -209,7 +208,9 @@ class Reporting extends SupportModule {
 		}
 	} // end method GenerateReport
 
-	// Method: GenerateGraph
+	//----- Pluggable methods go below -----
+
+	// Method: GenerateReport_Graph
 	//
 	//	Internal method used to generate graphs.
 	//
@@ -220,7 +221,7 @@ class Reporting extends SupportModule {
 	//
 	//	$query - SQL query as created by <GenerateReport>
 	//
-	protected function GenerateGraph ( $param, $query ) {
+	protected function GenerateReport_Graph ( $param, $query ) {
 		// Execute query
 		$res = $GLOBALS['sql']->queryAll( $query );
 
@@ -281,7 +282,7 @@ class Reporting extends SupportModule {
 
 		$g->setPadding( 10 );
 		$g->done( );
-	} // end method GenerateGraph
+	} // end method GenerateReport_Graph
 
 } // end class Reporting
 
