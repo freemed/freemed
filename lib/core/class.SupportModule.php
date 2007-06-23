@@ -102,21 +102,15 @@ class SupportModule extends BaseModule {
 	//
 	protected $list_view = NULL;
 
-	// Variable: $this->rpc_field_map
+	// Variable: $this->additional_fields
 	//
-	//	Specifies the format of the XML-RPC structures returned by
-	//	the FreeMED.DynamicModule.picklist method. These are passed
-	//	as key => value, where key is the target name of the
-	//	structure item and value is the name of the SQL field. "id"
-	//	is passed as "id" by default. If this array is not
-	//	defined, FreeMED.DynamicModule.picklist will fail for the
-	//	target module.
+	//	Additional custom SQL fields.
 	//
 	// Example:
 	//
-	//	$this->rpc_field_map = array ( 'last_name' => 'ptlname' );
+	//	$this->additional_fields = array ( 'LENGTH(ptst) AS st', 'ISNULL(x) AS y' );
 	//
-	var $rpc_field_map;
+	protected $additional_fields;
 
 	// Variable: $this->table_join
 	//
@@ -128,6 +122,7 @@ class SupportModule extends BaseModule {
 	//
 	//	$this->table_join = array ( 'covpatient' => 'patient' );
 	//
+	protected $table_join;
 
 	// Variable: $this->distinct_fields
 	//
@@ -326,8 +321,8 @@ class SupportModule extends BaseModule {
 		return $result ? true : false;
 	} // end function mod
 
-	private function mod_pre ( $data ) { }
-	private function mod_post ( $data ) { }
+	protected function mod_pre ( $data ) { }
+	protected function mod_post ( $data ) { }
 
 	// Method: GetRecord
 	//
@@ -370,7 +365,7 @@ class SupportModule extends BaseModule {
 				return false;
 			}
 		}
-		$q = "SELECT *,".$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT ${limit}";
+		$q = "SELECT *,".( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ).$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT ${limit}";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 
