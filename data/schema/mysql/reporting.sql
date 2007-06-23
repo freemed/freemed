@@ -58,6 +58,7 @@ CALL reporting_Upgrade;
 
 #	Load packaged reports
 
+SOURCE data/schema/mysql/reporting/report_GraphMonthlyFinancial.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
 SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql

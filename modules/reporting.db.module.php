@@ -79,6 +79,7 @@ class Reporting extends SupportModule {
 		$return = array ();
 		$return['report_name'] = $r['report_name'];
 		$return['report_desc'] = $r['report_desc'];
+		$return['report_type'] = $r['report_type'];
 		$return['report_sp'] = $r['report_sp'];
 		if ($r['report_param_count'] == 0) {
 			$return['params'] = array();
@@ -141,6 +142,12 @@ class Reporting extends SupportModule {
 		$query = "CALL ".$report['report_sp']." ( ". @join( ', ', $pass )." ); ";
 		//print_r($result); die();
 
+		// Handle graphing
+		if ( $report['report_type'] == 'graph' ) {
+			$this->GenerateGraph( $report, $query );
+			die();
+		}
+
 		switch ( strtolower( $format ) ) {
 			case 'csv':
 			$csv = CreateObject( 'org.freemedsoftware.core.CSV' );
@@ -201,6 +208,80 @@ class Reporting extends SupportModule {
 			break;
 		}
 	} // end method GenerateReport
+
+	// Method: GenerateGraph
+	//
+	//	Internal method used to generate graphs.
+	//
+	// Parameters:
+	//
+	//	$param - Hash of report information, as returned by 
+	//	<GetReportParameters>
+	//
+	//	$query - SQL query as created by <GenerateReport>
+	//
+	protected function GenerateGraph ( $param, $query ) {
+		// Execute query
+		$res = $GLOBALS['sql']->queryAll( $query );
+
+		// Get keys
+		foreach ( $res[0] AS $k => $v ) { if (!is_integer($k)) { $ks[] = $k; } }
+		$primary_key = $ks[0]; unset( $ks[0] );
+		foreach ( $ks AS $v ) { $keys[] = $v; } 
+
+		// Create Image_Graph
+		LoadObjectDependency( 'net.php.pear.Image_Graph' );
+		$g =& Image_Graph::factory( 'graph', array( 800, 600 ) );
+		$f =& $g->addNew( 'ttf_font', dirname(__FILE__).'/../data/fonts/FreeSans.ttf' );
+		$f->setSize( 10 );
+		$g->setFont( $f );
+		$g->add(
+			Image_Graph::vertical(
+				Image_Graph::vertical(
+					Image_Graph::factory( 'title', array( $param['report_name'], 12 ) ),
+					Image_Graph::factory( 'title', array( __('Generated').' '.date('r'), 8 ) ),
+					80
+				),
+				Image_Graph::vertical(
+					$plotarea = Image_Graph::factory( 'plotarea' ),
+					$legend = Image_Graph::factory( 'legend' ),
+					85
+				),
+				5
+			)
+		);
+		$legend->setPlotarea( $plotarea );
+
+		// Fancy background stuff
+		$FillArray =& Image_Graph::factory( 'Image_Graph_Fill_Array' );
+		$FillArray->addColor('blue@0.2');
+		$FillArray->addColor('yellow@0.2');
+		$FillArray->addColor('green@0.2');
+		$plotarea->setFillStyle( $FillArray );
+		$plotarea->setFillColor('silver@0.3'); 
+		$Grid =& $plotarea->addNew( 'line_grid', IMAGE_GRAPH_AXIS_X );
+		$Grid->setLineColor( 'silver');
+
+		foreach ( $keys AS $k => $v ) {	
+			$data[ $k ] =& Image_Graph::factory('dataset');
+			$data[ $k ]->setName( $v );
+
+			// Load data
+			foreach ( $res AS $r ) {
+				$data[ $k ]->addPoint( $r[ $primary_key ], $r[ $v ] );
+			}
+			$plot[$k] =& $plotarea->addNew( 'line', array( &$data[ $k ] ) );
+		}
+
+		// Check plot colors
+		$colors = array ( 'red', 'blue', 'green', 'yellow', 'purple', 'black', 'orange' );
+		foreach ( $plot AS $k => $v ) {
+			$plot[ $k ]->setLineColor( $colors[ $k ] );
+		}
+
+		$g->setPadding( 10 );
+		$g->done( );
+	} // end method GenerateGraph
 
 } // end class Reporting
 
