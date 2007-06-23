@@ -50,14 +50,38 @@ class Pharmacy extends SupportModule {
 
 	public function __construct ( ) {
 		// For i18n: __("Pharmacies")
-		// TODO: add ability to have additional query pieces ...
 		$this->list_view = array (
 			__("Name") => "phname",
 			__("City, State") => "citystate"
 		);
+		$this->additional_fields = array (
+			"CONCAT(phcity, ', ', phstpr) AS citystate"
+		);
 
 		parent::__construct();
-	} // end constructor Pharmacies
+	} // end constructor Pharmacy
+
+	protected function add_pre ( &$data ) {
+		// Split city, state zip if it's one field
+		if ($data['phcsz']) {
+			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
+				$data['phcity'] = $reg[1];
+				$data['phstpr'] = $reg[2];
+				$data['phzip'] = $reg[3];
+			}
+		}
+	} // end method add_pre
+
+	protected function mod_pre ( &$data ) {
+		// Split city, state zip if it's one field
+		if ($data['phcsz']) {
+			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
+				$data['phcity'] = $reg[1];
+				$data['phstpr'] = $reg[2];
+				$data['phzip'] = $reg[3];
+			}
+		}
+	} // end method mod_pre
 
 } // end class Pharmacy
 
