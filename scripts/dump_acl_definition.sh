@@ -54,27 +54,12 @@ cat<<'EOF' > ${TMP}
 EOF
 
 TABLES=(
-        acl_acl
-        acl_acl_sections
-        acl_acl_seq
-        acl_aco
-        acl_aco_map
-        acl_aco_sections
-        acl_aro
-        acl_aro_groups
-        acl_aro_groups_map
-        acl_aro_map
-        acl_aro_sections
-        acl_aro_seq
-        acl_axo
-        acl_axo_groups
-        acl_axo_groups_map
-        acl_axo_map
-        acl_axo_sections
-        acl_axo_seq
-        acl_groups_aro_map
-        acl_groups_axo_map
-        acl_phpgacl
+	$(mysql \
+	--user="$(${SCRIPTS}/cfg-value DB_USER)" \
+	--password="$(${SCRIPTS}/cfg-value DB_PASSWORD)" \
+	"$(${SCRIPTS}/cfg-value DB_NAME)" \
+	-NBe "SHOW TABLES LIKE 'acl_%'" \
+	)
 )
 
 mysqldump \
@@ -82,6 +67,8 @@ mysqldump \
 	--password="$(${SCRIPTS}/cfg-value DB_PASSWORD)" \
 	"$(${SCRIPTS}/cfg-value DB_NAME)" \
 	--opt --tables ${TABLES[@]} | grep -v '/*!4' >> ${TMP}
+
+perl -pi -e 's/ DEFAULT CHARSET=latin1//g;' "${TMP}"
 
 mv ${TMP} "${SCRIPTS}/../data/schema/mysql/acl.sql"
 
