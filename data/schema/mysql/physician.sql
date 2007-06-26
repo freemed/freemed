@@ -46,9 +46,8 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	phypager		VARCHAR (16),
 	phyupin			VARCHAR (15),
 	physsn			CHAR (9),
-	phydeg1			INT UNSIGNED,
-	phydeg2			INT UNSIGNED,
-	phydeg3			INT UNSIGNED,
+	phydegrees		TEXT,
+	physpecialties		TEXT,
 	physpe1			INT UNSIGNED,
 	physpe2			INT UNSIGNED,
 	physpe3			INT UNSIGNED,
@@ -81,9 +80,28 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Upgrades
+	CALL FreeMED_Module_GetVersion( 'physician', @V );
 
-	# Version 0.3.6
-	ALTER IGNORE TABLE physician ADD COLUMN phynpi VARCHAR(32) NOT NULL DEFAULT '' AFTER phyclia;
+	IF @V < 1 THEN
+		# Version 0.3.6
+		ALTER IGNORE TABLE physician ADD COLUMN phynpi VARCHAR(32) NOT NULL DEFAULT '' AFTER phyclia;
+
+		# Migrate degrees into single field
+		ALTER IGNORE TABLE physician ADD COLUMN phydegrees TEXT AFTER physsn;
+		UPDATE physician SET phydegrees = CONCAT_WS( ',', NULLIF(phydeg1,0), NULLIF(phydeg2,0), NULLIF(phydeg3,0) );
+		ALTER IGNORE TABLE physician DROP COLUMN phydeg1;
+		ALTER IGNORE TABLE physician DROP COLUMN phydeg2;
+		ALTER IGNORE TABLE physician DROP COLUMN phydeg3;
+
+		# Migrate specialties into single field
+		ALTER IGNORE TABLE physician ADD COLUMN physpecialties TEXT AFTER phydegrees;
+		UPDATE physician SET physpecialties = CONCAT_WS( ',', NULLIF(physpe1,0), NULLIF(physpe2,0), NULLIF(physpe3,0) );
+		ALTER IGNORE TABLE physician DROP COLUMN physpe1;
+		ALTER IGNORE TABLE physician DROP COLUMN physpe2;
+		ALTER IGNORE TABLE physician DROP COLUMN physpe3;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'physician', 1 );
 END
 //
 DELIMITER ;
