@@ -57,6 +57,32 @@ END;
 
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS SPLIT_ELEMENT
+
+DELIMITER //
+
+# Function: SPLIT_ELEMENT
+#
+#	MySQL UDF to pull out set elements from a substring, from MySQL user manual
+#
+# Parameters:
+#
+#	x - Value to examine. VARCHAR( 255 )
+#
+#	delim - String to use as a delimited. VARCHAR( 12 )
+#
+#	pos - SET position of desired element. INT
+#
+# Returns:
+#
+#	VARCHAR( 255 ), SET element
+#
+CREATE FUNCTION SPLIT_ELEMENT( x VARCHAR( 255 ), delim VARCHAR( 12 ), pos INT ) RETURN VARCHAR( 255 )
+	RETURN REPLACE( SUBSTRING( SUBSTRING_INDEX( x, delim, pos ), LENGTH( SUBSTRING_INDEX( x, delim, pos - 1 ) ) + 1), delim, '' );
+//
+
+DELIMITER ;
+
 DROP FUNCTION IF EXISTS SUBSTR_COUNT;
 
 DELIMITER //
