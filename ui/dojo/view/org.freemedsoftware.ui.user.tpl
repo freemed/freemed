@@ -46,6 +46,32 @@
 		onBackClick: function ( ) {
 			freemedLoad( 'org.freemedsoftware.ui.supportdata' );
 		},
+		onDeleteClick: function ( ) {
+			var v;
+			try {
+				v = dojo.widget.byId( 'supportDataHolder' ).getSelectedData().id;
+			} catch (e) {
+				alert("<!--{t}-->Please select a record.<!--{/t}-->");
+				return false;
+			}
+			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this user?<!--{/t}-->");
+			if (x) {
+				dojo.io.bind({
+					method: 'POST',
+					url: '<!--{$relay}-->/org.freemedsoftware.api.UserInterface.del',
+					content: {
+						param0: v
+					},
+					error: function( type, data, event ) {
+						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+					},
+					load: function( type, data, event ) {
+						supportData.loadData();
+					},
+					mimetype: "text/json"
+				});
+			}
+		},
 		moduleData: null,
 		currentFilter: 0,
 		loadData: function ( ) {
@@ -82,6 +108,7 @@
 	_container_.addOnLoad(function(){
 		supportData.loadData();
 		dojo.event.connect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
+		dojo.event.connect( dojo.widget.byId('supportDeleteButton'), 'onClick', supportData, 'onDeleteClick' );
 		dojo.event.connect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
 		dojo.event.connect( dojo.widget.byId('supportBackButton'), 'onClick', supportData, 'onBackClick' );
 		document.getElementById( 'supportFilterSelect' ).onchange = supportData.loadData;
@@ -90,6 +117,7 @@
 
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('supportAddButton'), 'onClick', supportData, 'onAddClick' );
+		dojo.event.disconnect( dojo.widget.byId('supportDeleteButton'), 'onClick', supportData, 'onDeleteClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportModifyButton'), 'onClick', supportData, 'onModifyClick' );
 		dojo.event.disconnect( dojo.widget.byId('supportBackButton'), 'onClick', supportData, 'onBackClick' );
 	});
@@ -112,6 +140,7 @@
 			<td>
 				<input type="text" id="supportFilterText" name="supportFilterText" value="" />
 			</td>
+			<td><button dojoType="Button" id="supportDeleteButton" widgetId="supportDeleteButton"><!--{t}-->Delete<!--{/t}--></button></td>
 			<td><button dojoType="Button" id="supportBackButton" widgetId="supportBackButton"><!--{t}-->Back<!--{/t}--></button></td>
 		</tr>
 	</table>
