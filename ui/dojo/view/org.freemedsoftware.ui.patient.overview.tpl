@@ -23,6 +23,8 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<!--{method var='patientName' namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}-->
+
 <script language="javascript">
 	dojo.require("dojo.widget.DropdownContainer");
 
@@ -30,7 +32,14 @@
 		dojo.widget.byId('contactDropdown').inputNode.style.display = 'none';
 
 		// Push this into the history
-		freemedGlobal.addPatientToHistory( '<!--{$patient}-->', '<!--{method namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}-->' );
+		freemedGlobal.addPatientToHistory( '<!--{$patient}-->', '<!--{$patientName}-->' );
+
+		// Title change
+		document.title = "FreeMED v<!--{$VERSION}--> : <!--{$patientName}-->";
+	});
+	_container_.addOnUnload(function(){
+		// Title reset
+		document.title = "FreeMED v<!--{$VERSION}-->";
 	});
 </script>
 
@@ -46,7 +55,7 @@
 
 <div id="patientInfoBar">
 	<table width="100%" border="0" cellspacing="0" cellpadding="3"><tr>
-	<td><b><!--{t}-->Patient<!--{/t}--> : </b> <!--{method namespace="org.freemedsoftware.api.PatientInterface.ToText" param="$patient"}--></td>
+	<td><b><!--{t}-->Patient<!--{/t}--> : </b> <!--{$patientName}--></td>
 		<!--{* Form a contact "box" *}-->
 	<td>
 	<!--{if $record.ptprefcontact == 'home'}-->
