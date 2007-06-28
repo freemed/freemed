@@ -33,7 +33,7 @@ print "(c) 2007 FreeMED Software Foundation\n\n";
 function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
 function printHeader ( $x ) { print "\n\n ----->> ${x} <<-----\n\n"; }
-function loadSchema ( $s  ) { $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
+function loadSchema ( $s, $sk=false  ) { $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."' ".($sk ? '1' : '' ); print `$c`; print "\n\n"; }
 
 if ( ! file_exists ( './scripts/upgrade.php' ) ) {
 	print "You must run this from the root directory of your FreeMED install.\n\n";
@@ -53,7 +53,8 @@ execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL A
 execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
 printHeader( "Include aggregation table definition" );
-loadSchema( 'patient_emr' );
+loadSchema( 'patient', true );
+loadSchema( 'patient_emr', true );
 
 printHeader( "Load admin table definitions" );
 loadSchema( 'modules' );

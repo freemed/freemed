@@ -26,6 +26,7 @@ TABLE=$2
 DBUSER=$3
 DBPASS=$4
 DBNAME=$5
+SKIP_FK=$6
 
 # Get current path so we can be sure to load from proper location
 OLDDIR="$(pwd)"
@@ -45,7 +46,11 @@ fi
 case "${ENGINE}" in
 	mysql)
 	cd "${PWD}"
-	mysql --user="${DBUSER}" --password="${DBPASS}" "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
+	if [ "${SKIP_FK}" == "1" ]; then
+		cat "data/schema/${ENGINE}/${TABLE}.sql" | grep -v 'FOREIGN KEY' | mysql --user="${DBUSER}" --password="${DBPASS}" "${DBNAME}"
+	else
+		mysql --user="${DBUSER}" --password="${DBPASS}" "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
+	fi
 	;;
 
 	*)
