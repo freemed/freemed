@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS `scheduler_status` (
 
 	#	Define keys
 
-	KEY			( cspatient, csstatus, csstamp ),
-	FOREIGN KEY		( cspatient ) REFERENCES patient.id ON DELETE CASCADE
+	KEY			( cspatient, csstatus, csstamp )
+	, FOREIGN KEY		( cspatient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `scheduler_status_delta` (
@@ -48,11 +48,11 @@ CREATE TABLE IF NOT EXISTS `scheduler_status_delta` (
 	duration		INT UNSIGNED,
 	id_start		INT UNSIGNED,
 	id_end			INT UNSIGNED,
-	id			SERIAL,
+	id			SERIAL
 
 	#	Define keys
 	
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS scheduler_status_Upgrade;

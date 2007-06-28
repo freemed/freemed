@@ -109,6 +109,7 @@ BEGIN
 	#----- Upgrades
 
 	#	Version 0.9.0
+	ALTER IGNORE TABLE patient ADD COLUMN ptsuffix VARCHAR (10) AFTER ptmname;
 	ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;
 	ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;
 END
@@ -190,7 +191,7 @@ DELIMITER ;
 #----- Prior demographics holding table
 
 CREATE TABLE IF NOT EXISTS `patient_prior` (
-	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
 	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 
 	ptlname			VARCHAR (50) NOT NULL,
@@ -215,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `patient_prior` (
 
 	#	Define keys
 
-	PRIMARY KEY		( id ),
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	PRIMARY KEY		( id )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

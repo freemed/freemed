@@ -23,7 +23,7 @@
 SOURCE data/schema/mysql/patient.sql
 
 CREATE TABLE IF NOT EXISTS `patient_emr` (
-	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
 	module			VARCHAR (150) NOT NULL,
 	oid			INT UNSIGNED NOT NULL,
 	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
@@ -32,13 +32,14 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	annotation		TEXT,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	provider		INT UNSIGNED NOT NULL DEFAULT 0,
+	language		CHAR( 5 ) DEFAULT '',
 	status			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
 
-	KEY			( patient, module, oid ),
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	KEY			( patient, module, oid )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS patient_emr_Upgrade;
@@ -49,6 +50,8 @@ BEGIN
 
 	#----- Remove triggers
 	DROP TRIGGER patient_emr_Insert;
+
+	ALTER IGNORE TABLE patient_emr ADD COLUMN language CHAR( 5 ) DEFAULT '' AFTER provider;
 END;
 
 CREATE TRIGGER patient_emr_Insert
