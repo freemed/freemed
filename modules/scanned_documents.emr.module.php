@@ -90,9 +90,9 @@ class ScannedDocuments extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function add_post ( $id ) {
+	protected function add_post ( $id, &$data ) {
 		// Handle upload
-		if (!($imagefilename = freemed::store_image($patient, "imageupload", $id))) {
+		if (!($imagefilename = freemed::store_image( $data[$this->patient_field], "imageupload", $id))) {
 			syslog("Failed to upload");
 			return false;
 		}

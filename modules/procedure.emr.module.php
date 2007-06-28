@@ -118,9 +118,7 @@ class ProcedureModule extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end add_pre
 
-	function add_post ( $id ) {
-		$data = $GLOBALS['sql']->get_link( $this->table_name, $id );
-
+	function add_post ( $id, &$data ) {
 		// Add to Claimlog
 		$claimlog = CreateObject('org.freemedsoftware.api.ClaimLog');
 		$claimlog->log_event(
