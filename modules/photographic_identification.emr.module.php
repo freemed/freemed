@@ -72,6 +72,80 @@ class PhotographicIdentification extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
+	// Method: UploadPhotoID
+	//
+	//	Upload photographic ID using PHP's file upload capabilities.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function UploadPhotoID ( $patient ) {
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		if( $_FILES["file"]["name"] != "" ) {
+			if ( $value == UPLOAD_ERR_OK ) {
+				// Create the upload wrapper here
+				$q = $GLOBALS['sql']->insert_query(
+					$this->table_name,
+					array (
+						'p_user' => freemed::user_cache()->user_number,
+						'p_patient' => $patient
+					)
+				);
+				syslog( LOG_INFO, $q );
+				$GLOBALS['sql']->query( $q );
+				$id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+
+				$origfilename = $_FILES["file"]["tmp_name"];
+				syslog( LOG_INFO, "originalfilename = $origfilename");
+				$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
+				if ( $success ) {
+					syslog( LOG_INFO, get_class($this)."| found file ".$_FILES['file']['name'] );
+					$q = $GLOBALS['sql']->update_query(
+						$this->table_name,
+						array(
+							'p_filename' => $pds->ResolveFilename( $patient, get_class($this), $id )
+						), array( 'id' => $id )
+					);
+					syslog( LOG_INFO, $q );
+					$GLOBALS['sql']->query( $q );
+					return true;
+				}
+			} else {
+				syslog( LOG_INFO, get_class($this)."| uploading file failed" );
+				return false;
+			}
+		}
+		return false;
+	}
+
+	// Method: GetPhotoID
+	//
+	//	Get BLOB of latest photo id, or no photo image if there is none.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	public function GetPhotoID ( $patient ) {
+		$pic = $GLOBALS['sql']->queryOne( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
+		if ( ! $pic ) { $pic = 'data/store/no-image.png'; }
+		ob_start();
+		readfile( $pic );
+		$x = ob_get_contents();
+		if ( strpos( $x, 'JFIF' ) > 0 ) {
+			Header( 'Content-type: image/jpeg' );
+		} else if ( strpos( $x, 'PNG' ) > 0 ) {
+			Header( 'Content-type: image/png' );
+		}
+		ob_end_flush();
+		die();
+	} // end method GetPhotoID
+
 	protected function add_post ( $id, &$data ) {
 		// Using example from http://www.php.net/manual/en/features.file-upload.php
 		// Assume 'file' is the name of the file, as per default
@@ -112,31 +186,6 @@ class PhotographicIdentification extends EMRModule {
 	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
-
-	function additional_move ( $id, $from, $to ) {
-		$orig = freemed::image_filename($from, $id, 'id.djvu');
-		$new = freemed::image_filename($to, $id, 'id.djvu');
-		$q = $GLOBALS['sql']->update_query(
-			$this->table_name,
-			array ( 'p_filename' => $new ),
-			array ( 'id' => $id )
-		);
-
-		syslog(LOG_INFO, "Photographic Identification| moved $orig to $new");
-
-		$result = $GLOBALS['sql']->query($q);
-		//if (!$result) { return false; }
-
-		$result = rename ( $orig, $new );
-		$dir = dirname($new);
-		`mkdir -p "$dir"`;
-		`mv "$orig" "$new"`;
-		//print "mv \"$orig\" \"$new\"<br/>\n";
-		//print "orig = $orig, new = $new<br/>\n";
-		//if (!$result) { return false; }
-
-		return true;
-	} // end method additional_move
 
 	// Method: GetDocumentPage
 	//

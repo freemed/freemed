@@ -5,6 +5,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -21,14 +22,21 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
+<!--{*
 
-<table border="0"><tr><td valign="top">
-<!--{include file="org.freemedsoftware.widget.patientemrattachments.tpl" patient=$patient}-->
-</td><td width="250" valign="top">
-<!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient}-->
-<br clear="all" />
-<!--{include file="org.freemedsoftware.widget.photoid.tpl" patient=$patient}-->
-<br clear="all" />
-<!--{include file="org.freemedsoftware.widget.patientreferrals.tpl" patient=$patient}-->
-</td></tr></table>
+	File:	org.freemedsoftware.widget.photoid
+
+	Reusable photographic ID widget.
+
+	Parameters:
+
+		$float - If set as right or left, will float the area
+
+*}-->
+<div id="patientPhotoIdContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
+	<div align="center" width="100%" class="patientEmrWidgetHeader"><b><!--{t}-->Photo<!--{/t}--></b></div>
+	<center>
+	<div id="patientTagContainerInnerDiv"><img src="<!--{$relay}-->/org.freemedsoftware.module.PhotographicIdentification.GetPhotoID?param0=<!--{$patient}-->" width="200" height="200" border="0" /></div>
+	</center>
+</div>
 

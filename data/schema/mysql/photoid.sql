@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `photoid` (
 	p_stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	p_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	p_description		VARCHAR (250),
+	p_filename		VARCHAR (250),
 	p_user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL
@@ -50,6 +51,8 @@ BEGIN
 	#----- Upgrades
 	CALL FreeMED_Module_GetVersion( 'photoid', @V );
 
+	ALTER IGNORE TABLE photoid ADD COLUMN p_filename VARCHAR(250) AFTER p_description;
+
 	CALL FreeMED_Module_UpdateVersion( 'photoid', 1 );
 END
 //
@@ -70,7 +73,7 @@ CREATE TRIGGER photoid_Delete
 CREATE TRIGGER photoid_Insert
 	AFTER INSERT ON photoid
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'photoid', NEW.p_patient, NEW.id, NEW.p_stamp, NEW.p_description, NEW.p_user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'photoid', NEW.p_patient, NEW.id, NEW.p_stamp, IF(ISNULL(NEW.p_description), NEW.p_stamp, NEW.p_description), NEW.p_user, NEW.active );
 	END;
 //
 
@@ -83,3 +86,13 @@ CREATE TRIGGER photoid_Update
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS photoid_GetLatest;
+DELIMITER //
+
+CREATE PROCEDURE photoid_GetLatest ( IN patient BIGINT(20) UNSIGNED )
+BEGIN
+	SELECT p_filename FROM photoid WHERE p_patient = patient ORDER BY p_stamp DESC LIMIT 1;
+END;
+//
+
+DELIMITER ;

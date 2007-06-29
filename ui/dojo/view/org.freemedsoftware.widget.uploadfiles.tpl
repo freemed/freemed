@@ -26,7 +26,7 @@
 
 	File:	org.freemedsoftware.widget.uploadfiles.tpl
 
-	Reusable SWFUpload-based upload widget
+	Reusable upload widget
 
 	Parameters:
 
@@ -34,195 +34,46 @@
 		to 'file'.
 
 		$relayPoint - Data relay point for upload.
+
+		$completedCode - Code to execute when upload has completed.
 *}-->
 
 <!--{if not $varname}-->
 <!--{assign var='varname' value='file'}-->
 <!--{/if}-->
 
-<!--{* ----- Callbacks for upload widget ----- *}-->
-<script language="javascript">
+<script type="text/javascript">
 
-try {
+	var <!--{$varname}-->UploadWidget = {
+		onChange: function ( ) {
+			<!--{$varname}-->UploadWidget.setStatus( true );
+			document.getElementById( '<!--{$varname}-->Form' ).submit();
+			<!--{$varname}-->UploadWidget.setStatus( false );
+			freemedMessage( "<!--{t}-->Uploaded file<!--{/t}-->", 'INFO' );
+			/* <!--{if $completedCode}--><!--{$completedCode}--><!--{/if}--> */
+		},
+		setStatus: function ( s ) {
+			var sW = document.getElementById( '<!--{$varname}-->Status' );
+			if ( s ) {
+				sW.innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" />';
+			} else {
+				sW.innerHTML = '';
+			}
+		}
+	};
 
-function fileQueued(file, queuelength) {
-	var listingfiles = document.getElementById("SWFUploadFileListingFiles");
-
-	if(!listingfiles.getElementsByTagName("ul")[0]) {
-		
-		var info = document.createElement("h4");
-		info.appendChild(document.createTextNode("File queue"));
-		
-		listingfiles.appendChild(info);
-		
-		var ul = document.createElement("ul")
-		listingfiles.appendChild(ul);
-	}
-	
-	listingfiles = listingfiles.getElementsByTagName("ul")[0];
-	
-	var li = document.createElement("li");
-	li.id = file.id;
-	li.className = "SWFUploadFileItem";
-	li.innerHTML = file.name + " <span class='progressBar' id='" + file.id + "progress'></span><a id='" + file.id + "deletebtn' class='cancelbtn' href='javascript:swfu.cancelFile(\"" + file.id + "\");'><!-- IE --></a>";
-
-	listingfiles.appendChild(li);
-	
-	var queueinfo = document.getElementById("queueinfo");
-	queueinfo.innerHTML = queuelength + " files queued";
-	document.getElementById(swfu.movieName + "UploadBtn").style.display = "block";
-	document.getElementById("cancelqueuebtn").style.display = "block";
-}
-
-function uploadFileCancelled(file, queuelength) {
-	var li = document.getElementById(file.id);
-	li.innerHTML = file.name + " - cancelled";
-	li.className = "SWFUploadFileItem uploadCancelled";
-	var queueinfo = document.getElementById("queueinfo");
-	queueinfo.innerHTML = queuelength + " files queued";
-}
-
-function uploadFileStart(file, position, queuelength) {
-	var div = document.getElementById("queueinfo");
-	div.innerHTML = "<!--{t}-->Uploading file<!--{/t}--> " + position + " of " + queuelength;
-
-	var li = document.getElementById(file.id);
-	li.className += " fileUploading";
-}
-
-function uploadProgress(file, bytesLoaded) {
-	var progress = document.getElementById(file.id + "progress");
-	var percent = Math.ceil((bytesLoaded / file.size) * 200)
-	progress.style.background = "#f0f0f0 url(<!--{$htdocs}-->/swfupload/progressbar.png) no-repeat -" + (200 - percent) + "px 0";
-}
-
-function uploadError(errno) {
-	// SWFUpload.debug(errno);
-}
-
-function uploadFileComplete(file) {
-	var li = document.getElementById(file.id);
-	li.className = "SWFUploadFileItem uploadCompleted";
-}
-
-function cancelQueue() {
-	swfu.cancelQueue();
-	document.getElementById(swfu.movieName + "UploadBtn").style.display = "none";
-	document.getElementById("cancelqueuebtn").style.display = "none";
-}
-
-function uploadQueueComplete(file) {
-	var div = document.getElementById("queueinfo");
-	div.innerHTML = "<!--{t}-->All files uploaded.<!--{/t}-->";
-	document.getElementById("cancelqueuebtn").style.display = "none";
-}
-
-} catch (loadError) { }
-
-_container_.addOnLoad(function(){
-	var swfu = new SWFUpload({
-		upload_script : "<!--{$relayPoint}-->",
-		target : "SWFUploadTarget",
-		flash_path : "<!--{$htdocs}-->/swfupload/SWFUpload.swf",
-		allowed_filesize : 30720,	// 30 MB
-		allowed_filetypes : "*.*",
-		allowed_filetypes_description : "<!--{t}-->All files...<!--{/t}-->",
-		browse_link_innerhtml : "<!--{t}-->Browse<!--{/t}-->",
-		upload_link_innerhtml : "<!--{t}-->Upload queue<!--{/t}-->",
-		browse_link_class : "swfuploadbtn browsebtn",
-		upload_link_class : "swfuploadbtn uploadbtn",
-		flash_loaded_callback : 'swfu.flashLoaded',
-		upload_file_queued_callback : "fileQueued",
-		upload_file_start_callback : 'uploadFileStart',
-		upload_progress_callback : 'uploadProgress',
-		upload_file_complete_callback : 'uploadFileComplete',
-		upload_file_cancel_callback : 'uploadFileCancelled',
-		upload_queue_complete_callback : 'uploadQueueComplete',
-		upload_error_callback : 'uploadError',
-		upload_cancel_callback : 'uploadCancel',
-		auto_upload : true
+	_container_.addOnLoad(function(){
+		document.getElementById( '<!--{$varname}-->' ).onchange = <!--{$varname}-->UploadWidget.onChange;
 	});
-});
 
 </script>
 
+<form action="<!--{$relayPoint}-->" method="post" enctype="multipart/form-data" target="<!--{$varname}-->IFrame" id="<!--{$varname}-->Form">
+	<input type="file" name="<!--{$varname}-->" id="<!--{$varname}-->" />
+	<span id="<!--{$varname}-->Status"></span>
+</form>
 
+<!--{* iFrame Container *}-->
 
-<style type="text/css">
-	.swfuploadbtn {
-		display: block;
-		width: 100px;
-		padding: 0 0 0 20px;
-	}
-	
-	.browsebtn { background: url(<!--{$htdocs}-->/swfupload/add.png) no-repeat 0 4px; }
-	.uploadbtn { 
-		display: none;
-		background: url(<!--{$htdocs}-->/swfupload/accept.png) no-repeat 0 4px; 
-	}
-	
-	.cancelbtn { 
-		display: block;
-		width: 16px;
-		height: 16px;
-		float: right;
-		background: url(<!--{$htdocs}-->/swfupload/cancel.png) no-repeat; 
-	}
-	
-	#cancelqueuebtn {
-		display: block;
-		display: none;
-		background: url(<!--{$htdocs}-->/swfupload/cancel.png) no-repeat 0 4px;
-		margin: 10px 0;
-	}
-	
-	#SWFUploadFileListingFiles ul {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
+<iframe name="<!--{$varname}-->IFrame" style="width: 600px; height: 400px;<!--{if not $DEBUG}--> display: none;<!--{/if}-->"></iframe>
 
-	.SWFUploadFileItem {
-		display: block;
-		width: 230px;
-		height: 70px;
-		float: left;
-		background: #eaefea;
-		margin: 0 10px 10px 0;
-		padding: 5px;
-	}
-
-	.fileUploading { background: #fee727; }
-	.uploadCompleted { background: #d2fa7c; }
-	.uploadCancelled { background: #f77c7c; }
-		
-	.uploadCompleted .cancelbtn, .uploadCancelled .cancelbtn {
-		display: none;
-	}
-		
-	span.progressBar {
-		width: 200px;
-		display: block;
-		font-size: 10px;
-		height: 4px;
-		margin-top: 2px;
-		margin-bottom: 10px;
-		background-color: #CCC;
-	}
-		
-</style>
-
-<div id="SWFUploadTarget">
-	<form action="<!--{$relayPoint}-->" method="post" enctype="multipart/form-data">
-		<input type="file" name="<!--{$varname}-->[]" id="<!--{$varname}-->[]" />
-		<input type="submit" value="<!--{t}-->Upload files<!--{/t}-->" />
-	</form>
-</div>
-
-<h4 id="queueinfo"><!--{t}-->Upload queue is empty.<!--{/t}--></h4>
-
-<div id="SWFUploadFileListingFiles"></div>
-
-<br class="clr" />
-
-<a class="swfuploadbtn" id="cancelqueuebtn" href="javascript:cancelQueue();">Cancel queue</a>
