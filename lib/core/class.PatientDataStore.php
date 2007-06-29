@@ -106,9 +106,9 @@ class PatientDataStore {
 	//	Path to file.
 	//
 	public function StoreFile( $patient, $module, $id, $contents ) {
-		$path = $this->base_path . '/' . $this->_PatientToPath . '/' . strtolower( $module );
+		$path = $this->base_path . '/' . $this->_PatientToPath( $patient ) . '/' . strtolower( $module );
 		// Recursively create directory in case it doesn't exist
-		mkdir ( $path, NULL, true );
+		mkdir ( $path, 0777, true );
 
 		$dest = $path . '/' . $id;
 
