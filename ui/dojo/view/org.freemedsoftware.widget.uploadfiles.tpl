@@ -50,7 +50,7 @@
 			document.getElementById( '<!--{$varname}-->Form' ).submit();
 			<!--{$varname}-->UploadWidget.setStatus( false );
 			freemedMessage( "<!--{t}-->Uploaded file<!--{/t}-->", 'INFO' );
-			/* <!--{if $completedCode}--><!--{$completedCode}--><!--{/if}--> */
+			<!--{if $completedCode}--><!--{$completedCode}--><!--{/if}-->
 		},
 		setStatus: function ( s ) {
 			var sW = document.getElementById( '<!--{$varname}-->Status' );

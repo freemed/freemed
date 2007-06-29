@@ -35,7 +35,8 @@ class PatientDataStore {
 	//	Create PatientDataStore object
 	//
 	public function __construct ( ) {
-		$this->base_path = dirname(__FILE__).'/../../data/store';
+		//$this->base_path = dirname(dirname(dirname(__FILE__))).'/data/store';
+		$this->base_path = 'data/store';
 	}
 
 	// Method: ResolveFilename

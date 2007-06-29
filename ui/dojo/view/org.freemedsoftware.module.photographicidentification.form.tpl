@@ -40,7 +40,7 @@
 
 <h3><!--{t}-->Photographic Identification<!--{/t}--></h3>
 
-<!--{include file='org.freemedsoftware.widget.uploadfiles.tpl' varname='file' completedCode="freemedPatientContentLoad('org.freemedsoftware.ui.patient.overview.default?patient=$patient');" relayPoint="$relay/org.freemedsoftware.module.photographicidentification.UploadPhotoID?param0=$patient" DEBUG="1"}-->
+<!--{include file='org.freemedsoftware.widget.uploadfiles.tpl' varname='file' completedCode="freemedPatientContentLoad('org.freemedsoftware.ui.patient.overview.default?patient=$patient');" relayPoint="$relay/org.freemedsoftware.module.photographicidentification.UploadPhotoID?param0=$patient"}-->
 
 <div align="center">
         <table border="0" style="width:200px;">

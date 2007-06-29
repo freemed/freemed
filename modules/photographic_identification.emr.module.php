@@ -62,7 +62,7 @@ class PhotographicIdentification extends EMRModule {
 		$this->_SetAssociation( 'EmrModule' );
 
 		// Define images base path
-		$this->base_path = dirname(__FILE__).'/../data/store/';
+		$this->base_path = dirname(dirname(__FILE__)).'/data/store/';
 
 		// Call parent constructor
 		parent::__construct();
@@ -139,9 +139,15 @@ class PhotographicIdentification extends EMRModule {
 		$x = ob_get_contents();
 		if ( strpos( $x, 'JFIF' ) > 0 ) {
 			Header( 'Content-type: image/jpeg' );
+		} else if ( strpos( $x, 'GIF89a' ) === 0 ) {
+			Header( 'Content-type: image/gif' );
 		} else if ( strpos( $x, 'PNG' ) > 0 ) {
 			Header( 'Content-type: image/png' );
 		}
+		Header( 'Pragma: no-cache' );
+		Header( 'Cache-Control: no-store, no-cache, must-revalidate' );
+		Header( 'Cache-Control: post-check=0, pre-check=0', false );
+		Header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
 		ob_end_flush();
 		die();
 	} // end method GetPhotoID
