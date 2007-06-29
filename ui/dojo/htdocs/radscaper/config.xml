@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<radscaper version="1.0">
+  <!--default value will be used if an entry doesn't exist or its value is invalid-->
+  <system>
+    <!--path to AppletHelper from wherever radscaper.jar file is installed, default=cgi-bin/AppletHelper.exe-->
+    <!--if installed on Linux, change AppletHelper.exe to AppletHelper-->
+    <appletHelper>cgi-bin/AppletHelper</appletHelper>
+
+    <!--local path to licens file for registerred user, default=c:\radscaper.bin for Windows, default=/usr/radscaper.bin for Linux-->
+    <!--<licenseFile>local_path_to_license_file</licenseFile>-->
+
+    <!--logging level (0: system, 1: exception, 2: warning, 3: debug, 4: detailed debug), default=0-->
+    <logLevel>0</logLevel>
+
+    <!--disable tag window if the information in DICOM header is a concern (0: disabled, 1: enabled), default=1-->
+    <tagAllowed>1</tagAllowed>
+  </system>
+  
+  <memory>
+    <!--maximum number of rows [1, 30], default=10-->
+    <maxRow>10</maxRow>
+ 
+    <!--maximum number of columns [1, 30], default=10-->
+    <maxColumn>10</maxColumn>
+
+    <!--maximum number of files to buffer [maxRow x maxColumn, 1000], default=maxRow x maxColumn-->
+    <maxFileToBuffer>100</maxFileToBuffer>
+  </memory>
+  
+  <startup>
+    <!--cine speed if start in cine mode [-10, 10] (0: cine off, +: forward, -: backword), default=0-->
+    <cine>0</cine>
+    
+    <!--number of rows if start in tiled mode [1, maxRow] (=1 if cine<>0), default=1-->
+    <row>1</row>
+    
+    <!--number of columns if start in tiled mode [1, maxColumn] (=1 if cine<>0), default=1-->
+    <column>1</column>
+    
+    <!--start with or without overlay (0: off, 1: on), default=1-->
+    <overlay>1</overlay>
+  </startup>
+  
+  <measure>
+    <!--horizontal pixel spacing in mm if not given in header (>= 0.0), default=use pixel count-->
+    <!--<horizontalSpacing>mm_per_pixel_in_horizontal</horizontalSpacing>-->
+    <!--vertical pixel spacing in mm if not given in header (>= 0.0), default=use pixel count-->
+    <!--<verticalSpacing>mm_per_pixel_in_vertical</verticalSpacing>-->
+    
+    <!--measurement unit (CM: cm, MM: mm, MICRO: micro, INCH: inch), default=CM-->
+    <unit>CM</unit>
+  </measure>
+  
+  <contrast>
+    <!--type of window center/width if not given in header (LINEAR or SIGMOID), default=LINEAR-->
+    <type>LINEAR</type>
+    
+    <!--default pair of window center/width if there is more than one in header (>= 1), default=1-->
+    <pair>1</pair>
+    
+    <!--window width if not given in header (>= 0), default=whole_range-->
+    <!--<windowWidth>4096</windowWidth>-->
+    <!--window center if not given in header (>= 0), default=middle_of_whole_range-->
+    <!--<windowCenter>2048</windowCenter>-->
+    
+    <!--default VOI LUT if there is more than one in header (>= 0), 0:ignore VOI LUT and use window center/width default=1-->
+    <voilut>1</voilut>
+  </contrast>
+  <performance>
+    <!--one dimension size of magnifier window (>= 50), default=400-->
+    <magnifierSize>400</magnifierSize>
+    
+    <!--one dimension size of window level window (>= 50), default=400-->
+    <windowLevelSize>400</windowLevelSize>
+    
+    <!--mouse wheel speed [1, 10], default=1-->
+    <mouseWheelSpeed>1</mouseWheelSpeed>
+  </performance>
+
+  <annotation>
+    <!--annotation in four corners of each viewport, limited to 5 each corner-->
+    <topLeft>(0010,0010)</topLeft>
+    <topLeft>(0010,1010) (0010,0040) (0010,0020)</topLeft>
+    <topLeft>(0008,1030)</topLeft>
+    
+    <topRight>(0008,0022) (0008,0032)</topRight>
+    <topRight>(0008,0080)</topRight>
+    <topRight>(0020,0010)</topRight>
+
+    <bottomLeft>W: (0028,1051) C: (0028,1050)</bottomLeft>
+    <bottomLeft>(0018,0060)kVp (0018,1152)mAs</bottomLeft>
+
+    <bottomRight>(0020,0013)/(0020,0011)</bottomRight>
+  </annotation>
+</radscaper>
