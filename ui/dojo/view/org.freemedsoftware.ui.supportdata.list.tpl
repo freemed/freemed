@@ -100,6 +100,12 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.GetRecords',
 				load: function ( type, data, event ) {
 					w.store.setData( data );
+					try {
+						var x = dojo.widget.byId( 'freemedContent' );
+						var node = x.containerNode || x.domNode;
+						var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'supportDataHeader' ).style.height + document.getElementById( 'supportDataControls' ).style.height + 100 );
+						document.getElementById( 'supportDataHolderBody' ).style.height = h + 'px';
+					} catch ( e ) { }
 				},
 				mimetype: "text/json"
 			});
@@ -125,9 +131,9 @@
 
 </script>
 
-<h3><!--{t}-->Support Data<!--{/t}-->: <!--{$moduleName}--></h3>
+<h3 id="supportDataHeader"><!--{t}-->Support Data<!--{/t}-->: <!--{$moduleName}--></h3>
 
-<div>
+<div id="supportDataControls">
 	<table border="0">
 		<tr>
 			<td><button dojoType="Button" id="supportAddButton" widgetId="supportAddButton"><!--{t}-->Add<!--{/t}--></button></td>
@@ -161,7 +167,7 @@
 		<!--{/foreach}-->
 		</tr>
 	</thead>
-	<tbody></tbody>
+	<tbody id="supportDataHolderBody"></tbody>
 	</table>
 </div>
 
