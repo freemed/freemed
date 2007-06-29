@@ -37,7 +37,7 @@
 <!--{/assign_block}-->
 
 <!--{assign_block var='validation'}-->
-	if ( content.phylname.length < 2 || content.phyfname.length ) {
+	if ( content.phylname.length < 2 || content.phyfname.length < 2 ) {
 		m += "<!--{t}-->You must enter a valid name.<!--{/t}-->\n";
 		r = false;
 	}
