@@ -72,27 +72,41 @@ class PhotographicIdentification extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function add_post ( $id ) {
-		// Handle upload
-		if (!($imagefilename = freemed::store_image($patient, "imageupload", $id))) {
-			syslog("Failed to upload");
-			return false;
+	protected function add_post ( $id, &$data ) {
+		// Using example from http://www.php.net/manual/en/features.file-upload.php
+		// Assume 'file' is the name of the file, as per default
+
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+
+		foreach( $_FILES["file"]["error"] as $key => $value ) {
+			if( $_FILES["file"]["name"][$key] != "" ) {
+				if ( $value == UPLOAD_ERR_OK ) {
+					$origfilename = $_FILES["file"]["name"][$key];
+					$success = $pds->StoreFile( $data[$this->patient_field], get_class( $this ), $id, $origfilename );
+					if ( $success ) {
+						// Do not process further
+						return true;
+					}
+				} else {
+					syslog( LOG_INFO, get_class($this)."| uploading file failed" );
+					return false;
+				}
+			}
 		}
 
-		$query = $GLOBALS['sql']->update_query (
-			$this->table_name,
-			array ( "imagefile" => $imagefilename ),
-			array ( "id" => $last_record )
-		);
-		$result = $GLOBALS['sql']->query ($query);
+		//$query = $GLOBALS['sql']->update_query (
+		//	$this->table_name,
+		//	array ( "imagefile" => $imagefilename ),
+		//	array ( "id" => $last_record )
+		//);
+		//$result = $GLOBALS['sql']->query ($query);
  	}
 
 	protected function del_pre ( $id ) {
-		unlink(freemed::image_filename(
-			freemed::secure_filename($patient),
-			freemed::secure_filename($id),
-			'id.djvu'
-		));
+		$data = $GLOBALS['sql']->get_link( $this->table_name, $id );
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		$filename = $pds->ResolveFilename( $data[$this->patient_field], get_class($this), $id );
+		unlink( $filename );
 	}
 
 	protected function mod_pre ( &$data ) {
@@ -132,8 +146,6 @@ class PhotographicIdentification extends EMRModule {
 	//
 	//	$id - Record id of document
 	//
-	//	$page - Page number
-	//
 	//	$thumbnail - (optional) Boolean, if image is to be rendered
 	//	as a thumbnail. Defaults to false.
 	//
@@ -141,7 +153,7 @@ class PhotographicIdentification extends EMRModule {
 	//
 	//	BLOB data containing jpeg image.
 	//
-	public function GetDocumentPage( $id, $page, $thumbnail = false ) {
+	public function GetDocumentPage( $id, $thumbnail = false ) {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
@@ -169,45 +181,6 @@ class PhotographicIdentification extends EMRModule {
 		return $djvu->NumberOfPages();
 	} // end method NumberOfPages
 
-	function tc_picklist ( ) {
-		return array (
-			__("Operative Report") => "op_report/misc",
-				"- ".__("Colonoscopy") => "op_report/colonoscopy",
-				"- ".__("Endoscopy") => "op_report/endoscopy",
-			__("Miscellaneous") => "misc/misc",
-				"- ".__("Consult") => "misc/consult",
-				"- ".__("Discharge Summary") => "misc/discharge_summary",
-				"- ".__("History and Physical") => "misc/history_and_physical",
-			__("Lab Report") => "lab_report/misc",
-				"- ".__("CBC") => "lab_report/cbc",
-				"- ".__("C8") => "lab_report/c8",
-				"- ".__("LFT") => "lab_report/lft",
-				"- ".__("Lipid Profile") => "lab_report/lipid_profile",
-				"- ".__("UA") => "lab_report/ua",
-				"- ".__("Thyroid Profile") => "lab_report/thyroid_profile",
-			__("Letters") => "letters/misc",
-			__("Oncology") => "oncology/misc",
-			__("Hospital Records") => "hospital/misc",
-				"- ".__("Discharge Summary") => "hospital/discharge",
-			__("Pathology") => "pathology/misc",
-			__("Patient History") => "patient_history/misc",
-			__("Questionnaire") => "questionnaire/misc",
-			__("Radiology") => "radiology/misc",
-				"- ".__("Abdominal Radiograph") => "radiology/abdominal_radiograph",
-				"- ".__("Chest Radiograph") => "radiology/chest_radiograph",
-				"- ".__("Abdominal CT Reports") => "radiology/abdominal_ct_reports",
-				"- ".__("Chest CT Reports") => "radiology/chest_ct_reports",
-				"- ".__("Mammogram Reports") => "radiology/mammogram_reports",
-			__("Insurance Card") => "insurance_card",
-			__("Referral") => "referral/misc",
-				"- ".__("Notes") => "referral/notes",
-				"- ".__("Radiographs") => "referral/radiographs",
-				"- ".__("Lab Reports") => "referral/lab_reports",
-				"- ".__("Consult") => "referral/consult",
-			__("Financial Information") => "financial/misc"
-		);
-	} // end method tc_picklist
-
 	protected function print_override ( $id ) {
 		// Create djvu object
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
@@ -216,19 +189,8 @@ class PhotographicIdentification extends EMRModule {
 		return $d->ToPDF( true );
 	} // end method print_override
 
-	function fax_widget ( $varname, $id ) {
-		global ${$varname};
-		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
-		$phy = $GLOBALS['sql']->get_link( 'physician', $r['imagephy'] );
-		${$varname} = $phy['phyfaxa'];
-		return module_function('faxcontacts',
-			'widget',
-			array ( $varname, false, 'phyfaxa' )
-		);
-	} // end method fax_widget
+} // end of class PhotographicIdentification
 
-} // end of class ScannedDocuments
-
-register_module ("ScannedDocuments");
+register_module ("PhotographicIdentification");
 
 ?>
