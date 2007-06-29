@@ -353,13 +353,13 @@ class EMRModule extends BaseModule {
 		);
 		$result = $GLOBALS['sql']->query ( $query );
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
-		$this->add_post( $new_id );
+		$this->add_post( $new_id, &$ourdata );
 
 		return $new_id;
 	} // end public function add
 
 	protected function add_pre( &$data ) { }
-	protected function add_post( $id ) { }
+	protected function add_post( $id, &$data ) { }
 
 	// Function: del
 	//
