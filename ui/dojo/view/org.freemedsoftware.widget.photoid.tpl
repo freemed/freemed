@@ -36,7 +36,7 @@
 <div id="patientPhotoIdContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
 	<div align="center" width="100%" class="patientEmrWidgetHeader"><b><!--{t}-->Photo<!--{/t}--></b></div>
 	<center>
-	<div id="patientTagContainerInnerDiv"><img src="<!--{$relay}-->/org.freemedsoftware.module.PhotographicIdentification.GetPhotoID?param0=<!--{$patient}-->&dojo.nocache=<!--{$smarty.now|date_format:"%s"}-->" width="200" height="200" border="0" /></div>
+	<div id="patientTagContainerInnerDiv"><img src="<!--{$relay}-->/org.freemedsoftware.module.PhotographicIdentification.GetPhotoID?param0=<!--{$patient}-->&dojo.nocache=<!--{$smarty.now|date_format:"%s"}-->" style="width: 230px; height: auto;" border="0" /></div>
 	</center>
 </div>
 
