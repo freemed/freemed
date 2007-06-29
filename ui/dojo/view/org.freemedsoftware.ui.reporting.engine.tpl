@@ -57,6 +57,13 @@
 					if (!data) { return false; }
 					document.getElementById('reportEngineForm').style.display = 'block';
 					document.getElementById('reportEngineFormContent').innerHTML = '';
+					if ( data.report_type != 'graph' ) {
+						document.getElementById('reportEngineFormStatic').style.display = 'block';
+						document.getElementById('reportEngineFormStaticGraph').style.display = 'none';
+					} else {
+						document.getElementById('reportEngineFormStatic').style.display = 'none';
+						document.getElementById('reportEngineFormStaticGraph').style.display = 'block';
+					}
 					if ( data.params.length > 0 ) {
 						reportingEngine.populateForm( data );
 					}
@@ -185,6 +192,7 @@
 		},
 
 		// Individual button callbacks
+		generateGraph: function ( ) { this.generate('XML'); },
 		generateCSV: function ( ) { this.generate('CSV'); },
 		generateHTML: function ( ) { this.generate('HTML'); },
 		generatePDF: function ( ) { this.generate('PDF'); },
@@ -194,6 +202,7 @@
 	_container_.addOnLoad(function() {
 		reportingEngine.populateReportsList();
 		dojo.event.connect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
+		dojo.event.connect(dojo.widget.byId('reportSubmitGraph'), "onClick", reportingEngine, 'generateGraph');
 		dojo.event.connect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.connect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');
 		dojo.event.connect(dojo.widget.byId('reportSubmitPDF'), "onClick", reportingEngine, 'generatePDF');
@@ -202,6 +211,7 @@
 
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
+		dojo.event.disconnect(dojo.widget.byId('reportSubmitGraph'), "onClick", reportingEngine, 'generateGraph');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitPDF'), "onClick", reportingEngine, 'generatePDF');
@@ -248,6 +258,11 @@
 
 			</div>
 
+			<div id="reportEngineFormStaticGraph" align="center">
+				<table border="0" style="width: auto;"><tr>
+					<td><div dojoType="Button" id="reportSubmitGraph"><img src="<!--{$htdocs}-->/images/xml.32x32.png" border="0" height="32" width="32" /><br/><!--{t}-->Graph<!--{/t}--></div></td>
+				</tr></table>
+			</div>
 		</div>
 
 	</div>
