@@ -140,7 +140,7 @@ _container_.addOnLoad(function(){
 		upload_queue_complete_callback : 'uploadQueueComplete',
 		upload_error_callback : 'uploadError',
 		upload_cancel_callback : 'uploadCancel',
-		auto_upload : false			
+		auto_upload : true
 	});
 });
 
