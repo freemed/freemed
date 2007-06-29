@@ -26,13 +26,14 @@ SOURCE data/schema/mysql/patient_emr.sql
 CREATE TABLE IF NOT EXISTS `photoid` (
 	p_stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	p_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	p_description		VARCHAR (250),
 	p_user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	id			SERIAL
 
 	#	Define keys
 
-	FOREIGN KEY		( p_patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( p_patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS photoid_Upgrade;
@@ -69,14 +70,14 @@ CREATE TRIGGER photoid_Delete
 CREATE TRIGGER photoid_Insert
 	AFTER INSERT ON photoid
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'photoid', NEW.p_patient, NEW.id, NEW.p_stamp, NEW.p_description, NEW.locked, NEW.p_user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'photoid', NEW.p_patient, NEW.id, NEW.p_stamp, NEW.p_description, NEW.p_user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER photoid_Update
 	AFTER UPDATE ON photoid
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.p_stamp, patient=NEW.p_patient, summary=NEW.p_description, locked=NEW.locked, user=NEW.p_user, status=NEW.active WHERE module='photoid' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.p_stamp, patient=NEW.p_patient, summary=NEW.p_description, user=NEW.p_user, status=NEW.active WHERE module='photoid' AND oid=NEW.id;
 	END;
 //
 
