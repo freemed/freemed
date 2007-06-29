@@ -54,6 +54,12 @@
 				error: function() { },
 				load: function( type, data, evt ) {
 					if (data) {
+						for ( var i=0; i<data.length; i++) {
+							if ( data[i].status_color ) {
+								var s = data[i].status;
+								data[i].status='<div style="width: 100%; background-color: ' + data[i].status_color + '; color: #999999; text-align: center;" >' + s + '</div>';	
+							}
+						}
 						dojo.widget.byId('dailyPatientAppointments').store.setData( data );
 					}
 				},
@@ -111,6 +117,7 @@
 		dojo.event.connect(dojo.widget.byId('atomicStatusWidget'), "onValueChanged", o, "setAtomicStatus");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
 		dojo.event.connect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
+		o.dailyCalendarSetDate();
 	});
 
 	_container_.addOnUnload(function() {
@@ -161,7 +168,7 @@
 			<th field="appointment_time" dataType="String" sort="asc">Time</th>
 			<th field="patient" dataType="String">Patient</th>
 			<th field="provider" dataType="String">Provider</th>
-			<th field="status" dataType="String">Status</th>
+			<th field="status" dataType="Html">Status</th>
 			<th field="note" dataType="String">Note</th>
 		</tr>
 	</thead>
