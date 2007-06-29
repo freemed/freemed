@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS `patienttag` (
 	id			SERIAL,
 
 	#	Define keys
-	KEY			( patient, tag ),
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	KEY			( patient, tag )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 #	Define aggregation table for set operations
