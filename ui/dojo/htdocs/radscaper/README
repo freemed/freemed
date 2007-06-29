@@ -1,2 +1,26 @@
 radscaper was downloaded from http://www.divinev.com/radscaper/ and is a
 freeware Java-based DICOM image viewer.
+
+Config example from http://www.divinev.com/radscaper/installation.html :
+
+==== An example of applet block embedded in HTML ====
+<HTML><BODY>
+<APPLET archive=radscaper.jar codebase=./ code=com.divinev.radscaper.Main.class width=100% height=100%>
+<PARAM NAME=Config VALUE=config.xml>
+<PARAM NAME=DicomImg1 VALUE="relative_path1/image1.dcm.zip">
+<PARAM NAME=DicomImg2 VALUE="http://third_party_hostname/path2/image2.dcm">
+<PARAM NAME=DicomImg2 VALUE="https://third_party_hostname/path3/image3.dcm">
+<PARAM NAME=DicomImg3 VALUE="C:\path4\image4.dcm">
+<PARAM NAME=DicomImg4 VALUE="\\server_name\path5\image5.dcm">
+<PARAM NAME=DcmImgLst VALUE="relative_path2/image_list_file">
+</APPLET>
+</BODY></HTML>
+==== An example of applet block embedded in HTML ====
+
+==== An example of image list file ====
+relative_path1/image1.dcm.zip
+http://localhost/path2/image2.dcm.gz
+https://third_party_hostname/path3/image3.dcm
+C:\path4\image4.dcm
+\\server_name\path5\image5.dcm
+==== An example of image list file ==== 
