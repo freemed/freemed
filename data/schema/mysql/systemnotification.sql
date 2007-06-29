@@ -31,8 +31,9 @@ CREATE TABLE IF NOT EXISTS `systemnotification` (
 	#	Default key
 
 	PRIMARY KEY		( id ),
-	KEY			( stamp, nuser ),
-	FOREIGN KEY		( nuser ) REFERENCES user.id ON DELETE CASCADE
+	KEY			( stamp, nuser )
+
+	, FOREIGN KEY		( nuser ) REFERENCES user.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS systemnotification_Upgrade;
