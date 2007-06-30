@@ -136,6 +136,47 @@ class ProviderModule extends SupportModule {
 		return $phy->fullName( $full );
 	} // end method fullName
 
+	// Method: internalPicklist
+	//
+	//	Internal provider picklist.
+	//
+	// Parameters:
+	//
+	//	$criteria - (optional) String to narrow search.
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function internalPicklist ( $criteria = NULL ) {
+		if (!(strpos($this->widget_hash, "##") === false)) {
+			$value = '';
+			$hash_split = explode('##', $this->widget_hash);
+			foreach ($hash_split AS $_k => $_v) {
+				if ($_k & 1) {
+					$c[] = "LOWER(". $_v .") LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
+				}
+			}
+		} else {
+			$c[] = "LOWER(".$this->widget_hash.") LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
+		}
+
+		$query = "SELECT * FROM ".$this->table_name.
+			" ".$this->FormJoinClause()." ".
+			( is_array($c) ? " WHERE ".join(' OR ',$c) : "" ).
+			" AND phyref='no' ".
+			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
+			" LIMIT 20";
+		//syslog(LOG_INFO, $query);
+		$result = $GLOBALS['sql']->queryAll($query);
+		if (!count($result)) { return array(); }
+		foreach ($result AS $r) {
+			$return[$r['id']] = trim( $this->to_text( $r ) );
+		}
+		return $return;
+	} // end method picklist
+
+
 } // end class ProviderModule
 
 register_module ("ProviderModule");
