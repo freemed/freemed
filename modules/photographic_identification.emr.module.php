@@ -131,8 +131,15 @@ class PhotographicIdentification extends EMRModule {
 	//
 	//	$patient - Patient ID
 	//
-	public function GetPhotoID ( $patient ) {
-		$pic = $GLOBALS['sql']->queryOne( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
+	//	$force_id - (optional) Forced ID, for viewing past photos.
+	//
+	public function GetPhotoID ( $patient, $force_id = false ) {
+		if ( ! $force_id ) {
+			$pic = $GLOBALS['sql']->queryOne( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
+		} else {
+			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+			$pic = $pds->ResolveFilename( $patient+0, get_class($this), $force_id+0 );
+		}
 		if ( ! $pic ) { $pic = 'data/store/no-image.png'; }
 		ob_start();
 		readfile( $pic );
