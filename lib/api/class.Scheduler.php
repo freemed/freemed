@@ -978,8 +978,6 @@ class Scheduler {
 		}
 
 		// Set add and modify
-		$fields['calcreated'] = SQL__NOW;
-		$fields['calmodified'] = SQL__NOW;
 		$fields['caldateof'] = $this->ImportDate( $fields['caldateof'] );
 
 		$query = $GLOBALS['sql']->insert_query (
@@ -990,7 +988,7 @@ class Scheduler {
 		if (!$result) {
 			return false; 
 		} else {
-			return $GLOBALS['sql']->last_record ( $result );
+			return $GLOBALS['sql']->lastInsertId ( 'scheduler', 'id' );
 		}
 	} // end method SetAppointment
 	public function set_appointment ( $data = NULL ) { return $this->SetAppointment ( $data ); }
