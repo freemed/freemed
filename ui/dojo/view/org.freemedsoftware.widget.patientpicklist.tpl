@@ -34,6 +34,41 @@
 
 *}-->
 
+<script language="javascript">
+
+	var <!--{$varname|replace:'.':''}--> = {
+		onAssign: function ( id ) {
+			// Don't assign if we have no value
+			try {
+				if ( parseInt( id ) < 1 ) { return false; }
+			} catch ( err ) { }
+
+			// Do reverse lookup from assignment
+			dojo.io.bind({
+				method: "POST",
+				content: {
+					param0: id
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.api.PatientInterface.ToText",
+				load: function ( type, data, evt ) {
+					dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id );
+					dojo.widget.byId('<!--{$varname|escape}-->_widget').setLabel( data );
+					document.getElementById( '<!--{$varname|escape}-->' ).value = id;
+				},
+				mimetype: "text/json"
+			});
+		}
+	};
+
+	_container_.addOnLoad(function(){
+		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
+	});
+	_container_.addOnUnload(function(){
+		dojo.event.topic.unsubscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
+	});
+
+</script>
+
 <input dojoType="Select" value=""
 	autocomplete="false"
 	id="<!--{$varname|escape}-->_widget" widgetId="<!--{$varname|escape}-->_widget"
