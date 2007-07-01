@@ -59,7 +59,8 @@ class CptCodes extends SupportModule {
 
 		$this->list_view = array (
 			__("Procedural Code") => "cptcode",
-			__("Internal Description") => "cptnameint"
+			__("Internal Description") => "cptnameint",
+			__("External Description") => "cptnameext"
 		);
 	
 		// Run parent constructor
