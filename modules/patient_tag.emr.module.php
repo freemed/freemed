@@ -153,6 +153,7 @@ class PatientTag extends SupportModule {
 	public function TagsForPatient ( $patient ) {
 		$query = "SELECT tags FROM patienttaglookup WHERE patient=".$GLOBALS['sql']->quote( $patient );
 		$return = $GLOBALS['sql']->queryOne( $query );
+		if (strlen($return) < 3) { return array(); }
 		return explode( ',', $return );
 	} // end method TagsForPatient
 
