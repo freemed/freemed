@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 
 	#	Define keys
 
-	KEY			( patient, module, oid )
+	KEY			( patient, module, oid ),
+	KEY			( module, oid )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

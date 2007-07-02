@@ -287,15 +287,7 @@ class EMRModule extends BaseModule {
 		if (!is_array($this->acl)) {
 			return freemed::acl_patient('emr', $type, $patient);
 		} else {
-			$this_user = CreateObject('org.freemedsoftware.core.User');
-			$xs = explode(',', $this_user->local_record['userlevel']);
-			foreach ($xs AS $x) {
-				// Admin has universal access
-				if ($x == 'admin') { return true; }
-				foreach ($this->acl AS $acl) {
-					if ($acl == $x) { return true; }
-				}
-			}
+			return true;
 		}
 		return false;
 	} // end method acl_access
@@ -340,9 +332,7 @@ class EMRModule extends BaseModule {
 	//	<add_post>
 	// 
 	public function add ( $data ) {
-		if ( !$this->acl_access( 'add', $patient ) ) {
-			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
-		}
+		freemed::acl_enforce( 'emr', 'add' );
 
 		$ourdata = $this->prepare( (array) $data );
 		$this->add_pre( &$ourdata );
@@ -735,15 +725,17 @@ class EMRModule extends BaseModule {
 	//
 	//	$patient - Id of patient record
 	//
+	//	$param - (optional) Qualifying parameter
+	//
 	// Returns:
 	//
-	//	Associative array of dates, where key = value for all elements.
+	//	Array of arrays, [ k, v ]
 	//
 	public function RecentDates ( $patient, $param = NULL ) {
-		$query = "SELECT DISTINCT(".$this->date_field.") FROM ".$this->table_name." ORDER BY ".$this->date_field." DESC";
-		$res = $GLOBALS['sql']->queryCol( $query ); 
-		foreach ( $res AS $v ) {
-			$result[$v] = $v;
+		$query = "SELECT DISTINCT(".$this->date_field.") AS dt, p.summary AS summary FROM ".$this->table_name." t LEFT OUTER JOIN patient_emr p ON ( p.module = ".$GLOBALS['sql']->quote( $this->table_name )." AND p.oid = t.id ) ORDER BY ".$this->date_field." DESC LIMIT 10";
+		$res = $GLOBALS['sql']->queryAll( $query ); 
+		foreach ( $res AS $r ) {
+			$result[] = array ( "$r[dt] - $r[summary]", $r[dt] );
 		}
 		return $result;
 	} // end method RecentDates

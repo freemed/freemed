@@ -23,7 +23,10 @@
 *}-->
 
 <script type="text/javascript">
+	djConfig.dojoRichTextFrameUrl = "<!--{$htdocs}-->/dojo/src/widget/templates/richtextframe.html";
 	dojo.require( 'dojo.event.*' );
+	dojo.require( 'dojo.widget.RichText' );
+
 
 	var notes = {
 		handleResponse: function ( data ) {
@@ -163,7 +166,7 @@
 			autocomplete="false"
 			id="prevProgressNoteDate_widget" widgetId="prevProgressNoteDate_widget"
 			setValue="if (arguments[0]) { document.getElementById('prevProgressNoteDate').value = arguments[0]; }"
-			style="width: 100px;"
+			style="width: 300px;"
 			dataUrl="<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.RecentDates?param0=<!--{$patient|escape}-->&param1=%{searchString}"
 			mode="remote"
 			/></td></tr></table></td>
