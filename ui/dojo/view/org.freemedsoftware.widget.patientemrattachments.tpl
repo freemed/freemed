@@ -87,7 +87,7 @@
 					load: function( type, data, evt ) {
 						if (data) {
 							// Force reload
-							patientLoadEmrAttachments();
+							patientEmrAttachments.initialLoad();
 						} else {
 							alert('<!--{t}-->Failed to lock record.<!--{/t}-->');
 						}
@@ -116,6 +116,12 @@
 		setFilters: function ( ) {
 			dojo.widget.byId('patientEmrAttachments').setFilter('date_mdy', this.emrDateFilter);
 			dojo.widget.byId('patientEmrAttachments').setFilter('type', this.emrModuleFilter);
+			return true;
+		},
+		resetFilters: function ( ) {
+			dojo.widget.byId( 'emrSection_widget' ).setValue( '' );
+			dojo.widget.byId( 'emrSection_widget' ).setLabel( '' );
+			dojo.widget.byId( 'patientEmrAttachments' ).clearFilters();
 			return true;
 		},
 		emrDateFilter: function ( dt ) { 
@@ -201,67 +207,75 @@
 				return false;
 			}
 			freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + m.toLowerCase() + '.form?patient=<!--{$patient|escape}-->' );
+		},
+		initialLoad: function ( ) {
+			// Initial data load
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: '<!--{$patient|escape}-->'
+	
+				},
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.PatientInterface.EmrAttachmentsbyPatient',
+				error: function() { },
+				load: function( type, data, evt ) {
+					if (typeof(data) == 'object') {
+						for (i=0; i<data.length; i++) {	
+							data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
+							data[i]['actions'] = '';
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
+							if (data[i]['locked'] == 0) {
+								// All unlocked actions go here:
+								<!--{acl category="emr" permission="lock"}-->
+								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
+								<!--{/acl}-->
+								<!--{acl category="emr" permission="modify"}-->
+								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
+								<!--{/acl}-->
+							} else {
+								// All locked stuff goes here:
+								data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}-->\" />&nbsp;";
+							}
+							if (data[i]['annotation'] != null) {
+								data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}-->\" /></a>";
+							}
+							// Common things
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;";
+						}
+						dojo.widget.byId('patientEmrAttachments').store.setData( data );
+						try {
+							var x = dojo.widget.byId( 'freemedPatientContent' );
+							var node = x.containerNode || x.domNode;
+							var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'patientParamBar' ).style.height + document.getElementById( 'patientEmrAttachmentsHead' ).style.height + 100 );
+							document.getElementById( 'patientEmrAttachmentsBody' ).style.height = h + 'px';
+						} catch ( e ) { }
+					}
+				},
+				mimetype: "text/json"
+			});
 		}
 	};
 	
-	function patientLoadEmrAttachments ( ) {
-		// Initial data load
-		dojo.io.bind({
-			method: 'POST',
-			content: {
-				param0: '<!--{$patient|escape}-->'
-
-			},
-			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.PatientInterface.EmrAttachmentsbyPatient',
-			error: function() { },
-			load: function( type, data, evt ) {
-				if (typeof(data) == 'object') {
-					for (i=0; i<data.length; i++) {	
-						data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
-						data[i]['actions'] = '';
-						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
-						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
-						if (data[i]['locked'] == 0) {
-							// All unlocked actions go here:
-							<!--{acl category="emr" permission="lock"}-->
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
-							<!--{/acl}-->
-							<!--{acl category="emr" permission="modify"}-->
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
-							<!--{/acl}-->
-						} else {
-							// All locked stuff goes here:
-							data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}-->\" />&nbsp;";
-						}
-						if (data[i]['annotation'] != null) {
-							data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}-->\" /></a>";
-						}
-						// Common things
-						data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;";
-					}
-					dojo.widget.byId('patientEmrAttachments').store.setData( data );
-					try {
-						var x = dojo.widget.byId( 'freemedPatientContent' );
-						var node = x.containerNode || x.domNode;
-						var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'patientParamBar' ).style.height + document.getElementById( 'patientEmrAttachmentsHead' ).style.height + 100 );
-						document.getElementById( 'patientEmrAttachmentsBody' ).style.height = h + 'px';
-					} catch ( e ) { }
-				}
-			},
-			mimetype: "text/json"
-		});
-
-	}
-
 	_container_.addOnLoad(function() {
-		patientLoadEmrAttachments();
+		dojo.widget.byId( 'emrSection_widget' ).setLabel( '' );
+		dojo.widget.byId( 'emrSection_widget' ).setValue( '' );
+		patientEmrAttachments.initialLoad( );
 		dojo.event.connect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
 		dojo.event.connect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
+		dojo.event.connect( dojo.widget.byId('emrResetButton'), 'onClick', patientEmrAttachments, 'resetFilters' );
+		dojo.event.connect( dojo.widget.byId('emrSection_widget'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.connect( dojo.widget.byId('emrRangeBegin'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.connect( dojo.widget.byId('emrRangeEnd'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 	});
 
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
 		dojo.event.disconnect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
+		dojo.event.disconnect( dojo.widget.byId('emrResetButton'), 'onClick', patientEmrAttachments, 'resetFilters' );
+		dojo.event.disconnect( dojo.widget.byId('emrSection_widget'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.disconnect( dojo.widget.byId('emrRangeBegin'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.disconnect( dojo.widget.byId('emrRangeEnd'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 	});
 
 </script>
@@ -269,11 +283,11 @@
 <div id="patientParamBar">
 <table width="100%" border="0">
 <tr>
-	<td><button dojoType="button" onClick="dojo.widget.byId('patientEmrAttachments').clearFilters();"><!--{t}-->Reset<!--{/t}--></button></td>
+	<td><button dojoType="button" id="emrResetButton" widgetId="emrResetButton"><!--{t}-->Reset<!--{/t}--></button></td>
 	<td><!--{t}-->Date Range:<!--{/t}-->
-		<input dojoType="DropdownDatePicker" id="emrRangeBegin" />
+		<input dojoType="DropdownDatePicker" id="emrRangeBegin" value="" />
 		-
-		<input dojoType="DropdownDatePicker" id="emrRangeEnd" />
+		<input dojoType="DropdownDatePicker" id="emrRangeEnd" value="" />
 	</td>
 	<td>
 		<input dojoType="Select"
@@ -286,7 +300,6 @@
 		<input type="hidden" id="emrSection" name="emrSection" value="" />
 	</td>
 	<td align="left"><button dojoType="button" id="emrAddButton" widgetId="emrAddButton"><!--{t}-->Add<!--{/t}--></button></td>
-	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.setFilters();"><!--{t}-->Apply<!--{/t}--></button></td>
 	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.printMultiple();"><!--{t}-->Print<!--{/t}--></button></td>
 </tr>
 </table>
