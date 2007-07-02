@@ -67,6 +67,7 @@ class Immunizations extends EMRModule {
 		);
 
 		// Set associations
+		$this->_SetAssociation('EmrModule');
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'eoc');
 
@@ -76,10 +77,18 @@ class Immunizations extends EMRModule {
 
 	protected function add_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
+		if ( $data['dateof'] ) {
+			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+			$data['dateof'] = $s->ImportDate( $data['dateof'] );
+		}
 	}
 
 	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
+		if ( $data['dateof'] ) {
+			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+			$data['dateof'] = $s->ImportDate( $data['dateof'] );
+		}
 	}
 
 } // end class Immunizations

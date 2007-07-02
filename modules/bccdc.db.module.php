@@ -34,6 +34,7 @@ class Bccdc extends SupportModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name = "bccdc";
+	var $widget_hash = '##description## (##agent_code##)';
 
 	public function __construct () {
 		// Call parent constructor
