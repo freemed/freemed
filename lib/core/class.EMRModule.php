@@ -332,7 +332,7 @@ class EMRModule extends BaseModule {
 	//	<add_post>
 	// 
 	public function add ( $data ) {
-		freemed::acl_enforce( 'emr', 'add' );
+		freemed::acl_enforce( 'emr', 'entry' );
 
 		$ourdata = $this->prepare( (array) $data );
 		$this->add_pre( &$ourdata );
@@ -358,9 +358,7 @@ class EMRModule extends BaseModule {
 	//	$id - Record id
 	//
 	public function del ( $id ) {
-		if ( !$this->acl_access( 'delete', $patient ) ) {
-			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
-		}
+		freemed::acl_enforce( 'emr', 'modify' );
 
 		// If there is an override ...
 		if (!freemed::lock_override()) {
@@ -388,9 +386,7 @@ class EMRModule extends BaseModule {
 	//	Boolean, success.
 	//
 	public function mod ( $data ) {
-		if ( !$this->acl_access( 'modify', $patient ) ) {
-			trigger_error(__("You do not have access to do that."), E_USER_ERROR);
-		}
+		freemed::acl_enforce( 'emr', 'modify' );
 
 		if ( !is_array($data) and !is_object($data) ) {
 			syslog(LOG_INFO, get_class($this)."| no data presented");
