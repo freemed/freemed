@@ -35,6 +35,7 @@
 </style>
 
 <script type="text/javascript">
+	dojo.require("dojo.date");
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.FilteringTable");
 	dojo.require('dojo.widget.DropdownDatePicker');
@@ -65,6 +66,16 @@
 				},
 				mimetype: "text/json"
 			});
+		},
+		prevDay: function ( ) {
+			var d = dojo.widget.byId('dailyAppointmentsDate');
+			var prevDate = dojo.date.add( d.value, dojo.date.dateParts.DAY, -1 );
+			d.setValue( prevDate );
+		},
+		nextDay: function ( ) {
+			var d = dojo.widget.byId('dailyAppointmentsDate');
+			var nextDate = dojo.date.add( d.value, dojo.date.dateParts.DAY, 1 );
+			d.setValue( nextDate );
 		},
 		setAtomicStatus: function ( evt ) {
 			if ( parseInt(evt) > 0 ) {
@@ -117,6 +128,8 @@
 		dojo.event.connect(dojo.widget.byId('atomicStatusWidget'), "onValueChanged", o, "setAtomicStatus");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
 		dojo.event.connect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
+		dojo.event.connect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
+		dojo.event.connect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
 		o.dailyCalendarSetDate();
 	});
 
@@ -124,14 +137,22 @@
 		dojo.event.disconnect(dojo.widget.byId('atomicStatusWidget'), "onValueChanged", o, "setAtomicStatus");
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
 		dojo.event.disconnect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
+		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
+		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
 	});
 </script>
 
 <div align="center" class="dateSelectionHeader">
 <table border="0">
 	<tr>
-		<td><b>Today's Patients</b></td>
-		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" widgetId="dailyAppointmentsDate" /></td>
+		<td><b><!--{t}-->Today's Patients<!--{/t}--></b></td>
+		<td>
+		<table border="0" style="width: auto;"><tr>
+		<td><button dojoType="Button" id="dailyAppointmentPrevDay" widgetId="dailyAppointmentPrevDay">&lt;</button></td>
+		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" widgetId="dailyAppointmentsDate" />
+		<td><button dojoType="Button" id="dailyAppointmentNextDay" widgetId="dailyAppointmentNextDay">&gt;</button></td>
+		</table>
+		</td>
 	</tr>
 	<tr>
 		<td colspan="2" align="center">
@@ -164,12 +185,11 @@
 	 valueField="scheduler_id" border="0" multiple="false">
 	<thead>
 		<tr>
-			<th field="date_of_mdy" dataType="Date">Date</th>
-			<th field="appointment_time" dataType="String" sort="asc">Time</th>
-			<th field="patient" dataType="String">Patient</th>
-			<th field="provider" dataType="String">Provider</th>
-			<th field="status" dataType="Html">Status</th>
-			<th field="note" dataType="String">Note</th>
+			<th field="appointment_time" dataType="String" sort="asc"><!--{t}-->Time<!--{/t}--></th>
+			<th field="patient" dataType="String"><!--{t}-->Patient<!--{/t}--></th>
+			<th field="provider" dataType="String"><!--{t}-->Provider<!--{/t}--></th>
+			<th field="status" dataType="Html"><!--{t}-->Status<!--{/t}--></th>
+			<th field="note" dataType="String"><!--{t}-->Note<!--{/t}--></th>
 		</tr>
 	</thead>
 	<tbody>
