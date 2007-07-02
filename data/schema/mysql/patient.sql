@@ -184,6 +184,34 @@ CREATE TRIGGER patient_Update
 					OLD.ptmarital
 				);
 		END IF;
+		IF
+				OLD.ptpcp<>NEW.ptpcp OR
+				OLD.ptdoc<>NEW.ptdoc OR
+				OLD.ptphy1<>NEW.ptphy1 OR
+				OLD.ptphy2<>NEW.ptphy2 OR
+				OLD.ptphy3<>NEW.ptphy3 OR
+				OLD.ptphy4<>NEW.ptphy4 OR
+				OLD.ptrefdoc<>NEW.ptrefdoc THEN
+			INSERT INTO `patient_prior_provider` (
+					patient,
+					ptdoc,
+					ptrefdoc,
+					ptpcp,
+					ptphy1,
+					ptphy2,
+					ptphy3,
+					ptphy4
+				) VALUES (
+					NEW.id,
+					OLD.ptdoc,
+					OLD.ptrefdoc,
+					OLD.ptpcp,
+					OLD.ptphy1,
+					OLD.ptphy2,
+					OLD.ptphy3,
+					OLD.ptphy4
+				);
+		END IF;
 	END;
 //
 DELIMITER ;
@@ -220,3 +248,21 @@ CREATE TABLE IF NOT EXISTS `patient_prior` (
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
+	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+
+	ptdoc			VARCHAR (150),
+	ptrefdoc		VARCHAR (150),
+	ptpcp			VARCHAR (150),
+	ptphy1			VARCHAR (150),
+	ptphy2			VARCHAR (150),
+	ptphy3			VARCHAR (150),
+	ptphy4			VARCHAR (150),
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+	#	Define keys
+
+	PRIMARY KEY		( id )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+) ENGINE=InnoDB;
