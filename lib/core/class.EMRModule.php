@@ -732,7 +732,7 @@ class EMRModule extends BaseModule {
 	//	Array of arrays, [ k, v ]
 	//
 	public function RecentDates ( $patient, $param = NULL ) {
-		$query = "SELECT DISTINCT(".$this->date_field.") AS dt, p.summary AS summary FROM ".$this->table_name." t LEFT OUTER JOIN patient_emr p ON ( p.module = ".$GLOBALS['sql']->quote( $this->table_name )." AND p.oid = t.id ) ORDER BY ".$this->date_field." DESC LIMIT 10";
+		$query = "SELECT DISTINCT(".$this->date_field.") AS dt, p.summary AS summary FROM ".$this->table_name." t LEFT OUTER JOIN patient_emr p ON ( p.module = ".$GLOBALS['sql']->quote( $this->table_name )." AND p.oid = t.id ) WHERE t.".$this->patient_field." = ".$GLOBALS['sql']->quote( $patient )." ORDER BY ".$this->date_field." DESC LIMIT 10";
 		$res = $GLOBALS['sql']->queryAll( $query ); 
 		foreach ( $res AS $r ) {
 			$result[] = array ( "$r[dt] - $r[summary]", $r[dt] );
