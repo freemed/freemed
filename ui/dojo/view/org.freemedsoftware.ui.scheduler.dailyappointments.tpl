@@ -32,6 +32,10 @@
 		background-color: #aaaaff;
 		}
 
+	.limitText {
+		font-size: 8pt;
+		}
+
 </style>
 
 <script type="text/javascript">
@@ -41,6 +45,7 @@
 	dojo.require('dojo.widget.DropdownDatePicker');
 
 	var o = {
+		limitStatus: 1,
 		dailyCalendarSetDate: function ( ) {
 			var date = dojo.widget.byId('dailyAppointmentsDate').inputNode.value;
 			// Initial data load
@@ -48,7 +53,7 @@
 				method: 'POST',
 				content: {
 					param0: date,
-					param1: '<!--{$SESSION.authdata.user_record.userrealphy}-->'
+					param1: o.limitStatus ? '<!--{$SESSION.authdata.user_record.userrealphy}-->' : ''
 	
 				},
 				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointments',
@@ -71,11 +76,13 @@
 			var d = dojo.widget.byId('dailyAppointmentsDate');
 			var prevDate = dojo.date.add( d.value, dojo.date.dateParts.DAY, -1 );
 			d.setValue( prevDate );
+			d.value = prevDate;
 		},
 		nextDay: function ( ) {
 			var d = dojo.widget.byId('dailyAppointmentsDate');
 			var nextDate = dojo.date.add( d.value, dojo.date.dateParts.DAY, 1 );
 			d.setValue( nextDate );
+			d.value = nextDate;
 		},
 		setAtomicStatus: function ( evt ) {
 			if ( parseInt(evt) > 0 ) {
@@ -117,6 +124,11 @@
 				alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
 			}
 		},
+		onLimitChange: function ( ) {
+			var w = document.getElementById( 'dailyAppointmentOnlyMe' );
+			o.limitStatus = w.checked ? 1 : 0;
+			o.dailyCalendarSetDate(); 	// refresh view
+		},
 		resetAtomicStatus: function () {
 			dojo.widget.byId('atomicStatusWidget').setLabel('');
 			dojo.widget.byId('atomicStatusWidget').setValue('');
@@ -131,6 +143,7 @@
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
 		o.dailyCalendarSetDate();
+		document.getElementById( 'dailyAppointmentOnlyMe' ).onchange = o.onLimitChange;
 	});
 
 	_container_.addOnUnload(function() {
@@ -151,6 +164,7 @@
 		<td><button dojoType="Button" id="dailyAppointmentPrevDay" widgetId="dailyAppointmentPrevDay">&lt;</button></td>
 		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" widgetId="dailyAppointmentsDate" />
 		<td><button dojoType="Button" id="dailyAppointmentNextDay" widgetId="dailyAppointmentNextDay">&gt;</button></td>
+		<td style="border: 1px dashed #000000;"><input type="checkbox" id="dailyAppointmentOnlyMe" checked="checked" /><label for="dailyAppointmentOnlyMe"><small><!--{t}-->Limit to provider<!--{/t}--></small></label></td>
 		</table>
 		</td>
 	</tr>
