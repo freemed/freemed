@@ -111,10 +111,25 @@
 	<tr>
 		<td align="right"><!--{t}-->Duration<!--{/t}--></td>
 		<td><select name="calduration" id="calduration">
-			<option>15</option>
-			<option>30</option>
-			<option>45</option>
-			<option>60</option>
+			<option value="5">0:05</option>
+			<option value="10">0:10</option>
+			<option value="15">0:15</option>
+			<option value="20">0:20</option>
+			<option value="25">0:25</option>
+			<option value="30">0:30</option>
+			<option value="45">0:45</option>
+			<option value="60">1:00</option>
+			<option value="75">1:15</option>
+			<option value="90">1:30</option>
+			<option value="105">1:45</option>
+			<option value="120">2:00</option>
+			<option value="150">2:30</option>
+			<option value="180">3:00</option>
+			<option value="240">4:00</option>
+			<option value="300">5:00</option>
+			<option value="360">6:00</option>
+			<option value="420">7:00</option>
+			<option value="480">8:00</option>
 		</select></td>
 	</tr>
 
