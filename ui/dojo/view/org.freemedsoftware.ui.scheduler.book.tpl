@@ -135,7 +135,7 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Provider<!--{/t}--></td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="calphysician"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="calphysician" methodName="internalPicklist"}--></td>
 	</tr>
 
 	<tr>
