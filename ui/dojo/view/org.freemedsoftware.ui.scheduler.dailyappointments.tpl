@@ -199,7 +199,7 @@
 	 valueField="scheduler_id" border="0" multiple="false">
 	<thead>
 		<tr>
-			<th field="appointment_time" dataType="String" sort="asc"><!--{t}-->Time<!--{/t}--></th>
+			<th field="appointment_time" dataType="String"><!--{t}-->Time<!--{/t}--></th>
 			<th field="duration" dataType="String"><!--{t}-->Duration<!--{/t}--></th>
 			<th field="patient" dataType="String"><!--{t}-->Patient<!--{/t}--></th>
 			<th field="provider" dataType="String"><!--{t}-->Provider<!--{/t}--></th>
