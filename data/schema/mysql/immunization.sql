@@ -30,14 +30,14 @@ CREATE TABLE IF NOT EXISTS `immunization` (
 	eoc			INT UNSIGNED,
 	immunization		INT UNSIGNED NOT NULL DEFAULT 0,
 	notes			TEXT,
-	locked			INT UNSIGNED,
+	locked			INT UNSIGNED NOT NULL DEFAULT 0,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
 
 	#	Define keys
-	KEY			( patient, dateof, provider ),
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	KEY			( patient, dateof, provider )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS immunization_Upgrade;

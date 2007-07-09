@@ -28,11 +28,11 @@ CREATE TABLE IF NOT EXISTS `workflow_status` (
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	status_type		INT UNSIGNED NOT NULL,
 	status_completed	BOOL DEFAULT FALSE,
-	id			SERIAL,
+	id			SERIAL
 
 	#	Define keys
 
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+#	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
@@ -40,11 +40,11 @@ CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	completed		TEXT,
 	uncompleted		TEXT,
-	id			SERIAL,
+	id			SERIAL
 
 	#	Define keys
 
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+#	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 DROP PROCEDURE IF EXISTS patientWorkflowStatusUpdateLookup;
