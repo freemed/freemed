@@ -25,7 +25,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>FreeMED v<!--{$VERSION}--></title>
+<title>FreeMED v<!--{$VERSION}--><!--{if $svnVersion}--> (build <!--{$svnVersion}-->)<!--{/if}--></title>
 
 <!--{* ***** Style Elements ***** *}-->
 
@@ -269,7 +269,7 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 					<img src="<!--{$htdocs}-->/images/FreeMEDLogoTransparent.png" alt="" height="37" width="120" border="0" />
 				</td>
 				<td align="middle" width="33%">
-					<font size="2" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">Version <!--{$VERSION}--></font><br/>
+					<font size="2" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">Version <!--{$VERSION}--><!--{if $svnVersion}--> (build <!--{$svnVersion}-->)<!--{/if}--></font><br/>
 					<font size="1" face="Trebuchet MS, Geneva, Arial, Helvetica, SunSans-Regular, sans-serif">&copy; 1999-2007 by the FreeMED Software Foundation</font>
 				</td>
 				<td align="middle" width="33%">

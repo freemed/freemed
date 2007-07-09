@@ -40,6 +40,11 @@ class controller_org_freemedsoftware_controller_mainframe extends Controller {
 			break;
 
 			default:
+			if ( file_exists( dirname(__FILE__).'/../../.svn/entries' ) ) {
+				$this->smarty->assign( 'svnVersion', trim( `svn info | grep Revision | cut -d: -f2` ) );
+			} else {
+				$this->smarty->assign( 'svnVersion', '' );
+			}
 			$this->load('org.freemedsoftware.ui.mainframe');
 			break;
 		}
