@@ -23,5 +23,5 @@
 CREATE TABLE IF NOT EXISTS `enctype` (
 	enclosure		VARCHAR (50) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

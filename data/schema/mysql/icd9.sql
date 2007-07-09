@@ -36,5 +36,5 @@ CREATE TABLE IF NOT EXISTS `icd9` (
 	#	Define keys
 
 	KEY			( icd9code, icd9descrip )
-) ENGINE=InnoDB;
+);
 

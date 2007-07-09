@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `translation` (
 
 	KEY			( tpatient, tmodule, tid, tlanguage ),
 	FOREIGN KEY		( tpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS translation_Upgrade;
 DELIMITER //

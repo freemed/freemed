@@ -35,5 +35,5 @@ CREATE TABLE IF NOT EXISTS `claimlog` (
 	#	Define keys
 
 	KEY			( clprocedure, clpayrec )
-) ENGINE=InnoDB;
+);
 

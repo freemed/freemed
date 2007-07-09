@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	#	Define keys
 	PRIMARY KEY		( id ),
 	KEY			( phylname, phyfname, phymname )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS physician_Upgrade;
 DELIMITER //

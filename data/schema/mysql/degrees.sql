@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS `degrees` (
 	degname			VARCHAR (50) NOT NULL,
 	degdate			DATE, 
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

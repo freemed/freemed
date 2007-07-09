@@ -37,5 +37,5 @@ CREATE TABLE IF NOT EXISTS `loinc` (
 
 	PRIMARY KEY			( loinc_num ),
 	KEY				( component, system, shortname )
-) ENGINE=InnoDB;
+);
 

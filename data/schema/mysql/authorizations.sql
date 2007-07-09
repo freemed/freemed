@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `authorizations` (
 
 	KEY			( authpatient, authdtbegin, authdtend ),
 	FOREIGN KEY		( authpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS authorizations_Upgrade;
 DELIMITER //

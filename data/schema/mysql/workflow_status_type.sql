@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `workflow_status_type` (
 	status_module		VARCHAR (250) NOT NULL,
 	active			BOOL NOT NULL DEFAULT TRUE,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS workflow_status_type_Upgrade;
 DELIMITER //

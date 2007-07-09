@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS `ptstatus` (
 	ptstatus		CHAR (3) NOT NULL,
 	ptstatusdescrip		VARCHAR (50) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

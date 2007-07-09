@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `current_problems` (
 
 	KEY			( ppatient, pdate ),
 	FOREIGN KEY		( ppatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS current_problems_Upgrade;
 DELIMITER //

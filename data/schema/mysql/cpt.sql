@@ -38,5 +38,5 @@ CREATE TABLE IF NOT EXISTS `cpt` (
 	cpttos			TEXT,
 	cpttosprfx		TEXT,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

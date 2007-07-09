@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	FOREIGN KEY		( procpatient ) REFERENCES patient.id ON DELETE CASCADE,
 	FOREIGN KEY		( proccpt ) REFERENCES cpt.id,
 	FOREIGN KEY		( procphysician ) REFERENCES physician.id
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS procrec_Upgrade;
 DELIMITER //

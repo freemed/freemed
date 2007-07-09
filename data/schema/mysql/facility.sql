@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `facility` (
 	psrx12id		VARCHAR (24),
 	psrx12idtype		VARCHAR (10),
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS facility_Upgrade;
 DELIMITER //

@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `eoc` (
 
 	KEY			( eocpatient, eocstartdate, eocdtlastsimilar ),
 	FOREIGN KEY		( eocpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS eoc_Upgrade;
 DELIMITER //

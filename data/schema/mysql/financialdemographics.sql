@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `financialdemographics` (
 
 	KEY			( fdpatient, fdtimestamp ),
 	FOREIGN KEY		( fdpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS financialdemographics_Upgrade;
 DELIMITER //

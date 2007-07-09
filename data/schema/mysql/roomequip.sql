@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS `roomequip` (
 	reqdescrip		VARCHAR (150),
 	reqmovable		INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

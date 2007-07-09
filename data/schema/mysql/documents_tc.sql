@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS `documents_tc` (
 	#	Define keys
 
 	KEY			( type, category )
-) ENGINE=InnoDB;
+);
 

@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	#	Define keys
 	KEY			( ptlname, ptfname, ptmname, ptid, ptdob ),
 	PRIMARY KEY		( id )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS patient_Upgrade;
 DELIMITER //
@@ -246,7 +246,7 @@ CREATE TABLE IF NOT EXISTS `patient_prior` (
 
 	PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
 	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
@@ -265,4 +265,4 @@ CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
 
 	PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);

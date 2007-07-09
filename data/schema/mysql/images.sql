@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 
 	KEY			( imagepat, imagetype, imagecat, imagedt ),
 	FOREIGN KEY		( imagepat ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS images_Upgrade;
 DELIMITER //

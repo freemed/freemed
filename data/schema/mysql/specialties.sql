@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS `specialties` (
 	specdesc		VARCHAR (100),
 	specdatestamp		DATE,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

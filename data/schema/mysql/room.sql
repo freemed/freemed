@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `room` (
 	# Define keys
 
 	KEY			( roomname, roompos )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS room_Upgrade;
 DELIMITER //

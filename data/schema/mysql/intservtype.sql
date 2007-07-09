@@ -23,5 +23,5 @@
 CREATE TABLE IF NOT EXISTS `intservtype` (
 	intservtype		VARCHAR (15) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

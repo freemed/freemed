@@ -35,5 +35,5 @@ CREATE TABLE IF NOT EXISTS `modules` (
 	module_meta			TEXT,
 	module_hidden			TINYINT (3) NOT NULL DEFAULT 0,
 	PRIMARY KEY 			( module_uid )
-) ENGINE=InnoDB;
+);
 

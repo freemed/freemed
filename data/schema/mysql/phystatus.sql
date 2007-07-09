@@ -23,5 +23,5 @@
 CREATE TABLE IF NOT EXISTS `phystatus` (
 	phystatus		VARCHAR (30) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

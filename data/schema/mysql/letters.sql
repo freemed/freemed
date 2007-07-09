@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `letters` (
 
 	KEY			( letterpatient, lettersent, letterfrom, lettereoc ),
 	FOREIGN KEY		( letterpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS letters_Upgrade;
 DELIMITER //

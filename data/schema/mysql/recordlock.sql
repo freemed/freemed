@@ -31,5 +31,5 @@ CREATE TABLE IF NOT EXISTS `recordlock` (
 	#	Define keys
 
 	KEY			( locktable, lockrow, lockstamp )
-) ENGINE=InnoDB;
+);
 

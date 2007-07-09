@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 
 	PRIMARY KEY			( report_uuid ),
 	KEY				( report_name, report_locale )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS reporting_Upgrade;
 DELIMITER //

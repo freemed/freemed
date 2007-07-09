@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `previous_operations` (
 
 	KEY			( opatient, odate ),
 	FOREIGN KEY		( opatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS previous_operations_Upgrade;
 DELIMITER //

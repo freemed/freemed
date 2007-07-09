@@ -26,5 +26,5 @@ CREATE TABLE IF NOT EXISTS `appttemplate` (
 	atequipment		BLOB,
 	atcolor			CHAR (7) NOT NULL DEFAULT '#ffffff',
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

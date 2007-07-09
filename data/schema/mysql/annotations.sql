@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `annotations` (
 
 	KEY			( apatient, amodule, aid ),
 	FOREIGN KEY		( apatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS annotations_Upgrade;
 DELIMITER //

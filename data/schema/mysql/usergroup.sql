@@ -27,5 +27,5 @@ CREATE TABLE IF NOT EXISTS `usergroup` (
 	usergroupdtmod		DATE,
 	usergroup		TEXT,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS `cptmod` (
 	cptmod			CHAR (2) NOT NULL,
 	cptmoddescrip		VARCHAR (50) DEFAULT '',
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

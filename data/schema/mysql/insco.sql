@@ -48,5 +48,5 @@ CREATE TABLE IF NOT EXISTS `insco` (
 	inscodefformate		VARCHAR (50),
 	inscodeftargete		VARCHAR (50),
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

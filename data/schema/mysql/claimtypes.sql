@@ -26,5 +26,5 @@ CREATE TABLE IF NOT EXISTS `claimtypes` (
 	clmtpdtadd		DATE,
 	clmtpdtmod		DATE,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

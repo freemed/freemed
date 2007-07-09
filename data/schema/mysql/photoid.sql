@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `photoid` (
 	#	Define keys
 
 	, FOREIGN KEY		( p_patient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS photoid_Upgrade;
 DELIMITER //

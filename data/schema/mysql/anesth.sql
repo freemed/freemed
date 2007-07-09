@@ -28,5 +28,5 @@ CREATE TABLE IF NOT EXISTS `anesth` (
 
 	#	Define keys
 	KEY			( andate )
-) ENGINE=InnoDB;
+);
 

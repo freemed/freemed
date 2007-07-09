@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `config` (
 	c_type			VARCHAR (100) NOT NULL,
 	c_options		TEXT,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS config_Upgrade;
 DELIMITER //

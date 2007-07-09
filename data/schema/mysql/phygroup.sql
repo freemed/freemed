@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS `phygroup` (
 	phygroupdocs		TEXT,
 	phygroupspe1		INT UNSIGNED,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 	#	Define keys
 	PRIMARY KEY 			( id )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS user_Upgrade;
 DELIMITER //

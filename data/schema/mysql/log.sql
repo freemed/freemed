@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS `log` (
 	logseverity		INT UNSIGNED NOT NULL,
 	logmsg			TEXT,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

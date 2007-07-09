@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `scheduler_status` (
 
 	KEY			( cspatient, csstatus, csstamp )
 	, FOREIGN KEY		( cspatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE IF NOT EXISTS `scheduler_status_delta` (
 	patient			BIGINT UNSIGNED NOT NULL,

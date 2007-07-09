@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `patienttag` (
 	#	Define keys
 	KEY			( patient, tag )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 #	Define aggregation table for set operations
 CREATE TABLE IF NOT EXISTS `patienttaglookup` (
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `patienttaglookup` (
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	tags			TEXT,
 	PRIMARY KEY		( patient )
-) ENGINE=InnoDB;
+);
 
 #	Define stored procedures
 

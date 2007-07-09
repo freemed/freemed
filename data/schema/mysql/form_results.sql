@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `form_results` (
 
 	KEY			( fr_patient, fr_timestamp ),
 	FOREIGN KEY		( fr_patient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS form_results_Upgrade;
 DELIMITER //

@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	# Define keys
 
 	KEY			( caldateof, calhour, calminute )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS scheduler_Upgrade;
 DELIMITER //

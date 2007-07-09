@@ -30,5 +30,5 @@ CREATE TABLE IF NOT EXISTS `oids` (
 
 	PRIMARY KEY			( oid ),
 	KEY				( short_name, status )
-) ENGINE=InnoDB;
+);
 

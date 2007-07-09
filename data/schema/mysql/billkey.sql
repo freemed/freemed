@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `billkey` (
 	billkey			BLOB,
 	bkprocs			TEXT,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS billkey_Upgrade;
 DELIMITER //

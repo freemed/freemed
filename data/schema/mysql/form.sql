@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `form` (
 
 	PRIMARY KEY		( id )
 	, KEY			( f_uuid )
-) ENGINE=InnoDB;
+);
 
 CREATE TABLE IF NOT EXISTS `form_element` (
 	fe_id			BIGINT (20) UNSIGNED NOT NULL DEFAULT 0,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `form_element` (
 
 	, FOREIGN KEY		( fe_id ) REFERENCES form.id ON DELETE CASCADE
 	, KEY			( fe_oid_mapping, fe_code )
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS form_GetFormElementId;
 

@@ -33,5 +33,5 @@ CREATE TABLE IF NOT EXISTS `pharmacy` (
 	# Define keys
 
 	KEY			( phname, phcity, phstate )
-) ENGINE=InnoDB;
+);
 

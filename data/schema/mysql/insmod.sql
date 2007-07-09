@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS `insmod` (
 	insmod			VARCHAR (15) NOT NULL,
 	insmoddesc		VARCHAR (50) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

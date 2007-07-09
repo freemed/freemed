@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `referrals` (
 	PRIMARY KEY		( id ),
 
 	FOREIGN KEY		( refpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS referrals_Upgrade;
 DELIMITER //

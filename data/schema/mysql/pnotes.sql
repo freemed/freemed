@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `pnotes` (
 	#	Define keys
 	KEY			( pnotespat, pnotesdt, pnotesdoc ),
 	FOREIGN KEY		( pnotespat ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS pnotes_Upgrade;
 DELIMITER //

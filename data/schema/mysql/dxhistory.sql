@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `dxhistory` (
 
 	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE,
 	FOREIGN KEY		( procrec ) REFERENCES procrec.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS dxhistory_Upgrade;
 DELIMITER //

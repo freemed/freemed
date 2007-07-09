@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `unreaddocuments` (
 
 	KEY			( urfphysician, urfpatient ),
 	FOREIGN KEY		( urfpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS unreaddocuments_Upgrade;
 DELIMITER //

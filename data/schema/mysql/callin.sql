@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `callin` (
 	citookcall		VARCHAR (50) NOT NULL,
 	cipatient		INT UNSIGNED DEFAULT 0,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS Callin_Convert_From_Patient;
 DELIMITER //

@@ -35,5 +35,5 @@ CREATE TABLE IF NOT EXISTS `faxstatus` (
 
 	KEY			( fsid, fspatient ),
 	FOREIGN KEY		( fspatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 

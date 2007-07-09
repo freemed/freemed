@@ -26,5 +26,5 @@ CREATE TABLE IF NOT EXISTS `tos` (
 	tosdtadd		DATE,
 	tosdtmod		DATE,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

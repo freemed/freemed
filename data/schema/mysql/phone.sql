@@ -32,5 +32,5 @@ CREATE TABLE IF NOT EXISTS `phone` (
 	# Define keys
 
 	KEY			( phonetype, phonecategory, phonelink )
-) ENGINE=InnoDB;
+);
 

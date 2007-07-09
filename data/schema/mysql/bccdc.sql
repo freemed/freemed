@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS `bccdc` (
 
 	PRIMARY KEY			( id ),
 	KEY				( description, agent_code )
-) ENGINE=InnoDB;
+);
 

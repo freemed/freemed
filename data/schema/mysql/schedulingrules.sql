@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `schedulingrules` (
 	timeend			TIME,
 	newpatient		BOOL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS schedulingrules_Upgrade;
 DELIMITER //

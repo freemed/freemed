@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `certifications` (
 
 	KEY			( certpatient, certtype ),
 	FOREIGN KEY		( certpatient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS certifications_Upgrade;
 DELIMITER //

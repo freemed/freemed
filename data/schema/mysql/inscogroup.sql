@@ -23,5 +23,5 @@
 CREATE TABLE IF NOT EXISTS `inscogroup` (
 	inscogroup		VARCHAR (50) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

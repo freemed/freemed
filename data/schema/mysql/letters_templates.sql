@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS `letters_templates` (
 
 	#	Define keys
 	KEY			( ltphy )
-) ENGINE=InnoDB;
+);
 

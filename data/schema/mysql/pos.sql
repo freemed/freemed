@@ -26,5 +26,5 @@ CREATE TABLE IF NOT EXISTS `pos` (
 	posdtadd		DATE,
 	posdtmod		DATE,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `schedulerstatustype` (
 	scolor			CHAR (7) NOT NULL DEFAULT '#ffffff',
 	sage			INT UNSIGNED NOT NULL DEFAULT 1,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 
 
 DROP PROCEDURE IF EXISTS schedulerstatustype_Upgrade;

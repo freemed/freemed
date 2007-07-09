@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS `unfileddocuments` (
 	uffdate			DATE NOT NULL,
 	ufffilename		VARCHAR (150) NOT NULL,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

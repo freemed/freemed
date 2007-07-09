@@ -41,7 +41,7 @@ CREATE TABLE `acl_acl` (
   KEY `acl_enabled_acl` (`enabled`),
   KEY `acl_section_value_acl` (`section_value`),
   KEY `acl_updated_date_acl` (`updated_date`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_acl`
@@ -67,7 +67,7 @@ CREATE TABLE `acl_acl_sections` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_value_acl_sections` (`value`),
   KEY `acl_hidden_acl_sections` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_acl_sections`
@@ -86,7 +86,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_acl_sections_seq`;
 CREATE TABLE `acl_acl_sections_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_acl_sections_seq`
@@ -105,7 +105,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_acl_seq`;
 CREATE TABLE `acl_acl_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_acl_seq`
@@ -132,7 +132,7 @@ CREATE TABLE `acl_aco` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_section_value_value_aco` (`section_value`,`value`),
   KEY `acl_hidden_aco` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aco`
@@ -154,7 +154,7 @@ CREATE TABLE `acl_aco_map` (
   `section_value` varchar(230) NOT NULL default '0',
   `value` varchar(230) NOT NULL,
   PRIMARY KEY  (`acl_id`,`section_value`,`value`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aco_map`
@@ -180,7 +180,7 @@ CREATE TABLE `acl_aco_sections` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_value_aco_sections` (`value`),
   KEY `acl_hidden_aco_sections` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aco_sections`
@@ -199,7 +199,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_aco_sections_seq`;
 CREATE TABLE `acl_aco_sections_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aco_sections_seq`
@@ -218,7 +218,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_aco_seq`;
 CREATE TABLE `acl_aco_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aco_seq`
@@ -245,7 +245,7 @@ CREATE TABLE `acl_aro` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_section_value_value_aro` (`section_value`,`value`),
   KEY `acl_hidden_aro` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro`
@@ -273,7 +273,7 @@ CREATE TABLE `acl_aro_groups` (
   UNIQUE KEY `acl_value_aro_groups` (`value`),
   KEY `acl_parent_id_aro_groups` (`parent_id`),
   KEY `acl_lft_rgt_aro_groups` (`lft`,`rgt`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_groups`
@@ -292,7 +292,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_aro_groups_id_seq`;
 CREATE TABLE `acl_aro_groups_id_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_groups_id_seq`
@@ -313,7 +313,7 @@ CREATE TABLE `acl_aro_groups_map` (
   `acl_id` int(11) NOT NULL default '0',
   `group_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`acl_id`,`group_id`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_groups_map`
@@ -335,7 +335,7 @@ CREATE TABLE `acl_aro_map` (
   `section_value` varchar(230) NOT NULL default '0',
   `value` varchar(230) NOT NULL,
   PRIMARY KEY  (`acl_id`,`section_value`,`value`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_map`
@@ -360,7 +360,7 @@ CREATE TABLE `acl_aro_sections` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_value_aro_sections` (`value`),
   KEY `acl_hidden_aro_sections` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_sections`
@@ -379,7 +379,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_aro_sections_seq`;
 CREATE TABLE `acl_aro_sections_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_sections_seq`
@@ -398,7 +398,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `acl_aro_seq`;
 CREATE TABLE `acl_aro_seq` (
   `id` int(11) NOT NULL
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_aro_seq`
@@ -425,7 +425,7 @@ CREATE TABLE `acl_axo` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_section_value_value_axo` (`section_value`,`value`),
   KEY `acl_hidden_axo` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_axo`
@@ -452,7 +452,7 @@ CREATE TABLE `acl_axo_groups` (
   UNIQUE KEY `acl_value_axo_groups` (`value`),
   KEY `acl_parent_id_axo_groups` (`parent_id`),
   KEY `acl_lft_rgt_axo_groups` (`lft`,`rgt`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_axo_groups`
@@ -472,7 +472,7 @@ CREATE TABLE `acl_axo_groups_map` (
   `acl_id` int(11) NOT NULL default '0',
   `group_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`acl_id`,`group_id`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_axo_groups_map`
@@ -493,7 +493,7 @@ CREATE TABLE `acl_axo_map` (
   `section_value` varchar(230) NOT NULL default '0',
   `value` varchar(230) NOT NULL,
   PRIMARY KEY  (`acl_id`,`section_value`,`value`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_axo_map`
@@ -518,7 +518,7 @@ CREATE TABLE `acl_axo_sections` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `acl_value_axo_sections` (`value`),
   KEY `acl_hidden_axo_sections` (`hidden`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_axo_sections`
@@ -539,7 +539,7 @@ CREATE TABLE `acl_groups_aro_map` (
   `aro_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`group_id`,`aro_id`),
   KEY `acl_aro_id` (`aro_id`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_groups_aro_map`
@@ -561,7 +561,7 @@ CREATE TABLE `acl_groups_axo_map` (
   `axo_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`group_id`,`axo_id`),
   KEY `acl_axo_id` (`axo_id`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_groups_axo_map`
@@ -581,7 +581,7 @@ CREATE TABLE `acl_phpgacl` (
   `name` varchar(230) NOT NULL,
   `value` varchar(230) NOT NULL,
   PRIMARY KEY  (`name`)
-) ENGINE=InnoDB;
+);
 
 --
 -- Dumping data for table `acl_phpgacl`

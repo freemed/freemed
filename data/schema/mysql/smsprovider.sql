@@ -26,5 +26,5 @@ CREATE TABLE IF NOT EXISTS `smsprovider` (
 	mailgwaddr		VARCHAR (50) NOT NULL,
 	countrycode		BOOL NOT NULL DEFAULT FALSE,
 	id			SERIAL
-) ENGINE=InnoDB;
+);
 

@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 
 	KEY			( patient, allergy ),
 	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 DROP PROCEDURE IF EXISTS allergies_Upgrade;
 DELIMITER //
