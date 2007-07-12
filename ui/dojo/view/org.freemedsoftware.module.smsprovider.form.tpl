@@ -34,7 +34,7 @@
 		r = false;
 	}
 	if ( content.mailgwaddr.length < 2 ) {
-		m += "<!--{t}-->You must enter a gateway.<!--{/t}-->\n";
+		m += "<!--{t}-->You must enter a SMS-gateway.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->
@@ -62,7 +62,7 @@
 	</tr>
 
 	<tr>
-		<td align="right"><!--{t}-->Gateway<!--{/t}--></td>
+		<td align="right"><!--{t}-->SMS-Gateway<!--{/t}--></td>
 		<td><input type="text" id="mailgwaddr" size="50" /></td>
 	</tr>
 
