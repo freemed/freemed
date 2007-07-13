@@ -125,7 +125,7 @@ class Agata7 {
 			$form->addElement( 'header', '', $report['Report']['Properties']['Description'] );
 		}
 
-		$merged = $this->DetermineMergedFormat($report);
+		$merged = $this->DetermineFormat($report);
 
 		//if (!is_array($report['Report']['Parameters'])) { return NULL; }
 		foreach ($report['Report']['Parameters'] AS $k => $v) {
