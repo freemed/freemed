@@ -138,6 +138,10 @@ class Agata7 {
 				$form->addElement('static', $k, $desc, module_function($detail, 'widget', $k));
 				break; // module
 
+				case 'patient':
+				$form->addElement('static', $k, $desc, freemed::patient_widget($k));
+				break; // patient
+
 				case 'select':
 				$form->addElement('select', $k, $desc, explode(',', $detail));
 				break; // select
