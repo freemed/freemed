@@ -64,12 +64,14 @@ class Agata7 {
 		}
 
 		$report = $this->api->getReport();
-		$merge = $this->DetermineMergedFormat ( $report );
+		$merge = $this->DetermineFormat ( $report );
 
-		if (!$merge) {
+		if ($merge == 'standard') {
 			$ok = $this->api->generateReport ( );
-		} else {
+		} elseif ($merge == 'merge') {
 			$ok = $this->api->generateDocument ( );
+		} elseif ($merge == 'label') {
+			$ok = $this->api->generateLabel ( );
 		}
 
 		// Read file into buffer
@@ -156,7 +158,7 @@ class Agata7 {
 		}
 
 		// Show format selection
-		if (!$merged) {
+		if ($merged == 'standard') {
 			$form->addElement('select', 'format', __("Report Format"), array (
 				'csv' => 'CSV',
 				'html' => 'HTML',
@@ -176,10 +178,9 @@ class Agata7 {
 		return $form;
 	} // end method CreateForm
 
-	// Method: DetermineMergedFormat
+	// Method: DetermineFormat
 	//
-	//	Figure out if a report is supposed to be an Agata "Merge"
-	//	report or not
+	//	Figure out report format.
 	//
 	// Parameters:
 	//
@@ -188,15 +189,17 @@ class Agata7 {
 	//
 	// Returns:
 	//
-	//	Boolean, true if merged report, false if not.
+	//	'standard', 'merge', or 'label'
 	//
-	function DetermineMergedFormat ( &$report ) {
+	function DetermineFormat ( &$report ) {
 		if (strlen($report['Report']['Merge']['ReportHeader']) > 10) {
-			return true;
-		} else {
-			return false;
+			return 'merge';
 		}
-	} // end method DetermineMergedFormat
+		if (strlen($report['Report']['Label']['Body']) > 10) {
+			return 'label';
+		}
+		return 'standard';
+	} // end method DetermineFormat
 
 	// Method: GetReports
 	//
