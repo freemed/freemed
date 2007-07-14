@@ -99,7 +99,6 @@ class UserInterface {
 	//	$value - Configuration value
 	//
 	public function SetConfigValue ( $key, $value ) {
-		freemed::acl_enforce( 'admin', 'config' );
 		return $this->user->setManageConfig ( $key, $value );
 	} // end method SetConfigValue
 

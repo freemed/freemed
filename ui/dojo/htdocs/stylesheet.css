@@ -33,12 +33,13 @@ form {
 .dojoSplitPane { margin: 5px; }
 .dojoToolTip { background: #ccccff; padding: 2px; }
 .dojoDialog { 
-	width: 30%;
 	border: 3px solid #555555;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-bottomright: 10px;
 	background-color: #ffffff;
-	padding: 2em;
+	padding: 1em;
+	min-width: 30%;
+	max-width: 60%;
 }
 .euDockBar { z-index: 10000; }
 #leftPane { margin: 0; }

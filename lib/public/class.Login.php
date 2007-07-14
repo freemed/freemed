@@ -70,6 +70,9 @@ class Login {
 		if (md5($password) == $r['userpassword']) {
 			// Set session vars
 			unset($r['userpassword']);
+			// Pull user options
+			$s = unserialize( $r['usermanageopt'] );
+			if ( $s ) { $r['usermanageopt'] = $s; }
 			$_SESSION['authdata'] = array (
 				"username" => $username,
 				"user" => $r['id'],

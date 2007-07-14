@@ -30,11 +30,15 @@
 <!--{* ***** Style Elements ***** *}-->
 
 <link rel="stylesheet" type="text/css" href="<!--{$htdocs}-->/stylesheet.css" />
-<!--{if $DEBUG}-->
 <script language="JavaScript" type="text/javascript">
-var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
-</script>
+var djConfig = {
+<!--{if $DEBUG}-->
+	isDebug: true,
+	debugContainerId : "dojoDebugOutput",
 <!--{/if}-->
+	dojoRichTextFrameUrl: "<!--{$htdocs}-->/dojo/src/widget/templates/richtextframe.html"
+};
+</script>
 <script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 <script language="JavaScript" type="text/javascript">
 	<!--{if $DEBUG}-->
@@ -57,6 +61,11 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	function openHelpPage ( ) {
 		var topic = freemedGlobal.currentHelpTopic;
 		var popup = window.open('<!--{$controller}-->/org.freemedsoftware.ui.chtmlbrowser?topic=' + topic, 'chtmlBrowser', 'height=600,width=480,resizable=yes,alwaysRaised=yes');
+	}
+
+	function openNotesDialog ( ) {
+		var notesDialog = dojo.widget.getWidgetById('freemedNotesDialog');
+		notesDialog.show();
 	}
 
 	function freemedMessage( message, type ) {
@@ -141,8 +150,27 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
 		currentHelpTopic: undefined,
+		noteSave: "<!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}-->",
 		interval: 60, // seconds between polls
 		intervalCallback: function ( ) {
+			// Handle changes to the notepad
+			var curNote = document.getElementById( 'notePad' ).value;
+			if ( curNote != freemedGlobal.noteSave ) {
+				dojo.io.bind({
+					method: "POST",
+					content: {
+						param0: 'notePad',
+						param1: curNote
+					},
+					url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.SetConfigValue",
+					load: function(type, data, evt) {
+						if (data) {
+							freemedMessage( "<!--{t}-->Notepad contents saved.<!--{/t}-->", 'INFO' );
+						}
+					},
+					mimetype: "text/json"
+				});
+			}
 			dojo.io.bind({
 				method: "POST",
 				content: {
@@ -258,6 +286,22 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 	</table>
 </div>
 
+<div dojoType="dialog" id="freemedNotesDialog" bgOpacity="0.5" toggle="fade" toggleDuration="250" blockDuration="2000" style="display:none;" closeOnBackgroundClick="true">
+	<div align="center">
+	<table border="0" cellpadding="2">
+		<tr>
+			<td align="center" valign="middle"><h3><!--{t}-->Notes<!--{/t}--></h3></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><small><i><!--{t}-->Click outside this dialog box to close the notepad.<!--{/t}--></i></small></td>
+		</tr>
+		<tr>
+			<td valign="middle" align="center"><textarea id="notePad" rows="20" cols="80" wrap="virtual"><!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}--></textarea></td>
+		</tr>
+	</table>
+	</div>
+</div>
+
 <div dojoType="LayoutContainer" layoutChildPriority="top-bottom" style="width: 100%; height: 100%;">
 	<div dojoType="ContentPane" layoutAlign="bottom" style="background-image: url(<!--{$htdocs}-->/images/brushed.gif); color: #000000;">
 
@@ -308,7 +352,7 @@ var djConfig = { isDebug: true }; //, debugContainerId : "dojoDebugOutput" };
 					</div>
 				</td>
 				<td align="right" nowrap="nowrap" valign="middle">
-					<img src="<!--{$htdocs}-->/images/notes.png" alt="" width="73" height="30" border="0" id="notesButton" />
+					<img src="<!--{$htdocs}-->/images/notes.png" alt="" width="73" height="30" border="0" id="notesButton" onClick="openNotesDialog();" />
 					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton" />
 					<img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" onClick="openHelpPage(); return true;" />
 					<img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
