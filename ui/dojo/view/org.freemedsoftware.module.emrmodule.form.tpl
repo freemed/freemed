@@ -144,7 +144,7 @@
 	};
 
 	_container_.addOnLoad(function() {
-		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notes, 'submit' );
+		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', m, 'submit' );
 		try { dojo.event.topic.subscribe ( 'noteTabContainer-selectChild', m, "OnSelectTab" ); } catch ( err ) { }
 		<!--{if $id}-->m.initialLoad();<!--{/if}-->
 		<!--{if not $id}-->
@@ -152,7 +152,7 @@
 		<!--{/if}-->
 	});
 	_container_.addOnUnload(function() {
-		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', notes, 'submit' );
+		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', m, 'submit' );
 		try { dojo.event.topic.unsubscribe ( 'noteTabContainer-selectChild', m, "OnSelectTab" ); } catch ( err ) { }
 		<!--{if not $id}-->
 		try { dojo.event.disconnect( dojo.widget.byId( 'importPrevious' ), 'onClick', m, 'OnLoadRecent' ); } catch ( err ) { }

@@ -22,91 +22,33 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<script type="text/javascript">
+<!--{assign var='module' value='immunizations'}-->
 
-	var m = {
-		handleResponse: function ( data ) {
-			if (data) {
-				<!--{if $id}-->
-				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
-				<!--{else}-->
-				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
-				<!--{/if}-->
-				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
-			} else {
-				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
-			}
-		},
-		validate: function ( content ) {
-			var r = true;
-			var m = "";
-			// TODO: validation goes here
-			if ( m.length > 1 ) { alert( m ); }
-			return r;
-		},
-		initialLoad: function ( ) {
-			<!--{if $id}-->
-			dojo.io.bind({
-				method: "POST",
-				content: {
-					param0: "<!--{$id|escape}-->"
-				},
-				url: "<!--{$relay}-->/org.freemedsoftware.module.Immunizations.GetRecord",
-				load: function ( type, data, evt ) {
-					try {
-					dojo.widget.byId( 'immunizationForm' ).setValues( data );
-					provider.onAssign( data.provider );
-					immunization.onAssign( data.immunization );
-					} catch (e) { alert(e); }
-				},
-				mimetype: "text/json"
-			});
-			<!--{/if}-->
-		},
-		submit: function ( ) {
-			try {
-				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
-			} catch ( err ) { }
-			var mForm = dojo.widget.byId( 'immunizationForm' ).getValues();
-			var myContent = {
-				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
-				dateof: dojo.widget.byId('dateof').getValue(),
-				patient: '<!--{$patient|escape}-->'
-			};
-			try {
-				for ( var mFormElement in mForm ) {
-					myContent[ mFormElement ] = mForm[ mFormElement ];
-				}
-			} catch ( err ) { } 
-			if (m.validate( myContent )) {
-				dojo.io.bind({
-					method: "POST",
-					content: {
-						param0: myContent
-					},
-					url: "<!--{$relay}-->/org.freemedsoftware.module.Immunizations.<!--{if $id}-->mod<!--{else}-->add<!--{/if}-->",
-					load: function ( type, data, evt ) {
-						m.handleResponse( data );
-					},
-					mimetype: "text/json"
-				});
-			}
-		}
-	};
+<!--{assign_block var='moduleName'}-->
+	<!--{t}-->Immunization<!--{/t}-->
+<!--{/assign_block}-->
 
-	_container_.addOnLoad(function() {
-		m.initialLoad();
-		dojo.event.connect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', m, 'submit' );
-	});
-	_container_.addOnUnload(function() {
-		dojo.event.disconnect( dojo.widget.byId('ModuleFormCommitChangesButton'), 'onClick', m, 'submit' );
-	});
+<!--{assign_block var='validation'}-->
+	/*
+	if ( content.var.length < 2 ) {
+		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		r = false;
+	}
+	*/
+<!--{/assign_block}-->
 
-</script>
+<!--{assign_block var='initialLoad'}-->
+	provider.onAssign( data.provider );
+	immunization.onAssign( data.immunization );
+	dojo.widget.byId( 'dateof' ).setValue( data.dateof );
+<!--{/assign_block}-->
 
-<h3><!--{t}-->Immunization<!--{/t}--></h3>
+<!--{assign_block var='collectDataArray'}-->
+	dateof: dojo.widget.byId('dateof').getValue(),
+<!--{/assign_block}-->
 
-<form dojoType="Form" id="immunizationForm" name="immunizationForm">
+<!--{assign_block var='moduleForm'}-->
+
 <table border="0" style="width: auto;">
 
 	<tr>
@@ -120,7 +62,7 @@
 	</tr>
 
 	<tr>
-		<td align="right"><!--{t}-->Immunization<!--{/t}--></td>
+		<td align="right"><!--{t}-->Immunization<!--{/t}--></td> 
 		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="Bccdc" varname="immunization"}--></td>
 	</tr>
 
@@ -130,18 +72,8 @@
 	</tr>
 
 </table>
-</form>
 
-<div align="center">
-        <table border="0" style="width:200px;">
-        <tr><td align="center">
-	        <button dojoType="Button" id="ModuleFormCommitChangesButton" widgetId="ModuleFormCommitChangesButton">
-	                <div><!--{t}-->Commit Changes<!--{/t}--></div>
-	        </button>
-        </td><td align="left">
-        	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
-        	        <div><!--{t}-->Cancel<!--{/t}--></div>
-        	</button>
-        </td></tr></table>
-</div>
+<!--{/assign_block}-->
+
+<!--{include file="org.freemedsoftware.module.emrmodule.form.tpl" module=$module moduleName=$moduleName moduleForm=$moduleForm collectDataArray=$collectDataArray initialLoad=$initialLoad validation=$validation patientVariable='patient'}-->
 
