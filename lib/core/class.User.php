@@ -383,7 +383,8 @@ class User {
 				'usermanageopt' => serialize( $this->manage_config )
 			), array ( 'id' => $this->user_number )
 		);
-		$result = $GLOBALS['sql']->query($query);
+		$result = $GLOBALS['sql']->query( $query );
+		return true;
 	} // end function setManageConfig
 
 	// Method: newMessages

@@ -153,24 +153,6 @@ var djConfig = {
 		noteSave: "<!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}-->",
 		interval: 60, // seconds between polls
 		intervalCallback: function ( ) {
-			// Handle changes to the notepad
-			var curNote = document.getElementById( 'notePad' ).value;
-			if ( curNote != freemedGlobal.noteSave ) {
-				dojo.io.bind({
-					method: "POST",
-					content: {
-						param0: 'notePad',
-						param1: curNote
-					},
-					url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.SetConfigValue",
-					load: function(type, data, evt) {
-						if (data) {
-							freemedMessage( "<!--{t}-->Notepad contents saved.<!--{/t}-->", 'INFO' );
-						}
-					},
-					mimetype: "text/json"
-				});
-			}
 			dojo.io.bind({
 				method: "POST",
 				content: {
@@ -190,6 +172,26 @@ var djConfig = {
 				},
 				mimetype: "text/json"
 			});
+		},
+		onUpdateNotepad: function ( ) {
+			// Handle changes to the notepad
+			var curNote = document.getElementById( 'notePad' ).value;
+			if ( curNote != freemedGlobal.noteSave ) {
+				dojo.io.bind({
+					method: "POST",
+					content: {
+						param0: 'notePad',
+						param1: curNote
+					},
+					url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.SetConfigValue",
+					load: function(type, data, evt) {
+						if (data) {
+							freemedMessage( "<!--{t}-->Notepad contents saved.<!--{/t}-->", 'INFO' );
+						}
+					},
+					mimetype: "text/json"
+				});
+			}
 		},
 		onSystemNotifications: function ( data ) {
 			for (var i=0; i<data.length; i++) {
@@ -296,7 +298,7 @@ var djConfig = {
 			<td align="center" valign="middle"><small><i><!--{t}-->Click outside this dialog box to close the notepad.<!--{/t}--></i></small></td>
 		</tr>
 		<tr>
-			<td valign="middle" align="center"><textarea id="notePad" rows="20" cols="80" wrap="virtual"><!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}--></textarea></td>
+			<td valign="middle" align="center"><textarea id="notePad" rows="20" cols="80" wrap="virtual" onBlur="freemedGlobal.onUpdateNotepad();"><!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}--></textarea></td>
 		</tr>
 	</table>
 	</div>
@@ -341,7 +343,7 @@ var djConfig = {
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stickies.png" } } ),
-		{ link:"http://eudock.jules.it" }
+		{ code:"openNotesDialog();" }
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Yellow-Pages.png" } } ),
