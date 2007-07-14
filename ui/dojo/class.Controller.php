@@ -69,6 +69,7 @@ class Controller {
 		$this->smarty->assign ( "controller", "${base_uri}/controller.php/${ui}" );
 		$this->smarty->assign ( "relay", "${base_uri}/relay.php/json" );
 		$this->smarty->assign ( "SESSION", $_SESSION );
+		$this->smarty->assign ( "paneLoading", '<div align="center"><img src="'.$base_uri.'/ui/'.$ui.'/htdocs/images/loading.gif" border="0"/></div>' );
 
 		// Theming options
 		if ( defined ( 'LOGIN_IMAGE' ) ) {
