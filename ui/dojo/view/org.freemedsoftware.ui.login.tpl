@@ -35,13 +35,6 @@
 	</script>
 
 	<script type="text/javascript">
-	var dlg;
-	function initLogin(e) {
-		var dlg = dojo.widget.byId("DialogContent");
-		dlg.show();
-		var username = document.getElementById("username");
-		username.focus();
-	}
 
 	function doFreemedLogin ( ) {
 		var params = new Array ( );
@@ -57,7 +50,7 @@
 			},
 			load: function(type, data, evt) {
 				if (data) {
-					dlg = dojo.widget.byId("DialogContent");
+					var dlg = dojo.widget.byId("DialogContent");
 					dlg.hide();
 					location.href = '<!--{$base_uri}-->/controller.php/<!--{$ui}-->/org.freemedsoftware.controller.mainframe';
 				} else {
@@ -68,7 +61,10 @@
 		} );
 	}
 
-	dojo.addOnLoad(initLogin);
+	dojo.addOnLoad(function() {
+		dojo.widget.byId("DialogContent").show();
+	});
+
 	</script>
 
 	<style type="text/css">
@@ -121,7 +117,7 @@
 </head>
 
 <!--{if $LOGIN_IMAGE}-->
-<body style="overflow-x: none; overflow-y: none;" >
+<body style="overflow-x: none; overflow-y: none;">
 <div id="backgroundImageDiv" style="height: 98%; width: 98%;" align="center">
 	<img id="backgroundImage" src="<!--{$htdocs}-->/images/<!--{$LOGIN_IMAGE}-->" border="0" alt="" style="height: 98%; width: 98%;" />
 </div>
@@ -129,7 +125,7 @@
 <body>
 <!--{/if}-->
 
-<div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250">
+<div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250" executeScripts="true">
 	<form onsubmit="return false;">
 		<table>
 			<tr>
@@ -149,11 +145,11 @@
 				</td>
 			</tr>
 			<tr>
-				<td><b>Login</b></td>
+				<td><b><!--{t}-->Login<!--{/t}--></b></td>
 				<td><input type="text" id="username" name="username" /></td>
 			</tr>
 			<tr>
-				<td><b>Password</b></td>
+				<td><b><!--{t}-->Password<!--{/t}--></b></td>
 				<td><input type="password" id="password" name="password" /></td>
 			</tr>
 			<tr>
