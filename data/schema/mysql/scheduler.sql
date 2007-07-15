@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	# Define keys
 
 	KEY			( caldateof, calhour, calminute )
+	, KEY			( calpatient )
 );
 
 DROP PROCEDURE IF EXISTS scheduler_Upgrade;
@@ -115,7 +116,7 @@ CREATE TRIGGER scheduler_Insert
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
 			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, NEW.calprenote, NEW.user );
-			CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
+			CALL patientWorkflowUpdateStatus( NEW.calpatient, NEW.caldateof, 'scheduler', TRUE, NEW.user );
 		END IF;
 	END;
 //
