@@ -22,33 +22,19 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<script type="text/javascript">
-	dojo.require( 'dojo.event.*' );
-
-	var m = {
-		handleResponse: function ( data ) {
-			if (data) {
-				freemedMessage( "<!--{t}-->Added m.<!--{/t}-->", "INFO" );
-				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
-			} else {
-				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
-			}
-		}
-	};
-
-</script>
-
 <h3><!--{t}-->Photographic Identification<!--{/t}--></h3>
 
+<div style="padding: 1em;">
+	<!--{t}-->This is the upload form for photographic identification. It allows more recent photos to non-destructively replace identification photographs for patients. Select the picture (JPG, PNG, or GIF) and it will be uploaded.<!--{/t}-->
+</div>
+
+<div align="center">
 <!--{include file='org.freemedsoftware.widget.uploadfiles.tpl' varname='file' completedCode="freemedPatientContentLoad('org.freemedsoftware.ui.patient.overview.default?patient=$patient');" relayPoint="$relay/org.freemedsoftware.module.photographicidentification.UploadPhotoID?param0=$patient"}-->
+</div>
 
 <div align="center">
         <table border="0" style="width:200px;">
         <tr><td align="center">
-	        <button dojoType="Button" id="ModuleFormCommitChangesButton" widgetId="ModuleFormCommitChangesButton">
-	                <div><!--{t}-->Commit Changes<!--{/t}--></div>
-	        </button>
-        </td><td align="left">
         	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedPatientContentLoad('org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');">
         	        <div><!--{t}-->Cancel<!--{/t}--></div>
         	</button>
