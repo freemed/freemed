@@ -50,6 +50,34 @@
 			calpatient.onAssign( <!--{$patient}--> );
 			<!--{/if}-->
 		},
+		updatePreview: function ( ) {
+			var d = dojo.widget.byId( 'caldateof' ).getValue();
+			var p = document.getElementById( 'calphysician' ).value;
+			document.getElementById( 'datePreviewLabel' ).innerHTML = d;
+			// Load date
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: d,
+					param1: p ? p : ''
+				},
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointments',
+				error: function() { },
+				load: function( type, data, evt ) {
+					if (data) {
+					for ( var i=0; i<data.length; i++) {
+						if ( data[i].status_color ) {
+								var s = data[i].status;
+								data[i].status='<div style="width: 100%; background-color: ' + data[i].status_color + '; color: #999999; text-align: center;" >' + s + '</div>';
+							}
+						}
+					dojo.widget.byId( 'datePreviewFilteringTable' ).store.setData( data );
+					}
+				},
+				mimetype: 'text/json'
+
+			});
+		},
 		submit: function ( ) {
 			try {
 				dojo.widget.byId('BookingFormCommitChangesButton').disable();
@@ -60,6 +88,7 @@
 				calhour: dojo.date.strftime( dojo.widget.byId('caltime').timePicker.time, '%H', dojo.widget.byId('caltime').lang ),
 				calminute: dojo.date.strftime( dojo.widget.byId('caltime').timePicker.time, '%M', dojo.widget.byId('caltime').lang ),
 				calpatient: parseInt( document.getElementById( 'calpatient' ).value ),
+				calphysician: parseInt( document.getElementById( 'calphysician' ).value ),
 				calduration: parseInt( document.getElementById( 'calduration' ).value ),
 				calprenote: document.getElementById( 'calprenote' ).value
 			};
@@ -82,15 +111,21 @@
 	_container_.addOnLoad(function() {
 		s.initialLoad();
 		dojo.event.connect( dojo.widget.byId('BookingFormCommitChangesButton'), 'onClick', s, 'submit' );
+		dojo.event.connect( dojo.widget.byId('caldateof'), 'onValueChanged', s, 'updatePreview' );
+		dojo.event.topic.subscribe( 'calphysician-setValue', s, 'updatePreview' );
 	});
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('BookingFormCommitChangesButton'), 'onClick', s, 'submit' );
+		dojo.event.disconnect( dojo.widget.byId('caldateof'), 'onValueChanged', s, 'updatePreview' );
+		dojo.event.topic.unsubscribe( 'calphysician-setValue', s, 'updatePreview' );
 	});
 
 </script>
 
 <h3><!--{t}-->Book Appointment<!--{/t}--></h3>
 
+<table border="0" cellpadding="5" style="width: auto;">
+<tr><td valign="top">
 <table border="0" style="width: auto;">
 
 	<tr>
@@ -144,6 +179,25 @@
 	</tr>
 
 </table>
+</td><td valign="top">
+<b><!--{t}-->Preview for <!--{/t}--> <span id="datePreviewLabel">-</span></b>
+<div class="tableContainer">
+	<table dojoType="FilteringTable" id="datePreviewFilteringTable" widgetId="datePreviewFilteringTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="scheduler_id" border="0" multiple="false">
+	<thead>
+		<tr>
+			<th field="appointment_time" dataType="String"><!--{t}-->Time<!--{/t}--></th>
+			<th field="duration" dataType="String"><!--{t}-->Duration<!--{/t}--></th>
+			<th field="patient" dataType="String"><!--{t}-->Patient<!--{/t}--></th>
+			<th field="provider" dataType="String"><!--{t}-->Provider<!--{/t}--></th>
+			<th field="status" dataType="Html"><!--{t}-->Status<!--{/t}--></th>
+			<th field="note" dataType="String"><!--{t}-->Note<!--{/t}--></th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+	</table>
+</div>
+
+</td></tr></table>
 
 <div align="center">
         <table border="0" style="width:200px;">
