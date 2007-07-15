@@ -50,6 +50,18 @@ CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
 DROP PROCEDURE IF EXISTS patientWorkflowStatusUpdateLookup;
 
 DELIMITER //
+
+# Procedure: patientWorkflowStatusUpdateLookup
+#
+#	Perform aggregation table rebuilding for a particular date and patient. Note
+#	that this is performed internally when using the insert / update function.
+#
+# Parameters:
+#
+#	pt - Patient id ( INT UNSIGNED )
+#
+#	dt - Date ( DATE )
+#
 CREATE PROCEDURE patientWorkflowStatusUpdateLookup ( IN pt INT UNSIGNED, IN dt DATE )
 BEGIN
 	DECLARE c TEXT;
@@ -116,9 +128,69 @@ DELIMITER ;
 
 #----- Aggregation functions
 
+DROP PROCEDURE IF EXISTS patientWorkflowUpdateStatus;
+
+DELIMITER //
+
+# Procedure: patientWorkflowUpdateStatus
+#
+#	Insert / update workflow status for a patient.
+#
+# Parameters:
+#
+#	pt - Patient ID ( BIGINT (20) UNSIGNED )
+#
+#	dt - Date of workflow status change ( DATE )
+#
+#	st - Status label / module name ( VARCHAR (250) )
+#
+#	completed - Status ( BOOL )
+#
+#	userId - Id of user making change ( INT UNSIGNED )
+#
+CREATE PROCEDURE patientWorkflowUpdateStatus ( 
+	  IN pt BIGINT (20) UNSIGNED
+	, IN dt DATE
+	, IN st VARCHAR (250)
+	, IN completed BOOL
+	, IN userId INT UNSIGNED
+)
+BEGIN
+	DECLARE rec INT UNSIGNED;
+	DECLARE ty  INT UNSIGNED;
+	
+	SELECT w.id INTO rec FROM workflow_status w LEFT OUTER JOIN workflow_status_type t ON t.id = w.status_type WHERE DATE_FORMAT('%Y-%m-%d', w.stamp) = dt AND w.patient = pt AND t.status_module = st;
+
+	IF ISNULL( rec ) THEN
+		#	Lookup type to insert
+		SELECT id INTO ty FROM workflow_status_type WHERE status_module = st;
+		INSERT INTO `workflow_status` ( stamp, patient, user, status_type, status_completed ) VALUES ( dt, pt, userId, ty, completed );
+	ELSE
+		UPDATE `workflow_status` SET status_completed = completed WHERE id = rec;
+	END IF;
+
+	#	Reindex aggregation for this date
+	CALL patientWorkflowStatusUpdateLookup( pt, dt );
+END//
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS patientWorkflowStatusByDate;
 
 DELIMITER //
+
+# Procedure: patientWorkflowStatusByDate
+#
+#	Generate daily lookup for workflow statuses for patients.
+#
+# Parameters:
+#
+#	dt - Date to retrieve matrix for ( DATE )
+#
+# Returns:
+#
+#	Query with patient, patient_id and all workflow statuses as columns for
+#	all patients being seen for the specified date.
+#
 CREATE PROCEDURE patientWorkflowStatusByDate ( IN dt DATE )
 BEGIN
 	DECLARE t_id INT UNSIGNED;
