@@ -23,7 +23,7 @@
 *}-->
 
 <script type="text/javascript">
-	dojo.require( 'dojo.event.*' );
+	dojo.require( 'dojo.date' );
 
 	var s = {
 		handleResponse: function ( data ) {
@@ -49,6 +49,18 @@
 			<!--{if $patient}-->
 			calpatient.onAssign( <!--{$patient}--> );
 			<!--{/if}-->
+		},
+		prevDay: function ( ) {
+			var d = dojo.widget.byId( 'caldateof' );
+			var prevDate = dojo.date.add( d.value, dojo.date.dateParts.DAY, -1 );
+			d.setValue( prevDate );
+			d.value = prevDate;
+		},
+		nextDay: function ( ) {
+			var d = dojo.widget.byId( 'caldateof' );
+			var nextDate = dojo.date.add( d.value, dojo.date.dateParts.DAY, 1 );
+			d.setValue( nextDate );
+			d.value = nextDate;
 		},
 		updatePreview: function ( ) {
 			var d = dojo.widget.byId( 'caldateof' ).getValue();
@@ -111,12 +123,16 @@
 	_container_.addOnLoad(function() {
 		s.initialLoad();
 		dojo.event.connect( dojo.widget.byId('BookingFormCommitChangesButton'), 'onClick', s, 'submit' );
-		dojo.event.connect( dojo.widget.byId('caldateof'), 'onValueChanged', s, 'updatePreview' );
+		dojo.event.connect( dojo.widget.byId( 'caldateof' ), 'onValueChanged', s, 'updatePreview' );
+                dojo.event.connect(dojo.widget.byId( 'caldateofNext' ), "onClick", s, "nextDay");
+                dojo.event.connect(dojo.widget.byId( 'caldateofPrev' ), "onClick", s, "prevDay");
 		dojo.event.topic.subscribe( 'calphysician-setValue', s, 'updatePreview' );
 	});
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect( dojo.widget.byId('BookingFormCommitChangesButton'), 'onClick', s, 'submit' );
 		dojo.event.disconnect( dojo.widget.byId('caldateof'), 'onValueChanged', s, 'updatePreview' );
+                dojo.event.disconnect(dojo.widget.byId( 'caldateofNext' ), "onClick", s, "nextDay");
+                dojo.event.disconnect(dojo.widget.byId( 'caldateofPrev' ), "onClick", s, "prevDay");
 		dojo.event.topic.unsubscribe( 'calphysician-setValue', s, 'updatePreview' );
 	});
 
@@ -135,7 +151,11 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Date<!--{/t}--></td>
-		<td><input dojoType="DropdownDatePicker" id="caldateof" name="caldateof" /></td>
+		<td><table border="0" style="width: auto;"><tr>
+		<td><button dojoType="Button" id="caldateofPrev" widgetId="caldateofPrev">&lt;</button></td>
+		<td><input dojoType="DropdownDatePicker" value="today" id="caldateof" name="caldateof" widgetId="caldateof" /></td>
+		<td><button dojoType="Button" id="caldateofNext" widgetId="caldateofNext">&gt;</button></td>
+		</table></td>
 	</tr>
 
 	<tr>
