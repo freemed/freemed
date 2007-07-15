@@ -75,7 +75,7 @@
 <input dojoType="Select" value=""
 	autocomplete="false"
 	id="<!--{$varname|escape}-->_widget" widgetId="<!--{$varname|escape}-->_widget"
-	setValue="if (arguments[0]) { document.getElementById('<!--{$varname|escape}-->').value = arguments[0]; }"
+	setValue="if (arguments[0]) { document.getElementById('<!--{$varname|escape}-->').value = arguments[0]; dojo.event.topic.publish( '<!--{$varname|escape}-->-setValue', arguments[0] ); }"
 	style="width: 300px;"
 	dataUrl="<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.<!--{if not $methodName}-->picklist<!--{else}--><!--{$methodName}--><!--{/if}-->?param0=%{searchString}"
 	mode="remote" />
