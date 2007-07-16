@@ -199,6 +199,20 @@
 	</tr>
 
 </table>
+
+<div align="center">
+        <table border="0" style="width:200px;">
+        <tr><td align="center">
+	        <button dojoType="Button" id="BookingFormCommitChangesButton" widgetId="BookingFormCommitChangesButton">
+	                <div><!--{t}-->Book Appointment<!--{/t}--></div>
+	        </button>
+        </td><td align="left">
+        	<button dojoType="Button" id="BookingFormCancelButton" widgetId="BookingFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
+        	        <div><!--{t}-->Cancel<!--{/t}--></div>
+        	</button>
+        </td></tr></table>
+</div>
+
 </td><td valign="top">
 <b><!--{t}-->Preview for <!--{/t}--> <span id="datePreviewLabel">-</span></b>
 <div class="tableContainer">
@@ -218,17 +232,4 @@
 </div>
 
 </td></tr></table>
-
-<div align="center">
-        <table border="0" style="width:200px;">
-        <tr><td align="center">
-	        <button dojoType="Button" id="BookingFormCommitChangesButton" widgetId="BookingFormCommitChangesButton">
-	                <div><!--{t}-->Book Appointment<!--{/t}--></div>
-	        </button>
-        </td><td align="left">
-        	<button dojoType="Button" id="BookingFormCancelButton" widgetId="BookingFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
-        	        <div><!--{t}-->Cancel<!--{/t}--></div>
-        	</button>
-        </td></tr></table>
-</div>
 
