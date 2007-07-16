@@ -113,6 +113,11 @@
 		<table style="border: 0; padding: 1em; width: auto;">
 
 			<tr>
+				<td><!--{t}-->Relative Value<!--{/t}--></td>
+				<td><input type="text" id="cptrelval" name="cptrelval" value="1" /></td>
+			</tr>
+
+			<tr>
 				<td><!--{t}-->Required Diagnoses<!--{/t}--></td>
 				<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" module="IcdCodes" varname="cptreqicd"}--></td>
 			</tr>

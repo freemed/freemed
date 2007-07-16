@@ -24,7 +24,7 @@
 *}-->
 
 <script type="text/javascript">
-	dojo.require("mywidgets.widget.Calendar");
+	dojo.require("mywidgets.widget.FreemedCalendar");
 	dojo.require("mywidgets.widget.Timezones");
 
 	var oCalendar;
@@ -51,6 +51,12 @@
 			var d1e = new Date(dateObj);
 			d1e.setDate(1);
 			d1e.setHours(14,30,0,0);
+			var d2s = new Date(dateObj);
+			d2s.setDate(1);
+			d2s.setHours(15,0,0,0);
+			var d2e = new Date(dateObj);
+			d2e.setDate(1);
+			d2e.setHours(15,30,0,0);
 			var d15s = new Date(dateObj);
 			d15s.setDate(15);
 			var d15e = new Date(dateObj);
@@ -68,6 +74,20 @@
 					allday: false,
 					repeated: false,
 					title: "Title 1",
+					url: "",
+					body: "This is the body of entry with id: id1 and title: Title 1",
+					attributes: {
+						Location: "My Galactic Headquarters",
+						Chair: "John Doe"
+					},
+					type: ["meeting","appointment"]
+				},
+				"id1.4": {
+					starttime: dojo.date.toRfc3339(d2s),
+					endtime: dojo.date.toRfc3339(d2e),
+					allday: false,
+					repeated: false,
+					title: "Title 1.1",
 					url: "",
 					body: "This is the body of entry with id: id1 and title: Title 1",
 					attributes: {
@@ -172,8 +192,12 @@
 <h3><!--{t}-->Scheduler<!--{/t}--></h3>
 
 <div align="center">
-	<div style="width:800px; height:400px; background-color:#cccccc; overflow:auto;">
-		<div id="dojoCalendar" dojoType="mywidgets:calendar"></div>
+	<div style="width:800px; height:600px; background-color:#cccccc; overflow:auto;">
+		<div id="dojoCalendar"
+		 dojoType="mywidgets:freemedcalendar"
+		 calendarType="day"
+		 dataRelayUrl="<!--{$relay}-->">
+		</div>
 	</div>
 </div>
 
