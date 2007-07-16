@@ -40,6 +40,8 @@
 <!--{assign_block var='initialLoad'}-->
 	provider.onAssign( data.provider );
 	immunization.onAssign( data.immunization );
+	route.onAssign( data.route );
+	body_site.onAssign( data.body_site );
 	dojo.widget.byId( 'dateof' ).setValue( data.dateof );
 <!--{/assign_block}-->
 
@@ -53,7 +55,7 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Date of Immunization<!--{/t}--></td>
-		<td><input dojoType="DropdownDatePicker" id="dateof" name="dateof" /></td>
+		<td><input dojoType="DropdownDatePicker" id="dateof" name="dateof" value="today" /></td>
 	</tr>
 
 	<tr>
@@ -64,6 +66,40 @@
 	<tr>
 		<td align="right"><!--{t}-->Immunization<!--{/t}--></td> 
 		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="Bccdc" varname="immunization"}--></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Route<!--{/t}--></td> 
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="RouteOfAdministration" varname="route"}--></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Body Site<!--{/t}--></td> 
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="BodySite" varname="body_site"}--></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Previous Doses<!--{/t}--></td>
+		<td><input dojoType="IntegerTextbox" trim="true" type="text" id="previous_doses" name="previous_doses" size="10" maxlength="10" /></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Manufacturer<!--{/t}--> / <!--{t}-->Lot Number<!--{/t}--></td>
+		<td>
+			<input type="text" id="manufacturer" name="manufacturer" size="30" maxlength="100" />
+			<b>/</b>
+			<input type="text" id="lot_number" name="lot_number" size="15" maxlength="20" />
+		</td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Recovery Status<!--{/t}--></td>
+		<td>
+			<select name="recovery" id="recovery">
+				<option value="1"><!--{t}-->Recovered<!--{/t}--></option>
+				<option value="0"><!--{t}-->Did not recover<!--{/t}--></option>
+			</select>
+		</td>
 	</tr>
 
 	<tr>
