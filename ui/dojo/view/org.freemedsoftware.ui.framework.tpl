@@ -308,7 +308,7 @@ var djConfig = {
 </div>
 
 <div dojoType="LayoutContainer" layoutChildPriority="top-bottom" style="width: 100%; height: 100%;">
-	<div dojoType="ContentPane" layoutAlign="bottom" style="background-image: url(<!--{$htdocs}-->/images/brushed.gif); color: #000000;">
+	<div dojoType="ContentPane" layoutAlign="bottom" style="background-image: url(<!--{$htdocs}-->/images/brushed.gif); color: #000000; border-top: 2px solid #000000;">
 
 		<!-- Bottom of screen bar -->
 
@@ -334,7 +334,7 @@ var djConfig = {
 	dock.setIconsOffset(5);
 	dock.addIcon(
 		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/Quick-Cal.png" } } ),
-		{ code:"freemedLoad('org.freemedsoftware.ui.scheduler.dailyappointments');" }
+		{ code:"freemedLoad('org.freemedsoftware.ui.scheduler');" }
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stocks.png" } } ),
@@ -350,7 +350,7 @@ var djConfig = {
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Yellow-Pages.png" } } ),
-		{ code:"freemedLoad('org.freemedsoftware.controller.mainframe');" }
+		{ code:"freemedLoad('org.freemedsoftware.ui.mainframe.default');" }
 	);
 //	dock.setScreenAlign(euDOWN, 5);
 </script>
@@ -361,12 +361,6 @@ var djConfig = {
 					<img src="<!--{$htdocs}-->/images/techsupport.png" alt="" width="73" height="30" border="0" id="supportButton" />
 					<img src="<!--{$htdocs}-->/images/usermanual.png" alt="" width="73" height="30" border="0" id="manualButton" onClick="openHelpPage(); return true;" />
 					<img src="<!--{$htdocs}-->/images/logoff.png" alt="" width="73" height="30" border="0" id="logoffButton" onClick="freemedLogout();" />
-					<!--{*
-					<!-- Tooltips -->
-					<span dojoType="tooltip" connectId="supportButton" toggle="explode" toggleDuration="100"><!--{t}-->Access technical support<!--{/t}--></span>
-					<span dojoType="tooltip" connectId="manualButton" toggle="explode" toggleDuration="100"><!--{t}-->View online FreeMED documentation<!--{/t}--></span>
-					<span dojoType="tooltip" connectId="logoffButton" toggle="explode" toggleDuration="100"><!--{t}-->Terminate your current FreeMED session<!--{/t}--></span>
-					*}-->
 				</td>
 			</tr>
 		</table>
