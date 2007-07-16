@@ -1,0 +1,54 @@
+BE,Bilateral Ears
+OU,Bilateral Eyes
+BN,Bilateral Nares
+BU,Buttock
+CT,Chest Tube
+LA,Left Arm
+LAC,Left Anterior Chest
+LACF,Left Antecubital Fossa
+LD,Left Deltoid
+LE,Left Ear
+LEJ,Left External Jugular
+OS,Left Eye
+LF,Left Foot
+LG,Left Gluteus Medius
+LH,Left Hand
+LIJ,Left Internal Jugular
+LLAQ,Left Lower Abd Quadrant
+LLFA,Left Lower Forearm
+LMFA,Left Mid Forearm
+LN,Left Naris
+LPC,Left Posterior Chest
+LSC,Left Subclavian
+LT,Left Thigh
+LUA,Left Upper Arm
+LUAQ,Left Upper Abd Quadrant
+LUFA,Left Upper Forearm
+LVG,Left Ventragluteal
+LVL,Left Vastus Lateralis
+NB,Nebulized
+PA,Perianal
+PERIN,Perineal
+RA,Right Arm
+RAC,Right Anterior Chest
+RACF,Right Antecubital Fossa
+RD,Right Deltoid
+RE,Right Ear
+REJ,Right External Jugular
+OD,Right Eye
+RF,Right Foot
+RG,Right Gluteus Medius
+RH,Right Hand
+RIJ,Right Internal Jugular
+RLAQ,Rt Lower Abd Quadrant
+RLFA,Right Lower Forearm
+RMFA,Right Mid Forearm
+RN,Right Naris
+RPC,Right Posterior Chest
+RSC,Right Subclavian
+RT,Right Thigh
+RUA,Right Upper Arm
+RUAQ,Right Upper Abd Quadrant
+RUFA,Right Upper Forearm
+RVL,Right Vastus Lateralis
+RVG,Right Ventragluteal
