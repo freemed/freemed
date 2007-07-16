@@ -44,6 +44,8 @@ var djConfig = {
 	<!--{if $DEBUG}-->
 	dojo.require( 'dojo.debug.Firebug' );
 	<!--{/if}-->
+	dojo.require("dojo.date");
+	dojo.require("dojo.event.*");
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
 	dojo.require("dojo.widget.LinkPane");
@@ -52,6 +54,7 @@ var djConfig = {
 	dojo.require("dojo.widget.Toaster");
 	dojo.require("dojo.widget.Select");
 	dojo.require("dojo.widget.Dialog");
+	dojo.require("dojo.widget.IntegerTextbox");
 	dojo.hostenv.writeIncludes();
 
 	//
@@ -150,7 +153,7 @@ var djConfig = {
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
 		currentHelpTopic: undefined,
-		noteSave: "<!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}-->",
+		noteSave: "<!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape:'javascript'}-->",
 		interval: 60, // seconds between polls
 		intervalCallback: function ( ) {
 			dojo.io.bind({
@@ -298,7 +301,7 @@ var djConfig = {
 			<td align="center" valign="middle"><small><i><!--{t}-->Click outside this dialog box to close the notepad.<!--{/t}--></i></small></td>
 		</tr>
 		<tr>
-			<td valign="middle" align="center"><textarea id="notePad" rows="20" cols="80" wrap="virtual" onBlur="freemedGlobal.onUpdateNotepad();"><!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape}--></textarea></td>
+			<td valign="middle" align="center"><textarea id="notePad" rows="20" cols="80" wrap="virtual" onBlur="freemedGlobal.onUpdateNotepad();"><!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape:'html'}--></textarea></td>
 		</tr>
 	</table>
 	</div>
