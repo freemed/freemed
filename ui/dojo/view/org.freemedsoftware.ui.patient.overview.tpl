@@ -90,5 +90,5 @@
 	</tr></table>
 </div>
 
-<div id="freemedPatientContent" dojoType="ContentPane" style="width: 100%; height: 100%;" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false" parseWidgets="true" adjustPaths="false" href="<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->"></div>
+<div id="freemedPatientContent" dojoType="ContentPane" style="width: 100%; height: 100%;" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false" parseWidgets="true" adjustPaths="false" href="<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->" loadingMessage="<!--{$paneLoading|escape}-->"></div>
 
