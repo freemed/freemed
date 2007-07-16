@@ -91,7 +91,6 @@
 		dojo.widget.byId('smartSearch').textInputNode.focus();
 		dojo.event.connect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.connect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
-		//dojo.event.connect(dojo.widget.byId('fieldSearchButton'), "onClick", patientSearch, 'fieldSearchPopulate');
 		document.getElementById( 'fieldSearchText' ).onkeyup = patientSearch.fieldSearchPopulate;
 
 		// If ...
@@ -118,7 +117,6 @@
 	_container_.addOnUnload(function() {
 		dojo.event.disconnect(dojo.widget.byId('patientSearch'), "onSelect", patientSearch, 'goToPatient');
 		dojo.event.disconnect(dojo.widget.byId('populatePatientSearchButton'), "onClick", patientSearch, 'populatePatientSearch');
-		//dojo.event.disconnect(dojo.widget.byId('fieldSearchButton'), "onClick", patientSearch, 'fieldSearchPopulate');
 		dojo.widget.byId('smartSearch').setValue('');
 		dojo.widget.byId('smartSearch').setLabel('');
 		dojo.widget.byId('patientTags').setValue('');
@@ -133,6 +131,7 @@
 
 		<h3><!--{t}-->Patient Search<!--{/t}-->: <!--{method namespace="org.freemedsoftware.api.PatientInterface.TotalInSystem"|escape}--> <!--{t}-->Patient(s) in the System<!--{/t}--></h3>
 
+	<!--
 	<div class="infoBox" style="float:right;">
 		<form dojoType="Form" id="patientSearchForm" widgetId="patientSearchForm">
 		<table border="0">
@@ -150,9 +149,10 @@
 		</div>
 		</form>
 	</div>
+	-->
 
 	<div style="margin: .5em;">
-		<!--{t}-->Smart Search<!--{/t}--> :
+		<b><!--{t}-->Smart Search<!--{/t}--></b> :
 		<input dojoType="Select" value=""
 		 autocomplete="false"
 		 id="smartSearch" widgetId="smartSearch"
@@ -163,7 +163,7 @@
 	</div>
 
 	<div style="margin: .5em;">
-		<!--{t}-->Tag Search<!--{/t}--> :
+		<b><!--{t}-->Tag Search<!--{/t}--></b> :
 		<input dojoType="Select" value=""
 		 autocomplete="false"
 		 id="patientTags" widgetId="patientTags"
@@ -174,10 +174,11 @@
 	</div>
 
 	<div style="margin: .5em;">
-		<table border="0" style="width:auto;"><tr>
+		<table border="0" cellspacing="0" cellpadding="0" style="width:auto;"><tr>
 		<td>
-			<!--{t}-->Field Search<!--{/t}--> :
+			<b><!--{t}-->Field Search<!--{/t}--></b> :
 		</td>
+		<td>&nbsp;</td>
 		<td>
 			<select id="fieldSearchField">
 				<option value="ptid"><!--{t}-->Patient ID<!--{/t}--></option>
@@ -188,6 +189,7 @@
 				<option value="zip"><!--{t}-->Zip/Postal Code<!--{/t}--></option>
 				<option value="hphone"><!--{t}-->Home Phone Number<!--{/t}--></option>
 				<option value="wphone"><!--{t}-->Work Phone Number<!--{/t}--></option>
+				<option value="age"><!--{t}-->Age<!--{/t}--></option>
 			</select>
 		</td>
 		<td>
@@ -197,7 +199,7 @@
 	</div>
 
 	<div style="margin: .5em; display: none;" id="patientHistoryDiv">
-		<!--{t}-->Last Patients<!--{/t}--> :
+		<b><!--{t}-->Last Patients<!--{/t}--></b> :
 		<span id="patientHistorySpan"></span>
 	</div>
 
@@ -211,12 +213,12 @@
 		<table dojoType="FilteringTable" id="patientSearch" widgetId="patientSearch" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="id" border="0" multiple="false">
 			<thead>
 				<tr>
-					<th field="patient_id" dataType="String">Record</th>
-					<th field="last_name" dataType="String">Last Name</th>
-					<th field="first_name" dataType="String">First Name</th>
-					<th field="middle_name" dataType="String">Middle Name</th>
-					<th field="age" dataType="String">Age</th>
-					<th field="date_of_birth" dataType="String">DOB</th>
+					<th field="patient_id" dataType="String"><!--{t}-->Patient ID<!--{/t}--></th>
+					<th field="last_name" dataType="String"><!--{t}-->Last Name<!--{/t}--></th>
+					<th field="first_name" dataType="String"><!--{t}-->First Name<!--{/t}--></th>
+					<th field="middle_name" dataType="String"><!--{t}-->Middle Name<!--{/t}--></th>
+					<th field="age" dataType="String"><!--{t}-->Age<!--{/t}--></th>
+					<th field="date_of_birth" dataType="String"><!--{t}-->DOB<!--{/t}--></th>
 				</tr>
 			</thead>
 			<tbody></tbody>
