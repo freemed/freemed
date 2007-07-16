@@ -42,14 +42,14 @@
 % only display. FIXME: Migrate this to a header.
 \begin{center}
         {\relsize{1}\textbf{{[link link=$pnotesdoc table='physician' field='phypracname'|texize]}}} \\
-        {\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param=$pnotesdoc|texize]}}} \\
+        {\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param0=$pnotesdoc|texize]}}} \\
         \textsl{{[link link=$pnotesdoc table='physician' field='phyaddr1a'|texize]}, {[link link=$pnotesdoc table='physician' field='phycitya'|texize]}, {[link link=$pnotesdoc table='physician' field='phystatea'|texize]} {[link link=$pnotesdoc table='physician' field='phyzipa'|texize]} } \\
         \textsl{phone {[link link=$pnotesdoc table='physician' field='phyphonea'|texize]} fax {[link link=$pnotesdoc table='physician' field='phyfaxa']}}
 \end{center}
 
-% {[method namespace='org.freemedsoftware.core.Physician.fullName' param=$pnotesdoc|texize]} \\
+% {[method namespace='org.freemedsoftware.core.Physician.fullName' param0=$pnotesdoc|texize]} \\
 \begin{tabular}{ll}
-NAME:	&	{[method namespace='org.freemedsoftware.core.Patient.fullName' param=$pnotespat|texize]}	\\
+NAME:	&	{[method namespace='org.freemedsoftware.core.Patient.fullName' param0=$pnotespat|texize]}	\\
 CHART:	&	{[link link=$pnotespat table='patient' field='ptid'|texize]} 	\\
 DOB:	&	{[link link=$pnotespat table='patient' field='ptdob'|texize]}	\\
 DATE:	&	{[$pnotesdt|texize]} \\
