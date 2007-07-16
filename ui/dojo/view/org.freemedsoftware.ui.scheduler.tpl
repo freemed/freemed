@@ -31,6 +31,7 @@
 
 	var sched = {
 		init: function () {
+			schedProvider.onAssign( 0 );
 			oCalendar = dojo.widget.byId( "dojoCalendar" );
 			oCalendar.setTimeZones(mywidgets.widget.timezones);
 			oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie( "DCTZ" );
@@ -50,7 +51,6 @@
 
 			var cal = dojo.widget.byId( 'dojoCalendar' );
 
-
 			var sP = new Date( cal.firstDay );
 			var eP;
 			if ( cal.calendarType == 'day' ) {
@@ -64,12 +64,14 @@
 			}
 
 			// use io bind, sync and get ...
+			var prov = document.getElementById( 'schedProvider' ).value;
 			dojo.io.bind({
 				method: 'POST',
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange',
 				content: {
 					param0: sched.dateToMdy( sP ),
-					param1: sched.dateToMdy( eP )
+					param1: sched.dateToMdy( eP ),
+					param2: prov ? prov : ''
 				},
 				load: function ( type, data, evt ) {
 					sched.dataStore = data;
@@ -78,20 +80,8 @@
 				sync: true
 			});
 			var d = sched.dataStore;
-			//var d28e = new Date(dateObj);
-			//d28e.setDate(28);
-			//d28e.setHours(18,30,0,0);
-			// entries [label] =
-			//	starttime
-			//	endtime: dojo.date.toRfc3339(d1e),
-			//	allday: false,
-			//	repeated: false,
-			//	title: "Title 1",
-			//	url: "",
-			//	body: "body ... desc?"
-			//	attributes: {Location: "My Galactic Headquarters"}
-			//	type: [ "appointment" ]
 			var entries = { };
+			// Populate with entries from relay
 			for (var i=0; i<d.length; i++) {
 				var sDate = sched.mdyToDate( d[i].date_of_mdy );
 				var eDate = sched.mdyToDate( d[i].date_of_mdy );
@@ -99,7 +89,7 @@
 				sDate.setMinutes( d[i].minute );
 				eDate.setHours( d[i].hour );
 				eDate.setMinutes( d[i].minute );
-				entries[ 'appt' + d[i].scheduler_id ] = {
+				entries[ 'appt_' + d[i].scheduler_id ] = {
 					starttime: dojo.date.toRfc3339( sDate ),
 					endtime: dojo.date.toRfc3339( eDate ),
 					allday: false,
@@ -108,6 +98,7 @@
 					code: "freemedLoad('org.freemedsoftware.ui.patient.overview?patient=" + d[i].patient_id + "');",
 					url: '',
 					body: d[i].note,
+					//attributes: {Location: "My Galactic Headquarters"},
 					type: [ 'appointment' ]
 				};
 			}
@@ -139,17 +130,17 @@
 
 		mdyToDate: function ( mdy ) {
 			var chunks = mdy.split('/');
-			return new Date( chunks[2], chunks[0], chunks[1] );
+			return new Date( chunks[2], chunks[0] - 1, chunks[1] );
 		},
 
 		dateToMdy: function ( dt ) {
-			var m = dt.getMonth();
+			var m = dt.getMonth() + 1;
 			var d = dt.getDate();
 			var y = dt.getYear() + 1900;
 			var s =  m + '/' + d + '/' + y;
 			if ( s == 'NaN/NaN/NaN' ) {
 				var dt = new Date();
-				m = dt.getMonth();
+				m = dt.getMonth() + 1;
 				d = dt.getDate();
 				y = dt.getYear() + 1900;
 				s =  m + '/' + d + '/' + y;
@@ -195,13 +186,28 @@
 		}
 	};
 
-	_container_.addOnLoad(sched.init);
+	_container_.addOnLoad(function(){
+		sched.init();
+		dojo.event.topic.subscribe( 'schedProvider-setValue', sched, 'widgetValueChanged' );
+	});
+	_container_.addOnUnload(function(){
+		dojo.event.topic.unsubscribe( 'schedProvider-setValue', sched, 'widgetValueChanged' );
+	});
 
 </script>
 
 <h3><!--{t}-->Scheduler<!--{/t}--></h3>
 
-<div align="center">
+<div align="center" style="padding: 1em;">
+	<table border="0" style="width: auto;">
+	<tr>
+		<td><b><!--{t}-->Provider<!--{/t}--></b> : </td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="schedProvider"}--></td>
+	</tr>
+	</table>
+</div>
+
+<div align="center" style="padding: 1em;">
 	<div style="width:800px; height:600px; background-color:#cccccc; overflow:auto;">
 		<div id="dojoCalendar"
 		 dojoType="mywidgets:freemedcalendar"
