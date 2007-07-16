@@ -23,6 +23,7 @@
 CREATE TABLE IF NOT EXISTS `routeofadmin` (
 	abbrev				CHAR (3) UNIQUE NOT NULL,
 	display_value			VARCHAR (150) NOT NULL,
+	id				SERIAL,
 
 	#	Define keys
 
