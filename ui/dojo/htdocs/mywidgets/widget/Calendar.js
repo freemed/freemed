@@ -224,6 +224,8 @@ dojo.widget.defineWidget(
 					sHTML = this.calendarEvents[i].title;
 					if(this.calendarEvents[i].url != ''){
 						sHTML = '<a href="' + this.calendarEvents[i].url + '" target="_blank">' + this.calendarEvents[i].title + '</a>';
+					} else if(this.calendarEvents[i].code != ''){
+						sHTML = '<a onClick="' + this.calendarEvents[i].code + '">' + this.calendarEvents[i].title + '</a>';
 					}
 					oSpan.innerHTML = sHTML
 					
