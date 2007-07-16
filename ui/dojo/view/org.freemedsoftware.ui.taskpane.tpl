@@ -44,12 +44,10 @@
 			<!--{t}-->Book Appointment<!--{/t}-->
 		</div>
 
-		<!--
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler');">
 			<img src="<!--{$htdocs}-->/images/pda_icon.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Scheduler<!--{/t}-->
 		</div>
-		-->
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.messaging');">
 			<img src="<!--{$htdocs}-->/images/messages_icon.png" height="64" width="64" border="0" /><br/>

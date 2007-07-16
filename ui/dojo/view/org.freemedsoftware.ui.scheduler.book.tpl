@@ -49,6 +49,7 @@
 			<!--{if $patient}-->
 			calpatient.onAssign( <!--{$patient}--> );
 			<!--{/if}-->
+			s.updatePreview();
 		},
 		prevDay: function ( ) {
 			var d = dojo.widget.byId( 'caldateof' );

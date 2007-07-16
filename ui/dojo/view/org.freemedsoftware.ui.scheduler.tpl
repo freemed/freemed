@@ -31,95 +31,85 @@
 
 	var sched = {
 		init: function () {
-			oCalendar = dojo.widget.byId("dojoCalendar");
+			oCalendar = dojo.widget.byId( "dojoCalendar" );
 			oCalendar.setTimeZones(mywidgets.widget.timezones);
-			oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie("DCTZ");
+			oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie( "DCTZ" );
 			oCalendar.onSetTimeZone = sched.widgetTimeZoneChanged;
 			oCalendar.changeEventTimes = true;
 			oCalendar.onEventChanged = sched.widgetEventChanged;
-			oCalendar.setAbleToCreateNew(true);
+			oCalendar.setAbleToCreateNew( true );
 			oCalendar.onNewEntry = sched.widgetNewEntry;
 			oCalendar.onValueChanged = sched.widgetValueChanged;
 			sched.widgetValueChanged(new Date());
 		},
 
-		widgetValueChanged: function (dateObj){
+		dataStore: { },
+		widgetValueChanged: function ( dateObj ){
+			// dateObj is current date
 			dojo.require("dojo.date.serialize");
-			var d1s = new Date(dateObj);
-			d1s.setDate(1);
-			d1s.setHours(14,0,0,0);
-			var d1e = new Date(dateObj);
-			d1e.setDate(1);
-			d1e.setHours(14,30,0,0);
-			var d2s = new Date(dateObj);
-			d2s.setDate(1);
-			d2s.setHours(15,0,0,0);
-			var d2e = new Date(dateObj);
-			d2e.setDate(1);
-			d2e.setHours(15,30,0,0);
-			var d15s = new Date(dateObj);
-			d15s.setDate(15);
-			var d15e = new Date(dateObj);
-			d15e.setDate(15);
-			var d28s = new Date(dateObj);
-			d28s.setDate(28);
-			d28s.setHours(16,40,0,0);
-			var d28e = new Date(dateObj);
-			d28e.setDate(28);
-			d28e.setHours(18,30,0,0);
-			var entries = {
-				"id1": {
-					starttime: dojo.date.toRfc3339(d1s),
-					endtime: dojo.date.toRfc3339(d1e),
+
+			var cal = dojo.widget.byId( 'dojoCalendar' );
+
+
+			var sP = new Date( cal.firstDay );
+			var eP;
+			if ( cal.calendarType == 'day' ) {
+				eP = sP;
+			}
+			if ( cal.calendarType == 'week' ) {
+				eP = dojo.date.add( sP, dojo.date.dateParts.DAY, 6 );
+			}
+			if ( cal.calendarType == 'month' ) {
+				eP = dojo.date.add( sP, dojo.date.dateParts.DAY, 27 );
+			}
+
+			// use io bind, sync and get ...
+			dojo.io.bind({
+				method: 'POST',
+				url: '<!--{$relay}-->/org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange',
+				content: {
+					param0: sched.dateToMdy( sP ),
+					param1: sched.dateToMdy( eP )
+				},
+				load: function ( type, data, evt ) {
+					sched.dataStore = data;
+				},
+				mimetype: 'text/json',
+				sync: true
+			});
+			var d = sched.dataStore;
+			//var d28e = new Date(dateObj);
+			//d28e.setDate(28);
+			//d28e.setHours(18,30,0,0);
+			// entries [label] =
+			//	starttime
+			//	endtime: dojo.date.toRfc3339(d1e),
+			//	allday: false,
+			//	repeated: false,
+			//	title: "Title 1",
+			//	url: "",
+			//	body: "body ... desc?"
+			//	attributes: {Location: "My Galactic Headquarters"}
+			//	type: [ "appointment" ]
+			var entries = { };
+			for (var i=0; i<d.length; i++) {
+				var sDate = sched.mdyToDate( d[i].date_of_mdy );
+				var eDate = sched.mdyToDate( d[i].date_of_mdy );
+				sDate.setHours( d[i].hour );
+				sDate.setMinutes( d[i].minute );
+				eDate.setHours( d[i].hour );
+				eDate.setMinutes( d[i].minute );
+				entries[ 'appt' + d[i].scheduler_id ] = {
+					starttime: dojo.date.toRfc3339( sDate ),
+					endtime: dojo.date.toRfc3339( eDate ),
 					allday: false,
 					repeated: false,
-					title: "Title 1",
-					url: "",
-					body: "This is the body of entry with id: id1 and title: Title 1",
-					attributes: {
-						Location: "My Galactic Headquarters",
-						Chair: "John Doe"
-					},
-					type: ["meeting","appointment"]
-				},
-				"id1.4": {
-					starttime: dojo.date.toRfc3339(d2s),
-					endtime: dojo.date.toRfc3339(d2e),
-					allday: false,
-					repeated: false,
-					title: "Title 1.1",
-					url: "",
-					body: "This is the body of entry with id: id1 and title: Title 1",
-					attributes: {
-						Location: "My Galactic Headquarters",
-						Chair: "John Doe"
-					},
-					type: ["meeting","appointment"]
-				},
-				"id2": {
-					starttime: dojo.date.toRfc3339(d15s),
-					endtime: dojo.date.toRfc3339(d15e),
-					allday: true,
-					repeated: false,
-					title: "Title 2",
-					url: "",
-					body: "This is the body of entry with id: id2 and title: Title 2",
-					attributes: {
-						Location: "Somewhere"
-					},
-					type: ["appointment","super"]
-				},
-				"id3": {
-					starttime: dojo.date.toRfc3339(d28s),
-					endtime: dojo.date.toRfc3339(d28e),
-					allday: false,
-					repeated: false,
-					title: "Title 3",
-					url: "",
-					body: "This is the body of entry with id: id3 and title: Title 3",
-					attributes: "",
-					type: ["reminder"]
-				}
+					title: d[i].patient,
+					code: "freemedLoad('org.freemedsoftware.ui.patient.overview?patient=" + d[i].patient_id + "');",
+					url: '',
+					body: d[i].note,
+					type: [ 'appointment' ]
+				};
 			}
 			oCalendar.setCalendarEntries(entries);
 		},
@@ -142,9 +132,29 @@
 					sReturn += i + " = " + sChildReturn + "\n";
 				}
 			}
-			alert(sReturn);
+			//alert(sReturn);
 			//Call script to update back-end db
 			oCalendar.refreshScreen();
+		},
+
+		mdyToDate: function ( mdy ) {
+			var chunks = mdy.split('/');
+			return new Date( chunks[2], chunks[0], chunks[1] );
+		},
+
+		dateToMdy: function ( dt ) {
+			var m = dt.getMonth();
+			var d = dt.getDate();
+			var y = dt.getYear() + 1900;
+			var s =  m + '/' + d + '/' + y;
+			if ( s == 'NaN/NaN/NaN' ) {
+				var dt = new Date();
+				m = dt.getMonth();
+				d = dt.getDate();
+				y = dt.getYear() + 1900;
+				s =  m + '/' + d + '/' + y;
+			}
+			return s;
 		},
 
 		widgetNewEntry: function(eventObject) {
@@ -166,7 +176,7 @@
 					sReturn += i + " = " + sChildReturn + "\n";
 				}
 			}
-			alert(sReturn);
+			//alert(sReturn);
 			//Call script to add to back-end db
 			oCalendar.refreshScreen();
 		},
