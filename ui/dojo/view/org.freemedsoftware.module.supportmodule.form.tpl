@@ -90,7 +90,7 @@
 				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
 			} catch ( err ) { }
 			var myContent = {
-				<!--{if $id}-->id: "<!--{$id|escape}-->",<!--{/if}-->
+				<!--{if $id}-->id: "<!--{$id|escape}-->"<!--{if $collectDataArray}-->,<!--{/if}--><!--{/if}-->
 				<!--{$collectDataArray}-->
 			};
 			var mForm = dojo.widget.byId( 'moduleForm' ).getValues( );
