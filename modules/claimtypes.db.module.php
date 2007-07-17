@@ -22,9 +22,6 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-  // note: Insurance Claim types database module
-  // lic : GPL, v2
-
 LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
 class ClaimTypes extends SupportModule {
@@ -35,7 +32,7 @@ class ClaimTypes extends SupportModule {
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "07adcce6-d38b-425a-a136-7102f9a0cb13";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name = "Claim Types";
 	var $table_name  = "claimtypes";
