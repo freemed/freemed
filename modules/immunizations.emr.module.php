@@ -43,6 +43,12 @@ class Immunizations extends EMRModule {
 		'provider',
 		'eoc',
 		'immunization',
+		'route',
+		'body_site',
+		'manufacturer',
+		'lot_number',
+		'previous_doses',
+		'recovered',
 		'notes',
 		'user'
 	);
