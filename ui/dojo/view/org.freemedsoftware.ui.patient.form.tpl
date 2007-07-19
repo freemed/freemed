@@ -60,14 +60,10 @@
 				content: {
 					param0: dojo.widget.byId('patientForm').getValues()
 				},
-				error: function(type, data, evt) {
-					alert('FreeMED has encountered an error. Please try again.');
-					dojo.widget.byId('patientFormCommitChangesButton').enable();
-				},
 				load: function(type, data, evt) {
 					if (data) {
 						if ((data + 0) > 0) {
-							freemed
+							freemedLoad( '<!--{$controller}-->/org.freemedsoftware.ui.patient.overview?patient=' + parseInt( data ) );
 						}
 					} else {
 						alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
