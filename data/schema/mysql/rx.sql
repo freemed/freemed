@@ -22,12 +22,13 @@
 
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/workflow_status.sql
 
 CREATE TABLE IF NOT EXISTS `rx` (
 	rxphy			INT UNSIGNED NOT NULL,
 	rxpatient		BIGINT UNSIGNED NOT NULL,
-	rxdtadd			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	rxdtmod			TIMESTAMP (14) NOT NULL,
+	rxdtadd			DATE NOT NULL,
+	rxdtmod			DATE,
 	rxdtfrom		DATE,
 	rxdrug			VARCHAR (150) NOT NULL,
 	rxform			VARCHAR (32),
@@ -72,8 +73,8 @@ BEGIN
 		ALTER IGNORE TABLE rx ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 	END IF;
 	IF @V < 2 THEN
-		ALTER IGNORE TABLE rx ADD COLUMN rxdtadd TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER rxpatient;
-		ALTER IGNORE TABLE rx ADD COLUMN rxdtadd TIMESTAMP (14) NOT NULL AFTER rxdtadd;
+		ALTER IGNORE TABLE rx ADD COLUMN rxdtadd DATE NOT NULL AFTER rxpatient;
+		ALTER IGNORE TABLE rx ADD COLUMN rxdtmod DATE AFTER rxdtadd;
 	END IF;
 
 	CALL FreeMED_Module_UpdateVersion( 'rx', 2 );
@@ -91,7 +92,7 @@ CREATE TRIGGER rx_Delete
 	FOR EACH ROW BEGIN
 		DECLARE c INT UNSIGNED;
 		DELETE FROM `patient_emr` WHERE module='rx' AND oid=OLD.id;
-		SELECT COUNT(*) INTO c FROM patient_emr WHERE module='rx' AND patient=OLD.rxpatient AND DATE_FORMAT( OLD.rxdtadd, '%Y-%m-%d' );
+		SELECT COUNT(*) INTO c FROM patient_emr WHERE module='rx' AND patient=OLD.rxpatient AND DATE_FORMAT( stamp, '%Y-%m-%d' ) = OLD.rxdtadd;
 		IF c < 1 THEN
 			CALL patientWorkflowUpdateStatus( OLD.rxpatient, DATE_FORMAT( OLD.rxdtadd, '%Y-%m-%d' ), 'rx', FALSE, OLD.user );
 		END IF;
