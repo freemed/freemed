@@ -1,0 +1,182 @@
+00,Not Specified
+10,Group
+12,Packet
+14,Shot
+1N,Count
+22,Decliter per Gram
+23,Grams per Cubic Centimeter
+3F,Kilograms Per Liter of Product
+40,Milliliter per Second
+41,Milliliter per Minute
+4E,20-Pack
+4G,Microliter
+4M,Milligrams per Hour
+58,Net Kilograms
+60,Percent Weight
+93,Calories Per Gram
+AF,Centigram
+AM,Ampoule
+AQ,Anti-hemophilic Factor (AHF) Units
+AR,Suppository
+AS,Assortment
+AU,Ocular Insert System
+AV,Capsule
+AW,Powder-Filled Vials
+AY,Assembly
+BG,Bag
+BI,Bar
+BO,Bottle
+BX,Box
+C3,Centiliter
+C5,Cost
+C7,Centipoise (CPS)
+C8,Cubic Decimeter
+CC,Cubic Centimeter
+CH,Container
+CI,Cubic Inches
+CM,Centimeter
+CQ,Cartridge
+CS,Cassette
+CT,Carton
+CU,Cup
+D5,Kilogram Per Square Centimeter
+DA,Days
+DB,Dry Pounds
+DD,Degree
+DF,Dram
+DG,Decigram
+DI,Dispenser
+DJ,Decagram
+DL,Deciliter
+E8,Inches\, Decimal ? Actual
+EA,Each
+EC,Each per Month
+EP,Eleven Pack
+EQ,Equivalent Gallons
+F2,International Unite
+F3,Equivalent
+F4,Minim
+F5,MOL
+FG,Transdermal Patch
+FH,Micromolar
+FO,Fluid Ounce
+FZ,Fluid Ounce (Imperial)
+GA,Gallon
+GB,Gallons/Day
+GC,Grams per 100 Grams
+GE,Pounds per Gallon
+GF,Grams per 100 Centimeters
+GH,Half Gallon
+GI,Imperial Gallons
+GJ,Grams per Milliliter
+GK,Grams per Kilogram
+GL,Grams per Liter
+GM,Grams per Sq. Meter
+GO,Milligrams per Square Meter
+GP,Milligrams per Cubic Meter
+GQ,Micrograms per Cubic Meter
+GR,Gram
+GX,Grain
+H2,Half Liter
+H4,Hectoliter
+HP,Millimeter H20
+HR,Hours
+HT,Half Hour
+IH,Inhaler
+IN,Inch
+JR,Jar
+KC,Kilograms per Cubic Meter
+KD,Kilograms Decimal
+KE,Keg
+KG,Kilogram
+KI,Kilograms/Millimeter Width
+KM,Kilograms per Square Meter\, Kilograms\, Decimal
+KT,Kit
+KW,Kilograms per Millimeter
+KX,Milliliters per Kilogram
+L2,Liters Per Minute
+LB,Pound
+LQ,Liters Per Day
+LT,Liter
+M1,Milligrams per Liter
+M2,Millimeter ? Actual
+M7,Micro Inch
+MC,Microgram
+ME,Milligram
+ML,Milliliter
+MM,Millimeter
+MO,Months
+MR,Meter
+MS,Square Millimeter
+MX,Mixed
+MY,Millimeter ? Average
+MZ,Millimeter ? minimum
+N1,Pen Calories
+N4,Pen Grams (Protein)
+N9,Cartridge Needle
+NA,Milligrams per Kilogram
+NX,Parts Per Thousand
+OP,Two Pack
+OZ,Ounce ? Av
+P1,Percent
+P3,Three Pack
+P4,Four-pack
+P5,Five-pack
+P6,Six pack
+P7,Seven pack
+P8,Eight-pack
+P9,Nine pack
+PH,Pack
+PK,Package
+PR,Pair
+PT,Pint
+PV,Half Pint
+PX,Pint\, Imperial
+PY,Peck\, Dry Imperial
+Q2,Pint U.S. Dry
+QK,Quarter Kilogram
+QS,Quart\, Dry U.S.
+QT,Quart
+QU,Quart\, Imperial
+S1,Semester
+S2,Trimester
+SR,Strip
+SZ,Syringe
+T2,Thousandths of an Inch
+TB,Tube
+TP,Ten-pack
+TY,Tray
+U1,Treatments
+U2,Tablet
+U3,Ten
+U5,Two Hundred Fifty
+UM,Million Units
+UN,Unit
+UP,Troche
+UQ,Wafer
+UR,Application
+US,Dosage Form
+UT,Inhalation
+UU,Lozenge
+UV,Percent Topical Only
+UW,Milliequivalent
+UX,Dram (Minim)
+VI,Vial
+VP,Percent Volume
+VS,Visit
+WW,Milliliters of Water
+X4,Drop
+X9,Portion
+Y2,Tablespoon
+Y3,Teaspoon
+Y4,Tub
+Y5,Applicatorful
+Y6,Dose(s)
+Y7,Gum
+Y8,Inhalation(s)
+Y9,Puff(s)
+Y10,Scoop(s)
+Y11,Spray(s)
+Y12,Thin layer
+YR,Years
+ZZ,Mutually Defined
