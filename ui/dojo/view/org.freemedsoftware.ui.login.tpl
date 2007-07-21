@@ -63,6 +63,8 @@
 
 	dojo.addOnLoad(function() {
 		dojo.widget.byId("DialogContent").show();
+		// Hack around dealing with focus issue
+		window.setTimeout( 'dojo.byId("username").focus();', 500 );
 	});
 
 	</script>
@@ -125,7 +127,7 @@
 <body>
 <!--{/if}-->
 
-<div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250" executeScripts="true">
+<div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250" executeScripts="true" focusElement="username">
 	<form onsubmit="return false;">
 		<table>
 			<tr>
@@ -146,7 +148,7 @@
 			</tr>
 			<tr>
 				<td><b><!--{t}-->Login<!--{/t}--></b></td>
-				<td><input type="text" id="username" name="username" /></td>
+				<td><input type="text" id="username" name="username" widgetId="username" /></td>
 			</tr>
 			<tr>
 				<td><b><!--{t}-->Password<!--{/t}--></b></td>
