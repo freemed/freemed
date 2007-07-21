@@ -21,6 +21,8 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/workflow_status.sql
 
 CREATE TABLE IF NOT EXISTS `superbill` (
 	dateofservice		DATE,
@@ -44,10 +46,44 @@ CREATE PROCEDURE superbill_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
+	#----- Remove triggers
+	DROP TRIGGER superbill_Delete;
+	DROP TRIGGER superbill_Insert;
+	DROP TRIGGER superbill_Update;
+
 	#----- Upgrades
 	ALTER TABLE superbill ADD COLUMN provider BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER patient;
 END
 //
 DELIMITER ;
 CALL superbill_Upgrade( );
+
+#----- Triggers
+
+DELIMITER //
+
+CREATE TRIGGER superbill_Delete
+	AFTER DELETE ON superbill
+	FOR EACH ROW BEGIN
+		DELETE FROM `patient_emr` WHERE module='superbill' AND oid=OLD.id;
+		CALL patientWorkflowUpdateStatus( OLD.patient, OLD.dateofservice, 'superbill', FALSE, OLD.enteredby );
+	END;
+//
+
+CREATE TRIGGER superbill_Insert
+	AFTER INSERT ON superbill
+	FOR EACH ROW BEGIN
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'superbill', NEW.patient, NEW.id, NEW.dateofservice, p, NEW.enteredby );
+		CALL patientWorkflowUpdateStatus( NEW.patient, NEW.dateofservice, 'superbill', TRUE, NEW.enteredby );
+	END;
+//
+
+CREATE TRIGGER superbill_Update
+	AFTER UPDATE ON superbill
+	FOR EACH ROW BEGIN
+		UPDATE `patient_emr` SET stamp=NEW.dateofservice, patient=NEW.patient, summary=p, user=NEW.enteredby WHERE module='superbill' AND oid=NEW.id;
+	END;
+//
+
+DELIMITER ;
 
