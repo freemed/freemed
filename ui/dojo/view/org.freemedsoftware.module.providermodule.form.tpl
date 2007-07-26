@@ -79,6 +79,16 @@
 				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderStatus" varname="userrealphy"}--></td>
 			</tr>
 
+			<tr>
+				<td><!--{t}-->Provider Internal / External<!--{/t}--></td>
+				<td>
+					<select id="phyref" name="phyref">
+						<option value="yes"><!--{t}-->In-House<!--{/t}--></option>
+						<option value="no"><!--{t}-->Referring<!--{/t}--></option>
+					</select>
+				</td>
+			</tr>
+
 		</table>
 
 	</div>
