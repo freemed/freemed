@@ -47,7 +47,7 @@ class FreemedDb extends MDB2 {
 		$this->db->loadModule( 'Function' );
 
 		// Required multi query option for stored procedures
-		$this->db->setOption( 'multi_query', true );
+		//$this->db->setOption( 'multi_query', true );
 
 		// Turn off "portability" option, which stops forcing lowercase keys
 		$this->db->setOption( 'portability', false );
