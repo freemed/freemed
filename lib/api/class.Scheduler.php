@@ -964,6 +964,7 @@ class Scheduler {
 	public function SetAppointment ( $data = NULL ) {
 		// Check for bogus data
 		if ($data == NULL) { return false; }
+		$ourdata = (array) $data;
 
 		// Set defaults
 		$fields = array (
@@ -973,8 +974,8 @@ class Scheduler {
 
 		// Only pass fields that are set as overrides
 		foreach ($this->calendar_field_mapping AS $k => $v) {
-			if (isset($data[$k])) {
-				$fields[$v] = $data[$k];
+			if (isset($ourdata[$k])) {
+				$fields[$v] = $ourdata[$k];
 			}
 		}
 
