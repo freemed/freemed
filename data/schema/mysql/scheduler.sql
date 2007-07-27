@@ -126,7 +126,9 @@ CREATE TRIGGER scheduler_Update
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
 			UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=NEW.calprenote, user=NEW.user WHERE module='scheduler' AND oid=NEW.id;
-			CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
+			IF NEW.caldateof != OLD.caldateof THEN
+				CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
+			END IF;
 		END IF;
 	END;
 //

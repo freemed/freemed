@@ -650,17 +650,20 @@ class Scheduler {
 	public function MoveAppointment ( $original, $data = NULL ) {
 		// Check for bogus data
 		if ($data == NULL) { return false; }
+		$ourdata = (array) $data;
 
 		// Only pass fields that are set
 		$fields = array ( );
 		foreach ($this->calendar_field_mapping AS $k => $v) {
-			if (isset($data[$k])) {
-				$fields[$v] = $data[$k];
+			if (isset($ourdata[$k])) {
+				$fields[$v] = $ourdata[$k];
 			}
 		}
 
 		// Set modify
-		$fields['caldateof'] = $this->ImportDate( $fields['caldateof'] );
+		if ( $fields['caldateof'] ) {
+			$fields['caldateof'] = $this->ImportDate( $fields['caldateof'] );
+		}
 		$fields['calmodified'] = SQL__NOW;
 
 		$query = $GLOBALS['sql']->update_query (

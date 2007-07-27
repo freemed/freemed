@@ -132,6 +132,32 @@
 		resetAtomicStatus: function () {
 			dojo.widget.byId('atomicStatusWidget').setLabel('');
 			dojo.widget.byId('atomicStatusWidget').setValue('');
+		},
+		noShow: function () {
+			o.updateStatus( 'noshow' );
+		},
+		cancelAppt: function () {
+			o.updateStatus( 'cancelled' );
+		},
+		updateStatus: function ( status ) {
+			try {
+				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
+				dojo.io.bind({
+					method: "GET",
+					content: {
+						param0: parseInt( s.scheduler_id ),
+						param1: { calstatus: status }
+					},
+					url: '<!--{$relay}-->/org.freemedsoftware.api.Scheduler.MoveAppointment',
+					load: function( type, data, evt ) {
+						if (data) {
+							freemedMessage( "<!--{t}-->Appointment updated.<!--{/t}-->", 'INFO' );
+							o.dailyCalendarSetDate();
+						}
+					},
+					mimetype: 'text/json'
+				});
+			} catch (err) { }
 		}
 	};
 
@@ -142,6 +168,8 @@
 		dojo.event.connect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
+		dojo.event.connect(dojo.widget.byId('noshowButton'), "onClick", o, "noShow");
+		dojo.event.connect(dojo.widget.byId('cancelApptButton'), "onClick", o, "cancelAppt");
 		o.dailyCalendarSetDate();
 		document.getElementById( 'dailyAppointmentOnlyMe' ).onchange = o.onLimitChange;
 	});
@@ -152,6 +180,8 @@
 		dojo.event.disconnect(dojo.widget.byId('viewPatientButton'), "onClick", o, "viewPatient");
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
+		dojo.event.disconnect(dojo.widget.byId('noshowButton'), "onClick", o, "noShow");
+		dojo.event.disconnect(dojo.widget.byId('cancelApptButton'), "onClick", o, "cancelAppt");
 	});
 </script>
 
@@ -172,7 +202,8 @@
 		<td colspan="2" align="center">
 			<table style="width: auto;" border="0">
 				<tr>
-					<td><button dojoType="Button" id="noshowButton" widgetId="nosnowButton"><!--{t}-->No Show<!--{/t}--></button></td>
+					<td><button dojoType="Button" id="cancelApptButton" widgetId="cancelApptButton"><!--{t}-->Cancellation<!--{/t}--></button></td>
+					<td><button dojoType="Button" id="noshowButton" widgetId="noshowButton"><!--{t}-->No Show<!--{/t}--></button></td>
 					<td>
 						<input dojoType="Select" value=""
 						autocomplete="false"
