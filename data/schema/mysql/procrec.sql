@@ -90,7 +90,16 @@ BEGIN
 	DROP TRIGGER procrec_Update;
 
 	#----- Upgrades
-	ALTER IGNORE TABLE procrec ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER proctosoverride;
+	CALL FreeMED_Module_GetVersion( 'procrec', @V );
+
+	# Version 1
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE procrec ADD COLUMN procslidingscale CHAR (1) AFTER procstatus;
+		ALTER IGNORE TABLE procrec ADD COLUMN proctosoverride INT UNSIGNED DEFAULT 0 AFTER procslidingscale;
+		ALTER IGNORE TABLE procrec ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER proctosoverride;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'procrec', 1 );
 END
 //
 DELIMITER ;
