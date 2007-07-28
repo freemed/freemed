@@ -59,6 +59,26 @@ class PatientInterface {
 		}
 	} // end method CheckForDuplicatePatient
 
+	// Method: DxForPatient
+	//
+	//	Find all diagnoses associated with patients.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//	* id
+	//	* code
+	//	* description
+	//
+	public function DxForPatient( $patient ) {
+		$q = "SELECT d.dx AS id, i.icd9code AS code, i.icd9descrip AS description FROM dxhistory d LEFT OUTER JOIN icd9 i ON d.dx=i.id WHERE d.patient = ".( $patient + 0 )." GROUP BY d.dx";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method DxForPatient
+
 	// Method: EmrAttachmentsByPatient
 	//
 	//	Get all patient attachments. Has support for caching.
