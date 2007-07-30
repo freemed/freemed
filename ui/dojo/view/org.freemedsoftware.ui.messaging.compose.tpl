@@ -51,6 +51,7 @@
 						user: dojo.widget.byId('msgfor').getValue(),
 						subject: document.getElementById('msgsubject').value,
 						patient: document.getElementById('msgpatient').value,
+						person: document.getElementById('msgperson').value,
 						text: dojo.widget.byId('msgtext').getValue()
 					}
 				},
@@ -97,6 +98,12 @@
 			<td valign="top" align="right"><!--{t}-->Patient<!--{/t}--> : </td>
 			<td>
 				<!--{include file="org.freemedsoftware.widget.patientpicklist.tpl" varname="msgpatient"}-->
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" align="right"><!--{t}-->Person (non-patient)<!--{/t}--> : </td>
+			<td>
+				<input type="text" id="msgperson" name="msgperson" size="50" />
 			</td>
 		</tr>
 		<tr>
