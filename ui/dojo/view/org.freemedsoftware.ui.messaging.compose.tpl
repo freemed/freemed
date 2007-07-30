@@ -44,16 +44,25 @@
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
 		createMessageCallback: function ( ) {
+			var x = {
+				user: parseInt( dojo.widget.byId('msgfor').getValue() ),
+				subject: document.getElementById('msgsubject').value,
+				patient: parseInt( document.getElementById('msgpatient').value ),
+				person: document.getElementById('msgperson').value,
+				text: dojo.widget.byId('msgtext').getValue()
+			};
+			if ( x.user < 1 ) {
+				alert( "<!--{t}-->You must select a valid recipient.<!--{/t}-->" );
+				return false;
+			}
+			if ( x.patient < 1 && x.person.length < 1 ) {
+				alert( "<!--{t}-->You must enter a patient or person value to create a message.<!--{/t}-->" );
+				return false;
+			}
 			dojo.io.bind({
 				method: 'POST',
 				content: {
-					param0: {
-						user: dojo.widget.byId('msgfor').getValue(),
-						subject: document.getElementById('msgsubject').value,
-						patient: document.getElementById('msgpatient').value,
-						person: document.getElementById('msgperson').value,
-						text: dojo.widget.byId('msgtext').getValue()
-					}
+					param0: x
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.send',
 				error: function( type, data, evt ) {
