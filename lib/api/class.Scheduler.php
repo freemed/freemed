@@ -150,7 +150,7 @@ class Scheduler {
 			// Single date query ....
 			$r_q = "s.caldateof = '".addslashes($this_date)."'";
 		}
-		$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') END AS patient, pa.id AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=pa.id WHERE ( ${r_q} ) AND s.calstatus != 'cancelled' ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
+		$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, ' (', pa.ptid, ')') END AS patient, pa.id AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id FROM scheduler s LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=pa.id WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
 		return $GLOBALS['sql']->queryAll ( $query );
 	} // end method GetDailyAppointmentsRange
 
@@ -671,6 +671,7 @@ class Scheduler {
 			$fields,
 			array ('id' => $original )
 		);
+		//syslog(LOG_INFO, "query : $query");
 		$result = $GLOBALS['sql']->query ( $query );
 		return $result;
 	} // end method MoveAppointment
