@@ -60,14 +60,20 @@ class FreemedDb extends MDB2 {
 	//
 	function __call ( $method, $param ) {
 		if ( method_exists ( $this, $method ) ) {
-			return call_user_func_array ( array ( $this, $method ), $param );
+			$value = call_user_func_array ( array ( $this, $method ), $param );
 		} elseif ( method_exists ( $this->db, $method ) ) {
-			return call_user_func_array ( array ( $this->db, $method ), $param );
+			$value = call_user_func_array ( array ( $this->db, $method ), $param );
 		} elseif ( method_exists ( $this->db->function, $method ) ) {
-			return call_user_func_array ( array ( $this->db->function, $method ), $param );
+			$value = call_user_func_array ( array ( $this->db->function, $method ), $param );
 		} else {
 			trigger_error ( "Could not load method $method", E_USER_ERROR );
 		}
+		if ( PEAR::isError( $value ) ) {
+			syslog( LOG_ERR, "FreemedDb: " . $value->userinfo );
+			return false;
+		}
+		return $value;
+
 	}
 
 	// Method: load_data
