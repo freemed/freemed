@@ -49,6 +49,8 @@ class WorkflowStatus extends SupportModule {
 
 	public function __construct ( ) {
 		// __("Workflow Status")
+
+		$this->_SetHandler( 'Dashboard', get_class( $this ) );
 	
 		// Run parent constructor
 		parent::__construct();
@@ -81,6 +83,37 @@ class WorkflowStatus extends SupportModule {
 		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $s->ImportDate( $date ) ) ." )";
 		return $GLOBALS['sql']->query( $q );
 	} // end method StatusMapForDate
+
+	// Method: OverallStatusforDate
+	//
+	//	Create single status indicator for the day, so that it is possible
+	//	to gauge whether any items still need to be completed for the day.
+	//
+	// Parameters:
+	//
+	//	$date - Date
+	//
+	// Returns:
+	//
+	//	Boolean.
+	//
+	public function OverallStatusForDate( $date ) {
+		$map = $this->StatusMapForDate( $date );
+		$status = true;
+		foreach ( $map AS $e ) {
+			foreach ( $e AS $k => $v ) {
+				switch ( $k ) {
+					case 'patient': case 'patient_id':
+					break;
+
+					default:
+					if ( ! $v ) { $status = false; }
+					break;
+				}
+			}
+		}
+		return $status;
+	} // end method OverallStatusForDate
 
 } // end class WorkflowStatus
 
