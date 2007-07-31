@@ -33,8 +33,6 @@ fi
 
 DRUG_MLT_TABLES=$( mdb-tables drug_mlt.mdb )
 
-mkdir -p export
-
 for T in $DRUG_MLT_TABLES; do
 	 mdb-export drug_mlt.mdb "${T}" > "$( dirname "$0" )/../data/multum/${T}.csv"
 done
