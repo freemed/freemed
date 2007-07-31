@@ -687,7 +687,7 @@ class freemed {
 		// Perform update query
 		$query = $GLOBALS['sql']->query(
 			$GLOBALS['sql']->update_query(
-				'module',
+				'modules',
 				array (
 					'module_version' => $version
 				),
