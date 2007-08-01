@@ -40,7 +40,7 @@
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.book');">
-			<img src="<!--{$htdocs}-->/images/teak/patient_avatar.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/book_appt.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Book Appointment<!--{/t}-->
 		</div>
 
