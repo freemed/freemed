@@ -33,7 +33,6 @@ DROP TABLE IF EXISTS ndc_active_ingredient;
 DROP TABLE IF EXISTS ndc_active_ingredient_list;
 DROP TABLE IF EXISTS ndc_brand_name;
 DROP TABLE IF EXISTS ndc_core_description;
-DROP TABLE IF EXISTS ndc_denorm;
 DROP TABLE IF EXISTS ndc_ingredient_strength;
 DROP TABLE IF EXISTS ndc_main_multum_drug_code;
 DROP TABLE IF EXISTS ndc_orange_book;
@@ -125,46 +124,6 @@ CREATE TABLE IF NOT EXISTS ndc_core_description (
 	, INDEX ( brand_code )
 	, INDEX ( main_multum_drug_code )
 	, INDEX ( inner_package_desc_code )
-);
-
-CREATE TABLE IF NOT EXISTS ndc_denorm (
-	ndc_code				VARCHAR (22), 
-	brand_description			VARCHAR (250), 
-	main_multum_drug_code			INT, 
-	route_description			VARCHAR (250), 
-	dose_form_description			VARCHAR (250), 
-	product_strength_description		VARCHAR (250), 
-	drug_id					VARCHAR (12), 
-	active_ingredient			VARCHAR (250), 
-	strength_num_amount			FLOAT, 
-	strength_num				VARCHAR (60), 
-	strength_denom_amount			FLOAT, 
-	strength_denom				VARCHAR (60), 
-	csa_schedule				VARCHAR (2), 
-	j_code					VARCHAR (20), 
-	j_code_description			VARCHAR (100), 
-	otc_status				VARCHAR (2), 
-	inner_package_size			FLOAT, 
-	inner_package_description		VARCHAR (250), 
-	outer_package_size			FLOAT, 
-	obsolete_date				DATE, 
-	source_desc				VARCHAR (240), 
-	address1				VARCHAR (200), 
-	address2				VARCHAR (100), 
-	city					VARCHAR (100), 
-	state					VARCHAR (4), 
-	province				VARCHAR (60), 
-	zip					VARCHAR (20), 
-	country					VARCHAR (100), 
-	orange_book_description			VARCHAR (100), 
-	unit_dose_code				VARCHAR (2), 
-	repackaged				VARCHAR (2), 
-	gbo					VARCHAR (2)
-
-	, INDEX ( ndc_code )
-	, INDEX ( brand_description )
-	, INDEX ( main_multum_drug_code )
-	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_ingredient_strength (
@@ -269,9 +228,6 @@ LOAD DATA LOCAL INFILE "data/multum/ndc_brand_name.csv"
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 LOAD DATA LOCAL INFILE "data/multum/ndc_core_description.csv"
 	INTO TABLE ndc_core_description
-	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
-LOAD DATA LOCAL INFILE "data/multum/ndc_denorm.csv"
-	INTO TABLE ndc_denorm
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 LOAD DATA LOCAL INFILE "data/multum/ndc_ingredient_strength.csv"
 	INTO TABLE ndc_ingredient_strength

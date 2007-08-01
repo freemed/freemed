@@ -37,3 +37,6 @@ for T in $DRUG_MLT_TABLES; do
 	 mdb-export drug_mlt.mdb "${T}" > "$( dirname "$0" )/../data/multum/${T}.csv"
 done
 
+#	Remove denormalized table, since we don't use it
+rm -f "$( dirname "$0" )/../data/multum/ndc_denorm.csv"
+
