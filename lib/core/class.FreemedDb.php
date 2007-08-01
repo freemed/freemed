@@ -32,7 +32,11 @@ class FreemedDb extends MDB2 {
 	private $db;
 	private $data;
 
-	public function __construct (  ) {
+	public function __construct (  ) { $this->init( ); }
+
+	public function __wakeup ( ) { $this->init( ); }
+
+	protected function init ( ) {
 		PEAR::setErrorHandling ( PEAR_ERROR_RETURN );
 		$uri = "mysqli://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
 		$this->db =& MDB2::factory ( $uri );
