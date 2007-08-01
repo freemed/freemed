@@ -22,24 +22,24 @@
 
 ----- Drop all old tables -----
 
-DROP TABLE icd_9;
-DROP TABLE multum_combination_drug;
-DROP TABLE multum_dose_form;
-DROP TABLE multum_drug_id;
-DROP TABLE multum_product_strength;
-DROP TABLE multum_route;
-DROP TABLE multum_units;
-DROP TABLE ndc_active_ingredient;
-DROP TABLE ndc_active_ingredient_list;
-DROP TABLE ndc_brand_name;
-DROP TABLE ndc_core_description;
-DROP TABLE ndc_denorm;
-DROP TABLE ndc_ingredient_strength;
-DROP TABLE ndc_main_multum_drug_code;
-DROP TABLE ndc_orange_book;
-DROP TABLE ndc_pregnancy_category;
-DROP TABLE ndc_source;
-DROP TABLE multum;
+DROP TABLE IF EXISTS icd_9;
+DROP TABLE IF EXISTS multum_combination_drug;
+DROP TABLE IF EXISTS multum_dose_form;
+DROP TABLE IF EXISTS multum_drug_id;
+DROP TABLE IF EXISTS multum_product_strength;
+DROP TABLE IF EXISTS multum_route;
+DROP TABLE IF EXISTS multum_units;
+DROP TABLE IF EXISTS ndc_active_ingredient;
+DROP TABLE IF EXISTS ndc_active_ingredient_list;
+DROP TABLE IF EXISTS ndc_brand_name;
+DROP TABLE IF EXISTS ndc_core_description;
+DROP TABLE IF EXISTS ndc_denorm;
+DROP TABLE IF EXISTS ndc_ingredient_strength;
+DROP TABLE IF EXISTS ndc_main_multum_drug_code;
+DROP TABLE IF EXISTS ndc_orange_book;
+DROP TABLE IF EXISTS ndc_pregnancy_category;
+DROP TABLE IF EXISTS ndc_source;
+DROP TABLE IF EXISTS multum;
 
 ----- Table definitions -----
 
