@@ -196,7 +196,7 @@ class notebook {
       $look_for = ${$this->actionvar."_last"};
     $found = 0;
     for ($i=1;$i<=($this->psize);$i++) {
-      if (html_entity_decode($this->name[$i]) == html_entity_decode($look_for)) { $found = $i; }
+      if (html_entity_decode($this->name[$i], ENT_COMPAT, 'UTF-8') == html_entity_decode($look_for, ENT_COMPAT, 'UTF-8')) { $found = $i; }
     }  
     return $found;
   } // end function notebook->get_current_page
