@@ -231,7 +231,7 @@ class notebook {
 	//
   function is_cancelled ($null_var = "") {
     global ${$this->actionvar};
-    return (html_entity_decode(${$this->actionvar}) == html_entity_decode($this->CANCEL));
+    return (html_entity_decode(${$this->actionvar}, ENT_COMPAT, 'UTF-8') == html_entity_decode($this->CANCEL, ENT_COMPAT, 'UTF-8'));
   } // end function notebook->is_cancelled
 
 	// Method: is_done
@@ -243,7 +243,7 @@ class notebook {
   function is_done ($null_var = "") {
     global ${$this->actionvar};
     //$this->verify_page(&$this->messages); // KLUDGE!
-    if (html_entity_decode(${$this->actionvar}) == html_entity_decode($this->SUBMIT)) {
+    if (html_entity_decode(${$this->actionvar}, ENT_COMPAT, 'UTF-8') == html_entity_decode($this->SUBMIT, ENT_COMPAT, 'UTF-8')) {
       // Check for all pages verified first
       if ($this->verify_page(&$this->messages, true)) {
         return true;
