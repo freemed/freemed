@@ -216,6 +216,25 @@ CREATE TRIGGER patient_Update
 //
 DELIMITER ;
 
+#----- Address table
+
+CREATE TABLE IF NOT EXISTS `patient_address` (
+	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	type			CHAR (2) NOT NULL DEFAULT 'H',
+	active			BOOL NOT NULL DEFAULT FALSE,
+	relate			CHAR (2) NOT NULL DEFAULT 'S',
+	line1			VARCHAR (100),
+	line2			VARCHAR (100),
+	city			VARCHAR (100),
+	stpr			VARCHAR (100),
+	postal			CHAR (10) NOT NULL,
+	country			CHAR (60) NOT NULL,
+	id			SERIAL
+
+	, KEY ( patient, stamp )
+);
+
 #----- Prior demographics holding table
 
 CREATE TABLE IF NOT EXISTS `patient_prior` (
