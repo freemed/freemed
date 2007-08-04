@@ -28,10 +28,11 @@ CREATE TABLE IF NOT EXISTS `zipcodes` (
 	longitude		REAL,
 	timezone		INT,
 	dst			INT UNSIGNED NOT NULL DEFAULT 0,
+	country			CHAR (100) NOT NULL DEFAULT 'United States',
 	id			SERIAL,
 
 	# Define keys
 
-	KEY			( city, state, zip )
+	KEY			( city, state, zip, country )
 );
 

@@ -88,7 +88,7 @@ class Zipcodes extends SupportModule {
 	//
 	// Returns:
 	//
-	//	Array of results containing fully formed "C, S Z" field.
+	//	Array of results containing fully formed "C, S Z Country" field.
 	//
 	public function CityStateZipPicklist ( $param ) {
 		// If two letters then a space, st city
@@ -114,7 +114,7 @@ class Zipcodes extends SupportModule {
 		// Ignore blanks
 		if ( $where == '' ) { return array(); }
 
-		$query = "SELECT CONCAT(city, ', ', state, ' ', zip) AS v FROM ".$this->table_name." WHERE ${where} LIMIT 20";
+		$query = "SELECT CONCAT(city, ', ', state, ' ', zip, ' (', country) AS v FROM ".$this->table_name." WHERE ${where} LIMIT 20";
 
 		$a = $GLOBALS['sql']->queryCol( $query );
 		foreach ($a AS $r) {
