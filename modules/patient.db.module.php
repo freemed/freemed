@@ -101,10 +101,11 @@ class PatientModule extends SupportModule {
 
 		// Split city, state zip if it's one field
 		if ($data['ptcsz']) {
-			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['ptcsz'], $reg)) {
+			if (preg_match("/([^,]+), ([A-Z]{2}) ([^ ]+) (.*)", $data['ptcsz'], $reg)) {
 				$data['ptcity'] = $reg[1];
 				$data['ptstate'] = $reg[2];
 				$data['ptzip'] = $reg[3];
+				$data['ptcountry'] = $reg[4];
 			}
 		}
 	} // end method add_pre
