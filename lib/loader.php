@@ -61,14 +61,58 @@ function CallMethod ( $namespace ) {
 		trigger_error( "CallMethod: no parameters given", E_USER_ERROR );
 	}
 
-	include_once ( $path );
-	$obj = new ${class_name};
+	$obj = InstantiateClass( $path, $class_name );
 	if ( $argc == 1 ) {
 		return call_user_func_array ( array ( &$obj, $method ), array ( ) );
 	} else {
 		return call_user_func_array ( array ( &$obj, $method ), $argv );
 	}
 } // end function CallMethod
+
+// Function: InstantiateClass
+//
+//	Instantiate class instance from SHM or new instance depending on
+//	contents of SHM. Handles this per session.
+//
+// Parameters:
+//
+//	$path - Fully qualified path name to PHP class source.
+//
+//	$class_name - Resolved name of the class
+//
+// Returns:
+//
+//	Object instance.
+//
+function InstantiateClass( $path, $class_name ) {
+	static $shared;
+	$session_id = session_id( );
+
+	// Check for global SHM_CACHE setting
+	if ( ! defined('SHM_CACHE') or ! SHM_CACHE ) {
+		syslog( LOG_DEBUG, "InstantiateClass : not caching {$class_name} for session {$session_id}" );
+		include_once( $path );
+		$x = new ${class_name};
+		return $x;
+	}
+
+	if ( !isset( $shared ) ) {
+		LoadObjectDependency( 'net.php.pear.System_SharedMemory' );
+		$shared = & System_SharedMemory::factory();
+	}
+
+	include_once( $path );
+	$x = $shared->get( "object-{$class_name}-{$session_id}" );
+	if ( isset( $x ) ) {
+		syslog( LOG_DEBUG, 'InstantiateClass : loaded object-'.$class_name.'-'.$session_id.' from SHM' );
+		return $x;
+	} else {
+		$x = new ${class_name};
+		syslog( LOG_DEBUG, 'InstantiateClass : stored object-'.$class_name.'-'.$session_id.' in SHM' );
+		$shared->set( "object-{$class_name}-{$session_id}", $x );
+		return $x;
+	}
+} // end method InstantiateClass
 
 // Function: CreateObject
 //
@@ -97,8 +141,7 @@ function CreateObject ( $namespace ) {
 	if ( $argc < 1 ) {
 		trigger_error( "CreateObject: no parameters given", E_USER_ERROR );
 	} elseif ( $argc == 1 ) {
-		include_once ( $path );
-		return new ${class_name};
+		return InstantiateClass( $path, $class_name );
 	} else {
 		include_once ( $path );
 		//return call_user_func_array ( array ( $class_name, '__construct' ), $argv );
