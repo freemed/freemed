@@ -35,7 +35,6 @@ class WorkListsModule extends BaseModule {
 		// __("Work Lists")
 
 		// Add main menu notification handlers
-		$this->_SetHandler( 'Dashboard', get_class($this) );
 		$this->_SetHandler('MainMenu', 'notify');
 
 		/*
