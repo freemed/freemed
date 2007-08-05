@@ -36,7 +36,7 @@ class FreemedDb extends MDB2 {
 
 	public function __wakeup ( ) { $this->init( ); }
 
-	protected function init ( ) {
+	protected function init ( $multi_query = false ) {
 		PEAR::setErrorHandling ( PEAR_ERROR_RETURN );
 		$uri = "mysqli://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
 		$this->db =& MDB2::factory ( $uri );
@@ -51,7 +51,7 @@ class FreemedDb extends MDB2 {
 		$this->db->loadModule( 'Function' );
 
 		// Required multi query option for stored procedures
-		//$this->db->setOption( 'multi_query', true );
+		$this->db->setOption( 'multi_query', $multi_query );
 
 		// Turn off "portability" option, which stops forcing lowercase keys
 		$this->db->setOption( 'portability', false );
@@ -77,8 +77,28 @@ class FreemedDb extends MDB2 {
 			return false;
 		}
 		return $value;
+	} // end method __call
 
-	}
+	// Method: queryAllStoredProc
+	//
+	//	queryAll wrapper for MDB2 to work around the necessity of reconnecting
+	//	using multi_query to execute stored procedures, which otherwise causes
+	//	massive ugly failures.
+	//
+	// Parameters:
+	//
+	//	$query - SQL query
+	//
+	// Returns:
+	//
+	//	PEAR::Error on error, or array of hashes on success.
+	//
+	public function queryAllStoredProc ( $query ) {
+		$this->init( true );
+		$res = $this->db->queryAll( $query );
+		$this->init( false );
+		return $res;
+	} // end method queryAllStoredProc
 
 	// Method: load_data
 	//
