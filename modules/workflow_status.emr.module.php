@@ -91,14 +91,16 @@ class WorkflowStatus extends SupportModule {
 	//
 	// Parameters:
 	//
-	//	$date - Date
+	//	$date - Date ( defaults to today )
 	//
 	// Returns:
 	//
 	//	Boolean.
 	//
 	public function OverallStatusForDate( $date ) {
-		$map = $this->StatusMapForDate( $date );
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$dt = $s->ImportDate( $date );
+		$map = $this->StatusMapForDate( $dt ? $dt : date('Y-m-d') );
 		$status = true;
 		foreach ( $map AS $e ) {
 			foreach ( $e AS $k => $v ) {

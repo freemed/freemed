@@ -80,7 +80,7 @@ class SuperBill extends EMRModule {
 		if (is_array($data['procs'])) { $data['procs'] = join(',', $data['procs']); }
 		if (is_array($data['dx'])) { $data['dx'] = join(',', $data['dx']); }
 		$data['reviewed'] = 0;
-		$data['entered'] = $user->user_number;
+		$data['enteredby'] = $user->user_number;
 	} // end add_pre
 
 	protected function mod_pre ( &$data ) {
