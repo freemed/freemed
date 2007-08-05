@@ -271,13 +271,13 @@
 		<tr>
 			<td align="right">
 				<button dojoType="Button" id="sendToProviderButton" widgetId="sendToProviderButton">
-					<!--{t}-->Send<!--{/t}-->
+					<div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{t}-->Send<!--{/t}--></div>
 				</button>
 			</td>
 
 			<td align="left">
 				<button dojoType="Button" id="cancelSendToProviderButton" onClick="dojo.widget.byId('sendToProviderDialog').hide();">
-					<!--{t}-->Cancel<!--{/t}-->
+					<div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" /> <!--{t}-->Cancel<!--{/t}--></div>
 				</button>
 			</td>
 		</tr>

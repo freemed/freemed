@@ -171,11 +171,11 @@
         <table border="0" style="width:200px;">
         <tr><td align="center">
 	        <button dojoType="Button" id="ModuleFormCommitChangesButton" widgetId="ModuleFormCommitChangesButton">
-	                <div><!--{t}-->Commit Changes<!--{/t}--></div>
+	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{t}-->Commit Changes<!--{/t}--></div>
 	        </button>
         </td><td align="left">
         	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
-        	        <div><!--{t}-->Cancel<!--{/t}--></div>
+        	        <div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" /> <!--{t}-->Cancel<!--{/t}--></div>
         	</button>
         </td></tr></table>
 </div>
