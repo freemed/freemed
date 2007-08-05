@@ -78,7 +78,7 @@ class freemed {
 	//
 	public function acl_enforce ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
 		$v = freemed::acl( $category, $permission, $axo_group, $axo_item );
-		if ( ! $v ) {
+		if ( ! $v && ! $_SERVER['argc'] ) {
 			$user = freemed::user_cache()->user_number;
 			syslog( LOG_INFO, "ACL| ${category}/${permission}/${axo_group}/${axo_item} failed for ${user}" );
 			trigger_error( __("Access denied."), E_USER_ERROR );
