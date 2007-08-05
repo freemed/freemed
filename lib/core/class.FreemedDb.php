@@ -79,6 +79,27 @@ class FreemedDb extends MDB2 {
 		return $value;
 	} // end method __call
 
+	// Method: queryOneStoredProc
+	//
+	//	queryOne wrapper for MDB2 to work around the necessity of reconnecting
+	//	using multi_query to execute stored procedures, which otherwise causes
+	//	massive ugly failures.
+	//
+	// Parameters:
+	//
+	//	$query - SQL query
+	//
+	// Returns:
+	//
+	//	PEAR::Error on error, or value on success.
+	//
+	public function queryOneStoredProc ( $query ) {
+		$this->init( true );
+		$res = $this->db->queryOne( $query );
+		$this->init( false );
+		return $res;
+	} // end method queryOneStoredProc
+
 	// Method: queryAllStoredProc
 	//
 	//	queryAll wrapper for MDB2 to work around the necessity of reconnecting

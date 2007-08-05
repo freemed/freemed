@@ -155,7 +155,7 @@ class Reporting extends SupportModule {
 			break; // csv
 
 			case 'html':
-			$result = $GLOBALS['sql']->queryAll( $query );
+			$result = $GLOBALS['sql']->queryAllStoredProc( $query );
 			$buf = "<html><head><title>".htmlentities( $report['report_name'] )."</title></head>\n";
 			$buf .= "<body>";
 			$buf .= "<h1>".htmlentities( $report['report_name'] )."</h1>\n";
@@ -189,7 +189,7 @@ class Reporting extends SupportModule {
 			break; // pdf
 
 			case 'xml':
-			$result = $GLOBALS['sql']->queryAll( $query );
+			$result = $GLOBALS['sql']->queryAllStoredProc( $query );
 			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
 			foreach ($result AS $r ) {
 				$row = $xml->addChild( 'Record' );
@@ -223,7 +223,7 @@ class Reporting extends SupportModule {
 	//
 	protected function GenerateReport_Graph ( $param, $query ) {
 		// Execute query
-		$res = $GLOBALS['sql']->queryAll( $query );
+		$res = $GLOBALS['sql']->queryAllStoredProc( $query );
 
 		// Get keys
 		foreach ( $res[0] AS $k => $v ) { if (!is_integer($k)) { $ks[] = $k; } }
@@ -272,12 +272,14 @@ class Reporting extends SupportModule {
 				$data[ $k ]->addPoint( $r[ $primary_key ], $r[ $v ] );
 			}
 			$plot[$k] =& $plotarea->addNew( 'line', array( &$data[ $k ] ) );
+			//$plot[$k] =& $plotarea->addNew( 'Image_Graph_Plot_Smoothed_Area', array( &$data[ $k ] ) );
 		}
 
 		// Check plot colors
 		$colors = array ( 'red', 'blue', 'green', 'yellow', 'purple', 'black', 'orange' );
 		foreach ( $plot AS $k => $v ) {
 			$plot[ $k ]->setLineColor( $colors[ $k ] );
+			//$plot[ $k ]->setFillColor( $colors[ $k ].'@0.3' );
 		}
 
 		$g->setPadding( 10 );

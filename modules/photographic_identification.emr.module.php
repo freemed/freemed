@@ -121,7 +121,56 @@ class PhotographicIdentification extends EMRModule {
 			}
 		}
 		return false;
-	}
+	} // end method UploadPhotoID
+
+	// Method: UploadPhotoIDInline
+	//
+	//	Upload photographic ID using only JSON.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//	$blob - BLOB string containing image.
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function UploadPhotoIDInline ( $patient, $blob ) {
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		// Create the upload wrapper here
+		$q = $GLOBALS['sql']->insert_query(
+			$this->table_name,
+			array (
+				'p_user' => freemed::user_cache()->user_number,
+				'p_patient' => $patient
+			)
+		);
+		syslog( LOG_INFO, $q );
+		$GLOBALS['sql']->query( $q );
+		$id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+
+		// Drop the blob to temp file
+		$origfilename = tempnam( '/tmp', 'photoIdUpload' );
+		file_put_contents( $origfilename, $blob, FILE_BINARY );
+
+		syslog( LOG_INFO, "originalfilename = $origfilename");
+		$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
+		if ( $success ) {
+			syslog( LOG_INFO, get_class($this)."| found file ".$_FILES['file']['name'] );
+			$q = $GLOBALS['sql']->update_query(
+				$this->table_name,
+				array(
+					'p_filename' => $pds->ResolveFilename( $patient, get_class($this), $id )
+				), array( 'id' => $id )
+			);
+			syslog( LOG_INFO, $q );
+			$GLOBALS['sql']->query( $q );
+			return true;
+		}
+		return false;
+	} // end method UploadPhotoIDInline
 
 	// Method: GetPhotoID
 	//
@@ -135,7 +184,7 @@ class PhotographicIdentification extends EMRModule {
 	//
 	public function GetPhotoID ( $patient, $force_id = false ) {
 		if ( ! $force_id ) {
-			$pic = $GLOBALS['sql']->queryOne( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
+			$pic = $GLOBALS['sql']->queryOneStoredProc( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
 		} else {
 			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
 			$pic = $pds->ResolveFilename( $patient+0, get_class($this), $force_id+0 );

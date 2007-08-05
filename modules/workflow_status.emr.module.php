@@ -81,7 +81,7 @@ class WorkflowStatus extends SupportModule {
 		freemed::acl_enforce( 'scheduling', 'view' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $s->ImportDate( $date ) ) ." )";
-		return $GLOBALS['sql']->query( $q );
+		return $GLOBALS['sql']->queryAllStoredProc( $q );
 	} // end method StatusMapForDate
 
 	// Method: OverallStatusforDate
