@@ -192,7 +192,7 @@
 	<div dojoType="ContentPane" sizeShare="40" layoutAlign="bottom">
 
 		<div class="tableContainer">
-	                <table dojoType="FilteringTable" id="accountsReceivableTable" widgetId="accountsReceivableTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="item" border="0" multiple="true" style="height: 100%;">
+	                <table dojoType="FilteringTable" id="accountsReceivableTable" widgetId="accountsReceivableTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="item" border="0" multiple="true" style="height: 100%;">
 				<thead>
 					<tr>
 						<th field="date_of_mdy" dataType="Date"><!--{t}-->Svc Date<!--{/t}--></th>

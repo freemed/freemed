@@ -210,7 +210,7 @@
 <div dojoType="ContentPane" layoutAlign="bottom" sizeShare="60" style="width: 100%; overflow: auto;">
 
 	<div class="tableContainer">
-		<table dojoType="FilteringTable" id="patientSearch" widgetId="patientSearch" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="id" border="0" multiple="false">
+		<table dojoType="FilteringTable" id="patientSearch" widgetId="patientSearch" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="id" border="0" multiple="false">
 			<thead>
 				<tr>
 					<th field="patient_id" dataType="String"><!--{t}-->Patient ID<!--{/t}--></th>

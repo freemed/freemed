@@ -127,7 +127,7 @@
 <tr>
 	<td colspan="3">
 		<div class="tableContainer">
-                <table dojoType="FilteringTable" id="chargeEntrySearch" widgetId="chargeEntrySearch" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="scheduler_id" border="0" multiple="false">
+                <table dojoType="FilteringTable" id="chargeEntrySearch" widgetId="chargeEntrySearch" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="scheduler_id" border="0" multiple="false">
 			<thead>
 				<tr>
 					<th field="date_of_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>

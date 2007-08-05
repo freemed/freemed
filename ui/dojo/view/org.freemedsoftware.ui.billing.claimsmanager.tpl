@@ -228,7 +228,7 @@
 	<div dojoType="ContentPane" sizeShare="40" layoutAlign="bottom">
 
 		<div class="tableContainer">
-	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="claim" border="0" multiple="true">
+	                <table dojoType="FilteringTable" id="claimsManagerTable" widgetId="claimsManagerTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="claim" border="0" multiple="true">
 				<thead>
 					<tr>
 						<th field="date_of_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>

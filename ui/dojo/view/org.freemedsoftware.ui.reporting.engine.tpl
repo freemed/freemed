@@ -227,7 +227,7 @@
 	<h3><!--{t}-->Reporting Engine<!--{/t}--></h3>
 
 	<div class="tableContainer">
-		<table dojoType="FilteringTable" id="reportsList" widgetId="reportsList" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlterateClass="alternateRow" valueField="report_uuid" border="0" multiple="false">
+		<table dojoType="FilteringTable" id="reportsList" widgetId="reportsList" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="report_uuid" border="0" multiple="false">
 			<thead>
 				<tr>
 					<th field="report_name" dataType="String"><!--{t}-->Name<!--{/t}--></th>
