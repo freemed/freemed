@@ -163,7 +163,7 @@ class DicomModule extends EMRModule {
 				if ( $success ) {
 					syslog( LOG_INFO, get_class($this)."| found file ".$_FILES['file']['name'] );
 					$x = $params;
-					$x['d_patient'] = $patient;
+					$x['user'] = freemed::user_cache()->user_number;
 					$x['d_filename'] = $pds->ResolveFilename( $patient, get_class($this), $id );
 					$x['d_md5'] = $md5;
 					$GLOBALS['sql']->load_data( $x );
