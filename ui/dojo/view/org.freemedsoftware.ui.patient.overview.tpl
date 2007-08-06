@@ -83,9 +83,9 @@
 	</div></td>
 		<!--{* Icon bar for easy actions *}-->
 	<td>
-		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/patient_avatar.24x24.png" height="24" width="24" border="0" alt="<!--{t}-->Overview<!--{/t}-->" /></span>
-		<span class="clickable" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/summary_modify.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
-		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/rightarrowglassbutton.png" height="18" width="18" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/patient.24x24.png" height="24" width="24" border="0" alt="<!--{t}-->Overview<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/edit_mini.24x24.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/encounter.24x24.png" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
 	</td>
 	</tr></table>
 </div>
