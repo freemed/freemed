@@ -256,19 +256,37 @@ class DicomModule extends EMRModule {
 	//
 	//	$id - Requested table ID
 	//
-	public function GetDICOM ( $patient, $id ) {
+	//	$convert - (optional) Convert to JPEG, defaults to false.
+	//
+	public function GetDICOM ( $patient, $id, $convert = false ) {
 		if ( ! $id ) {
 			return false;
 		} else {
 			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
 			$pic = $pds->ResolveFilename( $patient+0, get_class($this), $id+0 );
 		}
-		readfile( $pic );
-		Header( 'Content-type: image/dicom' );
+
+		// No caching headers
 		Header( 'Pragma: no-cache' );
 		Header( 'Cache-Control: no-store, no-cache, must-revalidate' );
 		Header( 'Cache-Control: post-check=0, pre-check=0', false );
 		Header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
+
+		if ( $convert ) {
+			Header( 'Content-type: image/jpeg' );
+			$temp = tempnam( '/tmp', 'dicomView' );
+			system( "dcmj2pnm +oj '${pic}' '${temp}'" );	
+			Header( 'Content-length: '.(string)( filesize( $temp ) ) );
+			Header( 'Content-disposition: inline; filename="'.mktime().'-dicom.jpg"' );
+			readfile( $temp );
+			unlink( $temp );
+		} else {
+			Header( 'Content-type: image/dicom' );
+			Header( 'Content-length: '.(string)( filesize( $pic ) ) );
+			Header( 'Content-disposition: inline; filename="'.mktime().'-dicom.dcm"' );
+			readfile( $pic );
+		}
+
 		die();
 	} // end method GetDICOM
 
