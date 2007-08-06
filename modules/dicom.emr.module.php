@@ -98,6 +98,33 @@ class DicomModule extends EMRModule {
 		return ( $r > 0 ) ? true : false;
 	} // end method CheckForDuplicates
 
+	// Method: LookupPatient
+	//
+	//	Lookup patient from DICOM parameters.
+	//
+	// Parameters:
+	//
+	//	$patient - Blob of patient data like 'LAST^FIRST^MIDDLE'
+	//
+	//	$dob - Date of birth in 'YYYY-MM-DD'
+	//
+	// Returns:
+	//
+	//	Patient ID or 0 if not able to resolve.
+	//
+	public function LookupPatient ( $patient, $dob ) {
+		$name = explode ( '^', $patient );
+
+		// Check first for DOB + Last Name
+		$r = $GLOBALS['sql']->queryCol(
+			"SELECT id FROM patient WHERE ptlname = ".$GLOBALS['sql']->quote( $name[0] )." AND ptdob = ".$GLOBALS['sql']->quote( $dob )
+		);
+		if ( count($r) == 1 ) {
+			syslog( LOG_DEBUG, get_class($this)."::LookupPatient( $patient, $dob ) resolved to patient " . $r[0] );
+			return $r[0];
+		}
+	} // end method LookupPatient
+
 	// Method: UploadDICOM
 	//
 	//	Upload DICOM using PHP's file upload capabilities.
