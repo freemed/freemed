@@ -112,7 +112,8 @@ class DicomModule extends EMRModule {
 	//
 	//	Boolean, success.
 	//
-	public function UploadDICOM ( $patient ) {
+	public function UploadDICOM ( $patient, $params ) {
+		syslog( LOG_DEBUG, get_class($this)."::UploadDICOM ( $patient, ... )" );
 		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
 		if( $_FILES["file"]["name"] != "" ) {
 			if ( $value == UPLOAD_ERR_OK ) {
@@ -128,21 +129,17 @@ class DicomModule extends EMRModule {
 				$GLOBALS['sql']->query( $q );
 				$id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
 
-				$origfilename = $_FILES["file"]["tmd_name"];
+				$origfilename = $_FILES["file"]["tmp_name"];
 				$md5 = md5_file( $origfilename );
 				syslog( LOG_DEBUG, "DICOM originalfilename = $origfilename");
 				$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
 				if ( $success ) {
 					syslog( LOG_INFO, get_class($this)."| found file ".$_FILES['file']['name'] );
-					$GLOBALS['sql']->load_data(
-						array_merge(
-							$params,
-							array(
-								'd_filename' => $pds->ResolveFilename( $patient, get_class($this), $id ),
-								'd_md5' => $md5
-							)
-						)
-					);
+					$x = $params;
+					$x['d_patient'] = $patient;
+					$x['d_filename'] = $pds->ResolveFilename( $patient, get_class($this), $id );
+					$x['d_md5'] = $md5;
+					$GLOBALS['sql']->load_data( $x );
 					$q = $GLOBALS['sql']->update_query(
 						$this->table_name,
 						$this->variables,
@@ -157,6 +154,7 @@ class DicomModule extends EMRModule {
 				return false;
 			}
 		}
+		syslog( LOG_ERROR, get_class($this)."::UploadDICOM| did not find 'file' in POST" );
 		return false;
 	} // end method UploadDICOM
 
@@ -195,13 +193,13 @@ class DicomModule extends EMRModule {
 		$origfilename = tempnam( '/tmp', 'dicomUpload' );
 		file_put_contents( $origfilename, $decoded_blob, FILE_BINARY );
 		$md5 = md5_file( $origfilename );
-		syslog( LOG_DEBUG, "Blob MD5 = $md5" );
-		syslog( LOG_DEBUG, "Blob Size = ".strlen($decoded_blob) );
+		syslog( LOG_DEBUG, get_class($this)."| Blob MD5 = $md5" );
+		syslog( LOG_DEBUG, get_class($this)."| Blob Size = ".strlen($decoded_blob) );
 
-		syslog( LOG_INFO, "originalfilename = $origfilename");
+		syslog( LOG_DEBUG, get_class($this)."| originalfilename = $origfilename");
 		$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
 		if ( $success ) {
-			syslog( LOG_INFO, get_class($this)."| found file ${origfilename}" );
+			syslog( LOG_INFO, get_class($this)."| found file ${origfilename} ( output = $success )" );
 			$x = $params;
 			$x['d_filename'] = $pds->ResolveFilename( $patient, get_class($this), $id );
 			$x['d_md5'] = $md5;
