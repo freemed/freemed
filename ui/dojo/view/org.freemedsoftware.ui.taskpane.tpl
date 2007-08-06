@@ -117,6 +117,11 @@
 			<!--{t}-->REMITT Billing<!--{/t}-->
 		</div>
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.superbill');">
+			<img src="<!--{$htdocs}-->/images/teak/superbill.64x64.png" height="64" width="64" border="0" /><br/>
+			<!--{t}-->Superbills<!--{/t}-->
+		</div>
+
 		<!--{* ----- Non-static items ----- *}-->
 		<!--{get_templates var=billingItems glob='org.freemedsoftware.hook.task.billing.*.tpl'}-->
 		<!--{foreach from=$billingItems item=component}-->

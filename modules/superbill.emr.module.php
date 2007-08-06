@@ -102,13 +102,27 @@ class SuperBill extends EMRModule {
 	//
 	//	$dtend - Ending date
 	//
+	//	$handled - (optional) Include handled status.
+	//
 	// Returns:
 	//
 	//	Array of hashes for superbills between the specified dates.
 	//
-	public function GetForDates( $dtbegin, $dtend ) {
+	public function GetForDates( $dtbegin, $dtend, $handled = NULL ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
-		$query = "SELECT s.id AS id, s.dateofservice AS dateofservice, CONCAT(pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')') AS patient_name, CONCAT(pr.phylname, ', ', pr.phyfname) AS provider_name, pr.id AS provider_id, pt.id AS patient_id, s.reviewed AS reviewed, s.procs AS procs, SUBSTR_COUNT(s.procs, ',')+1 AS procs_count FROM superbill s LEFT OUTER JOIN patient pt ON pt.id=s.patient LEFT OUTER JOIN physician pr ON s.provider=pr.id WHERE s.dateofservice>=".$GLOBALS['sql']->quote( $s->ImportDate( $dtbegin ) )." AND s.dateofservice <=".$GLOBALS['sql']->quote( $s->ImportDate( $dtend ) );
+		$query = "SELECT s.id AS id, DATE_FORMAT(s.dateofservice, '%m/%d/%Y') AS dateofservice_mdy, s.dateofservice AS dateofservice, CONCAT(pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')') AS patient_name, CONCAT(pr.phylname, ', ', pr.phyfname) AS provider_name, pr.id AS provider_id, pt.id AS patient_id, s.reviewed AS reviewed, s.procs AS procs, SUBSTR_COUNT(s.procs, ',')+1 AS procs_count FROM superbill s LEFT OUTER JOIN patient pt ON pt.id=s.patient LEFT OUTER JOIN physician pr ON s.provider=pr.id ";
+		$where = false;
+		if ( $dtbegin != NULL ) {
+			$query .= "WHERE s.dateofservice>=".$GLOBALS['sql']->quote( $s->ImportDate( $dtbegin ) )." AND s.dateofservice <=".$GLOBALS['sql']->quote( $s->ImportDate( $dtend ) );
+			$where = true;
+		}
+		if ( $handled !== NULL ) {
+			if ( $where ) {
+				$query .= " AND s.reviewed = ".$GLOBALS['sql']->quote( $handled );
+			} else {
+				$query .= " WHERE s.reviewed = ".$GLOBALS['sql']->quote( $handled );
+			}
+		}
 		$res = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $res AS $r ) {
 			$p_query = "SELECT cptcode FROM cpt WHERE FIND_IN_SET(id, ".$GLOBALS['sql']->quote( $r['procs'] ).")";
