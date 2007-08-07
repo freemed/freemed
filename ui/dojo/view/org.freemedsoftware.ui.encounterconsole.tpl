@@ -156,6 +156,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.add',
 				load: function( type, data, evt ) {
+					dojo.widget.byId( 'superbillTemplateSave' ).disable();
 					freemedMessage( "<!--{t}-->Added superbill.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
@@ -292,7 +293,9 @@
 			</table>
 
 			<div align="center">
-				<button dojoType="Button" id="superbillTemplateSave" widgetId="superbillTemplateSave"><!--{t}-->Commit Superbill<!--{/t}--></button>
+				<button dojoType="Button" id="superbillTemplateSave" widgetId="superbillTemplateSave">
+					<div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{t}-->Commit Superbill<!--{/t}--></div>
+				</button>
 			</div>
 
 		</div>
