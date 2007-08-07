@@ -20,6 +20,8 @@ class AgataCsv extends AgataReport
     {
         $SpreadSoft = $this->agataConfig['general']['SpreadSoft'];
         $Delimiter   = $this->agataConfig['general']['Delimiter'];
+        // Hardcode default delimiter as comma
+        if ( empty( $Delimiter ) ) { $Delimiter = ','; }
         
         if (isGui)
         {
