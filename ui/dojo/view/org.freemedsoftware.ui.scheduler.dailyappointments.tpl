@@ -139,6 +139,16 @@
 		cancelAppt: function () {
 			o.updateStatus( 'cancelled' );
 		},
+		moveAppt: function ( ) {
+			try {
+				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
+				freemedLoad( "org.freemedsoftware.ui.scheduler.book?patient=" + s.patient_id + "&id=" + s.scheduler_id );
+			} catch ( err ) {
+				// Nothing selected, reset
+				o.resetAtomicStatus();
+				alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+			}
+		},
 		updateStatus: function ( status ) {
 			try {
 				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
@@ -169,6 +179,7 @@
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
 		dojo.event.connect(dojo.widget.byId('noshowButton'), "onClick", o, "noShow");
+		dojo.event.connect(dojo.widget.byId('moveButton'), "onClick", o, "moveAppt");
 		dojo.event.connect(dojo.widget.byId('cancelApptButton'), "onClick", o, "cancelAppt");
 		o.dailyCalendarSetDate();
 		document.getElementById( 'dailyAppointmentOnlyMe' ).onchange = o.onLimitChange;
@@ -181,6 +192,7 @@
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentNextDay'), "onClick", o, "nextDay");
 		dojo.event.disconnect(dojo.widget.byId('dailyAppointmentPrevDay'), "onClick", o, "prevDay");
 		dojo.event.disconnect(dojo.widget.byId('noshowButton'), "onClick", o, "noShow");
+		dojo.event.disconnect(dojo.widget.byId('moveButton'), "onClick", o, "moveAppt");
 		dojo.event.disconnect(dojo.widget.byId('cancelApptButton'), "onClick", o, "cancelAppt");
 	});
 </script>
@@ -204,6 +216,7 @@
 				<tr>
 					<td><button dojoType="Button" id="cancelApptButton" widgetId="cancelApptButton"><!--{t}-->Cancellation<!--{/t}--></button></td>
 					<td><button dojoType="Button" id="noshowButton" widgetId="noshowButton"><!--{t}-->No Show<!--{/t}--></button></td>
+					<td><button dojoType="Button" id="moveButton" widgetId="moveButton"><!--{t}-->Move<!--{/t}--></button></td>
 					<td>
 						<input dojoType="Select" value=""
 						autocomplete="false"

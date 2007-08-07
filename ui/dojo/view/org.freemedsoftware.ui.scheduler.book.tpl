@@ -28,7 +28,11 @@
 	var s = {
 		handleResponse: function ( data ) {
 			if (data) {
+				<!--{if $id}-->
+				freemedMessage( "<!--{t}-->Moved appointment.<!--{/t}-->", "INFO" );
+				<!--{else}-->
 				freemedMessage( "<!--{t}-->Booked appointment.<!--{/t}-->", "INFO" );
+				<!--{/if}-->
 				<!--{if $patient}-->
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 				<!--{else}-->
@@ -46,6 +50,19 @@
 			return r;
 		},
 		initialLoad: function ( ) {
+			<!--{if $id}-->
+			<!--{method namespace="org.freemedsoftware.api.Scheduler.GetAppointment" param0=$id var='record'}-->
+			var x = <!--{json value=$record}-->;
+			dojo.widget.byId('caldateof').setValue( x.caldateof );
+			//calhour: dojo.date.strftime( dojo.widget.byId('caltime').timePicker.time, '%H', dojo.widget.byId('caltime').lang ),
+			var dt = new Date( );
+			dt.setHours( x.calhour );
+			dt.setMinutes( x.calminute );
+			dojo.widget.byId('caltime').timePicker.setTime( dt );
+			calphysician.onAssign( x.calphysician );
+			document.getElementById( 'calduration' ).value = x.calduration;
+			document.getElementById( 'calprenote' ).value = x.calprenote;
+			<!--{/if}-->
 			<!--{if $patient}-->
 			calpatient.onAssign( <!--{$patient}--> );
 			<!--{/if}-->
@@ -109,9 +126,14 @@
 				dojo.io.bind({
 					method: "POST",
 					content: {
+						<!--{if $id}-->
+						param0: <!--{$id}-->,
+						param1: myContent
+						<!--{else}-->
 						param0: myContent
+						<!--{/if}-->
 					},
-					url: "<!--{$relay}-->/org.freemedsoftware.api.Scheduler.SetAppointment",
+					url: "<!--{$relay}-->/org.freemedsoftware.api.Scheduler.<!--{if $id}-->Move<!--{else}-->Set<!--{/if}-->Appointment",
 					load: function ( type, data, evt ) {
 						s.handleResponse( data );
 					},
@@ -139,7 +161,11 @@
 
 </script>
 
+<!--{if $id}-->
+<h3><!--{t}-->Move Appointment<!--{/t}--></h3>
+<!--{else}-->
 <h3><!--{t}-->Book Appointment<!--{/t}--></h3>
+<!--{/if}-->
 
 <table border="0" cellpadding="5" style="width: auto;">
 <tr><td valign="top">
@@ -205,7 +231,7 @@
         <table border="0" style="width:200px;">
         <tr><td align="center">
 	        <button dojoType="Button" id="BookingFormCommitChangesButton" widgetId="BookingFormCommitChangesButton">
-	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{t}-->Book Appointment<!--{/t}--></div>
+	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{if $id}--><!--{t}-->Move Appointment<!--{/t}--><!--{else}--><!--{t}-->Book Appointment<!--{/t}--><!--{/if}--></div>
 	        </button>
         </td><td align="left">
         	<button dojoType="Button" id="BookingFormCancelButton" widgetId="BookingFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
