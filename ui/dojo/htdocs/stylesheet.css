@@ -61,10 +61,14 @@ a.button:hover {
 
 div.infoBox {
 	border: 1px solid #000000;
-	size: 8pt;
+	font-size: 8pt;
 	background: #ddddff;
 	padding: .5em;
 	max-width: 250px;
+	}
+
+div.infoBox *, div.infoBox a {
+	font-size: 8pt;
 	}
 
 .clickable {
