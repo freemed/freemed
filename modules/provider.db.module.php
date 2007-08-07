@@ -163,7 +163,7 @@ class ProviderModule extends SupportModule {
 
 		$query = "SELECT * FROM ".$this->table_name.
 			" ".$this->FormJoinClause()." ".
-			( is_array($c) ? " WHERE ".join(' OR ',$c) : "" ).
+			( is_array($c) ? " WHERE  ( ".join(' OR ',$c)." ) " : "" ).
 			" AND phyref='no' ".
 			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
 			" LIMIT 20";
