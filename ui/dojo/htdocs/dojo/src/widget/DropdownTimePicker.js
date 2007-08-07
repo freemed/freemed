@@ -111,7 +111,7 @@ dojo.widget.defineWidget("dojo.widget.DropdownTimePicker", dojo.widget.DropdownC
 	}
 	this._syncValueNode();
 	this.onValueChanged(this.getTime());
-	this.hideContainer();
+	//this.hideContainer();
 }, onValueChanged:function (dateObj) {
 }, onInputChange:function () {
 	if (this.dateFormat) {
