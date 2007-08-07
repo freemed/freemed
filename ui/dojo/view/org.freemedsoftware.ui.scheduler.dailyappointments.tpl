@@ -194,7 +194,7 @@
 		<td><button dojoType="Button" id="dailyAppointmentPrevDay" widgetId="dailyAppointmentPrevDay">&lt;</button></td>
 		<td><input dojoType="DropdownDatePicker" value="today" id="dailyAppointmentsDate" widgetId="dailyAppointmentsDate" />
 		<td><button dojoType="Button" id="dailyAppointmentNextDay" widgetId="dailyAppointmentNextDay">&gt;</button></td>
-		<td style="border: 1px dashed #000000;"><input type="checkbox" id="dailyAppointmentOnlyMe" checked="checked" /><label for="dailyAppointmentOnlyMe"><small><!--{t}-->Limit to provider<!--{/t}--></small></label></td>
+		<td style="border: 1px dashed #000000; <!--{if not $SESSION.authdata.user_record.userrealphy}-->display: none;<!--{/if}-->"><input type="checkbox" id="dailyAppointmentOnlyMe" checked="checked" /><label for="dailyAppointmentOnlyMe"><small><!--{t}-->Limit to provider<!--{/t}--></small></label></td>
 		</table>
 		</td>
 	</tr>
