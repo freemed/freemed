@@ -231,11 +231,11 @@
         <table border="0" style="width:200px;">
         <tr><td align="center">
 	        <button dojoType="Button" id="BookingFormCommitChangesButton" widgetId="BookingFormCommitChangesButton">
-	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{if $id}--><!--{t}-->Move Appointment<!--{/t}--><!--{else}--><!--{t}-->Book Appointment<!--{/t}--><!--{/if}--></div>
+	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{if $id}--><!--{t}-->Move Appointment<!--{/t}--><!--{else}--><!--{t}-->Book Appointment<!--{/t}--><!--{/if}--></div>
 	        </button>
         </td><td align="left">
         	<button dojoType="Button" id="BookingFormCancelButton" widgetId="BookingFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
-        	        <div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" /> <!--{t}-->Cancel<!--{/t}--></div>
+        	        <div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
         	</button>
         </td></tr></table>
 </div>
