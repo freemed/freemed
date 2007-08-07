@@ -106,7 +106,7 @@ class Agata7 {
 	//	HTML_QuickForm object
 	//
 	function CreateForm ( $report ) {
-		$form = CreateObject('PEAR.HTML_QuickForm', 'form', 'get');
+		$form = CreateObject('PEAR.HTML_QuickForm', 'form', 'get', '', '_newReportWindow');
                 freemed::quickform_i18n(&$form);
 		$form->addElement('hidden', 'module', $_REQUEST['module']);
 		$form->addElement('hidden', 'report', $_REQUEST['report']);
