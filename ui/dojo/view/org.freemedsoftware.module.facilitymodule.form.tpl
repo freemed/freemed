@@ -28,6 +28,29 @@
 	<!--{t}-->Facility<!--{/t}-->
 <!--{/assign_block}-->
 
+<!--{assign_block var='validation'}-->
+	if ( content.psrname.length < 2 ) {
+		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		r = false;
+	}
+	if ( content.psraddr1.length < 2 ) {
+		m += "<!--{t}-->You must enter an address.<!--{/t}-->\n";
+		r = false;
+	}
+	if ( content.psrcsz.length < 5 ) {
+		m += "<!--{t}-->You must enter a city and postal code.<!--{/t}-->\n";
+		r = false;
+	}
+	if ( content.psrnote.length < 2 ) {
+		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		r = false;
+	}
+	if ( parseInt( content.psrpos.length ) < 1 ) {
+		m += "<!--{t}-->You must enter a place of service code.<!--{/t}-->\n";
+		r = false;
+	}
+<!--{/assign_block}-->
+
 <!--{assign_block var='initialLoad'}-->
 	dojo.widget.byId( 'psrcsz_widget' ).setLabel( data['psrcity'] + ', ' + data['psrstate'] + ' ' + data['psrzip'] );
 	dojo.widget.byId( 'psrcsz_widget' ).setValue( data['psrcity'] + ', ' + data['psrstate'] + ' ' + data['psrzip'] );
@@ -141,7 +164,7 @@
 
 			<tr>
 				<td align="right"><!--{t}-->Fax Number<!--{/t}--></td>
-				<td align="left"><input dojoType="UsPhoneNumberTextbox" type="text" id="psrfax" widgetId="psrphone" name="psrphone" size="16" maxlength="16" value="" /></td>
+				<td align="left"><input dojoType="UsPhoneNumberTextbox" type="text" id="psrfax" widgetId="psrfax" name="psrfax" size="16" maxlength="16" value="" /></td>
 			</tr>
 
 			<tr>
