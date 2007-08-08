@@ -105,6 +105,8 @@ BEGIN
 
 	#----- Remove triggers
 	DROP TRIGGER patient_Update;
+	DROP TRIGGER patient_address_Insert;
+	DROP TRIGGER patient_address_Update;
 
 	#----- Upgrades
 
@@ -235,6 +237,28 @@ CREATE TABLE IF NOT EXISTS `patient_address` (
 	, KEY ( patient, stamp )
 );
 
+DELIMITER //
+CREATE TRIGGER patient_address_Update
+	AFTER UPDATE ON patient_address
+	FOR EACH ROW BEGIN
+		IF NEW.active AND NOT OLD.active THEN
+			UPDATE patient SET ptaddr1 = NEW.line1, ptaddr2 = NEW.line2, ptcity = NEW.city, ptstate = NEW.stpr, ptzip = NEW.postal, ptcountry = NEW.country WHERE id = NEW.patient;
+		END IF;
+	END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER patient_address_Insert
+	AFTER INSERT ON patient_address
+	FOR EACH ROW BEGIN
+		IF NEW.active THEN
+			UPDATE patient SET ptaddr1 = NEW.line1, ptaddr2 = NEW.line2, ptcity = NEW.city, ptstate = NEW.stpr, ptzip = NEW.postal, ptcountry = NEW.country WHERE id = NEW.patient;
+		END IF;
+	END;
+//
+DELIMITER ;
+
 #----- Prior demographics holding table
 
 CREATE TABLE IF NOT EXISTS `patient_prior` (
@@ -285,3 +309,4 @@ CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
 	PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
+

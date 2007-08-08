@@ -110,6 +110,72 @@ class PatientModule extends SupportModule {
 		}
 	} // end method add_pre
 
+	// Method: GetAddresses
+	//
+	//	Get all addresses associated with a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAddresses ( $patient ) {
+		$q = "SELECT * FROM patient_address WHERE patient = ". ( $patient + 0 );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAddresses
+
+	// Method: SetAddresses
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$addresses - Array of hashes
+	//	* type - 2 character abbreviation
+	//	* active - Boolean active flag
+	//	* relate - 2 character abbreviation
+	//	* line1 - Address line 1
+	//	* line2 - Address line 2
+	//	* csz - City state zip country hash
+	//	* altered - Boolean flag to determine whether or not this entry has been altered.
+	//	* id - 0 if new, otherwise the current id
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function SetAddresses ( $patient, $addresses ) {
+		$as = (array) $addresses;
+		foreach ( $as AS $a ) {
+			// Force as an array
+			$a = (array) $a;
+			$a['patient'] = $patient;
+			// If id = 0, process as new entry
+			if ( ( (int) $a['id'] ) == 0 ) {
+				$GLOBALS['sql']->load_data( $a );
+				$query = $GLOBALS['sql']->insert_query(
+					'patient_address',
+					$this->address_keys
+				);
+				$GLOBALS['sql']->query( $query );
+			} else {
+				if ( $a['altered'] ) {
+					$GLOBALS['sql']->load_data( $a );
+					$query = $GLOBALS['sql']->update_query(
+						'patient_address',
+						$this->address_keys,
+						array( 'id' => $a['id'] )
+					);
+					$GLOBALS['sql']->query( $query );
+				}
+			}
+		}
+		return true;
+	} // end method SetAddresses
+
 	// Method: Search
 	//
 	//	Search for patients matching criteria.
