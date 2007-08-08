@@ -213,7 +213,8 @@ tbody.scrollContent tr.selected:hover td {
 
 .dashboardWidgetContainer {
 	/* Dialog box-looking stuff */
-	width: 30%;
+	max-width: 50%;
+	min-width: 5ex;
 	border: 2px solid #555555;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-bottomright: 10px;
@@ -221,7 +222,7 @@ tbody.scrollContent tr.selected:hover td {
 	font-family: sans-serif;
 	/* Alignment stuff */
 	float: left;
-	height: 200px;
+	min-height: 200px;
 	margin: .5em;
 	}
 
