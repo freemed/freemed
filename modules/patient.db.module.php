@@ -83,6 +83,18 @@ class PatientModule extends SupportModule {
 		'ptarchive',
 		'iso'
 	);
+	var $address_keys = array (
+		'patient',
+		'type',
+		'active',
+		'relate',
+		'line1',
+		'line2',
+		'city',
+		'stpr',
+		'postal',
+		'country'
+	);
 
 	public function __construct ( ) {
 		// __("Patient Module")
@@ -152,7 +164,16 @@ class PatientModule extends SupportModule {
 		foreach ( $as AS $a ) {
 			// Force as an array
 			$a = (array) $a;
+
+			// Preprocessing
 			$a['patient'] = $patient;
+			if (preg_match("/([^,]+), ([A-Z]{2}) ([^ ]+) (.*)", $a['csz'], $reg)) {
+				$a['city'] = $reg[1];
+				$a['stpr'] = $reg[2];
+				$a['postal'] = $reg[3];
+				$a['country'] = $reg[4];
+			}
+
 			// If id = 0, process as new entry
 			if ( ( (int) $a['id'] ) == 0 ) {
 				$GLOBALS['sql']->load_data( $a );
