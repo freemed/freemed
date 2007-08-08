@@ -43,7 +43,7 @@ class Module {
 	var $MODULE_AUTHOR;
 	var $MODULE_DESCRIPTION;
 	var $MODULE_VENDOR;
-	var $MODULE_HIDDEN;
+	var $MODULE_HIDDEN = false;
 
 		// versioning related variables
 	var $PACKAGE_MINIMUM_VERSION = 0;

@@ -156,9 +156,10 @@ function register_module ($module_name) {
 			if ($m['module_uid'] == $data['MODULE_UID']) {
 				// If we've found it, update
 				//print "should update $m[MODULE_NAME]\n";
+				$GLOBALS['sql']->load_data( $a );
 				$query = $GLOBALS['sql']->update_query (
 					'modules',
-					$a,
+					array_keys( $a ),
 					array ( 'module_uid' => $data['MODULE_UID'] )
 				);
 				$GLOBALS['sql']->query ( $query );
@@ -168,9 +169,10 @@ function register_module ($module_name) {
 
 		// If all else fails, add
 		//print "should INSERT $m[MODULE_NAME]\n";
+		$GLOBALS['sql']->load_data( $a );
 		$query = $GLOBALS['sql']->insert_query (
 			'modules',
-			$a
+			array_keys( $a )
 		);
 		$GLOBALS['sql']->query ( $query );
 	} // end checking for caching

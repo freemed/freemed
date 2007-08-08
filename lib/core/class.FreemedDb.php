@@ -246,7 +246,7 @@ class FreemedDb extends MDB2 {
 			if ("${v}" == SQL__NOW) {
 				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->now();
 			} else {
-				if ( $v != '' ) {
+				if ( $v !== '' ) {
 					$values_clause[] = "`".$this->db->escape($k)."` = ".( "${v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
 				}
 			}
