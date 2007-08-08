@@ -126,8 +126,15 @@ CREATE TRIGGER scheduler_Update
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
 			UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), user=NEW.user WHERE module='scheduler' AND oid=NEW.id;
+			#	Mark this depending on how we're dealing with this
+			IF FIND_IN_SET( NEW.calstatus, 'noshow,cancelled' ) THEN
+				CALL patientWorkflowUpdateStatus( NEW.calpatient, NEW.caldateof, 'scheduler', FALSE, NEW.user );
+			ELSE
+				CALL patientWorkflowUpdateStatus( NEW.calpatient, NEW.caldateof, 'scheduler', TRUE, NEW.user );
+			END IF;
+			CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
 			IF NEW.caldateof != OLD.caldateof THEN
-				CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
+				CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, OLD.caldateof );
 			END IF;
 		END IF;
 	END;
