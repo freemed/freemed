@@ -65,6 +65,8 @@
 			<!--{/if}-->
 			<!--{if $patient}-->
 			calpatient.onAssign( <!--{$patient}--> );
+			<!--{else}-->
+			document.getElementById( 'calpatient' ).value = 0;
 			<!--{/if}-->
 			s.updatePreview();
 		},
