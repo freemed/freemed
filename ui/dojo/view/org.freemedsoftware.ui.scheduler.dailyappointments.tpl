@@ -48,6 +48,9 @@
 		limitStatus: 1,
 		dailyCalendarSetDate: function ( ) {
 			var date = dojo.widget.byId('dailyAppointmentsDate').inputNode.value;
+			try {
+				freemedGlobal.state.dailyAppointmentsDate = date;
+			} catch ( err ) { }
 			// Initial data load
 			dojo.io.bind({
 				method: 'POST',
@@ -172,6 +175,12 @@
 	};
 
 	_container_.addOnLoad(function() {
+		try {
+			var date = freemedGlobal.state.dailyAppointmentsDate;
+			if ( date.length > 4 ) {
+				dojo.widget.byId('dailyAppointmentsDate').inputNode.value = date;
+			}
+		} catch ( err ) { }
 		o.resetAtomicStatus();
 		dojo.event.connect(dojo.widget.byId('atomicStatusWidget'), "onValueChanged", o, "setAtomicStatus");
 		dojo.event.connect(dojo.widget.byId('dailyAppointmentsDate'), "onValueChanged", o, "dailyCalendarSetDate");
