@@ -86,6 +86,23 @@ class SystemNotifications extends SupportModule {
 		return $x;
 	} // end method GetTimestamp
 
+	// Method: GetSystemTaskInboxCount
+	//
+	//	Get number of system task inbox items.
+	//
+	// Parameters:
+	//
+	//	$box - Organizational box text name.
+	//
+	// Returns:
+	//
+	//	Number of items in the organizational box for the current user.
+	//
+	public function GetSystemTaskInboxCount ( $box ) {
+		$q = "SELECT count FROM systemtaskinboxsummary WHERE user = " . $GLOBALS['sql']->quote( freemed::user_cache()->user_number )." AND box = " . $GLOBALS['sql']->quote( $box );
+		return (int)( $GLOBALS['sql']->queryOne( $q ) );
+	} // end method GetSystemTaskInboxCount
+
 } // end class SystemNotifications
 
 register_module ("SystemNotifications");

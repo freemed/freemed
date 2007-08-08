@@ -36,6 +36,27 @@ CREATE TABLE IF NOT EXISTS `systemnotification` (
 	, FOREIGN KEY		( nuser ) REFERENCES user.id ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS `systemtaskinbox` (
+	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	box			VARCHAR (250) NOT NULL DEFAULT '',
+	module			VARCHAR (250) NOT NULL DEFAULT '',
+	oid			BIGINT (20) UNSIGNED NOT NULL,
+	summary			VARCHAR (250) NOT NULL DEFAULT '',
+	id			SERIAL
+
+	#	Keys
+	, KEY			( user, box )
+);
+
+CREATE TABLE IF NOT EXISTS `systemtaskinboxsummary` (
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	box			VARCHAR (250) NOT NULL DEFAULT '',
+	count			INT UNSIGNED NOT NULL DEFAULT 0
+
+	, PRIMARY KEY		( user )
+);
+
 DROP PROCEDURE IF EXISTS systemnotification_Upgrade;
 DELIMITER //
 CREATE PROCEDURE systemnotification_Upgrade ( )
@@ -43,10 +64,60 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Remove triggers
+	DROP TRIGGER systemtaskinbox_Insert;
+	DROP TRIGGER systemtaskinbox_Update;
+	DROP TRIGGER systemtaskinbox_Delete;
 
 	#----- Upgrades
 END
 //
 DELIMITER ;
+
 CALL systemnotification_Upgrade( );
+
+DELIMITER //
+
+CREATE TRIGGER systemtaskinbox_Insert
+	AFTER INSERT ON systemtaskinbox
+	FOR EACH ROW BEGIN
+		CALL systemtaskinbox_UpdateCount( NEW.user, NEW.box );
+        END;
+//
+
+CREATE TRIGGER systemtaskinbox_Update
+	AFTER UPDATE ON systemtaskinbox
+	FOR EACH ROW BEGIN
+		CALL systemtaskinbox_UpdateCount( NEW.user, NEW.box );
+        END;
+//
+
+CREATE TRIGGER systemtaskinbox_Delete
+	AFTER DELETE ON systemtaskinbox
+	FOR EACH ROW BEGIN
+		CALL systemtaskinbox_UpdateCount( OLD.user, OLD.box );
+        END;
+//
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS systemtaskinbox_UpdateCount;
+
+DELIMITER //
+
+CREATE PROCEDURE systemtaskinbox_UpdateCount ( IN u INT UNSIGNED, IN b VARCHAR (250) )
+BEGIN
+	DECLARE count INT UNSIGNED;
+
+	SELECT COUNT(*) INTO count FROM systemtaskinboxsummary WHERE user = u AND box = b;
+	IF count < 1 THEN
+		#	Create blank box
+		INSERT INTO systemtaskinboxsummary ( user, box, count ) VALUES ( u, b, 0 );
+	END IF;
+
+	#	Update aggregate total
+	UPDATE systemtaskinboxsummary SET count = ( SELECT COUNT(*) FROM systemtaskinbox WHERE user = u AND box = b ) WHERE user = u AND box = b;
+END
+//
+
+DELIMITER ;
 
