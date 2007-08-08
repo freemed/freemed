@@ -115,7 +115,7 @@ CREATE TRIGGER scheduler_Insert
 	AFTER INSERT ON scheduler
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
-			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, NEW.calprenote, NEW.user );
+			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), NEW.user );
 			CALL patientWorkflowUpdateStatus( NEW.calpatient, NEW.caldateof, 'scheduler', TRUE, NEW.user );
 		END IF;
 	END;
@@ -125,7 +125,7 @@ CREATE TRIGGER scheduler_Update
 	AFTER UPDATE ON scheduler
 	FOR EACH ROW BEGIN
 		IF NEW.caltype = 'pat' THEN
-			UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=NEW.calprenote, user=NEW.user WHERE module='scheduler' AND oid=NEW.id;
+			UPDATE `patient_emr` SET stamp=NEW.caldateof, patient=NEW.calpatient, summary=CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), user=NEW.user WHERE module='scheduler' AND oid=NEW.id;
 			IF NEW.caldateof != OLD.caldateof THEN
 				CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, NEW.caldateof );
 			END IF;
