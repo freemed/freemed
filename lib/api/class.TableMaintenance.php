@@ -73,7 +73,7 @@ class TableMaintenance {
 	//	Array of hashes.
 	//
 	public function GetModules ( $assoc, $like = NULL, $picklist = false ) {
-		$query = "SELECT module_name, module_version, module_class FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote( $assoc ).", module_associations ) ". ( $like ? " AND LOWER(module_name) LIKE '%".$GLOBALS['sql']->escape( strtolower($like) )."%'" : "" );
+		$query = "SELECT module_name, module_version, module_class FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote( $assoc ).", module_associations ) ". ( $like ? " AND LOWER(module_name) LIKE '%".$GLOBALS['sql']->escape( strtolower($like) )."%'" : "" )." ORDER BY module_name";
 		$result = $GLOBALS['sql']->queryAll( $query );
 		if ( $picklist ) {
 			foreach ( $result AS $v ) {

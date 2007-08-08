@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
 class SchedulerTable extends SupportModule {
 
-	var $MODULE_NAME = "Scheduler Table";
+	var $MODULE_NAME = "Scheduler";
 	var $MODULE_VERSION = "0.6.6";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "a992b0a0-97f7-4deb-a56d-5970bf6d3c97";
@@ -38,9 +38,10 @@ class SchedulerTable extends SupportModule {
 	var $table_name = "scheduler";
 
 	public function __construct () {
-		// __("Scheduler Table")
+		// __("Scheduler")
 
 		// Have main menu handler for physician appointments, etc
+		$this->_SetAssociation('EmrModule');
 		$this->_SetHandler('MainMenu', 'MainMenuAppointments');
 
 		// Call parent constructor
