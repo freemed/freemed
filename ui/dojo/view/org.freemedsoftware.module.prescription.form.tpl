@@ -42,6 +42,7 @@
 	rxphy.onAssign( data.rxphy );
 	rxform.onAssign( data.rxform );
 	rxquantityqual.onAssign( data.rxquantityqual );
+	rxunit.onAssign( data.rxunit );
 	dojo.widget.byId( 'rxdtfrom' ).setValue( data.rxdtfrom );
 <!--{/assign_block}-->
 
@@ -61,7 +62,7 @@
 	<tr>
 		<td align="right"><!--{t}-->Prescribing Provider<!--{/t}--></td>
 		<td>
-			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="rxphy"}-->
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="rxphy" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}-->
 		</td>
 	</tr>
 
@@ -80,6 +81,17 @@
 	</tr>
 
 	<tr>
+		<td align="right"><!--{t}-->Dosage<!--{/t}--></td>
+		<td>
+			<table style="width: auto;"><tr><td>
+				<input type="text" id="rxdosage" name="rxdosage" size="30" maxlength="100" />
+			</td><td>
+				<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="DrugQuantityQualifiers" varname="rxunit"}-->
+			</td></tr></table>
+		</td>
+	</tr>
+
+	<tr>
 		<td align="right"><!--{t}-->Quantity<!--{/t}--></td>
 		<td>
 			<table style="width: auto;"><tr><td>
@@ -87,6 +99,30 @@
 			</td><td>
 				<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="DrugQuantityQualifiers" varname="rxquantityqual"}-->
 			</td></tr></table>
+		</td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Interval<!--{/t}--></td>
+		<td>
+			<select name="rxinterval" id="rxinterval">
+				<option>b.i.d.</option>
+				<option>t.i.d.</option>
+				<option>q.i.d.</option>
+				<option>q. 3h</option>
+				<option>q. 4h</option>
+				<option>q. 5h</option>
+				<option>q. 6h</option>
+				<option>q. 8h</option>
+				<option>q.d.</option>
+				<option>h.s.</option>
+				<option>q.h.s.</option>
+				<option>q.A.M.</option>
+				<option>q.P.M.</option>
+				<option>a.c.</option>
+				<option>p.c.</option>
+				<option>p.r.n.</option>
+			</select>
 		</td>
 	</tr>
 
@@ -126,7 +162,7 @@
 		<td>
 			<table style="width: auto;"><tr>
 			<td>
-				<input type="text" name="rxrefills" id="rxrefills" />
+				<input type="text" name="rxrefills" id="rxrefills" value="0" />
 			</td>
 			<td>
 			<select name="rxrefillinterval" id="rxrefillinterval">
@@ -145,8 +181,13 @@
 	</tr>
 
 	<tr>
-		<td align="right"><!--{t}-->Notes<!--{/t}--></td>
-		<td><input type="text" id="notes" name="notes" size="50" maxlength="250" /></td>
+		<td align="right"><!--{t}-->Sig<!--{/t}--></td>
+		<td><input type="text" id="rxsig" name="rxsig" size="50" /></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Note<!--{/t}--></td>
+		<td><input type="text" id="rxnote" name="rxnote" size="50" maxlength="250" /></td>
 	</tr>
 
 </table>
