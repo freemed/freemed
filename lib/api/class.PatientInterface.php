@@ -213,7 +213,9 @@ class PatientInterface {
 			}
 		} // end foreach
 
-		if (!count($c)) { return array(); }
+		// Only look for 
+		if ( !isset( $criteria['archive'] ) ) { $c[] = "p.ptarchive = 0"; }
+
 		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p WHERE ".join(' AND ', $c)." ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method Search
