@@ -31,7 +31,6 @@
 
 	var sched = {
 		init: function () {
-			schedProvider.onAssign( <!--{if $SESSION.authdata.user_record.userrealphy gt 0}--><!--{$SESSION.authdata.user_record.userrealphy}--><!--{else}-->0<!--{/if}--> );
 			oCalendar = dojo.widget.byId( "dojoCalendar" );
 			oCalendar.setTimeZones(mywidgets.widget.timezones);
 			oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie( "DCTZ" );
@@ -97,7 +96,8 @@
 							type: [ 'appointment' ]
 						};
 					}
-					oCalendar.setCalendarEntries(entries);
+					var c = dojo.widget.byId( 'dojoCalendar' );
+					c.setCalendarEntries( entries );
 				},
 				mimetype: 'text/json'
 			});
@@ -200,7 +200,7 @@
 	<table border="0" style="width: auto;">
 	<tr>
 		<td><b><!--{t}-->Provider<!--{/t}--></b> : </td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="schedProvider" methodName="internalPicklist"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="schedProvider" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
 	</tr>
 	</table>
 </div>
