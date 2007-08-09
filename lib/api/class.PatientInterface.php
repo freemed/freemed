@@ -50,8 +50,8 @@ class PatientInterface {
 		$q = "SELECT * FROM patient p WHERE ".
 			"ptlname=".$GLOBALS['sql']->quote( $criteria['ptlname'] )." AND ".
 			"ptfname=".$GLOBALS['sql']->quote( $criteria['ptfname'] )." AND ".
-			"ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND ".
-			"ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND ".
+			( $criteria['ptmname'] ? "ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND " : "" ).
+			( $criteria['ptdob'] ? "ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND " : "" ).
 			"ptarchive=0";
 		$res = $GLOBALS['sql']->queryAll( $q );
 		if ( count ( $res ) > 0 ) {
