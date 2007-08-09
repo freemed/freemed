@@ -28,8 +28,38 @@
 <script language="javascript">
 	dojo.require("dojo.widget.DropdownContainer");
 
+	var patientBar = {
+		deletePatient: function () {
+			// Make sure that the user is *really* sure.
+			if ( ! confirm( "<!--{t}-->Are you sure you want to remove this patient from the system?<!--{/t}-->" ) ) {
+				return false;
+			}
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: {
+						id: <!--{$patient}-->,
+						ptarchive: 1
+					}
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.PatientModule.mod",
+				load: function( type, data, evt ) {
+					if ( data ) {
+						freemedMessage( "<!--{t}-->Patient was removed from the system.<!--{/t}-->", 'INFO' );
+						freemedGlobal.removePatientFromHistory( <!--{$patient}--> );
+						freemedLoad( 'org.freemedsoftware.ui.patient.search' );
+					} else {
+						freemedMessage( "<!--{t}-->Patient failed to be removed from the system.<!--{/t}-->", 'ERROR' );
+					}
+				},
+				mimetype: 'text/json'
+			});
+		}
+	};
+
 	_container_.addOnLoad(function(){
 		dojo.widget.byId('contactDropdown').inputNode.style.display = 'none';
+		document.getElementById( 'deletePatient' ).onclick = patientBar.deletePatient;
 
 		// Push this into the history
 		freemedGlobal.addPatientToHistory( '<!--{$patient}-->', '<!--{$patientName}-->' );
@@ -40,6 +70,7 @@
 	_container_.addOnUnload(function(){
 		// Title reset
 		document.title = "FreeMED v<!--{$VERSION}-->";
+		document.getElementById( 'deletePatient' ).onclick = null;
 	});
 </script>
 
@@ -87,6 +118,7 @@
 		<span class="clickable" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/edit_mini.24x24.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
 		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/encounter.24x24.png" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
 		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.book?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/book_appt.24x24.png" border="0" alt="<!--{t}-->Book Appointment<!--{/t}-->" /></span>
+		<span class="clickable" id="deletePatient"><img src="<!--{$htdocs}-->/images/teak/x_stop.24x24.png" border="0" alt="<!--{t}-->Remove Patient<!--{/t}-->" /></span>
 	</td>
 	</tr></table>
 </div>
