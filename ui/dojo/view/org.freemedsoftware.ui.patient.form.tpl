@@ -100,7 +100,7 @@
 					},
 					load: function( type, data, evt ) {
 						freemedMessage( "<!--{t}-->Patient addresses updated.<!--{/t}-->", 'INFO' );
-						//freemedLoad( '<!--{$controller}-->/org.freemedsoftware.ui.patient.overview?patient=' + parseInt( patientData ) );
+						freemedLoad( '<!--{$controller}-->/org.freemedsoftware.ui.patient.overview?patient=' + parseInt( patientData ) );
 					},
 					mimetype: "text/json"
 				});
