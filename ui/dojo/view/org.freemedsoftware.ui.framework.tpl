@@ -215,6 +215,17 @@ var djConfig = {
 				freemedGlobal.patientHistory.push([ id, patient_name ]);
 			} catch (err) { }
 		},
+		removePatientFromHistory: function ( id ) {
+			try {
+				if ( freemedGlobal.patientHistory.length > 0 ) {
+					for (var i=0; i<freemedGlobal.patientHistory.length; i++) {
+						if (freemedGlobal.patientHistory[i][0] == id) {
+							freemedGlobal.patientHistory[i] = null;
+						}
+					}
+				}
+			} catch (err) { }
+		},
 		//---- Catch all "state" namespace for storing state variables
 		pageHistory: [ ],
 		patientHistory: [ ],
