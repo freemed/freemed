@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `systemnotification` (
 CREATE TABLE IF NOT EXISTS `systemtaskinbox` (
 	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	patient			BIGINT (20) UNSIGNED NOT NULL DEFAULT 0,
 	box			VARCHAR (250) NOT NULL DEFAULT '',
 	module			VARCHAR (250) NOT NULL DEFAULT '',
 	oid			BIGINT (20) UNSIGNED NOT NULL,
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `systemtaskinbox` (
 
 	#	Keys
 	, KEY			( user, box )
+	, KEY			( patient )
 );
 
 CREATE TABLE IF NOT EXISTS `systemtaskinboxsummary` (
@@ -55,6 +57,14 @@ CREATE TABLE IF NOT EXISTS `systemtaskinboxsummary` (
 	count			INT UNSIGNED NOT NULL DEFAULT 0
 
 	, PRIMARY KEY		( user )
+);
+
+CREATE TABLE IF NOT EXISTS `systemtaskinboxpatientsummary` (
+	patient			INT UNSIGNED NOT NULL DEFAULT 0,
+	box			VARCHAR (250) NOT NULL DEFAULT '',
+	count			INT UNSIGNED NOT NULL DEFAULT 0
+
+	, PRIMARY KEY		( patient )
 );
 
 DROP PROCEDURE IF EXISTS systemnotification_Upgrade;
@@ -80,31 +90,34 @@ DELIMITER //
 CREATE TRIGGER systemtaskinbox_Insert
 	AFTER INSERT ON systemtaskinbox
 	FOR EACH ROW BEGIN
-		CALL systemtaskinbox_UpdateCount( NEW.user, NEW.box );
+		CALL systemtaskinbox_UpdateUserCount( NEW.user, NEW.box );
+		CALL systemtaskinbox_UpdatePatientCount( NEW.patient, NEW.box );
         END;
 //
 
 CREATE TRIGGER systemtaskinbox_Update
 	AFTER UPDATE ON systemtaskinbox
 	FOR EACH ROW BEGIN
-		CALL systemtaskinbox_UpdateCount( NEW.user, NEW.box );
+		CALL systemtaskinbox_UpdateUserCount( NEW.user, NEW.box );
+		CALL systemtaskinbox_UpdatePatientCount( NEW.patient, NEW.box );
         END;
 //
 
 CREATE TRIGGER systemtaskinbox_Delete
 	AFTER DELETE ON systemtaskinbox
 	FOR EACH ROW BEGIN
-		CALL systemtaskinbox_UpdateCount( OLD.user, OLD.box );
+		CALL systemtaskinbox_UpdateUserCount( OLD.user, OLD.box );
+		CALL systemtaskinbox_UpdatePatientCount( OLD.patient, OLD.box );
         END;
 //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS systemtaskinbox_UpdateCount;
+DROP PROCEDURE IF EXISTS systemtaskinbox_UpdateUserCount;
 
 DELIMITER //
 
-CREATE PROCEDURE systemtaskinbox_UpdateCount ( IN u INT UNSIGNED, IN b VARCHAR (250) )
+CREATE PROCEDURE systemtaskinbox_UpdateUserCount ( IN u INT UNSIGNED, IN b VARCHAR (250) )
 BEGIN
 	DECLARE count INT UNSIGNED;
 
@@ -116,6 +129,29 @@ BEGIN
 
 	#	Update aggregate total
 	UPDATE systemtaskinboxsummary SET count = ( SELECT COUNT(*) FROM systemtaskinbox WHERE user = u AND box = b ) WHERE user = u AND box = b;
+END
+//
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS systemtaskinbox_UpdatePatientCount;
+
+DELIMITER //
+
+CREATE PROCEDURE systemtaskinbox_UpdatePatientCount ( IN p INT UNSIGNED, IN b VARCHAR (250) )
+BEGIN
+	DECLARE count INT UNSIGNED;
+
+	IF p > 0 THEN
+		SELECT COUNT(*) INTO count FROM systemtaskinboxpatientsummary WHERE patient = p AND box = b;
+		IF count < 1 THEN
+			#	Create blank box
+			INSERT INTO systemtaskinboxpatientsummary ( patient, box, count ) VALUES ( p, b, 0 );
+		END IF;
+
+		#	Update aggregate total
+		UPDATE systemtaskinboxpatientsummary SET count = ( SELECT COUNT(*) FROM systemtaskinbox WHERE patient = p AND box = b ) WHERE user = p AND box = b;
+	END IF;
 END
 //
 
