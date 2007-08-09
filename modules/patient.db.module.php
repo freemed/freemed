@@ -167,7 +167,7 @@ class PatientModule extends SupportModule {
 
 			// Preprocessing
 			$a['patient'] = $patient;
-			if (preg_match("/([^,]+), ([A-Z]{2}) ([^ ]+) (.*)", $a['csz'], $reg)) {
+			if (preg_match("/([^,]+), ([A-Z]{2}) ([A-Z0-9\-]+) ([A-Za-z\.\-\ ]+)/", $a['csz'], $reg)) {
 				$a['city'] = $reg[1];
 				$a['stpr'] = $reg[2];
 				$a['postal'] = $reg[3];
@@ -176,6 +176,7 @@ class PatientModule extends SupportModule {
 
 			// If id = 0, process as new entry
 			if ( ( (int) $a['id'] ) == 0 ) {
+				syslog( LOG_DEBUG, "SetAddresses: adding new address for $patient" );
 				$GLOBALS['sql']->load_data( $a );
 				$query = $GLOBALS['sql']->insert_query(
 					'patient_address',
@@ -184,6 +185,7 @@ class PatientModule extends SupportModule {
 				$GLOBALS['sql']->query( $query );
 			} else {
 				if ( $a['altered'] ) {
+					syslog( LOG_DEBUG, "SetAddresses: modifying address for $patient, id = ".$a['id'] );
 					$GLOBALS['sql']->load_data( $a );
 					$query = $GLOBALS['sql']->update_query(
 						'patient_address',
