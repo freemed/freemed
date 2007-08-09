@@ -36,12 +36,17 @@
 
 		$methodName - (optional) Name of method. Defaults to 'picklist'
 
+		$defaultValue - (optional) Default value. If 0, is zero.
+
 *}-->
 
 <script language="javascript">
 
 	var <!--{$varname|replace:'.':''}--> = {
 		onAssign: function ( id ) {
+			this.assign( id, false );
+		},
+		assign: function ( id, dontset ) {
 			// Don't assign if we have no value
 			try {
 				if ( parseInt( id ) < 1 ) {
@@ -60,7 +65,7 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.to_text",
 				load: function ( type, data, evt ) {
-					dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id );
+					if ( !dontset ) { dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id ); }
 					dojo.widget.byId('<!--{$varname|escape}-->_widget').setLabel( data );
 				},
 				mimetype: "text/json"
@@ -69,6 +74,7 @@
 	};
 
 	_container_.addOnLoad(function(){
+		<!--{if $defaultValue gt 0}--><!--{$varname|replace:'.':''}-->.assign( <!--{$defaultValue}-->, true );<!--{/if}-->
 		dojo.event.topic.subscribe( "<!--{$varname|escape}-->-assign", <!--{$varname|replace:'.':''}-->, "onAssign" );
 	});
 	_container_.addOnUnload(function(){
