@@ -31,7 +31,7 @@
 
 	var sched = {
 		init: function () {
-			schedProvider.onAssign( 0 );
+			schedProvider.onAssign( <!--{if $SESSION.authdata.user_record.userrealphy gt 0}--><!--{$SESSION.authdata.user_record.userrealphy}--><!--{else}-->0<!--{/if}--> );
 			oCalendar = dojo.widget.byId( "dojoCalendar" );
 			oCalendar.setTimeZones(mywidgets.widget.timezones);
 			oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie( "DCTZ" );
@@ -74,35 +74,33 @@
 					param2: prov ? prov : ''
 				},
 				load: function ( type, data, evt ) {
-					sched.dataStore = data;
+					var d = data;
+					var entries = { };
+					// Populate with entries from relay
+					for( var i in d ) {
+						var sDate = sched.mdyToDate( d[i].date_of_mdy );
+						var eDate = sched.mdyToDate( d[i].date_of_mdy );
+						sDate.setHours( d[i].hour );
+						sDate.setMinutes( d[i].minute );
+						eDate.setHours( d[i].hour );
+						eDate.setMinutes( d[i].minute );
+						entries[ 'appt_' + d[i].scheduler_id ] = {
+							starttime: dojo.date.toRfc3339( sDate ),
+							endtime: dojo.date.toRfc3339( eDate ),
+							allday: false,
+							repeated: false,
+							title: d[i].patient ? ( d[i].patient + (d[i].note ? ' - <i>' + d[i].note + '</i>' : '' ) ) : "<!--{t}-->NON PATIENT APPOINTMENT<!--{/t}-->",
+							code: d[i].patient_id ? "freemedLoad('org.freemedsoftware.ui.patient.overview?patient=" + d[i].patient_id + "');" : '',
+							url: '',
+							body: d[i].note,
+							//attributes: {Location: "My Galactic Headquarters"},
+							type: [ 'appointment' ]
+						};
+					}
+					oCalendar.setCalendarEntries(entries);
 				},
-				mimetype: 'text/json',
-				sync: true
+				mimetype: 'text/json'
 			});
-			var d = sched.dataStore;
-			var entries = { };
-			// Populate with entries from relay
-			for (var i=0; i<d.length; i++) {
-				var sDate = sched.mdyToDate( d[i].date_of_mdy );
-				var eDate = sched.mdyToDate( d[i].date_of_mdy );
-				sDate.setHours( d[i].hour );
-				sDate.setMinutes( d[i].minute );
-				eDate.setHours( d[i].hour );
-				eDate.setMinutes( d[i].minute );
-				entries[ 'appt_' + d[i].scheduler_id ] = {
-					starttime: dojo.date.toRfc3339( sDate ),
-					endtime: dojo.date.toRfc3339( eDate ),
-					allday: false,
-					repeated: false,
-					title: d[i].patient,
-					code: "freemedLoad('org.freemedsoftware.ui.patient.overview?patient=" + d[i].patient_id + "');",
-					url: '',
-					body: d[i].note,
-					//attributes: {Location: "My Galactic Headquarters"},
-					type: [ 'appointment' ]
-				};
-			}
-			oCalendar.setCalendarEntries(entries);
 		},
 		widgetEventChanged: function (eventId,eventObject){
 			var sReturn = "id " + eventId + "=\n";
