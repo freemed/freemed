@@ -221,7 +221,7 @@
 			 valueField="id" border="0" multiple="false" maxSelect="1">
 			<thead>
 				<tr>
-					<th field="stamp_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
+					<th field="stamp_mdy" dataType="Date" sort="desc"><!--{t}-->Date<!--{/t}--></th>
 					<th field="from_user" dataType="String"><!--{t}-->From<!--{/t}--></th>
 					<th field="regarding" dataType="String"><!--{t}-->Regarding<!--{/t}--></th>
 					<th field="subject" dataType="String"><!--{t}-->Note<!--{/t}--></th>
