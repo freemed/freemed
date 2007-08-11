@@ -54,6 +54,7 @@ BEGIN
 
 	ALTER IGNORE TABLE patient_emr ADD COLUMN language CHAR( 5 ) DEFAULT '' AFTER provider;
 END;
+//
 
 CREATE TRIGGER patient_emr_Insert
 	AFTER INSERT ON patient_emr
