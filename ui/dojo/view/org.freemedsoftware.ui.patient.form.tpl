@@ -338,7 +338,7 @@
 
 	<tr>
 		<td><!--{t}-->Date of Birth<!--{/t}--></td>
-		<td><table style="width: auto;" cellspacing="0" cellpadding="0" border="0"><tr><td><button dojoType="Button" id="dobP10">-10</button></td><td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" containerToggle="wipe" value="today"></div></td><td><button dojoType="Button" id="dobN10">+10</button></td></tr></table></td>
+		<td><table style="width: auto;" cellspacing="0" cellpadding="0" border="0"><tr><td><button dojoType="Button" id="dobP10">-10</button></td><td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" containerToggle="wipe" value="today" displayFormat="MM/dd/yyyy"></div></td><td><button dojoType="Button" id="dobN10">+10</button></td></tr></table></td>
 	</tr>
 
 	<tr>
