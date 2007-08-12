@@ -113,19 +113,11 @@
 				method : 'POST',
 				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.GetRecord',
 				content: { param0: id },
-				error: function(type, data, evt) {
-					alert('<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->');
-					dojo.widget.byId('patientFormCommitChangesButton').enable();
-				},
 				load: function(type, data, evt) {
 					if (data) {
 						// Catch all for populating form data
 						dojo.widget.byId('patientForm').setValues(data);
-	
-						// City, State Zip hack
-						dojo.widget.byId('ptcsz_widget').setLabel( data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip );
-						document.getElementById('ptcsz').value = data.ptcity + ', ' + data.ptstate + ' ' + data.ptzip;
-	
+
 						// Picklists
 						dojo.event.topic.publish( 'ptref-assign', data.ptref );
 						dojo.event.topic.publish( 'ptdoc-assign', data.ptdoc );
@@ -154,10 +146,6 @@
 				method : 'POST',
 				url: '<!--{$relay}-->/org.freemedsoftware.module.PatientModule.GetAddresses',
 				content: { param0: id },
-				error: function(type, data, evt) {
-					alert('<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->');
-					dojo.widget.byId('patientFormCommitChangesButton').enable();
-				},
 				load: function(type, data, evt) {
 					if (data) {
 						// Altered flag
@@ -248,7 +236,7 @@
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
 	});
-<!--{else}-->
+<!--{/if}-->
 	_container_.addOnLoad(function(){
 		dojo.event.connect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
 		dojo.event.connect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
@@ -263,7 +251,6 @@
 		dojo.event.disconnect( dojo.widget.byId( 'dobP10' ), 'onClick', pForm, 'dobP10' );
 		dojo.event.disconnect( dojo.widget.byId( 'dobN10' ), 'onClick', pForm, 'dobN10' );
 	});
-<!--{/if}-->
 </script>
 
 <form dojoType="Form" id="patientForm" style="height: auto;">
@@ -532,7 +519,7 @@
 	<tr>
 		<td><!--{t}-->In House Provider<!--{/t}--></td>
 		<td>
-			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptdoc"}-->
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptdoc" methodName="internalPicklist"}-->
 		</td>
 	</tr>
 	<tr>
