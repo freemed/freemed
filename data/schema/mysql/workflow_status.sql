@@ -164,7 +164,9 @@ BEGIN
 	IF ISNULL( rec ) THEN
 		#	Lookup type to insert
 		SELECT id INTO ty FROM workflow_status_type WHERE status_module = st;
-		INSERT INTO `workflow_status` ( stamp, patient, user, status_type, status_completed ) VALUES ( dt, pt, userId, ty, completed );
+		IF NOT ISNULL( ty ) THEN
+			INSERT INTO `workflow_status` ( stamp, patient, user, status_type, status_completed ) VALUES ( dt, pt, userId, ty, completed );
+		END IF;
 	ELSE
 		UPDATE `workflow_status` SET status_completed = completed WHERE id = rec;
 	END IF;
