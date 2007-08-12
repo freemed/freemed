@@ -1187,7 +1187,7 @@ class Scheduler {
 			return sprintf('%04d-%02d-%02d', $regs[3], $regs[1], $regs[2]);
 			break;
 
-			case ( strcmp( $date, 'today' ) == 0 ):
+			case ( strcmp( $data, 'today' ) == 0 ):
 			return date( 'Y-m-d' );
 			break;
 
