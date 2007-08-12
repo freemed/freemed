@@ -26,14 +26,19 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class UnfiledDocuments extends SupportModule {
 
 	var $MODULE_NAME = "Unfiled Documents";
-	var $MODULE_VERSION = "0.1.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "edcf764c-1c99-4abd-924a-39d795541b44";
 	var $MODULE_HIDDEN = true;
 
-	var $PACKAGE_MINIMUM_VERSION = "0.7.0";
+	var $PACKAGE_MINIMUM_VERSION = "0.8.0";
 
 	var $table_name = 'unfileddocuments';
+
+	var $variables = array (
+		'uffdate',
+		'ufffilename'
+	);
 
 	public function __construct ( ) {
 		// __("Unfiled Documents")
@@ -71,6 +76,35 @@ class UnfiledDocuments extends SupportModule {
 		// Remove file name
 		unlink('data/documents/unfiled/'.$filename);
 	} // end method del_pre
+
+	protected function add_pre ( &$data ) {
+		syslog( LOG_DEBUG, get_class($this)."::add_pre ( ... )" );
+		// Temporarily set filename to something absurd
+		$data['uffilename'] = '-';
+	} // end method add_pre
+
+	protected function add_post ( $id, &$data ) {
+		// Handle uploads, if they exist
+		syslog( LOG_DEBUG, get_class($this)."::add_post ( $id, ... )" );
+		if ( $_FILES['file']['name'] != '' ) {
+			if ( $_FILES['file']['error'] == UPLOAD_ERR_OK ) {
+				$orig = $_FILES['file']['name'];
+				if ( move_uploaded_file( $_FILES['file']['tmp_name'], 'data/documents/unfiled/'.$orig ) ) {
+					syslog( LOG_INFO, get_class($this)."::add_post received $orig for id $id" );
+					$query = $GLOBALS['sql']->update_query(
+						$this->table_name,
+						array (
+							'ufffilename' => $orig
+						),
+						array ( 'id' => $id )
+					);
+					$GLOBALS['sql']->query( $query );
+				} else {
+					syslog( LOG_ERROR, get_class($this)."::add_post failed to receive $orig for id $id" );
+				}
+			}
+		}
+	} // end method add_post
 
 	protected function mod_pre ( &$data ) {
 		$id = $data['id'];
