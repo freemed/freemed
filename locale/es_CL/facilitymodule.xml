@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 22:36-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Address (Line 1)</original>
+	<translated>Direcci&#xC3;&#xB3;n (linea 1)</translated>
+</translation>
+<translation>
+	<original>Address (Line 2)</original>
+	<translated>Direcci&#xC3;&#xB3;n(linea 2)</translated>
+</translation>
+<translation>
+	<original>City, State, Zip</original>
+	<translated>Ciudad, estado, zip</translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Contacto</translated>
+</translation>
+<translation>
+	<original>Country</original>
+	<translated>Pa&#xC3;&#xAD;s</translated>
+</translation>
+<translation>
+	<original>Default Provider</original>
+	<translated>Proveedor por defecto</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Details</original>
+	<translated>Detalles</translated>
+</translation>
+<translation>
+	<original>Electronic Billing</original>
+	<translated>Facturaci&#xC3;&#xB3;n electronica</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Correo electronico</translated>
+</translation>
+<translation>
+	<original>Employer Identification Number</original>
+	<translated>N&#xC3;&#xBA;mero de identificaci&#xC3;&#xB3;n de patr&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>External</original>
+	<translated>Externo</translated>
+</translation>
+<translation>
+	<original>Facility Maintenance</original>
+	<translated>Mentenimiento de facilidad</translated>
+</translation>
+<translation>
+	<original>Facility Name</original>
+	<translated>Nombre de facilidad</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>N&#xC3;&#xBA;mero de fax</translated>
+</translation>
+<translation>
+	<original>Internal</original>
+	<translated>Interno</translated>
+</translation>
+<translation>
+	<original>Internal or External Facility</original>
+	<translated>Facilidad interna o externa</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>POS Code</original>
+	<translated>C&#xC3;&#xB3;digo POS</translated>
+</translation>
+<translation>
+	<original>Phone Number</original>
+	<translated>Numero telefonico</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Informacion principal</translated>
+</translation>
+<translation>
+	<original>Rendering NPI Number</original>
+	<translated>Representaci&#xC3;&#xB3;n de n&#xC3;&#xBA;mero de NPI</translated>
+</translation>
+<translation>
+	<original>Rendering Taxonomy Number</original>
+	<translated>Representaci&#xC3;&#xB3;n de n&#xC3;&#xBA;mero de la taxonom&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>X12 Identifier</original>
+	<translated>Identificador  X12</translated>
+</translation>
+<translation>
+	<original>X12 Identifier Type</original>
+	<translated>Tipo Identificador X12</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,339 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-10 18:56-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Adjust to Zero?</original>
+	<translated>&#xC2;&#xBF;Ajustar a Zero?</translated>
+</translation>
+<translation>
+	<original>Adjustment Amount</original>
+	<translated>Ajustar monto</translated>
+</translation>
+<translation>
+	<original>All records for this procedure have been deleted.</original>
+	<translated>Todos los expedientes para este procedimiento han sido eliminadas.</translated>
+</translation>
+<translation>
+	<original>Allowed</original>
+	<translated>Permitido</translated>
+</translation>
+<translation>
+	<original>Allowed Amount</original>
+	<translated>Monto permitido</translated>
+</translation>
+<translation>
+	<original>Apply to Credit</original>
+	<translated>Aplicar al credito</translated>
+</translation>
+<translation>
+	<original>Balance</original>
+	<translated>Balance</translated>
+</translation>
+<translation>
+	<original>Cash</original>
+	<translated>Efectivo</translated>
+</translation>
+<translation>
+	<original>Charged</original>
+	<translated>Cargado</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Cargos</translated>
+</translation>
+<translation>
+	<original>Check</original>
+	<translated>Verificar</translated>
+</translation>
+<translation>
+	<original>Check Number</original>
+	<translated>Verificar n&#xC3;&#xBA;mero</translated>
+</translation>
+<translation>
+	<original>Cheque Number</original>
+	<translated>N&#xC3;&#xBA;mero de chueque</translated>
+</translation>
+<translation>
+	<original>Closed</original>
+	<translated>Cerrado</translated>
+</translation>
+<translation>
+	<original>Confirm</original>
+	<translated>Confirmar</translated>
+</translation>
+<translation>
+	<original>Confirm delete request or cancel?</original>
+	<translated>&#xC2;&#xBF;Confirmar su eliminaci&#xC3;&#xB3;n o cancelarla?</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Co-pago</translated>
+</translation>
+<translation>
+	<original>Copay Amount</original>
+	<translated>Monto del co-pago</translated>
+</translation>
+<translation>
+	<original>Credit Card</original>
+	<translated>Tarjeta de credito</translated>
+</translation>
+<translation>
+	<original>Credit Card Number</original>
+	<translated>N&#xC3;&#xBA;mero de tarjeta de credito</translated>
+</translation>
+<translation>
+	<original>Date Billed</original>
+	<translated>D&#xC3;&#xAD;a de refacturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Date Received</original>
+	<translated>Fecha recibo</translated>
+</translation>
+<translation>
+	<original>Date of Copay</original>
+	<translated>Fecha de Co-pago</translated>
+</translation>
+<translation>
+	<original>Date of Denial</original>
+	<translated>Fecha de la negaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Date of Rebill</original>
+	<translated>D&#xC3;&#xAD;a de refacturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Date of Refund</original>
+	<translated>Fecha del reembolso</translated>
+</translation>
+<translation>
+	<original>Date of Transfer</original>
+	<translated>D&#xC3;&#xAD;a de transferencia</translated>
+</translation>
+<translation>
+	<original>Date of Writeoff</original>
+	<translated>D&#xC3;&#xAD;a de cancelaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Deductable Amount</original>
+	<translated>Describir el monto</translated>
+</translation>
+<translation>
+	<original>Describe the Adjustment</original>
+	<translated>Describir el ajuste</translated>
+</translation>
+<translation>
+	<original>Describe the Deductable</original>
+	<translated>Describir el deducible</translated>
+</translation>
+<translation>
+	<original>Describe the Payment</original>
+	<translated>Describir el pago</translated>
+</translation>
+<translation>
+	<original>Describe the Withholding</original>
+	<translated>Describir la retenci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Destination</original>
+	<translated>Destino</translated>
+</translation>
+<translation>
+	<original>Error getting procedure</original>
+	<translated>Error al obtener procedimiento</translated>
+</translation>
+<translation>
+	<original>Expiration Date</original>
+	<translated>Fecha de termino</translated>
+</translation>
+<translation>
+	<original>Fee Adjust</original>
+	<translated>Ajuste de honorario</translated>
+</translation>
+<translation>
+	<original>Handle Authorization</original>
+	<translated>Autorizaci&#xC3;&#xB3;n para atender</translated>
+</translation>
+<translation>
+	<original>Insurance Company</original>
+	<translated>Compa&#xC3;&#xB1;ia de seguros</translated>
+</translation>
+<translation>
+	<original>Ledger</original>
+	<translated>Libro mayor</translated>
+</translation>
+<translation>
+	<original>Ledger Closed</original>
+	<translated>Libro mayor cerrado</translated>
+</translation>
+<translation>
+	<original>Manage_Patient</original>
+	<translated>Manejo_paciente</translated>
+</translation>
+<translation>
+	<original>Mistake</original>
+	<translated>Error</translated>
+</translation>
+<translation>
+	<original>Modifying Authorized visits</original>
+	<translated>Modificaci&#xC3;&#xB3;n de visitas autorizadas</translated>
+</translation>
+<translation>
+	<original>Modifying procedural charges</original>
+	<translated>Modificaci&#xC3;&#xB3;n de cargas procesales</translated>
+</translation>
+<translation>
+	<original>Money Order</original>
+	<translated>Orden de dinero</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>No patient</original>
+	<translated>Sin paciente</translated>
+</translation>
+<translation>
+	<original>Paid</original>
+	<translated>Pagado</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Payment Amount</original>
+	<translated>Monoto de pago</translated>
+</translation>
+<translation>
+	<original>Payment Source</original>
+	<translated>Fuente de pago</translated>
+</translation>
+<translation>
+	<original>Payment Type</original>
+	<translated>Tipo de pago</translated>
+</translation>
+<translation>
+	<original>Payments</original>
+	<translated>Pagos</translated>
+</translation>
+<translation>
+	<original>Proc Code</original>
+	<translated>C&#xC3;&#xB3;digo Proc</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Proveedor</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>Refund Amount</original>
+	<translated>Cantidad del reembolso</translated>
+</translation>
+<translation>
+	<original>Refund to Patient</original>
+	<translated>Reembolso al paciente</translated>
+</translation>
+<translation>
+	<original>Remaining Visits</original>
+	<translated>Visitas restantes</translated>
+</translation>
+<translation>
+	<original>Return to Ledger</original>
+	<translated>Regresar al libro mayor</translated>
+</translation>
+<translation>
+	<original>Select Line Item</original>
+	<translated>Seleccione una linea de articulo</translated>
+</translation>
+<translation>
+	<original>Step Three</original>
+	<translated>Paso tres</translated>
+</translation>
+<translation>
+	<original>Step Two</original>
+	<translated>Paso dos</translated>
+</translation>
+<translation>
+	<original>There are no records for this patient.</original>
+	<translated>No hay informes para este paciente.</translated>
+</translation>
+<translation>
+	<original>Transactions</original>
+	<translated>Transacciones</translated>
+</translation>
+<translation>
+	<original>Transfer to</original>
+	<translated>Transferir a</translated>
+</translation>
+<translation>
+	<original>Traveller's Check</original>
+	<translated>Cheque de viaje</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Tipo</translated>
+</translation>
+<translation>
+	<original>Update Visits</original>
+	<translated>Actualizar visitas</translated>
+</translation>
+<translation>
+	<original>Used Visits</original>
+	<translated>Visitas hechas</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Ver</translated>
+</translation>
+<translation>
+	<original>Withhold</original>
+	<translated>Retener</translated>
+</translation>
+<translation>
+	<original>Withhold Amount</original>
+	<translated>Retener monto</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Si</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-09 14:30-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Booking Refresh</original>
+	<translated>Actualizar porgramaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Change Password</original>
+	<translated>Cambiar contrase&#xC3;&#xB1;a</translated>
+</translation>
+<translation>
+	<original>Change Template Options</original>
+	<translated>Cambiar las opciones de plantilla</translated>
+</translation>
+<translation>
+	<original>Change User Options</original>
+	<translated>Cambiar las opciones de usuario</translated>
+</translation>
+<translation>
+	<original>Current Password</original>
+	<translated>Actual contrase&#xC3;&#xB1;a</translated>
+</translation>
+<translation>
+	<original>Date Widget</original>
+	<translated>Fecha de widget</translated>
+</translation>
+<translation>
+	<original>Default Printer</original>
+	<translated>Impresora por defecto</translated>
+</translation>
+<translation>
+	<original>Default Room</original>
+	<translated>Sala por defecto</translated>
+</translation>
+<translation>
+	<original>Messaging: Forget recent patient</original>
+	<translated>Mensaje: Olvidar el paciente reciente</translated>
+</translation>
+<translation>
+	<original>New Password</original>
+	<translated>Nueva contrase&#xC3;&#xB1;a</translated>
+</translation>
+<translation>
+	<original>New Password Again</original>
+	<translated>Ingrese la nueva contrase&#xC3;&#xB1;a nuevamente</translated>
+</translation>
+<translation>
+	<original>Preferences</original>
+	<translated>Preferencias</translated>
+</translation>
+<translation>
+	<original>Set Options</original>
+	<translated>Establecer opciones</translated>
+</translation>
+<translation>
+	<original>Skip Printer Selection</original>
+	<translated>Saltar la selecci&#xC3;&#xB3;n de impresora</translated>
+</translation>
+<translation>
+	<original>The new passwords you entered do not match.</original>
+	<translated>Las nuevas contrase&#xC3;&#xB1;as ingreasadas no coinciden.</translated>
+</translation>
+<translation>
+	<original>The password you entered was incorrect.</original>
+	<translated>La contrase&#xC3;&#xB1;a que ingreso no es correcta.</translated>
+</translation>
+<translation>
+	<original>Update</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>disable</original>
+	<translated>No disponible</translated>
+</translation>
+<translation>
+	<original>enable</original>
+	<translated>Disponible</translated>
+</translation>
+<translation>
+	<original>javascript widget</original>
+	<translated>Javascript widget</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>split text entry</original>
+	<translated>Separar el texto de entrada</translated>
+</translation>
+<translation>
+	<original>system default</original>
+	<translated>Sistema por defecto</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Si</translated>
+</translation>
+
+</gettextXML>
+

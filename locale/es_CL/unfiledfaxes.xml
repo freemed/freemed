@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 22:10-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>All pages received.</original>
+	<translated>Todas las paginas recibidas.</translated>
+</translation>
+<translation>
+	<original>Are you sure that this fax contains a cover sheet?</original>
+	<translated>&#xC2;&#xBF;Esta seguro que este fax contiene una hoja cubierta?</translated>
+</translation>
+<translation>
+	<original>Are you sure that you want to permanently delete this fax?</original>
+	<translated>&#xC2;&#xBF;Esta seguro que desea eliminar este fax permanentemente?</translated>
+</translation>
+<translation>
+	<original>Confirmation fax sent.</original>
+	<translated>Confirmacion de fax enviado.</translated>
+</translation>
+<translation>
+	<original>Fax Confirmation #</original>
+	<translated>Confirmacion de Fax #</translated>
+</translation>
+<translation>
+	<original>Fax file does not exist!</original>
+	<translated>El fax no existe!</translated>
+</translation>
+<translation>
+	<original>Fax received for patient</original>
+	<translated>Fax recibo por el paciente</translated>
+</translation>
+<translation>
+	<original>File</original>
+	<translated>Archivar</translated>
+</translation>
+<translation>
+	<original>File Another Fax</original>
+	<translated>Archivar otro Fax</translated>
+</translation>
+<translation>
+	<original>File Directly</original>
+	<translated>Archivar Directamente</translated>
+</translation>
+<translation>
+	<original>File Directly without First Page</original>
+	<translated>Archivar directamente sin primera pagina</translated>
+</translation>
+<translation>
+	<original>File name</original>
+	<translated>Nombre del archivo</translated>
+</translation>
+<translation>
+	<original>Flip</original>
+	<translated>Girar</translated>
+</translation>
+<translation>
+	<original>Flipped fax.</original>
+	<translated>Fax girado.</translated>
+</translation>
+<translation>
+	<original>Moved fax to scanned documents.</original>
+	<translated>Fax movido a documentos revisados.</translated>
+</translation>
+<translation>
+	<original>Moved fax to unread box.</original>
+	<translated>Fax movido al buz&#xC3;&#xB3;n de no leido.</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Nota</translated>
+</translation>
+<translation>
+	<original>Notify</original>
+	<translated>Notificar</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Proveedor</translated>
+</translation>
+<translation>
+	<original>Recipient(s)</original>
+	<translated>Destinatario(s)</translated>
+</translation>
+<translation>
+	<original>Removed first page.</original>
+	<translated>Primera pagina eliminada.</translated>
+</translation>
+<translation>
+	<original>Return to Unfiled Fax Menu</original>
+	<translated>Regresar al menu de faxes sin archivar</translated>
+</translation>
+<translation>
+	<original>Send to Provider</original>
+	<translated>Enviar al proveedor</translated>
+</translation>
+<translation>
+	<original>Send to Provider without First Page</original>
+	<translated>Enviar al proveedor sin la primera pagina</translated>
+</translation>
+<translation>
+	<original>Split</original>
+	<translated>Separar</translated>
+</translation>
+<translation>
+	<original>Split Batch</original>
+	<translated>Separar por Lotes</translated>
+</translation>
+<translation>
+	<original>Split fax successfully.</original>
+	<translated>Fax separado exitosamente.</translated>
+</translation>
+<translation>
+	<original>Thank you.</original>
+	<translated>Gracias.</translated>
+</translation>
+<translation>
+	<original>There are currently %d unfiled fax(es) in the system.</original>
+	<translated>Actualmente hay %d fax(es) sin archivar en el sistema.</translated>
+</translation>
+<translation>
+	<original>There are no unfiled faxes at this time.</original>
+	<translated>No hay faxes sin archivar esta vez.</translated>
+</translation>
+<translation>
+	<original>There is currently 1 unfiled fax in the system.</original>
+	<translated>Actualemente hay 1 fax sin archivar en el sistema.</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Tipo</translated>
+</translation>
+<translation>
+	<original>Type of Document</original>
+	<translated>Tipo de documento</translated>
+</translation>
+<translation>
+	<original>Unfiled Faxes</original>
+	<translated>Faxes sin archivar</translated>
+</translation>
+<translation>
+	<original>View Patient Record</original>
+	<translated>Ver informe del paciente</translated>
+</translation>
+<translation>
+	<original>You have %d unfiled faxes</original>
+	<translated>Tiene %d faxes sin archivar</translated>
+</translation>
+<translation>
+	<original>You must enter a value for:</original>
+	<translated>Tiene que ingresar un valor para:</translated>
+</translation>
+<translation>
+	<original>page(s) received</original>
+	<translated>Pagina(s) recibidas</translated>
+</translation>
+
+</gettextXML>
+

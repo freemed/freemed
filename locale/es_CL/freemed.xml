@@ -1,0 +1,919 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+        <Locale>es_CL</Locale>
+        <LocaleName>Espanol (Chile)</LocaleName>
+
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-10 13:45-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>(no description)</original>
+	<translated>(sin descripci&#xC3;&#xB3;n)</translated>
+</translation>
+<translation>
+	<original>ADD</original>
+	<translated>AGREGAR</translated>
+</translation>
+<translation>
+	<original>ALL</original>
+	<translated>TODO</translated>
+</translation>
+<translation>
+	<original>AM</original>
+	<translated>AM</translated>
+</translation>
+<translation>
+	<original>Access denied.</original>
+	<translated>Acceso denegado.</translated>
+</translation>
+<translation>
+	<original>Action</original>
+	<translated>Acci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Add</original>
+	<translated>Agregar</translated>
+</translation>
+<translation>
+	<original>Adding</original>
+	<translated>Agregando</translated>
+</translation>
+<translation>
+	<original>Adding Bill Date to ledger.</original>
+	<translated>Agregando fecha facturaci&#xC3;&#xB3;n al libro mayor.</translated>
+</translation>
+<translation>
+	<original>Adjustment</original>
+	<translated>Ajuste</translated>
+</translation>
+<translation>
+	<original>Administrator</original>
+	<translated>Administrador</translated>
+</translation>
+<translation>
+	<original>Adventist</original>
+	<translated>Adventista</translated>
+</translation>
+<translation>
+	<original>American Indian or Alaska Native</original>
+	<translated>Indio americano o nativo de alaska</translated>
+</translation>
+<translation>
+	<original>Apr</original>
+	<translated>Apr</translated>
+</translation>
+<translation>
+	<original>Are you sure you want to delete this record?</original>
+	<translated>&#xC2;&#xBF;Esta seguro que desea borrar este informe?</translated>
+</translation>
+<translation>
+	<original>Are you sure you want to lock this record?</original>
+	<translated>&#xC2;&#xBF;Esta seguro que desea bloquear este informe?</translated>
+</translation>
+<translation>
+	<original>Asian or Pacific Islander</original>
+	<translated>Asia o isla del pacifico</translated>
+</translation>
+<translation>
+	<original>Assembly of God</original>
+	<translated>Asamblea de Dios</translated>
+</translation>
+<translation>
+	<original>Attach</original>
+	<translated>Adjuntar</translated>
+</translation>
+<translation>
+	<original>Aug</original>
+	<translated>Aug</translated>
+</translation>
+<translation>
+	<original>Back</original>
+	<translated>Volver</translated>
+</translation>
+<translation>
+	<original>Baptist</original>
+	<translated>Bautista</translated>
+</translation>
+<translation>
+	<original>Bill</original>
+	<translated>Factura</translated>
+</translation>
+<translation>
+	<original>Billed</original>
+	<translated>Facturado</translated>
+</translation>
+<translation>
+	<original>Black, not of Hispanic origin</original>
+	<translated>Negro, no de origen hispano</translated>
+</translation>
+<translation>
+	<original>Brethren</original>
+	<translated>Hermanos</translated>
+</translation>
+<translation>
+	<original>Browser-Based</original>
+	<translated>Navegador</translated>
+</translation>
+<translation>
+	<original>Buddhist</original>
+	<translated>Budista</translated>
+</translation>
+<translation>
+	<original>But that is not advisable from a security standpoint.</original>
+	<translated>Pero no es recomendable desde el punto de vista de la seguridad.</translated>
+</translation>
+<translation>
+	<original>By default this database should be named 'freemed'.</original>
+	<translated>Por defecto esta base de datos deberia llamarse 'freemed'</translated>
+</translation>
+<translation>
+	<original>Cancel</original>
+	<translated>Cancelar</translated>
+</translation>
+<translation>
+	<original>Catholic</original>
+	<translated>Catolico</translated>
+</translation>
+<translation>
+	<original>Change</original>
+	<translated>Cambiar</translated>
+</translation>
+<translation>
+	<original>Charge</original>
+	<translated>Cargar</translated>
+</translation>
+<translation>
+	<original>Check to make sure that you have a php-mysql module installed or compiled in.</original>
+	<translated>Verifique si tiene instalado y compilado el modulo de php-mysql.</translated>
+</translation>
+<translation>
+	<original>Christian Scientist</original>
+	<translated>Cristiano cientifico</translated>
+</translation>
+<translation>
+	<original>Church of Christ</original>
+	<translated>Iglesia de Cristo</translated>
+</translation>
+<translation>
+	<original>Church of God</original>
+	<translated>Iglesia de Dios</translated>
+</translation>
+<translation>
+	<original>Close</original>
+	<translated>Cerrar</translated>
+</translation>
+<translation>
+	<original>Configuration</original>
+	<translated>Configuraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Copayment</original>
+	<translated>Copayment</translated>
+</translation>
+<translation>
+	<original>DEL</original>
+	<translated>Borrar</translated>
+</translation>
+<translation>
+	<original>DOB</original>
+	<translated>DOB</translated>
+</translation>
+<translation>
+	<original>Date</original>
+	<translated>Fecha</translated>
+</translation>
+<translation>
+	<original>Debian GNU/Linux users should type</original>
+	<translated>Usuarios de tipo Debian GNU /LINUX</translated>
+</translation>
+<translation>
+	<original>Dec</original>
+	<translated>Dec</translated>
+</translation>
+<translation>
+	<original>Deductable</original>
+	<translated>Deducible</translated>
+</translation>
+<translation>
+	<original>Default Language</original>
+	<translated>Lenguaje por defecto</translated>
+</translation>
+<translation>
+	<original>Delete</original>
+	<translated>Borrar</translated>
+</translation>
+<translation>
+	<original>Deleting</original>
+	<translated>Borrando</translated>
+</translation>
+<translation>
+	<original>Denial</original>
+	<translated>Negaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Disciples of Christ</original>
+	<translated>Disipulo de Cristo</translated>
+</translation>
+<translation>
+	<original>Drug Lookup</original>
+	<translated>Busqueda de la droga</translated>
+</translation>
+<translation>
+	<original>ERROR</original>
+	<translated>ERROR</translated>
+</translation>
+<translation>
+	<original>Eastern Orthodox</original>
+	<translated>Ortodoxo del este</translated>
+</translation>
+<translation>
+	<original>End Date</original>
+	<translated>Fecha termino</translated>
+</translation>
+<translation>
+	<original>Episcopalian</original>
+	<translated>Episcopalista</translated>
+</translation>
+<translation>
+	<original>Evangelical Covenant</original>
+	<translated>Convenio evang&#xC3;&#xA9;lico</translated>
+</translation>
+<translation>
+	<original>Failed Adding Bill Date to ledger!!</original>
+	<translated>Error al agregar la fecha de facturaci&#xC3;&#xB3;n al libro mayor!</translated>
+</translation>
+<translation>
+	<original>Fax</original>
+	<translated>Fax</translated>
+</translation>
+<translation>
+	<original>Fax is attempting to send:</original>
+	<translated>El fax est&#xC3;&#xA1; intentando enviarse a:</translated>
+</translation>
+<translation>
+	<original>Fax job %d (%s) failed with '%s'.</original>
+	<translated>Fax a la espera %d(%s) fallados con '%s'.</translated>
+</translation>
+<translation>
+	<original>Fax job %d to %s successful.</original>
+	<translated>Fax a la espera %d a %s exitosos.</translated>
+</translation>
+<translation>
+	<original>Fax sent successfully.</original>
+	<translated>Fax enviado exitosamente</translated>
+</translation>
+<translation>
+	<original>Faxed to %s</original>
+	<translated>Faxiado a %s</translated>
+</translation>
+<translation>
+	<original>Feb</original>
+	<translated>Feb</translated>
+</translation>
+<translation>
+	<original>Fee Adjustment</original>
+	<translated>Ajustes de Fee</translated>
+</translation>
+<translation>
+	<original>FreeMED cannot seem to connect to the database.</original>
+	<translated>FreeMED parece no estar conectado a la base de datos.</translated>
+</translation>
+<translation>
+	<original>FreeMED could not select the database.</original>
+	<translated>FreeMED no puede seleccionar la base de datos.</translated>
+</translation>
+<translation>
+	<original>FreeMED was unable to create a file to record the healthy status of the system.</original>
+	<translated>FreeMED fue incapaz de crear un archivo para guardar el estado del sistema.</translated>
+</translation>
+<translation>
+	<original>FreeMED was unable to create a file to record the language registry.</original>
+	<translated>FreeMED fue incapaz de crear un archivo para guardar el lenguaje del 
+registro.</translated>
+</translation>
+<translation>
+	<original>FreeMED's 'locale' directory should be owned by the user that the webserver is running as...</original>
+	<translated>El directorio &#xE2;&#x80;&#x9C;locale&#xE2;&#x80;&#x9D; de FreeMED debe ser adquerido por el usuario a que el 
+web server est&#xC3;&#xA1; funcionando&#xE2;&#x80;&#xA6;</translated>
+</translation>
+<translation>
+	<original>Fri</original>
+	<translated>Viernes</translated>
+</translation>
+<translation>
+	<original>Friends</original>
+	<translated>Amigos</translated>
+</translation>
+<translation>
+	<original>Generate</original>
+	<translated>Generar</translated>
+</translation>
+<translation>
+	<original>Go</original>
+	<translated>Ir</translated>
+</translation>
+<translation>
+	<original>Graph</original>
+	<translated>Grafico</translated>
+</translation>
+<translation>
+	<original>HIPPA Compliance Notice: This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system.</original>
+	<translated>Noticia HIPPA: Esta trasmision contiene informacion medica confidencial, la 
+cual esta protegida por el privilegio m&#xC3;&#xA9;dico/paciente. El mensaje incluido 
+se est&#xC3;&#xA1; comunicando al recipiente previsto para los prop&#xC3;&#xB3;sitos de facilitar 
+el cuidado de salud. Si ha recibido esta transmisi&#xC3;&#xB3;n por error, notificar 
+por favor el remitente inmediatamente, volver a mensajes de fax y eliminar 
+el mensaje de su sistema.</translated>
+</translation>
+<translation>
+	<original>Hispanic, black</original>
+	<translated>Hispano, negro</translated>
+</translation>
+<translation>
+	<original>Hispanic, white</original>
+	<translated>Hispano, blanco</translated>
+</translation>
+<translation>
+	<original>If you are just installing FreeMED, and you are using the MySQL database, then you need to type:</original>
+	<translated>Si esta solo instalando FreeMED, y esta usuando la base de datos en MySQL, 
+necesita escribir:</translated>
+</translation>
+<translation>
+	<original>If you are using Redhat Linux then you need to install the MySQL RPMs.</original>
+	<translated>Si esta usuando Linux Redhat necesita instalar las ROMs de MySQL.</translated>
+</translation>
+<translation>
+	<original>If you have the module you need to make sure you are using it by adding in into php.ini</original>
+	<translated>Si tiene el modulo necesita asegurarse que el este, est&#xC3;&#xA9; agregado en php.ini</translated>
+</translation>
+<translation>
+	<original>If you installed FreeMED in the default location then you need to edit</original>
+	<translated>Si instalo FreeMED en la ubicacion por defecto necesita editarlo</translated>
+</translation>
+<translation>
+	<original>If you still are seeing this then you might need to check your database permisions!</original>
+	<translated>Si usted esta viendo esto, necesita ver los permisos de su base de datos!</translated>
+</translation>
+<translation>
+	<original>In order to connect to the database three things need to set correctly: the database user, the database password, and the database location.</original>
+	<translated>Para conectarse a la base de datos necesitar tener correcto tres cosas: El 
+nombre de usuario, la contrase&#xC3;&#xB1;a, y la ubicacion.</translated>
+</translation>
+<translation>
+	<original>In order to connect, the MySQL database must be running.</original>
+	<translated>Para conectarse, la base de datos de MySQL tiene que estar encendida.</translated>
+</translation>
+<translation>
+	<original>Invalid information entered.</original>
+	<translated>Informaci&#xC3;&#xB3;n invalida.</translated>
+</translation>
+<translation>
+	<original>Is MySQL installed? This needs to happen before anything else.</original>
+	<translated>&#xC2;&#xBF;Est&#xC3;&#xA1; MySQL instalado? Necesita hacer esto antes que todo.</translated>
+</translation>
+<translation>
+	<original>Islam</original>
+	<translated>Islam</translated>
+</translation>
+<translation>
+	<original>It seems that you are trying to use a version of php that is not capable of accessing mysql.</original>
+	<translated>AL parecer esta intentando usar una version de php que no es compatible con 
+MySQL.</translated>
+</translation>
+<translation>
+	<original>Jan</original>
+	<translated>Enero</translated>
+</translation>
+<translation>
+	<original>Jehovah's Witness</original>
+	<translated>Testigo de jehova</translated>
+</translation>
+<translation>
+	<original>Jewish</original>
+	<translated>Jud&#xC3;&#xAD;o</translated>
+</translation>
+<translation>
+	<original>Jul</original>
+	<translated>Julio</translated>
+</translation>
+<translation>
+	<original>Jun</original>
+	<translated>Junio</translated>
+</translation>
+<translation>
+	<original>LOCK</original>
+	<translated>Cerrado</translated>
+</translation>
+<translation>
+	<original>Latter-Day Saints</original>
+	<translated>Santos del ultimo d&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Legend:</original>
+	<translated>Leyenda:</translated>
+</translation>
+<translation>
+	<original>Lock</original>
+	<translated>Cerrado</translated>
+</translation>
+<translation>
+	<original>Lutheran</original>
+	<translated>Luterano</translated>
+</translation>
+<translation>
+	<original>MOD</original>
+	<translated>MOD</translated>
+</translation>
+<translation>
+	<original>Make sure that the user configured in lib/settings.php has access to the FreeMED database.</original>
+	<translated>Asegurese que la configuracion del usuario en lib/settings.php tenga acceso 
+a la base de datos de FreeMED.</translated>
+</translation>
+<translation>
+	<original>Manage Patient</original>
+	<translated>Manejo de paciente</translated>
+</translation>
+<translation>
+	<original>Mar</original>
+	<translated>Marzo</translated>
+</translation>
+<translation>
+	<original>May</original>
+	<translated>Mayo</translated>
+</translation>
+<translation>
+	<original>Methodist</original>
+	<translated>Metodista</translated>
+</translation>
+<translation>
+	<original>Modify</original>
+	<translated>Midifcar</translated>
+</translation>
+<translation>
+	<original>Modifying</original>
+	<translated>Modificando</translated>
+</translation>
+<translation>
+	<original>Mon</original>
+	<translated>Lunes</translated>
+</translation>
+<translation>
+	<original>Move</original>
+	<translated>Mover</translated>
+</translation>
+<translation>
+	<original>Must specify a patient id!</original>
+	<translated>Debe especificar algun ID de paciente!</translated>
+</translation>
+<translation>
+	<original>NO DESCRIPTION</original>
+	<translated>SIN DESCRIPCI&#xC3;&#x93;N</translated>
+</translation>
+<translation>
+	<original>NO RECORD FOUND</original>
+	<translated>INFORMES NO ENCONTRADOS</translated>
+</translation>
+<translation>
+	<original>NONE</original>
+	<translated>NINGUNO</translated>
+</translation>
+<translation>
+	<original>NONE SELECTED</original>
+	<translated>NINGUNO SELECCIONADO</translated>
+</translation>
+<translation>
+	<original>NOTE</original>
+	<translated>NOTA</translated>
+</translation>
+<translation>
+	<original>Native American</original>
+	<translated>Americano nativo</translated>
+</translation>
+<translation>
+	<original>Nazarene</original>
+	<translated>Nazarene</translated>
+</translation>
+<translation>
+	<original>Next</original>
+	<translated>Siguiente</translated>
+</translation>
+<translation>
+	<original>No Phone Number</original>
+	<translated>Sin n&#xC3;&#xBA;mero de telefono</translated>
+</translation>
+<translation>
+	<original>No administrative access!</original>
+	<translated>No puede ingresar a los accesos administrativos!</translated>
+</translation>
+<translation>
+	<original>No data entered.</original>
+	<translated>Ninguna informaci&#xC3;&#xB3;n ingresada.</translated>
+</translation>
+<translation>
+	<original>Non-Patient Event</original>
+	<translated>Sin evento para algun paciente</translated>
+</translation>
+<translation>
+	<original>Nothing set to be marked!</original>
+	<translated>Nada seleccionado para marcar!</translated>
+</translation>
+<translation>
+	<original>Nov</original>
+	<translated>Noviembre</translated>
+</translation>
+<translation>
+	<original>Oct</original>
+	<translated>Octubre</translated>
+</translation>
+<translation>
+	<original>On Redhat you should type</original>
+	<translated>En Redhat deberia tipiar</translated>
+</translation>
+<translation>
+	<original>Other</original>
+	<translated>Otro</translated>
+</translation>
+<translation>
+	<original>PM</original>
+	<translated>PM</translated>
+</translation>
+<translation>
+	<original>PRINT</original>
+	<translated>IMPRIMIR</translated>
+</translation>
+<translation>
+	<original>Page</original>
+	<translated>Pagina</translated>
+</translation>
+<translation>
+	<original>Patient Lookup</original>
+	<translated>B&#xC3;&#xBA;squeda pacientes</translated>
+</translation>
+<translation>
+	<original>Payment</original>
+	<translated>Pago</translated>
+</translation>
+<translation>
+	<original>Pentecostal</original>
+	<translated>Pentecostal</translated>
+</translation>
+<translation>
+	<original>Please correct these fields.</original>
+	<translated>Porfavor corriga estos campos.</translated>
+</translation>
+<translation>
+	<original>Presbyterian</original>
+	<translated>Presbyterian</translated>
+</translation>
+<translation>
+	<original>Previous</original>
+	<translated>Anteriores</translated>
+</translation>
+<translation>
+	<original>Print</original>
+	<translated>Imprimir</translated>
+</translation>
+<translation>
+	<original>Printer</original>
+	<translated>Impresora</translated>
+</translation>
+<translation>
+	<original>Printing</original>
+	<translated>Imprimiendo</translated>
+</translation>
+<translation>
+	<original>Protestant, No Denomenation</original>
+	<translated>Protestante, sin denominaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Protestant, Other</original>
+	<translated>Protestante, otro</translated>
+</translation>
+<translation>
+	<original>Queued for Rebill</original>
+	<translated>A la espera de la refacturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>RETURN TO MENU</original>
+	<translated>REGRESAR AL MENU</translated>
+</translation>
+<translation>
+	<original>Rebill</original>
+	<translated>Refacturar</translated>
+</translation>
+<translation>
+	<original>Record added successfully.</original>
+	<translated>Expediente agregado exitosamente.</translated>
+</translation>
+<translation>
+	<original>Record addition failed.</original>
+	<translated>Error al agregar expediente.</translated>
+</translation>
+<translation>
+	<original>Record deleted successfully.</original>
+	<translated>Expediente borrado exitosamente.</translated>
+</translation>
+<translation>
+	<original>Record deletion failed.</original>
+	<translated>Error al borrar el expediente.</translated>
+</translation>
+<translation>
+	<original>Record locked successfully.</original>
+	<translated>Expediente bloqueado exitosamente.</translated>
+</translation>
+<translation>
+	<original>Record locking failed.</original>
+	<translated>Error al bloquear el expediente.</translated>
+</translation>
+<translation>
+	<original>Record modification failed due to record lock.</original>
+	<translated>La modificaci&#xC3;&#xB3;n del informe fall&#xC3;&#xB3; debido al bloqueo del registro.</translated>
+</translation>
+<translation>
+	<original>Record modification failed.</original>
+	<translated>Error al modificar el expediente.</translated>
+</translation>
+<translation>
+	<original>Record modified successfully.</original>
+	<translated>Expediente modificado exitosamente.</translated>
+</translation>
+<translation>
+	<original>Reformed</original>
+	<translated>Reformado</translated>
+</translation>
+<translation>
+	<original>Refreshing</original>
+	<translated>Actualizando</translated>
+</translation>
+<translation>
+	<original>Refund</original>
+	<translated>Reembolso</translated>
+</translation>
+<translation>
+	<original>Remove</original>
+	<translated>Eliminar</translated>
+</translation>
+<translation>
+	<original>Report Format</original>
+	<translated>Formato del informe</translated>
+</translation>
+<translation>
+	<original>Reports</original>
+	<translated>Informes</translated>
+</translation>
+<translation>
+	<original>Reset</original>
+	<translated>Reajustar</translated>
+</translation>
+<translation>
+	<original>Return to Fixed Forms Generation Menu</original>
+	<translated>Regresar al menu de arreglo de formas</translated>
+</translation>
+<translation>
+	<original>Return to Main Menu</original>
+	<translated>Regresar al menu principal</translated>
+</translation>
+<translation>
+	<original>Salvation Army</original>
+	<translated>Ej&#xC3;&#xA9;rcito de Rescate</translated>
+</translation>
+<translation>
+	<original>Sat</original>
+	<translated>S&#xC3;&#xA1;bado</translated>
+</translation>
+<translation>
+	<original>Search</original>
+	<translated>Buscar</translated>
+</translation>
+<translation>
+	<original>Sep</original>
+	<translated>Sep</translated>
+</translation>
+<translation>
+	<original>Start Date</original>
+	<translated>Fecha inicio</translated>
+</translation>
+<translation>
+	<original>Submit Bug Report</original>
+	<translated>Someter informe del bug</translated>
+</translation>
+<translation>
+	<original>Sun</original>
+	<translated>Domingo</translated>
+</translation>
+<translation>
+	<original>Template does not exist!</original>
+	<translated>La plantilla no existe</translated>
+</translation>
+<translation>
+	<original>The FreeMED directory should be owned by the user that the webserver is running as...</original>
+	<translated>El directorio &#xE2;&#x80;&#x9C;locale&#xE2;&#x80;&#x9D; de FreeMED debe ser adquerido por el usuario a que el 
+web server est&#xC3;&#xA1; funcionando&#xE2;&#x80;&#xA6;</translated>
+</translation>
+<translation>
+	<original>The REMITT server is not running.</original>
+	<translated>El servidor REMITT esta apagado.</translated>
+</translation>
+<translation>
+	<original>The debug procedure is as follows:</original>
+	<translated>El procedimiento de eliminar errores es el siguiente:</translated>
+</translation>
+<translation>
+	<original>There are many reasons that this could happen.</original>
+	<translated>Hay muchas razones por las cuales podria ocurrir esto.</translated>
+</translation>
+<translation>
+	<original>There must be a database user who has complete access to the database that FreeMED will use.</original>
+	<translated>Tiene que haver un usuario el cual complete el acceso a la base de datos 
+para el uso de FreeMED.</translated>
+</translation>
+<translation>
+	<original>These values are configured in</original>
+	<translated>Estos valores estan configurados en</translated>
+</translation>
+<translation>
+	<original>This database must me accessable by this user.</original>
+	<translated>Esta base de datos debe se acc</translated>
+</translation>
+<translation>
+	<original>This record is currently in use.</original>
+	<translated>El informe esta actualmente en uso.</translated>
+</translation>
+<translation>
+	<original>Thu</original>
+	<translated>Thu</translated>
+</translation>
+<translation>
+	<original>Transfer</original>
+	<translated>Transferir</translated>
+</translation>
+<translation>
+	<original>Travel</original>
+	<translated>Recorrido</translated>
+</translation>
+<translation>
+	<original>Tue</original>
+	<translated>Tue</translated>
+</translation>
+<translation>
+	<original>Unitarian; Universalist</original>
+	<translated>Unitario/universalista</translated>
+</translation>
+<translation>
+	<original>United Church of God</original>
+	<translated>Unido a la iglesia de Dios</translated>
+</translation>
+<translation>
+	<original>Unknown</original>
+	<translated>Desconocido</translated>
+</translation>
+<translation>
+	<original>Unknown/No preference</original>
+	<translated>Desconocido / sin preferencia</translated>
+</translation>
+<translation>
+	<original>Unpostable</original>
+	<translated>Unpostable</translated>
+</translation>
+<translation>
+	<original>Usually this is 'apache'. You can also fix this by giving universal write access to the 'locale' directory of FreeMED.</original>
+	<translated>'apache'. Puede solucionarlo dando un acceso universal al directorio 
+'lacale' de FreeMED.</translated>
+</translation>
+<translation>
+	<original>Usually this is 'apache'. You can also fix this by giving universal write access to the home directory of FreeMED.</original>
+	<translated>'apache'. Puede solucionarlo dando un acceso universal desde el directorio 
+'home' de FreeMED.</translated>
+</translation>
+<translation>
+	<original>VIEW</original>
+	<translated>VER</translated>
+</translation>
+<translation>
+	<original>View/Manage</original>
+	<translated>Ver/manejar</translated>
+</translation>
+<translation>
+	<original>Wed</original>
+	<translated>Wed</translated>
+</translation>
+<translation>
+	<original>Week of</original>
+	<translated>Semana del</translated>
+</translation>
+<translation>
+	<original>White, not of Hispanic origin</original>
+	<translated>Blanco, no hispano de origen</translated>
+</translation>
+<translation>
+	<original>Withholding</original>
+	<translated>Retenci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Writeoff</original>
+	<translated>Cancelaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>XML-RPC Fault:</original>
+	<translated>XML-RPC:</translated>
+</translation>
+<translation>
+	<original>You do not have access to do that.</original>
+	<translated>No tiene permiso para acceder a eso.</translated>
+</translation>
+<translation>
+	<original>You do not have permission to do that.</original>
+	<translated>No tiene permiso para hacer eso.</translated>
+</translation>
+<translation>
+	<original>You don't have permission to do that.</original>
+	<translated>No tiene permiso para hacer eso.</translated>
+</translation>
+<translation>
+	<original>You have entered an incorrect username or password.</original>
+	<translated>Ha ingresado un nombre de usuario o contrase&#xC3;&#xB1;a incorrecta.</translated>
+</translation>
+<translation>
+	<original>You will prompted for the root password to the database, and the FreeMED database will be created.</original>
+	<translated>Necesitara la contrase&#xC3;&#xB1;a de \&#x22;root\&#x22; para la base de datos, y la base de datos 
+de FreeMED se creara.</translated>
+</translation>
+<translation>
+	<original>and then hit return.</original>
+	<translated>y luego pinche volver.</translated>
+</translation>
+<translation>
+	<original>and then hit the enter key. You should see an 'OK'.</original>
+	<translated>y luego pinche \</translated>
+</translation>
+<translation>
+	<original>appointment(s)</original>
+	<translated>Cita(s)</translated>
+</translation>
+<translation>
+	<original>back</original>
+	<translated>Volver</translated>
+</translation>
+<translation>
+	<original>contains</original>
+	<translated>Contenidos</translated>
+</translation>
+<translation>
+	<original>denotes required field</original>
+	<translated>Denote el campo requerido</translated>
+</translation>
+<translation>
+	<original>done</original>
+	<translated>Hecho</translated>
+</translation>
+<translation>
+	<original>go to today</original>
+	<translated>Ir hoy</translated>
+</translation>
+<translation>
+	<original>midnight</original>
+	<translated>Medianoche</translated>
+</translation>
+<translation>
+	<original>next</original>
+	<translated>Siguiente</translated>
+</translation>
+<translation>
+	<original>noon</original>
+	<translated>Mediod&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>prev</original>
+	<translated>Anterior</translated>
+</translation>
+<translation>
+	<original>unknown race</original>
+	<translated>Raza desconocida</translated>
+</translation>
+<translation>
+	<original>year(s)</original>
+	<translated>A&#xC3;&#xB1;o(s)</translated>
+</translation>
+
+</gettextXML>
+

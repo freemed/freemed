@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-06 12:42-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Abnormal</original>
+	<translated>Anormal</translated>
+</translation>
+<translation>
+	<original>Lab</original>
+	<translated>Laboratorio</translated>
+</translation>
+<translation>
+	<original>Labs</original>
+	<translated>Laboratorios</translated>
+</translation>
+<translation>
+	<original>Normal</original>
+	<translated>Normal</translated>
+</translation>
+<translation>
+	<original>Observation</original>
+	<translated>Observaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Order Code</original>
+	<translated>Codigo de orden</translated>
+</translation>
+<translation>
+	<original>Range</original>
+	<translated>Rango</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Estado</translated>
+</translation>
+<translation>
+	<original>Value</original>
+	<translated>Valor</translated>
+</translation>
+<translation>
+	<original>You must provide an id!</original>
+	<translated>Tiene que ingresar un ID</translated>
+</translation>
+
+</gettextXML>
+

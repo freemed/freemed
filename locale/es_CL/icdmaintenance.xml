@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-02 23:53-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Code</original>
+	<translated>C&#xC3;&#xB3;digo</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Diagnosis Related Groups</original>
+	<translated>Grupos relacionados de diagnosticos</translated>
+</translation>
+<translation>
+	<original>ICD Code Type</original>
+	<translated>Tipo de c&#xC3;&#xB3;digo ICD</translated>
+</translation>
+<translation>
+	<original>ICD Maintenance</original>
+	<translated>Mantenimiento ICD</translated>
+</translation>
+<translation>
+	<original>Meta Description</original>
+	<translated>Descripci&#xC3;&#xB3;n meta</translated>
+</translation>
+
+</gettextXML>
+

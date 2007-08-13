@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 18:29-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>ACL</original>
+	<translated>ACL</translated>
+</translation>
+<translation>
+	<original>Access Control Lists</original>
+	<translated>Listas de control de acceso</translated>
+</translation>
+<translation>
+	<original>Actual Physician</original>
+	<translated>M&#xC3;&#xA9;dico actual</translated>
+</translation>
+<translation>
+	<original>Add User</original>
+	<translated>Agregar usuario</translated>
+</translation>
+<translation>
+	<original>Authorize</original>
+	<translated>Autorizar</translated>
+</translation>
+<translation>
+	<original>Authorized facilities</original>
+	<translated>Instalaciones autorizadas </translated>
+</translation>
+<translation>
+	<original>Authorized physician groups</original>
+	<translated>Grupos m&#xC3;&#xA9;dicos autorizados</translated>
+</translation>
+<translation>
+	<original>Authorized physicians</original>
+	<translated>M&#xC3;&#xA9;dicos autorizados</translated>
+</translation>
+<translation>
+	<original>Deleted</original>
+	<translated>Borrado</translated>
+</translation>
+<translation>
+	<original>Deleting User</original>
+	<translated>Borrando usuario</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Done</original>
+	<translated>Hecho</translated>
+</translation>
+<translation>
+	<original>Error</original>
+	<translated>Error</translated>
+</translation>
+<translation>
+	<original>Go back to user menu</original>
+	<translated>Volver al men&#xC3;&#xBA; de usuario</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Miscel&#xC3;&#xA1;neos</translated>
+</translation>
+<translation>
+	<original>Modify User</original>
+	<translated>Modificar usuario</translated>
+</translation>
+<translation>
+	<original>No record found with that criteria.</original>
+	<translated>Ning&#xC3;&#xBA;n expediente encontrado con &#xC3;&#xA9;se criterio.</translated>
+</translation>
+<translation>
+	<original>Password</original>
+	<translated>Contrase&#xC3;&#xB1;a</translated>
+</translation>
+<translation>
+	<original>Password (Verify)</original>
+	<translated>Verificar Contrase&#xC3;&#xB1;a</translated>
+</translation>
+<translation>
+	<original>Passwords must match</original>
+	<translated>La contrase&#xC3;&#xB1;a no coincide</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Try Again</original>
+	<translated>Intente de nuevo</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usuario</translated>
+</translation>
+<translation>
+	<original>User type</original>
+	<translated>Tipo de usuario</translated>
+</translation>
+<translation>
+	<original>Username</original>
+	<translated>Nombre de usuario</translated>
+</translation>
+<translation>
+	<original>Users</original>
+	<translated>Usuarios</translated>
+</translation>
+<translation>
+	<original>You cannot delete admin!</original>
+	<translated>No puede eliminar el administrador!</translated>
+</translation>
+<translation>
+	<original>You cannot modify admin!</original>
+	<translated>No puede modificar el administrador!</translated>
+</translation>
+
+</gettextXML>
+

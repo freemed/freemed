@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-03 16:35-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>claims were successfully marked as billed</original>
+	<translated>Las cuentas fueron exitosamente marcadas como facturadas</translated>
+</translation>
+<translation>
+	<original>claims were successfully marked for rebill</original>
+	<translated>Las cuentas fueron exitosamente marcadas como refacturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Add Claim Event</original>
+	<translated>Agregar evento de cuenta</translated>
+</translation>
+<translation>
+	<original>Add Event</original>
+	<translated>Agregar evento</translated>
+</translation>
+<translation>
+	<original>Adustment Balance</original>
+	<translated>Ajuste de balance</translated>
+</translation>
+<translation>
+	<original>Aged Claims</original>
+	<translated>Cuentas 3&#xC2;&#xB0; edad</translated>
+</translation>
+<translation>
+	<original>Aging</original>
+	<translated>Et&#xC3;&#xA1;reo</translated>
+</translation>
+<translation>
+	<original>Aging Summary</original>
+	<translated>Sumario de et&#xC3;&#xA1;reo</translated>
+</translation>
+<translation>
+	<original>Amount Allowed</original>
+	<translated>Monto permitido</translated>
+</translation>
+<translation>
+	<original>Amount Billed</original>
+	<translated>Monto facturado</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to mark these claims as billed.</original>
+	<translated>Ha ocurrido un error al momento de marcar esta cuenta como facturada</translated>
+</translation>
+<translation>
+	<original>An error occured while attempting to mark these claims for rebill.</original>
+	<translated>Ha ocurrido un error al momento de marcar esta cuenta como refacturada</translated>
+</translation>
+<translation>
+	<original>Balance</original>
+	<translated>Balance</translated>
+</translation>
+<translation>
+	<original>Billing Status</original>
+	<translated>Estado de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>CPT</translated>
+</translation>
+<translation>
+	<original>Call</original>
+	<translated>Llamar</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Cargos</translated>
+</translation>
+<translation>
+	<original>Check #%s</original>
+	<translated>Verificar #%s</translated>
+</translation>
+<translation>
+	<original>Check Number</original>
+	<translated>Verificar n&#xC3;&#xBA;mero</translated>
+</translation>
+<translation>
+	<original>Check Received</original>
+	<translated>Verificar recibo</translated>
+</translation>
+<translation>
+	<original>Claim</original>
+	<translated>Cuenta</translated>
+</translation>
+<translation>
+	<original>Claim Criteria</original>
+	<translated>Criterio de cuenta</translated>
+</translation>
+<translation>
+	<original>Claim Detail</original>
+	<translated>Detalle de cuenta</translated>
+</translation>
+<translation>
+	<original>Claim Details</original>
+	<translated>Detalles de cuenta</translated>
+</translation>
+<translation>
+	<original>Claim Status</original>
+	<translated>Estado de cuenta</translated>
+</translation>
+<translation>
+	<original>Claim has nowhere to go ... no more coverages</original>
+	<translated>La cuenta no tiene donde ir... no m&#xC3;&#xA1;s coberturas</translated>
+</translation>
+<translation>
+	<original>Claims Criteria</original>
+	<translated>Criterio de cuentas</translated>
+</translation>
+<translation>
+	<original>Claims Manager</original>
+	<translated>Encargado de cuentas</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Comentario</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Co-pago</translated>
+</translation>
+<translation>
+	<original>Coverage</original>
+	<translated>Cobertura</translated>
+</translation>
+<translation>
+	<original>Current Criteria</original>
+	<translated>Actual criterio</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Fecha de nacimiento</translated>
+</translation>
+<translation>
+	<original>Date of Service</original>
+	<translated>Fecha del servicio</translated>
+</translation>
+<translation>
+	<original>EMR</original>
+	<translated>EMR</translated>
+</translation>
+<translation>
+	<original>Email</original>
+	<translated>Email</translated>
+</translation>
+<translation>
+	<original>Filter by this date</original>
+	<translated>Filtrar por fecha</translated>
+</translation>
+<translation>
+	<original>Filter by this patient</original>
+	<translated>Filtrar por paciente</translated>
+</translation>
+<translation>
+	<original>Filter by this payer</original>
+	<translated>Filtrar por pagador</translated>
+</translation>
+<translation>
+	<original>Filter by this status</original>
+	<translated>Filtrar por estado</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>First Name like</original>
+	<translated>Primer nombre como</translated>
+</translation>
+<translation>
+	<original>For checked claims</original>
+	<translated>Para cuentas revisadas</translated>
+</translation>
+<translation>
+	<original>ICD</original>
+	<translated>ICD</translated>
+</translation>
+<translation>
+	<original>Ins ID</original>
+	<translated>Ins ID</translated>
+</translation>
+<translation>
+	<original>Junk</original>
+	<translated>Comit&#xC3;&#xA9;</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Apellido</translated>
+</translation>
+<translation>
+	<original>Last Name like</original>
+	<translated>Apellido como</translated>
+</translation>
+<translation>
+	<original>Ledger</original>
+	<translated>Libro principal</translated>
+</translation>
+<translation>
+	<original>Left Over</original>
+	<translated>Dejar encima</translated>
+</translation>
+<translation>
+	<original>Manage outstanding claims and view aging information.</original>
+	<translated>Manejar las demandas excepcionales y ver la informaci&#xC3;&#xB3;n del et&#xC3;&#xA1;reo</translated>
+</translation>
+<translation>
+	<original>Mark Billed</original>
+	<translated>Marcar facturado</translated>
+</translation>
+<translation>
+	<original>Mark for Rebill</original>
+	<translated>Marcar para refacturar</translated>
+</translation>
+<translation>
+	<original>Marked for Rebill</original>
+	<translated>Marcado como refacturado</translated>
+</translation>
+<translation>
+	<original>Moved to coverage %s</original>
+	<translated>Movido a la cobertura %s</translated>
+</translation>
+<translation>
+	<original>Moved to patient responsibility</original>
+	<translated>Movido a responsabilidad del paciente</translated>
+</translation>
+<translation>
+	<original>Name (Last, First)</original>
+	<translated>Nombre y apellido</translated>
+</translation>
+<translation>
+	<original>Narrow Search</original>
+	<translated>Busqueda espec&#xC3;&#xAD;fica</translated>
+</translation>
+<translation>
+	<original>New Search</original>
+	<translated>Nueva busqueda</translated>
+</translation>
+<translation>
+	<original>No Search</original>
+	<translated>Sin resultado</translated>
+</translation>
+<translation>
+	<original>POS</original>
+	<translated>POS</translated>
+</translation>
+<translation>
+	<original>Paid</original>
+	<translated>Pagado</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Patient Criteria</original>
+	<translated>Criterio del paciente</translated>
+</translation>
+<translation>
+	<original>Patient Pay</original>
+	<translated>Pago del paciente</translated>
+</translation>
+<translation>
+	<original>Payer</original>
+	<translated>Pagador</translated>
+</translation>
+<translation>
+	<original>Payer Criteria</original>
+	<translated>Criterio de pago</translated>
+</translation>
+<translation>
+	<original>Payment from Payer</original>
+	<translated>Pago del cliente</translated>
+</translation>
+<translation>
+	<original>Plan</original>
+	<translated>Plan</translated>
+</translation>
+<translation>
+	<original>Plan Name</original>
+	<translated>Nombre del plan</translated>
+</translation>
+<translation>
+	<original>Please select a claim before attempting to mark as billed.</original>
+	<translated>Porfavor seleccione una cuenta antes de marcarla como facturado</translated>
+</translation>
+<translation>
+	<original>Post</original>
+	<translated>Comentario</translated>
+</translation>
+<translation>
+	<original>Post Check</original>
+	<translated>Revisar comentario</translated>
+</translation>
+<translation>
+	<original>Post Checks</original>
+	<translated>Revisar comentarios</translated>
+</translation>
+<translation>
+	<original>Primary</original>
+	<translated>Principal</translated>
+</translation>
+<translation>
+	<original>Procedures On</original>
+	<translated>Procedimientos</translated>
+</translation>
+<translation>
+	<original>Prov ID</original>
+	<translated>ID del proveedor</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Porveedor</translated>
+</translation>
+<translation>
+	<original>Queued</original>
+	<translated>En espera</translated>
+</translation>
+<translation>
+	<original>Referring Provider</original>
+	<translated>Proveedor Referido</translated>
+</translation>
+<translation>
+	<original>Resp. Party</original>
+	<translated>Resp. Party</translated>
+</translation>
+<translation>
+	<original>Return to Search</original>
+	<translated>Regresar a la busqueda</translated>
+</translation>
+<translation>
+	<original>SSN</original>
+	<translated>SSN</translated>
+</translation>
+<translation>
+	<original>Search Claims</original>
+	<translated>Buscar cuentas</translated>
+</translation>
+<translation>
+	<original>Secondary</original>
+	<translated>Secuendario</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>Seleccionar todo</translated>
+</translation>
+<translation>
+	<original>Select None</original>
+	<translated>Sin selecci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Service Date</original>
+	<translated>Fecha del servicio</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Estado</translated>
+</translation>
+<translation>
+	<original>Svc Date</original>
+	<translated>Fecha Svc</translated>
+</translation>
+<translation>
+	<original>Total Amount</original>
+	<translated>Monto total</translated>
+</translation>
+<translation>
+	<original>Total Claims</original>
+	<translated>Total de cuentas</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usuario</translated>
+</translation>
+<translation>
+	<original>View claim details</original>
+	<translated>Ver detalles de cuenta</translated>
+</translation>
+
+</gettextXML>
+

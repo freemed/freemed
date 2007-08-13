@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-10 14:08-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Address</original>
+	<translated>Direcci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Address 2</original>
+	<translated>Direcci&#xC3;&#xB3;n 2</translated>
+</translation>
+<translation>
+	<original>Amount</original>
+	<translated>Monto</translated>
+</translation>
+<translation>
+	<original>Anesthesiologist</original>
+	<translated>Anestesiologo</translated>
+</translation>
+<translation>
+	<original>Beeper / Pager #</original>
+	<translated>Beeper</translated>
+</translation>
+<translation>
+	<original>CLIA Number</original>
+	<translated>N&#xC3;&#xBA;mero CLIA</translated>
+</translation>
+<translation>
+	<original>Cellular Phone #</original>
+	<translated>Telefono de celular</translated>
+</translation>
+<translation>
+	<original>Charge Map</original>
+	<translated>Cargar mapa</translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Constacto</translated>
+</translation>
+<translation>
+	<original>DEA Number</original>
+	<translated>N&#xC3;&#xBA;mero DEA</translated>
+</translation>
+<translation>
+	<original>Degree 1</original>
+	<translated>Grado 1</translated>
+</translation>
+<translation>
+	<original>Degree 2</original>
+	<translated>Grado 2</translated>
+</translation>
+<translation>
+	<original>Degree 3</original>
+	<translated>Grado 3</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Direccion de email</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>HL7 Identifier</original>
+	<translated>Indentificador HL7</translated>
+</translation>
+<translation>
+	<original>Has Second Address</original>
+	<translated>Segunda direcci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>ID Number</original>
+	<translated>N&#xC3;&#xBA;mero de ID</translated>
+</translation>
+<translation>
+	<original>In-House</original>
+	<translated>En casa</translated>
+</translation>
+<translation>
+	<original>Insurance Group</original>
+	<translated>Compa&#xC3;&#xB1;ia de seguros</translated>
+</translation>
+<translation>
+	<original>Insurance IDs</original>
+	<translated>IDs de seguro</translated>
+</translation>
+<translation>
+	<original>Internal ID #</original>
+	<translated>ID interior</translated>
+</translation>
+<translation>
+	<original>Internal Type</original>
+	<translated>Tipo interno</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Apeliido</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>Segundo nombre</translated>
+</translation>
+<translation>
+	<original>NPI Number</original>
+	<translated>N&#xC3;&#xBA;mero NPI</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Personal</original>
+	<translated>Personal</translated>
+</translation>
+<translation>
+	<original>Physician Internal/External</original>
+	<translated>M&#xC3;&#xA9;dico interno y externo</translated>
+</translation>
+<translation>
+	<original>Practice EIN</original>
+	<translated>Pr&#xC3;&#xA1;ctica EIN</translated>
+</translation>
+<translation>
+	<original>Practice Name</original>
+	<translated>Nombre de practica</translated>
+</translation>
+<translation>
+	<original>Primary Address City</original>
+	<translated>Direcci&#xC3;&#xB3;n principal</translated>
+</translation>
+<translation>
+	<original>Primary Address Fax #</original>
+	<translated>Direcci&#xC3;&#xB3;n principal de Fax</translated>
+</translation>
+<translation>
+	<original>Primary Address Line 1</original>
+	<translated>Direcci&#xC3;&#xB3;n principal linea 1</translated>
+</translation>
+<translation>
+	<original>Primary Address Line 2</original>
+	<translated>Direcci&#xC3;&#xB3;n principal linea 2</translated>
+</translation>
+<translation>
+	<original>Primary Address Phone #</original>
+	<translated>Direcci&#xC3;&#xB3;n principal de telefono</translated>
+</translation>
+<translation>
+	<original>Primary Address State</original>
+	<translated>Direcci&#xC3;&#xB3;n principal del estado</translated>
+</translation>
+<translation>
+	<original>Primary Address Zip</original>
+	<translated>Direcci&#xC3;&#xB3;n principal c&#xC3;&#xB3;digo postal</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Informaci&#xC3;&#xB3;n principal</translated>
+</translation>
+<translation>
+	<original>Provider Maintenance</original>
+	<translated>Mantencion del proveedor</translated>
+</translation>
+<translation>
+	<original>Referring</original>
+	<translated>Referencia</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>Secondary Address City</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria</translated>
+</translation>
+<translation>
+	<original>Secondary Address Fax #</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria de fax</translated>
+</translation>
+<translation>
+	<original>Secondary Address Line 1</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria linea 1</translated>
+</translation>
+<translation>
+	<original>Secondary Address Line 2</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria linea 2</translated>
+</translation>
+<translation>
+	<original>Secondary Address Phone #</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria de telefono</translated>
+</translation>
+<translation>
+	<original>Secondary Address State</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria de estado</translated>
+</translation>
+<translation>
+	<original>Secondary Address Zip</original>
+	<translated>Direcci&#xC3;&#xB3;n secundaria c&#xC3;&#xB3;digo postal</translated>
+</translation>
+<translation>
+	<original>Social Security #</original>
+	<translated>Seguridad social</translated>
+</translation>
+<translation>
+	<original>Specialty 1</original>
+	<translated>Especialidad 1</translated>
+</translation>
+<translation>
+	<original>Specialty 2</original>
+	<translated>Especialidad 2</translated>
+</translation>
+<translation>
+	<original>Specialty 3</original>
+	<translated>Especialidad 3</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Estado</translated>
+</translation>
+<translation>
+	<original>Taxonomy Number</original>
+	<translated>N&#xC3;&#xBA;mero de taxonom&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Title</original>
+	<translated>Titulo</translated>
+</translation>
+<translation>
+	<original>UPIN Number</original>
+	<translated>Numero UPIN</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Si</translated>
+</translation>
+
+</gettextXML>
+

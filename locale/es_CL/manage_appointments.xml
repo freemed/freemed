@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-06 13:02-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Book Appointment</original>
+	<translated>Libro de citas</translated>
+</translation>
+<translation>
+	<original>CPT Code</original>
+	<translated>C&#xC3;&#xB3;digo CPT</translated>
+</translation>
+<translation>
+	<original>Deleting Appointment</original>
+	<translated>Borrando cita</translated>
+</translation>
+<translation>
+	<original>Location</original>
+	<translated>Ubicaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Manage Appointments</original>
+	<translated>Manejar citas</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Nota</translated>
+</translation>
+<translation>
+	<original>Select a Patient</original>
+	<translated>Seleccionar un paciente</translated>
+</translation>
+<translation>
+	<original>This patient has no appointments.</original>
+	<translated>Este paciente no tiene citas.</translated>
+</translation>
+<translation>
+	<original>Time/Duration</original>
+	<translated>Tiempo / Duraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>You do not have permission to delete appointments.</original>
+	<translated>Usted no tiene permiso para eliminar citas.</translated>
+</translation>
+<translation>
+	<original>You must select a patient.</original>
+	<translated>Tiene que seleccionar un paciente.</translated>
+</translation>
+
+</gettextXML>
+

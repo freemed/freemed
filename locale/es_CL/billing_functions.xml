@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-02 22:49-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Billing Functions</original>
+	<translated> Funciones de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Billing System</original>
+	<translated>Sitema de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>NO PATIENT SPECIFIED</original>
+	<translated>PACIENTE NO ESPECIFICADO</translated>
+</translation>
+<translation>
+	<original>Return to</original>
+	<translated>Regresar a </translated>
+</translation>
+<translation>
+	<original>You don't have access to do that.</original>
+	<translated>No tiene acceso a esto</translated>
+</translation>
+<translation>
+	<original>Your FreeMED installation has no billing handlers defined. This should not happen.</original>
+	<translated>La instalaci&#xC3;&#xB3;n de FreeMED no ha definido los tratantes de facturaci&#xC3;&#xB3;n. Esto 
+no deber&#xC3;&#xAD;a ocurrir.</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 22:01-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>1 Day</original>
+	<translated>D&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>1 Month</original>
+	<translated>Mes</translated>
+</translation>
+<translation>
+	<original>1 Week</original>
+	<translated>Semana</translated>
+</translation>
+<translation>
+	<original>1 Year</original>
+	<translated>A&#xC3;&#xB1;o</translated>
+</translation>
+<translation>
+	<original>10 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>10 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>11 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>2 Days</original>
+	<translated>D&#xC3;&#xAD;as</translated>
+</translation>
+<translation>
+	<original>2 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>2 Weeks</original>
+	<translated>Semanas</translated>
+</translation>
+<translation>
+	<original>2 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>3 Days</original>
+	<translated>D&#xC3;&#xAD;as</translated>
+</translation>
+<translation>
+	<original>3 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>3 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>4 Days</original>
+	<translated>D&#xC3;&#xAD;as</translated>
+</translation>
+<translation>
+	<original>4 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>4 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>5 Days</original>
+	<translated>D&#xC3;&#xAD;as</translated>
+</translation>
+<translation>
+	<original>5 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>5 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>6 Days</original>
+	<translated>D&#xC3;&#xAD;as</translated>
+</translation>
+<translation>
+	<original>6 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>6 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>7 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>7 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>8 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>8 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>9 Months</original>
+	<translated>Meses</translated>
+</translation>
+<translation>
+	<original>9 Years</original>
+	<translated>A&#xC3;&#xB1;os</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Notification</original>
+	<translated>Notificaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Notifications</original>
+	<translated>Notificaci&#xC3;&#xB3;nes</translated>
+</translation>
+<translation>
+	<original>Target Date</original>
+	<translated>Cita</translated>
+</translation>
+<translation>
+	<original>Target User</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usuario</translated>
+</translation>
+
+</gettextXML>
+
