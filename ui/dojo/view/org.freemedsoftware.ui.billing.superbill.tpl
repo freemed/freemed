@@ -56,7 +56,7 @@
 			if (x) {
 				dojo.io.bind({
 					method: 'POST',
-					url: '<!--{$relay}-->/org.freemedsoftware.module.Superbills.del',
+					url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.del',
 					content: {
 						param0: this.saveValue
 					},
@@ -78,7 +78,7 @@
 
 			dojo.io.bind({
 				method: 'POST',
-				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbills.mod',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.mod',
 				content: {
 					param0: p
 				},
@@ -96,10 +96,7 @@
 		resetForm: function ( ) {
 			loadSuperbills();
 			this.saveValue = 0;
-
-			// Hide form, unload djvu viewer
-			document.getElementById('superbillFormDiv').style.display = 'none';
-			dojo.widget.byId('superbillViewPane').setUrl('<!--{$controller}-->/blank');
+			document.getElementById( 'superbillView' ).innerHTML = '';
 		},
 		selectSuperbill: function ( ) {
 			var w = dojo.widget.byId( 'superbillTable' );
@@ -110,6 +107,25 @@
 
 				// Populate/display
 				document.getElementById('superbillFormDiv').style.display = 'block';
+
+				// Form superbill
+				document.getElementById( 'superbillView' ).innerHTML = "<!--{$paneLoading|escape}-->";
+				dojo.io.bind({
+					method: 'POST',
+					url: "<!--{$relay}-->/org.freemedsoftware.module.Superbill.GetSuperbill",
+					content: {
+						param0: val.id
+					},
+					load: function( type, data, evt ) {
+						document.getElementById( 'superbillView' ).innerHTML = dojo.json.serialize( data );
+					},
+					mimetype: 'text/json'
+				});
+					
+				// Set up the coverage widget to work properly
+				var cW = dojo.widget.byId( 'sbcov_widget' );
+				cW.setLabel(''); cW.setValue(0);
+				cW.dataProvider.searchUrl = "<!--{$relay}-->/org.freemedsoftware.module.PatientCoverages.GetCoverages?param0=" + val.patient_id + "&param1=" + val.dateofservice;
 				return true;
 			}
 		}
@@ -156,10 +172,24 @@
 
 		<div id="superbillFormDiv" style="display: none;">
 		<table border="0">
+
+			<tr>
+				<td><!--{t}-->Coverage<!--{/t}--></td>
+				<td><input dojoType="Select"
+					autocomplete="false"
+					id="sbcov_widget" widgetId="sbcov_widget"
+					style="width: 300px;"
+					dataUrl="<!--{$relay}-->/"
+					mode="remote"
+					setValue="document.getElementById( 'sbcov' ).value = arguments[1];"
+				/><input type="hidden" id="sbcov" value="0" /></td>
+			</tr>
+
 			<tr>
 				<td><!--{t}-->Note<!--{/t}--></td>
-				<td><input type="text" id="uffnote" name="uffnote" value="" /></td>
+				<td><input type="text" id="sbnote" name="sbnote" value="" /></td>
 			</tr>
+
 		</table>
 
 		<div align="center">
@@ -183,7 +213,8 @@
 
 	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="superbillViewPane" style="overflow: scroll;">
+	<div dojoType="ContentPane" executeScripts="false" sizeMin="30" sizeShare="50" id="superbillViewPane" style="overflow: scroll;">
+		<div id="superbillView"></div>
 	</div>
 </div>
 
