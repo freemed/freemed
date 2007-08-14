@@ -109,7 +109,7 @@
 				document.getElementById('superbillFormDiv').style.display = 'block';
 
 				// Form superbill
-				document.getElementById( 'superbillView' ).innerHTML = "<!--{$paneLoading|escape}-->";
+				document.getElementById( 'superbillView' ).innerHTML = "<!--{$paneLoading|replace:'"':''}-->";
 				dojo.io.bind({
 					method: 'POST',
 					url: "<!--{$relay}-->/org.freemedsoftware.module.Superbill.GetSuperbill",
@@ -117,7 +117,43 @@
 						param0: val.id
 					},
 					load: function( type, data, evt ) {
-						document.getElementById( 'superbillView' ).innerHTML = dojo.json.serialize( data );
+						var v = document.getElementById( 'superbillView' );
+						v.innerHTML = '';
+						var hPx = document.createElement( 'h4' );
+						hPx.innerHTML = "<!--{t}-->Procedures<!--{/t}-->";
+						v.appendChild( hPx );
+
+						var ulPx = document.createElement( 'ul' );
+						ulPx.style.listStyle = 'none';
+						for (var i=0; i<data.px.length; i++) {
+							var liPx = document.createElement( 'li' );
+							var liCheck = document.createElement( 'input' );
+							liCheck.type = 'checkbox';
+							liCheck.id = 'px_' + data.px[i].id;
+							liCheck.checked = 'checked';
+							liPx.appendChild( liCheck );
+							liPx.innerHTML += ' <label for="px_' + data.px[i].id + '">' + data.px[i].code + ' - ' + data.px[i].descrip + '</label>';
+							ulPx.appendChild( liPx );
+						}
+						v.appendChild( ulPx );
+
+						var hDx = document.createElement( 'h4' );
+						hDx.innerHTML = "<!--{t}-->Diagnoses<!--{/t}-->";
+						v.appendChild( hDx );
+
+						var ulDx = document.createElement( 'ul' );
+						ulDx.style.listStyle = 'none';
+						for (var i=0; i<data.dx.length; i++) {
+							var liDx = document.createElement( 'li' );
+							var liCheck = document.createElement( 'input' );
+							liCheck.type = 'checkbox';
+							liCheck.id = 'dx_' + data.dx[i].id;
+							liCheck.checked = 'checked';
+							liDx.appendChild( liCheck );
+							liDx.innerHTML += ' <label for="dx_' + data.dx[i].id + '">' + data.dx[i].code + ' - ' + data.dx[i].descrip + '</label>';
+							ulDx.appendChild( liDx );
+						}
+						v.appendChild( ulDx );
 					},
 					mimetype: 'text/json'
 				});
@@ -187,7 +223,7 @@
 
 			<tr>
 				<td><!--{t}-->Note<!--{/t}--></td>
-				<td><input type="text" id="sbnote" name="sbnote" value="" /></td>
+				<td><input type="text" id="sbnote" name="sbnote" size="50" value="" /></td>
 			</tr>
 
 		</table>
@@ -195,14 +231,14 @@
 		<div align="center">
 		<table border="0">
 			<tr>
-				<td>
+				<td align="right">
 					<button dojoType="Button" id="confirmButton">
-						<!--{t}-->Confirm<!--{/t}-->
+	                			<div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Confirm<!--{/t}--></div>
 					</button>
 				</td>
-				<td>
+				<td align="left">
 					<button dojoType="Button" id="cancelButton">
-						<!--{t}-->Cancel<!--{/t}-->
+	                			<div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
 					</button>
 				</td>
 			</tr>
