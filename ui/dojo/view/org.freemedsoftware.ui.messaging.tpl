@@ -63,7 +63,11 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.GetAllByTag',
 				error: function() { },
 				load: function( type, data, evt ) {
-					dojo.widget.byId('messagesTable').store.setData( data );
+					var d = data;
+					for(var i=0; i<d.length; i++) {
+						d[i].stamp_mdy = new Date( d[i].stamp_mdy );
+					}
+					dojo.widget.byId('messagesTable').store.setData( d );
 				},
 				mimetype: "text/json"
 			});
