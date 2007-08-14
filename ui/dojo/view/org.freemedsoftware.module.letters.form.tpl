@@ -117,7 +117,7 @@
 
 	<tr>
 		<td align="right"><!--{t}-->From<!--{/t}--></td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="letters.fromProvider"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="letters.fromProvider" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
 	</tr>
 
 	<tr>
