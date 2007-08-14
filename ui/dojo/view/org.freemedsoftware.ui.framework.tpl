@@ -273,6 +273,7 @@ var djConfig = {
 	.dashboardWidgetContainer {
 		background-image: url(<!--{$htdocs}-->/images/brushed.gif);
 		}
+
 </style>
 
 <!-- Include dock -->
@@ -344,23 +345,19 @@ var djConfig = {
 	});
 	dock.setIconsOffset(5);
 	dock.addIcon(
-		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/Quick-Cal.png" } } ),
+		new Array({ euImage:{ image:"<!--{$htdocs}-->/images/teak/scheduler.64x64.png" } } ),
 		{ code:"freemedLoad('org.freemedsoftware.ui.scheduler');" }
 	);
 	dock.addIcon(
-		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stocks.png" } } ),
-		{ code:"freemedLoad('org.freemedsoftware.ui.billing');"}
-	);
-	dock.addIcon(
-		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Rolodex.png" } } ),
-		{ link:"http://eudock.jules.it" }
+		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/teak/patient_entry.64x64.png" } } ),
+		{ code:"freemedLoad('org.freemedsoftware.ui.patient.form');"}
 	);
 	dock.addIcon(
 		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Stickies.png" } } ),
 		{ code:"openNotesDialog();" }
 	);
 	dock.addIcon(
-		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/Yellow-Pages.png" } } ),
+		new Array( { euImage:{ image:"<!--{$htdocs}-->/images/teak/dashboard.64x64.png" } } ),
 		{ code:"freemedLoad('org.freemedsoftware.ui.mainframe.default');" }
 	);
 //	dock.setScreenAlign(euDOWN, 5);
