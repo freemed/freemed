@@ -54,7 +54,7 @@
 				fdhousehold: parseInt( document.getElementById('financialDemographics.householdSize').value ),
 				fdspouse: parseInt( dojo.widget.byId('financialDemographics.spouse').getValue() ),
 				fdchild: parseInt( document.getElementById('financialDemographics.dependentChildren').value ),
-				fdother: parseInt( document.getElementById('financialDemographics.dependentOthers').value() ),
+				fdother: parseInt( document.getElementById('financialDemographics.dependentOthers').value ),
 				fdfreetext: document.getElementById('financialDemographics.otherInformation').value,
 				fdpatient: '<!--{$patient|escape}-->'
 			};
