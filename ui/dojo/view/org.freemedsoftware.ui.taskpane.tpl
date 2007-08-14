@@ -30,27 +30,27 @@
 	<div dojoType="ContentPane" selected="true" label="<!--{t}-->System<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.dashboard');">
-			<img src="<!--{$htdocs}-->/images/teak/dashboard.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/dashboard.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Dashboard<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.dailyappointments');">
-			<img src="<!--{$htdocs}-->/images/teak/scheduler_daily.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/scheduler_daily.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Day Schedule<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.book');">
-			<img src="<!--{$htdocs}-->/images/teak/book_appt.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/book_appt.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Book Appointment<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler');">
-			<img src="<!--{$htdocs}-->/images/teak/scheduler.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/scheduler.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Scheduler<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.messaging');">
-			<img src="<!--{$htdocs}-->/images/teak/messaging.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/messaging.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Messaging<!--{/t}-->
 		</div>
 
@@ -65,17 +65,17 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Patients<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.search?clear=1');">
-			<img src="<!--{$htdocs}-->/images/teak/search.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/chart_search.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Search<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.form');">
-			<img src="<!--{$htdocs}-->/images/teak/patient_entry.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/patient_entry.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Patient Entry<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.callin.manage');">
-			<img src="<!--{$htdocs}-->/images/teak/callin.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/callin.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Call-in<!--{/t}-->
 		</div>
 
@@ -89,12 +89,12 @@
 
 	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unfiled');">
-			<img src="<!--{$htdocs}-->/images/teak/unfiled.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/unfiled.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Unfiled<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unread');">
-			<img src="<!--{$htdocs}-->/images/teak/unread.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/unread.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Unread<!--{/t}-->
 		</div>
 	</div>
@@ -103,22 +103,22 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Billing<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.accountsreceivable');">
-			<img src="<!--{$htdocs}-->/images/teak/accounts_receivable.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/accounts_receivable.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Accounts Receivable<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.claimsmanager');">
-			<img src="<!--{$htdocs}-->/images/calc.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/claims_manage.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Claims Manager<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.remitt');">
-			<img src="<!--{$htdocs}-->/images/remitt.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/remitt.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->REMITT Billing<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.superbill');">
-			<img src="<!--{$htdocs}-->/images/teak/superbill.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/superbill.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Superbills<!--{/t}-->
 		</div>
 
@@ -135,7 +135,7 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.reporting.engine');">
-			<img src="<!--{$htdocs}-->/images/teak/reporting.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/report_engine.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Reporting Engine<!--{/t}-->
 		</div>
 
@@ -151,20 +151,20 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Utilities<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.supportdata');">
-			<img src="<!--{$htdocs}-->/images/teak/modules.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/modules.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Support Data<!--{/t}-->
 		</div>
 
 		<!--{acl category="admin" permission="config"}-->
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.configuration');">
-			<img src="<!--{$htdocs}-->/images/teak/settings.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/settings.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->System Configuration<!--{/t}-->
 		</div>
 		<!--{/acl}-->
 
 		<!--{acl category="admin" permission="user"}-->
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.user');">
-			<img src="<!--{$htdocs}-->/images/teak/settings.64x64.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/chart_config.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->User Administration<!--{/t}-->
 		</div>
 		<!--{/acl}-->
