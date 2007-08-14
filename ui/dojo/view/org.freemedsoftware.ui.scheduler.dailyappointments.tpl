@@ -140,7 +140,9 @@
 			o.updateStatus( 'noshow' );
 		},
 		cancelAppt: function () {
-			o.updateStatus( 'cancelled' );
+			if ( confirm( "<!--{t}-->Are you sure that you want to cancel this appointment?<!--{/t}-->" ) ) {
+				o.updateStatus( 'cancelled' );
+			}
 		},
 		moveAppt: function ( ) {
 			try {
