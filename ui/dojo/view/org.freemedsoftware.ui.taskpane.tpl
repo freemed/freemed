@@ -35,7 +35,7 @@
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.dailyappointments');">
-			<img src="<!--{$htdocs}-->/images/pda_icon.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/scheduler_daily.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Day Schedule<!--{/t}-->
 		</div>
 
@@ -45,12 +45,12 @@
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler');">
-			<img src="<!--{$htdocs}-->/images/pda_icon.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/scheduler.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Scheduler<!--{/t}-->
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.messaging');">
-			<img src="<!--{$htdocs}-->/images/messages_icon.png" height="64" width="64" border="0" /><br/>
+			<img src="<!--{$htdocs}-->/images/teak/messaging.64x64.png" height="64" width="64" border="0" /><br/>
 			<!--{t}-->Messaging<!--{/t}-->
 		</div>
 
