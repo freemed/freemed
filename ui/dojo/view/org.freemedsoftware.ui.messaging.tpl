@@ -44,6 +44,7 @@
 	// Special scope variable because of ContentPane
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
+		currentLocation: 'INBOX',
 		getSelectedMessage: function ( ) {
 			return dojo.widget.byId('messagesTable').getSelectedData();
 		},
@@ -110,6 +111,7 @@
 					load: function( type, data, evt ) {
 						freemedMessage( "<!--{t}-->Message moved successfully.<!--{/t}-->", 'INFO' );
 						// Force reload
+						dojo.widget.byId('messagesTag').setValue( o.currentLocation );
 						o.loadMessages();
 					},
 					mimetype: "text/json"
@@ -117,6 +119,7 @@
 			}
 		},
 		selectTagView: function ( ) {
+			o.currentLocation = dojo.widget.byId('messagesTag').getValue();
 			o.loadMessages();
 		},
 		createMessageCallback: function ( ) {
