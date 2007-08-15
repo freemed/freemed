@@ -127,8 +127,12 @@
 
 	<div align="center">
 		<table border="0"><tr>
-			<td align="right"><button dojoType="Button" id="createMessageButton" widgetId="createMessageButton"><!--{t}-->Create<!--{/t}--></button></td>
-			<td align="left"><button dojoType="Button" onClick="if(confirm('<!--{t}-->Are you sure you want to cancel this message?<!--{/t}-->')) { freemedLoad('org.freemedsoftware.ui.messaging'); }"><!--{t}-->Cancel<!--{/t}--></button></td>
+			<td align="right"><button dojoType="Button" id="createMessageButton" widgetId="createMessageButton">
+		                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Create<!--{/t}--></div>
+			</button></td>
+			<td align="left"><button dojoType="Button" onClick="if(confirm('<!--{t}-->Are you sure you want to cancel this message?<!--{/t}-->')) { freemedLoad('org.freemedsoftware.ui.messaging'); }">
+        	        	<div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
+		</button></td>
 		</tr></table>
 	</div>
 
