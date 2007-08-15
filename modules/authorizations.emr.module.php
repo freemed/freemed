@@ -23,21 +23,15 @@
 
 LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 
-class AuthorizationsModule extends EMRModule {
+class Authorizations extends EMRModule {
 
 	var $MODULE_NAME    = "Insurance Authorization";
-	var $MODULE_VERSION = "0.1.2";
-	var $MODULE_DESCRIPTION = "
-		Insurance authorizations are used to track whether
-		a patient is authorized by his or her insurance
-		company for service during a particular period of
-		time. If you do not use insurance support in
-		FreeMED, this module is not needed.
-	";
+	var $MODULE_VERSION = "0.2";
+	var $MODULE_DESCRIPTION = "Insurance authorizations are used to track whether a patient is authorized by his or her insurance company for service during a particular period of time. If you do not use insurance support in FreeMED, this module is not needed.";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "33447e8d-ba54-4255-af85-21876c020fa3";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name    = "Authorizations";
 	var $table_name     = "authorizations";
@@ -77,6 +71,7 @@ class AuthorizationsModule extends EMRModule {
 		);
 
 		$this->acl = array ( 'bill', 'emr' );
+		$this->_SetAssociation( 'EmrModule' );
 
 		// Run parent constructor
 		parent::__construct();
@@ -98,8 +93,8 @@ class AuthorizationsModule extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-} // end class AuthorizationsModule
+} // end class Authorizations
 
-register_module ("AuthorizationsModule");
+register_module ("Authorizations");
 
 ?>
