@@ -22,11 +22,15 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<style type="text/css">
+	.dojoFloatingPaneClient {{
+		background-color: #ffffff;
+	}
+</style>
+
 <script type="text/javascript">
 	djConfig.dojoRichTextFrameUrl = "<!--{$htdocs}-->/dojo/src/widget/templates/richtextframe.html";
-	dojo.require( 'dojo.event.*' );
-	dojo.require( 'dojo.widget.RichText' );
-
+	dojo.require( 'dojo.widget.Editor2' );
 
 	var notes = {
 		handleResponse: function ( data ) {
@@ -48,6 +52,10 @@
 			try {
 				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
 			} catch ( err ) { }
+
+			// Make sure all text fields have been saved
+			notes.SaveLastTab();
+
 			var myContent = {
 				<!--{if $id}-->
 				id: "<!--{$id|escape}-->",
@@ -55,13 +63,13 @@
 				pnotesdt: dojo.widget.byId('note.dateOf').getValue(),
 				pnotesdoc: parseInt( document.getElementById('note.provider').value ),
 				pnotesdescrip: document.getElementById('note.descrip').value,
-				pnotes_S: document.getElementById('note_S').value,
-				pnotes_O: document.getElementById('note_O').value,
-				pnotes_A: document.getElementById('note_A').value,
-				pnotes_P: document.getElementById('note_P').value,
-				pnotes_I: document.getElementById('note_I').value,
-				pnotes_E: document.getElementById('note_E').value,
-				pnotes_R: document.getElementById('note_R').value,
+				pnotes_S: dojo.byId('note_S_value').innerHTML,
+				pnotes_O: dojo.byId('note_O_value').innerHTML,
+				pnotes_A: dojo.byId('note_A_value').innerHTML,
+				pnotes_P: dojo.byId('note_P_value').innerHTML,
+				pnotes_I: dojo.byId('note_I_value').innerHTML,
+				pnotes_E: dojo.byId('note_E_value').innerHTML,
+				pnotes_R: dojo.byId('note_R_value').innerHTML,
 				pnotespat: '<!--{$patient|escape}-->'
 			};
 			if (notes.validate( myContent )) {
@@ -80,14 +88,14 @@
 		},
 		loadData: function ( data ) {
 			dojo.widget.byId('note.dateOf').setValue( data['pnotesdt'] );
-			document.getElementById('note.descrip').value = data['pnotesdescrip'];
-			document.getElementById('note_S').value = data['pnotes_S'];
-			document.getElementById('note_O').value = data['pnotes_O'];
-			document.getElementById('note_A').value = data['pnotes_A'];
-			document.getElementById('note_P').value = data['pnotes_P'];
-			document.getElementById('note_I').value = data['pnotes_I'];
-			document.getElementById('note_E').value = data['pnotes_E'];
-			document.getElementById('note_R').value = data['pnotes_R'];
+			dojo.byId('note.descrip').value = data.pnotesdescrip;
+			dojo.byId('note_S_value').innerHTML = data['pnotes_S'];
+			dojo.byId('note_O_value').innerHTML = data['pnotes_O'];
+			dojo.byId('note_A_value').innerHTML = data['pnotes_A'];
+			dojo.byId('note_P_value').innerHTML = data['pnotes_P'];
+			dojo.byId('note_I_value').innerHTML = data['pnotes_I'];
+			dojo.byId('note_E_value').innerHTML = data['pnotes_E'];
+			dojo.byId('note_R_value').innerHTML = data['pnotes_R'];
 			dojo.event.topic.publish( 'note.provider-assign', data['pnotesdoc'] );
 		},
 		initialLoad: function ( ) {
@@ -122,12 +130,62 @@
 				mimetype: "text/json"
 			});
 		},
+		SaveLastTab: function( ) {
+			try {
+				var t = dojo.widget.byId( notes.currentTab );
+				var old = notes.currentTab.replace( 'Pane', '' );
+				var w = dojo.widget.byId( old + '_editor' );
+
+				// Save, then kill editor
+				dojo.debug( 'DEBUG: save process for ' + old );
+				dojo.byId( w.contentSource ).innerHTML = w.getEditorContent();
+
+				t.removeChild( old + '_editor' );
+			} catch (err) { }
+		},
 		OnSelectTab: function( id ) {
 			var myId = id.widgetId.replace('Pane', '');
+
+			notes.SaveLastTab();
+
+			if ( notes.currentTab != id.widgetId ) {
+				try {
+					// Create new one
+					if ( myId.match('_') ) {
+						var w = dojo.widget.createWidget( 'dojo:Editor2', {
+							id: myId + '_editor',
+							widgetId: myId + '_editor',
+							height: '300',
+							shareToolbar: false
+						}, dojo.byId( myId + '_container' ));
+						w.contentSource = myId + '_value';
+						dojo.event.connect( w, "editorOnLoad", dojo.lang.hitch( w, function() {
+							this.replaceValue( dojo.byId( this.contentSource ).innerHTML );
+							dojo.event.connect(this, "save", dojo.lang.hitch(this, function() {
+								updateContent( this.contentSource, this.getEditorContent() );
+							}));
+						}));
+						dojo.event.connect(dj_global, notes, "updateContent",
+							dojo.lang.hitch( w, function(contentId, content){
+								if (contentId == this.contentSource) {
+									this.replaceValue( content );
+								}
+							})
+						);
+						id.addChild( w.domNode );
+					}
+				} catch (err) { }
+			}
+
 			try {
-				document.getElementById(myId).focus();
+				document.getElementById( myId ).focus();
 			} catch (e) { }
-		}
+			notes.currentTab = id.widgetId;
+		},
+		updateContent: function ( contentId, content ) {
+			dojo.byId( contentId ).innerHTML = content;
+		},
+		currentTab: ''
 	};
 
 	_container_.addOnLoad(function() {
@@ -181,7 +239,7 @@
 	
 		<tr>
 			<td align="right"><!--{t}-->Provider<!--{/t}--></td>
-			<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="note.provider" methodName="internalPicklist"}--></td>
+			<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="note.provider" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
 		</tr>
 
 		<tr>
@@ -194,31 +252,38 @@
 	</div>
 
         <div dojoType="ContentPane" id="notePane_S" label="<!--{t}-->Subjective<!--{/t}-->">
-		<textarea id="note_S" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_S_value" style="display: none;"></div>
+		<div id="note_S_container"></div>
 	</div>
 
         <div dojoType="ContentPane" id="notePane_O" label="<!--{t}-->Objective<!--{/t}-->">
-		<textarea id="note_O" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_O_value" style="display: none;"></div>
+		<div id="note_O_container"></div>
 	</div>
 
         <div dojoType="ContentPane" id="notePane_A" label="<!--{t}-->Assessment<!--{/t}-->">
-		<textarea id="note_A" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_A_value" style="display: none;"></div>
+		<div id="note_A_container"></div>
 	</div>
 
         <div dojoType="ContentPane" id="notePane_P" label="<!--{t}-->Plan<!--{/t}-->">
-		<textarea id="note_P" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_P_value" style="display: none;"></div>
+		<div id="note_P_container"></div>
 	</div>
 
         <div dojoType="ContentPane" id="notePane_I" label="<!--{t}-->Interval<!--{/t}-->">
-		<textarea id="note_I" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_I_value" style="display: none;"></div>
+		<div id="note_I_container"></div>
 	</div>
 
         <div dojoType="ContentPane" id="notePane_E" label="<!--{t}-->Education<!--{/t}-->">
-		<textarea id="note_E" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_E_value" style="display: none;"></div>
+		<div id="note_E_container"></div>
 	</div>
 
         <div dojoType="ContentPane" id="notePane_R" label="<!--{t}-->Rx<!--{/t}-->">
-		<textarea id="note_R" style="width: 95%; height: 95%;"></textarea>
+		<div id="note_R_value" style="display: none;"></div>
+		<div id="note_R_container"></div>
 	</div>
 
 </div> <!--{* Tab Container *}-->
