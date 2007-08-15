@@ -137,12 +137,12 @@ var djConfig = {
 				href: url
 			});
 			t.addChild( newTab );
-			t.selectChild( newTab );
+			t.selectChild( newTab ); 
 		} else {
 			try {
 				var tab = dojo.widget.byId( 'freemedWorkspace' + freemedGlobal.tabCount );
 				tab.setUrl( url );
-				t.selectChild( tab );
+				try { t.selectChild( tab ); } catch (err) { }
 			} catch ( err ) {
 				freemedGlobal.tabCount += 1;	
 				var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
