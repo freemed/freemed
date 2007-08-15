@@ -161,12 +161,14 @@
 		dojo.event.connect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
+		/*
 		try {
 			var x = dojo.widget.byId( 'messagesTablePane' );
 			var node = x.containerNode || x.domNode;
 			var h = parseInt( node.style.height ) - 55;
 			document.getElementById( 'messagesTableBody' ).style.height = h + 'px';
 		} catch ( e ) { }
+		*/
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
