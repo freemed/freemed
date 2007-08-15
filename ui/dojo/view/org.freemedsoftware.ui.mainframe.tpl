@@ -42,7 +42,14 @@
 	>
 		<div dojoType="ContentPane" id="leftPane" style="width: 100px; background-image: url(<!--{$htdocs}-->/images/stipedbg.png); overflow: auto;" href="<!--{$controller}-->/org.freemedsoftware.ui.taskpane" layoutAlign="left" executeScripts="true" loadingMessage="<!--{$paneLoading|escape}-->"></div>
 		<!-- this pane contains the actual application -->
-		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false" adjustPaths="false" href="<!--{$controller}-->/org.freemedsoftware.controller.dashboard" loadingMessage="<!--{$paneLoading|escape}-->"></div>
+		<div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false" adjustPaths="false">
+			<div id="freemedTabContainer" dojoType="TabContainer" labelPosition="top" style="width: 100%; height: 100%;">
+				<div id="freemedTabDashboard" dojoType="ContentPane" href="<!--{$controller}-->/org.freemedsoftware.controller.dashboard" loadingMessage="<!--{$paneLoading|escape}-->" adjustPaths="false" cacheContent="false" executeScripts="true" label="<!--{t}-->Dashboard<!--{/t}-->" closable="false"></div>
+				<div id="freemedWorkspace1" dojoType="ContentPane" adjustPaths="false" cacheContent="false" executeScripts="true" closable="true" label="<!--{t}-->Workspace<!--{/t}--> 1"></div>
+
+			</div>
+		</div>
+		<!-- <div id="freemedContent" dojoType="ContentPane" executeScripts="true" sizeMin="20" sizeShare="80" cacheContent="false" adjustPaths="false" href="<!--{$controller}-->/org.freemedsoftware.controller.dashboard" loadingMessage="<!--{$paneLoading|escape}-->"></div> -->
 	</div>
 
 <!--{include file="org.freemedsoftware.ui.footer.tpl"}-->

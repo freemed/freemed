@@ -115,9 +115,49 @@ var djConfig = {
 		return true;
 	}
 
-	function freemedLoad ( url ) {
-		// Set the URL for the contentPane to load the appropriate content
-		dojo.widget.byId( 'freemedContent' ).setUrl( url );
+	function freemedLoad ( url, e, forcenew ) {
+		forcenew = forcenew || 0;
+
+		try {
+			if ( e.ctrlKey ) { forcenew = 1; }
+		} catch (err) { }
+
+		// Decide where this goes
+		var t = dojo.widget.byId( 'freemedTabContainer' );
+
+		if ( forcenew ) {
+			freemedGlobal.tabCount += 1;	
+			var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
+				label: "<!--{t}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
+				cacheContent: false,
+				closable: true,
+				adjustPaths: false,
+				executeScripts: true,
+				loadingMessage: "<!--{$paneLoading|replace:'"':'\\"'}-->",
+				href: url
+			});
+			t.addChild( newTab );
+			t.selectChild( newTab );
+		} else {
+			try {
+				var tab = dojo.widget.byId( 'freemedWorkspace' + freemedGlobal.tabCount );
+				tab.setUrl( url );
+				t.selectChild( tab );
+			} catch ( err ) {
+				freemedGlobal.tabCount += 1;	
+				var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
+					label: "<!--{t}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
+					cacheContent: false,
+					closable: true,
+					adjustPaths: false,
+					executeScripts: true,
+					loadingMessage: "<!--{$paneLoading|replace:'"':'\\"'}-->",
+					href: url
+				});
+				t.addChild( newTab );
+				t.selectChild( newTab );
+			}
+		}
 
 		// Push current help topic value
 		var x = url.replace( "<!--{$controller}-->/", '' );
@@ -153,6 +193,7 @@ var djConfig = {
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
 		currentHelpTopic: undefined,
+		tabCount: 1,
 		noteSave: "<!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape:'javascript'}-->",
 		interval: 60, // seconds between polls
 		intervalCallback: function ( ) {
