@@ -65,10 +65,10 @@
 					content: {
 						param0: this.saveValue
 					},
-					error: function( type, data, event ) {
-						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
-					},
 					load: function( type, data, event ) {
+						if (data) {
+							freemedMessage( "<!--{t}-->Document removed successfully.<!--{/t}-->", "INFO" );
+						}
 						this.resetForm();
 					},
 					mimetype: "text/json"
@@ -106,11 +106,8 @@
 				content: {
 					param0: p
 				},
-				error: function( type, data, event ) {
-					//alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
-					this.resetForm();
-				},
 				load: function( type, data, event ) {
+					freemedMessage( "<!--{t}-->Document handled successfully.<!--{/t}-->", "INFO" );
 					this.resetForm();
 				},
 				mimetype: "text/json"
@@ -204,7 +201,7 @@
 			</tr>
 			<tr>
 				<td><!--{t}-->Provider<!--{/t}--></td>
-				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="uffprovider"}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="uffprovider" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
 			</tr>
 			<tr>
 				<td><!--{t}-->Category<!--{/t}--></td>
