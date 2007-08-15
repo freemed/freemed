@@ -98,6 +98,16 @@
 			this.saveValue = 0;
 			document.getElementById( 'superbillView' ).innerHTML = '';
 		},
+		handleDxCheck: function ( evt ) {
+			var x = this.id.replace( 'dx_', '' );
+			o.currentDx[ x ] = o.currentDx[ x ] ? 0 : 1;
+		},
+		handlePxCheck: function ( evt ) {
+			var x = this.id.replace( 'px_', '' );
+			o.currentPx[ x ] = o.currentPx[ x ] ? 0 : 1;
+		},
+		currentDx: {},
+		currentPx: {},
 		selectSuperbill: function ( ) {
 			var w = dojo.widget.byId( 'superbillTable' );
 			var val = w.getSelectedData();
@@ -123,6 +133,7 @@
 						hPx.innerHTML = "<!--{t}-->Procedures<!--{/t}-->";
 						v.appendChild( hPx );
 
+						o.currentPx = {};
 						var ulPx = document.createElement( 'ul' );
 						ulPx.style.listStyle = 'none';
 						for (var i=0; i<data.px.length; i++) {
@@ -134,6 +145,7 @@
 							liPx.appendChild( liCheck );
 							liPx.innerHTML += ' <label for="px_' + data.px[i].id + '">' + data.px[i].code + ' - ' + data.px[i].descrip + '</label>';
 							ulPx.appendChild( liPx );
+							o.currentPx[ data.px[i].id ] = 1;
 						}
 						v.appendChild( ulPx );
 
@@ -141,6 +153,7 @@
 						hDx.innerHTML = "<!--{t}-->Diagnoses<!--{/t}-->";
 						v.appendChild( hDx );
 
+						o.currentDx = {};
 						var ulDx = document.createElement( 'ul' );
 						ulDx.style.listStyle = 'none';
 						for (var i=0; i<data.dx.length; i++) {
@@ -152,16 +165,28 @@
 							liDx.appendChild( liCheck );
 							liDx.innerHTML += ' <label for="dx_' + data.dx[i].id + '">' + data.dx[i].code + ' - ' + data.dx[i].descrip + '</label>';
 							ulDx.appendChild( liDx );
+							o.currentDx[ data.dx[i].id ] = 1;
 						}
 						v.appendChild( ulDx );
+
+						// Show all checks initially
+						for(var i=0; i<data.px.length; i++) {
+							document.getElementById( 'px_' + data.px[i].id ).checked = 'checked';
+							document.getElementById( 'px_' + data.px[i].id ).onclick = o.handlePxCheck;
+						}
+						for(var i=0; i<data.dx.length; i++) {
+							document.getElementById( 'dx_' + data.dx[i].id ).checked = 'checked';
+							document.getElementById( 'dx_' + data.dx[i].id ).onclick = o.handleDxCheck;
+						}
 					},
 					mimetype: 'text/json'
 				});
-					
+
 				// Set up the coverage widget to work properly
 				var cW = dojo.widget.byId( 'sbcov_widget' );
 				cW.setLabel(''); cW.setValue(0);
 				cW.dataProvider.searchUrl = "<!--{$relay}-->/org.freemedsoftware.module.PatientCoverages.GetCoverages?param0=" + val.patient_id + "&param1=" + val.dateofservice;
+				sbauth.assign( 0 );
 				return true;
 			}
 		}
@@ -222,6 +247,11 @@
 			</tr>
 
 			<tr>
+				<td><!--{t}-->Authorization<!--{/t}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="Authorizations" varname="sbauth"}--></td>
+			</tr>
+
+			<tr>
 				<td><!--{t}-->Note<!--{/t}--></td>
 				<td><input type="text" id="sbnote" name="sbnote" size="50" value="" /></td>
 			</tr>
@@ -233,7 +263,7 @@
 			<tr>
 				<td align="right">
 					<button dojoType="Button" id="confirmButton">
-	                			<div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Confirm<!--{/t}--></div>
+	                			<div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Process Superbill<!--{/t}--></div>
 					</button>
 				</td>
 				<td align="left">
