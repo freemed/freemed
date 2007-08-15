@@ -103,6 +103,53 @@ class SystemNotifications extends SupportModule {
 		return (int)( $GLOBALS['sql']->queryOne( $q ) );
 	} // end method GetSystemTaskInboxCount
 
+	// Method: GetSystemTaskPatientInbox
+	//
+	//	Get system task inbox items for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$box - (optional) Box to qualify results. Defaults to none.
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//	* stamp
+	//	* stamp_mdy
+	//	* patient
+	//	* box
+	//	* module
+	//	* module_name
+	//	* oid
+	//	* summary
+	//	* id
+	//
+	public function GetSystemTaskPatientInbox ( $patient, $box ) {
+		$q = "SELECT DATE_FORMAT(s.stamp, '%m/%d/%Y') AS stamp_mdy, s.stamp AS stamp, s.patient AS patient, s.box AS box, s.module AS module, m.module_name AS module_name, s.oid AS oid, s.summary AS summary, s.id AS id FROM systemtaskinbox s LEFT OUTER JOIN modules m ON s.module = m.module_class WHERE s.patient = " . $GLOBALS['sql']->quote( $patient ).( $box != NULL ? " AND s.box = " . $GLOBALS['sql']->quote( $box ) : '' );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetSystemTaskPatientInbox
+
+	// Method: GetSystemTaskPatientInboxCount
+	//
+	//	Get number of system task inbox items for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$box - Organizational box text name.
+	//
+	// Returns:
+	//
+	//	Number of items in the organizational box for the current user.
+	//
+	public function GetSystemTaskPatientInboxCount ( $patient, $box ) {
+		$q = "SELECT count FROM systemtaskinboxpatientsummary WHERE patient = " . $GLOBALS['sql']->quote( $patient )." AND box = " . $GLOBALS['sql']->quote( $box );
+		return (int)( $GLOBALS['sql']->queryOne( $q ) );
+	} // end method GetSystemTaskPatientInboxCount
+
 } // end class SystemNotifications
 
 register_module ("SystemNotifications");

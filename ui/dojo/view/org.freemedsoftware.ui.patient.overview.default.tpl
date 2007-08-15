@@ -29,6 +29,6 @@
 <br clear="all" />
 <!--{include file="org.freemedsoftware.widget.photoid.tpl" patient=$patient}-->
 <br clear="all" />
-<!--{include file="org.freemedsoftware.widget.patientreferrals.tpl" patient=$patient}-->
+<!--{include file="org.freemedsoftware.widget.patienttasks.tpl" patient=$patient}-->
 </td></tr></table>
 

@@ -108,6 +108,30 @@ class PatientCoverages extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
+	// Method: GetCoverages
+	//
+	//	Get list of coverages for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//	$asof - (optional) As of a particular date of effectiveness.
+	//
+	// Returns:
+	//
+	//	Array of arrays, [ coverage description, id ]
+	//
+	public function GetCoverages ( $patient, $asof = NULL ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$q = "SELECT CONCAT( '[', c.covrel, '] ', i.insconame, ' / ', c.coveffdt ) AS k, c.id AS v FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient ). ( $asof != NULL ? " AND c.coveffdt <= ".$GLOBALS['sql']->quote( $s->ImportDate( $asof ) ) : '' )." ORDER BY c.covstatus DESC";
+		$r = $GLOBALS['sql']->queryAll( $q );
+		foreach ( $r AS $row ) {
+			$res[] = array ( $row['k'], $row['v'] );
+		}
+		return $res;
+	} // end method GetCoverages
+
 	// Method: RemoveOldCoverage
 	//
 	//	Move old coverage to deleted status.
