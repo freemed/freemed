@@ -93,6 +93,11 @@
 		<td><input type="text" id="phfax" name="phfax" size="20" /></td>
 	</tr>
 
+	<tr>
+		<td><!--{t}-->Email<!--{/t}--></td>
+		<td><input dojoType="EmailTextbox" type="text" id="phemail" name="phemail" size="45" /></td>
+	</tr>
+
 </table>
 <!--{/assign_block}-->
 

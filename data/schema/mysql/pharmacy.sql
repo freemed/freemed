@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS `pharmacy` (
 	phcity			VARCHAR (150) NOT NULL,
 	phstate			CHAR (3) NOT NULL,
 	phzip			VARCHAR (10) NOT NULL,
+	phfax			CHAR (16),
+	phemail			VARCHAR (100),
 	phmethod		VARCHAR (150) NOT NULL,
 	id			SERIAL,
 
@@ -34,4 +36,25 @@ CREATE TABLE IF NOT EXISTS `pharmacy` (
 
 	KEY			( phname, phcity, phstate )
 );
+
+DROP PROCEDURE IF EXISTS pharmacy_Upgrade;
+DELIMITER //
+CREATE PROCEDURE pharmacy_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+	CALL FreeMED_Module_GetVersion( 'pharmacy', @V );
+
+	# Version 1
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE pharmacy ADD COLUMN phfax CHAR (16) AFTER phzip;
+		ALTER IGNORE TABLE pharmacy ADD COLUMN phemail VARCHAR (100) AFTER phfax;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'pharmacy', 1 );
+END
+//
+DELIMITER ;
+CALL pharmacy_Upgrade( );
 
