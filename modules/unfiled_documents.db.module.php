@@ -165,7 +165,8 @@ class UnfiledDocuments extends SupportModule {
 					"imagedesc" => $data['note'],
 					"imagephy" => $data['physician'],
 					"imagetext" => $data['text'],
-					"imagereviewed" => 0
+					"imagereviewed" => 0,
+					"user" => freemed::user_cache()->user_number
 				)
 			));
 			$new_id = $GLOBALS['sql']->lastInsertID( 'images', 'id' );
@@ -211,7 +212,8 @@ class UnfiledDocuments extends SupportModule {
 					"urfpatient" => $data['patient'],
 					"urfphysician" => $data['physician'],
 					"urftype" => $data['category'],
-					"urfnote" => $data['note']
+					"urfnote" => $data['note'],
+					"user" => freemed::user_cache()->user_number
 				)
 			));
 		}

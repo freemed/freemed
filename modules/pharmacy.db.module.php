@@ -45,6 +45,7 @@ class Pharmacy extends SupportModule {
 		'phstpr',
 		'phzip',
 		'phfax',
+		'phemail',
 		'phmethod'
 	);
 
