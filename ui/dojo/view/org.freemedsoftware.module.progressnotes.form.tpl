@@ -155,7 +155,7 @@
 						var w = dojo.widget.createWidget( 'dojo:Editor2', {
 							id: myId + '_editor',
 							widgetId: myId + '_editor',
-							height: '300',
+							height: '95%',
 							shareToolbar: false
 						}, dojo.byId( myId + '_container' ));
 						w.contentSource = myId + '_value';
