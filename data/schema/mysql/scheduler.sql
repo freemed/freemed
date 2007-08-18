@@ -142,3 +142,94 @@ CREATE TRIGGER scheduler_Update
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS schedulerGenerateDailySchedule;
+
+DELIMITER //
+
+# Procedure: schedulerGenerateDailySchedule
+#
+#	Create a full appointment scheduler for a date, including
+#	slots which are not filled by appointments.
+#
+# Parameters:
+#
+#	dt - Scheduler date ( DATE )
+#
+#	hStart - Starting scheduler hour ( INT UNSIGNED )
+#
+#	hEnd - Ending scheduler hour ( INT UNSIGNED )
+#
+#	ival - Interval in minutes between slots ( INT UNSIGNED )
+#
+#	prov - (optional) Provider id number or 0 ( INT UNSIGNED )
+#
+CREATE PROCEDURE schedulerGenerateDailySchedule (
+	  IN dt DATE
+	, IN hStart INT UNSIGNED
+	, IN hEnd INT UNSIGNED
+	, IN ival INT UNSIGNED
+	, IN prov INT UNSIGNED
+)
+BEGIN
+	DECLARE i, dTime TIME;
+	DECLARE dLoop INT;
+
+	-- Create cursor for scheduler events --
+	DECLARE done BOOL DEFAULT FALSE;
+	DECLARE tI, tH, tM, tD, tP INT;
+	DECLARE tT ENUM ( 'pat', 'temp', 'block' );
+	DECLARE tN VARCHAR (250);
+	DECLARE cur CURSOR FOR SELECT c.id, calhour, calminute, calduration, CONCAT( ptlname, ' ', ptfname, ' ', ptmname, ' [', ptid, ']' ), calphysician, caltype FROM scheduler c LEFT OUTER JOIN patient p ON c.calpatient = p.id WHERE caldateof = dt AND calhour >= hStart AND calhour < hEnd;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = TRUE;
+
+	-- Create blank scheduler --
+	DROP TEMPORARY TABLE IF EXISTS schedTable;
+	CREATE TEMPORARY TABLE schedTable (
+		  h INT
+		, m INT
+		, type ENUM ( 'pat', 'temp', 'block' ) NOT NULL
+		, cont BOOL DEFAULT FALSE
+		, id INT UNSIGNED DEFAULT 0
+		, descrip VARCHAR (250) DEFAULT ''
+	);
+	SET i := MAKETIME( hStart, 0, 0 );
+	WHILE TIME_TO_SEC( i ) < TIME_TO_SEC( MAKETIME( hEnd, 0, 0 ) ) DO
+		INSERT INTO schedTable ( h, m ) VALUES ( HOUR( i ), MINUTE( i ) );
+		SET i = SEC_TO_TIME( TIME_TO_SEC( i ) + ( ival * 60 ) );
+	END WHILE;
+
+	-- Get scheduler entries --
+	OPEN cur;
+	WHILE NOT done DO
+		FETCH cur INTO tI, tH, tM, tD, tN, tP, tT;
+		IF ( prov = 0 OR ( prov > 0 AND ( tP = prov ) ) ) THEN
+			-- Create initial entry --
+			UPDATE schedTable SET id = tI, descrip = tN, type = tT WHERE h = tH AND m = tM;
+			-- If duration is more than interval, handle con't --
+			SET dTime = MAKETIME( tH, tM, 0 );
+			IF tD > ival THEN
+				SET dLoop = tD - ival;
+				WHILE ( dLoop >= ival ) DO
+					-- Determine temporary time increase --
+					SET dTime = SEC_TO_TIME( TIME_TO_SEC( dTime ) + ( ival * 60  ) );
+					-- Insert "continuation" entry --
+					UPDATE schedTable SET id = tI, descrip = CONCAT( tN, " (con't)" ), type = tT, cont = TRUE WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
+
+					-- Decrease amount left for next iteration --
+					SET dLoop = dLoop - ival;
+				END WHILE;
+			END IF;
+		END IF;
+	END WHILE;
+	CLOSE cur;
+
+	-- Output --
+	SELECT * FROM schedTable;
+
+	-- Cleanup --
+	DROP TEMPORARY TABLE schedTable;
+END;
+//
+
+DELIMITER ;
+
