@@ -78,11 +78,9 @@
 					// Populate with entries from relay
 					for( var i in d ) {
 						var sDate = sched.mdyToDate( d[i].date_of_mdy );
-						var eDate = sched.mdyToDate( d[i].date_of_mdy );
 						sDate.setHours( d[i].hour );
 						sDate.setMinutes( d[i].minute );
-						eDate.setHours( d[i].hour );
-						eDate.setMinutes( d[i].minute );
+						var eDate = new Date( sDate.getTime() + ( d[i].duration * 60 * 1000 ) );
 						entries[ 'appt_' + d[i].scheduler_id ] = {
 							starttime: dojo.date.toRfc3339( sDate ),
 							endtime: dojo.date.toRfc3339( eDate ),
