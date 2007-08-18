@@ -176,10 +176,10 @@ BEGIN
 
 	-- Create cursor for scheduler events --
 	DECLARE done BOOL DEFAULT FALSE;
-	DECLARE tI, tH, tM, tD, tP INT;
+	DECLARE tI, tH, tM, tD, tP, tPat INT;
 	DECLARE tT ENUM ( 'pat', 'temp', 'block' );
 	DECLARE tN VARCHAR (250);
-	DECLARE cur CURSOR FOR SELECT c.id, calhour, calminute, calduration, CONCAT( ptlname, ' ', ptfname, ' ', ptmname, ' [', ptid, ']' ), calphysician, caltype FROM scheduler c LEFT OUTER JOIN patient p ON c.calpatient = p.id WHERE caldateof = dt AND calhour >= hStart AND calhour < hEnd;
+	DECLARE cur CURSOR FOR SELECT c.id, c.calhour, c.calminute, c.calduration, c.calphysician, c.caltype, CASE c.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) ELSE CONCAT(p.ptlname, ', ', p.ptfname, ' (', p.ptid, ')') END, c.calpatient FROM scheduler c LEFT OUTER JOIN patient p ON c.calpatient = p.id LEFT OUTER JOIN callin ci ON c.calpatient = ci.id LEFT OUTER JOIN scheduler_status ss ON c.id = ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id = ss.csstatus LEFT OUTER JOIN physician ph ON c.calphysician = ph.id WHERE caldateof = dt AND calhour >= hStart AND calhour < hEnd;
 	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = TRUE;
 
 	-- Create blank scheduler --
@@ -190,7 +190,9 @@ BEGIN
 		, type ENUM ( 'pat', 'temp', 'block' ) NOT NULL
 		, cont BOOL DEFAULT FALSE
 		, id INT UNSIGNED DEFAULT 0
+		, patient_id INT UNSIGNED DEFAULT 0
 		, descrip VARCHAR (250) DEFAULT ''
+		, duration INT UNSIGNED DEFAULT 0
 	);
 	SET i := MAKETIME( hStart, 0, 0 );
 	WHILE TIME_TO_SEC( i ) < TIME_TO_SEC( MAKETIME( hEnd, 0, 0 ) ) DO
@@ -201,10 +203,10 @@ BEGIN
 	-- Get scheduler entries --
 	OPEN cur;
 	WHILE NOT done DO
-		FETCH cur INTO tI, tH, tM, tD, tN, tP, tT;
+		FETCH cur INTO tI, tH, tM, tD, tP, tT, tN, tPat;
 		IF ( prov = 0 OR ( prov > 0 AND ( tP = prov ) ) ) THEN
 			-- Create initial entry --
-			UPDATE schedTable SET id = tI, descrip = tN, type = tT WHERE h = tH AND m = tM;
+			UPDATE schedTable SET id = tI, descrip = tN, type = tT, patient_id = tPat, duration = tD WHERE h = tH AND m = tM;
 			-- If duration is more than interval, handle con't --
 			SET dTime = MAKETIME( tH, tM, 0 );
 			IF tD > ival THEN
@@ -213,7 +215,7 @@ BEGIN
 					-- Determine temporary time increase --
 					SET dTime = SEC_TO_TIME( TIME_TO_SEC( dTime ) + ( ival * 60  ) );
 					-- Insert "continuation" entry --
-					UPDATE schedTable SET id = tI, descrip = CONCAT( tN, " (con't)" ), type = tT, cont = TRUE WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
+					UPDATE schedTable SET id = tI, descrip = CONCAT( tN, " (con't)" ), type = tT, cont = TRUE, patient_id = tPat WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
 
 					-- Decrease amount left for next iteration --
 					SET dLoop = dLoop - ival;
