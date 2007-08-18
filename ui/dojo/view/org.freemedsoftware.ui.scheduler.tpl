@@ -102,28 +102,43 @@
 				mimetype: 'text/json'
 			});
 		},
-		widgetEventChanged: function (eventId,eventObject){
-			var sReturn = "id " + eventId + "=\n";
-			for(var i in eventObject){
-				if(typeof(eventObject[i]) != "object"){
-					sReturn += i + " = " + eventObject[i] + "\n";
-				}else{
-					oChildObject = eventObject[i];
-					var sChildReturn = "";
-					var iNum = 0;
-					for(var j in oChildObject){
-						if(iNum > 0){
-							sChildReturn += ", ";
-						}
-						sChildReturn += j + ": " + oChildObject[j];
-						iNum++;
-					}
-					sReturn += i + " = " + sChildReturn + "\n";
-				}
+		widgetEventChanged: function ( eventId,eventObject ){
+			var apptId = eventId.replace( 'appt_', '' );
+
+			// Get start date
+			var sDate = eventObject.starttime.substring( 0, 10 );
+
+			// Start time
+			var sHour = eventObject.starttime.substr( 11, 2 );
+			var sMinute = eventObject.starttime.substr( 14, 2 );
+
+			// Figure duration
+			var duration = dojo.date.fromRfc3339(eventObject.endtime).getTime() - dojo.date.fromRfc3339(eventObject.starttime).getTime();
+			if ( duration < 1000 ) {
+				alert( "<!--{t}-->You must select a valid appointment duration.<!--{/t}-->" );
+				return false;
 			}
-			//alert(sReturn);
-			//Call script to update back-end db
-			oCalendar.refreshScreen();
+			duration = duration / 60000;
+
+			dojo.io.bind({
+				method: 'POST',
+				url: "<!--{$relay}-->/org.freemedsoftware.api.Scheduler.MoveAppointment",
+				content: {
+					param0: apptId,
+					param1: {
+						id: apptId,
+						caldateof: sDate,
+						calhour: parseInt( sHour ),
+						calminute: parseInt( sMinute ),
+						calduration: duration
+					}
+				},
+				load: function ( type, data, evt ) {
+					//Call script to update back-end db
+					oCalendar.refreshScreen();
+				},
+				mimetype: 'text/json'
+			});
 		},
 
 		mdyToDate: function ( mdy ) {
