@@ -88,7 +88,7 @@
 							endtime: dojo.date.toRfc3339( eDate ),
 							allday: false,
 							repeated: false,
-							title: d[i].patient ? ( d[i].patient + (d[i].note ? ' - <i>' + d[i].note + '</i>' : '' ) ) : "<!--{t}-->NON PATIENT APPOINTMENT<!--{/t}-->",
+							title: ( d[i].patient ? ( d[i].patient + (d[i].note ? ' - <i>' + d[i].note + '</i>' : '' ) ) : "<!--{t}-->NON PATIENT APPOINTMENT<!--{/t}-->" ) + ' [' + d[i].duration + 'm]',
 							code: d[i].patient_id ? "freemedLoad('org.freemedsoftware.ui.patient.overview?patient=" + d[i].patient_id + "');" : '',
 							url: '',
 							body: d[i].note,
