@@ -66,6 +66,7 @@
 						for ( var i=0; i<data.length; i++) {
 							if ( parseInt( data[i].cont ) == 1 ) { data[i].appointment_time = ''; }
 							if ( parseInt( data[i].duration ) == 0 ) { data[i].duration = ''; }
+							if ( data[i].resource_type.match('block') ) { data[i].duration = ''; }
 							if ( data[i].status_color ) {
 								var s = data[i].status;
 								data[i].status='<div style="width: 100%; background-color: ' + data[i].status_color + '; color: #999999; text-align: center;" >' + s + '</div>';	
@@ -128,6 +129,10 @@
 		viewPatient: function ( ) {
 			try {
 				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
+				if ( parseInt( s.patient_id ) < 1 ) {
+					alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+					return false;
+				}
 				freemedLoad( 'org.freemedsoftware.controller.patient.overview?patient=' + s.patient_id );
 			} catch (err) {
 				alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
@@ -153,6 +158,10 @@
 		moveAppt: function ( ) {
 			try {
 				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
+				if ( parseInt( s.scheduler_id ) < 1 ) {
+					alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+					return false;
+				}
 				freemedLoad( "org.freemedsoftware.ui.scheduler.book?patient=" + s.patient_id + "&id=" + s.scheduler_id );
 			} catch ( err ) {
 				// Nothing selected, reset

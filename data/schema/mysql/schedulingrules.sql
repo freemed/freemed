@@ -94,3 +94,51 @@ END
 //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS checkSchedulingRulesInternal;
+DELIMITER //
+CREATE PROCEDURE checkSchedulingRulesInternal ( IN pat INT UNSIGNED, IN phy INT UNSIGNED, IN dt DATE, IN tm TIME, OUT reason TEXT )
+BEGIN
+	DECLARE ptstatus INT UNSIGNED;
+
+	IF pat > 0 THEN
+		#	Figure out patient status
+		SELECT
+			COUNT(*) INTO ptstatus
+		FROM scheduler s
+		WHERE
+			s.caldateof < dt AND
+			s.calpatient = pat AND
+			s.caltype = 'pat' AND
+			s.calstatus != 'cancelled';
+	END IF;
+
+	SELECT
+		GROUP_CONCAT( s.reason SEPARATOR ', ' ) INTO reason
+	FROM schedulingrules s
+	WHERE
+		#	Provider rules
+		( FIND_IN_SET( phy, s.provider ) OR s.provider = phy OR s.provider = 0 OR ISNULL(s.provider) ) 
+		AND (
+			#	Handle no patient status
+			ISNULL( s.newpatient )
+			#	Handle new patients only
+			OR ( s.newpatient = TRUE AND ptstatus > 0 )
+			#	Handle no new patients only
+			OR ( s.newpatient = FALSE AND ptstatus = 0 )
+		) AND (
+			#	Only day of week range, no actual dates or times
+			( ISNULL(s.datebegin) AND ISNULL(s.timebegin) AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
+			#	Full date ranges ( times are null ), no DOW
+			OR ( ISNULL(s.dowbegin) AND ISNULL(s.timebegin) AND dt >= s.datebegin AND dt <= s.dateend )
+			#	Full date ranges ( times are null ), with day of week
+			OR ( ISNULL(s.timebegin) AND dt >= s.datebegin AND dt <= s.dateend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
+			#	Date range, but within dates, no DOW
+			OR ( ISNULL(s.dowbegin) AND tm >= s.timebegin AND tm <= s.timeend AND dt >= s.datebegin AND dt <= s.dateend )
+			#	Date range, but within dates
+			OR ( tm >= s.timebegin AND tm <= s.timeend AND dt >= s.datebegin AND dt <= s.dateend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
+		)
+	;
+END
+//
+DELIMITER ;
+

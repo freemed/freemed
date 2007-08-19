@@ -23,6 +23,7 @@
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/workflow_status.sql
+SOURCE data/schema/mysql/schedulingrules.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler` (
 	caldateof		DATE,
@@ -46,11 +47,11 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calrecurid		INT UNSIGNED NOT NULL DEFAULT 0,
 	calappttemplate		INT UNSIGNED NOT NULL DEFAULT 0,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			SERIAL,
+	id			SERIAL
 
 	# Define keys
 
-	KEY			( caldateof, calhour, calminute )
+	, KEY			( caldateof, calhour, calminute )
 	, KEY			( calpatient )
 );
 
@@ -176,6 +177,7 @@ BEGIN
 
 	-- Create cursor for scheduler events --
 	DECLARE done BOOL DEFAULT FALSE;
+	DECLARE block TEXT;
 	DECLARE tI, tH, tM, tD, tP, tPat INT;
 	DECLARE tT ENUM ( 'pat', 'temp', 'block' );
 	DECLARE tN, tPatName VARCHAR (250);
@@ -202,11 +204,30 @@ BEGIN
 	);
 	SET i := MAKETIME( hStart, 0, 0 );
 	WHILE TIME_TO_SEC( i ) < TIME_TO_SEC( MAKETIME( hEnd, 0, 0 ) ) DO
+		-- Create blank entry --
 		INSERT INTO schedTable ( apptTime, h, m ) VALUES (
 			  CONCAT( LPAD(HOUR(i),2,'0'), ':', LPAD(MINUTE(i),2,'0') )
 			, HOUR( i )
 			, MINUTE( i )
 		);
+
+		-- Check for provider blocking --
+		CALL checkSchedulingRulesInternal(
+			  0
+			, IFNULL( prov, 0 )
+			, dt
+			, i
+			, block
+		);
+		IF NOT ISNULL( block ) THEN
+			UPDATE schedTable SET
+				note = block,
+				type = 'block',
+				duration = ival
+			WHERE h = HOUR( i ) AND m = MINUTE( i );
+		END IF;
+
+		-- Increment to next time slot --
 		SET i = SEC_TO_TIME( TIME_TO_SEC( i ) + ( ival * 60 ) );
 	END WHILE;
 
