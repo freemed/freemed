@@ -206,7 +206,7 @@ class PatientInterface {
 				break;
 
 				case 'age':
-				if ($v) { $c[] = "CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) = ".$GLOBALS['sql']->quote($v+0); }
+				if ($v) { $c[] = "FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) = ".$GLOBALS['sql']->quote($v+0); }
 				break;
 
 				default: break;
@@ -216,7 +216,7 @@ class PatientInterface {
 		// Only look for 
 		if ( !isset( $criteria['archive'] ) ) { $c[] = "p.ptarchive = 0"; }
 
-		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p WHERE ".join(' AND ', $c)." ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
+		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p WHERE ".join(' AND ', $c)." ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method Search
 
@@ -240,7 +240,7 @@ class PatientInterface {
 	//	* csz
 	//
 	public function PatientInformation( $id ) {
-		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, CAST( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 AS UNSIGNED INTEGER) AS age, CONCAT( p.ptcity, ', ', p.ptstate, ' ', p.ptzip ) AS csz, p.* FROM patient p WHERE p.id = " . ( $id + 0 );
+		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) AS age, CONCAT( p.ptcity, ', ', p.ptstate, ' ', p.ptzip ) AS csz, p.* FROM patient p WHERE p.id = " . ( $id + 0 );
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation
 
