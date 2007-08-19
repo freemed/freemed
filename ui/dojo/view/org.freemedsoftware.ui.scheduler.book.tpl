@@ -99,19 +99,26 @@
 				method: 'POST',
 				content: {
 					param0: d,
-					param1: p ? p : ''
+					param1: p ? p : 0
 				},
-				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointments',
-				error: function() { },
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointmentScheduler',
+				error: function( ) { },
 				load: function( type, data, evt ) {
 					if (data) {
-					for ( var i=0; i<data.length; i++) {
-						if ( data[i].status_color ) {
+						for ( var i=0; i<data.length; i++) {
+							if ( parseInt( data[i].cont ) == 1 ) { data[i].appointment_time = ''; }
+							if ( parseInt( data[i].duration ) == 0 ) { data[i].duration = ''; }
+							if ( data[i].resource_type.match('block') ) { data[i].duration = ''; }
+							if ( data[i].status_color ) {
 								var s = data[i].status;
 								data[i].status='<div style="width: 100%; background-color: ' + data[i].status_color + '; color: #999999; text-align: center;" >' + s + '</div>';
 							}
 						}
-					dojo.widget.byId( 'datePreviewFilteringTable' ).store.setData( data );
+						var w = dojo.widget.byId( 'datePreviewFilteringTable' );
+						w.sortInformation = [];
+						w.sortInformation.push({index:'hour',direction:0});
+						w.sortInformation.push({index:'minute',direction:0});
+						w.store.setData( data );
 					}
 				},
 				mimetype: 'text/json'
@@ -262,15 +269,15 @@
 	<table dojoType="FilteringTable" id="datePreviewFilteringTable" widgetId="datePreviewFilteringTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="scheduler_id" border="0" multiple="false">
 	<thead>
 		<tr>
-			<th field="appointment_time" dataType="String"><!--{t}-->Time<!--{/t}--></th>
-			<th field="duration" dataType="String"><!--{t}-->Duration<!--{/t}--></th>
-			<th field="patient" dataType="String"><!--{t}-->Patient<!--{/t}--></th>
-			<th field="provider" dataType="String"><!--{t}-->Provider<!--{/t}--></th>
-			<th field="status" dataType="Html"><!--{t}-->Status<!--{/t}--></th>
-			<th field="note" dataType="String"><!--{t}-->Note<!--{/t}--></th>
+			<th field="appointment_time" dataType="String" noSort="true"><!--{t}-->Time<!--{/t}--></th>
+			<th field="duration" dataType="String" noSort="true"><!--{t}-->Duration<!--{/t}--></th>
+			<th field="patient" dataType="String" noSort="true"><!--{t}-->Patient<!--{/t}--></th>
+			<th field="provider" dataType="String" noSort="true"><!--{t}-->Provider<!--{/t}--></th>
+			<th field="status" dataType="Html" noSort="true"><!--{t}-->Status<!--{/t}--></th>
+			<th field="note" dataType="String" noSort="true"><!--{t}-->Note<!--{/t}--></th>
 		</tr>
 	</thead>
-	<tbody></tbody>
+	<tbody style="height: 95%; overflow: auto;"></tbody>
 	</table>
 </div>
 
