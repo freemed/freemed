@@ -56,20 +56,25 @@
 				method: 'POST',
 				content: {
 					param0: date,
-					param1: o.limitStatus ? '<!--{$SESSION.authdata.user_record.userrealphy}-->' : ''
+					param1: o.limitStatus ? '<!--{$SESSION.authdata.user_record.userrealphy}-->' : 0
 	
 				},
-				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointments',
+				url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.api.Scheduler.GetDailyAppointmentScheduler',
 				error: function() { },
 				load: function( type, data, evt ) {
 					if (data) {
 						for ( var i=0; i<data.length; i++) {
+							if ( parseInt( data[i].duration ) == 0 ) { data[i].duration = ''; }
 							if ( data[i].status_color ) {
 								var s = data[i].status;
 								data[i].status='<div style="width: 100%; background-color: ' + data[i].status_color + '; color: #999999; text-align: center;" >' + s + '</div>';	
 							}
 						}
-						dojo.widget.byId('dailyPatientAppointments').store.setData( data );
+						var w = dojo.widget.byId('dailyPatientAppointments');
+						w.sortInformation = [];
+						w.sortInformation.push({index:'hour',direction:0});
+						w.sortInformation.push({index:'minute',direction:0});
+						w.store.setData( data );
 					}
 				},
 				mimetype: "text/json"
@@ -248,7 +253,7 @@
 </table>
 </div>
 
-<div class="tableContainer">
+<div class="tableContainer" style="height: 90%; overflow: auto;">
 	<table dojoType="FilteringTable" id="dailyPatientAppointments" widgetId="dailyPatientAppointments" headClass="fixedHeader"
 	 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
 	 valueField="scheduler_id" border="0" multiple="false">

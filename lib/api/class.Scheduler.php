@@ -154,6 +154,40 @@ class Scheduler {
 		return $GLOBALS['sql']->queryAll ( $query );
 	} // end method GetDailyAppointmentsRange
 
+	// Method: GetDailyAppointmentScheduler
+	//
+	//	Return daily appointment schedule for the specified date, with
+	//	blank areas and block booking.
+	//
+	// Parameters:
+	//
+	//	$dt - Date
+	//
+	//	$provider - (optional) Provider number
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//	* scheduler_id
+	//	* patient
+	//	* patient_id
+	//	* provider
+	//	* provider_id
+	//	* note
+	//	* hour
+	//	* minute
+	//	* appointment_time
+	//	* duration
+	//	* status
+	//	* status_color
+	//	* resource_type ( pat, temp, block )
+	//
+	public function GetDailyAppointmentScheduler( $dt, $provider = 0 ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $s->ImportDate( $dt ) ).", 8, 16, 5, ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
+		return $GLOBALS['sql']->queryAllStoredProc( $q );
+	} // end method GetDailyAppointmentScheduler
+
 	// Method: CopyAppointment
 	//
 	//	Copy the given appointment to a specified date
