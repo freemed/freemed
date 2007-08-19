@@ -184,7 +184,7 @@ class Scheduler {
 	//
 	public function GetDailyAppointmentScheduler( $dt, $provider = 0 ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $s->ImportDate( $dt ) ).", 8, 16, 5, ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
+		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $s->ImportDate( $dt ) ).", ".$GLOBALS['sql']->quote( freemed::config_value('calshr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calehr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calinterval') ).", ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
 		return $GLOBALS['sql']->queryAllStoredProc( $q );
 	} // end method GetDailyAppointmentScheduler
 

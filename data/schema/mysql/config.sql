@@ -110,3 +110,30 @@ CALL config_Register (
 	''
 );
 
+CALL config_Register (
+	'calshr',
+	'8',
+	'Scheduler Begin Hour',
+	'Scheduler',
+	'Select',
+	'4,5,6,7,8,9,10,11,12,13,14,15,16,17,18'
+);
+
+CALL config_Register (
+	'calehr',
+	'16',
+	'Scheduler End Hour',
+	'Scheduler',
+	'Select',
+	'10,11,12,13,14,15,16,17,18,19,20,21,22,23'
+);
+
+CALL config_Register (
+	'calinterval',
+	'15',
+	'Scheduling Interval',
+	'Scheduler',
+	'Select',
+	'5,10,15,20,30'
+);
+
