@@ -39,7 +39,13 @@
 		dataStore: [],
 		clickHandler: function ( evt ) {
 			var x = this.id.replace( 'patient_task_', '' );
-			alert( 'TODO: handle for id = ' + id );
+			var item;
+			for (var i=0; i<t.dataStore.length; i++) {
+				if ( t.dataStore[i].id == parseInt( x ) ) {
+					item = t.dataStore[i];
+				}
+			}
+			freemedPatientContentLoad( 'org.freemedsoftware.module.' + item.module + '.form?patient=<!--{$patient|escape}-->&id=' + item.oid );
 		},
 		initialLoad: function ( ) {
 			dojo.io.bind({
@@ -81,7 +87,7 @@
 							bBr.appendChild( bBd[0] );
 
 							bBd[1] = document.createElement( 'td' );
-							bBd[1].innerHTML = data[i].module;
+							bBd[1].innerHTML = data[i].module_name;
 							bBr.appendChild( bBd[1] );
 
 							bBr.id = 'patient_task_' + data[i].id;
