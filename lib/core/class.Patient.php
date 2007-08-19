@@ -177,7 +177,9 @@ class Patient {
 				( strlen($this->ptmname) == 1 ? ". " : " " ).
 				$this->_fixcaps($this->ptlname);
 		} else {
-			return $this->_fixcaps($this->ptlname).", ".
+			return $this->_fixcaps($this->ptlname).
+				( $this->local_record['ptsuffix'] ? " ".$this->local_record['ptsuffix'] : '' ).
+				", ".
 				$this->_fixcaps($this->ptfname)." ".
 				$this->_fixcaps($this->ptmname).
 				" [ ".$this->ptdob." ] ";
@@ -193,9 +195,12 @@ class Patient {
 	//	Textual representation of record.
 	//
 	function to_text ( ) {
-		return $this->_fixcaps($this->ptlname).", ".
+		return
+			$this->_fixcaps($this->ptlname).
+			( $this->local_record['ptsuffix'] ? " ".$this->local_record['ptsuffix'] : '' ).
+			", ".
 			$this->_fixcaps($this->ptfname)." ".
-			$this->_fixcaps($this->ptmname).
+			$this->_fixcaps($this->ptmname)." ".
 			" [ ".$this->ptdob." ] ".
 			$this->ptid;
 	} // end method to_text
