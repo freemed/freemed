@@ -64,6 +64,7 @@
 				load: function( type, data, evt ) {
 					if (data) {
 						for ( var i=0; i<data.length; i++) {
+							if ( parseInt( data[i].cont ) == 1 ) { data[i].appointment_time = ''; }
 							if ( parseInt( data[i].duration ) == 0 ) { data[i].duration = ''; }
 							if ( data[i].status_color ) {
 								var s = data[i].status;
@@ -259,12 +260,12 @@
 	 valueField="scheduler_id" border="0" multiple="false">
 	<thead>
 		<tr>
-			<th field="appointment_time" dataType="String"><!--{t}-->Time<!--{/t}--></th>
-			<th field="duration" dataType="String"><!--{t}-->Duration<!--{/t}--></th>
-			<th field="patient" dataType="String"><!--{t}-->Patient<!--{/t}--></th>
-			<th field="provider" dataType="String"><!--{t}-->Provider<!--{/t}--></th>
-			<th field="status" dataType="Html"><!--{t}-->Status<!--{/t}--></th>
-			<th field="note" dataType="String"><!--{t}-->Note<!--{/t}--></th>
+			<th field="appointment_time" dataType="String" noSort="true"><!--{t}-->Time<!--{/t}--></th>
+			<th field="duration" dataType="String" noSort="true"><!--{t}-->Duration<!--{/t}--></th>
+			<th field="patient" dataType="String" noSort="true"><!--{t}-->Patient<!--{/t}--></th>
+			<th field="provider" dataType="String" noSort="true"><!--{t}-->Provider<!--{/t}--></th>
+			<th field="status" dataType="Html" noSort="true"><!--{t}-->Status<!--{/t}--></th>
+			<th field="note" dataType="String" noSort="true"><!--{t}-->Note<!--{/t}--></th>
 		</tr>
 	</thead>
 	<tbody>

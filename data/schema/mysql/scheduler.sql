@@ -172,7 +172,7 @@ CREATE PROCEDURE schedulerGenerateDailySchedule (
 )
 BEGIN
 	DECLARE i, dTime TIME;
-	DECLARE f, dLoop INT;
+	DECLARE f, dLoop, c INT;
 
 	-- Create cursor for scheduler events --
 	DECLARE done BOOL DEFAULT FALSE;
@@ -214,37 +214,41 @@ BEGIN
 	OPEN cur;
 	WHILE NOT done DO
 		FETCH cur INTO tI, tH, tM, tD, tP, tT, tPatName, tPat, tN, tStatus, tStatusColor;
-		IF ( prov = 0 OR ( prov > 0 AND ( tP = prov ) ) ) THEN
-			-- Create initial entry --
-			SELECT id INTO f FROM schedTable WHERE h = tH AND m = tM LIMIT 1;
-			IF f > 0 THEN
-				-- Insert overbooking value --
-				INSERT INTO schedTable ( apptTime, h, m, id, note, type, patient, patient_id, duration, status, status_color ) VALUES ( CONCAT( LPAD(tH,2,'0'), ':', LPAD(tM,2,'0') ), tH, tM, tI, tN, tT, tPatName, tPat, tD, tStatus, tStatusColor );
-			ELSE
-				-- Update existing entry --
-				UPDATE schedTable SET id = tI, note = tN, type = tT, patient = tPatName, patient_id = tPat, duration = tD, status = tStatus, status_color = tStatusColor WHERE h = tH AND m = tM;
-			END IF;
-
-			-- If duration is more than interval, handle con't --
-			SET dTime = MAKETIME( tH, tM, 0 );
-			IF tD > ival THEN
-				SET dLoop = tD - ival;
-				WHILE ( dLoop >= ival ) DO
-					-- Determine temporary time increase --
-					SET dTime = SEC_TO_TIME( TIME_TO_SEC( dTime ) + ( ival * 60  ) );
-					-- Insert "continuation" entry --
-					SELECT id INTO f FROM schedTable WHERE h = HOUR( dTime ) AND m = MINUTE( dTime ) LIMIT 1;
-					IF f > 0 THEN
-						-- Insert overbooking value --
-						INSERT INTO schedTable ( apptTime, h, m, id, note, type, patient, patient_id, status, status_color ) VALUES ( CONCAT( LPAD(HOUR(dTime),2,'0'), ':', LPAD(MINUTE(dTime),2,'0') ), HOUR( dTime ), MINUTE( dTime ), tI, tN, tT, CONCAT( tPatName, " (con't)"), tPat, tStatus, tStatusColor );
-					ELSE
-						-- Update existing entry --
-						UPDATE schedTable SET id = tI, note = tN, patient = CONCAT( tPatName, " (con't)" ), type = tT, cont = TRUE, patient_id = tPat WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
-					END IF;
-
-					-- Decrease amount left for next iteration --
-					SET dLoop = dLoop - ival;
-				END WHILE;
+		-- Make sure we don't process twice for any reason --
+		SELECT COUNT(*) INTO c FROM schedTable WHERE id = tI;
+		IF c < 1 THEN
+			IF ( prov = 0 OR ( prov > 0 AND ( tP = prov ) ) ) THEN
+				-- Create initial entry --
+				SELECT id INTO f FROM schedTable WHERE h = tH AND m = tM LIMIT 1;
+				IF f > 0 THEN
+					-- Insert overbooking value --
+					INSERT INTO schedTable ( apptTime, h, m, id, note, type, patient, patient_id, duration, status, status_color, cont ) VALUES ( CONCAT( LPAD(tH,2,'0'), ':', LPAD(tM,2,'0') ), tH, tM, tI, tN, tT, tPatName, tPat, tD, tStatus, tStatusColor, TRUE );
+				ELSE
+					-- Update existing entry --
+					UPDATE schedTable SET id = tI, note = tN, type = tT, patient = tPatName, patient_id = tPat, duration = tD, status = tStatus, status_color = tStatusColor WHERE h = tH AND m = tM;
+				END IF;
+	
+				-- If duration is more than interval, handle con't --
+				SET dTime = MAKETIME( tH, tM, 0 );
+				IF tD > ival THEN
+					SET dLoop = tD - ival;
+					WHILE ( dLoop >= ival ) DO
+						-- Determine temporary time increase --
+						SET dTime = SEC_TO_TIME( TIME_TO_SEC( dTime ) + ( ival * 60  ) );
+						-- Insert "continuation" entry --
+						SELECT id INTO f FROM schedTable WHERE h = HOUR( dTime ) AND m = MINUTE( dTime ) LIMIT 1;
+						IF f > 0 THEN
+							-- Insert overbooking value --
+							INSERT INTO schedTable ( apptTime, h, m, id, note, type, patient, patient_id, status, status_color, cont ) VALUES ( CONCAT( LPAD(HOUR(dTime),2,'0'), ':', LPAD(MINUTE(dTime),2,'0') ), HOUR( dTime ), MINUTE( dTime ), tI, tN, tT, CONCAT( tPatName, " (con't)"), tPat, tStatus, tStatusColor, TRUE );
+						ELSE
+							-- Update existing entry --
+							UPDATE schedTable SET id = tI, note = tN, patient = CONCAT( tPatName, " (con't)" ), type = tT, cont = FALSE, patient_id = tPat WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
+						END IF;
+	
+						-- Decrease amount left for next iteration --
+						SET dLoop = dLoop - ival;
+					END WHILE;
+				END IF;
 			END IF;
 		END IF;
 	END WHILE;
