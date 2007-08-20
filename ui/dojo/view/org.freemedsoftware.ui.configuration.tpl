@@ -61,6 +61,17 @@
 				tD2.appendChild( widget );
 				break;
 
+				case 'Select': 
+				var widget = document.createElement( 'select' );
+				widget.id = item.c_option;
+				widget.options.length = 0;
+				for ( var t=0; t<item.options.length; t++ ) {
+					widget.options[widget.options.length] = new Option( item.options[t], item.options[t] );
+				}
+				try { widget.value = item.c_value; } catch (err) { }
+				tD2.appendChild( widget );
+				break;
+
 				case 'YesNo': 
 				var widget = document.createElement( 'select' );
 				widget.id = item.c_option;
@@ -90,6 +101,7 @@
 			}
 			switch ( item.c_type ) {
 				case 'Number':
+				case 'Select':
 				case 'Text':
 				case 'YesNo':
 				return document.getElementById( item.c_option ).value;
