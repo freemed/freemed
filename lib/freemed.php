@@ -49,6 +49,9 @@ if (file_exists(dirname(__FILE__).'/settings.php')) {
 if (ini_get('memory_limit')+0 < 64) {
 	@ini_set('memory_limit', '64M');
 }
+if (ini_get('post_max_size')+0 < 64) {
+	@ini_set('post_max_size', '64M');
+}
 
 //----- Use our *own* stuff, no one else's stuff
 if (function_exists('set_include_path')) {
