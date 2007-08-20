@@ -107,6 +107,7 @@ class PatientDataStore {
 	//	Path to file.
 	//
 	public function StoreFile( $patient, $module, $id, $contents ) {
+		syslog( LOG_DEBUG, get_class($this)."::StoreFile ( $patient, $module, $id, $contents )" );
 		$path = $this->base_path . '/' . $this->_PatientToPath( $patient ) . '/' . strtolower( $module );
 		// Recursively create directory in case it doesn't exist
 		mkdir ( $path, 0777, true );
@@ -114,8 +115,10 @@ class PatientDataStore {
 		$dest = $path . '/' . $id;
 
 		if ( is_uploaded_file( $contents ) ) {
+			syslog( LOG_DEBUG, get_class($this)."::StoreFile| Moving uploaded file to ${dest}" );
 			move_uploaded_file( $contents, $dest );
 		} else {
+			syslog( LOG_DEBUG, get_class($this)."::StoreFile| Moving non-uploaded file to ${dest}" );
 			copy( $contents, $dest );
 			unlink( $contents );
 		}
