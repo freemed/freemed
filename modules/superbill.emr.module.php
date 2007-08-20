@@ -153,7 +153,27 @@ class SuperBill extends EMRModule {
 			array( 'id' => $id + 0 )
 		);
 		return $query ? true : false;
-	} // end method MarkAsHandled`
+	} // end method MarkAsHandled
+
+	// Method: GetSuperbill
+	//
+	//	Retrieve complete superbill.
+	//
+	// Parameters:
+	//
+	//	$id - Record ID of superbill.
+	//
+	// Returns:
+	//
+	//	Hash containing:
+	//	* dx
+	//	* px
+	//
+	public function GetSuperbill ( $id ) {
+		$hash['dx'] = $GLOBALS['sql']->queryAll( "SELECT dx.icd9code AS code, dx.icd9descrip AS descrip, dx.id AS id FROM icd9 dx LEFT OUTER JOIN superbill s ON FIND_IN_SET( dx.id, s.dx ) WHERE s.id = " . $GLOBALS['sql']->quote( $id ) );
+		$hash['px'] = $GLOBALS['sql']->queryAll( "SELECT px.cptcode AS code, px.cptnameint AS descrip, px.id AS id FROM cpt px LEFT OUTER JOIN superbill s ON FIND_IN_SET( px.id, s.procs ) WHERE s.id = " . $GLOBALS['sql']->quote( $id ) );
+		return $hash;
+	} // end method GetSuperbill
 
 } // end class SuperBill
 
