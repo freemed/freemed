@@ -258,11 +258,11 @@
 	        <button dojoType="Button" id="BookingFormCommitChangesButton" widgetId="BookingFormCommitChangesButton">
 	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{if $id}--><!--{t}-->Move Appointment<!--{/t}--><!--{else}--><!--{t}-->Book Appointment<!--{/t}--><!--{/if}--></div>
 	        </button>
-        </td><td align="center">
+        </td><!--{if $patient}--><td align="center">
         	<button dojoType="Button" id="BookingFormCancelButton" widgetId="BookingFormCancelButton" onClick="freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );">
         	        <div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
         	</button>
-        </td><td align="left">
+        </td><!--{/if}--><td align="left">
         	<button dojoType="Button" id="BookingFormPatientButton" widgetId="BookingFormPatientButton">
         	        <div><img src="<!--{$htdocs}-->/images/teak/patient.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Go to Patient<!--{/t}--></div>
         	</button>
