@@ -114,6 +114,12 @@
 								data[i].status='<div style="width: 100%; background-color: ' + data[i].status_color + '; color: #999999; text-align: center;" >' + s + '</div>';
 							}
 						}
+						try {
+							var x = dojo.widget.byId( 'freemedWorkspace' + freemedGlobal.tabCount );
+							var node = x.containerNode || x.domNode;
+							var h = parseInt( node.offsetHeight ) - 100;
+							document.getElementById( 'bookTableBody' ).style.height = h + 'px';
+						} catch ( e ) { }
 						var w = dojo.widget.byId( 'datePreviewFilteringTable' );
 						w.sortInformation = [];
 						w.sortInformation.push({index:'hour',direction:0});
@@ -277,7 +283,7 @@
 			<th field="note" dataType="String" noSort="true"><!--{t}-->Note<!--{/t}--></th>
 		</tr>
 	</thead>
-	<tbody style="height: 95%; overflow: auto;"></tbody>
+	<tbody style="overflow-y: auto;" id="bookTableBody"></tbody>
 	</table>
 </div>
 
