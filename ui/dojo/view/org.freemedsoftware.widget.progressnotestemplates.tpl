@@ -129,6 +129,7 @@
 						dojo.byId( 'note_I_value' ).innerHTML = data.pnt_I;
 						dojo.byId( 'note_E_value' ).innerHTML = data.pnt_E;
 						dojo.byId( 'note_R_value' ).innerHTML = data.pnt_R;
+						freemedMessage( "<!--{t}-->Loaded template.<!--{/t}-->", "INFO" );
 					}
 				},
 				mimetype: 'text/json'
