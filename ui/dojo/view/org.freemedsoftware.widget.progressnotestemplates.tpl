@@ -37,7 +37,6 @@
 
 	var <!--{$varname}-->_namespace = {
 		add: function() {
-			//dojo.widget.byId('progressNotesTemplateAddDialog_<!--{$varname}-->').show();
 			// Ask the user for a name
 			var l = prompt( "<!--{t}-->Please enter a descriptive name for this template.<!--{/t}-->" );
 			if ( l.length == 0 ) { return false; }
@@ -62,6 +61,42 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotesTemplates.add',
 				load: function ( type, data, evt ) {
 					freemedMessage( "<!--{t}-->Added template.<!--{/t}-->", "INFO" );
+				},
+				mimetype: 'text/json'
+			});
+		
+		},
+		mod: function() {
+			// Check for an id
+			var v;
+			try {
+				v = document.getElementById('<!--{$varname}-->').value;
+			} catch (err) {
+				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				return false;
+			}
+			if ( parseInt( v ) < 1 ) {
+				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				return false;
+			}
+
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: {
+						id: v,
+						pnt_S: dojo.byId( 'note_S_value' ).innerHTML,
+						pnt_O: dojo.byId( 'note_O_value' ).innerHTML,
+						pnt_A: dojo.byId( 'note_A_value' ).innerHTML,
+						pnt_P: dojo.byId( 'note_P_value' ).innerHTML,
+						pnt_I: dojo.byId( 'note_I_value' ).innerHTML,
+						pnt_E: dojo.byId( 'note_E_value' ).innerHTML,
+						pnt_R: dojo.byId( 'note_R_value' ).innerHTML
+					}
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotesTemplates.mod',
+				load: function ( type, data, evt ) {
+					freemedMessage( "<!--{t}-->Updated template.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
 			});
@@ -103,10 +138,12 @@
 	_container_.addOnLoad(function(){
 		dojo.event.connect( dojo.widget.byId('inject_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'use' );
 		dojo.event.connect( dojo.widget.byId('add_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'add' );
+		dojo.event.connect( dojo.widget.byId('mod_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'mod' );
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('inject_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'use' );
 		dojo.event.disconnect( dojo.widget.byId('add_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'add' );
+		dojo.event.disconnect( dojo.widget.byId('mod_<!--{$varname}-->'), 'onClick', <!--{$varname}-->_namespace, 'mod' );
 	});
 </script>
 <table border="0" cellspacing="0" style="width: auto;">
@@ -121,6 +158,12 @@
 			<button dojoType="Button" id="add_<!--{$varname}-->" widgetId="add_<!--{$varname}-->">
 				<!--{t}-->Add<!--{/t}-->
 			</button>
+		</td>
+		<td>
+			<button dojoType="Button" id="add_<!--{$varname}-->" widgetId="mod_<!--{$varname}-->">
+				<!--{t}-->Update<!--{/t}-->
+			</button>
+
 		</td>
 	</tr>
 </table>
