@@ -247,6 +247,11 @@
 			<td><input type="text" id="note.descrip" size="50" /></td>
 		</tr>
 
+		<tr>
+			<td align="right"><!--{t}-->Template<!--{/t}--></td>
+			<td><!--{include file="org.freemedsoftware.widget.progressnotestemplates.tpl" varname="pntemplate"}--></td>
+		</tr>
+
 		</table>
 
 	</div>
