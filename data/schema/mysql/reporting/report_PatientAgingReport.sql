@@ -87,7 +87,15 @@ BEGIN
 	UPDATE tmp_Aging SET aging_120 = 0.0 WHERE ISNULL( aging_120 );
 
 	-- Output back to reporting engine --
-	SELECT * FROM tmp_Aging;
+	SELECT
+		  patient_name AS 'Patient Name'
+		, practice_id AS 'Patient ID'
+		, aging_0_30 AS '0-30' 
+		, aging_31_60 AS '31-60' 
+		, aging_61_90 AS '61-90' 
+		, aging_91_120 AS '91-120' 
+		, aging_120 AS '120+' 
+	FROM tmp_Aging;
 
 	-- Cleanup --
 	DROP TEMPORARY TABLE IF EXISTS tmp_Aging;	
