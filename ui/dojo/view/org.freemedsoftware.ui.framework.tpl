@@ -126,6 +126,7 @@ var djConfig = {
 		var t = dojo.widget.byId( 'freemedTabContainer' );
 
 		if ( forcenew ) {
+			dojo.debug( 'Forcing new tab creation' );
 			freemedGlobal.tabCount += 1;	
 			var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
 				label: "<!--{t}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
@@ -140,10 +141,10 @@ var djConfig = {
 			t.selectChild( newTab ); 
 		} else {
 			try {
-				var tab = dojo.widget.byId( 'freemedWorkspace' + freemedGlobal.tabCount );
+				var tab = dojo.widget.byId( t.selectedChild );
 				tab.setUrl( url );
-				try { t.selectChild( tab ); } catch (err) { }
 			} catch ( err ) {
+				dojo.debug( 'CAUGHT ERROR, OPENING NEW TAB' );
 				freemedGlobal.tabCount += 1;	
 				var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
 					label: "<!--{t}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
