@@ -192,9 +192,23 @@ class UnreadDocuments extends SupportModule {
 		return true;
 	} // end method MoveToAnotherProvider
 
-	protected function mod_pre ( &$data ) {
-		// Create user object
-		$this_user = CreateObject('org.freemedsoftware.core.User');
+	// Method: ReviewIntoRecord
+	//
+	//	Review patient unread document into scanned document in
+	//	patient record.
+	//
+	// Parameters:
+	//
+	//	$id - Record ID of unread document
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function ReviewIntoRecord ( $id ) {
+		$data = $GLOBALS['sql']->get_link( $this->table_name, $id );
+
+		$this_user = freemed::user_cache()->user_number;
 		
 		$filename = freemed::secure_filename( $data['urffilename'] );
 
@@ -207,10 +221,10 @@ class UnreadDocuments extends SupportModule {
 		// Extract type and category
 		list ($type, $cat) = explode('/', $data['urftype']);
 
-		$data['user'] = $this_user->user_number;
+		$data['user'] = $this_user;
 
 		// Insert new table query in unread
-		$query = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
+		$query = $GLOBALS['sql']->insert_query(
 			'images',
 			array (
 				"imagedt" => $data['urfdate'],
@@ -220,9 +234,10 @@ class UnreadDocuments extends SupportModule {
 				"imagedesc" => $data['urfnote'],
 				"imagephy" => $data['urfphysician'],
 				"imagetext" => $data['urftext'],
-				"imagereviewed" => $this_user->user_number
+				"imagereviewed" => $this_user
 			)
-		));
+		);
+		$result = $GLOBALS['sql']->query( $query );
 
 		$new_id = $GLOBALS['sql']->lastInsertID( 'images', 'id' );
 		$new_filename = freemed::image_filename (
@@ -247,8 +262,10 @@ class UnreadDocuments extends SupportModule {
 		//echo "mkdir -p $dirname";
 		`mv "data/documents/unread/$filename" "$new_filename" -f`;
 
-		$GLOBALS['sql']->query("DELETE FROM ".$this->table_name." WHERE id='".addslashes($data['id'])."'");
-	} // end method mod_pre
+		$GLOBALS['sql']->query( "DELETE FROM ".$this->table_name." WHERE id=".$GLOBALS['sql']->quote( $id ) );
+
+		return true;
+	} // end method ReviewIntoRecord
 
 } // end class UnreadDocuments
 

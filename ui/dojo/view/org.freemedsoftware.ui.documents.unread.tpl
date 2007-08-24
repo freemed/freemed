@@ -28,24 +28,23 @@
 	dojo.require("dojo.widget.FilteringTable");
 	dojo.require("dojo.widget.DropdownDatePicker");
 
-	function loadUnreadDocuments ( ) {
-		// Initial data load
-		dojo.io.bind({
-			method: 'POST',
-			content: { },
-			url: '<!--{$relay}-->/org.freemedsoftware.module.UnreadDocuments.GetAll',
-			error: function() { },
-			load: function( type, data, evt ) {
-				dojo.widget.byId('unreadDocuments').store.setData( data );
-			},
-			mimetype: "text/json"
-		});
-	}
-
 	// Special scope variable because of ContentPane
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
 		saveValue: 0,
+		loadUnreadDocuments: function ( ) {
+			// Initial data load
+			dojo.io.bind({
+				method: 'POST',
+				content: { },
+				url: '<!--{$relay}-->/org.freemedsoftware.module.UnreadDocuments.GetAll',
+				error: function() { },
+				load: function( type, data, evt ) {
+					dojo.widget.byId('unreadDocuments').store.setData( data );
+				},
+				mimetype: "text/json"
+			});
+		},
 		cancelDocument: function ( ) {
 			// Hide form, unload djvu viewer
 			document.getElementById('unreadDocumentsFormDiv').style.display = 'none';
@@ -54,10 +53,21 @@
 			// Unset all selections...
 			dojo.widget.byId('unreadDocuments').resetSelections();
 			dojo.widget.byId('unreadDocuments').renderSelections();
-			this.saveValue = 0;
+			o.saveValue = 0;
 		},
 		fileUnreadDocument: function ( ) {
-			alert ( " file : " + this.saveValue );
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: o.saveValue
+				},
+				url: '<!--{$relay}-->/org.freemedsoftware.module.UnreadDocuments.ReviewIntoRecord',
+				load: function( type, data, evt ) {
+					freemedMessage( "<!--{t}-->Filed document in patient record.<!--{/t}-->", "INFO" );
+					o.resetForm();
+				},
+				mimetype: 'text/json'	
+			});
 		},
 		wrongUnreadDocument: function ( ) {
 			dojo.widget.byId('sendToProviderDialog').show();
@@ -66,14 +76,14 @@
 			dojo.io.bind({
 				method: "POST",
 				content: {
-					param0: this.saveValue,
+					param0: o.saveValue,
 					param1: parseInt( document.getElementById('sendToProvider').value )
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.SendToAnotherProvider",
 				load: function ( type, data, evt ) {
 					freemedMessage( "<!--{t}-->Document moved to another provider.<!--{/t}-->", 'INFO' );
 					dojo.widget.byId('sendToProviderDialog').hide();
-					this.resetForm();
+					o.resetForm();
 				},
 				mimetype: "text/json"
 			});
@@ -85,62 +95,21 @@
 					method: 'POST',
 					url: '<!--{$relay}-->/org.freemedsoftware.module.UnreadDocuments.del',
 					content: {
-						param0: this.saveValue
+						param0: o.saveValue
 					},
 					error: function( type, data, event ) {
 						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
 					},
 					load: function( type, data, event ) {
-						this.resetForm();
+						o.resetForm();
 					},
 					mimetype: "text/json"
 				});
 			}
 		},
-		modifyDocument: function ( review, dropfirst ) {
-			var p = {
-				id: this.saveValue,
-				date: document.getElementById('urfdate').value,
-				category: document.getElementById('urfcategory').value,
-				patient: document.getElementById('urfpatient').value,
-				physician: document.getElementById('urfprovider').value,
-				note: document.getElementById('urfnote').value,
-				withoutfirstpage: dropfirst ? 1 : 0,
-				filedirectly: review ? 0 : 1,
-				flip: document.getElementById('urfflip').checked ? 1 : 0
-			};
-
-			// Some validation
-			var messages = '';
-			if ( ! p.date ) { messages += "<!--{t}-->No date has been selected.<!--{/t}-->\n"; }
-			if ( p.category == 0 ) { messages += "<!--{t}-->No category has been chosen.<!--{/t}-->\n"; }
-			if ( p.patient == 0 ) { messages += "<!--{t}-->No patient has been selected.<!--{/t}-->\n"; }
-			if ( p.physician == 0 ) { messages += "<!--{t}-->No provider has been selected.<!--{/t}-->\n"; }
-			if ( ! p.note ) { messages += "<!--{t}-->No note has been entered.<!--{/t}-->\n"; }
-			if ( messages != '' ) {
-				alert( messages );
-				return false;
-			}
-
-			dojo.io.bind({
-				method: 'POST',
-				url: '<!--{$relay}-->/org.freemedsoftware.module.UnreadDocuments.mod',
-				content: {
-					param0: p
-				},
-				error: function( type, data, event ) {
-					//alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
-					this.resetForm();
-				},
-				load: function( type, data, event ) {
-					this.resetForm();
-				},
-				mimetype: "text/json"
-			});
-		},
 		resetForm: function ( ) {
-			loadUnreadDocuments();
-			this.saveValue = 0;
+			o.loadUnreadDocuments();
+			o.saveValue = 0;
 
 			// Hide form, unload djvu viewer
 			document.getElementById('unreadDocumentsFormDiv').style.display = 'none';
@@ -151,7 +120,7 @@
 			var val = w.getSelectedData();
 			if (val != 'undefined') {
 				// Save the value
-				this.saveValue = val.id;
+				o.saveValue = val.id;
 
 				// Populate/display
 				document.getElementById('unreadDocumentsFormDiv').style.display = 'block';
@@ -166,7 +135,7 @@
 	};
 
 	// Make sure we load this upon page load
-	_container_.addOnLoad(loadUnreadDocuments);
+	_container_.addOnLoad(o.loadUnreadDocuments);
 
 	// Handle in context loading for these widgets
 	_container_.addOnLoad(function(){
