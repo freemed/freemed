@@ -65,7 +65,11 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.to_text",
 				load: function ( type, data, evt ) {
-					if ( !dontset ) { dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id ); }
+					if ( !dontset ) {
+						dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id );
+					} else {
+						document.getElementById( '<!--{$varname|escape}-->' ).value = id;
+					}
 					dojo.widget.byId('<!--{$varname|escape}-->_widget').setLabel( data );
 				},
 				mimetype: "text/json"
