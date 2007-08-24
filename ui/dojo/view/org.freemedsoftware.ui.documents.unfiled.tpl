@@ -28,24 +28,23 @@
 	dojo.require("dojo.widget.FilteringTable");
 	dojo.require("dojo.widget.DropdownDatePicker");
 
-	function loadUnfiledDocuments ( ) {
-		// Initial data load
-		dojo.io.bind({
-			method: 'POST',
-			content: { },
-			url: '<!--{$relay}-->/org.freemedsoftware.module.UnfiledDocuments.GetAll',
-			error: function() { },
-			load: function( type, data, evt ) {
-				dojo.widget.byId('unfiledDocuments').store.setData( data );
-			},
-			mimetype: "text/json"
-		});
-	}
-
-	// Special scope variable because of ContentPane
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
+		// Special scope variable because of ContentPane
 		saveValue: 0,
+		loadUnfiledDocuments: function ( ) {
+			// Initial data load
+			dojo.io.bind({
+				method: 'POST',
+				content: { },
+				url: '<!--{$relay}-->/org.freemedsoftware.module.UnfiledDocuments.GetAll',
+				error: function() { },
+				load: function( type, data, evt ) {
+					dojo.widget.byId('unfiledDocuments').store.setData( data );
+				},
+				mimetype: "text/json"
+			});
+		},
 		cancelDocument: function ( ) {
 			// Hide form, unload djvu viewer
 			document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
@@ -54,7 +53,7 @@
 			// Unset all selections...
 			dojo.widget.byId('unfiledDocuments').resetSelections();
 			dojo.widget.byId('unfiledDocuments').renderSelections();
-			this.saveValue = 0;
+			o.saveValue = 0;
 		},
 		deleteDocument: function ( ) {
 			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
@@ -63,13 +62,13 @@
 					method: 'POST',
 					url: '<!--{$relay}-->/org.freemedsoftware.module.UnfiledDocuments.del',
 					content: {
-						param0: this.saveValue
+						param0: o.saveValue
 					},
 					load: function( type, data, event ) {
 						if (data) {
 							freemedMessage( "<!--{t}-->Document removed successfully.<!--{/t}-->", "INFO" );
 						}
-						this.resetForm();
+						o.resetForm();
 					},
 					mimetype: "text/json"
 				});
@@ -77,7 +76,7 @@
 		},
 		modifyDocument: function ( review, dropfirst ) {
 			var p = {
-				id: this.saveValue,
+				id: o.saveValue,
 				date: document.getElementById('uffdate').value,
 				category: document.getElementById('uffcategory').value,
 				patient: document.getElementById('uffpatient').value,
@@ -108,19 +107,19 @@
 				},
 				load: function( type, data, event ) {
 					freemedMessage( "<!--{t}-->Document handled successfully.<!--{/t}-->", "INFO" );
-					this.resetForm();
+					o.resetForm();
 				},
 				mimetype: "text/json"
 			});
 		},
 		// specialty button actions here:
-		modifyToProvider: function ( ) { this.modifyDocument( true, false ); },
-		modifyToProviderNoCover: function ( ) { this.modifyDocument( true, true ); },
-		modifyDirectly: function ( ) { this.modifyDocument( false, false ); },
-		modifyDirectlyNoCover: function ( ) { this.modifyDocument( false, true ); },
+		modifyToProvider: function ( ) { o.modifyDocument( true, false ); },
+		modifyToProviderNoCover: function ( ) { o.modifyDocument( true, true ); },
+		modifyDirectly: function ( ) { o.modifyDocument( false, false ); },
+		modifyDirectlyNoCover: function ( ) { o.modifyDocument( false, true ); },
 		resetForm: function ( ) {
-			loadUnfiledDocuments();
-			this.saveValue = 0;
+			o.loadUnfiledDocuments();
+			o.saveValue = 0;
 
 			// Hide form, unload djvu viewer
 			document.getElementById('unfiledDocumentsFormDiv').style.display = 'none';
@@ -131,7 +130,7 @@
 			var val = w.getSelectedData();
 			if (val != 'undefined') {
 				// Save the value
-				this.saveValue = val.id;
+				o.saveValue = val.id;
 
 				// Populate/display
 				document.getElementById('unfiledDocumentsFormDiv').style.display = 'block';
@@ -142,7 +141,7 @@
 	};
 
 	// Make sure we load this upon page load
-	_container_.addOnLoad(loadUnfiledDocuments);
+	_container_.addOnLoad(o.loadUnfiledDocuments);
 
 	// Handle in context loading for these widgets
 	_container_.addOnLoad(function(){
