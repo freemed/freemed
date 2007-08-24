@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `patletter` (
 	letterdt		DATE,
 	lettereoc		VARCHAR (250),
 	letterfrom		INT UNSIGNED NOT NULL DEFAULT 0,
+	lettersubject		VARCHAR (250) NOT NULL DEFAULT '',
 	lettertext		TEXT,
 	lettersent		INT UNSIGNED NOT NULL DEFAULT 0,
 	letterpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -55,6 +56,7 @@ BEGIN
 	#----- Upgrades
 	ALTER IGNORE TABLE patletter ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
 	ALTER IGNORE TABLE patletter ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	ALTER IGNORE TABLE patletter ADD COLUMN lettersubject VARCHAR (250) NOT NULL DEFAULT '' AFTER letterfrom;
 END
 //
 DELIMITER ;
@@ -74,18 +76,14 @@ CREATE TRIGGER patletter_Delete
 CREATE TRIGGER patletter_Insert
 	AFTER INSERT ON patletter
 	FOR EACH ROW BEGIN
-		DECLARE p VARCHAR(250);
-		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterfrom;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'patletter', NEW.letterpatient, NEW.id, NEW.letterdt, p, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, provider, locked, user, status ) VALUES ( 'patletter', NEW.letterpatient, NEW.id, NEW.letterdt, NEW.lettersubject, NEW.letterfrom, IFNULL(NEW.locked, 0), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER patletter_Update
 	AFTER UPDATE ON patletter
 	FOR EACH ROW BEGIN
-		DECLARE p VARCHAR(250);
-		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterfrom;
-		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='patletter' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=NEW.lettersubject, provider=NEW.letterfrom, locked=IFNULL(NEW.locked, 0), user=NEW.user, status=NEW.active WHERE module='patletter' AND oid=NEW.id;
 	END;
 //
 

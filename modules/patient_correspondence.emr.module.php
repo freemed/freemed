@@ -43,9 +43,9 @@ class PatientCorrespondence extends EMRModule {
 		"letterdt",
 		"lettereoc",
 		"letterfrom",
+		"lettersubject",
 		"lettertext",
 		"letterpatient",
-		"locked" => '0',
 		"user"
 	);
 
@@ -61,6 +61,7 @@ class PatientCorrespondence extends EMRModule {
 			| SUMMARY_PRINT | SUMMARY_LOCK | SUMMARY_DELETE;
 
 		// Set associations
+		$this->_SetAssociation('EmrModule');
 		$this->_SetAssociation('EpisodeOfCare');
 		$this->_SetMetaInformation('EpisodeOfCareVar', 'lettereoc');
 
@@ -72,7 +73,9 @@ class PatientCorrespondence extends EMRModule {
 	} // end constructor PatientCorrespondence
 
 	protected function add_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['user'] = freemed::user_cache()->user_number;
+		$data['letterdt'] = $s->ImportDate( $data['letterdt'] );
 		if ($data['worddoc']) {
 			$docfile = tempnam ( '/tmp', 'wordconv' );
 			file_put_contents ( $docfile, $data['worddoc'] );
@@ -87,7 +90,9 @@ class PatientCorrespondence extends EMRModule {
 	}
 
 	protected function mod_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['user'] = freemed::user_cache()->user_number;
+		$data['letterdt'] = $s->ImportDate( $data['letterdt'] );
 	}
 
 } // end class PatientCorrespondence
