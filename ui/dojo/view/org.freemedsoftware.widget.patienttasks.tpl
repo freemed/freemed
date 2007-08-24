@@ -114,7 +114,6 @@
 		// Show loading
 		t.initialLoad();
 		document.getElementById('patientTaskContainerInnerDiv').innerHTML = "<!--{$paneLoading|replace:'"':'\\"'}-->";
-		dojo.event.connect( dojo.widget.byId("patientTaskAdd"), "onClick", patientTasks, "addReferralForm" );
 	});
 
 	_container_.addOnUnload(function(){
