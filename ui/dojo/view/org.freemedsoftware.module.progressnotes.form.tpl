@@ -234,7 +234,7 @@
 
 		<tr>
 			<td align="right"><!--{t}-->Date<!--{/t}--></td>
-			<td><input dojoType="DropdownDatePicker" id="note.dateOf" /></td>
+			<td><input dojoType="DropdownDatePicker" id="note.dateOf" value="today" /></td>
 		</tr>
 	
 		<tr>
