@@ -119,8 +119,8 @@
 			return true;
 		},
 		resetFilters: function ( ) {
-			dojo.widget.byId( 'emrSection_widget' ).setValue( '' );
-			dojo.widget.byId( 'emrSection_widget' ).setLabel( '' );
+			dojo.widget.byId( 'emrSection' ).setValue( '' );
+			dojo.widget.byId( 'emrSection' ).setLabel( '' );
 			dojo.widget.byId( 'patientEmrAttachments' ).clearFilters();
 			return true;
 		},
@@ -134,9 +134,11 @@
 		},
 		emrModuleFilter: function ( m ) {
 			// If not set, return true by default
-			if (document.getElementById('emrSection').value.length < 5) { return true; }
-			//dojo.debug ( m + ' == ' + dojo.widget.byId('emrSection_widget').getLabel() );
-			return ( m == dojo.widget.byId('emrSection_widget').getLabel() );
+			var v = dojo.widget.byId( 'emrSection' ).getValue();
+			var l = dojo.widget.byId( 'emrSection' ).getLabel();
+			if ( v.length < 5 ) { return true; }
+			//dojo.debug ( m + ' == ' + dojo.widget.byId('emrSection').getLabel() );
+			return ( m == l );
 		},
 		printMultiple: function ( ) {
 			if ( patientEmrAttachments.currentItem ) {
@@ -201,7 +203,7 @@
 			}
 		},
 		OnAdd: function ( ) {
-			var m = document.getElementById('emrSection').value;
+			var m = dojo.widget.byId('emrSection').getValue();
 			if ( ! m.length ) {
 				alert( "<!--{t}-->You must select a module first.<!--{/t}-->" );
 				return false;
@@ -258,13 +260,13 @@
 	};
 	
 	_container_.addOnLoad(function() {
-		dojo.widget.byId( 'emrSection_widget' ).setLabel( '' );
-		dojo.widget.byId( 'emrSection_widget' ).setValue( '' );
+		dojo.widget.byId( 'emrSection' ).setLabel( '' );
+		dojo.widget.byId( 'emrSection' ).setValue( '' );
 		patientEmrAttachments.initialLoad( );
 		dojo.event.connect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
 		dojo.event.connect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 		dojo.event.connect( dojo.widget.byId('emrResetButton'), 'onClick', patientEmrAttachments, 'resetFilters' );
-		dojo.event.connect( dojo.widget.byId('emrSection_widget'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.connect( dojo.widget.byId('emrSection'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.connect( dojo.widget.byId('emrRangeBegin'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.connect( dojo.widget.byId('emrRangeEnd'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 	});
@@ -273,7 +275,7 @@
 		dojo.event.disconnect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
 		dojo.event.disconnect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 		dojo.event.disconnect( dojo.widget.byId('emrResetButton'), 'onClick', patientEmrAttachments, 'resetFilters' );
-		dojo.event.disconnect( dojo.widget.byId('emrSection_widget'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.disconnect( dojo.widget.byId('emrSection'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.disconnect( dojo.widget.byId('emrRangeBegin'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.disconnect( dojo.widget.byId('emrRangeEnd'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 	});
@@ -292,12 +294,10 @@
 	<td>
 		<input dojoType="Select"
 			autocomplete="false"
-			id="emrSection_widget" widgetId="emrSection_widget"
+			id="emrSection" widgetId="emrSection"
 			style="width: 150px;"
 			dataUrl="<!--{$relay}-->/org.freemedsoftware.api.TableMaintenance.GetModules?param0=EmrModule&param1=%{searchString}&param2=1"
-			setValue="document.getElementById('emrSection').value = arguments[0];"
 			mode="remote" value="" />
-		<input type="hidden" id="emrSection" name="emrSection" value="" />
 	</td>
 	<td align="left"><button dojoType="button" id="emrAddButton" widgetId="emrAddButton"><!--{t}-->Add<!--{/t}--></button></td>
 	<td align="right"><button dojoType="button" onClick="patientEmrAttachments.printMultiple();"><!--{t}-->Print<!--{/t}--></button></td>
