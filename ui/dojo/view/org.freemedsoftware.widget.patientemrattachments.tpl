@@ -354,8 +354,12 @@
 		<tr>
 			<td colspan="3" align="center">
 				<table border="0" align="center"><tr>
-				<td align="right"><button dojoType="Button" id="emrPrintButton" widgetId="emrPrintButton"><!--{t}-->Print<!--{/t}--></button></td>
-				<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('emrPrintDialog').hide();"><!--{t}-->Cancel<!--{/t}--></button></td>
+				<td align="right"><button dojoType="Button" id="emrPrintButton" widgetId="emrPrintButton">
+					<div><img src="<!--{$htdocs}-->/images/summary_print.png" border="0" height="16" width="16" /> <!--{t}-->Print<!--{/t}--></div>
+				</button></td>
+				<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('emrPrintDialog').hide();">
+					<div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
+				</button></td>
 				</tr></table>
 			</td>
 		</tr>
