@@ -69,6 +69,20 @@
 					if ( data.newpatient != null ) {
 						document.getElementById( 'newpatient' ).selectedIndex = parseInt( data.newpatient ) + 1;
 					}
+					if ( data.timebegin != null ) {
+						var ts = data.timebegin.split(':');
+						var dt = new Date ( );
+						dt.setHours( ts[0] );
+						dt.setMinutes( ts[1] );
+						dojo.widget.byId( 'timebegin' ).timePicker.setTime( dt );
+					}
+					if ( data.timeend != null ) {
+						var ts = data.timeend.split(':');
+						var dt = new Date ( );
+						dt.setHours( ts[0] );
+						dt.setMinutes( ts[1] );
+						dojo.widget.byId( 'timeend' ).timePicker.setTime( dt );
+					}
 				},
 				mimetype: "text/json"
 			});
@@ -86,6 +100,8 @@
 				dowend: document.getElementById('dowend').value,
 				datebegin: dojo.widget.byId('datebegin').getValue,
 				dateend: dojo.widget.byId('datebegin').getValue,
+				timebegin: dojo.date.strftime( dojo.widget.byId('timebegin').timePicker.time, '%H:%M', dojo.widget.byId('timebegin').lang ),
+				timeend: dojo.date.strftime( dojo.widget.byId('timeend').timePicker.time, '%H:%M', dojo.widget.byId('timeend').lang ),
 				newpatient: document.getElementById('newpatient').value
 			};
 			if (m.validate( myContent )) {
@@ -167,6 +183,16 @@
 	</tr>
 
 	<tr>
+		<td align="right"><!--{t}-->Time Begin<!--{/t}--></td>
+		<td><input dojoType="DropdownTimePicker" id="timebegin" /></td>
+	</tr>
+
+	<tr>
+		<td align="right"><!--{t}-->Time End<!--{/t}--></td>
+		<td><input dojoType="DropdownTimePicker" id="timeend" /></td>
+	</tr>
+
+	<tr>
 		<td align="right"><!--{t}-->Patient Status<!--{/t}--></td>
 		<td><select id="newpatient">
 			<option value=""></option>
@@ -181,11 +207,11 @@
         <table border="0" style="width:200px;">
         <tr><td align="center">
 	        <button dojoType="Button" id="ModuleFormCommitChangesButton" widgetId="ModuleFormCommitChangesButton">
-	                <div><!--{t}-->Commit Changes<!--{/t}--></div>
+	                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Commit Changes<!--{/t}--></div>
 	        </button>
         </td><td align="left">
         	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );">
-        	        <div><!--{t}-->Cancel<!--{/t}--></div>
+        	        <div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" />  <!--{t}-->Cancel<!--{/t}--></div>
         	</button>
         </td></tr></table>
 </div>

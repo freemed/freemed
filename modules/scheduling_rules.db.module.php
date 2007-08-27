@@ -67,7 +67,9 @@ class SchedulingRules extends SupportModule {
 		}
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['datebegin'] = $data['datebegin'] ? $s->ImportDate( $data['datebegin'] ) : '' ;
+		if ( !$data['datebegin'] ) { unset( $data['datebegin'] ); }
 		$data['dateend'] = $data['dateend'] ? $s->ImportDate( $data['dateend'] ) : '' ;
+		if ( !$data['dateend'] ) { unset( $data['dateend'] ); }
 	}
 
 	protected function mod_pre ( &$data ) {
@@ -77,7 +79,9 @@ class SchedulingRules extends SupportModule {
 		}
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['datebegin'] = $data['datebegin'] ? $s->ImportDate( $data['datebegin'] ) : '' ;
+		if ( !$data['datebegin'] ) { unset( $data['datebegin'] ); }
 		$data['dateend'] = $data['dateend'] ? $s->ImportDate( $data['dateend'] ) : '' ;
+		if ( !$data['dateend'] ) { unset( $data['dateend'] ); }
 	}
 
 } // end class SchedulingRules
