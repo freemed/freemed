@@ -86,6 +86,8 @@ BEGIN
 			OR ( ISNULL(s.timebegin) AND dt >= s.datebegin AND dt <= s.dateend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 			#	Date range, but within dates, no DOW
 			OR ( ISNULL(s.dowbegin) AND tm >= s.timebegin AND tm <= s.timeend AND dt >= s.datebegin AND dt <= s.dateend )
+			#	DOW, no dates, but times
+			OR ( ( ISNULL(s.datebegin) AND NOT ISNULL(s.dowbegin) AND NOT ISNULL(s.timebegin) ) AND tm >= s.timebegin AND tm <= s.timeend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 			#	Date range, but within dates
 			OR ( tm >= s.timebegin AND tm <= s.timeend AND dt >= s.datebegin AND dt <= s.dateend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 		)
@@ -134,6 +136,8 @@ BEGIN
 			OR ( ISNULL(s.timebegin) AND dt >= s.datebegin AND dt <= s.dateend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 			#	Date range, but within dates, no DOW
 			OR ( ISNULL(s.dowbegin) AND tm >= s.timebegin AND tm <= s.timeend AND dt >= s.datebegin AND dt <= s.dateend )
+			#	DOW, no dates, but times
+			OR ( ( ISNULL(s.datebegin) AND NOT ISNULL(s.dowbegin) AND NOT ISNULL(s.timebegin) ) AND tm >= s.timebegin AND tm <= s.timeend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 			#	Date range, but within dates
 			OR ( tm >= s.timebegin AND tm <= s.timeend AND dt >= s.datebegin AND dt <= s.dateend AND DAYOFWEEK(dt) >= s.dowbegin AND DAYOFWEEK(dt) <= s.dowend )
 		)
