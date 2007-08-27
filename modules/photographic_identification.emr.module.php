@@ -189,7 +189,7 @@ class PhotographicIdentification extends EMRModule {
 			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
 			$pic = $pds->ResolveFilename( $patient+0, get_class($this), $force_id+0 );
 		}
-		if ( ! $pic ) { $pic = 'data/store/no-image.png'; }
+		if ( ! $pic ) { $pic = 'ui/dojo/htdocs/images/teak/noimage.250x250.png'; }
 		ob_start();
 		readfile( $pic );
 		$x = ob_get_contents();
