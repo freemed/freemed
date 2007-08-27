@@ -131,6 +131,25 @@ class Prescription extends EMRModule {
 		return @join(', ', $m);
 	} // end method recent_text
 
+	// Method: GetDistinctRx
+	//
+	//	Retrieve all prescriptions for a patient withoout duplicates.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	// Returns:
+	//
+	//	Array of hashes:
+	//	* rx - RX description
+	//	* id - RX id
+	//
+	public function GetDistinctRx ( $patient ) {
+		$q = "SELECT CONCAT( rxdrug, ' ', rxform, ' ', rxdosage ) AS rx, id AS id FROM rx WHERE rxpatient = ".$GLOBALS['sql']->quote( $patient )." AND ( rxorigrx = 0 OR ISNULL( rxorigrx ) )";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetDistinctRx
+
 } // end class Prescription
 
 register_module ("Prescription");
