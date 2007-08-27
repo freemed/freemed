@@ -98,6 +98,38 @@ CALL config_Register (
 	'Remitt Server Hostname',
 	'REMITT Billing',
 	'Text',
+	'127.0.0.1'
+);
+CALL config_Register (
+	'remitt_port',
+	'127.0.0.1',
+	'Remitt Server Port',
+	'REMITT Billing',
+	'Text',
+	'7688'
+);
+CALL config_Register (
+	'remitt_protocol',
+	'127.0.0.1',
+	'Remitt Server Protocol',
+	'REMITT Billing',
+	'Text',
+	'http'
+);
+CALL config_Register (
+	'remitt_user',
+	'127.0.0.1',
+	'Remitt Authentication Username',
+	'REMITT Billing',
+	'Text',
+	''
+);
+CALL config_Register (
+	'remitt_pass',
+	'127.0.0.1',
+	'Remitt Password',
+	'REMITT Billing',
+	'Text',
 	''
 );
 
