@@ -82,7 +82,7 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'previous_operations', opatient, id, odate, operation, 'active' FROM previous_operations;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'procrec', procpatient, p.id, procdt, CONCAT( c.cptcode, ' - ', c.cptdescrip), 'active' FROM procrec p LEFT OUTER JOIN cpt c ON procrec.proccpt=c.id;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'rx', rxpatient, id, rxdatefrom, rxdrug, locked, 'active' FROM rx;" );
-execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, calprenote, 'active' FROM scheduler WHERE caltype='pat';" );
+execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, CONCAT( LPAD( calhour, 2, '0' ), ':', LPAD( calminute, 2, '0' ), ' (', calduration, 'm) - ', calprenote ), 'active' FROM scheduler WHERE caltype='pat';" );
 execSql( "INSERT INTO patient_address SELECT id, NOW(), 'H', 1, 'S', ptaddr1, ptaddr2, ptcity, ptstate, ptzip, ptcountry, NULL FROM patient;" );
 
 printHeader( "Update Djvu storage paths" );
