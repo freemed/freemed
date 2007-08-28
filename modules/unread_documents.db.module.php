@@ -206,11 +206,13 @@ class UnreadDocuments extends SupportModule {
 	//	Boolean, success.
 	//
 	public function ReviewIntoRecord ( $id ) {
+		syslog( LOG_DEBUG, "ReviewIntoRecord $id" );
 		$data = $GLOBALS['sql']->get_link( $this->table_name, $id );
 
 		$this_user = freemed::user_cache()->user_number;
 		
 		$filename = freemed::secure_filename( $data['urffilename'] );
+		syslog( LOG_DEBUG, "user = this_user, filename = $filename" );
 
 		// Document sanity check
 		if (!file_exists('data/documents/unread/'.$filename) or empty($filename)) {
@@ -220,8 +222,6 @@ class UnreadDocuments extends SupportModule {
 
 		// Extract type and category
 		list ($type, $cat) = explode('/', $data['urftype']);
-
-		$data['user'] = $this_user;
 
 		// Insert new table query in unread
 		$query = $GLOBALS['sql']->insert_query(
@@ -234,9 +234,11 @@ class UnreadDocuments extends SupportModule {
 				"imagedesc" => $data['urfnote'],
 				"imagephy" => $data['urfphysician'],
 				"imagetext" => $data['urftext'],
-				"imagereviewed" => $this_user
+				"imagereviewed" => $this_user,
+				"user" => $this_user
 			)
 		);
+		syslog( LOG_DEBUG, "query = $query" );
 		$result = $GLOBALS['sql']->query( $query );
 
 		$new_id = $GLOBALS['sql']->lastInsertID( 'images', 'id' );
@@ -246,23 +248,25 @@ class UnreadDocuments extends SupportModule {
 			'djvu',
 			true
 		);
+		syslog( LOG_DEBUG, "insert id = $new_id, filename = $new_filename" );
 
-		$query = $GLOBALS['sql']->update_query (
+		$query2 = $GLOBALS['sql']->update_query (
 			'images',
 			array ( 'imagefile' => $new_filename ),
 			array ( 'id' => $new_id )
 		);
-		$result = $GLOBALS['sql']->query( $query );
-		syslog(LOG_INFO, "UnreadDocument| query = $query, result = $result");
+		$result2 = $GLOBALS['sql']->query( $query2 );
 
 		// Move actual file to new location
 		//echo "mv data/documents/unread/$filename $new_filename -f<br/>\n";
 		$dirname = dirname($new_filename);
+		syslog( LOG_DEBUG, "mkdir -p '$dirname'" );
 		`mkdir -p "$dirname"`;
-		//echo "mkdir -p $dirname";
-		`mv "data/documents/unread/$filename" "$new_filename" -f`;
+		syslog( LOG_DEBUG, "mv 'data/documents/unread/$filename' '$new_filename' -f" );
 
-		$GLOBALS['sql']->query( "DELETE FROM ".$this->table_name." WHERE id=".$GLOBALS['sql']->quote( $id ) );
+		$q = "DELETE FROM ".$this->table_name." WHERE id=".$GLOBALS['sql']->quote( $id );
+		syslog( LOG_DEBUG, "q = $q" );
+		$GLOBALS['sql']->query( $q );
 
 		return true;
 	} // end method ReviewIntoRecord
