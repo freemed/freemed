@@ -28,3 +28,19 @@ CREATE TABLE IF NOT EXISTS `appttemplate` (
 	id			SERIAL
 );
 
+DROP PROCEDURE IF EXISTS appttemplate_Upgrade;
+DELIMITER //
+CREATE PROCEDURE appttemplate_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+
+	#	Version 0.2
+	ALTER IGNORE TABLE appttemplate ADD COLUMN atcolor CHAR (7) NOT NULL DEFAULT '#ffffff' AFTER atequipment;
+END
+//
+DELIMITER ;
+CALL appttemplate_Upgrade( );
+1;2A
+
