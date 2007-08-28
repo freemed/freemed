@@ -13,7 +13,7 @@ dojo.require("dojo.widget.*");
 dojo.require("dojo.html.layout");
 dojo.require("dojo.html.display");
 dojo.require("dojo.html.selection");
-dojo.widget.defineWidget("dojo.widget.ColorPalette", dojo.widget.HtmlWidget, {palette:"7x10", _palettes:{"7x10":[["fff", "fcc", "fc9", "ff9", "ffc", "9f9", "9ff", "cff", "ccf", "fcf"], ["ccc", "f66", "f96", "ff6", "ff3", "6f9", "3ff", "6ff", "99f", "f9f"], ["c0c0c0", "f00", "f90", "fc6", "ff0", "3f3", "6cc", "3cf", "66c", "c6c"], ["999", "c00", "f60", "fc3", "fc0", "3c0", "0cc", "36f", "63f", "c3c"], ["666", "900", "c60", "c93", "990", "090", "399", "33f", "60c", "939"], ["333", "600", "930", "963", "660", "060", "366", "009", "339", "636"], ["000", "300", "630", "633", "330", "030", "033", "006", "309", "303"]], "3x4":[["ffffff", "00ff00", "008000", "0000ff"], ["c0c0c0", "ffff00", "ff00ff", "000080"], ["808080", "ff0000", "800080", "000000"]]}, buildRendering:function () {
+dojo.widget.defineWidget("dojo.widget.ColorPalette", dojo.widget.HtmlWidget, {palette:"7x10", _palettes:{"7x10":[["fff", "fcc", "fc9", "ff9", "ffc", "9f9", "9ff", "cff", "ccf", "fcf"], ["ccc", "f66", "f96", "ff6", "ff3", "6f9", "3ff", "6ff", "99f", "f9f"], ["c0c0c0", "f00", "f90", "fc6", "ff0", "3f3", "6cc", "3cf", "66c", "c6c"], ["999", "c00", "f60", "fc3", "fc0", "3c0", "0cc", "36f", "63f", "c3c"], ["666", "900", "c60", "c93", "990", "090", "399", "33f", "60c", "939"], ["333", "600", "930", "963", "660", "060", "366", "009", "339", "636"], ["000", "300", "630", "633", "330", "030", "033", "006", "309", "303"]], "3x4":[["ffffff", "00ff00", "008000", "0000ff"], ["c0c0c0", "ffff00", "ff00ff", "000080"], ["808080", "ff0000", "800080", "000000"]]}, currentValue: null, buildRendering:function () {
 	this.domNode = document.createElement("table");
 	dojo.html.disableSelection(this.domNode);
 	dojo.event.connect(this.domNode, "onmousedown", function (e) {
@@ -51,6 +51,7 @@ dojo.widget.defineWidget("dojo.widget.ColorPalette", dojo.widget.HtmlWidget, {pa
 		}
 	}
 }, onClick:function (e) {
+	this.currentValue = e.currentTarget.color;
 	this.onColorSelect(e.currentTarget.color);
 	e.currentTarget.style.borderColor = "gray";
 }, onColorSelect:function (color) {
