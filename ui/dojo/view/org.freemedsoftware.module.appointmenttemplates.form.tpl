@@ -32,12 +32,14 @@
 	document.getElementById( 'atname' ).value = data.atname;
 	document.getElementById( 'atduration' ).value = data.atduration;
 	if ( data.atequipment ) { atequipment.onAssign( data.atequipment ); }
+	dojo.widget.byId( 'atcolor' ).currentValue = data.atcolor;
 <!--{/assign_block}-->
 
 <!--{assign_block var='collectDataArray'}-->
 	atname: document.getElementById('atname').value,
 	atduration: document.getElementById('atduration').value,
-	atequipment: atequipment.getValue()
+	atequipment: atequipment.getValue(),
+	atcolor: dojo.widget.byId( 'atcolor' ).currentValue
 <!--{/assign_block}-->
 
 <!--{assign_block var='moduleForm'}-->

@@ -43,12 +43,14 @@
 	document.getElementById( 'sname' ).value = data.sname;
 	document.getElementById( 'sdescrip' ).value = data.sdescrip;
 	document.getElementById( 'sage' ).value = data.sage;
+	dojo.widget.byId( 'scolor' ).currentValue = data.scolor;
 <!--{/assign_block}-->
 
 <!--{assign_block var='collectDataArray'}-->
 	sname: document.getElementById('sname').value,
 	sdescrip: document.getElementById('sdescrip').value,
-	sage: document.getElementById('sage').value
+	sage: document.getElementById('sage').value,
+	scolor: dojo.widget.byId( 'scolor' ).currentValue
 <!--{/assign_block}-->
 
 <!--{assign_block var='moduleForm'}-->
