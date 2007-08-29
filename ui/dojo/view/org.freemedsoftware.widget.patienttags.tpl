@@ -136,7 +136,8 @@
 
 </script>
 <div id="patientTagContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center" width="100%" class="patientEmrWidgetHeader"><b><!--{t}-->Patient Tags<!--{/t}--></b></div>
+	<div align="center" width="100%" class="patientEmrWidgetHeader" onClick="toggleDiv( 'patientTagHoldingContainer' );"><b><!--{t}-->Patient Tags<!--{/t}--></b></div>
+	<div id="patientTagHoldingContainer">
 	<div id="patientTagContainerInnerDiv"></div>
 	<div id="formDiv">
 	<input dojoType="Select"
@@ -146,6 +147,7 @@
 		dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
 		setValue="patientTags.addTag(this, arguments[0]);"
 		mode="remote" value="" />
+	</div>
 	</div>
 </div>
 

@@ -122,7 +122,7 @@
 
 </script>
 <div id="patientTaskContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center" width="100%" class="patientEmrWidgetHeader"><!--{t}-->Patient Tasks<!--{/t}--></div>
+	<div align="center" width="100%" class="patientEmrWidgetHeader" onClick="toggleDiv( 'patientTaskContainerInnerDiv' );"><!--{t}-->Patient Tasks<!--{/t}--></div>
 	<div id="patientTaskContainerInnerDiv"></div>
 </div>
 

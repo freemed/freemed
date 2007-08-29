@@ -46,6 +46,7 @@ var djConfig = {
 	<!--{/if}-->
 	dojo.require("dojo.date");
 	dojo.require("dojo.event.*");
+	dojo.require("dojo.lfx.*");
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
 	dojo.require("dojo.widget.LinkPane");
@@ -190,6 +191,15 @@ var djConfig = {
 
 		return true;
 	} // end function freemedLoad
+
+	function toggleDiv ( d ) {
+		// Get current setting
+		if ( document.getElementById( d ).offsetHeight > 0 ) {
+			dojo.lfx.wipeOut( d, 300 ).play();
+		} else {
+			dojo.lfx.wipeIn( d, 300 ).play();
+		}
+	} // end function toggleDiv
 
 	// "Global Namespace" functions and settings
 	freemedGlobal = {
