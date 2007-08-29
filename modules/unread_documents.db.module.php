@@ -263,6 +263,7 @@ class UnreadDocuments extends SupportModule {
 		syslog( LOG_DEBUG, "mkdir -p '$dirname'" );
 		`mkdir -p "$dirname"`;
 		syslog( LOG_DEBUG, "mv 'data/documents/unread/$filename' '$new_filename' -f" );
+		`mv "data/documents/unread/${filename}" "${new_filename}" -f`;
 
 		$q = "DELETE FROM ".$this->table_name." WHERE id=".$GLOBALS['sql']->quote( $id );
 		syslog( LOG_DEBUG, "q = $q" );
