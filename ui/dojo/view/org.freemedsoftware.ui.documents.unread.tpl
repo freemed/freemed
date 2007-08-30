@@ -221,7 +221,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="unreadDocumentViewPane" style="overflow: scroll;">
+	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="unreadDocumentViewPane" style="overflow-x: scroll; overflow-y: scroll; max-height: 92%; max-width: 92%;">
 	</div>
 </div>
 
