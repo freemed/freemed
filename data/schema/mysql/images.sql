@@ -22,6 +22,7 @@
 
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/documents_tc.sql
 
 CREATE TABLE IF NOT EXISTS `images` (
 	imagedt			DATE,
@@ -106,14 +107,18 @@ CREATE TRIGGER images_Delete
 CREATE TRIGGER images_Insert
 	AFTER INSERT ON images
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, NEW.imagedesc, IFNULL(NEW.locked, 0), NEW.user, NEW.active );
+		DECLARE tc VARCHAR(250);
+		SELECT description INTO tc FROM documents_tc WHERE id = NEW.imagetype;
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'images', NEW.imagepat, NEW.id, NEW.imagedt, CONCAT( tc, ' - ', NEW.imagedesc ), IFNULL(NEW.locked, 0), NEW.user, NEW.active );
 	END;
 //
 
 CREATE TRIGGER images_Update
 	AFTER UPDATE ON images
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=NEW.imagedesc, locked=IFNULL(NEW.locked, 0), user=NEW.user, status=NEW.active WHERE module='images' AND oid=NEW.id;
+		DECLARE tc VARCHAR(250);
+		SELECT description INTO tc FROM documents_tc WHERE id = NEW.imagetype;
+		UPDATE `patient_emr` SET stamp=NEW.imagedt, patient=NEW.imagepat, summary=CONCAT( tc, ' - ', NEW.imagedesc ), locked=IFNULL(NEW.locked, 0), user=NEW.user, status=NEW.active WHERE module='images' AND oid=NEW.id;
 	END;
 //
 
