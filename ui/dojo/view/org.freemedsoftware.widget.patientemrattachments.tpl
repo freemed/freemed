@@ -326,6 +326,7 @@
 			id="emrSection" widgetId="emrSection"
 			style="width: 150px;"
 			dataUrl="<!--{$relay}-->/org.freemedsoftware.api.TableMaintenance.GetModules?param0=EmrModule&param1=%{searchString}&param2=1"
+			maxListLength="20"
 			mode="remote" value="" />
 	</td>
 	<td align="left"><button dojoType="button" id="emrAddButton" widgetId="emrAddButton"><!--{t}-->Add<!--{/t}--></button></td>
