@@ -45,6 +45,7 @@
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
 		currentLocation: 'INBOX',
+		messages: [],
 		getSelectedMessage: function ( ) {
 			return dojo.widget.byId('messagesTable').getSelectedData();
 		},
@@ -65,7 +66,9 @@
 				load: function( type, data, evt ) {
 					var d = data;
 					for(var i=0; i<d.length; i++) {
+						o.messages.push( d[i].id );
 						d[i].stamp_mdy = new Date( d[i].stamp_mdy );
+						d[i].select = '<input id="message_delete_' + d[i].id + '" type="checkbox" />';
 					}
 					dojo.widget.byId('messagesTable').store.setData( d );
 				},
@@ -92,6 +95,31 @@
 					},
 					url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.del',
 					load: function( type, data, evt ) {
+						freemedMessage( "<!--{t}-->Message deleted successfully.<!--{/t}-->", 'INFO' );
+						o.loadMessages();
+					},
+					mimetype: "text/json"
+				});
+			}
+		},
+		deleteMessages: function ( ) {
+			var selected = [];
+			for ( var i=0; i<o.messages.length; i++ ) {
+				if ( document.getElementById( 'message_delete_' + o.messages[ i ] ).checked ) {
+					selected.push( o.messages[ i ] );
+				}
+			}
+			if ( selected.length < 1 ) {
+				alert("<!--{t}-->At least one message must be selected.<!--{/t}-->");
+			} else {
+				dojo.io.bind({
+					method: 'POST',
+					content: {
+						param0: selected
+					},
+					url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.del',
+					load: function( type, data, evt ) {
+						freemedMessage( "<!--{t}-->Messages deleted successfully.<!--{/t}-->", 'INFO' );
 						o.loadMessages();
 					},
 					mimetype: "text/json"
@@ -159,6 +187,7 @@
 		dojo.event.connect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
 		dojo.event.connect(dojo.widget.byId('messageNewButton'), "onClick", o, "newMessage");
 		dojo.event.connect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
+		dojo.event.connect(dojo.widget.byId('messageMultipleDeleteButton'), "onClick", o, "deleteMessages");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
 		/*
@@ -174,6 +203,7 @@
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
 		dojo.event.disconnect(dojo.widget.byId('messageNewButton'), "onClick", o, "newMessage");
 		dojo.event.disconnect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
+		dojo.event.disconnect(dojo.widget.byId('messageMultipleDeleteButton'), "onClick", o, "deleteMessages");
 		dojo.event.disconnect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.disconnect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
 	});
@@ -195,6 +225,11 @@
 				</td>
 				<td width="30">
 					<button dojoType="Button" class="messageButton" id="messageDeleteButton" widgetId="messageDeleteButton">
+						<img src="<!--{$htdocs}-->/images/teak/summary_delete.16x16.png" border="0" height="16" width="16" />
+					</button>
+				</td>
+				<td width="30">
+					<button dojoType="Button" class="messageButton" id="messageMultipleDeleteButton" widgetId="messageMultipleDeleteButton">
 						<img src="<!--{$htdocs}-->/images/teak/summary_delete.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
@@ -230,6 +265,7 @@
 			 valueField="id" border="0" multiple="false" maxSelect="1">
 			<thead>
 				<tr>
+					<th field="select" dataType="Html">&nbsp;</th>
 					<th field="stamp_mdy" dataType="Date" sort="desc"><!--{t}-->Date<!--{/t}--></th>
 					<th field="from_user" dataType="String"><!--{t}-->From<!--{/t}--></th>
 					<th field="regarding" dataType="String"><!--{t}-->Regarding<!--{/t}--></th>

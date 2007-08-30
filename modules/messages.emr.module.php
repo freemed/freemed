@@ -138,6 +138,22 @@ class MessagesModule extends EMRModule {
 		return $GLOBALS['sql']->queryOne( $q ) + 0;
 	} // end method UnreadMessages
 
+	// Method: DeleteMultiple
+	//
+	//	Remove multiple messages by id.
+	//
+	// Parameters:
+	//
+	//	$m - Array of message ids
+	//
+	public function DeleteMultiple ( $m ) {
+		$hash = join( ',', $m );
+		$q = "DELETE FROM ".$this->table_name." WHERE FIND_IN_SET( id, ".$GLOBALS['sql']->quote( $hash )." ) AND msgfor = ".$GLOBALS['sql']->quote( freemed::user_cache()->user_number );
+		$res = $GLOBALS['sql']->query( $q );
+		if ( PEAR::isError( $res ) ) { return false; }
+		return true;
+	} // end method DeleteMultiple
+
 	function add_pre ( &$data ) {
 		$this_user = freemed::user_cache();
 		$data['msgby'] = $this_user->user_number;
