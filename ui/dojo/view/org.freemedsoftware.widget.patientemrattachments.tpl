@@ -86,6 +86,7 @@
 					error: function() { },
 					load: function( type, data, evt ) {
 						if (data) {
+							freemedMessage("<!--{t}-->Locked record.<!--{/t}-->", "INFO");
 							// Force reload
 							patientEmrAttachments.initialLoad();
 						} else {
@@ -98,6 +99,30 @@
 
 				case 'modify':
 				freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + x.module_namespace.toLowerCase() + '.form?id=' + x.oid + '&patient=<!--{$patient|escape}-->' );
+				break;
+
+				case 'delete':
+				if (!confirm("<!--{t}-->Are you sure you want to remove this record?<!--{/t}-->")) {
+					return false;
+				}
+				dojo.io.bind({
+					method: 'POST',
+					content: {
+						param0: x.oid
+						},
+					url: '<!--{$relay}-->/org.freemedsoftware.module.' + x.module_namespace + '.del',
+					error: function() { },
+					load: function( type, data, evt ) {
+						if (data) {
+							freemedMessage("<!--{t}-->Removed record.<!--{/t}-->", "INFO");
+							// Force reload
+							patientEmrAttachments.initialLoad();
+						} else {
+							alert('<!--{t}-->Failed to remove record.<!--{/t}-->');
+						}
+					},
+					mimetype: "text/json"
+				});
 				break;
 	
 				case 'print':
@@ -235,6 +260,9 @@
 								<!--{acl category="emr" permission="modify"}-->
 								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
 								<!--{/acl}-->
+								<!--{acl category="emr" permission="delete"}-->
+								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('delete', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_delete.png\" border=\"0\" alt=\"<!--{t}-->Remove Record<!--{/t}-->\" /></a>&nbsp;";
+								<!--{/acl}-->
 							} else {
 								// All locked stuff goes here:
 								data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}-->\" />&nbsp;";
@@ -263,6 +291,7 @@
 		dojo.widget.byId( 'emrSection' ).setLabel( '' );
 		dojo.widget.byId( 'emrSection' ).setValue( '' );
 		patientEmrAttachments.initialLoad( );
+		patientEmrAttachments.setFilters( );
 		dojo.event.connect( dojo.widget.byId('emrPrintButton'), 'onClick', patientEmrAttachments, 'OnPrint' );
 		dojo.event.connect( dojo.widget.byId('emrAddButton'), 'onClick', patientEmrAttachments, 'OnAdd' );
 		dojo.event.connect( dojo.widget.byId('emrResetButton'), 'onClick', patientEmrAttachments, 'resetFilters' );
