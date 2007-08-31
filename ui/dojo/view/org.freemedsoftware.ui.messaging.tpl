@@ -230,7 +230,7 @@
 				</td>
 				<td width="30">
 					<button dojoType="Button" class="messageButton" id="messageMultipleDeleteButton" widgetId="messageMultipleDeleteButton">
-						<img src="<!--{$htdocs}-->/images/teak/summary_delete.16x16.png" border="0" height="16" width="16" />
+						<img src="<!--{$htdocs}-->/images/teak/summary_delete_2.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="100">
