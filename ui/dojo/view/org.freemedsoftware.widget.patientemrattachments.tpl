@@ -249,6 +249,7 @@
 					if (typeof(data) == 'object') {
 						for (i=0; i<data.length; i++) {	
 							data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
+							data[i]['summary'] = data[i]['summary'].replace('\\', '');
 							data[i]['actions'] = '<span style="white-space: nowrap;">';
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
@@ -271,7 +272,7 @@
 								data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}-->\" /></a>";
 							}
 							// Common things
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a></span>";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;&nbsp;</span>";
 						}
 						dojo.widget.byId('patientEmrAttachments').store.setData( data );
 						try {
