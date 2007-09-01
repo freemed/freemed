@@ -36,7 +36,7 @@
         <table border="0" style="width:200px;">
         <tr><td align="center">
         	<button dojoType="Button" id="ModuleFormCancelButton" widgetId="ModuleFormCancelButton" onClick="freemedPatientContentLoad('org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');">
-        	        <div><!--{t}-->Cancel<!--{/t}--></div>
+        	        <div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
         	</button>
         </td></tr></table>
 </div>

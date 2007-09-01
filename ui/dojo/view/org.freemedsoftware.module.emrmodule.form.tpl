@@ -53,7 +53,11 @@
 	var m = {
 		handleResponse: function ( data ) {
 			if (data) {
+				<!--{if $id}-->
+				freemedMessage( "<!--{t}-->Updated record.<!--{/t}-->", "INFO" );
+				<!--{else}-->
 				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				<!--{/if}-->
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
