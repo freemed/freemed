@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `patient_emr` (
 	module			VARCHAR (150) NOT NULL,
 	oid			INT UNSIGNED NOT NULL,
 	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
-	summary			VARCHAR (250) NOT NULL,
+	summary			VARCHAR (250) DEFAULT '',
 	locked			BOOL NOT NULL DEFAULT FALSE,
 	annotation		TEXT,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
@@ -53,6 +53,7 @@ BEGIN
 	DROP TRIGGER patient_emr_Insert;
 
 	ALTER IGNORE TABLE patient_emr ADD COLUMN language CHAR( 5 ) DEFAULT '' AFTER provider;
+	#ALTER IGNORE TABLE patient_emr CHANGE COLUMN summary summary VARCHAR (250) DEFAULT '';
 END;
 //
 
