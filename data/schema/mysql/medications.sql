@@ -24,6 +24,23 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `medications` (
+	mpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	mdate			DATE,
+	mdrugs			VARCHAR (250),
+	locked			INT UNSIGNED NOT NULL DEFAULT 0,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
+	id			BIGINT NOT NULL AUTO_INCREMENT
+
+	#	Define keys
+
+	, PRIMARY KEY		( id )
+	, KEY			( mpatient, mdate )
+	, FOREIGN KEY		( mpatient ) REFERENCES patient.id ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `medications_atomic` (
+	mid			INT UNSIGNED NOT NULL,
 	mdrug			VARCHAR (150),
 	mdosage			VARCHAR (150),
 	mroute			VARCHAR (150),
@@ -31,12 +48,14 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	mdate			DATE,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	id			BIGINT NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 
-	KEY			( mpatient, mdate ),
-	FOREIGN KEY		( mpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, PRIMARY KEY		( id )
+	, KEY			( mpatient, mdate )
+	, FOREIGN KEY		( mpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( mid ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS medications_Upgrade;
@@ -47,12 +66,13 @@ BEGIN
 
 	#----- Remove triggers
 	DROP TRIGGER medications_Delete;
+	DROP TRIGGER medications_atomic_Delete;
 	DROP TRIGGER medications_Insert;
+	DROP TRIGGER medications_atomic_Insert;
 	DROP TRIGGER medications_Update;
+	DROP TRIGGER medications_atomic_Update;
 
 	#----- Upgrades
-	ALTER IGNORE TABLE medications ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER mdate;
-	ALTER IGNORE TABLE medications ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
@@ -65,22 +85,58 @@ DELIMITER //
 CREATE TRIGGER medications_Delete
 	AFTER DELETE ON medications
 	FOR EACH ROW BEGIN
-		DELETE FROM `patient_emr` WHERE module='medications' AND oid=OLD.id;
+		DELETE FROM `medications_atomic` WHERE mid = OLD.id;
+		DELETE FROM `patient_emr` WHERE module = 'medications' AND oid = OLD.id;
+	END;
+//
+
+CREATE TRIGGER medications_atomic_Delete
+	AFTER DELETE ON medications_atomic
+	FOR EACH ROW BEGIN
+		CALL medicationsReindex ( OLD.mid );
 	END;
 //
 
 CREATE TRIGGER medications_Insert
 	AFTER INSERT ON medications
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, CONCAT(NEW.mdrug, ' ', NEW.mdosage), NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'medications', NEW.mpatient, NEW.id, NEW.mdate, NEW.mdrugs, NEW.user, NEW.active );
+	END;
+//
+
+CREATE TRIGGER medications_atomic_Insert
+	AFTER INSERT ON medications_atomic
+	FOR EACH ROW BEGIN
+		CALL medicationsReindex ( NEW.mid );
 	END;
 //
 
 CREATE TRIGGER medications_Update
 	AFTER UPDATE ON medications
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=CONCAT(NEW.mdrug, ' ', NEW.mdosage), user=NEW.user, status=NEW.active WHERE module='medications' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.mdate, patient=NEW.mpatient, summary=IFNULL(NEW.mdrugs,''), user=NEW.user, status=NEW.active WHERE module='medications' AND oid=NEW.id;
 	END;
+//
+
+CREATE TRIGGER medications_atomic_Update
+	AFTER UPDATE ON medications_atomic
+	FOR EACH ROW BEGIN
+		CALL medicationsReindex ( NEW.mid );
+	END;
+//
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS medicationsReindex;
+
+DELIMITER //
+
+CREATE PROCEDURE medicationsReindex ( IN thisId BIGINT UNSIGNED )
+BEGIN
+	DECLARE m VARCHAR (250);
+	SELECT GROUP_CONCAT( mdrug ) INTO m FROM medications_atomic WHERE mid = thisId GROUP BY mid;
+	UPDATE medications SET mdrugs = m WHERE id = thisId;
+END
 //
 
 DELIMITER ;

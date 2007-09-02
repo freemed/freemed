@@ -26,52 +26,46 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 class Medications extends EMRModule {
 
 	var $MODULE_NAME = "Medication";
-	var $MODULE_VERSION = "0.3";
+	var $MODULE_VERSION = "0.4";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "11644a0c-9efb-4db2-857f-3e4d86b1b2ea";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $record_name = "Medications";
 	var $table_name = 'medications';
 	var $patient_field = 'mpatient';
 	var $date_field = 'mdate';
+	var $atomic_keys = array (
+		'mid',
+		'mdrug',
+		'mdosage',
+		'mroute',
+		'mpatient',
+		'mdate',
+		'user'
+	);
 
 	public function __construct ( ) {
 		// __("Medications")
 
 		$this->variables = array (
-			'mdrug',
-			'mdosage',
-			'mroute',
-			'mpatient',
 			'mdate',
+			'mpatient',
 			'user'
 		);
 
 		$this->summary_vars = array (
-			__("Drug") => 'mdrug',
-			__("Dosage") => 'mdosage'
+			__("Date") => 'mdate',
+			__("Drugs") => 'mdrugs',
 		);
 		$this->summary_options = SUMMARY_DELETE;
-		$this->summary_order_by = 'mdrug';
+		$this->summary_order_by = 'mdate';
+		$this->_SetAssociation( 'EmrModule' );
 
 		// call parent constructor
 		parent::__construct( );
 	} // end constructor Medications
-
-	function recent_text ( $patient, $recent_date = NULL ) {
-		// skip recent; need all for this one
-		$query = "SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->date_field." DESC";
-		$res = $GLOBALS['sql']->queryAll($query);
-	        $m[] = "\n\nMEDICATIONS:\n";
-		foreach ( $res AS $r ) {
-			$m[] = trim($r['mdrug'].' '.$r['mdosage'].' '.$r['mroute']);
-		}
-		return @join("\n", $m);
-	} // end method recent_text
 
 	protected function add_pre ( &$data ) {
 		$data['mdate'] = date('Y-m-d');
@@ -79,8 +73,92 @@ class Medications extends EMRModule {
 	}
 
 	protected function mod_pre ( &$data ) {
+		unset($data['mdate']);
 		$data['user'] = freemed::user_cache()->user_number;
 	}
+
+	// Method: GetAtoms
+	//
+	//	Get all atoms associated with a medication record.
+	//
+	// Parameters:
+	//
+	//	$mid - Medications id
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAtoms( $mid ) {
+		$q = "SELECT * FROM medications_atomic WHERE mid = ". ( $mid + 0 );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAtoms
+
+	// Method: SetAtoms
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$mid - Medications id
+	//
+	//	$atoms - Array of hashes
+	//	* altered - Boolean flag to determine whether or not this entry has been altered.
+	//	* id - 0 if new, otherwise the current id
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function SetAtoms ( $patient, $mid, $atoms ) {
+		$as = (array) $atoms;
+
+		// Get current atoms
+		//$current = $GLOBALS['sql']->queryCol( "SELECT id FROM medications_atomic WHERE mid = ".$GLOBALS['sql']->quote( $mid ) );
+		foreach ( $as AS $a ) {
+			$a = (array) $a;
+			if ( ( $a['id'] + 0 ) > 0 ) {
+				$newkeys[] = ( $a['id'] + 0 );
+			}
+		}
+
+		// Remove everything not here anymore
+		if ( count( $newkeys ) > 0 ) {
+			$remove = $GLOBALS['sql']->query( "DELETE FROM medications_atomic WHERE mid = ".$GLOBALS['sql']->quote( $mid )." AND NOT FIND_IN_SET( id, ".$GLOBALS['sql']->quote( join( ',', $newkeys ) )." )" );
+		}
+
+		foreach ( $as AS $a ) {
+			// Force as an array
+			$a = (array) $a;
+
+			// Preprocessing
+			$a['mid'] = $mid;
+			$a['mpatient'] = $patient;
+
+			// If id = 0, process as new entry
+			if ( ( (int) $a['id'] ) == 0 ) {
+				syslog( LOG_DEBUG, "SetAtoms: adding new atom for $patient, mid = $mid" );
+				$GLOBALS['sql']->load_data( $a );
+				$query = $GLOBALS['sql']->insert_query(
+					'medications_atomic',
+					$this->atomic_keys
+				);
+				$GLOBALS['sql']->query( $query );
+			} else {
+				if ( $a['altered'] ) {
+					syslog( LOG_DEBUG, "SetAtoms: modifying atomic medication for $patient, mid = $mid, id = ".$a['id'] );
+					$GLOBALS['sql']->load_data( $a );
+					$query = $GLOBALS['sql']->update_query(
+						'medications_atomic',
+						$this->atomic_keys,
+						array( 'id' => $a['id'] )
+					);
+					$GLOBALS['sql']->query( $query );
+				}
+			}
+		}
+		return true;
+	} // end method SetAtoms
 
 } // end class Medications
 
