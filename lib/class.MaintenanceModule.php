@@ -691,7 +691,7 @@ class MaintenanceModule extends BaseModule {
 			$return[$key] = $r[$field];
 		}
 		if (!$options['multiple']) {
-			return html_form::select_widget($varname, $return, $options);
+			return html_form::select_widget($varname, $return, $options)."<a href=\"module_loader.php?action=addform&module=".urlencode(get_class($this))."&return=close\" class=\"button\" target=\"_entry\">+</a>";
 		} else {
 			// Process multiple
 			global ${$varname};
