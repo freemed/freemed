@@ -69,7 +69,7 @@ BEGIN
 	DECLARE found BOOL;
 
 	SELECT GROUP_CONCAT( status_type ) INTO c FROM workflow_status WHERE patient = pt AND DATE_FORMAT( stamp, '%Y-%m-%d' ) = dt AND status_completed = TRUE GROUP BY patient;
-	SELECT GROUP_CONCAT( status_type ) INTO u FROM workflow_status WHERE patient = pt AND DATE_FORMAT( stamp, '%Y-%m-%d' ) = dt AND status_completed = TRUE GROUP BY patient;
+	SELECT GROUP_CONCAT( status_type ) INTO u FROM workflow_status WHERE patient = pt AND DATE_FORMAT( stamp, '%Y-%m-%d' ) = dt AND status_completed = FALSE GROUP BY patient;
 
 	#----- See if lookup already exists, adjust query accordingly
 	SELECT COUNT(*) > 0 INTO found FROM workflow_status_summary WHERE patient = pt AND DATE_FORMAT( stamp, '%Y-%m-%d' ) = dt;
@@ -159,7 +159,7 @@ BEGIN
 	DECLARE rec INT UNSIGNED;
 	DECLARE ty  INT UNSIGNED;
 	
-	SELECT w.id INTO rec FROM workflow_status w LEFT OUTER JOIN workflow_status_type t ON t.id = w.status_type WHERE DATE_FORMAT('%Y-%m-%d', w.stamp) = dt AND w.patient = pt AND t.status_module = st;
+	SELECT w.id INTO rec FROM workflow_status w LEFT OUTER JOIN workflow_status_type t ON t.id = w.status_type WHERE DATE_FORMAT( w.stamp, '%Y-%m-%d' ) = dt AND w.patient = pt AND t.status_module = st;
 
 	IF ISNULL( rec ) THEN
 		#	Lookup type to insert
