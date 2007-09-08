@@ -214,7 +214,7 @@ BEGIN
 	SET fClause = '';
 	WHILE NOT done DO
 		SET fClause_tmp = fClause;
-		SET fClause = CONCAT( fClause_tmp, ", CASE FIND_IN_SET( w.completed, '", t_id, "' ) WHEN TRUE THEN TRUE ELSE FALSE END AS '", t_status_module, "' " );
+		SET fClause = CONCAT( fClause_tmp, ", IF ( FIND_IN_SET( '", t_id, "', w.completed ), TRUE, FALSE ) AS '", t_status_module, "' " );
 		FETCH cur INTO t_id, t_status_name, t_status_module;
 	END WHILE;
 	CLOSE cur;
