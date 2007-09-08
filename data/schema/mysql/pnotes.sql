@@ -95,7 +95,7 @@ CREATE TRIGGER pnotes_Delete
 		DELETE FROM `patient_emr` WHERE module='pnotes' AND oid=OLD.id;
 		SELECT COUNT(*) INTO c FROM patient_emr WHERE module='pnotes' AND patient=OLD.pnotespat AND DATE_FORMAT( stamp, '%Y-%m-%d' ) = OLD.pnotesdt;
 		IF c < 1 THEN
-			CALL patientWorkflowUpdateStatus( OLD.pnotespat, OLD.pnotesdt, 'pnotes', FALSE, OLD.user );
+			CALL patientWorkflowUpdateStatus( OLD.pnotespat, OLD.pnotesdt, 'progressnotes', FALSE, OLD.user );
 		END IF;
 	END;
 //
@@ -104,7 +104,7 @@ CREATE TRIGGER pnotes_Insert
 	AFTER INSERT ON pnotes
 	FOR EACH ROW BEGIN
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, provider, user, status ) VALUES ( 'pnotes', NEW.pnotespat, NEW.id, NEW.pnotesdt, NEW.pnotesdescrip, NEW.locked, NEW.pnotesdoc, NEW.user, NEW.active );
-		CALL patientWorkflowUpdateStatus( NEW.pnotespat, NEW.pnotesdt, 'pnotes', TRUE, NEW.user );
+		CALL patientWorkflowUpdateStatus( NEW.pnotespat, NEW.pnotesdt, 'progressnotes', TRUE, NEW.user );
 	END;
 //
 
