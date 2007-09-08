@@ -89,7 +89,7 @@ CREATE TRIGGER letters_Insert
 	FOR EACH ROW BEGIN
 		DECLARE p VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterto;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'letters', NEW.letterpatient, NEW.id, NEW.letterdt, p, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'letters', NEW.letterpatient, NEW.id, NEW.letterdt, p, IFNULL(NEW.locked,0), NEW.user, NEW.active );
 	END;
 //
 
@@ -98,7 +98,7 @@ CREATE TRIGGER letters_Update
 	FOR EACH ROW BEGIN
 		DECLARE p VARCHAR(250);
 		SELECT CONCAT(phyfname, ' ', phylname) INTO p FROM physician WHERE id=NEW.letterto;
-		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='letters' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.letterdt, patient=NEW.letterpatient, summary=p, locked=IFNULL(NEW.locked,0), user=NEW.user, status=NEW.active WHERE module='letters' AND oid=NEW.id;
 	END;
 //
 
