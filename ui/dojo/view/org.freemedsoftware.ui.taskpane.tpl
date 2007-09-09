@@ -90,12 +90,12 @@
 	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unfiled', event);">
 			<img src="<!--{$htdocs}-->/images/teak/unfiled.32x32.png" height="32" width="32" border="0" /><br/>
-			<!--{t}-->Unfiled<!--{/t}-->
+			<!--{t}-->Unfiled<!--{/t}--> (<span id="taskPaneUnfiledCount"><!--{method namespace='org.freemedsoftware.module.UnfiledDocuments.GetCount'}--></span>)
 		</div>
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unread', event);">
 			<img src="<!--{$htdocs}-->/images/teak/unread.32x32.png" height="32" width="32" border="0" /><br/>
-			<!--{t}-->Unread<!--{/t}-->
+			<!--{t}-->Unread<!--{/t}--> (<span id="taskPaneUnreadCount"><!--{method namespace='org.freemedsoftware.module.UnreadDocuments.GetCount'}--></span>)
 		</div>
 	</div>
 
