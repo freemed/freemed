@@ -208,22 +208,36 @@ var djConfig = {
 		noteSave: "<!--{$SESSION.authdata.user_record.usermanageopt.notePad|escape:'javascript'}-->",
 		interval: 60, // seconds between polls
 		intervalCallback: function ( ) {
+			var p = [
+				{
+					method: "org.freemedsoftware.module.SystemNotifications.GetFromTimestamp",
+					parameters: [ freemedGlobal.intervalStamp ]
+				},
+				{
+					method: "org.freemedsoftware.module.UnfiledDocuments.GetCount"
+				},
+				{
+					method: "org.freemedsoftware.module.UnreadDocuments.GetCount"
+				}
+				]
 			dojo.io.bind({
 				method: "POST",
 				content: {
-					param0: freemedGlobal.intervalStamp
+					param0: dojo.json.serialize( p )
 				},
-				url: "<!--{$relay}-->/org.freemedsoftware.module.SystemNotifications.GetFromTimestamp",
+				url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.Multicall",
 				load: function(type, data, evt) {
-					if (data) {
+					if (datai[0]) {
 						// Handle everything
-						if ( data.count > 0 ) {
-							freemedGlobal.onSystemNotifications( data.items );
+						if ( data[0].count > 0 ) {
+							freemedGlobal.onSystemNotifications( data[0].items );
 						}
 
 						// Save interval passed back
 						freemedGlobal.intervalStamp = data.timestamp;
 					}
+					document.getElementById( 'taskPaneUnfiledCount' ).innerHTML = data[1];
+					document.getElementById( 'taskPaneUnreadCount' ).innerHTML = data[2];
 				},
 				mimetype: "text/json"
 			});
