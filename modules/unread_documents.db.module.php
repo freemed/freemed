@@ -272,6 +272,22 @@ class UnreadDocuments extends SupportModule {
 		return true;
 	} // end method ReviewIntoRecord
 
+	// Method: GetCount
+	//
+	//	Retrieve number of unread documents in the system for the current user.
+	//
+	// Returns:
+	//
+	//	Current number of unfiled documents in the system.
+	//
+	public function GetCount ( ) {
+		$user = freemed::user_cache();
+		if (!$GLOBALS['this_user']->isPhysician()) { return 0; }
+		$q = "SELECT COUNT(*) AS unread FROM ".$this->table_name." WHERE urfphysician=".$GLOBALS['sql']->quote( $user->getPhysician() );
+		$r = $GLOBALS['sql']->queryOne( $q );
+		return $r;
+	} // end method GetCount
+
 } // end class UnreadDocuments
 
 register_module('UnreadDocuments');

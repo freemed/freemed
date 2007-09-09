@@ -481,6 +481,20 @@ class UnfiledDocuments extends SupportModule {
 		}
 	} // end method menu_notify
 
+	// Method: GetCount
+	//
+	//	Retrieve number of unfiled documents in the system.
+	//
+	// Returns:
+	//
+	//	Current number of unfiled documents in the system.
+	//
+	public function GetCount ( ) {
+		$q = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
+		$r = $GLOBALS['sql']->queryOne( $q );
+		return $r;
+	} // end method GetCount
+
 } // end class UnfiledDocuments
 
 register_module('UnfiledDocuments');
