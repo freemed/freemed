@@ -60,6 +60,9 @@
 				alert( "<!--{t}-->You must enter a patient or person value to create a message.<!--{/t}-->" );
 				return false;
 			}
+			if ( parseInt( document.getElementById( 'msggroup' ) > 0 ) {
+				x.group = parseInt( document.getElementById( 'msggroup' ) );
+			}
 			dojo.io.bind({
 				method: 'POST',
 				content: {
@@ -96,6 +99,12 @@
 		<tr>
 			<td valign="top" align="right"><!--{t}-->Recipient<!--{/t}--> : </td>
 			<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" overrideNamespace="org.freemedsoftware.api.UserInterface" method="GetUsers" varname="msgfor"}--></td>
+		</tr>
+		<tr>
+			<td valign="top" align="right"><!--{t}-->Group<!--{/t}--> : </td>
+			<td>
+				<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module='UserGroups' varname="msggroup"}-->
+			</td>
 		</tr>
 		<tr>
 			<td valign="top" align="right"><!--{t}-->Patient<!--{/t}--> : </td>

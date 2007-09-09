@@ -142,6 +142,7 @@ class Messages {
 	//	$message - Associative array containing information describing the message.
 	//	* system - Boolean, if system message
 	//	* user - Destination user id
+	//	* group - User group id, optional
 	//	* for - Array of destination users (instad of 'user')
 	//	* text - Message body
 	//	* patient - Patient id
@@ -169,6 +170,12 @@ class Messages {
 			$msgFor = $message['for'];
 		} else {
 			$msgFor = array( $message['user'] );
+		}
+
+		// Handle message group if one is specified
+		if ( $message['group'] > 0 ) {
+			$g = $GLOBALS['sql']->get_link( 'usergroup', $message['group'] );
+			$msgFor = array_merge( $msgFor, explode( ',', $g ) );
 		}
 
 		// Unique timestamp
