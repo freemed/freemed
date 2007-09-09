@@ -31,7 +31,7 @@ class IcdCodes extends SupportModule {
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "bfe6eb44-331b-44e9-9f66-8805e2d98f1d";
 
-	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name 	 = "icd9";
 	var $record_name	 = "ICD9 Code";
@@ -51,16 +51,6 @@ class IcdCodes extends SupportModule {
 	);
 
 	public function __construct () {
-		$this->_SetMetaInformation('global_config_vars', array('icd'));
-		$this->_SetMetaInformation('global_config', array(
-			__("ICD Code Type") =>
-			'html_form::select_widget("icd", '.
-			'array ('.
-				'"ICD9" => "9",'.
-				'"ICD10" => "10"'.
-			'))'
-		));
-	
 		$this->list_view = array (
 			__("Code")        => 	"icd9code",
 			__("Description") =>	"icd9descrip"
@@ -69,7 +59,7 @@ class IcdCodes extends SupportModule {
 		parent::__construct( );
 	} // end constructor IcdCodes
 
-	function display_short ( $code ) {
+	public function display_short ( $code ) {
 		switch (freemed::config_value('icd')) {
 			case '10':
 				$suffix = '10'; break;
