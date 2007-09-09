@@ -236,6 +236,15 @@ var djConfig = {
 						// Save interval passed back
 						freemedGlobal.intervalStamp = data.timestamp;
 					}
+
+					// Show toasters if new documents have arrived.
+					if ( parseInt( document.getElementById( 'taskPaneUnfiledCount' ).innerHTML ) < parseInt( data[1] ) ) {
+						freemedMessage( "<!--{t}-->New unfiled document(s)<!--{/t}-->", 'INFO' );
+					}
+					if ( parseInt( document.getElementById( 'taskPaneUnreadCount' ).innerHTML ) < parseInt( data[2] ) ) {
+						freemedMessage( "<!--{t}-->New unread document(s).<!--{/t}-->", 'INFO' );
+					}
+					// Update display
 					document.getElementById( 'taskPaneUnfiledCount' ).innerHTML = data[1];
 					document.getElementById( 'taskPaneUnreadCount' ).innerHTML = data[2];
 				},
