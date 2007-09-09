@@ -59,6 +59,7 @@ loadSchema( 'patient_emr' );
 printHeader( "Load admin table definitions" );
 loadSchema( 'modules' );
 loadSchema( 'user' );
+loadSchema( 'scheduler' );
 
 printHeader( "Build aggregation tables" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'allergies', patient, id, reviewed, allergy, 'active' FROM allergies;" );
