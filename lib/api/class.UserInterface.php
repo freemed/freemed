@@ -79,6 +79,38 @@ class UserInterface {
 		return $return;
 	} // end method GetUsers
 
+	// Method: Multicall
+	//
+	//	Utility method to perform multiple pipelined calls.
+	//
+	// Parameters:
+	//
+	//	$calls - Array of hashes containing:
+	//	* method
+	//	* parameters
+	//
+	// Returns:
+	//
+	//	Array of results.
+	//
+	public function Multicall ( $calls ) {
+		if (!is_array($calls)) { return false; }
+		$output = array( );
+		foreach ( $calls AS $k => $v ) {
+			$v = (array) $v;
+			if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) {
+				syslog( LOG_ERROR, "Invalid method called ${v['method']}" );
+				return false;
+			}
+			if ( is_array( $v['parameters'] ) ) {
+				$output[ $k ] = @call_user_func_array ( 'CallMethod', array_merge ( array ( $v['method'] ), $v['parameters'] ) );
+			} else {
+				$output[ $k ] = @CallMethod( $v['method'] );
+			}
+		}
+		return $output;
+	} // end method Multicall
+
 	// Method: GetEMRConfiguration
 	public function GetEMRConfiguration ( ) {
 		return $this->user->manage_config;
