@@ -45,7 +45,8 @@
 	var o = {
 		createMessageCallback: function ( ) {
 			var x = {
-				user: parseInt( dojo.widget.byId('msgfor').getValue() ),
+				//user: parseInt( dojo.widget.byId('msgfor').getValue() ),
+				for: msgfor.getValue(),
 				subject: document.getElementById('msgsubject').value,
 				patient: parseInt( document.getElementById('msgpatient').value ),
 				person: document.getElementById('msgperson').value,
@@ -94,14 +95,7 @@
 	<table border="0">
 		<tr>
 			<td valign="top" align="right"><!--{t}-->Recipient<!--{/t}--> : </td>
-			<td>
-				<select dojoType="Select"
-				 id="msgfor" widgetId="msgfor"
-				 style="width: 150px;"
-				 mode="remote" autocomplete="false"
-				 dataUrl="<!--{$relay}-->/org.freemedsoftware.api.UserInterface.GetUsers?param0=%{searchString}"
-				 /></select>
-			</td>
+			<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" overrideNamespace="org.freemedsoftware.api.UserInterface" method="GetUsers" varname="msgfor"}--></td>
 		</tr>
 		<tr>
 			<td valign="top" align="right"><!--{t}-->Patient<!--{/t}--> : </td>

@@ -34,6 +34,10 @@
 
 		$module - Module class name
 
+		$overrideNamespace - Completely override namespace with another method path, use with $method
+
+		$method - Method name called by $overrideNamespace, not used when $module is used.
+
 *}-->
 
 <script language="javascript">
@@ -83,7 +87,7 @@
 				content: {
 					param0: id
 				},
-				url: "<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.to_text",
+				url: "<!--{$relay}-->/<!--{if $overrideNamespace}--><!--{$overrideNamespace}--><!--{else}-->org.freemedsoftware.module.<!--{$module|escape}--><!--{/if}-->.to_text",
 				load: function ( type, data, evt ) {
 					<!--{$varname|replace:'.':''}-->.AddValue( data, id );
 				},
@@ -166,7 +170,7 @@
 	id="<!--{$varname|escape}-->_widget" widgetId="<!--{$varname|escape}-->_widget"
 	style="width: 300px;"
 	setValue="if (arguments[0]) { dojo.event.topic.publish( '<!--{$varname|escape}-->-setValue', arguments[0] ); }"
-	dataUrl="<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.picklist?param0=%{searchString}"
+	dataUrl="<!--{$relay}-->/<!--{if $overrideNamespace}--><!--{$overrideNamespace}-->.<!--{$method}--><!--{else}-->org.freemedsoftware.module.<!--{$module|escape}-->.picklist<!--{/if}-->?param0=%{searchString}"
 	mode="remote" />
 </div>
 
