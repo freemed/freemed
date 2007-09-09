@@ -227,7 +227,7 @@ var djConfig = {
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.Multicall",
 				load: function(type, data, evt) {
-					if (datai[0]) {
+					if (data[0]) {
 						// Handle everything
 						if ( data[0].count > 0 ) {
 							freemedGlobal.onSystemNotifications( data[0].items );
