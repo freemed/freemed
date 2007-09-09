@@ -139,8 +139,16 @@ class Messages {
 	//
 	// Parameters:
 	//
-	//	$message - Associative array containing information
-	//	describing the message.
+	//	$message - Associative array containing information describing the message.
+	//	* system - Boolean, if system message
+	//	* user - Destination user id
+	//	* for - Array of destination users (instad of 'user')
+	//	* text - Message body
+	//	* patient - Patient id
+	//	* person - Person name whom the message is regarding
+	//	* subject - Textual subject line
+	//	* urgency - Urgency ( 1 to 5 )
+	//	* tag - Tag under which to file message. Defaults to ''.
 	//
 	// Returns:
 	//
@@ -156,28 +164,64 @@ class Messages {
 			return false;
 		}
 
-		// Insert the appropriate record
-		$query = $GLOBALS['sql']->insert_query(
-			"messages",
-			array(
-				"msgby"      => ( $message['system'] ? 0 : $this_user->user_number ),
-				"msgfor"     => $message['user'],
-				"msgrecip"   => $message['user'],
-				"msgpatient" => $message['patient'],
-				"msgperson"  => $message['person'],
-				"msgtext"    => $message['text'],
-				"msgsubject" => $message['subject'],
-				"msgurgency" => $message['urgency'],
-				"msgread"    => '0',
-				"msgtag"     => ( $message['tag'] ? $message['tag'] : '' ),
-				"msgunique"  => mktime(),
-				"msgtime"    => SQL__NOW
-			)
-		);
+		// Determine message recipients
+		if ( is_array( $message[ 'for' ] ) ) {
+			$msgFor = $message['for'];
+		} else {
+			$msgFor = array( $message['user'] );
+		}
 
-		syslog( LOG_INFO, "Messages.send| query = $query" );
-		$result = $GLOBALS['sql']->query( $query );
-		return ( $result ? true : false );
+		// Unique timestamp
+		$unique = mktime();
+
+		// Insert the appropriate record
+		$result = true;
+		foreach ( $msgFor AS $thisMsgFor ) {
+			$query = $GLOBALS['sql']->insert_query(
+				"messages",
+				array(
+					"msgby"      => ( $message['system'] ? 0 : $this_user->user_number ),
+					"msgfor"     => $thisMsgFor,
+					"msgrecip"   => join( ',', $msgFor ),
+					"msgpatient" => $message['patient'],
+					"msgperson"  => $message['person'],
+					"msgtext"    => $message['text'],
+					"msgsubject" => $message['subject'],
+					"msgurgency" => $message['urgency'],
+					"msgread"    => '0',
+					"msgtag"     => ( $message['tag'] ? $message['tag'] : '' ),
+					"msgunique"  => $unique,
+					"msgtime"    => SQL__NOW
+				)
+			);
+			syslog( LOG_DEBUG, "Messages.send| query = $query" );
+			$result &= ( $GLOBALS['sql']->query( $query ) ? true : false );
+		}
+
+		// Save "sent" message
+		if ( ! $message['system'] ) {
+			$query = $GLOBALS['sql']->insert_query(
+				"messages",
+				array(
+					"msgby"      => $this_user->user_number,
+					"msgfor"     => $this_user->user_number,
+					"msgrecip"   => join( ',', $msgFor ),
+					"msgpatient" => $message['patient'],
+					"msgperson"  => $message['person'],
+					"msgtext"    => $message['text'],
+					"msgsubject" => $message['subject'],
+					"msgurgency" => $message['urgency'],
+					"msgread"    => '0',
+					"msgtag"     => 'Sent',
+					"msgunique"  => $unique,
+					"msgtime"    => SQL__NOW
+				)
+			);
+			syslog( LOG_DEBUG, "Messages.send| (sent message) query = $query" );
+			$result &= ( $GLOBALS['sql']->query( $query ) ? true : false );
+		}
+
+		return $result;
 	} // end method send
 
 	// Method: TagModify
