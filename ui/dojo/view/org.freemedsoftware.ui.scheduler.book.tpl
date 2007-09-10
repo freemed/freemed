@@ -36,7 +36,9 @@
 				<!--{if $patient}-->
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 				<!--{else}-->
-				// ?
+				// Stay in the form, but reset
+				s.updatePreview();
+				dojo.widget.byId('BookingFormCommitChangesButton').enable();
 				<!--{/if}-->
 			} else {
 				dojo.widget.byId('BookingFormCommitChangesButton').enable();
