@@ -63,7 +63,7 @@
 			}
 
 			// use io bind, sync and get ...
-			var prov = document.getElementById( 'schedProvider' ).value;
+			var prov = dojo.widget.byId( 'schedProvider_widget' ).getValue();
 			dojo.io.bind({
 				method: 'POST',
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange',
