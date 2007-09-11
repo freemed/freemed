@@ -213,7 +213,7 @@
 	<table border="0" style="width: auto;">
 	<tr>
 		<td><b><!--{t}-->Provider<!--{/t}--></b> : </td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="schedProvider" methodName="internalPicklist" defaultValue="$SESSION.authdata.user_record.userrealphy"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="schedProvider" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
 	</tr>
 	</table>
 </div>
