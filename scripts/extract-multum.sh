@@ -34,7 +34,8 @@ fi
 DRUG_MLT_TABLES=$( mdb-tables drug_mlt.mdb )
 
 for T in $DRUG_MLT_TABLES; do
-	 mdb-export drug_mlt.mdb "${T}" > "$( dirname "$0" )/../data/multum/${T}.csv"
+	echo " - Extracting ${T} -> ${T}.csv"
+	mdb-export drug_mlt.mdb "${T}" > "$( dirname "$0" )/../data/multum/${T}.csv"
 done
 
 #	Remove denormalized table, since we don't use it
