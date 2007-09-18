@@ -1,0 +1,64 @@
+$Id$
+$Author$
+
+Data requirements for NEWRX ( NCPDP SCRIPT new prescription format )
+
+Provider Segment ( PVD )
+* Describes one or more provider associated with this Rx
+
+Patient Segment ( PTT )
+* Basic patient demographic data
+
+Drug Segment ( DRU )
+* I013 Drug
+  - 7009 Item description identification
+    - P = Prescribed
+    - D = Dispensed
+    - R = Requested
+  - 7008 Item description
+    - Textual drug name
+  - 7140 Item number
+    - Number allocated to group or item
+  - 3055 Code list responsibility agent
+    - MF = MFG
+    - UP = UPC
+    - ND = NDC
+  - 1131 Code list quantifier
+    - Forms ( example: 62 = Syrup, 63 = Solution )
+  - 4440 Measurement value
+    - Drug strength, textual value
+  - 1131 Code list qualifier
+    - Measurement for previous value
+  - 1154 Reference number
+    - Normalized reference number for this medication
+  - 1153 Reference qualifier
+    - MM = Multum MMDC
+    - MC = Multum Drug ID
+    - etc ...
+* I009 Quantity
+  - 6063 Quantity Qualifier
+    - Code system used to identify quantity
+  - 6060 Quantity
+  - 1131 Code list quantity
+    - 87 = Quantity Received
+    - 40 = Remaining Quantity
+    - 38 = Original Quantity (*)
+* I014 Directions
+  - 7879 Dosage identification (non normalized sig)
+* I006 Date
+  - ....
+* 4457 Substitution codes
+  - ....
+* I009 Quantity
+  - For refill information
+* I015 Diagnosis
+  - ....
+* I001 Reference number
+  - Prior authorization or sample number goes in here
+
+Observation Segment ( OBS )
+* ....
+
+Coordination of Benefits Sections ( COB )
+* ....
+
