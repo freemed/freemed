@@ -25,6 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/rx.sql
 SOURCE data/schema/mysql/physician.sql
 SOURCE data/schema/mysql/systemnotification.sql
+SOURCE data/schema/mysql/workflow_status.sql
 
 CREATE TABLE IF NOT EXISTS `rxrefillrequest` (
 	stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
@@ -38,8 +39,8 @@ CREATE TABLE IF NOT EXISTS `rxrefillrequest` (
 	id			SERIAL
 
 	#	Define keys
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE,
-	, FOREIGN KEY		( provider ) REFERENCES physician.id ON DELETE CASCADE,
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( provider ) REFERENCES physician.id ON DELETE CASCADE
 	, FOREIGN KEY		( rxorig ) REFERENCES rx.id ON DELETE CASCADE
 );
 
@@ -68,6 +69,7 @@ CREATE TRIGGER rxrefillrequest_Delete
 	AFTER DELETE ON rxrefillrequest
 	FOR EACH ROW BEGIN
 		DELETE FROM `patient_emr` WHERE module='rxrefillrequest' AND oid=OLD.id;
+		DELETE FROM `systemtaskinbox` WHERE module = 'rxrefillrequest' AND oid = OLD.id;
 	END;
 //
 
@@ -76,6 +78,7 @@ CREATE TRIGGER rxrefillrequest_Insert
 	FOR EACH ROW BEGIN
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, provider ) VALUES ( 'rxrefillrequest', NEW.patient, NEW.id, NEW.stamp, NEW.note, NEW.locked, NEW.user, NEW.provider );
 		INSERT INTO `systemnotification` ( stamp, nuser, ntext, nmodule, npatient ) VALUES ( NEW.stamp, NEW.user, NEW.note, 'rxrefillrequest', NEW.patient );
+		INSERT INTO `systemtaskinbox` ( user, patient, module, box, oid, summary ) VALUES ( NEW.user, NEW.patient, 'rxrefillrequest', 'rxrefillrequest', NEW.id, NEW.note );
 	END;
 //
 
@@ -83,6 +86,7 @@ CREATE TRIGGER rxrefillrequest_Update
 	AFTER UPDATE ON rxrefillrequest
 	FOR EACH ROW BEGIN
 		UPDATE `patient_emr` SET stamp=NEW.stamp, patient=NEW.patient, summary=NEW.note, locked=NEW.locked, user=NEW.user, provider=NEW.provider WHERE module='rxrefillrequest' AND oid=NEW.id;
+		UPDATE `systemtaskinbox` SET user = NEW.user, patient = NEW.patient, oid = NEW.id, summary = NEW.note WHERE module = 'rxrefillrequest' AND oid = NEW.id;
 	END;
 //
 
