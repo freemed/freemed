@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `superbill` (
 	provider		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	procs			BLOB,
 	dx			BLOB,
-	note			VARCHAR (250),
+	note			VARCHAR (250) NOT NULL DEFAULT '',
 	reviewed		INT UNSIGNED,
 	id			SERIAL,
 
@@ -67,6 +67,7 @@ CREATE TRIGGER superbill_Delete
 	FOR EACH ROW BEGIN
 		DELETE FROM `patient_emr` WHERE module='superbill' AND oid=OLD.id;
 		CALL patientWorkflowUpdateStatus( OLD.patient, OLD.dateofservice, 'superbill', FALSE, OLD.enteredby );
+		DELETE FROM `systemtaskinbox` WHERE module = 'superbill' AND oid = OLD.id;
 	END;
 //
 
@@ -75,6 +76,7 @@ CREATE TRIGGER superbill_Insert
 	FOR EACH ROW BEGIN
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'superbill', NEW.patient, NEW.id, NEW.dateofservice, p, NEW.enteredby );
 		CALL patientWorkflowUpdateStatus( NEW.patient, NEW.dateofservice, 'superbill', TRUE, NEW.enteredby );
+		INSERT INTO `systemtaskinbox` ( user, patient, module, box, oid, summary ) VALUES ( NEW.enteredby, NEW.patient, 'superbill', 'superbill', NEW.id, NEW.note );
 	END;
 //
 
@@ -82,6 +84,7 @@ CREATE TRIGGER superbill_Update
 	AFTER UPDATE ON superbill
 	FOR EACH ROW BEGIN
 		UPDATE `patient_emr` SET stamp=NEW.dateofservice, patient=NEW.patient, summary=p, user=NEW.enteredby WHERE module='superbill' AND oid=NEW.id;
+		UPDATE `systemtaskinbox` SET user = NEW.enteredby, patient = NEW.patient, oid = NEW.id, summary = NEW.note WHERE module = 'superbill' AND oid = NEW.id;
 	END;
 //
 
