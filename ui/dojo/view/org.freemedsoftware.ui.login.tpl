@@ -37,7 +37,6 @@
 	<script type="text/javascript">
 
 	function doFreemedLogin ( ) {
-		var params = new Array ( );
 		dojo.io.bind({
 			method : 'POST',
 			content : {
@@ -65,6 +64,8 @@
 		dojo.widget.byId("DialogContent").show();
 		// Hack around dealing with focus issue
 		window.setTimeout( 'dojo.byId("username").focus();', 500 );
+		dojo.widget.byId( 'language_widget' ).setLabel( 'English' );
+		dojo.widget.byId( 'language_widget' ).setValue( 'en_US' );
 	});
 
 	</script>
@@ -148,11 +149,23 @@
 			</tr>
 			<tr>
 				<td><b><!--{t}-->Login<!--{/t}--></b></td>
-				<td><input type="text" id="username" name="username" widgetId="username" /></td>
+				<td><input type="text" id="username" name="username" widgetId="username" style="width: 200px;" /></td>
 			</tr>
 			<tr>
 				<td><b><!--{t}-->Password<!--{/t}--></b></td>
-				<td><input type="password" id="password" name="password" /></td>
+				<td><input type="password" id="password" name="password" style="width: 200px;" /></td>
+			</tr>
+			<tr>
+				<td><b><!--{t}-->Language<!--{/t}--></b></td>
+				<td><input dojoType="Select" value=""
+					autocomplete="false"
+					id="language_widget" widgetId="language_widget"
+					setValue="if (arguments[0]) { document.getElementById('language').value = arguments[0]; }"
+					style="width: 200px;"
+					dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Login.GetLanguages?param0=%{searchString}"
+					mode="remote" />
+				<input type="hidden" id="language" name="language" value="0" />
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2" align="center">

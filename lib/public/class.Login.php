@@ -97,6 +97,23 @@ class Login {
 		} // end check password
 	} // end method Validate
 
+	// Method: GetLanguages
+	//
+	//	Populate language selection.
+	//
+	// Returns:
+	//
+	//	Array of arrays:
+	//	* [ language, abbrev ]
+	//
+	public function GetLanguages ( ) {
+		$m = module_function( 'i18nlanguages', 'GetAll', array ( ) );
+		foreach ( $m AS $r ) {
+			$res[] = array ( $r['language'], $r['abbrev'] );
+		}
+		return $res;
+	} // end method GetLanguages
+
 } // end class Login
 
 ?>

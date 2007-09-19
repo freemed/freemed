@@ -30,3 +30,24 @@ CREATE TABLE IF NOT EXISTS `i18nlanguages` (
 	PRIMARY KEY			( abbrev )
 );
 
+DROP PROCEDURE IF EXISTS i18n_PopulateLanguage;
+
+DELIMITER //
+
+CREATE PROCEDURE i18n_PopulateLanguage ( IN a CHAR (5), IN l VARCHAR (150) )
+BEGIN
+	DECLARE c INT UNSIGNED;
+	SELECT COUNT(*) INTO c FROM i18nlanguages WHERE abbrev = a;
+	IF c > 0 THEN
+		UPDATE i18nlanguages SET language = l WHERE abbrev = a;
+	ELSE
+		INSERT INTO i18nlanguages ( abbrev, language ) VALUES ( a, l );
+	END IF;
+END//
+
+DELIMITER ;
+
+# ----- Populate languages
+CALL i18n_PopulateLanguage( 'en_US', 'English' );
+CALL i18n_PopulateLanguage( 'fr_FR', 'Francais' );
+

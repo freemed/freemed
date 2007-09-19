@@ -46,6 +46,19 @@ class i18nLanguages extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
+	// Method: GetAll
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//	* abbrev
+	//	* language
+	//
+	public function GetAll ( ) {
+		$q = "SELECT abbrev, language FROM ".$this->table_name;
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAll
+
 } // end class i18nLanguages
 
 register_module("i18nLanguages");
