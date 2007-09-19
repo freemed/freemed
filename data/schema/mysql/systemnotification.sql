@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `systemtaskinboxsummary` (
 	box			VARCHAR (250) NOT NULL DEFAULT '',
 	count			INT UNSIGNED NOT NULL DEFAULT 0
 
-	, PRIMARY KEY		( user )
+	, PRIMARY KEY		( user, box )
 );
 
 CREATE TABLE IF NOT EXISTS `systemtaskinboxpatientsummary` (
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `systemtaskinboxpatientsummary` (
 	box			VARCHAR (250) NOT NULL DEFAULT '',
 	count			INT UNSIGNED NOT NULL DEFAULT 0
 
-	, PRIMARY KEY		( patient )
+	, PRIMARY KEY		( patient, box )
 );
 
 DROP PROCEDURE IF EXISTS systemnotification_Upgrade;
@@ -150,7 +150,7 @@ BEGIN
 		END IF;
 
 		#	Update aggregate total
-		UPDATE systemtaskinboxpatientsummary SET count = ( SELECT COUNT(*) FROM systemtaskinbox WHERE patient = p AND box = b ) WHERE user = p AND box = b;
+		UPDATE systemtaskinboxpatientsummary SET count = ( SELECT COUNT(*) FROM systemtaskinbox WHERE patient = p AND box = b ) WHERE patient = p AND box = b;
 	END IF;
 END
 //
