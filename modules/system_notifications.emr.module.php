@@ -39,6 +39,7 @@ class SystemNotifications extends SupportModule {
 
 	public function __construct () {
 		$this->acl = array ( 'bill', 'emr' );
+		$this->_SetHandler( 'Dashboard', get_class($this) );
 
 		// call parent constructor
 		parent::__construct( );
@@ -92,14 +93,14 @@ class SystemNotifications extends SupportModule {
 	//
 	// Parameters:
 	//
-	//	$box - Organizational box text name.
+	//	$box - (optional) Organizational box text name.
 	//
 	// Returns:
 	//
 	//	Number of items in the organizational box for the current user.
 	//
-	public function GetSystemTaskInboxCount ( $box ) {
-		$q = "SELECT count FROM systemtaskinboxsummary WHERE user = " . $GLOBALS['sql']->quote( freemed::user_cache()->user_number )." AND box = " . $GLOBALS['sql']->quote( $box );
+	public function GetSystemTaskInboxCount ( $box = NULL ) {
+		$q = "SELECT count FROM systemtaskinboxsummary WHERE user = " . $GLOBALS['sql']->quote( freemed::user_cache()->user_number ).( $box != NULL ? " AND box = " . $GLOBALS['sql']->quote( $box ) : '' );
 		return (int)( $GLOBALS['sql']->queryOne( $q ) );
 	} // end method GetSystemTaskInboxCount
 
@@ -130,6 +131,33 @@ class SystemNotifications extends SupportModule {
 		$q = "SELECT DATE_FORMAT(s.stamp, '%m/%d/%Y') AS stamp_mdy, s.stamp AS stamp, s.patient AS patient, s.box AS box, s.module AS module, m.module_name AS module_name, s.oid AS oid, s.summary AS summary, s.id AS id FROM systemtaskinbox s LEFT OUTER JOIN modules m ON s.module = m.module_class WHERE s.patient = " . $GLOBALS['sql']->quote( $patient ).( $box != NULL ? " AND s.box = " . $GLOBALS['sql']->quote( $box ) : '' );
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetSystemTaskPatientInbox
+
+	// Method: GetSystemTaskUserInbox
+	//
+	//	Get system task inbox items for a user.
+	//
+	// Parameters:
+	//
+	//	$box - (optional) Box to qualify results. Defaults to none.
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//	* stamp
+	//	* stamp_mdy
+	//	* patient
+	//	* patient_name
+	//	* box
+	//	* module
+	//	* module_name
+	//	* oid
+	//	* summary
+	//	* id
+	//
+	public function GetSystemTaskUserInbox ( $box = NULL ) {
+		$q = "SELECT DATE_FORMAT(s.stamp, '%m/%d/%Y') AS stamp_mdy, s.stamp AS stamp, s.patient AS patient, s.box AS box, s.module AS module, m.module_name AS module_name, CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname, ' (', p.ptid, ')' ) AS patient_name, s.oid AS oid, s.summary AS summary, s.id AS id FROM systemtaskinbox s LEFT OUTER JOIN modules m ON s.module = m.module_class LEFT OUTER JOIN patient p ON s.patient = p.id WHERE s.user = " . $GLOBALS['sql']->quote( freemed::user_cache()->user_number ).( $box != NULL ? " AND s.box = " . $GLOBALS['sql']->quote( $box ) : '' );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetSystemTaskUserInbox
 
 	// Method: GetSystemTaskPatientInboxCount
 	//
