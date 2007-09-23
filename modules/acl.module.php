@@ -117,7 +117,7 @@ class ACL extends SupportModule {
 		foreach ($u AS $v) { $users[] = 'user_'.$v; }
 
 		// This is a *nasty* hack, but otherwise we loop forever.
-		include_once(dirname(__FILE__).'/patient_acl.emr.module.php');
+		//include_once(dirname(__FILE__).'/patient_acl.emr.module.php');
 
 		// Add the current user to have access
 		//print "access for"; print_r($users); print "<br/>\n";

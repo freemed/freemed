@@ -62,7 +62,17 @@ print "[done]\n";
 
 // Reinitialize db
 print " - Reinitializing ACL tables ... ";
+$GLOBALS['sql']->query( "CREATE TABLE IF NOT EXISTS acl ( id SERIAL );" );
 module_function('acl', '_setup', array());
 print "[done]\n";
+
+// Reimport users
+print " - Reimporting users ... \n";
+$users = $GLOBALS['sql']->queryCol( "SELECT id FROM user" );
+foreach ( $users AS $u ) {
+	print " -- Importing user #${u} ... ";
+	module_function('acl', 'UserAdd', array( $u ) );
+	print "done.\n";
+}
 
 ?>
