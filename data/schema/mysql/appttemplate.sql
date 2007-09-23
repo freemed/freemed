@@ -42,5 +42,4 @@ END
 //
 DELIMITER ;
 CALL appttemplate_Upgrade( );
-1;2A
 
