@@ -148,7 +148,8 @@
 	The Multum Lexicon database from Cerner Multum, Inc has been modified for
 	this application, and there is no warranty explicit or implied from either
 	Cerner Multum, Inc or the FreeMED Software Foundation. More information
-	is available at <b>http://www.multum.com/license.htm</b>
+	is available at <b>http://www.multum.com/license.htm</b> [ Multum Lexicon
+	version <b><!--{include file="../../../data/multum/multum_version"}--></b> ]
 </div>
 
 <div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250" executeScripts="true" focusElement="username">
