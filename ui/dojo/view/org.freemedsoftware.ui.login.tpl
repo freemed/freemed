@@ -110,6 +110,19 @@
 			padding: 3px;
 			margin: 3px;
 		}
+		#legalNotice {
+			position: absolute;
+			align: center;
+			left: 10%;
+			text-align: center;
+			bottom: 3em;
+			background: #ffffff;
+			color: #000000;
+			width: 80%;
+			border: 3px solid #aaaaaa;
+			padding: 2em;
+			font-size: 8pt;
+		}
 		form {
 			margin-bottom : 0;
 		}
@@ -127,6 +140,16 @@
 <!--{else}-->
 <body>
 <!--{/if}-->
+
+<div id="legalNotice">
+	<b>FreeMED</b> &copy; 1999-2007 (GPL) FreeMED Software Foundation
+	( <b>http://www.freemedsoftware.org/</b> )
+	<hr />
+	The Multum Lexicon database from Cerner Multum, Inc has been modified for
+	this application, and there is no warranty explicit or implied from either
+	Cerner Multum, Inc or the FreeMED Software Foundation. More information
+	is available at <b>http://www.multum.com/license.htm</b>
+</div>
 
 <div dojoType="dialog" id="DialogContent" bgColor="#cccccc" bgOpacity="0.5" toggle="fade" toggleDuration="250" executeScripts="true" focusElement="username">
 	<form onsubmit="return false;">
