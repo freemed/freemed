@@ -117,7 +117,6 @@
 	});
 
 	_container_.addOnUnload(function(){
-		dojo.event.disconnect( dojo.widget.byId("patientTaskAdd"), "onClick", patientTasks, "addReferralForm" );
 	});
 
 </script>
