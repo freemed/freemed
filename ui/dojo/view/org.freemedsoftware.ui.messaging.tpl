@@ -190,14 +190,12 @@
 		dojo.event.connect(dojo.widget.byId('messageMultipleDeleteButton'), "onClick", o, "deleteMessages");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
-		/*
 		try {
 			var x = dojo.widget.byId( 'messagesTablePane' );
 			var node = x.containerNode || x.domNode;
-			var h = parseInt( node.style.height ) - 55;
+			var h = parseInt( node.style.height ) - 45;
 			document.getElementById( 'messagesTableBody' ).style.height = h + 'px';
 		} catch ( e ) { }
-		*/
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
