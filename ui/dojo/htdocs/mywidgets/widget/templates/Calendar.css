@@ -118,12 +118,15 @@ li.listItem {
 	/*cursor: move;*/
 }
 li.listItem span {
+	color: #000000;
 	padding-right: 5px;
 }
 li.listItem span.timetext {
+	color: #000000;
 	cursor: move;
 }
 li.listItem span.titletext {
+	color: #000000;
 	cursor: default;
 }
 li.listItem span a:link, li.listItem span a {
@@ -131,6 +134,7 @@ li.listItem span a:link, li.listItem span a {
 	text-decoration: none;
 }
 li.listItem span a:hover {
+	color: #000000;
 	text-decoration: underline;
 }
 
