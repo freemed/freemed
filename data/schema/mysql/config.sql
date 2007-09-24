@@ -169,3 +169,12 @@ CALL config_Register (
 	'5,10,15,20,30'
 );
 
+CALL config_Register (
+	'patient_form',
+	'tab',
+	'Patient Form',
+	'UI',
+	'Select',
+	'tab,singlepage'
+);
+
