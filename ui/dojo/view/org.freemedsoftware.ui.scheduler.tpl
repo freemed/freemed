@@ -44,11 +44,31 @@
 		},
 
 		dataStore: { },
+		oldDate: null,
+		oldProv: null,
 		widgetValueChanged: function ( dateObj ){
 			// dateObj is current date
 			dojo.require("dojo.date.serialize");
 
 			var cal = dojo.widget.byId( 'dojoCalendar' );
+			var prov = dojo.widget.byId( 'schedProvider_widget' ).getValue();
+
+			dojo.debug( 'dateObj = ' + dateObj + ', prov = ' + prov );
+			dojo.debug( 'oldDate = ' + sched.oldDate + ', oldProv = ' + sched.oldProv );
+
+			// If not first time and oldDate = dateObj...
+			if ( sched.oldDate == dateObj ) {
+				if ( sched.oldProv == prov ) {
+					dojo.debug( 'not blanking' );
+					return false;
+				} else {
+					dojo.debug( 'blanking scheduler' );
+					var itemsWidget = dojo.byId(dojo.date.toRfc3339(cal.value,'dateOnly'));
+					itemsWidget.innerHTML = '';
+				}
+			}
+			sched.oldDate = dateObj;
+			sched.oldProv = prov;
 
 			var sP = new Date( cal.firstDay );
 			var eP;
@@ -63,7 +83,6 @@
 			}
 
 			// use io bind, sync and get ...
-			var prov = dojo.widget.byId( 'schedProvider_widget' ).getValue();
 			dojo.io.bind({
 				method: 'POST',
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange',
@@ -198,11 +217,17 @@
 	};
 
 	_container_.addOnLoad(function(){
+		<!--{if $SESSION.authdata.user_record.userrealphy}-->
+		sched.oldProv = <!--{$SESSION.authdata.user_record.userrealphy}-->;
+		dojo.widget.byId( 'schedProvider_widget' ).setValue( <!--{$SESSION.authdata.user_record.userrealphy}--> );
+		<!--{/if}-->
 		sched.init();
-		dojo.event.topic.subscribe( 'schedProvider-setValue', sched, 'widgetValueChanged' );
+		//dojo.event.topic.subscribe( 'schedProvider-setValue', sched, 'widgetValueChanged' );
+		dojo.event.connect( dojo.widget.byId( 'schedProvider_widget' ), 'onValueChanged', sched, 'widgetValueChanged' );
 	});
 	_container_.addOnUnload(function(){
-		dojo.event.topic.unsubscribe( 'schedProvider-setValue', sched, 'widgetValueChanged' );
+		//dojo.event.topic.unsubscribe( 'schedProvider-setValue', sched, 'widgetValueChanged' );
+		dojo.event.disconnect( dojo.widget.byId( 'schedProvider_widget' ), 'onValueChanged', sched, 'widgetValueChanged' );
 	});
 
 </script>
