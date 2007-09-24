@@ -89,7 +89,7 @@
 						bElement.innerHTML = '<img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" />';
 					} else {
 						// Not completed
-						bElement.innerHTML = '<img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" />';
+						bElement.innerHTML = '<img onClick="freemedLoad(\'org.freemedsoftware.module.' + cols[j] + '.workflow\');" src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" />';
 					}
 					bRow.appendChild( bElement );
 				}
