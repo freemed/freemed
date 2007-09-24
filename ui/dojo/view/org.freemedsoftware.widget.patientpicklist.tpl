@@ -40,7 +40,11 @@
 		onAssign: function ( id ) {
 			// Don't assign if we have no value
 			try {
-				if ( parseInt( id ) < 1 ) { return false; }
+				if ( parseInt( id ) < 1 ) {
+					dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( 0 );
+					dojo.widget.byId('<!--{$varname|escape}-->_widget').setLabel( '' );
+					return false;
+				}
 			} catch ( err ) { }
 
 			// Do reverse lookup from assignment
