@@ -117,6 +117,37 @@ class WorkflowStatus extends SupportModule {
 		return $status;
 	} // end method OverallStatusForDate
 
+	// Method: SetStatus
+	//
+	//	Set workflow status for a patient, module and date
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id.
+	//
+	//	$date - Applicable date.
+	//
+	//	$module - Module class name.
+	//
+	//	$status - Boolean, true or false.
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function SetStatus ( $patient, $date, $module, $status ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$dt = $s->ImportDate( $date );
+		$q = "CALL patientWorkflowUpdateStatus ( ".
+			$GLOBALS['sql']->quote( $patient + 0 ). ", ".
+			$GLOBALS['sql']->quote( $dt ).", ".
+			$GLOBALS['sql']->quote( $module ).", ".
+			$GLOBALS['sql']->quote( $status ).", ".
+			$GLOBALS['sql']->quote( freemed::user_cache()->user_number )." );";
+		$result = $GLOBALS['sql']->query( $q );
+		return (bool) $result;
+	} // end method SetStatus
+
 } // end class WorkflowStatus
 
 register_module ("WorkflowStatus");
