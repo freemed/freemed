@@ -72,28 +72,30 @@
 
 			var hBody = dojo.byId( 'workflowStatusTableBody' );
 			for ( var i=0; i<d.length; i++ ) {
+				if ( d[i].patient ) {
 				var bRow = document.createElement( 'tr' );
 				if ( i & 1 ) {
 					bRow.className = 'alternateRow';
 				}
 				var bPatient = document.createElement( 'td' );
-				bPatient.innerHTML = d[i].patient;
-				bPatient.id = 'workflowstatus_patient_id_' + d[i].patient_id;
-				bPatient.onclick = w.onPatientClick;
-				bRow.appendChild( bPatient );
-				for ( var j=0; j<cols.length; j++ ) {
-					var bElement = document.createElement( 'td' );
-					bElement.style.textAlign = 'center';
-					if ( d[i][ cols[j] ] == 1 ) {
-						// Completed
-						bElement.innerHTML = '<img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" />';
-					} else {
-						// Not completed
-						bElement.innerHTML = '<img onClick="freemedLoad(\'org.freemedsoftware.module.' + cols[j] + '.workflow\');" src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" />';
+					bPatient.innerHTML = d[i].patient;
+					bPatient.id = 'workflowstatus_patient_id_' + d[i].patient_id;
+					bPatient.onclick = w.onPatientClick;
+					bRow.appendChild( bPatient );
+					for ( var j=0; j<cols.length; j++ ) {
+						var bElement = document.createElement( 'td' );
+						bElement.style.textAlign = 'center';
+						if ( d[i][ cols[j] ] == 1 ) {
+							// Completed
+							bElement.innerHTML = '<img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" />';
+						} else {
+							// Not completed
+							bElement.innerHTML = '<img onClick="freemedLoad(\'org.freemedsoftware.module.' + cols[j] + '.workflow?patient=' + encodeURIComponent( d[i].patient_id ) + '\');" src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" />';
+						}
+						bRow.appendChild( bElement );
 					}
-					bRow.appendChild( bElement );
+					hBody.appendChild( bRow );
 				}
-				hBody.appendChild( bRow );
 			}
 		}
 	};
