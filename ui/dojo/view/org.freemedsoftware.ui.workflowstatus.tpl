@@ -24,6 +24,7 @@
 *}-->
 
 <script language="javascript">
+	dojo.require( 'dojo.date.format' );
 
 	var w = {
 		init: function ( ) {
@@ -41,6 +42,36 @@
 		},
 		onPatientClick: function ( evt ) {
 			freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.overview?patient=' + this.id.replace('workflowstatus_patient_id_', '' ) );
+		},
+		onGoClick: function ( evt ) {
+			var hash = this.id.replace('workflow_status_go_', '' ).split('_');
+			freemedLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + hash[1] + '.workflow?patient=' + encodeURIComponent( hash[0] ) );
+		},
+		onImageClick: function ( evt ) {
+			var hash = this.id.replace('workflow_status_img_', '' ).split('_');
+
+			// For now, we use today's date
+			var dt = dojo.date.strftime( new Date(), '%D' );
+			alert( dt );
+
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: hash[0],
+					param1: dt,
+					param2: hash[1],
+					param3: true
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.workflowstatus.SetStatus",
+				load: function ( type, evt, data ) {
+					if ( data ) {
+						freemedMessage( "<!--{t}-->Workflow updated.<!--{/t}-->", 'INFO' );
+						var bImg = document.getElementById( 'workflow_status_img_' + hash[0] + '_' + hash[1] );
+						bImg.src = "<!--{$htdocs}-->/images/teak/check_go.16x16.png";
+					}
+				},
+				mimetype: 'text/json'
+			});
 		},
 		buildWorkflowStatus: function ( d ) {
 			if ( d.length < 1 ) {
@@ -90,7 +121,19 @@
 							bElement.innerHTML = '<img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" />';
 						} else {
 							// Not completed
-							bElement.innerHTML = '<img onClick="freemedLoad(\'org.freemedsoftware.module.' + cols[j] + '.workflow?patient=' + encodeURIComponent( d[i].patient_id ) + '\');" src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" />';
+							var bLink = document.createElement( 'a' );
+							bLink.innerHTML = "<!--{t}-->Go<!--{/t}-->";
+							bLink.onclick = w.onGoClick;
+							bLink.className = 'clickable';
+							bLink.id = 'workflow_status_go_' + d[i].patient_id + '_' + cols[j];
+							bElement.appendChild( bLink );
+
+							var bImg = document.createElement( 'img' );
+							bImg.id = 'workflow_status_img_' + d[i].patient_id + '_' + cols[j];
+							bImg.onclick = w.onImageClick;
+							bImg.src = "<!--{$htdocs}-->/images/teak/x_stop.16x16.png";
+							bImg.border = 0;
+							bElement.appendChild( bImg );
 						}
 						bRow.appendChild( bElement );
 					}
