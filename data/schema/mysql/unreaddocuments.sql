@@ -74,7 +74,7 @@ CREATE TRIGGER unreaddocuments_Insert
 	AFTER INSERT ON unreaddocuments
 	FOR EACH ROW BEGIN
 		DECLARE p INT UNSIGNED;
-		SELECT userrealphy INTO p FROM user WHERE id = NEW.user;
+		SELECT id INTO p FROM user WHERE userrealphy = NEW.urfphysician;
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'unreaddocuments', NEW.urfpatient, NEW.id, NEW.urfdate, NEW.urfnote, NEW.user );
 		INSERT INTO `systemtaskinbox` ( user, patient, module, box, oid, summary ) VALUES ( p, NEW.urfpatient, 'unreaddocuments', 'unreaddocuments', NEW.id, NEW.urfnote );
 	END;
@@ -83,6 +83,8 @@ CREATE TRIGGER unreaddocuments_Insert
 CREATE TRIGGER unreaddocuments_Update
 	AFTER UPDATE ON unreaddocuments
 	FOR EACH ROW BEGIN
+		DECLARE p INT UNSIGNED;
+		SELECT id INTO p FROM user WHERE userrealphy = NEW.urfphysician;
 		UPDATE `patient_emr` SET stamp=NEW.urfdate, patient=NEW.urfpatient, summary=NEW.urfnote, user=NEW.user WHERE module='unreaddocuments' AND oid=NEW.id;
 		UPDATE `systemtaskinbox` SET user = p, patient = NEW.urfpatient, oid = NEW.id, summary = NEW.urfnote WHERE module = 'unreaddocuments' AND oid = NEW.id;
 	END;
