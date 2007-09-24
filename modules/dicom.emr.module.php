@@ -166,6 +166,7 @@ class DicomModule extends EMRModule {
 					$x['user'] = freemed::user_cache()->user_number;
 					$x['d_filename'] = $pds->ResolveFilename( $patient, get_class($this), $id );
 					$x['d_md5'] = $md5;
+					unset( $x['d_patient'] ); // force no overwrite
 					$GLOBALS['sql']->load_data( $x );
 					$q = $GLOBALS['sql']->update_query(
 						$this->table_name,
