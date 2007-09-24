@@ -52,7 +52,7 @@
 				person: document.getElementById('msgperson').value,
 				text: dojo.widget.byId('msgtext').getValue()
 			};
-			if ( x.user < 1 ) {
+			if ( x.for < 1 ) {
 				alert( "<!--{t}-->You must select a valid recipient.<!--{/t}-->" );
 				return false;
 			}
@@ -60,8 +60,8 @@
 				alert( "<!--{t}-->You must enter a patient or person value to create a message.<!--{/t}-->" );
 				return false;
 			}
-			if ( parseInt( document.getElementById( 'msggroup' ) > 0 ) {
-				x.group = parseInt( document.getElementById( 'msggroup' ) );
+			if ( parseInt( document.getElementById( 'msggroup' ).value > 0 ) ) {
+				x.group = parseInt( document.getElementById( 'msggroup' ).value );
 			}
 			dojo.io.bind({
 				method: 'POST',
@@ -69,11 +69,6 @@
 					param0: x
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.send',
-				error: function( type, data, evt ) {
-					//alert("<!--{t}-->Unable to complete.<!--{/t}-->");
-					dojo.widget.byId('newMessageDialog').hide();
-					this.loadMessages();
-				},
 				load: function( type, data, evt ) {
 					freemedMessage( "<!--{t}-->Message sent successfully.<!--{/t}-->", 'INFO' );
 					freemedLoad( 'org.freemedsoftware.ui.messaging' );
