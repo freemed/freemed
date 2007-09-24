@@ -40,7 +40,7 @@
 					try {
 						var x = dojo.widget.byId( 'freemedContent' );
 						var node = x.containerNode || x.domNode;
-						var h = parseInt( node.offsetHeight ) - document.getElementById( 'supportDataHeader' ).offsetHeight;
+						var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'supportDataHeader' ).offsetHeight + 30 );
 						document.getElementById('containerDiv').style.height = h + 'px';
 	
 						var j = ( h - document.getElementById( 'tHeader' ).offsetHeight ) - 5;
@@ -77,7 +77,7 @@
 	 tbodyClass="scrollContent" enableAlternateRows="true"
 	 valueField="module_class" border="0" multiple="false"
 	 maxSelect="1" rowAlternateClass="alternateRow" sizerWidth="2"
-	 style="height: 100%;">
+	 style="height: 95%;">
 	<thead id="tHeader">
 		<tr>
 			<th field="module_name" dataType="String"><!--{t}-->Module<!--{/t}--></th>

@@ -273,7 +273,7 @@
 
 </td><td valign="top">
 <b><!--{t}-->Preview for <!--{/t}--> <span id="datePreviewLabel">-</span></b>
-<div class="tableContainer">
+<div class="tableContainer" id="bookSchedulerPreview" style="height: 30em; overflow-y: scroll; padding-right: 10px;">
 	<table dojoType="FilteringTable" id="datePreviewFilteringTable" widgetId="datePreviewFilteringTable" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="scheduler_id" border="0" multiple="false">
 	<thead>
 		<tr>
