@@ -267,7 +267,7 @@
 					<th field="stamp_mdy" dataType="Date" sort="desc"><!--{t}-->Date<!--{/t}--></th>
 					<th field="from_user" dataType="String"><!--{t}-->From<!--{/t}--></th>
 					<th field="regarding" dataType="String"><!--{t}-->Regarding<!--{/t}--></th>
-					<th field="subject" dataType="String"><!--{t}-->Note<!--{/t}--></th>
+					<th field="subject" dataType="String"><!--{t}-->Subject<!--{/t}--></th>
 				</tr>
 			</thead>
 			<tbody id="messagesTableBody"></tbody>
