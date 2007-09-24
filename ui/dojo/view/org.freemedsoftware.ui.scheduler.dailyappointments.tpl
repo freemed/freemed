@@ -148,7 +148,9 @@
 			dojo.widget.byId('atomicStatusWidget').setValue('');
 		},
 		noShow: function () {
-			o.updateStatus( 'noshow' );
+			if ( confirm( "<!--{t}-->Are you sure that you want to flag this appointment as a no-show?<!--{/t}-->" ) ) {
+				o.updateStatus( 'noshow' );
+			}
 		},
 		cancelAppt: function () {
 			if ( confirm( "<!--{t}-->Are you sure that you want to cancel this appointment?<!--{/t}-->" ) ) {
