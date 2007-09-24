@@ -23,6 +23,8 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
+<!--{config_value option='patient_form' var='patient_form'}-->
+
 <script type="text/javascript">
 	dojo.require("dojo.widget.Form");
 	dojo.require("dojo.widget.TabContainer");
@@ -262,8 +264,13 @@
 <!--{/if}-->
 
 
+<!--{if $patient_form eq 'tab'}-->
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em;">
 	<div dojoType="ContentPane" id="patientDemographicsPane" label="<!--{t}-->Demographics<!--{/t}-->">
+<!--{else}-->
+	<div style="height: 30em; overflow-y: scroll;">
+	<h4><!--{t}-->Demographics<!--{/t}--></h4>
+<!--{/if}-->
 	<table style="border: 0; padding: 1em;">
 
 	<tr>
@@ -344,9 +351,13 @@
 <!--{/if}-->
 
 	</table>
-	</div>
 
+<!--{if $patient_form eq 'tab'}-->
+	</div>
 	<div dojoType="ContentPane" id="patientAddressPane" label="<!--{t}-->Address<!--{/t}-->">
+<!--{else}-->
+	<h4><!--{t}-->Address<!--{/t}--></h4>
+<!--{/if}-->
 	<table style="border: 0; padding: 1em;">
 
 	<tr>
@@ -437,9 +448,14 @@
 	</tr>
 
 	</table>
-	</div>
 
+<!--{if $patient_form eq 'tab'}-->
+	</div>
 	<div dojoType="ContentPane" id="patientContactPane" label="<!--{t}-->Contact<!--{/t}-->">
+<!--{else}-->
+	<h4><!--{t}-->Contact<!--{/t}--></h4>
+<!--{/if}-->
+
 	<table style="border: 0; padding: 1em;">
 	<tr>
 		<td><!--{t}-->Preferred Contact<!--{/t}--></td>
@@ -473,9 +489,14 @@
 		<td><input dojoType="EmailTextbox" type="text" name="ptemail" id="ptemail" size="50" maxlength="50" /></td>
 	</tr>
 	</table>
-	</div>
 
+<!--{if $patient_form eq 'tab'}-->
+	</div>
 	<div dojoType="ContentPane" id="patientPersonalPane" label="<!--{t}-->Personal<!--{/t}-->">
+<!--{else}-->
+	<h4><!--{t}-->Personal<!--{/t}--></h4>
+<!--{/if}-->
+
 	<table style="border: 0; padding: 1em;">
 	<tr>
 		<td><!--{t}-->Marital Status<!--{/t}--></td>
@@ -512,9 +533,14 @@
 		<td><input type="text" name="ptdmv" id="ptdmv" size="10" maxlength="9" /></td>
 	</tr>
 	</table>
-	</div>
 
+<!--{if $patient_form eq 'tab'}-->
+	</div>
 	<div dojoType="ContentPane" id="patientProviderPane" label="<!--{t}-->Provider<!--{/t}-->">
+<!--{else}-->
+	<h4><!--{t}-->Provider<!--{/t}--></h4>
+<!--{/if}-->
+
 	<table style="border: 0; padding: 1em;">
 	<tr>
 		<td><!--{t}-->In House Provider<!--{/t}--></td>
@@ -535,9 +561,15 @@
 		</td>
 	</tr>
 	</table>
+
+<!--{if $patient_form eq 'tab'}-->
 	</div>
 
 </div>
+<!--{else}-->
+</div>
+<!--{/if}-->
+
 <br clear="all" />
 <div align="center">
 	<table border="0" style="width:200px;">
