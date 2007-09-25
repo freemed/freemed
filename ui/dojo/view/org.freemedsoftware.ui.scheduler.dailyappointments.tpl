@@ -211,6 +211,13 @@
 		dojo.event.connect(dojo.widget.byId('cancelApptButton'), "onClick", o, "cancelAppt");
 		o.dailyCalendarSetDate();
 		document.getElementById( 'dailyAppointmentOnlyMe' ).onchange = o.onLimitChange;
+		try {
+			var t = dojo.widget.byId( 'freemedTabContainer' );
+			var x = dojo.widget.byId( t.selectedChild );
+			var node = x.containerNode || x.domNode;
+			var h = parseInt( node.style.height ) - 100;
+			document.getElementById( 'dailyAppointmentsBody' ).style.height = h + 'px';
+		} catch ( e ) { }
 	});
 
 	_container_.addOnUnload(function() {
@@ -279,7 +286,7 @@
 			<th field="note" dataType="String" noSort="true"><!--{t}-->Note<!--{/t}--></th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody id="dailyAppointmentsBody">
 <!--{*
         //      * scheduler_id
         //      * patient
