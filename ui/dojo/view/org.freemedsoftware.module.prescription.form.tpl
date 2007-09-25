@@ -139,7 +139,7 @@
 		<td align="right"><!--{t}-->Substitutions<!--{/t}--></td>
 		<td>
 			<select name="rxsubstitute" id="rxsubstitute">
-				<option value="0"><!--{t}-->No Product selection Indicated<!--{/t}--></option>
+				<option value="0"><!--{t}-->Substitution Allowed By Prescriber<!--{/t}--></option>
 				<option value="1"><!--{t}-->Substitution Not Allowed By Prescriber<!--{/t}--></option>
 				<option value="2"><!--{t}-->Substitution Allowed - Patient Requested Product Dispensed<!--{/t}--></option>
 				<option value="3"><!--{t}-->Substitution Allowed - Pharmacist Selected Product Dispensed<!--{/t}--></option>
@@ -175,14 +175,14 @@
 			</td>
 			<td>
 			<select name="rxrefillinterval" id="rxrefillinterval">
-				<option value="PRN"><!--{t}-->As Needed<!--{/t}--> (PRN)</option>
+				<option value="R"><!--{t}-->Number of Refills<!--{/t}--></option>
 				<option value="Y"><!--{t}-->Refill for n Year(s)<!--{/t}--></option>
 				<option value="M"><!--{t}-->Refill for n Month(s)<!--{/t}--></option>
 				<option value="W"><!--{t}-->Refill for n Week(s)<!--{/t}--></option>
 				<option value="D"><!--{t}-->Refill for n Day(s)<!--{/t}--></option>
 				<option value="P"><!--{t}-->Pharmacy Requested Refills<!--{/t}--></option>
 				<option value="A"><!--{t}-->Additional Refills Authorized<!--{/t}--></option>
-				<option value="R"><!--{t}-->Number of Refills<!--{/t}--></option>
+				<option value="PRN"><!--{t}-->As Needed<!--{/t}--> (PRN)</option>
 			</select>
 			</td>
 			</tr></table>
