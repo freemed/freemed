@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class MultumDrugLexicon extends SupportModule {
 
 	var $MODULE_NAME = "Multum Drug Lexicon";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "20070901.0";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "9c28f0de-403b-4534-9627-d0156eeb721a";
 	var $MODULE_HIDDEN = true;
@@ -34,12 +34,52 @@ class MultumDrugLexicon extends SupportModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name = "multum";
-	var $widget_hash = '##description## (##multum_id##)';
+	var $widget_hash = '##brand_description## (##description##) ##form##';
 
 	public function __construct () {
 		// Call parent constructor
 		parent::__construct();
 	} // end constructor
+
+	// Method: DosagesForDrug
+	//
+	//	Get list of dosages from a "multum" table list
+	//
+	// Parameters:
+	//
+	//	$drug_id - Drug id in the "multum" aggregation table
+	//
+	// Returns:
+	//
+	//	Array of [ key, value ]
+	//
+	public function DosagesForDrug ( $drug_id ) {
+		$q = "SELECT ps.product_strength_description AS strength, ps.product_strength_code AS id
+			FROM multum m LEFT OUTER JOIN multum_product_strength ps ON FIND_IN_SET( ps.product_strength_code, m.dose_size_link )
+			WHERE m.id = ".$GLOBALS['sql']->quote( $drug_id )." GROUP BY ps.product_strength_code";
+		$r = $GLOBALS['sql']->queryAll( $q );
+		foreach ( $r AS $row ) {
+			$res[] = array ( $row['strength'], $row['id'] );
+		}
+		return $res;
+	} // end method DosagesForDrug
+
+	// Method: DrugDosageToText
+	//
+	//	Get textual name of drug dosage from id
+	//
+	// Parameters:
+	//
+	//	$id - Drug dosage id code
+	//
+	// Returns:
+	//
+	//	Textual description of drug dosage.
+	//
+	public function DrugDosageToText( $id ) {
+		$q = "SELECT ps.product_strength_description FROM multum_product_strength ps WHERE ps.product_strength_code = " . $GLOBALS['sql']->quote( $id );
+		return $GLOBALS['sql']->queryOne( $q );
+	} // end method DrugDosageToText
 
 } // end class MultumDrugLexicon
 

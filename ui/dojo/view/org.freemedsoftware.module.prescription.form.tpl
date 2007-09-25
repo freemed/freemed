@@ -42,8 +42,9 @@
 	rxphy.onAssign( data.rxphy );
 	rxform.onAssign( data.rxform );
 	rxquantityqual.onAssign( data.rxquantityqual );
-	rxunit.onAssign( data.rxunit );
 	dojo.widget.byId( 'rxdtfrom' ).setValue( data.rxdtfrom );
+	dW.onAssign( data.rxdrugmultum );
+	rxunit.onAssign( data.rxunit );
 <!--{/assign_block}-->
 
 <!--{assign_block var='collectDataArray'}-->
@@ -73,21 +74,29 @@
 		</td>
 	</tr>
 
-	<tr>
-		<td align="right"><!--{t}-->Drug Form<!--{/t}--></td>
-		<td>
-			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="DrugForms" varname="rxform"}-->
-		</td>
-	</tr>
+	<script language="javascript">
+	var dW = {
+		onAssign: function ( id ) {
+			// Change URL for submit, blank value
+			var w = dojo.widget.byId( 'rxunit_widget' );
+			w.dataProvider.searchUrl = "<!--{$relay}-->/org.freemedsoftware.module.MultumDrugLexicon.DosagesForDrug?param0=" + encodeURIComponent( id ) + '&param1=%{searchString}';
+			w.setLabel( '' );
+			w.setValue( 0 );
+			return true;
+		}
+	};
+	_container_.addOnLoad(function(){
+		dojo.event.topic.subscribe( "rxdrugmultum-setValue", dW, "onAssign" );
+	});
+	_container_.addOnUnload(function(){
+		dojo.event.topic.unsubscribe( "rxdrugmultum-setValue", dW, "onAssign" );
+	});
+	</script>
 
 	<tr>
 		<td align="right"><!--{t}-->Dosage<!--{/t}--></td>
 		<td>
-			<table style="width: auto;"><tr><td>
-				<input type="text" id="rxdosage" name="rxdosage" size="30" maxlength="100" />
-			</td><td>
-				<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="DrugQuantityQualifiers" varname="rxunit"}-->
-			</td></tr></table>
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="MultumDrugLexicon" methodName="DosagesForDrug" methodNameText="DrugDosageToText" varname="rxunit"}-->
 		</td>
 	</tr>
 

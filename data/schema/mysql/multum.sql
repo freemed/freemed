@@ -49,8 +49,10 @@ CREATE TABLE IF NOT EXISTS icd_9 (
 );
 
 CREATE TABLE IF NOT EXISTS multum_combination_drug (
-	drug_id			VARCHAR (12), 
+	drug_id			VARCHAR (12) NOT NULL, 
 	member_drug_id		VARCHAR (12)
+
+	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS multum_dose_form (
@@ -189,7 +191,8 @@ CREATE TABLE IF NOT EXISTS multum (
 	multum_id			VARCHAR (12) NOT NULL,
 	description			VARCHAR (100) NOT NULL,
 	brand_description		VARCHAR (250),
-	dose_size			FLOAT,
+	dose_size			TEXT,
+	dose_size_link			TEXT,
 	units				VARCHAR (50),
 	form				VARCHAR (50),
 	id				CHAR (7) NOT NULL
@@ -255,9 +258,10 @@ INSERT INTO multum
 		  mdc.drug_id
 		, drug_name
 		, brand_description
-		, GROUP_CONCAT( DISTINCT product_strength_description )
+		, GROUP_CONCAT( DISTINCT ps.product_strength_description )
+		, GROUP_CONCAT( DISTINCT ps.product_strength_code )
 		, GROUP_CONCAT( DISTINCT unit_abbr )
-		, GROUP_CONCAT( DISTINCT dose_form_description )
+		, dose_form_description
 		, cd.main_multum_drug_code
 	FROM ndc_core_description cd
 		LEFT OUTER JOIN ndc_main_multum_drug_code mdc ON mdc.main_multum_drug_code = cd.main_multum_drug_code
@@ -266,5 +270,5 @@ INSERT INTO multum
 		LEFT OUTER JOIN multum_drug_id mdi ON mdi.drug_id = mdc.drug_id
 		LEFT OUTER JOIN multum_dose_form df ON df.dose_form_code = mdc.dose_form_code
 		LEFT OUTER JOIN multum_product_strength ps ON ps.product_strength_code = mdc.product_strength_code
-	GROUP BY cd.main_multum_drug_code;
+	GROUP BY bn.brand_code, mdc.dose_form_code;
 
