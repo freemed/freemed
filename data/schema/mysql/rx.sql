@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	rxsubstitute		TINYINT UNSIGNED NOT NULL DEFAULT 0,
 	rxrefills		INT UNSIGNED NOT NULL DEFAULT 0,
 	rxrefillinterval	CHAR(3) NOT NULL DEFAULT 'PRN',
-	rxperrefill		INT UNSIGNED,
-	rxorigrx		INT UNSIGNED,
+	rxperrefill		INT UNSIGNED DEFAULT 0,
+	rxorigrx		INT UNSIGNED DEFAULT 0,
 	rxdx			VARCHAR (255),
 	rxcovstatus		CHAR (2) NOT NULL DEFAULT 'UN',
 	rxnote			TEXT,
@@ -120,10 +120,13 @@ CREATE TRIGGER rx_Delete
 CREATE TRIGGER rx_Insert
 	AFTER INSERT ON rx
 	FOR EACH ROW BEGIN
-		IF LENGTH( NEW.rxdrug ) < 3 OR ISNULL( rxdrug ) THEN
-			UPDATE rx SET rxdrug='' WHERE id = NEW.id;
+		DECLARE mDrug VARCHAR (150);
+		IF LENGTH( NEW.rxdrug ) < 10 OR ISNULL( NEW.rxdrug ) THEN
+			SELECT CONCAT( brand_description, ' (', description, ') ', form ) INTO mDrug FROM multum WHERE id=NEW.rxdrugmultum LIMIT 1;
+		ELSE
+			SELECT NEW.rxdrug INTO mDrug;
 		END IF;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), NEW.rxdrug, NEW.locked, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'rx', NEW.rxpatient, NEW.id, NOW(), mDrug, NEW.locked, NEW.user, NEW.active );
 		CALL patientWorkflowUpdateStatus( NEW.rxpatient, NOW(), 'rx', TRUE, NEW.user );
 	END;
 //
@@ -132,10 +135,12 @@ CREATE TRIGGER rx_Update
 	AFTER UPDATE ON rx
 	FOR EACH ROW BEGIN
 		DECLARE mDrug VARCHAR (150);
-		IF LENGTH( NEW.rxdrug ) < 3 OR ISNULL( rxdrug ) THEN
-			SELECT CONCAT( brand_description, ' (', description, ') ', form ) INTO mDrug FROM multum WHERE id=NEW.rxdrugmultum;
+		IF LENGTH( NEW.rxdrug ) < 10 OR ISNULL( NEW.rxdrug ) THEN
+			SELECT CONCAT( brand_description, ' (', description, ') ', form ) INTO mDrug FROM multum WHERE id=NEW.rxdrugmultum LIMIT 1;
+		ELSE
+			SELECT NEW.rxdrug INTO mDrug;
 		END IF;
-		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=NEW.rxdrug, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='rx' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NOW(), patient=NEW.rxpatient, summary=mDrug, locked=NEW.locked, user=NEW.user, status=NEW.active WHERE module='rx' AND oid=NEW.id;
 	END;
 //
 
