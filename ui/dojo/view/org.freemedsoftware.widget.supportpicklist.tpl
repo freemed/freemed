@@ -36,6 +36,9 @@
 
 		$methodName - (optional) Name of method. Defaults to 'picklist'
 
+		$methodNameText - (optional) Name of method for textual representation.
+		Defaults to 'to_text'
+
 		$defaultValue - (optional) Default value. If 0, is zero.
 
 *}-->
@@ -45,6 +48,7 @@
 	var <!--{$varname|replace:'.':''}--> = {
 		onAssign: function ( id ) {
 			this.assign( id, false );
+			return true;
 		},
 		assign: function ( id, dontset ) {
 			// Don't assign if we have no value
@@ -63,7 +67,7 @@
 				content: {
 					param0: id
 				},
-				url: "<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.to_text",
+				url: "<!--{$relay}-->/org.freemedsoftware.module.<!--{$module|escape}-->.<!--{if $methodNameText}--><!--{$methodNameText}--><!--{else}-->to_text<!--{/if}-->",
 				load: function ( type, data, evt ) {
 					if ( !dontset ) {
 						dojo.widget.byId('<!--{$varname|escape}-->_widget').setValue( id );
@@ -74,6 +78,7 @@
 				},
 				mimetype: "text/json"
 			});
+			return true;
 		}
 	};
 
