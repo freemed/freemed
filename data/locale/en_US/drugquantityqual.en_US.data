@@ -48,7 +48,7 @@ DG,Decigram
 DI,Dispenser
 DJ,Decagram
 DL,Deciliter
-E8,Inches\, Decimal ? Actual
+E8,Inches\, Decimal
 EA,Each
 EC,Each per Month
 EP,Eleven Pack
@@ -99,7 +99,7 @@ LB,Pound
 LQ,Liters Per Day
 LT,Liter
 M1,Milligrams per Liter
-M2,Millimeter ? Actual
+M2,Millimeter
 M7,Micro Inch
 MC,Microgram
 ME,Milligram
@@ -109,15 +109,15 @@ MO,Months
 MR,Meter
 MS,Square Millimeter
 MX,Mixed
-MY,Millimeter ? Average
-MZ,Millimeter ? minimum
+MY,Millimeter\, Average
+MZ,Millimeter\, minimum
 N1,Pen Calories
 N4,Pen Grams (Protein)
 N9,Cartridge Needle
 NA,Milligrams per Kilogram
 NX,Parts Per Thousand
 OP,Two Pack
-OZ,Ounce ? Av
+OZ,Ounce
 P1,Percent
 P3,Three Pack
 P4,Four-pack
