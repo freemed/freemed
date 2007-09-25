@@ -167,6 +167,7 @@
 				ptlname: document.getElementById('ptlname').value,
 				ptfname: document.getElementById('ptfname').value,
 				ptmname: document.getElementById('ptmname').value,
+				ptsuffix: dojo.widget.byId( 'ptsuffix' ).getValue( ),
 				ptdob: dojo.widget.byId( 'ptdob' ).getValue()
 			};
 			var dMsg = document.getElementById( 'dupeMessage' );

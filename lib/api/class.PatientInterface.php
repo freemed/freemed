@@ -39,6 +39,7 @@ class PatientInterface {
 	//	* ptlname - Last name
 	//	* ptfname - First name
 	//	* ptmname - Middle name
+	//	* ptsuffix - Suffix
 	//	* ptdob - Date of birth
 	//
 	// Returns:
@@ -51,6 +52,7 @@ class PatientInterface {
 			"ptlname=".$GLOBALS['sql']->quote( $criteria['ptlname'] )." AND ".
 			"ptfname=".$GLOBALS['sql']->quote( $criteria['ptfname'] )." AND ".
 			( $criteria['ptmname'] ? "ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND " : "" ).
+			( $criteria['ptsuffix'] ? "ptsuffix=".$GLOBALS['sql']->quote( $criteria['ptsuffix'] )." AND " : "" ).
 			( $criteria['ptdob'] ? "ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND " : "" ).
 			"ptarchive=0";
 		$res = $GLOBALS['sql']->queryAll( $q );
