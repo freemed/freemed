@@ -63,5 +63,6 @@ SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
 SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql
 SOURCE data/schema/mysql/reporting/report_PatientAgingReport.sql
+SOURCE data/schema/mysql/reporting/report_PatientList.sql
 SOURCE data/schema/mysql/reporting/report_PatientZipCodeDistribution.sql
 
