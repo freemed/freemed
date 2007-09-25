@@ -35,6 +35,7 @@ class DrugQuantityQualifiers extends SupportModule {
 
 	var $table_name = "drugquantityqual";
 	var $widget_hash = '##description## (##code##)';
+	var $order_field = 'description';
 
 	public function __construct () {
 		// Call parent constructor
