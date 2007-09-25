@@ -31,6 +31,8 @@ dojo.widget.defineWidget(
 		dataRelayUrl: null,
 		createNewEntry: function (evt) {
 			evt.stopPropagation();
+			freemedLoad( 'org.freemedsoftware.ui.scheduler.book' );
+			/*
 			if(dojo.widget.byId('newentrydialog')){
 				dojo.widget.byId('newentrydialog').show();
 			}else{
@@ -53,6 +55,7 @@ dojo.widget.defineWidget(
 				};
 				var widget = dojo.widget.createWidget("mywidgets:CalendarDialog", pars, div);
 			}
+			*/
 		}
 	}
 );
