@@ -92,6 +92,7 @@ class Prescription extends EMRModule {
 			"rxdx",
 			"rxcovstatus",
 			"rxnote",
+			"rxsig",
 			"rxorigrx",
 			"locked",
 			"user"
