@@ -64,6 +64,8 @@ CREATE TABLE IF NOT EXISTS multum_dose_form (
 CREATE TABLE IF NOT EXISTS multum_drug_id (
 	drug_id			VARCHAR (12), 
 	drug_name		VARCHAR (250)
+
+	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS multum_product_strength (
@@ -96,6 +98,8 @@ CREATE TABLE IF NOT EXISTS ndc_active_ingredient_list (
 	main_multum_drug_code			INT, 
 	active_ingredient_code			INT, 
 	ingredient_strength_code		INT
+
+	, INDEX ( ingredient_strength_code )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_brand_name (
@@ -132,6 +136,8 @@ CREATE TABLE IF NOT EXISTS ndc_ingredient_strength (
 	strength_num_unit			INT, 
 	strength_denom_amount			FLOAT, 
 	strength_denom_unit			INT
+
+	, INDEX ( ingredient_strength_code )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_main_multum_drug_code (
@@ -145,6 +151,7 @@ CREATE TABLE IF NOT EXISTS ndc_main_multum_drug_code (
 	j_code_description			VARCHAR (100)
 
 	, INDEX ( main_multum_drug_code, dose_form_code, product_strength_code )
+	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_orange_book (
@@ -175,6 +182,7 @@ CREATE TABLE IF NOT EXISTS ndc_source (
 CREATE TEMPORARY TABLE IF NOT EXISTS multum_temporary (
 	multum_id			VARCHAR (12) NOT NULL,
 	description			VARCHAR (100) NOT NULL,
+	brand_description		VARCHAR (100) NOT NULL,
 	dose_size			FLOAT,
 	units				VARCHAR (50),
 	id				CHAR (7) NOT NULL UNIQUE
@@ -186,6 +194,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS multum_temporary (
 CREATE TABLE IF NOT EXISTS multum (
 	multum_id			VARCHAR (12) NOT NULL,
 	description			VARCHAR (100) NOT NULL,
+	brand_description		VARCHAR (100) NOT NULL,
 	dose_size			FLOAT,
 	units				VARCHAR (50),
 	id				CHAR (7) NOT NULL UNIQUE
@@ -249,7 +258,9 @@ LOAD DATA LOCAL INFILE "data/multum/ndc_source.csv"
 INSERT INTO multum_temporary
 	SELECT
 		  cd.main_multum_drug_code
-		, IF( NOT ISNULL(unit_abbr) OR LENGTH(unit_abbr) > 0, CONCAT( brand_description, ' ', inner_package_size, ' ', unit_abbr, ' ', dose_form_description ), CONCAT( brand_description, ' ', dose_form_description ) )
+		#, IF( NOT ISNULL(unit_abbr) OR LENGTH(unit_abbr) > 0, CONCAT( brand_description, ' ', inner_package_size, ' ', unit_abbr, ' ', dose_form_description ), CONCAT( brand_description, ' ', dose_form_description ) )
+		, drug_name
+		, brand_description
 		, inner_package_size
 		, unit_abbr
 		, REPLACE( cd.main_multum_drug_code, 'd', '' )
@@ -257,6 +268,7 @@ INSERT INTO multum_temporary
 		LEFT OUTER JOIN ndc_brand_name bn ON bn.brand_code = cd.brand_code
 		LEFT OUTER JOIN multum_units u ON u.unit_id = cd.inner_package_desc_code
 		LEFT OUTER JOIN ndc_main_multum_drug_code mdc ON mdc.main_multum_drug_code = cd.main_multum_drug_code
+		LEFT OUTER JOIN multum_drug_id mdi ON mdi.drug_id = mdc.drug_id
 		LEFT OUTER JOIN multum_dose_form df ON df.dose_form_code = mdc.dose_form_code
 		LEFT OUTER JOIN multum_product_strength ps ON ps.product_strength_code = mdc.product_strength_code
 	GROUP BY cd.main_multum_drug_code;
@@ -267,11 +279,12 @@ INSERT INTO multum
 	SELECT
 		  multum_id
 		, description
+		, brand_description
 		, dose_size
 		, units
 		, id
 	FROM multum_temporary
-	GROUP BY description
+	GROUP BY description, brand_description
 	ORDER BY multum_id DESC;
 
 DROP TEMPORARY TABLE multum_temporary;
