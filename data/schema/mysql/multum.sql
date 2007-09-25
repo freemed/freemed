@@ -76,13 +76,15 @@ CREATE TABLE IF NOT EXISTS multum_product_strength (
 );
 
 CREATE TABLE IF NOT EXISTS multum_route (
-	route_code			INT, 
+	route_code			INT NOT NULL, 
 	route_abbr			VARCHAR (60), 
 	route_description		VARCHAR (250)
+
+	, PRIMARY KEY ( route_code )
 );
 
 CREATE TABLE IF NOT EXISTS multum_units (
-	unit_id			INT, 
+	unit_id			INT NOT NULL, 
 	unit_abbr		VARCHAR (60), 
 	unit_description	VARCHAR (250)
 
@@ -90,8 +92,10 @@ CREATE TABLE IF NOT EXISTS multum_units (
 );
 
 CREATE TABLE IF NOT EXISTS ndc_active_ingredient (
-	active_ingredient_code			INT, 
+	active_ingredient_code			INT NOT NULL, 
 	active_ingredient			VARCHAR (250)
+
+	, PRIMARY KEY ( active_ingredient_code )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_active_ingredient_list (
@@ -99,11 +103,13 @@ CREATE TABLE IF NOT EXISTS ndc_active_ingredient_list (
 	active_ingredient_code			INT, 
 	ingredient_strength_code		INT
 
-	, INDEX ( ingredient_strength_code )
+	, KEY ( main_multum_drug_code )
+	, KEY ( active_ingredient_code )
+	, KEY ( ingredient_strength_code )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_brand_name (
-	brand_code			INT, 
+	brand_code			INT NOT NULL, 
 	brand_description		VARCHAR (250)
 
 	, INDEX ( brand_code )
@@ -179,27 +185,16 @@ CREATE TABLE IF NOT EXISTS ndc_source (
 
 ----- Aggregation table definition -----
 
-CREATE TEMPORARY TABLE IF NOT EXISTS multum_temporary (
-	multum_id			VARCHAR (12) NOT NULL,
-	description			VARCHAR (100) NOT NULL,
-	brand_description		VARCHAR (100) NOT NULL,
-	dose_size			FLOAT,
-	units				VARCHAR (50),
-	id				CHAR (7) NOT NULL UNIQUE
-
-	, PRIMARY KEY ( id )
-	, KEY ( description, multum_id )
-);
-
 CREATE TABLE IF NOT EXISTS multum (
 	multum_id			VARCHAR (12) NOT NULL,
 	description			VARCHAR (100) NOT NULL,
-	brand_description		VARCHAR (100) NOT NULL,
+	brand_description		VARCHAR (250),
 	dose_size			FLOAT,
 	units				VARCHAR (50),
-	id				CHAR (7) NOT NULL UNIQUE
+	form				VARCHAR (50),
+	id				CHAR (7) NOT NULL
 
-	, PRIMARY KEY ( id )
+	, KEY ( id )
 	, KEY ( description, multum_id )
 );
 
@@ -255,37 +250,21 @@ LOAD DATA LOCAL INFILE "data/multum/ndc_source.csv"
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
 ----- Recomposite table from individual components -----
-INSERT INTO multum_temporary
+INSERT INTO multum
 	SELECT
-		  cd.main_multum_drug_code
-		#, IF( NOT ISNULL(unit_abbr) OR LENGTH(unit_abbr) > 0, CONCAT( brand_description, ' ', inner_package_size, ' ', unit_abbr, ' ', dose_form_description ), CONCAT( brand_description, ' ', dose_form_description ) )
+		  mdc.drug_id
 		, drug_name
 		, brand_description
-		, inner_package_size
-		, unit_abbr
-		, REPLACE( cd.main_multum_drug_code, 'd', '' )
+		, GROUP_CONCAT( DISTINCT product_strength_description )
+		, GROUP_CONCAT( DISTINCT unit_abbr )
+		, GROUP_CONCAT( DISTINCT dose_form_description )
+		, cd.main_multum_drug_code
 	FROM ndc_core_description cd
+		LEFT OUTER JOIN ndc_main_multum_drug_code mdc ON mdc.main_multum_drug_code = cd.main_multum_drug_code
 		LEFT OUTER JOIN ndc_brand_name bn ON bn.brand_code = cd.brand_code
 		LEFT OUTER JOIN multum_units u ON u.unit_id = cd.inner_package_desc_code
-		LEFT OUTER JOIN ndc_main_multum_drug_code mdc ON mdc.main_multum_drug_code = cd.main_multum_drug_code
 		LEFT OUTER JOIN multum_drug_id mdi ON mdi.drug_id = mdc.drug_id
 		LEFT OUTER JOIN multum_dose_form df ON df.dose_form_code = mdc.dose_form_code
 		LEFT OUTER JOIN multum_product_strength ps ON ps.product_strength_code = mdc.product_strength_code
 	GROUP BY cd.main_multum_drug_code;
 
------ Second stage sorting, since we can't group by a composited field -----
-
-INSERT INTO multum
-	SELECT
-		  multum_id
-		, description
-		, brand_description
-		, dose_size
-		, units
-		, id
-	FROM multum_temporary
-	GROUP BY description, brand_description
-	ORDER BY multum_id DESC;
-
-DROP TEMPORARY TABLE multum_temporary;
-	
