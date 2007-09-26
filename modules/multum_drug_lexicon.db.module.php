@@ -49,14 +49,18 @@ class MultumDrugLexicon extends SupportModule {
 	//
 	//	$drug_id - Drug id in the "multum" aggregation table
 	//
+	//	$drug_label - (optional) Textual drug name
+	//
 	// Returns:
 	//
 	//	Array of [ key, value ]
 	//
-	public function DosagesForDrug ( $drug_id ) {
+	public function DosagesForDrug ( $drug_id, $drug_label = NULL ) {
 		$q = "SELECT ps.product_strength_description AS strength, ps.product_strength_code AS id
 			FROM multum m LEFT OUTER JOIN multum_product_strength ps ON FIND_IN_SET( ps.product_strength_code, m.dose_size_link )
-			WHERE m.id = ".$GLOBALS['sql']->quote( $drug_id )." GROUP BY ps.product_strength_code";
+			WHERE m.id = ".$GLOBALS['sql']->quote( $drug_id ).
+			( $drug_label ? " AND CONCAT(brand_description, ' (', description,') ',form) = ".$GLOBALS['sql']->quote( $drug_label ) : "" ).
+			" GROUP BY ps.product_strength_code";
 		$r = $GLOBALS['sql']->queryAll( $q );
 		foreach ( $r AS $row ) {
 			$res[] = array ( $row['strength'], $row['id'] );
