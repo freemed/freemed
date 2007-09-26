@@ -40,11 +40,9 @@
 <!--{assign_block var='initialLoad'}-->
 	rxdrugmultum.onAssign( data.rxdrugmultum );
 	rxphy.onAssign( data.rxphy );
-	rxform.onAssign( data.rxform );
+	rxunit.onAssign( data.rxunit );
 	rxquantityqual.onAssign( data.rxquantityqual );
 	dojo.widget.byId( 'rxdtfrom' ).setValue( data.rxdtfrom );
-	dW.onAssign( data.rxdrugmultum );
-	rxunit.onAssign( data.rxunit );
 <!--{/assign_block}-->
 
 <!--{assign_block var='collectDataArray'}-->
