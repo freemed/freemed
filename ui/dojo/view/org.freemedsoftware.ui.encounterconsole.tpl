@@ -228,7 +228,7 @@
 
 <div dojoType="TabContainer" id="patientEncounterTabContainer" style="width: 100%; height: 100%;">
 
-	<div dojoType="ContentPane" id="patientEncounterSummaryPane" label="<!--{t}-->Summary<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterSummaryPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/dashboard.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Summary<!--{/t}-->">
 
 		<table border="0" cellpadding="5">
 
@@ -252,7 +252,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="patientEncounterSuperbillPane" label="<!--{t}-->Superbill<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterSuperbillPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/superbill.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Superbill<!--{/t}-->">
 		<div>
 			<table border="0">
 				<tr>
@@ -301,13 +301,13 @@
 		</div>
 	</div>
 
-	<div dojoType="ContentPane" id="patientEncounterApptPane" label="<!--{t}-->Appointments<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterApptPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/book_appt.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Appointments<!--{/t}-->">
 
 	</div>
 
 	<!--{method var='recentProgressNote' namespace='org.freemedsoftware.module.progressnotes.GetRecentRecord' param0=$patient}-->
 	<!--{if $recentProgressNote.id}-->
-	<div dojoType="ContentPane" id="patientEncounterProgressNotesPane" label="<!--{t}-->Recent Notes<!--{/t}-->" href="<!--{$controller}-->/org.freemedsoftware.module.progressnotes.view?id=<!--{$recentProgressNote.id}-->&patient=<!--{$patient}-->&embed=1" executeScripts="true" cacheContent="false" adjustPaths="false">
+	<div dojoType="ContentPane" id="patientEncounterProgressNotesPane" label="&lt;img src='<!--{$htdocs}-->/images/annotation_icon.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Recent Notes<!--{/t}-->" href="<!--{$controller}-->/org.freemedsoftware.module.progressnotes.view?id=<!--{$recentProgressNote.id}-->&patient=<!--{$patient}-->&embed=1" executeScripts="true" cacheContent="false" adjustPaths="false">
 	</div>
 	<!--{/if}-->
 
