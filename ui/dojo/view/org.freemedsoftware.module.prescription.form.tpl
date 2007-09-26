@@ -39,7 +39,6 @@
 
 <!--{assign_block var='initialLoad'}-->
 	rxdrugmultum.onAssign( data.rxdrugmultum );
-	dojo.widget.byId( 'rxdrugmultum_widget' ).setLabel( data.rxdrug );
 	dW.onAssign( data.rxdrugmultum );
 	rxphy.onAssign( data.rxphy );
 	rxunit.onAssign( data.rxunit );
@@ -80,7 +79,7 @@
 		onAssign: function ( id ) {
 			// Change URL for submit, blank value
 			var w = dojo.widget.byId( 'rxunit_widget' );
-			w.dataProvider.searchUrl = "<!--{$relay}-->/org.freemedsoftware.module.MultumDrugLexicon.DosagesForDrug?param0=" + encodeURIComponent( id ) + '&param1=' + encodeURIComponent( dojo.widget.byId( 'rxdrugmultum_widget' ).getLabel() ) + '&param2=%{searchString}';
+			w.dataProvider.searchUrl = "<!--{$relay}-->/org.freemedsoftware.module.MultumDrugLexicon.DosagesForDrug?param0=" + encodeURIComponent( id ) + '&param1=%{searchString}';
 			w.setLabel( '' );
 			w.setValue( 0 );
 			return true;

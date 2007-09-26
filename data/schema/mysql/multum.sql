@@ -195,7 +195,9 @@ CREATE TABLE IF NOT EXISTS multum (
 	dose_size_link			TEXT,
 	units				VARCHAR (50),
 	form				VARCHAR (50),
-	id				CHAR (7) NOT NULL
+	brand_id			BIGINT,
+	main_multum_drug_code		BIGINT,
+	id				CHAR (20) NOT NULL
 
 	, KEY ( id )
 	, KEY ( description, multum_id )
@@ -262,7 +264,9 @@ INSERT INTO multum
 		, GROUP_CONCAT( DISTINCT ps.product_strength_code )
 		, GROUP_CONCAT( DISTINCT unit_abbr )
 		, dose_form_description
+		, cd.brand_code
 		, cd.main_multum_drug_code
+		, CONCAT( cd.main_multum_drug_code, '-', cd.brand_code )
 	FROM ndc_core_description cd
 		LEFT OUTER JOIN ndc_main_multum_drug_code mdc ON mdc.main_multum_drug_code = cd.main_multum_drug_code
 		LEFT OUTER JOIN ndc_brand_name bn ON bn.brand_code = cd.brand_code

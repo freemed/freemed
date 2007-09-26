@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	rxdtmod			DATE,
 	rxdtfrom		DATE,
 	rxdrug			VARCHAR (150) NOT NULL,
-	rxdrugmultum		INT UNSIGNED NOT NULL,
+	rxdrugmultum		CHAR (20) NOT NULL,
 	rxform			VARCHAR (32),
 	rxdosage		VARCHAR (128),
 	rxquantity		REAL NOT NULL DEFAULT 0,
