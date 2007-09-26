@@ -53,6 +53,7 @@
 
 <!--{assign_block var='moduleForm'}-->
 
+<div align="center">
 <table border="0" style="width: auto;">
 
 	<tr>
@@ -200,6 +201,7 @@
 	</tr>
 
 </table>
+</div>
 
 <!--{/assign_block}-->
 
