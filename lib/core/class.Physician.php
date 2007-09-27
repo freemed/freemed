@@ -37,7 +37,7 @@ class Physician {
 	//
 	//	$physician - Database table identifier for physician/provider.
 	//
-	function Physician ($physician = 0) {
+	function __construct ($physician = 0) {
 		if ($physician==0) return false;    // error checking
 
 		// Check for cache
@@ -75,9 +75,10 @@ class Physician {
 	function fullName ($use_salutation = false) {
 		// Figure out degrees ...
 		$dr = true;
-		for ($i=1; $i<=3; $i++) {
-			if ($this->local_record['phydeg'.$i] > 0) {
-				$e = $GLOBALS['sql']->get_link( 'degrees', $this->local_record['phydeg'.$i]);
+		$degrees = explode( ',', $this->local_record['phydegrees'] );	
+		foreach ( $degrees AS $degree ) {
+			if ($degree > 0) {
+				$e = $GLOBALS['sql']->get_link( 'degrees', $degree );
 				$d[] = $e['degdegree'];
 				if (strpos($e, 'P.A.') !== false) { $dr = false; }
 				if (strpos($e, 'PA') !== false) { $dr = false; }
