@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `rxrefillrequest` (
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	provider		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	rxorig			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	rxorig			TEXT,
 	note			VARCHAR (250) NOT NULL DEFAULT '',
 	approved		TIMESTAMP (14),
 	locked			INT UNSIGNED NOT NULL DEFAULT 0,
@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS `rxrefillrequest` (
 	#	Define keys
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 	, FOREIGN KEY		( provider ) REFERENCES physician.id ON DELETE CASCADE
-	, FOREIGN KEY		( rxorig ) REFERENCES rx.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS rxrefillrequest_Upgrade;
