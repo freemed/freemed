@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS `dicom` (
 
 	, FOREIGN KEY		( d_patient ) REFERENCES patient.id ON DELETE CASCADE
 	, KEY			( d_md5 )
+	, KEY			( d_study_uid )
+	, KEY			( d_series_uid )
 );
 
 DROP PROCEDURE IF EXISTS dicom_Upgrade;
