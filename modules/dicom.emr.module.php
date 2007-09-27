@@ -113,7 +113,13 @@ class DicomModule extends EMRModule {
 	//	Patient ID or 0 if not able to resolve.
 	//
 	public function LookupPatient ( $patient, $dob ) {
-		$name = explode ( '^', $patient );
+		if ( strpos( $patient, '^' ) !== false ) {
+			$name = explode ( '^', $patient );
+		} else {
+			$name = explode ( ' ', $patient );
+		}
+
+		syslog( LOG_DEBUG, get_class($this)."::LookupPatient( name = $patient, dob = $dob )" );
 
 		// Check first for DOB + Last Name
 		$r = $GLOBALS['sql']->queryCol(
