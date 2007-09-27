@@ -45,10 +45,17 @@
 
 <!--{assign_block var='initialLoad'}-->
 	phystatus.onAssign( data.phystatus );
+	physpecialties.onAssign( data.physpecialties );
+	phydegrees.onAssign( data.phydegrees );
+<!--{/assign_block}-->
+
+<!--{assign_block var='collectDataArray'}-->
+	phydegrees: phydegrees.getValue( ),
+	physpecialties: physpecialties.getValue( )
 <!--{/assign_block}-->
 
 <!--{assign_block var='moduleForm'}-->
-<div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 15em;">
+<div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em; overflow-y: scroll;">
 
 	<div dojoType="ContentPane" id="providerMainPane" label="<!--{t}-->Primary Information<!--{/t}-->">
 
@@ -76,7 +83,7 @@
 
 			<tr>
 				<td><!--{t}-->Status<!--{/t}--></td>
-				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderStatus" varname="userrealphy"}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderStatus" varname="phystatus"}--></td>
 			</tr>
 
 			<tr>
@@ -87,6 +94,16 @@
 						<option value="no"><!--{t}-->Referring<!--{/t}--></option>
 					</select>
 				</td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->Degrees / Certifications<!--{/t}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" module="ProviderCertifications" varname="phydegrees"}--></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->Specialties<!--{/t}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.multisupportpicklist.tpl" module="ProviderSpecialties" varname="physpecialties"}--></td>
 			</tr>
 
 		</table>
@@ -110,6 +127,34 @@
 			<tr>
 				<td><!--{t}-->Beeper / Pager #<!--{/t}--></td>
 				<td><input type="text" id="phypager" name="phypager" /></td>
+			</tr>
+
+		</table>
+
+	</div>
+
+	<div dojoType="ContentPane" id="providerIdPane" label="<!--{t}-->Identifiers<!--{/t}-->">
+
+		<table style="border: 0; padding: 1em; width: auto;">
+
+			<tr>
+				<td><!--{t}-->NPI<!--{/t}--></td>
+				<td><input type="text" id="phynpi" name="phynpi" size="30" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->CLIA<!--{/t}--></td>
+				<td><input type="text" id="phyclia" name="phyclia" size="30" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->DEA Number<!--{/t}--></td>
+				<td><input type="text" id="phydea" name="phydea" size="30" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->HL7 Identification<!--{/t}--></td>
+				<td><input type="text" id="phyhl7id" name="phyhl7id" size="30" /></td>
 			</tr>
 
 		</table>
