@@ -34,19 +34,22 @@
 var djConfig = {
 <!--{if $DEBUG}-->
 	isDebug: true,
-	debugContainerId : "dojoDebugOutput",
+	debugAtAllCosts: true,
 <!--{/if}-->
+	dojoIframeHistoryUrl: "<!--{$htdocs}-->/dojo/iframe_history.html",
+	preventBackButtonFix: false,
 	dojoRichTextFrameUrl: "<!--{$htdocs}-->/dojo/src/widget/templates/richtextframe.html"
 };
 </script>
 <script type="text/javascript" src="<!--{$htdocs}-->/dojo/dojo.js"></script>
 <script language="JavaScript" type="text/javascript">
 	<!--{if $DEBUG}-->
-	dojo.require( 'dojo.debug.Firebug' );
+	dojo.require( 'dojo.debug.console' );
 	<!--{/if}-->
 	dojo.require("dojo.date");
 	dojo.require("dojo.event.*");
 	dojo.require("dojo.lfx.*");
+	dojo.require("dojo.undo.browser");
 	dojo.require("dojo.widget.LayoutContainer");
 	dojo.require("dojo.widget.ContentPane");
 	dojo.require("dojo.widget.LinkPane");
@@ -116,8 +119,10 @@ var djConfig = {
 		return true;
 	}
 
-	function freemedLoad ( url, e, forcenew ) {
+	function freemedLoad ( url, e, forcenew, ignoreHistory ) {
+		dojo.debug( 'freemedLoad ' + url + ',' + e + ',' + forcenew + ',' + ignoreHistory );
 		forcenew = forcenew || 0;
+		ignoreHistory = ignoreHistory || 0;
 
 		try {
 			if ( e.ctrlKey ) { forcenew = 1; }
@@ -169,7 +174,10 @@ var djConfig = {
 		freemedGlobal.currentHelpTopic = x;
 
 		// Add page to history
-		freemedGlobal.pageHistory.push( url );
+		if ( ! ignoreHistory ) {
+			freemedGlobal.pageHistory.push( url );
+			dojo.undo.browser.addToHistory( new browserHistory( url ) );
+		}
 
 		return true;
 	} // end function freemedLoad
@@ -307,8 +315,21 @@ var djConfig = {
 		state: { }
 	};
 
+	var browserHistory = function(url) {
+		this._url = url;
+	};
+	browserHistory.prototype.back = function ( ) {
+		dojo.debug( '[back] load = ' + this._url );
+		freemedLoad( this._url, null, 0, true );
+	};
+	browserHistory.prototype.forward = function ( ) {
+		dojo.debug( '[forward] load = ' + this._url );
+		freemedLoad( this._url, null, 0, true );
+	};
+
 	// Initialization
 	dojo.addOnLoad(function(){
+		dojo.undo.browser.setInitialState( new browserHistory ( 'org.freemedsoftware.controller.mainframe' ) );
 		dojo.io.bind({
 			method: "POST",
 			content: { },
@@ -451,4 +472,3 @@ var djConfig = {
 
 <!--{* ***** Content will go in here ***** *}-->
 
-<!--{if $DEBUG}--><div id="dojoDebugOutput" /><!--{/if}-->
