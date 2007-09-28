@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class Pharmacy extends SupportModule {
 
 	var $MODULE_NAME    = "Pharmacy";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID     = "47941b4e-cf68-431d-881a-79c5c63885e2";
 
@@ -46,6 +46,7 @@ class Pharmacy extends SupportModule {
 		'phzip',
 		'phfax',
 		'phemail',
+		'phncpdp',
 		'phmethod'
 	);
 

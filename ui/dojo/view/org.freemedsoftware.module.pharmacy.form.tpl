@@ -85,6 +85,7 @@
 		<td><select id="phmethod" name="phmethod">
 			<option value="fax"><!--{t}-->Fax<!--{/t}--></option>
 			<option value="email"><!--{t}-->Email<!--{/t}--></option>
+			<option value="ncpdp"><!--{t}-->NCPDP SCRIPT<!--{/t}--></option>
 		</select></td>
 	</tr>
 
@@ -96,6 +97,11 @@
 	<tr>
 		<td><!--{t}-->Email<!--{/t}--></td>
 		<td><input dojoType="EmailTextbox" type="text" id="phemail" name="phemail" size="45" /></td>
+	</tr>
+
+	<tr>
+		<td><!--{t}-->NCPDP ID Number<!--{/t}--></td>
+		<td><input type="text" id="phncpdp" name="phncpdp" size="20" /></td>
 	</tr>
 
 </table>

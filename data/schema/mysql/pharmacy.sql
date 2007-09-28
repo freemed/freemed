@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `pharmacy` (
 	phfax			CHAR (16),
 	phemail			VARCHAR (100),
 	phmethod		VARCHAR (150) NOT NULL,
+	phncpdp			CHAR (20),
 	id			SERIAL,
 
 	# Define keys
@@ -52,7 +53,12 @@ BEGIN
 		ALTER IGNORE TABLE pharmacy ADD COLUMN phemail VARCHAR (100) AFTER phfax;
 	END IF;
 
-	CALL FreeMED_Module_UpdateVersion( 'pharmacy', 1 );
+	# Version 2
+	IF @V < 2 THEN
+		ALTER IGNORE TABLE pharmacy ADD COLUMN phncpdp CHAR (20) AFTER phmethod;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'pharmacy', 2 );
 END
 //
 DELIMITER ;
