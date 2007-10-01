@@ -45,7 +45,7 @@
 					item = t.dataStore[i];
 				}
 			}
-			freemedPatientContentLoad( 'org.freemedsoftware.module.' + item.module + '.form?patient=<!--{$patient|escape}-->&id=' + item.oid );
+			freemedPatientContentLoad( 'org.freemedsoftware.module.' + item.module + '.systemtask?patient=<!--{$patient|escape}-->&id=' + item.oid );
 		},
 		initialLoad: function ( ) {
 			dojo.io.bind({
