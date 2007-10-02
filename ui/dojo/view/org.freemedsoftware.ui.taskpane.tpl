@@ -162,12 +162,13 @@
 		</div>
 		<!--{/acl}-->
 
-		<!--{acl category="admin" permission="user"}-->
+		<!--{* ----- Only 'admin' can do this ----- *}-->
+		<!--{if $SESSION.authdata.user_record.id eq 1}-->
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.user', event);">
 			<img src="<!--{$htdocs}-->/images/teak/chart_config.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->User Administration<!--{/t}-->
 		</div>
-		<!--{/acl}-->
+		<!--{/if}-->
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.preferences', event);">
 			<img src="<!--{$htdocs}-->/images/teak/user_config.32x32.png" height="32" width="32" border="0" /><br/>
