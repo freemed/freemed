@@ -73,6 +73,10 @@ BEGIN
 	DROP TRIGGER medications_atomic_Update;
 
 	#----- Upgrades
+	ALTER TABLE medications ADD COLUMN mdrugs VARCHAR (250) AFTER mdate;
+	ALTER TABLE medications ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER mdrugs;
+	ALTER TABLE medications ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER TABLE medications ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END
 //
 DELIMITER ;
