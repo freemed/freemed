@@ -30,6 +30,7 @@ class PaymentModule extends EMRModule {
 	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID	    = "715acf0f-9fd8-40cd-932c-1e864099d0e3";
+	var $MODULE_HIDDEN  = true;
 
 	var $PACKAGE_MINIMUM_VERSION = '0.6.0';
 
