@@ -24,6 +24,7 @@
 
 <script type="text/javascript">
 	//	Widgets used
+	dojo.require( "dojo.widget.Select" );
 	dojo.require( "dojo.widget.TabContainer" );
 	dojo.require( "dojo.widget.ContentPane" );
 
@@ -95,7 +96,6 @@
 		},
 		superbillPxPopulate: function ( px ) {
 			var t = document.getElementById( 'superbillPxTable' );
-			var tWidgetDivs = new Array ( );
 			for ( var p=0; p < px.length ; p++ ) {
 				var col = p==0 ? 0 : p % 3;
 				var colObj = document.getElementById('superbillPxCol' + col);
@@ -123,33 +123,39 @@
 				var tDetailDiv = document.createElement( 'div' );
 				tDetailDiv.style.display = 'none';
 				tDetailDiv.id = 'superbill_detaildiv_' + thisId;
-				var spanUnit = document.createElement( 'span' );
+
+				var tDetailTable = document.createElement( 'table' );
+				var tDetailRow = document.createElement( 'tr' );
+
+				var spanUnit = document.createElement( 'td' );
 				spanUnit.innerHTML = "&nbsp;&nbsp;&nbsp; <small><!--{t}-->Units<!--{/t}-->:</small> ";
+				var inputUnitContainer = document.createElement( 'td' );
 				var inputUnit = document.createElement( 'input' );
 				inputUnit.type = 'text';
 				inputUnit.size = 6;
 				inputUnit.id = 'superbill_unit_' + thisId;
 				inputUnit.value = 0;
 				inputUnit.disabled = true;
+				inputUnitContainer.appendChild( inputUnit );
 
-				tWidgetDivs[ thisId ] = document.createElement( 'div' );
-/*
-				dojo.widget.createWidget(
+				var spanMod = document.createElement( 'td' );
+				spanMod.innerHTML = "<small><!--{t}-->Modifier<!--{/t}-->:</small> ";
+
+				var tWidgetDiv = document.createElement( 'td' );
+				var wid = dojo.widget.createWidget(
 					'Select',
 					{
+						id: 'superbill_pxmod_' + thisId.toString() + '_widget',
 						name: 'superbill_pxmod_' + thisId + '_widget',
-						id: 'superbill_pxmod_' + thisId + '_widget',
 						width: '100px',
 						dataUrl: "<!--{$relay}-->/org.freemedsoftware.module.CptModifiers.picklist?param0=%{searchString}",
 						mode: 'remote',
 						autocomplete: false,
-						setValue: function ( ) { if (arguments[0]) { document.getElementById('superbill_pxmod_" + this.iteration + "').value = arguments[0]; } }
+						setValue: function ( ) { if (arguments[0]) { document.getElementById('superbill_pxmod_' + this.iteration.toString() ).value = arguments[0]; } },
 						iteration: thisId
-					},
-					tWidgetDivs[ thisId ]
+					}
 				);
-*/
-				dojo.debug('after create widget');
+				tWidgetDiv.appendChild( wid.domNode );
 	
 				// Keep track of the data here ...
 				var tHidden = document.createElement( 'input' );
@@ -157,9 +163,12 @@
 				tHidden.id = "superbill_pxmod_" + thisId;
 				tHidden.name = "superbill_pxmod_" + thisId;
 				
-				tDetailDiv.appendChild( spanUnit );
-				tDetailDiv.appendChild( inputUnit );
-				tDetailDiv.appendChild( tWidgetDivs[ thisId ] );
+				tDetailRow.appendChild( spanUnit );
+				tDetailRow.appendChild( inputUnitContainer );
+				tDetailRow.appendChild( spanMod );
+				tDetailRow.appendChild( tWidgetDiv );
+				tDetailTable.appendChild( tDetailRow );
+				tDetailDiv.appendChild( tDetailTable );
 				tDetailDiv.appendChild( tHidden );
 
 				// Assemble objects
