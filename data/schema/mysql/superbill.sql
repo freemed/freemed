@@ -31,8 +31,10 @@ CREATE TABLE IF NOT EXISTS `superbill` (
 	provider		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	procs			BLOB,
 	dx			BLOB,
+	details			BLOB,
 	note			VARCHAR (250) NOT NULL DEFAULT '',
-	reviewed		INT UNSIGNED,
+	reviewed		INT UNSIGNED DEFAULT 0,
+	processed		INT UNSIGNED DEFAULT 0,
 	id			SERIAL,
 
 	#	Define keys
@@ -53,6 +55,9 @@ BEGIN
 
 	#----- Upgrades
 	ALTER TABLE superbill ADD COLUMN provider BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER patient;
+	ALTER TABLE superbill CHANGE COLUMN reviewed reviewed INT UNSIGNED DEFAULT 0;
+	ALTER TABLE superbill ADD COLUMN processed INT UNSIGNED DEFAULT 0 AFTER reviewed;
+	ALTER TABLE superbill ADD COLUMN details BLOB AFTER dx;
 END
 //
 DELIMITER ;
