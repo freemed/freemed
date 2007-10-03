@@ -34,6 +34,7 @@ class ProviderCertifications extends SupportModule {
 
 	var $record_name = "Provider Certifications";
 	var $table_name = "degrees";
+	var $widget_hash = "##degdegree## (##degname##)";
 
 	var $variables      = array (
 		"degdegree",
