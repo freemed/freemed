@@ -65,6 +65,8 @@
 				var tSpan = document.createElement( 'span' );
 				var thisId = dx[d].id;
 
+				tDiv.className = 'superbillElement';
+
 				var cb = document.createElement( 'input' );
 				cb.type = 'checkbox';
 				cb.id = 'superbill_dx_' + thisId;
@@ -75,13 +77,13 @@
 
 				// Populate label, bolding previous dx's
 				if ( parseInt(dx[d].previous) == 1 ) {
-					var i = ' <label for="superbill_dx_' + thisId + '"><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</b></label> ';
+					var i = ' <label for="superbill_dx_' + thisId + '"><small><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></b></label> ';
 					tSpan.innerHTML = i;
 
 					// Previous dx should be selected by default
 					cb.checked = true;
 				} else {
-					var i = ' <label for="superbill_dx_' + thisId + '">' + dx[d].code + ' ( ' + dx[d].descrip + ' )</label> ';
+					var i = ' <label for="superbill_dx_' + thisId + '"><small>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></label> ';
 					tSpan.innerHTML = i;
 				}
 
@@ -93,6 +95,7 @@
 		},
 		superbillPxPopulate: function ( px ) {
 			var t = document.getElementById( 'superbillPxTable' );
+			var tWidgetDivs = new Array ( );
 			for ( var p=0; p < px.length ; p++ ) {
 				var col = p==0 ? 0 : p % 3;
 				var colObj = document.getElementById('superbillPxCol' + col);
@@ -101,6 +104,9 @@
 				var tSpan = document.createElement( 'span' );
 				var thisId = px[p].id;
 
+				tDiv.className = 'superbillElement';
+
+				var tInnerDiv = document.createElement( 'div' );
 				var cb = document.createElement( 'input' );
 				cb.type = 'checkbox';
 				cb.id = 'superbill_px_' + thisId;
@@ -109,13 +115,58 @@
 				// Set internal counter to 0
 				patientEncounter.superbillPx[ thisId ] = 0;
 
-				// Populate label, bolding previous dx's
-				var i = ' <label for="superbill_px_' + thisId + '">' + px[p].code + ' ( ' + px[p].descrip + ' )</label> ';
+				// Populate label
+				var i = ' <label for="superbill_px_' + thisId + '"><small>' + px[p].code + ' ( ' + px[p].descrip + ' )</small></label> ';
 				tSpan.innerHTML = i;
 
+				// Detailed inner div
+				var tDetailDiv = document.createElement( 'div' );
+				tDetailDiv.style.display = 'none';
+				tDetailDiv.id = 'superbill_detaildiv_' + thisId;
+				var spanUnit = document.createElement( 'span' );
+				spanUnit.innerHTML = "&nbsp;&nbsp;&nbsp; <small><!--{t}-->Units<!--{/t}-->:</small> ";
+				var inputUnit = document.createElement( 'input' );
+				inputUnit.type = 'text';
+				inputUnit.size = 6;
+				inputUnit.id = 'superbill_unit_' + thisId;
+				inputUnit.value = 0;
+				inputUnit.disabled = true;
+
+				tWidgetDivs[ thisId ] = document.createElement( 'div' );
+/*
+				dojo.widget.createWidget(
+					'Select',
+					{
+						name: 'superbill_pxmod_' + thisId + '_widget',
+						id: 'superbill_pxmod_' + thisId + '_widget',
+						width: '100px',
+						dataUrl: "<!--{$relay}-->/org.freemedsoftware.module.CptModifiers.picklist?param0=%{searchString}",
+						mode: 'remote',
+						autocomplete: false,
+						setValue: function ( ) { if (arguments[0]) { document.getElementById('superbill_pxmod_" + this.iteration + "').value = arguments[0]; } }
+						iteration: thisId
+					},
+					tWidgetDivs[ thisId ]
+				);
+*/
+				dojo.debug('after create widget');
+	
+				// Keep track of the data here ...
+				var tHidden = document.createElement( 'input' );
+				tHidden.type = 'hidden';
+				tHidden.id = "superbill_pxmod_" + thisId;
+				tHidden.name = "superbill_pxmod_" + thisId;
+				
+				tDetailDiv.appendChild( spanUnit );
+				tDetailDiv.appendChild( inputUnit );
+				tDetailDiv.appendChild( tWidgetDivs[ thisId ] );
+				tDetailDiv.appendChild( tHidden );
+
 				// Assemble objects
-				tDiv.appendChild( cb );
-				tDiv.appendChild( tSpan );
+				tInnerDiv.appendChild( cb );
+				tInnerDiv.appendChild( tSpan );
+				tDiv.appendChild( tInnerDiv );
+				tDiv.appendChild( tDetailDiv );
 				colObj.appendChild( tDiv );
 			}
 		},
@@ -123,6 +174,8 @@
 			// Compile all px & dx
 			var px = new Array ( );
 			var dx = new Array ( );
+			var detail = new Array ( );
+			detail['units'] = new Array ( );
 			for ( var i in patientEncounter.superbillDx ) {
 				if ( patientEncounter.superbillDx[ i ] ) {
 					dx.push( i );
@@ -135,6 +188,7 @@
 			for ( var i in patientEncounter.superbillPx ) {
 				if ( patientEncounter.superbillPx[ i ] ) {
 					px.push( i );
+					detail['units'][i] = document.getElementById( 'superbill_unit_' + i ).value;
 				}
 			}
 			try {
@@ -151,7 +205,8 @@
 					param0: {
 						patient: "<!--{$patient}-->",
 						procs: px,
-						dx: dx
+						dx: dx,
+						detail: detail
 					}
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.add',
@@ -197,6 +252,18 @@
 		onPxCheck: function ( evt ) {
 			var id = this.id.replace( 'superbill_px_', '' );
 			patientEncounter.superbillPx[ id ] = ! patientEncounter.superbillPx[ id ];
+			// Attempt to make sure we can write to this
+			try {
+				var pCount = document.getElementById( 'superbill_unit_' + id );
+				if ( ! patientEncounter.superbillPx[ id ] ) {
+					pCount.value = '0'
+					pCount.disabled = true;
+				} else {
+					pCount.value = '1';
+					pCount.disabled = false;
+				}
+				toggleDiv( 'superbill_detaildiv_' + id );
+			} catch (err) { }
 		}
 	};
 
@@ -221,6 +288,12 @@
 	#patientEncounterClose:hover {
 		color: #ff5555;
 		cursor: pointer;
+		}
+	.superbillElement {
+		border: 1px solid #000000;
+		}
+	.superbillElement:hover {
+		background-color: #ffffff;
 		}
 </style>
 
@@ -268,12 +341,12 @@
 			<table id="superbillDxTable">
 				<tbody>
 					<tr>
-						<td id="superbillDxCol0"></td>
-						<td id="superbillDxCol1"></td>
-						<td id="superbillDxCol2"></td>
+						<td width="33%" id="superbillDxCol0"></td>
+						<td width="33%" id="superbillDxCol1"></td>
+						<td width="33%" id="superbillDxCol2"></td>
 					</tr>
 					<tr>
-						<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="IcdCodes" varname="superbillDxCustom"}--></td>
+						<td class="superbillElement"><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="IcdCodes" varname="superbillDxCustom"}--></td>
 					</tr>
 				</tbody>
 			</table>
@@ -282,12 +355,12 @@
 			<table id="superbillPxTable">
 				<tbody>
 					<tr>
-						<td id="superbillPxCol0"></td>
-						<td id="superbillPxCol1"></td>
-						<td id="superbillPxCol2"></td>
+						<td width="33%" id="superbillPxCol0"></td>
+						<td width="33%" id="superbillPxCol1"></td>
+						<td width="33%" id="superbillPxCol2"></td>
 					</tr>
 					<tr>
-						<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="CptCodes" varname="superbillPxCustom"}--></td>
+						<td class="superbillElement"><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="CptCodes" varname="superbillPxCustom"}--></td>
 					</tr>
 				</tbody>
 			</table>
