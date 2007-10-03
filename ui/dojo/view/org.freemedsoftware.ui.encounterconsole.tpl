@@ -70,7 +70,7 @@
 
 				var cb = document.createElement( 'input' );
 				cb.type = 'checkbox';
-				cb.id = 'superbill_dx_' + thisId;
+				cb.id = 'superbill<!--{$unique}-->_dx_' + thisId;
 				cb.onclick = patientEncounter.onDxCheck;
 
 				// Set internal counter to 0
@@ -78,13 +78,13 @@
 
 				// Populate label, bolding previous dx's
 				if ( parseInt(dx[d].previous) == 1 ) {
-					var i = ' <label for="superbill_dx_' + thisId + '"><small><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></b></label> ';
+					var i = ' <label for="superbill<!--{$unique}-->_dx_' + thisId + '"><small><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></b></label> ';
 					tSpan.innerHTML = i;
 
 					// Previous dx should be selected by default
 					cb.checked = true;
 				} else {
-					var i = ' <label for="superbill_dx_' + thisId + '"><small>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></label> ';
+					var i = ' <label for="superbill<!--{$unique}-->_dx_' + thisId + '"><small>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></label> ';
 					tSpan.innerHTML = i;
 				}
 
@@ -109,20 +109,20 @@
 				var tInnerDiv = document.createElement( 'div' );
 				var cb = document.createElement( 'input' );
 				cb.type = 'checkbox';
-				cb.id = 'superbill_px_' + thisId;
+				cb.id = 'superbill<!--{$unique}-->_px_' + thisId;
 				cb.onclick = patientEncounter.onPxCheck;
 
 				// Set internal counter to 0
 				patientEncounter.superbillPx[ thisId ] = 0;
 
 				// Populate label
-				var i = ' <label for="superbill_px_' + thisId + '"><small>' + px[p].code + ' ( ' + px[p].descrip + ' )</small></label> ';
+				var i = ' <label for="superbill<!--{$unique}-->_px_' + thisId + '"><small>' + px[p].code + ' ( ' + px[p].descrip + ' )</small></label> ';
 				tSpan.innerHTML = i;
 
 				// Detailed inner div
 				var tDetailDiv = document.createElement( 'div' );
 				tDetailDiv.style.display = 'none';
-				tDetailDiv.id = 'superbill_detaildiv_' + thisId;
+				tDetailDiv.id = 'superbill<!--{$unique}-->_detaildiv_' + thisId;
 
 				var tDetailTable = document.createElement( 'table' );
 				var tDetailRow = document.createElement( 'tr' );
@@ -133,7 +133,7 @@
 				var inputUnit = document.createElement( 'input' );
 				inputUnit.type = 'text';
 				inputUnit.size = 6;
-				inputUnit.id = 'superbill_unit_' + thisId;
+				inputUnit.id = 'superbill<!--{$unique}-->_unit_' + thisId;
 				inputUnit.value = 0;
 				inputUnit.disabled = true;
 				inputUnitContainer.appendChild( inputUnit );
@@ -145,13 +145,13 @@
 				var wid = dojo.widget.createWidget(
 					'Select',
 					{
-						id: 'superbill_pxmod_' + thisId.toString() + '_widget',
-						name: 'superbill_pxmod_' + thisId + '_widget',
+						id: 'superbill<!--{$unique}-->_pxmod_' + thisId.toString() + '_widget',
+						name: 'superbill<!--{$unique}-->_pxmod_' + thisId + '_widget',
 						width: '100px',
 						dataUrl: "<!--{$relay}-->/org.freemedsoftware.module.CptModifiers.picklist?param0=%{searchString}",
 						mode: 'remote',
 						autocomplete: false,
-						setValue: function ( ) { if (arguments[0]) { document.getElementById('superbill_pxmod_' + this.iteration.toString() ).value = arguments[0]; } },
+						setValue: function ( ) { if (arguments[0]) { document.getElementById('superbill<!--{$unique}-->_pxmod_' + this.iteration.toString() ).value = arguments[0]; } },
 						iteration: thisId
 					}
 				);
@@ -160,8 +160,8 @@
 				// Keep track of the data here ...
 				var tHidden = document.createElement( 'input' );
 				tHidden.type = 'hidden';
-				tHidden.id = "superbill_pxmod_" + thisId;
-				tHidden.name = "superbill_pxmod_" + thisId;
+				tHidden.id = "superbill<!--{$unique}-->_pxmod_" + thisId;
+				tHidden.name = "superbill<!--{$unique}-->_pxmod_" + thisId;
 				
 				tDetailRow.appendChild( spanUnit );
 				tDetailRow.appendChild( inputUnitContainer );
@@ -197,7 +197,7 @@
 			for ( var i in patientEncounter.superbillPx ) {
 				if ( patientEncounter.superbillPx[ i ] ) {
 					px.push( i );
-					detail['units'][i] = document.getElementById( 'superbill_unit_' + i ).value;
+					detail['units'][i] = document.getElementById( 'superbill<!--{$unique}-->_unit_' + i ).value;
 				}
 			}
 			try {
@@ -255,15 +255,15 @@
 		},
 		//----- Callbacks
 		onDxCheck: function ( evt ) {
-			var id = this.id.replace( 'superbill_dx_', '' );
+			var id = this.id.replace( 'superbill<!--${unique}-->_dx_', '' );
 			patientEncounter.superbillDx[ id ] = ! patientEncounter.superbillDx[ id ];
 		},
 		onPxCheck: function ( evt ) {
-			var id = this.id.replace( 'superbill_px_', '' );
+			var id = this.id.replace( 'superbill<!--{$unique}-->_px_', '' );
 			patientEncounter.superbillPx[ id ] = ! patientEncounter.superbillPx[ id ];
 			// Attempt to make sure we can write to this
 			try {
-				var pCount = document.getElementById( 'superbill_unit_' + id );
+				var pCount = document.getElementById( 'superbill<!--{$unique}-->_unit_' + id );
 				if ( ! patientEncounter.superbillPx[ id ] ) {
 					pCount.value = '0'
 					pCount.disabled = true;
@@ -271,7 +271,7 @@
 					pCount.value = '1';
 					pCount.disabled = false;
 				}
-				toggleDiv( 'superbill_detaildiv_' + id );
+				toggleDiv( 'superbill<!--{$unique}-->_detaildiv_' + id );
 			} catch (err) { }
 		}
 	};
