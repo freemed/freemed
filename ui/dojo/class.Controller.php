@@ -69,6 +69,7 @@ class Controller {
 		$this->smarty->assign ( "controller", "${base_uri}/controller.php/${ui}" );
 		$this->smarty->assign ( "relay", "${base_uri}/relay.php/json" );
 		$this->smarty->assign ( "SESSION", $_SESSION );
+		$this->smarty->assign ( "unique", '_' . substr(md5(microtime()), 0, rand(5, 12)) . '_' );
 		$this->smarty->assign ( "paneLoading", '<div align="center"><img src="'.$base_uri.'/ui/'.$ui.'/htdocs/images/loading.gif" border="0"/></div>' );
 
 		// Theming options
