@@ -1,0 +1,266 @@
+                        Copyright Notice and License
+
+The LOINC(r) codes, LOINC(r) database, LOINC(r) table and related files, and
+LOINC(r) Users' Guide are copyright (c) 1995-2006, Regenstrief Institute,
+Inc. and the Logical Observation Identifiers Names and Codes (LOINC)
+Committee.  All rights reserved.
+
+The RELMA(r) program, RELMA(r) database (but excluding LOINC(r) codes, and
+LOINC(r)  table and related files incorporated therein, which are subject to
+the copyright above) and RELMA(r) Users' Manual are copyright (c) 1995-2006,
+Regenstrief Institute, Inc.  All rights reserved.
+
+LOINC(r) and RELMA(r) are registered United States trademarks of Regenstrief
+Institute, Inc.
+
+Permission is hereby granted in perpetuity, without payment of license fees
+or royalties, to use, copy, or distribute the RELMA(r) program, RELMA(r)
+Users' Manual, RELMA(r) database, LOINC(r) codes, LOINC(r) Users' Guide,
+LOINC(r) database, and LOINC(r) table and related files for any commercial
+or non-commercial purpose, subject to the following terms and conditions:
+      
+      1)        To prevent the dilution of the purpose of the LOINC code
+and LOINC table of providing a definitive standard for identifying clinical
+information in electronic reports, users shall not use the RELMA program,
+RELMA Users' Manual, RELMA database, LOINC Users' Guide, LOINC database,
+LOINC table or related files, and/or the LOINC codes for the purpose of
+developing or promulgating a different standard for identifying patient
+observations, such as laboratory test results; other diagnostic service
+test results; clinical observations and measurements; reports produced by
+clinicians and diagnostic services about patients; panels, forms and
+collections that define aggregations of these observations; and orders for
+these entities  in electronic reports and messages.
+      
+      2)	If the user elects to utilize the RELMA program, users
+receive the full RELMA database with the RELMA program, including the LOINC
+table and other database tables comprising the RELMA database.  In addition
+to its use with the RELMA program, users may use the LOINC table by itself
+and may modify the LOINC table as permitted herein.  Users may not use or
+modify the other database tables from the RELMA database except in
+conjunction with their authorized use of the RELMA program, unless prior
+written permission is granted by the Regenstrief Institute, Inc.  To
+request written permission, please contact loinc@regenstrief.org.
+      
+      3)	Users shall not change the meaning of any of the LOINC
+codes.  Users shall not change the name of, or any contents of, any fields
+in the LOINC table.  Users may add new fields to the LOINC table to attach
+additional information to existing LOINC records.
+      
+      4)	A user may delete records from the LOINC table to deal with
+the user's local requirements.  A user also may add new records to the LOINC
+table to deal with the users' local requirements, provided that if new
+records are added, any new entry in the LOINC_NUM field (field #1) of such
+new records must contain a leading alphabetic "X" so that the new codes
+and records cannot be confused with existing LOINC codes or new LOINC codes
+as they are defined in later releases of the LOINC table.  Records deleted
+or added by users to deal with local requirements are not reflected in the
+official LOINC database maintained by the Regenstrief Institute and the
+LOINC Committee.  Users will also make reasonable efforts to submit requests
+to LOINC for new records to cover observations that are not found in the
+LOINC database in order to minimize the need for X-codes.
+      
+      5)	LOINC codes and other information from the LOINC table may
+be used in electronic messages for laboratory test results and clinical
+observations such as HL7 ORU messages, without the need to include this
+Copyright Notice and License or a reference thereto in the message (and
+without the need to include all fields required by Section 7 hereof).  When
+the LOINC code (from the LOINC_NUM field) is included in the message, users
+are encouraged, but not required, to include the corresponding LOINC short
+name (from the SHORTNAME field) in the message if the message provides a
+place for a text name representation of the code.
+
+	6)	Users may make and distribute an unlimited number of copies
+of the RELMA program, RELMA database, the unmodified LOINC table, and/or
+the LOINC database.  Each copy thereof must include this Copyright Notice
+and License, and must include the version number of the LOINC table/database
+or RELMA program, respectively that is distributed.  This Copyright Notice
+and License must appear on every printed copy of the LOINC table.  Where
+the RELMA program, RELMA database, LOINC table, and/or LOINC database are
+distributed on a fixed storage medium (such as diskette or CD-ROM), a
+printed copy of this Copyright Notice and License must be included on or
+with the storage medium, and a text file containing this information also
+must be stored on the storage medium in a file called "license.txt".  Where
+the RELMA program, RELMA database, LOINC table, and/or LOINC database are
+distributed via the Internet, this Copyright Notice and License must be
+accessible on the same Internet page from which the RELMA program, RELMA
+database, LOINC table, and/or LOINC database are available for download.
+      
+	7)	Subject to Section 1 and the other restrictions hereof,
+users may incorporate portions of the LOINC table into another master term
+dictionary (e.g. laboratory test definition database), or software program
+for distribution outside of the user's corporation or organization,
+provided that any such master term dictionary or software program includes
+the following fields reproduced in their entirety from the LOINC table:
+LOINC_NUM (field #1), COMPONENT (field #2), PROPERTY (field #3),
+TIME_ASPCT (field #4), SYSTEM (field #5), SCALE_TYP (field #6),
+METHOD_TYP (field #7), ANSWERLIST (field #18), STATUS (field #19), and
+SHORTNAME (field #59). Users are also required to either: (1) include
+the EXTERNAL_COPYRIGHT_NOTICE (field #63) or (2) delete the rows that
+include third party copyrighted content (e.g., third party survey
+instruments and answers). If third party content is included, users are
+required to comply with any such third party copyright license terms.
+Users are encouraged, but not required, to also include the RelatedNames2
+(field #58) in any such database.  Further description of these fields is
+provided in Appendix A of the LOINC Users' Guide.  Every copy of the LOINC
+table incorporated into or distributed in conjunction with another database
+or software program must include the following notice:
+
+
+        "This product includes all or a portion of the LOINC(r) database,
+        or is derived from the LOINC(r) database, subject to a license
+        from Regenstrief Institute, Inc.  Your use of the LOINC database
+        and LOINC codes also is subject to this license, a copy of which
+        is available at http://www.regenstrief.org/loinc/#copyright.  The
+        current complete LOINC database and Users' Guide are available
+        for download at http://www.regenstrief.org/loinc.  The LOINC
+        database and LOINC codes are copyright (c) 1995-2006, Regenstrief
+        Institute, Inc. and the Logical Observation Identifiers Names and
+        Codes (LOINC) Committee.  All rights reserved.  THE LOINC DATABASE
+        IS PROVIDED "AS IS."  ANY EXPRESS OR IMPLIED WARRANTIES ARE
+        DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+        OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  LOINC(r)
+        is a registered United States trademark of Regenstrief Institute,
+        Inc. A small portion of the LOINC table may include content (e.g.,
+        survey instruments) that is subject to copyrights owned by third
+        parties. Such content has been mapped to LOINC terms under
+        applicable copyright and terms of use. Notice of such third party
+        copyright and license terms would need to be included if such
+        content is included."
+
+If the master term dictionary or software program containing the LOINC
+table is distributed with a printed license, this statement must appear in
+the printed license.  Where the master term dictionary or software program
+containing the LOINC table is distributed on a fixed storage medium, a text
+file containing this information also must be stored on the storage medium
+in a file called "LOINC_short_license.txt".  Where the master term
+dictionary or software program containing the LOINC table is distributed
+via the Internet, this information must be accessible on the same Internet
+page from which the product is available for download.
+
+      8)	Use and distribution of the LOINC codes and/or LOINC table
+in ways that are not specifically discussed herein shall always be
+accompanied by the notice provided in Section 7 hereof.  The guidelines for
+providing the notice that are contained in the last paragraph of Section 7
+also shall apply.  If a user has a question about whether a particular use
+of the RELMA program, RELMA database, LOINC codes, LOINC database, and/or
+LOINC table or related files is permissible, the user is invited to contact
+the Regenstrief Institute by e-mail at loinc@regenstrief.org.
+
+      9)	An unlimited number of copies of the RELMA Users' Manual
+and LOINC Users' Guide may be made and distributed.  This Copyright Notice
+and License must appear verbatim on every electronic or printed copy of the
+RELMA Users' Manual. and the LOINC Users' Guide.  The RELMA Users' Manual
+and the LOINC Users' Guide may not be modified, nor may derivative works of
+the RELMA Users' Manual or LOINC Users' Guide be created, without the prior
+written permission of the Regenstrief Institute, Inc.  To request written
+permission, please contact loinc@regenstrief.org.  The Regenstrief Institute
+retains the right to approve any modification to, or derivative work of, the
+RELMA Users' Manual or the LOINC Users' Guide.
+      
+      10)	If the user desires to translate the LOINC codes, LOINC
+table, LOINC database, LOINC Users' Guide, RELMA Users' Manual, RELMA
+program or RELMA database into a language other than English, then user
+shall notify Regenstrief via email at loinc@regenstrief.org. Any such
+translation is a derivative work, and the user agrees and does hereby
+assign all right, title and interest in and to such derivative work: (1) to
+Regenstrief and the LOINC Committee if the translation is a derivative of
+the LOINC codes, LOINC Users' Guide, the LOINC table or LOINC database, and
+(2) to Regenstrief if the translation is a derivative work of the RELMA
+program, RELMA Users' Manual or RELMA database (but excluding LOINC related
+tables or files). Further, user shall fully cooperate with Regenstrief in
+the filing and reviewing of any copyright applications or other legal
+documents, and signing any documents (such as declarations, assignments,
+affidavits, and the like) that are reasonably necessary to the preparation
+of any such copyright application. The assignment granted by this paragraph
+extends to all proprietary rights both in the United States, and in all
+foreign countries. No other right to create a derivative work of LOINC
+codes, LOINC table, LOINC database, LOINC Users' Guide, RELMA Users' Manual,
+RELMA program or RELMA database (except the right to translate into a
+language other than English) is hereby granted, and Regenstrief and the
+LOINC Committee respectively reserve all other rights not specifically
+granted herein. All such translations shall be electronically transmitted
+to Regenstrief, and such translations shall be made available and are
+subject to the same license rights and restrictions contained herein.
+Regenstrief will give credit on its website (and on screens in RELMA and
+in its users guides)  to the user and/or entity that did the translation.
+      
+      11)	The names "Regenstrief," "Regenstrief Foundation,"
+"Regenstrief Institute," and "LOINC Committee" may not be used in a way
+which could be interpreted as an endorsement or a promotion of any product
+or service without prior written permission of the Regenstrief Institute,
+Inc. Further, no right to use the trademarks of Regenstrief is licensed
+hereunder.  To request written permission, please contact
+loinc@regenstrief.org.
+      
+      12)	DISCLAIMER:  REGENSTRIEF INSTITUTE, INC. AND THE LOINC
+COMMITTEE DO NOT ACCEPT LIABILITY FOR ANY OMISSIONS OR ERRORS IN THE RELMA
+PROGRAM, RELMA USERS' MANUAL, RELMA DATABASE, LOINC CODES, LOINC USERS'
+GUIDE, LOINC DATABASE, OR THE LOINC TABLE OR RELATED FILES.  THE RELMA
+PROGRAM, RELMA USERS' MANUAL, RELMA DATABASE, LOINC USERS' GUIDE, LOINC
+CODES, LOINC DATABASE, AND LOINC TABLE AND RELATED FILES ARE PROVIDED
+"AS IS," WITHOUT WARRANTY OF ANY KIND.  ANY EXPRESSED OR IMPLIED WARRANTIES
+ARE HEREBY DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE OR WARRANTIES ARISING FROM A COURSE OF DEALING, TRADE USAGE, OR
+TRADE PRACTICE. FURTHER, NO WARRANTY OR REPRESENTATION IS MADE CONCERNING
+THE ACCURACY, COMPLETENESS, SEQUENCE, TIMELINESS OR AVAILABILITY OF THE
+LOINC CODES, LOINC USERS' GUIDE, THE LOINC DATABASE, LOINC TABLE OR RELATED
+FILES, RELMA PROGRAM, RELMA USERS' MANUAL, OR RELMA DATABASE, OR ANY
+TRANSLATIONS OR DERIVATIVE WORKS THEREOF.  IN NO EVENT SHALL REGENSTRIEF
+INSTITUTE, INC. OR THE LOINC COMMITTEE OR ITS CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, RELIANCE, OR
+CONSEQUENTIAL DAMAGES OR ATTORNEYS' FEES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; OPPORTUNITY COSTS; LOSS OF USE,
+DATA, SAVINGS OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+RELMA PROGRAM, RELMA USERS' MANUAL, RELMA DATABASE, LOINC USERS' GUIDE,
+LOINC CODES, LOINC DATABASE, OR THE LOINC TABLE OR RELATED FILES, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. SOME JURISDICTIONS DO NOT ALLOW
+THE LIMITATION OR EXCLUSION OF CERTAIN WARRANTIES OR CONDITIONS, SO SOME OF
+THE FOREGOING MAY NOT APPLY TO YOU.
+
+      13) This license shall be construed and interpreted in accordance with
+the laws of the State of Indiana, United States of America, excluding its
+conflicts of law rules.
+
+
+            Notice of Third Party Content and Copyright Terms
+
+A small fraction of the content of the LOINC and RELMA databases consists of
+content subject to copyright from third parties. This third party content is
+either used with permission or under the applicable terms of use. In all
+such cases, we have included the copyright notice. This third party content
+is highlighted in the program as follows: When such copyright content
+appears in the RELMA look-up grid, RELMA will highlight the row containing
+that content by printing in a different background color and using italics.
+It will also include a link in the (EXT (C)) column. By clicking on that
+link, users will get to the copyright notice and to the terms of use for the
+content of those LOINC-mapped terms. In the case of a LOINC database (e.g.
+the tab delimited file and the LOINC Access database) we include the
+copyright notice (up to 250 characters).
+
+We have included third party content that allows use and distribution at
+least for clinical, administrative and research purposes. The third party
+copyright owners generally ask for attribution of the source, allow the
+free use of the content for treatment, health care management, and research
+purposes. They generally forbid alteration of their content (e.g., survey
+questions and/or answers) and use for commercial purpose, which usually
+means the direct sale of the survey instruments, but they often do allow
+use of their content in commercial software, medical record and other
+clinical database systems, and the messaging of patient information
+collected through the use of these instruments.  The details of the notice
+of copyright for any third party content can be found in association with
+the terms when using the RELMA look-up tool or the LOINC tab delimited
+database. The copyright of the LOINC codes per se remain owned by
+Regenstrief Institute, Inc. and the LOINC committee and subject to the
+copyright notice and license for LOINC.
+
+In the future, we expect to include many more survey instruments and
+questionnaires from third parties with permission (especially those
+required by the U.S. federal government for payment and reimbursement) and
+believe that cataloguing all of these data collection forms in one
+comprehensive system (the LOINC database) along with laboratory and other
+clinical variables will facilitate the use of this data in direct clinical
+care, research and practice management.
+
