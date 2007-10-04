@@ -24,14 +24,20 @@
 include_once ( dirname(__FILE__).'/php-gettext/gettext.inc' );
 include_once ( dirname(__FILE__).'/iso-set.php' );
 
-T_bindtextdomain ( 'freemed', dirname(dirname(__FILE__)).'/locale' );
-T_setlocale ( LC_MESSAGES, $_SESSION['language'] ? $_SESSION['language'] : DEFAULT_LANGUAGE );
+$lang = $_SESSION['language'] ? $_SESSION['language'] : DEFAULT_LANGUAGE;
+$locale_dir = dirname(dirname(__FILE__)).'/locale';
 
-// Set text domain for page
-T_bindtextdomain ( 'freemed', LOCALE_DIR );
-T_bind_textdomain_codeset ( 'freemed', language2isoset ( $_SESSION['language'] ? $_SESSION['language'] : DEFAULT_LANGUAGE ) );
+$__domains = array (
+	'freemed',
+	UI
+);
 
-// Load text domain for UI
-T_textdomain ( UI );
+_setlocale ( LC_MESSAGES, $lang );
+
+foreach ( $__domains AS $_v ) {
+	_bindtextdomain ( $_v, $locale_dir );
+	_bind_textdomain_codeset ( $_v, language2isoset ( $lang ) );
+	_textdomain ( $_v );
+}
 
 ?>

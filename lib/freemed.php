@@ -98,15 +98,16 @@ if (!defined('SESSION_DISABLE')) {
 		'current_patient',
 		'default_facility',
 		'ipaddr',
+		'language',
 		'page_history',
 		'page_history_name',
 		'patient_history'
 	);
 
 	//----- Gettext and language settings
-	if (isset($_POST['_l'])) {
+	if (isset($_REQUEST['_l'])) {
 		// Handle template language changes
-		$_SESSION['language'] = $_POST['_l'];
+		$_SESSION['language'] = $_REQUEST['_l'];
 	} elseif ($_SESSION['language']) {
 		// Pull from cookie (do nothing)
 	} else {

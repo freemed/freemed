@@ -41,7 +41,8 @@
 			method : 'POST',
 			content : {
 				param0: dojo.byId('username').value,
-				param1: dojo.byId('password').value
+				param1: dojo.byId('password').value,
+				_l: dojo.widget.byId( 'language_widget' ).getValue( )
 			},
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Login.Validate',
 			error: function(type, data, evt) {
