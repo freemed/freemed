@@ -94,9 +94,9 @@ function smarty_block_t($params, $text, &$smarty)
 	
 	// use plural if required parameters are set
 	if (isset($count) && isset($plural)) {
-		$text = ngettext($text, $plural, $count);
+		$text = _ngettext($text, $plural, $count);
 	} else { // use normal
-		$text = gettext($text);
+		$text = _gettext($text);
 	}
 
 	// run strarg if there are parameters
