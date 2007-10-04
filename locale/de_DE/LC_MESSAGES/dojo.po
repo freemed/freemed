@@ -6,54 +6,55 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FreeMED v0.9.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-19 18:45+0200\n"
-"PO-Revision-Date: 2007-08-11 22:08+0200\n"
+"POT-Creation-Date: 2007-10-04 19:26+0200\n"
+"PO-Revision-Date: 2007-10-04 21:14+0200\n"
 "Last-Translator: Philipp Meng <p.meng@gmx.at>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 0.11\n"
+"X-Generator: Pootle 1.0.2\n"
 
-#: standard input:2 standard input:479
+#: standard input:2 standard input:592
 msgid "Progress Note"
 msgstr "Krankengeschichte"
 
-#: standard input:5 standard input:224 standard input:314 standard input:488
-#: standard input:839 standard input:908 standard input:917 standard input:965
-#: standard input:1163 standard input:1169 standard input:1568
-#: standard input:1652 standard input:1667 standard input:1685
-#: standard input:1733 standard input:2561 standard input:2765
-#: standard input:2804
+#: standard input:5 standard input:332 standard input:420 standard input:601
+#: standard input:976 standard input:1030 standard input:1039
+#: standard input:1087 standard input:1285 standard input:1291
+#: standard input:1718 standard input:1802 standard input:1817
+#: standard input:1835 standard input:1883 standard input:2768
+#: standard input:2987 standard input:3032 standard input:3071
+#: standard input:3092 standard input:3122 standard input:3149
 msgid "Date"
 msgstr "Datum"
 
-#: standard input:8 standard input:497
+#: standard input:8 standard input:613
 msgid "Subjective"
 msgstr "Beschwerden"
 
-#: standard input:11 standard input:500
+#: standard input:11 standard input:616
 msgid "Objective"
 msgstr "sachliche Beschwerden"
 
-#: standard input:14 standard input:503
+#: standard input:14 standard input:619
 msgid "Assessment"
 msgstr "Beurteilung"
 
-#: standard input:17 standard input:506
+#: standard input:17 standard input:622
 msgid "Plan"
 msgstr "geplante Vorgangsweise"
 
-#: standard input:20 standard input:509
+#: standard input:20 standard input:625 standard input:2900
 msgid "Interval"
 msgstr "Intervall"
 
-#: standard input:23 standard input:512
+#: standard input:23 standard input:628
 msgid "Education"
 msgstr "Ausbildung"
 
-#: standard input:26 standard input:515
+#: standard input:26 standard input:631
 msgid "Rx"
 msgstr "Rp"
 
@@ -65,7 +66,7 @@ msgstr "Versicherungsgruppe"
 msgid "You must enter a group name."
 msgstr "Sie müssen einen Gruppennamen eingeben."
 
-#: standard input:35 standard input:2216
+#: standard input:35 standard input:2387
 msgid "Group Name"
 msgstr "Gruppenname"
 
@@ -73,7 +74,15 @@ msgstr "Gruppenname"
 msgid "No first name."
 msgstr "Kein Vorname"
 
-#: standard input:41 standard input:56
+#: standard input:41
+msgid "No last name."
+msgstr "Kein Nachname"
+
+#: standard input:44
+msgid "Patient database updated."
+msgstr "Patienten-Datenbank aktualisiert."
+
+#: standard input:47 standard input:62
 msgid ""
 "The transaction has failed. Please try again or contact your system "
 "administrator."
@@ -81,895 +90,1014 @@ msgstr ""
 "Die Transaktion ist fehlgeschlagen. Bitte versuchen Sie es erneut oder "
 "kontaktieren Sie Ihren Systemadministrator."
 
-#: standard input:44 standard input:1247
-msgid "FreeMED has encountered an error. Please try again."
-msgstr "Es ist ein Fehler aufgetreten. Bitte versuchen Sie den Vorgang erneut."
+#: standard input:50
+msgid "Patient addresses updated."
+msgstr "Patientenadresse aktualisiert."
 
-#: standard input:47 standard input:98
+#: standard input:53 standard input:104
 msgid "Male"
 msgstr "Männlich"
 
-#: standard input:50 standard input:95
+#: standard input:56 standard input:101
 msgid "Female"
 msgstr "Weiblich"
 
-#: standard input:53 standard input:101
+#: standard input:59 standard input:107
 msgid "Transgendered"
 msgstr "Transgender"
 
-#: standard input:59
+#: standard input:65
 msgid "Patient exists in the system with ID"
 msgstr "Patient ist bereits im System mit der ID"
 
-#: standard input:62
+#: standard input:68
 msgid "No duplicate patients found."
 msgstr "Es gibt keine doppelt vorkommenden Patienten."
 
-#: standard input:65
+#: standard input:71
 msgid "Change Patient Details"
 msgstr "Patienten-Details ändern"
 
-#: standard input:68 standard input:1382
+#: standard input:74 standard input:1521
 msgid "Patient Entry"
 msgstr "Patient anlegen"
 
-#: standard input:71
+#: standard input:77 standard input:80
+msgid "Demographics"
+msgstr "Allgemeine Daten"
+
+#: standard input:83
 msgid "Title"
 msgstr "Titel"
 
-#: standard input:74 standard input:260 standard input:680 standard input:1520
-#: standard input:2243
+#: standard input:86 standard input:368 standard input:796 standard input:1671
+#: standard input:2420
 msgid "Last Name"
 msgstr "Nachname"
 
-#: standard input:77 standard input:266 standard input:683 standard input:1526
-#: standard input:2240
+#: standard input:89 standard input:374 standard input:799 standard input:1677
+#: standard input:2417
 msgid "First Name"
 msgstr "Vorname"
 
-#: standard input:80 standard input:686 standard input:2246
+#: standard input:92 standard input:802 standard input:2423
 msgid "Middle Name"
 msgstr "weitere Vornamen"
 
-#: standard input:83
+#: standard input:95
 msgid "Suffix"
 msgstr "Suffix"
 
-#: standard input:86
-msgid "Address"
-msgstr "Adresse"
-
-#: standard input:89 standard input:2507
-msgid "City, State Zip"
-msgstr "Stadt, Staat, Postleitzahl"
-
-#: standard input:92
+#: standard input:98
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: standard input:104
+#: standard input:110
 msgid "Date of Birth"
 msgstr "Geburtsdatum"
 
-#: standard input:107
+#: standard input:113
+msgid "Patient Practice ID"
+msgstr "Praxis-ID des Patienten"
+
+#: standard input:116
 msgid "Check for duplicate patient records"
 msgstr "Auf Duplikate in den Patientenakten überprüfen"
 
-#: standard input:110
-msgid "Preferred Contact"
-msgstr "Gewünschte Kontaktaufnahme"
+#: standard input:119 standard input:122
+msgid "Address"
+msgstr "Adresse"
 
-#: standard input:113
+#: standard input:125
+msgid "Type of Address"
+msgstr "Adresstyp"
+
+#: standard input:128 standard input:200
 msgid "Home"
 msgstr "Zuhause"
 
-#: standard input:116
+#: standard input:131 standard input:203
 msgid "Work"
 msgstr "Arbeit"
 
-#: standard input:119
-msgid "Mobile"
-msgstr "Mobil"
-
-#: standard input:122 standard input:2264 standard input:2516
-msgid "Email"
-msgstr "E-Mail"
-
-#: standard input:125 standard input:1658
-msgid "Home Phone"
-msgstr "Telefon - Zuhause"
-
-#: standard input:128 standard input:1661
-msgid "Work Phone"
-msgstr "Telefon - Arbeit"
-
-#: standard input:131
-msgid "Fax Phone"
-msgstr "Fax"
-
 #: standard input:134
-msgid "Mobile Phone"
-msgstr "Telefon - Mobil"
+msgid "Relationship to Patient"
+msgstr "Beziehung zum Patienten"
 
-#: standard input:137 standard input:656 standard input:2093
-msgid "Email Address"
-msgstr "E-Mail"
-
-#: standard input:140
-msgid "Marital Status"
-msgstr "Familienstand"
-
-#: standard input:143
-msgid "Single"
-msgstr "Ledig"
-
-#: standard input:146
-msgid "Married"
-msgstr "Verheiratet"
-
-#: standard input:149
-msgid "Divorced"
-msgstr "Geschieden"
-
-#: standard input:152
-msgid "Separated"
-msgstr "Getrennt"
-
-#: standard input:155
-msgid "Widowed"
-msgstr "Verwitwet"
-
-#: standard input:158
-msgid "Employment Status"
-msgstr "Beschäftigungsstatus"
-
-#: standard input:161 standard input:2702
-msgid "Unknown"
-msgstr "Unbekannt"
-
-#: standard input:164 standard input:275 standard input:473
-#: standard input:1535 standard input:1634 standard input:2402
-#: standard input:2477 standard input:2483
-msgid "Yes"
-msgstr "Ja"
-
-#: standard input:167 standard input:272 standard input:470
-#: standard input:1532 standard input:1631 standard input:2399
-#: standard input:2474 standard input:2486
-msgid "No"
-msgstr "Nein"
-
-#: standard input:170
-msgid "Part"
-msgstr "Teilzeit"
-
-#: standard input:173
+#: standard input:137 standard input:266 standard input:3248
 msgid "Self"
 msgstr "Selbstständig"
 
+#: standard input:140
+msgid "Parents"
+msgstr "Eltern"
+
+#: standard input:143
+msgid "Cousin"
+msgstr "Cousin"
+
+#: standard input:146
+msgid "Shelter"
+msgstr "Behelfsunterkunft"
+
+#: standard input:149
+msgid "Unrelated"
+msgstr "ohne Verwandtschaft"
+
+#: standard input:152 standard input:2699
+msgid "Address Line 1"
+msgstr "Adresszeile 1"
+
+#: standard input:155 standard input:2702
+msgid "Address Line 2"
+msgstr "Adresszeile 2"
+
+#: standard input:158 standard input:185 standard input:2705
+msgid "City, State Zip"
+msgstr "Stadt, Staat, Postleitzahl"
+
+#: standard input:161
+msgid "Active Address"
+msgstr "Aktive Adresse"
+
+#: standard input:164 standard input:188 standard input:661 standard input:667
+msgid "Active"
+msgstr "Aktiv"
+
+#: standard input:167 standard input:664
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: standard input:170
+msgid "Add Address"
+msgstr "Adresse hinzufügen"
+
+#: standard input:173
+msgid "Address Type"
+msgstr "Adresstyp"
+
 #: standard input:176
+msgid "Relation to Patient"
+msgstr "Beziehung zum Patienten"
+
+#: standard input:179
+msgid "Address 1"
+msgstr "Adresse 1"
+
+#: standard input:182
+msgid "Address 2"
+msgstr "Adresse 2"
+
+#: standard input:191 standard input:194 standard input:2251
+#: standard input:2444
+msgid "Contact"
+msgstr "Kontakt"
+
+#: standard input:197
+msgid "Preferred Contact"
+msgstr "Gewünschte Kontaktaufnahme"
+
+#: standard input:206
+msgid "Mobile"
+msgstr "Mobil"
+
+#: standard input:209 standard input:2447 standard input:2714
+#: standard input:2723
+msgid "Email"
+msgstr "E-Mail"
+
+#: standard input:212 standard input:1808
+msgid "Home Phone"
+msgstr "Telefon - Zuhause"
+
+#: standard input:215 standard input:1811
+msgid "Work Phone"
+msgstr "Telefon - Arbeit"
+
+#: standard input:218
+msgid "Fax Phone"
+msgstr "Fax"
+
+#: standard input:221
+msgid "Mobile Phone"
+msgstr "Telefon - Mobil"
+
+#: standard input:224 standard input:772 standard input:2260
+msgid "Email Address"
+msgstr "E-Mail"
+
+#: standard input:227 standard input:230
+msgid "Personal"
+msgstr "Persönlich"
+
+#: standard input:233
+msgid "Marital Status"
+msgstr "Familienstand"
+
+#: standard input:236
+msgid "Single"
+msgstr "Ledig"
+
+#: standard input:239
+msgid "Married"
+msgstr "Verheiratet"
+
+#: standard input:242
+msgid "Divorced"
+msgstr "Geschieden"
+
+#: standard input:245
+msgid "Separated"
+msgstr "Getrennt"
+
+#: standard input:248
+msgid "Widowed"
+msgstr "Verwitwet"
+
+#: standard input:251
+msgid "Employment Status"
+msgstr "Beschäftigungsstatus"
+
+#: standard input:254 standard input:2915 standard input:3170
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: standard input:257 standard input:383 standard input:586
+#: standard input:1686 standard input:1784 standard input:2600
+#: standard input:2675 standard input:2681
+msgid "Yes"
+msgstr "Ja"
+
+#: standard input:260 standard input:380 standard input:583
+#: standard input:1683 standard input:1781 standard input:2597
+#: standard input:2672 standard input:2684
+msgid "No"
+msgstr "Nein"
+
+#: standard input:263
+msgid "Part"
+msgstr "Teilzeit"
+
+#: standard input:269
 msgid "Retired"
 msgstr "Pensioniert"
 
-#: standard input:179
+#: standard input:272
 msgid "Military"
 msgstr "Militär"
 
-#: standard input:182 standard input:650
+#: standard input:275 standard input:766
 msgid "Social Security Number"
 msgstr "Sozialversicherungsnummer"
 
-#: standard input:185 standard input:653
+#: standard input:278 standard input:769
 msgid "Drivers License"
 msgstr "Führerschein"
 
-#: standard input:188
+#: standard input:281 standard input:284 standard input:408 standard input:511
+#: standard input:604 standard input:823 standard input:1084
+#: standard input:1297 standard input:1727 standard input:1823
+#: standard input:1832 standard input:2405 standard input:2408
+#: standard input:2777 standard input:2807 standard input:2993
+#: standard input:3074 standard input:3293
+msgid "Provider"
+msgstr "Behandelnde(r)"
+
+#: standard input:287
 msgid "In House Provider"
 msgstr "Behandelnder Arzt"
 
-#: standard input:191
+#: standard input:290
 msgid "Referring Provider"
 msgstr "Zuweisender Arzt"
 
-#: standard input:194
+#: standard input:293
 msgid "Primary Care Provider"
 msgstr "Hausarzt"
 
-#: standard input:197 standard input:518 standard input:776
-#: standard input:1130 standard input:1646 standard input:1751
-#: standard input:2204 standard input:2279 standard input:2663
+#: standard input:296 standard input:634 standard input:898
+#: standard input:1252 standard input:1796 standard input:1901
+#: standard input:2375 standard input:2477 standard input:2873
+#: standard input:3107 standard input:3356
 msgid "Commit Changes"
 msgstr "Änderungen anwenden"
 
-#: standard input:200
+#: standard input:299
 msgid "Create Patient"
 msgstr "Patient anlegen"
 
-#: standard input:203 standard input:521 standard input:779 standard input:866
-#: standard input:872 standard input:875 standard input:935 standard input:959
-#: standard input:1016 standard input:1133 standard input:1211
-#: standard input:1649 standard input:1754 standard input:1931
-#: standard input:2207 standard input:2282 standard input:2582
-#: standard input:2612 standard input:2666 standard input:2783
+#: standard input:302 standard input:637 standard input:901
+#: standard input:1003 standard input:1009 standard input:1012
+#: standard input:1057 standard input:1081 standard input:1138
+#: standard input:1255 standard input:1332 standard input:1799
+#: standard input:1904 standard input:2099 standard input:2378
+#: standard input:2480 standard input:2789 standard input:2819
+#: standard input:2876 standard input:3011 standard input:3110
+#: standard input:3359
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: standard input:206 standard input:209
+#: standard input:305 standard input:317
 msgid "A message must be selected."
 msgstr "Eine Nachricht muss ausgewählt werden."
 
-#: standard input:212
+#: standard input:308
+msgid "Message deleted successfully."
+msgstr "Nachricht erfolgreich gelöscht."
+
+#: standard input:311
+msgid "At least one message must be selected."
+msgstr "Mindestens eine Nachricht muss ausgewählt sein."
+
+#: standard input:314
+msgid "Messages deleted successfully."
+msgstr "Nachricht erfolgreich gelöscht."
+
+#: standard input:320
 msgid "Message moved successfully."
 msgstr "Nachricht erfolgreich verschoben"
 
-#: standard input:215 standard input:986
+#: standard input:323
 msgid "Unable to complete."
 msgstr "Fertigstellung fehlgeschlagen"
 
-#: standard input:218 standard input:992 standard input:1373
+#: standard input:326 standard input:1111 standard input:1512
 msgid "Messaging"
 msgstr "Nachrichten"
 
-#: standard input:221 standard input:2126
+#: standard input:329 standard input:2299
 msgid "Location"
 msgstr "Ort"
 
-#: standard input:227 standard input:1736
+#: standard input:335 standard input:1886 standard input:3095
 msgid "From"
 msgstr "Von"
 
-#: standard input:230
+#: standard input:338
 msgid "Regarding"
 msgstr "Betreff"
 
-#: standard input:233 standard input:404 standard input:914 standard input:926
-#: standard input:1181 standard input:1676 standard input:2573
-#: standard input:2606 standard input:2777
-msgid "Note"
-msgstr "Anmerkung"
+#: standard input:341 standard input:1126 standard input:1892
+#: standard input:3098
+msgid "Subject"
+msgstr "Betreff"
 
-#: standard input:236
+#: standard input:344
 msgid "Unknown element."
 msgstr "Unbekanntes Element."
 
-#: standard input:239 standard input:1412
+#: standard input:347 standard input:1551
 msgid "Reporting Engine"
 msgstr "Grafische Berichterstellung"
 
-#: standard input:242 standard input:536 standard input:563
-#: standard input:1283 standard input:1490 standard input:1502
-#: standard input:1655 standard input:2117 standard input:2321
-#: standard input:2333 standard input:2351 standard input:2459
+#: standard input:350 standard input:652 standard input:679
+#: standard input:1416 standard input:1641 standard input:1653
+#: standard input:1805 standard input:2290 standard input:2519
+#: standard input:2531 standard input:2549 standard input:2657
 msgid "Name"
 msgstr "Name"
 
-#: standard input:245 standard input:452 standard input:494 standard input:566
-#: standard input:581 standard input:1127 standard input:1286
-#: standard input:1304 standard input:1493 standard input:1505
-#: standard input:1769 standard input:1841 standard input:1856
-#: standard input:2057 standard input:2189 standard input:2297
-#: standard input:2324 standard input:2354 standard input:2447
-#: standard input:2465
+#: standard input:353 standard input:565 standard input:607 standard input:682
+#: standard input:697 standard input:1249 standard input:1419
+#: standard input:1437 standard input:1644 standard input:1656
+#: standard input:1925 standard input:2009 standard input:2024
+#: standard input:2224 standard input:2360 standard input:2495
+#: standard input:2522 standard input:2552 standard input:2645
+#: standard input:2663 standard input:3080
 msgid "Description"
 msgstr "Beschreibung"
 
-#: standard input:248
+#: standard input:356
 msgid "Graph"
 msgstr "Graph"
 
-#: standard input:251 standard input:1508
+#: standard input:359 standard input:1659
 msgid "Please select the criteria for the claims you are trying to work with."
 msgstr ""
 "Bitte wählen Sie für die Forderungen die Sie bearbeiten möchten Kriterien "
 "aus."
 
-#: standard input:254
+#: standard input:362
 msgid "The selected items have been written off."
 msgstr "Die ausgewählten Einträge wurden abgebucht."
 
-#: standard input:257 standard input:1397
+#: standard input:365 standard input:1536
 msgid "Accounts Receivable"
 msgstr "Außenstände"
 
-#: standard input:263 standard input:1523
+#: standard input:371 standard input:1674
 msgid "Aging Period"
 msgstr "Zeitspanne"
 
-#: standard input:269 standard input:1529
+#: standard input:377 standard input:1680
 msgid "Billed?"
 msgstr "Rechnung geschickt?"
 
-#: standard input:278 standard input:596 standard input:1541
+#: standard input:386 standard input:712 standard input:1692
 msgid "Date of Service"
 msgstr "Behandlungsdatum"
 
-#: standard input:287 standard input:1550
+#: standard input:393 standard input:1593 standard input:1700
+#: standard input:3062
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: standard input:290
+#: standard input:396
 msgid "Write Off"
 msgstr "Ausbuchen"
 
-#: standard input:293 standard input:1349 standard input:1562
+#: standard input:399 standard input:1488 standard input:1712
 msgid "Select All"
 msgstr "Alles auswählen"
 
-#: standard input:296 standard input:1352 standard input:1565
+#: standard input:402 standard input:1491 standard input:1715
 msgid "Select None"
 msgstr "Nichts auswählen"
 
-#: standard input:299
+#: standard input:405
 msgid "Svc Date"
 msgstr "Behandlungsdatum"
 
-#: standard input:302 standard input:398 standard input:491 standard input:707
-#: standard input:962 standard input:1175 standard input:1577
-#: standard input:1673 standard input:1682 standard input:2228
-#: standard input:2231 standard input:2570 standard input:2600
-#: standard input:2771
-msgid "Provider"
-msgstr "Behandelnde(r)"
-
-#: standard input:305 standard input:395 standard input:911 standard input:920
-#: standard input:1001 standard input:1172 standard input:1307
-#: standard input:1571 standard input:1670 standard input:1679
-#: standard input:1799 standard input:2558 standard input:2597
-#: standard input:2768
+#: standard input:411 standard input:508 standard input:1033
+#: standard input:1042 standard input:1123 standard input:1294
+#: standard input:1443 standard input:1721 standard input:1820
+#: standard input:1829 standard input:1964 standard input:2765
+#: standard input:2804 standard input:2990 standard input:3152
 msgid "Patient"
 msgstr "Patient"
 
-#: standard input:308
+#: standard input:414
 msgid "Procedure"
 msgstr "Behandlung"
 
-#: standard input:311 standard input:446 standard input:845
-#: standard input:1244 standard input:1271
+#: standard input:417 standard input:559 standard input:982
+#: standard input:1365 standard input:1404 standard input:3125
 msgid "Type"
 msgstr "Typ"
 
-#: standard input:317 standard input:611 standard input:1583
+#: standard input:423 standard input:727 standard input:1733
 msgid "Paid"
 msgstr "Bezahlt"
 
-#: standard input:320
+#: standard input:426
 msgid "Charges"
 msgstr "Kosten"
 
-#: standard input:323 standard input:326 standard input:1469
-#: standard input:1472
+#: standard input:429 standard input:432 standard input:1620
+#: standard input:1623
 msgid "Please select a record."
 msgstr "Bitte wählen Sie einen Datensatz aus."
 
-#: standard input:329
+#: standard input:435
 msgid "Are you sure you want to delete this record?"
 msgstr "Sind Sie sicher, dass Sie diesen Datensatz löschen wollen?"
 
-#: standard input:332
+#: standard input:438
 msgid "Record successfully removed."
 msgstr "Datensatz gelöscht."
 
-#: standard input:335 standard input:1418 standard input:1427
+#: standard input:441 standard input:1557 standard input:1569
 msgid "Support Data"
 msgstr "Basisinformationen"
 
-#: standard input:338 standard input:833 standard input:1445
-#: standard input:1484
+#: standard input:444 standard input:970 standard input:1590
+#: standard input:1635 standard input:3059
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: standard input:341 standard input:1487
+#: standard input:447 standard input:1638
 msgid "Modify"
 msgstr "Bearbeiten"
 
-#: standard input:344 standard input:1496
+#: standard input:450 standard input:1647
 msgid "Delete"
 msgstr "Löschen"
 
-#: standard input:347 standard input:1499
+#: standard input:453 standard input:1650
 msgid "Back"
 msgstr "Zurück"
 
-#: standard input:350
+#: standard input:456
 msgid "Status updated."
 msgstr "Status aktualisiert."
 
-#: standard input:353 standard input:356 standard input:359
+#: standard input:459 standard input:462 standard input:465 standard input:471
+#: standard input:474
 msgid "Please select an appointment."
 msgstr "Bitte wählen Sie einen Termin aus."
 
-#: standard input:362
+#: standard input:468
+msgid "Are you sure that you want to cancel this appointment?"
+msgstr "Sind sie sich sicher, dass Sie diesen Termin löschen wollen?"
+
+#: standard input:477
 msgid "Appointment updated."
 msgstr "Termin aktualisiert."
 
-#: standard input:365
+#: standard input:480
 msgid "Today's Patients"
 msgstr "Patienten des heutigen Tags"
 
-#: standard input:368
+#: standard input:483
 msgid "Limit to provider"
 msgstr "Nur von diesem Behandelndem"
 
-#: standard input:371
+#: standard input:486
 msgid "Cancellation"
 msgstr "Annullierung"
 
-#: standard input:374
+#: standard input:489
 msgid "No Show"
 msgstr "Nicht erschienen"
 
-#: standard input:377
+#: standard input:492
 msgid "Move"
 msgstr "Verschieben"
 
-#: standard input:380
+#: standard input:495
 msgid "View Patient"
 msgstr "Patient anzeigen"
 
-#: standard input:389 standard input:2564 standard input:2591
+#: standard input:502 standard input:2771 standard input:2798
 msgid "Time"
 msgstr "Zeit"
 
-#: standard input:392 standard input:1223 standard input:2567
-#: standard input:2594
+#: standard input:505 standard input:1344 standard input:2774
+#: standard input:2801
 msgid "Duration"
 msgstr "Dauer"
 
-#: standard input:401 standard input:1784 standard input:1793
-#: standard input:1853 standard input:2252 standard input:2363
-#: standard input:2603
+#: standard input:514 standard input:1940 standard input:1949
+#: standard input:2021 standard input:2429 standard input:2561
+#: standard input:2810
 msgid "Status"
 msgstr "Status"
 
-#: standard input:407
+#: standard input:517 standard input:1036 standard input:1048
+#: standard input:1303 standard input:1826 standard input:2780
+#: standard input:2813 standard input:2966 standard input:3005
+msgid "Note"
+msgstr "Anmerkung"
+
+#: standard input:520
 msgid "REMITT Server Running"
 msgstr "REMITT Server aktiv"
 
-#: standard input:410
+#: standard input:523
 msgid "REMITT Server NOT Running"
 msgstr "REMITT Server inaktiv"
 
-#: standard input:413 standard input:1340 standard input:1403
-#: standard input:1790
+#: standard input:526 standard input:1479 standard input:1542
+#: standard input:1946
 msgid "REMITT Billing"
 msgstr "REMITT Verrechnungssystem"
 
-#: standard input:416 standard input:1343
+#: standard input:529 standard input:1482
 msgid "Perform Billing"
 msgstr "Verrechnung durchführen"
 
-#: standard input:419
+#: standard input:532
 msgid "Perform Remitt billing runs."
 msgstr "Rechnungserstellung durch REMITT starten"
 
-#: standard input:422 standard input:1556
+#: standard input:535 standard input:1706
 msgid "Rebill"
 msgstr "Rechnung erneut erstellen"
 
-#: standard input:425
+#: standard input:538
 msgid "Select a previous billing to rebill."
 msgstr "Wählen Sie eine ältere Rechnung aus um diese erneut zu erstellen."
 
-#: standard input:428
+#: standard input:541
 msgid "Show Reports"
 msgstr "Berichte anzeigen"
 
-#: standard input:431
+#: standard input:544
 msgid "View output files and logs from Remitt."
 msgstr "Ausgabe- und Logdateien von REMITT anzeigen."
 
-#: standard input:434
+#: standard input:547
 msgid "Document Category"
 msgstr "Dokumentenkategorie"
 
-#: standard input:437 standard input:1241 standard input:1268
-#: standard input:1277 standard input:2288
+#: standard input:550 standard input:1362 standard input:1401
+#: standard input:1410 standard input:2486
 msgid "You must enter a type."
 msgstr "Sie müssen einen Typ angeben."
 
-#: standard input:440
+#: standard input:553
 msgid "You must enter a category."
 msgstr "Sie müssen eine Kategorie angeben."
 
-#: standard input:443 standard input:560 standard input:575 standard input:701
-#: standard input:1280 standard input:1763 standard input:1835
-#: standard input:1850 standard input:2030 standard input:2291
-#: standard input:2318 standard input:2348 standard input:2441
+#: standard input:556 standard input:676 standard input:691 standard input:817
+#: standard input:1413 standard input:1919 standard input:2003
+#: standard input:2018 standard input:2197 standard input:2489
+#: standard input:2516 standard input:2546 standard input:2639
 msgid "You must enter a description."
 msgstr "Sie müssen eine Beschreibung angeben"
 
-#: standard input:449 standard input:923 standard input:1178
+#: standard input:562 standard input:1045 standard input:1300
+#: standard input:3077
 msgid "Category"
 msgstr "Kategorie"
 
-#: standard input:455
+#: standard input:568
 msgid "SMS Provider"
 msgstr "SMS-Netzanbieter"
 
-#: standard input:458 standard input:530 standard input:557
-#: standard input:2021 standard input:2174 standard input:2213
-#: standard input:2315 standard input:2330 standard input:2345
-#: standard input:2453 standard input:2618 standard input:2672
+#: standard input:571 standard input:646 standard input:673
+#: standard input:2188 standard input:2345 standard input:2384
+#: standard input:2513 standard input:2528 standard input:2543
+#: standard input:2651 standard input:2825 standard input:2882
+#: standard input:3068 standard input:3164 standard input:3275
 msgid "You must enter a name."
 msgstr "Sie müssen einen Namen angeben."
 
-#: standard input:461
+#: standard input:574
 msgid "Provider Name"
 msgstr "Name des Behandelnden"
 
-#: standard input:464
+#: standard input:577
 msgid "Number Length"
 msgstr "Nummernlänge"
 
-#: standard input:467
+#: standard input:580
 msgid "Use Country Code?"
 msgstr "Landeskennzeichen verwenden?"
 
-#: standard input:476
+#: standard input:589
 msgid "Added progress note."
 msgstr "Fortschrittsbericht hinzugefügt."
 
-#: standard input:482 standard input:842 standard input:2114
+#: standard input:595 standard input:979 standard input:2287
+#: standard input:3158
 msgid "Summary"
 msgstr "Zusammenfassung"
 
-#: standard input:485
+#: standard input:598
 msgid "Import Previous Notes for "
 msgstr "Vorherigen Fortschrittsbericht importieren von"
 
-#: standard input:524 standard input:1361
+#: standard input:610 standard input:1895 standard input:3101
+msgid "Template"
+msgstr "Vorlage"
+
+#: standard input:640 standard input:1500 standard input:1907
 msgid "Dashboard"
 msgstr "Arbeitsfläche"
 
-#: standard input:527
+#: standard input:643
 msgid "Workflow Status Type"
 msgstr "Ablauforganisationstyp"
 
-#: standard input:533
+#: standard input:649
 msgid "You must enter a module."
 msgstr "Sie müssen ein Modul angeben."
 
-#: standard input:539
+#: standard input:655
 msgid "Priority / Order"
 msgstr "Priorität / Sortierung"
 
-#: standard input:542 standard input:1430
+#: standard input:658 standard input:1572 standard input:3155
 msgid "Module"
 msgstr "Modul"
 
-#: standard input:545 standard input:551
-msgid "Active"
-msgstr "Aktiv"
-
-#: standard input:548
-msgid "Inactive"
-msgstr "Inaktiv"
-
-#: standard input:554
+#: standard input:670
 msgid "Diagnosis Family"
 msgstr "Diagnosefamilie"
 
-#: standard input:569
+#: standard input:685
 msgid "CPT Modifier"
 msgstr "CPT Erweiterung"
 
-#: standard input:572 standard input:1298
+#: standard input:688 standard input:1431
 msgid "You must enter a modifier."
 msgstr "Sie müssen einen Erweiterung angeben."
 
-#: standard input:578 standard input:1301
+#: standard input:694 standard input:1434 standard input:2275
 msgid "Modifier"
 msgstr "Erweiterung"
 
-#: standard input:584 standard input:620 standard input:1553
+#: standard input:700 standard input:736 standard input:1703
 msgid "Post Check"
 msgstr "Scheck buchen"
 
-#: standard input:587 standard input:1538 standard input:1580
+#: standard input:703 standard input:1689 standard input:1730
 msgid "Payer"
 msgstr "Zahlender"
 
-#: standard input:590
+#: standard input:706
 msgid "Check Amount"
 msgstr "Scheckbetrag"
 
-#: standard input:593
+#: standard input:709
 msgid "Check Number"
 msgstr "Schecknummer"
 
-#: standard input:599
+#: standard input:715
 msgid "CPT Code"
 msgstr "CPT Nummer"
 
-#: standard input:602
+#: standard input:718
 msgid "Billed Amount"
 msgstr "Verrechneter Betrag "
 
-#: standard input:605
+#: standard input:721
 msgid "Allowed Amount"
 msgstr "Erlaubter Betrag"
 
-#: standard input:608
+#: standard input:724
 msgid "Copay"
 msgstr "Selbstbehalt"
 
-#: standard input:614
+#: standard input:730
 msgid "Leftover Balance"
 msgstr "Restbetrag"
 
-#: standard input:617
+#: standard input:733
 msgid "Send balance to Patient?"
 msgstr "Restbetrag vom Patienten einfordern?"
 
-#: standard input:623
+#: standard input:739
 msgid "Patient Search"
 msgstr "Patientensuche"
 
-#: standard input:626
+#: standard input:742
 msgid "Patient(s) in the System"
 msgstr "Patient(en) im System"
 
-#: standard input:629 standard input:671 standard input:689
-#: standard input:1289
+#: standard input:745 standard input:787 standard input:805
+#: standard input:1422
 msgid "Age"
 msgstr "Alter"
 
-#: standard input:632
+#: standard input:748
 msgid "SSN #"
 msgstr "SV-Nr."
 
-#: standard input:635 standard input:1379
+#: standard input:751 standard input:1518
 msgid "Search"
 msgstr "Suche"
 
-#: standard input:638
+#: standard input:754
 msgid "Smart Search"
 msgstr "Intelligente Suche"
 
-#: standard input:641
+#: standard input:757
 msgid "Tag Search"
 msgstr "Label-Suche"
 
-#: standard input:644
+#: standard input:760
 msgid "Field Search"
 msgstr "Feld-Suche"
 
-#: standard input:647 standard input:677
+#: standard input:763 standard input:793
 msgid "Patient ID"
 msgstr "Patienten-ID"
 
-#: standard input:659
+#: standard input:775
 msgid "City"
 msgstr "Ort"
 
-#: standard input:662
+#: standard input:778
 msgid "Zip/Postal Code"
 msgstr "PLZ"
 
-#: standard input:665
+#: standard input:781
 msgid "Home Phone Number"
 msgstr "Telefon - Zuhause"
 
-#: standard input:668
+#: standard input:784
 msgid "Work Phone Number"
 msgstr "Telefon - Arbeit"
 
-#: standard input:674
+#: standard input:790
 msgid "Last Patients"
 msgstr "Letzte Patienten"
 
-#: standard input:692
+#: standard input:808
 msgid "DOB"
 msgstr "Geb.Dat."
 
-#: standard input:695 standard input:1724 standard input:2168
-#: standard input:2273
+#: standard input:811 standard input:1874 standard input:2339
+#: standard input:2471 standard input:3083 standard input:3323
 msgid "Committed changes."
 msgstr "Durchgeführte Änderungen"
 
-#: standard input:698 standard input:1727 standard input:2171
-#: standard input:2276 standard input:2660
+#: standard input:814 standard input:1877 standard input:2342
+#: standard input:2474 standard input:2870 standard input:3086
+#: standard input:3326
 msgid "Added record."
 msgstr "Datensatz hinzugefügt."
 
-#: standard input:704
+#: standard input:820
 msgid "Scheduling Rule"
 msgstr "Zeitplanung"
 
-#: standard input:710
+#: standard input:826
 msgid "Reason / Description"
 msgstr "Grund / Beschreibung"
 
-#: standard input:713
+#: standard input:829
 msgid "Day of Week Beginning"
 msgstr "Beginn der Arbeitswoche"
 
-#: standard input:716 standard input:740
+#: standard input:832 standard input:856
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: standard input:719 standard input:743
+#: standard input:835 standard input:859
 msgid "Monday"
 msgstr "Montag"
 
-#: standard input:722 standard input:746
+#: standard input:838 standard input:862
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: standard input:725 standard input:749
+#: standard input:841 standard input:865
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: standard input:728 standard input:752
+#: standard input:844 standard input:868
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: standard input:731 standard input:755
+#: standard input:847 standard input:871
 msgid "Friday"
 msgstr "Freitag"
 
-#: standard input:734 standard input:758
+#: standard input:850 standard input:874
 msgid "Saturday"
 msgstr "Samstag"
 
-#: standard input:737
+#: standard input:853
 msgid "Day of Week Ending"
 msgstr "Ende der Arbeitswoche"
 
-#: standard input:761
+#: standard input:877
 msgid "Date Begin"
 msgstr "Startdatum"
 
-#: standard input:764
+#: standard input:880
 msgid "Date End"
 msgstr "Enddatum"
 
-#: standard input:767 standard input:1844
+#: standard input:883
+msgid "Time Begin"
+msgstr "Startzeit"
+
+#: standard input:886
+msgid "Time End"
+msgstr "Endzeit"
+
+#: standard input:889 standard input:2012
 msgid "Patient Status"
 msgstr "Patienten-Status"
 
-#: standard input:770
+#: standard input:892
 msgid "New Patients Only"
 msgstr "Nur neue Patienten"
 
-#: standard input:773
+#: standard input:895
 msgid "Established Patients"
 msgstr "Stammpatient"
 
-#: standard input:782
+#: standard input:904
 msgid "Added annotation."
 msgstr "Kommentar hinzugefügt"
 
-#: standard input:785
+#: standard input:907
 msgid "Failed to annotate record."
 msgstr "Hinzufügen einer Notiz fehlgeschlagen."
 
-#: standard input:788
+#: standard input:910
 msgid "Are you sure you want to lock this record?"
 msgstr "Sind Sie sich sicher, dass Sie diesen Datensatz sperren wollen?"
 
-#: standard input:791
+#: standard input:913
+msgid "Locked record."
+msgstr "Datensatz gesperrt."
+
+#: standard input:916
 msgid "Failed to lock record."
 msgstr "Sperren des Datensatzes fehlgeschlagen."
 
-#: standard input:794
+#: standard input:919
+msgid "Are you sure you want to remove this record?"
+msgstr "Sind Sie sicher, dass Sie diesen Datensatz löschen wollen?"
+
+#: standard input:922
+msgid "Removed record."
+msgstr "Datensatz gelöscht."
+
+#: standard input:925
+msgid "Failed to remove record."
+msgstr "Löschen des Datensatzes fehlgeschlagen."
+
+#: standard input:928
 msgid "No EMR attachments were selected."
 msgstr "Es wurden keine Anhänge der Akte ausgewählt."
 
-#: standard input:797
+#: standard input:931
 msgid "Sending document to your web browser."
 msgstr "Sende das Dokument zu Ihrem Browser."
 
-#: standard input:800
+#: standard input:934
 msgid "Sending document to printer"
 msgstr "Sende das Dokument an den Drucker"
 
-#: standard input:803
+#: standard input:937
 msgid "You must select a module first."
 msgstr "Sie müssen zuerst ein Modul auswählen."
 
-#: standard input:806
+#: standard input:940
 msgid "View"
 msgstr "Anzeigen"
 
-#: standard input:809
+#: standard input:943
 msgid "Print Record"
 msgstr "Datensatz drucken"
 
-#: standard input:812
+#: standard input:946
 msgid "Lock Record"
 msgstr "Datensatz sperren"
 
-#: standard input:815
+#: standard input:949
 msgid "Modify Record"
 msgstr "Datensatz ändern"
 
-#: standard input:818
+#: standard input:952
+msgid "Remove Record"
+msgstr "Datensatz löschen"
+
+#: standard input:955
 msgid "Locked"
 msgstr "Gesperrt"
 
-#: standard input:821
+#: standard input:958
 msgid "Annotation"
 msgstr "Kommentar"
 
-#: standard input:824 standard input:869
+#: standard input:961 standard input:1006
 msgid "Annotate"
 msgstr "kommentieren"
 
-#: standard input:827
+#: standard input:964
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: standard input:830
+#: standard input:967
 msgid "Date Range:"
 msgstr "Datumsbereich:"
 
-#: standard input:836 standard input:863
+#: standard input:973 standard input:1000
 msgid "Print"
 msgstr "Drucken"
 
-#: standard input:848 standard input:1259 standard input:2654
-#: standard input:2750
+#: standard input:985 standard input:1392 standard input:2861
 msgid "Notes"
 msgstr "Anmerkungen"
 
-#: standard input:851
+#: standard input:988
 msgid "Actions"
 msgstr "Aktionen"
 
-#: standard input:854
+#: standard input:991
 msgid "Printer"
 msgstr "Drucker"
 
-#: standard input:857 standard input:2513
+#: standard input:994 standard input:2711
 msgid "Fax"
 msgstr "Fax"
 
-#: standard input:860
+#: standard input:997
 msgid "Browser Based"
 msgstr "Browser-basiert"
 
-#: standard input:878
+#: standard input:1015
+msgid "Filed document in patient record."
+msgstr "Dokument in die Patientenakte einsortiert."
+
+#: standard input:1018
 msgid "Document moved to another provider."
 msgstr "Document wurde zu einem anderen Behandelnden verschoben."
 
-#: standard input:881 standard input:1136 standard input:2753
+#: standard input:1021 standard input:1258 standard input:2969
 msgid "Are you sure you want to permanently remove this document?"
 msgstr ""
 "Sind Sie sich sicher, dass Sie dieses Dokument unwiderruflich löschen "
 "wollen?"
 
-#: standard input:884 standard input:902 standard input:1139
-#: standard input:1157 standard input:1478 standard input:2756
-#: standard input:2759
+#: standard input:1024 standard input:1629 standard input:2972
+#: standard input:2975
 msgid "The system was unable to complete your request at this time."
 msgstr "Das System kann ihre Anfrage temporär nicht bearbeiten."
 
-#: standard input:887 standard input:1142
-msgid "No date has been selected."
-msgstr "Es wurde kein Datum ausgewählt."
-
-#: standard input:890 standard input:1145
-msgid "No category has been chosen."
-msgstr "Es wurde keine Kategorie ausgewählt."
-
-#: standard input:893 standard input:1148
-msgid "No patient has been selected."
-msgstr "Es wurde kein Patient ausgewählt."
-
-#: standard input:896 standard input:1151
-msgid "No provider has been selected."
-msgstr "Es wurde kein Behandler ausgewählt."
-
-#: standard input:899 standard input:1154
-msgid "No note has been entered."
-msgstr "Es wurde keine Anmerkung eingegeben."
-
-#: standard input:905
+#: standard input:1027
 msgid "Unread Documents"
 msgstr "Ungelesene Dokumente"
 
-#: standard input:929
+#: standard input:1051
 msgid ""
 "By clicking on the 'Sign' button below, I agree that I am the physician in "
 "question and have reviewed this document or facsimile transmission."
@@ -978,259 +1106,311 @@ msgstr ""
 "der besagte Arzt bin und das Dokument für eine Faxübertragung überprüft "
 "habe."
 
-#: standard input:932
+#: standard input:1054
 msgid "Sign"
 msgstr "Unterzeichnen"
 
-#: standard input:938
+#: standard input:1060
 msgid "Send to"
 msgstr "Senden an"
 
-#: standard input:941
+#: standard input:1063
 msgid "Another Provider"
 msgstr "Anderer Arzt"
 
-#: standard input:944 standard input:1199 standard input:1202
+#: standard input:1066 standard input:1320 standard input:1323
 msgid "File Directly"
 msgstr "Direkt einsortieren"
 
-#: standard input:947 standard input:1196 standard input:1205
+#: standard input:1069 standard input:1317 standard input:1326
 msgid "(w/o first page)"
 msgstr "(ohne erster Seite)"
 
-#: standard input:950
+#: standard input:1072
 msgid "Send to Another Provider"
 msgstr "Einem anderen Behandler senden"
 
-#: standard input:953
+#: standard input:1075
 msgid "Please choose another provider who should receive this document."
 msgstr ""
 "Bitte wählen Sie einen anderen Behandler, welcher dieses Dokument erhalten "
 "soll."
 
-#: standard input:956
+#: standard input:1078
 msgid "Send"
 msgstr "Senden"
 
-#: standard input:968
+#: standard input:1090
 msgid "No active referrals."
 msgstr "Keine ärztliche Überweisung vorhanden."
 
-#: standard input:971 standard input:2162
+#: standard input:1093 standard input:2333
 msgid "Loading"
 msgstr "Lade"
 
-#: standard input:974
+#: standard input:1096
 msgid "Outstanding Patient Referrals"
 msgstr "Ausständige Überweisungen"
 
-#: standard input:977
+#: standard input:1099
 msgid "Add Referral"
 msgstr "Überweisung hinzufügen"
 
-#: standard input:980
+#: standard input:1102
 msgid "You must select a valid recipient."
 msgstr "Sie müssen einen gültigen Empfänger auswählen."
 
-#: standard input:983
+#: standard input:1105
 msgid "You must enter a patient or person value to create a message."
 msgstr ""
 "Sie müssen einen Patienten oder eine Person angeben um eine Nachricht zu "
 "erstellen."
 
-#: standard input:989
+#: standard input:1108
 msgid "Message sent successfully."
 msgstr "Nachricht erfolgreich gesendet."
 
-#: standard input:995
+#: standard input:1114
 msgid "Compose Message"
 msgstr "Nachricht verfassen"
 
-#: standard input:998
+#: standard input:1117
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: standard input:1004 standard input:1742
-msgid "Subject"
-msgstr "Betreff"
+#: standard input:1120
+msgid "Group"
+msgstr "Gruppe"
 
-#: standard input:1007
+#: standard input:1129
 msgid "Message"
 msgstr "Nachricht"
 
-#: standard input:1010
+#: standard input:1132
 msgid "Create"
 msgstr "Erstellen"
 
-#: standard input:1013
+#: standard input:1135
 msgid "Are you sure you want to cancel this message?"
 msgstr "Sind Sie sich sicher, dass Sie den Entwurf verwerfen wollen?"
 
-#: standard input:1019
+#: standard input:1141
 msgid "Added notifications."
 msgstr "Erinnerungen hinzugefügt."
 
-#: standard input:1022
+#: standard input:1144
 msgid "No target date selected."
 msgstr "Kein Zieldatum ausgewählt."
 
-#: standard input:1025
+#: standard input:1147
 msgid "No target user selected."
 msgstr "Keinen Zielbenutzer ausgewählt."
 
-#: standard input:1028
+#: standard input:1150
 msgid "No message text given."
 msgstr "Sie haben keinen Nachrichtentext eingegeben."
 
-#: standard input:1031
+#: standard input:1153
 msgid "Notification"
 msgstr "Erinnerung"
 
-#: standard input:1034
+#: standard input:1156
 msgid "Target Date"
 msgstr "Zieldatum"
 
-#: standard input:1037
+#: standard input:1159
 msgid "Day"
 msgstr "Tag"
 
-#: standard input:1040 standard input:1043 standard input:1046
-#: standard input:1049 standard input:1052
+#: standard input:1162 standard input:1165 standard input:1168
+#: standard input:1171 standard input:1174
 msgid "Days"
 msgstr "Tage"
 
-#: standard input:1055
+#: standard input:1177
 msgid "Week"
 msgstr "Woche"
 
-#: standard input:1058
+#: standard input:1180
 msgid "Weeks"
 msgstr "Wochen"
 
-#: standard input:1061
+#: standard input:1183
 msgid "Month"
 msgstr "Monat"
 
-#: standard input:1064 standard input:1067 standard input:1070
-#: standard input:1073 standard input:1076 standard input:1079
-#: standard input:1082 standard input:1085 standard input:1088
-#: standard input:1091
+#: standard input:1186 standard input:1189 standard input:1192
+#: standard input:1195 standard input:1198 standard input:1201
+#: standard input:1204 standard input:1207 standard input:1210
+#: standard input:1213
 msgid "Months"
 msgstr "Monate"
 
-#: standard input:1094
+#: standard input:1216
 msgid "Year"
 msgstr "Jahr"
 
-#: standard input:1097 standard input:1100 standard input:1103
-#: standard input:1106 standard input:1109 standard input:1112
-#: standard input:1115 standard input:1118 standard input:1121
+#: standard input:1219 standard input:1222 standard input:1225
+#: standard input:1228 standard input:1231 standard input:1234
+#: standard input:1237 standard input:1240 standard input:1243
 msgid "Years"
 msgstr "Jahre"
 
-#: standard input:1124
+#: standard input:1246
 msgid "Target User"
 msgstr "Zielbenutzer"
 
-#: standard input:1160
+#: standard input:1261
+msgid "Document removed successfully."
+msgstr "Dokument erfolgreich verschoben."
+
+#: standard input:1264
+msgid "No date has been selected."
+msgstr "Es wurde kein Datum ausgewählt."
+
+#: standard input:1267
+msgid "No category has been chosen."
+msgstr "Es wurde keine Kategorie ausgewählt."
+
+#: standard input:1270
+msgid "No patient has been selected."
+msgstr "Es wurde kein Patient ausgewählt."
+
+#: standard input:1273
+msgid "No provider has been selected."
+msgstr "Es wurde kein Behandler ausgewählt."
+
+#: standard input:1276
+msgid "No note has been entered."
+msgstr "Es wurde keine Anmerkung eingegeben."
+
+#: standard input:1279
+msgid "Document handled successfully."
+msgstr "Dokument erfolgreich verarbeitet."
+
+#: standard input:1282
 msgid "Unfiled Documents"
 msgstr "Nicht-eingeordnete Dokumente"
 
-#: standard input:1166
+#: standard input:1288
 msgid "Filename"
 msgstr "Dateiname"
 
-#: standard input:1184
+#: standard input:1306
 msgid "Flip Document?"
 msgstr "Dokument drehen?"
 
-#: standard input:1190 standard input:1193
+#: standard input:1311 standard input:1314
 msgid "Send to Provider"
 msgstr "An Behandler senden"
 
-#: standard input:1208
+#: standard input:1329
 msgid "Split Batch"
 msgstr "Stapel teilen"
 
-#: standard input:1214
+#: standard input:1335
 msgid "Delete Document"
 msgstr "Dokument löschen"
 
-#: standard input:1217
+#: standard input:1338
 msgid "Appointment Template"
 msgstr "Terminvorlage"
 
-#: standard input:1220 standard input:2303
+#: standard input:1341 standard input:2501
 msgid "Template Name"
 msgstr "Vorlagenname"
 
-#: standard input:1226
+#: standard input:1347
 msgid "Required Equipment"
 msgstr "Benötigte Einrichtung"
 
-#: standard input:1229 standard input:1292
+#: standard input:1350 standard input:1425
 msgid "Color"
 msgstr "Farbe"
 
-#: standard input:1232
+#: standard input:1353
 msgid "Tags found for"
 msgstr "Ergebnis der Label-Suche nach"
 
-#: standard input:1235
+#: standard input:1356
 msgid "Could not load annotations."
 msgstr "Konnte die Erinnerungen nicht laden."
 
-#: standard input:1238 standard input:2405
+#: standard input:1359 standard input:2603
 msgid "Internal Service Type"
 msgstr "Interne Leistungsklassifikation"
 
-#: standard input:1250
+#: standard input:1368
+msgid "FreeMED has encountered an error. Please try again."
+msgstr "Es ist ein Fehler aufgetreten. Bitte versuchen Sie den Vorgang erneut."
+
+#: standard input:1371 standard input:1374 standard input:1910
+msgid "Workspace"
+msgstr "Arbeitsbereich"
+
+#: standard input:1377
+msgid "New unfiled document(s)"
+msgstr "Neue nicht-einsortierte Dokumente"
+
+#: standard input:1380
+msgid "New unread document(s)."
+msgstr "Neue ungelesene Dokumente"
+
+#: standard input:1383
 msgid "Notepad contents saved."
 msgstr "Inhalte des Notizblocks gespeichert."
 
-#: standard input:1253
+#: standard input:1386
 msgid "Loading ..."
 msgstr "Lade..."
 
-#: standard input:1256
+#: standard input:1389
 msgid "Logging out of FreeMED"
 msgstr "Abmelden von FreeMED"
 
-#: standard input:1262
+#: standard input:1395
 msgid "Click outside this dialog box to close the notepad."
 msgstr ""
 "Klicken Sie ausserhalb dieses Dialogfelds um den Notizblock zu schließen."
 
-#: standard input:1265
+#: standard input:1398
 msgid "Enclosure Type"
 msgstr "Anhang-Typ"
 
-#: standard input:1274
+#: standard input:1407
 msgid "Scheduler Status Type"
 msgstr "Statustyp des Planers"
 
-#: standard input:1295
+#: standard input:1428
 msgid "Insurance Modifier"
 msgstr "Ergänzende Mitteilung für die Krankenversicherung"
 
-#: standard input:1310
+#: standard input:1440
+msgid "Workflow updated."
+msgstr "Ablauf aktualisiert."
+
+#: standard input:1446
+msgid "Go"
+msgstr "Weiter"
+
+#: standard input:1449
 msgid "Workflow Status"
 msgstr "Ablauforganisation"
 
-#: standard input:1313
+#: standard input:1452
 msgid "No patients to bill."
 msgstr "Keine Rechnungen zum Ausstellen ausständig."
 
-#: standard input:1316
+#: standard input:1455
 msgid "claim(s)"
 msgstr "Ansprüche"
 
-#: standard input:1319
+#: standard input:1458
 msgid "Please select one or more patients to bill."
 msgstr ""
 "Bitte einen oder mehrere Patienten auswählen um Rechnungen auszustellen."
 
-#: standard input:1322
+#: standard input:1461
 msgid ""
 "An error occurred processing the claims. Please contact your system "
 "administrator."
@@ -1238,418 +1418,443 @@ msgstr ""
 "Ein Fehler trat beim Verarbeiten der Ansprüche auf. Kontaktieren Sie Ihren "
 "Systemadministrator!"
 
-#: standard input:1325
+#: standard input:1464
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#: standard input:1328 standard input:1574
+#: standard input:1467 standard input:1724
 msgid "Claim"
 msgstr "Anspruch"
 
-#: standard input:1331 standard input:1778
+#: standard input:1470 standard input:1934
 msgid "Format"
 msgstr "Format"
 
-#: standard input:1334
+#: standard input:1473
 msgid "Electronic"
 msgstr "Elektronisch"
 
-#: standard input:1337
+#: standard input:1476
 msgid "Paper"
 msgstr "Papier"
 
-#: standard input:1346
+#: standard input:1485
 msgid "Process"
 msgstr "Prozess"
 
-#: standard input:1355
+#: standard input:1494
 msgid "Return to Menu"
 msgstr "Zurück zum Menü"
 
-#: standard input:1358
+#: standard input:1497
 msgid "System"
 msgstr "System"
 
-#: standard input:1364
+#: standard input:1503
 msgid "Day Schedule"
 msgstr "Tagesplan"
 
-#: standard input:1367 standard input:1814 standard input:2555
-#: standard input:2579
+#: standard input:1506 standard input:1979 standard input:2762
+#: standard input:2786
 msgid "Book Appointment"
 msgstr "Termin buchen"
 
-#: standard input:1370 standard input:2225
+#: standard input:1509 standard input:2402
 msgid "Scheduler"
 msgstr "Planer"
 
-#: standard input:1376
+#: standard input:1515
 msgid "Patients"
 msgstr "Patienten"
 
-#: standard input:1385
+#: standard input:1524
 msgid "Documents"
 msgstr "Dokumente"
 
-#: standard input:1388
+#: standard input:1527
 msgid "Unfiled"
 msgstr "Nicht-einsortiert"
 
-#: standard input:1391
+#: standard input:1530
 msgid "Unread"
 msgstr "Ungelesen"
 
-#: standard input:1394
+#: standard input:1533
 msgid "Billing"
 msgstr "Verrechnung"
 
-#: standard input:1400 standard input:1517
+#: standard input:1539 standard input:1668
 msgid "Claims Manager"
 msgstr "Anspruchverwaltung"
 
-#: standard input:1406 standard input:2762
+#: standard input:1545 standard input:2984
 msgid "Superbills"
 msgstr "Vorab-Rechnungen"
 
-#: standard input:1409
+#: standard input:1548
 msgid "Reporting"
 msgstr "Berichterstellung"
 
-#: standard input:1415
+#: standard input:1554
 msgid "Utilities"
 msgstr "Werkzeuge"
 
-#: standard input:1421 standard input:1454 standard input:1994
+#: standard input:1560 standard input:1602 standard input:2161
 msgid "System Configuration"
 msgstr "Systemkonfiguration"
 
-#: standard input:1424
+#: standard input:1563
 msgid "User Administration"
 msgstr "Benutzerverwaltung"
 
-#: standard input:1433
+#: standard input:1566
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: standard input:1575
 msgid "Version"
 msgstr "Version"
 
-#: standard input:1436
+#: standard input:1578 standard input:3044
 msgid "Please enter a descriptive name for this template."
 msgstr "Bitte geben Sie eine Beschreibung für diese Vorlage an."
 
-#: standard input:1439
+#: standard input:1581 standard input:3047
 msgid "Added template."
 msgstr "Vorlage hinzugefügt."
 
-#: standard input:1442 standard input:2138
+#: standard input:1584 standard input:3050
+msgid "Updated template."
+msgstr "Vorlage aktualisiert."
+
+#: standard input:1587 standard input:2310 standard input:3056
 msgid "Use"
 msgstr "Verwenden"
 
-#: standard input:1448
+#: standard input:1596
 msgid "Saved configuration values."
 msgstr "Konfiguration gespeichert."
 
-#: standard input:1451
+#: standard input:1599
 msgid "Failed to change configuration values."
 msgstr "Konfiguration konnte nicht gespeichert werden."
 
-#: standard input:1457
+#: standard input:1605 standard input:3143
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
-#: standard input:1460
+#: standard input:1608
 msgid "Login"
 msgstr "Login"
 
-#: standard input:1463 standard input:1958 standard input:2183
+#: standard input:1611 standard input:2126 standard input:2354
 msgid "Password"
 msgstr "Passwort"
 
-#: standard input:1466
+#: standard input:1614
+msgid "Language"
+msgstr "Sprache"
+
+#: standard input:1617
 msgid "Help Browser"
 msgstr "Hilfefenster"
 
-#: standard input:1475
+#: standard input:1626
 msgid "Are you sure you want to permanently remove this user?"
 msgstr ""
 "Sind Sie sich sicher, dass Sie diesen Benutzer unwiderruflich löschen "
 "wollen?"
 
-#: standard input:1481
+#: standard input:1632
 msgid "Users"
 msgstr "Benutzer"
 
-#: standard input:1511
+#: standard input:1662
 msgid "Marked the selected claims for rebill."
 msgstr "Ausgewählte Ansprüche sind für das erneute erstellen markiert."
 
-#: standard input:1514
+#: standard input:1665
 msgid "Marked the selected claims as billed."
 msgstr "Ausgewählte Ansprüche sind als verrechnet markiert."
 
-#: standard input:1544
+#: standard input:1695
 msgid "Payer Group"
 msgstr "Kostenträger-Gruppe"
 
-#: standard input:1559
+#: standard input:1709
 msgid "Mark As Billed"
 msgstr "Als verrechnet markieren"
 
-#: standard input:1586
+#: standard input:1736
 msgid "Balance"
 msgstr "Saldo"
 
-#: standard input:1589
+#: standard input:1739
 msgid "Added demographics."
 msgstr "Personenbezogene Daten hinzugefügt."
 
-#: standard input:1592
+#: standard input:1742
 msgid "Financial Demographics"
 msgstr "Personenbezogene finanzielle Daten"
 
-#: standard input:1595
+#: standard input:1745
 msgid "Yearly Income"
 msgstr "Jahreseinkommen"
 
-#: standard input:1598
+#: standard input:1748
 msgid "Identification"
 msgstr "Identifikation"
 
-#: standard input:1601
+#: standard input:1751
 msgid "driver's license"
 msgstr "Führerschein"
 
-#: standard input:1604
+#: standard input:1754
 msgid "passport"
 msgstr "Reisepass"
 
-#: standard input:1607
+#: standard input:1757
 msgid "baptismal certificate"
 msgstr "Taufschein"
 
-#: standard input:1610
+#: standard input:1760
 msgid "green card"
 msgstr "Aufenthalts- und Arbeitsbewilligung"
 
-#: standard input:1613
+#: standard input:1763
 msgid "birth certificate"
 msgstr "Geburtsurkunde"
 
-#: standard input:1616
+#: standard input:1766
 msgid "Identification Number"
 msgstr "ID-Nummer"
 
-#: standard input:1619
+#: standard input:1769
 msgid "Identification Issuer"
 msgstr "Aussteller"
 
-#: standard input:1622
+#: standard input:1772
 msgid "Identification Expiration"
 msgstr "Ablaufdatum"
 
-#: standard input:1625
+#: standard input:1775
 msgid "Household Size"
 msgstr "Haushaltsgröße"
 
-#: standard input:1628
+#: standard input:1778
 msgid "Has a Spouse?"
 msgstr "Hat eine/n Lebensgefährtin/en"
 
-#: standard input:1637
+#: standard input:1787
 msgid "Number of Dependent Children"
 msgstr "Anzahl zu versorgender Kinder"
 
-#: standard input:1640
+#: standard input:1790
 msgid "Number of Other Dependents"
 msgstr "Anzahl anderer zu versorgende Personen"
 
-#: standard input:1643
+#: standard input:1793
 msgid "Other Information"
 msgstr "Andere Informationen"
 
-#: standard input:1664
+#: standard input:1814
 msgid "Complaint"
 msgstr "Beschwerden"
 
-#: standard input:1688 standard input:1691 standard input:1694
-#: standard input:1697
+#: standard input:1838 standard input:1841 standard input:1844
+#: standard input:1847
 msgid "ICD"
 msgstr "ICD"
 
-#: standard input:1700 standard input:1706 standard input:1712
-#: standard input:1718
+#: standard input:1850 standard input:1856 standard input:1862
+#: standard input:1868
 msgid "CPT"
 msgstr "CPT"
 
-#: standard input:1703 standard input:1709 standard input:1715
-#: standard input:1721
+#: standard input:1853 standard input:1859 standard input:1865
+#: standard input:1871 standard input:2272
 msgid "Units"
 msgstr "Einheiten"
 
-#: standard input:1730
+#: standard input:1880
 msgid "Letters"
 msgstr "Briefe"
 
-#: standard input:1739
+#: standard input:1889
 msgid "To"
 msgstr "An"
 
-#: standard input:1745
-msgid "Template"
-msgstr "Vorlage"
-
-#: standard input:1748
+#: standard input:1898 standard input:3104
 msgid "Letter"
 msgstr "Brief"
 
-#: standard input:1757 standard input:2462
+#: standard input:1913 standard input:2660
 msgid "Place of Service"
 msgstr "Ort der erbrachten Leistung"
 
-#: standard input:1760
+#: standard input:1916
 msgid "You must enter a code."
 msgstr "Sie müssen einen Code angeben."
 
-#: standard input:1766
+#: standard input:1922
 msgid "Code"
 msgstr "Code"
 
-#: standard input:1772
+#: standard input:1928
 msgid "Mark"
 msgstr "Markieren"
 
-#: standard input:1775
+#: standard input:1931
 msgid "Batch ID"
 msgstr "Stapel-ID"
 
-#: standard input:1781
+#: standard input:1937
 msgid "Target"
 msgstr "Ziel"
 
-#: standard input:1787
+#: standard input:1943
 msgid "No claims in process."
 msgstr "Keine Ansprüche werden momentan verarbeitet."
 
-#: standard input:1796
+#: standard input:1952
 msgid "Mark All"
 msgstr "Alles markieren"
 
-#: standard input:1802
+#: standard input:1955
+msgid "Are you sure you want to remove this patient from the system?"
+msgstr ""
+"Sind Sie sich sicher, dass Sie diesen Patienten vom System entfernen wollen?"
+
+#: standard input:1958
+msgid "Patient was removed from the system."
+msgstr "Patien aus dem System entfernt."
+
+#: standard input:1961
+msgid "Patient failed to be removed from the system."
+msgstr "Fehler - Patient konnte nicht vom System entfernt werden."
+
+#: standard input:1967
 msgid "no contact"
 msgstr "Kein Kontakt"
 
-#: standard input:1805
+#: standard input:1970
 msgid "Overview"
 msgstr "Übersicht"
 
-#: standard input:1808
+#: standard input:1973
 msgid "Modify Patient Information"
 msgstr "Patienteninformationen ändern"
 
-#: standard input:1811
+#: standard input:1976
 msgid "Encounter Console"
 msgstr "Patientenkontakt-Pult"
 
-#: standard input:1817
+#: standard input:1982
+msgid "Remove Patient"
+msgstr "Patient entfernen"
+
+#: standard input:1985
 msgid "message(s) in your box."
 msgstr "Nachricht(en) in Ihrer Mailbox."
 
-#: standard input:1820
+#: standard input:1988
 msgid "No messages in your box."
 msgstr "Keine Nachrichten in Ihrer Mailbox."
 
-#: standard input:1823
+#: standard input:1991
 msgid "Messages"
 msgstr "Nachrichten"
 
-#: standard input:1826
+#: standard input:1994 standard input:3065
 msgid "Scanned Document"
 msgstr "gescanntes Dokument"
 
-#: standard input:1829
+#: standard input:1997
 msgid "Room Equipment"
 msgstr "Raumausstattung"
 
-#: standard input:1832
+#: standard input:2000
 msgid "You must enter an equipment name."
 msgstr "Sie müssen einen Namen für die Einrichtung angeben."
 
-#: standard input:1838 standard input:2468
+#: standard input:2006 standard input:2666
 msgid "Equipment"
 msgstr "Einrichtung"
 
-#: standard input:1847 standard input:2360
+#: standard input:2015 standard input:2558
 msgid "You must enter a status."
 msgstr "Sie müssen einen Status angeben."
 
-#: standard input:1859
+#: standard input:2027
 msgid "FreeMED Installation Wizard"
 msgstr "FreeMED Installationsassistent"
 
-#: standard input:1862 standard input:1877
+#: standard input:2030 standard input:2045
 msgid "Database name has not been set."
 msgstr "Der Datenbankname wurde nicht eingestellt."
 
-#: standard input:1865 standard input:1880
+#: standard input:2033 standard input:2048
 msgid "Username has not been set."
 msgstr "Der Benutzername wurde nicht eingestellt."
 
-#: standard input:1868 standard input:1886
+#: standard input:2036 standard input:2054
 msgid "Password do not match."
 msgstr "Die Passwörter stimmen nicht überein."
 
-#: standard input:1871 standard input:1895 standard input:1904
-#: standard input:1913
+#: standard input:2039 standard input:2063 standard input:2072
+#: standard input:2081
 msgid "Please try again, data error."
 msgstr "Fehler - Bitte erneut versuchen."
 
-#: standard input:1874
+#: standard input:2042
 msgid "Credentials are not valid."
 msgstr "Eingegebene Daten sind ungültig"
 
-#: standard input:1883
+#: standard input:2051
 msgid "Password has not been set."
 msgstr "Das Passwort wurde nicht eingestellt."
 
-#: standard input:1889
+#: standard input:2057
 msgid "Passwords do not match."
 msgstr "Die Passwörter stimmen nicht überein."
 
-#: standard input:1892
+#: standard input:2060
 msgid "Creating configuration file"
 msgstr "Erstelle Konfigurationsdatei"
 
-#: standard input:1898
+#: standard input:2066
 msgid "Settings creation failed."
 msgstr "Erstellung der Einstellungen fehlgeschlagen."
 
-#: standard input:1901
+#: standard input:2069
 msgid "Initializing database"
 msgstr "Initialisiere die Datenbank"
 
-#: standard input:1907 standard input:1916
+#: standard input:2075 standard input:2084
 msgid "Failed to create the database."
 msgstr "Datenbankerstellung fehlgeschlagen."
 
-#: standard input:1910
+#: standard input:2078
 msgid "Making FreeMED usable"
 msgstr "FreeMED benutzbar machen"
 
-#: standard input:1919
+#: standard input:2087
 msgid "Installation completed."
 msgstr "Installation abgeschlossen"
 
-#: standard input:1922
+#: standard input:2090
 msgid "Click here to start using FreeMED"
 msgstr "Klicken Sie hier um mit der Benutzung von FreeMED zu beginnen"
 
-#: standard input:1925
+#: standard input:2093
 msgid "Next"
 msgstr "Weiter"
 
-#: standard input:1928
+#: standard input:2096
 msgid "Previous"
 msgstr "Zurück"
 
-#: standard input:1934
+#: standard input:2102
 msgid ""
 "We have detected that your PHP installation either does not have support for "
 "MySQL or does not have that support enabled. Please reconfigure your PHP "
@@ -1659,7 +1864,7 @@ msgstr ""
 "oder dieser deaktiviert ist. Bitte konfigurieren Sie Ihre PHP-Installation "
 "erneut - anschließend starten Sie bitte diesen Assistenten erneut."
 
-#: standard input:1937
+#: standard input:2105
 msgid ""
 "Please install or enable MySQL support in your PHP installation, then reload "
 "this wizard to continue."
@@ -1667,63 +1872,63 @@ msgstr ""
 "Installieren bzw. aktivieren Sie MySQL-Unterstützung in Ihrer PHP-"
 "Installation. Anschließend starten Sie bitte diesen Assistenten neu."
 
-#: standard input:1940
+#: standard input:2108
 msgid ""
 "Please follow the instructions on this pane and reload the wizard to proceed."
 msgstr ""
 "Bitte folgen Sie den Anweisungen auf dieser Seite und laden Sie anschließend "
 "den Assistenten neu um fortzufahren."
 
-#: standard input:1943
+#: standard input:2111
 msgid "Database Configuration"
 msgstr "Datenbankeinstellungen"
 
-#: standard input:1946
+#: standard input:2114
 msgid ""
 "Please configure these options to reflect your SQL server configuration."
 msgstr ""
 "Bitte geben Sie hier die Daten ein, sodass FreeMED mit Ihrem SQL-Server "
 "kommunizieren kann."
 
-#: standard input:1949
+#: standard input:2117
 msgid "Database Engine"
 msgstr "Datenbanktyp"
 
-#: standard input:1952
+#: standard input:2120
 msgid "Host"
 msgstr "Host"
 
-#: standard input:1955 standard input:2180
+#: standard input:2123 standard input:2351
 msgid "Username"
 msgstr "Benutzername"
 
-#: standard input:1961
+#: standard input:2129
 msgid "Password (confirm)"
 msgstr "Passwort bestätigen"
 
-#: standard input:1964
+#: standard input:2132
 msgid "Database Name"
 msgstr "Datenbankname"
 
-#: standard input:1970
+#: standard input:2137
 msgid "MySQL username"
 msgstr "MySQL-Benutzername"
 
-#: standard input:1973
+#: standard input:2140
 msgid "MySQL password"
 msgstr "MySQL-Passwort"
 
-#: standard input:1976
+#: standard input:2143
 msgid ""
 "Duplicate of the MySQL password field, to ensure that you meant to type that "
 "password."
 msgstr "MySQL-Passwort bestätigen"
 
-#: standard input:1979
+#: standard input:2146
 msgid "Administration Configuration"
 msgstr "Administrationseinstellungen"
 
-#: standard input:1982
+#: standard input:2149
 msgid ""
 "Please configure the administrative account for this system. We recommend "
 "that you use the name \"admin\", but please select a relatively complex "
@@ -1735,660 +1940,961 @@ msgstr ""
 "Zugriff auf die Installation hat und somit Eindringlinge großen Schaden "
 "anrichten können."
 
-#: standard input:1985
+#: standard input:2152
 msgid "Administrative Account"
 msgstr "Administratorkonto"
 
-#: standard input:1988
+#: standard input:2155
 msgid "Administrative Password"
 msgstr "Administrator-Passwort"
 
-#: standard input:1991
+#: standard input:2158
 msgid "Administrative Password (confirm)"
 msgstr "Administrator-Passwort bestätigen"
 
-#: standard input:1997
+#: standard input:2164
 msgid ""
 "Please choose the configuration options which best fit your system needs."
 msgstr "Bitte wählen Sie die Optionen, welche zu Ihrem System am besten passen."
 
-#: standard input:2000 standard input:2003
+#: standard input:2167 standard input:2170
 msgid "Installation Name"
 msgstr "Installations-Name"
 
-#: standard input:2006
+#: standard input:2173
 msgid "Default Language"
 msgstr "Standardsprache"
 
-#: standard input:2009
+#: standard input:2176
 msgid "Scheduler Start Time"
 msgstr "Kalender - Startzeit"
 
-#: standard input:2012
+#: standard input:2179
 msgid "Scheduler End Time"
 msgstr "Kalender - Endzeit"
 
-#: standard input:2015
+#: standard input:2182
 msgid "Installing ..."
 msgstr "Installiere ..."
 
-#: standard input:2018 standard input:2219 standard input:2336
+#: standard input:2185 standard input:2390 standard input:2534
 msgid "Facility"
 msgstr "Anlage"
 
-#: standard input:2024
+#: standard input:2191
 msgid "You must enter an address."
 msgstr "Sie müssen eine Adresse angeben."
 
-#: standard input:2027
+#: standard input:2194
 msgid "You must enter a city and postal code."
 msgstr "Sie müssen einen Ort und eine Postleitzahl angeben."
 
-#: standard input:2033
+#: standard input:2200
 msgid "You must enter a place of service code."
 msgstr "Sie müssen den Code für einen Behandlungsort angeben."
 
-#: standard input:2036 standard input:2237 standard input:2372
+#: standard input:2203 standard input:2414 standard input:2570
 msgid "Primary Information"
 msgstr "Primäre Informationen"
 
-#: standard input:2039
+#: standard input:2206
 msgid "Facility Name"
 msgstr "Anlagenname"
 
-#: standard input:2042
+#: standard input:2209
 msgid "Address (Line 1)"
 msgstr "Adresszeile 1"
 
-#: standard input:2045
+#: standard input:2212
 msgid "Address (Line 2)"
 msgstr "Adresszeile 2"
 
-#: standard input:2048
+#: standard input:2215
 msgid "City, State, Zip"
 msgstr "Stadt, Staat, Postleitzahl"
 
-#: standard input:2051
+#: standard input:2218
 msgid "Country"
 msgstr "Land"
 
-#: standard input:2054
+#: standard input:2221 standard input:3269
 msgid "Details"
 msgstr "Details"
 
-#: standard input:2060
+#: standard input:2227
 msgid "Default Provider"
 msgstr "Standardauswahl - Behandler"
 
-#: standard input:2063
+#: standard input:2230
 msgid "Place of Service Code"
 msgstr "Ort der erbrachten Leistung"
 
-#: standard input:2066
+#: standard input:2233
 msgid "Employer Identification Number"
 msgstr "Arbeitgeber-ID"
 
-#: standard input:2069
+#: standard input:2236
 msgid "Rendering NPI Number"
 msgstr "NPI-Nummer anhängen"
 
-#: standard input:2072
+#: standard input:2239
 msgid "Employer Taxonomy Number"
 msgstr "Taxonomienummer"
 
-#: standard input:2075
+#: standard input:2242
 msgid "Internal or External Facility"
 msgstr "Interne oder Externe Anlage"
 
-#: standard input:2078
+#: standard input:2245
 msgid "Internal"
 msgstr "Intern"
 
-#: standard input:2081
+#: standard input:2248
 msgid "External"
 msgstr "Extern"
 
-#: standard input:2084 standard input:2261
-msgid "Contact"
-msgstr "Kontakt"
-
-#: standard input:2087
+#: standard input:2254
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: standard input:2090
+#: standard input:2257
 msgid "Fax Number"
 msgstr "Faxnummer"
 
-#: standard input:2096
+#: standard input:2263
 msgid "Electronic Billing"
 msgstr "Elektronische Verrechnung"
 
-#: standard input:2099
+#: standard input:2266
 msgid "X12 Identifier"
 msgstr "X12-ID"
 
-#: standard input:2102
+#: standard input:2269
 msgid "X12 Identifier Type"
 msgstr "X12-ID Typ"
 
-#: standard input:2105
+#: standard input:2278
 msgid "Both procedures and diagnoses must be present to create a superbill."
 msgstr ""
 "Sie müssen sowohl  Arbeitsschritte als auch Diagnosen protokollieren um eine "
 "Vorab-Rechnung zu erstellen."
 
-#: standard input:2108
+#: standard input:2281
 msgid "Added superbill."
 msgstr "Vorab-Rechnung hinzugefügt."
 
-#: standard input:2111
+#: standard input:2284
 msgid "Patient Encounter Console"
 msgstr "Patientenkontakt-Pult"
 
-#: standard input:2120
+#: standard input:2293
 msgid "Date of Birth / Age"
 msgstr "Geburtsdatum / Alter"
 
-#: standard input:2123
+#: standard input:2296
 msgid "years old"
 msgstr "Jahre alt"
 
-#: standard input:2132 standard input:2135
+#: standard input:2304 standard input:2307
 msgid "Superbill"
 msgstr "Vorab-Rechnung"
 
-#: standard input:2141
+#: standard input:2313 standard input:2981
 msgid "Diagnoses"
 msgstr "Diagnose"
 
-#: standard input:2144
+#: standard input:2316 standard input:2978
 msgid "Procedures"
 msgstr "Behandlungsschritte"
 
-#: standard input:2147
+#: standard input:2319
 msgid "Commit Superbill"
 msgstr "Vorab-Rechnung hinzufügen"
 
-#: standard input:2150
+#: standard input:2322
 msgid "Appointments"
 msgstr "Termine"
 
-#: standard input:2153
+#: standard input:2325
 msgid "Recent Notes"
 msgstr "Letzte Notizen"
 
-#: standard input:2159
+#: standard input:2330
 msgid "Are you sure you want to remove this tag?"
 msgstr "Sind Sie sicher, dass Sie diesen Datensatz löschen wollen?"
 
-#: standard input:2165
+#: standard input:2336
 msgid "Patient Tags"
 msgstr "Patienten-Label"
 
-#: standard input:2177
+#: standard input:2348
 msgid "User"
 msgstr "Benutzer"
 
-#: standard input:2186
+#: standard input:2357
 msgid "Password (verify)"
 msgstr "Passwort bestätigen"
 
-#: standard input:2192
+#: standard input:2363
 msgid "User Type"
 msgstr "Benutzertyp"
 
-#: standard input:2195
+#: standard input:2366
 msgid "Physician"
 msgstr "Arzt"
 
-#: standard input:2198
+#: standard input:2369
 msgid "Miscellaneous"
 msgstr "Sonstige"
 
-#: standard input:2201
+#: standard input:2372
 msgid "Actual Provider"
 msgstr "derzeitiger Behandelnder"
 
-#: standard input:2210
+#: standard input:2381
 msgid "Provider Groups"
 msgstr "Behandler-Gruppen"
 
-#: standard input:2222
+#: standard input:2393
 msgid "Providers"
 msgstr "Behandler"
 
-#: standard input:2234 standard input:2369 standard input:2495
+#: standard input:2396
+msgid "NON PATIENT APPOINTMENT"
+msgstr "KEIN PATIENTEN-TERMIN"
+
+#: standard input:2399
+msgid "You must select a valid appointment duration."
+msgstr "Sie müssen eine gültige Dauer eingeben."
+
+#: standard input:2411 standard input:2567 standard input:2693
 msgid "You must enter a valid name."
 msgstr "Sie müssen einen gültigen Namen eingeben."
 
-#: standard input:2249
+#: standard input:2426
 msgid "Practice Name"
 msgstr "Name der Praxis"
 
-#: standard input:2255
+#: standard input:2432
 msgid "Provider Internal / External"
 msgstr "Behandler Intern / Extern"
 
-#: standard input:2258
+#: standard input:2435
 msgid "Referring"
 msgstr "Zuweisend"
 
-#: standard input:2267
+#: standard input:2438
+msgid "Degrees / Certifications"
+msgstr "Akademische Grade / Zertifikate"
+
+#: standard input:2441
+msgid "Specialties"
+msgstr "Fachgebiete"
+
+#: standard input:2450
 msgid "Cellular Phone #"
 msgstr "Mobilnummer"
 
-#: standard input:2270
+#: standard input:2453
 msgid "Beeper / Pager #"
 msgstr "Piepser/Pagernummer"
 
-#: standard input:2285 standard input:2294
+#: standard input:2456
+msgid "Identifiers"
+msgstr "Identifikatoren"
+
+#: standard input:2459
+msgid "NPI"
+msgstr "NPI"
+
+#: standard input:2462
+msgid "CLIA"
+msgstr "CLIA"
+
+#: standard input:2465
+msgid "DEA Number"
+msgstr "DEA-Nummer"
+
+#: standard input:2468
+msgid "HL7 Identification"
+msgstr "HL7- Identifikation"
+
+#: standard input:2483 standard input:2492
 msgid "Type of Service"
 msgstr "Behandlungstyp"
 
-#: standard input:2300
+#: standard input:2498
 msgid "Superbill Template"
 msgstr "Vorlage für die Vorab-Rechnung"
 
-#: standard input:2306
+#: standard input:2504
 msgid "Diagnosis Codes"
 msgstr "Diagnosecodes"
 
-#: standard input:2309
+#: standard input:2507
 msgid "Procedure Codes"
 msgstr "Behandlungscodes"
 
-#: standard input:2312
+#: standard input:2510
 msgid "Claim Type"
 msgstr "Anspruchstyp"
 
-#: standard input:2327
+#: standard input:2525
 msgid "User Group"
 msgstr "Benutzergruppe"
 
-#: standard input:2339
+#: standard input:2537
 msgid "Group Members"
 msgstr "Mitglieder der Gruppe"
 
-#: standard input:2342
+#: standard input:2540
 msgid "Coverage Type"
 msgstr "Deckungstyp der Versicherung"
 
-#: standard input:2357
+#: standard input:2555
 msgid "Provider Status"
 msgstr "Behandler-Status"
 
-#: standard input:2366
+#: standard input:2564
 msgid "CPT Codes"
 msgstr "CPT Codes"
 
-#: standard input:2375
+#: standard input:2573
 msgid "Procedural Code"
 msgstr "Behandlungscode"
 
-#: standard input:2378
+#: standard input:2576
 msgid "Internal Description"
 msgstr "Interne Beschreibung"
 
-#: standard input:2381
+#: standard input:2579
 msgid "External Description"
 msgstr "Externe Beschreibung"
 
-#: standard input:2384
+#: standard input:2582
 msgid "Gender Restriction"
 msgstr "Geschlechtsspezifisch"
 
-#: standard input:2387
+#: standard input:2585
 msgid "No Gender Restriction"
 msgstr "Nicht geschlechtsspezifisch"
 
-#: standard input:2390
+#: standard input:2588
 msgid "Male Only"
 msgstr "Nur Männer"
 
-#: standard input:2393
+#: standard input:2591
 msgid "Female Only"
 msgstr "Nur Frauen"
 
-#: standard input:2396
+#: standard input:2594
 msgid "Taxed?"
 msgstr "versteuert?"
 
-#: standard input:2408
+#: standard input:2606
 msgid "Billing Information"
 msgstr "Verrechnungs-Informationen"
 
-#: standard input:2411
+#: standard input:2609
 msgid "Relative Value"
 msgstr "relativer Wert"
 
-#: standard input:2414
+#: standard input:2612
 msgid "Required Diagnoses"
 msgstr "Benötigte Diagnosen"
 
-#: standard input:2417
+#: standard input:2615
 msgid "Excluded Diagnoses"
 msgstr "Ausgeschlossene Diagnosen"
 
-#: standard input:2420
+#: standard input:2618
 msgid "Required Procedural Codes"
 msgstr "Benötigte Behandlungscodes"
 
-#: standard input:2423
+#: standard input:2621
 msgid "Excluded Procedural Codes"
 msgstr "Ausgeschlossene Behandlungscodes"
 
-#: standard input:2426
+#: standard input:2624
 msgid "Fee Profiles"
 msgstr "Kosten-Profile"
 
-#: standard input:2429
+#: standard input:2627
 msgid "Default Standard Fee"
 msgstr "Standard-Kosten"
 
-#: standard input:2432
+#: standard input:2630
 msgid "Default Type of Service"
 msgstr "Standard Behandlungstyp"
 
-#: standard input:2435
+#: standard input:2633
 msgid "Provider Specialties"
 msgstr "Fachgebiete"
 
-#: standard input:2438
+#: standard input:2636
 msgid "You must enter a specialty name."
 msgstr "Sie müssen den Namen des Fachgebiets eingeben."
 
-#: standard input:2444
+#: standard input:2642
 msgid "Specialty Name"
 msgstr "Name des Fachgebiets"
 
-#: standard input:2450
+#: standard input:2648
 msgid "Room"
 msgstr "Raum"
 
-#: standard input:2456
+#: standard input:2654
 msgid "You must select a place of service."
 msgstr "Sie müssen einen Behandlungsort eingeben."
 
-#: standard input:2471
+#: standard input:2669
 msgid "Surgery Enabled?"
 msgstr "Für Chirurgie benutzbar?"
 
-#: standard input:2480
+#: standard input:2678
 msgid "Booking Enabled?"
 msgstr "Raum für Termine buchbar?"
 
-#: standard input:2489
+#: standard input:2687
 msgid "IP Address"
 msgstr "IP-Adresse"
 
-#: standard input:2492
+#: standard input:2690
 msgid "Pharmacy"
 msgstr "Apotheke"
 
-#: standard input:2498
+#: standard input:2696
 msgid "Pharmacy Name"
 msgstr "Name der Apotheke"
 
-#: standard input:2501
-msgid "Address Line 1"
-msgstr "Adresszeile 1"
-
-#: standard input:2504
-msgid "Address Line 2"
-msgstr "Adresszeile 2"
-
-#: standard input:2510
+#: standard input:2708
 msgid "Transmission Method"
 msgstr "Übertragungsmethode"
 
-#: standard input:2519
+#: standard input:2717
+msgid "NCPDP SCRIPT"
+msgstr "NCPDP-Skript"
+
+#: standard input:2720
 msgid "Facsimile Number (as dialed)"
 msgstr "Faxnummer (wie sie gewählt wird)"
 
-#: standard input:2522
+#: standard input:2726
+msgid "NCPDP ID Number"
+msgstr "NCPDP-Nummer"
+
+#: standard input:2729
 msgid "Provider Certifications"
 msgstr "Zertifikate des Behandlers"
 
-#: standard input:2525
+#: standard input:2732
 msgid "You must enter a degree."
 msgstr "Sie müssen einen Grad eingeben."
 
-#: standard input:2528
+#: standard input:2735
 msgid "You must enter a name for this degree."
 msgstr "Sie müssen einen Namen für diesen Grad angeben."
 
-#: standard input:2531
+#: standard input:2738
 msgid "Degree Abbreviation"
 msgstr "Abkürzung des Grads"
 
-#: standard input:2534
+#: standard input:2741
 msgid "Degree Name"
 msgstr "Name des Grads"
 
-#: standard input:2537
+#: standard input:2744
 msgid "Photo"
 msgstr "Foto"
 
-#: standard input:2540 standard input:2609
+#: standard input:2747 standard input:2816
 msgid "Photographic Identification"
 msgstr "Erkennungsfoto"
 
-#: standard input:2543
+#: standard input:2750
 msgid "Moved appointment."
 msgstr "Termin verschoben."
 
-#: standard input:2546
+#: standard input:2753
 msgid "Booked appointment."
 msgstr "Termin gebucht."
 
-#: standard input:2549
+#: standard input:2756
 msgid "You must select a patient."
 msgstr "Sie müssen einen Patient auswählen."
 
-#: standard input:2552 standard input:2576
+#: standard input:2759 standard input:2783
 msgid "Move Appointment"
 msgstr "Termin verschieben"
 
-#: standard input:2585
+#: standard input:2792
 msgid "Go to Patient"
 msgstr "Zu Patient springen"
 
-#: standard input:2588
+#: standard input:2795
 msgid "Preview for "
 msgstr "Vorschau für"
 
-#: standard input:2615 standard input:2627
+#: standard input:2822 standard input:2834
 msgid "Immunization"
 msgstr "Impfung"
 
-#: standard input:2621
+#: standard input:2828
 msgid "Date of Immunization"
 msgstr "Datum der Impfung"
 
-#: standard input:2624
+#: standard input:2831
 msgid "Administering Provider"
 msgstr "Verabreichender Behandler"
 
-#: standard input:2630
+#: standard input:2837 standard input:3338 standard input:3353
 msgid "Route"
 msgstr "Verabreichungsart"
 
-#: standard input:2633
+#: standard input:2840
 msgid "Body Site"
 msgstr "Körperstelle"
 
-#: standard input:2636
+#: standard input:2843
 msgid "Previous Doses"
 msgstr "vorherige Dosen"
 
-#: standard input:2639
+#: standard input:2846
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: standard input:2642
+#: standard input:2849
 msgid "Lot Number"
 msgstr "Lot-Nummer"
 
-#: standard input:2645
+#: standard input:2852
 msgid "Recovery Status"
 msgstr "Wiederherstellungs-Status"
 
-#: standard input:2648
+#: standard input:2855
 msgid "Recovered"
 msgstr "Wiederhergestellt"
 
-#: standard input:2651
+#: standard input:2858
 msgid "Did not recover"
 msgstr "Nicht wiederhergestellt"
 
-#: standard input:2657
+#: standard input:2864
 msgid "Uploaded file"
 msgstr "Datei hochgeladen"
 
-#: standard input:2669
+#: standard input:2867
+msgid "Updated record."
+msgstr "Datensatz aktualisiert."
+
+#: standard input:2879
 msgid "Prescription"
 msgstr "Verschreibung"
 
-#: standard input:2675
+#: standard input:2885
 msgid "Date of Prescription"
 msgstr "Verschreibungsdatum"
 
-#: standard input:2678
+#: standard input:2888
 msgid "Prescribing Provider"
 msgstr "Ausstellender Behandler"
 
-#: standard input:2681
+#: standard input:2891 standard input:3332 standard input:3347
 msgid "Drug"
 msgstr "Arzneimittel"
 
-#: standard input:2684
-msgid "Drug Form"
-msgstr "Verabreichungsform"
+#: standard input:2894 standard input:3335 standard input:3350
+msgid "Dosage"
+msgstr "Dosierung"
 
-#: standard input:2687
+#: standard input:2897
 msgid "Quantity"
 msgstr "Menge"
 
-#: standard input:2690
+#: standard input:2903
 msgid "Substitutions"
 msgstr "Substitutionen"
 
-#: standard input:2693
-msgid "No Product selection Indicated"
-msgstr "Keine Produktauswahl indiziert"
+#: standard input:2906
+msgid "Substitution Allowed By Prescriber"
+msgstr "Austausch gegen Generika ist erlabt"
 
-#: standard input:2696
+#: standard input:2909
 msgid "Substitution Not Allowed By Prescriber"
 msgstr "Austausch gegen Generika ist zu unterlassen"
 
-#: standard input:2699
+#: standard input:2912
 msgid "Coverage Status"
 msgstr "Versicherungsstatus"
 
-#: standard input:2705
+#: standard input:2918
 msgid "Preferred"
 msgstr "Bevorzugt"
 
-#: standard input:2708
+#: standard input:2921
 msgid "Approved"
 msgstr "Bewährt"
 
-#: standard input:2711
+#: standard input:2924
 msgid "Prior Authorization Required"
 msgstr "Vorherige Absprache mit der Versicherung erforderlich"
 
-#: standard input:2714
+#: standard input:2927
 msgid "Non Formulary"
 msgstr "nicht kassenfrei"
 
-#: standard input:2717
+#: standard input:2930
 msgid "Not Reimbursed"
 msgstr "nicht gebührenfrei"
 
-#: standard input:2720
+#: standard input:2933
 msgid "Step Therapy Required"
 msgstr "schrittweise Therapie benötigt"
 
-#: standard input:2723
+#: standard input:2936
 msgid "Refills"
 msgstr "Nachfüllungen"
 
-#: standard input:2726
-msgid "As Needed"
-msgstr "wie benötigt"
-
-#: standard input:2729
-msgid "Refill for n Year(s)"
-msgstr "Nachfüllung für n Jahr(e)"
-
-#: standard input:2732
-msgid "Refill for n Month(s)"
-msgstr "Nachfüllung für n Monat(e)"
-
-#: standard input:2735
-msgid "Refill for n Week(s)"
-msgstr "Nachfüllung für n Woche(n)"
-
-#: standard input:2738
-msgid "Refill for n Day(s)"
-msgstr "Nachfüllung für n Tag(e)"
-
-#: standard input:2741
-msgid "Pharmacy Requested Refills"
-msgstr "von der Apotheke angeforderte Nachfüllung"
-
-#: standard input:2744
-msgid "Additional Refills Authorized"
-msgstr "Weitere Nachfüllungen erlaubt"
-
-#: standard input:2747
+#: standard input:2939
 msgid "Number of Refills"
 msgstr "Anzahl Nachfüllungen"
 
-#: standard input:2774
+#: standard input:2942
+msgid "Refill for n Year(s)"
+msgstr "Nachfüllung für n Jahr(e)"
+
+#: standard input:2945
+msgid "Refill for n Month(s)"
+msgstr "Nachfüllung für n Monat(e)"
+
+#: standard input:2948
+msgid "Refill for n Week(s)"
+msgstr "Nachfüllung für n Woche(n)"
+
+#: standard input:2951
+msgid "Refill for n Day(s)"
+msgstr "Nachfüllung für n Tag(e)"
+
+#: standard input:2954
+msgid "Pharmacy Requested Refills"
+msgstr "von der Apotheke angeforderte Nachfüllung"
+
+#: standard input:2957
+msgid "Additional Refills Authorized"
+msgstr "Weitere Nachfüllungen erlaubt"
+
+#: standard input:2960
+msgid "As Needed"
+msgstr "wie benötigt"
+
+#: standard input:2963
+msgid "Sig"
+msgstr "Unterschrift"
+
+#: standard input:2996
 msgid "Procedural Codes"
 msgstr "Behandlungscodes"
 
-#: standard input:2780
-msgid "Confirm"
-msgstr "Bestätigen"
+#: standard input:2999
+msgid "Coverage"
+msgstr "Deckung"
 
-#: standard input:2786
+#: standard input:3002
+msgid "Authorization"
+msgstr "Authorisierung"
+
+#: standard input:3008
+msgid "Process Superbill"
+msgstr "Vorab-Rechnung verarbeiten"
+
+#: standard input:3014 standard input:3113
 msgid "Completed"
 msgstr "Fertiggestellt"
 
-#: standard input:2789
+#: standard input:3017
 msgid "Daily workflow not completed"
 msgstr "Arbeitsablauf nicht abgeschlossen"
 
-#: standard input:2792
+#: standard input:3020
 msgid "Workflow"
 msgstr "Arbeitsablauf"
 
-#: standard input:2795
+#: standard input:3023
 msgid "DICOM"
 msgstr "DICOM"
 
-#: standard input:2798
+#: standard input:3026
 msgid "Study"
 msgstr "Aufnahmeserie"
 
-#: standard input:2801
+#: standard input:3029
 msgid "NO DESCRIPTION"
 msgstr "KEINE BESCHREIBUNG"
 
-#: standard input:2807
+#: standard input:3035
 msgid "Institution"
 msgstr "Institution"
 
-#: standard input:2810
+#: standard input:3038
 msgid "Storage"
 msgstr "Speicher"
 
-#: standard input:2813
+#: standard input:3041
 msgid "Open DICOM Image"
 msgstr "DICOM Abbildung öffnen"
+
+#: standard input:3053
+msgid "Loaded template."
+msgstr "Vorlage geladen."
+
+#: standard input:3089
+msgid "Patient Correspondence"
+msgstr "Patienten-Korrespondenz"
+
+#: standard input:3116
+msgid "Tasks not completed"
+msgstr "Aufgaben nicht erledigt"
+
+#: standard input:3119
+msgid "Tasks"
+msgstr "Aufgaben"
+
+#: standard input:3128
+msgid "No active items."
+msgstr "Keine aktiven Elemente."
+
+#: standard input:3131
+msgid "Patient Tasks"
+msgstr "Patienten-Aufgaben"
+
+#: standard input:3134
+msgid "Saved preferences."
+msgstr "Einstellungen gespeichert."
+
+#: standard input:3137
+msgid "Failed to change preferences."
+msgstr "Ändern der Einstellungen fehlgeschlagen."
+
+#: standard input:3140
+msgid "User Preferences"
+msgstr "Benutzereinstellungen"
+
+#: standard input:3146
+msgid "System Task Inbox"
+msgstr "Taskleisten-Infobox"
+
+#: standard input:3161
+msgid "Patient Link"
+msgstr "Patienten-Verknüpfung"
+
+#: standard input:3167
+msgid "Link Type"
+msgstr "Verknüpfungstyp"
+
+#: standard input:3173
+msgid "Associate"
+msgstr "Partner"
+
+#: standard input:3176
+msgid "Brother"
+msgstr "Bruder"
+
+#: standard input:3179
+msgid "Care giver"
+msgstr "Pfleger"
+
+#: standard input:3182
+msgid "Child"
+msgstr "Kind"
+
+#: standard input:3185
+msgid "Handicapped dependent"
+msgstr "abhängiger Behinderter"
+
+#: standard input:3188
+msgid "Life partner"
+msgstr "LebensgefährtIn"
+
+#: standard input:3191
+msgid "Emergency contact"
+msgstr "Notfallkontakt"
+
+#: standard input:3194
+msgid "Employee"
+msgstr "Angestellte/r"
+
+#: standard input:3197
+msgid "Employer"
+msgstr "Arbeitgeber"
+
+#: standard input:3200
+msgid "Extended family"
+msgstr "Erweiterte Familie"
+
+#: standard input:3203
+msgid "Foster child"
+msgstr "Pflegekind"
+
+#: standard input:3206
+msgid "Friend"
+msgstr "Freund"
+
+#: standard input:3209
+msgid "Father"
+msgstr "Vater"
+
+#: standard input:3212
+msgid "Grandchild"
+msgstr "EnkelIn"
+
+#: standard input:3215
+msgid "Guardian"
+msgstr "Vormund"
+
+#: standard input:3218
+msgid "Grandparent"
+msgstr "Großeltern"
+
+#: standard input:3221
+msgid "Manager"
+msgstr "Manager"
+
+#: standard input:3224
+msgid "Mother"
+msgstr "Mutter"
+
+#: standard input:3227
+msgid "Natural child"
+msgstr "leibliches Kind"
+
+#: standard input:3230
+msgid "None"
+msgstr "Keine"
+
+#: standard input:3233
+msgid "Other adult"
+msgstr "Anderer Erwachsener"
+
+#: standard input:3236
+msgid "Other"
+msgstr "Anderer"
+
+#: standard input:3239
+msgid "Owner"
+msgstr "Eigentümer"
+
+#: standard input:3242
+msgid "Parent"
+msgstr "Elternteil"
+
+#: standard input:3245
+msgid "Stepchild"
+msgstr "Stiefkind"
+
+#: standard input:3251
+msgid "Sibling"
+msgstr "Geschwister"
+
+#: standard input:3254
+msgid "Sister"
+msgstr "Schwester"
+
+#: standard input:3257
+msgid "Spouse"
+msgstr "EhegattIn"
+
+#: standard input:3260
+msgid "Trainer"
+msgstr "Trainer"
+
+#: standard input:3263
+msgid "Ward of court"
+msgstr "Schutzbefohlene/r"
+
+#: standard input:3266
+msgid "Link to Patient"
+msgstr "Verknüpfung zu Patient"
+
+#: standard input:3272
+msgid "Insurance Authorization"
+msgstr "Versicherungs-Bewilligung"
+
+#: standard input:3278
+msgid "Starting Date"
+msgstr "Startdatum"
+
+#: standard input:3281
+msgid "Ending Date"
+msgstr "Enddatum"
+
+#: standard input:3284
+msgid "Authorization Number"
+msgstr "Authorisationsnummer"
+
+#: standard input:3287
+msgid "Authorization Type"
+msgstr "Authorisationstyp"
+
+#: standard input:3290
+msgid "NONE SELECTED"
+msgstr "NICHTS AUSGEWÄHLT"
+
+#: standard input:3296
+msgid "Insurance Company"
+msgstr "Versicherungsunternehmen"
+
+#: standard input:3299
+msgid "Certificate of Medical Necessity"
+msgstr "Zertifikat medizinischer Notwendigkeit"
+
+#: standard input:3302
+msgid "Surgical Authorization"
+msgstr "Operationserlaubnis"
+
+#: standard input:3305
+msgid "Worker's Compensation"
+msgstr "Arbeiterkompensation"
+
+#: standard input:3308
+msgid "Consultation"
+msgstr "Konsultation"
+
+#: standard input:3311
+msgid "Authorizing Provider"
+msgstr "Authorisierender Behandler"
+
+#: standard input:3314
+msgid "Authorizing Insurance Company"
+msgstr "Authorisierendes Versicherungsunternehmen"
+
+#: standard input:3317
+msgid "Number of Visits"
+msgstr "Anzahl an Besuchen"
+
+#: standard input:3320
+msgid "Comment"
+msgstr "Kommentar"
+
+#: standard input:3329
+msgid "Medications"
+msgstr "Medikationen"
+
+#: standard input:3341
+msgid "Add Medication"
+msgstr "Medikation hinzufügen"
+
+#: standard input:3344
+msgid "Remove Medication"
+msgstr "Medikation entfernen"
+
+#~ msgid "Drug Form"
+#~ msgstr "Verabreichungsform"
+
+#~ msgid "No Product selection Indicated"
+#~ msgstr "Keine Produktauswahl indiziert"
+
+#~ msgid "Confirm"
+#~ msgstr "Bestätigen"
 
 #~ msgid "No work lists for today."
 #~ msgstr "Keine Tätigkeitslisten für den heutigen Tag verfügbar."
