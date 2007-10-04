@@ -55,6 +55,7 @@ if (!file_exists(dirname(__FILE__)."/ui/".strtolower(${layout})."/controller/con
 	if ( CallMethod ( 'org.freemedsoftware.public.Login.LoggedIn' ) ) {
 		$controller->action ( $piece );
 	} else {
+		session_regenerate_id( );
 		$controller->load_default ( );
 	}
 	exit;
