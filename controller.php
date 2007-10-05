@@ -37,6 +37,8 @@ unset ( $piece );
 list ( $_garbage_, $layout, $piece ) = explode ('/', $_SERVER['PATH_INFO']);
 $layout = ucfirst(strtolower($layout));
 
+Header( 'Content-Type: text/html; charset=' . $GLOBALS['ISOSET'] );
+
 // Sanity checking
 if (!ereg("^[[:alpha:]]+$", $layout )) {
 	print "Hack attempt, dying ( '${layout}' given ).";

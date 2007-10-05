@@ -34,6 +34,7 @@ $__domains = array (
 
 _setlocale ( LC_MESSAGES, $lang );
 
+$GLOBALS['ISOSET'] = language2isoset ( $lang );
 foreach ( $__domains AS $_v ) {
 	_bindtextdomain ( $_v, $locale_dir );
 	_bind_textdomain_codeset ( $_v, language2isoset ( $lang ) );

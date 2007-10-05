@@ -126,7 +126,6 @@ if (!defined('SESSION_DISABLE')) {
 }
 // ***************************************************************
 
-include_once (dirname(__FILE__)."/iso-set.php");         // ISO set handler
 include_once (dirname(__FILE__)."/API.php");             // API functions
 include_once (dirname(__FILE__)."/macros.php");          // macros/contants
 
