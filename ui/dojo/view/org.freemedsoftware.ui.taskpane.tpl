@@ -27,7 +27,7 @@
 	style="overflow: hidden; width: 100%; height: 100%;"
 	containerNodeClass="accordionBody">
 
-	<div dojoType="ContentPane" selected="true" label="<!--{t}-->System<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" selected="true" label="<!--{t|escape:'javascript'}-->System<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.dashboard', event);">
 			<img src="<!--{$htdocs}-->/images/teak/dashboard.32x32.png" height="32" width="32" border="0" /><br/>
@@ -62,7 +62,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" label="<!--{t}-->Patients<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Patients<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.search?clear=1', event);">
 			<img src="<!--{$htdocs}-->/images/teak/chart_search.32x32.png" height="32" width="32" border="0" /><br/>
@@ -87,7 +87,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" label="<!--{t}-->Documents<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Documents<!--{/t}-->" class="basicPane">
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.documents.unfiled', event);">
 			<img src="<!--{$htdocs}-->/images/teak/unfiled.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Unfiled<!--{/t}--> (<span id="taskPaneUnfiledCount"><!--{method namespace='org.freemedsoftware.module.UnfiledDocuments.GetCount'}--></span>)
@@ -100,7 +100,7 @@
 	</div>
 
 	<!--{acl category="financial" permission="menu"}-->
-	<div dojoType="ContentPane" label="<!--{t}-->Billing<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Billing<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.billing.accountsreceivable', event);">
 			<img src="<!--{$htdocs}-->/images/teak/accounts_receivable.32x32.png" height="32" width="32" border="0" /><br/>
@@ -132,7 +132,7 @@
 	<!--{/acl}-->
 
 	<!--{acl category="reporting" permission="menu"}-->
-	<div dojoType="ContentPane" label="<!--{t}-->Reporting<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Reporting<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.reporting.engine', event);">
 			<img src="<!--{$htdocs}-->/images/teak/report_engine.32x32.png" height="32" width="32" border="0" /><br/>
@@ -148,7 +148,7 @@
 	</div>
 	<!--{/acl}-->
 
-	<div dojoType="ContentPane" label="<!--{t}-->Utilities<!--{/t}-->" class="basicPane">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Utilities<!--{/t}-->" class="basicPane">
 
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.supportdata', event);">
 			<img src="<!--{$htdocs}-->/images/teak/modules.32x32.png" height="32" width="32" border="0" /><br/>

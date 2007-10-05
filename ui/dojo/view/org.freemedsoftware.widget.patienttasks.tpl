@@ -65,11 +65,11 @@
 						var bHh = new Array ();
 
 						bHh[0] = document.createElement( 'th' );
-						bHh[0].innerHTML = "<!--{t}-->Date<!--{/t}-->";
+						bHh[0].innerHTML = "<!--{t|escape:'javascript'}-->Date<!--{/t}-->";
 						bHr.appendChild( bHh[0] );
 
 						bHh[1] = document.createElement( 'th' );
-						bHh[1].innerHTML = "<!--{t}-->Type<!--{/t}-->";
+						bHh[1].innerHTML = "<!--{t|escape:'javascript'}-->Type<!--{/t}-->";
 						bHr.appendChild( bHh[1] );
 
 						bH.appendChild( bHr );
@@ -99,7 +99,7 @@
 						b.appendChild( bB );
 						document.getElementById('patientTaskContainerInnerDiv').appendChild( b );
 					} else {
-						var buf = "<center><!--{t}-->No active items.<!--{/t}--></center>";
+						var buf = "<center><!--{t|escape:'javascript'}-->No active items.<!--{/t}--></center>";
 						document.getElementById('patientTaskContainerInnerDiv').innerHTML = buf;
 
 					}
@@ -121,7 +121,7 @@
 
 </script>
 <div id="patientTaskContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center" width="100%" class="patientEmrWidgetHeader" onClick="toggleDiv( 'patientTaskContainerInnerDiv' );"><!--{t}-->Patient Tasks<!--{/t}--></div>
+	<div align="center" width="100%" class="patientEmrWidgetHeader" onClick="toggleDiv( 'patientTaskContainerInnerDiv' );"><!--{t|escape:'javascript'}-->Patient Tasks<!--{/t}--></div>
 	<div id="patientTaskContainerInnerDiv"></div>
 </div>
 

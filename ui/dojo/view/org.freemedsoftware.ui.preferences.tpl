@@ -162,9 +162,9 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.modules.UserPreferences.SetValues',
 				load: function( type, data, evt ) {
 					if ( data ) {
-						freemedMessage( "<!--{t}-->Saved preferences.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Saved preferences.<!--{/t}-->", 'INFO' );
 					} else {
-						freemedMessage( "<!--{t}-->Failed to change preferences.<!--{/t}-->", 'ERROR' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Failed to change preferences.<!--{/t}-->", 'ERROR' );
 					}
 				},
 				mimetype: 'text/json'

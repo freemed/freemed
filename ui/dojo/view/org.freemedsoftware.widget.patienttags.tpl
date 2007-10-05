@@ -79,7 +79,7 @@
 			});
 		}, // end function addTag
 		expireTag: function ( obj, tag ) {
-			if (!confirm("<!--{t}-->Are you sure you want to remove this tag?<!--{/t}-->")) { return false; }
+			if (!confirm("<!--{t|escape:'javascript'}-->Are you sure you want to remove this tag?<!--{/t}-->")) { return false; }
 			dojo.io.bind({
 				method: 'GET',
 				content: {
@@ -100,7 +100,7 @@
 	// Autoloading routine
 	_container_.addOnLoad(function(){
 		// Show loading
-		document.getElementById('patientTagContainerInnerDiv').innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" /> <b><!--{t}-->Loading<!--{/t}--></b> ... ';
+		document.getElementById('patientTagContainerInnerDiv').innerHTML = '<img src="<!--{$htdocs}-->/images/loading.gif" border="0" /> <b><!--{t|escape:'javascript'}-->Loading<!--{/t}--></b> ... ';
 		dojo.io.bind({
 			method: 'GET',
 			content: {
@@ -136,7 +136,7 @@
 
 </script>
 <div id="patientTagContainerDiv" class="patientEmrWidgetContainer" style="<!--{if $float}-->float:<!--{$float}-->;<!--{/if}-->">
-	<div align="center" width="100%" class="patientEmrWidgetHeader" onClick="toggleDiv( 'patientTagHoldingContainer' );"><b><!--{t}-->Patient Tags<!--{/t}--></b></div>
+	<div align="center" width="100%" class="patientEmrWidgetHeader" onClick="toggleDiv( 'patientTagHoldingContainer' );"><b><!--{t|escape:'javascript'}-->Patient Tags<!--{/t}--></b></div>
 	<div id="patientTagHoldingContainer">
 	<div id="patientTagContainerInnerDiv"></div>
 	<div id="formDiv">

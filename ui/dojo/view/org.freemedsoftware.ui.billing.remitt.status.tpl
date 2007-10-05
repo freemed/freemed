@@ -42,19 +42,19 @@
 				var hRow = document.createElement( 'tr' );
 				var hCells = new Array ( );
 				hCells[0] = document.createElement( 'th' );
-				hCells[0].innerHTML = "<!--{t}-->Mark<!--{/t}-->";
+				hCells[0].innerHTML = "<!--{t|escape:'javascript'}-->Mark<!--{/t}-->";
 				hRow.appendChild( hCells[0] );
 				hCells[1] = document.createElement( 'th' );
-				hCells[1].innerHTML = "<!--{t}-->Batch ID<!--{/t}-->";
+				hCells[1].innerHTML = "<!--{t|escape:'javascript'}-->Batch ID<!--{/t}-->";
 				hRow.appendChild( hCells[1] );
 				hCells[2] = document.createElement( 'th' );
-				hCells[2].innerHTML = "<!--{t}-->Format<!--{/t}-->";
+				hCells[2].innerHTML = "<!--{t|escape:'javascript'}-->Format<!--{/t}-->";
 				hRow.appendChild( hCells[2] );
 				hCells[3] = document.createElement( 'th' );
-				hCells[3].innerHTML = "<!--{t}-->Target<!--{/t}-->";
+				hCells[3].innerHTML = "<!--{t|escape:'javascript'}-->Target<!--{/t}-->";
 				hRow.appendChild( hCells[3] );
 				hCells[4] = document.createElement( 'th' );
-				hCells[4].innerHTML = "<!--{t}-->Status<!--{/t}-->";
+				hCells[4].innerHTML = "<!--{t|escape:'javascript'}-->Status<!--{/t}-->";
 				hRow.appendChild( hCells[4] );
 				hHead.appendChild( hRow );
 
@@ -91,7 +91,7 @@
 				}
 			} else {
 				// If nothing here, return to the menu
-				alert("<!--{t}-->No claims in process.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No claims in process.<!--{/t}-->");
 				freemedLoad( 'org.freemedsoftware.ui.billing.remitt' );
 			}
 		},

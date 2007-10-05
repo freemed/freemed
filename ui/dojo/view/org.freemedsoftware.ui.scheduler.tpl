@@ -105,7 +105,7 @@
 							endtime: dojo.date.toRfc3339( eDate ),
 							allday: false,
 							repeated: false,
-							title: ( d[i].patient ? ( d[i].patient + (d[i].note ? ' - <i>' + d[i].note + '</i>' : '' ) ) : ( d[i].note ? "<b>" + d[i].note + "</b>" : "<!--{t}-->NON PATIENT APPOINTMENT<!--{/t}-->" ) ) + ' [' + d[i].duration + 'm]',
+							title: ( d[i].patient ? ( d[i].patient + (d[i].note ? ' - <i>' + d[i].note + '</i>' : '' ) ) : ( d[i].note ? "<b>" + d[i].note + "</b>" : "<!--{t|escape:'javascript'}-->NON PATIENT APPOINTMENT<!--{/t}-->" ) ) + ' [' + d[i].duration + 'm]',
 							code: d[i].patient_id ? "freemedLoad('org.freemedsoftware.ui.patient.overview?patient=" + d[i].patient_id + "');" : '',
 							url: '',
 							body: d[i].note,
@@ -132,7 +132,7 @@
 			// Figure duration
 			var duration = dojo.date.fromRfc3339(eventObject.endtime).getTime() - dojo.date.fromRfc3339(eventObject.starttime).getTime();
 			if ( duration < 1000 ) {
-				alert( "<!--{t}-->You must select a valid appointment duration.<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->You must select a valid appointment duration.<!--{/t}-->" );
 				return false;
 			}
 			duration = duration / 60000;

@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.posname.length < 2 ) {
-		m += "<!--{t}-->You must enter a code.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a code.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.posdescrip.length < 2 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

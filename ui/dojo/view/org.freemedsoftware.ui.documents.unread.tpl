@@ -63,7 +63,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.UnreadDocuments.ReviewIntoRecord',
 				load: function( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Filed document in patient record.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Filed document in patient record.<!--{/t}-->", "INFO" );
 					o.resetForm();
 				},
 				mimetype: 'text/json'	
@@ -81,7 +81,7 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.SendToAnotherProvider",
 				load: function ( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Document moved to another provider.<!--{/t}-->", 'INFO' );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Document moved to another provider.<!--{/t}-->", 'INFO' );
 					dojo.widget.byId('sendToProviderDialog').hide();
 					o.resetForm();
 				},
@@ -89,7 +89,7 @@
 			});
 		},
 		deleteDocument: function ( ) {
-			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
+			var x = confirm("<!--{t|escape:'javascript'}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
 			if (x) {
 				dojo.io.bind({
 					method: 'POST',
@@ -98,7 +98,7 @@
 						param0: o.saveValue
 					},
 					error: function( type, data, event ) {
-						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+						alert("<!--{t|escape:'javascript'}-->The system was unable to complete your request at this time.<!--{/t}-->");
 					},
 					load: function( type, data, event ) {
 						o.resetForm();

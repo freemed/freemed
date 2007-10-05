@@ -28,7 +28,7 @@
 	var financialDemographics = {
 		handleResponse: function ( data ) {
 			if (data) {
-				freemedMessage( "<!--{t}-->Added demographics.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Added demographics.<!--{/t}-->", "INFO" );
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();

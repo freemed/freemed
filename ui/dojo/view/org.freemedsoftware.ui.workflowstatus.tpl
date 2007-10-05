@@ -65,7 +65,7 @@
 				url: "<!--{$relay}-->/org.freemedsoftware.module.workflowstatus.SetStatus",
 				load: function ( type, evt, data ) {
 					if ( data ) {
-						freemedMessage( "<!--{t}-->Workflow updated.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Workflow updated.<!--{/t}-->", 'INFO' );
 						var bImg = document.getElementById( 'workflow_status_img_' + hash[0] + '_' + hash[1] );
 						bImg.src = "<!--{$htdocs}-->/images/teak/check_go.16x16.png";
 					}
@@ -93,7 +93,7 @@
 			// Create header row
 			var hRow = dojo.byId( 'workflowStatusTableHeader' );
 			var hPatient = document.createElement( 'th' );
-			hPatient.innerHTML = "<!--{t}-->Patient<!--{/t}-->";
+			hPatient.innerHTML = "<!--{t|escape:'javascript'}-->Patient<!--{/t}-->";
 			hRow.appendChild( hPatient );
 			for ( var i=0; i<cols.length; i++ ) {
 				var hElement = document.createElement( 'th' );
@@ -122,7 +122,7 @@
 						} else {
 							// Not completed
 							var bLink = document.createElement( 'a' );
-							bLink.innerHTML = "<!--{t}-->Go<!--{/t}-->";
+							bLink.innerHTML = "<!--{t|escape:'javascript'}-->Go<!--{/t}-->";
 							bLink.onclick = w.onGoClick;
 							bLink.className = 'clickable';
 							bLink.id = 'workflow_status_go_' + d[i].patient_id + '_' + cols[j];

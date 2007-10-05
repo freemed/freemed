@@ -44,7 +44,7 @@
 			var s = dojo.widget.byId("<!--{$inject}-->").getValue();
 
 			// Ask the user for a name
-			var l = prompt( "<!--{t}-->Please enter a descriptive name for this template.<!--{/t}-->" );
+			var l = prompt( "<!--{t|escape:'javascript'}-->Please enter a descriptive name for this template.<!--{/t}-->" );
 			if ( l.length == 0 ) { return false; }
 
 			dojo.io.bind({
@@ -57,7 +57,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.LettersTemplates.add',
 				load: function ( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Added template.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Added template.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
 			});
@@ -68,7 +68,7 @@
 			var s = dojo.widget.byId("<!--{$inject}-->").getValue();
 			var l = dojo.widget.byId("<!--{$varname}-->_widget").getLabel();
                         if ( ! <!--{$varname}-->_namespace.usingTemplate ) {
-				alert( "<!--{t}-->You must load a template before updating it!<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->You must load a template before updating it!<!--{/t}-->" );
 				return false;
 			}
 
@@ -83,7 +83,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.LettersTemplates.mod',
 				load: function ( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Updated template.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Updated template.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
 			});
@@ -94,11 +94,11 @@
 			try {
 				v = document.getElementById('<!--{$varname}-->').value;
 			} catch (err) {
-				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No template was chosen!<!--{/t}-->");
 				return false;
 			}
 			if ( parseInt( v ) < 1 ) {
-				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No template was chosen!<!--{/t}-->");
 				return false;
 			}
 			<!--{$varname}-->_namespace.usingTemplate = parseInt( v );

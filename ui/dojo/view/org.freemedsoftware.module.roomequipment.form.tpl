@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.reqname.length < 2 ) {
-		m += "<!--{t}-->You must enter an equipment name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter an equipment name.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.reqdescrip.length < 2 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

@@ -31,7 +31,7 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Annotations.GetAnnotations',
 				content: { param0: <!--{$id}--> },
 				error: function ( ) {
-					document.getElementById('annotationContainerDiv').innerHTML = "<!--{t}-->Could not load annotations.<!--{/t}-->";
+					document.getElementById('annotationContainerDiv').innerHTML = "<!--{t|escape:'javascript'}-->Could not load annotations.<!--{/t}-->";
 				},
 				load: function( type, data, event ) {
 					var aD = document.getElementById('annotationContainerDiv');

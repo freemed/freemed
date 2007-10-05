@@ -32,7 +32,7 @@
 <!--{assign_block var='validation'}-->
 	/*
 	if ( content.var.length < 2 ) {
-		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
 		r = false;
 	}
 	*/

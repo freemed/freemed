@@ -38,11 +38,11 @@
 			// Verify form
 			var message = '';
 			if (document.getElementById('ptfname').value.length < 3) {
-				message += "<!--{t}-->No first name.<!--{/t}-->\n";
+				message += "<!--{t|escape:'javascript'}-->No first name.<!--{/t}-->\n";
 			}
 	
 			if (document.getElementById('ptlname').value.length < 2) {
-				message += "<!--{t}-->No last name.<!--{/t}-->\n";
+				message += "<!--{t|escape:'javascript'}-->No last name.<!--{/t}-->\n";
 			}
 	
 			if (message.length > 0) {
@@ -69,12 +69,12 @@
 				},
 				load: function(type, data, evt) {
 					if (data) {
-						freemedMessage( "<!--{t}-->Patient database updated.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Patient database updated.<!--{/t}-->", 'INFO' );
 						if ( parseInt( data ) > 0 ) {
 							pForm.commitAddressChanges( data );
 						}
 					} else {
-						alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
+						alert('<!--{t|escape:'javascript'}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
 						dojo.widget.byId('patientFormCommitChangesButton').enable();
 					}
 				},
@@ -101,7 +101,7 @@
 						param1: dojo.json.serialize( y )
 					},
 					load: function( type, data, evt ) {
-						freemedMessage( "<!--{t}-->Patient addresses updated.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Patient addresses updated.<!--{/t}-->", 'INFO' );
 						freemedLoad( '<!--{$controller}-->/org.freemedsoftware.ui.patient.overview?patient=' + parseInt( patientData ) );
 					},
 					mimetype: "text/json"
@@ -131,14 +131,14 @@
 						// Select boxes
 						dojo.widget.byId( 'ptsex' ).setValue( data.ptsex );
 						switch( data.ptsex ) {
-							case 'm': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t}-->Male<!--{/t}-->" ); break;
-							case 'f': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t}-->Female<!--{/t}-->" ); break;
-							case 't': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t}-->Transgendered<!--{/t}-->" ); break;
+							case 'm': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t|escape:'javascript'}-->Male<!--{/t}-->" ); break;
+							case 'f': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t|escape:'javascript'}-->Female<!--{/t}-->" ); break;
+							case 't': dojo.widget.byId( 'ptsex' ).setLabel( "<!--{t|escape:'javascript'}-->Transgendered<!--{/t}-->" ); break;
 							break;
 							default: break;
 						}
 					} else {
-						alert('<!--{t}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
+						alert('<!--{t|escape:'javascript'}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
 					}
 				},
 				mimetype: "text/json"
@@ -179,10 +179,10 @@
 				url: "<!--{$relay}-->/org.freemedsoftware.api.PatientInterface.CheckForDuplicatePatient",
 				load: function ( type, data, evt ) {
 					if (data) {
-						dMsg.innerHTML = "<!--{t}-->Patient exists in the system with ID<!--{/t}--> " + data;
+						dMsg.innerHTML = "<!--{t|escape:'javascript'}-->Patient exists in the system with ID<!--{/t}--> " + data;
 						
 					} else {
-						dMsg.innerHTML = "<!--{t}-->No duplicate patients found.<!--{/t}-->";
+						dMsg.innerHTML = "<!--{t|escape:'javascript'}-->No duplicate patients found.<!--{/t}-->";
 					}
 				},
 				mimetype: 'text/json'
@@ -267,7 +267,7 @@
 
 <!--{if $patient_form eq 'tab'}-->
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em;">
-	<div dojoType="ContentPane" id="patientDemographicsPane" label="<!--{t}-->Demographics<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientDemographicsPane" label="<!--{t|escape:'javascript'}-->Demographics<!--{/t}-->">
 <!--{else}-->
 	<div style="height: 30em; overflow-y: scroll;">
 	<h4><!--{t}-->Demographics<!--{/t}--></h4>
@@ -355,7 +355,7 @@
 
 <!--{if $patient_form eq 'tab'}-->
 	</div>
-	<div dojoType="ContentPane" id="patientAddressPane" label="<!--{t}-->Address<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientAddressPane" label="<!--{t|escape:'javascript'}-->Address<!--{/t}-->">
 <!--{else}-->
 	<h4><!--{t}-->Address<!--{/t}--></h4>
 <!--{/if}-->
@@ -452,7 +452,7 @@
 
 <!--{if $patient_form eq 'tab'}-->
 	</div>
-	<div dojoType="ContentPane" id="patientContactPane" label="<!--{t}-->Contact<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientContactPane" label="<!--{t|escape:'javascript'}-->Contact<!--{/t}-->">
 <!--{else}-->
 	<h4><!--{t}-->Contact<!--{/t}--></h4>
 <!--{/if}-->
@@ -493,7 +493,7 @@
 
 <!--{if $patient_form eq 'tab'}-->
 	</div>
-	<div dojoType="ContentPane" id="patientPersonalPane" label="<!--{t}-->Personal<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientPersonalPane" label="<!--{t|escape:'javascript'}-->Personal<!--{/t}-->">
 <!--{else}-->
 	<h4><!--{t}-->Personal<!--{/t}--></h4>
 <!--{/if}-->
@@ -537,7 +537,7 @@
 
 <!--{if $patient_form eq 'tab'}-->
 	</div>
-	<div dojoType="ContentPane" id="patientProviderPane" label="<!--{t}-->Provider<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientProviderPane" label="<!--{t|escape:'javascript'}-->Provider<!--{/t}-->">
 <!--{else}-->
 	<h4><!--{t}-->Provider<!--{/t}--></h4>
 <!--{/if}-->

@@ -86,7 +86,7 @@
 		deleteMessage: function ( ) {
 			var msg = this.getSelectedMessage();
 			if ( typeof msg == 'undefined' ) {
-				alert("<!--{t}-->A message must be selected.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->A message must be selected.<!--{/t}-->");
 			} else {
 				dojo.io.bind({
 					method: 'POST',
@@ -95,7 +95,7 @@
 					},
 					url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.del',
 					load: function( type, data, evt ) {
-						freemedMessage( "<!--{t}-->Message deleted successfully.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Message deleted successfully.<!--{/t}-->", 'INFO' );
 						o.loadMessages();
 					},
 					mimetype: "text/json"
@@ -110,7 +110,7 @@
 				}
 			}
 			if ( selected.length < 1 ) {
-				alert("<!--{t}-->At least one message must be selected.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->At least one message must be selected.<!--{/t}-->");
 			} else {
 				dojo.io.bind({
 					method: 'POST',
@@ -119,7 +119,7 @@
 					},
 					url: '<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.del',
 					load: function( type, data, evt ) {
-						freemedMessage( "<!--{t}-->Messages deleted successfully.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Messages deleted successfully.<!--{/t}-->", 'INFO' );
 						o.loadMessages();
 					},
 					mimetype: "text/json"
@@ -129,7 +129,7 @@
 		modifyTag: function ( ) {
 			var msg = this.getSelectedMessage();
 			if ( typeof msg == 'undefined' ) {
-				alert("<!--{t}-->A message must be selected.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->A message must be selected.<!--{/t}-->");
 			} else {
 				var newTag = dojo.widget.byId('messagesTag').getValue();
 				if ( newTag == 'INBOX' ) { newTag = ''; }
@@ -141,7 +141,7 @@
 					},
 					url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.TagModify',
 					load: function( type, data, evt ) {
-						freemedMessage( "<!--{t}-->Message moved successfully.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Message moved successfully.<!--{/t}-->", 'INFO' );
 						// Force reload
 						dojo.widget.byId('messagesTag').setValue( o.currentLocation );
 						o.loadMessages();
@@ -167,7 +167,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.send',
 				error: function( type, data, evt ) {
-					//alert("<!--{t}-->Unable to complete.<!--{/t}-->");
+					//alert("<!--{t|escape:'javascript'}-->Unable to complete.<!--{/t}-->");
 					dojo.widget.byId('newMessageDialog').hide();
 					this.loadMessages();
 				},

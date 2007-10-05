@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.status_name.length < 2 ) {
-		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.status_module.length < 2 ) {
-		m += "<!--{t}-->You must enter a module.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a module.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

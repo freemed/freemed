@@ -38,7 +38,7 @@
 <!--{assign_block var='validation'}-->
 	/*
 	if ( content.phylname.length < 2 || content.phyfname.length ) {
-		m += "<!--{t}-->You must enter a valid name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a valid name.<!--{/t}-->\n";
 		r = false;
 	}
 	*/
@@ -63,7 +63,7 @@
 <!--{assign_block var='moduleForm'}-->
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 15em;">
 
-	<div dojoType="ContentPane" id="cptMainPane" label="<!--{t}-->Primary Information<!--{/t}-->">
+	<div dojoType="ContentPane" id="cptMainPane" label="<!--{t|escape:'javascript'}-->Primary Information<!--{/t}-->">
 
 		<table style="border: 0; padding: 1em;">
 
@@ -108,7 +108,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="cptBillingPane" label="<!--{t}-->Billing Information<!--{/t}-->">
+	<div dojoType="ContentPane" id="cptBillingPane" label="<!--{t|escape:'javascript'}-->Billing Information<!--{/t}-->">
 
 		<table style="border: 0; padding: 1em; width: auto;">
 
@@ -141,7 +141,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="cptFeeProfiles" label="<!--{t}-->Fee Profiles<!--{/t}-->">
+	<div dojoType="ContentPane" id="cptFeeProfiles" label="<!--{t|escape:'javascript'}-->Fee Profiles<!--{/t}-->">
 
 		<table style="border: 0; padding: 1em; width: auto;">
 

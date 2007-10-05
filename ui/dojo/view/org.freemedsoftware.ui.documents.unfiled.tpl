@@ -56,7 +56,7 @@
 			o.saveValue = 0;
 		},
 		deleteDocument: function ( ) {
-			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
+			var x = confirm("<!--{t|escape:'javascript'}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
 			if (x) {
 				dojo.io.bind({
 					method: 'POST',
@@ -66,7 +66,7 @@
 					},
 					load: function( type, data, event ) {
 						if (data) {
-							freemedMessage( "<!--{t}-->Document removed successfully.<!--{/t}-->", "INFO" );
+							freemedMessage( "<!--{t|escape:'javascript'}-->Document removed successfully.<!--{/t}-->", "INFO" );
 						}
 						o.resetForm();
 					},
@@ -89,11 +89,11 @@
 
 			// Some validation
 			var messages = '';
-			if ( ! p.date ) { messages += "<!--{t}-->No date has been selected.<!--{/t}-->\n"; }
-			if ( p.category == 0 ) { messages += "<!--{t}-->No category has been chosen.<!--{/t}-->\n"; }
-			if ( p.patient == 0 ) { messages += "<!--{t}-->No patient has been selected.<!--{/t}-->\n"; }
-			if ( p.physician == 0 ) { messages += "<!--{t}-->No provider has been selected.<!--{/t}-->\n"; }
-			if ( ! p.note ) { messages += "<!--{t}-->No note has been entered.<!--{/t}-->\n"; }
+			if ( ! p.date ) { messages += "<!--{t|escape:'javascript'}-->No date has been selected.<!--{/t}-->\n"; }
+			if ( p.category == 0 ) { messages += "<!--{t|escape:'javascript'}-->No category has been chosen.<!--{/t}-->\n"; }
+			if ( p.patient == 0 ) { messages += "<!--{t|escape:'javascript'}-->No patient has been selected.<!--{/t}-->\n"; }
+			if ( p.physician == 0 ) { messages += "<!--{t|escape:'javascript'}-->No provider has been selected.<!--{/t}-->\n"; }
+			if ( ! p.note ) { messages += "<!--{t|escape:'javascript'}-->No note has been entered.<!--{/t}-->\n"; }
 			if ( messages != '' ) {
 				alert( messages );
 				return false;
@@ -106,7 +106,7 @@
 					param0: p
 				},
 				load: function( type, data, event ) {
-					freemedMessage( "<!--{t}-->Document handled successfully.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Document handled successfully.<!--{/t}-->", "INFO" );
 					o.resetForm();
 				},
 				mimetype: "text/json"
@@ -213,10 +213,6 @@
 			<tr>
 				<td><label for="uffflip"><!--{t}-->Flip Document?<!--{/t}--></label></td>
 				<td><input type="checkbox" id="uffflip" name="uffflip" value="1" /></td>
-			</tr>
-			<tr>
-				<td><!--{t}--><!--{/t}--></td>
-				<td></td>
 			</tr>
 		</table>
 

@@ -28,7 +28,7 @@
 	var notifications = {
 		handleResponse: function ( data ) {
 			if (data) {
-				freemedMessage( "<!--{t}-->Added notifications.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Added notifications.<!--{/t}-->", "INFO" );
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
@@ -40,15 +40,15 @@
 /*
 			if ( content.noffset == undefined ) {
 				r = false;
-				m += "<!--{t}-->No target date selected.<!--{/t}-->\n";
+				m += "<!--{t|escape:'javascript'}-->No target date selected.<!--{/t}-->\n";
 			}
 			if ( content.nfor == undefined or content.nfor < 1 ) {
 				r = false;
-				m += "<!--{t}-->No target user selected.<!--{/t}-->\n";
+				m += "<!--{t|escape:'javascript'}-->No target user selected.<!--{/t}-->\n";
 			}
 			if ( content.ndescrip == undefined or content.ndescrip.length < 4 ) {
 				r = false;
-				m += "<!--{t}-->No message text given.<!--{/t}-->\n";
+				m += "<!--{t|escape:'javascript'}-->No message text given.<!--{/t}-->\n";
 			}
 */
 			if ( m.length > 1 ) { alert( m ); }

@@ -81,15 +81,15 @@
 
 		if ( ! document.getElementById('name').value ) {
 			okay = false;
-			messages += "<!--{t}-->Database name has not been set.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Database name has not been set.<!--{/t}-->\n";
 		}
 		if ( ! document.getElementById('username').value ) {
 			okay = false;
-			messages += "<!--{t}-->Username has not been set.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Username has not been set.<!--{/t}-->\n";
 		}
 		if ( document.getElementById('password').value != document.getElementById('password_confirm').value ) {
 			okay = false;
-			messages += "<!--{t}-->Password do not match.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Password do not match.<!--{/t}-->\n";
 		}
 
 		// If something is wrong already, don't run check.
@@ -107,12 +107,12 @@
 					param3: document.getElementById('password').value
 				},
 				error: function(type, data, evt) {
-					alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Please try again, data error.<!--{/t}-->");
 				},
 				load: function(type, data, evt) {
 					if (data != true) {
 						okay = false;
-						messages += "<!--{t}-->Credentials are not valid.<!--{/t}-->\n";
+						messages += "<!--{t|escape:'javascript'}-->Credentials are not valid.<!--{/t}-->\n";
 					} else {
 						okay = true;
 					}
@@ -130,19 +130,19 @@
 
 		if ( ! document.getElementById('name').value ) {
 			okay = false;
-			messages += "<!--{t}-->Database name has not been set.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Database name has not been set.<!--{/t}-->\n";
 		}
 		if ( ! document.getElementById('adminuser').value ) {
 			okay = false;
-			messages += "<!--{t}-->Username has not been set.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Username has not been set.<!--{/t}-->\n";
 		}
 		if ( ! document.getElementById('adminpass').value ) {
 			okay = false;
-			messages += "<!--{t}-->Password has not been set.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Password has not been set.<!--{/t}-->\n";
 		}
 		if ( document.getElementById('adminpass').value != document.getElementById('adminpass_confirm').value ) {
 			okay = false;
-			messages += "<!--{t}-->Password do not match.<!--{/t}-->\n";
+			messages += "<!--{t|escape:'javascript'}-->Password do not match.<!--{/t}-->\n";
 		}
 		if (!okay) { return messages; }
 	} // end function verifyAdministrationPane
@@ -154,7 +154,7 @@
 			document.getElementById(out).innerHTML = '';
 			document.getElementById(out).style.display = 'none';
 		} else {
-			document.getElementById(out).innerHTML = "<!--{t}-->Passwords do not match.<!--{/t}-->\n";
+			document.getElementById(out).innerHTML = "<!--{t|escape:'javascript'}-->Passwords do not match.<!--{/t}-->\n";
 			document.getElementById(out).style.display = 'block';
 		}
 	} // end function checkpwconfirm
@@ -172,7 +172,7 @@
 		// Show the actual dialog box
 		dojo.widget.byId('DoneDialog').show();
 
-		setProgressBar( 10, "<!--{t}-->Creating configuration file<!--{/t}-->" );
+		setProgressBar( 10, "<!--{t|escape:'javascript'}-->Creating configuration file<!--{/t}-->" );
 
 		// Start initial
 		dojo.io.bind({
@@ -191,14 +191,14 @@
 				}
 			},
 			error: function(type, data, evt) {
-				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please try again, data error.<!--{/t}-->");
 				dojo.widget.byId('DoneDialog').hide();
 				failedToInstall = true;
 				return false;
 			},
 			load: function(type, data, evt) {
 				if (!data) {
-					alert("<!--{t}-->Settings creation failed.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Settings creation failed.<!--{/t}-->");
 					dojo.widget.byId('DoneDialog').hide();
 					return false;
 				}
@@ -208,7 +208,7 @@
 
 		if (failedToInstall) { return false; }
 		setTimeout( null, 3000 );
-		setProgressBar( 30, "<!--{t}-->Initializing database<!--{/t}-->" );
+		setProgressBar( 30, "<!--{t|escape:'javascript'}-->Initializing database<!--{/t}-->" );
 		dojo.io.bind({
 			method : 'POST',
 			sync : true,
@@ -218,13 +218,13 @@
 				param1 : document.getElementById('adminpass').value
 			},
 			error: function(type, data, evt) {
-				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please try again, data error.<!--{/t}-->");
 				dojo.widget.byId('DoneDialog').hide();
 				return false;
 			},
 			load: function(type, data, evt) {
 				if (!data) {
-					alert("<!--{t}-->Failed to create the database.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Failed to create the database.<!--{/t}-->");
 					dojo.widget.byId('DoneDialog').hide();
 					return false;
 				}
@@ -234,20 +234,20 @@
 
 		if (failedToInstall) { return false; }
 		setTimeout( null, 3000 );
-		setProgressBar( 95, "<!--{t}-->Making FreeMED usable<!--{/t}-->" );
+		setProgressBar( 95, "<!--{t|escape:'javascript'}-->Making FreeMED usable<!--{/t}-->" );
 		dojo.io.bind({
 			method : 'POST',
 			sync : true,
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Installation.SetHealthyStatus',
 			content: { },
 			error: function(type, data, evt) {
-				alert("<!--{t}-->Please try again, data error.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please try again, data error.<!--{/t}-->");
 				dojo.widget.byId('DoneDialog').hide();
 				return false;
 			},
 			load: function(type, data, evt) {
 				if (!data) {
-					alert("<!--{t}-->Failed to create the database.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Failed to create the database.<!--{/t}-->");
 					dojo.widget.byId('DoneDialog').hide();
 					return false;
 				}
@@ -258,16 +258,16 @@
 		if (failedToInstall) { return false; }
 
 		// Wait so we can see what happens ...
-		setProgressBar( 100, "<!--{t}-->Installation completed.<!--{/t}-->" );
+		setProgressBar( 100, "<!--{t|escape:'javascript'}-->Installation completed.<!--{/t}-->" );
 		setTimeout( null, 3000 );
-		setProgressBar( 100, "<a class=\"button\" href=\"<!--{$base_uri}-->/index.php\"><!--{t}-->Click here to start using FreeMED<!--{/t}--></a>");
+		setProgressBar( 100, "<a class=\"button\" href=\"<!--{$base_uri}-->/index.php\"><!--{t|escape:'javascript'}-->Click here to start using FreeMED<!--{/t}--></a>");
 		//dojo.widget.byId('DoneDialog').hide();
 		return true;
 	} // end function done
 
 </script>
 
-<div id="installWizard" dojoType="WizardContainer" style="width: 95%; height: 80%;" nextButtonLabel="<!--{t}-->Next<!--{/t}--> &gt;&gt;" previousButtonLabel="&lt;&lt; <!--{t}-->Previous<!--{/t}-->" cancelButtonLabel="<!--{t}-->Cancel<!--{/t}-->" cancelFunction="cancel" hideDisabledButtons="true">
+<div id="installWizard" dojoType="WizardContainer" style="width: 95%; height: 80%;" nextButtonLabel="<!--{t|escape:'javascript'}-->Next<!--{/t}--> &gt;&gt;" previousButtonLabel="&lt;&lt; <!--{t|escape:'javascript'}-->Previous<!--{/t}-->" cancelButtonLabel="<!--{t|escape:'javascript'}-->Cancel<!--{/t}-->" cancelFunction="cancel" hideDisabledButtons="true">
 	<div dojoType="WizardPane" label="Welcome to FreeMED" passFunction="initialCheck">
 		<h1><!--{t}-->Welcome to FreeMED!<!--{/t}--></h1>
 
@@ -288,7 +288,7 @@
 		<pre>
 		<script language="javascript">
 			function initialCheck ( ) {
-				return "<!--{t}-->Please install or enable MySQL support in your PHP installation, then reload this wizard to continue.<!--{/t}-->";
+				return "<!--{t|escape:'javascript'}-->Please install or enable MySQL support in your PHP installation, then reload this wizard to continue.<!--{/t}-->";
 			} // end function initialCheck
 		</script>
 		<!--{else}-->
@@ -309,7 +309,7 @@
 		</pre>
 		<script language="javascript">
 			function initialCheck ( ) {
-				return "<!--{t}-->Please follow the instructions on this pane and reload the wizard to proceed.<!--{/t}-->";
+				return "<!--{t|escape:'javascript'}-->Please follow the instructions on this pane and reload the wizard to proceed.<!--{/t}-->";
 			} // end function initialCheck
 		</script>
 		<!--{/if}--> <!--{* configwrite *}-->
@@ -411,7 +411,7 @@
 		<table border="0">
 			<tr>
 				<td align="right"><!--{t}-->Installation Name<!--{/t}--></td>
-				<td align="left"><input type="input" id="installation" name="installation" size="50" maxlength="50" value="<!--{t}-->Installation Name<!--{/t}-->"/></td>
+				<td align="left"><input type="input" id="installation" name="installation" size="50" maxlength="50" value="<!--{t|escape:'javascript'}-->Installation Name<!--{/t}-->"/></td>
 			</tr>
 			<tr>
 				<td align="right"><!--{t}-->Default Language<!--{/t}--></td>

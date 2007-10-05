@@ -35,7 +35,7 @@
 	var notes = {
 		handleResponse: function ( data ) {
 			if (data) {
-				freemedMessage( "<!--{t}-->Added progress note.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Added progress note.<!--{/t}-->", "INFO" );
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {
 				dojo.widget.byId('ModuleFormCommitChangesButton').enable();
@@ -210,7 +210,7 @@
 
 <div dojoType="TabContainer" id="noteTabContainer" style="width: 100%; height: 80%;">
 
-        <div dojoType="ContentPane" id="noteSummaryPane" label="<!--{t}-->Summary<!--{/t}-->">
+        <div dojoType="ContentPane" id="noteSummaryPane" label="<!--{t|escape:'javascript'}-->Summary<!--{/t}-->">
 
 		<table border="0" style="width: auto;">
 
@@ -256,37 +256,37 @@
 
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_S" label="<!--{t}-->Subjective<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_S" label="<!--{t|escape:'javascript'}-->Subjective<!--{/t}-->">
 		<div id="note_S_value" style="display: none;"></div>
 		<div id="note_S_container" style="height: 100%;"></div>
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_O" label="<!--{t}-->Objective<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_O" label="<!--{t|escape:'javascript'}-->Objective<!--{/t}-->">
 		<div id="note_O_value" style="display: none;"></div>
 		<div id="note_O_container" style="height: 100%;"></div>
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_A" label="<!--{t}-->Assessment<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_A" label="<!--{t|escape:'javascript'}-->Assessment<!--{/t}-->">
 		<div id="note_A_value" style="display: none;"></div>
 		<div id="note_A_container" style="height: 100%;"></div>
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_P" label="<!--{t}-->Plan<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_P" label="<!--{t|escape:'javascript'}-->Plan<!--{/t}-->">
 		<div id="note_P_value" style="display: none;"></div>
 		<div id="note_P_container" style="height: 100%;"></div>
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_I" label="<!--{t}-->Interval<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_I" label="<!--{t|escape:'javascript'}-->Interval<!--{/t}-->">
 		<div id="note_I_value" style="display: none;"></div>
 		<div id="note_I_container" style="height: 100%;"></div>
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_E" label="<!--{t}-->Education<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_E" label="<!--{t|escape:'javascript'}-->Education<!--{/t}-->">
 		<div id="note_E_value" style="display: none;"></div>
 		<div id="note_E_container" style="height: 100%;"></div>
 	</div>
 
-        <div dojoType="ContentPane" id="notePane_R" label="<!--{t}-->Rx<!--{/t}-->">
+        <div dojoType="ContentPane" id="notePane_R" label="<!--{t|escape:'javascript'}-->Rx<!--{/t}-->">
 		<div id="note_R_value" style="display: none;"></div>
 		<div id="note_R_container" style="height: 100%;"></div>
 	</div>

@@ -36,9 +36,9 @@
 					var w = document.getElementById('dashboardWidgetWorkflowStatus');
 					var buf = '';
 					if ( data ) {
-						buf += '<div align="center"><img src="<!--{$htdocs}-->/images/teak/check_go.24x24.png" border="0" /> &nbsp; ' + "<!--{t}-->Completed<!--{/t}-->" + '</div>';
+						buf += '<div align="center"><img src="<!--{$htdocs}-->/images/teak/check_go.24x24.png" border="0" /> &nbsp; ' + "<!--{t|escape:'javascript'}-->Completed<!--{/t}-->" + '</div>';
 					} else {
-						buf += '<div align="center" class="clickable" onclick="freemedLoad(\'org.freemedsoftware.ui.workflowstatus\');"><img src="<!--{$htdocs}-->/images/teak/x_stop.24x24.png" border="0" /> &nbsp; ' + "<!--{t}-->Daily workflow not completed<!--{/t}-->" + '</div>';
+						buf += '<div align="center" class="clickable" onclick="freemedLoad(\'org.freemedsoftware.ui.workflowstatus\');"><img src="<!--{$htdocs}-->/images/teak/x_stop.24x24.png" border="0" /> &nbsp; ' + "<!--{t|escape:'javascript'}-->Daily workflow not completed<!--{/t}-->" + '</div>';
 					}
 					w.innerHTML = buf;
 				},

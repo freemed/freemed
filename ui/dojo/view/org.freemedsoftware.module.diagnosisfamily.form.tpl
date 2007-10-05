@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.dfname.length < 2 ) {
-		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.dfdescrip.length < 2 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

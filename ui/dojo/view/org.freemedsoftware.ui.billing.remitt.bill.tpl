@@ -42,7 +42,7 @@
 				url: "<!--{$relay}-->/org.freemedsoftware.module.RemittBillingTransport.PatientsToBill",
 				load: function ( type, data, evt ) {
 					if ( ! data.length ) {
-						alert("<!--{t}-->No patients to bill.<!--{/t}-->");
+						alert("<!--{t|escape:'javascript'}-->No patients to bill.<!--{/t}-->");
 					} else {
 						var pc = document.getElementById('remittPatientContainer');
 						var t = document.createElement('table');
@@ -98,7 +98,7 @@
 							labelDiv.innerHTML = data[i].patient;
 							cells[1].appendChild( labelDiv );
 							cells[2].innerHTML = data[i].date_of_birth_mdy;
-							cells[3].innerHTML = data[i].claim_count + " <!--{t}-->claim(s)<!--{/t}-->";
+							cells[3].innerHTML = data[i].claim_count + " <!--{t|escape:'javascript'}-->claim(s)<!--{/t}-->";
 
 							var divInner = document.createElement('div');
 							divInner.id = 'patient_inner_div_' + patient.toString();
@@ -142,7 +142,7 @@
 				if ( remitt.patientsEnabled[ i ] ) { anyPatientsEnabled = true; }
 			}
 			if ( ! anyPatientsEnabled ) {
-				alert("<!--{t}-->Please select one or more patients to bill.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select one or more patients to bill.<!--{/t}-->");
 				return false;
 			}
 
@@ -183,7 +183,7 @@
 						// View status ...
 						freemedLoad( 'org.freemedsoftware.ui.billing.remitt.status' );
 					} else {
-						alert("<!--{t}-->An error occurred processing the claims. Please contact your system administrator.<!--{/t}-->");
+						alert("<!--{t|escape:'javascript'}-->An error occurred processing the claims. Please contact your system administrator.<!--{/t}-->");
 					}
 				},
 				mimetype: "text/json"
@@ -230,13 +230,13 @@
 
 							// Header row
 							headerCells[0] = document.createElement( 'th' );
-							headerCells[0].innerHTML = "<!--{t}-->Enabled<!--{/t}-->";
+							headerCells[0].innerHTML = "<!--{t|escape:'javascript'}-->Enabled<!--{/t}-->";
 							headerRow.appendChild( headerCells[0] );
 							headerCells[1] = document.createElement( 'th' );
-							headerCells[1].innerHTML = "<!--{t}-->Claim<!--{/t}-->";
+							headerCells[1].innerHTML = "<!--{t|escape:'javascript'}-->Claim<!--{/t}-->";
 							headerRow.appendChild( headerCells[1] );
 							headerCells[2] = document.createElement( 'th' );
-							headerCells[2].innerHTML = "<!--{t}-->Format<!--{/t}-->";
+							headerCells[2].innerHTML = "<!--{t|escape:'javascript'}-->Format<!--{/t}-->";
 							headerRow.appendChild( headerCells[2] );
 
 							table.appendChild( headerRow );
@@ -257,11 +257,11 @@
 								selectBox.onchange = remitt.OnDestinationOverride;
 								op[0] = document.createElement('option');
 								op[0].value = 'electronic';
-								op[0].innerHTML = "<!--{t}-->Electronic<!--{/t}--> (" + data[i].electronic_format + ' / ' + data[i].electronic_target + ')';
+								op[0].innerHTML = "<!--{t|escape:'javascript'}-->Electronic<!--{/t}--> (" + data[i].electronic_format + ' / ' + data[i].electronic_target + ')';
 								selectBox.appendChild(op[0]);
 								op[1] = document.createElement('option');
 								op[1].value = 'paper';
-								op[1].innerHTML = "<!--{t}-->Paper<!--{/t}--> (" + data[i].paper_format + ' / ' + data[i].paper_target + ')';
+								op[1].innerHTML = "<!--{t|escape:'javascript'}-->Paper<!--{/t}--> (" + data[i].paper_format + ' / ' + data[i].paper_target + ')';
 								selectBox.appendChild(op[1]);
 								if ( data[i].output_format == 'paper' ) {
 									selectBox.selectedIndex = 1;

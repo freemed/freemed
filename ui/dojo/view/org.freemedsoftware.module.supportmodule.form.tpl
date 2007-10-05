@@ -51,9 +51,9 @@
 		handleResponse: function ( data ) {
 			if (data) {
 				<!--{if $id}-->
-				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Committed changes.<!--{/t}-->", "INFO" );
 				<!--{else}-->
-				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Added record.<!--{/t}-->", "INFO" );
 				<!--{/if}-->
 				freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );
 			} else {

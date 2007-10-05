@@ -38,7 +38,7 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.phylname.length < 2 || content.phyfname.length < 2 ) {
-		m += "<!--{t}-->You must enter a valid name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a valid name.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->
@@ -57,7 +57,7 @@
 <!--{assign_block var='moduleForm'}-->
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em; overflow-y: scroll;">
 
-	<div dojoType="ContentPane" id="providerMainPane" label="<!--{t}-->Primary Information<!--{/t}-->">
+	<div dojoType="ContentPane" id="providerMainPane" label="<!--{t|escape:'javascript'}-->Primary Information<!--{/t}-->">
 
 		<table style="border: 0; padding: 1em;">
 
@@ -110,7 +110,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="providerContactPane" label="<!--{t}-->Contact<!--{/t}-->">
+	<div dojoType="ContentPane" id="providerContactPane" label="<!--{t|escape:'javascript'}-->Contact<!--{/t}-->">
 
 		<table style="border: 0; padding: 1em; width: auto;">
 
@@ -133,7 +133,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="providerIdPane" label="<!--{t}-->Identifiers<!--{/t}-->">
+	<div dojoType="ContentPane" id="providerIdPane" label="<!--{t|escape:'javascript'}-->Identifiers<!--{/t}-->">
 
 		<table style="border: 0; padding: 1em; width: auto;">
 

@@ -38,7 +38,7 @@
 			try {
 				v = dojo.widget.byId( 'supportDataHolder' ).getSelectedData().id;
 			} catch (e) {
-				alert("<!--{t}-->Please select a record.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select a record.<!--{/t}-->");
 				return false;
 			}
 			freemedLoad( 'org.freemedsoftware.module.<!--{$module|lower|escape}-->.form?module=<!--{$module|escape}-->&id=' + v );
@@ -48,10 +48,10 @@
 			try {
 				v = dojo.widget.byId( 'supportDataHolder' ).getSelectedData().id;
 			} catch (e) {
-				alert("<!--{t}-->Please select a record.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select a record.<!--{/t}-->");
 				return false;
 			}
-			if ( confirm("<!--{t}-->Are you sure you want to delete this record?<!--{/t}-->") ) {
+			if ( confirm("<!--{t|escape:'javascript'}-->Are you sure you want to delete this record?<!--{/t}-->") ) {
 				dojo.io.bind({
 					method: 'POST',
 					content: {
@@ -59,7 +59,7 @@
 					},
 					url: '<!--{$relay}-->/org.freemedsoftware.module.<!--{$module}-->.del',
 					load: function ( type, data, evt ) {
-						freemedMessage( "<!--{t}-->Record successfully removed.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Record successfully removed.<!--{/t}-->", 'INFO' );
 						// Refresh data display
 						supportData.loadData();
 					},

@@ -38,7 +38,7 @@
 	var <!--{$varname}-->_namespace = {
 		add: function() {
 			// Ask the user for a name
-			var l = prompt( "<!--{t}-->Please enter a descriptive name for this template.<!--{/t}-->" );
+			var l = prompt( "<!--{t|escape:'javascript'}-->Please enter a descriptive name for this template.<!--{/t}-->" );
 			if ( l.length == 0 ) { return false; }
 
 			dojo.io.bind({
@@ -60,7 +60,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotesTemplates.add',
 				load: function ( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Added template.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Added template.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
 			});
@@ -72,11 +72,11 @@
 			try {
 				v = document.getElementById('<!--{$varname}-->').value;
 			} catch (err) {
-				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No template was chosen!<!--{/t}-->");
 				return false;
 			}
 			if ( parseInt( v ) < 1 ) {
-				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No template was chosen!<!--{/t}-->");
 				return false;
 			}
 
@@ -96,7 +96,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotesTemplates.mod',
 				load: function ( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Updated template.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Updated template.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
 			});
@@ -107,11 +107,11 @@
 			try {
 				v = document.getElementById('<!--{$varname}-->').value;
 			} catch (err) {
-				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No template was chosen!<!--{/t}-->");
 				return false;
 			}
 			if ( parseInt( v ) < 1 ) {
-				alert("<!--{t}-->No template was chosen!<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No template was chosen!<!--{/t}-->");
 				return false;
 			}
 			dojo.io.bind({
@@ -129,7 +129,7 @@
 						dojo.byId( 'note_I_value' ).innerHTML = data.pnt_I;
 						dojo.byId( 'note_E_value' ).innerHTML = data.pnt_E;
 						dojo.byId( 'note_R_value' ).innerHTML = data.pnt_R;
-						freemedMessage( "<!--{t}-->Loaded template.<!--{/t}-->", "INFO" );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Loaded template.<!--{/t}-->", "INFO" );
 					}
 				},
 				mimetype: 'text/json'

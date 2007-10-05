@@ -128,7 +128,7 @@
 				var tDetailRow = document.createElement( 'tr' );
 
 				var spanUnit = document.createElement( 'td' );
-				spanUnit.innerHTML = "&nbsp;&nbsp;&nbsp; <small><!--{t}-->Units<!--{/t}-->:</small> ";
+				spanUnit.innerHTML = "&nbsp;&nbsp;&nbsp; <small><!--{t|escape:'javascript'}-->Units<!--{/t}-->:</small> ";
 				var inputUnitContainer = document.createElement( 'td' );
 				var inputUnit = document.createElement( 'input' );
 				inputUnit.type = 'text';
@@ -139,7 +139,7 @@
 				inputUnitContainer.appendChild( inputUnit );
 
 				var spanMod = document.createElement( 'td' );
-				spanMod.innerHTML = "<small><!--{t}-->Modifier<!--{/t}-->:</small> ";
+				spanMod.innerHTML = "<small><!--{t|escape:'javascript'}-->Modifier<!--{/t}-->:</small> ";
 
 				var tWidgetDiv = document.createElement( 'td' );
 				var wid = dojo.widget.createWidget(
@@ -205,7 +205,7 @@
 				if ( x > 0 ) { px.push( x ); }
 			} catch (e) { }
 			if ( ! px.length || ! dx.length ) {
-				alert ( "<!--{t}-->Both procedures and diagnoses must be present to create a superbill.<!--{/t}-->" );
+				alert ( "<!--{t|escape:'javascript'}-->Both procedures and diagnoses must be present to create a superbill.<!--{/t}-->" );
 				return false;
 			}
 			dojo.io.bind({
@@ -221,7 +221,7 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.add',
 				load: function( type, data, evt ) {
 					dojo.widget.byId( 'superbillTemplateSave' ).disable();
-					freemedMessage( "<!--{t}-->Added superbill.<!--{/t}-->", "INFO" );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Added superbill.<!--{/t}-->", "INFO" );
 				},
 				mimetype: 'text/json'
 			});
@@ -310,7 +310,7 @@
 
 <div dojoType="TabContainer" id="patientEncounterTabContainer" style="width: 100%; height: 100%;">
 
-	<div dojoType="ContentPane" id="patientEncounterSummaryPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/dashboard.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Summary<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterSummaryPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/dashboard.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t|escape:'javascript'}-->Summary<!--{/t}-->">
 
 		<table border="0" cellpadding="5">
 
@@ -334,7 +334,7 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="patientEncounterSuperbillPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/superbill.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Superbill<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterSuperbillPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/superbill.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t|escape:'javascript'}-->Superbill<!--{/t}-->">
 		<div>
 			<table border="0">
 				<tr>
@@ -383,18 +383,18 @@
 		</div>
 	</div>
 
-	<div dojoType="ContentPane" id="patientEncounterApptPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/book_appt.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Appointments<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterApptPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/book_appt.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t|escape:'javascript'}-->Appointments<!--{/t}-->">
 
 	</div>
 
 	<!--{method var='recentProgressNote' namespace='org.freemedsoftware.module.progressnotes.GetRecentRecord' param0=$patient}-->
 	<!--{if $recentProgressNote.id}-->
-	<div dojoType="ContentPane" id="patientEncounterProgressNotesPane" label="&lt;img src='<!--{$htdocs}-->/images/annotation_icon.png' border='0' width='16' height='16' /;&gt; <!--{t}-->Recent Notes<!--{/t}-->" href="<!--{$controller}-->/org.freemedsoftware.module.progressnotes.view?id=<!--{$recentProgressNote.id}-->&patient=<!--{$patient}-->&embed=1" executeScripts="true" cacheContent="false" adjustPaths="false">
+	<div dojoType="ContentPane" id="patientEncounterProgressNotesPane" label="&lt;img src='<!--{$htdocs}-->/images/annotation_icon.png' border='0' width='16' height='16' /;&gt; <!--{t|escape:'javascript'}-->Recent Notes<!--{/t}-->" href="<!--{$controller}-->/org.freemedsoftware.module.progressnotes.view?id=<!--{$recentProgressNote.id}-->&patient=<!--{$patient}-->&embed=1" executeScripts="true" cacheContent="false" adjustPaths="false">
 	</div>
 	<!--{/if}-->
 
 <!--
-	<div dojoType="ContentPane" id="patientEncounterPane" label="<!--{t}--><!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterPane" label="<!--{t|escape:'javascript'}--><!--{/t}-->">
 	</div>
 -->
 

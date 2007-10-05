@@ -135,7 +135,7 @@
 					break; // Provider
 
 					default:
-					tDiv[ i ].innerHTML = "<!--{t}-->Unknown element.<!--{/t}-->";
+					tDiv[ i ].innerHTML = "<!--{t|escape:'javascript'}-->Unknown element.<!--{/t}-->";
 					break; // default / unknown
 				}
 

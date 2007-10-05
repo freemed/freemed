@@ -46,11 +46,11 @@
 						// Hide annotations box
 						dojo.widget.byId('emrAnnotationDialog').hide();
 						this.currentItem = 0;
-						freemedMessage("<!--{t}-->Added annotation.<!--{/t}-->", "INFO");
+						freemedMessage("<!--{t|escape:'javascript'}-->Added annotation.<!--{/t}-->", "INFO");
 						// Force reload
 						freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 					} else {
-						alert('<!--{t}-->Failed to annotate record.<!--{/t}-->');
+						alert('<!--{t|escape:'javascript'}-->Failed to annotate record.<!--{/t}-->');
 					}
 				},
 				mimetype: "text/json"
@@ -74,7 +74,7 @@
 				break;
 
 				case 'lock':
-				if (!confirm("<!--{t}-->Are you sure you want to lock this record?<!--{/t}-->")) {
+				if (!confirm("<!--{t|escape:'javascript'}-->Are you sure you want to lock this record?<!--{/t}-->")) {
 					return false;
 				}
 				dojo.io.bind({
@@ -86,11 +86,11 @@
 					error: function() { },
 					load: function( type, data, evt ) {
 						if (data) {
-							freemedMessage("<!--{t}-->Locked record.<!--{/t}-->", "INFO");
+							freemedMessage("<!--{t|escape:'javascript'}-->Locked record.<!--{/t}-->", "INFO");
 							// Force reload
 							patientEmrAttachments.initialLoad();
 						} else {
-							alert('<!--{t}-->Failed to lock record.<!--{/t}-->');
+							alert('<!--{t|escape:'javascript'}-->Failed to lock record.<!--{/t}-->');
 						}
 					},
 					mimetype: "text/json"
@@ -102,7 +102,7 @@
 				break;
 
 				case 'delete':
-				if (!confirm("<!--{t}-->Are you sure you want to remove this record?<!--{/t}-->")) {
+				if (!confirm("<!--{t|escape:'javascript'}-->Are you sure you want to remove this record?<!--{/t}-->")) {
 					return false;
 				}
 				dojo.io.bind({
@@ -114,11 +114,11 @@
 					error: function() { },
 					load: function( type, data, evt ) {
 						if (data) {
-							freemedMessage("<!--{t}-->Removed record.<!--{/t}-->", "INFO");
+							freemedMessage("<!--{t|escape:'javascript'}-->Removed record.<!--{/t}-->", "INFO");
 							// Force reload
 							patientEmrAttachments.initialLoad();
 						} else {
-							alert('<!--{t}-->Failed to remove record.<!--{/t}-->');
+							alert('<!--{t|escape:'javascript'}-->Failed to remove record.<!--{/t}-->');
 						}
 					},
 					mimetype: "text/json"
@@ -175,7 +175,7 @@
 			var w = dojo.widget.byId('patientEmrAttachments');
 			var val = w.getSelectedData();
 			if ( val.length == 0 ) {
-				alert("<!--{t}-->No EMR attachments were selected.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->No EMR attachments were selected.<!--{/t}-->");
 				return false;
 			}
 			this.itemsToPrint = [];
@@ -200,7 +200,7 @@
 
 			if ( document.getElementById('printMethodBrowser').checked ) {
 				// Load in hidden frame
-				freemedMessage("<!--{t}-->Sending document to your web browser.<!--{/t}-->", "INFO");
+				freemedMessage("<!--{t|escape:'javascript'}-->Sending document to your web browser.<!--{/t}-->", "INFO");
 				document.getElementById('patientPrintView').src = url;
 				return true;
 			}
@@ -220,7 +220,7 @@
 					method: "POST",
 					url: url,
 					load: function( type, data, evt ) {
-						freemedMessage("<!--{t}-->Sending document to printer<!--{/t}-->: " + document.getElementById('emrPrinter').value, "INFO");
+						freemedMessage("<!--{t|escape:'javascript'}-->Sending document to printer<!--{/t}-->: " + document.getElementById('emrPrinter').value, "INFO");
 					},
 					mimetype: "text/json"
 				});
@@ -230,7 +230,7 @@
 		OnAdd: function ( ) {
 			var m = dojo.widget.byId('emrSection').getValue();
 			if ( ! m.length ) {
-				alert( "<!--{t}-->You must select a module first.<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->You must select a module first.<!--{/t}-->" );
 				return false;
 			}
 			freemedPatientContentLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + m.toLowerCase() + '.form?patient=<!--{$patient|escape}-->' );
@@ -251,28 +251,28 @@
 							data[i]['date_mdy'] = new Date(data[i]['date_mdy']);
 							try { data[i]['summary'] = data[i]['summary'].replace('\\', ''); } catch ( err ) { }
 							data[i]['actions'] = '<span style="white-space: nowrap;">';
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t}-->View<!--{/t}-->\" /></a>&nbsp;";
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('view', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_view.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->View<!--{/t}-->\" /></a>&nbsp;";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('print', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_print.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Print Record<!--{/t}-->\" /></a>&nbsp;";
 							if (data[i]['locked'] == 0) {
 								// All unlocked actions go here:
 								<!--{acl category="emr" permission="lock"}-->
-								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
+								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('lock', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_lock.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Lock Record<!--{/t}-->\" /></a>&nbsp;";
 								<!--{/acl}-->
 								<!--{acl category="emr" permission="modify"}-->
-								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
+								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('modify', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_modify.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Modify Record<!--{/t}-->\" /></a>&nbsp;";
 								<!--{/acl}-->
 								<!--{acl category="emr" permission="delete"}-->
-								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('delete', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_delete.png\" border=\"0\" alt=\"<!--{t}-->Remove Record<!--{/t}-->\" /></a>&nbsp;";
+								data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('delete', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/summary_delete.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Remove Record<!--{/t}-->\" /></a>&nbsp;";
 								<!--{/acl}-->
 							} else {
 								// All locked stuff goes here:
-								data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t}-->Locked<!--{/t}-->\" />&nbsp;";
+								data[i]['actions'] += "<img src=\"<!--{$htdocs}-->/images/summary_locked.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Locked<!--{/t}-->\" />&nbsp;";
 							}
 							if (data[i]['annotation'] != null) {
-								data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t}-->Annotation<!--{/t}-->\" /></a>";
+								data[i]['notes'] = "<a onClick=\"patientEmrAttachments.showAnnotations(" + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotation_icon.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Annotation<!--{/t}-->\" /></a>";
 							}
 							// Common things
-							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t}-->Annotate<!--{/t}-->\" /></a>&nbsp;&nbsp;</span>";
+							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Annotate<!--{/t}-->\" /></a>&nbsp;&nbsp;</span>";
 						}
 						dojo.widget.byId('patientEmrAttachments').store.setData( data );
 						try {

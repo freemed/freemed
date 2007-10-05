@@ -44,7 +44,7 @@
 	var patientBar = {
 		deletePatient: function () {
 			// Make sure that the user is *really* sure.
-			if ( ! confirm( "<!--{t}-->Are you sure you want to remove this patient from the system?<!--{/t}-->" ) ) {
+			if ( ! confirm( "<!--{t|escape:'javascript'}-->Are you sure you want to remove this patient from the system?<!--{/t}-->" ) ) {
 				return false;
 			}
 			dojo.io.bind({
@@ -58,11 +58,11 @@
 				url: "<!--{$relay}-->/org.freemedsoftware.module.PatientModule.mod",
 				load: function( type, data, evt ) {
 					if ( data ) {
-						freemedMessage( "<!--{t}-->Patient was removed from the system.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Patient was removed from the system.<!--{/t}-->", 'INFO' );
 						freemedGlobal.removePatientFromHistory( <!--{$patient}--> );
 						freemedLoad( 'org.freemedsoftware.ui.patient.search' );
 					} else {
-						freemedMessage( "<!--{t}-->Patient failed to be removed from the system.<!--{/t}-->", 'ERROR' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Patient failed to be removed from the system.<!--{/t}-->", 'ERROR' );
 					}
 				},
 				mimetype: 'text/json'
@@ -127,11 +127,11 @@
 	</div></td>
 		<!--{* Icon bar for easy actions *}-->
 	<td>
-		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/patient.24x24.png" height="24" width="24" border="0" alt="<!--{t}-->Overview<!--{/t}-->" /></span>
-		<span class="clickable" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/edit_mini.24x24.png" border="0" alt="<!--{t}-->Modify Patient Information<!--{/t}-->" /></span>
-		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/encounter.24x24.png" border="0" alt="<!--{t}-->Encounter Console<!--{/t}-->" /></span>
-		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.book?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/book_appt.24x24.png" border="0" alt="<!--{t}-->Book Appointment<!--{/t}-->" /></span>
-		<span class="clickable" id="deletePatient"><img src="<!--{$htdocs}-->/images/teak/x_stop.24x24.png" border="0" alt="<!--{t}-->Remove Patient<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/patient.24x24.png" height="24" width="24" border="0" alt="<!--{t|escape:'javascript'}-->Overview<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.controller.patient.form?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/edit_mini.24x24.png" border="0" alt="<!--{t|escape:'javascript'}-->Modify Patient Information<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.encounterconsole?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/encounter.24x24.png" border="0" alt="<!--{t|escape:'javascript'}-->Encounter Console<!--{/t}-->" /></span>
+		<span class="clickable" onClick="freemedPatientContentLoad('<!--{$controller}-->/org.freemedsoftware.ui.scheduler.book?patient=<!--{$patient}-->');"><img src="<!--{$htdocs}-->/images/teak/book_appt.24x24.png" border="0" alt="<!--{t|escape:'javascript'}-->Book Appointment<!--{/t}-->" /></span>
+		<span class="clickable" id="deletePatient"><img src="<!--{$htdocs}-->/images/teak/x_stop.24x24.png" border="0" alt="<!--{t|escape:'javascript'}-->Remove Patient<!--{/t}-->" /></span>
 	</td>
 	</tr></table>
 </div>

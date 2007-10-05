@@ -29,9 +29,9 @@
 		handleResponse: function ( data ) {
 			if (data) {
 				<!--{if $id}-->
-				freemedMessage( "<!--{t}-->Moved appointment.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Moved appointment.<!--{/t}-->", "INFO" );
 				<!--{else}-->
-				freemedMessage( "<!--{t}-->Booked appointment.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Booked appointment.<!--{/t}-->", "INFO" );
 				<!--{/if}-->
 				<!--{if $patient}-->
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
@@ -87,7 +87,7 @@
 		goToPatient: function ( ) {
 			var pt = parseInt( document.getElementById( 'calpatient' ).value )
 			if ( pt < 1 ) {
-				alert( "<!--{t}-->You must select a patient.<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->You must select a patient.<!--{/t}-->" );
 				return false;
 			}
 			freemedLoad( 'org.freemedsoftware.ui.patient.overview?patient=' + pt );

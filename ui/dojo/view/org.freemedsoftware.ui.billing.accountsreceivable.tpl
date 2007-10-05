@@ -47,7 +47,7 @@
 
 			// Do not allow us to proceed if there are no qualifiers, otherwise we can really jam up the browser
 			if ( ! haveCrit ) {
-				alert ("<!--{t}-->Please select the criteria for the claims you are trying to work with.<!--{/t}-->");
+				alert ("<!--{t|escape:'javascript'}-->Please select the criteria for the claims you are trying to work with.<!--{/t}-->");
 				return false;
 			}
 			dojo.io.bind({
@@ -68,7 +68,7 @@
 				content: { param0: items },
 				url: "<!--{$relay}-->/org.freemedsoftware.api.Ledger.WriteoffItems",
 				load: function ( type, data, evt ) {
-					alert("<!--{t}-->The selected items have been written off.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->The selected items have been written off.<!--{/t}-->");
 					this.selectNone();
 				},
 				mimetype: "text/json"

@@ -30,23 +30,23 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.psrname.length < 2 ) {
-		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.psraddr1.length < 2 ) {
-		m += "<!--{t}-->You must enter an address.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter an address.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.psrcsz.length < 5 ) {
-		m += "<!--{t}-->You must enter a city and postal code.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a city and postal code.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.psrnote.length < 2 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( parseInt( content.psrpos.length ) < 1 ) {
-		m += "<!--{t}-->You must enter a place of service code.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a place of service code.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->
@@ -71,7 +71,7 @@
 <!--{assign_block var='moduleForm'}-->
 <div dojoType="TabContainer" id="facilityTabContainer" style="width: 100%; height: 20em;">
 
-	<div dojoType="ContentPane" label="<!--{t}-->Primary Information<!--{/t}-->">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Primary Information<!--{/t}-->">
 		<table border="0">
 
 			<tr>
@@ -109,7 +109,7 @@
 		</table>
 	</div>
 
-	<div dojoType="ContentPane" label="<!--{t}-->Details<!--{/t}-->">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Details<!--{/t}-->">
 
 		<table border="0">
 
@@ -154,7 +154,7 @@
 		</table>
 	</div>
 
-	<div dojoType="ContentPane" label="<!--{t}-->Contact<!--{/t}-->">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Contact<!--{/t}-->">
 		<table border="0">
 
 			<tr>
@@ -175,7 +175,7 @@
 		</table>
 	</div>
 
-	<div dojoType="ContentPane" label="<!--{t}-->Electronic Billing<!--{/t}-->">
+	<div dojoType="ContentPane" label="<!--{t|escape:'javascript'}-->Electronic Billing<!--{/t}-->">
 		<table border="0">
 
 			<tr>

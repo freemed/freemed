@@ -112,7 +112,7 @@
 						url: '<!--{$relay}-->/org.freemedsoftware.module.schedulerpatientstatus.add',
 						load: function( type, data, evt ) {
 							if (data) {
-								freemedMessage( "<!--{t}-->Status updated.<!--{/t}-->", 'INFO' );
+								freemedMessage( "<!--{t|escape:'javascript'}-->Status updated.<!--{/t}-->", 'INFO' );
 								o.resetAtomicStatus();
 								// Reload calendar by force
 								o.dailyCalendarSetDate();
@@ -122,7 +122,7 @@
 				} catch (err) {
 					// Nothing selected, reset
 					o.resetAtomicStatus();
-					alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Please select an appointment.<!--{/t}-->");
 				}
 			}
 		},
@@ -130,12 +130,12 @@
 			try {
 				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
 				if ( parseInt( s.patient_id ) < 1 ) {
-					alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Please select an appointment.<!--{/t}-->");
 					return false;
 				}
 				freemedLoad( 'org.freemedsoftware.controller.patient.overview?patient=' + s.patient_id );
 			} catch (err) {
-				alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select an appointment.<!--{/t}-->");
 			}
 		},
 		onLimitChange: function ( ) {
@@ -148,12 +148,12 @@
 			dojo.widget.byId('atomicStatusWidget').setValue('');
 		},
 		noShow: function () {
-			if ( confirm( "<!--{t}-->Are you sure that you want to flag this appointment as a no-show?<!--{/t}-->" ) ) {
+			if ( confirm( "<!--{t|escape:'javascript'}-->Are you sure that you want to flag this appointment as a no-show?<!--{/t}-->" ) ) {
 				o.updateStatus( 'noshow' );
 			}
 		},
 		cancelAppt: function () {
-			if ( confirm( "<!--{t}-->Are you sure that you want to cancel this appointment?<!--{/t}-->" ) ) {
+			if ( confirm( "<!--{t|escape:'javascript'}-->Are you sure that you want to cancel this appointment?<!--{/t}-->" ) ) {
 				o.updateStatus( 'cancelled' );
 			}
 		},
@@ -161,14 +161,14 @@
 			try {
 				var s = dojo.widget.byId('dailyPatientAppointments').getSelectedData();
 				if ( parseInt( s.scheduler_id ) < 1 ) {
-					alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+					alert("<!--{t|escape:'javascript'}-->Please select an appointment.<!--{/t}-->");
 					return false;
 				}
 				freemedLoad( "org.freemedsoftware.ui.scheduler.book?patient=" + s.patient_id + "&id=" + s.scheduler_id );
 			} catch ( err ) {
 				// Nothing selected, reset
 				o.resetAtomicStatus();
-				alert("<!--{t}-->Please select an appointment.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select an appointment.<!--{/t}-->");
 			}
 		},
 		updateStatus: function ( status ) {
@@ -183,7 +183,7 @@
 					url: '<!--{$relay}-->/org.freemedsoftware.api.Scheduler.MoveAppointment',
 					load: function( type, data, evt ) {
 						if (data) {
-							freemedMessage( "<!--{t}-->Appointment updated.<!--{/t}-->", 'INFO' );
+							freemedMessage( "<!--{t|escape:'javascript'}-->Appointment updated.<!--{/t}-->", 'INFO' );
 							o.dailyCalendarSetDate();
 						}
 					},

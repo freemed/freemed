@@ -30,15 +30,15 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.type.length < 2 ) {
-		m += "<!--{t}-->You must enter a type.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a type.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.category.length < 2 ) {
-		m += "<!--{t}-->You must enter a category.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a category.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.description.length < 2 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

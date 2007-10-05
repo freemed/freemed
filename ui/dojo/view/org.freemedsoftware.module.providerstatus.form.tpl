@@ -30,7 +30,7 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.phystatus.length < 2 ) {
-		m += "<!--{t}-->You must enter a status.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a status.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

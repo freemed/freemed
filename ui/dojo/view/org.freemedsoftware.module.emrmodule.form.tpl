@@ -54,9 +54,9 @@
 		handleResponse: function ( data ) {
 			if (data) {
 				<!--{if $id}-->
-				freemedMessage( "<!--{t}-->Updated record.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Updated record.<!--{/t}-->", "INFO" );
 				<!--{else}-->
-				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Added record.<!--{/t}-->", "INFO" );
 				<!--{/if}-->
 				freemedPatientContentLoad( 'org.freemedsoftware.ui.patient.overview.default?patient=<!--{$patient}-->' );
 			} else {

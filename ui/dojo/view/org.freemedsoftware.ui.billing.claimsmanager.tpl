@@ -50,7 +50,7 @@
 
 			// Do not allow us to proceed if there are no qualifiers, otherwise we can really jam up the browser
 			if ( ! haveCrit ) {
-				alert ("<!--{t}-->Please select the criteria for the claims you are trying to work with.<!--{/t}-->");
+				alert ("<!--{t|escape:'javascript'}-->Please select the criteria for the claims you are trying to work with.<!--{/t}-->");
 				return false;
 			}
 			claimsManager.saveUpdateLabel = document.getElementById('updateButtonText').innerHTML;
@@ -80,7 +80,7 @@
 				content: { param0: claims },
 				url: "<!--{$relay}-->/org.freemedsoftware.api.ClaimLog.RebillClaims",
 				load: function ( type, data, evt ) {
-					alert("<!--{t}-->Marked the selected claims for rebill.<!--{/t}-->");
+					freemedMessage( "<!--{t|escape:'javascript'}-->Marked the selected claims for rebill.<!--{/t}-->", 'INFO' );
 					this.selectNone();
 				},
 				mimetype: "text/json"
@@ -94,7 +94,7 @@
 				content: { param0: claims },
 				url: "<!--{$relay}-->/org.freemedsoftware.api.ClaimLog.MarkClaimsAsBilled",
 				load: function ( type, data, evt ) {
-					alert("<!--{t}-->Marked the selected claims as billed.<!--{/t}-->");
+					freemedMessage( "<!--{t|escape:'javascript'}-->Marked the selected claims as billed.<!--{/t}-->", 'INFO' );
 					this.selectNone();
 				},
 				mimetype: "text/json"

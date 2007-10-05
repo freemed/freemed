@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.providername.length < 2 ) {
-		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.mailgwaddr.length < 2 ) {
-		m += "<!--{t}-->You must enter a SMS-gateway.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a SMS-gateway.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

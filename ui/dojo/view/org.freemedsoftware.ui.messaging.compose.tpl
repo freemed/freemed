@@ -53,11 +53,11 @@
 				text: dojo.widget.byId('msgtext').getValue()
 			};
 			if ( x.for < 1 ) {
-				alert( "<!--{t}-->You must select a valid recipient.<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->You must select a valid recipient.<!--{/t}-->" );
 				return false;
 			}
 			if ( x.patient < 1 && x.person.length < 1 ) {
-				alert( "<!--{t}-->You must enter a patient or person value to create a message.<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->You must enter a patient or person value to create a message.<!--{/t}-->" );
 				return false;
 			}
 			if ( parseInt( document.getElementById( 'msggroup' ).value > 0 ) ) {
@@ -70,7 +70,7 @@
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.api.Messages.send',
 				load: function( type, data, evt ) {
-					freemedMessage( "<!--{t}-->Message sent successfully.<!--{/t}-->", 'INFO' );
+					freemedMessage( "<!--{t|escape:'javascript'}-->Message sent successfully.<!--{/t}-->", 'INFO' );
 					freemedLoad( 'org.freemedsoftware.ui.messaging' );
 				},
 				mimetype: "text/json"
@@ -128,7 +128,7 @@
 			<td align="right"><button dojoType="Button" id="createMessageButton" widgetId="createMessageButton">
 		                <div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Create<!--{/t}--></div>
 			</button></td>
-			<td align="left"><button dojoType="Button" onClick="if(confirm('<!--{t}-->Are you sure you want to cancel this message?<!--{/t}-->')) { freemedLoad('org.freemedsoftware.ui.messaging'); }">
+			<td align="left"><button dojoType="Button" onClick="if(confirm('<!--{t|escape:'javascript'}-->Are you sure you want to cancel this message?<!--{/t}-->')) { freemedLoad('org.freemedsoftware.ui.messaging'); }">
         	        	<div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
 		</button></td>
 		</tr></table>

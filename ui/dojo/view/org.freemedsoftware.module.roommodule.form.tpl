@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.roomname.length < 2 ) {
-		m += "<!--{t}-->You must enter a name.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( parseInt( content.roompos ) < 1 ) {
-		m += "<!--{t}-->You must select a place of service.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must select a place of service.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

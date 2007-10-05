@@ -34,10 +34,10 @@
 				load: function ( type, data, evt ) {
 					if ( data ) {
 						remittMenu.status = true;
-						document.getElementById('remittServerStatus').innerHTML = "<!--{t}-->REMITT Server Running<!--{/t}-->";
+						document.getElementById('remittServerStatus').innerHTML = "<!--{t|escape:'javascript'}-->REMITT Server Running<!--{/t}-->";
 					} else {
 						remittMenu.status = false;
-						document.getElementById('remittServerStatus').innerHTML = "<span style=\"color: #ff0000;\"><!--{t}-->REMITT Server NOT Running<!--{/t}--></span>";
+						document.getElementById('remittServerStatus').innerHTML = "<span style=\"color: #ff0000;\"><!--{t|escape:'javascript'}-->REMITT Server NOT Running<!--{/t}--></span>";
 					}
 				},
 				mimetype: "text/json",

@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.sname.length < 1 ) {
-		m += "<!--{t}-->You must enter a type.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a type.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.sdescrip.length < 1 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

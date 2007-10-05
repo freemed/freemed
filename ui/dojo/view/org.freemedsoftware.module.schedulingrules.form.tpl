@@ -27,9 +27,9 @@
 		handleResponse: function ( data ) {
 			if (data) {
 				<!--{if $id}-->
-				freemedMessage( "<!--{t}-->Committed changes.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Committed changes.<!--{/t}-->", "INFO" );
 				<!--{else}-->
-				freemedMessage( "<!--{t}-->Added record.<!--{/t}-->", "INFO" );
+				freemedMessage( "<!--{t|escape:'javascript'}-->Added record.<!--{/t}-->", "INFO" );
 				<!--{/if}-->
 				freemedLoad( 'org.freemedsoftware.ui.supportdata.list?module=<!--{$module}-->' );
 			} else {
@@ -40,7 +40,7 @@
 			var r = true;
 			var m = "";
 			if ( content.reason.length < 2 ) {
-				m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+				m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 				r = false;
 			}
 			// TODO: flesh this out more, better handling of rules

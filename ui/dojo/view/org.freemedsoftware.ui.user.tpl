@@ -35,7 +35,7 @@
 			try {
 				v = dojo.widget.byId( 'supportDataHolder' ).getSelectedData().id;
 			} catch (e) {
-				alert("<!--{t}-->Please select a record.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select a record.<!--{/t}-->");
 				return false;
 			}
 			freemedLoad( 'org.freemedsoftware.ui.user.form?id=' + v );
@@ -51,10 +51,10 @@
 			try {
 				v = dojo.widget.byId( 'supportDataHolder' ).getSelectedData().id;
 			} catch (e) {
-				alert("<!--{t}-->Please select a record.<!--{/t}-->");
+				alert("<!--{t|escape:'javascript'}-->Please select a record.<!--{/t}-->");
 				return false;
 			}
-			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this user?<!--{/t}-->");
+			var x = confirm("<!--{t|escape:'javascript'}-->Are you sure you want to permanently remove this user?<!--{/t}-->");
 			if (x) {
 				dojo.io.bind({
 					method: 'POST',
@@ -63,7 +63,7 @@
 						param0: v
 					},
 					error: function( type, data, event ) {
-						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+						alert("<!--{t|escape:'javascript'}-->The system was unable to complete your request at this time.<!--{/t}-->");
 					},
 					load: function( type, data, event ) {
 						supportData.loadData();

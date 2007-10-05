@@ -104,7 +104,7 @@ var djConfig = {
 			method : 'POST',
 			url: '<!--{$relay}-->/org.freemedsoftware.public.Login.Logout',
 			error: function(type, data, evt) {
-				alert( "<!--{t}-->FreeMED has encountered an error. Please try again.<!--{/t}-->" );
+				alert( "<!--{t|escape:'javascript'}-->FreeMED has encountered an error. Please try again.<!--{/t}-->" );
 			},
 			load: function(type, data, evt) {
 				if (data) {
@@ -135,7 +135,7 @@ var djConfig = {
 			dojo.debug( 'Forcing new tab creation' );
 			freemedGlobal.tabCount += 1;	
 			var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
-				label: "<!--{t}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
+				label: "<!--{t|escape:'javascript'}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
 				cacheContent: false,
 				closable: true,
 				adjustPaths: false,
@@ -153,7 +153,7 @@ var djConfig = {
 				dojo.debug( 'CAUGHT ERROR, OPENING NEW TAB' );
 				freemedGlobal.tabCount += 1;	
 				var newTab = dojo.widget.createWidget( 'dojo:ContentPane', {
-					label: "<!--{t}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
+					label: "<!--{t|escape:'javascript'}-->Workspace<!--{/t}--> " + freemedGlobal.tabCount,
 					cacheContent: false,
 					closable: true,
 					adjustPaths: false,
@@ -247,10 +247,10 @@ var djConfig = {
 
 					// Show toasters if new documents have arrived.
 					if ( parseInt( document.getElementById( 'taskPaneUnfiledCount' ).innerHTML ) < parseInt( data[1] ) ) {
-						freemedMessage( "<!--{t}-->New unfiled document(s)<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->New unfiled document(s)<!--{/t}-->", 'INFO' );
 					}
 					if ( parseInt( document.getElementById( 'taskPaneUnreadCount' ).innerHTML ) < parseInt( data[2] ) ) {
-						freemedMessage( "<!--{t}-->New unread document(s).<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->New unread document(s).<!--{/t}-->", 'INFO' );
 					}
 					// Update display
 					document.getElementById( 'taskPaneUnfiledCount' ).innerHTML = data[1];
@@ -272,7 +272,7 @@ var djConfig = {
 					url: "<!--{$relay}-->/org.freemedsoftware.api.UserInterface.SetConfigValue",
 					load: function(type, data, evt) {
 						if (data) {
-							freemedMessage( "<!--{t}-->Notepad contents saved.<!--{/t}-->", 'INFO' );
+							freemedMessage( "<!--{t|escape:'javascript'}-->Notepad contents saved.<!--{/t}-->", 'INFO' );
 						}
 					},
 					mimetype: "text/json"

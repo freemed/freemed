@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.degdegree.length < 2 ) {
-		m += "<!--{t}-->You must enter a degree.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a degree.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.degname.length < 2 ) {
-		m += "<!--{t}-->You must enter a name for this degree.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a name for this degree.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

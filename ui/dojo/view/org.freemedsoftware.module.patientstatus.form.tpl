@@ -30,11 +30,11 @@
 
 <!--{assign_block var='validation'}-->
 	if ( content.ptstatus.length < 2 ) {
-		m += "<!--{t}-->You must enter a status.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a status.<!--{/t}-->\n";
 		r = false;
 	}
 	if ( content.ptstatusdescrip.length < 2 ) {
-		m += "<!--{t}-->You must enter a description.<!--{/t}-->\n";
+		m += "<!--{t|escape:'javascript'}-->You must enter a description.<!--{/t}-->\n";
 		r = false;
 	}
 <!--{/assign_block}-->

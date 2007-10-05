@@ -160,9 +160,9 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.api.SystemConfig.SetValues',
 				load: function( type, data, evt ) {
 					if ( data ) {
-						freemedMessage( "<!--{t}-->Saved configuration values.<!--{/t}-->", 'INFO' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Saved configuration values.<!--{/t}-->", 'INFO' );
 					} else {
-						freemedMessage( "<!--{t}-->Failed to change configuration values.<!--{/t}-->", 'ERROR' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Failed to change configuration values.<!--{/t}-->", 'ERROR' );
 					}
 				},
 				mimetype: 'text/json'

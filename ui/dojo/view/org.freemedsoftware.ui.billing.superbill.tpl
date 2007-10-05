@@ -52,7 +52,7 @@
 			this.saveValue = 0;
 		},
 		deleteSuperbill: function ( ) {
-			var x = confirm("<!--{t}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
+			var x = confirm("<!--{t|escape:'javascript'}-->Are you sure you want to permanently remove this document?<!--{/t}-->");
 			if (x) {
 				dojo.io.bind({
 					method: 'POST',
@@ -61,7 +61,7 @@
 						param0: this.saveValue
 					},
 					error: function( type, data, event ) {
-						alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+						alert("<!--{t|escape:'javascript'}-->The system was unable to complete your request at this time.<!--{/t}-->");
 					},
 					load: function( type, data, event ) {
 						this.resetForm();
@@ -83,7 +83,7 @@
 					param0: p
 				},
 				error: function( type, data, event ) {
-					//alert("<!--{t}-->The system was unable to complete your request at this time.<!--{/t}-->");
+					//alert("<!--{t|escape:'javascript'}-->The system was unable to complete your request at this time.<!--{/t}-->");
 					this.resetForm();
 				},
 				load: function( type, data, event ) {
@@ -130,7 +130,7 @@
 						var v = document.getElementById( 'superbillView' );
 						v.innerHTML = '';
 						var hPx = document.createElement( 'h4' );
-						hPx.innerHTML = "<!--{t}-->Procedures<!--{/t}-->";
+						hPx.innerHTML = "<!--{t|escape:'javascript'}-->Procedures<!--{/t}-->";
 						v.appendChild( hPx );
 
 						o.currentPx = {};
@@ -150,7 +150,7 @@
 						v.appendChild( ulPx );
 
 						var hDx = document.createElement( 'h4' );
-						hDx.innerHTML = "<!--{t}-->Diagnoses<!--{/t}-->";
+						hDx.innerHTML = "<!--{t|escape:'javascript'}-->Diagnoses<!--{/t}-->";
 						v.appendChild( hDx );
 
 						o.currentDx = {};

@@ -49,7 +49,7 @@
 			<!--{$varname}-->UploadWidget.setStatus( true );
 			document.getElementById( '<!--{$varname}-->Form' ).submit();
 			<!--{$varname}-->UploadWidget.setStatus( false );
-			freemedMessage( "<!--{t}-->Uploaded file<!--{/t}-->", 'INFO' );
+			freemedMessage( "<!--{t|escape:'javascript'}-->Uploaded file<!--{/t}-->", 'INFO' );
 			<!--{if $completedCode}--><!--{$completedCode}--><!--{/if}-->
 		},
 		setStatus: function ( s ) {
