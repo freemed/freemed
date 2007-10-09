@@ -25,6 +25,34 @@
 %%	Prescriptions
 %%
 
+{[* Define all variables here to get around horrible Smarty bug *]}
+
+{[link table="physician" link=$rxphy field="phypracname" var='phypracname']}
+{[assign_block var="phyaddr"]}{[link table='physician' link=$rxphy field='phyaddr1a']}, {[link table='physician' link=$rxphy field='phycitya']}, {[link table='physician' link=$rxphy field='phycitya']} {[link table='physician' link=$rxphy field='phyzipa']}{[/assign_block]}
+{[link table='physician' link=$rxphy field='phyphonea' var='phyphone']}
+{[link table='physician' link=$rxphy field='phyfaxa' var='phyfax']}
+{[link table='drugquantityqual' field='description' link=$rxquantityqual var='quanqual']}
+{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param=$rxphy var='phyname']}
+{[link table='physician' link=$rxphy field='phydea' var='dea']}}}
+{[link table='physician' link=$rxphy field='phynpi' var='npi']}}}
+
+{[* Figure substitution *]}
+{[if $rxsubstitute == 0]}
+	{[assign var='substitute' value='Substitution Allowed By Prescriber']}
+{[elseif $rxsubstitute == 1]}
+	{[assign var='substitute' value='Substitution Not Allowed By Prescriber']}
+{[elseif $rxsubstitute == 2]}
+	{[assign var='substitute' value='Substitution Allowed - Patient Requested Product Dispensed']}
+{[elseif $rxsubstitute == 3]}
+	{[assign var='substitute' value='Substitution Allowed - Pharmacist Selected Product Dispensed']}
+{[elseif $rxsubstitute == 4]}
+	{[assign var='substitute' value='Substitution Allowed - Generic Drug Not In Stock']}
+{[elseif $rxsubstitute == 5]}
+	{[assign var='substitute' value='Substitution Allowed - Brand Drug Dispensed as a Generic']}
+{[elseif $rxsubstitute == 8]}
+	{[assign var='substitute' value='Substitution Allowed - Generic Drug Not Available in Marketplace']}
+{[/if]}
+
 \documentclass{article}
 
 % No normal header, footer, etc
@@ -45,10 +73,10 @@
 \framebox[5in]{
 	\parbox{4.8in}{
 		\begin{center}
-			{\relsize{1}\textbf{{[link table='physician' link=$rxphy field='phypracname'|texize]}}} \\
+			{\relsize{1}\textbf{{[$phypracname|texize]}}} \\
 			{\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param=$rxphy|texize]}}} \\
-			\textsl{{[link table='physician' link=$rxphy field='phyaddr1a']}, {[$phycitya]}, {[link table='physician' link=$rxphy field='phycitya'|texize]} {[link table='physician' link=$rxphy field='phyzipa'|texize]}} \\
-			\textsl{Phone {[link table='physician' link=$rxphy field='phyphonea']} Fax {[link table='physician' link=$rxphy field='phyfaxa']}}
+			{[if $phyaddr ne ', ,  ']}\textsl{{[$phyaddr|texize]}} \\{[/if]}
+			\textsl{{[if $phyphone]}Phone {[$phyphone|texize]}{[/if]} {[if $phyfax]}Fax {$phyfax|texize[]}{[/if]}}
 
 		\end{center}
 		\begin{center}
@@ -65,22 +93,30 @@
 
 				\  & \  \\
 %				\textbf{Medication}  & \parbox{3in}{{\large {[$rxform|texize]} {[$rxdrug|texize]} {[$rxsize|texize]} {[$rxunit|texize]}}} \\
-				\textbf{Medication}  & {\large {[$_drug|texize]} } \\
-				\textbf{Disp} & {[$_dispensed|texize]} \\
-				\textbf{Sig} & \parbox{3in}{{[$rxdosage|texize]}} \\
+				\textbf{Medication}  & {\large {[$rxdrug|texize]} {[$rxunit|texize]} } \\
+				\textbf{Disp} & {[$rxquantity|texize]} {[if $rxquantityqual]}{[$quanqual|texize]}{[/if]} \\
 				\  & \  \\
 				\textbf{Refill} & {[$_refills]} refill(s) \\
+				\  & \  \\
+				\textbf{Sig} & \parbox{3in}{{[$rxsig|texize]}} \\
 			\end{tabular}
 		\end{center}
 		\ \\
+		\ \\
+{[if $rxnote]}
 		\centerline{\textbf{Notes} \  \parbox{4in}{{[$rxnote]}} } \\
 		\ \\
-		\centerline{\textbf{{[$rxsubstitute]}}}
+{[/if]}
+		\centerline{\textbf{{[$substitute|texize]}}}
 		\ \\
 		\hfill \\
-		\centerline{{\large \textbf{{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param=$rxphy]}}}} 
-		\centerline{{\relsize{-1}DEA \#: {[link table='physician' link=$rxphy field='phydea']}}}
-		\centerline{{\relsize{-1}NPI \#: {[link table='physician' link=$rxphy field='phynpi']}}}
+		\centerline{{\large \textbf{{[$phyname|texize]}}}} 
+	{[if $dea]}
+		\centerline{{\relsize{-1}DEA \#: {[$dea|texize]}}}
+	{[/if]}
+	{[if $npi]}
+		\centerline{{\relsize{-1}NPI \#: {[$npi|texize]}}}
+	{[/if]}
 		\centerline{{\large Signature On File}} 
 	}
 }
