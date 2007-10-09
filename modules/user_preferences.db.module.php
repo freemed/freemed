@@ -50,6 +50,7 @@ class UserPreferences extends SupportModule {
 	//	Array of hashes.
 	//
 	public function GetAll( ) {
+		$u = freemed::user_cache();
 		$q = "SELECT * FROM ".$this->table_name." WHERE NOT ISNULL(u_title) ORDER BY u_title";
 		$res = $GLOBALS['sql']->queryAll( $q );
 		$result = array ( );
