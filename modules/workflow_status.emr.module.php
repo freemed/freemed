@@ -104,14 +104,16 @@ class WorkflowStatus extends SupportModule {
 		$map = $this->StatusMapForDate( $dt ? $dt : date('Y-m-d') );
 		$status = true;
 		foreach ( $map AS $e ) {
-			foreach ( $e AS $k => $v ) {
-				switch ( $k ) {
-					case 'patient': case 'patient_id': case 'date_of':
-					break;
-
-					default:
-					if ( ! $v ) { $status = false; }
-					break;
+			if ( $e['patient_id'] > 0 ) {
+				foreach ( $e AS $k => $v ) {
+					switch ( $k ) {
+						case 'patient': case 'patient_id': case 'date_of':
+						break;
+	
+						default:
+						if ( ! $v ) { $status = false; }
+						break;
+					}
 				}
 			}
 		}

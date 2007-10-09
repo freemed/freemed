@@ -228,7 +228,7 @@ BEGIN
 	END WHILE;
 	CLOSE cur;
 	SET @sql = CONCAT(
-		"SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname, ' (', p.ptid, ')' ) AS patient, w.patient AS patient_id, DATE_FORMAT( stamp, '%Y-%m-%d' ) AS date_of ", fClause, " FROM workflow_status_summary w LEFT OUTER JOIN patient p ON w.patient=p.id WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) >= '", olddt, "' AND DATE_FORMAT(stamp, '%Y-%m-%d') <= '", dt, "'"
+		"SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname, ' (', p.ptid, ')' ) AS patient, w.patient AS patient_id, DATE_FORMAT( stamp, '%Y-%m-%d' ) AS date_of ", fClause, " FROM workflow_status_summary w LEFT OUTER JOIN patient p ON w.patient=p.id WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) >= '", olddt, "' AND DATE_FORMAT(stamp, '%Y-%m-%d') <= '", dt, "' AND NOT ISNULL( w.patient ) AND w.patient > 0"
 	) ;
 
 	PREPARE s FROM @sql ;
