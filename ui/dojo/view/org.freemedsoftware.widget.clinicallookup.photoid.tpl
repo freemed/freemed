@@ -5,6 +5,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -21,15 +22,13 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
+<!--{*
 
-<table border="0"><tr><td valign="top">
-<!--{include file="org.freemedsoftware.widget.patientemrattachments.tpl" patient=$patient}-->
-</td><td width="250" valign="top">
-<!--{include file="org.freemedsoftware.widget.patienttags.tpl" patient=$patient}-->
-<br clear="all" />
-<!--{include file="org.freemedsoftware.widget.clinicallookup.tpl" patient=$patient}-->
-<br clear="all" />
-<!--{include file="org.freemedsoftware.widget.patienttasks.tpl" patient=$patient}-->
-<br clear="all" />
-</td></tr></table>
+	File:	org.freemedsoftware.widget.clinicallookup.photoid
+
+	Reusable photographic ID widget.
+
+*}-->
+
+<div id="patientPhotoIdContainerInnerDiv" align="center"><img src="<!--{$relay}-->/org.freemedsoftware.module.PhotographicIdentification.GetPhotoID?param0=<!--{$patient}-->&dojo.nocache=<!--{$smarty.now|date_format:"%s"}-->" style="width: 230px; height: auto;" border="0" /></div>
 
