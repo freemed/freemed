@@ -182,3 +182,74 @@ END;
 
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS TRANSLATE_CHARS;
+
+DELIMITER //
+
+# Function: TRANSLATE_CHARS
+#
+#	MySQL UDF to perform translation of strings
+#
+# Parameters:
+#
+#	s - Value to examine. VARCHAR(255)
+#
+#	f - From lookup table. VARCHAR (255)
+#
+#	t - To lookup table. VARCHAR (255)
+#
+# Returns:
+#
+#	VARCHAR (255) containing translated string
+#
+CREATE FUNCTION TRANSLATE_CHARS ( s VARCHAR(255), f VARCHAR(255), t VARCHAR(255) )
+	RETURNS VARCHAR(255)
+	LANGUAGE SQL
+	DETERMINISTIC
+BEGIN
+	DECLARE d VARCHAR(255);
+	DECLARE ch CHAR(1);
+	DECLARE offset TINYINT(3) UNSIGNED;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET d = NULL;
+
+	SET offset = 1;
+	SET d = '';
+
+	REPEAT
+		SET ch = SUBSTRING( s FROM offset FOR 1 );
+		SET d = CONCAT( d, SUBSTRING( t FROM INSTR( f, ch ) FOR 1 ) );
+		SET offset = offset + 1;
+	UNTIL offset > LENGTH( s ) END REPEAT;
+	RETURN d;
+END;
+//
+
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS STRING_TO_PHONE;
+
+DELIMITER //
+
+# Function: STRING_TO_PHONE
+#
+#	MySQL UDF to translate a string to a phone number string
+#
+# Parameters:
+#
+#	s - Value to examine. VARCHAR(255)
+#
+# Returns:
+#
+#	VARCHAR (255) containing translated string
+#
+CREATE FUNCTION STRING_TO_PHONE ( s VARCHAR(255) )
+	RETURNS VARCHAR(255)
+	LANGUAGE SQL
+	DETERMINISTIC
+BEGIN
+	RETURN TRANSLATE_CHARS( LOWER( REPLACE( s, ' ', '' ) ), 'abcdefghijklmnopqrstuvwxyz', '22233344455566671778889991' );
+END;
+//
+
+DELIMITER ;
+
