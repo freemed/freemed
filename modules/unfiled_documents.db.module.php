@@ -160,8 +160,8 @@ class UnfiledDocuments extends SupportModule {
 				array (
 					"imagedt" => $data['date'],
 					"imagepat" => $data['patient'],
-					"imagetype" => $cat['type'],
-					"imagecat" => $cat['category'],
+					"imagetype" => $data['category'],
+					//"imagecat" => $cat['category'],
 					"imagedesc" => $data['note'],
 					"imagephy" => $data['physician'],
 					"imagetext" => $data['text'],
