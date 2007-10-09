@@ -72,6 +72,7 @@ div.infoBox *, div.infoBox a {
 	}
 
 .clickable {
+	font-size: 8pt;
 	font-weight: bold;
 	text-decoration: underline;
 	}
@@ -134,6 +135,7 @@ html>body tbody.scrollContent {
 	height: auto;
 	overflow-x:hidden;
 	overflow-y: auto;
+	border: 1px solid #000000;
 	}
 
 tbody.scrollContent td, tbody.scrollContent tr td {
