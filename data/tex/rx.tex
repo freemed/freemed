@@ -35,6 +35,7 @@
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param=$rxphy var='phyname']}
 {[link table='physician' link=$rxphy field='phydea' var='dea']}}}
 {[link table='physician' link=$rxphy field='phynpi' var='npi']}}}
+{[method namespace='org.freemedsoftware.module.MultumDrugLexicon.DrugDosageToText' param0=$rxunit var='dosage']}
 
 {[* Figure substitution *]}
 {[if $rxsubstitute == 0]}
@@ -74,39 +75,39 @@
 	\parbox{4.8in}{
 		\begin{center}
 			{\relsize{1}\textbf{{[$phypracname|texize]}}} \\
-			{\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param=$rxphy|texize]}}} \\
+			{\relsize{-1}\textsl{{[$phyname|texize]}}} \\
 			{[if $phyaddr ne ', ,  ']}\textsl{{[$phyaddr|texize]}} \\{[/if]}
-			\textsl{{[if $phyphone]}Phone {[$phyphone|texize]}{[/if]} {[if $phyfax]}Fax {$phyfax|texize[]}{[/if]}}
+			\textsl{{[if $phyphone]}Phone {[$phyphone|texize]}{[/if]} {[if $phyfax]}Fax {$phyfax|texize]}{[/if]}}
 
 		\end{center}
 		\begin{center}
 			\begin{tabular}{r|l}
-				\textbf{Patient} & {[$ptfname|texize]} {[if $ptmname]}{[$ptmname|texize]}.{[/if]} {[$ptlname|texize]}  \\
-			 	\textbf{Date of Birth} & {[$ptdob|texize]} \\	
-			 	\textbf{SSN} & {[$ptssn|texize]}* \\	
-				\textbf{Account \#} & {[$ptid|texize]} \\
+				\textbf{Rx Date} & {[$rxdtfrom|date_format:"%B %e, %Y"|texize]} \\
 				\  & \  \\
-				\textbf{Rx Date} & {[$rxdtfrom|texize]} \\
+				\textbf{Patient} & {[$ptfname|texize]} {[if $ptmname]}{[$ptmname|texize]}.{[/if]} {[$ptlname|texize]}  \\
+			 	\textbf{Date of Birth} & {[$ptdob|date_format:"%B %e, %Y"|texize]} \\	
+			 	\textbf{SSN} & {[$ptssn|texize]} \\	
+%				\textbf{Account \#} & {[$ptid|texize]} \\
 				\  & \  \\
 				\textbf{Address} & {[$ptaddr1|texize]} \\
 				\  & {[$ptcity]}, {[$ptstate]} {[$ptzip]} \\
 
 				\  & \  \\
-%				\textbf{Medication}  & \parbox{3in}{{\large {[$rxform|texize]} {[$rxdrug|texize]} {[$rxsize|texize]} {[$rxunit|texize]}}} \\
-				\textbf{Medication}  & {\large {[$rxdrug|texize]} {[$rxunit|texize]} } \\
+				\textbf{Medication}  & \parbox{3in}{{\large {[$rxdrug|texize]} {[$dosage|texize]} }} \\
 				\textbf{Disp} & {[$rxquantity|texize]} {[if $rxquantityqual]}{[$quanqual|texize]}{[/if]} \\
 				\  & \  \\
-				\textbf{Refill} & {[$_refills]} refill(s) \\
-				\  & \  \\
+{[if $rxsig]}
 				\textbf{Sig} & \parbox{3in}{{[$rxsig|texize]}} \\
+{[/if]}
+				\  & \  \\
+				\textbf{Refill} & {[$_refills]} refill(s) \\
 			\end{tabular}
 		\end{center}
 		\ \\
-		\ \\
 {[if $rxnote]}
-		\centerline{\textbf{Notes} \  \parbox{4in}{{[$rxnote]}} } \\
-		\ \\
+		\centerline{\textbf{Notes} \  \parbox{4in}{{[$rxnote|texize]}} } \\
 {[/if]}
+		\ \\
 		\centerline{\textbf{{[$substitute|texize]}}}
 		\ \\
 		\hfill \\
