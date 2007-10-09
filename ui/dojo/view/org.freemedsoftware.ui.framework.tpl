@@ -26,6 +26,7 @@
 <html>
 <head>
 <title>FreeMED v<!--{$VERSION}--><!--{if $svnVersion}--> (build <!--{$svnVersion}-->)<!--{/if}--></title>
+<meta http-equiv="Content-Type" content="text/html; charset=<!--{$ISOSET}-->"></meta>
 
 <!--{* ***** Style Elements ***** *}-->
 
