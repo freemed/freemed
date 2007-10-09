@@ -159,7 +159,7 @@
 				content: {
 					param0: hash
 				},
-				url: '<!--{$relay}-->/org.freemedsoftware.modules.UserPreferences.SetValues',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.UserPreferences.SetValues',
 				load: function( type, data, evt ) {
 					if ( data ) {
 						freemedMessage( "<!--{t|escape:'javascript'}-->Saved preferences.<!--{/t}-->", 'INFO' );
