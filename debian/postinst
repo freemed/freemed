@@ -31,7 +31,7 @@ fi
 
 # Apache user has to own freemed
 echo -n "Updating ownership of freemed to webserver user ... "
-chown -Rf www-data.www-data /usr/share/freemed 
+chown -Rf www-data:www-data /usr/share/freemed 
 echo "[done]"
 
 # Change writeable permissions for data/, img/store, etc

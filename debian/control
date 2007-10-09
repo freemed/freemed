@@ -8,6 +8,6 @@ Standards-Version: 3.6.0
 Package: freemed
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php5, php5-mysql, php5-gd, php5-cli, php5-cgi, php5-curl, libapache2-mod-php5, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, xpdf-utils, mysql-server, mysql-client, djvulibre-bin, libxml-simple-perl, libpdf-api2-perl, libchm-bin, hylafax-client, hylafax-server
+Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php5, php5-mysql, php5-gd, php5-cli, php5-cgi, php5-curl, libapache2-mod-php5, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, xpdf-utils, mysql-server-5.0 (>= 5.0.22), mysql-client-5.0 (>= 5.0.22), djvulibre-bin, libxml-simple-perl, libpdf-api2-perl, hylafax-client, hylafax-server, wv
 Suggests: remitt, cdrecord, mkisofs, php5-eaccelerator
 Description: FreeMED Opensource Electronic Medical Record System
