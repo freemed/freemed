@@ -167,6 +167,30 @@ class PatientInterface {
 		return $return;
 	} // end method EmrModules
 
+	// Method: NumericSearch
+	//
+	//	Search for patients by numeric criteria.
+	//
+	// Parameters:
+	//
+	//	$criteria - Hash
+	//	* last_name - Last name
+	//	* first_name - First name
+	//	* year_of_birth - Year for date of birth
+	//
+	// Returns:
+	//
+	//	Array of hashes containing:
+	//	* ptlname - Patient last name
+	//	* ptfname - Patient first name
+	//	* ptid - Internal practice ID
+	//	* id - Patient record ID
+	//
+	public function NumericSearch ( $criteria ) {
+		$q = "SELECT p.ptlname, p.ptfname, p.ptid, p.id FROM patient_keypad_lookup k LEFT OUTER JOIN patient p ON k.patient = p.id WHERE k.archive = 0 AND last_name LIKE '". $GLOBALS['sql']->escape( $criteria['last_name'] )."%' AND first_name LIKE '". $GLOBALS['sql']->escape( $criteria['first_name'] ) ."%' AND year_of_birth = ".$GLOBALS['sql']->quote( $criteria['year_of_birth'] );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method NumericSearch
+
 	// Method: Search
 	//
 	//	Public patient search engine interface.
