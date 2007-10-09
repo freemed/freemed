@@ -149,6 +149,12 @@
 	};
 
 	_container_.addOnLoad(function() {
+		try {
+			var x = dojo.widget.byId( 'freemedContent' );
+			var node = x.containerNode || x.domNode;
+			var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'workflowStatusTableHeader' ).offsetHeight + 80 );
+			document.getElementById( 'workflowStatusTableBody' ).style.height = h + 'px';
+		} catch ( e ) { }
 		w.init();
 	});
 
