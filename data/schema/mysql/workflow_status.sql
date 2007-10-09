@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `workflow_status` (
 
 	#	Define keys
 
-#	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
 
 	#	Define keys
 
-#	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS patientWorkflowStatusUpdateLookup;
@@ -188,12 +188,14 @@ DELIMITER //
 #
 #	dt - Date to retrieve matrix for ( DATE )
 #
+#	daysFor - Number of days ( INT UNSIGNED )
+#
 # Returns:
 #
 #	Query with patient, patient_id and all workflow statuses as columns for
 #	all patients being seen for the specified date.
 #
-CREATE PROCEDURE patientWorkflowStatusByDate ( IN dt DATE )
+CREATE PROCEDURE patientWorkflowStatusByDate ( IN dt DATE, IN daysFor INT UNSIGNED )
 BEGIN
 	DECLARE t_id INT UNSIGNED;
 	DECLARE t_status_name VARCHAR (250);
@@ -202,12 +204,19 @@ BEGIN
 	DECLARE fClause TEXT;
 	DECLARE fClause_tmp TEXT;
 	DECLARE done INT DEFAULT 0;
+	DECLARE olddt DATE;
 	DECLARE cur CURSOR FOR
 		SELECT id, status_name, status_module FROM workflow_status_type WHERE active = TRUE ORDER BY status_order;
 
 	#	Handle SQL exceptions and bad states
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = 1;
+
+	IF daysFor > 1 THEN
+		SET olddt := DATE_SUB( dt, INTERVAL ( daysFor - 1 ) DAY );
+	ELSE
+		SET olddt := dt;
+	END IF;
 
 	OPEN cur;
 	FETCH cur INTO t_id, t_status_name, t_status_module;
@@ -219,7 +228,7 @@ BEGIN
 	END WHILE;
 	CLOSE cur;
 	SET @sql = CONCAT(
-		"SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname, ' (', p.ptid, ')' ) AS patient, w.patient AS patient_id ", fClause, " FROM workflow_status_summary w LEFT OUTER JOIN patient p ON w.patient=p.id WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = '", dt, "'"
+		"SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname, ' (', p.ptid, ')' ) AS patient, w.patient AS patient_id, DATE_FORMAT( stamp, '%Y-%m-%d' ) AS date_of ", fClause, " FROM workflow_status_summary w LEFT OUTER JOIN patient p ON w.patient=p.id WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) >= '", olddt, "' AND DATE_FORMAT(stamp, '%Y-%m-%d') <= '", dt, "'"
 	) ;
 
 	PREPARE s FROM @sql ;

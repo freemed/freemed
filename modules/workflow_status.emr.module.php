@@ -80,7 +80,8 @@ class WorkflowStatus extends SupportModule {
 	public function StatusMapForDate( $date ) {
 		freemed::acl_enforce( 'scheduling', 'view' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $s->ImportDate( $date ) ) ." )";
+		$u = freemed::user_cache();
+		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $s->ImportDate( $date ) ) .", " . $GLOBALS['sql']->quote( $u->getManageConfig( 'workflow_status_age' ) + 0 ) . " )";
 		return $GLOBALS['sql']->queryAllStoredProc( $q );
 	} // end method StatusMapForDate
 
@@ -105,7 +106,7 @@ class WorkflowStatus extends SupportModule {
 		foreach ( $map AS $e ) {
 			foreach ( $e AS $k => $v ) {
 				switch ( $k ) {
-					case 'patient': case 'patient_id':
+					case 'patient': case 'patient_id': case 'date_of':
 					break;
 
 					default:
