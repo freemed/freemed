@@ -66,7 +66,12 @@
 				widget.id = item.u_option;
 				widget.options.length = 0;
 				for ( var t=0; t<item.options.length; t++ ) {
-					widget.options[widget.options.length] = new Option( item.options[t], item.options[t] );
+					if ( item.options[t].match('/') ) {
+						var o = item.options[t].split('/');
+						widget.options[widget.options.length] = new Option( o[1], o[0] );
+					} else {
+						widget.options[widget.options.length] = new Option( item.options[t], item.options[t] );
+					}
 				}
 				try { widget.value = item.u_value; } catch (err) { }
 				tD2.appendChild( widget );

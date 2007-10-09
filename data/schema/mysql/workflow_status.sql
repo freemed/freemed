@@ -188,14 +188,14 @@ DELIMITER //
 #
 #	dt - Date to retrieve matrix for ( DATE )
 #
-#	daysFor - Number of days ( INT UNSIGNED )
+#	daysFor - Number of days, -1 indicates never expires ( INT )
 #
 # Returns:
 #
 #	Query with patient, patient_id and all workflow statuses as columns for
 #	all patients being seen for the specified date.
 #
-CREATE PROCEDURE patientWorkflowStatusByDate ( IN dt DATE, IN daysFor INT UNSIGNED )
+CREATE PROCEDURE patientWorkflowStatusByDate ( IN dt DATE, IN daysFor INT )
 BEGIN
 	DECLARE t_id INT UNSIGNED;
 	DECLARE t_status_name VARCHAR (250);
@@ -214,6 +214,8 @@ BEGIN
 
 	IF daysFor > 1 THEN
 		SET olddt := DATE_SUB( dt, INTERVAL ( daysFor - 1 ) DAY );
+	ELSEIF daysFor < 0 THEN
+		SET olddt := '0000-00-00';
 	ELSE
 		SET olddt := dt;
 	END IF;
