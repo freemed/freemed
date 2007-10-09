@@ -22,7 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 function smarty_function_method ( $params, &$smarty ) {
-	if ( !isset ( $params['namespace'] ) ) { $smarty->error ( "Namespace not specified" ); }
+	if ( !isset ( $params['namespace'] ) ) { $smarty->trigger_error ( "Namespace not specified" ); }
 	if ( isset ( $params['param'] ) ) {
 		$x = call_user_func_array ( 'CallMethod', array ( $params['namespace'], $params['param'] ) );
 	} elseif ( isset( $params['param0'] ) ) {

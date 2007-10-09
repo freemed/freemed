@@ -22,7 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 function smarty_block_assign_block( $params, $text, &$smarty ) {
-	if ( !isset ( $params['var'] ) ) { $smarty->error ( "Variable not specified" ); }
+	if ( !isset ( $params['var'] ) ) { $smarty->trigger_error ( "Variable not specified" ); }
 	$smarty->assign( $params['var'], $text );
 } // end function smarty_assign_block
 

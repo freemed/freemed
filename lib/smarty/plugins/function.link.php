@@ -24,16 +24,20 @@
 function smarty_function_link ( $params, &$smarty ) {
 	static $cache;
 
-	if ( !isset ( $params['table'] ) ) { $smarty->error ( "Table not specified" ); }
-	if ( !isset ( $params['link'] ) ) { $smarty->error ( "Link not specified" ); }
-	if ( !isset ( $params['field'] ) ) { $smarty->error ( "Field not specified" ); }
+	if ( !isset ( $params['table'] ) ) { $smarty->trigger_error ( "Table not specified" ); }
+	if ( !isset ( $params['link'] ) ) { $smarty->trigger_error ( "Link not specified" ); }
+	if ( !isset ( $params['field'] ) ) { $smarty->trigger_error ( "Field not specified" ); }
 
 	// Check for cache
 	if ( !isset ( $cache[$params['table']][$params['link']] ) ) {
 		$cache[$params['table']][$params['link']] = $GLOBALS['sql']->get_link( $params['table'], $params['link'] );
 	}
 
-	return $cache[$params['table']][$params['link']][$params['field']];
+	if ( isset ( $params['var'] ) ) {
+		$smarty->assign( $params['var'], $cache[$params['table']][$params['link']][$params['field']] );
+	} else {
+		return $cache[$params['table']][$params['link']][$params['field']];
+	}
 } // end function smarty_function_link
 
 ?>

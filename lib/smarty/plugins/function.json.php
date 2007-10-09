@@ -22,7 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 function smarty_function_json ( $params, &$smarty ) {
-	if ( !isset ( $params['value'] ) ) { $smarty->error ( "Value not specified" ); }
+	if ( !isset ( $params['value'] ) ) { $smarty->trigger_error ( "Value not specified" ); }
 
 	$x = json_encode( $params['value'] );
 	if ( empty( $x ) ) { $x = 'null'; }

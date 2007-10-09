@@ -22,7 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 function smarty_function_config_value ( $params, &$smarty ) {
-	if ( !isset ( $params['option'] ) ) { $smarty->error ( "Option not specified" ); }
+	if ( !isset ( $params['option'] ) ) { $smarty->trigger_error ( "Option not specified" ); }
 
 	$x = freemed::config_value( $params['option'] );
 

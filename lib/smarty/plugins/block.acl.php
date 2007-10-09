@@ -22,8 +22,8 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 function smarty_block_acl( $params, $text, &$smarty ) {
-	if ( !isset ( $params['category'] ) ) { $smarty->error ( "Category not specified" ); }
-	if ( !isset ( $params['permission'] ) ) { $smarty->error ( "Permission not specified" ); }
+	if ( !isset ( $params['category'] ) ) { $smarty->trigger_error ( "Category not specified" ); }
+	if ( !isset ( $params['permission'] ) ) { $smarty->trigger_error ( "Permission not specified" ); }
 
 	$perm = freemed::user_cache()->CachedACL( $params['category'], $params['permission'] );
 
