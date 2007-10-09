@@ -71,13 +71,11 @@ class Login {
 			// Set session vars
 			unset($r['userpassword']);
 			// Pull user options
-			$s = unserialize( $r['usermanageopt'] );
-			if ( $s ) { $r['usermanageopt'] = $s; }
-			$_SESSION['authdata'] = array (
-				"username" => $username,
-				"user" => $r['id'],
-				"user_record" => $r
-			);
+			$_SESSION['authdata']['username'] = $username;
+			$_SESSION['authdata']['user'] = $r['id'];
+
+			$this->SessionPopulate();
+
 			// Set ipaddr for SESSION_PROTECTION
 			$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
 	
@@ -96,6 +94,27 @@ class Login {
 			return false;
 		} // end check password
 	} // end method Validate
+
+	// Method: SessionPopulate
+	//
+	//	Populate / repopulate session data with user information. Requires
+	//	valid $_SESSION['authdata']['user'] variable.
+	//
+	// Returns:
+	//
+	//	True on success.
+	//
+	public function SessionPopulate ( ) {
+		$u = freemed::user_cache();
+
+		// Pull user options
+		$s = unserialize( $r['usermanageopt'] );
+		if ( $s ) { $r['usermanageopt'] = $s; }
+
+		$_SESSION['authdata']['user_record'] = $r;
+
+		return true;
+	} // end method SessionPopulate
 
 	// Method: GetLanguages
 	//

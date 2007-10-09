@@ -102,6 +102,10 @@ class UserPreferences extends SupportModule {
 			$u->setManageConfig( $k, $v );
 		}
 
+		// Repopulate session
+		$l = CreateObject( 'org.freemedsoftware.public.Login' );
+		$l->SessionPopulate();
+
 		return true;
 	} // end method SetValues
 
