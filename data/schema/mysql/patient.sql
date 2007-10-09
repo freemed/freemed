@@ -20,6 +20,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+SOURCE data/schema/mysql/_functions.sql
+
 CREATE TABLE IF NOT EXISTS `patient` (
 	ptdtadd			DATE,
 	ptdtmod			DATE,
@@ -101,9 +103,13 @@ DROP PROCEDURE IF EXISTS patient_Upgrade;
 DELIMITER //
 CREATE PROCEDURE patient_Upgrade ( )
 BEGIN
+	DECLARE patient_Count INT UNSIGNED DEFAULT 0;
+	DECLARE patient_keypad_Count INT UNSIGNED DEFAULT 0;
+
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Remove triggers
+	DROP TRIGGER patient_Insert;
 	DROP TRIGGER patient_Update;
 	DROP TRIGGER patient_address_Insert;
 	DROP TRIGGER patient_address_Update;
@@ -114,6 +120,27 @@ BEGIN
 	ALTER IGNORE TABLE patient ADD COLUMN ptsuffix VARCHAR (10) AFTER ptmname;
 	ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;
 	ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;
+
+	# If we have nothing in patient_keypad_lookup, populate.
+	SELECT COUNT(*) INTO patient_Count FROM patient;
+	SELECT COUNT(*) INTO patient_keypad_Count FROM patient_keypad_lookup;
+	IF patient_keypad_Count = 0 AND patient_Count > 0 THEN
+		INSERT INTO `patient_keypad_lookup` (
+				patient,
+				last_name,
+				first_name,
+				year_of_birth,
+				ssn,
+				archive
+			) SELECT
+				id,
+				STRING_TO_PHONE( ptlname ),
+				STRING_TO_PHONE( ptfname ),
+				YEAR( ptdob ),
+				SUBSTRING( ptssn FROM -4 FOR 4 ),
+				ptarchive
+			FROM patient;
+	END IF;
 END
 //
 DELIMITER ;
@@ -122,6 +149,28 @@ CALL patient_Upgrade( );
 #----- Triggers
 
 DELIMITER //
+CREATE TRIGGER patient_Insert
+	AFTER INSERT ON patient
+	FOR EACH ROW BEGIN
+		#-----	Add new phone lookup
+		INSERT INTO `patient_keypad_lookup` (
+				patient,
+				last_name,
+				first_name,
+				year_of_birth,
+				ssn,
+				archive
+			) VALUES (
+				NEW.id,
+				STRING_TO_PHONE( NEW.ptlname ),
+				STRING_TO_PHONE( NEW.ptfname ),
+				YEAR( NEW.ptdob ),
+				SUBSTRING( NEW.ptssn FROM -4 FOR 4 ),
+				NEW.ptarchive
+			);
+	END;
+//
+
 CREATE TRIGGER patient_Update
 	AFTER UPDATE ON patient
 	FOR EACH ROW BEGIN
@@ -214,6 +263,21 @@ CREATE TRIGGER patient_Update
 					OLD.ptphy4
 				);
 		END IF;
+		#-----	Update phone lookup
+		IF
+				OLD.ptlname<>NEW.ptlname OR
+				OLD.ptfname<>NEW.ptfname OR
+				OLD.ptdob<>NEW.ptdob OR
+				OLD.ptarchive<>NEW.ptarchive OR
+				OLD.ptssn<>NEW.ptssn THEN
+			UPDATE `patient_keypad_lookup` SET
+				last_name = STRING_TO_PHONE( NEW.ptlname ),
+				first_name = STRING_TO_PHONE( NEW.ptfname ),
+				year_of_birth = YEAR( NEW.ptdob ),
+				ssn = SUBSTRING( NEW.ptssn FROM -4 FOR 4 ),
+				archive = NEW.ptarchive
+			WHERE patient = NEW.id;
+		END IF;
 	END;
 //
 DELIMITER ;
@@ -302,6 +366,24 @@ CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
 	ptphy2			VARCHAR (150),
 	ptphy3			VARCHAR (150),
 	ptphy4			VARCHAR (150),
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+	#	Define keys
+
+	PRIMARY KEY		( id )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
+	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+
+	last_name		VARCHAR (30),
+	first_name		VARCHAR (30),
+	year_of_birth		CHAR (4),
+	ssn			CHAR (4),
+	pin			VARCHAR (150),	# future use
+	archive			INT UNSIGNED DEFAULT 0,
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
 	#	Define keys
