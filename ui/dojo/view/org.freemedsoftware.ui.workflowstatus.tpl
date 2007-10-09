@@ -45,28 +45,24 @@
 		},
 		onGoClick: function ( evt ) {
 			var hash = this.id.replace('workflow_status_go_', '' ).split('_');
-			freemedLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + hash[1] + '.workflow?patient=' + encodeURIComponent( hash[0] ) );
+			freemedLoad( '<!--{$controller}-->/org.freemedsoftware.module.' + hash[2] + '.workflow?patient=' + encodeURIComponent( hash[0] ) );
 		},
 		onImageClick: function ( evt ) {
 			var hash = this.id.replace('workflow_status_img_', '' ).split('_');
-
-			// For now, we use today's date
-			var dt = dojo.date.strftime( new Date(), '%D' );
-			alert( dt );
 
 			dojo.io.bind({
 				method: 'POST',
 				content: {
 					param0: hash[0],
-					param1: dt,
-					param2: hash[1],
+					param1: hash[1],
+					param2: hash[2],
 					param3: true
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.workflowstatus.SetStatus",
 				load: function ( type, evt, data ) {
 					if ( data ) {
 						freemedMessage( "<!--{t|escape:'javascript'}-->Workflow updated.<!--{/t}-->", 'INFO' );
-						var bImg = document.getElementById( 'workflow_status_img_' + hash[0] + '_' + hash[1] );
+						var bImg = document.getElementById( 'workflow_status_img_' + hash[0] + '_' + hash[1] + '_' + hash[2] );
 						bImg.src = "<!--{$htdocs}-->/images/teak/check_go.16x16.png";
 					}
 				},
@@ -84,6 +80,7 @@
 				switch ( h ) {
 					case 'patient': break;
 					case 'patient_id': break;
+					case 'date_of': break;
 					default: cols.push( h ); break;
 				}
 			}
@@ -95,6 +92,9 @@
 			var hPatient = document.createElement( 'th' );
 			hPatient.innerHTML = "<!--{t|escape:'javascript'}-->Patient<!--{/t}-->";
 			hRow.appendChild( hPatient );
+			var hDate = document.createElement( 'th' );
+			hDate.innerHTML = "<!--{t|escape:'javascript'}-->Date<!--{/t}-->";
+			hRow.appendChild( hDate );
 			for ( var i=0; i<cols.length; i++ ) {
 				var hElement = document.createElement( 'th' );
 				hElement.innerHTML = cols[i];
@@ -104,15 +104,20 @@
 			var hBody = dojo.byId( 'workflowStatusTableBody' );
 			for ( var i=0; i<d.length; i++ ) {
 				if ( d[i].patient ) {
-				var bRow = document.createElement( 'tr' );
-				if ( i & 1 ) {
-					bRow.className = 'alternateRow';
-				}
-				var bPatient = document.createElement( 'td' );
+					var bRow = document.createElement( 'tr' );
+					if ( i & 1 ) {
+						bRow.className = 'alternateRow';
+					}
+					var bPatient = document.createElement( 'td' );
 					bPatient.innerHTML = d[i].patient;
 					bPatient.id = 'workflowstatus_patient_id_' + d[i].patient_id;
 					bPatient.onclick = w.onPatientClick;
 					bRow.appendChild( bPatient );
+
+					var bDate = document.createElement( 'td' );
+					bDate.innerHTML = d[i].date_of;
+					bRow.appendChild( bDate );
+
 					for ( var j=0; j<cols.length; j++ ) {
 						var bElement = document.createElement( 'td' );
 						bElement.style.textAlign = 'center';
@@ -125,11 +130,11 @@
 							bLink.innerHTML = "<!--{t|escape:'javascript'}-->Go<!--{/t}-->";
 							bLink.onclick = w.onGoClick;
 							bLink.className = 'clickable';
-							bLink.id = 'workflow_status_go_' + d[i].patient_id + '_' + cols[j];
+							bLink.id = 'workflow_status_go_' + d[i].patient_id + '_' + d[i].date_of + '_' + cols[j];
 							bElement.appendChild( bLink );
 
 							var bImg = document.createElement( 'img' );
-							bImg.id = 'workflow_status_img_' + d[i].patient_id + '_' + cols[j];
+							bImg.id = 'workflow_status_img_' + d[i].patient_id + '_' + d[i].date_of + '_' + cols[j];
 							bImg.onclick = w.onImageClick;
 							bImg.src = "<!--{$htdocs}-->/images/teak/x_stop.16x16.png";
 							bImg.border = 0;
