@@ -77,6 +77,28 @@ class Medications extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
+	// Method: GetMostRecent
+	//
+	//	Get atoms for most recent set of medications.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	// Returns:
+	//
+	//	Array of medication "atoms".
+	//
+	// SeeAlso:
+	//	<GetAtoms>
+	//
+	public function GetMostRecent ( $patient ) {
+		$q = "SELECT id FROM ".$this->table_name." WHERE mpatient = ".$GLOBALS['sql']->escape( $patient )." ORDER BY mdate DESC LIMIT 1";
+		$mid = $GLOBALS['sql']->queryOne( $q );
+		if ( ($mid + 0) < 1 ) { return array(); }
+		return $this->GetAtoms( $mid );
+	} // end method GetMostRecent
+
 	// Method: GetAtoms
 	//
 	//	Get all atoms associated with a medication record.
