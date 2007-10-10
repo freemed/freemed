@@ -116,22 +116,25 @@
 		<td align="right"><!--{t}-->Interval<!--{/t}--></td>
 		<td>
 			<select name="rxinterval" id="rxinterval">
-				<option>b.i.d.</option>
-				<option>t.i.d.</option>
-				<option>q.i.d.</option>
-				<option>q. 3h</option>
-				<option>q. 4h</option>
-				<option>q. 5h</option>
-				<option>q. 6h</option>
-				<option>q. 8h</option>
-				<option>q.d.</option>
-				<option>h.s.</option>
-				<option>q.h.s.</option>
-				<option>q.A.M.</option>
-				<option>q.P.M.</option>
-				<option>a.c.</option>
-				<option>p.c.</option>
-				<option>p.r.n.</option>
+				<option value="BID">b.i.d.</option>
+				<option value="TID">t.i.d.</option>
+				<option value="QID">q.i.d.</option>
+				<option value="Q3H">q. 3h</option>
+				<option value="Q4H">q. 4h</option>
+				<option value="Q5H">q. 5h</option>
+				<option value="Q6H">q. 6h</option>
+				<option value="Q8H">q. 8h</option>
+				<option value="QD" >q.d.</option>
+				<option value="HS" >h.s.</option>
+				<option value="QHS">q.h.s.</option>
+				<option value="QAM">q.A.M.</option>
+				<option value="QPM">q.P.M.</option>
+				<option value="AC" >a.c.</option>
+				<option value="PC" >p.c.</option>
+				<option value="PRN">p.r.n.</option>
+				<option value="QSHIFT">q.shift</option>
+				<option value="QOD">q.o.d.</option>
+				<option value="Once"><!--{t}-->Once<!--{/t}--></option>
 			</select>
 		</td>
 	</tr>
