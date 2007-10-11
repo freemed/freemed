@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	report_param_options		TEXT,
 	report_param_optional		TEXT,
 	report_acl			VARCHAR (150),
+	report_formatting		BLOB,
 
 	#	Define keys
 
@@ -50,6 +51,7 @@ BEGIN
 	CALL FreeMED_Module_GetVersion( 'reporting', @V );
 
 	ALTER IGNORE TABLE reporting ADD COLUMN report_type VARCHAR (150) NOT NULL DEFAULT 'standard' AFTER report_desc;
+	ALTER IGNORE TABLE reporting ADD COLUMN report_formatting BLOB AFTER report_acl;
 
 	CALL FreeMED_Module_UpdateVersion( 'reporting', 1 );
 END//
