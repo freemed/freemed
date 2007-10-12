@@ -144,7 +144,7 @@ class Reporting extends SupportModule {
 
 		// Handle graphing, or at least non-standard, reports
 		if ( $report['report_type'] != 'standard' ) {
-			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $query ) );
+			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query ) );
 		}
 
 		switch ( strtolower( $format ) ) {
@@ -219,9 +219,11 @@ class Reporting extends SupportModule {
 	//	$param - Hash of report information, as returned by 
 	//	<GetReportParameters>
 	//
+	//	$format - Format of the report
+	//
 	//	$query - SQL query as created by <GenerateReport>
 	//
-	protected function GenerateReport_Graph ( $param, $query ) {
+	protected function GenerateReport_Graph ( $param, $format, $query ) {
 		// Execute query
 		$res = $GLOBALS['sql']->queryAllStoredProc( $query );
 
@@ -285,6 +287,43 @@ class Reporting extends SupportModule {
 		$g->setPadding( 10 );
 		$g->done( );
 	} // end method GenerateReport_Graph
+
+	// Method: GenerateReport_Rlib
+	//
+	//	Internal method used to generate rlib-based reports
+	//
+	// Parameters:
+	//
+	//	$param - Hash of report information, as returned by 
+	//	<GetReportParameters>
+	//
+	//	$format - Format of the report
+	//
+	//	$query - SQL query as created by <GenerateReport>
+	//
+	protected function GenerateReport_Rlib ( $param, $format, $query ) {
+		switch ( $format ) {
+			case 'html':	$outformat = 'html';	break;
+			case 'csv':	$outformat = 'csv';	break;
+			case 'text':	$outformat = 'text';	break;
+			case 'pdf':	$outformat = 'pdf';	break;
+			default:	$outformat = 'pdf';	break;
+		} // end switch format
+
+		@dl( "rlib.so" );
+		if ( ! function_exists( 'rlib_init' ) ) {
+			syslog( LOG_ERR, get_class($this)."| rlib PHP extension not found" );
+		}
+		$rlib = rlib_init( );
+		rlib_add_datasource_mysql( $rlib, "local_mysql", DB_HOST, DB_USERNAME, DB_PASS, DB_NAME );
+		rlib_add_query_as( $rlib, "local_mysql", $query, "result" );
+		rlib_add_report_from_buffer( $rlib, $param['report_formatting'] );
+		rlib_set_output_format_from_text( $rlib, $outformat );
+		rlib_execute( $rlib );
+		Header( rlib_get_content_type( $rlib ) );
+		rlib_spool( $rlib );
+		rlib_free( $rlib );
+	} // end method GenerateReport_Rlib
 
 } // end class Reporting
 
