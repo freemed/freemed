@@ -158,13 +158,6 @@
 			</tr>
 
 			<tr>
-				<td align="right" valign="top"><b><!--{t}--><!--{/t}--></b></td>
-				<td align="left" valign="top"></td>
-				<td align="right" valign="top"><b><!--{t}--><!--{/t}--></b></td>
-				<td align="left" valign="top"></td>
-			</tr>
-
-			<tr>
 				<td colspan="4" align="center">
 					<div dojoType="Button" id="accountsReceivableUpdateButton">
 						<!--{t}-->Update<!--{/t}-->
