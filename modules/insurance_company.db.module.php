@@ -65,6 +65,7 @@ class InsuranceCompanyModule extends SupportModule {
 	);
 
 	var $widget_hash = '##insconame## (##inscocity##, ##inscostate##)';
+	var $order_field = 'insconame, inscostate, inscocity';
 
 	public function __construct ( ) {
 		$this->table_join = array (
