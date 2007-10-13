@@ -108,6 +108,7 @@ class Login {
 		$u = freemed::user_cache();
 
 		// Pull user options
+		$r = $u->local_record;
 		$s = unserialize( $r['usermanageopt'] );
 		if ( $s ) { $r['usermanageopt'] = $s; }
 
