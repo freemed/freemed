@@ -100,13 +100,14 @@ INSERT INTO `reporting` (
 			<Line fontSize="7">
 				<field value="\'Generated on: \' + m.generated_on" width="50" align="left" italics="yes" />
 			</Line>
-			<HorizontalLine size="4" bgcolor="\'white\'"/>
+			<HorizontalLine size="10" bgcolor="\'white\'" />
 		</Output>
 	</ReportHeader>		
 	<Breaks>	
 		<Break name="break0" newpage="no" headernewpage="yes">
 			<BreakHeader>
 				<Output>
+					<HorizontalLine size="1" bgcolor="\'black\'" />
 					<Line>
 						<field value="carrier" width="20" align="left" col="1" bold="yes" />					
 					</Line>
@@ -117,8 +118,8 @@ INSERT INTO `reporting` (
 			</BreakFields>
 			<BreakFooter>
 				<Output>
-					<HorizontalLine size="2" bgcolor="\'black\'" />
-					<HorizontalLine size="6" bgcolor="\'white\'" />
+					<HorizontalLine size="1" bgcolor="\'black\'" />
+					<HorizontalLine size="10" bgcolor="\'white\'" />
 				</Output>
 			</BreakFooter>
 		</Break>
@@ -128,7 +129,7 @@ INSERT INTO `reporting` (
 			<Output>
 				<HorizontalLine size="1" bgcolor="\'black\'"/>
 				<Line bgcolor="\'0xe5e5e5\'">
-					<literal width="30" col="1">Patient</literal>
+					<literal width="40" col="1">Patient</literal>
 					<literal width="1"/>
 					<literal width="30" col="2">Street Address</literal>
 					<literal width="1"/>
@@ -143,13 +144,13 @@ INSERT INTO `reporting` (
 		<FieldDetails>
 			<Output>
 				<Line bgcolor="iif(r.detailcnt%2,\'0xe5e5e5\',\'white\')">
-					<field value="patient_name" width="30" align="left" col="1" />
+					<field value="patient_name" width="40" align="left" col="1" />
 					<literal width="1"/>
 					<field value="address" width="30" align="left" col="2" />
 					<literal width="1"/>
 					<field value="csz" width="30" align="left" col="3" />
 					<literal width="1"/>
-					<field value="phone_number" width="16" align="left" col="4" />
+					<field value="\'(\' + mid(phone_number,0,3) + \') \' + mid(phone_number,3,3) + \'-\' + mid(phone_number,6,4)" width="16" align="left" col="4" />
 				</Line>
 			</Output>
 		</FieldDetails>
