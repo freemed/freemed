@@ -81,6 +81,7 @@ class Reporting extends SupportModule {
 		$return['report_desc'] = $r['report_desc'];
 		$return['report_type'] = $r['report_type'];
 		$return['report_sp'] = $r['report_sp'];
+		$return['report_formatting'] = $r['report_formatting'];
 		if ($r['report_param_count'] == 0) {
 			$return['params'] = array();
 		} else {
@@ -303,26 +304,41 @@ class Reporting extends SupportModule {
 	//
 	protected function GenerateReport_Rlib ( $param, $format, $query ) {
 		switch ( $format ) {
-			case 'html':	$outformat = 'html';	break;
-			case 'csv':	$outformat = 'csv';	break;
-			case 'text':	$outformat = 'text';	break;
-			case 'pdf':	$outformat = 'pdf';	break;
-			default:	$outformat = 'pdf';	break;
+			case 'html':	$outformat = 'html';	$ext = 'html';	break;
+			case 'csv':	$outformat = 'csv';	$ext = 'csv';	break;
+			case 'text':	$outformat = 'text';	$ext = 'txt';	break;
+			case 'pdf':	$outformat = 'pdf';	$ext = 'pdf';	break;
+			default:	$outformat = 'pdf';	$ext = 'pdf';	break;
 		} // end switch format
 
 		@dl( "rlib.so" );
 		if ( ! function_exists( 'rlib_init' ) ) {
 			syslog( LOG_ERR, get_class($this)."| rlib PHP extension not found" );
 		}
+
+		// Global scope things to be passed into m.* namespace
+		$GLOBALS['installation'] = INSTALLATION;
+		$GLOBALS['generated_on'] = date( 'r' );
+
 		$rlib = rlib_init( );
-		rlib_add_datasource_mysql( $rlib, "local_mysql", DB_HOST, DB_USERNAME, DB_PASS, DB_NAME );
+		rlib_add_datasource_mysql( $rlib, "local_mysql", DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
 		rlib_add_query_as( $rlib, "local_mysql", $query, "result" );
 		rlib_add_report_from_buffer( $rlib, $param['report_formatting'] );
 		rlib_set_output_format_from_text( $rlib, $outformat );
 		rlib_execute( $rlib );
-		Header( rlib_get_content_type( $rlib ) );
+		switch ( $outformat ) {
+			case 'pdf':
+			Header( 'Content-type: application/pdf' );
+			break;
+
+			default:
+			Header( rlib_get_content_type( $rlib ) );
+			break;
+		}
+		Header ("Content-Disposition: inline; filename=\"".mktime().".${ext}\"");
 		rlib_spool( $rlib );
 		rlib_free( $rlib );
+		die();
 	} // end method GenerateReport_Rlib
 
 } // end class Reporting

@@ -39,14 +39,14 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Reporting.GetReports',
 				load: function(type, data, evt) {
 					if (data) {
-						dojo.widget.byId('reportsList').store.setData( data );
+						dojo.widget.byId('reportsList<!--{$unique}-->').store.setData( data );
 					}
 				},
 				mimetype: "text/json"
 			});
 		},
 		selectReport: function ( ) {
-			var myReport = dojo.widget.byId('reportsList').getSelectedData().report_uuid;
+			var myReport = dojo.widget.byId('reportsList<!--{$unique}-->').getSelectedData().report_uuid;
 			dojo.io.bind({
 				method: 'POST',
 				content: {
@@ -55,14 +55,28 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Reporting.GetReportParameters',
 				load: function(type, data, evt) {
 					if (!data) { return false; }
-					document.getElementById('reportEngineForm').style.display = 'block';
-					document.getElementById('reportEngineFormContent').innerHTML = '';
-					if ( data.report_type != 'graph' ) {
-						document.getElementById('reportEngineFormStatic').style.display = 'block';
-						document.getElementById('reportEngineFormStaticGraph').style.display = 'none';
-					} else {
-						document.getElementById('reportEngineFormStatic').style.display = 'none';
-						document.getElementById('reportEngineFormStaticGraph').style.display = 'block';
+					document.getElementById('reportEngineForm<!--{$unique}-->').style.display = 'block';
+					document.getElementById('reportEngineFormContent<!--{$unique}-->').innerHTML = '';
+					switch ( data.report_type ) {
+						case 'standard':
+						document.getElementById('reportEngineFormStatic<!--{$unique}-->').style.display = 'block';
+						document.getElementById('reportEngineFormStaticGraph<!--{$unique}-->').style.display = 'none';
+						document.getElementById('reportEngineFormStaticRlib<!--{$unique}-->').style.display = 'none';
+						break;
+
+						case 'graph':
+						document.getElementById('reportEngineFormStatic<!--{$unique}-->').style.display = 'none';
+						document.getElementById('reportEngineFormStaticGraph<!--{$unique}-->').style.display = 'block';
+						document.getElementById('reportEngineFormStaticRlib<!--{$unique}-->').style.display = 'none';
+						break;
+
+						case 'rlib':
+						document.getElementById('reportEngineFormStatic<!--{$unique}-->').style.display = 'none';
+						document.getElementById('reportEngineFormStaticGraph<!--{$unique}-->').style.display = 'none';
+						document.getElementById('reportEngineFormStaticRlib<!--{$unique}-->').style.display = 'block';
+						break;
+
+						default: break;
 					}
 					if ( data.params.length > 0 ) {
 						reportingEngine.populateForm( data );
@@ -75,7 +89,7 @@
 			//alert(dojo.json.serialize(data));
 
 			// Initialize
-			document.getElementById('reportEngineFormContent').innerHTML = '';
+			document.getElementById('reportEngineFormContent<!--{$unique}-->').innerHTML = '';
 
 			var tT = document.createElement('table');
 			var tTr = new Array ( );
@@ -104,8 +118,8 @@
 					dojo.widget.createWidget(
 						'DropdownDatePicker',
 						{
-							name: 'param' + i.toString(),
-							id: 'param' + i.toString()
+							name: '<!--{$unique}-->param' + i.toString(),
+							id: '<!--{$unique}-->param' + i.toString()
 						},
 						tDiv[ i ]
 					);
@@ -115,22 +129,22 @@
 					dojo.widget.createWidget(
 						'Select',
 						{
-							name: 'param' + i.toString(),
-							id: 'param' + i.toString() + '_widget',
+							name: '<!--{$unique}-->param' + i.toString(),
+							id: '<!--{$unique}-->param' + i.toString() + '_widget',
 							width: '300px',
 							dataUrl: "<!--{$relay}-->/org.freemedsoftware.module.ProviderModule.picklist?param0=%{searchString}",
 							mode: 'remote',
 							autocomplete: false,
 							iteration: i,
-							setValue: function ( ) { if (arguments[0]) { document.getElementById('param" + this.iteration.toString() + "').value = arguments[0]; } }
+							setValue: function ( ) { if (arguments[0]) { document.getElementById('<!--{$unique}-->param" + this.iteration.toString() + "').value = arguments[0]; } }
 						},
 						tDiv[ i ]
 					);
 					// Keep track of the data here ...
 					tHidden[ i ] = document.createElement( 'input' );
 					tHidden[ i ].type = 'hidden';
-					tHidden[ i ].id = "param" + i.toString();
-					tHidden[ i ].name = "param" + i.toString();
+					tHidden[ i ].id = "<!--{$unique}-->param" + i.toString();
+					tHidden[ i ].name = "<!--{$unique}-->param" + i.toString();
 					tDiv[ i ].appendChild( tHidden[ i ] );
 					break; // Provider
 
@@ -148,7 +162,7 @@
 			}
 
 			// Append entire table to container DIV
-			document.getElementById('reportEngineFormContent').appendChild( tT );
+			document.getElementById('reportEngineFormContent<!--{$unique}-->').appendChild( tT );
 		},
 		buildParameters: function ( ) {
 			var b = new Array ( );
@@ -162,11 +176,11 @@
 			for ( var i=0; i<this.reportParameters.params.length; i++) {
 				switch ( this.reportParameters.params[i].type ) {
 					case 'Date':
-					b[ i ] = dojo.widget.byId( 'param' + i.toString() ).inputNode.value;
+					b[ i ] = dojo.widget.byId( '<!--{$unique}-->param' + i.toString() ).inputNode.value;
 					break;
 
 					default:
-					b[ i ] = document.getElementById( 'param' + i.toString() ).value;
+					b[ i ] = document.getElementById( '<!--{$unique}-->param' + i.toString() ).value;
 					//alert("DEFAULT b[ " + i.toString() + " ] = " + b[i] );
 					break;
 				}
@@ -174,7 +188,7 @@
 			return b;
 		},
 		generate: function ( type ) {
-			var myReport = dojo.widget.byId('reportsList').getSelectedData().report_uuid;
+			var myReport = dojo.widget.byId('reportsList<!--{$unique}-->').getSelectedData().report_uuid;
 			var params = this.buildParameters( );
 			var uri = "<!--{$relay}-->/org.freemedsoftware.module.Reporting.GenerateReport?param0=" + encodeURIComponent( myReport ) + "&param1=" + type.toLowerCase() + "&param2=" + encodeURIComponent( dojo.json.serialize( params ) );
 
@@ -201,21 +215,27 @@
 
 	_container_.addOnLoad(function() {
 		reportingEngine.populateReportsList();
-		dojo.event.connect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
+		dojo.event.connect(dojo.widget.byId('reportsList<!--{$unique}-->'), "onSelect", reportingEngine, 'selectReport');
 		dojo.event.connect(dojo.widget.byId('reportSubmitGraph'), "onClick", reportingEngine, 'generateGraph');
 		dojo.event.connect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.connect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');
 		dojo.event.connect(dojo.widget.byId('reportSubmitPDF'), "onClick", reportingEngine, 'generatePDF');
 		dojo.event.connect(dojo.widget.byId('reportSubmitXML'), "onClick", reportingEngine, 'generateXML');
+		dojo.event.connect(dojo.widget.byId('reportSubmitRlibCSV'), "onClick", reportingEngine, 'generateCSV');
+		dojo.event.connect(dojo.widget.byId('reportSubmitRlibHTML'), "onClick", reportingEngine, 'generateHTML');
+		dojo.event.connect(dojo.widget.byId('reportSubmitRlibPDF'), "onClick", reportingEngine, 'generatePDF');
 	});
 
 	_container_.addOnUnload(function() {
-		dojo.event.disconnect(dojo.widget.byId('reportsList'), "onSelect", reportingEngine, 'selectReport');
+		dojo.event.disconnect(dojo.widget.byId('reportsList<!--{$unique}-->'), "onSelect", reportingEngine, 'selectReport');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitGraph'), "onClick", reportingEngine, 'generateGraph');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitCSV'), "onClick", reportingEngine, 'generateCSV');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitHTML'), "onClick", reportingEngine, 'generateHTML');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitPDF'), "onClick", reportingEngine, 'generatePDF');
 		dojo.event.disconnect(dojo.widget.byId('reportSubmitXML'), "onClick", reportingEngine, 'generateXML');
+		dojo.event.disconnect(dojo.widget.byId('reportSubmitRlibCSV'), "onClick", reportingEngine, 'generateCSV');
+		dojo.event.disconnect(dojo.widget.byId('reportSubmitRlibHTML'), "onClick", reportingEngine, 'generateHTML');
+		dojo.event.disconnect(dojo.widget.byId('reportSubmitRlibPDF'), "onClick", reportingEngine, 'generatePDF');
 	});
 
 </script>
@@ -227,7 +247,7 @@
 	<h3><!--{t}-->Reporting Engine<!--{/t}--></h3>
 
 	<div class="tableContainer">
-		<table dojoType="FilteringTable" id="reportsList" widgetId="reportsList" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="report_uuid" border="0" multiple="false">
+		<table dojoType="FilteringTable" id="reportsList<!--{$unique}-->" widgetId="reportsList<!--{$unique}-->" headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" valueField="report_uuid" border="0" multiple="false">
 			<thead>
 				<tr>
 					<th field="report_name" dataType="String"><!--{t}-->Name<!--{/t}--></th>
@@ -242,12 +262,12 @@
 
 	<div dojoType="ContentPane" layoutAlign="bottom" sizeShare="60" style="width: 100%; overflow: auto;">
 
-		<div id="reportEngineForm" style="display: none;">
+		<div id="reportEngineForm<!--{$unique}-->" style="display: none;">
 
 			<!-- Generated report parameters thrown into this DIV -->
-			<div id="reportEngineFormContent" align="center"></div>
+			<div id="reportEngineFormContent<!--{$unique}-->" align="center"></div>
 
-			<div id="reportEngineFormStatic" align="center">
+			<div id="reportEngineFormStatic<!--{$unique}-->" align="center">
 
 				<table border="0" style="width: auto;"><tr>
 					<td><div dojoType="Button" id="reportSubmitCSV"><img src="<!--{$htdocs}-->/images/csv.32x32.png" border="0" height="32" width="32" /><br/>CSV</div></td>
@@ -258,11 +278,20 @@
 
 			</div>
 
-			<div id="reportEngineFormStaticGraph" align="center">
+			<div id="reportEngineFormStaticGraph<!--{$unique}-->" align="center">
 				<table border="0" style="width: auto;"><tr>
 					<td><div dojoType="Button" id="reportSubmitGraph"><img src="<!--{$htdocs}-->/images/xml.32x32.png" border="0" height="32" width="32" /><br/><!--{t}-->Graph<!--{/t}--></div></td>
 				</tr></table>
 			</div>
+
+			<div id="reportEngineFormStaticRlib<!--{$unique}-->" align="center">
+				<table border="0" style="width: auto;"><tr>
+					<td><div dojoType="Button" id="reportSubmitRlibCSV"><img src="<!--{$htdocs}-->/images/csv.32x32.png" border="0" height="32" width="32" /><br/>CSV</div></td>
+					<td><div dojoType="Button" id="reportSubmitRlibHTML"><img src="<!--{$htdocs}-->/images/html.32x32.png" border="0" height="32" width="32" /><br/>HTML</div></td>
+					<td><div dojoType="Button" id="reportSubmitRlibPDF"><img src="<!--{$htdocs}-->/images/pdf.32x32.png" border="0" height="32" width="32" /><br/>PDF</div></td>
+				</tr></table>
+			</div>
+
 		</div>
 
 	</div>
