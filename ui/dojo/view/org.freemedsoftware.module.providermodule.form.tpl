@@ -55,6 +55,33 @@
 <!--{/assign_block}-->
 
 <!--{assign_block var='moduleForm'}-->
+<script language="javascript">
+	var npi_<!--{$unique}--> = {
+		lookup: function ( ) {
+			dojo.io.bind({
+				method: 'POST',
+				url: "<!--{$relay}-->/org.freemedsoftware.module.ProviderModule.LookupNPI",
+				content: {
+					param0: document.getElementById( 'phyfname' ).value,
+					param1: document.getElementById( 'phylname' ).value,
+					param2: document.getElementById( 'phystatea' ).value
+				},
+				load: function ( type, data, evt ) {
+					if ( data ) {
+						document.getElementById( 'phynpi' ).value = data;
+					}
+				},
+				mimetype: 'text/json'
+			});
+		}
+	};
+	_container_.addOnLoad(function(){
+		dojo.event.connect( dojo.widget.byId( 'lookupNPI<!--{$unique}-->' ), 'onClick', npi_<!--{$unique}-->, 'lookup' );
+	});
+	_container_.addOnUnload(function(){
+		dojo.event.disconnect( dojo.widget.byId( 'lookupNPI<!--{$unique}-->' ), 'onClick', npi_<!--{$unique}-->, 'lookup' );
+	});
+</script>
 <div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em; overflow-y: scroll;">
 
 	<div dojoType="ContentPane" id="providerMainPane" label="<!--{t|escape:'javascript'}-->Primary Information<!--{/t}-->">
@@ -79,6 +106,11 @@
 			<tr>
 				<td><!--{t}-->Practice Name<!--{/t}--></td>
 				<td><input type="text" id="phypracname" name="phypracname" size="45" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->State / Province<!--{/t}--></td>
+				<td><input type="text" id="phystatea" name="phystatea" size="3" /></td>
 			</tr>
 
 			<tr>
@@ -140,6 +172,9 @@
 			<tr>
 				<td><!--{t}-->NPI<!--{/t}--></td>
 				<td><input type="text" id="phynpi" name="phynpi" size="30" /></td>
+				<td><button dojoType="Button" id="lookupNPI<!--{$unique}-->" widgetId="lookupNPI<!--{$unique}-->">
+					<!--{t}-->Lookup NPI<!--{/t}-->
+				</button></td>
 			</tr>
 
 			<tr>
