@@ -172,6 +172,54 @@ class ProviderModule extends SupportModule {
 		return $return;
 	} // end method picklist
 
+	// Method: LookupNPI
+	//
+	//	Lookup NPI number in National Provider Registry.
+	//
+	// Parameters:
+	//
+	//	$first_name - Provider's first name
+	//
+	//	$last_name - Provider's last name
+	//
+	//	$state - Two letter state abbreviation
+	//
+	// Returns:
+	//
+	//	NPI number or boolean false if none has been found
+	//
+	public function LookupNPI ( $first_name, $last_name, $state ) {
+		$url = "https://nppes.cms.hhs.gov/NPPES/NPIRegistrySearch.do?searchType=ind&lastName=".urlencode( $last_name )."&firstName=".urlencode( $first_name )."&state=".urlencode( strtoupper( $state ) );
+
+		$ch = curl_init( );
+		curl_setopt( $ch, CURLOPT_URL, $url );
+		curl_setopt( $ch, CURLOPT_HEADER, 0 );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+		$f = curl_exec( $ch );
+
+		//print "length = ".strlen($f)."\n";
+
+		if ( strpos( $f, 'No matching records found.' ) !== false ) {
+			syslog( LOG_DEBUG, "LookupNPI: No matching records found for $first_name, $last_name, $state" );
+			return false;
+		}
+
+		$hash = explode( "\n", $f );
+		foreach ( $hash AS $k => $h ) {
+			if (strpos($h, '>NPI:<')) {
+				//print "Found 'NPI:'\n";
+				$npi_at = $k + 1;
+				break;
+			}
+		}
+
+		if ( $npi_at ) {
+			preg_match( '/>([^<]+)<\//i', $hash[$npi_at], $match );
+			return $match[1];
+		} else {
+			return false;
+		}
+	} // end method LookupNPI
 
 } // end class ProviderModule
 
