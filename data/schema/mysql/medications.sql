@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `medications_atomic` (
 	, PRIMARY KEY		( id )
 	, KEY			( mpatient, mdate )
 	, FOREIGN KEY		( mpatient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( mid ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( mid ) REFERENCES medications.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS medications_Upgrade;
