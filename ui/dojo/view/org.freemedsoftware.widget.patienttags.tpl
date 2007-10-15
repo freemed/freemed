@@ -49,7 +49,7 @@
 	patientTags = {
 		globalTagSpan: 0,
 		addTag: function ( obj, tag ) {
-			//val obj = dojo.widget.byId('tagSubmit');
+			//val obj = dojo.widget.byId('tagSubmit_<!--{$unique}-->');
 			//tag = obj.getValue();
 			if (tag.length < 3) {
 				return false;
@@ -124,13 +124,13 @@
 			mimetype: "text/json"
 		});
 		try {
-			dojo.widget.byId('tagSubmit').inputNode.value = '';
+			dojo.widget.byId('tagSubmit_<!--{$unique}-->').inputNode.value = '';
 		} catch ( err ) { }
 	});
 
 	_container_.addOnUnload(function(){
 		try {
-			dojo.widget.byId('tagSubmit').inputNode.value = '';
+			dojo.widget.byId('tagSubmit_<!--{$unique}-->').inputNode.value = '';
 		} catch ( err ) { }
 	});
 
@@ -142,7 +142,7 @@
 	<div id="formDiv">
 	<input dojoType="Select"
 		autocomplete="false"
-		id="tagSubmit" widgetId="tagSubmit"
+		id="tagSubmit_<!--{$unique}-->" widgetId="tagSubmit_<!--{$unique}-->"
 		style="width: 150px;"
 		dataUrl="<!--{$relay}-->/org.freemedsoftware.module.PatientTag.ListTags?param0=%{searchString}"
 		setValue="patientTags.addTag(this, arguments[0]);"
