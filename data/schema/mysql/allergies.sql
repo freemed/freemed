@@ -24,8 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `allergies` (
-	allergy			VARCHAR (150) NOT NULL,
-	severity		VARCHAR (150) NOT NULL,
+	allergies		VARCHAR (250),
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	reviewed		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
@@ -34,8 +33,26 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 
 	#	Define keys
 
-	KEY			( patient, allergy ),
+	KEY			( patient, allergies ),
 	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `allergies_atomic` (
+	aid			INT UNSIGNED NOT NULL,
+	allergy			VARCHAR (150) NOT NULL,
+	severity		VARCHAR (150) NOT NULL,
+	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	reviewed		DATE,
+	user			INT UNSIGNED NOT NULL DEFAULT 0,
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
+	id			BIGINT NOT NULL AUTO_INCREMENT
+
+	#	Define keys
+
+	, PRIMARY KEY		( id )
+	, KEY			( allergy, reviewed )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( aid ) REFERENCES allergies.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS allergies_Upgrade;
@@ -46,8 +63,11 @@ BEGIN
 
 	#----- Remove triggers
 	DROP TRIGGER allergies_Delete;
+	DROP TRIGGER allergies_atomic_Delete;
 	DROP TRIGGER allergies_Insert;
+	DROP TRIGGER allergies_atomic_Insert;
 	DROP TRIGGER allergies_Update;
+	DROP TRIGGER allergies_atomic_Update;
 
 	#----- Upgrades
 
@@ -71,18 +91,53 @@ CREATE TRIGGER allergies_Delete
 	END;
 //
 
+CREATE TRIGGER allergies_atomic_Delete
+	AFTER DELETE ON allergies_atomic
+	FOR EACH ROW BEGIN
+		CALL allergiesReindex ( OLD.aid );
+	END;
+//
+
 CREATE TRIGGER allergies_Insert
 	AFTER INSERT ON allergies
 	FOR EACH ROW BEGIN
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergy, NEW.user, NEW.active );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, status ) VALUES ( 'allergies', NEW.patient, NEW.id, NEW.reviewed, NEW.allergies, NEW.user, NEW.active );
+	END;
+//
+
+CREATE TRIGGER allergies_atomic_Insert
+	AFTER INSERT ON allergies_atomic
+	FOR EACH ROW BEGIN
+		CALL allergiesReindex ( NEW.aid );
 	END;
 //
 
 CREATE TRIGGER allergies_Update
 	AFTER UPDATE ON allergies
 	FOR EACH ROW BEGIN
-		UPDATE `patient_emr` SET stamp=NEW.reviewed, patient=NEW.patient, summary=NEW.allergy,user=NEW.user,active=NEW.active WHERE module='allergies' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.reviewed, patient=NEW.patient, summary=NEW.allergies, user=NEW.user, status=NEW.active WHERE module='allergies' AND oid=NEW.id;
 	END;
+//
+
+CREATE TRIGGER allergies_atomic_Update
+	AFTER UPDATE ON allergies_atomic
+	FOR EACH ROW BEGIN
+		CALL allergiesReindex ( NEW.aid );
+	END;
+//
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS allergiesReindex;
+
+DELIMITER //
+
+CREATE PROCEDURE allergiesReindex ( IN thisId BIGINT UNSIGNED )
+BEGIN
+	DECLARE a VARCHAR (250);
+	SELECT GROUP_CONCAT( allergy ) INTO a FROM allergies_atomic WHERE aid = thisId GROUP BY aid;
+	UPDATE allergies SET allergies = a WHERE id = thisId;
+END
 //
 
 DELIMITER ;
