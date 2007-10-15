@@ -72,6 +72,10 @@
 			};
 			w.store.addData( d );
 			m.atomCount = m.atomCount - 1;
+			document.getElementById( 'mdrug' ).value = '';
+			document.getElementById( 'mdosage' ).value = '';
+			document.getElementById( 'mroute' ).value = '';
+			document.getElementById( 'mdrug' ).focus();
 			return true;
 		},
 		removeAtom: function ( ) {
