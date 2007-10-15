@@ -40,6 +40,7 @@
 		<div id="patientClinicalLookupTabContainer_<!--{$unique}-->" dojoType="TabContainer" labelPosition="bottom" style="width: 100%; height: 250px;">
 			<div id="clinicalLookupTab1_<!--{$unique}-->" dojoType="ContentPane" href="<!--{$controller}-->/org.freemedsoftware.widget.clinicallookup.photoid?patient=<!--{$patient}-->" refreshOnShow="true" label="&lt;img src='<!--{$htdocs}-->/images/teak/patient_avatar.16x16.png' border='0' height=16 width=16 /&gt;" executeScripts="true" adjustPaths="false"></div>
 			<div id="clinicalLookupTab2_<!--{$unique}-->" dojoType="ContentPane" href="<!--{$controller}-->/org.freemedsoftware.widget.clinicallookup.medications?patient=<!--{$patient}-->" refreshOnShow="true" label="&lt;img src='<!--{$htdocs}-->/images/teak/rx_prescriptions.16x16.png' border='0' height=16 width=16 /&gt;" style="display: none;" executeScripts="true" adjustPaths="false"></div>
+			<div id="clinicalLookupTab3_<!--{$unique}-->" dojoType="ContentPane" href="<!--{$controller}-->/org.freemedsoftware.widget.clinicallookup.allergies?patient=<!--{$patient}-->" refreshOnShow="true" label="&lt;img src='<!--{$htdocs}-->/images/teak/image_mini_rotate.16x16.png' border='0' height=16 width=16 /&gt;" style="display: none;" executeScripts="true" adjustPaths="false"></div>
 		</div>	
 	</div>
 
