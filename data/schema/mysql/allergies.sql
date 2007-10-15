@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 CREATE TABLE IF NOT EXISTS `allergies_atomic` (
 	aid			INT UNSIGNED NOT NULL,
 	allergy			VARCHAR (150) NOT NULL,
+	reaction		VARCHAR (150) NOT NULL,
 	severity		VARCHAR (150) NOT NULL,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	reviewed		DATE,

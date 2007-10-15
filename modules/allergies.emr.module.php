@@ -40,6 +40,7 @@ class Allergies extends EMRModule {
 	var $atomic_keys = array (
 		'aid',
 		'allergy',
+		'reaction',
 		'severity',
 		'patient',
 		'reviewed',

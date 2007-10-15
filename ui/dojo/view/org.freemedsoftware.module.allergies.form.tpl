@@ -66,11 +66,14 @@
 			var w = dojo.widget.byId( 'allergiesAtomic' );
 			var d = {
 				allergy: document.getElementById( 'allergy' ).value,
+				reaction: document.getElementById( 'reaction' ).value,
 				severity: document.getElementById( 'severity' ).value,
 				id: m.atomCount
 			};
 			w.store.addData( d );
 			m.atomCount = m.atomCount - 1;
+			document.getElementById( 'allergy' ).value = '';
+			document.getElementById( 'allergy' ).focus();
 			return true;
 		},
 		removeAtom: function ( ) {
@@ -167,6 +170,13 @@
 	</tr>
 
 	<tr>
+		<td align="right"><!--{t}-->Reaction<!--{/t}--></td>
+		<td align="left">
+			<input type="text" id="reaction" name="reaction" />
+		</td>
+	</tr>
+
+	<tr>
 		<td align="right"><!--{t}-->Severity<!--{/t}--></td>
 		<td align="left">
 			<input type="text" id="severity" name="severity" />
@@ -195,6 +205,7 @@
 			<thead id="allergiesAtomicHead">
 				<tr>
 					<th field="allergy" dataType="String"><!--{t}-->Allergy<!--{/t}--></th>
+					<th field="reaction" dataType="String"><!--{t}-->Reaction<!--{/t}--></th>
 					<th field="severity" dataType="String"><!--{t}-->Severity<!--{/t}--></th>
 				</tr>
 			</thead>
