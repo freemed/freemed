@@ -46,6 +46,9 @@ function smarty_modifier_texize( $string )
         // Get rid of \r character
         $text = str_replace("\r", "", $text);
 
+        // Destrip \'
+        $text = str_replace("\\'", "'", $text);
+
         // Sanitize {, } (do NOT escape [ and ])
         $text = str_replace('{', '\lbrace\ ', $text);
         $text = str_replace('}', '\lbrace\ ', $text);
@@ -169,6 +172,8 @@ function smarty_modifier_texize( $string )
 	
         // Handle embedded CRs... for now we treat them as line
         // breaks
+        $text = str_replace("\r\n", "\n", $text);
+        $text = str_replace("\r", "\n", $text);
         $text = str_replace("\n", "\\  \\\\\n", $text);
 
 	$text = str_replace('<', '\<', $text);
