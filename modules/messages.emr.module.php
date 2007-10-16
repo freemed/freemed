@@ -38,6 +38,8 @@ class MessagesModule extends EMRModule {
 	var $order_by      = "msgunique DESC";
 	var $widget_hash   = "##msgsubject## [##msgtime##]";
 
+	var $print_template = 'messages';
+
 	var $variables = array (
 		'msgby',
 		'msgtime',

@@ -44,17 +44,17 @@
 	// Special scope variable because of ContentPane
 	// see http://manual.dojotoolkit.org/WikiHome/DojoDotBook/Book30
 	var o = {
-		currentLocation: 'INBOX',
+		currentLocation: '<!--{t|escape:'javascript'}-->INBOX<!--{/t}-->',
 		messages: [],
 		getSelectedMessage: function ( ) {
-			return dojo.widget.byId('messagesTable').getSelectedData();
+			return dojo.widget.byId('messagesTable<!--{$unique}-->').getSelectedData();
 		},
 		loadMessages: function ( ) {
 			// Clear HTML
-			document.getElementById('messageViewPaneDiv').innerHTML = '';
+			document.getElementById('messageViewPaneDiv<!--{$unique}-->').innerHTML = '';
 			// Grab messages
-			var val = dojo.widget.byId('messagesTag').getValue();
-			if ( val == 'INBOX' ) { val = ''; }
+			var val = dojo.widget.byId('messagesTag<!--{$unique}-->').getValue();
+			if ( val == '<!--{t|escape:'javascript'}-->INBOX<!--{/t}-->' ) { val = ''; }
 			dojo.io.bind({
 				method: 'POST',
 				content: {
@@ -70,15 +70,19 @@
 						d[i].stamp_mdy = new Date( d[i].stamp_mdy );
 						d[i].select = '<input id="message_delete_' + d[i].id + '" type="checkbox" />';
 					}
-					dojo.widget.byId('messagesTable').store.setData( d );
+					dojo.widget.byId('messagesTable<!--{$unique}-->').store.setData( d );
 				},
 				mimetype: "text/json"
 			});
 		},
 		selectMessage: function ( ) {
-			var d = document.getElementById('messageViewPaneDiv');
-			var data = dojo.widget.byId('messagesTable').getSelectedData();
-			d.innerHTML = '<tt>' + data.content.replace(/\n/g, "<br/>\n").replace(/\\/g, "") + '</tt>';
+			var d = document.getElementById('messageViewPaneDiv<!--{$unique}-->');
+			try {
+				var data = dojo.widget.byId('messagesTable<!--{$unique}-->').getSelectedData();
+				d.innerHTML = '<tt>' + data.content.replace(/\n/g, "<br/>\n").replace(/\\/g, "") + '</tt>';
+			} catch (e) {
+				dojo.debug( 'Nothing selected, do nothing' );
+			}
 		},
 		newMessage: function ( ) {
 			freemedLoad( 'org.freemedsoftware.ui.messaging.compose' );
@@ -126,13 +130,44 @@
 				});
 			}
 		},
+		printMessage: function ( ) {
+			var msg = this.getSelectedMessage();
+			try {
+				if ( msg.id ) {
+					dojo.widget.byId( 'messagePrintDialog<!--{$unique}-->' ).show();
+				}
+			} catch (e) { }
+		},
+		printMessageCallback: function ( ) {
+			var msg = this.getSelectedMessage();
+			dojo.widget.byId( 'messagePrintDialog<!--{$unique}-->' ).hide();
+
+			if ( document.getElementById( 'printMethodBrowser<!--{$unique}-->' ).checked ) {
+				freemedMessage("<!--{t|escape:'javascript'}-->Sending document to your web browser.<!--{/t}-->", "INFO");
+				document.getElementById( 'messagePrintView<!--{$unique}-->' ).src = "<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.RenderSinglePDF?param0=" + encodeURIComponent( msg.id );
+				return true;
+			}
+
+			if ( document.getElementById( 'printMethodPrinter<!--{$unique}-->' ).checked ) {
+				// Make async call to print
+				dojo.io.bind({
+					method: "POST",
+					url: "<!--{$relay}-->/org.freemedsoftware.module.MessagesModule.PrintSinglePDF?param0=" + encodeURIComponent( msg.id ) + "&param1=printer",
+					load: function( type, data, evt ) {
+						freemedMessage("<!--{t|escape:'javascript'}-->Sending document to printer<!--{/t}-->: " + document.getElementById('messagePrinter<!--{$unique}-->').value, "INFO");
+					},
+					mimetype: "text/json"
+				});
+				return true;
+			}
+		},
 		modifyTag: function ( ) {
 			var msg = this.getSelectedMessage();
 			if ( typeof msg == 'undefined' ) {
 				alert("<!--{t|escape:'javascript'}-->A message must be selected.<!--{/t}-->");
 			} else {
-				var newTag = dojo.widget.byId('messagesTag').getValue();
-				if ( newTag == 'INBOX' ) { newTag = ''; }
+				var newTag = dojo.widget.byId('messagesTag<!--{$unique}-->').getValue();
+				if ( newTag == '<!--{t|escape:'javascript'}-->INBOX<!--{/t}-->' ) { newTag = ''; }
 				dojo.io.bind({
 					method: 'POST',
 					content: {
@@ -143,7 +178,7 @@
 					load: function( type, data, evt ) {
 						freemedMessage( "<!--{t|escape:'javascript'}-->Message moved successfully.<!--{/t}-->", 'INFO' );
 						// Force reload
-						dojo.widget.byId('messagesTag').setValue( o.currentLocation );
+						dojo.widget.byId('messagesTag<!--{$unique}-->').setValue( o.currentLocation );
 						o.loadMessages();
 					},
 					mimetype: "text/json"
@@ -151,7 +186,7 @@
 			}
 		},
 		selectTagView: function ( ) {
-			o.currentLocation = dojo.widget.byId('messagesTag').getValue();
+			o.currentLocation = dojo.widget.byId('messagesTag<!--{$unique}-->').getValue();
 			o.loadMessages();
 		},
 		createMessageCallback: function ( ) {
@@ -182,28 +217,32 @@
 
 	// Handle in context loading for these widgets
 	_container_.addOnLoad(function(){
-		dojo.widget.byId('messagesTag').setValue( 'INBOX' );
+		dojo.widget.byId('messagesTag<!--{$unique}-->').setValue( '<!--{t|escape:'javascript'}-->INBOX<!--{/t}-->' );
 		o.loadMessages();
-		dojo.event.connect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
-		dojo.event.connect(dojo.widget.byId('messageNewButton'), "onClick", o, "newMessage");
-		dojo.event.connect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
-		dojo.event.connect(dojo.widget.byId('messageMultipleDeleteButton'), "onClick", o, "deleteMessages");
-		dojo.event.connect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
-		dojo.event.connect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
+		dojo.event.connect(dojo.widget.byId('messagesTable<!--{$unique}-->'), "onSelect", o, "selectMessage");
+		dojo.event.connect(dojo.widget.byId('messageNewButton<!--{$unique}-->'), "onClick", o, "newMessage");
+		dojo.event.connect(dojo.widget.byId('messagePrintButton<!--{$unique}-->'), "onClick", o, "printMessage");
+		dojo.event.connect(dojo.widget.byId('messagePrintButtonStart<!--{$unique}-->'), "onClick", o, "printMessageCallback");
+		dojo.event.connect(dojo.widget.byId('messageDeleteButton<!--{$unique}-->'), "onClick", o, "deleteMessage");
+		dojo.event.connect(dojo.widget.byId('messageMultipleDeleteButton<!--{$unique}-->'), "onClick", o, "deleteMessages");
+		dojo.event.connect(dojo.widget.byId('messageMoveButton<!--{$unique}-->'), "onClick", o, "modifyTag");
+		dojo.event.connect(dojo.widget.byId('messageTagButton<!--{$unique}-->'), "onClick", o, "selectTagView");
 		try {
-			var x = dojo.widget.byId( 'messagesTablePane' );
+			var x = dojo.widget.byId( 'messagesTablePane<!--{$unique}-->' );
 			var node = x.containerNode || x.domNode;
 			var h = parseInt( node.style.height ) - 45;
-			document.getElementById( 'messagesTableBody' ).style.height = h + 'px';
+			document.getElementById( 'messagesTableBody<!--{$unique}-->' ).style.height = h + 'px';
 		} catch ( e ) { }
 	});
 	_container_.addOnUnload(function(){
-		dojo.event.disconnect(dojo.widget.byId('messagesTable'), "onSelect", o, "selectMessage");
-		dojo.event.disconnect(dojo.widget.byId('messageNewButton'), "onClick", o, "newMessage");
-		dojo.event.disconnect(dojo.widget.byId('messageDeleteButton'), "onClick", o, "deleteMessage");
-		dojo.event.disconnect(dojo.widget.byId('messageMultipleDeleteButton'), "onClick", o, "deleteMessages");
-		dojo.event.disconnect(dojo.widget.byId('messageMoveButton'), "onClick", o, "modifyTag");
-		dojo.event.disconnect(dojo.widget.byId('messageTagButton'), "onClick", o, "selectTagView");
+		dojo.event.disconnect(dojo.widget.byId('messagesTable<!--{$unique}-->'), "onSelect", o, "selectMessage");
+		dojo.event.disconnect(dojo.widget.byId('messageNewButton<!--{$unique}-->'), "onClick", o, "newMessage");
+		dojo.event.disconnect(dojo.widget.byId('messagePrintButton<!--{$unique}-->'), "onClick", o, "printMessage");
+		dojo.event.disconnect(dojo.widget.byId('messagePrintButtonStart<!--{$unique}-->'), "onClick", o, "printMessageCallback");
+		dojo.event.disconnect(dojo.widget.byId('messageDeleteButton<!--{$unique}-->'), "onClick", o, "deleteMessage");
+		dojo.event.disconnect(dojo.widget.byId('messageMultipleDeleteButton<!--{$unique}-->'), "onClick", o, "deleteMessages");
+		dojo.event.disconnect(dojo.widget.byId('messageMoveButton<!--{$unique}-->'), "onClick", o, "modifyTag");
+		dojo.event.disconnect(dojo.widget.byId('messageTagButton<!--{$unique}-->'), "onClick", o, "selectTagView");
 	});
 
 </script>
@@ -212,22 +251,22 @@
 
 <div dojoType="SplitContainer" orientation="vertical" sizerWidth="5" activeSizing="0" layoutAlign="client" style="height: 100%;">
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" style="height: 50%;" widgetId="messagesTablePane" id="messageTablePane">
+	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" style="height: 50%;" widgetId="messagesTablePane<!--{$unique}-->" id="messageTablePane<!--{$unique}-->">
 
 		<div id="messagesBar">
 			<table border="0"><tr>
 				<td width="30">
-					<button dojoType="Button" class="messageButton" id="messageNewButton" widgetId="messageNewButton">
+					<button dojoType="Button" class="messageButton" id="messageNewButton<!--{$unique}-->" widgetId="messageNewButton<!--{$unique}-->">
 						<img src="<!--{$htdocs}-->/images/teak/summary_envelope.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="30">
-					<button dojoType="Button" class="messageButton" id="messageDeleteButton" widgetId="messageDeleteButton">
+					<button dojoType="Button" class="messageButton" id="messageDeleteButton<!--{$unique}-->" widgetId="messageDeleteButton<!--{$unique}-->">
 						<img src="<!--{$htdocs}-->/images/teak/summary_delete.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="30">
-					<button dojoType="Button" class="messageButton" id="messageMultipleDeleteButton" widgetId="messageMultipleDeleteButton">
+					<button dojoType="Button" class="messageButton" id="messageMultipleDeleteButton<!--{$unique}-->" widgetId="messageMultipleDeleteButton<!--{$unique}-->">
 						<img src="<!--{$htdocs}-->/images/teak/summary_delete_2.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
@@ -236,7 +275,7 @@
 				</td>
 				<td width="150">
 					<input dojoType="ComboBox"
-					 id="messagesTag" widgetId="messagesTag"
+					 id="messagesTag<!--{$unique}-->" widgetId="messagesTag<!--{$unique}-->"
 					 value=""
 					 style="width: 150px;"
 					 mode="remote"
@@ -244,13 +283,18 @@
 					 />
 				</td>
 				<td width="30">
-					<button dojoType="Button" class="messageButton" id="messageMoveButton" widgetId="messageMoveButton">
+					<button dojoType="Button" class="messageButton" id="messageMoveButton<!--{$unique}-->" widgetId="messageMoveButton<!--{$unique}-->">
 						<img src="<!--{$htdocs}-->/images/teak/summary_modify.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td width="30">
-					<button dojoType="Button" class="messageButton" id="messageTagButton" widgetId="messageTagButton">
+					<button dojoType="Button" class="messageButton" id="messageTagButton<!--{$unique}-->" widgetId="messageTagButton<!--{$unique}-->">
 						<img src="<!--{$htdocs}-->/images/teak/summary_view.16x16.png" border="0" height="16" width="16" />
+					</button>
+				</td>
+				<td width="30">
+					<button dojoType="Button" class="messageButton" id="messagePrintButton<!--{$unique}-->" widgetId="messagePrintButton<!--{$unique}-->">
+						<img src="<!--{$htdocs}-->/images/teak/ico.printer.16x16.png" border="0" height="16" width="16" />
 					</button>
 				</td>
 				<td></td>
@@ -258,7 +302,7 @@
 		</div>
 
 		<div class="tableContainer">
-			<table dojoType="FilteringTable" id="messagesTable" widgetId="messagesTable" headClass="fixedHeader"
+			<table dojoType="FilteringTable" id="messagesTable<!--{$unique}-->" widgetId="messagesTable<!--{$unique}-->" headClass="fixedHeader"
 			 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
 			 valueField="id" border="0" multiple="false" maxSelect="1">
 			<thead>
@@ -270,14 +314,63 @@
 					<th field="subject" dataType="String"><!--{t}-->Subject<!--{/t}--></th>
 				</tr>
 			</thead>
-			<tbody id="messagesTableBody"></tbody>
+			<tbody id="messagesTableBody<!--{$unique}-->"></tbody>
 			</table>
 		</div>
 
 	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="messagesViewPane" style="overflow: scroll; background-color: #ffffff;">
-		<div id="messageViewPaneDiv"></div>
+	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="messagesViewPane<!--{$unique}-->" style="overflow: scroll; background-color: #ffffff;">
+		<div id="messageViewPaneDiv<!--{$unique}-->"></div>
 	</div>
 </div>
+
+<!-- Print dialog -->
+
+<div dojoType="Dialog" style="display: none;" id="messagePrintDialog<!--{$unique}-->" widgetId="messagePrintDialog<!--{$unique}-->">
+	<form>
+	<table border="0">
+		<tr>
+			<td width="25"><input type="radio" id="printMethodPrinter<!--{$unique}-->" name="printMethod<!--{$unique}-->" value="printer" /></td>
+			<td align="right"><label for="printMethodPrinter<!--{$unique}-->"><!--{t}-->Printer<!--{/t}--></label</td>
+			<td align="left">
+				<input dojoType="Select"
+					autocomplete="true"
+					id="messagePrinter_widget<!--{$unique}-->" widgetId="messagePrinter_widget<!--{$unique}-->"
+					style="width: 200px;"
+					dataUrl="<!--{$relay}-->/org.freemedsoftware.api.Printing.GetPrinters?param0=%{searchString}"
+					setValue="document.getElementById('messagePrinter<!--{$unique}-->').value = arguments[0]; document.getElementById('printMethodPrinter<!--{$unique}-->').checked = true;"
+					mode="remote" value="" />
+				<input type="hidden" id="messagePrinter<!--{$unique}-->" name="messagePrinter<!--{$unique}-->" value="" />
+			</td>
+		</tr>
+		<tr>
+			<td width="25"><input type="radio" id="printMethodFax<!--{$unique}-->" name="printMethod<!--{$unique}-->" value="fax" /></td>
+			<td align="right"><label for="printMethodFax<!--{$unique}-->"><!--{t}-->Fax<!--{/t}--></label</td>
+			<td align="left"><input type="text" name="faxNumber" id="faxNumber" onFocus="document.getElementById('printMethodFax<!--{$unique}-->').checked = true;" /></td>
+		</tr>
+		<tr>
+			<td width="25"><input type="radio" id="printMethodBrowser<!--{$unique}-->" name="printMethod<!--{$unique}-->" value="browser" checked="checked" /></td>
+			<td align="right"><label for="printMethodBrowser<!--{$unique}-->"><!--{t}-->Browser Based<!--{/t}--></label</td>
+			<td align="left">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center">
+				<table border="0" align="center"><tr>
+				<td align="right"><button dojoType="Button" id="messagePrintButtonStart<!--{$unique}-->" widgetId="messagePrintButtonStart<!--{$unique}-->">
+					<div><img src="<!--{$htdocs}-->/images/teak/ico.printer.16x16.png" border="0" height="16" width="16" /> <!--{t}-->Print<!--{/t}--></div>
+				</button></td>
+				<td align="left"><button dojoType="Button" onClick="dojo.widget.byId('messagePrintDialog<!--{$unique}-->').hide();">
+					<div><img src="<!--{$htdocs}-->/images/teak/x_stop.16x16.png" border="0" width="16" height="16" /> <!--{t}-->Cancel<!--{/t}--></div>
+				</button></td>
+				</tr></table>
+			</td>
+		</tr>
+	</table>
+	</form>
+</div>
+
+<!-- Hidden frame for printing -->
+
+<iframe id="messagePrintView<!--{$unique}-->" style="display: none;"></iframe>
 
