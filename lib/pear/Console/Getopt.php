@@ -127,6 +127,10 @@ class Console_Getopt {
                 $error = Console_Getopt::_parseLongOption(substr($arg, 2), $long_options, $opts, $args);
                 if (PEAR::isError($error))
                     return $error;
+            } elseif ($arg == '-') {
+                // - is stdin
+                $non_opts = array_merge($non_opts, array_slice($args, $i));
+                break;
             } else {
                 $error = Console_Getopt::_parseShortOption(substr($arg, 1), $short_options, $opts, $args);
                 if (PEAR::isError($error))
@@ -167,15 +171,38 @@ class Console_Getopt {
                     if ($i + 1 < strlen($arg)) {
                         $opts[] = array($opt,  substr($arg, $i + 1));
                         break;
-                    } else if (list(, $opt_arg) = each($args))
+                    } else if (list(, $opt_arg) = each($args)) {
                         /* Else use the next argument. */;
-                    else
+                        if (Console_Getopt::_isShortOpt($opt_arg) || Console_Getopt::_isLongOpt($opt_arg)) {
+                            return PEAR::raiseError("Console_Getopt: option requires an argument -- $opt");
+                        }
+                    } else {
                         return PEAR::raiseError("Console_Getopt: option requires an argument -- $opt");
+                    }
                 }
             }
 
             $opts[] = array($opt, $opt_arg);
         }
+    }
+
+    /**
+     * @access private
+     *
+     */
+    function _isShortOpt($arg)
+    {
+        return strlen($arg) == 2 && $arg[0] == '-' && preg_match('/[a-zA-Z]/', $arg[1]);
+    }
+
+    /**
+     * @access private
+     *
+     */
+    function _isLongOpt($arg)
+    {
+        return strlen($arg) > 2 && $arg[0] == '-' && $arg[1] == '-' &&
+            preg_match('/[a-zA-Z]+$/', substr($arg, 2));
     }
 
     /**
@@ -190,18 +217,27 @@ class Console_Getopt {
         for ($i = 0; $i < count($long_options); $i++) {
             $long_opt  = $long_options[$i];
             $opt_start = substr($long_opt, 0, $opt_len);
+            $long_opt_name = str_replace('=', '', $long_opt);
 
             /* Option doesn't match. Go on to the next one. */
-            if ($opt_start != $opt)
+            if ($long_opt_name != $opt) {
                 continue;
+            }
 
             $opt_rest  = substr($long_opt, $opt_len);
 
             /* Check that the options uniquely matches one of the allowed
                options. */
+            if ($i + 1 < count($long_options)) {
+                $next_option_rest = substr($long_options[$i + 1], $opt_len);
+            } else {
+                $next_option_rest = '';
+            }
             if ($opt_rest != '' && $opt{0} != '=' &&
                 $i + 1 < count($long_options) &&
-                $opt == substr($long_options[$i+1], 0, $opt_len)) {
+                $opt == substr($long_options[$i+1], 0, $opt_len) &&
+                $next_option_rest != '' &&
+                $next_option_rest{0} != '=') {
                 return PEAR::raiseError("Console_Getopt: option --$opt is ambiguous");
             }
 
@@ -211,6 +247,9 @@ class Console_Getopt {
                        Take the next argument if one wasn't specified. */;
                     if (!strlen($opt_arg) && !(list(, $opt_arg) = each($args))) {
                         return PEAR::raiseError("Console_Getopt: option --$opt requires an argument");
+                    }
+                    if (Console_Getopt::_isShortOpt($opt_arg) || Console_Getopt::_isLongOpt($opt_arg)) {
+                        return PEAR::raiseError("Console_Getopt: option requires an argument --$opt");
                     }
                 }
             } else if ($opt_arg) {
