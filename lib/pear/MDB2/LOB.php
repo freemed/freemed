@@ -216,6 +216,25 @@ class MDB2_LOB
     }
     // }}}
 
+    // {{{ stream_stat()
+
+    /**
+     * return information about stream
+     *
+     * @access public
+     */
+    function stream_stat()
+    {
+        if (isset($GLOBALS['_MDB2_databases'][$this->db_index])) {
+            $db =& $GLOBALS['_MDB2_databases'][$this->db_index];
+            return array(
+              'db_index' => $this->db_index,
+              'lob_index' => $this->lob_index,
+            );
+        }
+    }
+    // }}}
+
     // {{{ stream_close()
 
     /**

@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -57,6 +57,37 @@ require_once 'MDB2/Driver/Datatype/Common.php';
  */
 class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
 {
+    // {{{ _getCharsetFieldDeclaration()
+
+    /**
+     * Obtain DBMS specific SQL code portion needed to set the CHARACTER SET
+     * of a field declaration to be used in statements like CREATE TABLE.
+     *
+     * @param string $charset   name of the charset
+     * @return string  DBMS specific SQL code portion needed to set the CHARACTER SET
+     *                 of a field declaration.
+     */
+    function _getCharsetFieldDeclaration($charset)
+    {
+        return 'CHARACTER SET '.$charset;
+    }
+
+    // }}}
+    // {{{ _getCollationFieldDeclaration()
+
+    /**
+     * Obtain DBMS specific SQL code portion needed to set the COLLATION
+     * of a field declaration to be used in statements like CREATE TABLE.
+     *
+     * @param string $collation   name of the collation
+     * @return string  DBMS specific SQL code portion needed to set the COLLATION
+     *                 of a field declaration.
+     */
+    function _getCollationFieldDeclaration($collation)
+    {
+        return 'COLLATE '.$collation;
+    }
+
     // }}}
     // {{{ getTypeDeclaration()
 
@@ -151,7 +182,8 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
             return 'DOUBLE';
         case 'decimal':
             $length = !empty($field['length']) ? $field['length'] : 18;
-            return 'DECIMAL('.$length.','.$db->options['decimal_places'].')';
+            $scale = !empty($field['scale']) ? $field['scale'] : $db->options['decimal_places'];
+            return 'DECIMAL('.$length.','.$scale.')';
         }
         return '';
     }
@@ -192,7 +224,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
             return $db;
         }
 
-        $default = $autoinc = '';;
+        $default = $autoinc = '';
         if (!empty($field['autoincrement'])) {
             $autoinc = ' AUTO_INCREMENT PRIMARY KEY';
         } elseif (array_key_exists('default', $field)) {
@@ -269,7 +301,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
     }
 
     // }}}
-    // {{{ mapNativeDatatype()
+    // {{{ _mapNativeDatatype()
 
     /**
      * Maps a native array description of a field to a MDB2 datatype and length
@@ -278,7 +310,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
      * @return array containing the various possible types, length, sign, fixed
      * @access public
      */
-    function mapNativeDatatype($field)
+    function _mapNativeDatatype($field)
     {
         $db_type = strtolower($field['type']);
         $db_type = strtok($db_type, '(), ');
@@ -286,8 +318,8 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
             $db_type = strtok('(), ');
         }
         if (!empty($field['length'])) {
-            $length = $field['length'];
-            $decimal = '';
+            $length = strtok($field['length'], ', ');
+            $decimal = strtok(', ');
         } else {
             $length = strtok('(), ');
             $decimal = strtok('(), ');
@@ -396,6 +428,9 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
         case 'numeric':
             $type[] = 'decimal';
             $unsigned = preg_match('/ unsigned/i', $field['type']);
+            if ($decimal !== false) {
+                $length = $length.','.$decimal;
+            }
             break;
         case 'tinyblob':
         case 'mediumblob':
@@ -403,6 +438,10 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
         case 'blob':
             $type[] = 'blob';
             $length = null;
+            break;
+        case 'binary':
+        case 'varbinary':
+            $type[] = 'blob';
             break;
         case 'year':
             $type[] = 'integer';
@@ -419,6 +458,10 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
                 'unknown database attribute type: '.$db_type, __FUNCTION__);
         }
 
+        if ((int)$length <= 0) {
+            $length = null;
+        }
+
         return array($type, $length, $unsigned, $fixed);
     }
 
@@ -426,7 +469,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
     // {{{ mapPrepareDatatype()
 
     /**
-     * Maps an mdb2 datatype to native prepare type
+     * Maps an MDB2 datatype to native prepare type
      *
      * @param string $type
      * @return string
@@ -459,6 +502,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
         }
         return 's';
     }
+    
+    // }}}
 }
-
 ?>

@@ -56,16 +56,19 @@
 class MDB2_Driver_mysqli extends MDB2_Driver_Common
 {
     // {{{ properties
-    var $escape_quotes = "\\";
+    var $string_quoting = array('start' => "'", 'end' => "'", 'escape' => '\\', 'escape_pattern' => '\\');
 
-    var $escape_pattern = "\\";
+    var $identifier_quoting = array('start' => '`', 'end' => '`', 'escape' => '`');
 
-    var $escape_identifier = '`';
+    var $sql_comments = array(
+        array('start' => '-- ', 'end' => "\n", 'escape' => false),
+        array('start' => '#', 'end' => "\n", 'escape' => false),
+        array('start' => '/*', 'end' => '*/', 'escape' => false),
+    );
 
     var $start_transaction = false;
 
     var $varchar_max_length = 255;
-
     // }}}
     // {{{ constructor
 
@@ -97,6 +100,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         $this->supported['prepared_statements'] = 'emulated';
         $this->supported['identifier_quoting'] = true;
         $this->supported['pattern_escaping'] = true;
+        $this->supported['new_link'] = true;
 
         $this->options['default_table_type'] = '';
         $this->options['multi_query'] = false;
@@ -118,8 +122,8 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             $native_code = @mysqli_errno($this->connection);
             $native_msg  = @mysqli_error($this->connection);
         } else {
-            $native_code = @mysqli_errno();
-            $native_msg  = @mysqli_error();
+            $native_code = @mysqli_connect_errno();
+            $native_msg  = @mysqli_connect_error();
         }
         if (is_null($error)) {
             static $ecode_map;
@@ -148,6 +152,9 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                     1146 => MDB2_ERROR_NOSUCHTABLE,
                     1216 => MDB2_ERROR_CONSTRAINT,
                     1217 => MDB2_ERROR_CONSTRAINT,
+                    1356 => MDB2_ERROR_DIVZERO,
+                    1451 => MDB2_ERROR_CONSTRAINT,
+                    1452 => MDB2_ERROR_CONSTRAINT,
                 );
             }
             if ($this->options['portability'] & MDB2_PORTABILITY_ERRORS) {
@@ -208,6 +215,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
     function beginTransaction($savepoint = null)
     {
         $this->debug('Starting transaction/savepoint', __FUNCTION__, array('is_manip' => true, 'savepoint' => $savepoint));
+        $this->_getServerCapabilities();
         if (!is_null($savepoint)) {
             if (!$this->supports('savepoints')) {
                 return $this->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
@@ -391,9 +399,6 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                 'extension '.$this->phptype.' is not compiled into PHP', __FUNCTION__);
         }
 
-        @ini_set('track_errors', true);
-        $php_errormsg = '';
-
         if ($this->options['ssl']) {
             $init = @mysqli_init();
             @mysqli_ssl_set(
@@ -426,15 +431,13 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             );
         }
 
-        @ini_restore('track_errors');
-
         if (!$connection) {
             if (($err = @mysqli_connect_error()) != '') {
-                return $this->raiseError(MDB2_ERROR_CONNECT_FAILED,
+                return $this->raiseError(null,
                     null, null, $err, __FUNCTION__);
             } else {
-                return $this->raiseError(MDB2_ERROR_CONNECT_FAILED,
-                    null, null, $php_errormsg, __FUNCTION__);
+                return $this->raiseError(MDB2_ERROR_CONNECT_FAILED, null, null,
+                    'unable to establish a connection', __FUNCTION__);
             }
         }
 
@@ -465,38 +468,13 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             case 'MRG_MYISAM':
             case 'MYISAM':
                 $this->supported['transactions'] = false;
-                $this->warnings[] = $default_table_type.
+                $this->warnings[] = $this->options['default_table_type'] .
                     ' is not a supported default table type';
                 break;
             }
         }
-
-        $this->supported['sub_selects'] = 'emulated';
-        $this->supported['prepared_statements'] = 'emulated';
-        $this->start_transaction = false;
-        $this->varchar_max_length = 255;
-
-        $server_info = $this->getServerVersion();
-        if (is_array($server_info)) {
-            if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.1.0', '<')) {
-                $this->supported['sub_selects'] = true;
-                $this->supported['prepared_statements'] = true;
-            }
-
-            if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.0.14', '<')
-                || !version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.1.1', '<')
-            ) {
-                $this->supported['savepoints'] = true;
-            }
-
-            if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.0.11', '<')) {
-                $this->start_transaction = true;
-            }
-
-            if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '5.0.3', '<')) {
-                $this->varchar_max_length = 65532;
-            }
-        }
+        
+        $this->_getServerCapabilities();
 
         return MDB2_OK;
     }
@@ -520,19 +498,8 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
                 return $connection;
             }
         }
-
-        if (function_exists('mysqli_set_charset')) {
-            $result = @mysqli_set_charset($connection, $charset);
-        } else {
-            $query = "SET character_set_client = '".mysqli_real_escape_string($charset, $connection)."'";
-            $result = @mysqli_query($query, $connection);
-        }
-
-        if (!$result) {
-            return $this->raiseError(null, null, null,
-                'Unable to set client charset: '.$charset, __FUNCTION__);
-        }
-        return MDB2_OK;
+        $query = "SET NAMES '".mysqli_real_escape_string($connection, $charset)."'";
+        return $this->_doQuery($query, true, $connection);
     }
 
     // }}}
@@ -695,12 +662,27 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             }
         }
         if ($limit > 0
-            && !preg_match('/LIMIT\s*\d(\s*(,|OFFSET)\s*\d+)?/i', $query)
+            && !preg_match('/LIMIT\s*\d(?:\s*(?:,|OFFSET)\s*\d+)?(?:[^\)]*)?$/i', $query)
         ) {
             $query = rtrim($query);
             if (substr($query, -1) == ';') {
                 $query = substr($query, 0, -1);
             }
+
+            // LIMIT doesn't always come last in the query
+            // @see http://dev.mysql.com/doc/refman/5.0/en/select.html
+            $after = '';
+            if (preg_match('/(\s+INTO\s+(?:OUT|DUMP)FILE\s.*)$/ims', $query, $matches)) {
+                $after = $matches[0];
+                $query = preg_replace('/(\s+INTO\s+(?:OUT|DUMP)FILE\s.*)$/ims', '', $query);
+            } elseif (preg_match('/(\s+FOR\s+UPDATE\s*)$/i', $query, $matches)) {
+               $after = $matches[0];
+               $query = preg_replace('/(\s+FOR\s+UPDATE\s*)$/im', '', $query);
+            } elseif (preg_match('/(\s+LOCK\s+IN\s+SHARE\s+MODE\s*)$/im', $query, $matches)) {
+               $after = $matches[0];
+               $query = preg_replace('/(\s+LOCK\s+IN\s+SHARE\s+MODE\s*)$/im', '', $query);
+            }
+
             if ($is_manip) {
                 return $query . " LIMIT $limit";
             } else {
@@ -716,7 +698,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
     /**
      * return version information about the server
      *
-     * @param string     $native  determines if the raw version string should be returned
+     * @param bool   $native  determines if the raw version string should be returned
      * @return mixed array/string with version information or MDB2 error object
      * @access public
      */
@@ -754,6 +736,80 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             );
         }
         return $server_info;
+    }
+
+    // }}}
+    // {{{ _getServerCapabilities()
+
+    /**
+     * Fetch some information about the server capabilities
+     * (transactions, subselects, prepared statements, etc).
+     *
+     * @access private
+     */
+    function _getServerCapabilities()
+    {
+        static $already_checked = false;
+        if (!$already_checked) {
+            $already_checked = true;
+
+            //set defaults
+            $this->supported['sub_selects'] = 'emulated';
+            $this->supported['prepared_statements'] = 'emulated';
+            $this->start_transaction = false;
+            $this->varchar_max_length = 255;
+
+            $server_info = $this->getServerVersion();
+            if (is_array($server_info)) {
+                if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.1.0', '<')) {
+                    $this->supported['sub_selects'] = true;
+                    $this->supported['prepared_statements'] = true;
+                }
+
+                if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.0.14', '<')
+                    || !version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.1.1', '<')
+                ) {
+                    $this->supported['savepoints'] = true;
+                }
+
+                if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '4.0.11', '<')) {
+                    $this->start_transaction = true;
+                }
+
+                if (!version_compare($server_info['major'].'.'.$server_info['minor'].'.'.$server_info['patch'], '5.0.3', '<')) {
+                    $this->varchar_max_length = 65532;
+                }
+            }
+        }
+    }
+
+    // }}}
+    // {{{ function _skipUserDefinedVariable($query, $position)
+
+    /**
+     * Utility method, used by prepare() to avoid misinterpreting MySQL user
+     * defined variables (SELECT @x:=5) for placeholders.
+     * Check if the placeholder is a false positive, i.e. if it is an user defined
+     * variable instead. If so, skip it and advance the position, otherwise
+     * return the current position, which is valid
+     *
+     * @param string $query
+     * @param integer $position current string cursor position
+     * @return integer $new_position
+     * @access protected
+     */
+    function _skipUserDefinedVariable($query, $position)
+    {
+        $found = strpos(strrev(substr($query, 0, $position)), '@');
+        if ($found === false) {
+            return $position;
+        }
+        $pos = strlen($query) - strlen(substr($query, $position)) - $found - 1;
+        $substring = substr($query, $pos, $position - $pos + 2);
+        if (preg_match('/^@\w+:=$/', $substring)) {
+            return $position + 1; //found an user defined variable: skip it
+        }
+        return $position;
     }
 
     // }}}
@@ -819,35 +875,28 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
             if (is_null($placeholder_type)) {
                 $placeholder_type_guess = $query[$p_position];
             }
-            if (is_int($quote = strpos($query, "'", $position)) && $quote < $p_position) {
-                if (!is_int($end_quote = strpos($query, "'", $quote + 1))) {
-                    $err =& $this->raiseError(MDB2_ERROR_SYNTAX, null, null,
-                        'query with an unterminated text string specified', __FUNCTION__);
-                    return $err;
-                }
-                switch ($this->escape_quotes) {
-                case '':
-                case "'":
-                    $position = $end_quote + 1;
-                    break;
-                default:
-                    if ($end_quote == $quote + 1) {
-                        $position = $end_quote + 1;
-                    } else {
-                        if ($query[$end_quote-1] == $this->escape_quotes) {
-                            $position = $end_quote;
-                        } else {
-                            $position = $end_quote + 1;
-                        }
-                    }
-                    break;
-                }
-            } elseif ($query[$position] == $placeholder_type_guess) {
+            
+            $new_pos = $this->_skipDelimitedStrings($query, $position, $p_position);
+            if (PEAR::isError($new_pos)) {
+                return $new_pos;
+            }
+            if ($new_pos != $position) {
+                $position = $new_pos;
+                continue; //evaluate again starting from the new position
+            }
+            
+            if ($query[$position] == $placeholder_type_guess) {
                 if (is_null($placeholder_type)) {
                     $placeholder_type = $query[$p_position];
                     $question = $colon = $placeholder_type;
                 }
                 if ($placeholder_type == ':') {
+                    //make sure this is not part of an user defined variable
+                    $new_pos = $this->_skipUserDefinedVariable($query, $position);
+                    if ($new_pos != $position) {
+                        $position = $new_pos;
+                        continue; //evaluate again starting from the new position
+                    }
                     $parameter = preg_replace('/^.{'.($position+1).'}([a-z0-9_]+).*$/si', '\\1', $query);
                     if ($parameter === '') {
                         $err =& $this->raiseError(MDB2_ERROR_SYNTAX, null, null,
@@ -870,7 +919,7 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         }
 
         if (!$is_manip) {
-            $statement_name = 'MDB2_Statement_'.$this->phptype.'_'.md5(time() + rand());
+            $statement_name = sprintf($this->options['statement_format'], $this->phptype, md5(time() + rand()));
             $query = "PREPARE $statement_name FROM ".$this->quote($query, 'text');
 
             $statement =& $this->_doQuery($query, true, $connection);
@@ -1030,16 +1079,12 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
         if (PEAR::isError($result)) {
             if ($ondemand && $result->getCode() == MDB2_ERROR_NOSUCHTABLE) {
                 $this->loadModule('Manager', null, true);
-                // Since we are creating the sequence on demand
-                // we know the first id = 1 so initialize the
-                // sequence at 2
-                $result = $this->manager->createSequence($seq_name, 2);
+                $result = $this->manager->createSequence($seq_name);
                 if (PEAR::isError($result)) {
                     return $this->raiseError($result, null, null,
                         'on demand sequence '.$seq_name.' could not be created', __FUNCTION__);
                 } else {
-                    // First ID of a newly created sequence is 1
-                    return 1;
+                    return $this->nextID($seq_name, false);
                 }
             }
             return $result;
@@ -1069,16 +1114,8 @@ class MDB2_Driver_mysqli extends MDB2_Driver_Common
      */
     function lastInsertID($table = null, $field = null)
     {
-        $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
-            return $connection;
-        }
-        $value = @mysqli_insert_id($connection);
-        if (!$value) {
-            return $this->raiseError(null, null, null,
-                'Could not get last insert ID', __FUNCTION__);
-        }
-        return $value;
+        // not using mysql_insert_id() due to http://pear.php.net/bugs/bug.php?id=8051
+        return $this->queryOne('SELECT LAST_INSERT_ID()');
     }
 
     // }}}
@@ -1234,7 +1271,6 @@ class MDB2_Result_mysqli extends MDB2_Result_Common
     /**
      * Move the internal result pointer to the next available result
      *
-     * @param a valid result resource
      * @return true on success, false if there is no more result set or an error object on failure
      * @access public
      */
@@ -1459,7 +1495,11 @@ class MDB2_Statement_mysqli extends MDB2_Statement_Common
                             $value = $data;
                         }
                     }
-                    $param_query = 'SET @'.$parameter.' = '.$this->db->quote($value, $type);
+                    $quoted = $this->db->quote($value, $type);
+                    if (PEAR::isError($quoted)) {
+                        return $quoted;
+                    }
+                    $param_query = 'SET @'.$parameter.' = '.$quoted;
                     $result = $this->db->_doQuery($param_query, true, $connection);
                     if (PEAR::isError($result)) {
                         return $result;

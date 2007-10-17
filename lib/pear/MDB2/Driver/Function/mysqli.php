@@ -108,5 +108,21 @@ class MDB2_Driver_Function_mysqli extends MDB2_Driver_Function_Common
         $args = func_get_args();
         return "CONCAT(".implode(', ', $args).")";
     }
+
+    // }}}
+    // {{{ guid()
+
+    /**
+     * Returns global unique identifier
+     *
+     * @return string to get global unique identifier
+     * @access public
+     */
+    function guid()
+    {
+        return 'UUID()';
+    }
+
+    // }}}
 }
 ?>
