@@ -145,6 +145,11 @@
 <div id="legalNotice">
 	<b>FreeMED</b> &copy; 1999-2007 (GPL) FreeMED Software Foundation
 	( <b>http://www.freemedsoftware.org/</b> )
+	<br />
+    	<small><i>FreeMED comes with ABSOLUTELY NO WARRANTY. This is free
+	software, and you are welcome to redistribute it under certain
+	conditions; please consult a copy of the GNU Public License for
+	more information.</i></small>
 	<hr />
 	The Multum Lexicon database from Cerner Multum, Inc has been modified for
 	this application, and there is no warranty explicit or implied from either
