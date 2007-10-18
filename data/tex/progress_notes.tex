@@ -25,8 +25,8 @@
 %%	Progress Notes
 %%
 
-{[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$pnotespat var='patient_name']}
-{[method namespace='org.freemedsoftware.core.Physician.fullName' param0=$pnotesdoc var='provider_name']}
+{[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$pnotespat param1=0 var='patientName']}
+{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$pnotesdoc param1=1 var='providerName']}
 
 \documentclass{article}
 
@@ -45,14 +45,13 @@
 % only display. FIXME: Migrate this to a header.
 \begin{center}
         {\relsize{1}\textbf{{[link link=$pnotesdoc table='physician' field='phypracname'|texize]}}} \\
-        {\relsize{-1}\textsl{{[$provider_name|texize]}}} \\
+        {\relsize{-1}\textsl{{[$providerName|texize]}}} \\
         \textsl{{[link link=$pnotesdoc table='physician' field='phyaddr1a'|texize]}, {[link link=$pnotesdoc table='physician' field='phycitya'|texize]}, {[link link=$pnotesdoc table='physician' field='phystatea'|texize]} {[link link=$pnotesdoc table='physician' field='phyzipa'|texize]} } \\
         \textsl{phone {[link link=$pnotesdoc table='physician' field='phyphonea'|texize]} fax {[link link=$pnotesdoc table='physician' field='phyfaxa']}}
 \end{center}
 
-% {[method namespace='org.freemedsoftware.core.Physician.fullName' param0=$pnotesdoc|texize]} \\
 \begin{tabular}{ll}
-NAME:	&	{[$patient_name|texize]}	\\
+NAME:	&	{[$patientName|texize]}	\\
 CHART:	&	{[link link=$pnotespat table='patient' field='ptid'|texize]} 	\\
 DOB:	&	{[link link=$pnotespat table='patient' field='ptdob'|texize]}	\\
 DATE:	&	{[$pnotesdt|texize]} \\
@@ -133,3 +132,4 @@ PRINTED: &	\today \\
 {[/if]}
 
 \end{document}
+
