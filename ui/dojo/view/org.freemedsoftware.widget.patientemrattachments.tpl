@@ -184,8 +184,6 @@
 				dojo.widget.byId('emrPrintDialog').show();
 			}
 		},
-		OnPrintSingle: function ( ) {
-		},
 		OnPrint: function ( ) {
 			var url;
 			if (patientEmrAttachments.itemsToPrint.length == 1) {
@@ -209,11 +207,12 @@
 				return true;
 			}
 			if ( document.getElementById('printMethodPrinter').checked ) {
+				var printer = document.getElementById( 'emrPrinter' ).value;
 				if (patientEmrAttachments.itemsToPrint.length == 1) {
 					var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
-					url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".PrintSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&param1=printer";
+					url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".PrintSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&param1=" + printer;
 				} else {
-					url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) ) + "&param1=printer";
+					url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) ) + "&param1=" + printer;
 				}
 				// Make async call to print
 				dojo.io.bind({

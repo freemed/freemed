@@ -736,6 +736,24 @@ class EMRModule extends BaseModule {
 		return $result;
 	} // end method RecentDates
 
+	// Method: PrintSinglePDF
+	//
+	//	Print a single PDF file to a printer.
+	//
+	// Parameters:
+	//
+	//	$id - Record id
+	//
+	//	$printer - String, name of printer
+	//
+	public function PrintSinglePDF ( $id, $printer ) {
+		$render = $this->RenderToPDF( $id );
+		$p = CreateObject( 'org.freemedsoftware.core.PrinterWrapper' );
+		$p->PrintFile( $printer, $render );
+		unlink( $render );
+		return true;
+	} // end method PrintSinglePDF
+
 	// Method: RenderSinglePDF
 	//
 	//	Creates a single record PDF which is returned with headers to
