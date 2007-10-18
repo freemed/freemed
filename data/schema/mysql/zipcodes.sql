@@ -36,3 +36,23 @@ CREATE TABLE IF NOT EXISTS `zipcodes` (
 	KEY			( city, state, zip, country )
 );
 
+DROP PROCEDURE IF EXISTS zipcodes_Upgrade;
+DELIMITER //
+CREATE PROCEDURE zipcodes_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+	CALL FreeMED_Module_GetVersion( 'zipcodes', @V );
+
+	# Version 1
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE zipcodes ADD COLUMN country CHAR (100) NOT NULL DEFAULT 'United States' AFTER dst;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'zipcodes', 1 );
+END
+//
+DELIMITER ;
+CALL zipcodes_Upgrade( );
+
