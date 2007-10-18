@@ -86,8 +86,10 @@
 				});
 			}
 		},
-		loadData: function ( data ) {
-			dojo.widget.byId('note.dateOf').setValue( data['pnotesdt'] );
+		loadData: function ( data, overwriteDate ) {
+			if (overwriteDate) {
+				dojo.widget.byId('note.dateOf').setValue( data['pnotesdt'] );
+			}
 			dojo.byId('note.descrip').value = data.pnotesdescrip;
 			dojo.byId('note_S_value').innerHTML = data['pnotes_S'];
 			dojo.byId('note_O_value').innerHTML = data['pnotes_O'];
@@ -107,7 +109,7 @@
 				},
 				url: "<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.GetRecord",
 				load: function ( type, data, evt ) {
-					notes.loadData( data );
+					notes.loadData( data, true );
 				},
 				mimetype: "text/json"
 			});
@@ -124,7 +126,7 @@
 				url: '<!--{$relay}-->/org.freemedsoftware.module.ProgressNotes.GetRecentRecord',
 				load: function( type, data, evt ) {
 					try {
-						notes.loadData( data );
+						notes.loadData( data, false );
 					} catch (e) { }
 				},
 				mimetype: "text/json"
