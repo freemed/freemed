@@ -27,6 +27,8 @@ if (!$_SERVER['argc']) { die ("cannot be called via web"); }
 ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
 include_once ( 'lib/freemed.php' );
 
+LoadObjectDependency( 'net.php.pear.Console_Getopt' );
+
 print "Upgrade from 0.8.x Tool\n";
 print "(c) 2007 FreeMED Software Foundation\n\n";
 
@@ -40,10 +42,23 @@ if ( ! file_exists ( './scripts/upgrade.php' ) ) {
 	die();
 }
 
-print "Please type 'yes' if you're *sure* you want to do this : ";
-if ( getInput( '%s' ) != 'yes' ) {
-	print "\nI didn't think so. :(\n";
+$a = Console_Getopt::readPHPArgv(); array_shift( $a );
+$g = Console_Getopt::getopt2 ( $a, 'f' );
+if ( PEAR::isError ( $g ) ) {
+	print "Allowed options:\n";
+	print "\t-f\t\tForce non-interactive mode.\n\n";
 	die();
+}
+$force = ( $g[0][0][0] == 'f' );
+
+if ( $force ) {
+	print "[ Forcing run in non-interactive mode. ]\n";
+} else {
+	print "Please type 'yes' if you're *sure* you want to do this : ";
+	if ( getInput( '%s' ) != 'yes' ) {
+		print "\nI didn't think so. :(\n";
+		die();
+	}
 }
 
 printHeader( "Upgrade Keys" );
