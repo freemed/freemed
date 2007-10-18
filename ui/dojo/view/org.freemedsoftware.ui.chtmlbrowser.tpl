@@ -96,7 +96,7 @@
 		</table>
 	</div>
 	<div dojoType="ContentPane" layoutAlign="top" id="chtmlContent" widgetId="chtmlContent" style="height: 100%;">
-		<iframe id="iFrame" width="100%" height="100%" src="<!--{$base_uri}-->/chtml.php/dojo_en_US/<!--{$topic}-->.html" frameborder="0"></iframe>
+		<iframe id="iFrame" width="100%" height="100%" src="<!--{$base_uri}-->/chtml.php/dojo_<!--{$SESSION.language}-->/<!--{$topic}-->.html" frameborder="0"></iframe>
 	</div>
 </div>
 
