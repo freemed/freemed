@@ -29,6 +29,9 @@ if ( file_exists ( dirname(__FILE__).'/data/cache/healthy' ) ) {
 
 // TODO : Handle JSON requests for handling things here?
 
+// i18n routines
+include_once ("lib/i18n.php");
+
 // Load smarty engine
 unset ( $smarty );
 include_once(dirname(__FILE__).'/lib/smarty/Smarty.class.php');
