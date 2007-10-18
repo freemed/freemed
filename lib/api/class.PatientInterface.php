@@ -375,13 +375,16 @@ class PatientInterface {
 	//
 	//	$patient - Database id of patient
 	//
+	//	$full - (optional) Boolean, full information string. If true then
+	//	contains DOB and patient ID. Defaults to true.
+	//
 	// Returns:
 	//
 	//	String representation of patient.
 	//
-	public function ToText ( $patient ) {
+	public function ToText ( $patient, $full = true ) {
 		$_obj = CreateObject('org.freemedsoftware.core.Patient', $patient);
-		return $_obj->to_text( );
+		return ( $full ? $_obj->to_text( ) : $_obj->fullName( ) );
 	} // end public function ToText
 
 } // end class PatientInterface

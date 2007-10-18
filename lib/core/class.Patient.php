@@ -175,7 +175,8 @@ class Patient {
 			return $this->_fixcaps($this->ptfname)." ".
 				$this->_fixcaps($this->ptmname).
 				( strlen($this->ptmname) == 1 ? ". " : " " ).
-				$this->_fixcaps($this->ptlname);
+				$this->_fixcaps($this->ptlname).
+				( $this->local_record['ptsuffix'] ? " ".$this->local_record['ptsuffix'] : '' );
 		} else {
 			return $this->_fixcaps($this->ptlname).
 				( $this->local_record['ptsuffix'] ? " ".$this->local_record['ptsuffix'] : '' ).
