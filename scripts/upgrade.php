@@ -141,5 +141,7 @@ execSql( "CREATE TEMPORARY TABLE medications_atomic_temp SELECT * FROM medicatio
 execSql( "INSERT INTO medications_atomic_temp ( mid, mdrug, mdosage, mroute, mdate, mpatient ) SELECT m.id, o.mdrug, o.mdosage, o.mroute, m.mdate, m.mpatient FROM medications_old o LEFT OUTER JOIN medications m ON o.mpatient = m.mpatient;" );
 execSql( "INSERT INTO medications_atomic SELECT * FROM medications_atomic_temp;" );
 execSql( "DROP TEMPORARY TABLE medications_atomic_temp;" );
+//	-- Templates, if they exist
+execSql( "INSERT INTO pnotes_templates SELECT pntname, pntphy, pntS, pntO, pntA, pntP, pntI, pntE, pntR, NOW(), NULL FROM pntemplate;" );
 
 ?>
