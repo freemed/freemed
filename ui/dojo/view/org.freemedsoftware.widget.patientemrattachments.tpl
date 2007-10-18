@@ -210,7 +210,7 @@
 				var printer = document.getElementById( 'emrPrinter' ).value;
 				if (patientEmrAttachments.itemsToPrint.length == 1) {
 					var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
-					url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".PrintSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&param1=" + printer;
+					url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".PrintSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&param1=" + encodeURIComponent( document.getElementById( 'emrPrinter' ).value );
 				} else {
 					url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) ) + "&param1=" + printer;
 				}

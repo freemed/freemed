@@ -749,7 +749,7 @@ class EMRModule extends BaseModule {
 	public function PrintSinglePDF ( $id, $printer ) {
 		$render = $this->RenderToPDF( $id );
 		$p = CreateObject( 'org.freemedsoftware.core.PrinterWrapper' );
-		$p->PrintFile( $printer, $render );
+		$p->driver->PrintFile( $printer, $render );
 		unlink( $render );
 		return true;
 	} // end method PrintSinglePDF
