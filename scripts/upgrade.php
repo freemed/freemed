@@ -76,6 +76,12 @@ loadSchema( 'modules' );
 loadSchema( 'user' );
 loadSchema( 'scheduler' );
 
+printHeader( "Backup differently aggregated tables" );
+execSql( "CREATE TABLE allergies_old SELECT * FROM allergies;" );
+execSql( "DROP TABLE allergies;" );
+execSql( "CREATE TABLE medications_old SELECT * FROM medications;" );
+execSql( "DROP TABLE medications;" );
+
 printHeader( "Build aggregation tables" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'allergies', patient, id, reviewed, allergy, 'active' FROM allergies;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'authorizations', authpatient, id, authdtadd, CONCAT(authdtbegin, ' - ', authdtend, ' (', authnum, ')'), 'active' FROM authorizations;" );
@@ -121,5 +127,19 @@ printHeader( "Create 'healthy system' status" );
 
 printHeader( "Force module definition upgrades" );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
+
+printHeader( "Rebuild differently organized tables" );
+//	-- Allergies
+execSql( "INSERT INTO allergies ( patient ) SELECT DISTINCT patient FROM allergies_old;" );
+execSql( "CREATE TEMPORARY TABLE allergies_atomic_temp SELECT * FROM allergies_atomic;" );
+execSql( "INSERT INTO allergies_atomic_temp ( aid, allergy, severity, patient ) SELECT a.id, o.allergy, o.severity, a.patient FROM allergies_old o LEFT OUTER JOIN allergies a ON o.patient = a.patient;" );
+execSql( "INSERT INTO allergies_atomic SELECT * FROM allergies_atomic_temp;" );
+execSql( "DROP TEMPORARY TABLE allergies_atomic_temp;" );
+//	-- Medications
+execSql( "INSERT INTO medications ( mpatient, mdate ) SELECT DISTINCT mpatient, mdate FROM medications_old;" );
+execSql( "CREATE TEMPORARY TABLE medications_atomic_temp SELECT * FROM medications_atomic;" );
+execSql( "INSERT INTO medications_atomic_temp ( mid, mdrug, mdosage, mroute, mdate, mpatient ) SELECT m.id, o.mdrug, o.mdosage, o.mroute, m.mdate, m.mpatient FROM medications_old o LEFT OUTER JOIN medications m ON o.mpatient = m.mpatient;" );
+execSql( "INSERT INTO medications_atomic SELECT * FROM medications_atomic_temp;" );
+execSql( "DROP TEMPORARY TABLE medications_atomic_temp;" );
 
 ?>
