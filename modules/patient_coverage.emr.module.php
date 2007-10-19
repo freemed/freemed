@@ -89,6 +89,7 @@ class PatientCoverages extends EMRModule {
 			'covinsco' => 'insco'
 		);
 
+		$this->_SetAssociation('EmrModule');
 		$this->acl = array ( 'bill', 'emr' );
 
 		// Call parent constructor
@@ -96,15 +97,23 @@ class PatientCoverages extends EMRModule {
 	} // end function PatientCoverages
 
 	protected function add_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['covstatus'] = ACTIVE;
 		$data['covdtadd'] = date('Y-m-d');
 		$data['covdtmod'] = date('Y-m-d');
+		$data['covdteff'] = $s->ImportDate( $data['covdteff'] );
+		$data['covrelinfodt'] = $s->ImportDate( $data['covrelinfodt'] );
+		$data['covdob'] = $s->ImportDate( $data['covdob'] );
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
 	protected function mod_pre ( &$data ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['covstatus'] = ACTIVE;
 		$data['covdtmod'] = date('Y-m-d');
+		$data['covdteff'] = $s->ImportDate( $data['covdteff'] );
+		$data['covrelinfodt'] = $s->ImportDate( $data['covrelinfodt'] );
+		$data['covdob'] = $s->ImportDate( $data['covdob'] );
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
