@@ -164,8 +164,6 @@
 				}
 			}
 
-			return false; // FIXME FIXME FIXME
-
 			// Make IO call
 			dojo.io.bind({
 				method: "POST",
