@@ -65,21 +65,23 @@
 			c.innerHTML = '';
 			c.style.display = 'none';
 			for (var i=0; i<data.length; i++) {
-				rr.store[ data[i].id ] = 0;
-				var li = document.createElement( 'li' );
-				var cb = document.createElement( 'input' );
-				cb.type = 'checkbox';
-				cb.value = '1';
-				cb.id = 'rx_refill_<!--{$unique}-->' + data[i].id;
-				cb.onclick = rr.onCheckboxClick;
+				if ( data[i].rx ) {
+					rr.store[ data[i].id ] = 0;
+					var li = document.createElement( 'li' );
+					var cb = document.createElement( 'input' );
+					cb.type = 'checkbox';
+					cb.value = '1';
+					cb.id = 'rx_refill_<!--{$unique}-->' + data[i].id;
+					cb.onclick = rr.onCheckboxClick;
 
-				var label = document.createElement( 'label' );
-				label.htmlFor = cb.id;
-				label.innerHTML = data[i].rx;
+					var label = document.createElement( 'label' );
+					label.htmlFor = cb.id;
+					label.innerHTML = "<b>" + data[i].rx + "</b>" + ( data[i].sig ? " - <i>" + data[i].sig + "</i>" : "" );
 
-				li.appendChild( cb );
-				li.appendChild( label );
-				c.appendChild( li );
+					li.appendChild( cb );
+					li.appendChild( label );
+					c.appendChild( li );
+				}
 			}
 			c.style.display = 'block';
 		},
@@ -97,6 +99,8 @@
 
 	_container_.addOnLoad(function(){
 		rr.init();
+		dojo.widget.byId('rxrefillpatient_widget').setLabel( '' );
+		dojo.widget.byId('rxrefillpatient_widget').textInputNode.focus();
 		dojo.event.connect( dojo.widget.byId( 'rrCommitButton<!--{$unique}-->' ), 'onClick', rr, 'onCommit' );
 		dojo.event.connect( dojo.widget.byId( 'rxrefillpatient_widget' ), 'onValueChanged', rr, 'onChangePatient' );
 	});
@@ -116,7 +120,7 @@
 	</tr>
 </table>
 
-<ul id="rxRefillContainer<!--{$unique}-->" style="display: none;"></ul>
+<ul id="rxRefillContainer<!--{$unique}-->" style="display: none; list-style: none;"></ul>
 
 <div align="center">
 	<table border="0" style="width: auto;">

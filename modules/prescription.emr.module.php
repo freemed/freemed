@@ -149,10 +149,11 @@ class Prescription extends EMRModule {
 	//
 	//	Array of hashes:
 	//	* rx - RX description
+	//	* sig - RX signature
 	//	* id - RX id
 	//
 	public function GetDistinctRx ( $patient ) {
-		$q = "SELECT CONCAT( rxdrug, ' ', rxform, ' ', rxdosage ) AS rx, id AS id FROM rx WHERE rxpatient = ".$GLOBALS['sql']->quote( $patient )." AND ( rxorigrx = 0 OR ISNULL( rxorigrx ) )";
+		$q = "SELECT CONCAT( r.rxdrug, ' ', r.rxform, ' ', r.rxdosage, ' ', ps.product_strength_description ) AS rx, r.rxsig AS sig, r.id AS id FROM rx r LEFT OUTER JOIN multum_product_strength ps ON ps.product_strength_code = r.rxunit WHERE r.rxpatient = ".$GLOBALS['sql']->quote( $patient )." AND ( r.rxorigrx = 0 OR ISNULL( r.rxorigrx ) )";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetDistinctRx
 
