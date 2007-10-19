@@ -86,6 +86,12 @@
 			c.style.display = 'block';
 		},
 		onCommit: function ( ) {
+			var patient = dojo.widget.byId( 'rxrefillpatient_widget' ).getValue();
+
+			if ( ! patient ) {
+				alert( "<!--{t|escape:'javascript'}-->You must select a patient.<!--{/t}-->" );
+				return false;
+			}
 			var l = [ ];
 			for ( var i in rr.store ) {
 				if ( rr.store[ i ] ) {
@@ -93,6 +99,26 @@
 				}
 			}
 			dojo.debug( dojo.json.serialize( l ) );
+			var hash = {
+				patient: patient,
+				rxorig: l,
+				note: document.getElementById( 'note<!--{$unique}-->' ).value
+			};
+			dojo.io.bind({
+				method: 'POST',
+				content: {
+					param0: hash
+				},
+				url: "<!--{$relay}-->/org.freemedsoftware.module.Prescription.GetDistinctRx",
+				load: function( type, data, evt ) {
+					if (data) {
+						rr.populate( patient, data );
+					} else {
+						freemedMessage( "<!--{t|escape:'javascript'}-->Failed to retrieve prescriptions for this patient.<!--{/t}-->", 'ERROR' );
+					}
+				},
+				mimetype: 'text/json'
+			});
 			return false;
 		}
 	};
@@ -117,6 +143,10 @@
 	<tr>
 		<td><!--{t}-->Patient<!--{/t}--> : </td>
 		<td><!--{include file="org.freemedsoftware.widget.patientpicklist.tpl" varname="rxrefillpatient"}--></td>
+	</tr>
+	<tr>
+		<td><!--{t}-->Note<!--{/t}--> : </td>
+		<td><input type="text" id="note<!--{$unique}-->" name="note<!--{$unique}-->" size="40" maxlength="250" />
 	</tr>
 </table>
 
