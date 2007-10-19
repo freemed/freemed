@@ -60,7 +60,6 @@
 					dojo.widget.byId('letterText').setValue( data.lettertext );
 					document.getElementById( 'lettersubject' ).value = data.lettersubject;
 					lettersfromProvider.onAssign( data.letterfrom );
-					letterstoProvider.onAssign( data.letterto );
 					} catch (e) { alert(e); }
 				},
 				mimetype: "text/json"
