@@ -54,6 +54,7 @@ BEGIN
 	DROP TRIGGER patletter_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE patletter ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER letterpatient;
 	ALTER IGNORE TABLE patletter ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
 	ALTER IGNORE TABLE patletter ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 	ALTER IGNORE TABLE patletter ADD COLUMN lettersubject VARCHAR (250) NOT NULL DEFAULT '' AFTER letterfrom;
