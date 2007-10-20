@@ -91,7 +91,7 @@ BEGIN
 		ALTER IGNORE TABLE rx ADD COLUMN rxdrugmultum CHAR (20) NOT NULL DEFAULT '' AFTER rxdrug;
 		ALTER IGNORE TABLE rx ADD COLUMN rxquantityqual INT UNSIGNED NOT NULL DEFAULT 0 AFTER rxquantity;
 		ALTER IGNORE TABLE rx ADD COLUMN rxsig TEXT AFTER rxcovstatus;
-		#### ALTER IGNORE TABLE rx ADD COLUMN
+		ALTER IGNORE TABLE rx CHANGE COLUMN rxunit rxunit VARCHAR (32);
 
 		# HL7 v2.3 normalization
 		ALTER IGNORE TABLE rx CHANGE COLUMN rxinterval rxinterval ENUM( 'BID', 'TID', 'QID', 'Q3H', 'Q4H', 'Q5H', 'Q6H', 'Q8H', 'QD', 'HS', 'QHS', 'QAM', 'QPM', 'AC', 'PC', 'PRN', 'QSHIFT', 'QOD', 'C', 'Once' ) NOT NULL DEFAULT 'Once';
