@@ -109,12 +109,12 @@
 				content: {
 					param0: hash
 				},
-				url: "<!--{$relay}-->/org.freemedsoftware.module.Prescription.GetDistinctRx",
+				url: "<!--{$relay}-->/org.freemedsoftware.module.RxRefillRequest.add",
 				load: function( type, data, evt ) {
 					if (data) {
-						rr.populate( patient, data );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Added prescription refill request.<!--{/t}-->", 'INFO' );
 					} else {
-						freemedMessage( "<!--{t|escape:'javascript'}-->Failed to retrieve prescriptions for this patient.<!--{/t}-->", 'ERROR' );
+						freemedMessage( "<!--{t|escape:'javascript'}-->Failed to commit.<!--{/t}-->", 'ERROR' );
 					}
 				},
 				mimetype: 'text/json'

@@ -39,7 +39,6 @@ class RxRefillRequest extends EMRModule {
 
 	var $variables = array (
 		'stamp',
-		'user',
 		'patient',
 		'provider',
 		'rxorig',
@@ -54,6 +53,7 @@ class RxRefillRequest extends EMRModule {
 	} // end constructor
 
 	protected function add_pre ( &$data ) {
+		unset($data['stamp']);
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
