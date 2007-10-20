@@ -76,7 +76,7 @@
 
 					var label = document.createElement( 'label' );
 					label.htmlFor = cb.id;
-					label.innerHTML = "<b>" + data[i].rx + "</b>" + ( data[i].sig ? " - <i>" + data[i].sig + "</i>" : "" );
+					label.innerHTML = "<b>" + data[i].rx + "</b>" + ( data[i].sig ? " - <i>" + data[i].sig + "</i>" : "" ) + ( data[i].often ? " [" + data[i].often + "]" : "" );
 
 					li.appendChild( cb );
 					li.appendChild( label );
