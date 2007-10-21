@@ -110,8 +110,8 @@
 
 			<tr>
 				<td><!--{t}-->Address<!--{/t}--></td>
-				<td><input type="text" id="phyaddr1" name="phyaddr1" size="40" /><br/>
-				<input type="text" id="phyaddr2" name="phyaddr2" size="40" /></td>
+				<td><input type="text" id="phyaddr1a" name="phyaddr1a" size="40" /><br/>
+				<input type="text" id="phyaddr2a" name="phyaddr2a" size="40" /></td>
 			</tr>
 
 			<tr>
