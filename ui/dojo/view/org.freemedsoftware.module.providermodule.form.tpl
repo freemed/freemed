@@ -115,8 +115,8 @@
 			</tr>
 
 			<tr>
-				<td><!--{t}-->State / Province<!--{/t}-->, <!--{t}-->Postal Code<!--{/t}--></td>
-				<td><input type="text" id="phystatea" name="phystatea" size="3" />, <input type="text" id="phyzipa" name="phyzipa" size="10" maxlength="10" /></td>
+				<td><!--{t}-->City<!--{/t}-->, <!--{t}-->State / Province<!--{/t}-->, <!--{t}-->Postal Code<!--{/t}--></td>
+				<td><input type="text" id="phycitya" name="phycitya" size="20" /><input type="text" id="phystatea" name="phystatea" size="3" />, <input type="text" id="phyzipa" name="phyzipa" size="10" maxlength="10" /></td>
 			</tr>
 
 			<tr>
