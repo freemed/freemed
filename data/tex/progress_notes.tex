@@ -27,6 +27,13 @@
 
 {[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$pnotespat param1=0 var='patientName']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$pnotesdoc param1=1 var='providerName']}
+{[link link=$pnotesdoc table='physician' field='phypracname' var='providerPractice']}
+{[link link=$pnotesdoc table='physician' field='phyaddr1a' var='providerAddress']}
+{[link link=$pnotesdoc table='physician' field='phycitya' var='providerCity']}
+{[link link=$pnotesdoc table='physician' field='phystatea' var='providerState']}
+{[link link=$pnotesdoc table='physician' field='phyzipa' var='providerZip']}
+{[link link=$pnotesdoc table='physician' field='phyphonea' var='providerPhone']}
+{[link link=$pnotesdoc table='physician' field='phyfaxa' var='providerFax']}}
 
 \documentclass{article}
 
@@ -44,10 +51,10 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-        {\relsize{1}\textbf{{[link link=$pnotesdoc table='physician' field='phypracname'|texize]}}} \\
+        {\relsize{1}\textbf{{[$providerPractice|texize]}}} \\
         {\relsize{-1}\textsl{{[$providerName|texize]}}} \\
-        \textsl{{[link link=$pnotesdoc table='physician' field='phyaddr1a'|texize]}, {[link link=$pnotesdoc table='physician' field='phycitya'|texize]}, {[link link=$pnotesdoc table='physician' field='phystatea'|texize]} {[link link=$pnotesdoc table='physician' field='phyzipa'|texize]} } \\
-        \textsl{phone {[link link=$pnotesdoc table='physician' field='phyphonea'|texize]} fax {[link link=$pnotesdoc table='physician' field='phyfaxa']}}
+        \textsl{{[$providerAddress|texize]}, {[$providerCity|texize]}, {[$providerState|texize]} {[$providerZip|texize]} } \\
+        \textsl{phone {[$providerPhone|texize]} fax {[$providerFax|texize]}}
 \end{center}
 
 \begin{tabular}{ll}
