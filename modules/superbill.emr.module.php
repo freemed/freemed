@@ -175,6 +175,66 @@ class SuperBill extends EMRModule {
 		return $hash;
 	} // end method GetSuperbill
 
+	// Method: ProcessSuperbills
+	//
+	//	Process superbills into procedure records.
+	//
+	// Parameters:
+	//
+	//	$superbills - Array of superbills to process, or '0' to process
+	//	all reviewed superbills.
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function ProcessSuperbills ( $superbills = 0 ) {
+		if ( $superbills == 0 ) {
+			$query = "SELECT * FROM ".$this->table_name." WHERE processed = 0 AND reviewed > 0";
+		} else {
+			// Use enumerated superbill ids
+			$query = "SELECT * FROM ".$this->table_name." WHERE FIND_IN_SET( id, ".$GLOBALS['sql']->quote( join( ',', $superbills ) )." )";
+		}
+		$s = $GLOBALS['sql']->queryAll( $query );
+		foreach ( $s AS $bill ) {
+			$dxs = explode( ',', $bill['dx'] );
+			$pxs = explode( ',', $bill['procs'] );
+			$detail = unserialize( $bill['detail'] );
+			foreach ( $pxs AS $px ) {
+				// Get current coverages
+
+				// Calculate charges
+
+				// Create database insert
+				$ins = $GLOBALS['sql']->insert_query(
+					'procrec',
+					array(
+						'procpatient' => $bill[ 'patient' ],
+						'proccpt' => $px,
+						'procdiag1' => $dx[0],
+						'procdiag2' => $dx[1],
+						'procdiag3' => $dx[2],
+						'procdiag4' => $dx[3],
+						'procbillable' => 1,
+						'procbilled' => 0,
+						'procamtpaid' => 0, // TODO: handle copays
+					)
+				);
+				$result = $GLOBALS['sql']->query( $ins );
+			} // end foreach procedure
+
+			// Mark superbill as processed
+			$query = $GLOBALS['sql']->update_query( 
+				$this->table_name,
+				array( 'processed' => freemed::user_cache()->user_number ),
+				array( 'id' => $id + 0 )
+			);
+
+		} // end foreach superbill
+
+		return true;
+	} // end method ProcessSuperbills
+
 } // end class SuperBill
 
 register_module ("SuperBill");
