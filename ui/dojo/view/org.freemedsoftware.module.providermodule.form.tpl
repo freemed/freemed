@@ -128,8 +128,8 @@
 				<td><!--{t}-->Provider Internal / External<!--{/t}--></td>
 				<td>
 					<select id="phyref" name="phyref">
-						<option value="yes"><!--{t}-->In-House<!--{/t}--></option>
-						<option value="no"><!--{t}-->Referring<!--{/t}--></option>
+						<option value="no"><!--{t}-->In-House<!--{/t}--></option>
+						<option value="yes"><!--{t}-->Referring<!--{/t}--></option>
 					</select>
 				</td>
 			</tr>
