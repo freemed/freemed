@@ -28,7 +28,7 @@
 {[* Define all variables here to get around horrible Smarty bug *]}
 
 {[link table="physician" link=$rxphy field="phypracname" var='phypracname']}
-{[assign_block var="phyaddr"]}{[link table='physician' link=$rxphy field='phyaddr1a']}, {[link table='physician' link=$rxphy field='phycitya']}, {[link table='physician' link=$rxphy field='phycitya']} {[link table='physician' link=$rxphy field='phyzipa']}{[/assign_block]}
+{[assign_block var="phyaddr"]}{[link table='physician' link=$rxphy field='phyaddr1a']}, {[link table='physician' link=$rxphy field='phycitya']}, {[link table='physician' link=$rxphy field='phystatea']} {[link table='physician' link=$rxphy field='phyzipa']}{[/assign_block]}
 {[link table='physician' link=$rxphy field='phyphonea' var='phyphone']}
 {[link table='physician' link=$rxphy field='phyfaxa' var='phyfax']}
 {[link table='drugquantityqual' field='description' link=$rxquantityqual var='quanqual']}
