@@ -22,8 +22,15 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 if [ ! -r drug_mlt.mdb ]; then
-	echo "drug_mlt.mdb needs to exist in the current directory."
-	exit
+	if [ ! -r "$1" ]; then
+		echo "drug_mlt.mdb needs to exist in the current directory, or needs to be passed"
+		echo "as a parameter to this script."
+		exit
+	else
+		P="$1"	
+	fi
+else
+	P=drug_mlt.mdb
 fi
 
 if [ ! -x "$(which mdb-tables)" ]; then
@@ -31,11 +38,11 @@ if [ ! -x "$(which mdb-tables)" ]; then
 	exit
 fi
 
-DRUG_MLT_TABLES=$( mdb-tables drug_mlt.mdb )
+DRUG_MLT_TABLES=$( mdb-tables "$P" )
 
 for T in $DRUG_MLT_TABLES; do
 	echo " - Extracting ${T} -> ${T}.csv"
-	mdb-export drug_mlt.mdb "${T}" > "$( dirname "$0" )/../data/multum/${T}.csv"
+	mdb-export "$P" "${T}" > "$( dirname "$0" )/../data/multum/${T}.csv"
 done
 
 #	Remove denormalized table, since we don't use it
