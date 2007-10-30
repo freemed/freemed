@@ -387,7 +387,7 @@ class MDB2
             return $err;
         }
 
-        $db =& new $class_name();
+        $db = new $class_name();
         $db->setDSN($dsninfo);
         $err = MDB2::setOptions($db, $options);
         if (PEAR::isError($err)) {
@@ -502,6 +502,31 @@ class MDB2
     }
 
     // }}}
+    // {{{ function areEquals()
+
+    /**
+     * It looks like there's a memory leak in array_diff() in PHP 5.1.x,
+     * so use this method instead.
+     * @see http://pear.php.net/bugs/bug.php?id=11790
+     *
+     * @param array $arr1
+     * @param array $arr2
+     * @return boolean
+     */
+    function areEquals($arr1, $arr2)
+    {
+        if (count($arr1) != count($arr2)) {
+            return false;
+        }
+        foreach (array_keys($arr1) as $k) {
+            if (!array_key_exists($k, $arr2) || $arr1[$k] != $arr2[$k]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // }}}
     // {{{ function loadFile($file)
 
     /**
@@ -539,7 +564,7 @@ class MDB2
      */
     function apiVersion()
     {
-        return '2.4.1';
+        return '2.5.0a1';
     }
 
     // }}}
@@ -569,7 +594,13 @@ class MDB2
      * @access  private
      * @see     PEAR_Error
      */
-    function &raiseError($code = null, $mode = null, $options = null, $userinfo = null)
+    function &raiseError($code = null,
+                         $mode = null,
+                         $options = null,
+                         $userinfo = null,
+                         $dummy1 = null,
+                         $dummy2 = null,
+                         $dummy3 = false)
     {
         $err =& PEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
         return $err;
@@ -671,7 +702,7 @@ class MDB2
      */
     function isStatement($value)
     {
-        return is_a($value, 'MDB2_Statement');
+        return is_a($value, 'MDB2_Statement_Common');
     }
 
     // }}}
@@ -961,10 +992,10 @@ class MDB2_Error extends PEAR_Error
      * @param   mixed   MDB2 error code, or string with error message.
      * @param   int     what 'error mode' to operate in
      * @param   int     what error level to use for $mode & PEAR_ERROR_TRIGGER
-     * @param   smixed   additional debug info, such as the last query
+     * @param   mixed   additional debug info, such as the last query
      */
     function MDB2_Error($code = MDB2_ERROR, $mode = PEAR_ERROR_RETURN,
-              $level = E_USER_NOTICE, $debuginfo = null)
+              $level = E_USER_NOTICE, $debuginfo = null, $dummy = null)
     {
         if (is_null($code)) {
             $code = MDB2_ERROR;
@@ -1156,6 +1187,7 @@ class MDB2_Driver_Common extends PEAR
         'datatype_map' => array(),
         'datatype_map_callback' => array(),
         'nativetype_map_callback' => array(),
+        'lob_allow_url_include' => false,
     );
 
     /**
@@ -1672,6 +1704,9 @@ class MDB2_Driver_Common extends PEAR
      * you SHOULD use them.  In general, they end up causing way more
      * problems than they solve.
      *
+     * NOTE: if you have table names containing periods, don't use this method
+     * (@see bug #11906)
+     *
      * Portability is broken by using the following characters inside
      * delimited identifiers:
      *   + backtick (<kbd>`</kbd>) -- due to MySQL
@@ -1703,7 +1738,11 @@ class MDB2_Driver_Common extends PEAR
             return $str;
         }
         $str = str_replace($this->identifier_quoting['end'], $this->identifier_quoting['escape'] . $this->identifier_quoting['end'], $str);
-        return $this->identifier_quoting['start'] . $str . $this->identifier_quoting['end'];
+        $parts = explode('.', $str);
+        foreach (array_keys($parts) as $k) {
+            $parts[$k] = $this->identifier_quoting['start'] . $parts[$k] . $this->identifier_quoting['end'];
+        }
+        return implode('.', $parts);
     }
 
     // }}}
@@ -1863,7 +1902,7 @@ class MDB2_Driver_Common extends PEAR
                 return $err;
             }
 
-            // load modul in a specific version
+            // load module in a specific version
             if ($version) {
                 if (method_exists($class_name, 'getClassName')) {
                     $class_name_new = call_user_func(array($class_name, 'getClassName'), $this->db_index);
@@ -1882,7 +1921,7 @@ class MDB2_Driver_Common extends PEAR
                     "unable to load module '$module' into property '$property'", __FUNCTION__);
                 return $err;
             }
-            $this->{$property} =& new $class_name($this->db_index);
+            $this->{$property} = new $class_name($this->db_index);
             $this->modules[$module] =& $this->{$property};
             if ($version) {
                 // this will be used in the connect method to determine if the module
@@ -2050,11 +2089,6 @@ class MDB2_Driver_Common extends PEAR
     /**
      * Start a nested transaction.
      *
-     * EXPERIMENTAL
-     *
-     * WARNING: this function is experimental and may change signature at
-     * any time until labelled as non-experimental
-     *
      * @return  mixed   MDB2_OK on success/savepoint name, a MDB2 error on failure
      *
      * @access  public
@@ -2082,11 +2116,6 @@ class MDB2_Driver_Common extends PEAR
     /**
      * Finish a nested transaction by rolling back if an error occured or
      * committing otherwise.
-     *
-     * EXPERIMENTAL
-     *
-     * WARNING: this function is experimental and may change signature at
-     * any time until labelled as non-experimental
      *
      * @param   bool    if the transaction should be rolled back regardless
      *                  even if no error was set within the nested transaction
@@ -2141,11 +2170,6 @@ class MDB2_Driver_Common extends PEAR
     /**
      * Force setting nested transaction to failed.
      *
-     * EXPERIMENTAL
-     *
-     * WARNING: this function is experimental and may change signature at
-     * any time until labelled as non-experimental
-     *
      * @param   mixed   value to return in getNestededTransactionError()
      * @param   bool    if the transaction should be rolled back immediately
      * @return  bool    MDB2_OK
@@ -2172,11 +2196,6 @@ class MDB2_Driver_Common extends PEAR
 
     /**
      * The first error that occured since the transaction start.
-     *
-     * EXPERIMENTAL
-     *
-     * WARNING: this function is experimental and may change signature at
-     * any time until labelled as non-experimental
      *
      * @return  MDB2_Error|bool     MDB2 error object if an error occured or false.
      *
@@ -2592,7 +2611,7 @@ class MDB2_Driver_Common extends PEAR
                     'result wrap class does not exist '.$result_wrap_class, __FUNCTION__);
                 return $err;
             }
-            $result =& new $result_wrap_class($result, $this->fetchmode);
+            $result = new $result_wrap_class($result, $this->fetchmode);
         }
         return $result;
     }
@@ -2937,7 +2956,7 @@ class MDB2_Driver_Common extends PEAR
         }
         $class_name = 'MDB2_Statement_'.$this->phptype;
         $statement = null;
-        $obj =& new $class_name($this, $statement, $positions, $query, $types, $result_types, $is_manip, $limit, $offset);
+        $obj = new $class_name($this, $statement, $positions, $query, $types, $result_types, $is_manip, $limit, $offset);
         $this->debug($query, __FUNCTION__, array('is_manip' => $is_manip, 'when' => 'post', 'result' => $obj));
         return $obj;
     }
@@ -3962,8 +3981,14 @@ class MDB2_Statement_Common
         $types = is_array($types) ? array_values($types) : array_fill(0, count($values), null);
         $parameters = array_keys($values);
         foreach ($parameters as $key => $parameter) {
+            $this->db->expectError(MDB2_ERROR_NOT_FOUND);
             $err = $this->bindValue($parameter, $values[$parameter], $types[$key]);
+            $this->db->popExpect();
             if (PEAR::isError($err)) {
+                if ($err->getCode() == MDB2_ERROR_NOT_FOUND) {
+                    //ignore (extra value for missing placeholder)
+                    continue;
+                }
                 return $err;
             }
         }

@@ -55,6 +55,9 @@ require_once 'MDB2/LOB.php';
 /**
  * MDB2_Driver_Common: Base class that is extended by each MDB2 driver
  *
+ * To load this module in the MDB2 object:
+ * $mdb->loadModule('Datatype');
+ *
  * @package MDB2
  * @category Database
  * @author Lukas Smith <smith@pooteeweet.org>

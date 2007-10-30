@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -116,12 +116,12 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     /**
      * Get the structure of a field into an array
      *
-     * @param string    $table       name of table that should be used in method
-     * @param string    $field_name  name of field that should be used in method
+     * @param string $table_name name of table that should be used in method
+     * @param string $field_name name of field that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
      * @access public
      */
-    function getTableFieldDefinition($table, $field_name)
+    function getTableFieldDefinition($table_name, $field_name)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
@@ -132,8 +132,11 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
         if (PEAR::isError($result)) {
             return $result;
         }
+
+        list($schema, $table) = $this->splitTableSchema($table_name);
+
         $table = $db->quoteIdentifier($table, true);
-        $query = "SHOW COLUMNS FROM $table LIKE ".$db->quote($field_name);
+        $query = "SHOW FULL COLUMNS FROM $table LIKE ".$db->quote($field_name);
         $columns = $db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
         if (PEAR::isError($columns)) {
             return $columns;
@@ -172,6 +175,11 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
                 if (!empty($column['extra']) && $column['extra'] == 'auto_increment') {
                     $autoincrement = true;
                 }
+                $collate = null;
+                if (!empty($column['collation'])) {
+                    $collate = $column['collation'];
+                    $charset = preg_replace('/(.+?)(_.+)?/', '$1', $collate);
+                }
 
                 $definition[0] = array(
                     'notnull' => $notnull,
@@ -192,10 +200,16 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
                 if ($autoincrement !== false) {
                     $definition[0]['autoincrement'] = $autoincrement;
                 }
+                if (!is_null($collate)) {
+                    $definition[0]['collate'] = $collate;
+                    $definition[0]['charset'] = $charset;
+                }
                 foreach ($types as $key => $type) {
                     $definition[$key] = $definition[0];
                     if ($type == 'clob' || $type == 'blob') {
                         unset($definition[$key]['default']);
+                    } elseif ($type == 'timestamp' && $notnull && empty($definition[$key]['default'])) {
+                        $definition[$key]['default'] = '0000-00-00 00:00:00';
                     }
                     $definition[$key]['type'] = $type;
                     $definition[$key]['mdb2type'] = $type;
@@ -214,17 +228,19 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     /**
      * Get the structure of an index into an array
      *
-     * @param string    $table      name of table that should be used in method
-     * @param string    $index_name name of index that should be used in method
+     * @param string $table_name name of table that should be used in method
+     * @param string $index_name name of index that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
      * @access public
      */
-    function getTableIndexDefinition($table, $index_name)
+    function getTableIndexDefinition($table_name, $index_name)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
+
+        list($schema, $table) = $this->splitTableSchema($table_name);
 
         $table = $db->quoteIdentifier($table, true);
         $query = "SHOW INDEX FROM $table /*!50002 WHERE Key_name = %s */";
@@ -254,7 +270,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             if ($index_name == $key_name) {
                 if (!$row['non_unique']) {
                     return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
-                        'it was not specified an existing table index', __FUNCTION__);
+                        $index_name . ' is not an existing table index', __FUNCTION__);
                 }
                 $column_name = $row['column_name'];
                 if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -276,7 +292,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
         $result->free();
         if (empty($definition['fields'])) {
             return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
-                'it was not specified an existing table index', __FUNCTION__);
+                $index_name . ' is not an existing table index', __FUNCTION__);
         }
         return $definition;
     }
@@ -287,17 +303,20 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     /**
      * Get the structure of a constraint into an array
      *
-     * @param string    $table      name of table that should be used in method
-     * @param string    $constraint_name name of constraint that should be used in method
+     * @param string $table_name      name of table that should be used in method
+     * @param string $constraint_name name of constraint that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
      * @access public
      */
-    function getTableConstraintDefinition($table, $constraint_name)
+    function getTableConstraintDefinition($table_name, $constraint_name)
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
+
+        list($schema, $table) = $this->splitTableSchema($table_name);
+        $constraint_name_original = $constraint_name;
 
         $table = $db->quoteIdentifier($table, true);
         $query = "SHOW INDEX FROM $table /*!50002 WHERE Key_name = %s */";
@@ -315,7 +334,23 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             return $result;
         }
         $colpos = 1;
-        $definition = array();
+        //default values, eventually overridden
+        $definition = array(
+            'primary' => false,
+            'unique'  => false,
+            'foreign' => false,
+            'check'   => false,
+            'fields'  => array(),
+            'references' => array(
+                'table'  => '',
+                'fields' => array(),
+            ),
+            'onupdate'  => '',
+            'ondelete'  => '',
+            'match'     => '',
+            'deferrable'        => false,
+            'initiallydeferred' => false,
+        );
         while (is_array($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC))) {
             $row = array_change_key_case($row, CASE_LOWER);
             $key_name = $row['key_name'];
@@ -328,12 +363,52 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             }
             if ($constraint_name == $key_name) {
                 if ($row['non_unique']) {
+                    //FOREIGN KEY?
+                    $query = 'SHOW CREATE TABLE '. $db->escape($table);
+                    $constraint = $db->queryOne($query, 'text', 1);
+                    if (!PEAR::isError($constraint) && !empty($constraint)) {
+                        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+                            if ($db->options['field_case'] == CASE_LOWER) {
+                                $constraint = strtolower($constraint);
+                            } else {
+                                $constraint = strtoupper($constraint);
+                            }
+                        }
+                        //NB: MySQL creates FKs with names in this format: "<TABLENAME>_ibfk_<INCREMENTAL_N>"
+                        $pattern = '/\bCONSTRAINT\s+'.$constraint_name_original.'\s+FOREIGN KEY\s+\(([^\)]+)\) \bREFERENCES\b ([^ ]+) \(([^\)]+)\)/i';
+                        if (preg_match($pattern, str_replace('`', '', $constraint), $matches)) {
+                            $definition['foreign'] = true;
+                            $column_names = explode(',', $matches[1]);
+                            $referenced_cols = explode(',', $matches[3]);
+                            $definition['references'] = array(
+                                'table'  => $matches[2],
+                                'fields' => array(),
+                            );
+                            $colpos = 1;
+                            foreach ($column_names as $column_name) {
+                                $definition['fields'][trim($column_name)] = array(
+                                    'position' => $colpos++
+                                );
+                            }
+                            $colpos = 1;
+                            foreach ($referenced_cols as $column_name) {
+                                $definition['references']['fields'][trim($column_name)] = array(
+                                    'position' => $colpos++
+                                );
+                            }
+                            $definition['onupdate'] = 'NO ACTION';
+                            $definition['ondelete'] = 'NO ACTION';
+                            $definition['match']    = 'SIMPLE';
+                            return $definition;
+                        }
+                    }
+
                     return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
                         $constraint_name . ' is not an existing table constraint', __FUNCTION__);
                 }
                 if ($row['key_name'] == 'PRIMARY') {
                     $definition['primary'] = true;
-                } else {
+                } elseif (!$row['non_unique']) {
                     $definition['unique'] = true;
                 }
                 $column_name = $row['column_name'];

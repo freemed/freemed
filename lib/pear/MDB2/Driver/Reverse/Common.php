@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -63,12 +63,30 @@ define('MDB2_TABLEINFO_FULL',       3);
 /**
  * Base class for the schema reverse engineering module that is extended by each MDB2 driver
  *
+ * To load this module in the MDB2 object:
+ * $mdb->loadModule('Reverse');
+ *
  * @package MDB2
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
  */
 class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
 {
+    // {{{ splitTableSchema()
+
+    /**
+     * Split the "[owner|schema].table" notation into an array
+     * @access private
+     */
+    function splitTableSchema($table)
+    {
+        $ret = array();
+        if (strpos($table, '.') !== false) {
+            return explode('.', $table);
+        }
+        return array(null, $table);
+    }
+
     // }}}
     // {{{ getTableFieldDefinition()
 
@@ -140,14 +158,31 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
      *          The returned array has this structure:
      *          <pre>
      *          array (
-     *              [primary] => 1
+     *              [primary] => 0
+     *              [unique]  => 0
+     *              [foreign] => 1
+     *              [check]   => 0
      *              [fields] => array (
      *                  [field1name] => array() // one entry per each field covered
      *                  [field2name] => array() // by the index
      *                  [field3name] => array(
-     *                      [sorting] => ascending
+     *                      [sorting]  => ascending
+     *                      [position] => 3
      *                  )
      *              )
+     *              [references] => array(
+     *                  [table] => name
+     *                  [fields] => array(
+     *                      [field1name] => array(  //one entry per each referenced field
+     *                           [position] => 1
+     *                      )
+     *                  )
+     *              )
+     *              [deferrable] => 0
+     *              [initiallydeferred] => 0
+     *              [onupdate] => CASCADE|RESTRICT|SET NULL|SET DEFAULT|NO ACTION
+     *              [ondelete] => CASCADE|RESTRICT|SET NULL|SET DEFAULT|NO ACTION
+     *              [match] => SIMPLE|PARTIAL|FULL
      *          );
      *          </pre>
      * @access public

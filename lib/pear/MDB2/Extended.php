@@ -100,10 +100,16 @@ class MDB2_Extended extends MDB2_Module_Common
         if (PEAR::isError($db)) {
             return $db;
         }
-        return $db->prepare($query, $types, $result_types);
+        $lobs = array();
+        foreach ($types as $param => $type) {
+            if (($type == 'clob') || ($type == 'blob')) {
+                $lobs[$param] = $table_fields[$param];
+            }
+        }
+        return $db->prepare($query, $types, $result_types, $lobs);
     }
-    // }}}
 
+    // }}}
     // {{{ autoExecute()
 
     /**
@@ -166,8 +172,8 @@ class MDB2_Extended extends MDB2_Module_Common
         }
         return $result;
     }
-    // }}}
 
+    // }}}
     // {{{ buildManipSQL()
 
     /**
@@ -247,8 +253,8 @@ class MDB2_Extended extends MDB2_Module_Common
         return $db->raiseError(MDB2_ERROR_SYNTAX, null, null,
                 'Non existant mode', __FUNCTION__);
     }
-    // }}}
 
+    // }}}
     // {{{ limitQuery()
 
     /**
@@ -279,8 +285,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $result =& $db->query($query, $types, $result_class, $result_wrap_class);
         return $result;
     }
-    // }}}
 
+    // }}}
     // {{{ execParam()
 
     /**
@@ -319,8 +325,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $stmt->free();
         return $result;
     }
-    // }}}
 
+    // }}}
     // {{{ getOne()
 
     /**
@@ -366,8 +372,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $result->free();
         return $one;
     }
-    // }}}
 
+    // }}}
     // {{{ getRow()
 
     /**
@@ -412,8 +418,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $result->free();
         return $row;
     }
-    // }}}
 
+    // }}}
     // {{{ getCol()
 
     /**
@@ -459,8 +465,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $result->free();
         return $col;
     }
-    // }}}
 
+    // }}}
     // {{{ getAll()
 
     /**
@@ -514,8 +520,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $result->free();
         return $all;
     }
-    // }}}
 
+    // }}}
     // {{{ getAssoc()
 
     /**
@@ -619,8 +625,8 @@ class MDB2_Extended extends MDB2_Module_Common
         $result->free();
         return $all;
     }
-    // }}}
 
+    // }}}
     // {{{ executeMultiple()
 
     /**
@@ -648,8 +654,8 @@ class MDB2_Extended extends MDB2_Module_Common
         }
         return MDB2_OK;
     }
-    // }}}
 
+    // }}}
     // {{{ getBeforeID()
 
     /**
@@ -683,8 +689,8 @@ class MDB2_Extended extends MDB2_Module_Common
         }
         return 'NULL';
     }
-    // }}}
 
+    // }}}
     // {{{ getAfterID()
 
     /**
@@ -709,6 +715,7 @@ class MDB2_Extended extends MDB2_Module_Common
         }
         return $db->lastInsertID($table, $field);
     }
+
     // }}}
 }
 ?>

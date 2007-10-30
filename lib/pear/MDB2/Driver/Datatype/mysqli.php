@@ -377,6 +377,7 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
                 if ($decimal == 'binary') {
                     $type[] = 'blob';
                 }
+                $type = array_reverse($type);
             }
             if ($fixed !== false) {
                 $fixed = true;

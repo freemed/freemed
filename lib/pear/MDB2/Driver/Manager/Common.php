@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -54,12 +54,31 @@
 /**
  * Base class for the management modules that is extended by each MDB2 driver
  *
+ * To load this module in the MDB2 object:
+ * $mdb->loadModule('Manager');
+ *
  * @package MDB2
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
  */
 class MDB2_Driver_Manager_Common extends MDB2_Module_Common
 {
+    // {{{ splitTableSchema()
+
+    /**
+     * Split the "[owner|schema].table" notation into an array
+     * @access private
+     */
+    function splitTableSchema($table)
+    {
+        $ret = array();
+        if (strpos($table, '.') !== false) {
+            return explode('.', $table);
+        }
+        return array(null, $table);
+    }
+
+    // }}}
     // {{{ getFieldDeclarationList()
 
     /**
@@ -138,7 +157,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
      * Removes any formatting in an index name using the 'idxname_format' option
      *
      * @param string $idx string that containts name of anl index
-     * @return string name of the index with possible formatting removed
+     * @return string name of the index with eventual formatting removed
      * @access protected
      */
     function _fixIndexName($idx)
@@ -308,7 +327,11 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
         if (PEAR::isError($db)) {
             return $db;
         }
-        return $db->exec($query);
+        $result = $db->exec($query);
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        return MDB2_OK;
     }
 
     // }}}
@@ -702,27 +725,60 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     }
 
     // }}}
+    // {{{ _getAdvancedFKOptions()
+
+    /**
+     * Return the FOREIGN KEY query section dealing with non-standard options
+     * as MATCH, INITIALLY DEFERRED, ON UPDATE, ...
+     *
+     * @param array $definition
+     * @return string
+     * @access protected
+     */
+    function _getAdvancedFKOptions($definition)
+    {
+        return '';
+    }
+
+    // }}}
     // {{{ createConstraint()
 
     /**
      * create a constraint on a table
      *
-     * @param string    $table         name of the table on which the constraint is to be created
-     * @param string    $name         name of the constraint to be created
-     * @param array     $definition        associative array that defines properties of the constraint to be created.
-     *                                 Currently, only one property named FIELDS is supported. This property
-     *                                 is also an associative with the names of the constraint fields as array
-     *                                 constraints. Each entry of this array is set to another type of associative
-     *                                 array that specifies properties of the constraint that are specific to
-     *                                 each field.
-     *
-     *                                 Example
-     *                                    array(
-     *                                        'fields' => array(
-     *                                            'user_name' => array(),
-     *                                            'last_login' => array()
-     *                                        )
-     *                                    )
+     * @param string    $table       name of the table on which the constraint is to be created
+     * @param string    $name        name of the constraint to be created
+     * @param array     $definition  associative array that defines properties of the constraint to be created.
+     *                               The full structure of the array looks like this:
+     *          <pre>
+     *          array (
+     *              [primary] => 0
+     *              [unique]  => 0
+     *              [foreign] => 1
+     *              [check]   => 0
+     *              [fields] => array (
+     *                  [field1name] => array() // one entry per each field covered
+     *                  [field2name] => array() // by the index
+     *                  [field3name] => array(
+     *                      [sorting]  => ascending
+     *                      [position] => 3
+     *                  )
+     *              )
+     *              [references] => array(
+     *                  [table] => name
+     *                  [fields] => array(
+     *                      [field1name] => array(  //one entry per each referenced field
+     *                           [position] => 1
+     *                      )
+     *                  )
+     *              )
+     *              [deferrable] => 0
+     *              [initiallydeferred] => 0
+     *              [onupdate] => CASCADE|RESTRICT|SET NULL|SET DEFAULT|NO ACTION
+     *              [ondelete] => CASCADE|RESTRICT|SET NULL|SET DEFAULT|NO ACTION
+     *              [match] => SIMPLE|PARTIAL|FULL
+     *          );
+     *          </pre>
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
      */
@@ -739,12 +795,23 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
             $query.= ' PRIMARY KEY';
         } elseif (!empty($definition['unique'])) {
             $query.= ' UNIQUE';
+        } elseif (!empty($definition['foreign'])) {
+            $query.= ' FOREIGN KEY';
         }
         $fields = array();
         foreach (array_keys($definition['fields']) as $field) {
             $fields[] = $db->quoteIdentifier($field, true);
         }
         $query .= ' ('. implode(', ', $fields) . ')';
+        if (!empty($definition['foreign'])) {
+            $query.= ' REFERENCES ' . $db->quoteIdentifier($definition['references']['table'], true);
+            $referenced_fields = array();
+            foreach (array_keys($definition['references']['fields']) as $field) {
+                $referenced_fields[] = $db->quoteIdentifier($field, true);
+            }
+            $query .= ' ('. implode(', ', $referenced_fields) . ')';
+            $query .= $this->_getAdvancedFKOptions($definition);
+        }
         return $db->exec($query);
     }
 

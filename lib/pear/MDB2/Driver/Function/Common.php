@@ -54,6 +54,9 @@
 /**
  * Base class for the function modules that is extended by each MDB2 driver
  *
+ * To load this module in the MDB2 object:
+ * $mdb->loadModule('Function');
+ *
  * @package MDB2
  * @category Database
  * @author  Lukas Smith <smith@pooteeweet.org>
@@ -203,6 +206,21 @@ class MDB2_Driver_Function_Common extends MDB2_Module_Common
     function upper($expression)
     {
         return "UPPER($expression)";
+    }
+
+    // }}}
+    // {{{ length()
+
+    /**
+     * return string to call a function to get the length of a string expression
+     *
+     * @param string $expression
+     * @return return string to get the string expression length
+     * @access public
+     */
+    function length($expression)
+    {
+        return "LENGTH($expression)";
     }
 
     // }}}
