@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `callin` (
 
 DROP PROCEDURE IF EXISTS Callin_Convert_From_Patient;
 DELIMITER //
-CREATE PROCEDURE Callin_Convert_From_Patient ( callinpatient INT UNSIGNED )
+CREATE PROCEDURE Callin_Convert_From_Patient ( IN callinpatient INT UNSIGNED )
 BEGIN
 	DECLARE newPatientId INT UNSIGNED;
 	DECLARE _cilname VARCHAR (50);
