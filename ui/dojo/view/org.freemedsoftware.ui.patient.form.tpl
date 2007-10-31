@@ -239,6 +239,14 @@
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
 	});
+<!--{else}-->
+	_container_.addOnLoad(function(){
+		// Clear old form if this is a new entry
+		dojo.widget.byId( 'addCsz_widget' ).setValue( 0 );
+		dojo.widget.byId( 'addCsz_widget' ).setLabel( '' );
+		dojo.event.topic.publish( 'ptref-assign', 0 );
+		dojo.event.topic.publish( 'ptpcp-assign', 0 );
+	});
 <!--{/if}-->
 	_container_.addOnLoad(function(){
 		dojo.event.connect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
