@@ -20,11 +20,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+SOURCE data/schema/mysql/practice.sql
+
 CREATE TABLE IF NOT EXISTS `physician` (
 	phylname		VARCHAR (52) NOT NULL,
 	phyfname		VARCHAR (50) NOT NULL,
 	phymname		VARCHAR (50) NOT NULL,
 	phytitle		VARCHAR (10),
+	phypractice		INT UNSIGNED NOT NULL DEFAULT 0,
 	phypracname		VARCHAR (80),
 	phypracein		VARCHAR (16),
 	phyaddr1a		VARCHAR (30),
@@ -66,8 +69,9 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
 	#	Define keys
-	PRIMARY KEY		( id ),
-	KEY			( phylname, phyfname, phymname )
+	, PRIMARY KEY		( id )
+	, KEY			( phylname, phyfname, phymname )
+	, FOREIGN KEY		( phypractice ) REFERENCES practice.id
 );
 
 DROP PROCEDURE IF EXISTS physician_Upgrade;
@@ -98,7 +102,18 @@ BEGIN
 		ALTER IGNORE TABLE physician DROP COLUMN physpe3;
 	END IF;
 
-	CALL FreeMED_Module_UpdateVersion( 'physician', 1 );
+	IF @V < 2 THEN
+		ALTER IGNORE TABLE physician ADD COLUMN phypractice INT UNSIGNED NOT NULL DEFAULT 0 AFTER phytitle;
+
+		SELECT COUNT(*) INTO @c FROM practice;
+		#	Pull records in for upgrade...
+		IF @c < 1 THEN
+			INSERT INTO practice ( pracname, ein, addr1a, addr2a, citya, statea, zipa, phonea, faxa, addr1b, addr2b, cityb, stateb, zipb, phoneb, faxb, email, cellular, pager, id ) SELECT phypracname, phypracein, phyaddr1a, phyaddr2a, phycitya, phystatea, phyzipa, phyphonea, phyfaxa, phyaddr1b, phyaddr2b, phycityb, phystateb, phyzipb, phyphoneb, phyfaxb, phyemail, phycellular, phypager, id FROM physician;
+			UPDATE physician SET phypractice = id;
+		END IF;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'physician', 2 );
 END
 //
 DELIMITER ;

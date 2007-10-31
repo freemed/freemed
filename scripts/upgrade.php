@@ -141,6 +141,9 @@ execSql( "CREATE TEMPORARY TABLE medications_atomic_temp SELECT * FROM medicatio
 execSql( "INSERT INTO medications_atomic_temp ( mid, mdrug, mdosage, mroute, mdate, mpatient ) SELECT m.id, o.mdrug, o.mdosage, o.mroute, m.mdate, m.mpatient FROM medications_old o LEFT OUTER JOIN medications m ON o.mpatient = m.mpatient;" );
 execSql( "INSERT INTO medications_atomic SELECT * FROM medications_atomic_temp;" );
 execSql( "DROP TEMPORARY TABLE medications_atomic_temp;" );
+//	-- Practice records
+execSql( "INSERT INTO practice ( pracname, ein, addr1a, addr2a, citya, statea, zipa, phonea, faxa, addr1b, addr2b, cityb, stateb, zipb, phoneb, faxb, email, cellular, pager, id ) SELECT phypracname, phypracein, phyaddr1a, phyaddr2a, phycitya, phystatea, phyzipa, phyphonea, phyfaxa, phyaddr1b, phyaddr2b, phycityb, phystateb, phyzipb, phyphoneb, phyfaxb, phyemail, phycellular, phypager, id FROM physician;" );
+execSql( "UPDATE physician SET phypractice = id;" );
 //	-- Templates, if they exist
 execSql( "INSERT INTO pnotes_templates SELECT pntname, pntphy, pntS, pntO, pntA, pntP, pntI, pntE, pntR, NOW(), NULL FROM pntemplate;" );
 
