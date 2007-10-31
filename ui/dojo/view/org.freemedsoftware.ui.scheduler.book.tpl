@@ -41,6 +41,7 @@
 				dojo.widget.byId('BookingFormCommitChangesButton').enable();
 				<!--{/if}-->
 			} else {
+				freemedMessage( "<!--{t|escape:'javascript'}-->Could not complete action, error encountered.<!--{/t}-->", "ERROR" );
 				dojo.widget.byId('BookingFormCommitChangesButton').enable();
 			}
 		},
@@ -244,7 +245,7 @@
 
 	<tr>
 		<td align="right"><!--{t}-->Provider<!--{/t}--></td>
-		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="calphysician" methodName="internalPicklist"}--></td>
+		<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="calphysician" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
 	</tr>
 
 	<tr>
