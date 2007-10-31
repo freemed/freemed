@@ -27,6 +27,13 @@
 
 {[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$letterpatient param1=0 var='patient_name']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0='letterfrom' param1=1 var='provider_name']}
+{[link link=$letterfrom table='physician' field='phypracname' var='providerPractice']}
+{[link link=$letterfrom table='physician' field='phyaddr1a' var='providerAddress']}
+{[link link=$letterfrom table='physician' field='phycitya' var='providerCity']}
+{[link link=$letterfrom table='physician' field='phystatea' var='providerState']}
+{[link link=$letterfrom table='physician' field='phyzipa' var='providerZip']}
+{[link link=$letterfrom table='physician' field='phyphonea' var='providerPhone']}
+{[link link=$letterfrom table='physician' field='phyfaxa' var='providerFax']}}
 
 \documentclass{article}
 
@@ -40,10 +47,9 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{{[link link=$letterfrom table='physician' field='phypracname'|texize]}}} \\
-%	{\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param=$letterfrom|texize]}}} \\
-	\textsl{{[link link=$letterfrom table='physician' field='phyaddr1a'|texize]}, {[link link=$letterfrom table='physician' field='phycitya'|texize]}, {[link link=$letterfrom table='physician' field='phystatea'|texize]} {[link link=$letterfrom table='physician' field='phyzipa'|texize]} } \\
-	\textsl{phone {[link link=$letterfrom table='physician' field='phyphonea'|texize]} fax {[link link=$letterfrom table='physician' field='phyfaxa'|texize]}}
+	{\relsize{1}\textbf{{[$providerPractice|texize]}}} \\
+	\textsl{{[$providerAddress|texize]}, {[$providerCity|texize]}, {[$providerState|texize]} {[$providerZip|texize]} } \\
+	\textsl{phone {[$providerPhone|phone_number|texize]} fax {[$providerFax|phone_number|texize]}}
 \end{center}
 
 \flushleft
@@ -65,6 +71,6 @@
 \  \\
 
 {[$provider_name|texize]} \\
-{[link link=$letterfrom table='physician' field='phypracname'|texize]}
+{[$providerPractice|texize]}
 
 \end{document}

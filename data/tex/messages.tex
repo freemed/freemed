@@ -25,6 +25,8 @@
 %%	Messages
 %%
 
+{[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$msgpatient param1=0 var='patientName']}
+
 \documentclass{article}
 
 % No normal header, footer, etc
@@ -36,7 +38,7 @@
 
 \framebox[6in]{
 	\begin{tabular}{l|l}
-{[if $msgpatient]} \textbf{Patient:}	&	{[method namespace='org.freemedsoftware.core.Patient.fullName' param=$msgpatient|texize]}	\\ {[/if]}
+{[if $msgpatient]} \textbf{Patient:}	&	{[$msgptient|texize]}	\\ {[/if]}
 		\textbf{Date:}		&	\ \\
 		\textbf{Subject:}	&	{[$msgsubject|texize]} \\
 	\end{tabular}
@@ -53,3 +55,4 @@
 \hfill \\
 
 \end{document}
+
