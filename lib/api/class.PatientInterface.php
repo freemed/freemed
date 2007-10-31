@@ -325,8 +325,10 @@ class PatientInterface {
 				" ptfname LIKE '".addslashes($first)."%' )";
 		} elseif ($first) {
                 	$q[] = "ptfname LIKE '".addslashes($first)."%'";
+                	$q[] = "ptid LIKE '".addslashes($first)."%'";
 		} elseif ($last) {
                 	$q[] = "ptlname LIKE '".addslashes($last)."%'";
+                	$q[] = "ptid LIKE '".addslashes($last)."%'";
 		} else {
 			$q[] = "ptfname LIKE '".addslashes($either)."%'";
 			$q[] = "ptlname LIKE '".addslashes($either)."%'";
