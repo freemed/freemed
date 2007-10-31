@@ -103,11 +103,11 @@
 		<!--{* Form a contact "box" *}-->
 	<td>
 	<!--{if $record.ptprefcontact == 'home'}-->
-		H: <!--{$record.pthphone}-->
+		H: <!--{$record.pthphone|phone_format}-->
 	<!--{elseif $record.ptprefcontact == 'work'}-->
-		W: <!--{$record.ptwphone}-->
+		W: <!--{$record.ptwphone|phone_format}-->
 	<!--{elseif $record.ptprefcontact == 'mobile'}-->
-		C: <!--{$record.ptwphone}-->
+		C: <!--{$record.ptwphone|phone_format}-->
 	<!--{elseif $record.ptprefcontact == 'email'}-->
 		<!--{$record.ptemail}-->
 	<!--{else}-->
@@ -115,9 +115,9 @@
 	<!--{/if}-->
 	<div dojoType="DropdownContainer" widgetId="contactDropdown" id="contactDropdown">
 		<div class="infoBox">
-			<!--{if $record.pthphone ne ''}--><div>H: <!--{$record.pthphone}--></div><!--{/if}-->
-			<!--{if $record.ptwphone ne ''}--><div>W: <!--{$record.ptwphone}--></div><!--{/if}-->
-			<!--{if $record.ptmphone ne ''}--><div>C: <!--{$record.ptmphone}--></div><!--{/if}-->
+			<!--{if $record.pthphone ne ''}--><div>H: <!--{$record.pthphone|phone_format}--></div><!--{/if}-->
+			<!--{if $record.ptwphone ne ''}--><div>W: <!--{$record.ptwphone|phone_format}--></div><!--{/if}-->
+			<!--{if $record.ptmphone ne ''}--><div>C: <!--{$record.ptmphone|phone_format}--></div><!--{/if}-->
 			<!--{if $record.ptemail ne ''}--><div><!--{$record.ptemail}--></div><!--{/if}-->
 			<hr/>
 			<div><!--{$record.ptaddr1|escape}--></div>
