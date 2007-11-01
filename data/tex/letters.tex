@@ -28,37 +28,69 @@
 {[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$letterpatient param1=0 var='patientName']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$letterfrom param1=1 var='providerName']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$letterto param1=1 var='providerDestinationName']}
+{[link link=$letterpatient table='patient' field='ptdob' var='patientDateOfBirth']}
 {[link link=$letterfrom table='physician' field='phypracname' var='providerPractice']}
 {[link link=$letterfrom table='physician' field='phyaddr1a' var='providerAddress']}
 {[link link=$letterfrom table='physician' field='phycitya' var='providerCity']}
 {[link link=$letterfrom table='physician' field='phystatea' var='providerState']}
 {[link link=$letterfrom table='physician' field='phyzipa' var='providerZip']}
 {[link link=$letterfrom table='physician' field='phyphonea' var='providerPhone']}
-{[link link=$letterfrom table='physician' field='phyfaxa' var='providerFax']}}
+{[link link=$letterfrom table='physician' field='phyfaxa' var='providerFax']}
+
+{[link link=$letterto table='physician' field='phypracname' var='providerDestinationPractice']}
+{[link link=$letterto table='physician' field='phyaddr1a' var='providerDestinationAddress']}
+{[link link=$letterto table='physician' field='phycitya' var='providerDestinationCity']}
+{[link link=$letterto table='physician' field='phystatea' var='providerDestinationState']}
+{[link link=$letterto table='physician' field='phyzipa' var='providerDestinationZip']}
 
 \documentclass{article}
 
 % No normal header, footer, etc
-\usepackage[top=0.5in,left=0.7in,right=0.7in,bottom=1in,nohead,nofoot]{geometry}
+\usepackage[top=0.5in,left=0.5in,right=0.5in,bottom=0.5in,nohead,nofoot]{geometry}
+\usepackage{fancyhdr}
 % Relative size package
 \usepackage{relsize}
 
-\begin{document}
-
-% Deal with the document "header". For now, we're just looking at a one-time
-% only display. FIXME: Migrate this to a header.
-\begin{center}
+\chead{
+        \makebox{ {
+        \begin{tabular}{c}
 	{\relsize{1}\textbf{{[$providerPractice|texize]}}} \\
 	{\relsize{-1}\textsl{{[$providerName|texize]}}} \\
 	\textsl{{[$providerAddress|texize]}, {[$providerCity|texize]}, {[$providerState|texize]} {[$providerZip|texize]} } \\
-	\textsl{{[if $providerPhone]}Phone {[$providerPhone|phone_format|texize]}{[/if]} {[if $providerFax]}Fax {[$providerFax|phone_format|texize]}{[/if]}}
-\end{center}
+	\textsl{{[if $providerPhone]}Phone {[$providerPhone|phone_format|texize]}{[/if]} {[if $providerFax]}Fax {[$providerFax|phone_format|texize]}{[/if]}} \\
+	\ \\
+	\
+	\end{tabular}
+        }
+}}
+\cfoot{\ }
 
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
 
-\begin{tabular}{ll}
-	NAME:	&	{[$patientName|texize]}	\\
-	DATE:	&	\today
-\end{tabular}
+\begin{document}
+\pagestyle{fancy}
+
+\bigskip
+\  \\
+\bigskip
+\  \\
+\bigskip
+\  \\
+
+\flushleft
+{[$letterdt|date_format]} \\
+\bigskip\  \\
+\textbf{{[$providerDestinationName|texize]}} \\
+{[$providerDestinationPractice|texize]} \\
+{[$providerDestinationAddress|texize]} \\
+{[$providerDestinationCity|texize]}, {[$providerDestinationState|texize]} {[$providerDestinationZip|texize]} \\
+\medskip
+\medskip
+RE: \underline{{[$patientName|texize]}} \\
+\ \ \ \ \ \ \underline{DOB: {[$patientDateOfBirth|date_format]}} \\
+
+\medskip
 
 {[$providerDestinationName|texize]}: \\
 
