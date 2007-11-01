@@ -48,8 +48,8 @@
 % Deal with the document "header". For now, we're just looking at a one-time
 % only display. FIXME: Migrate this to a header.
 \begin{center}
-	{\relsize{1}\textbf{{[link link=$letterfrom table='physician' field='phypracname'|texize]}}} \\
-	{\relsize{-1}\textsl{{[method namespace='org.freemedsoftware.core.Physician.fullName' param=$letterfrom|texize]}}} \\
+	{\relsize{1}\textbf{{[$providerPractice|texize]}}} \\
+	{\relsize{-1}\textsl{{[$providerName|texize]}}} \\
 	\textsl{{[$providerAddress|texize]}, {[$providerCity|texize]}, {[$providerState|texize]} {[$providerZip|texize]} } \\
 	\textsl{phone {[$providerPhone|phone_format|texize]} fax {[$providerFax|phone_format|texize]}}
 \end{center}
