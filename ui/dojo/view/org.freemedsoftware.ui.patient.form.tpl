@@ -268,6 +268,7 @@
 
 <!--{if $patient > 0}-->
 <h3><!--{t}-->Change Patient Details<!--{/t}--></h3>
+<input type="hidden" name="id" id="id" value="<!--{$patient}-->" />
 <!--{else}-->
 <h3><!--{t}-->Patient Entry<!--{/t}--></h3>
 <!--{/if}-->
