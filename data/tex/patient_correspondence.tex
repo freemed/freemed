@@ -49,7 +49,7 @@
 \begin{center}
 	{\relsize{1}\textbf{{[$providerPractice|texize]}}} \\
 	\textsl{{[$providerAddress|texize]}, {[$providerCity|texize]}, {[$providerState|texize]} {[$providerZip|texize]} } \\
-	\textsl{phone {[$providerPhone|phone_format|texize]} fax {[$providerFax|phone_format|texize]}}
+	\textsl{{[if $providerPhone]}Phone {[$providerPhone|phone_format|texize]}{[/if]} {[if $providerFax]}Fax {[$providerFax|phone_format|texize]}{[/if]}}
 \end{center}
 
 \flushleft
