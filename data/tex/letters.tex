@@ -29,13 +29,14 @@
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$letterfrom param1=1 var='providerName']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$letterto param1=1 var='providerDestinationName']}
 {[link link=$letterpatient table='patient' field='ptdob' var='patientDateOfBirth']}
-{[link link=$letterfrom table='physician' field='phypracname' var='providerPractice']}
-{[link link=$letterfrom table='physician' field='phyaddr1a' var='providerAddress']}
-{[link link=$letterfrom table='physician' field='phycitya' var='providerCity']}
-{[link link=$letterfrom table='physician' field='phystatea' var='providerState']}
-{[link link=$letterfrom table='physician' field='phyzipa' var='providerZip']}
-{[link link=$letterfrom table='physician' field='phyphonea' var='providerPhone']}
-{[link link=$letterfrom table='physician' field='phyfaxa' var='providerFax']}
+{[link link=$letterfrom table='physician' field='phypractice' var='prac']}
+{[link link=$prac table='practice' field='pracname' var='providerPractice']}
+{[link link=$prac table='practice' field='addr1a' var='providerAddress']}
+{[link link=$prac table='practice' field='citya' var='providerCity']}
+{[link link=$prac table='practice' field='statea' var='providerState']}
+{[link link=$prac table='practice' field='zipa' var='providerZip']}
+{[link link=$prac table='practice' field='phonea' var='providerPhone']}
+{[link link=$prac table='practice' field='faxa' var='providerFax']}
 
 {[link link=$letterto table='physician' field='phypracname' var='providerDestinationPractice']}
 {[link link=$letterto table='physician' field='phyaddr1a' var='providerDestinationAddress']}
