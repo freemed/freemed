@@ -172,7 +172,8 @@ class Patient {
 	//
 	function fullName ($with_dob = false) {
 		if (!$with_dob) {
-			return $this->_fixcaps($this->ptfname)." ".
+			return ( $this->local_record['ptsalut'] ? $this->local_record['ptsalut'].' ' : '' ).
+				$this->_fixcaps($this->ptfname)." ".
 				$this->_fixcaps($this->ptmname).
 				( strlen($this->ptmname) == 1 ? ". " : " " ).
 				$this->_fixcaps($this->ptlname).
