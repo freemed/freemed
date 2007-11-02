@@ -26,14 +26,15 @@
 %%
 
 {[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$letterpatient param1=0 var='patient_name']}
-{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0='letterfrom' param1=1 var='provider_name']}
-{[link link=$letterfrom table='physician' field='phypracname' var='providerPractice']}
-{[link link=$letterfrom table='physician' field='phyaddr1a' var='providerAddress']}
-{[link link=$letterfrom table='physician' field='phycitya' var='providerCity']}
-{[link link=$letterfrom table='physician' field='phystatea' var='providerState']}
-{[link link=$letterfrom table='physician' field='phyzipa' var='providerZip']}
-{[link link=$letterfrom table='physician' field='phyphonea' var='providerPhone']}
-{[link link=$letterfrom table='physician' field='phyfaxa' var='providerFax']}}
+{[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$letterfrom param1=1 var='provider_name']}
+{[link link=$letterfrom table='physician' field='phypractice' var='prac']}
+{[link link=$prac table='practice' field='pracname' var='providerPractice']}
+{[link link=$prac table='practice' field='addr1a' var='providerAddress']}
+{[link link=$prac table='practice' field='citya' var='providerCity']}
+{[link link=$prac table='practice' field='statea' var='providerState']}
+{[link link=$prac table='practice' field='zipa' var='providerZip']}
+{[link link=$prac table='practice' field='phonea' var='providerPhone']}
+{[link link=$prac table='practice' field='faxa' var='providerFax']}
 
 {[link link=$letterpatient table='patient' field='ptaddr1' var='patientAddress']}
 {[link link=$letterpatient table='patient' field='ptcity' var='patientCity']}
@@ -53,6 +54,7 @@
 % only display. FIXME: Migrate this to a header.
 \begin{center}
 	{\relsize{1}\textbf{{[$providerPractice|texize]}}} \\
+	{\relsize{1}{[$provider_name|texize]}} \\
 	\textsl{{[$providerAddress|texize]}, {[$providerCity|texize]}, {[$providerState|texize]} {[$providerZip|texize]} } \\
 	\textsl{{[if $providerPhone]}Phone {[$providerPhone|phone_format|texize]}{[/if]} {[if $providerFax]}Fax {[$providerFax|phone_format|texize]}{[/if]}}
 \end{center}
@@ -66,8 +68,10 @@
 \  \\
 
 {[$patient_name|texize]}	\\
-{[$patientAddress|texize]}		\\
-{[$patientCity|texize]}, {[$patientState|texize]} {[$patientZip|texize]} \\
+
+{[if $patientAddress]}{[$patientAddress|texize]} \\ {[/if]}
+
+{[if $patientCity]}{[$patientCity|texize]}, {[$patientState|texize]} {[$patientZip|texize]} \\ {[/if]}
 
 \  \\
 
