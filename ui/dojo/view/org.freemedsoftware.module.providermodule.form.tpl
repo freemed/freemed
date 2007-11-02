@@ -5,6 +5,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
+ // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
@@ -49,7 +50,41 @@
 	phydegrees.onAssign( data.phydegrees );
 <!--{/assign_block}-->
 
+<!--{assign_block var='preSubmitCode'}-->
+	var practiceValue = 0;
+	if ( document.getElementById( 'practiceType' ).value == 'new' ) {
+		var hash = {
+			pracname: document.getElementById( 'pracname' ).value,
+			ein: document.getElementById( 'ein' ).value,
+			pracname: document.getElementById( 'pracname' ).value,
+			addr1a: document.getElementById( 'addr1a' ).value,
+			addr2a: document.getElementById( 'addr2a' ).value,
+			citya: document.getElementById( 'citya' ).value,
+			statea: document.getElementById( 'statea' ).value,
+			zipa: document.getElementById( 'zipa' ).value,
+			phonea: document.getElementById( 'phonea' ).value,
+			faxa: document.getElementById( 'faxa' ).value,
+			email: document.getElementById( 'email' ).value,
+			cellular: document.getElementById( 'cellular' ).value,
+			pager: document.getElementById( 'pager' ).value
+		};
+		dojo.io.bind({
+			method: 'POST',
+			content: {
+				param0: hash
+			},
+			url: "<!--{$relay}-->/org.freemedsoftware.module.Practices.add",
+			load: function ( type, data, evt ) {
+				if ( data ) { practiceValue = data; }
+			},
+			mimetype: 'text/json',
+			sync: true
+		});
+	}
+<!--{/assign_block}-->
+
 <!--{assign_block var='collectDataArray'}-->
+	phypractice: ( document.getElementById('practiceType').value == 'old' ? dojo.widget.byId( 'phypractice_widget' ).getValue() : practiceValue ),
 	phydegrees: phydegrees.getValue( ),
 	physpecialties: physpecialties.getValue( )
 <!--{/assign_block}-->
@@ -57,14 +92,32 @@
 <!--{assign_block var='moduleForm'}-->
 <script language="javascript">
 	var npi_<!--{$unique}--> = {
+		stateValue: '',
 		lookup: function ( ) {
+			npi_<!--{$unique}-->.stateValue = document.getElementById( 'statea' ).value;
+			if ( document.getElementById( 'practiceType' ).value == 'old' ) {
+				dojo.io.bind({
+					method: 'POST',
+					content: {
+						param0: dojo.widget.byId( 'phypractice_widget' ).getValue()
+					},
+					url: "<!--{$relay}-->/org.freemedsoftware.module.Practices.GetRecord",
+					load: function ( type, data, evt ) {
+						if ( data ) {
+							npi_<!--{$unique}-->.stateValue = data.statea;
+						}
+					},
+					mimetype: 'text/json',
+					sync: true
+				});
+			}
 			dojo.io.bind({
 				method: 'POST',
 				url: "<!--{$relay}-->/org.freemedsoftware.module.ProviderModule.LookupNPI",
 				content: {
 					param0: document.getElementById( 'phyfname' ).value,
 					param1: document.getElementById( 'phylname' ).value,
-					param2: document.getElementById( 'phystatea' ).value
+					param2: npi_<!--{$unique}-->.stateValue
 				},
 				load: function ( type, data, evt ) {
 					if ( data ) {
@@ -104,22 +157,6 @@
 			</tr>
 
 			<tr>
-				<td><!--{t}-->Practice Name<!--{/t}--></td>
-				<td><input type="text" id="phypracname" name="phypracname" size="45" /></td>
-			</tr>
-
-			<tr>
-				<td><!--{t}-->Address<!--{/t}--></td>
-				<td><input type="text" id="phyaddr1a" name="phyaddr1a" size="40" /><br/>
-				<input type="text" id="phyaddr2a" name="phyaddr2a" size="40" /></td>
-			</tr>
-
-			<tr>
-				<td><!--{t}-->City<!--{/t}-->, <!--{t}-->State / Province<!--{/t}-->, <!--{t}-->Postal Code<!--{/t}--></td>
-				<td><input type="text" id="phycitya" name="phycitya" size="20" /><input type="text" id="phystatea" name="phystatea" size="3" />, <input type="text" id="phyzipa" name="phyzipa" size="10" maxlength="10" /></td>
-			</tr>
-
-			<tr>
 				<td><!--{t}-->Status<!--{/t}--></td>
 				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderStatus" varname="phystatus"}--></td>
 			</tr>
@@ -148,26 +185,82 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="providerContactPane" label="<!--{t|escape:'javascript'}-->Contact<!--{/t}-->">
+	<div dojoType="ContentPane" id="providerPracticePane" label="<!--{t|escape:'javascript'}-->Practice<!--{/t}-->">
 
-		<table style="border: 0; padding: 1em; width: auto;">
+		<div style="padding: 1em;">
+
+		<div id="practiceTypeSelector">
+			<!--{t}-->Practice Type<!--{/t}-->:
+			<select id="practiceType" onChange="toggleDiv( 'practiceTypeOld' ); toggleDiv( 'practiceTypeNew' );">
+				<option value="old"><!--{t}-->Existing<!--{/t}--></option>
+				<option value="new"><!--{t}-->New<!--{/t}--></option>
+			</select>
+		</div>
+
+		<div id="practiceTypeOld">
+		<table style="border: 0; padding: 1em;">
+
+			<tr>
+				<td><!--{t}-->Practice<!--{/t}--></td>
+				<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="Practices" varname="phypractice"}--></td>
+			</tr>
+
+		</table>
+		</div>
+		
+		<div id="practiceTypeNew" style="display: none;">
+		<table style="border: 0; padding: 1em;">
+
+			<tr>
+				<td><!--{t}-->Practice Name<!--{/t}--></td>
+				<td><input type="text" id="pracname" name="pracname" size="45" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->Address<!--{/t}--></td>
+				<td><input type="text" id="addr1a" name="addr1a" size="40" /><br/>
+				<input type="text" id="addr2a" name="addr2a" size="40" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->City<!--{/t}-->, <!--{t}-->State / Province<!--{/t}-->, <!--{t}-->Postal Code<!--{/t}--></td>
+				<td><input type="text" id="citya" name="citya" size="20" /><input type="text" id="statea" name="statea" size="3" />, <input type="text" id="zipa" name="zipa" size="10" maxlength="10" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->Employer Identification Number<!--{/t}--></td>
+				<td><input type="text" id="ein" name="ein" size="45" /></td>
+			</tr>
 
 			<tr>
 				<td><!--{t}-->Email<!--{/t}--></td>
-				<td><input dojoType="EmailTextbox" type="text" id="phyemail" name="phyemail" size="45" /></td>
+				<td><input dojoType="EmailTextbox" type="text" id="email" name="email" size="45" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->Phone #<!--{/t}--></td>
+				<td><input type="text" id="phonea" name="phonea" /></td>
+			</tr>
+
+			<tr>
+				<td><!--{t}-->Fax #<!--{/t}--></td>
+				<td><input type="text" id="faxa" name="faxa" /></td>
 			</tr>
 
 			<tr>
 				<td><!--{t}-->Cellular Phone #<!--{/t}--></td>
-				<td><input type="text" id="phycellular" name="phycellular" /></td>
+				<td><input type="text" id="cellular" name="cellular" /></td>
 			</tr>
 
 			<tr>
 				<td><!--{t}-->Beeper / Pager #<!--{/t}--></td>
-				<td><input type="text" id="phypager" name="phypager" /></td>
+				<td><input type="text" id="pager" name="pager" /></td>
 			</tr>
 
 		</table>
+		</div>
+
+		</div>
 
 	</div>
 

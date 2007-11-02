@@ -42,6 +42,8 @@
 
 		$validation - (optional) JS / Dojo validation fragment
 
+		$preSubmitCode - (optional) JS / Dojo pre-submit fragment
+
 *}-->
 
 <script type="text/javascript">
@@ -89,6 +91,7 @@
 			try {
 				dojo.widget.byId('ModuleFormCommitChangesButton').disable();
 			} catch ( err ) { }
+			<!--{if $preSubmitCode}--><!--{$preSubmitCode}--><!--{/if}-->
 			var myContent = {
 				<!--{if $id}-->id: "<!--{$id|escape}-->"<!--{if $collectDataArray}-->,<!--{/if}--><!--{/if}-->
 				<!--{$collectDataArray}-->
