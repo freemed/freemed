@@ -38,13 +38,15 @@
 
 \framebox[6in]{
 	\begin{tabular}{l|l}
-{[if $msgpatient]} \textbf{Patient:}	&	{[$msgptient|texize]}	\\ {[/if]}
-		\textbf{Date:}		&	\ \\
+{[if $msgpatient]} \textbf{Patient:}	&	{[$patientName|texize]}	\\ {[/if]}
+		\textbf{Date:}		&	{[$msgtime|date_format|texize]} \ \\
 		\textbf{Subject:}	&	{[$msgsubject|texize]} \\
 	\end{tabular}
 }
 
 \hfill \\
+
+\flushleft
 
 \parindent=0in
 
