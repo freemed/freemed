@@ -66,7 +66,7 @@ class Practices extends SupportModule {
 
 		$this->list_view = array (
 			__("Practice Name") => "pracname",
-			__("First Name") => "citya",
+			__("City") => "citya",
 			__("State / Province") => "statea"
 		);
 
