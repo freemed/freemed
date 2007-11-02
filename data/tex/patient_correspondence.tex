@@ -35,6 +35,11 @@
 {[link link=$letterfrom table='physician' field='phyphonea' var='providerPhone']}
 {[link link=$letterfrom table='physician' field='phyfaxa' var='providerFax']}}
 
+{[link link=$letterpatient table='patient' field='ptaddr1' var='patientAddress']}
+{[link link=$letterpatient table='patient' field='ptcity' var='patientCity']}
+{[link link=$letterpatient table='patient' field='ptstate' var='patientState']}
+{[link link=$letterpatient table='patient' field='ptzip' var='patientZip']}
+
 \documentclass{article}
 
 % No normal header, footer, etc
@@ -61,8 +66,8 @@
 \  \\
 
 {[$patient_name|texize]}	\\
-{[$ptaddr1|texize]}		\\
-{[$ptcity|texize]}, {[$ptstate|texize]} {[$ptzip|texize]} \\
+{[$patientAddress|texize]}		\\
+{[$patientCity|texize]}, {[$patientState|texize]} {[$patientZip|texize]} \\
 
 \  \\
 
@@ -70,6 +75,7 @@
 
 \  \\
 
+Sincerely, \\
 {[$provider_name|texize]} \\
 {[$providerPractice|texize]}
 
