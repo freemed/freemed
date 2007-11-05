@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class MultumDrugLexicon extends SupportModule {
 
 	var $MODULE_NAME = "Multum Drug Lexicon";
-	var $MODULE_VERSION = "20071001.0";
+	var $MODULE_VERSION = "20071101.0";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "9c28f0de-403b-4534-9627-d0156eeb721a";
 	var $MODULE_HIDDEN = true;
