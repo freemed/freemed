@@ -46,5 +46,8 @@ for T in $DRUG_MLT_TABLES; do
 done
 
 #	Remove denormalized table, since we don't use it
+echo " - Removing ndc_denorm (denormalized table)"
 rm -f "$( dirname "$0" )/../data/multum/ndc_denorm.csv"
+
+echo " ! Completed ! "
 
