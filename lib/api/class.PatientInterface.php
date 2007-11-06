@@ -219,12 +219,18 @@ class PatientInterface {
 			switch ($k) {
 				case 'hphone':
 				case 'wphone':
-				case 'zip':
-				case 'city':
 				case 'ssn':
 				case 'dmv':
 				case 'email':
 				if ($v) { $c[] = "p.pt${k} LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'city':
+				if ($v) { $c[] = "pa.city LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'zip':
+				if ($v) { $c[] = "pa.postal LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
 				break;
 
 				case 'ptid':
@@ -242,7 +248,7 @@ class PatientInterface {
 		// Only look for 
 		if ( !isset( $criteria['archive'] ) ) { $c[] = "p.ptarchive = 0"; }
 
-		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p WHERE ".join(' AND ', $c)." ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
+		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p LEFT OUTER JOIN patient_address pa ON p.id = pa.patient WHERE ".join(' AND ', $c)." AND pa.active = 1 ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method Search
 
@@ -266,7 +272,7 @@ class PatientInterface {
 	//	* csz
 	//
 	public function PatientInformation( $id ) {
-		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) AS age, CONCAT( p.ptcity, ', ', p.ptstate, ' ', p.ptzip ) AS csz, p.* FROM patient p WHERE p.id = " . ( $id + 0 );
+		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) AS age, CONCAT( pa.city, ', ', pa.stpr, ' ', pa.postal ) AS csz, p.* FROM patient p LEFT OUTER JOIN patient_address pa ON pa.patient = p.id WHERE p.id = " . ( $id + 0 ) . " AND pa.active = 1 GROUP BY p.id";
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation
 
