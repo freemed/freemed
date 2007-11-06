@@ -152,11 +152,12 @@
 					if (data) {
 						// Altered flag
 						for ( var i=0; i < data.length; i++ ) {
-							d[i]['altered'] = false;
+							data[i]['altered'] = false;
+							data[i]['csz'] = data[i].city + ', ' + data[i].stpr + ' ' + data[i].postal;
 						}
 
 						// Catch all for populating form data
-						dojo.widget.byId('addresses').setValues( data );
+						dojo.widget.byId('patientAddress').store.setData( data );
 					}
 				},
 				mimetype: "text/json"
