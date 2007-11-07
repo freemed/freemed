@@ -36,10 +36,7 @@
 {[link link=$prac table='practice' field='phonea' var='providerPhone']}
 {[link link=$prac table='practice' field='faxa' var='providerFax']}
 
-{[link link=$letterpatient table='patient' field='ptaddr1' var='patientAddress']}
-{[link link=$letterpatient table='patient' field='ptcity' var='patientCity']}
-{[link link=$letterpatient table='patient' field='ptstate' var='patientState']}
-{[link link=$letterpatient table='patient' field='ptzip' var='patientZip']}
+{[method namespace='org.freemedsoftware.api.PatientInterface.PatientInformation' param0=$rxpatient var='info']}
 
 \documentclass{article}
 
@@ -69,9 +66,9 @@
 
 {[$patient_name|texize]}	\\
 
-{[if $patientAddress]}{[$patientAddress|texize]} \\ {[/if]}
+{[if $info.address_line_1]}{[$info.address_line_1|texize]} \\ {[/if]}
 
-{[if $patientCity]}{[$patientCity|texize]}, {[$patientState|texize]} {[$patientZip|texize]} \\ {[/if]}
+{[if $info.city]}{[$info.city|texize]}, {[$info.stpr|texize]} {[$info.postal|texize]} \\ {[/if]}
 
 \  \\
 
