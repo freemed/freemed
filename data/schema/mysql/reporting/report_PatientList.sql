@@ -32,7 +32,7 @@ DELIMITER //
 CREATE PROCEDURE report_PatientList_en_US ( )
 BEGIN
 	SET @sql = CONCAT(
-		"SELECT ptlname AS 'Last Name', ptfname AS 'First Name', ptmname AS 'MI', ptaddr1 AS 'Address', CONCAT(ptcity, ', ', ptstate,' ', ptzip) AS 'City/State/Zip', ptid AS 'Patient ID', ptdob AS 'DOB' FROM patient WHERE ptarchive=0 ORDER BY ptlname, ptfname, ptmname, ptdob"
+		"SELECT p.ptlname AS 'Last Name', p.ptfname AS 'First Name', p.ptmname AS 'MI', pa.line1 AS 'Address', CONCAT(pa.city, ', ', pa.stpr,' ', pa.postal) AS 'City/State/Zip', ptid AS 'Patient ID', ptdob AS 'DOB' FROM patient p LEFT OUTER JOIN patient_address pa ON ( p.id = pa.patient AND pa.active = TRUE ) WHERE p.ptarchive = 0 ORDER BY p.ptlname, p.ptfname, p.ptmname, p.ptdob"
 	) ;
 
 	PREPARE s FROM @sql ;
