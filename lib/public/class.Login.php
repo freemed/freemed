@@ -117,6 +117,23 @@ class Login {
 		return true;
 	} // end method SessionPopulate
 
+	// Method: GetLocations
+	//
+	//	Populate location selection.
+	//
+	// Returns:
+	//
+	//	Array of arrays:
+	//	* [ language, abbrev ]
+	//
+	public function GetLocations ( ) {
+		$m = module_function( 'facilitymodule', 'GetAll', array ( ) );
+		foreach ( $m AS $r ) {
+			$res[] = array ( $r['psrname'], $r['id'] );
+		}
+		return $res;
+	} // end method GetLocations
+
 	// Method: GetLanguages
 	//
 	//	Populate language selection.

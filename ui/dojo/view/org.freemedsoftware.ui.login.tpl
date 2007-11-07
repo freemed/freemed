@@ -42,7 +42,8 @@
 			content : {
 				param0: dojo.byId('username').value,
 				param1: dojo.byId('password').value,
-				_l: dojo.widget.byId( 'language_widget' ).getValue( )
+				_l: dojo.widget.byId( 'language_widget' ).getValue( ),
+				_f: dojo.widget.byId( 'facility_widget' ).getValue( )
 			},
 			url: '<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Login.Validate',
 			error: function(type, data, evt) {
@@ -184,6 +185,18 @@
 			<tr>
 				<td><b><!--{t}-->Password<!--{/t}--></b></td>
 				<td><input type="password" id="password" name="password" style="width: 200px;" /></td>
+			</tr>
+			<tr>
+				<td><b><!--{t}-->Location<!--{/t}--></b></td>
+				<td><input dojoType="Select" value=""
+					autocomplete="false"
+					id="facility_widget" widgetId="facility_widget"
+					setValue="if (arguments[0]) { document.getElementById('facility').value = arguments[0]; }"
+					style="width: 200px;"
+					dataUrl="<!--{$base_uri}-->/relay.php/json/org.freemedsoftware.public.Login.GetLocations?param0=%{searchString}"
+					mode="remote" />
+				<input type="hidden" id="facility" name="facility" value="0" />
+				</td>
 			</tr>
 			<tr>
 				<td><b><!--{t}-->Language<!--{/t}--></b></td>

@@ -104,6 +104,19 @@ class FacilityModule extends SupportModule {
 		}
 	}
 
+	// Method: GetAll
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//	* id
+	//	* psrname
+	//
+	public function GetAll ( ) {
+		$q = "SELECT id, psrname FROM ".$this->table_name;
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAll
+
 } // end class FacilityModule
 
 register_module ("FacilityModule");

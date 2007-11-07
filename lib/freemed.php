@@ -116,6 +116,12 @@ if (!defined('SESSION_DISABLE')) {
 	}
 	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
 
+	// Set default facility from parameter if it exists
+	if (isset($_REQUEST['_f'])) {
+		// Handle template language changes
+		$_SESSION['default_facility'] = ( $_REQUEST['_f'] + 0 );
+	}
+
 	// Load Gettext routines (most non-session things don't need it).
 	include_once (dirname(__FILE__)."/i18n.php");
 
