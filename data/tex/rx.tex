@@ -33,6 +33,7 @@
 {[link table='physician' link=$rxphy field='phyfaxa' var='phyfax']}
 {[link table='drugquantityqual' field='description' link=$rxquantityqual var='quanqual']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$rxphy var='phyname']}
+{[method namespace='org.freemedsoftware.api.PatientInterface.PatientInformation' param0=$rxpatient var='info']}
 {[link table='physician' link=$rxphy field='phydea' var='dea']}
 {[link table='physician' link=$rxphy field='phynpi' var='npi']}
 {[method namespace='org.freemedsoftware.module.MultumDrugLexicon.DrugDosageToText' param0=$rxunit var='dosage']}
@@ -89,8 +90,8 @@
 			 	\textbf{SSN} & {[$ptssn|texize]} \\	
 %				\textbf{Account \#} & {[$ptid|texize]} \\
 				\  & \  \\
-				\textbf{Address} & {[$ptaddr1|texize]} \\
-				\  & {[$ptcity]}, {[$ptstate]} {[$ptzip]} \\
+				\textbf{Address} & {[$info.address_line_1|texize]} \\
+				\  & {[$info.csz|texize]} \\
 
 				\  & \  \\
 				\textbf{Medication}  & \parbox{3in}{{\large {[$rxdrug|texize]} {[$dosage|texize]} }} \\
