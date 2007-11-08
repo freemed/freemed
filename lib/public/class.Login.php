@@ -42,7 +42,10 @@ class Login {
 		//$password = $data['password'];
 
 		// Drop if no valid username
-		if (!$username) { return false; }
+		if (!$username) {
+			syslog(LOG_ERROR, "org.freemedsoftware.public.Validate: no valid username");
+			return false;
+		}
 
 		if (! $GLOBALS['sql'] ) {
 			syslog(LOG_ERROR, "org.freemedsoftware.public.Validate: failed to instantiate SQL object");
