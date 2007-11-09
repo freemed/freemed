@@ -36,7 +36,7 @@
 {[link link=$prac table='practice' field='phonea' var='providerPhone']}
 {[link link=$prac table='practice' field='faxa' var='providerFax']}
 
-{[method namespace='org.freemedsoftware.api.PatientInterface.PatientInformation' param0=$rxpatient var='info']}
+{[method namespace='org.freemedsoftware.api.PatientInterface.PatientInformation' param0=$letterpatient var='info']}
 
 \documentclass{article}
 
@@ -77,7 +77,9 @@
 \  \\
 
 Sincerely, \\
-{[$provider_name|texize]} \\
+\bigskip \\
+\bigskip \\
+{[$provider_name|texize]}
 {[$providerPractice|texize]}
 
 \end{document}
