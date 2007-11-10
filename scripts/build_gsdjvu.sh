@@ -21,7 +21,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-VERSION="1.1"
+VERSION="1.2"
 
 echo "build_gsdjvu.sh for gsdjvu version ${VERSION}"
 echo "by jeff@freemedsoftware.org"
@@ -37,9 +37,9 @@ else
 	echo " * Already have gsdjvu v${VERSION}"
 fi
 
-if [ ! -f "ghostscript-8.15.tar.bz2" ]; then
+if [ ! -f "ghostscript-8.57.tar.bz2" ]; then
 	echo -n " * Retrieving GPL ghostscript ... "
-	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-8.15.tar.bz2 2>&1 > /dev/null
+	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-8.57.tar.bz2 2>&1 > /dev/null
 	echo "[done]"
 else
 	echo " * Already have GPL ghostscript package"
@@ -59,7 +59,7 @@ echo "[done]"
 
 echo -n " * Copying ghostscript packages ... "
 mkdir -p gsdjvu-${VERSION}/BUILD/
-cp ghostscript-fonts-std-8.11.tar.gz ghostscript-8.15.tar.bz2 \
+cp ghostscript-fonts-std-8.11.tar.gz ghostscript-8.57.tar.bz2 \
 	gsdjvu-${VERSION}/BUILD/
 echo "[done]"
 
