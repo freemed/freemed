@@ -227,12 +227,6 @@
 		dojo.event.connect(dojo.widget.byId('messageMultipleDeleteButton<!--{$unique}-->'), "onClick", o, "deleteMessages");
 		dojo.event.connect(dojo.widget.byId('messageMoveButton<!--{$unique}-->'), "onClick", o, "modifyTag");
 		dojo.event.connect(dojo.widget.byId('messageTagButton<!--{$unique}-->'), "onClick", o, "selectTagView");
-		try {
-			var x = dojo.widget.byId( 'messagesTablePane<!--{$unique}-->' );
-			var node = x.containerNode || x.domNode;
-			var h = parseInt( node.style.height ) - 45;
-			document.getElementById( 'messagesTableBody<!--{$unique}-->' ).style.height = h + 'px';
-		} catch ( e ) { }
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect(dojo.widget.byId('messagesTable<!--{$unique}-->'), "onSelect", o, "selectMessage");
@@ -247,12 +241,13 @@
 
 </script>
 
-<h3><!--{t}-->Messaging<!--{/t}--></h3>
+<div dojoType="LayoutContainer" layoutChildPriority="top-bottom" style="height: 50%;">
 
-<div dojoType="SplitContainer" orientation="vertical" sizerWidth="5" activeSizing="0" layoutAlign="client" style="height: 100%;">
+	<div dojoType="ContentPane" layoutAlign="top">
+		<h3><!--{t}-->Messaging<!--{/t}--></h3>
+	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" style="height: 50%;" widgetId="messagesTablePane<!--{$unique}-->" id="messageTablePane<!--{$unique}-->">
-
+	<div dojoType="ContentPane" layoutAlign="top" style="height: 2em;">
 		<div id="messagesBar">
 			<table border="0"><tr>
 				<td width="30">
@@ -271,7 +266,7 @@
 					</button>
 				</td>
 				<td width="100">
-					<!--{t}-->Location<!--{/t}-->:
+					<small><!--{t}-->Location<!--{/t}-->:</small>
 				</td>
 				<td width="150">
 					<input dojoType="ComboBox"
@@ -300,6 +295,9 @@
 				<td></td>
 			</tr></table>
 		</div>
+	</div>
+
+	<div dojoType="ContentPane" layoutAlign="client">
 
 		<div class="tableContainer">
 			<table dojoType="FilteringTable" id="messagesTable<!--{$unique}-->" widgetId="messagesTable<!--{$unique}-->" headClass="fixedHeader"
@@ -318,10 +316,12 @@
 			</table>
 		</div>
 
+		</div>
+
 	</div>
 
-	<div dojoType="ContentPane" executeScripts="true" sizeMin="30" sizeShare="50" id="messagesViewPane<!--{$unique}-->" style="overflow: scroll; background-color: #ffffff;">
-		<div id="messageViewPaneDiv<!--{$unique}-->"></div>
+	<div dojoType="ContentPane" layoutAlign="bottom" style="background: #ffffff;">
+		<div style="border: 2px solid #000000; background: #ffffff;" id="messageViewPaneDiv<!--{$unique}-->"></div>
 	</div>
 </div>
 
