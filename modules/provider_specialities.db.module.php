@@ -36,6 +36,8 @@ class ProviderSpecialties extends SupportModule {
 	var $record_name    = "Specialty";
 	var $order_field    = "specname";
 
+	var $widget_hash    = "##specname## (##specdesc##)";
+
 	var $variables      = array (
 		"specname",
 		"specdesc"
