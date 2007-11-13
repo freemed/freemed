@@ -253,15 +253,15 @@
 		dojo.event.connect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
 		dojo.event.connect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
 		dojo.event.connect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
-		dojo.event.connect( dojo.widget.byId( 'dobP10' ), 'onClick', pForm, 'dobP10' );
-		dojo.event.connect( dojo.widget.byId( 'dobN10' ), 'onClick', pForm, 'dobN10' );
+		//dojo.event.connect( dojo.widget.byId( 'dobP10' ), 'onClick', pForm, 'dobP10' );
+		//dojo.event.connect( dojo.widget.byId( 'dobN10' ), 'onClick', pForm, 'dobN10' );
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
 		dojo.event.disconnect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
 		dojo.event.disconnect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
-		dojo.event.disconnect( dojo.widget.byId( 'dobP10' ), 'onClick', pForm, 'dobP10' );
-		dojo.event.disconnect( dojo.widget.byId( 'dobN10' ), 'onClick', pForm, 'dobN10' );
+		//dojo.event.disconnect( dojo.widget.byId( 'dobP10' ), 'onClick', pForm, 'dobP10' );
+		//dojo.event.disconnect( dojo.widget.byId( 'dobN10' ), 'onClick', pForm, 'dobN10' );
 	});
 </script>
 
@@ -343,7 +343,8 @@
 
 	<tr>
 		<td><!--{t}-->Date of Birth<!--{/t}--></td>
-		<td><table style="width: auto;" cellspacing="0" cellpadding="0" border="0"><tr><td><button dojoType="Button" id="dobP10">-10</button></td><td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" containerToggle="wipe" value="today" displayFormat="MM/dd/yyyy"></div></td><td><button dojoType="Button" id="dobN10">+10</button></td></tr></table></td>
+		<!-- <td><table style="width: auto;" cellspacing="0" cellpadding="0" border="0"><tr><td><button dojoType="Button" id="dobP10">-10</button></td><td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" containerToggle="wipe" value="today" displayFormat="MM/dd/yyyy"></div></td><td><button dojoType="Button" id="dobN10">+10</button></td></tr></table></td> -->
+		<td><div dojoType="DropdownDatePicker" id="ptdob" widgetId="ptdob" name="ptdob" containerToggle="wipe" value="today" displayFormat="MM/dd/yyyy"></div></td>
 	</tr>
 
 	<tr>
