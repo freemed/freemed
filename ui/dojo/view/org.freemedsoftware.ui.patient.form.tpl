@@ -70,9 +70,15 @@
 				load: function(type, data, evt) {
 					if (data) {
 						freemedMessage( "<!--{t|escape:'javascript'}-->Patient database updated.<!--{/t}-->", 'INFO' );
+						<!--{if $patient gt 0}-->
+						pForm.commitAddressChanges( <!--{$patient}--> );
+						<!--{else}-->
 						if ( parseInt( data ) > 0 ) {
 							pForm.commitAddressChanges( data );
+						} else {
+							freemedMessage( "<!--{t|escape:'javascript'}-->Invalid patient returned.<!--{/t}-->", 'ERROR' );
 						}
+						<!--{/if}-->
 					} else {
 						alert('<!--{t|escape:'javascript'}-->The transaction has failed. Please try again or contact your system administrator.<!--{/t}-->');
 						dojo.widget.byId('patientFormCommitChangesButton').enable();
@@ -206,6 +212,13 @@
 		},
 		addAddress: function () {
 			var w = dojo.widget.byId( 'patientAddress' );
+
+			// Disable widget to avoid multiple clicks.
+			dojo.widget.byId( 'addAddressButton' ).disable();
+			if ( document.getElementById( 'addAddr1' ).value == '' ) {
+				// Stop duplicates
+				return true;
+			}
 			// Set all others to be inactive if this one is active
 			if ( parseInt( document.getElementById( 'addActive' ).value ) == 1 ) {
 				if ( w.store.get().length > 0 ) {
@@ -227,6 +240,11 @@
 			};
 			w.store.addData( d );
 			pForm.addrCount = pForm.addrCount - 1;
+
+			// Reenable widget
+			dojo.widget.byId( 'addAddressButton' ).enable();
+			document.getElementById( 'addAddr1' ).value = '';
+			document.getElementById( 'addAddr2' ).value = '';
 			return true;
 		}
 	};
