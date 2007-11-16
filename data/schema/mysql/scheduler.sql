@@ -180,10 +180,36 @@ BEGIN
 	DECLARE block TEXT;
 	DECLARE tI, tH, tM, tD, tP, tPat INT;
 	DECLARE tT ENUM ( 'pat', 'temp', 'block' );
-	DECLARE tN, tPatName VARCHAR (250);
+	DECLARE tN, tPatName, tPName VARCHAR (250);
 	DECLARE tStatus, tStatusColor VARCHAR (10);
 	DECLARE tApptTime CHAR (5);
-	DECLARE cur CURSOR FOR SELECT c.id, c.calhour, c.calminute, c.calduration, c.calphysician, c.caltype, CASE c.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) ELSE CONCAT(p.ptlname, ', ', p.ptfname,  IF(LENGTH(p.ptmname)>0,CONCAT(' ',p.ptmname),''), IF(LENGTH(p.ptsuffix)>0,CONCAT(' ',p.ptsuffix),''), ' (', p.ptid, ')') END, c.calpatient, c.calprenote, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1), SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) FROM scheduler c LEFT OUTER JOIN patient p ON c.calpatient = p.id LEFT OUTER JOIN callin ci ON c.calpatient = ci.id LEFT OUTER JOIN scheduler_status ss ON c.id = ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id = ss.csstatus LEFT OUTER JOIN physician ph ON c.calphysician = ph.id WHERE caldateof = dt AND calhour >= hStart AND calhour < hEnd AND c.calstatus NOT IN ( 'noshow', 'cancelled' ) GROUP BY c.id, ss.csappt;
+	DECLARE cur CURSOR FOR
+		SELECT 
+			c.id
+			, c.calhour
+			, c.calminute
+			, c.calduration
+			, c.calphysician
+			, CONCAT( ph.phylname, ', ', ph.phyfname )
+			, c.caltype
+			, CASE c.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) ELSE CONCAT(p.ptlname, ', ', p.ptfname,  IF(LENGTH(p.ptmname)>0,CONCAT(' ',p.ptmname),'')
+			, IF(LENGTH(p.ptsuffix)>0,CONCAT(' ',p.ptsuffix),''), ' (', p.ptid, ')') END
+			, c.calpatient
+			, c.calprenote
+			, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1)
+			, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1)
+		FROM scheduler c
+			LEFT OUTER JOIN patient p ON c.calpatient = p.id
+			LEFT OUTER JOIN callin ci ON c.calpatient = ci.id
+			LEFT OUTER JOIN scheduler_status ss ON c.id = ss.csappt
+			LEFT OUTER JOIN schedulerstatustype st ON st.id = ss.csstatus
+			LEFT OUTER JOIN physician ph ON c.calphysician = ph.id
+		WHERE
+			caldateof = dt
+			AND calhour >= hStart
+			AND calhour < hEnd
+			AND c.calstatus NOT IN ( 'noshow', 'cancelled' )
+		GROUP BY c.id, ss.csappt;
 	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = TRUE;
 
 	-- Create blank scheduler --
@@ -195,6 +221,8 @@ BEGIN
 		, type ENUM ( 'pat', 'temp', 'block' ) NOT NULL
 		, cont BOOL DEFAULT FALSE
 		, id INT UNSIGNED DEFAULT 0
+		, provider_id INT UNSIGNED DEFAULT 0
+		, provider VARCHAR (250) DEFAULT ''
 		, patient_id INT UNSIGNED DEFAULT 0
 		, patient VARCHAR (250) DEFAULT ''
 		, note VARCHAR (250) DEFAULT ''
@@ -234,7 +262,7 @@ BEGIN
 	-- Get scheduler entries --
 	OPEN cur;
 	WHILE NOT done DO
-		FETCH cur INTO tI, tH, tM, tD, tP, tT, tPatName, tPat, tN, tStatus, tStatusColor;
+		FETCH cur INTO tI, tH, tM, tD, tP, tPName, tT, tPatName, tPat, tN, tStatus, tStatusColor;
 		-- Make sure we don't process twice for any reason --
 		SELECT COUNT(*) INTO c FROM schedTable WHERE id = tI;
 		IF c < 1 THEN
@@ -243,10 +271,10 @@ BEGIN
 				SELECT id INTO f FROM schedTable WHERE h = tH AND m = tM LIMIT 1;
 				IF f > 0 THEN
 					-- Insert overbooking value --
-					INSERT INTO schedTable ( apptTime, h, m, id, note, type, patient, patient_id, duration, status, status_color, cont ) VALUES ( CONCAT( LPAD(tH,2,'0'), ':', LPAD(tM,2,'0') ), tH, tM, tI, tN, tT, tPatName, tPat, tD, tStatus, tStatusColor, TRUE );
+					INSERT INTO schedTable ( apptTime, h, m, id, note, type, provider, provider_id, patient, patient_id, duration, status, status_color, cont ) VALUES ( CONCAT( LPAD(tH,2,'0'), ':', LPAD(tM,2,'0') ), tH, tM, tI, tN, tT, tPName, tP, tPatName, tPat, tD, tStatus, tStatusColor, TRUE );
 				ELSE
 					-- Update existing entry --
-					UPDATE schedTable SET id = tI, note = tN, type = tT, patient = tPatName, patient_id = tPat, duration = tD, status = tStatus, status_color = tStatusColor WHERE h = tH AND m = tM;
+					UPDATE schedTable SET id = tI, note = tN, type = tT, patient = tPatName, patient_id = tPat, duration = tD, status = tStatus, status_color = tStatusColor, provider = tPName, provider_id = tP WHERE h = tH AND m = tM;
 				END IF;
 	
 				-- If duration is more than interval, handle con't --
@@ -260,10 +288,10 @@ BEGIN
 						SELECT id INTO f FROM schedTable WHERE h = HOUR( dTime ) AND m = MINUTE( dTime ) LIMIT 1;
 						IF f > 0 THEN
 							-- Insert overbooking value --
-							INSERT INTO schedTable ( apptTime, h, m, id, note, type, patient, patient_id, status, status_color, cont ) VALUES ( CONCAT( LPAD(HOUR(dTime),2,'0'), ':', LPAD(MINUTE(dTime),2,'0') ), HOUR( dTime ), MINUTE( dTime ), tI, tN, tT, CONCAT( tPatName, " (con't)"), tPat, tStatus, tStatusColor, TRUE );
+							INSERT INTO schedTable ( apptTime, h, m, id, note, type, provider, provider_id, patient, patient_id, status, status_color, cont ) VALUES ( CONCAT( LPAD(HOUR(dTime),2,'0'), ':', LPAD(MINUTE(dTime),2,'0') ), HOUR( dTime ), MINUTE( dTime ), tI, tN, tT, tPName, tP, CONCAT( tPatName, " (con't)"), tPat, tStatus, tStatusColor, TRUE );
 						ELSE
 							-- Update existing entry --
-							UPDATE schedTable SET id = tI, note = tN, patient = CONCAT( tPatName, " (con't)" ), type = tT, cont = FALSE, patient_id = tPat WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
+							UPDATE schedTable SET id = tI, note = tN, patient = CONCAT( tPatName, " (con't)" ), type = tT, cont = FALSE, patient_id = tPat, provider = tPName, provider_id = tP WHERE h = HOUR( dTime ) AND m = MINUTE( dTime );
 						END IF;
 	
 						-- Decrease amount left for next iteration --
@@ -285,6 +313,8 @@ BEGIN
 		, id AS scheduler_id
 		, patient_id
 		, patient
+		, provider_id
+		, provider 
 		, note
 		, duration
 		, status
