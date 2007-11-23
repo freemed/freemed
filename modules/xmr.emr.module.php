@@ -41,7 +41,7 @@ class Xmr extends EMRModule {
 	var $variables = array (
 		'patient',
 		'form_id',
-		'provider,
+		'provider',
 		'user'
 	);
 
