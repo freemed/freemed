@@ -46,6 +46,15 @@ class XmrDefinition extends SupportModule {
 		'form_template'
 	);
 
+	var $element_keys = array (
+		'form_id',
+		'text_name',
+		'parent_concept_id',
+		'concept_id',
+		'quant_id',
+		'external_population'
+	);
+
 	public function __construct () {
 		// For i18n: __("XMR Definition")
 
@@ -57,6 +66,60 @@ class XmrDefinition extends SupportModule {
 		// Run constructor
 		parent::__construct();
 	} // end constructor
+
+	// Method: SetElements
+	//
+	// Parameters:
+	//
+	//	$id - Form ID
+	//
+	//	$elements - Array of hashes
+	//	* form_id - Link to parent form record
+	//	* text_name - Textual name
+	//	* parent_concept_id - UMLS parent concept ID
+	//	* concept_id - UMLS concept ID
+	//	* quant_id - UMLS quantifier concept ID
+	//	* external_population - Boolean flag to determine if this is populated by other parts of the medical record
+	//	* altered - Boolean flag to determine whether or not this entry has been altered.
+	//	* id - 0 if new, otherwise the current id
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function SetElements ( $id, $elements ) {
+		$es = (array) $elements;
+		foreach ( $es AS $a ) {
+			// Force as an array
+			$a = (array) $a;
+
+			// Preprocessing
+			$a['form_id'] = $id;
+
+			// If id = 0, process as new entry
+			if ( ( (int) $a['id'] ) == 0 ) {
+				syslog( LOG_DEBUG, "SetElements: adding new address for $id" );
+				$GLOBALS['sql']->load_data( $a );
+				$query = $GLOBALS['sql']->insert_query(
+					'xmr_definition_element',
+					$this->element_keys
+				);
+				$GLOBALS['sql']->query( $query );
+			} else {
+				if ( $a['altered'] ) {
+					syslog( LOG_DEBUG, "SetElements: modifying address for form $id, id = ".$a['id'] );
+					$GLOBALS['sql']->load_data( $a );
+					$query = $GLOBALS['sql']->update_query(
+						'xmr_definition_element',
+						$this->element_keys,
+						array( 'id' => $a['id'] )
+					);
+					$GLOBALS['sql']->query( $query );
+				}
+			}
+		}
+		return true;
+	} // end method SetElements
 
 } // end class XmrDefinition
 

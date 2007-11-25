@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `xmr_definition_element` (
 	parent_concept_id	CHAR (10),
 	concept_id		CHAR (10),
 	quant_id		CHAR (10),
-	external_popualtion	BOOL DEFAULT FALSE,
+	external_population	BOOL DEFAULT FALSE,
 	id			SERIAL
 
 	#	Define keys
