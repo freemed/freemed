@@ -101,7 +101,7 @@ class MDB2_Extended extends MDB2_Module_Common
             return $db;
         }
         $lobs = array();
-        foreach ($types as $param => $type) {
+        foreach ((array)$types as $param => $type) {
             if (($type == 'clob') || ($type == 'blob')) {
                 $lobs[$param] = $table_fields[$param];
             }

@@ -181,11 +181,13 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     /**
      * create a new database
      *
-     * @param string $name name of the database that should be created
+     * @param string $name    name of the database that should be created
+     * @param array  $options array with charset, collation info
+     *
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
      */
-    function createDatabase($database)
+    function createDatabase($database, $options = array())
     {
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
@@ -222,9 +224,11 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
 
     /**
      * Create a basic SQL query for a new table creation
-     * @param string $name   Name of the database that should be created
-     * @param array $fields  Associative array that contains the definition of each field of the new table
-     * @param array $options  An associative array of table options
+     *
+     * @param string $name    Name of the database that should be created
+     * @param array  $fields  Associative array that contains the definition of each field of the new table
+     * @param array  $options An associative array of table options
+     *
      * @return mixed string (the SQL query) on success, a MDB2 error on failure
      * @see createTable()
      */

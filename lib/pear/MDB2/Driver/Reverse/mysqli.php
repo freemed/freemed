@@ -156,7 +156,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             }
             if ($field_name == $column['name']) {
                 $mapped_datatype = $db->datatype->mapNativeDatatype($column);
-                if (PEAR::IsError($mapped_datatype)) {
+                if (PEAR::isError($mapped_datatype)) {
                     return $mapped_datatype;
                 }
                 list($types, $length, $unsigned, $fixed) = $mapped_datatype;
@@ -374,8 +374,11 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
                                 $constraint = strtoupper($constraint);
                             }
                         }
-                        //NB: MySQL creates FKs with names in this format: "<TABLENAME>_ibfk_<INCREMENTAL_N>"
-                        $pattern = '/\bCONSTRAINT\s+'.$constraint_name_original.'\s+FOREIGN KEY\s+\(([^\)]+)\) \bREFERENCES\b ([^ ]+) \(([^\)]+)\)/i';
+                        $pattern = '/\bCONSTRAINT\s+'.$constraint_name.'\s+FOREIGN KEY\s+\(([^\)]+)\) \bREFERENCES\b ([^ ]+) \(([^\)]+)\)/i';
+                        if (!preg_match($pattern, str_replace('`', '', $constraint), $matches)) {
+                            //fallback to original constraint name
+                            $pattern = '/\bCONSTRAINT\s+'.$constraint_name_original.'\s+FOREIGN KEY\s+\(([^\)]+)\) \bREFERENCES\b ([^ ]+) \(([^\)]+)\)/i';
+                        }
                         if (preg_match($pattern, str_replace('`', '', $constraint), $matches)) {
                             $definition['foreign'] = true;
                             $column_names = explode(',', $matches[1]);

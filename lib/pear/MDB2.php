@@ -387,7 +387,7 @@ class MDB2
             return $err;
         }
 
-        $db = new $class_name();
+        $db =& new $class_name();
         $db->setDSN($dsninfo);
         $err = MDB2::setOptions($db, $options);
         if (PEAR::isError($err)) {
@@ -564,7 +564,7 @@ class MDB2
      */
     function apiVersion()
     {
-        return '2.5.0a1';
+        return '2.5.0a2';
     }
 
     // }}}
@@ -1141,6 +1141,7 @@ class MDB2_Driver_Common extends PEAR
      *  <li>$options['emulate_prepared'] -> boolean: force prepared statements to be emulated</li>
      *  <li>$options['datatype_map'] -> array: map user defined datatypes to other primitive datatypes</li>
      *  <li>$options['datatype_map_callback'] -> array: callback function/method that should be called</li>
+     *  <li>$options['bindname_format'] -> string: regular expression pattern for named parameters
      * </ul>
      *
      * @var     array
@@ -1188,6 +1189,7 @@ class MDB2_Driver_Common extends PEAR
         'datatype_map_callback' => array(),
         'nativetype_map_callback' => array(),
         'lob_allow_url_include' => false,
+        'bindname_format' => '(?:\d+)|(?:[a-zA-Z][a-zA-Z0-9_]*)',
     );
 
     /**
@@ -1669,11 +1671,6 @@ class MDB2_Driver_Common extends PEAR
 
     /**
      * Quotes pattern (% and _) characters in a string)
-     *
-     * EXPERIMENTAL
-     *
-     * WARNING: this function is experimental and may change signature at
-     * any time until labelled as non-experimental
      *
      * @param   string  the input string to quote
      *
@@ -2855,8 +2852,9 @@ class MDB2_Driver_Common extends PEAR
      * prepare() requires a generic query as string like
      * 'INSERT INTO numbers VALUES(?,?)' or
      * 'INSERT INTO numbers VALUES(:foo,:bar)'.
-     * The ? and :[a-zA-Z] and  are placeholders which can be set using
-     * bindParam() and the query can be send off using the execute() method.
+     * The ? and :name and are placeholders which can be set using
+     * bindParam() and the query can be sent off using the execute() method.
+     * The allowed format for :name can be set with the 'bindname_format' option.
      *
      * @param   string  the query to prepare
      * @param   mixed   array that contains the types of the placeholders
@@ -2934,10 +2932,11 @@ class MDB2_Driver_Common extends PEAR
                     }
                 }
                 if ($placeholder_type == ':') {
-                    $parameter = preg_replace('/^.{'.($position+1).'}([a-z0-9_]+).*$/si', '\\1', $query);
+                    $regexp = '/^.{'.($position+1).'}('.$this->options['bindname_format'].').*$/s';
+                    $parameter = preg_replace($regexp, '\\1', $query);
                     if ($parameter === '') {
                         $err =& $this->raiseError(MDB2_ERROR_SYNTAX, null, null,
-                            'named parameter with an empty name', __FUNCTION__);
+                            'named parameter name must match "bindname_format" option', __FUNCTION__);
                         return $err;
                     }
                     $positions[$p_position] = $parameter;

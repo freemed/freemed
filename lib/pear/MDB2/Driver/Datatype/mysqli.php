@@ -248,11 +248,6 @@ class MDB2_Driver_Datatype_mysqli extends MDB2_Driver_Datatype_Common
     /**
      * build a pattern matching string
      *
-     * EXPERIMENTAL
-     *
-     * WARNING: this function is experimental and may change signature at
-     * any time until labelled as non-experimental
-     *
      * @access public
      *
      * @param array $pattern even keys are strings, odd are patterns (% and _)
