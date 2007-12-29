@@ -1,0 +1,14 @@
+<?php
+$needs_unicode_escape_data=array(
+156=>true,
+157=>true,
+158=>true,
+159=>true,
+250=>true,
+251=>true,
+252=>true,
+253=>true,
+254=>true,
+255=>true,
+);
+?>
