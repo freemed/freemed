@@ -6,7 +6,8 @@ licenses and terms:
 Agata Report                           7.6 beta                      GPL
 Dojo                                   0.4.1                         BSD
 FormFaces                              2007-01-19                    BSD
-GWTPHP                                 0.9.0-200711122353            Apache
+GWTPHP                                 0.9.0-200711122353            Apache 2.0
+LOG4PHP                                svn-20071229                  Apache 2.0
 MagpieRSS                              0.6a                          GPL
 PEAR                                   -                             PHP License
 php-gettext                            1.0                           GPL

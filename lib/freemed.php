@@ -31,6 +31,8 @@ define ('CODED_BY', "FreeMED Software Foundation");
 define ('VERSION', "0.8.8");	// current version
 define ('DISPLAY_VERSION', "0.9.0-dev");
 define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)) );
+define ('GWTPHP_DIR', PHYSICAL_LOCATION . '/lib/gwtphp');
+define ('LOG4PHP_DIR', PHYSICAL_LOCATION . '/lib/log4php');
 define ('SHM_CACHE', false );
 
 //	Override to allow login image
