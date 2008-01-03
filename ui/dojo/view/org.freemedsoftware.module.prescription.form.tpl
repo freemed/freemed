@@ -96,7 +96,7 @@
 	</script>
 
 	<tr>
-		<td align="right"><!--{t}-->Dosage<!--{/t}--></td>
+		<td align="right"><!--{t}-->Strength<!--{/t}--></td>
 		<td>
 			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="MultumDrugLexicon" methodName="DosagesForDrug" methodNameText="DrugDosageToText" varname="rxunit"}-->
 		</td>
@@ -176,7 +176,21 @@
 		<td>
 			<table style="width: auto;"><tr>
 			<td>
-				<input type="text" name="rxrefills" id="rxrefills" value="0" />
+				<select name="rxrefills" id="rxrefills">
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option>10</option>
+					<option>11</option>
+					<option>12</option>
+				</select>
 			</td>
 			<td>
 			<select name="rxrefillinterval" id="rxrefillinterval">
