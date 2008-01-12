@@ -55,7 +55,7 @@ class FreemedDb extends MDB2 {
 
 		// Turn off "portability" option, which stops forcing lowercase keys
 		$this->db->setOption( 'portability', false );
-	} // end constructor
+	} // end method init
 
 	// Method: __call
 	//
@@ -155,7 +155,8 @@ class FreemedDb extends MDB2 {
 	//	Hash of table row.
 	//
 	public function get_link ( $table, $key, $field = 'id' ) {
-		$query = "SELECT * FROM `".$this->db->escape( $table )."` WHERE `".$this->db->escape( $field )."` = ".$this->db->quote( $key );
+		//$query = "SELECT * FROM ".$this->db->escape( $table )." WHERE ".$this->db->escape( $field )." = ".$this->db->quote( $key );
+		$query = "SELECT * FROM ".addslashes($table)." WHERE ".addslashes($field)." = '".addslashes($key)."'";
 		return $this->db->queryRow( $query );
 	} // end public function get_link
 

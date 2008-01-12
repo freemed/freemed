@@ -46,13 +46,13 @@ class ModuleIndex {
 		$this->display_hidden = true;
 
 		// Derive module directory from the mask
-		$this->modules_directory = dirname(dirname(dirname(__FILE__))).'/modules';
+		$this->modules_directory = dirname(dirname(__FILE__)).'/module';
 
 		// Recursive directory spanning
 		$this->recursive = true;
 	
 		// Form the extension
-		$this->extension = ".module.php";
+		$this->extension = ".php";
 
 		$this->index = $this->LoadIndex ( );
 		$this->quiet = $quiet;

@@ -215,18 +215,6 @@ function ResolveMethodName ( $object ) {
 function ResolveObjectPath ( $object ) {
 	$base_path = dirname( dirname( __FILE__ ) );
 	switch (true) {
-		case substr( $object, 0, 24 ) == 'org.freemedsoftware.api.':
-			$cname = str_replace ( 'org.freemedsoftware.api.', '', $object );
-			$cname = eregi_replace( '\..+', '', $cname );
-			return "${base_path}/lib/api/class.${cname}.php";
-			break;
-
-		case substr( $object, 0, 25 ) == 'org.freemedsoftware.core.':
-			$cname = str_replace ( 'org.freemedsoftware.core.', '', $object );
-			$cname = eregi_replace( '\..+', '', $cname );
-			return "${base_path}/lib/core/class.${cname}.php";
-			break;
-
 		case substr( $object, 0, 27 ) == 'org.freemedsoftware.module.':
 			$cname = str_replace ( 'org.freemedsoftware.module.', '', $object );
 			$cname = eregi_replace( '\..+', '', $cname );
@@ -237,31 +225,41 @@ function ResolveObjectPath ( $object ) {
 			return "${base_path}/${module_path}";
 			break;
 
-		case substr( $object, 0, 20 ) == 'org.freemedsoftware.':
-			$name = str_replace ( 'org.freemedsoftware.', '', $object );
-			list ( $pname, $cname ) = explode ( '.', $name );
-			$cname = eregi_replace( '\..+', '', $cname );
-			if (!file_exists("${base_path}/lib/${pname}/.namespace")) {
-				trigger_error("Object ${object} not valid.", E_USER_ERROR);
-			}
-			if (file_exists("${base_path}/lib/${pname}/class.${cname}.php")) {
-				return "${base_path}/lib/${pname}/class.${cname}.php";
-			} else {
-				return "${base_path}/lib/${pname}/${cname}.class.php";
-			}
-			break;
-
 		case substr( $object, 0, 13 ) == 'net.php.pear.':
 			$name = str_replace ( 'net.php.pear.', '', $object );
 			$name = eregi_replace( '\..+', '', $name );
-			ini_set('include_path', ini_get('include_path').':'.dirname(dirname(__FILE__)).'/pear');
+			ini_set('include_path', ini_get('include_path').':'.dirname(__FILE__).'/net/php/pear');
 			$my_class = str_replace( '_', '/', $name );
-			$path = dirname(__FILE__).'/pear/'.$my_class.'.php';
+			$path = dirname(__FILE__).'/net/php/pear/'.$my_class.'.php';
 			return $path;
 			break;
 
 		default:
-			trigger_error( "Could not resolve object path ${object}", E_USER_ERROR );
+			$path = str_replace( '.', '/', $object );
+			$path_parts = explode( '/', $path );
+
+			// Pull out class name
+			$cname = $path_parts[ count( $path_parts ) - 1 ];
+
+			// Remove class name
+			unset( $path_parts[ count( $path_parts ) - 1 ] );
+
+			$pname = join( '/', $path_parts );
+
+			if (file_exists("${base_path}/lib/${pname}/class.${cname}.php")) {
+				$cpath = "${base_path}/lib/${pname}/class.${cname}.php";
+			} else {
+				$cpath = "${base_path}/lib/${pname}/${cname}.class.php";
+			}
+			if (!file_exists("${base_path}/lib/${pname}/.namespace")) {
+				trigger_error("Object ${object} not valid.", E_USER_ERROR);
+			}
+
+			if (!file_exists($cpath)) {
+				trigger_error( "Could not resolve object path ${object}", E_USER_ERROR );
+			}
+
+			return $cpath;
 			break;
 	}
 } // end function ResolveObjectPath

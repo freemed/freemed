@@ -144,7 +144,7 @@ class HL7v3_CDA {
 	// Method: GeneratePastMedicalHistoryComponent
 	protected function GeneratePastMedicalHistoryComponent ( ) {
 		// Get entire list from patient history
-		$allDx = $GLOBALS['sql']->query( "SELECT * FROM icd9 WHERE id IN ( SELECT procdiag1 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." UNION SELECT procdiag2 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." UNION SELECT procdiag3 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." UNION SELECT procdiag4 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." )" );
+		$allDx = $GLOBALS['sql']->queryAll( "SELECT * FROM icd9 WHERE id IN ( SELECT procdiag1 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." UNION SELECT procdiag2 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." UNION SELECT procdiag3 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." UNION SELECT procdiag4 FROM procrec WHERE procpatient=".$GLOBALS['sql']->quote( $this->patient )." )" );
 		if ( !count($allDx) ) { return ''; }
 
 		$buffer .= '<pastMedicalHistoryComponent>' . $this->EOL;
