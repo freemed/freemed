@@ -25,7 +25,7 @@
 
 prefix=/usr
 INSTDIR=$(DESTDIR)$(prefix)/share/freemed
-SUBDIR=data doc lib locale modules scripts ui
+SUBDIR=data doc lib locale scripts ui
 
 all:
 	# Nothing to do
