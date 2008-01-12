@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
  // $Id$
  //
@@ -23,11 +24,11 @@
 
 include_once ( dirname(__FILE__).'/bootstrap.test.php' );
 
-t('org.freemedsoftware.module.patienttag.CreateTag', CallMethod('org.freemedsoftware.module.patienttag.CreateTag', 1, 'test' ));
-t('org.freemedsoftware.module.patienttag.CreateTag', CallMethod('org.freemedsoftware.module.patienttag.CreateTag', 1, 'also' ));
-t('org.freemedsoftware.module.patienttag.SimpleTagSearch', CallMethod('org.freemedsoftware.module.patienttag.SimpleTagSearch', 'test' ));
-t('org.freemedsoftware.module.patienttag.AdvancedTagSearch', CallMethod('org.freemedsoftware.module.patienttag.AdvancedTagSearch', 'test', array ( array ( 'tag' => 'also', 'operator' => 'AND' ) ) ));
-t('org.freemedsoftware.module.patienttag.ExpireTag', CallMethod('org.freemedsoftware.module.patienttag.ExpireTag', 1, 'test' ));
-t('org.freemedsoftware.module.patienttag.ExpireTag', CallMethod('org.freemedsoftware.module.patienttag.ExpireTag', 1, 'also' ));
+t('org.freemedsoftware.module.PatientTag.CreateTag', CallMethod('org.freemedsoftware.module.PatientTag.CreateTag', 1, 'test' ));
+t('org.freemedsoftware.module.PatientTag.CreateTag', CallMethod('org.freemedsoftware.module.PatientTag.CreateTag', 1, 'also' ));
+t('org.freemedsoftware.module.PatientTag.SimpleTagSearch', CallMethod('org.freemedsoftware.module.PatientTag.SimpleTagSearch', 'test' ));
+t('org.freemedsoftware.module.PatientTag.AdvancedTagSearch', CallMethod('org.freemedsoftware.module.PatientTag.AdvancedTagSearch', 'test', array ( array ( 'tag' => 'also', 'operator' => 'AND' ) ) ));
+t('org.freemedsoftware.module.PatientTag.ExpireTag', CallMethod('org.freemedsoftware.module.PatientTag.ExpireTag', 1, 'test' ));
+t('org.freemedsoftware.module.PatientTag.ExpireTag', CallMethod('org.freemedsoftware.module.PatientTag.ExpireTag', 1, 'also' ));
 
 ?>

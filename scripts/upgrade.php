@@ -70,6 +70,7 @@ execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_I
 printHeader( "Include aggregation table definition" );
 loadSchema( 'patient' );
 loadSchema( 'patient_emr' );
+loadSchema( 'patienttag' );
 
 printHeader( "Load admin table definitions" );
 loadSchema( 'modules' );
@@ -113,7 +114,7 @@ execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/sto
 
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
-include_once( dirname(__FILE__).'/../modules/acl.module.php' );
+include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/class.ACL.php' );
 $a = new ACL();
 $q = "SELECT username, id FROM user WHERE id > 0";
 $r = $GLOBALS['sql']->queryAll( $q );
