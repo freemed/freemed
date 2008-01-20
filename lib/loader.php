@@ -180,7 +180,7 @@ function LoadObjectDependency ( $dependency ) {
 //
 function ResolveClassName ( $object ) {
 	$parts = explode( '.', $object );
-	return $parts[3];
+	return $parts[count($parts) - 2];
 } // end function ResolveClassName
 
 // Function: ResolveMethodName
@@ -197,7 +197,7 @@ function ResolveClassName ( $object ) {
 //
 function ResolveMethodName ( $object ) {
 	$parts = explode( '.', $object );
-	return $parts[4];
+	return $parts[count($parts) - 1];
 } // end function ResolveMethodName
 
 // Function: ResolveObjectPath
