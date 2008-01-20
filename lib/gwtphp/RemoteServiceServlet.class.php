@@ -162,6 +162,9 @@ class RemoteServiceServlet implements SerializationPolicyProvider  {
         try {
             $this->logger->debug('Processing Call start',$this);
             $rpcRequest = RPC::decodeRequest($payload,$this->getMappedClassLoader(),$this);
+            //FOCUS: this method is used only in PHP implementation of GWT RemoteServiceServlet
+            onAfterRequestDecoded($rpcRequest);
+            
             return RPC::invokeAndEncodeResponse(null,$rpcRequest->getMethod(), $rpcRequest->getParameters(), $rpcRequest->getSerializationPolicy(),$rpcRequest->getMappedClassLoader());
         } catch (IncompatibleRemoteServiceException $ex) {
             $this->logger->log(LoggerLevel::getLevelError(),
@@ -186,6 +189,16 @@ class RemoteServiceServlet implements SerializationPolicyProvider  {
      */
     protected function onBeforeRequestDeserialized($serializedRequest) {
     }
+    
+    /**
+     * Override this method to examine the decoded request that will be
+     * processing by RemoteServiceServlet. The default implementation does nothing and need
+     * not be called by subclasses.
+     * FOCUS: this method is used only in PHP implementation of GWT RemoteServiceServlet
+     */
+    protected function onAfterRequestDecoded(RPCReqest $rpcRequest) {
+    }
+
 
     /**
      * Write the response payload to the response stream.
