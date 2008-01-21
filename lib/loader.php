@@ -50,8 +50,8 @@ function CallMethod ( $namespace ) {
 	unset ( $argv[0] ); // get rid of $namespace parameter
 
 	// Resolve object path properly
-	$path = ResolveObjectPath ( $namespace );
-	$class_name = ResolveClassName ( $namespace );
+	$path = ResolveObjectPath ( $namespace, true );
+	$class_name = ResolveClassName ( $namespace, true );
 	$method = ResolveMethodName ( $namespace );
 	if ( ! ereg ( '^[A-Za-z0-9_]+$', $method ) or empty ( $method ) ) {
 		trigger_error( "CallMethod: invalid method '${method}' given", E_USER_ERROR );
@@ -134,8 +134,8 @@ function CreateObject ( $namespace ) {
 	unset ( $argv[0] ); // get rid of $namespace parameter
 
 	// Resolve object path properly
-	$path = ResolveObjectPath ( $namespace );
-	$class_name = ResolveClassName ( $namespace );
+	$path = ResolveObjectPath ( $namespace, false );
+	$class_name = ResolveClassName ( $namespace, false );
 	//print "DEBUG: $path / $class_name<br/>";
 
 	if ( $argc < 1 ) {
@@ -162,7 +162,7 @@ function CreateObject ( $namespace ) {
 //	$dependency - Object path required.
 //
 function LoadObjectDependency ( $dependency ) {
-	$path = ResolveObjectPath ( $dependency );
+	$path = ResolveObjectPath ( $dependency, false );
 	if ( file_exists ( $path ) ) { include_once ( $path ); }
 } // end function LoadObjectDependency
 
@@ -174,13 +174,16 @@ function LoadObjectDependency ( $dependency ) {
 //
 //	$object - Object namespace
 //
+//	$methodResolution - (optional) Boolean, resolve method instead of
+//	class. Defaults to false.
+//
 // Returns:
 //
 //	Name of the class that requires instantiation.
 //
-function ResolveClassName ( $object ) {
+function ResolveClassName ( $object, $methodResolution = false ) {
 	$parts = explode( '.', $object );
-	return $parts[count($parts) - 2];
+	return $parts[count($parts) - ( $methodResolution ? 2 : 1)];
 } // end function ResolveClassName
 
 // Function: ResolveMethodName
@@ -208,11 +211,14 @@ function ResolveMethodName ( $object ) {
 //
 //	$object - Object namespace
 //
+//	$methodResolution - (optional) Boolean, resolve method instead of
+//	class. Defaults to false.
+//
 // Returns:
 //
 //	Path to PHP class file.
 //	
-function ResolveObjectPath ( $object ) {
+function ResolveObjectPath ( $object, $methodResolution = false ) {
 	$base_path = dirname( dirname( __FILE__ ) );
 	switch (true) {
 		case substr( $object, 0, 27 ) == 'org.freemedsoftware.module.':
@@ -239,10 +245,13 @@ function ResolveObjectPath ( $object ) {
 			$path_parts = explode( '/', $path );
 
 			// Pull out class name
-			$cname = $path_parts[ count( $path_parts ) - 1 ];
-
+			$cname = $path_parts[ count( $path_parts ) - ( $methodResolution ? 2 : 1 ) ];
 			// Remove class name
-			unset( $path_parts[ count( $path_parts ) - 1 ] );
+			$path_pos = count( $path_parts ) - ( $methodResolution ? 2 : 1 );
+			unset( $path_parts[ $path_pos ] );
+			if ( $methodResolution ) {
+				unset( $path_parts[ $path_pos + 1 ] );
+			}
 
 			$pname = join( '/', $path_parts );
 
