@@ -21,12 +21,12 @@ Steady rule:
   Try to think about the set as a whole
 
 Billing/Claims/Statments Modules
--All related icons should have the "green screen" in the background.  All forground are all up to interpretation.
+-All related icons should have the dual "green screen" in the background.  All forground images are up to interpretation.
 
 Icons relating to patient chart, chart search, complete chart, complete health record, etc. . .
 Should have either "chart" or "chart_full" icon in background.
 
-Icons relating to provider, doctor, primary care, surgeon, professional healthcare practictioner should have "doc" or "doc_ALT" in background or part of the icon.
+Icons relating to provider, doctor, primary care, surgeon, professional healthcare practictioner should have "doc" icon in background or part of the icon.
 
 
 ____________________________________________________________________
