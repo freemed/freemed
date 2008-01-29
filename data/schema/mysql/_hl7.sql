@@ -54,11 +54,16 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLSTATE '22000' SET res = 1;
 
 	#	First, try basic patient_id resolution
-	SELECT id INTO res FROM patient WHERE ptid=patient_id;
+	SELECT id INTO res FROM patient WHERE ptid=patient_id AND ptlname=patient_lname;
 
 	IF res = 0 THEN
 		# Try again, this time with fname, mname, lname
-		SELECT id INTO res FROM patient WHERE TO_UPPER(ptlname)=TO_UPPER(patient_lname) AND TO_UPPER(ptfname)=TO_UPPER(patient_fname) AND TO_UPPER(ptmname)=TO_UPPER(patient_mname);
+		SELECT id INTO res FROM patient WHERE UPPER(ptlname)=UPPER(patient_lname) AND UPPER(ptfname)=UPPER(patient_fname) AND UPPER(ptmname)=UPPER(patient_mname);
+	END IF;
+
+	IF res = 0 THEN
+		# Try again, this time with fname, lname
+		SELECT id INTO res FROM patient WHERE UPPER(ptlname)=UPPER(patient_lname) AND UPPER(ptfname)=UPPER(patient_fname);
 	END IF;
 
 	SET pid = res;
