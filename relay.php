@@ -3,6 +3,7 @@
  //
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //     Alexandru Zbarcea <zbarcea.a@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2007 FreeMED Software Foundation
@@ -46,7 +47,7 @@ if (!ereg("^[[:alpha:]]+$", $_provider )) {
 	exit;
 }
 
-if ( !file_exists( dirname(__FILE__)."/lib/core/class.Relay_${_provider}.php" ) ) {
+if ( !file_exists( dirname(__FILE__)."/lib/org/freemedsoftware/core/class.Relay_${_provider}.php" ) ) {
 	print "Relay ${_provider} not present.";
 	exit;
 }

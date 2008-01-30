@@ -3,6 +3,7 @@
  //
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //      Alexandru Zbarcea <zbarcea.a@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2007 FreeMED Software Foundation
@@ -182,10 +183,10 @@ class Installation {
 	
 		// Create initial modules table	
 		syslog(LOG_INFO, "CreateDatabase(): modules table creation");
-		$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
 	        system ( $command );
 		syslog(LOG_INFO, "CreateDatabase(): user table creation");
-		$command = dirname(__FILE__).'/../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('user').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('user').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
 	        system ( $command );
 
 		// Check for SQL object
@@ -215,7 +216,7 @@ class Installation {
 	//	Boolean, indicator of success.
 	//
 	public function SetHealthyStatus ( ) {
-		$touched = touch ( dirname(dirname(dirname(__FILE__))) . '/data/cache/healthy' );
+		$touched = touch ( dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/data/cache/healthy' );
 		return $touched ? true : false;
 	} // end method SetHealthyStatus
 
