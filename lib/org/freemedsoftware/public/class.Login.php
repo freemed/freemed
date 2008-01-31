@@ -25,17 +25,47 @@ class Login {
 
 	public function __constructor () { }
 
+	// Method: LoggedIn
+	//
+	//	Gets present session status to determine if user has logged in.
+	//
+	// Returns:
+	//
+	//	Boolean.
+	//
 	public function LoggedIn ( ) {
 		if ( $_SESSION['authdata'] ) { return true; }
 		return false;
 	} // end method LoggedIn
 
+	// Method: Logout
+	//
+	//	Log out of the current session.
+	//
+	// Returns:
+	//
+	//	Success, boolean.
+	//
 	public function Logout ( ) {
 		unset ( $_SESSION['authdata'] );
 		unset ( $_SESSION['ipaddr'] );
 		return true;
 	} // end method Logout
 
+	// Method: Validate
+	//
+	//	Validate a new session with the provided credentials.
+	//
+	// Parameters:
+	//	
+	//	$username - Username
+	//
+	//	$password - Plain text password
+	//
+	// Returns:
+	//
+	//	Boolean, login status.
+	//
 	public function Validate ( $username, $password ) {
 		syslog (LOG_INFO, "username = ".$username);
 		//$username = $data['username'];
@@ -108,6 +138,8 @@ class Login {
 	//	True on success.
 	//
 	public function SessionPopulate ( ) {
+		if ( !$this->LoggedIn() ) { return false; }
+
 		$u = freemed::user_cache();
 
 		// Pull user options
