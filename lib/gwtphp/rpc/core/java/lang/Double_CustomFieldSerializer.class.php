@@ -25,7 +25,7 @@
 /**
  * @package gwtphp.rpc.core.java.lang
  */
-require_once(GWTPHP_DIR.'/maps/java/lang/Double.class.php');
+require_once(GWTPHP_DIR.'/../java/lang/Double.class.php');
 
 class Double_CustomFieldSerializer {
 

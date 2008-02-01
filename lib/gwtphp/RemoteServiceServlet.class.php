@@ -27,7 +27,7 @@
  */
 
 require_once(GWTPHP_DIR.'/rpc/RPC.class.php');
-require_once(GWTPHP_DIR.'/maps/com/google/gwt/user/client/rpc/SerializableException.class.php');
+require_once(GWTPHP_DIR.'/../com/google/gwt/user/client/rpc/SerializableException.class.php');
 require_once(GWTPHP_DIR.'/GWTPHPSerializable.class.php');
 
 require_once(GWTPHP_DIR.'/rpc/SerializationPolicyProvider.class.php');
@@ -163,7 +163,7 @@ class RemoteServiceServlet implements SerializationPolicyProvider  {
             $this->logger->debug('Processing Call start',$this);
             $rpcRequest = RPC::decodeRequest($payload,$this->getMappedClassLoader(),$this);
             //FOCUS: this method is used only in PHP implementation of GWT RemoteServiceServlet
-            onAfterRequestDecoded($rpcRequest);
+            $this->onAfterRequestDecoded($rpcRequest);
             
             return RPC::invokeAndEncodeResponse(null,$rpcRequest->getMethod(), $rpcRequest->getParameters(), $rpcRequest->getSerializationPolicy(),$rpcRequest->getMappedClassLoader());
         } catch (IncompatibleRemoteServiceException $ex) {
@@ -196,7 +196,7 @@ class RemoteServiceServlet implements SerializationPolicyProvider  {
      * not be called by subclasses.
      * FOCUS: this method is used only in PHP implementation of GWT RemoteServiceServlet
      */
-    protected function onAfterRequestDecoded(RPCReqest $rpcRequest) {
+    protected function onAfterRequestDecoded(RPCRequest $rpcRequest) {
     }
 
 

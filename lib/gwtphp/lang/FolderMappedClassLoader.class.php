@@ -260,7 +260,7 @@ class FolderMappedClassLoader extends AbstractMappedClassLoader {
 									} 
 //									else {
 //										class_exists('SerializableException') 
-//										|| require(GWTPHP_DIR.'/maps/com/google/gwt/user/client/rpc/SerializableException.class.php');
+//										|| require(GWTPHP_DIR.'/../com/google/gwt/user/client/rpc/SerializableException.class.php');
 //										throw new SerializableException("Did not found serialization signature for : "
 //										.$_exception->getName()." in class map file (".$_exception->getName()
 //										.".gwtphpmap.inc.php). Did you forget to put 'typeCRC' value in array map?.");

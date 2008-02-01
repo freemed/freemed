@@ -25,7 +25,7 @@
 /**
  * @package gwtphp.rpc.core.java.lang
  */
-require_once(GWTPHP_DIR.'/maps/java/lang/Integer.class.php');
+require_once(GWTPHP_DIR.'/../java/lang/Integer.class.php');
 
 class Integer_CustomFieldSerializer {
 	public static function deserialize(SerializationStreamReader $streamReader,

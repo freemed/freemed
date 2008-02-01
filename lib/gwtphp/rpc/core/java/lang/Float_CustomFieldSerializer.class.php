@@ -25,7 +25,7 @@
 /**
  * @package gwtphp.rpc.core.java.lang
  */
-require_once(GWTPHP_DIR.'/maps/java/lang/Float.class.php');
+require_once(GWTPHP_DIR.'/../java/lang/Float.class.php');
 
 class Float_CustomFieldSerializer {
 

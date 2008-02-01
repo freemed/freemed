@@ -146,7 +146,7 @@ class RPC {
                     //	                  + "', which doesn't extend RemoteService; this is either misconfiguration or a hack attempt");
                     //	        }
                 } catch (ClassNotFoundException $e) {
-                    class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/maps/com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
+                    class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/../com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
                     throw new IncompatibleRemoteServiceException(
 		            "Could not locate requested interface '" + $serviceIntfName
                     + "' in default classloader", $e);
@@ -170,7 +170,7 @@ class RPC {
                         $parameterTypes[$i] =  RPC::getClassFromSerializedName($paramClassName,
                         $mappedClassLoader);
                     } catch (ClassNotFoundException $e) {
-                        class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/maps/com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
+                        class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/../com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
                         throw new IncompatibleRemoteServiceException("Parameter " + $i
                         + " of is of an unknown type '" + $paramClassName + "'", $e);
                     }
@@ -183,7 +183,7 @@ class RPC {
                 $parameterTypes, true);
                 	
                 if ($mappedMethod == null) {
-                    class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/maps/com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
+                    class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/../com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
                     throw new IncompatibleRemoteServiceException(
                     RPC::formatMethodNotFoundErrorMessage($serviceIntf, $serviceMethodName,
                     $parameterTypes));
@@ -210,7 +210,7 @@ class RPC {
 
                 return new RPCRequest($mappedMethod,$parameterValues,$serializationPolicy,$mappedClassLoader);
         } catch (SerializationException $ex) {
-            class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/maps/com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
+            class_exists('IncompatibleRemoteServiceException') || require(GWTPHP_DIR.'/../com/google/gwt/user/client/rpc/IncompatibleRemoteServiceException.class.php');
             throw new IncompatibleRemoteServiceException($ex->getMessage(), $ex);
         }
 

@@ -25,7 +25,7 @@
 /**
  * @package gwtphp.rpc.core.java.lang
  */
-require_once(GWTPHP_DIR.'/maps/java/lang/Long.class.php');
+require_once(GWTPHP_DIR.'/../java/lang/Long.class.php');
 
 class Long_CustomFieldSerializer {
 

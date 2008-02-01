@@ -26,7 +26,7 @@
  * @package gwtphp.rpc.core.java.util
  */
 
-require_once(GWTPHP_DIR.'/maps/java/util/ArrayList.class.php');
+require_once(GWTPHP_DIR.'/../java/util/ArrayList.class.php');
 require_once(GWTPHP_DIR.'/rpc/core/java/util/AbstractList_CustomFieldSerializer.class.php');
 
 final class ArrayList_CustomFieldSerializer extends AbstractList_CustomFieldSerializer {

@@ -26,7 +26,7 @@
  * @package gwtphp.rpc.core.java.util
  */
 
-require_once(GWTPHP_DIR.'/maps/java/util/HashMap.class.php');
+require_once(GWTPHP_DIR.'/../java/util/HashMap.class.php');
 
 final class HashMap_CustomFieldSerializer {
 

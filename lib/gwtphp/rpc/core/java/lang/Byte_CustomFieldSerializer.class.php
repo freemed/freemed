@@ -25,7 +25,7 @@
 /**
  * @package gwtphp.rpc.core.java.lang
  */
-require_once(GWTPHP_DIR.'/maps/java/lang/Byte.class.php');
+require_once(GWTPHP_DIR.'/../java/lang/Byte.class.php');
 
 class Byte_CustomFieldSerializer {
 
