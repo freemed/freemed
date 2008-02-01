@@ -24,11 +24,13 @@
 // Handle public methods for initialization
 include_once( dirname(__FILE__) . "/lib/freemed.php" );
 
+define( 'LOG4PHP_CONFIGURATION', dirname(__FILE__) . "/data/config/log4php.xml" );
+
 include_once( LOG4PHP_DIR . '/LoggerManager.php' );
 include_once( GWTPHP_DIR . '/RemoteServiceServlet.class.php' );
 
-GWTPHPContext::getInstance()->setServicesRootDir(ROOT_DIR.'/lib/maps/');
-GWTPHPContext::getInstance()->setGWTPHPRootDir( dirname(__FILE__) . "/lib/" );
+GWTPHPContext::getInstance()->setServicesRootDir( dirname(__FILE__) . '/lib/' );
+GWTPHPContext::getInstance()->setGWTPHPRootDir( dirname(__FILE__) . "/lib/gwtphp/" );
 
 $servlet = CreateObject( 'org.freemedsoftware.core.AuthenticatedRemoteServiceServlet' );
 $servlet->start();

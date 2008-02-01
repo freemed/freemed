@@ -90,7 +90,7 @@ class Login {
 	
 		// If the user isn't found, false
 		if (!$r['username']) {
-			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Could not find user '${username}'" );
+			//$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Could not find user '${username}'" );
 			syslog(LOG_INFO, "org.freemedsoftware.public.Validate: could not find user '${username}'");
 			return false;
 		}

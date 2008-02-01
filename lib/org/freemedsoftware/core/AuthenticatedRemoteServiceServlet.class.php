@@ -38,14 +38,14 @@ class AuthenticatedRemoteServiceServlet extends RemoteServiceServlet {
      * not be called by subclasses.
      * FOCUS: this method is used only in PHP implementation of GWT RemoteServiceServlet
      */
-    protected function onAfterRequestDecoded(RPCReqest $rpcRequest) {
-        if ( ! $this->checkAuthenticationPolicy( $rpcRequest->getMethod() ) ) {
+    public function onAfterRequestDecoded(RPCRequest $rpcRequest) {
+        if ( ! $this->checkAuthenticationPolicy( $rpcRequest->getMethod()->getDeclaringMappedClass()->getMappedName() ) ) {
             $ex = new AuthenticationException( );
             throw new AuthenticationException( );
         }
     }
 
-    protected function checkAuthenticationPolicy( string $methodName ) {
+    protected function checkAuthenticationPolicy( $methodName ) {
         // Return false if attempting to access core namespace
         if ( strpos( $methodName, 'org.freemedsoftware.core.' ) !== false ) {
             return false;
