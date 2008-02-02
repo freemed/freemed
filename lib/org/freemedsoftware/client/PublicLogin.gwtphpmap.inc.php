@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.public.Login'
+		  'className' => 'org.freemedsoftware.client.PublicLogin'
 		, 'mappedBy' => 'org.freemedsoftware.public.Login'
 		, 'methods' => array (
 			// Method: LoggedIn
@@ -112,7 +112,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'GetLocations'
 				, 'mappedName' => 'GetLocations'
-				, 'returnType' => '[[Ljava.lang.String'
+				, 'returnType' => '[[java.lang.String'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
@@ -129,7 +129,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'GetLanguages'
 				, 'mappedName' => 'GetLanguages'
-				, 'returnType' => '[[Ljava.lang.String'
+				, 'returnType' => '[[java.lang.String'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
