@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  $Id$
+
+  Authors:
+  	Jeff Buchbinder <jeff@freemedsoftware.org>
+
+  FreeMED Electronic Medical Record and Practice Management System
+  Copyright (C) 1999-2006 FreeMED Software Foundation
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-->
+<log4php:configuration xmlns:log4php="http://www.vxr.it/log4php/" threshold="all" debug="false">
+
+    <appender name="syslog" class="LoggerAppenderSyslog">
+        <param name="Facility" value="1" />
+    </appender>
+
+    <appender name="file" class="LoggerAppenderFile">
+        <param name="file" value="data/cache/log.html" />
+        <param name="append" value="false" />
+        <layout class="LoggerLayoutHtml">
+            <param name="locationInfo" value="true" />
+            <param name="title" value="FreeMED" />
+        </layout>       
+    </appender>
+    
+    <root>
+        <level value="debug" />      
+        <appender_ref ref="syslog" />
+    </root>
+
+</log4php:configuration>
