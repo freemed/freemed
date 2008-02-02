@@ -37,7 +37,7 @@ $gwtphpmap = array (
 			  array (
 				  'name' => 'LoggedIn'
 				, 'mappedName' => 'LoggedIn'
-				, 'returnType' => TypeSignatures::$BOOLEAN
+				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
@@ -53,7 +53,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'Logout'
 				, 'mappedName' => 'Logout'
-				, 'returnType' => TypeSignatures::$BOOLEAN
+				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
@@ -75,7 +75,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'Validate'
 				, 'mappedName' => 'Validate'
-				, 'returnType' => TypeSignatures::$BOOLEAN
+				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.String' )
@@ -95,7 +95,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'SessionPopulate'
 				, 'mappedName' => 'SessionPopulate'
-				, 'returnType' => TypeSignatures::$BOOLEAN
+				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
