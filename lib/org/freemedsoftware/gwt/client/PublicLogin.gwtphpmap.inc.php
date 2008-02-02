@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.client.PublicLogin'
+		  'className' => 'org.freemedsoftware.gwt.client.PublicLogin'
 		, 'mappedBy' => 'org.freemedsoftware.public.Login'
 		, 'methods' => array (
 			// Method: LoggedIn

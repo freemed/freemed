@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.client.PublicProtocol'
+		  'className' => 'org.freemedsoftware.gwt.client.PublicProtocol'
 		, 'mappedBy' => 'org.freemedsoftware.public.Protocol'
 		, 'methods' => array (
 
