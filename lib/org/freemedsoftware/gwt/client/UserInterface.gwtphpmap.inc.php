@@ -87,7 +87,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'SetConfigValue'
 				, 'mappedName' => 'SetConfigValue'
-				, 'returnType' => ''
+				, 'returnType' => TypeSignatures::$VOID
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.String' )
