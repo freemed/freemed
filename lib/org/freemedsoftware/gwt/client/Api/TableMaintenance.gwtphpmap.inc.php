@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.gwt.client.ApiTableMaintenance'
+		  'className' => 'org.freemedsoftware.gwt.client.Api.TableMaintenance'
 		, 'mappedBy' => 'org.freemedsoftware.api.TableMaintenance'
 		, 'methods' => array (
 

@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.gwt.client.ApiScheduler'
+		  'className' => 'org.freemedsoftware.gwt.client.Api.Scheduler'
 		, 'mappedBy' => 'org.freemedsoftware.api.Scheduler'
 		, 'methods' => array (
 

@@ -23,26 +23,23 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.gwt.client.ApiTickler'
-		, 'mappedBy' => 'org.freemedsoftware.api.Tickler'
+		  'className' => 'org.freemedsoftware.gwt.client.Public.Protocol'
+		, 'mappedBy' => 'org.freemedsoftware.public.Protocol'
 		, 'methods' => array (
 
-			// Method: Call
+			// Method: Version
 			//
-			//	Call all available tickler functions
+			//	Gets present protocol version
 			//
-			// Parameters:
+			// Returns:
 			//
-			//	$params - (optional) Array of parameters to be passed to
-			//	all ticklers. Defaults to NULL.
+			//	Integer.
 			//
-			array (
-				  'name' => 'Call'
-				, 'mappedName' => 'Call'
-				, 'returnType' => 'java.lang.String'
-				, 'params' => array (
-					array ( 'type' => '[java.lang.String' )
-				)
+			  array (
+				  'name' => 'Version'
+				, 'mappedName' => 'Version'
+				, 'returnType' => 'java.lang.Integer'
+				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
 

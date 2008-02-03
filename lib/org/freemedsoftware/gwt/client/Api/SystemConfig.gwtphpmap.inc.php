@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.gwt.client.ApiSystemConfig'
+		  'className' => 'org.freemedsoftware.gwt.client.Api.SystemConfig'
 		, 'mappedBy' => 'org.freemedsoftware.api.SystemConfig'
 		, 'methods' => array (
 
