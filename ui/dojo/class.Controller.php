@@ -42,7 +42,7 @@ class Controller {
 
 		// Load smarty engine
 		unset ( $smarty );
-		include_once(dirname(__FILE__).'/../../lib/smarty/Smarty.class.php');
+		include_once(dirname(__FILE__).'/../../lib/net/php/smarty/Smarty.class.php');
 		$this->smarty = new Smarty;
 
 		// Override Smarty defaults for FreeMED
