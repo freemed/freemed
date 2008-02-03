@@ -48,7 +48,7 @@ import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class FreemedLoginTest implements EntryPoint {
+public class FreemedInterface implements EntryPoint {
 
   /**
    * This is the entry point method.
