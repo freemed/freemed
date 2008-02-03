@@ -398,3 +398,5 @@ class PatientInterface {
 	} // end public function ToText
 
 } // end class PatientInterface
+
+?>

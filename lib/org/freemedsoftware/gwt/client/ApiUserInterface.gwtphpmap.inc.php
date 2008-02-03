@@ -23,7 +23,7 @@
 
 $gwtphpmap = array (
 	array (
-		  'className' => 'org.freemedsoftware.gwt.client.UserInterface'
+		  'className' => 'org.freemedsoftware.gwt.client.ApiUserInterface'
 		, 'mappedBy' => 'org.freemedsoftware.api.UserInterface'
 		, 'methods' => array (
 
@@ -129,6 +129,15 @@ $gwtphpmap = array (
 			//
 			//	Array of hashes.
 			//
+			, array (
+				  'name' => 'GetRecord'
+				, 'mappedName' => 'GetRecord'
+				, 'returnType' => '[java.util.HashMap'
+				, 'params' => array (
+					array ( 'type' => 'java.lang.Integer' )
+				)
+				, 'throws' => array ( )
+			)
 
 			// Method: add
 			//
@@ -146,6 +155,15 @@ $gwtphpmap = array (
 			//	specified, _add will return the id number if successful
 			//	or false if unsuccessful.
 			//
+			, array (
+				  'name' => 'GetRecord'
+				, 'mappedName' => 'GetRecord'
+				, 'returnType' => 'java.lang.Integer'
+				, 'params' => array (
+					array ( 'type' => 'java.util.HashMap' )
+				)
+				, 'throws' => array ( )
+			)
 
 			// Method: del
 			//
@@ -161,6 +179,16 @@ $gwtphpmap = array (
 			//	Nothing if there are no parameters. If $_param is
 			//	specified, _del will return boolean true or false
 			//	depending on whether it is successful.
+			//
+			, array (
+				  'name' => 'del'
+				, 'mappedName' => 'del'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					array ( 'type' => 'java.lang.Integer' )
+				)
+				, 'throws' => array ( )
+			)
 
 			// Method: mod
 			//
@@ -170,6 +198,16 @@ $gwtphpmap = array (
 			//
 			//	$data - Hash of data to pass.
 			//
+			, array (
+				  'name' => 'mod'
+				, 'mappedName' => 'mod'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					array ( 'type' => 'java.util.HashMap' )
+				)
+				, 'throws' => array ( )
+			)
+
 		)
 	)
 );
