@@ -51,7 +51,18 @@ class AuthenticatedRemoteServiceServlet extends RemoteServiceServlet {
             return false;
         }
 
-        // FIXME: Check authentication here
+	// Always allow public methods
+        if ( strpos( $methodName, 'org.freemedsoftware.gwt.client.Public' ) !== false ) {
+            return true;
+        }
+        if ( strpos( $methodName, 'org.freemedsoftware.public.' ) !== false ) {
+            return true;
+        }
+
+        // Check authentication
+	if ( CallMethod( 'org.freemedsoftware.public.Login.LoggedIn' ) == false ) {
+            return false;
+        }
 
         // Default to returning "true"
         return true;
