@@ -1,3 +1,4 @@
+#!/bin/bash
 # $Id$
 #
 # Authors:
@@ -20,19 +21,25 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-THISDIR=ui
+GWTSEARCH=(
+	/usr/lib/gwt
+	~/gwt
+	~/code/gwt
+	$APPDIR
+	$GWTPATH
+)
 
-all:
-	make -C gwt
+GWTDIR=""
+for SEARCH in ${GWTSEARCH[@]}; do
+	if [ -f ${SEARCH}/gwt-user.jar ]; then
+		GWTDIR="$SEARCH"
+	fi
+done
 
-install:
-	mkdir -p $(INSTDIR)/$(THISDIR)
-	make -C gwt install
-	cp -rvf dojo $(INSTDIR)/$(THISDIR)
+if [ "$GWTDIR" == "" ]; then
+	echo "GWT could not be found in any path. Try setting GWTPATH env variable!"
+	exit 1
+fi
 
-clean:
-	make -C gwt clean
+export GWTDIR
 
-dist-clean:
-	make -C gwt dist-clean
-	

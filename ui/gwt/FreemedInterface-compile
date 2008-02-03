@@ -1,3 +1,4 @@
+#!/bin/sh
 # $Id$
 #
 # Authors:
@@ -20,19 +21,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-THISDIR=ui
+APPDIR=`dirname $0`;
+java  -cp "$APPDIR/src:$APPDIR/bin:/usr/lib/gwt/gwt-user.jar:/usr/lib/gwt/gwt-dev-linux.jar" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
 
-all:
-	make -C gwt
-
-install:
-	mkdir -p $(INSTDIR)/$(THISDIR)
-	make -C gwt install
-	cp -rvf dojo $(INSTDIR)/$(THISDIR)
-
-clean:
-	make -C gwt clean
-
-dist-clean:
-	make -C gwt dist-clean
-	

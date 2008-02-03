@@ -20,19 +20,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-THISDIR=ui
+THISDIR=ui/gwt
 
-all:
-	make -C gwt
+all: www
 
-install:
+www:
+	./FreemedInterface-compile
+
+install: www
 	mkdir -p $(INSTDIR)/$(THISDIR)
-	make -C gwt install
-	cp -rvf dojo $(INSTDIR)/$(THISDIR)
+	cp -rvf www $(INSTDIR)/$(THISDIR)
 
 clean:
-	make -C gwt clean
+	rm -rf www
 
-dist-clean:
-	make -C gwt dist-clean
+dist-clean: clean
+	rm -rf .gwt-cache
 	
