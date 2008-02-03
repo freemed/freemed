@@ -42,8 +42,7 @@ class Controller {
 
 		// Load smarty engine
 		unset ( $smarty );
-		include_once(dirname(__FILE__).'/../../lib/net/php/smarty/Smarty.class.php');
-		$this->smarty = new Smarty;
+		$this->smarty = CreateObject( 'net.php.smarty.Smarty' );
 
 		// Override Smarty defaults for FreeMED
 		$this->smarty->template_dir = dirname(__FILE__)."/view/";

@@ -47,7 +47,7 @@ if (!ereg("^[[:alpha:]]+$", $_provider )) {
 	exit;
 }
 
-if ( !file_exists( dirname(__FILE__)."/lib/org/freemedsoftware/core/class.Relay_${_provider}.php" ) ) {
+if ( !file_exists( dirname(__FILE__)."/lib/org/freemedsoftware/core/Relay_${_provider}.class.php" ) ) {
 	print "Relay ${_provider} not present.";
 	exit;
 }

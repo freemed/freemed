@@ -34,8 +34,7 @@ include_once ("lib/i18n.php");
 
 // Load smarty engine
 unset ( $smarty );
-include_once(dirname(__FILE__).'/lib/smarty/Smarty.class.php');
-$smarty = new Smarty;
+$smarty = CreateObject( 'net.php.smarty.Smarty' );
 
 // Override Smarty defaults for FreeMED
 $smarty->template_dir = dirname(__FILE__)."/ui/${ui}/view/";
