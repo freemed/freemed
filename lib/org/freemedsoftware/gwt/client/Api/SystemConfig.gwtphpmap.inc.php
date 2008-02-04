@@ -73,8 +73,8 @@ $gwtphpmap = array (
 			//	Array of configuration sections.
 			//
 			, array (
-				  'name' => 'SetConfigSections'
-				, 'mappedName' => 'SetConfigSections'
+				  'name' => 'GetConfigSections'
+				, 'mappedName' => 'GetConfigSections'
 				, 'returnType' => '[java.lang.String'
 				, 'params' => array ( )
 				, 'throws' => array ( )

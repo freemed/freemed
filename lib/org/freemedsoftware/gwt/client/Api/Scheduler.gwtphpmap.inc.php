@@ -56,7 +56,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'GetDailyAppointments'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.lang.Date' )
+					  array ( 'type' => 'java.util.Date' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -94,8 +94,8 @@ $gwtphpmap = array (
 				, 'mappedName' => 'GetDailyAppointmentsRange'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.lang.Date' )
-					, array ( 'type' => 'java.lang.Date' )
+					  array ( 'type' => 'java.util.Date' )
+					, array ( 'type' => 'java.util.Date' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -134,7 +134,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'GetDailyAppointmentScheduler'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.lang.Date' )
+					  array ( 'type' => 'java.util.Date' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -161,7 +161,7 @@ $gwtphpmap = array (
 				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
-					, array ( 'type' => 'java.lang.Date' )
+					, array ( 'type' => 'java.util.Date' )
 				)
 				, 'throws' => array ( )
 			)
@@ -184,7 +184,7 @@ $gwtphpmap = array (
 				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
-					, array ( 'type' => 'java.lang.Date' )
+					, array ( 'type' => 'java.util.Date' )
 				)
 				, 'throws' => array ( )
 			)
@@ -210,7 +210,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'FindDateAppointments'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.lang.Date' )
+					  array ( 'type' => 'java.util.Date' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )

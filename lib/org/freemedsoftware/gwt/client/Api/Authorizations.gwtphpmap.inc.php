@@ -140,8 +140,10 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'Valid'
 				, 'mappedName' => 'Valid'
-				, 'returnType' => ''
+				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
+					  array ( 'type' => 'java.lang.Integer' )
+					, array ( 'type' => 'java.lang.Date' )
 				)
 				, 'throws' => array ( )
 			)
