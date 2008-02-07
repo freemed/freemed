@@ -3,6 +3,7 @@
  //
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //     Horea Teodoru <teodoruh@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2008 FreeMED Software Foundation
@@ -86,14 +87,20 @@ class InsuranceCompanyModule extends SupportModule {
 		$inscodtadd = date('Y-m-d');
 		$inscodtmod = date('Y-m-d');
 		$data['inscoidmap'] = serialize($data['inscoidmap']);
+		if ( $data['inscocsz'] ) {
+			list( $data['inscocity'], $data['inscostate'], $data['inscozip'] ) = $this->SplitCSZ( $data['inscocsz'] );
+		}
 	}
 
 	protected function mod_pre ( &$data ) {
 		unset ( $data['inscodtadd'] ); // no add date
 		$inscodtmod = date('Y-m-d');
 		$data['inscoidmap'] = serialize($data['inscoidmap']);
+		if ( $data['inscocsz'] ) {
+			list( $data['inscocity'], $data['inscostate'], $data['inscozip'] ) = $this->SplitCSZ( $data['inscocsz'] );
+		}
 	}
-
+	
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
 
