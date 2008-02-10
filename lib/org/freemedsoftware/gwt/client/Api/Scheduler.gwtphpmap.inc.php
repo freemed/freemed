@@ -56,7 +56,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'GetDailyAppointments'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.util.Date' )
+					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -90,12 +90,12 @@ $gwtphpmap = array (
 			//	* resource_type ( pat, temp )
 			//
 			, array (
-				  'name' => 'GetDailyAppointmentsRange'
-				, 'mappedName' => 'GetDailyAppointmentsRange'
+				  'name' => 'GetDailyAppointmentRange'
+				, 'mappedName' => 'GetDailyAppointmentRange'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.util.Date' )
-					, array ( 'type' => 'java.util.Date' )
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -134,7 +134,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'GetDailyAppointmentScheduler'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.util.Date' )
+					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -155,13 +155,16 @@ $gwtphpmap = array (
 			//
 			//	Boolean, whether successful
 			//
+			// See Also:
+			//	<CopyGroupAppointment>
+			//
 			, array (
 				  'name' => 'CopyAppointment'
 				, 'mappedName' => 'CopyAppointment'
 				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
-					, array ( 'type' => 'java.util.Date' )
+					, array ( 'type' => 'java.lang.String' )
 				)
 				, 'throws' => array ( )
 			)
@@ -178,13 +181,16 @@ $gwtphpmap = array (
 			//
 			//	Boolean, whether successful
 			//
+			// See Also:
+			//	<CopyAppointment>
+			//
 			, array (
 				  'name' => 'CopyGroupAppointment'
 				, 'mappedName' => 'CopyGroupAppointment'
 				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
-					, array ( 'type' => 'java.util.Date' )
+					, array ( 'type' => 'java.lang.String' )
 				)
 				, 'throws' => array ( )
 			)
@@ -210,7 +216,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'FindDateAppointments'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					  array ( 'type' => 'java.util.Date' )
+					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
@@ -234,7 +240,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'FindGroupAppointments'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					array ( 'type' => 'java.lang.Integer' )
+					  array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
 			)
@@ -256,7 +262,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'GetAppointment'
 				, 'returnType' => 'java.util.HashMap'
 				, 'params' => array (
-					array ( 'type' => 'java.lang.Integer' )
+					  array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
 			)
@@ -318,7 +324,7 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
-			// Method: NextAvailable
+			// Method: next_available
 			//
 			//	Get next available slot with appropriate parameters.
 			//
@@ -369,7 +375,7 @@ $gwtphpmap = array (
 				, 'mappedName' => 'SetAppointment'
 				, 'returnType' => 'java.lang.Integer'
 				, 'params' => array (
-					array ( 'type' => 'java.util.HashMap' )
+					  array ( 'type' => 'java.util.HashMap' )
 				)
 				, 'throws' => array ( )
 			)
@@ -393,12 +399,13 @@ $gwtphpmap = array (
 				, 'mappedName' => 'SetGroupAppointment'
 				, 'returnType' => 'java.lang.Integer'
 				, 'params' => array (
-					array ( 'type' => 'java.util.HashMap' )
+					  array ( 'type' => '[java.lang.Integer' )
+					, array ( 'type' => 'java.util.HashMap' )
 				)
 				, 'throws' => array ( )
 			)
 
-			// Method: SetRecurringAppointment
+			// Method: set_recurring_appointment
 			//
 			//	Given an appointment (by its id) and a set of dates,
 			//	replicate the appointment exactly on given dates. All
@@ -420,15 +427,37 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'SetRecurringAppointment'
 				, 'mappedName' => 'set_recurring_appointment'
-				, 'returnType' => 'java.lang.Boolean'
-				, 'params' => array (
+				, 'returnType' => TypeSignatures::$VOID
+				, 'params' => array ( 
 					  array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => '[java.lang.Integer' )
 					, array ( 'type' => 'java.lang.String' )
 				)
 				, 'throws' => array ( )
 			)
-	
+
+			// Method: ImportDate
+			//
+			//	Import date to internal FreeMED format.
+			//
+			// Parameters:
+			//
+			//	$input - Input date.
+			//
+			// Returns:
+			//
+			//	YYYY-MM-DD formatted date
+			//
+			, array (
+				  'name' => 'ImportDate'
+				, 'mappedName' => 'ImportDate'
+				, 'returnType' => 'java.lang.String'
+				, 'params' => array (
+					array ( 'type' => 'java.lang.String' )
+				)
+				, 'throws' => array ( )
+			)
+
 		)
 	)
 );

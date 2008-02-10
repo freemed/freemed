@@ -49,7 +49,7 @@ class Messages {
 		if ($r['id']) {
 			// Check for appropriate access (correct user)
 			if ($r['msgfor'] != $this_user->user_number) {
-				return false;
+				return array ( );
 			}
 			
 			return array (
@@ -64,7 +64,7 @@ class Messages {
 				'id'         => $r['id']
 			);
 		} else {
-			return false;
+			return array ( );
 		}
 	} // end method get
 
