@@ -24,11 +24,13 @@
 
 package org.freemedsoftware.gwt.client.Module;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.RemoteService;
+import java.util.HashMap;
 
-public interface MultumDrugLexiconAsync {
-	public void DosagesForDrug ( String drugId, String drugLabel, AsyncCallback callback );
-	public void DrugDosageToText ( String id, AsyncCallback callback );
-	public void Picklist ( String criteria, AsyncCallback callback );
+public interface MessagesModule extends RemoteService {  
+	public HashMap[] GetAllByTag ( String searchTag, Boolean getAllMessages );
+	public String[][] MessageTags ( );
+	public Integer UnreadMessages ( Integer timestamp, Boolean showAllMessages );
+	public Boolean DeleteMultiple ( Integer[] messageIds );
 }
 

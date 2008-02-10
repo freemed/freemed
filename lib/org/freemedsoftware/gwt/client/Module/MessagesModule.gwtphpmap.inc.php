@@ -83,9 +83,9 @@ $gwtphpmap = array (
 			//	Number of unread messages for the current user
 			//
 			, array (
-				  'name' => 'GetAllByTag'
-				, 'mappedName' => 'GetAllByTag'
-				, 'returnType' => '[[java.lang.String'
+				  'name' => 'UnreadMessages'
+				, 'mappedName' => 'UnreadMessages'
+				, 'returnType' => 'java.lang.Integer'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => 'java.lang.Boolean' )

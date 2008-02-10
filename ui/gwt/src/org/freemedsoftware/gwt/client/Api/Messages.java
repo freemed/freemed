@@ -22,13 +22,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client.Module;
+package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.RemoteService;
+import java.util.HashMap;
 
-public interface MultumDrugLexiconAsync {
-	public void DosagesForDrug ( String drugId, String drugLabel, AsyncCallback callback );
-	public void DrugDosageToText ( String id, AsyncCallback callback );
-	public void Picklist ( String criteria, AsyncCallback callback );
+public interface Messages extends RemoteService {  
+	public HashMap Get ( Integer message );
+	public String RecipientsToText ( String id );
+	public Boolean Remove ( Integer messageId );
+	public HashMap[] ListOfUsers ( );
+	public Boolean Send ( HashMap message );
+	public Boolean TagModify ( Integer message, String tag );
+	public HashMap[] ViewPerPatient ( Integer patientId, Boolean unreadOnly );
+	public HashMap[] ViewPerUser ( Boolean unreadOnly );
 }
 

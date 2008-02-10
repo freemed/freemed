@@ -28,8 +28,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
 public interface MultumDrugLexicon extends RemoteService {  
-	String[][] DosagesForDrug ( String drugId, String drugLabel );
-	String DrugDosageToText ( String id );
-	HashMap Picklist ( String criteria );
+	public String[][] DosagesForDrug ( String drugId, String drugLabel );
+	public String DrugDosageToText ( String id );
+	public HashMap Picklist ( String criteria );
 }
 

@@ -26,9 +26,10 @@ package org.freemedsoftware.gwt.client.Module;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface MultumDrugLexiconAsync {
-	public void DosagesForDrug ( String drugId, String drugLabel, AsyncCallback callback );
-	public void DrugDosageToText ( String id, AsyncCallback callback );
-	public void Picklist ( String criteria, AsyncCallback callback );
+public interface MessagesModuleAsync {
+	public void GetAllByTag ( String searchTag, Boolean getAllMessages, AsyncCallback callback );
+	public void MessageTags ( AsyncCallback callback );
+	public void UnreadMessages ( Integer timestamp, Boolean showAllMessages, AsyncCallback callback );
+	public void DeleteMultiple ( Integer[] messageIds, AsyncCallback callback );
 }
 
