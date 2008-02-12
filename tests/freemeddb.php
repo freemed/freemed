@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2006 FreeMED Software Foundation
+ // Copyright (C) 1999-2008 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -26,26 +26,7 @@ include_once ( dirname(__FILE__).'/bootstrap.test.php' );
 // t("resolve_module(systemreports)", resolve_module('systemreports'));
 
 $db = CreateObject('org.freemedsoftware.core.FreemedDb');
-t("db creation (is object)", is_object($db));
-t("sql->queryAll('select * from config')", $db->queryAll("select * from config"));
-t("sql->load_data", $db->load_data(array('col3' => 'loaded_data')));
-t("sql->insert_query", $db->insert_query (
-	'test',
-	array (
-		'col1' => 'something',
-		'col2' => array ( '1', '2', '3' ),
-		'col3'
-	)
-));
-t("sql->update_query", $db->update_query(
-	'test',
-	array (
-		'col1' => 'something',
-		'col2' => array ( '1', '2', '3' ),
-		'col3'
-	),
-	array ( 'id' => 3 )
-));
-t("sql->distinct_values(messages, msgby)", $db->distinct_values('messages', 'msgby'));
+$result = $db->queryAll("SELECT zygote FROM embryo");
+print_r( $result );
 
 ?>
