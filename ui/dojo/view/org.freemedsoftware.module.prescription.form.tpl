@@ -30,12 +30,10 @@
 <!--{/assign_block}-->
 
 <!--{assign_block var='validation'}-->
-	/*
-	if ( content.var.length < 2 ) {
-		m += "<!--{t|escape:'javascript'}-->You must enter a name.<!--{/t}-->\n";
+	if ( parseInt( content.rxphy ) < 1 ) {
+		m += "<!--{t|escape:'javascript'}-->You must select a provider.<!--{/t}-->\n";
 		r = false;
 	}
-	*/
 <!--{/assign_block}-->
 
 <!--{assign_block var='initialLoad'}-->
