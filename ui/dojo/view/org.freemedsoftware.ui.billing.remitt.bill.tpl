@@ -130,7 +130,8 @@
 			var id = this.id.replace( 'patient_check_', '' );
 			//alert ( 'OnPatientCheckbox ' + id );
 			if ( remitt.patientsEnabled[ id ] && remitt.expanded[ id ] ) {
-				document.getElementById( 'patient_inner_div_' + id.toString() ).style.display = 'none';
+				//document.getElementById( 'patient_inner_div_' + id.toString() ).style.display = 'none';
+				toggleDiv( 'patient_inner_div_' + id.toString() );
 				remitt.expanded[ id ] = false;
 			}
 			remitt.patientsEnabled[ id ] = ! remitt.patientsEnabled[ id ];
@@ -221,6 +222,7 @@
 					load: function ( type, data, evt ) {
 						if ( data.length ) {
 							var div = document.getElementById( 'patient_inner_div_' + remitt.currentId );
+							div.style.display = 'none';
 							div.style.backgroundColor = '#ffffff';
 							var table = document.createElement( 'table' );
 							var headerRow = document.createElement( 'tr' );
@@ -288,7 +290,8 @@
 			}
 
 			// Show hidden row of table
-			document.getElementById( 'patient_inner_div_' + id.toString() ).style.display = remitt.expanded[ id ] ? 'none' : 'block';
+			//document.getElementById( 'patient_inner_div_' + id.toString() ).style.display = remitt.expanded[ id ] ? 'none' : 'block';
+			toggleDiv( 'patient_inner_div_' + id.toString() );
 
 			// Reverse expanded status after everything else is done
 			remitt.expanded[ id ] = ! remitt.expanded[ id ];
