@@ -31,6 +31,7 @@ if ( file_exists ( dirname(__FILE__).'/data/cache/healthy' ) ) {
 
 // i18n routines
 include_once ("lib/i18n.php");
+include_once ("lib/loader.php");
 
 // Load smarty engine
 unset ( $smarty );
