@@ -32,7 +32,7 @@ define ('HOST', "<{$host|escape}>"); // host name for this system
 define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('SESSION_PROTECTION', true); // strong session protection?
 define ('RECORD_LOCK_TIMEOUT', 180); // record lock timeout in seconds
-define ('DEFAULT_LANGUAGE', "<if $language ne ''><{$language|escape}><else>en_US</if>"); // default language
+define ('DEFAULT_LANGUAGE', "<{if $language ne ''}><{$language|escape}><{else}>en_US<{/if}>"); // default language 
 define ('INIT_ADDR',"127.0.0.1"); // this is the only IP address that can run the init wizard...
 
 // Archive settings

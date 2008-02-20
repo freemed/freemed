@@ -710,9 +710,9 @@ class freemed {
 	function module_tables ( ) {
 		$cache = freemed::module_cache();
 		foreach ($cache AS $v) {
-			if ($t = $v['META_INFORMATION']['table_name']) {
+			if ($t = $v['module_table']) {
 				T_textdomain(strtolower($v['MODULE_CLASS']));
-				$r[__($v['MODULE_NAME'])] = $t;
+				$r[__($v['module_name'])] = $t;
 			}
 		}
 		ksort($r);

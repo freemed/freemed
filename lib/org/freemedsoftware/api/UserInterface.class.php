@@ -99,7 +99,7 @@ class UserInterface {
 		foreach ( $calls AS $k => $v ) {
 			$v = (array) $v;
 			if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) {
-				syslog( LOG_ERROR, "Invalid method called ${v['method']}" );
+				syslog( LOG_ERR, "Invalid method called ${v['method']}" );
 				return false;
 			}
 			if ( is_array( $v['parameters'] ) ) {

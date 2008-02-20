@@ -188,7 +188,7 @@ class DicomModule extends EMRModule {
 				return false;
 			}
 		}
-		syslog( LOG_ERROR, get_class($this)."::UploadDICOM| did not find 'file' in POST" );
+		syslog( LOG_ERR, get_class($this)."::UploadDICOM| did not find 'file' in POST" );
 		return false;
 	} // end method UploadDICOM
 

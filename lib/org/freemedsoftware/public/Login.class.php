@@ -73,14 +73,14 @@ class Login {
 
 		// Drop if no valid username
 		if (!$username) {
-			syslog(LOG_ERROR, "org.freemedsoftware.public.Validate: no valid username");
+			syslog(LOG_ERR, "org.freemedsoftware.public.Validate: no valid username");
 			return false;
 		}
 
 		if (! $GLOBALS['sql'] ) {
-			syslog(LOG_ERROR, "org.freemedsoftware.public.Validate: failed to instantiate SQL object");
+			syslog(LOG_ERR, "org.freemedsoftware.public.Validate: failed to instantiate SQL object");
 			if (! file_exists ( dirname(__FILE__).'/../../data/cache/healthy' ) ) {
-				syslog(LOG_ERROR, "org.freemedsoftware.public.Validate: healthy system status not confirmed");
+				syslog(LOG_ERR, "org.freemedsoftware.public.Validate: healthy system status not confirmed");
 			}
 			return false;
 		}

@@ -294,7 +294,7 @@
 
 
 <!--{if $patient_form eq 'tab'}-->
-<div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 30em;">
+<div dojoType="TabContainer" id="mainTabContainer" style="width: 100%; height: 25em;">
 	<div dojoType="ContentPane" id="patientDemographicsPane" label="<!--{t|escape:'javascript'}-->Demographics<!--{/t}-->">
 <!--{else}-->
 	<div style="height: 30em; overflow-y: scroll;">

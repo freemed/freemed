@@ -170,6 +170,11 @@
 		</div>
 		<!--{/if}-->
 
+		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.database', event);"> 
+			<img src="<!--{$htdocs}-->/images/teak/settings.32x32.png" height="32" width="32" border="0" /><br/> 
+			<!--{t}-->DB Administration<!--{/t}--> 
+		</div> 
+ 	
 		<div class="paddedIcon" align="center" onClick="freemedLoad('<!--{$controller}-->/org.freemedsoftware.ui.preferences', event);">
 			<img src="<!--{$htdocs}-->/images/teak/user_config.32x32.png" height="32" width="32" border="0" /><br/>
 			<!--{t}-->Preferences<!--{/t}-->

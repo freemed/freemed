@@ -100,7 +100,7 @@ class UnfiledDocuments extends SupportModule {
 					);
 					$GLOBALS['sql']->query( $query );
 				} else {
-					syslog( LOG_ERROR, get_class($this)."::add_post failed to receive $orig for id $id" );
+					syslog( LOG_ERR, get_class($this)."::add_post failed to receive $orig for id $id" );
 				}
 			}
 		}

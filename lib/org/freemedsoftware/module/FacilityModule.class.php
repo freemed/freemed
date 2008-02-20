@@ -94,13 +94,13 @@ class FacilityModule extends SupportModule {
 
 	protected function add_pre( &$data ) {
 		if ( $data['psrcsz'] ) {
-			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSV( $data['psrcsz'] );
+			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSZ( $data['psrcsz'] );
 		}
 	}
 
 	protected function mod_pre( &$data ) {
 		if ( $data['psrcsz'] ) {
-			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSV( $data['psrcsz'] );
+			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSZ( $data['psrcsz'] );
 		}
 	}
 
