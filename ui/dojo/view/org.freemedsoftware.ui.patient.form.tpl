@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2008 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -223,10 +223,12 @@
 			if ( parseInt( document.getElementById( 'addActive' ).value ) == 1 ) {
 				if ( w.store.get().length > 0 ) {
 					var x = w.store.get();
+					var y = [];
 					for ( var i=0; i<x.length; i++ ) {
 						if ( x[i].src.active ) { x[i].src.active = 0; }
+						y.push(x[i].src);
 					}
-					w.store.setData( x );
+					w.store.setData( y );
 				}
 			}
 			var d = {
@@ -243,8 +245,106 @@
 
 			// Reenable widget
 			dojo.widget.byId( 'addAddressButton' ).enable();
+			
+			//cleanup
+			document.getElementById( 'addType' ).value = 'H';
+			document.getElementById( 'addRelate' ).value = 'S';
+			document.getElementById( 'addCsz' ).value='';
+			dojo.widget.byId( 'addCsz_widget' ).setAllValues('','');
 			document.getElementById( 'addAddr1' ).value = '';
 			document.getElementById( 'addAddr2' ).value = '';
+			
+			return true;
+		},
+		editAddress: function () {
+			//prevent multiclick
+			dojo.event.disconnect( dojo.widget.byId('patientAddress'), 'onSelect', pForm, 'editAddress' );
+			dojo.widget.byId( 'addAddressButton' ).hide();
+			dojo.widget.byId('modifyAddressButton').show();
+			
+			var w = dojo.widget.byId( 'patientAddress' );
+			
+			//verify clicking between rows
+			try
+			{
+				var addr_key = w.getSelectedData().id;
+			}
+			catch (e)
+			{
+				dojo.widget.byId( 'addAddressButton' ).show();
+				dojo.widget.byId('modifyAddressButton').hide();
+				dojo.event.connect( dojo.widget.byId('patientAddress'), 'onSelect', pForm, 'editAddress' );
+				return false;
+			}
+			var addr = w.store.getByKey(addr_key).src;
+			
+			document.getElementById( 'addType' ).value = addr['type'];
+			document.getElementById( 'addRelate' ).value = addr['relate'];
+			document.getElementById( 'addAddr1' ).value = addr['line1'];
+			document.getElementById( 'addAddr2' ).value = addr['line2'];
+			document.getElementById( 'addCsz' ).value = addr['csz'];
+			dojo.widget.byId( 'addCsz_widget' ).setAllValues(addr['csz'],addr['csz']);
+			document.getElementById( 'addActive' ).value=addr['active'];
+			dojo.event.connect( dojo.widget.byId('patientAddress'), 'onSelect', pForm, 'editAddress' );
+		},
+		modifyAddress: function () {
+			//prevent multiclick
+			dojo.widget.byId('modifyAddressButton').disable();
+			
+			var w = dojo.widget.byId( 'patientAddress' );
+			var addr_key = w.getSelectedData().id;
+			
+				
+				if ( w.store.get().length > 0 ) {
+					var x = w.store.get();
+					var y = [];
+					
+					//make others inactive if this one is active
+					if ( parseInt( document.getElementById( 'addActive' ).value ) == 1 ) {
+						for ( var i=0; i<x.length; i++ ) {
+							if ( x[i].src.active ) { 
+							x[i].src.active = 0; 
+							<!--{if $patient > 0}-->
+								x[i].src['altered']=true;
+							<!--{/if}-->
+							}
+						}
+					}
+					
+					for ( var i=0; i<x.length; i++ ) {
+						y.push(x[i].src);
+						if (y[i]['id'] == addr_key) {
+							y[i]['type'] = document.getElementById( 'addType' ).value;
+							y[i]['relate'] = document.getElementById( 'addRelate' ).value;
+							y[i]['line1'] = document.getElementById( 'addAddr1' ).value;
+							y[i]['line2'] = document.getElementById( 'addAddr2' ).value;
+							y[i]['csz'] = document.getElementById( 'addCsz' ).value;
+							y[i]['active'] = document.getElementById( 'addActive' ).value;
+							<!--{if $patient > 0}-->
+							y[i]['altered']=true;
+							<!--{/if}-->
+						}
+						
+					}
+					w.store.setData( y );
+				}
+				else 
+				{
+					console.error("nothing to edit");
+				}
+			
+			//cleanup
+			document.getElementById( 'addType' ).value = 'H';
+			document.getElementById( 'addRelate' ).value = 'S';
+			document.getElementById( 'addCsz' ).value='';
+			dojo.widget.byId( 'addCsz_widget' ).setAllValues('','');
+			document.getElementById( 'addAddr1' ).value = '';
+			document.getElementById( 'addAddr2' ).value = '';
+			
+			//revert to add mode
+			dojo.widget.byId( 'addAddressButton' ).show();
+			dojo.widget.byId('modifyAddressButton').hide();
+			dojo.widget.byId('modifyAddressButton').enable();
 			return true;
 		}
 	};
@@ -253,10 +353,10 @@
 	_container_.addOnLoad(function(){
 		//TODO: make this work properly to load via "AJAX"
 		pForm.Populate(<!--{$patient}-->);
-		dojo.event.connect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
+		//dojo.event.connect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
 	});
 	_container_.addOnUnload(function(){
-		dojo.event.disconnect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
+		//dojo.event.disconnect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
 	});
 <!--{else}-->
 	_container_.addOnLoad(function(){
@@ -265,9 +365,14 @@
 		dojo.widget.byId( 'addCsz_widget' ).setLabel( '' );
 		dojo.event.topic.publish( 'ptref-assign', 0 );
 		dojo.event.topic.publish( 'ptpcp-assign', 0 );
+		
 	});
 <!--{/if}-->
 	_container_.addOnLoad(function(){
+		//hide modify button
+		dojo.widget.byId('modifyAddressButton').hide();
+		dojo.event.connect( dojo.widget.byId('patientAddress'), 'onSelect', pForm, 'editAddress' );
+		dojo.event.connect( dojo.widget.byId( 'modifyAddressButton' ), 'onClick', pForm, 'modifyAddress' );
 		dojo.event.connect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
 		dojo.event.connect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
 		dojo.event.connect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
@@ -275,6 +380,8 @@
 		//dojo.event.connect( dojo.widget.byId( 'dobN10' ), 'onClick', pForm, 'dobN10' );
 	});
 	_container_.addOnUnload(function(){
+		dojo.event.disconnect( dojo.widget.byId('patientAddress'), 'onSelect', pForm, 'editAddress' );
+		dojo.event.disconnect( dojo.widget.byId( 'modifyAddressButton' ), 'onClick', pForm, 'modifyAddress' );
 		dojo.event.disconnect( dojo.widget.byId( 'dupeButton' ), 'onClick', pForm, 'checkForDupes' );
 		dojo.event.disconnect( dojo.widget.byId( 'patientFormCommitChangesButton' ), 'onClick', pForm, 'commitChanges' );
 		dojo.event.disconnect( dojo.widget.byId( 'addAddressButton' ), 'onClick', pForm, 'addAddress' );
@@ -452,6 +559,9 @@
 			<button dojoType="Button" id="addAddressButton" widgetId="addAddressButton">
 				<!--{t}-->Add Address<!--{/t}-->
 			</button>
+			<button dojoType="Button" id="modifyAddressButton" widgetId="modifyAddressButton">
+				<!--{t}-->Modify Address<!--{/t}-->
+			</button>
 		</td>
 	</tr>
 
@@ -460,7 +570,7 @@
 		<div class="tableContainer">
 			<table dojoType="FilteringTable" id="patientAddress" widgetId="patientAddress"
 			 headClass="fixedHeader" tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow"
-			 valueField="id" border="0" multiple="yes" style="height: 100%;">
+			 valueField="id" border="0" multiple="false" style="height: 100%;">
 			<thead id="patientAddressHead">
 				<tr>
 					<th field="type" dataType="String"><!--{t}-->Address Type<!--{/t}--></th>
