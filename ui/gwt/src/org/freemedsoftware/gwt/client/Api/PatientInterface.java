@@ -33,6 +33,7 @@ public interface PatientInterface extends RemoteService {
 	public HashMap[] EmrAttachmentsByPatient ( Integer patientId );
 	public HashMap[] EmrAttachmentsByPatientTable ( Integer patientId, String tableName );
 	public HashMap[] EmrModules ( String partOfName, Boolean sameKeyAndValue );
+	public Boolean MoveEmrAttachments ( Integer patientFrom, Integer patientTo, Integer[] attachments );
 	public HashMap[] NumericSearch ( HashMap criteria );
 	public HashMap[] Search ( HashMap criteria );
 	public HashMap PatientCriteria ( Integer patientId );

@@ -33,6 +33,7 @@ public interface PatientInterfaceAsync {
 	public void EmrAttachmentsByPatient ( Integer patientId, AsyncCallback callback );
 	public void EmrAttachmentsByPatientTable ( Integer patientId, String tableName, AsyncCallback callback );
 	public void EmrModules ( String partOfName, Boolean sameKeyAndValue, AsyncCallback callback );
+	public void MoveEmrAttachments ( Integer patientFrom, Integer patientTo, Integer[] attachments, AsyncCallback callback );
 	public void NumericSearch ( HashMap criteria, AsyncCallback callback );
 	public void Search ( HashMap criteria, AsyncCallback callback );
 	public void PatientCriteria ( Integer patientId, AsyncCallback callback );

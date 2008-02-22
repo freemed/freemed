@@ -165,6 +165,34 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
+			// Method: MoveEmrAttachments
+			//
+			//	Move EMR attachments from one patient to another.
+			//
+			// Parameters:
+			//
+			//	$patientFrom - Source patient id number
+			//
+			//	$patientTo - Destination patient id number
+			//
+			//	$attachments - Array of patient_emr table ids
+			//
+			// Return:
+			//
+			//	Boolean, success
+			//
+			, array (
+				  'name' => 'MoveEmrAttachments'
+				, 'mappedName' => 'MoveEmrAttachments'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.Integer' )
+					, array ( 'type' => 'java.lang.Integer' )
+					, array ( 'type' => '[java.lang.Integer' )
+				)
+				, 'throws' => array ( )
+			)
+
 			// Method: NumericSearch
 			//
 			//	Search for patients by numeric criteria.

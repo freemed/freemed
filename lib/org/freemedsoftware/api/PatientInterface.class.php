@@ -167,6 +167,55 @@ class PatientInterface {
 		return $return;
 	} // end method EmrModules
 
+	// Method: MoveEmrAttachments
+	//
+	//	Move EMR attachments from one patient to another.
+	//
+	// Parameters:
+	//
+	//	$patientFrom - Source patient id number
+	//
+	//	$patientTo - Destination patient id number
+	//
+	//	$attachments - Array of patient_emr table ids
+	//
+	// Return:
+	//
+	//	Boolean, success
+	//
+	public function MoveEmrAttachments ( $patientFrom, $patientTo, $attachments ) {
+		// Go through all records, make changes
+		if ( !is_array( $attachments ) ) { return false; }
+		$success = true;
+		foreach ( $attachments AS $attachment ) {
+			// Resolve original id and table
+			$resolve = $GLOBALS['sql']->queryRow( "SELECT m.module_table AS 'table', m.module_class AS 'class', p.oid AS oid FROM patient_emr p LEFT OUTER JOIN modules m ON m.module_table = p.module WHERE p.patient = ".$GLOBALS['sql']->quote( $patient )." AND p.id = " . ( (int) $patientFrom ) );
+
+			// Get patient field from meta data
+			$patient_field = freemed::module_get_meta( $resolve['class'], 'patient_field' );
+
+			// Move actual record
+			$result = $GLOBALS['sql']->query( "UPDATE " . $resolve['table'] . " SET ${patient_field} = " . $GLOBALS['sql']->quote( (int) $patientTo ) . " WHERE id = " . $GLOBALS['sql']->quote( (int) $resolve['oid'] ) );
+			$success &= (boolean) $result;
+
+			// Move any annotations, if they exist
+			$result = $GLOBALS['sql']->query( "UPDATE annotations SET apatient = " . $GLOBALS['sql']->quote( (int) $patientTo ) . " WHERE apatient = " . $GLOBALS['sql']->quote( (int) $patientFrom ) . " AND atable = " . $GLOBALS['sql']->quote( $resolve['table'] ) . " AND aid = " . $GLOBALS['sql']->quote( (int) $resolve['oid'] ) );
+			$success &= (boolean) $result;
+
+			// Anything additional
+			module_function(
+				  $resolve['class']
+				, 'additional_move'
+				, array (
+					  $resolve['oid']
+					, $patientFrom
+					, $patientTo
+				)
+			);
+		}
+		return $success;
+	}
+
 	// Method: NumericSearch
 	//
 	//	Search for patients by numeric criteria.
