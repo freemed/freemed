@@ -50,6 +50,8 @@ import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
  */
 public class FreemedInterface implements EntryPoint {
 
+  protected String moduleRelativeURL = "../../../../relay-gwt.php";
+
   /**
    * This is the entry point method.
    */
@@ -61,7 +63,6 @@ public class FreemedInterface implements EntryPoint {
       public void onClick(Widget sender) {
         final LoginAsync loginService = (LoginAsync) GWT.create( Login.class );
         ServiceDefTarget endpoint = (ServiceDefTarget) loginService;
-        String moduleRelativeURL = "../../../../relay-gwt.php";
         endpoint.setServiceEntryPoint( moduleRelativeURL );
         button.setText( "Processing" );
         label.setText( "" );
