@@ -4,6 +4,7 @@
  //
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
+ //      Vlad Mucescu <vladmucescu@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2008 FreeMED Software Foundation
@@ -32,9 +33,9 @@
 	var sched = {
 		init: function () {
 			oCalendar = dojo.widget.byId( "dojoCalendar" );
-			oCalendar.setTimeZones(mywidgets.widget.timezones);
-			oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie( "DCTZ" );
-			oCalendar.onSetTimeZone = sched.widgetTimeZoneChanged;
+			//oCalendar.setTimeZones(mywidgets.widget.timezones);
+			//oCalendar.selectedtimezone = dojo.io.cookie.getObjectCookie( "DCTZ" );
+			//oCalendar.onSetTimeZone = sched.widgetTimeZoneChanged;
 			oCalendar.changeEventTimes = true;
 			oCalendar.onEventChanged = sched.widgetEventChanged;
 			oCalendar.setAbleToCreateNew( true );
@@ -202,14 +203,14 @@
 			oCalendar.refreshScreen();
 		},
 
-		widgetTimeZoneChanged: function(){
-			//Setting cookie
-			if(oCalendar.selectedtimezone == ""){
-				dojo.io.cookie.deleteCookie("DCTZ");
-			}else{
-				dojo.io.cookie.setObjectCookie("DCTZ",oCalendar.selectedtimezone,3650);
-			}
-		},
+		//widgetTimeZoneChanged: function(){
+		//	//Setting cookie
+		//	if(oCalendar.selectedtimezone == ""){
+		//		dojo.io.cookie.deleteCookie("DCTZ");
+		//	}else{
+		//		dojo.io.cookie.setObjectCookie("DCTZ",oCalendar.selectedtimezone,3650);
+		//	}
+		//},
 		setLocale: function (sLocale){
 			oCalendar.lang = sLocale;
 			oCalendar._preInitUI(new Date(oCalendar.value));
