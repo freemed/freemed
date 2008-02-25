@@ -14,7 +14,7 @@ if(!class_exists('FPDF'))
 define('FPDF_VERSION','1.53');
 
 // FreeMED-specific path definition
-define( 'FPDF_FONTPATH', dirname(__FILE__).'/../../data/fpdf-fonts/' );
+define( 'FPDF_FONTPATH', dirname(__FILE__).'/../../../../data/fpdf-fonts/' );
 
 class FPDF
 {

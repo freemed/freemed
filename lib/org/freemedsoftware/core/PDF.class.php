@@ -42,10 +42,10 @@ class PDF {
 		$this->file = $file;
 		$this->page_count = $this->NumberOfPages();
 		$this->uid = md5_file($this->file);
-		$this->cache_dir = dirname(dirname(__FILE__)).'/data/cache/pdf/'.$this->uid.'/';
+		$this->cache_dir = dirname(__FILE__).'/../../../../data/cache/pdf/'.$this->uid.'/';
 
 		// Create cache directories (with parent)
-		@mkdir(dirname(dirname(__FILE__)).'/data/cache/pdf/');
+		@mkdir(dirname(__FILE__).'/../../../../data/cache/pdf/');
 		@mkdir($this->cache_dir);
 	} // end constructor
 

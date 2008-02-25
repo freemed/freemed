@@ -1,7 +1,7 @@
 <?php
  // $Id$
 
-include_once (dirname(__FILE__).'/../xmlrpc_tools.php');
+include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 
 	// by Edd Dumbill (C) 1999-2001
 	// <edd@usefulinc.com>
