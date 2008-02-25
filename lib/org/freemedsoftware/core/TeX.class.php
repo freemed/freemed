@@ -96,17 +96,18 @@ class TeX {
 	//	TeX document (not rendered into a result format).
 	//
 	public function RenderFromTemplate ( $template, $rec ) {
-		if (!file_exists(dirname(__FILE__)."/../../data/tex/${template}.tex")) {
+		$basedir = dirname(__FILE__)."/../../../..";
+		if (!file_exists("$basedir/data/tex/${template}.tex")) {
+			print "$basedir/data/tex/$template.tex<br/>\n";
 			die("Could not load $template TeX template.");
 		}
 
 		// Initialize Smarty engine, with caching
 		if (!is_object($this->smarty)) {
-			include_once ( dirname(dirname(__FILE__)) . '/smarty/Smarty.class.php' );
-			$this->smarty = new Smarty;
-			$this->smarty->template_dir = dirname(__FILE__).'/../../data/tex/';
-			$this->smarty->compile_dir = dirname(__FILE__).'/../../data/cache/smarty/templates_c/';
-			$this->smarty->cache_dir = dirname(__FILE__).'/../../data/cache/smarty/cache/';
+			$this->smarty = CreateObject( 'net.php.smarty.Smarty' );
+			$this->smarty->template_dir = "$basedir/data/tex/";
+			$this->smarty->compile_dir = "$basedir/data/cache/smarty/templates_c/";
+			$this->smarty->cache_dir = "$basedir/data/cache/smarty/cache/";
 			$this->smarty->left_delimiter = '{[';
 			$this->smarty->right_delimiter = ']}';
 		}
