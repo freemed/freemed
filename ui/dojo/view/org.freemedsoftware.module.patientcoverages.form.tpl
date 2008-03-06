@@ -23,7 +23,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 *}-->
 
-<!--{assign var='module' value='patientcoverage'}-->
+<!--{assign var='module' value='patientcoverages'}-->
 
 <!--{assign_block var='moduleName'}-->
 	<!--{t}-->Patient Coverage<!--{/t}-->
