@@ -38,6 +38,7 @@ class ProviderModule extends SupportModule {
 	        "phylname",
 		"phyfname",
 		"phytitle",
+		"phypractice",
 		"phymname",
 		"phypracname",
 		"phypracein",
