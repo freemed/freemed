@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptid			VARCHAR (10),
 	pthistbal		REAL,
 	ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' ),
-	ptempl			ENUM ( 'y' , 'n' , 'r' , 'p' , 's' , 'm' , 'u' ),
+	ptempl			ENUM ( 'y', 'n', 'r', 'p', 's', 'm', 'u' ),
 	ptemp1			INT UNSIGNED,
 	ptemp2			INT UNSIGNED,
 	ptnextofkin		TEXT,
