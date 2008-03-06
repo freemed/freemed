@@ -255,7 +255,7 @@
 		},
 		//----- Callbacks
 		onDxCheck: function ( evt ) {
-			var id = this.id.replace( 'superbill<!--${unique}-->_dx_', '' );
+			var id = this.id.replace( 'superbill<!--{$unique}-->_dx_', '' );
 			patientEncounter.superbillDx[ id ] = ! patientEncounter.superbillDx[ id ];
 		},
 		onPxCheck: function ( evt ) {
