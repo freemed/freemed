@@ -127,7 +127,7 @@
 						dojo.widget.byId('patientForm').setValues(data);
 
 						// Picklists
-						dojo.event.topic.publish( 'ptref-assign', data.ptref );
+						dojo.event.topic.publish( 'ptrefdoc-assign', data.ptrefdoc ); 
 						dojo.event.topic.publish( 'ptdoc-assign', data.ptdoc );
 						dojo.event.topic.publish( 'ptpcp-assign', data.ptpcp );
 
@@ -363,7 +363,7 @@
 		// Clear old form if this is a new entry
 		dojo.widget.byId( 'addCsz_widget' ).setValue( 0 );
 		dojo.widget.byId( 'addCsz_widget' ).setLabel( '' );
-		dojo.event.topic.publish( 'ptref-assign', 0 );
+		dojo.event.topic.publish( 'ptrefdoc-assign', 0 ); 
 		dojo.event.topic.publish( 'ptpcp-assign', 0 );
 		
 	});
@@ -691,7 +691,7 @@
 	<tr>
 		<td><!--{t}-->Referring Provider<!--{/t}--></td>
 		<td>
-			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptref"}-->
+			<!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="ptrefdoc"}--> 
 		</td>
 	</tr>
 	<tr>
