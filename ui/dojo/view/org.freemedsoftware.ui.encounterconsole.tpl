@@ -5,7 +5,7 @@
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
- // Copyright (C) 1999-2008 FreeMED Software Foundation
+ // Copyright (C) 1999-2007 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 <script type="text/javascript">
 	//	Widgets used
+	dojo.require( "dojo.widget.FilteringTable" );
 	dojo.require( "dojo.widget.Select" );
 	dojo.require( "dojo.widget.TabContainer" );
 	dojo.require( "dojo.widget.ContentPane" );
@@ -32,7 +33,84 @@
 	var patientEncounter = {
 		patientInfo: {},
 		superbillDx: {},
-		superbillPx: {},
+		superbillPx: {},				
+		loadSuperbillInformation: function () {
+			var patientId = "<!--{$patient}-->";
+			dojo.io.bind({
+				method: 'POST',
+				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.GetForDates',
+				content: {
+					param0: '',
+					param1: '',
+					param2: '',
+					param3: patientId
+				},
+				error: function() { },
+				load: function( type, data, evt ) {
+					w = dojo.widget.byId( 'superbillTable' );
+					w.sortInformation = [];
+					w.sortInformation.push({index:'provider_name', direction:1});
+					w.store.setData( data );
+				},
+				mimetype: "text/json"
+			});
+		},
+		printSuperbill: function ( ) {
+			var w = dojo.widget.byId( 'superbillTable' );
+			var val = w.getSelectedData();
+			if ( ! val ) {
+				alert ( "<!--{t|escape:'javascript'}-->No superbill was selected.<!--{/t}-->" );
+				return false;
+			}
+			var uri = "<!--{$relay}-->/org.freemedsoftware.module.Superbill.printSuperbills?param0=<!--{$patient}-->&param1="+val.id+"&param2="+document.getElementById('sbnote').value;
+			window.open( uri );
+		},
+		selectSuperbill: function ( ) {
+			var w = dojo.widget.byId( 'superbillTable' );
+			var val = w.getSelectedData();
+			if ( val != 'undefined' ) {
+				dojo.io.bind({
+					method: 'POST',
+					url: "<!--{$relay}-->/org.freemedsoftware.module.Superbill.GetSuperbill",
+					content: {
+						param0: val.id
+					},
+					load: function( type, data, evt ) {
+						if ( data.provider != 0 ) {
+							dojo.widget.byId( 'provider_widget' ).setValue(data.provider);
+						
+							var provider;
+							dojo.io.bind({
+								method: "POST",
+								url: "<!--{$relay}-->/org.freemedsoftware.module.ProviderModule.picklist",
+								load: function ( type, data1, evt ) {
+									dojo.widget.byId( 'provider_widget' ).setLabel(data1[data.provider]);
+							},
+							mimetype: "text/json"
+							});
+						}
+						
+						// After everything is done loading, display
+						document.getElementById('superbillPopulateDiv').style.display = 'block';
+						
+						document.getElementById( 'superbillDxCol0' ).innerHTML = '';
+						document.getElementById( 'superbillDxCol1' ).innerHTML = '';
+						document.getElementById( 'superbillDxCol2' ).innerHTML = '';
+
+						// Populate diagnoses
+						patientEncounter.superbillDxPopulate( data.dx, true );
+						
+						document.getElementById( 'superbillPxCol0' ).innerHTML = '';
+						document.getElementById( 'superbillPxCol1' ).innerHTML = '';
+						document.getElementById( 'superbillPxCol2' ).innerHTML = '';
+
+						// Populate procedures
+						patientEncounter.superbillPxPopulate( data.px, true );
+					},
+				mimetype: "text/json"
+				});
+			}
+		},
 		loadPatientInformation: function() {
 			var patientId = "<!--{$patient}-->";
 			dojo.io.bind({
@@ -56,8 +134,9 @@
 		populate: function ( domName, keyName ) {
 			document.getElementById(domName).innerHTML = this.patientInfo[keyName];
 		},
-		superbillDxPopulate: function ( dx ) {
+		superbillDxPopulate: function ( dx, checkDx ) {
 			var t = document.getElementById( 'superbillDxTable' );
+			patientEncounter.superbillDx = {};
 			for ( var d=0; d < dx.length ; d++ ) {
 				var col = d==0 ? 0 : d % 3;
 				var colObj = document.getElementById('superbillDxCol' + col);
@@ -73,17 +152,19 @@
 				cb.id = 'superbill<!--{$unique}-->_dx_' + thisId;
 				cb.onclick = patientEncounter.onDxCheck;
 
-				// Set internal counter to 0
-				patientEncounter.superbillDx[ thisId ] = 0;
-
 				// Populate label, bolding previous dx's
-				if ( parseInt(dx[d].previous) == 1 ) {
-					var i = ' <label for="superbill<!--{$unique}-->_dx_' + thisId + '"><small><b>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></b></label> ';
+				if ( parseInt(dx[d].previous) == 1 || checkDx) {
+					var i = ' <label for="superbill<!--{$unique}-->_dx_' + thisId + '"><small>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></label> ';
 					tSpan.innerHTML = i;
+					// Set internal counter to 1
+					patientEncounter.superbillDx[ thisId ] = 1;
 
 					// Previous dx should be selected by default
 					cb.checked = true;
 				} else {
+					// Set internal counter to 0
+					patientEncounter.superbillDx[ thisId ] = 0;
+					
 					var i = ' <label for="superbill<!--{$unique}-->_dx_' + thisId + '"><small>' + dx[d].code + ' ( ' + dx[d].descrip + ' )</small></label> ';
 					tSpan.innerHTML = i;
 				}
@@ -94,8 +175,9 @@
 				colObj.appendChild( tDiv );
 			}
 		},
-		superbillPxPopulate: function ( px ) {
+		superbillPxPopulate: function ( px, checkPx ) {
 			var t = document.getElementById( 'superbillPxTable' );
+			patientEncounter.superbillPx = {};
 			for ( var p=0; p < px.length ; p++ ) {
 				var col = p==0 ? 0 : p % 3;
 				var colObj = document.getElementById('superbillPxCol' + col);
@@ -112,16 +194,12 @@
 				cb.id = 'superbill<!--{$unique}-->_px_' + thisId;
 				cb.onclick = patientEncounter.onPxCheck;
 
-				// Set internal counter to 0
-				patientEncounter.superbillPx[ thisId ] = 0;
-
 				// Populate label
 				var i = ' <label for="superbill<!--{$unique}-->_px_' + thisId + '"><small>' + px[p].code + ' ( ' + px[p].descrip + ' )</small></label> ';
 				tSpan.innerHTML = i;
 
 				// Detailed inner div
 				var tDetailDiv = document.createElement( 'div' );
-				tDetailDiv.style.display = 'none';
 				tDetailDiv.id = 'superbill<!--{$unique}-->_detaildiv_' + thisId;
 
 				var tDetailTable = document.createElement( 'table' );
@@ -134,8 +212,21 @@
 				inputUnit.type = 'text';
 				inputUnit.size = 6;
 				inputUnit.id = 'superbill<!--{$unique}-->_unit_' + thisId;
-				inputUnit.value = 0;
-				inputUnit.disabled = true;
+				
+				if ( checkPx ) {
+					tDetailDiv.style.display = 'block';
+					cb.checked = true;
+					inputUnit.value = 1;
+					inputUnit.disabled = false;
+					// Set internal counter to 1
+					patientEncounter.superbillPx[ thisId ] = 1;
+				} else {
+					tDetailDiv.style.display = 'none';
+					inputUnit.value = 0;
+					inputUnit.disabled = true;
+					// Set internal counter to 0
+					patientEncounter.superbillPx[ thisId ] = 0;
+				}
 				inputUnitContainer.appendChild( inputUnit );
 
 				var spanMod = document.createElement( 'td' );
@@ -215,7 +306,8 @@
 						patient: "<!--{$patient}-->",
 						procs: px,
 						dx: dx,
-						detail: detail
+						detail: detail,
+						provider: dojo.widget.byId( 'provider_widget' ).getValue()
 					}
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Superbill.add',
@@ -225,12 +317,13 @@
 				},
 				mimetype: 'text/json'
 			});
+			patientEncounter.loadSuperbillInformation( );
 		},
 		loadSuperbill: function( ) {
 			var v = document.getElementById('superbillTemplate').value;
 
 			// Disable button
-			dojo.widget.byId( 'superbillTemplateChoose' ).disable();
+			//dojo.widget.byId( 'superbillTemplateChoose' ).disable();
 
 			// Load superbill form
 			dojo.io.bind({
@@ -243,9 +336,17 @@
 				load: function( type, data, evt ) {
 					// After everything is done loading, display
 					document.getElementById('superbillPopulateDiv').style.display = 'block';
+					
+					document.getElementById( 'superbillDxCol0' ).innerHTML = '';
+					document.getElementById( 'superbillDxCol1' ).innerHTML = '';
+					document.getElementById( 'superbillDxCol2' ).innerHTML = '';
 
 					// Populate diagnoses
 					patientEncounter.superbillDxPopulate( data.dx );
+					
+					document.getElementById( 'superbillPxCol0' ).innerHTML = '';
+					document.getElementById( 'superbillPxCol1' ).innerHTML = '';
+					document.getElementById( 'superbillPxCol2' ).innerHTML = '';
 
 					// Populate procedures
 					patientEncounter.superbillPxPopulate( data.px );
@@ -279,12 +380,17 @@
 	//	Initialization / Event Connection
 	_container_.addOnLoad(function(){
 		patientEncounter.loadPatientInformation( );
+		patientEncounter.loadSuperbillInformation( );
 		dojo.event.connect( dojo.widget.byId('superbillTemplateChoose'), 'onClick', patientEncounter, 'loadSuperbill' );
 		dojo.event.connect( dojo.widget.byId('superbillTemplateSave'), 'onClick', patientEncounter, 'saveSuperbill' );
+		dojo.event.connect( dojo.widget.byId('printSuperbillButton'), 'onClick', patientEncounter, 'printSuperbill' );
+		dojo.event.connect(dojo.widget.byId('superbillTable'), "onSelect", patientEncounter, "selectSuperbill");
 	});
 	_container_.addOnUnload(function(){
 		dojo.event.disconnect( dojo.widget.byId('superbillTemplateChoose'), 'onClick', patientEncounter, 'loadSuperbill' );
 		dojo.event.disconnect( dojo.widget.byId('superbillTemplateSave'), 'onClick', patientEncounter, 'saveSuperbill' );
+		dojo.event.disconnect( dojo.widget.byId('printSuperbillButton'), 'onClick', patientEncounter, 'printSuperbill' );
+		dojo.event.disconnect(dojo.widget.byId('superbillTable'), "onSelect", patientEncounter, "selectSuperbill");
 	});
 
 </script>
@@ -334,9 +440,34 @@
 
 	</div>
 
-	<div dojoType="ContentPane" id="patientEncounterSuperbillPane" label="&lt;img src='<!--{$htdocs}-->/images/teak/superbill.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t|escape:'javascript'}-->Superbill<!--{/t}-->">
+	<div dojoType="ContentPane" id="patientEncounterSuperbillPane" style="height: 100%; overflow: auto;" label="&lt;img src='<!--{$htdocs}-->/images/teak/superbill.16x16.png' border='0' width='16' height='16' /;&gt; <!--{t|escape:'javascript'}-->Superbill<!--{/t}-->">
+		
+		<div class="tableContainer" style="height: 130px; overflow-y: auto;">
+			<table dojoType="FilteringTable" id="superbillTable" widgetId="superbillTable" headClass="fixedHeader"
+			 tbodyClass="scrollContent" enableAlternateRows="true" rowAlternateClass="alternateRow" 
+			 valueField="id" border="0" multiple="false" maxSelect="1">
+			<thead>
+				<tr>
+					<th field="dateofservice_mdy" dataType="Date"><!--{t}-->Date<!--{/t}--></th>
+					<th field="provider_name" dataType="String"><!--{t}-->Provider<!--{/t}--></th>
+					<th field="cpt" dataType="String"><!--{t}-->Procedural Codes<!--{/t}--></th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			</table><br>
+		</div>	
+	
 		<div>
 			<table border="0">
+				<tr>
+					<th><!--{t}-->Note<!--{/t}--></th>
+					<td><input type="text" id="sbnote" name="sbnote" size="50" value="" /></td>
+					<td><button dojoType="Button" id="printSuperbillButton" widgetId="printSuperbillButton"><!--{t}-->View Superbill<!--{/t}--></button></td>
+				</tr><br>
+				<tr>
+					<th><!--{t}-->Provider<!--{/t}--></th>
+					<td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="ProviderModule" varname="provider" methodName="internalPicklist" defaultValue=$SESSION.authdata.user_record.userrealphy}--></td>
+				</tr>
 				<tr>
 					<th><!--{t}-->Superbill<!--{/t}--></th>
 					<td><table border="0" style="width: auto;"><tr><td><!--{include file="org.freemedsoftware.widget.supportpicklist.tpl" module="SuperbillTemplate" varname="superbillTemplate"}--></td><td><button dojoType="Button" id="superbillTemplateChoose" widgetId="superbillTemplateChoose"><!--{t}-->Use<!--{/t}--></button></td></tr></table></td>
@@ -373,13 +504,13 @@
 					</tr>
 				</tbody>
 			</table>
-
+			
 			<div align="center">
 				<button dojoType="Button" id="superbillTemplateSave" widgetId="superbillTemplateSave">
 					<div><img src="<!--{$htdocs}-->/images/teak/check_go.16x16.png" border="0" /> <!--{t}-->Commit Superbill<!--{/t}--></div>
 				</button>
 			</div>
-
+			<div style="width: 100%; height: 85px;"></div>
 		</div>
 	</div>
 

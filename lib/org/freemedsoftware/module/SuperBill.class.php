@@ -43,6 +43,7 @@ class SuperBill extends EMRModule {
 		'dateofservice',
 		'enteredby',
 		'patient',
+		'provider',
 		'note',
 		'procs',
 		'dx',
@@ -108,7 +109,7 @@ class SuperBill extends EMRModule {
 	//
 	//	Array of hashes for superbills between the specified dates.
 	//
-	public function GetForDates( $dtbegin, $dtend, $handled = NULL ) {
+	public function GetForDates( $dtbegin, $dtend, $handled = NULL, $patientId = NULL ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
 		$query = "SELECT s.id AS id, DATE_FORMAT(s.dateofservice, '%m/%d/%Y') AS dateofservice_mdy, s.dateofservice AS dateofservice, CONCAT(pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')') AS patient_name, CONCAT(pr.phylname, ', ', pr.phyfname) AS provider_name, pr.id AS provider_id, pt.id AS patient_id, s.reviewed AS reviewed, s.procs AS procs, SUBSTR_COUNT(s.procs, ',')+1 AS procs_count FROM superbill s LEFT OUTER JOIN patient pt ON pt.id=s.patient LEFT OUTER JOIN physician pr ON s.provider=pr.id ";
 		$where = false;
@@ -121,6 +122,15 @@ class SuperBill extends EMRModule {
 				$query .= " AND s.reviewed = ".$GLOBALS['sql']->quote( $handled );
 			} else {
 				$query .= " WHERE s.reviewed = ".$GLOBALS['sql']->quote( $handled );
+				$where = true;
+			}
+		} 
+		if ( $patientId !== NULL ) {
+			if ( $where ) {
+				$query .= " AND s.patient = ".$GLOBALS['sql']->quote( $patientId );
+			} else {
+				$query .= " WHERE s.patient = ".$GLOBALS['sql']->quote( $patientId );
+				$where = true;
 			}
 		}
 		$res = $GLOBALS['sql']->queryAll( $query );
@@ -172,8 +182,70 @@ class SuperBill extends EMRModule {
 	public function GetSuperbill ( $id ) {
 		$hash['dx'] = $GLOBALS['sql']->queryAll( "SELECT dx.icd9code AS code, dx.icd9descrip AS descrip, dx.id AS id FROM icd9 dx LEFT OUTER JOIN superbill s ON FIND_IN_SET( dx.id, s.dx ) WHERE s.id = " . $GLOBALS['sql']->quote( $id ) );
 		$hash['px'] = $GLOBALS['sql']->queryAll( "SELECT px.cptcode AS code, px.cptnameint AS descrip, px.id AS id FROM cpt px LEFT OUTER JOIN superbill s ON FIND_IN_SET( px.id, s.procs ) WHERE s.id = " . $GLOBALS['sql']->quote( $id ) );
+		$provider = $GLOBALS['sql']->queryAll( "SELECT provider FROM superbill s WHERE s.id = " . $GLOBALS['sql']->quote( $id ) );
+		$hash['provider'] = $provider[0]['provider'];
 		return $hash;
 	} // end method GetSuperbill
+	
+	public function printSuperbills ( $patientId, $superbillId, $notes ) {
+
+		$results = array();
+		$query = "SELECT CONCAT(pt.ptlname, ', ', pt.ptfname) AS patientName, pt.ptid AS id, pt.ptdob AS dateOfBirth, pt.ptssn AS socialSecurity ".
+		", CONCAT(p.phylname, ', ', p.phyfname) AS referringPhysician ".
+		"FROM patient pt LEFT OUTER JOIN physician p ON pt.ptrefdoc=p.id ". 
+		"WHERE pt.id = ".$patientId;
+		$patient = $GLOBALS['sql']->queryAll($query);
+		$results['Patient'] = $patient[0]; 
+
+		$query = "SELECT CONCAT(p.phylname, ', ', p.phyfname) AS todayProvider, s.dateofservice AS appointmentDate ".
+		"FROM superbill s LEFT OUTER JOIN physician p ON s.provider=p.id ".
+		"WHERE s.id = ".$superbillId;
+		$superbill = $GLOBALS['sql']->queryAll($query);
+		$results['Patient']=array_merge($results['Patient'],$superbill[0]);
+		
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$query = "SELECT i.insconame AS insuranceCompanyName,i.inscophone AS phone, c.covpatinsno AS idNumber, c.covpatgrpno AS groupNumber ".
+		"FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
+		"WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patientId )." AND c.coveffdt <= ".$GLOBALS['sql']->quote( $s->ImportDate( $superbill[0]['appointmentDate'] ) ).
+		" ORDER BY c.covstatus DESC";
+		$insurances = $GLOBALS['sql']->queryAll($query);
+		foreach ($insurances as $k => $v) {
+			$results["Insurance $k"] = $v;
+		}
+		
+		$results['Notes']=array('' => $notes);
+
+		$superbillHash = $this->GetSuperbill( $superbillId );
+		$results['Procedures'] = array();
+		foreach($superbillHash['px'] as $px) {
+       		$results['Procedures'] = array_merge($results['Procedures'], array( " ".$px['code'] => $px['descrip'] ));
+        }
+		$results['Diagnosis'] = array();
+		foreach($superbillHash['dx'] as $dx) {
+       		$results['Diagnosis'] = array_merge($results['Diagnosis'], array( " ".$dx['code'] => $dx['descrip'] ));
+        }
+
+		$buf = "<html><head><title>".htmlentities( $report['report_name'] )."</title></head>\n";
+		$buf .= "<body>";
+		$buf .= "<h1>".htmlentities( $report['report_name'] )."</h1>\n";
+		$buf .= "<h3>". __("Printed on") . " " . date('r') . "</h3>\n";
+		
+		foreach ( $results AS $title => $v ) {
+			$buf .= "<h3>".htmlentities($title)."</h3>\n";
+			$buf .= "<table>\n";
+			foreach ( $v AS $name => $value ) {
+				$buf .= "\t<tr>\n";
+				$buf .= "\t\t<th>".htmlentities( $name )."</th>";
+				$buf .= "<td>".htmlentities( $value )."</td>\n";
+				$buf .= "\t</tr>\n";
+			}
+			$buf .= "</table>\n";
+		}
+		$buf .= "</body></html>";
+		die ( $buf );
+	}
+	
+	
 
 	// Method: ProcessSuperbills
 	//
