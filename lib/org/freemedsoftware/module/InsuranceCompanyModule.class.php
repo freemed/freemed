@@ -69,9 +69,9 @@ class InsuranceCompanyModule extends SupportModule {
 	var $order_field = 'insconame, inscostate, inscocity';
 
 	public function __construct ( ) {
-		$this->table_join = array (
-			'inscogroup' => 'inscogroup'
-		);
+//		$this->table_join = array (
+//			'inscogroup' => 'inscogroup'
+//		);
 		$this->list_view = array (
 			__("Name")	=>	"insconame",
 			__("City")	=>	"inscocity",
