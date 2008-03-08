@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Book Appointment</original>
+	<translated>Citas</translated>
+</translation>
+<translation>
+	<original>Book an appointment at this time</original>
+	<translated>A&#xC3;&#xB1;adir una cita para este d&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Booking Location</original>
+	<translated>Lugar de la cita</translated>
+</translation>
+<translation>
+	<original>Confirm Booking</original>
+	<translated>Confirmar cita</translated>
+</translation>
+<translation>
+	<original>Duration</original>
+	<translated>Duraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>Fridays Only</original>
+	<translated>S&#xC3;&#xB3;lo Viernes</translated>
+</translation>
+<translation>
+	<original>Mondays Only</original>
+	<translated>S&#xC3;&#xB3;lo Lunes</translated>
+</translation>
+<translation>
+	<original>Move Appointment</original>
+	<translated>Trasladar citas</translated>
+</translation>
+<translation>
+	<original>Moving</original>
+	<translated>Trasladando</translated>
+</translation>
+<translation>
+	<original>Next Available</original>
+	<translated>Siguiente disponible</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Anotaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>One Month From Now</original>
+	<translated>Un mes desde ahora</translated>
+</translation>
+<translation>
+	<original>One Week From Now</original>
+	<translated>Una semana desde ahora</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Place of Service</original>
+	<translated>Emplazamiento del servicio</translated>
+</translation>
+<translation>
+	<original>Please select from the following available times and dates:</original>
+	<translated>Por favor seleccione a partir de las siguiente fechas/horas disponibles:</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Refrescar</translated>
+</translation>
+<translation>
+	<original>Saturdays Only</original>
+	<translated>S&#xC3;&#xB3;lo s&#xC3;&#xA1;bados</translated>
+</translation>
+<translation>
+	<original>Template</original>
+	<translated>Plantilla</translated>
+</translation>
+<translation>
+	<original>That is not a valid selection!</original>
+	<translated>Selecci&#xC3;&#xB3;n inv&#xC3;&#xA1;lida</translated>
+</translation>
+<translation>
+	<original>There are no available appointments which match your criteria.</original>
+	<translated>Sin resultados</translated>
+</translation>
+<translation>
+	<original>Thursdays Only</original>
+	<translated>S&#xC3;&#xB3;lo Jueves</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Hora</translated>
+</translation>
+<translation>
+	<original>Tuesdays Only</original>
+	<translated>S&#xC3;&#xB3;lo Martes</translated>
+</translation>
+<translation>
+	<original>Two Weeks From Now</original>
+	<translated>Dos semanas desde ahora</translated>
+</translation>
+<translation>
+	<original>Unable to find open slot!</original>
+	<translated>Imposible encontrar hueco libre</translated>
+</translation>
+<translation>
+	<original>Wednesdays Only</original>
+	<translated>S&#xC3;&#xB3;lo Mi&#xC3;&#xA9;rcoles</translated>
+</translation>
+<translation>
+	<original>Weekdays Only</original>
+	<translated>S&#xC3;&#xB3;lo de Lunes a Viernes</translated>
+</translation>
+<translation>
+	<original>You do not have permission to book an appointment.</original>
+	<translated>No tiene permisos para a&#xC3;&#xB1;adir citas</translated>
+</translation>
+<translation>
+	<original>You should never be here!</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>in collection</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>this date occurs in the past</original>
+	<translated>Fecha pasada</translated>
+</translation>
+
+</gettextXML>
+

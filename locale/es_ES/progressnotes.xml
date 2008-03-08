@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Assessment</original>
+	<translated>Evaluaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>BMI</original>
+	<translated>BMI</translated>
+</translation>
+<translation>
+	<original>Basic Information</original>
+	<translated>Informaci&#xC3;&#xB3;n b&#xC3;&#xA1;sica</translated>
+</translation>
+<translation>
+	<original>Blood Pressure</original>
+	<translated>Presi&#xC3;&#xB3;n sangu&#xC3;&#xAD;nea</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Diagnoses</original>
+	<translated>Diagn&#xC3;&#xB3;stico</translated>
+</translation>
+<translation>
+	<original>Education</original>
+	<translated>Educaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Heart Rate</original>
+	<translated>Ritmo cardiaco</translated>
+</translation>
+<translation>
+	<original>Height</original>
+	<translated>Altura</translated>
+</translation>
+<translation>
+	<original>Interval</original>
+	<translated>Intervalo</translated>
+</translation>
+<translation>
+	<original>Objective</original>
+	<translated>Objetivo</translated>
+</translation>
+<translation>
+	<original>Plan</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Prescription</original>
+	<translated>Planificaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Procedures</original>
+	<translated>Procedimientos</translated>
+</translation>
+<translation>
+	<original>Progress Notes</original>
+	<translated>Evaluaci&#xC3;&#xB3;n m&#xC3;&#xA9;dica</translated>
+</translation>
+<translation>
+	<original>Progress Notes Template</original>
+	<translated>Plantillas de evaluaciones</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Related Episode(s)</original>
+	<translated>Episodio(s) relacionado(s)</translated>
+</translation>
+<translation>
+	<original>Respiratory Rate</original>
+	<translated>Ritmo respiratorio</translated>
+</translation>
+<translation>
+	<original>Revert to Saved</original>
+	<translated>Volver a lo &#xC3;&#xBA;ltimo guardado</translated>
+</translation>
+<translation>
+	<original>Rx</original>
+	<translated>Rx</translated>
+</translation>
+<translation>
+	<original>Save</original>
+	<translated>Guardar</translated>
+</translation>
+<translation>
+	<original>Select Patient</original>
+	<translated>Seleccione un paciente</translated>
+</translation>
+<translation>
+	<original>Specify Notes to Display</original>
+	<translated>Indique las anotaciones a mostrar</translated>
+</translation>
+<translation>
+	<original>Subjective</original>
+	<translated>Subjetivo</translated>
+</translation>
+<translation>
+	<original>Superbill</original>
+	<translated>Resumen Diag. y Proc.</translated>
+</translation>
+<translation>
+	<original>Temperature</original>
+	<translated>Temperatura</translated>
+</translation>
+<translation>
+	<original>This record is locked, and cannot be modified.</original>
+	<translated>Informaci&#xC3;&#xB3;n bloqueada y no podr&#xC3;&#xA1; modificarse.</translated>
+</translation>
+<translation>
+	<original>View $this-CODE(0x86315fc)record_name</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Vitals</original>
+	<translated>Vitales</translated>
+</translation>
+<translation>
+	<original>Weight</original>
+	<translated>Peso</translated>
+</translation>
+<translation>
+	<original>You must select a patient.</original>
+	<translated>Debe seleccionar un paciente</translated>
+</translation>
+
+</gettextXML>
+

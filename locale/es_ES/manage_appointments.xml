@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-03-03 10:28+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Book Appointment</original>
+	<translated>A&#xC3;&#xB1;adir cita</translated>
+</translation>
+<translation>
+	<original>CPT Code</original>
+	<translated>C&#xC3;&#xB3;digo CPT</translated>
+</translation>
+<translation>
+	<original>Deleting Appointment</original>
+	<translated>Eliminando cita</translated>
+</translation>
+<translation>
+	<original>Location</original>
+	<translated>Emplazamiento</translated>
+</translation>
+<translation>
+	<original>Manage Appointments</original>
+	<translated>Gesti&#xC3;&#xB3;n de citas</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Nota</translated>
+</translation>
+<translation>
+	<original>Select a Patient</original>
+	<translated>Seleccione un paciente</translated>
+</translation>
+<translation>
+	<original>This patient has no appointments.</original>
+	<translated>El paciente no tiene citas</translated>
+</translation>
+<translation>
+	<original>Time/Duration</original>
+	<translated>Hora/Duraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>You do not have permission to delete appointments.</original>
+	<translated>No tiene permisos para eliminar citas.</translated>
+</translation>
+<translation>
+	<original>You must select a patient.</original>
+	<translated>Debe seleccionar un paciente.</translated>
+</translation>
+
+</gettextXML>
+

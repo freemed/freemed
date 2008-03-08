@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-03-03 11:19+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Abandon Modification</original>
+	<translated>Cancelar la modificaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Provider Status Maintenance</original>
+	<translated>Gesti&#xC3;&#xB3;n del Estado de los m&#xC3;&#xA9;dicos</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Estado</translated>
+</translation>
+
+</gettextXML>
+

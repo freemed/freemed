@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Adding Patient ID</original>
+	<translated>A&#xC3;&#xB1;adiendo id. del paciente</translated>
+</translation>
+<translation>
+	<original>Address Line 1</original>
+	<translated>1&#xC2;&#xAA; l&#xC3;&#xAD;nea de la direcci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>2&#xC2;&#xAA; l&#xC3;&#xAD;nea de la direcci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>All Patients</original>
+	<translated>Todos los pacientes</translated>
+</translation>
+<translation>
+	<original>Archiving</original>
+	<translated>Almacenando</translated>
+</translation>
+<translation>
+	<original>Archiving Patient</original>
+	<translated>Almacenando paciente</translated>
+</translation>
+<translation>
+	<original>Blood Type</original>
+	<translated>Grupo sangu&#xC3;&#xAD;neo</translated>
+</translation>
+<translation>
+	<original>Charge Card Billing</original>
+	<translated>Facturaci&#xC3;&#xB3;n a tarjeta de cargo</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ciudad</translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Contacto</translated>
+</translation>
+<translation>
+	<original>Country</original>
+	<translated>Pa&#xC3;&#xAD;s</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Fecha de nacimiento</translated>
+</translation>
+<translation>
+	<original>Divorced</original>
+	<translated>Divorciado</translated>
+</translation>
+<translation>
+	<original>Done</original>
+	<translated>Hecho</translated>
+</translation>
+<translation>
+	<original>Driver's License (No State)</original>
+	<translated>Carne de conducir</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Correo electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Employment Status</original>
+	<translated>Situaci&#xC3;&#xB3;n laboral</translated>
+</translation>
+<translation>
+	<original>Error</original>
+	<translated>Error</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Fax</translated>
+</translation>
+<translation>
+	<original>Female</original>
+	<translated>Mujer</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Gender</original>
+	<translated>G&#xC3;&#xA9;nero</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono de casa</translated>
+</translation>
+<translation>
+	<original>In House Doctor</original>
+	<translated>M&#xC3;&#xA9;dico de familia</translated>
+</translation>
+<translation>
+	<original>Internal Practice ID #</original>
+	<translated>N&#xC2;&#xBA; de colegiado</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Apellidos</translated>
+</translation>
+<translation>
+	<original>Last Names</original>
+	<translated>Apellidos</translated>
+</translation>
+<translation>
+	<original>Maiden or Previous Name (if applicable)</original>
+	<translated>Nombre de soltera o anterior (si procede)</translated>
+</translation>
+<translation>
+	<original>Male</original>
+	<translated>Hombre</translated>
+</translation>
+<translation>
+	<original>Manage This Patient</original>
+	<translated>Gestionar este paciente</translated>
+</translation>
+<translation>
+	<original>Marital Status</original>
+	<translated>Estado civil</translated>
+</translation>
+<translation>
+	<original>Married</original>
+	<translated>Casado</translated>
+</translation>
+<translation>
+	<original>Medical</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>Segundo nombre</translated>
+</translation>
+<translation>
+	<original>Military</original>
+	<translated>Militar</translated>
+</translation>
+<translation>
+	<original>Monthly Billing On Account</original>
+	<translated>Facturaci&#xC3;&#xB3;n mensual a cuenta</translated>
+</translation>
+<translation>
+	<original>Monthly Budget Amount</original>
+	<translated>Cantidad presupuestada mensualmente</translated>
+</translation>
+<translation>
+	<original>Next of Kin</original>
+	<translated>Familiar directo</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>Notes</original>
+	<translated>Observaciones</translated>
+</translation>
+<translation>
+	<original>Number of Other Physicians</original>
+	<translated>N&#xC3;&#xBA;mero de otros m&#xC3;&#xA9;dicos</translated>
+</translation>
+<translation>
+	<original>Other Physician</original>
+	<translated>Otro m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Other Physician 4</original>
+	<translated>Otro m&#xC3;&#xA9;dico 4</translated>
+</translation>
+<translation>
+	<original>Part Time</original>
+	<translated>Tiempo parcial</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Patient Name</original>
+	<translated>Nombre del paciente</translated>
+</translation>
+<translation>
+	<original>Patient Status</original>
+	<translated>Estado del paciente</translated>
+</translation>
+<translation>
+	<original>Patients</original>
+	<translated>Pacientes</translated>
+</translation>
+<translation>
+	<original>Patients Meeting Criteria</original>
+	<translated>Criterio de consultas</translated>
+</translation>
+<translation>
+	<original>Personal</original>
+	<translated>Personal</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Practice ID</original>
+	<translated>N&#xC2;&#xBA; de colegiado</translated>
+</translation>
+<translation>
+	<original>Preferred Pharmacy</original>
+	<translated>Farmacia habitual</translated>
+</translation>
+<translation>
+	<original>Primary Care Physician</original>
+	<translated>M&#xC3;&#xA9;dico de cabecera</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Informaci&#xC3;&#xB3;n b&#xC3;&#xA1;sica</translated>
+</translation>
+<translation>
+	<original>Race</original>
+	<translated>Raza</translated>
+</translation>
+<translation>
+	<original>Reassigning appointments</original>
+	<translated>Reasignaci&#xC3;&#xB3;n de citas</translated>
+</translation>
+<translation>
+	<original>Referring Doctor</original>
+	<translated>M&#xC3;&#xA9;dico de referencia</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Refrescar</translated>
+</translation>
+<translation>
+	<original>Religion</original>
+	<translated>Religi&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Removing old temporary patient account</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Retired</original>
+	<translated>Retirado</translated>
+</translation>
+<translation>
+	<original>Salutation</original>
+	<translated>Saludo</translated>
+</translation>
+<translation>
+	<original>Searching for</original>
+	<translated>B&#xC3;&#xBA;squeda</translated>
+</translation>
+<translation>
+	<original>Self</original>
+	<translated>Mismo</translated>
+</translation>
+<translation>
+	<original>Separated</original>
+	<translated>Divorciado</translated>
+</translation>
+<translation>
+	<original>Single</original>
+	<translated>Soltero</translated>
+</translation>
+<translation>
+	<original>Social Security Number</original>
+	<translated>N&#xC3;&#xBA;mero de la seg. social</translated>
+</translation>
+<translation>
+	<original>Statement Billing</original>
+	<translated>Estado de la facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Transgendered</original>
+	<translated>Transexual</translated>
+</translation>
+<translation>
+	<original>Type of Billing</original>
+	<translated>Tipo de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Widowed</original>
+	<translated>Viudo</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono del trabajo</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>You don't have access to do that.</original>
+	<translated>No tiene acceso para hacer esto.</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>CC</original>
+	<translated>CC</translated>
+</translation>
+<translation>
+	<original>Enclosures</original>
+	<translated>Anexos</translated>
+</translation>
+<translation>
+	<original>Enclosures sent separately</original>
+	<translated>Anexos enviados separadamente</translated>
+</translation>
+<translation>
+	<original>Episode of Care</original>
+	<translated>Episodio de atenci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Fax</translated>
+</translation>
+<translation>
+	<original>File Directly</original>
+	<translated>Archivar directamente</translated>
+</translation>
+<translation>
+	<original>File and Fax Directly</original>
+	<translated>Archivar y enviar por fax directamente</translated>
+</translation>
+<translation>
+	<original>From</original>
+	<translated>Desde</translated>
+</translation>
+<translation>
+	<original>HIPPA Compliance Notice: This transmission contains sensitive medical data.</original>
+	<translated>HIPPA: Esta transmisi&#xC3;&#xB3;n contiene informaci&#xC3;&#xB3;n m&#xC3;&#xA9;dica.</translated>
+</translation>
+<translation>
+	<original>Letter disappeared before it could be sent!</original>
+	<translated>Carta desaparecida antes de poder ser enviada</translated>
+</translation>
+<translation>
+	<original>Letters Template</original>
+	<translated>Plantilla de cartas</translated>
+</translation>
+<translation>
+	<original>Print Envelope</original>
+	<translated>Imprimir sobre</translated>
+</translation>
+<translation>
+	<original>Print No Signature</original>
+	<translated>Imprimir sin firma</translated>
+</translation>
+<translation>
+	<original>Send to Provider</original>
+	<translated>Enviar a m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Subject</original>
+	<translated>Asunto</translated>
+</translation>
+<translation>
+	<original>Text</original>
+	<translated>Texto</translated>
+</translation>
+<translation>
+	<original>To</original>
+	<translated>Destinatario</translated>
+</translation>
+<translation>
+	<original>Typist</original>
+	<translated>Remitente</translated>
+</translation>
+<translation>
+	<original>View Letter</original>
+	<translated>Consultar carta</translated>
+</translation>
+<translation>
+	<original>You must select a patient.</original>
+	<translated>Debe seleccionar un paciente</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Authorization Number</original>
+	<translated>N&#xC2;&#xBA; de autorizaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Authorization Type</original>
+	<translated>Tipo de autorizaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Authorizing Insurance Company</original>
+	<translated>Autorizaci&#xC3;&#xB3;n de la aseguradora</translated>
+</translation>
+<translation>
+	<original>Authorizing Provider</original>
+	<translated>Autorizaci&#xC3;&#xB3;n del m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Comentario</translated>
+</translation>
+<translation>
+	<original>Dates</original>
+	<translated>Fechas</translated>
+</translation>
+<translation>
+	<original>Ending Date</original>
+	<translated>Fecha final</translated>
+</translation>
+<translation>
+	<original>From</original>
+	<translated>Desde</translated>
+</translation>
+<translation>
+	<original>Insurance Authorizations</original>
+	<translated>Autorizaciones de las aseguradoras</translated>
+</translation>
+<translation>
+	<original>Number of Visits</original>
+	<translated>N&#xC3;&#xBA;mero de visitas</translated>
+</translation>
+<translation>
+	<original>Provider Identifier</original>
+	<translated>Id. m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Remaining</original>
+	<translated>Restantes</translated>
+</translation>
+<translation>
+	<original>Remaining Visits</original>
+	<translated>Visitas restantes</translated>
+</translation>
+<translation>
+	<original>Starting Date</original>
+	<translated>Fecha inicial</translated>
+</translation>
+<translation>
+	<original>To</original>
+	<translated>A</translated>
+</translation>
+<translation>
+	<original>Used Visits</original>
+	<translated>Visitas realizadas</translated>
+</translation>
+<translation>
+	<original>certificate of medical neccessity</original>
+	<translated>Certificado de </translated>
+</translation>
+<translation>
+	<original>consulatation</original>
+	<translated>consulta</translated>
+</translation>
+<translation>
+	<original>insurance company</original>
+	<translated>Aseguradora</translated>
+</translation>
+<translation>
+	<original>physician</original>
+	<translated>m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>surgical</original>
+	<translated>cirujano</translated>
+</translation>
+<translation>
+	<original>worker's compensation</original>
+	<translated>compensaciones al trabajador</translated>
+</translation>
+
+</gettextXML>
+

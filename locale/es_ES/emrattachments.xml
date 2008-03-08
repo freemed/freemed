@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-03-03 09:51+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Annotations were successfully moved.</original>
+	<translated>Anotaciones trasladadas correctamente.</translated>
+</translation>
+<translation>
+	<original>Attachment</original>
+	<translated>Adjuntar</translated>
+</translation>
+<translation>
+	<original>Destination Patient</original>
+	<translated>Paciente 'destino'</translated>
+</translation>
+<translation>
+	<original>EMR Attachments</original>
+	<translated>Adjuntos del EMD</translated>
+</translation>
+<translation>
+	<original>Failed to move record.</original>
+	<translated>Fallo al trasladar el registro</translated>
+</translation>
+<translation>
+	<original>Move EMR segments from one patient record to another.</original>
+	<translated>Trasladar segmentos EMR de un paciente a otro.</translated>
+</translation>
+<translation>
+	<original>Operation cannot be completed, since either source or destination patient record were not specified.</original>
+	<translated>La operaci&#xC3;&#xB3;n no puede completarse, hasta que no especifique pacientes 
+\&#x22;origen\&#x22; y \&#x22;destino\&#x22;</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Record was successfully moved.</original>
+	<translated>Registro trasladado correctamente.</translated>
+</translation>
+<translation>
+	<original>Step One: Select a Patient</original>
+	<translated>Paso 1: Selecci&#xC3;&#xB3;n de un paciente \</translated>
+</translation>
+<translation>
+	<original>Step Three: Select a Destination</original>
+	<translated>Paso 2: Selecci&#xC3;&#xB3;n de un paciente \</translated>
+</translation>
+<translation>
+	<original>Step Two: Choose the Attachment to Move</original>
+	<translated>Paso 2: Selecci&#xC3;&#xB3;n de registros EMR a trasladar.</translated>
+</translation>
+
+</gettextXML>
+

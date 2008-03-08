@@ -1,0 +1,299 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Abortions</original>
+	<translated>Abortos</translated>
+</translation>
+<translation>
+	<original>Address (Line 1)</original>
+	<translated>Direcci&#xC3;&#xB3;n (1&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>Address (Line 2)</original>
+	<translated>Direcci&#xC3;&#xB3;n (2&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>Auto Insurance</original>
+	<translated>Seguro de autom&#xC3;&#xB3;vil</translated>
+</translation>
+<translation>
+	<original>Automobile Related Information</original>
+	<translated>Informaci&#xC3;&#xB3;n relacionada con el autom&#xC3;&#xB3;vil</translated>
+</translation>
+<translation>
+	<original>Case Number</original>
+	<translated>N&#xC2;&#xBA; de caso</translated>
+</translation>
+<translation>
+	<original>City, State/Prov, Postal Code</original>
+	<translated>Ciudad, provincia, C.P.</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Observaciones</translated>
+</translation>
+<translation>
+	<original>Condition Related to</original>
+	<translated>Relacionado a la condici&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Contact Name</original>
+	<translated>Nombre de contacto</translated>
+</translation>
+<translation>
+	<original>Contact Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono de contacto</translated>
+</translation>
+<translation>
+	<original>Country</original>
+	<translated>Pa&#xC3;&#xAD;s</translated>
+</translation>
+<translation>
+	<original>Date of Confinement</original>
+	<translated>Fecha de confinamiento</translated>
+</translation>
+<translation>
+	<original>Date of Current Onset</original>
+	<translated>Fecha actual</translated>
+</translation>
+<translation>
+	<original>Date of First Occurance</original>
+	<translated>Fecha 1&#xC2;&#xAA; visita</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Diagnosis Family</original>
+	<translated>Diagn&#xC3;&#xB3;stico Familiar</translated>
+</translation>
+<translation>
+	<original>Disability Back to Work Date</original>
+	<translated>Discapacidad: Fecha de vuelta al trabajo</translated>
+</translation>
+<translation>
+	<original>Disability From Date</original>
+	<translated>Discapacidad: Fecha inicial</translated>
+</translation>
+<translation>
+	<original>Disability To Date</original>
+	<translated>Discapacidad: Fecha final</translated>
+</translation>
+<translation>
+	<original>Disability Type</original>
+	<translated>Tipo de discapacidad</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Direcci&#xC3;&#xB3;n de correo electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Employment Related Information</original>
+	<translated>Informaci&#xC3;&#xB3;n laboral</translated>
+</translation>
+<translation>
+	<original>Episode Type</original>
+	<translated>Tipo de episodio</translated>
+</translation>
+<translation>
+	<original>Episode of Care</original>
+	<translated>Episodio de atenci&#xC3;&#xB3;n (periodo de cuidados)</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>File Number</original>
+	<translated>N&#xC2;&#xBA; de fichero</translated>
+</translation>
+<translation>
+	<original>General Information</original>
+	<translated>Informaci&#xC3;&#xB3;n gen&#xC3;&#xA9;rica</translated>
+</translation>
+<translation>
+	<original>Gravida</original>
+	<translated>Embarazada</translated>
+</translation>
+<translation>
+	<original>HCFA-1500 box 10</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Hospital</original>
+	<translated>Hospital</translated>
+</translation>
+<translation>
+	<original>Hospital Admission Date</original>
+	<translated>Fecha de hospitalizaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Hospitial Discharge Date</original>
+	<translated>Fecha de alta</translated>
+</translation>
+<translation>
+	<original>LT</original>
+	<translated>LT</translated>
+</translation>
+<translation>
+	<original>Last</original>
+	<translated>&#xC3;&#x9A;ltimo</translated>
+</translation>
+<translation>
+	<original>Last Menstrual Period</original>
+	<translated>&#xC3;&#x9A;ltimo periodo menstrual</translated>
+</translation>
+<translation>
+	<original>Length of Cycle</original>
+	<translated>Duraci&#xC3;&#xB3;n del ciclo</translated>
+</translation>
+<translation>
+	<original>Miscarries</original>
+	<translated>Abortos naturales</translated>
+</translation>
+<translation>
+	<original>Must select record to Modify</original>
+	<translated>Debe seleccionar el registro a modificar</translated>
+</translation>
+<translation>
+	<original>NO COMMENT</original>
+	<translated>SIN COMENTARIO</translated>
+</translation>
+<translation>
+	<original>Name of Employer</original>
+	<translated>Nombre del jefe</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>No Disability</original>
+	<translated>Sin discapacidad</translated>
+</translation>
+<translation>
+	<original>Orig</original>
+	<translated>Orig.</translated>
+</translation>
+<translation>
+	<original>Other Related Information</original>
+	<translated>Otra informaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Para</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Patient Images</original>
+	<translated>Im&#xC3;&#xA1;genes del paciente</translated>
+</translation>
+<translation>
+	<original>Permanent</original>
+	<translated>Permanente</translated>
+</translation>
+<translation>
+	<original>Pregnancy Related Information</original>
+	<translated>Informaci&#xC3;&#xB3;n del embarazo</translated>
+</translation>
+<translation>
+	<original>Procedure</original>
+	<translated>Procedimiento</translated>
+</translation>
+<translation>
+	<original>Referring Physician</original>
+	<translated>M&#xC3;&#xA9;dico de referencia</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Refrescar</translated>
+</translation>
+<translation>
+	<original>Related to Automobile</original>
+	<translated>Automovil&#xC3;&#xAD;stico</translated>
+</translation>
+<translation>
+	<original>Related to Employment</original>
+	<translated>Laboral</translated>
+</translation>
+<translation>
+	<original>Related to Other Cause</original>
+	<translated>Otras causas</translated>
+</translation>
+<translation>
+	<original>Related to Pregnancy</original>
+	<translated>Embarazo</translated>
+</translation>
+<translation>
+	<original>ST</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Select Another</original>
+	<translated>Seleccione otro</translated>
+</translation>
+<translation>
+	<original>Starting Date</original>
+	<translated>Fecha inicial</translated>
+</translation>
+<translation>
+	<original>State/Province</original>
+	<translated>Provincia</translated>
+</translation>
+<translation>
+	<original>Time of Accident</original>
+	<translated>Hora del accidente</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>You must specify an ID to view an Episode!</original>
+	<translated>Deber&#xC3;&#xA1; indicar un id. para consultar un episodio</translated>
+</translation>
+<translation>
+	<original>acute</original>
+	<translated>Agudo</translated>
+</translation>
+<translation>
+	<original>chronic</original>
+	<translated>Cr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>chronic recurrent</original>
+	<translated>Cr&#xC3;&#xB3;nico recurrente</translated>
+</translation>
+<translation>
+	<original>historical</original>
+	<translated>historial</translated>
+</translation>
+<translation>
+	<original>to</original>
+	<translated>a</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Billing Information</original>
+	<translated>Informaci&#xC3;&#xB3;n de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>CPT Codes Maintenance</original>
+	<translated>Gesti&#xC3;&#xB3;n de c&#xC3;&#xB3;digos CPT</translated>
+</translation>
+<translation>
+	<original>Default Standard Fee</original>
+	<translated>Horarios por defecto</translated>
+</translation>
+<translation>
+	<original>Default Type of Service</original>
+	<translated>Tipo de servicio por defecto</translated>
+</translation>
+<translation>
+	<original>Diagnosis Excluded</original>
+	<translated>Diagn&#xC3;&#xB3;sticos excluidos</translated>
+</translation>
+<translation>
+	<original>Diagnosis Required</original>
+	<translated>Diasgn&#xC3;&#xB3;sticos requeridos</translated>
+</translation>
+<translation>
+	<original>External Description</original>
+	<translated>Descripci&#xC3;&#xB3;n externa</translated>
+</translation>
+<translation>
+	<original>Fee Profiles</original>
+	<translated>Perfiles de honorarios</translated>
+</translation>
+<translation>
+	<original>Gender Restriction</original>
+	<translated>Restricciones de g&#xC3;&#xA9;nero</translated>
+</translation>
+<translation>
+	<original>Inclusion/Exclusion</original>
+	<translated>Inclusiones/exclusiones</translated>
+</translation>
+<translation>
+	<original>Insurance Company</original>
+	<translated>Compa&#xC3;&#xB1;&#xC3;&#xAD;a aseguradora</translated>
+</translation>
+<translation>
+	<original>Internal Description</original>
+	<translated>Descripci&#xC3;&#xB3;n interna</translated>
+</translation>
+<translation>
+	<original>Internal Service Types</original>
+	<translated>Tipos de servicios internos</translated>
+</translation>
+<translation>
+	<original>Please note that selecting </original>
+	<translated>Tenga en cuenta que seleccionando \&#x22;\&#x22; o \&#x22;\&#x22; causar&#xC3;&#xA1; la selecci&#xC3;&#xB3;n de valores 
+por defecto</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Informaci&#xC3;&#xB3;n b&#xC3;&#xA1;sica</translated>
+</translation>
+<translation>
+	<original>Procedural Code</original>
+	<translated>C&#xC3;&#xB3;digo de procedimiento</translated>
+</translation>
+<translation>
+	<original>Procedural Codes Excluded</original>
+	<translated>C&#xC3;&#xB3;digos de procedimiento excluidos</translated>
+</translation>
+<translation>
+	<original>Procedural Codes Required</original>
+	<translated>C&#xC3;&#xB3;digos de procedimiento requeridos</translated>
+</translation>
+<translation>
+	<original>Relative Value</original>
+	<translated>Valor relativo</translated>
+</translation>
+<translation>
+	<original>Standard Fee</original>
+	<translated>Honorario est&#xC3;&#xA1;ndar</translated>
+</translation>
+<translation>
+	<original>Taxed?</original>
+	<translated>&#xC2;&#xBF;Se a&#xC3;&#xB1;aden impuestos?</translated>
+</translation>
+<translation>
+	<original>Type of Service</original>
+	<translated>Tipo de servicio</translated>
+</translation>
+<translation>
+	<original>female only</original>
+	<translated>S&#xC3;&#xB3;lo mujeres</translated>
+</translation>
+<translation>
+	<original>male only</original>
+	<translated>S&#xC3;&#xB3;lo hombres</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>no</translated>
+</translation>
+<translation>
+	<original>no restriction</original>
+	<translated>Sin restricci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>si</translated>
+</translation>
+
+</gettextXML>
+

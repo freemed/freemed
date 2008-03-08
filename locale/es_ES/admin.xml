@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Men&#xC3;&#xBA; de administraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Attach Cover Page</original>
+	<translated>Adjuntar portada</translated>
+</translation>
+<translation>
+	<original>Calendar Overbooking</original>
+	<translated>\</translated>
+</translation>
+<translation>
+	<original>Combo with past drugs</original>
+	<translated>Desplegable con f&#xC3;&#xA1;rmacos ya pasados</translated>
+</translation>
+<translation>
+	<original>Configuration Complete</original>
+	<translated>Configuraci&#xC3;&#xB3;n completa</translated>
+</translation>
+<translation>
+	<original>Configuration Help</original>
+	<translated>Ayuda de configuraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Configurar</translated>
+</translation>
+<translation>
+	<original>Date Format</original>
+	<translated>Formato de fecha</translated>
+</translation>
+<translation>
+	<original>Date Widget</original>
+	<translated>Componente de fechas</translated>
+</translation>
+<translation>
+	<original>Default</original>
+	<translated>Por defecto</translated>
+</translation>
+<translation>
+	<original>Default Area Code</original>
+	<translated>C&#xC3;&#xB3;digo de &#xC3;&#xA1;rea por defecto</translated>
+</translation>
+<translation>
+	<original>Disabled</original>
+	<translated>Desactivado</translated>
+</translation>
+<translation>
+	<original>Enabled</original>
+	<translated>Activo</translated>
+</translation>
+<translation>
+	<original>Export Databases</original>
+	<translated>Exportar base de datos</translated>
+</translation>
+<translation>
+	<original>Fax Cover Page</original>
+	<translated>Portada</translated>
+</translation>
+<translation>
+	<original>Fold Multipage Forms?</original>
+	<translated>&#xC2;&#xBF;Permitir pesta&#xC3;&#xB1;as (tabs) en formularios?</translated>
+</translation>
+<translation>
+	<original>France</original>
+	<translated>Francia</translated>
+</translation>
+<translation>
+	<original>Graphics Enhanced</original>
+	<translated>&#xC2;&#xBF;Usar gr&#xC3;&#xA1;ficos?</translated>
+</translation>
+<translation>
+	<original>Hour Format</original>
+	<translated>Formato de horas</translated>
+</translation>
+<translation>
+	<original>Import Databases</original>
+	<translated>Importar base de datos</translated>
+</translation>
+<translation>
+	<original>Lock Record Override</original>
+	<translated>Bloquear la sobreescritura de registros</translated>
+</translation>
+<translation>
+	<original>Module Information</original>
+	<translated>Informaci&#xC3;&#xB3;n de m&#xC3;&#xB3;dulos</translated>
+</translation>
+<translation>
+	<original>No Cover Page</original>
+	<translated>Sin portada</translated>
+</translation>
+<translation>
+	<original>Phone Number Format</original>
+	<translated>Formato telef&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Prescription Drug Widget</original>
+	<translated>Componente de recetas</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Refrescar</translated>
+</translation>
+<translation>
+	<original>Reinitialize Database</original>
+	<translated>Reiniciar la base de datos</translated>
+</translation>
+<translation>
+	<original>Return To Administration Menu</original>
+	<translated>Volver al men&#xC3;&#xBA; de administraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Return to the Main Menu</original>
+	<translated>Volver al men&#xC3;&#xBA; principal</translated>
+</translation>
+<translation>
+	<original>Scheduling End Time</original>
+	<translated>Hora final (Calendario)</translated>
+</translation>
+<translation>
+	<original>Scheduling Start Time</original>
+	<translated>Hora inicial (Calendario)</translated>
+</translation>
+<translation>
+	<original>Show Tips?</original>
+	<translated>&#xC2;&#xBF;Mostrar consejos?</translated>
+</translation>
+<translation>
+	<original>Standard Config</original>
+	<translated>Configuraci&#xC3;&#xB3;n est&#xC3;&#xA1;ndar</translated>
+</translation>
+<translation>
+	<original>System Configuration</original>
+	<translated>Configuraci&#xC3;&#xB3;n del sistema</translated>
+</translation>
+<translation>
+	<original>Unformatted</original>
+	<translated>Sin formato</translated>
+</translation>
+<translation>
+	<original>United States</original>
+	<translated>Estados unidos</translated>
+</translation>
+<translation>
+	<original>User Maintenance</original>
+	<translated>Gesti&#xC3;&#xB3;n de usuarios</translated>
+</translation>
+<translation>
+	<original>You do not have access to system configuration.</original>
+	<translated>No tiene permisos para acceder a la configuraci&#xC3;&#xB3;n del sistema.</translated>
+</translation>
+<translation>
+	<original>You don't have access to the administration menu.</original>
+	<translated>No tiene permisos para acceder al men&#xC3;&#xBA; de administraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>javascript widget</original>
+	<translated>Componente javascript</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>no</translated>
+</translation>
+<translation>
+	<original>rxlist.com Drug Listing</original>
+	<translated>rxlist.com Drug Listing</translated>
+</translation>
+<translation>
+	<original>split text entry</original>
+	<translated>Dividir introducci&#xC3;&#xB3;n de texto</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>si</translated>
+</translation>
+
+</gettextXML>
+

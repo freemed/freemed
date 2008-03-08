@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-03-03 10:59+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Address Line 1</original>
+	<translated>Direcci&#xC3;&#xB3;n (1&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>Direcci&#xC3;&#xB3;n (2&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>City, State</original>
+	<translated>Ciudad, Provincia</translated>
+</translation>
+<translation>
+	<original>City, State Zip</original>
+	<translated>Ciudad, Provincia, C.P.</translated>
+</translation>
+<translation>
+	<original>Fax Number (as dialed)</original>
+	<translated>N&#xC3;&#xBA;mero de fax</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Pharmacy Maintenance</original>
+	<translated>Gesti&#xC3;&#xB3;n de Farmacia</translated>
+</translation>
+<translation>
+	<original>Pharmacy Name</original>
+	<translated>Nombre de la farmacia</translated>
+</translation>
+<translation>
+	<original>Preferred Transmission</original>
+	<translated>Transmisi&#xC3;&#xB3;n predefinida</translated>
+</translation>
+
+</gettextXML>
+

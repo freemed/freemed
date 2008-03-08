@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Address (Line 1)</original>
+	<translated>Direcci&#xC3;&#xB3;n (1&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>Address (Line 2)</original>
+	<translated>Direcci&#xC3;&#xB3;n (2&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>City, State, Zip</original>
+	<translated>Ciudad, Provincia, C.P.</translated>
+</translation>
+<translation>
+	<original>Contact</original>
+	<translated>Contacto</translated>
+</translation>
+<translation>
+	<original>Country</original>
+	<translated>Pa&#xC3;&#xAD;s</translated>
+</translation>
+<translation>
+	<original>Default Provider</original>
+	<translated>M&#xC3;&#xA9;dico por defecto</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Details</original>
+	<translated>Detalles</translated>
+</translation>
+<translation>
+	<original>Electronic Billing</original>
+	<translated>Facturaci&#xC3;&#xB3;n electr&#xC3;&#xB3;nica</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Direcci&#xC3;&#xB3;n de correo electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Employer Identification Number</original>
+	<translated>N&#xC2;&#xBA; de identificaci&#xC3;&#xB3;n de empresario</translated>
+</translation>
+<translation>
+	<original>External</original>
+	<translated>Externo</translated>
+</translation>
+<translation>
+	<original>Facility Maintenance</original>
+	<translated>Gesti&#xC3;&#xB3;n de facilidades</translated>
+</translation>
+<translation>
+	<original>Facility Name</original>
+	<translated>Nombre de la facilidad</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Fax</translated>
+</translation>
+<translation>
+	<original>Internal</original>
+	<translated>Interno</translated>
+</translation>
+<translation>
+	<original>Internal or External Facility</original>
+	<translated>Facilidad interna o externa</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>POS Code</original>
+	<translated>POS Code</translated>
+</translation>
+<translation>
+	<original>Phone Number</original>
+	<translated>Tel&#xC3;&#xA9;fono</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Informaci&#xC3;&#xB3;n b&#xC3;&#xA1;sica</translated>
+</translation>
+<translation>
+	<original>Rendering NPI Number</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Rendering Taxonomy Number</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>X12 Identifier</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>X12 Identifier Type</original>
+	<translated></translated>
+</translation>
+
+</gettextXML>
+

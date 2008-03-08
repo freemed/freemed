@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Assemble Query</original>
+	<translated>Enlazar consulta</translated>
+</translation>
+<translation>
+	<original>Clear All</original>
+	<translated>Borrar todo</translated>
+</translation>
+<translation>
+	<original>Condition</original>
+	<translated>Condici&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Create</original>
+	<translated>Create</translated>
+</translation>
+<translation>
+	<original>Error adding %s.</original>
+	<translated>Error a&#xC3;&#xB1;adiendo %s</translated>
+</translation>
+<translation>
+	<original>Execute Query</original>
+	<translated>Ejecutar consulta</translated>
+</translation>
+<translation>
+	<original>Export Query to CSV</original>
+	<translated>Ejecutar consulta resultado a CSV</translated>
+</translation>
+<translation>
+	<original>Field</original>
+	<translated>Campo</translated>
+</translation>
+<translation>
+	<original>Load Query</original>
+	<translated>Cargar consulta</translated>
+</translation>
+<translation>
+	<original>No Information available</original>
+	<translated>Sin resultados</translated>
+</translation>
+<translation>
+	<original>Operator</original>
+	<translated>Operador</translated>
+</translation>
+<translation>
+	<original>Pick Query</original>
+	<translated>Seleccionar consulta</translated>
+</translation>
+<translation>
+	<original>Pick a Query</original>
+	<translated>Seleccionar una consulta</translated>
+</translation>
+<translation>
+	<original>Query Maker</original>
+	<translated>Creador de consultas</translated>
+</translation>
+<translation>
+	<original>Save Query</original>
+	<translated>Guardar consulta</translated>
+</translation>
+<translation>
+	<original>Save Query As</original>
+	<translated>Guardar consulta como</translated>
+</translation>
+<translation>
+	<original>Saving Query</original>
+	<translated>Guardando consulta</translated>
+</translation>
+<translation>
+	<original>Select Fields</original>
+	<translated>Seleccionar campos</translated>
+</translation>
+<translation>
+	<original>Select Options</original>
+	<translated>Seleccionar opciones</translated>
+</translation>
+<translation>
+	<original>Select fields from tables</original>
+	<translated>Seleccionar campos de tablas</translated>
+</translation>
+<translation>
+	<original>The current Select statement is:</original>
+	<translated>El estado actual del 'Select' es:</translated>
+</translation>
+<translation>
+	<original>The query has been saved as %s.</original>
+	<translated>La consulta ha sido almacenada como %s</translated>
+</translation>
+<translation>
+	<original>The selected query is %s.</original>
+	<translated>La consulta seleccionada es %s</translated>
+</translation>
+<translation>
+	<original>Unnamed</original>
+	<translated>Sin nombre</translated>
+</translation>
+<translation>
+	<original>Updating Query</original>
+	<translated>Actualizando consulta</translated>
+</translation>
+<translation>
+	<original>Value</original>
+	<translated>Valor</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,428 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>%d new message(s)</original>
+	<translated>%d nuevo(s) mensaje(s)</translated>
+</translation>
+<translation>
+	<original>Add Patient</original>
+	<translated>Nuevo paciente</translated>
+</translation>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Men&#xC3;&#xBA; de aministraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Age</original>
+	<translated>Edad</translated>
+</translation>
+<translation>
+	<original>Annotate</original>
+	<translated>Anotar</translated>
+</translation>
+<translation>
+	<original>Appointments</original>
+	<translated>Citas</translated>
+</translation>
+<translation>
+	<original>Are you sure you want to delete this?</original>
+	<translated>&#xC2;&#xBF;Est&#xC3;&#xA1; seguro que desea eliminarlo?</translated>
+</translation>
+<translation>
+	<original>Automatic Refresh Time</original>
+	<translated>Tiempo autom&#xC3;&#xA1;tico de refresco</translated>
+</translation>
+<translation>
+	<original>Billing Functions</original>
+	<translated>Funciones de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Book Appointment</original>
+	<translated>Ingresar cita</translated>
+</translation>
+<translation>
+	<original>Calendar</original>
+	<translated>Calendario</translated>
+</translation>
+<translation>
+	<original>Call In Menu</original>
+	<translated>Menu de peticiones</translated>
+</translation>
+<translation>
+	<original>Call-In</original>
+	<translated>Pedir cita</translated>
+</translation>
+<translation>
+	<original>Change Language</original>
+	<translated>Cambiar idioma</translated>
+</translation>
+<translation>
+	<original>Choose Another Patient</original>
+	<translated>Seleccionar otro paciente</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ciudad</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Close this Window</original>
+	<translated>Cerrar la ventana</translated>
+</translation>
+<translation>
+	<original>Color Scheme</original>
+	<translated>Esquema de color</translated>
+</translation>
+<translation>
+	<original>Columns in Display</original>
+	<translated>Columnas en pantalla</translated>
+</translation>
+<translation>
+	<original>Configuration Help</original>
+	<translated>Ayuda en la configuraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Configurar</translated>
+</translation>
+<translation>
+	<original>Custom Reports</original>
+	<translated>Informes personalizados</translated>
+</translation>
+<translation>
+	<original>DEBUG IS ON</original>
+	<translated>DEPURACI&#xC3;&#x93;N ACTIVADA</translated>
+</translation>
+<translation>
+	<original>Daily Calendar</original>
+	<translated>Calendario por d&#xC3;&#xAD;as</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>D&#xC3;&#xAD;a de nacimieto</translated>
+</translation>
+<translation>
+	<original>Default Blue</original>
+	<translated>Por defecto (azul)</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Disabled</original>
+	<translated>Desactivado</translated>
+</translation>
+<translation>
+	<original>Display Language Selection</original>
+	<translated>Mostrar selecci&#xC3;&#xB3;n de idiomas</translated>
+</translation>
+<translation>
+	<original>Driver's License</original>
+	<translated>Licencia de conducir</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Direcci&#xC3;&#xB3;n de correo electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Enabled</original>
+	<translated>Activo</translated>
+</translation>
+<translation>
+	<original>Enlarge image</original>
+	<translated>Alargar la imagen</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Help</original>
+	<translated>Ayuda</translated>
+</translation>
+<translation>
+	<original>Hide Menu</original>
+	<translated>Ocultar men&#xC3;&#xBA;</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono de casa</translated>
+</translation>
+<translation>
+	<original>Internal Practice ID</original>
+	<translated>Identificador interno de la consulta</translated>
+</translation>
+<translation>
+	<original>Jump to page</original>
+	<translated>Ir a la p&#xC3;&#xA1;gina</translated>
+</translation>
+<translation>
+	<original>Language</original>
+	<translated>Idioma</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Apellidos</translated>
+</translation>
+<translation>
+	<original>Locked</original>
+	<translated>Bloqueado</translated>
+</translation>
+<translation>
+	<original>Login</original>
+	<translated>Acceder</translated>
+</translation>
+<translation>
+	<original>Logout</original>
+	<translated>Cerrar sesi&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Main Menu</original>
+	<translated>Men&#xC3;&#xBA; principal</translated>
+</translation>
+<translation>
+	<original>Manage</original>
+	<translated>Gesti&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Management Configuration</original>
+	<translated>Configurar</translated>
+</translation>
+<translation>
+	<original>Medical Information</original>
+	<translated>Informaci&#xC3;&#xB3;n m&#xC3;&#xA9;dica</translated>
+</translation>
+<translation>
+	<original>Messages</original>
+	<translated>Mensajes</translated>
+</translation>
+<translation>
+	<original>Modify Patient Information</original>
+	<translated>Modificar datos del paciente</translated>
+</translation>
+<translation>
+	<original>Name ('last, first' or 'first last')</original>
+	<translated>Nombre ('apellidos, nombre' o 'nombre apellidos')</translated>
+</translation>
+<translation>
+	<original>New</original>
+	<translated>Nuevo</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>N&#xC2;&#xBA;</translated>
+</translation>
+<translation>
+	<original>No Patients In System</original>
+	<translated>N&#xC2;&#xBA; de pacientes en el sistema</translated>
+</translation>
+<translation>
+	<original>No photographic identification on file.</original>
+	<translated>No hay ning&#xC3;&#xBA;n indentificador de la fotograf&#xC3;&#xAD;a en el fichero.</translated>
+</translation>
+<translation>
+	<original>Number of Summary Items</original>
+	<translated>Numero resumido de art&#xC3;&#xAD;culos</translated>
+</translation>
+<translation>
+	<original>One Patient In System</original>
+	<translated>Un paciente en el sistema</translated>
+</translation>
+<translation>
+	<original>Password</original>
+	<translated>Clave</translated>
+</translation>
+<translation>
+	<original>Patient Information</original>
+	<translated>Informaci&#xC3;&#xB3;n del paciente</translated>
+</translation>
+<translation>
+	<original>Patient Smart Search</original>
+	<translated>Busqueda avanzada de pacientes</translated>
+</translation>
+<translation>
+	<original>Patient(s) In System</original>
+	<translated>Paciente(s) en el sistema</translated>
+</translation>
+<translation>
+	<original>Patients</original>
+	<translated>Pacientes</translated>
+</translation>
+<translation>
+	<original>Patients By Name</original>
+	<translated>Pacientes por nombre</translated>
+</translation>
+<translation>
+	<original>Patients Field Search</original>
+	<translated>Campos de b&#xC3;&#xBA;squeda de pacientes</translated>
+</translation>
+<translation>
+	<original>Photo ID</original>
+	<translated>Id. de la foto</translated>
+</translation>
+<translation>
+	<original>Photographic Identification</original>
+	<translated>Identificaci&#xC3;&#xB3;n de la fotograf&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Please configure panels through the </original>
+	<translated>Por favor configure paneles mediante la opci&#xC3;&#xB3;n \&#x22;\&#x22; del men&#xC3;&#xBA; de pacientes.</translated>
+</translation>
+<translation>
+	<original>Preferences</original>
+	<translated>Preferencias</translated>
+</translation>
+<translation>
+	<original>Report</original>
+	<translated>Informe</translated>
+</translation>
+<translation>
+	<original>Reset Resume</original>
+	<translated>Restablecer Reanudar</translated>
+</translation>
+<translation>
+	<original>Resume</original>
+	<translated>Reanudar</translated>
+</translation>
+<translation>
+	<original>Select a Patient</original>
+	<translated>Seleccionar un paciente</translated>
+</translation>
+<translation>
+	<original>Select information to insert:</original>
+	<translated>Seleccione la informaci&#xC3;&#xB3;n a a&#xC3;&#xB1;adir:</translated>
+</translation>
+<translation>
+	<original>Show All Patients</original>
+	<translated>Mostrar todos los pacientes</translated>
+</translation>
+<translation>
+	<original>Show Menubar</original>
+	<translated>Mostrar men&#xC3;&#xBA;</translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated>Acceder</translated>
+</translation>
+<translation>
+	<original>Social Security Number</original>
+	<translated>N&#xC3;&#xBA;mero de la seguridad social</translated>
+</translation>
+<translation>
+	<original>Soundalike Search</original>
+	<translated>Busqueda \</translated>
+</translation>
+<translation>
+	<original>State</original>
+	<translated>Estado/Provincia</translated>
+</translation>
+<translation>
+	<original>Support Data</original>
+	<translated>Datos de apoyo</translated>
+</translation>
+<translation>
+	<original>There are no report modules present.</original>
+	<translated>El m&#xC3;&#xB3;dulo de informes no est&#xC3;&#xA1; presente.</translated>
+</translation>
+<translation>
+	<original>This record has been locked, and can no longer be modified.</original>
+	<translated>El registro ha sido bloqueado y no podr&#xC3;&#xA1; volver a modificarse.</translated>
+</translation>
+<translation>
+	<original>Type a portion of the entry that you want to find, then select it from the pulldown menu.</original>
+	<translated>Escriba parte del texto de lo que desea buscar, posteriormente seleccione el 
+resto en la lista desplegable.</translated>
+</translation>
+<translation>
+	<original>Update</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>Updated configuration</original>
+	<translated>Configuraci&#xC3;&#xB3;n actualizada</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usuario</translated>
+</translation>
+<translation>
+	<original>Username</original>
+	<translated>Nombre de usuario</translated>
+</translation>
+<translation>
+	<original>Utilities</original>
+	<translated>Servicios</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Consultar</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono del trabajo</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>You have %d new message(s).</original>
+	<translated>Tiene %d nuevo(s) mensaje(s)</translated>
+</translation>
+<translation>
+	<original>You must select a patient.</original>
+	<translated>Es necesario seleccionar un paciente</translated>
+</translation>
+<translation>
+	<original>Zip</original>
+	<translated>C.P.</translated>
+</translation>
+<translation>
+	<original>bottom</original>
+	<translated>abajo</translated>
+</translation>
+<translation>
+	<original>sounds like</original>
+	<translated>Suena como</translated>
+</translation>
+<translation>
+	<original>top</original>
+	<translated>arriba</translated>
+</translation>
+<translation>
+	<original>version</original>
+	<translated>versi&#xC3;&#xB3;n</translated>
+</translation>
+
+</gettextXML>
+

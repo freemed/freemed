@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>FULL NAME &#x3C;EMAIL@ADDRESS&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Admin Account Password</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Admin password set.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>All modules initialized.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Before creating that account you must prove that you have the appropriate level of access.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Confirm Admin Account Password</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Database Password</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Database Password Accepted</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Database Username</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Dynamic modules database initialized.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>FreeMED configuration database initialized.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>FreeMED expects the intial setup to be done from the localhost. Dying because your IP is not in lib/settings.php as INIT_ADDR.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>In order to access the freemed intialization, your web client must come from the host defined in lib/settings.php.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Incorrect user/password combination</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Normally that means that you must be on the same host that FreeMED is running on (localhost).</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Page Not Accessible from your IP Address</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Please provide the database user name and password, as found in settings.php.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Return to Login</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>SECURITY NOTE: The default is to limit access to this function to localhost. It is wise to leave this default alone.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>So if possible, go sit at the FreeMED box to do this intial configuration.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>The initialization wizard cannot be called directly.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>This function is capable of destroying the entire database and the value in settings.php will control future access to this function.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>This is the the wizard to setup the admin account.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>User table created.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>You can login using:</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>You must either change your host, or change the value found in settings.php to match your host.</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>You will now be returned to the the login prompt.</original>
+	<translated></translated>
+</translation>
+
+</gettextXML>
+

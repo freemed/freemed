@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Address Line 1</original>
+	<translated>Direcci&#xC3;&#xB3;n (1&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>Direcci&#xC3;&#xB3;n (2&#xC2;&#xAA; l&#xC3;&#xAD;nea)</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ciudad</translated>
+</translation>
+<translation>
+	<original>Company Name (full)</original>
+	<translated>Raz&#xC3;&#xB3;n social</translated>
+</translation>
+<translation>
+	<original>Company Name (on forms)</original>
+	<translated>Nombre comercial</translated>
+</translation>
+<translation>
+	<original>Contact Information</original>
+	<translated>Informaci&#xC3;&#xB3;n de contacto</translated>
+</translation>
+<translation>
+	<original>Contact Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono de contacto</translated>
+</translation>
+<translation>
+	<original>Default Electronic Billing Format</original>
+	<translated>Formato de facturaci&#xC3;&#xB3;n por defecto</translated>
+</translation>
+<translation>
+	<original>Default Electronic Billing Target</original>
+	<translated>Destino por defecto de env&#xC3;&#xAD;o electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Default Output</original>
+	<translated>Salida por defecto</translated>
+</translation>
+<translation>
+	<original>Default Paper Billing Format</original>
+	<translated>Formato de facturas por defecto</translated>
+</translation>
+<translation>
+	<original>Default Paper Billing Target</original>
+	<translated>Destino por defecto de las facturas.</translated>
+</translation>
+<translation>
+	<original>Email Address</original>
+	<translated>Direcci&#xC3;&#xB3;n de correo electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>Fax Number</original>
+	<translated>Fax</translated>
+</translation>
+<translation>
+	<original>Group</original>
+	<translated>Grupo</translated>
+</translation>
+<translation>
+	<original>Group ID</original>
+	<translated>Id. del grupo</translated>
+</translation>
+<translation>
+	<original>HCFA Form Space 10d</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>HCFA Form Space 19</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>HCFA Form Space 24k</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>ID</original>
+	<translated>Id.</translated>
+</translation>
+<translation>
+	<original>ID Mappings</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Insurance Assign?</original>
+	<translated>&#xC2;&#xBF;Asignar aseguradora?</translated>
+</translation>
+<translation>
+	<original>Insurance Companies</original>
+	<translated>Aseguradoras</translated>
+</translation>
+<translation>
+	<original>Insurance Group</original>
+	<translated>Grupo de aseguradoras</translated>
+</translation>
+<translation>
+	<original>Insurance Modifiers</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Insurance Type</original>
+	<translated>Tipo de aseguradora</translated>
+</translation>
+<translation>
+	<original>Internal Information</original>
+	<translated>Informaci&#xC3;&#xB3;n interna</translated>
+</translation>
+<translation>
+	<original>Local Use 10d</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Local Use 19</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Local Use 24k</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>NEIC ID</original>
+	<translated>Id. NEIC</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>REMITT Server not running</original>
+	<translated>El servidor REMITT no est&#xC3;&#xA1; funcionando.</translated>
+</translation>
+<translation>
+	<original>State</original>
+	<translated>Provincia</translated>
+</translation>
+<translation>
+	<original>Web Site</original>
+	<translated>Sitio Web</translated>
+</translation>
+<translation>
+	<original>X12 Payer Id Code</original>
+	<translated></translated>
+</translation>
+<translation>
+	<original>Zip</original>
+	<translated>C.P.</translated>
+</translation>
+<translation>
+	<original>electronic</original>
+	<translated>electr&#xC3;&#xB3;nico</translated>
+</translation>
+<translation>
+	<original>paper</original>
+	<translated>papel</translated>
+</translation>
+
+</gettextXML>
+

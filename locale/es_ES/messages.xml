@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>%s wrote:</original>
+	<translated>%s escribi&#xC3;&#xB3;:</translated>
+</translation>
+<translation>
+	<original>Are you sure that you want to permanently delete this message?</original>
+	<translated>&#xC2;&#xBF;Desea eliminar permanentemente este mensaje?</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Delete Marked Messages</original>
+	<translated>Eliminar los mensajes marcados</translated>
+</translation>
+<translation>
+	<original>For</original>
+	<translated>Para</translated>
+</translation>
+<translation>
+	<original>FreeMED Messaging System</original>
+	<translated>Sistema de mensajes de FreeMED</translated>
+</translation>
+<translation>
+	<original>From</original>
+	<translated>De</translated>
+</translation>
+<translation>
+	<original>Fwd</original>
+	<translated>Fwd</translated>
+</translation>
+<translation>
+	<original>Main Menu</original>
+	<translated>Men&#xC3;&#xBA; principal</translated>
+</translation>
+<translation>
+	<original>Mark as Read</original>
+	<translated>Marcar como le&#xC3;&#xAD;do</translated>
+</translation>
+<translation>
+	<original>Message</original>
+	<translated>Mensaje</translated>
+</translation>
+<translation>
+	<original>Messages</original>
+	<translated>Mensajes</translated>
+</translation>
+<translation>
+	<original>Old Messages</original>
+	<translated>Mensajes antiguos</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Regarding</original>
+	<translated>Respecto a</translated>
+</translation>
+<translation>
+	<original>Regarding (if not a patient)</original>
+	<translated>Respecto a (si no hay paciente)</translated>
+</translation>
+<translation>
+	<original>Remove Tag</original>
+	<translated>Eliminar marca</translated>
+</translation>
+<translation>
+	<original>Reply</original>
+	<translated>Responder</translated>
+</translation>
+<translation>
+	<original>Return to the Main Menu</original>
+	<translated>Volver a men&#xC3;&#xBA; principal</translated>
+</translation>
+<translation>
+	<original>Save Draft</original>
+	<translated>Guardar borrador</translated>
+</translation>
+<translation>
+	<original>Select All</original>
+	<translated>Seleccionar todo</translated>
+</translation>
+<translation>
+	<original>Send</original>
+	<translated>Enviar</translated>
+</translation>
+<translation>
+	<original>Send Message</original>
+	<translated>Enviar mensaje</translated>
+</translation>
+<translation>
+	<original>Sending</original>
+	<translated>Enviando</translated>
+</translation>
+<translation>
+	<original>Sent By</original>
+	<translated>Enviado por</translated>
+</translation>
+<translation>
+	<original>Sent to:</original>
+	<translated>Enviado a</translated>
+</translation>
+<translation>
+	<original>Subject</original>
+	<translated>Asunto</translated>
+</translation>
+<translation>
+	<original>Tag</original>
+	<translated>Marca</translated>
+</translation>
+<translation>
+	<original>There is nothing to delete.</original>
+	<translated>No hay nada para eliminar</translated>
+</translation>
+<translation>
+	<original>There is nothing to mark as read.</original>
+	<translated>No hay nada para marcar como le&#xC3;&#xAD;do.</translated>
+</translation>
+<translation>
+	<original>This message has been sent multiple times.</original>
+	<translated>Este mensaje ha sido enviado m&#xC3;&#xBA;ltiples veces.</translated>
+</translation>
+<translation>
+	<original>Time</original>
+	<translated>Hora</translated>
+</translation>
+<translation>
+	<original>To</original>
+	<translated>A</translated>
+</translation>
+<translation>
+	<original>Urgency</original>
+	<translated>Urgencia</translated>
+</translation>
+<translation>
+	<original>You have no old messages.</original>
+	<translated>No tiene mensajes antiguos</translated>
+</translation>
+<translation>
+	<original>You have no waiting messages.</original>
+	<translated>No tiene mensajes en espera</translated>
+</translation>
+<translation>
+	<original>You must select a recipient.</original>
+	<translated>Debe seleccionar un contenedor</translated>
+</translation>
+<translation>
+	<original>extremely urgent</original>
+	<translated>Urgente</translated>
+</translation>
+<translation>
+	<original>moderately important</original>
+	<translated>Importancia: 2/4</translated>
+</translation>
+<translation>
+	<original>not important</original>
+	<translated>Importancia: 1/4</translated>
+</translation>
+<translation>
+	<original>somewhat important</original>
+	<translated>Importancia: 3/4</translated>
+</translation>
+<translation>
+	<original>very important</original>
+	<translated>Importancia: 4/4</translated>
+</translation>
+
+</gettextXML>
+

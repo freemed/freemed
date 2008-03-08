@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>Are you sure that you want to permanently remove this fax?</original>
+	<translated>&#xC2;&#xBF;Est&#xC3;&#xA1; seguro que desea eliminar permanentemente este fax?</translated>
+</translation>
+<translation>
+	<original>By clicking on the 'Sign' button below, I agree that I am the physician in question and have reviewed this facsimile transmission.</original>
+	<translated>Pulsando sobre el bot&#xC3;&#xB3;n \&#x22;Firmar\&#x22; (abajo), acepto que yo soy el m&#xC3;&#xA9;dico en 
+cuesti&#xC3;&#xB3;n y que he revisado esta transmisi&#xC3;&#xB3;n por fax.</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Moved fax to scanned documents.</original>
+	<translated>Trasladar el fax a documentos escaneados.</translated>
+</translation>
+<translation>
+	<original>Note</original>
+	<translated>Anotaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Read</original>
+	<translated>Leer</translated>
+</translation>
+<translation>
+	<original>Return to Unread Fax Menu</original>
+	<translated>Volver al men&#xC3;&#xBA; 'Fax no le&#xC3;&#xAD;dos'</translated>
+</translation>
+<translation>
+	<original>Send to Another Provider</original>
+	<translated>Enviar a otro m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Sign</original>
+	<translated>Firmar</translated>
+</translation>
+<translation>
+	<original>There are currently %d unread faxes in the system.</original>
+	<translated>Actualmente hay %d faxes sin leer en el sistema.</translated>
+</translation>
+<translation>
+	<original>There is currently 1 unread fax in the system.</original>
+	<translated>Actualmente hay 1 fax sin leer en el sistema.</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Tipo</translated>
+</translation>
+<translation>
+	<original>Unread Faxes</original>
+	<translated>Faxes no le&#xC3;&#xAD;dos</translated>
+</translation>
+<translation>
+	<original>View Patient Record</original>
+	<translated>Consultar registro del paciente</translated>
+</translation>
+<translation>
+	<original>You have %d unread faxes</original>
+	<translated>Tiene %d faxes sin leer</translated>
+</translation>
+
+</gettextXML>
+

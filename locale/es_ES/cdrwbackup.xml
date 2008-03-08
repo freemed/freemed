@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-03-03 09:13+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>CD Recorder Device</original>
+	<translated>Grabador de CR</translated>
+</translation>
+<translation>
+	<original>CD Recorder Driver</original>
+	<translated>Driver del grabador</translated>
+</translation>
+<translation>
+	<original>CD Recorder Max Speed</original>
+	<translated>Velocidad m&#xC3;&#xA1;xima</translated>
+</translation>
+<translation>
+	<original>CD/RW Backup</original>
+	<translated>Copia de seguridad en CD</translated>
+</translation>
+<translation>
+	<original>Creating backup</original>
+	<translated>Crear copia de seguridad</translated>
+</translation>
+<translation>
+	<original>Return to Administration Menu</original>
+	<translated>Volver al men&#xC3;&#xBA; de administraci&#xC3;&#xB3;n</translated>
+</translation>
+
+</gettextXML>
+

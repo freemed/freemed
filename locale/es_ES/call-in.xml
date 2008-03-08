@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = FreeMED 0.84 -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-13 20:42+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2008-02-29 19:54+0100 -->
+
+	<Translator>Pablo C. Vergara Castro &#x3C;pablocristobal@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Translators <LL@li.org> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTF-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
+
+	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+</information>
+<translation>
+	<original>All</original>
+	<translated>Todos</translated>
+</translation>
+<translation>
+	<original>Appointments</original>
+	<translated>Citas</translated>
+</translation>
+<translation>
+	<original>Book</original>
+	<translated>Ingresar cita</translated>
+</translation>
+<translation>
+	<original>Call In</original>
+	<translated>Pedir cita</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Complaint</original>
+	<translated>Dolencia</translated>
+</translation>
+<translation>
+	<original>Contact Information</original>
+	<translated>Informaci&#xC3;&#xB3;n de contacto</translated>
+</translation>
+<translation>
+	<original>Current</original>
+	<translated>Actual</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Fecha de nacimiento</translated>
+</translation>
+<translation>
+	<original>Date of Call</original>
+	<translated>Fecha petici&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Enter</original>
+	<translated>Introducir</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>First</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono de casa</translated>
+</translation>
+<translation>
+	<original>Home/Work Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono contacto</translated>
+</translation>
+<translation>
+	<original>Last</original>
+	<translated>Apellidos</translated>
+</translation>
+<translation>
+	<original>Middle</original>
+	<translated>2&#xC2;&#xBA; nomb.</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Old</original>
+	<translated>Antigua</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Return to the Main Menu</original>
+	<translated>Volver al men&#xC3;&#xBA; principal</translated>
+</translation>
+<translation>
+	<original>Show All Appointments</original>
+	<translated>Mostrar todas las citas</translated>
+</translation>
+<translation>
+	<original>Show Today's Appointments</original>
+	<translated>Mostrar las citas de hoy</translated>
+</translation>
+<translation>
+	<original>Took Call</original>
+	<translated>Petici&#xC3;&#xB3;n tomada</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Consultar</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>Tel&#xC3;&#xA9;fono del trabajo</translated>
+</translation>
+
+</gettextXML>
+
