@@ -186,7 +186,20 @@ class SuperBill extends EMRModule {
 		$hash['provider'] = $provider[0]['provider'];
 		return $hash;
 	} // end method GetSuperbill
-	
+
+	// Method: PrintSuperbills
+	//
+	//	Output an HTML-formatted list of superbills, unsuitable for
+	//	JSON or other RPC output.
+	//
+	// Parameters:
+	//
+	//	$patientId - Patient record id
+	//
+	//	$superbillId - Superbill record id
+	//
+	//	$notes - Arbitrary text to pass.
+	//
 	public function printSuperbills ( $patientId, $superbillId, $notes ) {
 
 		$results = array();
