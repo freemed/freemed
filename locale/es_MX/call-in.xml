@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 21:45-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>All</original>
+	<translated>Todo</translated>
+</translation>
+<translation>
+	<original>Appointments</original>
+	<translated>Citas</translated>
+</translation>
+<translation>
+	<original>Book</original>
+	<translated>Libro</translated>
+</translation>
+<translation>
+	<original>Call In</original>
+	<translated>Llamar</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Complaint</original>
+	<translated>Queja</translated>
+</translation>
+<translation>
+	<original>Contact Information</original>
+	<translated>Informacion de contacto</translated>
+</translation>
+<translation>
+	<original>Current</original>
+	<translated>Actual</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Fecha de nacimiento</translated>
+</translation>
+<translation>
+	<original>Date of Call</original>
+	<translated>D&#xC3;&#xAD;a de llamada</translated>
+</translation>
+<translation>
+	<original>Enter</original>
+	<translated>Entrar</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>First</original>
+	<translated>Primero</translated>
+</translation>
+<translation>
+	<original>Home Phone</original>
+	<translated>Telefono de casa</translated>
+</translation>
+<translation>
+	<original>Home/Work Phone</original>
+	<translated>Telefono de casa/trabajo</translated>
+</translation>
+<translation>
+	<original>Last</original>
+	<translated>Ultimo</translated>
+</translation>
+<translation>
+	<original>Middle</original>
+	<translated>Mitad</translated>
+</translation>
+<translation>
+	<original>Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Old</original>
+	<translated>Antiguedad</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Return to the Main Menu</original>
+	<translated>Regresar al menu principal</translated>
+</translation>
+<translation>
+	<original>Show All Appointments</original>
+	<translated>Mostrar todas las citas</translated>
+</translation>
+<translation>
+	<original>Show Today's Appointments</original>
+	<translated>Mostras todas las citas de hoy</translated>
+</translation>
+<translation>
+	<original>Took Call</original>
+	<translated>Llamada tomada</translated>
+</translation>
+<translation>
+	<original>View</original>
+	<translated>Ver</translated>
+</translation>
+<translation>
+	<original>Work Phone</original>
+	<translated>Telefono del trabajo</translated>
+</translation>
+
+</gettextXML>
+

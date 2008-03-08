@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 19:37-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Generate Statement</original>
+	<translated>Generar la declaraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>No procedures to bill seem to exist for this patient.</original>
+	<translated>Ning&#xC3;&#xBA;n procedimiento de la cuenta existe para este paciente. </translated>
+</translation>
+<translation>
+	<original>Operation timed out.</original>
+	<translated>Tiempo expirado de la operaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Statement</original>
+	<translated>Declaraci&#xC3;&#xB3;n </translated>
+</translation>
+<translation>
+	<original>This patient does not have any statements to generate.</original>
+	<translated>Este paciente no tiene ninguna declaraci&#xC3;&#xB3;n para generar.</translated>
+</translation>
+
+</gettextXML>
+

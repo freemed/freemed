@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-03 18:41-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Charges Graph</original>
+	<translated>Cargar gr&#xC3;&#xA1;fico </translated>
+</translation>
+<translation>
+	<original>Charges Graph From</original>
+	<translated>Cargar gr&#xC3;&#xA1;fico desde</translated>
+</translation>
+<translation>
+	<original>Charges Pie Chart From</original>
+	<translated>Cargar carta desde</translated>
+</translation>
+<translation>
+	<original>Chart Type</original>
+	<translated>Tipo de carta</translated>
+</translation>
+<translation>
+	<original>Printable</original>
+	<translated>Imprimible</translated>
+</translation>
+<translation>
+	<original>Select Charges Graph Dates</original>
+	<translated>Seleccionar fecha carga gr&#xC3;&#xA1;fica </translated>
+</translation>
+<translation>
+	<original>The PHP gd extension must be installed for this report to work.</original>
+	<translated>La extensi&#xC3;&#xB3;n gd PHP debe estar instalada para que este informe funcione</translated>
+</translation>
+
+</gettextXML>
+

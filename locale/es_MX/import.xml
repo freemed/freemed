@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-02 23:54-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Import</original>
+	<translated>Importar</translated>
+</translation>
+<translation>
+	<original>Import Another Database</original>
+	<translated>Importar otra base de datos</translated>
+</translation>
+<translation>
+	<original>Import Database</original>
+	<translated>Importar base de datos</translated>
+</translation>
+<translation>
+	<original>Importing Database</original>
+	<translated>Importando base de datos</translated>
+</translation>
+<translation>
+	<original>Return to Administration Menu</original>
+	<translated>Regresar al Menu de administraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Select Database to Import</original>
+	<translated>Seleccionar base de datos a importar</translated>
+</translation>
+<translation>
+	<original>You do not have access to import functions.</original>
+	<translated>No tiene acceso a las funciones de importaci&#xC3;&#xB3;n</translated>
+</translation>
+
+</gettextXML>
+

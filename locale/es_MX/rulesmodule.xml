@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 21:10-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Choose</original>
+	<translated>Escoger</translated>
+</translation>
+<translation>
+	<original>Choose Type</original>
+	<translated>Escoger tipo</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>IF</original>
+	<translated>IF</translated>
+</translation>
+<translation>
+	<original>No IF clause was defined.</original>
+	<translated>Ning&#xC3;&#xBA;na cl&#xC3;&#xA1;usula IF fue definida.</translated>
+</translation>
+<translation>
+	<original>No THEN clause was defined.</original>
+	<translated>Ning&#xC3;&#xBA;na cl&#xC3;&#xA1;usula THEN fue definida.</translated>
+</translation>
+<translation>
+	<original>No modules are currently defining rule types.</original>
+	<translated>Ning&#xC3;&#xBA;n modulo actual esta definido por tipos.</translated>
+</translation>
+<translation>
+	<original>Priority</original>
+	<translated>Prioridad</translated>
+</translation>
+<translation>
+	<original>Rule set encountered unknown equivalence operator.</original>
+	<translated>Las reglas establecidadas en el programa, encontraron a un operador de 
+equivalencia desconocido.</translated>
+</translation>
+<translation>
+	<original>Rules</original>
+	<translated>Reglas</translated>
+</translation>
+<translation>
+	<original>THEN</original>
+	<translated>THEN</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Tipo</translated>
+</translation>
+<translation>
+	<original>lower numbers have higher priority</original>
+	<translated>N&#xC3;&#xBA;meros m&#xC3;&#xA1;s bajos tienen prioridad m&#xC3;&#xA1;s alta</translated>
+</translation>
+
+</gettextXML>
+

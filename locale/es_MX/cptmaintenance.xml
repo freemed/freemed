@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-09 14:37-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Billing Information</original>
+	<translated>Informaci&#xC3;&#xB3;n de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>CPT Codes Maintenance</original>
+	<translated>Mantenimiento de c&#xC3;&#xB3;digos CPT</translated>
+</translation>
+<translation>
+	<original>Default Standard Fee</original>
+	<translated>Honorario por defecto</translated>
+</translation>
+<translation>
+	<original>Default Type of Service</original>
+	<translated>Tipo de servicio por defecto</translated>
+</translation>
+<translation>
+	<original>Diagnosis Excluded</original>
+	<translated>Diagnostico excluido</translated>
+</translation>
+<translation>
+	<original>Diagnosis Required</original>
+	<translated>Diagnostico requerido</translated>
+</translation>
+<translation>
+	<original>External Description</original>
+	<translated>Descripci&#xC3;&#xB3;n externa</translated>
+</translation>
+<translation>
+	<original>Fee Profiles</original>
+	<translated>Perfiles del honorario</translated>
+</translation>
+<translation>
+	<original>Gender Restriction</original>
+	<translated>Restricci&#xC3;&#xB3;n del g&#xC3;&#xA9;nero</translated>
+</translation>
+<translation>
+	<original>Inclusion/Exclusion</original>
+	<translated>Inclusi&#xC3;&#xB3;n/exclusi&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Insurance Company</original>
+	<translated>Compa&#xC3;&#xB1;ia de seguros</translated>
+</translation>
+<translation>
+	<original>Internal Description</original>
+	<translated>Descripci&#xC3;&#xB3;n interna</translated>
+</translation>
+<translation>
+	<original>Internal Service Types</original>
+	<translated>Tipos de servicio interno</translated>
+</translation>
+<translation>
+	<original>Please note that selecting </original>
+	<translated>Porfavor verifique la selecci&#xC3;&#xB3;n o utilizara los valores por defecto.</translated>
+</translation>
+<translation>
+	<original>Primary Information</original>
+	<translated>Informaci&#xC3;&#xB3;n primaria</translated>
+</translation>
+<translation>
+	<original>Procedural Code</original>
+	<translated>C&#xC3;&#xB3;digo procesales</translated>
+</translation>
+<translation>
+	<original>Procedural Codes Excluded</original>
+	<translated>C&#xC3;&#xB3;digos procesales excluidos</translated>
+</translation>
+<translation>
+	<original>Procedural Codes Required</original>
+	<translated>C&#xC3;&#xB3;digos procesales requeridos</translated>
+</translation>
+<translation>
+	<original>Relative Value</original>
+	<translated>Valor relativo</translated>
+</translation>
+<translation>
+	<original>Standard Fee</original>
+	<translated>Valor estandar</translated>
+</translation>
+<translation>
+	<original>Taxed?</original>
+	<translated>&#xC2;&#xBF;Impuestos?</translated>
+</translation>
+<translation>
+	<original>Type of Service</original>
+	<translated>Tipo de servicio</translated>
+</translation>
+<translation>
+	<original>female only</original>
+	<translated>Solo mujer</translated>
+</translation>
+<translation>
+	<original>male only</original>
+	<translated>Solo hombre</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>no restriction</original>
+	<translated>Sin restriccion</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Si</translated>
+</translation>
+
+</gettextXML>
+

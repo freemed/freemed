@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-09 15:01-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Dependent Children</original>
+	<translated>Hijo dependiente</translated>
+</translation>
+<translation>
+	<original>Expiration</original>
+	<translated>Expiraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Federal Poverty Increment</original>
+	<translated>Incremento federal de la pobreza</translated>
+</translation>
+<translation>
+	<original>Federal Poverty Level</original>
+	<translated>Nivel federal de la pobreza</translated>
+</translation>
+<translation>
+	<original>Financial Demographics</original>
+	<translated>Demogr&#xC3;&#xA1;ficos financiero</translated>
+</translation>
+<translation>
+	<original>Household Size</original>
+	<translated>Tama&#xC3;&#xB1;o de la casa</translated>
+</translation>
+<translation>
+	<original>Identification</original>
+	<translated>Indentificai&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Identification Issuer</original>
+	<translated>Identificaci&#xC3;&#xB3;n del emisor</translated>
+</translation>
+<translation>
+	<original>Identification Number</original>
+	<translated>N&#xC3;&#xBA;mero de identificaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Income</original>
+	<translated>Renta</translated>
+</translation>
+<translation>
+	<original>Keep track of information for determining sliding fee schedule and other income and dependent parties related information.</original>
+	<translated>No perder de vista la informaci&#xC3;&#xB3;n para determinar horario del honorario, 
+renta y dependientes relacionados a esta informaci&#xC3;&#xB3;n.</translated>
+</translation>
+<translation>
+	<original>Other Dependents</original>
+	<translated>Otro dependientes</translated>
+</translation>
+<translation>
+	<original>Other Information</original>
+	<translated>Otra informaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Size of Household</original>
+	<translated>Tama&#xC3;&#xB1;o de la casa</translated>
+</translation>
+<translation>
+	<original>Sliding Fee Scale Enabled</original>
+	<translated>Slid del honorario disponibe</translated>
+</translation>
+<translation>
+	<original>Spouse</original>
+	<translated>Esposo</translated>
+</translation>
+<translation>
+	<original>Timestamp</original>
+	<translated>Timestamp</translated>
+</translation>
+<translation>
+	<original>Yearly Income</original>
+	<translated>Renta anual</translated>
+</translation>
+<translation>
+	<original>baptismal certificate</original>
+	<translated>Certificado bautismo</translated>
+</translation>
+<translation>
+	<original>birth certificate</original>
+	<translated>Certificado de nacimiento</translated>
+</translation>
+<translation>
+	<original>driver's license</original>
+	<translated>Licencia de conducir</translated>
+</translation>
+<translation>
+	<original>green card</original>
+	<translated>Tarjeta verde (green card)</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>passport</original>
+	<translated>Pasaporte</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>Si</translated>
+</translation>
+
+</gettextXML>
+

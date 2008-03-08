@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-10 13:56-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Add Another</original>
+	<translated>Agregar otro</translated>
+</translation>
+<translation>
+	<original>Add Payment</original>
+	<translated>Agregar pago</translated>
+</translation>
+<translation>
+	<original>Authorization</original>
+	<translated>Autorizaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Billing</original>
+	<translated>Facturando</translated>
+</translation>
+<translation>
+	<original>CPT</original>
+	<translated>CPT</translated>
+</translation>
+<translation>
+	<original>CPT Code</original>
+	<translated>C&#xC3;&#xB3;digo CPT</translated>
+</translation>
+<translation>
+	<original>CPT Modifier</original>
+	<translated>Modificar CPT</translated>
+</translation>
+<translation>
+	<original>Calculated Accepted Fee</original>
+	<translated>Calculo de honorario aceptado </translated>
+</translation>
+<translation>
+	<original>Calculated Charge</original>
+	<translated>Calcular cargo</translated>
+</translation>
+<translation>
+	<original>Cancelled</original>
+	<translated>Cancelado</translated>
+</translation>
+<translation>
+	<original>Certifications</original>
+	<translated>Certificaciones</translated>
+</translation>
+<translation>
+	<original>Charges</original>
+	<translated>Cargos</translated>
+</translation>
+<translation>
+	<original>Claim Type</original>
+	<translated>Tipo de cita</translated>
+</translation>
+<translation>
+	<original>Click Finish</original>
+	<translated>Click finalizar</translated>
+</translation>
+<translation>
+	<original>Comment</original>
+	<translated>Comentario</translated>
+</translation>
+<translation>
+	<original>Committing to ledger</original>
+	<translated>Comentar al libro mayor.</translated>
+</translation>
+<translation>
+	<original>Create</original>
+	<translated>Crear</translated>
+</translation>
+<translation>
+	<original>Current Coverage</original>
+	<translated>Actual cobertura</translated>
+</translation>
+<translation>
+	<original>Date of Last Visit</original>
+	<translated>Fecha de la ultima visita</translated>
+</translation>
+<translation>
+	<original>Date of Procedure</original>
+	<translated>Fecha del procedimiento</translated>
+</translation>
+<translation>
+	<original>Diagnosis Code</original>
+	<translated>C&#xC3;&#xB3;digo de diagnostico</translated>
+</translation>
+<translation>
+	<original>Episode of Care</original>
+	<translated>Episodio de cuidado</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>Failed to modify authorization.</original>
+	<translated>Error de autorizacion para modificar.</translated>
+</translation>
+<translation>
+	<original>Finish</original>
+	<translated>Finalizar</translated>
+</translation>
+<translation>
+	<original>Insurance Billable?</original>
+	<translated>&#xC2;&#xBF;Seguro facturable?</translated>
+</translation>
+<translation>
+	<original>Invalid authorization</original>
+	<translated>Autorizacion invalida</translated>
+</translation>
+<translation>
+	<original>Medicaid Original Reference</original>
+	<translated>Referencia original de Medicaid</translated>
+</translation>
+<translation>
+	<original>Medicaid Resubmission Code</original>
+	<translated>C&#xC3;&#xB3;digo de la resumisi&#xC3;&#xB3;n de Medicaid</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Miscel&#xC3;&#xA1;neo</translated>
+</translation>
+<translation>
+	<original>Modifier</original>
+	<translated>Modificar</translated>
+</translation>
+<translation>
+	<original>Modifier 2</original>
+	<translated>Modificar 2</translated>
+</translation>
+<translation>
+	<original>Modifier 3</original>
+	<translated>Modificar 3</translated>
+</translation>
+<translation>
+	<original>Must Specify Amount</original>
+	<translated>Debe especificar un monto</translated>
+</translation>
+<translation>
+	<original>Must Specify Place of Service</original>
+	<translated>Debe especificar un lugar de servicio</translated>
+</translation>
+<translation>
+	<original>Must Specify Proc Year</original>
+	<translated>Debe especificar un a&#xC3;&#xB1;o </translated>
+</translation>
+<translation>
+	<original>Must Specify Procedural code</original>
+	<translated>Debe especificar c&#xC3;&#xB3;digo procesal</translated>
+</translation>
+<translation>
+	<original>Must Specify Type of Claim</original>
+	<translated>Debe especificar un tipo de cita</translated>
+</translation>
+<translation>
+	<original>Must Specify physician</original>
+	<translated>Debe especificar un m&#xC3;&#xA9;dico</translated>
+</translation>
+<translation>
+	<original>Must Specify proc Day</original>
+	<translated>Debe especificar un d&#xC3;&#xAD;a </translated>
+</translation>
+<translation>
+	<original>Must Specify proc Month</original>
+	<translated>Debe especificar un mes</translated>
+</translation>
+<translation>
+	<original>Must have one diagnosis code</original>
+	<translated>Debe tener un c&#xC3;&#xB3;digo de diagnostico</translated>
+</translation>
+<translation>
+	<original>NO COMMENT</original>
+	<translated>SIN COMENTARIO</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>Outside Lab Charges</original>
+	<translated>Cargas exteriores del laboratorio</translated>
+</translation>
+<translation>
+	<original>Part One</original>
+	<translated>Parte uno</translated>
+</translation>
+<translation>
+	<original>Payment Record</original>
+	<translated>Expediente de pago</translated>
+</translation>
+<translation>
+	<original>Place of Service</original>
+	<translated>Lugar de servicio</translated>
+</translation>
+<translation>
+	<original>Primary Coverage</original>
+	<translated>Cobertura primaria</translated>
+</translation>
+<translation>
+	<original>Procedural Code</original>
+	<translated>C&#xC3;&#xB3;digo procesal</translated>
+</translation>
+<translation>
+	<original>Procedure</original>
+	<translated>Procedimiento</translated>
+</translation>
+<translation>
+	<original>Procedure Code</original>
+	<translated>C&#xC3;&#xB3;digo de procedimiento</translated>
+</translation>
+<translation>
+	<original>Procedure created</original>
+	<translated>Procedimiento creado</translated>
+</translation>
+<translation>
+	<original>Procedures</original>
+	<translated>Procedimientos</translated>
+</translation>
+<translation>
+	<original>Provider</original>
+	<translated>Proveedor</translated>
+</translation>
+<translation>
+	<original>Referring Provider</original>
+	<translated>Referencia del proveedor</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>Removed old authorization</original>
+	<translated>Eliminar autorizaciones antiguas</translated>
+</translation>
+<translation>
+	<original>Revise</original>
+	<translated>Revisi&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Secondary Coverage</original>
+	<translated>Cobertura secundaria</translated>
+</translation>
+<translation>
+	<original>Sliding Fee Scale</original>
+	<translated>Escala de honorario</translated>
+</translation>
+<translation>
+	<original>Step One</original>
+	<translated>Primer paso</translated>
+</translation>
+<translation>
+	<original>Step Three: Confirm</original>
+	<translated>Paso tres: Confirmar</translated>
+</translation>
+<translation>
+	<original>Step Two: Select Coverage</original>
+	<translated>Paso dos: Seleccionar cobertura</translated>
+</translation>
+<translation>
+	<original>Tertiary Coverage</original>
+	<translated>Cobertura terciaria</translated>
+</translation>
+<translation>
+	<original>Type of Service</original>
+	<translated>Tipo de servicio</translated>
+</translation>
+<translation>
+	<original>Units</original>
+	<translated>Unidades</translated>
+</translation>
+<translation>
+	<original>Updated authorization</original>
+	<translated>Autorizacion actualizada</translated>
+</translation>
+<translation>
+	<original>Updating patient diagnoses</original>
+	<translated>Actualizando el diagnostico del paciente</translated>
+</translation>
+<translation>
+	<original>Voucher Number</original>
+	<translated>N&#xC3;&#xBA;mero del vale</translated>
+</translation>
+<translation>
+	<original>Work Comp Coverage</original>
+	<translated>Cobertura de los componentes del trabajo</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>to</original>
+	<translated>A</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 21:31-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Menu del administrador</translated>
+</translation>
+<translation>
+	<original>Billing Functions</original>
+	<translated>Funciones de facturaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Calendar</original>
+	<translated>Calendario</translated>
+</translation>
+<translation>
+	<original>Call-In</original>
+	<translated>Llamar</translated>
+</translation>
+<translation>
+	<original>Check</original>
+	<translated>Verificar</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Limpiar</translated>
+</translation>
+<translation>
+	<original>Color Scheme</original>
+	<translated>Color de esquema</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Configurar</translated>
+</translation>
+<translation>
+	<original>DEBUG IS ON</original>
+	<translated>Eliminador de errores activado</translated>
+</translation>
+<translation>
+	<original>Day View</original>
+	<translated>opini&#xC3;&#xB3;n del d&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Default Blue</original>
+	<translated>Por defecto azul</translated>
+</translation>
+<translation>
+	<original>Display Language Selection</original>
+	<translated>Mostrar selecci&#xC3;&#xB3;n del lenguaje</translated>
+</translation>
+<translation>
+	<original>Entry</original>
+	<translated>Entrar</translated>
+</translation>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>Help</original>
+	<translated>Ayuda</translated>
+</translation>
+<translation>
+	<original>History</original>
+	<translated>Historial</translated>
+</translation>
+<translation>
+	<original>Language</original>
+	<translated>Lenguaje</translated>
+</translation>
+<translation>
+	<original>Login</original>
+	<translated>Entrar</translated>
+</translation>
+<translation>
+	<original>Logout</original>
+	<translated>Salir</translated>
+</translation>
+<translation>
+	<original>Main</original>
+	<translated>Principal</translated>
+</translation>
+<translation>
+	<original>Menu</original>
+	<translated>Menu</translated>
+</translation>
+<translation>
+	<original>Messages</original>
+	<translated>Mensajes</translated>
+</translation>
+<translation>
+	<original>New</original>
+	<translated>Nuevo</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>Notify</original>
+	<translated>Notificar</translated>
+</translation>
+<translation>
+	<original>Password</original>
+	<translated>Constrase&#xC3;&#xB1;a</translated>
+</translation>
+<translation>
+	<original>Patients</original>
+	<translated>Pacientes</translated>
+</translation>
+<translation>
+	<original>Preferences</original>
+	<translated>Preferencias</translated>
+</translation>
+<translation>
+	<original>Recent</original>
+	<translated>Reciente</translated>
+</translation>
+<translation>
+	<original>Reset Resume</original>
+	<translated>Resetear el resumen</translated>
+</translation>
+<translation>
+	<original>Resume</original>
+	<translated>Resumir</translated>
+</translation>
+<translation>
+	<original>Schedule</original>
+	<translated>Planificador</translated>
+</translation>
+<translation>
+	<original>Select</original>
+	<translated>Seleccionar</translated>
+</translation>
+<translation>
+	<original>Send</original>
+	<translated>Enviar</translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated>Entrar</translated>
+</translation>
+<translation>
+	<original>Support Data</original>
+	<translated>Datos de Apoyo</translated>
+</translation>
+<translation>
+	<original>System</original>
+	<translated>Sistema</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usuario</translated>
+</translation>
+<translation>
+	<original>Username</original>
+	<translated>Nombre de usuario</translated>
+</translation>
+<translation>
+	<original>Utilities</original>
+	<translated>Utilidades</translated>
+</translation>
+<translation>
+	<original>Week View</original>
+	<translated>opini&#xC3;&#xB3;n de la semana</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>version</original>
+	<translated>Version</translated>
+</translation>
+
+</gettextXML>
+

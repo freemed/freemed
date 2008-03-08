@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-02 23:45-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Choose</original>
+	<translated>Elegir </translated>
+</translation>
+<translation>
+	<original>Choose Template</original>
+	<translated>Elegir plantilla</translated>
+</translation>
+<translation>
+	<original>Form</original>
+	<translated>Forma</translated>
+</translation>
+<translation>
+	<original>Forms</original>
+	<translated>Formas</translated>
+</translation>
+<translation>
+	<original>Record is locked.</original>
+	<translated>Expediente esta bloqueado</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>S&#xC3;&#xAD;</translated>
+</translation>
+
+</gettextXML>
+

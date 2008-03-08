@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-02 22:32-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Annotation</original>
+	<translated>Anotaci&#xC3;&#xB3;n </translated>
+</translation>
+<translation>
+	<original>Annotations</original>
+	<translated>Anotaciones</translated>
+</translation>
+<translation>
+	<original>Could not resolve table name!</original>
+	<translated>Imposible resolver el nombre de la tabla</translated>
+</translation>
+<translation>
+	<original>Date/Time</original>
+	<translated>Fecha/Tiempo</translated>
+</translation>
+<translation>
+	<original>Module</original>
+	<translated>Modulo</translated>
+</translation>
+<translation>
+	<original>Not specified</original>
+	<translated>No especificado</translated>
+</translation>
+<translation>
+	<original>Table</original>
+	<translated>Tabla</translated>
+</translation>
+<translation>
+	<original>User</original>
+	<translated>Usuario</translated>
+</translation>
+<translation>
+	<original>by</original>
+	<translated>Por</translated>
+</translation>
+
+</gettextXML>
+

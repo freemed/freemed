@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 20:01-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Error getting payer name.</original>
+	<translated>Error al obtener nombre del cliente.</translated>
+</translation>
+<translation>
+	<original>Mark claims to be rebilled by coverage.</original>
+	<translated>Marcar las demandas que se refacturar&#xC3;&#xA1;n por la cobertura. </translated>
+</translation>
+<translation>
+	<original>Rebill By Coverage</original>
+	<translated>Refacturar por cobertura</translated>
+</translation>
+<translation>
+	<original>Rebill by Coverage</original>
+	<translated>Refacturar por cobertura</translated>
+</translation>
+<translation>
+	<original>Rebill for</original>
+	<translated>Refacturar por </translated>
+</translation>
+<translation>
+	<original>Return to Rebill Menu</original>
+	<translated>Regresar al men&#xC3;&#xBA; para refacturar</translated>
+</translation>
+<translation>
+	<original>There is nothing to rebill at this time.</original>
+	<translated>No hay nada que refacturar ahora.</translated>
+</translation>
+
+</gettextXML>
+

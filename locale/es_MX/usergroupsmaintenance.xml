@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 18:24-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Facility</original>
+	<translated>Facilidad</translated>
+</translation>
+<translation>
+	<original>Remove Changes</original>
+	<translated>Eliminar cambios</translated>
+</translation>
+<translation>
+	<original>User Group</original>
+	<translated>Grupo de usuario</translated>
+</translation>
+<translation>
+	<original>User Group Name</original>
+	<translated>Nombre del grupo de usuario</translated>
+</translation>
+<translation>
+	<original>User Groups Maintenance</original>
+	<translated>Mantenimiento de los grupos de usuario</translated>
+</translation>
+<translation>
+	<original>Users</original>
+	<translated>Usuarios</translated>
+</translation>
+
+</gettextXML>
+

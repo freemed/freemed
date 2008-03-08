@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 17:48-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>City</original>
+	<translated>Ciudad</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Apellido</translated>
+</translation>
+<translation>
+	<original>No patients found with that criteria!</original>
+	<translated>No se encontraron pacientes con ese criterio!</translated>
+</translation>
+<translation>
+	<original>Recent</original>
+	<translated>Reciente</translated>
+</translation>
+<translation>
+	<original>Select</original>
+	<translated>Seleccionar</translated>
+</translation>
+<translation>
+	<original>Select a patient from the following list:</original>
+	<translated>Seleccionar un paciente de la siguiente lista:</translated>
+</translation>
+<translation>
+	<original>Smart Lookup</original>
+	<translated>Busqueda inteligente</translated>
+</translation>
+
+</gettextXML>
+

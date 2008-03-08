@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-10 19:20-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Address Line 1</original>
+	<translated>Direcc&#xC3;&#xAD;on linea 1</translated>
+</translation>
+<translation>
+	<original>Address Line 2</original>
+	<translated>Direcc&#xC3;&#xAD;on linea 2</translated>
+</translation>
+<translation>
+	<original>Assigment Of Benefits</original>
+	<translated>Asignaci&#xC3;&#xB3;n de beneficios</translated>
+</translation>
+<translation>
+	<original>Child</original>
+	<translated>Ni&#xC3;&#xB1;o</translated>
+</translation>
+<translation>
+	<original>Child Not Fin</original>
+	<translated>Ni&#xC3;&#xB1;o no encontrado</translated>
+</translation>
+<translation>
+	<original>City</original>
+	<translated>Ciudad</translated>
+</translation>
+<translation>
+	<original>Copay</original>
+	<translated>Co-pago</translated>
+</translation>
+<translation>
+	<original>Coverage Insurance Type</original>
+	<translated>Tipo de seguro de la cobertura</translated>
+</translation>
+<translation>
+	<original>Date of Birth</original>
+	<translated>Fecha de nacimiento</translated>
+</translation>
+<translation>
+	<original>Employer of Insured (Leave blank if unemployed)</original>
+	<translated>Patr&#xC3;&#xB3;n de los asegurados</translated>
+</translation>
+<translation>
+	<original>Entry error found.</original>
+	<translated>Error de entrada encontrada.</translated>
+</translation>
+<translation>
+	<original>Error updating coverage status</original>
+	<translated>Error al actualizar el estado de cobertura</translated>
+</translation>
+<translation>
+	<original>Failed to get insurance companies</original>
+	<translated>Error al obtener compa&#xC3;&#xB1;ias de seguro</translated>
+</translation>
+<translation>
+	<original>Failed to get insurance coverage types</original>
+	<translated>Error al obtener tipos de cobertura de seguro</translated>
+</translation>
+<translation>
+	<original>Failed to read coverage table</original>
+	<translated>Error al leer tabla de cobertura</translated>
+</translation>
+<translation>
+	<original>Female</original>
+	<translated>Femenino</translated>
+</translation>
+<translation>
+	<original>Finish</original>
+	<translated>Finalizar</translated>
+</translation>
+<translation>
+	<original>First Name</original>
+	<translated>Nombre</translated>
+</translation>
+<translation>
+	<original>Foster Child</original>
+	<translated>Dar ni&#xC3;&#xB1;o</translated>
+</translation>
+<translation>
+	<original>Gender</original>
+	<translated>G&#xC3;&#xA9;nero</translated>
+</translation>
+<translation>
+	<original>Group</original>
+	<translated>Grupo</translated>
+</translation>
+<translation>
+	<original>Group - Plan Name</original>
+	<translated>Nombre del plan - Grupo</translated>
+</translation>
+<translation>
+	<original>HC Dependent</original>
+	<translated>Dependiente HC</translated>
+</translation>
+<translation>
+	<original>Husband</original>
+	<translated>Marido</translated>
+</translation>
+<translation>
+	<original>ID</original>
+	<translated>ID</translated>
+</translation>
+<translation>
+	<original>ID not valid</original>
+	<translated>ID no valido</translated>
+</translation>
+<translation>
+	<original>Ins Co</original>
+	<translated>Ins co</translated>
+</translation>
+<translation>
+	<original>Insurance</original>
+	<translated>Seguro</translated>
+</translation>
+<translation>
+	<original>Insurance Company</original>
+	<translated>Compa&#xC3;&#xB1;ia de seguro</translated>
+</translation>
+<translation>
+	<original>Insurance Group Number</original>
+	<translated>N&#xC3;&#xBA;mero del grupo de seguro</translated>
+</translation>
+<translation>
+	<original>Insurance ID Number</original>
+	<translated>N&#xC3;&#xBA;mero de ID del seguro</translated>
+</translation>
+<translation>
+	<original>Insurance Type</original>
+	<translated>Tipo de seguro</translated>
+</translation>
+<translation>
+	<original>Is Assigning?</original>
+	<translated>&#xC2;&#xBF;Est&#xC3;&#xA1; asignando?</translated>
+</translation>
+<translation>
+	<original>Last Name</original>
+	<translated>Apellido</translated>
+</translation>
+<translation>
+	<original>Limited</original>
+	<translated>Limitado</translated>
+</translation>
+<translation>
+	<original>Male</original>
+	<translated>Masculino</translated>
+</translation>
+<translation>
+	<original>Medicare Legal Rep</original>
+	<translated>Representante legal de Seguro de enfermedad</translated>
+</translation>
+<translation>
+	<original>Middle Name</original>
+	<translated>Segundo nombre</translated>
+</translation>
+<translation>
+	<original>Miscellaneous Information</original>
+	<translated>Informaci&#xC3;&#xB3;n miscel&#xC3;&#xA1;nea</translated>
+</translation>
+<translation>
+	<original>Must Select a patient</original>
+	<translated>Tiene que seleccionar un paciente</translated>
+</translation>
+<translation>
+	<original>No</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>Patient Coverage</original>
+	<translated>Cobertura del paciente</translated>
+</translation>
+<translation>
+	<original>Patient has active coverage of this type. Select 'Replace' to replace.</original>
+	<translated>El paciente tiene activada la cobertura de este tipo. Seleccione &#xE2;&#x80;&#x9C;sustituir&#xE2;&#x80;&#x9D; 
+para reemplazar.</translated>
+</translation>
+<translation>
+	<original>Plan</original>
+	<translated>Plan</translated>
+</translation>
+<translation>
+	<original>Primary</original>
+	<translated>Primario</translated>
+</translation>
+<translation>
+	<original>Provider Accepts Assigment</original>
+	<translated>El proveedor acepta giro</translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>Relationship</original>
+	<translated>Relaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Relationship to Insured</original>
+	<translated>Relaci&#xC3;&#xB3;n a los asegurados</translated>
+</translation>
+<translation>
+	<original>Release Date Signed</original>
+	<translated>Fecha de entrada (login)</translated>
+</translation>
+<translation>
+	<original>Release Of Information</original>
+	<translated>Lanzamiento de la informaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Removing old coverage</original>
+	<translated>Eliminando coberturas antiguas</translated>
+</translation>
+<translation>
+	<original>Replace Like Coverage</original>
+	<translated>Substituir como cobertura</translated>
+</translation>
+<translation>
+	<original>School Name for Insured (Leave blank if not a student)</original>
+	<translated>Nombre del seguro de colegio (dejar en blanco si no es estudiante)</translated>
+</translation>
+<translation>
+	<original>Secondary</original>
+	<translated>Secundario</translated>
+</translation>
+<translation>
+	<original>Select Coverage Type</original>
+	<translated>Seleccione tipo de cobertura</translated>
+</translation>
+<translation>
+	<original>Self</original>
+	<translated>Mismo</translated>
+</translation>
+<translation>
+	<original>Social Security Number</original>
+	<translated>N&#xC3;&#xBA;mero de seguridad social</translated>
+</translation>
+<translation>
+	<original>Sponsored Dependent</original>
+	<translated>Dependiente patrocinado</translated>
+</translation>
+<translation>
+	<original>Start date cannot be later than today's date.</original>
+	<translated>La fecha de incio no puede mas antigua que la fecha actual.</translated>
+</translation>
+<translation>
+	<original>Starting Date</original>
+	<translated>Fecha de inicio</translated>
+</translation>
+<translation>
+	<original>State</original>
+	<translated>Estado</translated>
+</translation>
+<translation>
+	<original>Status</original>
+	<translated>Estados</translated>
+</translation>
+<translation>
+	<original>Step Child</original>
+	<translated>Paso de ni&#xC3;&#xB1;o</translated>
+</translation>
+<translation>
+	<original>Submit</original>
+	<translated>Someter</translated>
+</translation>
+<translation>
+	<original>Supply Coverage Information</original>
+	<translated>Llene la informaci&#xC3;&#xB3;n de cobertura</translated>
+</translation>
+<translation>
+	<original>Supply Insurance Information</original>
+	<translated>Llene la informaci&#xC3;&#xB3;n de seguro</translated>
+</translation>
+<translation>
+	<original>Supply Insureds Info if not the Patient</original>
+	<translated>Llene la informaci&#xC3;&#xB3;n de seguro, si no es paciente</translated>
+</translation>
+<translation>
+	<original>Tertiary</original>
+	<translated>Terciario</translated>
+</translation>
+<translation>
+	<original>Transgendered</original>
+	<translated>Transgendered</translated>
+</translation>
+<translation>
+	<original>Try Again</original>
+	<translated>Intente de nuevo</translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Tipo</translated>
+</translation>
+<translation>
+	<original>Ward of Court</original>
+	<translated>Sala de corte</translated>
+</translation>
+<translation>
+	<original>Wife</original>
+	<translated>Esposa</translated>
+</translation>
+<translation>
+	<original>Work Comp</original>
+	<translated>Compa&#xC3;&#xB1;ia de trabajo</translated>
+</translation>
+<translation>
+	<original>Yes</original>
+	<translated>Si</translated>
+</translation>
+<translation>
+	<original>You must select a patient before viewing coverages.</original>
+	<translated>Debe seleccionar un paciente antes de ver cobertura.</translated>
+</translation>
+<translation>
+	<original>You must select an insurance company.</original>
+	<translated>Debe seleccionar una compa&#xC3;&#xB1;ia de seguro.</translated>
+</translation>
+<translation>
+	<original>You must supply ID numbers.</original>
+	<translated>Debe llenar los n&#xC3;&#xBA;meros de ID.</translated>
+</translation>
+<translation>
+	<original>You must supply the insured party's name.</original>
+	<translated>Debe llenar los nombre de feriados</translated>
+</translation>
+<translation>
+	<original>Zip</original>
+	<translated>C&#xC3;&#xB3;digo postal</translated>
+</translation>
+
+</gettextXML>
+

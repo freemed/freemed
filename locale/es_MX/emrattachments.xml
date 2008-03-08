@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-02 23:28-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Annotations were successfully moved.</original>
+	<translated>Las anotaciones fueron satisfactoriamente movidas</translated>
+</translation>
+<translation>
+	<original>Attachment</original>
+	<translated>Adjunto</translated>
+</translation>
+<translation>
+	<original>Destination Patient</original>
+	<translated>Destinaci&#xC3;&#xB3;n del paciente</translated>
+</translation>
+<translation>
+	<original>EMR Attachments</original>
+	<translated>EMR adjuntos</translated>
+</translation>
+<translation>
+	<original>Failed to move record.</original>
+	<translated>Error al mover el expediente</translated>
+</translation>
+<translation>
+	<original>Move EMR segments from one patient record to another.</original>
+	<translated>Mover los segmentos de EMR a partir de un expediente del paciente a otro.</translated>
+</translation>
+<translation>
+	<original>Operation cannot be completed, since either source or destination patient record were not specified.</original>
+	<translated>La operaci&#xC3;&#xB3;n no pudo completarse, debido a que la fuente o el expediente de 
+destinaci&#xC3;&#xB3;n del  paciente no fue especificado</translated>
+</translation>
+<translation>
+	<original>Patient</original>
+	<translated>Paciente</translated>
+</translation>
+<translation>
+	<original>Record was successfully moved.</original>
+	<translated>El expediente fu&#xC3;&#xA9; exitosamente eliminado</translated>
+</translation>
+<translation>
+	<original>Step One: Select a Patient</original>
+	<translated>Paso uno: Seleccionar un paciente</translated>
+</translation>
+<translation>
+	<original>Step Three: Select a Destination</original>
+	<translated>Pado tres: Seleccionar destinaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Step Two: Choose the Attachment to Move</original>
+	<translated>Paso dos: Elegir archivo adjunto a mover</translated>
+</translation>
+
+</gettextXML>
+

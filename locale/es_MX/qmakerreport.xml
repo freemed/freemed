@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 20:40-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Assemble Query</original>
+	<translated>Montar query</translated>
+</translation>
+<translation>
+	<original>Clear All</original>
+	<translated>Limpiar todo</translated>
+</translation>
+<translation>
+	<original>Condition</original>
+	<translated>Condici&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Create</original>
+	<translated>Crear</translated>
+</translation>
+<translation>
+	<original>Error adding %s.</original>
+	<translated>Error al agregar %s</translated>
+</translation>
+<translation>
+	<original>Execute Query</original>
+	<translated>Ejecutar query</translated>
+</translation>
+<translation>
+	<original>Export Query to CSV</original>
+	<translated>Exportar query a CSV</translated>
+</translation>
+<translation>
+	<original>Field</original>
+	<translated>Campo</translated>
+</translation>
+<translation>
+	<original>Load Query</original>
+	<translated>Cargar query</translated>
+</translation>
+<translation>
+	<original>No Information available</original>
+	<translated>No hay informaci&#xC3;&#xB3;n disponible</translated>
+</translation>
+<translation>
+	<original>Operator</original>
+	<translated>Operador</translated>
+</translation>
+<translation>
+	<original>Pick Query</original>
+	<translated>Tomar query</translated>
+</translation>
+<translation>
+	<original>Pick a Query</original>
+	<translated>Tomar un query</translated>
+</translation>
+<translation>
+	<original>Query Maker</original>
+	<translated>Hacer un query</translated>
+</translation>
+<translation>
+	<original>Save Query</original>
+	<translated>Guardar query</translated>
+</translation>
+<translation>
+	<original>Save Query As</original>
+	<translated>Guardar query como</translated>
+</translation>
+<translation>
+	<original>Saving Query</original>
+	<translated>Guardando query</translated>
+</translation>
+<translation>
+	<original>Select Fields</original>
+	<translated>Seleccionar campos</translated>
+</translation>
+<translation>
+	<original>Select Options</original>
+	<translated>Sleccionar opciones</translated>
+</translation>
+<translation>
+	<original>Select fields from tables</original>
+	<translated>Seleccionar campos desde tablas</translated>
+</translation>
+<translation>
+	<original>The current Select statement is:</original>
+	<translated>La actual selecci&#xC3;&#xB3;n de declaraci&#xC3;&#xB3;n es:</translated>
+</translation>
+<translation>
+	<original>The query has been saved as %s.</original>
+	<translated>El query ha sido guardada como %s.</translated>
+</translation>
+<translation>
+	<original>The selected query is %s.</original>
+	<translated>El query seleccionado es %s.</translated>
+</translation>
+<translation>
+	<original>Unnamed</original>
+	<translated>No nombrado</translated>
+</translation>
+<translation>
+	<original>Updating Query</original>
+	<translated>Actualizando query</translated>
+</translation>
+<translation>
+	<original>Value</original>
+	<translated>Valor</translated>
+</translation>
+
+</gettextXML>
+

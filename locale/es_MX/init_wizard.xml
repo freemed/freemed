@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-03 20:14-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Admin Account Password</original>
+	<translated>Contrase&#xC3;&#xB1;a cuenta del administrador</translated>
+</translation>
+<translation>
+	<original>Admin password set.</original>
+	<translated>Contrase&#xC3;&#xB1;a de admistrador establecida</translated>
+</translation>
+<translation>
+	<original>All modules initialized.</original>
+	<translated>Todos los modulos iniciados</translated>
+</translation>
+<translation>
+	<original>Before creating that account you must prove that you have the appropriate level of access.</original>
+	<translated>Antes de crear esta cuenta tiene que comprobar su nivel de acceso apropiado</translated>
+</translation>
+<translation>
+	<original>Clear</original>
+	<translated>Listo</translated>
+</translation>
+<translation>
+	<original>Confirm Admin Account Password</original>
+	<translated>Confirmar contrase&#xC3;&#xB1;a cuenta del administrador</translated>
+</translation>
+<translation>
+	<original>Database Password</original>
+	<translated>Contrase&#xC3;&#xB1;a de la base de datos</translated>
+</translation>
+<translation>
+	<original>Database Password Accepted</original>
+	<translated>Contrase&#xC3;&#xB1;a de base de datos aceptada</translated>
+</translation>
+<translation>
+	<original>Database Username</original>
+	<translated>Nombre de usuario de base de datos</translated>
+</translation>
+<translation>
+	<original>Dynamic modules database initialized.</original>
+	<translated>M&#xC3;&#xB3;dulos din&#xC3;&#xA1;micos de la base de datos iniciados</translated>
+</translation>
+<translation>
+	<original>FreeMED configuration database initialized.</original>
+	<translated>Configuraci&#xC3;&#xB3;n de la base de datos de FreeMED iniciada</translated>
+</translation>
+<translation>
+	<original>FreeMED expects the intial setup to be done from the localhost. Dying because your IP is not in lib/settings.php as INIT_ADDR.</original>
+	<translated>FreeMED a la espera de la instalaci&#xC3;&#xB3;n desde \&#x22;localhost\&#x22;. No conectando 
+porque su IP no esta en lib/settings.php como INIT_ADDR</translated>
+</translation>
+<translation>
+	<original>In order to access the freemed intialization, your web client must come from the host defined in lib/settings.php.</original>
+	<translated>De acuerdo al orden de acceso a la iniciaci&#xC3;&#xB3;n de FreeMED, tu cliente de 
+navegaci&#xC3;&#xB3;n debe ser igual al del host definido en lib/settings.php</translated>
+</translation>
+<translation>
+	<original>Incorrect user/password combination</original>
+	<translated>Nombre de usuario o contrase&#xC3;&#xB1;a incorrecta</translated>
+</translation>
+<translation>
+	<original>Normally that means that you must be on the same host that FreeMED is running on (localhost).</original>
+	<translated>Tiene que estar en el mismo \&#x22;host\&#x22; donde FreeMED esta corriendo (localhost)</translated>
+</translation>
+<translation>
+	<original>Page Not Accessible from your IP Address</original>
+	<translated>Pagina no accesible desde su direcci&#xC3;&#xB3;n IP</translated>
+</translation>
+<translation>
+	<original>Please provide the database user name and password, as found in settings.php.</original>
+	<translated>Porfavor ingrese el nombre de usuario y contrase&#xC3;&#xB1;a, puede encontrarlo en 
+settings.php</translated>
+</translation>
+<translation>
+	<original>Return to Login</original>
+	<translated>Regresar a la identificaci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>SECURITY NOTE: The default is to limit access to this function to localhost. It is wise to leave this default alone.</original>
+	<translated>NOTA DE SEGURIDAD: Por defecto no se puede acceder a esta funci&#xC3;&#xB3;n del 
+localhost. Es conveniente no modificarla</translated>
+</translation>
+<translation>
+	<original>Sign In</original>
+	<translated>Entrar</translated>
+</translation>
+<translation>
+	<original>So if possible, go sit at the FreeMED box to do this intial configuration.</original>
+	<translated>Si es posible, ingrese al buz&#xC3;&#xB3;n de FreeMED para su confuraci&#xC3;&#xB3;n inicial</translated>
+</translation>
+<translation>
+	<original>The initialization wizard cannot be called directly.</original>
+	<translated>La iniciaci&#xC3;&#xB3;n del asistente no puede ser abierto directamente</translated>
+</translation>
+<translation>
+	<original>This function is capable of destroying the entire database and the value in settings.php will control future access to this function.</original>
+	<translated>Esta funci&#xC3;&#xB3;n es capaz de destruir la base de datos entera, el valor de 
+settings.php controlora el futuro acceso a esta.</translated>
+</translation>
+<translation>
+	<original>This is the the wizard to setup the admin account.</original>
+	<translated>Este es el asistente de instalaci&#xC3;&#xB3;n para la cuenta de administrador</translated>
+</translation>
+<translation>
+	<original>User table created.</original>
+	<translated>Tabla de usuario creada</translated>
+</translation>
+<translation>
+	<original>You can login using:</original>
+	<translated>Puede indentificarse usando:</translated>
+</translation>
+<translation>
+	<original>You must either change your host, or change the value found in settings.php to match your host.</original>
+	<translated>Tiene que cambiar su \&#x22;host\&#x22;, o cambiarlo por el valor del archivo 
+settings.php </translated>
+</translation>
+<translation>
+	<original>You will now be returned to the the login prompt.</original>
+	<translated>Ser&#xC3;&#xA1; regresado a la ventana de identificaci&#xC3;&#xB3;n de conexi&#xC3;&#xB3;n</translated>
+</translation>
+
+</gettextXML>
+

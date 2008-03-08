@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 21:34-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>Administration Menu</original>
+	<translated>Menu de administraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Attach Cover Page</original>
+	<translated>Ajuntar pagina</translated>
+</translation>
+<translation>
+	<original>Calendar Overbooking</original>
+	<translated>Calendario sobreventana</translated>
+</translation>
+<translation>
+	<original>Combo with past drugs</original>
+	<translated>Combo con drogas antiguas</translated>
+</translation>
+<translation>
+	<original>Configuration Complete</original>
+	<translated>Configuraci&#xC3;&#xB3;n completada</translated>
+</translation>
+<translation>
+	<original>Configuration Help</original>
+	<translated>Ayuda Configuraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Configure</original>
+	<translated>Configuraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Date Format</original>
+	<translated>Formato de fecha</translated>
+</translation>
+<translation>
+	<original>Date Widget</original>
+	<translated>Fecha de widget</translated>
+</translation>
+<translation>
+	<original>Default</original>
+	<translated>Defecto</translated>
+</translation>
+<translation>
+	<original>Default Area Code</original>
+	<translated>Codigo de Area por defecto</translated>
+</translation>
+<translation>
+	<original>Disabled</original>
+	<translated>Indisponible</translated>
+</translation>
+<translation>
+	<original>Enabled</original>
+	<translated>Disponible</translated>
+</translation>
+<translation>
+	<original>Export Databases</original>
+	<translated>Exportar bade de datos</translated>
+</translation>
+<translation>
+	<original>Fax Cover Page</original>
+	<translated>Pagina de Fax</translated>
+</translation>
+<translation>
+	<original>Fold Multipage Forms?</original>
+	<translated>Doblegar multiples formas?</translated>
+</translation>
+<translation>
+	<original>France</original>
+	<translated>Francia</translated>
+</translation>
+<translation>
+	<original>Graphics Enhanced</original>
+	<translated>Grafico aumentado</translated>
+</translation>
+<translation>
+	<original>Hour Format</original>
+	<translated>Formato de hora</translated>
+</translation>
+<translation>
+	<original>Import Databases</original>
+	<translated>Inportar base de datos</translated>
+</translation>
+<translation>
+	<original>Lock Record Override</original>
+	<translated>Bloquear la invalidaci&#xC3;&#xB3;n de registro</translated>
+</translation>
+<translation>
+	<original>Module Information</original>
+	<translated>Informaci&#xC3;&#xB3;n Modulo</translated>
+</translation>
+<translation>
+	<original>No Cover Page</original>
+	<translated>Pagina no cubierta</translated>
+</translation>
+<translation>
+	<original>Phone Number Format</original>
+	<translated>Formato numero telefonico</translated>
+</translation>
+<translation>
+	<original>Prescription Drug Widget</original>
+	<translated>Prescripci&#xC3;&#xB3;n de la droga Widget </translated>
+</translation>
+<translation>
+	<original>Refresh</original>
+	<translated>Actualizar</translated>
+</translation>
+<translation>
+	<original>Reinitialize Database</original>
+	<translated>Reinicializar la base de datos</translated>
+</translation>
+<translation>
+	<original>Return To Administration Menu</original>
+	<translated>Regresar al Menu de administracion</translated>
+</translation>
+<translation>
+	<original>Return to the Main Menu</original>
+	<translated>Regresar al Menu principal</translated>
+</translation>
+<translation>
+	<original>Scheduling End Time</original>
+	<translated>Tiempo termino de cita</translated>
+</translation>
+<translation>
+	<original>Scheduling Start Time</original>
+	<translated>Tiempo inicio de cita</translated>
+</translation>
+<translation>
+	<original>Show Tips?</original>
+	<translated>&#xC2;&#xBF;Mostrar ayuda?</translated>
+</translation>
+<translation>
+	<original>Standard Config</original>
+	<translated>Configuraci&#xC3;&#xB3;n estandar</translated>
+</translation>
+<translation>
+	<original>System Configuration</original>
+	<translated>Configuraci&#xC3;&#xB3;n del sistema</translated>
+</translation>
+<translation>
+	<original>Unformatted</original>
+	<translated>Sin formato</translated>
+</translation>
+<translation>
+	<original>United States</original>
+	<translated>Estados Unidos</translated>
+</translation>
+<translation>
+	<original>User Maintenance</original>
+	<translated>Mantenimiento del usuario</translated>
+</translation>
+<translation>
+	<original>You do not have access to system configuration.</original>
+	<translated>No tiene acceso al sistema de configuraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>You don't have access to the administration menu.</original>
+	<translated>No tiene acceso al Menu de administraci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>javascript widget</original>
+	<translated>javascript widget</translated>
+</translation>
+<translation>
+	<original>no</original>
+	<translated>No</translated>
+</translation>
+<translation>
+	<original>rxlist.com Drug Listing</original>
+	<translated>Lista de drogas rxlist.com</translated>
+</translation>
+<translation>
+	<original>split text entry</original>
+	<translated>Ingresas texto separado</translated>
+</translation>
+<translation>
+	<original>yes</original>
+	<translated>S&#xC3;&#xAD;</translated>
+</translation>
+
+</gettextXML>
+

@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<gettextXML>
+<information>
+
+	<!-- type = Project-Id-Version, data = PACKAGE VERSION -->
+
+	<!-- type = , data =  -->
+
+	<!-- type = POT-Creation-Date, data = 2007-08-01 21:09+0200 -->
+
+	<!-- type = PO-Revision-Date, data = 2007-08-08 21:24-0300 -->
+
+	<Translator>Carlos Samain&#x3C;gnucmst@gmail.com&#x3E;</Translator>
+	<!-- type = Language-Team, data = Spanish<SamaGroup> -->
+
+	<!-- type = MIME-Version, data = 1.0 -->
+
+	<!-- type = Content-Type, data = text/plain; charset=UTf-8 -->
+
+	<ContentTransferEncoding>8bit</ContentTransferEncoding>
+	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
+
+	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+</information>
+<translation>
+	<original>ATTACHED</original>
+	<translated>Adjuntado</translated>
+</translation>
+<translation>
+	<original>Abdominal CT Reports</original>
+	<translated>Informes abdominal CT</translated>
+</translation>
+<translation>
+	<original>Abdominal Radiograph</original>
+	<translated>Radiograf&#xC3;&#xAD;a abdominal</translated>
+</translation>
+<translation>
+	<original>Add Another</original>
+	<translated>Agregar otra</translated>
+</translation>
+<translation>
+	<original>Attach Image</original>
+	<translated>Adjuntar imagen</translated>
+</translation>
+<translation>
+	<original>C8</original>
+	<translated>C8</translated>
+</translation>
+<translation>
+	<original>CBC</original>
+	<translated>CBC</translated>
+</translation>
+<translation>
+	<original>Category</original>
+	<translated>Categoria</translated>
+</translation>
+<translation>
+	<original>Chest CT Reports</original>
+	<translated>Informes del pecho CT</translated>
+</translation>
+<translation>
+	<original>Chest Radiograph</original>
+	<translated>Radiograf&#xC3;&#xAD;a al pecho</translated>
+</translation>
+<translation>
+	<original>Colonoscopy</original>
+	<translated>Colonoscop&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Consult</original>
+	<translated>Consulta</translated>
+</translation>
+<translation>
+	<original>Description</original>
+	<translated>Descripci&#xC3;&#xB3;n</translated>
+</translation>
+<translation>
+	<original>Discharge Summary</original>
+	<translated>Cancelar sumario</translated>
+</translation>
+<translation>
+	<original>Endoscopy</original>
+	<translated>Endoscopia</translated>
+</translation>
+<translation>
+	<original>Financial Information</original>
+	<translated>Informaci&#xC3;&#xB3;n financiera</translated>
+</translation>
+<translation>
+	<original>History and Physical</original>
+	<translated>Historia y sicologia</translated>
+</translation>
+<translation>
+	<original>Hospital Records</original>
+	<translated>Informes del hospital</translated>
+</translation>
+<translation>
+	<original>Insurance Card</original>
+	<translated>Tarjeta del seguro </translated>
+</translation>
+<translation>
+	<original>LFT</original>
+	<translated>LFT</translated>
+</translation>
+<translation>
+	<original>Lab Report</original>
+	<translated>Informe de laboratorio</translated>
+</translation>
+<translation>
+	<original>Lab Reports</original>
+	<translated>Informes de laboratorio</translated>
+</translation>
+<translation>
+	<original>Letters</original>
+	<translated>Cartas</translated>
+</translation>
+<translation>
+	<original>Lipid Profile</original>
+	<translated>Perfil del l&#xC3;&#xAD;pido </translated>
+</translation>
+<translation>
+	<original>Mammogram Reports</original>
+	<translated>Informes Mamografia</translated>
+</translation>
+<translation>
+	<original>Miscellaneous</original>
+	<translated>Miscel&#xC3;&#xA1;neos</translated>
+</translation>
+<translation>
+	<original>Notes</original>
+	<translated>Notas</translated>
+</translation>
+<translation>
+	<original>Oncology</original>
+	<translated>Oncologo</translated>
+</translation>
+<translation>
+	<original>Operative Report</original>
+	<translated>Informe operativo</translated>
+</translation>
+<translation>
+	<original>Pathology</original>
+	<translated>Patologia</translated>
+</translation>
+<translation>
+	<original>Patient History</original>
+	<translated>Historia del paciente</translated>
+</translation>
+<translation>
+	<original>Physician</original>
+	<translated>M&#xC3;&#xA9;dico </translated>
+</translation>
+<translation>
+	<original>Questionnaire</original>
+	<translated>Questionario</translated>
+</translation>
+<translation>
+	<original>Radiographs</original>
+	<translated>Radiografias</translated>
+</translation>
+<translation>
+	<original>Radiology</original>
+	<translated>Radiolog&#xC3;&#xAD;a</translated>
+</translation>
+<translation>
+	<original>Record is locked.</original>
+	<translated>El informe esta bloqueado</translated>
+</translation>
+<translation>
+	<original>Referral</original>
+	<translated>Referencia</translated>
+</translation>
+<translation>
+	<original>Related Episode(s)</original>
+	<translated>Episodio(s) relacionados</translated>
+</translation>
+<translation>
+	<original>Reviewed</original>
+	<translated>Revisado</translated>
+</translation>
+<translation>
+	<original>Scanned Documents</original>
+	<translated>Documentos escaneados</translated>
+</translation>
+<translation>
+	<original>Thyroid Profile</original>
+	<translated>Perfil de la tiroides </translated>
+</translation>
+<translation>
+	<original>Type</original>
+	<translated>Tipo</translated>
+</translation>
+<translation>
+	<original>Type of Image</original>
+	<translated>Tipo de imagen</translated>
+</translation>
+<translation>
+	<original>UA</original>
+	<translated>UA</translated>
+</translation>
+<translation>
+	<original>Updating database</original>
+	<translated>Actualizando la base de datos</translated>
+</translation>
+
+</gettextXML>
+
