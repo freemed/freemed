@@ -268,7 +268,7 @@ class UnfiledDocuments extends SupportModule {
 		// Get page information
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
+			FREEMED_DIR . '/data/documents/unfiled/' .
 			$r['ufffilename']);
 		$pages = $djvu->NumberOfPages();
 		$chunks = $djvu->StoredChunks();
@@ -355,7 +355,7 @@ class UnfiledDocuments extends SupportModule {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
+			FREEMED_DIR . '/data/documents/unfiled/' .
 			$r['ufffilename']);
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
@@ -388,7 +388,7 @@ class UnfiledDocuments extends SupportModule {
 
 		// Analyze File
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			dirname(dirname(__FILE__)).'/data/documents/unfiled/'.
+			FREEMED_DIR . '/data/documents/unfiled/' .
 			$filename);
 		$pages = $djvu->NumberOfPages( );
 
