@@ -50,4 +50,4 @@ DELIMITER ;
 # ----- Populate languages
 CALL i18n_PopulateLanguage( 'en_US', 'English' );
 CALL i18n_PopulateLanguage( 'fr_FR', 'Francais' );
-
+CALL i18n_PopulateLanguage( 'es_MX', 'Spanish(Mexico)' );
