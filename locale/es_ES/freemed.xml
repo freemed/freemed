@@ -21,6 +21,10 @@
 	<!-- type = Plural-Forms, data = nplurals=INTEGER; plural=EXPRESSION; -->
 
 	<!-- type = X-Generator, data = Translate Toolkit 0.10.1 -->
+	
+        <Locale>es_CL</Locale>
+        <LocaleName>Espanol (Spain)</LocaleName>
+
 </information>
 <translation>
 	<original>(no description)</original>

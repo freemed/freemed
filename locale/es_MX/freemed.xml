@@ -21,6 +21,10 @@
 	<!-- type = Plural-Forms, data = nplurals=2; plural=(n != 1); -->
 
 	<!-- type = X-Generator, data = Pootling 0.2rc1 -->
+
+	<Locale>es_MX</Locale>
+	<LocaleName>Espanol (Mexico)</LocaleName>
+
 </information>
 <translation>
 	<original>(no description)</original>
