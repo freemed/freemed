@@ -52,4 +52,4 @@ CALL i18n_PopulateLanguage( 'en_US', 'English' );
 CALL i18n_PopulateLanguage( 'de_DE', 'Deutsch' );
 CALL i18n_PopulateLanguage( 'fr_FR', 'Francais' );
 CALL i18n_PopulateLanguage( 'es_MX', 'Spanish(Mexico)' );
-CALL i18n_PopulateLanguage( 'pl', 'Polski' );
+CALL i18n_PopulateLanguage( 'pl_PL', 'Polski' );
