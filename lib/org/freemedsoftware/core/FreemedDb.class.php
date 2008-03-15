@@ -57,6 +57,14 @@ class FreemedDb extends MDB2 {
 		$this->db->setOption( 'portability', false );
 	} // end method init
 
+	// Method: GetMDB2Object
+	//
+	//	Get underlying MDB2 object.
+	//
+	public function GetMDB2Object ( ) {
+		return $this->db;
+	} // end method GetMDB2Object
+
 	// Method: __call
 	//
 	//	Magic method to push calls which come into this object into the $db

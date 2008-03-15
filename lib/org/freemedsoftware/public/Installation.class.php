@@ -195,6 +195,10 @@ class Installation {
 			$GLOBALS['sql'] = CreateObject ( 'org.freemedsoftware.core.FreemedDb' );
 		}
 
+		syslog(LOG_INFO, "CreateDatabase(): session table creation");
+		$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('session').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+	        system ( $command );
+
 		// Load module index, which should cause complete initialization
 		$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, true );
 

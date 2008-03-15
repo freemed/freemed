@@ -92,21 +92,52 @@ if (!function_exists("bcadd")) include_once (dirname(__FILE__).'/bcadd.php');
 include_once ( dirname(__FILE__)."/loader.php" );
 include_once ( dirname(__FILE__)."/module.php" );
 
+  // ****************** INITIALIZE SQL CONNECTION ******************
+
+define ('DB_ENGINE', 'mysqli');
+
+//----- Create SQL database object
+if (!defined('SKIP_SQL_INIT')) {
+	$sql = CreateObject ( 'org.freemedsoftware.core.FreemedDb' );
+}
+
 // ********************** START SESSION **************************
 if (!defined('SESSION_DISABLE')) {
-	session_cache_limiter('nocache');
-	session_start();
+	LoadObjectDependency( 'net.php.pear.HTTP_Session2' );
+	HTTP_Session2::useTransSID(false);
+	HTTP_Session2::useCookies(false);
 
-	session_register(
-		'authdata',
-		'current_patient',
-		'default_facility',
-		'ipaddr',
-		'language',
-		'page_history',
-		'page_history_name',
-		'patient_history'
+	// using an existing MDB2 connection
+	HTTP_Session2::setContainer(
+		  'MDB2'
+		, array (
+			  'dsn'   => $GLOBALS['sql']->GetMDB2Object()
+			, 'table' => 'session'
+		)
 	);
+
+	HTTP_Session2::start( );
+	HTTP_Session2::setExpire( time() + (60 * 60) ); // set expire to 60 seconds
+	HTTP_Session2::setIdle( time() + (10 * 60) );   // set idle to 5 seconds
+
+	if (HTTP_Session2::isExpired()) {
+		HTTP_Session2::destroy();
+	}
+
+	if (HTTP_Session2::isIdle()) {
+		HTTP_Session2::destroy();
+	}
+
+	HTTP_Session2::updateIdle();
+
+	HTTP_Session2::register ( 'authdata' );
+	HTTP_Session2::register ( 'current_patient' );
+	HTTP_Session2::register ( 'default_facility' );
+	HTTP_Session2::register ( 'ipaddr' );
+	HTTP_Session2::register ( 'language' );
+	HTTP_Session2::register ( 'page_history' );
+	HTTP_Session2::register ( 'page_history_name' );
+	HTTP_Session2::register ( 'patient_history');
 
 	//----- Gettext and language settings
 	if (isset($_REQUEST['_l'])) {
@@ -138,15 +169,6 @@ if (!defined('SESSION_DISABLE')) {
 
 include_once (dirname(__FILE__)."/API.php");             // API functions
 include_once (dirname(__FILE__)."/macros.php");          // macros/contants
-
-  // ****************** INITIALIZE SQL CONNECTION ******************
-
-define ('DB_ENGINE', 'mysqli');
-
-//----- Create SQL database object
-if (!defined('SKIP_SQL_INIT')) {
-	$sql = CreateObject ( 'org.freemedsoftware.core.FreemedDb' );
-}
 
 //----- Create Log target
 openlog( "freemed", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
