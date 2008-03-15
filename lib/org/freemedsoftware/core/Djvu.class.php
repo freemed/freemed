@@ -102,9 +102,13 @@ class Djvu {
 		$cache_name = PHYSICAL_LOCATION . '/data/cache/djvu/' . $this->md5 . '.' . $page . '.' . ( $force_rotation ? 'rotated.' : '' ) . ( $force_ps ? 'ps' : 'jpg' );
 
 		if ( ! file_exists( $cache_name ) ) {
-			$rotate = $force_rotation ? " -rotate 90 " : "";
-			$command = "djvups -page=" . ($page+0) . " " . escapeshellarg($filename) . " | /usr/bin/convert - ${rotate} " . escapeshellarg( $cache_name );
+			$temp = tempnam('/tmp', 'djvu');
+			$rotate = $force_rotation ? " 90 " : " 0 ";
+			//$command = "djvups -page=" . ($page+0) . " " . escapeshellarg($filename) . " | /usr/bin/convert - ${rotate} " . escapeshellarg( $cache_name );
+			$command = "ddjvu -format=pnm -scale=100 -page=" . ($page+0) . " " . escapeshellarg($filename) . " " . escapeshellarg($temp) . " ; cat " . escapeshellarg($temp) . " | /usr/bin/pnmrotate ${rotate} | /usr/bin/pnmtopng > " . escapeshellarg( $cache_name );
+
 			exec( $command );
+			unlink( $temp );
 		} else {
 			// Touch it to avoid reaping if it has been accessed
 			exec( "touch " . escapeshellarg( $cache_name ) );
