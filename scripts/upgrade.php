@@ -76,6 +76,7 @@ printHeader( "Load admin table definitions" );
 loadSchema( 'modules' );
 loadSchema( 'user' );
 loadSchema( 'scheduler' );
+loadSchema( 'session' );
 
 printHeader( "Backup differently aggregated tables" );
 execSql( "CREATE TABLE allergies_old SELECT * FROM allergies;" );
