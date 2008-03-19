@@ -142,8 +142,7 @@ class Installation {
 			return false;
 		}
 
-		include_once( PHYSICAL_LOCATION.'/lib/smarty/Smarty.class.php' );
-		$smarty = new Smarty;
+		$smarty = CreateObject( 'net.php.smarty.Smarty' );
 
 		// Override Smarty defaults
 		$smarty->template_dir = PHYSICAL_LOCATION."/lib/";
