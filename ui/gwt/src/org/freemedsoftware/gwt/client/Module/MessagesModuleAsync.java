@@ -24,11 +24,14 @@
 
 package org.freemedsoftware.gwt.client.Module;
 
+import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface MessagesModuleAsync {
+public interface MessagesModuleAsync {  
+	/**
+	 */
 	public void GetAllByTag ( String searchTag, Boolean getAllMessages, AsyncCallback callback );
-	public void MessageTags ( AsyncCallback callback );
+	public void MessageTags (AsyncCallback callback );
 	public void UnreadMessages ( Integer timestamp, Boolean showAllMessages, AsyncCallback callback );
 	public void DeleteMultiple ( Integer[] messageIds, AsyncCallback callback );
 }

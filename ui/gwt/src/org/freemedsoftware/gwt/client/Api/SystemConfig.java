@@ -27,11 +27,17 @@ package org.freemedsoftware.gwt.client.Api;
 import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
-public interface SystemConfig extends RemoteService {  
+public interface SystemConfig extends RemoteService {
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap GetAll ( );
 	public String GetValue ( String configKey );
 	public String[] GetConfigSections ( );
 	public Boolean SetValue ( String configKey, String configValue );
+	/**
+	 * @gwt.typeArgs values <java.lang.String, java.lang.String>
+	 */
 	public Boolean SetValues ( HashMap values );
 }
 

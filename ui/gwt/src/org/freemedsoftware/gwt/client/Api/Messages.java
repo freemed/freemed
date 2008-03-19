@@ -27,14 +27,29 @@ package org.freemedsoftware.gwt.client.Api;
 import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
-public interface Messages extends RemoteService {  
+public interface Messages extends RemoteService {
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap Get ( Integer message );
 	public String RecipientsToText ( String id );
 	public Boolean Remove ( Integer messageId );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] ListOfUsers ( );
+	/**
+	 * @gwt.typeArgs message <java.lang.String, java.lang.String>
+	 */
 	public Boolean Send ( HashMap message );
 	public Boolean TagModify ( Integer message, String tag );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] ViewPerPatient ( Integer patientId, Boolean unreadOnly );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] ViewPerUser ( Boolean unreadOnly );
 }
 

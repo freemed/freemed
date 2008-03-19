@@ -28,12 +28,28 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
 public interface RemittBillingTransport extends RemoteService {
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetRebillList ( );
 	public String GetReport ( String report, String reportType );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap GetStatus ( String[] uniqueIds );
 	public Boolean MarkAsBilled ( Integer[] ids );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] PatientsToBill ( );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetClaimInformation ( Integer claimIds );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * @gwt.typeArgs overrides <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] ProcessClaims ( Integer[] patientIds, Integer[] claimIds, HashMap[] overrideInfo );
 }
 

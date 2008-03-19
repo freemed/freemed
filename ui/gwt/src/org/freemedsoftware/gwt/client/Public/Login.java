@@ -27,8 +27,8 @@ package org.freemedsoftware.gwt.client.Public;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Login extends RemoteService {  
-	Boolean LoggedIn( );
-	void Logout( );
-	Boolean Validate( String username, String password ); 
+	public Boolean LoggedIn( );
+	public void Logout( );
+	public Boolean Validate( String username, String password ); 
 }
 

@@ -27,18 +27,48 @@ package org.freemedsoftware.gwt.client.Api;
 import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
-public interface Scheduler extends RemoteService {  
+public interface Scheduler extends RemoteService {
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetDailyAppointments ( String apptDate, Integer providerId );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetDailyAppointmentsRange ( String startingDate, String endingDate, Integer providerId );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetDailyAppointmentScheduler ( String schedulerDate, Integer providerId );
 	public Boolean CopyAppointment ( Integer id, String destDate );
 	public Boolean CopyGroupAppointment ( Integer groupId, String targetDate );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] FindDateAppointments ( String searchDate, Integer providerId );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] FindGroupAppointments ( Integer groupId );
+	/**
+	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
+	 */
 	public Boolean MoveAppointment ( Integer apptId, HashMap data );
+	/**
+	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
+	 */
 	public Boolean MoveGroupAppointment ( Integer groupId, HashMap data );
+	/**
+	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
+	 */
 	public String[][] NextAvailable ( HashMap data );
+	/**
+	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
+	 */
 	public Integer SetAppointment ( HashMap data );
+	/**
+	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
+	 */
 	public Integer SetGroupAppointment ( Integer[] patientIds, HashMap data );
 	public void SetRecurringAppointment ( Integer apptId, Integer[] timestamps, String description );
 }

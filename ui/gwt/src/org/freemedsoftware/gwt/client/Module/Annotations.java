@@ -29,7 +29,13 @@ import java.util.HashMap;
 
 public interface Annotations extends RemoteService {
 	public Boolean NewAnnotation ( Integer emrAttachmentId, String annotation );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetAnnotations ( Integer emrAttachmentId );
+	/**
+	 * @gwt.typeArgs annotations <java.lang.String, java.lang.String>
+	 */
 	public String OutputAnnotations ( HashMap[] annotations );
 	public String PrepareAnnotation ( String annotationText );
 	public Integer LookupPatient ( String moduleClass, Integer id );

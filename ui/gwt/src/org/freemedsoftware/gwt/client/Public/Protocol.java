@@ -27,6 +27,6 @@ package org.freemedsoftware.gwt.client.Public;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Protocol extends RemoteService {  
-	Integer Version( );
+	public Integer Version( );
 }
 

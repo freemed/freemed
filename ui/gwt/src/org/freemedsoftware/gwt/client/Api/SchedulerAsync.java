@@ -24,21 +24,41 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.HashMap;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SchedulerAsync {
+	/**
+	 */
 	public void GetDailyAppointments ( String apptDate, Integer providerId, AsyncCallback callback );
+	/**
+	 */
 	public void GetDailyAppointmentsRange ( String startingDate, String endingDate, Integer providerId, AsyncCallback callback );
+	/**
+	 */
 	public void GetDailyAppointmentScheduler ( String schedulerDate, Integer providerId, AsyncCallback callback );
 	public void CopyAppointment ( Integer id, String destDate, AsyncCallback callback );
 	public void CopyGroupAppointment ( Integer groupId, String targetDate, AsyncCallback callback );
+	/**
+	 */
 	public void FindDateAppointments ( String searchDate, Integer providerId, AsyncCallback callback );
+	/**
+	 */
 	public void FindGroupAppointments ( Integer groupId, AsyncCallback callback );
+	/**
+	 */
 	public void MoveAppointment ( Integer apptId, HashMap data, AsyncCallback callback );
+	/**
+	 */
 	public void MoveGroupAppointment ( Integer groupId, HashMap data, AsyncCallback callback );
+	/**
+	 */
 	public void NextAvailable ( HashMap data, AsyncCallback callback );
+	/**
+	 */
 	public void SetAppointment ( HashMap data, AsyncCallback callback );
+	/**
+	 */
 	public void SetGroupAppointment ( Integer[] patientIds, HashMap data, AsyncCallback callback );
 	public void SetRecurringAppointment ( Integer apptId, Integer[] timestamps, String description, AsyncCallback callback );
 }

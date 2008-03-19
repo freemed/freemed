@@ -24,17 +24,27 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.HashMap;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface MessagesAsync {
+	/**
+	 */
 	public void Get ( Integer message, AsyncCallback callback );
 	public void RecipientsToText ( String id, AsyncCallback callback );
 	public void Remove ( Integer messageId, AsyncCallback callback );
-	public void ListOfUsers ( AsyncCallback callback );
+	/**
+	 */
+	public void ListOfUsers (AsyncCallback callback );
+	/**
+	 */
 	public void Send ( HashMap message, AsyncCallback callback );
 	public void TagModify ( Integer message, String tag, AsyncCallback callback );
+	/**
+	 */
 	public void ViewPerPatient ( Integer patientId, Boolean unreadOnly, AsyncCallback callback );
+	/**
+	 */
 	public void ViewPerUser ( Boolean unreadOnly, AsyncCallback callback );
 }
 

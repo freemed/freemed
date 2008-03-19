@@ -30,6 +30,9 @@ import java.util.HashMap;
 public interface MultumDrugLexicon extends RemoteService {  
 	public String[][] DosagesForDrug ( String drugId, String drugLabel );
 	public String DrugDosageToText ( String id );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap Picklist ( String criteria );
 }
 

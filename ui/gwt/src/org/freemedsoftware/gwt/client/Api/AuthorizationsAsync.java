@@ -24,12 +24,14 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 import java.util.HashMap;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface AuthorizationsAsync {
+public interface AuthorizationsAsync {  
 	public void FindByCoverage ( Integer coverageId, AsyncCallback callback );
+	/**
+	 */
 	public void GetAuthorization ( Integer authorizationId, AsyncCallback callback );
 	public void Replace ( Integer authorizationId, AsyncCallback callback );
 	public void UseAuthorization ( Integer authorizationId, AsyncCallback callback );

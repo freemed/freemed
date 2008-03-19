@@ -24,11 +24,14 @@
 
 package org.freemedsoftware.gwt.client.Module;
 
+import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface MultumDrugLexiconAsync {
+public interface MultumDrugLexiconAsync {  
 	public void DosagesForDrug ( String drugId, String drugLabel, AsyncCallback callback );
 	public void DrugDosageToText ( String id, AsyncCallback callback );
+	/**
+	 */
 	public void Picklist ( String criteria, AsyncCallback callback );
 }
 

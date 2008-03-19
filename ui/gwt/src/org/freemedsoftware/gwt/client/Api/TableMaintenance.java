@@ -29,6 +29,9 @@ import java.util.HashMap;
 
 public interface TableMaintenance extends RemoteService {  
 	public Boolean ExportStockData ( String tableName );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetModules ( String association, String likeString, Boolean picklist );
 	public void ImportStockData ( String tableName );
 }

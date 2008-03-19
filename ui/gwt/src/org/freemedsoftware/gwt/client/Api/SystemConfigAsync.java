@@ -24,14 +24,18 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.HashMap;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SystemConfigAsync {
-	public void GetAll ( AsyncCallback callback );
+	/**
+	 */
+	public void GetAll (AsyncCallback callback );
 	public void GetValue ( String configKey, AsyncCallback callback );
-	public void GetConfigSections ( AsyncCallback callback );
+	public void GetConfigSections (AsyncCallback callback );
 	public void SetValue ( String configKey, String configValue, AsyncCallback callback );
+	/**
+	 */
 	public void SetValues ( HashMap values, AsyncCallback callback );
 }
 

@@ -30,6 +30,9 @@ import java.util.HashMap;
 
 public interface Authorizations extends RemoteService {  
 	public Integer[] FindByCoverage ( Integer coverageId );
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap GetAuthorization ( Integer authorizationId );
 	public Boolean Replace ( Integer authorizationId );
 	public Boolean UseAuthorization ( Integer authorizationId );

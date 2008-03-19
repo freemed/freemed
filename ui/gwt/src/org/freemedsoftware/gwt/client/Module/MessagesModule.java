@@ -28,6 +28,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
 public interface MessagesModule extends RemoteService {  
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	public HashMap[] GetAllByTag ( String searchTag, Boolean getAllMessages );
 	public String[][] MessageTags ( );
 	public Integer UnreadMessages ( Integer timestamp, Boolean showAllMessages );

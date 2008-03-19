@@ -26,9 +26,9 @@ package org.freemedsoftware.gwt.client.Public;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface LoginAsync {
-	public void LoggedIn( AsyncCallback callback );
-	public void Logout( AsyncCallback callback );
+public interface LoginAsync {  
+	public void LoggedIn(AsyncCallback callback );
+	public void Logout(AsyncCallback callback );
 	public void Validate( String username, String password, AsyncCallback callback ); 
 }
 

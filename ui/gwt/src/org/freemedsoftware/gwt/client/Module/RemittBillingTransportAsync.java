@@ -24,16 +24,26 @@
 
 package org.freemedsoftware.gwt.client.Module;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.HashMap;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface RemittBillingTransportAsync {
-	public void GetRebillList ( AsyncCallback callback );
+	/**
+	 */
+	public void GetRebillList (AsyncCallback callback );
 	public void GetReport ( String report, String reportType, AsyncCallback callback );
+	/**
+	 */
 	public void GetStatus ( String[] uniqueIds, AsyncCallback callback );
 	public void MarkAsBilled ( Integer[] ids, AsyncCallback callback );
-	public void PatientsToBill ( AsyncCallback callback );
+	/**
+	 */
+	public void PatientsToBill (AsyncCallback callback );
+	/**
+	 */
 	public void GetClaimInformation ( Integer claimIds, AsyncCallback callback );
+	/**
+	 */
 	public void ProcessClaims ( Integer[] patientIds, Integer[] claimIds, HashMap[] overrideInfo, AsyncCallback callback );
 }
 
