@@ -202,8 +202,7 @@ class Installation {
 		$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, true );
 
 		// Set admin username / password
-		$user = CreateObject( 'org.freemedsoftware.core.User' );
-		$user->CreateAdminUser( $admin_username, $admin_password );
+		$this->CreateAdministrationAccount( $admin_username, $admin_password );
 
 		// Return success status
 		syslog(LOG_INFO, "CreateDatabase(): completed");

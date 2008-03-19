@@ -157,15 +157,15 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 		$_SESSION['default_facility'] = ( $_REQUEST['_f'] + 0 );
 	}
 
-	// Load Gettext routines (most non-session things don't need it).
-	include_once (dirname(__FILE__)."/i18n.php");
-
 	// Load ACL routines
 	if (!defined('SKIP_SQL_INIT')) {
 		include_once (dirname(__FILE__)."/acl.php");
 	}
 }
 // ***************************************************************
+
+// Load Gettext routines
+include_once (dirname(__FILE__)."/i18n.php");
 
 include_once (dirname(__FILE__)."/API.php");             // API functions
 include_once (dirname(__FILE__)."/macros.php");          // macros/contants
