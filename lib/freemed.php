@@ -102,7 +102,7 @@ if (!defined('SKIP_SQL_INIT')) {
 }
 
 // ********************** START SESSION **************************
-if (!defined('SESSION_DISABLE')) {
+if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 	LoadObjectDependency( 'net.php.pear.HTTP_Session2' );
 	HTTP_Session2::useTransSID(false);
 	HTTP_Session2::useCookies(false);
