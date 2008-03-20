@@ -1,5 +1,5 @@
 <?php
- // $Id
+ // $Id$
  //
  // Authors:
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
@@ -36,7 +36,7 @@ class PatientDataStore {
 	//
 	public function __construct ( ) {
 		//$this->base_path = dirname(dirname(dirname(__FILE__))).'/data/store';
-		$this->base_path = 'data/store';
+		$this->base_path = PHYSICAL_LOCATION . '/data/store';
 	}
 
 	// Method: ResolveFilename
@@ -126,6 +126,7 @@ class PatientDataStore {
 		if ( file_exists ( $dest ) ) {
 			return str_replace( $this->base_path.'/', '', $dest );
 		} else {
+			syslog( LOG_INFO, get_class($this)."::StoreFile| Failed to create $dest" );
 			return false;
 		}
 	} // end method StoreFile
