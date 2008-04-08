@@ -1,0 +1,95 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2008 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+package org.freemedsoftware.gwt.client;
+
+import com.google.gwt.core.client.GWT;
+import org.freemedsoftware.gwt.client.Module.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.rpc.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.VerticalSplitPanel;
+import com.thapar.gwt.user.ui.client.widget.SortableTable;
+
+public class Messaging extends Composite {
+
+	private SortableTable wMessages;
+	
+	public Messaging() {
+
+		final VerticalPanel verticalPanel = new VerticalPanel();
+		initWidget(verticalPanel);
+
+		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		verticalPanel.add(horizontalPanel);
+
+		final Button composeButton = new Button();
+		horizontalPanel.add(composeButton);
+		composeButton.setText("Compose");
+
+		final Button selectAllButton = new Button();
+		horizontalPanel.add(selectAllButton);
+		selectAllButton.setText("Select All");
+
+		final Button selectNoneButton = new Button();
+		horizontalPanel.add(selectNoneButton);
+		selectNoneButton.setText("Select None");
+
+		final VerticalSplitPanel verticalSplitPanel = new VerticalSplitPanel();
+		verticalPanel.add(verticalSplitPanel);
+		verticalSplitPanel.setSize("100%", "150px");
+		verticalSplitPanel.setSplitPosition("50%");
+
+		wMessages = new SortableTable();
+		verticalSplitPanel.add(wMessages);
+		wMessages.addColumnHeader("Received", 0);
+		wMessages.addColumnHeader("From", 1);
+		
+		final HTML messageView = new HTML("");
+		verticalSplitPanel.add(messageView);
+		verticalSplitPanel.setSize("100%", "100%");
+	}
+	
+	public void populate (String tag) {
+		// Populate the whole thing.		
+		MessagesModuleAsync service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
+		ServiceDefTarget endpoint = (ServiceDefTarget) service;
+        String moduleRelativeURL = Util.getRelativeURL();
+        endpoint.setServiceEntryPoint( moduleRelativeURL );
+        service.GetAllByTag(tag, Boolean.FALSE, new AsyncCallback() {
+        	public void onSuccess(Object result) {
+        		
+        	}
+        	
+        	public void onFailure(Throwable t) {
+        		
+        	}
+        });
+	}
+
+}

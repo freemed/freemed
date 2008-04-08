@@ -1,12 +1,13 @@
 <!--
-
--->
+   - $Id$
+   -->
+  
 <module>
 
-	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
+	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable"/>
+	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker"/>
 
-	<!-- Specify the app entry point class.                   -->
 	<entry-point class='org.freemedsoftware.gwt.client.FreemedInterface'/>
   
 </module>
