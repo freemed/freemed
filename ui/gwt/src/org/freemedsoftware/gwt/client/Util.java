@@ -24,6 +24,11 @@
 
 package org.freemedsoftware.gwt.client;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.freemedsoftware.gwt.client.Module.*;
+import org.freemedsoftware.gwt.client.Public.*;
+
 public class Util {
 
 	public Util() {
@@ -36,5 +41,40 @@ public class Util {
 	public static String getRelativeURL() {
 		return new String("../../../../relay-gwt.php");
 	}
+	
+	/**
+	 * Generate async proxy for GWT-RPC interactions based on proxy name.
+	 * 
+	 * @param className String representation of proxy we're looking for
+	 * @return Async service object as generic Object
+	 * @throws Exception Thrown when className isn't resolved.
+	 */
+	public static Object getProxy(String className) throws Exception {
+		Object service = null;
 
+		// This is a *horrendous* hack to get around lack of dynamic loading
+
+		if (className.compareTo("org.freemedsoftware.gwt.client.Public.Login") == 0) {
+			service = (LoginAsync) GWT.create(Login.class);
+		}
+		
+		if (className.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {
+			service = (AnnotationsAsync) GWT.create(Annotations.class);
+		}
+
+		if (className.compareTo("org.freemedsoftware.gwt.client.Module.MessagesModule") == 0) {
+			service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
+		}
+
+		try {
+			ServiceDefTarget endpoint = (ServiceDefTarget) service;
+    		String moduleRelativeURL = Util.getRelativeURL();
+    		endpoint.setServiceEntryPoint( moduleRelativeURL );
+    		return (Object) service;
+		} catch (Exception e) {
+			// All else fails, throw exception
+			throw new Exception("Unable to resolve appropriate class " + className);
+		}
+	}
+	
 }

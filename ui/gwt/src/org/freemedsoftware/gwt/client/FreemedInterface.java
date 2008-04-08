@@ -61,30 +61,32 @@ public class FreemedInterface implements EntryPoint {
 
     button.addClickListener(new ClickListener() {
       public void onClick(Widget sender) {
-        final LoginAsync loginService = (LoginAsync) GWT.create( Login.class );
-        ServiceDefTarget endpoint = (ServiceDefTarget) loginService;
-        endpoint.setServiceEntryPoint( moduleRelativeURL );
+    	LoginAsync loginService = null;
+    	try {
+    		loginService = (LoginAsync) Util.getProxy("org.freemedsoftware.gwt.client.Public.Login");
+    	} catch (Exception e) {
+    		GWT.log( "Could not instantiate login proxy", e);
+    	}
         button.setText( "Processing" );
         label.setText( "" );
-        AsyncCallback callback = new AsyncCallback() {
-          public void onSuccess( Object result ) {
-              button.setText( "org.freemedsoftware.public.Login.Validate" );
-              label.setText( "onSuccess [accepted username and password]" );
-              if ( (Boolean) result == java.lang.Boolean.TRUE ) {
-                  label.setText( "onSuccess [accepted username and password]" );
-              } else {
-                  label.setText( "onSuccess [denied username and password]" );
-              }
-          }
-          public void onFailure( Throwable caught ) {
-              GWT.log( "Error", caught );
-              button.setText( "org.freemedsoftware.public.Login.Validate" );
-              //label.setText( "onFailure" );
-              label.setText( caught.getCause() + ": " + caught.getMessage() );
-          }
-        };
-	GWT.log( "Calling login service", null );
-        loginService.Validate( "demo", "demo", callback );
+        GWT.log( "Calling login service", null );
+        loginService.Validate( "demo", "demo", new AsyncCallback() {
+            public void onSuccess( Object result ) {
+                button.setText( "org.freemedsoftware.public.Login.Validate" );
+                label.setText( "onSuccess [accepted username and password]" );
+                if ( (Boolean) result == java.lang.Boolean.TRUE ) {
+                    label.setText( "onSuccess [accepted username and password]" );
+                } else {
+                    label.setText( "onSuccess [denied username and password]" );
+                }
+            }
+            public void onFailure( Throwable caught ) {
+                GWT.log( "Error", caught );
+                button.setText( "org.freemedsoftware.public.Login.Validate" );
+                //label.setText( "onFailure" );
+                label.setText( caught.getCause() + ": " + caught.getMessage() );
+            }
+          });
       }
     });
 
