@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/simpledatepicker.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/simplesortabletable.jar"/>
 	<classpathentry kind="output" path="www"/>
 </classpath>
