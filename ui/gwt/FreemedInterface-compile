@@ -21,6 +21,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+
 APPDIR=`dirname $0`;
-java  -cp "$APPDIR/src:$APPDIR/bin:/usr/lib/gwt/gwt-user.jar:/usr/lib/gwt/gwt-dev-linux.jar" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
+CP="$APPDIR/src:$APPDIR/bin:/opt/gwt/gwt-user.jar:/opt/gwt/gwt-dev-linux.jar:/usr/lib/gwt/gwt-user.jar:/usr/lib/gwt/gwt-dev-linux.jar"
+for JAR in lib/*.jar; do
+	CP="${CP}:$APPDIR/lib/$(basename "$JAR")"
+done
+echo "Compiling GWT portion of application ... "
+java  -cp "$CP" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
 
