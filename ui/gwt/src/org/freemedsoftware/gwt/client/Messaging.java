@@ -24,9 +24,10 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.util.*;
 import com.google.gwt.core.client.GWT;
+import org.freemedsoftware.gwt.client.*;
 import org.freemedsoftware.gwt.client.Module.*;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.ui.HTML;
@@ -69,27 +70,55 @@ public class Messaging extends Composite {
 		verticalSplitPanel.add(wMessages);
 		wMessages.addColumnHeader("Received", 0);
 		wMessages.addColumnHeader("From", 1);
+		wMessages.addColumnHeader("Subject", 2);
 		
 		final HTML messageView = new HTML("");
 		verticalSplitPanel.add(messageView);
 		verticalSplitPanel.setSize("100%", "100%");
 	}
-	
+
 	public void populate (String tag) {
-		// Populate the whole thing.		
-		MessagesModuleAsync service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
-		ServiceDefTarget endpoint = (ServiceDefTarget) service;
-        String moduleRelativeURL = Util.getRelativeURL();
-        endpoint.setServiceEntryPoint( moduleRelativeURL );
-        service.GetAllByTag(tag, Boolean.FALSE, new AsyncCallback() {
-        	public void onSuccess(Object result) {
-        		
-        	}
-        	
-        	public void onFailure(Throwable t) {
-        		
-        	}
-        });
+		if (Util.isStubbedMode()) {
+			/**
+			 * @gwt.typeArgs <java.lang.String,java.lang.String>
+			 */
+			HashMap[] dummyData = {
+			};
+			
+			populateByData(dummyData);
+		} else {
+			// Populate the whole thing.		
+			MessagesModuleAsync service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
+			ServiceDefTarget endpoint = (ServiceDefTarget) service;
+			String moduleRelativeURL = Util.getRelativeURL();
+			endpoint.setServiceEntryPoint( moduleRelativeURL );
+			service.GetAllByTag(tag, Boolean.FALSE, new AsyncCallback() {
+				public void onSuccess(Object result) {
+					/**
+					 * @gwt.typeArgs <java.lang.String,java.lang.String>
+					 */
+					HashMap[] res = (HashMap[]) result;
+					populateByData(res);
+				}
+				
+				public void onFailure(Throwable t) {
+					
+				}
+			});
+		}
+	}
+	
+	/**
+	 * Actual internal data population method, wrapped for testing.
+	 * @param data
+	 */
+	public void populateByData( HashMap[] data ) {
+		wMessages.clear();
+		for (int iter=0; iter<data.length; iter++) {
+			wMessages.setValue(iter+1, 0, (String) data[iter].get("stamp"));
+			wMessages.setValue(iter+1, 1, (String) data[iter].get("from_user"));
+			wMessages.setValue(iter+1, 2, (String) data[iter].get("subject"));
+		}
 	}
 
 }
