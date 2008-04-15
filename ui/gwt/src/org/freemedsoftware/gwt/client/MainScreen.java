@@ -65,7 +65,7 @@ public class MainScreen extends Composite {
 				new ClickListener() {
 			public void onClick( Widget w ) {
 				final Messaging p = new Messaging();
-				tabPanel.add(p, "Messages");
+				tabPanel.add(p, new ClosableTab("Messages", p));
 			}
 		}));
 		
