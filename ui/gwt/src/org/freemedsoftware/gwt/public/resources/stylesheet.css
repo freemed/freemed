@@ -22,6 +22,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* Task bar parent widget styling */
+
 .gwt-StackPanel {
 	/* the panel itself */
 	}
@@ -38,14 +40,61 @@
 	border-bottom: 1px solid #000000;
 	}
 	
+/* Task bar icons */
+	
 .taskbarIcon {
 	background-color: transparent;
 	border: 1px solid transparent;
+	padding: 1em;
+	size: 8pt;
 	}
 	
-.taskbarIcon:hover {
+.taskbarIcon:hover, .taskbarIcon-hover {
 	background-color: #ccccff;
 	border: 1px solid #555555;
 	cursor: pointer;
+	padding: 1em;
+	size: 8pt;
 	}
-	
+
+/* Tab panel CSS from KitchenSink */
+
+.gwt-TabPanel {
+	margin-top: 4px;
+	}
+
+.gwt-TabPanelBottom {
+	background-color: #E8EEF7;
+	}
+
+.gwt-TabBar {
+	padding-top: 2px;
+	border-bottom: 4px solid #87B3FF;
+	background-color: #fff;
+	}
+
+.gwt-TabBar .gwt-TabBarFirst {
+	}
+
+.gwt-TabBar .gwt-TabBarRest {
+	}
+
+.gwt-TabBar .gwt-TabBarItem {
+	padding: 4px;
+	cursor: pointer;
+	cursor: hand;
+
+	background-color: #e8eef7;
+	border-bottom: 2px solid white;
+	margin-right: 2px;
+	}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+	padding: 4px;
+	font-weight: bold;
+	cursor: default;
+
+	background-color: #87b3ff;
+	border-bottom: 2px solid #87b3ff;
+	margin-right: 2px;
+	}

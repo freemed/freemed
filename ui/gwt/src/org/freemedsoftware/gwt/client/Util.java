@@ -26,20 +26,22 @@ package org.freemedsoftware.gwt.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.freemedsoftware.gwt.client.Api.*;
 import org.freemedsoftware.gwt.client.Module.*;
 import org.freemedsoftware.gwt.client.Public.*;
 
-public class Util {
-
-	public Util() {
-	}
+public final class Util {
 	
 	/**
 	 * Get the "relative URL" used by async services
 	 * @return URL
 	 */
-	public static String getRelativeURL() {
+	public static synchronized String getRelativeURL() {
 		return new String("../../../../relay-gwt.php");
+	}
+	
+	public static synchronized boolean isStubbedMode() {
+		return true;
 	}
 	
 	/**
@@ -49,13 +51,17 @@ public class Util {
 	 * @return Async service object as generic Object
 	 * @throws Exception Thrown when className isn't resolved.
 	 */
-	public static Object getProxy(String className) throws Exception {
+	public static synchronized Object getProxy(String className) throws Exception {
 		Object service = null;
 
 		// This is a *horrendous* hack to get around lack of dynamic loading
 
 		if (className.compareTo("org.freemedsoftware.gwt.client.Public.Login") == 0) {
 			service = (LoginAsync) GWT.create(Login.class);
+		}
+		
+		if (className.compareTo("org.freemedsoftware.gwt.client.Api.PatientInterface") == 0) {
+			service = (PatientInterfaceAsync) GWT.create(PatientInterface.class);
 		}
 		
 		if (className.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {

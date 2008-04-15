@@ -50,12 +50,16 @@ import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
  */
 public class FreemedInterface implements EntryPoint {
 
-  protected String moduleRelativeURL = "../../../../relay-gwt.php";
-
   /**
    * This is the entry point method.
    */
   public void onModuleLoad() {
+	  MainScreen mainScreen = new MainScreen();
+	  RootPanel.get("rootPanel").add(mainScreen);
+
+	/*
+	  
+	 // OLD CODE BELOW ... KEEP FOR NOW ...
     final Button button = new Button("org.freemedsoftware.public.Login.Validate");
     final Label label = new Label();
 
@@ -92,6 +96,7 @@ public class FreemedInterface implements EntryPoint {
 
     RootPanel.get("slot1").add(button);
     RootPanel.get("slot2").add(label);
+    */
   }
 }
 

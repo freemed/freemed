@@ -30,7 +30,9 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TaskbarIcon extends Composite {
 
@@ -48,11 +50,27 @@ public class TaskbarIcon extends Composite {
 		verticalPanel.setCellVerticalAlignment(label, HasVerticalAlignment.ALIGN_TOP);
 
 		// Style this from CSS
-		verticalPanel.setStyleName("taskbarIcon");
+		verticalPanel.setStylePrimaryName("taskbarIcon");
 		
 		// Push click listeners for both internal objects
 		image.addClickListener(l);
 		label.addClickListener(l);
+		
+		MouseListener ml = new MouseListener() {
+			public void onMouseEnter( Widget w ) {
+				getParent().setStylePrimaryName("taskbarIcon-hover");
+			}
+			
+			public void onMouseLeave( Widget w ) {
+				getParent().setStylePrimaryName("taskbarIcon");
+			}
+			
+			public void onMouseDown( Widget w, int x, int y ) { }
+			public void onMouseMove( Widget w, int x, int y ) { }
+			public void onMouseUp( Widget w, int x, int y ) { }
+		};
+		image.addMouseListener(ml);
+		label.addMouseListener(ml);
 	}
 	
 }
