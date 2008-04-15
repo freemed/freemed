@@ -38,3 +38,14 @@
 	border-bottom: 1px solid #000000;
 	}
 	
+.taskbarIcon {
+	background-color: transparent;
+	border: 1px solid transparent;
+	}
+	
+.taskbarIcon:hover {
+	background-color: #ccccff;
+	border: 1px solid #555555;
+	cursor: pointer;
+	}
+	
