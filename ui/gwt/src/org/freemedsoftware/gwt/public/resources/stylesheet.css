@@ -61,6 +61,8 @@
 
 .gwt-TabPanel {
 	margin-top: 4px;
+	height: 100%;
+	width: 100%;
 	}
 
 .gwt-TabPanelBottom {
@@ -97,4 +99,29 @@
 	background-color: #87b3ff;
 	border-bottom: 2px solid #87b3ff;
 	margin-right: 2px;
+	}
+
+.gwt-MenuBar {
+	background-color: #C3D9FF;
+	border: 1px solid #87B3FF;
+	cursor: default;
+	}
+
+.gwt-MenuBar .gwt-MenuItem {
+	padding: 1px 4px 1px 4px;
+	cursor: default;
+	}
+
+.gwt-MenuBar .gwt-MenuItem-selected {
+	background-color: #E8EEF7;
+	}
+
+.statusBar {
+	background: #cccccc;
+	border: 1px solid #000000;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+	size: 8pt;
 	}

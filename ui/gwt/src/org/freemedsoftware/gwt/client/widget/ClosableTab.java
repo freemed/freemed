@@ -29,9 +29,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ClosableTab extends Composite {
@@ -52,12 +54,16 @@ public class ClosableTab extends Composite {
 
 		final Image image = new Image("resources/images/x_stop.16x16.png");
 
+		// Create spacer
+		panel.add(new HTML("&nbsp;"));
+		
 		panel.add(image);
 		panel.setCellVerticalAlignment(image, HasVerticalAlignment.ALIGN_TOP);
 		panel.setCellHorizontalAlignment(image, HasHorizontalAlignment.ALIGN_RIGHT);
 
 		image.addClickListener(new ClickListener() {
 			public void onClick( Widget thisWidget ) {
+				((TabPanel) widget.getParent().getParent().getParent()).selectTab(0);
 				widget.removeFromParent();
 			}
 		});

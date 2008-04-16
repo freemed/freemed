@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client;
 
 import java.util.*;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import org.freemedsoftware.gwt.client.*;
 import org.freemedsoftware.gwt.client.Module.*;
 import org.freemedsoftware.gwt.client.widget.*;
@@ -35,8 +36,11 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -47,39 +51,76 @@ import com.thapar.gwt.user.ui.client.widget.SortableTable;
 public class MainScreen extends Composite {
 
 	protected final TabPanel tabPanel;
-	protected final HorizontalSplitPanel statusBar;
+	protected final HorizontalSplitPanel statusBarContainer;
+	protected final Label statusBar1, statusBar2;
 	
 	public MainScreen() {
-		final DockPanel dockPanel = new DockPanel();
-		initWidget(dockPanel);
-		dockPanel.setSize("100%", "100%");
-
-		final StackPanel taskPanel = new StackPanel();
-		dockPanel.add(taskPanel, DockPanel.WEST);
-		taskPanel.setWidth("200px");
-
-		final VerticalPanel tasksSystem = new VerticalPanel();
-		taskPanel.add(tasksSystem, "<div class=\"tasksTitle\">System</div>", true);
-		tasksSystem.add(new TaskbarIcon("Messages",
-				new Image("resources/images/messaging.32x32.png"),
-				new ClickListener() {
-			public void onClick( Widget w ) {
-				final Messaging p = new Messaging();
-				tabPanel.add(p, new ClosableTab("Messages", p));
-			}
-		}));
+		final DockPanel mainPanel = new DockPanel();
+		initWidget(mainPanel);
+		mainPanel.setSize("100%", "100%");
 		
-		statusBar = new HorizontalSplitPanel();
-		dockPanel.add(statusBar, DockPanel.SOUTH);
-		statusBar.setSize("100%", "25px");
-		statusBar.setSplitPosition("50%");
+		{
+			final MenuBar menuBar = new MenuBar();
+			mainPanel.add(menuBar, DockPanel.NORTH);
+			menuBar.setHeight("1.5em");
 
+			final MenuBar menuBar_1 = new MenuBar(true);
+
+			menuBar.addItem("System", menuBar_1);
+
+			menuBar_1.addItem("Messages", new Command() {
+				public void execute() {
+					final Messaging p = new Messaging();
+					tabPanel.add(p, new ClosableTab("Messages", p));					
+				}
+			});
+
+			final MenuItem menuItem = menuBar_1.addItem("Logout", new Command() {
+				public void execute() {
+					
+				}
+			});
+
+			final MenuBar menuBar_2 = new MenuBar(true);
+
+			menuBar_2.addItem("Search", new Command() {
+				public void execute() {
+					
+				}
+			});
+
+			menuBar_2.addItem("Entry", new Command() {
+				public void execute() {
+					
+				}
+			});
+
+			menuBar.addItem("Patient", menuBar_2);
+		}
+		
+		statusBarContainer = new HorizontalSplitPanel();
+		mainPanel.add(statusBarContainer, DockPanel.SOUTH);
+		statusBarContainer.setSize("100%", "25px");
+		statusBarContainer.setSplitPosition("50%");
+
+		statusBar1 = new Label("Ready");
+		statusBar1.setStyleName("statusBar");
+		statusBarContainer.add(statusBar1);
+		statusBar2 = new Label("-");
+		statusBar2.setStyleName("statusBar");
+		statusBarContainer.add(statusBar2);
+		
 		tabPanel = new TabPanel();
-		dockPanel.add(tabPanel, DockPanel.CENTER);
-		tabPanel.setWidth("100%");
-		tabPanel.add(new HTML("Dashboard goes here"), "Dashboard");
+		mainPanel.add(tabPanel, DockPanel.CENTER);
+		tabPanel.setSize("100%", "100%");
+		final HTML dashboard = new HTML("Dashboard");
+		dashboard.setSize("100%", "100%");
+		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
-		
+
+		// Expand out main tabpanel to take up all extra room
+		mainPanel.setCellWidth(tabPanel, "100%");
+		mainPanel.setCellHeight(tabPanel, "100%");
 	}
 	
 }
