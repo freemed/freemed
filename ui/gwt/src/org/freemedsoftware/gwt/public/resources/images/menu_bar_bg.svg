@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="10"
+   height="40"
+   id="svg17783"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   version="1.0"
+   sodipodi:docbase="C:\Users\localtestbed\.workspace\org.freemedsoftware.gwt.client.FreemedInterface\src\org\freemedsoftware\gwt\public\resources\images"
+   sodipodi:docname="menu_bar_bg.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\Users\localtestbed\.workspace\org.freemedsoftware.gwt.client.FreemedInterface\src\org\freemedsoftware\gwt\public\resources\images\menu_bar_bg.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs17785">
+    <linearGradient
+       id="linearGradient7040">
+      <stop
+         style="stop-color:#164450;stop-opacity:1;"
+         offset="0"
+         id="stop7042" />
+      <stop
+         style="stop-color:#b6dbe5;stop-opacity:1;"
+         offset="1"
+         id="stop7044" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7040"
+       id="linearGradient10087"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,5.0526316,-14.479515,-31.755431)"
+       x1="55.9753"
+       y1="21.378679"
+       x2="55.9753"
+       y2="9.2000751" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7040"
+       id="linearGradient17800"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,5.0526316,-14.479515,63.244569)"
+       x1="55.9753"
+       y1="21.378679"
+       x2="55.9753"
+       y2="9.2000751" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7040"
+       id="linearGradient17807"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(41.3,0,0,2.8070175,-693.00398,14.358094)"
+       x1="19.479515"
+       y1="20.157312"
+       x2="19.479515"
+       y2="7.4698062" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="4"
+     inkscape:cx="-72.821976"
+     inkscape:cy="23.973641"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     height="72px"
+     width="10px"
+     inkscape:window-width="748"
+     inkscape:window-height="579"
+     inkscape:window-x="191"
+     inkscape:window-y="125"
+     showborder="false"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata17788">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,-32)">
+    <path
+       style="opacity:1;fill:url(#linearGradient17807);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       d="M -95,32 L -95,72 L 318,72 L 318,32 L -95,32 z "
+       id="rect9111" />
+    <rect
+       style="opacity:1;fill:#224f5b;fill-opacity:1;stroke:none;stroke-width:0.65799999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect17803"
+       width="16.713432"
+       height="10.799449"
+       x="5.9420443"
+       y="119.62879" />
+    <rect
+       y="-7.0721765"
+       x="17.032953"
+       height="10.799449"
+       width="16.713432"
+       id="rect17805"
+       style="opacity:1;fill:#b5dae4;fill-opacity:1;stroke:none;stroke-width:0.65799999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="C:\Users\localtestbed\.workspace\org.freemedsoftware.gwt.client.FreemedInterface\src\org\freemedsoftware\gwt\public\resources\images\menu_bar_bg.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.65799999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2166"
+       width="16"
+       height="16"
+       x="-92"
+       y="48.900002" />
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#224f5b;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2168"
+       width="73.75"
+       height="18"
+       x="-92.5"
+       y="47.900002" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:sans"
+       x="-72.433594"
+       y="61.400002"
+       id="text3141"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3143"
+         x="-72.433594"
+         y="61.400002">SYSTEM</tspan></text>
+    <rect
+       y="67.5"
+       x="-75.5"
+       height="18"
+       width="86"
+       id="rect3145"
+       style="opacity:1;fill:#b5dae4;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       y="68.400002"
+       x="-75"
+       height="16"
+       width="16"
+       id="rect3151"
+       style="opacity:1;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.65799999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>

@@ -39,6 +39,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
@@ -62,11 +63,20 @@ public class MainScreen extends Composite {
 		{
 			final MenuBar menuBar = new MenuBar();
 			mainPanel.add(menuBar, DockPanel.NORTH);
-			menuBar.setHeight("1.5em");
+			menuBar.setStylePrimaryName("");
+			menuBar.setStyleName("gwt-MainMenuBar");
 
 			final MenuBar menuBar_1 = new MenuBar(true);
 
-			menuBar.addItem("System", menuBar_1);
+			final MenuItem _MenuItem = menuBar.addItem("_", (Command)null);
+			_MenuItem.setCommand(null);
+			_MenuItem.setStyleName("gwt-LogoMainMenuBar");
+			_MenuItem.setStylePrimaryName("");
+
+			final MenuItem systemMenuItem = menuBar.addItem("system", menuBar_1);
+			systemMenuItem.setSize("0", "0");
+			systemMenuItem.setStyleName("gwt-SystemMenuItem");
+			systemMenuItem.setStylePrimaryName("");
 
 			menuBar_1.addItem("Messages", new Command() {
 				public void execute() {
@@ -95,7 +105,9 @@ public class MainScreen extends Composite {
 				}
 			});
 
-			menuBar.addItem("Patient", menuBar_2);
+			final MenuItem patientMenuItem = menuBar.addItem("patient", menuBar_2);
+			patientMenuItem.setStyleName("gwt-PatientMenuItem");
+			patientMenuItem.setStylePrimaryName("");
 		}
 		
 		statusBarContainer = new HorizontalSplitPanel();
@@ -121,6 +133,8 @@ public class MainScreen extends Composite {
 		// Expand out main tabpanel to take up all extra room
 		mainPanel.setCellWidth(tabPanel, "100%");
 		mainPanel.setCellHeight(tabPanel, "100%");
+
+		
 	}
 	
 }

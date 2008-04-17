@@ -125,3 +125,97 @@
 	padding-right: 10px;
 	size: 8pt;
 	}
+.gwt-Label-RAlign {
+	font-family: sans-serif,;
+	font-size: 1.1em;
+	font-style: normal;
+	font-variant: small-caps;
+	text-align: right;
+}
+.loginPanel {
+	padding: 1px;
+	font-family: sans-serif;
+	font-size: 12px;
+	background-attachment: fixed;
+	background-color: wheat;
+	background-image: url(images/login_button.png);
+	background-repeat: no-repeat;
+}
+.gwt-LoginFields {
+	padding: 1px;
+	font-family: sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	text-align: left;
+	vertical-align: top;
+	background-color: mediumaquamarine;
+}
+.gwt-LoginButton {
+	width: 137px;
+	height: 36px;
+	margin: 1px;
+	padding: 1px;
+	border: 2px hidden;
+	text-align: center;
+	background-attachment: fixed;
+	background-image: url(images/button_on.png);
+	background-repeat: no-repeat;
+	cursor: hand;
+	table-layout: auto;
+}
+.gwt-MainMenuBar {
+	height: 40px;
+	color: White;
+	border: 1px solid #87B3FF;
+	font-variant: small-caps;
+	font-weight: bold;
+	background-color: #224f5b;
+	background-image: url(images/menu_bar_bg.png);
+	background-repeat: repeat-x;
+	cursor: default;
+}
+.gwt-SystemMenuItem {
+	height: 19px;
+	background-postion: center left;
+	color: white;
+	margin-top: 20px;
+	padding-right: 5px;
+	padding-left: 17px;
+	border: 1px solid #224f5b;
+	font-family: sans-serif;
+	font-size: 14px;
+	font-variant: small-caps;
+	font-weight: bold;
+	background-color: transparent;
+	background-image: url(images/dashboard.16x16.png);
+	background-repeat: no-repeat;
+}
+.gwt-PatientMenuItem {
+	background-postion: center left;
+	color: white;
+	margin-top: 20px;
+	padding-right: 5px;
+	padding-left: 17px;
+	border: 1px solid #224f5b;
+	font-family: sans-serif;
+	font-size: 14px;
+	font-variant: small-caps;
+	font-weight: bold;
+	background-color: transparent;
+	background-image: url(images/patient.16x16.png);
+	background-repeat: no-repeat;
+}
+.gwt-LogoMainMenuBar  {
+	height: 40px;
+	width: 67px;
+	background-postion: top left;
+	color: white;
+	padding:0px;
+	margin-left: 5px;
+	float: left;
+	display: block;
+	position: fixed;
+	background-color: transparent;
+	background-image: url(images/freemed_PE_logo.40x67.png);
+	background-repeat: no-repeat;
+}
