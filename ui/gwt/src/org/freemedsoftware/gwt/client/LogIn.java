@@ -1,8 +1,31 @@
+/*
+ * Authors:
+ *      Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2008 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package org.freemedsoftware.gwt.client;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -78,11 +101,23 @@ public class LogIn extends Composite {
 		languageLabel.setStyleName("gwt-Label-RAlign");
 		languageLabel.setSize("59px", "19px");
 
-		final Button loginButton = new Button();
-		absolutePanel.add(loginButton, 92, 240);
-		loginButton.setStylePrimaryName("");
-		loginButton.setStyleName("gwt-LoginButton");
-		loginButton.setText("login");
+/*
+ * 	Using a FocusPanel to provide image support while being able to provide
+ * 	onClick Function.  This will probably end up being a terrible idea -JA
+ */
+		final FocusPanel focusPanel = new FocusPanel();
+		absolutePanel.add(focusPanel, 83, 233);
+		focusPanel.setStyleName("gwt-LoginButton");
+		focusPanel.setSize("137px", "36px");
+
+		final Image image = new Image();
+		focusPanel.setWidget(image);
+		image.setUrl("resources/images/button_on.png");
+		image.setSize("100%", "100%");
+
+		final Label loginLabel = new Label("Login");
+		absolutePanel.add(loginLabel, 140, 242);
+		loginLabel.setStyleName("gwt-Label-RAlign");
 		
 	}
 

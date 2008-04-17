@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *      Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2008 FreeMED Software Foundation
@@ -32,10 +33,13 @@ import org.freemedsoftware.gwt.client.Module.*;
 import org.freemedsoftware.gwt.client.widget.*;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
@@ -43,10 +47,12 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class MainScreen extends Composite {
@@ -59,19 +65,37 @@ public class MainScreen extends Composite {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("100%", "100%");
+
+		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		mainPanel.add(horizontalPanel, DockPanel.NORTH);
+		horizontalPanel.setWidth("100%");
+/*
+ *	Currently using the PushButton widgit for a "go back to the beginning" Button, mainly because 
+ *	I couldn't set css background image to function correctly. -JA
+ */
+		final PushButton pushButton = new PushButton(" ", " ");
+		horizontalPanel.add(pushButton);
+		pushButton.setSize("67px", "70px");
+		pushButton.setStylePrimaryName("");
+		pushButton.setStyleName("gwt-LogoMainMenuBar");
+		pushButton.addClickListener(new ClickListener() {
+			public void onClick(final Widget sender) {
+			}
+		});
+
+		final VerticalSplitPanel verticalSplitPanel = new VerticalSplitPanel();
+		horizontalPanel.add(verticalSplitPanel);
+		verticalSplitPanel.setSize("700px", "70px");
+		verticalSplitPanel.setSplitPosition("50%");
 		
 		{
 			final MenuBar menuBar = new MenuBar();
-			mainPanel.add(menuBar, DockPanel.NORTH);
+			verticalSplitPanel.setTopWidget(menuBar);
+			menuBar.setSize("100%", "30px");
 			menuBar.setStylePrimaryName("");
 			menuBar.setStyleName("gwt-MainMenuBar");
 
 			final MenuBar menuBar_1 = new MenuBar(true);
-
-			final MenuItem _MenuItem = menuBar.addItem("_", (Command)null);
-			_MenuItem.setCommand(null);
-			_MenuItem.setStyleName("gwt-LogoMainMenuBar");
-			_MenuItem.setStylePrimaryName("");
 
 			final MenuItem systemMenuItem = menuBar.addItem("system", menuBar_1);
 			systemMenuItem.setSize("0", "0");
@@ -99,28 +123,33 @@ public class MainScreen extends Composite {
 				}
 			});
 
+			final MenuItem patientMenuItem = menuBar.addItem("patient", menuBar_2);
+
 			menuBar_2.addItem("Entry", new Command() {
 				public void execute() {
 					
 				}
 			});
 
-			final MenuItem patientMenuItem = menuBar.addItem("patient", menuBar_2);
+			menuBar_2.addItem("New Item", new Command() {
+				public void execute() {
+				}
+			});
+
+			menuBar_2.addItem("New Item", (Command)null);
+
+			menuBar_2.addItem("New Item", (Command)null);
 			patientMenuItem.setStyleName("gwt-PatientMenuItem");
 			patientMenuItem.setStylePrimaryName("");
 		}
-		
-		statusBarContainer = new HorizontalSplitPanel();
-		mainPanel.add(statusBarContainer, DockPanel.SOUTH);
-		statusBarContainer.setSize("100%", "25px");
-		statusBarContainer.setSplitPosition("50%");
-
-		statusBar1 = new Label("Ready");
-		statusBar1.setStyleName("statusBar");
-		statusBarContainer.add(statusBar1);
-		statusBar2 = new Label("-");
-		statusBar2.setStyleName("statusBar");
-		statusBarContainer.add(statusBar2);
+/*
+ * 	SimplePanel to hold (hopefully) a horizontal sub menu, going to try to 
+ * 	use the Menu Bar items to call each sub-menu -JA
+ */
+		final SimplePanel simplePanel = new SimplePanel();
+		verticalSplitPanel.setBottomWidget(simplePanel);
+		simplePanel.setStyleName("gwt-MainMenuBar");
+		simplePanel.setSize("100%", "40px");
 		
 		tabPanel = new TabPanel();
 		mainPanel.add(tabPanel, DockPanel.CENTER);
@@ -133,6 +162,18 @@ public class MainScreen extends Composite {
 		// Expand out main tabpanel to take up all extra room
 		mainPanel.setCellWidth(tabPanel, "100%");
 		mainPanel.setCellHeight(tabPanel, "100%");
+		
+		statusBarContainer = new HorizontalSplitPanel();
+		mainPanel.add(statusBarContainer, DockPanel.SOUTH);
+		statusBarContainer.setSize("100%", "25px");
+		statusBarContainer.setSplitPosition("50%");
+
+		statusBar1 = new Label("Ready");
+		statusBar1.setStyleName("statusBar");
+		statusBarContainer.add(statusBar1);
+		statusBar2 = new Label("-");
+		statusBar2.setStyleName("statusBar");
+		statusBarContainer.add(statusBar2);
 
 		
 	}

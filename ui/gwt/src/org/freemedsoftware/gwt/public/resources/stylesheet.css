@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *		Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2008 FreeMED Software Foundation
@@ -153,13 +154,7 @@
 .gwt-LoginButton {
 	width: 137px;
 	height: 36px;
-	margin: 1px;
-	padding: 1px;
-	border: 2px hidden;
-	text-align: center;
-	background-attachment: fixed;
-	background-image: url(images/button_on.png);
-	background-repeat: no-repeat;
+	color: transparent;
 	cursor: hand;
 	table-layout: auto;
 }
@@ -172,6 +167,7 @@
 	background-color: #224f5b;
 	background-image: url(images/menu_bar_bg.png);
 	background-repeat: repeat-x;
+	background-position: bottom left;
 	cursor: default;
 }
 .gwt-SystemMenuItem {
