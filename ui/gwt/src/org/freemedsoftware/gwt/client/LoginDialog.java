@@ -39,9 +39,9 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class LogIn extends Composite {
+public class LoginDialog extends Composite {
 
-	public LogIn() {
+	public LoginDialog() {
 
 		final AbsolutePanel absolutePanel = new AbsolutePanel();
 		initWidget(absolutePanel);
