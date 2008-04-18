@@ -1,5 +1,8 @@
 /*
+ * $Id$
+ *
  * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *      Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
  *
  * FreeMED Electronic Medical Record and Practice Management System
@@ -25,6 +28,7 @@ package org.freemedsoftware.gwt.client;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -33,6 +37,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class LogIn extends Composite {
 
@@ -101,20 +106,17 @@ public class LogIn extends Composite {
 		languageLabel.setStyleName("gwt-Label-RAlign");
 		languageLabel.setSize("59px", "19px");
 
-/*
- * 	Using a FocusPanel to provide image support while being able to provide
- * 	onClick Function.  This will probably end up being a terrible idea -JA
- */
-		final FocusPanel focusPanel = new FocusPanel();
-		absolutePanel.add(focusPanel, 83, 233);
-		focusPanel.setStyleName("gwt-LoginButton");
-		focusPanel.setSize("137px", "36px");
-
-		final Image image = new Image();
-		focusPanel.setWidget(image);
-		image.setUrl("resources/images/button_on.png");
+		final Image image = new Image("resources/images/button_on.png");
 		image.setSize("100%", "100%");
-
+		
+		final PushButton loginButton = new PushButton(image);
+		loginButton.addClickListener(new ClickListener() {
+			public void onClick( Widget w ) {
+				
+			}
+		});
+		absolutePanel.add(loginButton, 83, 233);
+		
 		final Label loginLabel = new Label("Login");
 		absolutePanel.add(loginLabel, 140, 242);
 		loginLabel.setStyleName("gwt-Label-RAlign");
