@@ -24,10 +24,12 @@
 
 package org.freemedsoftware.gwt.client;
 
-import java.util.*;
-import com.google.gwt.core.client.GWT;
+import java.util.HashMap;
 import org.freemedsoftware.gwt.client.*;
 import org.freemedsoftware.gwt.client.Module.*;
+import org.freemedsoftware.gwt.client.widget.ClosableTab;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.ui.HTML;
@@ -57,6 +59,14 @@ public class Messaging extends Composite {
 		final Button composeButton = new Button();
 		horizontalPanel.add(composeButton);
 		composeButton.setText("Compose");
+		composeButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				final MessagingComposeScreen p = new MessagingComposeScreen();
+				p.assignState(state);
+				state.tabPanel.add(p, new ClosableTab("Compose Message", p));
+				state.tabPanel.selectTab(state.tabPanel.getWidgetCount() - 1);
+			}
+		});
 
 		final Button selectAllButton = new Button();
 		horizontalPanel.add(selectAllButton);
