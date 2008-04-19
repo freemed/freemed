@@ -40,6 +40,11 @@ import com.thapar.gwt.user.ui.client.widget.SortableTable;
 public class Messaging extends Composite {
 
 	private SortableTable wMessages;
+	/**
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	private HashMap[] mStore;
+	private CurrentState state = null;
 	
 	public Messaging() {
 
@@ -77,6 +82,15 @@ public class Messaging extends Composite {
 		verticalSplitPanel.setSize("100%", "100%");
 	}
 
+	/**
+	 * Assign current state object to local object.
+	 * 
+	 * @param c
+	 */
+	public void assignState(CurrentState c) {
+		state = c;
+	}
+	
 	public void populate (String tag) {
 		if (Util.isStubbedMode()) {
 			/**
@@ -113,6 +127,9 @@ public class Messaging extends Composite {
 	 * @param data
 	 */
 	public void populateByData( HashMap[] data ) {
+		// Keep a copy of the data in the local store
+		mStore = data;
+		// Clear any current contents
 		wMessages.clear();
 		for (int iter=0; iter<data.length; iter++) {
 			wMessages.setValue(iter+1, 0, (String) data[iter].get("stamp"));
@@ -121,4 +138,35 @@ public class Messaging extends Composite {
 		}
 	}
 
+	/**
+	 * @return
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	public HashMap[] getStubData() {
+		/**
+		 * @gwt.typeArgs <java.lang.String,java.lang.String>
+		 */
+		final HashMap a = new HashMap();
+		a.put("id", "1");
+		a.put("","");
+
+		/**
+		 * @gwt.typeArgs <java.lang.String,java.lang.String>
+		 */
+		final HashMap b = new HashMap();
+		b.put("id", "1");
+		b.put("","");
+
+		/**
+		 * @gwt.typeArgs <java.lang.String,java.lang.String>
+		 */
+		final HashMap c = new HashMap();
+		c.put("id", "1");
+		c.put("","");
+
+		return new HashMap[]{
+			a, b, c
+		};
+	}
+	
 }

@@ -60,12 +60,16 @@ public class MainScreen extends Composite {
 	protected final TabPanel tabPanel;
 	protected final HorizontalSplitPanel statusBarContainer;
 	protected final Label statusBar1, statusBar2;
+	protected final CurrentState state;
 	
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("100%", "100%");
 
+		// Assign state
+		state = new CurrentState();
+		
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
 		horizontalPanel.setWidth("100%");
@@ -106,7 +110,9 @@ public class MainScreen extends Composite {
 			menuBar_1.addItem("Messages", new Command() {
 				public void execute() {
 					final Messaging p = new Messaging();
-					tabPanel.add(p, new ClosableTab("Messages", p));					
+					p.assignState(state);
+					tabPanel.add(p, new ClosableTab("Messages", p));
+					tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 				}
 			});
 
@@ -150,6 +156,7 @@ public class MainScreen extends Composite {
 		dashboard.setSize("100%", "100%");
 		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
+		state.assignTabPanel(tabPanel);
 
 		// Expand out main tabpanel to take up all extra room
 		mainPanel.setCellWidth(tabPanel, "100%");
@@ -163,6 +170,7 @@ public class MainScreen extends Composite {
 		statusBar1 = new Label("Ready");
 		statusBar1.setStyleName("statusBar");
 		statusBarContainer.add(statusBar1);
+		state.assignStatusBar(statusBar1);
 		statusBar2 = new Label("-");
 		statusBar2.setStyleName("statusBar");
 		statusBarContainer.add(statusBar2);
