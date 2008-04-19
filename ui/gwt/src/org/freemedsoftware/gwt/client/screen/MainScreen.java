@@ -30,6 +30,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import org.freemedsoftware.gwt.client.*;
 import org.freemedsoftware.gwt.client.Module.*;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.*;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -57,6 +58,7 @@ import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class MainScreen extends Composite {
 
+	private static final AppConstants CONSTANTS = (AppConstants) GWT.create(AppConstants.class);
 	protected final TabPanel tabPanel;
 	protected final HorizontalSplitPanel statusBarContainer;
 	protected final Label statusBar1, statusBar2;
