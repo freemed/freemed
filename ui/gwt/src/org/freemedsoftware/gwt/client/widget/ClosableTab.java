@@ -63,7 +63,8 @@ public class ClosableTab extends Composite {
 
 		image.addClickListener(new ClickListener() {
 			public void onClick( Widget thisWidget ) {
-				((TabPanel) widget.getParent().getParent().getParent()).selectTab(0);
+				TabPanel t = ((TabPanel) widget.getParent().getParent().getParent());
+				t.selectTab(t.getWidgetIndex(widget) - 1);
 				widget.removeFromParent();
 			}
 		});
