@@ -106,6 +106,8 @@
 	background-color: #C3D9FF;
 	border: 1px solid #87B3FF;
 	cursor: default;
+	overflow-x: hidden;
+	overflow-y: hidden;
 	}
 
 .gwt-MenuBar .gwt-MenuItem {
@@ -160,6 +162,9 @@
 }
 .gwt-MainMenuBar {
 	height: 40px;
+	background-position: bottom left;
+	overflow-x: hidden;
+	overflow-y: hidden;
 	color: White;
 	border: 1px solid #87B3FF;
 	font-variant: small-caps;
@@ -167,7 +172,6 @@
 	background-color: #224f5b;
 	background-image: url(images/menu_bar_bg.png);
 	background-repeat: repeat-x;
-	background-position: bottom left;
 	cursor: default;
 }
 .gwt-SystemMenuItem {
@@ -185,6 +189,8 @@
 	background-color: transparent;
 	background-image: url(images/dashboard.16x16.png);
 	background-repeat: no-repeat;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
 .gwt-PatientMenuItem {
 	background-postion: center left;
@@ -200,8 +206,12 @@
 	background-color: transparent;
 	background-image: url(images/patient.16x16.png);
 	background-repeat: no-repeat;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
+
 .gwt-LogoMainMenuBar  {
+/*
 	height: 40px;
 	width: 67px;
 	background-postion: top left;
@@ -214,4 +224,7 @@
 	background-color: transparent;
 	background-image: url(images/freemed_PE_logo.40x67.png);
 	background-repeat: no-repeat;
+	overflow-x: hidden;
+	overflow-y: hidden;
+*/
 }

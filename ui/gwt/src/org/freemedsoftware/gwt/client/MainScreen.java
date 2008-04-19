@@ -70,37 +70,38 @@ public class MainScreen extends Composite {
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
 		horizontalPanel.setWidth("100%");
 /*
- *	Currently using the PushButton widgit for a "go back to the beginning" Button, mainly because 
+ *	Currently using the PushButton widget for a "go back to the beginning" Button, mainly because 
  *	I couldn't set css background image to function correctly. -JA
  */
-		final PushButton pushButton = new PushButton(" ", " ");
+		final PushButton pushButton = new PushButton(new Image("resources/images/freemed_PE_logo.40x67.png"));
 		horizontalPanel.add(pushButton);
-		pushButton.setSize("67px", "70px");
-		pushButton.setStylePrimaryName("");
-		pushButton.setStyleName("gwt-LogoMainMenuBar");
 		pushButton.addClickListener(new ClickListener() {
 			public void onClick(final Widget sender) {
 			}
 		});
 
-		final VerticalSplitPanel verticalSplitPanel = new VerticalSplitPanel();
-		horizontalPanel.add(verticalSplitPanel);
-		verticalSplitPanel.setSize("700px", "70px");
-		verticalSplitPanel.setSplitPosition("50%");
+		//final HorizontalPanel topPanel = new HorizontalPanel();
+		//horizontalPanel.add(topPanel);
+		//topPanel.setSize("700px", "70px");
+/*
+ * 	SimplePanel to hold (hopefully) a horizontal sub menu, going to try to 
+ * 	use the Menu Bar items to call each sub-menu -JA
+ */
+		final SimplePanel simplePanel = new SimplePanel();
+		horizontalPanel.add(simplePanel);
+		horizontalPanel.setStyleName("gwt-MainMenuBar");
+		simplePanel.setSize("100%", "40px");
 		
 		{
 			final MenuBar menuBar = new MenuBar();
-			verticalSplitPanel.setTopWidget(menuBar);
-			menuBar.setSize("100%", "30px");
-			menuBar.setStylePrimaryName("");
+			simplePanel.setWidget(menuBar);
+			menuBar.setWidth("100%");
 			menuBar.setStyleName("gwt-MainMenuBar");
 
 			final MenuBar menuBar_1 = new MenuBar(true);
 
 			final MenuItem systemMenuItem = menuBar.addItem("system", menuBar_1);
-			systemMenuItem.setSize("0", "0");
 			systemMenuItem.setStyleName("gwt-SystemMenuItem");
-			systemMenuItem.setStylePrimaryName("");
 
 			menuBar_1.addItem("Messages", new Command() {
 				public void execute() {
@@ -140,16 +141,7 @@ public class MainScreen extends Composite {
 
 			menuBar_2.addItem("New Item", (Command)null);
 			patientMenuItem.setStyleName("gwt-PatientMenuItem");
-			patientMenuItem.setStylePrimaryName("");
 		}
-/*
- * 	SimplePanel to hold (hopefully) a horizontal sub menu, going to try to 
- * 	use the Menu Bar items to call each sub-menu -JA
- */
-		final SimplePanel simplePanel = new SimplePanel();
-		verticalSplitPanel.setBottomWidget(simplePanel);
-		simplePanel.setStyleName("gwt-MainMenuBar");
-		simplePanel.setSize("100%", "40px");
 		
 		tabPanel = new TabPanel();
 		mainPanel.add(tabPanel, DockPanel.CENTER);
