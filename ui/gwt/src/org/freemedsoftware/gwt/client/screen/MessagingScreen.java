@@ -22,10 +22,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client;
+package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
 import org.freemedsoftware.gwt.client.*;
+import org.freemedsoftware.gwt.client.screen.*;
 import org.freemedsoftware.gwt.client.Module.*;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
@@ -39,7 +40,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
-public class Messaging extends Composite {
+public class MessagingScreen extends Composite {
 
 	private SortableTable wMessages;
 	/**
@@ -48,7 +49,7 @@ public class Messaging extends Composite {
 	private HashMap[] mStore;
 	private CurrentState state = null;
 	
-	public Messaging() {
+	public MessagingScreen() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -63,8 +64,8 @@ public class Messaging extends Composite {
 			public void onClick(Widget w) {
 				final MessagingComposeScreen p = new MessagingComposeScreen();
 				p.assignState(state);
-				state.tabPanel.add(p, new ClosableTab("Compose Message", p));
-				state.tabPanel.selectTab(state.tabPanel.getWidgetCount() - 1);
+				state.getTabPanel().add(p, new ClosableTab("Compose Message", p));
+				state.getTabPanel().selectTab(state.getTabPanel().getWidgetCount() - 1);
 			}
 		});
 

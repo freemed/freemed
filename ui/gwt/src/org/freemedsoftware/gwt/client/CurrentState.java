@@ -24,6 +24,7 @@
 
 package org.freemedsoftware.gwt.client;
 
+import org.freemedsoftware.gwt.client.screen.MainScreen;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -48,8 +49,8 @@ public class CurrentState {
 	 * @param m
 	 */
 	public void assignMainScreen(MainScreen m) {
-		assignStatusBar(m.statusBar1);
-		assignTabPanel(m.tabPanel);
+		assignStatusBar(m.getStatusBar());
+		assignTabPanel(m.getTabPanel());
 	}
 	
 	/**
@@ -95,5 +96,8 @@ public class CurrentState {
 		}
 	}
 	
+	public TabPanel getTabPanel() {
+		return tabPanel;
+	}
 }
 

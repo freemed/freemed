@@ -23,7 +23,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client;
+package org.freemedsoftware.gwt.client.screen;
 
 import java.util.*;
 import com.google.gwt.core.client.GWT;
@@ -109,7 +109,7 @@ public class MainScreen extends Composite {
 
 			menuBar_1.addItem("Messages", new Command() {
 				public void execute() {
-					final Messaging p = new Messaging();
+					final MessagingScreen p = new MessagingScreen();
 					p.assignState(state);
 					tabPanel.add(p, new ClosableTab("Messages", p));
 					tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
@@ -173,10 +173,15 @@ public class MainScreen extends Composite {
 		state.assignStatusBar(statusBar1);
 		statusBar2 = new Label("-");
 		statusBar2.setStyleName("statusBar");
-		statusBarContainer.add(statusBar2);
-
-		
+		statusBarContainer.add(statusBar2);	
 	}
 	
+	public Label getStatusBar() {
+		return statusBar1;
+	}
+	
+	public TabPanel getTabPanel() {
+		return tabPanel;
+	}
 }
 

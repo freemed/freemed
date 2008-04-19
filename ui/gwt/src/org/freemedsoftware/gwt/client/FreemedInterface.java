@@ -35,6 +35,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import org.freemedsoftware.gwt.client.screen.*;
+
 /* RPC classes */
 
 import org.freemedsoftware.gwt.client.Api.UserInterface;
