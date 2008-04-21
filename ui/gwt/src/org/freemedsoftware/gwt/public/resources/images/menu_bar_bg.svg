@@ -18,11 +18,22 @@
    sodipodi:docbase="C:\Users\localtestbed\.workspace\org.freemedsoftware.gwt.client.FreemedInterface\src\org\freemedsoftware\gwt\public\resources\images"
    sodipodi:docname="menu_bar_bg.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="C:\Users\localtestbed\.workspace\org.freemedsoftware.gwt.client.FreemedInterface\src\org\freemedsoftware\gwt\public\resources\images\menu_bar_bg.png"
+   inkscape:export-filename="C:\Users\localtestbed\.workspace\org.freemedsoftware.gwt.client.FreemedInterface\src\org\freemedsoftware\gwt\public\resources\images\menu_bar_selected_bg.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
      id="defs17785">
+    <linearGradient
+       id="linearGradient3147">
+      <stop
+         style="stop-color:#c5d1d4;stop-opacity:1;"
+         offset="0"
+         id="stop3149" />
+      <stop
+         style="stop-color:#224f5b;stop-opacity:1;"
+         offset="1"
+         id="stop3151" />
+    </linearGradient>
     <linearGradient
        id="linearGradient7040">
       <stop
@@ -59,11 +70,21 @@
        xlink:href="#linearGradient7040"
        id="linearGradient17807"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(41.3,0,0,2.8070175,-693.00398,14.358094)"
+       gradientTransform="matrix(41.3,0,0,2.8070175,-471.00398,-69.080506)"
        x1="19.479515"
        y1="20.157312"
        x2="19.479515"
        y2="7.4698062" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3147"
+       id="linearGradient3153"
+       x1="-112.32265"
+       y1="78.606171"
+       x2="-112.32265"
+       y2="35.558472"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(152,-16.5614)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -106,7 +127,7 @@
      transform="translate(0,-32)">
     <path
        style="opacity:1;fill:url(#linearGradient17807);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
-       d="M -95,32 L -95,72 L 318,72 L 318,32 L -95,32 z "
+       d="M 127,-51.4386 L 127,-11.4386 L 540,-11.4386 L 540,-51.4386 L 127,-51.4386 z "
        id="rect9111" />
     <rect
        style="opacity:1;fill:#224f5b;fill-opacity:1;stroke:none;stroke-width:0.65799999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -130,39 +151,44 @@
        id="rect2166"
        width="16"
        height="16"
-       x="-92"
-       y="48.900002" />
+       x="130"
+       y="-34.538597" />
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke:#224f5b;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2168"
        width="73.75"
        height="18"
-       x="-92.5"
-       y="47.900002" />
+       x="129.5"
+       y="-35.538597" />
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:sans"
-       x="-72.433594"
-       y="61.400002"
+       x="149.56641"
+       y="-22.038599"
        id="text3141"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3143"
-         x="-72.433594"
-         y="61.400002">SYSTEM</tspan></text>
+         x="149.56641"
+         y="-22.038599">SYSTEM</tspan></text>
     <rect
-       y="67.5"
-       x="-75.5"
+       y="-15.938601"
+       x="146.5"
        height="18"
        width="86"
        id="rect3145"
        style="opacity:1;fill:#b5dae4;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       y="68.400002"
-       x="-75"
+       y="-15.038599"
+       x="147"
        height="16"
        width="16"
        id="rect3151"
        style="opacity:1;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.65799999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       id="path2172"
+       d="M 0,72 L 0,32 L 44,32 L 44,72 L 0,72 z "
+       style="opacity:1;fill:url(#linearGradient3153);fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       sodipodi:nodetypes="ccccc" />
   </g>
 </svg>
