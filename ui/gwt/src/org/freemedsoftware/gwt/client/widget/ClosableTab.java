@@ -58,6 +58,7 @@ public class ClosableTab extends Composite {
 		panel.add(new HTML("&nbsp;"));
 		
 		panel.add(image);
+		image.setUrl("resources/images/close_x.16x16.png");
 		panel.setCellVerticalAlignment(image, HasVerticalAlignment.ALIGN_TOP);
 		panel.setCellHorizontalAlignment(image, HasHorizontalAlignment.ALIGN_RIGHT);
 
