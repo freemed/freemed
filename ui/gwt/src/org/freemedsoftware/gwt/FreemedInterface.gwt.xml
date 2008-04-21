@@ -31,7 +31,9 @@
 
 	<!-- Stylesheet resources go here -->
 	<stylesheet src="resources/stylesheet.css" />
+	<stylesheet src="resources/SortableTable.css" />
 	
 	<entry-point class='org.freemedsoftware.gwt.client.FreemedInterface'/>
+	<inherits name="com.google.gwt.i18n.I18N"/>
   
 </module>

@@ -34,10 +34,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.*;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
+import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class MessagingScreen extends Composite {
@@ -77,20 +81,35 @@ public class MessagingScreen extends Composite {
 		horizontalPanel.add(selectNoneButton);
 		selectNoneButton.setText("Select None");
 
-		final VerticalSplitPanel verticalSplitPanel = new VerticalSplitPanel();
+		final VerticalPanel verticalSplitPanel = new VerticalPanel();
 		verticalPanel.add(verticalSplitPanel);
-		verticalSplitPanel.setSize("100%", "150px");
-		verticalSplitPanel.setSplitPosition("50%");
+		verticalSplitPanel.setSize("100%", "100%");
+		//verticalSplitPanel.setSplitPosition("50%");
 
 		wMessages = new SortableTable();
 		verticalSplitPanel.add(wMessages);
+		wMessages.setSize("100%", "100%");
 		wMessages.addColumnHeader("Received", 0);
 		wMessages.addColumnHeader("From", 1);
 		wMessages.addColumnHeader("Subject", 2);
 		
-		final HTML messageView = new HTML("");
+		// Boilerplate
+		final int columnCount = 3;
+		wMessages.setStyleName("sortableTable");
+		RowFormatter rowFormatter = wMessages.getRowFormatter();
+		rowFormatter.setStyleName(0, "tableHeader");
+		CellFormatter cellFormatter = wMessages.getCellFormatter();
+		for (int colIndex = 0; colIndex <= columnCount; colIndex++) {
+			cellFormatter.setStyleName(0, colIndex, "headerStyle");
+			cellFormatter.setAlignment(0, colIndex,
+					HasHorizontalAlignment.ALIGN_CENTER,
+					HasVerticalAlignment.ALIGN_MIDDLE);
+		}
+		
+		final HTML messageView = new HTML("Message text goes here.");
 		verticalSplitPanel.add(messageView);
-		verticalSplitPanel.setSize("100%", "100%");
+		messageView.setSize("100%", "100%");
+		//verticalSplitPanel.setSize("100%", "100%");
 	}
 
 	/**
@@ -107,9 +126,7 @@ public class MessagingScreen extends Composite {
 			/**
 			 * @gwt.typeArgs <java.lang.String,java.lang.String>
 			 */
-			HashMap[] dummyData = {
-			};
-			
+			HashMap[] dummyData = getStubData();
 			populateByData(dummyData);
 		} else {
 			// Populate the whole thing.		
@@ -159,22 +176,31 @@ public class MessagingScreen extends Composite {
 		 */
 		final HashMap a = new HashMap();
 		a.put("id", "1");
-		a.put("","");
+		a.put("stamp","2007-08-01");
+		a.put("from_user","A");
+		a.put("subject","Subject A");
 
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		final HashMap b = new HashMap();
 		b.put("id", "1");
-		b.put("","");
+		b.put("stamp","2007-08-01");
+		b.put("from_user","B");
+		b.put("subject","Subject B");
 
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		final HashMap c = new HashMap();
 		c.put("id", "1");
-		c.put("","");
+		c.put("stamp","2007-08-03");
+		c.put("from_user","C");
+		c.put("subject","Subject C");
 
+		/**
+		 * @gwt.typeArgs <java.lang.String,java.lang.String>
+		 */
 		return new HashMap[]{
 			a, b, c
 		};

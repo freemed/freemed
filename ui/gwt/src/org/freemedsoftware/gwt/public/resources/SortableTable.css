@@ -1,0 +1,195 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2008 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+TABLE.sortableTable TD  {
+	border-bottom:solid #93BEE2 1px;
+	BORDER-RIGHT:1px solid #93BEE2;
+	border-left:1px solid #93BEE2;
+	border-top:1px solid #93BEE2;
+}
+
+.tableHeader{
+	font-family:tahoma,sans-serif;
+	font-size:12px;
+	color:#FFFFFF;
+	font-weight:bold;
+	background: #104A7B;
+}
+
+.headerStyle{
+	font-family:tahoma,sans-serif;
+	font-size:12px;
+	color:#FFFFFF;
+	font-weight:bold;
+	cursor:pointer;cursor:hand;
+ }
+
+.tableHeader2{
+	font-family:tahoma,sans-serif;
+	font-size:12px;
+	color:#000000;
+	font-weight:bold;
+	background: #FFFFFF;
+	cursor:pointer;cursor:hand;
+}
+
+.tableRow{
+	font-family:tahoma,sans-serif;
+	font-size:11px;
+	color:#000096;
+	background: #FFFFFF;
+}
+
+.customFont{
+	font-family:tahoma,sans-serif;
+	font-size:11px;
+	color:#000096;
+}
+
+.customRowStyle{
+	font-family:tahoma,sans-serif;
+	font-size:11px;
+	color:#000096;
+	background: #CCCCCC;
+ }
+
+
+.txtbox	{
+	font-family:tahoma,sans-serif;
+	font-size:11px;
+	color:#104A7B;background: #FFFFFF;
+	border-bottom: 1px solid #336699;
+	border-right: 1px solid #336699;
+	border-left: 1px solid #336699;
+	border-top:1px solid #336699;
+}
+	
+.popupPanel	{
+	font-family:tahoma,sans-serif;
+	font-size:10px;
+	background: #FFFFFF;
+
+}
+	
+.calendarPanel	{
+	font-family:tahoma,sans-serif;
+	font-size:10px;
+	color:#104A7B;
+	background: #CCCCFF;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+	border-top:1px solid gray;
+ }
+ 
+.todayPanel	{
+	font-family:tahoma,sans-serif;font-size:11px;
+	float: right;
+	font-weight:bold;
+	color:#104A7B;
+	background: #FFFFFF;
+	text-align:center;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+	
+ } 
+ 
+ .todayLink	{
+ 	font-family:tahoma,sans-serif;font-size:11px;
+ 	float: right;
+ 	font-weight:bold;
+ 	color:#104A7B;
+	background: #FFFFFF;
+	width: 100%;
+	text-align:center;
+	text-decoration:underline;
+	cursor:pointer;cursor:hand;
+ } 
+ 
+ .monthHeader {
+ 	font-family:tahoma,sans-serif;
+ 	font-size:10px;
+ 	font-weight:BOLD;
+ 	color:#000000;
+ 	text-align:center;
+ }
+
+ 
+.holidayWeek {
+ 	font-family:tahoma,sans-serif;
+ 	font-size:10px;
+ 	font-weight:BOLD;
+ 	color:gray;
+ 	text-align:center;
+ }
+ 
+.holiday {
+ 	font-family:Arial,tahoma,sans-serif;
+ 	font-size:10px;
+ 	color:gray;
+ 	text-align:center;
+ } 
+
+.monthYearTraversorBtn	{
+	font-family:tahoma,sans-serif;font-size:11px;
+	background: #104A7B;
+	color: #FFFFFF;
+	font-weight:bold;
+	border-right: 0px solid gray;
+	border-left: 0px solid gray;
+	border-bottom: 0px solid gray;
+	border-top: 0px solid gray;
+	cursor:pointer;cursor:hand;
+}
+	
+.monthYearTraversor	{
+	font-family:Arial,tahoma,sans-serif;font-size:11px;
+	background: #104A7B;
+	color: #FFFFFF;
+	font-weight:bold;
+	
+}	
+	
+.calendarDate {
+	font-family:Arial,tahoma,sans-serif;
+	font-size:10px;
+	color:#000000;
+	text-decoration:none;
+	cursor:pointer;cursor:hand;
+  }
+  
+.currentDate {
+	font-family:tahoma,sans-serif;
+	font-size:10px;
+	color:#104A7B;
+	font-weight:BOLD;
+	background: #FFFFFF;
+	text-decoration:none;
+	cursor:pointer;cursor:hand;
+	border-bottom: 1px solid #336699;
+	border-right: 1px solid #336699;
+	border-left: 1px solid #336699;
+	border-top:1px solid #336699;	
+  }
