@@ -52,13 +52,13 @@ public class ClosableTab extends Composite {
 		panel.setCellHorizontalAlignment(label, HasHorizontalAlignment.ALIGN_LEFT);
 		panel.setCellVerticalAlignment(label, HasVerticalAlignment.ALIGN_TOP);
 
-		final Image image = new Image("resources/images/x_stop.16x16.png");
+		final Image image = new Image();
+		image.setUrl("resources/images/close_x.16x16.png");
 
 		// Create spacer
 		panel.add(new HTML("&nbsp;"));
 		
 		panel.add(image);
-		image.setUrl("resources/images/close_x.16x16.png");
 		panel.setCellVerticalAlignment(image, HasVerticalAlignment.ALIGN_TOP);
 		panel.setCellHorizontalAlignment(image, HasHorizontalAlignment.ALIGN_RIGHT);
 
