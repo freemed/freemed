@@ -129,6 +129,7 @@ a:hover{
 .freemed-MainMenuBar {
 	background-color: #C3D9FF;
 	background-image: url(images/menu_bar_bg);
+	background-repeat: repeat-x;
 	border: 1px solid #87B3FF;
 	cursor: default;
 	overflow-x: hidden;
@@ -136,7 +137,7 @@ a:hover{
 	}
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem {
-	padding: 1px 4px 1px 4px;
+	padding: 1px 4px 1px 20px;
 	cursor: default;
 	color: #fff;
 	font-size: 14px;
@@ -145,8 +146,10 @@ a:hover{
 	}
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem-selected {
-	background-color: #E8EEF7;
-	background-image: url(images/menu_bar_selected_bg.png);
+	background-color: transparent;
+	background-image: url(images/button_bg.png);
+	background-repeat: no-repeat;
+	background-position: 0px -30px
 	color: #333;
 	}
 	
@@ -154,6 +157,9 @@ a:hover{
 	margin-top: 7px;
 	border: 0px;
 	background-color: transparent;
+	background-image: url(images/button_bg.png);
+	background-repeat: no-repeat;
+	background-position: 0px 0px
 	overflow-x: hidden;
 	overflow-y: hidden;
 }

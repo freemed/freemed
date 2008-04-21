@@ -81,9 +81,9 @@ public class MainScreen extends Composite {
 		{
 			final MenuBar menuBar = new MenuBar();
 			horizontalPanel.add(menuBar);
+			menuBar.setSize("100%", "40px");
 			menuBar.setStylePrimaryName("freemed-MainMenuBar");
 			menuBar.setStyleName("freemed-MainMenuBar");
-			menuBar.setSize("100%", "30px");
 
 			final MenuBar menuBar_2 = new MenuBar();
 			menuBar_2.setStylePrimaryName("");
@@ -94,6 +94,7 @@ public class MainScreen extends Composite {
 			menuBar_2.addItem("logout", (Command)null);
 
 			final MenuItem menuItem = menuBar.addItem("system", menuBar_2);
+			menuItem.setSize("105px", "30px");
 			menuItem.setStylePrimaryName("freemed-PrimaryMenuItem");
 			menuItem.setStyleName("freemed-PrimaryMenuItem");
 
@@ -104,6 +105,7 @@ public class MainScreen extends Composite {
 			menuBar_3.addItem("entry", (Command)null);
 
 			final MenuItem menuItem_1 = menuBar.addItem("patient", menuBar_3);
+			menuItem_1.setSize("105px", "30px");
 			menuItem_1.setStyleName("freemed-PrimaryMenuItem");
 		}
 
