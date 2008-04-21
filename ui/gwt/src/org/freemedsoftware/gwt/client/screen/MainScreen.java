@@ -131,8 +131,8 @@ public class MainScreen extends Composite {
 		mainPanel.add(tabPanel, DockPanel.CENTER);
 		tabPanel.setSize("100%", "100%");
 
-		final HTML dashboard = new HTML("Dashboard");
-		dashboard.setSize("100%", "100%");
+		final DashboardScreen dashboard = new DashboardScreen();
+		dashboard.assignState(state);
 		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
 		state.assignTabPanel(tabPanel);
