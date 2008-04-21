@@ -131,8 +131,6 @@ public class MainScreen extends Composite {
 		mainPanel.add(tabPanel, DockPanel.CENTER);
 		tabPanel.setSize("100%", "100%");
 
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		tabPanel.add(verticalPanel, "Tab");
 		final HTML dashboard = new HTML("Dashboard");
 		dashboard.setSize("100%", "100%");
 		tabPanel.add(dashboard, "Dashboard");
