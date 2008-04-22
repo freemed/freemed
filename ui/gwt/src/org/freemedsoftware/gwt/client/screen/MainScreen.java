@@ -106,7 +106,7 @@ public class MainScreen extends Composite {
 
 			menuBar_2.addItem("logout", (Command)null);
 
-			final MenuItem menuItem = menuBar.addItem("system", menuBar_2);
+			final MenuItem menuItem = menuBar.addItem("<span id=\"freemed-PrimaryMenuItem-title\">system</span>", true, menuBar_2);
 			menuItem.setSize("105px", "30px");
 			menuItem.setStylePrimaryName("freemed-PrimaryMenuItem");
 			menuItem.setStyleName("freemed-PrimaryMenuItem");
