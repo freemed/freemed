@@ -33,13 +33,50 @@ import org.freemedsoftware.gwt.client.Public.*;
 public final class Util {
 	
 	/**
+	 * Get base url of FreeMED installation.
+	 * 
+	 * @return Base URL string
+	 */
+	public static synchronized String getBaseUrl() {
+		return new String("../../../..");
+	}
+	
+	/**
+	 * Get full url of FreeMED JSON relay.
+	 * 
+	 * @param method Fully qualified method name
+	 * @param args Array of parameters, as strings
+	 * @return URL to pass with JSON request
+	 */
+	public static synchronized String getJsonRequest(String method, String[] args) {
+		String url = getBaseUrl() + "/relay.php/json";
+		try {
+			String params = new String();
+			for (int iter=0; iter<args.length; iter++) {
+				if (iter>0) {
+					params += "&";
+				}
+				params += "param" + new Integer(iter).toString() + "=" + args[iter];
+			}
+			return url + "/" + method + "/" + params;
+		} catch (Exception e) {
+			return url + "/" + method;
+		}
+	}
+	
+	/**
 	 * Get the "relative URL" used by async services
 	 * @return URL
 	 */
 	public static synchronized String getRelativeURL() {
-		return new String("../../../../relay-gwt.php");
+		return new String(getBaseUrl() + "/relay-gwt.php");
 	}
 	
+	/**
+	 * Find out if we're running in stub mode or not.
+	 * 
+	 * @return Stubbed mode status
+	 */
 	public static synchronized boolean isStubbedMode() {
 		return true;
 	}
