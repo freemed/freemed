@@ -183,9 +183,7 @@ a:hover{
 	font-size: 14px;
 	font-variant: small-caps;
 	font-weight: bold;
-	background-color: #224f5b;
-	background-image: url(images/menu_bar_bg.png);
-	background-repeat: repeat-x;
+	background-color: #fff;
 	cursor: default;
 }
 .gwt-MainMenuBar {
@@ -293,14 +291,14 @@ a:hover{
 .gwt-NoStyle {
 }
 .freemed-MainMenuBar {
-	background-color: #C3D9FF;
-	background-image: url(images/menu_bar_bg);
-	background-repeat: repeat-x;
-	border: 1px solid #87B3FF;
-	cursor: default;
 	overflow-x: hidden;
 	overflow-y: hidden;
-	padding: 1px 4px 0px 20px;	
+	padding: 1px 4px 0px 20px;
+	border: 1px solid #87B3FF;
+	background-color: #FFFFFF;
+	background-image: url(images/menu_bar_bg);
+	background-repeat: repeat-x;
+	cursor: default;
 	}
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem {
@@ -313,35 +311,45 @@ a:hover{
 	}
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem-selected {
-	background-color: transparent;
-	background-image: url(images/button_bg.png);
-	background-repeat: no-repeat;
-	background-position: 0px -30px;
+	background-position: 0px 0px;
 	color: #333;
+	background-color: transparent;
+	background-image: url(images/login_button.105x60.png);
+	background-repeat: no-repeat;
 	}
 	
 .freemed-PrimaryMenuItem {
-	margin-top: 7px;
-	border: 0px;
-	background-color: transparent;
-	background-image: url(images/button_bg.png);  
 /*	background-image: url(images/freemed-PrimaryMenuItem_bg_L.png);  */
 	background-position: top left;
-	background-repeat: no-repeat;
-	background-position: 0px 0px;  
+	background-position: 0px -30px;  
 	overflow-x: hidden;
 	overflow-y: hidden;
-	padding: 0px; 
+	margin-top: 7px;
+	padding: 0px;
+	border: 0px;
+	background-color: transparent;
+	background-image: url(images/login_button.105x60.png);
+	background-repeat: no-repeat; 
 }
 
 #freemed-PrimaryMenuItem-title{
 	padding: 0px 0px 0px 25px; 
 
 }
-
-.freemed-SubMenuBar {
-	border: 0;
-	margin: 0;
-}
 .freemed-SecondaryMenuBar {
+	margin-top: 10px;
+	background-color: #224f5b;
+}
+.freemed-SecondaryMenuBar .freemed-SecondaryMenuItem{
+	padding: 5px;
+	background-color: #224f5b;
+	font-size: 14px;
+	font-variant: small-caps;
+	font-weight: bold;
+}
+.freemed-SecondaryMenuBar .freemed-SecondaryMenuItem-selected{
+	background-color: #fff;
+	color: #999;
+}
+.freemed-SecondaryMenuItem {
 }

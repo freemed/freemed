@@ -55,6 +55,7 @@ import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class MainScreen extends Composite {
 
+	private MenuBar menuBar_1;
 	private static final AppConstants CONSTANTS = (AppConstants) GWT.create(AppConstants.class);
 	protected final TabPanel tabPanel;
 	protected final HorizontalSplitPanel statusBarContainer;
@@ -83,7 +84,9 @@ public class MainScreen extends Composite {
 		horizontalPanel.setCellWidth(pushButton_1, "40px");
 		horizontalPanel.setCellHeight(pushButton_1, "100%");
 		pushButton_1.setStyleName("freemed-LogoMainMenuBar");
-
+/*
+ * 	Start of the Main menu/toolbar.  CSS inherits are VERY important, see the stylesheet.css for clearer explination
+ */
 		{
 			final MenuBar menuBar = new MenuBar();
 			horizontalPanel.add(menuBar);
@@ -91,11 +94,12 @@ public class MainScreen extends Composite {
 			menuBar.setStylePrimaryName("freemed-MainMenuBar");
 			menuBar.setStyleName("freemed-MainMenuBar");
 
-			final MenuBar menuBar_2 = new MenuBar();
-			menuBar_2.setStylePrimaryName("freemed-SecondaryMenuBar");
-			menuBar_2.setStyleName("freemed-SecondaryMenuBar");
+			menuBar_1 = new MenuBar();
+			menuBar_1.setAutoOpen(true);
+			menuBar_1.setStylePrimaryName("freemed-SecondaryMenuBar");
+			menuBar_1.setStyleName("freemed-SecondaryMenuBar");
 
-			menuBar_2.addItem("messaging", new Command() {
+			final MenuItem menuItem_2 = menuBar_1.addItem("messaging", new Command() {
 				public void execute() {
 					final MessagingScreen p = new MessagingScreen();
 					p.assignState(state);
@@ -103,21 +107,38 @@ public class MainScreen extends Composite {
 					tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 				}
 			});
+			menuItem_2.setStylePrimaryName("");
+			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
 
-			menuBar_2.addItem("logout", (Command)null);
-
-			final MenuItem menuItem = menuBar.addItem("<span id=\"freemed-PrimaryMenuItem-title\">system</span>", true, menuBar_2);
+			final MenuItem menuItem_3 = menuBar_1.addItem("logout", (Command)null);
+			menuItem_3.setStylePrimaryName("");
+			menuItem_3.setStyleName("freemed-SecondaryMenuItem");
+/*
+ * 	all the primary menu items are currently housed in static width/height since css backgrounds are batched buttons.
+ * 	This definitely needs to be worked on.  hopefully using a more fluid css technique.  probably will require more in code html
+ * 	markup.
+ */
+			final MenuItem menuItem = menuBar.addItem("<span id=\"freemed-PrimaryMenuItem-title\">system</span>", true, menuBar_1);
+			menuItem.setSubMenu(menuBar_1);
 			menuItem.setSize("105px", "30px");
 			menuItem.setStylePrimaryName("freemed-PrimaryMenuItem");
 			menuItem.setStyleName("freemed-PrimaryMenuItem");
 
 			final MenuBar menuBar_3 = new MenuBar();
+			menuBar_3.setAutoOpen(true);
+			menuBar_3.setStylePrimaryName("");
+			menuBar_3.setStyleName("freemed-SecondaryMenuBar");
 
-			menuBar_3.addItem("search", (Command)null);
+			final MenuItem menuItem_4 = menuBar_3.addItem("search", (Command)null);
+			menuItem_4.setStylePrimaryName("");
+			menuItem_4.setStyleName("freemed-SecondaryMenuItem");
 
-			menuBar_3.addItem("entry", (Command)null);
+			final MenuItem menuItem_5 = menuBar_3.addItem("entry", (Command)null);
+			menuItem_5.setStylePrimaryName("");
+			menuItem_5.setStyleName("freemed-SecondaryMenuItem");
 
-			final MenuItem menuItem_1 = menuBar.addItem("patient", menuBar_3);
+			final MenuItem menuItem_1 = menuBar.addItem("<span id=\"freemed-PrimaryMenuItem-title\">patient</span>", true, menuBar_3);
+			menuItem_1.setStylePrimaryName("");
 			menuItem_1.setSize("105px", "30px");
 			menuItem_1.setStyleName("freemed-PrimaryMenuItem");
 		}
