@@ -54,7 +54,6 @@ public class MessagingScreen extends Composite {
 	private CurrentState state = null;
 	
 	public MessagingScreen() {
-
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 

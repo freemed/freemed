@@ -159,4 +159,13 @@ public class PatientWidget extends Composite {
 		return new Integer(value);
 	}
 
+	/**
+	 * Pass change listener through to internal widget.
+	 * 
+	 * @param changeListener
+	 */
+	public void addChangeListener( ChangeListener changeListener ) {
+		searchBox.addChangeListener(changeListener);
+	}
+	
 }
