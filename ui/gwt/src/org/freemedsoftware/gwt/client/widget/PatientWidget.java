@@ -24,115 +24,139 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.rpc.IsSerializable;
-import java.util.*;
-import java.lang.StringBuffer;
+import com.google.gwt.user.client.ui.SuggestOracle.Callback;
+import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
 public class PatientWidget extends Composite {
 
 	protected int value = 0;
-    /**
-     * @gwt.typeArgs <java.lang.String, java.lang.String>
-     */
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
 	protected HashMap map;
-	
+
+	// private final FlexTable listPanel;
+
+	private SuggestBox searchBox;
+
+	private final VerticalPanel layout;
+
 	public PatientWidget() {
+		/**
+		 * @gwt.typeArgs <java.lang.String,java.lang.String>
+		 */
+		map = new HashMap();
 
-		final SuggestOracle suggestOracle = new SuggestOracle() {
-			ArrayList items = new ArrayList();
+		layout = new VerticalPanel();
 
-		     final class StartsWithSuggestion implements Suggestion, IsSerializable {
-		             private String _value;
-		             private String _displayString;
+		searchBox = new SuggestBox(new SuggestOracle() {
+			public void requestSuggestions(Request r, Callback cb) {
+				loadSuggestions(r.getQuery(), r, cb);
+			}
+		});
+		searchBox.addChangeListener(new ChangeListener() {
+			public void onChange(Widget w) {
+				String cur = (String) ((SuggestBox) w).getText();
+				((SuggestBox) w).setTitle(cur);
+				value = getValueFromText(cur);
+			}
+		});
 
-		             /**
-		              * Constructor used by RPC.
-		              */
-		             public StartsWithSuggestion() { }
+		layout.add(searchBox);
 
-		             /**
-		              * Constructor for <code>StartsWithSuggestion</code>.
-		              */
-		             public StartsWithSuggestion(String value, String displayString) {
-		                 _value = value;
-		                 _displayString = displayString;
-		             }
+		// listPanel = new FlexTable();
+		// layout.add(listPanel);
 
-		             public String getDisplayString() {
-		                 return _displayString;
-		             }
+		initWidget(layout);
+	}
 
-		             public String getReplacementString() {
-		            	 return _displayString;
-		             }
-		             
-		             public Object getValue() {
-		                 return _value;
-		             }
-		         } 
-			
-		    private StartsWithSuggestion getFormattedSuggestion(String query,String suggestion) {
-		    	StringBuffer formattedSuggestion = new StringBuffer()
-		    		            .append("<strong>")
-		    		            .append(suggestion.substring(0, query.length()))
-		    		            .append("</strong>")
-		    		            .append(suggestion.substring(query.length()));
-		    	return new StartsWithSuggestion(suggestion, formattedSuggestion.toString());
-		    }
-			
-			/**
-			 * 
-			 * @param query
-			 * @param limit
-			 * @return
-			 * @gwt.typeArgs <java.lang.String>
-			 */
-		    private List getItems(String query, int limit)
-		    {
-		    	/**
-		    	 * @gwt.typeArgs <java.lang.String>
-		    	 */
-		        ArrayList/*<StartsWithSuggestion>*/ matches = new ArrayList();
-		        for (int i = 0; i < items.size() && matches.size() < limit; i++) {
-		            if (query.matches(((String) items.get(i)).substring(0, query.length()).toLowerCase())) {
-		                matches.add(getFormattedSuggestion(query, (String) items.get(i)));
-		            }
-		        }
-		        //Log.debug("found " + matches.size() + " matches for query " + query);
-		        return matches;
-		    }
+	protected void loadSuggestions(String req, final Request r,
+			final Callback cb) {
+		PatientInterfaceAsync service = null;
+		try {
+			service = ((PatientInterfaceAsync) Util
+					.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
+		} catch (Exception e) {
+		}
 
-
-			public void requestSuggestions(SuggestOracle.Request request, SuggestOracle.Callback callback) {
+		service.Picklist(req, 20, 10, new AsyncCallback() {
+			public void onSuccess(Object data) {
 				/**
-				 * @gwt.typeArgs <StartsWithSuggestion>
+				 * @gwt.typeArgs <java.lang.String,java.lang.String>
 				 */
-		        final List/*<StartsWithSuggestion>*/ suggestions =
-		        	getItems(request.getQuery().toLowerCase(), request.getLimit());
-		        	        Response response = new Response(suggestions);
-		        	        callback.onSuggestionsReady(request, response); 
+				final HashMap result = (HashMap) data;
+				Set keys = result.keySet();
+				Iterator iter = keys.iterator();
+
+				List items = new ArrayList();
+				map.clear();
+				while (iter.hasNext()) {
+					final String key = (String) iter.next();
+					final String val = (String) result.get(key);
+					map.put(key, val);
+					items.add(new SuggestOracle.Suggestion() {
+						public String getDisplayString() {
+							return val;
+						}
+
+						public String getReplacementString() {
+							return val;
+						}
+					});
+
+				}
+				cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
 			}
-			
-		};
-		final SuggestBox suggestBox = new SuggestBox(suggestOracle);
-		initWidget(suggestBox);
-		suggestBox.addChangeListener(new ChangeListener() {
-			public void onChange(final Widget sender) {
+
+			public void onFailure(Throwable t) {
+
 			}
+
 		});
 	}
 
 	/**
+	 * Resolve value of widget from full text.
+	 * 
+	 * @param text
+	 * @return
+	 */
+	public Integer getValueFromText(String text) {
+		String found = new String("");
+		Iterator keys = map.keySet().iterator();
+		while (found.length() == 0 && keys.hasNext()) {
+			String cur = (String) keys.next();
+			if (cur.contentEquals(text)) {
+				found = cur;
+			}
+		}
+		return new Integer((String) found);
+	}
+
+	/**
 	 * Get integer value of currently selected patient.
+	 * 
 	 * @return Current selected patient value
 	 */
-	public int getValue() {
-		return value;
+	public Integer getValue() {
+		return new Integer(value);
 	}
-	
+
 }
