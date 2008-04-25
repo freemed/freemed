@@ -167,7 +167,11 @@ public class DjvuViewer extends Composite {
 	}
 	
 	protected void pagePrevious() {
-		
+		try {
+			loadPage(currentPage - 1);
+		} catch (Exception e) {
+				
+		}		
 	}
 	
 	/**
