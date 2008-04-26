@@ -45,7 +45,7 @@ import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
 public class PatientWidget extends Composite {
 
-	protected int value = 0;
+	protected Integer value = new Integer(0);
 
 	/**
 	 * @gwt.typeArgs <java.lang.String, java.lang.String>
@@ -96,40 +96,42 @@ public class PatientWidget extends Composite {
 		} catch (Exception e) {
 		}
 
-		service.Picklist(req, 20, 10, new AsyncCallback() {
-			public void onSuccess(Object data) {
-				/**
-				 * @gwt.typeArgs <java.lang.String,java.lang.String>
-				 */
-				final HashMap result = (HashMap) data;
-				Set keys = result.keySet();
-				Iterator iter = keys.iterator();
+		service.Picklist(req, new Integer(20), new Integer(10),
+				new AsyncCallback() {
+					public void onSuccess(Object data) {
+						/**
+						 * @gwt.typeArgs <java.lang.String,java.lang.String>
+						 */
+						final HashMap result = (HashMap) data;
+						Set keys = result.keySet();
+						Iterator iter = keys.iterator();
 
-				List items = new ArrayList();
-				map.clear();
-				while (iter.hasNext()) {
-					final String key = (String) iter.next();
-					final String val = (String) result.get(key);
-					map.put(key, val);
-					items.add(new SuggestOracle.Suggestion() {
-						public String getDisplayString() {
-							return val;
+						List items = new ArrayList();
+						map.clear();
+						while (iter.hasNext()) {
+							final String key = (String) iter.next();
+							final String val = (String) result.get(key);
+							map.put(key, val);
+							items.add(new SuggestOracle.Suggestion() {
+								public String getDisplayString() {
+									return val;
+								}
+
+								public String getReplacementString() {
+									return val;
+								}
+							});
+
 						}
+						cb.onSuggestionsReady(r, new SuggestOracle.Response(
+								items));
+					}
 
-						public String getReplacementString() {
-							return val;
-						}
-					});
+					public void onFailure(Throwable t) {
 
-				}
-				cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
-			}
+					}
 
-			public void onFailure(Throwable t) {
-
-			}
-
-		});
+				});
 	}
 
 	/**
@@ -143,7 +145,7 @@ public class PatientWidget extends Composite {
 		Iterator keys = map.keySet().iterator();
 		while (found.length() == 0 && keys.hasNext()) {
 			String cur = (String) keys.next();
-			if (cur.contentEquals(text)) {
+			if (cur.compareTo(text) == 0) {
 				found = cur;
 			}
 		}
@@ -156,7 +158,7 @@ public class PatientWidget extends Composite {
 	 * @return Current selected patient value
 	 */
 	public Integer getValue() {
-		return new Integer(value);
+		return value;
 	}
 
 	/**
@@ -164,8 +166,8 @@ public class PatientWidget extends Composite {
 	 * 
 	 * @param changeListener
 	 */
-	public void addChangeListener( ChangeListener changeListener ) {
+	public void addChangeListener(ChangeListener changeListener) {
 		searchBox.addChangeListener(changeListener);
 	}
-	
+
 }
