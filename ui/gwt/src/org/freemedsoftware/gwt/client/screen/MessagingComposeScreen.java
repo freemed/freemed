@@ -24,33 +24,34 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
-import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.ScreenInterface;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MessagingComposeScreen extends Composite {
+public class MessagingComposeScreen extends ScreenInterface {
 
-	protected CurrentState state = null;
 	protected final TextArea wText;
+
 	protected final ListBox wTo;
+
 	protected final String className = "org.freemedsoftware.gwt.client.MessagingComposeScreen";
-	
+
 	public MessagingComposeScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
-		verticalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		verticalPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		final FlexTable flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
@@ -62,7 +63,7 @@ public class MessagingComposeScreen extends Composite {
 		flexTable.setWidget(0, 1, wTo);
 		wTo.setMultipleSelect(true);
 		wTo.setVisibleItemCount(5);
-		
+
 		final Label subjectLabel = new Label("Subject : ");
 		flexTable.setWidget(1, 0, subjectLabel);
 
@@ -96,7 +97,8 @@ public class MessagingComposeScreen extends Composite {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
-		horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		horizontalPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		final Button sendButton = new Button();
 		horizontalPanel.add(sendButton);
@@ -126,17 +128,13 @@ public class MessagingComposeScreen extends Composite {
 		});
 	}
 
-	public void assignState(CurrentState s) {
-		state = s;
-	}
-	
 	public void clearForm() {
 		wText.setText(new String(""));
 	}
-	
+
 	public void sendMessage(boolean sendAnother) {
 		state.statusBarAdd(className, "Sending Message");
-		
+
 	}
 
 }

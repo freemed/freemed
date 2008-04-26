@@ -24,14 +24,22 @@
 
 package org.freemedsoftware.gwt.client;
 
+import org.freemedsoftware.gwt.client.Api.PatientInterface;
+import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.Module.Annotations;
+import org.freemedsoftware.gwt.client.Module.AnnotationsAsync;
+import org.freemedsoftware.gwt.client.Module.MessagesModule;
+import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
+import org.freemedsoftware.gwt.client.Public.Login;
+import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.widget.ClosableTab;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import org.freemedsoftware.gwt.client.Api.*;
-import org.freemedsoftware.gwt.client.Module.*;
-import org.freemedsoftware.gwt.client.Public.*;
+import com.google.gwt.user.client.ui.Widget;
 
 public final class Util {
-	
+
 	/**
 	 * Get base url of FreeMED installation.
 	 * 
@@ -40,38 +48,43 @@ public final class Util {
 	public static synchronized String getBaseUrl() {
 		return new String("../../../..");
 	}
-	
+
 	/**
 	 * Get full url of FreeMED JSON relay.
 	 * 
-	 * @param method Fully qualified method name
-	 * @param args Array of parameters, as strings
+	 * @param method
+	 *            Fully qualified method name
+	 * @param args
+	 *            Array of parameters, as strings
 	 * @return URL to pass with JSON request
 	 */
-	public static synchronized String getJsonRequest(String method, String[] args) {
+	public static synchronized String getJsonRequest(String method,
+			String[] args) {
 		String url = getBaseUrl() + "/relay.php/json";
 		try {
 			String params = new String();
-			for (int iter=0; iter<args.length; iter++) {
-				if (iter>0) {
+			for (int iter = 0; iter < args.length; iter++) {
+				if (iter > 0) {
 					params += "&";
 				}
-				params += "param" + new Integer(iter).toString() + "=" + args[iter];
+				params += "param" + new Integer(iter).toString() + "="
+						+ args[iter];
 			}
 			return url + "/" + method + "/" + params;
 		} catch (Exception e) {
 			return url + "/" + method;
 		}
 	}
-	
+
 	/**
 	 * Get the "relative URL" used by async services
+	 * 
 	 * @return URL
 	 */
 	public static synchronized String getRelativeURL() {
 		return new String(getBaseUrl() + "/relay-gwt.php");
 	}
-	
+
 	/**
 	 * Find out if we're running in stub mode or not.
 	 * 
@@ -80,15 +93,18 @@ public final class Util {
 	public static synchronized boolean isStubbedMode() {
 		return true;
 	}
-	
+
 	/**
 	 * Generate async proxy for GWT-RPC interactions based on proxy name.
 	 * 
-	 * @param className String representation of proxy we're looking for
+	 * @param className
+	 *            String representation of proxy we're looking for
 	 * @return Async service object as generic Object
-	 * @throws Exception Thrown when className isn't resolved.
+	 * @throws Exception
+	 *             Thrown when className isn't resolved.
 	 */
-	public static synchronized Object getProxy(String className) throws Exception {
+	public static synchronized Object getProxy(String className)
+			throws Exception {
 		Object service = null;
 
 		// This is a *horrendous* hack to get around lack of dynamic loading
@@ -96,28 +112,51 @@ public final class Util {
 		if (className.compareTo("org.freemedsoftware.gwt.client.Public.Login") == 0) {
 			service = (LoginAsync) GWT.create(Login.class);
 		}
-		
-		if (className.compareTo("org.freemedsoftware.gwt.client.Api.PatientInterface") == 0) {
-			service = (PatientInterfaceAsync) GWT.create(PatientInterface.class);
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Api.PatientInterface") == 0) {
+			service = (PatientInterfaceAsync) GWT
+					.create(PatientInterface.class);
 		}
-		
-		if (className.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {
 			service = (AnnotationsAsync) GWT.create(Annotations.class);
 		}
 
-		if (className.compareTo("org.freemedsoftware.gwt.client.Module.MessagesModule") == 0) {
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.MessagesModule") == 0) {
 			service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
 		}
 
 		try {
 			ServiceDefTarget endpoint = (ServiceDefTarget) service;
-    		String moduleRelativeURL = Util.getRelativeURL();
-    		endpoint.setServiceEntryPoint( moduleRelativeURL );
-    		return (Object) service;
+			String moduleRelativeURL = Util.getRelativeURL();
+			endpoint.setServiceEntryPoint(moduleRelativeURL);
+			return (Object) service;
 		} catch (Exception e) {
 			// All else fails, throw exception
-			throw new Exception("Unable to resolve appropriate class " + className);
+			throw new Exception("Unable to resolve appropriate class "
+					+ className);
 		}
 	}
-	
+
+	/**
+	 * Create new tab in main window with specified title and ScreenInterface
+	 * 
+	 * @param title
+	 *            String title of the new tab
+	 * @param screen
+	 *            Object containing extended composite with content
+	 * @param state
+	 *            Pass internal program state.
+	 */
+	public static synchronized void spawnTab(String title,
+			ScreenInterface screen, CurrentState state) {
+		screen.assignState(state);
+		state.getTabPanel().add((Widget) screen,
+				new ClosableTab(title, (Widget) screen));
+		state.getTabPanel().selectTab(state.getTabPanel().getWidgetCount() - 1);
+	}
+
 }

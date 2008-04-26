@@ -24,36 +24,24 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
-import java.util.HashMap;
-import org.freemedsoftware.gwt.client.*;
-import org.freemedsoftware.gwt.client.screen.*;
-import org.freemedsoftware.gwt.client.Module.*;
-import org.freemedsoftware.gwt.client.widget.ClosableTab;
+import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.rpc.*;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.VerticalSplitPanel;
-import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
-import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.Widget;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
-public class PatientSearchScreen extends Composite {
+public class PatientSearchScreen extends ScreenInterface {
 
-	private CurrentState state = null;
-	
-	public PatientSearchScreen () {
+	protected PatientWidget wSmartSearch = null;
+
+	public PatientSearchScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -64,7 +52,19 @@ public class PatientSearchScreen extends Composite {
 		final Label smartSearchLabel = new Label("Smart Search : ");
 		flexTable.setWidget(0, 0, smartSearchLabel);
 
-		final SuggestBox wSmartSearch = new SuggestBox();
+		wSmartSearch = new PatientWidget();
+		wSmartSearch.addChangeListener(new ChangeListener() {
+			public void onChange(Widget w) {
+				Integer val = wSmartSearch.getValue();
+				try {
+					if (val.compareTo(new Integer(0)) != 0) {
+						spawnPatientScreen(wSmartSearch.getValue());
+					}
+				} catch (Exception e) {
+					// Don't do anything if no patient is declared
+				}
+			}
+		});
 		flexTable.setWidget(0, 1, wSmartSearch);
 
 		final Label fieldSearchLabel = new Label("Field Search : ");
@@ -86,13 +86,12 @@ public class PatientSearchScreen extends Composite {
 	}
 
 	/**
-	 * Assign current state object to local object.
+	 * Create new tab for patient.
 	 * 
-	 * @param c
+	 * @param patient
 	 */
-	public void assignState(CurrentState c) {
-		state = c;
+	public void spawnPatientScreen(Integer patient) {
+		// TODO: Force spawning of patient screen
 	}
-	
-}
 
+}

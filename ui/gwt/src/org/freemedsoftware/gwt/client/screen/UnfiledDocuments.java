@@ -1,11 +1,11 @@
 package org.freemedsoftware.gwt.client.screen;
 
-import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -16,10 +16,15 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
-public class UnfiledDocuments extends Composite {
+public class UnfiledDocuments extends ScreenInterface {
 
-	protected CurrentState state = null;
+	protected ListBox wRotate = null;
+
+	protected TextBox wNote = null;
+
+	protected PatientWidget wPatient = null;
 
 	public UnfiledDocuments() {
 
@@ -61,14 +66,14 @@ public class UnfiledDocuments extends Composite {
 		final Label rotateLabel = new Label("Rotate : ");
 		flexTable.setWidget(5, 0, rotateLabel);
 
-		final PatientWidget wPatient = new PatientWidget();
+		wPatient = new PatientWidget();
 		flexTable.setWidget(1, 1, wPatient);
 
-		final TextBox wNote = new TextBox();
+		wNote = new TextBox();
 		flexTable.setWidget(4, 1, wNote);
 		wNote.setWidth("100%");
 
-		final ListBox wRotate = new ListBox();
+		wRotate = new ListBox();
 		flexTable.setWidget(5, 1, wRotate);
 		wRotate.addItem("No rotation");
 		wRotate.addItem("Rotate left");
@@ -82,8 +87,27 @@ public class UnfiledDocuments extends Composite {
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		horizontalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 
-		final PushButton pushButton = new PushButton("Up text", "Down text");
-		horizontalPanel.add(pushButton);
+		final PushButton sendToProviderButton = new PushButton();
+		sendToProviderButton.setHTML("Send to Provider");
+		sendToProviderButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				if (validateForm()) {
+					sendToProvider();
+				}
+			}
+		});
+		horizontalPanel.add(sendToProviderButton);
+
+		final PushButton fileDirectlyButton = new PushButton();
+		fileDirectlyButton.setHTML("File Directly");
+		fileDirectlyButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				if (validateForm()) {
+					fileDirectly();
+				}
+			}
+		});
+		horizontalPanel.add(fileDirectlyButton);
 
 		final DjvuViewer djvuViewer = new DjvuViewer();
 		horizontalSplitPanel.setRightWidget(djvuViewer);
@@ -91,13 +115,21 @@ public class UnfiledDocuments extends Composite {
 		djvuViewer.setSize("100%", "100%");
 	}
 
+	protected void fileDirectly() {
+
+	}
+
+	protected void sendToProvider() {
+
+	}
+
 	/**
-	 * Assign current state object to local object.
+	 * Perform form validation.
 	 * 
-	 * @param c
+	 * @return Successful form validation status.
 	 */
-	public void assignState(CurrentState c) {
-		state = c;
+	protected boolean validateForm() {
+		return true;
 	}
 
 }

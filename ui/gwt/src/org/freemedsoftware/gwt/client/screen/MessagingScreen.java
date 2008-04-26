@@ -25,34 +25,37 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
-import org.freemedsoftware.gwt.client.*;
-import org.freemedsoftware.gwt.client.screen.*;
-import org.freemedsoftware.gwt.client.Module.*;
+
+import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Module.MessagesModule;
+import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.rpc.*;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.VerticalSplitPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
-public class MessagingScreen extends Composite {
+public class MessagingScreen extends ScreenInterface {
 
 	private SortableTable wMessages;
+
 	/**
 	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 */
 	private HashMap[] mStore;
-	private CurrentState state = null;
-	
+
 	public MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -67,8 +70,10 @@ public class MessagingScreen extends Composite {
 			public void onClick(Widget w) {
 				final MessagingComposeScreen p = new MessagingComposeScreen();
 				p.assignState(state);
-				state.getTabPanel().add(p, new ClosableTab("Compose Message", p));
-				state.getTabPanel().selectTab(state.getTabPanel().getWidgetCount() - 1);
+				state.getTabPanel().add(p,
+						new ClosableTab("Compose Message", p));
+				state.getTabPanel().selectTab(
+						state.getTabPanel().getWidgetCount() - 1);
 			}
 		});
 
@@ -83,7 +88,7 @@ public class MessagingScreen extends Composite {
 		final VerticalPanel verticalSplitPanel = new VerticalPanel();
 		verticalPanel.add(verticalSplitPanel);
 		verticalSplitPanel.setSize("100%", "100%");
-		//verticalSplitPanel.setSplitPosition("50%");
+		// verticalSplitPanel.setSplitPosition("50%");
 
 		wMessages = new SortableTable();
 		verticalSplitPanel.add(wMessages);
@@ -91,7 +96,7 @@ public class MessagingScreen extends Composite {
 		wMessages.addColumnHeader("Received", 0);
 		wMessages.addColumnHeader("From", 1);
 		wMessages.addColumnHeader("Subject", 2);
-		
+
 		// Boilerplate
 		final int columnCount = 3;
 		wMessages.setStyleName("sortableTable");
@@ -104,23 +109,14 @@ public class MessagingScreen extends Composite {
 					HasHorizontalAlignment.ALIGN_CENTER,
 					HasVerticalAlignment.ALIGN_MIDDLE);
 		}
-		
+
 		final HTML messageView = new HTML("Message text goes here.");
 		verticalSplitPanel.add(messageView);
 		messageView.setSize("100%", "100%");
-		//verticalSplitPanel.setSize("100%", "100%");
+		// verticalSplitPanel.setSize("100%", "100%");
 	}
 
-	/**
-	 * Assign current state object to local object.
-	 * 
-	 * @param c
-	 */
-	public void assignState(CurrentState c) {
-		state = c;
-	}
-	
-	public void populate (String tag) {
+	public void populate(String tag) {
 		if (Util.isStubbedMode()) {
 			/**
 			 * @gwt.typeArgs <java.lang.String,java.lang.String>
@@ -128,11 +124,12 @@ public class MessagingScreen extends Composite {
 			HashMap[] dummyData = getStubData();
 			populateByData(dummyData);
 		} else {
-			// Populate the whole thing.		
-			MessagesModuleAsync service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
+			// Populate the whole thing.
+			MessagesModuleAsync service = (MessagesModuleAsync) GWT
+					.create(MessagesModule.class);
 			ServiceDefTarget endpoint = (ServiceDefTarget) service;
 			String moduleRelativeURL = Util.getRelativeURL();
-			endpoint.setServiceEntryPoint( moduleRelativeURL );
+			endpoint.setServiceEntryPoint(moduleRelativeURL);
 			service.GetAllByTag(tag, Boolean.FALSE, new AsyncCallback() {
 				public void onSuccess(Object result) {
 					/**
@@ -141,27 +138,29 @@ public class MessagingScreen extends Composite {
 					HashMap[] res = (HashMap[]) result;
 					populateByData(res);
 				}
-				
+
 				public void onFailure(Throwable t) {
-					
+
 				}
 			});
 		}
 	}
-	
+
 	/**
 	 * Actual internal data population method, wrapped for testing.
+	 * 
 	 * @param data
 	 */
-	public void populateByData( HashMap[] data ) {
+	public void populateByData(HashMap[] data) {
 		// Keep a copy of the data in the local store
 		mStore = data;
 		// Clear any current contents
 		wMessages.clear();
-		for (int iter=0; iter<data.length; iter++) {
-			wMessages.setValue(iter+1, 0, (String) data[iter].get("stamp"));
-			wMessages.setValue(iter+1, 1, (String) data[iter].get("from_user"));
-			wMessages.setValue(iter+1, 2, (String) data[iter].get("subject"));
+		for (int iter = 0; iter < data.length; iter++) {
+			wMessages.setValue(iter + 1, 0, (String) data[iter].get("stamp"));
+			wMessages.setValue(iter + 1, 1, (String) data[iter]
+					.get("from_user"));
+			wMessages.setValue(iter + 1, 2, (String) data[iter].get("subject"));
 		}
 	}
 
@@ -175,34 +174,32 @@ public class MessagingScreen extends Composite {
 		 */
 		final HashMap a = new HashMap();
 		a.put("id", "1");
-		a.put("stamp","2007-08-01");
-		a.put("from_user","A");
-		a.put("subject","Subject A");
+		a.put("stamp", "2007-08-01");
+		a.put("from_user", "A");
+		a.put("subject", "Subject A");
 
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		final HashMap b = new HashMap();
 		b.put("id", "1");
-		b.put("stamp","2007-08-01");
-		b.put("from_user","B");
-		b.put("subject","Subject B");
+		b.put("stamp", "2007-08-01");
+		b.put("from_user", "B");
+		b.put("subject", "Subject B");
 
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		final HashMap c = new HashMap();
 		c.put("id", "1");
-		c.put("stamp","2007-08-03");
-		c.put("from_user","C");
-		c.put("subject","Subject C");
+		c.put("stamp", "2007-08-03");
+		c.put("from_user", "C");
+		c.put("subject", "Subject C");
 
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
-		return new HashMap[]{
-			a, b, c
-		};
+		return new HashMap[] { a, b, c };
 	}
-	
+
 }

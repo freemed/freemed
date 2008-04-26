@@ -22,17 +22,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client.screen;
+package org.freemedsoftware.gwt.client;
 
-import org.freemedsoftware.gwt.client.ScreenInterface;
+import com.google.gwt.user.client.ui.Composite;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
+public abstract class ScreenInterface extends Composite {
 
-public class DashboardScreen extends ScreenInterface {
+	protected CurrentState state = null;
 
-	public DashboardScreen() {
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		initWidget(verticalPanel);
+	public void assignState(CurrentState s) {
+		state = s;
 	}
-
+	
 }
