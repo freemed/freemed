@@ -22,14 +22,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+ 
 body{
 	font: normal normal normal 10px;
 	font-family: Verdana, Helvetica, sans-serif, MS Sans Serif;
-}
-a{
-}
-a:hover{
-}
+	}
+
+a {
+	}
+
+a:hover {
+	}
+
 /************************************** Task bar parent widget styling */
 
 .gwt-StackPanel {
@@ -177,13 +181,13 @@ a:hover{
 }
 .freemed-MainMenuBar {
 	background-position: bottom left;
-	color: #fff;
+	color: #ffffff;
 	border: 1px solid #87B3FF;
 	font-family: sans-serif;
 	font-size: 14px;
 	font-variant: small-caps;
 	font-weight: bold;
-	background-color: #fff;
+	background-color: #ffffff;
 	cursor: default;
 }
 .gwt-MainMenuBar {
@@ -221,7 +225,7 @@ a:hover{
 }
 .freemed-SystemMenuItem:hover .freemed-SystemMenuItem-hover {
 	background-color: #cddbde;
-	color: #999;	
+	color: #999999;	
 }
 
 .gwt-SystemMenuItem {
@@ -239,8 +243,9 @@ a:hover{
 	background-color: transparent;
 	background-image: url(images/dashboard.16x16.png);
 	background-repeat: no-repeat;
-
-}
+	cursor: hand;
+	}
+	
 .gwt-PatientMenuItem {
 	background-postion: center left;
 	color: white;
@@ -256,7 +261,8 @@ a:hover{
 	background-repeat: no-repeat;
 	overflow-x: hidden;
 	overflow-y: hidden;
-}
+	cursor: hand;
+	}
 
 .gwt-LogoMainMenuBar  {
 /*
@@ -287,9 +293,12 @@ a:hover{
 	text-indent: 5px;
 	vertical-align: middle;
 	background-color: #c0c0c0;
-}
+	cursor: hand;
+	}
+
 .gwt-NoStyle {
-}
+	}
+
 .freemed-MainMenuBar {
 	overflow-x: hidden;
 	overflow-y: hidden;
@@ -302,9 +311,8 @@ a:hover{
 	}
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem {
-
-	cursor: default;
-	color: #fff;
+	cursor: hand;
+	color: #ffffff;
 	font-size: 14px;
 	font-variant: small-caps;
 	font-weight: bold;
@@ -312,7 +320,7 @@ a:hover{
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem-selected {
 	background-position: 0px 0px;
-	color: #333;
+	color: #333333;
 	background-color: transparent;
 	background-image: url(images/login_button.105x60.png);
 	background-repeat: no-repeat;
@@ -348,8 +356,22 @@ a:hover{
 	font-weight: bold;
 }
 .freemed-SecondaryMenuBar .freemed-SecondaryMenuItem-selected{
-	background-color: #fff;
-	color: #999;
+	background-color: #ffffff;
+	color: #999999;
 }
 .freemed-SecondaryMenuItem {
 }
+
+.freemed-Toaster {
+	background-color: #ccffcc;
+	border: 1px solid #555555;
+	margin: 0px;
+	padding: 7px;
+	width: 150px;
+	}
+	
+.freemed-ToasterItem {
+	size: 8pt;
+	cursor: hand;
+	border-bottom: 1px dashed #555555;
+	}

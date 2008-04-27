@@ -24,11 +24,13 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.util.HashMap;
+
 import org.freemedsoftware.gwt.client.screen.MainScreen;
+import org.freemedsoftware.gwt.client.widget.Toaster;
+
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.Widget;
-import java.util.HashMap;
 
 public class CurrentState {
 
@@ -36,9 +38,13 @@ public class CurrentState {
 	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 */
 	protected HashMap statusItems;
+
 	protected Label statusBar = null;
+
+	protected Toaster toaster = null;
+
 	protected TabPanel tabPanel = null;
-	
+
 	public CurrentState() {
 		statusItems = new HashMap();
 	}
@@ -52,7 +58,7 @@ public class CurrentState {
 		assignStatusBar(m.getStatusBar());
 		assignTabPanel(m.getTabPanel());
 	}
-	
+
 	/**
 	 * Assign status bar object.
 	 * 
@@ -70,7 +76,16 @@ public class CurrentState {
 	public void assignTabPanel(TabPanel t) {
 		tabPanel = t;
 	}
-	
+
+	/**
+	 * Assign toaster object.
+	 * 
+	 * @param t
+	 */
+	public void assignToaster(Toaster t) {
+		toaster = t;
+	}
+
 	/**
 	 * Add an item to the status bar stack.
 	 * 
@@ -81,7 +96,7 @@ public class CurrentState {
 		statusItems.put(module, text);
 		((Label) statusBar).setText("Processing (" + text + ")");
 	}
-	
+
 	/**
 	 * Remove an item from the status bar stack.
 	 * 
@@ -95,9 +110,13 @@ public class CurrentState {
 			((Label) statusBar).setText("Ready");
 		}
 	}
-	
+
 	public TabPanel getTabPanel() {
 		return tabPanel;
 	}
-}
 
+	public Toaster getToaster() {
+		return toaster;
+	}
+
+}

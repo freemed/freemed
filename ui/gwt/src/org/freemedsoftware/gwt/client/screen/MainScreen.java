@@ -28,6 +28,7 @@ package org.freemedsoftware.gwt.client.screen;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -79,9 +80,10 @@ public class MainScreen extends Composite {
 		horizontalPanel.setCellWidth(pushButton_1, "40px");
 		horizontalPanel.setCellHeight(pushButton_1, "100%");
 		pushButton_1.setStyleName("freemed-LogoMainMenuBar");
-/*
- * 	Start of the Main menu/toolbar.  CSS inherits are VERY important, see the stylesheet.css for clearer explination
- */
+		/*
+		 * Start of the Main menu/toolbar. CSS inherits are VERY important, see
+		 * the stylesheet.css for clearer explination
+		 */
 		{
 			final MenuBar menuBar = new MenuBar();
 			horizontalPanel.add(menuBar);
@@ -93,21 +95,27 @@ public class MainScreen extends Composite {
 			menuBar_1.setStylePrimaryName("freemed-SecondaryMenuBar");
 			menuBar_1.setStyleName("freemed-SecondaryMenuBar");
 
-			final MenuItem menuItem_2 = menuBar_1.addItem("messaging", new Command() {
-				public void execute() {
-					Util.spawnTab("Messages", new MessagingScreen(), state);
-				}
-			});
+			final MenuItem menuItem_2 = menuBar_1.addItem("messaging",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Messages", new MessagingScreen(),
+									state);
+						}
+					});
 			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
 
-			final MenuItem menuItem_3 = menuBar_1.addItem("logout", (Command)null);
+			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
+					(Command) null);
 			menuItem_3.setStyleName("freemed-SecondaryMenuItem");
-/*
- * 	all the primary menu items are currently housed in static width/height since css backgrounds are batched buttons.
- * 	This definitely needs to be worked on.  hopefully using a more fluid css technique.  probably will require more in code html
- * 	markup.
- */
-			final MenuItem menuItem = menuBar.addItem("<span id=\"freemed-PrimaryMenuItem-title\">system</span>", true, menuBar_1);
+			/*
+			 * all the primary menu items are currently housed in static
+			 * width/height since css backgrounds are batched buttons. This
+			 * definitely needs to be worked on. hopefully using a more fluid
+			 * css technique. probably will require more in code html markup.
+			 */
+			final MenuItem menuItem = menuBar.addItem(
+					"<span id=\"freemed-PrimaryMenuItem-title\">system</span>",
+					true, menuBar_1);
 			menuItem.setSubMenu(menuBar_1);
 			menuItem.setSize("105px", "30px");
 			menuItem.setStylePrimaryName("freemed-PrimaryMenuItem");
@@ -116,17 +124,23 @@ public class MainScreen extends Composite {
 			menuBar_3.setAutoOpen(true);
 			menuBar_3.setStyleName("freemed-SecondaryMenuBar");
 
-			final MenuItem menuItem_4 = menuBar_3.addItem("search", new Command() {
-				public void execute() {
-					Util.spawnTab("Search", new PatientSearchScreen(), state);
-				}
-			});
+			final MenuItem menuItem_4 = menuBar_3.addItem("search",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Search", new PatientSearchScreen(),
+									state);
+						}
+					});
 			menuItem_4.setStyleName("freemed-SecondaryMenuItem");
 
-			final MenuItem menuItem_5 = menuBar_3.addItem("entry", (Command)null);
+			final MenuItem menuItem_5 = menuBar_3.addItem("entry",
+					(Command) null);
 			menuItem_5.setStyleName("freemed-SecondaryMenuItem");
 
-			final MenuItem menuItem_1 = menuBar.addItem("<span id=\"freemed-PrimaryMenuItem-title\">patient</span>", true, menuBar_3);
+			final MenuItem menuItem_1 = menuBar
+					.addItem(
+							"<span id=\"freemed-PrimaryMenuItem-title\">patient</span>",
+							true, menuBar_3);
 			menuItem_1.setSize("105px", "30px");
 			menuItem_1.setStyleName("freemed-PrimaryMenuItem");
 		}
@@ -162,6 +176,11 @@ public class MainScreen extends Composite {
 		statusBar2 = new Label("-");
 		statusBar2.setStyleName("statusBar");
 		statusBarContainer.add(statusBar2);
+
+		// Create notification toaster
+		Toaster toaster = new Toaster();
+		state.assignToaster(toaster);
+		toaster.setTimeout(10);
 	}
 
 	public Label getStatusBar() {
