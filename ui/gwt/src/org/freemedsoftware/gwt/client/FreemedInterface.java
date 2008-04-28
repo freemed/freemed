@@ -24,81 +24,68 @@
 
 package org.freemedsoftware.gwt.client;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-
-import org.freemedsoftware.gwt.client.screen.*;
-
-/* RPC classes */
-
-import org.freemedsoftware.gwt.client.Api.UserInterface;
-import org.freemedsoftware.gwt.client.Api.UserInterfaceAsync;
-
-import org.freemedsoftware.gwt.client.Public.Login;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
-import org.freemedsoftware.gwt.client.Public.Protocol;
-import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
+import org.freemedsoftware.gwt.client.screen.MainScreen;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class FreemedInterface implements EntryPoint {
 
-  /**
-   * This is the entry point method.
-   */
-  public void onModuleLoad() {
-	  MainScreen mainScreen = new MainScreen();
-	  RootPanel.get("rootPanel").add(mainScreen);
+	protected boolean active = false;
 
-	/*
-	  
-	 // OLD CODE BELOW ... KEEP FOR NOW ...
-    final Button button = new Button("org.freemedsoftware.public.Login.Validate");
-    final Label label = new Label();
+	protected LoginDialog loginDialog;
 
-    button.addClickListener(new ClickListener() {
-      public void onClick(Widget sender) {
-    	LoginAsync loginService = null;
-    	try {
-    		loginService = (LoginAsync) Util.getProxy("org.freemedsoftware.gwt.client.Public.Login");
-    	} catch (Exception e) {
-    		GWT.log( "Could not instantiate login proxy", e);
-    	}
-        button.setText( "Processing" );
-        label.setText( "" );
-        GWT.log( "Calling login service", null );
-        loginService.Validate( "demo", "demo", new AsyncCallback() {
-            public void onSuccess( Object result ) {
-                button.setText( "org.freemedsoftware.public.Login.Validate" );
-                label.setText( "onSuccess [accepted username and password]" );
-                if ( (Boolean) result == java.lang.Boolean.TRUE ) {
-                    label.setText( "onSuccess [accepted username and password]" );
-                } else {
-                    label.setText( "onSuccess [denied username and password]" );
-                }
-            }
-            public void onFailure( Throwable caught ) {
-                GWT.log( "Error", caught );
-                button.setText( "org.freemedsoftware.public.Login.Validate" );
-                //label.setText( "onFailure" );
-                label.setText( caught.getCause() + ": " + caught.getMessage() );
-            }
-          });
-      }
-    });
+	protected MainScreen mainScreen;
 
-    RootPanel.get("slot1").add(button);
-    RootPanel.get("slot2").add(label);
-    */
-  }
+	/**
+	 * This is the entry point method.
+	 */
+	public void onModuleLoad() {
+		// Test to make sure we're logged in
+		if (Util.isStubbedMode()) {
+			resume();
+		} else {
+			loginDialog = new LoginDialog();
+			loginDialog.setFreemedInterface(this);
+			LoginAsync service = null;
+			try {
+				service = (LoginAsync) Util
+						.getProxy("org.freemedsoftware.gwt.Public.Login");
+				service.LoggedIn(new AsyncCallback() {
+					public void onSuccess(Object result) {
+						Boolean r = (Boolean) result;
+						if (r.booleanValue()) {
+							// If logged in, continue
+							MainScreen mainScreen = new MainScreen();
+							RootPanel.get("rootPanel").add(mainScreen);
+						} else {
+							// Force login loop
+							loginDialog.show();
+						}
+					}
+
+					public void onFailure(Throwable t) {
+						Window
+								.alert("Unable to contact RPC service, try again later.");
+					}
+				});
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	public void resume() {
+		if (!active) {
+			mainScreen = new MainScreen();
+			RootPanel.get("rootPanel").add(mainScreen);
+		} else {
+			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
+		}
+	}
 }
-

@@ -25,23 +25,42 @@
 
 package org.freemedsoftware.gwt.client;
 
+import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.screen.MainScreen;
+
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LoginDialog extends Composite {
 
+	protected boolean loggedIn = false;
+
+	protected final ListBox facilityList, languageList;
+
+	protected final TextBox userLogin;
+
+	protected final PasswordTextBox loginPassword;
+
+	protected final PushButton loginButton;
+
+	protected FreemedInterface freemedInterface = null;
+
+	protected DialogBox dialog;
+
 	public LoginDialog() {
+		final DialogBox dialog = new DialogBox();
 
 		final AbsolutePanel absolutePanel = new AbsolutePanel();
 		initWidget(absolutePanel);
@@ -52,76 +71,127 @@ public class LoginDialog extends Composite {
 
 		final Label userLabel = new Label("user name");
 		absolutePanel.add(userLabel, 25, 71);
-		userLabel.setStylePrimaryName("");
-		userLabel.setStyleName("gwt-Label-RAlign");
+		userLabel.setStylePrimaryName("gwt-Label-RAlign");
 
-		final TextBox userLogin = new TextBox();
+		userLogin = new TextBox();
 		absolutePanel.add(userLogin, 92, 71);
 		userLogin.setSize("139px", "22px");
-		userLogin.setStyleName("freemed-LoginFields");
-		userLogin.setStylePrimaryName("");
+		userLogin.setStylePrimaryName("freemed-LoginFields");
 		userLogin.setText("your user name");
 		userLogin.setAccessKey('u');
 
 		final Label passwordLabel = new Label("password");
 		absolutePanel.add(passwordLabel, 25, 100);
-		passwordLabel.setStylePrimaryName("");
-		passwordLabel.setStyleName("gwt-Label-RAlign");
+		passwordLabel.setStylePrimaryName("gwt-Label-RAlign");
 
-		final PasswordTextBox loginPassword = new PasswordTextBox();
+		loginPassword = new PasswordTextBox();
 		absolutePanel.add(loginPassword, 92, 102);
 		loginPassword.setSize("139px", "22px");
-		loginPassword.setStyleName("freemed-LoginFields");
-		loginPassword.setStylePrimaryName("");
+		loginPassword.setStylePrimaryName("freemed-LoginFields");
 		loginPassword.setText("password");
 
 		final Label facilityLabel = new Label("facility");
 		absolutePanel.add(facilityLabel, 28, 152);
-		facilityLabel.setStylePrimaryName("");
-		facilityLabel.setStyleName("gwt-Label-RAlign");
+		facilityLabel.setStylePrimaryName("gwt-Label-RAlign");
 		facilityLabel.setSize("59px", "19px");
 
-		final ListBox facilityList = new ListBox();
+		facilityList = new ListBox();
 		absolutePanel.add(facilityList, 94, 149);
 		facilityList.setSize("191px", "22px");
-		facilityList.setStyleName("freemed-LoginFields");
-		facilityList.setStylePrimaryName("");
-		facilityList.addItem("Mt. Ascutney Hospital Medical Clinic Examination Room");
-		facilityList.addItem("Associates in Surgery & Gastroenterology, LLC");
-		facilityList.addItem("Valley Regional Hospital");
+		facilityList.setStylePrimaryName("freemed-LoginFields");
+		if (Util.isStubbedMode()) {
+			facilityList
+					.addItem("Mt. Ascutney Hospital Medical Clinic Examination Room");
+			facilityList
+					.addItem("Associates in Surgery & Gastroenterology, LLC");
+			facilityList.addItem("Valley Regional Hospital");
+		} else {
+			// TODO: populate list
+		}
 
 		final Label languageLabel = new Label("language");
 		absolutePanel.add(languageLabel, 28, 183);
-		languageLabel.setStylePrimaryName("");
-		languageLabel.setStyleName("gwt-Label-RAlign");
+		languageLabel.setStylePrimaryName("gwt-Label-RAlign");
 		languageLabel.setSize("59px", "19px");
 
-		final ListBox languageList = new ListBox();
+		languageList = new ListBox();
 		absolutePanel.add(languageList, 94, 180);
 		languageList.setSize("190px", "22px");
-		languageList.setStyleName("freemed-LoginFields");
-		languageList.setStylePrimaryName("");
-		languageList.addItem("English");
-		languageList.addItem("Deutsch");
-		languageList.addItem("Espanol (Mexico)");
-		languageList.addItem("Polski");
+		languageList.setStylePrimaryName("freemed-LoginFields");
+		if (Util.isStubbedMode()) {
+			languageList.addItem("English", "en_US");
+			languageList.addItem("Deutsch", "de_DE");
+			languageList.addItem("Espanol (Mexico)", "es_MX");
+			languageList.addItem("Polski", "pl_PL");
+		} else {
+			// TODO: populate list
+		}
 
 		final Image image = new Image("resources/images/button_on.png");
 		image.setSize("100%", "100%");
-		
-		final PushButton loginButton = new PushButton(image);
+
+		loginButton = new PushButton(image);
 		loginButton.addClickListener(new ClickListener() {
-			public void onClick( Widget w ) {
-				
+			public void onClick(Widget w) {
+				attemptLogin();
 			}
 		});
 		absolutePanel.add(loginButton, 83, 233);
-		loginButton.setStyleName("gwt-LoginButton");
-		
+		loginButton.setStylePrimaryName("gwt-LoginButton");
+
 		final Label loginLabel = new Label("Login");
 		absolutePanel.add(loginLabel, 140, 242);
-		loginLabel.setStyleName("gwt-Label-RAlign");
+		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
 		
+		dialog.add(absolutePanel);
+		initWidget(dialog);
+	}
+
+	public void attemptLogin() {
+		// Disable submit button
+		loginButton.setEnabled(false);
+		LoginAsync service = null;
+		try {
+			service = (LoginAsync) Util
+					.getProxy("org.freemedsoftware.gwt.Public.Login");
+			service.LoggedIn(new AsyncCallback() {
+				public void onSuccess(Object result) {
+					Boolean r = (Boolean) result;
+					if (r.booleanValue()) {
+						// If logged in, continue
+						freemedInterface.resume();
+					} else {
+						// Force login loop
+						dialog.show();
+						loginPassword.setText("");
+						loginButton.setEnabled(true);
+					}
+				}
+
+				public void onFailure(Throwable t) {
+					Window
+							.alert("Unable to contact RPC service, try again later.");
+				}
+			});
+		} catch (Exception e) {
+		}
+	}
+
+	public void hide() {
+		dialog.hide();
+	}
+	
+	public void setFreemedInterface(FreemedInterface i) {
+		freemedInterface = i;
+	}
+	
+	public void show() {
+		dialog.show();
+		dialog.center();
+	}
+
+	public boolean isLoggedIn() {
+		return loggedIn;
 	}
 
 }

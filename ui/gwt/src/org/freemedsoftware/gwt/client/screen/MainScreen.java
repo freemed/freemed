@@ -176,6 +176,9 @@ public class MainScreen extends Composite {
 		statusBar2 = new Label("-");
 		statusBar2.setStyleName("statusBar");
 		statusBarContainer.add(statusBar2);
+		if (Util.isStubbedMode()) {
+			statusBar2.setText("STUBBED / TEST MODE");
+		}
 
 		// Create notification toaster
 		Toaster toaster = new Toaster();
