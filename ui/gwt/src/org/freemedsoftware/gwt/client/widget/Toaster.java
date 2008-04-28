@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
@@ -98,8 +99,24 @@ public class Toaster extends PopupPanel {
 			} catch (Exception e) {
 				GWT.log("Exception", e);
 			}
-			try {
 
+			// Loop through and set CSS properly
+			/**
+			 * @gwt.typeArgs <java.lang.String>
+			 */
+			Iterator ks = items.keySet().iterator();
+			while (ks.hasNext()) {
+				final String k = (String) ks.next();
+				if (!ks.hasNext()) {
+					// If this is the last one, set to special
+					((HTML) itemWidgets.get(k)).setStylePrimaryName("freemed-ToasterItem-Last");
+				} else {
+					// Otherwise regular style
+					((HTML) itemWidgets.get(k)).setStylePrimaryName("freemed-ToasterItem");
+				}
+			}
+
+			try {
 				setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 						int left = (Window.getClientWidth() - offsetWidth) - 5;

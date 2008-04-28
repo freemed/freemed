@@ -370,8 +370,11 @@ a:hover {
 	width: 150px;
 	}
 	
-.freemed-ToasterItem {
+.freemed-ToasterItem, .freemed-ToasterItem-Last {
 	size: 8pt;
 	cursor: hand;
+	}
+
+.freemed-ToasterItem {
 	border-bottom: 1px dashed #555555;
 	}
