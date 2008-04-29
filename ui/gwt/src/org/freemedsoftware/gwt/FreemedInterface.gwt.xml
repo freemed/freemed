@@ -28,6 +28,7 @@
 	<inherits name='com.google.gwt.user.User'/>
 	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable"/>
 	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker"/>
+	<inherits name="com.bouwkamp.gwt.user.User"/>
 
 	<!-- Stylesheet resources go here -->
 	<stylesheet src="resources/stylesheet.css" />
