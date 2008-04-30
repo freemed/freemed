@@ -305,7 +305,7 @@ a:hover {
 	padding: 1px 4px 0px 20px;
 	border: 1px solid #87B3FF;
 	background-color: #FFFFFF;
-	background-image: url(images/menu_bar_bg);
+	background-image: url(images/menu_bar_bg.png);
 	background-repeat: repeat-x;
 	cursor: default;
 	}
@@ -338,29 +338,29 @@ a:hover {
 	background-color: transparent;
 	background-image: url(images/login_button.105x60.png);
 	background-repeat: no-repeat; 
-}
+	}
 
 #freemed-PrimaryMenuItem-title{
 	padding: 0px 0px 0px 25px; 
-
-}
+	}
 .freemed-SecondaryMenuBar {
 	margin-top: 10px;
 	background-color: #224f5b;
-}
-.freemed-SecondaryMenuBar .freemed-SecondaryMenuItem{
+	}
+.freemed-SecondaryMenuBar .freemed-SecondaryMenuItem {
 	padding: 5px;
 	background-color: #224f5b;
 	font-size: 14px;
 	font-variant: small-caps;
 	font-weight: bold;
-}
+	}
 .freemed-SecondaryMenuBar .freemed-SecondaryMenuItem-selected{
 	background-color: #ffffff;
 	color: #999999;
-}
+	cursor: hand;
+	}
 .freemed-SecondaryMenuItem {
-}
+	}
 
 .freemed-Toaster {
 	background-color: #ccffcc;
@@ -382,3 +382,20 @@ a:hover {
 .cgb-RP {
 	background-color: #ccccff;
 	}
+
+.gwt-SuggestBox {
+	}
+.gwt-SuggestBoxPopup {
+	border-bottom: 1px solid #000000;
+	background: #ffffff;
+	}
+.gwt-SuggestBoxPopup .item {
+	color: #555555;
+	background: #ffffff;
+	}
+.gwt-SuggestBoxPopup .item-selected {
+	color: #000000;
+	background: #ccccff;
+	cursor: hand;
+	}
+	

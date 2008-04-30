@@ -35,13 +35,16 @@ import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestionEvent;
+import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class PatientWidget extends Composite {
 
@@ -58,11 +61,15 @@ public class PatientWidget extends Composite {
 
 	private final VerticalPanel layout;
 
+	private ChangeListenerCollection changeListeners;
+
 	public PatientWidget() {
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		map = new HashMap();
+
+		changeListeners = new ChangeListenerCollection();
 
 		layout = new VerticalPanel();
 
@@ -71,14 +78,14 @@ public class PatientWidget extends Composite {
 				loadSuggestions(r.getQuery(), r, cb);
 			}
 		});
-		searchBox.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
-				String cur = (String) ((SuggestBox) w).getText();
-				((SuggestBox) w).setTitle(cur);
-				value = getValueFromText(cur);
+		searchBox.addEventHandler(new SuggestionHandler() {
+			public void onSuggestionSelected(SuggestionEvent e) {
+				Suggestion s = e.getSelectedSuggestion();
+				value = getValueFromText(s.getDisplayString());
+				setTitle(s.getDisplayString());
+				onSelected();
 			}
 		});
-
 		layout.add(searchBox);
 
 		// listPanel = new FlexTable();
@@ -89,49 +96,91 @@ public class PatientWidget extends Composite {
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
-		PatientInterfaceAsync service = null;
-		try {
-			service = ((PatientInterfaceAsync) Util
-					.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
-		} catch (Exception e) {
-		}
+		if (Util.isStubbedMode()) {
+			// Handle in a stubbed sort of way
+			List items = new ArrayList();
+			map.clear();
+			final String key = new String("Hackenbush, Hugo Z");
+			final String val = new String("1");
+			map.put(new String("Hackenbush, Hugo Z"), new String("1"));
+			items.add(new SuggestOracle.Suggestion() {
+				public String getDisplayString() {
+					return new String("Hackenbush, Hugo Z");
+				}
 
-		service.Picklist(req, new Integer(20), new Integer(10),
-				new AsyncCallback() {
-					public void onSuccess(Object data) {
-						/**
-						 * @gwt.typeArgs <java.lang.String,java.lang.String>
-						 */
-						final HashMap result = (HashMap) data;
-						Set keys = result.keySet();
-						Iterator iter = keys.iterator();
+				public String getReplacementString() {
+					return new String("Hackenbush, Hugo Z");
+				}
 
-						List items = new ArrayList();
-						map.clear();
-						while (iter.hasNext()) {
-							final String key = (String) iter.next();
-							final String val = (String) result.get(key);
-							map.put(key, val);
-							items.add(new SuggestOracle.Suggestion() {
-								public String getDisplayString() {
-									return val;
-								}
+				public String getValue() {
+					return new String("1");
+				}
+			});
+			map.put(new String("Firefly, Rufus T"), new String("2"));
+			items.add(new SuggestOracle.Suggestion() {
+				public String getDisplayString() {
+					return new String("Firefly, Rufus T");
+				}
 
-								public String getReplacementString() {
-									return val;
-								}
-							});
+				public String getReplacementString() {
+					return new String("Firefly, Rufus T");
+				}
+
+				public String getValue() {
+					return new String("2");
+				}
+			});
+			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
+		} else {
+			PatientInterfaceAsync service = null;
+			try {
+				service = ((PatientInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
+			} catch (Exception e) {
+			}
+
+			service.Picklist(req, new Integer(20), new Integer(10),
+					new AsyncCallback() {
+						public void onSuccess(Object data) {
+							/**
+							 * @gwt.typeArgs <java.lang.String,java.lang.String>
+							 */
+							final HashMap result = (HashMap) data;
+							Set keys = result.keySet();
+							Iterator iter = keys.iterator();
+
+							List items = new ArrayList();
+							map.clear();
+							while (iter.hasNext()) {
+								final String key = (String) iter.next();
+								final String val = (String) result.get(key);
+								map.put(key, val);
+								items.add(new SuggestOracle.Suggestion() {
+
+									public String getDisplayString() {
+										return key;
+									}
+
+									public String getReplacementString() {
+										return key;
+									}
+
+									public String getValue() {
+										return val;
+									}
+
+								});
+							}
+							cb.onSuggestionsReady(r,
+									new SuggestOracle.Response(items));
+						}
+
+						public void onFailure(Throwable t) {
 
 						}
-						cb.onSuggestionsReady(r, new SuggestOracle.Response(
-								items));
-					}
 
-					public void onFailure(Throwable t) {
-
-					}
-
-				});
+					});
+		}
 	}
 
 	/**
@@ -146,7 +195,7 @@ public class PatientWidget extends Composite {
 		while (found.length() == 0 && keys.hasNext()) {
 			String cur = (String) keys.next();
 			if (cur.compareTo(text) == 0) {
-				found = cur;
+				found = (String) map.get(cur);
 			}
 		}
 		return new Integer((String) found);
@@ -161,13 +210,25 @@ public class PatientWidget extends Composite {
 		return value;
 	}
 
+	public void addChangeListener(ChangeListener listener) {
+		if (changeListeners == null)
+			changeListeners = new ChangeListenerCollection();
+		changeListeners.add(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		if (changeListeners != null)
+			changeListeners.remove(listener);
+	}
+
 	/**
-	 * Pass change listener through to internal widget.
+	 * Fire change listeners attached to this object if there are any.
 	 * 
-	 * @param changeListener
 	 */
-	public void addChangeListener(ChangeListener changeListener) {
-		searchBox.addChangeListener(changeListener);
+	protected void onSelected() {
+		if (changeListeners != null) {
+			changeListeners.fireChange(this);
+		}
 	}
 
 }
