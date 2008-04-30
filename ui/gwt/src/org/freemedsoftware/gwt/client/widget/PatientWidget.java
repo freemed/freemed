@@ -231,4 +231,13 @@ public class PatientWidget extends Composite {
 		}
 	}
 
+	/**
+	 * Clear contents of composite widget.
+	 *
+	 */
+	public void clear() {
+		searchBox.setText("");
+		map.clear();
+	}
+	
 }

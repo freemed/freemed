@@ -24,22 +24,41 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.HashMap;
+
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class PatientSearchScreen extends ScreenInterface {
 
+	protected CustomSortableTable sortableTable = null;
+
 	protected PatientWidget wSmartSearch = null;
+
+	protected ListBox wFieldName = null;
+
+	protected TextBox wFieldValue = null;
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	protected HashMap patientMap = null;
 
 	public PatientSearchScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -55,13 +74,15 @@ public class PatientSearchScreen extends ScreenInterface {
 		wSmartSearch = new PatientWidget();
 		wSmartSearch.addChangeListener(new ChangeListener() {
 			public void onChange(Widget w) {
-				Integer val = wSmartSearch.getValue();
+				Integer val = ((PatientWidget) w).getValue();
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
-						spawnPatientScreen(wSmartSearch.getValue());
+						spawnPatientScreen(val);
+						clearForm();
 					}
 				} catch (Exception e) {
 					// Don't do anything if no patient is declared
+					GWT.log("Caught exception", e);
 				}
 			}
 		});
@@ -70,19 +91,142 @@ public class PatientSearchScreen extends ScreenInterface {
 		final Label fieldSearchLabel = new Label("Field Search : ");
 		flexTable.setWidget(1, 0, fieldSearchLabel);
 
-		final ListBox wFieldName = new ListBox();
+		wFieldName = new ListBox();
 		flexTable.setWidget(1, 1, wFieldName);
 		wFieldName.setVisibleItemCount(1);
+		wFieldName.addItem("Internal ID", "ptid");
+		wFieldName.addItem("Social Security Number", "ssn");
+		wFieldName.addItem("Drivers License", "dmv");
+		wFieldName.addItem("Email Address", "email");
+		wFieldName.addItem("City", "city");
+		wFieldName.addItem("Zip/Postal Code", "zip");
+		wFieldName.addItem("Home Phone", "hphone");
+		wFieldName.addItem("Work Phone", "wphone");
+		wFieldName.addItem("Age", "age");
 
-		final TextBox wFieldValue = new TextBox();
+		wFieldValue = new TextBox();
 		flexTable.setWidget(2, 1, wFieldValue);
 		wFieldValue.setWidth("100%");
+		wFieldValue.addChangeListener(new ChangeListener() {
+			public void onChange(Widget w) {
+				refreshSearch();
+			}
+		});
+
+		// Initialize patient mapping
+		patientMap = new HashMap();
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		final SortableTable sortableTable = new SortableTable();
+		sortableTable = new CustomSortableTable();
+		sortableTable.setWidth("100%");
+		sortableTable.addColumnHeader("Last Name", 0);
+		sortableTable.addColumnHeader("First Name", 1);
+		sortableTable.addColumnHeader("Middle", 2);
+		sortableTable.addColumnHeader("Internal ID", 3);
+		sortableTable.addColumnHeader("Date of Birth", 4);
+		sortableTable.addColumnHeader("Age", 5);
+		sortableTable.formatTable(0, 5);
+		sortableTable.addTableListener(new TableListener() {
+			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+				// Get information on row...
+				try {
+					Integer patientId = new Integer((String) patientMap
+							.get(sortableTable.getText(row, 3)));
+					spawnPatientScreen(patientId);
+				} catch (Exception e) {
+					GWT.log("Caught exception: ", e);
+				}
+			}
+		});
+
 		verticalPanel.add(sortableTable);
+	}
+
+	protected void refreshSearch() {
+		sortableTable.clear();
+		patientMap.clear();
+		if (Util.isStubbedMode()) {
+			/**
+			 * @gwt.typeArgs <java.lang.String,java.lang.String>
+			 */
+			HashMap a = new HashMap();
+			a.put("last_name", "Hackenbush");
+			a.put("first_name", "Hugo");
+			a.put("middle_name", "Z");
+			a.put("patient_id", "HACK01");
+			a.put("date_of_birth", "1979-08-10");
+			a.put("age", "28");
+			a.put("id", "1");
+			setResultRow(a, 0);
+
+			sortableTable.formatTable(patientMap.size(), 5);
+		} else {
+			PatientInterfaceAsync service = null;
+			try {
+				service = (PatientInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface");
+			} catch (Exception e) {
+				GWT.log("Caught exception: ", e);
+			}
+
+			/**
+			 * @gwt.typeArgs <java.lang.String, java.lang.String>
+			 */
+			HashMap criteria = new HashMap();
+			criteria.put(wFieldName.getItemText(wFieldName.getSelectedIndex()),
+					wFieldValue.getText());
+
+			service.Search(criteria, new AsyncCallback() {
+				public void onSuccess(Object result) {
+					/**
+					 * @gwt.typeArgs <java.lang.String,java.lang.String>
+					 */
+					HashMap[] r = (HashMap[]) result;
+					for (int iter = 0; iter < r.length; iter++) {
+						setResultRow(r[iter], iter);
+					}
+
+					sortableTable.formatTable(patientMap.size(), 5);
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("Caught exception: ", t);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Set contents of numbered output row.
+	 * 
+	 * @param res
+	 *            HashMap containing return values from
+	 *            PatientInterfaceAsync.Search() method
+	 * @param rowIndex
+	 *            Index row, starting at 0 for any results.
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	public void setResultRow(HashMap res, int rowIndex) {
+		try {
+			sortableTable.setValue(rowIndex + 1, 0, (String) res
+					.get("last_name"));
+			sortableTable.setValue(rowIndex + 1, 1, (String) res
+					.get("first_name"));
+			sortableTable.setValue(rowIndex + 1, 2, (String) res
+					.get("middle_name"));
+			sortableTable.setValue(rowIndex + 1, 3, (String) res
+					.get("patient_id"));
+			sortableTable.setValue(rowIndex + 1, 4, (String) res
+					.get("date_of_birth"));
+			sortableTable.setValue(rowIndex + 1, 5, (String) res.get("age"));
+		} catch (NullPointerException npe) {
+			GWT.log("NPE caught: ", npe);
+		}
+
+		// Add value to lookup table, by patient id (supposedly unique field)
+		patientMap.put(res.get("patient_id"), res.get("id"));
 	}
 
 	/**
@@ -91,7 +235,12 @@ public class PatientSearchScreen extends ScreenInterface {
 	 * @param patient
 	 */
 	public void spawnPatientScreen(Integer patient) {
-		// TODO: Force spawning of patient screen
+		Util.spawnTab(wSmartSearch.getTitle(), new PatientScreen(), state);
+	}
+
+	public void clearForm() {
+		wSmartSearch.clear();
+		wFieldValue.setText("");
 	}
 
 }
