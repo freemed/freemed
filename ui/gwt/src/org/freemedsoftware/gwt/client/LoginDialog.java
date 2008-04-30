@@ -118,7 +118,7 @@ public class LoginDialog extends Composite {
 				public void onSuccess(Object result) {
 					String[][] r = (String[][]) result;
 					for (int iter = 0; iter < r.length; iter++) {
-						facilityList.addItem(r[iter][0], r[iter][0]);
+						facilityList.addItem(r[iter][0], r[iter][1]);
 					}
 				}
 
@@ -148,7 +148,7 @@ public class LoginDialog extends Composite {
 				public void onSuccess(Object result) {
 					String[][] r = (String[][]) result;
 					for (int iter = 0; iter < r.length; iter++) {
-						languageList.addItem(r[iter][0], r[iter][0]);
+						languageList.addItem(r[iter][0], r[iter][1]);
 					}
 				}
 
