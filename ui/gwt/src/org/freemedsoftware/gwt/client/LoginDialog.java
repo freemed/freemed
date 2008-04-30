@@ -26,7 +26,6 @@
 package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
-import org.freemedsoftware.gwt.client.screen.MainScreen;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -39,7 +38,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -59,8 +57,17 @@ public class LoginDialog extends Composite {
 
 	protected DialogBox dialog;
 
+	protected LoginAsync service = null;
+
 	public LoginDialog() {
 		final DialogBox dialog = new DialogBox();
+
+		try {
+			service = (LoginAsync) Util
+					.getProxy("org.freemedsoftware.gwt.client.Public.Login");
+		} catch (Exception e) {
+
+		}
 
 		final AbsolutePanel absolutePanel = new AbsolutePanel();
 		initWidget(absolutePanel);
@@ -100,13 +107,26 @@ public class LoginDialog extends Composite {
 		facilityList.setSize("191px", "22px");
 		facilityList.setStylePrimaryName("freemed-LoginFields");
 		if (Util.isStubbedMode()) {
-			facilityList
-					.addItem("Mt. Ascutney Hospital Medical Clinic Examination Room");
-			facilityList
-					.addItem("Associates in Surgery & Gastroenterology, LLC");
-			facilityList.addItem("Valley Regional Hospital");
+			facilityList.addItem(
+					"Mt. Ascutney Hospital Medical Clinic Examination Room",
+					"1");
+			facilityList.addItem(
+					"Associates in Surgery & Gastroenterology, LLC", "2");
+			facilityList.addItem("Valley Regional Hospital", "3");
 		} else {
-			// TODO: populate list
+			service.GetLocations(new AsyncCallback() {
+				public void onSuccess(Object result) {
+					String[][] r = (String[][]) result;
+					for (int iter = 0; iter < r.length; iter++) {
+						facilityList.addItem(r[iter][0], r[iter][0]);
+					}
+				}
+
+				public void onFailure(Throwable t) {
+					Window
+							.alert("Unable to contact RPC service, try again later.");
+				}
+			});
 		}
 
 		final Label languageLabel = new Label("language");
@@ -124,7 +144,19 @@ public class LoginDialog extends Composite {
 			languageList.addItem("Espanol (Mexico)", "es_MX");
 			languageList.addItem("Polski", "pl_PL");
 		} else {
-			// TODO: populate list
+			service.GetLanguages(new AsyncCallback() {
+				public void onSuccess(Object result) {
+					String[][] r = (String[][]) result;
+					for (int iter = 0; iter < r.length; iter++) {
+						languageList.addItem(r[iter][0], r[iter][0]);
+					}
+				}
+
+				public void onFailure(Throwable t) {
+					Window
+							.alert("Unable to contact RPC service, try again later.");
+				}
+			});
 		}
 
 		final Image image = new Image("resources/images/button_on.png");
@@ -142,7 +174,7 @@ public class LoginDialog extends Composite {
 		final Label loginLabel = new Label("Login");
 		absolutePanel.add(loginLabel, 140, 242);
 		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
-		
+
 		dialog.add(absolutePanel);
 		initWidget(dialog);
 	}
@@ -180,11 +212,11 @@ public class LoginDialog extends Composite {
 	public void hide() {
 		dialog.hide();
 	}
-	
+
 	public void setFreemedInterface(FreemedInterface i) {
 		freemedInterface = i;
 	}
-	
+
 	public void show() {
 		dialog.show();
 		dialog.center();

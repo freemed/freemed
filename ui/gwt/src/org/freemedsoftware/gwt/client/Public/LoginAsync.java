@@ -29,6 +29,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface LoginAsync {  
 	public void LoggedIn(AsyncCallback callback );
 	public void Logout(AsyncCallback callback );
-	public void Validate( String username, String password, AsyncCallback callback ); 
+	public void Validate( String username, String password, AsyncCallback callback );
+	public void GetLanguages(AsyncCallback callback);
+	public void GetLocations(AsyncCallback callback);
 }
 
