@@ -26,30 +26,30 @@ package org.freemedsoftware.gwt.client.widget;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ClosableTab extends Composite {
 
 	protected Widget widget;
-	
+
 	public ClosableTab(String labelText, Widget w) {
 		// Store in namespace where we can see it later
 		widget = w;
-		
+
 		final HorizontalPanel panel = new HorizontalPanel();
 		initWidget(panel);
 
 		final Label label = new Label(labelText);
 		panel.add(label);
-		panel.setCellHorizontalAlignment(label, HasHorizontalAlignment.ALIGN_LEFT);
+		panel.setCellHorizontalAlignment(label,
+				HasHorizontalAlignment.ALIGN_LEFT);
 		panel.setCellVerticalAlignment(label, HasVerticalAlignment.ALIGN_TOP);
 
 		final Image image = new Image();
@@ -57,19 +57,20 @@ public class ClosableTab extends Composite {
 
 		// Create spacer
 		panel.add(new HTML("&nbsp;"));
-		
+
 		panel.add(image);
 		panel.setCellVerticalAlignment(image, HasVerticalAlignment.ALIGN_TOP);
-		panel.setCellHorizontalAlignment(image, HasHorizontalAlignment.ALIGN_RIGHT);
+		panel.setCellHorizontalAlignment(image,
+				HasHorizontalAlignment.ALIGN_RIGHT);
 
 		image.addClickListener(new ClickListener() {
-			public void onClick( Widget thisWidget ) {
-				TabPanel t = ((TabPanel) widget.getParent().getParent().getParent());
+			public void onClick(Widget thisWidget) {
+				TabPanel t = ((TabPanel) widget.getParent().getParent()
+						.getParent());
 				t.selectTab(t.getWidgetIndex(widget) - 1);
 				widget.removeFromParent();
 			}
 		});
 	}
-	
-}
 
+}
