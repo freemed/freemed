@@ -27,12 +27,16 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.HashMap;
 
 import com.bouwkamp.gwt.user.client.ui.RoundedPanel;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class PatientInfoBar extends Composite {
 
@@ -50,6 +54,7 @@ public class PatientInfoBar extends Composite {
 		container.setWidth("100%");
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.setWidth("100%");
 		container.add(horizontalPanel);
 
 		wPatientName = new Label("");
@@ -61,10 +66,23 @@ public class PatientInfoBar extends Composite {
 		wPatientHiddenInfo = new HTML();
 		wDropdownContainer.add(wPatientHiddenInfo);
 		horizontalPanel.add(wDropdown);
-	}
+		horizontalPanel.setCellHorizontalAlignment(wDropdown,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		
+		final HorizontalPanel iconBar = new HorizontalPanel();
 
-	public void setPatient(int patientId) {
+		final Image wBookAppointment = new Image(
+				"resources/images/book_appt.32x32.png");
+		wBookAppointment.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
 
+			}
+		});
+		iconBar.add(wBookAppointment);
+
+		horizontalPanel.add(iconBar);
+		horizontalPanel.setCellHorizontalAlignment(iconBar,
+				HasHorizontalAlignment.ALIGN_RIGHT);
 	}
 
 	/**

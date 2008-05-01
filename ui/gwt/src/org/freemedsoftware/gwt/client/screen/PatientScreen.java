@@ -24,12 +24,17 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.HashMap;
+
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -39,13 +44,22 @@ public class PatientScreen extends ScreenInterface {
 
 	protected TabPanel tabPanel;
 
+	protected PatientInfoBar patientInfoBar = null;
+
+	protected Integer patientId = new Integer(0);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	protected HashMap patientInfo;
+
 	public PatientScreen() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
-		final PatientInfoBar patientInfoBar = new PatientInfoBar();
+		patientInfoBar = new PatientInfoBar();
 		verticalPanel.add(patientInfoBar);
 
 		{
@@ -103,4 +117,62 @@ public class PatientScreen extends ScreenInterface {
 		return this;
 	}
 
+	/**
+	 * Set patient id.
+	 */
+	public void setPatient(Integer id) {
+		patientId = id;
+
+		if (Util.isStubbedMode()) {
+			/**
+			 * @gwt.typeArgs <java.lang.String,java.lang.String>
+			 */
+			HashMap dummy = new HashMap();
+			dummy.put("patient_name", "Hackenbush, Hugo Z");
+			dummy.put("id", id.toString());
+			dummy.put("patient_id", "HUGO01");
+			dummy.put("ptdob", "1979-08-10");
+			dummy.put("address_line_1", "101 Evergreen Terrace");
+			dummy.put("address_line_2", "");
+			dummy.put("csz", "N Kilt Town, IL 00000");
+			dummy.put("pthphone", "8005551212");
+			dummy.put("ptwphone", "860KL51212");
+			populatePatientInformation(dummy);
+		} else {
+			// Set off async method to get information
+			PatientInterfaceAsync service = null;
+			try {
+				service = (PatientInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface");
+			} catch (Exception e) {
+				GWT.log("Exception caught: ", e);
+			}
+			service.PatientInformation(patientId, new AsyncCallback() {
+				public void onSuccess(Object result) {
+					/**
+					 * @gwt.typeArgs <java.lang.String, java.lang.String>
+					 */
+					HashMap pInfo = (HashMap) result;
+					populatePatientInformation(pInfo);
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("FAILURE: ", t);
+				}
+			});
+		}
+	}
+
+	/**
+	 * 
+	 * @param info
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	protected void populatePatientInformation(HashMap info) {
+		// Store this in the object
+		patientInfo = info;
+		
+		// Push out to child widgets
+		patientInfoBar.setPatientFromMap(patientInfo);
+	}
 }

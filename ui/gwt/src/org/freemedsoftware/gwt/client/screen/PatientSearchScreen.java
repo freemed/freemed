@@ -77,7 +77,7 @@ public class PatientSearchScreen extends ScreenInterface {
 				Integer val = ((PatientWidget) w).getValue();
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
-						spawnPatientScreen(val);
+						spawnPatientScreen(val, wSmartSearch.getTitle());
 						clearForm();
 					}
 				} catch (Exception e) {
@@ -132,9 +132,12 @@ public class PatientSearchScreen extends ScreenInterface {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				// Get information on row...
 				try {
-					Integer patientId = new Integer((String) patientMap
+					final Integer patientId = new Integer((String) patientMap
 							.get(sortableTable.getText(row, 3)));
-					spawnPatientScreen(patientId);
+					final String patientName = (String) sortableTable.getText(
+							row, 0)
+							+ ", " + (String) sortableTable.getText(row, 1);
+					spawnPatientScreen(patientId, patientName);
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
 				}
@@ -234,8 +237,12 @@ public class PatientSearchScreen extends ScreenInterface {
 	 * 
 	 * @param patient
 	 */
-	public void spawnPatientScreen(Integer patient) {
-		Util.spawnTab(wSmartSearch.getTitle(), new PatientScreen(), state);
+	public void spawnPatientScreen(Integer patient, String patientName) {
+		PatientScreen s = new PatientScreen();
+		s.setPatient(patient);
+		GWT.log("Spawn patient screen with patient = " + patient.toString(),
+				null);
+		Util.spawnTab(patientName, s, state);
 	}
 
 	public void clearForm() {

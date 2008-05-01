@@ -24,48 +24,68 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
 
-public interface PatientInterface extends RemoteService {  
-	public Integer CheckForDuplicatePatient ( HashMap criteria );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] DxForPatient ( Integer patientId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] EmrAttachmentsByPatient ( Integer patientId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] EmrAttachmentsByPatientTable ( Integer patientId, String tableName );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] EmrModules ( String partOfName, Boolean sameKeyAndValue );
-	public Boolean MoveEmrAttachments ( Integer patientFrom, Integer patientTo, Integer[] attachments );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] NumericSearch ( HashMap criteria );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] Search ( HashMap criteria );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap PatientCriteria ( Integer patientId );
-	public Integer TotalInSystem ( );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap Picklist ( String textParameters, Integer limit, Integer inputLimit );
-	public Integer[] ProceduresToBill ( Integer patientId );
-	public String ToText ( Integer patientId, Boolean fullString );
-}
+import com.google.gwt.user.client.rpc.RemoteService;
 
+public interface PatientInterface extends RemoteService {
+	public Integer CheckForDuplicatePatient(HashMap criteria);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap[] DxForPatient(Integer patientId);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap[] EmrAttachmentsByPatient(Integer patientId);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap[] EmrAttachmentsByPatientTable(Integer patientId,
+			String tableName);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap[] EmrModules(String partOfName, Boolean sameKeyAndValue);
+
+	public Boolean MoveEmrAttachments(Integer patientFrom, Integer patientTo,
+			Integer[] attachments);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
+	 */
+	public HashMap[] NumericSearch(HashMap criteria);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
+	 */
+	public HashMap[] Search(HashMap criteria);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap PatientCriteria(Integer patientId);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap PatientInformation(Integer patientId);
+
+	public Integer TotalInSystem();
+
+	/**
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap Picklist(String textParameters, Integer limit,
+			Integer inputLimit);
+
+	public Integer[] ProceduresToBill(Integer patientId);
+
+	public String ToText(Integer patientId, Boolean fullString);
+}
