@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.HashMap;
+
 import com.bouwkamp.gwt.user.client.ui.RoundedPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -35,19 +37,22 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PatientInfoBar extends Composite {
 
 	protected Label wPatientName;
+
 	protected HTML wPatientHiddenInfo;
-	
+
+	protected Integer patientId = new Integer(0);
+
 	public PatientInfoBar() {
 		final RoundedPanel container = new RoundedPanel();
 		initWidget(container);
 		container.setCornerColor("#ccccff");
 		container.setStylePrimaryName("freemed-PatientInfoBar");
 		container.setWidth("100%");
-		
+
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		container.add(horizontalPanel);
 
-		wPatientName = new Label("Patient");
+		wPatientName = new Label("");
 		horizontalPanel.add(wPatientName);
 
 		final DisclosurePanel wDropdown = new DisclosurePanel("");
@@ -57,9 +62,36 @@ public class PatientInfoBar extends Composite {
 		wDropdownContainer.add(wPatientHiddenInfo);
 		horizontalPanel.add(wDropdown);
 	}
-	
+
 	public void setPatient(int patientId) {
-		
+
+	}
+
+	/**
+	 * Set patient information with HashMap returned from PatientInformation()
+	 * method.
+	 * 
+	 * @param map
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public void setPatientFromMap(HashMap map) {
+		try {
+			wPatientName.setText((String) map.get("patient_name"));
+		} catch (Exception e) {
+		}
+		try {
+			wPatientHiddenInfo.setHTML("<small>"
+					+ (String) map.get("address_line_1") + "<br/>"
+					+ (String) map.get("address_line_2") + "<br/>"
+					+ (String) map.get("csz") + "<br/>" + "H:"
+					+ (String) map.get("pthphone") + "<br/>" + "W:"
+					+ (String) map.get("ptwphone") + "</small>");
+		} catch (Exception e) {
+		}
+		try {
+			patientId = new Integer((String) map.get("id"));
+		} catch (Exception e) {
+		}
 	}
 
 }

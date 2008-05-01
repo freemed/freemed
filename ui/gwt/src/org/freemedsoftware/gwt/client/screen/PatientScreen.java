@@ -25,6 +25,8 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 
 import com.google.gwt.user.client.Command;
@@ -36,7 +38,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PatientScreen extends ScreenInterface {
 
 	protected TabPanel tabPanel;
-	
+
 	public PatientScreen() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -52,13 +54,22 @@ public class PatientScreen extends ScreenInterface {
 
 			final MenuBar menuBar_1 = new MenuBar(true);
 
+			menuBar_1.addItem("Progress Note", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Progress Note",
+							new ProgressNoteEntry(), state, getObject());
+				}
+			});
+
+			menuBar_1.addItem("Prescription", (Command) null);
+
 			menuBar.addItem("New", menuBar_1);
 
 			final MenuBar menuBar_2 = new MenuBar(true);
 
-			menuBar_2.addItem("Billing", (Command)null);
+			menuBar_2.addItem("Billing", (Command) null);
 
-			menuBar_2.addItem("Trending", (Command)null);
+			menuBar_2.addItem("Trending", (Command) null);
 
 			menuBar.addItem("Reporting", menuBar_2);
 		}
@@ -72,6 +83,24 @@ public class PatientScreen extends ScreenInterface {
 		SimplePanel summary = new SimplePanel();
 		tabPanel.add(summary, "Summary");
 		tabPanel.selectTab(0);
+	}
+
+	/**
+	 * Get patient tab panel.
+	 * 
+	 * @return
+	 */
+	public TabPanel getTabPanel() {
+		return tabPanel;
+	}
+
+	/**
+	 * Get reference to internal object.
+	 * 
+	 * @return
+	 */
+	protected PatientScreen getObject() {
+		return this;
 	}
 
 }

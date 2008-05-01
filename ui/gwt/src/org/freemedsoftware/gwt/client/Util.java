@@ -32,6 +32,7 @@ import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Public.Login;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
 import com.google.gwt.core.client.GWT;
@@ -157,6 +158,29 @@ public final class Util {
 		state.getTabPanel().add((Widget) screen,
 				new ClosableTab(title, (Widget) screen));
 		state.getTabPanel().selectTab(state.getTabPanel().getWidgetCount() - 1);
+	}
+
+	/**
+	 * Create new tab in patient screen with specified title and
+	 * PatientScreenInterface
+	 * 
+	 * @param title
+	 *            String title of the new tab
+	 * @param screen
+	 *            Object containing extended composite with content
+	 * @param state
+	 *            Pass internal program state.
+	 * @param pScreen
+	 *            Pass reference to PatientScreen parent
+	 */
+	public static synchronized void spawnTabPatient(String title,
+			PatientScreenInterface screen, CurrentState state,
+			PatientScreen pScreen) {
+		screen.assignState(state);
+		pScreen.getTabPanel().add((Widget) screen,
+				new ClosableTab(title, (Widget) screen));
+		pScreen.getTabPanel().selectTab(
+				pScreen.getTabPanel().getWidgetCount() - 1);
 	}
 
 }
