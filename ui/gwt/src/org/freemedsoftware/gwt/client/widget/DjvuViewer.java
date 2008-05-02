@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.Util;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -40,27 +41,36 @@ import com.google.gwt.user.client.ui.Widget;
 public class DjvuViewer extends Composite {
 
 	public final static int UNFILED_DOCUMENTS = 1;
+
 	public final static int UNREAD_DOCUMENTS = 2;
+
 	public final static int SCANNED_DOCUMENTS = 3;
-	
+
 	protected Integer patientId = new Integer(0);
+
 	protected Integer internalId = new Integer(0);
+
 	protected int viewerType = SCANNED_DOCUMENTS;
+
 	protected int numberOfPages = 1;
+
 	protected int currentPage = 1;
-	
-	protected final Label wPageTop, wPageBottom; 
+
+	protected final Label wPageTop, wPageBottom;
+
 	protected final Image wImage;
-	protected final PushButton wBackTop, wForwardTop, wBackBottom, wForwardBottom;
-	
-	public DjvuViewer( ) {
+
+	protected final PushButton wBackTop, wForwardTop, wBackBottom,
+			wForwardBottom;
+
+	public DjvuViewer() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
-		final HorizontalPanel horizontalPanel = new HorizontalPanel();
-		verticalPanel.add(horizontalPanel);
-		horizontalPanel.setWidth("100%");
+		final HorizontalPanel controlBarTop = new HorizontalPanel();
+		verticalPanel.add(controlBarTop);
+		controlBarTop.setWidth("100%");
 
 		// Click listeners
 		ClickListener clPrevious = new ClickListener() {
@@ -73,45 +83,65 @@ public class DjvuViewer extends Composite {
 				pageNext();
 			}
 		};
-		
+		ClickListener clView = new ClickListener() {
+			public void onClick(Widget w) {
+				viewDocument();
+			}
+		};
+
 		wBackTop = new PushButton();
-		horizontalPanel.add(wBackTop);
+		controlBarTop.add(wBackTop);
 		wBackTop.setText("-");
+		wBackTop.setStylePrimaryName("freemed-PushButton");
 		wBackTop.addClickListener(clPrevious);
-		
+
 		wPageTop = new Label("1 of 1");
-		horizontalPanel.add(wPageTop);
+		controlBarTop.add(wPageTop);
 		wPageTop.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
+		PushButton wViewTop = new PushButton("View");
+		wViewTop.addClickListener(clView);
+		wViewTop.setStylePrimaryName("freemed-PushButton");
+		controlBarTop.add(wViewTop);
+
 		wForwardTop = new PushButton();
-		horizontalPanel.add(wForwardTop);
+		controlBarTop.add(wForwardTop);
 		wForwardTop.setText("+");
+		wForwardTop.setStylePrimaryName("freemed-PushButton");
 		wForwardTop.addClickListener(clNext);
 
 		wImage = new Image();
 		verticalPanel.add(wImage);
 		wImage.setSize("100%", "100%");
 
-		final HorizontalPanel horizontalPanel_1 = new HorizontalPanel();
-		verticalPanel.add(horizontalPanel_1);
-		horizontalPanel_1.setWidth("100%");
-		horizontalPanel_1.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		final HorizontalPanel controlBarBottom = new HorizontalPanel();
+		verticalPanel.add(controlBarBottom);
+		controlBarBottom.setWidth("100%");
+		controlBarBottom
+				.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 
 		wBackBottom = new PushButton();
-		horizontalPanel_1.add(wBackBottom);
+		controlBarBottom.add(wBackBottom);
 		wBackBottom.setText("-");
+		wBackBottom.setStylePrimaryName("freemed-PushButton");
 		wBackBottom.addClickListener(clPrevious);
 
 		wPageBottom = new Label("1 of 1");
-		horizontalPanel_1.add(wPageBottom);
+		controlBarBottom.add(wPageBottom);
 		wPageBottom.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
+		PushButton wViewBottom = new PushButton("View");
+		wViewBottom.addClickListener(clView);
+		wViewBottom.setStylePrimaryName("freemed-PushButton");
+		controlBarBottom.add(wViewBottom);
+
 		wForwardBottom = new PushButton();
-		horizontalPanel_1.add(wForwardBottom);
+		controlBarBottom.add(wForwardBottom);
 		wForwardBottom.setText("+");
+		wForwardBottom.setStylePrimaryName("freemed-PushButton");
 		wForwardBottom.addClickListener(clNext);
 	}
-	
+
 	/**
 	 * Load a page into the widget.
 	 * 
@@ -129,18 +159,19 @@ public class DjvuViewer extends Composite {
 		if (viewerType == 0) {
 			throw new Exception("Document type not set");
 		}
-		
+
 		// Set image URL to the appropriate page
-		wImage.setUrl(Util.getJsonRequest(resolvePageViewMethod(), new String[]{
-			internalId.toString(), new Integer(pageNumber).toString()
-		}));
-		
+		wImage.setUrl(Util.getJsonRequest(resolvePageViewMethod(),
+				new String[] { internalId.toString(),
+						new Integer(pageNumber).toString() }));
+
 		// Set the current page counter
-		String pageCountLabelText = new Integer(pageNumber).toString() + " of " + new Integer(numberOfPages).toString();
+		String pageCountLabelText = new Integer(pageNumber).toString() + " of "
+				+ new Integer(numberOfPages).toString();
 		currentPage = pageNumber;
 		wPageTop.setText(pageCountLabelText);
 		wPageBottom.setText(pageCountLabelText);
-		
+
 		// Enable/disable buttons as needed
 		if (currentPage == 1) {
 			wBackTop.setEnabled(false);
@@ -160,67 +191,79 @@ public class DjvuViewer extends Composite {
 
 	protected void pageNext() {
 		try {
-		loadPage(currentPage + 1);
+			loadPage(currentPage + 1);
 		} catch (Exception e) {
-			
+
 		}
 	}
-	
+
 	protected void pagePrevious() {
 		try {
 			loadPage(currentPage - 1);
 		} catch (Exception e) {
-				
-		}		
+
+		}
 	}
-	
+
+	protected String resolveNamespace() {
+		if (viewerType == UNFILED_DOCUMENTS) {
+			return new String("org.freemedsoftware.module.UnfiledDocuments");
+		}
+		if (viewerType == UNREAD_DOCUMENTS) {
+			return new String("org.freemedsoftware.module.UnreadDocuments");
+		}
+		if (viewerType == SCANNED_DOCUMENTS) {
+			return new String("org.freemedsoftware.module.ScannedDocuments");
+		}
+
+		// If all else fails ...
+		return new String("");
+	}
+
 	/**
 	 * Internal method to resolve page view URL.
 	 * 
 	 * @return Method name
 	 */
 	protected String resolvePageViewMethod() {
-		if (viewerType == UNFILED_DOCUMENTS) {
-			return new String("org.freemedsoftware.module.UnfiledDocuments.GetDocumentPage");
-		}
-		if (viewerType == UNREAD_DOCUMENTS) {
-			return new String("org.freemedsoftware.module.UnreadDocuments.GetDocumentPage");
-		}
-		if (viewerType == SCANNED_DOCUMENTS) {
-			return new String("org.freemedsoftware.module.ScannedDocuments.GetDocumentPage");
-		}
-		
-		// If all else fails ...
-		return new String("");
+		return resolveNamespace() + ".GetDocumentPage";
 	}
-	
+
 	/**
 	 * Set internal document id.
 	 * 
 	 * @param id
 	 */
-	public void setInternalId( Integer id ) {
+	public void setInternalId(Integer id) {
 		internalId = id;
 	}
-	
+
 	/**
 	 * Set internal patient id.
 	 * 
 	 * @param patient
 	 */
-	public void setPatient( Integer patient ) {
+	public void setPatient(Integer patient) {
 		patientId = patient;
 	}
-	
+
 	/**
-	 * Set string indicating URL used for image transfer from JSON relay.
-	 * Use UNFILED_DOCUMENTS, UNREAD_DOCUMENTS, SCANNED_DOCUMENTS.
+	 * Set string indicating URL used for image transfer from JSON relay. Use
+	 * UNFILED_DOCUMENTS, UNREAD_DOCUMENTS, SCANNED_DOCUMENTS.
 	 * 
 	 * @param type
 	 */
-	public void setType( int type ) {
+	public void setType(int type) {
 		viewerType = type;
 	}
-	
-}
 
+	/**
+	 * Open up full page view.
+	 */
+	public void viewDocument() {
+		String[] params = { (String) internalId.toString() };
+		Window.open(Util.getJsonRequest(resolveNamespace() + ".GetDocumentPDF",
+				params), "View", "");
+	}
+
+}

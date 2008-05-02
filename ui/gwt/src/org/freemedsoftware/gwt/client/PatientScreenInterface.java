@@ -24,9 +24,14 @@
 
 package org.freemedsoftware.gwt.client;
 
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+
+import com.google.gwt.core.client.GWT;
+
 public abstract class PatientScreenInterface extends ScreenInterface {
 
 	protected Integer patientId = new Integer(0);
+
 	protected CurrentState state = null;
 
 	/**
@@ -44,5 +49,21 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	public void setPatientId(Integer id) {
 		patientId = id;
 	}
-	
+
+	/**
+	 * Load the module interface RPC proxy.
+	 * 
+	 * @return
+	 */
+	public ModuleInterfaceAsync getProxy() {
+		try {
+			ModuleInterfaceAsync service = (ModuleInterfaceAsync) Util
+					.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+			return service;
+		} catch (Exception e) {
+			GWT.log("Exception: ", e);
+			return (ModuleInterfaceAsync) null;
+		}
+	}
+
 }

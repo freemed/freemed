@@ -27,7 +27,9 @@ package org.freemedsoftware.gwt.client.screen.patient;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -50,6 +52,12 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 	 */
 	protected HashMap patientMap = null;
 
+	/**
+	 * Internal id representing this record. If this is 0, we create a new one,
+	 * otherwise we modify.
+	 */
+	protected Integer internalId = new Integer(0);
+
 	protected SimpleDatePicker wDate;
 
 	protected TextArea wDescription;
@@ -57,6 +65,8 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 	protected SuggestBox wProvider, wTemplate;
 
 	protected RichTextArea S, O, A, P, I, E, R;
+
+	final protected String moduleName = "ProgressNotes";
 
 	public ProgressNoteEntry() {
 
@@ -72,14 +82,14 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		buttonBar.add(wSubmit);
 		wSubmit.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-
+				submitForm();
 			}
 		});
 		final Button wReset = new Button("Reset");
 		buttonBar.add(wReset);
 		wReset.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-
+				resetForm();
 			}
 		});
 		verticalPanel.add(buttonBar);
@@ -172,4 +182,65 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		tabPanel.selectTab(0);
 	}
 
+	public void loadInternalId(Integer id) {
+		ModuleInterfaceAsync service = getProxy();
+		service.ModuleGetRecordMethod(moduleName, id, new AsyncCallback() {
+			public void onSuccess(Object result) {
+				/**
+				 * @gwt.typeArgs <java.lang.String, java.lang.String>
+				 */
+				HashMap r = (HashMap) result;
+				// TODO: finish this mapping
+				// wProvider.setValue(new Integer((String)r.get("pnotesphy")));
+				S.setHTML((String) r.get("pnotes_S"));
+				O.setHTML((String) r.get("pnotes_O"));
+				A.setHTML((String) r.get("pnotes_A"));
+				P.setHTML((String) r.get("pnotes_P"));
+				I.setHTML((String) r.get("pnotes_I"));
+				E.setHTML((String) r.get("pnotes_E"));
+				R.setHTML((String) r.get("pnotes_R"));
+			}
+
+			public void onFailure(Throwable t) {
+
+			}
+		});
+	}
+	
+	public void submitForm() {
+		ModuleInterfaceAsync service = getProxy();
+		// Form hashmap ...
+		/**
+		 * @gwt.typeArgs <java.lang.String,java.lang.String>
+		 */
+		final HashMap rec = new HashMap();
+		
+		if (internalId > 0) {
+			// Modify
+			service.ModuleModifyMethod(moduleName, rec, new AsyncCallback() {
+				public void onSuccess(Object result) {
+
+				}
+
+				public void onFailure(Throwable t) {
+
+				}				
+			});
+		} else {
+			// Add
+			service.ModuleAddMethod(moduleName, rec, new AsyncCallback() {
+				public void onSuccess(Object result) {
+
+				}
+
+				public void onFailure(Throwable t) {
+
+				}				
+			});
+		}
+	}
+	
+	public void resetForm() {
+		
+	}
 }
