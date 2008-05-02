@@ -28,5 +28,5 @@ for JAR in lib/*.jar; do
 	CP="${CP}:$APPDIR/lib/$(basename "$JAR")"
 done
 echo "Compiling GWT portion of application ... "
-java  -cp "$CP" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
+java -Xmx1024M -Xms128M -cp "$CP" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
 
