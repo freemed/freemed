@@ -24,14 +24,32 @@
 
 package org.freemedsoftware.gwt.client;
 
+import org.freemedsoftware.gwt.client.Api.Authorizations;
+import org.freemedsoftware.gwt.client.Api.AuthorizationsAsync;
+import org.freemedsoftware.gwt.client.Api.Messages;
+import org.freemedsoftware.gwt.client.Api.MessagesAsync;
+import org.freemedsoftware.gwt.client.Api.ModuleInterface;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Api.PatientInterface;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.Api.Scheduler;
+import org.freemedsoftware.gwt.client.Api.SchedulerAsync;
+import org.freemedsoftware.gwt.client.Api.SystemConfig;
+import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
+import org.freemedsoftware.gwt.client.Api.Tickler;
+import org.freemedsoftware.gwt.client.Api.TicklerAsync;
 import org.freemedsoftware.gwt.client.Module.Annotations;
 import org.freemedsoftware.gwt.client.Module.AnnotationsAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
+import org.freemedsoftware.gwt.client.Module.MultumDrugLexicon;
+import org.freemedsoftware.gwt.client.Module.MultumDrugLexiconAsync;
+import org.freemedsoftware.gwt.client.Module.RemittBillingTransport;
+import org.freemedsoftware.gwt.client.Module.RemittBillingTransportAsync;
 import org.freemedsoftware.gwt.client.Public.Login;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.Public.Protocol;
+import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
@@ -110,8 +128,31 @@ public final class Util {
 
 		// This is a *horrendous* hack to get around lack of dynamic loading
 
+		// org.freemedsoftware.gwt.client.Public.*
+
 		if (className.compareTo("org.freemedsoftware.gwt.client.Public.Login") == 0) {
 			service = (LoginAsync) GWT.create(Login.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Public.Protocol") == 0) {
+			service = (ProtocolAsync) GWT.create(Protocol.class);
+		}
+
+		// org.freemedsoftware.gwt.client.Api.*
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Api.Authorizations") == 0) {
+			service = (AuthorizationsAsync) GWT.create(Authorizations.class);
+		}
+
+		if (className.compareTo("org.freemedsoftware.gwt.client.Api.Messages") == 0) {
+			service = (MessagesAsync) GWT.create(Messages.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Api.ModuleInterface") == 0) {
+			service = (ModuleInterfaceAsync) GWT.create(ModuleInterface.class);
 		}
 
 		if (className
@@ -119,6 +160,21 @@ public final class Util {
 			service = (PatientInterfaceAsync) GWT
 					.create(PatientInterface.class);
 		}
+
+		if (className.compareTo("org.freemedsoftware.gwt.client.Api.Scheduler") == 0) {
+			service = (SchedulerAsync) GWT.create(Scheduler.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Api.SystemConfig") == 0) {
+			service = (SystemConfigAsync) GWT.create(SystemConfig.class);
+		}
+
+		if (className.compareTo("org.freemedsoftware.gwt.client.Api.Tickler") == 0) {
+			service = (TicklerAsync) GWT.create(Tickler.class);
+		}
+
+		// org.freemedsoftware.gwt.client.Module.*
 
 		if (className
 				.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {
@@ -128,6 +184,17 @@ public final class Util {
 		if (className
 				.compareTo("org.freemedsoftware.gwt.client.Module.MessagesModule") == 0) {
 			service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
+		}
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.MultumDrugLexicon") == 0) {
+			service = (MultumDrugLexiconAsync) GWT
+					.create(MultumDrugLexicon.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.RemittBillingTransport") == 0) {
+			service = (RemittBillingTransportAsync) GWT
+					.create(RemittBillingTransport.class);
 		}
 
 		try {
