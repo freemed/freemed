@@ -35,6 +35,13 @@ public interface ModuleInterfaceAsync {
 	 */
 	public void ModuleAddMethod(String module, HashMap data, AsyncCallback callback);
 
+	/**
+	 * 
+	 * @param module
+	 * @param id
+	 */
+	public void ModuleGetRecordMethod(String module, Integer id, AsyncCallback callback);
+
 	public void ModuleDeleteMethod(String module, Integer id, AsyncCallback callback);
 
 	/**
@@ -42,5 +49,12 @@ public interface ModuleInterfaceAsync {
 	 * @param data
 	 */
 	public void ModuleModifyMethod(String module, HashMap data, AsyncCallback callback);
+
+	/**
+	 * 
+	 * @param module
+	 * @param criteria
+	 */
+	public void ModuleSupportPicklist(String module, HashMap criteria, AsyncCallback callback);
 
 }

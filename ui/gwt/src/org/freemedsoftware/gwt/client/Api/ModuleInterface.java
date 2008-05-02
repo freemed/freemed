@@ -37,6 +37,15 @@ public interface ModuleInterface extends RemoteService {
 	 */
 	public Integer ModuleAddMethod(String module, HashMap data);
 
+	/**
+	 * 
+	 * @param module
+	 * @param id
+	 * @return
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 */
+	public HashMap ModuleGetRecordMethod(String module, Integer id);
+
 	public Integer ModuleDeleteMethod(String module, Integer id);
 
 	/**
@@ -46,5 +55,15 @@ public interface ModuleInterface extends RemoteService {
 	 * @return
 	 */
 	public Integer ModuleModifyMethod(String module, HashMap data);
+
+	/**
+	 * 
+	 * @param module
+	 * @param criteria
+	 * @return
+	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
+	 */
+	public HashMap ModuleSupportPicklist(String module, HashMap criteria);
 
 }

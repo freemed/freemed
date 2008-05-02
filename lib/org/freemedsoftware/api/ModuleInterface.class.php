@@ -58,6 +58,22 @@ class ModuleInterface {
 		return module_function( $module, 'del', array ( $id ) );
 	} // end method ModuleDeleteMethod
 
+	// Method: ModuleGetRecordMethod
+	//
+	// Parameters:
+	//
+	//	$module - Module name
+	//
+	//	$id - Id to be retrieved
+	//
+	// Returns:
+	//
+	//	Associative array of values.
+	//
+	public function ModuleGetRecordMethod ( $module, $id ) {
+		return module_function( $module, 'GetRecord', array ( $id ) );
+	} // end method ModuleGetRecordMethod
+
 	// Method: ModuleModifyMethod
 	//
 	// Parameters:
@@ -73,6 +89,22 @@ class ModuleInterface {
 	public function ModuleModifyMethod ( $module, $data ) {
 		return module_function( $module, 'mod', array ( $data ) );
 	} // end method ModuleModifyMethod
+
+	// Method: ModuleSupportPicklistMethod
+	//
+	// Parameters:
+	//
+	//	$module - Module name
+	//
+	//	$hash - Associative array of values
+	//
+	// Returns:
+	//
+	//	Associative array of values. Key = id, value = display name
+	//
+	public function ModuleSupportPicklistMethod ( $module, $hash ) {
+		return module_function( $module, 'picklist', array ( $id, $hash ) );
+	} // end method ModuleSupportPicklistMethod
 
 } // end class ModuleInterface
 

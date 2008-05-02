@@ -69,6 +69,29 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
+			// Method: ModuleGetRecordMethod
+			//
+			// Parameters:
+			//
+			//	$module - Module name
+			//
+			//	$id - Id to be retrieved
+			//
+			// Returns:
+			//
+			//	Associative array of values.
+			//
+			, array (
+				  'name' => 'ModuleGetRecordMethod'
+				, 'mappedName' => 'ModuleGetRecordMethod'
+				, 'returnType' => 'java.util.HashMap'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.lang.Integer' )
+				)
+				, 'throws' => array ( )
+			)
+
 			// Method: ModuleModifyMethod
 			//
 			// Parameters:
@@ -85,6 +108,29 @@ $gwtphpmap = array (
 				  'name' => 'ModuleModifyMethod'
 				, 'mappedName' => 'ModuleModifyMethod'
 				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.util.HashMap' )
+				)
+				, 'throws' => array ( )
+			)
+
+			// Method: ModuleSupportPicklistMethod
+			//
+			// Parameters:
+			//
+			//	$module - Module name
+			//
+			//	$hash - Associative array of values
+			//
+			// Returns:
+			//
+			//	Associative array of values. Key = id, value = display name
+			//
+			, array (
+				  'name' => 'ModuleSupportPicklistMethod'
+				, 'mappedName' => 'ModuleSupportPicklistMethod'
+				, 'returnType' => 'java.lang.HashMap'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.util.HashMap' )
