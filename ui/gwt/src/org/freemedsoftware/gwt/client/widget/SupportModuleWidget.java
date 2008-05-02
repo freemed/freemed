@@ -31,14 +31,32 @@ import java.util.List;
 import java.util.Set;
 
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
-public class PatientWidget extends AsyncPicklistWidgetBase {
+public class SupportModuleWidget extends AsyncPicklistWidgetBase {
+
+	protected String moduleName = null;
+
+	public SupportModuleWidget(String module) {
+		// Load superclass constructor first...
+		super();
+		moduleName = module;
+	}
+
+	/**
+	 * Set module class name.
+	 * 
+	 * @param module
+	 */
+	public void setModuleName(String module) {
+		moduleName = module;
+	}
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
@@ -52,14 +70,14 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
 		} else {
-			PatientInterfaceAsync service = null;
+			ModuleInterfaceAsync service = null;
 			try {
-				service = ((PatientInterfaceAsync) Util
-						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
+				service = ((ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface"));
 			} catch (Exception e) {
 			}
 
-			service.Picklist(req, new Integer(20), new Integer(10),
+			service.ModuleSupportPicklistMethod(moduleName, req,
 					new AsyncCallback() {
 						public void onSuccess(Object data) {
 							/**
@@ -81,7 +99,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 						}
 
 						public void onFailure(Throwable t) {
-
+							GWT.log("Exception thrown: ", t);
 						}
 
 					});
