@@ -99,6 +99,7 @@ a:hover {
 	padding: 4px;
 	cursor: pointer;
 	cursor: hand;
+	size: 8pt;
 
 	background-color: #e8eef7;
 	border-bottom: 2px solid white;
@@ -108,6 +109,7 @@ a:hover {
 .gwt-TabBar .gwt-TabBarItem-selected {
 	padding: 4px;
 	font-weight: bold;
+	size: 8pt;
 	cursor: default;
 
 	background-color: #87b3ff;
@@ -179,7 +181,8 @@ a:hover {
 	background-color: transparent;
 	background-image: url(images/freemed_PE_logo.40x67.png);
 	background-repeat: no-repeat;
-}
+	}
+
 .freemed-MainMenuBar {
 	background-position: bottom left;
 	color: #ffffff;
@@ -190,7 +193,8 @@ a:hover {
 	font-weight: bold;
 	background-color: #ffffff;
 	cursor: default;
-}
+	}
+
 .gwt-MainMenuBar {
 	height: 40px;
 	background-position: bottom left;
@@ -204,7 +208,8 @@ a:hover {
 	background-image: url(images/menu_bar_bg.png);
 	background-repeat: repeat-x;
 	cursor: default;
-}
+	}
+
 .freemed-SystemMenuItem {
 /*	height: 19px;  */
 
@@ -216,18 +221,16 @@ a:hover {
 	font-variant: small-caps;
 	font-weight: bold;
 	background-color: transparent;
-
-
-}
+	}
 .freemed-System {
 	background-image: url(images/dashboard.16x16.png);
 	background-repeat: no-repeat;	
 	background-postion: center left;	
-}
+	}
 .freemed-SystemMenuItem:hover .freemed-SystemMenuItem-hover {
 	background-color: #cddbde;
 	color: #999999;	
-}
+	}
 
 .gwt-SystemMenuItem {
 	height: 19px;
@@ -244,6 +247,7 @@ a:hover {
 	background-color: transparent;
 	background-image: url(images/dashboard.16x16.png);
 	background-repeat: no-repeat;
+	cursor: pointer;
 	cursor: hand;
 	}
 	
@@ -262,6 +266,7 @@ a:hover {
 	background-repeat: no-repeat;
 	overflow-x: hidden;
 	overflow-y: hidden;
+	cursor: pointer;
 	cursor: hand;
 	}
 
@@ -358,6 +363,7 @@ a:hover {
 .freemed-SecondaryMenuBar .freemed-SecondaryMenuItem-selected{
 	background-color: #ffffff;
 	color: #999999;
+	cursor: pointer;
 	cursor: hand;
 	}
 .freemed-SecondaryMenuItem {
@@ -380,6 +386,18 @@ a:hover {
 	border-bottom: 1px dashed #555555;
 	}
 	
+.freemed-PushButton, .freemed-Button {
+	border: 1px solid #555555;
+	background-color: #dddddd;
+	}
+
+.freemed-PushButton:hover, freemed-Button:hover {
+	background-color: #555555;
+	color: #aaaaff;
+	cursor: pointer;
+	cursor: hand;
+	}
+	
 .cgb-RP {
 	background-color: #ccccff;
 	}
@@ -397,6 +415,7 @@ a:hover {
 .gwt-SuggestBoxPopup .item-selected {
 	color: #000000;
 	background: #ccccff;
+	cursor: pointer;
 	cursor: hand;
 	}
 	

@@ -74,7 +74,7 @@ public class MainScreen extends Composite {
 		 * to function correctly. -JA
 		 */
 
-		final PushButton pushButton_1 = new PushButton("freeMED", "linkHome");
+		final PushButton pushButton_1 = new PushButton();
 		horizontalPanel.add(pushButton_1);
 		pushButton_1.setSize("67px", "40px");
 		horizontalPanel.setCellWidth(pushButton_1, "40px");
