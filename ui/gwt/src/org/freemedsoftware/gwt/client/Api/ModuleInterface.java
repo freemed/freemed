@@ -62,8 +62,7 @@ public interface ModuleInterface extends RemoteService {
 	 * @param criteria
 	 * @return
 	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
 	 */
-	public HashMap ModuleSupportPicklist(String module, HashMap criteria);
+	public HashMap ModuleSupportPicklistMethod(String module, String criteria);
 
 }

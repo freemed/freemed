@@ -55,6 +55,6 @@ public interface ModuleInterfaceAsync {
 	 * @param module
 	 * @param criteria
 	 */
-	public void ModuleSupportPicklist(String module, HashMap criteria, AsyncCallback callback);
+	public void ModuleSupportPicklistMethod(String module, String criteria, AsyncCallback callback);
 
 }

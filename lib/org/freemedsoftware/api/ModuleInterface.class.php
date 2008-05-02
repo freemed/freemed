@@ -96,14 +96,14 @@ class ModuleInterface {
 	//
 	//	$module - Module name
 	//
-	//	$hash - Associative array of values
+	//	$criteria - Search text
 	//
 	// Returns:
 	//
 	//	Associative array of values. Key = id, value = display name
 	//
-	public function ModuleSupportPicklistMethod ( $module, $hash ) {
-		return module_function( $module, 'picklist', array ( $id, $hash ) );
+	public function ModuleSupportPicklistMethod ( $module, $criteria ) {
+		return module_function( $module, 'picklist', array ( $id, $criteria ) );
 	} // end method ModuleSupportPicklistMethod
 
 } // end class ModuleInterface

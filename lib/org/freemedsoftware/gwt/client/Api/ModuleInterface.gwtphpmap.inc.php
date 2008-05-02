@@ -121,7 +121,7 @@ $gwtphpmap = array (
 			//
 			//	$module - Module name
 			//
-			//	$hash - Associative array of values
+			//	$criteria - Search text
 			//
 			// Returns:
 			//
@@ -133,7 +133,7 @@ $gwtphpmap = array (
 				, 'returnType' => 'java.lang.HashMap'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
-					, array ( 'type' => 'java.util.HashMap' )
+					, array ( 'type' => 'java.lang.String' )
 				)
 				, 'throws' => array ( )
 			)
