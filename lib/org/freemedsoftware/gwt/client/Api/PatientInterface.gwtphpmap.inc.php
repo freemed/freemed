@@ -49,7 +49,10 @@ $gwtphpmap = array (
 				, 'mappedName' => 'CheckForDuplicatePatient'
 				, 'returnType' => 'java.lang.Integer'
 				, 'params' => array (
-					array ( 'type' => 'java.util.HashMap' )
+					array (
+						  'type' => 'java.util.HashMap'
+						, 'typeCRC' => '962170901<2004016611,2004016611>'
+					)
 				)
 				, 'throws' => array ( )
 			)
@@ -217,7 +220,10 @@ $gwtphpmap = array (
 				, 'mappedName' => 'NumericSearch'
 				, 'returnType' => '[java.util.HashMap'
 				, 'params' => array (
-					array ( 'type' => 'java.util.HashMap' )
+					array (
+						  'type' => 'java.util.HashMap'
+						, 'typeCRC' => '962170901<2004016611,2004016611>'
+					)
 				)
 				, 'throws' => array ( )
 			)
@@ -246,9 +252,13 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'Search'
 				, 'mappedName' => 'Search'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap<java.lang.String,java.lang.String>;'
+				, 'returnTypeCRC' => '3558356060[L962170901<2004016611,2004016611>;'
 				, 'params' => array (
-					array ( 'type' => 'java.util.HashMap' )
+					array (
+						  'type' => 'java.util.HashMap'
+						, 'typeCRC' => '962170901<2004016611,2004016611>'
+					)
 				)
 				, 'throws' => array ( )
 			)
@@ -277,7 +287,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'PatientInformation'
 				, 'mappedName' => 'PatientInformation'
-				, 'returnType' => 'java.util.HashMap'
+				, 'returnType' => 'java.util.HashMap<java.lang.String,java.lang.String>'
+				, 'returnTypeCRC' => '962170901<2004016611,2004016611>'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.Integer' )
 				)
@@ -324,14 +335,16 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'Picklist'
 				, 'mappedName' => 'Picklist'
-				, 'returnType' => 'java.util.HashMap'
+				, 'returnType' => 'java.util.HashMap<java.lang.Integer,java.lang.String>'
+				, 'returnTypeCRC' => '962170901<3438268394,2004016611>'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Integer' )
-					, array ( 'type' => 'java.lang.Integer' )
 				)
-				, 'throws' => array ( )
+				, 'throws' => array ( /*'type' => 'org.freemedsoftware.gwt.client.AuthenticationException'*/ )
 			)
+//- HashMap = 962170901
+//- HashMap[] = 3558356060
 
 			// Method: ProceduresToBill
 			//

@@ -111,6 +111,10 @@ final class HashMap_CustomFieldSerializer {
   */
 	public static function serialize(SerializationStreamWriter $streamWriter,
 	/*HashMap<Object, Object>*/ $instance, MappedClass $instanceClass)  {
+		ob_start();
+		print_r($instance);
+		syslog(LOG_DEBUG, "instance = ".ob_get_contents());
+		ob_end_clean();
 		if ($instance instanceof HashMap) {
 			$size = $instance->size();
 			$streamWriter->writeInt($size);
@@ -153,7 +157,12 @@ final class HashMap_CustomFieldSerializer {
 		//  streamWriter.writeObject(entry.getValue());
 		//}
 		else {
+			if (defined('GWTPHP_FORCE_SHOEHORN')) {
+			// Compatibility hack. :(
+			$streamWriter->writeInt(0);
+			} else {
 			throw new UnimplementedOperationException("HashMap_CustomFieldSerializer serialize type: "+gettype($instance) + " not implemented");
+			}
 		}
 	}
 

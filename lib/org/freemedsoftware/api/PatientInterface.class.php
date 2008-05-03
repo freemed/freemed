@@ -261,7 +261,8 @@ class PatientInterface {
 	//
 	//	Array of hashes.
 	//
-	public function Search ( $criteria ) {
+	public function Search ( $_criteria ) {
+		$criteria = (array) $_criteria;
 		if (!count($criteria)) { return array(); }
 
 		foreach ($criteria AS $k => $v) {
@@ -360,8 +361,12 @@ class PatientInterface {
 	//	* key - Patient table id key
 	//	* value - Text representing patient record identifying info.
 	//
-	public function picklist ( $string, $limit = 10, $inputlimit = 2 ) {
-		if (strlen($string) < $inputlimit) { return false; }
+	public function picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
+		$limit = ($_limit < 10) ? 10 : $_limit;
+		if (strlen($string) < $inputlimit) {
+			syslog(LOG_INFO, "under $inputlimit");
+			return false;
+		}
 
 		$criteria = addslashes( $string );
 		if (!(strpos($criteria, ',') === false)) {
@@ -393,19 +398,16 @@ class PatientInterface {
 		}
 
 		$query = "SELECT * FROM patient WHERE ( ".join(' OR ', $q)." ) ".
-			"AND ( ISNULL(ptarchive) OR ptarchive=0 )";
+			"AND ( ISNULL(ptarchive) OR ptarchive=0 ) LIMIT $limit";
 		syslog(LOG_INFO, "PICK| $query");
 		$result = $GLOBALS['sql']->queryAll( $query );
 		if (count($result) < 1) { return array (); }
 		$count = 0;
 		foreach ($result AS $r) {
-			$count++;
-			if ($count < $limit) {
-				$_obj = CreateObject('org.freemedsoftware.core.Patient', $r);
-				$return[$r['id']] = trim(stripslashes($_obj->to_text()));
-
-			}
+			$_obj = CreateObject('org.freemedsoftware.core.Patient', $r);
+			$return[(int)$r['id']] = trim(stripslashes($_obj->to_text()));
 		}
+		syslog(LOG_INFO, "picklist| found ".count($return)." results returned");
 		return $return;
 	} // end public function picklist
 

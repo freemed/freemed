@@ -112,7 +112,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'GetLocations'
 				, 'mappedName' => 'GetLocations'
-				, 'returnType' => '[[java.lang.String'
+				, 'returnType' => '[[Ljava.lang.String;'
+				, 'returnTypeCRC' => '392769419[2364883620[L2004016611;'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
@@ -129,7 +130,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'GetLanguages'
 				, 'mappedName' => 'GetLanguages'
-				, 'returnType' => '[[java.lang.String'
+				, 'returnType' => '[[Ljava.lang.String;'
+				, 'returnTypeCRC' => '392769419[2364883620[L2004016611;'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
