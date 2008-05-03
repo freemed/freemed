@@ -206,7 +206,7 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 			}
 		});
 	}
-	
+
 	public void submitForm() {
 		ModuleInterfaceAsync service = getProxy();
 		// Form hashmap ...
@@ -214,8 +214,8 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		final HashMap rec = new HashMap();
-		
-		if (internalId > 0) {
+
+		if (!internalId.equals(new Integer(0))) {
 			// Modify
 			service.ModuleModifyMethod(moduleName, rec, new AsyncCallback() {
 				public void onSuccess(Object result) {
@@ -224,7 +224,7 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 
 				public void onFailure(Throwable t) {
 
-				}				
+				}
 			});
 		} else {
 			// Add
@@ -235,12 +235,12 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 
 				public void onFailure(Throwable t) {
 
-				}				
+				}
 			});
 		}
 	}
-	
+
 	public void resetForm() {
-		
+
 	}
 }

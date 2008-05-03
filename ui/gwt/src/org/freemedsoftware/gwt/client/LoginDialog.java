@@ -27,11 +27,11 @@ package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class LoginDialog extends Composite {
+public class LoginDialog extends DialogBox {
 
 	protected boolean loggedIn = false;
 
@@ -60,17 +60,14 @@ public class LoginDialog extends Composite {
 	protected LoginAsync service = null;
 
 	public LoginDialog() {
-		final DialogBox dialog = new DialogBox();
-
 		try {
 			service = (LoginAsync) Util
 					.getProxy("org.freemedsoftware.gwt.client.Public.Login");
 		} catch (Exception e) {
-
+			GWT.log("Caught exception: ", e);
 		}
 
 		final AbsolutePanel absolutePanel = new AbsolutePanel();
-		initWidget(absolutePanel);
 		absolutePanel.setTitle("Login");
 		absolutePanel.setStylePrimaryName("loginPanel");
 		absolutePanel.setStyleName("loginPanel");
@@ -175,51 +172,57 @@ public class LoginDialog extends Composite {
 		absolutePanel.add(loginLabel, 140, 242);
 		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
 
-		dialog.add(absolutePanel);
-		initWidget(dialog);
+		this.setWidget(absolutePanel);
 	}
 
 	public void attemptLogin() {
 		// Disable submit button
-		loginButton.setEnabled(false);
-		LoginAsync service = null;
-		try {
-			service = (LoginAsync) Util
-					.getProxy("org.freemedsoftware.gwt.Public.Login");
-			service.LoggedIn(new AsyncCallback() {
-				public void onSuccess(Object result) {
-					Boolean r = (Boolean) result;
-					if (r.booleanValue()) {
-						// If logged in, continue
-						freemedInterface.resume();
-					} else {
-						// Force login loop
-						dialog.show();
-						loginPassword.setText("");
-						loginButton.setEnabled(true);
-					}
-				}
+		if (Util.isStubbedMode()) {
+			hide();
+			freemedInterface.resume();
+		} else {
+			loginButton.setEnabled(false);
+			LoginAsync service = null;
 
-				public void onFailure(Throwable t) {
-					Window
-							.alert("Unable to contact RPC service, try again later.");
-				}
-			});
-		} catch (Exception e) {
+			try {
+				service = (LoginAsync) Util
+						.getProxy("org.freemedsoftware.gwt.Public.Login");
+				service.LoggedIn(new AsyncCallback() {
+					public void onSuccess(Object result) {
+						Boolean r = (Boolean) result;
+						if (r.booleanValue()) {
+							// If logged in, continue
+							hide();
+							freemedInterface.resume();
+						} else {
+							// Force login loop
+							show();
+							loginPassword.setText("");
+							loginButton.setEnabled(true);
+						}
+					}
+
+					public void onFailure(Throwable t) {
+						Window
+								.alert("Unable to contact RPC service, try again later.");
+					}
+				});
+			} catch (Exception e) {
+			}
 		}
 	}
 
-	public void hide() {
-		dialog.hide();
+	public void show() {
+		super.show();
+		try {
+			userLogin.setFocus(true);
+		} catch (Exception e) {
+			GWT.log("Caught exception: ", e);
+		}
 	}
 
 	public void setFreemedInterface(FreemedInterface i) {
 		freemedInterface = i;
-	}
-
-	public void show() {
-		dialog.show();
-		dialog.center();
 	}
 
 	public boolean isLoggedIn() {

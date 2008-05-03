@@ -48,11 +48,12 @@ public class FreemedInterface implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		// Test to make sure we're logged in
+		loginDialog = new LoginDialog();
+		loginDialog.setFreemedInterface(this);
 		if (Util.isStubbedMode()) {
-			resume();
+			// Skip checking for logged in...
+			loginDialog.show();
 		} else {
-			loginDialog = new LoginDialog();
-			loginDialog.setFreemedInterface(this);
 			LoginAsync service = null;
 			try {
 				service = (LoginAsync) Util
