@@ -57,7 +57,7 @@ public class FreemedInterface implements EntryPoint {
 			LoginAsync service = null;
 			try {
 				service = (LoginAsync) Util
-						.getProxy("org.freemedsoftware.gwt.Public.Login");
+						.getProxy("org.freemedsoftware.gwt.client.Public.Login");
 				service.LoggedIn(new AsyncCallback() {
 					public void onSuccess(Object result) {
 						Boolean r = (Boolean) result;
@@ -72,11 +72,15 @@ public class FreemedInterface implements EntryPoint {
 					}
 
 					public void onFailure(Throwable t) {
-						Window
-								.alert("Unable to contact RPC service, try again later.");
+						Window.alert(t.getMessage());
+						/*
+						 * Window .alert("Unable to contact RPC service, try
+						 * again later.");
+						 */
 					}
 				});
 			} catch (Exception e) {
+				Window.alert("exception: " + e.getMessage());
 			}
 		}
 	}

@@ -290,7 +290,10 @@ $gwtphpmap = array (
 				, 'returnType' => 'java.util.HashMap<java.lang.String,java.lang.String>'
 				, 'returnTypeCRC' => '962170901<2004016611,2004016611>'
 				, 'params' => array (
-					array ( 'type' => 'java.lang.Integer' )
+					array (
+						  'type' => 'java.lang.Integer'
+						, 'typeCRC' => '3438268394'
+					)
 				)
 				, 'throws' => array ( )
 			)

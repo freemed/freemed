@@ -32,7 +32,9 @@ import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -75,9 +77,10 @@ public class PatientSearchScreen extends ScreenInterface {
 		wSmartSearch.addChangeListener(new ChangeListener() {
 			public void onChange(Widget w) {
 				Integer val = ((PatientWidget) w).getValue();
+				Log.debug("Patient value = " + val.toString());
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
-						spawnPatientScreen(val, wSmartSearch.getTitle());
+						spawnPatientScreen(val, wSmartSearch.getText());
 						clearForm();
 					}
 				} catch (Exception e) {
@@ -178,7 +181,7 @@ public class PatientSearchScreen extends ScreenInterface {
 			 * @gwt.typeArgs <java.lang.String, java.lang.String>
 			 */
 			HashMap criteria = new HashMap();
-			criteria.put(wFieldName.getItemText(wFieldName.getSelectedIndex()),
+			criteria.put(wFieldName.getValue(wFieldName.getSelectedIndex()),
 					wFieldValue.getText());
 
 			service.Search(criteria, new AsyncCallback() {
@@ -187,6 +190,8 @@ public class PatientSearchScreen extends ScreenInterface {
 					 * @gwt.typeArgs <java.lang.String,java.lang.String>
 					 */
 					HashMap[] r = (HashMap[]) result;
+					Window.alert("found " + new Integer(r.length).toString()
+							+ " results for Search");
 					for (int iter = 0; iter < r.length; iter++) {
 						setResultRow(r[iter], iter);
 					}

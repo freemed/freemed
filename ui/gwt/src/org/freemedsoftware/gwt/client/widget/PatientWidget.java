@@ -33,6 +33,8 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
@@ -59,33 +61,32 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 			} catch (Exception e) {
 			}
 
-			service.Picklist(req, new Integer(20), new Integer(10),
-					new AsyncCallback() {
-						public void onSuccess(Object data) {
-							/**
-							 * @gwt.typeArgs <java.lang.String,java.lang.String>
-							 */
-							final HashMap result = (HashMap) data;
-							Set keys = result.keySet();
-							Iterator iter = keys.iterator();
+			service.Picklist(req, new Integer(20), new AsyncCallback() {
+				public void onSuccess(Object data) {
+					/**
+					 * @gwt.typeArgs <java.lang.Integer,java.lang.String>
+					 */
+					final HashMap result = (HashMap) data;
+					Set keys = result.keySet();
+					Iterator iter = keys.iterator();
 
-							List items = new ArrayList();
-							map.clear();
-							while (iter.hasNext()) {
-								final String key = (String) iter.next();
-								final String val = (String) result.get(key);
-								addKeyValuePair(items, key, val);
-							}
-							cb.onSuggestionsReady(r,
-									new SuggestOracle.Response(items));
-						}
+					List items = new ArrayList();
+					map.clear();
+					while (iter.hasNext()) {
+						Integer keyInt = (Integer) iter.next();
+						String key = keyInt.toString();
+						Log.debug("keyInt = " + keyInt.toString());
+						String val = (String) result.get(keyInt);
+						addKeyValuePair(items, val, key);
+					}
+					cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
+				}
 
-						public void onFailure(Throwable t) {
+				public void onFailure(Throwable t) {
+					Window.alert(t.getMessage());
+				}
 
-						}
-
-					});
+			});
 		}
 	}
-
 }

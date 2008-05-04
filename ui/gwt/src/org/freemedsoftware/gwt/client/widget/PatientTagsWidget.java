@@ -24,16 +24,17 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.ArrayList;
 
 public class PatientTagsWidget extends Composite {
 

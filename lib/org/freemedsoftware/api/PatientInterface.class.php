@@ -324,7 +324,9 @@ class PatientInterface {
 	//	* csz
 	//
 	public function PatientInformation( $id ) {
+		syslog(LOG_INFO, (int)$id);
 		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) AS age, pa.line1 AS address_line_1, pa.line2 AS address_line_2, CONCAT( pa.city, ', ', pa.stpr, ' ', pa.postal ) AS csz, p.* FROM patient p LEFT OUTER JOIN patient_address pa ON ( pa.patient = p.id AND pa.active = TRUE ) WHERE p.id = " . ( $id + 0 ) . " GROUP BY p.id";
+		syslog(LOG_INFO, $q);
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation
 
