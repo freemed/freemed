@@ -28,6 +28,7 @@ package org.freemedsoftware.gwt.client;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -38,6 +39,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -81,8 +83,9 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.add(userLogin, 92, 71);
 		userLogin.setSize("139px", "22px");
 		userLogin.setStylePrimaryName("freemed-LoginFields");
-		userLogin.setText("your user name");
+		userLogin.setText("");
 		userLogin.setAccessKey('u');
+		userLogin.setTabIndex(1);
 
 		final Label passwordLabel = new Label("password");
 		absolutePanel.add(passwordLabel, 25, 100);
@@ -92,7 +95,8 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.add(loginPassword, 92, 102);
 		loginPassword.setSize("139px", "22px");
 		loginPassword.setStylePrimaryName("freemed-LoginFields");
-		loginPassword.setText("password");
+		loginPassword.setText("");
+		loginPassword.setTabIndex(2);
 
 		final Label facilityLabel = new Label("facility");
 		absolutePanel.add(facilityLabel, 28, 152);
@@ -103,6 +107,7 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.add(facilityList, 94, 149);
 		facilityList.setSize("191px", "22px");
 		facilityList.setStylePrimaryName("freemed-LoginFields");
+		facilityList.setTabIndex(3);
 		if (Util.isStubbedMode()) {
 			facilityList.addItem(
 					"Mt. Ascutney Hospital Medical Clinic Examination Room",
@@ -120,8 +125,11 @@ public class LoginDialog extends DialogBox {
 				}
 
 				public void onFailure(Throwable t) {
-					Window
-							.alert("Unable to contact RPC service, try again later.");
+					Window.alert(t.getMessage());
+					/*
+					 * Window .alert("Unable to contact RPC service, try again
+					 * later."); }
+					 */
 				}
 			});
 		}
@@ -135,6 +143,7 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.add(languageList, 94, 180);
 		languageList.setSize("190px", "22px");
 		languageList.setStylePrimaryName("freemed-LoginFields");
+		languageList.setTabIndex(4);
 		if (Util.isStubbedMode()) {
 			languageList.addItem("English", "en_US");
 			languageList.addItem("Deutsch", "de_DE");
@@ -150,8 +159,11 @@ public class LoginDialog extends DialogBox {
 				}
 
 				public void onFailure(Throwable t) {
-					Window
-							.alert("Unable to contact RPC service, try again later.");
+					Window.alert(t.toString());
+					/*
+					 * Window .alert("Unable to contact RPC service, try again
+					 * later."); }
+					 */
 				}
 			});
 		}
@@ -165,6 +177,7 @@ public class LoginDialog extends DialogBox {
 				attemptLogin();
 			}
 		});
+		loginButton.setTabIndex(5);
 		absolutePanel.add(loginButton, 83, 233);
 		loginButton.setStylePrimaryName("gwt-LoginButton");
 
@@ -172,7 +185,10 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.add(loginLabel, 140, 242);
 		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
 
-		this.setWidget(absolutePanel);
+		final SimplePanel simplePanel = new SimplePanel();
+		simplePanel.setWidget(absolutePanel);
+
+		this.setWidget(simplePanel);
 	}
 
 	public void attemptLogin() {
@@ -185,28 +201,35 @@ public class LoginDialog extends DialogBox {
 			LoginAsync service = null;
 
 			try {
-				service = (LoginAsync) Util
-						.getProxy("org.freemedsoftware.gwt.Public.Login");
-				service.LoggedIn(new AsyncCallback() {
-					public void onSuccess(Object result) {
-						Boolean r = (Boolean) result;
-						if (r.booleanValue()) {
-							// If logged in, continue
-							hide();
-							freemedInterface.resume();
-						} else {
-							// Force login loop
-							show();
-							loginPassword.setText("");
-							loginButton.setEnabled(true);
-						}
-					}
+				Util.login(userLogin.getText(), loginPassword.getText(),
+						new Command() {
+							public void execute() {
+								hide();
+								freemedInterface.resume();
+								loginButton.setEnabled(true);
+							}
+						}, new Command() {
+							public void execute() {
+								show();
+								loginPassword.setText("");
+								loginButton.setEnabled(true);
+							}
 
-					public void onFailure(Throwable t) {
-						Window
-								.alert("Unable to contact RPC service, try again later.");
-					}
-				});
+						});
+				/*
+				 * service = (LoginAsync) Util
+				 * .getProxy("org.freemedsoftware.gwt.client.Public.Login");
+				 * service.Validate(userLogin.getText(),
+				 * loginPassword.getText(), new AsyncCallback() { public void
+				 * onSuccess(Object result) { Boolean r = (Boolean) result; if
+				 * (r.booleanValue()) { // If logged in, continue hide();
+				 * freemedInterface.resume(); } else { // Force login loop
+				 * show(); loginPassword.setText("");
+				 * loginButton.setEnabled(true); } }
+				 * 
+				 * public void onFailure(Throwable t) { Window .alert("Unable to
+				 * contact RPC service, try again later."); } });
+				 */
 			} catch (Exception e) {
 			}
 		}

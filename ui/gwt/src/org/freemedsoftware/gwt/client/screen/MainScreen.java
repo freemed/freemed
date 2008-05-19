@@ -26,12 +26,16 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.FreemedInterface;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -40,6 +44,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public class MainScreen extends Composite {
@@ -48,6 +53,8 @@ public class MainScreen extends Composite {
 			.create(AppConstants.class);
 
 	private MenuBar menuBar_1;
+
+	protected FreemedInterface freemedInterface;
 
 	protected final TabPanel tabPanel;
 
@@ -103,9 +110,30 @@ public class MainScreen extends Composite {
 						}
 					});
 			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
-
+			
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
-					(Command) null);
+					new Command() {
+						public void execute() {
+							try {
+								LoginAsync service = (LoginAsync) Util
+										.getProxy("org.freemedsoftware.gwt.client.Public.Login");
+								service.Logout(new AsyncCallback() {
+									public void onSuccess(Object r) {
+										hide();
+										freemedInterface.getLoginDialog().center();
+										//freemedInterface.getLoginDialog().show();
+									}
+
+									public void onFailure(Throwable t) {
+										Window.alert("Failed to log out.");
+									}
+								});
+							} catch (Exception e) {
+								Window
+										.alert("Could not create proxy for Login");
+							}
+						}
+					});
 			menuItem_3.setStyleName("freemed-SecondaryMenuItem");
 			/*
 			 * all the primary menu items are currently housed in static
@@ -194,4 +222,16 @@ public class MainScreen extends Composite {
 		return tabPanel;
 	}
 
+	public void hide() {
+		RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), false);
+	}
+	
+	public void setFreemedInterface(FreemedInterface i) {
+		freemedInterface = i;
+	}
+	
+	public void show() {
+		RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
+	}
+	
 }

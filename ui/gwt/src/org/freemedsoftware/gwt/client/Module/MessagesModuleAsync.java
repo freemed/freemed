@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.Module;
 
 import java.util.HashMap;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface MessagesModuleAsync {  

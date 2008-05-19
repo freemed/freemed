@@ -54,6 +54,9 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.HTTPRequest;
+import com.google.gwt.user.client.ResponseTextHandler;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -89,7 +92,7 @@ public final class Util {
 				params += "param" + new Integer(iter).toString() + "="
 						+ args[iter];
 			}
-			return url + "/" + method + "/" + params;
+			return url + "/" + method + "?" + params;
 		} catch (Exception e) {
 			return url + "/" + method;
 		}
@@ -110,7 +113,7 @@ public final class Util {
 	 * @return Stubbed mode status
 	 */
 	public static synchronized boolean isStubbedMode() {
-		return true;
+		return false;// true;
 	}
 
 	/**
@@ -207,6 +210,24 @@ public final class Util {
 			throw new Exception("Unable to resolve appropriate class "
 					+ className);
 		}
+	}
+
+	public static void login(String username, String password,
+			final Command whenDone, final Command whenFail) {
+		String[] params = {
+				username, password
+		};
+		HTTPRequest.asyncGet(Util.getJsonRequest(
+				"org.freemedsoftware.public.Login.Validate", params),
+				new ResponseTextHandler() {
+			public void onCompletion(String result) {
+				if (result.compareTo("true") == 0) {
+					whenDone.execute();
+				} else {
+					whenFail.execute();
+				}
+			}
+		});
 	}
 
 	/**

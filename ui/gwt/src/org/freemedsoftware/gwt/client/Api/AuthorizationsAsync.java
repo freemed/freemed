@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.Api;
 
 import java.util.Date;
 import java.util.HashMap;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AuthorizationsAsync {  

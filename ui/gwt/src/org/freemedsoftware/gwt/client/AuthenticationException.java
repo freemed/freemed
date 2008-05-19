@@ -22,23 +22,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client.Api;
+package org.freemedsoftware.gwt.client;
 
-import java.util.HashMap;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-
-public interface SystemConfig extends RemoteService {
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap GetAll ( );
-	public String GetValue ( String configKey );
-	public String[] GetConfigSections ( );
-	public Boolean SetValue ( String configKey, String configValue );
-	/**
-	 * @gwt.typeArgs values <java.lang.String, java.lang.String>
-	 */
-	public Boolean SetValues ( HashMap values );
+public class AuthenticationException extends Exception implements
+		IsSerializable {
+	static final long serialVersionUID = 805031045;
 }
-

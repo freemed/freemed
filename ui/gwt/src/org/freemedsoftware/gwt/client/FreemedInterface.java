@@ -52,22 +52,25 @@ public class FreemedInterface implements EntryPoint {
 		loginDialog.setFreemedInterface(this);
 		if (Util.isStubbedMode()) {
 			// Skip checking for logged in...
-			loginDialog.show();
+			loginDialog.center();
+			//loginDialog.show();
 		} else {
 			LoginAsync service = null;
 			try {
 				service = (LoginAsync) Util
 						.getProxy("org.freemedsoftware.gwt.client.Public.Login");
+				final FreemedInterface thisObject = this;
+				
 				service.LoggedIn(new AsyncCallback() {
 					public void onSuccess(Object result) {
 						Boolean r = (Boolean) result;
 						if (r.booleanValue()) {
 							// If logged in, continue
-							MainScreen mainScreen = new MainScreen();
-							RootPanel.get("rootPanel").add(mainScreen);
+							resume();
 						} else {
 							// Force login loop
-							loginDialog.show();
+							loginDialog.center();
+							//loginDialog.show();
 						}
 					}
 
@@ -85,12 +88,19 @@ public class FreemedInterface implements EntryPoint {
 		}
 	}
 
+	public LoginDialog getLoginDialog() {
+		return loginDialog;
+	}
+
 	public void resume() {
 		if (!active) {
 			mainScreen = new MainScreen();
 			RootPanel.get("rootPanel").add(mainScreen);
+			mainScreen.setFreemedInterface(this);
+			active = true;
 		} else {
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
 		}
 	}
+	
 }

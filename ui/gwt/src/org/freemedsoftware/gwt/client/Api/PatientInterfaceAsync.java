@@ -56,6 +56,7 @@ public interface PatientInterfaceAsync {
 	public void NumericSearch(HashMap criteria, AsyncCallback callback);
 
 	/**
+	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
 	 */
 	public void Search(HashMap criteria, AsyncCallback callback);
 
@@ -71,8 +72,7 @@ public interface PatientInterfaceAsync {
 
 	/**
 	 */
-	public void Picklist(String textParameters, Integer limit,
-			Integer inputLimit, AsyncCallback callback);
+	public void Picklist(String textParameters, Integer limit, AsyncCallback callback);
 
 	public void ProceduresToBill(Integer patientId, AsyncCallback callback);
 

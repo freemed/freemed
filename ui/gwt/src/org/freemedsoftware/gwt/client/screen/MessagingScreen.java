@@ -114,6 +114,9 @@ public class MessagingScreen extends ScreenInterface {
 		verticalSplitPanel.add(messageView);
 		messageView.setSize("100%", "100%");
 		// verticalSplitPanel.setSize("100%", "100%");
+		
+		// Start population routine
+		populate("");
 	}
 
 	public void populate(String tag) {

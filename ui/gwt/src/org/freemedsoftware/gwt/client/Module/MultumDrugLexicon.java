@@ -24,8 +24,9 @@
 
 package org.freemedsoftware.gwt.client.Module;
 
-import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
+
+import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface MultumDrugLexicon extends RemoteService {  
 	public String[][] DosagesForDrug ( String drugId, String drugLabel );

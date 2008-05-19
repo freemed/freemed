@@ -24,9 +24,10 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.Date;
 import java.util.HashMap;
+
+import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Authorizations extends RemoteService {  
 	public Integer[] FindByCoverage ( Integer coverageId );

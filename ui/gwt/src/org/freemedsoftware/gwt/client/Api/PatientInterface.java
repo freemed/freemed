@@ -26,6 +26,8 @@ package org.freemedsoftware.gwt.client.Api;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.AuthenticationException;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface PatientInterface extends RemoteService {
@@ -80,10 +82,10 @@ public interface PatientInterface extends RemoteService {
 	public Integer TotalInSystem();
 
 	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
+	 * @gwt.typeArgs <java.lang.Integer, java.lang.String>
 	 */
-	public HashMap Picklist(String textParameters, Integer limit,
-			Integer inputLimit);
+	public HashMap Picklist(String textParameters, Integer limit)
+			throws AuthenticationException;
 
 	public Integer[] ProceduresToBill(Integer patientId);
 

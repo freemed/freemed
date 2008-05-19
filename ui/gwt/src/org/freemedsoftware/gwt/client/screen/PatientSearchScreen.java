@@ -34,7 +34,6 @@ import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -152,6 +151,7 @@ public class PatientSearchScreen extends ScreenInterface {
 
 	protected void refreshSearch() {
 		sortableTable.clear();
+		clearSearchResults();
 		patientMap.clear();
 		if (Util.isStubbedMode()) {
 			/**
@@ -190,7 +190,7 @@ public class PatientSearchScreen extends ScreenInterface {
 					 * @gwt.typeArgs <java.lang.String,java.lang.String>
 					 */
 					HashMap[] r = (HashMap[]) result;
-					Window.alert("found " + new Integer(r.length).toString()
+					Log.info("found " + new Integer(r.length).toString()
 							+ " results for Search");
 					for (int iter = 0; iter < r.length; iter++) {
 						setResultRow(r[iter], iter);
@@ -200,9 +200,21 @@ public class PatientSearchScreen extends ScreenInterface {
 				}
 
 				public void onFailure(Throwable t) {
-					GWT.log("Caught exception: ", t);
+					Log.error("Caught exception: ", t);
 				}
 			});
+		}
+	}
+
+	/**
+	 * Clear all contents of the SortableTable, since the generic clear() method
+	 * does not clear set cell contents.
+	 */
+	public void clearSearchResults() {
+		for (int rowIter = 0; rowIter < patientMap.size(); rowIter++) {
+			for (int colIter = 0; colIter < 6; colIter++) {
+				sortableTable.clearCell(rowIter, colIter);
+			}
 		}
 	}
 

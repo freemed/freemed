@@ -24,8 +24,9 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
-import com.google.gwt.user.client.rpc.RemoteService;
 import java.util.HashMap;
+
+import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Scheduler extends RemoteService {
 	/**
