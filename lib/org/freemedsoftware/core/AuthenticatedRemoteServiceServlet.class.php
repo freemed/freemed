@@ -40,6 +40,7 @@ class AuthenticatedRemoteServiceServlet extends RemoteServiceServlet {
      */
     public function onAfterRequestDecoded(RPCRequest $rpcRequest) {
         if ( ! $this->checkAuthenticationPolicy( $rpcRequest->getMethod()->getDeclaringMappedClass()->getMappedName() ) ) {
+		syslog(LOG_INFO,  $rpcRequest->getMethod()->getDeclaringMappedClass()->getMappedName() );
             $ex = new AuthenticationException( );
             throw new AuthenticationException( );
         }
@@ -61,6 +62,7 @@ class AuthenticatedRemoteServiceServlet extends RemoteServiceServlet {
 
         // Check authentication
 	if ( CallMethod( 'org.freemedsoftware.public.Login.LoggedIn' ) == false ) {
+            syslog(LOG_INFO, "Not logged in, failing checkAuthenticationPolicy");
             return false;
         }
 

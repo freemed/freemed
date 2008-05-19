@@ -292,8 +292,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'PatientInformation'
 				, 'mappedName' => 'PatientInformation'
-				, 'returnType' => '[Ljava.util.HashMap;'
-				, 'returnTypeCRC' => '3558356060[L962170901;'
+				, 'returnType' => 'java.util.HashMap'
+				, 'returnTypeCRC' => '962170901'
 				, 'params' => array (
 					array (
 						  'type' => 'java.lang.Integer'

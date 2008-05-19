@@ -411,15 +411,16 @@ class UnfiledDocuments extends SupportModule {
 		// Check to see if we're the person who is supposed to be
 		// notified. If not, die out right now.
 		$supposed = freemed::config_value('uffax_user');
+		$authdata = HTTP_Session2::get( 'authdata' );
 		if (!(strpos($supposed, ',') === false)) {
 			// Handle array
 			$found = false;
 			foreach (explode(',', $supposed) AS $s) {
-				if ($s == $_SESSION['authdata']['user']) { $found = true; }
+				if ($s == $authdata['user']) { $found = true; }
 			}
 			if (!$found) { return false; }
 		} else {
-			if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
+			if (($supposed > 0) and ($supposed != $authdata['user'])) {
 				return false;
 			}
 		}
@@ -453,15 +454,16 @@ class UnfiledDocuments extends SupportModule {
 		// Check to see if we're the person who is supposed to be
 		// notified. If not, die out right now.
 		$supposed = freemed::config_value('uffax_user');
+		$authdata = HTTP_Session2::get( 'authdata' );
 		if (!(strpos($supposed, ',') === false)) {
 			// Handle array
 			$found = false;
 			foreach (explode(',', $supposed) AS $s) {
-				if ($s == $_SESSION['authdata']['user']) { $found = true; }
+				if ($s == $authdata['user']) { $found = true; }
 			}
 			if (!$found) { return false; }
 		} else {
-			if (($supposed > 0) and ($supposed != $_SESSION['authdata']['user'])) {
+			if (($supposed > 0) and ($supposed != $authdata['user'])) {
 				return false;
 			}
 		}

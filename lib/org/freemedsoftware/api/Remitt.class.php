@@ -80,9 +80,10 @@ class Remitt {
 	//
 	public function GetProtocolVersion ( ) {
 		if (!$this->GetServerStatus()) { return NULL; }
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		$version = $this->_call( 'Remitt.Interface.ProtocolVersion' );
 		return $version;
@@ -121,9 +122,10 @@ class Remitt {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		$status = $this->_call(
 			'Remitt.Interface.GetStatus',
@@ -159,9 +161,10 @@ class Remitt {
 	//	Array of available options for the specified plugin
 	//
 	public function ListOptions ( $type, $plugin, $media = NULL, $format = NULL ) {
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 
 		if (!isset($this->_cache['ListOptions'][$type][$plugin]['x_'.$format])) {
@@ -207,9 +210,10 @@ class Remitt {
 	//	Array of available plugins
 	//
 	public function ListPlugins ( $type ) {
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 
 		if (!isset($this->_cache['ListPlugins'][$type])) {
@@ -236,9 +240,10 @@ class Remitt {
 	//	Hash of years => number of output files available.
 	//
 	public function ListOutputMonths ( $year = NULL ) {
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		if ($year) {
 			$months = $this->_call( 
@@ -263,9 +268,10 @@ class Remitt {
 	//	Hash of years => number of output files available.
 	//
 	public function ListOutputYears ( ) {
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		$years = $this->_call( 'Remitt.Interface.GetOutputYears' );
 		if (!is_array($years)) { $years = array ( $years ); }
@@ -286,11 +292,12 @@ class Remitt {
 	public function Login ( $username, $password ) {
 /*
 		// Check for session data
-		if ($_SESSION['remitt']) { 
+		$remitt = HTTP_Session2::get( 'remitt' );
+		if ($remitt) { 
 			// Set credentials properly
 			$this->_connection->SetCredentials(
-				$_SESSION['remitt']['sessionid'],
-				$_SESSION['remitt']['key']
+				  $remitt['sessionid']
+				, $remitt['key']
 			);
 
 			// Skip the rest
@@ -314,12 +321,13 @@ class Remitt {
 			$this->protocol
 		);
 		$response = $response_raw->deserialize();
-		$_SESSION['remitt'] = $response;
+		HTTP_Session2::set( 'remitt', $response );
 
 		// Set credentials properly
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		//print "Got this: "; print_r($response); print "<br/>\n";
 
@@ -337,9 +345,10 @@ class Remitt {
 		$bc = $bs = $ch = 1;
 		$xml = $this->RenderPayerXML($billkey_hash['procedures'], $bc, $bs, $ch);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		//print "calling with ( ..., XSLT, $render, $transport ) <br/>\n";
 		$output = $this->_call(
@@ -362,9 +371,10 @@ class Remitt {
 		// For now, just use the first ones ... FIXME FIXME FIXME
 		$xml = $this->RenderStatementXML($procedures);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
+		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
-			$_SESSION['remitt']['sessionid'],
-			$_SESSION['remitt']['key']
+			  $remitt['sessionid']
+			, $remitt['key']
 		);
 		//print "calling with ( ..., XSLT, $render, $transport ) <br/>\n";
 		$output = $this->_call(

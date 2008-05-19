@@ -34,7 +34,7 @@ class Login {
 	//	Boolean.
 	//
 	public function LoggedIn ( ) {
-		if ( $_SESSION['authdata'] ) { return true; }
+		if ( is_array( HTTP_Session2::get('authdata') ) ) { return true; }
 		return false;
 	} // end method LoggedIn
 
@@ -47,8 +47,8 @@ class Login {
 	//	Success, boolean.
 	//
 	public function Logout ( ) {
-		unset ( $_SESSION['authdata'] );
-		unset ( $_SESSION['ipaddr'] );
+		HTTP_Session2::set( 'authdata', null );
+		HTTP_Session2::set( 'ipaddr', null );
 		return true;
 	} // end method Logout
 
@@ -104,13 +104,15 @@ class Login {
 			// Set session vars
 			unset($r['userpassword']);
 			// Pull user options
-			$_SESSION['authdata']['username'] = $username;
-			$_SESSION['authdata']['user'] = $r['id'];
+			$authdata = HTTP_Session2::get( 'authdata' );
+			$authdata['username'] = $username;
+			$authdata['user'] = $r['id'];
+			HTTP_Session2::set( 'authdata', $authdata );
 
 			$this->SessionPopulate();
 
 			// Set ipaddr for SESSION_PROTECTION
-			$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+			HTTP_Session2::set( 'ipaddr', $_SERVER['REMOTE_ADDR'] );
 	
 			// Authorize
 			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth successful login");}		
@@ -119,8 +121,8 @@ class Login {
 			return true;
 		} else { // check password
 			// Failed password check
-			unset ( $_SESSION['authdata'] );
-			unset ( $_SESSION['ipaddr'] );
+			HTTP_Session2::set( 'authdata', null );
+			HTTP_Session2::set( 'ipaddr', null );
 			//if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth failed login");	}	
 			//$log = freemed::log_object();
 			//$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Failed login" );
@@ -138,7 +140,9 @@ class Login {
 	//	True on success.
 	//
 	public function SessionPopulate ( ) {
+		syslog(LOG_INFO, "SessionPopulate called");
 		if ( !$this->LoggedIn() ) { return false; }
+		syslog(LOG_INFO, "SessionPopulate called, proceeding");
 
 		$u = freemed::user_cache();
 
@@ -147,7 +151,9 @@ class Login {
 		$s = unserialize( $r['usermanageopt'] );
 		if ( $s ) { $r['usermanageopt'] = $s; }
 
-		$_SESSION['authdata']['user_record'] = $r;
+		$authdata = HTTP_Session2::get( 'authdata' );
+		$authdata['user_record'] = $r;
+		HTTP_Session2::set( 'authdata', $authdata );
 
 		return true;
 	} // end method SessionPopulate

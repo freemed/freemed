@@ -43,6 +43,7 @@ $gwtphpmap = array (
 				  'name' => 'Get'
 				, 'mappedBy' => 'Get'
 				, 'returnType' => 'java.util.HashMap'
+				, 'returnTypeCRC' => '962170901'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.Integer' )
 				)
@@ -66,6 +67,7 @@ $gwtphpmap = array (
 				  'name' => 'RecipentsToText'
 				, 'mappedBy' => 'recipients_to_text'
 				, 'returnType' => 'java.lang.String'
+				, 'returnTypeCRC' => '2004016611'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.String' )
 				)
@@ -107,7 +109,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'ListOfUsers'
 				, 'mappedBy' => 'ListOfUsers'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
@@ -191,7 +194,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'ViewPerPatient'
 				, 'mappedBy' => 'view_per_patient'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => 'java.lang.Boolean' )
@@ -219,7 +223,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'ViewPerUser'
 				, 'mappedBy' => 'view_per_user'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.Boolean' )
 				)

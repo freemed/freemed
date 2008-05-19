@@ -145,13 +145,11 @@ class freemed {
 	//	<freemed::check_access_for_patient>
 	//
 	public function check_access_for_facility ($facility_number) {
-		global $_SESSION;
-
 		// Separate out authdata
-		$authdata = $_SESSION['authdata'];
+		$authdata = HTTP_Session2::get('authdata', array());
 
 		// Root has all access...
-		if ($_SESSION['authdata']['user'] == 1) return true;
+		if ($authdata['user'] == 1) return true;
 
 		// Grab the authorizations field
 		$f_fac = freemed::get_link_field ($authdata['user'], "user", "userfac");
@@ -192,7 +190,7 @@ class freemed {
 	public function check_access_for_patient ($patient_number, $_user=0) {
 		if ($_user == 0) {
 			// Grab authdata
-			$_authdata = $_SESSION['authdata'];
+			$_authdata = HTTP_Session2::get('authdata', array());
 			$user = $_authdata['user'];
 		} else {
 			$user = $_user;
@@ -1458,12 +1456,12 @@ function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
 //
 function page_push () {
 	global $page_title;
-	$page_history = $_SESSION['page_history'];
+	$page_history = HTTP_Session2::get('page_history');
 
 	// Import it if it exists
-	if (isset($_SESSION['page_history'])) {
+	if (isset($page_history)) {
 		// Import
-		$_page_history = $_SESSION['page_history'];
+		$_page_history = $page_history;
 
 		// Check to see if this is the last item on the list...
 		// ... kick out without adding.
@@ -1478,7 +1476,7 @@ function page_push () {
 		"type=".urlencode($_REQUEST['type']);
 
 	// Reimport into SESSION
-	$_SESSION['page_history'] = $_page_history;
+	HTTP_Session2::put( 'page_history', $_page_history );
 } // end function page_push
 
 // Function: page_pop
@@ -1486,11 +1484,13 @@ function page_push () {
 //	Pop off page from global history stack.
 //
 function page_pop () {
+	$page_history = HTTP_Session2::get('page_history');
+
 	// Return false if there is nothing in the list
-	if (!isset($_SESSION['page_history'])) return false;
+	if (!isset($page_history)) return false;
 
 	// Import page_history
-	$_page_history = $_SESSION['page_history'];
+	$_page_history = $page_history;
 
 	// Otherwise get the last one and return it ...
 	$to_return = $_page_history[(count($page_history)-1)];
@@ -1501,8 +1501,8 @@ function page_pop () {
 	unset($_page_history_name[(count($_page_history)-1)]);
 
 	// Reimport into SESSION
-	$_SESSION['page_history'] = $_page_history;
-	$_SESSION['page_history_name'] = $_page_history_name;
+	HTTP_Session2::set( 'page_history', $_page_history );
+	HTTP_Session2::set( 'page_history_name', $_page_history_name );
 
 	// And return value (access as list(x,y) = page_pop())
 	return array ($to_return, $to_return_name);
@@ -1513,11 +1513,10 @@ function page_pop () {
 //	Push patient onto global history stack.
 //
 function patient_push ($patient) {
-	// Import it if it exists
-	if (isset($_SESSION['patient_history'])) {
-		// Import
-		$patient_history = $_SESSION['patient_history'];
+	$patient_history = HTTP_Session2::get('patient_history');
 
+	// Import it if it exists
+	if (isset($patient_history)) {
 		// Clean out null entries... and rogue arrays
 		foreach ($patient_history AS $k => $v) {
 			if (!$v) unset($patient_history[$k]);
@@ -1528,7 +1527,7 @@ function patient_push ($patient) {
 		// ... kick out without adding.
 		if ($patient_history[(count($patient_history))] == $patient) {
 			// Reimport due to cleaning
-			$_SESSION['patient_history'] = $patient_history;
+			HTTP_Session2::set( 'patient_history', $patient_history );
 
 			// And we don't have to add it, exit with true
 			return true;
@@ -1539,7 +1538,7 @@ function patient_push ($patient) {
 	$patient_history[] = $patient;
 
 	// Reimport into SESSION
-	$_SESSION['patient_history'] = $patient_history;
+	HTTP_Session2::set( 'patient_history', $patient_history );
 } // end function patient_push
 
 // Function: patient_history_list
@@ -1551,11 +1550,10 @@ function patient_push ($patient) {
 //	Array of patients in global history list.
 //
 function patient_history_list () {
-	// Return false if there is nothing in the list
-	if (!is_array($_SESSION['patient_history'])) return false;
+	$patient_history = HTTP_Session2::get('patient_history');
 
-	// Import patient_history
-	$patient_history = $_SESSION['patient_history'];
+	// Return false if there is nothing in the list
+	if (!is_array($patient_history)) return false;
 
 	// Check for no patient history
 	if (count($patient_history)<1) return false;
@@ -1595,11 +1593,10 @@ function patient_history_list () {
 //	Array of pages in global history list.
 //
 function page_history_list () {
-	// Return false if there is nothing in the list
-	if (!is_array($_SESSION['page_history'])) return false;
+	$page_history = HTTP_Session2::get( 'page_history' );
 
-	// Import patient_history
-	$page_history = $_SESSION['page_history'];
+	// Return false if there is nothing in the list
+	if (!is_array($page_history)) return false;
 
 	// Check for no patient history
 	if (count($page_history)<1) return false;

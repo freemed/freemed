@@ -54,8 +54,9 @@ class User {
 
 		if ($param == NULL) {
 			// Check to see if XML-RPC or session data
-			if ($_SESSION['authdata']['user']) {
-				$this->user_number = $_SESSION['authdata']['user']; 
+			$authdata = HTTP_Session2::get( 'authdata' );
+			if ($authdata['user']) {
+				$this->user_number = $authdata['user']; 
 			} else {
 				$this->user_number = $GLOBALS['__freemed']['basic_auth_id'];
 			}

@@ -44,7 +44,8 @@ $gwtphpmap = array (
 			  array (
 				  'name' => 'GetAllByTag'
 				, 'mappedName' => 'GetAllByTag'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Boolean' )
@@ -61,9 +62,10 @@ $gwtphpmap = array (
 			//	Array of tags
 			//
 			, array (
-				  'name' => 'GetAllByTag'
-				, 'mappedName' => 'GetAllByTag'
-				, 'returnType' => '[[java.lang.String'
+				  'name' => 'MessageTags'
+				, 'mappedName' => 'MessageTags'
+				, 'returnType' => '[[Ljava.lang.String;'
+				, 'returnTypeCRC' => '392769419[2364883620[L2004016611;'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)

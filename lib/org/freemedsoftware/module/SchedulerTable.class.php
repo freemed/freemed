@@ -94,8 +94,8 @@ class SchedulerTable extends SupportModule {
 			$day_count = $GLOBALS['sql']->query(
 				"SELECT COUNT(*) AS day_count FROM scheduler WHERE ".
 				"caldateof = '".date('Y-m-d')."' ".
-				( $_SESSION['default_facility'] ?
-					"AND calfacility='".addslashes($_SESSION['default_facility'])."' " : "" )
+				( HTTP_Session2::get( 'default_facility' ) ?
+					"AND calfacility='".addslashes(HTTP_Session2::get( 'default_facility' ))."' " : "" )
 			);
 
 			// Figure out appointments for this week

@@ -105,7 +105,7 @@ if (!defined('SKIP_SQL_INIT')) {
 if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 	LoadObjectDependency( 'net.php.pear.HTTP_Session2' );
 	HTTP_Session2::useTransSID(false);
-	HTTP_Session2::useCookies(false);
+	HTTP_Session2::useCookies(true);
 
 	// using an existing MDB2 connection
 	HTTP_Session2::setContainer(
@@ -116,16 +116,19 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 		)
 	);
 
-	HTTP_Session2::start( );
-	HTTP_Session2::setExpire( time() + (60 * 60) ); // set expire to 60 seconds
-	HTTP_Session2::setIdle( time() + (10 * 60) );   // set idle to 5 seconds
+	HTTP_Session2::start( 's' );
+ 
+	HTTP_Session2::setExpire( time() + (60 * 60) ); // set expire to 60 minutes 
+	HTTP_Session2::setIdle( time() + (1 * 60) );   // set idle to 60 seconds
 
 	if (HTTP_Session2::isExpired()) {
+		syslog( LOG_INFO, "Session expired!!" );
 		HTTP_Session2::destroy();
 	}
 
 	if (HTTP_Session2::isIdle()) {
-		HTTP_Session2::destroy();
+		syslog( LOG_INFO, "Session became idle" );
+		//HTTP_Session2::destroy();
 	}
 
 	HTTP_Session2::updateIdle();
@@ -142,19 +145,19 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 	//----- Gettext and language settings
 	if (isset($_REQUEST['_l'])) {
 		// Handle template language changes
-		$_SESSION['language'] = $_REQUEST['_l'];
-	} elseif ($_SESSION['language']) {
+		HTTP_Session2::set( 'language', $_REQUEST['_l'] );
+	} elseif (HTTP_Session2::get( 'language' )) {
 		// Pull from cookie (do nothing)
 	} else {
 		// Use the default
-		$_SESSION['language'] = DEFAULT_LANGUAGE;
+		HTTP_Session2::set( 'language', DEFAULT_LANGUAGE );
 	}
-	$GLOBALS['freemed']['__language'] = $_SESSION['language'];
+	$GLOBALS['freemed']['__language'] = HTTP_Session2::get( 'language' );
 
 	// Set default facility from parameter if it exists
 	if (isset($_REQUEST['_f'])) {
 		// Handle template language changes
-		$_SESSION['default_facility'] = ( $_REQUEST['_f'] + 0 );
+		HTTP_Session2::set( 'default_facility', ( $_REQUEST['_f'] + 0 ) );
 	}
 
 	// Load ACL routines
