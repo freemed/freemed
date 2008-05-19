@@ -23,9 +23,9 @@
  */
 
 /**
- * @package gwtphp.exceptions
+ * @package gwtphp.maps.com.google.gwt.user.client.rpc
  */
-class IncompatibleRemoteServiceException extends Exception {
+class IncompatibleRemoteServiceException extends Exception implements GWTPHPSerializable {
 	
 	/**
 	 *
