@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends Composite {
 
@@ -40,4 +41,9 @@ public abstract class ScreenInterface extends Composite {
 		state = s;
 	}
 
+	public void closeScreen() {
+		TabPanel t = state.getTabPanel();
+		t.selectTab(t.getWidgetIndex(this) - 1);
+		t.remove(t.getWidgetIndex(this));
+	}
 }

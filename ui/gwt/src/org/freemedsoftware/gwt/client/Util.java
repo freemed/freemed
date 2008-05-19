@@ -265,6 +265,7 @@ public final class Util {
 			PatientScreenInterface screen, CurrentState state,
 			PatientScreen pScreen) {
 		screen.assignState(state);
+		screen.assignPatientScreen(pScreen);
 		pScreen.getTabPanel().add((Widget) screen,
 				new ClosableTab(title, (Widget) screen));
 		pScreen.getTabPanel().selectTab(

@@ -25,12 +25,16 @@
 package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class PatientScreenInterface extends ScreenInterface {
 
 	protected Integer patientId = new Integer(0);
+
+	protected PatientScreen patientScreen = null;
 
 	protected CurrentState state = null;
 
@@ -39,6 +43,24 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	 */
 	public void assignState(CurrentState s) {
 		state = s;
+	}
+
+	/**
+	 * Pass current patient screen.
+	 * 
+	 * @param p
+	 */
+	public void assignPatientScreen(PatientScreen p) {
+		patientScreen = p;
+	}
+
+	/**
+	 * Close this screen by removing it from the tab panel.
+	 */
+	public void closeScreen() {
+		TabPanel t = patientScreen.getTabPanel();
+		t.selectTab(t.getWidgetIndex(this) - 1);
+		t.remove(t.getWidgetIndex(this));
 	}
 
 	/**
