@@ -75,7 +75,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'DxForPatient'
 				, 'mappedName' => 'DxForPatient'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.Integer' )
 				)
@@ -108,7 +109,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'EmrAttachmentsByPatient'
 				, 'mappedName' => 'EmrAttachmentsByPatient'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.Integer' )
 				)
@@ -132,7 +134,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'EmrAttachmentsByPatientTable'
 				, 'mappedName' => 'EmrAttachmentsByPatientTable'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => 'java.lang.String' )
@@ -160,7 +163,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'EmrModules'
 				, 'mappedName' => 'EmrModules'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.Boolean' )
@@ -191,7 +195,7 @@ $gwtphpmap = array (
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => 'java.lang.Integer' )
-					, array ( 'type' => '[java.lang.Integer' )
+					, array ( 'type' => '[Ljava.lang.Integer;' )
 				)
 				, 'throws' => array ( )
 			)
@@ -218,10 +222,11 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'NumericSearch'
 				, 'mappedName' => 'NumericSearch'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					array (
-						  'type' => 'java.util.HashMap'
+						  'type' => 'java.util.HashMap<java.lang.String,java.lang.String>'
 						, 'typeCRC' => '962170901<2004016611,2004016611>'
 					)
 				)
@@ -252,11 +257,11 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'Search'
 				, 'mappedName' => 'Search'
-				, 'returnType' => '[Ljava.util.HashMap<java.lang.String,java.lang.String>;'
-				, 'returnTypeCRC' => '3558356060[L962170901<2004016611,2004016611>;'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					array (
-						  'type' => 'java.util.HashMap'
+						  'type' => 'java.util.HashMap<java.lang.String,java.lang.String>'
 						, 'typeCRC' => '962170901<2004016611,2004016611>'
 					)
 				)
@@ -287,8 +292,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'PatientInformation'
 				, 'mappedName' => 'PatientInformation'
-				, 'returnType' => 'java.util.HashMap<java.lang.String,java.lang.String>'
-				, 'returnTypeCRC' => '962170901<2004016611,2004016611>'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					array (
 						  'type' => 'java.lang.Integer'
@@ -364,7 +369,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'ProceduresToBill'
 				, 'mappedName' => 'ProceduresToBill'
-				, 'returnType' => '[java.lang.Integer'
+				, 'returnType' => '[Ljava.lang.Integer;'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.Integer' )
 				)

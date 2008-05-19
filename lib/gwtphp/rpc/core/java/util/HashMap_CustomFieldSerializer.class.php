@@ -85,7 +85,7 @@ final class HashMap_CustomFieldSerializer {
 				if (!FORCE_CAST_TO_PHP_PRIMITIVE_TYPES || is_object($key)) {
 					echo $key.' : '.gettype($key);
 					class_exists('SerializationException') 
-					|| require(GWTPHP_DIR.'/exceptions/SerializationException.class.php');
+					|| require_once(GWTPHP_DIR.'/exceptions/SerializationException.class.php');
 					throw new SerializationException("Error occurred while casting native php array to HashMap: "
 					."HashMap_CustomFieldSerializer serialize only array() where"
 					." keys object are mapped by one of following types:"
@@ -127,18 +127,31 @@ final class HashMap_CustomFieldSerializer {
 			$size = count($instance);
 			$streamWriter->writeInt($size);
 
+			$typeParameters = $instanceClass->getTypeParameters();
+
 			//for (Object obj : instance) {
+			if (defined('GWTPHP_FORCE_SHOEHORN') and !is_array($typeParameters)) {
+				// Force casting to java.util.HashMap<java.lang.String,java.lang.String>
+				require_once(GWTPHP_DIR.'/lang/SimpleMappedClass.class.php');
+				$_class = new SimpleMappedClass();
+				$_class->setClassLoader(GWTPHPContext::getInstance()->getMappedClassLoader()->getClassLoader());
+				$_class->setMappedName("java.lang.String");
+				$_class->setSignature("java.lang.String");
+				$_class->setCRC("2004016611");
+				$typeParameters = array( $_class, $_class );
+			} else {
 			if (!$instanceClass->isGeneric())  {
 				class_exists('SerializationException') 
-				|| require(GWTPHP_DIR.'/exceptions/SerializationException.class.php');
+				|| require_once(GWTPHP_DIR.'/exceptions/SerializationException.class.php');
 				throw new SerializationException("Error occurred while casting native php array to HashMap: "
 				."HashMap must be mapped as generic type! add < > to signatures and CRC");
-			}
 			$typeParameters = $instanceClass->getTypeParameters();
+			}
+			}
 
 			if ( !isset(HashMap_CustomFieldSerializer::$ACCEPTABLE_KEY_TYPES[$typeParameters[0]->getSignature()]) ) {
 				class_exists('SerializationException') 
-				|| require(GWTPHP_DIR.'/exceptions/SerializationException.class.php');
+				|| require_once(GWTPHP_DIR.'/exceptions/SerializationException.class.php');
 				throw new SerializationException("Error occurred while casting native php array to HashMap: "
 				."HashMap_CustomFieldSerializer serialize only array() where "
 				."keys object are mapped by one of following types: "

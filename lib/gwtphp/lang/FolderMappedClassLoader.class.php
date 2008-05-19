@@ -164,6 +164,7 @@ class FolderMappedClassLoader extends AbstractMappedClassLoader {
 	 * @throws ClassMapNotFoundException
 	 */
 	public function findMappedClassByObject($object) {		
+		syslog(LOG_INFO, "reflect: $object");
 		return $this->findMappedClassByReflectionClass(new ReflectionObject($object));
 	}
 	
@@ -365,6 +366,7 @@ class FolderMappedClassLoader extends AbstractMappedClassLoader {
 		$class = new SimpleMappedClass();
 		$class->setClassLoader($this->getClassLoader());
 		$class->setSignature($className);
+		$class->setCRC(JavaSignatureUtil::getSerializationSignatureForNative($className));
 		return $class;
 		}
 		else return null;

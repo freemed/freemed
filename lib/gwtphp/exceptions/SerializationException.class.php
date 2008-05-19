@@ -26,7 +26,7 @@
  * @package gwtphp.exceptions
  */
 
-class SerializationException_ extends Exception {
+class SerializationException extends Exception {
 	
 	public function __construct($message) {
 		

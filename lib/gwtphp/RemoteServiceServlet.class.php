@@ -181,7 +181,7 @@ class RemoteServiceServlet implements SerializationPolicyProvider  {
      */
     protected function onAfterResponseSerialized($serializedResponse) {
     }
-
+    
     /**
      * Override this method to examine the serialized version of the request
      * payload before it is deserialized into objects. The default implementation
