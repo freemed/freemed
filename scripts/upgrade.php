@@ -71,6 +71,7 @@ printHeader( "Include aggregation table definition" );
 loadSchema( 'patient' );
 loadSchema( 'patient_emr' );
 loadSchema( 'patienttag' );
+loadSchema( 'dxhistory' );
 
 printHeader( "Load admin table definitions" );
 loadSchema( 'modules' );
@@ -109,6 +110,12 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, CONCAT( LPAD( calhour, 2, '0' ), ':', LPAD( calminute, 2, '0' ), ' (', calduration, 'm) - ', calprenote ), 'active' FROM scheduler WHERE caltype='pat';" );
 execSql( "INSERT INTO patient_address SELECT id, NOW(), 'H', 0, 'S', ptaddr1, ptaddr2, ptcity, ptstate, ptzip, ptcountry, NULL FROM patient;" );
 execSql( "UPDATE patient_address SET active = 1;" );
+
+printHeader( "Building diagnosis history" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag1, NULL FROM procrec WHERE NOT ISNULL(procdiag1) AND procdiag1 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag2, NULL FROM procrec WHERE NOT ISNULL(procdiag2) AND procdiag2 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag3, NULL FROM procrec WHERE NOT ISNULL(procdiag3) AND procdiag3 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag4, NULL FROM procrec WHERE NOT ISNULL(procdiag4) AND procdiag4 > 0;" );
 
 printHeader( "Update Djvu storage paths" );
 execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/store/');" );
