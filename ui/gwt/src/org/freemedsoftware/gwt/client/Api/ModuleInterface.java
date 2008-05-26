@@ -65,4 +65,12 @@ public interface ModuleInterface extends RemoteService {
 	 */
 	public HashMap ModuleSupportPicklistMethod(String module, String criteria);
 
+	/**
+	 * 
+	 * @param module
+	 * @param id
+	 * @return
+	 */
+	public HashMap ModuleToTextMethod(String module, Integer id);
+
 }

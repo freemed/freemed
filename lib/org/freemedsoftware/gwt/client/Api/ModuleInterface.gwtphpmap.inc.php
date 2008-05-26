@@ -130,10 +130,33 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'ModuleSupportPicklistMethod'
 				, 'mappedName' => 'ModuleSupportPicklistMethod'
-				, 'returnType' => 'java.lang.HashMap'
+				, 'returnType' => 'java.util.HashMap'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.String' )
+				)
+				, 'throws' => array ( )
+			)
+
+			// Method: ModuleToTextMethod
+			//
+			// Parameters:
+			//
+			//	$module - Module name
+			//
+			//	$id - Id to be retrieved
+			//
+			// Returns:
+			//
+			//	String
+			//
+			, array (
+				  'name' => 'ModuleToTextMethod'
+				, 'mappedName' => 'ModuleToTextMethod'
+				, 'returnType' => 'java.lang.String'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
 			)

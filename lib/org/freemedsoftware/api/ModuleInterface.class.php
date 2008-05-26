@@ -106,6 +106,22 @@ class ModuleInterface {
 		return module_function( $module, 'picklist', array ( $id, $criteria ) );
 	} // end method ModuleSupportPicklistMethod
 
+	// Method: ModuleToTextMethod
+	//
+	// Parameters:
+	//
+	//	$module - Module name
+	//
+	//	$id - Id to be retrieved
+	//
+	// Returns:
+	//
+	//	String
+	//
+	public function ModuleToTextMethod ( $module, $id ) {
+		return module_function( $module, 'to_text', array ( $id ) );
+	} // end method ModuleToTextMethod
+
 } // end class ModuleInterface
 
 ?>

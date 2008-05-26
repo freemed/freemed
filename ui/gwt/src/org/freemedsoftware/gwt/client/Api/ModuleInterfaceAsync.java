@@ -57,4 +57,11 @@ public interface ModuleInterfaceAsync {
 	 */
 	public void ModuleSupportPicklistMethod(String module, String criteria, AsyncCallback callback);
 
+	/**
+	 * 
+	 * @param module
+	 * @param id
+	 */
+	public void ModuleToTextMethod(String module, Integer id, AsyncCallback callback);
+
 }
