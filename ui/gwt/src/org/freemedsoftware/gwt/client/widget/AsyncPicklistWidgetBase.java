@@ -52,7 +52,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 
 	// private final FlexTable listPanel;
 
-	private SuggestBox searchBox;
+	protected SuggestBox searchBox;
 
 	private final VerticalPanel layout;
 
@@ -85,7 +85,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 		});
 		searchBox.setLimit(10);
 		layout.add(searchBox);
-
+		
 		initWidget(layout);
 	}
 

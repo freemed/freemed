@@ -43,10 +43,47 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 
 	protected String moduleName = null;
 
+	public SupportModuleWidget() {
+		super();
+	}
+
 	public SupportModuleWidget(String module) {
 		// Load superclass constructor first...
 		super();
-		moduleName = module;
+		setModuleName(module);
+	}
+
+	/**
+	 * Set value of current widget based on integer value, asynchronously.
+	 * 
+	 * @param widgetValue
+	 */
+	public void setValue(Integer widgetValue) {
+		value = widgetValue;
+		if (Util.isStubbedMode()) {
+			searchBox.setText("Stub Value");
+			searchBox.setTitle("Stub Value");
+		} else {
+			ModuleInterfaceAsync service = null;
+			try {
+				service = ((ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface"));
+			} catch (Exception e) {
+			}
+			service.ModuleToTextMethod(moduleName, widgetValue,
+					new AsyncCallback() {
+						public void onSuccess(Object res) {
+							String textual = (String) res;
+							searchBox.setText(textual);
+							searchBox.setTitle(textual);
+						}
+
+						public void onFailure(Throwable t) {
+
+						}
+					});
+
+		}
 	}
 
 	/**
