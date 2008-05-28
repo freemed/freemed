@@ -38,6 +38,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Toaster extends PopupPanel {
 
+	public static final int TOASTER_INFO = 0;
+
+	public static final int TOASTER_WARN = 1;
+
+	public static final int TOASTER_ERROR = 2;
+
 	/**
 	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 */
@@ -61,13 +67,40 @@ public class Toaster extends PopupPanel {
 		add(container);
 	}
 
-	public void addItem(final String module, String value) {
+	/**
+	 * Compatibility function to add TOASTER_INFO item.
+	 * 
+	 * @param module
+	 * @param value
+	 */
+	public void addItem(String module, String value) {
+		addItem(module, value, TOASTER_INFO);
+	}
+
+	/**
+	 * Add additional item to toaster.
+	 * 
+	 * @param module
+	 * @param value
+	 * @param toasterStatus
+	 *            TOASTER_INFO, TOASTER_WARN, TOASTER_ERROR
+	 */
+	public void addItem(final String module, String value, int toasterStatus) {
 		// Add items to hash
 		items.put(module, value);
 
 		// Create new HTML segment, add
 		HTML x = new HTML(value);
 		x.setStylePrimaryName("freemed-ToasterItem");
+		if (toasterStatus == TOASTER_INFO) {
+			x.addStyleDependentName("Info");
+		} else if (toasterStatus == TOASTER_WARN) {
+			x.addStyleDependentName("Warning");
+		} else if (toasterStatus == TOASTER_ERROR) {
+			x.addStyleDependentName("Error");
+		} else {
+			// Do nothing, invalid
+		}
 		x.setTitle(module);
 		x.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
@@ -109,10 +142,12 @@ public class Toaster extends PopupPanel {
 				final String k = (String) ks.next();
 				if (!ks.hasNext()) {
 					// If this is the last one, set to special
-					((HTML) itemWidgets.get(k)).setStylePrimaryName("freemed-ToasterItem-Last");
+					((HTML) itemWidgets.get(k))
+							.setStylePrimaryName("freemed-ToasterItem-Last");
 				} else {
 					// Otherwise regular style
-					((HTML) itemWidgets.get(k)).setStylePrimaryName("freemed-ToasterItem");
+					((HTML) itemWidgets.get(k))
+							.setStylePrimaryName("freemed-ToasterItem");
 				}
 			}
 

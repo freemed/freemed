@@ -113,7 +113,7 @@ public final class Util {
 	 * @return Stubbed mode status
 	 */
 	public static synchronized boolean isStubbedMode() {
-		return false;// true;
+		return true;
 	}
 
 	/**

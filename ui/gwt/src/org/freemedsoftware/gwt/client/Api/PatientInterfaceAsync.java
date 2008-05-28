@@ -56,7 +56,6 @@ public interface PatientInterfaceAsync {
 	public void NumericSearch(HashMap criteria, AsyncCallback callback);
 
 	/**
-	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
 	 */
 	public void Search(HashMap criteria, AsyncCallback callback);
 

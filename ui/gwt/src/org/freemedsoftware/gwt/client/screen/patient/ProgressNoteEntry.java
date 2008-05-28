@@ -28,6 +28,8 @@ import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -62,7 +64,9 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 
 	protected TextArea wDescription;
 
-	protected SuggestBox wProvider, wTemplate;
+	protected SupportModuleWidget wProvider;
+
+	protected SuggestBox wTemplate;
 
 	protected RichTextArea S, O, A, P, I, E, R;
 
@@ -121,7 +125,7 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		final Label providerLabel = new Label("Provider : ");
 		flexTable.setWidget(2, 0, providerLabel);
 
-		final SuggestBox wProvider = new SuggestBox();
+		wProvider = new SupportModuleWidget("ProviderModule");
 		flexTable.setWidget(2, 1, wProvider);
 
 		final Label descriptionLabel = new Label("Description : ");
@@ -191,7 +195,7 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 				 */
 				HashMap r = (HashMap) result;
 				// TODO: finish this mapping
-				// wProvider.setValue(new Integer((String)r.get("pnotesphy")));
+				wProvider.setValue(new Integer((String)r.get("pnotesphy")));
 				S.setHTML((String) r.get("pnotes_S"));
 				O.setHTML((String) r.get("pnotes_O"));
 				A.setHTML((String) r.get("pnotes_A"));
@@ -214,33 +218,59 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
 		 */
 		final HashMap rec = new HashMap();
+		rec.put("pnotesdt", (String) wDate.getSelectedDate().toString());
+		rec.put("pnotesdescrip", (String) wDescription.toString());
+		rec.put("pnotesdoc", (String) wProvider.getValue().toString());
+		rec.put("pnotes_S", (String) S.getHTML());
+		rec.put("pnotes_O", (String) O.getHTML());
+		rec.put("pnotes_A", (String) A.getHTML());
+		rec.put("pnotes_P", (String) P.getHTML());
+		rec.put("pnotes_I", (String) I.getHTML());
+		rec.put("pnotes_E", (String) E.getHTML());
+		rec.put("pnotes_R", (String) R.getHTML());
 
 		if (!internalId.equals(new Integer(0))) {
 			// Modify
+			rec.put("id", (String) internalId.toString());
 			service.ModuleModifyMethod(moduleName, rec, new AsyncCallback() {
 				public void onSuccess(Object result) {
-
+					Toaster t = state.getToaster();
+					t.addItem("progressNotes", "Updated progress note.",
+							Toaster.TOASTER_INFO);
 				}
 
-				public void onFailure(Throwable t) {
-
+				public void onFailure(Throwable th) {
+					Toaster t = state.getToaster();
+					t.addItem("progressNotes",
+							"Failed to update progress note.",
+							Toaster.TOASTER_ERROR);
 				}
 			});
 		} else {
 			// Add
 			service.ModuleAddMethod(moduleName, rec, new AsyncCallback() {
 				public void onSuccess(Object result) {
-
+					Toaster t = state.getToaster();
+					t.addItem("progressNotes", "Added progress note.",
+							Toaster.TOASTER_INFO);
 				}
 
-				public void onFailure(Throwable t) {
-
+				public void onFailure(Throwable th) {
+					Toaster t = state.getToaster();
+					t.addItem("progressNotes", "Failed to add progress note.",
+							Toaster.TOASTER_ERROR);
 				}
 			});
 		}
 	}
 
 	public void resetForm() {
-
+		S.setHTML(new String(""));
+		O.setHTML(new String(""));
+		A.setHTML(new String(""));
+		P.setHTML(new String(""));
+		I.setHTML(new String(""));
+		E.setHTML(new String(""));
+		R.setHTML(new String(""));
 	}
 }

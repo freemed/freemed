@@ -370,12 +370,24 @@ a:hover {
 	}
 
 .freemed-Toaster {
-	background-color: #ccffcc;
 	border: 1px solid #555555;
 	margin: 0px;
 	padding: 7px;
 	width: 150px;
 	}
+
+.freemed-Toaster-Info {
+	background-color: #ccffcc;
+	}
+	
+.freemed-Toaster-Warning {
+	background-color: #ffa500;
+	}
+	
+.freemed-Toaster-Error {
+	background-color: #ffcccc;
+	}
+
 	
 .freemed-ToasterItem, .freemed-ToasterItem-Last {
 	size: 8pt;
