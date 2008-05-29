@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	procvoucher		VARCHAR (25),
 	procphysician		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	procdt			DATE,
+	procdtend		DATE,
 	procpos			INT UNSIGNED DEFAULT 0,
 	proccomment		TEXT,
 	procbalorig		REAL,
@@ -99,7 +100,12 @@ BEGIN
 		ALTER IGNORE TABLE procrec ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER proctosoverride;
 	END IF;
 
-	CALL FreeMED_Module_UpdateVersion( 'procrec', 1 );
+	# Version 2
+	IF @V < 2 THEN
+		ALTER IGNORE TABLE procrec ADD COLUMN procdtend DATE AFTER procdt;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'procrec', 2 );
 END
 //
 DELIMITER ;

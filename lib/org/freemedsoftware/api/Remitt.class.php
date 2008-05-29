@@ -1006,7 +1006,15 @@ class Remitt {
 		$buffer .= $this->_tag('outsidelabcharges', $p['proclabcharges'] + 0, true);
 
 		$buffer .= $this->_date('dateofservicestart', $p['procdt']);
-		$buffer .= $this->_date('dateofserviceend', $p['procdt']);
+		switch ( $procdtend ) {
+			case '': case '0000-00-00':
+			$buffer .= $this->_date('dateofserviceend', $p['procdt']);
+			break;
+
+			default:
+			$buffer .= $this->_date('dateofserviceend', $p['procdtend']);
+			break;
+		}
 		$buffer .= $this->_tag('aging', (strtotime(date("Y-m-d")) - strtotime($p['procdt'])) / (60 * 60 * 24), true);
 
 		$e = $GLOBALS['sql']->get_link( 'eoc', $eoc );
