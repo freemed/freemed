@@ -32,7 +32,7 @@ import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
-import com.allen_sauer.gwt.log.client.Log;
+//import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -76,7 +76,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		wSmartSearch.addChangeListener(new ChangeListener() {
 			public void onChange(Widget w) {
 				Integer val = ((PatientWidget) w).getValue();
-				Log.debug("Patient value = " + val.toString());
+				//Log.debug("Patient value = " + val.toString());
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
 						spawnPatientScreen(val, wSmartSearch.getText());
@@ -190,8 +190,7 @@ public class PatientSearchScreen extends ScreenInterface {
 					 * @gwt.typeArgs <java.lang.String,java.lang.String>
 					 */
 					HashMap[] r = (HashMap[]) result;
-					Log.info("found " + new Integer(r.length).toString()
-							+ " results for Search");
+					//Log.info("found " + new Integer(r.length).toString() + " results for Search");
 					for (int iter = 0; iter < r.length; iter++) {
 						setResultRow(r[iter], iter);
 					}
@@ -200,7 +199,7 @@ public class PatientSearchScreen extends ScreenInterface {
 				}
 
 				public void onFailure(Throwable t) {
-					Log.error("Caught exception: ", t);
+					//Log.error("Caught exception: ", t);
 				}
 			});
 		}

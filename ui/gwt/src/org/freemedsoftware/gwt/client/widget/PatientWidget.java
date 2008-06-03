@@ -33,7 +33,7 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 
-import com.allen_sauer.gwt.log.client.Log;
+//import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -75,7 +75,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 					while (iter.hasNext()) {
 						Integer keyInt = (Integer) iter.next();
 						String key = keyInt.toString();
-						Log.debug("keyInt = " + keyInt.toString());
+						//Log.debug("keyInt = " + keyInt.toString());
 						String val = (String) result.get(keyInt);
 						addKeyValuePair(items, val, key);
 					}

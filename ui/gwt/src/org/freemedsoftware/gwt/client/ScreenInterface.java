@@ -24,7 +24,7 @@
 
 package org.freemedsoftware.gwt.client;
 
-import com.allen_sauer.gwt.log.client.Log;
+//import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabPanel;
 
@@ -34,7 +34,7 @@ public abstract class ScreenInterface extends Composite {
 
 	public ScreenInterface() {
 		super();
-		Log.setUncaughtExceptionHandler();
+		//Log.setUncaughtExceptionHandler();
 	}
 
 	public void assignState(CurrentState s) {

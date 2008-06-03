@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.allen_sauer.gwt.log.client.Log;
+//import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
@@ -59,7 +59,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 	private ChangeListenerCollection changeListeners;
 
 	public AsyncPicklistWidgetBase() {
-		Log.setUncaughtExceptionHandler();
+		//Log.setUncaughtExceptionHandler();
 
 		/**
 		 * @gwt.typeArgs <java.lang.String,java.lang.String>
@@ -173,7 +173,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 	 */
 	protected void addKeyValuePair(List items, final String key,
 			final String value) {
-		Log.debug("Adding key = " + key + ", value = " + value);
+		//Log.debug("Adding key = " + key + ", value = " + value);
 		map.put(key, value);
 		items.add(new SuggestOracle.Suggestion() {
 			public String getDisplayString() {
