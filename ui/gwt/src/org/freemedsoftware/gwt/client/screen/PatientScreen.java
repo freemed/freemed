@@ -29,6 +29,7 @@ import java.util.HashMap;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 
@@ -67,6 +68,13 @@ public class PatientScreen extends ScreenInterface {
 			verticalPanel.add(menuBar);
 
 			final MenuBar menuBar_1 = new MenuBar(true);
+
+			menuBar_1.addItem("Letter", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Letter", new LetterEntry(), state,
+							getObject());
+				}
+			});
 
 			menuBar_1.addItem("Progress Note", new Command() {
 				public void execute() {
@@ -171,7 +179,7 @@ public class PatientScreen extends ScreenInterface {
 	protected void populatePatientInformation(HashMap info) {
 		// Store this in the object
 		patientInfo = info;
-		
+
 		// Push out to child widgets
 		patientInfoBar.setPatientFromMap(patientInfo);
 	}
