@@ -39,9 +39,16 @@ public class ClosableTab extends Composite {
 
 	protected Widget widget;
 
+	protected ClosableTabInterface closableTabInterface;
+
 	public ClosableTab(String labelText, Widget w) {
+		this(labelText, w, null);
+	}
+
+	public ClosableTab(String labelText, Widget w, ClosableTabInterface cTI) {
 		// Store in namespace where we can see it later
 		widget = w;
+		closableTabInterface = cTI;
 
 		final HorizontalPanel panel = new HorizontalPanel();
 		initWidget(panel);
@@ -65,10 +72,18 @@ public class ClosableTab extends Composite {
 
 		image.addClickListener(new ClickListener() {
 			public void onClick(Widget thisWidget) {
-				TabPanel t = ((TabPanel) widget.getParent().getParent()
-						.getParent());
-				t.selectTab(t.getWidgetIndex(widget) - 1);
-				widget.removeFromParent();
+				boolean goodToGo = true;
+				// If we have a ClosableTabInterface, make sure it's ready to
+				// die
+				if (closableTabInterface != null) {
+					goodToGo = closableTabInterface.isReadyToClose();
+				}
+				if (goodToGo) {
+					TabPanel t = ((TabPanel) widget.getParent().getParent()
+							.getParent());
+					t.selectTab(t.getWidgetIndex(widget) - 1);
+					widget.removeFromParent();
+				}
 			}
 		});
 	}
