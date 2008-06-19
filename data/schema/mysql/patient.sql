@@ -90,7 +90,8 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptpharmacy		INT UNSIGNED,
 	ptrace			INT UNSIGNED,
 	ptreligion		INT UNSIGNED,
-	ptarchive		INT UNSIGNED,
+	ptarchive		INT UNSIGNED DEFAULT 0,
+	ptprimaryfacility	INT UNSIGNED DEFAULT 0,
 	iso			VARCHAR (15),
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 
@@ -120,6 +121,7 @@ BEGIN
 	ALTER IGNORE TABLE patient ADD COLUMN ptsuffix VARCHAR (10) AFTER ptmname;
 	ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;
 	ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;
+	ALTER IGNORE TABLE patient ADD COLUMN ptprimaryfacility INT UNSIGNED DEFAULT 0 AFTER ptarchive;
 
 	# If we have nothing in patient_keypad_lookup, populate.
 	SELECT COUNT(*) INTO patient_Count FROM patient;

@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `xmr` (
 	stamp			TIMESTAMP NOT NULL DEFAULT NOW(),
 	provider		INT UNSIGNED NOT NULL,
 	user			INT UNSIGNED NOT NULL,
+	locked			INT UNSIGNED NOT NULL,
 	id			SERIAL
 
 	#	Define keys
@@ -87,7 +88,7 @@ CREATE TRIGGER xmr_Insert
 	FOR EACH ROW BEGIN
 		DECLARE d VARCHAR (250);
 		SELECT form_name INTO d FROM xmr_definition WHERE id = NEW.form_id;
-		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, provider ) VALUES ( 'xmr', NEW.patient, NEW.id, NEW.stamp, d, NEW.user, NEW.provider );
+		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user, provider, locked ) VALUES ( 'xmr', NEW.patient, NEW.id, NEW.stamp, d, NEW.user, NEW.provider, NEW.locked );
 	END;
 //
 
@@ -96,7 +97,7 @@ CREATE TRIGGER xmr_Update
 	FOR EACH ROW BEGIN
 		DECLARE d VARCHAR (250);
 		SELECT form_name INTO d FROM xmr_definition WHERE id = NEW.form_id;
-		UPDATE `patient_emr` SET stamp=NEW.stamp, patient=NEW.patient, summary=d, user=NEW.user, provider=NEW.provider WHERE module='xmr' AND oid=NEW.id;
+		UPDATE `patient_emr` SET stamp=NEW.stamp, patient=NEW.patient, summary=d, user=NEW.user, provider=NEW.provider, locked=NEW.locked WHERE module='xmr' AND oid=NEW.id;
 	END;
 //
 
