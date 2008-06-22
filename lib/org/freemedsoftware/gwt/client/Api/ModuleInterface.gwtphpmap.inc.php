@@ -161,6 +161,52 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
+			// Method: PrintToFax
+			//
+			// Parameters:
+			//
+			//      $faxnumber - Destination number
+			//
+			//      $items - Array of items
+			//
+			// Return:
+			//
+			//      Boolean, success
+			//
+			, array (
+				  'name' => 'PrintToFax'
+				, 'mappedName' => 'PrintToFax'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => '[Ljava.lang.Integer;' )
+				)
+				, 'throws' => array ( )
+			)
+
+			// Method: PrintToPrinter
+			//
+			// Parameters:
+			//
+			//      $printer - Printer name
+			//
+			//      $items - Array of items
+			//
+			// Return:
+			//
+			//      Boolean, success
+			//
+			, array (
+				  'name' => 'PrintToPrinter'
+				, 'mappedName' => 'PrintToPrinter'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => '[Ljava.lang.Integer;' )
+				)
+				, 'throws' => array ( )
+			)
+
 		)
 	)
 );
