@@ -122,6 +122,37 @@ class ModuleInterface {
 		return module_function( $module, 'to_text', array ( $id ) );
 	} // end method ModuleToTextMethod
 
+	// Method: PrintToBrowser
+	//
+	// Parameters:
+	//
+	//	$items - Array of items
+	//
+	public function PrintToBrowser ( $items ) {
+		foreach ($items AS $i) {
+			$k[] = (int) $i;
+		}
+		$q = "SELECT * FROM patient_emr WHERE id IN ( ".join(',', $k)." )";
+		$r = $GLOBALS['sql']->queryAll( $q );
+
+		// Handle differently depending on single or multiple
+		if (count($items) < 2) {
+			// Single render
+			module_function( $r[0]['module'], 'RenderSinglePDF', $r[0]['oid'] );
+		} else {
+			// Multiples, use composite object
+			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );
+			foreach ($r AS $o) {
+				$thisFile = module_function( $o['module'], '_RenderToPDF', array( $o['oid'] ) );
+				$comp->Add( $thisFile );
+				$f[] = $thisFile;
+			}
+			passthru( $comp->Composite() );
+			@unlink( $comp->Composite() );
+			foreach ($f AS $fn) { @unlink( $fn ); }
+		}
+	} // end method PrintToBrowser
+
 } // end class ModuleInterface
 
 ?>
