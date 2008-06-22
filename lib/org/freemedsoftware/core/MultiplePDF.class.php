@@ -27,7 +27,8 @@
 //
 class MultiplePDF {
 
-	var $stack;
+	protected $stack;
+	protected $internalFile;
 
 	// Constructor: MultiplePDF
 	public function __construct ( ) {
@@ -63,15 +64,21 @@ class MultiplePDF {
 		// Create command
 		$cmd = "pdfjoin --paper letterpaper --outfile '${tempfile}' ";
 		foreach ($this->stack AS $pdf) {
-			$cmd .= " \"".escapeshellcmd($pdf)."\" ";
+			$cmd .= " ".escapeshellarg($pdf)." ";
 		}
 
 		// Execute the composite command
 		$garbage_collector = exec( $cmd );
 
 		// Return the temporary file name
+		$internalFile = $tempfile;
 		return $tempfile;
 	} // end method Composite
+
+	public function __destruct() {
+		// Clean up the temporary file
+		@unlink( $internalFile );
+	}
 
 } // end class MultiplePDF
 
