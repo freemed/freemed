@@ -26,10 +26,12 @@ package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -173,8 +175,17 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		// TODO: Send to fax
-		closeDialog();
+		state.getToaster().addItem("FaxOSubsystem", "Sending fax to " + f);
+		getProxy().PrintToFax(f, items, new AsyncCallback() {
+			public void onSuccess(Object o) {
+				closeDialog();
+			}
+
+			public void onFailure(Throwable t) {
+				state.getToaster().addItem("FaxSubsystemError",
+						"Error faxing document.", Toaster.TOASTER_ERROR);
+			}
+		});
 		return 0;
 	}
 
@@ -185,8 +196,18 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		// TODO: Send to printer
-		closeDialog();
+		state.getToaster().addItem("PrintSubsystem",
+				"Sending document to printer.");
+		getProxy().PrintToPrinter("", items, new AsyncCallback() {
+			public void onSuccess(Object o) {
+				closeDialog();
+			}
+
+			public void onFailure(Throwable t) {
+				state.getToaster().addItem("PrintSubsystemError",
+						"Error sending document.", Toaster.TOASTER_ERROR);
+			}
+		});
 		return 0;
 	}
 
@@ -203,5 +224,15 @@ public class EmrPrintDialog extends DialogBox {
 		closeDialog();
 		return 0;
 	}
+
+	private ModuleInterfaceAsync getProxy() {
+		ModuleInterfaceAsync p = null;
+		try {
+			p = (ModuleInterfaceAsync) Util
+					.getProxy("org.freemedsoftware.api.ModuleInterface");
+		} catch (Exception ex) {
+		}
+		return p;
+	}
+
 }
-`

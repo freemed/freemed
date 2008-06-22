@@ -39,6 +39,11 @@ public class SummaryScreen extends PatientScreenInterface {
 
 	protected CustomSortableTable summaryTable;
 
+	/**
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	protected HashMap[] dataStore;
+
 	public SummaryScreen() {
 
 		final FlexTable flexTable = new FlexTable();
@@ -70,7 +75,12 @@ public class SummaryScreen extends PatientScreenInterface {
 					 * @gwt.typeArgs <java.lang.String, java.lang.String>
 					 */
 					HashMap[] r = (HashMap[]) result;
-					// TODO: populate here
+					dataStore = r;
+					for (int iter=0; iter<r.length; iter++) {
+						summaryTable.setText(iter+1, 0, (String) r[iter].get("stamp"));
+						summaryTable.setText(iter+1, 1, (String) r[iter].get("type"));
+						summaryTable.setText(iter+1, 2, (String) r[iter].get("summary"));
+					}
 				}
 
 				public void onFailure(Throwable t) {
@@ -79,5 +89,4 @@ public class SummaryScreen extends PatientScreenInterface {
 			});
 		}
 	}
-
 }

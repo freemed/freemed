@@ -31,13 +31,13 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
+import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -102,8 +102,11 @@ public class PatientScreen extends ScreenInterface {
 
 		tabPanel = new TabPanel();
 		verticalPanel_1.add(tabPanel);
-		SimplePanel summary = new SimplePanel();
-		tabPanel.add(summary, "Summary");
+		SummaryScreen summaryScreen = new SummaryScreen();
+		tabPanel.add(summaryScreen, "Summary");
+		summaryScreen.assignPatientScreen(this);
+		summaryScreen.assignState(state);
+		summaryScreen.loadData();
 		tabPanel.selectTab(0);
 	}
 
@@ -169,6 +172,7 @@ public class PatientScreen extends ScreenInterface {
 				}
 			});
 		}
+
 	}
 
 	/**

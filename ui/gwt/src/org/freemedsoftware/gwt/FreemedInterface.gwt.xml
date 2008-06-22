@@ -27,6 +27,7 @@
 	<!-- Additional namespaces go here -->
 	<inherits name="com.google.gwt.user.User"/>
 	<inherits name="com.google.gwt.http.HTTP"/>
+	<inherits name="com.google.gwt.json.JSON"/>
 	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable"/>
 	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker"/>
 	<inherits name="com.bouwkamp.gwt.user.User"/>

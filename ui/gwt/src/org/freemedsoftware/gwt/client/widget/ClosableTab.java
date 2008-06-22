@@ -55,6 +55,7 @@ public class ClosableTab extends Composite {
 
 		final Label label = new Label(labelText);
 		panel.add(label);
+		panel.setTitle(labelText);
 		panel.setCellHorizontalAlignment(label,
 				HasHorizontalAlignment.ALIGN_LEFT);
 		panel.setCellVerticalAlignment(label, HasVerticalAlignment.ALIGN_TOP);
