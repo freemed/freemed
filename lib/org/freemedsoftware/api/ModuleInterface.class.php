@@ -122,7 +122,96 @@ class ModuleInterface {
 		return module_function( $module, 'to_text', array ( $id ) );
 	} // end method ModuleToTextMethod
 
+	// Method: PrintToFax
+	//
+	// Parameters:
+	//
+	//	$faxnumber - Destination number
+	//
+	//	$items - Array of items
+	//
+	// Return:
+	//
+	//	Boolean, success
+	//
+	public function PrintToFax( $faxnumber, $items ) {
+		foreach ($items AS $i) {
+			$k[] = (int) $i;
+		}
+		$q = "SELECT * FROM patient_emr WHERE id IN ( ".join(',', $k)." )";
+		$r = $GLOBALS['sql']->queryAll( $q );
+
+		// Handle differently depending on single or multiple
+		if (count($items) < 2) {
+			// Single render
+			$render = module_function( $r[0]['module'], '_RenderToPDF', array( $r[0]['oid'] ) );
+		} else {
+			// Multiples, use composite object
+			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );
+			foreach ($r AS $o) {
+				$thisFile = module_function( $o['module'], '_RenderToPDF', array( $o['oid'] ) );
+				$comp->Add( $thisFile );
+				$f[] = $thisFile;
+			}
+			$render = $comp->Composite();
+		}
+
+		$wrapper = CreateObject( 'org.freemedsoftware.core.Fax', $render, array(
+			'sender' => freemed::user_cache()->user_descrip,
+			'comments' => __("HIPPA Compliance Notice: This transmission contains confidential medical information which is protected by the patient/physician privilege. The enclosed message is being communicated to the intended recipient for the purposes of facilitating healthcare. If you have received this transmission in error, please notify the sender immediately, return the fax message and delete the message from your system.")
+		) );
+
+		$wrapper->Send( $faxnumber );
+		@unlink( $render );
+		if (is_array($f)) { foreach ($f AS $fn) { @unlink( $fn ); } }
+		return true;
+	} // end method PrintToFax
+
+	// Method: PrintToPrinter
+	//
+	// Parameters:
+	//
+	//	$printer - Printer name
+	//
+	//	$items - Array of items
+	//
+	// Return:
+	//
+	//	Boolean, success
+	//
+	public function PrintToPrinter( $printer, $items ) {
+		foreach ($items AS $i) {
+			$k[] = (int) $i;
+		}
+		$q = "SELECT * FROM patient_emr WHERE id IN ( ".join(',', $k)." )";
+		$r = $GLOBALS['sql']->queryAll( $q );
+
+		$wrapper = CreateObject( 'org.freemedsoftware.core.PrinterWrapper' );
+
+		// Handle differently depending on single or multiple
+		if (count($items) < 2) {
+			// Single render
+			$render = module_function( $r[0]['module'], '_RenderToPDF', array( $r[0]['oid'] ) );
+		} else {
+			// Multiples, use composite object
+			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );
+			foreach ($r AS $o) {
+				$thisFile = module_function( $o['module'], '_RenderToPDF', array( $o['oid'] ) );
+				$comp->Add( $thisFile );
+				$f[] = $thisFile;
+			}
+			$render = $comp->Composite();
+		}
+
+		$wrapper->PrintFile( $printer, $render );
+		@unlink( $render );
+		if (is_array($f)) { foreach ($f AS $fn) { @unlink( $fn ); } }
+		return true;
+	} // end method PrintToPrinter
+
 	// Method: PrintToBrowser
+	//
+	//	Print patient_emr items to browser as PDF
 	//
 	// Parameters:
 	//
@@ -138,7 +227,9 @@ class ModuleInterface {
 		// Handle differently depending on single or multiple
 		if (count($items) < 2) {
 			// Single render
-			module_function( $r[0]['module'], 'RenderSinglePDF', $r[0]['oid'] );
+			$thisFile = module_function( $r[0]['module'], '_RenderToPDF', array( $r[0]['oid'] ) );
+			passthru( $thisFile );
+			@unlink( $thisFile );
 		} else {
 			// Multiples, use composite object
 			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );

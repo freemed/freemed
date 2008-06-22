@@ -73,4 +73,8 @@ public interface ModuleInterface extends RemoteService {
 	 */
 	public HashMap ModuleToTextMethod(String module, Integer id);
 
+	public Boolean PrintToFax(String faxNumber, Integer[] items);
+
+	public Boolean PrintToPrinter(String printer, Integer[] items);
+
 }

@@ -64,4 +64,8 @@ public interface ModuleInterfaceAsync {
 	 */
 	public void ModuleToTextMethod(String module, Integer id, AsyncCallback callback);
 
+	public void PrintToFax(String faxNumber, Integer[] items, AsyncCallback callback);
+
+	public void PrintToPrinter(String printer, Integer[] items, AsyncCallback callback);
+
 }
