@@ -28,17 +28,16 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface UnfiledDocumentsAsync {
+public interface UnreadDocumentsAsync {
 	public void NumberOfPages(Integer id, AsyncCallback callback);
-
-	public void BatchSplit(Integer id, Integer[] splitAfter, AsyncCallback callback);
 
 	/**
 	 */
 	public void GetAll(AsyncCallback callback);
 
-	public void Faxback(Integer id, String faxback, AsyncCallback callback);
-
 	public void GetCount(AsyncCallback callback);
 
+	public void MoveToAnotherProvider(Integer id, Integer toProvider, AsyncCallback callback);
+
+	public void ReviewIntoRecord(Integer id, AsyncCallback callback);
 }

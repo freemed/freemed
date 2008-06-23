@@ -26,19 +26,20 @@ package org.freemedsoftware.gwt.client.Module;
 
 import java.util.HashMap;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface UnfiledDocumentsAsync {
-	public void NumberOfPages(Integer id, AsyncCallback callback);
-
-	public void BatchSplit(Integer id, Integer[] splitAfter, AsyncCallback callback);
+public interface UnreadDocuments extends RemoteService {
+	public Integer NumberOfPages(Integer id);
 
 	/**
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 * @return
 	 */
-	public void GetAll(AsyncCallback callback);
+	public HashMap[] GetAll();
 
-	public void Faxback(Integer id, String faxback, AsyncCallback callback);
+	public Integer GetCount();
 
-	public void GetCount(AsyncCallback callback);
+	public Boolean MoveToAnotherProvider(Integer id, Integer toProvider);
 
+	public Boolean ReviewIntoRecord(Integer id);
 }

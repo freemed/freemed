@@ -42,4 +42,5 @@ public interface UnfiledDocuments extends RemoteService {
 	public void Faxback(Integer id, String faxback);
 
 	public Integer GetCount();
+
 }

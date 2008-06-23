@@ -25,8 +25,12 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
+import org.freemedsoftware.gwt.client.Module.UnreadDocumentsAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -143,6 +147,57 @@ public class DjvuViewer extends Composite {
 	}
 
 	/**
+	 * Retrieve the current number of pages for the internal document.
+	 */
+	protected boolean getNumberOfPages() {
+		if (internalId.intValue() == 0) {
+			GWT.log("getNUmberOfPages called without initializing internalId",
+					null);
+			return false;
+		}
+		if (viewerType == UNFILED_DOCUMENTS) {
+			UnfiledDocumentsAsync p = null;
+			try {
+				p = (UnfiledDocumentsAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Module.UnfiledDocuments");
+			} catch (Exception e) {
+				GWT.log("Exception", e);
+			}
+			p.NumberOfPages(internalId, new AsyncCallback() {
+				public void onSuccess(Object o) {
+					numberOfPages = (Integer) o;
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("Exception", t);
+				}
+			});
+		}
+		if (viewerType == UNREAD_DOCUMENTS) {
+			UnreadDocumentsAsync p = null;
+			try {
+				p = (UnreadDocumentsAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Module.UnreadDocuments");
+			} catch (Exception e) {
+				GWT.log("Exception", e);
+			}
+			p.NumberOfPages(internalId, new AsyncCallback() {
+				public void onSuccess(Object o) {
+					numberOfPages = (Integer) o;
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("Exception", t);
+				}
+			});
+		}
+		if (viewerType == SCANNED_DOCUMENTS) {
+			// TODO: make this work for scanned documents
+		}
+		return true;
+	}
+
+	/**
 	 * Load a page into the widget.
 	 * 
 	 * @param pageNumber
@@ -193,7 +248,7 @@ public class DjvuViewer extends Composite {
 		try {
 			loadPage(currentPage + 1);
 		} catch (Exception e) {
-
+			GWT.log("Exception", e);
 		}
 	}
 
@@ -201,7 +256,7 @@ public class DjvuViewer extends Composite {
 		try {
 			loadPage(currentPage - 1);
 		} catch (Exception e) {
-
+			GWT.log("Exception", e);
 		}
 	}
 
@@ -236,6 +291,8 @@ public class DjvuViewer extends Composite {
 	 */
 	public void setInternalId(Integer id) {
 		internalId = id;
+		// Callback for setting pages
+		getNumberOfPages();
 	}
 
 	/**

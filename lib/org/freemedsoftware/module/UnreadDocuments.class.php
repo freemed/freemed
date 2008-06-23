@@ -171,6 +171,10 @@ class UnreadDocuments extends SupportModule {
 	//
 	//	$to - Destination provider.
 	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
 	public function MoveToAnotherProvider ( $id, $to ) {
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 
