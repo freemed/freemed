@@ -54,6 +54,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		summaryTable.addColumnHeader("Date", 0);
 		summaryTable.addColumnHeader("Type", 1);
 		summaryTable.addColumnHeader("Summary", 2);
+		summaryTable.formatTable(20, 3);
 		flexTable.setWidget(0, 0, summaryTable);
 
 	}

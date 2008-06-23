@@ -46,6 +46,10 @@ import org.freemedsoftware.gwt.client.Module.MultumDrugLexicon;
 import org.freemedsoftware.gwt.client.Module.MultumDrugLexiconAsync;
 import org.freemedsoftware.gwt.client.Module.RemittBillingTransport;
 import org.freemedsoftware.gwt.client.Module.RemittBillingTransportAsync;
+import org.freemedsoftware.gwt.client.Module.UnfiledDocuments;
+import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
+import org.freemedsoftware.gwt.client.Module.UnreadDocuments;
+import org.freemedsoftware.gwt.client.Module.UnreadDocumentsAsync;
 import org.freemedsoftware.gwt.client.Public.Login;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Public.Protocol;
@@ -200,6 +204,17 @@ public final class Util {
 					.create(RemittBillingTransport.class);
 		}
 
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.UnfiledDocuments") == 0) {
+			service = (UnfiledDocumentsAsync) GWT
+					.create(UnfiledDocuments.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.UnreadDocuments") == 0) {
+			service = (UnreadDocumentsAsync) GWT.create(UnreadDocuments.class);
+		}
+
 		try {
 			ServiceDefTarget endpoint = (ServiceDefTarget) service;
 			String moduleRelativeURL = Util.getRelativeURL();
@@ -214,20 +229,18 @@ public final class Util {
 
 	public static void login(String username, String password,
 			final Command whenDone, final Command whenFail) {
-		String[] params = {
-				username, password
-		};
+		String[] params = { username, password };
 		HTTPRequest.asyncGet(Util.getJsonRequest(
 				"org.freemedsoftware.public.Login.Validate", params),
 				new ResponseTextHandler() {
-			public void onCompletion(String result) {
-				if (result.compareTo("true") == 0) {
-					whenDone.execute();
-				} else {
-					whenFail.execute();
-				}
-			}
-		});
+					public void onCompletion(String result) {
+						if (result.compareTo("true") == 0) {
+							whenDone.execute();
+						} else {
+							whenFail.execute();
+						}
+					}
+				});
 	}
 
 	/**

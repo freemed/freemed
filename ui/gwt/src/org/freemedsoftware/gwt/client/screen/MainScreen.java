@@ -67,8 +67,9 @@ public class MainScreen extends Composite {
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
-		mainPanel.setSize("100%", "100%");
-
+		mainPanel.setSize("98%", "98%");
+		//mainPanel.setHeight(new Integer(Window.getClientHeight() - 5).toString());
+		
 		// Assign state
 		state = new CurrentState();
 
@@ -76,7 +77,7 @@ public class MainScreen extends Composite {
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
 		horizontalPanel.setWidth("100%");
 		/*
-		 * Currently using the PushButton widgit for a "go back to the
+		 * Currently using the PushButton widget for a "go back to the
 		 * beginning" Button, mainly because I couldn't set css background image
 		 * to function correctly. -JA
 		 */
@@ -89,7 +90,7 @@ public class MainScreen extends Composite {
 		pushButton_1.setStyleName("freemed-LogoMainMenuBar");
 		/*
 		 * Start of the Main menu/toolbar. CSS inherits are VERY important, see
-		 * the stylesheet.css for clearer explination
+		 * the stylesheet.css for clearer explanation
 		 */
 		{
 			final MenuBar menuBar = new MenuBar();
