@@ -1,3 +1,11 @@
+Version 7.7 rc1 (x.x Mb) 01-03-2008
+
+# Replace control GtkClist for GtkTreeview(Miguel Casanova)
+# Replace PHP-GTK1  for PHP-GTK2 (Miguel Casanova)
+# Migration to PHP>5 (Miguel Casanova)
+# Replace control GtkCombo for GtkComboBox (Miguel Casanova)
+# Tested in Linux Ubuntu 7.10. (Miguel Casanova)
+
 Version 7.6 rc1 (x.x Mb) 2006-10-25
 # Bug fixes in temporary files (jamiel)
 # Definition of the table number for page in Engine2 (jamiel)

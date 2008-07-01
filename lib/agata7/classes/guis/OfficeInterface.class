@@ -36,7 +36,7 @@ class OfficeInterface
         $label5->set_text(_a('Repeat Header'));
         $label6->set_text(_a('Repeat Footer'));
         
-        $this->buttonOpenOfficeOpen->connect_object('clicked', array(&$this, 'onOpenFile'));
+        $this->buttonOpenOfficeOpen->connect_simple('clicked', array(&$this, 'onOpenFile'));
     }
 
     /***********************************************************/

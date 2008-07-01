@@ -3,21 +3,85 @@
 /* Class defining the filetree box
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class FileTree extends GtkCTree
+class FileTree extends GtkTreeView
 {
+  protected $model;
+  protected $scrolled_win;
+  
+  protected $column;
+
+  protected $icon_folder_open;
+  protected $icon_folder_closed;
+
+  protected $title;
+  protected $trace;
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function FileTree()
-    {
-        GtkCTree::GtkCTree(1, 0, array(''));
-        GtkCTree::set_selection_mode(GTK_SELECTION_SINGLE);
-        GtkCTree::set_line_style(GTK_CTREE_LINES_SOLID);
-        GtkCTree::column_titles_hide();
-        GtkCTree::connect_object('tree-select-row', array(&$this, 'Abrir'));
-        $this->BotaoOk = new GtkButton;
-        $this->SetShowExtension(true);
-    }
+      public function __construct() {
+                
+
+		
+		// Crea un list store para definir la estructura del modelo de datos del gtktreeview 
+		    
+           	    
+		   $this->model = new GtkTreeStore(Gtk::TYPE_STRING);
+		
+	
+		   parent::__construct($this->model);
+		   $this->connect_simple('row-activated', array(&$this, 'Abrir'));
+        	//set up treeview columns
+		  
+
+			   $column = new GtkTreeViewColumn();
+// for image
+			     $cell_renderer = new GtkCellRendererPixbuf();
+			     $column->pack_start($cell_renderer, false);
+			     $column->set_cell_data_func($cell_renderer,array(&$this, 'format_col')); 
+	
+			     $cell_renderer->set_property('pixbuf-expander-open',
+			     GdkPixbuf::new_from_file('interface/ico_folder2.xpm'));
+			     $cell_renderer->set_property('pixbuf-expander-closed',
+			     GdkPixbuf::new_from_file('interface/ico_folder1.xpm'));
+
+
+
+
+
+
+				// for text
+
+			      $cell_renderer = new GtkCellRendererText();
+			      $column->pack_start($cell_renderer, true);
+			      $column->set_attributes($cell_renderer, 'text', 0);
+			   
+                              $this->append_column($column);
+	                      $column->set_title('Archivo');
+
+		 
+		
+
+                   $this->show();
+
+    
+		$this->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL);
+		$this->BotaoOk = new GtkButton;
+        	$this->SetShowExtension(true);
+
+      }	
+    
+   //establece los iconos que se mostraran en el treeview
+	function format_col($column, $cell, $model, $iter)
+	 {
+	    $value = $model->get_value($iter, 0); // get the current path
+		 if (strstr($value,'.agt') && !strstr($value,'.agt~') ) { $cell->set_property('pixbuf', GdkPixbuf::new_from_file('interface/ico_agata.xpm'));}
+	 
+	 if (strstr($value,'.agt~') ) $cell->set_property('pixbuf', GdkPixbuf::new_from_file('interface/ico_output.xpm'));
+	
+	}
+
+
+
 
     function SetShowExtension($flag)
     {
@@ -29,21 +93,28 @@ class FileTree extends GtkCTree
     /***********************************************************/
     function Abrir()
     {
-        $selecao = $this->selection[0];
-        $Arquivo = GtkCTree::node_get_row_data($selecao);
+
+         $selecao = $this->get_selection();
+	 list($model, $iter) =$selecao->get_selected(); // note 3
+	 $Arquivo= $model->get_value($iter, 0); 
+
+
+
+        //$selecao = $this->selection[0];
+        //$Arquivo = GtkTreeView::node_get_row_data($selecao);
         if (is_dir($Arquivo) && (!$this->opened[$Arquivo]))
-        {
+        {  
             $this->opened[$Arquivo] = true;
             $this->AbreDiretorio($Arquivo, $selecao, null);
-            GtkCTree::expand($selecao);
+            //GtkTreeView::expand($selecao);
         }
         elseif (is_dir($Arquivo) && ($this->opened[$Arquivo]))
         {
-            GtkCTree::expand($selecao);
+            //GtkTreeView::expand($selecao);
         }
         elseif ($Arquivo=='home')
         {
-            GtkCTree::expand($selecao);
+            //GtkTreeView::expand($selecao);
         }
         else
         {
@@ -57,8 +128,12 @@ class FileTree extends GtkCTree
     /***********************************************************/
     function Apagar()
     {
-        $selecao = $this->selection[0];
-        $Arquivo = GtkCTree::node_get_row_data($selecao);
+    
+
+	 $selecao =  $this->get_selection();
+	 list($model, $iter) =$selecao->get_selected();
+	 $Arquivo= $model->get_value($iter, 0); 
+
         if (is_dir($Arquivo))
         {
             include_once 'Dialog.class';
@@ -66,9 +141,14 @@ class FileTree extends GtkCTree
         }
         else
         {
-            GtkCTree::remove_node($selecao);
+            GtkTreeView::remove_node($selecao);
             unlink($Arquivo);
         }
+    }
+
+    function GetModel()
+    {
+       return $this->model;
     }
 
     /***********************************************************/
@@ -142,12 +222,17 @@ class FileTree extends GtkCTree
                 {
                     $ico1 = $Pixmaps['folder1'];
                     $ico2 = $Pixmaps['folder2'];
-                    $NodoPasta = GtkCTree::insert_node(
-                        $NodoRaiz, null, array($arquivo), 5,
-                        $ico1[0], $ico1[1], $ico2[0], $ico2[1], false, false);
+                  //  $NodoPasta = GtkTreeView::insert_node(
+                   //     $NodoRaiz, null, array($arquivo), 5,
+                    //    $ico1[0], $ico1[1], $ico2[0], $ico2[1], false, false);
+		    
+
+
+                     $NodoPasta=$this->model->append($NodoRaiz,array($arquivo));	
+		
                     
-                    //$this->AbreDiretorio($Caminho, $NodoPasta);
-                    GtkCTree::node_set_row_data($NodoPasta, $Caminho);
+                    $this->AbreDiretorio($Caminho, $NodoPasta);
+                    //GtkTreeView::node_set_row_data($NodoPasta, $Caminho);
                 }
                 else
                 {
@@ -171,16 +256,89 @@ class FileTree extends GtkCTree
                     if (!$ico)
                         $ico = $Pixmaps['generic'];
 
-                    $NodoFilho = GtkCTree::insert_node(
-                        $NodoRaiz, null , array($node_text), 5,
-                        $ico[0], $ico[1], $ico[0], $ico[1], true, false);
+                   // $NodoFilho = GtkTreeView::insert_node(
+                    //    $NodoRaiz, null , array($node_text), 5,
+                     //   $ico[0], $ico[1], $ico[0], $ico[1], true, false);
+
+
+
+		
+ 			$NodoFilho=$this->model->append($NodoRaiz,array($node_text));
                     
-                    GtkCTree::node_set_row_data($NodoFilho, $Caminho);
+                   // GtkTreeView::node_set_row_data($NodoFilho, $Caminho);
                 }
             }
         }
-        GtkCTree::thaw();
+       // GtkTreeView::thaw();
     }
+
+
+
+
+    function AbreDiretorioold($Diretorio, $NodoRaiz) {
+	
+
+	    if (!isset($NodoRaiz)) {
+		//$Diretorio= $Diretorio;
+	    }
+
+
+	    if (!is_dir($Diretorio)) {
+	      trigger_error("PhpGtkDirectoryTree : "
+		. "directory not found",
+		E_USER_WARNING);
+	      return false;
+	    }
+	    $this->model->clear();
+	    $root = $Diretorio;
+	    $dir_list = array($root);
+	    $nodes = array();
+	    $nodes[$root] = null;
+
+	    while (count($dir_list)>0) {
+	      $dir = array_shift($dir_list);
+	      $this->trace("folder = $dir\n");
+
+	      // add the directories first
+	      if ($handle = opendir($dir)) {
+		while (false !== ($file = readdir($handle))) {
+		  if ($file != "." && $file != "..") {
+		    $fullpath = $dir.'/'.$file;
+		    if (is_dir($fullpath)) {
+		      $nodes[$fullpath] = $this->model->append(
+		        $nodes[$dir], array($file));
+		      array_push($dir_list, $fullpath);
+		    }
+		  }
+		}
+		closedir($handle);
+	      }
+
+	      $num_files = 0;
+	      // then add the files
+	      if ($handle = opendir($dir)) {
+		while (false !== ($file = readdir($handle))) {
+		  if ($file != "." && $file != "..") {
+		    $fullpath = $dir.'/'.$file;
+		  if (!is_dir($fullpath)) {
+		    $nodes[$fullpath] = $this->model->append(
+		      $nodes[$dir], array($file));
+		    ++$num_files;
+		    }
+		  }
+		}
+		closedir($handle);
+	      }
+
+	      # FIXME : bug here when directory is empty (no files or only sub-directories)
+	      if ($num_files==0)
+		$nodes[$fullpath] = $this->model->append(
+		  $nodes[$dir], array(''));
+	    }
+     }
+
+
+
 
     /***********************************************************/
     /* Reloads the tree
@@ -188,8 +346,9 @@ class FileTree extends GtkCTree
     function ReadAgain()
     {
         $this->opened = null;
-        GtkCTree::clear();
-        GtkCTree::thaw();
+      
+        //GtkTreeView::thaw();
+        $this->MyClear();  
         $entries = $this->entries;
         $this->entries = null;
         
@@ -207,9 +366,12 @@ class FileTree extends GtkCTree
     /***********************************************************/
     function MyClear()
     {
-        GtkCTree::clear();
-        GtkCTree::thaw();
-        $this->entries = null;
+	$this->model->clear();
+        $this->model = new GtkTreeStore(Gtk::TYPE_STRING);
+	$this->set_model($this->model);
+
+        //GtkTreeView::thaw();
+     //   $this->entries = null;
     }
     
     function AddHome($Home, $pixmap = null)
@@ -217,11 +379,21 @@ class FileTree extends GtkCTree
         global $Pixmaps;
 		$ico = ($pixmap ? $pixmap : $Pixmaps['home']);
 
-        $node = GtkCTree::insert_node(
-            $NodoNull, null, array(':: ' . $Home), 5,
-            $ico[0], $ico[1], $ico[0], $ico[1], false, false);
-        GtkCTree::node_set_row_data($node, 'home');
+      //  $node = GtkTreeView::insert_node(
+        //    $NodoNull, null, array(':: ' . $Home), 5,
+         //   $ico[0], $ico[1], $ico[0], $ico[1], false, false);
+
+	$node=$this->model->append($NodoNull,array(':: ' . $Home));	
+       
+	//GtkTreeView::node_set_row_data($node, 'home');
+
+	$this->model->append($node, array('home'));
+
         return $node;
     }
+   function trace($txt) {
+    if ($this->trace)
+      echo "$txt";
+  }
 }
 ?>

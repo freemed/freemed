@@ -13,8 +13,8 @@ class DictionaryWindow
     {
         $this->glade = &new GladeXML(images . 'dictionary.glade');
         $this->window = $this->glade->get_widget('window');
-        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('delete-event', array(&$this, 'Hide'));
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
         
         $this->Containers['vboxTables'] = $this->glade->get_widget('vboxTables');
         $this->Containers['vboxGroups'] = $this->glade->get_widget('vboxGroups');
@@ -50,7 +50,7 @@ class DictionaryWindow
         $this->Containers['scrolledDict']->add($this->FileList);
 
         $this->buttonSave = $this->glade->get_widget('buttonSaveDictionary');
-        $this->buttonSave->connect_object('clicked', array(&$this, 'PreSaveDictionary'));
+        $this->buttonSave->connect_simple('clicked', array(&$this, 'PreSaveDictionary'));
 
         $this->labelTableFamilies   = $this->glade->get_widget('labelTableFamilies');
         $this->labelSaveDictionary  = $this->glade->get_widget('labelSaveDictionary');
@@ -77,13 +77,15 @@ class DictionaryWindow
                                        array(_a('Family'), _a('Tables')), null, 400, 200, false, $buttons,
                                        0, array(images . 'ico_home.xpm', images . 'ico_table.xpm'));
     
-        $this->TableFamilies->clist->set_column_width(0, 200);
+	//---comentado por miguel casanova	
+    //    $this->TableFamilies->clist->set_column_width(0, 200);
         
         $this->LinkingSettings = new Alist(&$this->Containers['vboxLinkingSettings'], $this->window, _a('Linking Settings'),
                                        array(_a('Fields'), _a('Fields')), null, 400, 200, false, $buttons,
                                        0, array(images . 'ico_field.xpm', images . 'ico_field.xpm'));
     
-        $this->LinkingSettings->clist->set_column_width(0, 200);    
+	//-----comentado por miguel casanova
+        //$this->LinkingSettings->clist->set_column_width(0, 200);    
     
         $buttons = array('Delete' => 1, 'Clear' => 1);
         $this->DataDescription = new Alist(&$this->Containers['vboxDataDescription'], $this->window, _a('Data Description'),
@@ -91,21 +93,24 @@ class DictionaryWindow
                        null, 400, 200, false, $buttons,
                        0, array(images . 'ico_field.xpm', images . 'ico_info.xpm'));
     
-        $this->DataDescription->clist->set_column_width(0, 200);
+	//-----comentado por miguel casanova
 
-        $this->ctreeTableLink1      = &new TableTree(_a('Tables Structure') . ' (FK)', false);
+        //$this->DataDescription->clist->set_column_width(0, 200);
+
+        $this->ctreeTableLink1      = &new TableTree(_a('Tables Structure') . ' (FK)',false);
         $this->ctreeTableLink2      = &new TableTree(_a('Tables Structure') . ' (PK)', false);
         $this->ctreeDataDescription = &new TableTree(_a('Tables Structure'), false);
-        $this->ctreeDataDescription->connect_object('tree-select-row', array(&$this, 'FillDescr'));
-        $this->Containers['scrolledwindowDataDescription']->add($this->ctreeDataDescription);
+        $this->ctreeDataDescription->connect_simple('select-cursor-row', array(&$this, 'FillDescr'));
+	$this->ctreeDataDescription->connect_simple('event', array(&$this, 'FillDescr'));
+	$this->Containers['scrolledwindowDataDescription']->add($this->ctreeDataDescription);
 
         $this->Containers['scrolledwindowTableLink1']->add($this->ctreeTableLink1);
         $this->Containers['scrolledwindowTableLink2']->add($this->ctreeTableLink2);
-
-        $local_pix['bigdown'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'bigdown.xpm');
-        $local_pix['link']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'link.xpm');
-        $local_pix['down']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_down.xpm');
-        $local_pix['load']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'loaddb.xpm');
+	$color = &new GdkColor(0, 65535, 65535);
+        $local_pix['bigdown'] =   images . 'bigdown.xpm';
+        $local_pix['link']    =  images . 'link.xpm';
+        $local_pix['down']    =  images . 'ico_down.xpm';
+        $local_pix['load']    =   images . 'loaddb.xpm';
 
         $this->Buttons['MakeGroup'] = 		 new Button(array(&$this, 'MakeGroup'), 	  _a('Classify'), 		       $local_pix['bigdown'],TOPBUTTON);
         $this->Buttons['LinkTables'] = 		 new Button(array(&$this, 'Link'), 			  _a('Link Tables'), 	       $local_pix['link'], 	 TOPBUTTON);
@@ -139,19 +144,35 @@ class DictionaryWindow
     /***********************************************************/
     function MakeGroup()
     {
-        
-        $selection1 = $this->TableGroups->clist->selection;
-        $selection2 = $this->TableList->clist->selection;
+   
+	$selection1 =$this->TableGroups->clist->get_selection();
+	list($model1, $iter1) = $selection1->get_selected_rows(); // note 3
+
+	
+	$selection2 =$this->TableList->clist->get_selection();
+	list($model2, $iter2) = $selection2->get_selected_rows(); // note 3
+	
         
         if (($selection1) && ($selection2))
         {
-            $line1 = $selection1[0];
-            foreach($selection2 as $line2)
-            {
-                $text1 = $this->TableGroups->GetItem($line1, 0);
-                $text2 = $this->TableList->GetItem($line2, 0);
-                $this->TableFamilies->Append(array($text1, $text2));
-            }
+       
+	      foreach($iter2 as $path) { // note 3
+		$iter = $model2->get_iter($path);
+		$text2 = $model2->get_value($iter, 0);
+		 
+		if ($iter==NULL || !isset($text2) || !$text2) return false;
+
+		    foreach($iter1 as $path) { // note 3
+			$iter = $model1->get_iter($path);
+			$text1 = $model1->get_value($iter, 0);
+			   
+			      $this->TableFamilies->Append(array($text1, $text2));	    
+			}
+	    }
+
+
+
+ 
         }
         else
         {
@@ -166,12 +187,17 @@ class DictionaryWindow
     {
         $text1 = $this->ctreeTableLink1->GetInfo();
         $text2 = $this->ctreeTableLink2->GetInfo();
-        
+      
+
         if (($text1) && ($text2))
         {
             $aField1 = explode(':', $text1);
             $aField2 = explode(':', $text2);
             
+	   //    $aField1 = $text1;
+             //  $aField2 = $text2;
+      
+
             if ((count($aField1) == 4) && (count($aField2) == 4))
             {
                 $this->LinkingSettings->AddStart(array($aField1[1] . '.' . $aField1[3], $aField2[1] . '.' . $aField2[3]));
@@ -321,12 +347,18 @@ class DictionaryWindow
         
         if (($TbFamilies) && $TbGroups)
         {
+
+	
+
             foreach($TbFamilies as $TbFamily)
             {
                 $a = $TbFamily[0];
                 $b = $TbFamily[1];
                 //$agataTbFamilies[$a][] = $b;
                 $array['tables']["dic:$b"]['dic:groups']['dic:name'][] = $a;
+		
+
+
             }
             
             //$this->agataTbFamilies = $this->ProjectDefs[$this->project][0] = $agataTbFamilies;

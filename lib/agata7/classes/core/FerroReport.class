@@ -1,0 +1,43 @@
+<?php
+/*******************************************************************************/
+/* AgataAPI
+/* API for report generation from Web PHP scripts
+/* by Miguel Casanova - 2001 - 2006
+
+/*******************************************************************************/
+include_once '../agata/classes/core/AgataAPI.class';
+class FerroReport extends AgataAPI
+{
+     function __FerroReport()
+     {   
+	 parent::__construct();
+     
+     }
+
+     function open($report_path_name_agt,$source_path_name_sxw,$output_format='pdf'){	
+ 	$this->setLanguage('es');
+	
+	$this->setReportPath($report_path_name_agt);
+	$this->setProject('desarrollo');
+	//echo RemoveExtension($source_path_name_sxw);
+	session_start();
+	$id = session_id();	
+	$this->setOutputPath('/tmp/'.$id.'.sxw');
+	$this->format=$output_format;
+	$this->parseOpenOffice($source_path_name_sxw);
+
+	if ($output_format=='pdf') {
+		$a='.pdf';		
+		$this->openOffice2pdf($id.'.sxw');
+	}
+	else
+	{	
+		$a='.sxw';
+		$this->setOutputPath($id.'.sxw');
+	}
+	
+	$this->fileDialogOpen($id.$a);
+     }
+
+ }
+?>

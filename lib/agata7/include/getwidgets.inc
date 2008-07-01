@@ -4,88 +4,93 @@
 /* PIXMAP'S
 /***********************************************************/
 global $Pixmaps;
-$Pixmaps['folder1'] = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_folder1.xpm');
-$Pixmaps['folder2'] = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_folder2.xpm');
-$Pixmaps['table']   = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_table.xpm');
-$Pixmaps['field']   = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_field.xpm');
-$Pixmaps['column']  = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_column.xpm');
-$Pixmaps['home']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/home.xpm');
-$Pixmaps['TrueType']= Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_tt.xpm');
-$Pixmaps['Symbols'] = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_symbol.xpm');
-$Pixmaps['sql']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_sql.xpm');
-$Pixmaps['agt']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_agata.xpm');
-$Pixmaps['agl']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_label.xpm');
-$Pixmaps['agd']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_description.xpm');
-$Pixmaps['html']   = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_html.xpm');
-$Pixmaps['ps']     = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_ps.xpm');
-$Pixmaps['pdf']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_pdf.xpm');
-$Pixmaps['doc']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_doc.xpm');
-$Pixmaps['png']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_png.xpm');
-$Pixmaps['jpg']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_jpg.xpm');
-$Pixmaps['gif']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_gif.xpm');
-$Pixmaps['cdr']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_cdr.xpm');
-$Pixmaps['xpm']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_xpm.xpm');
-$Pixmaps['zip']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_zip.xpm');
-$Pixmaps['txt']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_txt.xpm');
-$Pixmaps['csv']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_csv.xpm');
-$Pixmaps['dia']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_dia.xpm');
-$Pixmaps['xml']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_xml.xpm');
-$Pixmaps['sxw']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_sxw.xpm');
-$Pixmaps['fun']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_php.xpm');
-$Pixmaps['php']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_php.xpm');
-$Pixmaps['del']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/del.xpm');
-$Pixmaps['db']     = Gdk::pixmap_create_from_xpm($this->window->window, null,   'interface/ico_db.xpm');
-$Pixmaps['ok']     = Gdk::pixmap_create_from_xpm($this->window->window, null,   'interface/ico_ok.xpm');
-$Pixmaps['cancel'] = Gdk::pixmap_create_from_xpm($this->window->window, null,   'interface/ico_cancel.xpm');
-$Pixmaps['generic']= Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_generic.xpm');
-$Pixmaps['level']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_level.xpm');
-$Pixmaps['require']= Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_require.xpm');
-$Pixmaps['connect']= Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/connect.xpm');
-$Pixmaps['remote']=  Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_remote.xpm');
-$Pixmaps['publish']=  Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_publish.xpm');
-$Pixmaps['measures']= Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_measures.xpm');
+global $vboxmenu;
 
-$Pixmaps['menu_connect'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_connect.xpm');
-$Pixmaps['menu_config']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_config.xpm');
-$Pixmaps['menu_schemas'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_schemas.xpm');
-$Pixmaps['ico_colors']   = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_colors.xpm');
-$Pixmaps['menu_replace'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_replace.xpm');
-$Pixmaps['menu_del']     = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_del.xpm');
-$Pixmaps['menu_close']   = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_close.xpm');
-$Pixmaps['menu_new']     = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_new.xpm');
-$Pixmaps['menu_open']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_open.xpm');
-$Pixmaps['menu_save']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_save.xpm');
-$Pixmaps['menu_saveas']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_saveas.xpm');
-$Pixmaps['menu_page']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_page.xpm');
-$Pixmaps['menu_quit']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_quit.xpm');
-$Pixmaps['menu_execute'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_execute.xpm');
-$Pixmaps['menu_txt']     = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_txt.xpm');
-$Pixmaps['menu_pdf']     = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/menu_pdf.xpm');
-$Pixmaps['menu_html']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_html.xpm');
-$Pixmaps['menu_ps']      = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_ps.xpm');
-$Pixmaps['menu_dbf']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_dbf.xpm');
-$Pixmaps['menu_csv']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_csv.xpm');
-$Pixmaps['menu_dia']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_dia.xpm');
-$Pixmaps['menu_function']= Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_function.xpm');
-$Pixmaps['menu_help']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/menu_help.xpm');
-$Pixmaps['menu_prop']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  'interface/ico_properties.xpm');
+	$color = &new GdkColor(0, 65535, 65535);
 
-$Pixmaps['file_open']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/fileopen.xpm');
-$Pixmaps['file_del']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/filedelete.xpm');
-$Pixmaps['folder_new']   = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/foldernew.xpm');
 
-$Pixmaps['popdate']      = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/popdate.xpm');
-$Pixmaps['ico_cal']      = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_cal.xpm');
-$Pixmaps['ico_chars']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_chars.xpm');
-$Pixmaps['cor']          = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/cor.xpm');
-$Pixmaps['font']         = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/font.xpm');
-$Pixmaps['file']         = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/filesel.xpm');
-$Pixmaps['icon']         = Gdk::pixmap_create_from_xpm($this->window->window, null, 'icon.xpm');
-$Pixmaps['ico_fun']      = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_fun.xpm');
-$Pixmaps['ico_format']   = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_format.xpm');
-$Pixmaps['ico_join']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_join.xpm');
-$Pixmaps['ico_edit']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_edit.xpm');
-$Pixmaps['ico_desc']     = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_description.xpm');
+$Pixmaps['folder1'] =   'interface/ico_folder1.xpm';
+$Pixmaps['folder2'] =   'interface/ico_folder2.xpm';
+$Pixmaps['table']   =   'interface/ico_table.xpm';
+$Pixmaps['field']   =   'interface/ico_field.xpm';
+$Pixmaps['column']  =   'interface/ico_column.xpm';
+$Pixmaps['home']    =   'interface/home.xpm';
+$Pixmaps['TrueType']=   'interface/ico_tt.xpm';
+$Pixmaps['Symbols'] =   'interface/ico_symbol.xpm';
+$Pixmaps['sql']    =    'interface/ico_sql.xpm';
+$Pixmaps['agt']    =    'interface/ico_agata.xpm';
+$Pixmaps['agl']    =    'interface/ico_label.xpm';
+$Pixmaps['agd']    =    'interface/ico_description.xpm';
+$Pixmaps['html']   =    'interface/ico_html.xpm';
+$Pixmaps['ps']     =    'interface/ico_ps.xpm';
+$Pixmaps['pdf']    =    'interface/ico_pdf.xpm';
+$Pixmaps['doc']    =    'interface/ico_doc.xpm';
+$Pixmaps['png']    =    'interface/ico_png.xpm';
+$Pixmaps['jpg']    =    'interface/ico_jpg.xpm';
+$Pixmaps['gif']    =    'interface/ico_gif.xpm';
+$Pixmaps['cdr']    =    'interface/ico_cdr.xpm';
+$Pixmaps['xpm']    =    'interface/ico_xpm.xpm';
+$Pixmaps['zip']    =    'interface/ico_zip.xpm';
+$Pixmaps['txt']    =    'interface/ico_txt.xpm';
+$Pixmaps['csv']    =    'interface/ico_csv.xpm';
+$Pixmaps['dia']    =    'interface/ico_dia.xpm';
+$Pixmaps['xml']    =    'interface/ico_xml.xpm';
+$Pixmaps['sxw']    =    'interface/ico_sxw.xpm';
+$Pixmaps['fun']    =    'interface/ico_php.xpm';
+$Pixmaps['php']    =    'interface/ico_php.xpm';
+$Pixmaps['del']    =    'interface/del.xpm';
+$Pixmaps['db']     =     'interface/ico_db.xpm';
+$Pixmaps['ok']     =     'interface/ico_ok.xpm';
+$Pixmaps['cancel'] =     'interface/ico_cancel.xpm';
+$Pixmaps['generic']=    'interface/ico_generic.xpm';
+$Pixmaps['level']  =    'interface/ico_level.xpm';
+$Pixmaps['require']=    'interface/ico_require.xpm';
+$Pixmaps['connect']=    'interface/connect.xpm';
+$Pixmaps['remote']=     'interface/ico_remote.xpm';
+$Pixmaps['publish']=     'interface/ico_publish.xpm';
+$Pixmaps['measures']=    'interface/ico_measures.xpm';
+
+$Pixmaps['menu_connect'] =    'interface/menu_connect.xpm';
+$Pixmaps['menu_config']  =    'interface/menu_config.xpm';
+$Pixmaps['menu_schemas'] =    'interface/ico_schemas.xpm';
+$Pixmaps['ico_colors']   =    'interface/ico_colors.xpm';
+$Pixmaps['menu_replace'] =    'interface/menu_replace.xpm';
+$Pixmaps['menu_del']     =    'interface/menu_del.xpm';
+$Pixmaps['menu_close']   =    'interface/menu_close.xpm';
+$Pixmaps['menu_new']     =    'interface/menu_new.xpm';
+$Pixmaps['menu_open']    =    'interface/menu_open.xpm';
+$Pixmaps['menu_save']    =    'interface/menu_save.xpm';
+$Pixmaps['menu_saveas']  =    'interface/menu_saveas.xpm';
+$Pixmaps['menu_page']    =    'interface/menu_page.xpm';
+$Pixmaps['menu_quit']    =    'interface/menu_quit.xpm';
+$Pixmaps['menu_execute'] =    'interface/menu_execute.xpm';
+$Pixmaps['menu_txt']     =    'interface/menu_txt.xpm';
+$Pixmaps['menu_pdf']     =    'interface/menu_pdf.xpm';
+$Pixmaps['menu_html']    =   'interface/menu_html.xpm';
+$Pixmaps['menu_ps']      =   'interface/menu_ps.xpm';
+$Pixmaps['menu_dbf']     =   'interface/menu_dbf.xpm';
+$Pixmaps['menu_csv']     =   'interface/menu_csv.xpm';
+$Pixmaps['menu_dia']     =   'interface/menu_dia.xpm';
+$Pixmaps['menu_function']=   'interface/menu_function.xpm';
+$Pixmaps['menu_help']    =   'interface/menu_help.xpm';
+$Pixmaps['menu_prop']    =    'interface/ico_properties.xpm';
+
+$Pixmaps['file_open']    =   'interface/fileopen.xpm';
+$Pixmaps['file_del']     =   'interface/filedelete.xpm';
+$Pixmaps['folder_new']   =   'interface/foldernew.xpm';
+
+$Pixmaps['popdate']      =   'interface/popdate.xpm';
+$Pixmaps['ico_cal']      =   'interface/ico_cal.xpm';
+$Pixmaps['ico_chars']    =   'interface/ico_chars.xpm';
+$Pixmaps['cor']          =   'interface/cor.xpm';
+$Pixmaps['font']         =   'interface/font.xpm';
+$Pixmaps['file']         =   'interface/filesel.xpm';
+$Pixmaps['icon']         =   'icon.xpm';
+$Pixmaps['ico_fun']      =   'interface/ico_fun.xpm';
+$Pixmaps['ico_format']   =   'interface/ico_format.xpm';
+$Pixmaps['ico_join']     =   'interface/ico_join.xpm';
+$Pixmaps['ico_edit']     =   'interface/ico_edit.xpm';
+$Pixmaps['ico_desc']     =   'interface/ico_description.xpm';
 
 /***********************************************************/
 /* PARAMETERS
@@ -115,12 +120,24 @@ $this->param['OpenRep'] =   array(array(&$this, 'OpenReport'), 'agt',   $RptDir,
 /***********************************************************/
 $this->comboDBFunctions = $this->glade->get_widget('comboDBFunctions');
 $this->comboLegend = $this->glade->get_widget('comboLegend');
+$this->comboLabelFormat=$this->glade->get_widget('comboLabelFormat');
 
 
 $db_functions = array(  _a('Sum'), _a('Count'), _a('Count distinct'),
                         _a('Average'), _a('Minimal'), _a('Maximal'));
-$this->comboDBFunctions->set_popdown_strings($db_functions);
+//$this->comboDBFunctions->set_popdown_strings($db_functions);
 
+
+		$item1= new GtkListStore(Gtk::TYPE_STRING);	
+		$this->comboDBFunctions->clear();	
+		$this->comboDBFunctions->set_model($item1);
+		$cellRenderer = new GtkCellRendererText(); // note 2
+		$this->comboDBFunctions->pack_start($cellRenderer);
+		$this->comboDBFunctions->set_attributes($cellRenderer, 'text', 0); // note 3
+		foreach($db_functions as $Element0)
+		{ 
+		    $item1->append(array($Element0));
+		}
 
 /***********************************************************/
 /* TEXT'S
@@ -258,11 +275,16 @@ $this->Containers['hboxMainQueryField'] = $this->glade->get_widget('hboxMainQuer
 $this->Containers['viewportFixed'] = $this->glade->get_widget('viewportFixed');
 $this->Containers['hboxOpenOffice'] = $this->glade->get_widget('hboxOpenOffice');
 $this->Containers['hboxCrossTab'] = $this->glade->get_widget('hboxCrossTab');
+$vboxmenu= $this->glade->get_widget('hboxMainMenu');
 
+//------BOTON QUE PERMITE SELECCIONAR  LAS TABLA DE BASE DE  DATOS
 $this->Buttons['RequireTables'] = 	$this->glade->get_widget('buttonRequire');
+
 $this->Buttons['Clear'] = 		    $this->glade->get_widget('buttonClear');
 $this->Buttons['ApplyFunction'] = 	$this->glade->get_widget('buttonApplyFunction');
 $this->Buttons['ApplyOrder'] =	    $this->glade->get_widget('buttonApplyOrder');
+
+//-----BOTON QUE PERMITE SELECCIONAR EL CAMPO DE LA TABLA PARA ARMAR QUERY
 $this->Buttons['SelectColumn'] =	$this->glade->get_widget('buttonSelectColumn');
 $this->Buttons['InsertParameter'] = $this->glade->get_widget('buttonInsertParameter');
 $this->Buttons['ClearExpr'] =       $this->glade->get_widget('buttonClearExpr');
@@ -278,25 +300,27 @@ $this->Buttons['ReloadRepository'] =$this->glade->get_widget('buttonReloadReposi
 $this->Buttons['DownSql'] =         $this->glade->get_widget('buttonDownSql');
 $this->Buttons['UpSql'] =           $this->glade->get_widget('buttonUpSql');
 
+
+
 $this->tooltips->set_tip($this->Buttons['ReloadReports'], _a('Reload'));
 $this->tooltips->set_tip($this->Buttons['ReloadRepository'], _a('Reload'));
 
-$this->Buttons['RequireTables']->connect_object('clicked', array(&$this, 'RequireTables'));;
-$this->Buttons['Clear']->connect_object('clicked', array(&$this, 'ClearTables'). true);
-$this->Buttons['ApplyFunction']->connect_object('clicked', array(&$this, 'ApplyFunction'));
-$this->Buttons['ApplyOrder']->connect_object('clicked', array(&$this, 'InsertOnBlock'), 'Order by');
-$this->Buttons['SelectColumn']->connect_object('clicked', array(&$this, 'InsertOnBlock'), 'Select');
-$this->Buttons['InsertParameter']->connect_object('clicked', array(&$this, 'PopParameters'));
-$this->Buttons['ClearExpr']->connect_object('clicked', array(&$this, 'ClearExpr'));
-$this->Buttons['WriteItDown']->connect_object('clicked', array(&$this, 'WriteItDown'));
-$this->Buttons['GraphLines']->connect_object('clicked', array(&$this, 'PreReport'), 'lines');
-$this->Buttons['GraphBars']->connect_object('clicked', array(&$this, 'PreReport'), 'bars');
-$this->Buttons['Join']->connect_object('clicked', array(&$this, 'JoinTables'));
-$this->Buttons['ImportSql']->connect_object('clicked', array(&$this, 'ImportSql'));
-$this->Buttons['ReloadReports']->connect_object('clicked', array(&$this, 'RefreshReports'));
-$this->Buttons['ReloadRepository']->connect_object('clicked', array(&$this, 'RefreshRepository'));
-$this->Buttons['UpSql']->connect_object('clicked', array(&$this, 'UpSql'));
-$this->Buttons['DownSql']->connect_object('clicked', array(&$this, 'DownSql'));
+$this->Buttons['RequireTables']->connect_simple('clicked', array(&$this, 'RequireTables'));;
+$this->Buttons['Clear']->connect_simple('clicked', array(&$this, 'ClearTables'));
+$this->Buttons['ApplyFunction']->connect_simple('clicked', array(&$this, 'ApplyFunction'));
+$this->Buttons['ApplyOrder']->connect_simple('clicked', array(&$this, 'InsertOnBlock'), 'Order by');
+$this->Buttons['SelectColumn']->connect_simple('clicked', array(&$this, 'InsertOnBlock'), 'Select');
+$this->Buttons['InsertParameter']->connect_simple('clicked', array(&$this, 'PopParameters'));
+$this->Buttons['ClearExpr']->connect_simple('clicked', array(&$this, 'ClearExpr'));
+$this->Buttons['WriteItDown']->connect_simple('clicked', array(&$this, 'WriteItDown'));
+$this->Buttons['GraphLines']->connect_simple('clicked', array(&$this, 'PreReport'), 'lines');
+$this->Buttons['GraphBars']->connect_simple('clicked', array(&$this, 'PreReport'), 'bars');
+$this->Buttons['Join']->connect_simple('clicked', array(&$this, 'JoinTables'));
+$this->Buttons['ImportSql']->connect_simple('clicked', array(&$this, 'ImportSql'));
+$this->Buttons['ReloadReports']->connect_simple('clicked', array(&$this, 'RefreshReports'));
+$this->Buttons['ReloadRepository']->connect_simple('clicked', array(&$this, 'RefreshRepository'));
+$this->Buttons['UpSql']->connect_simple('clicked', array(&$this, 'UpSql'));
+$this->Buttons['DownSql']->connect_simple('clicked', array(&$this, 'DownSql'));
 
 $this->tooltips->set_tip($this->Buttons['UpSql'],   _a('Copy')  . ' ' . _a('Query'));
 $this->tooltips->set_tip($this->Buttons['DownSql'], _a('Paste') . ' ' . _a('Query'));
@@ -314,7 +338,7 @@ $this->radios['checkShowDetail'] = $this->glade->get_widget('checkShowDetail');
 $this->radios['checkShowNumber'] = $this->glade->get_widget('checkShowNumber');
 $this->radios['checkShowIndent'] = $this->glade->get_widget('checkShowIndent');
 
-$this->radios['checkShowTotal']->connect_object('toggled', array(&$this, 'ToggleDetail'));
+$this->radios['checkShowTotal']->connect_simple('toggled', array(&$this, 'ToggleDetail'));
 
 $this->radios['AscendantOrder'] = $this->glade->get_widget('radioAscendantOrder');
 $this->radios['DescendantOrder'] = $this->glade->get_widget('radioDescendantOrder');
@@ -326,8 +350,8 @@ $this->radios['radioHTML']    = $this->glade->get_widget('radioHTML');
 
 $this->radios['checkData'] = $this->glade->get_widget('checkData');
 $this->radios['showValues'] = $this->glade->get_widget('showValues');
-$this->radios['radioColumns']->connect_object('pressed', array(&$this, 'ChangePageGraph'), 0);
-$this->radios['radioLines']->connect_object('pressed', array(&$this, 'ChangePageGraph'), 1);
+$this->radios['radioColumns']->connect_simple('pressed', array(&$this, 'ChangePageGraph'), 0);
+$this->radios['radioLines']->connect_simple('pressed', array(&$this, 'ChangePageGraph'), 1);
 
 $this->radios['checkShowGroup']->set_active(false);
 $this->radios['checkShowDetail']->set_active(true);
@@ -342,4 +366,20 @@ $this->radios['showValues']->set_active(true);
 $this->QueryNotebook        = $this->glade->get_widget('QueryNotebook');
 $this->GraphNotebook        = $this->glade->get_widget('GraphNotebook');
 $this->AgataNotebook        = $this->glade->get_widget('AgataNotebook');
+
+//$this->AgataNotebook->connect('key_press_event', array($this, 'nextTab'));
+
+//$this->AgataNotebook->connect('button_press_event', array($this, 'nextTab'));
+
+
+/***********************************************************/
+/* TREEVIEW
+/*        MODIFICADO POR MIGUEL CASANOVA                    */
+/***********************************************************/    
+$this->TreeTablestructure        = $this->glade->get_widget('treeviewTablestructure');
+$this->TreeSavedqueries          = $this->glade->get_widget('treeviewSavedqueries');
+$this->TreeSelect        	 = $this->glade->get_widget('treeviewSelect');
+$this->TreeRepository            = $this->glade->get_widget('treeviewRepository');
+
+
 ?>

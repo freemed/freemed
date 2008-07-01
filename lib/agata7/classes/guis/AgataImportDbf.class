@@ -38,8 +38,8 @@ class AgataImportDbf
         $this->ColumnWnd = new Match($agataDB);
         $this->ColumnWnd->PutInColumn1($this->columns);
         $this->ColumnWnd->PutInCombo($Tables);
-        $this->ColumnWnd->ok->connect_object('clicked', array(&$this, 'ImportDBF'));
-        $this->ColumnWnd->view->connect_object('clicked', array(&$this, 'View'));
+        $this->ColumnWnd->ok->connect_simple('clicked', array(&$this, 'ImportDBF'));
+        $this->ColumnWnd->view->connect_simple('clicked', array(&$this, 'View'));
         
         $this->ColumnWnd->clist1->set_column_title(0, _a('DBF Columns'));
         $this->ColumnWnd->clist2->set_column_title(0, _a('Destinated Columns'));

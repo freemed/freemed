@@ -8,7 +8,7 @@ class DiaWindow extends AgataCore
     /* Constructor
     /***********************************************************/
     function DiaWindow($DbAttributes, $agataConfig, $ctreeTablesDia, $agataTbLinks, $project)
-    {
+    {	$color = &new GdkColor(0, 65535, 65535);
         $this->agataConfig  = $agataConfig;
         $this->agataTbLinks = $agataTbLinks;
         $this->project      = $project;
@@ -16,9 +16,9 @@ class DiaWindow extends AgataCore
 
         $this->glade = &new GladeXML(images . 'dia.glade');
         $this->window = $this->glade->get_widget('window');
-        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
+        $this->window->connect_simple('delete-event', array(&$this, 'Hide'));
         $this->window->set_title(_a('Create Diagram'));
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
 
         $this->Containers['scrolledwindowDia'] = $this->glade->get_widget('scrolledwindowDia');
         $this->Containers['hboxDiaTables'] = $this->glade->get_widget('hboxDiaTables');
@@ -27,8 +27,8 @@ class DiaWindow extends AgataCore
         $this->Containers['vboxSelectDia'] = $this->glade->get_widget('vboxSelectDia');
         $this->Containers['hboxCreateDiagram'] = $this->glade->get_widget('hboxCreateDiagram');
 
-        $local_pix['right']= Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'bigright.xpm');
-        $local_pix['dia']= Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'dia.xpm');
+        $local_pix['right']=   images . 'bigright.xpm';
+        $local_pix['dia']=   images . 'dia.xpm';
 
         $this->Buttons['SelectDia'] = &new Button(array(&$this, 'SelectDia'),  _a('Add'),           $local_pix['right'], TOPBUTTON);
         $this->Buttons['Diagram'] =   &new Button(array(&$this, 'SaveDia'),    _a('Create Diagram'),$local_pix['dia'],   IMAGEBUTTON);
@@ -64,7 +64,7 @@ class DiaWindow extends AgataCore
         
         $this->ConfigDia = new FormEntry(_a('Configuration'), $this->aConfigDia['dia'], &$this->Containers['hboxConfigDia']);
         
-        $this->ConfigDia->button->connect_object('clicked', array(&$this,'ReturnDia'));
+        $this->ConfigDia->button->connect_simple('clicked', array(&$this,'ReturnDia'));
         $this->Show();
     }
 
@@ -73,12 +73,19 @@ class DiaWindow extends AgataCore
     /***********************************************************/
     function SaveDia()
     {
+
+	
+
         if (!$this->DiaTables->GetItems())
         {
             new Dialog(_a('Require Tables, please'));
             return false;
         }
+echo 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWww';
         $OutputDir = $this->agataConfig['general']['OutputDir'];
+
+	echo 'macg='.$OutputDir;
+
         $button = array(images . 'output.xpm', _a('Output'), $OutputDir);
         new FileDialog(_a('Create Diagram'), array('dia'), $button, $OutputDir, array(&$this, 'CreateDia'));
     }
@@ -88,8 +95,13 @@ class DiaWindow extends AgataCore
     /***********************************************************/
     function SelectDia()
     {
-        $this->ctreeTablesDia->freeze();
-        $selection = $this->ctreeTablesDia->selection;
+	//-----------comentado por miguel casanova
+        //$this->ctreeTablesDia->freeze();
+//        $selection = $this->ctreeTablesDia->selection;
+      	$selection = $this->ctreeTablesDia->get_selection();
+	
+	
+
         
         if (!$this->connected)
         {
@@ -97,15 +109,20 @@ class DiaWindow extends AgataCore
             return false;
         }
         
-        foreach ($selection as $SelectionLine)
-        {
-            $text = $this->ctreeTablesDia->node_get_row_data( $SelectionLine );
-            if ($text)
-            {
-                $this->DiaTables->append(array($text));
-            }
-        }
-        $this->ctreeTablesDia->thaw();
+
+	  list($model, $selected_rows) =   $selection->get_selected_rows(); // note 2
+	    foreach($selected_rows as $path) { // note 3
+		$iter = $model->get_iter($path);
+		$text = $model->get_value($iter, 0);
+		    if ($text)
+		    {
+		        $this->DiaTables->append(array($text));
+		    }
+	    }
+	
+
+
+        //$this->ctreeTablesDia->thaw();
     }
 
     
@@ -114,7 +131,10 @@ class DiaWindow extends AgataCore
     /***********************************************************/
     function CreateDia($fs)
     {
+
+
         $FileName = $fs->get_filename();
+
         if ($FileName)
         {
             $fs->hide();

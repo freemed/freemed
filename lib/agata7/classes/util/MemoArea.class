@@ -15,7 +15,7 @@ class MemoArea
             $this->window = new GtkWindow;
             $this->window->set_title(_a('Message'));
             $this->window->set_default_size(400, 280);
-            $this->window->connect_object('key_press_event', array(&$this, 'KeyTest'));
+            $this->window->connect_simple('key_press_event', array(&$this, 'KeyTest'));
             $this->window->set_position(GTK_WIN_POS_CENTER);
             $this->window->realize();
             
@@ -24,16 +24,25 @@ class MemoArea
             $this->window->add($vbox);
             $col1 = &new GdkColor(56000, 0, 0);
             
-            $HelpText = &new GtkText();
-            $HelpText->set_word_wrap(true);
+            $HelpText = &new GtkTextview();
+            //$HelpText->set_word_wrap(true);
+	    $HelpText->set_wrap_mode(Gtk::WRAP_WORD_CHAR); 
             $vbox->pack_start($HelpText, true, true);
-            $font = gdk::font_load ("-bitstream-helvetica-medium-r-normal-*-*-140-*-*-m-*-iso8859-9");
-            $HelpText->insert($font, $col1, null, "$mensagem\n");
-            $HelpText->set_usize(364, -1);
+            //$font = gdk::font_load ("-bitstream-helvetica-medium-r-normal-*-*-140-*-*-m-*-iso8859-9");
+
+
+	    $parrafo= $mensagem ."\n";
+	    $buffer1 = new GtkTextBuffer();
+	    $buffer1->set_text($parrafo);
+	    $HelpText->set_buffer($buffer1);
+
+
+           // $HelpText->insert($font, $col1, null, "$mensagem\n");
+            $HelpText->set_size_request(364, -1);
             
-            $close = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_close.xpm');
+            $close =   images . 'ico_close.xpm';
             $this->button = new VoidButton(_a('Close'), $close, IMAGEBUTTON);
-            $this->button->connect_object('clicked', array($this, 'Close'));
+            $this->button->connect_simple('clicked', array($this, 'Close'));
             $vbox->pack_start(right($this->button), false, false);
             
             $this->window->show_all();

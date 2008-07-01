@@ -1,0 +1,185 @@
+<?php
+/**
+* Easy menu manipulation
+* Copyright (c) Jonathan Gotti
+*    <jonathan.gotti@the-ring.homelinux.net>
+* @license http://opensource.org/licenses/lgpl-license.php
+*    GNU Lesser General Public Licence
+*/
+
+class menu {
+  var $bar;
+
+  /** the gdkwindow used to create pixmaps */
+  var $gdkwindow;
+
+  /** the accel group to manage accelkeys */
+  var $accel_group;
+
+  /** used for easy access to menus */
+  var $menus;
+
+  /** used for easy access to menuitems */
+  var $items;
+
+  /**
+  * constructor function
+  * @param GdkWindow $gdkwindow
+  * @param GtkAccelGroup $accel_group
+  * @return menu object
+  **/
+  function menu($gdkwindow=null, $accel_group=null) {
+  if (is_a($gdkwindow,'gdkwindow'))
+    $this->gdkwindow = &$gdkwindow;
+    $this->bar        = &new GtkMenuBar();
+    //$this->bar->set_shadow_type(GTK_SHADOW_ETCHED_IN);
+    if (is_a($accel_group,'GtkAccelGroup')) {
+      $this->accel_group = &$accel_group;
+    } else {
+    $this->accel_group = &new GtkAccelGroup();
+    }
+    # showvar($GLOBALS['MAIN']);
+  }
+
+  /**
+   * add an handlebox as box property
+   * and pack the bar into it so you will need to pack
+   * $this->box instead of $this->bar
+   */
+  function add_handlebox() {
+    $this->box = &new GtkHandleBox();
+    $this->box->add($this->bar);
+  }
+
+  /**
+   * will add a separator to $parent menu
+   * @param string $parent the parent menu keyindex
+   */
+  function add_sep($parent) {
+    $this->add_menu_item('SEP', $parent);
+  }
+
+  /**
+   * add an item to the menu
+   * @param string $key is the keyindex to acces the item
+   *     inside the objects
+   * @param string $parent the parent's keyindex
+   * @param string $label the text to display for this item
+   *     (can be null to get a separator)
+  * @param mixed $callback the function name or
+  *     array(object,methodname) to call on select
+  * @param string $imgfile optionnal file path to an icon
+  * @param bool   $sensitive
+  * @param bool   $is_checkmenuitem
+  * @param bool   $is_checked
+  */
+  function add_menu_item($key,
+  $parent,
+    $label=null,
+    $callback=null,
+    $imgfile=null,
+    $param=null,   
+    $sensitive=TRUE,
+    $is_checkmenuitem=FALSE,
+    $is_checked=FALSE) {
+
+  try
+  {
+    while ($this->items[$key]) { # ensure a unike keyid
+      preg_match("!(\d+)$!",$key,$m);
+      $int = $m[1];
+      if (is_numeric($int))       
+        $key = substr($key, 0, - strlen($int)) . ($int+1);
+      else
+        $key .= '1';
+      // echo "int $int / " . is_numeric($int) . "\n";
+    }
+    if ((!$label) && $this->menus[$parent]) {
+      $this->items[$key] = &new GtkMenuItem();
+      $this->items[$key]->set_sensitive(FALSE);
+      $this->menus[$parent]->append($this->items[$key]);
+      return;
+    }
+    if (!$is_checkmenuitem) {
+      $this->items[$key]= &new GtkMenuItem($label);
+    } else {
+      $this->items[$key]= &new GtkCheckMenuitem($label);
+      $this->items[$key]->set_active($is_checked);
+    }
+    $lb = $this->items[$key]->child;
+
+    # add icon if needed
+    if (file_exists($imgfile)) {
+      if (!$this->gdkwindow) {
+        $this->bar->realize();
+        $this->gdkwindow = $this->bar->window;
+      }
+     /* if ($img = GdkPixmap::create_from_xpm(
+        $this->gdkwindow,null,$imgfile)) {
+        $img = &new GtkPixmap($img[0], $img[1]);     
+        $this->items[$key]->remove($lb);
+        $box = &new GtkHBox();
+        $box->pack_start($img,0,0,2);
+        $box->pack_start($lb,0,0,2);       
+        $this->items[$key]->add($box);
+      }*/
+    }
+
+    # adding to parent menu
+    if (!$parent) {
+      $this->bar->append($this->items[$key]);
+    } else {
+      if (!$this->items[$parent]) {
+        echo "[ERROR] menu::add_menu_item to non-existent parent '$parent'\n";
+        return FALSE;
+      }
+      if (!$this->menus[$parent]) {
+        $this->menus[$parent] = &new GtkMenu();
+        $this->items[$parent]->set_submenu($this->menus[$parent]);
+      }
+      $this->menus[$parent]->append($this->items[$key]);
+    }
+
+    # add accellkey if needed
+    if (substr_count($label, '_')) { # add a keyboard shortcut
+      $acckey = $lb->parse_uline($label);
+      $this->items[$key]->add_accelerator('activate',
+        $this->accel_group,
+        $acckey,
+        GDK_CONTROL_MASK,
+        GTK_ACCEL_VISIBLE);
+    }
+
+    #connect to callback
+
+	if($callback){
+	     	  if ($param)
+		    {
+		     
+     			 $this->items[$key]->connect_simple('activate', $callback, $param);
+
+		    }
+		    else
+		    {
+		         $this->items[$key]->connect_simple('activate', $callback);
+		    }
+	}  		      
+	
+  }
+   catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+  
+
+}
+
+  function destroy() {
+    if($this->box)
+      $this->box->destroy();
+    else
+      $this->bar->destroy();
+  }
+}
+?>

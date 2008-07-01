@@ -11,6 +11,9 @@ class Dialog
     function Dialog($mensagem, $erro = true, $kill = false, $submessage = null)
     {
         $agataConfig = AgataConfig::ReadConfig();
+
+	echo $mensagem;
+
         if ($agataConfig['general']['ShowMessage'])
         {
             if (!is_array($mensagem))
@@ -30,6 +33,7 @@ class Dialog
                 $mensagem = $result;
                 }
             }
+	    echo 'DIALOG ERROR:'.$mensagem;	
             $this->ShowMessage($mensagem, $erro, $kill, $submessage);
         }
     }
@@ -46,11 +50,11 @@ class Dialog
             //$this->window->set_modal(true);
             $this->window->set_border_width(10);
             $this->window->realize();
-            $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), null);
+            $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'), null);
     
-            $this->img = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_message.xpm');
-            //$this->img = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_warning.xpm');
-            $pixwid = &new GtkPixmap($this->img[0], $this->img[1]);
+           // $this->img = GdkPixmap::create_from_xpm($this->window->window, null, images . 'ico_message.xpm');
+            //$this->img = GdkPixmap::create_from_xpm($this->window->window, null, images . 'ico_warning.xpm');
+           // $pixwid = &new GtkPixmap($this->img[0], $this->img[1]);
             
             if ($erro)
                 $col1 = &new GdkColor(56000, 0, 0);
@@ -59,9 +63,9 @@ class Dialog
             
             $col2 = &new GdkColor(0, 56000, 32000);
             $style = &new GtkStyle;
-            $style->fg[GTK_STATE_NORMAL] = $col1;
-            $style->base[GTK_STATE_NORMAL] = $col2;
-            $style->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*");
+           // $style->fg[GTK_STATE_NORMAL] = $col1;
+           // $style->base[GTK_STATE_NORMAL] = $col2;
+           // $style->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*");
             
             $vbox = new GtkVBox(false, 10);
             $this->window->add($vbox);
@@ -80,7 +84,7 @@ class Dialog
                     $line = new GtkHBox;
                     $texto = new GtkLabel(' ' . $lb . ' ');
                     //$texto->set_justify(GTK_JUSTIFY_LEFT);
-                    $texto->set_style($style);
+                   // $texto->set_style($style);
                     $line->pack_start($texto, false, false);
                     $line->pack_start($tmp, true, true);
                     $textbox->pack_start($line, false, false);
@@ -92,7 +96,7 @@ class Dialog
                 $line = new GtkHBox;
                 $texto = new GtkLabel(' ' . $labels . ' ');
                 $texto->set_justify(GTK_JUSTIFY_LEFT);
-                $texto->set_style($style);
+                //$texto->set_style($style);
                 $line->pack_start($texto, false, false);
                 $line->pack_start($tmp, true, true);
                 $textbox->pack_start($line, false, false);
@@ -110,16 +114,16 @@ class Dialog
             $vbox->pack_start($sep);
             $hbox = new GtkHBox;
     
-            $close = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_close.xpm');
+            $close =  images . 'ico_close.xpm';
             $this->button = $button = new VoidButton(_a('Close'), $close, IMAGEBUTTON);
     
             
             //$this->button = $button = new GtkButton('   ' . _a('Close') . '   ');
             
             if ($kill)
-            { $button->connect_object('clicked', array(&$this, 'Quit')); }
+            { $button->connect_simple('clicked', array(&$this, 'Quit')); }
             else
-            { $button->connect_object('clicked', array(&$this, 'Close')); }
+            { $button->connect_simple('clicked', array(&$this, 'Close')); }
     
             $hbox->pack_start($button, true, false);
             $vbox->pack_start($hbox, true, true);

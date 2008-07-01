@@ -5,6 +5,7 @@
 
 function a_customer_age($string_column, $array_row)
 {
+
 	return $string_column;
 }
 ?>

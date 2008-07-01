@@ -9,10 +9,16 @@ class HeaderFooterArea
     /* Constructor Method
     /***********************************************************/
     function HeaderFooterArea($glade)
-    {
+    { try{
+
         global $Pixmaps;
         $this->Header = $glade->get_widget('textPageHeader');
+   	$this->buffer1 = new GtkTextBuffer();
+	$this->Header->set_buffer($this->buffer1);
+
         $this->Footer = $glade->get_widget('textPageFooter');
+	$this->buffer2 = new GtkTextBuffer();
+	$this->Footer->set_buffer($this->buffer2);
 
         $this->HeaderFooterNotebook     = $glade->get_widget('notebookHeaderFooter');
         $this->Buttons['DateTime2']     = $glade->get_widget('buttonDateTime2');
@@ -42,32 +48,34 @@ class HeaderFooterArea
 
         $img_mimetypes = array('png', 'jpg', 'jpeg');
         $this->param['InsertImage']=array(array(&$this, 'TypeImage'), $img_mimetypes, null,     _a('Open'));
-        $this->Buttons['DateTime2']->connect_object('clicked', array(&$this, 'PopDateTime'));
-        $this->Buttons['Chars2']->connect_object('clicked',array(&$this, 'PopChars'));
-        $this->Buttons['InsertImage2']->connect_object('clicked', 'HandlerFile', $this->param['InsertImage']);
+        $this->Buttons['DateTime2']->connect_simple('clicked', array(&$this, 'PopDateTime'));
+        $this->Buttons['Chars2']->connect_simple('clicked',array(&$this, 'PopChars'));
+        $this->Buttons['InsertImage2']->connect_simple('clicked', 'HandlerFile', $this->param['InsertImage']);
 
         $this->MenuChars = new GtkMenu;
-        $option1  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(185), null);
-        $option2  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(178), null);
-        $option3  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(179), null);
-        $option4  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(186), null);
-        $option5  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(170), null);
-        $option6  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(188), null);
-        $option7  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(189), null);
-        $option8  = new MyNormalMenuItem($Pixmaps['ico_chars'],  chr(190), null);
-        $option9  = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Registered') . ' ' . chr(174), null);
-        $option10 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Copyright')  . ' ' . chr(169), null);
-        $option11 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Sterling')   . ' ' . chr(163), null);
-        $option12 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Paragraph')  . ' ' . chr(167), null);
-        $option13 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Spaniard')   . ' ' . chr(191), null);
-        $option14 = new MyNormalMenuItem($Pixmaps['ico_chars'], 'PI ' . chr(182), null);
-        $option15 = new MyNormalMenuItem($Pixmaps['ico_chars'], chr(177), null);
-        $option16 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Commented Line'), null);
-        $option17 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('File Name'), null);
-        $option18 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Page Number'), null);
-        $option19 = new MyNormalMenuItem($Pixmaps['ico_chars'], _a('Page counting'), null);
-    
-        $this->MenuChars->append($option1);
+
+	$option1 = new GtkMenuItem(  _a('Year'));
+        $option1  = new GtkMenuItem( chr(185));
+        $option2  =new GtkMenuItem( chr(178));
+        $option3  = new GtkMenuItem(  chr(179));
+        $option4  = new GtkMenuItem(  chr(186));
+        $option5  = new GtkMenuItem(  chr(170));
+        $option6  = new GtkMenuItem(  chr(188));
+        $option7  = new GtkMenuItem( chr(189));
+        $option8  = new GtkMenuItem(  chr(190));
+        $option9  = new GtkMenuItem( _a('Registered') . ' ' . chr(174));
+        $option10 = new GtkMenuItem( _a('Copyright')  . ' ' . chr(169));
+        $option11 = new GtkMenuItem( _a('Sterling')   . ' ' . chr(163));
+        $option12 = new GtkMenuItem( _a('Paragraph')  . ' ' . chr(167));
+        $option13 = new GtkMenuItem( _a('Spaniard')   . ' ' . chr(191));
+        $option14 = new GtkMenuItem( 'PI ' . chr(182));
+        $option15 = new GtkMenuItem( chr(177));
+        $option16 = new GtkMenuItem( _a('Commented Line'));
+        $option17 = new GtkMenuItem( _a('File Name'));
+        $option18 = new GtkMenuItem( _a('Page Number'));
+        $option19 = new GtkMenuItem( _a('Page counting'));
+
+	$this->MenuChars->append($option1);
         $this->MenuChars->append($option2);
         $this->MenuChars->append($option3);
         $this->MenuChars->append($option4);
@@ -86,48 +94,61 @@ class HeaderFooterArea
         $this->MenuChars->append($option17);
         $this->MenuChars->append($option18);
         $this->MenuChars->append($option19);
-    
-        $option1->connect_object('activate', array(&$this, 'TypeChar'), ' $sup1 ');
-        $option2->connect_object('activate', array(&$this, 'TypeChar'), ' $sup2 ');
-        $option3->connect_object('activate', array(&$this, 'TypeChar'), ' $sup3 ');
-        $option4->connect_object('activate', array(&$this, 'TypeChar'), ' $supo ');
-        $option5->connect_object('activate', array(&$this, 'TypeChar'), ' $supa ');
-        $option6->connect_object('activate', array(&$this, 'TypeChar'), ' $s14 ');
-        $option7->connect_object('activate', array(&$this, 'TypeChar'), ' $s12 ');
-        $option8->connect_object('activate', array(&$this, 'TypeChar'), ' $s34 ');
-        $option9->connect_object('activate', array(&$this, 'TypeChar'), ' $reco ');
-        $option10->connect_object('activate', array(&$this, 'TypeChar'), ' $copy ');
-        $option11->connect_object('activate', array(&$this, 'TypeChar'), ' $ster ');
-        $option12->connect_object('activate', array(&$this, 'TypeChar'), ' $para ');
-        $option13->connect_object('activate', array(&$this, 'TypeChar'), ' $iesp ');
-        $option14->connect_object('activate', array(&$this, 'TypeChar'), ' $pi ');
-        $option15->connect_object('activate', array(&$this, 'TypeChar'), ' $mame ');
-        $option16->connect_object('activate', array(&$this, 'TypeChar'), "\n// ");
-        $option17->connect_object('activate', array(&$this, 'TypeChar'), ' $filename ');
-        $option18->connect_object('activate', array(&$this, 'TypeChar'), ' $page ');
-        $option19->connect_object('activate', array(&$this, 'TypeChar'), ' $pagecounting ');
 
-        $this->MenuDateTime = new GtkMenu;
-        $option1 = new MyNormalMenuItem($Pixmaps['ico_cal'],  _a('Year'), null);
-        $option2 = new MyNormalMenuItem($Pixmaps['ico_cal'],  _a('Month'), null);
-        $option3 = new MyNormalMenuItem($Pixmaps['ico_cal'],  _a('Day'), null);
-        $option4 = new MyNormalMenuItem($Pixmaps['ico_cal'],  _a('Month Name'), null);
-        $option5 = new MyNormalMenuItem($Pixmaps['ico_cal'],  _a('Week Day'), null);
-        $option6 = new MyNormalMenuItem($Pixmaps['ico_cal'],  _a('Time'), null);
+        $option1->connect_simple('activate', array(&$this, 'TypeChar'), ' $sup1 ');
+        $option2->connect_simple('activate', array(&$this, 'TypeChar'), ' $sup2 ');
+        $option3->connect_simple('activate', array(&$this, 'TypeChar'), ' $sup3 ');
+        $option4->connect_simple('activate', array(&$this, 'TypeChar'), ' $supo ');
+        $option5->connect_simple('activate', array(&$this, 'TypeChar'), ' $supa ');
+        $option6->connect_simple('activate', array(&$this, 'TypeChar'), ' $s14 ');
+        $option7->connect_simple('activate', array(&$this, 'TypeChar'), ' $s12 ');
+        $option8->connect_simple('activate', array(&$this, 'TypeChar'), ' $s34 ');
+        $option9->connect_simple('activate', array(&$this, 'TypeChar'), ' $reco ');
+        $option10->connect_simple('activate', array(&$this, 'TypeChar'), ' $copy ');
+        $option11->connect_simple('activate', array(&$this, 'TypeChar'), ' $ster ');
+        $option12->connect_simple('activate', array(&$this, 'TypeChar'), ' $para ');
+        $option13->connect_simple('activate', array(&$this, 'TypeChar'), ' $iesp ');
+        $option14->connect_simple('activate', array(&$this, 'TypeChar'), ' $pi ');
+        $option15->connect_simple('activate', array(&$this, 'TypeChar'), ' $mame ');
+        $option16->connect_simple('activate', array(&$this, 'TypeChar'), "\n// ");
+        $option17->connect_simple('activate', array(&$this, 'TypeChar'), ' $filename ');
+        $option18->connect_simple('activate', array(&$this, 'TypeChar'), ' $page ');
+        $option19->connect_simple('activate', array(&$this, 'TypeChar'), ' $pagecounting ');
+
+       $this->MenuDateTime = new GtkMenu;
+
+	$option1 = new GtkMenuItem(  _a('Year'));
+        $option2 = new GtkMenuItem( _a('Month'));
+        $option3 = new GtkMenuItem( _a('Day'));
+        $option4 = new GtkMenuItem( _a('Month Name'));
+        $option5 = new GtkMenuItem( _a('Week Day'));
+        $option6 = new GtkMenuItem( _a('Time'));
         
-        $this->MenuDateTime->append($option1);
+
+	$this->MenuDateTime->append($option1);
         $this->MenuDateTime->append($option2);
         $this->MenuDateTime->append($option3);
         $this->MenuDateTime->append($option4);
         $this->MenuDateTime->append($option5);
         $this->MenuDateTime->append($option6);
+       
+	
+
+
     
-        $option1->connect_object('activate', array(&$this, 'TypeChar'), ' $year ');
-        $option2->connect_object('activate', array(&$this, 'TypeChar'), ' $month ');
-        $option3->connect_object('activate', array(&$this, 'TypeChar'), ' $day ');
-        $option4->connect_object('activate', array(&$this, 'TypeChar'), ' $monthname ');
-        $option5->connect_object('activate', array(&$this, 'TypeChar'), ' $weekday ');
-        $option6->connect_object('activate', array(&$this, 'TypeChar'), ' $time ');
+        $option1->connect_simple('activate', array(&$this, 'TypeChar'), ' $year ');
+        $option2->connect_simple('activate', array(&$this, 'TypeChar'), ' $month ');
+        $option3->connect_simple('activate', array(&$this, 'TypeChar'), ' $day ');
+        $option4->connect_simple('activate', array(&$this, 'TypeChar'), ' $monthname ');
+        $option5->connect_simple('activate', array(&$this, 'TypeChar'), ' $weekday ');
+        $option6->connect_simple('activate', array(&$this, 'TypeChar'), ' $time ');
+     }
+         catch(Exception $e)
+     {
+		
+		echo $e;
+     }
+
     }
 
     /***********************************************************/
@@ -135,7 +156,7 @@ class HeaderFooterArea
     /***********************************************************/
     function PopChars()
     {
-        $this->MenuChars->popup(null, null, null, 1, 1);
+        $this->MenuChars->popup();
         $this->MenuChars->show_all();
     }
 
@@ -144,7 +165,7 @@ class HeaderFooterArea
     /***********************************************************/
     function PopDateTime()
     {
-        $this->MenuDateTime->popup(null, null, null, 1, 1);
+        $this->MenuDateTime->popup();
         $this->MenuDateTime->show_all();
     }
 
@@ -168,8 +189,16 @@ class HeaderFooterArea
     /***********************************************************/
     function Clear()
     {
-        $this->Header->delete_text(0, -1);
-        $this->Footer->delete_text(0, -1);
+       // $this->Header->delete_text(0, -1);
+       // $this->Footer->delete_text(0, -1);
+
+
+	  	   $buffer1 = new GtkTextBuffer();
+		   $text='';
+		   $buffer1->set_text($text);
+		   $this->Header->set_buffer($buffer1);
+		   $this->Footer->set_buffer($buffer1);
+
     }
 
     /***********************************************************/
@@ -177,7 +206,10 @@ class HeaderFooterArea
     /***********************************************************/
     function GetHeader()
     {
-        return $this->Header->get_chars(0, -1);
+       // return $this->Header->get_chars(0, -1);
+	 $buffer =  $this->Header->get_buffer();
+	return    $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	
     }
 
     /***********************************************************/
@@ -185,7 +217,11 @@ class HeaderFooterArea
     /***********************************************************/
     function GetFooter()
     {
-        return $this->Footer->get_chars(0, -1);
+      //  return $this->Footer->get_chars(0, -1);
+
+	 $buffer =  $this->Header->get_buffer();
+	return    $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+
     }
 
     /***********************************************************/
@@ -195,11 +231,23 @@ class HeaderFooterArea
     {
         if ($current)
         {
-            $this->Header->insert_text($text, $this->Header->get_position());
+          //  $this->Header->insert_text($text, $this->Header->get_position());
+
+
+		
+	
+		$this->buffer1->insert_interactive_at_cursor($text,strlen($text),true);
+		$this->Header->set_buffer($this->buffer1);
+   
         }
         else
         {
-            $this->Header->insert(null, null, null, $text);
+//            $this->Header->insert(null, null, null, $text);
+		  $buffer = new GtkTextBuffer();
+		  $buffer->set_text($text);
+		  $this->Header->set_buffer($buffer);
+
+
         }
     }
 
@@ -210,11 +258,22 @@ class HeaderFooterArea
     {
         if ($current)
         {
-            $this->Footer->insert_text($text, $this->Footer->get_position());
+            //$this->Footer->insert_text($text, $this->Footer->get_position());
+
+	
+		$this->buffer2->insert_interactive_at_cursor($text,strlen($text),true);
+		$this->Footer->set_buffer($this->buffer2);
+   
+   
         }
         else
         {
-            $this->Footer->insert(null, null, null, $text);
+         //   $this->Footer->insert(null, null, null, $text);
+
+	   $buffer = new GtkTextBuffer();
+	   $buffer->set_text($text);
+	   $this->Footer->set_buffer($buffer);
+
         }
     }
 

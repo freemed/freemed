@@ -13,7 +13,7 @@ class InWindow
         global $Pixmaps;
         $agataConfig = AgataConfig::ReadConfig();
         $janela = new GtkWindow;
-        $janela->connect_object('key_press_event', array(&$this,'KeyTest'), $janela);
+        $janela->connect_simple('key_press_event', array(&$this,'KeyTest'), $janela);
         $janela->set_title(_a('Queries'));
         $janela->set_position(GTK_WIN_POS_CENTER);
         $janela->set_default_size(320,320);
@@ -24,20 +24,23 @@ class InWindow
         $extensions = array('.sql');
         $this->RepositoryTree = $filetree = &new FileTree();
         $this->RepositoryTree->Info = $Info;
-        $filetree->set_column_width(0,400);
+        //$filetree->set_column_width(0,400);
         $filetree->DefineExtensions($extensions);
         $filetree->AbreDiretorio($agataConfig['general']['SqlDir'], null);
-        $filetree->set_column_width(0, 600);
+
+
+       // $filetree->set_column_width(0, 600);
         
         $SavedQueriesHandler = &new TreeHandler($filetree, array(0 => array($Pixmaps['require'], 'Apply')));
+	$this->FunctionsHandler->folder("sql");
         $ItemOpen = $SavedQueriesHandler->OpenAction;
-        $ItemOpen->connect_object('clicked', array(&$this, 'GetQuery'));
-        $ItemOpen->connect_object('clicked', array(&$janela, 'hide'));
+        $ItemOpen->connect_simple('clicked', array(&$this, 'GetQuery'));
+        $ItemOpen->connect_simple('clicked', array(&$janela, 'hide'));
         //$janela->add($SavedQueriesHandler);
 
         $vbox->pack_start(darktxt(_a('Query Templates')), false, false);
         $vbox->pack_start($SavedQueriesHandler, true, true);
-        $SavedQueriesHandler->CreateToolBar2();
+        $SavedQueriesHandler->CreateToolBar3();
         
         $janela->show_all();
     }
@@ -46,9 +49,15 @@ class InWindow
     {
         $agataConfig = AgataConfig::ReadConfig();
         $FileTree = $this->RepositoryTree;
-        $node = $FileTree->selection[0];
-        $Info = $this->RepositoryTree->node_get_row_data($node);
-        $Info = str_replace("\\", '/', $Info);
+   
+	//$node = $FileTree->selection[0];
+
+	$selection = $FileTree->get_selection();	
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$Info= $this->agataConfig['general']['SqlDir'].'/'.$model->get_value($iter, 0); 
+
+       // $Info = $this->RepositoryTree->node_get_row_data($node);
+       // $Info = str_replace("\\", '/', $Info);
         
         if (!$Info)
         {
@@ -58,10 +67,12 @@ class InWindow
         {
             call_user_func($this->signals['select-file'], $Info);
         }
+
+
         return;
     }
     
-    function connect_object($signal, $handler)
+    function connect_simple($signal, $handler)
     {
         $this->signals[$signal] = $handler;
     }

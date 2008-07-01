@@ -102,6 +102,6 @@
       $buttonRel = $this->glade->get_widget('buttonRel'.$n);
       $label = $buttonRel->child;
       $text = $label->get();
-      $buttonRel->connect_object('clicked', array(&$this,'InsertOnBlock'), 'Where', $text);
+      $buttonRel->connect_simple('clicked', array(&$this,'InsertOnBlock'), 'Where', $text);
     }
 ?>

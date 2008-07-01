@@ -5,12 +5,14 @@
 /***********************************************************/
 class Alist
 {
+protected $model;
+
     /***********************************************************/
     /* Defines the resultant action
     /***********************************************************/
     function SetCallBack($callback, $param = null)
     {
-        $this->buttonc->connect_object('clicked', $callback, $param);
+        $this->buttonc->connect_simple('clicked', $callback, $param);
     }
 
     /***********************************************************/
@@ -24,7 +26,7 @@ class Alist
         {
             foreach ($aPixTexts as $aPixText)
             {
-                $this->icons[] = Gdk::pixmap_create_from_xpm($this->window->window, null, $aPixText);
+               // $this->icons[] = GdkPixmap::create_from_xpm($this->window->window, null, $aPixText);
             }
         }
         
@@ -51,8 +53,43 @@ class Alist
         $scrolled_win->set_border_width(5);
         $scrolled_win->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
         
-        $this->clist = &new GtkCList(count($Columns), $Columns);
-        $this->clist->set_selection_mode($mode);
+
+        $this->model =$this->resizetreeview(count($Columns));
+	$this->clist = &new GtkTreeview ($this->model);
+        
+ 	$this->clist->set_enable_tree_lines(true);
+
+	if ($mode!=GTK_SELECTION_SINGLE) {
+echo '******************ssssssssssssss**************************';
+		$selection = $this->clist->get_selection(); // note 1
+		$selection->set_mode(Gtk::SELECTION_MULTIPLE); // note 1 
+	}
+
+
+  	for ($col=0; $col<count($Columns); ++$col) {
+
+			$column = new GtkTreeViewColumn();
+		// for image
+			$cell_renderer = new GtkCellRendererPixbuf();
+			$column->pack_start($cell_renderer, false);
+			
+			$column->set_cell_data_func($cell_renderer,array(&$this, 'format_col'),$aPixTexts[$col]);	
+
+	
+		       // for text
+			$cell_renderer = new GtkCellRendererText();
+		 	$column->pack_start($cell_renderer, true);
+			$column->set_attributes($cell_renderer, 'text', $col);
+			$column->set_title($Columns[$col]);
+
+			$this->clist->append_column($column);
+        }
+	
+
+        //$this->clist = &new GtkTreeview (count($Columns), $Columns);
+
+	$this->clist->expand_all();
+        //$this->clist->set_selection_mode($mode);
         $scrolled_win->add($this->clist);
         
         if ($isleft)
@@ -64,13 +101,13 @@ class Alist
         $this->vbox = &$vbox;
         $hbox->pack_start($vbox, false, false, 5);
         
-        $local_pix['add']   = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_add.xpm');
-        $local_pix['edit']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_edit.xpm');
-        $local_pix['delete']= Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_delete.xpm');
-        $local_pix['clear'] = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_clear.xpm');
-        $local_pix['up']    = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_up.xpm');
-        $local_pix['down']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_down.xpm');
-        $local_pix['save']  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_save.xpm');
+        $local_pix['add']   =   images . 'ico_add.xpm';
+        $local_pix['edit']  =  images . 'ico_edit.xpm';
+        $local_pix['delete']=  images . 'ico_delete.xpm';
+        $local_pix['clear'] =  images . 'ico_clear.xpm';
+        $local_pix['up']    =  images . 'ico_up.xpm';
+        $local_pix['down']  =   images . 'ico_down.xpm';
+        $local_pix['save']  =   images . 'ico_save.xpm'; 
         
         if ($aButtons['Add'])
             $vbox->pack_start(new Button(array(&$this, 'Add'), _a('Add'), $local_pix['add'], $format), false, false, 2);
@@ -96,6 +133,15 @@ class Alist
         $this->StartAppend($Elements);
     }
 
+
+//establece los iconos que se mostraran en el treeview
+	function format_col($column, $cell, $model, $iter,$icono)
+	 {
+	
+	 if ($icono!='')
+	 $cell->set_property('pixbuf', GdkPixbuf::new_from_file($icono));
+	 
+	}
     /***********************************************************/
     /* Closes the window
     /***********************************************************/
@@ -103,6 +149,30 @@ class Alist
     {
         $this->window->hide();
     }
+
+
+	function resizetreeview($count){
+		if ($count==1)  $model = new GtkListStore(Gtk::TYPE_STRING);
+		if ($count==2)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==3)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==4)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+		if ($count==5)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+		if ($count==6)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==7)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==8)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+		if ($count==9)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==10)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==11)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==12)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		if ($count==13)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+		return $model;
+
+	}
+
+
 
     /***********************************************************/
     /* Append a matrix
@@ -134,7 +204,11 @@ class Alist
     /***********************************************************/
     function Clear()
     {
-        $this->clist->clear();
+	$this->model = $this->resizetreeview($this->ColumnCount);
+	$this->clist->set_model($this->model);
+
+
+       // $this->clist->clear();
         $this->ElementCount = 0;
     }
 
@@ -143,14 +217,28 @@ class Alist
     /***********************************************************/
     function GetSelectedItem()
     {
-        $this->clist->freeze();
-        $selection = $this->clist->selection;
-        $this->clist->thaw();
-        for ($i=0; $i<=$this->ColumnCount -1; $i++)
-        {
-            $tmp = $this->GetItem($selection[0],$i);
-            $return[$i] = $tmp;
-        }
+    //    $this->clist->freeze();
+//        $selection = $this->clist->selection;
+
+
+
+	$selection =$this->clist->get_selection();
+	list($model, $selected_rows) =  $selection->get_selected_rows(); // note 3
+        if (!$model) {return;}
+
+
+
+		foreach($selected_rows as $path) { 
+			     $iter = $model->get_iter($path);
+			     $text='';	
+			     for ($i=0; $i<=($this->ColumnCount -1); $i++)
+			     {
+					    $text = $model->get_value($iter, $i);	
+					    $texts[$i] = $text;
+			     }
+					  $return[] = $texts;
+		}
+
         return $return;
     }
 
@@ -159,8 +247,8 @@ class Alist
     /***********************************************************/
     function GetItems()
     {
-        $this->clist->freeze();
-        if ($this->ColumnCount == 1)
+       // $this->clist->freeze();
+     /*   if ($this->ColumnCount == 1)
         {
             $n = 0;
             
@@ -186,8 +274,50 @@ class Alist
                 $n ++;
             }
         }
-        $this->clist->thaw();
-        return $return;
+*/
+     	$selected_rows=$this->clist->get_model();
+      	 $model=$this->clist->get_model();
+
+	 if ($this->ColumnCount == 1)
+	{
+		$n=0;
+		foreach($selected_rows as $path) { // note 3
+			
+			$iter = $model->get_iter($n);
+			$text = $model->get_value($iter, 0);
+			
+			    {
+	      			$return[] = $text;
+		          }
+			$n++;
+		}
+	}
+	else
+	{
+		$n=0;
+		foreach($selected_rows as $path) { 
+		
+			     $iter = $model->get_iter($n);
+			
+			     for ($i=0; $i<=($this->ColumnCount -1); $i++)
+			     {
+					    $text = $model->get_value($iter, $i);	
+					    $texts[$i] = $text;
+					     echo $texts[$i]; 	
+			     }
+					  $return[] = $texts;
+			  $n++;
+		}
+
+
+	}
+
+
+
+
+  	 return $return;
+
+
     }
 
     /***********************************************************/
@@ -198,7 +328,7 @@ class Alist
         if ($this->ColumnCount == 1)
         {
             $this->InputBox = new InputArea(_a('New Item'), 200);
-            $this->InputBox->button->connect_object('clicked', array(&$this,'AddItem'));
+            $this->InputBox->button->connect_simple('clicked', array(&$this,'AddItem'));
         }
         else
         {
@@ -206,7 +336,7 @@ class Alist
             $vars[] = array('', $column, false, null, true);
             
             $this->InputForm = new FormEntry(_a('New Item'), $vars);
-            $this->InputForm->button->connect_object('clicked', array(&$this,'AddGroup'));
+            $this->InputForm->button->connect_simple('clicked', array(&$this,'AddGroup'));
         }
     }
 
@@ -221,8 +351,10 @@ class Alist
         foreach ($aInputEntries as $key => $InputEntry)
         {
             $items[] = $InputEntry->get_text();
+		
         }
-        $this->Append($items);
+	  
+	$this->Append($items);
     }
 
     /***********************************************************/
@@ -231,9 +363,13 @@ class Alist
     function AddItem()
     {
         $InputBox = $this->InputBox;
-        $Item = $InputBox->InputEntry->get_chars(0, -1);
-        
+        //$Item = $InputBox->InputEntry->get_chars(0, -1);
+         
+	 $buffer = $InputBox->InputEntry->get_buffer();
+	$Item= $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	
         $InputBox->Close();
+        
         $node = $this->Append(array($Item));
     }
 
@@ -241,9 +377,10 @@ class Alist
     {
         if ($items)
         {
-            $node = $this->clist->prepend($items);
+            //$node = $this->clist->prepend($items);
+ 	    $node = $this->model->append($items);
             $n = 0;
-            foreach($items as $item) // several columns
+         /*   foreach($items as $item) // several columns
             {
                 if ($this->icons)
                 {
@@ -251,7 +388,8 @@ class Alist
                 }
                 
                 $n ++;
-            }
+            }*/
+
         }
         $this->ElementCount ++;
     }
@@ -263,8 +401,13 @@ class Alist
     {
         if ($items)
         {
-            $node = $this->clist->append($items);
-            $n = 0;
+           // $node = $this->clist->append($items);
+
+  
+
+		 $node = $this->model->append($items);
+	 
+           $n = 0;
             foreach($items as $item) // several columns
             {
                 if ($this->icons)
@@ -281,28 +424,70 @@ class Alist
     /***********************************************************/
     function Edit()
     {
-        $selection = $this->clist->selection;
+	//$selection =$this->clist->get_selection();
+
+
+	//list($model, $iter) = $selection->get_selected(); // note 3
+	
+	
+
+
+	 $selection =$this->clist->get_selection();
+	 list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	
+
+
+	
+	
+
         if ($selection)
         {
-            $line = $selection[0];
             if ($this->ColumnCount == 1)
             {
-                $text = $this->GetItem($line, 0);
+
+		
+
+			foreach($selected_rows as $column) { // note 3
+				$iter = $model->get_iter($column);
+				$text = $model->get_value($iter, 0);
+				   
+			 }
+			if ($text=='' || !$text) return false;
+
+     	       // $text=$model->get_value($iter, 0);
                 $this->InputBox = new InputArea(_a('Edit Item'), 360, $text);
-                $this->InputBox->button->connect_object('clicked', array(&$this,'EditItem'), $line);
+                $this->InputBox->button->connect_simple('clicked', array(&$this,'EditItem'), $line);
+
             }
             else
             {
                 $i =0;
-                foreach ($this->Columns as $column)
-                {
-                    $text = $this->GetItem($line, $i);
-                    $vars[] = array($text, $column, false, null, true);
-                    $i ++;
-                }
+
+
+			foreach($selected_rows as $column) { // note 3
+				$iter = $model->get_iter($column);
+				$text = $model->get_value($iter, 0);
+				    {
+
+			                    $vars[] = array($text, $column, false, null, true);
+			                    $i ++;
+
+			            }
+			 }
+
+
+
+            //    foreach ($this->Columns as $column)
+              //  {
+               //     //$text = $this->GetItem($line, $i);
+		//   $text=$model->get_value($iter, 0);
+
+                 //   $vars[] = array($text, $column, false, null, true);
+                 //   $i ++;
+                //}
                 
                 $this->EditForm = new FormEntry(_a('Edit Item'), $vars);
-                $this->EditForm->button->connect_object('clicked', array(&$this,'EditGroup'), $line);
+                $this->EditForm->button->connect_simple('clicked', array(&$this,'EditGroup'), $line);
             }
         }
     }
@@ -313,8 +498,11 @@ class Alist
     function EditItem($line)
     {
         $InputBox = $this->InputBox;
-        $Item = $InputBox->InputEntry->get_chars(0, -1);
-        
+//        $Item = $InputBox->InputEntry->get_chars(0, -1);
+  	 $buffer = $InputBox->InputEntry->get_buffer();
+	$Item= $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+      
+
         $this->SetItem($line, 0, $Item);
         
         $InputBox->Close();
@@ -356,10 +544,11 @@ class Alist
     /***********************************************************/
     function SetItem($line, $column, $content)
     {
-        @$this->clist->set_text($line, $column, $content);
+        //@$this->clist->set_text($line, $column, $content);
+        @$this->model->append(array($line, $column, $content));
         
-        if ($this->icons)
-        @$this->clist->set_pixtext($line, $column, $content, 5, $this->icons[$column][0], $this->icons[$column][1]);
+       // if ($this->icons)
+      //  @$this->clist->set_pixtext($line, $column, $content, 5, $this->icons[$column][0], $this->icons[$column][1]);
     }
 
     /***********************************************************/
@@ -367,11 +556,28 @@ class Alist
     /***********************************************************/
     function Up()
     {
-        $this->clist->freeze();
-        $selection = $this->clist->selection;
+      //  $this->clist->freeze();
+       // $selection = $this->clist->selection;
+
+  
+	 // $selection = $this->clist->get_selection();	
+	  //list($model, $iter) = $selection->get_selected();
+
+
+	  $selection =$this->clist->get_selection();
+	  list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	 
+
+
+
         if ($selection)
         {
-            $line = $selection[0];
+            
+		foreach($selected_rows as $column) { // note 3
+				$iter = $model->get_iter($column);
+				$line = $model->get_value($iter, 0);
+				   
+		 }
             if ($line>0)
             {
                 $text1 = $this->GetItem($line -1, 0);
@@ -385,7 +591,7 @@ class Alist
                 $this->clist->select_row($line -1, 0);
             }
         }
-        $this->clist->thaw();
+      //  $this->clist->thaw();
     }
 
     /***********************************************************/
@@ -393,11 +599,32 @@ class Alist
     /***********************************************************/
     function Down()
     {
-        $this->clist->freeze();
-        $selection = $this->clist->selection;
+      //  $this->clist->freeze();
+       // $selection = $this->clist->selection;
+
+
+	// $selection = $this->clist->get_selection();
+	// list($model, $iter) = $selection->get_selected(); // note 3
+	 
+
+	  $selection =$this->clist->get_selection();
+	  list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	
+
+
+
         if ($selection)
         {
-            $line = $selection[0];
+            //$line = $selection[0];
+	   // $line = $model->get_value($iter, 0); 
+
+
+		foreach($selected_rows as $column) { // note 3
+				$iter = $model->get_iter($column);
+				$line = $model->get_value($iter, 0);
+		 }
+     
+
             if ($line +1 < $this->ElementCount)
             {
                 $text1 = $this->GetItem($line, 0);
@@ -412,7 +639,7 @@ class Alist
                 $this->clist->select_row($line +1, 0);
             }
         }
-        $this->clist->thaw();
+     //   $this->clist->thaw();
     }
 
     /***********************************************************/
@@ -420,22 +647,52 @@ class Alist
     /***********************************************************/
     function Delete()
     {
-        $this->clist->freeze();
-        $selection = $this->clist->selection;
+     //   $this->clist->freeze();
+        //$selection = $this->clist->selection;
         
+	 
+
+	//$selection = $this->clist->get_selection();
+        //list($model, $iter) = $selection->get_selected();
+        
+	$selection =$this->clist->get_selection();
+	list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	
+
+	if ($selected_rows==NULL) return true;
+
+
+		foreach($selected_rows as $column) { // note 3
+				$iter = $model->get_iter($column);
+				$line = $model->get_value($iter, 0);
+				
+
+				$path = $model->get_path($iter); // note 1
+        
+			        $model->remove($iter); // note 2
+			        $selection->select_path($path); // note 3
+        			$this->ElementCount --;
+  
+		 }
+
+
+
+
+       
+/*
         while (($row = $this->clist->selection[0]) !== null)
         {
             $this->clist->remove($row);
-            $this->ElementCount --;
+            
             
             if ($clist->selection_mode == GTK_SELECTION_BROWSE)
             break;
         }
-        
-        if ($this->clist->selection_mode == GTK_SELECTION_EXTENDED &&
-        $this->clist->selection[0] === null && $this->clist->focus_row >= 0)
-        $this->clist->select_row($this->clist->focus_row, -1);
-        $this->clist->thaw();
+   */     
+      //  if ($this->clist->selection_mode == GTK_SELECTION_EXTENDED &&
+      //  $this->clist->selection[0] === null && $this->clist->focus_row >= 0)
+      //  $this->clist->select_row($this->clist->focus_row, -1);
+      //  $this->clist->thaw();
     }
 
     /***********************************************************/
@@ -460,13 +717,13 @@ class Wlist extends Alist
     function Wlist($Title, $Columns, $Elements, $width, $height,  $isleft, $aButtons)
     {
         $this->window = &new GtkWindow;
-        $this->window->connect_object('delete-event', array(&$this,'CloseList'));
+        $this->window->connect_simple('delete-event', array(&$this,'CloseList'));
         $this->window->set_title($Title);
         $this->window->set_border_width(0);
         $this->window->set_default_size($width, $height);
         $this->window->set_uposition(80, 80);
         $this->window->realize();
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
 
         Alist::Alist($this->window, $this->window, $Title, $Columns, $Elements, $width, $height,  $isleft, $aButtons);
     }
@@ -480,6 +737,10 @@ class Wlist extends Alist
             $this->CloseList();
     }
 
+    function append($value)
+    {
+	$this->model->append($value);     
+     }
     /***********************************************************/
     /* Closes the window
     /***********************************************************/
@@ -487,5 +748,8 @@ class Wlist extends Alist
     {
         $this->window->hide();
     }
+
+
+
 }
 ?>

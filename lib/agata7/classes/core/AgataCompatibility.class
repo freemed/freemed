@@ -5,8 +5,10 @@ class AgataCompatibility
     {
         $array = Xml2Array($FileName);
         # From 7.2 to 7.5
+
+	
         if (!$array['Version'])
-        {
+        {  
             $new_array['Version']                       = '7.4';
             $new_array['Properties']['Description']     = $array['description'];
             $new_array['Header']['Body']                = $array['header']['body'];
@@ -107,18 +109,26 @@ class AgataCompatibility
 
             return $new_array;
         }
-        elseif ($array['Version'] == '7.4') # From 7.4 to 7.5
-        {
-            $array['Version']                                               = '7.5';
-            $array['Report']['Merge']['Details']['Detail1']['NumberSubSql'] = 0;
-            $array['Merge']['Details']['Detail1']['DataSet1']               = $array['Merge']['Details']['Detail1']['DataSet'];
-            $array['Merge']['Details']['Detail1']['DataSet1']['Body']       = $array['Merge']['Details']['Detail1']['Body'];
+        elseif ($array['Version'] == '7.4' ) # From 7.4 to 7.5
+        {echo $array['Version'];
+	$new_array['Version']                                               = '7.5';	  
+	  if  ($array['Version'] == '7.6 rc1')	{$array['Version']                                               = '7.6';}
+            $new_array['Version']                                               = '7.5';
+	if  ($array['Version'] == '7.4')	{$array['Version']                                               = '7.5';}
 
-            unset($array['Merge']['Details']['Detail1']['Body'],
-                  $array['Merge']['Details']['Detail1']['DataSet']);
+
+            $new_array['Report']['Merge']['Details']['Detail1']['NumberSubSql'] = 0;
+            $new_array['Merge']['Details']['Detail1']['DataSet1']               = $array['Merge']['Details']['Detail1']['DataSet1'];
+            $new_array['Merge']['Details']['Detail1']['DataSet1']['Body']       = $array['Merge']['Details']['Detail1']['Body'];
+
+           /* unset(  $new_array['Merge']['Details']['Detail1']['Body'],
+                    $new_array['Merge']['Details']['Detail1']['DataSet']);*/
+print $new_array['Merge']['Details']['Detail1']['DataSet1'] ;
+	    return $new_array;
 
         }
-
+//$string =print_r($array,true);
+ //echo $string;
         return $array;
     }
 }

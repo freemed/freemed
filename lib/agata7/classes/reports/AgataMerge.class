@@ -3,7 +3,7 @@
 /* Abstract Merge class
 /* by Pablo Dall'Oglio  2001-2006
 /*    Jamiel Spezia 2006 - 2006
-/***********************************************************/
+/****Miguel Angel Casanova Goitia  migration PHP-GTK1 TO PHP-GTK2 ************************************/
 
 class AgataMerge
 {

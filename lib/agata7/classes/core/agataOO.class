@@ -35,19 +35,18 @@ class AgataOO
 
         $array_content = preg_split ('/(<(?:[^<>]+(?:"[^"]*"|\'[^\']*\')?)+>)/', trim ($content), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-print_r ($this->prefix);
+ 
         for ($x=0; $x < count($array_content); $x++)
         {
             $line = $array_content[$x];
-
-		
-            if ($line == '<dc:description>')
+        
+	   if ($line == '<dc:description>')
             {
                 while ($line != '</dc:description>')
                 {
                     $x++;
                     $agataDescription .= $line = $array_content[$x];
- 
+
                 }
                 $tags = preg_split ('/(\{AGATA::[^=]*=[^\}]*\})/', trim ($agataDescription), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
@@ -59,18 +58,13 @@ print_r ($this->prefix);
                         $preg = '/({AGATA::([^=]*)=([^\}]*)})/';
 
                         $array = '[\'' . implode('\'][\'', explode('::', strtolower(preg_replace($preg, '\2', $t)))) . '\']';
-
-
-
                         $result = preg_replace($preg, '\3', $t);
+			
                         eval("\$config$array = \$result;");
-
-
                     }
                 }
             }
         }
-
         return $config;
     }
 

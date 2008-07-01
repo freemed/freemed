@@ -4,7 +4,7 @@
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
 class LinkMatch
-{
+{protected $model;
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
@@ -15,7 +15,7 @@ class LinkMatch
         $this->window->set_default_size(480,280);
         $this->window->set_title(_a('Linking Settings'));
         $this->window->set_position(GTK_WIN_POS_CENTER);
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->window);
         $this->agataDataDescription = $agataDescription;
         $this->agataDB              = $agataDB;
         $this->linking = &$linking;
@@ -27,17 +27,71 @@ class LinkMatch
         $this->window->add($vbox);
         $vbox->pack_start(darktxt(_a('Linking Settings')), false, false);
         $scroll = new GtkScrolledWindow;
-        $this->list = new GtkCList(6, array('', _a('Table'), _a('Column'), '=', _a('Table'), _a('Column')));
-        $this->list->connect_object('select-row', array(&$this, 'ChangeStatus'));
+
+
+ 	$this->model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+       // $this->list = new GtkTreeview(6, array('', _a('Table'), _a('Column'), '=', _a('Table'), _a('Column')));
+
+	$this->list = new GtkTreeview($this->model);
+
+
+  	
+
+	$column = new GtkTreeViewColumn();
+	
+	$cell_renderer = new GtkCellRendererText();
+	$column->pack_start($cell_renderer, true);
+	$column->set_attributes($cell_renderer, 'text', 0);
+	$column->set_title('');
+	$this->list->append_column($column);
+        
+	$column = new GtkTreeViewColumn();
+	$cell_renderer = new GtkCellRendererText();
+	$column->pack_start($cell_renderer, true);
+	$column->set_attributes($cell_renderer, 'text', 1);
+	$column->set_title(_a('Table'));
+	$this->list->append_column($column);
+        
+	$column = new GtkTreeViewColumn();
+	$cell_renderer = new GtkCellRendererText();
+	$column->pack_start($cell_renderer, true);
+	$column->set_attributes($cell_renderer, 'text', 2);
+	$column->set_title(_a('Column'));
+	$this->list->append_column($column);
+        
+	$column = new GtkTreeViewColumn();
+	$cell_renderer = new GtkCellRendererText();
+	$column->pack_start($cell_renderer, true);
+	$column->set_attributes($cell_renderer, 'text', 3);
+	$column->set_title('=');
+	$this->list->append_column($column);
+
+	$column = new GtkTreeViewColumn();
+	$cell_renderer = new GtkCellRendererText();
+	$column->pack_start($cell_renderer, true);
+	$column->set_attributes($cell_renderer, 'text', 4);
+	$column->set_title( _a('Table'));
+	$this->list->append_column($column);
+
+	$column = new GtkTreeViewColumn();	
+	$cell_renderer = new GtkCellRendererText();
+	$column->pack_start($cell_renderer, true);
+	$column->set_attributes($cell_renderer, 'text', 5);
+	$column->set_title( _a('Column'));
+	$this->list->append_column($column);
+
+
+        $this->list->connect_simple('select-cursor-row', array(&$this, 'ChangeStatus'));
+	$this->list->connect_simple('row-activated', array(&$this, 'ChangeStatus'));
         $scroll->add($this->list);
         $vbox->pack_start($scroll, true, true);
 
-        $this->pixmaps['on']     = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_on.xpm');
-        $this->pixmaps['add']    = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_add.xpm');
-        $this->pixmaps['off']    = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_off.xpm');
-        $this->pixmaps['ok']     = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_ok.xpm');
-        $this->pixmaps['cancel'] = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_cancel.xpm');
-
+        $this->pixmaps['on']     =  images . 'ico_on.xpm';
+        $this->pixmaps['add']    =  images . 'ico_add.xpm';
+        $this->pixmaps['off']    =  images . 'ico_off.xpm';
+        $this->pixmaps['ok']     =  images . 'ico_ok.xpm';
+        $this->pixmaps['cancel'] = images . 'ico_cancel.xpm';
         if ($linking)
         {
             foreach ($linking as $link)
@@ -50,10 +104,12 @@ class LinkMatch
                 $link[2] = ($this->SeekDataDescription($key2)) ? $this->SeekDataDescription($key2) : $link[2];
                 $link[4] = ($this->SeekDataDescription($key3)) ? $this->SeekDataDescription($key3) : $link[4];
                 $link[5] = ($this->SeekDataDescription($key4)) ? $this->SeekDataDescription($key4) : $link[5];
-                $node = $this->list->append($link);
-                $this->list->set_pixtext($node, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
+               
+		
+		$node = $this->model->append($link);
+              //  $this->list->set_pixtext($node, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
             }
-            $this->list->columns_autosize();
+          //  $this->list->columns_autosize();
         }
 
         $button1 = new Button(array(&$this, 'onOK'),         _a('OK'),     $this->pixmaps['ok'],     IMAGEBUTTON);
@@ -103,10 +159,28 @@ class LinkMatch
     /* Accepts the links
     /***********************************************************/    
     function onOK()
-    {
+    {	
+
+	$clist = $this->list;
         $i = 0;
-        while (@$data = $this->list->get_pixtext($i,0))
-        {
+
+
+//echo "conteo=".$this->linking[0][1].'-'.count($this->linking);
+
+
+	    for($i=0;$i<count($this->linking);$i++) { // note 6
+		   $data=$this->linking[$i][0];	
+		    if ($data == 1)
+		    {
+		        $return[] = $this->linking[$i];
+		        $text[] = $this->linking[$i][1] . '.'. $this->linking[$i][2] . ' = ' . $this->linking[$i][4]. '.' . $this->linking[$i][5];
+		    }
+		++$i;
+	    }
+
+
+/*
+        while ($data = @$clist->get_text($i,0)) {
             if ($data[0] == 1)
             {
                 $return[] = $this->linking[$i];
@@ -114,6 +188,7 @@ class LinkMatch
             }
             $i ++;
         }
+*/
         if ($text)
         {
             $condition = implode(' and ', $text);
@@ -132,7 +207,7 @@ class LinkMatch
         $this->lwindow->set_default_size(480,280);
         $this->lwindow->set_title(_a('Link Tables'));
         $this->lwindow->set_position(GTK_WIN_POS_CENTER);
-        $this->lwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->lwindow);
+        $this->lwindow->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->lwindow);
         
         $vbox = &new GtkVBox;
         $vbox->pack_start(darktxt(_a('Linking Settings')), false, false);
@@ -147,19 +222,19 @@ class LinkMatch
         $scroll2->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
         
         $this->ctreeTable1= &new TableTree('', true);
-        $this->ctreeTable1->set_selection_mode(GTK_SELECTION_EXTENDED);
-        $this->ctreeTable1->set_column_width(0, 200);
-        $this->ctreeTable1->column_titles_hide();
+        //$this->ctreeTable1->set_selection_mode(GTK_SELECTION_EXTENDED);
+      //  $this->ctreeTable1->set_column_width(0, 200);
+     //   $this->ctreeTable1->column_titles_hide();
         $scroll1->add($this->ctreeTable1);
         $hbox->pack_start($scroll1, true, true);
-        $local_pix['link'] = Gdk::pixmap_create_from_xpm($this->lwindow->window, null,  images . 'link.xpm');
+        $local_pix['link'] =   images . 'link.xpm';
         $button = new Button(array(&$this, 'Link'), _a('Link Tables'), $local_pix['link'], 	 TOPBUTTON);
         $hbox->pack_start(vcentral($button), false, false);
 
         $this->ctreeTable2= &new TableTree('', true);
-        $this->ctreeTable2->set_selection_mode(GTK_SELECTION_EXTENDED);
-        $this->ctreeTable2->set_column_width(0, 200);
-        $this->ctreeTable2->column_titles_hide();
+       // $this->ctreeTable2->set_selection_mode(GTK_SELECTION_EXTENDED);
+        //$this->ctreeTable2->set_column_width(0, 200);
+        //$this->ctreeTable2->column_titles_hide();
         $scroll2->add($this->ctreeTable2);
         $hbox->pack_start($scroll2, true, true);
 
@@ -196,9 +271,9 @@ class LinkMatch
             $link[2] = ($this->SeekDataDescription($key2)) ? $this->SeekDataDescription($key2) : $link[2];
             $link[4] = ($this->SeekDataDescription($key3)) ? $this->SeekDataDescription($key3) : $link[4];
             $link[5] = ($this->SeekDataDescription($key4)) ? $this->SeekDataDescription($key4) : $link[5];
-            $node = $this->list->append($link);
-            $this->list->set_pixtext($node, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
-            $this->list->columns_autosize();
+            $node = $this->model->append($link);
+           // $this->list->set_pixtext($node, 0, '1', 5, $this->pixmaps['on'][0], $this->pixmaps['on'][1]);
+           // $this->list->columns_autosize();
             $this->lwindow->hide();
         }
         else

@@ -11,8 +11,8 @@ class LayoutConfig
     function LayoutConfig()
     {
         $this->pwindow = &new GtkWindow;
-        $this->pwindow->connect_object('delete-event', array(&$this, 'Hide'));
-        $this->pwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->pwindow);
+        $this->pwindow->connect_simple('delete-event', array(&$this, 'Hide'));
+        $this->pwindow->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->pwindow);
         $this->pwindow->set_title(_a('Configuration'));
         $this->pwindow->set_position(GTK_WIN_POS_CENTER);
         $this->pwindow->set_default_size(400,400);

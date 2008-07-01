@@ -1,45 +1,199 @@
 <?
 /***********************************************************/
-/* SimpleTree, a wrapper for GtkCtree
+/* SimpleTree, a wrapper for GtkTreeView
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class SimpleTree extends GtkCTree
+class SimpleTree extends GtkTreeView
 {
+protected $model;
+
     /***********************************************************/
     /* Constructor Method
+
+    /*
+
+   /* Gtk::TREE_VIEW_GRID_LINES_NONE
+   /* Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL
+   /* Gtk::TREE_VIEW_GRID_LINES_VERTICAL
+   /* Gtk::TREE_VIEW_GRID_LINES_BOTH
+	
+
     /***********************************************************/
-    function SimpleTree($Title)
-    {
+    
+
+
+     public function __construct($Title) {
+               
+      $this->countcolumns=count($Title);
+   
         if (is_array($Title))
         {
-            GtkCTree::GtkCTree(count($Title),0,$Title);
-            $this->count = count($Title);
-            for ($n=0; $n<=count($Title); $n++)
-            {
-                GtkCTree::set_column_resizeable($n, true);
-            }
+		
+		// Creates the list store
+		    // $this->model = new GtkListStore(Gtk::TYPE_STRING);
+		     $this->model= $this->resizetreeview(count($Title));
+	    	      parent::__construct($this->model);
+
+			
+
+	            //GtkTreeView::GtkTreeView(count($Title),0,$Title);
+		    $this->count = count($Title);
+		    for ($n=0; $n<count($Title); $n++)
+		    {
+			   $cell_renderer = new GtkCellRendererText();
+			   $column = new GtkTreeViewColumn($Title[$n], $cell_renderer, 'text', $n);
+					
+			   $this->append_column($column);
+			   //$this->set_column_resizeable($n, true);
+
+		    }
         }
         else
         {
-            GtkCTree::GtkCTree(1,0,array($Title));
-            $this->count = 1;
+          
+   
+
+		// Creates the list store
+	       $this->model =  $this->resizetreeview(count($Title));
+    	       parent::__construct($this->model);
+	      
+	     $column = new GtkTreeViewColumn();
+
+
+		// for image
+	     $cell_renderer = new GtkCellRendererPixbuf();
+             $column->pack_start($cell_renderer, false);
+	     $column->set_cell_data_func($cell_renderer,array(&$this, 'format_col'));	
+	     $cell_renderer->set_property('pixbuf-expander-open',
+	     GdkPixbuf::new_from_file('interface/home.xpm'));
+	     $cell_renderer->set_property('pixbuf-expander-closed',
+	     GdkPixbuf::new_from_file('interface/home.xpm'));
+
+		// for text
+
+	      $cell_renderer = new GtkCellRendererText();
+	      $column->pack_start($cell_renderer, true);
+              $column->set_attributes($cell_renderer, 'text', 0);
+
+	      $this->append_column($column);
+	      $column->set_title($Title);
+	      $this->count = 1;
         }
-        GtkCTree::set_selection_mode(GTK_SELECTION_EXTENDED);
-        GtkCTree::set_line_style(GTK_CTREE_LINES_SOLID);
+  	
+	$selection = $this->get_selection(); // note 1
+ 	$selection->connect('changed',  array(&$this, 'on_selection')); // note 2
+	
+
+        //GtkTreeView::set_selection_mode(GTK_SELECTION_EXTENDED);
+
+	
+	$selection->set_mode(Gtk::SELECTION_MULTIPLE); // note 1 
+        $this->set_enable_tree_lines(true);
+
+       // GtkTreeView::set_line_style(GTK_CTREE_LINES_SOLID);
+
+	$this->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL);
     }
+
+
+   //establece los iconos que se mostraran en el treeview
+	function format_col($column, $cell, $model, $iter)
+	 {
+	 $cell->set_property('pixbuf', GdkPixbuf::new_from_file('interface/ico_table.xpm'));
+	 
+	}
+
+
+
+
+
+	function resizetreeview($count){
+	if ($count==1)  $model = new GtkTreeStore(Gtk::TYPE_STRING);
+	if ($count==2)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==3)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==4)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+	if ($count==5)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+	if ($count==6)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==7)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==8)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+	if ($count==9)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==10)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==11)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==12)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==13)  $model = new GtkTreeStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+
+
+	return $model;
+
+}
+
+
+     // the function that is called when user selects a row
+      function on_selection($selection) {
+	    
+ 	    $model = $this->get_model();
+    	    $selection = $this->get_selection();
+    	    list($model, $selected_rows) =   $selection->get_selected_rows(); // note 2
+
+
+	if ($iter==null) return false;
+
+if 	($selection){
+	    foreach($selected_rows as $path) { // note 3
+		$iter = $model->get_iter($path);
+		$desc = $model->get_value($iter, 0);
+	    }
+	return $desc;
+}
+ 
+	/*if 	($selection){
+	    
+	    $desc = $model->get_value($iter, 0); 
+	   
+	    return $desc; 
+	}*/
+	   
+	return false;
+
+
+
+
+$i = 0;
+    foreach($selected_rows as $path) { // note 3
+        $iter = $model->get_iter($path);
+        $desc = $model->get_value($iter, 1);
+        $qty = $model->get_value($iter, 2);
+        $price = $model->get_value($iter, 3);
+        print "Selection $i: $desc: $qty ($price)\n";
+        ++$i;
+    }
+	 
+      }
+
 
     /***********************************************************/
     /* Append a subtree
     /***********************************************************/
     function AppendSubTree($Title, $Pixmap, $parent = null)
-    {
+    {   $node = array();
+	$node[0] = null; // root
+	
         if (is_array($Title))
         $node = $Title;
         else
         $node = array($Title);
         
-        $root = GtkCTree::insert_node($parent, null, $node, 5,
-        $Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+    //    $root = GtkTreeView::insert_node($parent, null, $node, 5,
+      //  $Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+
+  
+        $root = $this->model->append($parent, $node);
+	//$this->expand_all();
+		
         return $root;
     }
 
@@ -48,22 +202,35 @@ class SimpleTree extends GtkCTree
     /***********************************************************/
     function AppendItems($root, $Array, $Pixmap)
     {
+
+	$node = array();
+	$node[0] = null; // root	
         foreach ($Array as $Item)
         {
+		
             if ($Item[0])
             {
-                $node = GtkCTree::insert_node($root, null, array($Item[1]), 5,
-                $Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+//----comentado por miguel casanova
 
-                GtkCTree::node_set_row_data( $node, $Item[0]);
+                //$node = GtkTreeView::insert_node($root, null, array($Item[1]), 5,
+                //$Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+
+	
+		$node = $this->model->append($root, array($Item[1]));
+
             }
             else
             {
-                $node = GtkCTree::insert_node($root, null, array(''), 5,
-                                  null, null, null, null, false, false);
-                GtkCTree::node_set_row_data( $node, $Item[0]);
+              //  $node = GtkTreeView::insert_node($root, null, array(''), 5,
+                //                  null, null, null, null, false, false);
+
+		$node = $this->model->append($root, array(''));
+
+             //   GtkTreeView::node_set_row_data( $node, $Item[0]);
             }
         }
+ 	//$this->expand_all();
+	
     }
 
     /***********************************************************/
@@ -72,16 +239,19 @@ class SimpleTree extends GtkCTree
     function AppendLineItems($root, $Array, $Pixmap, $style = null)
     {
         if ($this->count == count($Array))
-        {
-            $node = GtkCTree::insert_node($root, null, $Array, 5,
-                    $Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+        {//----comentado por miguel casanova
+         //   $node = GtkTreeView::insert_node($root, null, $Array, 5,
+           //         $Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+
+		$node = $this->model->append($root, $Array);
         }
         
         if ($style)
-        {
-            GtkCTree::node_set_row_style( $node, $style);
+        {//----comentado por miguel casanova
+            //GtkTreeView::node_set_row_style( $node, $style);
             
         }
+       // $this->expand_all();
         return $node;
     }
 
@@ -90,18 +260,51 @@ class SimpleTree extends GtkCTree
     /***********************************************************/
     function GetData()
     {
-        $selection = $this->selection;
-        $Info = GtkCTree::node_get_row_data($selection[0]);
+//        $selection = $this->selection;
+
+
+	
+
+	    $model = $this->get_model();
+    	    $selection = $this->get_selection();
+    	    list($model, $iter) =   $selection->get_selected_rows(); // note 2
+
+
+	if ($iter==null) return false;
+
+if 	($selection){
+	    foreach($iter as $path) { // note 3
+		$iter = $model->get_iter($path);
+		{
+			$Info[] = $model->get_value($iter, 0);
+		}
+	    }
+	
+}
+	
+	//$Info  = $model->get_value($iter, 0); // note 4
+
+
+
+        //$Info = GtkTreeView::node_get_row_data($selection[0]);
         
         return $Info;
     }
-
+    function Clear()
+    {
+	$this->model->clear();       
+	$this->model =  $this->resizetreeview($this->countcolumns);
+	$this->set_model($this->model);
+     
+    }
     /***********************************************************/
     /* Changes the current node information
     /***********************************************************/
     function SetData($node, $info)
     {
-        GtkCTree::node_set_row_data($node, $info);
+        //GtkTreeView::node_set_row_data($node, $info);
+	$this->model->append($node, $info);
+	//$this->expand_all();
     }
 }
 ?>

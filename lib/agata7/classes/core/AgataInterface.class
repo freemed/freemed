@@ -43,6 +43,7 @@ include_once 'classes/util/Box.class';
 include_once 'classes/util/IList.class';
 include_once 'classes/util/FileDialog.class';
 include_once 'classes/util/MenuItem.class';
+include_once 'classes/util/MenuItem_macg.class';
 include_once 'classes/util/HintWindow.class';
 include_once 'classes/util/GtkEntryMask.class';
 include_once 'classes/util/GtkPopDate.class';
@@ -69,59 +70,108 @@ include_once 'classes/guis/ConnectionWizard.class';
 include_once 'classes/guis/HeaderFooterArea.class';
 include_once 'classes/reports/AgataReport.class';
 
+
+
 class AgataInterface
 {
+ protected $MergeInterface;
+ protected $HeaderFooterArea;
+ protected $OfficeInterface;
+ protected  $LevelsArea;
+ protected  $subQuery;
+           
+
+// arreglo de formatos
+protected $formatlabel = array('A3' => 'A3','A4' => 'A4','A5' => 'A5','Legal' => 'Legal');
+
+
+//*****************ocultar tab de NOTEBOOK
+function nextTab($notebook,$event)
+{
+            
+	for($i=1;$i<4;$i++)
+	{
+	  	$widget = $notebook->get_nth_page($i);
+		$widget->set_visible(false);
+	}
+    
+}
+
+
     /***********************************************************/
     /* Builds the Agata Interface
     /***********************************************************/
-    function AgataInterface($agataConfig, $subQuery = false)
-    {
+   
+	function  AgataInterface($agataConfig, $subQuery = false)
+        { 
+	try {
+	  
         $this->subQuery = $subQuery;
+ 
         $this->agataConfig = $agataConfig;
+
         $this->glade = &new GladeXML('interface' . bar . 'agata.glade');
+
         $this->window = $this->glade->get_widget('window');
+
 
         $this->window->set_border_width(0);
         $this->window->realize();
         $this->connected = false;
         $this->tooltips = &new GtkTooltips();
-        
         include ('include/getwidgets.inc');
+
         include ('include/createwidgets.inc');
+
         include ('include/setwidgets.inc');
+ 
+
+	// This is the class file you just created
+	  $this->LevelsArea = &new LevelsArea($this->glade);
+             $this->MergeInterface   = &new MergeInterface($this->glade, $this->agataConfig);
+//include('classes/util/MenuItem.class');
 
         $gdkwindow = $this->window->window;
-        $gdkwindow->set_icon($gdkwindow, $Pixmaps['icon'][0], $Pixmaps['icon'][1]);
+     // $gdkwindow->set_icon( $gdkwindow,GdkPixbuf::new_from_file('interface/icon.xpm'),GdkPixbuf::new_from_file//('interface/icon.xpm'));
 
-        if (!$subQuery)
+
+	  if (!$subQuery)
         {
+
             $this->Title = 'Agata Report';
             $this->window->set_title($this->Title);
-            $this->window->connect_object('delete-event', array(&$this, 'AskFecha'));
-            $this->window->connect_object('destroy', array(&$this, 'Quit'));
-            $this->SelectList->connect_object('changed',       array(&$this, 'RefreshFields'));
-            $this->PackMainMenu();
+            $this->window->connect_simple('delete-event', array(&$this, 'AskFecha'));
+            $this->window->connect_simple('destroy', array(&$this, 'Quit'));
+	     	
+            $this->SelectList->connect_simple('columns-changed', array(&$this, 'RefreshFields'));
+	    $this->NewPackMainMenu($this->window);
+		//$this->PackMainMenu($this->window);
 
             /***********************************************************/
             /* Levels Area
             /***********************************************************/
-            $this->LevelsArea = &new LevelsArea($this->glade);
-            $this->LevelsArea->connect_object('onchange', array(&$this, 'onBreakAction'));
+     
+          
+            $this->LevelsArea->connect_simple('onchange', array(&$this, 'onBreakAction'));
             $this->Containers['viewportFixed']->add($this->LevelsArea->widget);
             $this->LevelsArea->CreateBreakList();
             $this->Containers['hboxBreaks']->pack_start($this->LevelsArea->widget2);
             $this->Containers['viewportFixed']->show_all();
-            
+             
             /***********************************************************/
             /* Merge Interface
             /***********************************************************/
-            $this->MergeInterface   = &new MergeInterface($this->glade, $this->agataConfig);
+
+
+
+           
             $this->HeaderFooterArea = &new HeaderFooterArea($this->glade);
-            $this->MergeInterface->Buttons['SubQuery']->connect_object('clicked', array(&$this, 'SubQuery'));
+	
+            $this->MergeInterface->Buttons['SubQuery']->connect_simple('clicked', array(&$this, 'SubQuery'));
             $this->MergeInterface->eventAddDetail(array(&$this, 'SubQuery'));
 
-            $this->MergeInterface->Buttons['Preview']->connect_object('clicked', array(&$this, 'SaveTmpMerge'));
-            $this->MergeInterface->Buttons['MergePdf']->connect_object('clicked', array(&$this, 'PreReport'), 'MergePdf');
+            $this->MergeInterface->Buttons['Preview']->connect_simple('clicked', array(&$this, 'SaveTmpMerge'));
+            $this->MergeInterface->Buttons['MergePdf']->connect_simple('clicked', array(&$this, 'PreReport'), 'MergePdf');
 
             $this->Containers['boxLabel']->add($this->MergeInterface->textSections['@LabelText']);
             $this->Containers['boxHeader']->add($this->MergeInterface->textSections['@MergeHeader']);
@@ -135,42 +185,402 @@ class AgataInterface
             /* OpenOffice Interface
             /***********************************************************/
             $this->OfficeInterface   = &new OfficeInterface($this->glade, $this->agataConfig);
-            $this->OfficeInterface->buttonOpenOfficeParse->connect_object('clicked', array(&$this, 'PreReport'), 'ParseOO');
-            
-            $this->PackConnection(true);
-        }
+            $this->OfficeInterface->buttonOpenOfficeParse->connect_simple('clicked', array(&$this, 'PreReport'), 'ParseOO');
+           
+
+	     $this->PackConnection(true);
+	}
         else
         {
+
+
             $this->Title = _a('SubReport Wizard');
             $this->window->set_title($this->Title);
             $this->Containers['hboxCloseSubWindow']->pack_start(right(new Button(array(&$this, 'SaveSubReport'), _a('Save SubReport'), $Pixmaps['menu_save'], IMAGEBUTTON)), false, true, 4);
             $this->Containers['hboxCloseSubWindow']->pack_start(right(new Button(array(&$this->window, 'hide'), _a('Quit'), $Pixmaps['menu_quit'], IMAGEBUTTON)), false, true, 4);
             $this->Containers['hboxMainQueryField']->pack_start(new Button(array(&$this, 'PopMainQueryFields'),       _a('Report Fields'), $Pixmaps['column'], IMAGEBUTTON), true, true, 2);
             $this->Containers['hboxMainMenu']->pack_start(darktxt(_a('SubQuery Session')), true, true);
-            $this->window->connect_object('destroy', array(&$this->window, 'hide'));
+            $this->window->connect_simple('destroy', array(&$this->window, 'hide'));
         
             $this->AgataNotebook->remove_page(1);
             $this->AgataNotebook->remove_page(1);
             $this->AgataNotebook->remove_page(1);
         }
-        
+       
         $this->FileName = null;
         $this->LoadBlocks(true, false);
         $this->window->show_all();
+
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+
     }
+
+    function NewPackMainMenu($window)
+    {
+	try {
+
+	
+
+		$window->connect_simple('destroy-event', 'shutdown');
+		$window->connect_simple('delete-event', 'shutdown');
+		$window->set_position('center');
+
+		/**
+		* We realize the window to get the gdkwindow needed to
+		* create Xpm if we want to display icons in our menu
+		*/
+		$window->realize();
+		$gdkwindow  = $window->window;
+
+		/**
+		* We also create a gtkaccelgroup to manage accelkeys
+		* the class menu will attempt to create its own if none
+		* is given at creation time
+		*/
+		$accelgroup = &new GtkAccelGroup();
+		$window->add_accel_group($accelgroup);
+
+		// So we declare the menu and add it to the window
+		$menu = &new menu($window->window, $accelgroup);
+		//$vboxmenu->add($menu->bar);
+
+		$this->Containers['hboxMainMenu']->pack_start($menu->bar, false, false);
+
+		/**
+		* We know can add entrys to the menu
+		*/
+
+		// First the file menu
+
+
+		
+
+
+
+
+
+
+		$menu->add_menu_item(_a('File'), null, _a('File'));
+
+				$menu->add_menu_item(
+				  $keyid=   _a('Connect to Database'),
+				  $parent=_a('File'),
+				  $label=_a('Connect to Database'),
+				  $callback=array(&$this, 'PackConnection'),
+				  $imgfile='img/fileopen.xpm');
+
+				// Second se quiere  Manejar Proyectos
+				$menu->add_menu_item(
+				  $keyid=   _a('Manage Project'),
+				  $parent=_a('File'),
+				  $label= _a('Manage Project'),
+				  $callback=array(&$this, 'ManageProject'),
+				  $imgfile='img/fileopen.xpm');
+
+
+		$menu->add_menu_item(_a('New Report'),_a('File'),_a('New Report'));
+
+				$menu->add_menu_item(
+				  $keyid=   '_' .  _a('New'),
+				  $parent=_a('New Report'),
+				  $label=_a('New'),
+				  $callback=array(&$this, 'ClearQuery'),
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid=   '_O',
+				  $parent=_a('New Report'),
+				  $label=_a('Open Report'),
+				  $callback='HandlerFile', 
+				  $imgfile='img/fileopen.xpm',
+				$param=$this->param['OpenRep']);
+
+
+				$menu->add_menu_item(
+				  $keyid=   '_S' . _a('Save'),
+				  $parent=_a('New Report'),
+				  $label=_a('Save'),
+				  $callback= array(&$this, 'PreSave'),
+				  $imgfile='img/fileopen.xpm',
+				$param=$this->param['SaveRep']);
+
+
+				$menu->add_menu_item(
+				  $keyid=   '',
+				  $parent=_a('New Report'),
+				  $label=_a('Save as'),
+				  $callback= array(&$this, 'HandlerFile'),
+				  $imgfile='img/fileopen.xpm',
+				  $param= $this->param['SaveRep']);
+
+				
+				$menu->add_menu_item(
+				  $keyid=   '' .   _a('Save'),
+				  $parent=_a('New Report'),
+				  $label=_a('Save SQL'),
+				  $callback='HandlerFile',
+				  $imgfile='img/fileopen.xpm' ,
+				  $param=$this->param['SaveRep']);
+
+
+
+				$menu->add_menu_item(
+				  $keyid=   '',
+				  $parent=_a('New Report'),
+				  $label= _a('Publish Report'),
+				  $callback=array(&$this, 'PublishReport'),
+				  $imgfile='img/fileopen.xpm');
+
+
+		$menu->add_menu_item(_a('Report Properties'),_a('File'),_a('Report Properties'));
+
+				$menu->add_menu_item(
+				  $keyid=  '' . _a('xxx'),
+				  $parent=_a('Report Properties'),
+				  $label=_a('Report Properties'),
+				  $callback=array(&$this, 'Properties'),
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid=   '' . _a('xxx'),
+				  $parent=_a('Report Properties'),
+				  $label=_a('Custom Parameters'),
+				  $callback=array(&$this, 'CustomParameters'),
+				  $imgfile='img/fileopen.xpm',
+				  $param=$this->param['OpenRep']);
+
+
+
+				$menu->add_menu_item(
+				  $keyid=   '' . _a('xxx'),
+				  $parent=_a('Report Properties'),
+				  $label= _a('Page Setup'),
+				  $callback=array(&$this, 'PageSetup'),
+				  $imgfile='img/fileopen.xpm',
+				  $param=$this->param['OpenRep']);
+	
+				$menu->add_menu_item(
+				  $keyid=  '' .   _a('Save'),
+				  $parent=_a('Report Properties'),
+				  $label=_a('Quit'),
+				  $callback=array(&$this, 'Quit'),
+				  $imgfile='img/fileopen.xpm');
+
+
+
+
+
+
+	// First the file menu
+	$menu->add_menu_item(_a('Report'), _a('File'), _a('Report'));
+
+				$menu->add_menu_item(
+				  $keyid=  65471,
+				  $parent=_a('Report'),
+				  $label=_a('Preview of Report'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',
+				  $param= 'screen');
+
+  	
+				$menu->add_menu_item(
+				  $keyid=  65472,
+				  $parent=_a('Report'),
+				  $label= _a('Export to TXT File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',
+				  $param= 'txt');
+          			 
+    
+				$menu->add_menu_item(
+				  $keyid=  65473,
+				  $parent=_a('Report'),
+				  $label=  _a('Export to PDF File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',
+				  $param= 'pdf');
+
+
+				$menu->add_menu_item(
+				  $keyid=  65474,
+				  $parent=_a('Report'),
+				  $label=  _a('Export to HTML File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',
+				  $param= 'html');
+
+
+				$menu->add_menu_item(
+				  $keyid=  65475,
+				  $parent=_a('Report'),
+				  $label=  _a('Export to XML File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',
+				  $param= 'xml');
+
+				$menu->add_menu_item(
+				  $keyid=  65477,
+				  $parent=_a('Report'),
+				  $label= _a('Export to CSV File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',$userparam= 'csv');
+
+
+				$menu->add_menu_item(
+				  $keyid=  65478,
+				  $parent=_a('Report'),
+				  $label= _a('Export to SXW File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $imgfile='img/fileopen.xpm',
+                                  $userparam= 'sxw');
+
+				$menu->add_menu_item(
+				  $keyid=  65480,
+				  $parent=_a('Report'),
+				  $label=  _a('Export to SQL File'),
+				  $callback=array(&$this, 'PreReport'),
+				  $userparam= 'sql',	
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid=  65481,
+				  $parent=_a('Report'),
+				  $label= _a('Export to TXT Form'),
+				  $callback=array(&$this, 'PreReport'),
+				  $userparam= 'TxtForm',	
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid=  65482,
+				  $parent=_a('Report'),
+				  $label= _a('Export to TXT Form'),
+				  $callback=array(&$this, 'PreReport'),
+				  $userparam= 'TxtForm',	
+				  $imgfile='img/fileopen.xpm');
+
+
+				$menu->add_menu_item(
+				  $keyid=  65483,
+				  $parent=_a('Report'),
+				  $label= _a('Export to HTML Frame'),
+				  $callback=array(&$this, 'PreReport'),
+				  $userparam= 'HtmlFrame',	
+				  $imgfile='img/fileopen.xpm');
+
+
+				$menu->add_menu_item(
+				  $keyid=  65484,
+				  $parent=_a('Report'),
+				  $label= _a('Parse OpenOffice Document'),
+				  $callback=array(&$this, 'PreReport'),
+				  $userparam= 'ooffice',	
+				  $imgfile='img/fileopen.xpm');
+
+
+	$menu->add_menu_item(_a('Tools'), null, _a('Tools'));
+
+				$menu->add_menu_item(
+				  $keyid= '_' .  _a('Dictionary'),
+				  $parent=_a('Tools'),
+				  $label=_a('Data Dictionary'),
+				  $callback= array(&$this, 'Dictionary'),
+				  $imgfile='img/fileopen.xpm');
+
+
+				$menu->add_menu_item(
+				  $keyid='_P' .  _a('System Preferences'),
+				  $parent=_a('Tools'),
+				  $label=_a('System Preferences'),
+				  $callback= array(&$this, 'ConfigWindow'),
+				  $imgfile='img/fileopen.xpm');
+
+
+				$menu->add_menu_item(
+				  $keyid= '_L' .  _a('Layout Configuration'),
+				  $parent=_a('Tools'),
+				  $label= _a('Layout Configuration'),
+				  $callback= array(&$this, 'LayoutConfig'),
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid= '_T' .  _a('Label Templates'),
+				  $parent=_a('Tools'),
+				  $label= _a('Label Templates'),
+				  $callback= array(&$this, 'LabelConfig'),
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid= '_D',
+				  $parent=_a('Tools'),
+				  $label= _a('Create Diagram'),
+				  $callback= array(&$this, 'PackDia'),
+				  $imgfile='img/fileopen.xpm');
+
+				$menu->add_menu_item(
+				  $keyid= '_F',
+				  $parent=_a('Tools'),
+				  $label= _a('Function Repository'),
+				  $callback= array(&$this, 'PackFunctions'),
+				  $imgfile='img/fileopen.xpm');
+
+	    $menu->add_menu_item('?', null, '?');
+
+				$menu->add_menu_item(
+				  $keyid= _a('About'),
+				  $parent= '?',
+				  $label= _a('About'),
+				  $callback= array(&$this, 'About'),
+				  $imgfile='img/fileopen.xpm');
+
+
+    
+		// We also want a separator in the menu file
+		//$menu->add_sep(_a('File'));
+		//$menu->add_menu_item('quit', _a('File'), '_quit',  'Quit', 'img/exit.xpm');
+	
+		$window->show_all();
+		
+
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+
+    }
+	function shutdown() {
+	  gtk::main_quit();
+	}
+
 
     function PackMainMenu()
     {
+
+	try {
+
         global $Pixmaps;
         $this->accel = $accelgroup = &new GtkAccelGroup();
         $this->window->add_accel_group($accelgroup);
         
         $MenuBar = &new GtkMenuBar;
-        
+	
         $Menu = new MyAltMenuItem(_a('File'), '_' . _a('File'), $accelgroup);
-        
+   
+	
+
         $Subitem0 = new MyControlMenuItem($Pixmaps['menu_connect'], _a('Connect to Database'), '_' .  _a('Connect to Database'),   $accelgroup, array(&$this, 'PackConnection'));
+   
+
         $SubitemE = new MyControlMenuItem($Pixmaps['menu_connect'], _a('Manage Project'), '_' .  _a('Manage Project'),   $accelgroup, array(&$this, 'ManageProject'));
+
+
+
 
         $Subitem1 = new GtkMenuItem;
         $Subitem2 = new MyControlMenuItem($Pixmaps['menu_new'],     _a('New Report'), '_' .  _a('New'),   $accelgroup, array(&$this, 'ClearQuery'));
@@ -179,6 +589,8 @@ class AgataInterface
         $Subitem5 = new MyControlMenuItem($Pixmaps['menu_saveas'],  _a('Save as'),    '',                 $accelgroup, 'HandlerFile', $this->param['SaveRep']);
         $Subitem6 = new MyControlMenuItem($Pixmaps['sql'],          _a('Save SQL'),   '' .   _a('Save'),  $accelgroup, 'HandlerFile', $this->param['SaveSql']);
         $Subitem7 = new MyControlMenuItem($Pixmaps['publish'],      _a('Publish Report'),    '',          $accelgroup, array(&$this, 'PublishReport'));
+
+
         $Subitem8= &new GtkMenuItem;
         $Subitem9 = new MyControlMenuItem($Pixmaps['menu_prop'],    _a('Report Properties'), '' . _a('xxx'),  $accelgroup, array(&$this, 'Properties'));
         $SubitemA = new MyControlMenuItem($Pixmaps['ico_edit'],     _a('Custom Parameters'), '' . _a('xxx'),  $accelgroup, array(&$this, 'CustomParameters'));
@@ -273,6 +685,13 @@ class AgataInterface
         $MenuBar->append($Menu);
         
         $this->Containers['hboxMainMenu']->pack_start($MenuBar, false, false);
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+
     }
 
     function Quit()
@@ -301,6 +720,9 @@ class AgataInterface
     /***********************************************************/
     function FillTables()
     {
+    try
+      {
+
         global $Pixmaps;
         $this->ctreeTables->Clear();
         $this->ctreeTablesDia->Clear();
@@ -334,6 +756,10 @@ class AgataInterface
                 
                 $this->TableNames[$Table] = $nick;
             }
+	   	
+
+			
+
             $conn->close();
             
             if ($this->agataTbFamilies)
@@ -377,17 +803,27 @@ class AgataInterface
                     }
                     else
                     {
-                        $inserts[] = array($Table, $this->TableNames[$Table]);
+                        
+                        $inserts[] = array($Table,$this->TableNames[$Table]);
                     }
                 }
                 $root1 = $this->ctreeTables->AppendSubTree(_a('All Tables'), $Pixmaps['home'], null);
                 $root2 = $this->ctreeTablesDia->AppendSubTree(_a('All Tables'), $Pixmaps['home'], null);
-                $this->ctreeTables->expand($root1);
-                $this->ctreeTablesDia->expand($root2);
+             //-----------comentado por miguel casanova 
+             //  $this->ctreeTables->expand($root1);
+               // $this->ctreeTablesDia->expand($root2);
                 $this->ctreeTables->AppendItems($root1, $inserts, $Pixmaps['table']);
                 $this->ctreeTablesDia->AppendItems($root2, $inserts, $Pixmaps['table']);
             }
-        }
+          }
+
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+
     }
 
     /***********************************************************/
@@ -424,10 +860,15 @@ class AgataInterface
     /***********************************************************/
     function ApplyFunction()
     {
-        $entry = $this->comboDBFunctions->entry;
+        //$entry = $this->comboDBFunctions->entry;
+	$model = $this->comboDBFunctions->get_model(); // note 5
+	$command_tr= $model->get_value($this->comboDBFunctions->get_active_iter(), 0); // note 6
+		
+
+
         $index = 'Select';
 
-        $command_tr = $entry->get_text();
+       // $command_tr = $entry->get_text();
         $commands[_a('Sum')]            = 'sum';
         $commands[_a('Count')]          = 'count';
         $commands[_a('Count distinct')] = 'count distinct';
@@ -440,18 +881,32 @@ class AgataInterface
         $complem = '';
         
         $strings = null;
-        $selection = $this->ctreeTableStructure->selection;
-        $Structure = false;
+	//------comentado por miguel casanova
+        //$selection = $this->ctreeTableStructure->selection;
+        $selection = $this->ctreeTableStructure->get_selection();	
+	
         
         foreach ($selection as $node)
         {
-            $Info = $this->ctreeTableStructure->node_get_row_data($node);
-            $Info = explode(':', $Info);
+            //$Info = $this->ctreeTableStructure->node_get_row_data($node);
             
+	    list($model, $iter) = $selection->get_selected(); // note 3
+	    $field= $model->get_value($iter, 0); 
+
+	    $iter = $model->iter_parent($iter);
+	    $tabla = $model->get_value($iter, 0); // note 4
+	
+	    $Info="table:$tabla:field:$field";
+
+	    $Info = explode(':', $Info);
+
+
             $Table = $Info[1];
             $Field = $Info[3];
             
-            
+
+            if ($Field=='' || !$Field || $Table=='' || !$Table) return false;
+       
             if ($Field)
             {
                 if (!$Structure)
@@ -492,7 +947,8 @@ class AgataInterface
                 new Dialog(_a('This action will create a group'), false);
             }
         }
-        $this->LoadBlocks();
+       $this->LoadBlocks();
+       
     }
     
     /***********************************************************/
@@ -500,14 +956,44 @@ class AgataInterface
     /* Main Query
     /***********************************************************/
     function RefreshFields()
-    {
-        # Clear all dependant information
-        $this->comboLegend->set_popdown_strings(array(null));
-        $this->LevelsArea->comboBFields->set_popdown_strings(array(null));
-        $this->LevelsArea->comboBBreaks->set_popdown_strings(array(null));
-        $this->PlottedColumns->Clear();
-        $this->MergeInterface->comboFields->set_popdown_strings(array(null));
-        $this->MergeInterface->Buttons['breakPage']->set_active(true);
+    {  # Clear all dependant information
+
+	
+	// Set up the combobox
+	
+	$this->comboLegend->clear();
+//        $this->comboLegend->set_popdown_strings(array(null));
+
+	//$this->LevelsArea->comboFields->set_popdown_strings(array(null));
+	//$this->LevelsArea->comboFields->clear();
+	//$cellRenderer = new GtkCellRendererText(); // note 2
+	//$this->LevelsArea->comboFields->pack_start($cellRenderer);
+	//$this->LevelsArea->comboFields->set_attributes($cellRenderer, 'text', 0); // note 3
+
+        //$this->LevelsArea->comboBFields->set_popdown_strings(array(null));
+       // $this->LevelsArea->comboBBreaks->set_popdown_strings(array(null));
+       
+	
+
+	
+
+		$itemB= new GtkListStore(Gtk::TYPE_STRING);	
+		$this->LevelsArea->comboBBreaks->clear();
+		$this->LevelsArea->comboBBreaks->set_model($itemB);
+
+		$cellRenderer = new GtkCellRendererText(); // note 2
+		$this->LevelsArea->comboBBreaks->pack_start($cellRenderer);
+		$this->LevelsArea->comboBBreaks->set_attributes($cellRenderer, 'text', 0); // note 3
+		$itemB->append(array(null));
+		
+	
+
+	 $this->PlottedColumns->Clear();
+      
+	$this->MergeInterface->comboFields->clear();
+
+      //  $this->MergeInterface->comboFields->set_popdown_strings(array(null));
+      //  $this->MergeInterface->Buttons['breakPage']->set_active(true);
         
         $Content   = @$this->SelectList->Block['Select'][1];
         if ($Content)
@@ -516,16 +1002,54 @@ class AgataInterface
             if ($Elements)
             {
                 # Refresh Breaks Screen
-                $this->comboLegend->set_popdown_strings($Elements);
-                $this->LevelsArea->comboBFields->set_popdown_strings($Elements);
-                $this->LevelsArea->comboBBreaks->set_popdown_strings(array_merge(array(_a('Level') . ' 0 : ' . _a('Grand Total')),
-                                                                     $Elements));
+//                $this->comboLegend->set_popdown_strings($Elements);
+
+		$item1= new GtkListStore(Gtk::TYPE_STRING);	
+		$this->comboLegend->clear();	
+		$this->comboLegend->set_model($item1);
+		$cellRenderer = new GtkCellRendererText(); // note 2
+		$this->comboLegend->pack_start($cellRenderer);
+		$this->comboLegend->set_attributes($cellRenderer, 'text', 0); // note 3
+		foreach($Elements as $Element0)
+		{ 
+		    $item1->append(array($Element0));
+		}	
+		
+		$item2= new GtkListStore(Gtk::TYPE_STRING);
+		$this->LevelsArea->comboBFields->clear();	
+		$this->LevelsArea->comboBFields->set_model($item2);
+		$cellRenderer = new GtkCellRendererText(); // note 2
+		$this->LevelsArea->comboBFields->pack_start($cellRenderer);
+		$this->LevelsArea->comboBFields->set_attributes($cellRenderer, 'text', 0); // note 3
+		foreach($Elements as $Element1)
+		{ 
+		    $item2->append(array($Element1));
+		}
+
+
+
+               // $this->LevelsArea->comboBFields->set_popdown_strings($Elements);
+              
+		$item3= new GtkListStore(Gtk::TYPE_STRING);
+		$this->LevelsArea->comboBBreaks->clear();	
+		$this->LevelsArea->comboBBreaks->set_model($item3);
+		$cellRenderer = new GtkCellRendererText(); // note 2
+		$this->LevelsArea->comboBBreaks->pack_start($cellRenderer);
+		$this->LevelsArea->comboBBreaks->set_attributes($cellRenderer, 'text', 0); // note 3
+		foreach($Elements as $Element2)
+		{ 
+		    $item3->append(array($Element2));
+		}
+
+
+
+ // $this->LevelsArea->comboBBreaks->set_popdown_strings(array_merge(array(_a('Level') . ' 0 : ' . _a('Grand Total')),       $Elements));
                                           
                 $this->MergeInterface->LoadFields($Elements, @array_keys($this->Parameters));
 
-                foreach($Elements as $Element)
+                foreach($Elements as $Element3)
                 {
-                    $this->PlottedColumns->Append(array($Element));
+                    $this->PlottedColumns->Append(array($Element3));
                 }
             }
         }
@@ -544,8 +1068,9 @@ class AgataInterface
             foreach ($this->MainQueryFields as $MainQueryField)
             {
                 $var = "\$var{$i}";
-                $Menuitem = new MyNormalMenuItem($Pixmaps['field'], $MainQueryField,  array(&$this, 'TypeExpression'), $var);
+                $Menuitem = new GtkMenuItem( $MainQueryField);
                 $Menu->append($Menuitem);
+		$Menuitem->connect_simple('activate', array(&$this, 'TypeExpression'), $var);
                 $i ++;
             }
             if (is_array($this->SubQueryFields))
@@ -557,13 +1082,15 @@ class AgataInterface
                     {
                         $number = null;
                     }
-                    $subMenu = new MyNormalMenuItem($Pixmaps['field'], _a('Sub Report') . ' ' . $number);
+                    $subMenu = new GtkMenuItem( _a('Sub Report') . ' ' . $number);
                     $subMenuItem = new GtkMenu;
                     foreach ($SubQueryFields as $SubQueryField)
                     {
                         $var = "\${$number}subfield{$i}";
-                        $Menuitem = new MyNormalMenuItem($Pixmaps['field'], $SubQueryField,  array(&$this, 'TypeExpression'), $var);
+                        $Menuitem =new GtkMenuItem( $SubQueryField);
+
                         $subMenuItem->append($Menuitem);
+			$Menuitem->connect_simple('activate', array(&$this, 'TypeExpression'), $var);
                         $i ++;
                     }
                     $subMenu->set_submenu($subMenuItem);
@@ -571,7 +1098,7 @@ class AgataInterface
                 }
             }
             $Menu->show_all();
-            $Menu->popup(null, null, null, 1, 1);
+            $Menu->popup();
         }
     }
 
@@ -587,11 +1114,12 @@ class AgataInterface
             $Parameters = array_keys($this->Parameters);
             foreach ($Parameters as $parameter)
             {
-                $Menuitem = new MyNormalMenuItem($Pixmaps['ico_edit'], $parameter,  array(&$this, 'TypeExpression'), $parameter);
-                $Menu->append($Menuitem);
-            }
+                $Menuitem =  new GtkMenuItem( $parameter);
+	        $Menu->append($Menuitem);
+		$Menuitem->connect_simple('activate',  array(&$this, 'TypeExpression'), $parameter);        
+	    }
             $Menu->show_all();
-            $Menu->popup(null, null, null, 1, 1);
+            $Menu->popup();
         }
         else
         {
@@ -603,50 +1131,89 @@ class AgataInterface
     }
     
     function TypeExpression($text)
-    {
-        $size = $this->textExpression->get_length();
-        if ($size > 0)
-            $this->textExpression->insert_text(" $text", $size);
+    { 
+//        $size = $this->textExpression->get_length();
+
+ 	 $buffer =  $this->textExpression->get_buffer();
+	 $valor= $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	 $size=strlen($valor); 
+
+        if ($size > 0){
+          //  $this->textExpression->insert_text(" $text", $size);
+
+		  $buffer1 = new GtkTextBuffer();
+		  $buffer1->set_text("$valor $text");
+		  $this->textExpression->set_buffer($buffer1);
+	}
         else
-            $this->textExpression->insert_text("$text ", 0);
+	{
+
+//$this->textExpression->insert_text("$text ", 0);
+
+		  $buffer1 = new GtkTextBuffer();
+		  $buffer1->set_text("$text ");
+		  $this->textExpression->set_buffer($buffer1);
+	}
     }
 
     /***********************************************************/
     /* Shows the popup menu at Table Structure Tree...
     /***********************************************************/
     function PopTableStructure()
-    {
+    { 
         $text = $this->ctreeTableStructure->GetInfo();
+	
+           if ($text=='' || !$text ) return false;
+
         if (count(explode(':', $text)) == 2)
-        {
+        {$color = &new GdkColor(0, 65535, 65535);
+
+     
             $Menu = new GtkMenu;
             $names = $this->names;
-            $open_img  = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'menu_open.xpm');
-            $del_img   = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'menu_del.xpm');
+            //$open_img  = GdkPixmap::create_from_xpm($this->window->window, $color,  images . 'menu_open.xpm');
+            //$del_img   = GdkPixmap::create_from_xpm($this->window->window,$color,  images . 'menu_del.xpm');
             
-            $Menuitem1 = new MyNormalMenuItem($open_img, _a('Open'),   array(&$this->ctreeTableStructure, 'ExpandCurrent'));
-            $Menuitem2 = new MyNormalMenuItem($del_img,  _a('Delete'), array(&$this, 'RemoveTable'));
+            $Menuitem1 =new GtkMenuItem(  _a('Open'));
+            $Menuitem2 = new GtkMenuItem(  _a('Delete'));
             $Menu->append($Menuitem1);
             $Menu->append($Menuitem2);
-            
+                 
+
+            $Menuitem1->connect_simple('activate',  array(&$this->ctreeTableStructure, 'ExpandCurrent'));                
+	    $Menuitem1->connect_simple('activate',  array(&$this, 'RemoveTable'));                
+		
+
             $Menu->show_all();
-            $Menu->popup(null, null, null, 1, 1);
+            $Menu->popup();
         }
         else
         {
-            $selection = $this->ctreeTableStructure->selection;
+            //$selection = $this->ctreeTableStructure->selection;
+
+         
+
+	    $selection = $this->ctreeTableStructure->get_selection();
+	     list($model, $iter) = $selection->get_selected(); // note 3
+	     $text = $model->get_value($iter, 0); // note 4
+
+	     if ($text=='' || !$text ) return false;
+
             if (count($selection) == 1)
             {
                 $this->entryDataDescription->set_editable(true);
                 $nick = $this->SeekDataDescription($text);
+	
                 $this->entryDataDescription->set_text($nick);
             }
             else
-            {
+            { 
                 $this->entryDataDescription->set_text('');
                 $this->entryDataDescription->set_editable(false);
             }
+	    
         }
+		
     }
     
     function RemoveTable()
@@ -681,20 +1248,37 @@ class AgataInterface
     {
         if ($this->QueryNotebook->get_current_page() == 0)
         {
-            $this->QueryNotebook->set_page(1);
+            $this->QueryNotebook->set_current_page(1);
         }
         else if ($this->QueryNotebook->get_current_page() == 2)
         {
-            $selection = $this->ctreeTableStructure->selection;
-            $node = $selection[0];
+	//comentado por miguel casanova
+	//            $selection = $this->ctreeTableStructure->selection;
+	    $selection = $this->ctreeTableStructure->get_selection();
+           // $node = $selection[0];
+ 	   $node = $selection;
+	//echo '---------------valor de &node='. $node;	
             if ($node)
-            {
-                $Info = $this->ctreeTableStructure->node_get_row_data($node);
+            {	
+		 
+
+		list($model, $iter) = $selection->get_selected(); // note 3
+	        $field= $model->get_value($iter, 0); 
+
+		$iter = $model->iter_parent($iter);
+		$tabla = $model->get_value($iter, 0); // note 4
+	
+		$Info="table:$tabla:field:$field";
+            
+
+              //  $Info = $this->ctreeTableStructure->node_get_row_data($node);
                 $Info = explode(':', $Info);
                 
                 $Table = $Info[1];
                 $Field = $Info[3];
-                
+	        if ($Field=='' || !$Field || $Table=='' || !$Table) return false;
+            
+    
                 if ($Field)
                 {
                     $this->TypeExpression("$Table.$Field");
@@ -715,18 +1299,41 @@ class AgataInterface
     /* Refresh the screen
     /***********************************************************/
     function LoadBlocks($init = false, $Changed = true)
-    {
-        if ($init)
+    {   
+	try{
+	
+       if ($init)
         {
             $this->SelectList->LoadBlocks(null);
             
-            $this->textAreas['@ReportDescription']->delete_text(0, -1);
+
+//-----------modificado por miguel casanova
+/*            $this->textAreas['@ReportDescription']->delete_text(0, -1);
             $this->textAreas['@ManualQuery']->delete_text(0, -1);
             $this->textAreas['@GraphIntroduction']->delete_text(0, -1);
+*/
+
+
+		$buffer1 = new GtkTextBuffer();
+	         $parrado="";
+		$buffer1->set_text($parrado);
+		$this->textAreas['@ReportDescription']->set_buffer($buffer1);
+		$buffer2 = new GtkTextBuffer();
+	        $parrado="";
+		$buffer2->set_text($parrado);
+                $this->textAreas['@ManualQuery']->set_buffer($buffer2);
+
+		$buffer3 = new GtkTextBuffer();
+	         $parrado="";
+		$buffer1->set_text($parrado);
+
+                $this->textAreas['@GraphIntroduction']->set_buffer($buffer3);
+
             
             if (!$this->subQuery)
             {
-                $this->LevelsArea->ClearBreaks();
+
+	        $this->LevelsArea->ClearBreaks();
                 $this->HeaderFooterArea->Clear();
                 $this->MergeInterface->Clear();
                 $this->entryTitle->set_text('');
@@ -748,24 +1355,38 @@ class AgataInterface
                 $this->MergeInterface->SubSelectList[0]->setDistinct(false);
                 $this->LevelsArea->entryTotalLabel->set_text('');
                 $this->OfficeInterface->entryOpenOffice->set_text('');
-            }
+  
+	  }
             
-            $this->textExpression->delete_text(0, -1);
+           // $this->textExpression->delete_text(0, -1);
+		  $buffer4 = new GtkTextBuffer();
+		  $text='';
+		  $buffer4->set_text($text);
+		  
+	           $this->textExpression->set_buffer($buffer4);
+
             $this->Adjustments = null;
             $this->SubAdjustments = null;
             //$this->ParametersContent = null;
             $this->Parameters = null;
+	   
         }
-        
+	
+	
         $this->SelectList->Reload();
-        $this->DrawAdjustments(0);
+   
+	 $this->DrawAdjustments(0);
+	
         if (!$this->subQuery)
         {
-            $this->LevelsArea->DrawLevels($this->SelectList->Block['Select'][1]);
+			             
+	    $this->LevelsArea->DrawLevels($this->SelectList->Block['Select'][1]);
             for ($x=0; $x<=$this->MergeInterface->numberSubReport; $x++)
             {
                 $this->MergeInterface->SubSelectList[$x]->Reload();
-                $this->DrawAdjustments(1, $x);
+
+           
+	    $this->DrawAdjustments(1, $x);
             }
         }
         
@@ -773,31 +1394,60 @@ class AgataInterface
         $char = $Changed ? ' *' : '';
         
         $this->window->set_title($this->Title . $this->FileName . $char);
+	
+	$this->RefreshFields();
+
+
+	}
+
+ 	catch(Exception $e)
+	     {
+		
+			echo '---error classes LoadBlocks($init = false, $Changed = true) ' . $e;
+	     }
+	
+
+	    
+	
     }
 
     /***********************************************************/
     /* Draws breaks structure.
+    /* CONSTRUYE LA ESTRUCTURA DE PERSONALIZACION DEL GTKNOTEBOOK PAGINA 4 
     /***********************************************************/
     function DrawAdjustments($sub, $currentSubReport = null)
     {
         if ($sub)
-        {
+        { 
             if (!$currentSubReport)
             {
                 $currentSubReport = $this->MergeInterface->GetCurrentSubReport();
+		
             }
             $Elements = $this->MergeInterface->SubSelectList[$currentSubReport]->GetSelectColumns(_a('Column'));
             if ($currentSubReport == 0)
-            {
+            {  
                 $Adjustments = $this->SubAdjustments;
             }
             else
-            {
-                $Adjustments = $this->MergeInterface->SubAdjustments[$currentSubReport];
+            {	
+
+		
+
+
+
+		//----------------modificado por miguel casanova-------------------------
+		//-------debe hacer seguimento a esta linea sustituida para evaluar conportammiento de subtablas	
+                 $Adjustments = $this->MergeInterface->SubAdjustments[$currentSubReport];
+		 //$Adjustments = $this->Adjustments;
+
+
             }
         }
         else
         {
+
+
             $Elements = $this->SelectList->GetSelectColumns(_a('Column'));
             $Adjustments = $this->Adjustments;
         }
@@ -812,7 +1462,7 @@ class AgataInterface
                 $oCross       = &new CrossBox(_a('Fields'));
                 $oCross->info = $Element;
                 $oMask        = &new MaskBox(_a('Format'));
-                
+                echo ($i.'   ');
                 $chars      = $Adjustments[$i]['Chars']       ? $Adjustments[$i]['Chars']   : 30;
                 $points     = $Adjustments[$i]['Points']      ? $Adjustments[$i]['Points']  : 60;
                 $align      = $Adjustments[$i]['Align']       ? $Adjustments[$i]['Align']   : 'left';
@@ -856,10 +1506,11 @@ class AgataInterface
         {
             if ($this->AdjustmentsConfig)
             {
-                $this->AdjustmentsConfig->Clear();
+               $this->AdjustmentsConfig->Clear();
                 $this->AdjustmentsConfig->FillForms($Vars);
             }
         }
+	
     }
 
     /***********************************************************/
@@ -876,7 +1527,12 @@ class AgataInterface
     /***********************************************************/
     function ClearExpr()
     {
-        $this->textExpression->delete_text(0, -1);
+        //$this->textExpression->delete_text(0, -1);
+
+	  $buffer1 = new GtkTextBuffer();
+	  $buffer1->set_text('');
+	  $this->textExpression->set_buffer($buffer1);
+
     }
     
     /***********************************************************/
@@ -884,7 +1540,12 @@ class AgataInterface
     /***********************************************************/
     function WriteItDown()
     {
-        $text = $this->textExpression->get_chars(0, -1);
+         //$text = $this->textExpression->get_chars(0, -1);
+
+	 $buffer =  $this->textExpression->get_buffer();
+	 $text   = $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	
+
         if ($text)
         {
             $this->SelectList->Concatenate('Where', ($this->SelectList->Block['Where'][1]) ? ' and ' : '');
@@ -901,7 +1562,17 @@ class AgataInterface
     function DownSql()
     {
         $sql = $this->ReturnSql();
-        $this->textAreas['@ManualQuery']->insert(null, null, null, $sql);
+//comentado por miguel casanova
+//        $this->textAreas['@ManualQuery']->insert(null, null, null, $sql);
+        //$this->textAreas['@ManualQuery']->insertText( $sql);
+
+ 	$buffer_manualquery = $this->textAreas['@ManualQuery']->get_buffer();
+        $buffer_manualquery->get_text($buffer_manualquery->get_start_iter(), $buffer_manualquery->get_end_iter());
+
+	$buffer_manualquery->insert_interactive_at_cursor($sql,strlen($sql),true);
+	$this->textAreas['@ManualQuery']->set_buffer($buffer_manualquery);
+
+
     }
 
     /***********************************************************/
@@ -909,19 +1580,54 @@ class AgataInterface
     /***********************************************************/
     function UpSql()
     {
-        $sql = ereg_replace("\n", ' ', $this->textAreas['@ManualQuery']->get_chars(0, -1));
+        //$sql = ereg_replace("\n", ' ', $this->textAreas['@ManualQuery']->get_chars(0, -1));
+
+
+
+	$buffer_manualquery = $this->textAreas['@ManualQuery']->get_buffer();
+        $buffer_manualquery->get_text($buffer_manualquery->get_start_iter(), $buffer_manualquery->get_end_iter());
+
+	
+
+	$sql = ereg_replace("\n", ' ', $buffer_manualquery->get_text($buffer_manualquery->get_start_iter(), $buffer_manualquery->get_end_iter()) );
+
+
+        //$sql = ereg_replace("\n", ' ', $this->textAreas['@ManualQuery']->get_text());
+
         $this->ClearQuery(true, false);
+  	
+    
         $this->SelectList->LoadBlocks(CoreReport::SqlToBlock($sql));
         $this->LoadTablesFrom();
-    }
+	
+      //  $this->LoadBlocks();
+			             
+	
+      
+
+}
     
     /***********************************************************/
     /* Get the Required Tables and put them on the screen
+    /* Obeter las tablas requeridas 
     /***********************************************************/
     function RequireTables()
     {
-        $this->ctreeTables->freeze();
-        $selection = $this->ctreeTables->selection;
+	//----------comentado por miguel casanova----------
+	// metodo no aplica a TREEVIEW sino al control anterior ya deprecado
+       // $this->ctreeTables->freeze();
+     //   $selection = $this->ctreeTables->selection;
+//echo  '-----------------------------RequireTables------------------------\n';
+
+         $model = $this->ctreeTables->get_model();
+   	 $selection = $this->ctreeTables->get_selection();
+    	   
+ 	
+	//$selection->connect('changed',  array(&$this, 'on_selection')); // note 2
+	 
+       
+
+
         $strings = null;
         
         if (!$this->connected)
@@ -930,28 +1636,40 @@ class AgataInterface
             return false;
         }
         
-        foreach ($selection as $SelectionLine)
-        {
-            $text = $this->ctreeTables->node_get_row_data($SelectionLine);
-            {
-                $strings[] = $text;
-            }
-        }
-        
+
+   	    list($model, $selected_rows) =   $selection->get_selected_rows(); // note 2
+	    foreach($selected_rows as $path) { // note 3
+		$iter = $model->get_iter($path);
+		$text = $model->get_value($iter, 0);
+//die("$text");
+                
+		if ($text=='' || !$text ) return false;
+
+		    {
+	                $strings[] = $text;
+	            }
+	    }
+	
+
+
         if ($strings)
-        {
+        { 
             $this->SuggestTables($strings);
         }
         
-        $require = &new LinkedTables(array(&$this, 'SuggestTables'), $this->TableNames, $this->agataTbLinks, $this->agataDataDescription, $this->agataDB);
+       $require = &new LinkedTables(array(&$this, 'SuggestTables'), $this->TableNames, $this->agataTbLinks, $this->agataDataDescription, $this->agataDB);
+
+
         $HierarquicalLinks = $require->CallLinks($strings, $this->RequiredTables, true);
-        
+     
         if ($HierarquicalLinks)
-        {
+        { 
             $require->BuildScreen($HierarquicalLinks);
-        }
-        
-        $this->ctreeTables->thaw();
+ 
+
+	 }
+         
+        //$this->ctreeTables->thaw();
     }
     
     /***********************************************************/
@@ -959,8 +1677,17 @@ class AgataInterface
     /***********************************************************/
     function JoinTables()
     {
-        $this->ctreeTables->freeze();
-        $selection = $this->ctreeTables->selection;
+	//---comentado por miguel casanova
+       // $this->ctreeTables->freeze();
+
+	$selection =$this->ctreeTables->get_selection();
+	list($model, $selected_rows) =  $selection->get_selected_rows(); // note 3
+
+
+
+       if (!$model) {return;}
+
+      //  $selection = $this->ctreeTables->selection;
         $strings = null;
         
         if (!$this->connected)
@@ -969,14 +1696,19 @@ class AgataInterface
             return false;
         }
         
-        foreach ($selection as $SelectionLine)
-        {
-            $text = $this->ctreeTables->node_get_row_data($SelectionLine);
-            {
-                $strings[] = $text;
-                $last = $text;
-            }
-        }
+	
+	    foreach($selected_rows as $path) { // note 3
+		$iter = $model->get_iter($path);
+		$text = $model->get_value($iter, 0);
+		if ($text=='' || !$text) return false;
+		    {
+                	$strings[] = $text;
+                	$last = $text;
+	            }
+	    }
+
+
+    
         
         if ($strings)
         {
@@ -986,17 +1718,17 @@ class AgataInterface
         $require = &new LinkedTables(array(&$this, 'JoinTheseTables'), $this->TableNames, $this->agataTbLinks, $this->agataDataDescription, $this->agataDB);
         $HierarquicalLinks = $require->CallLinks(array($last), $this->RequiredTables, false);
         
-        //if ($HierarquicalLinks)
-        {
+       // if ($HierarquicalLinks)
+        //{
             $require->BuildScreen($HierarquicalLinks, true, $last, $this->TableNames);
-        }
+        //}
         //else
-        {
-            //new Dialog(_a('No Links'), true, false, _a('Further Information: ^1', _a('Data Dictionary')));
-        }
+       // {
+        //    new Dialog(_a('No Links'), true, false, _a('Further Information: ^1', _a('Data Dictionary')));
+        //}
         
-        //$this->autolink();
-        $this->ctreeTables->thaw();
+       $this->autolink($strings);
+      //  $this->ctreeTables->thaw();
     }
 
     function LoadTables($tables, $clear = false)
@@ -1024,12 +1756,13 @@ class AgataInterface
             }
             $this->LoadTables($aFrom, true);
         }
+
         $this->LoadBlocks(null, false);
     }
     
     function SuggestTables($tables)
-    {
-        foreach ($tables as $table)
+    {  
+      foreach ($tables as $table)
         {
             if ($this->RequiredTables)
             {
@@ -1047,7 +1780,7 @@ class AgataInterface
         if ($loadtables)
         {
             $this->LoadTables($loadtables, false);
-            $MergeTables = array_merge($this->RequiredTables, $loadtables);
+            $MergeTables = array_merge(array($this->RequiredTables), $loadtables);
             $this->RequiredTables = $MergeTables;
             
             $list = implode(',', $loadtables);
@@ -1102,8 +1835,8 @@ class AgataInterface
     /* Clear Fields of the Screen
     /***********************************************************/
     function ClearTables($delAllDetail = false)
-    {
-        $this->ctreeTableStructure->ClearTree();
+    {  
+      $this->ctreeTableStructure->ClearTree();
         $this->RequiredTables = null;
         $this->SelectList->SetBlock('From', '');
         $this->LoadBlocks(null);
@@ -1116,23 +1849,43 @@ class AgataInterface
 
     /***********************************************************/
     /* Insert a selected field to a specific clause
+    /* funcion invocada desde el boton para insertar el campo seleccionado para armar una clausula SQL
     /***********************************************************/
     function InsertOnBlock($index, $more=null)
-    {
-        $more = ($more) ? trim($more) : $more;
+    { 
+
+      $more = ($more) ? trim($more) : $more;
         $strings = null;
-        $selection = $this->ctreeTableStructure->selection;
+       // $selection = $this->ctreeTableStructure->selection;
+
+         $selection = $this->ctreeTableStructure->get_selection();
+    
+	
+      
+
         foreach ($selection as $node)
         {
-            $Info = $this->ctreeTableStructure->node_get_row_data($node);
-            $Info = explode(':', $Info);
-            
-            $Table = $Info[1];
-            $Field = $Info[3];
+
+
+		list($model, $iter) =$selection->get_selected(); // note 3
+	        $Field= $model->get_value($iter, 0); 
+
+		if ($Field=='' || !$Field) return false;
+		$iter = $model->iter_parent($iter);
+		$tabla = $model->get_value($iter, 0); // note 4
+		$Info="table:$tabla:field:$Field";
+		$Info = explode(':', $Info);
+        
+
+     		 $Table = $Info[1];
+                 $Field = $Info[3];
+		
+		if ($Field=='' || !$Field || $Table=='' || !$Table) return false;
+
             $Structure = false;
             
             if ($Field)
-            {
+            { 
                 $Structure = true;
                 if (($index == 'Select') or ($index == 'Group by'))
                 {
@@ -1144,6 +1897,7 @@ class AgataInterface
                     $this->SelectList->Concatenate($index, ($this->SelectList->Block[$index][1]) ? ', ' : '');
                     $nodetext = ($nick) ? ' as "' . $nick .'"': '';
                     $this->SelectList->Concatenate($index, ("$Table.$Field" . $nodetext));
+			
                 }
                 else if ($index == 'Order by')
                 {
@@ -1164,8 +1918,13 @@ class AgataInterface
             new Dialog(_a('Select field, please'));
             return null;
         }
+	
+	
+	//----carga los campos en en el treeview de la pagina 4 del gtknotebook
         $this->LoadBlocks();
         $this->window->set_focus($this->textExpression);
+	
+	
     }
     
     /*
@@ -1199,6 +1958,7 @@ class AgataInterface
                     }
                 }
             }
+		
         }
         
         // Verify if From tables are foreign of required tables
@@ -1225,8 +1985,8 @@ class AgataInterface
                 }
             }
         }
-        if ($linking)
-        {
+        if ($linking) 
+        {  
             new LinkMatch(array(&$this, 'ApplyLink'), null, null, null, $linking, $this->agataDataDescription, $this->agataDB);
         }
     }
@@ -1363,6 +2123,8 @@ class AgataInterface
 
     function SeekDataDescription($index)
     {
+
+		
         if ($this->agataDataDescription[$index])
         {
             return $this->agataDataDescription[$index];
@@ -1371,7 +2133,7 @@ class AgataInterface
         {
             $pieces = explode(':', $index);
             if (count($pieces) == 2)
-            {
+            {	
                 $upper = $this->agataDataDescription[$pieces[0] . ':' . strtoupper($pieces[1])];
                 $lower = $this->agataDataDescription[$pieces[0] . ':' . strtolower($pieces[1])];
                 
@@ -1381,7 +2143,7 @@ class AgataInterface
             {
                 $upper = $this->agataDataDescription[$pieces[0] . ':' . strtoupper($pieces[1]) . ':' . $pieces[2] . ':' . strtoupper($pieces[3])];
                 $lower = $this->agataDataDescription[$pieces[0] . ':' . strtolower($pieces[1]) . ':' . $pieces[2] . ':' . strtolower($pieces[3])];
-                
+               
                 return ($upper ? $upper : $lower);
             }
         }
@@ -1447,7 +2209,7 @@ class AgataInterface
             $this->ParametersFormEntry = new FormEntry(_a('Parameters'), $ParameterList);
             $this->ParametersFormEntry->SetStatus(_a('Type the query parameters above'));
 
-            $this->button_handler = $this->ParametersFormEntry->button->connect_object('clicked', array(&$this,'ReturnParameters'), $type);
+            $this->button_handler = $this->ParametersFormEntry->button->connect_simple('clicked', array(&$this,'ReturnParameters'), $type);
             $this->ParametersFormEntry->Show();
         }
         else
@@ -1548,7 +2310,11 @@ class AgataInterface
             if ($type == 'lines')     $mask = ($this->radios['radioHTML']->get_active()) ? 'html' : 'sxw';
             if ($type == 'bars')      $mask = ($this->radios['radioHTML']->get_active()) ? 'html' : 'sxw';
             $messg = _a('Export to ' . strtoupper($mask) . ' File');
+
+		
             $dialog = new FileDialog($messg, array($mask), $button1, $OutputDir, array(&$this, 'CreateReport'), array($type, $layout));
+
+
             if ($this->FileName)
             {
                 $dialog->set_filename(RemoveExtension(GetFileName($this->FileName)) . ".{$mask}");
@@ -1604,30 +2370,63 @@ class AgataInterface
             }
             else if ($type=='lines')
             {
-                $selection = $this->PlottedColumns->clist->selection;
-                foreach ($selection as $line)
-                {
-                    $PlottedColumns[] = $this->PlottedColumns->GetItem($line,0);
-                }
+               // $selection = $this->PlottedColumns->clist->selection;
+
+ 		$selection =$this->PlottedColumns->clist->get_selection();
+		 list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	 	   foreach($selected_rows as $path) { // note 3
+			$iter = $model->get_iter($path);
+			$text = $model->get_value($iter, 0);
+			    {
+	     	           $PlottedColumns[] = $text;
+	       	     }
+	   	 }
+
+
+               // foreach ($selection as $line)
+               // {
+                //    $PlottedColumns[] = $this->PlottedColumns->GetItem($line,0);
+               // }
                 
                 $params[6]= $PlottedColumns;
-                $entry = $this->comboLegend->entry;
-                $legend = $entry->get_text();
+               // $entry = $this->comboLegend->entry;
+                //$legend = $entry->get_text();
+
+
+		$model = $this->comboLegend->get_model(); // note 5
+		$legend = $model->get_value($this->comboLegend->get_active_iter(), 0); // note 6
+		
+
                 
                 $obj = AgataCore::CreateGraph($params);
                 $obj->Lines($legend);
             }
             else if ($type=='bars')
             {
-                $selection = $this->PlottedColumns->clist->selection;
-                foreach ($selection as $line)
-                {
-                    $PlottedColumns[] = $this->PlottedColumns->GetItem($line,0);
-                }
+                //$selection = $this->PlottedColumns->clist->selection;
+
+		$selection =$this->PlottedColumns->clist->get_selection();
+		 list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	 	   foreach($selected_rows as $path) { // note 3
+			$iter = $model->get_iter($path);
+			$text = $model->get_value($iter, 0);
+			    {
+	     	           $PlottedColumns[] = $text;
+	       	     }
+	   	 }
+
+//                foreach ($selection as $line)
+  //              {
+    //                $PlottedColumns[] = $this->PlottedColumns->GetItem($line,0);
+      //          }
                 
                 $params[6]= $PlottedColumns;
-                $entry = $this->comboLegend->entry;
-                $legend = $entry->get_text();
+               // $entry = $this->comboLegend->entry;
+               // $legend = $entry->get_text();
+
+		$model = $this->comboLegend->get_model(); // note 5
+		$legend = $model->get_value($this->comboLegend->get_active_iter(), 0); // note 6
+		
                 
                 $obj = AgataCore::CreateGraph($params);
                 $obj->Bars($legend);
@@ -1654,7 +2453,11 @@ class AgataInterface
                 $params[6] = $this->getParametersContent();
 
                 $Source = $XmlArray['Report']['OpenOffice']['Source'];
+
+
                 $config = AgataOO::GetConfig($Source);
+
+		
                 $obj = AgataCore::ParseOpenOffice($params, 'Sxw', $config['engine']);
                 $obj->Generate($Source, $FileName);
             }
@@ -1699,9 +2502,22 @@ class AgataInterface
     function OpenReportFromTree($flag = false)
     {
         $FileTree = $this->ctreeReports;
-        $node = $FileTree->selection[0];
-        $Info = $this->ctreeReports->node_get_row_data($node);
-        
+       // $node = $FileTree->selection[0];
+
+  	$selection = $FileTree->get_selection();	
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$node= $model->get_value($iter, 0); 
+
+
+
+        $iter = $model->iter_parent($iter);
+	$nodopadre = $model->get_value($iter, 0); // note 4
+	
+
+
+        //$Info = $this->ctreeReports->node_get_row_data($node);
+        $Info=AGATA_PATH . "/reports/".$nodopadre.'/'. $node;
+
         if (!$Info)
         return true;
         
@@ -1711,7 +2527,7 @@ class AgataInterface
             return true;
         }
         else
-        {
+        { 
             if ($Info)
             {
                 $FileName = $Info;
@@ -1728,8 +2544,15 @@ class AgataInterface
     function OpenSQLFromTree($flag = false)
     {
         $FileTree = $this->ctreeTemplates;
-        $node = $FileTree->selection[0];
-        $Info = $this->ctreeTemplates->node_get_row_data($node);
+       // $node = $FileTree->selection[0];
+
+	$selection = $FileTree->get_selection();	
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$node= $model->get_value($iter, 0); 
+	
+	$Info =$node;
+
+     //   $Info = $this->ctreeTemplates->node_get_row_data($node);
         
         if (!$Info)
         {
@@ -1760,8 +2583,15 @@ class AgataInterface
     function OpenRepository($flag = false)
     {
         $FileTree = $this->ctreeRepository;
-        $node = $FileTree->selection[0];
-        $Info = $this->ctreeRepository->node_get_row_data($node);
+        //$node = $FileTree->selection[0];
+
+
+  	$selection = $FileTree->get_selection();	
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$node= $model->get_value($iter, 0); 
+
+	$Info = $node;
+        //$Info = $this->ctreeRepository->node_get_row_data($node);
         if (!$Info)
         {
             return true;
@@ -1802,7 +2632,10 @@ class AgataInterface
     /* Load a SQL File
     /***********************************************************/
     function LoadReport($FileName)
-    {
+    { 
+	try
+	{
+
         if (!file_exists($FileName))
         {
             return;
@@ -1828,11 +2661,12 @@ class AgataInterface
             $this->SubAdjustments    = CoreReport::ExtractAdjustments($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet1']);
 
             for ($x=1; $x<=$XmlArray['Report']['Merge']['Details']['Detail1']['NumberSubSql']; $x++)
-            {
+            {  
                 $this->MergeInterface->SubAdjustments[$x] = CoreReport::ExtractAdjustments($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet'.($x+1)]);;
+
             }
 
-            $this->SelectList->setDistinct($XmlArray['Report']['DataSet']['Query']['Config']['Distinct']);
+	if (isset($XmlArray['Report']['DataSet']['Query']['Config']['Distinct'])) $this->SelectList->setDistinct($XmlArray['Report']['DataSet']['Query']['Config']['Distinct']);
             $this->SelectList->setOffSet($XmlArray['Report']['DataSet']['Query']['Config']['OffSet']);
             $this->SelectList->setLimit($XmlArray['Report']['DataSet']['Query']['Config']['Limit']);
             
@@ -1875,15 +2709,36 @@ class AgataInterface
                 $this->MergeInterface->entries['TopMargin']->set_text($XmlArray['Report']['Label']['Config']['TopMargin']);
                 $this->MergeInterface->entries['LabelCols']->set_text($XmlArray['Report']['Label']['Config']['Columns']);
                 $this->MergeInterface->entries['LabelRows']->set_text($XmlArray['Report']['Label']['Config']['Rows']);
-                $this->MergeInterface->entries['LabelFormat']->set_text($XmlArray['Report']['Label']['Config']['PageFormat']);
+                //$this->MergeInterface->entries['LabelFormat']->set_text($XmlArray['Report']['Label']['Config']['PageFormat']);
+
+
+
+		$this->combo_set_active( $this->MergeInterface->entries['LabelFormat'],$this->formatlabel,$XmlArray['Report']['Label']['Config']['PageFormat']);
+
+
+
                 $this->MergeInterface->entries['LabelSpacing']->set_text($XmlArray['Report']['Label']['Config']['LineSpacing']);
                 
                 $this->MergeInterface->PageValues = $XmlArray['Report']['Merge']['PageSetup'];
                 $this->PageValues                 = $XmlArray['Report']['PageSetup'];
                 $this->Properties                 = $XmlArray['Report']['Properties'];
                 
-                $this->textAreas['@GraphIntroduction']->insert(null, null, null, $XmlArray['Report']['Graph']['Description']);
-                $this->HeaderFooterArea->InsertHeader($XmlArray['Report']['Header']['Body']);
+
+
+                //$this->textAreas['@GraphIntroduction']->insert(null, null, null, $XmlArray['Report']['Graph']['Description']);
+                
+		
+               
+		  $buffer1 = new GtkTextBuffer();
+		  $text= $XmlArray['Report']['Graph']['Description'];
+		  $buffer1->set_text($text);
+		  $this->textAreas['@GraphIntroduction']->set_buffer($buffer1);
+	
+		
+
+
+
+		$this->HeaderFooterArea->InsertHeader($XmlArray['Report']['Header']['Body']);
                 $this->HeaderFooterArea->InsertFooter($XmlArray['Report']['Footer']['Body']);
                 $this->HeaderFooterArea->SetHeaderAlign($XmlArray['Report']['Header']['Align']);
                 $this->HeaderFooterArea->SetFooterAlign($XmlArray['Report']['Footer']['Body']);
@@ -1895,17 +2750,30 @@ class AgataInterface
                     if ($x > 0)
                     {
                         $this->MergeInterface->addDetail(&$this->glade);
+
+
+
                         $this->MergeInterface->SubSql[$x]->setDetail($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['GroupHeader'], 0);
                         $this->MergeInterface->SubSql[$x]->setDetail($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Body'], 1);
                     }
                     $this->MergeInterface->SubSelectList[$x]->LoadBlocks(CoreReport::ExtractBlock($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]));
+
+
+
+
+
                     $this->MergeInterface->SubSelectList[$x]->setOffSet($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Query']['Config']['OffSet']);
                     $this->MergeInterface->SubSelectList[$x]->setLimit($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Query']['Config']['Limit']);
                     $this->MergeInterface->SubSelectList[$x]->setDistinct($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet' . $numSubSql]['Query']['Config']['Distinct']);
                 }
 
                 $this->MergeInterface->textSections['@MergeHeader']->add_text($XmlArray['Report']['Merge']['ReportHeader']);
+
+
+
                 $this->MergeInterface->textSections['@GroupHeader']->add_text($XmlArray['Report']['Merge']['Details']['Detail1']['GroupHeader']);
+
+
                 $this->MergeInterface->textSections['@MergeDetail']->add_text($XmlArray['Report']['Merge']['Details']['Detail1']['DataSet1']['Body']);
                 $this->MergeInterface->textSections['@GroupFooter']->add_text($XmlArray['Report']['Merge']['Details']['Detail1']['GroupFooter']);
                 $this->MergeInterface->textSections['@MergeFooter']->add_text($XmlArray['Report']['Merge']['ReportFooter']);
@@ -1921,7 +2789,13 @@ class AgataInterface
                 $this->OfficeInterface->checkRepeatFooter->set_active($XmlArray['Report']['OpenOffice']['Config']['RepeatFooter']);
             }
             
-            $this->textAreas['@ReportDescription']->insert(null, null, null, $XmlArray['Report']['Properties']['Description']);
+         //   $this->textAreas['@ReportDescription']->insert(null, null, null, $XmlArray['Report']['Properties']['Description']);
+
+	   $buffer6 = new GtkTextBuffer();
+	   $buffer6->set_text($XmlArray['Report']['Properties']['Description']);
+	   $this->textAreas['@ReportDescription']->set_buffer($buffer6);
+
+
             
             $this->LoadTablesFrom();
         }
@@ -1929,6 +2803,13 @@ class AgataInterface
         {
             new Dialog(_a('File Error'));
         }
+
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
     }
     
     /***********************************************************/
@@ -1952,7 +2833,11 @@ class AgataInterface
     function GetXmlArray()
     {
         $XmlArray['Report']['Version']                          = AGATA_VERSION;
-        $XmlArray['Report']['Properties']['Description']        = $this->textAreas['@ReportDescription']->get_chars(0, -1);
+        //$XmlArray['Report']['Properties']['Description']        = $this->textAreas['@ReportDescription']->get_chars(0, -1);
+	 $buffer =   $this->textAreas['@ReportDescription']->get_buffer();
+	  $XmlArray['Report']['Properties']['Description']        =    $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	
+
         $XmlArray['Report']['Properties']['Title']              = $this->Properties['Title'];
         $XmlArray['Report']['Properties']['Author']             = $this->Properties['Author'];
         $XmlArray['Report']['Properties']['Keywords']           = $this->Properties['Keywords'];
@@ -2011,7 +2896,11 @@ class AgataInterface
         $XmlArray['Report']['Graph']['TitleY']      = $this->entryTitley->get_text();
         $XmlArray['Report']['Graph']['Width']       = $this->entrySizeX->get_text();
         $XmlArray['Report']['Graph']['Height']      = $this->entrySizeY->get_text();
-        $XmlArray['Report']['Graph']['Description'] = $this->textAreas['@GraphIntroduction']->get_chars(0, -1);
+
+	 $buffer =   $this->textAreas['@GraphIntroduction']->get_buffer();
+	 $XmlArray['Report']['Graph']['Description']=$buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+
+      //  $XmlArray['Report']['Graph']['Description'] = $this->textAreas['@GraphIntroduction']->get_chars(0, -1);
         $XmlArray['Report']['Graph']['ShowData']    = $this->radios['checkData']->get_active();
         $XmlArray['Report']['Graph']['ShowValues']  = $this->radios['showValues']->get_active();
         $XmlArray['Report']['Graph']['Orientation'] = $this->radios['radioColumns']->get_active() ? 'columns' : 'lines';
@@ -2057,7 +2946,17 @@ class AgataInterface
         $XmlArray['Report']['Label']['Config']['TopMargin']        = $this->MergeInterface->entries['TopMargin']->get_text();
         $XmlArray['Report']['Label']['Config']['Columns']          = $this->MergeInterface->entries['LabelCols']->get_text();
         $XmlArray['Report']['Label']['Config']['Rows']             = $this->MergeInterface->entries['LabelRows']->get_text();
-        $XmlArray['Report']['Label']['Config']['PageFormat']       = $this->MergeInterface->entries['LabelFormat']->get_text();
+
+
+
+	$model = $this->comboLabelFormat->get_model(); // note 5
+		
+      $XmlArray['Report']['Label']['Config']['PageFormat']       =   $model->get_value($this->comboLabelFormat->get_active_iter(), 0); // note 6
+	
+
+ //      $XmlArray['Report']['Label']['Config']['PageFormat']       = $this->MergeInterface->entries['LabelFormat']->get_text();
+
+
         $XmlArray['Report']['Label']['Config']['LineSpacing']      = $this->MergeInterface->entries['LabelSpacing']->get_text();
         
         $XmlArray['Report']['OpenOffice']['Source']                  = $this->OfficeInterface->entryOpenOffice->get_text();
@@ -2086,13 +2985,18 @@ class AgataInterface
         }
         
         $XmlArray = $this->GetXmlArray();
+        
         CoreReport::SaveReport($FileName, $XmlArray);
 
         if ($fs)
         {
             $fs->hide();
         }
+	
         $this->LoadBlocks(null, false);
+
+
+        
         $this->ctreeReports->ReadAgain();
     }
 
@@ -2170,26 +3074,31 @@ class AgataInterface
     }
     
     function ReadAdjustments($sub = false, $numSubSql = null)
-    {
+    { 
         if ($sub)
         {
             if (!$numSubSql)
             {
+echo "<<<<<<<<<<<<<<<<<<<<<<<<valores=$numSubSql";
                 $Values = $this->SubAdjustmentsConfig->GetAllVars();
             }
             else
             {
                 $Values = $this->MergeInterface->SubAdjustmentsConfig[$numSubSql]->GetAllVars();
+
+
             }
         }
         else
         {
             $Values = $this->AdjustmentsConfig->GetAllVars();
         }
-        
+ 	$values=$this->SubAdjustmentsConfig->GetAllVars();
+	
+        print_r ($Values);
         $i = 1;
         if ($Values)
-        {
+        { echo '<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>';
             foreach ($Values as $column => $AdjustmentsValues)
             {
                 $Adjustments[$i]['Chars']       = $AdjustmentsValues[0];
@@ -2226,6 +3135,7 @@ class AgataInterface
         else
         {
             $this->Adjustments = $Adjustments;
+	     	
         }
             
         return $Array;
@@ -2250,7 +3160,24 @@ class AgataInterface
             return false;
         }
         
-        if (!$this->PlottedColumns->clist->selection)
+
+         $selection =$this->PlottedColumns->clist->get_selection();
+	 list($model, $selected_rows) =    $selection->get_selected_rows(); // note 2
+	    foreach($selected_rows as $path) { // note 3
+		$iter = $model->get_iter($path);
+		$text = $model->get_value($iter, 0);
+		    {
+	                $strings[] = $text;
+	            }
+	    }
+
+	//$selection = $this->PlottedColumns->clist->get_selection();	
+	//list($model, $iter) = $selection->get_selected(); // note 3
+	//$node= $model->get_value($iter, 0); 
+
+
+      // if (!$this->PlottedColumns->clist->selection)
+	if (!$strings)
         {
             new Dialog(_a('Select columns to plot'));
             return false;
@@ -2258,8 +3185,13 @@ class AgataInterface
         
         if ($this->radios['radioLines']->get_active())
         {
-            $entry = $this->comboLegend->entry;
-            $legend = $entry->get_text();
+           // $entry = $this->comboLegend->entry;
+           // $legend = $entry->get_text();
+
+	    $model = $this->comboLegend->get_model(); // note 5
+	    $legend = $model->get_value($this->comboLegend->get_active_iter(), 0); // note 6
+		
+
             if (!$entry)
             {
                 new Dialog(_a('Select a Legend, please'));
@@ -2283,6 +3215,7 @@ class AgataInterface
     /***********************************************************/
     function ClearQuery($flag = false, $clearAll = true)
     {
+  	
         if (($this->Changed) && (!$flag))
         {
             $a = new Ask(_a('Query not saved, Do you really want to continue ?'), array(&$this,'ClearQuery'), null, array(true));
@@ -2298,7 +3231,16 @@ class AgataInterface
             }
             else
             {
-                $this->textAreas['@ManualQuery']->delete_text(0, -1);
+		//----modificado por Miguel casanova
+                //$this->textAreas['@ManualQuery']->delete_text(0, -1);
+
+
+		  $buffer1 = new GtkTextBuffer();
+		  $text='';
+		  $buffer1->set_text($text);
+		  $this->textAreas['@ManualQuery']->set_buffer($buffer1);
+
+		
             }
         }
         return true;
@@ -2352,6 +3294,18 @@ class AgataInterface
         }
     }
 
+	// utilizado para seleccionar un item de algun gtkcombobox	
+	// simula GtkComboBox::set_active($selected_str)
+	function combo_set_active($combo, $options, $current_val) {
+	    $i = 0; 
+	    foreach($options as $label=>$value) { // note 6
+		if ($label==$current_val) { 
+		    $combo->set_active($i); 
+		    break;
+		}
+		++$i;
+	    }
+	}
 
     function CustomParameters()
     {
@@ -2365,7 +3319,7 @@ class AgataInterface
         {
             $this->CustomParameterWindow = &new CustomParameterWindow();
             $this->CustomParameterWindow->SetParameters($this->Parameters);
-            $this->CustomParameterWindow->connect_object('return-parameters', array(&$this, 'ReturnCustomParameters'));
+            $this->CustomParameterWindow->connect_simple('return-parameters', array(&$this, 'ReturnCustomParameters'));
             $this->CustomParameterWindow->Show();
         }
     }
@@ -2418,7 +3372,7 @@ class AgataInterface
     function ImportSql()
     {
         $inWindow = &new InWindow;
-        $inWindow->connect_object('select-file', array(&$this, 'ReturnInSql'));
+        $inWindow->connect_simple('select-file', array(&$this, 'ReturnInSql'));
     }
     
     function ReturnInSql($Info)
@@ -2504,7 +3458,9 @@ class AgataInterface
             else
             {
                 $this->ConnectionWizard = &new ConnectionWizard(array(&$this,'ReturnProjectVars'));
-                //$this->ConnectionWizard->connectButtonNewReport(array(&$this, 'NewReport'));
+	  //$this->ConnectionWizard->connectButtonNewReport(array(&$this, 'NewReport'));
+		 
+
             }
         }
         else
@@ -2599,6 +3555,8 @@ class AgataInterface
             $dbVars['dict']   = $DatabaseVars->dict;
         }
 
+
+
         if ($this->Connect($project, $dbVars))
         {
             //New project mode
@@ -2673,6 +3631,7 @@ class AgataInterface
     /***********************************************************/
     function SaveSubReport()
     {
+        
         $this->window->hide();
         $this->ReadAdjustments();
         call_user_func($this->callback);
@@ -2697,7 +3656,7 @@ class AgataInterface
     /* Connect Project
     /***********************************************************/
     function Connect($project, $dbVars)
-    {
+    {  
         Wait::On();
         
         $this->ProjectDefs[$project] = Dictionary::ReadDictionary($dbVars['dict']);
@@ -2705,6 +3664,7 @@ class AgataInterface
         $this->agataTbFamilies       = $this->ProjectDefs[$project][0];
         $this->agataTbGroups         = $this->ProjectDefs[$project][1];
         $this->agataTbLinks          = $this->ProjectDefs[$project][2];
+	
         $this->agataDataDescription  = $this->ProjectDefs[$project][3];
         
         $PlanVars = Dictionary::Planification($this->agataTbFamilies, $this->agataTbLinks, $this->agataDataDescription);
@@ -2730,6 +3690,7 @@ class AgataInterface
         {
             $this->connected = true;
             $this->ClearQuery(true);
+
             $this->FillTables();
             Wait::Off();
             return true;

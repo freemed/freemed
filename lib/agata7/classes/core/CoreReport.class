@@ -44,7 +44,11 @@ class CoreReport
     {
         $sql = '';
         $ln = $break ? "\n" : '';
-        foreach ($Block as $Clause)
+      
+
+	
+	
+	 foreach ($Block as $Clause)
         {
             if ($Clause[1])
             {
@@ -65,7 +69,7 @@ class CoreReport
                 }
             }
         }
-        
+        $sql=str_replace("\\\"", '"', $sql);
         return $sql;
     }
 

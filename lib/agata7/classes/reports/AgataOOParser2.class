@@ -9,13 +9,15 @@ class AgataOOParser2 extends AgataMerge
     var $prefix;
     var $page_break;
     var $break_style;
-
+     
     /* Constructor Method
      *
      */
     function Generate($source, $target)
-    {
+    {  
         $this->config = AgataOO::GetConfig($source);
+
+ 	
 
         $this->fixedDetails     = $this->XmlArray['Report']['OpenOffice']['Config']['FixedDetails'];
         $this->expandDetails    = $this->XmlArray['Report']['OpenOffice']['Config']['ExpandDetails'];
@@ -188,12 +190,31 @@ class AgataOOParser2 extends AgataMerge
                     $bufferLine--;
                 }
             }
+
+//-----------------modificado por miguel-----------------------------
+
+
             # Ajusta as variáveis globais para este registro
             for ($i=sizeof($data); $i>0; $i--)
             {
                 $cell = $data[$i];
-                $text_line = str_replace('$var' . $i, AgataOO::encode($cell), $text_line);
-                $text_line = str_replace('[' . $this->CurrentQuery->ColumnNames[$i -1] . ']', utf8_encode($cell), $text_line);
+
+		
+
+		if ( substr(trim($cell),0,9)== '</text:p>' || substr(trim($cell),0,8)== '<text:p>' || substr(trim($cell),0,6)== '<table'  ){
+                	$text_line = str_replace('$var' . $i, $cell, $text_line);
+	                $text_line = str_replace('[' . $this->CurrentQuery->ColumnNames[$i -1] . ']', $cell, $text_line);
+
+		}
+		else
+		{               	
+			$text_line = str_replace('$var' . $i, AgataOO::encode($cell), $text_line);
+ 			$text_line = str_replace('[' . $this->CurrentQuery->ColumnNames[$i -1] . ']', utf8_encode($cell), $text_line);		
+		}
+
+
+
+
             }
 
             # Search by barCode
@@ -301,12 +322,14 @@ class AgataOOParser2 extends AgataMerge
                     $levelTmp = $level;
                 }
                 $x=0;
+              
                 while ($sub_row = $subQuery->FetchNext())
                 {
                     $data[] = $sub_row;
                     foreach ($sub_row as $key=>$sR)
-                    {
+                    {  
                         $localVars[$x]['$' . $levelTmp . 'subfield' . $key] = $sR;
+		
                     }
                     $x++;
                 }
@@ -352,6 +375,9 @@ class AgataOOParser2 extends AgataMerge
         return false;
     }
 
+   
+
+
     /*
      * mothod parseDetailTable
      *
@@ -372,9 +398,14 @@ class AgataOOParser2 extends AgataMerge
 
                 //Extrai o nome da tabela
                 $detailTableName = preg_replace('/' . $detailTable . '([^_]*)?.*/', '\1', $text_line);
+
+ 		//$detailTableName = substr(preg_replace('/' . $detailTable . '([^_]*)?.*/', '\1', $text_line), 0,strrpos(preg_replace('/' . $detailTable . '([^_]*)?.*/', '\1', $text_line)," ")-1);
                 //Verifica de há configuração
-                if ($this->config['break']['detailtable'][$detailTableName])
-                {
+
+		//echo "-----------".$detailTableName."==>".$text_line."-----------";
+
+             //   if ($this->config['break']['detailtable'][$detailTableName])
+              //  {
                     if (!$bufferBreak['page'])
                     {
                         //Inicia o número de páginas
@@ -382,16 +413,22 @@ class AgataOOParser2 extends AgataMerge
                     }
 
                     //Se ultrapassou o número definido de tabelas gera o conteudo
-                    if (($this->config['break']['detailtable'][$detailTableName] * $bufferBreak['page']) == ($dataPosition+1) && $data[$dataPosition+1])
-                    {
+                //    if (($this->config['break']['detailtable'][$detailTableName] * $bufferBreak['page']) == ($dataPosition+1) && $data[$dataPosition+1])
+                  //  {
                         // Adiciona rodapé
-                        $bufferBreak['content'] = $this->printSection('pageFooter',  $line);
+                      //  $bufferBreak['content'] = $this->printSection('pageFooter',  $line);
                         // Adicona cabeçalho
-                        $bufferBreak['content'] .= $this->printSection('pageHeader',  $line, true);
-                    }
-                }
+                      //  $bufferBreak['content'] .= $this->printSection('pageHeader',  $line, true);
+                    //}
+                //}
 
+
+		
+		
+		
                 $globalVars_ = array_merge($globalVars, $localVars[$dataPosition]);
+		
+		
                 $existDetailTable = true;
                 $controlOperation = array();
                 # percore toda a tabela de detalhes para substituir os campos
@@ -632,6 +669,8 @@ class AgataOOParser2 extends AgataMerge
     {
         $this->user_style = $style;
     }
+
+   
 
     function SetImageReplace($imageName, $imagePath)
     {

@@ -571,20 +571,26 @@ function FirstUpper($string)
 function darktxt($text, $width = -1, $height = 26, $color = null)
 {
     $topbox = new gtkeventbox;
-    $topbox->set_usize($width, $height);
+    $topbox->set_size_request($width, $height);
     $style = $topbox->style;
-    $style->bg[GTK_STATE_NORMAL] = ($color) ? $color : new GdkColor(42036, 42036, 42036);
+
+ 
+     //------------------comendado por MIGUEL CASANOVA-----------------
+    //$style->bg[GTK_STATE_NORMAL] = ($color) ? $color : new GdkColor(42036, 42036, 42036);
+
     $style = $style->copy();
     $topbox->set_style($style);
 
     $topbox->add(left(new GtkLabel('  ' . $text)));
+    $topbox->modify_fg(Gtk::STATE_NORMAL, GdkColor::parse('#000080'));
+
     return $topbox;
 }
 
 function darkbox($widget, $width, $height, $color)
 {
     $topbox = new gtkeventbox;
-    $topbox->set_usize($width, $height);
+    $topbox->set_size_request($width, $height);
     $style = $topbox->style;
     $style->bg[GTK_STATE_NORMAL] = ($color) ? $color : new GdkColor(42036, 42036, 42036);
     $style = $style->copy();

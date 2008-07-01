@@ -43,7 +43,7 @@ class AgataScreen extends AgataReport
         
         
         $this->window = new GtkWindow;
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
         $this->window->set_title(_a('Preview of Report'));
         $this->window->set_uposition(20,20);
         $this->window->set_default_size(740,540);
@@ -71,8 +71,9 @@ class AgataScreen extends AgataReport
             $this->TreeList = new SimpleTree($TreeListColumns);
         }
 
-        $this->TreeList->set_column_justification(0, GTK_JUSTIFY_LEFT);
-        $this->TreeList->set_column_width(0, 200);
+	//--------comentado  por miguel casanova
+       // $this->TreeList->set_column_justification(0, GTK_JUSTIFY_LEFT);
+       // $this->TreeList->set_column_width(0, 200);
         $Scroll->add($this->TreeList);
         $this->window->add($vbox);
         
@@ -81,13 +82,13 @@ class AgataScreen extends AgataReport
             $width = $this->Adjustments[$y][1];
             $this->TreeList->set_column_width($y - (($this->ShowBreakColumns) ? 0 : $CountBreaks), $width);
         }*/
-
-        $local_pix['edit']   = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/edit.xpm');
-        $local_pix['pdf']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/pdf.xpm');
-        $local_pix['html']   = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/html.xpm');
-        $local_pix['xml']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/xml.xpm');
-        $local_pix['csv']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/csv.xpm');
-        $local_pix['sxw']    = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/sxw.xpm');
+	$color = &new GdkColor(0, 65535, 65535);
+        $local_pix['edit']   =  'interface/edit.xpm';
+        $local_pix['pdf']    =  'interface/pdf.xpm';
+        $local_pix['html']   ='interface/html.xpm';
+        $local_pix['xml']    = 'interface/xml.xpm';
+        $local_pix['csv']    =  'interface/csv.xpm';
+        $local_pix['sxw']    = 'interface/sxw.xpm';
 
         $hbox = new GtkHBox;
         $hbox->pack_start(new Button(array(&$this, 'PreGenerate'), _a('Export to TXT File'), $local_pix['edit'], ICONBUTTON, 'txt'), false, false);
@@ -104,10 +105,10 @@ class AgataScreen extends AgataReport
         
         $vbox->pack_start($hbox, false, false);
         $vbox->pack_start($a = new GtkHSeparator, false, false);
-        $a ->set_usize(-1, 20);
+        $a ->set_size_request(-1, 20);
         $vbox->pack_start($Scroll);
         $vbox->pack_start($b = new GtkHSeparator, false, false);
-        $b ->set_usize(-1, 20);
+        $b ->set_size_request(-1, 20);
         $vbox->pack_start($hbox2, false, false);
 
         while ($QueryLine = $this->CurrentQuery->FetchNext())
@@ -131,7 +132,8 @@ class AgataScreen extends AgataReport
                 $QueryCell = $QueryLine[$y];
                 if ($align)
                 {
-                    $this->TreeList->set_column_justification($y - (($this->ShowBreakColumns) ? 0 : $CountBreaks), $align);
+//-----comentado por miguel casanova            
+//        $this->TreeList->set_column_justification($y - (($this->ShowBreakColumns) ? 0 : $CountBreaks), $align);
                 }
                 
                 //------------------------------------------------------------
@@ -328,7 +330,8 @@ class AgataScreen extends AgataReport
         {
             foreach ($nodes as $node)
             {
-                $this->TreeList->expand($node);
+               // $this->TreeList->expand($node);
+		 $this->TreeList->expand_all();
             }
         }
         $this->TreeList->columns_autosize();

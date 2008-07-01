@@ -117,6 +117,7 @@ class AgataOOParser extends AgataMerge
                 while ($sub_row = $subQuery->FetchNext())
                 {
                     $sub[] = $sub_row;
+				
                     /*$y++;
                     $QueryCell = trim($sub_row[$y]);
                     $vars['$subvar' . $y] = FormatMask($this->Adjustments[$y]['Mask'], $QueryCell);*/
@@ -126,9 +127,13 @@ class AgataOOParser extends AgataMerge
             $this->GrandTotal = array();
             $this->firstPage  = true;
             $output .= $this->printSection('header',  $line, $break);
+	  
+	  
+	
             if ($this->printEmptyDetail or $sub)
-            {
+            { 
                 $output .= $this->printSection('details', $line, $sub);
+		//echo ' DETAILS===>'.$this->printSection('details', $line, $sub);
             }
             $output .= $this->printSection('footer',  $line);
             
@@ -195,12 +200,14 @@ class AgataOOParser extends AgataMerge
         $details_stage = 0;
         $total_stage = 0;
         foreach ($this->buffer[$section] as $text_line)
-        {
+        { 
             for ($i=sizeof($data); $i>0; $i--)
             {
                 $cell = $data[$i];
                 $text_line = str_replace('$var' . $i, utf8_encode($cell), $text_line);
                 $text_line = str_replace('[' . $this->CurrentQuery->ColumnNames[$i -1] . ']', utf8_encode($cell), $text_line);
+
+
             }
             
             # Search by barCode
@@ -230,10 +237,10 @@ class AgataOOParser extends AgataMerge
             }
             
             if ($section == 'details')
-            {
+            {  
                 # Fim do cabeçalho, começa a contar as linhas dos detalhes
                 if (substr($text_line, 0, 26) == '</table:table-header-rows>')
-                {
+                { 
                     $process = true;
                 }
                 
@@ -307,6 +314,8 @@ class AgataOOParser extends AgataMerge
                     }
                     else
                     {
+
+			
                         if ((substr($text_line, 0, 16) == '<table:table-row') and ($details_stage == 0))
                         {
                             $details_stage = 1;

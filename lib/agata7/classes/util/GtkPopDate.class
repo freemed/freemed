@@ -102,12 +102,12 @@ class GtkPopDate
     function DateSel()
     {
         $this->janela = new GtkWindow;
-        $this->janela->connect_object('key_press_event', array(&$this,'KeyTest'), $this->janela);
+        $this->janela->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->janela);
         $this->janela->set_position(GTK_WIN_POS_CENTER);
         $calendar = &new GtkCalendar;
         $calendar->select_month(date('n') -1, date('Y'));
         $calendar->select_day(date('j'));
-        $calendar->connect_object('day-selected-double-click', array(&$this, 'GetDate'), &$calendar);
+        $calendar->connect_simple('day-selected-double-click', array(&$this, 'GetDate'), &$calendar);
         $this->janela->add($calendar);
         $this->janela->show_all();
     }

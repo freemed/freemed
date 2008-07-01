@@ -16,8 +16,8 @@ class ConnectionWizard
         //2 - new mode
         $this->mode = 0;
         $this->window = &new GtkWindow;
-        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('delete-event', array(&$this, 'Hide'));
+      //  $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
         $this->window->set_title(_a('Connection wizard'));
         $this->window->set_position(GTK_WIN_POS_CENTER);
         $this->window->set_default_size(500,450);
@@ -28,31 +28,42 @@ class ConnectionWizard
         $this->aProjects = Project::ReadProjects();
 
         //Instance background image
-        $this->PixStart = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/connection_wizard.xpm');
+        //$this->PixStart = GdkPixmap::create_from_xpm($this->window->window, null, 'interface/connection_wizard.xpm');
+	//modificado por Miguel casanova
+	$color = &new GdkColor(0, 65535, 65535);     
+  	 $this->PixStart = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/connection_wizard.xpm');
 
         //Instance title style
         $this->TitleStyle = &new GtkStyle();
-        $this->TitleStyle->fg[GTK_STATE_NORMAL] = new GdkColor('#FFFFFF');
-        $this->TitleStyle->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-180-*-*-*-*-*-*");
+       //$this->TitleStyle->fg[GTK_STATE_NORMAL] = new GdkColor('#FFFFFF');
+       // $this->TitleStyle->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-180-*-*-*-*-*-*");
+	// $this->TitleStyle->font = Gtk::gdk_font_load   ("-*-helvetica-bold-r-*-*-*-180-*-*-*-*-*-*");
 
-        $this->pageStyle = &new GtkStyle();
-        $this->pageStyle->bg[GTK_STATE_NORMAL] = new GdkColor('#8CB6DB');
+
+	
+	
+        //$this->pageStyle = &new GtkStyle();
+       // $this->pageStyle->bg[GTK_STATE_NORMAL] = new GdkColor('#8CB6DB');
 
         $this->notebook = &new GtkNotebook();
-        $this->notebook->set_style($this->pageStyle);
+
+	$this->notebook->modify_font(new PangoFontDescription("Times New Roman Italic 10"));
+	
+       // $this->notebook->set_style($this->pageStyle);
         $this->notebook->insert_page($this->generateMain()          , new GtkLabel('0'), 0);
+
         //New project
         $this->notebook->insert_page($this->generateNewProject()    , new GtkLabel('1'), 1);
         $this->notebook->insert_page($this->generateConfigDb()      , new GtkLabel('2'), 2);
         //Open project
-        $this->notebook->insert_page($this->generateOpenProject()   , new GtkLabel('3'), 3);
+     $this->notebook->insert_page($this->generateOpenProject()   , new GtkLabel('3'), 3);
         //Final wizard
-        $this->notebook->insert_page($this->generateCongratulation(), new GtkLabel('4'), 4);
-        $this->notebook->set_show_tabs(false);
 
+        $this->notebook->insert_page($this->generateCongratulation(), new GtkLabel('4'), 4);
+       $this->notebook->set_show_tabs(false);
         $hbox = new GtkHBox;
         $this->window->add($this->notebook);
-
+ 
         $this->setFields();
 
         $this->Show();
@@ -63,9 +74,20 @@ class ConnectionWizard
     /***********************************************************/
     function generateMain()
     {
+	
+	$color = &new GdkColor(0, 65535, 65535);
+
         $fixed = &new GtkFixed;
         $fixed->set_style($this->pageStyle);
-        $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+       // $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+
+
+
+
+	$pixbuf = $this->PixStart[0];
+	$Start = new GtkImage();
+	//$Start->set_from_pixbuf($pixbuf);
+
         $fixed->put($Start, 0, 0);
         $Title = &new GtkLabel(_a('Welcome to the agata wizard!'));
         $Title->set_style($this->TitleStyle);
@@ -73,34 +95,56 @@ class ConnectionWizard
 
         //Instance title style
         $buttonStyle = &new GtkStyle();
-        $buttonStyle->bg[GTK_STATE_NORMAL]   = new GdkColor('#709DCB');
-        $buttonStyle->bg[GTK_STATE_PRELIGHT] = new GdkColor('#8CB6DB');
+      //  $buttonStyle->bg[GTK_STATE_NORMAL]   = new GdkColor('#709DCB');
+       // $buttonStyle->bg[GTK_STATE_PRELIGHT] = new GdkColor('#8CB6DB');
         //$buttonStyle->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-180-*-*-*-*-*-*");
 
-        $pix = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/open.xpm');
-        $image = &new GtkPixmap($pix[0], $pix[1]);
-        $buttonOpen = new GtkButton();
-        $buttonOpen->set_usize(150, 100);
+
+
+	
+
+        //$pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/open.xpm');
+	
+	$pixbuf = GdkPixbuf::new_from_file('interface/open.xpm');
+	$image = new GtkImage();
+	$image->set_from_pixbuf($pixbuf);
+
+
+	$buttonOpen = new GtkButton();
+	$buttonOpen->set_image($image);
+
+        $buttonOpen->set_size_request(150, 100);
         $buttonOpen->set_style($buttonStyle);
-        $buttonOpen->connect_object('clicked', array(&$this, 'next_page'), '3');
+        $buttonOpen->connect_simple('clicked', array(&$this, 'next_page'), '3');
         $hbox = &new GtkHBox();
-        $hbox->pack_start($image);
+
+       // $hbox->pack_start($image);
+
         $hbox->pack_start(new GtkLabel(_a('Open project')));
-        $buttonOpen->add($hbox);
+
+       // $buttonOpen->add($hbox);
         $fixed->put($buttonOpen, 66, 200 );
 
-        $pix = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/filenew.xpm');
-        $image = &new GtkPixmap($pix[0], $pix[1]);
-        $buttonNew = new GtkButton();
-        $buttonNew->set_usize(150, 100);
-        $buttonNew->set_style($buttonStyle);
-        $buttonNew->connect_object('clicked', array(&$this, 'next_page'), '1');
-        $hbox = &new GtkHBox();
-        $hbox->pack_start($image);
-        $hbox->pack_start(new GtkLabel(_a('New project')));
-        $buttonNew->add($hbox);
-        $fixed->put($buttonNew, 282, 200 );
+       // $pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/filenew.xpm');
+        //$image = &new GtkPixmap($pix[0], $pix[1]);
+        
 
+	$pixbuf = GdkPixbuf::new_from_file('interface/filenew.xpm');
+	$image = new GtkImage();
+	$image->set_from_pixbuf($pixbuf);
+
+	$buttonNew = new GtkButton();
+	$buttonNew->set_image($image);
+        $buttonNew->set_size_request(150, 100);
+       // $buttonNew->set_style($buttonStyle);
+        $buttonNew->connect_simple('clicked', array(&$this, 'next_page'), '1');
+    
+  $hbox = &new GtkHBox();
+        //$hbox->pack_start($image);
+      
+       $hbox->pack_start(new GtkLabel(_a('New project')));
+       // $buttonNew->add($hbox);
+        $fixed->put($buttonNew, 282, 200 );
         return $fixed;
     }
 
@@ -111,7 +155,13 @@ class ConnectionWizard
     {
         $fixed = &new GtkFixed;
         $fixed->set_style($this->pageStyle);
-        $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+        
+	$pixbuf = GdkPixbuf::new_from_file('interface/filenew.xpm');
+	$Start = new GtkImage();
+	$Start->set_from_pixbuf($pixbuf);
+
+
+	//$Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
         $fixed->put($Start, 0, 0);
         $Title = &new GtkLabel(_a('New project - characteristic of the project'));
         $Title->set_style($this->TitleStyle);
@@ -128,20 +178,22 @@ class ConnectionWizard
         $col  = 100;
         $this->projectName = new GtkEntry();
         $fixed->put($this->projectName, $col, $line);
-
-        $this->description = new GtkText();
-        $this->description->set_usize(200,100);
+	
+        $this->description = new  GtkTextview();
+        $this->description->set_size_request(200,100);
         $this->description->set_editable(true);
         $scroll = &new GtkScrolledWindow();
         $scroll->add($this->description);
-        $scroll->set_usize(300, 100);
+        $scroll->set_size_request(300, 100);
         $scroll->set_policy(GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
         $fixed->put($scroll  , $col, $line+=30);
 
         $this->author = new GtkEntry();
         $fixed->put($this->author       , $col, $line+=110);
+
         $this->date = new GtkEntry();
         $this->date->set_editable(false);
+
         $fixed->put($this->date         , $col, $line+=30);
 
         $fixed->put($this->buttonNext(2, array(&$this, 'validateNewProject')), 340, 410);
@@ -175,7 +227,13 @@ class ConnectionWizard
     {
         $fixed = &new GtkFixed;
         $fixed->set_style($this->pageStyle);
-        $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+        //$Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+
+	$pix = $this->PixStart[0];
+	$Start = new GtkImage();
+	//$Start->set_from_pixbuf($pix);
+
+
         $fixed->put($Start, 0, 0);
         $Title = &new GtkLabel(_a('New project - configure the database'));
         $Title->set_style($this->TitleStyle);
@@ -193,6 +251,7 @@ class ConnectionWizard
         $line = 70;
         $col  = 150;
 
+
         $this->host = new GtkCombo();
         $fixed->put($this->host  , $col, $line);
 
@@ -202,7 +261,7 @@ class ConnectionWizard
         $fixed->put($this->type  , $col, $line+=30);
 
         $this->name = &new FileBox(null, false);
-        $this->name->set_usize(126, 22);
+        $this->name->set_size_request(126, 22);
         $this->name->set_text($Content);
         $fixed->put($this->name->box  , $col, $line+=30);
 
@@ -256,7 +315,12 @@ class ConnectionWizard
             $eDataDictionary = $this->dataDictionary->entry;
             //Project data
             $databaseVars->projectName  = $this->projectName->get_text();
-            $databaseVars->desc         = $this->description->get_chars(0,-1);
+        //    $databaseVars->desc         = $this->description->get_text();
+	    $buffer = $this->description->get_buffer();
+	    $databaseVars->desc = $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	    	
+
+
             $databaseVars->author       = $this->author->get_text();
             $databaseVars->date         = $this->date->get_text();
             //Connection data
@@ -279,7 +343,14 @@ class ConnectionWizard
     {
         $fixed = &new GtkFixed;
         $fixed->set_style($this->pageStyle);
-        $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+       // $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+
+	$pixbuf = $this->PixStart;
+	$Start = new GtkImage();
+	//$Start->set_from_pixbuf($pixbuf);
+
+
+
         $fixed->put($Start, 0, 0);
         $Title = &new GtkLabel(_a('Open project'));
         $Title->set_style($this->TitleStyle);
@@ -293,20 +364,24 @@ class ConnectionWizard
         $line = 90;
         $col  = 10;
         $this->projectList = new ProjectList();
-        $this->projectList->connect_object('select-row', array(&$this, 'selectProject'));
-        $scroll = new GtkScrolledWindow;
+        $this->projectList->connect_simple('move-cursor', array(&$this, 'selectProject'));
+	$this->projectList->connect_simple('event', array(&$this, 'selectProject'));
+	
+
+                
+	$scroll = new GtkScrolledWindow;
         $scroll->set_policy(GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
         $scroll->add($this->projectList);
-        $scroll->set_usize(140, 200);
+        $scroll->set_size_request(140, 200);
         $fixed->put($scroll, $col, $line);
 
         $this->listing = new Listing(array(_a('Field'), _a('Content')));
-        $this->listing->set_column_width(0, 100);
-        //$this->listing->set_usize(200, 200);
+        //$this->listing->set_column_width(0, 100);
+        //$this->listing->set_size_request(200, 200);
         $scroll = new GtkScrolledWindow;
         //$scroll->set_policy(GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
         $scroll->add($this->listing);
-        $scroll->set_usize(300, 200);
+        $scroll->set_size_request(300, 200);
         $fixed->put($scroll  , $col+=180, $line);
 
         $fixed->put($this->buttonNext(3, $this->handler, 1), 340, 410);
@@ -316,17 +391,29 @@ class ConnectionWizard
     }
 
     function generateCongratulation()
-    {
-        $fixed = &new GtkFixed;
+    {   
+     $fixed = &new GtkFixed;
         $fixed->set_style($this->pageStyle);
-        $Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+
+
+	$color = &new GdkColor(0, 65535, 65535);     
+  	//$Pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/connection_wizard.xpm');
+
+	$pix = GdkPixbuf::new_from_file('interface/connection_wizard.xpm');
+	
+	$Start = new GtkImage();
+	$Start->set_from_pixbuf($Pix);
+
+
+
+        //$Start = &new GtkPixmap($this->PixStart[0], $this->PixStart[1]);
+
         $fixed->put($Start, 0, 0);
         $Title = &new GtkLabel(_a('Congratulations!'));
         $Title->set_style($this->TitleStyle);
         $fixed->put($Title, 70, 15);
         $Text = &new GtkLabel (_a('You are connected to project'));
         $fixed->put($Text, 70, 50);
-
         $line = 70;
         $col  = 10;
 
@@ -341,9 +428,11 @@ class ConnectionWizard
     /* 
     /***********************************************************/
     function selectProject()
-    {
+    { 
         $projectName = $this->projectList->getSelection();
         $project = $this->aProjects[$projectName];
+       
+	if (!$project  ) return false;
 
         $this->dataOpenProject->projectName = $projectName;
         foreach ($project as $key=>$p)
@@ -354,23 +443,35 @@ class ConnectionWizard
                 $data[] = array($key, $p);
             }
         }
-        $this->listing->clear();
+       
+	$this->listing->clear();
         $this->listing->AppendItems($data);
+
     }
 
     function connectButtonNewReport($handler)
     {
-        $this->buttonReport->connect_object('clicked', $handler);
+        $this->buttonReport->connect_simple('clicked', $handler);
     }
 
     function buttonNewReport($handler=null)
-    {
-        $pix = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_new.xpm');
-        $image = &new GtkPixmap($pix[0], $pix[1]);
+    {     
+       // $pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/ico_new.xpm');
+
+
+	$color = &new GdkColor(0, 65535, 65535);     
+  	$pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/ico_new.xpm');
+	$image = new GtkImage();
+	$image->set_from_pixbuf($pix);
+
+
+
+       // $image->set_from_pixbuf($pixbuf);
+	$this->buttonReport->set_image($image);
         $this->buttonReport = new GtkButton();
         $this->buttonReport->set_relief(GTK_RELIEF_HALF);
-        $this->buttonReport->set_usize(150, 30);
-        $this->buttonReport->connect_object('clicked', array(&$this, 'Hide'), $page);
+        $this->buttonReport->set_size_request(150, 30);
+        $this->buttonReport->connect_simple('clicked', array(&$this, 'Hide'), $page);
         $hbox = &new GtkHBox();
         $hbox->pack_start($image);
         $hbox->pack_start(new GtkLabel(_a('New report')));
@@ -380,62 +481,85 @@ class ConnectionWizard
     }
 
     function buttonClose($handler=null)
-    {
-        $pix = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_close.xpm');
-        $image = &new GtkPixmap($pix[0], $pix[1]);
-        $buttonClose = new GtkButton();
+    {$color = &new GdkColor(0, 65535, 65535);     
+      //  $pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/ico_close.xpm');
+       // $image = &new GtkPixmap($pix[0], $pix[1]);
+
+	$pix = GdkPixbuf::new_from_file('interface/ico_close.xpm');
+	$image = new GtkImage();
+	$image->set_from_pixbuf($Pix);
+
+
+        $buttonClose = new GtkButton(_a('Close'));
+	$buttonClose->set_image($image);
         $buttonClose->set_relief(GTK_RELIEF_HALF);
-        $buttonClose->set_usize(100, 30);
-        $buttonClose->connect_object('clicked', array(&$this, 'Hide'), $page);
-        $hbox = &new GtkHBox();
-        $hbox->pack_start($image);
-        $hbox->pack_start(new GtkLabel(_a('Close')));
-        $buttonClose->add($hbox);
+        $buttonClose->set_size_request(100, 30);
+        $buttonClose->connect_simple('clicked', array(&$this, 'Hide'), $page);
+       // $hbox = &new GtkHBox();
+       // $hbox->pack_start($image);
+       // $hbox->pack_start(new GtkLabel(_a('Close')));
+       // $buttonClose->add($hbox);
 
         if ($handler)
         {
-            $buttonClose->connect_object('clicked', $handler);
+            $buttonClose->connect_simple('clicked', $handler);
         }
 
         return $buttonClose;
     }
 
     function buttonPrev($page, $handler=null)
-    {
-        $pix = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_prev.xpm');
-        $image = &new GtkPixmap($pix[0], $pix[1]);
-        $buttonPrev = new GtkButton();
+    {   $color = &new GdkColor(0, 65535, 65535);     
+        //$pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/ico_prev.xpm');
+        //$image = &new GtkPixmap($pix[0], $pix[1]);
+
+
+	$pix = GdkPixbuf::new_from_file('interface/ico_prev.xpm');
+	$image = new GtkImage();
+	$image->set_from_pixbuf($pix);
+
+
+        $buttonPrev = new GtkButton(_a('Prev'));
+	$buttonPrev->set_image($image);
         $buttonPrev->set_relief(GTK_RELIEF_HALF);
-        $buttonPrev->set_usize(150, 30);
-        $buttonPrev->connect_object('clicked', array(&$this, 'next_page'), $page);
-        $hbox = &new GtkHBox();
-        $hbox->pack_start($image);
-        $hbox->pack_start(new GtkLabel(_a('Prev')));
-        $buttonPrev->add($hbox);
+        $buttonPrev->set_size_request(150, 30);
+        $buttonPrev->connect_simple('clicked', array(&$this, 'next_page'), $page);
+        //$hbox = &new GtkHBox();
+        //$hbox->pack_start($image);
+        //$hbox->pack_start(new GtkLabel(_a('Prev')));
+        //$buttonPrev->add($hbox);
 
         if ($handler)
         {
-            $buttonPrev->connect_object('clicked', $handler);
+            $buttonPrev->connect_simple('clicked', $handler);
         }
 
         return $buttonPrev;
     }
 
     function buttonNext($page, $handler=null, $mode=0)
-    {
-        $pix = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_next.xpm');
-        $image = &new GtkPixmap($pix[0], $pix[1]);
-        $buttonNext = new GtkButton();
-        $buttonNext->set_usize(150, 30);
-        $buttonNext->connect_object('clicked', array(&$this, 'next_page'), $page, $mode);
-        $hbox = &new GtkHBox();
-        $hbox->pack_start(new GtkLabel(_a('Next')));
-        $hbox->pack_start($image);
-        $buttonNext->add($hbox);
+    {   $color = &new GdkColor(0, 65535, 65535);     
+       // $pix = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/ico_next.xpm');
+        //$image = &new GtkPixmap($pix[0], $pix[1]);
+
+
+	$pix = GdkPixbuf::new_from_file('interface/ico_next.xpm');
+	$image = new GtkImage();
+	$image->set_from_pixbuf($pix);
+
+
+        $buttonNext = new GtkButton(_a('Next'));
+	$buttonNext->set_image($image);
+        $buttonNext->set_size_request(150, 30);
+        $buttonNext->connect_simple('clicked', array(&$this, 'next_page'), $page, $mode);
+       // $hbox = &new GtkHBox();
+        //$hbox->pack_start(new GtkLabel(_a('Next')));
+       // $hbox->pack_start($image);
+        //$buttonNext->add($hbox);
 
         if ($handler)
         {
-            $buttonNext->connect_object('clicked', $handler);
+            $buttonNext->connect_simple('clicked', $handler);
         }
 
         return $buttonNext;
@@ -447,37 +571,46 @@ class ConnectionWizard
     function next_page($page, $mode=0)
     {
         $this->mode = $mode;
-        $this->notebook->set_page($page);
+        $this->notebook->set_current_page($page);
     }
 
     function setFields()
-    {
+    {   try
+	{
         include_once 'include/util.inc';
 
         $this->projectName->set_text('');
-        $this->description->delete_text(0,-1);
+       // $this->description->delete_text(0,-1);
         $this->author->set_text('');
         $this->date->set_text('');
         $this->date->set_text(date('Y-m-d'));
         $host = $this->host->entry;
-        $host->set_text('');
-        $this->name->set_text('');
-        $this->user->set_text('');
-        $this->password->set_text('');
+        $host->set_text('localhost');
+        $this->name->set_text('pruebas');
+        $this->user->set_text('miguelacg');
+        $this->password->set_text('12050970');
         $dataDictionary = $this->dataDictionary->entry;
         $dataDictionary->set_text('');
 
         $this->aProjects = Project::ReadProjects();
         $aDict = Dictionary::ListDictionaries();
         $aDB = suported_databases_type();
-
         $this->host->set_popdown_strings($this->dataHost());
         $this->dataDictionary->set_popdown_strings($aDict);
         $this->type->set_popdown_strings($aDB);
-
+     
         $this->projectList->ClearProjects();
+
         $this->projectList->SetProjects($this->aProjects);
-    }
+	 	
+	}
+	 catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+	    
+     }
 
     /***********************************************************/
     /* Show the Window

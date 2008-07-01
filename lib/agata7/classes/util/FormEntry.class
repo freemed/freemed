@@ -22,9 +22,9 @@ class FormEntry extends CommonForm
             $this->window->set_border_width(0);
             $this->window->set_position(GTK_WIN_POS_CENTER);
             $this->window->set_default_size(40,400);
-            $this->window->set_policy(false, false, false);
+            $this->window->set_resizable(false, false, false);
             $this->window->realize();
-            $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+            $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
         }
         $this->SimpleColumn = $simpleColumn;
         $this->CheckVars = $CheckVars;
@@ -32,7 +32,7 @@ class FormEntry extends CommonForm
         
         $this->tooltips = new GtkTooltips;
         
-        $this->window->connect_object('delete_event', array(&$this, 'Close'));
+        $this->window->connect_simple('delete_event', array(&$this, 'Close'));
         
         $this->CheckVars = $CheckVars;
 
@@ -55,7 +55,12 @@ class FormEntry extends CommonForm
         $this->BuildFormEntries('unique', $CheckVars);
         $entries = $this->InputEntries['unique'];
 
-        $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null,  images . 'ico_ok.xpm');
+
+	//modificado por Miguel Casanova
+	$pixmap =  images . 'ico_ok.xpm';
+	
+
+    
         $this->button = &new VoidButton(' OK ', $pixmap, IMAGEBUTTON);
         $this->button->set_border_width(5);
 
@@ -84,7 +89,7 @@ class FormEntry extends CommonForm
     function AddAction($message, $ico, $callback)
     {
         $button = &new Icone($this->window->window, images . $ico,  '  ' . $message . '  ', $message, true);
-        $button->connect_object('clicked', $callback);
+        $button->connect_simple('clicked', $callback);
         $box = &new GtkHBox(false, 3);
         $box->pack_start($button, false, false, 10);
         $this->vbox2->pack_start($box, false,false);

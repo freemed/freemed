@@ -9,7 +9,8 @@ class CommonForm
     /* Builds the Form Entries array
     /***********************************************************/
     function BuildFormEntries($Config, $CheckVars)
-    {
+    { try
+      {
         $i = 0;
         $count = count($CheckVars);
         $this->CheckVars[$Config] = $CheckVars;
@@ -22,7 +23,7 @@ class CommonForm
             $Editable    = $CheckVar[4];
             $Tooltip     = $CheckVar[5];
             $Mask        = $CheckVar[6];
-
+	
             $box = &new GtkHBox(false, 3);
             if (($i < ($count/2)) or ($count <= 2) or ($this->SimpleColumn))
             {
@@ -41,13 +42,14 @@ class CommonForm
                 $entry =$this->InputEntries[$Config][$i]->entry;
                 $entry->set_text($Content);
                 $entry->set_editable($Editable);
-                $entry->set_usize(126,22);
-                $this->InputEntries[$Config][$i]->set_usize(126,22);
+                $entry->set_size_request(126,22);
+                $this->InputEntries[$Config][$i]->set_size_request(126,22);
+		$this->InputEntries[$Config][$i]->show();
             }
             else if (get_class($Kind) == 'GtkRadioButton')
             {
                 $this->InputEntries[$Config][$i] = $Kind;
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+                $this->InputEntries[$Config][$i]->set_size_request(126, 22);
 
                 $box->pack_start($this->InputEntries[$Config][$i], false, false, 10);
                 $this->InputEntries[$Config][$i]->show();
@@ -56,7 +58,8 @@ class CommonForm
             else if (is_object($Kind))
             {
                 $this->InputEntries[$Config][$i] = $Kind;
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+		//-------comentado por miguel casanova               
+		// $this->InputEntries[$Config][$i]->set_size_request(126, 22);
                 $this->InputEntries[$Config][$i]->set_editable($Editable);
                 
                 $this->InputEntries[$Config][$i]->set_text($Content);
@@ -70,9 +73,12 @@ class CommonForm
             }
             else if ($Kind=='spin')
             {
-                $this->InputEntries[$Config][$i] = &new GtkSpinButton(new GtkAdjustment((double)$Content, 0, 999, 1, 10, 10));
+              //  $this->InputEntries[$Config][$i] = &new GtkSpinButton(new GtkAdjustment((double)$Content, 0, 999, 1, 10, 10));
+
+		   $this->InputEntries[$Config][$i] = GtkSpinButton::new_with_range(0, 999, 2); // note 1 
+                $this->InputEntries[$Config][$i]->set_value((double)$Content);
                 $this->InputEntries[$Config][$i]->set_position(0);
-                $this->InputEntries[$Config][$i]->set_usize(88, 22);
+                $this->InputEntries[$Config][$i]->set_size_request(88, 22);
                 $box->pack_start(new Box($this->InputEntries[$Config][$i], $Description), false, false, 10);
                 if ($IsPassword)
                 {
@@ -83,14 +89,15 @@ class CommonForm
             else if ($Kind=='line')
             {
                 $this->InputEntries[$Config][$i] = &new GtkHSeparator;
-                $this->InputEntries[$Config][$i]->set_usize(88, 2);
+                $this->InputEntries[$Config][$i]->set_size_request(88, 2);
                 $box->pack_start(new Box($this->InputEntries[$Config][$i], $Description), false, false, 2);
                 $this->InputEntries[$Config][$i]->show();
             }
             else if ($Kind=='colors')
-            {                
+            {               
                 $this->InputEntries[$Config][$i] = &new ColorButton($Description);
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+		//-----------comentado por miguel casanova               
+		// $this->InputEntries[$Config][$i]->set_size_request(126, 22);
                 $this->InputEntries[$Config][$i]->set_text($Content);
 
                 $box->pack_start($this->InputEntries[$Config][$i]->widget, false, false, 10);
@@ -99,7 +106,7 @@ class CommonForm
             else if ($Kind=='gtkfont')
             {
                 $this->InputEntries[$Config][$i] = &new GtkFontBox($Description, $Content);
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+                $this->InputEntries[$Config][$i]->set_size_request(126, 22);
                 $this->InputEntries[$Config][$i]->set_editable($Editable);
                 $this->InputEntries[$Config][$i]->set_text($Content);
 
@@ -113,7 +120,8 @@ class CommonForm
             else if (($Kind=='fonts') or ($Kind=='fonts2'))
             {
                 $this->InputEntries[$Config][$i] = &new FontBox($Description, $Kind=='fonts2');
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+		//-----comentado por miguel casanova               
+		// $this->InputEntries[$Config][$i]->set_size_request(126, 22);
                 $this->InputEntries[$Config][$i]->set_editable($Editable);
                 $this->InputEntries[$Config][$i]->set_text($Content);
                 
@@ -127,7 +135,7 @@ class CommonForm
             else if (($Kind=='files') or ($Kind=='files2'))
             {
                 $this->InputEntries[$Config][$i] = &new FileBox($Description, $Kind=='files2');
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+                $this->InputEntries[$Config][$i]->set_size_request(126, 22);
                 $this->InputEntries[$Config][$i]->set_editable($Editable);
                 $this->InputEntries[$Config][$i]->set_text($Content);
 
@@ -148,10 +156,10 @@ class CommonForm
             }
             else if ($Kind=='TextArea')
             {
-                $this->InputEntries[$Config][$i] = &new GtkText();
+                $this->InputEntries[$Config][$i] = &new GtkTextView();
                 $this->InputEntries[$Config][$i]->set_editable($Editable);
                 $scroll = new GtkScrolledWindow;
-                $scroll->set_usize(200,100);
+                $scroll->set_size_request(200,100);
                 $scroll->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
                 $scroll->add($this->InputEntries[$Config][$i]);
                 $box->pack_start(new Box($scroll, $Description), false, false, 10);
@@ -161,7 +169,7 @@ class CommonForm
             else if (class_exists($Kind))
             {
                 $this->InputEntries[$Config][$i] = new $Kind;
-                $this->InputEntries[$Config][$i]->set_usize(126, 22);
+                $this->InputEntries[$Config][$i]->set_size_request(126, 22);
                 $this->InputEntries[$Config][$i]->set_editable($Editable);
                 
                 $this->InputEntries[$Config][$i]->set_text($Content);
@@ -203,7 +211,7 @@ class CommonForm
                     $this->InputEntries[$Config][$i]->set_visibility(false);
                 }
                 $this->InputEntries[$Config][$i]->show();
-                $this->InputEntries[$Config][$i]->set_usize(140,22);
+                $this->InputEntries[$Config][$i]->set_size_request(140,22);
             }
             
             if ($Kind == null)
@@ -222,7 +230,19 @@ class CommonForm
             $this->InputKinds[$Config][$i] = $Kind;
             $i ++;
         }
+	
+	
         return $this->InputEntries;
+	
+	
+	
+    	}
+	
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
     }
 
     /***********************************************************/

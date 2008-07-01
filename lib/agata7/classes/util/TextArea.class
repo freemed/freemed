@@ -3,15 +3,21 @@
 /* TextAreaClass, a wrapper for GtkScintilla used in Merge Tool
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class TextArea extends GtkText
+class TextArea extends GtkTextView  //GtkText
 {
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-	function TextArea()
-	{
-        GtkText::GtkText();
-        GtkText::set_editable(true);
+
+	function  __construct()
+    	{
+	// GtkText::GtkText();
+	   parent::__construct();
+	   $this->buffer1 = new GtkTextBuffer();
+	   $this->set_buffer($this->buffer1);
+
+	   $this->set_editable(true);
+	   $this->show();
 	}
 
     /***********************************************************/
@@ -19,7 +25,7 @@ class TextArea extends GtkText
     /***********************************************************/
 	function Open($lines)
 	{
-		GtkText::clear_all();
+	$this->clear_all();
         foreach($lines as $line)
         {
             $this->insert_text(-1, $line . "\n");
@@ -28,22 +34,48 @@ class TextArea extends GtkText
     
     function add_text($text)
     {
-        GtkText::insert(null, null, null, $text);
+//        GtkText::insert(null, null, null, $text);
+
+		$this->buffer1->insert_interactive_at_cursor($text,strlen($text),true);
+		$this->set_buffer($this->buffer1);
+  	   
+
+
     }
     
     function get_text()
     {
-        return GtkText::get_chars(0,-1);
+//        return GtkText::get_chars(0,-1);
+	 $buffer = $this->get_buffer();
+	 return $buffer->get_text($buffer->get_start_iter(), $buffer->get_end_iter());
+	   
+
     }
     
     function clear_all()
     {
-        GtkText::delete_text(0,-1);
+//        GtkText::delete_text(0,-1);
+	
+
+  		  $buffer1 = new GtkTextBuffer();
+		  $text='';
+		  $buffer1->set_text($text);
+		  $this->set_buffer($buffer1);
+	
     }
-    
+        function insert($text)
+    {
+     //   GtkText::insert_text($text, GtkText::get_position());
+
+		$this->buffer1->insert_interactive_at_cursor($text,strlen($text),true);
+		$this->set_buffer($this->buffer1);
+     }
     function insertText($text)
     {
-        GtkText::insert_text($text, GtkText::get_position());
-    }
+     //   GtkText::insert_text($text, GtkText::get_position());
+
+		$this->buffer1->insert_interactive_at_cursor($text,strlen($text),true);
+		$this->set_buffer($this->buffer1);
+     }
 }
 ?>

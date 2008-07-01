@@ -22,6 +22,7 @@ class MaskBox
 
         $box->pack_start($this->entry);
         $box->pack_start($this->button);
+	$box->show();
     }
     /***********************************************************/
     /* Changes the color
@@ -76,7 +77,7 @@ class MaskBox
         global $Pixmaps;
         $glade_format       = new GladeXML('interface/format.glade');
         $this->window       = $glade_format->get_widget('window1');
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->window);
         
         $this->notebook           = $glade_format->get_widget('notebook1');
         $this->spin_decimals      = $glade_format->get_widget('spin_decimals');
@@ -93,10 +94,20 @@ class MaskBox
             $this->notebook->set_show_tabs(false);
         }
         $masks = file('include/masks');
+
+	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	
+	$cell_renderer = new GtkCellRendererText();
+	$column = new GtkTreeViewColumn("Formats", $cell_renderer, 'text', 0);
+        $this->clist_masks->append_column($column);
+			 
+	$this->clist_masks->set_model($this->model);
+
         foreach ($masks as $mask)
         {
-            $this->clist_masks->append(array(ereg_replace("\n",'',$mask)));
-        }
+         //   $this->clist_masks->append(array(ereg_replace("\n",'',$mask)));
+		$this->model->append( array(ereg_replace("\n",'',$mask))   );      
+	}
         
         if ($text = $this->get_text())
         {
@@ -145,7 +156,7 @@ class MaskBox
         $label_thousand_sep  = $glade_format->get_widget('label_thousand_sep');
         $label_negatives     = $glade_format->get_widget('label_negatives');
         $label_custom        = $glade_format->get_widget('label_custom');
-        $label_title         = $glade_format->get_widget('label_title');
+     //   $label_title         = $glade_format->get_widget('label_title');
         $label_currency      = $glade_format->get_widget('label_currency');
         $label_clear         = $glade_format->get_widget('label_clear');
         $label_suffix        = $glade_format->get_widget('label_suffix');
@@ -158,9 +169,9 @@ class MaskBox
         
         $button_clear        = $glade_format->get_widget('button_clear');
         
-        $button_page1->connect_object('clicked', array(&$this, 'GetMask1'));
-        $button_page2->connect_object('clicked', array(&$this, 'GetMask2'));
-        $button_clear->connect_object('clicked', array(&$this, 'Clear'));
+        $button_page1->connect_simple('clicked', array(&$this, 'GetMask1'));
+        $button_page2->connect_simple('clicked', array(&$this, 'GetMask2'));
+        $button_clear->connect_simple('clicked', array(&$this, 'Clear'));
         
         $hbox_page1->pack_start(darktxt(_a('Number Format')), true, true);
         $hbox_page2->pack_start(darktxt(_a('Text Mask')), true, true);
@@ -172,7 +183,7 @@ class MaskBox
         $label_decimal_sep->set_text(_a('Decimal Separator'));
         $label_thousand_sep->set_text(_a('Thousand Separator'));
         $label_custom->set_text(_a('Custom'));
-        $label_title->set_text(_a('Format'));
+    //    $label_title->set_text(_a('Format'));
         $label_currency->set_text(_a('Currency'));
         $label_negatives->set_text(_a('Negatives'));
         $label_clear->set_text(_a('Clear'));
@@ -220,12 +231,18 @@ class MaskBox
         }
         else
         {
-            $row = $this->clist_masks->selection[0];
-            if (is_numeric($row))
+            //$row = $this->clist_masks->selection[0];
+
+	    $selection = $this->clist_masks->get_selection();
+    	    list($model, $selected_rows) =  $selection->get_selected(); 
+	    $row = $model->get_value($selected_rows, 0);
+	    $row1=$row[0];	
+           if (is_numeric($row1))
             {
-                $format = $this->clist_masks->get_text($row,0);
+               $format = $row;
                 $this->set_text('@' . $format);
-            }
+           }
+
         }
         $this->window->hide();
     }

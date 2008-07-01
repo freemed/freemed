@@ -6,7 +6,7 @@
 class Dictionary
 {
     function ListDictionaries()
-    {
+    {    
         $aDict = getSimpleDirArray(AGATA_PATH . '/dictionary');
         foreach ($aDict as $dict)
         {

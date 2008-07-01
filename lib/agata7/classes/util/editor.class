@@ -160,40 +160,42 @@ class ScintillaPHP extends GtkScintilla
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function ScintillaPHP()
+    function  __construct()
     {
-        GtkScintilla::GtkScintilla();
-        GtkScintilla::connect_object('char_added', array(&$this,'char_added'));
-        GtkScintilla::set_margin_type_n(2, 0);
-        GtkScintilla::set_margin_width_n(2, 0);
-        GtkScintilla::set_margin_width_n(1, 20);
-        GtkScintilla::autoc_set_choose_single(TRUE);
-        GtkScintilla::set_tab_indents(1);
-        GtkScintilla::set_backspace_unindents(1);
-        GtkScintilla::set_usize(400, 200);
-        GtkScintilla::use_pop_up(0);
+
+	parent::__construct();
         
-        GtkScintilla::set_sel_back(true,    11250603);
-        GtkScintilla::marker_set_back(true, 15908608);
+        $this->connect_simple('char_added', array(&$this,'char_added'),$this);
+        $this->set_margin_type_n(2, 0);
+        $this->set_margin_width_n(2, 0);
+        $this->set_margin_width_n(1, 20);
+        $this->auto_cset_choose_single(TRUE);
+        $this->set_tab_indents(1);
+        $this->set_backspace_unindents(1);
+        $this->set_size_request(400, 200);
+        $this->use_pop_up(0);
         
-        GtkScintilla::set_caret_fore(0);
-        GtkScintilla::set_caret_width(2);
-        GtkScintilla::set_caret_period(250);
+        $this->set_sel_back(true,    11250603);
+        $this->marker_set_back(true, 15908608);
+        
+        $this->set_caret_fore(0);
+        $this->set_caret_width(2);
+        $this->set_caret_period(250);
         
         $this->DefinePHP();
         
-        GtkScintilla::set_tab_width(4);
-        GtkScintilla::set_use_tabs(1);
-        GtkScintilla::set_indent(4);
-        GtkScintilla::set_indentation_guides(1);
-        GtkScintilla::set_edge_mode(0);
-        GtkScintilla::set_edge_column( 80);
-        GtkScintilla::set_edge_colour( 8355712);
-        GtkScintilla::set_style_bits(7);
-        GtkScintilla::set_lexer(SCINTILLA_LEXER_HTML);
+        $this->set_tab_width(4);
+        $this->set_use_tabs(1);
+        $this->set_indent(4);
+        $this->set_indentation_guides(1);
+        $this->set_edge_mode(0);
+        $this->set_edge_column( 80);
+        $this->set_edge_colour( 8355712);
+        $this->set_style_bits(7);
+        $this->set_lexer(SCINTILLA_LEXER_HTML);
         
-        GtkScintilla::show_lines(0,GtkScintilla::get_line_count());
-        GtkScintilla::show();
+        $this->show_lines(0,$this->get_line_count());
+        $this->show();
     }
 
     /***********************************************************/
@@ -201,16 +203,18 @@ class ScintillaPHP extends GtkScintilla
     /***********************************************************/    
     function Open($file)
     {
-        GtkScintilla::clear_all();
+        $this->clear_all();
         if (file_exists($file))
         {
             $lines = file($file);
             $lines = array_reverse($lines);
-            
+         
+
             foreach($lines as $line)
-            GtkScintilla::insert_text(-1, $line);
+	 	
+            $this->insert_text(-1, $line);
         }
-        GtkScintilla::empty_undo_buffer();
+        $this->empty_undo_buffer();
     }
 
     /***********************************************************/
@@ -218,9 +222,9 @@ class ScintillaPHP extends GtkScintilla
     /***********************************************************/
     function OpenString($string)
     {
-        GtkScintilla::clear_all();
-        GtkScintilla::insert_text(-1, $string);
-        GtkScintilla::empty_undo_buffer();
+        $this->clear_all();
+        $this->insert_text(-1, $string);
+        $this->empty_undo_buffer();
     }
 
     /***********************************************************/
@@ -242,13 +246,13 @@ class ScintillaPHP extends GtkScintilla
     /***********************************************************/
     function get_current_word($n = 0)
     {
-        $this->curpos = GtkScintilla::get_current_pos();
-        GtkScintilla::word_left_extend();
+        $this->curpos = $this->get_current_pos();
+        $this->word_left_extend();
         if ($n ==1)
-        GtkScintilla::word_left_extend();
+        $this->word_left_extend();
         
-        $word = GtkScintilla::get_sel_text();
-        GtkScintilla::goto_pos($this->curpos);
+        $word = $this->get_sel_text();
+        $this->goto_pos($this->curpos);
         return trim($word);
     }
 
@@ -271,7 +275,7 @@ class ScintillaPHP extends GtkScintilla
             case "$":
             if ($is_key) $this->lastword = $word;
             if (preg_match_all("/\\".$word."[a-z0-9_>=-]*/",
-            GtkScintilla::get_text(), $matches ))
+            $this->get_text(), $matches ))
             {
                 if (!$matches[0]) return;
                 $matches[0][0] = "";
@@ -286,7 +290,7 @@ class ScintillaPHP extends GtkScintilla
                 if (!$is_key || (count($linematches) < 5))
                 if (!$disable_autocomplete )
                 {
-                    GtkScintilla::autoc_show(strlen($word), $l);
+                    $this->auto_cshow(strlen($word), $l);
                     if ($is_key) $this->lastword = $word;
                 }
             }
@@ -301,7 +305,7 @@ class ScintillaPHP extends GtkScintilla
                 //if (!$disable_autocomplete )
                 {
                     if ($is_key) $this->lastword = $word;
-                    GtkScintilla::autoc_show(strlen($word), $l);
+                    $this->auto_cshow(strlen($word), $l);
                     //return;
                 }
             }
@@ -311,7 +315,7 @@ class ScintillaPHP extends GtkScintilla
                 $start = $this->curpos - strlen($this->lastword);
                 if ($f = $this->get_definition($this->lastword))
                 {
-                    GtkScintilla::call_tip_show($start,$f);
+                    $this->call_tip_show($start,$f);
                 }
             }
             break;
@@ -397,27 +401,29 @@ class ScintillaPHP extends GtkScintilla
             //	$lilfont = $font;
         }
         
-        GtkScintilla::style_set_font(SCINTILLA_STYLE_DEFAULT, $lilfont);
-        GtkScintilla::style_set_fore(SCINTILLA_STYLE_DEFAULT, 0);
-        GtkScintilla::style_set_back(SCINTILLA_STYLE_DEFAULT, 15987699 );
+        $this->style_set_font(SCINTILLA_STYLE_DEFAULT, $lilfont);
+        $this->style_set_fore(SCINTILLA_STYLE_DEFAULT, 0);
+        $this->style_set_back(SCINTILLA_STYLE_DEFAULT, 15987699 );
         
-        GtkScintilla::style_set_font(SCINTILLA_STYLE_LINE_NUMBER, $lilfont);
-        GtkScintilla::style_set_fore(SCINTILLA_STYLE_LINE_NUMBER, 0);
-        GtkScintilla::style_set_back(SCINTILLA_STYLE_LINE_NUMBER, 11053224);
+        $this->style_set_font(SCINTILLA_STYLE_LINE_NUMBER, $lilfont);
+        $this->style_set_fore(SCINTILLA_STYLE_LINE_NUMBER, 0);
+        $this->style_set_back(SCINTILLA_STYLE_LINE_NUMBER, 11053224);
         
-        GtkScintilla::style_set_font(SCINTILLA_STYLE_BRACE_LIGHT, $lilfont);
-        GtkScintilla::style_set_fore(SCINTILLA_STYLE_BRACE_LIGHT, 12517376);
-        GtkScintilla::style_set_back(SCINTILLA_STYLE_BRACE_LIGHT,15987699);
+        $this->style_set_font(SCINTILLA_STYLE_BRACE_LIGHT, $lilfont);
+        $this->style_set_fore(SCINTILLA_STYLE_BRACE_LIGHT, 12517376);
+        $this->style_set_back(SCINTILLA_STYLE_BRACE_LIGHT,15987699);
         
-        GtkScintilla::style_set_font(SCINTILLA_STYLE_BRACE_BAD, $lilfont);
-        GtkScintilla::style_set_fore(SCINTILLA_STYLE_BRACE_BAD, 12517376);
-        GtkScintilla::style_set_back(SCINTILLA_STYLE_BRACE_BAD,15987699);
+        $this->style_set_font(SCINTILLA_STYLE_BRACE_BAD, $lilfont);
+        $this->style_set_fore(SCINTILLA_STYLE_BRACE_BAD, 12517376);
+        $this->style_set_back(SCINTILLA_STYLE_BRACE_BAD,15987699);
         
-        $font2 = Gdk::font_load($etcfont);
+      /* comentado por miguel casanova  
+
+	$font2 = GdkFont::load($etcfont);
         if ($font2)
         {
-            GtkScintilla::set_margin_width_n(0, $font2->width(str_repeat('0',(4))));
-        }
+            $this->set_margin_width_n(0, $font2->width(str_repeat('0',(4))));
+        }*/
         
         $this->keywords[1] = 'doctype a abbr abbr accept accept-charset accesskey acronym action address align alink alt applet archive area axis b background base basefont bdo bgcolor big blockquote body border br button caption cellpadding cellspacing center char charoff charset checkbox checked cite cite class classid clear code codebase codetype col colgroup color cols colspan compact content coords data datafld dataformatas datapagesize datasrc datetime dd declare defer del dfn dir dir disabled div dl dt em enctype event face fieldset file font for foreach form frame frame frameborder frameset h1 h2 h3 h4 h5 h6 head headers height hidden hr href hreflang hspace html http-equiv i id iframe image img input ins isindex ismap kbd label label lang language leftmargin legend li link link longdesc map marginheight marginwidth maxlength media menu meta method multiple name noframes nohref noresize noscript noshade nowrap object object ol onblur onchange onclick ondblclick onfocus onkeydown onkeypress onkeyup onload onmousedown onmousemove onmouseout onmouseover onmouseup onreset onselect onsubmit onunload optgroup option p param password pre profile prompt public q radio readonly rel reset rev rows rowspan rules s samp scheme scope script select selected shape size small span span src standby start strike strong style style sub submit summary sup tabindex table target tbody td text text textarea tfoot th thead title title topmargin tr tt type u ul usemap valign value valuetype var version vlink vspace width xml xmlns';
         $this->keywords[2] = 'abstract boolean break byte case catch char class const continue debugger default delete do double else enum export extends final finally float for foreach function goto if implements import in instanceof int interface long native new package private protected public return short static super switch synchronized this throw throws transient try typeof var void volatile while with';
@@ -426,60 +432,60 @@ class ScintillaPHP extends GtkScintilla
         $dc = get_declared_classes();
         $this->keywords[5] = implode(' ', $df['internal']);
         $this->keywords[6] = implode(' ', $dc);
-        GtkScintilla::set_keywords(1, $this->keywords[1]);
-        GtkScintilla::set_keywords(2, $this->keywords[2]);
-        GtkScintilla::set_keywords(4, $this->keywords[4]);
+        $this->set_keywords(1, $this->keywords[1]);
+        $this->set_keywords(2, $this->keywords[2]);
+        $this->set_keywords(4, $this->keywords[4]);
         
         $this->read_function_file();
         
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_COMMENT_LINE, 8355711);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_COMMENT_BLOCK, 8421504);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_VARIABLE, 21504);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_NUMBER, 9204544);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_OPERATOR, 8388608);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_PHP_OPERATOR, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_KEYWORD, 8388608); //keywords 4
-        GtkScintilla::style_set_font(SCINTILLA_HTML_PHP_KEYWORD, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_STRING_SINGLE, 8388736);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP_STRING_DOUBLE, 8388736);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_JS_SYMBOL, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_STRING_SINGLE, 8388736);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_STRING_DOUBLE, 8388736);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_KEYWORD, 8388608);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_JS_KEYWORD, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_NUMBER, 9204544);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_COMMENT_DOC, 8355712);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_COMMENT_LINE, 8421504);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_JS_COMMENT_BLOCK, 8421504);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_UNQUOTED, 21632);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_PHP, 7553165);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_PHP, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_SCRIPT, 7553165);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_SCRIPT, $font);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_ENTITY, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_COMMENT, 8421504);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_SINGLE_STRING, 32768);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_DOUBLE_STRING, 32768);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_NUMBER, 9204544);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_ATTRIBUTE_UNKNOWN, 7572544);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_ATTRIBUTE_UNKNOWN, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_ATTRIBUTE, 9204544);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_ATTRIBUTE, $font);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_TAG_UNKNOWN, 7553164);
-        GtkScintilla::style_set_fore(SCINTILLA_HTML_TAG, 7553164);
-        GtkScintilla::style_set_font(SCINTILLA_HTML_TAG, $font);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_COMMENT_LINE, 8355711);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_COMMENT_BLOCK, 8421504);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_VARIABLE, 21504);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_NUMBER, 9204544);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_OPERATOR, 8388608);
+        $this->style_set_font(SCINTILLA_HTML_PHP_OPERATOR, $font);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_KEYWORD, 8388608); //keywords 4
+        $this->style_set_font(SCINTILLA_HTML_PHP_KEYWORD, $font);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_STRING_SINGLE, 8388736);
+        $this->style_set_fore(SCINTILLA_HTML_PHP_STRING_DOUBLE, 8388736);
+        $this->style_set_font(SCINTILLA_HTML_JS_SYMBOL, $font);
+        $this->style_set_fore(SCINTILLA_HTML_JS_STRING_SINGLE, 8388736);
+        $this->style_set_fore(SCINTILLA_HTML_JS_STRING_DOUBLE, 8388736);
+        $this->style_set_fore(SCINTILLA_HTML_JS_KEYWORD, 8388608);
+        $this->style_set_font(SCINTILLA_HTML_JS_KEYWORD, $font);
+        $this->style_set_fore(SCINTILLA_HTML_JS_NUMBER, 9204544);
+        $this->style_set_fore(SCINTILLA_HTML_JS_COMMENT_DOC, 8355712);
+        $this->style_set_fore(SCINTILLA_HTML_JS_COMMENT_LINE, 8421504);
+        $this->style_set_fore(SCINTILLA_HTML_JS_COMMENT_BLOCK, 8421504);
+        $this->style_set_fore(SCINTILLA_HTML_UNQUOTED, 21632);
+        $this->style_set_fore(SCINTILLA_HTML_PHP, 7553165);
+        $this->style_set_font(SCINTILLA_HTML_PHP, $font);
+        $this->style_set_fore(SCINTILLA_HTML_SCRIPT, 7553165);
+        $this->style_set_font(SCINTILLA_HTML_SCRIPT, $font);
+        $this->style_set_font(SCINTILLA_HTML_ENTITY, $font);
+        $this->style_set_fore(SCINTILLA_HTML_COMMENT, 8421504);
+        $this->style_set_fore(SCINTILLA_HTML_SINGLE_STRING, 32768);
+        $this->style_set_fore(SCINTILLA_HTML_DOUBLE_STRING, 32768);
+        $this->style_set_fore(SCINTILLA_HTML_NUMBER, 9204544);
+        $this->style_set_fore(SCINTILLA_HTML_ATTRIBUTE_UNKNOWN, 7572544);
+        $this->style_set_font(SCINTILLA_HTML_ATTRIBUTE_UNKNOWN, $font);
+        $this->style_set_fore(SCINTILLA_HTML_ATTRIBUTE, 9204544);
+        $this->style_set_font(SCINTILLA_HTML_ATTRIBUTE, $font);
+        $this->style_set_fore(SCINTILLA_HTML_TAG_UNKNOWN, 7553164);
+        $this->style_set_fore(SCINTILLA_HTML_TAG, 7553164);
+        $this->style_set_font(SCINTILLA_HTML_TAG, $font);
         
         for  ($n=118; $n<=127; $n++) //PHP BACK
         {
-            GtkScintilla::style_set_back($n, 15987699);
-            GtkScintilla::style_set_font($n, $font);
+            $this->style_set_back($n, 15987699);
+            $this->style_set_font($n, $font);
         }
         for  ($n=0; $n<=29; $n++) //HTML BACK
         {
-            GtkScintilla::style_set_back($n, 15987699);
-            GtkScintilla::style_set_font($n, $font);
+            $this->style_set_back($n, 15987699);
+            $this->style_set_font($n, $font);
         }
-        GtkScintilla::style_set_back(SCINTILLA_HTML_PHP, 15987699); // HTML AND PHP TAGS
+        $this->style_set_back(SCINTILLA_HTML_PHP, 15987699); // HTML AND PHP TAGS
     }
 }
 ?>

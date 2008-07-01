@@ -9,7 +9,9 @@ class FontBox
     /* Constructor Method
     /***********************************************************/
     function FontBox($Description, $moreoptions)
-    {
+    { try
+      {
+
         global $Pixmaps;
         $tooltip = &new GtkTooltips;
         $this->entry = &new GtkEntry;
@@ -21,6 +23,12 @@ class FontBox
 
         $box->pack_start($this->entry);
         $box->pack_start($this->button);
+       }
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
     }
     /***********************************************************/
     /* Changes the color
@@ -74,7 +82,7 @@ class FontBox
     {
         $glade  = &new GladeXML(images . 'font.glade');
         $this->ftwindow = $window1 = $glade->get_widget( 'window1' );
-        $this->ftwindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->ftwindow);
+        $this->ftwindow->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->ftwindow);
         $window1->set_title(_a('Font Selection'));
         $ok= $glade->get_widget( 'ok' );
         $status = $glade->get_widget('statusbar');
@@ -137,7 +145,7 @@ class FontBox
         $lstyles->set_text(_a('Style'));
         $lsizes->set_text(_a('Size'));
         
-        $ok->connect_object('clicked', array(&$this,'GetFont'));
+        $ok->connect_simple('clicked', array(&$this,'GetFont'));
         $window1->show_all();
     }
 
@@ -261,14 +269,14 @@ class GtkFontBox
     {
         $this->GtkFontWindow = $janela = new GtkWindow;
         $this->GtkFontWindow->set_title('Font');
-        $this->GtkFontWindow->connect_object('key_press_event', array(&$this,'KeyTest'), $this->GtkFontWindow);
+        $this->GtkFontWindow->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->GtkFontWindow);
         $janela->set_position(GTK_WIN_POS_MOUSE);
         $vbox = new GtkVBox;
         
         $this->GtkFontSel = &new GtkFontSelection();
         $this->GtkFontSel->set_font_name($Content);
         $botao = new GtkButton('OK');
-        $botao->connect_object('clicked', array(&$this, 'GetGtkFont'));
+        $botao->connect_simple('clicked', array(&$this, 'GetGtkFont'));
         
         $vbox->pack_start($this->GtkFontSel);
         $vbox->pack_start($botao);

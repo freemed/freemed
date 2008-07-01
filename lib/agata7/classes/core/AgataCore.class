@@ -36,7 +36,7 @@ class AgataCore
     /* Parse an OpenOffice Document
     /*******************************************************************************/
     function ParseOpenOffice($params, $kind, $engine=null)
-    {
+    {   
         include_once AGATA_PATH . '/classes/reports/AgataMerge.class';
         include_once AGATA_PATH . '/classes/reports/AgataOOParser' . $engine . '.class';
 
@@ -272,8 +272,10 @@ class AgataCore
     /*******************************************************************************/
     function requireFunction($function)
     {
-        $function_dir    = AGATA_PATH . '/functions';
+        $function_dir    = AGATA_PATH . '/functions/';
         $function_path   = $function_dir . str_replace('/', bar, $function);
+	$function_path   =  str_replace('{', '',  $function_path );
+	$function_path   =  str_replace('}', '',  $function_path );
         $function_divide = explode('/', $function);
         $function_file   = $function_divide[count($function_divide) -1];
         $function_dots   = explode('.', $function_file);

@@ -4,33 +4,58 @@
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
 class Button extends GtkButton
-{
+{protected $Butt;
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function Button($function, $message, $image, $kind, $param = null, $showtip = true)
-    {
-        GtkButton::GtkButton();
+    function  __construct($function, $message, $image, $kind, $param = null, $showtip = true)
+    { parent::__construct();
+
+
 
         if ($showtip)
         {
             $this->tooltips = $tooltips = new GtkTooltips;
-            $tooltips->set_tip($this, $message, 'ContextHelp/buttons/1');
+          //  $tooltips->set_tip($this, $message, 'ContextHelp/buttons/1');
         }
 
         if ($function)
         {
             if ($param)
             {
-                GtkButton::connect_object_after('clicked', $function, $param);
+            //   GtkButton::connect_after('clicked', $function, $param);
+       
+	      $this->connect_simple('clicked', $function, $param);
             }
             else
             {
-                GtkButton::connect_object_after('clicked', $function);
+ //               GtkButton::connect_simple('clicked', $function);
+
+	        $this->connect_simple('clicked', $function);
             }
+	    //return $this->Butt;
         }
 
-        $pixmapConfig = &new GtkPixmap($image[0], $image[1]);
+        //$pixmapConfig = &new GtkPixmap($image[0],$image[0]);
+
+
+ 	$pixmapConfig=new GtkImage();
+//	if ($image!='' and $image!=null) {
+//	$pixbuf = GdkPixbuf::new_from_file($image);
+//	$pixmapConfig->set_from_pixbuf($pixbuf);
+//	}
+	
+
+		if (isset($image) && $image!='') {
+	
+			$pixbuf = GdkPixbuf::new_from_file($image);
+			$pixmapConfig = new GtkImage();
+			$pixmapConfig->set_from_pixbuf($pixbuf);
+
+		}	
+
+	     
+
         $text = $this->text = new GtkLabel('  ' . $message . '  ');
 
         if ($kind == IMAGEBUTTON)
@@ -53,8 +78,8 @@ class Button extends GtkButton
         $boxConfig->show();
         $pixmapConfig->show();
         
-        GtkButton::add($boxConfig);
-        GtkButton::show();
+        $this->add($boxConfig);
+        $this->show();
     }
 
     /***********************************************************/
@@ -78,10 +103,13 @@ class VoidButton extends Button
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function VoidButton($message, $image, $kind)
-    {
-        Button::Button(null, $message, $image, $kind, null);
-    }
+   function  __construct($message, $image, $kind)
+   {  
+
+    
+        //Button::Button(null, $message, $image, $kind, null);
+	 parent::__construct(null, $message, $image, $kind, null);
+   }
 }
 
 /***********************************************************/

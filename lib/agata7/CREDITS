@@ -1,10 +1,11 @@
 Development and Coordination
 ============================
-# Jamiel Spezia
+# Miguel Angel Casanova Goitia
 
-Consultant
-==========
-# Vilson Cristiano Gärtner
+Handbook Spanish Translators
+============================
+# Misserine Carvajal
+
 
 Project Author
 ==============
@@ -12,6 +13,8 @@ Project Author
 
 Contributers
 ============
+# Vilson Cristiano Gärtner
+# Jamiel Spezia
 # Bruno Depero (InterBase, Informix, MSSQL test);
 # Jeffrey Buchbinder (Multiple Subqueries on
   Merge, font improvements on Merge docs);
@@ -74,3 +77,4 @@ Projects used by Agata
 # PhpDocWriter (http://phpdocwriter.sf.net);
 # Ximian Icons (www.ximian.com);
 # BARCODE GENERATOR  (Walter Cattebeke)
+# DIA

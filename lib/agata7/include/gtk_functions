@@ -524,7 +524,7 @@
    void emit_stop_by_name (string name)
    int connect (string signal, string function, mixed custom_data)
    int connect_after (string signal, string function, void custom)
-   int connect_object (string signal, string function, object param)
+   int connect_simple (string signal, string function, object param)
    int connect_object_after (string signal, string function, Object param)
    void disconnect (int handler_id)
    void signal_handler_block (int handler_id)

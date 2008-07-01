@@ -1,25 +1,60 @@
 <?
-class FileList extends GtkCList
-{
-    function FileList($title, $names)
+class FileList extends GtkTreeview
+{protected $model;
+ protected $names;
+
+    function  __construct($title, $names)
     {
+
         $this->names = $names;
-        GtkCList::GtkCList(1, array($title));
-        GtkCList::connect_object('select-row', array(&$this, 'Pop'));
-        
+    	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	parent::__construct($this->model);
+	
+	
+	$this->connect_simple('select-cursor-row', array(&$this, 'Pop'));	
+            
+	$this->connect_simple('event', array(&$this, 'Pop'));
+
+ 	$column = new GtkTreeViewColumn();
+// for image
+	$cell_renderer = new GtkCellRendererPixbuf();
+	$column->pack_start($cell_renderer, false);
+	$column->set_cell_data_func($cell_renderer,array(&$this, 'format_col'));	
+
+	
+
+       // for text
+        $cell_renderer = new GtkCellRendererText();
+ 	$column->pack_start($cell_renderer, true);
+        $column->set_attributes($cell_renderer, 'text', 0);
+        $column->set_title($title);
+
+
+
+	$this->append_column($column);
+	$this->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL);
+	$this->set_enable_tree_lines(true);
         $this->BotaoOk = new GtkButton;
-        GtkCList::show();
+        $this->show();
         $this->CreateMenu();
     }
     
+//establece los iconos que se mostraran en el treeview
+	function format_col($column, $cell, $model, $iter)
+	 {
+	 $cell->set_property('pixbuf', GdkPixbuf::new_from_file('interface/ico_description.xpm'));
+	 
+	}
+
+
     function SetExtension($ext)
     {
         $this->Extension = $ext;
     }
     
     function SetWidth($width = 140)
-    {
-        GtkCList::set_column_width(0, $width);
+    {   //--------comentado por miguel casanova
+        //GtkTreeview::set_column_width(0, $width);
     }
     
     function Load($directory)
@@ -31,15 +66,19 @@ class FileList extends GtkCList
         foreach ($data as $line)
         {
             $item = substr($line, 0, -4);
-            $row = GtkCList::append(array($item));
-            GtkCList::set_pixtext($row, 0, trim($item), 5, $Pixmaps['ico_desc'][0], $Pixmaps['ico_desc'][1]);
+	    $row=	  $this->model->append(array($item));
+	 	
+        //    GtkTreeview::set_pixtext($row, 0, trim($item), 5, $Pixmaps['ico_desc'][0], $Pixmaps['ico_desc'][1]);
         }
     }
     
     function Reload()
     {
-        GtkCList::clear();
-        $this->Load($this->Directory);
+        
+	$this->model->clear();
+	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	$this->set_model($this->model);        
+	$this->Load($this->Directory);
     }
 
     /***********************************************************/
@@ -49,7 +88,7 @@ class FileList extends GtkCList
     {
         $Menu = $this->Menu;
         $Menu->show_all();
-        $Menu->popup(null, null, null, 1, 1);
+        $Menu->popup();
     }
 
     /***********************************************************/
@@ -63,25 +102,39 @@ class FileList extends GtkCList
 
         if (!$names)
         {
-            $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($Pixmaps['menu_open'], _a('Open'), array(&$this, 'Open'));
-            $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($Pixmaps['menu_del'], _a('Delete'), array(&$this, 'Delete'));
+            $Menuitem1 = new GtkMenuItem( _a('Open'));
+	    $Menuitem1->connect_simple('activate', array(&$this, 'Open'));
+	    $this->ItemOpen =$Menuitem1;
+
+            $Menuitem2 = new GtkMenuItem( _a('Delete'));
+	    $Menuitem2->connect_simple('activate', array(&$this, 'Delete'));
+	    $this->ItemDel =$Menuitem2 ;
+
         }
         else
         {
             if ($names[0])
             {
-                $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($Pixmaps['menu_open'], _a($names[0][1]) , array(&$this, 'Open'));
+               $Menuitem1 = new GtkMenuItem( _a($names[0][1]) );
+	       $Menuitem1->connect_simple('activate', array(&$this, 'Open'));
+	       $this->ItemOpen  =$Menuitem1 ;
+
             }
             
             if ($names[1])
             {
-                $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($Pixmaps['menu_del'], _a($names[1][1]), array(&$this, 'Delete'));
+                $Menuitem2 = new GtkMenuItem( _a($names[1][1]));
+	        $Menuitem2->connect_simple('activate', array(&$this, 'Delete'));
+		$this->ItemDel =$Menuitem2 ;
+
             }
         }
         
         
         $Menuitem3 = new GtkMenuItem;
-        $Menuitem4 = new MyNormalMenuItem($Pixmaps['menu_close'], _a('Close'), null);
+        $Menuitem4 = new GtkMenuItem( _a('Close'));
+	$Menuitem4->connect_simple('activate', null);
+	
 
         if ($Menuitem1)
         {
@@ -98,7 +151,7 @@ class FileList extends GtkCList
     function Open()
     {
         $row = $this->selection[0];
-        $data = GtkCList::get_pixtext($row, 0);
+        $data = GtkTreeview::get_pixtext($row, 0);
         $file = $this->Directory . bar . $data[0] . '.' . $this->Extension;
         if (is_file($file))
         {
@@ -109,7 +162,7 @@ class FileList extends GtkCList
     function Delete($flag = false)
     {
         $row = $this->selection[0];
-        $data = GtkCList::get_pixtext($row, 0);
+        $data = GtkTreeview::get_pixtext($row, 0);
         $file = $this->Directory . bar .    $data[0] . '.' . $this->Extension;
 
         if (!$flag)
@@ -128,9 +181,9 @@ class FileList extends GtkCList
                 }
                 else
                 {
-                    GtkCList::freeze();
-                    GtkCList::remove($row);
-                    GtkCList::thaw();
+                 //   GtkTreeview::freeze();
+                    GtkTreeview::remove($row);
+                  //  GtkTreeview::thaw();
                 }
             }
         }

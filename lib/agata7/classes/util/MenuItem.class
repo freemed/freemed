@@ -8,24 +8,37 @@ class MyNormalMenuItem extends GtkMenuItem
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-	function MyNormalMenuItem($img, $label, $function = null, $param = null)
-	{
-		GtkMenuItem::GtkMenuItem($label);
+	
+
+  function __construct($img, $label, $function = null, $param = null) {
+    
+
+	parent::__construct($label);
+
+	//new GtkMenuItem($label);
         $child = $this->child;
 
-        GtkMenuItem::remove($child);
-        $pixmap = new GtkPixmap($img[0], $img[1]);
+       // GtkMenuItem::remove($child);
+    	$this->remove($child);
+      
+  //   $pixmap = new GtkImage;
+//	$pixmap->set_from_pixbuf($img);
+
 
         $hbox = new GtkHBox;
-        $hbox->pack_start($pixmap, false, false, 5);
+       // $hbox->pack_start($pixmap, false, false, 5);
         $hbox->pack_start($child, true, true);
-        GtkMenuItem::add($hbox);
-        
+	      
+	//GtkMenuItem::add($hbox);
+        $this->add($hbox);
         if ($function)
         {
-            GtkMenuItem::connect_object('activate', $function, $param);
+            //GtkMenuItem::connect_simple('activate', $function, $param);
+	    $this->connect_simple('activate', $function, $param);	
         }
-		GtkMenuItem::lock_accelerators();
+		//GtkMenuItem::lock_accelerators();
+		//$this->lock_accelerators();
+
 	}
 }
 
@@ -38,18 +51,23 @@ class MyControlMenuItem extends GtkMenuItem
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-	function MyControlMenuItem($img, $label, $underscore, $accelgroup, $function, $param = null)
-	{
-		GtkMenuItem::GtkMenuItem($label);
-        $child = $this->child;
+	
+    function  __construct($img, $label, $underscore, $accelgroup, $function, $param = null)
+    { 
+	try{
+	parent::__construct($label);
+	
+	
+        	$child = $this->child;
 
-        GtkMenuItem::remove($child);
-        $pixmap = new GtkPixmap($img[0], $img[1]);
+		$this->remove($child);
+        	//$pixmap = new GtkImage($img[0], $img[1]);
 
-        $hbox = new GtkHBox;
-        $hbox->pack_start($pixmap, false, false, 5);
-        $hbox->pack_start($child, true, true);
-        GtkMenuItem::add($hbox);
+	
+		$hbox = new GtkHBox;
+		$hbox->pack_start($pixmap, false, false, 5);
+		$hbox->pack_start($child, true, true);
+		$this->add($hbox);
         
 		if (strlen($label)!=(strlen($underscore)-1))
 			$parse = new GtkLabel;
@@ -58,19 +76,28 @@ class MyControlMenuItem extends GtkMenuItem
 
 		$Subitem_key = $parse->parse_uline($underscore);
 
-		GtkMenuItem::add_accelerator("activate", $accelgroup, $Subitem_key, GDK_CONTROL_MASK, ($underscore)? 1:0);
+		$this->add_accelerator("activate", $accelgroup, $Subitem_key, GDK_CONTROL_MASK, ($underscore)? 1:0);
         if ($function)
         {
             if ($param)
             {
-                GtkMenuItem::connect_object('activate', $function, $param);
+                $this->connect_simple('activate', $function, $param);
             }
             else
             {
-                GtkMenuItem::connect_object('activate', $function);
+                $this->connect_simple('activate', $function);
             }
         }
-		GtkMenuItem::lock_accelerators();
+		//GtkMenuItem::lock_accelerators();
+
+
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+	
 	}
 }
 
@@ -83,13 +110,19 @@ class MyCheckMenuItem extends GtkCheckMenuItem
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-	function MyCheckMenuItem($img, $label, $underscore, $accelgroup, $function)
-	{
+	
+        function  __construct($img, $label, $underscore, $accelgroup, $function)
+        { parent::__construct();
+	 try{
+
+
 		GtkCheckMenuItem::GtkCheckMenuItem($label);
         $child = $this->child;
         GtkMenuItem::remove($child);
-        $pixmap = new GtkPixmap($img[0], $img[1]);
+        $pixmap = new GtkImage();
+        $pixmap=gtk_image_new_from_pixbuf($img[0]); 
 
+ 
         $hbox = new GtkHBox;
         $hbox->pack_start($pixmap, false, false, 5);
         $hbox->pack_start($child, true, true);
@@ -104,8 +137,15 @@ class MyCheckMenuItem extends GtkCheckMenuItem
 
 
 		GtkMenuItem::add_accelerator("activate", $accelgroup, $Subitem_key, GDK_MOD1_MASK, ($underscore)? 1:0);
-		GtkMenuItem::connect_object('activate', $function);
+		GtkMenuItem::connect_simple('activate', $function);
 		GtkMenuItem::lock_accelerators();
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+		
 	}
 }
 
@@ -118,18 +158,34 @@ class MyAltMenuItem extends GtkMenuItem
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-	function MyAltMenuItem($label, $underscore, $accelgroup)
-	{
-		GtkMenuItem::GtkMenuItem($label);
+	
+    function  __construct($label, $underscore, $accelgroup)
+    { parent::__construct();
+	try{
+		new GtkMenuItem($label);
 
 		if (strlen($label)!=(strlen($underscore)-1))
 			$label = new GtkLabel;
 		else
 			$label = $this->child;
 
-		$Subitem_key = $label->parse_uline($underscore);
+
+		
+		$Subitem_key=$underscore;
+		//$Subitem_key = $label->parse_uline($underscore);
+
 		GtkMenuItem::add_accelerator("activate_item", $accelgroup, $Subitem_key, GDK_MOD1_MASK, 0);
+
 	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
+	
+     }
+
+
 }
 
 /***********************************************************/
@@ -141,12 +197,16 @@ class MyFunctionMenuItem extends GtkMenuItem
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-	function MyFunctionMenuItem($img, $label, $key, $accelgroup, $function, $param = null)
-	{
-		GtkMenuItem::GtkMenuItem($label);
+        function  __construct($img, $label, $key, $accelgroup, $function, $param = null)
+        { 
+	try {
+		
+	parent::__construct($label);
+	//new GtkMenuItem($label);
         $child = $this->child;
-        GtkMenuItem::remove($child);
-        $pixmap = new GtkPixmap($img[0], $img[1]);
+       // GtkMenuItem::remove($child);
+ 	$this->remove($child);
+        $pixmap = new GtkImage($img[0], $img[1]);
 
         $hbox = new GtkHBox;
         $hbox->pack_start($pixmap, false, false, 5);
@@ -164,13 +224,20 @@ class MyFunctionMenuItem extends GtkMenuItem
         {
             if ($param)
             {
-                GtkMenuItem::connect_object('activate', $function, $param);
+                GtkMenuItem::connect_simple('activate', $function, $param);
             }
             else
             {
-                GtkMenuItem::connect_object('activate', $function);
+                GtkMenuItem::connect_simple('activate', $function);
             }
         }
+
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
 	}
 }
 ?>

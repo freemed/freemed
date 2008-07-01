@@ -212,14 +212,14 @@ class AgataConnection
             {
                 $TableNamesQuery['pgsql']  = "select schemaname || '.' || tablename from pg_tables where " .
                                              "tablename not like 'pg%' and schemaname<>'information_schema' union " .
-                                             "select viewname from pg_views where viewname not like 'pg%' and ".
+                                             "select schemaname || '.' || viewname  from pg_views where viewname not like 'pg%' and ".
                                              "schemaname<>'information_schema' order by 1";
             }
             else
             {
                 $TableNamesQuery['pgsql']  = "select tablename from pg_tables where " .
                                              "tablename not like 'pg%' union " .
-                                             "select viewname from pg_views where viewname not like 'pg%'".
+                                             "select schemaname || '.' || viewname  from pg_views where viewname not like 'pg%'".
                                              "order by 1";
             }
         }

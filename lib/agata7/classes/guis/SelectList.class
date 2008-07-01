@@ -3,23 +3,44 @@
 /* Class that controls the Select statements
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class SelectList
-{
+class SelectList extends GtkTreeview
+{protected $model;
+
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function SelectList($Block)
-    {
+
+
+  function __construct($Block) {
+   
         global $Pixmaps;
         $this->widget = new GtkVBox;
-        $this->widget->set_border_width(4);
 
-        $this->clist= new GtkCList(2, array(_a('Clause'), _a('Content')));
-        $this->clist->connect_object('select-row', array(&$this, 'EditSelect'));
-        $this->clist->set_selection_mode(GTK_SELECTION_EXTENDED);
-        $this->clist->set_row_height(18);
-        $this->clist->set_column_width(0, 80);
-        $this->clist->set_column_width(1, 10248);
+        $this->widget->set_border_width(4);
+ 	 //$this->clist= new GtkTreeView (2, array(_a('Clause'), _a('Content')));
+       $this->model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+       parent::__construct($this->model);
+
+	$cell_renderer = new GtkCellRendererText();
+	$column = new GtkTreeViewColumn(_a('Clause'), $cell_renderer, 'text', 0);
+        $column-> set_cell_data_func($cell_renderer, array(&$this, 'format_col')); // note 1	
+	$this->append_column($column);
+	
+
+	$cell_renderer = new GtkCellRendererText();
+	$column = new GtkTreeViewColumn(_a('Content'), $cell_renderer, 'text', 1);
+	$column->set_cell_data_func($cell_renderer,array(&$this, 'format_col')); // note 1
+	$this->append_column($column);
+		
+	$this->expand_all();
+			
+	$this->connect_simple('row-activated', array(&$this, 'EditSelect'));
+       
+        $this->connect_simple('select-cursor-row', array(&$this, 'EditSelect'));
+       // $this->clist->set_selection_mode(GTK_SELECTION_EXTENDED);
+        //$this->clist->set_row_height(18);
+        //$this->clist->set_column_width(0, 80);
+        //$this->clist->set_column_width(1, 10248);
         $this->Block = $Block;
         $this->LoadBlocks($this->Block);
   
@@ -32,14 +53,20 @@ class SelectList
         $this->hbox->pack_start($part2, true,  true, 2);
 
         $DelBox = &new GtkVBox(false, 0);
-        $a = &new GtkLabel('');  $a->set_usize(18,25);
+        $a = &new GtkLabel('');  $a->set_size_request(18,25);
     
         $DelBox->pack_start($a, false, false);
         $blocks = array('Select', 'From', 'Where', 'Group by', 'Order by');
         foreach ($blocks as $block)
         {
-          $DelBox->pack_start($a = new Button(array(&$this, 'Del'),    _a('Clear'), $Pixmaps['del'], ICONBUTTON, $block), false, false);
-          $a->set_usize(18,19); $a->set_relief(GTK_RELIEF_NONE);
+	  $color = &new GdkColor(0, 65535, 65535);
+
+	$Pixmaps['del']    = 'interface/del.xpm';
+	
+	 $DelBox->pack_start($a = new Button(array(&$this, 'Del'),    _a('Clear'), $Pixmaps['del'], ICONBUTTON, $block), false, false);
+
+ 	// $a->set_image($image);
+          $a->set_size_request(24,24); $a->set_relief(GTK_RELIEF_NONE);
         }
         $part1->pack_start($DelBox, false, false, 0);
         
@@ -49,7 +76,7 @@ class SelectList
         $this->Distinct = new GtkCheckButton;
         
         $stub = new GtkHBox;
-        $stub->set_usize(26,-1);
+        $stub->set_size_request(26,-1);
         $hbox->pack_start($stub, false, false);
         $hbox->pack_start(new GtkLabel(_a('OffSet') . ':    '), false, false);
         $hbox->pack_start($this->OffSet, false, false);
@@ -62,7 +89,7 @@ class SelectList
         $this->widget->pack_start($hbox, false, false);
         
         $scroll = new GtkScrolledWindow;
-        $scroll->add($this->clist);
+        $scroll->add($this);
         $part2->pack_start($scroll, true, true, 2);
     }
 
@@ -131,7 +158,7 @@ class SelectList
     /***********************************************************/
     /* Connects the signals
     /***********************************************************/
-    function connect_object($signal, $callback, $param=null)
+    function connect($signal, $callback, $param=null)
     {
         $this->callbacks[$signal] = $callback;
         $this->param = $param;
@@ -160,6 +187,7 @@ class SelectList
 
     /***********************************************************/
     /* Reload the statements
+    /* Recarga la lista de sentencias para desplegar información que formará la sentencia SQL	
     /***********************************************************/
     function Reload()
     {
@@ -168,15 +196,13 @@ class SelectList
         $translate['Where'] =       _a('Constraints');
         $translate['Group by'] =    _a('Groups');
         $translate['Order by'] =    _a('Ordering');
-        
-        
-        $this->clist->clear();
+       $this->model->clear();
+       $this->model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	$this->set_model($this->model );
         foreach ($this->Block as $Clause)
         {
             $Clause[0] = $translate[$Clause[0]];
-            $row = $this->clist->append($Clause);
-            if (($row % 2) == 0)
-                $this->clist->set_background($row, new GdkColor('#DDDDDD'));
+	    $row =$this->model->append($Clause);
         }
     }
 
@@ -192,10 +218,20 @@ class SelectList
     /* Opens the edit list dialog
     /***********************************************************/
     function EditSelect()
-    {
-        $this->clist->freeze();
-        $selection = $this->clist->selection;
-        $this->clist->thaw();
+    {  
+        //$this->clist->freeze();
+//        $selection = $this->clist->selection;
+
+        $selection = $this->get_selection();
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$cl = $model->get_value($iter, 0); // note 4
+	$co = $model->get_value($iter, 1); // note 4
+
+	if (!$selection){
+	    return false;		
+	}
+
+        //$this->clist->thaw();
         
         $translate[_a('Fields')] =      'Select';
         $translate[_a('Tables')] =      'From';
@@ -203,8 +239,11 @@ class SelectList
         $translate[_a('Groups')] =      'Group by';
         $translate[_a('Ordering')] =    'Order by';
 
-        $Clause  = $this->clist->get_text($selection[0],0);
-        $Content = $this->clist->get_text($selection[0],1);
+	$Clause  = $cl;
+        $Content = $co;
+                
+	//$Clause  = $this->clist->get_text($selection[0],0);
+        //$Content = $this->clist->get_text($selection[0],1);
         
         $Clause = $translate[$Clause];
         
@@ -229,7 +268,7 @@ class SelectList
     /* Clear some clause
     /***********************************************************/
     function Del($Block)
-    {
+    {   
         $this->Block[$Block][1] = '';
         $this->LoadBlocks($this->Block);
         if ($this->callbacks['del-block'])
@@ -290,9 +329,16 @@ class SelectList
             call_user_func($this->callbacks['changed']);
         }
     }
-    
+    // self-defined function to display alternate row color
+    // Funcion para configurar los colores alternos de las filas	
+	function format_col($column, $cell, $model, $iter) {
+	    $path = $model-> get_path($iter); // get the current path
+	    $row_num = $path[0]; // note 2
+	    $row_color = ($row_num%2==1) ? '#dddddd' : '#ffffff'; // sets the row color for odd and even rows
+	    $cell-> set_property('cell-background', $row_color); // sets the background color!
+	}
     function Concatenate($index, $content)
-    {
+    { 
         $this->Block[$index][1] .= $content;
         $this->Reload();
         if ($this->callbacks['changed'])

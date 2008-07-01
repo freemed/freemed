@@ -14,8 +14,8 @@ class PageSetup
 
         $this->window = $window = $glade->get_widget('window');
         $window->set_title(_a('Page Setup'));
-        $window->connect_object('key_press_event', array(&$this, 'KeyTest'));
-        $window->connect_object('delete-event', array(&$this, 'Close'));
+        $window->connect_simple('key_press_event', array(&$this, 'KeyTest'));
+        $window->connect_simple('delete-event', array(&$this, 'Close'));
 
         $labelPage          = $glade->get_widget('labelPage');
         $labelPaperFormat   = $glade->get_widget('labelPaperFormat');
@@ -49,10 +49,10 @@ class PageSetup
         $this->spinHeight->set_editable(false);
 
         $list = $this->comboFormat->list;
-        $list->connect_object('button_press_event', array(&$this, 'ChangeFormat'));
+        $list->connect_simple('button_press_event', array(&$this, 'ChangeFormat'));
 
-        $this->rbPortrait->connect_object('toggled', array(&$this, 'ToggleOrientation'));
-        $this->rbLandscape->connect_object('toggled', array(&$this, 'ToggleOrientation'));
+        $this->rbPortrait->connect_simple('toggled', array(&$this, 'ToggleOrientation'));
+        $this->rbLandscape->connect_simple('toggled', array(&$this, 'ToggleOrientation'));
 
         $buttonOK->set_relief(GTK_RELIEF_NONE);
         $labelPage->set_text(_a('Page'));
@@ -74,7 +74,7 @@ class PageSetup
         $labelPortrait->set_text(_a('Portrait'));
         $labelLandscape->set_text(_a('Landscape'));
         $this->comboFormat->set_popdown_strings(array('A3', 'A4', 'A5', 'Letter', 'Legal'));
-        $buttonOK->connect_object('clicked', array(&$this, 'OK'), $callback);
+        $buttonOK->connect_simple('clicked', array(&$this, 'OK'), $callback);
     }
     
     function Show()

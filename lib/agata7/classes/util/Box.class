@@ -8,22 +8,25 @@ class Box extends GtkFrame
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function Box(&$field, $title)
-    {
-        GtkFrame::GtkFrame($title);
-        GtkFrame::set_shadow_type(GTK_SHADOW_NONE);
+ 
+   	function  __construct(&$field, $title)
+    	{  
+	 parent::__construct($title);
+	
+        
+        $this->set_shadow_type(GTK_SHADOW_NONE);
         $bbox = &new GtkHButtonBox();
 
         $bbox->set_border_width(4);
-        $bbox->set_layout(GTK_BUTTONBOX_SPREAD);
+        $bbox->set_layout(GTK::BUTTONBOX_SPREAD);
         $bbox->set_spacing(2);
-        GtkFrame::add($bbox);
+        $this->add($bbox);
         
         if ($title)
         {
             $bbox->pack_start($field, false, false);
         }
-        GtkFrame::show_all();
+        $this->show_all();
     }
 }
 
@@ -36,24 +39,26 @@ class EntryBox extends GtkFrame
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function EntryBox(&$field, $max_lenght, $title, $PreText)
-    {
-        GtkFrame::GtkFrame($title);
-        GtkFrame::set_shadow_type(GTK_SHADOW_NONE);
+ 	function  __construct(&$field, $max_lenght, $title, $PreText)
+    	{  
+	 parent::__construct($title);
+  
+        $this->set_shadow_type(GTK_SHADOW_NONE);
         $bbox = &new GtkHButtonBox();
         
         $bbox->set_border_width(4);
         $bbox->set_layout(GTK_BUTTONBOX_SPREAD);
         $bbox->set_spacing(2);
-        $bbox->set_child_size(15, 20);
-        GtkFrame::add($bbox);
+        //$bbox->set_child_size(15, 20);
+        $this->add($bbox);
         
         $field->set_text($PreText);
-        $field->add_events(GDK_KEY_PRESS_MASK);
+        $field->add_events(GDK::KEY_PRESS_MASK);
+	
         $field->set_max_length($max_lenght);
         $bbox->pack_start($field, false, false);
         
-        GtkFrame::show_all();
+        $this->show_all();
     }
 }
 

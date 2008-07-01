@@ -3,32 +3,59 @@
 /* Project list
 /* by Jamiel Spezia 2006-2006
 /***********************************************************/
-class ProjectList extends GtkCList
-{
+//class ProjectList extends GtkTreeview
+class ProjectList extends GtkTreeview
+{ protected $model;
+
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function ProjectList()
-    {
-        GtkCList::GtkCList(2);
-        GtkCList::set_usize(140, -1);
-        GtkCList::set_column_auto_resize(0, true);
-        GtkCList::set_column_auto_resize(1, true);
-        GtkCList::set_selection_mode(GTK_SELECTION_SINGLE);
-    }
+   	function  __construct()
+    	{  
+		    $this->model = new GtkListStore(Gtk::TYPE_STRING);
+		    parent::__construct($this->model);
+			
+                   $cell_renderer = new GtkCellRendererText();
+		   $column = new GtkTreeViewColumn('', $cell_renderer, 'text', 0);
+		   $this->append_column($column);
+	           $this->set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_HORIZONTAL);
+		   $this->expand_all();                 
+	}
 
+    
     /***********************************************************/
     /* Set the projects in ProjectList
     /***********************************************************/
     function SetProjects($projects)
-    {
-        $start = Gdk::pixmap_create_from_xpm(null, null, 'interface/ico_db.xpm');
+    {try
+      {	
+        //$start = GdkPixmap::create_from_xpm(null, null, 'interface/ico_db.xpm');
+	
+		//	$start = GdkPixbuf::new_from_file('interface/ico_db.xpm');
+		//	$image = new GtkImage();
+		//	$image->set_from_pixbuf($pix);
+
+
 
         foreach ( $projects as $name=>$project )
         {
-            $node = GtkCList::append(array('', $name));
-            GtkCList::set_pixtext($node, 0, '', 5, $start[0], $start[1]);
+         //   $node = GtkCList::append(array('', $name));
+	
+		$this->model->append( array($name));	
+         //   GtkCList::set_pixtext($node, 0, '', 5, $start[0], $start[1]);
         }
+
+     }
+     catch(Exception $e)
+     {
+		
+		echo '---classes/util/ProjectList::SetProjects ' . $e;
+     }
+	
+
+	    
+		  
+
     }
 
     /***********************************************************/
@@ -36,19 +63,33 @@ class ProjectList extends GtkCList
     /***********************************************************/
     function GetSelection()
     {
-        $selection = $this->selection;
-        if ($selection)
-        {
-            $line = $selection[0];
-            return GtkCList::get_text($line,1);
-        }
+       // $selection = $this->selection;
+        $selection = $this->get_selection();
+	if ($selection)
+	{
+
+	    list($model, $iter) = $selection->get_selected();
+
+	    if (!$model || !isset($model) || !$iter || !isset($iter))  return false;
+
+	     $line  = $model->get_value($iter, 0); // note 4
+	     if ($line=='' || !$line)  return false;
+ 	
+	    //$line = $selection[0];
+
+          //  return GtkCList::get_text($line,1);
+          return $line;	
+         }
 
         return false;
     }
 
     function ClearProjects()
     {
-        GtkCList::Clear();
+	$this->model->Clear();
+	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	$this->set_model($this->model);	    
+      
     }
 }
 ?>

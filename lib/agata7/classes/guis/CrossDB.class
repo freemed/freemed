@@ -19,7 +19,7 @@ class CrossDB extends AgataCore
         $this->window->set_title('Cross DB');
         $this->window->set_default_size(600, 360);
         $this->window->set_position(GTK_WIN_POS_CENTER);
-        $this->window->connect_object('key_press_event', array(&$this, 'KeyTest'));
+        $this->window->connect_simple('key_press_event', array(&$this, 'KeyTest'));
         $this->window->realize();
         $this->projects = Project::ReadProjects();
         $this->ProjectDefs = $ProjectDefs;
@@ -32,31 +32,53 @@ class CrossDB extends AgataCore
         
         $listbox = new GtkVBox;
         $connect = new Button(array(&$this, 'Connect'), _a('Connect'), $Pixmaps['ok'], IMAGEBUTTON);
-        $this->list = new GtkCList(1, array(_a('Project Name')));
-        $this->list->set_column_width(0, 160);
+
+
+
+        $this->list = new GtkTreeview();
+	
+	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	$this->list->set_model ( $this->model);
+		   
+        $cell_renderer = new GtkCellRendererText();
+	$cell_renderer->set_property('width', 160);
+	$column = new GtkTreeViewColumn(_a('Project Name'), $cell_renderer, 'text', 0);
+	$this->list->append_column($column);
+
+
+
+      //  $this->list->set_column_width(0, 160);
         
-        $listbox->pack_start($this->list, true, true, 2);
-        $listbox->pack_start($connect, false, false, 2);
-        
+       // $listbox->pack_start($this->list, true, true, 2);
+       // $listbox->pack_start($connect, false, false, 2);
+       
+        $scroll0 = new GtkScrolledWindow;
         $scroll1 = new GtkScrolledWindow;
         $scroll2 = new GtkScrolledWindow;
+        
+	$scroll0->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
         $scroll1->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
         $scroll2->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
         
+
         $this->tree1 = &new TableTree(_a('Tables Structure'), true);
         $this->tree2 = &new TableTree(_a('Tables Structure'), true);
-        $this->tree1->connect_object('tree-select-row', array(&$this, 'LoadTables2'));
+        $this->tree1->connect_simple('row-activated', array(&$this, 'LoadTables2'));
         
-        $scroll1->add($this->tree1);
+      
+	$scroll0->add($this->list);
+	$scroll1->add($this->tree1);
         $scroll2->add($this->tree2);
         
         $chaves = array_keys($this->projects);
         foreach ($chaves as $project)
         {
-            $node = $this->list->append(array($project));
-            $this->list->set_pixtext($node, 0, $project, 5, $Pixmaps['db'][0], $Pixmaps['db'][1]);
+            
+		$node = $this->model->append(array($project));	
+	    //$node = $this->list->append(array($project));
+            //$this->list->set_pixtext($node, 0, $project, 5, $Pixmaps['db'][0], $Pixmaps['db'][1]);
         }
-        
+        $vbox0 = new GtkVBox();
         $vbox1 = new GtkVBox();
         $vbox2 = new GtkVBox();
         $this->info = $info;
@@ -66,16 +88,23 @@ class CrossDB extends AgataCore
         $label1 = new GtkLabel(_a('Select this column') . ':');
         $label2 = new GtkLabel($phrase);
         $this->buttonok = new Button(array(&$this->window, 'hide'), _a('Return'), $Pixmaps['require'], IMAGEBUTTON);
-        //$this->buttonok->connect_object('clicked', );
-        $label1->set_usize(-1, 30);
-        $label2->set_usize(-1, 60);
+        //$this->buttonok->connect_simple('clicked', );
+        $label1->set_size_request(-1, 30);
+        $label2->set_size_request(-1, 60);
         $vbox1->pack_start($label1, false, false, 2);
         $vbox2->pack_start($label2, false, false, 2);
+       
+	$vbox0->pack_start($scroll0);
+	$vbox0->pack_start($connect);
+
         $vbox1->pack_start($scroll1);
         $vbox2->pack_start($scroll2);
         $vbox2->pack_start($this->buttonok, false, false, 2);
         
         $hbox->pack_start($listbox, false, false, 5);
+
+
+        $hbox->pack_start($vbox0, true, true, 5);
         $hbox->pack_start($vbox1, true, true, 5);
         $hbox->pack_start($vbox2, true, true, 5);
 
@@ -104,14 +133,26 @@ class CrossDB extends AgataCore
     /***********************************************************/
     function Connect()
     {
-        $selection = $this->list->selection;
-        if ($selection)
+        //$selection = $this->list->selection;
+        $selection = $this->list->get_selection();
+	
+
+	if ($selection)
         {
-            $data = $this->list->get_pixtext($selection[0], 0);
-            $this->project = $project = $data[0];
+ 	    list($model, $iter) = $selection->get_selected();
+            //$data = $this->list->get_pixtext($selection[0], 0);
+	    $data=$model->get_value($iter, 0);		
+            //$this->project = $project = $data[0];
+	    
+	    $this->project = $project = $data;
+	
+	
             $DbAttributes = $this->projects[$project];
             $this->DbAttributes = $DbAttributes;
-            $this->ProjectDefs[$project] = Project::ReadProjectDefinitions($project);
+            //$this->ProjectDefs[$project] = Project::ReadProjectDefinitions($project);
+
+            $this->ProjectDefs[$project] = Project::ReadProject($project);
+
             $this->DataDescription = $this->ProjectDefs[$project][3];
             
             $this->tree1->LoadTables($DbAttributes, $this->DataDescription);

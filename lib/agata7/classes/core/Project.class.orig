@@ -10,15 +10,16 @@ class Project
     /* Exist the Project File
     /***********************************************************/
     function ExistProject($Project)
-    { 
-        return is_file(AGATA_PATH . "/projects/{$Project}.prj");
+    {
+        return is_array($Project) or is_file(AGATA_PATH . "/projects/{$Project}.prj");
     }
 
     /***********************************************************/
     /* Read the Project File
     /***********************************************************/
     function ReadProject($Project)
-    { 
+    {
+        if (is_array($Project)) { return $Project; }
         $array         = Xml2Array(AGATA_PATH . "/projects/{$Project}.prj");
         if ($array)
         {
@@ -101,14 +102,13 @@ class Project
         $app['.dia']  = $agataConfig['app']['DiaSoft'];
         $app['.xml']  = $agataConfig['app']['XmlSoft'];
         $app['.sxw']  = $agataConfig['app']['OpenSoft'];
-      
+        
         foreach ($app as $key => $ext)
         {
             if (strstr($FileName, $key))
             $launch = $ext;
-
         }
- 
+        
         if ($launch)
         {
             if (OS == 'WIN')

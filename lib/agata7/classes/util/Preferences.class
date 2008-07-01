@@ -4,7 +4,8 @@
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
 class Preferences extends CommonForm
-{
+{protected $model;
+
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
@@ -132,7 +133,7 @@ class Preferences extends CommonForm
     /* Builds the form
     /***********************************************************/
     function BuildForms($CheckVars)
-    {
+    {  
         if ($this->container)
         {
             $this->window = $this->container;
@@ -151,8 +152,11 @@ class Preferences extends CommonForm
 
         $this->CheckVars = $CheckVars;
         $this->tooltips = &new GtkTooltips();
-        list($this->iconpixmap, $this->iconmask) = Gdk::pixmap_create_from_xpm($this->window->window, null, $this->Pixmap);
-        $this->MultiPage = &new GtkNotebook;
+    
+//********comentado por MIGUEL CASANOVA
+        //list($this->iconpixmap, $this->iconmask) = GdkPixmap::create_from_xpm($this->window->window, null, $this->Pixmap);
+	         
+	$this->MultiPage = &new GtkNotebook;
         $this->MultiPage->set_show_tabs(false);
 
         $SVBox = new GtkVBox;
@@ -161,14 +165,38 @@ class Preferences extends CommonForm
         $HBox = &new GtkHBox;
         $SVBox->pack_start($HBox, true, true, 10);
         
-        $this->clistProjects = new GtkCList(1, array($this->ListTitle));
-        $this->clistProjects->connect_object('select-row', array(&$this, 'ChangePage'));
-        $this->clistProjects->set_usize(140, -1);
-        $this->clistProjects->set_column_width(0, 400);
+        //********comentado por MIGUEL CASANOVA
+        //$this->clistProjects = new GtkTreeview(1, array($this->ListTitle));
+        //$this->clistProjects->connect_simple('select_cursor_row', array(&$this, 'ChangePage'));
+        //$this->clistProjects->set_size_request(140, -1);
+        //$this->clistProjects->set_column_width(0, 400);
+
+
+		    $Title1=array($this->ListTitle);
+		    $this->model = new GtkListStore(Gtk::TYPE_STRING);
+		    $field_justification = array(2);
+		    $this->clistProjects=new GtkTreeview($this->model);
+		
+
+		    $this->count = count($Title1);
+		    for ($n=0; $n<count($Title1); $n++)
+		    {
+			   $cell_renderer = new GtkCellRendererText();
+			   $column = new GtkTreeViewColumn($Title1[$n], $cell_renderer, 'text', $n);
+			
+			   
+			   $this->clistProjects->append_column($column);
+		     }
+		
+ 		   $this->clistProjects->connect_simple('row-activated', array(&$this, 'ChangePage'));
+                   $this->clistProjects->set_size_request(140, -1);
+                   //$this->clistProjects->set_column_width(0, 400);
+
+		   $this->clistProjects->show();
         
         $scroll = new GtkScrolledWindow;
         $scroll->set_policy(GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
-        $scroll->add($this->clistProjects);
+       $scroll->add($this->clistProjects);
         
         $BoxLeft = new GtkVBox;
         $BoxLeft->pack_start($scroll);
@@ -176,13 +204,14 @@ class Preferences extends CommonForm
         $BoxLeft->pack_start($BoxButton, false, false);
 
         if ($this->UseButtons !== false)
-        {
-            $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'del.xpm');
+        { $color = &new GdkColor(0, 65535, 65535); 
+            $pixmap =  images . 'del.xpm';
+
             $button_del = new Button(array(&$this, 'ClosePage'), _a('Delete'), $pixmap, IMAGEBUTTON);
-            //$button_del->connect_object('clicked', $this->slot_del);
+            //$button_del->connect_simple('clicked', $this->slot_del);
             $button_del->set_relief(GTK_RELIEF_NONE);
     
-            $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_add.xpm');
+            $pixmap =  images . 'ico_add.xpm';
             $button_add = new Button(array(&$this, 'AddPage'), _a('Add'), $pixmap, IMAGEBUTTON);
             $button_add->set_relief(GTK_RELIEF_NONE);
     
@@ -196,10 +225,19 @@ class Preferences extends CommonForm
 
         if ($this->TitleImage)
         {
+
+
+
             $hbox = &new GtkHbox(false, 2);
             $Vbox->pack_start($hbox, false, false);
-            list($pixmap, $mask) = Gdk::pixmap_create_from_xpm($this->window->window, null, $this->TitleImage);
-            $pixmapwid = &new GtkPixmap($pixmap, $mask);
+           // $pixmap = GdkPixmap::create_from_xpm($this->window->window, $color, $this->TitleImage);
+
+	  $pixmap = GdkPixbuf::new_from_file($this->TitleImage);
+
+
+            $pixmapwid = &new GtkImage();
+	    $pixmapwid->set_from_pixbuf($pixmap);
+
             $hbox->pack_start($pixmapwid, false, false);
         }
 
@@ -221,22 +259,26 @@ class Preferences extends CommonForm
             $SVBox->pack_start($status, false);
             $status->push(1, $this->Status);
         }
+	
     }
 
     /***********************************************************/
     /* Create the pages and fill them
     /***********************************************************/
     function FillForms($CheckVars)
-    {
+    {  
         $this->CheckVars = $CheckVars;
         $this->i = 0;
         if ($CheckVars)
         {
             foreach($CheckVars as $Config => $CheckVars_)
             {
-                $this->NewPage($Config, $CheckVars_);
-                $node = $this->clistProjects->append(array($Config));
-                $this->clistProjects->set_pixtext($node, 0, $Config, 5, $this->iconpixmap, $this->iconmask);
+                
+	         $this->NewPage($Config, $CheckVars_);  //*********en esta linea se crealas preferencias de cada campo del  Gtknotebook 4 
+               
+	         $node = $this->model->append(array($Config));
+    
+		//$this->clistProjects->set_pixtext($node, 0, $Config, 5, $this->iconpixmap, $this->iconmask);
                 //$this->PageNumbers[utf8_encode($Config)] = $this->i;
                 //$this->InvPageNumbers[$this->i] = $Config;
                 $this->i ++;
@@ -278,7 +320,7 @@ class Preferences extends CommonForm
         {
             $this->NewPage($Config, $this->Plus);
             $node = $this->clistProjects->append(array($Config));
-            $this->clistProjects->set_pixtext($node, 0, $Config, 5, $this->iconpixmap, $this->iconmask);
+           // $this->clistProjects->set_pixtext($node, 0, $Config, 5, $this->iconpixmap, $this->iconmask);
             //$this->PageNumbers[utf8_encode($Config)] = $this->i;
             //$this->InvPageNumbers[$this->i] = $Config;
             $this->MultiPage->set_page($this->i);
@@ -314,6 +356,8 @@ class Preferences extends CommonForm
     /***********************************************************/
     function NewPage($Config, $CheckVars)
     {
+    Try
+    {
         $texto = $Config;
 
         $frame = &new GtkFrame();
@@ -345,18 +389,21 @@ class Preferences extends CommonForm
 
         if ($CheckVars)
         {
+	
+	
             $this->BuildFormEntries($Config, $CheckVars);
-            if ($this->UseSaveButton)
-            {
+           if ($this->UseSaveButton)
+            {$color = &new GdkColor(0, 65535, 65535);   
                 $boxbt = &new GtkHBox(false, 0);
                 $boxbt->set_border_width(2);
                 $child->pack_start(new GtkHSeparator, false, false, 0);
                 $child->pack_start($boxbt, false, false, 0);
 
-                $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_ok.xpm');
-                /*$this->buttons[$Config] = &new Button($this->slot_ok, $this->caption, $pixmap, IMAGEBUTTON);
+               $pixmap =  images . 'ico_ok.xpm';
+
+                $this->buttons[$Config] = &new Button($this->slot_ok, $this->caption, $pixmap, IMAGEBUTTON);
                 $this->buttons[$Config]->set_border_width(5);
-                $boxbt->pack_end($this->buttons[$Config], false, false, 0);*/
+                $boxbt->pack_end($this->buttons[$Config], false, false, 0);
                 $this->buttons[$this->i] = &new Button($this->slot_ok, $this->caption, $pixmap, IMAGEBUTTON);
                 $this->buttons[$this->i]->set_border_width(5);
                 $boxbt->pack_end($this->buttons[$this->i], false, false, 0);
@@ -367,15 +414,23 @@ class Preferences extends CommonForm
 
         /*$this->buttonsd[$Config] = &new GtkButton('-');
         $this->tooltips->set_tip($this->buttonsd[$Config], _a('Delete'), '');
-        $this->buttonsd[$Config]->connect_object('clicked', array(&$this, 'ClosePage'));*/
+        $this->buttonsd[$Config]->connect_simple('clicked', array(&$this, 'ClosePage'));*/
 
         $this->buttonsd[$this->i] = &new GtkButton('-');
         $this->tooltips->set_tip($this->buttonsd[$this->i], _a('Delete'), '');
-        $this->buttonsd[$this->i]->connect_object('clicked', array(&$this, 'ClosePage'));
+        $this->buttonsd[$this->i]->connect_simple('clicked', array(&$this, 'ClosePage'));
 
         $menu_box = &new GtkHBox(false, 0);
         $child->show_all();
         $this->MultiPage->append_page_menu($child, $label, $menu_box);
+    
+	
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}
     }
 
     /***********************************************************/
@@ -390,26 +445,38 @@ class Preferences extends CommonForm
         }
         else
         {
-            $this->clistProjects->freeze();
-            $selection = $this->clistProjects->selection;
+            //$this->clistProjects->freeze();
+
+
+	  $selection = $this->clistProjects->get_selection();	
+
+	    
+
+
             if ($selection)
             {
                 if ($this->slot_del)
                 {
                     call_user_func($this->slot_del);
                 }
-                $line = $selection[0];
-                $text = $this->clistProjects->get_pixtext($line, 0);
-                $text = $text[0];
+
+		list($model, $iter) = $selection->get_selected();
+		$line=$model->get_path($iter); 
+	        $text=$model->get_value($iter, 0);       
+
+		$text = $text[0];
                 $this->CheckVars[$text] = null;
                 $this->MultiPage->remove_page($line);
-                $this->clistProjects->remove($line);
+             
+	        $model->remove($line); 
+
+
             }
             else
             {
                 new Dialog(_a('Select a project'));
             }
-            $this->clistProjects->thaw();
+          //  $this->clistProjects->thaw();
         }
         
         return true;
@@ -419,10 +486,16 @@ class Preferences extends CommonForm
     /* Clear all the pages
     /***********************************************************/
     function Clear()
-    {
-        $this->clistProjects->freeze();
-        $this->clistProjects->clear();
-        $this->clistProjects->thaw();
+    { 
+    
+       // $this->clistProjects->freeze();
+       // $this->clistProjects->clear();
+        $this->model->clear();
+        
+	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	$this->clistProjects->set_model($this->model);
+		    
+       // $this->clistProjects->thaw();
 
         for ($n=0; $n<=$this->i; $n++)
         {
@@ -438,6 +511,8 @@ class Preferences extends CommonForm
         }
 
         $this->PageNumbers = null;*/
+	
+    
     }
 
 
@@ -446,19 +521,32 @@ class Preferences extends CommonForm
     /***********************************************************/
     function ChangePage()
     {
-        $this->clistProjects->freeze();
-        $selection = $this->clistProjects->selection;
+	//----comentado por miguel casanova
+        //$this->clistProjects->freeze();
+        //$selection = $this->clistProjects->selection;
+	  
+	  $selection = $this->clistProjects->get_selection();	
+	  list($model, $iter) = $selection->get_selected();
+
+
         if ($selection)
         {
-            $line = $selection[0];
-            $text = $this->clistProjects->get_pixtext($line, 0);
-            //$x = $this->PageNumbers[utf8_encode($text[0])];
-            //echo "changint to $x\n";
-            //$this->MultiPage->set_page($x);
-            $this->MultiPage->set_page($line);
-            $this->Current = $x;
+
+	    $v=$model->get_path($iter); 
+	   
+	    
+	    $line = $v[0];	
+	    $text  = $model->get_value($iter, 0);
+           // $text = $this->clistProjects->get_pixtext($line, 0);
+           // $x = $this->PageNumbers[utf8_encode($text)];
+           
+            //$this->MultiPage->set_current_page($x);
+            $this->MultiPage->set_current_page($line);
+
+            //$this->MultiPage->set_current_page($line);
+            $this->Current = $line;
         }
-        $this->clistProjects->thaw();
+        //$this->clistProjects->thaw();
     }
 
     /***********************************************************/

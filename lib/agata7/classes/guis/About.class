@@ -8,22 +8,29 @@ class About
     {
         $this->about = new GtkWindow;
         $this->about->set_title('Agata Report ' . AGATA_VERSION);
-        $this->about->connect_object('key_press_event', array(&$this, 'Close'));
+        $this->about->connect_simple('key_press_event', array(&$this, 'Close'));
 		$this->about->realize();
 
-		$GdkPixmap = Gdk::pixmap_create_from_xpm(
-				$this->about->window, null, images . 'about.xpm');
+		//$GdkPixmap = GdkPixmap::create_from_xpm(
+		//		$this->about->window, null, images . 'about.xpm');
 
-		$Pixmap = &new GtkPixmap($GdkPixmap[0], $GdkPixmap[1]);
+		//$Pixmap = &new GtkPixmap($GdkPixmap[0], $GdkPixmap[1]);
+
+
+	$pixbuf = GdkPixbuf::new_from_file(images . 'about.xpm');
+	$Pixmap = new GtkImage();
+	$Pixmap->set_from_pixbuf($pixbuf);
+
+
 
         $Fixed  = &new GtkFixed;
         $Fixed->put($Pixmap, 0, 0);
         $botao  = &new GtkButton(_a('Credits'));
-        $botao->connect_object('clicked', array(&$this, 'Credits'));
+        $botao->connect_simple('clicked', array(&$this, 'Credits'));
         $Fixed->put($botao, 367, 147);
         
         $botao  = &new GtkButton('ChangeLogs');
-        $botao->connect_object('clicked', array(&$this, 'Changelog'));
+        $botao->connect_simple('clicked', array(&$this, 'Changelog'));
         $Fixed->put($botao, 356, 174);
         
 		$this->about->set_position(GTK_WIN_POS_CENTER);
@@ -44,7 +51,11 @@ class About
         
         $iwindow->add($scrolled_win);
         
-        $HelpText = &new GtkText();
+        $HelpText = &new GtkTextview();
+
+	$HelpText->set_editable(false); 
+
+
         $scrolled_win->add($HelpText);
         $scrolled_win->show();
         
@@ -56,13 +67,24 @@ class About
             $strings[] = $buffer;
         }
         fclose($fd);
-        $font = gdk::font_load ("-bitstream-courier-medium-r-normal-*-*-140-*-*-m-*-iso8859-9");
-        foreach ($strings as $string)
+       // $font = gdk::font_load ("-bitstream-courier-medium-r-normal-*-*-140-*-*-m-*-iso8859-9");
+
+	$i=0;        
+	$parrafo=' ';
+	foreach ($strings as $string)
         {
-            $HelpText->insert($font, null, null, "$string\n");
+
+		$i=$i+1;
+
+		$parrafo=$parrafo . $strings[$i] ."\n";
         }
+		$buffer1 = new GtkTextBuffer();
+		$buffer1->set_text($parrafo);
+		 $HelpText->set_buffer($buffer1);
+
+
         $HelpText->show();
-        $HelpText->set_usize(364, -1);
+        $HelpText->set_size_request(364, -1);
         
         $iwindow->show();
     }
@@ -80,7 +102,10 @@ class About
         
         $iwindow->add($scrolled_win);
         
-        $HelpText = &new GtkText();
+        $HelpText = &new GtkTextview();
+
+	$HelpText->set_editable(false); 
+
         $scrolled_win->add($HelpText);
         $scrolled_win->show();
         
@@ -88,17 +113,27 @@ class About
         while (!feof ($fd))
         {
             $buffer = fgets($fd, 500);
+
             $buffer = ereg_replace("\n", '', $buffer);
             $strings[] = $buffer;
         }
         fclose($fd);
-        $font = gdk::font_load ("-bitstream-courier-medium-r-normal-*-*-140-*-*-m-*-iso8859-9");
-        foreach ($strings as $string)
+       // $font = gdk::font_load ("-bitstream-courier-medium-r-normal-*-*-140-*-*-m-*-iso8859-9");
+	$i=0;        
+	$parrafo=' ';
+	foreach ($strings as $string)
         {
-            $HelpText->insert($font, null, null, "$string\n");
+
+		$i=$i+1;
+
+		$parrafo=$parrafo . $strings[$i] ."\n";
         }
+		$buffer1 = new GtkTextBuffer();
+		$buffer1->set_text($parrafo);
+		 $HelpText->set_buffer($buffer1);
+
         $HelpText->show();
-        $HelpText->set_usize(364, -1);
+        $HelpText->set_size_request(364, -1);
         
         $iwindow->show();
     }

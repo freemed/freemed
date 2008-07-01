@@ -73,7 +73,7 @@ class CrossBox
     function CrossSel()
     {
         $this->crossdb = &new CrossDB($this->info);
-        $this->crossdb->buttonok->connect_object('clicked', array(&$this, 'SetCross'));
+        $this->crossdb->buttonok->connect_simple('clicked', array(&$this, 'SetCross'));
     }
     
     function SetCross()

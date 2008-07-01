@@ -8,10 +8,13 @@ class LevelsArea
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function LevelsArea($glade)
+    function __construct($glade) 
     {
+	try
+	{
+	
         global $Pixmaps;
-
+     
         $this->widget    = &new GtkFixed;
 
         $this->MenuLevels = new GtkMenu;
@@ -25,6 +28,7 @@ class LevelsArea
         $MenuLevels->append($option3);
         $MenuLevels->append($option4);
         
+   
         $this->comboBFunctions = $glade->get_widget('comboBFunctions');
         $this->comboBFields = $glade->get_widget('comboBFields');
         $this->comboBBreaks = $glade->get_widget('comboBBreaks');
@@ -33,7 +37,21 @@ class LevelsArea
                                _a('Average'), _a('Minimal'), _a('Maximal'),
                                _a('Group Average'), _a('Group Maximal'), _a('Group Minimal'));
         
-        $this->comboBFunctions->set_popdown_strings($b_functions);
+
+
+	$item= new GtkListStore(Gtk::TYPE_STRING);	
+	// Set up the combobox
+	$this->comboBFunctions->clear();
+	$this->comboBFunctions->set_model($item);
+	$cellRenderer = new GtkCellRendererText(); // note 2
+	$this->comboBFunctions->pack_start($cellRenderer);
+	$this->comboBFunctions->set_attributes($cellRenderer, 'text', 0); // note 3
+	foreach($b_functions as $Element)
+        { 
+            $item->append(array($Element));
+ 	}
+
+        //$this->comboBFunctions->set_popdown_strings($b_functions);
         
         $this->Containers['frameFunction']   = $glade->get_widget('frameFunction');
         $this->Containers['boxLevelMask']  = $glade->get_widget('boxLevelMask');
@@ -48,29 +66,39 @@ class LevelsArea
         
         $this->Buttons['GroupIt'] =         $glade->get_widget('buttonGroupIt');
         $this->Buttons['BreakIt'] =         $glade->get_widget('buttonBreakIt');
-        $this->Buttons['GroupIt']->connect_object('clicked', array(&$this, 'GroupIt'));
-        $this->Buttons['BreakIt']->connect_object('clicked', array(&$this, 'BreakIt'));
+        $this->Buttons['GroupIt']->connect_simple('clicked', array(&$this, 'GroupIt'));
+        $this->Buttons['BreakIt']->connect_simple('clicked', array(&$this, 'BreakIt'));
         
         $this->entryTotalLabel      = $glade->get_widget( 'entryTotalLabel' );
         
         $this->Labels['labelGroup'] = $glade->get_widget('labelGroup');
         $this->Labels['labelGroup']->set_text(_a('Group') . ' : ');
         
-        $option1->connect_object('activate', array(&$this, 'EditBreakList'), null, 2);
-        $option2->connect_object('activate', array(&$this, 'DropLevel'));
-    }
+        $option1->connect_simple('activate', array(&$this, 'EditBreakList'), null, 2);
+        $option2->connect_simple('activate', array(&$this, 'DropLevel'));
+	
+	}
+         catch(Exception $e)
+	{
+		
+		echo $e;
+	}   
+ }
 
     function CreateBreakList()
     {
         $this->widget2   = &new GtkHBox;
         $this->widget->realize();
+
+       
+
         $this->clistBreak = new Alist(&$this->widget2, $this->widget, _a('xxx'),
                                 array(_a('Groups'), _a('Formulas')), null, 400, 200,
                                 true, array(null),  0, null, ICONBUTTON);
-        $this->clistBreak->clist->set_usize(320, 70);
-        $this->clistBreak->clist->set_column_width(0, 60);
-        $this->clistBreak->clist->set_column_width(1, 800);
-        $this->clistBreak->clist->connect_object('select-row', array(&$this, 'EditBreakList'), 1);
+        $this->clistBreak->clist->set_size_request(320, 70);
+       // $this->clistBreak->clist->set_column_width(0, 60);
+       // $this->clistBreak->clist->set_column_width(1, 800);
+        $this->clistBreak->clist->connect_simple('select_cursor_row', array(&$this, 'EditBreakList'), 1);
     }
     /***********************************************************/
     /* Draws the levels on GtkFixed
@@ -78,7 +106,7 @@ class LevelsArea
     function DrawLevels($Select)
     {
         global $Pixmaps;
-
+	//------comentado por miguel casanova
         $this->ClearArea();
         $this->Select = $Select;
         $Content   = $Select;
@@ -99,16 +127,16 @@ class LevelsArea
                     $level = _a('Level') . ' 0 : ' . _a('Grand Total');
                     $b = new Button(array(&$this, 'PopLevels') , $level,
                          $Pixmaps['level'], IMAGEBUTTON, array('0'), false);
-                    $b->connect_object('enter-notify-event', array(&$this, 'GetIn'), $Formulas, $level);
-                    $b->connect_object('leave-notify-event', array(&$this, 'GetOut'));
+                    $b->connect_simple('enter-notify-event', array(&$this, 'GetIn'),&$this, $Formulas, $level);
+                    $b->connect_simple('leave-notify-event', array(&$this, 'GetOut'));
                 }
                 else
                 {
                     $level = $Elements[$Break];
                     $b = new Button(array(&$this, 'PopLevels'), $level,
                          $Pixmaps['level'], IMAGEBUTTON, array($Break), false);
-                    $b->connect_object('enter-notify-event', array(&$this, 'GetIn'), $Formulas, $level);
-                    $b->connect_object('leave-notify-event', array(&$this, 'GetOut'));
+                    $b->connect_simple('enter-notify-event', array(&$this, 'GetIn'),&$this, $Formulas, $level);
+                    $b->connect_simple('leave-notify-event', array(&$this, 'GetOut'));
                 }
                 $b->set_relief(GTK_RELIEF_NONE);
                 
@@ -135,7 +163,7 @@ class LevelsArea
             $this->Hint = &new HintWindow;
             $this->Hint->set_title(_a('Formulas'));
             $this->Hint->set_uposition(480,164);
-            $this->Hint->set_usize(280,-1);
+            $this->Hint->set_size_request(280,-1);
             $vbox = new GtkVBox;
             $vbox->pack_start(darktxt($Level, -1, 20));
             $vbox->pack_start(new GtkHSeparator);
@@ -148,8 +176,8 @@ class LevelsArea
                 $hbox2 = new GtkHBox;
                 $stub1 = new GtkHBox;
                 $stub2 = new GtkHBox;
-                $stub1->set_usize(40, -1);
-                $stub2->set_usize(40, -1);
+                $stub1->set_size_request(40, -1);
+                $stub2->set_size_request(40, -1);
                 $hbox1->pack_start($stub1, false, false);
                 $hbox2->pack_start($stub2, false, false);
                 $hbox1->pack_start(darktxt($formula, -1, 20, new GdkColor(52036, 52036, 52036)), true, true);
@@ -260,7 +288,7 @@ class LevelsArea
     /***********************************************************/
     function ClearArea()
     {
-        $children = $this->widget->children;
+        $children = $this->widget->get_children();
         foreach ($children as $child)
         {
             $this->widget->remove($child->widget);
@@ -312,12 +340,27 @@ class LevelsArea
     /***********************************************************/
     function BreakIt()
     {
-        $Field_    = $this->comboBFields->entry;
-        $Break_    = $this->comboBBreaks->entry;
-        $Function_ = $this->comboBFunctions->entry;
-        $Field     = $Field_->get_text();
-        $Break     = $Break_->get_text();
-        $Function_tr= $Function_->get_text();
+       // $Field_    = $this->comboBFields->entry;
+       // $Break_    = $this->comboBBreaks->entry;
+       // $Function_ = $this->comboBFunctions->entry;
+
+
+	$model = $this->comboBFields->get_model(); // note 5
+	$Field  = $model->get_value($this->comboBFields->get_active_iter(), 0); // note 6
+
+
+	$model = $this->comboBBreaks->get_model(); // note 5
+	$Break  = $model->get_value($this->comboBBreaks->get_active_iter(), 0); // note 6
+
+
+	$model = $this->comboBFunctions->get_model(); // note 5
+	$Function_tr  = $model->get_value($this->comboBFunctions->get_active_iter(), 0); // note 6
+
+
+
+      //  $Field     = $Field_->get_text();
+       // $Break     = $Break_->get_text();
+       // $Function_tr= $Function_->get_text();
         
         $commands[_a('Sum')] = 'sum';
         $commands[_a('Count')] = 'count';
@@ -370,17 +413,25 @@ class LevelsArea
     /***********************************************************/
     function GroupIt()
     {
-        $Break_    = $this->comboBBreaks->entry;
-        $Break     = $Break_->get_text();
+       // $Break_    = $this->comboBBreaks->entry;
+        //$Break     = $Break_->get_text();
         
+	$model = $this->comboBBreaks->get_model(); // note 5
+	$Break  = $model->get_value($this->comboBBreaks->get_active_iter(), 0); // note 6
+	
+	
         if ($Break)
         {
+	
+
             $breaks = explode (':', $Break);
             $breaks = explode (' ', $breaks[0]);
             $break = trim($breaks[1]);
             
             if (!$this->Breaks[$break])
             {
+
+		
                 $this->SetBreak($break, '');
                 $a = array('0');
                 $putinorder = array_diff(array_keys($this->GetBreaks()), $a);
@@ -398,9 +449,9 @@ class LevelsArea
     }
 
     /***********************************************************/
-    /* connect_object
+    /* connect_simple
     /***********************************************************/
-    function connect_object($signal, $callback)
+    function connect_simple($signal, $callback)
     {
         $this->callbacks[$signal] = $callback;
     }

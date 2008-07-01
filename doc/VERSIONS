@@ -1,9 +1,10 @@
 $Id$
 Internal Versions of Software
 
-Agata                               : 7.6rc1
+Agata                               : 7.7rc1
 Dojo                                : 0.4.2
 FPDF                                : 1.53
+gwtphp                              : 0.9.0-20080112
 phpgacl                             : 3.3.7
 radscaper                           : 7.13
 Smarty                              : 2.6.18

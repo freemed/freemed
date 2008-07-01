@@ -3,43 +3,56 @@
 /* Tree handler, a wrapper for FileExplorer
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class TreeHandler extends GtkBox
+class TreeHandler extends GtkVBox
 {
+//protected $FileTree;
+
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function TreeHandler($FileTree, $names = null, $horizontal = false)
-    {
-        $this->horizontal = $horizontal;
-        $this->FileTree = $FileTree;
-        GtkVBox::GtkVBox();
-        $scroll = new GtkScrolledWindow;
-        $view = new GtkViewPort;
-        $hbox = new GtkHBox;
-        $scroll->add($view);
-        $view->add($hbox);
-        $hbox->pack_start($FileTree);
+    
+     function  __construct($FileTree, $names = null, $horizontal = false) {
+               
+      try
+      {
+	 $this->horizontal = $horizontal;
+         $this->agataConfig = AgataConfig::ReadConfig();
         $this->names = $names;
 
-        if ($horizontal)
-        {
-            GtkHBox::GtkHBox();
-        }
-        else
-        {
-            GtkVBox::GtkVBox();
-        }
-        $this->widget = $widget;
+		$this->FileTree=$FileTree;
+		
+	        parent::__construct();
+		$scroll = new GtkScrolledWindow;
+	        $view = new GtkViewPort;
+	        $hbox = new GtkHBox;
+	        $scroll->add($view);
+	        $view->add($hbox);
+	        $hbox->pack_start($this->FileTree);
+		$this->pack_start( $scroll);
+		$this->show();	
 
-        GtkBox::pack_start($scroll);
-        
+
+
+		
+
+
+
+
         $this->CreateMenu();
         $this->OpenAction = new GtkButton();
-        $botao = $FileTree->BotaoOk;
-        
-        $botao->connect_object('clicked', array(&$this, 'Pop'));
+        $botao = $this->FileTree->BotaoOk;
+       
+        $botao->connect_simple('clicked', array(&$this, 'Pop'));
+	$this->FileTree->set_enable_tree_lines(true);
+        $this->show_all();
+    }
+    catch(Exception $e)
+    {
+		
+			echo '---error classes TreeHandler($FileTree, $names = null, $horizontal = false) ' . $e;
+    }
 
-        GtkVBox::show_all();
+	
     }
 
     /***********************************************************/
@@ -49,7 +62,7 @@ class TreeHandler extends GtkBox
     {
         $Menu = $this->Menu;
         $Menu->show_all();
-        $Menu->popup(null, null, null, 1, 1);
+        $Menu->popup();
     }
 
     /***********************************************************/
@@ -61,27 +74,44 @@ class TreeHandler extends GtkBox
         $this->Menu = $Menu = new GtkMenu;
         $names = $this->names;
 
+
+
+
+
         if (!$names)
-        {
-            $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($Pixmaps['menu_open'], _a('Open'), array(&$this, 'Open'));
-            $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($Pixmaps['menu_del'], _a('Delete'), array(&$this, 'Delete'));
+        { 
+            $Menuitem1 = new GtkMenuItem( _a('Open'));
+	    $Menuitem1->connect_simple('activate', array(&$this, 'Open'));
+	    $this->ItemOpen =$Menuitem1;
+
+            $Menuitem2 = new GtkMenuItem( _a('Delete'));
+	    $Menuitem2->connect_simple('activate', array(&$this, 'Delete'));
+	    $this->ItemDel =$Menuitem2 ;
         }
         else
         {
             if ($names[0])
             {
-                $this->ItemOpen = $Menuitem1 = new MyNormalMenuItem($names[0][0], _a($names[0][1]) , array(&$this, 'Open'));
-            }
+          $Menuitem1 = new GtkMenuItem( _a($names[0][1]) );
+	       $Menuitem1->connect_simple('activate', array(&$this, 'Open'));
+	       $this->ItemOpen  =$Menuitem1 ;
+           }
             
             if ($names[1])
             {
-                $this->ItemDel  = $Menuitem2 = new MyNormalMenuItem($names[1][0], _a($names[1][1]), array(&$this, 'Delete'));
+              $Menuitem2 = new GtkMenuItem( _a($names[1][1]));
+	        $Menuitem2->connect_simple('activate', array(&$this, 'Delete'));
+		$this->ItemDel =$Menuitem2 ;
             }
         }
         
         
+
+    
         $Menuitem3 = new GtkMenuItem;
-        $Menuitem4 = new MyNormalMenuItem($Pixmaps['menu_close'], _a('Close'), null);
+        $Menuitem4 = new GtkMenuItem( _a('Close'));
+	$Menuitem4->connect_simple('activate', null);
+	
 
         $Menu->append($Menuitem1);
         if ($Menuitem2)
@@ -91,6 +121,8 @@ class TreeHandler extends GtkBox
         $Menu->append($Menuitem3);
         $Menu->append($Menuitem4);
     }
+
+
 
     /***********************************************************/
     /* Creates the toolbar
@@ -125,12 +157,31 @@ class TreeHandler extends GtkBox
         $ButtonBox = new GtkHBox;
         GtkVBox::pack_start($ButtonBox, false, false);
         $ButtonBox->pack_start(new GtkHBox);
-        $pixmap = Gdk::pixmap_create_from_xpm($this->window, null, images . 'ico_require.xpm');
+ 	
+	$color = &new GdkColor(0, 65535, 65535);
+        $pixmap =  images . 'ico_require.xpm';
         $ButtonBox->pack_start($b = new Button(array(&$this, 'Open'),    _a('Apply'), $pixmap, IMAGEBUTTON), false, false);
         
         $b->set_relief(GTK_RELIEF_NONE);
     }
 
+
+ /***********************************************************/
+    /* Complementary options  SQL TEMPLATE
+    /***********************************************************/
+    function CreateToolBar3()
+    {
+        GtkVBox::realize();
+        $ButtonBox = new GtkHBox;
+        GtkVBox::pack_start($ButtonBox, false, false);
+        $ButtonBox->pack_start(new GtkHBox);
+ 	
+	$color = &new GdkColor(0, 65535, 65535);
+        $pixmap =  images . 'ico_require.xpm';
+        $ButtonBox->pack_start($b = new Button(array(&$this, 'OpenNodeSQL'),    _a('Apply'), $pixmap, IMAGEBUTTON), false, false);
+        
+        $b->set_relief(GTK_RELIEF_NONE);
+    }
     /***********************************************************/
     /* Asks by the Folder name
     /***********************************************************/
@@ -145,7 +196,7 @@ class TreeHandler extends GtkBox
             {
                 $this->InputBox = new InputBox(_a('Folder Name'), 180, '');
                 $button =  $this->InputBox->button;
-                $button->connect_object('clicked', array(&$this,'MakeFolder'), $node, $info);
+                $button->connect_simple('clicked', array(&$this,'MakeFolder'), $node, $info);
             }
             else
             {
@@ -156,7 +207,7 @@ class TreeHandler extends GtkBox
         {
             $this->InputBox = new InputBox(_a('Folder Name'), 180, '');
             $button =  $this->InputBox->button;
-            $button->connect_object('clicked', array(&$this,'MakeFolder'), null, $FileTree->entries[0]);
+            $button->connect_simple('clicked', array(&$this,'MakeFolder'), null, $FileTree->entries[0]);
         }
     }
 
@@ -184,13 +235,31 @@ class TreeHandler extends GtkBox
         }
     }
 
+
+
+
     /***********************************************************/
     /* Opens a node
     /***********************************************************/
     function Open()
     {
-        $FileTree = $this->FileTree;
-        $node = $FileTree->selection[0];
+        
+          
+       // $node = $FileTree->selection[0];
+
+
+
+	
+	
+            $selection = $this->FileTree->get_selection();
+	    list($model, $iter) = $selection->get_selected(); // note 3
+	    $node= $model->get_value($iter, 0); 
+
+	    $iter = $model->iter_parent($iter);
+	    $nodopadre = $model->get_value($iter, 0); // note 4
+	
+
+
         if (!$node)
         {
             return;
@@ -202,17 +271,80 @@ class TreeHandler extends GtkBox
             $Menu->popdown();
         }
         
-        $info = $FileTree->node_get_row_data($node);
+        //$info = $FileTree->node_get_row_data($node);
+        $info =$node;
+		
+
+	$info=	AGATA_PATH . "/".$this->folder."/".$nodopadre.'/'.$info;
+	echo "$info";
+
         if (($info) &&  is_file($info))// arquivo
+        { 
+
+	   	
+            $ItemOpen = $this->OpenAction;
+            $ItemOpen->emit('clicked');
+	    
+        }
+        else
         {
+           // $FileTree->expand_row( $FileTree,$node);
+
+
+		 
+        }
+
+    }
+
+	function folder($foldername){
+		$this->folder=$foldername;
+	}
+ /***********************************************************/
+    /* Opens a node
+    /***********************************************************/
+    function OpenNodeSQL()
+    {
+        $FileTree = $this->FileTree;
+       // $node = $FileTree->selection[0];
+	$selection=$FileTree->get_selection();
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$infopath=$model->get_path($iter);
+	$node = $model->get_value($iter, 0);
+
+	
+        if (!$node)
+        {
+            return;
+        }
+
+        $Menu = $this->Menu;
+        if ($Menu)
+        {
+            $Menu->popdown();
+        }
+        
+        //$info = $FileTree->node_get_row_data($node);
+        $info =$node;
+		
+
+	$info=	$this->agataConfig['general']['SqlDir'].'/'.$info;
+	
+
+        if (($info) &&  is_file($info))// arquivo
+        { 
             $ItemOpen = $this->OpenAction;
             $ItemOpen->emit('clicked');
         }
         else
         {
-            $FileTree->expand($node);
+           // $FileTree->expand_row( $FileTree,$node);
+
+
+		 
         }
     }
+
+
 
     /***********************************************************/
     /* Deletes the selected node (file or dir)

@@ -23,8 +23,8 @@ class TulipEditor
     function TulipEditor($Dir)
     {
         $this->window = &new GtkWindow;
-        $this->window->connect_object('delete-event', array(&$this, 'Hide'));
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('delete-event', array(&$this, 'Hide'));
+        $this->window->connect('key_press_event', array(&$this,'KeyTest'));
         $this->window->set_title(_a('Function Repository'));
         $this->window->set_position(GTK_WIN_POS_CENTER);
         $this->window->set_default_size(600,400);
@@ -56,10 +56,10 @@ class TulipEditor
         $salvar = new Icone($this->window->window, images . 'filesave.xpm', ' ' . _a('Save'). ' ', _a('Save File'));
         $test   = new Icone($this->window->window, images . 'filetest.xpm', ' ' . _a('Test'). ' ', _a('Test File'));
         
-        $novo->connect_object('clicked', array(&$this, 'NewFunction'));
-        $abrir->connect_object('clicked', array(&$this, 'PreAbrir'));
-        $salvar->connect_object('clicked', array(&$this, 'Salvar'));
-        $test->connect_object('clicked', array(&$this, 'Testar'));
+        $novo->connect_simple('clicked', array(&$this, 'NewFunction'));
+        $abrir->connect_simple('clicked', array(&$this, 'PreAbrir'));
+        $salvar->connect_simple('clicked', array(&$this, 'Salvar'));
+        $test->connect_simple('clicked', array(&$this, 'Testar'));
 
         $widgets = array($novo, $abrir, $salvar, $test);
         foreach ($widgets as $widget)
@@ -72,13 +72,15 @@ class TulipEditor
         $extensions = array('.fun');
         $this->arquivos = &new FileTree();
         $this->arquivos->DefineExtensions($extensions);
-        $this->arquivos->set_column_width(0,400);
+	//esta linea comentada por miguel casanova        
+	//$this->arquivos->set_column_width(0,400);
         $this->arquivos->AbreDiretorio($Dir, null, 'Root');
         $botao = $this->arquivos->BotaoOk;
-        //$botao->connect_object('clicked', array(&$this,'AbrirTree'));
+        //$botao->connect_simple('clicked', array(&$this,'AbrirTree'));
         $this->FunctionsHandler = &new TreeHandler($this->arquivos);
+	$this->FunctionsHandler->folder("functions");
         $ItemOpen = $this->FunctionsHandler->OpenAction;
-        $ItemOpen->connect_object('clicked', array(&$this, 'AbrirTree'));
+        $ItemOpen->connect_simple('clicked', array(&$this, 'AbrirTree'));
         
         $this->paned = new GtkHPaned;
         $hbox->pack_start($this->paned, true, true);
@@ -90,7 +92,7 @@ class TulipEditor
         
         $ico_box = new GtkVBox;
         $del = new IconeImg($this->window->window, images . 'ico_del.xpm', _a('Close'));
-        $del->connect_object('clicked', array(&$this, 'Fechar'));
+        $del->connect_simple('clicked', array(&$this, 'Fechar'));
         $del->set_relief(GTK_RELIEF_NONE);
         $ico_box->pack_start($del, false, false);
         $hbox->pack_start($ico_box, false, false);
@@ -128,8 +130,8 @@ class TulipEditor
             $Subitem_key = $label->parse_uline("_$n");
             $button = new GtkButton;
             $button->add_accelerator("clicked", $accelgroup, $Subitem_key, GDK_MOD1_MASK, 0);
-            $button->connect_object('clicked', array(&$this, 'OnAlt'), $n);
-            $button->lock_accelerators();
+            $button->connect_simple('clicked', array(&$this, 'OnAlt'), $n);
+           // $button->lock_accelerators();
         }
         $control_shortcuts = array ('N' => 'NewFunction', 'O' => 'PreAbrir', 'S' => 'Salvar', 'W' => 'Fechar');
         foreach($control_shortcuts as $shortcut => $function)
@@ -137,8 +139,8 @@ class TulipEditor
             $Subitem_key = $label->parse_uline("_$shortcut");
             $button = new GtkButton;
             $button->add_accelerator("clicked", $accelgroup, $Subitem_key, GDK_CONTROL_MASK, 0);
-            $button->connect_object('clicked', array(&$this, $function));
-            $button->lock_accelerators();
+            $button->connect_simple('clicked', array(&$this, $function));
+           // $button->lock_accelerators();
         }
     }
 
@@ -146,7 +148,7 @@ class TulipEditor
     /* Creates a new function dialog
     /***********************************************************/
     function NewFunction()
-    {
+    { echo 'New Function';
         $this->newfunction = &new InputBox(_a('Function Name') . ' :', 120, '', array(&$this, 'NewFunctionX'));
     }
 
@@ -183,7 +185,7 @@ class TulipEditor
     /***********************************************************/
     function OnAlt($n)
     {
-        $this->notebook->set_page($n-1);
+        $this->notebook->set_current_page($n-1);
         $scintilla = $this->GetScintilla();
         $scintilla->grab_focus();
     }
@@ -193,13 +195,22 @@ class TulipEditor
     /***********************************************************/
     function AbrirTree()
     {
-        $selecao = $this->arquivos->selection[0];
-        $Arquivo = $this->arquivos->node_get_row_data($selecao);
+        
+         $selecao = $this->arquivos->get_selection();
+	 list($model, $iter) =$selecao->get_selected();
+	 $Arquivo= $model->get_value($iter, 0); 
+
+	 $iter = $model->iter_parent($iter);
+         $nodopadre = $model->get_value($iter, 0); // note 4
+	
+
+       // $Arquivo = $this->arquivos->node_get_row_data($selecao);
+	
         $results = $this->AppendPage(GetFileName($Arquivo));
         $label = $results[0];
         $scintilla = $results[1];
-        $scintilla->Open($Arquivo);
-        $label->set_text($Arquivo);
+        $scintilla->Open(AGATA_PATH . '/functions/'.$nodopadre.'/'.$Arquivo);
+        $label->set_text(AGATA_PATH . '/functions/'.$nodopadre.'/'.$Arquivo);
     }
 
     /***********************************************************/
@@ -211,7 +222,7 @@ class TulipEditor
         $vbox = new GtkVBox;
         $path = new GtkLabel;
         $style = &new GtkStyle();
-        $style->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-100-*-*-*-*-*-*");
+    //    $style->font = gdk::font_load ("-*-helvetica-bold-r-*-*-*-100-*-*-*-*-*-*");
         $path->set_style($style);
         $scintilla = new ScintillaPHP;
         
@@ -228,9 +239,18 @@ class TulipEditor
         else
         $GdkPixmap = $Pixmaps[$ext];
         
-        $imagem = new GtkPixmap($GdkPixmap[0], $GdkPixmap[1]);
+      
+
+	//$imagem = new GtkPixmap($GdkPixmap[0], $GdkPixmap[1]);
         $label = new GtkLabel(" $string ");
         
+
+	$pixbuf = GdkPixbuf::new_from_file($GdkPixmap);
+	$imagem  = new GtkImage();
+	$imagem->set_from_pixbuf($pixbuf);
+
+
+
         $hbox = new GtkHBox;
         $hbox->pack_start($imagem);
         $hbox->pack_start($label);
@@ -238,7 +258,7 @@ class TulipEditor
         
         $this->notebook->append_page($vbox, $hbox);
         $page = $this->notebook->page_num($vbox);
-        $this->notebook->set_page($page);
+        $this->notebook->set_current_page($page);
         $scintilla->grab_focus();
         return array($path, $scintilla);
     }
@@ -250,12 +270,24 @@ class TulipEditor
     {
         $current = $this->notebook->get_current_page();
         $content = $this->notebook->get_nth_page($current);
-        $slots = $content->children;
+       
+	
+
+	$slots=$content->get_children();
+	
+  
+	
+
         $slot1 = $slots[0];
-        $label = $slot1->widget;
+
+	$label=$slot1;
+
+	
         $file = $label->get();
         if (substr($file,0,1) != '*')
         $label->set_text("* $file");
+
+
     }
 
     /***********************************************************/
@@ -267,6 +299,7 @@ class TulipEditor
         $line = $scintilla->get_cur_line();
         $col = $line[1];
         $this->status->push(1, "COL: $col");
+
     }
 
     /***********************************************************/
@@ -278,9 +311,9 @@ class TulipEditor
         $content = $this->notebook->get_nth_page($current);
         if ($content)
         {
-            $slots = $content->children;
+            $slots = $content->get_children();
             $slot1 = $slots[0];
-            $label = $slot1->widget;
+            $label = $slot1;
             $file = $label->get();
             return $file;
         }
@@ -312,9 +345,9 @@ class TulipEditor
     {
         $current = $this->notebook->get_current_page();
         $content = $this->notebook->get_nth_page($current);
-        $slots = $content->children;
+        $slots = $content->get_children();
         $slot1 = $slots[0];
-        $label = $slot1->widget;
+        $label = $slot1;
         $file = $label->set_text($file);
     }
 
@@ -327,9 +360,9 @@ class TulipEditor
         $content = $this->notebook->get_nth_page($current);
         if ($content)
         {
-            $slots = $content->children;
+            $slots = $content->get_children();
             $slot2 = $slots[1];
-            $scintilla = $slot2->widget;
+            $scintilla = $slot2;
             return $scintilla;
         }
     }
@@ -343,7 +376,7 @@ class TulipEditor
         //$this->ReadProjects();
         
         //$botao = $this->arquivos->BotaoOk;
-        //$botao->connect_object('clicked', array(&$this,'AbrirTree'));
+        //$botao->connect_simple('clicked', array(&$this,'AbrirTree'));
         
         //$this->scroll->add($this->arquivos);
         //$this->scroll->show_all();
@@ -469,6 +502,8 @@ class TulipEditor
     function Testar()
     {
         $filename = $this->GetFileName();
+	
+	
         if (substr($filename,0,1) == '*')
         {
             new Dialog(_a('File Not Saved'));
@@ -477,16 +512,25 @@ class TulipEditor
         {
             if (OS != 'WIN')
             {
-                $php_cmd = $_ENV['_'];
-                $a = system("$php_cmd -q $filename", $ret);
+                $php_cmd = '/usr/bin/php';
+
+		$s=$php_cmd .' -f '.$filename;
+ //new Dialog($s);
+		   $a = system($s, $ret);
+
+
             }
             else
             {
+
+		
                 if (PHP_OS != 'WINNT')
-                {
-                    $a = system("php\\php -q $filename", $ret);
+                { 	
+                    $a = system("php\\php -f $filename", $ret);
                 }
             }
+
+
             if ($ret == 255) // erro
                 new Dialog($a);
             else
@@ -501,11 +545,11 @@ class TulipEditor
     {
         $current = $this->notebook->get_current_page();
         $content = $this->notebook->get_nth_page($current);
-        $slots = $content->children;
+        $slots = $content->get_children();
         $slot1 = $slots[0];
         $slot2 = $slots[1];
-        $label = $slot1->widget;
-        $scintilla = $slot2->widget;
+        $label = $slot1;
+        $scintilla = $slot2;
         $file = $label->get();
         $texto = $scintilla->get_text();
         $Arquivo = $fs->get_filename();

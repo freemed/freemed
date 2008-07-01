@@ -63,9 +63,9 @@ class FunctionBox
     /***********************************************************/
     /* Define the size
     /***********************************************************/
-    function set_usize($width, $height)
+    function set_size_request($width, $height)
     {
-        $this->entry->set_usize($width, $height);
+        $this->entry->set_size_request($width, $height);
     }
 
     /***********************************************************/
@@ -75,7 +75,7 @@ class FunctionBox
     {
         global $Pixmaps;
         $janela = new GtkWindow;
-        $janela->connect_object('key_press_event', array(&$this,'KeyTest'), $janela);
+        $janela->connect_simple('key_press_event', array(&$this,'KeyTest'), $janela);
         $janela->set_title(_a('Functions'));
         $janela->set_position(GTK_WIN_POS_CENTER);
         $janela->set_default_size(320,320);
@@ -86,16 +86,22 @@ class FunctionBox
         $extensions = array('.fun');
         $this->RepositoryTree = $filetree = &new FileTree();
         $this->RepositoryTree->Info = $Info;
-        $filetree->set_column_width(0,400);
+      //  $filetree->set_column_width(0,400);
         $filetree->DefineExtensions($extensions);
         $filetree->AbreDiretorio('functions', null);
-        $filetree->set_column_width(0, 600);
+       // $filetree->set_column_width(0, 600);
         
+
+
         $SavedQueriesHandler = &new TreeHandler($filetree, array(0 => array($Pixmaps['require'], 'Apply')));
+	$SavedQueriesHandler->folder("functions");
         $ItemOpen = $SavedQueriesHandler->OpenAction;
-        $ItemOpen->connect_object('clicked', array(&$this, 'GetFunction'));
-        $ItemOpen->connect_object('clicked', array(&$janela, 'hide'));
-        //$janela->add($SavedQueriesHandler);
+	
+	
+
+        $ItemOpen->connect_simple('clicked', array(&$this, 'GetFunction'));
+        $ItemOpen->connect_simple('clicked', array(&$janela, 'hide'));
+        $janela->add($SavedQueriesHandler);
 
         $vbox->pack_start(darktxt(_a('Function Repository')), false, false);
         $vbox->pack_start($SavedQueriesHandler, true, true);
@@ -105,22 +111,44 @@ class FunctionBox
     }
     
     function GetFunction()
-    {
+    { 
         $FileTree = $this->RepositoryTree;
-        $node = $FileTree->selection[0];
-        $Info = $this->RepositoryTree->node_get_row_data($node);
+
+//        $node = $FileTree->selection[0];
+
+	
+	$selection=$FileTree->get_selection();
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$nodohijo = $model->get_value($iter, 0);
+	$iter = $model->iter_parent($iter);
+	$nodopadre = $model->get_value($iter, 0); 
+	
+	
+	$Info=$nodopadre.'/'.$nodohijo;
+
+
+
+  //      $Info = $this->RepositoryTree->node_get_row_data($node);
         
+
+
+
         if (!$Info)
         {
             return true;
         }
-        $Info = str_replace('functions', '', $Info);
-        //$function = str_replace("C:\\", "\\", $Info);
-        //$function = substr($function, 1);
-        $Info = str_replace("\\", '/', $Info);
-        $function = str_replace('functions', '', $Info);
+
+         $Info = str_replace("\\", '/', $Info);
+	
+	$Info= str_replace('functions', '', $Info);
+
+
+        $function1 = $Info;
         $string = $this->RepositoryTree->Info;
-        $this->set_text("{$function}");
+
+	 
+
+        $this->set_text('{'.$Info.'}');
         return;
     }
 

@@ -13,6 +13,7 @@ function a_to_number($string_column, $array_row)
             $return .= $char;
         }
     }
+
     return $return;
 }
 ?>

@@ -4,23 +4,29 @@
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
 class IList
-{
+{ 
+protected $model;
+protected $clist;
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
     function IList($items, $action, $list_pixmap, $title, $listtitle, $param = null)
     {
-        $this->window = new GtkWindow(GTK_WINDOW_DIALOG);
-        $this->window->set_title($title);
+      //  $this->window = new GtkWindow(Gtk::WIN_POS_CENTER);
+	$this->window = new GtkWindow();
+                
+	$this->window->set_title($title);
         $this->window->set_position(GTK_WIN_POS_CENTER);
         $this->window->set_border_width(10);
         $this->window->set_default_size(300, 160);
-        $this->window->set_policy(false, true, false);
+        $this->window->set_resizable(false);
         $this->window->set_modal(true);
         $this->window->realize();
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
-        $this->pixmaps['ok']     = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_ok.xpm');
-        $this->pixmaps['cancel'] = Gdk::pixmap_create_from_xpm($this->window->window, null, images . 'ico_cancel.xpm');
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
+	$color = &new GdkColor(0, 65535, 65535); 
+
+        $this->pixmaps['ok']     =  images . 'ico_ok.xpm';
+        $this->pixmaps['cancel'] = images . 'ico_cancel.xpm';
 
         $this->action = &$action;
         $this->param  = $param;
@@ -30,18 +36,50 @@ class IList
         $vbox = new GtkVBox(false,10);
         $this->window->add($vbox);
 
-        $this->clist = $clist = new GtkCList(1, array($listtitle));
-        $scroll->add($clist);
+
+
+        
+
+    
+	$this->model = new GtkListStore(Gtk::TYPE_STRING);
+	$this->clist=new GtkTreeview($this->model);
+	//set up treeview columns
+	$cell_renderer = new GtkCellRendererText();
+	$column = new GtkTreeViewColumn($listtitle, $cell_renderer, 'text', 0);
+	$this->clist->append_column($column);
+	$this->clist->show();
+
+
+	//$this->clist = $clist = new GtkTreeview(1, array($listtitle));
+ 
+
+        $scroll->add($this->clist);
         foreach($items as $item)
         {
-            $node = $clist->append(array($item));
-            $clist->set_pixtext($node, 0, $item, 5, $list_pixmap[0], $list_pixmap[1]);
-        }
+
+	
+           // $node = $clist->append(array($item));
+           // $clist->set_pixtext($node, 0, $item, 5, $list_pixmap[0], $list_pixmap[1]);
+            $node = $this->model->append(array($item));
+          //  $clist->set_pixtext($node, 0, $item, 5, $list_pixmap[0], $list_pixmap[1]);
+        
+	}
+
+	$this->clist->expand_all();   
+
+	
+	$Pixmaps['ok']     = 'interface/ico_ok.xpm';
+
 
         $vbox->pack_start($scroll, true, true);
-        $button1 = new Button(array(&$this, 'Execute'), _a('OK'), $this->pixmaps['ok'], IMAGEBUTTON);
+        $button1 = new Button(array(&$this, 'Execute'), _a('OK'), $Pixmaps['ok'], IMAGEBUTTON);
         $button2 = new Button(array(&$this->window, 'hide'), _a('Cancel'), $this->pixmaps['cancel'], IMAGEBUTTON);
-        $button1->set_relief(GTK_RELIEF_NONE);
+       
+
+
+
+
+	$button1->set_relief(GTK_RELIEF_NONE);
         $button2->set_relief(GTK_RELIEF_NONE);
         $hbox = new GtkHBox;
         $hbox->pack_start(new GtkHBox, true, true);
@@ -58,11 +96,19 @@ class IList
     /***********************************************************/
     function GetItem()
     {
-        $row = $this->clist->selection[0];
+
+
+
+
+
+	$row  = $this->clist->get_selection();
+        //$row = $this->clist->selection[0];
         if (($row !== false) and ($row !== null))
         {
-            $data = $this->clist->get_pixtext($row, 0);
-            return $data[0];
+   	     list($model, $iter) = $row->get_selected(); // note 3
+	     $data  = $model->get_value($iter, 0);
+            //$data = $this->clist->get_pixtext($row, 0);
+            return $data;
         }
         else
         {
@@ -75,6 +121,8 @@ class IList
     /***********************************************************/
     function Execute()
     {
+
+	
         if ($this->GetItem())
         {
             $this->window->hide();

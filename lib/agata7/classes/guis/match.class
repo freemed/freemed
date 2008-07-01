@@ -17,7 +17,7 @@ class Match
         $bar = (OS == 'WIN') ? $bar = '\\' : $bar = '/';
         $this->glade= &new GladeXML(images . 'match.glade');
         $this->window = $this->glade->get_widget( 'window1' );
-        $this->window->connect_object('key_press_event', array(&$this, 'KeyTest'));
+        $this->window->connect_simple('key_press_event', array(&$this, 'KeyTest'));
         
         $this->clist1   = $this->glade->get_widget("clist1");
         $this->clist2   = $this->glade->get_widget("clist2");
@@ -33,9 +33,9 @@ class Match
         $this->agataDB = $agataDB;
         $combolist = $this->comboTables->list;
         
-        $combolist->connect_object('button_press_event', array(&$this,'on_comboTablesClick'));
-        $this->cancel->connect_object('clicked', array(&$this,'Close'));
-        $this->direita->connect_object('clicked', array(&$this, 'on_direita_clicked'));
+        $combolist->connect_simple('button_press_event', array(&$this,'on_comboTablesClick'));
+        $this->cancel->connect_simple('clicked', array(&$this,'Close'));
+        $this->direita->connect_simple('clicked', array(&$this, 'on_direita_clicked'));
     }
 
     /***********************************************************/

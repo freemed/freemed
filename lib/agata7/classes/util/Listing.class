@@ -3,21 +3,45 @@
 /* Listing class
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class Listing extends GtkCList
+class Listing extends GtkTreeview
 {
+protected $model;
+protected $count;
+
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function Listing($Title)
-    {
-        GtkCList::GtkCList(count($Title),$Title);
-        GtkCList::set_selection_mode(GTK_SELECTION_SINGLE);
-        $this->count = count($Title);
-        for ($n=0; $n<=count($Title); $n++)
-        {
-            GtkCTree::set_column_resizeable($n, true);
-        }
-    }
+
+ 	function  __construct($Title)
+    	{  
+		$this->model =$this->resizetreeview(count($Title));
+
+		 parent::__construct($this->model);
+		$this->set_enable_tree_lines(true);
+		    // $this->set_enable_tree_lines(1);
+
+		    $this->count = count($Title);
+		    for ($n=0; $n<count($Title); $n++)
+		    {
+			   $cell_renderer = new GtkCellRendererText();
+			   $column = new GtkTreeViewColumn($Title[$n], $cell_renderer, 'text', $n);
+			   $column->set_cell_data_func($cell_renderer,array(&$this, 'format_col')); 
+			   $this->append_column($column);
+		     }
+		$this->expand_all();
+	}
+
+    // self-defined function to display alternate row color
+    // Funcion para configurar los colores alternos de las filas	
+	function format_col($column, $cell, $model, $iter)
+	 {
+	    $path = $model->get_path($iter); // get the current path
+	    $row_num = $path[0]; // note 2
+	    $row_color = ($row_num%2==1) ? '#dddddd' : '#ffffff'; // sets the row color for odd and even rows
+	    $cell-> set_property('cell-background', $row_color); // sets the background color!
+
+	}
+
 
     /***********************************************************/
     /* Append new items
@@ -26,12 +50,12 @@ class Listing extends GtkCList
     {
         if (count($Contents) == $this->count)
         {
-            $row = GtkCList::append($Contents);
-            if ($row % 2 != 0)
-            {
-                GtkCList::set_background($row, new GdkColor('#EEEEEE'));
-            }
+      //      $row = GtkCList::append($Contents);
+	    $this->model->append($Contents);	
         }
+
+	
+
     }
 
     /***********************************************************/
@@ -39,13 +63,62 @@ class Listing extends GtkCList
     /***********************************************************/
     function AppendItems($Contents, $style = null)
     {
-        if (count($Contents) > 0)
+      /*  if (count($Contents) > 0)
         {
             foreach ($Contents as $content)
             {
                 $this->AppendLineItems($content);
             }
         }
+	*/
+
+
+        if (count($Contents) > 0)
+        {
+		    for ($row=0; $row<count($Contents); ++$row) {
+			$values = array();
+			for ($col=0; $col<count($Contents[$row]); ++$col) {
+			    $values[] = $Contents[$row][$col];
+			}
+			$this->model->append($values);
+		    }
+	}
+
     }
+
+     function clear()
+    {
+	$this->model->Clear();
+	$this->model =$this->resizetreeview($this->count);
+	
+	$this->set_model($this->model);	    
+      
+    }
+
+
+	function resizetreeview($count){
+	if ($count==1)  $model = new GtkListStore(Gtk::TYPE_STRING);
+	if ($count==2)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==3)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==4)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+	if ($count==5)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+	if ($count==6)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==7)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==8)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+	if ($count==9)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==10)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==11)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==12)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+	if ($count==13)  $model = new GtkListStore(Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING,Gtk::TYPE_STRING);
+
+
+
+	return $model;
+
+}
+
 }
 ?>

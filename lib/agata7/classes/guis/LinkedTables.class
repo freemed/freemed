@@ -94,14 +94,15 @@ class LinkedTables
     {
         global $Pixmaps;
         $this->TreeList = new SimpleTree(array(_a('Table')));
-        $this->TreeList->set_selection_mode(GTK_SELECTION_SINGLE);
+	//--------------comentado por Miguel Casanova-----------        
+	//$this->TreeList->set_selection_mode(GTK_SELECTION_SINGLE);
         $this->BuildRecursive($Hierarquical, $nullparent);
         $this->window = new GtkWindow;
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'), $this->window);
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'), $this->window);
         $lastname = $this->agataDescription["table:$last"] ? $this->agataDescription["table:$last"] : $last;
         $this->jointable1 = $last;
         $this->window->set_title(($join) ? _a('Join') . ":: $lastname" : _a('Require Tables'));
-        $this->window->set_uposition(((int) (Gdk::screen_width() /2)) -190, (((int) (Gdk::screen_height() /2)))-240);
+        $this->window->set_uposition(((int) (GdkScreen::width() /2)) -190, (((int) (GdkScreen::height() /2)))-240);
         $this->window->set_default_size(380,280);
         $this->window->realize();
 
@@ -119,7 +120,10 @@ class LinkedTables
             $button2 = new Button(array(&$this->window, 'hide'), _a('Close'), $Pixmaps['cancel'], IMAGEBUTTON);
             $Scroll = new GtkScrolledWindow;
             $this->AllTableList = new SimpleTree(array(_a('Tables')));
-            $this->AllTableList->set_selection_mode(GTK_SELECTION_SINGLE);
+
+
+//------------comentado por miguel casanova            
+		//$this->AllTableList->set_selection_mode(GTK_SELECTION_SINGLE);
             $Scroll->add($this->AllTableList);
             $vbox->pack_start(darktxt(_a('All Tables')), false, false);
             $vbox->pack_start($Scroll, true, true, 0);
@@ -128,7 +132,13 @@ class LinkedTables
             foreach ($AllTables as $table => $nickname)
             {
                 $filho = $this->AllTableList->AppendLineItems(null, array($nickname), $Pixmaps['table']);
-                $this->TreeList->node_set_row_data($filho, array($table));
+		
+
+		//------------comentado por miguel casanova	    
+print_r ('-' .  $table) ;
+		//  $this->TreeList->node_set_row_data($filho, array($table));
+	//	$this->TreeList->SetData($filho, array($table));
+//$this->TreeList->SetData(null, array($table));
             }
         }
         else
@@ -167,16 +177,18 @@ class LinkedTables
                 {
                     $nodo = $this->TreeList->AppendSubTree(array($nickname), $Pixmaps['table'], $parent);
                     $this->BuildRecursive($table, $nodo, $tmp);
-                    $this->TreeList->node_set_row_data($nodo, $tmp);
+                    $this->TreeList->SetData($nodo, $tmp);
                 }
                 else
                 {
                     $filho = $this->TreeList->AppendLineItems($parent, array($nickname), $Pixmaps['table']);
-                    $this->TreeList->node_set_row_data($filho, $tmp);
+                    $this->TreeList->SetData($filho, $tmp);
                 }
             }
         }
-        $this->TreeList->expand_recursive($parent);
+	//------comentado por Miguel Casanova
+        //$this->TreeList->expand_recursive($parent);
+	$this->TreeList->expand_all();
     }
 
     /***********************************************************/
@@ -199,7 +211,7 @@ class LinkedTables
     /* Join Tables
     /***********************************************************/
     function JoinTables()
-    {
+    { 
         $data = @$this->TreeList->GetData();
         
         if (!$data) // from linked tables list
@@ -217,8 +229,8 @@ class LinkedTables
             return;
         }
         $table2 = $data[0];
-
-        $pixmap = Gdk::pixmap_create_from_xpm($this->window->window, null, 'interface/ico_join2.xpm');
+	$color = &new GdkColor(0, 65535, 65535);
+        $pixmap = GdkPixmap::create_from_xpm($this->window->window, $color, 'interface/ico_join2.xpm');
         $this->MenuJoins = new GtkMenu;
 
         $this->joinkinds = null;
@@ -241,12 +253,12 @@ class LinkedTables
         
         foreach ($this->joinkinds as $joinkind)
         {
-            $option = new MyNormalMenuItem($pixmap,  FirstUpper($joinkind), null);
+            $option = new GtkMenuItem( FirstUpper($joinkind));
             $this->MenuJoins->append($option);
-            $option->connect_object('activate', array(&$this, 'SelectConstraints'), $joinkind, $table2);
+            $option->connect_simple('activate', array(&$this, 'SelectConstraints'), $joinkind, $table2);
         }
 
-        $this->MenuJoins->popup(null, null, null, 1, 1);
+        $this->MenuJoins->popup();
         $this->MenuJoins->show_all();
     }
 
@@ -288,7 +300,7 @@ class LinkedTables
     /* Apply Join
     /***********************************************************/
     function ApplyJoin($table1, $table2, $joinkind, $condition)
-    {
+    { 
         if ($condition)
         {
             call_user_func($this->callback, $table1, $table2, $joinkind, $condition);

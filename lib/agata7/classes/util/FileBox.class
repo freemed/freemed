@@ -11,6 +11,8 @@ class FileBox
     /***********************************************************/
     function FileBox($Description, $isdir)
     {
+
+	
         global $Pixmaps;
         $tooltip = &new GtkTooltips;
         $this->entry = &new GtkEntry;
@@ -63,9 +65,9 @@ class FileBox
     /***********************************************************/
     /* Define the size
     /***********************************************************/
-    function set_usize($width, $height)
+    function set_size_request($width, $height)
     {
-        $this->entry->set_usize($width, $height);
+        $this->entry->set_size_request($width, $height);
     }
 
     /***********************************************************/
@@ -73,12 +75,13 @@ class FileBox
     /***********************************************************/
     function FileSel($is_dir = false)
     {
+	
         $FileSelection = &new FileDialog(_a('File Selection'));
         $button_ok = $FileSelection->ok_button;
-        $button_ok->connect_object('clicked', array(&$this, 'GetFileName'), &$FileSelection, $is_dir);
+        $button_ok->connect_simple('clicked', array(&$this, 'GetFileName'), &$FileSelection, $is_dir);
 
         $button_cancel = $FileSelection->cancel_button;
-        $button_cancel->connect_object('clicked', array(&$FileSelection, 'hide'));
+        $button_cancel->connect_simple('clicked', array(&$FileSelection, 'hide'));
     }
 
     /***********************************************************/

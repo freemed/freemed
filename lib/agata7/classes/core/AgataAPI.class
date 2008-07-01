@@ -215,6 +215,51 @@ class AgataAPI
         $this->imageReplace[$imageName] = $imagePath;
     }
 
+
+
+    function fileDialogOpen()
+    {
+	
+        switch ($this->format)
+        {
+            case ('txt'):
+                $content_type = 'text/plain';
+                break;
+            case ('csv'):
+                $content_type = 'text/plain';
+                break;
+            case 'xml':
+                $content_type = 'text/xml';
+                break;
+            case 'pdf':
+                $content_type = 'application/pdf';
+                break;
+            case 'ps':
+                $content_type = 'application/postscript';
+                break;
+            case 'sxw':
+                $content_type = 'application/sxw';
+                break;
+            case 'dia':
+                $content_type = 'application/dia';
+                break;
+        }
+
+        $download = '/tmp/'.$this->outputPath;
+
+        if ($this->format != 'html')
+        {
+	    header("Content-type: $content_type");
+ 	    header("Content-Disposition: attachment;");
+            header("Content-Disposition: filename=\"$download\"");
+  	    header ("Cache-Control: cache"); // HTTP/1.1 
+            header ("Content-Transfer-Encoding: binary");
+        }
+
+            readfile('/tmp/'.$this->outputPath);
+	   @unlink(RemoveExtension('/tmp/'.$this->outputPath) . '.pdf');
+	   @unlink(RemoveExtension('/tmp/'.$this->outputPath) . '.sxw');
+    }
     function fileDialog()
     {
         switch ($this->format)
@@ -278,23 +323,30 @@ class AgataAPI
             return;
         }
 
-        if ($this->parameters)
-        {
-            $header = $Report['Report']['Header']['Body'];
-            $footer = $Report['Report']['Footer']['Body'];
-            
-            foreach ( $this->parameters as $key => $value )
-            {
-                $header = str_replace($key,$value,$header);
-                $footer = str_replace($key,$value,$footer);
-            }
-            $Report['Report']['Header']['Body'] = $header;
-            $Report['Report']['Footer']['Body'] = $footer;
-        }
-        
+
+    	if ($this->format!='MergePDF' && $this->format!='MergePdf' && $this->format!='Mergepdf' && $this->format!='mergepdf'){
+
+		if ($this->parameters)
+		{
+		    $header = $Report['Report']['Header']['Body'];
+		    $footer = $Report['Report']['Footer']['Body'];
+		    
+		    foreach ( $this->parameters as $key => $value )
+		    {
+		        $header = str_replace($key,$value,$header);
+		        $footer = str_replace($key,$value,$footer);
+		    }
+		    $Report['Report']['Header']['Body'] = $header;
+		    $Report['Report']['Footer']['Body'] = $footer;
+		}
+	}        
         $DataSet = $Report['Report']['DataSet'];
         
         # Process the Query.
+
+	
+
+	
         $Query = AgataCore::CreateQuery($Project, $DataSet, $this->parameters);
 
         if (is_agata_error($Query))
@@ -309,10 +361,28 @@ class AgataAPI
             $params[2] = $this->outputPath;
             $params[3] = $Query;
             $params[4] = $Report;
-            $params[6] = $this->layout;
+             if ($this->layout=='MergePDF' || $this->layout=='MergePdf' || $this->layout=='Mergepdf' || $this->layout=='mergepdf'){
+		    $params[6] = $this->parameters;
+	}
+	else
+	{
+		 $params[6] = $this->layout;
+	}
             
-            $myreport = AgataCore::CreateReport($this->format, $params);
-            $myreport->Process();
+        if ($this->layout=='MergePDF' || $this->layout=='MergePdf' || $this->layout=='Mergepdf' || $this->layout=='mergepdf'){	
+
+
+	    $myreport = AgataCore::CreateMergedDocument($params, 'Pdf');
+            $myreport->Generate();
+		
+	}
+	else
+	{
+           $myreport = AgataCore::CreateReport($this->format, $params);
+           $myreport->Process();
+			
+	}
+
         }
         return true;
     }

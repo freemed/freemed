@@ -8,17 +8,20 @@ class HintWindow extends GtkWindow
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function HintWindow($bgcolor = '#FFFFFF')
+    public function __construct($bgcolor =16777215)
     {
-        GtkWindow::GtkWindow(GTK_WINDOW_POPUP);
+
+	parent::__construct(GTK_WINDOW_POPUP);
+
+        //GtkWindow::GtkWindow(GTK_WINDOW_POPUP);
         $style = new GtkStyle;
-        $style->bg[GTK_STATE_NORMAL] = new GdkColor($bgcolor);
-        GtkWindow::set_style($style);
+       // $style->bg[GTK_STATE_NORMAL] = new GdkColor(0,0,$bgcolor);
+        $this->set_style($style);
 
         $this->content = new GtkVBox;
 
         $styleb = new GtkStyle;
-        $styleb->bg[GTK_STATE_NORMAL] = new GdkColor('#000000');
+        //$styleb->bg[GTK_STATE_NORMAL] = new GdkColor(0, 0, 0);
         $sep1 = new GtkVSeparator;
         $sep2 = new GtkVSeparator;
         $sep1->set_style($styleb);
@@ -37,8 +40,8 @@ class HintWindow extends GtkWindow
         $vbox->pack_start($sep1);
         $vbox->pack_start($this->content);
         $vbox->pack_start($sep2);
-        GtkWindow::add($hbox);
-        GtkWindow::show_all();
+        $this->add($hbox);
+        $this->show_all();
     }
 
     /***********************************************************/

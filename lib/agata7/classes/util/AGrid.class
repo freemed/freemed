@@ -11,14 +11,14 @@ class AGrid
     function AGrid($Title, $Titles, $width, $height, $label='ok')
     {
         $this->window = &new GtkWindow;
-        $this->window->connect_object('delete-event', array(&$this,'FechaGrid'));
+        $this->window->connect_simple('delete-event', array(&$this,'FechaGrid'));
         $this->window->set_title($Title);
         $this->window->set_border_width(0);
         $this->window->set_default_size($width, $height);
         $this->window->set_uposition(80, 80);
         
         $this->window->add_events(GDK_KEY_PRESS_MASK);
-        $this->window->connect_object('key_press_event', array(&$this,'KeyTest'));
+        $this->window->connect_simple('key_press_event', array(&$this,'KeyTest'));
         $vbox = &new GtkVBox();
         $this->window->add($vbox);
         $vbox->show();
@@ -27,7 +27,7 @@ class AGrid
         $scrolled_win->set_border_width(5);
         $scrolled_win->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
         
-        $this->clist = &new GtkCList(count($Titles), $Titles);
+        $this->clist = &new GtkTreeview(count($Titles), $Titles);
         $scrolled_win->add($this->clist);
         $this->clist->show();
         
@@ -38,7 +38,7 @@ class AGrid
         $hbox->show();
         
         $this->button = &new GtkButton($label);
-        $this->button->connect_object('clicked', array(&$this, 'FechaGrid'));
+        $this->button->connect_simple('clicked', array(&$this, 'FechaGrid'));
         $hbox->pack_start($this->button);
         $this->button->show();
         

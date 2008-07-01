@@ -309,7 +309,11 @@ class AgataMergePdf extends AgataMerge
         {
             $Lines = explode("\n", $textMerge);
             $i = 0;
-            unset($this->subQueryLine[$numberSubReport]);
+
+	    if (isset($this->subQueryLine[$numberSubReport]))
+	   {
+		 unset($this->subQueryLine[$numberSubReport]);
+	    }
             while ($Subrow = $subQuery->FetchNext())
             {
                 $this->subQueryLine[$numberSubReport][] = $Subrow;

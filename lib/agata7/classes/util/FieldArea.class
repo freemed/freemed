@@ -15,7 +15,7 @@ class FieldArea extends GtkFixed
         $this->col        = 4;
     }
     
-    function connect_object($signal, $callback)
+    function connect_simple($signal, $callback)
     {
         $this->callbacks[$signal] = $callback;
     }
@@ -84,7 +84,7 @@ class FieldArea extends GtkFixed
     {
         $this->row = 0;
         $this->col = 4;
-        foreach ($this->children() as $widget)
+        foreach ($this->get_children() as $widget)
         {
             GtkFixed::move($widget, $this->col, $this->row);
             if ($this->horizontal)
@@ -102,12 +102,11 @@ class FieldArea extends GtkFixed
     {
         //var_dump($widget->get_data(0));
         $menu = new GtkMenu;
-        $icon = gdk::pixmap_create_from_xpm($widget->window, null, images . 'menu_del.xpm');
-        $item1 = new MyNormalMenuItem($icon, 'Remover');
-        $item1->connect_object('activate', array(&$this, 'RemoveWidget'), $widget);
+        $item1 = new GtkMenuItem('Remover');
+        $item1->connect_simple('activate', array(&$this, 'RemoveWidget'), $widget);
         $menu->append($item1);
         $menu->show_all();
-        $menu->popup(null,null,null,1,1);
+        $menu->popup();
     }
     
     function RemoveWidget($widget)
@@ -131,7 +130,7 @@ class FieldArea extends GtkFixed
     
     function EraseByName($name)
     {
-        foreach ($this->children() as $widget)
+        foreach ($this->get_children() as $widget)
         {
             $data = $widget->get_data(0);
             if ($name == $data[1])
@@ -143,7 +142,7 @@ class FieldArea extends GtkFixed
     
     function GetInfo()
     {
-        if ($this->children())
+        if ($this->get_children())
         {
             foreach ($this->children() as $widget)
             {

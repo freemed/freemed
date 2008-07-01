@@ -8,11 +8,20 @@ class Icone extends GtkButton
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function Icone($gdkwindow, $imagem, $texto, $dica, $horizontal = false)
-    {
-        GtkButton::GtkButton();
-        $Pixmap = Gdk::pixmap_create_from_xpm($gdkwindow, null, $imagem);
-        $Imagem = new GtkPixmap($Pixmap[0], $Pixmap[1]);
+ 
+
+ 	function  __construct($gdkwindow, $imagem, $texto, $dica, $horizontal = false)
+    	{    parent::__construct();
+		
+        //$Pixmap = GdkPixmap::create_from_xpm($gdkwindow, null, $imagem);
+        //$Imagem = new GtkPixmap($Pixmap[0], $Pixmap[1]);
+
+
+	$Pixmap = GdkPixbuf::new_from_file($imagem);
+	$Imagem  = new GtkImage();
+	$Imagem->set_from_pixbuf($Pixmap);
+
+
         $Rotulo = new GtkLabel($texto);
         
         $help = &new GtkTooltips;
@@ -28,7 +37,7 @@ class Icone extends GtkButton
         $box->pack_start($Imagem);
         $box->pack_start($Rotulo);
         
-        GtkButton::add($box);
+        $this->add($box);
     }
 }
 
@@ -44,7 +53,7 @@ class ToggleIcone extends GtkToggleButton
     function ToggleIcone($imagem, $texto, $dica)
     {
         GtkToggleButton::GtkToggleButton();
-        $Pixmap = Gdk::pixmap_create_from_xpm(null, null, $imagem);
+        $Pixmap = GdkPixmap::create_from_xpm(null, null, $imagem);
         $Imagem = new GtkPixmap($Pixmap[0], $Pixmap[1]);
         $Rotulo = new GtkLabel($texto);
         
@@ -67,18 +76,29 @@ class IconeImg extends GtkButton
     /***********************************************************/
     /* Constructor Method
     /***********************************************************/
-    function IconeImg($gdkwindow, $imagem, $dica)
-    {
-        GtkButton::GtkButton();
-        $Pixmap = Gdk::pixmap_create_from_xpm($gdkwindow, null, $imagem);
-        $Imagem = new GtkPixmap($Pixmap[0], $Pixmap[1]);
-        
+ 
+
+
+	
+
+ 	function  __construct($gdkwindow, $imagem, $dica)
+    	{    parent::__construct();
+		
+        //    GtkButton::GtkButton();
+        //$Pixmap = GdkPixmap::create_from_xpm($gdkwindow, null, $imagem);
+        //$Imagem = new GtkPixmap($Pixmap[0], $Pixmap[1]);
+    
+
+	$Pixmap = GdkPixbuf::new_from_file($imagem);
+	$Imagem  = new GtkImage();
+	$Imagem->set_from_pixbuf($Pixmap);
+       
         $help = &new GtkTooltips;
         $help->set_tip($this, $dica);
         $vbox = new GtkVBox;
         $vbox->pack_start($Imagem);
         
-        GtkButton::add($vbox);
+        $this->add($vbox);
     }
 }
 ?>

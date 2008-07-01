@@ -3,22 +3,71 @@
 /* Database Tree
 /* by Pablo Dall'Oglio 2001-2006
 /***********************************************************/
-class TableTree extends GtkCTree
-{
+class TableTree extends GtkTreeView
+{protected $model;
+ 	
     /***********************************************************/
     /* Constructor Method
-    /***********************************************************/
-    function TableTree($Title, $nick)
-    {
-        GtkCTree::GtkCTree(1, 0, array($Title));
-        GtkCTree::set_selection_mode(GTK_SELECTION_SINGLE);
-        GtkCTree::set_line_style(GTK_CTREE_LINES_SOLID);
-        $this->handler = GtkCTree::connect_object('tree-select-row', array(&$this, 'Abrir'));
+    /********************************************************/
+
+	function  __construct($Title='', $nick=true)
+    	{
+
+		   $this->model= new GtkTreeStore(Gtk::TYPE_STRING);
+		    parent::__construct($this->model);
+		    $this->set_enable_tree_lines(true);
+                    $v=array($Title);
+	
+		    $this->count = count($v);
+
+		    for ($n=0; $n<count($v); $n++)
+		    {      
+			  
+
+	
+				 $column = new GtkTreeViewColumn();
+
+			   	// for image
+				     $cell_renderer = new GtkCellRendererPixbuf();
+				     $column->pack_start($cell_renderer, false);
+				     $column->set_cell_data_func($cell_renderer,array(&$this, 'format_col'));	
+	 
+				     $cell_renderer->set_property('pixbuf-expander-open',
+				     GdkPixbuf::new_from_file('interface/ico_table.xpm'));
+				     $cell_renderer->set_property('pixbuf-expander-closed',
+				     GdkPixbuf::new_from_file('interface/ico_table.xpm'));
+
+			    // for text
+
+				     $cell_renderer = new GtkCellRendererText();
+	     			     $column->pack_start($cell_renderer, true);
+                                     $column->set_attributes($cell_renderer, 'text', $n);
+
+
+
+			   $this->append_column($column);
+			 
+	      		   $column->set_title($Title);
+		     }
+		    $this->handler = $this->connect_simple('row-activated', array(&$this, 'Abrir'));	
+		    
+
+		$this->expand_all();
         
         $this->BotaoOk = new GtkButton;
         $this->nick = $nick;
         $this->opened = null;
+         $this->show();
+	
     }
+ 
+ //establece los iconos que se mostraran en el treeview
+	function format_col($column, $cell, $model, $iter)
+	 {
+	 $cell->set_property('pixbuf', GdkPixbuf::new_from_file('interface/ico_field.xpm'));
+	 
+	}
+
 
     /***********************************************************/
     /* Load specific tables
@@ -32,7 +81,7 @@ class TableTree extends GtkCTree
         $this->agataDataDescription = $DataDescription;
         if ($this->handler)
         {
-            GtkCTree::disconnect($this->handler);
+            GtkTreeView::disconnect($this->handler);
             $this->handler = null;
         }
         
@@ -40,6 +89,7 @@ class TableTree extends GtkCTree
         {
             $Table = trim($Table);
             $index = "table:$Table";
+	    echo  "$index"; 	
             if (!$this->Tables[$Table])
             {
                 $this->Tables[$Table] = true;
@@ -53,13 +103,18 @@ class TableTree extends GtkCTree
                     $text = array($Table);
                 }
 
-                $table = GtkCtree::insert_node(null, null, $text, 5,
-                $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+               // $table = GtkCtree::insert_node(null, null, $text, 5,
+                //$pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+
+		 $table = $this->model->append(null, $text);
                 
-                GtkCtree::node_set_row_data($table, $index);
+                //GtkCtree::node_set_row_data($table, $index);
                 $this->LoadFields($index, $table);
+
+
             }
         }
+	$this->expand_all();
     }
 
     /***********************************************************/
@@ -96,6 +151,7 @@ class TableTree extends GtkCTree
             {
                 $text = $Table;
             }
+		
             
             $Tablesok[$index] = $text;
         }
@@ -103,11 +159,15 @@ class TableTree extends GtkCTree
         
         foreach ($Tablesok as $index => $text)
         {
-            $table = GtkCtree::insert_node(null, null, array($text), 5,
-            $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+            //$table = GtkCtree::insert_node(null, null, array($text), 5,
+           // $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+		
+	   $table= $this->model->append(null,array($text));
+
             
-            GtkCtree::node_set_row_data($table, $index);
+            //GtkCtree::node_set_row_data($table, $index);
         }
+	$this->expand_all();
     }
 
     /***********************************************************/
@@ -115,7 +175,15 @@ class TableTree extends GtkCTree
     /***********************************************************/
     function ClearTree()
     {
-        GtkCtree::clear();
+	//        GtkCtree::clear();
+          $this->model= new GtkTreeStore(Gtk::TYPE_STRING);
+		  
+	
+	
+	$this->set_model($this->model);
+
+
+	
         $this->opened = null;
         $this->Tables = null;
     }
@@ -125,14 +193,25 @@ class TableTree extends GtkCTree
     /***********************************************************/
     function GetInfo()
     {
-        $selection = $this->selection;
-        
-        if ($selection)
-        {
-            $text = GtkCTree::node_get_row_data($selection[0]);
-            return $text;
-        }
-        return false;
+	// $selection = $this->selection;
+    
+	        $selection = $this->get_selection();
+		if (!$selection) return false;
+
+		 if ($selection)
+		{
+
+		list($model, $iter) = $selection->get_selected(); // note 3
+		$field = $model->get_value($iter, 0); // note 4
+
+		$iter = $model->iter_parent($iter);
+		$tabla = $model->get_value($iter, 0); // note 4
+	   	
+		 return 'Table:'.$tabla.':Field:'.$field;
+		}
+		return false;
+          
+
     }
 
     /***********************************************************/
@@ -140,44 +219,81 @@ class TableTree extends GtkCTree
     /***********************************************************/
     function ExpandCurrent()
     {
-        $selecao = $this->selection[0];
-        GtkCTree::expand($selecao);
+	//----comentado por miguel casanova
+        //$selecao = $this->selection[0];
+        //GtkCTree::expand($selecao);
+	$this->expand_all();
     }
 
     /***********************************************************/
     /* Removes the current node
     /***********************************************************/
     function RemoveCurrent()
-    {
-        $selecao = $this->selection[0];
-        $text = GtkCTree::node_get_row_data($selecao);
-        $pieces = explode(':', $text);
-        $table = $pieces[1];
+    { //---------comentado por miguel casanova
+       // $selecao = $this->selection[0];
+
+	$selection = $this->get_selection();
+	list($model, $iter) = $selection->get_selected(); // note 3
+	$text  = $model->get_value($iter, 0); // note 4
+
+	if ($iter==NULL || !isset($text) || !$text) return false;
+       // $text = GtkCTree::node_get_row_data($selecao);
+        //$pieces = explode(':', $text);
+        $table = $text;
+	//$table = $pieces[1];
         $this->Tables[$table] = false;
-        GtkCTree::remove_node($selecao);
-    }
+     //   GtkCTree::remove_node($selecao);
+	 $this->model->remove($iter);     
+	return true;
+     
+	}
 
     /***********************************************************/
     /* Opens the current node
     /***********************************************************/
     function Abrir()
     {
-        $selecao = $this->selection[0];
+       // $selecao = $this->selection[0];
+
+        $selecao= $this->get_selection();
+	list($model, $iter) = $selecao->get_selected(); // note 3
+	$text  = $model->get_value($iter, 0); // note 4
+
+	if ($iter==NULL || !isset($text) || !$text) return false;
+
+/*
         $index = GtkCTree::node_get_row_data($selecao);
         $pieces = explode(':', $index);
         $is_table = (count($pieces) == 2);
-        
+   */
+        $index = 'table:'.$model->get_value($iter, 0);
+	
+        $pieces = explode(':', $index);
+        $is_table = (count($pieces) == 2);
+      
+	
         if ($is_table && (!$this->opened[$index]))
         {
             $this->opened[$index] = true;
-            if ($this->LoadFields($index, $selecao))
+
+
+/*            if ($this->LoadFields($index, $selecao))
             {
-                GtkCTree::expand($selecao);
+                $this->expand($selecao);
+
+            }*/
+
+            if ($this->LoadFields($index, $iter))
+            {
+                $this->expand_all();
+
             }
         }
         elseif ($is_table && ($this->opened[$index]))
         {
-            GtkCTree::expand($selecao);
+            //$this->expand($selecao);
+            $this->expand_all();
+
         }
         else
         {
@@ -217,14 +333,31 @@ class TableTree extends GtkCTree
                     if ($this->nick)
                     {
                         $nodetext = ($this->SeekDataDescription($index)) ? array($this->SeekDataDescription($index)) : array($Field);
+
                     }
                     else
                     {
                         $nodetext = array($Field);
                     }
                     
-                    $field = GtkCtree::insert_node($NodoRaiz, null, $nodetext, 5, $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
-                    GtkCTree::node_set_row_data($field, $index);
+                 //   $field = GtkCtree::insert_node($NodoRaiz, null, $nodetext, 5, $pixmap[0], $pixmap[1], $pixmap[0], $pixmap[1], false, false);
+
+
+
+
+		  $field  = $this->model->append($NodoRaiz, $nodetext);
+
+
+ 			//$root = GtkTreeView::insert_node($parent, null, $node, 5,
+      			//  $Pixmap[0], $Pixmap[1], $Pixmap[0], $Pixmap[1], false, false);
+
+  
+        		
+	
+
+
+
+                   // GtkCTree::node_set_row_data($field, $index);
                     
                 }
             }
