@@ -22,7 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 // Include the AgataAPI class
-include_once (dirname(dirname(__FILE__)).'/agata7/classes/core/AgataAPI.class');
+include_once ( FREEMED_DIR . '/lib/agata7/classes/core/AgataAPI.class' );
 
 // Class: org.freemedsoftware.api.Agata7
 //
@@ -60,7 +60,7 @@ class Agata7 {
 		// Create temporary file name
 		$output = tempnam('/tmp', 'fm_agata_');
 
-		$this->api->setReportPath(dirname(dirname(__FILE__)).'/data/report/'.$report.'.report');
+		$this->api->setReportPath( FREEMED_DIR . '/data/report/'.$report.'.report' );
 
 		// Set core database access information based on
 		// stuff that FreeMED defines in lib/settings.php
@@ -125,8 +125,7 @@ class Agata7 {
 	public function CreateForm ( $report ) {
 		$form = CreateObject('net.php.pear.HTML_QuickForm', 'form', 'get');
                 freemed::quickform_i18n(&$form);
-		$form->addElement('hidden', 'module', $_REQUEST['module']);
-		$form->addElement('hidden', 'report', $_REQUEST['report']);
+		$form->addElement('hidden', 'report', $report);
 		$form->addElement('hidden', 'action', 'view');
 		$form->setDefaults(array('action' => 'view'));
 
@@ -134,7 +133,7 @@ class Agata7 {
 		$_cache = freemed::module_cache();
 
 		// Get meta-information from the report
-		$this->api->setReportPath(dirname(dirname(dirname(__FILE__))).'/data/report/'.$report.'.report');
+		$this->api->setReportPath( FREEMED_DIR . '/data/report/'.$report.'.report' );
 		$report = $this->api->getReport();
 
 		// Display the header if one exists
@@ -219,8 +218,8 @@ class Agata7 {
 	//	to the system.
 	//
 	public function GetReports ( ) {
-		if (! ($d = dir(dirname(dirname(dirname(__FILE__))).'/data/report/')) ) {
-			DIE(get_class($this)." :: could not open directory '".dirname(dirname(dirname(__FILE__)))."/data/report/'");
+		if (! ($d = dir( FREEMED_DIR . '/data/report/' )) ) {
+			DIE(get_class($this)." :: could not open directory '". FREEMED_DIR . "/data/report/'");
 		}
 		while ($entry = $d->read()) {
 			if (eregi('\.report$', $entry)) {
@@ -286,7 +285,7 @@ class Agata7 {
 	//
 	public function _ReadMetaInformation ( $report ) {
                 // Get meta-information from the report
-                $this->api->setReportPath(dirname(dirname(dirname(__FILE__))).'/data/report/'.$report);
+                $this->api->setReportPath( FREEMED_DIR . '/data/report/' . $report );
                 $report = $this->api->getReport();
 
 		return $report['Report']['Properties'];
