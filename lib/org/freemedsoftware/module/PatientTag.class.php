@@ -106,6 +106,10 @@ class PatientTag extends SupportModule {
 	//
 	//	$tag - Textual name of tag
 	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
 	public function CreateTag ( $patient, $tag ) {
 		if ($patient and $tag) {
 			$user = freemed::user_cache();

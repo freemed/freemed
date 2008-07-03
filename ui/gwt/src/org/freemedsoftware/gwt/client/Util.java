@@ -44,6 +44,8 @@ import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Module.MultumDrugLexicon;
 import org.freemedsoftware.gwt.client.Module.MultumDrugLexiconAsync;
+import org.freemedsoftware.gwt.client.Module.PatientTag;
+import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Module.RemittBillingTransport;
 import org.freemedsoftware.gwt.client.Module.RemittBillingTransportAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocuments;
@@ -192,10 +194,16 @@ public final class Util {
 				.compareTo("org.freemedsoftware.gwt.client.Module.MessagesModule") == 0) {
 			service = (MessagesModuleAsync) GWT.create(MessagesModule.class);
 		}
+
 		if (className
 				.compareTo("org.freemedsoftware.gwt.client.Module.MultumDrugLexicon") == 0) {
 			service = (MultumDrugLexiconAsync) GWT
 					.create(MultumDrugLexicon.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.PatientTag") == 0) {
+			service = (PatientTagAsync) GWT.create(PatientTag.class);
 		}
 
 		if (className
