@@ -30,6 +30,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
@@ -72,6 +73,14 @@ public class PatientScreen extends ScreenInterface {
 			menuBar_1.addItem("Letter", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Letter", new LetterEntry(), state,
+							getObject());
+				}
+			});
+
+			menuBar_1.addItem("Patient Correspondence", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Patient Correspondence",
+							new PatientCorrespondenceEntry(), state,
 							getObject());
 				}
 			});
