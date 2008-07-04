@@ -41,6 +41,7 @@ class AppointmentFollowup extends EMRModule {
 		'appatient',
 		'apdatecreated',
 		'apdatetarget',
+		'appriority',
 		'apreason',
 		'apschedulerlink',	
 		'approvider',

@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `apptplanning` (
 	appatient		BIGINT UNSIGNED NOT NULL,
 	apdatecreated		TIMESTAMP(14) NOT NULL DEFAULT NOW(),
 	apdatetarget		DATE NOT NULL,
+	appriority		INT NOT NULL DEFAULT 0,
 	apreason		VARCHAR (150),
 	apschedulerlink		INT UNSIGNED NOT NULL DEFAULT 0,
 	approvider		BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -48,6 +49,7 @@ BEGIN
 	DROP TRIGGER apptplanning_Update;
 
 	#----- Upgrades
+	ALTER TABLE apptplanning ADD COLUMN appriority INT NOT NULL DEFAULT 0 AFTER apdatetarget;
 END
 //
 DELIMITER ;
