@@ -40,6 +40,8 @@ import org.freemedsoftware.gwt.client.Api.Tickler;
 import org.freemedsoftware.gwt.client.Api.TicklerAsync;
 import org.freemedsoftware.gwt.client.Module.Annotations;
 import org.freemedsoftware.gwt.client.Module.AnnotationsAsync;
+import org.freemedsoftware.gwt.client.Module.Medications;
+import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Module.MultumDrugLexicon;
@@ -188,6 +190,11 @@ public final class Util {
 		if (className
 				.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {
 			service = (AnnotationsAsync) GWT.create(Annotations.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.Medications") == 0) {
+			service = (MedicationsAsync) GWT.create(Medications.class);
 		}
 
 		if (className
