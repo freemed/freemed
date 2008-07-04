@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 
@@ -53,6 +54,8 @@ public class PatientTagsWidget extends Composite {
 	protected final FlowPanel flowPanel;
 
 	protected final TextBox wEntry;
+
+	protected CurrentState state;
 
 	public PatientTagsWidget() {
 		flowPanel = new FlowPanel();
@@ -145,6 +148,9 @@ public class PatientTagsWidget extends Composite {
 		populate();
 	}
 
+	/**
+	 * Populate the widget via RPC.
+	 */
 	protected void populate() {
 		if (Util.isStubbedMode()) {
 			addTagToDisplay("testTag1");
@@ -166,6 +172,10 @@ public class PatientTagsWidget extends Composite {
 		}
 	}
 
+	/**
+	 * Internal method to retrieve proxy object from Util.getProxy()
+	 * @return
+	 */
 	protected PatientTagAsync getProxy() {
 		PatientTagAsync p = null;
 		try {
