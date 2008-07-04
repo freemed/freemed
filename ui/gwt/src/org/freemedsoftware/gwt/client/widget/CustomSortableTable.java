@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
@@ -71,7 +72,7 @@ public class CustomSortableTable extends SortableTable {
 	/**
 	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 */
-	protected HashMap indexMap;
+	protected HashMap indexMap = new HashMap();
 
 	protected Integer maximumRows = new Integer(20);
 
@@ -184,13 +185,17 @@ public class CustomSortableTable extends SortableTable {
 		data = newData;
 		int rows = (data.length < maximumRows.intValue()) ? data.length
 				: maximumRows.intValue();
+		GWT.log("rows = " + new Integer(rows).toString(), null);
 		for (int iter = 0; iter < rows; iter++) {
 			// Set the value in the index map so clicks can be converted
-			indexMap.put(new Integer(iter++).toString(), data[iter]
-					.get(indexName));
+			String indexValue = (String) data[iter].get(indexName);
+			GWT.log("indexValue = " + indexValue, null);
+			String rowValue = String.valueOf(iter + 1);
+			GWT.log("rowValue = " + rowValue, null);
+			indexMap.put((String) rowValue, (String) indexValue);
 			for (int jter = 0; jter < columns.length; jter++) {
 				// Populate the column
-				setText(iter++, jter, (String) data[iter]
+				setText(iter + 1, jter, (String) data[iter]
 						.get((String) columns[jter].getHashMapping()));
 			}
 		}

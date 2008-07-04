@@ -132,8 +132,8 @@ public class PatientSearchScreen extends ScreenInterface {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				// Get information on row...
 				try {
-					final Integer patientId = new Integer((String) patientMap
-							.get(sortableTable.getText(row, 3)));
+					final Integer patientId = new Integer(sortableTable
+							.getValueByRow(row));
 					final String patientName = (String) sortableTable.getText(
 							row, 0)
 							+ ", " + (String) sortableTable.getText(row, 1);
