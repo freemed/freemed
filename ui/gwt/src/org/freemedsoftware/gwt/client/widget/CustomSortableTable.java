@@ -24,11 +24,61 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class CustomSortableTable extends SortableTable {
+
+	public class Column {
+		protected String heading;
+
+		protected String hashMapping;
+
+		public Column() {
+		}
+
+		public Column(String newHeading, String newHashMapping) {
+			setHeading(newHeading);
+			setHashMapping(newHashMapping);
+		}
+
+		public String getHashMapping() {
+			return hashMapping;
+		}
+
+		public String getHeading() {
+			return heading;
+		}
+
+		public void setHashMapping(String newHashMapping) {
+			hashMapping = newHashMapping;
+		}
+
+		public void setHeading(String newHeading) {
+			heading = newHeading;
+		}
+	}
+
+	protected Column[] columns = new Column[] {};
+
+	protected String indexName = new String("id");;
+
+	/**
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	protected HashMap indexMap;
+
+	protected Integer maximumRows = new Integer(20);
+
+	/**
+	 * @gwt.typeArgs <java.lang.String,java.lang.String>
+	 */
+	protected HashMap[] data;
 
 	public CustomSortableTable() {
 		super();
@@ -38,15 +88,49 @@ public class CustomSortableTable extends SortableTable {
 	}
 
 	/**
-	 * Format table with boiler plate.
+	 * Add an additional column definition.
+	 * 
+	 * @param col
+	 */
+	public void addColumn(Column col) {
+		int currentCols = 0;
+		try {
+			currentCols = columns.length;
+		} catch (Exception e) {
+
+		}
+		this.addColumnHeader(col.getHeading(), currentCols);
+
+		/**
+		 * @gwt.typeArgs <Column>
+		 */
+		Set sA = new HashSet();
+		for (int iter = 0; iter < currentCols; iter++) {
+			sA.add(columns[iter]);
+		}
+		sA.add(col);
+		columns = (Column[]) sA.toArray(new Column[0]);
+	}
+
+	/**
+	 * Add an additional column definition.
+	 * 
+	 * @param col
+	 */
+	public void addColumn(String headerName, String hashMapping) {
+		addColumn(new Column(headerName, hashMapping));
+	}
+
+	/**
+	 * ` Format table with boiler plate.
 	 * 
 	 * @param columnCount
 	 *            Number of columns present.
 	 */
-	public void formatTable(int rowCount, int columnCount) {
+	public void formatTable(int rowCount) {
 		{
 			CellFormatter cellFormatter = getCellFormatter();
-			for (int colIndex = 0; colIndex <= columnCount; colIndex++) {
+			for (int colIndex = 0; colIndex < columns.length; colIndex++) {
 				cellFormatter.setStyleName(0, colIndex, "headerStyle");
 				cellFormatter.setAlignment(0, colIndex,
 						HasHorizontalAlignment.ALIGN_CENTER,
@@ -67,7 +151,7 @@ public class CustomSortableTable extends SortableTable {
 						rowFormatter.setStyleName(rowIndex, "tableRow");
 					}
 					// Set column alignments and fonts
-					for (int colIndex = 0; colIndex < columnCount; colIndex++) {
+					for (int colIndex = 0; colIndex < columns.length; colIndex++) {
 						cellFormatter.setStyleName(rowIndex, colIndex,
 								"customFont");
 						cellFormatter.setAlignment(rowIndex, colIndex,
@@ -79,6 +163,46 @@ public class CustomSortableTable extends SortableTable {
 		} catch (Exception e) {
 
 		}
+	}
+
+	/**
+	 * Resolve value of row based on the physical row number on the actual view.
+	 * Meant to be used for things like TableListener.
+	 * 
+	 * @param row
+	 * @return
+	 */
+	public String getValueByRow(int row) {
+		return (String) indexMap.get((String) new Integer(row).toString());
+	}
+
+	/**
+	 * @gwt.typeArgs newData <java.lang.String,java.lang.String>
+	 * @param newData
+	 */
+	public void loadData(HashMap[] newData) {
+		data = newData;
+		int rows = (data.length < maximumRows.intValue()) ? data.length
+				: maximumRows.intValue();
+		for (int iter = 0; iter < rows; iter++) {
+			// Set the value in the index map so clicks can be converted
+			indexMap.put(new Integer(iter++).toString(), data[iter]
+					.get(indexName));
+			for (int jter = 0; jter < columns.length; jter++) {
+				// Populate the column
+				setText(iter++, jter, (String) data[iter]
+						.get((String) columns[jter].getHashMapping()));
+			}
+		}
+		formatTable(rows);
+	}
+
+	public void setIndexName(String newIndexName) {
+		indexName = newIndexName;
+	}
+
+	public void setMaximumRows(Integer max) {
+		maximumRows = max;
 	}
 
 }

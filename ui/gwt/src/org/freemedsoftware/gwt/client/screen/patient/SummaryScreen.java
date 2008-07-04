@@ -61,10 +61,9 @@ public class SummaryScreen extends PatientScreenInterface {
 		final Label problemLabel = new Label("Problems");
 		problemContainer.add(problemLabel);
 		summaryTable = new CustomSortableTable();
-		summaryTable.addColumnHeader("Date", 0);
-		summaryTable.addColumnHeader("Type", 1);
-		summaryTable.addColumnHeader("Summary", 2);
-		summaryTable.formatTable(20, 3);
+		summaryTable.addColumn("Date", "date_mdy");
+		summaryTable.addColumn("Type", "type");
+		summaryTable.addColumn("Summary", "summary");
 		problemContainer.add(summaryTable);
 		flexTable.setWidget(0, 0, problemContainer);
 

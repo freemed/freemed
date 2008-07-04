@@ -55,9 +55,8 @@ public class UnfiledDocuments extends ScreenInterface {
 
 		wDocuments = new CustomSortableTable();
 		verticalPanel.add(wDocuments);
-		wDocuments.addColumnHeader("Date", 0);
-		wDocuments.addColumnHeader("Filename", 1);
-		wDocuments.formatTable(0, 2);
+		wDocuments.addColumn("Date", "uffdate");
+		wDocuments.addColumn("Filename", "ufffilename");
 		if (Util.isStubbedMode()) {
 
 		} else {
@@ -68,13 +67,7 @@ public class UnfiledDocuments extends ScreenInterface {
 					 */
 					HashMap[] res = (HashMap[]) o;
 					store = res;
-					wDocuments.formatTable(res.length, 2);
-					for (int iter = 0; iter < res.length; iter++) {
-						wDocuments.setText(iter + 1, 0, (String) res[iter]
-								.get("uffdate"));
-						wDocuments.setText(iter + 1, 1, (String) res[iter]
-								.get("ufffilename"));
-					}
+					wDocuments.loadData(res);
 				}
 
 				public void onFailure(Throwable t) {
