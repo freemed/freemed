@@ -38,6 +38,8 @@ import org.freemedsoftware.gwt.client.Api.SystemConfig;
 import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
 import org.freemedsoftware.gwt.client.Api.Tickler;
 import org.freemedsoftware.gwt.client.Api.TicklerAsync;
+import org.freemedsoftware.gwt.client.Module.Allergies;
+import org.freemedsoftware.gwt.client.Module.AllergiesAsync;
 import org.freemedsoftware.gwt.client.Module.Annotations;
 import org.freemedsoftware.gwt.client.Module.AnnotationsAsync;
 import org.freemedsoftware.gwt.client.Module.Medications;
@@ -186,6 +188,11 @@ public final class Util {
 		}
 
 		// org.freemedsoftware.gwt.client.Module.*
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.Allergies") == 0) {
+			service = (AllergiesAsync) GWT.create(Allergies.class);
+		}
 
 		if (className
 				.compareTo("org.freemedsoftware.gwt.client.Module.Annotations") == 0) {
