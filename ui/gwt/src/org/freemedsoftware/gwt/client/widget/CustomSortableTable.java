@@ -81,6 +81,10 @@ public class CustomSortableTable extends SortableTable {
 	 */
 	protected HashMap[] data;
 
+	protected boolean multipleSelection = false;
+
+	protected String[] selected;
+	
 	public CustomSortableTable() {
 		super();
 		setStyleName("sortableTable");
@@ -202,12 +206,34 @@ public class CustomSortableTable extends SortableTable {
 		formatTable(rows);
 	}
 
+	/**
+	 * Set name of indexing variable, which is used to determine the value of a
+	 * row from the data HashMap given.
+	 * 
+	 * @param newIndexName
+	 */
 	public void setIndexName(String newIndexName) {
 		indexName = newIndexName;
 	}
 
+	/**
+	 * Set maximum number of rendered rows.
+	 * 
+	 * @param max
+	 */
 	public void setMaximumRows(Integer max) {
 		maximumRows = max;
+	}
+
+	/**
+	 * Set multiple selection capability. true indicates that multiple
+	 * selections are allowed, false indicates single selection only. By
+	 * default, this is set to false.
+	 * 
+	 * @param newMultipleSelection
+	 */
+	public void setMultipleSelection(boolean newMultipleSelection) {
+		multipleSelection = newMultipleSelection;
 	}
 
 }
