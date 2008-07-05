@@ -1,5 +1,6 @@
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
@@ -9,6 +10,8 @@ import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,9 +24,12 @@ import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class UnfiledDocuments extends ScreenInterface {
 
@@ -35,7 +41,17 @@ public class UnfiledDocuments extends ScreenInterface {
 
 	protected PatientWidget wPatient = null;
 
+	protected SupportModuleWidget wProvider = null, wCategory = null;
+
+	protected SimpleDatePicker wDate = null;
+
 	protected Integer currentId = new Integer(0);
+
+	protected HorizontalPanel horizontalPanel;
+
+	protected FlexTable flexTable;
+
+	protected DjvuViewer djvuViewer;
 
 	/**
 	 * @gwt.typeArgs <java.lang.String,java.lang.String>
@@ -57,64 +73,72 @@ public class UnfiledDocuments extends ScreenInterface {
 		verticalPanel.add(wDocuments);
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
-		if (Util.isStubbedMode()) {
+		loadData();
+		wDocuments.addTableListener(new TableListener() {
+			public void onCellClicked(SourcesTableEvents e, int row, int col) {
+				// Import current id
+				currentId = new Integer(wDocuments.getValueByRow(row));
 
-		} else {
-			getDocumentsProxy().GetAll(new AsyncCallback() {
-				public void onSuccess(Object o) {
-					/**
-					 * @gwt.typeArgs <java.lang.String,java.lang.String>
-					 */
-					HashMap[] res = (HashMap[]) o;
-					store = res;
-					wDocuments.loadData(res);
-				}
+				// Show the form
+				flexTable.setVisible(true);
+				horizontalPanel.setVisible(true);
 
-				public void onFailure(Throwable t) {
-
-				}
-			});
-		}
+				// Show the image in the viewer
+				djvuViewer.setInternalId(currentId);
+				djvuViewer.setVisible(true);
+			}
+		});
 		wDocuments.setWidth("100%");
 
-		final FlexTable flexTable = new FlexTable();
+		flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
 		flexTable.setWidth("100%");
+		flexTable.setVisible(false);
 
 		final Label dateLabel = new Label("Date : ");
 		flexTable.setWidget(0, 0, dateLabel);
 
+		wDate = new SimpleDatePicker();
+		wDate.setCurrentDate(new Date());
+		flexTable.setWidget(0, 1, wDate);
+
 		final Label patientLabel = new Label("Patient : ");
 		flexTable.setWidget(1, 0, patientLabel);
+
+		wPatient = new PatientWidget();
+		flexTable.setWidget(1, 1, wPatient);
 
 		final Label providerLabel = new Label("Provider : ");
 		flexTable.setWidget(2, 0, providerLabel);
 
-		final Label categoryLabel = new Label("Category : ");
-		flexTable.setWidget(3, 0, categoryLabel);
-
-		final Label noteLabel = new Label("Note : ");
-		flexTable.setWidget(4, 0, noteLabel);
-
-		final Label rotateLabel = new Label("Rotate : ");
-		flexTable.setWidget(5, 0, rotateLabel);
-
-		wPatient = new PatientWidget();
-		flexTable.setWidget(1, 1, wPatient);
+		wProvider = new SupportModuleWidget();
+		wProvider.setModuleName("ProviderModule");
+		flexTable.setWidget(2, 1, wProvider);
 
 		wNote = new TextBox();
 		flexTable.setWidget(4, 1, wNote);
 		wNote.setWidth("100%");
 
+		final Label categoryLabel = new Label("Category : ");
+		flexTable.setWidget(5, 0, categoryLabel);
+
+		wCategory = new SupportModuleWidget();
+		wCategory.setModuleName("DocumentCategory");
+		flexTable.setWidget(5, 1, wCategory);
+
+		final Label rotateLabel = new Label("Rotate : ");
+		flexTable.setWidget(6, 0, rotateLabel);
+
 		wRotate = new ListBox();
-		flexTable.setWidget(5, 1, wRotate);
+		flexTable.setWidget(6, 1, wRotate);
 		wRotate.addItem("No rotation", "0");
 		wRotate.addItem("Rotate left", "270");
 		wRotate.addItem("Rotate right", "90");
 		wRotate.addItem("Flip", "180");
 		wRotate.setVisibleItemCount(1);
 
-		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel = new HorizontalPanel();
+		horizontalPanel.setVisible(false);
 		verticalPanel.add(horizontalPanel);
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -142,7 +166,8 @@ public class UnfiledDocuments extends ScreenInterface {
 		});
 		horizontalPanel.add(fileDirectlyButton);
 
-		final DjvuViewer djvuViewer = new DjvuViewer();
+		djvuViewer = new DjvuViewer();
+		djvuViewer.setType(DjvuViewer.UNFILED_DOCUMENTS);
 		horizontalSplitPanel.setRightWidget(djvuViewer);
 		djvuViewer.setVisible(false);
 		djvuViewer.setSize("100%", "100%");
@@ -155,26 +180,61 @@ public class UnfiledDocuments extends ScreenInterface {
 		HashMap p = new HashMap();
 		p.put((String) "id", (String) currentId.toString());
 		p.put((String) "patient", (String) wPatient.getValue().toString());
-		p.put((String) "category", (String) "");
-		p.put((String) "physician", (String) "");
+		p.put((String) "category", (String) wCategory.getValue().toString());
+		p.put((String) "physician", (String) wProvider.getValue().toString());
 		p.put((String) "withoutfirstpage", (String) "");
 		p.put((String) "filedirectly", (String) "1");
 		p.put((String) "note", (String) wNote.getText());
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
 		if (Util.isStubbedMode()) {
-
+			state.getToaster().addItem("UnfiledDocuments",
+					"Processed unfiled document.");
+			loadData();
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback() {
 						public void onSuccess(Object o) {
-
+							state.getToaster().addItem("UnfiledDocuments",
+									"Processed unfiled document.");
+							loadData();
 						}
 
 						public void onFailure(Throwable t) {
+							state.getToaster().addItem("UnfiledDocuments",
+									"Error processing unfiled document.",
+									Toaster.TOASTER_ERROR);
+
 							GWT.log("Exception", t);
 						}
 					});
+		}
+	}
+
+	/**
+	 * Load table entries and reset form.
+	 */
+	protected void loadData() {
+		djvuViewer.setVisible(false);
+		flexTable.setVisible(false);
+		horizontalPanel.setVisible(false);
+		if (Util.isStubbedMode()) {
+
+		} else {
+			getDocumentsProxy().GetAll(new AsyncCallback() {
+				public void onSuccess(Object o) {
+					/**
+					 * @gwt.typeArgs <java.lang.String,java.lang.String>
+					 */
+					HashMap[] res = (HashMap[]) o;
+					store = res;
+					wDocuments.loadData(res);
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("Exception", t);
+				}
+			});
 		}
 	}
 
@@ -186,7 +246,7 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "id", (String) currentId.toString());
 		p.put((String) "patient", (String) wPatient.getValue().toString());
 		p.put((String) "category", (String) "");
-		p.put((String) "physician", (String) "");
+		p.put((String) "physician", (String) wProvider.getValue().toString());
 		p.put((String) "withoutfirstpage", (String) "");
 		p.put((String) "filedirectly", (String) "0");
 		p.put((String) "note", (String) wNote.getText());
