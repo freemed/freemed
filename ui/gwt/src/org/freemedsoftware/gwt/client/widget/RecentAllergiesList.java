@@ -33,18 +33,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 
-public class RecentMedicationsList extends Composite {
+public class RecentAllergiesList extends Composite {
 
 	protected Integer patientId = new Integer(0);
 
-	protected CustomSortableTable medicationsTable;
+	protected CustomSortableTable allergiesTable;
 	
-	public RecentMedicationsList() {
-		medicationsTable = new CustomSortableTable();
-		initWidget(medicationsTable);
-		medicationsTable.addColumn("Drug", "mdrug");
-		medicationsTable.addColumn("Dosage", "mdosage");
-		medicationsTable.addColumn("Route", "mroute");
+	public RecentAllergiesList() {
+		allergiesTable = new CustomSortableTable();
+		initWidget(allergiesTable);
+		allergiesTable.addColumn("Allergy", "allergy");
+		allergiesTable.addColumn("Reaction", "reaction");
+		allergiesTable.addColumn("Severity", "severity");
 	}
 
 	public void setPatientId(Integer id) {
@@ -62,8 +62,8 @@ public class RecentMedicationsList extends Composite {
 					 * @gwt.typeArgs <java.lang.String,java.lang.String>
 					 */
 					HashMap[] m = (HashMap[]) o;
-					medicationsTable.clear();
-					medicationsTable.loadData(m);
+					allergiesTable.clear();
+					allergiesTable.loadData(m);
 				}
 
 				public void onFailure(Throwable t) {
