@@ -25,21 +25,20 @@
 <module>
 
 	<!-- Additional namespaces go here -->
-	<inherits name="com.google.gwt.user.User"/>
-	<inherits name="com.google.gwt.http.HTTP"/>
-	<inherits name="com.google.gwt.json.JSON"/>
-	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable"/>
-	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker"/>
-	<inherits name="com.bouwkamp.gwt.user.User"/>
-	<inherits name="com.google.gwt.i18n.I18N"/>
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.http.HTTP" />
+	<inherits name="com.google.gwt.json.JSON" />
+	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable" />
+	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker" />
+	<inherits name="com.bouwkamp.gwt.user.User" />
+	<inherits name="com.google.gwt.i18n.I18N" />
 	<!-- <inherits name="com.allen_sauer.gwt.log.gwt-log" /> -->
-	
 
 	<!-- Stylesheet resources go here -->
 	<stylesheet src="resources/stylesheet.css" />
 	<stylesheet src="resources/SortableTable.css" />
 	
-	<entry-point class='org.freemedsoftware.gwt.client.FreemedInterface'/>
+	<entry-point class="org.freemedsoftware.gwt.client.FreemedInterface" />
   
 	<!-- Logging properties -->
 	<!--
