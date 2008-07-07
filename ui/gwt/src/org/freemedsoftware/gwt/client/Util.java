@@ -64,6 +64,7 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.HTTPRequest;
 import com.google.gwt.user.client.ResponseTextHandler;
@@ -100,7 +101,7 @@ public final class Util {
 					params += "&";
 				}
 				params += "param" + new Integer(iter).toString() + "="
-						+ args[iter];
+						+ URL.encodeComponent(args[iter]);
 			}
 			return url + "/" + method + "?" + params;
 		} catch (Exception e) {
