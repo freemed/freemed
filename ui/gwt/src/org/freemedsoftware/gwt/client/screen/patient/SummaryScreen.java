@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.PatientTagsWidget;
+import org.freemedsoftware.gwt.client.widget.RecentAllergiesList;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 
 import com.google.gwt.core.client.GWT;
@@ -99,10 +100,10 @@ public class SummaryScreen extends PatientScreenInterface {
 		photoIdLabel.setUrl("resources/images/patient.32x32.png");
 		photoIdLabel.setTitle("Photo Identification");
 		final Image photoId = new Image();
+		photoId.setWidth("230px");
 		if (Util.isStubbedMode()) {
 			// Don't populate
 		} else {
-			photoId.setWidth("230px");
 			photoId
 					.setUrl(Util
 							.getJsonRequest(
@@ -123,9 +124,12 @@ public class SummaryScreen extends PatientScreenInterface {
 				medicationsLabel);
 
 		final SimplePanel clinicalAllergiesPanel = new SimplePanel();
+		final RecentAllergiesList recentAllergiesList = new RecentAllergiesList();
+		recentAllergiesList.setPatientId(patientId);
+		clinicalAllergiesPanel.add(recentAllergiesList);
 		final Image allergiesLabel = new Image();
-		medicationsLabel.setUrl("resources/images/allergy.32x32.png");
-		medicationsLabel.setTitle("Allergies");
+		allergiesLabel.setUrl("resources/images/allergy.32x32.png");
+		allergiesLabel.setTitle("Allergies");
 		clinicalInformationTabPanel.add(clinicalAllergiesPanel, allergiesLabel);
 
 		final VerticalPanel verticalPanel_2 = new VerticalPanel();
