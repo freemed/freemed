@@ -22,7 +22,7 @@
 
 THISDIR=ui/gwt
 
-all: www
+all: clean www
 
 www:
 	./FreemedInterface-compile
