@@ -115,6 +115,7 @@ $gwtphpmap = array (
 				  'name' => 'TagsForPatient'
 				, 'mappedName' => 'TagsForPatient'
 				, 'returnType' => '[Ljava.lang.String;'
+				, 'returnTypeCRC' => '2364883620[L2004016611;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 				)
