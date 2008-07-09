@@ -39,7 +39,7 @@ $gwtphpmap = array (
 			//
 			//	Array of key = value hashes.
 			//
-			, array (
+			  array (
 				  'name' => 'ListTags'
 				, 'mappedName' => 'ListTags'
 				, 'returnType' => '[Ljava.lang.String;'
