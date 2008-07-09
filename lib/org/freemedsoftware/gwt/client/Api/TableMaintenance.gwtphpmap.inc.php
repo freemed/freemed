@@ -68,7 +68,8 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'GetModules'
 				, 'mappedName' => 'GetModules'
-				, 'returnType' => '[java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.String' )

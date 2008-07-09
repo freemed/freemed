@@ -117,7 +117,7 @@ $gwtphpmap = array (
 				, 'returnType' => '[Ljava.lang.String;'
 				, 'returnTypeCRC' => '2364883620[L2004016611;'
 				, 'params' => array (
-					  array ( 'type' => 'java.lang.String' )
+					  array ( 'type' => 'java.lang.Integer' )
 				)
 				, 'throws' => array ( )
 			)
