@@ -31,14 +31,18 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -104,14 +108,57 @@ public class PatientTagsWidget extends Composite {
 	protected void addTagToDisplay(String tag) {
 		HorizontalPanel p = new HorizontalPanel();
 		p.setTitle(tag);
-		HTML r = new HTML("<sup>X</sup>");
-		p.add(new Label(tag));
+		final String oldTagName = tag;
+		final HTML r = new HTML("<sup>X</sup>");
+		final Label tagLabel = new Label(tag);
+		tagLabel.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				final PopupPanel p = new PopupPanel();
+				final FlexTable fT = new FlexTable();
+				fT.setWidget(0, 0, new Label("Rename Tag"));
+				final TextBox newTagName = new TextBox();
+				fT.setWidget(1, 0, newTagName);
+				final Button changeTagButton = new Button("Change");
+				changeTagButton.addClickListener(new ClickListener() {
+					public void onClick(Widget bW) {
+						if (newTagName.getText().trim().length() > 0) {
+							if (!Util.isStubbedMode()){
+							getProxy().ChangeTag(oldTagName,
+									newTagName.getText().trim(),
+									new AsyncCallback() {
+										public void onSuccess(Object o) {
+											p.hide();
+											p.removeFromParent();
+											populate();
+										}
+
+										public void onFailure(Throwable t) {
+											GWT.log("Exception", t);
+										}
+									});
+							} else {
+								// Stubbed mode
+								p.hide();
+								p.removeFromParent();
+							}
+						}
+					}
+				});
+				p.add(fT);
+				p.setPopupPosition(tagLabel.getAbsoluteLeft() + 5, tagLabel
+						.getAbsoluteTop() + 5);
+				p.show();
+			}
+		});
+		p.add(tagLabel);
 		p.add(r);
 		p.setStyleName("freemed-PatientTag");
 		r.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-				HorizontalPanel container = (HorizontalPanel) w.getParent();
-				removeTag(container.getTitle(), container);
+				if (Window.confirm("Are you sure you want to remove this tag?")) {
+					HorizontalPanel container = (HorizontalPanel) w.getParent();
+					removeTag(container.getTitle(), container);
+				}
 			}
 		});
 		flowPanel.add(p);
@@ -174,6 +221,7 @@ public class PatientTagsWidget extends Composite {
 
 	/**
 	 * Internal method to retrieve proxy object from Util.getProxy()
+	 * 
 	 * @return
 	 */
 	protected PatientTagAsync getProxy() {
