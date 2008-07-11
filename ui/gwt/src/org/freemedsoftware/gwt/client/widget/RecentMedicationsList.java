@@ -38,7 +38,7 @@ public class RecentMedicationsList extends Composite {
 	protected Integer patientId = new Integer(0);
 
 	protected CustomSortableTable medicationsTable;
-	
+
 	public RecentMedicationsList() {
 		medicationsTable = new CustomSortableTable();
 		initWidget(medicationsTable);
@@ -63,7 +63,11 @@ public class RecentMedicationsList extends Composite {
 					 */
 					HashMap[] m = (HashMap[]) o;
 					medicationsTable.clear();
-					medicationsTable.loadData(m);
+					try {
+						medicationsTable.loadData(m);
+					} catch (Exception e) {
+						GWT.log("Exception", e);
+					}
 				}
 
 				public void onFailure(Throwable t) {

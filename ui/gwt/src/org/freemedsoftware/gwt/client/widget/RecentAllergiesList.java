@@ -38,7 +38,7 @@ public class RecentAllergiesList extends Composite {
 	protected Integer patientId = new Integer(0);
 
 	protected CustomSortableTable allergiesTable;
-	
+
 	public RecentAllergiesList() {
 		allergiesTable = new CustomSortableTable();
 		initWidget(allergiesTable);
@@ -63,7 +63,11 @@ public class RecentAllergiesList extends Composite {
 					 */
 					HashMap[] m = (HashMap[]) o;
 					allergiesTable.clear();
-					allergiesTable.loadData(m);
+					try {
+						allergiesTable.loadData(m);
+					} catch (Exception e) {
+						GWT.log("Exception", e);
+					}
 				}
 
 				public void onFailure(Throwable t) {
@@ -82,7 +86,7 @@ public class RecentAllergiesList extends Composite {
 		MedicationsAsync p = null;
 		try {
 			p = (MedicationsAsync) Util
-					.getProxy("org.freemedsoftware.gwt.client.Module.Medications");
+					.getProxy("org.freemedsoftware.gwt.client.Module.Allergies");
 		} catch (Exception ex) {
 			GWT.log("Exception", ex);
 		}
