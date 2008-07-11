@@ -74,6 +74,31 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
+			// Method: ChangeTag
+			//
+			//	Change all instances of a tag name in the system.
+			//
+			// Parameters:
+			//
+			//	$oTag - String containing original tag name
+			//
+			//	$nTag - String containing new tag name
+			//
+			// Returns:
+			//
+			//	Boolean, success.
+			//
+			, array (
+				  'name' => 'ChangeTag'
+				, 'mappedName' => 'ChangeTag'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.lang.String' )
+				)
+				, 'throws' => array ( )
+			)
+
 			// Method: ExpireTag
 			//
 			//	Force tag to expire for specified patient and tag.

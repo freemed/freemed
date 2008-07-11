@@ -33,6 +33,8 @@ public interface PatientTag extends RemoteService {
 
 	public Boolean CreateTag(Integer patientId, String tagName);
 
+	public Boolean ChangeTag(String oldTag, String newTag);
+
 	public Boolean ExpireTag(Integer patientId, String tagName);
 
 	public String[] TagsForPatient(Integer patientId);

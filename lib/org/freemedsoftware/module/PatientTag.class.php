@@ -126,6 +126,27 @@ class PatientTag extends SupportModule {
 		return true;
 	} // end method CreateTag
 
+	// Method: ChangeTag
+	//
+	//	Change all instances of a tag name in the system.
+	//
+	// Parameters:
+	//
+	//	$oTag - String containing original tag name
+	//
+	//	$nTag - String containing new tag name
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function ChangeTag( $oTag, $nTag ) {
+		if ( strlen( trim( $nTag ) ) < 1 ) { return false; }
+		$query = "UPDATE `".$this->table_name."` SET tag=".$GLOBALS['sql']->quote( $nTag )." WHERE tag=".$GLOBALS['sql']->quote( $oTag );
+		$GLOBALS['sql']->query( $query );
+		return true;
+	} // end method ChangeTag
+
 	// Method: ExpireTag
 	//
 	//	Force tag to expire for specified patient and tag.

@@ -33,6 +33,8 @@ public interface PatientTagAsync {
 
 	public void CreateTag(Integer patientId, String tagName, AsyncCallback callback);
 
+	public void ChangeTag(String oldTag, String newTag, AsyncCallback callback);
+
 	public void ExpireTag(Integer patientId, String tagName, AsyncCallback callback);
 
 	public void TagsForPatient(Integer patientId, AsyncCallback callback);
