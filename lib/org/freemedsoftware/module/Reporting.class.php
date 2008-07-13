@@ -89,11 +89,18 @@ class Reporting extends SupportModule {
 			$types = explode( ',', $r['report_param_types'] );
 			$optional = explode( ',', $r['report_param_optional'] );
 			for ( $p = 0; $p < $r['report_param_count'] ; $p++ ) {
-				$return['params'][$p] = array (
-					'name' => $names[$p],
-					'type' => $types[$p],
-					'optional' => ( $optional[$p] ? true : false )
-				);
+				if ( defined('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES') ) {
+					// Force flattening of output for GWT
+					$return['report_param_name_'.$p] = $names[$p];
+					$return['report_param_type_'.$p] = $types[$p];
+					$return['report_param_optional_'.$p] = ( $optional[$p] ? true : false );
+				} else {
+					$return['params'][$p] = array (
+						'name' => $names[$p],
+						'type' => $types[$p],
+						'optional' => ( $optional[$p] ? true : false )
+					);
+				}
 			}
 		}
 		return $return;

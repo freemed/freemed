@@ -52,6 +52,8 @@ import org.freemedsoftware.gwt.client.Module.PatientTag;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Module.RemittBillingTransport;
 import org.freemedsoftware.gwt.client.Module.RemittBillingTransportAsync;
+import org.freemedsoftware.gwt.client.Module.Reporting;
+import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocuments;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Module.UnreadDocuments;
@@ -225,6 +227,11 @@ public final class Util {
 				.compareTo("org.freemedsoftware.gwt.client.Module.RemittBillingTransport") == 0) {
 			service = (RemittBillingTransportAsync) GWT
 					.create(RemittBillingTransport.class);
+		}
+
+		if (className
+				.compareTo("org.freemedsoftware.gwt.client.Module.Reporting") == 0) {
+			service = (ReportingAsync) GWT.create(Reporting.class);
 		}
 
 		if (className
