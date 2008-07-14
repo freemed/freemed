@@ -8,7 +8,7 @@
  * @package  HTTP_Session2
  * @author   Till Klampaeckel <till@php.net>
  * @license  http://www.opensource.org/licenses/bsd-license.php The BSD License
- * @version  CVS: $Id: MDB2.php,v 1.16 2008/02/17 13:23:51 till Exp $
+ * @version  CVS: $Id: MDB2.php,v 1.17 2008/04/01 15:28:44 till Exp $
  * @link     http://pear.php.net/package/HTTP_Session2
  */
 
@@ -214,8 +214,8 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
 
             $result = $this->db->queryOne($query);
             if (MDB2::isError($result)) {
-                new DB_Error($result->code, PEAR_ERROR_DIE);
-                return false;
+                throw new HTTP_Session2_Exception($result->getUserInfo(),
+                    $result->getCode());
             }
             if (0 == intval($result)) {
                 /* Insert new row into table */
@@ -239,8 +239,8 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
         }
         $result = $this->db->query($query);
         if (MDB2::isError($result)) {
-            new DB_Error($result->code, PEAR_ERROR_DIE);
-            return false;
+            throw new HTTP_Session2_Exception($result->getUserInfo(),
+                    $result->getCode());
         }
         return true;
     }
