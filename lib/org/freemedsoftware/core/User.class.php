@@ -54,7 +54,9 @@ class User {
 
 		if ($param == NULL) {
 			// Check to see if XML-RPC or session data
-			$authdata = HTTP_Session2::get( 'authdata' );
+			if (!defined('SESSION_DISABLE')) {
+				$authdata = HTTP_Session2::get( 'authdata' );
+			}
 			if ($authdata['user']) {
 				$this->user_number = $authdata['user']; 
 			} else {

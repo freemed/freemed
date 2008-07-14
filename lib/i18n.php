@@ -24,7 +24,11 @@
 include_once ( dirname(__FILE__).'/php-gettext/gettext.inc' );
 include_once ( dirname(__FILE__).'/iso-set.php' );
 
-$lang = HTTP_Session2::get( 'language', DEFAULT_LANGUAGE );
+if (!defined('SESSION_DISABLE')) {
+	$lang = HTTP_Session2::get( 'language', DEFAULT_LANGUAGE );
+} else {
+	$lang = DEFAULT_LANGUAGE;
+}
 $locale_dir = dirname(dirname(__FILE__)).'/locale';
 
 $__domains = array (

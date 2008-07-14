@@ -34,7 +34,9 @@ class Login {
 	//	Boolean.
 	//
 	public function LoggedIn ( ) {
-		if ( is_array( HTTP_Session2::get('authdata') ) ) { return true; }
+		if ( !defined('SESSION_DISABLE') ) {
+			if ( is_array( HTTP_Session2::get('authdata') ) ) { return true; }
+		}
 		return false;
 	} // end method LoggedIn
 
