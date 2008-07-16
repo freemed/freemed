@@ -59,9 +59,9 @@ if (ini_get('post_max_size')+0 < 64) {
 
 //----- Use our *own* stuff, no one else's stuff
 if (function_exists('set_include_path')) {
-	set_include_path(dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/pear/');
+	set_include_path(dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/net/php/pear/');
 } else {
-	ini_set('include_path', dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/pear/');
+	ini_set('include_path', dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/net/php/pear/');
 }
 
   // related to the calendar --
