@@ -25,6 +25,7 @@ include_once ( dirname(__FILE__).'/php-gettext/gettext.inc' );
 include_once ( dirname(__FILE__).'/iso-set.php' );
 
 if (!defined('SESSION_DISABLE')) {
+	LoadObjectDependency( 'net.php.pear.HTTP_Session2' );
 	$lang = HTTP_Session2::get( 'language', DEFAULT_LANGUAGE );
 } else {
 	$lang = DEFAULT_LANGUAGE;
