@@ -165,7 +165,7 @@ public class DjvuViewer extends Composite {
 			}
 			p.NumberOfPages(internalId, new AsyncCallback() {
 				public void onSuccess(Object o) {
-					numberOfPages = (Integer) o;
+					numberOfPages = ((Integer) o).intValue();
 				}
 
 				public void onFailure(Throwable t) {
@@ -183,7 +183,7 @@ public class DjvuViewer extends Composite {
 			}
 			p.NumberOfPages(internalId, new AsyncCallback() {
 				public void onSuccess(Object o) {
-					numberOfPages = (Integer) o;
+					numberOfPages = ((Integer) o).intValue();
 				}
 
 				public void onFailure(Throwable t) {
