@@ -31,11 +31,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 public interface UnreadDocuments extends RemoteService {
 	public Integer NumberOfPages(Integer id);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 * @return
-	 */
-	public HashMap[] GetAll();
+	public HashMap<String, String>[] GetAll();
 
 	public Integer GetCount();
 

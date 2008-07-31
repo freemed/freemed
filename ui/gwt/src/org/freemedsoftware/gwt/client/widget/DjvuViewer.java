@@ -163,9 +163,9 @@ public class DjvuViewer extends Composite {
 			} catch (Exception e) {
 				GWT.log("Exception", e);
 			}
-			p.NumberOfPages(internalId, new AsyncCallback() {
-				public void onSuccess(Object o) {
-					numberOfPages = ((Integer) o).intValue();
+			p.NumberOfPages(internalId, new AsyncCallback<Integer>() {
+				public void onSuccess(Integer o) {
+					numberOfPages = o.intValue();
 				}
 
 				public void onFailure(Throwable t) {
@@ -181,9 +181,9 @@ public class DjvuViewer extends Composite {
 			} catch (Exception e) {
 				GWT.log("Exception", e);
 			}
-			p.NumberOfPages(internalId, new AsyncCallback() {
-				public void onSuccess(Object o) {
-					numberOfPages = ((Integer) o).intValue();
+			p.NumberOfPages(internalId, new AsyncCallback<Integer>() {
+				public void onSuccess(Integer o) {
+					numberOfPages = o.intValue();
 				}
 
 				public void onFailure(Throwable t) {

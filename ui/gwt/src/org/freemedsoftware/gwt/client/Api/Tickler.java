@@ -26,7 +26,7 @@ package org.freemedsoftware.gwt.client.Api;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface Tickler extends RemoteService {  
-	public String Call ( String[] parameters );
-}
+public interface Tickler extends RemoteService {
 
+	public String Call(String[] parameters);
+}

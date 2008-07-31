@@ -69,22 +69,16 @@ public class CustomSortableTable extends SortableTable {
 
 	protected String indexName = new String("id");;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap indexMap = new HashMap();
+	protected HashMap<String, String> indexMap = new HashMap<String, String>();
 
 	protected Integer maximumRows = new Integer(20);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap[] data;
+	protected HashMap<String, String>[] data;
 
 	protected boolean multipleSelection = false;
 
 	protected String[] selected;
-	
+
 	public CustomSortableTable() {
 		super();
 		setStyleName("sortableTable");
@@ -109,7 +103,7 @@ public class CustomSortableTable extends SortableTable {
 		/**
 		 * @gwt.typeArgs <Column>
 		 */
-		Set sA = new HashSet();
+		Set<Column> sA = new HashSet<Column>();
 		for (int iter = 0; iter < currentCols; iter++) {
 			sA.add(columns[iter]);
 		}
@@ -182,10 +176,29 @@ public class CustomSortableTable extends SortableTable {
 	}
 
 	/**
-	 * @gwt.typeArgs newData <java.lang.String,java.lang.String>
+	 * Determine if index row has been selected. This only affects anything if
+	 * using multiple selection mode.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public boolean isIndexSelected(String index) {
+		try {
+			for (int iter = 0; iter < selected.length; iter++) {
+				if (selected[iter].compareTo(index) == 0) {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			GWT.log("Exception", e);
+		}
+		return false;
+	}
+
+	/**
 	 * @param newData
 	 */
-	public void loadData(HashMap[] newData) {
+	public void loadData(HashMap<String,String>[] newData) {
 		data = newData;
 		int rows = (data.length < maximumRows.intValue()) ? data.length
 				: maximumRows.intValue();
@@ -204,6 +217,24 @@ public class CustomSortableTable extends SortableTable {
 			}
 		}
 		formatTable(rows);
+	}
+
+	protected void selectionAdd(String index) {
+		selected[selected.length] = index;
+	}
+
+	protected void selectionRemove(String index) {
+		try {
+			String[] res = new String[] {};
+			for (int iter = 0; iter < selected.length; iter++) {
+				if (selected[iter].compareTo(index) != 0) {
+					res[res.length] = selected[iter];
+				}
+			}
+			selected = res;
+		} catch (Exception e) {
+			GWT.log("Exception", e);
+		}
 	}
 
 	/**
@@ -234,6 +265,20 @@ public class CustomSortableTable extends SortableTable {
 	 */
 	public void setMultipleSelection(boolean newMultipleSelection) {
 		multipleSelection = newMultipleSelection;
+	}
+
+	/**
+	 * Toggle a multiple selection for a row by its index.
+	 * 
+	 * @param index
+	 */
+	public void toggleSelection(String index) {
+		// TODO: handle visual aspect of selection
+		if (isIndexSelected(index)) {
+			selectionRemove(index);
+		} else {
+			selectionAdd(index);
+		}
 	}
 
 }

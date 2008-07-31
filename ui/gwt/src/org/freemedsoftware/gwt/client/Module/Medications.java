@@ -31,26 +31,24 @@ import com.google.gwt.user.client.rpc.RemoteService;
 public interface Medications extends RemoteService {
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 * @param patientId
 	 * @return
 	 */
-	public HashMap[] GetMostRecent(Integer patientId);
+	public HashMap<String, String>[] GetMostRecent(Integer patientId);
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 * @param mId
 	 * @return
 	 */
-	public HashMap[] GetAtoms(Integer mId);
+	public HashMap<String, String>[] GetAtoms(Integer mId);
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 * @param patientId
 	 * @param mId
 	 * @param atoms
 	 * @return
 	 */
-	public Boolean SetAtoms(Integer patientId, Integer mId, HashMap atoms);
+	public Boolean SetAtoms(Integer patientId, Integer mId,
+			HashMap<String, String> atoms);
 
 }

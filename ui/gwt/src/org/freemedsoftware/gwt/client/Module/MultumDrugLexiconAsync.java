@@ -28,11 +28,10 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface MultumDrugLexiconAsync {  
-	public void DosagesForDrug ( String drugId, String drugLabel, AsyncCallback callback );
-	public void DrugDosageToText ( String id, AsyncCallback callback );
-	/**
-	 */
-	public void Picklist ( String criteria, AsyncCallback callback );
-}
+public interface MultumDrugLexiconAsync {
+	public void DosagesForDrug(String drugId, String drugLabel, AsyncCallback<String[][]> callback);
 
+	public void DrugDosageToText(String id, AsyncCallback<String> callback);
+
+	public void Picklist(String criteria, AsyncCallback<HashMap<String, String>> callback);
+}

@@ -29,15 +29,16 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface Authorizations extends RemoteService {  
-	public Integer[] FindByCoverage ( Integer coverageId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap GetAuthorization ( Integer authorizationId );
-	public Boolean Replace ( Integer authorizationId );
-	public Boolean UseAuthorization ( Integer authorizationId );
-	public Boolean Valid ( Integer authorizationId, Date comparisonDate );
-	public Integer[] ValidSet ( Integer[] authSet, Date comparisonDate );
-}
+public interface Authorizations extends RemoteService {
+	public Integer[] FindByCoverage(Integer coverageId);
 
+	public HashMap<String, String> GetAuthorization(Integer authorizationId);
+
+	public Boolean Replace(Integer authorizationId);
+
+	public Boolean UseAuthorization(Integer authorizationId);
+
+	public Boolean Valid(Integer authorizationId, Date comparisonDate);
+
+	public Integer[] ValidSet(Integer[] authSet, Date comparisonDate);
+}

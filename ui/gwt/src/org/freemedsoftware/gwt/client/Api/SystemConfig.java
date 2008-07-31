@@ -29,16 +29,14 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface SystemConfig extends RemoteService {
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap GetAll ( );
-	public String GetValue ( String configKey );
-	public String[] GetConfigSections ( );
-	public Boolean SetValue ( String configKey, String configValue );
-	/**
-	 * @gwt.typeArgs values <java.lang.String, java.lang.String>
-	 */
-	public Boolean SetValues ( HashMap values );
-}
 
+	public HashMap<String, String> GetAll();
+
+	public String GetValue(String configKey);
+
+	public String[] GetConfigSections();
+
+	public Boolean SetValue(String configKey, String configValue);
+
+	public Boolean SetValues(HashMap<String, String> values);
+}

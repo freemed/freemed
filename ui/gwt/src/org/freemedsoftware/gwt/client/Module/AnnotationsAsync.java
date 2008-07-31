@@ -29,14 +29,13 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AnnotationsAsync {
-	public void NewAnnotation ( Integer emrAttachmentId, String annotation, AsyncCallback callback );
-	/**
-	 */
-	public void GetAnnotations ( Integer emrAttachmentId, AsyncCallback callback );
-	/**
-	 */
-	public void OutputAnnotations ( HashMap[] annotations, AsyncCallback callback );
-	public void PrepareAnnotation ( String annotationText, AsyncCallback callback );
-	public void LookupPatient ( String moduleClass, Integer id, AsyncCallback callback );
-}
+	public void NewAnnotation(Integer emrAttachmentId, String annotation, AsyncCallback<Boolean> callback);
 
+	public void GetAnnotations(Integer emrAttachmentId, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void OutputAnnotations(HashMap<String, String>[] annotations, AsyncCallback<String> callback);
+
+	public void PrepareAnnotation(String annotationText, AsyncCallback<String> callback);
+
+	public void LookupPatient(String moduleClass, Integer id, AsyncCallback<Integer> callback);
+}

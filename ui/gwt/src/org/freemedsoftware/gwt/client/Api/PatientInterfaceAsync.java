@@ -29,51 +29,36 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface PatientInterfaceAsync {
-	public void CheckForDuplicatePatient(HashMap criteria, AsyncCallback callback);
+	public void CheckForDuplicatePatient(HashMap<String, String> criteria, AsyncCallback<Integer> callback);
 
-	/**
-	 */
-	public void DxForPatient(Integer patientId, AsyncCallback callback);
+	public void DxForPatient(Integer patientId, AsyncCallback<HashMap<String, String>[]> callback);
 
-	/**
-	 */
-	public void EmrAttachmentsByPatient(Integer patientId, AsyncCallback callback);
+	public void EmrAttachmentsByPatient(Integer patientId, AsyncCallback<HashMap<String, String>[]> callback);
 
-	/**
-	 */
-	public void EmrAttachmentsByPatientTable(Integer patientId,
-			String tableName, AsyncCallback callback);
+	public void EmrAttachmentsByPatientTable(
+			Integer patientId, String tableName, AsyncCallback<HashMap<String, String>[]> callback);
 
-	/**
-	 */
-	public void EmrModules(String partOfName, Boolean sameKeyAndValue, AsyncCallback callback);
+	public void EmrModules(String partOfName,
+			Boolean sameKeyAndValue, AsyncCallback<HashMap<String, String>[]> callback);
 
 	public void MoveEmrAttachments(Integer patientFrom, Integer patientTo,
-			Integer[] attachments, AsyncCallback callback);
+			Integer[] attachments, AsyncCallback<Boolean> callback);
 
-	/**
-	 */
-	public void NumericSearch(HashMap criteria, AsyncCallback callback);
+	public void NumericSearch(
+			HashMap<String, String> criteria, AsyncCallback<HashMap<String, String>[]> callback);
 
-	/**
-	 */
-	public void Search(HashMap criteria, AsyncCallback callback);
+	public void Search(HashMap<String, String> criteria, AsyncCallback<HashMap<String, String>[]> callback);
 
-	/**
-	 */
-	public void PatientCriteria(Integer patientId, AsyncCallback callback);
+	public void PatientCriteria(Integer patientId, AsyncCallback<HashMap<String, String>> callback);
 
-	/**
-	 */
-	public void PatientInformation(Integer patientId, AsyncCallback callback);
+	public void PatientInformation(Integer patientId, AsyncCallback<HashMap<String, String>> callback);
 
-	public void TotalInSystem(AsyncCallback callback);
+	public void TotalInSystem(AsyncCallback<Integer> callback);
 
-	/**
-	 */
-	public void Picklist(String textParameters, Integer limit, AsyncCallback callback);
+	public void Picklist(String textParameters,
+			Integer limit, AsyncCallback<HashMap<Integer, String>> callback);
 
-	public void ProceduresToBill(Integer patientId, AsyncCallback callback);
+	public void ProceduresToBill(Integer patientId, AsyncCallback<Integer[]> callback);
 
-	public void ToText(Integer patientId, Boolean fullString, AsyncCallback callback);
+	public void ToText(Integer patientId, Boolean fullString, AsyncCallback<String> callback);
 }

@@ -27,7 +27,8 @@ package org.freemedsoftware.gwt.client.Api;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UserInterfaceAsync {
-	public void GetCurrentUsername ( AsyncCallback callback );
-	public void GetNewMessages ( AsyncCallback callback );
-}
 
+	public void GetCurrentUsername(AsyncCallback<String> callback);
+
+	public void GetNewMessages(AsyncCallback<Integer> callback);
+}

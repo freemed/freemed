@@ -34,10 +34,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 
 public class CurrentState {
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap statusItems;
+	protected HashMap<String,String> statusItems;
 
 	protected Label statusBar = null;
 
@@ -46,7 +43,7 @@ public class CurrentState {
 	protected TabPanel tabPanel = null;
 
 	public CurrentState() {
-		statusItems = new HashMap();
+		statusItems = new HashMap<String,String>();
 	}
 
 	/**

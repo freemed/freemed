@@ -28,12 +28,12 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface TableMaintenance extends RemoteService {  
-	public Boolean ExportStockData ( String tableName );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] GetModules ( String association, String likeString, Boolean picklist );
-	public void ImportStockData ( String tableName );
-}
+public interface TableMaintenance extends RemoteService {
 
+	public Boolean ExportStockData(String tableName);
+
+	public HashMap<String, String>[] GetModules(String association,
+			String likeString, Boolean picklist);
+
+	public void ImportStockData(String tableName);
+}

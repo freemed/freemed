@@ -128,32 +128,29 @@ public class LetterEntry extends PatientScreenInterface {
 
 	public void loadInternalId(Integer id) {
 		ModuleInterfaceAsync service = getProxy();
-		service.ModuleGetRecordMethod(moduleName, id, new AsyncCallback() {
-			public void onSuccess(Object result) {
-				/**
-				 * @gwt.typeArgs <java.lang.String, java.lang.String>
-				 */
-				HashMap r = (HashMap) result;
-				wFrom.setValue(new Integer((String) r.get("letterfrom")));
-				wTo.setValue(new Integer((String) r.get("letterto")));
-				wSubject.setText((String) r.get("lettersubject"));
-				wDate.setSelectedDate(new Date((String) r.get("letterdt")));
-				wText.setHTML((String) r.get("lettertext"));
-			}
+		service.ModuleGetRecordMethod(moduleName, id,
+				new AsyncCallback<HashMap<String, String>>() {
+					public void onSuccess(HashMap<String, String> r) {
+						wFrom
+								.setValue(new Integer((String) r
+										.get("letterfrom")));
+						wTo.setValue(new Integer((String) r.get("letterto")));
+						wSubject.setText((String) r.get("lettersubject"));
+						wDate.setSelectedDate(new Date((String) r
+								.get("letterdt")));
+						wText.setHTML((String) r.get("lettertext"));
+					}
 
-			public void onFailure(Throwable t) {
+					public void onFailure(Throwable t) {
 
-			}
-		});
+					}
+				});
 	}
 
 	public void submitForm() {
 		ModuleInterfaceAsync service = getProxy();
 		// Form hashmap ...
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		final HashMap rec = new HashMap();
+		final HashMap<String, String> rec = new HashMap<String, String>();
 		rec.put("letterdt", (String) wDate.getSelectedDate().toString());
 		rec.put("letterpatient", (String) patientId.toString());
 		rec.put("letterfrom", (String) wFrom.getValue().toString());
@@ -163,33 +160,36 @@ public class LetterEntry extends PatientScreenInterface {
 		if (!internalId.equals(new Integer(0))) {
 			// Modify
 			rec.put("id", (String) internalId.toString());
-			service.ModuleModifyMethod(moduleName, rec, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					Toaster t = state.getToaster();
-					t.addItem("letters", "Updated letter.",
-							Toaster.TOASTER_INFO);
-				}
+			service.ModuleModifyMethod(moduleName, rec,
+					new AsyncCallback<Integer>() {
+						public void onSuccess(Integer result) {
+							Toaster t = state.getToaster();
+							t.addItem("letters", "Updated letter.",
+									Toaster.TOASTER_INFO);
+						}
 
-				public void onFailure(Throwable th) {
-					Toaster t = state.getToaster();
-					t.addItem("letters", "Failed to update letter.",
-							Toaster.TOASTER_ERROR);
-				}
-			});
+						public void onFailure(Throwable th) {
+							Toaster t = state.getToaster();
+							t.addItem("letters", "Failed to update letter.",
+									Toaster.TOASTER_ERROR);
+						}
+					});
 		} else {
 			// Add
-			service.ModuleAddMethod(moduleName, rec, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					Toaster t = state.getToaster();
-					t.addItem("letters", "Added letter.", Toaster.TOASTER_INFO);
-				}
+			service.ModuleAddMethod(moduleName, rec,
+					new AsyncCallback<Integer>() {
+						public void onSuccess(Integer result) {
+							Toaster t = state.getToaster();
+							t.addItem("letters", "Added letter.",
+									Toaster.TOASTER_INFO);
+						}
 
-				public void onFailure(Throwable th) {
-					Toaster t = state.getToaster();
-					t.addItem("letters", "Failed to add letter.",
-							Toaster.TOASTER_ERROR);
-				}
-			});
+						public void onFailure(Throwable th) {
+							Toaster t = state.getToaster();
+							t.addItem("letters", "Failed to add letter.",
+									Toaster.TOASTER_ERROR);
+						}
+					});
 		}
 	}
 

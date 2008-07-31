@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-//import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
@@ -45,10 +44,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 
 	protected Integer value = new Integer(0);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	protected HashMap map;
+	protected HashMap<String, String> map;
 
 	// private final FlexTable listPanel;
 
@@ -59,12 +55,9 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 	private ChangeListenerCollection changeListeners;
 
 	public AsyncPicklistWidgetBase() {
-		//Log.setUncaughtExceptionHandler();
+		// Log.setUncaughtExceptionHandler();
 
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		map = new HashMap();
+		map = new HashMap<String, String>();
 
 		changeListeners = new ChangeListenerCollection();
 
@@ -85,7 +78,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 		});
 		searchBox.setLimit(10);
 		layout.add(searchBox);
-		
+
 		initWidget(layout);
 	}
 
@@ -107,7 +100,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 	 */
 	public Integer getValueFromText(String text) {
 		String found = new String("");
-		Iterator keys = map.keySet().iterator();
+		Iterator<String> keys = map.keySet().iterator();
 		while (found.length() == 0 && keys.hasNext()) {
 			String cur = (String) keys.next();
 			if (cur.compareTo(text) == 0) {
@@ -171,9 +164,9 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 	 * @param key
 	 * @param value
 	 */
-	protected void addKeyValuePair(List items, final String key,
-			final String value) {
-		//Log.debug("Adding key = " + key + ", value = " + value);
+	protected void addKeyValuePair(List<SuggestOracle.Suggestion> items,
+			final String key, final String value) {
+		// Log.debug("Adding key = " + key + ", value = " + value);
 		map.put(key, value);
 		items.add(new SuggestOracle.Suggestion() {
 			public String getDisplayString() {
@@ -184,6 +177,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 				return key;
 			}
 
+			@SuppressWarnings("unused")
 			public String getValue() {
 				return value;
 			}

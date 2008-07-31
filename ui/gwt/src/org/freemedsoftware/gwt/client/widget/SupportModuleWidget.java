@@ -71,9 +71,8 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 			} catch (Exception e) {
 			}
 			service.ModuleToTextMethod(moduleName, widgetValue,
-					new AsyncCallback() {
-						public void onSuccess(Object res) {
-							String textual = (String) res;
+					new AsyncCallback<String>() {
+						public void onSuccess(String textual) {
 							searchBox.setText(textual);
 							searchBox.setTitle(textual);
 						}
@@ -99,7 +98,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 			final Callback cb) {
 		if (Util.isStubbedMode()) {
 			// Handle in a stubbed sort of way
-			List items = new ArrayList();
+			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
 			map.clear();
 			addKeyValuePair(items, new String("Hackenbush, Hugo Z"),
 					new String("1"));
@@ -115,16 +114,12 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 			}
 
 			service.ModuleSupportPicklistMethod(moduleName, req,
-					new AsyncCallback() {
-						public void onSuccess(Object data) {
-							/**
-							 * @gwt.typeArgs <java.lang.String,java.lang.String>
-							 */
-							final HashMap result = (HashMap) data;
-							Set keys = result.keySet();
-							Iterator iter = keys.iterator();
+					new AsyncCallback<HashMap<String, String>>() {
+						public void onSuccess(HashMap<String, String> result) {
+							Set<String> keys = result.keySet();
+							Iterator<String> iter = keys.iterator();
 
-							List items = new ArrayList();
+							List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
 							map.clear();
 							while (iter.hasNext()) {
 								final String key = (String) iter.next();

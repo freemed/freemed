@@ -31,61 +31,34 @@ import org.freemedsoftware.gwt.client.AuthenticationException;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface PatientInterface extends RemoteService {
-	public Integer CheckForDuplicatePatient(HashMap criteria);
+	public Integer CheckForDuplicatePatient(HashMap<String, String> criteria);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] DxForPatient(Integer patientId);
+	public HashMap<String, String>[] DxForPatient(Integer patientId);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] EmrAttachmentsByPatient(Integer patientId);
+	public HashMap<String, String>[] EmrAttachmentsByPatient(Integer patientId);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] EmrAttachmentsByPatientTable(Integer patientId,
-			String tableName);
+	public HashMap<String, String>[] EmrAttachmentsByPatientTable(
+			Integer patientId, String tableName);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] EmrModules(String partOfName, Boolean sameKeyAndValue);
+	public HashMap<String, String>[] EmrModules(String partOfName,
+			Boolean sameKeyAndValue);
 
 	public Boolean MoveEmrAttachments(Integer patientFrom, Integer patientTo,
 			Integer[] attachments);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] NumericSearch(HashMap criteria);
+	public HashMap<String, String>[] NumericSearch(
+			HashMap<String, String> criteria);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 * @gwt.typeArgs criteria <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] Search(HashMap criteria);
+	public HashMap<String, String>[] Search(HashMap<String, String> criteria);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap PatientCriteria(Integer patientId);
+	public HashMap<String, String> PatientCriteria(Integer patientId);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap PatientInformation(Integer patientId);
+	public HashMap<String, String> PatientInformation(Integer patientId);
 
 	public Integer TotalInSystem();
 
-	/**
-	 * @gwt.typeArgs <java.lang.Integer, java.lang.String>
-	 */
-	public HashMap Picklist(String textParameters, Integer limit)
-			throws AuthenticationException;
+	public HashMap<Integer, String> Picklist(String textParameters,
+			Integer limit) throws AuthenticationException;
 
 	public Integer[] ProceduresToBill(Integer patientId);
 

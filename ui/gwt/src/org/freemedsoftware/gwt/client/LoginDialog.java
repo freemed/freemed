@@ -116,9 +116,8 @@ public class LoginDialog extends DialogBox {
 					"Associates in Surgery & Gastroenterology, LLC", "2");
 			facilityList.addItem("Valley Regional Hospital", "3");
 		} else {
-			service.GetLocations(new AsyncCallback() {
-				public void onSuccess(Object result) {
-					String[][] r = (String[][]) result;
+			service.GetLocations(new AsyncCallback<String[][]>() {
+				public void onSuccess(String[][] r) {
 					for (int iter = 0; iter < r.length; iter++) {
 						facilityList.addItem(r[iter][0], r[iter][1]);
 					}
@@ -150,9 +149,8 @@ public class LoginDialog extends DialogBox {
 			languageList.addItem("Espanol (Mexico)", "es_MX");
 			languageList.addItem("Polski", "pl_PL");
 		} else {
-			service.GetLanguages(new AsyncCallback() {
-				public void onSuccess(Object result) {
-					String[][] r = (String[][]) result;
+			service.GetLanguages(new AsyncCallback<String[][]>() {
+				public void onSuccess(String[][] r) {
 					for (int iter = 0; iter < r.length; iter++) {
 						languageList.addItem(r[iter][0], r[iter][1]);
 					}
@@ -198,7 +196,6 @@ public class LoginDialog extends DialogBox {
 			freemedInterface.resume();
 		} else {
 			loginButton.setEnabled(false);
-			LoginAsync service = null;
 
 			try {
 				Util.login(userLogin.getText(), loginPassword.getText(),

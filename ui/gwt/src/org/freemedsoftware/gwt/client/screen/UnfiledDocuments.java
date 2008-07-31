@@ -53,10 +53,7 @@ public class UnfiledDocuments extends ScreenInterface {
 
 	protected DjvuViewer djvuViewer;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap[] store = null;
+	protected HashMap<String, String>[] store = null;
 
 	public UnfiledDocuments() {
 
@@ -174,10 +171,7 @@ public class UnfiledDocuments extends ScreenInterface {
 	}
 
 	protected void fileDirectly() {
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		HashMap p = new HashMap();
+		HashMap<String, String> p = new HashMap<String, String>();
 		p.put((String) "id", (String) currentId.toString());
 		p.put((String) "patient", (String) wPatient.getValue().toString());
 		p.put((String) "category", (String) wCategory.getValue().toString());
@@ -193,8 +187,8 @@ public class UnfiledDocuments extends ScreenInterface {
 			loadData();
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
-					new AsyncCallback() {
-						public void onSuccess(Object o) {
+					new AsyncCallback<Integer>() {
+						public void onSuccess(Integer o) {
 							state.getToaster().addItem("UnfiledDocuments",
 									"Processed unfiled document.");
 							loadData();
@@ -221,28 +215,22 @@ public class UnfiledDocuments extends ScreenInterface {
 		if (Util.isStubbedMode()) {
 
 		} else {
-			getDocumentsProxy().GetAll(new AsyncCallback() {
-				public void onSuccess(Object o) {
-					/**
-					 * @gwt.typeArgs <java.lang.String,java.lang.String>
-					 */
-					HashMap[] res = (HashMap[]) o;
-					store = res;
-					wDocuments.loadData(res);
-				}
+			getDocumentsProxy().GetAll(
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] res) {
+							store = res;
+							wDocuments.loadData(res);
+						}
 
-				public void onFailure(Throwable t) {
-					GWT.log("Exception", t);
-				}
-			});
+						public void onFailure(Throwable t) {
+							GWT.log("Exception", t);
+						}
+					});
 		}
 	}
 
 	protected void sendToProvider() {
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		HashMap p = new HashMap();
+		HashMap<String, String> p = new HashMap<String, String>();
 		p.put((String) "id", (String) currentId.toString());
 		p.put((String) "patient", (String) wPatient.getValue().toString());
 		p.put((String) "category", (String) "");
@@ -256,8 +244,8 @@ public class UnfiledDocuments extends ScreenInterface {
 
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
-					new AsyncCallback() {
-						public void onSuccess(Object o) {
+					new AsyncCallback<Integer>() {
+						public void onSuccess(Integer o) {
 
 						}
 

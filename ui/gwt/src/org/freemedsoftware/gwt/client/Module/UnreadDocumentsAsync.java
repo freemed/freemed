@@ -29,15 +29,13 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UnreadDocumentsAsync {
-	public void NumberOfPages(Integer id, AsyncCallback callback);
+	public void NumberOfPages(Integer id, AsyncCallback<Integer> callback);
 
-	/**
-	 */
-	public void GetAll(AsyncCallback callback);
+	public void GetAll(AsyncCallback<HashMap<String, String>[]> callback);
 
-	public void GetCount(AsyncCallback callback);
+	public void GetCount(AsyncCallback<Integer> callback);
 
-	public void MoveToAnotherProvider(Integer id, Integer toProvider, AsyncCallback callback);
+	public void MoveToAnotherProvider(Integer id, Integer toProvider, AsyncCallback<Boolean> callback);
 
-	public void ReviewIntoRecord(Integer id, AsyncCallback callback);
+	public void ReviewIntoRecord(Integer id, AsyncCallback<Boolean> callback);
 }

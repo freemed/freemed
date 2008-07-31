@@ -33,39 +33,42 @@ public interface ModuleInterfaceAsync {
 	 * 
 	 * @param data
 	 */
-	public void ModuleAddMethod(String module, HashMap data, AsyncCallback callback);
+	public void ModuleAddMethod(String module, HashMap<String, String> data, AsyncCallback<Integer> callback);
 
 	/**
 	 * 
 	 * @param module
 	 * @param id
 	 */
-	public void ModuleGetRecordMethod(String module, Integer id, AsyncCallback callback);
+	public void ModuleGetRecordMethod(String module,
+			Integer id, AsyncCallback<HashMap<String, String>> callback);
 
-	public void ModuleDeleteMethod(String module, Integer id, AsyncCallback callback);
+	public void ModuleDeleteMethod(String module, Integer id, AsyncCallback<Integer> callback);
 
 	/**
 	 * 
 	 * @param data
 	 */
-	public void ModuleModifyMethod(String module, HashMap data, AsyncCallback callback);
+	public void ModuleModifyMethod(String module,
+			HashMap<String, String> data, AsyncCallback<Integer> callback);
 
 	/**
 	 * 
 	 * @param module
 	 * @param criteria
 	 */
-	public void ModuleSupportPicklistMethod(String module, String criteria, AsyncCallback callback);
+	public void ModuleSupportPicklistMethod(String module,
+			String criteria, AsyncCallback<HashMap<String, String>> callback);
 
 	/**
 	 * 
 	 * @param module
 	 * @param id
 	 */
-	public void ModuleToTextMethod(String module, Integer id, AsyncCallback callback);
+	public void ModuleToTextMethod(String module, Integer id, AsyncCallback<String> callback);
 
-	public void PrintToFax(String faxNumber, Integer[] items, AsyncCallback callback);
+	public void PrintToFax(String faxNumber, Integer[] items, AsyncCallback<Boolean> callback);
 
-	public void PrintToPrinter(String printer, Integer[] items, AsyncCallback callback);
+	public void PrintToPrinter(String printer, Integer[] items, AsyncCallback<Boolean> callback);
 
 }

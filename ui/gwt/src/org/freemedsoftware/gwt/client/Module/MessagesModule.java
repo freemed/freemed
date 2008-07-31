@@ -28,13 +28,13 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface MessagesModule extends RemoteService {  
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] GetAllByTag ( String searchTag, Boolean getAllMessages );
-	public String[][] MessageTags ( );
-	public Integer UnreadMessages ( Integer timestamp, Boolean showAllMessages );
-	public Boolean DeleteMultiple ( Integer[] messageIds );
-}
+public interface MessagesModule extends RemoteService {
+	public HashMap<String, String>[] GetAllByTag(String searchTag,
+			Boolean getAllMessages);
 
+	public String[][] MessageTags();
+
+	public Integer UnreadMessages(Integer timestamp, Boolean showAllMessages);
+
+	public Boolean DeleteMultiple(Integer[] messageIds);
+}

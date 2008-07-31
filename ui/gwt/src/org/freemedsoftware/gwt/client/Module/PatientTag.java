@@ -40,22 +40,20 @@ public interface PatientTag extends RemoteService {
 	public String[] TagsForPatient(Integer patientId);
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 * @param tagName
 	 * @param includeInactive
 	 * @return
 	 */
-	public HashMap[] SimpleTagSearch(String tagName, Boolean includeInactive);
+	public HashMap<String, String>[] SimpleTagSearch(String tagName,
+			Boolean includeInactive);
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 * @gwt.typeArgs clauses <java.lang.String,java.lang.String>
 	 * @param tagName
 	 * @param clauses
 	 * @param includeInactive
 	 * @return
 	 */
-	public HashMap[] AdvancedTagSearch(String primaryTagName, HashMap clauses,
-			Boolean includeInactive);
+	public HashMap<String, String>[] AdvancedTagSearch(String primaryTagName,
+			HashMap<String, String> clauses, Boolean includeInactive);
 
 }

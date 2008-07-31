@@ -34,11 +34,11 @@ public interface ReportingAsync {
 	 * @param locale
 	 * @param callback the callback to return Array of HashMaps containing data about reports.
 	 */
-	public void GetReports(String locale, AsyncCallback callback);
+	public void GetReports(String locale, AsyncCallback<HashMap<String, String>[]> callback);
 
 	/**
 	 * @param uuid
 	 */
-	public void GetReportParameters(String uuid, AsyncCallback callback);
+	public void GetReportParameters(String uuid, AsyncCallback<HashMap<String, String>[]> callback);
 
 }

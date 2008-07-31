@@ -28,12 +28,10 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-public interface MultumDrugLexicon extends RemoteService {  
-	public String[][] DosagesForDrug ( String drugId, String drugLabel );
-	public String DrugDosageToText ( String id );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap Picklist ( String criteria );
-}
+public interface MultumDrugLexicon extends RemoteService {
+	public String[][] DosagesForDrug(String drugId, String drugLabel);
 
+	public String DrugDosageToText(String id);
+
+	public HashMap<String, String> Picklist(String criteria);
+}

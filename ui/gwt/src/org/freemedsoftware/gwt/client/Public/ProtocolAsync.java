@@ -26,7 +26,6 @@ package org.freemedsoftware.gwt.client.Public;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface ProtocolAsync {  
-	public void Version( AsyncCallback callback );
+public interface ProtocolAsync {
+	public void Version(AsyncCallback<Integer> callback);
 }
-

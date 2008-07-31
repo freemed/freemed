@@ -47,13 +47,9 @@ public class SummaryScreen extends PatientScreenInterface {
 
 	protected CustomSortableTable summaryTable;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap[] dataStore;
+	protected HashMap<String, String>[] dataStore;
 
 	public SummaryScreen() {
-
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 		flexTable.setSize("100%", "100%");
@@ -150,32 +146,29 @@ public class SummaryScreen extends PatientScreenInterface {
 		} else {
 			PatientInterfaceAsync service = null;
 			try {
-				Util
+				service = (PatientInterfaceAsync) Util
 						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface");
 			} catch (Exception e) {
-				GWT.log("Failed to get proxy for PatientInterface", null);
+				GWT.log("Failed to get proxy for PatientInterface", e);
 			}
-			service.EmrAttachmentsByPatient(patientId, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					/**
-					 * @gwt.typeArgs <java.lang.String, java.lang.String>
-					 */
-					HashMap[] r = (HashMap[]) result;
-					dataStore = r;
-					for (int iter = 0; iter < r.length; iter++) {
-						summaryTable.setText(iter + 1, 0, (String) r[iter]
-								.get("stamp"));
-						summaryTable.setText(iter + 1, 1, (String) r[iter]
-								.get("type"));
-						summaryTable.setText(iter + 1, 2, (String) r[iter]
-								.get("summary"));
-					}
-				}
+			service.EmrAttachmentsByPatient(patientId,
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] r) {
+							dataStore = r;
+							for (int iter = 0; iter < r.length; iter++) {
+								summaryTable.setText(iter + 1, 0,
+										(String) r[iter].get("stamp"));
+								summaryTable.setText(iter + 1, 1,
+										(String) r[iter].get("type"));
+								summaryTable.setText(iter + 1, 2,
+										(String) r[iter].get("summary"));
+							}
+						}
 
-				public void onFailure(Throwable t) {
-
-				}
-			});
+						public void onFailure(Throwable t) {
+							GWT.log("Exception", t);
+						}
+					});
 		}
 	}
 }

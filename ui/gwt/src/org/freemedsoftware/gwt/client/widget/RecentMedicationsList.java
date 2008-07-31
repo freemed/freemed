@@ -56,24 +56,21 @@ public class RecentMedicationsList extends Composite {
 		if (Util.isStubbedMode()) {
 
 		} else {
-			getProxy().GetMostRecent(patientId, new AsyncCallback() {
-				public void onSuccess(Object o) {
-					/**
-					 * @gwt.typeArgs <java.lang.String,java.lang.String>
-					 */
-					HashMap[] m = (HashMap[]) o;
-					medicationsTable.clear();
-					try {
-						medicationsTable.loadData(m);
-					} catch (Exception e) {
-						GWT.log("Exception", e);
-					}
-				}
+			getProxy().GetMostRecent(patientId,
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] m) {
+							medicationsTable.clear();
+							try {
+								medicationsTable.loadData(m);
+							} catch (Exception e) {
+								GWT.log("Exception", e);
+							}
+						}
 
-				public void onFailure(Throwable t) {
+						public void onFailure(Throwable t) {
 
-				}
-			});
+						}
+					});
 		}
 	}
 

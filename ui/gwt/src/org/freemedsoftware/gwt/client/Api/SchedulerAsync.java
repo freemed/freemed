@@ -29,38 +29,38 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SchedulerAsync {
-	/**
-	 */
-	public void GetDailyAppointments ( String apptDate, Integer providerId, AsyncCallback callback );
-	/**
-	 */
-	public void GetDailyAppointmentsRange ( String startingDate, String endingDate, Integer providerId, AsyncCallback callback );
-	/**
-	 */
-	public void GetDailyAppointmentScheduler ( String schedulerDate, Integer providerId, AsyncCallback callback );
-	public void CopyAppointment ( Integer id, String destDate, AsyncCallback callback );
-	public void CopyGroupAppointment ( Integer groupId, String targetDate, AsyncCallback callback );
-	/**
-	 */
-	public void FindDateAppointments ( String searchDate, Integer providerId, AsyncCallback callback );
-	/**
-	 */
-	public void FindGroupAppointments ( Integer groupId, AsyncCallback callback );
-	/**
-	 */
-	public void MoveAppointment ( Integer apptId, HashMap data, AsyncCallback callback );
-	/**
-	 */
-	public void MoveGroupAppointment ( Integer groupId, HashMap data, AsyncCallback callback );
-	/**
-	 */
-	public void NextAvailable ( HashMap data, AsyncCallback callback );
-	/**
-	 */
-	public void SetAppointment ( HashMap data, AsyncCallback callback );
-	/**
-	 */
-	public void SetGroupAppointment ( Integer[] patientIds, HashMap data, AsyncCallback callback );
-	public void SetRecurringAppointment ( Integer apptId, Integer[] timestamps, String description, AsyncCallback callback );
-}
 
+	public void GetDailyAppointments(String apptDate,
+			Integer providerId, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void GetDailyAppointmentsRange(
+			String startingDate, String endingDate, Integer providerId, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void GetDailyAppointmentScheduler(
+			String schedulerDate, Integer providerId, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void CopyAppointment(Integer id, String destDate, AsyncCallback<Boolean> callback);
+
+	public void CopyGroupAppointment(Integer groupId, String targetDate, AsyncCallback<Boolean> callback);
+
+	public void FindDateAppointments(String searchDate,
+			Integer providerId, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void FindGroupAppointments(Integer groupId, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void MoveAppointment(Integer apptId, HashMap<String, String> data, AsyncCallback<Boolean> callback);
+
+	public void MoveGroupAppointment(Integer groupId,
+			HashMap<String, String> data, AsyncCallback<Boolean> callback);
+
+	public void NextAvailable(HashMap<String, String> data, AsyncCallback<String[][]> callback);
+
+	public void SetAppointment(HashMap<String, String> data, AsyncCallback<Integer> callback);
+
+	public void SetGroupAppointment(Integer[] patientIds,
+			HashMap<String, String> data, AsyncCallback<Integer> callback);
+
+	public void SetRecurringAppointment(Integer apptId, Integer[] timestamps,
+			String description, AsyncCallback<Void> callback);
+
+}

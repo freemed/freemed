@@ -33,7 +33,6 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 
-//import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -46,7 +45,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 			final Callback cb) {
 		if (Util.isStubbedMode()) {
 			// Handle in a stubbed sort of way
-			List items = new ArrayList();
+			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
 			map.clear();
 			addKeyValuePair(items, new String("Hackenbush, Hugo Z"),
 					new String("1"));
@@ -61,32 +60,30 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 			} catch (Exception e) {
 			}
 
-			service.Picklist(req, new Integer(20), new AsyncCallback() {
-				public void onSuccess(Object data) {
-					/**
-					 * @gwt.typeArgs <java.lang.Integer,java.lang.String>
-					 */
-					final HashMap result = (HashMap) data;
-					Set keys = result.keySet();
-					Iterator iter = keys.iterator();
+			service.Picklist(req, new Integer(20),
+					new AsyncCallback<HashMap<Integer, String>>() {
+						public void onSuccess(HashMap<Integer, String> result) {
+							Set<Integer> keys = result.keySet();
+							Iterator<Integer> iter = keys.iterator();
 
-					List items = new ArrayList();
-					map.clear();
-					while (iter.hasNext()) {
-						Integer keyInt = (Integer) iter.next();
-						String key = keyInt.toString();
-						//Log.debug("keyInt = " + keyInt.toString());
-						String val = (String) result.get(keyInt);
-						addKeyValuePair(items, val, key);
-					}
-					cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
-				}
+							List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
+							map.clear();
+							while (iter.hasNext()) {
+								Integer keyInt = (Integer) iter.next();
+								String key = keyInt.toString();
+								// Log.debug("keyInt = " + keyInt.toString());
+								String val = (String) result.get(keyInt);
+								addKeyValuePair(items, val, key);
+							}
+							cb.onSuggestionsReady(r,
+									new SuggestOracle.Response(items));
+						}
 
-				public void onFailure(Throwable t) {
-					Window.alert(t.getMessage());
-				}
+						public void onFailure(Throwable t) {
+							Window.alert(t.getMessage());
+						}
 
-			});
+					});
 		}
 	}
 }

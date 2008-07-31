@@ -29,23 +29,20 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface MessagesAsync {
-	/**
-	 */
-	public void Get ( Integer message, AsyncCallback callback );
-	public void RecipientsToText ( String id, AsyncCallback callback );
-	public void Remove ( Integer messageId, AsyncCallback callback );
-	/**
-	 */
-	public void ListOfUsers (AsyncCallback callback );
-	/**
-	 */
-	public void Send ( HashMap message, AsyncCallback callback );
-	public void TagModify ( Integer message, String tag, AsyncCallback callback );
-	/**
-	 */
-	public void ViewPerPatient ( Integer patientId, Boolean unreadOnly, AsyncCallback callback );
-	/**
-	 */
-	public void ViewPerUser ( Boolean unreadOnly, AsyncCallback callback );
-}
+	public void Get(Integer message, AsyncCallback<HashMap<String, String>> callback);
 
+	public void RecipientsToText(String id, AsyncCallback<String> callback);
+
+	public void Remove(Integer messageId, AsyncCallback<Boolean> callback);
+
+	public void ListOfUsers(AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void Send(HashMap<String, String> message, AsyncCallback<Boolean> callback);
+
+	public void TagModify(Integer message, String tag, AsyncCallback<Boolean> callback);
+
+	public void ViewPerPatient(Integer patientId,
+			Boolean unreadOnly, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void ViewPerUser(Boolean unreadOnly, AsyncCallback<HashMap<String, String>[]> callback);
+}

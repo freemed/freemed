@@ -29,48 +29,38 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Scheduler extends RemoteService {
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] GetDailyAppointments ( String apptDate, Integer providerId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] GetDailyAppointmentsRange ( String startingDate, String endingDate, Integer providerId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] GetDailyAppointmentScheduler ( String schedulerDate, Integer providerId );
-	public Boolean CopyAppointment ( Integer id, String destDate );
-	public Boolean CopyGroupAppointment ( Integer groupId, String targetDate );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] FindDateAppointments ( String searchDate, Integer providerId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] FindGroupAppointments ( Integer groupId );
-	/**
-	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
-	 */
-	public Boolean MoveAppointment ( Integer apptId, HashMap data );
-	/**
-	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
-	 */
-	public Boolean MoveGroupAppointment ( Integer groupId, HashMap data );
-	/**
-	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
-	 */
-	public String[][] NextAvailable ( HashMap data );
-	/**
-	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
-	 */
-	public Integer SetAppointment ( HashMap data );
-	/**
-	 * @gwt.typeArgs data <java.lang.String, java.lang.String>
-	 */
-	public Integer SetGroupAppointment ( Integer[] patientIds, HashMap data );
-	public void SetRecurringAppointment ( Integer apptId, Integer[] timestamps, String description );
-}
 
+	public HashMap<String, String>[] GetDailyAppointments(String apptDate,
+			Integer providerId);
+
+	public HashMap<String, String>[] GetDailyAppointmentsRange(
+			String startingDate, String endingDate, Integer providerId);
+
+	public HashMap<String, String>[] GetDailyAppointmentScheduler(
+			String schedulerDate, Integer providerId);
+
+	public Boolean CopyAppointment(Integer id, String destDate);
+
+	public Boolean CopyGroupAppointment(Integer groupId, String targetDate);
+
+	public HashMap<String, String>[] FindDateAppointments(String searchDate,
+			Integer providerId);
+
+	public HashMap<String, String>[] FindGroupAppointments(Integer groupId);
+
+	public Boolean MoveAppointment(Integer apptId, HashMap<String, String> data);
+
+	public Boolean MoveGroupAppointment(Integer groupId,
+			HashMap<String, String> data);
+
+	public String[][] NextAvailable(HashMap<String, String> data);
+
+	public Integer SetAppointment(HashMap<String, String> data);
+
+	public Integer SetGroupAppointment(Integer[] patientIds,
+			HashMap<String, String> data);
+
+	public void SetRecurringAppointment(Integer apptId, Integer[] timestamps,
+			String description);
+
+}

@@ -29,14 +29,16 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface AuthorizationsAsync {  
-	public void FindByCoverage ( Integer coverageId, AsyncCallback callback );
-	/**
-	 */
-	public void GetAuthorization ( Integer authorizationId, AsyncCallback callback );
-	public void Replace ( Integer authorizationId, AsyncCallback callback );
-	public void UseAuthorization ( Integer authorizationId, AsyncCallback callback );
-	public void Valid ( Integer authorizationId, Date comparisonDate, AsyncCallback callback );
-	public void ValidSet ( Integer[] authSet, Date comparisonDate, AsyncCallback callback );
-}
+public interface AuthorizationsAsync {
+	public void FindByCoverage(Integer coverageId, AsyncCallback<Integer[]> callback);
 
+	public void GetAuthorization(Integer authorizationId, AsyncCallback<HashMap<String, String>> callback);
+
+	public void Replace(Integer authorizationId, AsyncCallback<Boolean> callback);
+
+	public void UseAuthorization(Integer authorizationId, AsyncCallback<Boolean> callback);
+
+	public void Valid(Integer authorizationId, Date comparisonDate, AsyncCallback<Boolean> callback);
+
+	public void ValidSet(Integer[] authSet, Date comparisonDate, AsyncCallback<Integer[]> callback);
+}

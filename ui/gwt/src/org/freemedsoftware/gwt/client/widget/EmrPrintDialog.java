@@ -24,6 +24,9 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
@@ -176,8 +179,8 @@ public class EmrPrintDialog extends DialogBox {
 			return 1;
 		}
 		state.getToaster().addItem("FaxOSubsystem", "Sending fax to " + f);
-		getProxy().PrintToFax(f, items, new AsyncCallback() {
-			public void onSuccess(Object o) {
+		getProxy().PrintToFax(f, items, new AsyncCallback<Boolean>() {
+			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
@@ -198,8 +201,8 @@ public class EmrPrintDialog extends DialogBox {
 		}
 		state.getToaster().addItem("PrintSubsystem",
 				"Sending document to printer.");
-		getProxy().PrintToPrinter("", items, new AsyncCallback() {
-			public void onSuccess(Object o) {
+		getProxy().PrintToPrinter("", items, new AsyncCallback<Boolean>() {
+			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
@@ -212,14 +215,15 @@ public class EmrPrintDialog extends DialogBox {
 	}
 
 	public int printToBrowser() {
-		String[] args = null;
+		List<String> args = new ArrayList<String>();
 		JSONArray a = new JSONArray();
 		for (int iter = 0; iter < items.length; iter++) {
 			a.set(iter, new JSONNumber(items[iter]));
 		}
-		args[0] = a.toString();
+		args.add(a.toString());
 		String url = Util.getJsonRequest(
-				"org.freemedsoftware.api.ModuleInterface.PrintToBrowser", args);
+				"org.freemedsoftware.api.ModuleInterface.PrintToBrowser", args
+						.toArray(new String[0]));
 		Window.open(url, "", "");
 		closeDialog();
 		return 0;

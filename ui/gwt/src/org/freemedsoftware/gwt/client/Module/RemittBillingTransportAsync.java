@@ -29,22 +29,18 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface RemittBillingTransportAsync {
-	/**
-	 */
-	public void GetRebillList (AsyncCallback callback );
-	public void GetReport ( String report, String reportType, AsyncCallback callback );
-	/**
-	 */
-	public void GetStatus ( String[] uniqueIds, AsyncCallback callback );
-	public void MarkAsBilled ( Integer[] ids, AsyncCallback callback );
-	/**
-	 */
-	public void PatientsToBill (AsyncCallback callback );
-	/**
-	 */
-	public void GetClaimInformation ( Integer claimIds, AsyncCallback callback );
-	/**
-	 */
-	public void ProcessClaims ( Integer[] patientIds, Integer[] claimIds, HashMap[] overrideInfo, AsyncCallback callback );
-}
+	public void GetRebillList(AsyncCallback<HashMap<String, String>[]> callback);
 
+	public void GetReport(String report, String reportType, AsyncCallback<String> callback);
+
+	public void GetStatus(String[] uniqueIds, AsyncCallback<HashMap<String, String>> callback);
+
+	public void MarkAsBilled(Integer[] ids, AsyncCallback<Boolean> callback);
+
+	public void PatientsToBill(AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void GetClaimInformation(Integer claimIds, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void ProcessClaims(Integer[] patientIds,
+			Integer[] claimIds, HashMap<String, String>[] overrideInfo, AsyncCallback<HashMap<String, String>[]> callback);
+}

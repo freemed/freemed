@@ -68,8 +68,9 @@ public class MainScreen extends Composite {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
-		//mainPanel.setHeight(new Integer(Window.getClientHeight() - 5).toString());
-		
+		// mainPanel.setHeight(new Integer(Window.getClientHeight() -
+		// 5).toString());
+
 		// Assign state
 		state = new CurrentState();
 
@@ -111,18 +112,20 @@ public class MainScreen extends Composite {
 						}
 					});
 			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
-			
+
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
 							try {
 								LoginAsync service = (LoginAsync) Util
 										.getProxy("org.freemedsoftware.gwt.client.Public.Login");
-								service.Logout(new AsyncCallback() {
-									public void onSuccess(Object r) {
+								service.Logout(new AsyncCallback<Void>() {
+									public void onSuccess(Void r) {
 										hide();
-										freemedInterface.getLoginDialog().center();
-										//freemedInterface.getLoginDialog().show();
+										freemedInterface.getLoginDialog()
+												.center();
+										//freemedInterface.getLoginDialog().show
+										// ();
 									}
 
 									public void onFailure(Throwable t) {
@@ -226,13 +229,13 @@ public class MainScreen extends Composite {
 	public void hide() {
 		RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), false);
 	}
-	
+
 	public void setFreemedInterface(FreemedInterface i) {
 		freemedInterface = i;
 	}
-	
+
 	public void show() {
 		RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
 	}
-	
+
 }

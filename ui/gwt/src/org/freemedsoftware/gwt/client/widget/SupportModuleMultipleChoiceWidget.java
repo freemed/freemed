@@ -145,16 +145,16 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 				} catch (Exception e) {
 				}
 				final Integer i = new Integer(iter);
-				service.ModuleToTextMethod(module, i, new AsyncCallback() {
-					public void onSuccess(Object res) {
-						String textual = (String) res;
-						addValue(textual, i);
-					}
+				service.ModuleToTextMethod(module, i,
+						new AsyncCallback<String>() {
+							public void onSuccess(String textual) {
+								addValue(textual, i);
+							}
 
-					public void onFailure(Throwable t) {
+							public void onFailure(Throwable t) {
 
-					}
-				});
+							}
+						});
 			}
 		}
 	}

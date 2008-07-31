@@ -50,10 +50,7 @@ public class PatientScreen extends ScreenInterface {
 
 	protected Integer patientId = new Integer(0);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap patientInfo;
+	protected HashMap<String, String> patientInfo;
 
 	public PatientScreen() {
 
@@ -144,10 +141,7 @@ public class PatientScreen extends ScreenInterface {
 		patientId = id;
 
 		if (Util.isStubbedMode()) {
-			/**
-			 * @gwt.typeArgs <java.lang.String,java.lang.String>
-			 */
-			HashMap dummy = new HashMap();
+			HashMap<String, String> dummy = new HashMap<String, String>();
 			dummy.put("patient_name", "Hackenbush, Hugo Z");
 			dummy.put("id", id.toString());
 			dummy.put("patient_id", "HUGO01");
@@ -167,19 +161,16 @@ public class PatientScreen extends ScreenInterface {
 			} catch (Exception e) {
 				GWT.log("Exception caught: ", e);
 			}
-			service.PatientInformation(patientId, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					/**
-					 * @gwt.typeArgs <java.lang.String, java.lang.String>
-					 */
-					HashMap pInfo = (HashMap) result;
-					populatePatientInformation(pInfo);
-				}
+			service.PatientInformation(patientId,
+					new AsyncCallback<HashMap<String, String>>() {
+						public void onSuccess(HashMap<String, String> pInfo) {
+							populatePatientInformation(pInfo);
+						}
 
-				public void onFailure(Throwable t) {
-					GWT.log("FAILURE: ", t);
-				}
-			});
+						public void onFailure(Throwable t) {
+							GWT.log("FAILURE: ", t);
+						}
+					});
 		}
 
 	}
@@ -187,9 +178,8 @@ public class PatientScreen extends ScreenInterface {
 	/**
 	 * 
 	 * @param info
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
-	protected void populatePatientInformation(HashMap info) {
+	protected void populatePatientInformation(HashMap<String, String> info) {
 		// Store this in the object
 		patientInfo = info;
 

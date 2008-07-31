@@ -33,18 +33,19 @@ public interface AllergiesAsync {
 	/**
 	 * @param patientId
 	 */
-	public void GetMostRecent(Integer patientId, AsyncCallback callback);
+	public void GetMostRecent(Integer patientId, AsyncCallback<HashMap<String, String>[]> callback);
 
 	/**
 	 * @param mId
 	 */
-	public void GetAtoms(Integer mId, AsyncCallback callback);
+	public void GetAtoms(Integer mId, AsyncCallback<HashMap<String, String>[]> callback);
 
 	/**
 	 * @param patientId
 	 * @param mId
 	 * @param atoms
 	 */
-	public void SetAtoms(Integer patientId, Integer mId, HashMap atoms, AsyncCallback callback);
+	public void SetAtoms(Integer patientId, Integer mId,
+			HashMap<String, String> atoms, AsyncCallback<Boolean> callback);
 
 }

@@ -33,11 +33,7 @@ public interface UnfiledDocuments extends RemoteService {
 
 	public void BatchSplit(Integer id, Integer[] splitAfter);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 * @return
-	 */
-	public HashMap[] GetAll();
+	public HashMap<String, String>[] GetAll();
 
 	public void Faxback(Integer id, String faxback);
 

@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -49,10 +50,7 @@ import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class ProgressNoteEntry extends PatientScreenInterface {
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	protected HashMap patientMap = null;
+	protected HashMap<String, String> patientMap = null;
 
 	/**
 	 * Internal id representing this record. If this is 0, we create a new one,
@@ -177,47 +175,45 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		containerE.setWidget(E);
 		E.setSize("100%", "100%");
 
-		final SimplePanel containerR = new SimplePanel();
+		final VerticalPanel containerR = new VerticalPanel();
 		tabPanel.add(containerR, "R");
 		R = new RichTextArea();
-		containerR.setWidget(R);
+		containerR.add(R);
 		R.setSize("100%", "100%");
+		final RecentMedicationsList recentMedicationsList = new RecentMedicationsList();
+		recentMedicationsList.setPatientId(patientId);
+		containerR.add(recentMedicationsList);
 
 		tabPanel.selectTab(0);
 	}
 
 	public void loadInternalId(Integer id) {
 		ModuleInterfaceAsync service = getProxy();
-		service.ModuleGetRecordMethod(moduleName, id, new AsyncCallback() {
-			public void onSuccess(Object result) {
-				/**
-				 * @gwt.typeArgs <java.lang.String, java.lang.String>
-				 */
-				HashMap r = (HashMap) result;
-				// TODO: finish this mapping
-				wProvider.setValue(new Integer((String)r.get("pnotesphy")));
-				S.setHTML((String) r.get("pnotes_S"));
-				O.setHTML((String) r.get("pnotes_O"));
-				A.setHTML((String) r.get("pnotes_A"));
-				P.setHTML((String) r.get("pnotes_P"));
-				I.setHTML((String) r.get("pnotes_I"));
-				E.setHTML((String) r.get("pnotes_E"));
-				R.setHTML((String) r.get("pnotes_R"));
-			}
+		service.ModuleGetRecordMethod(moduleName, id,
+				new AsyncCallback<HashMap<String, String>>() {
+					public void onSuccess(HashMap<String, String> r) {
+						// TODO: finish this mapping
+						wProvider.setValue(new Integer((String) r
+								.get("pnotesphy")));
+						S.setHTML((String) r.get("pnotes_S"));
+						O.setHTML((String) r.get("pnotes_O"));
+						A.setHTML((String) r.get("pnotes_A"));
+						P.setHTML((String) r.get("pnotes_P"));
+						I.setHTML((String) r.get("pnotes_I"));
+						E.setHTML((String) r.get("pnotes_E"));
+						R.setHTML((String) r.get("pnotes_R"));
+					}
 
-			public void onFailure(Throwable t) {
+					public void onFailure(Throwable t) {
 
-			}
-		});
+					}
+				});
 	}
 
 	public void submitForm() {
 		ModuleInterfaceAsync service = getProxy();
 		// Form hashmap ...
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		final HashMap rec = new HashMap();
+		final HashMap<String, String> rec = new HashMap<String, String>();
 		rec.put("pnotesdt", (String) wDate.getSelectedDate().toString());
 		rec.put("pnotesdescrip", (String) wDescription.toString());
 		rec.put("pnotesdoc", (String) wProvider.getValue().toString());
@@ -232,35 +228,39 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		if (!internalId.equals(new Integer(0))) {
 			// Modify
 			rec.put("id", (String) internalId.toString());
-			service.ModuleModifyMethod(moduleName, rec, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					Toaster t = state.getToaster();
-					t.addItem("progressNotes", "Updated progress note.",
-							Toaster.TOASTER_INFO);
-				}
+			service.ModuleModifyMethod(moduleName, rec,
+					new AsyncCallback<Integer>() {
+						public void onSuccess(Integer result) {
+							Toaster t = state.getToaster();
+							t.addItem("progressNotes",
+									"Updated progress note.",
+									Toaster.TOASTER_INFO);
+						}
 
-				public void onFailure(Throwable th) {
-					Toaster t = state.getToaster();
-					t.addItem("progressNotes",
-							"Failed to update progress note.",
-							Toaster.TOASTER_ERROR);
-				}
-			});
+						public void onFailure(Throwable th) {
+							Toaster t = state.getToaster();
+							t.addItem("progressNotes",
+									"Failed to update progress note.",
+									Toaster.TOASTER_ERROR);
+						}
+					});
 		} else {
 			// Add
-			service.ModuleAddMethod(moduleName, rec, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					Toaster t = state.getToaster();
-					t.addItem("progressNotes", "Added progress note.",
-							Toaster.TOASTER_INFO);
-				}
+			service.ModuleAddMethod(moduleName, rec,
+					new AsyncCallback<Integer>() {
+						public void onSuccess(Integer result) {
+							Toaster t = state.getToaster();
+							t.addItem("progressNotes", "Added progress note.",
+									Toaster.TOASTER_INFO);
+						}
 
-				public void onFailure(Throwable th) {
-					Toaster t = state.getToaster();
-					t.addItem("progressNotes", "Failed to add progress note.",
-							Toaster.TOASTER_ERROR);
-				}
-			});
+						public void onFailure(Throwable th) {
+							Toaster t = state.getToaster();
+							t.addItem("progressNotes",
+									"Failed to add progress note.",
+									Toaster.TOASTER_ERROR);
+						}
+					});
 		}
 	}
 

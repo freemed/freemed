@@ -27,6 +27,6 @@ package org.freemedsoftware.gwt.client.Api;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TicklerAsync {
-	public void Call ( String[] parameters, AsyncCallback callback );
-}
 
+	public void Call(String[] parameters, AsyncCallback<String> callback);
+}

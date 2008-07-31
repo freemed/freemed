@@ -32,38 +32,37 @@ public interface ModuleInterface extends RemoteService {
 	/**
 	 * 
 	 * @param data
-	 * @gwt.typeArgs data <java.lang.String,java.lang.String>
 	 * @return
 	 */
-	public Integer ModuleAddMethod(String module, HashMap data);
+	public Integer ModuleAddMethod(String module, HashMap<String, String> data);
 
 	/**
 	 * 
 	 * @param module
 	 * @param id
 	 * @return
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
-	public HashMap ModuleGetRecordMethod(String module, Integer id);
+	public HashMap<String, String> ModuleGetRecordMethod(String module,
+			Integer id);
 
 	public Integer ModuleDeleteMethod(String module, Integer id);
 
 	/**
 	 * 
 	 * @param data
-	 * @gwt.typeArgs data <java.lang.String,java.lang.String>
 	 * @return
 	 */
-	public Integer ModuleModifyMethod(String module, HashMap data);
+	public Integer ModuleModifyMethod(String module,
+			HashMap<String, String> data);
 
 	/**
 	 * 
 	 * @param module
 	 * @param criteria
 	 * @return
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
-	public HashMap ModuleSupportPicklistMethod(String module, String criteria);
+	public HashMap<String, String> ModuleSupportPicklistMethod(String module,
+			String criteria);
 
 	/**
 	 * 
@@ -71,7 +70,7 @@ public interface ModuleInterface extends RemoteService {
 	 * @param id
 	 * @return
 	 */
-	public HashMap ModuleToTextMethod(String module, Integer id);
+	public String ModuleToTextMethod(String module, Integer id);
 
 	public Boolean PrintToFax(String faxNumber, Integer[] items);
 

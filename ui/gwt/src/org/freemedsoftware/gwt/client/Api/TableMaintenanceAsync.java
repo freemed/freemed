@@ -28,11 +28,12 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface TableMaintenanceAsync {  
-	public void ExportStockData ( String tableName, AsyncCallback callback );
-	/**
-	 */
-	public void GetModules ( String association, String likeString, Boolean picklist, AsyncCallback callback );
-	public void ImportStockData ( String tableName, AsyncCallback callback );
-}
+public interface TableMaintenanceAsync {
 
+	public void ExportStockData(String tableName, AsyncCallback<Boolean> callback);
+
+	public void GetModules(String association,
+			String likeString, Boolean picklist, AsyncCallback<HashMap<String, String>[]> callback);
+
+	public void ImportStockData(String tableName, AsyncCallback<Void> callback);
+}

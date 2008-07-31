@@ -31,17 +31,15 @@ import com.google.gwt.user.client.rpc.RemoteService;
 public interface Reporting extends RemoteService {
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 * @param locale
 	 * @return Array of HashMaps containing data about reports.
 	 */
-	public HashMap[] GetReports(String locale);
+	public HashMap<String, String>[] GetReports(String locale);
 
 	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 * @param uuid
 	 * @return
 	 */
-	public HashMap[] GetReportParameters(String uuid);
+	public HashMap<String, String>[] GetReportParameters(String uuid);
 
 }

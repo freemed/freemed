@@ -44,15 +44,9 @@ public class Toaster extends PopupPanel {
 
 	public static final int TOASTER_ERROR = 2;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	protected HashMap items = null;
+	protected HashMap<String, String> items = null;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,com.google.gwt.user.client.ui.HTML>
-	 */
-	protected HashMap itemWidgets = null;
+	protected HashMap<String, HTML> itemWidgets = null;
 
 	protected VerticalPanel container = null;
 
@@ -60,8 +54,8 @@ public class Toaster extends PopupPanel {
 
 	public Toaster() {
 		super(false);
-		items = new HashMap();
-		itemWidgets = new HashMap();
+		items = new HashMap<String, String>();
+		itemWidgets = new HashMap<String, HTML>();
 		container = new VerticalPanel();
 		container.setStylePrimaryName("freemed-Toaster");
 		add(container);
@@ -134,10 +128,7 @@ public class Toaster extends PopupPanel {
 			}
 
 			// Loop through and set CSS properly
-			/**
-			 * @gwt.typeArgs <java.lang.String>
-			 */
-			Iterator ks = items.keySet().iterator();
+			Iterator<String> ks = items.keySet().iterator();
 			while (ks.hasNext()) {
 				final String k = (String) ks.next();
 				if (!ks.hasNext()) {

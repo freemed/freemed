@@ -24,7 +24,9 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -51,10 +53,7 @@ public class MessagingScreen extends ScreenInterface {
 
 	private SortableTable wMessages;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	private HashMap[] mStore;
+	private HashMap<String, String>[] mStore;
 
 	public MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -114,17 +113,14 @@ public class MessagingScreen extends ScreenInterface {
 		verticalSplitPanel.add(messageView);
 		messageView.setSize("100%", "100%");
 		// verticalSplitPanel.setSize("100%", "100%");
-		
+
 		// Start population routine
 		populate("");
 	}
 
 	public void populate(String tag) {
 		if (Util.isStubbedMode()) {
-			/**
-			 * @gwt.typeArgs <java.lang.String,java.lang.String>
-			 */
-			HashMap[] dummyData = getStubData();
+			HashMap<String, String>[] dummyData = getStubData();
 			populateByData(dummyData);
 		} else {
 			// Populate the whole thing.
@@ -133,19 +129,16 @@ public class MessagingScreen extends ScreenInterface {
 			ServiceDefTarget endpoint = (ServiceDefTarget) service;
 			String moduleRelativeURL = Util.getRelativeURL();
 			endpoint.setServiceEntryPoint(moduleRelativeURL);
-			service.GetAllByTag(tag, Boolean.FALSE, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					/**
-					 * @gwt.typeArgs <java.lang.String,java.lang.String>
-					 */
-					HashMap[] res = (HashMap[]) result;
-					populateByData(res);
-				}
+			service.GetAllByTag(tag, Boolean.FALSE,
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] result) {
+							populateByData(result);
+						}
 
-				public void onFailure(Throwable t) {
+						public void onFailure(Throwable t) {
 
-				}
-			});
+						}
+					});
 		}
 	}
 
@@ -154,7 +147,7 @@ public class MessagingScreen extends ScreenInterface {
 	 * 
 	 * @param data
 	 */
-	public void populateByData(HashMap[] data) {
+	public void populateByData(HashMap<String, String>[] data) {
 		// Keep a copy of the data in the local store
 		mStore = data;
 		// Clear any current contents
@@ -167,42 +160,31 @@ public class MessagingScreen extends ScreenInterface {
 		}
 	}
 
-	/**
-	 * @return
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
-	 */
-	public HashMap[] getStubData() {
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		final HashMap a = new HashMap();
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String>[] getStubData() {
+		List<HashMap<String, String>> m = new ArrayList<HashMap<String, String>>();
+
+		final HashMap<String, String> a = new HashMap<String, String>();
 		a.put("id", "1");
 		a.put("stamp", "2007-08-01");
 		a.put("from_user", "A");
 		a.put("subject", "Subject A");
+		m.add(a);
 
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		final HashMap b = new HashMap();
+		final HashMap<String, String> b = new HashMap<String, String>();
 		b.put("id", "1");
 		b.put("stamp", "2007-08-01");
 		b.put("from_user", "B");
 		b.put("subject", "Subject B");
+		m.add(b);
 
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		final HashMap c = new HashMap();
+		final HashMap<String, String> c = new HashMap<String, String>();
 		c.put("id", "1");
 		c.put("stamp", "2007-08-03");
 		c.put("from_user", "C");
 		c.put("subject", "Subject C");
+		m.add(c);
 
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		return new HashMap[] { a, b, c };
+		return (HashMap<String, String>[]) m.toArray(new HashMap<?, ?>[0]);
 	}
-
 }

@@ -29,16 +29,13 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Annotations extends RemoteService {
-	public Boolean NewAnnotation ( Integer emrAttachmentId, String annotation );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] GetAnnotations ( Integer emrAttachmentId );
-	/**
-	 * @gwt.typeArgs annotations <java.lang.String, java.lang.String>
-	 */
-	public String OutputAnnotations ( HashMap[] annotations );
-	public String PrepareAnnotation ( String annotationText );
-	public Integer LookupPatient ( String moduleClass, Integer id );
-}
+	public Boolean NewAnnotation(Integer emrAttachmentId, String annotation);
 
+	public HashMap<String, String>[] GetAnnotations(Integer emrAttachmentId);
+
+	public String OutputAnnotations(HashMap<String, String>[] annotations);
+
+	public String PrepareAnnotation(String annotationText);
+
+	public Integer LookupPatient(String moduleClass, Integer id);
+}

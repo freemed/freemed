@@ -50,10 +50,7 @@ public class PatientTagsWidget extends Composite {
 
 	protected Integer patientId = new Integer(0);
 
-	/**
-	 * @gwt.typeArgs <java.lang.String>
-	 */
-	protected ArrayList tags = null;
+	protected ArrayList<String> tags = null;
 
 	protected final FlowPanel flowPanel;
 
@@ -87,8 +84,8 @@ public class PatientTagsWidget extends Composite {
 			wEntry.setText("");
 			addTagToDisplay(tag);
 		} else {
-			getProxy().CreateTag(patientId, tag, new AsyncCallback() {
-				public void onSuccess(Object o) {
+			getProxy().CreateTag(patientId, tag, new AsyncCallback<Boolean>() {
+				public void onSuccess(Boolean o) {
 					wEntry.setText("");
 					addTagToDisplay(tag);
 				}
@@ -122,20 +119,20 @@ public class PatientTagsWidget extends Composite {
 				changeTagButton.addClickListener(new ClickListener() {
 					public void onClick(Widget bW) {
 						if (newTagName.getText().trim().length() > 0) {
-							if (!Util.isStubbedMode()){
-							getProxy().ChangeTag(oldTagName,
-									newTagName.getText().trim(),
-									new AsyncCallback() {
-										public void onSuccess(Object o) {
-											p.hide();
-											p.removeFromParent();
-											populate();
-										}
+							if (!Util.isStubbedMode()) {
+								getProxy().ChangeTag(oldTagName,
+										newTagName.getText().trim(),
+										new AsyncCallback<Boolean>() {
+											public void onSuccess(Boolean o) {
+												p.hide();
+												p.removeFromParent();
+												populate();
+											}
 
-										public void onFailure(Throwable t) {
-											GWT.log("Exception", t);
-										}
-									});
+											public void onFailure(Throwable t) {
+												GWT.log("Exception", t);
+											}
+										});
 							} else {
 								// Stubbed mode
 								p.hide();
@@ -173,8 +170,8 @@ public class PatientTagsWidget extends Composite {
 		if (Util.isStubbedMode()) {
 			hp.removeFromParent();
 		} else {
-			getProxy().ExpireTag(patientId, tag, new AsyncCallback() {
-				public void onSuccess(Object o) {
+			getProxy().ExpireTag(patientId, tag, new AsyncCallback<Boolean>() {
+				public void onSuccess(Boolean o) {
 					hp.removeFromParent();
 				}
 
@@ -204,9 +201,8 @@ public class PatientTagsWidget extends Composite {
 			addTagToDisplay("Diabetes");
 			addTagToDisplay("LatePayment");
 		} else {
-			getProxy().TagsForPatient(patientId, new AsyncCallback() {
-				public void onSuccess(Object o) {
-					String[] tags = (String[]) o;
+			getProxy().TagsForPatient(patientId, new AsyncCallback<String[]>() {
+				public void onSuccess(String[] tags) {
 					for (int iter = 0; iter < tags.length; iter++) {
 						addTagToDisplay(tags[iter]);
 					}

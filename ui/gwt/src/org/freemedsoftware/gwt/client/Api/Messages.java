@@ -29,28 +29,20 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Messages extends RemoteService {
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap Get ( Integer message );
-	public String RecipientsToText ( String id );
-	public Boolean Remove ( Integer messageId );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] ListOfUsers ( );
-	/**
-	 * @gwt.typeArgs message <java.lang.String, java.lang.String>
-	 */
-	public Boolean Send ( HashMap message );
-	public Boolean TagModify ( Integer message, String tag );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] ViewPerPatient ( Integer patientId, Boolean unreadOnly );
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	public HashMap[] ViewPerUser ( Boolean unreadOnly );
-}
+	public HashMap<String, String> Get(Integer message);
 
+	public String RecipientsToText(String id);
+
+	public Boolean Remove(Integer messageId);
+
+	public HashMap<String, String>[] ListOfUsers();
+
+	public Boolean Send(HashMap<String, String> message);
+
+	public Boolean TagModify(Integer message, String tag);
+
+	public HashMap<String, String>[] ViewPerPatient(Integer patientId,
+			Boolean unreadOnly);
+
+	public HashMap<String, String>[] ViewPerUser(Boolean unreadOnly);
+}

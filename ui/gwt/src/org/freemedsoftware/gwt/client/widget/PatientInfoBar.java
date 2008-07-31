@@ -68,7 +68,7 @@ public class PatientInfoBar extends Composite {
 		horizontalPanel.add(wDropdown);
 		horizontalPanel.setCellHorizontalAlignment(wDropdown,
 				HasHorizontalAlignment.ALIGN_CENTER);
-		
+
 		final HorizontalPanel iconBar = new HorizontalPanel();
 
 		final Image wBookAppointment = new Image(
@@ -90,9 +90,8 @@ public class PatientInfoBar extends Composite {
 	 * method.
 	 * 
 	 * @param map
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
 	 */
-	public void setPatientFromMap(HashMap map) {
+	public void setPatientFromMap(HashMap<String, String> map) {
 		try {
 			wPatientName.setText((String) map.get("patient_name"));
 		} catch (Exception e) {

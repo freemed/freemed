@@ -24,7 +24,9 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -55,10 +57,7 @@ public class PatientSearchScreen extends ScreenInterface {
 
 	protected TextBox wFieldValue = null;
 
-	/**
-	 * @gwt.typeArgs <java.lang.String, java.lang.String>
-	 */
-	protected HashMap patientMap = null;
+	protected HashMap<String, String> patientMap = null;
 
 	public PatientSearchScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -115,7 +114,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		});
 
 		// Initialize patient mapping
-		patientMap = new HashMap();
+		patientMap = new HashMap<String, String>();
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
@@ -147,15 +146,13 @@ public class PatientSearchScreen extends ScreenInterface {
 		verticalPanel.add(sortableTable);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void refreshSearch() {
 		sortableTable.clear();
 		clearSearchResults();
 		patientMap.clear();
 		if (Util.isStubbedMode()) {
-			/**
-			 * @gwt.typeArgs <java.lang.String,java.lang.String>
-			 */
-			HashMap a = new HashMap();
+			HashMap<String, String> a = new HashMap<String, String>();
 			a.put("last_name", "Hackenbush");
 			a.put("first_name", "Hugo");
 			a.put("middle_name", "Z");
@@ -163,7 +160,10 @@ public class PatientSearchScreen extends ScreenInterface {
 			a.put("date_of_birth", "1979-08-10");
 			a.put("age", "28");
 			a.put("id", "1");
-			sortableTable.loadData(new HashMap[] { a });
+			List<HashMap<String, String>> l = new ArrayList<HashMap<String, String>>();
+			l.add(a);
+			sortableTable.loadData((HashMap<String, String>[]) l
+					.toArray(new HashMap<?, ?>[0]));
 		} else {
 			PatientInterfaceAsync service = null;
 			try {
@@ -173,28 +173,23 @@ public class PatientSearchScreen extends ScreenInterface {
 				GWT.log("Caught exception: ", e);
 			}
 
-			/**
-			 * @gwt.typeArgs <java.lang.String, java.lang.String>
-			 */
-			HashMap criteria = new HashMap();
+			HashMap<String, String> criteria = new HashMap<String, String>();
 			criteria.put(wFieldName.getValue(wFieldName.getSelectedIndex()),
 					wFieldValue.getText());
 
-			service.Search(criteria, new AsyncCallback() {
-				public void onSuccess(Object result) {
-					/**
-					 * @gwt.typeArgs <java.lang.String,java.lang.String>
-					 */
-					HashMap[] r = (HashMap[]) result;
-					// Log.info("found " + new Integer(r.length).toString() + "
-					// results for Search");
-					sortableTable.loadData(r);
-				}
+			service.Search(criteria,
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] result) {
+							// Log.info("found " + new
+							// Integer(r.length).toString() + "
+							// results for Search");
+							sortableTable.loadData(result);
+						}
 
-				public void onFailure(Throwable t) {
-					// Log.error("Caught exception: ", t);
-				}
-			});
+						public void onFailure(Throwable t) {
+							// Log.error("Caught exception: ", t);
+						}
+					});
 		}
 	}
 
@@ -218,9 +213,8 @@ public class PatientSearchScreen extends ScreenInterface {
 	 *            PatientInterfaceAsync.Search() method
 	 * @param rowIndex
 	 *            Index row, starting at 0 for any results.
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 */
-	public void setResultRow(HashMap res, int rowIndex) {
+	public void setResultRow(HashMap<String, String> res, int rowIndex) {
 		try {
 			sortableTable.setValue(rowIndex + 1, 0, (String) res
 					.get("last_name"));
@@ -238,7 +232,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		}
 
 		// Add value to lookup table, by patient id (supposedly unique field)
-		patientMap.put(res.get("patient_id"), res.get("id"));
+		patientMap.put((String) res.get("patient_id"), (String) res.get("id"));
 	}
 
 	/**

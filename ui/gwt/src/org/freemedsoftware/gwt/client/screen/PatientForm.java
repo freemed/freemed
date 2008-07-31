@@ -339,8 +339,9 @@ public class PatientForm extends ScreenInterface {
 						if (patientId.equals(new Integer(0))) {
 							// Add
 							getModuleProxy().ModuleAddMethod(moduleName,
-									populateHashMap(), new AsyncCallback() {
-										public void onSuccess(Object o) {
+									populateHashMap(),
+									new AsyncCallback<Integer>() {
+										public void onSuccess(Integer o) {
 											// TODO: handle success
 											closeScreen();
 										}
@@ -353,8 +354,9 @@ public class PatientForm extends ScreenInterface {
 						} else {
 							// Modify
 							getModuleProxy().ModuleModifyMethod(moduleName,
-									populateHashMap(), new AsyncCallback() {
-										public void onSuccess(Object o) {
+									populateHashMap(),
+									new AsyncCallback<Integer>() {
+										public void onSuccess(Integer o) {
 											// TODO: handle success
 											closeScreen();
 										}
@@ -383,13 +385,8 @@ public class PatientForm extends ScreenInterface {
 
 	protected void populateForm() {
 		getModuleProxy().ModuleGetRecordMethod("PatientModule", patientId,
-				new AsyncCallback() {
-					public void onSuccess(Object o) {
-						/**
-						 * @gwt.typeArgs <java.lang.String,java.lang.String>
-						 */
-						HashMap m = (HashMap) o;
-
+				new AsyncCallback<HashMap<String, String>>() {
+					public void onSuccess(HashMap<String, String> m) {
 						// Demographics screen
 						wTitle.setWidgetValue((String) m
 								.get((String) "ptsalut"));
@@ -423,14 +420,9 @@ public class PatientForm extends ScreenInterface {
 
 	/**
 	 * Populate hash from form to be fed into the RPC routines.
-	 * 
-	 * @gwt.typeArgs <java.lang.String,java.lang.String>
 	 */
-	protected HashMap populateHashMap() {
-		/**
-		 * @gwt.typeArgs <java.lang.String,java.lang.String>
-		 */
-		HashMap m = new HashMap();
+	protected HashMap<String, String> populateHashMap() {
+		HashMap<String, String> m = new HashMap<String, String>();
 		if (patientId.intValue() > 0) {
 			m.put((String) "id", (String) patientId.toString());
 		}

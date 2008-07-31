@@ -29,28 +29,29 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface PatientTagAsync {
-	public void ListTags(String criteria, AsyncCallback callback);
+	public void ListTags(String criteria, AsyncCallback<String[]> callback);
 
-	public void CreateTag(Integer patientId, String tagName, AsyncCallback callback);
+	public void CreateTag(Integer patientId, String tagName, AsyncCallback<Boolean> callback);
 
-	public void ChangeTag(String oldTag, String newTag, AsyncCallback callback);
+	public void ChangeTag(String oldTag, String newTag, AsyncCallback<Boolean> callback);
 
-	public void ExpireTag(Integer patientId, String tagName, AsyncCallback callback);
+	public void ExpireTag(Integer patientId, String tagName, AsyncCallback<Boolean> callback);
 
-	public void TagsForPatient(Integer patientId, AsyncCallback callback);
+	public void TagsForPatient(Integer patientId, AsyncCallback<String[]> callback);
 
 	/**
 	 * @param tagName
 	 * @param includeInactive
 	 */
-	public void SimpleTagSearch(String tagName, Boolean includeInactive, AsyncCallback callback);
+	public void SimpleTagSearch(String tagName,
+			Boolean includeInactive, AsyncCallback<HashMap<String, String>[]> callback);
 
 	/**
 	 * @param tagName
 	 * @param clauses
 	 * @param includeInactive
 	 */
-	public void AdvancedTagSearch(String primaryTagName, HashMap clauses,
-			Boolean includeInactive, AsyncCallback callback);
+	public void AdvancedTagSearch(String primaryTagName,
+			HashMap<String, String> clauses, Boolean includeInactive, AsyncCallback<HashMap<String, String>[]> callback);
 
 }
