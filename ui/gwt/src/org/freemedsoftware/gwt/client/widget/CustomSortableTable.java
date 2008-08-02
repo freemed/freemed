@@ -100,9 +100,6 @@ public class CustomSortableTable extends SortableTable {
 		}
 		this.addColumnHeader(col.getHeading(), currentCols);
 
-		/**
-		 * @gwt.typeArgs <Column>
-		 */
 		Set<Column> sA = new HashSet<Column>();
 		for (int iter = 0; iter < currentCols; iter++) {
 			sA.add(columns[iter]);
@@ -198,7 +195,7 @@ public class CustomSortableTable extends SortableTable {
 	/**
 	 * @param newData
 	 */
-	public void loadData(HashMap<String,String>[] newData) {
+	public void loadData(HashMap<String, String>[] newData) {
 		data = newData;
 		int rows = (data.length < maximumRows.intValue()) ? data.length
 				: maximumRows.intValue();
