@@ -24,7 +24,9 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
@@ -52,9 +54,34 @@ public class RecentAllergiesList extends Composite {
 		populate();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void populate() {
 		if (Util.isStubbedMode()) {
-
+			allergiesTable.clear();
+			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
+			{
+				HashMap<String, String> item1 = new HashMap<String, String>();
+				item1.put("allergy", "Penicillin");
+				item1.put("reaction", "Swelling");
+				item1.put("severity", "Moderate");
+				results.add(item1);
+			}
+			{
+				HashMap<String, String> item2 = new HashMap<String, String>();
+				item2.put("allergy", "Bee Stings");
+				item2.put("reaction", "Swelling");
+				item2.put("severity", "Severe");
+				results.add(item2);
+			}
+			{
+				HashMap<String, String> item3 = new HashMap<String, String>();
+				item3.put("allergy", "Avocado");
+				item3.put("reaction", "Hives");
+				item3.put("severity", "Moderate");
+				results.add(item3);
+			}
+			allergiesTable.loadData(results
+					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
 		} else {
 			getProxy().GetMostRecent(patientId,
 					new AsyncCallback<HashMap<String, String>[]>() {
@@ -68,7 +95,7 @@ public class RecentAllergiesList extends Composite {
 						}
 
 						public void onFailure(Throwable t) {
-
+							GWT.log("Exception", t);
 						}
 					});
 		}

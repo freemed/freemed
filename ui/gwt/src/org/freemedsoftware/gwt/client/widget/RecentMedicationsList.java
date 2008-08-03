@@ -24,7 +24,9 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
@@ -52,9 +54,34 @@ public class RecentMedicationsList extends Composite {
 		populate();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void populate() {
 		if (Util.isStubbedMode()) {
-
+			medicationsTable.clear();
+			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
+			{
+				HashMap<String, String> item1 = new HashMap<String, String>();
+				item1.put("mdrug", "Doxycycline");
+				item1.put("mdosage", "100mg");
+				item1.put("mroute", "Tablet");
+				results.add(item1);
+			}
+			{
+				HashMap<String, String> item2 = new HashMap<String, String>();
+				item2.put("mdrug", "Keflex");
+				item2.put("mdosage", "50mg");
+				item2.put("mroute", "Capsule");
+				results.add(item2);
+			}
+			{
+				HashMap<String, String> item3 = new HashMap<String, String>();
+				item3.put("mdrug", "Feldene");
+				item3.put("mdosage", "75mg");
+				item3.put("mroute", "Tablet");
+				results.add(item3);
+			}
+			medicationsTable.loadData(results
+					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
 		} else {
 			getProxy().GetMostRecent(patientId,
 					new AsyncCallback<HashMap<String, String>[]>() {
@@ -68,7 +95,7 @@ public class RecentMedicationsList extends Composite {
 						}
 
 						public void onFailure(Throwable t) {
-
+							GWT.log("Exception", t);
 						}
 					});
 		}
