@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
+import org.freemedsoftware.gwt.client.screen.PatientTagSearchScreen;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -116,6 +117,7 @@ public class PatientTagsWidget extends Composite {
 				final TextBox newTagName = new TextBox();
 				fT.setWidget(1, 0, newTagName);
 				final Button changeTagButton = new Button("Change");
+				fT.setWidget(1, 1, changeTagButton);
 				changeTagButton.addClickListener(new ClickListener() {
 					public void onClick(Widget bW) {
 						if (newTagName.getText().trim().length() > 0) {
@@ -139,6 +141,17 @@ public class PatientTagsWidget extends Composite {
 								p.removeFromParent();
 							}
 						}
+					}
+				});
+				final Button searchButton = new Button("Search");
+				fT.setWidget(1, 2, searchButton);
+				searchButton.addClickListener(new ClickListener() {
+					public void onClick(Widget bW) {
+						PatientTagSearchScreen searchScreen = new PatientTagSearchScreen();
+						searchScreen.setTagValue(oldTagName);
+						Util.spawnTab("Tag Search", searchScreen, state);
+						p.hide();
+						p.removeFromParent();
 					}
 				});
 				p.add(fT);
