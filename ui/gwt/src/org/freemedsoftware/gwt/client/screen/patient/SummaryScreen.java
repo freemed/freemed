@@ -84,8 +84,12 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final SimplePanel clinicalTagsPanel = new SimplePanel();
 		final PatientTagsWidget patientTags = new PatientTagsWidget();
-		patientTags.setPatient(patientId);
-		clinicalTagsPanel.add(patientTags);
+		try {
+			patientTags.setPatient(patientId);
+			clinicalTagsPanel.add(patientTags);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
 		final Image tagsLabel = new Image();
 		tagsLabel.setUrl("resources/images/dashboard.32x32.png");
 		tagsLabel.setTitle("Patient Tags");
@@ -111,8 +115,12 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final SimplePanel clinicalMedicationsPanel = new SimplePanel();
 		final RecentMedicationsList recentMedicationsList = new RecentMedicationsList();
-		recentMedicationsList.setPatientId(patientId);
-		clinicalMedicationsPanel.add(recentMedicationsList);
+		try {
+			recentMedicationsList.setPatientId(patientId);
+			clinicalMedicationsPanel.add(recentMedicationsList);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
 		final Image medicationsLabel = new Image();
 		medicationsLabel.setUrl("resources/images/rx_prescriptions.32x32.png");
 		medicationsLabel.setTitle("Medications");
@@ -121,8 +129,12 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final SimplePanel clinicalAllergiesPanel = new SimplePanel();
 		final RecentAllergiesList recentAllergiesList = new RecentAllergiesList();
-		recentAllergiesList.setPatientId(patientId);
-		clinicalAllergiesPanel.add(recentAllergiesList);
+		try {
+			recentAllergiesList.setPatientId(patientId);
+			clinicalAllergiesPanel.add(recentAllergiesList);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
 		final Image allergiesLabel = new Image();
 		allergiesLabel.setUrl("resources/images/allergy.32x32.png");
 		allergiesLabel.setTitle("Allergies");
@@ -142,6 +154,39 @@ public class SummaryScreen extends PatientScreenInterface {
 
 	public void loadData() {
 		if (Util.isStubbedMode()) {
+			int i = 0;
+			{
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put("stamp", "2008-01-01");
+				item.put("type", "test");
+				item.put("summary", "Test item 1");
+				populateTableEntry(i, item);
+				i++;
+			}
+			{
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put("stamp", "2008-01-02");
+				item.put("type", "test");
+				item.put("summary", "Test item 2");
+				populateTableEntry(i, item);
+				i++;
+			}
+			{
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put("stamp", "2008-01-02");
+				item.put("type", "test");
+				item.put("summary", "Test item 3");
+				populateTableEntry(i, item);
+				i++;
+			}
+			{
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put("stamp", "2008-01-03");
+				item.put("type", "test");
+				item.put("summary", "Test item 4");
+				populateTableEntry(i, item);
+				i++;
+			}
 
 		} else {
 			PatientInterfaceAsync service = null;
@@ -156,12 +201,7 @@ public class SummaryScreen extends PatientScreenInterface {
 						public void onSuccess(HashMap<String, String>[] r) {
 							dataStore = r;
 							for (int iter = 0; iter < r.length; iter++) {
-								summaryTable.setText(iter + 1, 0,
-										(String) r[iter].get("stamp"));
-								summaryTable.setText(iter + 1, 1,
-										(String) r[iter].get("type"));
-								summaryTable.setText(iter + 1, 2,
-										(String) r[iter].get("summary"));
+								populateTableEntry(iter, r[iter]);
 							}
 						}
 
@@ -170,5 +210,19 @@ public class SummaryScreen extends PatientScreenInterface {
 						}
 					});
 		}
+	}
+
+	/**
+	 * Populate summary table entry
+	 * 
+	 * @param pos
+	 *            Item position, starting at 0.
+	 * @param entry
+	 *            Data for population
+	 */
+	protected void populateTableEntry(int pos, HashMap<String, String> entry) {
+		summaryTable.setText(pos + 1, 0, entry.get("stamp"));
+		summaryTable.setText(pos + 1, 1, entry.get("type"));
+		summaryTable.setText(pos + 1, 2, entry.get("summary"));
 	}
 }
