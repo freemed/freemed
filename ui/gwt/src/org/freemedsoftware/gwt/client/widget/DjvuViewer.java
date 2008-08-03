@@ -155,23 +155,27 @@ public class DjvuViewer extends Composite {
 					null);
 			return false;
 		}
-		if (viewerType == UNFILED_DOCUMENTS) {
-			UnfiledDocumentsAsync p = null;
-			try {
-				p = (UnfiledDocumentsAsync) Util
-						.getProxy("org.freemedsoftware.gwt.client.Module.UnfiledDocuments");
-			} catch (Exception e) {
-				GWT.log("Exception", e);
-			}
-			p.NumberOfPages(internalId, new AsyncCallback<Integer>() {
-				public void onSuccess(Integer o) {
-					numberOfPages = o.intValue();
+		if (Util.isStubbedMode()) {
+			numberOfPages = 1;
+		} else {
+			if (viewerType == UNFILED_DOCUMENTS) {
+				UnfiledDocumentsAsync p = null;
+				try {
+					p = (UnfiledDocumentsAsync) Util
+							.getProxy("org.freemedsoftware.gwt.client.Module.UnfiledDocuments");
+				} catch (Exception e) {
+					GWT.log("Exception", e);
 				}
+				p.NumberOfPages(internalId, new AsyncCallback<Integer>() {
+					public void onSuccess(Integer o) {
+						numberOfPages = o.intValue();
+					}
 
-				public void onFailure(Throwable t) {
-					GWT.log("Exception", t);
-				}
-			});
+					public void onFailure(Throwable t) {
+						GWT.log("Exception", t);
+					}
+				});
+			}
 		}
 		if (viewerType == UNREAD_DOCUMENTS) {
 			UnreadDocumentsAsync p = null;
@@ -216,9 +220,12 @@ public class DjvuViewer extends Composite {
 		}
 
 		// Set image URL to the appropriate page
-		wImage.setUrl(Util.getJsonRequest(resolvePageViewMethod(),
-				new String[] { internalId.toString(),
-						new Integer(pageNumber).toString() }));
+		if (Util.isStubbedMode()) {
+		} else {
+			wImage.setUrl(Util.getJsonRequest(resolvePageViewMethod(),
+					new String[] { internalId.toString(),
+							new Integer(pageNumber).toString() }));
+		}
 
 		// Set the current page counter
 		String pageCountLabelText = new Integer(pageNumber).toString() + " of "

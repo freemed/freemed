@@ -1,7 +1,9 @@
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -20,7 +22,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
@@ -56,33 +57,35 @@ public class UnfiledDocuments extends ScreenInterface {
 	protected HashMap<String, String>[] store = null;
 
 	public UnfiledDocuments() {
-
-		final HorizontalSplitPanel horizontalSplitPanel = new HorizontalSplitPanel();
-		initWidget(horizontalSplitPanel);
-		horizontalSplitPanel.setSize("100%", "100%");
-		horizontalSplitPanel.setSplitPosition("50%");
+		final HorizontalPanel mainHorizontalPanel = new HorizontalPanel();
+		initWidget(mainHorizontalPanel);
+		mainHorizontalPanel.setSize("100%", "100%");
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
-		horizontalSplitPanel.setLeftWidget(verticalPanel);
+		mainHorizontalPanel.add(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
 		wDocuments = new CustomSortableTable();
 		verticalPanel.add(wDocuments);
+		wDocuments.setIndexName("id");
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
-		loadData();
 		wDocuments.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents e, int row, int col) {
 				// Import current id
-				currentId = new Integer(wDocuments.getValueByRow(row));
+				try {
+					currentId = new Integer(wDocuments.getValueByRow(row));
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+				} finally {
+					// Show the form
+					flexTable.setVisible(true);
+					horizontalPanel.setVisible(true);
 
-				// Show the form
-				flexTable.setVisible(true);
-				horizontalPanel.setVisible(true);
-
-				// Show the image in the viewer
-				djvuViewer.setInternalId(currentId);
-				djvuViewer.setVisible(true);
+					// Show the image in the viewer
+					djvuViewer.setInternalId(currentId);
+					djvuViewer.setVisible(true);
+				}
 			}
 		});
 		wDocuments.setWidth("100%");
@@ -165,9 +168,13 @@ public class UnfiledDocuments extends ScreenInterface {
 
 		djvuViewer = new DjvuViewer();
 		djvuViewer.setType(DjvuViewer.UNFILED_DOCUMENTS);
-		horizontalSplitPanel.setRightWidget(djvuViewer);
+		mainHorizontalPanel.add(djvuViewer);
 		djvuViewer.setVisible(false);
 		djvuViewer.setSize("100%", "100%");
+
+		// Last thing is to initialize, otherwise we're going to get some
+		// NullPointerException errors
+		loadData();
 	}
 
 	protected void fileDirectly() {
@@ -208,12 +215,29 @@ public class UnfiledDocuments extends ScreenInterface {
 	/**
 	 * Load table entries and reset form.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void loadData() {
 		djvuViewer.setVisible(false);
 		flexTable.setVisible(false);
 		horizontalPanel.setVisible(false);
 		if (Util.isStubbedMode()) {
-
+			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
+			{
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put("id", "1");
+				item.put("uffdate", "2008-08-10");
+				item.put("ufffilename", "testFile1.pdf");
+				results.add(item);
+			}
+			{
+				HashMap<String, String> item = new HashMap<String, String>();
+				item.put("id", "2");
+				item.put("uffdate", "2008-08-25");
+				item.put("ufffilename", "testFile2.pdf");
+				results.add(item);
+			}
+			wDocuments.loadData(results
+					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
 		} else {
 			getDocumentsProxy().GetAll(
 					new AsyncCallback<HashMap<String, String>[]>() {

@@ -175,6 +175,32 @@ public class MainScreen extends Composite {
 							true, menuBar_3);
 			menuItem_1.setSize("105px", "30px");
 			menuItem_1.setStyleName("freemed-PrimaryMenuItem");
+
+			// Document management bar
+			final MenuBar menuBar_document = new MenuBar();
+			menuBar_document.setAutoOpen(true);
+			menuBar_document.setStyleName("freemed-SecondaryMenuBar");
+			final MenuItem menuItem_document = menuBar
+					.addItem(
+							"<span id=\"freemed-PrimaryMenuItem-title\">documents</span>",
+							true, menuBar_document);
+			menuItem_document.setSize("105px", "30px");
+			menuItem_document.setStyleName("freemed-PrimaryMenuItem");
+			final MenuItem menuItem_unfiled = menuBar_document.addItem(
+					"unfiled", new Command() {
+						public void execute() {
+							Util.spawnTab("Unfiled Documents",
+									new UnfiledDocuments(), state);
+						}
+					});
+			menuItem_unfiled.setStyleName("freemed-SecondaryMenuItem");
+			/*
+			 * final MenuItem menuItem_unread =
+			 * menuBar_document.addItem("unread", new Command() { public void
+			 * execute() { Util.spawnTab("Unread Documents", new
+			 * UnreadDocuments(), state); } });
+			 * menuItem_unread.setStyleName("freemed-SecondaryMenuItem");
+			 */
 		}
 
 		/*
