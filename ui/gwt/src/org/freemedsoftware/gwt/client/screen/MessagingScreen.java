@@ -30,9 +30,11 @@ import java.util.List;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
+import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -40,20 +42,19 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
-import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
-import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class MessagingScreen extends ScreenInterface {
 
-	private SortableTable wMessages;
+	private CustomSortableTable wMessages;
 
 	private HashMap<String, String>[] mStore;
+
+	protected HTML messageView;
 
 	public MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -89,27 +90,27 @@ public class MessagingScreen extends ScreenInterface {
 		verticalSplitPanel.setSize("100%", "100%");
 		// verticalSplitPanel.setSplitPosition("50%");
 
-		wMessages = new SortableTable();
+		wMessages = new CustomSortableTable();
 		verticalSplitPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
-		wMessages.addColumnHeader("Received", 0);
-		wMessages.addColumnHeader("From", 1);
-		wMessages.addColumnHeader("Subject", 2);
+		wMessages.addColumn("Received", "stamp");
+		wMessages.addColumn("From", "from_user");
+		wMessages.addColumn("Subject", "subject");
+		wMessages.setIndexName("id");
+		wMessages.addTableListener(new TableListener() {
+			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+				// Get information on row...
+				try {
+					final Integer messageId = new Integer(wMessages
+							.getValueByRow(row));
+					showMessage(messageId);
+				} catch (Exception e) {
+					GWT.log("Caught exception: ", e);
+				}
+			}
+		});
 
-		// Boilerplate
-		final int columnCount = 3;
-		wMessages.setStyleName("sortableTable");
-		RowFormatter rowFormatter = wMessages.getRowFormatter();
-		rowFormatter.setStyleName(0, "tableHeader");
-		CellFormatter cellFormatter = wMessages.getCellFormatter();
-		for (int colIndex = 0; colIndex <= columnCount; colIndex++) {
-			cellFormatter.setStyleName(0, colIndex, "headerStyle");
-			cellFormatter.setAlignment(0, colIndex,
-					HasHorizontalAlignment.ALIGN_CENTER,
-					HasVerticalAlignment.ALIGN_MIDDLE);
-		}
-
-		final HTML messageView = new HTML("Message text goes here.");
+		messageView = new HTML("Message text goes here.");
 		verticalSplitPanel.add(messageView);
 		messageView.setSize("100%", "100%");
 		// verticalSplitPanel.setSize("100%", "100%");
@@ -136,7 +137,7 @@ public class MessagingScreen extends ScreenInterface {
 						}
 
 						public void onFailure(Throwable t) {
-
+							GWT.log("Exception", t);
 						}
 					});
 		}
@@ -152,12 +153,7 @@ public class MessagingScreen extends ScreenInterface {
 		mStore = data;
 		// Clear any current contents
 		wMessages.clear();
-		for (int iter = 0; iter < data.length; iter++) {
-			wMessages.setValue(iter + 1, 0, (String) data[iter].get("stamp"));
-			wMessages.setValue(iter + 1, 1, (String) data[iter]
-					.get("from_user"));
-			wMessages.setValue(iter + 1, 2, (String) data[iter].get("subject"));
-		}
+		wMessages.loadData(data);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,19 +168,59 @@ public class MessagingScreen extends ScreenInterface {
 		m.add(a);
 
 		final HashMap<String, String> b = new HashMap<String, String>();
-		b.put("id", "1");
+		b.put("id", "2");
 		b.put("stamp", "2007-08-01");
 		b.put("from_user", "B");
 		b.put("subject", "Subject B");
 		m.add(b);
 
 		final HashMap<String, String> c = new HashMap<String, String>();
-		c.put("id", "1");
+		c.put("id", "3");
 		c.put("stamp", "2007-08-03");
 		c.put("from_user", "C");
 		c.put("subject", "Subject C");
 		m.add(c);
 
 		return (HashMap<String, String>[]) m.toArray(new HashMap<?, ?>[0]);
+	}
+
+	protected void showMessage(Integer messageId) {
+		if (Util.isStubbedMode()) {
+			String txt = new String();
+			switch (messageId.intValue()) {
+			case 1:
+				txt = "Text from message A";
+				break;
+			case 2:
+				txt = "Some more text from message B.";
+				break;
+			case 3:
+				txt = "Why are you still clicking on me? I'm from message C.";
+				break;
+			default:
+				txt = "";
+				break;
+			}
+			messageView.setHTML(txt);
+		} else {
+			ModuleInterfaceAsync service = null;
+
+			try {
+				service = (ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+			} catch (Exception e) {
+				GWT.log("Caught exception: ", e);
+			}
+			service.ModuleGetRecordMethod("MessagesModule", messageId,
+					new AsyncCallback<HashMap<String, String>>() {
+						public void onSuccess(HashMap<String, String> data) {
+							messageView.setHTML(data.get("msgtext"));
+						}
+
+						public void onFailure(Throwable t) {
+							GWT.log("Exception", t);
+						}
+					});
+		}
 	}
 }
