@@ -24,9 +24,9 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -67,7 +67,7 @@ public class CustomSortableTable extends SortableTable {
 
 	protected Column[] columns = new Column[] {};
 
-	protected String indexName = new String("id");;
+	protected String indexName = new String("id");
 
 	protected HashMap<String, String> indexMap = new HashMap<String, String>();
 
@@ -100,7 +100,7 @@ public class CustomSortableTable extends SortableTable {
 		}
 		this.addColumnHeader(col.getHeading(), currentCols);
 
-		Set<Column> sA = new HashSet<Column>();
+		List<Column> sA = new ArrayList<Column>();
 		for (int iter = 0; iter < currentCols; iter++) {
 			sA.add(columns[iter]);
 		}
