@@ -32,7 +32,7 @@
 	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker" />
 	<inherits name="com.bouwkamp.gwt.user.User" />
 	<inherits name="com.google.gwt.i18n.I18N" />
-	<inherits name="com.gwtscheduler.client.Scheduler" />
+	<!-- <inherits name="com.gwtscheduler.client.Scheduler" /> -->
 	<!-- <inherits name="com.allen_sauer.gwt.log.gwt-log" /> -->
 
 	<!-- Stylesheet resources go here -->
