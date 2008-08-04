@@ -43,6 +43,8 @@ class Medications extends EMRModule {
 		'mroute',
 		'mpatient',
 		'mdate',
+		'minterval',
+		'mprescriber',
 		'user'
 	);
 
@@ -112,7 +114,7 @@ class Medications extends EMRModule {
 	//	Array of hashes
 	//
 	public function GetAtoms( $mid ) {
-		$q = "SELECT * FROM medications_atomic WHERE mid = ". ( $mid + 0 );
+		$q = "SELECT ma.*, CONCAT(p.phylname, ', ', p.phyfname, ' ', p.phymname) AS prescriber FROM medications_atomic ma LEFT OUTER JOIN physician p ON ma.mprescriber = p.id WHERE ma.mid = ". ( $mid + 0 );
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAtoms
 

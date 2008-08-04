@@ -47,6 +47,8 @@ public class RecentMedicationsList extends Composite {
 		medicationsTable.addColumn("Drug", "mdrug");
 		medicationsTable.addColumn("Dosage", "mdosage");
 		medicationsTable.addColumn("Route", "mroute");
+		medicationsTable.addColumn("Interval", "minterval");
+		medicationsTable.addColumn("Prescriber", "prescriber");
 	}
 
 	public void setPatientId(Integer id) {
@@ -64,6 +66,8 @@ public class RecentMedicationsList extends Composite {
 				item1.put("mdrug", "Doxycycline");
 				item1.put("mdosage", "100mg");
 				item1.put("mroute", "Tablet");
+				item1.put("minterval", "BID");
+				item1.put("prescriber", "Hackenbush, Hugo Z");
 				results.add(item1);
 			}
 			{
@@ -71,6 +75,8 @@ public class RecentMedicationsList extends Composite {
 				item2.put("mdrug", "Keflex");
 				item2.put("mdosage", "50mg");
 				item2.put("mroute", "Capsule");
+				item2.put("minterval", "BID");
+				item2.put("prescriber", "Hackenbush, Hugo Z");
 				results.add(item2);
 			}
 			{
@@ -78,6 +84,8 @@ public class RecentMedicationsList extends Composite {
 				item3.put("mdrug", "Feldene");
 				item3.put("mdosage", "75mg");
 				item3.put("mroute", "Tablet");
+				item3.put("minterval", "BID");
+				item3.put("prescriber", "Hackenbush, Hugo Z");
 				results.add(item3);
 			}
 			medicationsTable.loadData(results

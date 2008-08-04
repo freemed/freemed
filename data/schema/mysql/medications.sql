@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS `medications_atomic` (
 	mdrug			VARCHAR (150),
 	mdosage			VARCHAR (150),
 	mroute			VARCHAR (150),
+	minterval		ENUM( 'BID', 'TID', 'QID', 'Q3H', 'Q4H', 'Q5H', 'Q6H', 'Q8H', 'QD', 'HS', 'QHS', 'QAM', 'QPM', 'AC', 'PC', 'PRN', 'QSHIFT', 'QOD', 'C', 'Once' ) NOT NULL DEFAULT 'Once',
+	mprescriber		INT UNSIGNED NOT NULL DEFAULT 0,
 	mpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	mdate			DATE,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
@@ -73,10 +75,12 @@ BEGIN
 	DROP TRIGGER medications_atomic_Update;
 
 	#----- Upgrades
-	ALTER TABLE medications ADD COLUMN mdrugs VARCHAR (250) AFTER mdate;
-	ALTER TABLE medications ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER mdrugs;
-	ALTER TABLE medications ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
-	ALTER TABLE medications ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	ALTER IGNORE TABLE medications ADD COLUMN mdrugs VARCHAR (250) AFTER mdate;
+	ALTER IGNORE TABLE medications ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER mdrugs;
+	ALTER IGNORE TABLE medications ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER IGNORE TABLE medications ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	ALTER IGNORE TABLE medications_atomic ADD COLUMN minterval ENUM( 'BID', 'TID', 'QID', 'Q3H', 'Q4H', 'Q5H', 'Q6H', 'Q8H', 'QD', 'HS', 'QHS', 'QAM', 'QPM', 'AC', 'PC', 'PRN', 'QSHIFT', 'QOD', 'C', 'Once' ) NOT NULL DEFAULT 'Once' AFTER mroute;
+	ALTER IGNORE TABLE medications_atomic ADD COLUMN mprescriber INT UNSIGNED NOT NULL DEFAULT 0 AFTER minterval;
 END
 //
 DELIMITER ;
