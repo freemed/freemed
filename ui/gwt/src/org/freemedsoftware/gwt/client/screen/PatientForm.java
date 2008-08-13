@@ -31,7 +31,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.PatientAddresses;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -88,7 +88,7 @@ public class PatientForm extends ScreenInterface {
 
 	protected Integer patientId = new Integer(0);
 
-	protected CustomSortableTable addressContainer;
+	protected PatientAddresses addressContainer;
 
 	public final static String moduleName = "PatientModule";
 
@@ -181,92 +181,9 @@ public class PatientForm extends ScreenInterface {
 		wPatientId.setTabIndex(7);
 		wPatientId.setWidth("100%");
 
-		final FlexTable addressTable = new FlexTable();
-		tabPanel.add(addressTable, "Address");
-
-		final Label typeOfAddressLabel = new Label("Type of Address");
-		addressTable.setWidget(0, 0, typeOfAddressLabel);
-
-		addressType = new CustomListBox();
-		addressType.addItem("Home", "H");
-		addressType.addItem("Work", "W");
-		addressTable.setWidget(0, 1, addressType);
-		addressType.setVisibleItemCount(1);
-
-		final Label relationshipToPatientLabel = new Label(
-				"Relationship to Patient");
-		addressTable.setWidget(1, 0, relationshipToPatientLabel);
-
-		addressRelationship = new CustomListBox();
-		addressRelationship.addItem("Self", "S");
-		addressRelationship.addItem("Parents", "P");
-		addressRelationship.addItem("Cousin", "C");
-		addressRelationship.addItem("Shelter", "SH");
-		addressRelationship.addItem("Unrelated", "U");
-		addressTable.setWidget(1, 1, addressRelationship);
-		addressRelationship.setVisibleItemCount(1);
-
-		final Label addressLine1Label = new Label("Address Line 1");
-		addressTable.setWidget(2, 0, addressLine1Label);
-
-		addressLine1 = new TextBox();
-		addressTable.setWidget(2, 1, addressLine1);
-		addressLine1.setWidth("100%");
-
-		final Label addressLine2Label = new Label("Address Line 2");
-		addressTable.setWidget(3, 0, addressLine2Label);
-
-		addressLine2 = new TextBox();
-		addressTable.setWidget(3, 1, addressLine2);
-		addressLine2.setWidth("100%");
-
-		final Label cityStateLabel = new Label("City / State / Postal");
-		addressTable.setWidget(4, 0, cityStateLabel);
-
-		suggestBox = new SuggestBox();
-		addressTable.setWidget(4, 1, suggestBox);
-
-		final Label activeAddressLabel = new Label("Active Address");
-		addressTable.setWidget(5, 0, activeAddressLabel);
-
-		addressActive = new CustomListBox();
-		addressActive.addItem("Yes", "1");
-		addressActive.addItem("No", "0");
-		addressTable.setWidget(5, 1, addressActive);
-		addressActive.setVisibleItemCount(1);
-
-		final HorizontalPanel horizontalPanel_1 = new HorizontalPanel();
-		addressTable.setWidget(6, 0, horizontalPanel_1);
-		horizontalPanel_1
-				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		addressTable.getFlexCellFormatter().setColSpan(6, 0, 2);
-
-		addressAddButton = new Button();
-		horizontalPanel_1.add(addressAddButton);
-		addressAddButton.setText("Add Address");
-		addressAddButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-				((Button) w).setEnabled(false);
-			}
-		});
-		addressModifyButton = new Button();
-		horizontalPanel_1.add(addressModifyButton);
-		addressModifyButton.setText("Modify Address");
-		addressModifyButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-				((Button) w).setEnabled(false);
-			}
-		});
-
-		addressContainer = new CustomSortableTable();
-		addressContainer.addColumn("Address Type", "type");
-		addressContainer.addColumn("Relationship to Patient", "relate");
-		addressContainer.addColumn("Address Line 1", "line1");
-		addressContainer.addColumn("Address Line 2", "line2");
-		addressContainer.addColumn("City / State / Postal", "csv");
-		addressContainer.addColumn("Active", "active");
-		addressTable.setWidget(7, 0, addressContainer);
-		addressTable.getFlexCellFormatter().setColSpan(7, 0, 2);
+		addressContainer = new PatientAddresses();
+		addressContainer.setState(state);
+		tabPanel.add(addressContainer, "Address");
 
 		final FlexTable contactTable = new FlexTable();
 		tabPanel.add(contactTable, "Contact");
@@ -343,6 +260,8 @@ public class PatientForm extends ScreenInterface {
 									new AsyncCallback<Integer>() {
 										public void onSuccess(Integer o) {
 											// TODO: handle success
+											addressContainer.setPatient(o);
+											addressContainer.commitChanges();
 											closeScreen();
 										}
 
@@ -366,6 +285,7 @@ public class PatientForm extends ScreenInterface {
 											submitButton.setEnabled(true);
 										}
 									});
+							addressContainer.commitChanges();
 						}
 					}
 				} else {
@@ -409,13 +329,14 @@ public class PatientForm extends ScreenInterface {
 						phoneMobile
 								.setText((String) m.get((String) "ptmphone"));
 						phoneFax.setText((String) m.get((String) "ptfax"));
-
 					}
 
 					public void onFailure(Throwable t) {
 						GWT.log("Exception", t);
 					}
 				});
+		// Populate address container
+		addressContainer.setPatient(patientId);
 	}
 
 	/**

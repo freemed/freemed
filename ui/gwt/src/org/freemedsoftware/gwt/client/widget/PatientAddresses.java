@@ -24,16 +24,21 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -61,6 +66,23 @@ public class PatientAddresses extends Composite {
 			setRelation(myRelation);
 			setActive(myActive);
 			setUpdated(myUpdated);
+		}
+
+		/**
+		 * Retrieve HashMap for object used from RPC.
+		 * 
+		 * @return
+		 */
+		public HashMap<String, String> getMap() {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("line1", getLine1());
+			map.put("line2", getLine2());
+			map.put("csz", getCsz());
+			map.put("relation", getRelation());
+			map.put("type", getType());
+			map.put("active", getActive() ? "1" : "0");
+			map.put("updated", getUpdated() ? "1" : "0");
+			return map;
 		}
 
 		public String getLine1() {
@@ -126,6 +148,8 @@ public class PatientAddresses extends Composite {
 
 	protected HashMap<Integer, Address> addresses;
 
+	protected CurrentState state = null;
+
 	public PatientAddresses() {
 		addresses = new HashMap<Integer, Address>();
 
@@ -137,6 +161,20 @@ public class PatientAddresses extends Composite {
 
 		HorizontalPanel hP = new HorizontalPanel();
 		vP.add(hP);
+
+		Button addAddressButton = new Button("Add Address");
+		addAddressButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				Address a = new Address();
+				a.setActive(Boolean.FALSE);
+				addAddress(addresses.size() + 1, a);
+			}
+		});
+		hP.add(addAddressButton);
+	}
+
+	public void setState(CurrentState s) {
+		state = s;
 	}
 
 	/**
@@ -213,7 +251,56 @@ public class PatientAddresses extends Composite {
 		line1.addChangeListener(cl);
 		line2.addChangeListener(cl);
 		csz.addChangeListener(cl);
+		active.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				Address x = addresses.get(pos);
+				x.setActive(new Boolean(((CheckBox) w).isChecked()));
+				addresses.put(pos, x);
 
+				// Sanity check: uncheck all other active ones
+				if (((CheckBox) w).isChecked()) {
+					setActiveAddress(pos);
+				}
+			}
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public void commitChanges() {
+		// Form map
+		HashMap<String, String>[] map;
+		List<HashMap<String, String>> l = new ArrayList<HashMap<String, String>>();
+		Iterator<Integer> iter = addresses.keySet().iterator();
+		while (iter.hasNext()) {
+			l.add(addresses.get(iter.next()).getMap());
+		}
+		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
+
+		if (Util.isStubbedMode()) {
+			// TODO: Stubbed stuff
+		} else {
+			PatientModuleAsync service = null;
+			try {
+				service = (PatientModuleAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Module.PatientModule");
+			} catch (Exception ex) {
+				GWT.log("Exception", ex);
+			} finally {
+				service.SetAddresses(patientId, map,
+						new AsyncCallback<Boolean>() {
+							public void onSuccess(Boolean result) {
+								state.getToaster().addItem("PatientAddresses",
+										"Updated patient addresses.",
+										Toaster.TOASTER_INFO);
+							}
+
+							public void onFailure(Throwable t) {
+								GWT.log("Exception", t);
+							}
+						});
+
+			}
+		}
 	}
 
 	/**
