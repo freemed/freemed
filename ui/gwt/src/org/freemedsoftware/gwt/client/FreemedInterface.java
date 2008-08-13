@@ -94,7 +94,7 @@ public class FreemedInterface implements EntryPoint {
 		if (!active) {
 			mainScreen = new MainScreen();
 			RootPanel.get("rootPanel").add(mainScreen);
-			mainScreen.setFreemedInterface(this);
+			//mainScreen.setFreemedInterface(this);
 			active = true;
 		} else {
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
