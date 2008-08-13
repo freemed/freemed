@@ -32,5 +32,5 @@ public interface PatientModule extends RemoteService {
 	public HashMap<String, String>[] GetAddresses(Integer patientId);
 
 	public Boolean SetAddresses(Integer patientId,
-			HashMap<String, String> addresses);
+			HashMap<String, String>[] addresses);
 }

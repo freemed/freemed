@@ -32,5 +32,5 @@ public interface PatientModuleAsync {
 	public void GetAddresses(Integer patientId, AsyncCallback<HashMap<String, String>[]> callback);
 
 	public void SetAddresses(Integer patientId,
-			HashMap<String, String> addresses, AsyncCallback<Boolean> callback);
+			HashMap<String, String>[] addresses, AsyncCallback<Boolean> callback);
 }
