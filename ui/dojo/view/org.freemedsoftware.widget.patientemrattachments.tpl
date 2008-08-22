@@ -188,7 +188,7 @@
 			var url;
 			if (patientEmrAttachments.itemsToPrint.length == 1) {
 				var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
-				url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".RenderSinglePDF?param0=" + encodeURIComponent( x.oid );
+				url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".RenderSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&nocache=<!--{$unique}-->";
 			} else {
 				url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) );
 			}
@@ -203,7 +203,24 @@
 				return true;
 			}
 			if ( document.getElementById('printMethodFax').checked ) {
-				alert('STUB: print to fax');
+				var destinationNumber = document.getElementById( 'faxNumber' ).value;
+				if (patientEmrAttachments.itemsToPrint.length == 1) {
+					var x = dojo.widget.byId('patientEmrAttachments').store.getDataByKey( patientEmrAttachments.currentItem );
+					url = "<!--{$relay}-->/org.freemedsoftware.module." + x.module_namespace + ".FaxSinglePDF?param0=" + encodeURIComponent( x.oid ) + "&param1=" + encodeURIComponent( document.getElementById( 'faxNumber' ).value );
+				} else {
+					alert('multiple items not supported yet!');
+					return false;
+					//url = "<!--{$relay}-->/org.freemedsoftware.api.ModuleInterface.PrintMultiple?param0=" + encodeURIComponent( dojo.json.serialize( patientEmrAttachments.itemsToPrint ) ) + "&param1=" + printer;
+				}
+				// Make async call to print
+				dojo.io.bind({
+					method: "POST",
+					url: url,
+					load: function( type, data, evt ) {
+						freemedMessage("<!--{t|escape:'javascript'}-->Sending document to printer<!--{/t}-->: " + document.getElementById('emrPrinter').value, "INFO");
+					},
+					mimetype: "text/json"
+				});
 				return true;
 			}
 			if ( document.getElementById('printMethodPrinter').checked ) {
@@ -274,16 +291,19 @@
 							data[i]['actions'] += "<a onClick=\"patientEmrAttachments.patientEmrAction('annotate', " + data[i]['id'] + ");\"><img src=\"<!--{$htdocs}-->/images/annotate.png\" border=\"0\" alt=\"<!--{t|escape:'javascript'}-->Annotate<!--{/t}-->\" /></a>&nbsp;&nbsp;</span>";
 						}
 						dojo.widget.byId('patientEmrAttachments').store.setData( data );
-						try {
-							var x = dojo.widget.byId( 'freemedPatientContent' );
-							var node = x.containerNode || x.domNode;
-							var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'patientParamBar' ).style.height + document.getElementById( 'patientEmrAttachmentsHead' ).style.height + 100 );
-							document.getElementById( 'patientEmrAttachmentsBody' ).style.height = h + 'px';
-						} catch ( e ) { }
+						patientEmrAttachments.resize();
 					}
 				},
 				mimetype: "text/json"
 			});
+		},
+		resize: function() {
+			try {
+				var x = dojo.widget.byId( 'freemedPatientContent' );
+				var node = x.containerNode || x.domNode;
+				var h = parseInt( node.offsetHeight ) - ( document.getElementById( 'patientParamBar' ).style.height + document.getElementById( 'patientEmrAttachmentsHead' ).style.height + 100 );
+				document.getElementById( 'patientEmrAttachmentsBody' ).style.height = h + 'px';
+			} catch ( e ) { }
 		}
 	};
 	
@@ -298,6 +318,7 @@
 		dojo.event.connect( dojo.widget.byId('emrSection'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.connect( dojo.widget.byId('emrRangeBegin'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.connect( dojo.widget.byId('emrRangeEnd'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.connect( window, "onresize", patientEmrAttachments, "resize" );
 	});
 
 	_container_.addOnUnload(function() {
@@ -307,6 +328,7 @@
 		dojo.event.disconnect( dojo.widget.byId('emrSection'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.disconnect( dojo.widget.byId('emrRangeBegin'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
 		dojo.event.disconnect( dojo.widget.byId('emrRangeEnd'), 'onValueChanged', patientEmrAttachments, 'setFilters' );
+		dojo.event.disconnect( window, "onresize", patientEmrAttachments, "resize" );
 	});
 
 </script>
