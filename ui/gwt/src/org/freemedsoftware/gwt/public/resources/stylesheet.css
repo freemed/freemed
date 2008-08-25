@@ -431,3 +431,19 @@ a:hover {
 	cursor: hand;
 	}
 	
+.freemed-PushButton {
+    border: 1px solid #666;
+    margin: 3px 1px;
+    font-size: 80%;
+    cursor: hand;
+    cursor: pointer;
+    background-color: #cccccc;
+    padding: 0 10px;
+	}
+.freemed-PushButton-down-hovering {
+    background-color: #ccccff;
+	}
+.freemed-PushButton-up-hovering {
+    background-color: #00ff00;
+	}
+	

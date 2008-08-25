@@ -145,6 +145,7 @@ public class UnfiledDocuments extends ScreenInterface {
 		horizontalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 
 		final PushButton sendToProviderButton = new PushButton();
+		sendToProviderButton.setStylePrimaryName("freemed-PushButton");
 		sendToProviderButton.setHTML("Send to Provider");
 		sendToProviderButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
@@ -157,6 +158,7 @@ public class UnfiledDocuments extends ScreenInterface {
 
 		final PushButton fileDirectlyButton = new PushButton();
 		fileDirectlyButton.setHTML("File Directly");
+		fileDirectlyButton.setStylePrimaryName("freemed-PushButton");
 		fileDirectlyButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				if (validateForm()) {
