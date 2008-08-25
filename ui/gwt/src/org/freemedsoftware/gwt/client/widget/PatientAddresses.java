@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -150,6 +151,8 @@ public class PatientAddresses extends Composite {
 
 	protected CurrentState state = null;
 
+	protected Command onCompletion = null;
+
 	public PatientAddresses() {
 		addresses = new HashMap<Integer, Address>();
 
@@ -175,6 +178,15 @@ public class PatientAddresses extends Composite {
 
 	public void setState(CurrentState s) {
 		state = s;
+	}
+
+	/**
+	 * Set <Command> which is run on completion of data submission.
+	 * 
+	 * @param oc
+	 */
+	public void setOnCompletion(Command oc) {
+		onCompletion = oc;
 	}
 
 	/**
@@ -277,7 +289,11 @@ public class PatientAddresses extends Composite {
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
 
 		if (Util.isStubbedMode()) {
-			// TODO: Stubbed stuff
+			state.getToaster().addItem("PatientAddresses",
+					"Updated patient addresses.", Toaster.TOASTER_INFO);
+			if (onCompletion != null) {
+				onCompletion.execute();
+			}
 		} else {
 			PatientModuleAsync service = null;
 			try {
@@ -292,10 +308,16 @@ public class PatientAddresses extends Composite {
 								state.getToaster().addItem("PatientAddresses",
 										"Updated patient addresses.",
 										Toaster.TOASTER_INFO);
+								if (onCompletion != null) {
+									onCompletion.execute();
+								}
 							}
 
 							public void onFailure(Throwable t) {
 								GWT.log("Exception", t);
+								state.getToaster().addItem("PatientAddresses",
+										"Failed to update patient addresses.",
+										Toaster.TOASTER_ERROR);
 							}
 						});
 

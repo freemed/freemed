@@ -32,8 +32,11 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -252,6 +255,15 @@ public class PatientForm extends ScreenInterface {
 				if (validateForm()) {
 					if (Util.isStubbedMode()) {
 						submitButton.setEnabled(true);
+						state.getToaster().addItem("Patient",
+								"Updated patient information.",
+								Toaster.TOASTER_INFO);
+						addressContainer.setOnCompletion(new Command() {
+							public void execute() {
+								closeScreen();
+							}
+						});
+						addressContainer.commitChanges();
 					} else {
 						if (patientId.equals(new Integer(0))) {
 							// Add
@@ -259,10 +271,20 @@ public class PatientForm extends ScreenInterface {
 									populateHashMap(),
 									new AsyncCallback<Integer>() {
 										public void onSuccess(Integer o) {
-											// TODO: handle success
+											state
+													.getToaster()
+													.addItem(
+															"Patient",
+															"Updated patient information.",
+															Toaster.TOASTER_INFO);
 											addressContainer.setPatient(o);
+											addressContainer
+													.setOnCompletion(new Command() {
+														public void execute() {
+															closeScreen();
+														}
+													});
 											addressContainer.commitChanges();
-											closeScreen();
 										}
 
 										public void onFailure(Throwable t) {
@@ -276,8 +298,19 @@ public class PatientForm extends ScreenInterface {
 									populateHashMap(),
 									new AsyncCallback<Integer>() {
 										public void onSuccess(Integer o) {
-											// TODO: handle success
-											closeScreen();
+											state
+													.getToaster()
+													.addItem(
+															"Patient",
+															"Updated patient information.",
+															Toaster.TOASTER_INFO);
+											addressContainer
+													.setOnCompletion(new Command() {
+														public void execute() {
+															closeScreen();
+														}
+													});
+											addressContainer.commitChanges();
 										}
 
 										public void onFailure(Throwable t) {
@@ -285,7 +318,6 @@ public class PatientForm extends ScreenInterface {
 											submitButton.setEnabled(true);
 										}
 									});
-							addressContainer.commitChanges();
 						}
 					}
 				} else {
@@ -397,6 +429,7 @@ public class PatientForm extends ScreenInterface {
 		if (msg.length() == 0) {
 			return false;
 		}
+		Window.alert(msg);
 		return true;
 	}
 
