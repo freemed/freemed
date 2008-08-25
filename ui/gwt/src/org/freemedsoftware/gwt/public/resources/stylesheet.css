@@ -376,18 +376,17 @@ a:hover {
 	width: 150px;
 	}
 
-.freemed-Toaster-Info {
+.freemed-ToasterItem-Info, .freemed-ToasterItem-Last-Info {
 	background-color: #ccffcc;
 	}
 	
-.freemed-Toaster-Warning {
+.freemed-ToasterItem-Warning, .freemed-ToasterItem-Last-Warning {
 	background-color: #ffa500;
 	}
 	
-.freemed-Toaster-Error {
+.freemed-ToasterItem-Error, .freemed-ToasterItem-Last-Error {
 	background-color: #ffcccc;
 	}
-
 	
 .freemed-ToasterItem, .freemed-ToasterItem-Last {
 	size: 8pt;
