@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -169,6 +170,9 @@ public class PatientScreen extends ScreenInterface {
 
 						public void onFailure(Throwable t) {
 							GWT.log("FAILURE: ", t);
+							state.getToaster().addItem("Patient",
+									"Failed to retrieve patient information.",
+									Toaster.TOASTER_ERROR);
 						}
 					});
 		}
