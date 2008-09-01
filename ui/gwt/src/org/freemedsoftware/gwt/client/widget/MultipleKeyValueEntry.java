@@ -1,0 +1,321 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2008 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+package org.freemedsoftware.gwt.client.widget;
+
+import java.util.HashMap;
+import java.util.Iterator;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+
+public class MultipleKeyValueEntry extends Composite {
+
+	public enum WidgetType {
+		DEFAULT, TEXTBOX, SELECT, MODULEPICKLIST
+	};
+
+	public class KeyValuePair {
+		private String key;
+
+		private String displayName;
+
+		private String value;
+
+		private WidgetType type;
+
+		private String constraints;
+
+		public KeyValuePair() {
+		}
+
+		public KeyValuePair(HashMap<String, String> map) {
+			setKey(map.get("key"));
+			setValue(map.get("value"));
+			setDisplayName(map.get("displayName"));
+			String t = map.get("type");
+			if (t.equalsIgnoreCase("select")) {
+				setType(WidgetType.SELECT);
+			} else if (t.equalsIgnoreCase("text")) {
+				setType(WidgetType.TEXTBOX);
+			} else if (t.equalsIgnoreCase("module")
+					|| t.equalsIgnoreCase("modulepicklist")) {
+				setType(WidgetType.MODULEPICKLIST);
+			} else {
+				// Default is free text
+				setType(WidgetType.TEXTBOX);
+			}
+			setConstraints(map.get("constraints"));
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public String getDisplayName() {
+			return displayName;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public WidgetType getType() {
+			return type;
+		}
+
+		public String getConstraints() {
+			return constraints;
+		}
+
+		public void setKey(String n) {
+			key = n;
+		}
+
+		public void setDisplayName(String n) {
+			displayName = n;
+		}
+
+		public void setValue(String n) {
+			value = n;
+		}
+
+		public void setType(WidgetType n) {
+			type = n;
+		}
+
+		public void setConstraints(String n) {
+			constraints = n;
+		}
+	}
+
+	protected FlexTable layoutTable;
+
+	protected CustomListBox keyWidget;
+
+	protected Widget valueWidget;
+
+	protected CustomSortableTable displayTable;
+
+	protected HashMap<String, KeyValuePair> keys;
+
+	protected String currentKey;
+
+	protected WidgetType currentType;
+
+	protected HashMap<String, HashMap<String, String>> displayData = new HashMap<String, HashMap<String, String>>();
+
+	protected ChangeListener onSelect = new ChangeListener() {
+
+		@Override
+		public void onChange(Widget w) {
+			// Acquire value from current widget
+			String v = getValueWidgetValue();
+
+			// Grab value pair and set current
+			KeyValuePair kvp = keys.get(currentKey);
+			kvp.setValue(v);
+
+			// Push back in
+			keys.put(currentKey, kvp);
+
+			// Clear the form
+			valueWidget.setVisible(false);
+			keyWidget.setWidgetValue("");
+			currentKey = "";
+			currentType = null;
+		}
+
+	};
+
+	public MultipleKeyValueEntry() {
+		layoutTable = new FlexTable();
+		FlexCellFormatter formatter = layoutTable.getFlexCellFormatter();
+		initWidget(layoutTable);
+
+		keyWidget = new CustomListBox();
+		keyWidget.setTabIndex(1);
+		keyWidget.setVisibleItemCount(1);
+		keyWidget.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void onChange(Widget sender) {
+				if (((CustomListBox) sender).getWidgetValue().length() > 0) {
+					// Only fire change if something is actually selected
+					onChangeKey(((CustomListBox) sender).getWidgetValue());
+				}
+			}
+
+		});
+		layoutTable.setWidget(0, 0, keyWidget);
+
+		// Default constraints ...
+		setValueWidgetType(WidgetType.DEFAULT, "");
+		layoutTable.setWidget(0, 1, valueWidget);
+
+		displayTable = new CustomSortableTable();
+		displayTable.addColumn("Name", "displayName");
+		displayTable.addColumn("Value", "value");
+		layoutTable.setWidget(1, 0, displayTable);
+		formatter.setColSpan(0, 1, 2);
+
+	}
+
+	/**
+	 * To be called when the active key (the one being edited) is changed.
+	 * 
+	 * @param newKey
+	 *            String key name
+	 */
+	protected void onChangeKey(String newKey) {
+		Iterator<String> iter = keys.keySet().iterator();
+		while (iter.hasNext()) {
+			String k = iter.next();
+			if (k.compareTo(newKey) == 0) {
+				KeyValuePair kvp = keys.get(k);
+
+				// Set current key
+				currentKey = k;
+
+				// Set the widget to the appropriate type
+				setValueWidgetType(kvp.getType(), kvp.getConstraints());
+
+				// Assign value if there is one
+				assignValue(kvp.getType(), kvp.getValue());
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void addKey(KeyValuePair k) {
+		// Add to master HashMap
+		keys.put(k.getKey(), k);
+
+		// Add to keyWidget
+		keyWidget.addItem(k.getDisplayName(), k.getKey());
+
+		// Add to display table, if appropriate
+		if (k.getValue().length() > 0) {
+			HashMap<String, String> displayItem = new HashMap<String, String>();
+			displayItem.put("displayName", k.getDisplayName());
+			displayItem.put("value", k.getValue());
+			// Update in display data
+			displayData.put(k.getKey(), displayItem);
+			displayTable.loadData((HashMap<String, String>[]) displayData
+					.values().toArray(new HashMap<?, ?>[0]));
+		}
+	}
+
+	/**
+	 * Assign a preexisting value to the currently displayed entry widget.
+	 * 
+	 * @param newType
+	 *            <WidgetType> enumerated value
+	 * @param newValue
+	 *            String value
+	 */
+	protected void assignValue(WidgetType newType, String newValue) {
+		switch (newType) {
+		case SELECT:
+			((CustomListBox) valueWidget).setWidgetValue(newValue);
+			break;
+		case MODULEPICKLIST:
+			((SupportModuleWidget) valueWidget).setValue(new Integer(newValue));
+			break;
+		case TEXTBOX:
+		default:
+			((TextBox) valueWidget).setText(newValue);
+			break;
+		}
+	}
+
+	/**
+	 * Import all data into widget.
+	 * 
+	 * @param data
+	 */
+	public void loadData(HashMap<String, String>[] data) {
+		for (int iter = 0; iter < data.length; iter++) {
+			addKey(new KeyValuePair(data[iter]));
+		}
+	}
+
+	/**
+	 * Get current "value" for displayed form.
+	 * 
+	 * @return
+	 */
+	protected String getValueWidgetValue() {
+		switch (currentType) {
+		case SELECT:
+			return ((CustomListBox) valueWidget).getWidgetValue();
+		case MODULEPICKLIST:
+			return ((SupportModuleWidget) valueWidget).getValue().toString();
+		case TEXTBOX:
+		default:
+			return ((TextBox) valueWidget).getText();
+		}
+	}
+
+	protected void setValueWidgetType(WidgetType newType, String constraints) {
+		currentType = newType;
+		switch (newType) {
+		case SELECT:
+			valueWidget = new CustomListBox();
+			((CustomListBox) valueWidget).setVisibleItemCount(1);
+			// CSV of values for constraints ....
+			String[] options = constraints.split(",");
+			for (int iter = 0; iter < options.length; iter++) {
+				((ListBox) valueWidget).addItem(options[iter]);
+			}
+			((CustomListBox) valueWidget).addChangeListener(onSelect);
+			break;
+		case MODULEPICKLIST:
+			valueWidget = new SupportModuleWidget();
+			((SupportModuleWidget) valueWidget).addChangeListener(onSelect);
+			break;
+		case TEXTBOX:
+		default:
+			valueWidget = new TextBox();
+			((TextBox) valueWidget).addChangeListener(onSelect);
+			break;
+		}
+		try {
+			((FocusWidget) valueWidget).setTabIndex(2);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
+
+		// Make sure everything is visible...
+		valueWidget.setVisible(true);
+	}
+
+}
