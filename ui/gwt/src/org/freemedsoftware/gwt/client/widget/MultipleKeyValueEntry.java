@@ -24,6 +24,7 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,11 +37,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class MultipleKeyValueEntry extends Composite {
 
 	public enum WidgetType {
-		DEFAULT, TEXTBOX, SELECT, MODULEPICKLIST
+		DEFAULT, TEXTBOX, SELECT, MODULEPICKLIST, DATEPICKER, SELECT_YN
 	};
 
 	public class KeyValuePair {
@@ -64,11 +66,17 @@ public class MultipleKeyValueEntry extends Composite {
 			String t = map.get("type");
 			if (t.equalsIgnoreCase("select")) {
 				setType(WidgetType.SELECT);
+			} else if (t.equalsIgnoreCase("yn")
+					|| t.equalsIgnoreCase("select_yn")) {
+				setType(WidgetType.SELECT_YN);
 			} else if (t.equalsIgnoreCase("text")) {
 				setType(WidgetType.TEXTBOX);
 			} else if (t.equalsIgnoreCase("module")
 					|| t.equalsIgnoreCase("modulepicklist")) {
 				setType(WidgetType.MODULEPICKLIST);
+			} else if (t.equalsIgnoreCase("date")
+					|| t.equalsIgnoreCase("datepicker")) {
+				setType(WidgetType.DATEPICKER);
 			} else {
 				// Default is free text
 				setType(WidgetType.TEXTBOX);
@@ -245,7 +253,11 @@ public class MultipleKeyValueEntry extends Composite {
 	protected void assignValue(WidgetType newType, String newValue) {
 		switch (newType) {
 		case SELECT:
+		case SELECT_YN:
 			((CustomListBox) valueWidget).setWidgetValue(newValue);
+			break;
+		case DATEPICKER:
+			((SimpleDatePicker) valueWidget).setCurrentDate(new Date(newValue));
 			break;
 		case MODULEPICKLIST:
 			((SupportModuleWidget) valueWidget).setValue(new Integer(newValue));
@@ -315,6 +327,17 @@ public class MultipleKeyValueEntry extends Composite {
 				((ListBox) valueWidget).addItem(options[iter]);
 			}
 			((CustomListBox) valueWidget).addChangeListener(onSelect);
+			break;
+		case SELECT_YN:
+			valueWidget = new CustomListBox();
+			((CustomListBox) valueWidget).setVisibleItemCount(1);
+			((CustomListBox) valueWidget).addItem("Yes", "1");
+			((CustomListBox) valueWidget).addItem("No", "0");
+			((CustomListBox) valueWidget).addChangeListener(onSelect);
+			break;
+		case DATEPICKER:
+			valueWidget = new SimpleDatePicker();
+			((SimpleDatePicker) valueWidget).addChangeListener(onSelect);
 			break;
 		case MODULEPICKLIST:
 			valueWidget = new SupportModuleWidget();
