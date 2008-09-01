@@ -269,6 +269,24 @@ public class MultipleKeyValueEntry extends Composite {
 	}
 
 	/**
+	 * Get all values assigned by this widget.
+	 * 
+	 * @return
+	 */
+	public HashMap<String, String> getAllValues() {
+		HashMap<String, String> v = new HashMap<String, String>();
+		Iterator<KeyValuePair> i = keys.values().iterator();
+		while (i.hasNext()) {
+			KeyValuePair kvp = i.next();
+			// Avoid null values
+			if (kvp.value.length() > 0) {
+				v.put(kvp.getKey(), kvp.getValue());
+			}
+		}
+		return v;
+	}
+
+	/**
 	 * Get current "value" for displayed form.
 	 * 
 	 * @return
