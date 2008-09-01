@@ -306,7 +306,10 @@ public class MultipleKeyValueEntry extends Composite {
 	protected String getValueWidgetValue() {
 		switch (currentType) {
 		case SELECT:
+		case SELECT_YN:
 			return ((CustomListBox) valueWidget).getWidgetValue();
+		case DATEPICKER:
+			return ((SimpleDatePicker) valueWidget).getCurrentDate().toString();
 		case MODULEPICKLIST:
 			return ((SupportModuleWidget) valueWidget).getValue().toString();
 		case TEXTBOX:
