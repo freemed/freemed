@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	caldateof		DATE,
 	calcreated		TIMESTAMP (16),
 	calmodified		TIMESTAMP (16),
-	caltype			ENUM( 'temp', 'pat', 'block' ) NOT NULL DEFAULT 'pat',
+	caltype			ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat',
 	calhour			INT UNSIGNED,
 	calminute		INT UNSIGNED,
 	calduration		INT UNSIGNED,
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calrecurnote		VARCHAR (100),
 	calrecurid		INT UNSIGNED NOT NULL DEFAULT 0,
 	calappttemplate		INT UNSIGNED NOT NULL DEFAULT 0,
+	calattendees		VARCHAR (250),
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	id			SERIAL
 
@@ -69,8 +70,8 @@ BEGIN
 	#----- Upgrades
         CALL FreeMED_Module_GetVersion( 'scheduler', @V );
 
-        # Version 1
-        IF @V < 1 THEN
+        # Version 2
+        IF @V < 2 THEN
 		#	Version 0.6.3
 		ALTER IGNORE TABLE scheduler ADD COLUMN calgroupid INT UNSIGNED NOT NULL DEFAULT 0 AFTER calmark;
 		ALTER IGNORE TABLE scheduler ADD COLUMN calrecurnote VARCHAR (100) AFTER calgroupid;
@@ -91,7 +92,15 @@ BEGIN
 		ALTER IGNORE TABLE scheduler ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER calappttemplate;
 	END IF;
 
-	CALL FreeMED_Module_UpdateVersion( 'scheduler', 2 );
+        # Version 3
+	IF @V < 3 THEN
+		#	Patch for attendees and "group" scheduling, since all other
+		#	group scheduling pieces are in here from a legacy version.
+		ALTER TABLE scheduler CHANGE COLUMN caltype caltype ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat';
+		ALTER TABLE scheduler ADD COLUMN calattendees VARCHAR (250) AFTER calappttemplate;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'scheduler', 3 );
 END
 //
 DELIMITER ;
