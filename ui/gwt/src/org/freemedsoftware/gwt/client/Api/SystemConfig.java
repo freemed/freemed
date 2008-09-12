@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface SystemConfig extends RemoteService {
 
-	public HashMap<String, String> GetAll();
+	public HashMap<String, String>[] GetAll();
 
 	public String GetValue(String configKey);
 

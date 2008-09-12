@@ -45,7 +45,7 @@ class SystemConfig {
 		foreach ( $res AS $r ) {
 			$result[] = array_merge(
 				$r,
-				array( 'options' => explode( ',', $r['c_options'] ) )
+				array( 'options' => defined('GWTPHP_FORCE_SHOEHORN') ? $r['c_options'] : explode( ',', $r['c_options'] ) )
 			);
 		}
 		return $result;

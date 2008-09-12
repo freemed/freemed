@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SystemConfigAsync {
 
-	public void GetAll(AsyncCallback<HashMap<String, String>> callback);
+	public void GetAll(AsyncCallback<HashMap<String, String>[]> callback);
 
 	public void GetValue(String configKey, AsyncCallback<String> callback);
 

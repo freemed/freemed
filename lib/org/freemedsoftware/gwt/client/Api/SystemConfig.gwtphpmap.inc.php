@@ -39,7 +39,7 @@ $gwtphpmap = array (
 			  array (
 				  'name' => 'GetAll'
 				, 'mappedName' => 'GetAll'
-				, 'returnType' => 'java.util.HashMap'
+				, 'returnType' => '[Ljava.util.HashMap;'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
@@ -75,7 +75,7 @@ $gwtphpmap = array (
 			, array (
 				  'name' => 'GetConfigSections'
 				, 'mappedName' => 'GetConfigSections'
-				, 'returnType' => '[java.lang.String'
+				, 'returnType' => '[Ljava.lang.String;'
 				, 'params' => array ( )
 				, 'throws' => array ( )
 			)
