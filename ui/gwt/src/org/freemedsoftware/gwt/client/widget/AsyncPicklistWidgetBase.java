@@ -128,6 +128,17 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 		return value;
 	}
 
+	/**
+	 * Set widget value.
+	 * 
+	 * @param v
+	 */
+	public void setValue(Integer v) {
+		value = v;
+	}
+
+	public abstract void getTextForValue(Integer val);
+
 	public void addChangeListener(ChangeListener listener) {
 		if (changeListeners == null)
 			changeListeners = new ChangeListenerCollection();

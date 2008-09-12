@@ -138,4 +138,27 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 		}
 	}
 
+	@Override
+	public void getTextForValue(Integer val) {
+		if (Util.isStubbedMode()) {
+			searchBox.setText("Hackenbush, Hugo Z (STUB)");
+		} else {
+			ModuleInterfaceAsync service = null;
+			try {
+				service = ((ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface"));
+			} catch (Exception e) {
+			}
+			service.ModuleToTextMethod(moduleName, val,
+					new AsyncCallback<String>() {
+						public void onSuccess(String r) {
+							searchBox.setText(r);
+						}
+
+						public void onFailure(Throwable t) {
+							GWT.log("Exception", t);
+						}
+					});
+		}
+	}
 }

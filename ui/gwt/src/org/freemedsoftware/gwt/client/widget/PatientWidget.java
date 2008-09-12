@@ -33,6 +33,7 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -84,6 +85,29 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 						}
 
 					});
+		}
+	}
+
+	@Override
+	public void getTextForValue(Integer val) {
+		if (Util.isStubbedMode()) {
+			searchBox.setText("Hackenbush, Hugo Z (STUB)");
+		} else {
+			PatientInterfaceAsync service = null;
+			try {
+				service = ((PatientInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
+			} catch (Exception e) {
+			}
+			service.ToText(val, true, new AsyncCallback<String>() {
+				public void onSuccess(String r) {
+					searchBox.setText(r);
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("Exception", t);
+				}
+			});
 		}
 	}
 }
