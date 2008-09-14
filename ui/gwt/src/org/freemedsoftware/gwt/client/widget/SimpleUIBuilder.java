@@ -37,6 +37,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleUIBuilder extends Composite {
 
+	public enum WidgetType {
+		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT
+	};
+
 	/**
 	 * Interface for any <SimpleUIBuilder> subclasses to receive infomation back
 	 * from this piece.
@@ -122,17 +126,17 @@ public class SimpleUIBuilder extends Composite {
 	 * @param value
 	 *            Default value.
 	 */
-	public void addWidget(String name, String title, String type,
+	public void addWidget(String name, String title, WidgetType type,
 			String options, String value) {
 		Widget w;
 
-		if (type.compareToIgnoreCase("text") == 0) {
+		if (type == WidgetType.TEXT) {
 			w = new TextBox();
-		} else if (type.compareToIgnoreCase("modulemultiple") == 0) {
-			w = new SupportModuleMultipleChoiceWidget(options);
-		} else if (type.compareToIgnoreCase("module") == 0) {
+		} else if (type == WidgetType.MODULE) {
 			w = new SupportModuleWidget(options);
-		} else if (type.compareToIgnoreCase("select") == 0) {
+		} else if (type == WidgetType.MODULE_MULTIPLE) {
+			w = new SupportModuleMultipleChoiceWidget(options);
+		} else if (type == WidgetType.SELECT) {
 			w = new CustomListBox();
 
 			// Push in all "options" values
@@ -145,7 +149,7 @@ public class SimpleUIBuilder extends Composite {
 				}
 				((CustomListBox) w).addItem(o[iter]);
 			}
-		} else if (type.compareToIgnoreCase("patient") == 0) {
+		} else if (type == WidgetType.PATIENT) {
 			w = new PatientWidget();
 		} else {
 			// Unimplemented, use text box as fallback
