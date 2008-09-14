@@ -24,6 +24,10 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
@@ -101,6 +105,44 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 	 */
 	public Integer[] getValues() {
 		return widgetValues;
+	}
+
+	/**
+	 * Get all integer values squished into a comma separated string.
+	 * 
+	 * @return
+	 */
+	public String getCommaSeparatedValues() {
+		List<Integer> v = new ArrayList<Integer>();
+		for (int i = 0; i < widgetValues.length; i++) {
+			v.add(widgetValues[i]);
+		}
+		String buffer = new String("");
+		Iterator<Integer> iter = v.iterator();
+		while (iter.hasNext()) {
+			buffer += iter.next();
+			if (iter.hasNext()) {
+				buffer += ",";
+			}
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * Assign all integer values from a squished comma separated string.
+	 * 
+	 * @param v
+	 * @return
+	 */
+	public void setCommaSeparatedValues(String v) {
+		if (v != null) {
+			String[] s = v.split(",");
+			List<Integer> i = new ArrayList<Integer>();
+			for (int iter = 0; iter < s.length; iter++) {
+				i.add(new Integer(s[iter]));
+			}
+			setValue(i.toArray(new Integer[0]));
+		}
 	}
 
 	/**

@@ -37,7 +37,23 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleUIBuilder extends Composite {
 
+	/**
+	 * Interface for any <SimpleUIBuilder> subclasses to receive infomation back
+	 * from this piece.
+	 * 
+	 * @author jeff@freemedsoftware.org
+	 * 
+	 */
 	public interface Receiver {
+
+		/**
+		 * Check to make sure data is valid.
+		 * 
+		 * @param data
+		 * @return null if there are no errors, or else a list of errors.
+		 */
+		public String validateData(HashMap<String, String> data);
+
 		/**
 		 * Handle data.
 		 * 
@@ -70,7 +86,10 @@ public class SimpleUIBuilder extends Composite {
 
 				// If a receiver has been set, push there
 				if (receiver != null) {
-					receiver.processData(data);
+					String v = receiver.validateData(data);
+					if (v == null) {
+						receiver.processData(data);
+					}
 				}
 			}
 
@@ -78,6 +97,15 @@ public class SimpleUIBuilder extends Composite {
 
 		// Initialize widget container
 		widgets = new HashMap<String, Widget>();
+	}
+
+	/**
+	 * Allow assigning of event <Receiver> to this widget.
+	 * 
+	 * @param r
+	 */
+	public void setReceiver(Receiver r) {
+		receiver = r;
 	}
 
 	/**
@@ -100,14 +128,10 @@ public class SimpleUIBuilder extends Composite {
 
 		if (type.compareToIgnoreCase("text") == 0) {
 			w = new TextBox();
-			if (value != null) {
-				((TextBox) w).setText(value);
-			}
+		} else if (type.compareToIgnoreCase("modulemultiple") == 0) {
+			w = new SupportModuleMultipleChoiceWidget(options);
 		} else if (type.compareToIgnoreCase("module") == 0) {
 			w = new SupportModuleWidget(options);
-			if (value != null) {
-				((SupportModuleWidget) w).setValue(new Integer(value));
-			}
 		} else if (type.compareToIgnoreCase("select") == 0) {
 			w = new CustomListBox();
 
@@ -121,27 +145,20 @@ public class SimpleUIBuilder extends Composite {
 				}
 				((CustomListBox) w).addItem(o[iter]);
 			}
-
-			if (value != null) {
-				((CustomListBox) w).setWidgetValue(value);
-			}
 		} else if (type.compareToIgnoreCase("patient") == 0) {
 			w = new PatientWidget();
-			if (value != null) {
-				((PatientWidget) w).setValue(new Integer(value));
-			}
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new TextBox();
-			if (value != null) {
-				((TextBox) w).setText(value);
-			}
 		}
 
 		// Add to indices and display
 		widgets.put(name, w);
 		table.setText(widgets.size() - 1, 0, title);
 		table.setWidget(widgets.size() - 1, 1, w);
+
+		// Set widget value after it is added.
+		this.setWidgetValue(name, value);
 	}
 
 	/**
@@ -160,6 +177,22 @@ public class SimpleUIBuilder extends Composite {
 	}
 
 	/**
+	 * Set all widget values.
+	 * 
+	 * @param c
+	 */
+	public void setValues(HashMap<String, String> c) {
+		Iterator<String> iter = widgets.keySet().iterator();
+		while (iter.hasNext()) {
+			String k = iter.next();
+			String v = c.get(k);
+			if (v != null) {
+				setWidgetValue(k, v);
+			}
+		}
+	}
+
+	/**
 	 * Convenience method for extracting value from a contained widget given the
 	 * widget's name in the widgets hashmap.
 	 * 
@@ -167,7 +200,7 @@ public class SimpleUIBuilder extends Composite {
 	 *            "name" key in the widgets hashmap
 	 * @return Value of the specified widget, or null if none is found.
 	 */
-	protected String getWidgetValue(String name) {
+	public String getWidgetValue(String name) {
 		Widget w = widgets.get(name);
 		if (w instanceof TextBox) {
 			return ((TextBox) w).getText();
@@ -178,10 +211,45 @@ public class SimpleUIBuilder extends Composite {
 		if (w instanceof SupportModuleWidget) {
 			return ((SupportModuleWidget) w).getValue().toString();
 		}
+		if (w instanceof SupportModuleMultipleChoiceWidget) {
+			return ((SupportModuleMultipleChoiceWidget) w)
+					.getCommaSeparatedValues();
+		}
 		if (w instanceof PatientWidget) {
 			return ((PatientWidget) w).getValue().toString();
 		}
 		return null;
+	}
+
+	/**
+	 * Convenience method for setting value of a contained widget given the
+	 * widget's name in the widgets hashmap.
+	 * 
+	 * @param name
+	 *            "name" key in the widgets hashmap
+	 * @param value
+	 *            Value to assign
+	 */
+	public void setWidgetValue(String name, String value) {
+		Widget w = widgets.get(name);
+		if (value != null) {
+			if (w instanceof TextBox) {
+				((TextBox) w).setText(value);
+			}
+			if (w instanceof CustomListBox) {
+				((CustomListBox) w).setWidgetValue(value);
+			}
+			if (w instanceof SupportModuleWidget) {
+				((SupportModuleWidget) w).setValue(new Integer(value));
+			}
+			if (w instanceof SupportModuleMultipleChoiceWidget) {
+				((SupportModuleMultipleChoiceWidget) w)
+						.setCommaSeparatedValues(value);
+			}
+			if (w instanceof PatientWidget) {
+				((PatientWidget) w).setValue(new Integer(value));
+			}
+		}
 	}
 
 }
