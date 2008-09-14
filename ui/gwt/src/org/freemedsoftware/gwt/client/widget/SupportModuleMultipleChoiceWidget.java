@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,6 +52,15 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 	protected Integer[] widgetValues;
 
 	public SupportModuleMultipleChoiceWidget() {
+		init();
+	}
+
+	public SupportModuleMultipleChoiceWidget(String moduleName) {
+		init();
+		setModuleName(moduleName);
+	}
+
+	private void init() {
 		final VerticalPanel v = new VerticalPanel();
 		initWidget(v);
 
@@ -60,12 +70,6 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 		// Add picklist for this ...
 		supportModuleWidget = new SupportModuleWidget();
 		v.add(supportModuleWidget);
-	}
-
-	public SupportModuleMultipleChoiceWidget(String module) {
-		// Load superclass constructor first...
-		super();
-		setModuleName(module);
 	}
 
 	protected void addValue(String text, final Integer value) {
@@ -113,12 +117,8 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 	 * @return
 	 */
 	public String getCommaSeparatedValues() {
-		List<Integer> v = new ArrayList<Integer>();
-		for (int i = 0; i < widgetValues.length; i++) {
-			v.add(widgetValues[i]);
-		}
 		String buffer = new String("");
-		Iterator<Integer> iter = v.iterator();
+		Iterator<Integer> iter = Arrays.asList(widgetValues).iterator();
 		while (iter.hasNext()) {
 			buffer += iter.next();
 			if (iter.hasNext()) {

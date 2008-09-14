@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -80,10 +81,12 @@ public class SimpleUIBuilder extends Composite {
 		table = new FlexTable();
 		verticalPanel.add(table);
 
-		Button commitChangesButton = new Button("Commit Changes");
-		commitChangesButton.addClickListener(new ClickListener() {
+		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		verticalPanel.add(horizontalPanel);
 
-			@Override
+		Button commitChangesButton = new Button("Commit Changes");
+		horizontalPanel.add(commitChangesButton);
+		commitChangesButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				// Collect data
 				HashMap<String, String> data = new HashMap<String, String>();
@@ -96,7 +99,6 @@ public class SimpleUIBuilder extends Composite {
 					}
 				}
 			}
-
 		});
 
 		// Initialize widget container
@@ -132,6 +134,13 @@ public class SimpleUIBuilder extends Composite {
 
 		if (type == WidgetType.TEXT) {
 			w = new TextBox();
+			try {
+				Integer len = new Integer(options);
+				if (len > 0) {
+					((TextBox) w).setMaxLength(len.intValue());
+				}
+			} catch (Exception ex) {
+			}
 		} else if (type == WidgetType.MODULE) {
 			w = new SupportModuleWidget(options);
 		} else if (type == WidgetType.MODULE_MULTIPLE) {

@@ -42,6 +42,10 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 
 	protected SimpleUIBuilder ui = new SimpleUIBuilder();
 
+	public EntryScreenInterface() {
+		buildForm();
+	}
+
 	protected abstract void buildForm();
 
 	/**
@@ -70,12 +74,10 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 			} else {
 				service.ModuleGetRecordMethod(moduleName, id,
 						new AsyncCallback<HashMap<String, String>>() {
-							@Override
 							public void onSuccess(HashMap<String, String> r) {
 								ui.setValues(r);
 							}
 
-							@Override
 							public void onFailure(Throwable t) {
 								GWT.log("Exception", t);
 							}
@@ -84,7 +86,6 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 		}
 	}
 
-	@Override
 	public void processData(HashMap<String, String> data) {
 		if (internalId.intValue() > 0) {
 			data.put("id", internalId.toString());
@@ -105,7 +106,6 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 				} else {
 					service.ModuleAddMethod(moduleName, data,
 							new AsyncCallback<Integer>() {
-								@Override
 								public void onSuccess(Integer r) {
 									state.getToaster().addItem(moduleName,
 											"Added successfully.",
@@ -113,7 +113,6 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 									closeScreen();
 								}
 
-								@Override
 								public void onFailure(Throwable t) {
 									GWT.log("Exception", t);
 								}
@@ -128,7 +127,6 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 				} else {
 					service.ModuleModifyMethod(moduleName, data,
 							new AsyncCallback<Integer>() {
-								@Override
 								public void onSuccess(Integer r) {
 									state.getToaster().addItem(moduleName,
 											"Modified successfully.",
@@ -136,7 +134,6 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 									closeScreen();
 								}
 
-								@Override
 								public void onFailure(Throwable t) {
 									GWT.log("Exception", t);
 								}

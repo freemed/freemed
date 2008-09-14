@@ -68,7 +68,6 @@ public class ConfigurationScreen extends Composite {
 		horizontalPanel.add(commitChangesButton);
 		commitChangesButton.setText("Commit Changes");
 		commitChangesButton.addClickListener(new ClickListener() {
-			@Override
 			public void onClick(Widget w) {
 
 			}
@@ -85,7 +84,6 @@ public class ConfigurationScreen extends Composite {
 			// TODO: Simulate
 		} else {
 			getProxy().GetConfigSections(new AsyncCallback<String[]>() {
-				@Override
 				public void onSuccess(String[] r) {
 					// Create the actual tabs
 					createTabs(r);
@@ -94,7 +92,6 @@ public class ConfigurationScreen extends Composite {
 					populateConfig();
 				}
 
-				@Override
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
 				}
@@ -107,19 +104,15 @@ public class ConfigurationScreen extends Composite {
 			// TODO: populate config values
 		} else {
 			getProxy().GetAll(new AsyncCallback<HashMap<String, String>[]>() {
-
-				@Override
 				public void onSuccess(HashMap<String, String>[] r) {
 					for (int iter = 0; iter < r.length; iter++) {
 						addToStack(r[iter]);
 					}
 				}
 
-				@Override
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
 				}
-
 			});
 		}
 	}

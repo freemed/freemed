@@ -51,7 +51,6 @@ public class DrugWidget extends Composite {
 		container.add(multumDrugLookup);
 		multumDrugLookup.addChangeListener(new ChangeListener() {
 
-			@Override
 			public void onChange(Widget sender) {
 				Integer value = ((SupportModuleWidget) sender).getValue();
 				if (Util.isStubbedMode()) {
@@ -92,7 +91,6 @@ public class DrugWidget extends Composite {
 			} finally {
 				proxy.DosagesForDrug(drugValue.toString(), new String(""),
 						new AsyncCallback<String[][]>() {
-							@Override
 							public void onSuccess(String[][] r) {
 								drugDosage.clear();
 								for (int iter = 0; iter < r.length; iter++) {
@@ -100,7 +98,6 @@ public class DrugWidget extends Composite {
 								}
 							}
 
-							@Override
 							public void onFailure(Throwable t) {
 								GWT.log("Exception", t);
 							}

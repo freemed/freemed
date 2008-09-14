@@ -143,7 +143,6 @@ public class MultipleKeyValueEntry extends Composite {
 
 	protected ChangeListener onSelect = new ChangeListener() {
 
-		@Override
 		public void onChange(Widget w) {
 			// Acquire value from current widget
 			String v = getValueWidgetValue();
@@ -174,7 +173,6 @@ public class MultipleKeyValueEntry extends Composite {
 		keyWidget.setVisibleItemCount(1);
 		keyWidget.addChangeListener(new ChangeListener() {
 
-			@Override
 			public void onChange(Widget sender) {
 				if (((CustomListBox) sender).getWidgetValue().length() > 0) {
 					// Only fire change if something is actually selected

@@ -238,7 +238,6 @@ public class PatientAddresses extends Composite {
 		flexTable.setWidget(pos, 5, active);
 
 		ChangeListener cl = new ChangeListener() {
-			@Override
 			public void onChange(Widget sender) {
 				Address x = addresses.get(pos);
 				x.setType(type.getWidgetValue());

@@ -11,12 +11,10 @@ public class RoomEntry extends EntryScreenInterface {
 		initWidget(ui);
 	}
 
-	@Override
 	public String validateData(HashMap<String, String> data) {
 		return null;
 	}
 
-	@Override
 	protected void buildForm() {
 		ui.addWidget("roomname", "Name", WidgetType.TEXT, "20", null);
 		ui.addWidget("roompos", "Place of Service", WidgetType.MODULE,
@@ -32,7 +30,6 @@ public class RoomEntry extends EntryScreenInterface {
 				null);
 	}
 
-	@Override
 	protected String getModuleName() {
 		return "RoomModule";
 	}
