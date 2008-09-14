@@ -65,18 +65,22 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 			GWT.log("Exception", ex);
 		} finally {
 			internalId = id;
-			service.ModuleGetRecordMethod(moduleName, id,
-					new AsyncCallback<HashMap<String, String>>() {
-						@Override
-						public void onSuccess(HashMap<String, String> r) {
-							ui.setValues(r);
-						}
+			if (Util.isStubbedMode()) {
+				// TODO: Emulate stubbed mode
+			} else {
+				service.ModuleGetRecordMethod(moduleName, id,
+						new AsyncCallback<HashMap<String, String>>() {
+							@Override
+							public void onSuccess(HashMap<String, String> r) {
+								ui.setValues(r);
+							}
 
-						@Override
-						public void onFailure(Throwable t) {
-							GWT.log("Exception", t);
-						}
-					});
+							@Override
+							public void onFailure(Throwable t) {
+								GWT.log("Exception", t);
+							}
+						});
+			}
 		}
 	}
 
@@ -94,38 +98,50 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 		} finally {
 			if (internalId.intValue() == 0) {
 				// Add record
-				service.ModuleAddMethod(moduleName, data,
-						new AsyncCallback<Integer>() {
-							@Override
-							public void onSuccess(Integer r) {
-								state.getToaster().addItem(moduleName,
-										"Added successfully.",
-										Toaster.TOASTER_INFO);
-								closeScreen();
-							}
+				if (Util.isStubbedMode()) {
+					state.getToaster().addItem(moduleName,
+							"Added successfully.", Toaster.TOASTER_INFO);
+					closeScreen();
+				} else {
+					service.ModuleAddMethod(moduleName, data,
+							new AsyncCallback<Integer>() {
+								@Override
+								public void onSuccess(Integer r) {
+									state.getToaster().addItem(moduleName,
+											"Added successfully.",
+											Toaster.TOASTER_INFO);
+									closeScreen();
+								}
 
-							@Override
-							public void onFailure(Throwable t) {
-								GWT.log("Exception", t);
-							}
-						});
+								@Override
+								public void onFailure(Throwable t) {
+									GWT.log("Exception", t);
+								}
+							});
+				}
 			} else {
 				// Modify record
-				service.ModuleModifyMethod(moduleName, data,
-						new AsyncCallback<Integer>() {
-							@Override
-							public void onSuccess(Integer r) {
-								state.getToaster().addItem(moduleName,
-										"Modified successfully.",
-										Toaster.TOASTER_INFO);
-								closeScreen();
-							}
+				if (Util.isStubbedMode()) {
+					state.getToaster().addItem(moduleName,
+							"Modified successfully.", Toaster.TOASTER_INFO);
+					closeScreen();
+				} else {
+					service.ModuleModifyMethod(moduleName, data,
+							new AsyncCallback<Integer>() {
+								@Override
+								public void onSuccess(Integer r) {
+									state.getToaster().addItem(moduleName,
+											"Modified successfully.",
+											Toaster.TOASTER_INFO);
+									closeScreen();
+								}
 
-							@Override
-							public void onFailure(Throwable t) {
-								GWT.log("Exception", t);
-							}
-						});
+								@Override
+								public void onFailure(Throwable t) {
+									GWT.log("Exception", t);
+								}
+							});
+				}
 			}
 		}
 
