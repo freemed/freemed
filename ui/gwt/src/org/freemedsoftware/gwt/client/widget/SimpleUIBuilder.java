@@ -153,10 +153,13 @@ public class SimpleUIBuilder extends Composite {
 			for (int iter = 0; iter < o.length; iter++) {
 				// Check for "description" pairs
 				if (o[iter].contains("|")) {
-					String[] i = o[iter].split("|");
+					String[] i = o[iter].split("\\|");
 					((CustomListBox) w).addItem(i[0], i[1]);
+				} else {
+					if (o[iter].length() > 0) {
+						((CustomListBox) w).addItem(o[iter]);
+					}
 				}
-				((CustomListBox) w).addItem(o[iter]);
 			}
 		} else if (type == WidgetType.PATIENT) {
 			w = new PatientWidget();
