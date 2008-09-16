@@ -178,6 +178,33 @@ public class SimpleUIBuilder extends Composite {
 	}
 
 	/**
+	 * Convert string into <WidgetType> enumerated value
+	 * 
+	 * @param widget
+	 * @return
+	 */
+	public WidgetType stringToWidgetType(String widget) {
+		if (widget.compareToIgnoreCase("TEXT") == 0) {
+			return WidgetType.TEXT;
+		}
+		if (widget.compareToIgnoreCase("MODULEMULTIPLE") == 0) {
+			return WidgetType.MODULE_MULTIPLE;
+		}
+		if (widget.compareToIgnoreCase("MODULE") == 0) {
+			return WidgetType.MODULE;
+		}
+		if (widget.compareToIgnoreCase("SELECT") == 0) {
+			return WidgetType.SELECT;
+		}
+		if (widget.compareToIgnoreCase("PATIENT") == 0) {
+			return WidgetType.PATIENT;
+		}
+
+		// By default, return text
+		return WidgetType.TEXT;
+	}
+
+	/**
 	 * Form HashMap containing all values contained in this widget.
 	 * 
 	 * @return

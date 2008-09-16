@@ -46,6 +46,11 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 		buildForm();
 	}
 
+	public EntryScreenInterface(String module) {
+		moduleName = module;
+		buildForm();
+	}
+
 	protected abstract void buildForm();
 
 	/**
