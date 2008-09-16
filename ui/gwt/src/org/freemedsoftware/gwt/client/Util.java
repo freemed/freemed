@@ -83,7 +83,11 @@ public final class Util {
 	 * @return Base URL string
 	 */
 	public static synchronized String getBaseUrl() {
-		return new String("../../../..");
+		if (isStubbedMode()) {
+			return GWT.getModuleBaseURL();
+		} else {
+			return new String("../../../..");
+		}
 	}
 
 	/**

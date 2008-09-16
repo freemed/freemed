@@ -73,30 +73,32 @@ public class SupportModuleEntry extends EntryScreenInterface {
 	}
 
 	protected void buildForm() {
-		// Get XML file name from module
-		final String interfaceUrl = Util.getBaseUrl() + "/resources/interface/"
-				+ moduleName + ".module.xml";
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL
-				.encode(interfaceUrl));
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-				public void onResponseReceived(Request request,
-						Response response) {
-					if (200 == response.getStatusCode()) {
-						rawXml = response.getText();
-						xmlToForm(response.getText());
-					} else {
-						GWT.log("Error requesting " + interfaceUrl + ": "
-								+ response.getStatusText(), null);
+		if (moduleName != null) {
+			// Get XML file name from module
+			final String interfaceUrl = Util.getBaseUrl()
+					+ "/resources/interface/" + moduleName + ".module.xml";
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL
+					.encode(interfaceUrl));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							rawXml = response.getText();
+							xmlToForm(response.getText());
+						} else {
+							GWT.log("Error requesting " + interfaceUrl + ": "
+									+ response.getStatusText(), null);
+						}
 					}
-				}
 
-				public void onError(Request request, Throwable exception) {
-					GWT.log("Exception", exception);
-				}
-			});
-		} catch (RequestException e) {
-			GWT.log("RequestException", e);
+					public void onError(Request request, Throwable exception) {
+						GWT.log("Exception", exception);
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("RequestException", e);
+			}
 		}
 	}
 
