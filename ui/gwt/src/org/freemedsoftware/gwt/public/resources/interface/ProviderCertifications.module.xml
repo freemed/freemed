@@ -23,6 +23,8 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="ProviderCertifications">
-	<Element field="degdegree" title="Degree Abbreviation" type="TEXT" options="10" />
-	<Element field="degname" title="Degree Name" type="TEXT" options="50" />
+	<Elements>
+		<Element field="degdegree" title="Degree Abbreviation" type="TEXT" options="10" />
+		<Element field="degname" title="Degree Name" type="TEXT" options="50" />
+	</Elements>
 </SimpleUIBuilder>

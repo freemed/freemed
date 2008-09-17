@@ -23,6 +23,8 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="DiagnosisFamily">
-	<Element field="dfname" title="Diagnosis Family" type="TEXT" options="20" />
-	<Element field="dfdescrip" title="Description" type="TEXT" options="50" />
+	<Elements>
+		<Element field="dfname" title="Diagnosis Family" type="TEXT" options="20" />
+		<Element field="dfdescrip" title="Description" type="TEXT" options="50" />
+	</Elements>
 </SimpleUIBuilder>

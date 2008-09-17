@@ -23,5 +23,7 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="ClaimTypes">
-	<Element field="claimtpname" title="Claim Type" type="TEXT" options="20" />
+	<Elements>
+		<Element field="claimtpname" title="Claim Type" type="TEXT" options="20" />
+	</Elements>
 </SimpleUIBuilder>

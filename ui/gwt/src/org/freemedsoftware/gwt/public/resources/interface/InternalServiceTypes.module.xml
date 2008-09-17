@@ -23,5 +23,7 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="InternalServiceTypes">
-	<Element field="intservtype" title="Type" type="TEXT" options="50" />
+	<Elements>
+		<Element field="intservtype" title="Type" type="TEXT" options="50" />
+	</Elements>
 </SimpleUIBuilder>

@@ -23,7 +23,9 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="DocumentCategory">
-	<Element field="type" title="Type" type="TEXT" options="50" />
-	<Element field="category" title="Category" type="TEXT" options="50" />
-	<Element field="description" title="Description" type="TEXT" options="50" />
+	<Elements>
+		<Element field="type" title="Type" type="TEXT" options="50" />
+		<Element field="category" title="Category" type="TEXT" options="50" />
+		<Element field="description" title="Description" type="TEXT" options="50" />
+	</Elements>
 </SimpleUIBuilder>

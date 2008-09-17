@@ -23,8 +23,10 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="SmsProvider">
-	<Element field="providername" title="Provider Name" type="TEXT" options="50" />
-	<Element field="mailgwaddr" title="Mail Gateway" type="TEXT" options="50" />
-	<Element field="numberlength" title="Number Length" type="TEXT" options="2" />
-	<Element field="countrycode" title="Use Country Code?" type="SELECT" options="No|0,Yes|1" />
+	<Elements>
+		<Element field="providername" title="Provider Name" type="TEXT" options="50" />
+		<Element field="mailgwaddr" title="Mail Gateway" type="TEXT" options="50" />
+		<Element field="numberlength" title="Number Length" type="TEXT" options="2" />
+		<Element field="countrycode" title="Use Country Code?" type="SELECT" options="No|0,Yes|1" />
+	</Elements>
 </SimpleUIBuilder>

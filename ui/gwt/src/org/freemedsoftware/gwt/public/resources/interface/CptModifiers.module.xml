@@ -23,6 +23,8 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
 <SimpleUIBuilder module="CptModifiers">
-	<Element field="cptmod" title="Modifier" type="TEXT" options="5" />
-	<Element field="cptmoddescrip" title="Description" type="TEXT" options="50" />
+	<Elements>
+		<Element field="cptmod" title="Modifier" type="TEXT" options="5" />
+		<Element field="cptmoddescrip" title="Description" type="TEXT" options="50" />
+	</Elements>
 </SimpleUIBuilder>
