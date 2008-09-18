@@ -32,6 +32,7 @@
 	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable" />
 	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker" />
 	<inherits name="com.gwtsandbox.colorpicker.ColorPicker" />
+	<inherits name="com.gwtscheduler.Scheduler" />
 	<inherits name="com.bouwkamp.gwt.user.User" />
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name="com.googlecode.gchart.GChart" />
