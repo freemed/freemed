@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SimpleUIBuilder extends Composite {
 
 	public enum WidgetType {
-		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT
+		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR
 	};
 
 	/**
@@ -163,6 +163,8 @@ public class SimpleUIBuilder extends Composite {
 			}
 		} else if (type == WidgetType.PATIENT) {
 			w = new PatientWidget();
+		} else if (type == WidgetType.COLOR) {
+			w = new CustomColorPicker();
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new TextBox();
@@ -198,6 +200,9 @@ public class SimpleUIBuilder extends Composite {
 		}
 		if (widget.compareToIgnoreCase("PATIENT") == 0) {
 			return WidgetType.PATIENT;
+		}
+		if (widget.compareToIgnoreCase("COLOR") == 0) {
+			return WidgetType.COLOR;
 		}
 
 		// By default, return text
@@ -258,6 +263,9 @@ public class SimpleUIBuilder extends Composite {
 			return ((SupportModuleMultipleChoiceWidget) w)
 					.getCommaSeparatedValues();
 		}
+		if (w instanceof CustomColorPicker) {
+			return ((CustomColorPicker) w).getValue();
+		}
 		if (w instanceof PatientWidget) {
 			return ((PatientWidget) w).getValue().toString();
 		}
@@ -288,6 +296,9 @@ public class SimpleUIBuilder extends Composite {
 			if (w instanceof SupportModuleMultipleChoiceWidget) {
 				((SupportModuleMultipleChoiceWidget) w)
 						.setCommaSeparatedValues(value);
+			}
+			if (w instanceof CustomColorPicker) {
+				((CustomColorPicker) w).setValue(value);
 			}
 			if (w instanceof PatientWidget) {
 				((PatientWidget) w).setValue(new Integer(value));
