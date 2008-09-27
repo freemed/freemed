@@ -25,23 +25,25 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ConfigurationScreen extends Composite {
+public class ConfigurationScreen extends ScreenInterface {
 
 	protected TabPanel tabPanel;
 
@@ -69,10 +71,52 @@ public class ConfigurationScreen extends Composite {
 		commitChangesButton.setText("Commit Changes");
 		commitChangesButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-
+				commitValues();
 			}
 		});
 
+	}
+
+	/**
+	 * Retrieve <HashMap> containing key/value pairs representing all current
+	 * form configuration values.
+	 * 
+	 * @return
+	 */
+	public HashMap<String, String> getAllValues() {
+		HashMap<String, String> v = new HashMap<String, String>();
+		Iterator<String> iter = widgets.keySet().iterator();
+		while (iter.hasNext()) {
+			String cur = iter.next();
+			v.put(cur, ((CustomListBox) widgets.get(cur)).getWidgetValue());
+		}
+		return v;
+	}
+
+	protected void commitValues() {
+		if (Util.isStubbedMode()) {
+			state.getToaster().addItem("ConfigurationScreen",
+					"Updated configuration.", Toaster.TOASTER_INFO);
+		} else {
+			getProxy().SetValues(getAllValues(), new AsyncCallback<Boolean>() {
+
+				public void onSuccess(Boolean result) {
+					if (result.booleanValue()) {
+						state.getToaster().addItem("ConfigurationScreen",
+								"Updated configuration.", Toaster.TOASTER_INFO);
+					} else {
+						state.getToaster().addItem("ConfigurationScreen",
+								"Failed to update configuration.",
+								Toaster.TOASTER_ERROR);
+					}
+				}
+
+				public void onFailure(Throwable t) {
+					GWT.log("Exception", t);
+				}
+
+			});
+		}
 	}
 
 	public void populate() {
@@ -99,7 +143,7 @@ public class ConfigurationScreen extends Composite {
 		}
 	}
 
-	public void populateConfig() {
+	protected void populateConfig() {
 		if (Util.isStubbedMode()) {
 			// TODO: populate config values
 		} else {
@@ -160,6 +204,11 @@ public class ConfigurationScreen extends Composite {
 		}
 	}
 
+	/**
+	 * Internal method to get <SystemConfigAsync> proxy.
+	 * 
+	 * @return
+	 */
 	protected SystemConfigAsync getProxy() {
 		SystemConfigAsync proxy = null;
 		try {
