@@ -4,7 +4,7 @@
 
 # Auto-detect the path for libraries and the FreeMED install
 use FindBin;
-use lib "$FindBin::Bin/../lib/perl";
+use lib "$FindBin::Bin/../../lib/perl";
 my $rootpath = "$FindBin::Bin/..";
 
 # Add proper libraries for XML-RPC access and configuration data
