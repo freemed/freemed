@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+  $Id$
+ 
+  Authors:
+       Jeff Buchbinder <jeff@freemedsoftware.org>
+ 
+  FreeMED Electronic Medical Record and Practice Management System
+  Copyright (C) 1999-2008 FreeMED Software Foundation
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ -->
+<SimpleUIBuilder module="Practices">
+	<Elements>
+		<Element field="pracname" title="Practice Name" type="TEXT" options="20" />
+		<Element field="addr1a" title="Address Line 1" type="TEXT" options="50" />
+		<Element field="addr2a" title="Address Line 2" type="TEXT" options="50" />
+		<Element field="citya" title="City" type="TEXT" options="25" />
+		<Element field="statea" title="State" type="TEXT" options="25" />
+		<Element field="zipa" title="Postal Code" type="TEXT" options="10" />
+		<Element field="phonea" title="Phone #" type="TEXT" options="20" />
+		<Element field="faxa" title="Facsimile #" type="TEXT" options="20" />
+		<Element field="ein" title="Employer Identification Number" type="TEXT" options="50" />
+		<Element field="email" title="Email" type="TEXT" options="45" />
+		<Element field="cellular" title="Cellular Phone #" type="TEXT" options="20" />
+		<Element field="pager" title="Beepr / Pager #" type="TEXT" options="20" />
+		<Element field="email" title="Email" type="TEXT" options="45" />
+	</Elements>
+</SimpleUIBuilder>
