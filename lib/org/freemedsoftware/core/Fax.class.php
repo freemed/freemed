@@ -137,7 +137,7 @@ class Fax {
 		if (!$output) { return 1; }
 
 		// Tokenize
-		$tokens = explode(' ', $output);
+		$tokens = preg_split('/\s+/', $output);
 
 		// Fourth field. This may break in some installs.
 		return $tokens[4];
