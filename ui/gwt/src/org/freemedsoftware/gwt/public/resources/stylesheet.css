@@ -446,3 +446,12 @@ a:hover {
     background-color: #00ff00;
 	}
 	
+/* For tooltip popup window, yellow with black border */
+.TooltipPopup {
+	border: 1px solid #000000;
+	background: #ffff00;
+	font-size: 8pt;
+	font-family: sans-serif;
+	padding: 5px;
+	}
+	
