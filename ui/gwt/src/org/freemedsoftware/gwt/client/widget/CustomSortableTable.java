@@ -173,6 +173,20 @@ public class CustomSortableTable extends SortableTable {
 	}
 
 	/**
+	 * Resolve value of row member based on the actual view.
+	 * 
+	 * @param row
+	 * @param key
+	 * @return
+	 */
+	public String getValueFromIndex(int row, String key) {
+		GWT.log("getValueFromIndex: row = " + new Integer(row - 1).toString()
+				+ ", key = " + key, null);
+		GWT.log("getValueFromIndex: return = " + data[row - 1].get(key), null);
+		return (String) data[row - 1].get(key);
+	}
+
+	/**
 	 * Determine if index row has been selected. This only affects anything if
 	 * using multiple selection mode.
 	 * 
