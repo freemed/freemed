@@ -24,11 +24,14 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
+import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -57,7 +60,7 @@ public class SupportDataScreen extends ScreenInterface {
 		sortableTable.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents e, int row, int col) {
 				String moduleName = sortableTable.getValueByRow(row);
-				handleClick(moduleName);
+				handleClick(row);
 			}
 		});
 		verticalPanel.add(sortableTable);
@@ -66,34 +69,54 @@ public class SupportDataScreen extends ScreenInterface {
 		populate();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void populate() {
-		TableMaintenanceAsync proxy = null;
-		try {
-			proxy = (TableMaintenanceAsync) Util
-					.getProxy("org.freemedsoftware.gwt.client.Api.TableMaintenance");
-		} catch (Exception e) {
-			GWT.log("Exception", e);
-		}
-		proxy.GetModules("SupportModule", "", false,
-				new AsyncCallback<HashMap<String, String>[]>() {
-					public void onSuccess(HashMap<String, String>[] res) {
-						sortableTable.loadData(res);
-					}
+		if (Util.isStubbedMode()) {
+			List<HashMap<String, String>> r = new ArrayList<HashMap<String, String>>();
+			String[][] stockModules = {
+					{ "AppointmentTemplates", "Appointment Templates" },
+					{ "ClaimTypes", "Claim Types" },
+					{ "CoverageTypes", "Coverage Types" } };
+			for (int iter = 0; iter < stockModules.length; iter++) {
+				HashMap<String, String> a = new HashMap<String, String>();
+				a.put("module_class", stockModules[iter][0]);
+				a.put("module_name", stockModules[iter][1]);
+				a.put("module_version", "0.0");
+				r.add(a);
+			}
+			sortableTable.loadData((HashMap<String, String>[]) r
+					.toArray(new HashMap<?, ?>[0]));
+		} else {
+			TableMaintenanceAsync proxy = null;
+			try {
+				proxy = (TableMaintenanceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.TableMaintenance");
+			} catch (Exception e) {
+				GWT.log("Exception", e);
+			}
+			proxy.GetModules("SupportModule", "", false,
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] res) {
+							sortableTable.loadData(res);
+						}
 
-					public void onFailure(Throwable t) {
-						state.getToaster().addItem("SupportDataScreen",
-								"Could not load list of support data modules.",
-								Toaster.TOASTER_ERROR);
-					}
-				});
+						public void onFailure(Throwable t) {
+							state
+									.getToaster()
+									.addItem(
+											"SupportDataScreen",
+											"Could not load list of support data modules.",
+											Toaster.TOASTER_ERROR);
+						}
+					});
+		}
 	}
 
-	protected void handleClick(String moduleName) {
-		// Since we can't dynamically load code segments, we're back to the idea
-		// of a nasty if..else statement to loop through possible places to
-		// spawn this....
-		if (moduleName.compareToIgnoreCase("ProviderModule") == 0) {
-
-		}
+	protected void handleClick(int idx) {
+		// TODO: For right now, bring up add screen. Fix it later.
+		String moduleClass = sortableTable.getValueFromIndex(idx,
+				"module_class");
+		String moduleName = sortableTable.getValueFromIndex(idx, "module_name");
+		Util.spawnTab(moduleName, new SupportModuleEntry(moduleClass), state);
 	}
 }

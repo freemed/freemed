@@ -124,7 +124,7 @@ public class MainScreen extends Composite {
 										hide();
 										freemedInterface.getLoginDialog()
 												.center();
-										//freemedInterface.getLoginDialog().show
+										// freemedInterface.getLoginDialog().show
 										// ();
 									}
 
@@ -194,13 +194,24 @@ public class MainScreen extends Composite {
 						}
 					});
 			menuItem_unfiled.setStyleName("freemed-SecondaryMenuItem");
-			/*
-			 * final MenuItem menuItem_unread =
-			 * menuBar_document.addItem("unread", new Command() { public void
-			 * execute() { Util.spawnTab("Unread Documents", new
-			 * UnreadDocuments(), state); } });
-			 * menuItem_unread.setStyleName("freemed-SecondaryMenuItem");
-			 */
+
+			// Document management bar
+			final MenuBar menuBar_system = new MenuBar();
+			menuBar_system.setAutoOpen(true);
+			menuBar_system.setStyleName("freemed-SecondaryMenuBar");
+			final MenuItem menuItem_system = menuBar.addItem(
+					"<span id=\"freemed-PrimaryMenuItem-title\">system</span>",
+					true, menuBar_system);
+			menuItem_system.setSize("105px", "30px");
+			menuItem_system.setStyleName("freemed-PrimaryMenuItem");
+			final MenuItem menuItem_support = menuBar_system.addItem("support data",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Support Data",
+									new SupportDataScreen(), state);
+						}
+					});
+			menuItem_support.setStyleName("freemed-SecondaryMenuItem");
 		}
 
 		/*
