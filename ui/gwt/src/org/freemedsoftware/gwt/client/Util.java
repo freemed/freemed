@@ -77,6 +77,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 public final class Util {
 
+	public static enum ProgramMode {
+		NORMAL, STUBBED, JSONRPC
+	};
+
+	/**
+	 * Set currently running program mode.
+	 */
+	public static ProgramMode thisProgramMode = ProgramMode.STUBBED;
+
 	/**
 	 * Get base url of FreeMED installation.
 	 * 
@@ -132,7 +141,17 @@ public final class Util {
 	 * @return Stubbed mode status
 	 */
 	public static synchronized boolean isStubbedMode() {
-		return true;
+		return thisProgramMode == ProgramMode.STUBBED;
+	}
+
+	/**
+	 * Return "program mode" to determine whether it is running in GWT-RPC,
+	 * stubbed, or JSON-RPC.
+	 * 
+	 * @return
+	 */
+	public static synchronized ProgramMode getProgramMode() {
+		return thisProgramMode;
 	}
 
 	/**
