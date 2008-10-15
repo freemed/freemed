@@ -28,13 +28,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -151,7 +161,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		sortableTable.clear();
 		clearSearchResults();
 		patientMap.clear();
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> a = new HashMap<String, String>();
 			a.put("last_name", "Hackenbush");
 			a.put("first_name", "Hugo");
@@ -164,6 +174,38 @@ public class PatientSearchScreen extends ScreenInterface {
 			l.add(a);
 			sortableTable.loadData((HashMap<String, String>[]) l
 					.toArray(new HashMap<?, ?>[0]));
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			HashMap<String, String> criteria = new HashMap<String, String>();
+			criteria.put(wFieldName.getValue(wFieldName.getSelectedIndex()),
+					wFieldValue.getText());
+
+			String[] params = { JsonUtil.jsonify(criteria) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.api.PatientInterface.Search",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							sortableTable.loadData(result);
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			PatientInterfaceAsync service = null;
 			try {

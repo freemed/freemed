@@ -30,10 +30,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -44,7 +51,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
 			map.clear();
@@ -53,6 +60,54 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 			addKeyValuePair(items, new String("Firefly, Rufus T"), new String(
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { req, new Integer(20).toString() };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.PatientInterface.Picklist",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<Integer,String>");
+							if (result != null) {
+								Set<Integer> keys = result.keySet();
+								Iterator<Integer> iter = keys.iterator();
+
+								List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
+								map.clear();
+								while (iter.hasNext()) {
+									Integer keyInt = (Integer) iter.next();
+									String key = keyInt.toString();
+									String val = (String) result.get(keyInt);
+									addKeyValuePair(items, val, key);
+								}
+								cb.onSuggestionsReady(r,
+										new SuggestOracle.Response(items));
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			PatientInterfaceAsync service = null;
 			try {

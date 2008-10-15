@@ -30,11 +30,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -287,11 +295,57 @@ public class PatientAddresses extends Composite {
 		}
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
 
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			state.getToaster().addItem("PatientAddresses",
 					"Updated patient addresses.", Toaster.TOASTER_INFO);
 			if (onCompletion != null) {
 				onCompletion.execute();
+			}
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { patientId.toString(), JsonUtil.jsonify(map) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.PatientModule.SetAddresses",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+						GWT.log("Exception", ex);
+						state.getToaster().addItem("PatientAddresses",
+								"Failed to update patient addresses.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							Boolean result = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (result != null) {
+								state.getToaster().addItem("PatientAddresses",
+										"Updated patient addresses.",
+										Toaster.TOASTER_INFO);
+								if (onCompletion != null) {
+									onCompletion.execute();
+								}
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception", e);
+				state.getToaster().addItem("PatientAddresses",
+						"Failed to update patient addresses.",
+						Toaster.TOASTER_ERROR);
 			}
 		} else {
 			PatientModuleAsync service = null;
@@ -352,8 +406,56 @@ public class PatientAddresses extends Composite {
 	}
 
 	private void populate() {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: Stubbed stuff
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { patientId.toString() };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.PatientModule.GetAddresses",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+						GWT.log("Exception", ex);
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (result != null) {
+								for (int iter = 0; iter < result.length; iter++) {
+									// Create new address object
+									Address a = new Address();
+									a.setLine1(result[iter].get("line1"));
+									a.setLine2(result[iter].get("line2"));
+									a.setCsz(result[iter].get("csz"));
+									a.setRelation(result[iter].get("relation"));
+									a.setType(result[iter].get("type"));
+									// Pass new address object to interface
+									// builder
+									addAddress(new Integer(iter + 1), a);
+								}
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception", e);
+			}
 		} else {
 			PatientModuleAsync service = null;
 			try {

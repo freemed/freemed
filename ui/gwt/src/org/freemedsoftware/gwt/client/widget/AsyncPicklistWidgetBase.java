@@ -31,11 +31,13 @@ import java.util.List;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -75,6 +77,30 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 				setTitle(s.getDisplayString());
 				onSelected();
 			}
+		});
+		searchBox.addKeyboardListener(new KeyboardListener() {
+
+			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
+			}
+
+			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+			}
+
+			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+				switch (keyCode) {
+				case KeyboardListener.KEY_ESCAPE:
+				case KeyboardListener.KEY_BACKSPACE:
+					// Clear any current values
+					searchBox.setText("");
+					searchBox.setTitle("");
+					setValue(0);
+					break;
+
+				default:
+					break;
+				}
+			}
+
 		});
 		searchBox.setLimit(10);
 		layout.add(searchBox);

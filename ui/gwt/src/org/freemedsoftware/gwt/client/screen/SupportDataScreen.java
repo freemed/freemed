@@ -28,14 +28,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
@@ -59,7 +69,7 @@ public class SupportDataScreen extends ScreenInterface {
 		sortableTable.addColumn("Version", "module_version");
 		sortableTable.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents e, int row, int col) {
-				String moduleName = sortableTable.getValueByRow(row);
+				// String moduleName = sortableTable.getValueByRow(row);
 				handleClick(row);
 			}
 		});
@@ -71,7 +81,7 @@ public class SupportDataScreen extends ScreenInterface {
 
 	@SuppressWarnings("unchecked")
 	public void populate() {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			List<HashMap<String, String>> r = new ArrayList<HashMap<String, String>>();
 			String[][] stockModules = {
 					{ "AppointmentTemplates", "Appointment Templates" },
@@ -86,6 +96,44 @@ public class SupportDataScreen extends ScreenInterface {
 			}
 			sortableTable.loadData((HashMap<String, String>[]) r
 					.toArray(new HashMap<?, ?>[0]));
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { "SupportModule", "" };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.TableMaintenance.GetModules",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("SupportDataScreen",
+								"Could not load list of support data modules.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							sortableTable.loadData(r);
+						} else {
+							state
+									.getToaster()
+									.addItem(
+											"SupportDataScreen",
+											"Could not load list of support data modules.",
+											Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			TableMaintenanceAsync proxy = null;
 			try {

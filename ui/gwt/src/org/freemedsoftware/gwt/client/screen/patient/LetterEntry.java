@@ -27,11 +27,21 @@ package org.freemedsoftware.gwt.client.screen.patient;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -160,20 +170,108 @@ public class LetterEntry extends PatientScreenInterface {
 		if (!internalId.equals(new Integer(0))) {
 			// Modify
 			rec.put("id", (String) internalId.toString());
-			service.ModuleModifyMethod(moduleName, rec,
-					new AsyncCallback<Integer>() {
-						public void onSuccess(Integer result) {
-							Toaster t = state.getToaster();
-							t.addItem("letters", "Updated letter.",
-									Toaster.TOASTER_INFO);
-						}
-
-						public void onFailure(Throwable th) {
+			if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { moduleName, JsonUtil.jsonify(rec) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
 							Toaster t = state.getToaster();
 							t.addItem("letters", "Failed to update letter.",
 									Toaster.TOASTER_ERROR);
 						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								Integer r = (Integer) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Integer");
+								if (r != null) {
+									Toaster t = state.getToaster();
+									t.addItem("letters", "Updated letter.",
+											Toaster.TOASTER_INFO);
+								}
+							} else {
+								Toaster t = state.getToaster();
+								t.addItem("letters",
+										"Failed to update letter.",
+										Toaster.TOASTER_ERROR);
+							}
+						}
 					});
+				} catch (RequestException e) {
+					Toaster t = state.getToaster();
+					t.addItem("letters", "Failed to update letter.",
+							Toaster.TOASTER_ERROR);
+				}
+			} else {
+				if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					String[] params = { moduleName, JsonUtil.jsonify(rec) };
+					RequestBuilder builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
+													params)));
+					try {
+						builder.sendRequest(null, new RequestCallback() {
+							public void onError(Request request, Throwable ex) {
+								Toaster t = state.getToaster();
+								t.addItem("letters", "Failed to add letter.",
+										Toaster.TOASTER_ERROR);
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									Integer r = (Integer) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"Integer");
+									if (r != null) {
+										Toaster t = state.getToaster();
+										t.addItem("letters", "Added letter.",
+												Toaster.TOASTER_INFO);
+									}
+								} else {
+									Toaster t = state.getToaster();
+									t.addItem("letters",
+											"Failed to add letter.",
+											Toaster.TOASTER_ERROR);
+								}
+							}
+						});
+					} catch (RequestException e) {
+						Toaster t = state.getToaster();
+						t.addItem("letters", "Failed to add letter.",
+								Toaster.TOASTER_ERROR);
+					}
+				} else {
+					service.ModuleModifyMethod(moduleName, rec,
+							new AsyncCallback<Integer>() {
+								public void onSuccess(Integer result) {
+									Toaster t = state.getToaster();
+									t.addItem("letters", "Updated letter.",
+											Toaster.TOASTER_INFO);
+								}
+
+								public void onFailure(Throwable th) {
+									Toaster t = state.getToaster();
+									t.addItem("letters",
+											"Failed to update letter.",
+											Toaster.TOASTER_ERROR);
+								}
+							});
+				}
+			}
 		} else {
 			// Add
 			service.ModuleAddMethod(moduleName, rec,

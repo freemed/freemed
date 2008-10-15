@@ -26,9 +26,11 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
@@ -37,6 +39,13 @@ import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -141,7 +150,7 @@ public class PatientScreen extends ScreenInterface {
 	public void setPatient(Integer id) {
 		patientId = id;
 
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();
 			dummy.put("patient_name", "Hackenbush, Hugo Z");
 			dummy.put("id", id.toString());
@@ -153,6 +162,46 @@ public class PatientScreen extends ScreenInterface {
 			dummy.put("pthphone", "8005551212");
 			dummy.put("ptwphone", "860KL51212");
 			populatePatientInformation(dummy);
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { patientId.toString() };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.PatientInterface.PatientInformation",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("Patient",
+								"Failed to retrieve patient information.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>");
+							if (r != null) {
+								populatePatientInformation(r);
+							}
+						} else {
+							state.getToaster().addItem("Patient",
+									"Failed to retrieve patient information.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				state.getToaster().addItem("Patient",
+						"Failed to retrieve patient information.",
+						Toaster.TOASTER_ERROR);
+			}
 		} else {
 			// Set off async method to get information
 			PatientInterfaceAsync service = null;

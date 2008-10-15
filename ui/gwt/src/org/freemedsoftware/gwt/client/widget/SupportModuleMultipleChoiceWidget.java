@@ -29,9 +29,17 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -176,9 +184,45 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 
 		// Loop through all values given
 		for (int iter = 0; iter < values.length; iter++) {
-			if (Util.isStubbedMode()) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				addValue("Value " + new Integer(iter).toString(), new Integer(
 						iter));
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				final Integer i = new Integer(values[iter]);
+				String[] params = {};
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(
+								com.google.gwt.http.client.Request request,
+								Throwable ex) {
+							GWT.log("Exception", ex);
+						}
+
+						public void onResponseReceived(
+								com.google.gwt.http.client.Request request,
+								com.google.gwt.http.client.Response response) {
+							if (200 == response.getStatusCode()) {
+								String result = (String) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"String");
+								if (result != null) {
+									addValue(result, i);
+								}
+							} else {
+								GWT.log(response.toString(), null);
+							}
+						}
+					});
+				} catch (RequestException e) {
+					GWT.log("Exception", e);
+				}
 			} else {
 				ModuleInterfaceAsync service = null;
 				try {
@@ -186,7 +230,7 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 							.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface"));
 				} catch (Exception e) {
 				}
-				final Integer i = new Integer(iter);
+				final Integer i = new Integer(values[iter]);
 				service.ModuleToTextMethod(module, i,
 						new AsyncCallback<String>() {
 							public void onSuccess(String textual) {

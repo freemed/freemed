@@ -30,10 +30,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
@@ -60,9 +68,48 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 	 */
 	public void setValue(Integer widgetValue) {
 		value = widgetValue;
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			searchBox.setText("Stub Value");
 			searchBox.setTitle("Stub Value");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			if (widgetValue.compareTo(0) == 0) {
+				searchBox.setText("");
+				searchBox.setTitle("");
+			} else {
+				String[] params = { moduleName, widgetValue.toString() };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(
+								com.google.gwt.http.client.Request request,
+								Throwable ex) {
+						}
+
+						public void onResponseReceived(
+								com.google.gwt.http.client.Request request,
+								com.google.gwt.http.client.Response response) {
+							if (200 == response.getStatusCode()) {
+								String result = (String) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"String");
+								if (result != null) {
+									searchBox.setText(result);
+									searchBox.setTitle(result);
+								}
+							} else {
+								Window.alert(response.toString());
+							}
+						}
+					});
+				} catch (RequestException e) {
+				}
+			}
 		} else {
 			ModuleInterfaceAsync service = null;
 			try {
@@ -96,7 +143,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
 			map.clear();
@@ -105,6 +152,53 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 			addKeyValuePair(items, new String("Firefly, Rufus T"), new String(
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { moduleName, req };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>");
+							if (result != null) {
+								Set<String> keys = result.keySet();
+								Iterator<String> iter = keys.iterator();
+
+								List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
+								map.clear();
+								while (iter.hasNext()) {
+									final String key = (String) iter.next();
+									final String val = (String) result.get(key);
+									addKeyValuePair(items, val, key);
+								}
+								cb.onSuggestionsReady(r,
+										new SuggestOracle.Response(items));
+							}
+						} else {
+							GWT.log("Result " + response.getStatusText(), null);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception thrown: ", e);
+			}
 		} else {
 			ModuleInterfaceAsync service = null;
 			try {
@@ -124,7 +218,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 							while (iter.hasNext()) {
 								final String key = (String) iter.next();
 								final String val = (String) result.get(key);
-								addKeyValuePair(items, key, val);
+								addKeyValuePair(items, val, key);
 							}
 							cb.onSuggestionsReady(r,
 									new SuggestOracle.Response(items));
@@ -140,8 +234,42 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 
 	@Override
 	public void getTextForValue(Integer val) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			searchBox.setText("Hackenbush, Hugo Z (STUB)");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { moduleName, val.toString() };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							String result = (String) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String");
+							if (result != null) {
+							}
+						} else {
+							GWT.log("Result " + response.getStatusText(), null);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception thrown: ", e);
+			}
 		} else {
 			ModuleInterfaceAsync service = null;
 			try {
