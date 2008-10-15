@@ -141,8 +141,11 @@ public class LoginDialog extends DialogBox {
 							String[][] r = (String[][]) JsonUtil.shoehornJson(
 									JSONParser.parse(response.getText()),
 									"String[][]");
-							for (int iter = 0; iter < r.length; iter++) {
-								facilityList.addItem(r[iter][0], r[iter][1]);
+							if (r != null) {
+								for (int iter = 0; iter < r.length; iter++) {
+									facilityList
+											.addItem(r[iter][0], r[iter][1]);
+								}
 							}
 						} else {
 							Window.alert(response.toString());
@@ -199,8 +202,11 @@ public class LoginDialog extends DialogBox {
 							String[][] r = (String[][]) JsonUtil.shoehornJson(
 									JSONParser.parse(response.getText()),
 									"String[][]");
-							for (int iter = 0; iter < r.length; iter++) {
-								languageList.addItem(r[iter][0], r[iter][1]);
+							if (r != null) {
+								for (int iter = 0; iter < r.length; iter++) {
+									languageList
+											.addItem(r[iter][0], r[iter][1]);
+								}
 							}
 						} else {
 							Window.alert(response.toString());

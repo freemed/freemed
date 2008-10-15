@@ -83,11 +83,15 @@ public class FreemedInterface implements EntryPoint {
 							Boolean r = (Boolean) JsonUtil.shoehornJson(
 									JSONParser.parse(response.getText()),
 									"Boolean");
-							if (r.booleanValue()) {
-								// If logged in, continue
-								resume();
+							if (r != null) {
+								if (r.booleanValue()) {
+									// If logged in, continue
+									resume();
+								} else {
+									// Force login loop
+									loginDialog.center();
+								}
 							} else {
-								// Force login loop
 								loginDialog.center();
 							}
 						} else {

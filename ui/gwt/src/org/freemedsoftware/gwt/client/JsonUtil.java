@@ -31,10 +31,60 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
 public class JsonUtil {
+
+	/**
+	 * Create JSON adaptation of objects.
+	 * 
+	 * @param o
+	 * @return JSON formatted string
+	 */
+	@SuppressWarnings("unchecked")
+	public static synchronized String jsonify(Object o) {
+		if (o instanceof HashMap) {
+			JSONObject out = new JSONObject();
+			HashMap<String, String> ng = (HashMap<String, String>) o;
+			Iterator<String> iter = ng.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				out.put(key, new JSONString(ng.get(key)));
+			}
+			return out.toString();
+		}
+		if (o instanceof HashMap[]) {
+			JSONArray out = new JSONArray();
+			for (int oIter = 0; oIter < ((HashMap<String, String>[]) o).length; oIter++) {
+				JSONObject a = new JSONObject();
+				HashMap<String, String> ng = ((HashMap<String, String>[]) o)[oIter];
+				Iterator<String> iter = ng.keySet().iterator();
+				while (iter.hasNext()) {
+					String key = iter.next();
+					a.put(key, new JSONString(ng.get(key)));
+				}
+				out.set(oIter, a);
+			}
+			return out.toString();
+		}
+		if (o instanceof Boolean) {
+			return JSONBoolean.getInstance(((Boolean) o).booleanValue())
+					.toString();
+		}
+		if (o instanceof Integer) {
+			return new JSONNumber((Integer) o).toString();
+		}
+		if (o instanceof String) {
+			return new JSONString((String) o).toString();
+		}
+
+		// All else fails, return ""
+		return "";
+	}
 
 	/**
 	 * Convenience function to produce native objects from JSON structures.
@@ -153,7 +203,7 @@ public class JsonUtil {
 	 */
 	@SuppressWarnings("unused")
 	private static native void debug(String st)/*-{
-		if (typeof console !=  "undefined") console.debug (st);
-		}-*/;
+															if (typeof console !=  "undefined") console.debug (st);
+															}-*/;
 
 }

@@ -68,10 +68,14 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.HTTPRequest;
-import com.google.gwt.user.client.ResponseTextHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -290,17 +294,31 @@ public final class Util {
 	public static void login(String username, String password,
 			final Command whenDone, final Command whenFail) {
 		String[] params = { username, password };
-		HTTPRequest.asyncGet(Util.getJsonRequest(
-				"org.freemedsoftware.public.Login.Validate", params),
-				new ResponseTextHandler() {
-					public void onCompletion(String result) {
-						if (result.compareTo("true") == 0) {
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL
+				.encode(Util.getJsonRequest(
+						"org.freemedsoftware.public.Login.Validate", params)));
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+				public void onError(Request request, Throwable ex) {
+					Window.alert(ex.toString());
+				}
+
+				public void onResponseReceived(Request request,
+						Response response) {
+					if (200 == response.getStatusCode()) {
+						if (response.getText().compareToIgnoreCase("true") == 0) {
 							whenDone.execute();
 						} else {
 							whenFail.execute();
 						}
+					} else {
+						whenFail.execute();
 					}
-				});
+				}
+			});
+		} catch (RequestException e) {
+			whenFail.execute();
+		}
 	}
 
 	/**
