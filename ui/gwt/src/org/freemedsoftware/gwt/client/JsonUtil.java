@@ -56,9 +56,11 @@ public class JsonUtil {
 				Iterator<String> iter = obj.keySet().iterator();
 				while (iter.hasNext()) {
 					String k = iter.next();
-					item.put(k, obj.get(k).isString().stringValue());
+					if (obj.get(k).isString() != null) {
+						item.put(k, obj.get(k).isString().stringValue());
+					}
 				}
-				result.add(item);
+				result.add(oIter, item);
 			}
 			return (HashMap<String, String>[]) result
 					.toArray(new HashMap<?, ?>[0]);
@@ -69,8 +71,11 @@ public class JsonUtil {
 			Iterator<String> iter = obj.keySet().iterator();
 			while (iter.hasNext()) {
 				String k = iter.next();
-				result.put(k, obj.get(k).isString().stringValue());
+				if (obj.get(k).isString() != null) {
+					result.put(k, obj.get(k).isString().stringValue());
+				}
 			}
+			return (HashMap<String, String>) result;
 		}
 		if (t.compareToIgnoreCase("HashMap<Integer,String>") == 0) {
 			JSONObject obj = r.isObject();
@@ -78,42 +83,77 @@ public class JsonUtil {
 			Iterator<String> iter = obj.keySet().iterator();
 			while (iter.hasNext()) {
 				String k = iter.next();
-				result.put(Integer.valueOf(k), obj.get(k).isString()
-						.stringValue());
+				if (obj.get(k).isString() != null) {
+					result.put(Integer.valueOf(k), obj.get(k).isString()
+							.stringValue());
+				}
 			}
+			return (HashMap<Integer, String>) result;
 		}
 		if (t.compareToIgnoreCase("String[][]") == 0) {
 			JSONArray outer = r.isArray();
-			String[][] x = new String[][] {};
-			for (int oIter = 0; oIter < outer.size(); oIter++) {
-				JSONArray inner = outer.get(oIter).isArray();
-				for (int iIter = 0; iIter < inner.size(); iIter++) {
-					x[oIter][iIter] = inner.isString().stringValue();
+			List<String[]> x = new ArrayList<String[]>();
+			if (r.isArray() != null) {
+				for (int oIter = 0; oIter < outer.size(); oIter++) {
+					if (outer.get(oIter).isArray() != null) {
+						JSONArray inner = outer.get(oIter).isArray();
+						List<String> xI = new ArrayList<String>();
+						if (inner.isArray() != null) {
+							for (int iIter = 0; iIter < inner.size(); iIter++) {
+								if (inner.get(iIter).isString() != null) {
+									xI.add(iIter, inner.get(iIter).isString()
+											.stringValue());
+								}
+							}
+						}
+						x.add((String[]) xI.toArray(new String[0]));
+					}
 				}
+				return (String[][]) x.toArray(new String[0][0]);
 			}
-			return (String[][]) x;
 		}
 		if (t.compareToIgnoreCase("String[]") == 0) {
 			JSONArray a = r.isArray();
-			String[] x = new String[] {};
-			for (int iter = 0; iter < a.size(); iter++) {
-				x[iter] = a.isString().stringValue();
+			List<String> x = new ArrayList<String>();
+			if (r.isArray() != null) {
+				for (int iter = 0; iter < a.size(); iter++) {
+					if (a.get(iter).isString() != null) {
+						x.add(iter, a.get(iter).isString().stringValue());
+					}
+				}
 			}
-			return (String[]) x;
+			return (String[]) x.toArray(new String[0]);
 		}
 		if (t.compareToIgnoreCase("String") == 0) {
-			return (String) r.isString().stringValue();
+			if (r.isString() != null) {
+				return (String) r.isString().stringValue();
+			}
 		}
 		if (t.compareToIgnoreCase("Integer") == 0) {
-			return (Integer) new Integer((int) r.isNumber().doubleValue());
+			if (r.isNumber() != null) {
+				return (Integer) new Integer((int) r.isNumber().doubleValue());
+			}
 		}
 		if (t.compareToIgnoreCase("Boolean") == 0) {
-			return (Boolean) r.isBoolean().booleanValue();
+			if (r.isBoolean() != null) {
+				return (Boolean) r.isBoolean().booleanValue();
+			}
 		}
 
 		// If anything else bombs out...
 		GWT.log("Could not parse type " + t, null);
 		return null;
 	}
+
+	/**
+	 * Console debugging for Firebug and other pieces.
+	 * 
+	 * @param st
+	 *            String to echo to debug console.
+	 */
+	@SuppressWarnings("unused")
+	private static native void debug(String st)/*-{
+		if (typeof console !=  "undefined") console.debug (st);
+		}-*/;
 
 }

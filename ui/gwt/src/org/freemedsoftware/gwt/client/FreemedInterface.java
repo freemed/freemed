@@ -25,9 +25,17 @@
 package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -50,10 +58,46 @@ public class FreemedInterface implements EntryPoint {
 		// Test to make sure we're logged in
 		loginDialog = new LoginDialog();
 		loginDialog.setFreemedInterface(this);
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Skip checking for logged in...
 			loginDialog.center();
 			// loginDialog.show();
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.public.Login.LoggedIn",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Boolean r = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (r.booleanValue()) {
+								// If logged in, continue
+								resume();
+							} else {
+								// Force login loop
+								loginDialog.center();
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			LoginAsync service = null;
 			try {
@@ -94,7 +138,7 @@ public class FreemedInterface implements EntryPoint {
 		if (!active) {
 			mainScreen = new MainScreen();
 			RootPanel.get("rootPanel").add(mainScreen);
-			//mainScreen.setFreemedInterface(this);
+			// mainScreen.setFreemedInterface(this);
 			active = true;
 		} else {
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);

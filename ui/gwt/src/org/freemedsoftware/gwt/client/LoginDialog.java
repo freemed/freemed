@@ -26,8 +26,16 @@
 package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -108,13 +116,42 @@ public class LoginDialog extends DialogBox {
 		facilityList.setSize("191px", "22px");
 		facilityList.setStylePrimaryName("freemed-LoginFields");
 		facilityList.setTabIndex(3);
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			facilityList.addItem(
 					"Mt. Ascutney Hospital Medical Clinic Examination Room",
 					"1");
 			facilityList.addItem(
 					"Associates in Surgery & Gastroenterology, LLC", "2");
 			facilityList.addItem("Valley Regional Hospital", "3");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.public.Login.GetLocations",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String[][] r = (String[][]) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String[][]");
+							for (int iter = 0; iter < r.length; iter++) {
+								facilityList.addItem(r[iter][0], r[iter][1]);
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			service.GetLocations(new AsyncCallback<String[][]>() {
 				public void onSuccess(String[][] r) {
@@ -125,10 +162,6 @@ public class LoginDialog extends DialogBox {
 
 				public void onFailure(Throwable t) {
 					Window.alert(t.getMessage());
-					/*
-					 * Window .alert("Unable to contact RPC service, try again
-					 * later."); }
-					 */
 				}
 			});
 		}
@@ -143,11 +176,40 @@ public class LoginDialog extends DialogBox {
 		languageList.setSize("190px", "22px");
 		languageList.setStylePrimaryName("freemed-LoginFields");
 		languageList.setTabIndex(4);
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			languageList.addItem("English", "en_US");
 			languageList.addItem("Deutsch", "de_DE");
 			languageList.addItem("Espanol (Mexico)", "es_MX");
 			languageList.addItem("Polski", "pl_PL");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.public.Login.GetLanguages",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String[][] r = (String[][]) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String[][]");
+							for (int iter = 0; iter < r.length; iter++) {
+								languageList.addItem(r[iter][0], r[iter][1]);
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			service.GetLanguages(new AsyncCallback<String[][]>() {
 				public void onSuccess(String[][] r) {
@@ -158,10 +220,6 @@ public class LoginDialog extends DialogBox {
 
 				public void onFailure(Throwable t) {
 					Window.alert(t.toString());
-					/*
-					 * Window .alert("Unable to contact RPC service, try again
-					 * later."); }
-					 */
 				}
 			});
 		}
@@ -213,20 +271,6 @@ public class LoginDialog extends DialogBox {
 							}
 
 						});
-				/*
-				 * service = (LoginAsync) Util
-				 * .getProxy("org.freemedsoftware.gwt.client.Public.Login");
-				 * service.Validate(userLogin.getText(),
-				 * loginPassword.getText(), new AsyncCallback() { public void
-				 * onSuccess(Object result) { Boolean r = (Boolean) result; if
-				 * (r.booleanValue()) { // If logged in, continue hide();
-				 * freemedInterface.resume(); } else { // Force login loop
-				 * show(); loginPassword.setText("");
-				 * loginButton.setEnabled(true); } }
-				 * 
-				 * public void onFailure(Throwable t) { Window .alert("Unable to
-				 * contact RPC service, try again later."); } });
-				 */
 			} catch (Exception e) {
 			}
 		}
