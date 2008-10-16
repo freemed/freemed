@@ -28,10 +28,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 
@@ -58,7 +67,7 @@ public class RecentMedicationsList extends Composite {
 
 	@SuppressWarnings("unchecked")
 	protected void populate() {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			medicationsTable.clear();
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 			{
@@ -90,6 +99,41 @@ public class RecentMedicationsList extends Composite {
 			}
 			medicationsTable.loadData(results
 					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(patientId) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (r != null) {
+								medicationsTable.clear();
+								try {
+									medicationsTable.loadData(r);
+								} catch (Exception e) {
+									GWT.log("Exception", e);
+								}
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			getProxy().GetMostRecent(patientId,
 					new AsyncCallback<HashMap<String, String>[]>() {

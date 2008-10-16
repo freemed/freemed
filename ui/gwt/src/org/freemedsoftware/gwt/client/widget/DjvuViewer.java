@@ -24,11 +24,20 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Module.UnreadDocumentsAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -155,8 +164,33 @@ public class DjvuViewer extends Composite {
 					null);
 			return false;
 		}
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			numberOfPages = 1;
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(internalId) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(resolveNamespace()
+							+ ".NumberOfPages", params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Integer r = (Integer) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Integer");
+							if (r != null) {
+								numberOfPages = r;
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			if (viewerType == UNFILED_DOCUMENTS) {
 				UnfiledDocumentsAsync p = null;
@@ -176,27 +210,28 @@ public class DjvuViewer extends Composite {
 					}
 				});
 			}
-		}
-		if (viewerType == UNREAD_DOCUMENTS) {
-			UnreadDocumentsAsync p = null;
-			try {
-				p = (UnreadDocumentsAsync) Util
-						.getProxy("org.freemedsoftware.gwt.client.Module.UnreadDocuments");
-			} catch (Exception e) {
-				GWT.log("Exception", e);
-			}
-			p.NumberOfPages(internalId, new AsyncCallback<Integer>() {
-				public void onSuccess(Integer o) {
-					numberOfPages = o.intValue();
-				}
 
-				public void onFailure(Throwable t) {
-					GWT.log("Exception", t);
+			if (viewerType == UNREAD_DOCUMENTS) {
+				UnreadDocumentsAsync p = null;
+				try {
+					p = (UnreadDocumentsAsync) Util
+							.getProxy("org.freemedsoftware.gwt.client.Module.UnreadDocuments");
+				} catch (Exception e) {
+					GWT.log("Exception", e);
 				}
-			});
-		}
-		if (viewerType == SCANNED_DOCUMENTS) {
-			// TODO: make this work for scanned documents
+				p.NumberOfPages(internalId, new AsyncCallback<Integer>() {
+					public void onSuccess(Integer o) {
+						numberOfPages = o.intValue();
+					}
+
+					public void onFailure(Throwable t) {
+						GWT.log("Exception", t);
+					}
+				});
+			}
+			if (viewerType == SCANNED_DOCUMENTS) {
+				// TODO: make this work for scanned documents
+			}
 		}
 		return true;
 	}

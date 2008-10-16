@@ -27,10 +27,18 @@ package org.freemedsoftware.gwt.client;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.SimpleUIBuilder;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class EntryScreenInterface extends ScreenInterface implements
@@ -69,8 +77,39 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 			GWT.log("Exception", ex);
 		} finally {
 			internalId = id;
-			if (Util.isStubbedMode()) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO: Emulate stubbed mode
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { moduleName, JsonUtil.jsonify(id) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleGetRecordMethod",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+						}
+
+						@SuppressWarnings("unchecked")
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (r != null) {
+									ui.setValues(r);
+								}
+							} else {
+							}
+						}
+					});
+				} catch (RequestException e) {
+				}
 			} else {
 				service.ModuleGetRecordMethod(moduleName, id,
 						new AsyncCallback<HashMap<String, String>>() {
@@ -99,10 +138,43 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 		} finally {
 			if (internalId.intValue() == 0) {
 				// Add record
-				if (Util.isStubbedMode()) {
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
 					state.getToaster().addItem(moduleName,
 							"Added successfully.", Toaster.TOASTER_INFO);
 					closeScreen();
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					String[] params = { moduleName, JsonUtil.jsonify(data) };
+					RequestBuilder builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
+													params)));
+					try {
+						builder.sendRequest(null, new RequestCallback() {
+							public void onError(Request request, Throwable ex) {
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									Integer r = (Integer) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"Integer");
+									if (r != null) {
+										state.getToaster().addItem(moduleName,
+												"Added successfully.",
+												Toaster.TOASTER_INFO);
+										closeScreen();
+									}
+								} else {
+								}
+							}
+						});
+					} catch (RequestException e) {
+					}
 				} else {
 					service.ModuleAddMethod(moduleName, data,
 							new AsyncCallback<Integer>() {
@@ -120,10 +192,43 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 				}
 			} else {
 				// Modify record
-				if (Util.isStubbedMode()) {
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
 					state.getToaster().addItem(moduleName,
 							"Modified successfully.", Toaster.TOASTER_INFO);
 					closeScreen();
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					String[] params = { moduleName, JsonUtil.jsonify(data) };
+					RequestBuilder builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
+													params)));
+					try {
+						builder.sendRequest(null, new RequestCallback() {
+							public void onError(Request request, Throwable ex) {
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									Integer r = (Integer) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"Integer");
+									if (r != null) {
+										state.getToaster().addItem(moduleName,
+												"Modified successfully.",
+												Toaster.TOASTER_INFO);
+										closeScreen();
+									}
+								} else {
+								}
+							}
+						});
+					} catch (RequestException e) {
+					}
 				} else {
 					service.ModuleModifyMethod(moduleName, data,
 							new AsyncCallback<Integer>() {

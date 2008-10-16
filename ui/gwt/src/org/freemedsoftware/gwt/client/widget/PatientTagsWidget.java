@@ -27,11 +27,20 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.ArrayList;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientTagSearchScreen;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -81,9 +90,36 @@ public class PatientTagsWidget extends Composite {
 	 * @param tag
 	 */
 	public void addTag(final String tag) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			wEntry.setText("");
 			addTagToDisplay(tag);
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(patientId), tag };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.PatientTag.CreateTag",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Boolean r = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (r != null) {
+								wEntry.setText("");
+								addTagToDisplay(tag);
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			getProxy().CreateTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
@@ -121,7 +157,52 @@ public class PatientTagsWidget extends Composite {
 				changeTagButton.addClickListener(new ClickListener() {
 					public void onClick(Widget bW) {
 						if (newTagName.getText().trim().length() > 0) {
-							if (!Util.isStubbedMode()) {
+							if (Util.getProgramMode() == ProgramMode.STUBBED) {
+								// Stubbed mode
+								p.hide();
+								p.removeFromParent();
+							} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+								String[] params = { oldTagName,
+										newTagName.getText().trim() };
+								RequestBuilder builder = new RequestBuilder(
+										RequestBuilder.POST,
+										URL
+												.encode(Util
+														.getJsonRequest(
+																"org.freemedsoftware.module.PatientTag.ChangeTag",
+																params)));
+								try {
+									builder.sendRequest(null,
+											new RequestCallback() {
+												public void onError(
+														Request request,
+														Throwable ex) {
+												}
+
+												public void onResponseReceived(
+														Request request,
+														Response response) {
+													if (200 == response
+															.getStatusCode()) {
+														Boolean r = (Boolean) JsonUtil
+																.shoehornJson(
+																		JSONParser
+																				.parse(response
+																						.getText()),
+																		"Boolean");
+														if (r != null) {
+															p.hide();
+															p
+																	.removeFromParent();
+															populate();
+														}
+													} else {
+													}
+												}
+											});
+								} catch (RequestException e) {
+								}
+							} else {
 								getProxy().ChangeTag(oldTagName,
 										newTagName.getText().trim(),
 										new AsyncCallback<Boolean>() {
@@ -135,10 +216,6 @@ public class PatientTagsWidget extends Composite {
 												GWT.log("Exception", t);
 											}
 										});
-							} else {
-								// Stubbed mode
-								p.hide();
-								p.removeFromParent();
 							}
 						}
 					}
@@ -180,8 +257,34 @@ public class PatientTagsWidget extends Composite {
 	 * @param tag
 	 */
 	public void removeTag(String tag, final HorizontalPanel hp) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			hp.removeFromParent();
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(patientId), tag };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.PatientTag.ExpireTag",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Boolean r = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (r != null) {
+								hp.removeFromParent();
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			getProxy().ExpireTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
@@ -209,10 +312,38 @@ public class PatientTagsWidget extends Composite {
 	 * Populate the widget via RPC.
 	 */
 	protected void populate() {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			addTagToDisplay("testTag1");
 			addTagToDisplay("Diabetes");
 			addTagToDisplay("LatePayment");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(patientId) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.PatientTag.TagsForPatient",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String[] r = (String[]) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String[]");
+							if (r != null) {
+								for (int iter = 0; iter < r.length; iter++) {
+									addTagToDisplay(r[iter]);
+								}
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			getProxy().TagsForPatient(patientId, new AsyncCallback<String[]>() {
 				public void onSuccess(String[] tags) {
