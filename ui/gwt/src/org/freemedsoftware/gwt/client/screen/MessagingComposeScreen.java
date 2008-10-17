@@ -24,16 +24,33 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
-import org.freemedsoftware.gwt.client.ScreenInterface;
+import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.MessagesAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
+import org.freemedsoftware.gwt.client.widget.PatientWidget;
+import org.freemedsoftware.gwt.client.widget.SupportModuleMultipleChoiceWidget;
+import org.freemedsoftware.gwt.client.widget.Toaster;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -43,7 +60,13 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 	protected final TextArea wText;
 
-	protected final ListBox wTo;
+	protected final SupportModuleMultipleChoiceWidget wTo;
+
+	protected final TextBox wSubject;
+
+	protected final PatientWidget wPatient;
+
+	protected final CustomListBox wUrgency;
 
 	protected final String className = "org.freemedsoftware.gwt.client.MessagingComposeScreen";
 
@@ -59,18 +82,19 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Label toLabel = new Label("To : ");
 		flexTable.setWidget(0, 0, toLabel);
 
-		wTo = new ListBox();
+		wTo = new SupportModuleMultipleChoiceWidget("UserModule");
 		flexTable.setWidget(0, 1, wTo);
-		wTo.setMultipleSelect(true);
-		wTo.setVisibleItemCount(5);
 
 		final Label subjectLabel = new Label("Subject : ");
 		flexTable.setWidget(1, 0, subjectLabel);
 
+		wSubject = new TextBox();
+		flexTable.setWidget(1, 1, wSubject);
+
 		final Label urgencyLabel = new Label("Urgency : ");
 		flexTable.setWidget(3, 0, urgencyLabel);
 
-		final ListBox wUrgency = new ListBox();
+		wUrgency = new CustomListBox();
 		flexTable.setWidget(3, 1, wUrgency);
 		wUrgency.addItem("1 (Urgent)");
 		wUrgency.addItem("2 (Expedited)");
@@ -86,8 +110,8 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Label patientLabel = new Label("Patient : ");
 		flexTable.setWidget(2, 0, patientLabel);
 
-		final SuggestBox suggestBox = new SuggestBox();
-		flexTable.setWidget(2, 1, suggestBox);
+		wPatient = new PatientWidget();
+		flexTable.setWidget(2, 1, wPatient);
 
 		wText = new TextArea();
 		flexTable.setWidget(4, 1, wText);
@@ -129,12 +153,94 @@ public class MessagingComposeScreen extends ScreenInterface {
 	}
 
 	public void clearForm() {
-		wText.setText(new String(""));
+		wPatient.clear();
+		wTo.setValue(new Integer[] {});
+		wSubject.setText("");
+		wText.setText("");
 	}
 
-	public void sendMessage(boolean sendAnother) {
+	public void sendMessage(final boolean sendAnother) {
 		state.statusBarAdd(className, "Sending Message");
 
+		// Form data
+		HashMap<String, String> data = new HashMap<String, String>();
+		data.put("patient", wPatient.getValue().toString());
+		data.put("for", wTo.getCommaSeparatedValues());
+		data.put("text", wText.getText());
+		data.put("subject", wSubject.getText());
+		data.put("urgency", wUrgency.getWidgetValue());
+
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			state.statusBarRemove(className);
+			state.getToaster().addItem(className, "Sent message.",
+					Toaster.TOASTER_INFO);
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(data) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.api.Messages.Send", params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.statusBarRemove(className);
+						state.getToaster().addItem(className,
+								"Failed to send message.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String[] r = (String[]) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String[]");
+							if (r != null) {
+								state.statusBarRemove(className);
+								state.getToaster().addItem(className,
+										"Sent message.", Toaster.TOASTER_INFO);
+							}
+						} else {
+							state.statusBarRemove(className);
+							state.getToaster().addItem(className,
+									"Failed to send message.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				state.getToaster().addItem(className,
+						"Failed to send message.", Toaster.TOASTER_ERROR);
+			}
+		} else {
+			getProxy().Send(data, new AsyncCallback<Boolean>() {
+				public void onSuccess(Boolean result) {
+					state.statusBarRemove(className);
+					state.getToaster().addItem(className, "Sent message.",
+							Toaster.TOASTER_INFO);
+				}
+
+				public void onFailure(Throwable t) {
+					state.statusBarRemove(className);
+					state.getToaster().addItem(className,
+							"Failed to send message.", Toaster.TOASTER_ERROR);
+				}
+			});
+		}
 	}
 
+	/**
+	 * Internal method to retrieve proxy object from Util.getProxy()
+	 * 
+	 * @return
+	 */
+	protected MessagesAsync getProxy() {
+		MessagesAsync p = null;
+		try {
+			p = (MessagesAsync) Util
+					.getProxy("org.freemedsoftware.gwt.client.Api.Messages");
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
+		return p;
+	}
 }

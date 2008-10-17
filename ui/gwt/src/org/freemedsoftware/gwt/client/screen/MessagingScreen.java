@@ -28,15 +28,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
@@ -120,9 +129,40 @@ public class MessagingScreen extends ScreenInterface {
 	}
 
 	public void populate(String tag) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String>[] dummyData = getStubData();
 			populateByData(dummyData);
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { tag, JsonUtil.jsonify(Boolean.FALSE) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.MessagesModule.GetAllByTag",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (r != null) {
+								populateByData(r);
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			// Populate the whole thing.
 			MessagesModuleAsync service = (MessagesModuleAsync) GWT
@@ -185,7 +225,7 @@ public class MessagingScreen extends ScreenInterface {
 	}
 
 	protected void showMessage(Integer messageId) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			String txt = new String();
 			switch (messageId.intValue()) {
 			case 1:
@@ -202,6 +242,37 @@ public class MessagingScreen extends ScreenInterface {
 				break;
 			}
 			messageView.setHTML(txt);
+		} else if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			String[] params = { "MessagesModule", JsonUtil.jsonify(messageId) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleGetRecordMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>");
+							if (r != null) {
+								messageView.setHTML(r.get("msgtext"));
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			ModuleInterfaceAsync service = null;
 

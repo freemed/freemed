@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
@@ -52,6 +53,8 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 
 	protected SuggestBox searchBox;
 
+	protected TextBox textBox;
+
 	private final VerticalPanel layout;
 
 	private ChangeListenerCollection changeListeners;
@@ -65,11 +68,13 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 
 		layout = new VerticalPanel();
 
+		textBox = new TextBox();
+
 		searchBox = new SuggestBox(new SuggestOracle() {
 			public void requestSuggestions(Request r, Callback cb) {
 				loadSuggestions(r.getQuery(), r, cb);
 			}
-		});
+		}, textBox);
 		searchBox.addEventHandler(new SuggestionHandler() {
 			public void onSuggestionSelected(SuggestionEvent e) {
 				Suggestion s = e.getSelectedSuggestion();
@@ -94,6 +99,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 					searchBox.setText("");
 					searchBox.setTitle("");
 					setValue(0);
+					textBox.cancelKey();
 					break;
 
 				default:
