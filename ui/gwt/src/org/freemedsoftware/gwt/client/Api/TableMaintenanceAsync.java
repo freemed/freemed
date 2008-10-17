@@ -32,8 +32,10 @@ public interface TableMaintenanceAsync {
 
 	public void ExportStockData(String tableName, AsyncCallback<Boolean> callback);
 
+	public void GetModuleTables(String param, AsyncCallback<String[][]> callback);
+
 	public void GetModules(String association,
 			String likeString, Boolean picklist, AsyncCallback<HashMap<String, String>[]> callback);
 
-	public void ImportStockData(String tableName, AsyncCallback<Void> callback);
+	public void ImportStockData(String tableName, AsyncCallback<Boolean> callback);
 }

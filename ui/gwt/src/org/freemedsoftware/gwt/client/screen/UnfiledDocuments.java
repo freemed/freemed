@@ -29,10 +29,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
@@ -40,6 +42,13 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -214,10 +223,50 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "note", (String) wNote.getText());
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			state.getToaster().addItem("UnfiledDocuments",
 					"Processed unfiled document.", Toaster.TOASTER_INFO);
 			loadData();
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { "UnfiledDocuments", JsonUtil.jsonify(p) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("UnfiledDocuments",
+								"Failed to file document.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Integer r = (Integer) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Integer");
+							if (r != null) {
+								state.getToaster().addItem("UnfiledDocuments",
+										"Processed unfiled document.",
+										Toaster.TOASTER_INFO);
+								loadData();
+							}
+						} else {
+							state.getToaster().addItem("UnfiledDocuments",
+									"Failed to file document.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				state.getToaster().addItem("UnfiledDocuments",
+						"Failed to file document.", Toaster.TOASTER_ERROR);
+			}
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback<Integer>() {
@@ -229,9 +278,8 @@ public class UnfiledDocuments extends ScreenInterface {
 
 						public void onFailure(Throwable t) {
 							state.getToaster().addItem("UnfiledDocuments",
-									"Error processing unfiled document.",
+									"Failed to file document.",
 									Toaster.TOASTER_ERROR);
-
 							GWT.log("Exception", t);
 						}
 					});
@@ -246,7 +294,7 @@ public class UnfiledDocuments extends ScreenInterface {
 		djvuViewer.setVisible(false);
 		flexTable.setVisible(false);
 		horizontalPanel.setVisible(false);
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 			{
 				HashMap<String, String> item = new HashMap<String, String>();
@@ -264,6 +312,34 @@ public class UnfiledDocuments extends ScreenInterface {
 			}
 			wDocuments.loadData(results
 					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.UnfiledDocuments",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (r != null) {
+								store = r;
+								wDocuments.loadData(r);
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
 		} else {
 			getDocumentsProxy().GetAll(
 					new AsyncCallback<HashMap<String, String>[]>() {
@@ -290,15 +366,55 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "note", (String) wNote.getText());
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			state.getToaster().addItem("UnfiledDocuments",
 					"Processed unfiled document.", Toaster.TOASTER_INFO);
 			loadData();
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { "UnfiledDocuments", JsonUtil.jsonify(p) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("UnfiledDocuments",
+								"Failed to file document.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Integer r = (Integer) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Integer");
+							if (r != null) {
+								state.getToaster().addItem("UnfiledDocuments",
+										"Sent to provider.",
+										Toaster.TOASTER_INFO);
+							}
+						} else {
+							state.getToaster().addItem("UnfiledDocuments",
+									"Failed to file document.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				state.getToaster().addItem("UnfiledDocuments",
+						"Failed to file document.", Toaster.TOASTER_ERROR);
+			}
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer o) {
-
+							state.getToaster().addItem("UnfiledDocuments",
+									"Sent to provider.", Toaster.TOASTER_INFO);
 						}
 
 						public void onFailure(Throwable t) {

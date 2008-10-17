@@ -32,8 +32,10 @@ public interface TableMaintenance extends RemoteService {
 
 	public Boolean ExportStockData(String tableName);
 
+	public String[][] GetModuleTables(String param);
+
 	public HashMap<String, String>[] GetModules(String association,
 			String likeString, Boolean picklist);
 
-	public void ImportStockData(String tableName);
+	public Boolean ImportStockData(String tableName);
 }
