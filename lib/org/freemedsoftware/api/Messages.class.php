@@ -168,6 +168,8 @@ class Messages {
 		// Determine message recipients
 		if ( is_array( $message[ 'for' ] ) ) {
 			$msgFor = $message['for'];
+		} else if ( strpos( $message['for'], ',' ) !== false ) {
+			$msgFor = split( ',', $message['for'] );
 		} else {
 			$msgFor = array( $message['user'] );
 		}
