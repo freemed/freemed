@@ -102,6 +102,8 @@ public class PatientTagsWidget extends Composite {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("PatientTags",
+								"Failed to add tags.", Toaster.TOASTER_ERROR);
 					}
 
 					public void onResponseReceived(Request request,
@@ -113,22 +115,33 @@ public class PatientTagsWidget extends Composite {
 							if (r != null) {
 								wEntry.setText("");
 								addTagToDisplay(tag);
+								state.getToaster().addItem("PatientTags",
+										"Added tag.", Toaster.TOASTER_INFO);
 							}
 						} else {
+							state.getToaster().addItem("PatientTags",
+									"Failed to add tags.",
+									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
+				state.getToaster().addItem("PatientTags",
+						"Failed to add tags.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			getProxy().CreateTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
 					wEntry.setText("");
 					addTagToDisplay(tag);
+					state.getToaster().addItem("PatientTags", "Added tag.",
+							Toaster.TOASTER_INFO);
 				}
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
+					state.getToaster().addItem("PatientTags",
+							"Failed to add tags.", Toaster.TOASTER_ERROR);
 				}
 			});
 		}
@@ -268,6 +281,8 @@ public class PatientTagsWidget extends Composite {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("PatientTags",
+								"Failed to remove tag.", Toaster.TOASTER_ERROR);
 					}
 
 					public void onResponseReceived(Request request,
@@ -278,21 +293,32 @@ public class PatientTagsWidget extends Composite {
 									"Boolean");
 							if (r != null) {
 								hp.removeFromParent();
+								state.getToaster().addItem("PatientTags",
+										"Removed tag.", Toaster.TOASTER_INFO);
 							}
 						} else {
+							state.getToaster().addItem("PatientTags",
+									"Failed to remove tag.",
+									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
+				state.getToaster().addItem("PatientTags",
+						"Failed to remove tag.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			getProxy().ExpireTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
 					hp.removeFromParent();
+					state.getToaster().addItem("PatientTags", "Removed tag.",
+							Toaster.TOASTER_INFO);
 				}
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
+					state.getToaster().addItem("PatientTags",
+							"Failed to remove tag.", Toaster.TOASTER_ERROR);
 				}
 			});
 		}
@@ -318,10 +344,13 @@ public class PatientTagsWidget extends Composite {
 			addTagToDisplay("LatePayment");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(patientId) };
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.module.PatientTag.TagsForPatient",
-							params)));
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.PatientTag.TagsForPatient",
+											params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {

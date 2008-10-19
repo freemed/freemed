@@ -97,6 +97,35 @@ public class JsonUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static synchronized Object shoehornJson(JSONValue r, String t) {
+		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,String>[]>") == 0) {
+			HashMap<String, HashMap<String, String>[]> oResult = new HashMap<String, HashMap<String, String>[]>();
+			JSONObject oA = r.isObject();
+			if (oA != null) {
+				Iterator<String> outerIter = oA.keySet().iterator();
+				while (outerIter.hasNext()) {
+					String innerKey = outerIter.next();
+					List<HashMap<?, ?>> result = new ArrayList<HashMap<?, ?>>();
+					JSONArray a = oA.get(innerKey).isArray();
+					for (int oIter = 0; oIter < a.size(); oIter++) {
+						HashMap<String, String> item = new HashMap<String, String>();
+						JSONObject obj = a.get(oIter).isObject();
+						Iterator<String> iter = obj.keySet().iterator();
+						while (iter.hasNext()) {
+							String k = iter.next();
+							if (obj.get(k).isString() != null) {
+								item
+										.put(k, obj.get(k).isString()
+												.stringValue());
+							}
+						}
+						result.add(oIter, item);
+					}
+					oResult.put(innerKey, (HashMap<String, String>[]) result
+							.toArray(new HashMap<?, ?>[0]));
+				}
+			}
+			return (HashMap<String, HashMap<String, String>[]>) oResult;
+		}
 		if (t.compareToIgnoreCase("HashMap<String,String>[]") == 0) {
 			List<HashMap<?, ?>> result = new ArrayList<HashMap<?, ?>>();
 			JSONArray a = r.isArray();
@@ -201,9 +230,8 @@ public class JsonUtil {
 	 * @param st
 	 *            String to echo to debug console.
 	 */
-	@SuppressWarnings("unused")
-	private static native void debug(String st)/*-{
-															if (typeof console !=  "undefined") console.debug (st);
-															}-*/;
+	public static native void debug(String st)/*-{
+	if (typeof console !=  "undefined") console.debug (st);
+	}-*/;
 
 }

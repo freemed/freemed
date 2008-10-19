@@ -172,6 +172,8 @@ public class UnfiledDocuments extends ScreenInterface {
 
 		horizontalPanel = new HorizontalPanel();
 		horizontalPanel.setVisible(false);
+		horizontalPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		verticalPanel.add(horizontalPanel);
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -314,10 +316,13 @@ public class UnfiledDocuments extends ScreenInterface {
 					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = {};
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.module.UnfiledDocuments",
-							params)));
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.UnfiledDocuments.GetAll",
+											params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {

@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
@@ -76,6 +77,13 @@ public class PatientScreen extends ScreenInterface {
 			verticalPanel.add(menuBar);
 
 			final MenuBar menuBar_1 = new MenuBar(true);
+
+			menuBar_1.addItem("Encounter", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Encounter", new EncounterScreen(),
+							state, getObject());
+				}
+			});
 
 			menuBar_1.addItem("Letter", new Command() {
 				public void execute() {
