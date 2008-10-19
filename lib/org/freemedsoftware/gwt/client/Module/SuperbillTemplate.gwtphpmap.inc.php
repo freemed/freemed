@@ -46,7 +46,7 @@ $gwtphpmap = array (
 			  array (
 				  'name' => 'GetTemplate'
 				, 'mappedName' => 'GetTemplate'
-				, 'returnType' => 'java.lang.HashMap<java.lang.String,java.lang.HashMap<java.lang.String,java.lang.String>>;'
+				, 'returnType' => 'java.lang.HashMap<java.lang.String,[Ljava.lang.HashMap<java.lang.String,java.lang.String>>;'
 				, 'params' => array (
 					  array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => 'java.lang.Integer' )

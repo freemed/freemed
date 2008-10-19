@@ -29,6 +29,6 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SuperbillTemplateAsync {
-	public void GetTemplate(Integer id,
-			Integer patientId, AsyncCallback<HashMap<String, HashMap<String, String>>> callback);
+	public void GetTemplate(Integer id, Integer patientId,
+			AsyncCallback<HashMap<String, HashMap<String, String>[]>> callback);
 }

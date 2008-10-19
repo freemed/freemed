@@ -29,6 +29,6 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface SuperbillTemplate extends RemoteService {
-	public HashMap<String, HashMap<String, String>> GetTemplate(Integer id,
+	public HashMap<String, HashMap<String, String>[]> GetTemplate(Integer id,
 			Integer patientId);
 }
