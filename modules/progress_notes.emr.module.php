@@ -100,9 +100,9 @@ class ProgressNotes extends EMRModule {
       switch ($action) { // internal switch
         case "addform":
  	// check if we are a physician
-         if ($this->this_user->isPhysician()) {
+         if ($GLOBALS['this_user']->isPhysician()) {
 		global $pnotesdoc;
- 		$pnotesdoc = $this->this_user->getPhysician(); // if so, set as default
+ 		$pnotesdoc = $GLOBALS['this_user']->getPhysician(); // if so, set as default
 	}
 	 global $pnotesdt;
          $pnotesdt     = date("Y-m-d");
