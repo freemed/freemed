@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2007 FreeMED Software Foundation
+ // Copyright (C) 1999-2008 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ if ( file_exists ( dirname(__FILE__).'/data/cache/healthy' ) ) {
 // TODO : Handle JSON requests for handling things here?
 
 // i18n routines
-include_once ("lib/i18n.php");
 include_once ("lib/loader.php");
+include_once ("lib/i18n.php");
 
 // Load smarty engine
 unset ( $smarty );
