@@ -25,12 +25,13 @@
 if (!$_SERVER['argc']) { die ("cannot be called via web"); }
 
 ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
+define('SESSION_DISABLE', true);
 include_once ( 'lib/freemed.php' );
 
 LoadObjectDependency( 'net.php.pear.Console_Getopt' );
 
 print "Upgrade from 0.8.x Tool\n";
-print "(c) 2007 FreeMED Software Foundation\n\n";
+print "(c) 2008 FreeMED Software Foundation\n\n";
 
 function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
