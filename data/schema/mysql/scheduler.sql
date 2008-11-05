@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2007 FreeMED Software Foundation
+# Copyright (C) 1999-2008 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `scheduler` (
 	calpostnote		TEXT,
 	calmark			INT UNSIGNED NOT NULL DEFAULT 0,
 	calgroupid		INT UNSIGNED NOT NULL DEFAULT 0,
+	calgroupmembers		TEXT,
 	calrecurnote		VARCHAR (100),
 	calrecurid		INT UNSIGNED NOT NULL DEFAULT 0,
 	calappttemplate		INT UNSIGNED NOT NULL DEFAULT 0,
@@ -98,6 +99,7 @@ BEGIN
 		#	group scheduling pieces are in here from a legacy version.
 		ALTER TABLE scheduler CHANGE COLUMN caltype caltype ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat';
 		ALTER TABLE scheduler ADD COLUMN calattendees VARCHAR (250) AFTER calappttemplate;
+		ALTER TABLE scheduler ADD COLUMN calgroupmembers TEXT AFTER calgroupid;
 	END IF;
 
 	CALL FreeMED_Module_UpdateVersion( 'scheduler', 3 );
