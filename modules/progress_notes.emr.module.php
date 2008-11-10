@@ -833,6 +833,17 @@ class ProgressNotes extends EMRModule {
 		}
 	} // end method noteForDate
 
+	function fax_widget ( $varname, $id ) {
+		global $sql, ${$varname};
+		$r = freemed::get_link_rec($id, $this->table_name);
+		$phy = freemed::get_link_rec($r['pnotesdoc'], 'physician');
+		${$varname} = $phy['phyfaxa'];
+		return module_function('faxcontacts',
+			'widget',
+			array ( $varname, false, 'phyfaxa' )
+		);
+	} // end method fax_widget
+
 	function _update() {
 		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
