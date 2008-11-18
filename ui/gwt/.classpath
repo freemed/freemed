@@ -12,5 +12,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/gwt-dnd-2.0.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-date-0.9.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-extras-0.9.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.cobogw.gwt.jar"/>
 	<classpathentry kind="output" path="www"/>
 </classpath>
