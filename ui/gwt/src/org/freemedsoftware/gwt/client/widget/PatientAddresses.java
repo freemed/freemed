@@ -49,7 +49,6 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -153,7 +152,7 @@ public class PatientAddresses extends Composite {
 
 	protected Integer patientId = new Integer(0);
 
-	protected FlexTable flexTable;
+	protected CustomSortableTable flexTable;
 
 	protected HashMap<Integer, Address> addresses;
 
@@ -167,7 +166,13 @@ public class PatientAddresses extends Composite {
 		VerticalPanel vP = new VerticalPanel();
 		initWidget(vP);
 
-		flexTable = new FlexTable();
+		flexTable = new CustomSortableTable();
+		flexTable.addColumn("Residence Type", "type");
+		flexTable.addColumn("Relationship", "relation");
+		flexTable.addColumn("Address Line 1", "line1");
+		flexTable.addColumn("Address Line 2", "line2");
+		flexTable.addColumn("City, State Postal", "csz");
+		flexTable.addColumn("Active?", "active");
 		vP.add(flexTable);
 
 		HorizontalPanel hP = new HorizontalPanel();

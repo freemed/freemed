@@ -330,8 +330,10 @@ public class PatientForm extends ScreenInterface {
 
 	public void setPatientId(Integer newPatientId) {
 		patientId = newPatientId;
-		if (!Util.isStubbedMode()) {
-			populateForm();
+		if (newPatientId > 0) {
+			if (!Util.isStubbedMode()) {
+				populateForm();
+			}
 		}
 	}
 
