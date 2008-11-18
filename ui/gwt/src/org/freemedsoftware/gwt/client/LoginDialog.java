@@ -43,6 +43,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -249,6 +250,31 @@ public class LoginDialog extends DialogBox {
 
 		final SimplePanel simplePanel = new SimplePanel();
 		simplePanel.setWidget(absolutePanel);
+
+		// Add custom keyboard listener to allow submit from password field.
+		loginPassword.addKeyboardListener(new KeyboardListener() {
+
+			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+				switch (keyCode) {
+				case KeyboardListener.KEY_ENTER:
+					attemptLogin();
+					try {
+						((TextBox) sender).cancelKey();
+					} catch (Exception ex) {
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
+			}
+
+			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+			}
+
+		});
 
 		this.setWidget(simplePanel);
 	}
