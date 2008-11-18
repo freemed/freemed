@@ -13,22 +13,23 @@
     <pathelement path="lib/simpledatepicker.jar"/>
     <pathelement path="lib/simplesortabletable.jar"/>
     <pathelement path="lib/com.gwtsandbox.colorpicker.ColorPicker.jar"/>
-    <pathelement path="lib/com.gwtscheduler.Scheduler.jar"/>
     <pathelement path="lib/gchart-2.1.jar"/>
     <pathelement path="lib/gwt-dnd-2.0.5.jar"/>
+    <pathelement path="lib/lib/ftr-gwt-library-date-0.9.7.jar"/>
+    <pathelement path="lib/lib/ftr-gwt-library-extras-0.9.7.jar"/>
     <!-- Additional dependencies (such as junit) go here -->
   </path>
 
   <target name="compile" description="Compile src to bin">
-    <mkdir dir="bin"/>
-    <javac srcdir="src:test" destdir="bin" includes="**" debug="on" debuglevel="lines,vars,source" source="1.4">
+    <mkdir dir="www"/>
+    <javac srcdir="src:test" destdir="www" includes="**" debug="on" debuglevel="lines,vars,source" source="1.4">
       <classpath refid="project.class.path"/>
     </javac>
   </target>
 
   <target name="package" depends="compile" description="Package up the project as a jar">
     <jar destfile="org.freemedsoftware.gwt.client.FreemedInterface.jar">
-      <fileset dir="bin">
+      <fileset dir="www">
         <include name="**/*.class"/>
       </fileset>
       <!-- Get everything; source, modules, html files -->
@@ -45,7 +46,7 @@
     <!-- Delete the bin directory tree -->
     <delete file="org.freemedsoftware.gwt.client.FreemedInterface.jar"/>
     <delete>
-      <fileset dir="bin" includes="**/*.class"/>
+      <fileset dir="www" includes="**/*.class"/>
     </delete>
   </target>
 

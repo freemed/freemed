@@ -9,7 +9,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/simplesortabletable.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gchart-2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.gwtsandbox.colorpicker.ColorPicker.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/com.gwtscheduler.Scheduler.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gwt-dnd-2.0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-date-0.9.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-extras-0.9.7.jar"/>
 	<classpathentry kind="output" path="www"/>
 </classpath>
