@@ -32,11 +32,12 @@
 	<inherits name="com.thapar.gwt.user.ui.SimpleSortableTable" />
 	<inherits name="com.thapar.gwt.user.ui.SimpleDatePicker" />
 	<inherits name="com.gwtsandbox.colorpicker.ColorPicker" />
-	<inherits name="com.gwtscheduler.Scheduler" />
 	<inherits name="com.bouwkamp.gwt.user.User" />
 	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name='org.cobogw.gwt.user.User' />
 	<inherits name="com.googlecode.gchart.GChart" />
-	<!-- <inherits name="com.gwtscheduler.client.Scheduler" /> -->
+	<inherits name='eu.future.earth.gwt.FtrGwtDate' />
+	
 	<!-- <inherits name="com.allen_sauer.gwt.log.gwt-log" /> -->
 
 	<!-- Stylesheet resources go here -->

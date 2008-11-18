@@ -25,7 +25,9 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DashboardScreen extends ScreenInterface {
@@ -33,6 +35,11 @@ public class DashboardScreen extends ScreenInterface {
 	public DashboardScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
+
+		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		verticalPanel.add(horizontalPanel);
+
+		horizontalPanel.add(new SchedulerWidget());
 	}
 
 }
