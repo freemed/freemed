@@ -3,7 +3,6 @@ package org.freemedsoftware.gwt.client.screen.entry;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.EntryScreenInterface;
-import org.freemedsoftware.gwt.client.Util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -75,8 +74,8 @@ public class SupportModuleEntry extends EntryScreenInterface {
 	protected void buildForm() {
 		if (moduleName != null) {
 			// Get XML file name from module
-			final String interfaceUrl = Util.getBaseUrl()
-					+ "/resources/interface/" + moduleName + ".module.xml";
+			final String interfaceUrl = "resources/interface/" + moduleName
+					+ ".module.xml";
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL
 					.encode(interfaceUrl));
 			try {
