@@ -92,6 +92,34 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
+			// Method: ModuleGetRecordsMethod
+			//
+			// Parameters:
+			//
+			//	$module - Module name
+			//
+			//	$count - Maximum count
+			//
+			//	$ckey - Criteria key
+			//
+			//	$cval - Criteria value
+			//
+			// Returns:
+			//
+			//	Array of associative array of values.
+			//
+			, array (
+				  'name' => 'ModuleGetRecordsMethod'
+				, 'mappedName' => 'ModuleGetRecordsMethod'
+				, 'returnType' => '[Ljava.util.HashMap;'
+				, 'params' => array (
+					  array ( 'type' => 'java.lang.Integer' )
+					, array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.lang.String' )
+				)
+				, 'throws' => array ( )
+			)
+
 			// Method: ModuleModifyMethod
 			//
 			// Parameters:

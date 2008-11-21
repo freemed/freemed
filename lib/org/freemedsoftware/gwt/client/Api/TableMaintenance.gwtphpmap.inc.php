@@ -41,7 +41,7 @@ $gwtphpmap = array (
 			//
 			  array (
 				  'name' => 'ExportStockData'
-				, 'mappedName' => 'ExportStockData'
+				, 'mappedBy' => 'ExportStockData'
 				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.String' )
@@ -49,6 +49,51 @@ $gwtphpmap = array (
 				, 'throws' => array ( )
 			)
 
+			// Method: ExportTables 
+		 	// 
+		 	//      Export data for tables. 
+		 	// 
+		 	// Parameters: 
+		 	// 
+		 	//      $tables - array of table names 
+		 	// 
+			// Returns:
+			//
+			//	Boolean, success
+			//
+			, array (
+				  'name' => 'ExportTables'
+				, 'mappedBy' => 'ExportTables'
+				, 'returnType' => 'java.lang.Boolean'
+				, 'params' => array (
+					array ( 'type' => 'java.lang.String' )
+				)
+				, 'throws' => array ( )
+			)
+     
+		 	// Method: GetModuleTables 
+		 	// 
+		 	//      Get picklist formatted module tables information. 
+		 	// 
+		 	// Parameters: 
+		 	// 
+		 	//      $param - Substring to search for. Defaults to ''. 
+		 	// 
+		 	// Returns: 
+		 	// 
+		 	//      Array of arrays containing ( module name, table name). 
+		 	// 
+			, array (
+				  'name' => 'GetModuleTables'
+				, 'mappedBy' => 'GetModuleTables'
+				, 'returnType' => '[[Ljava.lang.String;'
+				, 'returnTypeCRC' => '392769419[2364883620[L2004016611;'
+				, 'params' => array (
+					array ( 'type' => 'java.lang.String' )
+				)
+				, 'throws' => array ( )
+			)
+	
 			// Method: GetModules
 			//
 			//	Get list of modules based on their associations.
@@ -59,7 +104,7 @@ $gwtphpmap = array (
 			//
 			//	$like - (optional) String to search names for
 			//
-			//	$picklist - (optional) Return in picklist format ( k, v )
+			//	$picklist - (optional) Return in picklist format ( k, v ), boolean
 			//
 			// Returns:
 			//
@@ -67,7 +112,7 @@ $gwtphpmap = array (
 			//
 			, array (
 				  'name' => 'GetModules'
-				, 'mappedName' => 'GetModules'
+				, 'mappedBy' => 'GetModules'
 				, 'returnType' => '[Ljava.util.HashMap;'
 				, 'returnTypeCRC' => '3558356060[L962170901;'
 				, 'params' => array (
@@ -86,10 +131,14 @@ $gwtphpmap = array (
 			//
 			//	$table_name - Table name
 			//
+			// Returns:
+			//
+			//	Boolean
+			//
 			, array (
 				  'name' => 'ImportStockData'
-				, 'mappedName' => 'ImportStockData'
-				, 'returnType' => TypeSignatures::$NULL
+				, 'mappedBy' => 'ImportStockData'
+				, 'returnType' => 'java.lang.Boolean'
 				, 'params' => array (
 					array ( 'type' => 'java.lang.String' )
 				)

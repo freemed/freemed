@@ -45,6 +45,9 @@ public interface ModuleInterface extends RemoteService {
 	public HashMap<String, String> ModuleGetRecordMethod(String module,
 			Integer id);
 
+	public HashMap<String, String>[] ModuleGetRecordsMethod(String module,
+			Integer count, String ckey, String cval);
+
 	public Integer ModuleDeleteMethod(String module, Integer id);
 
 	/**

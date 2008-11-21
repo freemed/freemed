@@ -43,6 +43,9 @@ public interface ModuleInterfaceAsync {
 	public void ModuleGetRecordMethod(String module,
 			Integer id, AsyncCallback<HashMap<String, String>> callback);
 
+	public void ModuleGetRecordsMethod(String module,
+			Integer count, String ckey, String cval, AsyncCallback<HashMap<String, String>[]> callback);
+
 	public void ModuleDeleteMethod(String module, Integer id, AsyncCallback<Integer> callback);
 
 	/**

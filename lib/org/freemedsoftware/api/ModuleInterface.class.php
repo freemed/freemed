@@ -74,6 +74,26 @@ class ModuleInterface {
 		return module_function( $module, 'GetRecord', array ( $id ) );
 	} // end method ModuleGetRecordMethod
 
+	// Method: ModuleGetRecordsMethod
+	//
+	// Parameters:
+	//
+	//	$module - Module name
+	//
+	//	$count - Maximum count
+	//
+	//	$ckey - Criteria key
+	//
+	//	$cval - Criteria value
+	//
+	// Returns:
+	//
+	//	Array of associative array of values.
+	//
+	public function ModuleGetRecordsMethod ( $module, $count, $ckey, $cval ) {
+		return module_function( $module, 'GetRecords', array ( $count, $ckey, $cval ) );
+	} // end method ModuleGetRecordsMethod
+
 	// Method: ModuleModifyMethod
 	//
 	// Parameters:
@@ -103,7 +123,8 @@ class ModuleInterface {
 	//	Associative array of values. Key = id, value = display name
 	//
 	public function ModuleSupportPicklistMethod ( $module, $criteria ) {
-		return module_function( $module, 'picklist', array ( $id, $criteria ) );
+		syslog(LOG_INFO, module_function( $module, 'picklist', array ( $criteria ) ) );
+		return module_function( $module, 'picklist', array ( $criteria ) );
 	} // end method ModuleSupportPicklistMethod
 
 	// Method: ModuleToTextMethod
