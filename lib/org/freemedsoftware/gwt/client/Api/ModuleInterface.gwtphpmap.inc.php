@@ -113,7 +113,8 @@ $gwtphpmap = array (
 				, 'mappedName' => 'ModuleGetRecordsMethod'
 				, 'returnType' => '[Ljava.util.HashMap;'
 				, 'params' => array (
-					  array ( 'type' => 'java.lang.Integer' )
+					  array ( 'type' => 'java.lang.String' )
+					, array ( 'type' => 'java.lang.Integer' )
 					, array ( 'type' => 'java.lang.String' )
 					, array ( 'type' => 'java.lang.String' )
 				)
