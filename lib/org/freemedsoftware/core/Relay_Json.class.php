@@ -51,11 +51,11 @@ class Relay_Json extends Relay {
 		}
 		if (function_exists( 'json_decode' ) && 0==1) {
 			// Try the JSON PECL native function first
-			$return = utf8_decode(json_decode( stripslashes($request), true ));
+			$return = utf8_decode(json_decode( stripslashes( urldecode( $request ) ), true ));
 			//syslog(LOG_INFO, "json_decode = $return");
 		} else {
 			$json = CreateObject('net.php.pear.Services_JSON');
-			$return = $json->decode( stripslashes($request) );
+			$return = $json->decode( stripslashes( urldecode( $request ) ) );
 			//syslog(LOG_INFO, "json->decode = $return");
 		}
 		if (!$return) {
