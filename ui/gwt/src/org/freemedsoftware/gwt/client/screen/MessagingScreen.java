@@ -31,12 +31,14 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -64,6 +66,8 @@ public class MessagingScreen extends ScreenInterface {
 	private HashMap<String, String>[] mStore;
 
 	protected HTML messageView;
+
+	protected final static String LOADING_IMAGE = "resources/images/loading.gif";
 
 	public MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -102,9 +106,10 @@ public class MessagingScreen extends ScreenInterface {
 		wMessages = new CustomSortableTable();
 		verticalSplitPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
-		wMessages.addColumn("Received", "stamp");
-		wMessages.addColumn("From", "from_user");
-		wMessages.addColumn("Subject", "subject");
+		wMessages.addColumn("Received", "stamp"); // col 0
+		wMessages.addColumn("From", "from_user"); // col 1
+		wMessages.addColumn("Subject", "subject"); // col 2
+		wMessages.addColumn("Delete", "delete"); // col 3
 		wMessages.setIndexName("id");
 		wMessages.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
@@ -112,14 +117,19 @@ public class MessagingScreen extends ScreenInterface {
 				try {
 					final Integer messageId = new Integer(wMessages
 							.getValueByRow(row));
-					showMessage(messageId);
+					if (col == 3) {
+						deleteMessage(messageId);
+					} else {
+						showMessage(messageId);
+					}
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
 				}
 			}
 		});
 
-		messageView = new HTML("Message text goes here.");
+		messageView = new HTML("<img src=\"" + LOADING_IMAGE
+				+ "\" border=\"0\" />");
 		verticalSplitPanel.add(messageView);
 		messageView.setSize("100%", "100%");
 		// verticalSplitPanel.setSize("100%", "100%");
@@ -194,6 +204,9 @@ public class MessagingScreen extends ScreenInterface {
 		// Clear any current contents
 		wMessages.clear();
 		wMessages.loadData(data);
+		// Quickly add something blank to the message view so loading image goes
+		// away
+		messageView.setHTML("<br/>&nbsp;<br/>&nbsp;<br/>");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -224,6 +237,76 @@ public class MessagingScreen extends ScreenInterface {
 		return (HashMap<String, String>[]) m.toArray(new HashMap<?, ?>[0]);
 	}
 
+	protected void deleteMessage(Integer messageId) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			state.getToaster().addItem("MessagingScreen", "Deleted message.",
+					Toaster.TOASTER_INFO);
+			populate("");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(messageId) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.api.Messages.Remove", params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("MessagingScreen",
+								"Failed to delete message.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Boolean r = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (r != null) {
+								state.getToaster().addItem("MessagingScreen",
+										"Deleted message.",
+										Toaster.TOASTER_INFO);
+								populate("");
+							}
+						} else {
+							state.getToaster().addItem("MessagingScreen",
+									"Failed to delete message.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		} else {
+			MessagesAsync service = null;
+
+			try {
+				service = (MessagesAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.Messages");
+			} catch (Exception e) {
+				state.getToaster().addItem("MessagingScreen",
+						"Failed to delete message.", Toaster.TOASTER_ERROR);
+			}
+			service.Remove(messageId, new AsyncCallback<Boolean>() {
+				public void onSuccess(Boolean data) {
+					if (data) {
+						state.getToaster().addItem("MessagingScreen",
+								"Deleted message.", Toaster.TOASTER_INFO);
+						populate("");
+					} else {
+						state.getToaster().addItem("MessagingScreen",
+								"Failed to delete message.",
+								Toaster.TOASTER_ERROR);
+					}
+				}
+
+				public void onFailure(Throwable t) {
+					state.getToaster().addItem("MessagingScreen",
+							"Failed to delete message.", Toaster.TOASTER_ERROR);
+				}
+			});
+		}
+	}
+
 	protected void showMessage(Integer messageId) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			String txt = new String();
@@ -242,7 +325,7 @@ public class MessagingScreen extends ScreenInterface {
 				break;
 			}
 			messageView.setHTML(txt);
-		} else if (Util.getProgramMode() == ProgramMode.STUBBED) {
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { "MessagesModule", JsonUtil.jsonify(messageId) };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -265,7 +348,8 @@ public class MessagingScreen extends ScreenInterface {
 											.getText()),
 											"HashMap<String,String>");
 							if (r != null) {
-								messageView.setHTML(r.get("msgtext"));
+								messageView.setHTML(r.get("msgtext").replace(
+										"\\", "").replace("\n", "<br/>"));
 							}
 						} else {
 						}
@@ -285,7 +369,8 @@ public class MessagingScreen extends ScreenInterface {
 			service.ModuleGetRecordMethod("MessagesModule", messageId,
 					new AsyncCallback<HashMap<String, String>>() {
 						public void onSuccess(HashMap<String, String> data) {
-							messageView.setHTML(data.get("msgtext"));
+							messageView.setHTML(data.get("msgtext").replace(
+									"\\", "").replace("\n", "<br/>"));
 						}
 
 						public void onFailure(Throwable t) {
@@ -294,4 +379,5 @@ public class MessagingScreen extends ScreenInterface {
 					});
 		}
 	}
+
 }

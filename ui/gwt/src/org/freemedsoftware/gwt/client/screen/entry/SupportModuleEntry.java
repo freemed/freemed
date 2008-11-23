@@ -30,6 +30,12 @@ public class SupportModuleEntry extends EntryScreenInterface {
 		setModuleName(module);
 		initWidget(ui);
 	}
+	
+	public SupportModuleEntry(String module, Integer id) {
+		setModuleName(module);
+		setInternalId(id);
+		initWidget(ui);
+	}
 
 	public String validateData(HashMap<String, String> data) {
 		String message = "";

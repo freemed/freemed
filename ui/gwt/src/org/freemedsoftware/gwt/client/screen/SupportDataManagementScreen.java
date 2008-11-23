@@ -44,6 +44,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -62,7 +63,8 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-public class SupportDataManagementScreen extends ScreenInterface {
+public class SupportDataManagementScreen extends ScreenInterface implements
+		Command {
 
 	protected CustomListBox wField = null;
 
@@ -75,6 +77,8 @@ public class SupportDataManagementScreen extends ScreenInterface {
 	protected String rawXml = null;
 
 	public SupportDataManagementScreen() {
+		final SupportDataManagementScreen thisRef = this;
+
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -87,8 +91,9 @@ public class SupportDataManagementScreen extends ScreenInterface {
 		addButton.setText("Add");
 		addButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-				Util.spawnTab(moduleName + ": " + "Add",
-						new SupportModuleEntry(moduleName), state);
+				SupportModuleEntry entry = new SupportModuleEntry(moduleName);
+				entry.setDoneCommand(thisRef);
+				Util.spawnTab(moduleName + ": " + "Add", entry, state);
 			}
 		});
 
@@ -129,11 +134,10 @@ public class SupportDataManagementScreen extends ScreenInterface {
 				try {
 					final Integer recordId = new Integer(sortableTable
 							.getValueByRow(row));
-					Util
-							.spawnTab(
-									moduleName + ": " + "Edit",
-									new SupportModuleEntry(moduleName, recordId),
-									state);
+					SupportModuleEntry entry = new SupportModuleEntry(
+							moduleName, recordId);
+					entry.setDoneCommand(thisRef);
+					Util.spawnTab(moduleName + ": " + "Edit", entry, state);
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
 				}
@@ -282,6 +286,13 @@ public class SupportDataManagementScreen extends ScreenInterface {
 						}
 					});
 		}
+	}
+
+	/**
+	 * Executed when something is done to the data in this screen.
+	 */
+	public void execute() {
+		populateData();
 	}
 
 }

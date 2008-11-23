@@ -39,6 +39,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class EntryScreenInterface extends ScreenInterface implements
@@ -46,11 +47,14 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 
 	protected String moduleName;
 
+	protected Command doneCommand = null;
+
 	protected Integer internalId = 0;
 
 	protected SimpleUIBuilder ui = new SimpleUIBuilder();
 
 	public EntryScreenInterface() {
+		ui.setReceiver(this);
 		buildForm();
 	}
 
@@ -62,6 +66,15 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 	 * @return The FreeMED module class name implemented by this class.
 	 */
 	protected abstract String getModuleName();
+
+	/**
+	 * Set command run when action is completed for this screen.
+	 * 
+	 * @param done
+	 */
+	public void setDoneCommand(Command done) {
+		doneCommand = done;
+	}
 
 	/**
 	 * Set the internal id associated with this form.
@@ -127,6 +140,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 
 	public void processData(HashMap<String, String> data) {
 		if (internalId.intValue() > 0) {
+			JsonUtil.debug("Found internalId, using modify");
 			data.put("id", internalId.toString());
 		}
 		ModuleInterfaceAsync service = null;
@@ -141,6 +155,9 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 				if (Util.getProgramMode() == ProgramMode.STUBBED) {
 					state.getToaster().addItem(moduleName,
 							"Added successfully.", Toaster.TOASTER_INFO);
+					if (doneCommand != null) {
+						doneCommand.execute();
+					}
 					closeScreen();
 				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 					String[] params = { moduleName, JsonUtil.jsonify(data) };
@@ -154,6 +171,9 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
+								state.getToaster().addItem(moduleName,
+										"Failed to add record.",
+										Toaster.TOASTER_ERROR);
 							}
 
 							public void onResponseReceived(Request request,
@@ -167,13 +187,21 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 										state.getToaster().addItem(moduleName,
 												"Added successfully.",
 												Toaster.TOASTER_INFO);
+										if (doneCommand != null) {
+											doneCommand.execute();
+										}
 										closeScreen();
 									}
 								} else {
+									state.getToaster().addItem(moduleName,
+											"Failed to add record.",
+											Toaster.TOASTER_ERROR);
 								}
 							}
 						});
 					} catch (RequestException e) {
+						state.getToaster().addItem(moduleName,
+								"Failed to add record.", Toaster.TOASTER_ERROR);
 					}
 				} else {
 					service.ModuleAddMethod(moduleName, data,
@@ -182,6 +210,9 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 									state.getToaster().addItem(moduleName,
 											"Added successfully.",
 											Toaster.TOASTER_INFO);
+									if (doneCommand != null) {
+										doneCommand.execute();
+									}
 									closeScreen();
 								}
 
@@ -208,22 +239,35 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
+								state.getToaster().addItem(moduleName,
+										"Failed to modify record.",
+										Toaster.TOASTER_ERROR);
 							}
 
 							public void onResponseReceived(Request request,
 									Response response) {
 								if (200 == response.getStatusCode()) {
-									Integer r = (Integer) JsonUtil
+									Boolean r = (Boolean) JsonUtil
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
-													"Integer");
-									if (r != null) {
+													"Boolean");
+									if (r != false && r != null) {
 										state.getToaster().addItem(moduleName,
 												"Modified successfully.",
 												Toaster.TOASTER_INFO);
+										if (doneCommand != null) {
+											doneCommand.execute();
+										}
 										closeScreen();
+									} else {
+										state.getToaster().addItem(moduleName,
+												"Failed to modify record.",
+												Toaster.TOASTER_ERROR);
 									}
 								} else {
+									state.getToaster().addItem(moduleName,
+											"Failed to modify record.",
+											Toaster.TOASTER_ERROR);
 								}
 							}
 						});
@@ -236,6 +280,9 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 									state.getToaster().addItem(moduleName,
 											"Modified successfully.",
 											Toaster.TOASTER_INFO);
+									if (doneCommand != null) {
+										doneCommand.execute();
+									}
 									closeScreen();
 								}
 

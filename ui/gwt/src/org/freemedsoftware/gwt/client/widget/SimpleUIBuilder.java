@@ -27,6 +27,8 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -90,6 +92,7 @@ public class SimpleUIBuilder extends Composite {
 			public void onClick(Widget sender) {
 				// Collect data
 				HashMap<String, String> data = new HashMap<String, String>();
+				data = getValues();
 
 				// If a receiver has been set, push there
 				if (receiver != null) {
@@ -97,6 +100,8 @@ public class SimpleUIBuilder extends Composite {
 					if (v == null) {
 						receiver.processData(data);
 					}
+				} else {
+					JsonUtil.debug("No receiver was defined.");
 				}
 			}
 		});
