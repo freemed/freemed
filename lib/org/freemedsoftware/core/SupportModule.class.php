@@ -314,6 +314,9 @@ class SupportModule extends BaseModule {
 					array ( "id" => $data['id'] )
 				)
 			);
+			if ( PEAR::isError( $result ) ) {
+				$result = false;
+			}
 		} else {
 			$result = true;
 		}
@@ -355,6 +358,8 @@ class SupportModule extends BaseModule {
 	//	Array of hashes.
 	//
 	public function GetRecords ( $limit = 100, $criteria_field = NULL, $criteria = NULL ) {
+		// TODO: Security, sanity check criteria_field variable
+
 		// Check to make sure that if $criteria_field is declared that it's valid
 		if ( $criteria_field ) {
 			$found = false;
