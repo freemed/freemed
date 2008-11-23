@@ -24,8 +24,8 @@
  -->
 <SimpleUIBuilder module="DocumentCategory">
 	<Elements>
-		<Element field="type" title="Type" type="TEXT" options="50" />
-		<Element field="category" title="Category" type="TEXT" options="50" />
-		<Element field="description" title="Description" type="TEXT" options="50" />
+		<Element field="type" title="Type" type="TEXT" options="50" display="1" />
+		<Element field="category" title="Category" type="TEXT" options="50" display="1" />
+		<Element field="description" title="Description" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

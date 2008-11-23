@@ -24,9 +24,9 @@
  -->
 <SimpleUIBuilder module="RoomModule">
 	<Elements>
-		<Element field="roomname" title="Name" type="TEXT" options="20" />
+		<Element field="roomname" title="Name" type="TEXT" options="20"  display="1" />
 		<Element field="roompos" title="Place of Service" type="MODULE" options="FacilityModule" />
-		<Element field="roomdescrip" title="Description" type="TEXT" options="40" />
+		<Element field="roomdescrip" title="Description" type="TEXT" options="40" display="1" />
 		<Element field="roomequipment" title="Equipment" type="MODULE_MULTIPLE" options="RoomEquipment" />
 		<Element field="roomsurgery" title="Surgery Enabled" type="SELECT" options="No|n,Yes|y" />
 		<Element field="roombooking" title="Booking Enabled" type="SELECT" options="Yes|y,No|n" />

@@ -24,7 +24,7 @@
  -->
 <SimpleUIBuilder module="DiagnosisFamily">
 	<Elements>
-		<Element field="dfname" title="Diagnosis Family" type="TEXT" options="20" />
-		<Element field="dfdescrip" title="Description" type="TEXT" options="50" />
+		<Element field="dfname" title="Diagnosis Family" type="TEXT" options="20" display="1" />
+		<Element field="dfdescrip" title="Description" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

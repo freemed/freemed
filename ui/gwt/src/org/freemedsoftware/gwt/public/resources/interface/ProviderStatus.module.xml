@@ -24,6 +24,6 @@
  -->
 <SimpleUIBuilder module="ProviderStatus">
 	<Elements>
-		<Element field="phystatus" title="Status" type="TEXT" options="30" />
+		<Element field="phystatus" title="Status" type="TEXT" options="30" display="1" />
 	</Elements>
 </SimpleUIBuilder>

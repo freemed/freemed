@@ -24,6 +24,6 @@
  -->
 <SimpleUIBuilder module="InternalServiceTypes">
 	<Elements>
-		<Element field="intservtype" title="Type" type="TEXT" options="50" />
+		<Element field="intservtype" title="Type" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

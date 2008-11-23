@@ -24,7 +24,7 @@
  -->
 <SimpleUIBuilder module="ProviderCertifications">
 	<Elements>
-		<Element field="degdegree" title="Degree Abbreviation" type="TEXT" options="10" />
-		<Element field="degname" title="Degree Name" type="TEXT" options="50" />
+		<Element field="degdegree" title="Degree Abbreviation" type="TEXT" options="10" display="1" />
+		<Element field="degname" title="Degree Name" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

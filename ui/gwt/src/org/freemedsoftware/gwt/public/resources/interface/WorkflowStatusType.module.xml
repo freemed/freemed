@@ -24,7 +24,7 @@
  -->
 <SimpleUIBuilder module="WorkflowStatusType">
 	<Elements>
-		<Element field="status_name" title="Name" type="TEXT" options="250" />
+		<Element field="status_name" title="Name" type="TEXT" options="250" display="1" />
 		<Element field="status_order" title="Priority / Order" type="TEXT" options="20" />
 		<Element field="status_module" title="Module" type="TEXT" options="50" />
 		<Element field="active" title="Active" type="SELECT" options="Inactive|0,Active|1" />

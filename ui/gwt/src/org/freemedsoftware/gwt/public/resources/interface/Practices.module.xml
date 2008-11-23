@@ -24,11 +24,11 @@
  -->
 <SimpleUIBuilder module="Practices">
 	<Elements>
-		<Element field="pracname" title="Practice Name" type="TEXT" options="20" />
+		<Element field="pracname" title="Practice Name" type="TEXT" options="20" display="1" />
 		<Element field="addr1a" title="Address Line 1" type="TEXT" options="50" />
 		<Element field="addr2a" title="Address Line 2" type="TEXT" options="50" />
-		<Element field="citya" title="City" type="TEXT" options="25" />
-		<Element field="statea" title="State" type="TEXT" options="25" />
+		<Element field="citya" title="City" type="TEXT" options="25" display="1" />
+		<Element field="statea" title="State" type="TEXT" options="25" display="1" />
 		<Element field="zipa" title="Postal Code" type="TEXT" options="10" />
 		<Element field="phonea" title="Phone #" type="TEXT" options="20" />
 		<Element field="faxa" title="Facsimile #" type="TEXT" options="20" />
@@ -36,6 +36,5 @@
 		<Element field="email" title="Email" type="TEXT" options="45" />
 		<Element field="cellular" title="Cellular Phone #" type="TEXT" options="20" />
 		<Element field="pager" title="Beepr / Pager #" type="TEXT" options="20" />
-		<Element field="email" title="Email" type="TEXT" options="45" />
 	</Elements>
 </SimpleUIBuilder>

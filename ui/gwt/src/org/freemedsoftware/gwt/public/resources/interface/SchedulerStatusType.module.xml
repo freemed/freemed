@@ -22,11 +22,11 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  -->
-<SimpleUIBuilder module="SmsProvider">
+<SimpleUIBuilder module="SchedulerStatusType">
 	<Elements>
-		<Element field="providername" title="Provider Name" type="TEXT" options="50" display="1" />
-		<Element field="mailgwaddr" title="Mail Gateway" type="TEXT" options="50" display="1" />
-		<Element field="numberlength" title="Number Length" type="TEXT" options="2" />
-		<Element field="countrycode" title="Use Country Code?" type="SELECT" options="No|0,Yes|1" />
+		<Element field="sname" title="Name" type="TEXT" options="7" display="1" />
+		<Element field="sdescrip" title="Description" type="TEXT" options="50" display="1" />
+		<Element field="sage" title="Age" type="TEXT" options="20" />
+		<Element field="scolor" title="Color" type="COLOR" options="" />
 	</Elements>
 </SimpleUIBuilder>

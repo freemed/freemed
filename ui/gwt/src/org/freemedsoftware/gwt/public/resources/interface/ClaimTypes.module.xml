@@ -24,6 +24,6 @@
  -->
 <SimpleUIBuilder module="ClaimTypes">
 	<Elements>
-		<Element field="claimtpname" title="Claim Type" type="TEXT" options="20" />
+		<Element field="claimtpname" title="Claim Type" type="TEXT" options="20" display="1" />
 	</Elements>
 </SimpleUIBuilder>

@@ -24,6 +24,6 @@
  -->
 <SimpleUIBuilder module="EnclosureTypes">
 	<Elements>
-		<Element field="enclosure" title="Enclosure" type="TEXT" options="50" />
+		<Element field="enclosure" title="Enclosure" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

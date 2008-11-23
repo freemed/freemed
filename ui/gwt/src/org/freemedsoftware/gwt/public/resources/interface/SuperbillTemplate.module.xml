@@ -24,7 +24,7 @@
  -->
 <SimpleUIBuilder module="SuperbillTemplate">
 	<Elements>
-		<Element field="st_name" title="Template Name" type="TEXT" options="50" />
+		<Element field="st_name" title="Template Name" type="TEXT" options="50" display="1" />
 		<Element field="st_dx" title="Diagnosis Codes" type="MODULE_MULTIPLE" options="IcdCodes" />
 		<Element field="st_px" title="Procedure Codes" type="MODULE_MULTIPLE" options="CptCodes" />
 	</Elements>

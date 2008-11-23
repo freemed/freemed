@@ -24,6 +24,6 @@
  -->
 <SimpleUIBuilder module="InsuranceCompanyGroup">
 	<Elements>
-		<Element field="inscogroup" title="Group Name" type="TEXT" options="50" />
+		<Element field="inscogroup" title="Group Name" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

@@ -24,8 +24,8 @@
  -->
 <SimpleUIBuilder module="AppointmentTemplates">
 	<Elements>
-		<Element field="atname" title="Template Name" type="TEXT" options="250" />
-		<Element field="atduration" title="Duration" type="TEXT" options="3" />
+		<Element field="atname" title="Template Name" type="TEXT" options="250" display="1" />
+		<Element field="atduration" title="Duration" type="TEXT" options="3" display="1" />
 		<Element field="atequipment" title="Required Equipment" type="MODULE_MULTIPLE" options="RoomEquipment" />
 		<Element field="active" title="Active" type="SELECT" options="Inactive|0,Active|1" />
 		<Element field="atcolor" title="Color" type="COLOR" options="" />		

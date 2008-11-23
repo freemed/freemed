@@ -24,13 +24,13 @@
  -->
 <SimpleUIBuilder module="Pharmacy">
 	<Elements>
-		<Element field="phname" title="Pharmacy Name" type="TEXT" options="50" />
+		<Element field="phname" title="Pharmacy Name" type="TEXT" options="50" display="1" />
 		<Element field="phaddr1" title="Address Line 1" type="TEXT" options="75" />
 		<Element field="phaddr2" title="Address Line 2" type="TEXT" options="75" />
-		<Element field="phcsz" title="City, State Zip" type="MODULE" options="Zipcodes" />
+		<Element field="phcsz" title="City, State Zip" type="MODULE" options="Zipcodes" display="1" />
 		<Element field="phmethod" title="Transmission Method" type="SELECT" options="Fax|fax,Email|email,NCPDP SCRIPT|ncpdp" />
 		<Element field="phfax" title="Facsimile Number (as dialed)" type="TEXT" options="20" />
 		<Element field="phemail" title="Email" type="TEXT" options="50" />
-		<Element field="phncpdp" title="NCPDP ID Number" type="TEXT" options="20" />
+		<Element field="phncpdp" title="NCPDP ID Number" type="TEXT" options="20" display="1" />
 	</Elements>
 </SimpleUIBuilder>

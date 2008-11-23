@@ -24,7 +24,7 @@
  -->
 <SimpleUIBuilder module="RoomEquipment">
 	<Elements>
-		<Element field="reqname" title="Equipment" type="TEXT" options="20" />
-		<Element field="reqdescrip" title="Description" type="TEXT" options="50" />
+		<Element field="reqname" title="Equipment" type="TEXT" options="20" display="1" />
+		<Element field="reqdescrip" title="Description" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>

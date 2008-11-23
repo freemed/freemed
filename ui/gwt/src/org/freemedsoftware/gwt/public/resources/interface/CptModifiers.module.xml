@@ -24,7 +24,7 @@
  -->
 <SimpleUIBuilder module="CptModifiers">
 	<Elements>
-		<Element field="cptmod" title="Modifier" type="TEXT" options="5" />
-		<Element field="cptmoddescrip" title="Description" type="TEXT" options="50" />
+		<Element field="cptmod" title="Modifier" type="TEXT" options="5" display="1" />
+		<Element field="cptmoddescrip" title="Description" type="TEXT" options="50" display="1" />
 	</Elements>
 </SimpleUIBuilder>
