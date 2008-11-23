@@ -165,6 +165,8 @@ public class SupportDataScreen extends ScreenInterface {
 		String moduleClass = sortableTable.getValueFromIndex(idx,
 				"module_class");
 		String moduleName = sortableTable.getValueFromIndex(idx, "module_name");
-		Util.spawnTab(moduleName, new SupportModuleEntry(moduleClass), state);
+		SupportDataManagementScreen screen = new SupportDataManagementScreen();
+		screen.setModuleName(moduleClass);
+		Util.spawnTab(moduleName, screen, state);
 	}
 }

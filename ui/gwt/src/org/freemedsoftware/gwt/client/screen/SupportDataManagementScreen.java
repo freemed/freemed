@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
@@ -45,10 +46,15 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -77,22 +83,62 @@ public class SupportDataManagementScreen extends ScreenInterface {
 
 		final PushButton addButton = new PushButton("Add", "Add");
 		horizontalPanel.add(addButton);
+		addButton.setStylePrimaryName("freemed-PushButton");
 		addButton.setText("Add");
+		addButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				Util.spawnTab(moduleName + ": " + "Add",
+						new SupportModuleEntry(moduleName), state);
+			}
+		});
 
 		wField = new CustomListBox();
 		horizontalPanel.add(wField);
 		wField.setVisibleItemCount(1);
+		wField.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+				// If we see text, repopulate
+				if (searchText.getText().length() > 2) {
+					populateData();
+				}
+			}
+		});
 
 		searchText = new TextBox();
+		searchText.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+				// If we see text, repopulate
+				if (((TextBox) sender).getText().length() > 2) {
+					populateData();
+				}
+			}
+		});
 		horizontalPanel.add(searchText);
 
 		final PushButton searchButton = new PushButton("Search", "Search");
 		horizontalPanel.add(searchButton);
+		searchButton.setStylePrimaryName("freemed-PushButton");
 		searchButton.setText("Search");
 
 		sortableTable = new CustomSortableTable();
 		verticalPanel.add(sortableTable);
 		sortableTable.setSize("100%", "100%");
+		sortableTable.addTableListener(new TableListener() {
+			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+				// Get information on row...
+				try {
+					final Integer recordId = new Integer(sortableTable
+							.getValueByRow(row));
+					Util
+							.spawnTab(
+									moduleName + ": " + "Edit",
+									new SupportModuleEntry(moduleName, recordId),
+									state);
+				} catch (Exception e) {
+					GWT.log("Caught exception: ", e);
+				}
+			}
+		});
 	}
 
 	public void setModuleName(String module) {
@@ -153,6 +199,8 @@ public class SupportDataManagementScreen extends ScreenInterface {
 					if (e.getAttribute("display").compareTo("1") == 0) {
 						sortableTable.addColumn(e.getAttribute("title"), e
 								.getAttribute("field"));
+						wField.addItem(e.getAttribute("title"), e
+								.getAttribute("field"));
 					}
 				}
 			} else {
@@ -168,7 +216,13 @@ public class SupportDataManagementScreen extends ScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: populate in stubbed mode
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { "SupportModule", "" };
+			String[] params = {
+					moduleName,
+					"40",
+					(searchText.getText().length() > 2) ? wField
+							.getWidgetValue() : "",
+					(searchText.getText().length() > 2) ? searchText.getText()
+							: "" };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
 					URL
@@ -212,7 +266,9 @@ public class SupportDataManagementScreen extends ScreenInterface {
 			} catch (Exception e) {
 				GWT.log("Exception", e);
 			}
-			proxy.ModuleGetRecordsMethod(moduleName, 100, "", "",
+			proxy.ModuleGetRecordsMethod(moduleName, 40, (searchText.getText()
+					.length() > 2) ? wField.getWidgetValue() : "", (searchText
+					.getText().length() > 2) ? searchText.getText() : "",
 					new AsyncCallback<HashMap<String, String>[]>() {
 						public void onSuccess(HashMap<String, String>[] res) {
 							sortableTable.loadData(res);
