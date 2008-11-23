@@ -29,10 +29,15 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.FreemedInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -68,8 +73,6 @@ public class MainScreen extends Composite {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
-		// mainPanel.setHeight(new Integer(Window.getClientHeight() -
-		// 5).toString());
 
 		// Assign state
 		state = new CurrentState();
@@ -116,25 +119,67 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
-							try {
-								LoginAsync service = (LoginAsync) Util
-										.getProxy("org.freemedsoftware.gwt.client.Public.Login");
-								service.Logout(new AsyncCallback<Void>() {
-									public void onSuccess(Void r) {
-										hide();
-										freemedInterface.getLoginDialog()
-												.center();
-										// freemedInterface.getLoginDialog().show
-										// ();
-									}
+							if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
-									public void onFailure(Throwable t) {
-										Window.alert("Failed to log out.");
-									}
-								});
-							} catch (Exception e) {
-								Window
-										.alert("Could not create proxy for Login");
+							} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+								String[] params = {};
+								RequestBuilder builder = new RequestBuilder(
+										RequestBuilder.POST,
+										URL
+												.encode(Util
+														.getJsonRequest(
+																"org.freemedsoftware.public.Login.Logout",
+																params)));
+								try {
+									builder.sendRequest(null,
+											new RequestCallback() {
+												public void onError(
+														com.google.gwt.http.client.Request request,
+														Throwable ex) {
+													GWT.log("Exception", ex);
+													Window
+															.alert("Failed to log out.");
+												}
+
+												public void onResponseReceived(
+														com.google.gwt.http.client.Request request,
+														com.google.gwt.http.client.Response response) {
+													if (200 == response
+															.getStatusCode()) {
+														hide();
+														freemedInterface
+																.getLoginDialog()
+																.center();
+													} else {
+														Window
+																.alert("Failed to log out.");
+													}
+												}
+											});
+								} catch (RequestException e) {
+									GWT.log("Exception", e);
+									Window.alert("Failed to log out.");
+								}
+
+							} else {
+								try {
+									LoginAsync service = (LoginAsync) Util
+											.getProxy("org.freemedsoftware.gwt.client.Public.Login");
+									service.Logout(new AsyncCallback<Void>() {
+										public void onSuccess(Void r) {
+											hide();
+											freemedInterface.getLoginDialog()
+													.center();
+										}
+
+										public void onFailure(Throwable t) {
+											Window.alert("Failed to log out.");
+										}
+									});
+								} catch (Exception e) {
+									Window
+											.alert("Could not create proxy for Login");
+								}
 							}
 						}
 					});
@@ -166,7 +211,12 @@ public class MainScreen extends Composite {
 			menuItem_4.setStyleName("freemed-SecondaryMenuItem");
 
 			final MenuItem menuItem_5 = menuBar_3.addItem("entry",
-					(Command) null);
+					new Command() {
+						public void execute() {
+							Util.spawnTab("New Patient", new PatientForm(),
+									state);
+						}
+					});
 			menuItem_5.setStyleName("freemed-SecondaryMenuItem");
 
 			final MenuItem menuItem_1 = menuBar
@@ -199,13 +249,14 @@ public class MainScreen extends Composite {
 			final MenuBar menuBar_system = new MenuBar();
 			menuBar_system.setAutoOpen(true);
 			menuBar_system.setStyleName("freemed-SecondaryMenuBar");
-			final MenuItem menuItem_system = menuBar.addItem(
-					"<span id=\"freemed-PrimaryMenuItem-title\">system</span>",
-					true, menuBar_system);
+			final MenuItem menuItem_system = menuBar
+					.addItem(
+							"<span id=\"freemed-PrimaryMenuItem-title\">support</span>",
+							true, menuBar_system);
 			menuItem_system.setSize("105px", "30px");
 			menuItem_system.setStyleName("freemed-PrimaryMenuItem");
-			final MenuItem menuItem_support = menuBar_system.addItem("support data",
-					new Command() {
+			final MenuItem menuItem_support = menuBar_system.addItem(
+					"support data", new Command() {
 						public void execute() {
 							Util.spawnTab("Support Data",
 									new SupportDataScreen(), state);
