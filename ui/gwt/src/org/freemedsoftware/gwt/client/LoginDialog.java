@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -45,7 +46,6 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -56,7 +56,7 @@ public class LoginDialog extends DialogBox {
 
 	protected boolean loggedIn = false;
 
-	protected final ListBox facilityList, languageList;
+	protected final CustomListBox facilityList, languageList;
 
 	protected final TextBox userLogin;
 
@@ -112,7 +112,7 @@ public class LoginDialog extends DialogBox {
 		facilityLabel.setStylePrimaryName("gwt-Label-RAlign");
 		facilityLabel.setSize("59px", "19px");
 
-		facilityList = new ListBox();
+		facilityList = new CustomListBox();
 		absolutePanel.add(facilityList, 94, 149);
 		facilityList.setSize("191px", "22px");
 		facilityList.setStylePrimaryName("freemed-LoginFields");
@@ -175,7 +175,7 @@ public class LoginDialog extends DialogBox {
 		languageLabel.setStylePrimaryName("gwt-Label-RAlign");
 		languageLabel.setSize("59px", "19px");
 
-		languageList = new ListBox();
+		languageList = new CustomListBox();
 		absolutePanel.add(languageList, 94, 180);
 		languageList.setSize("190px", "22px");
 		languageList.setStylePrimaryName("freemed-LoginFields");
@@ -325,4 +325,7 @@ public class LoginDialog extends DialogBox {
 		return loggedIn;
 	}
 
+	public String getLanguageSelected() {
+		return languageList.getWidgetValue();
+	}
 }

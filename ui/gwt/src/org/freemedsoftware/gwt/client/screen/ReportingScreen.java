@@ -43,6 +43,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -70,8 +71,14 @@ public class ReportingScreen extends ScreenInterface {
 
 	protected static String locale = "en_US";
 
+	protected String thisReportUUID = null;
+
+	protected Label thisReportName = new Label();
+
+	protected PushButton reportActionHTML, reportActionXML, reportActionPDF;
+
 	public enum ReportType {
-		PDF, XLS, HTML, TEXT
+		PDF, XLS, HTML, TEXT, XML
 	};
 
 	public ReportingScreen() {
@@ -99,12 +106,16 @@ public class ReportingScreen extends ScreenInterface {
 			public void onCellClicked(SourcesTableEvents sender, int row,
 					int cell) {
 				String uuid = reportTable.getValueByRow(row);
+				thisReportUUID = uuid;
 				getReportInformation(uuid);
 			}
 		});
 
 		final VerticalPanel paramContainer = new VerticalPanel();
 		horizontalPanel.add(paramContainer);
+
+		// Report label
+		paramContainer.add(thisReportName);
 
 		reportParametersTable = new FlexTable();
 		paramContainer.add(reportParametersTable);
@@ -113,7 +124,12 @@ public class ReportingScreen extends ScreenInterface {
 
 		reportActionPanel = new HorizontalPanel();
 		reportActionPanel.setVisible(false);
-		PushButton reportActionPDF = new PushButton("PDF");
+
+		// PDF
+		reportActionPDF = new PushButton();
+		reportActionPDF
+				.setHTML("<img src=\"resources/images/pdf.32x32.png\" /><br/>"
+						+ "PDF");
 		reportActionPDF.setStylePrimaryName("freemed-PushButton");
 		reportActionPDF.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
@@ -121,6 +137,33 @@ public class ReportingScreen extends ScreenInterface {
 			}
 		});
 		reportActionPanel.add(reportActionPDF);
+
+		// HTML
+		reportActionHTML = new PushButton();
+		reportActionHTML
+				.setHTML("<img src=\"resources/images/html.32x32.png\" /><br/>"
+						+ "HTML");
+		reportActionHTML.setStylePrimaryName("freemed-PushButton");
+		reportActionHTML.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				runReport(ReportType.HTML);
+			}
+		});
+		reportActionPanel.add(reportActionHTML);
+
+		// XML
+		reportActionXML = new PushButton();
+		reportActionXML
+				.setHTML("<img src=\"resources/images/xml.32x32.png\" /><br/>"
+						+ "XML");
+		reportActionXML.setStylePrimaryName("freemed-PushButton");
+		reportActionXML.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				runReport(ReportType.XML);
+			}
+		});
+		reportActionPanel.add(reportActionXML);
+
 		paramContainer.add(reportActionPanel);
 
 		// After everything is initialized, start population routine.
@@ -128,6 +171,32 @@ public class ReportingScreen extends ScreenInterface {
 	}
 
 	protected void runReport(ReportType reportType) {
+		// Get report type
+		String type = null;
+		switch (reportType) {
+		case PDF:
+			type = "pdf";
+			break;
+		case HTML:
+			type = "html";
+			break;
+		case XLS:
+			type = "xls";
+			break;
+		case XML:
+			type = "xml";
+			break;
+		case TEXT:
+		default:
+			type = "text";
+			break;
+		}
+
+		// Open window for request
+		Window.open(Util.getJsonRequest(
+				"org.freemedsoftware.module.Reporting.GenerateReport",
+				new String[] { thisReportUUID, type,
+						JsonUtil.jsonify(getParameters()) }), "Report", "");
 	}
 
 	public void populate() {
@@ -203,6 +272,8 @@ public class ReportingScreen extends ScreenInterface {
 		reportParametersTable.clear();
 		reportParameters.clear();
 
+		thisReportName.setText(data.get("report_name"));
+
 		for (int iter = 0; iter < new Integer(data.get("report_param_count"))
 				.intValue(); iter++) {
 			final int i = iter;
@@ -246,6 +317,7 @@ public class ReportingScreen extends ScreenInterface {
 					}
 				});
 			}
+			reportParameters.put(iter, "");
 			reportParametersTable.setWidget(iter, 1, w);
 		}
 

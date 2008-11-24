@@ -67,15 +67,12 @@ public class MainScreen extends Composite {
 
 	protected final Label statusBar1, statusBar2;
 
-	protected final CurrentState state;
+	protected final CurrentState state = new CurrentState();
 
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
-
-		// Assign state
-		state = new CurrentState();
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
@@ -323,6 +320,10 @@ public class MainScreen extends Composite {
 		Toaster toaster = new Toaster();
 		state.assignToaster(toaster);
 		toaster.setTimeout(10);
+	}
+
+	public CurrentState getCurrentState() {
+		return state;
 	}
 
 	public Label getStatusBar() {

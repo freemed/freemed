@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 
 public class CurrentState {
 
-	protected HashMap<String,String> statusItems;
+	protected HashMap<String, String> statusItems;
 
 	protected Label statusBar = null;
 
@@ -42,8 +42,10 @@ public class CurrentState {
 
 	protected TabPanel tabPanel = null;
 
+	protected String locale = "en_US";
+
 	public CurrentState() {
-		statusItems = new HashMap<String,String>();
+		statusItems = new HashMap<String, String>();
 	}
 
 	/**
@@ -84,6 +86,16 @@ public class CurrentState {
 	}
 
 	/**
+	 * Assign locale value.
+	 * 
+	 * @param l
+	 *            Locale string, default is "en_US"
+	 */
+	public void assignLocale(String l) {
+		locale = l;
+	}
+
+	/**
 	 * Add an item to the status bar stack.
 	 * 
 	 * @param module
@@ -106,6 +118,10 @@ public class CurrentState {
 		} else {
 			((Label) statusBar).setText("Ready");
 		}
+	}
+
+	public String getLocale() {
+		return locale;
 	}
 
 	public TabPanel getTabPanel() {
