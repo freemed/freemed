@@ -50,7 +50,8 @@
 			dojo.io.bind({
 				method: 'POST',
 				content: {
-					param0: myReport
+					param0: myReport,
+					param1: true
 				},
 				url: '<!--{$relay}-->/org.freemedsoftware.module.Reporting.GetReportParameters',
 				load: function(type, data, evt) {

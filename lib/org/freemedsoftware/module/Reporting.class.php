@@ -69,11 +69,13 @@ class Reporting extends SupportModule {
 	//
 	//	$uuid - UUID of designated report
 	//
+	//	$flattened - Flatten results (default true)
+	//
 	// Returns:
 	//
 	//	Array of hashes
 	//
-	public function GetReportParameters ( $uuid ) {
+	public function GetReportParameters ( $uuid, $flatten = true ) {
 		$query = "SELECT * FROM reporting WHERE report_uuid=".$GLOBALS['sql']->quote( $uuid );
 		$r = $GLOBALS['sql']->queryRow( $query );
 		$return = array ();
@@ -82,14 +84,17 @@ class Reporting extends SupportModule {
 		$return['report_type'] = $r['report_type'];
 		$return['report_sp'] = $r['report_sp'];
 		$return['report_formatting'] = $r['report_formatting'];
+		$return['report_param_count'] = $r['report_param_count'];
 		if ($r['report_param_count'] == 0) {
-			$return['params'] = array();
+			if ( ! ( defined('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES') || $flatten ) ) {
+				$return['params'] = array();
+			}
 		} else {
 			$names = explode( ',', $r['report_param_names'] );
 			$types = explode( ',', $r['report_param_types'] );
 			$optional = explode( ',', $r['report_param_optional'] );
 			for ( $p = 0; $p < $r['report_param_count'] ; $p++ ) {
-				if ( defined('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES') ) {
+				if ( defined('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES') || $flatten ) {
 					// Force flattening of output for GWT
 					$return['report_param_name_'.$p] = $names[$p];
 					$return['report_param_type_'.$p] = $types[$p];
