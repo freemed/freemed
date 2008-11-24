@@ -39,6 +39,6 @@ public interface ReportingAsync {
 	/**
 	 * @param uuid
 	 */
-	public void GetReportParameters(String uuid, AsyncCallback<HashMap<String, String>[]> callback);
+	public void GetReportParameters(String uuid, AsyncCallback<HashMap<String, String>> callback);
 
 }

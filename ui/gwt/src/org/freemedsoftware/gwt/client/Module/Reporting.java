@@ -40,6 +40,6 @@ public interface Reporting extends RemoteService {
 	 * @param uuid
 	 * @return
 	 */
-	public HashMap<String, String>[] GetReportParameters(String uuid);
+	public HashMap<String, String> GetReportParameters(String uuid);
 
 }
