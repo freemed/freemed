@@ -45,10 +45,12 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalSplitPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
@@ -62,19 +64,24 @@ public class ReportingScreen extends ScreenInterface {
 
 	protected FlexTable reportParametersTable;
 
+	protected HorizontalPanel reportActionPanel;
+
 	protected HashMap<Integer, String> reportParameters = new HashMap<Integer, String>();
 
 	protected static String locale = "en_US";
 
+	public enum ReportType {
+		PDF, XLS, HTML, TEXT
+	};
+
 	public ReportingScreen() {
 
-		final HorizontalSplitPanel horizontalSplitPanel = new HorizontalSplitPanel();
-		initWidget(horizontalSplitPanel);
-		horizontalSplitPanel.setSize("100%", "100%");
-		horizontalSplitPanel.setSplitPosition("50%");
+		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		initWidget(horizontalPanel);
+		horizontalPanel.setSize("100%", "100%");
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
-		horizontalSplitPanel.setLeftWidget(verticalPanel);
+		horizontalPanel.add(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
 		final Label pleaseChooseALabel = new Label("Please choose a report.");
@@ -84,7 +91,7 @@ public class ReportingScreen extends ScreenInterface {
 
 		reportTable = new CustomSortableTable();
 		verticalPanel.add(reportTable);
-		reportTable.setWidth("100%");
+		reportTable.setSize("100%", "100%");
 		reportTable.setIndexName("report_uuid");
 		reportTable.addColumn("Name", "report_name");
 		reportTable.addColumn("Description", "report_desc");
@@ -96,13 +103,31 @@ public class ReportingScreen extends ScreenInterface {
 			}
 		});
 
+		final VerticalPanel paramContainer = new VerticalPanel();
+		horizontalPanel.add(paramContainer);
+
 		reportParametersTable = new FlexTable();
-		horizontalSplitPanel.setRightWidget(reportParametersTable);
+		paramContainer.add(reportParametersTable);
 		reportParametersTable.setVisible(false);
 		reportParametersTable.setSize("100%", "100%");
 
+		reportActionPanel = new HorizontalPanel();
+		reportActionPanel.setVisible(false);
+		PushButton reportActionPDF = new PushButton("PDF");
+		reportActionPDF.setStylePrimaryName("freemed-PushButton");
+		reportActionPDF.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				runReport(ReportType.PDF);
+			}
+		});
+		reportActionPanel.add(reportActionPDF);
+		paramContainer.add(reportActionPanel);
+
 		// After everything is initialized, start population routine.
 		populate();
+	}
+
+	protected void runReport(ReportType reportType) {
 	}
 
 	public void populate() {
@@ -133,6 +158,7 @@ public class ReportingScreen extends ScreenInterface {
 											"HashMap<String,String>[]");
 							if (result != null) {
 								reportTable.loadData(result);
+							} else {
 							}
 						} else {
 						}
@@ -173,14 +199,17 @@ public class ReportingScreen extends ScreenInterface {
 	 * 
 	 * @param data
 	 */
-	protected void populateReportParameters(HashMap<String, String>[] data) {
+	protected void populateReportParameters(HashMap<String, String> data) {
 		reportParametersTable.clear();
 		reportParameters.clear();
 
-		for (int iter = 0; iter < data.length; iter++) {
+		for (int iter = 0; iter < new Integer(data.get("report_param_count"))
+				.intValue(); iter++) {
 			final int i = iter;
-			String type = data[iter].get("type");
-			reportParametersTable.setText(iter, 0, data[iter].get("name"));
+			final String iS = new Integer(iter).toString();
+			String type = data.get("report_param_type_" + iS);
+			reportParametersTable.setText(iter, 0, data
+					.get("report_param_name_" + iS));
 			Widget w = null;
 			if (type.compareToIgnoreCase("Date") == 0) {
 				w = new SimpleDatePicker();
@@ -221,18 +250,27 @@ public class ReportingScreen extends ScreenInterface {
 		}
 
 		// Show this when everything is populated
-		reportParametersTable.setVisible(false);
+		reportParametersTable.setVisible(true);
+		reportActionPanel.setVisible(true);
 	}
 
+	/**
+	 * Get parameters for a specific report by uuid.
+	 * 
+	 * @param uuid
+	 */
 	public void getReportInformation(String uuid) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { locale };
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.module.Reporting.GetReports",
-							params)));
+			String[] params = { uuid };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.Reporting.GetReportParameters",
+											params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -246,10 +284,10 @@ public class ReportingScreen extends ScreenInterface {
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
+							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 									.shoehornJson(JSONParser.parse(response
 											.getText()),
-											"HashMap<String,String>[]");
+											"HashMap<String,String>");
 							if (result != null) {
 								populateReportParameters(result);
 							}
@@ -262,8 +300,8 @@ public class ReportingScreen extends ScreenInterface {
 			}
 		} else {
 			getProxy().GetReportParameters(uuid,
-					new AsyncCallback<HashMap<String, String>[]>() {
-						public void onSuccess(HashMap<String, String>[] r) {
+					new AsyncCallback<HashMap<String, String>>() {
+						public void onSuccess(HashMap<String, String> r) {
 							populateReportParameters(r);
 						}
 

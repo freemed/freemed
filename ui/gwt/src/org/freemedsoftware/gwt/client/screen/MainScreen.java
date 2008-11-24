@@ -245,17 +245,36 @@ public class MainScreen extends Composite {
 					});
 			menuItem_unfiled.setStyleName("freemed-SecondaryMenuItem");
 
-			// Document management bar
-			final MenuBar menuBar_system = new MenuBar();
-			menuBar_system.setAutoOpen(true);
-			menuBar_system.setStyleName("freemed-SecondaryMenuBar");
-			final MenuItem menuItem_system = menuBar
+			// Support functionality
+			final MenuBar menuBar_report = new MenuBar();
+			menuBar_report.setAutoOpen(true);
+			menuBar_report.setStyleName("freemed-SecondaryMenuBar");
+			final MenuItem menuItemBar_report = menuBar
+					.addItem(
+							"<span id=\"freemed-PrimaryMenuItem-title\">reporting</span>",
+							true, menuBar_report);
+			menuItemBar_report.setSize("105px", "30px");
+			menuItemBar_report.setStyleName("freemed-PrimaryMenuItem");
+			final MenuItem menuItem_report = menuBar_report.addItem(
+					"reporting", new Command() {
+						public void execute() {
+							Util.spawnTab("Reporting", new ReportingScreen(),
+									state);
+						}
+					});
+			menuItem_report.setStyleName("freemed-SecondaryMenuItem");
+
+			// Support functionality
+			final MenuBar menuBar_support = new MenuBar();
+			menuBar_support.setAutoOpen(true);
+			menuBar_support.setStyleName("freemed-SecondaryMenuBar");
+			final MenuItem menuItemBar_support = menuBar
 					.addItem(
 							"<span id=\"freemed-PrimaryMenuItem-title\">support</span>",
-							true, menuBar_system);
-			menuItem_system.setSize("105px", "30px");
-			menuItem_system.setStyleName("freemed-PrimaryMenuItem");
-			final MenuItem menuItem_support = menuBar_system.addItem(
+							true, menuBar_support);
+			menuItemBar_support.setSize("105px", "30px");
+			menuItemBar_support.setStyleName("freemed-PrimaryMenuItem");
+			final MenuItem menuItem_support = menuBar_support.addItem(
 					"support data", new Command() {
 						public void execute() {
 							Util.spawnTab("Support Data",
