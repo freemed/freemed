@@ -81,6 +81,13 @@ public class JsonUtil {
 		if (o instanceof String) {
 			return new JSONString((String) o).toString();
 		}
+		if (o instanceof String[]) {
+			JSONArray out = new JSONArray();
+			for (int iter = 0; iter < ((String[]) o).length; iter++) {
+				out.set(iter, new JSONString(((String[]) o)[iter]));
+			}
+			return out.toString();
+		}
 
 		// All else fails, return ""
 		return "";
