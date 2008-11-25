@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -43,14 +44,74 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class PatientTagSearchScreen extends ScreenInterface {
 
 	private TextBox tagWidget = null;
 
+	private CustomSortableTable customSortableTable = null;
+
 	public PatientTagSearchScreen() {
+		FlexTable layout = new FlexTable();
+		initWidget(layout);
+
+		Label tagLabel = new Label("Search for Tag: ");
+		layout.setWidget(0, 0, tagLabel);
 		tagWidget = new TextBox();
+		layout.setWidget(0, 2, tagWidget);
+		tagWidget.addChangeListener(new ChangeListener() {
+			public void onChange(Widget w) {
+				if (((TextBox) w).getText().length() > 2) {
+					searchForTag(((TextBox) w).getText());
+				}
+			}
+		});
+
+		customSortableTable = new CustomSortableTable();
+		customSortableTable.setWidth("100%");
+		layout.setWidget(1, 0, customSortableTable);
+		layout.getFlexCellFormatter().setColSpan(1, 0, 4);
+
+		customSortableTable.setIndexName("patient_record");
+		customSortableTable.addColumn("Last Name", "last_name");
+		customSortableTable.addColumn("First Name", "first_name");
+		customSortableTable.addColumn("DOB", "date_of_birth");
+		customSortableTable.addColumn("Patient ID", "patient_id");
+		customSortableTable.addTableListener(new TableListener() {
+			public void onCellClicked(SourcesTableEvents sender, int row,
+					int cell) {
+				Integer patientId = null;
+				String patientName = null;
+				try {
+					patientId = new Integer(customSortableTable
+							.getValueByRow(row));
+					JsonUtil.debug("patientId = " + patientId.toString());
+					patientName = customSortableTable.getValueFromIndex(row,
+							"last_name")
+							+ ", "
+							+ customSortableTable.getValueFromIndex(row,
+									"first_name");
+					JsonUtil.debug("patientName = " + patientName);
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+				} finally {
+					PatientScreen s = new PatientScreen();
+					s.setPatient(patientId);
+					JsonUtil.debug("Spawn patient screen with patient = "
+							+ patientId.toString());
+					GWT.log("Spawn patient screen with patient = "
+							+ patientId.toString(), null);
+					Util.spawnTab(patientName, s, state);
+				}
+			}
+		});
 	}
 
 	/**
@@ -59,7 +120,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 	 * @param data
 	 */
 	protected void populate(HashMap<String, String>[] data) {
-		// TODO: finish this
+		customSortableTable.loadData(data);
 	}
 
 	/**

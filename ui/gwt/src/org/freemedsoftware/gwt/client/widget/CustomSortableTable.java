@@ -207,6 +207,26 @@ public class CustomSortableTable extends SortableTable {
 	}
 
 	/**
+	 * Remove all active data and styles in the grid, handling errors.
+	 */
+	public void clearData() {
+		int maxRows = 0;
+		try {
+			maxRows = maximumRows.intValue();
+		} catch (Exception ex) {
+		}
+		int rows = (data.length < maxRows) ? data.length : maxRows;
+		RowFormatter rowFormatter = getRowFormatter();
+		for (int iter = 0; iter < rows; iter++) {
+			rowFormatter.removeStyleName(iter + 1, "tableRow");
+			rowFormatter.removeStyleName(iter + 1, "customRowStyle");
+			for (int jter = 0; jter < columns.length; jter++) {
+				clearCell(iter + 1, jter);
+			}
+		}
+	}
+
+	/**
 	 * @param newData
 	 */
 	public void loadData(HashMap<String, String>[] newData) {

@@ -217,6 +217,11 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 
 	@SuppressWarnings("unchecked")
 	public void populateData() {
+		try {
+			sortableTable.clearData();
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: populate in stubbed mode
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {

@@ -216,6 +216,15 @@ public class MainScreen extends Composite {
 					});
 			menuItem_5.setStyleName("freemed-SecondaryMenuItem");
 
+			final MenuItem menuItem_6 = menuBar_3.addItem("tags",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Tag Search",
+									new PatientTagSearchScreen(), state);
+						}
+					});
+			menuItem_6.setStyleName("freemed-SecondaryMenuItem");
+
 			final MenuItem menuItem_1 = menuBar
 					.addItem(
 							"<span id=\"freemed-PrimaryMenuItem-title\">patient</span>",

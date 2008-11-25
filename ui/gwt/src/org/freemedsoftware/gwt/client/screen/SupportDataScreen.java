@@ -33,7 +33,6 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -64,6 +63,7 @@ public class SupportDataScreen extends ScreenInterface {
 		verticalPanel.add(horizontalPanel);
 
 		sortableTable = new CustomSortableTable();
+		sortableTable.setWidth("80%");
 		sortableTable.setIndexName("module_class");
 		sortableTable.addColumn("Name", "module_name");
 		sortableTable.addColumn("Version", "module_version");
@@ -161,7 +161,6 @@ public class SupportDataScreen extends ScreenInterface {
 	}
 
 	protected void handleClick(int idx) {
-		// TODO: For right now, bring up add screen. Fix it later.
 		String moduleClass = sortableTable.getValueFromIndex(idx,
 				"module_class");
 		String moduleName = sortableTable.getValueFromIndex(idx, "module_name");
