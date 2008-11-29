@@ -178,3 +178,48 @@ CALL config_Register (
 	'tab,singlepage'
 );
 
+CALL config_Register (
+	'xmpp_notify',
+	'0',
+	'XMPP Notifications',
+	'Notifications',
+	'YesNo',
+	''
+);
+
+CALL config_Register (
+	'xmpp_host',
+	'talk.google.com',
+	'XMPP Hostname',
+	'Notifications',
+	'Text',
+	''
+);
+
+CALL config_Register (
+	'xmpp_port',
+	'5222',
+	'XMPP Port',
+	'Notifications',
+	'Text',
+	''
+);
+
+CALL config_Register (
+	'xmpp_user',
+	'',
+	'XMPP Username',
+	'Notifications',
+	'Text',
+	''
+);
+
+CALL config_Register (
+	'xmpp_pass',
+	'',
+	'XMPP Password',
+	'Notifications',
+	'Text',
+	''
+);
+
