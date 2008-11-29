@@ -27,19 +27,30 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -54,7 +65,6 @@ public class ConfigurationScreen extends ScreenInterface {
 	protected HashMap<String, Integer> containerWidgetCount;
 
 	public ConfigurationScreen() {
-
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setWidth("100%");
@@ -75,6 +85,7 @@ public class ConfigurationScreen extends ScreenInterface {
 			}
 		});
 
+		populate();
 	}
 
 	/**
@@ -88,18 +99,65 @@ public class ConfigurationScreen extends ScreenInterface {
 		Iterator<String> iter = widgets.keySet().iterator();
 		while (iter.hasNext()) {
 			String cur = iter.next();
-			v.put(cur, ((CustomListBox) widgets.get(cur)).getWidgetValue());
+			if (widgets.get(cur) instanceof CustomListBox) {
+				v.put(cur, ((CustomListBox) widgets.get(cur)).getWidgetValue());
+			}
+			if (widgets.get(cur) instanceof TextBox) {
+				v.put(cur, ((TextBox) widgets.get(cur)).getText());
+			}
 		}
 		return v;
 	}
 
 	protected void commitValues() {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			state.getToaster().addItem("ConfigurationScreen",
 					"Updated configuration.", Toaster.TOASTER_INFO);
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(getAllValues()) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.api.SystemConfig.SetValues",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						state.getToaster().addItem("ConfigurationScreen",
+								"Failed to update configuration.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Boolean r = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (r.booleanValue()) {
+								state.getToaster().addItem(
+										"ConfigurationScreen",
+										"Updated configuration.",
+										Toaster.TOASTER_INFO);
+							} else {
+								state.getToaster().addItem(
+										"ConfigurationScreen",
+										"Failed to update configuration.",
+										Toaster.TOASTER_ERROR);
+							}
+						} else {
+							state.getToaster().addItem("ConfigurationScreen",
+									"Failed to update configuration.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				state.getToaster().addItem("ConfigurationScreen",
+						"Failed to update configuration.",
+						Toaster.TOASTER_ERROR);
+			}
 		} else {
 			getProxy().SetValues(getAllValues(), new AsyncCallback<Boolean>() {
-
 				public void onSuccess(Boolean result) {
 					if (result.booleanValue()) {
 						state.getToaster().addItem("ConfigurationScreen",
@@ -114,7 +172,6 @@ public class ConfigurationScreen extends ScreenInterface {
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
 				}
-
 			});
 		}
 	}
@@ -124,8 +181,41 @@ public class ConfigurationScreen extends ScreenInterface {
 		widgets = new HashMap<String, Widget>();
 		containerWidgetCount = new HashMap<String, Integer>();
 
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: Simulate
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.SystemConfig.GetConfigSections",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String[] r = (String[]) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String[]");
+							// Create the actual tabs
+							createTabs(r);
+							tabPanel.selectTab(0);
+
+							// Fire off population routine
+							populateConfig();
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			getProxy().GetConfigSections(new AsyncCallback<String[]>() {
 				public void onSuccess(String[] r) {
@@ -144,8 +234,41 @@ public class ConfigurationScreen extends ScreenInterface {
 	}
 
 	protected void populateConfig() {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: populate config values
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.api.SystemConfig.GetAll",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							for (int iter = 0; iter < r.length; iter++) {
+								try {
+									addToStack(r[iter]);
+								} catch (Exception ex) {
+									JsonUtil.debug(ex.getMessage());
+								}
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			getProxy().GetAll(new AsyncCallback<HashMap<String, String>[]>() {
 				public void onSuccess(HashMap<String, String>[] r) {
@@ -161,22 +284,58 @@ public class ConfigurationScreen extends ScreenInterface {
 		}
 	}
 
+	/**
+	 * Internal method to create widget instance.
+	 * 
+	 * @param r
+	 * @return
+	 */
 	protected Widget addWidget(HashMap<String, String> r) {
-		CustomListBox w = new CustomListBox();
-		String[] options = r.get("options").split(",");
-		for (int iter = 0; iter < options.length; iter++) {
-			w.addItem(options[iter]);
+		String widgetType = r.get("c_type");
+		if (widgetType.compareToIgnoreCase("Select") == 0) {
+			CustomListBox w = new CustomListBox();
+			String[] options = r.get("c_options").split(",");
+			for (int iter = 0; iter < options.length; iter++) {
+				w.addItem(options[iter]);
+			}
+			w.setWidgetValue(r.get("c_value"));
+			// Add to index
+			widgets.put(r.get("c_option"), w);
+			return w;
+		} else if (widgetType.compareToIgnoreCase("YesNo") == 0) {
+			CustomListBox w = new CustomListBox();
+			w.addItem("Yes", "1");
+			w.addItem("No", "0");
+			w.setWidgetValue(r.get("c_value"));
+			widgets.put(r.get("c_option"), w);
+			return w;
+		} else if (widgetType.compareToIgnoreCase("Number") == 0) {
+			// TODO: implement number and bounds checking
+			TextBox w = new TextBox();
+			w.setText(r.get("c_value"));
+			widgets.put(r.get("c_option"), w);
+			return w;
+		} else {
+			// Text
+			TextBox w = new TextBox();
+			w.setText(r.get("c_value"));
+			widgets.put(r.get("c_option"), w);
+			return w;
 		}
-		// Add to index
-		widgets.put(r.get("c_name"), w);
-		return w;
 	}
 
 	protected void addToStack(HashMap<String, String> r) {
 		// Add initial widget, get appropriate count and container
+		JsonUtil.debug(r.get("c_option") + " (" + r.get("c_type") + ")");
 		Widget w = addWidget(r);
 		FlexTable f = containers.get(r.get("c_section"));
-		Integer c = containerWidgetCount.get(r.get("c_section"));
+		JsonUtil.debug(" --- got flextable");
+		Integer c = new Integer(0);
+		try {
+			c = containerWidgetCount.get(r.get("c_section"));
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
 
 		// Populate proper row of FlexTable
 		f.setText(c, 0, r.get("c_title"));

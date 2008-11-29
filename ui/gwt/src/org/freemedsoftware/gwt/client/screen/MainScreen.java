@@ -113,6 +113,15 @@ public class MainScreen extends Composite {
 					});
 			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
 
+			final MenuItem menuItem_7 = menuBar_1.addItem("config",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Configuration",
+									new ConfigurationScreen(), state);
+						}
+					});
+			menuItem_7.setStyleName("freemed-SecondaryMenuItem");
+
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
