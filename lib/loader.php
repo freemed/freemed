@@ -257,8 +257,10 @@ function ResolveObjectPath ( $object, $methodResolution = false ) {
 
 			if (file_exists("${base_path}/lib/${pname}/class.${cname}.php")) {
 				$cpath = "${base_path}/lib/${pname}/class.${cname}.php";
-			} else {
+			} else if (file_exists("${base_path}/lib/${pname}/${cname}.class.php")) {
 				$cpath = "${base_path}/lib/${pname}/${cname}.class.php";
+			} else {
+				$cpath = "${base_path}/lib/${pname}/${cname}.php";
 			}
 			if (!file_exists("${base_path}/lib/${pname}/.namespace")) {
 				trigger_error("Object ${object} not valid.", E_USER_ERROR);
