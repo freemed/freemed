@@ -21,9 +21,14 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// TODO: Handle application installation and setup
 include_once ( 'lib/freemed.php' );
-include_once ( 'ui/' . UI . '/load.php' );
+
+if ( defined( 'UI' ) ) {
+	include_once ( 'ui/' . UI . '/load.php' );
+} else {
+	die( "Please make sure that lib/settings.php has been created by the installer." );
+}
+
 die();
 
 ?>

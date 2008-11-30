@@ -1,44 +1,50 @@
 <html>
 <head>
-	<title>FreeMED Error: PHP not configured properly</title>
+<!--
+  $Id$
+ 
+  Authors:
+       Jeff Buchbinder <jeff@freemedsoftware.org>
+ 
+  FreeMED Electronic Medical Record and Practice Management System
+  Copyright (C) 1999-2008 FreeMED Software Foundation
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-->
+	<title>FreeMED</title>
+	<meta http-equiv="refresh" content="5; index.php"></meta>
+	<style type="text/css">
+		//<!--
+		background-color: #ccccff;
+		font-family: tahoma, sans-serif;
+		//-->	
+	</style>
 </head>
 <body>
-<div align="center" style="border: 1px solid; border-color: #000000 #ffffff #ffffff #0000000; background-color: #ccccff; font-family: tahoma, sans-serif; text-align: left;">
 
-<p style="text-align: right"><b><big>FreeMED Error</big></b>&nbsp;</p>
+<h1>FreeMED loading...</h1>
 
-<hr/>
+<p>
+	Click <a href="index.php">here</a> to continue if you are not
+	automatically redirected.
+</p>
 
-This is the index.html, but you need to view index.php as the default.
-
-<p/>
-
-If this is all you see (if there is no login screen far above this),
-then you have successfully gotten Apache to work, but not PHP.
-FreeMED requires that you have PHP and the PHP MySQL extention to run.
-More information is available at <a href="http://httpd.apache.org"
->apache.org</a> or <a href="http://www.php.net">php.net</a>.
-
-<p/>
-
-If you have PHP installed and working already, you need to make sure that
-"<i>index.php</i>" is the first filename listed in the <b>DirectoryIndex</b>
-directive in your Apache configuration.
-
-<p/>
-
-If you are not sure if you have PHP installed, try loading <a
-href="test.php">test.php</a>.  If PHP is working, you will get a PHP
-information page.  If PHP is not installed, your browser will attempt
-to download test.php.
-
-<p/>
-
-For more information, please visit either <a href="http://freemedsoftware.org"
->freemedsoftware.org</a> or <a href="http://freemedsoftware.com"
->freemedsoftware.com</a>.
-
-</div>
+<p><i>
+	If you are seeing this screen, your Apache configuration is not setup
+	to serve index.php before index.html.
+</i></p>
 
 </body>
 </html>
