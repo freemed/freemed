@@ -60,6 +60,14 @@ public class SummaryScreen extends PatientScreenInterface {
 
 	protected HashMap<String, String>[] dataStore;
 
+	protected RecentMedicationsList recentMedicationsList = null;
+
+	protected RecentAllergiesList recentAllergiesList = null;
+
+	protected PatientTagsWidget patientTags = null;
+
+	protected Image photoId = null;
+
 	public SummaryScreen() {
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
@@ -96,13 +104,9 @@ public class SummaryScreen extends PatientScreenInterface {
 		verticalPanel_1.add(clinicalInformationTabPanel);
 
 		final SimplePanel clinicalTagsPanel = new SimplePanel();
-		final PatientTagsWidget patientTags = new PatientTagsWidget();
-		try {
-			patientTags.setPatient(patientId);
-			clinicalTagsPanel.add(patientTags);
-		} catch (Exception ex) {
-			GWT.log("Exception", ex);
-		}
+		patientTags = new PatientTagsWidget();
+		clinicalTagsPanel.add(patientTags);
+
 		final Image tagsLabel = new Image();
 		tagsLabel.setUrl("resources/images/dashboard.32x32.png");
 		tagsLabel.setTitle("Patient Tags");
@@ -112,28 +116,15 @@ public class SummaryScreen extends PatientScreenInterface {
 		final Image photoIdLabel = new Image();
 		photoIdLabel.setUrl("resources/images/patient.32x32.png");
 		photoIdLabel.setTitle("Photo Identification");
-		final Image photoId = new Image();
+		photoId = new Image();
 		photoId.setWidth("230px");
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// Don't populate
-		} else {
-			photoId
-					.setUrl(Util
-							.getJsonRequest(
-									"org.freemedsoftware.module.PhotographicIdentification.GetPhotoID",
-									new String[] { photoId.toString() }));
-		}
 		clinicalPhotoIdPanel.add(photoId);
 		clinicalInformationTabPanel.add(clinicalPhotoIdPanel, photoIdLabel);
 
 		final SimplePanel clinicalMedicationsPanel = new SimplePanel();
-		final RecentMedicationsList recentMedicationsList = new RecentMedicationsList();
-		try {
-			recentMedicationsList.setPatientId(patientId);
-			clinicalMedicationsPanel.add(recentMedicationsList);
-		} catch (Exception ex) {
-			GWT.log("Exception", ex);
-		}
+		recentMedicationsList = new RecentMedicationsList();
+		clinicalMedicationsPanel.add(recentMedicationsList);
+
 		final Image medicationsLabel = new Image();
 		medicationsLabel.setUrl("resources/images/rx_prescriptions.32x32.png");
 		medicationsLabel.setTitle("Medications");
@@ -141,13 +132,9 @@ public class SummaryScreen extends PatientScreenInterface {
 				medicationsLabel);
 
 		final SimplePanel clinicalAllergiesPanel = new SimplePanel();
-		final RecentAllergiesList recentAllergiesList = new RecentAllergiesList();
-		try {
-			recentAllergiesList.setPatientId(patientId);
-			clinicalAllergiesPanel.add(recentAllergiesList);
-		} catch (Exception ex) {
-			GWT.log("Exception", ex);
-		}
+		recentAllergiesList = new RecentAllergiesList();
+		clinicalAllergiesPanel.add(recentAllergiesList);
+
 		final Image allergiesLabel = new Image();
 		allergiesLabel.setUrl("resources/images/allergy.32x32.png");
 		allergiesLabel.setTitle("Allergies");
@@ -166,6 +153,34 @@ public class SummaryScreen extends PatientScreenInterface {
 	}
 
 	public void loadData() {
+		try {
+			recentMedicationsList.setPatientId(patientId);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
+
+		try {
+			recentAllergiesList.setPatientId(patientId);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
+
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// Don't populate
+		} else {
+			photoId
+					.setUrl(Util
+							.getJsonRequest(
+									"org.freemedsoftware.module.PhotographicIdentification.GetPhotoID",
+									new String[] { patientId.toString() }));
+		}
+
+		try {
+			patientTags.setPatient(patientId);
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
+
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			int i = 0;
 			{

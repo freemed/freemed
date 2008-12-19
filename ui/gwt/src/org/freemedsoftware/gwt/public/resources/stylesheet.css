@@ -454,4 +454,16 @@ a:hover {
 	font-family: sans-serif;
 	padding: 5px;
 	}
+
+.freemed-PatientTagRemove {
+	cursor: pointer;
+	cursor: hand;
+	}
+	
+.freemed-PatientTagPopup {
+	border: 1px solid #555555;
+	background-color: #ffffff;
+	margin: 0px;
+	padding: 7px;
+	}
 	

@@ -63,6 +63,8 @@ public class PatientScreen extends ScreenInterface {
 
 	protected HashMap<String, String> patientInfo;
 
+	protected SummaryScreen summaryScreen = null;
+
 	public PatientScreen() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -126,11 +128,10 @@ public class PatientScreen extends ScreenInterface {
 
 		tabPanel = new TabPanel();
 		verticalPanel_1.add(tabPanel);
-		SummaryScreen summaryScreen = new SummaryScreen();
+		summaryScreen = new SummaryScreen();
 		tabPanel.add(summaryScreen, "Summary");
 		summaryScreen.assignPatientScreen(this);
 		summaryScreen.assignState(state);
-		summaryScreen.loadData();
 		tabPanel.selectTab(0);
 	}
 
@@ -157,6 +158,9 @@ public class PatientScreen extends ScreenInterface {
 	 */
 	public void setPatient(Integer id) {
 		patientId = id;
+
+		summaryScreen.setPatientId(patientId);
+		summaryScreen.loadData();
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();

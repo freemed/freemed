@@ -43,6 +43,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -157,10 +158,10 @@ public class PatientTagsWidget extends Composite {
 		p.setTitle(tag);
 		final String oldTagName = tag;
 		final HTML r = new HTML("<sup>X</sup>");
-		final Label tagLabel = new Label(tag);
+		final Anchor tagLabel = new Anchor(tag);
 		tagLabel.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-				final PopupPanel p = new PopupPanel();
+				final PopupPanel p = new PopupPanel(true);
 				final FlexTable fT = new FlexTable();
 				fT.setWidget(0, 0, new Label("Rename Tag"));
 				final TextBox newTagName = new TextBox();
@@ -174,6 +175,7 @@ public class PatientTagsWidget extends Composite {
 								// Stubbed mode
 								p.hide();
 								p.removeFromParent();
+								addTagToDisplay(newTagName.getText().trim());
 							} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 								String[] params = { oldTagName,
 										newTagName.getText().trim() };
@@ -207,7 +209,9 @@ public class PatientTagsWidget extends Composite {
 															p.hide();
 															p
 																	.removeFromParent();
-															populate();
+															addTagToDisplay(newTagName
+																	.getText()
+																	.trim());
 														}
 													} else {
 													}
@@ -222,7 +226,8 @@ public class PatientTagsWidget extends Composite {
 											public void onSuccess(Boolean o) {
 												p.hide();
 												p.removeFromParent();
-												populate();
+												addTagToDisplay(newTagName
+														.getText().trim());
 											}
 
 											public void onFailure(Throwable t) {
@@ -241,18 +246,19 @@ public class PatientTagsWidget extends Composite {
 						searchScreen.setTagValue(oldTagName);
 						Util.spawnTab("Tag Search", searchScreen, state);
 						p.hide();
-						p.removeFromParent();
 					}
 				});
 				p.add(fT);
 				p.setPopupPosition(tagLabel.getAbsoluteLeft() + 5, tagLabel
-						.getAbsoluteTop() + 5);
+						.getAbsoluteTop() - 10);
+				p.setStyleName("freemed-PatientTagPopup");
 				p.show();
 			}
 		});
 		p.add(tagLabel);
 		p.add(r);
 		p.setStyleName("freemed-PatientTag");
+		r.addStyleName("freemed-PatientTagRemove");
 		r.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				if (Window.confirm("Are you sure you want to remove this tag?")) {
@@ -330,6 +336,8 @@ public class PatientTagsWidget extends Composite {
 	 * @param patient
 	 */
 	public void setPatient(Integer patient) {
+		JsonUtil.debug("PatientTagsWidget.setPatient(" + patient.toString()
+				+ ")");
 		patientId = patient;
 		populate();
 	}
@@ -359,6 +367,7 @@ public class PatientTagsWidget extends Composite {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
+							JsonUtil.debug(response.getText());
 							String[] r = (String[]) JsonUtil.shoehornJson(
 									JSONParser.parse(response.getText()),
 									"String[]");
