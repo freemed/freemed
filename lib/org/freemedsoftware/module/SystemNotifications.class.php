@@ -56,20 +56,14 @@ class SystemNotifications extends SupportModule {
 	//
 	// Returns:
 	//
-	//	Hash containing:
-	//	* timestamp: New timestamp, current.
-	//	* count: Number of items found.
-	//	* items: Notifications. Array of hashes.
+	//	Array of hashes of systemnotifications table with added
+	//	'timestamp' field containing current timestamp.
 	//
 	public function GetFromTimestamp ( $timestamp ) {
 		$this_user = freemed::user_cache( );
-		$q = "SELECT * FROM ".$this->table_name." WHERE nuser = ".$GLOBALS['sql']->quote( $this_user->user_number )." AND stamp >= ".$GLOBALS['sql']->quote( $timestamp );
+		$q = "SELECT *, SUBSTRING_INDEX(NOW() + 0, '.', 1) AS 'timestamp' FROM ".$this->table_name." WHERE nuser = ".$GLOBALS['sql']->quote( $this_user->user_number )." AND stamp >= ".$GLOBALS['sql']->quote( $timestamp );
 		$res = $GLOBALS['sql']->queryAll( $q );
-		return array (
-			'timestamp' => $this->GetTimestamp( ),
-			'count' => count( $res ),
-			'items' => $res
-		);
+		return $res;
 	} // end method GetFromTimestamp
 
 	// Method: GetTimestamp
