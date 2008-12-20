@@ -33,8 +33,8 @@ import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
-import org.freemedsoftware.gwt.client.widget.SupportModuleMultipleChoiceWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -60,7 +60,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 	protected final TextArea wText;
 
-	protected final SupportModuleMultipleChoiceWidget wTo;
+	protected final UserMultipleChoiceWidget wTo;
 
 	protected final TextBox wSubject;
 
@@ -82,7 +82,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Label toLabel = new Label("To : ");
 		flexTable.setWidget(0, 0, toLabel);
 
-		wTo = new SupportModuleMultipleChoiceWidget("UserModule");
+		wTo = new UserMultipleChoiceWidget();
 		flexTable.setWidget(0, 1, wTo);
 
 		final Label subjectLabel = new Label("Subject : ");
