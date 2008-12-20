@@ -26,12 +26,13 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Api.UserInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
@@ -42,6 +43,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -49,9 +51,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SupportModuleMultipleChoiceWidget extends Composite {
+public class UserMultipleChoiceWidget extends Composite {
 
-	protected SupportModuleWidget supportModuleWidget = null;
+	protected UserWidget userWidget = null;
 
 	protected String module = null;
 
@@ -59,25 +61,25 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 
 	protected Integer[] widgetValues;
 
-	public SupportModuleMultipleChoiceWidget() {
-		init();
-	}
-
-	public SupportModuleMultipleChoiceWidget(String moduleName) {
-		init();
-		setModuleName(moduleName);
-	}
-
-	private void init() {
+	public UserMultipleChoiceWidget() {
 		final VerticalPanel v = new VerticalPanel();
-		initWidget(v);
-
 		container = new VerticalPanel();
 		v.add(container);
+		initWidget(v);
 
 		// Add picklist for this ...
-		supportModuleWidget = new SupportModuleWidget();
-		v.add(supportModuleWidget);
+		userWidget = new UserWidget();
+		v.add(userWidget);
+		userWidget.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+				Integer val = ((UserWidget) sender).getValue();
+				String label = ((UserWidget) sender).getText();
+				JsonUtil.debug("value = " + val.toString() + ", label = "
+						+ label);
+				addValue(label, val);
+				((UserWidget) sender).clear();
+			}
+		});
 	}
 
 	protected void pushWidgetValue(Integer val) {
@@ -98,7 +100,7 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 		// Create new container, push in
 		final HorizontalPanel hp = new HorizontalPanel();
 		hp.add(new Label(text));
-		Button removeButton = new Button();
+		Button removeButton = new Button("<sup>X</sup>");
 		removeButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				// Remove the hp object from its parent container, "container"
@@ -117,7 +119,11 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 	 * Remove all current values from the widget.
 	 */
 	protected void clearValues() {
-		container.clear();
+		try {
+			container.clear();
+		} catch (Exception ex) {
+
+		}
 		widgetValues = null;
 	}
 
@@ -179,13 +185,6 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 		widgetValues = temp;
 	}
 
-	public void setModuleName(String moduleName) {
-		module = moduleName;
-
-		// Pass along to child widgets
-		supportModuleWidget.setModuleName(moduleName);
-	}
-
 	public void setValue(Integer[] values) {
 		// In future, need to implement multiple resolve function so we don't
 		// have to make a thousand RPC calls for a thousand entries. - Jeff
@@ -206,7 +205,7 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 						URL
 								.encode(Util
 										.getJsonRequest(
-												"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
+												"org.freemedsoftware.api.UserInterface.GetRecord",
 												params)));
 				try {
 					builder.sendRequest(null, new RequestCallback() {
@@ -216,15 +215,17 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 							GWT.log("Exception", ex);
 						}
 
+						@SuppressWarnings("unchecked")
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
 							if (200 == response.getStatusCode()) {
-								String result = (String) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
-										"String");
+								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
 								if (result != null) {
-									addValue(result, i);
+									addValue(result.get("userdescrip"), i);
 								}
 							} else {
 								GWT.log(response.toString(), null);
@@ -235,17 +236,17 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 					GWT.log("Exception", e);
 				}
 			} else {
-				ModuleInterfaceAsync service = null;
+				UserInterfaceAsync service = null;
 				try {
-					service = ((ModuleInterfaceAsync) Util
-							.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface"));
+					service = ((UserInterfaceAsync) Util
+							.getProxy("org.freemedsoftware.gwt.client.Api.UserInterface"));
 				} catch (Exception e) {
 				}
 				final Integer i = new Integer(values[iter]);
-				service.ModuleToTextMethod(module, i,
-						new AsyncCallback<String>() {
-							public void onSuccess(String textual) {
-								addValue(textual, i);
+				service.GetRecord(i,
+						new AsyncCallback<HashMap<String, String>>() {
+							public void onSuccess(HashMap<String, String> rec) {
+								addValue(rec.get("userdescrip"), i);
 							}
 
 							public void onFailure(Throwable t) {
