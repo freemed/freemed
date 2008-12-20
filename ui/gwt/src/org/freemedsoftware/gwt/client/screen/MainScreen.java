@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.InfoDialog;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
@@ -48,6 +49,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -321,7 +323,12 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_communitySupport = menuBar_support.addItem(
 					"community support", new Command() {
 						public void execute() {
-
+							InfoDialog d = new InfoDialog();
+							d.setCaption("Community Support");
+							d
+									.setContent(new HTML(
+											"TODO: describe community support blurb here."));
+							d.center();
 						}
 					});
 			menuItem_communitySupport.setStyleName("freemed-SecondaryMenuItem");
@@ -329,6 +336,14 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_commercialSupport = menuBar_support
 					.addItem("commercial support", new Command() {
 						public void execute() {
+							InfoDialog d = new InfoDialog();
+							d.setCaption("Commercial Support");
+							d
+									.setContent(new HTML(
+											"Commercial support is available for <b>FreeMED</b> through the Foundation's commercial support partners."
+													+ "<br/><br/>"
+													+ "More information is available at <a href=\"http://freemedsoftware.org/commercial_support\" target=\"_new\">http://freemedsoftware.org/commercial_support</a>."));
+							d.center();
 						}
 					});
 			menuItem_commercialSupport

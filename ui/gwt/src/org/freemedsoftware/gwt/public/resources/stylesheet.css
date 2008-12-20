@@ -460,14 +460,14 @@ a:hover {
 	cursor: hand;
 	}
 	
-.freemed-PatientTagPopup, .freemed-SchedulerEventDialog {
+.freemed-PatientTagPopup, .freemed-SchedulerEventDialog, .freemed-InfoDialog {
 	border: 1px solid #555555;
 	background-color: #ffffff;
 	margin: 0px;
 	padding: 7px;
 	}
 	
-.freemed-SchedulerEventDialog .Caption {
+.freemed-SchedulerEventDialog .Caption, .freemed-InfoDialog .Caption {
 	font-weight: bold;
 	}
 	
