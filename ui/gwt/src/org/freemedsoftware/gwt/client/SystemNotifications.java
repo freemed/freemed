@@ -65,6 +65,7 @@ public class SystemNotifications {
 	 * Start system notification polling.
 	 */
 	public void start() {
+		JsonUtil.debug("SystemNotifications.start() called");
 		timer = new Timer() {
 			public void run() {
 				poll();
@@ -81,6 +82,7 @@ public class SystemNotifications {
 	 * Stop system notification polling.
 	 */
 	public void stop() {
+		JsonUtil.debug("SystemNotifications.stop() called");
 		if (timer != null) {
 			timer.cancel();
 			timer = null;
@@ -91,6 +93,8 @@ public class SystemNotifications {
 	 * Asynchronously poll for new system notifications
 	 */
 	public boolean poll() {
+		JsonUtil.debug("SystemNotifications.poll() called");
+
 		if (mutexStatus) {
 			JsonUtil.debug("mutexStatus indicates run in progress.");
 			return false;
@@ -123,19 +127,24 @@ public class SystemNotifications {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							if (r != null) {
-								if (r.length > 0) {
-									// Update our working timestamp
-									mutexTimestamp = Integer.parseInt(r[0]
-											.get("timestamp"));
-									for (int iter = 0; iter < r.length; iter++) {
-										handleNotification(r[iter]);
+							if (response.getText().compareToIgnoreCase("false") != 0) {
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								if (r != null) {
+									if (r.length > 0) {
+										// Update our working timestamp
+										mutexTimestamp = Integer.parseInt(r[0]
+												.get("timestamp"));
+										for (int iter = 0; iter < r.length; iter++) {
+											handleNotification(r[iter]);
+										}
 									}
 								}
+							} else {
+								JsonUtil
+										.debug("Received dummy response from JSON backend");
 							}
 						} else {
 							state.getToaster().addItem("SystemNotifications",

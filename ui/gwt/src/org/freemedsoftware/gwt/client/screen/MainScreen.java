@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.FreemedInterface;
+import org.freemedsoftware.gwt.client.SystemNotifications;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
@@ -68,6 +69,8 @@ public class MainScreen extends Composite {
 	protected final Label statusBar1, statusBar2;
 
 	protected final CurrentState state = new CurrentState();
+
+	protected final SystemNotifications notifications = new SystemNotifications();
 
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
@@ -279,6 +282,25 @@ public class MainScreen extends Composite {
 					});
 			menuItem_report.setStyleName("freemed-SecondaryMenuItem");
 
+			// Data functionality
+			final MenuBar menuBar_data = new MenuBar();
+			menuBar_data.setAutoOpen(true);
+			menuBar_data.setStyleName("freemed-SecondaryMenuBar");
+			final MenuItem menuItemBar_data = menuBar
+					.addItem(
+							"<span id=\"freemed-PrimaryMenuItem-title\">data entry</span>",
+							true, menuBar_data);
+			menuItemBar_data.setSize("105px", "30px");
+			menuItemBar_data.setStyleName("freemed-PrimaryMenuItem");
+			final MenuItem menuItem_data = menuBar_data.addItem("support data",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Support Data",
+									new SupportDataScreen(), state);
+						}
+					});
+			menuItem_data.setStyleName("freemed-SecondaryMenuItem");
+
 			// Support functionality
 			final MenuBar menuBar_support = new MenuBar();
 			menuBar_support.setAutoOpen(true);
@@ -289,14 +311,22 @@ public class MainScreen extends Composite {
 							true, menuBar_support);
 			menuItemBar_support.setSize("105px", "30px");
 			menuItemBar_support.setStyleName("freemed-PrimaryMenuItem");
-			final MenuItem menuItem_support = menuBar_support.addItem(
-					"support data", new Command() {
+
+			final MenuItem menuItem_communitySupport = menuBar_support.addItem(
+					"community support", new Command() {
 						public void execute() {
-							Util.spawnTab("Support Data",
-									new SupportDataScreen(), state);
+
 						}
 					});
-			menuItem_support.setStyleName("freemed-SecondaryMenuItem");
+			menuItem_communitySupport.setStyleName("freemed-SecondaryMenuItem");
+
+			final MenuItem menuItem_commercialSupport = menuBar_support
+					.addItem("commercial support", new Command() {
+						public void execute() {
+						}
+					});
+			menuItem_commercialSupport
+					.setStyleName("freemed-SecondaryMenuItem");
 		}
 
 		/*
@@ -338,6 +368,10 @@ public class MainScreen extends Composite {
 		Toaster toaster = new Toaster();
 		state.assignToaster(toaster);
 		toaster.setTimeout(10);
+
+		// Handle system notifications
+		notifications.setState(getCurrentState());
+		notifications.start();
 	}
 
 	public CurrentState getCurrentState() {
