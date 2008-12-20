@@ -52,7 +52,7 @@ public class FreemedInterface implements EntryPoint {
 	protected MainScreen mainScreen;
 
 	protected CurrentState state;
-	
+
 	/**
 	 * This is the entry point method.
 	 */
@@ -63,7 +63,6 @@ public class FreemedInterface implements EntryPoint {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Skip checking for logged in...
 			loginDialog.center();
-			// loginDialog.show();
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = {};
 			RequestBuilder builder = new RequestBuilder(
@@ -118,7 +117,6 @@ public class FreemedInterface implements EntryPoint {
 						} else {
 							// Force login loop
 							loginDialog.center();
-							// loginDialog.show();
 						}
 					}
 
@@ -143,7 +141,8 @@ public class FreemedInterface implements EntryPoint {
 	public void resume() {
 		if (!active) {
 			mainScreen = new MainScreen();
-			mainScreen.getCurrentState().assignLocale(loginDialog.getLanguageSelected());
+			mainScreen.getCurrentState().assignLocale(
+					loginDialog.getLanguageSelected());
 			RootPanel.get("rootPanel").add(mainScreen);
 			// mainScreen.setFreemedInterface(this);
 			active = true;

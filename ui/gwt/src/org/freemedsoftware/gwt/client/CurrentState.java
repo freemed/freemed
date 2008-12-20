@@ -44,6 +44,8 @@ public class CurrentState {
 
 	protected String locale = "en_US";
 
+	protected Integer defaultProvider = new Integer(0);
+
 	public CurrentState() {
 		statusItems = new HashMap<String, String>();
 	}
@@ -65,6 +67,15 @@ public class CurrentState {
 	 */
 	public void assignStatusBar(Label l) {
 		statusBar = l;
+	}
+
+	/**
+	 * Assign default provider.
+	 * 
+	 * @param p
+	 */
+	public void assignDefaultProvider(Integer p) {
+		defaultProvider = p;
 	}
 
 	/**
@@ -122,6 +133,10 @@ public class CurrentState {
 
 	public String getLocale() {
 		return locale;
+	}
+
+	public Integer getDefaultProvider() {
+		return defaultProvider;
 	}
 
 	public TabPanel getTabPanel() {

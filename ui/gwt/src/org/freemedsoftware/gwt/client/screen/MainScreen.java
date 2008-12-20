@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.FreemedInterface;
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.SystemNotifications;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
@@ -35,10 +36,13 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -76,6 +80,8 @@ public class MainScreen extends Composite {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
+
+		populateDefaultProvider();
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
@@ -396,6 +402,69 @@ public class MainScreen extends Composite {
 
 	public void show() {
 		RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
+	}
+
+	public void populateDefaultProvider() {
+		if (state.getDefaultProvider().intValue() < 1) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Do gornicht.
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = {};
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.UserInterface.GetCurrentProvider",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							state
+									.getToaster()
+									.addItem(
+											"MainScreen",
+											"Could not determine provider information.",
+											Toaster.TOASTER_ERROR);
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								Integer r = (Integer) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Integer");
+								if (r != null) {
+									JsonUtil
+											.debug("MainScreen.populateDefaultProvider: found "
+													+ r.toString());
+									state.assignDefaultProvider(r);
+								} else {
+									JsonUtil
+											.debug("MainScreen.populateDefaultProvider: found error");
+								}
+							} else {
+								state
+										.getToaster()
+										.addItem(
+												"MainScreen",
+												"Could not determine provider information.",
+												Toaster.TOASTER_ERROR);
+							}
+						}
+					});
+				} catch (RequestException e) {
+					state.getToaster().addItem("MainScreen",
+							"Could not determine provider information.",
+							Toaster.TOASTER_ERROR);
+				}
+			} else {
+				// TODO: GWT-RPC support for this function
+			}
+		} else {
+			JsonUtil
+					.debug("MainScreen.populateDefaultProvider: already assigned");
+		}
 	}
 
 }

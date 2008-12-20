@@ -30,6 +30,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.JsonUtil;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
@@ -130,7 +133,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		}
 
 		/**
-		 * This identifier identifes the evnt in the calander. All updates and
+		 * This identifier identifies the event in the calendar. All updates and
 		 * such rely on an unique id to handle updates correctly. In a
 		 * production like situation we would recommend using the key of the
 		 * record.
@@ -161,6 +164,10 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		private DateEventListener listener = null;
 
+		private PatientWidget patient = null;
+
+		private SupportModuleWidget provider = null;
+
 		private Button cancel = null;
 
 		private Button ok = null;
@@ -171,14 +178,27 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		private int command = DateEvent.ADD;
 
+		private CurrentState state = null;
+
 		public EventDataDialog(DateEventListener newListener,
 				Serializable newData) {
-			this(newListener, newData, DateEvent.ADD);
+			this(newListener, newData, DateEvent.ADD, null);
 		}
 
 		public EventDataDialog(DateEventListener newListener,
-				Serializable newData, int newCommand) {
+				Serializable newData, CurrentState s) {
+			this(newListener, newData, DateEvent.ADD, s);
+		}
+
+		public EventDataDialog(DateEventListener newListener,
+				Serializable newData, int newCommand, CurrentState s) {
 			super();
+
+			state = s;
+
+			setAnimationEnabled(true);
+			setStyleName("freemed-SchedulerEventDialog");
+
 			command = newCommand;
 			data = (EventData) newData;
 			listener = newListener;
@@ -191,17 +211,17 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 				wholeDay.setChecked(true);
 			}
 			if (newCommand == DateEvent.ADD) {
-				setText("New Event");
+				setText("New Appointment");
 			} else {
 				text.setText((String) data.getData());
-				setText("Edit Event");
+				setText("Edit Appointment");
 			}
 
 			// VerticalPanel outer = new VerticalPanel();
 
 			final FlexTable table = new FlexTable();
 
-			table.setWidget(0, 0, new Label("Datum"));
+			table.setWidget(0, 0, new Label("Date"));
 			table.setWidget(0, 1, date);
 
 			timePanel.add(start);
@@ -217,11 +237,25 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			table.setWidget(0, 2, time);
 			table.getFlexCellFormatter().setHorizontalAlignment(0, 2,
 					HorizontalPanel.ALIGN_LEFT);
-			table.setWidget(1, 0, new Label("Text"));
 
-			table.setWidget(1, 1, text);
+			patient = new PatientWidget();
+			table.setWidget(1, 0, new Label("Patient"));
+			table.setWidget(1, 1, patient);
+
+			provider = new SupportModuleWidget();
+			provider.setModuleName("ProviderModule");
+			table.setWidget(2, 0, new Label("Provider"));
+			if (state == null) {
+				JsonUtil.debug("current state not passed to scheduler");
+			}
+			if (state.getDefaultProvider().intValue() > 0) {
+				provider.setValue(state.getDefaultProvider());
+			}
+			table.setWidget(2, 1, provider);
+
+			table.setWidget(3, 0, new Label("Description"));
+			table.setWidget(3, 1, text);
 			table.getFlexCellFormatter().setColSpan(1, 1, 2);
-			// outer.add(table);
 
 			text.addKeyboardListener(this);
 			text.setWidth("250px");
@@ -230,6 +264,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
+			cancel.addClickListener(this);
 
 			ok = new Button("Ok", this);
 			ok.setEnabled(false);
@@ -246,13 +281,12 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 				delete.addClickListener(this);
 				button.add(new HTML(" "));
 				button.add(delete);
-
 			}
 
 			button.add(new HTML(" "));
 			button.add(cancel);
 
-			table.setWidget(2, 1, button);
+			table.setWidget(4, 1, button);
 			setWidget(table);
 			if (text.getText().length() > 1) {
 				ok.setEnabled(true);
@@ -450,7 +484,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		public void editAfterClick(Serializable data, DateEventListener listener) {
 			final EventDataDialog dialog = new EventDataDialog(listener, data,
-					DateEvent.UPDATE);
+					DateEvent.UPDATE, currentState);
 			dialog.show();
 			dialog.center();
 		}
@@ -460,10 +494,10 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			final EventData data = new EventData();
 			data.setStartTime(currentDate);
 			data.setEndTime(endDate);
-			final EventDataDialog dialog = new EventDataDialog(listener, data);
+			final EventDataDialog dialog = new EventDataDialog(listener, data,
+					currentState);
 			dialog.show();
 			dialog.center();
-
 		}
 
 		public Widget createPickerPanel(Serializable newData, int day) {
@@ -538,7 +572,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		}
 
 		public int getGridSize() {
-			return 30;
+			return 15;
 		}
 
 		public boolean isWholeDayEvent(Serializable event) {
@@ -646,6 +680,8 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 	}
 
+	protected CurrentState currentState = null;
+
 	private Label label = new Label("Feedback");
 
 	private MultiView schedulerContainerPanel = new MultiView(
@@ -654,6 +690,18 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 	public SchedulerWidget() {
 		super();
+		init(null);
+	}
+
+	public SchedulerWidget(CurrentState s) {
+		super();
+		JsonUtil.debug("Initializing scheduler widget with state passed");
+		init(s);
+	}
+
+	public void init(CurrentState s) {
+		currentState = s;
+
 		final HorizontalPanel fields = new HorizontalPanel();
 		super.add(fields, DockPanel.NORTH);
 		fields.add(label);
@@ -671,6 +719,10 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		schedulerContainerPanel.addDateListener(this);
 		// setGrid.addClickListener(this);
 		Window.addWindowResizeListener(this);
+	}
+
+	public void setCurrentState(CurrentState s) {
+		currentState = s;
 	}
 
 	public void handleDateEvent(DateEvent newEvent) {

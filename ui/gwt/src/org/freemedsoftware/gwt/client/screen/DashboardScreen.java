@@ -24,6 +24,7 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 
@@ -32,6 +33,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DashboardScreen extends ScreenInterface {
 
+	protected SchedulerWidget schedulerWidget = null;
+
 	public DashboardScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -39,7 +42,14 @@ public class DashboardScreen extends ScreenInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		horizontalPanel.add(new SchedulerWidget());
+		schedulerWidget = new SchedulerWidget();
+		horizontalPanel.add(schedulerWidget);
+	}
+
+	@Override
+	public void assignState(CurrentState s) {
+		state = s;
+		schedulerWidget.setCurrentState(state);
 	}
 
 }
