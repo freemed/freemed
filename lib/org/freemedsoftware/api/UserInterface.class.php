@@ -58,6 +58,19 @@ class UserInterface {
 		return $this->user->getDescription();
 	} // end method GetCurrentUsername
 
+	// Method: GetCurrentProvider
+	//
+	//	Determine provider record associated with current user.
+	//
+	// Returns:
+	//
+	//	Integer, 0 if there is none.
+	//
+	public function GetCurrentProvider ( ) {
+		$q = "SELECT IFNULL(userrealphy,0) FROM user WHERE id = ".( $this->user->user_number + 0 );
+		return (int) $GLOBALS['sql']->queryOne( $q );
+	} // end method GetCurrentProvider
+
 	// Method: GetUsers
 	//
 	//	Get picklist formatted user information.
