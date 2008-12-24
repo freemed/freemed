@@ -1,0 +1,373 @@
+#!/bin/sh
+#C--------------------------------------------------------------------
+#C- DjVuLibre-3.5
+#C- Copyright (c) 2002  Leon Bottou and Yann Le Cun.
+#C- Copyright (c) 2001  AT&T
+#C-
+#C- This software is subject to, and may be distributed under, the
+#C- GNU General Public License, either Version 2 of the license,
+#C- or (at your option) any later version. The license should have
+#C- accompanied the software or you may obtain a copy of the license
+#C- from the Free Software Foundation at http://www.fsf.org .
+#C-
+#C- This program is distributed in the hope that it will be useful,
+#C- but WITHOUT ANY WARRANTY; without even the implied warranty of
+#C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#C- GNU General Public License for more details.
+#C-
+#C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
+#C- Lizardtech Software.  Lizardtech Software has authorized us to
+#C- replace the original DjVu(r) Reference Library notice by the following
+#C- text (see doc/lizard2002.djvu and doc/lizardtech2007.djvu):
+#C-
+#C-  ------------------------------------------------------------------
+#C- | DjVu (r) Reference Library (v. 3.5)
+#C- | Copyright (c) 1999-2001 LizardTech, Inc. All Rights Reserved.
+#C- | The DjVu Reference Library is protected by U.S. Pat. No.
+#C- | 6,058,214 and patents pending.
+#C- |
+#C- | This software is subject to, and may be distributed under, the
+#C- | GNU General Public License, either Version 2 of the license,
+#C- | or (at your option) any later version. The license should have
+#C- | accompanied the software or you may obtain a copy of the license
+#C- | from the Free Software Foundation at http://www.fsf.org .
+#C- |
+#C- | The computer code originally released by LizardTech under this
+#C- | license and unmodified by other parties is deemed "the LIZARDTECH
+#C- | ORIGINAL CODE."  Subject to any third party intellectual property
+#C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
+#C- | non-exclusive license to make, use, sell, or otherwise dispose of 
+#C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
+#C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
+#C- | General Public License.   This grant only confers the right to 
+#C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
+#C- | the extent such infringement is reasonably necessary to enable 
+#C- | recipient to make, have made, practice, sell, or otherwise dispose 
+#C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
+#C- | any greater extent that may be necessary to utilize further 
+#C- | modifications or combinations.
+#C- |
+#C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
+#C- | OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+#C- | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
+#C- | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+#C- +------------------------------------------------------------------
+#C--------------------------------------------------------------------
+
+# Step 1 -- utilities
+
+usage()
+{
+    cat 1>&2 <<\END
+Usage:  djvudigital [options] inputfile [outputfile]
+More information is displayed by typing
+    djvudigital --help
+END
+    exit 10
+}
+
+getarg()
+{
+        echo "$1" | sed -e 's/^[^=]*=//'
+}
+
+getargs()
+{
+        echo "$1" | sed -e 's/^[^=]*=//' -e 's/,/ /g'
+}
+
+pathexpand()
+{
+    tmpvar="$PATH"
+    tmpdir=
+    while [ -n "$tmpvar" ]
+    do
+      IFS=':' read tmpdir tmpvar <<EOF
+$tmpvar
+EOF
+      test -x $tmpdir/$1 && echo $tmpdir/$1
+    done
+}
+
+checkps2utf8()
+{
+    if [ -z "$djvutext" ] 
+    then
+        djvutext=no
+        if ( "$gsdjvu" 2>&1 -dNODISPLAY -c '(ps2utf8.ps) runlibfile quit' | \
+              grep -q WRITESYSTEMDICT )
+        then
+            djvutext="/tmp/dj$$.ps"
+            trap "rm 2>/dev/null $djvutext" 0
+            cat > $djvutext <<\EOF
+(ps2utf8.ps) runlibfile currentglobal /setglobal load true setglobal 
+.ps2utf8 begin /onpage { } bind def /onfont { pop pop pop } bind def
+/onmark { pop pop pop pop currentx currenty currentpoint 
+.djvutextmark } bind def end exec
+EOF
+        fi
+    fi
+    test "$djvutext" != no && test -r "$djvutext"  
+}
+
+
+# Step 1 -- locate gsdjvu executable
+
+gsdjvu=
+for gs in ${GSDJVU} `pathexpand gs` `pathexpand gsdjvu`
+do
+  if [ -z "$gsdjvu" ] && ( "$gs" -h 2>&1 | grep -q djvusep )
+  then
+     gsdjvu="$gs"
+  fi
+done
+
+if [ -z "$gsdjvu" ]
+then
+    cat 1>&2 <<\EOF
+djvudigital: cannot locate suitable ghostscript executable.
++--------------------------------------------------------------------+
+| DjVuDigital relies on a special ghostscript device driver, but     |
+| could not find a ghostscript executable that implement this driver.|
+| Please visit http://djvulibre.djvuzone.org/gsdjvu.html.            |
++--------------------------------------------------------------------+
+EOF
+    exit 10
+fi
+
+
+# Step 2 -- locate csepdjvu executable
+
+csepdjvu=
+for cs in ${CSEPDJVU} `pathexpand msepdjvu` `pathexpand csepdjvu`
+do
+  if [ -z "$csepdjvu" ] && ( "$cs" -h 2>&1 | grep -q quality )
+  then
+      csepdjvu="$cs"
+  fi
+done
+
+if [ -z "$csepdjvu" ]
+then
+    cat 1>&2 <<\EOF
+djvudigital: cannot locate csepdjvu executable.
++--------------------------------------------------------------------+
+| DjVuDigital was not able to locate the djvulibre tool "csepdjvu".   |
+| Please make sure that the djvulibre tools are properly installed.  |
++--------------------------------------------------------------------+
+EOF
+    exit 10
+fi
+
+
+# Step 3 -- process arguments
+
+gsarg0="-sDEVICE=djvusep -dNOPAUSE -dBATCH -dSAFER"
+gsarg1=
+gsarg2=
+csepargs=
+dpi="300"
+gsprinted="-dPrinted"
+gsepsf="-dEPSCrop"
+gsverbosity=
+csepverbosity='-v'
+djvutext=
+infile=
+outfile=
+run=
+sepfile=
+
+for n
+do
+  case $n in 
+      --*) 
+          ;;
+      -*)  
+          n="-$n" 
+          ;;
+  esac
+  case $n in
+      --help)
+          man djvudigital
+          exit 10
+          ;;
+      --check)
+          echo 1>&2 "Using: $gsdjvu"
+          echo 1>&2 "  and: $csepdjvu"
+          exit 0
+          ;;
+      --dpi=[0-9]*)
+          dpi="`getarg $n`"
+          ;;
+      --verbose|--v)
+          gsverbosity=''
+          csepverbosity='-vv'
+          ;;
+      --dryrun)
+          run=echo
+          ;;
+      --sepfile)
+          sepfile=yes
+          ;;
+      --quiet|--q)
+          gsverbosity='-q'
+          csepverbosity=''
+          ;;
+      --psrotate=0)
+          gsarg2="-c << /Orientation 0 >> setpagedevice"
+          ;;
+      --psrotate=90)
+          gsarg2="-c << /Orientation 3 >> setpagedevice"
+          ;;
+      --psrotate=180)
+          gsarg2="-c << /Orientation 2 >> setpagedevice"
+          ;;
+      --psrotate=270)
+          gsarg2="-c << /Orientation 1 >> setpagedevice"
+          ;;
+      --epsf=no)
+          gsepsf=
+          ;;
+      --epsf=ignore)
+          gsepsf="-dNOEPS"
+          ;;
+      --epsf=fit)
+          gsepsf="-dEPSFitPage"
+          ;;
+      --epsf=crop)
+          gsepsf="-dEPSCrop"
+          ;;
+      --words)
+          if checkps2utf8; then
+            gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
+            gsarg1="-f $djvutext"
+          else
+            gsarg0="$gsarg0 -dProvideUnicode -dExtractText"
+          fi
+          ;;
+      --lines)
+          if checkps2utf8; then 
+            gsarg0="$gsarg0 -dDELAYBIND -dWRITESYSTEMDICT"
+            gsarg1="-f $djvutext"
+          else
+            gsarg0="$gsarg0 -dProvideUnicode -dExtractText"
+          fi
+          csepargs="$csepargs -t"
+          ;;
+      --pdf=screen)
+          gsprinted="-dPrinted=false"
+          ;;
+      --pdf=printed)
+          gsprinted="-dPrinted=true"
+          ;;
+      --exact-color)
+          gsarg0="-dUseCIEColor $gsarg0"
+          ;;
+      --threshold=*)
+          gsarg0=" -dThreshold=`getarg $n` $gsarg0"
+          ;;
+      --bg-subsample=*)
+          gsarg0=" -dBgSubsample=`getarg $n` $gsarg0"
+          ;;
+      --bg-slices=*)
+          csepargs=" -q `getarg $n` $csepargs"
+          ;;
+      --fg-colors=*)
+          gsarg0=" -dFgColors=`getarg $n` $gsarg0"
+          ;;
+      --fg-image-colors=*)
+          gsarg0=" -dFgImgColors=`getarg $n` $gsarg0"
+          ;;
+      --gsarg=*)
+          gsarg0=" `getargs $n` $gsarg0"
+          ;;
+      --cseparg=*)
+          csepargs="$csepargs `getargs $n`"
+          ;;
+      -*)
+          usage
+          ;;
+      *)
+          if [ -z "$infile" ] ; then
+              infile=$n
+          elif [ -z "$outfile" ] ; then
+              outfile=$n
+          else
+              usage
+          fi
+          ;;
+  esac
+done
+
+
+# Step 4 -- check input filename
+
+if [ -z "$infile" ] ; then
+    usage
+elif [ ! -r "$infile" -a -z "$run" ]; then
+    echo "djvudigital: cannot open $infile for reading" 1>&2
+    exit 10
+fi
+
+if [ -z "$outfile" ]
+then
+    outfile="$infile"
+    for ext in gz GZ ps PS eps EPS pdf PDF
+    do
+       case "$outfile" in
+         *.$ext)
+            outfile=`basename "$outfile" .$ext`
+            ;;
+       esac
+    done
+    if [ "$sepfile" = "yes" ] 
+    then
+      outfile="$outfile.sep"
+    else
+      outfile="$outfile.djvu"
+    fi
+fi
+
+# Step 5 -- execute command
+
+if [ "$csepverbosity" != "" -o "$gsverbosity" != "-q" ] 
+then
+    test -z "$run" && echo "DJVUDIGITAL --- DjVuLibre-3.5"
+fi
+
+if [ "$sepfile" = "yes" ] 
+then
+  backend="$outfile"
+else
+  backend="|$csepdjvu -d "'"'"$dpi"'"'
+  backend="$backend $csepverbosity $csepargs - "'"'"$outfile"'"'
+fi
+
+
+case "$infile" in
+    *.gz|*.GZ)
+        if test -z "$run" ; then
+          gzip -d -c "$infile" | \
+          $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+            "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 -_ -c quit
+        else
+          echo -n gzip -d -c '"'"$infile"'"' '|' ""
+          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
+          echo -n "-sOutputFile=""'""$backend""'" ""
+          echo -n $gsarg0 $gsarg1 $gsarg2 -_ -c quit
+          echo
+        fi
+        ;;
+    *)
+        if test -z "$run" ; then
+          $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf \
+            "-sOutputFile=$backend" $gsarg0 $gsarg1 $gsarg2 \
+            -f "$infile" -c quit
+        else
+          echo -n $gsdjvu "-r$dpi" $gsverbosity $gsprinted $gsepsf ""
+          echo -n "-sOutputFile=""'""$backend""'" ""
+          echo -n $gsarg0 $gsarg1 $gsarg2 -f '"'"$infile"'"' -c quit
+          echo
+        fi
+        ;;
+esac
