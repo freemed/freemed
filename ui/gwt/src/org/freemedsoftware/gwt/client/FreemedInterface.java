@@ -39,6 +39,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.UIObject;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -143,12 +144,18 @@ public class FreemedInterface implements EntryPoint {
 			mainScreen = new MainScreen();
 			mainScreen.getCurrentState().assignLocale(
 					loginDialog.getLanguageSelected());
+			UIObject.setVisible(RootPanel.get("loginScreen").getElement(),
+					false);
 			RootPanel.get("rootPanel").add(mainScreen);
-			// mainScreen.setFreemedInterface(this);
+			mainScreen.setFreemedInterface(this);
 			active = true;
 		} else {
+			try {
+				UIObject.setVisible(RootPanel.get("loginScreen").getElement(),
+						false);
+			} catch (Exception ex) {
+			}
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
 		}
 	}
-
 }

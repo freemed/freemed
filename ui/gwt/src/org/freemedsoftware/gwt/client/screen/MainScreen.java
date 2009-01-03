@@ -58,6 +58,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.UIObject;
 
 public class MainScreen extends Composite {
 
@@ -164,6 +165,13 @@ public class MainScreen extends Composite {
 													if (200 == response
 															.getStatusCode()) {
 														hide();
+														UIObject
+																.setVisible(
+																		RootPanel
+																				.get(
+																						"loginScreen")
+																				.getElement(),
+																		true);
 														freemedInterface
 																.getLoginDialog()
 																.center();
@@ -185,6 +193,10 @@ public class MainScreen extends Composite {
 									service.Logout(new AsyncCallback<Void>() {
 										public void onSuccess(Void r) {
 											hide();
+											UIObject
+													.setVisible(RootPanel.get(
+															"loginScreen")
+															.getElement(), true);
 											freemedInterface.getLoginDialog()
 													.center();
 										}
@@ -371,7 +383,7 @@ public class MainScreen extends Composite {
 
 		statusBarContainer = new HorizontalSplitPanel();
 		mainPanel.add(statusBarContainer, DockPanel.SOUTH);
-		statusBarContainer.setSize("100%", "25px");
+		statusBarContainer.setSize("100%", "30px");
 		statusBarContainer.setSplitPosition("50%");
 
 		statusBar1 = new Label("Ready");
