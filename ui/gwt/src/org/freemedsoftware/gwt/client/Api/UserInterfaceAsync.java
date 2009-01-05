@@ -24,11 +24,17 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
+import java.util.HashMap;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UserInterfaceAsync {
 
 	public void GetCurrentUsername(AsyncCallback<String> callback);
+
+	public void GetRecord(Integer id, AsyncCallback<HashMap<String, String>> callback);
+
+	public void GetUsers(String param, AsyncCallback<String[][]> callback);
 
 	public void GetNewMessages(AsyncCallback<Integer> callback);
 }

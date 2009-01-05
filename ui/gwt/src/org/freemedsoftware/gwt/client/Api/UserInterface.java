@@ -24,11 +24,17 @@
 
 package org.freemedsoftware.gwt.client.Api;
 
+import java.util.HashMap;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface UserInterface extends RemoteService {
 
 	public String GetCurrentUsername();
+
+	public HashMap<String, String> GetRecord(Integer id);
+
+	public String[][] GetUsers(String param);
 
 	public Integer GetNewMessages();
 }
