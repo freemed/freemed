@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -73,7 +75,7 @@ public class CustomSortableTable extends SortableTable {
 
 	protected Integer maximumRows = new Integer(20);
 
-	protected HashMap<String, String>[] data;
+	protected HashMap<String, String>[] data = null;
 
 	protected boolean multipleSelection = false;
 
@@ -180,9 +182,9 @@ public class CustomSortableTable extends SortableTable {
 	 * @return
 	 */
 	public String getValueFromIndex(int row, String key) {
-		GWT.log("getValueFromIndex: row = " + new Integer(row - 1).toString()
-				+ ", key = " + key, null);
-		GWT.log("getValueFromIndex: return = " + data[row - 1].get(key), null);
+		JsonUtil.debug("getValueFromIndex: row = "
+				+ new Integer(row - 1).toString() + ", key = " + key);
+		JsonUtil.debug("getValueFromIndex: return = " + data[row - 1].get(key));
 		return (String) data[row - 1].get(key);
 	}
 
@@ -215,13 +217,15 @@ public class CustomSortableTable extends SortableTable {
 			maxRows = maximumRows.intValue();
 		} catch (Exception ex) {
 		}
-		int rows = (data.length < maxRows) ? data.length : maxRows;
-		RowFormatter rowFormatter = getRowFormatter();
-		for (int iter = 0; iter < rows; iter++) {
-			rowFormatter.removeStyleName(iter + 1, "tableRow");
-			rowFormatter.removeStyleName(iter + 1, "customRowStyle");
-			for (int jter = 0; jter < columns.length; jter++) {
-				clearCell(iter + 1, jter);
+		if (data != null) {
+			int rows = (data.length < maxRows) ? data.length : maxRows;
+			RowFormatter rowFormatter = getRowFormatter();
+			for (int iter = 0; iter < rows; iter++) {
+				rowFormatter.removeStyleName(iter + 1, "tableRow");
+				rowFormatter.removeStyleName(iter + 1, "customRowStyle");
+				for (int jter = 0; jter < columns.length; jter++) {
+					clearCell(iter + 1, jter);
+				}
 			}
 		}
 	}
@@ -231,23 +235,27 @@ public class CustomSortableTable extends SortableTable {
 	 */
 	public void loadData(HashMap<String, String>[] newData) {
 		data = newData;
-		int rows = (data.length < maximumRows.intValue()) ? data.length
-				: maximumRows.intValue();
-		GWT.log("rows = " + new Integer(rows).toString(), null);
-		for (int iter = 0; iter < rows; iter++) {
-			// Set the value in the index map so clicks can be converted
-			String indexValue = (String) data[iter].get(indexName);
-			GWT.log("indexValue = " + indexValue, null);
-			String rowValue = String.valueOf(iter + 1);
-			GWT.log("rowValue = " + rowValue, null);
-			indexMap.put((String) rowValue, (String) indexValue);
-			for (int jter = 0; jter < columns.length; jter++) {
-				// Populate the column
-				setText(iter + 1, jter, (String) data[iter]
-						.get((String) columns[jter].getHashMapping()));
+		if (data != null) {
+			int rows = (data.length < maximumRows.intValue()) ? data.length
+					: maximumRows.intValue();
+			GWT.log("rows = " + new Integer(rows).toString(), null);
+			for (int iter = 0; iter < rows; iter++) {
+				// Set the value in the index map so clicks can be converted
+				String indexValue = (String) data[iter].get(indexName);
+				GWT.log("indexValue = " + indexValue, null);
+				String rowValue = String.valueOf(iter + 1);
+				GWT.log("rowValue = " + rowValue, null);
+				indexMap.put((String) rowValue, (String) indexValue);
+				for (int jter = 0; jter < columns.length; jter++) {
+					// Populate the column
+					setText(iter + 1, jter, (String) data[iter]
+							.get((String) columns[jter].getHashMapping()));
+				}
 			}
+			formatTable(rows);
+		} else {
+			JsonUtil.debug("Skipping loadData code due to null data presented");
 		}
-		formatTable(rows);
 	}
 
 	protected void selectionAdd(String index) {

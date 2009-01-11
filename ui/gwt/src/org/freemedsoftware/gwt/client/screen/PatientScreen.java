@@ -66,7 +66,6 @@ public class PatientScreen extends ScreenInterface {
 	protected SummaryScreen summaryScreen = null;
 
 	public PatientScreen() {
-
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
@@ -130,8 +129,7 @@ public class PatientScreen extends ScreenInterface {
 		verticalPanel_1.add(tabPanel);
 		summaryScreen = new SummaryScreen();
 		tabPanel.add(summaryScreen, "Summary");
-		summaryScreen.assignPatientScreen(this);
-		summaryScreen.assignState(state);
+		summaryScreen.assignPatientScreen(getObject());
 		tabPanel.selectTab(0);
 	}
 
@@ -158,9 +156,6 @@ public class PatientScreen extends ScreenInterface {
 	 */
 	public void setPatient(Integer id) {
 		patientId = id;
-
-		summaryScreen.setPatientId(patientId);
-		summaryScreen.loadData();
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();
@@ -250,5 +245,9 @@ public class PatientScreen extends ScreenInterface {
 
 		// Push out to child widgets
 		patientInfoBar.setPatientFromMap(patientInfo);
+
+		summaryScreen.assignState(state);
+		summaryScreen.setPatientId(patientId);
+		summaryScreen.loadData();
 	}
 }

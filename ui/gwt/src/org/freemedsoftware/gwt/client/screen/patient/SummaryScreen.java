@@ -29,23 +29,14 @@ import java.util.HashMap;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.PatientProblemList;
 import org.freemedsoftware.gwt.client.widget.PatientTagsWidget;
 import org.freemedsoftware.gwt.client.widget.RecentAllergiesList;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -56,9 +47,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SummaryScreen extends PatientScreenInterface {
 
-	protected CustomSortableTable summaryTable;
-
 	protected HashMap<String, String>[] dataStore;
+
+	protected PatientProblemList problemList = null;
 
 	protected RecentMedicationsList recentMedicationsList = null;
 
@@ -75,19 +66,25 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final VerticalPanel problemContainer = new VerticalPanel();
 		final Label problemLabel = new Label("Problems");
+		problemLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
 		problemContainer.add(problemLabel);
-		summaryTable = new CustomSortableTable();
-		summaryTable.addColumn("Date", "date_mdy");
-		summaryTable.addColumn("Type", "type");
-		summaryTable.addColumn("Summary", "summary");
-		problemContainer.add(summaryTable);
+
+		final SimplePanel cProblemList = new SimplePanel();
+		cProblemList.setStylePrimaryName("freemed-PatientSummaryContainer");
+		problemList = new PatientProblemList();
+		problemContainer.add(cProblemList);
+
 		flexTable.setWidget(0, 0, problemContainer);
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		flexTable.setWidget(0, 1, verticalPanel);
 
 		final Label actionItemsLabel = new Label("Action Items");
+		actionItemsLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
 		verticalPanel.add(actionItemsLabel);
+		final SimplePanel cActionItems = new SimplePanel();
+		cActionItems.setStylePrimaryName("freemed-PatientSummaryContainer");
+		verticalPanel.add(cActionItems);
 		verticalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 
 		final CustomSortableTable customSortableTable = new CustomSortableTable();
@@ -97,11 +94,18 @@ public class SummaryScreen extends PatientScreenInterface {
 		flexTable.setWidget(1, 0, verticalPanel_1);
 
 		final Label clinicalInformationLabel = new Label("Clinical Information");
+		clinicalInformationLabel
+				.setStylePrimaryName("freemed-PatientSummaryHeading");
 		verticalPanel_1.add(clinicalInformationLabel);
+		final SimplePanel cClinicalInformation = new SimplePanel();
+		cClinicalInformation
+				.setStylePrimaryName("freemed-PatientSummaryContainer");
+		cClinicalInformation.setWidth("90%");
+		verticalPanel_1.add(cClinicalInformation);
 		verticalPanel_1.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 
 		final TabPanel clinicalInformationTabPanel = new TabPanel();
-		verticalPanel_1.add(clinicalInformationTabPanel);
+		cClinicalInformation.setWidget(clinicalInformationTabPanel);
 
 		final SimplePanel clinicalTagsPanel = new SimplePanel();
 		patientTags = new PatientTagsWidget();
@@ -144,12 +148,18 @@ public class SummaryScreen extends PatientScreenInterface {
 		flexTable.setWidget(1, 1, verticalPanel_2);
 
 		final Label financialLabel = new Label("Financial");
+		financialLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
 		verticalPanel_2.add(financialLabel);
 
+		JsonUtil.debug("build financial flex table");
 		final FlexTable financialFlexTable = new FlexTable();
-		verticalPanel_2.add(financialFlexTable);
-		clinicalInformationTabPanel.selectTab(0);
+		final SimplePanel cFinancial = new SimplePanel();
+		cFinancial.setStylePrimaryName("freemed-PatientSummaryContainer");
+		cFinancial.setWidget(financialFlexTable);
+		verticalPanel_2.add(cFinancial);
 
+		JsonUtil.debug("selectTab(0)");
+		clinicalInformationTabPanel.selectTab(0);
 	}
 
 	public void loadData() {
@@ -176,117 +186,17 @@ public class SummaryScreen extends PatientScreenInterface {
 		}
 
 		try {
+			patientTags.setState(state);
 			patientTags.setPatient(patientId);
 		} catch (Exception ex) {
-			GWT.log("Exception", ex);
+			JsonUtil.debug("Exception in patientTags: " + ex.toString());
 		}
 
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			int i = 0;
-			{
-				HashMap<String, String> item = new HashMap<String, String>();
-				item.put("stamp", "2008-01-01");
-				item.put("type", "test");
-				item.put("summary", "Test item 1");
-				populateTableEntry(i, item);
-				i++;
-			}
-			{
-				HashMap<String, String> item = new HashMap<String, String>();
-				item.put("stamp", "2008-01-02");
-				item.put("type", "test");
-				item.put("summary", "Test item 2");
-				populateTableEntry(i, item);
-				i++;
-			}
-			{
-				HashMap<String, String> item = new HashMap<String, String>();
-				item.put("stamp", "2008-01-02");
-				item.put("type", "test");
-				item.put("summary", "Test item 3");
-				populateTableEntry(i, item);
-				i++;
-			}
-			{
-				HashMap<String, String> item = new HashMap<String, String>();
-				item.put("stamp", "2008-01-03");
-				item.put("type", "test");
-				item.put("summary", "Test item 4");
-				populateTableEntry(i, item);
-				i++;
-			}
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { patientId.toString() };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.api.PatientInterface.EmrAttachmentsByPatient",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable ex) {
-						Window.alert(ex.toString());
-					}
-
-					@SuppressWarnings("unchecked")
-					public void onResponseReceived(Request request,
-							Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							if (r != null) {
-								dataStore = r;
-								for (int iter = 0; iter < r.length; iter++) {
-									populateTableEntry(iter, r[iter]);
-								}
-							}
-						} else {
-							Window.alert(response.toString());
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert(e.toString());
-			}
-		} else {
-			PatientInterfaceAsync service = null;
-			try {
-				service = (PatientInterfaceAsync) Util
-						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface");
-			} catch (Exception e) {
-				GWT.log("Failed to get proxy for PatientInterface", e);
-			}
-			service.EmrAttachmentsByPatient(patientId,
-					new AsyncCallback<HashMap<String, String>[]>() {
-						public void onSuccess(HashMap<String, String>[] r) {
-							dataStore = r;
-							for (int iter = 0; iter < r.length; iter++) {
-								populateTableEntry(iter, r[iter]);
-							}
-						}
-
-						public void onFailure(Throwable t) {
-							GWT.log("Exception", t);
-						}
-					});
+		try {
+			problemList.setPatientId(patientId);
+		} catch (Exception ex) {
+			JsonUtil.debug("Exception in problemList: " + ex.toString());
 		}
 	}
 
-	/**
-	 * Populate summary table entry
-	 * 
-	 * @param pos
-	 *            Item position, starting at 0.
-	 * @param entry
-	 *            Data for population
-	 */
-	protected void populateTableEntry(int pos, HashMap<String, String> entry) {
-		summaryTable.setText(pos + 1, 0, entry.get("stamp"));
-		summaryTable.setText(pos + 1, 1, entry.get("type"));
-		summaryTable.setText(pos + 1, 2, entry.get("summary"));
-	}
 }
