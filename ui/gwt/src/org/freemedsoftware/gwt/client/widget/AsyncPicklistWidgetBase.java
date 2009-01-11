@@ -161,6 +161,15 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 	}
 
 	/**
+	 * Passthrough for focus.
+	 * 
+	 * @param focused
+	 */
+	public void setFocus(boolean focused) {
+		searchBox.setFocus(focused);
+	}
+
+	/**
 	 * Set widget value.
 	 * 
 	 * @param v

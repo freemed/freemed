@@ -67,7 +67,7 @@ public class PatientTagsWidget extends Composite {
 
 	protected final TextBox wEntry;
 
-	protected CurrentState state;
+	protected CurrentState state = null;
 
 	public PatientTagsWidget() {
 		flowPanel = new FlowPanel();
@@ -83,6 +83,10 @@ public class PatientTagsWidget extends Composite {
 				}
 			}
 		});
+	}
+
+	public void setState(CurrentState s) {
+		state = s;
 	}
 
 	/**
@@ -154,20 +158,24 @@ public class PatientTagsWidget extends Composite {
 	 * @param tag
 	 */
 	protected void addTagToDisplay(String tag) {
+		JsonUtil.debug("addTagToDisplay(" + tag + ")");
 		HorizontalPanel p = new HorizontalPanel();
 		p.setTitle(tag);
-		final String oldTagName = tag;
+		final String oldTagName = tag.trim();
 		final HTML r = new HTML("<sup>X</sup>");
 		final Anchor tagLabel = new Anchor(tag);
+		tagLabel.setStylePrimaryName("freemed-PatientTag");
+		JsonUtil.debug("addclicklistener");
 		tagLabel.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+			public void onClick(final Widget w) {
 				final PopupPanel p = new PopupPanel(true);
 				final FlexTable fT = new FlexTable();
-				fT.setWidget(0, 0, new Label("Rename Tag"));
+				fT.setWidget(0, 0, new HTML("<b>" + oldTagName + "</b>"));
+				fT.setWidget(1, 0, new Label("Rename Tag"));
 				final TextBox newTagName = new TextBox();
-				fT.setWidget(1, 0, newTagName);
+				fT.setWidget(2, 0, newTagName);
 				final Button changeTagButton = new Button("Change");
-				fT.setWidget(1, 1, changeTagButton);
+				fT.setWidget(2, 1, changeTagButton);
 				changeTagButton.addClickListener(new ClickListener() {
 					public void onClick(Widget bW) {
 						if (newTagName.getText().trim().length() > 0) {
@@ -175,6 +183,8 @@ public class PatientTagsWidget extends Composite {
 								// Stubbed mode
 								p.hide();
 								p.removeFromParent();
+								((HorizontalPanel) w.getParent())
+										.removeFromParent();
 								addTagToDisplay(newTagName.getText().trim());
 							} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 								String[] params = { oldTagName,
@@ -209,6 +219,9 @@ public class PatientTagsWidget extends Composite {
 															p.hide();
 															p
 																	.removeFromParent();
+															((HorizontalPanel) w
+																	.getParent())
+																	.removeFromParent();
 															addTagToDisplay(newTagName
 																	.getText()
 																	.trim());
@@ -226,6 +239,9 @@ public class PatientTagsWidget extends Composite {
 											public void onSuccess(Boolean o) {
 												p.hide();
 												p.removeFromParent();
+												((HorizontalPanel) w
+														.getParent())
+														.removeFromParent();
 												addTagToDisplay(newTagName
 														.getText().trim());
 											}
@@ -239,7 +255,7 @@ public class PatientTagsWidget extends Composite {
 					}
 				});
 				final Button searchButton = new Button("Search");
-				fT.setWidget(1, 2, searchButton);
+				fT.setWidget(2, 2, searchButton);
 				searchButton.addClickListener(new ClickListener() {
 					public void onClick(Widget bW) {
 						PatientTagSearchScreen searchScreen = new PatientTagSearchScreen();
