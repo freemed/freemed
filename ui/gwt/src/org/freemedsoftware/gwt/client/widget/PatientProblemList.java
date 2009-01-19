@@ -47,6 +47,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public class PatientProblemList extends Composite {
@@ -59,15 +60,20 @@ public class PatientProblemList extends Composite {
 
 	protected HashMap<String, String>[] dataStore = null;
 
+	protected int maximumRows = 10;
+
 	public PatientProblemList() {
+		SimplePanel panel = new SimplePanel();
 		tabPanel = new TabPanel();
 		tabPanel.setSize("100%", "100%");
 		tabPanel.setVisible(true);
-		initWidget(tabPanel);
+		panel.setWidget(tabPanel);
+		initWidget(panel);
 
 		// All
 		// Label allImage = new Label("All");
 		CustomSortableTable allTable = new CustomSortableTable();
+		allTable.setMaximumRows(10);
 		allTable.addColumn("Date", "date_mdy");
 		allTable.addColumn("Summary", "summary");
 		tabPanel.add(allTable, new Label("All"));
@@ -77,11 +83,20 @@ public class PatientProblemList extends Composite {
 		// Progress Notes
 		// Label progressNotesImage = new Label("Progress Notes");
 		CustomSortableTable progressNotesTable = new CustomSortableTable();
+		progressNotesTable.setMaximumRows(10);
 		progressNotesTable.addColumn("Date", "date_mdy");
 		progressNotesTable.addColumn("Summary", "summary");
 		tabPanel.add(progressNotesTable, new Label("Progress Notes"));
 		tables.put("pnotes", progressNotesTable);
 		// tabPanel.add(progressNotesTable, progressNotesImage);
+
+		// Letters
+		CustomSortableTable lettersTable = new CustomSortableTable();
+		lettersTable.setMaximumRows(10);
+		lettersTable.addColumn("Date", "date_mdy");
+		lettersTable.addColumn("Summary", "summary");
+		tabPanel.add(lettersTable, new Label("Letters"));
+		tables.put("letters|patletter", lettersTable);
 
 		tabPanel.selectTab(0);
 	}
@@ -90,6 +105,15 @@ public class PatientProblemList extends Composite {
 		patientId = id;
 		// Call initial data load, as patient id is set
 		loadData();
+	}
+
+	public void setMaximumRows(int maxRows) {
+		maximumRows = maxRows;
+		Iterator<String> iter = tables.keySet().iterator();
+		while (iter.hasNext()) {
+			String k = iter.next();
+			tables.get(k).setMaximumRows(maximumRows);
+		}
 	}
 
 	/*
@@ -205,6 +229,23 @@ public class PatientProblemList extends Composite {
 	}
 
 	/**
+	 * Check to see if a string is in a stack of pipe separated values.
+	 * 
+	 * @param needle
+	 * @param haystack
+	 * @return
+	 */
+	protected boolean inSet(String needle, String haystack) {
+		String[] stack = haystack.split("|");
+		for (int iter = 0; iter < stack.length; iter++) {
+			if (needle.equalsIgnoreCase(stack[iter])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Internal method to populate all sub tables.
 	 * 
 	 * @param data
@@ -242,7 +283,8 @@ public class PatientProblemList extends Composite {
 					// JsonUtil.debug("-- pass through, no criteria");
 				} else {
 					// Handle criteria
-					if (crit.compareToIgnoreCase(rec.get("module")) != 0) {
+					if (crit.compareToIgnoreCase(rec.get("module")) != 0
+							|| inSet(rec.get("module"), crit)) {
 						continue;
 					}
 				}
@@ -258,6 +300,7 @@ public class PatientProblemList extends Composite {
 				HashMap<String, String>[] thisData = (HashMap<String, String>[]) res
 						.toArray(new HashMap<?, ?>[0]);
 				thisTable.loadData(thisData);
+				JsonUtil.debug("Completed populating table " + k);
 			} else {
 				JsonUtil.debug("Could not populate null results into table");
 			}

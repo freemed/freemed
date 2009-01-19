@@ -72,6 +72,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		final SimplePanel cProblemList = new SimplePanel();
 		cProblemList.setStylePrimaryName("freemed-PatientSummaryContainer");
 		problemList = new PatientProblemList();
+		cProblemList.setWidget(problemList);
 		problemContainer.add(cProblemList);
 
 		flexTable.setWidget(0, 0, problemContainer);
