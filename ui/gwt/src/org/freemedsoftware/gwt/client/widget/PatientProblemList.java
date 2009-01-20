@@ -46,9 +46,10 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class PatientProblemList extends Composite {
 
@@ -71,32 +72,18 @@ public class PatientProblemList extends Composite {
 		initWidget(panel);
 
 		// All
-		// Label allImage = new Label("All");
-		CustomSortableTable allTable = new CustomSortableTable();
-		allTable.setMaximumRows(10);
-		allTable.addColumn("Date", "date_mdy");
-		allTable.addColumn("Summary", "summary");
-		tabPanel.add(allTable, new Label("All"));
-		tables.put("all", allTable);
-		// tabPanel.add(allTable, allImage);
-
+		Image allImage = new Image("resources/images/chart_full.16x16.png");
+		allImage.setTitle("All");
+		createSummaryTable(allImage, "all");
 		// Progress Notes
-		// Label progressNotesImage = new Label("Progress Notes");
-		CustomSortableTable progressNotesTable = new CustomSortableTable();
-		progressNotesTable.setMaximumRows(10);
-		progressNotesTable.addColumn("Date", "date_mdy");
-		progressNotesTable.addColumn("Summary", "summary");
-		tabPanel.add(progressNotesTable, new Label("Progress Notes"));
-		tables.put("pnotes", progressNotesTable);
-		// tabPanel.add(progressNotesTable, progressNotesImage);
-
+		Image notesImage = new Image("resources/images/chart.16x16.png");
+		notesImage.setTitle("Progress Notes");
+		createSummaryTable(notesImage, "pnotes");
 		// Letters
-		CustomSortableTable lettersTable = new CustomSortableTable();
-		lettersTable.setMaximumRows(10);
-		lettersTable.addColumn("Date", "date_mdy");
-		lettersTable.addColumn("Summary", "summary");
-		tabPanel.add(lettersTable, new Label("Letters"));
-		tables.put("letters|patletter", lettersTable);
+		Image lettersImage = new Image(
+				"resources/images/summary_envelope.16x16.png");
+		lettersImage.setTitle("Letters");
+		createSummaryTable(lettersImage, "letters|patletter");
 
 		tabPanel.selectTab(0);
 	}
@@ -116,12 +103,14 @@ public class PatientProblemList extends Composite {
 		}
 	}
 
-	/*
-	 * private SummaryTable createSummaryTable(String criteria, boolean starred)
-	 * { SummaryTable t = new SummaryTable(criteria, starred); try {
-	 * t.addColumn("Date", "date_mdy"); t.addColumn("Summary", "summary"); }
-	 * catch (Exception ex) { JsonUtil.debug(ex.toString()); } return t; }
-	 */
+	private void createSummaryTable(Widget tab, String criteria) {
+		CustomSortableTable t = new CustomSortableTable();
+		t.setMaximumRows(maximumRows);
+		t.addColumn("Date", "date_mdy");
+		t.addColumn("Summary", "summary");
+		tabPanel.add(t, tab);
+		tables.put(criteria, t);
+	}
 
 	@SuppressWarnings("unchecked")
 	protected void loadData() {
@@ -284,7 +273,7 @@ public class PatientProblemList extends Composite {
 				} else {
 					// Handle criteria
 					if (crit.compareToIgnoreCase(rec.get("module")) != 0
-							|| inSet(rec.get("module"), crit)) {
+							|| !inSet(rec.get("module"), crit)) {
 						continue;
 					}
 				}

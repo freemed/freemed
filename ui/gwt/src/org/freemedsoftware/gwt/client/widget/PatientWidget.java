@@ -77,6 +77,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 						Window.alert(ex.toString());
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {

@@ -104,6 +104,7 @@ public class UnfiledDocuments extends ScreenInterface {
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
 		wDocuments.addTableListener(new TableListener() {
+			@SuppressWarnings("deprecation")
 			public void onCellClicked(SourcesTableEvents e, int row, int col) {
 				// Import current id
 				try {
@@ -111,6 +112,14 @@ public class UnfiledDocuments extends ScreenInterface {
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);
 				} finally {
+					// Populate
+					String pDate = wDocuments.getValueFromIndex(row, "uffdate");
+					Date thisDate = new Date();
+					thisDate.setYear(Integer.parseInt(pDate.substring(0, 4)));
+					thisDate.setMonth(Integer.parseInt(pDate.substring(5, 6)));
+					thisDate.setDate(Integer.parseInt(pDate.substring(8, 9)));
+					wDate.setSelectedDate(thisDate);
+
 					// Show the form
 					flexTable.setVisible(true);
 					horizontalPanel.setVisible(true);
