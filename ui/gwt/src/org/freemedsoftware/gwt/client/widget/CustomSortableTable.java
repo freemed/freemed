@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Widget;
 import com.thapar.gwt.user.ui.client.widget.SortableTable;
 
 public class CustomSortableTable extends SortableTable {
@@ -67,6 +68,21 @@ public class CustomSortableTable extends SortableTable {
 		}
 	}
 
+	public interface TableWidgetColumnSetInterface {
+		/**
+		 * Set column renderer for a particular column.
+		 * 
+		 * @param columnName
+		 *            Key for column in question.
+		 * @param data
+		 *            Full hashmap of data.
+		 * @return Rendered widget, or null if this renderer is either disabled
+		 *         or not used for this particular column.
+		 */
+		public abstract Widget setColumn(String columnName,
+				HashMap<String, String> data);
+	}
+
 	protected Column[] columns = new Column[] {};
 
 	protected String indexName = new String("id");
@@ -81,11 +97,17 @@ public class CustomSortableTable extends SortableTable {
 
 	protected String[] selected;
 
+	protected TableWidgetColumnSetInterface widgetInterface = null;
+
 	public CustomSortableTable() {
 		super();
 		setStyleName("sortableTable");
 		RowFormatter rowFormatter = getRowFormatter();
 		rowFormatter.setStyleName(0, "tableHeader");
+	}
+
+	public void setTableWidgetColumnSetInterface(TableWidgetColumnSetInterface i) {
+		widgetInterface = i;
 	}
 
 	/**
@@ -242,14 +264,24 @@ public class CustomSortableTable extends SortableTable {
 			for (int iter = 0; iter < rows; iter++) {
 				// Set the value in the index map so clicks can be converted
 				String indexValue = (String) data[iter].get(indexName);
-				GWT.log("indexValue = " + indexValue, null);
 				String rowValue = String.valueOf(iter + 1);
-				GWT.log("rowValue = " + rowValue, null);
 				indexMap.put((String) rowValue, (String) indexValue);
 				for (int jter = 0; jter < columns.length; jter++) {
 					// Populate the column
-					setText(iter + 1, jter, (String) data[iter]
-							.get((String) columns[jter].getHashMapping()));
+					if (widgetInterface != null) {
+						Widget content = widgetInterface.setColumn(
+								columns[jter].getHashMapping(), data[iter]);
+						if (content != null) {
+							this.setWidget(iter + 1, jter, content);
+						} else {
+							setText(iter + 1, jter, (String) data[iter]
+									.get((String) columns[jter]
+											.getHashMapping()));
+						}
+					} else {
+						setText(iter + 1, jter, (String) data[iter]
+								.get((String) columns[jter].getHashMapping()));
+					}
 				}
 			}
 			formatTable(rows);

@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -45,13 +46,87 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PatientProblemList extends Composite {
+
+	public class ActionBar extends Composite implements ClickListener {
+
+		protected Integer internalId = 0;
+
+		protected HashMap<String, String> data = null;
+
+		protected Image annotateImage = null, deleteImage = null,
+				modifyImage = null, unlockedImage = null, lockedImage = null,
+				printImage = null;
+
+		protected CheckBox cb = null;
+
+		public ActionBar(HashMap<String, String> item) {
+			// Pull ID for future
+			internalId = Integer.parseInt(item.get("id"));
+			data = item;
+
+			HorizontalPanel hPanel = new HorizontalPanel();
+			initWidget(hPanel);
+
+			// Multiple select box
+			cb = new CheckBox();
+			cb.addClickListener(this);
+			hPanel.add(cb);
+
+			// Build icons
+			annotateImage = new Image("resources/images/add1.16x16.png");
+			annotateImage.setTitle("Add Annotation");
+			annotateImage.addClickListener(this);
+			hPanel.add(annotateImage);
+
+			printImage = new Image("rsources/images/ico.printer.16x16.png");
+			printImage.setTitle("Print");
+			printImage.addClickListener(this);
+			hPanel.add(printImage);
+
+			// Display all unlocked things
+			if (Integer.parseInt(data.get("locked")) != 0) {
+				deleteImage = new Image(
+						"resources/images/summary_delete.16x16.png");
+				deleteImage.setTitle("Remove");
+				deleteImage.addClickListener(this);
+				hPanel.add(deleteImage);
+				modifyImage = new Image(
+						"resources/images/summary_modify.16x16.png");
+				modifyImage.setTitle("Edit");
+				modifyImage.addClickListener(this);
+				hPanel.add(modifyImage);
+			} else {
+				// Display all actions for locked items
+			}
+		}
+
+		public void onClick(Widget sender) {
+			if (sender == cb) {
+				Window.alert("toggle item " + internalId.toString());
+			} else if (sender == annotateImage) {
+				Window.alert("annotate item " + internalId.toString());
+			} else if (sender == printImage) {
+				Window.alert("print item " + internalId.toString());
+			} else if (sender == deleteImage) {
+				Window.alert("delete item " + internalId.toString());
+			} else if (sender == modifyImage) {
+				Window.alert("modify item " + internalId.toString());
+			} else {
+				// Do nothing
+			}
+		}
+
+	}
 
 	protected Integer patientId = new Integer(0);
 
@@ -83,7 +158,7 @@ public class PatientProblemList extends Composite {
 		Image lettersImage = new Image(
 				"resources/images/summary_envelope.16x16.png");
 		lettersImage.setTitle("Letters");
-		createSummaryTable(lettersImage, "letters|patletter");
+		createSummaryTable(lettersImage, "letters,patletter");
 
 		tabPanel.selectTab(0);
 	}
@@ -105,9 +180,22 @@ public class PatientProblemList extends Composite {
 
 	private void createSummaryTable(Widget tab, String criteria) {
 		CustomSortableTable t = new CustomSortableTable();
+		t.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+			public Widget setColumn(String columnName,
+					HashMap<String, String> data) {
+				// Render only action column, otherwise skip renderer
+				if (columnName.compareToIgnoreCase("action") != 0) {
+					return null;
+				}
+				JsonUtil.debug("Rendering action bar");
+				return new ActionBar(data);
+			}
+		});
 		t.setMaximumRows(maximumRows);
 		t.addColumn("Date", "date_mdy");
+		t.addColumn("Module", "type");
 		t.addColumn("Summary", "summary");
+		t.addColumn("Action", "action");
 		tabPanel.add(t, tab);
 		tables.put(criteria, t);
 	}
@@ -225,9 +313,13 @@ public class PatientProblemList extends Composite {
 	 * @return
 	 */
 	protected boolean inSet(String needle, String haystack) {
-		String[] stack = haystack.split("|");
+		// Handle incidence of needle == haystack
+		if (needle.equalsIgnoreCase(haystack)) {
+			return true;
+		}
+		String[] stack = haystack.split(",");
 		for (int iter = 0; iter < stack.length; iter++) {
-			if (needle.equalsIgnoreCase(stack[iter])) {
+			if (needle.trim().equalsIgnoreCase(stack[iter].trim())) {
 				return true;
 			}
 		}
@@ -272,8 +364,13 @@ public class PatientProblemList extends Composite {
 					// JsonUtil.debug("-- pass through, no criteria");
 				} else {
 					// Handle criteria
-					if (crit.compareToIgnoreCase(rec.get("module")) != 0
-							|| !inSet(rec.get("module"), crit)) {
+					if (!inSet(rec.get("module"), crit)) {
+						JsonUtil.debug(rec.get("module") + " not include "
+								+ crit);
+					} else {
+						JsonUtil.debug(rec.get("module") + " INCLUDE " + crit);
+					}
+					if (!inSet(rec.get("module"), crit)) {
 						continue;
 					}
 				}
