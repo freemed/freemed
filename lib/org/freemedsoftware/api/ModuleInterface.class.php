@@ -165,12 +165,12 @@ class ModuleInterface {
 		// Handle differently depending on single or multiple
 		if (count($items) < 2) {
 			// Single render
-			$render = module_function( $r[0]['module'], '_RenderToPDF', array( $r[0]['oid'] ) );
+			$render = module_function( $r[0]['module'], 'RenderToPDF', array( $r[0]['oid'] ) );
 		} else {
 			// Multiples, use composite object
 			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );
 			foreach ($r AS $o) {
-				$thisFile = module_function( $o['module'], '_RenderToPDF', array( $o['oid'] ) );
+				$thisFile = module_function( $o['module'], 'RenderToPDF', array( $o['oid'] ) );
 				$comp->Add( $thisFile );
 				$f[] = $thisFile;
 			}
@@ -212,12 +212,12 @@ class ModuleInterface {
 		// Handle differently depending on single or multiple
 		if (count($items) < 2) {
 			// Single render
-			$render = module_function( $r[0]['module'], '_RenderToPDF', array( $r[0]['oid'] ) );
+			$render = module_function( $r[0]['module'], 'RenderToPDF', array( $r[0]['oid'] ) );
 		} else {
 			// Multiples, use composite object
 			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );
 			foreach ($r AS $o) {
-				$thisFile = module_function( $o['module'], '_RenderToPDF', array( $o['oid'] ) );
+				$thisFile = module_function( $o['module'], 'RenderToPDF', array( $o['oid'] ) );
 				$comp->Add( $thisFile );
 				$f[] = $thisFile;
 			}
@@ -242,24 +242,28 @@ class ModuleInterface {
 		foreach ($items AS $i) {
 			$k[] = (int) $i;
 		}
-		$q = "SELECT * FROM patient_emr WHERE id IN ( ".join(',', $k)." )";
+		$q = "SELECT p.patient AS patient, p.module AS module, p.oid AS oid, p.annotation AS annotation, p.summary AS summary, p.stamp AS stamp, DATE_FORMAT(p.stamp, '%m/%d/%Y') AS date_mdy, m.module_name AS type, m.module_class AS module_namespace, p.locked AS locked, p.id AS id FROM patient_emr p LEFT OUTER JOIN modules m ON m.module_table = p.module WHERE p.id IN ( ".join( ',', $k )." )";
 		$r = $GLOBALS['sql']->queryAll( $q );
 
 		// Handle differently depending on single or multiple
 		if (count($items) < 2) {
 			// Single render
-			$thisFile = module_function( $r[0]['module'], '_RenderToPDF', array( $r[0]['oid'] ) );
-			passthru( $thisFile );
+			Header ("Content-type: application/x-pdf");
+			Header ("Content-Disposition: inline; filename=\"".mktime().".pdf\"");
+			$thisFile = module_function( $r[0]['module_namespace'], 'RenderToPDF', array( $r[0]['oid'] ) );
+			print file_get_contents( $thisFile );
 			@unlink( $thisFile );
 		} else {
 			// Multiples, use composite object
 			$c = CreateObject( 'org.freemedsoftware.core.MultiplePDF' );
 			foreach ($r AS $o) {
-				$thisFile = module_function( $o['module'], '_RenderToPDF', array( $o['oid'] ) );
+				$thisFile = module_function( $o['module_namespace'], 'RenderToPDF', array( $o['oid'] ) );
 				$comp->Add( $thisFile );
 				$f[] = $thisFile;
 			}
-			passthru( $comp->Composite() );
+			Header ("Content-type: application/x-pdf");
+			Header ("Content-Disposition: inline; filename=\"".mktime().".pdf\"");
+			print file_get_contents( $comp->Composite() );
 			@unlink( $comp->Composite() );
 			foreach ($f AS $fn) { @unlink( $fn ); }
 		}
