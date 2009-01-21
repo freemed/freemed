@@ -1,0 +1,89 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2008 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
+.gwt-ScrollTable {
+	border-color: #aaa;
+	border-style: solid;
+	border-width: 1px 0px 1px 1px;
+	}
+
+.gwt-ScrollTable .gwt-ScrollTable-header-wrapper {
+	background: #8bd url(images/bg_header_gradient.gif) repeat-x bottom left;
+	}
+
+.gwt-ScrollTable .gwt-ScrollTable-footer-wrapper {
+	border-top: 1px solid #aaa;
+	background: #8bd url(images/bg_header_gradient.gif) repeat-x bottom left;
+	}
+
+.gwt-ScrollTable .gwt-ScrollTable-data td,
+.gwt-ScrollTable .gwt-ScrollTable-header td,
+.gwt-ScrollTable .gwt-ScrollTable-footer td {
+	border-color: #aaa;
+	border-style: solid;
+	border-width: 0px 1px 1px 0px;
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 3px;
+	}
+
+.gwt-ScrollTable .gwt-ScrollTable-header td,
+.gwt-ScrollTable .gwt-ScrollTable-footer td {
+	color: #fff;
+	}
+	
+.gwt-ScrollTable .gwt-ScrollTable-data tr.hovering {
+	background: #C3D9FF;
+	}
+
+.gwt-ScrollTable .gwt-ScrollTable-data td.hovering {
+	border: 1px solid blue;
+	cursor: hand;
+	cursor: pointer;
+	}
+
+.gwt-ScrollTable .gwt-ScrollTable-data tr.selected {
+	background: #7AA5D6;
+	}
+
+.gwt-ScrollTable .pagingOptions {
+	background: #e8eef7;
+	border-top: 1px solid #aaa;
+	border-right: 1px solid #aaa;
+	padding: 1px 0px;
+	}
+
+.gwt-ScrollTable .pagingOptions .errorLabel {
+	color: red;
+	}
+
+.gwt-CellEditor {
+	border: 3px solid #7AA5D6;
+	padding: 4px;
+	background: white;
+	}
+	
+.gwt-CellEditor td {
+	padding: 4px;
+	}

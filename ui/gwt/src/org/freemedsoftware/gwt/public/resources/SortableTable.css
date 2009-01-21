@@ -22,14 +22,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-TABLE.sortableTable TD  {
+TABLE.sortableTable TD {
 	border-bottom:solid #93BEE2 1px;
 	BORDER-RIGHT:1px solid #93BEE2;
 	border-left:1px solid #93BEE2;
 	border-top:1px solid #93BEE2;
 }
 
-.tableHeader{
+TABLE.sortableTable TBODY {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.tableHeader {
 	font-family:tahoma,sans-serif;
 	font-size:12px;
 	color:#FFFFFF;

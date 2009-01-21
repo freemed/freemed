@@ -34,15 +34,18 @@
 	<inherits name="com.gwtsandbox.colorpicker.ColorPicker" />
 	<inherits name="com.bouwkamp.gwt.user.User" />
 	<inherits name="com.google.gwt.i18n.I18N" />
-	<inherits name='org.cobogw.gwt.user.User' />
+	<inherits name="org.cobogw.gwt.user.User" />
 	<inherits name="com.googlecode.gchart.GChart" />
-	<inherits name='eu.future.earth.gwt.FtrGwtDate' />
+	<inherits name="eu.future.earth.gwt.FtrGwtDate" />
+	<inherits name="com.google.gwt.gen2.table.Table" />
+	<inherits name="com.google.gwt.gen2.table.FixedWidthFlexTable" />
 	
 	<!-- <inherits name="com.allen_sauer.gwt.log.gwt-log" /> -->
 
 	<!-- Stylesheet resources go here -->
 	<stylesheet src="resources/stylesheet.css" />
 	<stylesheet src="resources/SortableTable.css" />
+	<stylesheet src="resources/ScrollTable.css" />
 	
 	<entry-point class="org.freemedsoftware.gwt.client.FreemedInterface" />
   
@@ -50,6 +53,6 @@
 	<!--
   	<extend-property name="log_level" values="DEBUG" />
 	<set-property    name="log_level" value="DEBUG" />
-    -->
+	-->
   
 </module>
