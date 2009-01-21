@@ -1,5 +1,5 @@
 /*
- * $Ids$
+ * $Id$
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
@@ -65,7 +65,6 @@ public class EmrPrintDialog extends DialogBox {
 	protected Integer[] items;
 
 	public EmrPrintDialog() {
-
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		setWidget(verticalPanel);
 
@@ -178,7 +177,7 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		state.getToaster().addItem("FaxOSubsystem", "Sending fax to " + f);
+		state.getToaster().addItem("FaxSubsystem", "Sending fax to " + f);
 		getProxy().PrintToFax(f, items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
 				closeDialog();
