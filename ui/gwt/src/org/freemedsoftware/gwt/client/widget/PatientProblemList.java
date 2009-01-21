@@ -116,7 +116,9 @@ public class PatientProblemList extends Composite {
 			} else if (sender == annotateImage) {
 				Window.alert("annotate item " + internalId.toString());
 			} else if (sender == printImage) {
-				Window.alert("print item " + internalId.toString());
+				EmrPrintDialog d = new EmrPrintDialog();
+				d.setItems(new Integer[] { Integer.parseInt(data.get("id")) });
+				d.center();
 			} else if (sender == deleteImage) {
 				Window.alert("delete item " + internalId.toString());
 			} else if (sender == modifyImage) {

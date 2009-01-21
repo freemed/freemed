@@ -66,6 +66,7 @@ public class EmrPrintDialog extends DialogBox {
 
 	public EmrPrintDialog() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
+		setStylePrimaryName("freemed-EmrPrintDialog");
 		setWidget(verticalPanel);
 
 		final FlexTable flexTable = new FlexTable();
