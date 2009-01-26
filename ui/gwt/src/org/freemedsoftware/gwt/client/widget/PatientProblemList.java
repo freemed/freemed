@@ -49,15 +49,28 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PatientProblemList extends Composite {
 
 	public class ActionBar extends Composite implements ClickListener {
+
+		protected final String IMAGE_ANNOTATE = "resources/images/add1.16x16.png";
+
+		protected final String IMAGE_DELETE = "resources/images/summary_delete.16x16.png";
+
+		protected final String IMAGE_MODIFY = "resources/images/summary_modify.16x16.png";
+
+		protected final String IMAGE_PRINT = "resources/images/ico.printer.16x16.png";
 
 		protected Integer internalId = 0;
 
@@ -74,6 +87,8 @@ public class PatientProblemList extends Composite {
 			internalId = Integer.parseInt(item.get("id"));
 			data = item;
 
+			boolean locked = (Integer.parseInt(data.get("locked")) > 0);
+
 			HorizontalPanel hPanel = new HorizontalPanel();
 			initWidget(hPanel);
 
@@ -83,25 +98,24 @@ public class PatientProblemList extends Composite {
 			hPanel.add(cb);
 
 			// Build icons
-			annotateImage = new Image("resources/images/add1.16x16.png");
+			annotateImage = new Image(IMAGE_ANNOTATE);
 			annotateImage.setTitle("Add Annotation");
 			annotateImage.addClickListener(this);
 			hPanel.add(annotateImage);
 
-			printImage = new Image("rsources/images/ico.printer.16x16.png");
+			printImage = new Image(IMAGE_PRINT);
 			printImage.setTitle("Print");
 			printImage.addClickListener(this);
 			hPanel.add(printImage);
 
 			// Display all unlocked things
-			if (Integer.parseInt(data.get("locked")) != 0) {
-				deleteImage = new Image(
-						"resources/images/summary_delete.16x16.png");
+			if (!locked) {
+				deleteImage = new Image(IMAGE_DELETE);
 				deleteImage.setTitle("Remove");
 				deleteImage.addClickListener(this);
 				hPanel.add(deleteImage);
-				modifyImage = new Image(
-						"resources/images/summary_modify.16x16.png");
+
+				modifyImage = new Image(IMAGE_MODIFY);
 				modifyImage.setTitle("Edit");
 				modifyImage.addClickListener(this);
 				hPanel.add(modifyImage);
@@ -114,7 +128,8 @@ public class PatientProblemList extends Composite {
 			if (sender == cb) {
 				Window.alert("toggle item " + internalId.toString());
 			} else if (sender == annotateImage) {
-				Window.alert("annotate item " + internalId.toString());
+				CreateAnnotationPopup p = new CreateAnnotationPopup(data);
+				p.center();
 			} else if (sender == printImage) {
 				EmrPrintDialog d = new EmrPrintDialog();
 				d.setItems(new Integer[] { Integer.parseInt(data.get("id")) });
@@ -126,6 +141,43 @@ public class PatientProblemList extends Composite {
 			} else {
 				// Do nothing
 			}
+		}
+
+	}
+
+	public class CreateAnnotationPopup extends DialogBox implements
+			ClickListener {
+
+		protected HashMap<String, String> data = null;
+
+		protected TextArea textArea = null;
+
+		public CreateAnnotationPopup(HashMap<String, String> rec) {
+			super(true);
+			setAnimationEnabled(true);
+
+			// Save copy of data
+			data = rec;
+
+			final VerticalPanel verticalPanel = new VerticalPanel();
+			setStylePrimaryName("freemed-CreateAnnotationPopup");
+			setWidget(verticalPanel);
+
+			textArea = new TextArea();
+			textArea.setSize("300px", "300px");
+			verticalPanel.add(textArea);
+
+			PushButton submitButton = new PushButton("Add Annotation");
+			submitButton.addClickListener(this);
+			submitButton.setText("Add Annotation");
+			verticalPanel.add(submitButton);
+			verticalPanel.setCellHorizontalAlignment(submitButton,
+					HasHorizontalAlignment.ALIGN_CENTER);
+		}
+
+		public void onClick(Widget sender) {
+			Window.alert("STUB: need to handle annotation add");
+			hide();
 		}
 
 	}

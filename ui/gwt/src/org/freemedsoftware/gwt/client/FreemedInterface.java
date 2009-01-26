@@ -144,14 +144,14 @@ public class FreemedInterface implements EntryPoint {
 			mainScreen = new MainScreen();
 			mainScreen.getCurrentState().assignLocale(
 					loginDialog.getLanguageSelected());
-			UIObject.setVisible(RootPanel.get("loginScreen").getElement(),
+			UIObject.setVisible(RootPanel.get("loginScreenOuter").getElement(),
 					false);
 			RootPanel.get("rootPanel").add(mainScreen);
 			mainScreen.setFreemedInterface(this);
 			active = true;
 		} else {
 			try {
-				UIObject.setVisible(RootPanel.get("loginScreen").getElement(),
+				UIObject.setVisible(RootPanel.get("loginScreenOuter").getElement(),
 						false);
 			} catch (Exception ex) {
 			}

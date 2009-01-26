@@ -156,6 +156,31 @@ a:hover {
 	text-align: right;
 }
 /************************************** Login Panel Styles ****/
+
+#loginScreenOuter {
+	height: 580px; overflow: hidden; position: relative; width: 100%;
+	}
+#loginScreenOuter[id] {
+	display: table;
+	position: static;
+	}
+
+#loginScreenMiddle {
+	position: absolute; top: 50%; width: 100%; text-align: center; /* for explorer only*/
+	}
+#loginScreenMiddle[id] {
+	display: table-cell; vertical-align: middle; 
+	position: static;
+	}
+
+#loginScreenInner {
+	position: relative; top: -50%; text-align: left; /* for explorer only */
+	}
+#loginScreenInner[id] {
+	width: 950px; margin-left: auto; margin-right: auto; /* for all browsers*/
+	position: static;
+	}
+
 .loginPanel {
 	padding: 1px;
 	font-size: 12px;
