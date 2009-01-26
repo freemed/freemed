@@ -25,7 +25,7 @@
  
 body{
 	font: normal normal normal 10px;
-	font-family: Verdana, Helvetica, sans-serif, MS Sans Serif;
+	font-family: sans-serif;
 	margin: 0;
 	}
 
@@ -72,6 +72,7 @@ a:hover {
 	padding: 1em;
 	size: 8pt;
 	}
+
 /************************************** END: Task bar icons styles ****/
 
 /************************************** Tab panel CSS from KitchenSink */
@@ -103,22 +104,58 @@ a:hover {
 	cursor: pointer;
 	cursor: hand;
 	size: 8pt;
+	font-family: sans-serif;
+
+	border-left: 2px solid #cccccc;
+	border-right: 2px solid #cccccc;
+	border-top: 2px solid #cccccc;
+
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 3px;
+
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
 
 	background-color: #e8eef7;
 	border-bottom: 2px solid white;
 	margin-right: 2px;
 	}
 
+.gwt-TabBar .gwt-TabBarItem * {
+	size: 8pt;
+	font-family: sans-serif;
+	}
+
 .gwt-TabBar .gwt-TabBarItem-selected {
 	padding: 4px;
 	font-weight: bold;
+	font-family: sans-serif;
 	size: 8pt;
 	cursor: default;
+
+	border-left: 2px solid #000000;
+	border-right: 2px solid #000000;
+	border-top: 2px solid #000000;
+
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 3px;
+
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
 
 	background-color: #87b3ff;
 	border-bottom: 2px solid #87b3ff;
 	margin-right: 2px;
 	}
+
+.gwt-TabBar .gwt-TabBarItem-selected * {
+	size: 8pt;
+	font-weight: bold;
+	font-family: sans-serif;
+	}
+
 /************************************** END: Tab panel CSS from KitchenSink ****/
 .gwt-MenuBar {
 	background-color: #C3D9FF;
