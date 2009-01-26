@@ -26,14 +26,14 @@ package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
-import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
+import org.freemedsoftware.gwt.client.widget.WorkList;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DashboardScreen extends ScreenInterface {
 
-	protected SchedulerWidget schedulerWidget = null;
+	protected WorkList workList = null;
 
 	public DashboardScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -42,14 +42,19 @@ public class DashboardScreen extends ScreenInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		schedulerWidget = new SchedulerWidget();
-		horizontalPanel.add(schedulerWidget);
+		workList = new WorkList();
+		if (state.getDefaultProvider() > 0) {
+			workList.setProvider(state.getDefaultProvider());
+		}
+		horizontalPanel.add(workList);
 	}
 
-	@Override
 	public void assignState(CurrentState s) {
 		state = s;
-		schedulerWidget.setCurrentState(state);
+		workList.setCurrentState(state);
+
+		// Continue with dummy population
+		workList.setProvider(1);
 	}
 
 }
