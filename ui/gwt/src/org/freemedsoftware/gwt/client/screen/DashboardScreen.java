@@ -43,9 +43,7 @@ public class DashboardScreen extends ScreenInterface {
 		verticalPanel.add(horizontalPanel);
 
 		workList = new WorkList();
-		if (state.getDefaultProvider() > 0) {
-			workList.setProvider(state.getDefaultProvider());
-		}
+
 		horizontalPanel.add(workList);
 	}
 
@@ -53,8 +51,9 @@ public class DashboardScreen extends ScreenInterface {
 		state = s;
 		workList.setCurrentState(state);
 
-		// Continue with dummy population
-		workList.setProvider(1);
+		if (state.getDefaultProvider() > 0) {
+			workList.setProvider(state.getDefaultProvider());
+		}
 	}
 
 }
