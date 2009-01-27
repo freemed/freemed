@@ -36,7 +36,7 @@ print "(c) 2008 FreeMED Software Foundation\n\n";
 function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
 function printHeader ( $x ) { print "\n\n ----->> ${x} <<-----\n\n"; }
-function loadSchema ( $s ) { $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
+function loadSchema ( $s ) { print " - Loading schema \"$s\" : "; $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
 
 if ( ! file_exists ( './scripts/upgrade.php' ) ) {
 	print "You must run this from the root directory of your FreeMED install.\n\n";
@@ -87,7 +87,6 @@ execSql( "CREATE TABLE medications_old SELECT * FROM medications;" );
 execSql( "DROP TABLE medications;" );
 
 printHeader( "Build aggregation tables" );
-execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'allergies', patient, id, reviewed, allergy, 'active' FROM allergies;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'authorizations', authpatient, id, authdtadd, CONCAT(authdtbegin, ' - ', authdtend, ' (', authnum, ')'), 'active' FROM authorizations;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'certifications', certpatient, id, NOW(), certdesc, 'active' FROM certifications;" );
 //execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'chronic_problems', FROM chronic_problems;" );
@@ -99,7 +98,6 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'images', imagepat, id, imagedt, imagedesc, locked, 'active' FROM images;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'labs', labpatient, id, labtimestamp, CONCAT( labordercode, ' - ', laborderdescrip ), 'active' FROM labs;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'letters', letterpatient, l.id, letterdt, CONCAT( p.phyfname, ' ', p.phylname), locked, 'active' FROM letters l LEFT OUTER JOIN physician p ON l.letterto=p.id;" );
-execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'medications', mpatient, id, mdate, CONCAT( mdrug, ' ', mdosage ), 'active' FROM medications;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, user, status ) SELECT 'messages', msgpatient, id, msgtime, msgsubject, msgby, 'active' FROM messages GROUP BY msgunique;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, user, status ) SELECT 'notification', npatient, id, noriginal, ndescrip, nuser, 'active' FROM notification;" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked, status ) SELECT 'patletter', letterpatient, l.id, letterdt, CONCAT( p.phyfname, ' ', p.phylname ), locked, 'active' FROM patletter l LEFT OUTER JOIN physician p ON l.letterfrom=p.id;" );
@@ -123,7 +121,7 @@ execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/sto
 
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
-include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/class.ACL.php' );
+include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/ACL.class.php' );
 $a = new ACL();
 $q = "SELECT username, id FROM user WHERE id > 0";
 $r = $GLOBALS['sql']->queryAll( $q );
