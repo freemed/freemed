@@ -292,6 +292,7 @@ public class LoginDialog extends DialogBox {
 						new Command() {
 							public void execute() {
 								hide();
+								loginPassword.setText("");
 								freemedInterface.resume();
 								loginButton.setEnabled(true);
 							}

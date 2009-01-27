@@ -169,7 +169,7 @@ public class MainScreen extends Composite {
 																.setVisible(
 																		RootPanel
 																				.get(
-																						"loginScreen")
+																						"loginScreenOuter")
 																				.getElement(),
 																		true);
 														freemedInterface
@@ -193,10 +193,9 @@ public class MainScreen extends Composite {
 									service.Logout(new AsyncCallback<Void>() {
 										public void onSuccess(Void r) {
 											hide();
-											UIObject
-													.setVisible(RootPanel.get(
-															"loginScreen")
-															.getElement(), true);
+											UIObject.setVisible(RootPanel.get(
+													"loginScreenOuter")
+													.getElement(), true);
 											freemedInterface.getLoginDialog()
 													.center();
 										}
