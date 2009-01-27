@@ -77,7 +77,6 @@ loadSchema( 'dxhistory' );
 printHeader( "Load admin table definitions" );
 loadSchema( 'modules' );
 loadSchema( 'user' );
-loadSchema( 'scheduler' );
 loadSchema( 'session' );
 
 printHeader( "Backup differently aggregated tables" );
@@ -85,6 +84,15 @@ execSql( "CREATE TABLE allergies_old SELECT * FROM allergies;" );
 execSql( "DROP TABLE allergies;" );
 execSql( "CREATE TABLE medications_old SELECT * FROM medications;" );
 execSql( "DROP TABLE medications;" );
+
+printHeader( "Force module table build" );
+$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
+
+printHeader( "Force module definition upgrades through secondary load" );
+$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
+
+printHeader( "Load scheduler definition" );
+loadSchema( 'scheduler' );
 
 printHeader( "Build aggregation tables" );
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'authorizations', authpatient, id, authdtadd, CONCAT(authdtbegin, ' - ', authdtend, ' (', authnum, ')'), 'active' FROM authorizations;" );
@@ -132,9 +140,6 @@ foreach ( $r AS $user ) {
 
 printHeader( "Create 'healthy system' status" );
 `touch ./data/cache/healthy`;
-
-printHeader( "Force module definition upgrades" );
-$modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
 
 printHeader( "Rebuild differently organized tables" );
 //	-- Allergies
