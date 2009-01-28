@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.screen.MainScreen;
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.user.client.ui.Label;
@@ -45,6 +46,8 @@ public class CurrentState {
 	protected String locale = "en_US";
 
 	protected Integer defaultProvider = new Integer(0);
+
+	protected HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
 
 	public CurrentState() {
 		statusItems = new HashMap<String, String>();
@@ -145,6 +148,10 @@ public class CurrentState {
 
 	public Toaster getToaster() {
 		return toaster;
+	}
+
+	public HashMap<Integer, PatientScreen> getPatientScreenMap() {
+		return patientScreenMap;
 	}
 
 }

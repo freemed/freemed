@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.util.HashMap;
+
 import org.freemedsoftware.gwt.client.Api.Authorizations;
 import org.freemedsoftware.gwt.client.Api.AuthorizationsAsync;
 import org.freemedsoftware.gwt.client.Api.Messages;
@@ -90,7 +92,7 @@ public final class Util {
 	/**
 	 * Set currently running program mode.
 	 */
-	public static ProgramMode thisProgramMode = ProgramMode.STUBBED;
+	public static ProgramMode thisProgramMode = ProgramMode.JSONRPC;
 
 	/**
 	 * Get base url of FreeMED installation.
@@ -341,10 +343,46 @@ public final class Util {
 	 */
 	public static synchronized void spawnTab(String title,
 			ScreenInterface screen, CurrentState state) {
-		screen.assignState(state);
-		state.getTabPanel().add((Widget) screen,
-				new ClosableTab(title, (Widget) screen));
-		state.getTabPanel().selectTab(state.getTabPanel().getWidgetCount() - 1);
+		boolean recycle = false;
+
+		// Special handling for PatientScreen
+		if (screen instanceof PatientScreen) {
+			HashMap<Integer, PatientScreen> map = state.getPatientScreenMap();
+			Integer oldId = ((PatientScreen) screen).getPatient();
+			if (map.get(oldId) == null) {
+				// We don't find it, we have to instantiate new
+				recycle = false;
+
+				// Push into mapping
+				map.put(oldId, (PatientScreen) screen);
+
+				// Force population only if it hadn't existed before.
+				((PatientScreen) screen).populate();
+			} else {
+				recycle = true; // skip actual instantiation
+
+				// Get screen
+				PatientScreen existingScreen = map.get(oldId);
+
+				// Activate that screen
+				try {
+					state.getTabPanel().selectTab(
+							state.getTabPanel().getWidgetIndex(existingScreen));
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+					JsonUtil.debug("Exception selecting tab: " + ex.toString());
+				}
+			}
+		}
+
+		// Only instantiate new screen if we aren't recycling an old one
+		if (!recycle) {
+			screen.assignState(state);
+			state.getTabPanel().add((Widget) screen,
+					new ClosableTab(title, (Widget) screen));
+			state.getTabPanel().selectTab(
+					state.getTabPanel().getWidgetCount() - 1);
+		}
 	}
 
 	/**

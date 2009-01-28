@@ -156,11 +156,22 @@ public class PatientScreen extends ScreenInterface {
 	 */
 	public void setPatient(Integer id) {
 		patientId = id;
+	}
 
+	/**
+	 * Get patient id.
+	 * 
+	 * @return Integer of patient id.
+	 */
+	public Integer getPatient() {
+		return patientId;
+	}
+
+	public void populate() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();
 			dummy.put("patient_name", "Hackenbush, Hugo Z");
-			dummy.put("id", id.toString());
+			dummy.put("id", patientId.toString());
 			dummy.put("patient_id", "HUGO01");
 			dummy.put("ptdob", "1979-08-10");
 			dummy.put("address_line_1", "101 Evergreen Terrace");

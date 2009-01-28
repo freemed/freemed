@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -84,6 +86,14 @@ public class ClosableTab extends Composite {
 							.getParent());
 					t.selectTab(t.getWidgetIndex(widget) - 1);
 					widget.removeFromParent();
+
+					// If we're dealing with PatientScreen, remove from mapping
+					if (widget instanceof PatientScreen) {
+						Integer patientId = ((PatientScreen) widget)
+								.getPatient();
+						((PatientScreen) widget).getState()
+								.getPatientScreenMap().remove(patientId);
+					}
 				}
 			}
 		});

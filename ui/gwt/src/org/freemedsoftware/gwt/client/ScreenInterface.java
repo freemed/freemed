@@ -33,10 +33,20 @@ public abstract class ScreenInterface extends Composite {
 
 	public ScreenInterface() {
 		super();
+		// setStylePrimaryName(this.getElement(), "freemed-ScreenInterface");
+		// setSize("100%", "100%");
 	}
 
 	public void assignState(CurrentState s) {
 		state = s;
+	}
+
+	public void setState(CurrentState s) {
+		state = s;
+	}
+
+	public CurrentState getState() {
+		return state;
 	}
 
 	public void closeScreen() {
