@@ -26,6 +26,7 @@ all: clean www
 
 www:
 	./FreemedInterface-compile
+	rm -rf www/org
 
 install: www
 	mkdir -p $(INSTDIR)/$(THISDIR)

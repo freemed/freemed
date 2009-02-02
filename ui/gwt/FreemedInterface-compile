@@ -23,10 +23,11 @@
 
 
 APPDIR=`dirname $0`;
+MODE="OBFUS"; # MODE=(PRETTY|OBFUS|DETAILED)
 CP="$APPDIR/src:$APPDIR/bin:/opt/gwt/gwt-user.jar:/opt/gwt/gwt-dev-linux.jar:/usr/lib/gwt/gwt-user.jar:/usr/lib/gwt/gwt-dev-linux.jar"
 for JAR in lib/*.jar; do
 	CP="${CP}:$APPDIR/lib/$(basename "$JAR")"
 done
 echo "Compiling GWT portion of application ... "
-java -Xmx1024M -Xms128M -cp "$CP" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
+java -Xmx1536M -Xms128M -cp "$CP" com.google.gwt.dev.GWTCompiler -style ${MODE} -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface;
 

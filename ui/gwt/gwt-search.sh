@@ -22,6 +22,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 GWTSEARCH=(
+	/opt/gwt
 	/usr/lib/gwt
 	~/gwt
 	~/code/gwt
