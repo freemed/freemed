@@ -117,6 +117,7 @@ execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, locked
 execSql( "INSERT INTO patient_emr ( module, patient, oid, stamp, summary, status ) SELECT 'scheduler', calpatient, id, caldateof, CONCAT( LPAD( calhour, 2, '0' ), ':', LPAD( calminute, 2, '0' ), ' (', calduration, 'm) - ', calprenote ), 'active' FROM scheduler WHERE caltype='pat';" );
 execSql( "INSERT INTO patient_address SELECT id, NOW(), 'H', 0, 'S', ptaddr1, ptaddr2, ptcity, ptstate, ptzip, ptcountry, NULL FROM patient;" );
 execSql( "UPDATE patient_address SET active = 1;" );
+execSql( "INSERT INTO patient_keypad_lookup ( patient, last_name, first_name, year_of_birth, ssn, archive ) SELECT id, STRING_TO_PHONE( ptlname ), STRING_TO_PHONE( ptfname ), YEAR( ptdob ), SUBSTRING( ptssn FROM -4 FOR 4 ), ptarchive FROM patient;");
 
 printHeader( "Building diagnosis history" );
 execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag1, NULL FROM procrec WHERE NOT ISNULL(procdiag1) AND procdiag1 > 0;" );
