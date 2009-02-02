@@ -114,3 +114,23 @@ CREATE TRIGGER labs_Update
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS labs_Trending;
+
+DELIMITER //
+
+CREATE PROCEDURE labs_Trending (
+		IN patientId BIGINT UNSIGNED
+		IN labValues VARCHAR (250)
+	)
+BEGIN
+	DECLARE dtCur AS CURSOR FOR
+		SELECT DISTINCT(DATE_FORMAT(l.labtimestamp, '%Y-%m-%d')) AS dt
+		FROM labresults r
+			LEFT OUTER JOIN labs l ON l.id = r.labid
+		WHERE l.labpatient = patientId
+			AND FIND_IN_SET(r.labobscode, labValues);
+END;
+//
+
+DELIMITER //
+

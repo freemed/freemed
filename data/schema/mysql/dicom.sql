@@ -24,24 +24,40 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `dicom` (
-	d_stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	d_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	d_study_description	VARCHAR (250),
-	d_filename		VARCHAR (250),
-	d_md5			CHAR (32),
-	d_study_date		DATE,
-	d_institution_name	VARCHAR (250),
-	d_institution_address	VARCHAR (250),
-	d_study_uid		VARCHAR (250),
-	d_series_uid		VARCHAR (250),
-	d_referring_provider	INT UNSIGNED NOT NULL DEFAULT 0,
+	d_stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW() COMMENT 'Date of indexing',
+	d_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to patient table',
+	d_study_description	VARCHAR (250) COMMENT 'DICOM study description tag',
+	d_images		TEXT COMMENT 'DICOM image IDs',
+	d_study_uid		VARCHAR (250) COMMENT 'DICOM study uid tag',
+	d_series_uid		VARCHAR (250) COMMENT 'DICOM series uid tag',
+	user			INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to user table',
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' COMMENT 'Status of record',
+	id			SERIAL
 
-	d_xml_data		TEXT,
+	, FOREIGN KEY		( d_patient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY			( d_study_uid )
+	, KEY			( d_series_uid )
+);
 
-	storage_status		ENUM ( 'online', 'offline', 'remote' ) NOT NULL DEFAULT 'online',
+CREATE TABLE IF NOT EXISTS `dicom_image` (
+	d_stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW() COMMENT 'Date of indexing',
+	d_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to patient table',
+	d_study_description	VARCHAR (250) COMMENT 'DICOM study description tag',
+	d_filename		VARCHAR (250) COMMENT 'Local filename',
+	d_md5			CHAR (32) COMMENT 'File MD5 checksum',
+	d_study_date		DATE COMMENT 'Date of study',
+	d_institution_name	VARCHAR (250) COMMENT 'DICOM institution name tag',
+	d_institution_address	VARCHAR (250) COMMENT 'DICOM institution address tag',
+	d_study_uid		VARCHAR (250) COMMENT 'DICOM study uid tag',
+	d_series_uid		VARCHAR (250) COMMENT 'DICOM series uid tag',
+	d_referring_provider	INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to provider table',
+
+	d_xml_data		TEXT COMMENT 'dcm2xml DICOM data blob',
+
+	storage_status		ENUM ( 'online', 'offline', 'remote' ) NOT NULL DEFAULT 'online' COMMENT 'Location of DICOM image',
 	
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
+	user			INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to user table',
+	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' COMMENT 'Status of record',
 	id			SERIAL
 
 	#	Define keys
@@ -62,6 +78,9 @@ BEGIN
 	DROP TRIGGER dicom_Delete;
 	DROP TRIGGER dicom_Insert;
 	DROP TRIGGER dicom_Update;
+	DROP TRIGGER dicom_image_Delete;
+	DROP TRIGGER dicom_image_Insert;
+	DROP TRIGGER dicom_image_Update;
 
 	#----- Upgrades
 	#CALL FreeMED_Module_GetVersion( 'dicom', @V );
@@ -83,6 +102,22 @@ CREATE TRIGGER dicom_Delete
 	END;
 //
 
+CREATE TRIGGER dicom_image_Delete
+	AFTER DELETE ON dicom_image
+	FOR EACH ROW BEGIN
+		#----- Update record
+		UPDATE dicom
+		SET
+			d_images = (
+				SELECT GROUP_CONCAT( di.id ) FROM dicom_images di WHERE d_patient = OLD.d_patient AND d_series_uid = OLD.d_series_uid AND d_study_uid = OLD.d_study_uid
+			)
+		WHERE
+			d_patient = OLD.d_patient
+			AND d_study_uid = OLD.d_study_uid
+			AND d_series_uid = OLD.d_series_uid;
+	END;
+//
+
 CREATE TRIGGER dicom_Insert
 	AFTER INSERT ON dicom
 	FOR EACH ROW BEGIN
@@ -90,10 +125,61 @@ CREATE TRIGGER dicom_Insert
 	END;
 //
 
+CREATE TRIGGER dicom_image_insert
+	AFTER INSERT ON dicom_image
+	FOR EACH ROW BEGIN
+		DECLARE c INT UNSIGNED;
+		#----- Check for existing aggregation record
+		SELECT COUNT(*) INTO c FROM dicom d
+			WHERE d.d_patient = NEW.d_patient
+			AND d.d_study_uid = NEW.d_study_uid
+			AND d.d_series_uid = NEW.d_series_uid;
+		IF c < 1 THEN
+			#----- If no aggregation record, then create one
+			INSERT INTO dicom (
+				  d_stamp
+				, d_patient
+				, d_study_description
+				, d_study_uid
+				, d_series_uid
+				, d_images
+				, user
+				, active
+			) VALUES (
+				  NEW.d_stamp
+				, NEW.d_patient
+				, NEW.d_study_description
+				, NEW.d_study_uid
+				, NEW.d_series_uid
+				, NEW.id
+				, NEW.user
+				, NEW.active
+			);
+		ELSE
+			#----- Update record if one exists
+			UPDATE dicom
+			SET
+				d_images = (
+					SELECT GROUP_CONCAT( di.id ) FROM dicom_images di WHERE d_patient = NEW.d_patient AND d_series_uid = NEW.d_series_uid AND d_study_uid = NEW.d_study_uid
+				)
+			WHERE
+				d_patient = NEW.d_patient
+				AND d_study_uid = NEW.d_study_uid
+				AND d_series_uid = NEW.d_series_uid;
+		END IF;
+	END;
+//
+
 CREATE TRIGGER dicom_Update
 	AFTER UPDATE ON dicom
 	FOR EACH ROW BEGIN
 		UPDATE `patient_emr` SET stamp=NEW.d_stamp, patient=NEW.d_patient, summary=NEW.d_study_description, user=NEW.user, status=NEW.active WHERE module='dicom' AND oid=NEW.id;
+	END;
+//
+
+CREATE TRIGGER dicom_image_Update
+	AFTER UPDATE ON dicom_image
+	FOR EACH ROW BEGIN
 	END;
 //
 
