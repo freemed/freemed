@@ -227,7 +227,7 @@ class WorkListsModule extends BaseModule {
 	//
 	// Returns:
 	//
-	public function GenerateWorklist ( $provider, $date = '' ) {
+	public function GenerateWorkList ( $provider, $date = '' ) {
 		static $lookup_cache, $s;
 
 		if (!is_object( $s )) {
