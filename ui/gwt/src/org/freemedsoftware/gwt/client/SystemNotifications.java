@@ -175,7 +175,12 @@ public class SystemNotifications {
 	 *            HashMap of event information.
 	 */
 	protected void handleNotification(HashMap<String, String> event) {
-
+		try {
+			state.getToaster()
+					.addItem(event.get("nmodule"), event.get("ntext"));
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
 	}
 
 }

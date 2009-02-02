@@ -551,11 +551,17 @@ a:hover {
 .freemed-PatientTag {
 	font-size: 10pt;
 	font-family: sans-serif, verdana;
+	display: inline;
 	}
 
 .freemed-PatientTag, .freemed-PatientTagRemove {
 	cursor: pointer;
 	cursor: hand;
+	}
+	
+.freemed-PatientTagRemove {
+	display: inline;
+	margin-right: 7px;
 	}
 	
 .freemed-PatientSummaryHeading,
