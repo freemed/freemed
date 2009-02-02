@@ -23,7 +23,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
  
-body{
+body {
 	font: normal normal normal 10px;
 	font-family: sans-serif;
 	margin: 0;
@@ -594,3 +594,9 @@ a:hover {
 	-moz-border-radius-bottomright: 20px;
 	}
 	
+.freemed-MessageText {
+	padding: 10px;
+	color: #555555;
+	font-size: 8pt;
+	font-style: italic;
+	}

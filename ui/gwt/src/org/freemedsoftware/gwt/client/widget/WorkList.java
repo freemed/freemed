@@ -44,6 +44,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -57,10 +58,15 @@ public class WorkList extends Composite {
 
 	protected Integer providerId = null;
 
-	public WorkList() {
-		VerticalPanel vPanel = new VerticalPanel();
+	protected Label message = null;
 
-		initWidget(vPanel);
+	public WorkList() {
+		SimplePanel sPanel = new SimplePanel();
+		VerticalPanel vPanel = new VerticalPanel();
+		
+		sPanel.setWidget(vPanel);
+		sPanel.addStyleName("");
+		initWidget(sPanel);
 
 		providerLabel = new Label("");
 		workListTable = new CustomSortableTable();
@@ -72,6 +78,12 @@ public class WorkList extends Composite {
 		workListTable.addColumn("Patient", "patient_name");
 		workListTable.addColumn("Time", "time");
 		workListTable.addColumn("Description", "note");
+
+		message = new Label();
+		message.setStylePrimaryName("freemed-MessageText");
+		message.setText("There are no items scheduled for this day.");
+		vPanel.add(message);
+		message.setVisible(false);
 
 		workListTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -132,7 +144,10 @@ public class WorkList extends Composite {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							if (response.getText().compareToIgnoreCase("false") != 0) {
+							JsonUtil.debug(response.getText());
+							if (response.getText().compareToIgnoreCase("null") != 0
+									&& response.getText().compareToIgnoreCase(
+											"false") != 0) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
 										.shoehornJson(JSONParser.parse(response
 												.getText()),
@@ -143,8 +158,7 @@ public class WorkList extends Composite {
 									}
 								}
 							} else {
-								JsonUtil
-										.debug("Received dummy response from JSON backend");
+								message.setVisible(true);
 							}
 						} else {
 							state.getToaster().addItem("WorkLists",
@@ -163,7 +177,21 @@ public class WorkList extends Composite {
 	}
 
 	protected void populateWorkList(HashMap<String, String>[] data) {
-		workListTable.loadData(data);
+		boolean empty = false;
+		if (data != null) {
+			if (data.length == 0) {
+				empty = true;
+			}
+			workListTable.loadData(data);
+		} else {
+			empty = true;
+		}
+
+		if (empty) {
+			message.setVisible(true);
+		} else {
+			message.setVisible(false);
+		}
 	}
 
 }

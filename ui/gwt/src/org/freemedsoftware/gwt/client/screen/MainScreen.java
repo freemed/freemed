@@ -79,6 +79,8 @@ public class MainScreen extends Composite {
 
 	protected final SystemNotifications notifications = new SystemNotifications();
 
+	protected DashboardScreen dashboard = null;
+
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
@@ -370,7 +372,7 @@ public class MainScreen extends Composite {
 		mainPanel.add(tabPanel, DockPanel.CENTER);
 		tabPanel.setSize("100%", "100%");
 
-		final DashboardScreen dashboard = new DashboardScreen();
+		dashboard = new DashboardScreen();
 		dashboard.assignState(state);
 		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
@@ -465,6 +467,7 @@ public class MainScreen extends Composite {
 											.debug("MainScreen.populateDefaultProvider: found "
 													+ r.toString());
 									state.assignDefaultProvider(r);
+									dashboard.assignState(state);
 								} else {
 									JsonUtil
 											.debug("MainScreen.populateDefaultProvider: found error");
