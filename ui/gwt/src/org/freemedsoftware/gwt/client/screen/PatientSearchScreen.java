@@ -48,6 +48,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -60,6 +61,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class PatientSearchScreen extends ScreenInterface {
 
 	protected CustomSortableTable sortableTable = null;
+
+	protected Label sortableTableEmptyLabel = new Label();
 
 	protected PatientWidget wSmartSearch = null;
 
@@ -153,7 +156,24 @@ public class PatientSearchScreen extends ScreenInterface {
 			}
 		});
 
-		verticalPanel.add(sortableTable);
+		final VerticalPanel stPanel = new VerticalPanel();
+		stPanel.setWidth("100%");
+		stPanel.add(sortableTable);
+		stPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		sortableTableEmptyLabel.setStylePrimaryName("freemed-MessageText");
+		sortableTableEmptyLabel
+				.setText("No patients found with the specified criteria.");
+		sortableTableEmptyLabel.setVisible(true);
+		stPanel.add(sortableTableEmptyLabel);
+
+		verticalPanel.add(stPanel);
+
+		// Set visible focus *after* this is shown, otherwise it won't focus.
+		try {
+			wSmartSearch.setFocus(true);
+		} catch (Exception e) {
+			GWT.log("Caught exception: ", e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -197,14 +217,21 @@ public class PatientSearchScreen extends ScreenInterface {
 									.shoehornJson(JSONParser.parse(response
 											.getText()),
 											"HashMap<String,String>[]");
+							if (result.length > 0) {
+								sortableTableEmptyLabel.setVisible(false);
+							} else {
+								sortableTableEmptyLabel.setVisible(true);
+							}
 							sortableTable.loadData(result);
 						} else {
 							Window.alert(response.toString());
+							sortableTableEmptyLabel.setVisible(true);
 						}
 					}
 				});
 			} catch (RequestException e) {
 				Window.alert(e.toString());
+				sortableTableEmptyLabel.setVisible(true);
 			}
 		} else {
 			PatientInterfaceAsync service = null;
@@ -225,10 +252,16 @@ public class PatientSearchScreen extends ScreenInterface {
 							// Log.info("found " + new
 							// Integer(r.length).toString() + "
 							// results for Search");
+							if (result.length > 0) {
+								sortableTableEmptyLabel.setVisible(false);
+							} else {
+								sortableTableEmptyLabel.setVisible(true);
+							}
 							sortableTable.loadData(result);
 						}
 
 						public void onFailure(Throwable t) {
+							sortableTableEmptyLabel.setVisible(true);
 							// Log.error("Caught exception: ", t);
 						}
 					});

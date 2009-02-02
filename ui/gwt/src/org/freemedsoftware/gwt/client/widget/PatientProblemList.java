@@ -53,6 +53,7 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -135,9 +136,9 @@ public class PatientProblemList extends Composite {
 				d.setItems(new Integer[] { Integer.parseInt(data.get("id")) });
 				d.center();
 			} else if (sender == deleteImage) {
-				Window.alert("delete item " + internalId.toString());
+				deleteItem(internalId);
 			} else if (sender == modifyImage) {
-				Window.alert("modify item " + internalId.toString());
+				modifyItem(internalId);
 			} else {
 				// Do nothing
 			}
@@ -188,6 +189,8 @@ public class PatientProblemList extends Composite {
 
 	protected HashMap<String, CustomSortableTable> tables = new HashMap<String, CustomSortableTable>();
 
+	protected HashMap<String, Label> messages = new HashMap<String, Label>();
+
 	protected HashMap<String, String>[] dataStore = null;
 
 	protected int maximumRows = 10;
@@ -215,6 +218,14 @@ public class PatientProblemList extends Composite {
 		createSummaryTable(lettersImage, "letters,patletter");
 
 		tabPanel.selectTab(0);
+	}
+
+	public void modifyItem(Integer item) {
+
+	}
+
+	public void deleteItem(Integer item) {
+
 	}
 
 	public void setPatientId(Integer id) {
@@ -250,8 +261,20 @@ public class PatientProblemList extends Composite {
 		t.addColumn("Module", "type");
 		t.addColumn("Summary", "summary");
 		t.addColumn("Action", "action");
-		tabPanel.add(t, tab);
+
+		VerticalPanel vPanel = new VerticalPanel();
+		vPanel.add(t);
+
+		Label m = new Label();
+		m.setText("No items.");
+		m.setStylePrimaryName("freemed-MessageText");
+		m.setVisible(false);
+		vPanel.add(m);
+
+		tabPanel.add(vPanel, tab);
+
 		tables.put(criteria, t);
+		messages.put(criteria, m);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -434,6 +457,7 @@ public class PatientProblemList extends Composite {
 			}
 
 			if (res.size() > 0) {
+				messages.get(crit).setVisible(false);
 				JsonUtil.debug("Populating table " + k + " with "
 						+ new Integer(res.size()).toString() + " entries");
 				CustomSortableTable thisTable = tables.get(k);
@@ -442,6 +466,7 @@ public class PatientProblemList extends Composite {
 				thisTable.loadData(thisData);
 				JsonUtil.debug("Completed populating table " + k);
 			} else {
+				messages.get(crit).setVisible(true);
 				JsonUtil.debug("Could not populate null results into table");
 			}
 		}
