@@ -128,7 +128,7 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 
 	if (HTTP_Session2::isIdle()) {
 		syslog( LOG_INFO, "Session became idle" );
-		//HTTP_Session2::destroy();
+		HTTP_Session2::destroy();
 	}
 
 	HTTP_Session2::updateIdle();
