@@ -6,7 +6,7 @@
  //     Alexandru Zbarcea <zbarcea.a@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2007 FreeMED Software Foundation
+ // Copyright (C) 1999-2009 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ if ( !file_exists( dirname(__FILE__)."/lib/org/freemedsoftware/core/Relay_${_pro
 
 // Otherwise, instantiate
 unset ( $obj );
+syslog(LOG_INFO, "method = ${_method}, provider = ${_provider}");
 //print "DEBUG : creating relay for method ${_method}<br/>\n";
 $obj = CreateObject ( "org.freemedsoftware.core.Relay_${_provider}" );
 //print "DEBUG : relay created<br/>\n";
