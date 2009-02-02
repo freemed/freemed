@@ -63,9 +63,9 @@ public class WorkList extends Composite {
 	public WorkList() {
 		SimplePanel sPanel = new SimplePanel();
 		VerticalPanel vPanel = new VerticalPanel();
-		
+
 		sPanel.setWidget(vPanel);
-		sPanel.addStyleName("");
+		sPanel.addStyleName("freemed-WorkListContainer");
 		initWidget(sPanel);
 
 		providerLabel = new Label("");

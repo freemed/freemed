@@ -29,11 +29,12 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.widget.WorkList;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DashboardScreen extends ScreenInterface {
 
-	protected WorkList workList = null;
+	protected WorkList workList = new WorkList();
 
 	public DashboardScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -42,9 +43,14 @@ public class DashboardScreen extends ScreenInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		workList = new WorkList();
+		final VerticalPanel workListContainer = new VerticalPanel();
+		final Label workListLabel = new Label("Work List");
+		workListLabel.setStylePrimaryName("freemed-DashboardLabel");
 
-		horizontalPanel.add(workList);
+		workListContainer.add(workListLabel);
+		workListContainer.add(workList);
+
+		horizontalPanel.add(workListContainer);
 	}
 
 	public void assignState(CurrentState s) {

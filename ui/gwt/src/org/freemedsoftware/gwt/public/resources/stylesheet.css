@@ -558,7 +558,8 @@ a:hover {
 	cursor: hand;
 	}
 	
-.freemed-PatientSummaryHeading {
+.freemed-PatientSummaryHeading,
+.freemed-DashboardLabel {
 	font-size: 10pt;
 	font-face: sans-serif, verdana;
 	font-weight: bold;
@@ -573,7 +574,8 @@ a:hover {
 	background-color: #ffffff;
 	}
 	
-.freemed-PatientSummaryContainer {
+.freemed-PatientSummaryContainer,
+.freemed-WorkListContainer {
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;

@@ -79,13 +79,14 @@ public class MainScreen extends Composite {
 
 	protected final SystemNotifications notifications = new SystemNotifications();
 
-	protected DashboardScreen dashboard = null;
+	protected final DashboardScreen dashboard = new DashboardScreen();
 
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
 
+		dashboard.assignState(state);
 		populateDefaultProvider();
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -372,8 +373,6 @@ public class MainScreen extends Composite {
 		mainPanel.add(tabPanel, DockPanel.CENTER);
 		tabPanel.setSize("100%", "100%");
 
-		dashboard = new DashboardScreen();
-		dashboard.assignState(state);
 		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
 		state.assignTabPanel(tabPanel);
