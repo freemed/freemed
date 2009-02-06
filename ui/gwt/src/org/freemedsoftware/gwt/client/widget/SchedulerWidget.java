@@ -62,6 +62,7 @@ import eu.future.earth.gwt.client.date.DateUtils;
 import eu.future.earth.gwt.client.date.EventController;
 import eu.future.earth.gwt.client.date.EventPanel;
 import eu.future.earth.gwt.client.date.MultiView;
+import eu.future.earth.gwt.client.date.DateEvent.DateEventActions;
 import eu.future.earth.gwt.client.date.month.staend.AbstractMonthField;
 import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 
@@ -176,22 +177,21 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		private EventData data = null;
 
-		private int command = DateEvent.ADD;
+		private DateEventActions command = DateEventActions.ADD;
 
 		private CurrentState state = null;
 
-		public EventDataDialog(DateEventListener newListener,
-				Serializable newData) {
-			this(newListener, newData, DateEvent.ADD, null);
+		public EventDataDialog(DateEventListener newListener, Object newData) {
+			this(newListener, newData, DateEventActions.ADD, null);
 		}
 
-		public EventDataDialog(DateEventListener newListener,
-				Serializable newData, CurrentState s) {
-			this(newListener, newData, DateEvent.ADD, s);
+		public EventDataDialog(DateEventListener newListener, Object newData,
+				CurrentState s) {
+			this(newListener, newData, DateEventActions.ADD, s);
 		}
 
-		public EventDataDialog(DateEventListener newListener,
-				Serializable newData, int newCommand, CurrentState s) {
+		public EventDataDialog(DateEventListener newListener, Object newData,
+				DateEventActions newCommand, CurrentState s) {
 			super();
 
 			state = s;
@@ -210,7 +210,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			} else {
 				wholeDay.setChecked(true);
 			}
-			if (newCommand == DateEvent.ADD) {
+			if (newCommand == DateEventActions.ADD) {
 				setText("New Appointment");
 			} else {
 				text.setText((String) data.getData());
@@ -274,7 +274,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			final HorizontalPanel button = new HorizontalPanel();
 			button.add(ok);
 
-			if (command == DateEvent.UPDATE) {
+			if (command == DateEventActions.UPDATE) {
 				delete = new Button("Delete", this);
 				delete.setFocus(true);
 				delete.setAccessKey('d');
@@ -343,7 +343,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 					} else {
 						if (data != null && sender != null && sender == delete) {
 							final DateEvent newEvent = new DateEvent(this, data);
-							newEvent.setCommand(DateEvent.REMOVE);
+							newEvent.setCommand(DateEventActions.REMOVE);
 							listener.handleDateEvent(newEvent);
 							hide();
 						} else {
@@ -383,7 +383,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		}
 
 		public void setTitle() {
-			final Serializable theData = super.getData();
+			final Serializable theData = (Serializable) super.getData();
 			final EventData real = (EventData) theData;
 			if (real.getEndTime() == null) {
 				super.setTitle(format.format(real.getStartTime()));
@@ -482,9 +482,9 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			dialog.center();
 		}
 
-		public void editAfterClick(Serializable data, DateEventListener listener) {
+		public void editAfterClick(Object data, DateEventListener listener) {
 			final EventDataDialog dialog = new EventDataDialog(listener, data,
-					DateEvent.UPDATE, currentState);
+					DateEventActions.UPDATE, currentState);
 			dialog.show();
 			dialog.center();
 		}
@@ -500,7 +500,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			dialog.center();
 		}
 
-		public Widget createPickerPanel(Serializable newData, int day) {
+		public Widget createPickerPanel(Object newData, int day) {
 			return null;
 		}
 
@@ -536,12 +536,12 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			return 7;
 		}
 
-		public Date getEndTime(Serializable event) {
+		public Date getEndTime(Object event) {
 			final EventData data = getData(event);
 			return data.getEndTime();
 		}
 
-		private EventData getData(Serializable event) {
+		private EventData getData(Object event) {
 			if (event instanceof EventData) {
 				return (EventData) event;
 			} else {
@@ -550,23 +550,23 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			}
 		}
 
-		public String getIdentifier(Serializable event) {
+		public String getIdentifier(Object event) {
 			final EventData data = getData(event);
 			return data.getIdentifier();
 		}
 
-		public Date getStartTime(Serializable event) {
+		public Date getStartTime(Object event) {
 			final EventData data = getData(event);
 			return data.getStartTime();
 		}
 
-		public void setEndTime(Serializable event, Date newEnd) {
+		public void setEndTime(Object event, Date newEnd) {
 			final EventData data = getData(event);
 			data.setEndTime(newEnd);
 
 		}
 
-		public void setStartTime(Serializable event, Date newStart) {
+		public void setStartTime(Object event, Date newStart) {
 			final EventData data = getData(event);
 			data.setStartTime(newStart);
 		}
@@ -575,7 +575,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			return 15;
 		}
 
-		public boolean isWholeDayEvent(Serializable event) {
+		public boolean isWholeDayEvent(Object event) {
 			final EventData data = getData(event);
 			if (data != null) {
 				return data.isAlldayEvent();
@@ -585,7 +585,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			}
 		}
 
-		public EventPanel createPanel(Serializable newData, int viewType) {
+		public EventPanel createPanel(Object newData, int viewType) {
 			final EventData data = getData(newData);
 			if (data.isAlldayEvent()) {
 				WholeDayField panel = new WholeDayField(this);
@@ -661,19 +661,19 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 					.toArray(new Serializable[0]));
 		}
 
-		public void updateEvent(Serializable updated) {
+		public void updateEvent(Object updated) {
 			removeEvent(updated);
 			addEvent(updated);
 		}
 
-		public void removeEvent(Serializable updated) {
+		public void removeEvent(Object updated) {
 			EventData data = (EventData) updated;
 			// Window.alert("Remove" + items.size());
 			items.remove(data.getIdentifier());
 			// Window.alert("Remove" + items.size());
 		}
 
-		public void addEvent(Serializable updated) {
+		public void addEvent(Object updated) {
 			EventData data = (EventData) updated;
 			items.put(data.getIdentifier(), (EventData) updated);
 		}
@@ -725,35 +725,42 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		currentState = s;
 	}
 
+	/**
+	 * Convert Date object into minutes from beginning of day.
+	 * 
+	 * @param d
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	protected int dateToMinutes(Date d) {
+		return (d.getHours() * 60) + d.getMinutes();
+	}
+
 	public void handleDateEvent(DateEvent newEvent) {
-		switch (newEvent.getCommand()) {
-		case DateEvent.ADD: {
-			final EventData data = (EventData) newEvent.getData();
-			label.setText("Added event on " + data.getStartTime() + " - "
-					+ data.getEndTime());
-			break;
-		}
-		case DateEvent.UPDATE: {
-			final EventData data = (EventData) newEvent.getData();
-			label.setText("Updated event on " + data.getStartTime() + " - "
-					+ data.getEndTime());
-			break;
-		}
-		case DateEvent.REMOVE: {
-			final EventData data = (EventData) newEvent.getData();
-			label.setText("Removed event on " + data.getStartTime() + " - "
-					+ data.getEndTime());
-			break;
-		}
+		// Figure out common things
+		final EventData data = (EventData) newEvent.getData();
+		final int duration = dateToMinutes(data.getEndTime())
+				- dateToMinutes(data.getStartTime());
 
-		case DateEvent.DRAG_DROP: {
-			final EventData data = (EventData) newEvent.getData();
-			label.setText("Removed event on " + data.getStartTime() + " - "
+		if (newEvent.getCommand() == DateEventActions.ADD) {
+			label
+					.setText("Added event on " + data.getStartTime()
+							+ ", duration " + new Integer(duration).toString()
+							+ " min");
+		} else if (newEvent.getCommand() == DateEventActions.UPDATE) {
+			label
+					.setText("Updated event on " + data.getStartTime()
+							+ ", duration " + new Integer(duration).toString()
+							+ " min");
+		} else if (newEvent.getCommand() == DateEventActions.REMOVE) {
+			label
+					.setText("Removed event on " + data.getStartTime()
+							+ ", duration " + new Integer(duration).toString()
+							+ " min");
+		} else if (newEvent.getCommand() == DateEventActions.DRAG_DROP) {
+			label.setText("TODO: Moved event on " + data.getStartTime() + " - "
 					+ data.getEndTime());
-			break;
 		}
-		}
-
 	}
 
 	public void onWindowResized(int _int, int _int1) {
@@ -768,4 +775,5 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 	public void onClick(Widget arg0) {
 		// demoPanel.setG
 	}
+
 }
