@@ -47,6 +47,9 @@ public class DashboardScreen extends ScreenInterface {
 		final Label workListLabel = new Label("Work List");
 		workListLabel.setStylePrimaryName("freemed-DashboardLabel");
 
+		// Add widgets which need state to the stack
+		addChildWidget(workList);
+
 		workListContainer.add(workListLabel);
 		workListContainer.add(workList);
 
@@ -54,9 +57,9 @@ public class DashboardScreen extends ScreenInterface {
 	}
 
 	public void assignState(CurrentState s) {
-		state = s;
-		workList.setCurrentState(state);
+		super.assignState(s);
 
+		// Custom junk here
 		if (state.getDefaultProvider() > 0) {
 			workList.setProvider(state.getDefaultProvider());
 		}

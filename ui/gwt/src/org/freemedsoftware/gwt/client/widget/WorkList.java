@@ -26,9 +26,9 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
@@ -42,15 +42,12 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class WorkList extends Composite {
-
-	protected CurrentState state = null;
+public class WorkList extends WidgetInterface {
 
 	protected CustomSortableTable workListTable = null;
 
@@ -113,10 +110,6 @@ public class WorkList extends Composite {
 	public void setProvider(Integer pId) {
 		providerId = pId;
 		retrieveData();
-	}
-
-	public void setCurrentState(CurrentState s) {
-		state = s;
 	}
 
 	protected void retrieveData() {
