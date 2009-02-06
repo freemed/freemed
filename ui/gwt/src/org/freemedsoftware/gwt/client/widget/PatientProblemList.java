@@ -125,9 +125,32 @@ public class PatientProblemList extends Composite {
 			}
 		}
 
+		public void setChecked(boolean s) {
+			cb.setChecked(s);
+		}
+
 		public void onClick(Widget sender) {
 			if (sender == cb) {
-				Window.alert("toggle item " + internalId.toString());
+				// Handle clicking
+				JsonUtil.debug("current status = "
+						+ (cb.isChecked() ? "checked" : "not"));
+
+				// Set in dictionary
+				setSelected(internalId, cb.isChecked());
+
+				// Adjust all others to have same status as this.
+				try {
+					Iterator<ActionBar> iter = Arrays.asList(
+							actionBarMap.get(internalId)).iterator();
+					while (iter.hasNext()) {
+						ActionBar cur = iter.next();
+						if (cur != this) {
+							cur.setChecked(cb.isChecked());
+						}
+					}
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.toString());
+				}
 			} else if (sender == annotateImage) {
 				CreateAnnotationPopup p = new CreateAnnotationPopup(data);
 				p.center();
@@ -136,14 +159,16 @@ public class PatientProblemList extends Composite {
 				d.setItems(new Integer[] { Integer.parseInt(data.get("id")) });
 				d.center();
 			} else if (sender == deleteImage) {
-				deleteItem(internalId);
+				if (Window
+						.confirm("Are you sure you want to delete this item?")) {
+					deleteItem(internalId);
+				}
 			} else if (sender == modifyImage) {
 				modifyItem(internalId);
 			} else {
 				// Do nothing
 			}
 		}
-
 	}
 
 	public class CreateAnnotationPopup extends DialogBox implements
@@ -193,6 +218,10 @@ public class PatientProblemList extends Composite {
 
 	protected HashMap<String, String>[] dataStore = null;
 
+	protected HashMap<Integer, ActionBar[]> actionBarMap = new HashMap<Integer, ActionBar[]>();
+
+	protected List<Integer> selected = new ArrayList<Integer>();
+
 	protected int maximumRows = 10;
 
 	public PatientProblemList() {
@@ -234,6 +263,22 @@ public class PatientProblemList extends Composite {
 		loadData();
 	}
 
+	public void addToActionBarMap(Integer key, ActionBar ab) {
+		ActionBar[] x = actionBarMap.get(key);
+		if (x == null) {
+			// Create new
+			actionBarMap.put(key, new ActionBar[] { ab });
+		} else {
+			// Add to map
+			List<ActionBar> l = new ArrayList<ActionBar>();
+			for (int iter = 0; iter < x.length; iter++) {
+				l.add(x[iter]);
+			}
+			l.add(ab);
+			actionBarMap.put(key, (ActionBar[]) l.toArray(new ActionBar[0]));
+		}
+	}
+
 	public void setMaximumRows(int maxRows) {
 		maximumRows = maxRows;
 		Iterator<String> iter = tables.keySet().iterator();
@@ -252,8 +297,11 @@ public class PatientProblemList extends Composite {
 				if (columnName.compareToIgnoreCase("action") != 0) {
 					return null;
 				}
-				JsonUtil.debug("Rendering action bar");
-				return new ActionBar(data);
+				ActionBar ab = new ActionBar(data);
+				// Add to mapping, so we can control lots of these things
+				addToActionBarMap(Integer.parseInt(data.get("id")), ab);
+				// Push value back to table
+				return ab;
 			}
 		});
 		t.setMaximumRows(maximumRows);
@@ -279,6 +327,10 @@ public class PatientProblemList extends Composite {
 
 	@SuppressWarnings("unchecked")
 	protected void loadData() {
+		// Clear mappings during populate
+		selected.clear();
+		actionBarMap.clear();
+
 		if (patientId.intValue() == 0) {
 			JsonUtil
 					.debug("ERROR: patientId not defined when loadData called for PatientProblemList");
@@ -401,6 +453,23 @@ public class PatientProblemList extends Composite {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Set an item as being selected.
+	 * 
+	 * @param key
+	 * @param isSet
+	 */
+	protected void setSelected(Integer key, boolean isSet) {
+		try {
+			if (isSet) {
+				selected.add(key);
+			} else {
+				selected.remove(key);
+			}
+		} catch (Exception ex) {
+		}
 	}
 
 	/**
