@@ -24,34 +24,64 @@
 
 package org.freemedsoftware.gwt.client;
 
-import com.google.gwt.user.client.ui.Composite;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.TabPanel;
 
-public abstract class ScreenInterface extends Composite {
+public abstract class ScreenInterface extends WidgetInterface {
 
 	protected CurrentState state = null;
 
+	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
+
 	public ScreenInterface() {
 		super();
-		// setStylePrimaryName(this.getElement(), "freemed-ScreenInterface");
-		// setSize("100%", "100%");
 	}
 
-	public void assignState(CurrentState s) {
-		state = s;
+	/**
+	 * Append additional child WidgetInterface to stack.
+	 * 
+	 * @param child
+	 */
+	public void addChildWidget(WidgetInterface child) {
+		children.add(child);
+	}
+
+	/**
+	 * Take a child WidgetInterface out of the stack.
+	 * 
+	 * @param child
+	 */
+	public void removeChildWidget(WidgetInterface child) {
+		children.remove(child);
+	}
+
+	/**
+	 * Remove all children WidgetInterface objects.
+	 */
+	public void clearChildWidgets() {
+		children.clear();
 	}
 
 	public void setState(CurrentState s) {
 		state = s;
+		if (children.size() > 0) {
+			Iterator<WidgetInterface> iter = children.iterator();
+			while (iter.hasNext()) {
+				iter.next().setState(state);
+			}
+		}
 	}
 
-	public CurrentState getState() {
-		return state;
-	}
-
+	/**
+	 * Remove the current ScreenInterface from the parent TabPanel.
+	 */
 	public void closeScreen() {
 		TabPanel t = state.getTabPanel();
 		t.selectTab(t.getWidgetIndex(this) - 1);
 		t.remove(t.getWidgetIndex(this));
 	}
+
 }

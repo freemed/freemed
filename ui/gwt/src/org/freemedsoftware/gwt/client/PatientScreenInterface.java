@@ -42,7 +42,7 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	 * Pass current state object.
 	 */
 	public void assignState(CurrentState s) {
-		state = s;
+		setState(s);
 	}
 
 	/**
