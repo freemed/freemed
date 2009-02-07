@@ -26,14 +26,27 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Button;
@@ -66,8 +79,8 @@ import eu.future.earth.gwt.client.date.DateEvent.DateEventActions;
 import eu.future.earth.gwt.client.date.month.staend.AbstractMonthField;
 import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 
-public class SchedulerWidget extends DockPanel implements DateEventListener,
-		WindowResizeListener, ClickListener {
+public class SchedulerWidget extends WidgetInterface implements
+		DateEventListener, WindowResizeListener, ClickListener {
 
 	public class EventData implements Serializable {
 
@@ -80,6 +93,14 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		private String data = null;
 
 		private String id = null;
+
+		private Integer patientId = null;
+
+		private Integer providerId = null;
+
+		private String patientName = null;
+
+		private String providerName = null;
 
 		public EventData() {
 			super();
@@ -111,6 +132,22 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			return startTime;
 		}
 
+		public Integer getPatientId() {
+			return patientId;
+		}
+
+		public Integer getProviderId() {
+			return providerId;
+		}
+
+		public String getPatientName() {
+			return patientName;
+		}
+
+		public String getProviderName() {
+			return providerName;
+		}
+
 		public void setData(String data) {
 			this.data = data;
 		}
@@ -121,6 +158,22 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		public void setStartTime(Date startTime) {
 			this.startTime = startTime;
+		}
+
+		public void setPatientId(Integer patientId) {
+			this.patientId = patientId;
+		}
+
+		public void setProviderId(Integer providerId) {
+			this.providerId = providerId;
+		}
+
+		public void setPatientName(String patientName) {
+			this.patientName = patientName;
+		}
+
+		public void setProviderName(String providerName) {
+			this.providerName = providerName;
 		}
 
 		/**
@@ -144,6 +197,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		public String getIdentifier() {
 			return id;
 		}
+
 	}
 
 	public class EventDataDialog extends DialogBox implements KeyboardListener,
@@ -484,7 +538,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		public void editAfterClick(Object data, DateEventListener listener) {
 			final EventDataDialog dialog = new EventDataDialog(listener, data,
-					DateEventActions.UPDATE, currentState);
+					DateEventActions.UPDATE, state);
 			dialog.show();
 			dialog.center();
 		}
@@ -495,7 +549,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 			data.setStartTime(currentDate);
 			data.setEndTime(endDate);
 			final EventDataDialog dialog = new EventDataDialog(listener, data,
-					currentState);
+					state);
 			dialog.show();
 			dialog.center();
 		}
@@ -525,11 +579,11 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		}
 
 		public int getEndHour() {
-			return 24;
+			return 19;
 		}
 
 		public int getStartHour() {
-			return 0;
+			return 7;
 		}
 
 		public int showDaysInWeek() {
@@ -563,7 +617,6 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 		public void setEndTime(Object event, Date newEnd) {
 			final EventData data = getData(event);
 			data.setEndTime(newEnd);
-
 		}
 
 		public void setStartTime(Object event, Date newStart) {
@@ -640,21 +693,164 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 		private HashMap<String, EventData> items = new HashMap<String, EventData>();
 
+		protected Date startRange = null, endRange = null;
+
 		public SampleEventCacheController() {
 			super();
 		}
 
-		public void getEventsForRange(Date start, Date end, MultiView caller,
-				boolean doRefresh) {
+		public void getEventsForRange(Date start, Date end,
+				final MultiView caller, final boolean doRefresh) {
+			startRange = start;
+			endRange = end;
+			JsonUtil.debug("getEventsForRange: start = "
+					+ startRange.toString() + ", end = " + endRange.toString());
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				// JSON-RPC
+				String[] params = { dateToSql(start), dateToSql(end),
+						state.getDefaultProvider().toString() };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							state.getToaster().addItem("Scheduler",
+									"Failed to get scheduler items.",
+									Toaster.TOASTER_ERROR);
+						}
+
+						@SuppressWarnings("unchecked")
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								if (response.getText().compareToIgnoreCase(
+										"false") != 0) {
+									HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"HashMap<String,String>[]");
+									if (r != null) {
+										if (r.length > 0) {
+											JsonUtil.debug("found " + r.length
+													+ " events");
+											List<EventData> e = new ArrayList<EventData>();
+											for (int iter = 0; iter < r.length; iter++) {
+												JsonUtil.debug("Iterating at "
+														+ iter);
+												EventData d = shoehornEventData(r[iter]);
+												JsonUtil.debug("Found: "
+														+ d.toString());
+												e.add(d);
+											}
+											JsonUtil
+													.debug("calling populateEvents");
+											populateEvents(
+													(ArrayList<EventData>) e,
+													startRange, endRange,
+													caller, doRefresh);
+										}
+									}
+								} else {
+									JsonUtil
+											.debug("Received dummy response from JSON backend");
+								}
+							} else {
+								state.getToaster().addItem("Scheduler",
+										"Failed to get scheduler items.",
+										Toaster.TOASTER_ERROR);
+							}
+						}
+					});
+				} catch (RequestException e) {
+					state.getToaster().addItem("Scheduler",
+							"Failed to get scheduler items.",
+							Toaster.TOASTER_ERROR);
+				}
+			} else {
+				// GWT-RPC
+			}
+		}
+
+		/**
+		 * Shoehorn string representations of date and time into a
+		 * java.util.Date object.
+		 * 
+		 * @param date
+		 *            SQL format date (YYYY-MM-DD)
+		 * @param hour
+		 *            Hour (24 hour format)
+		 * @param minute
+		 *            Minute
+		 * @return
+		 */
+		public Calendar importSqlDateTime(String date, String hour,
+				String minute) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+			calendar.set(Calendar.MONTH,
+					Integer.parseInt(date.substring(5, 7)) - 1);
+			calendar
+					.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+
+			calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+			calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			return calendar;
+		}
+
+		public Date shoehornSqlDateTime(String date, String hour, String minute) {
+			Calendar x = importSqlDateTime(date, hour, minute);
+			return new Date(x.getTime().getTime());
+		}
+
+		public EventData shoehornEventData(HashMap<String, String> o) {
+			EventData data = new EventData();
+
+			// Set date / time information
+			Calendar cal = importSqlDateTime(o.get("date_of"), o.get("hour"), o
+					.get("minute"));
+			data.setStartTime(new Date(cal.getTime().getTime()));
+			cal.add(Calendar.MINUTE, Integer.parseInt(o.get("duration")));
+			data.setEndTime(new Date(cal.getTime().getTime()));
+
+			// Set patient and other appointment information
+			data.setPatientId(Integer.parseInt(o.get("patient_id")));
+			data.setProviderId(Integer.parseInt(o.get("provider_id")));
+			data.setPatientName(o.get("patient"));
+			data.setProviderName(o.get("provider"));
+
+			// Set event label
+			data.setData(o.get("patient") + ": " + o.get("note"));
+
+			return data;
+		}
+
+		public void populateEvents(ArrayList<EventData> data, Date start,
+				Date end, MultiView caller, boolean doRefresh) {
+			JsonUtil.debug("populateEvents for " + data.size() + " events");
+			JsonUtil.debug("start = " + start.toString() + ", end = "
+					+ end.toString());
 			ArrayList<EventData> found = new ArrayList<EventData>();
-			Iterator<EventData> walker = items.values().iterator();
+			Iterator<EventData> walker = data.iterator();
 			while (walker.hasNext()) {
-				EventData data = (EventData) walker.next();
-				if ((data.getStartTime().after(start) && data.getStartTime()
-						.before(end))
-						|| DateUtils.isSameDay(data.getStartTime(), start)
-						|| DateUtils.isSameDay(data.getStartTime(), end)) {
-					found.add(data);
+				EventData thisData = (EventData) walker.next();
+				JsonUtil.debug("Iterating through event data");
+				if ((thisData.getStartTime().after(start) && thisData
+						.getStartTime().before(end))
+						|| DateUtils.isSameDay(thisData.getStartTime(), start)
+						|| DateUtils.isSameDay(thisData.getStartTime(), end)) {
+					JsonUtil.debug("event " + thisData.toString() + " added");
+					found.add(thisData);
 				}
 			}
 			caller.setEvents((Serializable[]) found
@@ -680,13 +876,13 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 
 	}
 
-	protected CurrentState currentState = null;
+	protected CurrentState state = null;
 
 	private Label label = new Label("Feedback");
 
-	private MultiView schedulerContainerPanel = new MultiView(
-			(EventController) new SampleEventCacheController(),
-			(DateRenderer) new StringPanelRenderer());
+	private MultiView schedulerContainerPanel = null;
+
+	protected DockPanel panel = new DockPanel();
 
 	public SchedulerWidget() {
 		super();
@@ -700,14 +896,19 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 	}
 
 	public void init(CurrentState s) {
-		currentState = s;
+		state = s;
+		initWidget(panel);
+
+		schedulerContainerPanel = new MultiView(
+				(EventController) new SampleEventCacheController(),
+				(DateRenderer) new StringPanelRenderer());
 
 		final HorizontalPanel fields = new HorizontalPanel();
-		super.add(fields, DockPanel.NORTH);
+		panel.add(fields, DockPanel.NORTH);
 		fields.add(label);
 		fields.setCellHeight(label, "20px");
 
-		super.add(schedulerContainerPanel, DockPanel.CENTER);
+		panel.add(schedulerContainerPanel, DockPanel.CENTER);
 		schedulerContainerPanel.setWidth("100%");
 		int height = Window.getClientHeight();
 		int shortcutHeight = height - 160;
@@ -722,7 +923,7 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 	}
 
 	public void setCurrentState(CurrentState s) {
-		currentState = s;
+		state = s;
 	}
 
 	/**
@@ -731,9 +932,15 @@ public class SchedulerWidget extends DockPanel implements DateEventListener,
 	 * @param d
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	protected int dateToMinutes(Date d) {
-		return (d.getHours() * 60) + d.getMinutes();
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(d);
+		return (cal.get(Calendar.HOUR_OF_DAY) * 60) + cal.get(Calendar.MINUTE);
+	}
+
+	protected String dateToSql(Date d) {
+		DateTimeFormat ymdFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+		return ymdFormat.format(d);
 	}
 
 	public void handleDateEvent(DateEvent newEvent) {

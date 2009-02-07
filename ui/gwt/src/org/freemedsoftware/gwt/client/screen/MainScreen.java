@@ -128,6 +128,15 @@ public class MainScreen extends Composite {
 					});
 			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
 
+			final MenuItem menuItem_scheduler = menuBar_1.addItem("scheduler",
+					new Command() {
+						public void execute() {
+							Util.spawnTab("Scheduler", new SchedulerScreen(),
+									state);
+						}
+					});
+			menuItem_scheduler.setStyleName("freemed-SecondaryMenuItem");
+
 			final MenuItem menuItem_7 = menuBar_1.addItem("config",
 					new Command() {
 						public void execute() {
