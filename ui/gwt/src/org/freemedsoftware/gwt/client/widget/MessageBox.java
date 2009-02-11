@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -58,19 +57,17 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MessageBox extends WidgetInterface {
 
-	Label messageCountLabel = new Label("You have no new Messages!");
+	protected Label messageCountLabel = new Label("You have no new Messages!");
 
 	protected HashMap<String, String>[] result;
 
 	protected String resultString;
 
-	CurrentState state = null;
+	protected CustomSortableTable wMessages = new CustomSortableTable();
 
-	CustomSortableTable wMessages = new CustomSortableTable();
+	protected HashMap<String, String>[] dataMemory;
 
-	HashMap<String, String>[] dataMemory;
-
-	Popup popupMessageView;
+	protected Popup popupMessageView;
 
 	public MessageBox() {
 
@@ -109,10 +106,10 @@ public class MessageBox extends WidgetInterface {
 					final Integer messageId = new Integer(wMessages
 							.getValueByRow(row));
 					if ((col == 0) || (col == 2)) {
-						MessageView messageView = new MessageView(
-								showMessage(messageId));
 						popupMessageView = new Popup();
-						popupMessageView.setNewWidget(messageView);
+						popupMessageView.setState(getState());
+						popupMessageView.setNewWidget(new MessageView(
+								showMessage(messageId)));
 						popupMessageView.initialize();
 					}
 				} catch (Exception e) {

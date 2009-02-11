@@ -25,25 +25,29 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.WidgetInterface;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class Popup extends PopupPanel {
 
-	protected Widget mWidget;
+	protected CurrentState state = null;
 
-	final SimplePanel sPanelOuter = new SimplePanel();
+	protected WidgetInterface mWidget = null;
 
-	final SimplePanel sPanelInner = new SimplePanel();
+	protected final SimplePanel sPanelOuter = new SimplePanel();
 
-	final ScrollPanel scrollPanel = new ScrollPanel();
+	protected final SimplePanel sPanelInner = new SimplePanel();
 
-	final VerticalPanel verticalPanel = new VerticalPanel();
+	protected final ScrollPanel scrollPanel = new ScrollPanel();
+
+	protected final VerticalPanel verticalPanel = new VerticalPanel();
 
 	protected Integer widthmodifier = 4;
 
@@ -58,8 +62,21 @@ public class Popup extends PopupPanel {
 		super(true);
 	}
 
-	public void setNewWidget(Widget w) {
+	public void setState(CurrentState st) {
+		state = st;
+	}
+
+	public CurrentState getState() {
+		return state;
+	}
+
+	public void setNewWidget(WidgetInterface w) {
 		mWidget = w;
+
+		// Pass state on to child widget
+		if (mWidget != null) {
+			mWidget.setState(getState());
+		}
 	}
 
 	public void initialize() {
