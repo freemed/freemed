@@ -25,8 +25,10 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.screen.MessagingComposeScreen;
+import org.freemedsoftware.gwt.client.screen.MessagingScreen;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -73,11 +75,14 @@ public class MessageView extends WidgetInterface {
 
 		replyWrapper.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final Popup popup = new Popup();
-				popup.setNewWidget(new MessagingComposeScreen());
-				popup.setWidthOffset(20);
-				popup.setHeightOffset(10);
-				popup.initialize();
+				Util.spawnTab("Messages", new MessagingComposeScreen(), state);
+
+				/*
+				 * Previous Code final Popup popup = new Popup();
+				 * popup.setNewWidget(new MessagingComposeScreen());
+				 * popup.setWidthOffset(20); popup.setHeightOffset(10);
+				 * popup.initialize();
+				 */
 			}
 
 		});
