@@ -42,8 +42,8 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -70,7 +70,6 @@ public class MessageBox extends WidgetInterface {
 	protected Popup popupMessageView;
 
 	public MessageBox() {
-
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		sPanel
@@ -106,10 +105,16 @@ public class MessageBox extends WidgetInterface {
 					final Integer messageId = new Integer(wMessages
 							.getValueByRow(row));
 					if ((col == 0) || (col == 2)) {
+						MessageView messageView = new MessageView(
+								showMessage(messageId));
 						popupMessageView = new Popup();
 						popupMessageView.setState(getState());
-						popupMessageView.setNewWidget(new MessageView(
-								showMessage(messageId)));
+						popupMessageView.setNewWidget(messageView);
+						messageView.setOnClose(new Command() {
+							public void execute() {
+								popupMessageView.hide();
+							}
+						});
 						popupMessageView.initialize();
 					}
 				} catch (Exception e) {
@@ -221,22 +226,53 @@ public class MessageBox extends WidgetInterface {
 			String[] countparams = { JsonUtil.jsonify(Boolean.FALSE),
 					JsonUtil.jsonify(Boolean.FALSE) };
 
-			loadData(runJsonRequest(RequestBuilder.POST,
-					"org.freemedsoftware.module.MessagesModule.GetAllByTag",
-					messagesparams));
-			loadCounter(runJsonRequest(RequestBuilder.POST,
-					"org.freemedsoftware.module.MessagesModule.UnreadMessages",
-					countparams));
+			retrieveData(messagesparams);
+			retrieveCounter(countparams);
 		} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
 			// Use GWT-RPC to retrieve the data
 			// TODO: Create that stuff
 		}
 	}
 
-	protected HashMap<String, String>[] runJsonRequest(Method httpmethod,
-			String module, String[] params) {
-		RequestBuilder builder = new RequestBuilder(httpmethod, URL.encode(Util
-				.getJsonRequest(module, params)));
+	protected void retrieveCounter(String[] params) {
+		RequestBuilder builder = new RequestBuilder(
+				RequestBuilder.POST,
+				URL
+						.encode(Util
+								.getJsonRequest(
+										"org.freemedsoftware.module.MessagesModule.UnreadMessages",
+										params)));
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+				public void onError(Request request, Throwable ex) {
+					GWT.log(request.toString(), ex);
+				}
+
+				public void onResponseReceived(Request request,
+						Response response) {
+					if (response.getStatusCode() == 200) {
+						Integer data = (Integer) JsonUtil
+								.shoehornJson(JSONParser.parse(response
+										.getText()), "Integer");
+						if (data != null) {
+							// loadCounter(data);
+						}
+					}
+				}
+			});
+		} catch (RequestException e) {
+			// nothing here right now
+		}
+	}
+
+	protected void retrieveData(String[] params) {
+		RequestBuilder builder = new RequestBuilder(
+				RequestBuilder.POST,
+				URL
+						.encode(Util
+								.getJsonRequest(
+										"org.freemedsoftware.module.MessagesModule.GetAllByTag",
+										params)));
 		try {
 			builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable ex) {
@@ -247,22 +283,19 @@ public class MessageBox extends WidgetInterface {
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (response.getStatusCode() == 200) {
-						setResult((HashMap<String, String>[]) JsonUtil
+						HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
 								.shoehornJson(JSONParser.parse(response
-										.getText()), "HashMap<String,String>[]"));
-					}
-
-					if (getResult() == null) {
-						// some error occurred
-						JsonUtil.debug("HTTP-StatusCode at MessageBox.java: "
-								+ Integer.toString(response.getStatusCode()));
+										.getText()), "HashMap<String,String>[]");
+						if (data != null) {
+							setResult(data);
+							loadData(data);
+						}
 					}
 				}
 			});
 		} catch (RequestException e) {
 			// nothing here right now
 		}
-		return result;
 	}
 
 	public void loadData(HashMap<String, String>[] data) {
@@ -276,14 +309,12 @@ public class MessageBox extends WidgetInterface {
 		}
 	}
 
-	public void loadCounter(HashMap<String, String>[] data) {
-		Integer count = Integer.valueOf(data[0].get("count"));
+	public void loadCounter(Integer count) {
 		String text;
 		if (count < 1) {
-			text = ("You have ".concat(Integer.toString(count)))
-					.concat(" new Messages!");
+			text = "You have " + count.toString() + " new Messages!";
 		} else {
-			text = "There are no new Messages.";
+			text = "There are no new messages.";
 		}
 		messageCountLabel.setText(text);
 	}

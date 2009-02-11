@@ -28,8 +28,8 @@ package org.freemedsoftware.gwt.client.widget;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.screen.MessagingComposeScreen;
-import org.freemedsoftware.gwt.client.screen.MessagingScreen;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -43,8 +43,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MessageView extends WidgetInterface {
 
-	public MessageView(String text) {
+	protected Command onClose = null;
 
+	public MessageView(String text) {
 		final SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		VerticalPanel verticalPanel = new VerticalPanel();
@@ -76,15 +77,10 @@ public class MessageView extends WidgetInterface {
 		replyWrapper.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				Util.spawnTab("Messages", new MessagingComposeScreen(), state);
-
-				/*
-				 * Previous Code final Popup popup = new Popup();
-				 * popup.setNewWidget(new MessagingComposeScreen());
-				 * popup.setWidthOffset(20); popup.setHeightOffset(10);
-				 * popup.initialize();
-				 */
+				if (onClose != null) {
+					onClose.execute();
+				}
 			}
-
 		});
 		horizontalPanel.add(replyWrapper);
 
@@ -107,13 +103,16 @@ public class MessageView extends WidgetInterface {
 				// TODO: create that
 				Window.alert("Forward");
 			}
-
 		});
 		horizontalPanel.add(forwardWrapper);
 
 		verticalPanel.add(new HTML(text));
 		sPanel.add(verticalPanel);
 
+	}
+
+	public void setOnClose(Command c) {
+		onClose = c;
 	}
 
 }
