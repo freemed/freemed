@@ -48,6 +48,7 @@
 	<stylesheet src="resources/ScrollTable.css" />
 	
 	<entry-point class="org.freemedsoftware.gwt.client.FreemedInterface" />
+	<inherits name="com.allen_sauer.gwt.log.gwt-log-impl"/>
   
 	<!-- Logging properties -->
 	<!--

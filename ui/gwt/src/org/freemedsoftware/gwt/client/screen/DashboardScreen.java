@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.widget.MessageBox;
 import org.freemedsoftware.gwt.client.widget.WorkList;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -42,7 +43,12 @@ public class DashboardScreen extends ScreenInterface {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
-
+		
+		final VerticalPanel widgetContainer = new VerticalPanel();
+		horizontalPanel.add(widgetContainer);
+		
+		horizontalPanel.add(widgetContainer);
+		
 		final VerticalPanel workListContainer = new VerticalPanel();
 		final Label workListLabel = new Label("Work List");
 		workListLabel.setStylePrimaryName("freemed-DashboardLabel");
@@ -53,7 +59,14 @@ public class DashboardScreen extends ScreenInterface {
 		workListContainer.add(workListLabel);
 		workListContainer.add(workList);
 
-		horizontalPanel.add(workListContainer);
+		widgetContainer.add(workListContainer);
+		
+
+
+
+		final MessageBox messageBox = new MessageBox();
+		widgetContainer.add(messageBox);
+
 	}
 
 	public void assignState(CurrentState s) {
