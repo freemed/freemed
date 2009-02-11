@@ -25,7 +25,7 @@
 
   <target name="compile" description="Compile src to bin">
     <mkdir dir="www"/>
-    <javac srcdir="src:test" destdir="www" includes="**" debug="on" debuglevel="lines,vars,source" source="1.4">
+    <javac srcdir="src:test" destdir="www" includes="**" debug="on" debuglevel="lines,vars,source" source="1.5">
       <classpath refid="project.class.path"/>
     </javac>
   </target>
