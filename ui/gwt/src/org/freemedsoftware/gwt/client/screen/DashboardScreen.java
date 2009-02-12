@@ -43,12 +43,12 @@ public class DashboardScreen extends ScreenInterface {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
-		
+
 		final VerticalPanel widgetContainer = new VerticalPanel();
 		horizontalPanel.add(widgetContainer);
-		
+
 		horizontalPanel.add(widgetContainer);
-		
+
 		final VerticalPanel workListContainer = new VerticalPanel();
 		final Label workListLabel = new Label("Work List");
 		workListLabel.setStylePrimaryName("freemed-DashboardLabel");
@@ -60,13 +60,16 @@ public class DashboardScreen extends ScreenInterface {
 		workListContainer.add(workList);
 
 		widgetContainer.add(workListContainer);
-		
 
-
-
+		final VerticalPanel messageBoxContainer = new VerticalPanel();
+		final Label messageBoxLabel = new Label("Messages");
+		messageBoxLabel.setStylePrimaryName("freemed-DashboardLabel");
 		final MessageBox messageBox = new MessageBox();
-		widgetContainer.add(messageBox);
 
+		messageBoxContainer.add(messageBoxLabel);
+		messageBoxContainer.add(messageBox);
+
+		widgetContainer.add(messageBoxContainer);
 	}
 
 	public void assignState(CurrentState s) {
