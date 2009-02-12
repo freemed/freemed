@@ -45,7 +45,9 @@ public class MessageView extends WidgetInterface {
 
 	protected Command onClose = null;
 
-	public MessageView(String text) {
+	protected HTML text = new HTML("");
+
+	public MessageView() {
 		final SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		VerticalPanel verticalPanel = new VerticalPanel();
@@ -106,9 +108,13 @@ public class MessageView extends WidgetInterface {
 		});
 		horizontalPanel.add(forwardWrapper);
 
-		verticalPanel.add(new HTML(text));
+		verticalPanel.add(text);
 		sPanel.add(verticalPanel);
 
+	}
+
+	public void setText(String t) {
+		text.setHTML(t);
 	}
 
 	public void setOnClose(Command c) {

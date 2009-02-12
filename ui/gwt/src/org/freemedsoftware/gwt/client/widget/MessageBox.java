@@ -61,8 +61,6 @@ public class MessageBox extends WidgetInterface {
 
 	protected HashMap<String, String>[] result;
 
-	protected String resultString;
-
 	protected CustomSortableTable wMessages = new CustomSortableTable();
 
 	protected HashMap<String, String>[] dataMemory;
@@ -97,6 +95,7 @@ public class MessageBox extends WidgetInterface {
 		wMessages.addColumn("From", "from_user"); // col 1
 		wMessages.addColumn("Subject", "subject"); // col 2
 		wMessages.setIndexName("id");
+
 		// TODO: Fix the TableListener - Adapt the copied code so it fits here
 		wMessages.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
@@ -105,8 +104,8 @@ public class MessageBox extends WidgetInterface {
 					final Integer messageId = new Integer(wMessages
 							.getValueByRow(row));
 					if ((col == 0) || (col == 2)) {
-						MessageView messageView = new MessageView(
-								showMessage(messageId));
+						MessageView messageView = new MessageView();
+						showMessage(messageId, messageView);
 						popupMessageView = new Popup();
 						popupMessageView.setState(getState());
 						popupMessageView.setNewWidget(messageView);
@@ -166,12 +165,14 @@ public class MessageBox extends WidgetInterface {
 		retrieveData("");
 	}
 
-	public String showMessage(Integer messageId) {
+	public void showMessage(Integer messageId, MessageView messageView) {
+		final MessageView view = messageView;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			if (messageId == 1) {
-				return "This is some sample message according to ID#1. Here you can see that the messages can be designed using <b>HTML</b> in a <i>very cool <b>way</b></i>. <br/>You can even <sub>subcase letters</sub>.";
+				view
+						.setText("This is some sample message according to ID#1. Here you can see that the messages can be designed using <b>HTML</b> in a <i>very cool <b>way</b></i>. <br/>You can even <sub>subcase letters</sub>.");
 			} else if (messageId == 2) {
-				return "Text to MessageId 2";
+				view.setText("Text to MessageId 2");
 			}
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { "MessagesModule", JsonUtil.jsonify(messageId) };
@@ -196,8 +197,8 @@ public class MessageBox extends WidgetInterface {
 											.getText()),
 											"HashMap<String,String>");
 							if (r != null) {
-								setResultString(r.get("msgtext").replace("\\",
-										"").replace("\n", "<br/>"));
+								view.setText(r.get("msgtext").replace("\\", "")
+										.replace("\n", "<br/>"));
 							}
 						} else {
 						}
@@ -209,8 +210,6 @@ public class MessageBox extends WidgetInterface {
 		} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
 
 		}
-
-		return getResultString();
 	}
 
 	protected void retrieveData(String searchtag) {
@@ -226,75 +225,70 @@ public class MessageBox extends WidgetInterface {
 			String[] countparams = { JsonUtil.jsonify(Boolean.FALSE),
 					JsonUtil.jsonify(Boolean.FALSE) };
 
-			retrieveData(messagesparams);
-			retrieveCounter(countparams);
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.MessagesModule.UnreadMessages",
+											countparams)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						GWT.log(request.toString(), ex);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (response.getStatusCode() == 200) {
+							Integer data = (Integer) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Integer");
+							if (data != null) {
+								loadCounter(data);
+							}
+						}
+					}
+				});
+			} catch (RequestException e) {
+				// nothing here right now
+			}
+
+			// Get data
+			RequestBuilder dataBuilder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.MessagesModule.GetAllByTag",
+											messagesparams)));
+			try {
+				dataBuilder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						GWT.log(request.toString(), ex);
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (response.getStatusCode() == 200) {
+							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (data != null) {
+								setResult(data);
+								loadData(data);
+							}
+						}
+					}
+				});
+			} catch (RequestException e) {
+				// nothing here right now
+			}
 		} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
 			// Use GWT-RPC to retrieve the data
 			// TODO: Create that stuff
-		}
-	}
-
-	protected void retrieveCounter(String[] params) {
-		RequestBuilder builder = new RequestBuilder(
-				RequestBuilder.POST,
-				URL
-						.encode(Util
-								.getJsonRequest(
-										"org.freemedsoftware.module.MessagesModule.UnreadMessages",
-										params)));
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-				public void onError(Request request, Throwable ex) {
-					GWT.log(request.toString(), ex);
-				}
-
-				public void onResponseReceived(Request request,
-						Response response) {
-					if (response.getStatusCode() == 200) {
-						Integer data = (Integer) JsonUtil
-								.shoehornJson(JSONParser.parse(response
-										.getText()), "Integer");
-						if (data != null) {
-							// loadCounter(data);
-						}
-					}
-				}
-			});
-		} catch (RequestException e) {
-			// nothing here right now
-		}
-	}
-
-	protected void retrieveData(String[] params) {
-		RequestBuilder builder = new RequestBuilder(
-				RequestBuilder.POST,
-				URL
-						.encode(Util
-								.getJsonRequest(
-										"org.freemedsoftware.module.MessagesModule.GetAllByTag",
-										params)));
-		try {
-			builder.sendRequest(null, new RequestCallback() {
-				public void onError(Request request, Throwable ex) {
-					GWT.log(request.toString(), ex);
-				}
-
-				@SuppressWarnings("unchecked")
-				public void onResponseReceived(Request request,
-						Response response) {
-					if (response.getStatusCode() == 200) {
-						HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-								.shoehornJson(JSONParser.parse(response
-										.getText()), "HashMap<String,String>[]");
-						if (data != null) {
-							setResult(data);
-							loadData(data);
-						}
-					}
-				}
-			});
-		} catch (RequestException e) {
-			// nothing here right now
 		}
 	}
 
@@ -309,10 +303,15 @@ public class MessageBox extends WidgetInterface {
 		}
 	}
 
+	/**
+	 * Set current messages count as displayed.
+	 * 
+	 * @param count
+	 */
 	public void loadCounter(Integer count) {
 		String text;
 		if (count < 1) {
-			text = "You have " + count.toString() + " new Messages!";
+			text = "You have " + count.toString() + " new messages!";
 		} else {
 			text = "There are no new messages.";
 		}
@@ -323,16 +322,8 @@ public class MessageBox extends WidgetInterface {
 		return result;
 	}
 
-	public String getResultString() {
-		return resultString;
-	}
-
 	public void setResult(HashMap<String, String>[] data) {
 		result = data;
-	}
-
-	public void setResultString(String data) {
-		resultString = data;
 	}
 
 	@SuppressWarnings("unchecked")
