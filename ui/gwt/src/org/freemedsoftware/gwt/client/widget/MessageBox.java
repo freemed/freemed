@@ -33,7 +33,6 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.screen.MessagingScreen;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -145,21 +144,6 @@ public class MessageBox extends WidgetInterface {
 		});
 
 		horizontalPanel.add(messageCountLabel);
-
-		final PushButton pushButton = new PushButton("", "");
-		horizontalPanel.add(pushButton);
-		pushButton.getUpFace().setImage(
-				new Image("resources/images/messaging_arrow.32x32.png"));
-		pushButton.getDownFace().setImage(
-				new Image("resources/images/messaging_arrow.32x32.png"));
-
-		// TODO: Clicking on the Button still has no effect
-		pushButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-				Util.spawnTab("Messages", new MessagingScreen(), state);
-			}
-
-		});
 
 		// Load the Data; we have no searchtag - we search for everything
 		retrieveData("");

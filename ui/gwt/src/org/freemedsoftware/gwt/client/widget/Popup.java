@@ -89,9 +89,8 @@ public class Popup extends PopupPanel {
 				.concat("px"));
 		scrollPanel.add(mWidget);
 		verticalPanel.add(scrollPanel);
-		verticalPanel
-				.add(new HTML(
-						"<br/><br/><small>(Click outside this popup to close it)</small>"));
+		verticalPanel.add(new HTML("<br/><br/><small>("
+				+ "Click outside this popup to close it." + ")</small>"));
 		sPanelInner.add(verticalPanel);
 		setWidget(sPanelOuter);
 		setPosition();
