@@ -60,6 +60,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import eu.future.earth.gwt.client.DateEditFieldWithPicker;
@@ -77,6 +78,8 @@ import eu.future.earth.gwt.client.date.EventPanel;
 import eu.future.earth.gwt.client.date.MultiView;
 import eu.future.earth.gwt.client.date.DateEvent.DateEventActions;
 import eu.future.earth.gwt.client.date.month.staend.AbstractMonthField;
+import eu.future.earth.gwt.client.date.picker.DatePickerMonthNavigator;
+import eu.future.earth.gwt.client.date.picker.NoneContraintAndEntryRenderer;
 import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 
 public class SchedulerWidget extends WidgetInterface implements
@@ -109,7 +112,11 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public EventData(String currentId) {
 			super();
-			id = currentId;
+			if (currentId != null) {
+				id = currentId;
+			} else {
+				id = String.valueOf(System.currentTimeMillis());
+			}
 		}
 
 		public boolean isAlldayEvent() {
@@ -253,13 +260,25 @@ public class SchedulerWidget extends WidgetInterface implements
 			setAnimationEnabled(true);
 			setStyleName("freemed-SchedulerEventDialog");
 
+			boolean reverseTime = false;
+
 			command = newCommand;
 			data = (EventData) newData;
 			listener = newListener;
-			date.setDate(data.getStartTime());
-			start.setDate(data.getStartTime());
+
+			// If drag is backwards, hack to reverse times shown in display.
+			if (data.getStartTime().getTime() > data.getEndTime().getTime()) {
+				reverseTime = true;
+			}
+
+			date
+					.setDate(!reverseTime ? data.getStartTime() : data
+							.getEndTime());
+			start.setDate(!reverseTime ? data.getStartTime() : data
+					.getEndTime());
 			if (data.getEndTime() != null) {
-				end.setDate(data.getEndTime());
+				end.setDate(!reverseTime ? data.getEndTime() : data
+						.getStartTime());
 				wholeDay.setChecked(false);
 			} else {
 				wholeDay.setChecked(true);
@@ -563,7 +582,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public boolean supportMonthView() {
-			return true;
+			return false;
 		}
 
 		public boolean showWholeDayEventView() {
@@ -625,7 +644,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getGridSize() {
-			return 15;
+			return 10;
 		}
 
 		public boolean isWholeDayEvent(Object event) {
@@ -645,7 +664,6 @@ public class SchedulerWidget extends WidgetInterface implements
 				panel.setData(newData);
 				return panel;
 			} else {
-
 				switch (viewType) {
 				case DatePanel.MONTH: {
 					final MonthField panel = new MonthField(this);
@@ -689,16 +707,17 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 	}
 
-	public class SampleEventCacheController implements EventController {
+	public class EventCacheController implements EventController {
 
 		private HashMap<String, EventData> items = new HashMap<String, EventData>();
 
 		protected Date startRange = null, endRange = null;
 
-		public SampleEventCacheController() {
+		public EventCacheController() {
 			super();
 		}
 
+		@SuppressWarnings("unchecked")
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
 			startRange = start;
@@ -706,7 +725,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			JsonUtil.debug("getEventsForRange: start = "
 					+ startRange.toString() + ", end = " + endRange.toString());
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
-
+				// TODO: STUBBED
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				// JSON-RPC
 				String[] params = { dateToSql(start), dateToSql(end),
@@ -750,11 +769,9 @@ public class SchedulerWidget extends WidgetInterface implements
 												e.add(d);
 											}
 											JsonUtil
-													.debug("calling populateEvents");
-											populateEvents(
-													(ArrayList<EventData>) e,
-													startRange, endRange,
-													caller, doRefresh);
+													.debug("using setEventsByArrayList");
+											caller
+													.setEventsByArrayList((ArrayList<?>) e);
 										}
 									}
 								} else {
@@ -814,7 +831,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public EventData shoehornEventData(HashMap<String, String> o) {
-			EventData data = new EventData();
+			EventData data = new EventData(o.get("scheduler_id"));
 
 			// Set date / time information
 			Calendar cal = importSqlDateTime(o.get("date_of"), o.get("hour"), o
@@ -835,16 +852,27 @@ public class SchedulerWidget extends WidgetInterface implements
 			return data;
 		}
 
-		public void populateEvents(ArrayList<EventData> data, Date start,
-				Date end, MultiView caller, boolean doRefresh) {
-			JsonUtil.debug("populateEvents for " + data.size() + " events");
+		public void populateEventsForRange(Date start, Date end,
+				MultiView caller, boolean reloadData) {
+			JsonUtil.debug("populateEvents for " + items.size() + " events");
 			JsonUtil.debug("start = " + start.toString() + ", end = "
 					+ end.toString());
 			ArrayList<EventData> found = new ArrayList<EventData>();
-			Iterator<EventData> walker = data.iterator();
+			Iterator<String> walker = items.keySet().iterator();
+			int recursionDetector = 0;
 			while (walker.hasNext()) {
-				EventData thisData = (EventData) walker.next();
-				JsonUtil.debug("Iterating through event data");
+				recursionDetector++;
+				if (recursionDetector > 50) {
+					JsonUtil.debug("recursion detected, bouncing");
+					continue;
+				}
+				JsonUtil.debug("populateEventsForRange - iterating");
+				String key = walker.next();
+				JsonUtil.debug("--> iterating through key = " + key);
+				EventData thisData = (EventData) items.get(key);
+				JsonUtil.debug(" --> start = " + start + ", end = " + end
+						+ ", thisData.getStartTime = "
+						+ thisData.getStartTime());
 				if ((thisData.getStartTime().after(start) && thisData
 						.getStartTime().before(end))
 						|| DateUtils.isSameDay(thisData.getStartTime(), start)
@@ -853,8 +881,9 @@ public class SchedulerWidget extends WidgetInterface implements
 					found.add(thisData);
 				}
 			}
-			caller.setEvents((Serializable[]) found
-					.toArray(new Serializable[0]));
+			JsonUtil
+					.debug("attempting to add events, numbered " + found.size());
+			caller.setEvents((Object[]) found.toArray(new Object[0]));
 		}
 
 		public void updateEvent(Object updated) {
@@ -864,29 +893,30 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public void removeEvent(Object updated) {
 			EventData data = (EventData) updated;
-			// Window.alert("Remove" + items.size());
 			items.remove(data.getIdentifier());
-			// Window.alert("Remove" + items.size());
 		}
 
 		public void addEvent(Object updated) {
 			EventData data = (EventData) updated;
 			items.put(data.getIdentifier(), (EventData) updated);
 		}
-
 	}
 
 	protected CurrentState state = null;
 
-	private Label label = new Label("Feedback");
+	private Label label = new Label("");
 
-	private MultiView schedulerContainerPanel = null;
+	private MultiView multiPanel = null;
+
+	private DatePickerMonthNavigator navigator = new DatePickerMonthNavigator(
+			new NoneContraintAndEntryRenderer());
 
 	protected DockPanel panel = new DockPanel();
 
+	protected boolean alreadyInitialized = false;
+
 	public SchedulerWidget() {
 		super();
-		init(null);
 	}
 
 	public SchedulerWidget(CurrentState s) {
@@ -896,34 +926,51 @@ public class SchedulerWidget extends WidgetInterface implements
 	}
 
 	public void init(CurrentState s) {
-		state = s;
-		initWidget(panel);
+		if (!alreadyInitialized) {
+			alreadyInitialized = true;
+			state = s;
+			multiPanel = new MultiView(new EventCacheController(),
+					new StringPanelRenderer());
+			JsonUtil.debug("initializing pabel widget");
+			initWidget(panel);
 
-		schedulerContainerPanel = new MultiView(
-				(EventController) new SampleEventCacheController(),
-				(DateRenderer) new StringPanelRenderer());
+			final HorizontalPanel fields = new HorizontalPanel();
+			panel.add(fields, DockPanel.NORTH);
+			fields.add(label);
+			fields.setCellHeight(label, "20px");
 
-		final HorizontalPanel fields = new HorizontalPanel();
-		panel.add(fields, DockPanel.NORTH);
-		fields.add(label);
-		fields.setCellHeight(label, "20px");
+			VerticalPanel posPanel = new VerticalPanel();
+			posPanel.setWidth("100%");
+			HorizontalPanel pickerHolder = new HorizontalPanel();
+			pickerHolder.add(posPanel);
+			pickerHolder.add(multiPanel);
 
-		panel.add(schedulerContainerPanel, DockPanel.CENTER);
-		schedulerContainerPanel.setWidth("100%");
-		int height = Window.getClientHeight();
-		int shortcutHeight = height - 160;
-		if (shortcutHeight < 1) {
-			shortcutHeight = 1;
+			HTML space = new HTML(" ");
+			posPanel.add(space);
+			space.setHeight("40px");
+			posPanel.add(navigator);
+
+			pickerHolder.setCellWidth(posPanel, "200px");
+			pickerHolder.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
+
+			pickerHolder.setCellWidth(multiPanel, "100%");
+			multiPanel.setWidth("100%");
+			posPanel.setWidth("200px");
+
+			panel.add(pickerHolder, DockPanel.CENTER);
+			pickerHolder.setWidth("100%");
+			onWindowResized(-1, Window.getClientHeight());
+			panel.setStyleName("whiteForDemo");
+			multiPanel.addDateListener(this);
+			navigator.addDateListener(this);
+			Window.addWindowResizeListener(this);
+			multiPanel.scrollToHour(9);
 		}
-		super.setStyleName("whiteForDemo");
-		schedulerContainerPanel.setHeight(shortcutHeight);
-		schedulerContainerPanel.addDateListener(this);
-		// setGrid.addClickListener(this);
-		Window.addWindowResizeListener(this);
 	}
 
-	public void setCurrentState(CurrentState s) {
+	public void setState(CurrentState s) {
 		state = s;
+		init(s);
 	}
 
 	/**
@@ -945,38 +992,58 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	public void handleDateEvent(DateEvent newEvent) {
 		// Figure out common things
-		final EventData data = (EventData) newEvent.getData();
-		final int duration = dateToMinutes(data.getEndTime())
+		EventData data = (EventData) newEvent.getData();
+		int duration = dateToMinutes(data.getEndTime())
 				- dateToMinutes(data.getStartTime());
 
-		if (newEvent.getCommand() == DateEventActions.ADD) {
-			label
-					.setText("Added event on " + data.getStartTime()
-							+ ", duration " + new Integer(duration).toString()
-							+ " min");
-		} else if (newEvent.getCommand() == DateEventActions.UPDATE) {
-			label
-					.setText("Updated event on " + data.getStartTime()
-							+ ", duration " + new Integer(duration).toString()
-							+ " min");
-		} else if (newEvent.getCommand() == DateEventActions.REMOVE) {
+		switch (newEvent.getCommand()) {
+		case ADD: {
+			label.setText("Added event on " + data.getStartTime()
+					+ ", duration " + duration + " min");
+			break;
+		}
+		case SELECT_DAY: {
+			if (newEvent.getSource() == navigator) {
+				multiPanel.setDate(newEvent.getDate());
+			}
+			break;
+		}
+		case SELECT_MONTH: {
+			if (newEvent.getSource() == navigator) {
+				multiPanel.setType(DatePanel.MONTH);
+				multiPanel.setDate(newEvent.getDate());
+			}
+			break;
+		}
+		case UPDATE: {
+			label.setText("Updated event on " + data.getStartTime()
+					+ ", duration " + duration + " min");
+			break;
+		}
+		case REMOVE: {
 			label
 					.setText("Removed event on " + data.getStartTime()
 							+ ", duration " + new Integer(duration).toString()
 							+ " min");
-		} else if (newEvent.getCommand() == DateEventActions.DRAG_DROP) {
+			break;
+		}
+
+		case DRAG_DROP: {
 			label.setText("TODO: Moved event on " + data.getStartTime() + " - "
 					+ data.getEndTime());
+			break;
 		}
+		}
+
 	}
 
-	public void onWindowResized(int _int, int _int1) {
-		final int height = Window.getClientHeight();
+	public void onWindowResized(int width, int height) {
 		int shortcutHeight = height - 160;
 		if (shortcutHeight < 1) {
 			shortcutHeight = 1;
 		}
-		schedulerContainerPanel.setHeight(shortcutHeight);
+
+		multiPanel.setHeight(shortcutHeight);
 	}
 
 	public void onClick(Widget arg0) {
