@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.screen;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.widget.MessageBox;
+import org.freemedsoftware.gwt.client.widget.NotesBox;
 import org.freemedsoftware.gwt.client.widget.WorkList;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -67,10 +68,24 @@ public class DashboardScreen extends ScreenInterface {
 		messageBoxContainer.add(messageBox);
 
 		widgetContainer.add(messageBoxContainer);
+		addChildWidget(messageBox);
 
+		//for NotesBox
+		final VerticalPanel notesBoxContainer = new VerticalPanel();
+		widgetContainer.add(notesBoxContainer);
+
+		final Label notesBoxLabel = new Label("Notepad");
+		notesBoxLabel.setStylePrimaryName("freemed-DashboardLabel");
+		notesBoxContainer.add(notesBoxLabel);
+
+		final NotesBox notesBox = new NotesBox();
+		notesBoxContainer.add(notesBox);
+		
 		// Add widgets which need state to the stack
 		addChildWidget(workList);
 		addChildWidget(messageBox);
+		addChildWidget(notesBox);
+
 	}
 
 	public void assignState(CurrentState s) {

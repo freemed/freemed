@@ -608,7 +608,7 @@ a:hover {
 	font-size: 8pt;
 	font-style: italic;
 	}
-.freemed-PatientSummaryContainer, .freemed-MessageBoxContainer {
+.freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer {
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -647,3 +647,13 @@ a:hover {
 .freemed-MessageView-verticalPanelButton {
 	text-align:center;
 	}
+.gwt-TextArea {
+}
+.freemed-NotesBox-textarea {
+background-color:yellow;
+border:0;
+}
+.freemed-NotesBox-textarea_outer {
+padding:10px;
+background-color:yellow;
+}
