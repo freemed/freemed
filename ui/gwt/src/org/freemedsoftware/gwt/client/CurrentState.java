@@ -26,10 +26,18 @@ package org.freemedsoftware.gwt.client;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 
@@ -49,8 +57,11 @@ public class CurrentState {
 
 	protected HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
 
+	protected HashMap<String, String> userConfiguration = null;
+
 	public CurrentState() {
 		statusItems = new HashMap<String, String>();
+		retrieveUserConfiguration(true);
 	}
 
 	/**
@@ -152,6 +163,67 @@ public class CurrentState {
 
 	public HashMap<Integer, PatientScreen> getPatientScreenMap() {
 		return patientScreenMap;
+	}
+
+	/**
+	 * Get user specific configuration value, or "" if there is no value.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public String getUserConfig(String key) {
+		if (userConfiguration != null) {
+			return userConfiguration.get(key);
+		}
+		JsonUtil.debug("getUserConfig(): was unable to find userConfiguration "
+				+ "| key = " + key);
+		return "";
+	}
+
+	/**
+	 * Pull user configuration settings into CurrentState object.
+	 * 
+	 * @param forceReload
+	 */
+	protected void retrieveUserConfiguration(boolean forceReload) {
+		if (userConfiguration == null || forceReload) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// STUBBED mode
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.UserInterface.GetEMRConfiguration",
+												new String[] {})));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+						}
+
+						@SuppressWarnings("unchecked")
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (r != null) {
+									userConfiguration = r;
+								}
+							} else {
+							}
+						}
+					});
+				} catch (RequestException e) {
+				}
+
+			} else {
+				// GWT-RPC
+			}
+		}
 	}
 
 }
