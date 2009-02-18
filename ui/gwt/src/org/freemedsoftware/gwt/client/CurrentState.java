@@ -24,6 +24,7 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
@@ -187,6 +188,15 @@ public class CurrentState {
 	 * @param value
 	 */
 	public void setUserConfig(String key, Object value) {
+		// Set key locally
+		if (value instanceof String) {
+			userConfiguration.put(key, (String) value);
+		} else if (value instanceof Serializable) {
+			userConfiguration.put(key, ((Serializable) value).toString());
+		} else {
+			JsonUtil.debug("Unable to serialize value");
+		}
+
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// STUBBED mode
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
