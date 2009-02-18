@@ -181,11 +181,49 @@ public class CurrentState {
 	}
 
 	/**
+	 * Set user specific configuration value.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void setUserConfig(String key, Object value) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// STUBBED mode
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.UserInterface.SetConfigValue",
+											new String[] { key,
+													JsonUtil.jsonify(value) })));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+
+		} else {
+			// GWT-RPC
+		}
+	}
+
+	/**
 	 * Pull user configuration settings into CurrentState object.
 	 * 
 	 * @param forceReload
 	 */
-	protected void retrieveUserConfiguration(boolean forceReload) {
+	public void retrieveUserConfiguration(boolean forceReload) {
 		if (userConfiguration == null || forceReload) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// STUBBED mode
