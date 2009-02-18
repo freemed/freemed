@@ -52,7 +52,7 @@ public class NotesBox extends WidgetInterface {
 
 		textArea.addChangeListener(new ChangeListener() {
 			public void onChange(final Widget sender) {
-				// save the changes
+				state.setUserConfig("notepad", textArea.getText());
 			}
 
 		});
@@ -62,7 +62,13 @@ public class NotesBox extends WidgetInterface {
 	protected void onLoad() {
 		// Load initial Data
 		super.onLoad();
-		textArea.setText("Enter here your notes...");
+
+		String text = state.getUserConfig("notepad");
+
+		if (text == "") {
+			text = "Enter your here your notes...";
+		}
+		textArea.setText(text);
 	}
 
 }
