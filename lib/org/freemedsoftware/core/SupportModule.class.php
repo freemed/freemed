@@ -551,7 +551,7 @@ class SupportModule extends BaseModule {
 		// Check to see if the current version exits
 		$path = dirname(__FILE__).'/../../../../data/schema/mysql/'.$this->table_name.'.sql';
 		if (file_exists( $path )) {
-			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+			$command = '"'.dirname(__FILE__).'/../../../../scripts/load_schema.sh" '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
 			system ( $command );
 			return true;
 		} else {
