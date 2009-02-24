@@ -108,7 +108,21 @@ loadSchema( 'scheduler' );
 
 printHeader( "Install ACL tables" );
 loadSchema( 'acl' );
-include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/ACL.class.php' );
+
+// Add the administrative account
+printHeader( "Add an administrative account" );
+print "\nPlease enter an username for your administrative account [root] : ";
+$username = getInput( '%s' );
+if ($username == "") { $username = "root"; }
+print "\nPlease enter a password for your administrative account : ";
+$password = getInput( '%s' );
+LoadObjectDependency( "org.freemedsoftware.public.Installation" );
+Installation::CreateAdministrationAccount( $username, $password );
+print "\n\n";
+
+printHeader( "Form ACL rules for users" );
+include_once( dirname(__FILE__) . '/../lib/acl.php' );
+include_once( dirname(__FILE__) . '/../lib/org/freemedsoftware/module/ACL.class.php' );
 $a = new ACL();
 $q = "SELECT username, id FROM user WHERE id > 0";
 $r = $GLOBALS['sql']->queryAll( $q );

@@ -229,6 +229,7 @@ class ACL extends SupportModule {
 	private function acl_object ( ) {
 		static $_obj;
 		if (!isset($_obj)) {
+		LoadObjectDependency ('org.freemedsoftware.acl.gacl');
 		$_obj = CreateObject('org.freemedsoftware.acl.gacl_api',
 			array (
 				// Unfortunately, we duplicate to avoid
