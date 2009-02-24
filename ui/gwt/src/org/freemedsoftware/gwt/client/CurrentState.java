@@ -265,7 +265,8 @@ public class CurrentState {
 						@SuppressWarnings("unchecked")
 						public void onResponseReceived(Request request,
 								Response response) {
-							if (200 == response.getStatusCode()) {
+							if (200 == response.getStatusCode()
+									&& !response.getText().contentEquals("[]")) {
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
 										.shoehornJson(JSONParser.parse(response
 												.getText()),
@@ -274,6 +275,7 @@ public class CurrentState {
 									userConfiguration = r;
 								}
 							} else {
+								userConfiguration = new HashMap<String, String>();
 							}
 						}
 					});

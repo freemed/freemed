@@ -126,7 +126,11 @@ class UserInterface {
 
 	// Method: GetEMRConfiguration
 	public function GetEMRConfiguration ( ) {
-		return $this->user->manage_config;
+		if (is_array($this->user->manage_config)) {
+			return $this->user->manage_config;
+		} else {
+			return array();
+		}
 	} // end method GetEMRConfiguration
 
 	public function GetNewMessages ( ) {
