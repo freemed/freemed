@@ -211,16 +211,28 @@ public class CurrentState {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
+						getToaster().addItem("CurrentState",
+								"Failed to update configuration value.",
+								Toaster.TOASTER_ERROR);
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
+							getToaster().addItem("CurrentState",
+									"Updated configuration value.",
+									Toaster.TOASTER_INFO);
 						} else {
+							getToaster().addItem("CurrentState",
+									"Failed to update configuration value.",
+									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
+				getToaster().addItem("CurrentState",
+						"Failed to update configuration value.",
+						Toaster.TOASTER_ERROR);
 			}
 
 		} else {

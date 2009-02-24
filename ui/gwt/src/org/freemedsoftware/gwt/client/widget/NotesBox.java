@@ -54,19 +54,14 @@ public class NotesBox extends WidgetInterface {
 			public void onChange(final Widget sender) {
 				state.setUserConfig("notepad", textArea.getText());
 			}
-		
 		});
-
 	}
 
-	protected void onLoad() {
-		// Load initial Data
-		super.onLoad();
-
+	public void populateWidget() {
 		String text = state.getUserConfig("notepad");
 
-		if (text == "") {
-			text = "Enter your here your notes...";
+		if (text == "" || text == null) {
+			text = "Enter your notes here.";
 		}
 		textArea.setText(text);
 	}

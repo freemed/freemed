@@ -38,6 +38,8 @@ public class DashboardScreen extends ScreenInterface {
 
 	protected WorkList workList = new WorkList();
 
+	protected NotesBox notesBox = new NotesBox();
+
 	public DashboardScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -70,17 +72,15 @@ public class DashboardScreen extends ScreenInterface {
 		widgetContainer.add(messageBoxContainer);
 		addChildWidget(messageBox);
 
-		//for NotesBox
+		// for NotesBox
 		final VerticalPanel notesBoxContainer = new VerticalPanel();
 		widgetContainer.add(notesBoxContainer);
 
 		final Label notesBoxLabel = new Label("Notepad");
 		notesBoxLabel.setStylePrimaryName("freemed-DashboardLabel");
 		notesBoxContainer.add(notesBoxLabel);
-
-		final NotesBox notesBox = new NotesBox();
 		notesBoxContainer.add(notesBox);
-		
+
 		// Add widgets which need state to the stack
 		addChildWidget(workList);
 		addChildWidget(messageBox);
@@ -95,6 +95,7 @@ public class DashboardScreen extends ScreenInterface {
 		if (state.getDefaultProvider() > 0) {
 			workList.setProvider(state.getDefaultProvider());
 		}
+		notesBox.populateWidget();
 	}
 
 }
