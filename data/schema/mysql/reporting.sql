@@ -66,6 +66,7 @@ SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.s
 SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql
 SOURCE data/schema/mysql/reporting/report_PatientAgingReport.sql
 SOURCE data/schema/mysql/reporting/report_PatientCensusByCarrier.sql
+SOURCE data/schema/mysql/reporting/report_PatientDuplicateAccounts.sql
 SOURCE data/schema/mysql/reporting/report_PatientList.sql
 SOURCE data/schema/mysql/reporting/report_PatientZipCodeDistribution.sql
 
