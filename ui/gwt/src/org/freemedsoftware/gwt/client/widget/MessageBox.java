@@ -70,7 +70,7 @@ public class MessageBox extends WidgetInterface {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		sPanel
-				.setStyleName("freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer");
+				.setStyleName("freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer, .freemed-PrescriptionRefillBoxContainer");
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 
@@ -95,7 +95,6 @@ public class MessageBox extends WidgetInterface {
 		wMessages.addColumn("Subject", "subject"); // col 2
 		wMessages.setIndexName("id");
 
-		// TODO: Fix the TableListener - Adapt the copied code so it fits here
 		wMessages.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				// Get information on row...
@@ -203,9 +202,14 @@ public class MessageBox extends WidgetInterface {
 			loadData(sampleData);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// Use JSON-RPC to retrieve the data
-			// TODO: Config setting to retrieve all mail, or only new one
 			String[] messagesparams = { searchtag,
 					JsonUtil.jsonify(Boolean.FALSE) };
+			// TODO: get Config setting to retrieve all mail, or only new one
+			// if (state.getUserConfig("messagebox") == "retrieveall") {
+			// messagesparams[1] = JsonUtil.jsonify(Boolean.TRUE) ;
+			//	
+			// }
+
 			String[] countparams = { JsonUtil.jsonify(Boolean.FALSE),
 					JsonUtil.jsonify(Boolean.FALSE) };
 

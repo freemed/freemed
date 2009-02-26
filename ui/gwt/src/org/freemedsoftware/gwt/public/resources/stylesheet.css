@@ -608,7 +608,7 @@ a:hover {
 	font-size: 8pt;
 	font-style: italic;
 	}
-.freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer {
+.freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer, .freemed-PrescriptionRefillBoxContainer {
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;

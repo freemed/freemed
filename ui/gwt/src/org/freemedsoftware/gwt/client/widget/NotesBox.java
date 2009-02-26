@@ -40,7 +40,7 @@ public class NotesBox extends WidgetInterface {
 		final SimplePanel simplePanel = new SimplePanel();
 		initWidget(simplePanel);
 		simplePanel
-				.setStyleName("freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer");
+				.setStyleName("freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer, .freemed-PrescriptionRefillBoxContainer");
 		simplePanel.setSize("100%", "100%");
 
 		simplePanel.addStyleName("freemed-NotesBoxContainer");

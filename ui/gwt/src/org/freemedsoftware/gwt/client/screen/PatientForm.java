@@ -27,14 +27,22 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -251,9 +259,13 @@ public class PatientForm extends ScreenInterface {
 		submitButton.setText("Commit");
 		submitButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
+				// Window.alert("clicked me!");
+				// }
 				submitButton.setEnabled(false);
 				if (validateForm()) {
-					if (Util.isStubbedMode()) {
+					Window.alert("i am inside!");
+					if (Util.getProgramMode() == ProgramMode.STUBBED) {
+
 						submitButton.setEnabled(true);
 						state.getToaster().addItem("Patient",
 								"Updated patient information.",
@@ -264,8 +276,8 @@ public class PatientForm extends ScreenInterface {
 							}
 						});
 						addressContainer.commitChanges();
-					} else {
-						if (patientId.equals(new Integer(0))) {
+					} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
+						if (patientId == 0) {
 							// Add
 							getModuleProxy().ModuleAddMethod(moduleName,
 									populateHashMap(),
@@ -288,7 +300,7 @@ public class PatientForm extends ScreenInterface {
 										}
 
 										public void onFailure(Throwable t) {
-											GWT.log("Exception", t);
+											JsonUtil.debug("Exception");
 											submitButton.setEnabled(true);
 										}
 									});
@@ -314,15 +326,123 @@ public class PatientForm extends ScreenInterface {
 										}
 
 										public void onFailure(Throwable t) {
-											GWT.log("Exception", t);
+											JsonUtil.debug("Exception");
 											submitButton.setEnabled(true);
 										}
 									});
 						}
+					} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+						Window.alert(Integer.toString(patientId));
+						if (patientId == 0) {
+							Window.alert("ADD");
+							// Add
+							String[] params = { JsonUtil
+									.jsonify(populateHashMap()) };
+							RequestBuilder builder = new RequestBuilder(
+									RequestBuilder.POST,
+									URL
+											.encode(Util
+													.getJsonRequest(
+															"org.freemedsoftware.module.PatientModule.add",
+															params)));
+							try {
+								builder.sendRequest(null,
+										new RequestCallback() {
+											public void onError(
+													Request request,
+													Throwable ex) {
+											}
+
+											@SuppressWarnings("unchecked")
+											public void onResponseReceived(
+													Request request,
+													Response response) {
+												if (200 == response
+														.getStatusCode()) {
+													Integer r = (Integer) JsonUtil
+															.shoehornJson(
+																	JSONParser
+																			.parse(response
+																					.getText()),
+																	"Integer");
+													if (r != 0) {
+														state
+																.getToaster()
+																.addItem(
+																		"PatientForm",
+																		"Patient successfully added.");
+													}
+												} else {
+													state
+															.getToaster()
+															.addItem(
+																	"PatientForm",
+																	"Adding Patient failed.");
+												}
+											}
+										});
+							} catch (RequestException e) {
+							}
+
+						} else {
+							Window.alert("MOD");
+							// Modify
+							String[] params = { JsonUtil
+									.jsonify(populateHashMap()) };
+							RequestBuilder builder = new RequestBuilder(
+									RequestBuilder.POST,
+									URL
+											.encode(Util
+													.getJsonRequest(
+															"org.freemedsoftware.module.PatientModule.mod",
+															params)));
+							try {
+								builder.sendRequest(null,
+										new RequestCallback() {
+											public void onError(
+													Request request,
+													Throwable ex) {
+											}
+
+											@SuppressWarnings("unchecked")
+											public void onResponseReceived(
+													Request request,
+													Response response) {
+												if (200 == response
+														.getStatusCode()) {
+													Integer r = (Integer) JsonUtil
+															.shoehornJson(
+																	JSONParser
+																			.parse(response
+																					.getText()),
+																	"Integer");
+													if (r != 0) {
+														state
+																.getToaster()
+																.addItem(
+																		"PatientForm",
+																		"Patient successfully added.");
+													}
+												} else {
+													state
+															.getToaster()
+															.addItem(
+																	"PatientForm",
+																	"Adding Patient failed.");
+												}
+											}
+										});
+							} catch (RequestException e) {
+							}
+
+						}
+
 					}
 				} else {
 					// Form validation failed, allow user to continue
 					submitButton.setEnabled(true);
+					state.getToaster().addItem("PatientForm",
+							"Form validation failed");
 				}
 			}
 		});
@@ -366,7 +486,7 @@ public class PatientForm extends ScreenInterface {
 					}
 
 					public void onFailure(Throwable t) {
-						GWT.log("Exception", t);
+						JsonUtil.debug("Exception");
 					}
 				});
 		// Populate address container
@@ -415,7 +535,7 @@ public class PatientForm extends ScreenInterface {
 			p = (ModuleInterfaceAsync) Util
 					.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
 		} catch (Exception e) {
-			GWT.log("Exception", e);
+			JsonUtil.debug("Exception");
 		}
 		return p;
 	}
@@ -428,10 +548,11 @@ public class PatientForm extends ScreenInterface {
 		if (wFirstName.getText().length() < 2) {
 			msg += "Please specify a first name." + "\n";
 		}
-		if (msg.length() == 0) {
+		if (msg != "") {
+			Window.alert(msg);
 			return false;
 		}
-		Window.alert(msg);
+
 		return true;
 	}
 
