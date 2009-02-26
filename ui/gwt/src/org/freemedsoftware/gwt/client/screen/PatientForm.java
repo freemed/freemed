@@ -259,11 +259,10 @@ public class PatientForm extends ScreenInterface {
 		submitButton.setText("Commit");
 		submitButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
-				// Window.alert("clicked me!");
-				// }
+
 				submitButton.setEnabled(false);
 				if (validateForm()) {
-					Window.alert("i am inside!");
+
 					if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 						submitButton.setEnabled(true);
@@ -332,9 +331,9 @@ public class PatientForm extends ScreenInterface {
 									});
 						}
 					} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-						Window.alert(Integer.toString(patientId));
+
 						if (patientId == 0) {
-							Window.alert("ADD");
+
 							// Add
 							String[] params = { JsonUtil
 									.jsonify(populateHashMap()) };
@@ -385,7 +384,7 @@ public class PatientForm extends ScreenInterface {
 							}
 
 						} else {
-							Window.alert("MOD");
+
 							// Modify
 							String[] params = { JsonUtil
 									.jsonify(populateHashMap()) };
