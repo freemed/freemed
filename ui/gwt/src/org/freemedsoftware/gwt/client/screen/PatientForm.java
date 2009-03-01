@@ -437,6 +437,8 @@ public class PatientForm extends ScreenInterface {
 						}
 
 					}
+					
+				closeScreen();
 				} else {
 					// Form validation failed, allow user to continue
 					submitButton.setEnabled(true);

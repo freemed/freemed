@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -34,6 +35,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class NotesBox extends WidgetInterface {
 
 	protected TextArea textArea;
+
+	protected Command command;
 
 	public NotesBox() {
 
@@ -52,18 +55,20 @@ public class NotesBox extends WidgetInterface {
 
 		textArea.addChangeListener(new ChangeListener() {
 			public void onChange(final Widget sender) {
-				state.setUserConfig("notepad", textArea.getText());
+				command.execute();
 			}
 		});
 	}
 
-	public void populateWidget() {
-		String text = state.getUserConfig("notepad");
-
-		if (text == "" || text == null) {
-			text = "Enter your notes here.";
-		}
+	public void populateWidget(String text) {
 		textArea.setText(text);
 	}
 
+	public void setCommand(Command c) {
+		command = c;
+	}
+
+	public String getText() {
+		return textArea.getText();
+	}
 }
