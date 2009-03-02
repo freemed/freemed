@@ -38,7 +38,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -79,19 +81,19 @@ public class NotesBox extends WidgetInterface {
 			return textArea;
 		}
 
-		public boolean isReadyToClose() {
+		public void onClose() {
 			// Kill it as we close it ...
 			notes.remove(myKey);
-
 			// ... save/update ...
 			saveContent();
-
-			// ... then return true to continue closing
-			return true;
 		}
 
 		public void onChange(Widget sender) {
 			saveContent();
+		}
+
+		public boolean isReadyToClose() {
+			return true;
 		}
 
 	}
@@ -111,8 +113,10 @@ public class NotesBox extends WidgetInterface {
 		initWidget(simplePanel);
 		simplePanel.setWidget(verticalPanel);
 		PushButton addButton = new PushButton();
-		addButton.getUpFace().setImage(
-				new Image("resources/images/add_plus.16x16.png"));
+		HorizontalPanel addButtonLayout = new HorizontalPanel();
+		addButtonLayout.add(new Image("resources/images/add_plus.16x16.png"));
+		addButtonLayout.add(new Label("Add Note"));
+		addButton.getUpFace().setHTML(addButtonLayout.toString());
 		addButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				addNote("");

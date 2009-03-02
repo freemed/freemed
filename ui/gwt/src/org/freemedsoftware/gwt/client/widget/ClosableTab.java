@@ -82,6 +82,9 @@ public class ClosableTab extends Composite {
 					goodToGo = closableTabInterface.isReadyToClose();
 				}
 				if (goodToGo) {
+					if (closableTabInterface != null) {
+						closableTabInterface.onClose();
+					}
 					TabPanel t = ((TabPanel) widget.getParent().getParent()
 							.getParent());
 					t.selectTab(t.getWidgetIndex(widget) - 1);

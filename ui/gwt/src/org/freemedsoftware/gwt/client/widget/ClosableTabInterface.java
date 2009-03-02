@@ -29,4 +29,9 @@ public interface ClosableTabInterface {
 	 * Determine whether this object is ready to be closed.
 	 */
 	public boolean isReadyToClose();
+
+	/**
+	 * Run whenever tab is closed.
+	 */
+	public void onClose();
 }
