@@ -86,7 +86,6 @@ public class MainScreen extends Composite {
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
 
-		dashboard.assignState(state);
 		populateDefaultProvider();
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -385,6 +384,13 @@ public class MainScreen extends Composite {
 		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
 		state.assignTabPanel(tabPanel);
+
+		// Get configuration
+		getCurrentState().retrieveUserConfiguration(true, new Command() {
+			public void execute() {
+				dashboard.setState(state);
+			}
+		});
 
 		// Expand out main tabpanel to take up all extra room
 		mainPanel.setCellWidth(tabPanel, "100%");

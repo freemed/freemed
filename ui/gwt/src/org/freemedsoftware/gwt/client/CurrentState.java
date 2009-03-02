@@ -39,6 +39,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 
@@ -240,12 +241,17 @@ public class CurrentState {
 		}
 	}
 
+	public void retrieveUserConfiguration(boolean forceReload) {
+		retrieveUserConfiguration(true, null);
+	}
+
 	/**
 	 * Pull user configuration settings into CurrentState object.
 	 * 
 	 * @param forceReload
 	 */
-	public void retrieveUserConfiguration(boolean forceReload) {
+	public void retrieveUserConfiguration(boolean forceReload,
+			final Command onLoad) {
 		if (userConfiguration == null || forceReload) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// STUBBED mode
@@ -273,9 +279,15 @@ public class CurrentState {
 												"HashMap<String,String>");
 								if (r != null) {
 									userConfiguration = r;
+									if (onLoad != null) {
+										onLoad.execute();
+									}
 								}
 							} else {
 								userConfiguration = new HashMap<String, String>();
+								if (onLoad != null) {
+									onLoad.execute();
+								}
 							}
 						}
 					});

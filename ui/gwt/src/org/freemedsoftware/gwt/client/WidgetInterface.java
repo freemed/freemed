@@ -42,4 +42,10 @@ public abstract class WidgetInterface extends Composite {
 		return state;
 	}
 
+	/**
+	 * Method used to initialize widget, called after state is set.
+	 */
+	public void populateWidget() {
+	}
+
 }
