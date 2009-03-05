@@ -22,7 +22,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client.screen;
+package org.freemedsoftware.gwt.client.screen.patient;
 
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;

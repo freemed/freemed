@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: PatientScreen.java 4485 2009-03-05 20:02:54Z pmeng $
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PrescriptionsScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
