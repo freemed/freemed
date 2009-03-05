@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
@@ -112,6 +113,12 @@ public class PatientScreen extends ScreenInterface {
 			menuBar_1.addItem("Prescription", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Prescription", new PrescriptionsScreen(), state, getObject());
+				}
+			});
+			
+			menuBar_1.addItem("Allergy", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Allergy", new AllergyEntryScreen(), state, getObject());
 				}
 			});
 
