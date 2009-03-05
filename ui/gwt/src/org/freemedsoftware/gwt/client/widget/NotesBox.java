@@ -38,13 +38,11 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.CustomButton;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,6 +58,7 @@ public class NotesBox extends WidgetInterface {
 		protected Widget widget;
 		protected String name;
 		protected Label label = new Label("");
+
 		public Note() {
 			SimplePanel simplePanel = new SimplePanel();
 			initWidget(simplePanel);
@@ -68,12 +67,11 @@ public class NotesBox extends WidgetInterface {
 
 			VerticalPanel vPanel = new VerticalPanel();
 			simplePanel.setWidget(vPanel);
-			
-		
-			
+
 			HorizontalPanel hPanelInner = new HorizontalPanel();
-			
-			PushButton button = new PushButton(new Image("resources/images/close_x.16x16.png"));
+
+			PushButton button = new PushButton(new Image(
+					"resources/images/close_x.16x16.png"));
 			vPanel.add(hPanelInner);
 			hPanelInner.add(label);
 			hPanelInner.add(button);
@@ -86,13 +84,13 @@ public class NotesBox extends WidgetInterface {
 			simplePanel.addStyleName("freemed-NotesBoxContainer");
 
 			textArea.addChangeListener(this);
-			
-			button.addClickListener( new ClickListener() {
+
+			button.addClickListener(new ClickListener() {
 				public void onClick(Widget w) {
 					onClose();
 				}
 			});
-			
+
 		}
 
 		public void setKey(Integer key) {
@@ -110,16 +108,15 @@ public class NotesBox extends WidgetInterface {
 			saveContent();
 			widget.removeFromParent();
 		}
-		
+
 		public void setName(String s) {
 			name = s;
 			label.setText(name);
 		}
-		
+
 		public void setWidget(Widget w) {
 			widget = w;
 		}
-		
 
 		public void onChange(Widget sender) {
 			saveContent();
@@ -135,9 +132,7 @@ public class NotesBox extends WidgetInterface {
 
 	protected Command command;
 
-
-	
-	protected HorizontalPanel hPanel = new HorizontalPanel(); 
+	protected HorizontalPanel hPanel = new HorizontalPanel();
 
 	protected HashMap<Integer, Note> notes = new HashMap<Integer, Note>();
 
@@ -158,7 +153,7 @@ public class NotesBox extends WidgetInterface {
 			}
 		});
 		verticalPanel.add(addButton);
-		//verticalPanel.add(tabPanel);
+		// verticalPanel.add(tabPanel);
 		verticalPanel.add(hPanel);
 	}
 
@@ -208,11 +203,11 @@ public class NotesBox extends WidgetInterface {
 		n.setKey(idx);
 		n.getTextArea().setText(text);
 		notes.put(idx, n);
-		
+
 		n.setWidget(n);
-		n.setName("Note #" + (idx +1) + " ");
+		n.setName("Note #" + (idx + 1) + " ");
 		hPanel.add(n);
-		
+
 	}
 
 }

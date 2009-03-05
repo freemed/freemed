@@ -23,7 +23,7 @@
 
 
 APPDIR=`dirname $0`;
-MODE="OBFUS"; # MODE=(PRETTY|OBFUS|DETAILED)
+MODE="DETAILED"; # MODE=(PRETTY|OBFUS|DETAILED)
 CP="$APPDIR/src:$APPDIR/bin:/opt/gwt/gwt-user.jar:/opt/gwt/gwt-dev-linux.jar:/usr/lib/gwt/gwt-user.jar:/usr/lib/gwt/gwt-dev-linux.jar"
 for JAR in lib/*.jar; do
 	CP="${CP}:$APPDIR/lib/$(basename "$JAR")"

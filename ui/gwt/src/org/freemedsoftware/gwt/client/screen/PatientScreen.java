@@ -108,7 +108,11 @@ public class PatientScreen extends ScreenInterface {
 				}
 			});
 
-			menuBar_1.addItem("Prescription", (Command) null);
+			menuBar_1.addItem("Prescription", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Prescription", new PrescriptionsScreen(), state, getObject());
+				}
+			});
 
 			menuBar.addItem("New", menuBar_1);
 
