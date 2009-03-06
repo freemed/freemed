@@ -97,8 +97,9 @@ public class NotesBox extends WidgetInterface {
 			myKey = key;
 		}
 
-		public TextArea getTextArea() {
-			return textArea;
+		public void setText(String s) {
+			textArea.setText(s);
+			setName();
 		}
 
 		public void onClose() {
@@ -109,9 +110,25 @@ public class NotesBox extends WidgetInterface {
 			widget.removeFromParent();
 		}
 
-		public void setName(String s) {
-			name = s;
-			label.setText(name);
+		public void setName() {
+			// String s) {
+			// name = s;
+			// label.setText(name);
+
+			name = textArea.getText();
+			boolean skip = true;
+			if (name.length() != 0) {
+				int pos = name.indexOf(" ", name.indexOf(" ") + 1);
+				if (pos != -1) {
+					name = name.substring(0, pos);
+				}
+				label.setText(name);
+
+			} else {
+				name = "Note #" + (myKey + 1) + " ";
+				label.setText(name);
+			}
+
 		}
 
 		public void setWidget(Widget w) {
@@ -120,10 +137,15 @@ public class NotesBox extends WidgetInterface {
 
 		public void onChange(Widget sender) {
 			saveContent();
+			setName();
 		}
 
 		public boolean isReadyToClose() {
 			return true;
+		}
+
+		public TextArea getTextArea() {
+			return textArea;
 		}
 
 	}
@@ -201,11 +223,11 @@ public class NotesBox extends WidgetInterface {
 
 		Note n = new Note();
 		n.setKey(idx);
-		n.getTextArea().setText(text);
+		n.setText(text);
 		notes.put(idx, n);
 
 		n.setWidget(n);
-		n.setName("Note #" + (idx + 1) + " ");
+		// n.setName("Note #" + (idx + 1) + " ");
 		hPanel.add(n);
 
 	}
