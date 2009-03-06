@@ -118,7 +118,7 @@ public class NotesBox extends WidgetInterface {
 			name = textArea.getText();
 			boolean skip = true;
 			if (name.length() != 0) {
-				int pos = name.indexOf(" ", name.indexOf(" ") + 1);
+				int pos = name.indexOf(" ", name.indexOf(" ", name.indexOf(" ") + 1) +1);
 				if (pos != -1) {
 					name = name.substring(0, pos);
 				}
