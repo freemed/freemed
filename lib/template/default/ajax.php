@@ -252,7 +252,7 @@ function x_<?php print $name; ?>_populate(data) {
 				try {
 					var _k = innerTokenizer.nextToken();
 					var _v = innerTokenizer.nextToken();
-					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div onClick="x_<?php print $name; ?>_set_field(\'' + _k + '\', ' + _v + ');"><span>' + hilight(_k, hilight_string) + '</span></div>\n';
+					document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div onClick="x_<?php print $name; ?>_set_field(\'' + _k.replace('\'', '\\\'') + '\', ' + _v + ');"><span>' + hilight(_k, hilight_string) + '</span></div>\n';
 				} catch (e) {}
 			} else {
 				document.getElementById('<?php print $name; ?>_hiddendiv').innerHTML += '<div style="background: #ffffff; color: #000000;" onClick="document.getElementById(\'<?php print $name; ?>_hiddendiv\').style.display = \'none\';">' + hilight(_this_one, hilight_string) + '</div>\n';
