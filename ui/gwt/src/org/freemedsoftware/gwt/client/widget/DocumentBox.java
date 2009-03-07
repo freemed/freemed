@@ -22,7 +22,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.screen.DocumentScreen;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -58,9 +58,11 @@ public class DocumentBox extends WidgetInterface {
 	protected Label documentsCountLabel = new Label(
 			"You have no unfiled Documents!");
 
-	protected HashMap<String, String>[] data;
+	protected HashMap<String, String>[] data = null;
 
 	protected CustomSortableTable wDocuments = new CustomSortableTable();
+
+	protected DocumentScreen documentScreen = null;
 
 	public DocumentBox() {
 		SimplePanel sPanel = new SimplePanel();
@@ -81,25 +83,39 @@ public class DocumentBox extends WidgetInterface {
 		verticalPanel.add(horizontalPanel);
 		horizontalPanel.add(showDocumentsButton);
 		verticalPanel.add(wDocuments);
-		
+
 		showDocumentsButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				if (wDocuments.isVisible()) {
-					wDocuments.setVisible(false);	
-					} else {
+					wDocuments.setVisible(false);
+				} else {
 					wDocuments.setVisible(true);
-					}
+				}
 			}
 		});
+
+		retrieveData();
 
 		wDocuments.setSize("100%", "100%");
 		wDocuments.addColumn("Date", "uffdate"); // col 0
 		wDocuments.addColumn("Filename", "ufffilename"); // col 1
 		wDocuments.setIndexName("id");
 
+		documentScreen = new DocumentScreen();
+
 		wDocuments.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				final Integer uffId = new Integer(wDocuments.getValueByRow(row));
+				for (int i = 0; i < data.length; i++) {
+
+					String str = data[i].get("uffid");
+
+					if (str == Integer.toString(uffId)) {
+						documentScreen.setData(data[i], uffId);
+						break;
+					}
+				}
+				Util.spawnTab("File Document", documentScreen, state);
 			}
 
 		});
@@ -107,7 +123,6 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.setVisible(false);
 		horizontalPanel.add(documentsCountLabel);
 
-		retrieveData();
 	}
 
 	public void retrieveData() {
