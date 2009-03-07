@@ -81,7 +81,10 @@ public class NotesBox extends WidgetInterface {
 
 			simplePanel.setSize("100%", "100%");
 
+			simplePanel.setStyleName("freemed-WidgetContainer");
 			simplePanel.addStyleName("freemed-NotesBoxContainer");
+			
+			
 
 			textArea.addChangeListener(this);
 
@@ -166,6 +169,7 @@ public class NotesBox extends WidgetInterface {
 		simplePanel.setWidget(verticalPanel);
 		PushButton addButton = new PushButton();
 		HorizontalPanel addButtonLayout = new HorizontalPanel();
+		addButtonLayout.setStylePrimaryName("freemed-NotesBoxContainer");
 		addButtonLayout.add(new Image("resources/images/add_plus.16x16.png"));
 		addButtonLayout.add(new Label("Add Note"));
 		addButton.getUpFace().setHTML(addButtonLayout.toString());

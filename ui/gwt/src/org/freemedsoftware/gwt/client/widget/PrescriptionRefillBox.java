@@ -53,8 +53,8 @@ public class PrescriptionRefillBox extends WidgetInterface {
 
 		final SimplePanel simplePanel = new SimplePanel();
 		simplePanel
-				.setStyleName("freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer, .freemed-PrescriptionRefillBoxContainer");
-		simplePanel.addStyleName("freemed-PrescriptionRefillBoxContainer");
+				.setStyleName("freemed-WidgetContainer");
+		//simplePanel.addStyleName("freemed-PrescriptionRefillBoxContainer");
 		initWidget(simplePanel);
 
 		final FlexTable flexTable = new FlexTable();

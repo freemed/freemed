@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.widget.DocumentBox;
 import org.freemedsoftware.gwt.client.widget.MessageBox;
 import org.freemedsoftware.gwt.client.widget.NotesBox;
 import org.freemedsoftware.gwt.client.widget.PrescriptionRefillBox;
@@ -44,6 +45,8 @@ public class DashboardScreen extends ScreenInterface {
 	protected PrescriptionRefillBox prescriptionRefillBox = new PrescriptionRefillBox();
 
 	protected NotesBox notesBox = new NotesBox();
+
+	protected DocumentBox documentBox = new DocumentBox();
 
 	public DashboardScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -97,11 +100,19 @@ public class DashboardScreen extends ScreenInterface {
 		prescriptionRefillBoxContainer.add(prescriptionRefillBox);
 		widgetContainer.add(prescriptionRefillBoxContainer);
 
+		final VerticalPanel documentBoxContainer = new VerticalPanel();
+		final Label documentBoxLabel = new Label("Unfiled Documents");
+		documentBoxLabel.setStylePrimaryName("freemed-DashboardLabel");
+		documentBoxContainer.add(documentBoxLabel);
+		documentBoxContainer.add(documentBox);
+		widgetContainer.add(documentBox);
+
 		// Add widgets which need state to the stack
 		addChildWidget(workList);
 		addChildWidget(messageBox);
 		addChildWidget(notesBox);
 		addChildWidget(prescriptionRefillBox);
+		addChildWidget(documentBox);
 	}
 
 	public void assignState(CurrentState s) {

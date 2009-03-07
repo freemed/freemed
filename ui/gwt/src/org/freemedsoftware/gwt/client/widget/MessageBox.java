@@ -70,12 +70,12 @@ public class MessageBox extends WidgetInterface {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		sPanel
-				.setStyleName("freemed-PatientSummaryContainer, .freemed-MessageBoxContainer, .freemed-NotesBoxContainer, .freemed-PrescriptionRefillBoxContainer");
+				.setStyleName("freemed-WidgetContainer");
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 
 		sPanel.setWidget(verticalPanel);
-		sPanel.addStyleName("freemed-MessageBoxContainer");
+		//sPanel.addStyleName("freemed-MessageBoxContainer");
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 
