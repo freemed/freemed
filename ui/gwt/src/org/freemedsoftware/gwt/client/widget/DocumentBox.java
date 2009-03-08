@@ -102,20 +102,23 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.setIndexName("id");
 
 		documentScreen = new DocumentScreen();
-
 		wDocuments.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				final Integer uffId = new Integer(wDocuments.getValueByRow(row));
-				for (int i = 0; i < data.length; i++) {
 
-					String str = data[i].get("uffid");
+				if (data != null) {
+					for (int i = 0; i < data.length; i++) {
 
-					if (str == Integer.toString(uffId)) {
-						documentScreen.setData(data[i], uffId);
-						break;
+						String str = data[i].get("id");
+
+						if (Integer.parseInt(str) == uffId) {
+							documentScreen.setData(data[i], uffId);
+							Util.spawnTab("File Document", documentScreen,
+									state);
+							break;
+						}
 					}
 				}
-				Util.spawnTab("File Document", documentScreen, state);
 			}
 
 		});
