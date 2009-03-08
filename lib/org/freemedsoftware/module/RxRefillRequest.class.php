@@ -3,6 +3,7 @@
  //
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //     Phil Meng <pmeng@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -60,6 +61,19 @@ class RxRefillRequest extends EMRModule {
 	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
+
+	// Method: GetAll
+	//
+	//	Get all records.
+	//
+	// Returns:
+	//
+	//	Array of hashes.
+	//
+	public function GetAll ( ) {
+		$query = "SELECT * FROM ".$this->table_name." ORDER BY stamp DESC";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method GetAll
 
 } // end class RxRefillRequest
 
