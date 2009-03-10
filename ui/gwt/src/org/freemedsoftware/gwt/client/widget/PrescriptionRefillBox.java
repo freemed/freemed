@@ -79,9 +79,10 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		wRequests.addColumn("User", "user"); // col 1
 		wRequests.addColumn("Patient", "patient"); // col 2
 		wRequests.addColumn("RX Orig", "rxorig"); // col 3
-		wRequests.addColumn("approved", "approved");// col 4
-		wRequests.addColumn("locked", "locked"); // col 5
-		wRequests.addColumn("id", "id"); // col 6
+		wRequests.addColumn("Note", "note"); //col 4
+		wRequests.addColumn("approved", "approved");// col 5
+		wRequests.addColumn("locked", "locked"); // col 6
+		wRequests.addColumn("id", "id"); // col 7
 
 		wRequests.setIndexName("id");
 
