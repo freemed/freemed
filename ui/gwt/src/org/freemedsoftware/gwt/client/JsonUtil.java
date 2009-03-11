@@ -47,46 +47,48 @@ public class JsonUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static synchronized String jsonify(Object o) {
-		if (o instanceof HashMap) {
-			JSONObject out = new JSONObject();
-			HashMap<String, String> ng = (HashMap<String, String>) o;
-			Iterator<String> iter = ng.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				out.put(key, new JSONString(ng.get(key)));
-			}
-			return out.toString();
-		}
-		if (o instanceof HashMap[]) {
-			JSONArray out = new JSONArray();
-			for (int oIter = 0; oIter < ((HashMap<String, String>[]) o).length; oIter++) {
-				JSONObject a = new JSONObject();
-				HashMap<String, String> ng = ((HashMap<String, String>[]) o)[oIter];
+		if (o != null) {
+			if (o instanceof HashMap) {
+				JSONObject out = new JSONObject();
+				HashMap<String, String> ng = (HashMap<String, String>) o;
 				Iterator<String> iter = ng.keySet().iterator();
 				while (iter.hasNext()) {
 					String key = iter.next();
-					a.put(key, new JSONString(ng.get(key)));
+					out.put(key, new JSONString(ng.get(key)));
 				}
-				out.set(oIter, a);
+				return out.toString();
 			}
-			return out.toString();
-		}
-		if (o instanceof Boolean) {
-			return JSONBoolean.getInstance(((Boolean) o).booleanValue())
-					.toString();
-		}
-		if (o instanceof Integer) {
-			return new JSONNumber((Integer) o).toString();
-		}
-		if (o instanceof String) {
-			return new JSONString((String) o).toString();
-		}
-		if (o instanceof String[]) {
-			JSONArray out = new JSONArray();
-			for (int iter = 0; iter < ((String[]) o).length; iter++) {
-				out.set(iter, new JSONString(((String[]) o)[iter]));
+			if (o instanceof HashMap[]) {
+				JSONArray out = new JSONArray();
+				for (int oIter = 0; oIter < ((HashMap<String, String>[]) o).length; oIter++) {
+					JSONObject a = new JSONObject();
+					HashMap<String, String> ng = ((HashMap<String, String>[]) o)[oIter];
+					Iterator<String> iter = ng.keySet().iterator();
+					while (iter.hasNext()) {
+						String key = iter.next();
+						a.put(key, new JSONString(ng.get(key)));
+					}
+					out.set(oIter, a);
+				}
+				return out.toString();
 			}
-			return out.toString();
+			if (o instanceof Boolean) {
+				return JSONBoolean.getInstance(((Boolean) o).booleanValue())
+						.toString();
+			}
+			if (o instanceof Integer) {
+				return new JSONNumber((Integer) o).toString();
+			}
+			if (o instanceof String) {
+				return new JSONString((String) o).toString();
+			}
+			if (o instanceof String[]) {
+				JSONArray out = new JSONArray();
+				for (int iter = 0; iter < ((String[]) o).length; iter++) {
+					out.set(iter, new JSONString(((String[]) o)[iter]));
+				}
+				return out.toString();
+			}
 		}
 
 		// All else fails, return ""
@@ -238,7 +240,7 @@ public class JsonUtil {
 	 *            String to echo to debug console.
 	 */
 	public static native void debug(String st)/*-{
-	if (typeof console !=  "undefined") console.debug (st);
-	}-*/;
+		if (typeof console !=  "undefined") console.debug (st);
+		}-*/;
 
 }
