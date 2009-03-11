@@ -48,7 +48,8 @@ public class JsonUtil {
 	@SuppressWarnings("unchecked")
 	public static synchronized String jsonify(Object o) {
 		if (o != null) {
-			if (o instanceof HashMap) {
+
+			if (o instanceof HashMap && (((HashMap<String, String>) o) != null)) {
 				JSONObject out = new JSONObject();
 				HashMap<String, String> ng = (HashMap<String, String>) o;
 				Iterator<String> iter = ng.keySet().iterator();
@@ -58,7 +59,8 @@ public class JsonUtil {
 				}
 				return out.toString();
 			}
-			if (o instanceof HashMap[]) {
+			if (o instanceof HashMap[]
+					&& (((HashMap<String, String>[]) o) != null)) {
 				JSONArray out = new JSONArray();
 				for (int oIter = 0; oIter < ((HashMap<String, String>[]) o).length; oIter++) {
 					JSONObject a = new JSONObject();
@@ -82,7 +84,7 @@ public class JsonUtil {
 			if (o instanceof String) {
 				return new JSONString((String) o).toString();
 			}
-			if (o instanceof String[]) {
+			if (o instanceof String[] && (((String[]) o) != null)) {
 				JSONArray out = new JSONArray();
 				for (int iter = 0; iter < ((String[]) o).length; iter++) {
 					out.set(iter, new JSONString(((String[]) o)[iter]));
@@ -240,7 +242,7 @@ public class JsonUtil {
 	 *            String to echo to debug console.
 	 */
 	public static native void debug(String st)/*-{
-		if (typeof console !=  "undefined") console.debug (st);
-		}-*/;
+					if (typeof console !=  "undefined") console.debug (st);
+					}-*/;
 
 }
