@@ -106,19 +106,9 @@ public class DocumentBox extends WidgetInterface {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				final Integer uffId = new Integer(wDocuments.getValueByRow(row));
 
-				if (data != null) {
-					for (int i = 0; i < data.length; i++) {
+				documentScreen.setData(uffId);
+				Util.spawnTab("File Document", documentScreen, state);
 
-						String str = data[i].get("id");
-
-						if (Integer.parseInt(str) == uffId) {
-							documentScreen.setData(data[i], uffId);
-							Util.spawnTab("File Document", documentScreen,
-									state);
-							break;
-						}
-					}
-				}
 			}
 
 		});

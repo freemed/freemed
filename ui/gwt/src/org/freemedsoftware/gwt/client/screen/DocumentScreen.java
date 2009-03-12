@@ -27,9 +27,9 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.widget.DjvuViewer;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -38,7 +38,7 @@ public class DocumentScreen extends ScreenInterface {
 
 	protected Integer myId = null;
 	protected HashMap<String, String> data = null;
-	protected HTML html = new HTML("");
+	protected SimplePanel sP = new SimplePanel();
 
 	public DocumentScreen() {
 
@@ -62,15 +62,17 @@ public class DocumentScreen extends ScreenInterface {
 		flexTable.setWidget(2, 1, textBox);
 		textBox.setWidth("100%");
 
-		flexTable.setWidget(3, 0, html);
+		flexTable.setWidget(3, 0, sP);
 		flexTable.getFlexCellFormatter().setColSpan(3, 0, 2);
 
 	}
 
-	public void setData(HashMap<String, String> d, Integer i) {
-		data = d;
+	public void setData(Integer i) {
 		myId = i;
-		html.setHTML(data.get("ufffilename"));
+		DjvuViewer djvu = new DjvuViewer();
+		djvu.setInternalId(myId);
+		sP.add(djvu);
+
 	}
 
 	public void saveData() {
