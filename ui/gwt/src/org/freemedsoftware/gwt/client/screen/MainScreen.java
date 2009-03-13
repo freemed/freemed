@@ -145,6 +145,19 @@ public class MainScreen extends Composite {
 					});
 			menuItem_7.setStyleName("freemed-SecondaryMenuItem");
 
+			final MenuItem menuItem_users = menuBar_1.addItem(
+					"User Management", new Command() {
+						public void execute() {
+							InfoDialog d = new InfoDialog();
+							d.setCaption("User Management");
+							d
+									.setContent(new HTML(
+											"TODO: Open User Management"));
+							d.center();
+						}
+					});
+			menuItem_users.setStyleName("freemed-SecondaryMenuItem");
+
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
