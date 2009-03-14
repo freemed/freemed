@@ -51,7 +51,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DjvuViewer extends Composite {
+public class DjvuViewer extends Composite implements ClickListener {
 
 	public final static int UNFILED_DOCUMENTS = 1;
 
@@ -74,7 +74,7 @@ public class DjvuViewer extends Composite {
 	protected final Image wImage;
 
 	protected final PushButton wBackTop, wForwardTop, wBackBottom,
-			wForwardBottom;
+			wForwardBottom, wViewTop, wViewBottom;
 
 	public DjvuViewer() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -85,35 +85,18 @@ public class DjvuViewer extends Composite {
 		verticalPanel.add(controlBarTop);
 		controlBarTop.setWidth("100%");
 
-		// Click listeners
-		ClickListener clPrevious = new ClickListener() {
-			public void onClick(Widget w) {
-				pagePrevious();
-			}
-		};
-		ClickListener clNext = new ClickListener() {
-			public void onClick(Widget w) {
-				pageNext();
-			}
-		};
-		ClickListener clView = new ClickListener() {
-			public void onClick(Widget w) {
-				viewDocument();
-			}
-		};
-
 		wBackTop = new PushButton();
 		controlBarTop.add(wBackTop);
 		wBackTop.setText("-");
 		wBackTop.setStylePrimaryName("freemed-PushButton");
-		wBackTop.addClickListener(clPrevious);
+		wBackTop.addClickListener(this);
 
 		wPageTop = new Label("1 of 1");
 		controlBarTop.add(wPageTop);
 		wPageTop.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		PushButton wViewTop = new PushButton("View");
-		wViewTop.addClickListener(clView);
+		wViewTop = new PushButton("View");
+		wViewTop.addClickListener(this);
 		wViewTop.setStylePrimaryName("freemed-PushButton");
 		controlBarTop.add(wViewTop);
 
@@ -121,7 +104,7 @@ public class DjvuViewer extends Composite {
 		controlBarTop.add(wForwardTop);
 		wForwardTop.setText("+");
 		wForwardTop.setStylePrimaryName("freemed-PushButton");
-		wForwardTop.addClickListener(clNext);
+		wForwardTop.addClickListener(this);
 
 		wImage = new Image();
 		verticalPanel.add(wImage);
@@ -137,14 +120,14 @@ public class DjvuViewer extends Composite {
 		controlBarBottom.add(wBackBottom);
 		wBackBottom.setText("-");
 		wBackBottom.setStylePrimaryName("freemed-PushButton");
-		wBackBottom.addClickListener(clPrevious);
+		wBackBottom.addClickListener(this);
 
 		wPageBottom = new Label("1 of 1");
 		controlBarBottom.add(wPageBottom);
 		wPageBottom.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		PushButton wViewBottom = new PushButton("View");
-		wViewBottom.addClickListener(clView);
+		wViewBottom = new PushButton("View");
+		wViewBottom.addClickListener(this);
 		wViewBottom.setStylePrimaryName("freemed-PushButton");
 		controlBarBottom.add(wViewBottom);
 
@@ -152,7 +135,17 @@ public class DjvuViewer extends Composite {
 		controlBarBottom.add(wForwardBottom);
 		wForwardBottom.setText("+");
 		wForwardBottom.setStylePrimaryName("freemed-PushButton");
-		wForwardBottom.addClickListener(clNext);
+		wForwardBottom.addClickListener(this);
+	}
+
+	public void onClick(Widget w) {
+		if (w == wForwardBottom || w == wForwardTop) {
+			pageNext();
+		} else if (w == wBackBottom || w == wBackTop) {
+			pagePrevious();
+		} else if (w == wViewBottom || w == wViewTop) {
+			viewDocument();
+		}
 	}
 
 	/**
