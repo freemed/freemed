@@ -49,8 +49,7 @@ class Login {
 	//	Success, boolean.
 	//
 	public function Logout ( ) {
-		HTTP_Session2::set( 'authdata', null );
-		HTTP_Session2::set( 'ipaddr', null );
+		HTTP_Session2::destroy( );
 		return true;
 	} // end method Logout
 
@@ -123,8 +122,7 @@ class Login {
 			return true;
 		} else { // check password
 			// Failed password check
-			HTTP_Session2::set( 'authdata', null );
-			HTTP_Session2::set( 'ipaddr', null );
+			HTTP_Session2::destroy( );
 			//if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth failed login");	}	
 			//$log = freemed::log_object();
 			//$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Failed login" );

@@ -119,7 +119,7 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 	HTTP_Session2::start( 's' );
  
 	HTTP_Session2::setExpire( time() + (60 * 60) ); // set expire to 60 minutes 
-	HTTP_Session2::setIdle( time() + (1 * 60) );   // set idle to 60 seconds
+	HTTP_Session2::setIdle( time() + (10 * 60) );   // set idle to 10 minutes
 
 	if (HTTP_Session2::isExpired()) {
 		syslog( LOG_INFO, "Session expired!!" );
