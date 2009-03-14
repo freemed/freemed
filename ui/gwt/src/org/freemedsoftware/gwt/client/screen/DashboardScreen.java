@@ -26,17 +26,35 @@ package org.freemedsoftware.gwt.client.screen;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.widget.DocumentBox;
 import org.freemedsoftware.gwt.client.widget.MessageBox;
 import org.freemedsoftware.gwt.client.widget.NotesBox;
 import org.freemedsoftware.gwt.client.widget.PrescriptionRefillBox;
 import org.freemedsoftware.gwt.client.widget.WorkList;
 
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DashboardScreen extends ScreenInterface {
+
+	public class DashboardItemContainer extends Composite {
+
+		public DashboardItemContainer(String title, WidgetInterface contents) {
+			final VerticalPanel container = new VerticalPanel();
+			initWidget(container);
+			final Label label = new Label(title);
+			label.setStylePrimaryName("freemed-DashboardLabel");
+			container.add(label);
+			container.add(contents);
+			addChildWidget(contents);
+		}
+
+	}
+
+	protected MessageBox messageBox = new MessageBox();
 
 	protected WorkList workList = new WorkList();
 
@@ -58,61 +76,19 @@ public class DashboardScreen extends ScreenInterface {
 		final VerticalPanel widgetContainer = new VerticalPanel();
 		horizontalPanel.add(widgetContainer);
 
-		horizontalPanel.add(widgetContainer);
-
-		final VerticalPanel workListContainer = new VerticalPanel();
-		final Label workListLabel = new Label("Work List");
-		workListLabel.setStylePrimaryName("freemed-DashboardLabel");
-
-		workListContainer.add(workListLabel);
-		workListContainer.add(workList);
-
-		widgetContainer.add(workListContainer);
-
-		final VerticalPanel messageBoxContainer = new VerticalPanel();
-		final Label messageBoxLabel = new Label("Messages");
-		messageBoxLabel.setStylePrimaryName("freemed-DashboardLabel");
-		final MessageBox messageBox = new MessageBox();
-
-		messageBoxContainer.add(messageBoxLabel);
-		messageBoxContainer.add(messageBox);
-
-		widgetContainer.add(messageBoxContainer);
+		widgetContainer.add(new DashboardItemContainer("Work List", workList));
+		widgetContainer.add(new DashboardItemContainer("Messages", messageBox));
 
 		// NotesBox
-
-		final VerticalPanel notesBoxContainer = new VerticalPanel();
-		widgetContainer.add(notesBoxContainer);
-		final Label notesBoxContainerLabel = new Label("Notepad");
-		notesBoxContainerLabel.setStylePrimaryName("freemed-DashboardLabel");
-		notesBoxContainer.add(notesBoxContainerLabel);
-		notesBoxContainer.add(notesBox);
-		widgetContainer.add(notesBoxContainer);
+		widgetContainer.add(new DashboardItemContainer("Notepad", notesBox));
 
 		// PrescriptionRefillBox
+		widgetContainer.add(new DashboardItemContainer("Prescription Refills",
+				prescriptionRefillBox));
 
-		final VerticalPanel prescriptionRefillBoxContainer = new VerticalPanel();
-		final Label prescriptionRefillBoxContainerLabel = new Label(
-				"Prescription Refills");
-		prescriptionRefillBoxContainerLabel
-				.setStylePrimaryName("freemed-DashboardLabel");
-		prescriptionRefillBoxContainer.add(prescriptionRefillBoxContainerLabel);
-		prescriptionRefillBoxContainer.add(prescriptionRefillBox);
-		widgetContainer.add(prescriptionRefillBoxContainer);
-
-		final VerticalPanel documentBoxContainer = new VerticalPanel();
-		final Label documentBoxLabel = new Label("Unfiled Documents");
-		documentBoxLabel.setStylePrimaryName("freemed-DashboardLabel");
-		documentBoxContainer.add(documentBoxLabel);
-		documentBoxContainer.add(documentBox);
-		widgetContainer.add(documentBox);
-
-		// Add widgets which need state to the stack
-		addChildWidget(workList);
-		addChildWidget(messageBox);
-		addChildWidget(notesBox);
-		addChildWidget(prescriptionRefillBox);
-		addChildWidget(documentBox);
+		// Unfiled documents
+		widgetContainer.add(new DashboardItemContainer("Unfiled Documents",
+				documentBox));
 	}
 
 	public void assignState(CurrentState s) {
