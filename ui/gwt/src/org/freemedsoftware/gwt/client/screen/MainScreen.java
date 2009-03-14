@@ -148,12 +148,8 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_users = menuBar_1.addItem(
 					"User Management", new Command() {
 						public void execute() {
-							InfoDialog d = new InfoDialog();
-							d.setCaption("User Management");
-							d
-									.setContent(new HTML(
-											"TODO: Open User Management"));
-							d.center();
+							Util.spawnTab("User Management",
+									new UserManagementScreen(), state);
 						}
 					});
 			menuItem_users.setStyleName("freemed-SecondaryMenuItem");
