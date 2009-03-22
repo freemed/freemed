@@ -80,7 +80,10 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public final class Util {
@@ -407,6 +410,65 @@ public final class Util {
 				new ClosableTab(title, (Widget) screen));
 		pScreen.getTabPanel().selectTab(
 				pScreen.getTabPanel().getWidgetCount() - 1);
+	}
+
+	public static void logout(CurrentState state) {
+		final CurrentState s = state;
+
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.public.Login.Logout", params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+						GWT.log("Exception", ex);
+						Window.alert("Failed to log out.");
+					}
+
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							s.getMainScreen().hide();
+							UIObject.setVisible(RootPanel.get(
+									"loginScreenOuter").getElement(), true);
+							s.getFreemedInterface().getLoginDialog().center();
+						} else {
+							Window.alert("Failed to log out.");
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception", e);
+				Window.alert("Failed to log out.");
+			}
+
+		} else {
+			try {
+				LoginAsync service = (LoginAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Public.Login");
+				service.Logout(new AsyncCallback<Void>() {
+					public void onSuccess(Void r) {
+						s.getMainScreen().hide();
+						UIObject.setVisible(RootPanel.get("loginScreenOuter")
+								.getElement(), true);
+						s.getFreemedInterface().getLoginDialog().center();
+					}
+
+					public void onFailure(Throwable t) {
+						Window.alert("Failed to log out.");
+					}
+				});
+			} catch (Exception e) {
+				Window.alert("Could not create proxy for Login");
+			}
+		}
 	}
 
 }

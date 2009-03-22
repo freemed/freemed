@@ -242,7 +242,7 @@ public class JsonUtil {
 	 *            String to echo to debug console.
 	 */
 	public static native void debug(String st)/*-{
-					if (typeof console !=  "undefined") console.debug (st);
-					}-*/;
+		if (typeof console !=  "undefined") console.debug (st);
+		}-*/;
 
 }

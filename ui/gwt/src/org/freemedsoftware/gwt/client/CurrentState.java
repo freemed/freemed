@@ -61,6 +61,10 @@ public class CurrentState {
 
 	protected HashMap<String, String> userConfiguration = null;
 
+	protected FreemedInterface freemedInterface = null;
+
+	protected MainScreen mainScreen = null;
+
 	public CurrentState() {
 		statusItems = new HashMap<String, String>();
 		retrieveUserConfiguration(true);
@@ -72,8 +76,13 @@ public class CurrentState {
 	 * @param m
 	 */
 	public void assignMainScreen(MainScreen m) {
+		mainScreen = m;
 		assignStatusBar(m.getStatusBar());
 		assignTabPanel(m.getTabPanel());
+	}
+
+	public void assignFreemedInterface(FreemedInterface i) {
+		freemedInterface = i;
 	}
 
 	/**
@@ -153,6 +162,14 @@ public class CurrentState {
 
 	public Integer getDefaultProvider() {
 		return defaultProvider;
+	}
+
+	public FreemedInterface getFreemedInterface() {
+		return freemedInterface;
+	}
+
+	public MainScreen getMainScreen() {
+		return mainScreen;
 	}
 
 	public TabPanel getTabPanel() {

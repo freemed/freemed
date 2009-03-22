@@ -30,7 +30,6 @@ import org.freemedsoftware.gwt.client.FreemedInterface;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.SystemNotifications;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.InfoDialog;
@@ -45,8 +44,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -58,7 +55,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.UIObject;
 
 public class MainScreen extends Composite {
 
@@ -87,6 +83,7 @@ public class MainScreen extends Composite {
 		mainPanel.setSize("98%", "98%");
 
 		populateDefaultProvider();
+		state.assignMainScreen(this);
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
@@ -157,78 +154,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
-							if (Util.getProgramMode() == ProgramMode.STUBBED) {
-
-							} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-								String[] params = {};
-								RequestBuilder builder = new RequestBuilder(
-										RequestBuilder.POST,
-										URL
-												.encode(Util
-														.getJsonRequest(
-																"org.freemedsoftware.public.Login.Logout",
-																params)));
-								try {
-									builder.sendRequest(null,
-											new RequestCallback() {
-												public void onError(
-														com.google.gwt.http.client.Request request,
-														Throwable ex) {
-													GWT.log("Exception", ex);
-													Window
-															.alert("Failed to log out.");
-												}
-
-												public void onResponseReceived(
-														com.google.gwt.http.client.Request request,
-														com.google.gwt.http.client.Response response) {
-													if (200 == response
-															.getStatusCode()) {
-														hide();
-														UIObject
-																.setVisible(
-																		RootPanel
-																				.get(
-																						"loginScreenOuter")
-																				.getElement(),
-																		true);
-														freemedInterface
-																.getLoginDialog()
-																.center();
-													} else {
-														Window
-																.alert("Failed to log out.");
-													}
-												}
-											});
-								} catch (RequestException e) {
-									GWT.log("Exception", e);
-									Window.alert("Failed to log out.");
-								}
-
-							} else {
-								try {
-									LoginAsync service = (LoginAsync) Util
-											.getProxy("org.freemedsoftware.gwt.client.Public.Login");
-									service.Logout(new AsyncCallback<Void>() {
-										public void onSuccess(Void r) {
-											hide();
-											UIObject.setVisible(RootPanel.get(
-													"loginScreenOuter")
-													.getElement(), true);
-											freemedInterface.getLoginDialog()
-													.center();
-										}
-
-										public void onFailure(Throwable t) {
-											Window.alert("Failed to log out.");
-										}
-									});
-								} catch (Exception e) {
-									Window
-											.alert("Could not create proxy for Login");
-								}
-							}
+							Util.logout(state);
 						}
 					});
 			menuItem_3.setStyleName("freemed-SecondaryMenuItem");
@@ -449,6 +375,7 @@ public class MainScreen extends Composite {
 
 	public void setFreemedInterface(FreemedInterface i) {
 		freemedInterface = i;
+		state.assignFreemedInterface(i);
 	}
 
 	public void show() {
