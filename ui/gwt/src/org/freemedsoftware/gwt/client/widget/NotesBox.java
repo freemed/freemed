@@ -83,8 +83,6 @@ public class NotesBox extends WidgetInterface {
 
 			simplePanel.setStyleName("freemed-WidgetContainer");
 			simplePanel.addStyleName("freemed-NotesBoxContainer");
-			
-			
 
 			textArea.addChangeListener(this);
 
@@ -121,7 +119,8 @@ public class NotesBox extends WidgetInterface {
 			name = textArea.getText();
 			boolean skip = true;
 			if (name.length() != 0) {
-				int pos = name.indexOf(" ", name.indexOf(" ", name.indexOf(" ") + 1) +1);
+				int pos = name.indexOf(" ", name.indexOf(" ",
+						name.indexOf(" ") + 1) + 1);
 				if (pos != -1) {
 					name = name.substring(0, pos);
 				}
@@ -158,6 +157,8 @@ public class NotesBox extends WidgetInterface {
 	protected Command command;
 
 	protected HorizontalPanel hPanel = new HorizontalPanel();
+	
+	protected String emptyNoteText = "Edit this note!";
 
 	protected HashMap<Integer, Note> notes = new HashMap<Integer, Note>();
 
@@ -192,19 +193,22 @@ public class NotesBox extends WidgetInterface {
 		String[] aNote = {};
 		oNote = state.getUserConfig("notepad");
 
-		if (notes.size() == 0) {
-			if (oNote != "") {
-				aNote = (String[]) JsonUtil.shoehornJson(JSONParser
-						.parse(oNote), "String[]");
-				for (int i = 0; i < aNote.length; i++) {
-					if (aNote[i] != "") {
-						addNote(aNote[i]);
-					}
+		if (oNote != "") {
+			aNote = (String[]) JsonUtil.shoehornJson(JSONParser.parse(oNote),
+					"String[]");
+			if (aNote.length != 0) {
+			for (int i = 0; i < aNote.length; i++) {
+				if (aNote[i] != "") {
+					addNote(aNote[i]);
 				}
-			} else {
-				addNote("Edit this note!");
 			}
+			} else {
+				addNote(emptyNoteText);
+			}
+		} else {
+			addNote(emptyNoteText);
 		}
+		JsonUtil.debug("NotesBox.setState() finished");
 	}
 
 	public void saveContent() {
