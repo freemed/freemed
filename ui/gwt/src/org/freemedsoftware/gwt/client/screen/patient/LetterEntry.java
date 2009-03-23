@@ -71,7 +71,7 @@ public class LetterEntry extends PatientScreenInterface {
 
 	protected RichTextArea wText;
 
-	final protected String moduleName = "Letters";
+	protected String moduleName = "Letters";
 
 	public LetterEntry() {
 
@@ -136,25 +136,16 @@ public class LetterEntry extends PatientScreenInterface {
 		verticalPanel.add(buttonBar);
 	}
 
-	public void loadInternalId(Integer id) {
-		ModuleInterfaceAsync service = getProxy();
-		service.ModuleGetRecordMethod(moduleName, id,
-				new AsyncCallback<HashMap<String, String>>() {
-					public void onSuccess(HashMap<String, String> r) {
-						wFrom
-								.setValue(new Integer((String) r
-										.get("letterfrom")));
-						wTo.setValue(new Integer((String) r.get("letterto")));
-						wSubject.setText((String) r.get("lettersubject"));
-						wDate.setSelectedDate(new Date((String) r
-								.get("letterdt")));
-						wText.setHTML((String) r.get("lettertext"));
-					}
+	public void populateData(HashMap<String, String> r) {
+		wFrom.setValue(Integer.parseInt(r.get("letterfrom")));
+		wTo.setValue(Integer.parseInt(r.get("letterto")));
+		wSubject.setText((String) r.get("lettersubject"));
+		wText.setHTML((String) r.get("lettertext"));
+		wDate.setSelectedDate(new Date((String) r.get("letterdt")));
+	}
 
-					public void onFailure(Throwable t) {
-
-					}
-				});
+	public String getModuleName() {
+		return "Letters";
 	}
 
 	public void submitForm() {
@@ -166,6 +157,7 @@ public class LetterEntry extends PatientScreenInterface {
 		rec.put("letterfrom", (String) wFrom.getValue().toString());
 		rec.put("letterto", (String) wTo.getValue().toString());
 		rec.put("lettersubject", (String) wSubject.getText());
+		rec.put("lettertext", (String) wText.getText());
 
 		if (!internalId.equals(new Integer(0))) {
 			// Modify

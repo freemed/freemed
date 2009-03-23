@@ -31,9 +31,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
+import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
@@ -61,7 +67,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PatientProblemList extends Composite {
+public class PatientProblemList extends WidgetInterface {
 
 	public class ActionBar extends Composite implements ClickListener {
 
@@ -164,7 +170,7 @@ public class PatientProblemList extends Composite {
 					deleteItem(internalId);
 				}
 			} else if (sender == modifyImage) {
-				modifyItem(internalId);
+				modifyItem(internalId, data);
 			} else {
 				// Do nothing
 			}
@@ -224,6 +230,8 @@ public class PatientProblemList extends Composite {
 
 	protected int maximumRows = 10;
 
+	protected PatientScreen patientScreen = null;
+
 	public PatientProblemList() {
 		SimplePanel panel = new SimplePanel();
 		tabPanel = new TabPanel();
@@ -249,8 +257,10 @@ public class PatientProblemList extends Composite {
 		tabPanel.selectTab(0);
 	}
 
-	public void modifyItem(Integer item) {
-
+	public void modifyItem(Integer item, HashMap<String, String> data) {
+		PatientScreenInterface i = resolvePatientScreen(data.get("module"));
+		i.setInternalId(Integer.parseInt(data.get("oid")));
+		Util.spawnTabPatient("Modify", i, state, patientScreen);
 	}
 
 	public void deleteItem(Integer item) {
@@ -261,6 +271,10 @@ public class PatientProblemList extends Composite {
 		patientId = id;
 		// Call initial data load, as patient id is set
 		loadData();
+	}
+
+	public void setPatientScreen(PatientScreen ps) {
+		patientScreen = ps;
 	}
 
 	public void addToActionBarMap(Integer key, ActionBar ab) {
@@ -323,6 +337,25 @@ public class PatientProblemList extends Composite {
 
 		tables.put(criteria, t);
 		messages.put(criteria, m);
+	}
+
+	protected PatientScreenInterface resolvePatientScreen(String moduleName) {
+		PatientScreenInterface pSI = null;
+		if (moduleName.toLowerCase() == "pnotes") {
+			pSI = new ProgressNoteEntry();
+		}
+		if (moduleName.toLowerCase() == "letters") {
+			pSI = new LetterEntry();
+		}
+		if (moduleName.toLowerCase() == "patletter") {
+			pSI = new PatientCorrespondenceEntry();
+		}
+		if (pSI != null) {
+			pSI.setPatientId(patientId);
+			pSI.assignState(state);
+			pSI.assignPatientScreen(patientScreen);
+		}
+		return pSI;
 	}
 
 	@SuppressWarnings("unchecked")

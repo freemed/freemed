@@ -72,6 +72,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		final SimplePanel cProblemList = new SimplePanel();
 		cProblemList.setStylePrimaryName("freemed-PatientSummaryContainer");
 		problemList = new PatientProblemList();
+		problemList.setPatientScreen(patientScreen);
 		cProblemList.setWidget(problemList);
 		problemContainer.add(cProblemList);
 
@@ -195,6 +196,7 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		try {
 			problemList.setPatientId(patientId);
+			problemList.setPatientScreen(patientScreen);
 		} catch (Exception ex) {
 			JsonUtil.debug("Exception in problemList: " + ex.toString());
 		}

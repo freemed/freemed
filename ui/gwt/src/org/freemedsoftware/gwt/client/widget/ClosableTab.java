@@ -82,14 +82,6 @@ public class ClosableTab extends Composite {
 					goodToGo = closableTabInterface.isReadyToClose();
 				}
 				if (goodToGo) {
-					if (closableTabInterface != null) {
-						closableTabInterface.onClose();
-					}
-					TabPanel t = ((TabPanel) widget.getParent().getParent()
-							.getParent());
-					t.selectTab(t.getWidgetIndex(widget) - 1);
-					widget.removeFromParent();
-
 					// If we're dealing with PatientScreen, remove from mapping
 					if (widget instanceof PatientScreen) {
 						Integer patientId = ((PatientScreen) widget)
@@ -97,6 +89,14 @@ public class ClosableTab extends Composite {
 						((PatientScreen) widget).getState()
 								.getPatientScreenMap().remove(patientId);
 					}
+
+					if (closableTabInterface != null) {
+						closableTabInterface.onClose();
+					}
+					TabPanel t = ((TabPanel) widget.getParent().getParent()
+							.getParent());
+					t.selectTab(t.getWidgetIndex(widget) - 1);
+					widget.removeFromParent();
 				}
 			}
 		});
