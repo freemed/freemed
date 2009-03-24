@@ -89,6 +89,11 @@ public class DashboardScreen extends ScreenInterface {
 		public String getTitle() {
 			return t;
 		}
+		
+		public void setStyle(String style) {
+			label.setStylePrimaryName(style);
+		}
+		
 
 	}
 
@@ -122,7 +127,7 @@ public class DashboardScreen extends ScreenInterface {
 		outOfDrag.setWidth("100%");
 
 		final Label descDnd = new Label(
-				"Click and hold the Title of a Widget to move it");
+				"Click and hold the Title of a Widget to move it to another column.");
 		outOfDrag.add(descDnd);
 
 		outOfDrag.add(boundaryPanel);
@@ -209,8 +214,10 @@ public class DashboardScreen extends ScreenInterface {
 		for (int i = 0; i < cols; i++) {
 
 			vPanelColHead[i] = new VerticalPanel();
-			vPanelColHead[i].add(new DashboardItemContainer("Column #"
-					+ Integer.toString(i + 1)));
+			DashboardItemContainer dbic = new DashboardItemContainer("Column #"
+					+ Integer.toString(i + 1));
+			dbic.setStyle("freemed-DashboardLabel-Column");
+			vPanelColHead[i].add(dbic);
 
 			vPanelCol[i] = new VerticalPanel();
 			// vPanelCol[i].setSize(Integer.toString(100/cols)+"%", "100%");

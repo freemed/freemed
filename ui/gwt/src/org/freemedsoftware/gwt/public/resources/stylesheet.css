@@ -580,6 +580,18 @@ a:hover {
 	background-color: #ffffff;
 	}
 	
+.freemed-DashboardLabel-Column {
+	font-size: 10pt;
+	font-face: sans-serif, verdana;
+	font-weight: bold;
+	color: #666666;
+	border: 1px solid #000000;
+	padding-left: 40px;
+	padding-right: 40px;
+	margin: 2px;
+	background-color: #ffffff;
+}
+	
 .freemed-PatientSummaryContainer,
 .freemed-WorkListContainer {
 	border-left: 1px solid #000000;
