@@ -154,6 +154,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
+							dashboard.saveArrangement();
 							Util.logout(state);
 						}
 					});
@@ -321,9 +322,12 @@ public class MainScreen extends Composite {
 		state.assignTabPanel(tabPanel);
 
 		// Get configuration
+
 		getCurrentState().retrieveUserConfiguration(true, new Command() {
 			public void execute() {
+				JsonUtil.debug("MainScreen: Set State of dashboard");
 				dashboard.setState(state);
+				dashboard.afterStateSet();
 			}
 		});
 
@@ -417,7 +421,6 @@ public class MainScreen extends Composite {
 											.debug("MainScreen.populateDefaultProvider: found "
 													+ r.toString());
 									state.assignDefaultProvider(r);
-									dashboard.assignState(state);
 								} else {
 									JsonUtil
 											.debug("MainScreen.populateDefaultProvider: found error");

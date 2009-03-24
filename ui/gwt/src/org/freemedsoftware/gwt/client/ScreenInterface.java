@@ -66,13 +66,20 @@ public abstract class ScreenInterface extends WidgetInterface {
 	}
 
 	public void setState(CurrentState s) {
+
 		state = s;
+		JsonUtil.debug("ScreenInterface.setState() called");
+
 		if (children.size() > 0) {
 			Iterator<WidgetInterface> iter = children.iterator();
 			while (iter.hasNext()) {
-				iter.next().setState(state);
+				WidgetInterface c = iter.next();
+				JsonUtil.debug("child:" + c.getClass().getName());
+				c.setState(state);
+				// iter.next().setState(state);
 			}
 		}
+		JsonUtil.debug("3");
 	}
 
 	/**
