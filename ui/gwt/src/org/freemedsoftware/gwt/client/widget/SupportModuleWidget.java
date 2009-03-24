@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
@@ -47,9 +48,12 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
-public class SupportModuleWidget extends AsyncPicklistWidgetBase {
+public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
+		HashSetter {
 
 	protected String moduleName = null;
+
+	protected String hashMapping = null;
 
 	public SupportModuleWidget() {
 		super();
@@ -288,5 +292,21 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase {
 						}
 					});
 		}
+	}
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
+	}
+
+	public String getStoredValue() {
+		return getValue().toString();
+	}
+
+	public String getHashMapping() {
+		return hashMapping;
+	}
+
+	public void setFromHash(HashMap<String, String> data) {
+		setValue(Integer.parseInt(data.get(hashMapping)));
 	}
 }

@@ -26,37 +26,27 @@ package org.freemedsoftware.gwt.client;
 
 import java.util.HashMap;
 
-import com.google.gwt.user.client.ui.Composite;
-
-public abstract class WidgetInterface extends Composite {
-
-	protected CurrentState state = null;
-
-	public void assignState(CurrentState s) {
-		setState(s);
-	}
-
-	public void setState(CurrentState s) {
-		state = s;
-	}
-
-	public CurrentState getState() {
-		return state;
-	}
+public interface HashSetter {
 
 	/**
-	 * Method used to initialize widget, called after state is set.
+	 * Return static hashmapping for this object.
+	 * 
+	 * @return
 	 */
-	public void populateWidget() {
-	}
+	public String getHashMapping();
 
 	/**
-	 * Method to set current widget value from HashMap of data. Defaults to no
-	 * action.
+	 * Wrapper for individual value retrieval functions.
+	 * 
+	 * @return
+	 */
+	public String getStoredValue();
+
+	/**
+	 * Set a value from a hash of available values.
 	 * 
 	 * @param data
 	 */
-	public void setFromData(HashMap<String, String> data) {
-	}
+	public void setFromHash(HashMap<String, String> data);
 
 }

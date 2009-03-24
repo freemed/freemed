@@ -22,41 +22,32 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.freemedsoftware.gwt.client;
+package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
-import com.google.gwt.user.client.ui.Composite;
+import org.freemedsoftware.gwt.client.HashSetter;
 
-public abstract class WidgetInterface extends Composite {
+import com.google.gwt.user.client.ui.RichTextArea;
 
-	protected CurrentState state = null;
+public class CustomRichTextArea extends RichTextArea implements HashSetter {
 
-	public void assignState(CurrentState s) {
-		setState(s);
+	protected String hashMapping = null;
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
 	}
 
-	public void setState(CurrentState s) {
-		state = s;
+	public String getStoredValue() {
+		return getText();
 	}
 
-	public CurrentState getState() {
-		return state;
+	public String getHashMapping() {
+		return hashMapping;
 	}
 
-	/**
-	 * Method used to initialize widget, called after state is set.
-	 */
-	public void populateWidget() {
-	}
-
-	/**
-	 * Method to set current widget value from HashMap of data. Defaults to no
-	 * action.
-	 * 
-	 * @param data
-	 */
-	public void setFromData(HashMap<String, String> data) {
+	public void setFromHash(HashMap<String, String> data) {
+		setHTML(data.get(hashMapping));
 	}
 
 }

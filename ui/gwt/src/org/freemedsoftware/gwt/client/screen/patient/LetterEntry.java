@@ -26,12 +26,17 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
+import org.freemedsoftware.gwt.client.widget.CustomTextBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -49,11 +54,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class LetterEntry extends PatientScreenInterface {
 
@@ -63,15 +65,17 @@ public class LetterEntry extends PatientScreenInterface {
 	 */
 	protected Integer internalId = new Integer(0);
 
-	protected SimpleDatePicker wDate;
+	protected CustomDatePicker wDate;
 
 	protected SupportModuleWidget wFrom, wTo;
 
-	protected TextBox wSubject;
+	protected CustomTextBox wSubject;
 
-	protected RichTextArea wText;
+	protected CustomRichTextArea wText;
 
 	protected String moduleName = "Letters";
+
+	protected HashMap<String, HashSetter> setters = new HashMap<String, HashSetter>();
 
 	public LetterEntry() {
 
@@ -84,7 +88,9 @@ public class LetterEntry extends PatientScreenInterface {
 		final Label dateLabel = new Label("Date : ");
 		flexTable.setWidget(0, 0, dateLabel);
 
-		wDate = new SimpleDatePicker();
+		wDate = new CustomDatePicker();
+		wDate.setHashMapping("letterdt");
+		setters.put("letterdt", wDate);
 		flexTable.setWidget(0, 1, wDate);
 
 		final Label fromLabel = new Label("From : ");
@@ -92,6 +98,8 @@ public class LetterEntry extends PatientScreenInterface {
 
 		wFrom = new SupportModuleWidget();
 		wFrom.setModuleName("ProviderModule");
+		wFrom.setHashMapping("letterfrom");
+		setters.put("letterfrom", wFrom);
 		flexTable.setWidget(1, 1, wFrom);
 
 		final Label toLabel = new Label("To : ");
@@ -99,12 +107,16 @@ public class LetterEntry extends PatientScreenInterface {
 
 		wTo = new SupportModuleWidget();
 		wTo.setModuleName("ProviderModule");
+		wTo.setHashMapping("letterto");
+		setters.put("letterto", wTo);
 		flexTable.setWidget(2, 1, wTo);
 
 		final Label subjectLabel = new Label("Subject : ");
 		flexTable.setWidget(3, 0, subjectLabel);
 
-		wSubject = new TextBox();
+		wSubject = new CustomTextBox();
+		wSubject.setHashMapping("lettersubject");
+		setters.put("lettersubject", wSubject);
 		flexTable.setWidget(3, 1, wSubject);
 		wSubject.setWidth("100%");
 
@@ -114,7 +126,9 @@ public class LetterEntry extends PatientScreenInterface {
 		final Label messageLabel = new Label("Message : ");
 		flexTable.setWidget(5, 0, messageLabel);
 
-		wText = new RichTextArea();
+		wText = new CustomRichTextArea();
+		wText.setHashMapping("lettertext");
+		setters.put("lettertext", wText);
 		flexTable.setWidget(5, 1, wText);
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
@@ -137,11 +151,10 @@ public class LetterEntry extends PatientScreenInterface {
 	}
 
 	public void populateData(HashMap<String, String> r) {
-		wFrom.setValue(Integer.parseInt(r.get("letterfrom")));
-		wTo.setValue(Integer.parseInt(r.get("letterto")));
-		wSubject.setText((String) r.get("lettersubject"));
-		wText.setHTML((String) r.get("lettertext"));
-		wDate.setSelectedDate(new Date((String) r.get("letterdt")));
+		Iterator<HashSetter> iter = setters.values().iterator();
+		while (iter.hasNext()) {
+			iter.next().setFromHash(r);
+		}
 	}
 
 	public String getModuleName() {
@@ -152,12 +165,11 @@ public class LetterEntry extends PatientScreenInterface {
 		ModuleInterfaceAsync service = getProxy();
 		// Form hashmap ...
 		final HashMap<String, String> rec = new HashMap<String, String>();
-		rec.put("letterdt", (String) wDate.getSelectedDate().toString());
-		rec.put("letterpatient", (String) patientId.toString());
-		rec.put("letterfrom", (String) wFrom.getValue().toString());
-		rec.put("letterto", (String) wTo.getValue().toString());
-		rec.put("lettersubject", (String) wSubject.getText());
-		rec.put("lettertext", (String) wText.getText());
+		Iterator<String> iter = setters.keySet().iterator();
+		while (iter.hasNext()) {
+			String k = iter.next();
+			rec.put(k, setters.get(k).getStoredValue());
+		}
 
 		if (!internalId.equals(new Integer(0))) {
 			// Modify

@@ -24,14 +24,20 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.HashMap;
+
+import org.freemedsoftware.gwt.client.HashSetter;
+
 import com.google.gwt.core.client.GWT;
 import com.gwtsandbox.colorpicker.client.ui.ColorSelectedEvent;
 import com.gwtsandbox.colorpicker.client.ui.HSVColorPicker;
 import com.gwtsandbox.colorpicker.client.util.ColorUtils;
 
-public class CustomColorPicker extends HSVColorPicker {
+public class CustomColorPicker extends HSVColorPicker implements HashSetter {
 
 	protected String value = "";
+
+	protected String hashMapping = null;
 
 	public void onColorSelected(ColorSelectedEvent e) {
 		// Call superclass methods first
@@ -93,6 +99,22 @@ public class CustomColorPicker extends HSVColorPicker {
 			return raw.substring(raw.length() - 2);
 		}
 		return raw;
+	}
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
+	}
+
+	public String getStoredValue() {
+		return getValue();
+	}
+
+	public String getHashMapping() {
+		return hashMapping;
+	}
+
+	public void setFromHash(HashMap<String, String> data) {
+		setValue(data.get(hashMapping));
 	}
 
 }

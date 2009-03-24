@@ -24,47 +24,18 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.HashSetter;
 
-import com.google.gwt.user.client.ui.ListBox;
+import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
-public class CustomListBox extends ListBox implements HashSetter {
+public class CustomDatePicker extends SimpleDatePicker implements HashSetter {
 
 	protected String hashMapping = null;
-
-	public String getStoredValue() {
-		return getWidgetValue();
-	}
-
-	/**
-	 * Determine the string value.
-	 * 
-	 * @return
-	 */
-	public String getWidgetValue() {
-		try {
-			return getValue(getSelectedIndex());
-		} catch (Exception e) {
-			return new String("");
-		}
-	}
-
-	/**
-	 * Set the active value of the ListBox widget to be val.
-	 * 
-	 * @param val
-	 */
-	public void setWidgetValue(String val) {
-		if (getItemCount() > 0) {
-			for (int iter = 0; iter < getItemCount(); iter++) {
-				if (getValue(iter).compareTo(val) == 0) {
-					this.setItemSelected(iter, true);
-				}
-			}
-		}
-	}
 
 	public void setHashMapping(String hm) {
 		hashMapping = hm;
@@ -74,8 +45,28 @@ public class CustomListBox extends ListBox implements HashSetter {
 		return hashMapping;
 	}
 
+	public String getStoredValue() {
+		return getSelectedDate().toString();
+	}
+
 	public void setFromHash(HashMap<String, String> data) {
-		setWidgetValue(data.get(hashMapping));
+		Date dt = importSqlDate(data.get(hashMapping));
+		setSelectedDate(dt);
+	}
+
+	public Date importSqlDate(String date) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+		calendar
+				.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
+		calendar.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+
+		calendar.set(Calendar.HOUR, 1);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return new Date(calendar.getTime().getTime());
 	}
 
 }
