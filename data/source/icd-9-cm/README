@@ -1,0 +1,12 @@
+$Id$
+
+Available from:
+http://www.hcup-us.ahrq.gov/toolssoftware/ccs/$DXREF%202008_Archive.csv
+
+Source page:
+http://www.hcup-us.ahrq.gov/toolssoftware/ccs/ccs.jsp
+
+This is meant to be run as:
+
+   ./convert.sh DXREF_2008_Archive.csv > ../../locale/en_US/icd9.en_US.data
+

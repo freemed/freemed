@@ -21,20 +21,21 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `icd9` (
-	icd9code		VARCHAR (6),
+	icd9code		VARCHAR (6) NOT NULL,
 	icd10code		VARCHAR (7),
-	icd9descrip		VARCHAR (45),
+	icd9descrip		VARCHAR (45) NOT NULL UNIQUE,
 	icd10descrip		VARCHAR (45),
 	icdmetadesc		VARCHAR (30),
 	icdng			DATE,
 	icddrg			DATE,
-	icdnum			INT UNSIGNED,
-	icdamt			REAL,
-	icdcoll			REAL,
-	id			SERIAL,
+	icdnum			INT UNSIGNED DEFAULT 0,
+	icdamt			REAL DEFAULT 0.0,
+	icdcoll			REAL DEFAULT 0.0,
+	id			SERIAL
 
 	#	Define keys
 
-	KEY			( icd9code, icd9descrip )
+	, KEY			( icd9code )
+	, KEY			( icd9descrip )
 );
 
