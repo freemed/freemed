@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *      Philipp Meng <pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -41,11 +42,18 @@ import org.freemedsoftware.gwt.client.widget.WorkList;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class DashboardScreen extends ScreenInterface {
 
@@ -57,18 +65,41 @@ public class DashboardScreen extends ScreenInterface {
 
 		protected Label label;
 		protected String t;
+		protected WidgetInterface content;
+
+		/**
+		 * @wbp.parser.constructor
+		 */
 
 		public DashboardItemContainer(String title, WidgetInterface contents) {
 
 			final VerticalPanel container = new VerticalPanel();
 			initWidget(container);
+			content = contents;
 			t = title;
 			label = new Label(title);
 
-			label.setStylePrimaryName("freemed-DashboardLabel");
-			container.add(label);
+			final HorizontalPanel hP = new HorizontalPanel();
+			hP.add(label);
+			hP.setStylePrimaryName("freemed-DashboardLabel");
+			final PushButton button = new PushButton();
+			button.getUpFace().setImage(
+					new Image("resources/images/close_x.16x16.png"));
+
+			button.addClickListener(new ClickListener() {
+				public void onClick(Widget sender) {
+					remove();
+				}
+			});
+
+			hP.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+
+			hP.add(button);
+
+			container.add(hP);
 			container.add(contents);
 			addChildWidget(contents);
+
 		}
 
 		public DashboardItemContainer(String title) {
@@ -89,11 +120,16 @@ public class DashboardScreen extends ScreenInterface {
 		public String getTitle() {
 			return t;
 		}
-		
+
+		protected void remove() {
+			removeChildWidget(content);
+			listBoxWidgets.addItem(t);
+			this.removeFromParent();
+		}
+
 		public void setStyle(String style) {
 			label.setStylePrimaryName(style);
 		}
-		
 
 	}
 
@@ -118,6 +154,7 @@ public class DashboardScreen extends ScreenInterface {
 	protected NoInsertAtEndIndexedDropController[] dropController = {};
 
 	protected HorizontalPanel hPanel = new HorizontalPanel();
+	protected ListBox listBoxWidgets = new ListBox();
 
 	public DashboardScreen() {
 
@@ -128,7 +165,23 @@ public class DashboardScreen extends ScreenInterface {
 
 		final Label descDnd = new Label(
 				"Click and hold the Title of a Widget to move it to another column.");
-		outOfDrag.add(descDnd);
+
+		final HorizontalPanel outOfDragHP = new HorizontalPanel();
+		outOfDragHP.add(descDnd);
+
+		outOfDrag.add(outOfDragHP);
+		outOfDragHP.add(listBoxWidgets);
+		listBoxWidgets.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+				if (listBoxWidgets.getSelectedIndex() > 0) {
+					addDashboardItem();
+				}
+			}
+		});
+
+		listBoxWidgets.addItem("Select a Widget to add");
+		listBoxWidgets.setVisibleItemCount(1);
+		addListItems();
 
 		outOfDrag.add(boundaryPanel);
 		boundaryPanel.setWidth("100%");
@@ -154,32 +207,11 @@ public class DashboardScreen extends ScreenInterface {
 
 	}
 
-	public void assignState(CurrentState s) {
+	public void addDashboardItem() {
+		String s = listBoxWidgets
+				.getItemText(listBoxWidgets.getSelectedIndex());
+		createDraggableWidget(s, 0);
 
-		// Custom junk here
-
-	}
-
-	public void createDraggableWidget(String title, Integer col) {
-		DashboardItemContainer d = null;
-
-		if (title == "Work List") {
-			d = new DashboardItemContainer("Work List", workList);
-		} else if (title == "Messages") {
-			d = new DashboardItemContainer("Messages", messageBox);
-		} else if (title == "Notepad") {
-			d = new DashboardItemContainer("Notepad", notesBox);
-		} else if (title == "Prescription Refills") {
-			d = new DashboardItemContainer("Prescription Refills",
-					prescriptionRefillBox);
-		} else if (title == "Unfiled Documents") {
-			d = new DashboardItemContainer("Unfiled Documents", documentBox);
-		}
-
-		if (d != null) {
-			vPanelCol[col].add(d);
-			dragController.makeDraggable(d, d.getLabel());
-		}
 	}
 
 	public void addBaseWidgets() {
@@ -191,15 +223,38 @@ public class DashboardScreen extends ScreenInterface {
 		createDraggableWidget("Unfiled Documents", 0);
 	}
 
-	public void preventCollapse() {
-		for (int i = 0; i < cols; i++) {
-			// Add a blank Label to each column to prevent collapsing the Panels
-			SimplePanel s = new SimplePanel();
-			s.setHeight("5em");
-			s.setWidth("10em");
-			s.setWidget(new Label(""));
-			vPanelCol[i].add(s);
+	public void addListItems() {
+
+		// Kind of odd solution, but i had no other idea yet.
+		// __ALL__ items need to be defined here.
+		// If an Widget is added with CreateDraggableWidget, there the item is
+		// removed from the dropdown list.
+		addSingleListItem("Work List");
+		addSingleListItem("Messages");
+		addSingleListItem("Notepad");
+		addSingleListItem("Prescription Refills");
+		addSingleListItem("Unfiled Documents");
+
+	}
+
+	public void addSingleListItem(String s) {
+		if (itemInList(s) == -1) {
+			listBoxWidgets.addItem(s);
 		}
+	}
+
+	public void afterStateSet() {
+		JsonUtil.debug("DashBoard: AfterStateSet() called");
+		restoreArrangement();
+		if (state.getDefaultProvider() > 0) {
+			workList.setProvider(state.getDefaultProvider());
+		}
+	}
+
+	public void assignState(CurrentState s) {
+
+		// Custom junk here
+
 	}
 
 	public void clearView() {
@@ -234,28 +289,60 @@ public class DashboardScreen extends ScreenInterface {
 		 */
 	}
 
-	public void saveArrangement() {
-		// This method saves the current Arrangement of the Widgets moved by the
-		// user
-		HashMap<String, String> order = new HashMap<String, String>();
-		Integer columns = hPanel.getWidgetCount();
+	public void createDraggableWidget(String title, Integer col) {
+		DashboardItemContainer d = null;
+		JsonUtil.debug(title + " adding");
 
-		state.setUserConfig("dashboardcols", JsonUtil.jsonify(columns));
+		if (title == "Work List") {
+			d = new DashboardItemContainer("Work List", workList);
+			removeListItem("Work List");
+		} else if (title == "Messages") {
+			d = new DashboardItemContainer("Messages", messageBox);
+			removeListItem("Messages");
+		} else if (title == "Notepad") {
+			d = new DashboardItemContainer("Notepad", notesBox);
+			removeListItem("Notepad");
+		} else if (title == "Prescription Refills") {
+			d = new DashboardItemContainer("Prescription Refills",
+					prescriptionRefillBox);
+			removeListItem("Prescription Refills");
+		} else if (title == "Unfiled Documents") {
+			d = new DashboardItemContainer("Unfiled Documents", documentBox);
+			removeListItem("Unfiled Documents");
 
-		for (int i = (columns - 1); i >= 0; i--) {
-
-			VerticalPanel vP = (VerticalPanel) ((VerticalPanel) hPanel
-					.getWidget(i)).getWidget(1);
-
-			Integer rows = vP.getWidgetCount();
-			for (int j = 0; j < rows - 1; j++) {
-				String t = vP.getWidget(j).getTitle();
-				// j is the __correct__ index!
-				order.put(t, Integer.toString(i));
-			}
 		}
 
-		state.setUserConfig("dashboard", JsonUtil.jsonify(order));
+		if (d != null) {
+			vPanelCol[col].add(d);
+			dragController.makeDraggable(d, d.getLabel());
+		}
+	}
+
+	public Integer itemInList(String s) {
+		for (int i = 0; i < listBoxWidgets.getItemCount(); i++) {
+			if (listBoxWidgets.getValue(i) == s) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public void preventCollapse() {
+		for (int i = 0; i < cols; i++) {
+			// Add a blank Label to each column to prevent collapsing the Panels
+			SimplePanel s = new SimplePanel();
+			s.setHeight("5em");
+			s.setWidth("10em");
+			s.setWidget(new Label(""));
+			vPanelCol[i].add(s);
+		}
+	}
+
+	public void removeListItem(String s) {
+		Integer i = itemInList(s);
+		if (i > 0) {
+			listBoxWidgets.removeItem(i);
+		}
 
 	}
 
@@ -283,6 +370,7 @@ public class DashboardScreen extends ScreenInterface {
 
 				String s = iter.next();
 				Integer colNum = Integer.parseInt(conf.get(s));
+				addListItems();
 				createDraggableWidget(s, colNum);
 
 			}
@@ -294,11 +382,29 @@ public class DashboardScreen extends ScreenInterface {
 		}
 	}
 
-	public void afterStateSet() {
-		JsonUtil.debug("DashBoard: AfterStateSet() called");
-		restoreArrangement();
-		if (state.getDefaultProvider() > 0) {
-			workList.setProvider(state.getDefaultProvider());
+	public void saveArrangement() {
+		// This method saves the current Arrangement of the Widgets moved by the
+		// user
+		HashMap<String, String> order = new HashMap<String, String>();
+		Integer columns = hPanel.getWidgetCount();
+
+		state.setUserConfig("dashboardcols", JsonUtil.jsonify(columns));
+
+		for (int i = (columns - 1); i >= 0; i--) {
+
+			VerticalPanel vP = (VerticalPanel) ((VerticalPanel) hPanel
+					.getWidget(i)).getWidget(1);
+
+			Integer rows = vP.getWidgetCount();
+			for (int j = 0; j < rows - 1; j++) {
+				String t = vP.getWidget(j).getTitle();
+				// j is the __correct__ index!
+				order.put(t, Integer.toString(i));
+			}
 		}
+
+		state.setUserConfig("dashboard", JsonUtil.jsonify(order));
+
 	}
+
 }
