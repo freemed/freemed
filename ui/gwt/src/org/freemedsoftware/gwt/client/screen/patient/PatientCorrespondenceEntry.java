@@ -24,42 +24,30 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.Date;
-import java.util.HashMap;
-
-import org.freemedsoftware.gwt.client.PatientScreenInterface;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
+import org.freemedsoftware.gwt.client.widget.CustomTextBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
-public class PatientCorrespondenceEntry extends PatientScreenInterface {
+public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 
-	/**
-	 * Internal id representing this record. If this is 0, we create a new one,
-	 * otherwise we modify.
-	 */
-	protected Integer internalId = new Integer(0);
-
-	protected SimpleDatePicker wDate;
+	protected CustomDatePicker wDate;
 
 	protected SupportModuleWidget wFrom, wTo;
 
-	protected TextBox wSubject;
+	protected CustomTextBox wSubject;
 
-	protected RichTextArea wText;
+	protected CustomRichTextArea wText;
 
 	final protected String moduleName = "PatientCorrespondence";
 
@@ -74,7 +62,9 @@ public class PatientCorrespondenceEntry extends PatientScreenInterface {
 		final Label dateLabel = new Label("Date : ");
 		flexTable.setWidget(0, 0, dateLabel);
 
-		wDate = new SimpleDatePicker();
+		wDate = new CustomDatePicker();
+		wDate.setHashMapping("letterdt");
+		addEntryWidget("letterdt", wDate);
 		flexTable.setWidget(0, 1, wDate);
 
 		final Label fromLabel = new Label("From : ");
@@ -82,12 +72,16 @@ public class PatientCorrespondenceEntry extends PatientScreenInterface {
 
 		wFrom = new SupportModuleWidget();
 		wFrom.setModuleName("ProviderModule");
+		wFrom.setHashMapping("letterfrom");
+		addEntryWidget("letterfrom", wFrom);
 		flexTable.setWidget(1, 1, wFrom);
 
 		final Label subjectLabel = new Label("Subject : ");
 		flexTable.setWidget(2, 0, subjectLabel);
 
-		wSubject = new TextBox();
+		wSubject = new CustomTextBox();
+		wSubject.setHashMapping("lettersubject");
+		addEntryWidget("lettersubject", wSubject);
 		flexTable.setWidget(2, 1, wSubject);
 		wSubject.setWidth("100%");
 
@@ -97,7 +91,9 @@ public class PatientCorrespondenceEntry extends PatientScreenInterface {
 		final Label messageLabel = new Label("Message : ");
 		flexTable.setWidget(4, 0, messageLabel);
 
-		wText = new RichTextArea();
+		wText = new CustomRichTextArea();
+		wText.setHashMapping("lettertext");
+		addEntryWidget("lettertext", wText);
 		flexTable.setWidget(4, 1, wText);
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
@@ -119,73 +115,8 @@ public class PatientCorrespondenceEntry extends PatientScreenInterface {
 		verticalPanel.add(buttonBar);
 	}
 
-	public void loadInternalId(Integer id) {
-		ModuleInterfaceAsync service = getProxy();
-		service.ModuleGetRecordMethod(moduleName, id,
-				new AsyncCallback<HashMap<String, String>>() {
-					public void onSuccess(HashMap<String, String> r) {
-						wFrom
-								.setValue(new Integer((String) r
-										.get("letterfrom")));
-						wSubject.setText((String) r.get("lettersubject"));
-						wDate.setSelectedDate(new Date((String) r
-								.get("letterdt")));
-						wText.setHTML((String) r.get("lettertext"));
-					}
-
-					public void onFailure(Throwable t) {
-
-					}
-				});
-	}
-
-	public void submitForm() {
-		ModuleInterfaceAsync service = getProxy();
-		// Form hashmap ...
-		final HashMap<String, String> rec = new HashMap<String, String>();
-		rec.put("letterdt", (String) wDate.getSelectedDate().toString());
-		rec.put("letterpatient", (String) patientId.toString());
-		rec.put("letterfrom", (String) wFrom.getValue().toString());
-		rec.put("lettersubject", (String) wSubject.getText());
-
-		if (!internalId.equals(new Integer(0))) {
-			// Modify
-			rec.put("id", (String) internalId.toString());
-			service.ModuleModifyMethod(moduleName, rec,
-					new AsyncCallback<Integer>() {
-						public void onSuccess(Integer result) {
-							Toaster t = state.getToaster();
-							t.addItem("patientCorrespondence",
-									"Updated correspondence.",
-									Toaster.TOASTER_INFO);
-						}
-
-						public void onFailure(Throwable th) {
-							Toaster t = state.getToaster();
-							t.addItem("patientCorrespondence",
-									"Failed to update correspondence.",
-									Toaster.TOASTER_ERROR);
-						}
-					});
-		} else {
-			// Add
-			service.ModuleAddMethod(moduleName, rec,
-					new AsyncCallback<Integer>() {
-						public void onSuccess(Integer result) {
-							Toaster t = state.getToaster();
-							t.addItem("patientCorrespondence",
-									"Added correspondence.",
-									Toaster.TOASTER_INFO);
-						}
-
-						public void onFailure(Throwable th) {
-							Toaster t = state.getToaster();
-							t.addItem("patientCorrespondence",
-									"Failed to add correspondence.",
-									Toaster.TOASTER_ERROR);
-						}
-					});
-		}
+	public String getModuleName() {
+		return "PatientCorrespondence";
 	}
 
 	public void resetForm() {

@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
-import org.freemedsoftware.gwt.client.PatientScreenInterface;
+import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
@@ -258,7 +258,7 @@ public class PatientProblemList extends WidgetInterface {
 	}
 
 	public void modifyItem(Integer item, HashMap<String, String> data) {
-		PatientScreenInterface i = resolvePatientScreen(data.get("module"));
+		PatientEntryScreenInterface i = resolvePatientScreen(data.get("module"));
 		i.setInternalId(Integer.parseInt(data.get("oid")));
 		Util.spawnTabPatient("Modify", i, state, patientScreen);
 	}
@@ -339,8 +339,8 @@ public class PatientProblemList extends WidgetInterface {
 		messages.put(criteria, m);
 	}
 
-	protected PatientScreenInterface resolvePatientScreen(String moduleName) {
-		PatientScreenInterface pSI = null;
+	protected PatientEntryScreenInterface resolvePatientScreen(String moduleName) {
+		PatientEntryScreenInterface pSI = null;
 		if (moduleName.toLowerCase() == "pnotes") {
 			pSI = new ProgressNoteEntry();
 		}

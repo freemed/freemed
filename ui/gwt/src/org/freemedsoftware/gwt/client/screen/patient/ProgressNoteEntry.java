@@ -24,59 +24,37 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.HashMap;
-
-import org.freemedsoftware.gwt.client.JsonUtil;
-import org.freemedsoftware.gwt.client.PatientScreenInterface;
-import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
+import org.freemedsoftware.gwt.client.widget.CustomTextArea;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
-public class ProgressNoteEntry extends PatientScreenInterface {
+public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
-	protected HashMap<String, String> patientMap = null;
+	protected CustomDatePicker wDate;
 
-	/**
-	 * Internal id representing this record. If this is 0, we create a new one,
-	 * otherwise we modify.
-	 */
-	protected Integer internalId = new Integer(0);
-
-	protected SimpleDatePicker wDate;
-
-	protected TextArea wDescription;
+	protected CustomTextArea wDescription;
 
 	protected SupportModuleWidget wProvider;
 
 	protected SuggestBox wTemplate;
 
-	protected RichTextArea S, O, A, P, I, E, R;
+	protected CustomRichTextArea S, O, A, P, I, E, R;
 
 	final protected String moduleName = "ProgressNotes";
 
@@ -127,19 +105,25 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		final Label dateLabel = new Label("Date : ");
 		flexTable.setWidget(1, 0, dateLabel);
 
-		final SimpleDatePicker wDate = new SimpleDatePicker();
+		wDate = new CustomDatePicker();
+		wDate.setHashMapping("pnotesdt");
+		addEntryWidget("pnotesdt", wDate);
 		flexTable.setWidget(1, 1, wDate);
 
 		final Label providerLabel = new Label("Provider : ");
 		flexTable.setWidget(2, 0, providerLabel);
 
 		wProvider = new SupportModuleWidget("ProviderModule");
+		wProvider.setHashMapping("pnotesphy");
+		addEntryWidget("pnotesphy", wProvider);
 		flexTable.setWidget(2, 1, wProvider);
 
 		final Label descriptionLabel = new Label("Description : ");
 		flexTable.setWidget(3, 0, descriptionLabel);
 
-		wDescription = new TextArea();
+		wDescription = new CustomTextArea();
+		wDescription.setHashMapping("pnotesdescrip");
+		addEntryWidget("pnotesdescrip", wDescription);
 		flexTable.setWidget(3, 1, wDescription);
 		wDescription.setWidth("100%");
 
@@ -151,43 +135,57 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 
 		final SimplePanel containerS = new SimplePanel();
 		tabPanel.add(containerS, "S");
-		S = new RichTextArea();
+		S = new CustomRichTextArea();
+		S.setHashMapping("pnotes_S");
+		addEntryWidget("pnotes_S", S);
 		containerS.setWidget(S);
 		S.setSize("100%", "100%");
 
 		final SimplePanel containerO = new SimplePanel();
 		tabPanel.add(containerO, "O");
-		O = new RichTextArea();
+		O = new CustomRichTextArea();
+		O.setHashMapping("pnotes_O");
+		addEntryWidget("pnotes_O", O);
 		containerO.setWidget(O);
 		O.setSize("100%", "100%");
 
 		final SimplePanel containerA = new SimplePanel();
 		tabPanel.add(containerA, "A");
-		A = new RichTextArea();
+		A = new CustomRichTextArea();
+		A.setHashMapping("pnotes_A");
+		addEntryWidget("pnotes_A", A);
 		containerA.setWidget(A);
 		A.setSize("100%", "100%");
 
 		final SimplePanel containerP = new SimplePanel();
 		tabPanel.add(containerP, "P");
-		P = new RichTextArea();
+		P = new CustomRichTextArea();
+		P.setHashMapping("pnotes_P");
+		addEntryWidget("pnotes_P", P);
 		containerP.setWidget(P);
 		P.setSize("100%", "100%");
 
 		final SimplePanel containerI = new SimplePanel();
 		tabPanel.add(containerI, "I");
-		I = new RichTextArea();
+		I = new CustomRichTextArea();
+		I.setHashMapping("pnotes_I");
+		addEntryWidget("pnotes_I", I);
 		containerI.setWidget(I);
 		I.setSize("100%", "100%");
 
 		final SimplePanel containerE = new SimplePanel();
 		tabPanel.add(containerE, "E");
-		E = new RichTextArea();
+		E = new CustomRichTextArea();
+		E.setHashMapping("pnotes_E");
+		addEntryWidget("pnotes_E", E);
 		containerE.setWidget(E);
 		E.setSize("100%", "100%");
 
 		final VerticalPanel containerR = new VerticalPanel();
 		tabPanel.add(containerR, "R");
-		R = new RichTextArea();
+		R = new CustomRichTextArea();
+		R.setHashMapping("pnotes_R");
+		addEntryWidget("pnotes_R", R);
 		containerR.add(R);
 		R.setSize("100%", "100%");
 		final RecentMedicationsList recentMedicationsList = new RecentMedicationsList();
@@ -197,173 +195,8 @@ public class ProgressNoteEntry extends PatientScreenInterface {
 		tabPanel.selectTab(0);
 	}
 
-	public void loadInternalId(Integer id) {
-		ModuleInterfaceAsync service = getProxy();
-		service.ModuleGetRecordMethod(moduleName, id,
-				new AsyncCallback<HashMap<String, String>>() {
-					public void onSuccess(HashMap<String, String> r) {
-						// TODO: finish this mapping
-						wProvider.setValue(new Integer((String) r
-								.get("pnotesphy")));
-						S.setHTML((String) r.get("pnotes_S"));
-						O.setHTML((String) r.get("pnotes_O"));
-						A.setHTML((String) r.get("pnotes_A"));
-						P.setHTML((String) r.get("pnotes_P"));
-						I.setHTML((String) r.get("pnotes_I"));
-						E.setHTML((String) r.get("pnotes_E"));
-						R.setHTML((String) r.get("pnotes_R"));
-					}
-
-					public void onFailure(Throwable t) {
-
-					}
-				});
-	}
-
-	public void submitForm() {
-		ModuleInterfaceAsync service = getProxy();
-		// Form hashmap ...
-		final HashMap<String, String> rec = new HashMap<String, String>();
-		rec.put("pnotesdt", (String) wDate.getSelectedDate().toString());
-		rec.put("pnotesdescrip", (String) wDescription.toString());
-		rec.put("pnotesdoc", (String) wProvider.getValue().toString());
-		rec.put("pnotes_S", (String) S.getHTML());
-		rec.put("pnotes_O", (String) O.getHTML());
-		rec.put("pnotes_A", (String) A.getHTML());
-		rec.put("pnotes_P", (String) P.getHTML());
-		rec.put("pnotes_I", (String) I.getHTML());
-		rec.put("pnotes_E", (String) E.getHTML());
-		rec.put("pnotes_R", (String) R.getHTML());
-
-		if (!internalId.equals(new Integer(0))) {
-			// Modify
-			rec.put("id", (String) internalId.toString());
-			if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				String[] params = { moduleName, JsonUtil.jsonify(rec) };
-				RequestBuilder builder = new RequestBuilder(
-						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
-												params)));
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						public void onError(Request request, Throwable ex) {
-							Toaster t = state.getToaster();
-							t.addItem("progressNotes",
-									"Failed to update progress note.",
-									Toaster.TOASTER_ERROR);
-						}
-
-						public void onResponseReceived(Request request,
-								Response response) {
-							if (200 == response.getStatusCode()) {
-								Integer r = (Integer) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
-										"Integer");
-								if (r != null) {
-									Toaster t = state.getToaster();
-									t.addItem("progressNotes",
-											"Updated progress note.",
-											Toaster.TOASTER_INFO);
-								}
-							} else {
-								Toaster t = state.getToaster();
-								t.addItem("progressNotes",
-										"Failed to update progress note.",
-										Toaster.TOASTER_ERROR);
-							}
-						}
-					});
-				} catch (RequestException e) {
-					Toaster t = state.getToaster();
-					t.addItem("progressNotes",
-							"Failed to update progress note.",
-							Toaster.TOASTER_ERROR);
-				}
-			} else {
-				service.ModuleModifyMethod(moduleName, rec,
-						new AsyncCallback<Integer>() {
-							public void onSuccess(Integer result) {
-								Toaster t = state.getToaster();
-								t.addItem("progressNotes",
-										"Updated progress note.",
-										Toaster.TOASTER_INFO);
-							}
-
-							public void onFailure(Throwable th) {
-								Toaster t = state.getToaster();
-								t.addItem("progressNotes",
-										"Failed to update progress note.",
-										Toaster.TOASTER_ERROR);
-							}
-						});
-			}
-		} else {
-			// Add
-			if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				String[] params = { moduleName, JsonUtil.jsonify(rec) };
-				RequestBuilder builder = new RequestBuilder(
-						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
-												params)));
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						public void onError(Request request, Throwable ex) {
-							Toaster t = state.getToaster();
-							t.addItem("progressNotes",
-									"Failed to add progress note.",
-									Toaster.TOASTER_ERROR);
-						}
-
-						public void onResponseReceived(Request request,
-								Response response) {
-							if (200 == response.getStatusCode()) {
-								Integer r = (Integer) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
-										"Integer");
-								if (r != null) {
-									Toaster t = state.getToaster();
-									t.addItem("progressNotes",
-											"Added progress note.",
-											Toaster.TOASTER_INFO);
-								}
-							} else {
-								Toaster t = state.getToaster();
-								t.addItem("progressNotes",
-										"Failed to add progress note.",
-										Toaster.TOASTER_ERROR);
-							}
-						}
-					});
-				} catch (RequestException e) {
-					Toaster t = state.getToaster();
-					t.addItem("progressNotes", "Failed to add progress note.",
-							Toaster.TOASTER_ERROR);
-				}
-			} else {
-				service.ModuleAddMethod(moduleName, rec,
-						new AsyncCallback<Integer>() {
-							public void onSuccess(Integer result) {
-								Toaster t = state.getToaster();
-								t.addItem("progressNotes",
-										"Added progress note.",
-										Toaster.TOASTER_INFO);
-							}
-
-							public void onFailure(Throwable th) {
-								Toaster t = state.getToaster();
-								t.addItem("progressNotes",
-										"Failed to add progress note.",
-										Toaster.TOASTER_ERROR);
-							}
-						});
-			}
-		}
+	public String getModuleName() {
+		return "ProgressNotes";
 	}
 
 	public void resetForm() {
