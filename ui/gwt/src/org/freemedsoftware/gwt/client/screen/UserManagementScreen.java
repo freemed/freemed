@@ -273,9 +273,9 @@ public class UserManagementScreen extends ScreenInterface implements
 			s[s.length] = "User Description";
 		}
 
-		if (lbUserType.getValue(lbUserType.getSelectedIndex()) == "null") {
+		if (lbUserType.getWidgetValue() == "null") {
 			s[s.length] = "User Type";
-		} else if (lbUserType.getValue(lbUserType.getSelectedIndex()) == "phy") {
+		} else if (lbUserType.getWidgetValue()== "phy") {
 			if (lbActualPhysician.getText() == "") {
 				s[s.length] = "Actual Physician";
 			}
