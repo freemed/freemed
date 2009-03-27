@@ -82,6 +82,8 @@ class ProgressNotes extends EMRModule {
 		global $display_buffer, $sql, $pnoteseoc;
 		foreach ($GLOBALS AS $k => $v) { global ${$k}; }
 
+		if (!is_object($GLOBALS['this_user'])) { $GLOBALS['this_user'] = CreateObject('FreeMED.User'); }
+
 		$book = CreateObject('PHP.notebook',
 				array ("id", "module", "patient", "action", "return"),
 				NOTEBOOK_COMMON_BAR | NOTEBOOK_STRETCH, 5);
@@ -546,7 +548,7 @@ class ProgressNotes extends EMRModule {
 			'superbill',
 			array (
 				'dateofservice' => fm_date_assemble('pnotesdt'),
-				'enteredby' => $this_user->user_number,
+				'enteredby' => $GLOBALS['this_user']->user_number,
 				'patient',
 				'note' => $_REQUEST['pnotesdescrip'],
 				'procs' => join ( ',', $_REQUEST['procs'] ),
