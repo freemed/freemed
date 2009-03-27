@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Philipp Meng	<pmeng@freemedsoftware.org>
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -32,6 +33,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -41,6 +43,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -65,6 +68,8 @@ public class UserManagementScreen extends ScreenInterface implements
 	protected SupportModuleWidget lbActualPhysician;
 
 	protected Button addUserButton, clearButton;
+
+	protected String className = "UserManagementScreen";
 
 	public UserManagementScreen() {
 
@@ -117,27 +122,33 @@ public class UserManagementScreen extends ScreenInterface implements
 		lbUserType = new CustomListBox();
 		userAddTable.setWidget(4, 1, lbUserType);
 		userAddTable.getFlexCellFormatter().setColSpan(4, 1, 2);
+		lbUserType.addItem("Select User Type", "null");
 		lbUserType.addItem("Miscellaneous", "misc");
 		lbUserType.addItem("Provider", "phy");
+
+		final Label actualPhysicianLabel = new Label("Actual Physician");
+		userAddTable.setWidget(5, 0, actualPhysicianLabel);
+		actualPhysicianLabel.setVisible(false);
+
+		lbActualPhysician = new SupportModuleWidget("ProviderModule");
+		userAddTable.setWidget(5, 1, lbActualPhysician);
+		userAddTable.getFlexCellFormatter().setColSpan(5, 1, 2);
+		lbActualPhysician.setVisible(false);
+
 		lbUserType.addChangeListener(new ChangeListener() {
 			public void onChange(Widget sender) {
 				String value = ((CustomListBox) sender).getWidgetValue();
 				if (value.compareTo("phy") == 0) {
 					// Is provider
-					// TODO: enable lbActualPhysician
+					lbActualPhysician.setVisible(true);
+					actualPhysicianLabel.setVisible(true);
 				} else {
 					// Is not provider
-					// TODO: disable lbActualPhysician
+					lbActualPhysician.setVisible(false);
+					actualPhysicianLabel.setVisible(false);
 				}
 			}
 		});
-
-		final Label actualPhysicianLabel = new Label("Actual Physician");
-		userAddTable.setWidget(5, 0, actualPhysicianLabel);
-
-		lbActualPhysician = new SupportModuleWidget("ProviderModule");
-		userAddTable.setWidget(5, 1, lbActualPhysician);
-		userAddTable.getFlexCellFormatter().setColSpan(5, 1, 2);
 
 		addUserButton = new Button();
 		userAddTable.setWidget(6, 1, addUserButton);
@@ -176,10 +187,114 @@ public class UserManagementScreen extends ScreenInterface implements
 
 	public void onClick(Widget w) {
 		if (w == addUserButton) {
-			// TODO: verify form and submit data
-		} else if (w == clearButton) {
-			clearForm();
+
+			if (checkInput() == true) {
+
+				HashMap<String, String> hm = new HashMap<String, String>();
+				hm.put("username", tbUsername.getText());
+				hm.put("userpassword", tbPassword.getText());
+				hm.put("userdescrip", tbDescription.getText());
+				String usertype = lbUserType.getValue(lbUserType
+						.getSelectedIndex());
+				hm.put("usertype", usertype);
+				if (usertype == "phy") {
+					hm.put("userrealphy", lbActualPhysician.getText());
+				}
+
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
+					// Do nothing.
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					String[] params = { JsonUtil.jsonify(hm) };
+					RequestBuilder builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.api.UserInterface.add",
+													params)));
+					try {
+						builder.sendRequest(null, new RequestCallback() {
+							public void onError(Request request, Throwable ex) {
+								state.getToaster().addItem(className,
+										"Failed to add user.",
+										Toaster.TOASTER_ERROR);
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									Integer r = (Integer) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"Integer");
+									if (r != null) {
+										state.getToaster().addItem(className,
+												"Successfully Added User.",
+												Toaster.TOASTER_INFO);
+									}
+								} else {
+									state.getToaster().addItem(className,
+											"Failed to add user.",
+											Toaster.TOASTER_ERROR);
+								}
+							}
+						});
+					} catch (RequestException e) {
+						state.getToaster().addItem(className,
+								"Failed to send message.",
+								Toaster.TOASTER_ERROR);
+					}
+				} else {
+					// TODO: Create GWT-RPC stuff here
+				}
+
+			} else if (w == clearButton) {
+				clearForm();
+			}
 		}
+	}
+
+	public Boolean checkInput() {
+		String base = "Please check the following fields:" + " ";
+		String[] s = {};
+		String pw = null;
+		if (tbUsername.getText() == "") {
+			s[s.length] = "Username";
+		}
+		if (tbPassword.getText() != "") {
+			if (tbPassword.getText() != tbPasswordverify.getText()) {
+				pw = "Passwords do not match!";
+			}
+		} else {
+			s[s.length] = "Password";
+		}
+
+		if (tbDescription.getText() == "") {
+			s[s.length] = "User Description";
+		}
+
+		if (lbUserType.getValue(lbUserType.getSelectedIndex()) == "null") {
+			s[s.length] = "User Type";
+		} else if (lbUserType.getValue(lbUserType.getSelectedIndex()) == "phy") {
+			if (lbActualPhysician.getText() == "") {
+				s[s.length] = "Actual Physician";
+			}
+		}
+
+		if (s.length == 0 && pw == null) {
+			return true;
+		}
+
+		for (int i = 0; i < s.length; i++) {
+			base = base + s[i];
+			if (i != s.length - 1) {
+				base = base + ", ";
+			}
+		}
+
+		Window.alert(base + "\n" + pw);
+
+		return false;
 	}
 
 	public void clearForm() {
