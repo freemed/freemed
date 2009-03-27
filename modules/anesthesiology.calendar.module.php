@@ -72,6 +72,7 @@ class AnesthCalendar extends CalendarModule {
 		$buffer .= "
 		<!-- mini calendar -->
 		<div ALIGN=\"CENTER\">
+		".template::link_button(__("Help"), help_url())."
 		<table WIDTH=\"100%\" CELLSPACING=\"0\" CELLPADDING=\2\" ".
 		"BORDER=\"0\">
 		<tr>
