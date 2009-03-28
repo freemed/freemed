@@ -21,7 +21,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-VERSION="1.2"
+VERSION="1.3"
+PKGLOC="/tmp"
 
 echo "build_gsdjvu.sh for gsdjvu version ${VERSION}"
 echo "by jeff@freemedsoftware.org"
@@ -29,17 +30,37 @@ echo " "
 echo "Please note you must have root privileges to install this package."
 echo " "
 
-if [ ! -f "gsdjvu-${VERSION}.tar.gz" ]; then
+DEPS=""
+if [ ! -f "/usr/include/jpeglib.h" -a ! -f "/usr/local/include/jpeglib.h" ]; then
+	DEPS="$DEPS libjpeg"
+fi
+if [ ! -f "/usr/include/zlib.h" -a ! -f "/usr/local/include/zlib.h" ]; then
+	DEPS="$DEPS zlib"
+fi
+if [ ! -f "/usr/include/png.h" -a ! -f "/usr/local/include/png.h" ]; then
+	DEPS="$DEPS libpng"
+fi
+if [ "$DEPS" != "" ]; then
+	echo " ! Failed to locate development headers for :"
+	echo $DEPS
+	echo " "
+	echo "If you're using a Debian based distribution, try : "
+	echo " sudo apt-get -y install build-essential libjpeg62-dev libpng12-dev zlib1g-dev"
+	echo "before continuing with the build process."
+	exit
+fi
+
+if [ ! -f "${PKGLOC}/gsdjvu-${VERSION}.tar.gz" ]; then
 	echo -n " * Retrieving gsdjvu v${VERSION} ... "
-	wget -q -c http://downloads.sourceforge.net/djvu/gsdjvu-${VERSION}.tar.gz 2>&1 > /dev/null
+	wget -q -c http://downloads.sourceforge.net/djvu/gsdjvu-${VERSION}.tar.gz -O "${PKGLOC}/gsdjvu-${VERSION}.tar.gz" 2>&1 > /dev/null
 	echo "[done]"
 else
 	echo " * Already have gsdjvu v${VERSION}"
 fi
 
-if [ ! -f "ghostscript-8.57.tar.bz2" ]; then
+if [ ! -f "${PKGLOC}/ghostscript-8.57.tar.bz2" ]; then
 	echo -n " * Retrieving GPL ghostscript ... "
-	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-8.57.tar.bz2 2>&1 > /dev/null
+	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-8.57.tar.bz2 -O "${PKGLOC}/ghostscript-8.57.tar.bz2" 2>&1 > /dev/null
 	echo "[done]"
 else
 	echo " * Already have GPL ghostscript package"
@@ -47,19 +68,20 @@ fi
 
 if [ ! -f "ghostscript-fonts-std-8.11.tar.gz" ]; then
 	echo -n " * Retrieving ghostscript fonts ... "
-	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-fonts-std-8.11.tar.gz 2>&1 > /dev/null
+	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-fonts-std-8.11.tar.gz -O "${PKGLOC}/ghostscript-fonts-std-8.11.tar.gz" 2>&1 > /dev/null
 	echo "[done]"
 else
 	echo " * Already have ghostscript font package"
 fi
 
 echo -n " * Extracting gsdjvu ... "
-tar zxf gsdjvu-${VERSION}.tar.gz
+tar zxf ${PKGLOC}/gsdjvu-${VERSION}.tar.gz
 echo "[done]"
 
 echo -n " * Copying ghostscript packages ... "
 mkdir -p gsdjvu-${VERSION}/BUILD/
-cp ghostscript-fonts-std-8.11.tar.gz ghostscript-8.57.tar.bz2 \
+cp ${PKGLOC}/ghostscript-fonts-std-8.11.tar.gz \
+	${PKGLOC}/ghostscript-8.57.tar.bz2 \
 	gsdjvu-${VERSION}/BUILD/
 echo "[done]"
 
