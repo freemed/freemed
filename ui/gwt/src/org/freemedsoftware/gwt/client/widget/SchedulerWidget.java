@@ -50,6 +50,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -208,7 +209,7 @@ public class SchedulerWidget extends WidgetInterface implements
 	}
 
 	public class EventDataDialog extends DialogBox implements KeyboardListener,
-			ClickListener {
+			ClickListener, ChangeListener {
 
 		private TextArea text = new TextArea();
 
@@ -314,7 +315,9 @@ public class SchedulerWidget extends WidgetInterface implements
 			patient = new PatientWidget();
 			table.setWidget(1, 0, new Label("Patient"));
 			table.setWidget(1, 1, patient);
-
+			
+			patient.addChangeListener(this);
+			
 			provider = new SupportModuleWidget();
 			provider.setModuleName("ProviderModule");
 			table.setWidget(2, 0, new Label("Provider"));
@@ -361,13 +364,18 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			table.setWidget(4, 1, button);
 			setWidget(table);
-			if (text.getText().length() > 1) {
-				ok.setEnabled(true);
-			} else {
-				ok.setEnabled(false);
+			
+			text.addChangeListener(this);
+			toggleButton();
+			
+		}
+		
+		public void onChange(Widget sender) {
+			if (sender == text || sender==patient) {
+				toggleButton();
 			}
 		}
-
+		
 		public void onKeyDown(Widget widget, char _char, int _int) {
 
 		}
@@ -408,7 +416,9 @@ public class SchedulerWidget extends WidgetInterface implements
 					data.setData(text.getText());
 					final DateEvent newEvent = new DateEvent(this, data);
 					newEvent.setCommand(command);
+					JsonUtil.debug("Received Date Event");
 					listener.handleDateEvent(newEvent);
+					
 					hide();
 				} else {
 					if (sender == cancel) {
@@ -426,6 +436,17 @@ public class SchedulerWidget extends WidgetInterface implements
 
 				}
 			}
+		}
+		
+		protected void toggleButton() {
+			JsonUtil.debug("String: '"+patient.getText() + "'");
+			
+			if (text.getText().length() > 1 && patient.getText() != "") {
+				ok.setEnabled(true);
+			} else {
+				ok.setEnabled(false);
+			}
+			
 		}
 	}
 
