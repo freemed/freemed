@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -39,6 +40,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -105,6 +107,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		private String patientName = null;
 
 		private String providerName = null;
+
+		// TODO: Position Marker
 
 		public EventData() {
 			super();
@@ -315,11 +319,14 @@ public class SchedulerWidget extends WidgetInterface implements
 			patient = new PatientWidget();
 			table.setWidget(1, 0, new Label("Patient"));
 			table.setWidget(1, 1, patient);
-			
+
 			patient.addChangeListener(this);
-			
+
 			provider = new SupportModuleWidget();
 			provider.setModuleName("ProviderModule");
+
+			provider.addChangeListener(this);
+
 			table.setWidget(2, 0, new Label("Provider"));
 			if (state == null) {
 				JsonUtil.debug("current state not passed to scheduler");
@@ -364,18 +371,18 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			table.setWidget(4, 1, button);
 			setWidget(table);
-			
+
 			text.addChangeListener(this);
 			toggleButton();
-			
+
 		}
-		
+
 		public void onChange(Widget sender) {
-			if (sender == text || sender==patient) {
+			if (sender == text || sender == patient) {
 				toggleButton();
 			}
 		}
-		
+
 		public void onKeyDown(Widget widget, char _char, int _int) {
 
 		}
@@ -414,11 +421,14 @@ public class SchedulerWidget extends WidgetInterface implements
 						data.setEndTime(end.getValue(date.getValue()));
 					}
 					data.setData(text.getText());
+					data.setProviderName(provider.getText());
+					data.setProviderId(provider.getValue());
+					data.setPatientName(patient.getText());
+					data.setPatientId(patient.getValue());
 					final DateEvent newEvent = new DateEvent(this, data);
 					newEvent.setCommand(command);
-					JsonUtil.debug("Received Date Event");
 					listener.handleDateEvent(newEvent);
-					
+
 					hide();
 				} else {
 					if (sender == cancel) {
@@ -437,16 +447,17 @@ public class SchedulerWidget extends WidgetInterface implements
 				}
 			}
 		}
-		
+
 		protected void toggleButton() {
-			JsonUtil.debug("String: '"+patient.getText() + "'");
-			
-			if (text.getText().length() > 1 && patient.getText() != "") {
+			JsonUtil.debug("String: '" + patient.getText() + "'");
+
+			if (text.getText().length() > 1 && patient.getValue() > 0
+					&& provider.getValue() > 0) {
 				ok.setEnabled(true);
 			} else {
 				ok.setEnabled(false);
 			}
-			
+
 		}
 	}
 
@@ -1019,6 +1030,91 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		switch (newEvent.getCommand()) {
 		case ADD: {
+
+
+			Calendar cstart = new GregorianCalendar();
+			cstart.setTime(data.getStartTime());
+			Calendar cend = new GregorianCalendar();
+			cend.setTime(data.getEndTime());
+
+
+			// Needed fields: caldateof, calhour, calminute, calduration,
+			// caltype, calpatient, calfacility
+			// caltype = pat (all patient appointments) || temp (call in
+			// patient; reservations)
+			// || block (time reservations like lunch, etc.)
+
+			HashMap<String, String> d = new HashMap<String, String>();
+
+			d.put("caldateof", Integer
+					.toString(cstart.get(Calendar.YEAR))
+					+ "-"
+					+ Integer.toString((cstart.get(Calendar.MONTH) + 1))
+					+ "-"
+					+ Integer.toString(cstart.get(Calendar.DAY_OF_MONTH)));
+			d
+					.put("calhour", Integer.toString(cstart
+							.get(Calendar.HOUR_OF_DAY)));
+			d.put("calminute", Integer.toString(cstart.get(Calendar.MINUTE)));
+
+			Integer dur = (cend.get(Calendar.HOUR) - cstart.get(Calendar.HOUR));
+			if (dur < 0) {
+				dur = dur + 24;
+			}
+			dur = (dur*60)
+					+ (cend.get(Calendar.MINUTE) - cstart.get(Calendar.MINUTE));
+
+			d.put("calduration",Integer.toString(dur));
+			d.put("caltype", "pat");
+			d.put("calpatient", Integer.toString(data.getPatientId()));
+			d.put("calprovider", Integer.toString(data.getProviderId()));
+			d.put("calprenote", data.getData());
+			// TODO: FACILITY MISSING!
+			
+			
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Runs in STUBBED MODE => Do nothing
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				// Use JSON-RPC to retrieve the data
+				String[] params = {JsonUtil.jsonify(d)};
+
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.Scheduler.SetAppointment",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							JsonUtil.debug(request.toString());
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (response.getStatusCode() == 200) {
+								Integer result = (Integer) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"Integer");
+								if (result != null && result != 0) {
+									JsonUtil.debug("successfully added Event.");
+								}
+							}
+						}
+					});
+				} catch (RequestException e) {
+					// nothing here right now
+				}
+			} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
+				// Use GWT-RPC to retrieve the data
+				// TODO: Create that stuff
+			}
+			
+			
+			
+			
 			label.setText("Added event on " + data.getStartTime()
 					+ ", duration " + duration + " min");
 			break;
