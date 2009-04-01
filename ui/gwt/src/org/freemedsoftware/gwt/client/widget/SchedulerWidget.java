@@ -737,6 +737,49 @@ public class SchedulerWidget extends WidgetInterface implements
 		public int getSingleTopHeight() {
 			return 0;
 		}
+
+		public int getEventBottomHeight() {
+			return 0;
+		}
+
+		public int getEventCornerSize() {
+			return 0;
+		}
+
+		public int getEventMinimumHeight() {
+			return 0;
+		}
+
+		public int getEventTopHeight() {
+			return 0;
+		}
+
+		public int getIntervalHeight() {
+			return 20;
+		}
+
+		public int getIntervalsPerHour() {
+			return 4;
+		}
+
+		public int getScrollHour() {
+			return 0;
+		}
+
+		public boolean isDurationAcceptable(int minutes) {
+			if (minutes % 15 == 0) {
+				return true;
+			}
+			return false;
+		}
+
+		public boolean show24HourClock() {
+			return false;
+		}
+
+		public boolean showIntervalTimes() {
+			return false;
+		}
 	}
 
 	public class EventCacheController implements EventController {

@@ -11,8 +11,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/gwt-dnd-2.0.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.cobogw.gwt.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gwt-incubator_1-5_Dec_28.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-date-emulation-0.9.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-date-0.9.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-extras-0.9.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-date-emulation-0.9.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-date-0.9.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-extras-0.9.9.jar"/>
 	<classpathentry kind="output" path="www"/>
 </classpath>
