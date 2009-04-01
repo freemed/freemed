@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -40,7 +41,6 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -835,18 +835,21 @@ public class SchedulerWidget extends WidgetInterface implements
 											JsonUtil.debug("found " + r.length
 													+ " events");
 											List<EventData> e = new ArrayList<EventData>();
-											for (int iter = 0; iter < r.length; iter++) {
-												JsonUtil.debug("Iterating at "
-														+ iter);
-												EventData d = shoehornEventData(r[iter]);
+											Iterator<HashMap<String, String>> iter = Arrays
+													.asList(r).iterator();
+											while (iter.hasNext()) {
+												JsonUtil
+														.debug("Iterating through event");
+												EventData d = shoehornEventData(iter
+														.next());
 												JsonUtil.debug("Found: "
 														+ d.toString());
 												e.add(d);
 											}
 											JsonUtil
 													.debug("using setEventsByArrayList");
-											caller
-													.setEventsByArrayList((ArrayList<?>) e);
+											caller.setEvents(e
+													.toArray(new EventData[0]));
 										}
 									}
 								} else {
@@ -916,8 +919,16 @@ public class SchedulerWidget extends WidgetInterface implements
 			data.setEndTime(new Date(cal.getTime().getTime()));
 
 			// Set patient and other appointment information
-			data.setPatientId(Integer.parseInt(o.get("patient_id")));
-			data.setProviderId(Integer.parseInt(o.get("provider_id")));
+			try {
+				data.setPatientId(Integer.parseInt(o.get("patient_id")));
+			} catch (NumberFormatException ex) {
+				data.setPatientId(0);
+			}
+			try {
+				data.setProviderId(Integer.parseInt(o.get("provider_id")));
+			} catch (NumberFormatException ex) {
+				data.setProviderId(0);
+			}
 			data.setPatientName(o.get("patient"));
 			data.setProviderName(o.get("provider"));
 
@@ -1068,18 +1079,17 @@ public class SchedulerWidget extends WidgetInterface implements
 	public void handleDateEvent(DateEvent newEvent) {
 		// Figure out common things
 		EventData data = (EventData) newEvent.getData();
-		int duration = dateToMinutes(data.getEndTime())
-				- dateToMinutes(data.getStartTime());
 
 		switch (newEvent.getCommand()) {
 		case ADD: {
-
+			JsonUtil.debug("handleDateEvent : " + data.toString());
+			int duration = dateToMinutes(data.getEndTime())
+					- dateToMinutes(data.getStartTime());
 
 			Calendar cstart = new GregorianCalendar();
 			cstart.setTime(data.getStartTime());
 			Calendar cend = new GregorianCalendar();
 			cend.setTime(data.getEndTime());
-
 
 			// Needed fields: caldateof, calhour, calminute, calduration,
 			// caltype, calpatient, calfacility
@@ -1089,12 +1099,15 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			HashMap<String, String> d = new HashMap<String, String>();
 
-			d.put("caldateof", Integer
-					.toString(cstart.get(Calendar.YEAR))
-					+ "-"
-					+ Integer.toString((cstart.get(Calendar.MONTH) + 1))
-					+ "-"
-					+ Integer.toString(cstart.get(Calendar.DAY_OF_MONTH)));
+			d
+					.put("caldateof", Integer.toString(cstart
+							.get(Calendar.YEAR))
+							+ "-"
+							+ Integer
+									.toString((cstart.get(Calendar.MONTH) + 1))
+							+ "-"
+							+ Integer.toString(cstart
+									.get(Calendar.DAY_OF_MONTH)));
 			d
 					.put("calhour", Integer.toString(cstart
 							.get(Calendar.HOUR_OF_DAY)));
@@ -1104,22 +1117,21 @@ public class SchedulerWidget extends WidgetInterface implements
 			if (dur < 0) {
 				dur = dur + 24;
 			}
-			dur = (dur*60)
+			dur = (dur * 60)
 					+ (cend.get(Calendar.MINUTE) - cstart.get(Calendar.MINUTE));
 
-			d.put("calduration",Integer.toString(dur));
+			d.put("calduration", Integer.toString(dur));
 			d.put("caltype", "pat");
 			d.put("calpatient", Integer.toString(data.getPatientId()));
 			d.put("calprovider", Integer.toString(data.getProviderId()));
 			d.put("calprenote", data.getData());
 			// TODO: FACILITY MISSING!
-			
-			
+
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// Runs in STUBBED MODE => Do nothing
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				// Use JSON-RPC to retrieve the data
-				String[] params = {JsonUtil.jsonify(d)};
+				String[] params = { JsonUtil.jsonify(d) };
 
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
@@ -1139,8 +1151,7 @@ public class SchedulerWidget extends WidgetInterface implements
 							if (response.getStatusCode() == 200) {
 								Integer result = (Integer) JsonUtil
 										.shoehornJson(JSONParser.parse(response
-												.getText()),
-												"Integer");
+												.getText()), "Integer");
 								if (result != null && result != 0) {
 									JsonUtil.debug("successfully added Event.");
 								}
@@ -1154,10 +1165,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				// Use GWT-RPC to retrieve the data
 				// TODO: Create that stuff
 			}
-			
-			
-			
-			
+
 			label.setText("Added event on " + data.getStartTime()
 					+ ", duration " + duration + " min");
 			break;
@@ -1176,11 +1184,17 @@ public class SchedulerWidget extends WidgetInterface implements
 			break;
 		}
 		case UPDATE: {
+			JsonUtil.debug("handleDateEvent : " + data.toString());
+			int duration = dateToMinutes(data.getEndTime())
+					- dateToMinutes(data.getStartTime());
 			label.setText("Updated event on " + data.getStartTime()
 					+ ", duration " + duration + " min");
 			break;
 		}
 		case REMOVE: {
+			JsonUtil.debug("handleDateEvent : " + data.toString());
+			int duration = dateToMinutes(data.getEndTime())
+					- dateToMinutes(data.getStartTime());
 			label
 					.setText("Removed event on " + data.getStartTime()
 							+ ", duration " + new Integer(duration).toString()
@@ -1189,6 +1203,10 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		case DRAG_DROP: {
+			JsonUtil.debug("handleDateEvent : " + data.toString());
+			int duration = dateToMinutes(data.getEndTime())
+					- dateToMinutes(data.getStartTime());
+
 			label.setText("TODO: Moved event on " + data.getStartTime() + " - "
 					+ data.getEndTime());
 			break;
