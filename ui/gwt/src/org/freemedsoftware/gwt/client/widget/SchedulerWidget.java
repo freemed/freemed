@@ -75,7 +75,6 @@ import eu.future.earth.gwt.client.date.DateEventListener;
 import eu.future.earth.gwt.client.date.DatePanel;
 import eu.future.earth.gwt.client.date.DatePickerRenderer;
 import eu.future.earth.gwt.client.date.DateRenderer;
-import eu.future.earth.gwt.client.date.DateUtils;
 import eu.future.earth.gwt.client.date.EventController;
 import eu.future.earth.gwt.client.date.EventPanel;
 import eu.future.earth.gwt.client.date.MultiView;
@@ -88,6 +87,31 @@ import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 public class SchedulerWidget extends WidgetInterface implements
 		DateEventListener, WindowResizeListener, ClickListener {
 
+	public class SchedulerCss {
+
+		public final static String PREFIX = "freemed-Scheduler-";
+
+		public final static String EVENT_HEADER_MONDAY = PREFIX
+				+ "eventHeaderMonday";
+
+		public final static String EVENT_PANEL_MONDAY = PREFIX
+				+ "eventBodyMonday";
+
+		public final static String WHOLEDAY_PANEL_MONDAY = PREFIX
+				+ "eventWholeDayMonday";
+
+		public final static String EVENT_HEADER_NORMAL = PREFIX
+				+ "eventHeaderNormal";
+
+		public final static String EVENT_DIALOG = PREFIX + "eventDialog";
+
+		public final static String EVENT_PANEL_NORMAL = PREFIX
+				+ "eventBodyNormal";
+
+		public final static String WHOLEDAY_PANEL_NORMAL = PREFIX
+				+ "eventWholeDayNormal";
+	}
+
 	public class EventData implements Serializable {
 
 		private static final long serialVersionUID = -6586593847569185408L;
@@ -97,6 +121,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		private Date endTime = null;
 
 		private String data = null;
+
+		private String description = null;
 
 		private String id = null;
 
@@ -136,6 +162,10 @@ public class SchedulerWidget extends WidgetInterface implements
 			return data;
 		}
 
+		public String getDescription() {
+			return description;
+		}
+
 		public Date getEndTime() {
 			return endTime;
 		}
@@ -162,6 +192,10 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public void setData(String data) {
 			this.data = data;
+		}
+
+		public void setDescription(String d) {
+			this.description = d;
 		}
 
 		public void setEndTime(Date endTime) {
@@ -212,365 +246,6 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	}
 
-	public class EventDataDialog extends DialogBox implements KeyboardListener,
-			ClickListener, ChangeListener {
-
-		private TextArea text = new TextArea();
-
-		private DateEditFieldWithPicker date = new DateEditFieldWithPicker();
-
-		private CheckBox wholeDay = new CheckBox();
-
-		private HorizontalPanel time = new HorizontalPanel();
-
-		private HorizontalPanel timePanel = new HorizontalPanel();
-
-		private TimeBox start = new TimeBox();
-
-		private TimeBox end = new TimeBox();
-
-		private DateEventListener listener = null;
-
-		private PatientWidget patient = null;
-
-		private SupportModuleWidget provider = null;
-
-		private Button cancel = null;
-
-		private Button ok = null;
-
-		private Button delete = null;
-
-		private EventData data = null;
-
-		private DateEventActions command = DateEventActions.ADD;
-
-		private CurrentState state = null;
-
-		public EventDataDialog(DateEventListener newListener, Object newData) {
-			this(newListener, newData, DateEventActions.ADD, null);
-		}
-
-		public EventDataDialog(DateEventListener newListener, Object newData,
-				CurrentState s) {
-			this(newListener, newData, DateEventActions.ADD, s);
-		}
-
-		public EventDataDialog(DateEventListener newListener, Object newData,
-				DateEventActions newCommand, CurrentState s) {
-			super();
-
-			state = s;
-
-			setAnimationEnabled(true);
-			setStyleName("freemed-SchedulerEventDialog");
-
-			boolean reverseTime = false;
-
-			command = newCommand;
-			data = (EventData) newData;
-			listener = newListener;
-
-			// If drag is backwards, hack to reverse times shown in display.
-			if (data.getStartTime().getTime() > data.getEndTime().getTime()) {
-				reverseTime = true;
-			}
-
-			date
-					.setDate(!reverseTime ? data.getStartTime() : data
-							.getEndTime());
-			start.setDate(!reverseTime ? data.getStartTime() : data
-					.getEndTime());
-			if (data.getEndTime() != null) {
-				end.setDate(!reverseTime ? data.getEndTime() : data
-						.getStartTime());
-				wholeDay.setChecked(false);
-			} else {
-				wholeDay.setChecked(true);
-			}
-			if (newCommand == DateEventActions.ADD) {
-				setText("New Appointment");
-			} else {
-				text.setText((String) data.getData());
-				setText("Edit Appointment");
-			}
-
-			// VerticalPanel outer = new VerticalPanel();
-
-			final FlexTable table = new FlexTable();
-
-			table.setWidget(0, 0, new Label("Date"));
-			table.setWidget(0, 1, date);
-
-			timePanel.add(start);
-			timePanel.add(new Label("-"));
-			timePanel.add(end);
-
-			time.add(wholeDay);
-			wholeDay.addClickListener(this);
-			if (data.getEndTime() != null) {
-				time.add(timePanel);
-			}
-
-			table.setWidget(0, 2, time);
-			table.getFlexCellFormatter().setHorizontalAlignment(0, 2,
-					HorizontalPanel.ALIGN_LEFT);
-
-			patient = new PatientWidget();
-			table.setWidget(1, 0, new Label("Patient"));
-			table.setWidget(1, 1, patient);
-
-			patient.addChangeListener(this);
-
-			provider = new SupportModuleWidget();
-			provider.setModuleName("ProviderModule");
-
-			provider.addChangeListener(this);
-
-			table.setWidget(2, 0, new Label("Provider"));
-			if (state == null) {
-				JsonUtil.debug("current state not passed to scheduler");
-			}
-			if (state.getDefaultProvider().intValue() > 0) {
-				provider.setValue(state.getDefaultProvider());
-			}
-			table.setWidget(2, 1, provider);
-
-			table.setWidget(3, 0, new Label("Description"));
-			table.setWidget(3, 1, text);
-			table.getFlexCellFormatter().setColSpan(1, 1, 2);
-
-			text.addKeyboardListener(this);
-			text.setWidth("250px");
-			text.setHeight("100px");
-			cancel = new Button("Cancel", this);
-
-			cancel.setFocus(true);
-			cancel.setAccessKey('c');
-			cancel.addClickListener(this);
-
-			ok = new Button("Ok", this);
-			ok.setEnabled(false);
-			ok.setFocus(true);
-			ok.setAccessKey('o');
-
-			final HorizontalPanel button = new HorizontalPanel();
-			button.add(ok);
-
-			if (command == DateEventActions.UPDATE) {
-				delete = new Button("Delete", this);
-				delete.setFocus(true);
-				delete.setAccessKey('d');
-				delete.addClickListener(this);
-				button.add(new HTML(" "));
-				button.add(delete);
-			}
-
-			button.add(new HTML(" "));
-			button.add(cancel);
-
-			table.setWidget(4, 1, button);
-			setWidget(table);
-
-			text.addChangeListener(this);
-			toggleButton();
-
-		}
-
-		public void onChange(Widget sender) {
-			if (sender == text || sender == patient) {
-				toggleButton();
-			}
-		}
-
-		public void onKeyDown(Widget widget, char _char, int _int) {
-
-		}
-
-		public void onKeyPress(Widget widget, char key, int _int) {
-			if (text.getText().length() > 1) {
-				ok.setEnabled(true);
-			} else {
-				ok.setEnabled(false);
-			}
-		}
-
-		public void onKeyUp(Widget widget, char _char, int _int) {
-		}
-
-		public void onClick(Widget sender) {
-			if (sender == wholeDay) {
-				if (wholeDay.isChecked()) {
-					if (time.getWidgetIndex(timePanel) > -1) {
-						time.remove(timePanel);
-					}
-				} else {
-					if (time.getWidgetIndex(timePanel) == -1) {
-						time.add(timePanel);
-					}
-				}
-			} else {
-				if (sender == ok) {
-					if (data == null) {
-						data = new EventData();
-					}
-					if (wholeDay.isChecked()) {
-						data.setStartTime(date.getValue());
-					} else {
-						data.setStartTime(start.getValue(date.getValue()));
-						data.setEndTime(end.getValue(date.getValue()));
-					}
-					data.setData(text.getText());
-					data.setProviderName(provider.getText());
-					data.setProviderId(provider.getValue());
-					data.setPatientName(patient.getText());
-					data.setPatientId(patient.getValue());
-					final DateEvent newEvent = new DateEvent(this, data);
-					newEvent.setCommand(command);
-					listener.handleDateEvent(newEvent);
-
-					hide();
-				} else {
-					if (sender == cancel) {
-						hide();
-					} else {
-						if (data != null && sender != null && sender == delete) {
-							final DateEvent newEvent = new DateEvent(this, data);
-							newEvent.setCommand(DateEventActions.REMOVE);
-							listener.handleDateEvent(newEvent);
-							hide();
-						} else {
-							hide();
-						}
-					}
-
-				}
-			}
-		}
-
-		protected void toggleButton() {
-			JsonUtil.debug("String: '" + patient.getText() + "'");
-
-			if (text.getText().length() > 1 && patient.getValue() > 0
-					&& provider.getValue() > 0) {
-				ok.setEnabled(true);
-			} else {
-				ok.setEnabled(false);
-			}
-
-		}
-	}
-
-	public class DayField extends AbstractDayField {
-
-		// private HorizontalPanel panel = new HorizontalPanel();
-		private Label description = new Label();
-
-		private DateTimeFormat format = DateTimeFormat.getFormat("HH:mm");
-
-		public DayField(DateRenderer renderer) {
-			super(renderer);
-			description.addClickListener(this);
-		}
-
-		public Widget createCustom(Serializable theData) {
-			if (theData != null) {
-				final EventData real = (EventData) theData;
-				description.setText((String) real.getData());
-				if (real.getEndTime() == null) {
-					super.setTitle(format.format(real.getStartTime()));
-				} else {
-					super.setTitle(format.format(real.getStartTime()) + "-"
-							+ format.format(real.getEndTime()));
-				}
-			}
-			return description;
-		}
-
-		public void setTitle() {
-			final Serializable theData = (Serializable) super.getData();
-			final EventData real = (EventData) theData;
-			if (real.getEndTime() == null) {
-				super.setTitle(format.format(real.getStartTime()));
-			} else {
-				super.setTitle(format.format(real.getStartTime()) + "-"
-						+ format.format(real.getEndTime()));
-			}
-
-		}
-
-		public Widget getClickableItem() {
-			return description;
-		}
-
-		public void repaintPanel() {
-		}
-	}
-
-	public class MonthField extends AbstractMonthField {
-
-		// private HorizontalPanel panel = new HorizontalPanel();
-		private Label description = new Label(); // NOPMD;
-
-		private DateTimeFormat format = DateTimeFormat.getFormat("HH:mm"); // NOPMD;
-
-		public MonthField(DateRenderer renderer) {
-			super(renderer);
-			description.addClickListener(this);
-		}
-
-		/**
-		 * createCustom
-		 * 
-		 * @param theData
-		 *            EventData
-		 * @return Widget
-		 * @todo Implement this
-		 *       eu.future.earth.gwt.client.date.month.AbstractMonthField method
-		 */
-		public Widget createCustom(Serializable theData) {
-			if (theData != null) {
-				if (theData instanceof EventData) {
-					final EventData real = (EventData) theData;
-					description.setText(real.getData());
-					super.setTitle(format.format(real.getStartTime()));
-				} else {
-					Window.alert("Programming error " + theData);
-				}
-			}
-			return description;
-		}
-
-		public Widget getClickableItem() {
-			return description;
-		}
-
-		public void repaintPanel() {
-		}
-	}
-
-	public class WholeDayField extends AbstractWholeDayField {
-
-		public WholeDayField(DateRenderer renderer) {
-			super(renderer);
-		}
-
-		public void drawTitle(Serializable theData) {
-			if (theData != null) {
-				if (theData instanceof EventData) {
-					final EventData real = (EventData) theData;
-					setTitle(real.getData());
-				} else {
-					Window.alert("Programming error " + theData);
-				}
-			}
-
-		}
-
-		public void repaintPanel() {
-		}
-	}
-
 	public class StringPanelRenderer extends BaseDateRenderer implements
 			DatePickerRenderer {
 
@@ -582,14 +257,15 @@ public class SchedulerWidget extends WidgetInterface implements
 				DateEventListener listener) {
 			final EventData data = new EventData();
 			data.setStartTime(currentDate);
-			final EventDataDialog dialog = new EventDataDialog(listener, data);
+			final StringEventDataDialog dialog = new StringEventDataDialog(
+					this, listener, data);
 			dialog.show();
 			dialog.center();
 		}
 
 		public void editAfterClick(Object data, DateEventListener listener) {
-			final EventDataDialog dialog = new EventDataDialog(listener, data,
-					DateEventActions.UPDATE, state);
+			final StringEventDataDialog dialog = new StringEventDataDialog(
+					this, listener, data, DateEventActions.UPDATE);
 			dialog.show();
 			dialog.center();
 		}
@@ -599,10 +275,11 @@ public class SchedulerWidget extends WidgetInterface implements
 			final EventData data = new EventData();
 			data.setStartTime(currentDate);
 			data.setEndTime(endDate);
-			final EventDataDialog dialog = new EventDataDialog(listener, data,
-					state);
+			final StringEventDataDialog dialog = new StringEventDataDialog(
+					this, listener, data);
 			dialog.show();
 			dialog.center();
+
 		}
 
 		public Widget createPickerPanel(Object newData, int day) {
@@ -614,11 +291,11 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public boolean supportMonthView() {
-			return false;
+			return true;
 		}
 
 		public boolean showWholeDayEventView() {
-			return true;
+			return false;
 		}
 
 		public boolean supportWeekView() {
@@ -630,11 +307,11 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getEndHour() {
-			return 19;
+			return 24;
 		}
 
 		public int getStartHour() {
-			return 7;
+			return 6;
 		}
 
 		public int showDaysInWeek() {
@@ -675,16 +352,12 @@ public class SchedulerWidget extends WidgetInterface implements
 			data.setStartTime(newStart);
 		}
 
-		public int getGridSize() {
-			return 10;
-		}
-
 		public boolean isWholeDayEvent(Object event) {
 			final EventData data = getData(event);
 			if (data != null) {
 				return data.isAlldayEvent();
 			} else {
-				Window.alert("Error: " + event);
+				Window.alert("Programming Error " + event);
 				return true;
 			}
 		}
@@ -696,6 +369,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				panel.setData(newData);
 				return panel;
 			} else {
+
 				switch (viewType) {
 				case DatePanel.MONTH: {
 					final MonthField panel = new MonthField(this);
@@ -722,36 +396,24 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		}
 
-		public int getHalfHeight() {
-			return 20;
-		}
-
-		public boolean showHalfHour() {
-			return false;
-		}
-
 		public boolean useShowMore() {
 			return true;
 		}
 
-		public int getSingleTopHeight() {
-			return 0;
-		}
-
 		public int getEventBottomHeight() {
-			return 0;
+			return 6;
 		}
 
 		public int getEventCornerSize() {
-			return 0;
+			return 3;
 		}
 
 		public int getEventMinimumHeight() {
-			return 0;
+			return 30;
 		}
 
 		public int getEventTopHeight() {
-			return 0;
+			return 18;
 		}
 
 		public int getIntervalHeight() {
@@ -763,18 +425,15 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getScrollHour() {
-			return 0;
+			return 9;
 		}
 
 		public boolean isDurationAcceptable(int minutes) {
-			if (minutes % 15 == 0) {
-				return true;
-			}
-			return false;
+			return minutes >= (60 / getIntervalsPerHour());
 		}
 
 		public boolean show24HourClock() {
-			return false;
+			return true;
 		}
 
 		public boolean showIntervalTimes() {
@@ -782,23 +441,456 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 	}
 
+	public class StringEventDataDialog extends DialogBox implements
+			KeyboardListener, ClickListener, ChangeListener {
+
+		private PatientWidget patient = null;
+
+		private SupportModuleWidget provider = null;
+
+		private TextArea text = new TextArea();
+
+		private DateEditFieldWithPicker date;
+
+		private CheckBox wholeDay = new CheckBox();
+
+		private HorizontalPanel time = new HorizontalPanel();
+
+		private HorizontalPanel timePanel = new HorizontalPanel();
+
+		private TimeBox start;
+
+		private TimeBox end;
+
+		private DateEventListener listener = null;
+
+		private Button cancel = null;
+
+		private Button ok = null;
+
+		private Button delete = null;
+
+		private EventData data = null;
+
+		private DateEventActions command = DateEventActions.ADD;
+
+		public StringEventDataDialog(DateRenderer renderer,
+				DateEventListener newListener, Object newData) {
+			this(renderer, newListener, newData, DateEventActions.ADD);
+		}
+
+		public StringEventDataDialog(DateRenderer renderer,
+				DateEventListener newListener, Object newData,
+				DateEventActions newCommand) {
+			super();
+
+			this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
+
+			boolean reverseTime = false;
+
+			date = new DateEditFieldWithPicker("MM/dd/yyyy");
+			start = new TimeBox(renderer.show24HourClock() ? "HH:mm"
+					: "hh:mmaa");
+			end = new TimeBox(renderer.show24HourClock() ? "HH:mm" : "hh:mmaa");
+			command = newCommand;
+			data = (EventData) newData;
+			listener = newListener;
+
+			// If drag is backwards, hack to reverse times shown in display.
+			if (data.getStartTime().getTime() > data.getEndTime().getTime()) {
+				reverseTime = true;
+			}
+
+			date
+					.setDate(!reverseTime ? data.getStartTime() : data
+							.getEndTime());
+			start.setDate(!reverseTime ? data.getStartTime() : data
+					.getEndTime());
+
+			if (data.getEndTime() != null) {
+				end.setDate(!reverseTime ? data.getEndTime() : data
+						.getStartTime());
+				wholeDay.setChecked(false);
+			} else {
+				wholeDay.setChecked(true);
+			}
+			if (newCommand == DateEventActions.ADD) {
+				setText("New Appointment");
+			} else {
+				text.setText((String) data.getDescription());
+				setText("Edit Appointment");
+			}
+
+			// VerticalPanel outer = new VerticalPanel();
+
+			final FlexTable table = new FlexTable();
+
+			table.setWidget(0, 0, new Label("Date"));
+			table.setWidget(0, 1, date);
+
+			timePanel.add(start);
+			timePanel.add(new Label("-"));
+			timePanel.add(end);
+
+			time.add(wholeDay);
+			wholeDay.addClickListener(this);
+			if (data.getEndTime() != null) {
+				time.add(timePanel);
+			}
+
+			table.setWidget(0, 2, time);
+			table.getFlexCellFormatter().setHorizontalAlignment(0, 2,
+					HorizontalPanel.ALIGN_LEFT);
+
+			patient = new PatientWidget();
+			table.setWidget(1, 0, new Label("Patient"));
+			table.setWidget(1, 1, patient);
+			try {
+				patient.setValue(data.getPatientId());
+			} catch (Exception ex) {
+				JsonUtil.debug(ex.toString());
+			}
+			patient.addChangeListener(this);
+
+			provider = new SupportModuleWidget();
+			provider.setModuleName("ProviderModule");
+			try {
+				provider.setValue(data.getProviderId());
+			} catch (Exception ex) {
+				JsonUtil.debug(ex.toString());
+			}
+			provider.addChangeListener(this);
+
+			table.setWidget(2, 0, new Label("Provider"));
+			if (state == null) {
+				JsonUtil.debug("current state not passed to scheduler");
+			} else {
+				// Only set default provider *if* there is one, and if the
+				// current event data hasn't already set it.
+				if (state.getDefaultProvider().intValue() > 0
+						&& (data.getProviderId() == null || data
+								.getProviderId() == 0)) {
+					provider.setValue(state.getDefaultProvider());
+				}
+			}
+			table.setWidget(2, 1, provider);
+
+			table.setWidget(3, 0, new Label("Description"));
+			table.setWidget(3, 1, text);
+			table.getFlexCellFormatter().setColSpan(1, 1, 2);
+
+			cancel = new Button("Cancel", this);
+
+			cancel.setFocus(true);
+			cancel.setAccessKey('c');
+
+			ok = new Button("Ok", this);
+			ok.setEnabled(false);
+			ok.setFocus(true);
+			ok.setAccessKey('o');
+
+			final HorizontalPanel button = new HorizontalPanel();
+			button.add(ok);
+
+			if (command == DateEventActions.UPDATE) {
+				delete = new Button("Delete", this);
+				delete.setFocus(true);
+				delete.setAccessKey('d');
+				delete.addClickListener(this);
+				button.add(new HTML(" "));
+				button.add(delete);
+			}
+
+			button.add(new HTML(" "));
+			button.add(cancel);
+			table.setWidget(4, 1, button);
+			setWidget(table);
+			toggleButton();
+		}
+
+		public void onChange(Widget sender) {
+			if (sender == text || sender == patient) {
+				toggleButton();
+			}
+		}
+
+		public void onKeyDown(Widget widget, char _char, int _int) {
+		}
+
+		public void onKeyPress(Widget widget, char key, int _int) {
+			toggleButton();
+		}
+
+		public void onKeyUp(Widget widget, char _char, int _int) {
+		}
+
+		public void onClick(Widget sender) {
+			if (sender == wholeDay) {
+				if (wholeDay.isChecked()) {
+					if (time.getWidgetIndex(timePanel) > -1) {
+						time.remove(timePanel);
+					}
+				} else {
+					if (time.getWidgetIndex(timePanel) == -1) {
+						time.add(timePanel);
+					}
+				}
+			} else {
+				if (sender == ok) {
+					if (data == null) {
+						data = new EventData();
+					}
+					if (wholeDay.isChecked()) {
+						data.setStartTime(date.getValue());
+					} else {
+						data.setStartTime(start.getValue(date.getValue()));
+						data.setEndTime(end.getValue(date.getValue()));
+					}
+					data.setData(text.getText());
+					data.setProviderName(provider.getText());
+					data.setProviderId(provider.getValue());
+					data.setPatientName(patient.getText());
+					data.setPatientId(patient.getValue());
+					final DateEvent newEvent = new DateEvent(this, data);
+					newEvent.setCommand(command);
+					listener.handleDateEvent(newEvent);
+					hide();
+				} else {
+					if (sender == cancel) {
+						hide();
+					} else {
+						if (data != null && sender != null && sender == delete) {
+							final DateEvent newEvent = new DateEvent(this, data);
+							newEvent.setCommand(DateEventActions.REMOVE);
+							listener.handleDateEvent(newEvent);
+							hide();
+						} else {
+							hide();
+						}
+					}
+
+				}
+			}
+		}
+
+		protected void toggleButton() {
+			JsonUtil.debug("String: '" + patient.getText() + "'");
+			if (text.getText().length() > 1 && patient.getValue() > 0
+					&& provider.getValue() > 0) {
+				ok.setEnabled(true);
+			} else {
+				ok.setEnabled(false);
+			}
+		}
+
+	}
+
+	public class WholeDayField extends AbstractWholeDayField {
+
+		public WholeDayField(DateRenderer renderer) {
+			super(renderer);
+		}
+
+		GregorianCalendar helper = new GregorianCalendar();
+
+		public void repaintPanel() {
+			final Object theData = getData();
+			if (theData != null) {
+				if (theData instanceof EventData) {
+					final EventData real = (EventData) theData;
+					helper.setTime(real.getStartTime());
+					if (helper.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+						super
+								.setEventStyleName(SchedulerCss.EVENT_HEADER_MONDAY);
+					}
+					setTitle(real.getData());
+				} else {
+					Window.alert("Programming error " + theData);
+				}
+			}
+
+		}
+	}
+
+	public class DayField extends AbstractDayField {
+
+		private Label description = new Label();
+
+		private DateTimeFormat format = DateTimeFormat.getFormat("HH:mm");
+
+		public DayField(DateRenderer renderer) {
+			super(renderer);
+			description.addClickListener(this);
+			super.setBody(description);
+		}
+
+		public void setTitle() {
+			final Object theData = super.getData();
+			final EventData real = (EventData) theData;
+			if (real.getEndTime() == null) {
+				super.setTitle(format.format(real.getStartTime()));
+			} else {
+				super.setTitle(format.format(real.getStartTime()) + "-"
+						+ format.format(real.getEndTime()));
+			}
+
+		}
+
+		public Widget getClickableItem() {
+			return description;
+		}
+
+		GregorianCalendar helper = new GregorianCalendar();
+
+		@Override
+		public void repaintPanel() {
+			final Object theData = super.getData();
+			if (theData != null) {
+				final EventData real = (EventData) theData;
+				helper.setTime(real.getStartTime());
+				if (helper.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+					super.setEventStyleName(SchedulerCss.EVENT_PANEL_MONDAY,
+							SchedulerCss.EVENT_HEADER_MONDAY);
+				}
+				description.setText((String) real.getData());
+				if (real.getEndTime() == null) {
+					super.setTitle(format.format(real.getStartTime()));
+				} else {
+					super.setTitle(format.format(real.getStartTime()) + "-"
+							+ format.format(real.getEndTime()));
+				}
+			}
+		}
+	}
+
+	public class MonthField extends AbstractMonthField {
+
+		private Label description = new Label(); // NOPMD;
+
+		private DateTimeFormat format = DateTimeFormat.getFormat("HH:mm"); // NOPMD;
+
+		public MonthField(DateRenderer renderer) {
+			super(renderer);
+			description.addClickListener(this);
+			super.setBody(description);
+		}
+
+		public Widget getClickableItem() {
+			return description;
+		}
+
+		GregorianCalendar helper = new GregorianCalendar();
+
+		public void repaintPanel() {
+			final Object theData = getData();
+
+			if (theData != null) {
+				if (theData instanceof EventData) {
+					final EventData real = (EventData) theData;
+					helper.setTime(real.getStartTime());
+					if (helper.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+						super
+								.setEventStyleName(SchedulerCss.WHOLEDAY_PANEL_MONDAY);
+					}
+					description.setText(real.getData());
+					super.setTitle(format.format(real.getStartTime()));
+				} else {
+					Window.alert("Programming error " + theData);
+				}
+			}
+		}
+	}
+
 	public class EventCacheController implements EventController {
 
 		private HashMap<String, EventData> items = new HashMap<String, EventData>();
-
-		protected Date startRange = null, endRange = null;
 
 		public EventCacheController() {
 			super();
 		}
 
+		/*
+		 * public void getEventsForRange(Date start, Date end, MultiView caller,
+		 * boolean reloadData) { ArrayList<EventData> found = new
+		 * ArrayList<EventData>(); Iterator<EventData> walker =
+		 * items.values().iterator(); while (walker.hasNext()) { EventData data
+		 * = (EventData) walker.next(); if ((data.getStartTime().after(start) &&
+		 * data.getStartTime() .before(end)) ||
+		 * DateUtils.isSameDay(data.getStartTime(), start) ||
+		 * DateUtils.isSameDay(data.getStartTime(), end)) { found.add(data); } }
+		 * caller.setEvents((Object[]) found.toArray(new Object[0])); }
+		 */
+
+		public EventData shoehornEventData(HashMap<String, String> o) {
+			EventData data = new EventData(o.get("scheduler_id"));
+
+			// Set date / time information
+			Calendar cal = importSqlDateTime(o.get("date_of"), o.get("hour"), o
+					.get("minute"));
+			data.setStartTime(new Date(cal.getTime().getTime()));
+			cal.add(Calendar.MINUTE, Integer.parseInt(o.get("duration")));
+			data.setEndTime(new Date(cal.getTime().getTime()));
+
+			// Set patient and other appointment information
+			try {
+				data.setPatientId(Integer.parseInt(o.get("patient_id")));
+			} catch (NumberFormatException ex) {
+				data.setPatientId(0);
+			}
+			try {
+				data.setProviderId(Integer.parseInt(o.get("provider_id")));
+			} catch (NumberFormatException ex) {
+				data.setProviderId(0);
+			}
+			data.setPatientName(o.get("patient"));
+			data.setProviderName(o.get("provider"));
+			data.setDescription(o.get("note"));
+
+			// Set event label
+			data
+					.setData((o.get("patient") != null && o.get("patient") != "") ? o
+							.get("patient")
+							+ ": "
+							: "" + o.get("note"));
+
+			return data;
+		}
+
+		/**
+		 * Shoehorn string representations of date and time into a
+		 * java.util.Date object.
+		 * 
+		 * @param date
+		 *            SQL format date (YYYY-MM-DD)
+		 * @param hour
+		 *            Hour (24 hour format)
+		 * @param minute
+		 *            Minute
+		 * @return
+		 */
+		public Calendar importSqlDateTime(String date, String hour,
+				String minute) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+			calendar.set(Calendar.MONTH,
+					Integer.parseInt(date.substring(5, 7)) - 1);
+			calendar
+					.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+
+			calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+			calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			return calendar;
+		}
+
 		@SuppressWarnings("unchecked")
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
-			startRange = start;
-			endRange = end;
-			JsonUtil.debug("getEventsForRange: start = "
-					+ startRange.toString() + ", end = " + endRange.toString());
+			JsonUtil.debug("getEventsForRange: start = " + start.toString()
+					+ ", end = " + end.toString());
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO: STUBBED
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -820,7 +912,6 @@ public class SchedulerWidget extends WidgetInterface implements
 									Toaster.TOASTER_ERROR);
 						}
 
-						@SuppressWarnings("unchecked")
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
@@ -873,105 +964,6 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		}
 
-		/**
-		 * Shoehorn string representations of date and time into a
-		 * java.util.Date object.
-		 * 
-		 * @param date
-		 *            SQL format date (YYYY-MM-DD)
-		 * @param hour
-		 *            Hour (24 hour format)
-		 * @param minute
-		 *            Minute
-		 * @return
-		 */
-		public Calendar importSqlDateTime(String date, String hour,
-				String minute) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
-			calendar.set(Calendar.MONTH,
-					Integer.parseInt(date.substring(5, 7)) - 1);
-			calendar
-					.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
-
-			calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-			calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
-
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-
-			return calendar;
-		}
-
-		public Date shoehornSqlDateTime(String date, String hour, String minute) {
-			Calendar x = importSqlDateTime(date, hour, minute);
-			return new Date(x.getTime().getTime());
-		}
-
-		public EventData shoehornEventData(HashMap<String, String> o) {
-			EventData data = new EventData(o.get("scheduler_id"));
-
-			// Set date / time information
-			Calendar cal = importSqlDateTime(o.get("date_of"), o.get("hour"), o
-					.get("minute"));
-			data.setStartTime(new Date(cal.getTime().getTime()));
-			cal.add(Calendar.MINUTE, Integer.parseInt(o.get("duration")));
-			data.setEndTime(new Date(cal.getTime().getTime()));
-
-			// Set patient and other appointment information
-			try {
-				data.setPatientId(Integer.parseInt(o.get("patient_id")));
-			} catch (NumberFormatException ex) {
-				data.setPatientId(0);
-			}
-			try {
-				data.setProviderId(Integer.parseInt(o.get("provider_id")));
-			} catch (NumberFormatException ex) {
-				data.setProviderId(0);
-			}
-			data.setPatientName(o.get("patient"));
-			data.setProviderName(o.get("provider"));
-
-			// Set event label
-			data.setData(o.get("patient") + ": " + o.get("note"));
-
-			return data;
-		}
-
-		public void populateEventsForRange(Date start, Date end,
-				MultiView caller, boolean reloadData) {
-			JsonUtil.debug("populateEvents for " + items.size() + " events");
-			JsonUtil.debug("start = " + start.toString() + ", end = "
-					+ end.toString());
-			ArrayList<EventData> found = new ArrayList<EventData>();
-			Iterator<String> walker = items.keySet().iterator();
-			int recursionDetector = 0;
-			while (walker.hasNext()) {
-				recursionDetector++;
-				if (recursionDetector > 50) {
-					JsonUtil.debug("recursion detected, bouncing");
-					continue;
-				}
-				JsonUtil.debug("populateEventsForRange - iterating");
-				String key = walker.next();
-				JsonUtil.debug("--> iterating through key = " + key);
-				EventData thisData = (EventData) items.get(key);
-				JsonUtil.debug(" --> start = " + start + ", end = " + end
-						+ ", thisData.getStartTime = "
-						+ thisData.getStartTime());
-				if ((thisData.getStartTime().after(start) && thisData
-						.getStartTime().before(end))
-						|| DateUtils.isSameDay(thisData.getStartTime(), start)
-						|| DateUtils.isSameDay(thisData.getStartTime(), end)) {
-					JsonUtil.debug("event " + thisData.toString() + " added");
-					found.add(thisData);
-				}
-			}
-			JsonUtil
-					.debug("attempting to add events, numbered " + found.size());
-			caller.setEvents((Object[]) found.toArray(new Object[0]));
-		}
-
 		public void updateEvent(Object updated) {
 			removeEvent(updated);
 			addEvent(updated);
@@ -979,16 +971,16 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public void removeEvent(Object updated) {
 			EventData data = (EventData) updated;
+			// Window.alert("Remove" + items.size());
 			items.remove(data.getIdentifier());
+			// Window.alert("Remove" + items.size());
 		}
 
 		public void addEvent(Object updated) {
 			EventData data = (EventData) updated;
-			items.put(data.getIdentifier(), (EventData) updated);
+			items.put(data.getIdentifier(), data);
 		}
 	}
-
-	protected CurrentState state = null;
 
 	private Label label = new Label("");
 
@@ -997,9 +989,9 @@ public class SchedulerWidget extends WidgetInterface implements
 	private DatePickerMonthNavigator navigator = new DatePickerMonthNavigator(
 			new NoneContraintAndEntryRenderer());
 
-	protected DockPanel panel = new DockPanel();
-
 	protected boolean alreadyInitialized = false;
+
+	protected DockPanel panel = new DockPanel();
 
 	public SchedulerWidget() {
 		super();
@@ -1007,17 +999,16 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	public SchedulerWidget(CurrentState s) {
 		super();
-		JsonUtil.debug("Initializing scheduler widget with state passed");
 		init(s);
 	}
 
 	public void init(CurrentState s) {
 		if (!alreadyInitialized) {
 			alreadyInitialized = true;
-			state = s;
+			assignState(s);
 			multiPanel = new MultiView(new EventCacheController(),
 					new StringPanelRenderer());
-			JsonUtil.debug("initializing pabel widget");
+			JsonUtil.debug("initializing panel widget");
 			initWidget(panel);
 
 			final HorizontalPanel fields = new HorizontalPanel();
@@ -1054,9 +1045,60 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 	}
 
-	public void setState(CurrentState s) {
-		state = s;
-		init(s);
+	public void handleDateEvent(DateEvent newEvent) {
+		switch (newEvent.getCommand()) {
+		case ADD: {
+			final EventData data = (EventData) newEvent.getData();
+			label.setText("Added event on " + data.getStartTime() + " - "
+					+ data.getEndTime());
+			break;
+		}
+		case SELECT_DAY: {
+			if (newEvent.getSource() == navigator) {
+				multiPanel.setDate(newEvent.getDate());
+			}
+			break;
+		}
+		case SELECT_MONTH: {
+			if (newEvent.getSource() == navigator) {
+				multiPanel.setType(DatePanel.MONTH);
+				multiPanel.setDate(newEvent.getDate());
+			}
+			break;
+		}
+		case UPDATE: {
+			final EventData data = (EventData) newEvent.getData();
+			label.setText("Updated event on " + data.getStartTime() + " - "
+					+ data.getEndTime());
+			break;
+		}
+		case REMOVE: {
+			final EventData data = (EventData) newEvent.getData();
+			label.setText("Removed event on " + data.getStartTime() + " - "
+					+ data.getEndTime());
+			break;
+		}
+
+		case DRAG_DROP: {
+			final EventData data = (EventData) newEvent.getData();
+			label.setText("Removed event on " + data.getStartTime() + " - "
+					+ data.getEndTime());
+			break;
+		}
+		}
+
+	}
+
+	public void onWindowResized(int width, int height) {
+		int shortcutHeight = height - 160;
+		if (shortcutHeight < 1) {
+			shortcutHeight = 1;
+		}
+		multiPanel.setHeight(shortcutHeight);
+	}
+
+	public void onClick(Widget arg0) {
+		// demoPanel.setG
 	}
 
 	/**
@@ -1074,158 +1116,6 @@ public class SchedulerWidget extends WidgetInterface implements
 	protected String dateToSql(Date d) {
 		DateTimeFormat ymdFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
 		return ymdFormat.format(d);
-	}
-
-	public void handleDateEvent(DateEvent newEvent) {
-		// Figure out common things
-		EventData data = (EventData) newEvent.getData();
-
-		switch (newEvent.getCommand()) {
-		case ADD: {
-			JsonUtil.debug("handleDateEvent : " + data.toString());
-			int duration = dateToMinutes(data.getEndTime())
-					- dateToMinutes(data.getStartTime());
-
-			Calendar cstart = new GregorianCalendar();
-			cstart.setTime(data.getStartTime());
-			Calendar cend = new GregorianCalendar();
-			cend.setTime(data.getEndTime());
-
-			// Needed fields: caldateof, calhour, calminute, calduration,
-			// caltype, calpatient, calfacility
-			// caltype = pat (all patient appointments) || temp (call in
-			// patient; reservations)
-			// || block (time reservations like lunch, etc.)
-
-			HashMap<String, String> d = new HashMap<String, String>();
-
-			d
-					.put("caldateof", Integer.toString(cstart
-							.get(Calendar.YEAR))
-							+ "-"
-							+ Integer
-									.toString((cstart.get(Calendar.MONTH) + 1))
-							+ "-"
-							+ Integer.toString(cstart
-									.get(Calendar.DAY_OF_MONTH)));
-			d
-					.put("calhour", Integer.toString(cstart
-							.get(Calendar.HOUR_OF_DAY)));
-			d.put("calminute", Integer.toString(cstart.get(Calendar.MINUTE)));
-
-			Integer dur = (cend.get(Calendar.HOUR) - cstart.get(Calendar.HOUR));
-			if (dur < 0) {
-				dur = dur + 24;
-			}
-			dur = (dur * 60)
-					+ (cend.get(Calendar.MINUTE) - cstart.get(Calendar.MINUTE));
-
-			d.put("calduration", Integer.toString(dur));
-			d.put("caltype", "pat");
-			d.put("calpatient", Integer.toString(data.getPatientId()));
-			d.put("calprovider", Integer.toString(data.getProviderId()));
-			d.put("calprenote", data.getData());
-			// TODO: FACILITY MISSING!
-
-			if (Util.getProgramMode() == ProgramMode.STUBBED) {
-				// Runs in STUBBED MODE => Do nothing
-			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				// Use JSON-RPC to retrieve the data
-				String[] params = { JsonUtil.jsonify(d) };
-
-				RequestBuilder builder = new RequestBuilder(
-						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.Scheduler.SetAppointment",
-												params)));
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						public void onError(Request request, Throwable ex) {
-							JsonUtil.debug(request.toString());
-						}
-
-						public void onResponseReceived(Request request,
-								Response response) {
-							if (response.getStatusCode() == 200) {
-								Integer result = (Integer) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()), "Integer");
-								if (result != null && result != 0) {
-									JsonUtil.debug("successfully added Event.");
-								}
-							}
-						}
-					});
-				} catch (RequestException e) {
-					// nothing here right now
-				}
-			} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
-				// Use GWT-RPC to retrieve the data
-				// TODO: Create that stuff
-			}
-
-			label.setText("Added event on " + data.getStartTime()
-					+ ", duration " + duration + " min");
-			break;
-		}
-		case SELECT_DAY: {
-			if (newEvent.getSource() == navigator) {
-				multiPanel.setDate(newEvent.getDate());
-			}
-			break;
-		}
-		case SELECT_MONTH: {
-			if (newEvent.getSource() == navigator) {
-				multiPanel.setType(DatePanel.MONTH);
-				multiPanel.setDate(newEvent.getDate());
-			}
-			break;
-		}
-		case UPDATE: {
-			JsonUtil.debug("handleDateEvent : " + data.toString());
-			int duration = dateToMinutes(data.getEndTime())
-					- dateToMinutes(data.getStartTime());
-			label.setText("Updated event on " + data.getStartTime()
-					+ ", duration " + duration + " min");
-			break;
-		}
-		case REMOVE: {
-			JsonUtil.debug("handleDateEvent : " + data.toString());
-			int duration = dateToMinutes(data.getEndTime())
-					- dateToMinutes(data.getStartTime());
-			label
-					.setText("Removed event on " + data.getStartTime()
-							+ ", duration " + new Integer(duration).toString()
-							+ " min");
-			break;
-		}
-
-		case DRAG_DROP: {
-			JsonUtil.debug("handleDateEvent : " + data.toString());
-			int duration = dateToMinutes(data.getEndTime())
-					- dateToMinutes(data.getStartTime());
-
-			label.setText("TODO: Moved event on " + data.getStartTime() + " - "
-					+ data.getEndTime());
-			break;
-		}
-		}
-
-	}
-
-	public void onWindowResized(int width, int height) {
-		int shortcutHeight = height - 160;
-		if (shortcutHeight < 1) {
-			shortcutHeight = 1;
-		}
-
-		multiPanel.setHeight(shortcutHeight);
-	}
-
-	public void onClick(Widget arg0) {
-		// demoPanel.setG
 	}
 
 }

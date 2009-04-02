@@ -40,7 +40,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 
@@ -60,7 +59,7 @@ public class CurrentState {
 
 	protected HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
 
-	protected HashMap<String, String> userConfiguration = new HashMap<String,String>();
+	protected HashMap<String, String> userConfiguration = new HashMap<String, String>();
 
 	protected FreemedInterface freemedInterface = null;
 
@@ -196,7 +195,7 @@ public class CurrentState {
 		JsonUtil.debug("getUserConfig() called");
 		if (userConfiguration.size() != 0) {
 			return userConfiguration.get(key);
-		} 
+		}
 		JsonUtil.debug("getUserConfig(): was unable to find userConfiguration "
 				+ "| key = " + key);
 		return "";
@@ -211,6 +210,10 @@ public class CurrentState {
 	 */
 	public void setUserConfig(String key, Object value) {
 		// Set key locally
+		if (value == null) {
+			value = new String("");
+			JsonUtil.debug("For key = " + key + ", value was null");
+		}
 		if (value instanceof String) {
 			userConfiguration.put(key, (String) value);
 		} else if (value instanceof Serializable) {
@@ -295,9 +298,11 @@ public class CurrentState {
 						@SuppressWarnings("unchecked")
 						public void onResponseReceived(Request request,
 								Response response) {
-							if (200 == response.getStatusCode()&& !response.getText().contentEquals("[]")) {
-								
-								JsonUtil.debug("Retrieved good looking content");
+							if (200 == response.getStatusCode()
+									&& !response.getText().contentEquals("[]")) {
+
+								JsonUtil
+										.debug("Retrieved good looking content");
 
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
 										.shoehornJson(JSONParser.parse(response
@@ -307,7 +312,7 @@ public class CurrentState {
 									JsonUtil
 											.debug("successfully retrieved User Configuration");
 									userConfiguration = r;
-									
+
 									if (onLoad != null) {
 										onLoad.execute();
 									}
