@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
@@ -47,7 +48,10 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
-public class PatientWidget extends AsyncPicklistWidgetBase {
+public class PatientWidget extends AsyncPicklistWidgetBase implements
+		HashSetter {
+
+	protected String hashMapping = null;
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
@@ -144,10 +148,47 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 		}
 	}
 
+	public void setValue(Integer v) {
+		value = v;
+		getTextForValue(value);
+	}
+
 	@Override
 	public void getTextForValue(Integer val) {
-		if (Util.isStubbedMode()) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			searchBox.setText("Hackenbush, Hugo Z (STUB)");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { val.toString() };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.api.PatientInterface.ToText",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							String result = (String) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String");
+							if (result != null) {
+								searchBox.setText(result);
+							}
+						} else {
+							Window.alert(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
 		} else {
 			PatientInterfaceAsync service = null;
 			try {
@@ -166,4 +207,21 @@ public class PatientWidget extends AsyncPicklistWidgetBase {
 			});
 		}
 	}
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
+	}
+
+	public String getStoredValue() {
+		return getValue().toString();
+	}
+
+	public String getHashMapping() {
+		return hashMapping;
+	}
+
+	public void setFromHash(HashMap<String, String> data) {
+		setValue(Integer.parseInt(data.get(hashMapping)));
+	}
+
 }
