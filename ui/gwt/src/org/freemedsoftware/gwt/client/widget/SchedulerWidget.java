@@ -58,6 +58,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
@@ -560,7 +561,8 @@ public class SchedulerWidget extends WidgetInterface implements
 				JsonUtil.debug(ex.toString());
 			}
 			provider.addChangeListener(this);
-
+			text.addChangeListener(this);
+			text.addKeyboardListener(this);
 			table.setWidget(2, 0, new Label("Provider"));
 			if (state == null) {
 				JsonUtil.debug("current state not passed to scheduler");
@@ -609,12 +611,16 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public void onChange(Widget sender) {
-			if (sender == text || sender == patient) {
+			if (sender == text || sender == patient || sender == provider) {
 				toggleButton();
 			}
 		}
+		
 
 		public void onKeyDown(Widget widget, char _char, int _int) {
+			if (widget == text) {
+				toggleButton();
+			}
 		}
 
 		public void onKeyPress(Widget widget, char key, int _int) {
@@ -677,11 +683,14 @@ public class SchedulerWidget extends WidgetInterface implements
 			JsonUtil.debug("String: '" + patient.getText() + "'");
 			if (text.getText().length() > 1 && patient.getValue() > 0
 					&& provider.getValue() > 0) {
+				JsonUtil.debug("true");
 				ok.setEnabled(true);
 			} else {
 				ok.setEnabled(false);
 			}
 		}
+
+
 
 	}
 
