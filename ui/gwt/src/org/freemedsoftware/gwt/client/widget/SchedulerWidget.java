@@ -401,15 +401,15 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getEventBottomHeight() {
-			return 6;
+			return 2;
 		}
 
 		public int getEventCornerSize() {
-			return 3;
+			return 1;
 		}
 
 		public int getEventMinimumHeight() {
-			return 30;
+			return 50;
 		}
 
 		public int getEventTopHeight() {
@@ -417,7 +417,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getIntervalHeight() {
-			return 20;
+			return 50;
 		}
 
 		public int getIntervalsPerHour() {
@@ -425,7 +425,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getScrollHour() {
-			return 9;
+			return 7;
 		}
 
 		public boolean isDurationAcceptable(int minutes) {
@@ -1010,6 +1010,7 @@ public class SchedulerWidget extends WidgetInterface implements
 					new StringPanelRenderer());
 			JsonUtil.debug("initializing panel widget");
 			initWidget(panel);
+			panel.setWidth("100%");
 
 			final HorizontalPanel fields = new HorizontalPanel();
 			panel.add(fields, DockPanel.NORTH);
@@ -1041,7 +1042,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			multiPanel.addDateListener(this);
 			navigator.addDateListener(this);
 			Window.addWindowResizeListener(this);
-			multiPanel.scrollToHour(9);
+			multiPanel.scrollToHour(7);
 		}
 	}
 
