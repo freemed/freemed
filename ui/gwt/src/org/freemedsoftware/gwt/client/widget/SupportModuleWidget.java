@@ -100,17 +100,21 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
-							if (200 == response.getStatusCode()) {
-								String result = (String) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
-										"String");
-								textBox.setEnabled(true);
-								if (result != null) {
-									searchBox.setText(result);
-									searchBox.setTitle(result);
+							if (Util.checkValidSessionResponse(response
+									.getText(), state)) {
+								if (200 == response.getStatusCode()) {
+									String result = (String) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"String");
+									textBox.setEnabled(true);
+									if (result != null) {
+										searchBox.setText(result);
+										searchBox.setTitle(result);
+									}
+								} else {
+									Window.alert(response.toString());
 								}
-							} else {
-								Window.alert(response.toString());
 							}
 						}
 					});
@@ -182,27 +186,32 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>");
-							if (result != null) {
-								Set<String> keys = result.keySet();
-								Iterator<String> iter = keys.iterator();
+						if (Util.checkValidSessionResponse(response.getText(),
+								state)) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (result != null) {
+									Set<String> keys = result.keySet();
+									Iterator<String> iter = keys.iterator();
 
-								List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
-								map.clear();
-								while (iter.hasNext()) {
-									final String key = (String) iter.next();
-									final String val = (String) result.get(key);
-									addKeyValuePair(items, val, key);
+									List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
+									map.clear();
+									while (iter.hasNext()) {
+										final String key = (String) iter.next();
+										final String val = (String) result
+												.get(key);
+										addKeyValuePair(items, val, key);
+									}
+									cb.onSuggestionsReady(r,
+											new SuggestOracle.Response(items));
 								}
-								cb.onSuggestionsReady(r,
-										new SuggestOracle.Response(items));
+							} else {
+								GWT.log("Result " + response.getStatusText(),
+										null);
 							}
-						} else {
-							GWT.log("Result " + response.getStatusText(), null);
 						}
 					}
 				});
@@ -262,18 +271,21 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 							Throwable ex) {
 					}
 
-					@SuppressWarnings("unchecked")
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							String result = (String) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"String");
-							if (result != null) {
+						if (Util.checkValidSessionResponse(response.getText(),
+								state)) {
+							if (200 == response.getStatusCode()) {
+								String result = (String) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"String");
+								if (result != null) {
+								}
+							} else {
+								GWT.log("Result " + response.getStatusText(),
+										null);
 							}
-						} else {
-							GWT.log("Result " + response.getStatusText(), null);
 						}
 					}
 				});

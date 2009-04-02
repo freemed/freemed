@@ -99,6 +99,7 @@ public class PatientSearchScreen extends ScreenInterface {
 				}
 			}
 		});
+		addChildWidget(wSmartSearch);
 		flexTable.setWidget(0, 1, wSmartSearch);
 
 		final Label fieldSearchLabel = new Label("Field Search : ");
@@ -212,20 +213,23 @@ public class PatientSearchScreen extends ScreenInterface {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							if (result.length > 0) {
-								sortableTableEmptyLabel.setVisible(false);
+						if (Util.checkValidSessionResponse(response.getText(),
+								state)) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								if (result.length > 0) {
+									sortableTableEmptyLabel.setVisible(false);
+								} else {
+									sortableTableEmptyLabel.setVisible(true);
+								}
+								sortableTable.loadData(result);
 							} else {
+								Window.alert(response.toString());
 								sortableTableEmptyLabel.setVisible(true);
 							}
-							sortableTable.loadData(result);
-						} else {
-							Window.alert(response.toString());
-							sortableTableEmptyLabel.setVisible(true);
 						}
 					}
 				});

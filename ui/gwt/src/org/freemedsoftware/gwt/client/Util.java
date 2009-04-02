@@ -412,6 +412,30 @@ public final class Util {
 				pScreen.getTabPanel().getWidgetCount() - 1);
 	}
 
+	/**
+	 * Check JSON response to see if it's a "valid" authenticated response.
+	 * 
+	 * @param response
+	 *            JSON response text
+	 * @param state
+	 * @return boolean false if the session has expired (logs out automatically)
+	 *         or true if we can continue with business as usual.
+	 */
+	public static boolean checkValidSessionResponse(String response,
+			CurrentState state) {
+		final String fail = "denied due to user not being logged in";
+		if (response.indexOf(fail) != -1) {
+			Util.logout(state);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Logout of the system and pop up a login dialog.
+	 * 
+	 * @param state
+	 */
 	public static void logout(CurrentState state) {
 		final CurrentState s = state;
 

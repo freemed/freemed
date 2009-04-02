@@ -28,9 +28,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.WidgetInterface;
+
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -43,7 +44,7 @@ import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
-abstract public class AsyncPicklistWidgetBase extends Composite {
+abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 
 	protected Integer value = new Integer(0);
 

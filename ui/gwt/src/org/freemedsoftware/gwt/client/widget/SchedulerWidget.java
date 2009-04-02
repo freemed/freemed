@@ -58,7 +58,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
@@ -582,14 +581,15 @@ public class SchedulerWidget extends WidgetInterface implements
 			table.getFlexCellFormatter().setColSpan(1, 1, 2);
 
 			cancel = new Button("Cancel", this);
-
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
+			cancel.addClickListener(this);
 
 			ok = new Button("Ok", this);
 			ok.setEnabled(false);
 			ok.setFocus(true);
 			ok.setAccessKey('o');
+			ok.addClickListener(this);
 
 			final HorizontalPanel button = new HorizontalPanel();
 			button.add(ok);
@@ -615,7 +615,6 @@ public class SchedulerWidget extends WidgetInterface implements
 				toggleButton();
 			}
 		}
-		
 
 		public void onKeyDown(Widget widget, char _char, int _int) {
 			if (widget == text) {
@@ -653,6 +652,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						data.setEndTime(end.getValue(date.getValue()));
 					}
 					data.setData(text.getText());
+					data.setDescription(text.getText());
 					data.setProviderName(provider.getText());
 					data.setProviderId(provider.getValue());
 					data.setPatientName(patient.getText());
@@ -689,8 +689,6 @@ public class SchedulerWidget extends WidgetInterface implements
 				ok.setEnabled(false);
 			}
 		}
-
-
 
 	}
 

@@ -423,22 +423,25 @@ public class PatientProblemList extends WidgetInterface {
 					public void onResponseReceived(Request request,
 							Response response) {
 						JsonUtil.debug("onResponseReceived");
-						if (200 == response.getStatusCode()) {
-							JsonUtil.debug(response.getText());
-							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							if (r != null) {
-								JsonUtil
-										.debug("PatientProblemList... r.length = "
-												+ new Integer(r.length)
-														.toString());
-								dataStore = r;
-								populateData(dataStore);
+						if (Util.checkValidSessionResponse(response.getText(),
+								state)) {
+							if (200 == response.getStatusCode()) {
+								JsonUtil.debug(response.getText());
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								if (r != null) {
+									JsonUtil
+											.debug("PatientProblemList... r.length = "
+													+ new Integer(r.length)
+															.toString());
+									dataStore = r;
+									populateData(dataStore);
+								}
+							} else {
+								Window.alert(response.toString());
 							}
-						} else {
-							Window.alert(response.toString());
 						}
 					}
 				});

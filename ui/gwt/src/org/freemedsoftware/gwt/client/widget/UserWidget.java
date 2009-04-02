@@ -67,6 +67,7 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 				searchBox.setTitle("");
 			} else {
 				String[] params = { widgetValue.toString() };
+				textBox.setEnabled(false);
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
@@ -85,23 +86,29 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
-							if (200 == response.getStatusCode()) {
-								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
-												"HashMap<String,String>");
-								if (result != null) {
-									searchBox
-											.setText(result.get("userdescrip"));
-									searchBox.setTitle(result
-											.get("userdescrip"));
+							if (Util.checkValidSessionResponse(response
+									.getText(), state)) {
+								if (200 == response.getStatusCode()) {
+									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"HashMap<String,String>");
+									textBox.setEnabled(true);
+									if (result != null) {
+										searchBox.setText(result
+												.get("userdescrip"));
+										searchBox.setTitle(result
+												.get("userdescrip"));
+									}
+								} else {
+									textBox.setEnabled(true);
+									Window.alert(response.toString());
 								}
-							} else {
-								Window.alert(response.toString());
 							}
 						}
 					});
 				} catch (RequestException e) {
+					textBox.setEnabled(true);
 				}
 			}
 		} else {
@@ -111,14 +118,17 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						.getProxy("org.freemedsoftware.gwt.client.Api.UserInterface"));
 			} catch (Exception e) {
 			}
+			textBox.setEnabled(false);
 			service.GetRecord(widgetValue,
 					new AsyncCallback<HashMap<String, String>>() {
 						public void onSuccess(HashMap<String, String> r) {
+							textBox.setEnabled(true);
 							searchBox.setText(r.get("userdescrip"));
 							searchBox.setTitle(r.get("userdescrip"));
 						}
 
 						public void onFailure(Throwable t) {
+							textBox.setEnabled(true);
 						}
 					});
 
@@ -152,24 +162,28 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							String[][] result = (String[][]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()), "String[][]");
-							if (result != null) {
-								List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
-								map.clear();
-								for (int iter = 0; iter < result.length; iter++) {
-									String[] x = result[iter];
-									final String key = x[1];
-									final String val = x[0];
-									addKeyValuePair(items, val, key);
+						if (Util.checkValidSessionResponse(response.getText(),
+								state)) {
+							if (200 == response.getStatusCode()) {
+								String[][] result = (String[][]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()), "String[][]");
+								if (result != null) {
+									List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
+									map.clear();
+									for (int iter = 0; iter < result.length; iter++) {
+										String[] x = result[iter];
+										final String key = x[1];
+										final String val = x[0];
+										addKeyValuePair(items, val, key);
+									}
+									cb.onSuggestionsReady(r,
+											new SuggestOracle.Response(items));
 								}
-								cb.onSuggestionsReady(r,
-										new SuggestOracle.Response(items));
+							} else {
+								GWT.log("Result " + response.getStatusText(),
+										null);
 							}
-						} else {
-							GWT.log("Result " + response.getStatusText(), null);
 						}
 					}
 				});
@@ -226,16 +240,21 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>");
-							if (result != null) {
-								searchBox.setText(result.get("userdescrip"));
+						if (Util.checkValidSessionResponse(response.getText(),
+								state)) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (result != null) {
+									searchBox
+											.setText(result.get("userdescrip"));
+								}
+							} else {
+								GWT.log("Result " + response.getStatusText(),
+										null);
 							}
-						} else {
-							GWT.log("Result " + response.getStatusText(), null);
 						}
 					}
 				});

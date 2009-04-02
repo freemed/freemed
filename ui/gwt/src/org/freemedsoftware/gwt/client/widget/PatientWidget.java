@@ -86,24 +86,28 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
-							HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<Integer,String>");
-							if (result != null) {
-								Set<Integer> keys = result.keySet();
-								Iterator<Integer> iter = keys.iterator();
+							if (Util.checkValidSessionResponse(response
+									.getText(), state)) {
+								HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<Integer,String>");
+								if (result != null) {
+									Set<Integer> keys = result.keySet();
+									Iterator<Integer> iter = keys.iterator();
 
-								List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
-								map.clear();
-								while (iter.hasNext()) {
-									Integer keyInt = (Integer) iter.next();
-									String key = keyInt.toString();
-									String val = (String) result.get(keyInt);
-									addKeyValuePair(items, val, key);
+									List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
+									map.clear();
+									while (iter.hasNext()) {
+										Integer keyInt = (Integer) iter.next();
+										String key = keyInt.toString();
+										String val = (String) result
+												.get(keyInt);
+										addKeyValuePair(items, val, key);
+									}
+									cb.onSuggestionsReady(r,
+											new SuggestOracle.Response(items));
 								}
-								cb.onSuggestionsReady(r,
-										new SuggestOracle.Response(items));
 							}
 						} else {
 							Window.alert(response.toString());
@@ -155,63 +159,72 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 
 	@Override
 	public void getTextForValue(Integer val) {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			searchBox.setText("Hackenbush, Hugo Z (STUB)");
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			textBox.setEnabled(false);
-			String[] params = { val.toString() };
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.api.PatientInterface.ToText",
-							params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(
-							com.google.gwt.http.client.Request request,
-							Throwable ex) {
+		if (val > 0) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				searchBox.setText("Hackenbush, Hugo Z (STUB)");
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				textBox.setEnabled(false);
+				String[] params = { val.toString() };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.PatientInterface.ToText",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(
+								com.google.gwt.http.client.Request request,
+								Throwable ex) {
+							textBox.setEnabled(true);
+							Window.alert(ex.toString());
+						}
+
+						public void onResponseReceived(
+								com.google.gwt.http.client.Request request,
+								com.google.gwt.http.client.Response response) {
+							textBox.setEnabled(true);
+							if (Util.checkValidSessionResponse(response
+									.getText(), state)) {
+								if (200 == response.getStatusCode()) {
+									String result = (String) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"String");
+									if (result != null) {
+										searchBox.setText(result);
+									}
+								} else {
+									Window.alert(response.toString());
+								}
+							}
+						}
+					});
+				} catch (RequestException e) {
+					textBox.setEnabled(true);
+					Window.alert(e.toString());
+				}
+			} else {
+				PatientInterfaceAsync service = null;
+				try {
+					service = ((PatientInterfaceAsync) Util
+							.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
+				} catch (Exception e) {
+				}
+				textBox.setEnabled(false);
+				service.ToText(val, true, new AsyncCallback<String>() {
+					public void onSuccess(String r) {
 						textBox.setEnabled(true);
-						Window.alert(ex.toString());
+						searchBox.setText(r);
 					}
 
-					public void onResponseReceived(
-							com.google.gwt.http.client.Request request,
-							com.google.gwt.http.client.Response response) {
+					public void onFailure(Throwable t) {
 						textBox.setEnabled(true);
-						if (200 == response.getStatusCode()) {
-							String result = (String) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"String");
-							if (result != null) {
-								searchBox.setText(result);
-							}
-						} else {
-							Window.alert(response.toString());
-						}
+						GWT.log("Exception", t);
 					}
 				});
-			} catch (RequestException e) {
-				textBox.setEnabled(true);
-				Window.alert(e.toString());
 			}
-		} else {
-			PatientInterfaceAsync service = null;
-			try {
-				service = ((PatientInterfaceAsync) Util
-						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
-			} catch (Exception e) {
-			}
-			textBox.setEnabled(false);
-			service.ToText(val, true, new AsyncCallback<String>() {
-				public void onSuccess(String r) {
-					textBox.setEnabled(true);
-					searchBox.setText(r);
-				}
-
-				public void onFailure(Throwable t) {
-					textBox.setEnabled(true);
-					GWT.log("Exception", t);
-				}
-			});
 		}
 	}
 
