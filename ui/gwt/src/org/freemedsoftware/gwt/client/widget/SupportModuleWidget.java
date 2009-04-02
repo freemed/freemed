@@ -80,6 +80,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 				searchBox.setText("");
 				searchBox.setTitle("");
 			} else {
+				textBox.setEnabled(false);
 				String[] params = { moduleName, widgetValue.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
@@ -93,6 +94,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 						public void onError(
 								com.google.gwt.http.client.Request request,
 								Throwable ex) {
+							textBox.setEnabled(true);
 						}
 
 						public void onResponseReceived(
@@ -102,6 +104,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 								String result = (String) JsonUtil.shoehornJson(
 										JSONParser.parse(response.getText()),
 										"String");
+								textBox.setEnabled(true);
 								if (result != null) {
 									searchBox.setText(result);
 									searchBox.setTitle(result);
@@ -112,6 +115,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 						}
 					});
 				} catch (RequestException e) {
+					textBox.setEnabled(true);
 				}
 			}
 		} else {
@@ -121,9 +125,11 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface"));
 			} catch (Exception e) {
 			}
+			textBox.setEnabled(false);
 			service.ModuleToTextMethod(moduleName, widgetValue,
 					new AsyncCallback<String>() {
 						public void onSuccess(String textual) {
+							textBox.setEnabled(true);
 							searchBox.setText(textual);
 							searchBox.setTitle(textual);
 						}

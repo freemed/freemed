@@ -158,6 +158,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			searchBox.setText("Hackenbush, Hugo Z (STUB)");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			textBox.setEnabled(false);
 			String[] params = { val.toString() };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL.encode(Util.getJsonRequest(
@@ -168,12 +169,14 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 					public void onError(
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
+						textBox.setEnabled(true);
 						Window.alert(ex.toString());
 					}
 
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
+						textBox.setEnabled(true);
 						if (200 == response.getStatusCode()) {
 							String result = (String) JsonUtil.shoehornJson(
 									JSONParser.parse(response.getText()),
@@ -187,6 +190,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 					}
 				});
 			} catch (RequestException e) {
+				textBox.setEnabled(true);
 				Window.alert(e.toString());
 			}
 		} else {
@@ -196,12 +200,15 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 						.getProxy("org.freemedsoftware.gwt.client.Api.PatientInterface"));
 			} catch (Exception e) {
 			}
+			textBox.setEnabled(false);
 			service.ToText(val, true, new AsyncCallback<String>() {
 				public void onSuccess(String r) {
+					textBox.setEnabled(true);
 					searchBox.setText(r);
 				}
 
 				public void onFailure(Throwable t) {
+					textBox.setEnabled(true);
 					GWT.log("Exception", t);
 				}
 			});

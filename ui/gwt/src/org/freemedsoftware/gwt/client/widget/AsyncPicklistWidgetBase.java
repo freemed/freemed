@@ -109,6 +109,7 @@ abstract public class AsyncPicklistWidgetBase extends Composite {
 
 		});
 		searchBox.setLimit(10);
+		searchBox.setAnimationEnabled(true);
 		layout.add(searchBox);
 
 		initWidget(layout);
