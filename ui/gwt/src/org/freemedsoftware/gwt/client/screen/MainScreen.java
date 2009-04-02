@@ -154,7 +154,12 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_3 = menuBar_1.addItem("logout",
 					new Command() {
 						public void execute() {
-							dashboard.saveArrangement();
+							try {
+								dashboard.saveArrangement();
+							} catch (Exception ex) {
+								JsonUtil
+										.debug("dashboard.saveArrangement() threw an exception, continue");
+							}
 							Util.logout(state);
 						}
 					});
