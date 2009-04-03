@@ -3,6 +3,7 @@ package org.freemedsoftware.gwt.client.screen.entry;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.EntryScreenInterface;
+import org.freemedsoftware.gwt.client.JsonUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -128,6 +129,7 @@ public class SupportModuleEntry extends EntryScreenInterface {
 							.getAttribute("title"), ui.stringToWidgetType(e
 							.getAttribute("type")), e.getAttribute("options"),
 							null);
+					JsonUtil.debug("Attribute: type="+ e.getAttribute("type"));
 				}
 			} else {
 				// Deal with other possibilities

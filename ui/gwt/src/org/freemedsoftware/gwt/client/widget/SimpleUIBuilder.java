@@ -45,7 +45,7 @@ public class SimpleUIBuilder extends Composite {
 	};
 
 	/**
-	 * Interface for any <SimpleUIBuilder> subclasses to receive infomation back
+	 * Interface for any <SimpleUIBuilder> subclasses to receive information back
 	 * from this piece.
 	 * 
 	 * @author jeff@freemedsoftware.org
@@ -137,6 +137,7 @@ public class SimpleUIBuilder extends Composite {
 			String options, String value) {
 		Widget w;
 
+		
 		if (type == WidgetType.TEXT) {
 			w = new TextBox();
 			try {
@@ -149,6 +150,7 @@ public class SimpleUIBuilder extends Composite {
 		} else if (type == WidgetType.MODULE) {
 			w = new SupportModuleWidget(options);
 		} else if (type == WidgetType.MODULE_MULTIPLE) {
+			
 			w = new SupportModuleMultipleChoiceWidget(options);
 		} else if (type == WidgetType.SELECT) {
 			w = new CustomListBox();
@@ -195,7 +197,7 @@ public class SimpleUIBuilder extends Composite {
 		if (widget.compareToIgnoreCase("TEXT") == 0) {
 			return WidgetType.TEXT;
 		}
-		if (widget.compareToIgnoreCase("MODULEMULTIPLE") == 0) {
+		if (widget.compareToIgnoreCase("MODULE_MULTIPLE") == 0) {
 			return WidgetType.MODULE_MULTIPLE;
 		}
 		if (widget.compareToIgnoreCase("MODULE") == 0) {
@@ -212,6 +214,8 @@ public class SimpleUIBuilder extends Composite {
 		}
 
 		// By default, return text
+		
+		JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" +  widget + "' found. Fallback to type TEXT.");
 		return WidgetType.TEXT;
 	}
 
