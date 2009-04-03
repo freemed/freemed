@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+    $Id$
+    
+    Authors:
+    Philipp Meng <pmeng@freemedsoftware.org>
+	    
+	    FreeMED Electronic Medical Record and Practice Management System
+	    Copyright (C) 1999-2009 FreeMED Software Foundation
+	    
+	    This program is free software; you can redistribute it and/or modify
+	    it under the terms of the GNU General Public License as published by
+	    the Free Software Foundation; either version 2 of the License, or
+	    (at your option) any later version.
+	    
+	    This program is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	    
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	    -->
+	    <SimpleUIBuilder module="ProviderModule">
+		    <Elements>
+			    <Element field="phylname" title="Last Name" type="TEXT" options="52" display="1" />
+			    <Element field="phyfname" title="First Name" type="TEXT" options="50" display="1" />
+			    <Element field="phymname" title="Middle Name" type="TEXT" options="50" display="1" />
+			    <Element field="phytitle" title="Title" type="TEXT" options="10" display="1" />
+			    <Element field="phypractice" title="Practice" type="MODULE" options="Practices" display="1" />
+			    <Element field="phyemail" title="E-Mail Adress" type="TEXT" options="50" display="1" />
+			    <Element field="phycellular" title="Cell Phone" type="TEXT" options="16" display="1" />
+			    <Element field="phypager" title="Pager" type="TEXT" options="16" display="1" />
+			    <Element field="phyupin" title="UPIN# (Unique Physician Identification Number)" type="TEXT" options="15"  display="1"/>
+			    <Element field="physsn" title="Social Security Number" type="TEXT" options="15"  display="1"/>
+			    <Element field="phydegrees" title="Degrees" type="MODULE_MULTIPLE" options="ProviderCertifications" display="1" />
+			    <Element field="physpecialties" title="Specialties" type="MODULE_MULTIPLE" options="ProviderSpecialties" display="1" />
+			    
+			    
+			    
+		    <!--
+			    <Element field="phytitle" title="City, State Zip" type="MODULE" options="Zipcodes" display="1" />
+			    <Element field="phmethod" title="Transmission Method" type="SELECT" options="Fax|fax,Email|email,NCPDP SCRIPT|ncpdp" />
+			    <Element field="phfax" title="Facsimile Number (as dialed)" type="TEXT" options="20" />
+			    <Element field="phemail" title="Email" type="TEXT" options="50" />
+			    <Element field="phncpdp" title="NCPDP ID Number" type="TEXT" options="20" display="1" />
+			    -->
+		    </Elements>
+	    </SimpleUIBuilder>
