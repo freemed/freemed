@@ -173,6 +173,7 @@ public class SimpleUIBuilder extends Composite {
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new TextBox();
+			JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" +  type + "' found. Fallback to TextBox.");
 		}
 
 		// Add to indices and display
