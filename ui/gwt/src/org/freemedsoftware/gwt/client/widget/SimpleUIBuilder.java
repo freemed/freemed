@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -33,13 +34,20 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleUIBuilder extends Composite {
 
+	protected static String helpprefix = "Help for";
+	
+	
 	public enum WidgetType {
 		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR
 	};
@@ -134,7 +142,7 @@ public class SimpleUIBuilder extends Composite {
 	 *            Default value.
 	 */
 	public void addWidget(String name, String title, WidgetType type,
-			String options, String value) {
+			String options, String value, String help) {
 		Widget w;
 
 		
@@ -180,8 +188,51 @@ public class SimpleUIBuilder extends Composite {
 
 		// Add to indices and display
 		widgets.put(name, w);
+		
 		table.setText(widgets.size() - 1, 0, title);
 		table.setWidget(widgets.size() - 1, 1, w);
+		
+		if( help != null) {
+			final Image image = new Image();
+			image.setUrl("resources/images/q_help.16x16.png");
+			
+			final PopupPanel popup = new PopupPanel();
+			final HTML html = new HTML();
+			html.setHTML("<b>" + helpprefix + " " + title +  "</b><br/><br/>" + help);
+			
+			popup.add(html);
+			popup.setStyleName("freemed-HelpPopup");
+			
+			image.addMouseListener( new MouseListener() {
+
+				public void onMouseDown(Widget sender, int x, int y) {
+					//Do nothing
+				}
+
+				public void onMouseEnter(Widget sender) {
+					//Show help PopUp
+					popup.center();
+				}
+
+				public void onMouseLeave(Widget sender) {
+					//Hide help PopUp
+					popup.hide();
+				}
+
+				public void onMouseMove(Widget sender, int x, int y) {
+					//Do nothing
+				}
+
+				public void onMouseUp(Widget sender, int x, int y) {
+					//Do nothing
+				}
+				
+			});
+			
+			table.setWidget(widgets.size() - 1, 2, image);
+		}
+		
+		
 
 		// Set widget value after it is added.
 		this.setWidgetValue(name, value);
@@ -315,5 +366,7 @@ public class SimpleUIBuilder extends Composite {
 			}
 		}
 	}
+
+
 
 }

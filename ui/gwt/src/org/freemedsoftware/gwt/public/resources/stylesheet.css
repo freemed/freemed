@@ -4,6 +4,7 @@
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *		Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
+ *		Philipp Meng <pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -681,4 +682,11 @@ a:hover {
 .freemed-NotesBox-textarea_outer {
 	padding: 10px;
 	background-color: yellow;
+}
+
+.freemed-HelpPopup {
+	padding: 10px;
+	background-color: #FFFFFF;
+	border: 1px solid #000000;
+	
 }

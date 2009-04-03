@@ -35,7 +35,7 @@
 			    <Element field="phyupin" title="UPIN# (Unique Physician Identification Number)" type="TEXT" options="15"/>
 			    <Element field="physsn" title="Social Security Number" type="TEXT" options="15"/>
 			    <Element field="phydegrees" title="Degrees" type="MODULE_MULTIPLE" options="ProviderCertifications"/>
-			    <Element field="physpecialties" title="Specialties" type="MODULE_MULTIPLE" options="ProviderSpecialties"/>
+			    <Element field="physpecialties" title="Specialties" type="MODULE_MULTIPLE" options="ProviderSpecialties" help="Enter here the specialties the Provider has."/>
 			    
 			    
 			    
