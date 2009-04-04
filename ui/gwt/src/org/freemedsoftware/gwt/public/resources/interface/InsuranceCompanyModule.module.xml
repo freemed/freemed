@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+    $Id$
+    
+    Authors:
+    Philipp Meng <pmeng@freemedsoftware.org>
+	    
+	    FreeMED Electronic Medical Record and Practice Management System
+	    Copyright (C) 1999-2009 FreeMED Software Foundation
+	    
+	    This program is free software; you can redistribute it and/or modify
+	    it under the terms of the GNU General Public License as published by
+	    the Free Software Foundation; either version 2 of the License, or
+	    (at your option) any later version.
+	    
+	    This program is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	    
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	    -->
+	    <SimpleUIBuilder module="InsuranceCompanyModule">
+		    <Elements>
+			    <Element field="insconame" title="Insurancecompany Name" type="TEXT" options="50" display="1"/>
+			    <Element field="inscoalias" title="Alias" type="TEXT" options="30" display="1"/>
+			    <Element field="inscoaddr1" title="Adress Line 1" type="TEXT" options="45"/>
+			    <Element field="inscoaddr2" title="Adress Line 2" type="TEXT" options="45"/>
+			    <Element field="inscocity" title="City" type="TEXT" options="30"/>
+			    <Element field="inscostate" title="State" type="TEXT" options="3"/>
+			    <Element field="inscozip" title="ZIP" type="TEXT" options="10"/>
+			    <Element field="inscophone" title="Phone Number" type="TEXT" options="16"/>
+			    <Element field="inscofax" title="Fax Number" type="TEXT" options="16"/>
+			    <Element field="inscocontact" title="Contact Person's Name" type="TEXT" options="100"/>
+			    <Element field="inscoid" title="inscoid???" type="TEXT" options="10"/>
+			    <Element field="inscowebsite" title="Homepage" type="TEXT" options="100"/>
+			    <Element field="inscoemail" title="email adress" type="TEXT" options="50"/>
+			    <Element field="inscogroup" title="Select Insurance Company Group" type="MODULE" options="InsuranceCompanyGroup"/>
+			    <Element field="inscotype" title="inscotype???" type="TEXT" options="25"/>
+			    <Element field="inscoassign" title="inscoassign???" type="TEXT" options="16"/>
+			    <Element field="inscomod" title="Insurance Modifiers" type="MODULE_MULTIPLE" options="InsuranceModifiers"/>
+			    <Element field="inscoidmap" title="inscoidmap???" type="TEXT" options="16"/>
+			    <Element field="inscox12id" title="X12 Payer ID Code" type="TEXT" options="32"/>
+			    <Element field="inscodefoutput" title="Default Output Format" type="SELECT" options="Electronic|electronic,Paper|paper"/>
+			    <Element field="inscodefformat" title="Paper: Default Format" type="TEXT" options="50"/>
+			    <Element field="inscodeftarget" title="Paper: Default Target" type="TEXT" options="50"/>
+			    <Element field="inscodefformate" title="Electronic: Default Format" type="TEXT" options="50"/>
+			    <Element field="inscodeftargete" title="Electronic: Default Format" type="TEXT" options="50"/>
+		    </Elements>
+	    </SimpleUIBuilder>

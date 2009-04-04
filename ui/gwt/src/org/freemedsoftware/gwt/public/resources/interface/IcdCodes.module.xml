@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+    $Id$
+    
+    Authors:
+    Philipp Meng <pmeng@freemedsoftware.org>
+	    
+	    FreeMED Electronic Medical Record and Practice Management System
+	    Copyright (C) 1999-2009 FreeMED Software Foundation
+	    
+	    This program is free software; you can redistribute it and/or modify
+	    it under the terms of the GNU General Public License as published by
+	    the Free Software Foundation; either version 2 of the License, or
+	    (at your option) any later version.
+	    
+	    This program is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	    
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	    -->
+	    <SimpleUIBuilder module="IcdCodes">
+		    <Elements>
+			    <Element field="icd9code" title="ICD9-Code" type="TEXT" options="6" display="1"/>
+			    <Element field="icd10code" title="ICD10-Code" type="TEXT" options="7" display="1"/>
+			    <Element field="icd9descrip" title="ICD9 Descriptor" type="TEXT" options="45" display="1" help="Description of the ICD9 Code."/>
+			    <Element field="icd10descrip" title="ICD10 Descriptor" type="TEXT" options="45" display="1" help="Description of the ICD10 Code."/>
+			    <Element field="icd10descrip" title="ICD10 Descriptor" type="TEXT" options="45" display="1"/>
+			    <Element field="icdmetadesc" title="Meta Description" type="TEXT" options="30"/>
+			    <Element field="icdng" title="icdng????" type="TEXT" options="30"/>
+			    <Element field="icddrg" title="icddrg????" type="TEXT" options="30"/>
+			    <Element field="icdnum" title="icdnum????" type="TEXT" options="30"/>
+			    <Element field="icdamt" title="icdamt????" type="TEXT" options="30"/>
+			    <Element field="icdcoll" title="icdcoll????" type="TEXT" options="30"/>    
+		    </Elements>
+	    </SimpleUIBuilder>
