@@ -154,7 +154,7 @@ public class SupportModuleEntry extends EntryScreenInterface {
 							.getAttribute("title"), ui.stringToWidgetType(e
 							.getAttribute("type")), e.getAttribute("options"),
 							null, e.getAttribute("help"));
-					JsonUtil.debug("Attribute: type="+ e.getAttribute("type"));
+					
 				}
 			} else {
 				// Deal with other possibilities

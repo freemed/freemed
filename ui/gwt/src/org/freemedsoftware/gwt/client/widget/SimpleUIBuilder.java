@@ -30,6 +30,7 @@ import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -42,6 +43,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 
 public class SimpleUIBuilder extends Composite {
 
@@ -211,7 +213,6 @@ public class SimpleUIBuilder extends Composite {
 
 				public void onMouseEnter(Widget sender) {
 					//Show help PopUp
-					popup.center();
 				}
 
 				public void onMouseLeave(Widget sender) {
@@ -221,6 +222,15 @@ public class SimpleUIBuilder extends Composite {
 
 				public void onMouseMove(Widget sender, int x, int y) {
 					//Do nothing
+					popup.setPopupPositionAndShow(new PositionCallback() {
+
+						public void setPosition(int offsetWidth,
+								int offsetHeight) {
+							//TODO: needs tweaking to show it relative to the mouse-pointer.
+							popup.setPopupPosition(20,20);
+						}
+						
+					});
 				}
 
 				public void onMouseUp(Widget sender, int x, int y) {

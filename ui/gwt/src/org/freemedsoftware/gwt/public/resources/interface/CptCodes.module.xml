@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+    $Id$
+    
+    Authors:
+    Philipp Meng <pmeng@freemedsoftware.org>
+	    
+	    FreeMED Electronic Medical Record and Practice Management System
+	    Copyright (C) 1999-2009 FreeMED Software Foundation
+	    
+	    This program is free software; you can redistribute it and/or modify
+	    it under the terms of the GNU General Public License as published by
+	    the Free Software Foundation; either version 2 of the License, or
+	    (at your option) any later version.
+	    
+	    This program is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	    
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	    -->
+	    <SimpleUIBuilder module="CptCodes">
+		    <Elements>
+			    <Element field="cptcode" title="CPT Code" type="TEXT" options="7" display="1" help="Enter here the Procedural Code."/>
+			    <Element field="cptnameint" title="Internal Name" type="TEXT" options="50" display="1" />
+			    <Element field="cptnameext" title="External Name" type="TEXT" options="50" display="1" />
+			    <Element field="cptgender" title="Gender Restriction" type="SELECT" options="No restriction|n,Male|m,Female|f" />
+			    <Element field="cpttaxed" title="Taxed?" type="SELECT" options="No|n,Yes|y" />
+			    <Element field="cpttype" title="Internal Service Type" type="MODULE" options="CptTypes"/>
+			    <Element field="cptreqcpt" title="Required Procedural Codes" type="MODULE_MULTIPLE" options="CptCodes" help="Required Procedures as Cpt Codes"/>
+			    <Element field="cptexccpt" title="Excluded Procedural Codes" type="MODULE_MULTIPLE" options="CptCodes" help="Excluded Procedures as Cpt Codes"/>
+			    <Element field="cptreqicd" title="Required Diagnoses" type="MODULE_MULTIPLE" options="IcdCodes" help="Required Diagnoses as ICD Codes"/>
+			    <Element field="cptexcicd" title="Excluded Diagnoses" type="MODULE_MULTIPLE" options="IcdCodes" help="Excluded Diagnoses as ICD Codes"/> />
+			    <Element field="cptrelval" title="Relative Value" type="TEXT"/>
+			    <Element field="cptdeftos" title="Default Type of Service" type="MODULE" options="TypeOfService"/>
+			    <Element field="cptdefstdfee" title="Default Standard fee" type="TEXT" display="1" />
+		    </Elements>
+	    </SimpleUIBuilder>
