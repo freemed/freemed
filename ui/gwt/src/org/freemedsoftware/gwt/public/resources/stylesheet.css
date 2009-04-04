@@ -690,3 +690,13 @@ a:hover {
 	border: 1px solid #000000;
 	
 }
+
+.freemed-SimpleUIBuilder-Delimiter {
+	padding: 5px;
+	border: 1px solid #333333;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}

@@ -30,7 +30,6 @@ import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -38,6 +37,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -51,7 +51,7 @@ public class SimpleUIBuilder extends Composite {
 	
 	
 	public enum WidgetType {
-		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR
+		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER
 	};
 
 	/**
@@ -182,6 +182,9 @@ public class SimpleUIBuilder extends Composite {
 			w = new PatientWidget();
 		} else if (type == WidgetType.COLOR) {
 			w = new CustomColorPicker();
+		} else if (type == WidgetType.DELIMITER) {
+			w = new Label(title);
+			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new TextBox();
@@ -191,56 +194,63 @@ public class SimpleUIBuilder extends Composite {
 		// Add to indices and display
 		widgets.put(name, w);
 		
-		table.setText(widgets.size() - 1, 0, title);
-		table.setWidget(widgets.size() - 1, 1, w);
-		
-		if( help != null) {
-			final Image image = new Image();
-			image.setUrl("resources/images/q_help.16x16.png");
-			
-			final PopupPanel popup = new PopupPanel();
-			final HTML html = new HTML();
-			html.setHTML("<b>" + helpprefix + " " + title +  "</b><br/><br/>" + help);
-			
-			popup.add(html);
-			popup.setStyleName("freemed-HelpPopup");
-			
-			image.addMouseListener( new MouseListener() {
-
-				public void onMouseDown(Widget sender, int x, int y) {
-					//Do nothing
-				}
-
-				public void onMouseEnter(Widget sender) {
-					//Show help PopUp
-				}
-
-				public void onMouseLeave(Widget sender) {
-					//Hide help PopUp
-					popup.hide();
-				}
-
-				public void onMouseMove(Widget sender, int x, int y) {
-					//Do nothing
-					popup.setPopupPositionAndShow(new PositionCallback() {
-
-						public void setPosition(int offsetWidth,
-								int offsetHeight) {
-							//TODO: needs tweaking to show it relative to the mouse-pointer.
-							popup.setPopupPosition(20,20);
-						}
-						
-					});
-				}
-
-				public void onMouseUp(Widget sender, int x, int y) {
-					//Do nothing
-				}
+		if (type == WidgetType.DELIMITER) {
+			table.setWidget(widgets.size() -1, 0, w);
+			table.getFlexCellFormatter().setColSpan(widgets.size() -1 , 0, 2);
+		} else {
+			table.setText(widgets.size() - 1, 0, title);
+			table.setWidget(widgets.size() - 1, 1, w);	
+			if( help != null) {
+				final Image image = new Image();
+				image.setUrl("resources/images/q_help.16x16.png");
 				
-			});
-			
-			table.setWidget(widgets.size() - 1, 2, image);
+				final PopupPanel popup = new PopupPanel();
+				final HTML html = new HTML();
+				html.setHTML("<b>" + helpprefix + " " + title +  "</b><br/><br/>" + help);
+				
+				popup.add(html);
+				popup.setStyleName("freemed-HelpPopup");
+				
+				image.addMouseListener( new MouseListener() {
+
+					public void onMouseDown(Widget sender, int x, int y) {
+						//Do nothing
+					}
+
+					public void onMouseEnter(Widget sender) {
+						//Show help PopUp
+					}
+
+					public void onMouseLeave(Widget sender) {
+						//Hide help PopUp
+						popup.hide();
+					}
+
+					public void onMouseMove(Widget sender, int x, int y) {
+						//Do nothing
+						popup.setPopupPositionAndShow(new PositionCallback() {
+
+							public void setPosition(int offsetWidth,
+									int offsetHeight) {
+								//TODO: needs tweaking to show it relative to the mouse-pointer.
+								popup.setPopupPosition(20,20);
+							}
+							
+						});
+					}
+
+					public void onMouseUp(Widget sender, int x, int y) {
+						//Do nothing
+					}
+					
+				});
+				
+				table.setWidget(widgets.size() - 1, 2, image);
+			}
 		}
+		
+		
+		
 		
 		
 
@@ -272,6 +282,9 @@ public class SimpleUIBuilder extends Composite {
 		}
 		if (widget.compareToIgnoreCase("COLOR") == 0) {
 			return WidgetType.COLOR;
+		}
+		if (widget.compareToIgnoreCase("DELIMITER") == 0) {
+			return WidgetType.DELIMITER;
 		}
 
 		// By default, return text
