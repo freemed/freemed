@@ -580,12 +580,12 @@ public class SchedulerWidget extends WidgetInterface implements
 			table.setWidget(3, 1, text);
 			table.getFlexCellFormatter().setColSpan(1, 1, 2);
 
-			cancel = new Button("Cancel", this);
+			cancel = new Button("Cancel");
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
 			cancel.addClickListener(this);
 
-			ok = new Button("Ok", this);
+			ok = new Button("Ok");
 			ok.setEnabled(false);
 			ok.setFocus(true);
 			ok.setAccessKey('o');
@@ -595,7 +595,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			button.add(ok);
 
 			if (command == DateEventActions.UPDATE) {
-				delete = new Button("Delete", this);
+				delete = new Button("Delete");
 				delete.setFocus(true);
 				delete.setAccessKey('d');
 				delete.addClickListener(this);
@@ -630,6 +630,9 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public void onClick(Widget sender) {
+			
+			JsonUtil.debug("Onclick - sender: " + sender.toString());
+			
 			if (sender == wholeDay) {
 				if (wholeDay.isChecked()) {
 					if (time.getWidgetIndex(timePanel) > -1) {
