@@ -680,10 +680,9 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		protected void toggleButton() {
-			JsonUtil.debug("String: '" + patient.getText() + "'");
 			if (text.getText().length() > 1 && patient.getValue() > 0
 					&& provider.getValue() > 0) {
-				JsonUtil.debug("true");
+				
 				ok.setEnabled(true);
 			} else {
 				ok.setEnabled(false);
@@ -896,8 +895,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		@SuppressWarnings("unchecked")
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
-			JsonUtil.debug("getEventsForRange: start = " + start.toString()
-					+ ", end = " + end.toString());
+			
+			
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO: STUBBED
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -972,11 +971,14 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public void updateEvent(Object updated) {
+			JsonUtil.debug("Run updateEvent()");
 			removeEvent(updated);
 			addEvent(updated);
+
 		}
 
 		public void removeEvent(Object updated) {
+			JsonUtil.debug("Run removeEvent()");
 			EventData data = (EventData) updated;
 			// Window.alert("Remove" + items.size());
 			items.remove(data.getIdentifier());
@@ -984,8 +986,10 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public void addEvent(Object updated) {
+			JsonUtil.debug("Run addEvent()");
 			EventData data = (EventData) updated;
 			items.put(data.getIdentifier(), data);
+
 		}
 	}
 
@@ -1059,6 +1063,79 @@ public class SchedulerWidget extends WidgetInterface implements
 			final EventData data = (EventData) newEvent.getData();
 			label.setText("Added event on " + data.getStartTime() + " - "
 					+ data.getEndTime());
+			
+			Calendar cstart = new GregorianCalendar();
+			cstart.setTime(data.getStartTime());
+			Calendar cend = new GregorianCalendar();
+			cend.setTime(data.getEndTime());
+
+			// Needed fields: caldateof, calhour, calminute, calduration,
+			// caltype, calpatient, calfacility
+			// caltype = pat (all patient appointments) || temp (call in
+			// patient; reservations)
+			// || block (time reservations like lunch, etc.)
+
+			HashMap<String, String> d = new HashMap<String, String>();
+
+			d.put("caldateof", dateToSql(cstart.getTime()));
+			d
+					.put("calhour", Integer.toString(cstart
+							.get(Calendar.HOUR_OF_DAY)));
+			d.put("calminute", Integer.toString(cstart.get(Calendar.MINUTE)));
+
+			Integer dur = (cend.get(Calendar.HOUR) - cstart.get(Calendar.HOUR));
+			if (dur < 0) {
+				dur = dur + 24;
+			}
+			dur = (dur * 60)
+					+ (cend.get(Calendar.MINUTE) - cstart.get(Calendar.MINUTE));
+
+			d.put("calduration", Integer.toString(dur));
+			d.put("caltype", "pat");
+			d.put("calpatient", Integer.toString(data.getPatientId()));
+			d.put("calprovider", Integer.toString(data.getProviderId()));
+			d.put("calprenote", data.getData());
+			// TODO: FACILITY MISSING!
+			
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Runs in STUBBED MODE => Do nothing
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				// Use JSON-RPC to retrieve the data
+				String[] params = { JsonUtil.jsonify(d) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.Scheduler.SetAppointment",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							JsonUtil.debug(request.toString());
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (response.getStatusCode() == 200) {
+								Integer result = (Integer) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()), "Integer");
+								if (result != null && result != 0) {
+									JsonUtil.debug("successfully added Event.");
+								}
+							}
+						}
+					});
+				} catch (RequestException e) {
+					// nothing here right now
+				}
+			} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
+				// Use GWT-RPC to retrieve the data
+				// TODO: Create that stuff
+			}
+
+			
 			break;
 		}
 		case SELECT_DAY: {
