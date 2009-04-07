@@ -655,12 +655,15 @@ public class SchedulerWidget extends WidgetInterface implements
 						data.setStartTime(start.getValue(date.getValue()));
 						data.setEndTime(end.getValue(date.getValue()));
 					}
-					data.setData(text.getText());
 					data.setDescription(text.getText());
 					data.setProviderName(provider.getText());
 					data.setProviderId(provider.getValue());
 					data.setPatientName(patient.getText());
+					JsonUtil.debug("patient name = " + patient.getText());
 					data.setPatientId(patient.getValue());
+					data.setData((data.getPatientId() != null && data
+							.getPatientId() > 0) ? data.getPatientName() + ": "
+							: "" + data.getDescription());
 					final DateEvent newEvent = new DateEvent(this, data);
 					newEvent.setCommand(command);
 					listener.handleDateEvent(newEvent);
@@ -1027,7 +1030,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			d.put("caltype", "pat");
 			d.put("calpatient", Integer.toString(data.getPatientId()));
 			d.put("calprovider", Integer.toString(data.getProviderId()));
-			d.put("calprenote", data.getData());
+			d.put("calprenote", data.getDescription());
 			// TODO: FACILITY MISSING!
 			Boolean b = false;
 			if (s == "add") {
