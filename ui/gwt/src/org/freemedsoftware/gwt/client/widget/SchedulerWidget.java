@@ -945,12 +945,8 @@ public class SchedulerWidget extends WidgetInterface implements
 											Iterator<HashMap<String, String>> iter = Arrays
 													.asList(r).iterator();
 											while (iter.hasNext()) {
-												JsonUtil
-														.debug("Iterating through event");
 												EventData d = shoehornEventData(iter
 														.next());
-												JsonUtil.debug("Found: "
-														+ d.toString());
 												e.add(d);
 											}
 											JsonUtil
@@ -1089,18 +1085,17 @@ public class SchedulerWidget extends WidgetInterface implements
 									Response response) {
 								if (response.getStatusCode() == 200) {
 
-									Integer result = (Integer) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													rpcparams.get("resulttype"));
-									if (result != null) {
+									Object r = JsonUtil
+									.shoehornJson(JSONParser
+											.parse(response.getText()),
+											rpcparams.get("resulttype"));
+									
+									
+									if (r != null) {
 										if (rpcparams.get("resulttype") == "Integer") {
-											JsonUtil.debug("SchedulerWidget - "
-													+ s
-													+ ":"
-													+ rpcparams
-															.get("responseOk"));
-										} else if (rpcparams.get("resulttype") == "Boolean") {
+											
+											Integer result = (Integer) r;
+											
 											JsonUtil.debug("SchedulerWidget - "
 													+ s
 													+ ":"
@@ -1110,6 +1105,15 @@ public class SchedulerWidget extends WidgetInterface implements
 												items.get(data.getIdentifier())
 														.setIdentifier(result);
 											}
+										} else if (rpcparams.get("resulttype") == "Boolean") {
+											Boolean result = (Boolean) r;
+											JsonUtil.debug("SchedulerWidget - "
+													+ s
+													+ ":"
+													+ rpcparams
+															.get("responseOk"));
+										
+											
 
 										} else {
 											JsonUtil
