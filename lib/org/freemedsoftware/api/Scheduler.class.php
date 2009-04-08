@@ -55,6 +55,7 @@ class Scheduler {
 		'calmark' => 'calmark',
 		'calappttemplate' => 'calappttemplate',
 
+		'user' => 'user',
 		'date' => 'caldateof',
 		'type' => 'caltype',
 		'hour' => 'calhour',
@@ -1020,6 +1021,8 @@ class Scheduler {
 
 		// Set add and modify
 		$fields['caldateof'] = $this->ImportDate( $fields['caldateof'] );
+		$this_user = freemed::user_cache();
+		$fields['user'] = $this_user->user_number;
 
 		$query = $GLOBALS['sql']->insert_query (
 			'scheduler',
