@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -44,9 +45,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SupportModuleListBox extends WidgetInterface {
+public class SupportModuleListBox extends WidgetInterface implements HashSetter {
 
 	protected String moduleName = null;
+
+	protected String hashMapping = null;
 
 	protected VerticalPanel layout;
 
@@ -154,6 +157,50 @@ public class SupportModuleListBox extends WidgetInterface {
 			return s;
 		}
 		return null;
+	}
+
+	public String getStoredValue() {
+		return getWidgetValue();
+	}
+
+	/**
+	 * Determine the string value.
+	 * 
+	 * @return
+	 */
+	public String getWidgetValue() {
+		try {
+			return getValue(listBox.getSelectedIndex());
+		} catch (Exception e) {
+			return new String("");
+		}
+	}
+
+	/**
+	 * Set the active value of the ListBox widget to be val.
+	 * 
+	 * @param val
+	 */
+	public void setWidgetValue(String val) {
+		if (listBox.getItemCount() > 0) {
+			for (int iter = 0; iter < listBox.getItemCount(); iter++) {
+				if (listBox.getValue(iter).compareTo(val) == 0) {
+					listBox.setItemSelected(iter, true);
+				}
+			}
+		}
+	}
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
+	}
+
+	public String getHashMapping() {
+		return hashMapping;
+	}
+
+	public void setFromHash(HashMap<String, String> data) {
+		setWidgetValue(data.get(hashMapping));
 	}
 
 }

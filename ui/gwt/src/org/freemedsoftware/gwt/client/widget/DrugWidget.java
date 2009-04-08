@@ -24,24 +24,29 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.HashMap;
+
+import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Module.MultumDrugLexiconAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DrugWidget extends Composite {
+public class DrugWidget extends WidgetInterface implements HashSetter {
 
 	protected SupportModuleWidget multumDrugLookup;
 
 	protected ListBox drugFormat;
 
 	protected ListBox drugDosage;
+
+	protected String hashMapping;
 
 	public DrugWidget() {
 		final HorizontalPanel container = new HorizontalPanel();
@@ -104,6 +109,25 @@ public class DrugWidget extends Composite {
 						});
 			}
 		}
+	}
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
+	}
+
+	public String getStoredValue() {
+		// FIXME: make this work
+		// return getValue().toString();
+		return "";
+	}
+
+	public String getHashMapping() {
+		return hashMapping;
+	}
+
+	public void setFromHash(HashMap<String, String> data) {
+		// FIXME: make this work
+		// setValue(Integer.parseInt(data.get(hashMapping)));
 	}
 
 }
