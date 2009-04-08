@@ -170,7 +170,7 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 	 */
 	public String getWidgetValue() {
 		try {
-			return getValue(listBox.getSelectedIndex());
+			return listBox.getValue(listBox.getSelectedIndex());
 		} catch (Exception e) {
 			return new String("");
 		}
