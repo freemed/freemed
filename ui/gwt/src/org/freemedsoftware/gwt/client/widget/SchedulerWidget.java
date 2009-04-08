@@ -49,6 +49,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Button;
@@ -135,7 +136,9 @@ public class SchedulerWidget extends WidgetInterface implements
 		private String providerName = null;
 
 		// TODO: Position Marker
-
+		/**
+		 * @wbp.parser.constructor
+		 */
 		public EventData() {
 			super();
 			id = String.valueOf(System.currentTimeMillis());
@@ -475,6 +478,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		private Button delete = null;
 
 		private EventData data = null;
+		
+		SupportModuleListBox selectTemplate = null;
 
 		private DateEventActions command = DateEventActions.ADD;
 
@@ -482,6 +487,16 @@ public class SchedulerWidget extends WidgetInterface implements
 				DateEventListener newListener, Object newData) {
 			this(renderer, newListener, newData, DateEventActions.ADD);
 		}
+
+		/**
+		 * 
+		 * 
+		 * @param renderer
+		 * @param newListener
+		 * @param newData
+		 * @param newCommand
+		 * @wbp.parser.constructor
+		 */
 
 		public StringEventDataDialog(DateRenderer renderer,
 				DateEventListener newListener, Object newData,
@@ -609,8 +624,21 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			button.add(new HTML(" "));
 			button.add(cancel);
-			table.setWidget(4, 1, button);
+			table.setWidget(5, 1, button);
 			setWidget(table);
+
+			final Label templateLabel = new Label("Template");
+			table.setWidget(4, 0, templateLabel);
+			selectTemplate = new SupportModuleListBox(
+					"AppointmentTemplates", "Select a Template");
+			table.setWidget(4, 1, selectTemplate);
+			
+			selectTemplate.initChangeListener(new Command() {
+				public void execute() {
+					updateFromTemplate(Integer.parseInt(selectTemplate.getSelectedValue())); 
+				}
+			});
+			
 			toggleButton();
 		}
 
@@ -694,6 +722,78 @@ public class SchedulerWidget extends WidgetInterface implements
 				ok.setEnabled(true);
 			} else {
 				ok.setEnabled(false);
+			}
+		}
+		
+		
+		/**
+		 * 
+		 * @param i The Index value of the Appointment-Template
+		 */
+		public void updateFromTemplate(Integer i) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// TODO: STUBBED
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				// JSON-RPC
+				String[] params = { JsonUtil.jsonify(i) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.AppointmentTemplates.GetRecord",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							JsonUtil.debug("Error on retrieving AppointmentTemplate");
+						}
+
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								if (response.getText().compareToIgnoreCase(
+										"false") != 0) {
+									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"HashMap<String,String>");
+									if (result != null) {
+										if (result.size() == 1) {
+											
+											Integer duration = Integer.parseInt(result.get("atduration"));
+											Date date_start = start.getValue(new Date());
+											Calendar c = new GregorianCalendar();
+											c.setTime(date_start);
+											c.add(Calendar.HOUR_OF_DAY,  (int) Math.ceil(duration / 60));
+											c.add(Calendar.MINUTE, (duration % 60));
+											end.setDate(c.getTime());
+											 
+											
+											
+										} else {
+											JsonUtil.debug("Error: retrieved 0 or more than 1 Template");
+										}
+									}
+								} else {
+									JsonUtil
+											.debug("Received dummy response from JSON backend");
+								}
+							} else {
+								state.getToaster().addItem("Scheduler",
+										"Failed to get scheduler items.",
+										Toaster.TOASTER_ERROR);
+							}
+						}
+					});
+				} catch (RequestException e) {
+					state.getToaster().addItem("Scheduler",
+							"Failed to get scheduler items.",
+							Toaster.TOASTER_ERROR);
+				}
+			} else {
+				// GWT-RPC
 			}
 		}
 
@@ -1135,6 +1235,10 @@ public class SchedulerWidget extends WidgetInterface implements
 	protected boolean alreadyInitialized = false;
 
 	protected DockPanel panel = new DockPanel();
+
+	/**
+	 * @wbp.parser.constructor
+	 */
 
 	public SchedulerWidget() {
 		super();
