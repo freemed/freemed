@@ -661,9 +661,10 @@ public class SchedulerWidget extends WidgetInterface implements
 					data.setPatientName(patient.getText());
 					JsonUtil.debug("patient name = " + patient.getText());
 					data.setPatientId(patient.getValue());
-					data.setData((data.getPatientId() != null && data
+					data.setData(((data.getPatientId() != null && data
 							.getPatientId() > 0) ? data.getPatientName() + ": "
-							: "" + data.getDescription());
+							: "")
+							+ data.getDescription());
 					final DateEvent newEvent = new DateEvent(this, data);
 					newEvent.setCommand(command);
 					listener.handleDateEvent(newEvent);
@@ -826,18 +827,6 @@ public class SchedulerWidget extends WidgetInterface implements
 			super();
 		}
 
-		/*
-		 * public void getEventsForRange(Date start, Date end, MultiView caller,
-		 * boolean reloadData) { ArrayList<EventData> found = new
-		 * ArrayList<EventData>(); Iterator<EventData> walker =
-		 * items.values().iterator(); while (walker.hasNext()) { EventData data
-		 * = (EventData) walker.next(); if ((data.getStartTime().after(start) &&
-		 * data.getStartTime() .before(end)) ||
-		 * DateUtils.isSameDay(data.getStartTime(), start) ||
-		 * DateUtils.isSameDay(data.getStartTime(), end)) { found.add(data); } }
-		 * caller.setEvents((Object[]) found.toArray(new Object[0])); }
-		 */
-
 		public EventData shoehornEventData(HashMap<String, String> o) {
 			EventData data = new EventData(o.get("scheduler_id"));
 
@@ -865,10 +854,11 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			// Set event label
 			data
-					.setData((o.get("patient") != null && o.get("patient") != "") ? o
+					.setData(((o.get("patient") != null && o.get("patient") != "") ? o
 							.get("patient")
 							+ ": "
-							: "" + o.get("note"));
+							: "")
+							+ o.get("note"));
 
 			return data;
 		}
@@ -1024,8 +1014,8 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			d.put("calduration", Integer.toString(dur));
 			d.put("caltype", "pat");
-			d.put("calpatient", Integer.toString(data.getPatientId()));
-			d.put("calprovider", Integer.toString(data.getProviderId()));
+			d.put("calpatient", data.getPatientId().toString());
+			d.put("calprovider", data.getProviderId().toString());
 			d.put("calprenote", data.getDescription());
 			// TODO: FACILITY MISSING!
 			Boolean b = false;
@@ -1085,17 +1075,15 @@ public class SchedulerWidget extends WidgetInterface implements
 									Response response) {
 								if (response.getStatusCode() == 200) {
 
-									Object r = JsonUtil
-									.shoehornJson(JSONParser
+									Object r = JsonUtil.shoehornJson(JSONParser
 											.parse(response.getText()),
 											rpcparams.get("resulttype"));
-									
-									
+
 									if (r != null) {
 										if (rpcparams.get("resulttype") == "Integer") {
-											
+
 											Integer result = (Integer) r;
-											
+
 											JsonUtil.debug("SchedulerWidget - "
 													+ s
 													+ ":"
@@ -1112,8 +1100,6 @@ public class SchedulerWidget extends WidgetInterface implements
 													+ ":"
 													+ rpcparams
 															.get("responseOk"));
-										
-											
 
 										} else {
 											JsonUtil
