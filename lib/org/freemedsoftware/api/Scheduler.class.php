@@ -706,8 +706,9 @@ class Scheduler {
 			array ('id' => $original )
 		);
 		//syslog(LOG_INFO, "query : $query");
-		$result = $GLOBALS['sql']->query ( $query );
-		return $result;
+		$result = $GLOBALS['sql']->exec ( $query );
+		if ( $result > 0 ) { return true; }
+		return false;
 	} // end method MoveAppointment
 	public function move_appointment ( $original, $data = NULL ) { return $this->MoveAppointment ( $original, $data ); }
 
