@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
@@ -41,9 +42,12 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SupportModuleListBox extends WidgetInterface implements HashSetter {
 
@@ -56,6 +60,8 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 	protected ListBox listBox;
 
 	protected String selectText = "Select an Item";
+	
+	protected Command command = null; 
 
 	public SupportModuleListBox(String s) {
 		moduleName = s;
@@ -157,6 +163,17 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 			return s;
 		}
 		return null;
+	}
+	
+	public void initChangeListener(Command c) {
+		command = c;
+		listBox.addChangeListener(new ChangeListener() {
+
+			public void onChange(Widget sender) {
+				command.execute();
+			}
+			
+		});
 	}
 
 	public String getStoredValue() {
