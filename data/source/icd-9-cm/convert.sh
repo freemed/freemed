@@ -46,7 +46,7 @@ cat $1 | grep ^\' | grep -v 'ICD-9-CM' | while read X; do
 	if [ "$(echo $CODE)" != "" ]; then
 		COUNT=$(( ${COUNT} + 1 ))
 		CODE=$( echo ${CODE} | sed -e 's/ //g;' )
-		echo \"${CODE}\",\"${CODE}\",\"${DESC}\",\"${DESC}\",\"${DESC}\",${DATE},${DATE},0,0,0,${COUNT}
+		echo ${CODE},${CODE},${DESC},${DESC},${DESC},${DATE},${DATE},0,0,0,${COUNT}
 	fi
 done
 

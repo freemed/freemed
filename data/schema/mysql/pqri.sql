@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS pqri_source (
 
 ----- Import PQRI from CSV export files -----
 
-LOAD DATA LOCAL INFILE "data/pqri/2008PQRISingleSourceCodeMaster.csv"
+LOAD DATA LOCAL INFILE "data/locale/en_US/pqri.en_US.data"
 	INTO TABLE pqri_source
-	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
+	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"';
 
