@@ -61,6 +61,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
@@ -135,6 +136,10 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private String providerName = null;
 
+		private Integer facilityId = null;
+
+		private Integer roomId = null;
+
 		// TODO: Position Marker
 		/**
 		 * @wbp.parser.constructor
@@ -185,6 +190,14 @@ public class SchedulerWidget extends WidgetInterface implements
 			return providerId;
 		}
 
+		public Integer getRoomId() {
+			return roomId;
+		}
+
+		public Integer getFacilityId() {
+			return facilityId;
+		}
+
 		public String getPatientName() {
 			return patientName;
 		}
@@ -215,6 +228,14 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public void setProviderId(Integer providerId) {
 			this.providerId = providerId;
+		}
+
+		public void setFacilityId(Integer facilityId) {
+			this.facilityId = facilityId;
+		}
+
+		public void setRoomId(Integer roomId) {
+			this.roomId = roomId;
 		}
 
 		public void setPatientName(String patientName) {
@@ -478,7 +499,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		private Button delete = null;
 
 		private EventData data = null;
-		
+
 		SupportModuleListBox selectTemplate = null;
 
 		private DateEventActions command = DateEventActions.ADD;
@@ -629,16 +650,17 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			final Label templateLabel = new Label("Template");
 			table.setWidget(4, 0, templateLabel);
-			selectTemplate = new SupportModuleListBox(
-					"AppointmentTemplates", "Select a Template");
+			selectTemplate = new SupportModuleListBox("AppointmentTemplates",
+					"Select a Template");
 			table.setWidget(4, 1, selectTemplate);
-			
+
 			selectTemplate.initChangeListener(new Command() {
 				public void execute() {
-					updateFromTemplate(Integer.parseInt(selectTemplate.getSelectedValue())); 
+					updateFromTemplate(Integer.parseInt(selectTemplate
+							.getSelectedValue()));
 				}
 			});
-			
+
 			toggleButton();
 		}
 
@@ -724,11 +746,11 @@ public class SchedulerWidget extends WidgetInterface implements
 				ok.setEnabled(false);
 			}
 		}
-		
-		
+
 		/**
 		 * 
-		 * @param i The Index value of the Appointment-Template
+		 * @param i
+		 *            The Index value of the Appointment-Template
 		 */
 		public void updateFromTemplate(Integer i) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -746,9 +768,9 @@ public class SchedulerWidget extends WidgetInterface implements
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							JsonUtil.debug("Error on retrieving AppointmentTemplate");
+							JsonUtil
+									.debug("Error on retrieving AppointmentTemplate");
 						}
-
 
 						public void onResponseReceived(Request request,
 								Response response) {
@@ -761,19 +783,26 @@ public class SchedulerWidget extends WidgetInterface implements
 													"HashMap<String,String>");
 									if (result != null) {
 										if (result.size() == 1) {
-											
-											Integer duration = Integer.parseInt(result.get("atduration"));
-											Date date_start = start.getValue(new Date());
+
+											Integer duration = Integer
+													.parseInt(result
+															.get("atduration"));
+											Date date_start = start
+													.getValue(new Date());
 											Calendar c = new GregorianCalendar();
 											c.setTime(date_start);
-											c.add(Calendar.HOUR_OF_DAY,  (int) Math.ceil(duration / 60));
-											c.add(Calendar.MINUTE, (duration % 60));
+											c
+													.add(
+															Calendar.HOUR_OF_DAY,
+															(int) Math
+																	.ceil(duration / 60));
+											c.add(Calendar.MINUTE,
+													(duration % 60));
 											end.setDate(c.getTime());
-											 
-											
-											
+
 										} else {
-											JsonUtil.debug("Error: retrieved 0 or more than 1 Template");
+											JsonUtil
+													.debug("Error: retrieved 0 or more than 1 Template");
 										}
 									}
 								} else {
@@ -1011,8 +1040,10 @@ public class SchedulerWidget extends WidgetInterface implements
 												"org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange",
 												params)));
 				try {
+					loadingDialog.center();
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
+							loadingDialog.hide();
 							state.getToaster().addItem("Scheduler",
 									"Failed to get scheduler items.",
 									Toaster.TOASTER_ERROR);
@@ -1020,6 +1051,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 						public void onResponseReceived(Request request,
 								Response response) {
+							loadingDialog.hide();
 							if (200 == response.getStatusCode()) {
 								if (response.getText().compareToIgnoreCase(
 										"false") != 0) {
@@ -1057,6 +1089,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						}
 					});
 				} catch (RequestException e) {
+					loadingDialog.hide();
 					state.getToaster().addItem("Scheduler",
 							"Failed to get scheduler items.",
 							Toaster.TOASTER_ERROR);
@@ -1236,10 +1269,11 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	protected DockPanel panel = new DockPanel();
 
+	protected DialogBox loadingDialog = new DialogBox();
+
 	/**
 	 * @wbp.parser.constructor
 	 */
-
 	public SchedulerWidget() {
 		super();
 	}
@@ -1258,6 +1292,13 @@ public class SchedulerWidget extends WidgetInterface implements
 			JsonUtil.debug("initializing panel widget");
 			initWidget(panel);
 			panel.setWidth("100%");
+
+			final HorizontalPanel loadingContainer = new HorizontalPanel();
+			loadingContainer.add(new Image("resources/images/loading.gif"));
+			loadingContainer.add(new HTML("<h3>" + "Loading" + "</h3>"));
+			loadingDialog.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
+			loadingDialog.setWidget(loadingContainer);
+			loadingDialog.hide();
 
 			final HorizontalPanel fields = new HorizontalPanel();
 			panel.add(fields, DockPanel.NORTH);
