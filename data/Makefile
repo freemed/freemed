@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 THISDIR=data
-SUBDIR=backup cache config documents fonts fpdf-fonts keys locale multum ui report schema store tex
+SUBDIR=backup cache config documents drugs fonts fpdf-fonts keys locale multum ui report schema store tex
 
 all:
 	# Nothing
