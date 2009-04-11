@@ -39,7 +39,9 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
+import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
@@ -349,6 +351,12 @@ public class PatientProblemList extends WidgetInterface {
 		}
 		if (moduleName.toLowerCase() == "patletter") {
 			pSI = new PatientCorrespondenceEntry();
+		}
+		if (moduleName.toLowerCase() == "patient_ids") {
+			pSI = new PatientIdEntry();
+		}
+		if (moduleName.toLowerCase() == "referrals") {
+			pSI = new ReferralEntry();
 		}
 		if (pSI != null) {
 			pSI.setPatientId(patientId);

@@ -58,6 +58,8 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 	final protected String moduleName = "ProgressNotes";
 
+	protected String patientIdName = "pnotespat";
+	
 	public ProgressNoteEntry() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();

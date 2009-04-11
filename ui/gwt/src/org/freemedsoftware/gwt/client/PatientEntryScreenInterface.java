@@ -52,6 +52,8 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 
 	protected HashMap<String, HashSetter> setters = new HashMap<String, HashSetter>();
 
+	protected String patientIdName = "patient";
+
 	protected String moduleName;
 
 	/**
@@ -83,6 +85,9 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			String k = iter.next();
 			rec.put(k, setters.get(k).getStoredValue());
 		}
+
+		// Set patient ID
+		rec.put(patientIdName, patientId.toString());
 
 		if (!internalId.equals(new Integer(0))) {
 			// Modify

@@ -1,5 +1,5 @@
 /*
- * $Id: PatientScreen.java 4485 2009-03-05 20:02:54Z pmeng $
+ * $Id$
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
@@ -35,8 +35,10 @@ import org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PrescriptionsScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
+import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 import org.freemedsoftware.gwt.client.widget.Toaster;
@@ -81,9 +83,23 @@ public class PatientScreen extends ScreenInterface {
 
 			final MenuBar menuBar_1 = new MenuBar(true);
 
+			menuBar_1.addItem("Allergy", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Allergy", new AllergyEntryScreen(),
+							state, getObject());
+				}
+			});
+
 			menuBar_1.addItem("Encounter", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Encounter", new EncounterScreen(),
+							state, getObject());
+				}
+			});
+
+			menuBar_1.addItem("Foreign ID", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Foreign ID", new PatientIdEntry(),
 							state, getObject());
 				}
 			});
@@ -112,13 +128,15 @@ public class PatientScreen extends ScreenInterface {
 
 			menuBar_1.addItem("Prescription", new Command() {
 				public void execute() {
-					Util.spawnTabPatient("Prescription", new PrescriptionsScreen(), state, getObject());
+					Util.spawnTabPatient("Prescription",
+							new PrescriptionsScreen(), state, getObject());
 				}
 			});
-			
-			menuBar_1.addItem("Allergy", new Command() {
+
+			menuBar_1.addItem("Referral", new Command() {
 				public void execute() {
-					Util.spawnTabPatient("Allergy", new AllergyEntryScreen(), state, getObject());
+					Util.spawnTabPatient("Referral", new ReferralEntry(),
+							state, getObject());
 				}
 			});
 

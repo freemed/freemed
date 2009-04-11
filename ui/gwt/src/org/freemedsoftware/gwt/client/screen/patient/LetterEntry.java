@@ -51,6 +51,8 @@ public class LetterEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "Letters";
 
+	protected String patientIdName = "letterpatient";
+
 	public LetterEntry() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();

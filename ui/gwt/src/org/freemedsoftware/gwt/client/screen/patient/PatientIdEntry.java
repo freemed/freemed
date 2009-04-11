@@ -25,8 +25,6 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
-import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
-import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
 import org.freemedsoftware.gwt.client.widget.CustomTextBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
@@ -39,21 +37,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
+public class PatientIdEntry extends PatientEntryScreenInterface {
 
-	protected CustomDatePicker wDate;
+	protected String moduleName = "PatientIds";
 
-	protected SupportModuleWidget wFrom, wTo;
-
-	protected CustomTextBox wSubject;
-
-	protected CustomRichTextArea wText;
-
-	final protected String moduleName = "PatientCorrespondence";
-
-	protected String patientIdName = "letterpatient";
-
-	public PatientCorrespondenceEntry() {
+	protected String patientIdName = "patient";
+	
+	public PatientIdEntry() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -61,42 +51,31 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
 
-		final Label dateLabel = new Label("Date : ");
-		flexTable.setWidget(0, 0, dateLabel);
+		final Label providerLabel = new Label("Provider");
+		flexTable.setWidget(0, 0, providerLabel);
 
-		wDate = new CustomDatePicker();
-		wDate.setHashMapping("letterdt");
-		addEntryWidget("letterdt", wDate);
-		flexTable.setWidget(0, 1, wDate);
+		final SupportModuleWidget wProvider = new SupportModuleWidget(
+				"ProviderModule");
+		wProvider.setHashMapping("provider");
+		addEntryWidget("provider", wProvider);
+		flexTable.setWidget(0, 1, wProvider);
 
-		final Label fromLabel = new Label("From : ");
-		flexTable.setWidget(1, 0, fromLabel);
+		final Label facilityLabel = new Label("Facility");
+		flexTable.setWidget(1, 0, facilityLabel);
 
-		wFrom = new SupportModuleWidget();
-		wFrom.setModuleName("ProviderModule");
-		wFrom.setHashMapping("letterfrom");
-		addEntryWidget("letterfrom", wFrom);
-		flexTable.setWidget(1, 1, wFrom);
+		final SupportModuleWidget wFacility = new SupportModuleWidget(
+				"FacilityModule");
+		wFacility.setHashMapping("facility");
+		addEntryWidget("facility", wFacility);
+		flexTable.setWidget(1, 1, wFacility);
 
-		final Label subjectLabel = new Label("Subject : ");
-		flexTable.setWidget(2, 0, subjectLabel);
+		final Label foreignIdLabel = new Label("Foreign ID #");
+		flexTable.setWidget(2, 0, foreignIdLabel);
 
-		wSubject = new CustomTextBox();
-		wSubject.setHashMapping("lettersubject");
-		addEntryWidget("lettersubject", wSubject);
-		flexTable.setWidget(2, 1, wSubject);
-		wSubject.setWidth("100%");
-
-		final Label templateLabel = new Label("Template : ");
-		flexTable.setWidget(3, 0, templateLabel);
-
-		final Label messageLabel = new Label("Message : ");
-		flexTable.setWidget(4, 0, messageLabel);
-
-		wText = new CustomRichTextArea();
-		wText.setHashMapping("lettertext");
-		addEntryWidget("lettertext", wText);
-		flexTable.setWidget(4, 1, wText);
+		final CustomTextBox wForeignId = new CustomTextBox();
+		wForeignId.setHashMapping("foreign_id");
+		addEntryWidget("foreign_id", wForeignId);
+		flexTable.setWidget(2, 1, wForeignId);
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -118,7 +97,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 	}
 
 	public String getModuleName() {
-		return "PatientCorrespondence";
+		return "PatientIds";
 	}
 
 	public void resetForm() {
