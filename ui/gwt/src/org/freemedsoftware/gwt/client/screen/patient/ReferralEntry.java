@@ -44,11 +44,11 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 	protected SupportModuleWidget wOriginalProvider, wDestinationProvider,
 			wPayor;
 
-	protected SupportModuleMultipleChoiceWidget wDx;
+	protected SupportModuleMultipleChoiceWidget wDx, wComorbids;
 
-	protected CustomListBox wDirection, wPayorApproval;
+	protected CustomListBox wDirection, wPayorApproval, wUrgency;
 
-	protected CustomTextArea wReasons, wComorbids;
+	protected CustomTextArea wReasons;
 
 	protected String moduleName = "Referrals";
 
@@ -92,45 +92,59 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(3, 1, wDirection);
 		wDirection.setHashMapping("refdirection");
 		addEntryWidget("refdirection", wDirection);
-		wDirection.addItem("inbound", "inbound");
 		wDirection.addItem("outbound", "outbound");
+		wDirection.addItem("inbound", "inbound");
 		wDirection.setVisibleItemCount(1);
 
 		final Label reasonsLabel = new Label("Reasons");
-		flexTable.setWidget(4, 0, reasonsLabel);
+		flexTable.setWidget(5, 0, reasonsLabel);
 
 		wReasons = new CustomTextArea();
 		wReasons.setHashMapping("refreasons");
 		addEntryWidget("refreasons", wReasons);
-		flexTable.setWidget(4, 1, wReasons);
+		flexTable.setWidget(5, 1, wReasons);
 
 		final Label comorbidsLabel = new Label("Comorbids");
-		flexTable.setWidget(5, 0, comorbidsLabel);
+		flexTable.setWidget(6, 0, comorbidsLabel);
 
-		wComorbids = new CustomTextArea();
+		wComorbids = new SupportModuleMultipleChoiceWidget("IcdCodes");
 		wComorbids.setHashMapping("refcomorbids");
 		addEntryWidget("refcomorbids", wComorbids);
-		flexTable.setWidget(5, 1, wComorbids);
+		flexTable.setWidget(6, 1, wComorbids);
 
 		final Label payorLabel = new Label("Payor");
-		flexTable.setWidget(6, 0, payorLabel);
+		flexTable.setWidget(7, 0, payorLabel);
 
 		wPayor = new SupportModuleWidget("InsuranceCompanyModule");
 		wPayor.setHashMapping("refpayor");
 		addEntryWidget("refpayor", wPayor);
-		flexTable.setWidget(6, 1, wPayor);
+		flexTable.setWidget(7, 1, wPayor);
 
 		final Label payorApprovalLabel = new Label("Payor Approval");
-		flexTable.setWidget(7, 0, payorApprovalLabel);
+		flexTable.setWidget(8, 0, payorApprovalLabel);
 
 		wPayorApproval = new CustomListBox();
-		flexTable.setWidget(7, 1, wPayorApproval);
+		flexTable.setWidget(8, 1, wPayorApproval);
 		wPayorApproval.setHashMapping("refpayorapproval");
 		addEntryWidget("refpayorapproval", wPayorApproval);
 		wPayorApproval.addItem("unknown");
 		wPayorApproval.addItem("denied");
 		wPayorApproval.addItem("approved");
 		wPayorApproval.setVisibleItemCount(1);
+
+		final Label urgencyLabel = new Label("Urgency");
+		flexTable.setWidget(4, 0, urgencyLabel);
+
+		wUrgency = new CustomListBox();
+		flexTable.setWidget(4, 1, wUrgency);
+		wUrgency.setHashMapping("refurgency");
+		addEntryWidget("refurgency", wUrgency);
+		wUrgency.addItem("not specified", "0");
+		wUrgency.addItem("low priority", "1");
+		wUrgency.addItem("normal", "2");
+		wUrgency.addItem("urgent", "3");
+		wUrgency.addItem("emergency", "4");
+		wUrgency.setVisibleItemCount(1);
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -160,10 +174,11 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		wDestinationProvider.clear();
 		wPayor.clear();
 		wDx.setValue(new Integer[] {});
-		wDirection.setWidgetValue("inbound");
+		wDirection.setWidgetValue("outbound");
 		wPayorApproval.setWidgetValue("unknown");
 		wReasons.setText("");
-		wComorbids.setText("");
+		wComorbids.setValue(new Integer[] {});
+		wUrgency.setWidgetValue("0");
 	}
 
 }
