@@ -26,11 +26,14 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
@@ -43,13 +46,13 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SupportModuleMultipleChoiceWidget extends Composite {
+public class SupportModuleMultipleChoiceWidget extends WidgetInterface
+		implements HashSetter {
 
 	protected SupportModuleWidget supportModuleWidget = null;
 
@@ -58,6 +61,8 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 	protected VerticalPanel container = null;
 
 	protected Integer[] widgetValues;
+
+	protected String hashMapping = null;
 
 	public SupportModuleMultipleChoiceWidget() {
 		init();
@@ -253,6 +258,32 @@ public class SupportModuleMultipleChoiceWidget extends Composite {
 							}
 						});
 			}
+		}
+	}
+
+	public void setHashMapping(String hm) {
+		hashMapping = hm;
+	}
+
+	public String getHashMapping() {
+		return hashMapping;
+	}
+
+	public String getStoredValue() {
+		return getCommaSeparatedValues();
+	}
+
+	public void setFromHash(HashMap<String, String> data) {
+		try {
+			ArrayList<Integer> a = new ArrayList<Integer>();
+			String[] sValues = data.get(hashMapping).split(",");
+			Iterator<String> iter = Arrays.asList(sValues).iterator();
+			while (iter.hasNext()) {
+				a.add(Integer.parseInt(iter.next()));
+			}
+			setValue(a.toArray(new Integer[0]));
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
 		}
 	}
 
