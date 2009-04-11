@@ -49,17 +49,20 @@ public class SupportModuleEntry extends EntryScreenInterface {
 	protected String rawXml = "";
 
 	public SupportModuleEntry() {
+		addChildWidget(ui);
 		initWidget(ui);
 	}
 
 	public SupportModuleEntry(String module) {
 		setModuleName(module);
+		addChildWidget(ui);
 		initWidget(ui);
 	}
-	
+
 	public SupportModuleEntry(String module, Integer id) {
 		setModuleName(module);
 		setInternalId(id);
+		addChildWidget(ui);
 		initWidget(ui);
 	}
 
