@@ -24,6 +24,7 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -43,14 +44,22 @@ public class ClosableTab extends Composite {
 
 	protected ClosableTabInterface closableTabInterface;
 
+	protected CurrentState state = null;
+
 	public ClosableTab(String labelText, Widget w) {
-		this(labelText, w, null);
+		this(labelText, w, null, null);
 	}
 
 	public ClosableTab(String labelText, Widget w, ClosableTabInterface cTI) {
+		this(labelText, w, cTI, null);
+	}
+
+	public ClosableTab(String labelText, Widget w, ClosableTabInterface cTI,
+			CurrentState s) {
 		// Store in namespace where we can see it later
 		widget = w;
 		closableTabInterface = cTI;
+		state = s;
 
 		final HorizontalPanel panel = new HorizontalPanel();
 		initWidget(panel);
@@ -82,13 +91,6 @@ public class ClosableTab extends Composite {
 					goodToGo = closableTabInterface.isReadyToClose();
 				}
 				if (goodToGo) {
-					// If we're dealing with PatientScreen, remove from mapping
-					if (widget instanceof PatientScreen) {
-						PatientScreen ps = (PatientScreen) widget;
-						Integer patientId = ps.getPatient();
-						ps.getState().getPatientScreenMap().remove(patientId);
-					}
-
 					if (closableTabInterface != null) {
 						closableTabInterface.onClose();
 					}
@@ -96,6 +98,13 @@ public class ClosableTab extends Composite {
 							.getParent());
 					t.selectTab(t.getWidgetIndex(widget) - 1);
 					widget.removeFromParent();
+
+					// If we're dealing with PatientScreen, remove from mapping
+					if (widget instanceof PatientScreen) {
+						PatientScreen ps = (PatientScreen) widget;
+						Integer patientId = ps.getPatient();
+						state.getPatientScreenMap().remove(patientId);
+					}
 				}
 			}
 		});

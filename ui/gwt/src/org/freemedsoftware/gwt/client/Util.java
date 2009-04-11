@@ -381,8 +381,13 @@ public final class Util {
 		// Only instantiate new screen if we aren't recycling an old one
 		if (!recycle) {
 			screen.assignState(state);
-			state.getTabPanel().add((Widget) screen,
-					new ClosableTab(title, (Widget) screen));
+			if (screen instanceof PatientScreen) {
+				state.getTabPanel().add((Widget) screen,
+						new ClosableTab(title, (Widget) screen, null, state));
+			} else {
+				state.getTabPanel().add((Widget) screen,
+						new ClosableTab(title, (Widget) screen));
+			}
 			state.getTabPanel().selectTab(
 					state.getTabPanel().getWidgetCount() - 1);
 		}
