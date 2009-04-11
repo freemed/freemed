@@ -45,6 +45,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -83,6 +84,13 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		// Add picklist for this ...
 		supportModuleWidget = new SupportModuleWidget();
 		v.add(supportModuleWidget);
+		supportModuleWidget.addChangeListener(new ChangeListener() {
+			public void onChange(Widget sender) {
+				SupportModuleWidget w = (SupportModuleWidget) sender;
+				addValue(w.getText(), w.getValue());
+				w.clear();
+			}
+		});
 	}
 
 	protected void pushWidgetValue(Integer val) {
@@ -103,7 +111,8 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		// Create new container, push in
 		final HorizontalPanel hp = new HorizontalPanel();
 		hp.add(new Label(text));
-		Button removeButton = new Button();
+		Button removeButton = new Button("X");
+		removeButton.setTitle("Click to remove this item from this list.");
 		removeButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				// Remove the hp object from its parent container, "container"
