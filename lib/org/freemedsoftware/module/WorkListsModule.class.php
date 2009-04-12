@@ -238,6 +238,8 @@ class WorkListsModule extends BaseModule {
 	public function GenerateWorkList ( $provider, $date = '' , $show = 20, $limit = 10) {
 		static $lookup_cache, $s;
 
+		$return = array();
+
 		if (!is_object( $s )) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		}
@@ -262,31 +264,25 @@ class WorkListsModule extends BaseModule {
 		unset ($r);
 
 		$pobj = CreateObject( 'org.freemedsoftware.core.Physician', $provider );
-		//Needs improvement. Needs to count ONLY dates after the current date
-		
+		// Needs improvement. Needs to count ONLY dates after the current date
 		$add_sql = "s.caldateof='".addslashes($_date)."' AND";
 		if ($date == '') {
-
 			$query = "SELECT caldateof, COUNT(*) AS count FROM scheduler WHERE calphysician='".addslashes($provider)."' AND calstatus != 'cancelled' AND (DATEDIFF(caldateof,NOW())>= 0) GROUP BY caldateof LIMIT ".$limit.";";
 
 			$q = $GLOBALS['sql']->queryAll( $query );
 
 			if (count($q) >= 1) {
-
-			$add_sql = "(";
-
-			foreach ($q as $r) {
-				$sum += $r['count'];
-				if ($sum < $show) {
-					$add_sql .= "caldateof='" . $r['caldateof'] . "' OR ";
-				} else {
-					break;
+				$add_sql = "(";
+				foreach ($q as $r) {
+					$sum += $r['count'];
+					if ($sum < $show) {
+						$add_sql .= "caldateof='" . $r['caldateof'] . "' OR ";
+					} else {
+						break;
+					}
 				}
+				$add_sql = substr($add_sql, 0, (strlen($add_sql) - 4)) . ") AND ";
 			}
-			$add_sql = substr($add_sql, 0, (strlen($add_sql) - 4)) . ") AND ";
-			
-			}
-		
 		}
 
 		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calprenote AS s_note, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration, s.caldateof AS s_date, CONCAT(phy.phyfname, ' ', phy.phylname) AS s_provider FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient LEFT OUTER JOIN physician phy ON phy.id=s.calphysician WHERE ". $add_sql." s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
@@ -316,10 +312,7 @@ class WorkListsModule extends BaseModule {
 			);
 		} // end get array	
 
-		if (!defined($return)) {
-			$return[] = array();
-		}
-	
+		if (count($return) < 1) { return array(array()); }
 		return $return;
 	} // end method generate_worklist
 
