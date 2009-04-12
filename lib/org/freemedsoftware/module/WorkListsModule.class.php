@@ -3,6 +3,7 @@
  //
  // Authors:
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
+ //	Phil Meng <pmeng@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
  // Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -223,11 +224,18 @@ class WorkListsModule extends BaseModule {
 	//
 	//	$provider - Provider id
 	//
-	//	$date - (optional) Date, defaults to current date
+	//	$date - (optional) Date, defaults to current date; overrides $show and $limit
+	//		has to be "" if you want to show more than one day at once.
+	//
+	//	$show - (optional) How many Appointments shall be returned maximum.
+	//
+	//	$limit - (optional) How many days shall maximum be combined.
 	//
 	// Returns:
 	//
-	public function GenerateWorkList ( $provider, $date = '' ) {
+	// 	Array of Array of Hashes OR null (DB Error occured)
+
+	public function GenerateWorkList ( $provider, $date = '' , $show = 20, $limit = 10) {
 		static $lookup_cache, $s;
 
 		if (!is_object( $s )) {
@@ -254,8 +262,35 @@ class WorkListsModule extends BaseModule {
 		unset ($r);
 
 		$pobj = CreateObject( 'org.freemedsoftware.core.Physician', $provider );
+		//Needs improvement. Needs to count ONLY dates after the current date
+		
+		$add_sql = "s.caldateof='".addslashes($_date)."' AND";
+		if ($date == '') {
 
-		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calprenote AS s_note, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration, CONCAT(phy.phyfname, ' ', phy.phylname) AS s_provider FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient LEFT OUTER JOIN physician phy ON phy.id=s.calphysician WHERE s.caldateof='".addslashes($_date)."' AND s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
+			$query = "SELECT caldateof, COUNT(*) AS count FROM scheduler WHERE calphysician='".addslashes($provider)."' AND calstatus != 'cancelled' AND (DATEDIFF(caldateof,NOW())>= 0) GROUP BY caldateof LIMIT ".$limit.";";
+
+			$q = $GLOBALS['sql']->queryAll( $query );
+
+			if (count($q) >= 1) {
+
+			$add_sql = "(";
+
+			foreach ($q as $r) {
+				$sum += $r['count'];
+				if ($sum < $show) {
+					$add_sql .= "caldateof='" . $r['caldateof'] . "' OR ";
+				} else {
+					break;
+				}
+			}
+			$add_sql = substr($add_sql, 0, (strlen($add_sql) - 4)) . ") AND ";
+			
+			}
+		
+		}
+
+		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calprenote AS s_note, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration, s.caldateof AS s_date, CONCAT(phy.phyfname, ' ', phy.phylname) AS s_provider FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient LEFT OUTER JOIN physician phy ON phy.id=s.calphysician WHERE ". $add_sql." s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
+
 		$q = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $q AS $r ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
@@ -276,10 +311,15 @@ class WorkListsModule extends BaseModule {
 				'hour' => $r['s_hour'],
 				'minute' => sprintf( '%02d', $r['s_minute'] ),
 				'time' => $r['s_hour'] . ':' . sprintf( '%02d', $r['s_minute'] ),
+				'date' => date("d/m", strtotime($r['s_date'])),
 				'expired' => ( $expired ? true : false )
 			);
-		} // end get array
+		} // end get array	
 
+		if (!defined($return)) {
+			$return[] = array();
+		}
+	
 		return $return;
 	} // end method generate_worklist
 
