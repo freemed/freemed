@@ -31,8 +31,10 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.screen.SchedulerScreen;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -40,10 +42,13 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -73,6 +78,7 @@ public class WorkList extends WidgetInterface {
 
 		workListTable.setSize("100%", "100%");
 		workListTable.addColumn("Patient", "patient_name");
+		workListTable.addColumn("DD/MM","date");
 		workListTable.addColumn("Time", "time");
 		workListTable.addColumn("Description", "note");
 
@@ -105,6 +111,25 @@ public class WorkList extends WidgetInterface {
 						return a;
 					}
 				});
+		workListTable.addTableListener(new TableListener() {
+
+			public void onCellClicked(SourcesTableEvents ste, int row,
+					int col) {
+				try {
+					final Integer schedulerId = new Integer(workListTable
+							.getValueByRow(row));
+					if (col > 0) {
+						//TODO: Open THIS day.
+						Util.spawnTab("Scheduler", new SchedulerScreen(),
+								state);
+					}
+				} catch (Exception e) {
+					JsonUtil.debug("WorkList.java: Caught exception: " + e.toString());
+				}
+				
+			}
+			
+		});
 	}
 
 	public void setProvider(Integer pId) {
