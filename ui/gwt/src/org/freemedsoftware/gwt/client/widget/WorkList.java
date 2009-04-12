@@ -142,13 +142,20 @@ public class WorkList extends WidgetInterface {
 										"null") != 0
 										&& response.getText()
 												.compareToIgnoreCase("false") != 0) {
+									JsonUtil
+											.debug("WorkList.java: got good looking data");
 									HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
 													"HashMap<String,String>[]");
+
 									if (r != null) {
+										JsonUtil.debug("WorkList.java: r > 0");
 										if (r.length > 0) {
+											JsonUtil
+													.debug("WorkList.java: r > 0 && r.length > 0");
 											populateWorkList(r);
+
 										}
 									}
 								} else {
