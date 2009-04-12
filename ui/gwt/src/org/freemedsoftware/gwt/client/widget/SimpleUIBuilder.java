@@ -30,10 +30,10 @@ import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 
-public class SimpleUIBuilder extends Composite {
+public class SimpleUIBuilder extends WidgetInterface {
 
 	protected static String helpprefix = "Help for";
 	
@@ -151,19 +151,21 @@ public class SimpleUIBuilder extends Composite {
 
 		
 		if (type == WidgetType.TEXT) {
-			w = new TextBox();
+			w = new CustomTextBox();
 			try {
 				Integer len = new Integer(options);
 				if (len > 0) {
-					((TextBox) w).setMaxLength(len.intValue());
+					((CustomTextBox) w).setMaxLength(len.intValue());
 				}
 			} catch (Exception ex) {
 			}
 		} else if (type == WidgetType.MODULE) {
 			w = new SupportModuleWidget(options);
+			((SupportModuleWidget) w).assignState(getState());
 		} else if (type == WidgetType.MODULE_MULTIPLE) {
 			
 			w = new SupportModuleMultipleChoiceWidget(options);
+			((SupportModuleMultipleChoiceWidget) w).assignState(getState());
 		} else if (type == WidgetType.SELECT) {
 			w = new CustomListBox();
 
@@ -182,6 +184,7 @@ public class SimpleUIBuilder extends Composite {
 			}
 		} else if (type == WidgetType.PATIENT) {
 			w = new PatientWidget();
+			((PatientWidget) w).assignState(getState());
 		} else if (type == WidgetType.COLOR) {
 			w = new CustomColorPicker();
 		} else if (type == WidgetType.DELIMITER) {
@@ -189,7 +192,7 @@ public class SimpleUIBuilder extends Composite {
 			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
 		} else {
 			// Unimplemented, use text box as fallback
-			w = new TextBox();
+			w = new CustomTextBox();
 			JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" +  type + "' found. Fallback to TextBox.");
 		}
 
