@@ -113,59 +113,61 @@ public class WorkList extends WidgetInterface {
 	}
 
 	protected void retrieveData() {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// Nothing. Do nothing.
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			// JSON-RPC
-			String[] params = { providerId.toString() };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.WorkListsModule.GenerateWorkList",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("WorkList",
-								"Failed to get work list.",
-								Toaster.TOASTER_ERROR);
-					}
-
-					@SuppressWarnings("unchecked")
-					public void onResponseReceived(Request request,
-							Response response) {
-						if (200 == response.getStatusCode()) {
-							JsonUtil.debug(response.getText());
-							if (response.getText().compareToIgnoreCase("null") != 0
-									&& response.getText().compareToIgnoreCase(
-											"false") != 0) {
-								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
-												"HashMap<String,String>[]");
-								if (r != null) {
-									if (r.length > 0) {
-										populateWorkList(r);
-									}
-								}
-							} else {
-								message.setVisible(true);
-							}
-						} else {
-							state.getToaster().addItem("WorkLists",
+		if (providerId != null && providerId != 0) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Nothing. Do nothing.
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				// JSON-RPC
+				String[] params = { providerId.toString() };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.module.WorkListsModule.GenerateWorkList",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							state.getToaster().addItem("WorkList",
 									"Failed to get work list.",
 									Toaster.TOASTER_ERROR);
 						}
-					}
-				});
-			} catch (RequestException e) {
-				state.getToaster().addItem("WorkLists",
-						"Failed to get work list.", Toaster.TOASTER_ERROR);
+
+						@SuppressWarnings("unchecked")
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								if (response.getText().compareToIgnoreCase(
+										"null") != 0
+										&& response.getText()
+												.compareToIgnoreCase("false") != 0) {
+									HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"HashMap<String,String>[]");
+									if (r != null) {
+										if (r.length > 0) {
+											populateWorkList(r);
+										}
+									}
+								} else {
+									message.setVisible(true);
+								}
+							} else {
+								state.getToaster().addItem("WorkLists",
+										"Failed to get work list.",
+										Toaster.TOASTER_ERROR);
+							}
+						}
+					});
+				} catch (RequestException e) {
+					state.getToaster().addItem("WorkLists",
+							"Failed to get work list.", Toaster.TOASTER_ERROR);
+				}
+			} else {
+				// GWT-RPC
 			}
-		} else {
-			// GWT-RPC
 		}
 	}
 
