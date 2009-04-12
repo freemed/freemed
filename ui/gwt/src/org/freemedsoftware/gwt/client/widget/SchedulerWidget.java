@@ -1148,7 +1148,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			d.put("calduration", Integer.toString(dur));
 			d.put("caltype", "pat");
 			d.put("calpatient", data.getPatientId().toString());
-			d.put("provider", data.getProviderId().toString());
+			d.put("calphysician", data.getProviderId().toString());
 			d.put("calprenote", data.getDescription());
 			// TODO: FACILITY MISSING!
 			Boolean b = false;
