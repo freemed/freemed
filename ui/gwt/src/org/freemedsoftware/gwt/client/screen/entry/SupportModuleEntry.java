@@ -28,7 +28,6 @@ package org.freemedsoftware.gwt.client.screen.entry;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.EntryScreenInterface;
-import org.freemedsoftware.gwt.client.JsonUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;

@@ -28,6 +28,7 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 
 import com.google.gwt.user.client.ui.Button;
@@ -49,6 +50,7 @@ public class SimpleUIBuilder extends Composite {
 
 	protected static String helpprefix = "Help for";
 	
+	protected CurrentState state = null;
 	
 	public enum WidgetType {
 		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER
@@ -388,6 +390,11 @@ public class SimpleUIBuilder extends Composite {
 				((PatientWidget) w).setValue(new Integer(value));
 			}
 		}
+	}
+
+	public void setState(CurrentState s) {
+		state = s;
+		
 	}
 
 
