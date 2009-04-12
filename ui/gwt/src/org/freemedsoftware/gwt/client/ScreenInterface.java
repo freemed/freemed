@@ -28,15 +28,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.widget.SimpleUIBuilder;
-
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
 
 	protected CurrentState state = null;
 
-	protected List<Object> children = new ArrayList<Object>();
+	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
 
 	public ScreenInterface() {
 		super();
@@ -51,11 +49,6 @@ public abstract class ScreenInterface extends WidgetInterface {
 		children.add(child);
 	}
 
-	public void addChildWidget(SimpleUIBuilder child) {
-		children.add(child);
-	}
-	
-	
 	/**
 	 * Take a child WidgetInterface out of the stack.
 	 * 
@@ -78,17 +71,11 @@ public abstract class ScreenInterface extends WidgetInterface {
 		JsonUtil.debug("ScreenInterface.setState() called");
 
 		if (children.size() > 0) {
-			Iterator<Object> iter = children.iterator();
+			Iterator<WidgetInterface> iter = children.iterator();
 			while (iter.hasNext()) {
-				Object c = iter.next();
-				if (c instanceof WidgetInterface) {
+				WidgetInterface c = iter.next();
 				JsonUtil.debug("child:" + c.getClass().getName());
-					((WidgetInterface) c).setState(state);
-				} else if ( c instanceof SimpleUIBuilder) {
-					JsonUtil.debug("child:" + c.getClass().getName());
-					((SimpleUIBuilder) c).setState(state);
-				}
-				// iter.next().setState(state);
+				c.setState(state);
 			}
 		}
 		JsonUtil.debug("3");

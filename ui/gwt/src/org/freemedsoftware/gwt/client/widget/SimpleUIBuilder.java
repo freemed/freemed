@@ -28,7 +28,6 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
@@ -49,16 +48,14 @@ import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 public class SimpleUIBuilder extends WidgetInterface {
 
 	protected static String helpprefix = "Help for";
-	
-	protected CurrentState state = null;
-	
+
 	public enum WidgetType {
 		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER
 	};
 
 	/**
-	 * Interface for any <SimpleUIBuilder> subclasses to receive information back
-	 * from this piece.
+	 * Interface for any <SimpleUIBuilder> subclasses to receive information
+	 * back from this piece.
 	 * 
 	 * @author jeff@freemedsoftware.org
 	 * 
@@ -149,7 +146,6 @@ public class SimpleUIBuilder extends WidgetInterface {
 			String options, String value, String help) {
 		Widget w;
 
-		
 		if (type == WidgetType.TEXT) {
 			w = new CustomTextBox();
 			try {
@@ -163,7 +159,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 			w = new SupportModuleWidget(options);
 			((SupportModuleWidget) w).assignState(getState());
 		} else if (type == WidgetType.MODULE_MULTIPLE) {
-			
+
 			w = new SupportModuleMultipleChoiceWidget(options);
 			((SupportModuleMultipleChoiceWidget) w).assignState(getState());
 		} else if (type == WidgetType.SELECT) {
@@ -193,71 +189,69 @@ public class SimpleUIBuilder extends WidgetInterface {
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new CustomTextBox();
-			JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" +  type + "' found. Fallback to TextBox.");
+			JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" + type
+					+ "' found. Fallback to TextBox.");
 		}
 
 		// Add to indices and display
 		widgets.put(name, w);
-		
+
 		if (type == WidgetType.DELIMITER) {
-			table.setWidget(widgets.size() -1, 0, w);
-			table.getFlexCellFormatter().setColSpan(widgets.size() -1 , 0, 2);
+			table.setWidget(widgets.size() - 1, 0, w);
+			table.getFlexCellFormatter().setColSpan(widgets.size() - 1, 0, 2);
 		} else {
 			table.setText(widgets.size() - 1, 0, title);
-			table.setWidget(widgets.size() - 1, 1, w);	
-			if( help != null) {
+			table.setWidget(widgets.size() - 1, 1, w);
+			if (help != null) {
 				final Image image = new Image();
 				image.setUrl("resources/images/q_help.16x16.png");
-				
+
 				final PopupPanel popup = new PopupPanel();
 				final HTML html = new HTML();
-				html.setHTML("<b>" + helpprefix + " " + title +  "</b><br/><br/>" + help);
-				
+				html.setHTML("<b>" + helpprefix + " " + title
+						+ "</b><br/><br/>" + help);
+
 				popup.add(html);
 				popup.setStyleName("freemed-HelpPopup");
-				
-				image.addMouseListener( new MouseListener() {
+
+				image.addMouseListener(new MouseListener() {
 
 					public void onMouseDown(Widget sender, int x, int y) {
-						//Do nothing
+						// Do nothing
 					}
 
 					public void onMouseEnter(Widget sender) {
-						//Show help PopUp
+						// Show help PopUp
 					}
 
 					public void onMouseLeave(Widget sender) {
-						//Hide help PopUp
+						// Hide help PopUp
 						popup.hide();
 					}
 
 					public void onMouseMove(Widget sender, int x, int y) {
-						//Do nothing
+						// Do nothing
 						popup.setPopupPositionAndShow(new PositionCallback() {
 
 							public void setPosition(int offsetWidth,
 									int offsetHeight) {
-								//TODO: needs tweaking to show it relative to the mouse-pointer.
-								popup.setPopupPosition(20,20);
+								// TODO: needs tweaking to show it relative to
+								// the mouse-pointer.
+								popup.setPopupPosition(20, 20);
 							}
-							
+
 						});
 					}
 
 					public void onMouseUp(Widget sender, int x, int y) {
-						//Do nothing
+						// Do nothing
 					}
-					
+
 				});
-				
+
 				table.setWidget(widgets.size() - 1, 2, image);
 			}
 		}
-		
-		
-		
-		
-		
 
 		// Set widget value after it is added.
 		this.setWidgetValue(name, value);
@@ -293,8 +287,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		}
 
 		// By default, return text
-		
-		JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" +  widget + "' found. Fallback to type TEXT.");
+
+		JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" + widget
+				+ "' found. Fallback to type TEXT.");
 		return WidgetType.TEXT;
 	}
 
@@ -394,12 +389,5 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 		}
 	}
-
-	public void setState(CurrentState s) {
-		state = s;
-		
-	}
-
-
 
 }
