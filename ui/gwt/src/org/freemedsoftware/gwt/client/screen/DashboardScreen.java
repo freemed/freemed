@@ -296,6 +296,11 @@ public class DashboardScreen extends ScreenInterface {
 		if (title == "Work List") {
 			d = new DashboardItemContainer("Work List", workList);
 			removeListItem("Work List");
+			if (state != null) {
+				if (state.getDefaultProvider() != null) {
+					workList.setProvider(state.getDefaultProvider());
+				}
+			}
 		} else if (title == "Messages") {
 			d = new DashboardItemContainer("Messages", messageBox);
 			removeListItem("Messages");
