@@ -181,7 +181,7 @@ public class UserManagementScreen extends ScreenInterface implements
 		});
 
 		// TODO:Backend needs to be fixed first
-		// retrieveAllUsers();
+		retrieveAllUsers();
 
 	}
 
@@ -315,7 +315,7 @@ public class UserManagementScreen extends ScreenInterface implements
 
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.api.UserInterface.GetAll",
+							"org.freemedsoftware.api.UserInterface.GetRecords",
 							params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
