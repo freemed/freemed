@@ -198,7 +198,8 @@ class UserInterface {
 				return false;
 			}
 		}
-		$q = "SELECT * FROM user ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." AND id>1 ORDER BY username LIMIT ${limit}";
+		$q = "SELECT username, userdescrip, userlevel, usertype, userfac, userphy, userphygrp, userrealphy, usermanageopt, useremail, usersms, usersmsprovider FROM user WHERE".( $criteria_field ? " ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%'  AND" : "" )." id>1 ORDER BY username LIMIT ${limit}";	
+
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 
