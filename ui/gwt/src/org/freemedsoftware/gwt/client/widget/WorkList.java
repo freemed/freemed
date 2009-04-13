@@ -34,7 +34,6 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.SchedulerScreen;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -42,10 +41,12 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
@@ -73,12 +74,28 @@ public class WorkList extends WidgetInterface {
 		providerLabel = new Label("");
 		workListTable = new CustomSortableTable();
 
-		vPanel.add(providerLabel);
+		HorizontalPanel hPaneltop = new HorizontalPanel();
+		hPaneltop.add(providerLabel);
+
+		PushButton refreshButton = new PushButton();
+		refreshButton.getUpFace().setImage(
+				new Image("resources/images/summary_modify.16x16.png"));
+
+		refreshButton.addClickListener(new ClickListener() {
+
+			public void onClick(Widget sender) {
+				retrieveData();
+			}
+
+		});
+
+		hPaneltop.add(refreshButton);
+		vPanel.add(hPaneltop);
 		vPanel.add(workListTable);
 
 		workListTable.setSize("100%", "100%");
 		workListTable.addColumn("Patient", "patient_name");
-		workListTable.addColumn("DD/MM","date");
+		workListTable.addColumn("DD/MM", "date");
 		workListTable.addColumn("Time", "time");
 		workListTable.addColumn("Description", "note");
 
@@ -113,22 +130,23 @@ public class WorkList extends WidgetInterface {
 				});
 		workListTable.addTableListener(new TableListener() {
 
-			public void onCellClicked(SourcesTableEvents ste, int row,
-					int col) {
+			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				try {
 					final Integer schedulerId = new Integer(workListTable
 							.getValueByRow(row));
 					if (col > 0) {
-						//TODO: Open THIS day.
-						Util.spawnTab("Scheduler", new SchedulerScreen(),
-								state);
+						// TODO: Open THIS day.
+						Util
+								.spawnTab("Scheduler", new SchedulerScreen(),
+										state);
 					}
 				} catch (Exception e) {
-					JsonUtil.debug("WorkList.java: Caught exception: " + e.toString());
+					JsonUtil.debug("WorkList.java: Caught exception: "
+							+ e.toString());
 				}
-				
+
 			}
-			
+
 		});
 	}
 
@@ -167,18 +185,12 @@ public class WorkList extends WidgetInterface {
 										"null") != 0
 										&& response.getText()
 												.compareToIgnoreCase("false") != 0) {
-									JsonUtil
-											.debug("WorkList.java: got good looking data");
 									HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
 													"HashMap<String,String>[]");
-
 									if (r != null) {
-										JsonUtil.debug("WorkList.java: r > 0");
 										if (r.length > 0) {
-											JsonUtil
-													.debug("WorkList.java: r > 0 && r.length > 0");
 											populateWorkList(r);
 
 										}
@@ -210,6 +222,7 @@ public class WorkList extends WidgetInterface {
 				empty = true;
 			}
 			workListTable.loadData(data);
+			state.getToaster().addItem("WorkList","Successfully updated worklist items.", Toaster.TOASTER_INFO);
 		} else {
 			empty = true;
 		}
