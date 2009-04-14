@@ -26,11 +26,14 @@ package org.freemedsoftware.gwt.client;
 
 import java.util.HashMap;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 
 public abstract class WidgetInterface extends Composite {
 
 	protected CurrentState state = null;
+
+	protected Command setStateCommand = null;
 
 	public void assignState(CurrentState s) {
 		setState(s);
@@ -38,6 +41,13 @@ public abstract class WidgetInterface extends Composite {
 
 	public void setState(CurrentState s) {
 		state = s;
+		if (setStateCommand != null) {
+			setStateCommand.execute();
+		}
+	}
+
+	public void onSetState(Command cmd) {
+		setStateCommand = cmd;
 	}
 
 	public CurrentState getState() {
