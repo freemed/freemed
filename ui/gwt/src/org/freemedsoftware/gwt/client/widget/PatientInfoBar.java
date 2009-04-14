@@ -3,6 +3,7 @@
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *      Philipp Meng 	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
  * Copyright (C) 1999-2009 FreeMED Software Foundation
@@ -24,27 +25,50 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
+import org.freemedsoftware.gwt.client.screen.SchedulerScreen;
+
 import com.bouwkamp.gwt.user.client.ui.RoundedPanel;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PatientInfoBar extends Composite {
+//To add Items, do the following:
+// 1.) define them in iconParser()
+// 2.) Add them to the panel in PatientInfobarSettingsPopup.listItems
+
+
+public class PatientInfoBar extends WidgetInterface implements Command{
 
 	protected Label wPatientName;
 
 	protected HTML wPatientHiddenInfo;
 
 	protected Integer patientId = new Integer(0);
+
+	protected HorizontalPanel iconBar = new HorizontalPanel();
+	
+	protected ArrayList<String> activeIcons = new ArrayList<String>();
+	
+	protected Command[] commandList= {null};
+	
+	protected ListBox lB = new ListBox();
 
 	public PatientInfoBar() {
 		final RoundedPanel container = new RoundedPanel();
@@ -69,20 +93,12 @@ public class PatientInfoBar extends Composite {
 		horizontalPanel.setCellHorizontalAlignment(wDropdown,
 				HasHorizontalAlignment.ALIGN_CENTER);
 
-		final HorizontalPanel iconBar = new HorizontalPanel();
-
-		final Image wBookAppointment = new Image(
-				"resources/images/book_appt.32x32.png");
-		wBookAppointment.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-
-			}
-		});
-		iconBar.add(wBookAppointment);
-
 		horizontalPanel.add(iconBar);
 		horizontalPanel.setCellHorizontalAlignment(iconBar,
 				HasHorizontalAlignment.ALIGN_RIGHT);
+
+		clear();
+		onSetState(this);
 	}
 
 	/**
@@ -110,5 +126,148 @@ public class PatientInfoBar extends Composite {
 		} catch (Exception e) {
 		}
 	}
+
+	protected void clear() {
+		iconBar.clear();
+		// STATIC Icon definitions
+		newIcon("resources/images/settings.32x32.png", new Command() {
+			public void execute() {
+				settingsPopup();
+			}
+		});
+	}
+	
+	public void execute() {
+		loadConfig();
+	}
+	
+	protected void iconParser(String s) {
+		JsonUtil.debug("s =" + s);
+		activeIcons.add(s);
+		if (s == "Scheduler") {
+			newIcon("resources/images/book_appt.32x32.png", new Command() {
+				public void execute() {
+					Util.spawnTab("Scheduler", new SchedulerScreen(), state);
+				}
+
+			});
+		} else {
+			//remove last Icon as it is something crambled
+			activeIcons.remove(s);
+		}
+		
+		
+	}
+
+	protected void loadConfig() {
+		try {
+		String config = state.getUserConfig("PatientInfoBar");
+		String[] array = {};
+
+		if (config != "") {
+			array = (String[]) JsonUtil.shoehornJson(JSONParser.parse(config),
+					"String[]");
+			if (array.length != 0) {
+			for (int i = 0; i < array.length; i++) {
+				if (array[i] != "") {
+					iconParser(array[i]);
+				}
+			}
+			}
+		}
+		} catch (Exception e) {
+			JsonUtil.debug("PatientInfoBar.java: Caught exception: "+ e.toString());
+		}
+	}
+	
+	public void populateWidget() {
+		for (int i = 0; i < commandList.length; i++) {
+			commandList[i].execute();
+		}
+	}
+	
+	protected void saveConfig() {	
+		if (state != null) {
+			try {
+			state.setUserConfig("PatientInfoBar", (String) JsonUtil.jsonify(activeIcons
+				.toArray(new String[0])));
+			} catch (Exception e) {
+				JsonUtil.debug("PatientInfoBar: Caught exception" + e.toString());
+			}
+		} else {
+			commandList[commandList.length] = new Command() {
+				public void execute() {
+					try {
+					state.setUserConfig("PatientInfoBar", (String) JsonUtil.jsonify(activeIcons.toArray(new String[0])));
+					state.getToaster().addItem("PatientInfoBar", "InfoBar Data saved");
+					} catch (Exception e) {
+						JsonUtil.debug("PatientInfoBar: Caught exception" + e.toString());
+					}
+				}
+			};
+		}
+	}
+	
+	protected void newIcon(String imagePath, final Command c) {
+		final Image i = new Image(imagePath);
+		i.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				c.execute();
+			}
+		});
+		iconBar.add(i);
+		
+	}
+	
+	protected void settingsPopup() {
+		String[] listItems = {"Scheduler"};
+		final PopupPanel popup = new PopupPanel();
+		final VerticalPanel vPanel = new VerticalPanel();
+		popup.add(vPanel);
+		
+		
+		lB.setMultipleSelect(true);
+		lB.setVisibleItemCount(5);
+		vPanel.add(lB);
+		
+		for (int i = 0; i <listItems.length; i++) {
+			lB.addItem(listItems[i]);
+		}
+		
+		
+		
+		Button buttonOK = new Button("Save");
+		buttonOK.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				clear();
+				for (int i = 0; i < lB.getItemCount(); i++) {
+					if (lB.isItemSelected(i) == true) {
+						iconParser(lB.getItemText(i));
+					}
+					
+				}
+				saveConfig();
+				popup.hide();
+			}
+		});
+		
+		Button buttonCancel = new Button("Cancel");
+		buttonCancel.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				popup.hide();
+			}
+		});
+		
+		vPanel.add(buttonOK);
+		vPanel.add(buttonCancel);
+		
+
+		
+		popup.setStyleName("freemed-HelpPopup");
+		popup.center();
+		
+	}
+
+	
 
 }

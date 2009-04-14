@@ -41,6 +41,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -53,7 +54,7 @@ import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class WorkList extends WidgetInterface {
+public class WorkList extends WidgetInterface implements Command {
 
 	protected CustomSortableTable workListTable = null;
 
@@ -132,8 +133,7 @@ public class WorkList extends WidgetInterface {
 
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				try {
-					final Integer schedulerId = new Integer(workListTable
-							.getValueByRow(row));
+					//final Integer schedulerId = new Integer(workListTable.getValueByRow(row));
 					if (col > 0) {
 						// TODO: Open THIS day.
 						Util
@@ -148,11 +148,10 @@ public class WorkList extends WidgetInterface {
 			}
 
 		});
-	}
-
-	public void setProvider(Integer pId) {
-		providerId = pId;
-		retrieveData();
+	
+		onSetState(this);
+		
+	
 	}
 
 	protected void retrieveData() {
@@ -232,6 +231,11 @@ public class WorkList extends WidgetInterface {
 		} else {
 			message.setVisible(false);
 		}
+	}
+
+	public void execute() {
+		providerId = state.getDefaultProvider();
+		retrieveData();
 	}
 
 }

@@ -246,9 +246,6 @@ public class DashboardScreen extends ScreenInterface {
 	public void afterStateSet() {
 		JsonUtil.debug("DashBoard: AfterStateSet() called");
 		restoreArrangement();
-		if (state.getDefaultProvider() > 0) {
-			workList.setProvider(state.getDefaultProvider());
-		}
 	}
 
 	public void assignState(CurrentState s) {
@@ -296,11 +293,6 @@ public class DashboardScreen extends ScreenInterface {
 		if (title == "Work List") {
 			d = new DashboardItemContainer("Work List", workList);
 			removeListItem("Work List");
-			if (state != null) {
-				if (state.getDefaultProvider() != null) {
-					workList.setProvider(state.getDefaultProvider());
-				}
-			}
 		} else if (title == "Messages") {
 			d = new DashboardItemContainer("Messages", messageBox);
 			removeListItem("Messages");
