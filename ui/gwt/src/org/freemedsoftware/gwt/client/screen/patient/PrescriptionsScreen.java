@@ -30,6 +30,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.DrugWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -45,7 +46,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,9 +53,12 @@ import eu.future.earth.gwt.client.DateEditFieldWithPicker;
 
 public class PrescriptionsScreen extends PatientScreenInterface {
 
-	final SupportModuleWidget wProvider = new SupportModuleWidget("ProviderModule");
-	final SupportModuleWidget wDrug = new SupportModuleWidget("MultumDrugLexicon");
-	final SupportModuleWidget wQuantity = new SupportModuleWidget("DrugQuantityQualifiers");
+	final SupportModuleWidget wProvider = new SupportModuleWidget(
+			"ProviderModule");
+	final DrugWidget wDrug = new DrugWidget();
+	final SupportModuleWidget wQuantity = new SupportModuleWidget(
+			"DrugQuantityQualifiers");
+
 	public PrescriptionsScreen() {
 
 		final FlexTable flexTable = new FlexTable();
@@ -64,7 +67,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		final Label dateLabel = new Label("Starting Date");
 		flexTable.setWidget(0, 0, dateLabel);
 		dateLabel.setDirection(Direction.RTL);
-		
+
 		final Label providerLabel = new Label("Provider");
 		flexTable.setWidget(1, 0, providerLabel);
 		providerLabel.setDirection(Direction.RTL);
@@ -73,42 +76,37 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		flexTable.setWidget(2, 0, drugLabel);
 		drugLabel.setDirection(Direction.RTL);
 
-		final Label dosageLabel = new Label("Dosage");
-		flexTable.setWidget(3, 0, dosageLabel);
-		dosageLabel.setDirection(Direction.RTL);
-
 		final Label quantityLabel = new Label("Quantity");
-		flexTable.setWidget(4, 0, quantityLabel);
+		flexTable.setWidget(3, 0, quantityLabel);
 		quantityLabel.setDirection(Direction.RTL);
 
 		final Label intervalLabel = new Label("Interval");
-		flexTable.setWidget(5, 0, intervalLabel);
+		flexTable.setWidget(4, 0, intervalLabel);
 		intervalLabel.setDirection(Direction.RTL);
 
 		final Label substitutionsLabel = new Label("Substitutions");
-		flexTable.setWidget(6, 0, substitutionsLabel);
+		flexTable.setWidget(5, 0, substitutionsLabel);
 		substitutionsLabel.setDirection(Direction.RTL);
 
 		final Label coverageStatusLabel = new Label("Coverage Status");
-		flexTable.setWidget(7, 0, coverageStatusLabel);
+		flexTable.setWidget(6, 0, coverageStatusLabel);
 		coverageStatusLabel.setDirection(Direction.RTL);
 
 		final Label refillsLabel = new Label("Refills");
-		flexTable.setWidget(8, 0, refillsLabel);
+		flexTable.setWidget(7, 0, refillsLabel);
 		refillsLabel.setDirection(Direction.RTL);
 
 		final Label signatureLabel = new Label("Signature");
-		flexTable.setWidget(9, 0, signatureLabel);
+		flexTable.setWidget(8, 0, signatureLabel);
 		signatureLabel.setDirection(Direction.RTL);
 
 		final Label noteLabel = new Label("Note");
-		flexTable.setWidget(10, 0, noteLabel);
+		flexTable.setWidget(9, 0, noteLabel);
 		noteLabel.setDirection(Direction.RTL);
 
 		final DateEditFieldWithPicker wDate = new DateEditFieldWithPicker();
 		flexTable.setWidget(0, 1, wDate);
 		flexTable.getFlexCellFormatter().setColSpan(0, 1, 2);
-		
 
 		flexTable.setWidget(1, 1, wProvider);
 		flexTable.getFlexCellFormatter().setColSpan(1, 1, 2);
@@ -116,37 +114,33 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		flexTable.setWidget(2, 1, wDrug);
 		flexTable.getFlexCellFormatter().setColSpan(2, 1, 2);
 
-		flexTable.setWidget(4, 1, wQuantity);
-		flexTable.getFlexCellFormatter().setColSpan(4, 1, 2);
+		flexTable.setWidget(3, 1, wQuantity);
+		flexTable.getFlexCellFormatter().setColSpan(3, 1, 2);
 
 		final TextBox wInterval = new TextBox();
-		flexTable.setWidget(5, 1, wInterval);
-		flexTable.getFlexCellFormatter().setColSpan(5, 1, 2);
+		flexTable.setWidget(4, 1, wInterval);
+		flexTable.getFlexCellFormatter().setColSpan(4, 1, 2);
 
 		final TextBox wSubstitutions = new TextBox();
-		flexTable.setWidget(6, 1, wSubstitutions);
-		flexTable.getFlexCellFormatter().setColSpan(6, 1, 2);
+		flexTable.setWidget(5, 1, wSubstitutions);
+		flexTable.getFlexCellFormatter().setColSpan(5, 1, 2);
 
 		final TextBox wCoverageStatus = new TextBox();
-		flexTable.setWidget(7, 1, wCoverageStatus);
-		flexTable.getFlexCellFormatter().setColSpan(7, 1, 2);
+		flexTable.setWidget(6, 1, wCoverageStatus);
+		flexTable.getFlexCellFormatter().setColSpan(6, 1, 2);
 
 		final TextBox wRefills = new TextBox();
-		flexTable.setWidget(8, 1, wRefills);
+		flexTable.setWidget(7, 1, wRefills);
 		flexTable.getFlexCellFormatter().setColSpan(8, 1, 2);
 
 		final TextBox tSignature = new TextBox();
-		flexTable.setWidget(9, 1, tSignature);
-		flexTable.getFlexCellFormatter().setColSpan(9, 1, 2);
+		flexTable.setWidget(8, 1, tSignature);
+		flexTable.getFlexCellFormatter().setColSpan(8, 1, 2);
 		tSignature.setWidth("100%");
-		flexTable.getFlexCellFormatter().setColSpan(10, 1, 2);
-
-		final TextBox wDosage = new TextBox();
-		flexTable.setWidget(3, 1, wDosage);
-		flexTable.getFlexCellFormatter().setColSpan(3, 1, 2);
+		flexTable.getFlexCellFormatter().setColSpan(9, 1, 2);
 
 		final Button saveButton = new Button("Save");
-		flexTable.setWidget(11, 1, saveButton);
+		flexTable.setWidget(10, 1, saveButton);
 		saveButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				savePrescription();
@@ -154,55 +148,45 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		});
 
 		final Button resetButton = new Button("Reset");
-		flexTable.setWidget(11, 2, resetButton);
+		flexTable.setWidget(10, 2, resetButton);
 		resetButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				resetForm();
 			}
 		});
-
-		final TextArea textArea = new TextArea();
-		flexTable.setWidget(10, 1, textArea);
-		textArea.setWidth("100%");
-
-
 	}
-	
+
 	public void savePrescription() {
-		HashMap<String,String> data = new HashMap<String,String>();
-		data.put("rxphy",Integer.toString(wProvider.getValue()));
+		HashMap<String, String> data = new HashMap<String, String>();
+		data.put("rxphy", Integer.toString(wProvider.getValue()));
 		data.put("rxpatient", Integer.toString(patientId));
-		data.put("rxdrug", wDrug.getText());
-		data.put("rxdrugmultum", Integer.toString(wDrug.getValue()));
-		//rxform
-		//rxdosage
-		//rxquantity
+		data.put("rxdrug", wDrug.getStoredValue());
+		// rxform
+		// rxdosage
+		// rxquantity
 		data.put("rxquantityqual", Integer.toString(wQuantity.getValue()));
-		//rxsize
-		//rxunit
-		//rxinterval
-		//rxsubstitute
-		//rxrefills
-		//rxrefillinterval
-		//rxperrefill
-		//rxorigrx
-		//rxdx
-		//rxcovstatus
-		//rxsig
-		//rxnote
-		
+		// rxsize
+		// rxunit
+		// rxinterval
+		// rxsubstitute
+		// rxrefills
+		// rxrefillinterval
+		// rxperrefill
+		// rxorigrx
+		// rxdx
+		// rxcovstatus
+		// rxsig
+		// rxnote
+
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: STUBBED
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// JSON-RPC
-			String[] params = {JsonUtil.jsonify(data)};
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.Prescription.add",
-											params)));
+			String[] params = { JsonUtil.jsonify(data) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.Prescription.add",
+							params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
@@ -215,15 +199,17 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							if (response.getText().compareToIgnoreCase(
-									"false") != 0) {
+							if (response.getText().compareToIgnoreCase("false") != 0) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser
-												.parse(response.getText()),
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
-									//Successful
-									state.getToaster().addItem("PrescriptionScreen", "Successfully added prescription", Toaster.TOASTER_INFO);
+									// Successful
+									state.getToaster().addItem(
+											"PrescriptionScreen",
+											"Successfully added prescription",
+											Toaster.TOASTER_INFO);
 								}
 							} else {
 								JsonUtil
@@ -238,18 +224,16 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 				});
 			} catch (RequestException e) {
 				state.getToaster().addItem("PrescriptionScreen",
-						"Failed to add Prescription",
-						Toaster.TOASTER_ERROR);
+						"Failed to add Prescription", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			// GWT-RPC
 		}
-		
-		
+
 	}
-	
+
 	public void resetForm() {
-		//TODO
+		// TODO
 	}
 
 }

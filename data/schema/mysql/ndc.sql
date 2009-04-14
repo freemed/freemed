@@ -34,6 +34,7 @@ DROP TABLE IF EXISTS ndc_schedule;
 DROP TABLE IF EXISTS orangebook_products;
 
 #----- Drop composited tables -----
+DROP TABLE IF EXISTS ndc_name_lookup;
 DROP TABLE IF EXISTS ndc_strength_lookup;
 
 #----- Table definitions -----
@@ -48,6 +49,7 @@ CREATE TABLE IF NOT EXISTS ndc_listings (
 	, tradename		CHAR (100) NOT NULL
 
 	, PRIMARY KEY		( id )
+	, INDEX			( tradename )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_packages (
@@ -148,6 +150,14 @@ CREATE TABLE IF NOT EXISTS ndc_schedule (
 	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
 );
 
+CREATE TABLE IF NOT EXISTS ndc_name_lookup (
+	  id			SERIAL
+	, all_ids		TEXT
+	, tradename		VARCHAR (100) NOT NULL
+
+	, KEY			( tradename )
+);
+
 CREATE TABLE IF NOT EXISTS ndc_strength_lookup (
 	  listing_seq_no	BIGINT NOT NULL
 	, ob_nda_number		CHAR (6) NOT NULL
@@ -200,6 +210,8 @@ LOAD DATA LOCAL INFILE "data/drugs/orangebook_products.tsv"
 	FIELDS TERMINATED BY "	" OPTIONALLY ENCLOSED BY '"';
 
 #----- Composite tables -----
+
+INSERT INTO ndc_name_lookup SELECT NULL, GROUP_CONCAT( id ) , tradename FROM ndc_listings GROUP BY tradename;
 
 DROP PROCEDURE IF EXISTS ndc_ExtractStrengths;
 
