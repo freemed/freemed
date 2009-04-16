@@ -28,7 +28,6 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -44,7 +43,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -61,8 +59,7 @@ public class DashboardScreen extends ScreenInterface {
 	PickupDragController dragController = new PickupDragController(
 			boundaryPanel, false);
 
-	public class DashboardItemContainer extends Composite {
-
+	public class DashboardItemContainer extends WidgetInterface {
 		protected Label label;
 		protected String t;
 		protected WidgetInterface content;
@@ -72,7 +69,6 @@ public class DashboardScreen extends ScreenInterface {
 		 */
 
 		public DashboardItemContainer(String title, WidgetInterface contents) {
-
 			final VerticalPanel container = new VerticalPanel();
 			initWidget(container);
 			content = contents;
@@ -99,11 +95,9 @@ public class DashboardScreen extends ScreenInterface {
 			container.add(hP);
 			container.add(contents);
 			addChildWidget(contents);
-
 		}
 
 		public DashboardItemContainer(String title) {
-
 			final VerticalPanel container = new VerticalPanel();
 			initWidget(container);
 
@@ -157,7 +151,6 @@ public class DashboardScreen extends ScreenInterface {
 	protected ListBox listBoxWidgets = new ListBox();
 
 	public DashboardScreen() {
-
 		// Initialize everything
 		final VerticalPanel outOfDrag = new VerticalPanel();
 		initWidget(outOfDrag);
@@ -224,7 +217,6 @@ public class DashboardScreen extends ScreenInterface {
 	}
 
 	public void addListItems() {
-
 		// Kind of odd solution, but i had no other idea yet.
 		// __ALL__ items need to be defined here.
 		// If an Widget is added with CreateDraggableWidget, there the item is
@@ -234,7 +226,6 @@ public class DashboardScreen extends ScreenInterface {
 		addSingleListItem("Notepad");
 		addSingleListItem("Prescription Refills");
 		addSingleListItem("Unfiled Documents");
-
 	}
 
 	public void addSingleListItem(String s) {
@@ -246,12 +237,9 @@ public class DashboardScreen extends ScreenInterface {
 	public void afterStateSet() {
 		JsonUtil.debug("DashBoard: AfterStateSet() called");
 		restoreArrangement();
-	}
-
-	public void assignState(CurrentState s) {
-
-		// Custom junk here
-
+		if (state.getDefaultProvider() > 0) {
+			workList.setProvider(state.getDefaultProvider());
+		}
 	}
 
 	public void clearView() {
@@ -264,7 +252,6 @@ public class DashboardScreen extends ScreenInterface {
 		}
 
 		for (int i = 0; i < cols; i++) {
-
 			vPanelColHead[i] = new VerticalPanel();
 			DashboardItemContainer dbic = new DashboardItemContainer("Column #"
 					+ Integer.toString(i + 1));
@@ -289,10 +276,14 @@ public class DashboardScreen extends ScreenInterface {
 	public void createDraggableWidget(String title, Integer col) {
 		DashboardItemContainer d = null;
 		JsonUtil.debug(title + " adding");
-
 		if (title == "Work List") {
 			d = new DashboardItemContainer("Work List", workList);
 			removeListItem("Work List");
+			if (state != null) {
+				if (state.getDefaultProvider() != null) {
+					workList.setProvider(state.getDefaultProvider());
+				}
+			}
 		} else if (title == "Messages") {
 			d = new DashboardItemContainer("Messages", messageBox);
 			removeListItem("Messages");
@@ -306,12 +297,15 @@ public class DashboardScreen extends ScreenInterface {
 		} else if (title == "Unfiled Documents") {
 			d = new DashboardItemContainer("Unfiled Documents", documentBox);
 			removeListItem("Unfiled Documents");
-
 		}
 
 		if (d != null) {
 			vPanelCol[col].add(d);
 			dragController.makeDraggable(d, d.getLabel());
+			addChildWidget(d);
+			if (state != null) {
+				d.setState(getState());
+			}
 		}
 	}
 
@@ -340,42 +334,49 @@ public class DashboardScreen extends ScreenInterface {
 		if (i > 0) {
 			listBoxWidgets.removeItem(i);
 		}
-
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( { "unchecked", "finally" })
 	public boolean restoreArrangement() {
-		String c = state.getUserConfig("dashboard");
-		Integer i = Integer.parseInt(state.getUserConfig("dashboardcols"));
-		if (i > 0) {
-			cols = i;
-		}
-		if (c != "") {
+		String c = null;
+		Integer i = 0;
 
-			HashMap<String, String> conf = (HashMap<String, String>) JsonUtil
-					.shoehornJson(JSONParser.parse(c), "HashMap<String,String>");
+		try {
+			c = state.getUserConfig("dashboard");
+			i = Integer.parseInt(state.getUserConfig("dashboardcols"));
+		} catch (Exception ex) {
+			JsonUtil.debug("restoreArrangement(): Caught exception "
+					+ ex.toString());
+		} finally {
+			if (i > 0) {
+				cols = i;
+			}
+			if (c != "") {
+				final HashMap<String, String> conf = (HashMap<String, String>) JsonUtil
+						.shoehornJson(JSONParser.parse(c),
+								"HashMap<String,String>");
 
-			Iterator<String> iter = conf.keySet().iterator();
+				final Iterator<String> iter = conf.keySet().iterator();
 
-			Boolean firstrun = true;
+				Boolean firstrun = true;
 
-			while (iter.hasNext()) {
-				if (firstrun == true) {
-					firstrun = false;
-					clearView();
+				while (iter.hasNext()) {
+					if (firstrun == true) {
+						firstrun = false;
+						clearView();
+					}
+
+					final String s = iter.next();
+					final Integer colNum = Integer.parseInt(conf.get(s));
+					addListItems();
+					createDraggableWidget(s, colNum);
 				}
 
-				String s = iter.next();
-				Integer colNum = Integer.parseInt(conf.get(s));
-				addListItems();
-				createDraggableWidget(s, colNum);
-
+				preventCollapse();
+				return !firstrun;
+			} else {
+				return false;
 			}
-
-			preventCollapse();
-			return !firstrun;
-		} else {
-			return false;
 		}
 	}
 
@@ -399,9 +400,7 @@ public class DashboardScreen extends ScreenInterface {
 				order.put(t, Integer.toString(i));
 			}
 		}
-
 		state.setUserConfig("dashboard", JsonUtil.jsonify(order));
-
 	}
 
 }
