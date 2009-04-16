@@ -24,7 +24,10 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
@@ -35,6 +38,8 @@ public abstract class WidgetInterface extends Composite {
 
 	protected Command setStateCommand = null;
 
+	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
+
 	public void assignState(CurrentState s) {
 		setState(s);
 	}
@@ -44,6 +49,18 @@ public abstract class WidgetInterface extends Composite {
 		if (setStateCommand != null) {
 			setStateCommand.execute();
 		}
+
+		if (children.size() > 0) {
+			Iterator<WidgetInterface> iter = children.iterator();
+			while (iter.hasNext()) {
+				WidgetInterface c = iter.next();
+				if (c != null) {
+					JsonUtil.debug(this.getClass().getName() + " child:"
+							+ c.getClass().getName());
+					c.setState(state);
+				}
+			}
+		}
 	}
 
 	public void onSetState(Command cmd) {
@@ -52,6 +69,31 @@ public abstract class WidgetInterface extends Composite {
 
 	public CurrentState getState() {
 		return state;
+	}
+
+	/**
+	 * Append additional child WidgetInterface to stack.
+	 * 
+	 * @param child
+	 */
+	public void addChildWidget(WidgetInterface child) {
+		children.add(child);
+	}
+
+	/**
+	 * Take a child WidgetInterface out of the stack.
+	 * 
+	 * @param child
+	 */
+	public void removeChildWidget(WidgetInterface child) {
+		children.remove(child);
+	}
+
+	/**
+	 * Remove all children WidgetInterface objects.
+	 */
+	public void clearChildWidgets() {
+		children.clear();
 	}
 
 	/**
