@@ -24,14 +24,61 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
 
 	protected CurrentState state = null;
 
+	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
+
 	public ScreenInterface() {
 		super();
+	}
+
+	/**
+	 * Append additional child WidgetInterface to stack.
+	 * 
+	 * @param child
+	 */
+	public void addChildWidget(WidgetInterface child) {
+		children.add(child);
+	}
+
+	/**
+	 * Take a child WidgetInterface out of the stack.
+	 * 
+	 * @param child
+	 */
+	public void removeChildWidget(WidgetInterface child) {
+		children.remove(child);
+	}
+
+	/**
+	 * Remove all children WidgetInterface objects.
+	 */
+	public void clearChildWidgets() {
+		children.clear();
+	}
+
+	public void setState(CurrentState s) {
+
+		state = s;
+		JsonUtil.debug("ScreenInterface.setState() called");
+
+		if (children.size() > 0) {
+			Iterator<WidgetInterface> iter = children.iterator();
+			while (iter.hasNext()) {
+				WidgetInterface c = iter.next();
+				JsonUtil.debug("child:" + c.getClass().getName());
+				c.setState(state);
+			}
+		}
+		JsonUtil.debug("3");
 	}
 
 	/**
