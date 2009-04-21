@@ -13,7 +13,7 @@
     <pathelement path="lib/simpledatepicker.jar"/>
     <pathelement path="lib/simplesortabletable.jar"/>
     <pathelement path="lib/com.gwtsandbox.colorpicker.ColorPicker.jar"/>
-    <pathelement path="lib/gchart-2.1.jar"/>
+    <pathelement path="lib/gchart-2.41.jar"/>
     <pathelement path="lib/gwt-dnd-2.0.5.jar"/>
     <pathelement path="lib/org.cobogw.gwt.jar"/>
     <pathelement path="lib/ftr-gwt-date-emulation-0.9.9.jar"/>
