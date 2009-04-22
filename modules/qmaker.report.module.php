@@ -517,7 +517,7 @@ class QmakerReport extends ReportsModule {
 		$buffer =  "<div align=\"CENTER\">\n";
 		$buffer .=  "<h3>".sprintf(__("The selected query is %s."), "\"$saveas\"")."</h3>\n";
 		$buffer .=  "<form METHOD=\"POST\" ACTION=\"$this->page_name\">\n";
-		$buffer .=  "<textarea ROWS=\"10\" COLS=\"100\" WRAP=\"virtual\" NAME=\"cquery\">$query</textarea>\n";
+		$buffer .=  "<textarea ROWS=\"10\" COLS=\"100\" WRAP=\"virtual\" NAME=\"cquery\">".prepare( $query )."</textarea>\n";
 		$buffer .=  "<table><tr>\n";
 		$buffer .=  "<td>\n";
 		$buffer .=  "<td><input class=\"button\" TYPE=\"SUBMIT\" NAME=\"btnSubmit\" VALUE=\"".__("Execute Query")."\"/></td>\n";
