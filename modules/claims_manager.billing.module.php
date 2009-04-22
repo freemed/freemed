@@ -179,6 +179,10 @@ class ClaimsManager extends BillingModule {
 				'1' => __("Billed")
 			));
 
+		$search_form->addElement(
+			'static', 'criteria[facility]', __("Facility"),
+			module_function('FacilityModule', 'widget', array('criteria[facility]') ) );
+
 		// Date of service
 		$search_form->addElement(
 			'static', 'criteria[date]', __("Date of Service"),
@@ -497,6 +501,16 @@ class ClaimsManager extends BillingModule {
 				))."\" class=\"remove_link\">X</a><br/>\n";
 			$criteria['date'] = $_REQUEST['criteria']['date'];
 		} // end date
+		if ($_REQUEST['criteria']['facility']) {
+			$display_buffer .= "<b>".__("Facility").
+				": </b>".
+				freemed::get_link_field($_REQUEST['criteria']['facility'], 'facility', 'psrname')
+				." ".
+				"<a href=\"".$this->_search_link(array(
+					'facility' => ''	
+				))."\" class=\"remove_link\">X</a><br/>\n";
+			$criteria['facility'] = $_REQUEST['criteria']['facility'];
+		} // end facility
 		if ($_REQUEST['criteria']['status']) {
 			$display_buffer .= "<b>".__("Status").
 				": </b>".$_REQUEST['criteria']['status']." ".

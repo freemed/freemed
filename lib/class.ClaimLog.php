@@ -110,6 +110,10 @@ class ClaimLog {
 				case 'status':
 				if ($v) $q[] = "p.procstatus = '".addslashes($v)."'";
 				break;
+
+				case 'facility':
+				if ($v) $q[] = "pt.ptdefaultfacility = '".addslashes($v)."'";
+				break;
 			} // end outer criteria type switch
 		} // end criteria foreach loop
 
