@@ -705,7 +705,7 @@ class EMRModule extends BaseModule {
 			( (count($this->summary_query)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
-			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
+			( is_array($this->summary_query_link) ? " ".join(' ',$_from).' ' : ' ' ).
 			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
 			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC LIMIT ".addslashes($items);
