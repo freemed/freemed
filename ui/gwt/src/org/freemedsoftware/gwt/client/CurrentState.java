@@ -110,6 +110,19 @@ public class CurrentState {
 	 */
 	public void assignTabPanel(TabPanel t) {
 		tabPanel = t;
+		/*
+		 * t.addTabListener(new TabListener() {
+		 * 
+		 * public boolean onBeforeTabSelected(SourcesTabEvents sender, int
+		 * tabIndex) { return false; }
+		 * 
+		 * public void onTabSelected(SourcesTabEvents sender, int tabIndex) { //
+		 * Fire focus event try { ((ScreenInterface)
+		 * getTabPanel().getWidget(tabIndex)) .onFocus(); } catch (Exception ex)
+		 * { JsonUtil.debug(ex.toString()); } }
+		 * 
+		 * });
+		 */
 	}
 
 	/**

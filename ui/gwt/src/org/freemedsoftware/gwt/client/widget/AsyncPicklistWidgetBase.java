@@ -116,6 +116,10 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 		initWidget(layout);
 	}
 
+	public TextBox getTextEntryWidget() {
+		return textBox;
+	}
+
 	/**
 	 * Defined in subclasses to actually return data.
 	 * 

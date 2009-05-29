@@ -181,22 +181,29 @@ public class WorkList extends WidgetInterface {
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
-								if (response.getText().compareToIgnoreCase(
-										"null") != 0
-										&& response.getText()
-												.compareToIgnoreCase("false") != 0) {
-									HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													"HashMap<String,String>[]");
-									if (r != null) {
-										if (r.length > 0) {
-											populateWorkList(r);
-
+								try {
+									if (response.getText().compareToIgnoreCase(
+											"null") != 0
+											&& response.getText().compareTo(
+													"[[]]") != 0
+											&& response.getText()
+													.compareToIgnoreCase(
+															"false") != 0) {
+										HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+												.shoehornJson(JSONParser
+														.parse(response
+																.getText()),
+														"HashMap<String,String>[]");
+										if (r != null) {
+											if (r.length > 0) {
+												populateWorkList(r);
+											}
 										}
+									} else {
+										message.setVisible(true);
 									}
-								} else {
-									message.setVisible(true);
+								} catch (Exception ex) {
+									JsonUtil.debug(ex.toString());
 								}
 							} else {
 								state.getToaster().addItem("WorkLists",
@@ -222,7 +229,9 @@ public class WorkList extends WidgetInterface {
 				empty = true;
 			}
 			workListTable.loadData(data);
-			state.getToaster().addItem("WorkList","Successfully updated worklist items.", Toaster.TOASTER_INFO);
+			state.getToaster().addItem("WorkList",
+					"Successfully updated worklist items.",
+					Toaster.TOASTER_INFO);
 		} else {
 			empty = true;
 		}

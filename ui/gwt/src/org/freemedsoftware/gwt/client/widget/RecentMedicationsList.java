@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
@@ -42,9 +43,8 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
 
-public class RecentMedicationsList extends Composite {
+public class RecentMedicationsList extends WidgetInterface {
 
 	protected Integer patientId = new Integer(0);
 

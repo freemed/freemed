@@ -72,31 +72,6 @@ public abstract class WidgetInterface extends Composite {
 	}
 
 	/**
-	 * Append additional child WidgetInterface to stack.
-	 * 
-	 * @param child
-	 */
-	public void addChildWidget(WidgetInterface child) {
-		children.add(child);
-	}
-
-	/**
-	 * Take a child WidgetInterface out of the stack.
-	 * 
-	 * @param child
-	 */
-	public void removeChildWidget(WidgetInterface child) {
-		children.remove(child);
-	}
-
-	/**
-	 * Remove all children WidgetInterface objects.
-	 */
-	public void clearChildWidgets() {
-		children.clear();
-	}
-
-	/**
 	 * Method used to initialize widget, called after state is set.
 	 */
 	public void populateWidget() {

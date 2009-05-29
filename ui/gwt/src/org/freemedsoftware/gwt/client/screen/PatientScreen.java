@@ -160,6 +160,7 @@ public class PatientScreen extends ScreenInterface {
 		summaryScreen = new SummaryScreen();
 		tabPanel.add(summaryScreen, "Summary");
 		summaryScreen.assignPatientScreen(getObject());
+		addChildWidget(summaryScreen);
 		tabPanel.selectTab(0);
 	}
 

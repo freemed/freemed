@@ -41,6 +41,12 @@ public abstract class ScreenInterface extends WidgetInterface {
 	}
 
 	/**
+	 * Call function on getting tab focus.
+	 */
+	public void onFocus() {
+	}
+
+	/**
 	 * Append additional child WidgetInterface to stack.
 	 * 
 	 * @param child
@@ -66,9 +72,11 @@ public abstract class ScreenInterface extends WidgetInterface {
 	}
 
 	public void setState(CurrentState s) {
-
 		state = s;
 		JsonUtil.debug("ScreenInterface.setState() called");
+		if (setStateCommand != null) {
+			setStateCommand.execute();
+		}
 
 		if (children.size() > 0) {
 			Iterator<WidgetInterface> iter = children.iterator();

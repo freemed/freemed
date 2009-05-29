@@ -177,6 +177,11 @@ public class PatientSearchScreen extends ScreenInterface {
 		}
 	}
 
+	public void onFocus() {
+		super.onFocus();
+		wSmartSearch.getTextEntryWidget().setFocus(true);
+	}
+
 	@SuppressWarnings("unchecked")
 	protected void refreshSearch() {
 		sortableTable.clear();

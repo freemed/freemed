@@ -112,6 +112,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		final SimplePanel clinicalTagsPanel = new SimplePanel();
 		patientTags = new PatientTagsWidget();
 		clinicalTagsPanel.add(patientTags);
+		addChildWidget(patientTags);
 
 		final Image tagsLabel = new Image();
 		tagsLabel.setUrl("resources/images/dashboard.32x32.png");
@@ -130,6 +131,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		final SimplePanel clinicalMedicationsPanel = new SimplePanel();
 		recentMedicationsList = new RecentMedicationsList();
 		clinicalMedicationsPanel.add(recentMedicationsList);
+		addChildWidget(recentMedicationsList);
 
 		final Image medicationsLabel = new Image();
 		medicationsLabel.setUrl("resources/images/rx_prescriptions.32x32.png");
@@ -140,6 +142,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		final SimplePanel clinicalAllergiesPanel = new SimplePanel();
 		recentAllergiesList = new RecentAllergiesList();
 		clinicalAllergiesPanel.add(recentAllergiesList);
+		addChildWidget(recentAllergiesList);
 
 		final Image allergiesLabel = new Image();
 		allergiesLabel.setUrl("resources/images/allergy.32x32.png");
