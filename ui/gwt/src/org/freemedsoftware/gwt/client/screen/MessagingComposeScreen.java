@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -160,7 +161,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 	}
 
 	public void sendMessage(final boolean sendAnother) {
-		state.statusBarAdd(className, "Sending Message");
+		CurrentState.statusBarAdd(className, "Sending Message");
 
 		// Form data
 		HashMap<String, String> data = new HashMap<String, String>();
@@ -171,8 +172,8 @@ public class MessagingComposeScreen extends ScreenInterface {
 		data.put("urgency", wUrgency.getWidgetValue());
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.statusBarRemove(className);
-			state.getToaster().addItem(className, "Sent message.",
+			CurrentState.statusBarRemove(className);
+			CurrentState.getToaster().addItem(className, "Sent message.",
 					Toaster.TOASTER_INFO);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(data) };
@@ -182,8 +183,8 @@ public class MessagingComposeScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.statusBarRemove(className);
-						state.getToaster().addItem(className,
+						CurrentState.statusBarRemove(className);
+						CurrentState.getToaster().addItem(className,
 								"Failed to send message.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -195,33 +196,33 @@ public class MessagingComposeScreen extends ScreenInterface {
 									JSONParser.parse(response.getText()),
 									"String[]");
 							if (r != null) {
-								state.statusBarRemove(className);
-								state.getToaster().addItem(className,
+								CurrentState.statusBarRemove(className);
+								CurrentState.getToaster().addItem(className,
 										"Sent message.", Toaster.TOASTER_INFO);
 							}
 						} else {
-							state.statusBarRemove(className);
-							state.getToaster().addItem(className,
+							CurrentState.statusBarRemove(className);
+							CurrentState.getToaster().addItem(className,
 									"Failed to send message.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem(className,
+				CurrentState.getToaster().addItem(className,
 						"Failed to send message.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			getProxy().Send(data, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean result) {
-					state.statusBarRemove(className);
-					state.getToaster().addItem(className, "Sent message.",
-							Toaster.TOASTER_INFO);
+					CurrentState.statusBarRemove(className);
+					CurrentState.getToaster().addItem(className,
+							"Sent message.", Toaster.TOASTER_INFO);
 				}
 
 				public void onFailure(Throwable t) {
-					state.statusBarRemove(className);
-					state.getToaster().addItem(className,
+					CurrentState.statusBarRemove(className);
+					CurrentState.getToaster().addItem(className,
 							"Failed to send message.", Toaster.TOASTER_ERROR);
 				}
 			});

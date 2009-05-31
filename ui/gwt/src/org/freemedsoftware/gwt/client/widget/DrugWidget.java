@@ -97,7 +97,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 									com.google.gwt.http.client.Request request,
 									com.google.gwt.http.client.Response response) {
 								if (Util.checkValidSessionResponse(response
-										.getText(), state)) {
+										.getText())) {
 									if (200 == response.getStatusCode()) {
 										String result = (String) JsonUtil
 												.shoehornJson(JSONParser
@@ -155,7 +155,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
 							if (Util.checkValidSessionResponse(response
-									.getText(), state)) {
+									.getText())) {
 								if (200 == response.getStatusCode()) {
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
@@ -217,7 +217,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
 							if (Util.checkValidSessionResponse(response
-									.getText(), state)) {
+									.getText())) {
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
@@ -311,8 +311,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
-						if (Util.checkValidSessionResponse(response.getText(),
-								state)) {
+						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String[][] r = (String[][]) JsonUtil
 										.shoehornJson(JSONParser.parse(response

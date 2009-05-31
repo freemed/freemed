@@ -24,7 +24,6 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.WorkList;
@@ -41,13 +40,9 @@ public class SchedulerScreen extends ScreenInterface {
 
 	public SchedulerScreen() {
 		verticalPanel = new VerticalPanel();
-		initWidget(verticalPanel);
-	}
-
-	public void assignState(CurrentState s) {
-		state = s;
-		scheduler = new SchedulerWidget(state);
+		scheduler = new SchedulerWidget();
 		verticalPanel.add(scheduler);
+		initWidget(verticalPanel);
 	}
 
 }

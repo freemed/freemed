@@ -118,7 +118,8 @@ public class SystemNotifications {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("SystemNotifications",
+						CurrentState.getToaster().addItem(
+								"SystemNotifications",
 								"Failed to get system notifications.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -147,7 +148,8 @@ public class SystemNotifications {
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							state.getToaster().addItem("SystemNotifications",
+							CurrentState.getToaster().addItem(
+									"SystemNotifications",
 									"Failed to get system notifications.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -157,7 +159,7 @@ public class SystemNotifications {
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("SystemNotifications",
+				CurrentState.getToaster().addItem("SystemNotifications",
 						"Failed to get system notifications.",
 						Toaster.TOASTER_ERROR);
 			}
@@ -176,8 +178,8 @@ public class SystemNotifications {
 	 */
 	protected void handleNotification(HashMap<String, String> event) {
 		try {
-			state.getToaster()
-					.addItem(event.get("nmodule"), event.get("ntext"));
+			CurrentState.getToaster().addItem(event.get("nmodule"),
+					event.get("ntext"));
 		} catch (Exception ex) {
 			JsonUtil.debug(ex.toString());
 		}

@@ -67,8 +67,6 @@ public class PatientTagsWidget extends WidgetInterface {
 
 	protected final TextBox wEntry;
 
-	protected CurrentState state = null;
-
 	public PatientTagsWidget() {
 		flowPanel = new FlowPanel();
 		initWidget(flowPanel);
@@ -103,7 +101,7 @@ public class PatientTagsWidget extends WidgetInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("PatientTags",
+						CurrentState.getToaster().addItem("PatientTags",
 								"Failed to add tags.", Toaster.TOASTER_ERROR);
 					}
 
@@ -116,18 +114,19 @@ public class PatientTagsWidget extends WidgetInterface {
 							if (r != null) {
 								wEntry.setText("");
 								addTagToDisplay(tag);
-								state.getToaster().addItem("PatientTags",
-										"Added tag.", Toaster.TOASTER_INFO);
+								CurrentState.getToaster().addItem(
+										"PatientTags", "Added tag.",
+										Toaster.TOASTER_INFO);
 							}
 						} else {
-							state.getToaster().addItem("PatientTags",
+							CurrentState.getToaster().addItem("PatientTags",
 									"Failed to add tags.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("PatientTags",
+				CurrentState.getToaster().addItem("PatientTags",
 						"Failed to add tags.", Toaster.TOASTER_ERROR);
 			}
 		} else {
@@ -135,13 +134,13 @@ public class PatientTagsWidget extends WidgetInterface {
 				public void onSuccess(Boolean o) {
 					wEntry.setText("");
 					addTagToDisplay(tag);
-					state.getToaster().addItem("PatientTags", "Added tag.",
-							Toaster.TOASTER_INFO);
+					CurrentState.getToaster().addItem("PatientTags",
+							"Added tag.", Toaster.TOASTER_INFO);
 				}
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
-					state.getToaster().addItem("PatientTags",
+					CurrentState.getToaster().addItem("PatientTags",
 							"Failed to add tags.", Toaster.TOASTER_ERROR);
 				}
 			});
@@ -256,7 +255,7 @@ public class PatientTagsWidget extends WidgetInterface {
 					public void onClick(Widget bW) {
 						PatientTagSearchScreen searchScreen = new PatientTagSearchScreen();
 						searchScreen.setTagValue(oldTagName);
-						Util.spawnTab("Tag Search", searchScreen, state);
+						Util.spawnTab("Tag Search", searchScreen);
 						p.hide();
 					}
 				});
@@ -299,7 +298,7 @@ public class PatientTagsWidget extends WidgetInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("PatientTags",
+						CurrentState.getToaster().addItem("PatientTags",
 								"Failed to remove tag.", Toaster.TOASTER_ERROR);
 					}
 
@@ -311,31 +310,32 @@ public class PatientTagsWidget extends WidgetInterface {
 									"Boolean");
 							if (r != null) {
 								hp.removeFromParent();
-								state.getToaster().addItem("PatientTags",
-										"Removed tag.", Toaster.TOASTER_INFO);
+								CurrentState.getToaster().addItem(
+										"PatientTags", "Removed tag.",
+										Toaster.TOASTER_INFO);
 							}
 						} else {
-							state.getToaster().addItem("PatientTags",
+							CurrentState.getToaster().addItem("PatientTags",
 									"Failed to remove tag.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("PatientTags",
+				CurrentState.getToaster().addItem("PatientTags",
 						"Failed to remove tag.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			getProxy().ExpireTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
 					hp.removeFromParent();
-					state.getToaster().addItem("PatientTags", "Removed tag.",
-							Toaster.TOASTER_INFO);
+					CurrentState.getToaster().addItem("PatientTags",
+							"Removed tag.", Toaster.TOASTER_INFO);
 				}
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
-					state.getToaster().addItem("PatientTags",
+					CurrentState.getToaster().addItem("PatientTags",
 							"Failed to remove tag.", Toaster.TOASTER_ERROR);
 				}
 			});

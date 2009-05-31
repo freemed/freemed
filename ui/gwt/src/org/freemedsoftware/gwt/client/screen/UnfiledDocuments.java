@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -235,7 +236,7 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.getToaster().addItem("UnfiledDocuments",
+			CurrentState.getToaster().addItem("UnfiledDocuments",
 					"Processed unfiled document.", Toaster.TOASTER_INFO);
 			loadData();
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -250,7 +251,7 @@ public class UnfiledDocuments extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("UnfiledDocuments",
+						CurrentState.getToaster().addItem("UnfiledDocuments",
 								"Failed to file document.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -262,33 +263,37 @@ public class UnfiledDocuments extends ScreenInterface {
 									JSONParser.parse(response.getText()),
 									"Integer");
 							if (r != null) {
-								state.getToaster().addItem("UnfiledDocuments",
+								CurrentState.getToaster().addItem(
+										"UnfiledDocuments",
 										"Processed unfiled document.",
 										Toaster.TOASTER_INFO);
 								loadData();
 							}
 						} else {
-							state.getToaster().addItem("UnfiledDocuments",
+							CurrentState.getToaster().addItem(
+									"UnfiledDocuments",
 									"Failed to file document.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("UnfiledDocuments",
+				CurrentState.getToaster().addItem("UnfiledDocuments",
 						"Failed to file document.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer o) {
-							state.getToaster().addItem("UnfiledDocuments",
+							CurrentState.getToaster().addItem(
+									"UnfiledDocuments",
 									"Processed unfiled document.");
 							loadData();
 						}
 
 						public void onFailure(Throwable t) {
-							state.getToaster().addItem("UnfiledDocuments",
+							CurrentState.getToaster().addItem(
+									"UnfiledDocuments",
 									"Failed to file document.",
 									Toaster.TOASTER_ERROR);
 							GWT.log("Exception", t);
@@ -381,7 +386,7 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.getToaster().addItem("UnfiledDocuments",
+			CurrentState.getToaster().addItem("UnfiledDocuments",
 					"Processed unfiled document.", Toaster.TOASTER_INFO);
 			loadData();
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -396,7 +401,7 @@ public class UnfiledDocuments extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("UnfiledDocuments",
+						CurrentState.getToaster().addItem("UnfiledDocuments",
 								"Failed to file document.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -408,27 +413,30 @@ public class UnfiledDocuments extends ScreenInterface {
 									JSONParser.parse(response.getText()),
 									"Integer");
 							if (r != null) {
-								state.getToaster().addItem("UnfiledDocuments",
+								CurrentState.getToaster().addItem(
+										"UnfiledDocuments",
 										"Sent to provider.",
 										Toaster.TOASTER_INFO);
 							}
 						} else {
-							state.getToaster().addItem("UnfiledDocuments",
+							CurrentState.getToaster().addItem(
+									"UnfiledDocuments",
 									"Failed to file document.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("UnfiledDocuments",
+				CurrentState.getToaster().addItem("UnfiledDocuments",
 						"Failed to file document.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer o) {
-							state.getToaster().addItem("UnfiledDocuments",
-									"Sent to provider.", Toaster.TOASTER_INFO);
+							CurrentState.getToaster().addItem(
+									"UnfiledDocuments", "Sent to provider.",
+									Toaster.TOASTER_INFO);
 						}
 
 						public void onFailure(Throwable t) {

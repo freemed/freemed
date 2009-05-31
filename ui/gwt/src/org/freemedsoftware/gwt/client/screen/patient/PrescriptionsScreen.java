@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -60,7 +61,6 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			"DrugQuantityQualifiers");
 
 	public PrescriptionsScreen() {
-
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 
@@ -190,7 +190,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("PrescriptionScreen",
+						CurrentState.getToaster().addItem("PrescriptionScreen",
 								"Failed to add Prescription",
 								Toaster.TOASTER_ERROR);
 					}
@@ -206,7 +206,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 												"HashMap<String,String>");
 								if (r != null) {
 									// Successful
-									state.getToaster().addItem(
+									CurrentState.getToaster().addItem(
 											"PrescriptionScreen",
 											"Successfully added prescription",
 											Toaster.TOASTER_INFO);
@@ -216,14 +216,15 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							state.getToaster().addItem("PrescriptionScreen",
+							CurrentState.getToaster().addItem(
+									"PrescriptionScreen",
 									"Failed to add Prescription",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("PrescriptionScreen",
+				CurrentState.getToaster().addItem("PrescriptionScreen",
 						"Failed to add Prescription", Toaster.TOASTER_ERROR);
 			}
 		} else {

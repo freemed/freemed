@@ -603,16 +603,11 @@ public class SchedulerWidget extends WidgetInterface implements
 			text.addChangeListener(this);
 			text.addKeyboardListener(this);
 			table.setWidget(2, 0, new Label("Provider"));
-			if (state == null) {
-				JsonUtil.debug("current state not passed to scheduler");
-			} else {
-				// Only set default provider *if* there is one, and if the
-				// current event data hasn't already set it.
-				if (state.getDefaultProvider().intValue() > 0
-						&& (data.getProviderId() == null || data
-								.getProviderId() == 0)) {
-					provider.setValue(state.getDefaultProvider());
-				}
+			// Only set default provider *if* there is one, and if the
+			// current event data hasn't already set it.
+			if (CurrentState.getDefaultProvider().intValue() > 0
+					&& (data.getProviderId() == null || data.getProviderId() == 0)) {
+				provider.setValue(CurrentState.getDefaultProvider());
 			}
 			table.setWidget(2, 1, provider);
 
@@ -810,14 +805,14 @@ public class SchedulerWidget extends WidgetInterface implements
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								state.getToaster().addItem("Scheduler",
+								CurrentState.getToaster().addItem("Scheduler",
 										"Failed to get scheduler items.",
 										Toaster.TOASTER_ERROR);
 							}
 						}
 					});
 				} catch (RequestException e) {
-					state.getToaster().addItem("Scheduler",
+					CurrentState.getToaster().addItem("Scheduler",
 							"Failed to get scheduler items.",
 							Toaster.TOASTER_ERROR);
 				}
@@ -1031,7 +1026,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				// JSON-RPC
 				String[] params = { dateToSql(start), dateToSql(end),
-						state.getDefaultProvider().toString() };
+						CurrentState.getDefaultProvider().toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
@@ -1044,7 +1039,7 @@ public class SchedulerWidget extends WidgetInterface implements
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
 							loadingDialog.hide();
-							state.getToaster().addItem("Scheduler",
+							CurrentState.getToaster().addItem("Scheduler",
 									"Failed to get scheduler items.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -1082,7 +1077,7 @@ public class SchedulerWidget extends WidgetInterface implements
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								state.getToaster().addItem("Scheduler",
+								CurrentState.getToaster().addItem("Scheduler",
 										"Failed to get scheduler items.",
 										Toaster.TOASTER_ERROR);
 							}
@@ -1090,7 +1085,7 @@ public class SchedulerWidget extends WidgetInterface implements
 					});
 				} catch (RequestException e) {
 					loadingDialog.hide();
-					state.getToaster().addItem("Scheduler",
+					CurrentState.getToaster().addItem("Scheduler",
 							"Failed to get scheduler items.",
 							Toaster.TOASTER_ERROR);
 				}
@@ -1286,7 +1281,6 @@ public class SchedulerWidget extends WidgetInterface implements
 	public void init(CurrentState s) {
 		if (!alreadyInitialized) {
 			alreadyInitialized = true;
-			assignState(s);
 			multiPanel = new MultiView(new EventCacheController(),
 					new StringPanelRenderer());
 			JsonUtil.debug("initializing panel widget");

@@ -45,28 +45,27 @@ import com.google.gwt.user.client.ui.TabPanel;
 
 public class CurrentState {
 
-	protected HashMap<String, String> statusItems;
+	protected static HashMap<String, String> statusItems = new HashMap<String, String>();
 
-	protected Label statusBar = null;
+	protected static Label statusBar = null;
 
-	protected Toaster toaster = null;
+	protected static Toaster toaster = null;
 
-	protected TabPanel tabPanel = null;
+	protected static TabPanel tabPanel = null;
 
-	protected String locale = "en_US";
+	protected static String locale = "en_US";
 
-	protected Integer defaultProvider = new Integer(0);
+	protected static Integer defaultProvider = new Integer(0);
 
-	protected HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
+	protected static HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
 
-	protected HashMap<String, String> userConfiguration = new HashMap<String, String>();
+	protected static HashMap<String, String> userConfiguration = new HashMap<String, String>();
 
-	protected FreemedInterface freemedInterface = null;
+	protected static FreemedInterface freemedInterface = null;
 
-	protected MainScreen mainScreen = null;
+	protected static MainScreen mainScreen = null;
 
 	public CurrentState() {
-		statusItems = new HashMap<String, String>();
 		retrieveUserConfiguration(true);
 	}
 
@@ -75,13 +74,13 @@ public class CurrentState {
 	 * 
 	 * @param m
 	 */
-	public void assignMainScreen(MainScreen m) {
+	public static void assignMainScreen(MainScreen m) {
 		mainScreen = m;
 		assignStatusBar(m.getStatusBar());
 		assignTabPanel(m.getTabPanel());
 	}
 
-	public void assignFreemedInterface(FreemedInterface i) {
+	public static void assignFreemedInterface(FreemedInterface i) {
 		freemedInterface = i;
 	}
 
@@ -90,7 +89,7 @@ public class CurrentState {
 	 * 
 	 * @param w
 	 */
-	public void assignStatusBar(Label l) {
+	public static void assignStatusBar(Label l) {
 		statusBar = l;
 	}
 
@@ -99,7 +98,7 @@ public class CurrentState {
 	 * 
 	 * @param p
 	 */
-	public void assignDefaultProvider(Integer p) {
+	public static void assignDefaultProvider(Integer p) {
 		defaultProvider = p;
 	}
 
@@ -108,29 +107,14 @@ public class CurrentState {
 	 * 
 	 * @param t
 	 */
-	public void assignTabPanel(TabPanel t) {
+	public static void assignTabPanel(TabPanel t) {
 		tabPanel = t;
-		/*
-		 * t.addTabListener(new TabListener() {
-		 * 
-		 * public boolean onBeforeTabSelected(SourcesTabEvents sender, int
-		 * tabIndex) { return false; }
-		 * 
-		 * public void onTabSelected(SourcesTabEvents sender, int tabIndex) { //
-		 * Fire focus event try { ((ScreenInterface)
-		 * getTabPanel().getWidget(tabIndex)) .onFocus(); } catch (Exception ex)
-		 * { JsonUtil.debug(ex.toString()); } }
-		 * 
-		 * });
-		 */
 	}
 
 	/**
 	 * Assign toaster object.
-	 * 
-	 * @param t
 	 */
-	public void assignToaster(Toaster t) {
+	public static void assignToaster(Toaster t) {
 		toaster = t;
 	}
 
@@ -140,7 +124,7 @@ public class CurrentState {
 	 * @param l
 	 *            Locale string, default is "en_US"
 	 */
-	public void assignLocale(String l) {
+	public static void assignLocale(String l) {
 		locale = l;
 	}
 
@@ -150,7 +134,7 @@ public class CurrentState {
 	 * @param module
 	 * @param text
 	 */
-	public void statusBarAdd(String module, String text) {
+	public static void statusBarAdd(String module, String text) {
 		statusItems.put(module, text);
 		((Label) statusBar).setText("Processing (" + text + ")");
 	}
@@ -160,7 +144,7 @@ public class CurrentState {
 	 * 
 	 * @param module
 	 */
-	public void statusBarRemove(String module) {
+	public static void statusBarRemove(String module) {
 		statusItems.remove(module);
 		if (statusItems.size() > 0) {
 			((Label) statusBar).setText("Processing");
@@ -169,31 +153,31 @@ public class CurrentState {
 		}
 	}
 
-	public String getLocale() {
+	public static String getLocale() {
 		return locale;
 	}
 
-	public Integer getDefaultProvider() {
+	public static Integer getDefaultProvider() {
 		return defaultProvider;
 	}
 
-	public FreemedInterface getFreemedInterface() {
+	public static FreemedInterface getFreemedInterface() {
 		return freemedInterface;
 	}
 
-	public MainScreen getMainScreen() {
+	public static MainScreen getMainScreen() {
 		return mainScreen;
 	}
 
-	public TabPanel getTabPanel() {
+	public static TabPanel getTabPanel() {
 		return tabPanel;
 	}
 
-	public Toaster getToaster() {
+	public static Toaster getToaster() {
 		return toaster;
 	}
 
-	public HashMap<Integer, PatientScreen> getPatientScreenMap() {
+	public static HashMap<Integer, PatientScreen> getPatientScreenMap() {
 		return patientScreenMap;
 	}
 
@@ -203,8 +187,7 @@ public class CurrentState {
 	 * @param key
 	 * @return
 	 */
-	public String getUserConfig(String key) {
-
+	public static String getUserConfig(String key) {
 		JsonUtil.debug("getUserConfig() called");
 		if (userConfiguration.size() != 0) {
 			return userConfiguration.get(key);
@@ -212,7 +195,6 @@ public class CurrentState {
 		JsonUtil.debug("getUserConfig(): was unable to find userConfiguration "
 				+ "| key = " + key);
 		return "";
-
 	}
 
 	/**
@@ -221,7 +203,7 @@ public class CurrentState {
 	 * @param key
 	 * @param value
 	 */
-	public void setUserConfig(String key, Object value) {
+	public static void setUserConfig(String key, Object value) {
 		// Set key locally
 		if (value == null) {
 			value = new String("");
@@ -278,7 +260,7 @@ public class CurrentState {
 		}
 	}
 
-	public void retrieveUserConfiguration(boolean forceReload) {
+	public static void retrieveUserConfiguration(boolean forceReload) {
 		retrieveUserConfiguration(forceReload, null);
 	}
 
@@ -287,7 +269,7 @@ public class CurrentState {
 	 * 
 	 * @param forceReload
 	 */
-	public void retrieveUserConfiguration(boolean forceReload,
+	public static void retrieveUserConfiguration(boolean forceReload,
 			final Command onLoad) {
 
 		JsonUtil.debug("retrieveUserConfiguration called");

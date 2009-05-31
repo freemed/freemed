@@ -191,7 +191,6 @@ public class SummaryScreen extends PatientScreenInterface {
 		}
 
 		try {
-			patientTags.setState(state);
 			patientTags.setPatient(patientId);
 		} catch (Exception ex) {
 			JsonUtil.debug("Exception in patientTags: " + ex.toString());

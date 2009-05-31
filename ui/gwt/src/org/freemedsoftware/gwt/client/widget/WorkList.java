@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -121,8 +122,7 @@ public class WorkList extends WidgetInterface {
 								PatientScreen p = new PatientScreen();
 								p.setPatient(Integer.parseInt(data
 										.get("patient")));
-								Util.spawnTab(data.get("patient_name"), p,
-										state);
+								Util.spawnTab(data.get("patient_name"), p);
 							}
 						});
 						return a;
@@ -136,9 +136,7 @@ public class WorkList extends WidgetInterface {
 							.getValueByRow(row));
 					if (col > 0) {
 						// TODO: Open THIS day.
-						Util
-								.spawnTab("Scheduler", new SchedulerScreen(),
-										state);
+						Util.spawnTab("Scheduler", new SchedulerScreen());
 					}
 				} catch (Exception e) {
 					JsonUtil.debug("WorkList.java: Caught exception: "
@@ -172,7 +170,7 @@ public class WorkList extends WidgetInterface {
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							state.getToaster().addItem("WorkList",
+							CurrentState.getToaster().addItem("WorkList",
 									"Failed to get work list.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -206,14 +204,14 @@ public class WorkList extends WidgetInterface {
 									JsonUtil.debug(ex.toString());
 								}
 							} else {
-								state.getToaster().addItem("WorkLists",
+								CurrentState.getToaster().addItem("WorkLists",
 										"Failed to get work list.",
 										Toaster.TOASTER_ERROR);
 							}
 						}
 					});
 				} catch (RequestException e) {
-					state.getToaster().addItem("WorkLists",
+					CurrentState.getToaster().addItem("WorkLists",
 							"Failed to get work list.", Toaster.TOASTER_ERROR);
 				}
 			} else {
@@ -229,7 +227,7 @@ public class WorkList extends WidgetInterface {
 				empty = true;
 			}
 			workListTable.loadData(data);
-			state.getToaster().addItem("WorkList",
+			CurrentState.getToaster().addItem("WorkList",
 					"Successfully updated worklist items.",
 					Toaster.TOASTER_INFO);
 		} else {

@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -86,27 +87,27 @@ public class PatientScreen extends ScreenInterface {
 			menuBar_1.addItem("Allergy", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Allergy", new AllergyEntryScreen(),
-							state, getObject());
+							getObject());
 				}
 			});
 
 			menuBar_1.addItem("Encounter", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Encounter", new EncounterScreen(),
-							state, getObject());
+							getObject());
 				}
 			});
 
 			menuBar_1.addItem("Foreign ID", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Foreign ID", new PatientIdEntry(),
-							state, getObject());
+							getObject());
 				}
 			});
 
 			menuBar_1.addItem("Letter", new Command() {
 				public void execute() {
-					Util.spawnTabPatient("Letter", new LetterEntry(), state,
+					Util.spawnTabPatient("Letter", new LetterEntry(),
 							getObject());
 				}
 			});
@@ -114,29 +115,28 @@ public class PatientScreen extends ScreenInterface {
 			menuBar_1.addItem("Patient Correspondence", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Patient Correspondence",
-							new PatientCorrespondenceEntry(), state,
-							getObject());
+							new PatientCorrespondenceEntry(), getObject());
 				}
 			});
 
 			menuBar_1.addItem("Progress Note", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Progress Note",
-							new ProgressNoteEntry(), state, getObject());
+							new ProgressNoteEntry(), getObject());
 				}
 			});
 
 			menuBar_1.addItem("Prescription", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Prescription",
-							new PrescriptionsScreen(), state, getObject());
+							new PrescriptionsScreen(), getObject());
 				}
 			});
 
 			menuBar_1.addItem("Referral", new Command() {
 				public void execute() {
 					Util.spawnTabPatient("Referral", new ReferralEntry(),
-							state, getObject());
+							getObject());
 				}
 			});
 
@@ -223,7 +223,7 @@ public class PatientScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("Patient",
+						CurrentState.getToaster().addItem("Patient",
 								"Failed to retrieve patient information.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -240,14 +240,14 @@ public class PatientScreen extends ScreenInterface {
 								populatePatientInformation(r);
 							}
 						} else {
-							state.getToaster().addItem("Patient",
+							CurrentState.getToaster().addItem("Patient",
 									"Failed to retrieve patient information.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("Patient",
+				CurrentState.getToaster().addItem("Patient",
 						"Failed to retrieve patient information.",
 						Toaster.TOASTER_ERROR);
 			}
@@ -268,7 +268,7 @@ public class PatientScreen extends ScreenInterface {
 
 						public void onFailure(Throwable t) {
 							GWT.log("FAILURE: ", t);
-							state.getToaster().addItem("Patient",
+							CurrentState.getToaster().addItem("Patient",
 									"Failed to retrieve patient information.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -287,8 +287,6 @@ public class PatientScreen extends ScreenInterface {
 
 		// Push out to child widgets
 		patientInfoBar.setPatientFromMap(patientInfo);
-
-		summaryScreen.assignState(state);
 		summaryScreen.setPatientId(patientId);
 		summaryScreen.loadData();
 	}

@@ -69,13 +69,12 @@ public class MessageBox extends WidgetInterface {
 	public MessageBox() {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
-		sPanel
-				.setStyleName("freemed-WidgetContainer");
+		sPanel.setStyleName("freemed-WidgetContainer");
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 
 		sPanel.setWidget(verticalPanel);
-		//sPanel.addStyleName("freemed-MessageBoxContainer");
+		// sPanel.addStyleName("freemed-MessageBoxContainer");
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 
@@ -105,7 +104,6 @@ public class MessageBox extends WidgetInterface {
 						MessageView messageView = new MessageView();
 						showMessage(messageId, messageView);
 						popupMessageView = new Popup();
-						popupMessageView.setState(getState());
 						popupMessageView.setNewWidget(messageView);
 						messageView.setOnClose(new Command() {
 							public void execute() {

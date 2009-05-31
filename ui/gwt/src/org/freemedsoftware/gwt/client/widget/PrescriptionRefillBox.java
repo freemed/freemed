@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -67,11 +68,9 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.setSize("100%", "100%");
 
 		cleanView();
-
 	}
 
 	protected void showDoctor() {
-
 		cleanView();
 		wRequests = new CustomSortableTable();
 		wRequests.setSize("100%", "100%");
@@ -79,7 +78,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		wRequests.addColumn("User", "user"); // col 1
 		wRequests.addColumn("Patient", "patient"); // col 2
 		wRequests.addColumn("RX Orig", "rxorig"); // col 3
-		wRequests.addColumn("Note", "note"); //col 4
+		wRequests.addColumn("Note", "note"); // col 4
 		wRequests.addColumn("approved", "approved");// col 5
 		wRequests.addColumn("locked", "locked"); // col 6
 		wRequests.addColumn("id", "id"); // col 7
@@ -129,7 +128,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 
 				HashMap<String, String> data = new HashMap<String, String>();
 				// data.put("id", "some stuff"); not needed??
-				data.put("provider", Integer.toString(state
+				data.put("provider", Integer.toString(CurrentState
 						.getDefaultProvider()));
 				data.put("note", textBox.getText());
 				data.put("patient", Integer.toString(patid));
@@ -148,7 +147,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								state.getToaster().addItem(
+								CurrentState.getToaster().addItem(
 										"PrescriptionRefillBox",
 										"Error adding refill request."
 												+ ex.toString(),
@@ -163,7 +162,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 													.parse(response.getText()),
 													"Integer");
 									if (r != 0) {
-										state
+										CurrentState
 												.getToaster()
 												.addItem(
 														"PrescriptionRefillBox",
@@ -171,7 +170,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 														Toaster.TOASTER_INFO);
 									}
 								} else {
-									state.getToaster().addItem(
+									CurrentState.getToaster().addItem(
 											"PrescriptionRefillBox",
 											"Error adding prescription refill",
 											Toaster.TOASTER_ERROR);

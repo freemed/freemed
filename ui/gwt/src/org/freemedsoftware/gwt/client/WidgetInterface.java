@@ -26,50 +26,13 @@ package org.freemedsoftware.gwt.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 
 public abstract class WidgetInterface extends Composite {
 
-	protected CurrentState state = null;
-
-	protected Command setStateCommand = null;
-
 	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
-
-	public void assignState(CurrentState s) {
-		setState(s);
-	}
-
-	public void setState(CurrentState s) {
-		state = s;
-		if (setStateCommand != null) {
-			setStateCommand.execute();
-		}
-
-		if (children.size() > 0) {
-			Iterator<WidgetInterface> iter = children.iterator();
-			while (iter.hasNext()) {
-				WidgetInterface c = iter.next();
-				if (c != null) {
-					JsonUtil.debug(this.getClass().getName() + " child:"
-							+ c.getClass().getName());
-					c.setState(state);
-				}
-			}
-		}
-	}
-
-	public void onSetState(Command cmd) {
-		setStateCommand = cmd;
-	}
-
-	public CurrentState getState() {
-		return state;
-	}
 
 	/**
 	 * Method used to initialize widget, called after state is set.

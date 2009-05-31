@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -215,7 +216,7 @@ public class UserManagementScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								state.getToaster().addItem(className,
+								CurrentState.getToaster().addItem(className,
 										"Failed to add user.",
 										Toaster.TOASTER_ERROR);
 							}
@@ -228,19 +229,20 @@ public class UserManagementScreen extends ScreenInterface implements
 													.parse(response.getText()),
 													"Integer");
 									if (r != null) {
-										state.getToaster().addItem(className,
+										CurrentState.getToaster().addItem(
+												className,
 												"Successfully Added User.",
 												Toaster.TOASTER_INFO);
 									}
 								} else {
-									state.getToaster().addItem(className,
-											"Failed to add user.",
+									CurrentState.getToaster().addItem(
+											className, "Failed to add user.",
 											Toaster.TOASTER_ERROR);
 								}
 							}
 						});
 					} catch (RequestException e) {
-						state.getToaster().addItem(className,
+						CurrentState.getToaster().addItem(className,
 								"Failed to send message.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -275,7 +277,7 @@ public class UserManagementScreen extends ScreenInterface implements
 
 		if (lbUserType.getWidgetValue() == "null") {
 			s[s.length] = "User Type";
-		} else if (lbUserType.getWidgetValue()== "phy") {
+		} else if (lbUserType.getWidgetValue() == "phy") {
 			if (lbActualPhysician.getText() == "") {
 				s[s.length] = "Actual Physician";
 			}

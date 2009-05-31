@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -72,7 +73,6 @@ public class MessagingScreen extends ScreenInterface {
 	public MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
-
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
@@ -82,11 +82,10 @@ public class MessagingScreen extends ScreenInterface {
 		composeButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				final MessagingComposeScreen p = new MessagingComposeScreen();
-				p.assignState(state);
-				state.getTabPanel().add(p,
+				CurrentState.getTabPanel().add(p,
 						new ClosableTab("Compose Message", p));
-				state.getTabPanel().selectTab(
-						state.getTabPanel().getWidgetCount() - 1);
+				CurrentState.getTabPanel().selectTab(
+						CurrentState.getTabPanel().getWidgetCount() - 1);
 			}
 		});
 
@@ -239,8 +238,8 @@ public class MessagingScreen extends ScreenInterface {
 
 	protected void deleteMessage(Integer messageId) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.getToaster().addItem("MessagingScreen", "Deleted message.",
-					Toaster.TOASTER_INFO);
+			CurrentState.getToaster().addItem("MessagingScreen",
+					"Deleted message.", Toaster.TOASTER_INFO);
 			populate("");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(messageId) };
@@ -250,7 +249,7 @@ public class MessagingScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("MessagingScreen",
+						CurrentState.getToaster().addItem("MessagingScreen",
 								"Failed to delete message.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -262,13 +261,14 @@ public class MessagingScreen extends ScreenInterface {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (r != null) {
-								state.getToaster().addItem("MessagingScreen",
-										"Deleted message.",
+								CurrentState.getToaster().addItem(
+										"MessagingScreen", "Deleted message.",
 										Toaster.TOASTER_INFO);
 								populate("");
 							}
 						} else {
-							state.getToaster().addItem("MessagingScreen",
+							CurrentState.getToaster().addItem(
+									"MessagingScreen",
 									"Failed to delete message.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -283,24 +283,24 @@ public class MessagingScreen extends ScreenInterface {
 				service = (MessagesAsync) Util
 						.getProxy("org.freemedsoftware.gwt.client.Api.Messages");
 			} catch (Exception e) {
-				state.getToaster().addItem("MessagingScreen",
+				CurrentState.getToaster().addItem("MessagingScreen",
 						"Failed to delete message.", Toaster.TOASTER_ERROR);
 			}
 			service.Remove(messageId, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean data) {
 					if (data) {
-						state.getToaster().addItem("MessagingScreen",
+						CurrentState.getToaster().addItem("MessagingScreen",
 								"Deleted message.", Toaster.TOASTER_INFO);
 						populate("");
 					} else {
-						state.getToaster().addItem("MessagingScreen",
+						CurrentState.getToaster().addItem("MessagingScreen",
 								"Failed to delete message.",
 								Toaster.TOASTER_ERROR);
 					}
 				}
 
 				public void onFailure(Throwable t) {
-					state.getToaster().addItem("MessagingScreen",
+					CurrentState.getToaster().addItem("MessagingScreen",
 							"Failed to delete message.", Toaster.TOASTER_ERROR);
 				}
 			});

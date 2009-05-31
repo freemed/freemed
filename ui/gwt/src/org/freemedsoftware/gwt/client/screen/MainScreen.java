@@ -71,7 +71,7 @@ public class MainScreen extends Composite {
 
 	protected final Label statusBar1, statusBar2;
 
-	protected final CurrentState state = new CurrentState();
+	// protected final CurrentState state = new CurrentState();
 
 	protected final SystemNotifications notifications = new SystemNotifications();
 
@@ -82,8 +82,10 @@ public class MainScreen extends Composite {
 		initWidget(mainPanel);
 		mainPanel.setSize("98%", "98%");
 
+		CurrentState.retrieveUserConfiguration(true);
+
 		populateDefaultProvider();
-		state.assignMainScreen(this);
+		CurrentState.assignMainScreen(this);
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		mainPanel.add(horizontalPanel, DockPanel.NORTH);
@@ -118,8 +120,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_2 = menuBar_1.addItem("messaging",
 					new Command() {
 						public void execute() {
-							Util.spawnTab("Messages", new MessagingScreen(),
-									state);
+							Util.spawnTab("Messages", new MessagingScreen());
 						}
 					});
 			menuItem_2.setStyleName("freemed-SecondaryMenuItem");
@@ -127,8 +128,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_scheduler = menuBar_1.addItem("scheduler",
 					new Command() {
 						public void execute() {
-							Util.spawnTab("Scheduler", new SchedulerScreen(),
-									state);
+							Util.spawnTab("Scheduler", new SchedulerScreen());
 						}
 					});
 			menuItem_scheduler.setStyleName("freemed-SecondaryMenuItem");
@@ -137,7 +137,7 @@ public class MainScreen extends Composite {
 					new Command() {
 						public void execute() {
 							Util.spawnTab("Configuration",
-									new ConfigurationScreen(), state);
+									new ConfigurationScreen());
 						}
 					});
 			menuItem_7.setStyleName("freemed-SecondaryMenuItem");
@@ -146,7 +146,7 @@ public class MainScreen extends Composite {
 					"User Management", new Command() {
 						public void execute() {
 							Util.spawnTab("User Management",
-									new UserManagementScreen(), state);
+									new UserManagementScreen());
 						}
 					});
 			menuItem_users.setStyleName("freemed-SecondaryMenuItem");
@@ -160,7 +160,7 @@ public class MainScreen extends Composite {
 								JsonUtil
 										.debug("dashboard.saveArrangement() threw an exception, continue");
 							}
-							Util.logout(state);
+							Util.logout();
 						}
 					});
 			menuItem_3.setStyleName("freemed-SecondaryMenuItem");
@@ -184,8 +184,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_4 = menuBar_3.addItem("search",
 					new Command() {
 						public void execute() {
-							Util.spawnTab("Search", new PatientSearchScreen(),
-									state);
+							Util.spawnTab("Search", new PatientSearchScreen());
 						}
 					});
 			menuItem_4.setStyleName("freemed-SecondaryMenuItem");
@@ -193,8 +192,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_5 = menuBar_3.addItem("entry",
 					new Command() {
 						public void execute() {
-							Util.spawnTab("New Patient", new PatientForm(),
-									state);
+							Util.spawnTab("New Patient", new PatientForm());
 						}
 					});
 			menuItem_5.setStyleName("freemed-SecondaryMenuItem");
@@ -203,7 +201,7 @@ public class MainScreen extends Composite {
 					new Command() {
 						public void execute() {
 							Util.spawnTab("Tag Search",
-									new PatientTagSearchScreen(), state);
+									new PatientTagSearchScreen());
 						}
 					});
 			menuItem_6.setStyleName("freemed-SecondaryMenuItem");
@@ -229,7 +227,7 @@ public class MainScreen extends Composite {
 					"unfiled", new Command() {
 						public void execute() {
 							Util.spawnTab("Unfiled Documents",
-									new UnfiledDocuments(), state);
+									new UnfiledDocuments());
 						}
 					});
 			menuItem_unfiled.setStyleName("freemed-SecondaryMenuItem");
@@ -247,8 +245,7 @@ public class MainScreen extends Composite {
 			final MenuItem menuItem_report = menuBar_report.addItem(
 					"reporting", new Command() {
 						public void execute() {
-							Util.spawnTab("Reporting", new ReportingScreen(),
-									state);
+							Util.spawnTab("Reporting", new ReportingScreen());
 						}
 					});
 			menuItem_report.setStyleName("freemed-SecondaryMenuItem");
@@ -267,7 +264,7 @@ public class MainScreen extends Composite {
 					new Command() {
 						public void execute() {
 							Util.spawnTab("Support Data",
-									new SupportDataScreen(), state);
+									new SupportDataScreen());
 						}
 					});
 			menuItem_data.setStyleName("freemed-SecondaryMenuItem");
@@ -324,14 +321,12 @@ public class MainScreen extends Composite {
 
 		tabPanel.add(dashboard, "Dashboard");
 		tabPanel.selectTab(0);
-		state.assignTabPanel(tabPanel);
+		CurrentState.assignTabPanel(tabPanel);
 
 		// Get configuration
-
-		getCurrentState().retrieveUserConfiguration(true, new Command() {
+		CurrentState.retrieveUserConfiguration(true, new Command() {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");
-				dashboard.setState(state);
 				dashboard.afterStateSet();
 			}
 		});
@@ -348,7 +343,7 @@ public class MainScreen extends Composite {
 		statusBar1 = new Label("Ready");
 		statusBar1.setStyleName("statusBar");
 		statusBarContainer.add(statusBar1);
-		state.assignStatusBar(statusBar1);
+		CurrentState.assignStatusBar(statusBar1);
 		statusBar2 = new Label("-");
 		statusBar2.setStyleName("statusBar");
 		statusBarContainer.add(statusBar2);
@@ -358,16 +353,12 @@ public class MainScreen extends Composite {
 
 		// Create notification toaster
 		Toaster toaster = new Toaster();
-		state.assignToaster(toaster);
+		CurrentState.assignToaster(toaster);
 		toaster.setTimeout(10);
 
 		// Handle system notifications
-		notifications.setState(getCurrentState());
+		// notifications.setState(getCurrentState());
 		notifications.start();
-	}
-
-	public CurrentState getCurrentState() {
-		return state;
 	}
 
 	public Label getStatusBar() {
@@ -384,7 +375,7 @@ public class MainScreen extends Composite {
 
 	public void setFreemedInterface(FreemedInterface i) {
 		freemedInterface = i;
-		state.assignFreemedInterface(i);
+		CurrentState.assignFreemedInterface(i);
 	}
 
 	public void show() {
@@ -392,7 +383,7 @@ public class MainScreen extends Composite {
 	}
 
 	public void populateDefaultProvider() {
-		if (state.getDefaultProvider().intValue() < 1) {
+		if (CurrentState.getDefaultProvider().intValue() < 1) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// Do gornicht.
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -407,7 +398,7 @@ public class MainScreen extends Composite {
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							state
+							CurrentState
 									.getToaster()
 									.addItem(
 											"MainScreen",
@@ -425,13 +416,13 @@ public class MainScreen extends Composite {
 									JsonUtil
 											.debug("MainScreen.populateDefaultProvider: found "
 													+ r.toString());
-									state.assignDefaultProvider(r);
+									CurrentState.assignDefaultProvider(r);
 								} else {
 									JsonUtil
 											.debug("MainScreen.populateDefaultProvider: found error");
 								}
 							} else {
-								state
+								CurrentState
 										.getToaster()
 										.addItem(
 												"MainScreen",
@@ -441,7 +432,7 @@ public class MainScreen extends Composite {
 						}
 					});
 				} catch (RequestException e) {
-					state.getToaster().addItem("MainScreen",
+					CurrentState.getToaster().addItem("MainScreen",
 							"Could not determine provider information.",
 							Toaster.TOASTER_ERROR);
 				}

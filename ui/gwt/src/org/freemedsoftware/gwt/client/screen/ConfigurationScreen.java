@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -111,7 +112,7 @@ public class ConfigurationScreen extends ScreenInterface {
 
 	protected void commitValues() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.getToaster().addItem("ConfigurationScreen",
+			CurrentState.getToaster().addItem("ConfigurationScreen",
 					"Updated configuration.", Toaster.TOASTER_INFO);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(getAllValues()) };
@@ -122,7 +123,8 @@ public class ConfigurationScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("ConfigurationScreen",
+						CurrentState.getToaster().addItem(
+								"ConfigurationScreen",
 								"Failed to update configuration.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -134,25 +136,26 @@ public class ConfigurationScreen extends ScreenInterface {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (r.booleanValue()) {
-								state.getToaster().addItem(
+								CurrentState.getToaster().addItem(
 										"ConfigurationScreen",
 										"Updated configuration.",
 										Toaster.TOASTER_INFO);
 							} else {
-								state.getToaster().addItem(
+								CurrentState.getToaster().addItem(
 										"ConfigurationScreen",
 										"Failed to update configuration.",
 										Toaster.TOASTER_ERROR);
 							}
 						} else {
-							state.getToaster().addItem("ConfigurationScreen",
+							CurrentState.getToaster().addItem(
+									"ConfigurationScreen",
 									"Failed to update configuration.",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem("ConfigurationScreen",
+				CurrentState.getToaster().addItem("ConfigurationScreen",
 						"Failed to update configuration.",
 						Toaster.TOASTER_ERROR);
 			}
@@ -160,10 +163,12 @@ public class ConfigurationScreen extends ScreenInterface {
 			getProxy().SetValues(getAllValues(), new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean result) {
 					if (result.booleanValue()) {
-						state.getToaster().addItem("ConfigurationScreen",
+						CurrentState.getToaster().addItem(
+								"ConfigurationScreen",
 								"Updated configuration.", Toaster.TOASTER_INFO);
 					} else {
-						state.getToaster().addItem("ConfigurationScreen",
+						CurrentState.getToaster().addItem(
+								"ConfigurationScreen",
 								"Failed to update configuration.",
 								Toaster.TOASTER_ERROR);
 					}

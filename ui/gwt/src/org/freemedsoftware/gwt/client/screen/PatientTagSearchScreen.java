@@ -108,7 +108,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 							+ patientId.toString());
 					GWT.log("Spawn patient screen with patient = "
 							+ patientId.toString(), null);
-					Util.spawnTab(patientName, s, state);
+					Util.spawnTab(patientName, s);
 				}
 			}
 		});

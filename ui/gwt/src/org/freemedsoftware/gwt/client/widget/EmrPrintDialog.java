@@ -178,14 +178,15 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		state.getToaster().addItem("FaxSubsystem", "Sending fax to " + f);
+		CurrentState.getToaster()
+				.addItem("FaxSubsystem", "Sending fax to " + f);
 		getProxy().PrintToFax(f, items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
 			public void onFailure(Throwable t) {
-				state.getToaster().addItem("FaxSubsystemError",
+				CurrentState.getToaster().addItem("FaxSubsystemError",
 						"Error faxing document.", Toaster.TOASTER_ERROR);
 			}
 		});
@@ -199,7 +200,7 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		state.getToaster().addItem("PrintSubsystem",
+		CurrentState.getToaster().addItem("PrintSubsystem",
 				"Sending document to printer.");
 		getProxy().PrintToPrinter("", items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
@@ -207,7 +208,7 @@ public class EmrPrintDialog extends DialogBox {
 			}
 
 			public void onFailure(Throwable t) {
-				state.getToaster().addItem("PrintSubsystemError",
+				CurrentState.getToaster().addItem("PrintSubsystemError",
 						"Error sending document.", Toaster.TOASTER_ERROR);
 			}
 		});

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -328,7 +329,7 @@ public class EncounterScreen extends PatientScreenInterface {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						state.getToaster().addItem("SuperbillTemplate",
+						CurrentState.getToaster().addItem("SuperbillTemplate",
 								"Failed to load template.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -348,7 +349,8 @@ public class EncounterScreen extends PatientScreenInterface {
 								populateSuperbill(result);
 							}
 						} else {
-							state.getToaster().addItem("SuperbillTemplate",
+							CurrentState.getToaster().addItem(
+									"SuperbillTemplate",
 									"Failed to load template.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -356,7 +358,7 @@ public class EncounterScreen extends PatientScreenInterface {
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				state.getToaster().addItem("SuperbillTemplate",
+				CurrentState.getToaster().addItem("SuperbillTemplate",
 						"Failed to load template.", Toaster.TOASTER_ERROR);
 			}
 		} else {
@@ -375,7 +377,7 @@ public class EncounterScreen extends PatientScreenInterface {
 									}
 
 									public void onFailure(Throwable caught) {
-										state.getToaster().addItem(
+										CurrentState.getToaster().addItem(
 												"SuperbillTemplate",
 												"Failed to load template.",
 												Toaster.TOASTER_ERROR);
@@ -384,7 +386,7 @@ public class EncounterScreen extends PatientScreenInterface {
 								});
 			} catch (Exception e) {
 				e.printStackTrace();
-				state.getToaster().addItem("SuperbillTemplate",
+				CurrentState.getToaster().addItem("SuperbillTemplate",
 						"Failed to load template.", Toaster.TOASTER_ERROR);
 			}
 

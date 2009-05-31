@@ -52,8 +52,6 @@ public class FreemedInterface implements EntryPoint {
 
 	protected MainScreen mainScreen;
 
-	protected CurrentState state;
-
 	/**
 	 * This is the entry point method.
 	 */
@@ -142,8 +140,7 @@ public class FreemedInterface implements EntryPoint {
 	public void resume() {
 		if (!active) {
 			mainScreen = new MainScreen();
-			mainScreen.getCurrentState().assignLocale(
-					loginDialog.getLanguageSelected());
+			CurrentState.assignLocale(loginDialog.getLanguageSelected());
 			UIObject.setVisible(RootPanel.get("loginScreenOuter").getElement(),
 					false);
 			RootPanel.get("rootPanel").add(mainScreen);
@@ -151,8 +148,8 @@ public class FreemedInterface implements EntryPoint {
 			active = true;
 		} else {
 			try {
-				UIObject.setVisible(RootPanel.get("loginScreenOuter").getElement(),
-						false);
+				UIObject.setVisible(RootPanel.get("loginScreenOuter")
+						.getElement(), false);
 			} catch (Exception ex) {
 			}
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);

@@ -78,7 +78,7 @@ public class MessageView extends WidgetInterface {
 
 		replyWrapper.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				Util.spawnTab("Messages", new MessagingComposeScreen(), state);
+				Util.spawnTab("Messages", new MessagingComposeScreen());
 				if (onClose != null) {
 					onClose.execute();
 				}

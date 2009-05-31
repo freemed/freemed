@@ -25,7 +25,6 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
 import com.google.gwt.user.client.Window;
@@ -36,8 +35,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Popup extends PopupPanel {
-
-	protected CurrentState state = null;
 
 	protected WidgetInterface mWidget = null;
 
@@ -62,21 +59,8 @@ public class Popup extends PopupPanel {
 		super(true);
 	}
 
-	public void setState(CurrentState st) {
-		state = st;
-	}
-
-	public CurrentState getState() {
-		return state;
-	}
-
 	public void setNewWidget(WidgetInterface w) {
 		mWidget = w;
-
-		// Pass state on to child widget
-		if (mWidget != null) {
-			mWidget.setState(getState());
-		}
 	}
 
 	public void initialize() {

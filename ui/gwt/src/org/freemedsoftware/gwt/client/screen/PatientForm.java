@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -193,7 +194,6 @@ public class PatientForm extends ScreenInterface {
 		wPatientId.setWidth("100%");
 
 		addressContainer = new PatientAddresses();
-		addressContainer.setState(state);
 		tabPanel.add(addressContainer, "Address");
 
 		final FlexTable contactTable = new FlexTable();
@@ -266,7 +266,7 @@ public class PatientForm extends ScreenInterface {
 					if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 						submitButton.setEnabled(true);
-						state.getToaster().addItem("Patient",
+						CurrentState.getToaster().addItem("Patient",
 								"Updated patient information.",
 								Toaster.TOASTER_INFO);
 						addressContainer.setOnCompletion(new Command() {
@@ -282,7 +282,7 @@ public class PatientForm extends ScreenInterface {
 									populateHashMap(),
 									new AsyncCallback<Integer>() {
 										public void onSuccess(Integer o) {
-											state
+											CurrentState
 													.getToaster()
 													.addItem(
 															"Patient",
@@ -309,7 +309,7 @@ public class PatientForm extends ScreenInterface {
 									populateHashMap(),
 									new AsyncCallback<Integer>() {
 										public void onSuccess(Integer o) {
-											state
+											CurrentState
 													.getToaster()
 													.addItem(
 															"Patient",
@@ -365,14 +365,14 @@ public class PatientForm extends ScreenInterface {
 																					.getText()),
 																	"Integer");
 													if (r != 0) {
-														state
+														CurrentState
 																.getToaster()
 																.addItem(
 																		"PatientForm",
 																		"Patient successfully added.");
 													}
 												} else {
-													state
+													CurrentState
 															.getToaster()
 															.addItem(
 																	"PatientForm",
@@ -416,14 +416,14 @@ public class PatientForm extends ScreenInterface {
 																					.getText()),
 																	"Integer");
 													if (r != 0) {
-														state
+														CurrentState
 																.getToaster()
 																.addItem(
 																		"PatientForm",
 																		"Patient successfully added.");
 													}
 												} else {
-													state
+													CurrentState
 															.getToaster()
 															.addItem(
 																	"PatientForm",
@@ -437,12 +437,12 @@ public class PatientForm extends ScreenInterface {
 						}
 
 					}
-					
-				closeScreen();
+
+					closeScreen();
 				} else {
 					// Form validation failed, allow user to continue
 					submitButton.setEnabled(true);
-					state.getToaster().addItem("PatientForm",
+					CurrentState.getToaster().addItem("PatientForm",
 							"Form validation failed");
 				}
 			}

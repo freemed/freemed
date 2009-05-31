@@ -87,7 +87,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							if (Util.checkValidSessionResponse(response
-									.getText(), state)) {
+									.getText())) {
 								HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
 										.shoehornJson(JSONParser.parse(response
 												.getText()),
@@ -186,7 +186,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 								com.google.gwt.http.client.Response response) {
 							textBox.setEnabled(true);
 							if (Util.checkValidSessionResponse(response
-									.getText(), state)) {
+									.getText())) {
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser

@@ -104,7 +104,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							Toaster t = state.getToaster();
+							Toaster t = CurrentState.getToaster();
 							t.addItem(moduleName, "Failed to update.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -116,19 +116,19 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 										JSONParser.parse(response.getText()),
 										"Integer");
 								if (r != null) {
-									Toaster t = state.getToaster();
+									Toaster t = CurrentState.getToaster();
 									t.addItem(moduleName, "Updated.",
 											Toaster.TOASTER_INFO);
 								}
 							} else {
-								Toaster t = state.getToaster();
+								Toaster t = CurrentState.getToaster();
 								t.addItem(moduleName, "Failed to update.",
 										Toaster.TOASTER_ERROR);
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Toaster t = state.getToaster();
+					Toaster t = CurrentState.getToaster();
 					t.addItem(moduleName, "Failed to update.",
 							Toaster.TOASTER_ERROR);
 				}
@@ -145,7 +145,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								Toaster t = state.getToaster();
+								Toaster t = CurrentState.getToaster();
 								t.addItem(moduleName, "Failed to add.",
 										Toaster.TOASTER_ERROR);
 							}
@@ -158,19 +158,19 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 													.parse(response.getText()),
 													"Integer");
 									if (r != null) {
-										Toaster t = state.getToaster();
+										Toaster t = CurrentState.getToaster();
 										t.addItem(moduleName, "Added.",
 												Toaster.TOASTER_INFO);
 									}
 								} else {
-									Toaster t = state.getToaster();
+									Toaster t = CurrentState.getToaster();
 									t.addItem(moduleName, "Failed to add.",
 											Toaster.TOASTER_ERROR);
 								}
 							}
 						});
 					} catch (RequestException e) {
-						Toaster t = state.getToaster();
+						Toaster t = CurrentState.getToaster();
 						t.addItem(moduleName, "Failed to update.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -178,13 +178,13 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 					service.ModuleModifyMethod(moduleName, rec,
 							new AsyncCallback<Integer>() {
 								public void onSuccess(Integer result) {
-									Toaster t = state.getToaster();
+									Toaster t = CurrentState.getToaster();
 									t.addItem(moduleName, "Updated.",
 											Toaster.TOASTER_INFO);
 								}
 
 								public void onFailure(Throwable th) {
-									Toaster t = state.getToaster();
+									Toaster t = CurrentState.getToaster();
 									t.addItem(moduleName, "Failed to update.",
 											Toaster.TOASTER_ERROR);
 								}
@@ -196,13 +196,13 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			service.ModuleAddMethod(moduleName, rec,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer result) {
-							Toaster t = state.getToaster();
+							Toaster t = CurrentState.getToaster();
 							t.addItem(moduleName, "Added.",
 									Toaster.TOASTER_INFO);
 						}
 
 						public void onFailure(Throwable th) {
-							Toaster t = state.getToaster();
+							Toaster t = CurrentState.getToaster();
 							t.addItem(moduleName, "Failed to add.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -238,7 +238,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem(moduleName,
+						CurrentState.getToaster().addItem(moduleName,
 								"Failed to load data.", Toaster.TOASTER_ERROR);
 					}
 
@@ -256,7 +256,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 								populateData(r);
 							}
 						} else {
-							state.getToaster().addItem(moduleName,
+							CurrentState.getToaster().addItem(moduleName,
 									"Failed to load data.",
 									Toaster.TOASTER_ERROR);
 						}
@@ -274,7 +274,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 						}
 
 						public void onFailure(Throwable t) {
-							state.getToaster().addItem(moduleName,
+							CurrentState.getToaster().addItem(moduleName,
 									"Failed to load data.",
 									Toaster.TOASTER_ERROR);
 						}

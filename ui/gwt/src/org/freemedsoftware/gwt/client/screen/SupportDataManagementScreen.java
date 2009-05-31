@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -93,7 +94,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			public void onClick(Widget w) {
 				SupportModuleEntry entry = new SupportModuleEntry(moduleName);
 				entry.setDoneCommand(thisRef);
-				Util.spawnTab(moduleName + ": " + "Add", entry, state);
+				Util.spawnTab(moduleName + ": " + "Add", entry);
 			}
 		});
 
@@ -137,7 +138,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 					SupportModuleEntry entry = new SupportModuleEntry(
 							moduleName, recordId);
 					entry.setDoneCommand(thisRef);
-					Util.spawnTab(moduleName + ": " + "Edit", entry, state);
+					Util.spawnTab(moduleName + ": " + "Edit", entry);
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
 				}
@@ -242,7 +243,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem(
+						CurrentState.getToaster().addItem(
 								"SupportDataManagementScreen",
 								"Could not load support data records.",
 								Toaster.TOASTER_ERROR);
@@ -257,7 +258,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 											"HashMap<String,String>[]");
 							sortableTable.loadData(r);
 						} else {
-							state.getToaster().addItem(
+							CurrentState.getToaster().addItem(
 									"SupportDataManagementScreen",
 									"Could not load support data records.",
 									Toaster.TOASTER_ERROR);
@@ -284,7 +285,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 						}
 
 						public void onFailure(Throwable t) {
-							state.getToaster().addItem(
+							CurrentState.getToaster().addItem(
 									"SupportDataManagementScreen",
 									"Could not load support data records.",
 									Toaster.TOASTER_ERROR);

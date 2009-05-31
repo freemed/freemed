@@ -28,6 +28,7 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -187,12 +188,8 @@ public class DashboardScreen extends ScreenInterface {
 		// Create a new fresh view
 		clearView();
 
-		if (state != null) {
-			Boolean b = restoreArrangement();
-			if (b == false) {
-				addBaseWidgets();
-			}
-		} else {
+		Boolean b = restoreArrangement();
+		if (b == false) {
 			addBaseWidgets();
 		}
 
@@ -237,8 +234,8 @@ public class DashboardScreen extends ScreenInterface {
 	public void afterStateSet() {
 		JsonUtil.debug("DashBoard: AfterStateSet() called");
 		restoreArrangement();
-		if (state.getDefaultProvider() > 0) {
-			workList.setProvider(state.getDefaultProvider());
+		if (CurrentState.getDefaultProvider() > 0) {
+			workList.setProvider(CurrentState.getDefaultProvider());
 		}
 	}
 
@@ -279,10 +276,8 @@ public class DashboardScreen extends ScreenInterface {
 		if (title == "Work List") {
 			d = new DashboardItemContainer("Work List", workList);
 			removeListItem("Work List");
-			if (state != null) {
-				if (state.getDefaultProvider() != null) {
-					workList.setProvider(state.getDefaultProvider());
-				}
+			if (CurrentState.getDefaultProvider() != null) {
+				workList.setProvider(CurrentState.getDefaultProvider());
 			}
 		} else if (title == "Messages") {
 			d = new DashboardItemContainer("Messages", messageBox);
@@ -303,9 +298,6 @@ public class DashboardScreen extends ScreenInterface {
 			vPanelCol[col].add(d);
 			dragController.makeDraggable(d, d.getLabel());
 			addChildWidget(d);
-			if (state != null) {
-				d.setState(getState());
-			}
 		}
 	}
 
@@ -342,8 +334,8 @@ public class DashboardScreen extends ScreenInterface {
 		Integer i = 0;
 
 		try {
-			c = state.getUserConfig("dashboard");
-			i = Integer.parseInt(state.getUserConfig("dashboardcols"));
+			c = CurrentState.getUserConfig("dashboard");
+			i = Integer.parseInt(CurrentState.getUserConfig("dashboardcols"));
 		} catch (Exception ex) {
 			JsonUtil.debug("restoreArrangement(): Caught exception "
 					+ ex.toString());
@@ -386,7 +378,7 @@ public class DashboardScreen extends ScreenInterface {
 		HashMap<String, String> order = new HashMap<String, String>();
 		Integer columns = hPanel.getWidgetCount();
 
-		state.setUserConfig("dashboardcols", JsonUtil.jsonify(columns));
+		CurrentState.setUserConfig("dashboardcols", JsonUtil.jsonify(columns));
 
 		for (int i = (columns - 1); i >= 0; i--) {
 
@@ -400,7 +392,7 @@ public class DashboardScreen extends ScreenInterface {
 				order.put(t, Integer.toString(i));
 			}
 		}
-		state.setUserConfig("dashboard", JsonUtil.jsonify(order));
+		CurrentState.setUserConfig("dashboard", JsonUtil.jsonify(order));
 	}
 
 }

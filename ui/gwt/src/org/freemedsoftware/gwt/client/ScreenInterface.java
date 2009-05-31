@@ -25,14 +25,11 @@
 package org.freemedsoftware.gwt.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
-
-	protected CurrentState state = null;
 
 	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
 
@@ -71,29 +68,11 @@ public abstract class ScreenInterface extends WidgetInterface {
 		children.clear();
 	}
 
-	public void setState(CurrentState s) {
-		state = s;
-		JsonUtil.debug("ScreenInterface.setState() called");
-		if (setStateCommand != null) {
-			setStateCommand.execute();
-		}
-
-		if (children.size() > 0) {
-			Iterator<WidgetInterface> iter = children.iterator();
-			while (iter.hasNext()) {
-				WidgetInterface c = iter.next();
-				JsonUtil.debug("child:" + c.getClass().getName());
-				c.setState(state);
-			}
-		}
-		JsonUtil.debug("3");
-	}
-
 	/**
 	 * Remove the current ScreenInterface from the parent TabPanel.
 	 */
 	public void closeScreen() {
-		TabPanel t = state.getTabPanel();
+		TabPanel t = CurrentState.getTabPanel();
 		t.selectTab(t.getWidgetIndex(this) - 1);
 		t.remove(t.getWidgetIndex(this));
 	}

@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
@@ -60,8 +59,8 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 	protected ListBox listBox;
 
 	protected String selectText = "Select an Item";
-	
-	protected Command command = null; 
+
+	protected Command command = null;
 
 	public SupportModuleListBox(String s) {
 		moduleName = s;
@@ -107,8 +106,7 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (Util.checkValidSessionResponse(response.getText(),
-								state)) {
+						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 										.shoehornJson(JSONParser.parse(response
@@ -164,7 +162,7 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 		}
 		return null;
 	}
-	
+
 	public void initChangeListener(Command c) {
 		command = c;
 		listBox.addChangeListener(new ChangeListener() {
@@ -172,7 +170,7 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 			public void onChange(Widget sender) {
 				command.execute();
 			}
-			
+
 		});
 	}
 

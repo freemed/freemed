@@ -25,6 +25,7 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -137,7 +138,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		data.put("severity", severityTextBox.getText());
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.getToaster().addItem(className, "Added Allergy.",
+			CurrentState.getToaster().addItem(className, "Added Allergy.",
 					Toaster.TOASTER_INFO);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(data) };
@@ -149,7 +150,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster()
+						CurrentState.getToaster()
 								.addItem(className, "Failed to add Allergy.",
 										Toaster.TOASTER_ERROR);
 					}
@@ -161,19 +162,19 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 									JSONParser.parse(response.getText()),
 									"String[]");
 							if (r != null) {
-								state.getToaster().addItem(className,
+								CurrentState.getToaster().addItem(className,
 										"Added Allergy.", Toaster.TOASTER_INFO);
 							}
 						} else {
-							state.getToaster().addItem(className,
+							CurrentState.getToaster().addItem(className,
 									"Failed to add Allergy",
 									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				state.getToaster().addItem(className, "Failed to add Allergy.",
-						Toaster.TOASTER_ERROR);
+				CurrentState.getToaster().addItem(className,
+						"Failed to add Allergy.", Toaster.TOASTER_ERROR);
 			}
 		} else {
 			// TODO: GWT-RPC Stuff

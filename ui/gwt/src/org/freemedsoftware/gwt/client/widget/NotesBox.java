@@ -157,7 +157,7 @@ public class NotesBox extends WidgetInterface {
 	protected Command command;
 
 	protected HorizontalPanel hPanel = new HorizontalPanel();
-	
+
 	protected String emptyNoteText = "Edit this note!";
 
 	protected HashMap<Integer, Note> notes = new HashMap<Integer, Note>();
@@ -182,26 +182,20 @@ public class NotesBox extends WidgetInterface {
 		verticalPanel.add(addButton);
 		// verticalPanel.add(tabPanel);
 		verticalPanel.add(hPanel);
-	}
 
-	public void setState(CurrentState currentState) {
-		super.setState(currentState);
-		JsonUtil.debug("NotesBox.setState() called");
-
-		// NotesBox
 		String oNote = null;
 		String[] aNote = {};
-		oNote = state.getUserConfig("notepad");
+		oNote = CurrentState.getUserConfig("notepad");
 
 		if (oNote != "") {
 			aNote = (String[]) JsonUtil.shoehornJson(JSONParser.parse(oNote),
 					"String[]");
 			if (aNote.length != 0) {
-			for (int i = 0; i < aNote.length; i++) {
-				if (aNote[i] != "") {
-					addNote(aNote[i]);
+				for (int i = 0; i < aNote.length; i++) {
+					if (aNote[i] != "") {
+						addNote(aNote[i]);
+					}
 				}
-			}
 			} else {
 				addNote(emptyNoteText);
 			}
@@ -218,7 +212,7 @@ public class NotesBox extends WidgetInterface {
 			Note t = iter.next();
 			a.add(t.getTextArea().getText());
 		}
-		state.setUserConfig("notepad", (String) JsonUtil.jsonify(a
+		CurrentState.setUserConfig("notepad", (String) JsonUtil.jsonify(a
 				.toArray(new String[0])));
 	}
 
@@ -237,7 +231,6 @@ public class NotesBox extends WidgetInterface {
 		n.setWidget(n);
 		// n.setName("Note #" + (idx + 1) + " ");
 		hPanel.add(n);
-
 	}
 
 }

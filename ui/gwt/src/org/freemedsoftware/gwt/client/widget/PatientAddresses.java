@@ -189,10 +189,6 @@ public class PatientAddresses extends Composite {
 		hP.add(addAddressButton);
 	}
 
-	public void setState(CurrentState s) {
-		state = s;
-	}
-
 	/**
 	 * Set <Command> which is run on completion of data submission.
 	 * 
@@ -301,7 +297,7 @@ public class PatientAddresses extends Composite {
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			state.getToaster().addItem("PatientAddresses",
+			CurrentState.getToaster().addItem("PatientAddresses",
 					"Updated patient addresses.", Toaster.TOASTER_INFO);
 			if (onCompletion != null) {
 				onCompletion.execute();
@@ -321,7 +317,7 @@ public class PatientAddresses extends Composite {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						state.getToaster().addItem("PatientAddresses",
+						CurrentState.getToaster().addItem("PatientAddresses",
 								"Failed to update patient addresses.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -334,7 +330,8 @@ public class PatientAddresses extends Composite {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (result != null) {
-								state.getToaster().addItem("PatientAddresses",
+								CurrentState.getToaster().addItem(
+										"PatientAddresses",
 										"Updated patient addresses.",
 										Toaster.TOASTER_INFO);
 								if (onCompletion != null) {
@@ -348,7 +345,7 @@ public class PatientAddresses extends Composite {
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				state.getToaster().addItem("PatientAddresses",
+				CurrentState.getToaster().addItem("PatientAddresses",
 						"Failed to update patient addresses.",
 						Toaster.TOASTER_ERROR);
 			}
@@ -363,7 +360,8 @@ public class PatientAddresses extends Composite {
 				service.SetAddresses(patientId, map,
 						new AsyncCallback<Boolean>() {
 							public void onSuccess(Boolean result) {
-								state.getToaster().addItem("PatientAddresses",
+								CurrentState.getToaster().addItem(
+										"PatientAddresses",
 										"Updated patient addresses.",
 										Toaster.TOASTER_INFO);
 								if (onCompletion != null) {
@@ -373,7 +371,8 @@ public class PatientAddresses extends Composite {
 
 							public void onFailure(Throwable t) {
 								GWT.log("Exception", t);
-								state.getToaster().addItem("PatientAddresses",
+								CurrentState.getToaster().addItem(
+										"PatientAddresses",
 										"Failed to update patient addresses.",
 										Toaster.TOASTER_ERROR);
 							}

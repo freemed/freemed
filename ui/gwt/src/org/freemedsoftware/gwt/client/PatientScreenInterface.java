@@ -38,15 +38,6 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 
 	protected PatientScreen patientScreen = null;
 
-	protected CurrentState state = null;
-
-	/**
-	 * Pass current state object.
-	 */
-	public void assignState(CurrentState s) {
-		setState(s);
-	}
-
 	/**
 	 * Pass current patient screen.
 	 * 

@@ -262,7 +262,7 @@ public class PatientProblemList extends WidgetInterface {
 	public void modifyItem(Integer item, HashMap<String, String> data) {
 		PatientEntryScreenInterface i = resolvePatientScreen(data.get("module"));
 		i.setInternalId(Integer.parseInt(data.get("oid")));
-		Util.spawnTabPatient("Modify", i, state, patientScreen);
+		Util.spawnTabPatient("Modify", i, patientScreen);
 	}
 
 	public void deleteItem(Integer item) {
@@ -360,7 +360,6 @@ public class PatientProblemList extends WidgetInterface {
 		}
 		if (pSI != null) {
 			pSI.setPatientId(patientId);
-			pSI.assignState(state);
 			pSI.assignPatientScreen(patientScreen);
 		}
 		return pSI;
@@ -431,8 +430,7 @@ public class PatientProblemList extends WidgetInterface {
 					public void onResponseReceived(Request request,
 							Response response) {
 						JsonUtil.debug("onResponseReceived");
-						if (Util.checkValidSessionResponse(response.getText(),
-								state)) {
+						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								JsonUtil.debug(response.getText());
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil

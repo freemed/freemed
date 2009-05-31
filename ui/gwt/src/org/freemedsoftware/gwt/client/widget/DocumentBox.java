@@ -105,17 +105,14 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
 				final Integer uffId = new Integer(wDocuments.getValueByRow(row));
-
 				documentScreen.setData(uffId);
-				Util.spawnTab("File Document", documentScreen, state);
-
+				Util.spawnTab("File Document", documentScreen);
 			}
 
 		});
 		// Collapsed view
 		wDocuments.setVisible(false);
 		horizontalPanel.add(documentsCountLabel);
-
 	}
 
 	public void retrieveData() {

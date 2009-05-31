@@ -341,16 +341,15 @@ public final class Util {
 	 *            String title of the new tab
 	 * @param screen
 	 *            Object containing extended composite with content
-	 * @param state
-	 *            Pass internal program state.
 	 */
 	public static synchronized void spawnTab(String title,
-			ScreenInterface screen, CurrentState state) {
+			ScreenInterface screen) {
 		boolean recycle = false;
 
 		// Special handling for PatientScreen
 		if (screen instanceof PatientScreen) {
-			HashMap<Integer, PatientScreen> map = state.getPatientScreenMap();
+			HashMap<Integer, PatientScreen> map = CurrentState
+					.getPatientScreenMap();
 			Integer oldId = ((PatientScreen) screen).getPatient();
 			if (map.get(oldId) == null) {
 				// We don't find it, we have to instantiate new
@@ -369,27 +368,27 @@ public final class Util {
 
 				// Activate that screen
 				try {
-					state.getTabPanel().selectTab(
-							state.getTabPanel().getWidgetIndex(existingScreen));
+					CurrentState.getTabPanel().selectTab(
+							CurrentState.getTabPanel().getWidgetIndex(
+									existingScreen));
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);
-					JsonUtil.debug("Exception selecting tab: " + ex.toString());
+					JsonUtil.debug("Exception selecting tb: " + ex.toString());
 				}
 			}
 		}
 
 		// Only instantiate new screen if we aren't recycling an old one
 		if (!recycle) {
-			screen.assignState(state);
 			if (screen instanceof PatientScreen) {
-				state.getTabPanel().add((Widget) screen,
-						new ClosableTab(title, (Widget) screen, null, state));
+				CurrentState.getTabPanel().add((Widget) screen,
+						new ClosableTab(title, (Widget) screen, null));
 			} else {
-				state.getTabPanel().add((Widget) screen,
+				CurrentState.getTabPanel().add((Widget) screen,
 						new ClosableTab(title, (Widget) screen));
 			}
-			state.getTabPanel().selectTab(
-					state.getTabPanel().getWidgetCount() - 1);
+			CurrentState.getTabPanel().selectTab(
+					CurrentState.getTabPanel().getWidgetCount() - 1);
 		}
 	}
 
@@ -401,15 +400,11 @@ public final class Util {
 	 *            String title of the new tab
 	 * @param screen
 	 *            Object containing extended composite with content
-	 * @param state
-	 *            Pass internal program state.
 	 * @param pScreen
 	 *            Pass reference to PatientScreen parent
 	 */
 	public static synchronized void spawnTabPatient(String title,
-			PatientScreenInterface screen, CurrentState state,
-			PatientScreen pScreen) {
-		screen.assignState(state);
+			PatientScreenInterface screen, PatientScreen pScreen) {
 		screen.assignPatientScreen(pScreen);
 		pScreen.getTabPanel().add((Widget) screen,
 				new ClosableTab(title, (Widget) screen));
@@ -422,15 +417,13 @@ public final class Util {
 	 * 
 	 * @param response
 	 *            JSON response text
-	 * @param state
 	 * @return boolean false if the session has expired (logs out automatically)
 	 *         or true if we can continue with business as usual.
 	 */
-	public static boolean checkValidSessionResponse(String response,
-			CurrentState state) {
+	public static boolean checkValidSessionResponse(String response) {
 		final String fail = "denied due to user not being logged in";
 		if (response.indexOf(fail) != -1) {
-			Util.logout(state);
+			Util.logout();
 			return false;
 		}
 		return true;
@@ -441,9 +434,7 @@ public final class Util {
 	 * 
 	 * @param state
 	 */
-	public static void logout(CurrentState state) {
-		final CurrentState s = state;
-
+	public static void logout() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -464,10 +455,11 @@ public final class Util {
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
-							s.getMainScreen().hide();
+							CurrentState.getMainScreen().hide();
 							UIObject.setVisible(RootPanel.get(
 									"loginScreenOuter").getElement(), true);
-							s.getFreemedInterface().getLoginDialog().center();
+							CurrentState.getFreemedInterface().getLoginDialog()
+									.center();
 						} else {
 							Window.alert("Failed to log out.");
 						}
@@ -484,10 +476,11 @@ public final class Util {
 						.getProxy("org.freemedsoftware.gwt.client.Public.Login");
 				service.Logout(new AsyncCallback<Void>() {
 					public void onSuccess(Void r) {
-						s.getMainScreen().hide();
+						CurrentState.getMainScreen().hide();
 						UIObject.setVisible(RootPanel.get("loginScreenOuter")
 								.getElement(), true);
-						s.getFreemedInterface().getLoginDialog().center();
+						CurrentState.getFreemedInterface().getLoginDialog()
+								.center();
 					}
 
 					public void onFailure(Throwable t) {

@@ -153,7 +153,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 			if (internalId.intValue() == 0) {
 				// Add record
 				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					state.getToaster().addItem(moduleName,
+					CurrentState.getToaster().addItem(moduleName,
 							"Added successfully.", Toaster.TOASTER_INFO);
 					if (doneCommand != null) {
 						doneCommand.execute();
@@ -171,7 +171,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								state.getToaster().addItem(moduleName,
+								CurrentState.getToaster().addItem(moduleName,
 										"Failed to add record.",
 										Toaster.TOASTER_ERROR);
 							}
@@ -184,7 +184,8 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 													.parse(response.getText()),
 													"Integer");
 									if (r != null) {
-										state.getToaster().addItem(moduleName,
+										CurrentState.getToaster().addItem(
+												moduleName,
 												"Added successfully.",
 												Toaster.TOASTER_INFO);
 										if (doneCommand != null) {
@@ -193,22 +194,23 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 										closeScreen();
 									}
 								} else {
-									state.getToaster().addItem(moduleName,
+									CurrentState.getToaster().addItem(
+											moduleName,
 											"Failed to add record.",
 											Toaster.TOASTER_ERROR);
 								}
 							}
 						});
 					} catch (RequestException e) {
-						state.getToaster().addItem(moduleName,
+						CurrentState.getToaster().addItem(moduleName,
 								"Failed to add record.", Toaster.TOASTER_ERROR);
 					}
 				} else {
 					service.ModuleAddMethod(moduleName, data,
 							new AsyncCallback<Integer>() {
 								public void onSuccess(Integer r) {
-									state.getToaster().addItem(moduleName,
-											"Added successfully.",
+									CurrentState.getToaster().addItem(
+											moduleName, "Added successfully.",
 											Toaster.TOASTER_INFO);
 									if (doneCommand != null) {
 										doneCommand.execute();
@@ -224,7 +226,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 			} else {
 				// Modify record
 				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					state.getToaster().addItem(moduleName,
+					CurrentState.getToaster().addItem(moduleName,
 							"Modified successfully.", Toaster.TOASTER_INFO);
 					closeScreen();
 				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -239,7 +241,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								state.getToaster().addItem(moduleName,
+								CurrentState.getToaster().addItem(moduleName,
 										"Failed to modify record.",
 										Toaster.TOASTER_ERROR);
 							}
@@ -252,7 +254,8 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 													.parse(response.getText()),
 													"Boolean");
 									if (r != false && r != null) {
-										state.getToaster().addItem(moduleName,
+										CurrentState.getToaster().addItem(
+												moduleName,
 												"Modified successfully.",
 												Toaster.TOASTER_INFO);
 										if (doneCommand != null) {
@@ -260,12 +263,14 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 										}
 										closeScreen();
 									} else {
-										state.getToaster().addItem(moduleName,
+										CurrentState.getToaster().addItem(
+												moduleName,
 												"Failed to modify record.",
 												Toaster.TOASTER_ERROR);
 									}
 								} else {
-									state.getToaster().addItem(moduleName,
+									CurrentState.getToaster().addItem(
+											moduleName,
 											"Failed to modify record.",
 											Toaster.TOASTER_ERROR);
 								}
@@ -277,7 +282,8 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					service.ModuleModifyMethod(moduleName, data,
 							new AsyncCallback<Integer>() {
 								public void onSuccess(Integer r) {
-									state.getToaster().addItem(moduleName,
+									CurrentState.getToaster().addItem(
+											moduleName,
 											"Modified successfully.",
 											Toaster.TOASTER_INFO);
 									if (doneCommand != null) {

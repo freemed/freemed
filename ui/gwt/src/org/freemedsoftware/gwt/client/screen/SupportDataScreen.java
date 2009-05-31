@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -108,7 +109,7 @@ public class SupportDataScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						state.getToaster().addItem("SupportDataScreen",
+						CurrentState.getToaster().addItem("SupportDataScreen",
 								"Could not load list of support data modules.",
 								Toaster.TOASTER_ERROR);
 					}
@@ -122,7 +123,7 @@ public class SupportDataScreen extends ScreenInterface {
 											"HashMap<String,String>[]");
 							sortableTable.loadData(r);
 						} else {
-							state
+							CurrentState
 									.getToaster()
 									.addItem(
 											"SupportDataScreen",
@@ -149,7 +150,7 @@ public class SupportDataScreen extends ScreenInterface {
 						}
 
 						public void onFailure(Throwable t) {
-							state
+							CurrentState
 									.getToaster()
 									.addItem(
 											"SupportDataScreen",
@@ -166,6 +167,6 @@ public class SupportDataScreen extends ScreenInterface {
 		String moduleName = sortableTable.getValueFromIndex(idx, "module_name");
 		SupportDataManagementScreen screen = new SupportDataManagementScreen();
 		screen.setModuleName(moduleClass);
-		Util.spawnTab(moduleName, screen, state);
+		Util.spawnTab(moduleName, screen);
 	}
 }

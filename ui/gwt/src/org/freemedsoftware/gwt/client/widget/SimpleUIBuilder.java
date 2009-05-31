@@ -157,11 +157,8 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 		} else if (type == WidgetType.MODULE) {
 			w = new SupportModuleWidget(options);
-			((SupportModuleWidget) w).assignState(getState());
 		} else if (type == WidgetType.MODULE_MULTIPLE) {
-
 			w = new SupportModuleMultipleChoiceWidget(options);
-			((SupportModuleMultipleChoiceWidget) w).assignState(getState());
 		} else if (type == WidgetType.SELECT) {
 			w = new CustomListBox();
 
@@ -180,7 +177,6 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 		} else if (type == WidgetType.PATIENT) {
 			w = new PatientWidget();
-			((PatientWidget) w).assignState(getState());
 		} else if (type == WidgetType.COLOR) {
 			w = new CustomColorPicker();
 		} else if (type == WidgetType.DELIMITER) {

@@ -218,8 +218,7 @@ public class PatientSearchScreen extends ScreenInterface {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (Util.checkValidSessionResponse(response.getText(),
-								state)) {
+						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 										.shoehornJson(JSONParser.parse(response
@@ -327,9 +326,7 @@ public class PatientSearchScreen extends ScreenInterface {
 	public void spawnPatientScreen(Integer patient, String patientName) {
 		PatientScreen s = new PatientScreen();
 		s.setPatient(patient);
-		GWT.log("Spawn patient screen with patient = " + patient.toString(),
-				null);
-		Util.spawnTab(patientName, s, state);
+		Util.spawnTab(patientName, s);
 	}
 
 	public void clearForm() {
