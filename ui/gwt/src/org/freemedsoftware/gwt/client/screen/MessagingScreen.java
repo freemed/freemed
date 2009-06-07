@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
@@ -38,8 +39,10 @@ import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -49,9 +52,11 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -60,15 +65,21 @@ import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MessagingScreen extends ScreenInterface {
+public class MessagingScreen extends ScreenInterface implements ClickListener {
 
 	private CustomSortableTable wMessages;
 
-	private HashMap<String, String>[] mStore;
+	private HashMap<String, String>[] mStore = null;
 
 	protected HTML messageView;
 
 	protected final static String LOADING_IMAGE = "resources/images/loading.gif";
+
+	protected HashMap<CheckBox, Integer> checkboxStack = new HashMap<CheckBox, Integer>();
+
+	protected List<Integer> selectedItems = new ArrayList<Integer>();
+
+	protected CustomListBox messageTagSelect = new CustomListBox();
 
 	public MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -82,6 +93,7 @@ public class MessagingScreen extends ScreenInterface {
 		composeButton.addClickListener(new ClickListener() {
 			public void onClick(Widget w) {
 				final MessagingComposeScreen p = new MessagingComposeScreen();
+				p.setParentScreen(getMessagingScreen());
 				CurrentState.getTabPanel().add(p,
 						new ClosableTab("Compose Message", p));
 				CurrentState.getTabPanel().selectTab(
@@ -92,10 +104,70 @@ public class MessagingScreen extends ScreenInterface {
 		final Button selectAllButton = new Button();
 		horizontalPanel.add(selectAllButton);
 		selectAllButton.setText("Select All");
+		selectAllButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
+				while (iter.hasNext()) {
+					CheckBox t = iter.next();
+					t.setChecked(true);
+					if (!selectedItems.contains(checkboxStack.get(t))) {
+						selectedItems.add(checkboxStack.get(t));
+					}
+				}
+			}
+		});
 
 		final Button selectNoneButton = new Button();
 		horizontalPanel.add(selectNoneButton);
 		selectNoneButton.setText("Select None");
+		selectNoneButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
+				while (iter.hasNext()) {
+					CheckBox t = iter.next();
+					t.setChecked(false);
+					if (selectedItems.contains(checkboxStack.get(t))) {
+						selectedItems.remove(checkboxStack.get(t));
+					}
+				}
+			}
+		});
+
+		final Button deleteButton = new Button();
+		horizontalPanel.add(deleteButton);
+		deleteButton.setText("Delete");
+		deleteButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				if (Window
+						.confirm("Are you sure you want to delete these item(s)?")) {
+					Window.alert("STUB: delete items");
+				}
+			}
+		});
+
+		horizontalPanel.add(messageTagSelect);
+		// messageTagSelect.addChangeListener(new ChangeListener() {
+		// public void onChange(Widget w) {
+		// }
+		// });
+
+		final Button selectButton = new Button();
+		horizontalPanel.add(selectButton);
+		selectButton.setText("Change");
+		selectButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				populate(((CustomListBox) w).getWidgetValue());
+			}
+		});
+
+		final Button moveButton = new Button();
+		horizontalPanel.add(moveButton);
+		moveButton.setText("Move");
+		moveButton.addClickListener(new ClickListener() {
+			public void onClick(Widget w) {
+				Window.alert("STUB: move message(s)");
+			}
+		});
 
 		final VerticalPanel verticalSplitPanel = new VerticalPanel();
 		verticalPanel.add(verticalSplitPanel);
@@ -105,10 +177,11 @@ public class MessagingScreen extends ScreenInterface {
 		wMessages = new CustomSortableTable();
 		verticalSplitPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
-		wMessages.addColumn("Received", "stamp"); // col 0
-		wMessages.addColumn("From", "from_user"); // col 1
-		wMessages.addColumn("Subject", "subject"); // col 2
-		wMessages.addColumn("Delete", "delete"); // col 3
+		wMessages.addColumn("Selected", "selected");
+		wMessages.addColumn("Received", "stamp"); // col 1
+		wMessages.addColumn("From", "from_user"); // col 2
+		wMessages.addColumn("Subject", "subject"); // col 3
+		wMessages.addColumn("Delete", "delete"); // col 4
 		wMessages.setIndexName("id");
 		wMessages.addTableListener(new TableListener() {
 			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
@@ -116,7 +189,7 @@ public class MessagingScreen extends ScreenInterface {
 				try {
 					final Integer messageId = new Integer(wMessages
 							.getValueByRow(row));
-					if (col == 3) {
+					if (col == 4) {
 						deleteMessage(messageId);
 					} else {
 						showMessage(messageId);
@@ -126,6 +199,21 @@ public class MessagingScreen extends ScreenInterface {
 				}
 			}
 		});
+		wMessages
+				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+					public Widget setColumn(String columnName,
+							HashMap<String, String> data) {
+						Integer id = Integer.parseInt(data.get("id"));
+						if (columnName.compareTo("selected") == 0) {
+							CheckBox c = new CheckBox();
+							c.addClickListener(getMessagingScreen());
+							checkboxStack.put(c, id);
+							return c;
+						} else {
+							return (Widget) null;
+						}
+					}
+				});
 
 		messageView = new HTML("<img src=\"" + LOADING_IMAGE
 				+ "\" border=\"0\" />");
@@ -135,9 +223,93 @@ public class MessagingScreen extends ScreenInterface {
 
 		// Start population routine
 		populate("");
+		populateTagWidget();
+	}
+
+	public MessagingScreen getMessagingScreen() {
+		return this;
+	}
+
+	public void onClick(Widget w) {
+		if (w instanceof CheckBox) {
+			if (checkboxStack.keySet().size() > 0) {
+				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
+				while (iter.hasNext()) {
+					CheckBox c = iter.next();
+					if (c == w) {
+						// Handle click event for item
+						Integer id = checkboxStack.get(c);
+						handleClickForItemCheckbox(id, c);
+					}
+				}
+			}
+		}
+	}
+
+	protected void handleClickForItemCheckbox(Integer item, CheckBox c) {
+		// Reverse checking ?!?
+		// c.setChecked(!c.isChecked());
+
+		// Add or remove from itemlist
+		if (c.isChecked()) {
+			selectedItems.add((Integer) item);
+		} else {
+			selectedItems.remove((Object) item);
+		}
+	}
+
+	/**
+	 * Populate tag/folder selection widget.
+	 */
+	protected void populateTagWidget() {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			HashMap<String, String>[] dummyData = getStubData();
+			populateByData(dummyData);
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			// Populate message tags
+			String[] mTparams = {};
+			RequestBuilder mTbuilder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.MessagesModule.MessageTags",
+											mTparams)));
+			try {
+				mTbuilder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								String[][] r = (String[][]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()), "String[][]");
+								if (r != null) {
+									messageTagSelect.clear();
+									for (int i = 0; i < r.length; i++) {
+										messageTagSelect.addItem(r[i][0],
+												r[i][1]);
+									}
+								}
+							} else {
+							}
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+
+		} else {
+			// FIXME: GWT-RPC
+		}
 	}
 
 	public void populate(String tag) {
+		selectedItems.clear();
+		checkboxStack.clear();
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String>[] dummyData = getStubData();
 			populateByData(dummyData);
@@ -158,20 +330,23 @@ public class MessagingScreen extends ScreenInterface {
 					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							if (r != null) {
-								populateByData(r);
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								if (r != null) {
+									populateByData(r);
+								}
+							} else {
 							}
-						} else {
 						}
 					}
 				});
 			} catch (RequestException e) {
 			}
+
 		} else {
 			// Populate the whole thing.
 			MessagesModuleAsync service = (MessagesModuleAsync) GWT
@@ -189,6 +364,8 @@ public class MessagingScreen extends ScreenInterface {
 							GWT.log("Exception", t);
 						}
 					});
+
+			// FIXME: needs to populate tags widget
 		}
 	}
 
@@ -256,21 +433,24 @@ public class MessagingScreen extends ScreenInterface {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							Boolean r = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"Boolean");
-							if (r != null) {
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								Boolean r = (Boolean) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Boolean");
+								if (r != null) {
+									CurrentState.getToaster().addItem(
+											"MessagingScreen",
+											"Deleted message.",
+											Toaster.TOASTER_INFO);
+									populate("");
+								}
+							} else {
 								CurrentState.getToaster().addItem(
-										"MessagingScreen", "Deleted message.",
-										Toaster.TOASTER_INFO);
-								populate("");
+										"MessagingScreen",
+										"Failed to delete message.",
+										Toaster.TOASTER_ERROR);
 							}
-						} else {
-							CurrentState.getToaster().addItem(
-									"MessagingScreen",
-									"Failed to delete message.",
-									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
@@ -342,16 +522,19 @@ public class MessagingScreen extends ScreenInterface {
 					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>");
-							if (r != null) {
-								messageView.setHTML(r.get("msgtext").replace(
-										"\\", "").replace("\n", "<br/>"));
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (r != null) {
+									messageView.setHTML(r.get("msgtext")
+											.replace("\\", "").replace("\n",
+													"<br/>"));
+								}
+							} else {
 							}
-						} else {
 						}
 					}
 				});

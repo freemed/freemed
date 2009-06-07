@@ -69,6 +69,8 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 	protected final CustomListBox wUrgency;
 
+	protected MessagingScreen parentScreen = null;
+
 	protected final String className = "org.freemedsoftware.gwt.client.MessagingComposeScreen";
 
 	public MessagingComposeScreen() {
@@ -153,6 +155,14 @@ public class MessagingComposeScreen extends ScreenInterface {
 		});
 	}
 
+	public void setParentScreen(MessagingScreen p) {
+		parentScreen = p;
+	}
+
+	protected MessagingComposeScreen getThisObject() {
+		return this;
+	}
+
 	public void clearForm() {
 		wPatient.clear();
 		wTo.setValue(new Integer[] {});
@@ -199,6 +209,10 @@ public class MessagingComposeScreen extends ScreenInterface {
 								CurrentState.statusBarRemove(className);
 								CurrentState.getToaster().addItem(className,
 										"Sent message.", Toaster.TOASTER_INFO);
+								if (!sendAnother && parentScreen != null) {
+									parentScreen.populate("");
+									getThisObject().closeScreen();
+								}
 							}
 						} else {
 							CurrentState.statusBarRemove(className);
@@ -218,6 +232,10 @@ public class MessagingComposeScreen extends ScreenInterface {
 					CurrentState.statusBarRemove(className);
 					CurrentState.getToaster().addItem(className,
 							"Sent message.", Toaster.TOASTER_INFO);
+					if (!sendAnother && parentScreen != null) {
+						parentScreen.populate("");
+						getThisObject().closeScreen();
+					}
 				}
 
 				public void onFailure(Throwable t) {

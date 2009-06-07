@@ -37,6 +37,11 @@ public class CustomDatePicker extends SimpleDatePicker implements HashSetter {
 
 	protected String hashMapping = null;
 
+	public void setValue(String s) {
+		Date dt = importSqlDate(s);
+		setSelectedDate(dt);
+	}
+
 	public void setHashMapping(String hm) {
 		hashMapping = hm;
 	}

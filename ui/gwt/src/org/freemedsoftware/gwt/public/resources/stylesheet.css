@@ -624,6 +624,7 @@ a:hover {
 }
 
 .freemed-MessageText {
+	align: center;
 	padding: 10px;
 	color: #555555;
 	font-size: 8pt;
