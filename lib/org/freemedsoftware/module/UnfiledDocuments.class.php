@@ -358,6 +358,7 @@ class UnfiledDocuments extends SupportModule {
 			FREEMED_DIR . '/data/documents/unfiled/' .
 			$r['ufffilename']);
 
+		Header( "Content-type: image/jpeg" );
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
 

@@ -105,7 +105,7 @@ class Djvu {
 			$temp = tempnam('/tmp', 'djvu');
 			$rotate = $force_rotation ? " 90 " : " 0 ";
 			//$command = "djvups -page=" . ($page+0) . " " . escapeshellarg($filename) . " | /usr/bin/convert - ${rotate} " . escapeshellarg( $cache_name );
-			$command = "ddjvu -format=pnm -scale=100 -page=" . ($page+0) . " " . escapeshellarg($filename) . " " . escapeshellarg($temp) . " ; cat " . escapeshellarg($temp) . " | /usr/bin/pnmrotate ${rotate} | /usr/bin/pnmtopng > " . escapeshellarg( $cache_name );
+			$command = "ddjvu -format=pnm -scale=100 -page=" . ($page+0) . " " . escapeshellarg($filename) . " " . escapeshellarg($temp) . " ; cat " . escapeshellarg($temp) . " | /usr/bin/pnmrotate ${rotate} | /usr/bin/pnmtojpeg > " . escapeshellarg( $cache_name );
 
 			exec( $command );
 			unlink( $temp );
