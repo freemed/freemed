@@ -127,6 +127,11 @@ public class UnfiledDocuments extends ScreenInterface {
 
 					// Show the image in the viewer
 					djvuViewer.setInternalId(currentId);
+					try {
+						djvuViewer.loadPage(1);
+					} catch (Exception ex) {
+						JsonUtil.debug(ex.toString());
+					}
 					djvuViewer.setVisible(true);
 				}
 			}
@@ -158,22 +163,25 @@ public class UnfiledDocuments extends ScreenInterface {
 		wProvider.setModuleName("ProviderModule");
 		flexTable.setWidget(2, 1, wProvider);
 
+		final Label noteLabel = new Label("Note : ");
+		flexTable.setWidget(3, 0, noteLabel);
+
 		wNote = new TextBox();
-		flexTable.setWidget(4, 1, wNote);
+		flexTable.setWidget(3, 1, wNote);
 		wNote.setWidth("100%");
 
 		final Label categoryLabel = new Label("Category : ");
-		flexTable.setWidget(5, 0, categoryLabel);
+		flexTable.setWidget(4, 0, categoryLabel);
 
 		wCategory = new SupportModuleWidget();
 		wCategory.setModuleName("DocumentCategory");
-		flexTable.setWidget(5, 1, wCategory);
+		flexTable.setWidget(4, 1, wCategory);
 
 		final Label rotateLabel = new Label("Rotate : ");
-		flexTable.setWidget(6, 0, rotateLabel);
+		flexTable.setWidget(5, 0, rotateLabel);
 
 		wRotate = new ListBox();
-		flexTable.setWidget(6, 1, wRotate);
+		flexTable.setWidget(5, 1, wRotate);
 		wRotate.addItem("No rotation", "0");
 		wRotate.addItem("Rotate left", "270");
 		wRotate.addItem("Rotate right", "90");
@@ -258,22 +266,24 @@ public class UnfiledDocuments extends ScreenInterface {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"Integer");
-							if (r != null) {
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								Integer r = (Integer) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Integer");
+								if (r != null) {
+									CurrentState.getToaster().addItem(
+											"UnfiledDocuments",
+											"Processed unfiled document.",
+											Toaster.TOASTER_INFO);
+									loadData();
+								}
+							} else {
 								CurrentState.getToaster().addItem(
 										"UnfiledDocuments",
-										"Processed unfiled document.",
-										Toaster.TOASTER_INFO);
-								loadData();
+										"Failed to file document.",
+										Toaster.TOASTER_ERROR);
 							}
-						} else {
-							CurrentState.getToaster().addItem(
-									"UnfiledDocuments",
-									"Failed to file document.",
-									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
@@ -344,16 +354,18 @@ public class UnfiledDocuments extends ScreenInterface {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							if (r != null) {
-								store = r;
-								wDocuments.loadData(r);
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								if (r != null) {
+									store = r;
+									wDocuments.loadData(r);
+								}
+							} else {
 							}
-						} else {
 						}
 					}
 				});
@@ -408,21 +420,23 @@ public class UnfiledDocuments extends ScreenInterface {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"Integer");
-							if (r != null) {
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								Integer r = (Integer) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Integer");
+								if (r != null) {
+									CurrentState.getToaster().addItem(
+											"UnfiledDocuments",
+											"Sent to provider.",
+											Toaster.TOASTER_INFO);
+								}
+							} else {
 								CurrentState.getToaster().addItem(
 										"UnfiledDocuments",
-										"Sent to provider.",
-										Toaster.TOASTER_INFO);
+										"Failed to file document.",
+										Toaster.TOASTER_ERROR);
 							}
-						} else {
-							CurrentState.getToaster().addItem(
-									"UnfiledDocuments",
-									"Failed to file document.",
-									Toaster.TOASTER_ERROR);
 						}
 					}
 				});

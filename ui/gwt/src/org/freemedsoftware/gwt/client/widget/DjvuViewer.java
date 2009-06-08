@@ -240,19 +240,23 @@ public class DjvuViewer extends Composite implements ClickListener {
 		if (internalId.compareTo(new Integer(0)) == 0) {
 			throw new Exception("Internal id not set");
 		}
-		if (patientId.compareTo(new Integer(0)) == 0) {
-			throw new Exception("Patient id not set");
-		}
 		if (viewerType == 0) {
 			throw new Exception("Document type not set");
+		}
+		if (patientId.compareTo(new Integer(0)) == 0
+				&& viewerType == SCANNED_DOCUMENTS) {
+			throw new Exception("Patient id not set");
 		}
 
 		// Set image URL to the appropriate page
 		if (Util.isStubbedMode()) {
+			JsonUtil.debug("stubbed mode! not loading image");
 		} else {
-			wImage.setUrl(Util.getJsonRequest(resolvePageViewMethod(),
+			String myUrl = Util.getJsonRequest(resolvePageViewMethod(),
 					new String[] { internalId.toString(),
-							new Integer(pageNumber).toString() }));
+							new Integer(pageNumber).toString() });
+			JsonUtil.debug("image URL = " + myUrl);
+			wImage.setUrl(myUrl);
 		}
 
 		// Set the current page counter
