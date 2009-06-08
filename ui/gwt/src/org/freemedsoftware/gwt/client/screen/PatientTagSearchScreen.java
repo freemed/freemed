@@ -131,6 +131,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 	 */
 	public void setTagValue(String tagValue) {
 		tagWidget.setText(tagValue);
+		searchForTag(tagValue);
 	}
 
 	/**
