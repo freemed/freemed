@@ -35,7 +35,7 @@
 			    <Element field="psrdefphy" title="Default Physician" type="MODULE" options="PhysicianModule"/>
 			    <Element field="psrphone" title="Phone Number" type="TEXT" options="16"/>
 			    <Element field="psrfax" title="Fax Number" type="TEXT" options="16"/>
-			    <Element field="psremail" title="email adress" type="TEXT" options="25"/>
+			    <Element field="psremail" title="email adress" type="TEXT" options="50"/>
 			    <Element field="psrein" title="Employer Identification Number" type="TEXT" options="9" help="Enter here the Employer Identification Number."/>
 			    <Element field="psrnpi" title="National Provider Identification" type="TEXT" options="32"/>
 			    <Element field="psrtaxonomy" title="Taxonomy Number" type="TEXT" options="32"/>
