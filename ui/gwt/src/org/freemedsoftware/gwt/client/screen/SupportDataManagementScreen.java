@@ -251,17 +251,19 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,String>[]");
-							sortableTable.loadData(r);
-						} else {
-							CurrentState.getToaster().addItem(
-									"SupportDataManagementScreen",
-									"Could not load support data records.",
-									Toaster.TOASTER_ERROR);
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								sortableTable.loadData(r);
+							} else {
+								CurrentState.getToaster().addItem(
+										"SupportDataManagementScreen",
+										"Could not load support data records.",
+										Toaster.TOASTER_ERROR);
+							}
 						}
 					}
 				});
