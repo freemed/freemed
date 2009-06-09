@@ -151,6 +151,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 			try {
 				Integer len = new Integer(options);
 				if (len > 0) {
+					JsonUtil.debug("addWidget " + name + " has length of "
+							+ len);
+					((CustomTextBox) w).setVisibleLength(len.intValue() + 1);
 					((CustomTextBox) w).setMaxLength(len.intValue());
 				}
 			} catch (Exception ex) {
@@ -231,9 +234,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 
 							public void setPosition(int offsetWidth,
 									int offsetHeight) {
-								// TODO: needs tweaking to show it relative to
-								// the mouse-pointer.
-								popup.setPopupPosition(20, 20);
+								// Show it relative to the mouse-pointer.
+								popup.setPopupPosition(offsetWidth + 20,
+										offsetHeight + 20);
 							}
 
 						});

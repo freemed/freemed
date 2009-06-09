@@ -61,7 +61,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 
 	protected VerticalPanel container = null;
 
-	protected Integer[] widgetValues;
+	protected List<Integer> widgetValues = new ArrayList<Integer>();
 
 	protected String hashMapping = null;
 
@@ -93,20 +93,9 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		});
 	}
 
-	protected void pushWidgetValue(Integer val) {
-		List<Integer> a = new ArrayList<Integer>();
-		if (widgetValues != null) {
-			for (int iter = 0; iter < widgetValues.length; iter++) {
-				a.add(widgetValues[iter]);
-			}
-		}
-		a.add(val);
-		widgetValues = a.toArray(new Integer[0]);
-	}
-
 	protected void addValue(String text, final Integer value) {
 		// Push into internal store of values
-		pushWidgetValue(value);
+		widgetValues.add(value);
 
 		// Create new container, push in
 		final HorizontalPanel hp = new HorizontalPanel();
@@ -132,7 +121,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 	 */
 	protected void clearValues() {
 		container.clear();
-		widgetValues = null;
+		widgetValues.clear();
 	}
 
 	/**
@@ -141,7 +130,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 	 * @return
 	 */
 	public Integer[] getValues() {
-		return widgetValues;
+		return widgetValues.toArray(new Integer[0]);
 	}
 
 	/**
@@ -150,15 +139,27 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 	 * @return
 	 */
 	public String getCommaSeparatedValues() {
-		String buffer = new String("");
-		Iterator<Integer> iter = Arrays.asList(widgetValues).iterator();
-		while (iter.hasNext()) {
-			buffer += iter.next();
-			if (iter.hasNext()) {
-				buffer += ",";
-			}
+		if (widgetValues.size() == 0) {
+			JsonUtil
+					.debug("getCommaSeparatedValues(): no items found for widget "
+							+ hashMapping);
+			return "";
 		}
-		return buffer.toString();
+		try {
+			StringBuffer buffer = new StringBuffer();
+			Iterator<Integer> iter = widgetValues.iterator();
+			if (iter.hasNext()) {
+				buffer.append(iter.next());
+				while (iter.hasNext()) {
+					buffer.append(",");
+					buffer.append(iter.next());
+				}
+			}
+			return buffer.toString();
+		} catch (Exception ex) {
+			JsonUtil.debug("getCommaSeparatedValues(): " + ex.toString());
+			return "";
+		}
 	}
 
 	/**
@@ -169,12 +170,15 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 	 */
 	public void setCommaSeparatedValues(String v) {
 		if (v != null) {
+			List<Integer> a = new ArrayList<Integer>();
 			String[] s = v.split(",");
-			List<Integer> i = new ArrayList<Integer>();
-			for (int iter = 0; iter < s.length; iter++) {
-				i.add(new Integer(s[iter]));
+			Iterator<String> iter = Arrays.asList(s).iterator();
+			while (iter.hasNext()) {
+				String n = iter.next();
+				JsonUtil.debug("setCSV (multiple choice) : found " + n);
+				a.add(Integer.parseInt(n));
 			}
-			setValue(i.toArray(new Integer[0]));
+			setValue(a.toArray(new Integer[0]));
 		}
 	}
 
@@ -184,13 +188,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 	 * @param value
 	 */
 	protected void removeValueFromStore(Integer value) {
-		Integer[] temp = {};
-		for (int iter = 0; iter < widgetValues.length; iter++) {
-			if (widgetValues[iter].compareTo(value) != 0) {
-				temp[temp.length] = widgetValues[iter];
-			}
-		}
-		widgetValues = temp;
+		widgetValues.remove((Integer) value);
 	}
 
 	public void setModuleName(String moduleName) {
@@ -214,7 +212,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 						iter));
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				final Integer i = new Integer(values[iter]);
-				String[] params = {};
+				String[] params = { module, JsonUtil.jsonify(i) };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
@@ -284,11 +282,13 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 
 	public void setFromHash(HashMap<String, String> data) {
 		try {
-			ArrayList<Integer> a = new ArrayList<Integer>();
+			List<Integer> a = new ArrayList<Integer>();
 			String[] sValues = data.get(hashMapping).split(",");
 			Iterator<String> iter = Arrays.asList(sValues).iterator();
 			while (iter.hasNext()) {
-				a.add(Integer.parseInt(iter.next()));
+				String n = iter.next();
+				JsonUtil.debug("setFromHash (multiple choice) : found " + n);
+				a.add(Integer.parseInt(n));
 			}
 			setValue(a.toArray(new Integer[0]));
 		} catch (Exception ex) {
