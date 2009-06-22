@@ -1,0 +1,11 @@
+$Id$
+
+Source:
+  http://nppesdata.cms.hhs.gov/cms_NPI_files.html
+
+RSS Feed for changes:
+  http://nppesdata.cms.hhs.gov/nppes_data_dissemination_rss.xml
+
+Extract the large npidata_*.csv file, and rename to npidata.csv in this
+directory so that the import script can find it.
+

@@ -56,6 +56,7 @@ class Practices extends SupportModule {
 		"email",
 		"cellular",
 		"pager",
+		"pracnpi",
 	); // end of variables list
 	var $order_field = 'pracname, citya, statea';
 
@@ -67,7 +68,8 @@ class Practices extends SupportModule {
 		$this->list_view = array (
 			__("Practice Name") => "pracname",
 			__("City") => "citya",
-			__("State / Province") => "statea"
+			__("State / Province") => "statea",
+			__("NPI") => "pracnpi"
 		);
 
 		// Run parent constructor

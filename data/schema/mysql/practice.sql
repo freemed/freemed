@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `practice` (
 	email			VARCHAR (50),
 	cellular		VARCHAR (16),
 	pager			VARCHAR (16),
+	pracnpi			VARCHAR (32) NOT NULL DEFAULT '',
 	
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
@@ -59,8 +60,9 @@ BEGIN
 	#----- Upgrades
 	CALL FreeMED_Module_GetVersion( 'practice', @V );
 
-	#IF @V < 1 THEN
-	#END IF;
+	IF @V < 1 THEN
+		ALTER IGNORE TABLE practice ADD COLUMN pracnpi VARCHAR (32) NOT NULL DEFAULT '' AFTER pager;
+	END IF;
 
 	CALL FreeMED_Module_UpdateVersion( 'practice', 1 );
 END
