@@ -6,6 +6,11 @@ Source:
 RSS Feed for changes:
   http://nppesdata.cms.hhs.gov/nppes_data_dissemination_rss.xml
 
-Extract the large npidata_*.csv file, and rename to npidata.csv in this
-directory so that the import script can find it.
+Run the download_and_import.sh script to download the current corpus of
+data and generate the npi.csv file which FreeMED will import on its first
+run.
+
+Beware, this file is *huge*. We're talking upwards of 3-4GB of data, so
+make sure you've got both hard drive space and a cup of coffee to wait for
+this whole thing to import.
 
