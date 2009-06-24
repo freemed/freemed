@@ -26,18 +26,18 @@ URL=$( lynx -source http://nppesdata.cms.hhs.gov/nppes_data_dissemination_rss.xm
 ARCHIVE=$(basename "$URL")
 
 echo "Retrieving $URL from CMS ... "
-wget -c $URL
+wget -c $URL -O "${HERE}/${ARCHIVE}"
 
 echo "Extracting $ARCHIVE ... "
-unzip $ARCHIVE
+( cd "${HERE}" ; unzip "${ARCHIVE}" )
 
 echo "Removing data header in $ARCHIVE output directory ... "
 rm -rf */*Header.csv */*.pdf
 
 for DATA in ${HERE}/*/*.csv; do
 	echo "Processing $DATA ... "
-	cat "${DATA}" | ./process.pl > ${HERE}/npi.csv
-	rm -v $DATA
+	cat "${DATA}" | ${HERE}/process.pl > ${HERE}/npi.csv
+	rm -v "${DATA}"
 	exit
 done
 
