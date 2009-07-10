@@ -2,7 +2,7 @@
 	// $Id$
 	// $Author$
 
-LoadObjectDependency('_FreeMED.EMRModule');
+LoadObjectDependency('_FreeMED.MaintenanceModule');
 
 class LogModule extends MaintenanceModule {
 
