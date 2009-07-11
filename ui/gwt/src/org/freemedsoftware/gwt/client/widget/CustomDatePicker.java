@@ -31,15 +31,16 @@ import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.HashSetter;
 
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class CustomDatePicker extends SimpleDatePicker implements HashSetter {
+public class CustomDatePicker extends DatePicker implements HashSetter {
 
 	protected String hashMapping = null;
 
 	public void setValue(String s) {
 		Date dt = importSqlDate(s);
-		setSelectedDate(dt);
+		setValue(dt);
 	}
 
 	public void setHashMapping(String hm) {
@@ -51,12 +52,13 @@ public class CustomDatePicker extends SimpleDatePicker implements HashSetter {
 	}
 
 	public String getStoredValue() {
-		return getSelectedDate().toString();
+		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd");
+		return df.format(getValue());
 	}
 
 	public void setFromHash(HashMap<String, String> data) {
 		Date dt = importSqlDate(data.get(hashMapping));
-		setSelectedDate(dt);
+		setValue(dt);
 	}
 
 	public Date importSqlDate(String date) {

@@ -26,6 +26,7 @@
 <project name="FreemedInterface" default="build" basedir=".">
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="/opt/gwt" />
+  <defaultexcludes remove="**/.svn/**"/>
 
   <path id="project.class.path">
     <pathelement location="${gwt.sdk}/gwt-user.jar"/>

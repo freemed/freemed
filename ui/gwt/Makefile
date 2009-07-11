@@ -22,7 +22,7 @@
 
 THISDIR=ui/gwt
 
-all: clean interface
+all: interface
 
 interface:
 	ant gwtc
