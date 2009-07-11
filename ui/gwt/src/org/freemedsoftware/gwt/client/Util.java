@@ -111,6 +111,15 @@ public final class Util {
 	}
 
 	/**
+	 * Get base url of FreeMED UI.
+	 * 
+	 * @return Base URL string
+	 */
+	public static synchronized String getUIBaseUrl() {
+		return GWT.getModuleBaseURL() + "../";
+	}
+
+	/**
 	 * Get full url of FreeMED JSON relay.
 	 * 
 	 * @param method

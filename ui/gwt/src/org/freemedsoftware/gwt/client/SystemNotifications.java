@@ -42,8 +42,6 @@ public class SystemNotifications {
 
 	protected boolean mutexStatus = false;
 
-	protected CurrentState state = null;
-
 	protected long mutexTimestamp = 0;
 
 	protected Timer timer = null;
@@ -55,10 +53,6 @@ public class SystemNotifications {
 
 	public SystemNotifications() {
 
-	}
-
-	public void setState(CurrentState s) {
-		state = s;
 	}
 
 	/**

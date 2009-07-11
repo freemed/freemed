@@ -22,7 +22,7 @@
    - Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
    -->
   
-<module>
+<module rename-to="FreemedInterface">
 
 	<!-- Additional namespaces go here -->
 	<inherits name="com.google.gwt.user.User" />
@@ -40,11 +40,10 @@
 	<inherits name="com.google.gwt.gen2.table.Table" />
 	<inherits name="com.google.gwt.gen2.table.FixedWidthFlexTable" />
 	
-	<!-- Stylesheet resources go here -->
-	<stylesheet src="resources/stylesheet.css" />
-	<stylesheet src="resources/SortableTable.css" />
-	<stylesheet src="resources/ScrollTable.css" />
-	
 	<entry-point class="org.freemedsoftware.gwt.client.FreemedInterface" />
+
+        <stylesheet src="../resources/stylesheet.css" />
+        <stylesheet src="../resources/SortableTable.css" />
+        <stylesheet src="../resources/ScrollTable.css" />
     
 </module>

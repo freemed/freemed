@@ -27,5 +27,5 @@ for JAR in lib/*.jar; do
 	CP="${CP}:$APPDIR/lib/$(basename "$JAR")"
 done
 echo "Launching application ... "
-java -Xmx256M -cp "$CP" com.google.gwt.dev.GWTShell -out "$APPDIR/www" "$@" org.freemedsoftware.gwt.FreemedInterface/FreemedInterface.html;
+java -Xmx1024M -cp "$CP" com.google.gwt.dev.HostedMode -out "$APPDIR/www" "$@" -startupUrl FreemedInterface.html org.freemedsoftware.gwt.FreemedInterface;
 

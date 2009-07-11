@@ -75,7 +75,6 @@ import eu.future.earth.gwt.client.date.BaseDateRenderer;
 import eu.future.earth.gwt.client.date.DateEvent;
 import eu.future.earth.gwt.client.date.DateEventListener;
 import eu.future.earth.gwt.client.date.DatePanel;
-import eu.future.earth.gwt.client.date.DatePickerRenderer;
 import eu.future.earth.gwt.client.date.DateRenderer;
 import eu.future.earth.gwt.client.date.EventController;
 import eu.future.earth.gwt.client.date.EventPanel;
@@ -83,6 +82,7 @@ import eu.future.earth.gwt.client.date.MultiView;
 import eu.future.earth.gwt.client.date.DateEvent.DateEventActions;
 import eu.future.earth.gwt.client.date.month.staend.AbstractMonthField;
 import eu.future.earth.gwt.client.date.picker.DatePickerMonthNavigator;
+import eu.future.earth.gwt.client.date.picker.DatePickerRenderer;
 import eu.future.earth.gwt.client.date.picker.NoneContraintAndEntryRenderer;
 import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 
@@ -466,6 +466,10 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public boolean showIntervalTimes() {
 			return false;
+		}
+
+		public boolean isEnabled(Date event) {
+			return true;
 		}
 	}
 
@@ -858,7 +862,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public DayField(DateRenderer renderer) {
 			super(renderer);
-			description.addClickListener(this);
+			// description.addClickListener(this);
 			super.setBody(description);
 		}
 
@@ -909,7 +913,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public MonthField(DateRenderer renderer) {
 			super(renderer);
-			description.addClickListener(this);
+			// description.addClickListener(this);
 			super.setBody(description);
 		}
 

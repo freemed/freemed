@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+   - $Id$
+   -
+   - Authors:
+   -      Jeff Buchbinder <jeff@freemedsoftware.org>
+   -
+   - FreeMED Electronic Medical Record and Practice Management System
+   - Copyright (C) 1999-2009 FreeMED Software Foundation
+   -
+   - This program is free software; you can redistribute it and/or modify
+   - it under the terms of the GNU General Public License as published by
+   - the Free Software Foundation; either version 2 of the License, or
+   - (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU General Public License for more details.
+   -
+   - You should have received a copy of the GNU General Public License
+   - along with this program; if not, write to the Free Software
+   - Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+   -->
+  
+<project name="FreemedInterface" default="build" basedir=".">
+  <!-- Configure path to GWT SDK -->
+  <property name="gwt.sdk" location="/opt/gwt" />
+
+  <path id="project.class.path">
+    <pathelement location="${gwt.sdk}/gwt-user.jar"/>
+    <fileset dir="${gwt.sdk}" includes="gwt-dev*.jar"/>
+    <!-- Add any additional non-server libs (such as JUnit) -->
+    <fileset dir="lib" includes="**/*.jar"/>
+  </path>
+
+  <target name="gwtc" description="GWT compile to JavaScript">
+    <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+      <classpath>
+        <pathelement location="src"/>
+        <path refid="project.class.path"/>
+      </classpath>
+      <!-- JVM arguments -->
+      <jvmarg value="-Xmx1024M"/>
+      <jvmarg value="-Xss16M"/> 
+      <!-- Additional arguments -->
+      <arg value="-style"/>
+      <arg value="OBFUS"/>
+      <arg value="-war" />
+      <arg value="www" />
+      <arg value="org.freemedsoftware.gwt.FreemedInterface" />
+    </java>
+    <!-- Remove temporary files when done -->
+    <!-- <delete dir="www/org" failonerror="false" /> -->
+  </target>
+
+  <target name="hosted" description="Run hosted mode">
+    <java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
+      <classpath>
+        <pathelement location="src"/>
+        <path refid="project.class.path"/>
+      </classpath>
+      <jvmarg value="-Xmx1024M"/>
+      <arg value="-startupUrl"/>
+      <arg value="FreemedInterface.html"/>
+      <arg value="org.freemedsoftware.gwt.FreemedInterface" />
+    </java>
+  </target>
+
+  <target name="eclipse.generate" description="Generate eclipse project">
+    <java failonerror="true" fork="true" classname="com.google.gwt.user.tools.WebAppCreator">
+      <classpath>
+        <path refid="project.class.path"/>
+      </classpath>
+      <arg value="-XonlyEclipse"/>
+      <arg value="-ignore"/>
+      <arg value="org.freemedsoftware.gwt.FreemedInterface" />
+    </java>
+  </target>
+
+  <target name="build" depends="gwtc" description="Build this project" />
+
+  <target name="clean" description="Cleans this project">
+    <delete dir="www/FreemedInterface" failonerror="false" />
+    <!-- <delete dir="www/org" failonerror="false" /> -->
+  </target>
+
+</project>

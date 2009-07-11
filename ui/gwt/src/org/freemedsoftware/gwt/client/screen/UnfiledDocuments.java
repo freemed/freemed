@@ -25,7 +25,9 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,7 +107,6 @@ public class UnfiledDocuments extends ScreenInterface {
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
 		wDocuments.addTableListener(new TableListener() {
-			@SuppressWarnings("deprecation")
 			public void onCellClicked(SourcesTableEvents e, int row, int col) {
 				// Import current id
 				try {
@@ -115,11 +116,14 @@ public class UnfiledDocuments extends ScreenInterface {
 				} finally {
 					// Populate
 					String pDate = wDocuments.getValueFromIndex(row, "uffdate");
-					Date thisDate = new Date();
-					thisDate.setYear(Integer.parseInt(pDate.substring(0, 4)));
-					thisDate.setMonth(Integer.parseInt(pDate.substring(5, 6)));
-					thisDate.setDate(Integer.parseInt(pDate.substring(8, 9)));
-					wDate.setSelectedDate(thisDate);
+					Calendar thisCal = new GregorianCalendar();
+					thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
+							.substring(0, 4)));
+					thisCal.set(Calendar.MONTH, Integer.parseInt(pDate
+							.substring(5, 6)) - 1);
+					thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
+							.substring(8, 9)));
+					wDate.setSelectedDate(thisCal.getTime());
 
 					// Show the form
 					flexTable.setVisible(true);

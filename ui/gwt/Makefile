@@ -22,19 +22,19 @@
 
 THISDIR=ui/gwt
 
-all: clean www
+all: clean interface
 
-www:
-	./FreemedInterface-compile
-	rm -rf www/org
+interface:
+	ant gwtc
+	rm www/org -Rf
 
-install: www
+install: interface
 	mkdir -p $(INSTDIR)/$(THISDIR)
 	cp -rvf www $(INSTDIR)/$(THISDIR)
 
 clean:
-	rm -rf www
+	ant clean
 
 dist-clean: clean
-	rm -rf .gwt-cache
+	rm -rf .gwt
 	

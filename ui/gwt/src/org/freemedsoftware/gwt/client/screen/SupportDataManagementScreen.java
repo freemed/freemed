@@ -154,8 +154,8 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 	public void populateSchema() {
 		if (moduleName != null) {
 			// Get XML file name from module
-			final String interfaceUrl = "resources/interface/" + moduleName
-					+ ".module.xml";
+			final String interfaceUrl = Util.getUIBaseUrl()
+					+ "resources/interface/" + moduleName + ".module.xml";
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL
 					.encode(interfaceUrl));
 			try {
