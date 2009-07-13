@@ -37,6 +37,10 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -46,8 +50,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
@@ -58,7 +60,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class UserManagementScreen extends ScreenInterface implements
-		ClickListener {
+		ClickHandler {
 
 	protected CustomSortableTable wUsers = new CustomSortableTable();
 
@@ -136,8 +138,9 @@ public class UserManagementScreen extends ScreenInterface implements
 		userAddTable.getFlexCellFormatter().setColSpan(5, 1, 2);
 		lbActualPhysician.setVisible(false);
 
-		lbUserType.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
+		lbUserType.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent evt) {
+				Widget sender = (Widget) evt.getSource();
 				String value = ((CustomListBox) sender).getWidgetValue();
 				if (value.compareTo("phy") == 0) {
 					// Is provider
@@ -154,12 +157,12 @@ public class UserManagementScreen extends ScreenInterface implements
 		addUserButton = new Button();
 		userAddTable.setWidget(6, 1, addUserButton);
 		addUserButton.setText("Add User");
-		addUserButton.addClickListener(this);
+		addUserButton.addClickHandler(this);
 
 		clearButton = new Button();
 		userAddTable.setWidget(6, 2, clearButton);
 		clearButton.setText("Clear");
-		clearButton.addClickListener(this);
+		clearButton.addClickHandler(this);
 
 		// Panel #2
 
@@ -186,7 +189,8 @@ public class UserManagementScreen extends ScreenInterface implements
 
 	}
 
-	public void onClick(Widget w) {
+	public void onClick(ClickEvent evt) {
+		Widget w = (Widget) evt.getSource();
 		if (w == addUserButton) {
 
 			if (checkInput() == true) {

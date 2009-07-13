@@ -40,10 +40,12 @@ import org.freemedsoftware.gwt.client.widget.PrescriptionRefillBox;
 import org.freemedsoftware.gwt.client.widget.WorkList;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -52,7 +54,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class DashboardScreen extends ScreenInterface {
 
@@ -83,8 +84,9 @@ public class DashboardScreen extends ScreenInterface {
 			button.getUpFace().setImage(
 					new Image("resources/images/close_x.16x16.png"));
 
-			button.addClickListener(new ClickListener() {
-				public void onClick(Widget sender) {
+			button.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
 					remove();
 				}
 			});
@@ -165,8 +167,9 @@ public class DashboardScreen extends ScreenInterface {
 
 		outOfDrag.add(outOfDragHP);
 		outOfDragHP.add(listBoxWidgets);
-		listBoxWidgets.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
+		listBoxWidgets.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
 				if (listBoxWidgets.getSelectedIndex() > 0) {
 					addDashboardItem();
 				}

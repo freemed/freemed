@@ -45,6 +45,10 @@ import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -57,7 +61,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
@@ -65,7 +68,7 @@ import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MessagingScreen extends ScreenInterface implements ClickListener {
+public class MessagingScreen extends ScreenInterface implements ClickHandler {
 
 	private CustomSortableTable wMessages;
 
@@ -90,8 +93,9 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 		final Button composeButton = new Button();
 		horizontalPanel.add(composeButton);
 		composeButton.setText("Compose");
-		composeButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		composeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				final MessagingComposeScreen p = new MessagingComposeScreen();
 				p.setParentScreen(getMessagingScreen());
 				CurrentState.getTabPanel().add(p,
@@ -104,12 +108,13 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 		final Button selectAllButton = new Button();
 		horizontalPanel.add(selectAllButton);
 		selectAllButton.setText("Select All");
-		selectAllButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		selectAllButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent wvt) {
 				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
 				while (iter.hasNext()) {
 					CheckBox t = iter.next();
-					t.setChecked(true);
+					t.setValue(true);
 					if (!selectedItems.contains(checkboxStack.get(t))) {
 						selectedItems.add(checkboxStack.get(t));
 					}
@@ -120,12 +125,13 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 		final Button selectNoneButton = new Button();
 		horizontalPanel.add(selectNoneButton);
 		selectNoneButton.setText("Select None");
-		selectNoneButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		selectNoneButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
 				while (iter.hasNext()) {
 					CheckBox t = iter.next();
-					t.setChecked(false);
+					t.setValue(false);
 					if (selectedItems.contains(checkboxStack.get(t))) {
 						selectedItems.remove(checkboxStack.get(t));
 					}
@@ -136,8 +142,9 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 		final Button deleteButton = new Button();
 		horizontalPanel.add(deleteButton);
 		deleteButton.setText("Delete");
-		deleteButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		deleteButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				if (Window
 						.confirm("Are you sure you want to delete these item(s)?")) {
 					Window.alert("STUB: delete items");
@@ -146,25 +153,36 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 		});
 
 		horizontalPanel.add(messageTagSelect);
-		// messageTagSelect.addChangeListener(new ChangeListener() {
-		// public void onChange(Widget w) {
-		// }
-		// });
+		messageTagSelect.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					String effective = messageTagSelect.getWidgetValue();
+					Window
+							.alert("effective value of tag widget = "
+									+ effective);
+				} catch (Exception ex) {
+					Window.alert(ex.toString());
+				}
+			}
+		});
 
 		final Button selectButton = new Button();
 		horizontalPanel.add(selectButton);
 		selectButton.setText("Change");
-		selectButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-				populate(((CustomListBox) w).getWidgetValue());
+		selectButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				populate(((CustomListBox) evt.getSource()).getWidgetValue());
 			}
 		});
 
 		final Button moveButton = new Button();
 		horizontalPanel.add(moveButton);
 		moveButton.setText("Move");
-		moveButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		moveButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				Window.alert("STUB: move message(s)");
 			}
 		});
@@ -206,7 +224,7 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 						Integer id = Integer.parseInt(data.get("id"));
 						if (columnName.compareTo("selected") == 0) {
 							CheckBox c = new CheckBox();
-							c.addClickListener(getMessagingScreen());
+							c.addClickHandler(getMessagingScreen());
 							checkboxStack.put(c, id);
 							return c;
 						} else {
@@ -230,7 +248,8 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 		return this;
 	}
 
-	public void onClick(Widget w) {
+	public void onClick(ClickEvent evt) {
+		Widget w = (Widget) evt.getSource();
 		if (w instanceof CheckBox) {
 			if (checkboxStack.keySet().size() > 0) {
 				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
@@ -247,11 +266,8 @@ public class MessagingScreen extends ScreenInterface implements ClickListener {
 	}
 
 	protected void handleClickForItemCheckbox(Integer item, CheckBox c) {
-		// Reverse checking ?!?
-		// c.setChecked(!c.isChecked());
-
 		// Add or remove from itemlist
-		if (c.isChecked()) {
+		if (c.getValue()) {
 			selectedItems.add((Integer) item);
 		} else {
 			selectedItems.remove((Object) item);

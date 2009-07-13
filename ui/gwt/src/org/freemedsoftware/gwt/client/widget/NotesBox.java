@@ -33,10 +33,12 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -50,7 +52,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class NotesBox extends WidgetInterface {
 
 	public class Note extends Composite implements ClosableTabInterface,
-			ChangeListener {
+			ChangeHandler {
 
 		protected Integer myKey = 0;
 
@@ -84,10 +86,11 @@ public class NotesBox extends WidgetInterface {
 			simplePanel.setStyleName("freemed-WidgetContainer");
 			simplePanel.addStyleName("freemed-NotesBoxContainer");
 
-			textArea.addChangeListener(this);
+			textArea.addChangeHandler(this);
 
-			button.addClickListener(new ClickListener() {
-				public void onClick(Widget w) {
+			button.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent wvt) {
 					onClose();
 				}
 			});
@@ -117,7 +120,6 @@ public class NotesBox extends WidgetInterface {
 			// label.setText(name);
 
 			name = textArea.getText();
-			boolean skip = true;
 			if (name.length() != 0) {
 				int pos = name.indexOf(" ", name.indexOf(" ",
 						name.indexOf(" ") + 1) + 1);
@@ -137,17 +139,18 @@ public class NotesBox extends WidgetInterface {
 			widget = w;
 		}
 
-		public void onChange(Widget sender) {
-			saveContent();
-			setName();
-		}
-
 		public boolean isReadyToClose() {
 			return true;
 		}
 
 		public TextArea getTextArea() {
 			return textArea;
+		}
+
+		@Override
+		public void onChange(ChangeEvent event) {
+			saveContent();
+			setName();
 		}
 
 	}
@@ -174,8 +177,9 @@ public class NotesBox extends WidgetInterface {
 		addButtonLayout.add(new Image("resources/images/add_plus.16x16.png"));
 		addButtonLayout.add(new Label("Add Note"));
 		addButton.getUpFace().setHTML(addButtonLayout.toString());
-		addButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		addButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				addNote("");
 			}
 		});

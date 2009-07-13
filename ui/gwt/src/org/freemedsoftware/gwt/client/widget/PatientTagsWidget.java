@@ -35,6 +35,10 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientTagSearchScreen;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -46,8 +50,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -73,9 +75,10 @@ public class PatientTagsWidget extends WidgetInterface {
 
 		wEntry = new TextBox();
 		flowPanel.add(wEntry);
-		wEntry.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
-				TextBox t = (TextBox) w;
+		wEntry.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent evt) {
+				TextBox t = (TextBox) evt.getSource();
 				if (t.getText().length() > 2) {
 					addTag(t.getText());
 				}
@@ -161,8 +164,10 @@ public class PatientTagsWidget extends WidgetInterface {
 		final Anchor tagLabel = new Anchor(tag);
 		tagLabel.setStylePrimaryName("freemed-PatientTag");
 		JsonUtil.debug("addclicklistener");
-		tagLabel.addClickListener(new ClickListener() {
-			public void onClick(final Widget w) {
+		tagLabel.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				final Widget w = (Widget) evt.getSource();
 				final PopupPanel p = new PopupPanel(true);
 				final FlexTable fT = new FlexTable();
 				fT.setWidget(0, 0, new HTML("<b>" + oldTagName + "</b>"));
@@ -171,8 +176,9 @@ public class PatientTagsWidget extends WidgetInterface {
 				fT.setWidget(2, 0, newTagName);
 				final Button changeTagButton = new Button("Change");
 				fT.setWidget(2, 1, changeTagButton);
-				changeTagButton.addClickListener(new ClickListener() {
-					public void onClick(Widget bW) {
+				changeTagButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent bEvt) {
 						if (newTagName.getText().trim().length() > 0) {
 							if (Util.getProgramMode() == ProgramMode.STUBBED) {
 								// Stubbed mode
@@ -251,8 +257,9 @@ public class PatientTagsWidget extends WidgetInterface {
 				});
 				final Button searchButton = new Button("Search");
 				fT.setWidget(2, 2, searchButton);
-				searchButton.addClickListener(new ClickListener() {
-					public void onClick(Widget bW) {
+				searchButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent evt) {
 						PatientTagSearchScreen searchScreen = new PatientTagSearchScreen();
 						searchScreen.setTagValue(oldTagName);
 						Util.spawnTab("Tag Search", searchScreen);
@@ -270,10 +277,12 @@ public class PatientTagsWidget extends WidgetInterface {
 		p.add(r);
 		p.setStyleName("freemed-PatientTag");
 		r.addStyleName("freemed-PatientTagRemove");
-		r.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		r.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				if (Window.confirm("Are you sure you want to remove this tag?")) {
-					HorizontalPanel container = (HorizontalPanel) w.getParent();
+					HorizontalPanel container = (HorizontalPanel) ((Widget) evt
+							.getSource()).getParent();
 					removeTag(container.getTitle(), container);
 				}
 			}

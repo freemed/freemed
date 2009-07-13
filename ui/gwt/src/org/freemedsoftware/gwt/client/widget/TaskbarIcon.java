@@ -24,54 +24,60 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class TaskbarIcon extends Composite {
 
-	public TaskbarIcon(String labelText, Image image, ClickListener l) {
+	public TaskbarIcon(String labelText, Image image, ClickHandler l) {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
 		verticalPanel.add(image);
-		verticalPanel.setCellVerticalAlignment(image, HasVerticalAlignment.ALIGN_BOTTOM);
-		verticalPanel.setCellHorizontalAlignment(image, HasHorizontalAlignment.ALIGN_CENTER);
+		verticalPanel.setCellVerticalAlignment(image,
+				HasVerticalAlignment.ALIGN_BOTTOM);
+		verticalPanel.setCellHorizontalAlignment(image,
+				HasHorizontalAlignment.ALIGN_CENTER);
 
 		final Label label = new Label(labelText);
 		verticalPanel.add(label);
-		verticalPanel.setCellHorizontalAlignment(label, HasHorizontalAlignment.ALIGN_CENTER);
-		verticalPanel.setCellVerticalAlignment(label, HasVerticalAlignment.ALIGN_TOP);
+		verticalPanel.setCellHorizontalAlignment(label,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		verticalPanel.setCellVerticalAlignment(label,
+				HasVerticalAlignment.ALIGN_TOP);
 
 		// Style this from CSS
 		verticalPanel.setStylePrimaryName("taskbarIcon");
-		
+
 		// Push click listeners for both internal objects
-		image.addClickListener(l);
-		label.addClickListener(l);
-		
-		MouseListener ml = new MouseListener() {
-			public void onMouseEnter( Widget w ) {
+		image.addClickHandler(l);
+		label.addClickHandler(l);
+
+		MouseOverHandler mlOver = new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
 				getParent().setStylePrimaryName("taskbarIcon-hover");
 			}
-			
-			public void onMouseLeave( Widget w ) {
+		};
+		MouseOutHandler mlOut = new MouseOutHandler() {
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
 				getParent().setStylePrimaryName("taskbarIcon");
 			}
-			
-			public void onMouseDown( Widget w, int x, int y ) { }
-			public void onMouseMove( Widget w, int x, int y ) { }
-			public void onMouseUp( Widget w, int x, int y ) { }
 		};
-		image.addMouseListener(ml);
-		label.addMouseListener(ml);
+		image.addMouseOverHandler(mlOver);
+		image.addMouseOutHandler(mlOut);
+		label.addMouseOverHandler(mlOver);
+		label.addMouseOutHandler(mlOut);
 	}
-	
-}
 
+}

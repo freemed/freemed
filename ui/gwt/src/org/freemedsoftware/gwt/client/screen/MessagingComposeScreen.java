@@ -38,6 +38,8 @@ import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -47,7 +49,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -55,7 +56,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class MessagingComposeScreen extends ScreenInterface {
 
@@ -130,8 +130,9 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Button sendButton = new Button();
 		horizontalPanel.add(sendButton);
 		sendButton.setText("Send");
-		sendButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		sendButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				sendMessage(false);
 			}
 		});
@@ -139,8 +140,9 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Button sendAnotherButton = new Button();
 		horizontalPanel.add(sendAnotherButton);
 		sendAnotherButton.setText("Send and Compose Another");
-		sendAnotherButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		sendAnotherButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				sendMessage(true);
 			}
 		});
@@ -148,8 +150,9 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Button clearButton = new Button();
 		horizontalPanel.add(clearButton);
 		clearButton.setText("Clear");
-		clearButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		clearButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				clearForm();
 			}
 		});

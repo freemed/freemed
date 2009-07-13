@@ -31,22 +31,23 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class EmrPrintDialog extends DialogBox {
 
@@ -75,7 +76,7 @@ public class EmrPrintDialog extends DialogBox {
 
 		browserMethod = new RadioButton("printingMethod");
 		flexTable.setWidget(0, 0, browserMethod);
-		browserMethod.setChecked(true);
+		browserMethod.setValue(true);
 		browserMethod.setName("printingMethod");
 		browserMethod.setText("Browser");
 
@@ -94,12 +95,10 @@ public class EmrPrintDialog extends DialogBox {
 		faxMethod.setText("Fax");
 
 		faxNumber = new TextBox();
-		faxNumber.addFocusListener(new FocusListener() {
-			public void onFocus(Widget w) {
-				faxMethod.setChecked(true);
-			}
-
-			public void onLostFocus(Widget w) {
+		faxNumber.addFocusHandler(new FocusHandler() {
+			@Override
+			public void onFocus(FocusEvent event) {
+				faxMethod.setValue(true);
 			}
 		});
 		flexTable.setWidget(2, 1, faxNumber);
@@ -114,13 +113,14 @@ public class EmrPrintDialog extends DialogBox {
 		printfaxButton = new Button();
 		horizontalPanel.add(printfaxButton);
 		printfaxButton.setText("Print/Fax");
-		printfaxButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		printfaxButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				printfaxButton.setEnabled(false);
-				if (faxMethod.isChecked()) {
+				if (faxMethod.getValue()) {
 					// Fax
 					printToFax();
-				} else if (browserMethod.isChecked()) {
+				} else if (browserMethod.getValue()) {
 					// Browser
 					printToBrowser();
 				} else {
@@ -133,8 +133,9 @@ public class EmrPrintDialog extends DialogBox {
 		final Button cancelButton = new Button();
 		horizontalPanel.add(cancelButton);
 		cancelButton.setText("Cancel");
-		cancelButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				closeDialog();
 			}
 		});

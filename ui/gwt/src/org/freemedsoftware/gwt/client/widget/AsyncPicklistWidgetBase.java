@@ -30,16 +30,19 @@ import java.util.List;
 
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -76,26 +79,19 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 				loadSuggestions(r.getQuery(), r, cb);
 			}
 		}, textBox);
-		searchBox.addEventHandler(new SuggestionHandler() {
-			public void onSuggestionSelected(SuggestionEvent e) {
-				Suggestion s = e.getSelectedSuggestion();
-				value = getValueFromText(s.getDisplayString());
-				setTitle(s.getDisplayString());
-				onSelected();
+		searchBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				// Window.alert("Here be the new value:" + event.getValue());
 			}
 		});
-		searchBox.addKeyboardListener(new KeyboardListener() {
-
-			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-			}
-
-			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-			}
-
-			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+		searchBox.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				int keyCode = event.getNativeKeyCode();
 				switch (keyCode) {
-				case KeyboardListener.KEY_ESCAPE:
-				case KeyboardListener.KEY_BACKSPACE:
+				case KeyCodes.KEY_ESCAPE:
+				case KeyCodes.KEY_BACKSPACE:
 					// Clear any current values
 					searchBox.setText("");
 					searchBox.setTitle("");
@@ -104,10 +100,18 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 					break;
 
 				default:
+					// Ignore any other keystroke
 					break;
 				}
 			}
-
+		});
+		searchBox.addEventHandler(new SuggestionHandler() {
+			public void onSuggestionSelected(SuggestionEvent e) {
+				Suggestion s = e.getSelectedSuggestion();
+				value = getValueFromText(s.getDisplayString());
+				setTitle(s.getDisplayString());
+				onSelected();
+			}
 		});
 		searchBox.setLimit(10);
 		searchBox.setAnimationEnabled(true);

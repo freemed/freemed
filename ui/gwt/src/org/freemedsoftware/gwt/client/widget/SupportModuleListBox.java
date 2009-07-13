@@ -34,6 +34,8 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -43,10 +45,8 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class SupportModuleListBox extends WidgetInterface implements HashSetter {
 
@@ -165,12 +165,11 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 
 	public void initChangeListener(Command c) {
 		command = c;
-		listBox.addChangeListener(new ChangeListener() {
-
-			public void onChange(Widget sender) {
+		listBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent evt) {
 				command.execute();
 			}
-
 		});
 	}
 

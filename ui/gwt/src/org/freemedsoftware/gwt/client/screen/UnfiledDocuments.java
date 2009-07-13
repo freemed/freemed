@@ -45,6 +45,8 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -53,7 +55,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -65,7 +66,6 @@ import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class UnfiledDocuments extends ScreenInterface {
@@ -204,8 +204,9 @@ public class UnfiledDocuments extends ScreenInterface {
 		final PushButton sendToProviderButton = new PushButton();
 		sendToProviderButton.setStylePrimaryName("freemed-PushButton");
 		sendToProviderButton.setHTML("Send to Provider");
-		sendToProviderButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		sendToProviderButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				if (validateForm()) {
 					sendToProvider();
 				}
@@ -216,8 +217,9 @@ public class UnfiledDocuments extends ScreenInterface {
 		final PushButton fileDirectlyButton = new PushButton();
 		fileDirectlyButton.setHTML("File Directly");
 		fileDirectlyButton.setStylePrimaryName("freemed-PushButton");
-		fileDirectlyButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		fileDirectlyButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				if (validateForm()) {
 					fileDirectly();
 				}

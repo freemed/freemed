@@ -61,7 +61,8 @@ public class FreemedInterface implements EntryPoint {
 		loginDialog.setFreemedInterface(this);
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Skip checking for logged in...
-			loginDialog.center();
+			// loginDialog.center();
+			resume();
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = {};
 			RequestBuilder builder = new RequestBuilder(

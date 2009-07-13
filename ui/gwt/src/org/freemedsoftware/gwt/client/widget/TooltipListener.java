@@ -21,13 +21,16 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TooltipListener extends MouseListenerAdapter {
+public class TooltipListener implements MouseOverHandler, MouseOutHandler {
 	private static final String DEFAULT_TOOLTIP_STYLE = "TooltipPopup";
 
 	private static final int DEFAULT_OFFSET_X = 10;
@@ -89,7 +92,8 @@ public class TooltipListener extends MouseListenerAdapter {
 		this.styleName = styleName;
 	}
 
-	public void onMouseEnter(Widget sender) {
+	public void onMouseOver(MouseOverEvent event) {
+		Widget sender = (Widget) event.getSource();
 		if (tooltip != null) {
 			tooltip.hide();
 		}
@@ -97,7 +101,7 @@ public class TooltipListener extends MouseListenerAdapter {
 		tooltip.show();
 	}
 
-	public void onMouseLeave(Widget sender) {
+	public void onMouseOut(MouseOutEvent event) {
 		if (tooltip != null) {
 			tooltip.hide();
 		}
@@ -126,4 +130,5 @@ public class TooltipListener extends MouseListenerAdapter {
 	public void setOffsetY(int offsetY) {
 		this.offsetY = offsetY;
 	}
+
 }

@@ -106,7 +106,7 @@ public final class Util {
 		if (isStubbedMode()) {
 			return GWT.getModuleBaseURL();
 		} else {
-			return new String("../../../..");
+			return GWT.getModuleBaseURL() + "../../../../";
 		}
 	}
 

@@ -31,14 +31,18 @@ import java.util.Iterator;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -97,8 +101,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 
 		Button commitChangesButton = new Button("Commit Changes");
 		horizontalPanel.add(commitChangesButton);
-		commitChangesButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		commitChangesButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				// Collect data
 				HashMap<String, String> data = new HashMap<String, String>();
 				data = getValues();
@@ -213,41 +218,28 @@ public class SimpleUIBuilder extends WidgetInterface {
 				popup.add(html);
 				popup.setStyleName("freemed-HelpPopup");
 
-				image.addMouseListener(new MouseListener() {
-
-					public void onMouseDown(Widget sender, int x, int y) {
-						// Do nothing
-					}
-
-					public void onMouseEnter(Widget sender) {
-						// Show help PopUp
-					}
-
-					public void onMouseLeave(Widget sender) {
+				image.addMouseOutHandler(new MouseOutHandler() {
+					@Override
+					public void onMouseOut(MouseOutEvent event) {
 						// Hide help PopUp
 						popup.hide();
 					}
 
-					public void onMouseMove(Widget sender, int x, int y) {
+				});
+				image.addMouseMoveHandler(new MouseMoveHandler() {
+					@Override
+					public void onMouseMove(MouseMoveEvent event) {
 						// Do nothing
 						popup.setPopupPositionAndShow(new PositionCallback() {
-
 							public void setPosition(int offsetWidth,
 									int offsetHeight) {
 								// Show it relative to the mouse-pointer.
 								popup.setPopupPosition(offsetWidth + 20,
 										offsetHeight + 20);
 							}
-
 						});
 					}
-
-					public void onMouseUp(Widget sender, int x, int y) {
-						// Do nothing
-					}
-
 				});
-
 				table.setWidget(widgets.size() - 1, 2, image);
 			}
 		}

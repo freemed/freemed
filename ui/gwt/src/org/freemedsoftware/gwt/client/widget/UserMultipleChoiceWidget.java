@@ -36,6 +36,8 @@ import org.freemedsoftware.gwt.client.Api.UserInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -44,7 +46,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -101,9 +102,12 @@ public class UserMultipleChoiceWidget extends Composite {
 		final HorizontalPanel hp = new HorizontalPanel();
 		hp.add(new Label(text));
 		Button removeButton = new Button("<sup>X</sup>");
-		removeButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-				// Remove the hp object from its parent container, "container"
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				Widget w = (Widget) evt.getSource();
+				// Remove the HorizontalPanel object from its parent container,
+				// "container"
 				w.getParent().removeFromParent();
 
 				// Remove from data store

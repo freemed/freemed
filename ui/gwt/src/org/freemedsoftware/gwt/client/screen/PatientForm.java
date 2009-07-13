@@ -24,7 +24,6 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CurrentState;
@@ -33,10 +32,13 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -48,7 +50,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -57,12 +58,10 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class PatientForm extends ScreenInterface {
 
-	protected SimpleDatePicker wDob;
+	protected CustomDatePicker wDob;
 
 	protected TextBox emailAddress;
 
@@ -180,10 +179,9 @@ public class PatientForm extends ScreenInterface {
 		final Label dateOfBirthLabel = new Label("Date of Birth");
 		demographicsTable.setWidget(6, 0, dateOfBirthLabel);
 
-		wDob = new SimpleDatePicker();
+		wDob = new CustomDatePicker();
 		demographicsTable.setWidget(6, 1, wDob);
-		wDob.setWeekendSelectable(true);
-		wDob.setTabIndex(6);
+		// wDob.setTabIndex(6);
 
 		final Label patientPracticeIdLabel = new Label("Patient Practice ID");
 		demographicsTable.setWidget(7, 0, patientPracticeIdLabel);
@@ -257,9 +255,9 @@ public class PatientForm extends ScreenInterface {
 		submitButton = new Button();
 		horizontalPanel.add(submitButton);
 		submitButton.setText("Commit");
-		submitButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
-
+		submitButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				submitButton.setEnabled(false);
 				if (validateForm()) {
 
@@ -352,7 +350,6 @@ public class PatientForm extends ScreenInterface {
 													Throwable ex) {
 											}
 
-											@SuppressWarnings("unchecked")
 											public void onResponseReceived(
 													Request request,
 													Response response) {
@@ -403,7 +400,6 @@ public class PatientForm extends ScreenInterface {
 													Throwable ex) {
 											}
 
-											@SuppressWarnings("unchecked")
 											public void onResponseReceived(
 													Request request,
 													Response response) {
@@ -473,8 +469,7 @@ public class PatientForm extends ScreenInterface {
 						wGender
 								.setWidgetValue((String) m
 										.get((String) "ptsex"));
-						wDob.setSelectedDate(new Date((String) m
-								.get((String) "ptdob")));
+						wDob.setValue((String) m.get((String) "ptdob"));
 
 						// Contact screen
 						preferredContact.setWidgetValue((String) m
@@ -504,7 +499,7 @@ public class PatientForm extends ScreenInterface {
 		}
 
 		// Demographic screen
-		m.put((String) "ptdob", (String) wDob.getSelectedDate().toString());
+		m.put((String) "ptdob", (String) wDob.getStoredValue());
 		m.put((String) "ptsalut", (String) wTitle.getWidgetValue());
 		m.put((String) "ptlname", (String) wLastName.getText());
 		m.put((String) "ptfname", (String) wFirstName.getText());

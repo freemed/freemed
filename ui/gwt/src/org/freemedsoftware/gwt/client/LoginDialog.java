@@ -30,6 +30,11 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -41,16 +46,13 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class LoginDialog extends DialogBox {
 
@@ -235,8 +237,8 @@ public class LoginDialog extends DialogBox {
 		image.setSize("100%", "100%");
 
 		loginButton = new PushButton(image);
-		loginButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		loginButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
 				attemptLogin();
 			}
 		});
@@ -252,14 +254,15 @@ public class LoginDialog extends DialogBox {
 		simplePanel.setWidget(absolutePanel);
 
 		// Add custom keyboard listener to allow submit from password field.
-		loginPassword.addKeyboardListener(new KeyboardListener() {
-
-			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+		loginPassword.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				int keyCode = event.getNativeKeyCode();
 				switch (keyCode) {
-				case KeyboardListener.KEY_ENTER:
+				case KeyCodes.KEY_ENTER:
 					attemptLogin();
 					try {
-						((TextBox) sender).cancelKey();
+						((TextBox) event.getSource()).cancelKey();
 					} catch (Exception ex) {
 					}
 					break;
@@ -267,13 +270,6 @@ public class LoginDialog extends DialogBox {
 					break;
 				}
 			}
-
-			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-			}
-
-			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-			}
-
 		});
 
 		this.setWidget(simplePanel);

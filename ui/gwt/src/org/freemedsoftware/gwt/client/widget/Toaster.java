@@ -28,9 +28,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -96,8 +97,9 @@ public class Toaster extends PopupPanel {
 			// Do nothing, invalid
 		}
 		x.setTitle(module);
-		x.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		x.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				removeItem(module);
 			}
 		});

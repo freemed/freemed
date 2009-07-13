@@ -29,9 +29,10 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.screen.MessagingComposeScreen;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,7 +40,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class MessageView extends WidgetInterface {
 
@@ -76,8 +76,9 @@ public class MessageView extends WidgetInterface {
 		replyWrapper.add(replyVerticalPanel);
 		replyWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
 
-		replyWrapper.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		replyWrapper.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				Util.spawnTab("Messages", new MessagingComposeScreen());
 				if (onClose != null) {
 					onClose.execute();
@@ -100,8 +101,9 @@ public class MessageView extends WidgetInterface {
 		forwardWrapper.add(forwardVerticalPanel);
 		forwardWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
 
-		forwardWrapper.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		forwardWrapper.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				// TODO: create that
 				Window.alert("Forward");
 			}

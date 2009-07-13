@@ -27,7 +27,8 @@ package org.freemedsoftware.gwt.client.widget;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -74,8 +75,8 @@ public class ClosableTab extends Composite {
 		panel.setCellHorizontalAlignment(image,
 				HasHorizontalAlignment.ALIGN_RIGHT);
 
-		image.addClickListener(new ClickListener() {
-			public void onClick(Widget thisWidget) {
+		image.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent evt) {
 				boolean goodToGo = true;
 				// If we have a ClosableTabInterface, make sure it's ready to
 				// die

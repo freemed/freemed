@@ -35,6 +35,8 @@ import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -43,7 +45,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -52,7 +53,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class MessageBox extends WidgetInterface {
 
@@ -123,16 +123,18 @@ public class MessageBox extends WidgetInterface {
 		wMessages.setVisible(false);
 		// Click listener for both: the button and the label
 
-		showMessagesButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		showMessagesButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				if (wMessages.isVisible() == false)
 					wMessages.setVisible(true);
 				else
 					wMessages.setVisible(false);
 			}
 		});
-		messageCountLabel.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		messageCountLabel.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				if (wMessages.isVisible() == false)
 					wMessages.setVisible(true);
 				else

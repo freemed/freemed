@@ -32,6 +32,10 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -40,8 +44,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -49,7 +51,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class PrescriptionRefillBox extends WidgetInterface {
 	protected Integer patid = 0;
@@ -122,8 +123,9 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.setWidget(3, 1, sendButton);
 
 		sendButton.setText("Send Request");
-		sendButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
+		sendButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				patid = patientWidget.value;
 
 				HashMap<String, String> data = new HashMap<String, String>();
@@ -201,8 +203,9 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		selectUser.addItem("staff");
 		selectUser.setVisibleItemCount(1);
 
-		selectUser.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
+		selectUser.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent evt) {
 				if (selectUser.getSelectedIndex() == 1) {
 					showDoctor();
 				} else if (selectUser.getSelectedIndex() == 2) {

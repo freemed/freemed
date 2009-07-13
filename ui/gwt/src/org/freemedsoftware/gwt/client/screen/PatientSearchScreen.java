@@ -37,6 +37,8 @@ import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -121,8 +123,9 @@ public class PatientSearchScreen extends ScreenInterface {
 		wFieldValue = new TextBox();
 		flexTable.setWidget(2, 1, wFieldValue);
 		wFieldValue.setWidth("100%");
-		wFieldValue.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
+		wFieldValue.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
 				refreshSearch();
 			}
 		});
