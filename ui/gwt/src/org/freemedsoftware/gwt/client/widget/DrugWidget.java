@@ -37,16 +37,16 @@ import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
@@ -269,11 +269,11 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 
 		drugNameLookup = new DrugNameWidget();
 		container.add(drugNameLookup);
-		drugNameLookup.addChangeListener(new ChangeListener() {
-
-			public void onChange(Widget sender) {
+		drugNameLookup.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> evt) {
 				JsonUtil.debug("Change detected in drugNameLookup widget");
-				Integer value = ((DrugNameWidget) sender).getValue();
+				Integer value = ((DrugNameWidget) evt.getSource()).getValue();
 				if (Util.isStubbedMode()) {
 					// TODO: make this do something in stubbed mode
 				} else {
@@ -281,7 +281,6 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 					populateStrength(value);
 				}
 			}
-
 		});
 		drugStrength = new CustomListBox();
 		drugStrength.setVisibleItemCount(1);

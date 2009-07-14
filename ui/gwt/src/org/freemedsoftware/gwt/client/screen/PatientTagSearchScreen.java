@@ -36,6 +36,10 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -44,13 +48,10 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class PatientTagSearchScreen extends ScreenInterface {
 
@@ -66,10 +67,12 @@ public class PatientTagSearchScreen extends ScreenInterface {
 		layout.setWidget(0, 0, tagLabel);
 		tagWidget = new TextBox();
 		layout.setWidget(0, 2, tagWidget);
-		tagWidget.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
-				if (((TextBox) w).getText().length() > 2) {
-					searchForTag(((TextBox) w).getText());
+		tagWidget.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent evt) {
+				TextBox w = (TextBox) evt.getSource();
+				if (w.getText().length() > 2) {
+					searchForTag(w.getText());
 				}
 			}
 		});
@@ -84,9 +87,13 @@ public class PatientTagSearchScreen extends ScreenInterface {
 		customSortableTable.addColumn("First Name", "first_name");
 		customSortableTable.addColumn("DOB", "date_of_birth");
 		customSortableTable.addColumn("Patient ID", "patient_id");
-		customSortableTable.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents sender, int row,
-					int cell) {
+		customSortableTable.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell clickedCell = ((CustomSortableTable) event.getSource())
+						.getCellForEvent(event);
+				int row = clickedCell.getRowIndex();
+
 				Integer patientId = null;
 				String patientName = null;
 				try {
@@ -110,6 +117,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 							+ patientId.toString(), null);
 					Util.spawnTab(patientName, s);
 				}
+
 			}
 		});
 	}

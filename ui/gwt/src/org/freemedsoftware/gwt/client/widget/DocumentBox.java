@@ -49,9 +49,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class DocumentBox extends WidgetInterface {
 
@@ -103,13 +102,15 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.setIndexName("id");
 
 		documentScreen = new DocumentScreen();
-		wDocuments.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		wDocuments.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell clickedCell = wDocuments.getCellForEvent(event);
+				int row = clickedCell.getRowIndex();
 				final Integer uffId = new Integer(wDocuments.getValueByRow(row));
 				documentScreen.setData(uffId);
 				Util.spawnTab("File Document", documentScreen);
 			}
-
 		});
 		// Collapsed view
 		wDocuments.setVisible(false);

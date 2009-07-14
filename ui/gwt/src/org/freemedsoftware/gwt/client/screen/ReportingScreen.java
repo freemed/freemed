@@ -38,6 +38,12 @@ import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -45,18 +51,15 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class ReportingScreen extends ScreenInterface {
@@ -102,9 +105,11 @@ public class ReportingScreen extends ScreenInterface {
 		reportTable.setIndexName("report_uuid");
 		reportTable.addColumn("Name", "report_name");
 		reportTable.addColumn("Description", "report_desc");
-		reportTable.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents sender, int row,
-					int cell) {
+		reportTable.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				Cell clickedCell = reportTable.getCellForEvent(evt);
+				int row = clickedCell.getRowIndex();
 				String uuid = reportTable.getValueByRow(row);
 				thisReportUUID = uuid;
 				getReportInformation(uuid);
@@ -131,8 +136,9 @@ public class ReportingScreen extends ScreenInterface {
 				.setHTML("<img src=\"resources/images/pdf.32x32.png\" /><br/>"
 						+ "PDF");
 		reportActionPDF.setStylePrimaryName("freemed-PushButton");
-		reportActionPDF.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		reportActionPDF.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				runReport(ReportType.PDF);
 			}
 		});
@@ -144,8 +150,9 @@ public class ReportingScreen extends ScreenInterface {
 				.setHTML("<img src=\"resources/images/html.32x32.png\" /><br/>"
 						+ "HTML");
 		reportActionHTML.setStylePrimaryName("freemed-PushButton");
-		reportActionHTML.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		reportActionHTML.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				runReport(ReportType.HTML);
 			}
 		});
@@ -157,8 +164,9 @@ public class ReportingScreen extends ScreenInterface {
 				.setHTML("<img src=\"resources/images/xml.32x32.png\" /><br/>"
 						+ "XML");
 		reportActionXML.setStylePrimaryName("freemed-PushButton");
-		reportActionXML.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		reportActionXML.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				runReport(ReportType.XML);
 			}
 		});
@@ -284,36 +292,45 @@ public class ReportingScreen extends ScreenInterface {
 			Widget w = null;
 			if (type.compareToIgnoreCase("Date") == 0) {
 				w = new SimpleDatePicker();
-				((SimpleDatePicker) w).addChangeListener(new ChangeListener() {
-					public void onChange(Widget sender) {
-						reportParameters.put(i, ((SimpleDatePicker) sender)
-								.getCurrentDate().toString());
+				((SimpleDatePicker) w).addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent evt) {
+						reportParameters.put(i, ((SimpleDatePicker) evt
+								.getSource()).getCurrentDate().toString());
 					}
 				});
 			} else if (type.compareToIgnoreCase("Provider") == 0) {
 				w = new SupportModuleWidget("ProviderModule");
 				((SupportModuleWidget) w)
-						.addChangeListener(new ChangeListener() {
-							public void onChange(Widget sender) {
+						.addChangeHandler(new ValueChangeHandler<Integer>() {
+							@Override
+							public void onValueChange(
+									ValueChangeEvent<Integer> event) {
 								reportParameters.put(i,
-										((SupportModuleWidget) sender)
-												.getValue().toString());
+										((SupportModuleWidget) event
+												.getSource()).getValue()
+												.toString());
 							}
 						});
 			} else if (type.compareToIgnoreCase("Patient") == 0) {
 				w = new PatientWidget();
-				((PatientWidget) w).addChangeListener(new ChangeListener() {
-					public void onChange(Widget sender) {
-						reportParameters.put(i, ((PatientWidget) sender)
-								.getValue().toString());
-					}
-				});
+				((PatientWidget) w)
+						.addChangeHandler(new ValueChangeHandler<Integer>() {
+							@Override
+							public void onValueChange(
+									ValueChangeEvent<Integer> event) {
+								reportParameters.put(i, ((PatientWidget) event
+										.getSource()).getValue().toString());
+							}
+						});
 			} else {
 				// Default to text box
 				w = new TextBox();
-				((TextBox) w).addChangeListener(new ChangeListener() {
-					public void onChange(Widget sender) {
-						reportParameters.put(i, ((TextBox) sender).getText());
+				((TextBox) w).addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent evt) {
+						reportParameters.put(i, ((TextBox) evt.getSource())
+								.getText());
 					}
 				});
 			}

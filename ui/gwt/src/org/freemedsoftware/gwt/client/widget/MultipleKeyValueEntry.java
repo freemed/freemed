@@ -24,12 +24,17 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusWidget;
@@ -125,25 +130,19 @@ public class MultipleKeyValueEntry extends Composite {
 		}
 	}
 
-	protected FlexTable layoutTable;
+	protected class KVChangeHandler implements ValueChangeHandler<Integer>,
+			ChangeHandler {
+		@Override
+		public void onValueChange(ValueChangeEvent<Integer> event) {
+			myAction();
+		}
 
-	protected CustomListBox keyWidget;
+		@Override
+		public void onChange(ChangeEvent event) {
+			myAction();
+		}
 
-	protected Widget valueWidget;
-
-	protected CustomSortableTable displayTable;
-
-	protected HashMap<String, KeyValuePair> keys;
-
-	protected String currentKey;
-
-	protected WidgetType currentType;
-
-	protected HashMap<String, HashMap<String, String>> displayData = new HashMap<String, HashMap<String, String>>();
-
-	protected ChangeListener onSelect = new ChangeListener() {
-
-		public void onChange(Widget w) {
+		public void myAction() {
 			// Acquire value from current widget
 			String v = getValueWidgetValue();
 
@@ -160,8 +159,25 @@ public class MultipleKeyValueEntry extends Composite {
 			currentKey = "";
 			currentType = null;
 		}
-
 	};
+
+	protected FlexTable layoutTable;
+
+	protected CustomListBox keyWidget;
+
+	protected Widget valueWidget;
+
+	protected CustomSortableTable displayTable;
+
+	protected HashMap<String, KeyValuePair> keys;
+
+	protected String currentKey;
+
+	protected WidgetType currentType;
+
+	protected HashMap<String, HashMap<String, String>> displayData = new HashMap<String, HashMap<String, String>>();
+
+	protected KVChangeHandler onSelect = new KVChangeHandler();
 
 	public MultipleKeyValueEntry() {
 		layoutTable = new FlexTable();
@@ -171,15 +187,15 @@ public class MultipleKeyValueEntry extends Composite {
 		keyWidget = new CustomListBox();
 		keyWidget.setTabIndex(1);
 		keyWidget.setVisibleItemCount(1);
-		keyWidget.addChangeListener(new ChangeListener() {
-
-			public void onChange(Widget sender) {
+		keyWidget.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent evt) {
+				Widget sender = (Widget) evt.getSource();
 				if (((CustomListBox) sender).getWidgetValue().length() > 0) {
 					// Only fire change if something is actually selected
 					onChangeKey(((CustomListBox) sender).getWidgetValue());
 				}
 			}
-
 		});
 		layoutTable.setWidget(0, 0, keyWidget);
 
@@ -240,6 +256,21 @@ public class MultipleKeyValueEntry extends Composite {
 		}
 	}
 
+	public Date importSqlDate(String date) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+		calendar
+				.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
+		calendar.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+
+		calendar.set(Calendar.HOUR, 1);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		return new Date(calendar.getTime().getTime());
+	}
+
 	/**
 	 * Assign a preexisting value to the currently displayed entry widget.
 	 * 
@@ -255,7 +286,8 @@ public class MultipleKeyValueEntry extends Composite {
 			((CustomListBox) valueWidget).setWidgetValue(newValue);
 			break;
 		case DATEPICKER:
-			((SimpleDatePicker) valueWidget).setCurrentDate(new Date(newValue));
+			((SimpleDatePicker) valueWidget)
+					.setCurrentDate(importSqlDate(newValue));
 			break;
 		case MODULEPICKLIST:
 			((SupportModuleWidget) valueWidget).setValue(new Integer(newValue));
@@ -327,27 +359,27 @@ public class MultipleKeyValueEntry extends Composite {
 			for (int iter = 0; iter < options.length; iter++) {
 				((ListBox) valueWidget).addItem(options[iter]);
 			}
-			((CustomListBox) valueWidget).addChangeListener(onSelect);
+			((CustomListBox) valueWidget).addChangeHandler(onSelect);
 			break;
 		case SELECT_YN:
 			valueWidget = new CustomListBox();
 			((CustomListBox) valueWidget).setVisibleItemCount(1);
 			((CustomListBox) valueWidget).addItem("Yes", "1");
 			((CustomListBox) valueWidget).addItem("No", "0");
-			((CustomListBox) valueWidget).addChangeListener(onSelect);
+			((CustomListBox) valueWidget).addChangeHandler(onSelect);
 			break;
 		case DATEPICKER:
 			valueWidget = new SimpleDatePicker();
-			((SimpleDatePicker) valueWidget).addChangeListener(onSelect);
+			((SimpleDatePicker) valueWidget).addChangeHandler(onSelect);
 			break;
 		case MODULEPICKLIST:
 			valueWidget = new SupportModuleWidget();
-			((SupportModuleWidget) valueWidget).addChangeListener(onSelect);
+			((SupportModuleWidget) valueWidget).addChangeHandler(onSelect);
 			break;
 		case TEXTBOX:
 		default:
 			valueWidget = new TextBox();
-			((TextBox) valueWidget).addChangeListener(onSelect);
+			((TextBox) valueWidget).addChangeHandler(onSelect);
 			break;
 		}
 		try {

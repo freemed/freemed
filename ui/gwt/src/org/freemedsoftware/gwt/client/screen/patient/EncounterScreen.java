@@ -40,22 +40,23 @@ import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class EncounterScreen extends PatientScreenInterface {
 
@@ -105,9 +106,10 @@ public class EncounterScreen extends PatientScreenInterface {
 		superbillHPanel.add(superbillLabel);
 		final SupportModuleWidget superbillTemplate = new SupportModuleWidget(
 				"SuperbillTemplate");
-		superbillTemplate.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
-				Integer value = ((SupportModuleWidget) w).getValue();
+		superbillTemplate.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				Integer value = event.getValue();
 				if (value > 0) {
 					populateSuperbillFromId(value);
 					popoutPanel.setVisible(true);
@@ -126,19 +128,20 @@ public class EncounterScreen extends PatientScreenInterface {
 		dxTable = new FlexTable();
 		dxTable.setWidth("100%");
 		popoutPanel.add(dxTable);
-		dxPicklist.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
-				if (((SupportModuleWidget) w).getValue() > 0) {
+		dxPicklist.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				SupportModuleWidget w = (SupportModuleWidget) event.getSource();
+				if (w.getValue() > 0) {
 					// Push additional copy in
-					final String value = (((SupportModuleWidget) w).getValue())
-							.toString();
-					String label = ((SupportModuleWidget) w).getText();
+					final String value = w.getValue().toString();
+					String label = w.getText();
 					dxCount++;
 					CheckBox cb = new CheckBox(label);
-					cb.setChecked(true);
+					cb.setValue(true);
 					dxValues.put(value, true);
-					cb.addClickListener(new ClickListener() {
-						public void onClick(Widget sender) {
+					cb.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent evt) {
 							Boolean cur = dxValues.get(value);
 							dxValues.put(value, !cur.booleanValue());
 						}
@@ -156,8 +159,10 @@ public class EncounterScreen extends PatientScreenInterface {
 		pxTable = new FlexTable();
 		pxTable.setWidth("100%");
 		popoutPanel.add(pxTable);
-		pxPicklist.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
+		pxPicklist.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				SupportModuleWidget w = (SupportModuleWidget) event.getSource();
 				if (((SupportModuleWidget) w).getValue() > 0) {
 					// Push additional copy in
 					final String value = (((SupportModuleWidget) w).getValue())
@@ -165,10 +170,11 @@ public class EncounterScreen extends PatientScreenInterface {
 					String label = ((SupportModuleWidget) w).getText();
 					pxCount++;
 					CheckBox cb = new CheckBox(label);
-					cb.setChecked(true);
+					cb.setValue(true);
 					pxValues.put(value, true);
-					cb.addClickListener(new ClickListener() {
-						public void onClick(Widget sender) {
+					cb.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent evt) {
 							Boolean cur = pxValues.get(value);
 							pxValues.put(value, !cur.booleanValue());
 						}
@@ -186,8 +192,9 @@ public class EncounterScreen extends PatientScreenInterface {
 		// Submit button
 		PushButton submitButton = new PushButton("Add Encounter");
 		submitButton.setStylePrimaryName("freemed-PushButton");
-		submitButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		submitButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 			}
 		});
 		popoutPanel.add(submitButton);
@@ -257,8 +264,9 @@ public class EncounterScreen extends PatientScreenInterface {
 					w.setText(label);
 					dxValues.put(value, Boolean.FALSE);
 				}
-				w.addClickListener(new ClickListener() {
-					public void onClick(Widget sender) {
+				w.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent evt) {
 						Boolean cur = dxValues.get(value);
 						dxValues.put(value, !cur.booleanValue());
 					}
@@ -293,8 +301,9 @@ public class EncounterScreen extends PatientScreenInterface {
 					w.setText(label);
 					pxValues.put(value, Boolean.FALSE);
 				}
-				w.addClickListener(new ClickListener() {
-					public void onClick(Widget sender) {
+				w.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent evt) {
 						Boolean cur = pxValues.get(value);
 						pxValues.put(value, !cur.booleanValue());
 					}

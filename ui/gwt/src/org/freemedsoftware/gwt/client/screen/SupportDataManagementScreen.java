@@ -38,6 +38,10 @@ import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -48,15 +52,11 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -90,8 +90,9 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		horizontalPanel.add(addButton);
 		addButton.setStylePrimaryName("freemed-PushButton");
 		addButton.setText("Add");
-		addButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		addButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				SupportModuleEntry entry = new SupportModuleEntry(moduleName);
 				entry.setDoneCommand(thisRef);
 				Util.spawnTab(moduleName + ": " + "Add", entry);
@@ -101,8 +102,8 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		wField = new CustomListBox();
 		horizontalPanel.add(wField);
 		wField.setVisibleItemCount(1);
-		wField.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
+		wField.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent evt) {
 				// If we see text, repopulate
 				if (searchText.getText().length() > 2) {
 					populateData();
@@ -111,10 +112,11 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		});
 
 		searchText = new TextBox();
-		searchText.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
+		searchText.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent evt) {
 				// If we see text, repopulate
-				if (((TextBox) sender).getText().length() > 2) {
+				if (((TextBox) evt.getSource()).getText().length() > 2) {
 					populateData();
 				}
 			}
@@ -129,8 +131,12 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		sortableTable = new CustomSortableTable();
 		verticalPanel.add(sortableTable);
 		sortableTable.setSize("100%", "100%");
-		sortableTable.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		sortableTable.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				Cell clickedCell = ((CustomSortableTable) evt.getSource())
+						.getCellForEvent(evt);
+				int row = clickedCell.getRowIndex();
 				// Get information on row...
 				try {
 					final Integer recordId = new Integer(sortableTable

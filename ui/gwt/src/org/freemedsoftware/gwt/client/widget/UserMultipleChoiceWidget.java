@@ -38,6 +38,8 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -45,7 +47,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -71,14 +72,16 @@ public class UserMultipleChoiceWidget extends Composite {
 		// Add picklist for this ...
 		userWidget = new UserWidget();
 		v.add(userWidget);
-		userWidget.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
-				Integer val = ((UserWidget) sender).getValue();
-				String label = ((UserWidget) sender).getText();
+		userWidget.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				UserWidget sender = (UserWidget) event.getSource();
+				Integer val = sender.getValue();
+				String label = sender.getText();
 				JsonUtil.debug("value = " + val.toString() + ", label = "
 						+ label);
 				addValue(label, val);
-				((UserWidget) sender).clear();
+				sender.clear();
 			}
 		});
 	}

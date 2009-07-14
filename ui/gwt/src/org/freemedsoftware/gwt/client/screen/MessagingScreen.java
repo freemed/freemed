@@ -63,10 +63,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class MessagingScreen extends ScreenInterface implements ClickHandler {
 
@@ -201,8 +200,12 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 		wMessages.addColumn("Subject", "subject"); // col 3
 		wMessages.addColumn("Delete", "delete"); // col 4
 		wMessages.setIndexName("id");
-		wMessages.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		wMessages.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				Cell clickedCell = wMessages.getCellForEvent(evt);
+				int row = clickedCell.getRowIndex();
+				int col = clickedCell.getCellIndex();
 				// Get information on row...
 				try {
 					final Integer messageId = new Integer(wMessages

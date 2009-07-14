@@ -50,9 +50,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class MessageBox extends WidgetInterface {
 
@@ -94,9 +93,13 @@ public class MessageBox extends WidgetInterface {
 		wMessages.addColumn("Subject", "subject"); // col 2
 		wMessages.setIndexName("id");
 
-		wMessages.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		wMessages.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				// Get information on row...
+				Cell clickedCell = wMessages.getCellForEvent(event);
+				int row = clickedCell.getRowIndex();
+				int col = clickedCell.getCellIndex();
 				try {
 					final Integer messageId = new Integer(wMessages
 							.getValueByRow(row));
@@ -116,7 +119,6 @@ public class MessageBox extends WidgetInterface {
 					GWT.log("Caught exception: ", e);
 				}
 			}
-
 		});
 
 		// Standard is collapsed view of the Messagebox

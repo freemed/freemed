@@ -48,9 +48,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class PrescriptionRefillBox extends WidgetInterface {
 	protected Integer patid = 0;
@@ -86,13 +85,14 @@ public class PrescriptionRefillBox extends WidgetInterface {
 
 		wRequests.setIndexName("id");
 
-		wRequests.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		wRequests.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell clickedCell = wRequests.getCellForEvent(event);
+				int row = clickedCell.getRowIndex();
 				final Integer id = new Integer(wRequests.getValueByRow(row));
 				JsonUtil.debug(Integer.toString(id));
-
 			}
-
 		});
 
 		retrieveData();

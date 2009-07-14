@@ -45,6 +45,8 @@ import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -55,7 +57,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -71,7 +72,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PatientProblemList extends WidgetInterface {
 
-	public class ActionBar extends Composite implements ClickListener {
+	public class ActionBar extends Composite implements ClickHandler {
 
 		protected final String IMAGE_ANNOTATE = "resources/images/add1.16x16.png";
 
@@ -103,30 +104,30 @@ public class PatientProblemList extends WidgetInterface {
 
 			// Multiple select box
 			cb = new CheckBox();
-			cb.addClickListener(this);
+			cb.addClickHandler(this);
 			hPanel.add(cb);
 
 			// Build icons
 			annotateImage = new Image(IMAGE_ANNOTATE);
 			annotateImage.setTitle("Add Annotation");
-			annotateImage.addClickListener(this);
+			annotateImage.addClickHandler(this);
 			hPanel.add(annotateImage);
 
 			printImage = new Image(IMAGE_PRINT);
 			printImage.setTitle("Print");
-			printImage.addClickListener(this);
+			printImage.addClickHandler(this);
 			hPanel.add(printImage);
 
 			// Display all unlocked things
 			if (!locked) {
 				deleteImage = new Image(IMAGE_DELETE);
 				deleteImage.setTitle("Remove");
-				deleteImage.addClickListener(this);
+				deleteImage.addClickHandler(this);
 				hPanel.add(deleteImage);
 
 				modifyImage = new Image(IMAGE_MODIFY);
 				modifyImage.setTitle("Edit");
-				modifyImage.addClickListener(this);
+				modifyImage.addClickHandler(this);
 				hPanel.add(modifyImage);
 			} else {
 				// Display all actions for locked items
@@ -134,17 +135,18 @@ public class PatientProblemList extends WidgetInterface {
 		}
 
 		public void setChecked(boolean s) {
-			cb.setChecked(s);
+			cb.setValue(s);
 		}
 
-		public void onClick(Widget sender) {
+		public void onClick(ClickEvent evt) {
+			Widget sender = (Widget) evt.getSource();
 			if (sender == cb) {
 				// Handle clicking
 				JsonUtil.debug("current status = "
-						+ (cb.isChecked() ? "checked" : "not"));
+						+ (cb.getValue() ? "checked" : "not"));
 
 				// Set in dictionary
-				setSelected(internalId, cb.isChecked());
+				setSelected(internalId, cb.getValue());
 
 				// Adjust all others to have same status as this.
 				try {
@@ -153,7 +155,7 @@ public class PatientProblemList extends WidgetInterface {
 					while (iter.hasNext()) {
 						ActionBar cur = iter.next();
 						if (cur != this) {
-							cur.setChecked(cb.isChecked());
+							cur.setChecked(cb.getValue());
 						}
 					}
 				} catch (Exception ex) {
@@ -180,7 +182,7 @@ public class PatientProblemList extends WidgetInterface {
 	}
 
 	public class CreateAnnotationPopup extends DialogBox implements
-			ClickListener {
+			ClickHandler {
 
 		protected HashMap<String, String> data = null;
 
@@ -202,14 +204,14 @@ public class PatientProblemList extends WidgetInterface {
 			verticalPanel.add(textArea);
 
 			PushButton submitButton = new PushButton("Add Annotation");
-			submitButton.addClickListener(this);
+			submitButton.addClickHandler(this);
 			submitButton.setText("Add Annotation");
 			verticalPanel.add(submitButton);
 			verticalPanel.setCellHorizontalAlignment(submitButton,
 					HasHorizontalAlignment.ALIGN_CENTER);
 		}
 
-		public void onClick(Widget sender) {
+		public void onClick(ClickEvent evt) {
 			Window.alert("STUB: need to handle annotation add");
 			hide();
 		}

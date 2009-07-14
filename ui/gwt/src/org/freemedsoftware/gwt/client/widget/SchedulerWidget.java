@@ -41,6 +41,12 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -53,9 +59,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -87,7 +91,7 @@ import eu.future.earth.gwt.client.date.picker.NoneContraintAndEntryRenderer;
 import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 
 public class SchedulerWidget extends WidgetInterface implements
-		DateEventListener, WindowResizeListener, ClickListener {
+		DateEventListener, WindowResizeListener, ClickHandler {
 
 	public class SchedulerCss {
 
@@ -474,7 +478,8 @@ public class SchedulerWidget extends WidgetInterface implements
 	}
 
 	public class StringEventDataDialog extends DialogBox implements
-			KeyboardListener, ClickListener, ChangeListener {
+			KeyboardListener, ClickHandler, ChangeHandler,
+			ValueChangeHandler<Integer> {
 
 		private PatientWidget patient = null;
 
@@ -554,9 +559,9 @@ public class SchedulerWidget extends WidgetInterface implements
 			if (data.getEndTime() != null) {
 				end.setDate(!reverseTime ? data.getEndTime() : data
 						.getStartTime());
-				wholeDay.setChecked(false);
+				wholeDay.setValue(false);
 			} else {
-				wholeDay.setChecked(true);
+				wholeDay.setValue(true);
 			}
 			if (newCommand == DateEventActions.ADD) {
 				setText("New Appointment");
@@ -577,7 +582,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			timePanel.add(end);
 
 			time.add(wholeDay);
-			wholeDay.addClickListener(this);
+			wholeDay.addClickHandler(this);
 			if (data.getEndTime() != null) {
 				time.add(timePanel);
 			}
@@ -594,7 +599,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			} catch (Exception ex) {
 				JsonUtil.debug(ex.toString());
 			}
-			patient.addChangeListener(this);
+			patient.addChangeHandler(this);
 
 			provider = new SupportModuleWidget();
 			provider.setModuleName("ProviderModule");
@@ -603,8 +608,8 @@ public class SchedulerWidget extends WidgetInterface implements
 			} catch (Exception ex) {
 				JsonUtil.debug(ex.toString());
 			}
-			provider.addChangeListener(this);
-			text.addChangeListener(this);
+			provider.addChangeHandler(this);
+			text.addChangeHandler(this);
 			text.addKeyboardListener(this);
 			table.setWidget(2, 0, new Label("Provider"));
 			// Only set default provider *if* there is one, and if the
@@ -622,13 +627,13 @@ public class SchedulerWidget extends WidgetInterface implements
 			cancel = new Button("Cancel");
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
-			cancel.addClickListener(this);
+			cancel.addClickHandler(this);
 
 			ok = new Button("Ok");
 			ok.setEnabled(false);
 			ok.setFocus(true);
 			ok.setAccessKey('o');
-			ok.addClickListener(this);
+			ok.addClickHandler(this);
 
 			final HorizontalPanel button = new HorizontalPanel();
 			button.add(ok);
@@ -637,7 +642,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				delete = new Button("Delete");
 				delete.setFocus(true);
 				delete.setAccessKey('d');
-				delete.addClickListener(this);
+				delete.addClickHandler(this);
 				button.add(new HTML(" "));
 				button.add(delete);
 			}
@@ -663,7 +668,8 @@ public class SchedulerWidget extends WidgetInterface implements
 			toggleButton();
 		}
 
-		public void onChange(Widget sender) {
+		public void onChange(ChangeEvent evt) {
+			Widget sender = (Widget) evt.getSource();
 			if (sender == text || sender == patient || sender == provider) {
 				toggleButton();
 			}
@@ -682,9 +688,10 @@ public class SchedulerWidget extends WidgetInterface implements
 		public void onKeyUp(Widget widget, char _char, int _int) {
 		}
 
-		public void onClick(Widget sender) {
+		public void onClick(ClickEvent evt) {
+			Widget sender = (Widget) evt.getSource();
 			if (sender == wholeDay) {
-				if (wholeDay.isChecked()) {
+				if (wholeDay.getValue()) {
 					if (time.getWidgetIndex(timePanel) > -1) {
 						time.remove(timePanel);
 					}
@@ -698,7 +705,7 @@ public class SchedulerWidget extends WidgetInterface implements
 					if (data == null) {
 						data = new EventData();
 					}
-					if (wholeDay.isChecked()) {
+					if (wholeDay.getValue()) {
 						data.setStartTime(date.getValue());
 					} else {
 						data.setStartTime(start.getValue(date.getValue()));
@@ -771,6 +778,7 @@ public class SchedulerWidget extends WidgetInterface implements
 									.debug("Error on retrieving AppointmentTemplate");
 						}
 
+						@SuppressWarnings("unchecked")
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
@@ -823,6 +831,12 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else {
 				// GWT-RPC
 			}
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<Integer> event) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}
@@ -1226,7 +1240,7 @@ public class SchedulerWidget extends WidgetInterface implements
 														.setIdentifier(result);
 											}
 										} else if (rpcparams.get("resulttype") == "Boolean") {
-											Boolean result = (Boolean) r;
+											// Boolean result = (Boolean) r;
 											JsonUtil.debug("SchedulerWidget - "
 													+ s
 													+ ":"
@@ -1384,8 +1398,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		multiPanel.setHeight(shortcutHeight);
 	}
 
-	public void onClick(Widget arg0) {
-		// demoPanel.setG
+	@Override
+	public void onClick(ClickEvent event) {
 	}
 
 	/**

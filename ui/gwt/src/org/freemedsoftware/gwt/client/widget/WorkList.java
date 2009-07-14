@@ -35,6 +35,8 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.SchedulerScreen;
 import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -43,16 +45,14 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class WorkList extends WidgetInterface {
 
@@ -82,12 +82,11 @@ public class WorkList extends WidgetInterface {
 		refreshButton.getUpFace().setImage(
 				new Image("resources/images/summary_modify.16x16.png"));
 
-		refreshButton.addClickListener(new ClickListener() {
-
-			public void onClick(Widget sender) {
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				retrieveData();
 			}
-
 		});
 
 		hPaneltop.add(refreshButton);
@@ -117,8 +116,9 @@ public class WorkList extends WidgetInterface {
 						Anchor a = new Anchor();
 						a.setTitle("View EMR for " + data.get("patient_name"));
 						a.setText(data.get("patient_name"));
-						a.addClickListener(new ClickListener() {
-							public void onClick(Widget sender) {
+						a.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent evt) {
 								PatientScreen p = new PatientScreen();
 								p.setPatient(Integer.parseInt(data
 										.get("patient")));
@@ -128,9 +128,12 @@ public class WorkList extends WidgetInterface {
 						return a;
 					}
 				});
-		workListTable.addTableListener(new TableListener() {
-
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		workListTable.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				Cell clickedCell = workListTable.getCellForEvent(evt);
+				int row = clickedCell.getRowIndex();
+				int col = clickedCell.getCellIndex();
 				try {
 					final Integer schedulerId = new Integer(workListTable
 							.getValueByRow(row));
@@ -142,9 +145,7 @@ public class WorkList extends WidgetInterface {
 					JsonUtil.debug("WorkList.java: Caught exception: "
 							+ e.toString());
 				}
-
 			}
-
 		});
 	}
 

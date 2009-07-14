@@ -38,6 +38,10 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -45,8 +49,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -84,9 +86,10 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		// Add picklist for this ...
 		supportModuleWidget = new SupportModuleWidget();
 		v.add(supportModuleWidget);
-		supportModuleWidget.addChangeListener(new ChangeListener() {
-			public void onChange(Widget sender) {
-				SupportModuleWidget w = (SupportModuleWidget) sender;
+		supportModuleWidget.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				SupportModuleWidget w = (SupportModuleWidget) event.getSource();
 				addValue(w.getText(), w.getValue());
 				w.clear();
 			}
@@ -102,10 +105,11 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		hp.add(new Label(text));
 		Button removeButton = new Button("X");
 		removeButton.setTitle("Click to remove this item from this list.");
-		removeButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
 				// Remove the hp object from its parent container, "container"
-				w.getParent().removeFromParent();
+				((Widget) evt.getSource()).getParent().removeFromParent();
 
 				// Remove from data store
 				removeValueFromStore(value);

@@ -62,10 +62,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class UnfiledDocuments extends ScreenInterface {
@@ -106,8 +105,11 @@ public class UnfiledDocuments extends ScreenInterface {
 		wDocuments.setIndexName("id");
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
-		wDocuments.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents e, int row, int col) {
+		wDocuments.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell clickedCell = wDocuments.getCellForEvent(event);
+				int row = clickedCell.getRowIndex();
 				// Import current id
 				try {
 					currentId = new Integer(wDocuments.getValueByRow(row));

@@ -39,6 +39,10 @@ import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -48,17 +52,14 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class PatientSearchScreen extends ScreenInterface {
 
@@ -86,9 +87,10 @@ public class PatientSearchScreen extends ScreenInterface {
 		flexTable.setWidget(0, 0, smartSearchLabel);
 
 		wSmartSearch = new PatientWidget();
-		wSmartSearch.addChangeListener(new ChangeListener() {
-			public void onChange(Widget w) {
-				Integer val = ((PatientWidget) w).getValue();
+		wSmartSearch.addChangeHandler(new ValueChangeHandler<Integer>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				Integer val = ((PatientWidget) event.getSource()).getValue();
 				// Log.debug("Patient value = " + val.toString());
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
@@ -144,8 +146,11 @@ public class PatientSearchScreen extends ScreenInterface {
 		sortableTable.addColumn("Internal ID", "patient_id");
 		sortableTable.addColumn("Date of Birth", "date_of_birth");
 		sortableTable.addColumn("Age", "age");
-		sortableTable.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
+		sortableTable.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				Cell clickedCell = sortableTable.getCellForEvent(evt);
+				int row = clickedCell.getRowIndex();
 				// Get information on row...
 				try {
 					final Integer patientId = new Integer(sortableTable

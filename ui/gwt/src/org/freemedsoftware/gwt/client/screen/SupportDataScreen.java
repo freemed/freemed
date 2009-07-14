@@ -38,6 +38,8 @@ import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -48,9 +50,8 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class SupportDataScreen extends ScreenInterface {
 
@@ -68,8 +69,11 @@ public class SupportDataScreen extends ScreenInterface {
 		sortableTable.setIndexName("module_class");
 		sortableTable.addColumn("Name", "module_name");
 		sortableTable.addColumn("Version", "module_version");
-		sortableTable.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents e, int row, int col) {
+		sortableTable.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell clickedCell = sortableTable.getCellForEvent(event);
+				int row = clickedCell.getRowIndex();
 				// String moduleName = sortableTable.getValueByRow(row);
 				handleClick(row);
 			}

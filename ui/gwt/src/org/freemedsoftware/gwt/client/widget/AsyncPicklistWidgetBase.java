@@ -28,26 +28,28 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestionEvent;
-import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
-abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
+abstract public class AsyncPicklistWidgetBase extends WidgetInterface implements
+		HasValueChangeHandlers<Integer> {
 
 	protected Integer value = new Integer(0);
 
@@ -61,14 +63,12 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 
 	private final VerticalPanel layout;
 
-	private ChangeListenerCollection changeListeners;
+	private HashMap<ValueChangeHandler<Integer>, HandlerRegistration> changeHandlers = new HashMap<ValueChangeHandler<Integer>, HandlerRegistration>();
 
 	public AsyncPicklistWidgetBase() {
 		// Log.setUncaughtExceptionHandler();
 
 		map = new HashMap<String, String>();
-
-		changeListeners = new ChangeListenerCollection();
 
 		layout = new VerticalPanel();
 
@@ -105,9 +105,10 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 				}
 			}
 		});
-		searchBox.addEventHandler(new SuggestionHandler() {
-			public void onSuggestionSelected(SuggestionEvent e) {
-				Suggestion s = e.getSelectedSuggestion();
+		searchBox.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				Suggestion s = (Suggestion) event.getSelectedItem();
 				value = getValueFromText(s.getDisplayString());
 				setTitle(s.getDisplayString());
 				onSelected();
@@ -133,6 +134,10 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 	 */
 	abstract protected void loadSuggestions(String req, final Request r,
 			final Callback cb);
+
+	public AsyncPicklistWidgetBase getWidgetBase() {
+		return this;
+	}
 
 	/**
 	 * Resolve value of widget from full text.
@@ -190,25 +195,33 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface {
 
 	public abstract void getTextForValue(Integer val);
 
-	public void addChangeListener(ChangeListener listener) {
-		if (changeListeners == null)
-			changeListeners = new ChangeListenerCollection();
-		changeListeners.add(listener);
+	public void addChangeHandler(ValueChangeHandler<Integer> handler) {
+		this.addValueChangeHandler(handler);
 	}
 
-	public void removeChangeListener(ChangeListener listener) {
-		if (changeListeners != null)
-			changeListeners.remove(listener);
+	public void removeChangeHandler(ValueChangeHandler<Integer> handler) {
+		try {
+			changeHandlers.get(handler).removeHandler();
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(
+			ValueChangeHandler<Integer> handler) {
+		HandlerRegistration r = addHandler(handler, ValueChangeEvent.getType());
+		changeHandlers.put(handler, r);
+		return r;
 	}
 
 	/**
-	 * Fire change listeners attached to this object if there are any.
+	 * Fire ValueChangeHandler classes attached to this object if there are any.
 	 * 
 	 */
 	protected void onSelected() {
-		if (changeListeners != null) {
-			changeListeners.fireChange(this);
-		}
+		// Fire change
+		ValueChangeEvent.fire(this, value);
 	}
 
 	/**
