@@ -100,13 +100,10 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	PRIMARY KEY		( id )
 );
 
-DROP PROCEDURE IF EXISTS patient_Upgrade;
+DROP PROCEDURE IF EXISTS patient_trigger_Remove;
 DELIMITER //
-CREATE PROCEDURE patient_Upgrade ( )
+CREATE PROCEDURE patient_trigger_Remove ( )
 BEGIN
-	DECLARE patient_Count INT UNSIGNED DEFAULT 0;
-	DECLARE patient_keypad_Count INT UNSIGNED DEFAULT 0;
-
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Remove triggers
@@ -114,6 +111,20 @@ BEGIN
 	DROP TRIGGER patient_Update;
 	DROP TRIGGER patient_address_Insert;
 	DROP TRIGGER patient_address_Update;
+END//
+DELIMITER ;
+
+CALL patient_trigger_Remove();
+
+DROP PROCEDURE IF EXISTS patient_Upgrade;
+DELIMITER //
+CREATE PROCEDURE patient_Upgrade ( )
+BEGIN
+	DECLARE patient_Count INT UNSIGNED DEFAULT 0;
+	DECLARE patient_keypad_Count INT UNSIGNED DEFAULT 0;
+	DECLARE patient_phone_Count INT UNSIGNED DEFAULT 0;
+
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Upgrades
 
@@ -126,6 +137,7 @@ BEGIN
 	# If we have nothing in patient_keypad_lookup, populate.
 	SELECT COUNT(*) INTO patient_Count FROM patient;
 	SELECT COUNT(*) INTO patient_keypad_Count FROM patient_keypad_lookup;
+	SELECT COUNT(*) INTO patient_phone_Count FROM patient_phone_lookup;
 	IF patient_keypad_Count = 0 AND patient_Count > 0 THEN
 		INSERT INTO `patient_keypad_lookup` (
 				patient,
@@ -143,10 +155,31 @@ BEGIN
 				ptarchive
 			FROM patient;
 	END IF;
+
+	#---- Populate phone number lookup table if needed
+	IF patient_phone_Count = 0 AND patient_Count > 0 THEN
+		INSERT INTO `patient_phone_lookup` (
+				  patient, type, phone_number
+			) SELECT
+				  id, 'home', pthphone
+			FROM patient
+			WHERE ptarchive = 0 AND LENGTH( pthphone ) > 0;
+		INSERT INTO `patient_phone_lookup` (
+				  patient, type, phone_number
+			) SELECT
+				  id, 'work', ptwphone
+			FROM patient
+			WHERE ptarchive = 0 AND LENGTH( ptwphone ) > 0;
+		INSERT INTO `patient_phone_lookup` (
+				  patient, type, phone_number
+			) SELECT
+				  id, 'mobile', ptmphone
+			FROM patient
+			WHERE ptarchive = 0 AND LENGTH( ptmphone ) > 0;
+	END IF;
 END
 //
 DELIMITER ;
-CALL patient_Upgrade( );
 
 #----- Triggers
 
@@ -170,6 +203,40 @@ CREATE TRIGGER patient_Insert
 				SUBSTRING( NEW.ptssn FROM -4 FOR 4 ),
 				NEW.ptarchive
 			);
+		#----- If the phone numbers aren't null, insert
+		IF LENGTH(NEW.pthphone) > 0 THEN
+			INSERT INTO `patient_phone_lookup` (
+				  patient
+				, type
+				, phone_number
+			) VALUES (
+				  NEW.id
+				, 'home'
+				, NEW.pthphone
+			);
+		END IF;
+		IF LENGTH(NEW.ptwphone) > 0 THEN
+			INSERT INTO `patient_phone_lookup` (
+				  patient
+				, type
+				, phone_number
+			) VALUES (
+				  NEW.id
+				, 'work'
+				, NEW.ptwphone
+			);
+		END IF;
+		IF LENGTH(NEW.ptmphone) > 0 THEN
+			INSERT INTO `patient_phone_lookup` (
+				  patient
+				, type
+				, phone_number
+			) VALUES (
+				  NEW.id
+				, 'mobile'
+				, NEW.ptmphone
+			);
+		END IF;
 	END;
 //
 
@@ -279,6 +346,61 @@ CREATE TRIGGER patient_Update
 				ssn = SUBSTRING( NEW.ptssn FROM -4 FOR 4 ),
 				archive = NEW.ptarchive
 			WHERE patient = NEW.id;
+		END IF;
+		#----- Handle all phone lookups
+		IF OLD.pthphone <> NEW.pthphone THEN
+			IF LENGTH(OLD.pthphone) > 0 THEN
+				UPDATE `patient_phone_lookup` SET
+					phone_number = NEW.pthphone
+				WHERE patient = NEW.id AND type = 'home' AND
+					phone_number = OLD.pthphone;
+			ELSE
+				INSERT INTO `patient_phone_lookup` (
+					  patient
+					, type
+					, phone_number
+				) VALUES (
+					  NEW.id
+					, 'home'
+					, NEW.pthphone
+				);
+			END IF;
+		END IF;
+		IF OLD.ptwphone <> NEW.ptwphone THEN
+			IF LENGTH(OLD.ptwphone) > 0 THEN
+				UPDATE `patient_phone_lookup` SET
+					phone_number = NEW.ptwphone
+				WHERE patient = NEW.id AND type = 'work' AND
+					phone_number = OLD.ptwphone;
+			ELSE
+				INSERT INTO `patient_phone_lookup` (
+					  patient
+					, type
+					, phone_number
+				) VALUES (
+					  NEW.id
+					, 'work'
+					, NEW.ptwphone
+				);
+			END IF;
+		END IF;
+		IF OLD.ptmphone <> NEW.ptmphone THEN
+			IF LENGTH(OLD.ptmphone) > 0 THEN
+				UPDATE `patient_phone_lookup` SET
+					phone_number = NEW.ptmphone
+				WHERE patient = NEW.id AND type = 'mobile' AND
+					phone_number = OLD.ptmphone;
+			ELSE
+				INSERT INTO `patient_phone_lookup` (
+					  patient
+					, type
+					, phone_number
+				) VALUES (
+					  NEW.id
+					, 'mobile'
+					, NEW.ptmphone
+				);
+			END IF;
 		END IF;
 	END;
 //
@@ -393,4 +515,23 @@ CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
 	PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS `patient_phone_lookup` (
+	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+
+	, type			ENUM ( 'home', 'work', 'mobile', 'other' ) NOT NULL DEFAULT 'home'
+	, phone_number		VARCHAR (20) NOT NULL
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+
+	#	Define keys
+
+	, PRIMARY KEY		( id )
+	, KEY			( phone_number )
+	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+);
+
+#----- Call upgrade at end of DTD so that all tables are created properly
+
+CALL patient_Upgrade( );
 
