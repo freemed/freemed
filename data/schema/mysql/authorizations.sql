@@ -94,3 +94,30 @@ CREATE TRIGGER authorizations_Update
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_GetMostCurrentAuthorization;
+DELIMITER //
+CREATE PROCEDURE sp_GetMostCurrentAuthorization ( IN patientId INT UNSIGNED )
+BEGIN
+	DECLARE found INT UNSIGNED;
+
+	# Attempt to find a current authorization for this patient
+	SELECT id INTO found
+		FROM authorizations
+		WHERE ( authdtend = '0000-00-00' OR authdtend > CURRENT_DATE )
+			AND authpatient = patientId
+		ORDER BY id DESC LIMIT 1;
+
+	# If that does not work, find the *most* recent
+	IF ISNULL(found) THEN
+		SELECT id INTO found
+			FROM authorizations
+			WHERE authpatient = patientId
+			ORDER BY authdtend DESC LIMIT 1;
+	END IF;
+
+	# "Return" value
+	SELECT found;
+END
+//
+DELIMITER ;
+
