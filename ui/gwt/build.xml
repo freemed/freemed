@@ -36,6 +36,7 @@
   </path>
 
   <target name="gwtc" description="GWT compile to JavaScript">
+    <mkdir dir="build" />
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
       <classpath>
         <pathelement location="src"/>
@@ -48,11 +49,18 @@
       <arg value="-style"/>
       <arg value="OBFUS"/>
       <arg value="-war" />
-      <arg value="www" />
+      <arg value="build" />
       <arg value="org.freemedsoftware.gwt.FreemedInterface" />
     </java>
     <!-- Remove temporary files when done -->
-    <!-- <delete dir="www/org" failonerror="false" /> -->
+    <delete dir="build/org" failonerror="false" />
+    <!-- Remove subversion files when done -->
+    <delete dir="build/**/.svn" failonerror="false" />
+    <!-- Copy compiled files -->
+    <copy todir="www/FreemedInterface">
+      <fileset dir="build/FreemedInterface" excludes="**/*.java"/>
+    </copy>
+
   </target>
 
   <target name="hosted" description="Run hosted mode">
@@ -82,8 +90,9 @@
   <target name="build" depends="gwtc" description="Build this project" />
 
   <target name="clean" description="Cleans this project">
+    <delete dir="build" failonerror="false" />
     <delete dir="www/FreemedInterface" failonerror="false" />
-    <!-- <delete dir="www/org" failonerror="false" /> -->
+    <delete dir="www/org" failonerror="false" />
   </target>
 
 </project>
