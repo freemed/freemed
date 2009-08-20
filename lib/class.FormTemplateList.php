@@ -28,6 +28,7 @@ class FormTemplateList {
 
 				// Get information by instantiating template
 				$template = CreateObject('_FreeMED.FormTemplate', $basename);
+				unset($information);
 				$information = $template->GetInformation();
 				// Add to the stack
 				$scan[$basename] = $information;

@@ -67,14 +67,13 @@ class FormTemplate {
 		$template = $this->GetXMLTemplate();
 
 		// Extract pages, go one by one
-		$controls_dom =& $template->elementsByName('controls');
-		foreach ($controls_dom[0]->Children AS $control) {
-			unset ($c);
-			foreach ($control->Attributes AS $attr) {
-				$c[$attr->Name] = $attr->Content;
+		foreach ($template->xpath('//controls/control') AS $control) {
+			foreach ($control->attributes() AS $name => $content) {
+				$c[$name] = (string) $content;
 			}
 			$results[$c['variable']] = $c;
 		} // end foreach control
+		//print "<pre>"; print_r($results); die("</pre>");
 		return $results;
 	} // end method GetControls
 
@@ -82,9 +81,9 @@ class FormTemplate {
 	function GetInformation ( ) {
 		$template = $this->GetXMLTemplate();
 
-		$information_dom =& $template->elementsByName('information');
-		foreach ($information_dom['0']->Children AS $i) {
-			$information[$i->Name] = $i->Children[0]->Content;
+		$r = $template->xpath('//information');
+		foreach ($r[0] AS $k => $v) {
+			$information[$k] = (string) $v;
 		}
 		return $information;
 	} // end method GetInformation
@@ -99,11 +98,10 @@ class FormTemplate {
 	//
 	function GetXMLTemplate ( ) {
 		static $template;
-		if (!isset($template)) {
-			$template_obj = CreateObject('_FreeMED.eZXML');
-			$template =& $template_obj->domTree( file_get_contents($this->xml_template), array( "TrimWhiteSpace" => true  ) );
+		if (!isset($template[$this->xml_template])) {
+			$template[$this->xml_template] = simplexml_load_file ( $this->xml_template );
 		} // end caching
-		return $template;
+		return $template[$this->xml_template];
 	} // end method GetXMLTemplate
 
 	// Method: LoadData
@@ -166,10 +164,10 @@ class FormTemplate {
 		$output .= '</information>'."\n";
 
 		// Extract pages, go one by one
-		$page_dom =& $template->elementsByName('page');
-		foreach ($page_dom AS $sub) {
+		foreach ($template->xpath('//page') AS $sub) {
 			// Extract original page id (need to translate as-is)
-			$oid = $sub->Attributes[0]->Content;
+			$attr = $sub->attributes();
+			$oid = (string) $attr->oid;
 			//print "<b>processing page $oid</b><br/>\n";
 
 			$output .= '<page oid="'.$oid.'">'."\n";
@@ -177,14 +175,14 @@ class FormTemplate {
 			// Loop through all children elements ...
 			//	d = data element
 			//	e = element attributes
-			foreach ($sub->Children AS $element) {
-				foreach ($element->Attributes AS $attr) {
-					$e[$attr->Name] = $attr->Content;
+			foreach ($sub AS $element) {
+				foreach ($element->attributes() AS $name => $content) {
+					$e[$name] = (string) $content;
 				}
-				foreach ($element->Children AS $children) {
-					if ($children->Name == 'data') {
-						foreach ($children->Attributes AS $attr) {
-							$d[$attr->Name] = $attr->Content;
+				foreach ($element AS $name => $children) {
+					if ($name == 'data') {
+						foreach ($children->attributes() AS $name => $content) {
+							$d[$name] = (string) $content;
 						}
 					}
 				}
