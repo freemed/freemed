@@ -97,7 +97,7 @@ public class AccordionPanel extends Composite {
 				if (currentlyExpanded != null) {
 					Widget w = currentlyExpanded;
 					Element elem = w.getElement();
-					int oSh = DOM.getIntAttribute(elem, animBounds);
+					int oSh = DOM.getElementPropertyInt(elem, animBounds);
 					DOM.setStyleAttribute(elem, animField, ""
 							+ ((NUM_FRAMES - frame) * oSh / NUM_FRAMES) + "px");
 
@@ -105,7 +105,7 @@ public class AccordionPanel extends Composite {
 				if (currentlyExpanded != c) {
 					Widget w = c;
 					Element elem = w.getElement();
-					int oSh = DOM.getIntAttribute(elem, animBounds);
+					int oSh = DOM.getElementPropertyInt(elem, animBounds);
 					DOM.setStyleAttribute(elem, animField, ""
 							+ (frame * oSh / NUM_FRAMES) + "px");
 				}
