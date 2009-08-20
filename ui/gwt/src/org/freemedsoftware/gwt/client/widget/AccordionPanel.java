@@ -25,12 +25,16 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.HashMap;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -49,15 +53,22 @@ public class AccordionPanel extends Composite {
 	private Widget currentlyExpanded = null;
 	private Label currentlyExpandedLabel = null;
 
+	private HashMap<String, Label> labelMap = new HashMap<String, Label>();
+	private HashMap<String, Widget> widgetMap = new HashMap<String, Widget>();
+
 	public AccordionPanel(boolean horizontal) {
 		if (horizontal) {
 			aPanel = new HorizontalPanel();
 			animField = "width";
 			animBounds = "scrollWidth";
+			((HorizontalPanel) aPanel)
+					.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		} else {
 			aPanel = new VerticalPanel();
 			animField = "height";
 			animBounds = "scrollHeight";
+			((VerticalPanel) aPanel)
+					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		}
 		initWidget(aPanel);
 		setStylePrimaryName("accordion");
@@ -73,16 +84,33 @@ public class AccordionPanel extends Composite {
 		final SimplePanel sp = new SimplePanel();
 		sp.setWidget(content);
 
-		l.addClickHandler(new ClickHandler() {
+		ClickHandler ch = new ClickHandler() {
 			public void onClick(ClickEvent sender) {
 				expand(l, sp);
 			}
-		});
+		};
+		l.addClickHandler(ch);
 		aPanel.add(l);
+
+		// Add to indices
+		labelMap.put(label, l);
+		widgetMap.put(label, content);
+
 		sp.setStylePrimaryName(getStylePrimaryName() + "-content");
 		DOM.setStyleAttribute(sp.getElement(), animField, "0px");
 		DOM.setStyleAttribute(sp.getElement(), "overflow", "hidden");
 		aPanel.add(sp);
+	}
+
+	public void selectPanel(String label) {
+		Widget c = widgetMap.get(label);
+		c.addStyleDependentName("selected");
+		currentlyExpanded = c;
+		currentlyExpandedLabel = labelMap.get(label);
+		currentlyExpandedLabel.addStyleDependentName("selected");
+		Element elem = c.getElement();
+		DOM.setStyleAttribute(elem, "overflow", "auto");
+		DOM.setStyleAttribute(elem, animField, "auto");
 	}
 
 	private void expand(final Label label, final Widget c) {

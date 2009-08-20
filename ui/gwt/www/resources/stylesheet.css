@@ -704,8 +704,55 @@ a:hover {
 
 /* Accordion CSS */
 
+.accordion-item-selected {
+	background: #aaaaff;
+	width: 100%;
+	cursor: pointer;
+	cursor: hand;
+	
+	padding-left: 45px;
+	padding-right: 45px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	/* round corners if we can */
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	-moz-border-radius-topright: 10px;
+	-moz-border-radius-bottomright: 10px;
+	}
+
+.accordion-item-unselected {
+	background: transparent;
+	width: 100%;
+	cursor: default;
+
+	padding-left: 45px;
+	padding-right: 45px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+
+	margin-top: 10px;
+	margin-bottom: 10px;
+	}
+
+.accordion-panel {
+	background-color: transparent;
+	background-image: url(images/stipedbg.png);
+	background-repeat: repeat-x repeat-y;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	margin: 0;
+	padding: 20px;
+	font-family: verdana;
+	}
+
 .accordion-title {
-	background: #EFEFE3 url(gray-bg.gif) repeat-x scroll 0%;
+	background: #EFEFE3 url(images/stipedbg.png) repeat-x scroll 0%;
 	border: 0pt none;
 	padding: 3px;
 	color: white;
@@ -713,15 +760,15 @@ a:hover {
 	}
 
 .accordion-title-selected {
-	background: coral none;
+	background: #4444ff none;
 	}
 
 .accordion {
-	width: 300px;
+	width: 250px;
 	}
 
 .accordion2-title {
-	background: #EFEFE3 url(gray-bg.gif) repeat-x scroll 0%;
+	background: #EFEFE3 url(images/stipedbg.png) repeat-x scroll 0%;
 	border: 0pt none;
 	padding: 3px;
 	padding-left: 10px;
@@ -734,6 +781,6 @@ a:hover {
 	}
 
 .accordion2 {
-	width: 300px;
+	width: 250px;
 	}
 
