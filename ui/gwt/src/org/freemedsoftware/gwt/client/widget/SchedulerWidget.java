@@ -45,6 +45,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
@@ -57,7 +63,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -66,7 +71,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -91,7 +95,7 @@ import eu.future.earth.gwt.client.date.picker.NoneContraintAndEntryRenderer;
 import eu.future.earth.gwt.client.date.week.staend.AbstractDayField;
 
 public class SchedulerWidget extends WidgetInterface implements
-		DateEventListener, WindowResizeListener, ClickHandler {
+		DateEventListener, ResizeHandler, ClickHandler {
 
 	public class SchedulerCss {
 
@@ -144,10 +148,6 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private Integer roomId = null;
 
-		// TODO: Position Marker
-		/**
-		 * @wbp.parser.constructor
-		 */
 		public EventData() {
 			super();
 			id = String.valueOf(System.currentTimeMillis());
@@ -478,8 +478,7 @@ public class SchedulerWidget extends WidgetInterface implements
 	}
 
 	public class StringEventDataDialog extends DialogBox implements
-			KeyboardListener, ClickHandler, ChangeHandler,
-			ValueChangeHandler<Integer> {
+			ClickHandler, ChangeHandler, ValueChangeHandler<Integer> {
 
 		private PatientWidget patient = null;
 
@@ -610,7 +609,20 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 			provider.addChangeHandler(this);
 			text.addChangeHandler(this);
-			text.addKeyboardListener(this);
+			text.addKeyDownHandler(new KeyDownHandler() {
+				@Override
+				public void onKeyDown(KeyDownEvent event) {
+					if (event.getSource() == text) {
+						toggleButton();
+					}
+				}
+			});
+			text.addKeyPressHandler(new KeyPressHandler() {
+				@Override
+				public void onKeyPress(KeyPressEvent event) {
+					toggleButton();
+				}
+			});
 			table.setWidget(2, 0, new Label("Provider"));
 			// Only set default provider *if* there is one, and if the
 			// current event data hasn't already set it.
@@ -673,19 +685,6 @@ public class SchedulerWidget extends WidgetInterface implements
 			if (sender == text || sender == patient || sender == provider) {
 				toggleButton();
 			}
-		}
-
-		public void onKeyDown(Widget widget, char _char, int _int) {
-			if (widget == text) {
-				toggleButton();
-			}
-		}
-
-		public void onKeyPress(Widget widget, char key, int _int) {
-			toggleButton();
-		}
-
-		public void onKeyUp(Widget widget, char _char, int _int) {
 		}
 
 		public void onClick(ClickEvent evt) {
@@ -1019,26 +1018,33 @@ public class SchedulerWidget extends WidgetInterface implements
 		 */
 		public Calendar importSqlDateTime(String date, String hour,
 				String minute) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
-			calendar.set(Calendar.MONTH,
-					Integer.parseInt(date.substring(5, 7)) - 1);
-			calendar
-					.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+			try {
+				Calendar calendar = new GregorianCalendar();
+				calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0,
+						4)));
+				calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5,
+						7)) - 1);
+				calendar.set(Calendar.DATE, Integer.parseInt(date.substring(8,
+						10)));
 
-			calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-			calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+				calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+				calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
 
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				return calendar;
+			} catch (Exception ex) {
+				JsonUtil.debug("importSqlDateTime(): " + ex.toString());
+			}
 
-			return calendar;
+			// By default, return new calendar object
+			return new GregorianCalendar();
 		}
 
 		@SuppressWarnings("unchecked")
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
-
+			JsonUtil.debug("getEventsForRange()");
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO: STUBBED
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -1278,72 +1284,59 @@ public class SchedulerWidget extends WidgetInterface implements
 	private DatePickerMonthNavigator navigator = new DatePickerMonthNavigator(
 			new NoneContraintAndEntryRenderer());
 
-	protected boolean alreadyInitialized = false;
-
 	protected DockPanel panel = new DockPanel();
 
 	protected DialogBox loadingDialog = new DialogBox();
 
-	/**
-	 * @wbp.parser.constructor
-	 */
+	protected DateTimeFormat ymdFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+
 	public SchedulerWidget() {
 		super();
-	}
+		multiPanel = new MultiView(new EventCacheController(),
+				new StringPanelRenderer());
 
-	public SchedulerWidget(CurrentState s) {
-		super();
-		init(s);
-	}
+		panel.setWidth("100%");
 
-	public void init(CurrentState s) {
-		if (!alreadyInitialized) {
-			alreadyInitialized = true;
-			multiPanel = new MultiView(new EventCacheController(),
-					new StringPanelRenderer());
-			JsonUtil.debug("initializing panel widget");
-			initWidget(panel);
-			panel.setWidth("100%");
+		final HorizontalPanel loadingContainer = new HorizontalPanel();
+		loadingContainer.add(new Image("resources/images/loading.gif"));
+		loadingContainer.add(new HTML("<h3>" + "Loading" + "</h3>"));
+		loadingDialog.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
+		loadingDialog.setWidget(loadingContainer);
+		loadingDialog.hide();
 
-			final HorizontalPanel loadingContainer = new HorizontalPanel();
-			loadingContainer.add(new Image("resources/images/loading.gif"));
-			loadingContainer.add(new HTML("<h3>" + "Loading" + "</h3>"));
-			loadingDialog.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
-			loadingDialog.setWidget(loadingContainer);
-			loadingDialog.hide();
+		final HorizontalPanel fields = new HorizontalPanel();
+		panel.add(fields, DockPanel.NORTH);
+		fields.add(label);
+		fields.setCellHeight(label, "20px");
 
-			final HorizontalPanel fields = new HorizontalPanel();
-			panel.add(fields, DockPanel.NORTH);
-			fields.add(label);
-			fields.setCellHeight(label, "20px");
+		VerticalPanel posPanel = new VerticalPanel();
+		posPanel.setWidth("100%");
+		HorizontalPanel pickerHolder = new HorizontalPanel();
+		pickerHolder.add(posPanel);
+		pickerHolder.add(multiPanel);
 
-			VerticalPanel posPanel = new VerticalPanel();
-			posPanel.setWidth("100%");
-			HorizontalPanel pickerHolder = new HorizontalPanel();
-			pickerHolder.add(posPanel);
-			pickerHolder.add(multiPanel);
+		HTML space = new HTML(" ");
+		posPanel.add(space);
+		space.setHeight("40px");
+		posPanel.add(navigator);
 
-			HTML space = new HTML(" ");
-			posPanel.add(space);
-			space.setHeight("40px");
-			posPanel.add(navigator);
+		pickerHolder.setCellWidth(posPanel, "200px");
+		pickerHolder.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
 
-			pickerHolder.setCellWidth(posPanel, "200px");
-			pickerHolder.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
+		pickerHolder.setCellWidth(multiPanel, "100%");
+		multiPanel.setWidth("100%");
+		posPanel.setWidth("200px");
 
-			pickerHolder.setCellWidth(multiPanel, "100%");
-			multiPanel.setWidth("100%");
-			posPanel.setWidth("200px");
+		panel.add(pickerHolder, DockPanel.CENTER);
+		pickerHolder.setWidth("100%");
+		onWindowResized(-1, Window.getClientHeight());
+		panel.setStyleName("whiteForDemo");
+		multiPanel.addDateListener(this);
+		navigator.addDateListener(this);
+		Window.addResizeHandler(this);
+		multiPanel.scrollToHour(7);
 
-			panel.add(pickerHolder, DockPanel.CENTER);
-			pickerHolder.setWidth("100%");
-			onWindowResized(-1, Window.getClientHeight());
-			panel.setStyleName("whiteForDemo");
-			multiPanel.addDateListener(this);
-			navigator.addDateListener(this);
-			Window.addWindowResizeListener(this);
-			multiPanel.scrollToHour(7);
-		}
+		initWidget(panel);
 	}
 
 	public void handleDateEvent(DateEvent newEvent) {
@@ -1400,6 +1393,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	@Override
 	public void onClick(ClickEvent event) {
+
 	}
 
 	/**
@@ -1415,8 +1409,16 @@ public class SchedulerWidget extends WidgetInterface implements
 	}
 
 	protected String dateToSql(Date d) {
-		DateTimeFormat ymdFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
 		return ymdFormat.format(d);
+	}
+
+	@Override
+	public void onResize(ResizeEvent event) {
+		int shortcutHeight = event.getHeight() - 160;
+		if (shortcutHeight < 1) {
+			shortcutHeight = 1;
+		}
+		multiPanel.setHeight(shortcutHeight);
 	}
 
 }

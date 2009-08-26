@@ -45,4 +45,8 @@ public class SchedulerScreen extends ScreenInterface {
 		initWidget(verticalPanel);
 	}
 
+	public SchedulerWidget getSchedulerWidget() {
+		return scheduler;
+	}
+
 }
