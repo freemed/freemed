@@ -33,7 +33,8 @@ import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.SchedulerScreen;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -52,11 +53,10 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class WorkList extends WidgetInterface {
 
-	protected CustomSortableTable workListTable = null;
+	protected CustomTable workListTable = null;
 
 	protected Label providerLabel = null;
 
@@ -73,7 +73,7 @@ public class WorkList extends WidgetInterface {
 		initWidget(sPanel);
 
 		providerLabel = new Label("");
-		workListTable = new CustomSortableTable();
+		workListTable = new CustomTable();
 
 		HorizontalPanel hPaneltop = new HorizontalPanel();
 		hPaneltop.add(providerLabel);
@@ -128,18 +128,16 @@ public class WorkList extends WidgetInterface {
 						return a;
 					}
 				});
-		workListTable.addClickHandler(new ClickHandler() {
+		workListTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent evt) {
-				Cell clickedCell = workListTable.getCellForEvent(evt);
-				int row = clickedCell.getRowIndex();
-				int col = clickedCell.getCellIndex();
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				try {
-					final Integer schedulerId = new Integer(workListTable
-							.getValueByRow(row));
 					if (col > 0) {
-						// TODO: Open THIS day.
-						Util.spawnTab("Scheduler", new SchedulerScreen());
+						// TODO: Open the day of this particular event and
+						// select that screen.
+						SchedulerScreen schedulerScreen = new SchedulerScreen();
+						// schedulerScreen.getSchedulerWidget().
+						Util.spawnTab("Scheduler", schedulerScreen);
 					}
 				} catch (Exception e) {
 					JsonUtil.debug("WorkList.java: Caught exception: "

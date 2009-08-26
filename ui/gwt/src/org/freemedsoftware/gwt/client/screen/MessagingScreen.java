@@ -40,9 +40,10 @@ import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -65,11 +66,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class MessagingScreen extends ScreenInterface implements ClickHandler {
 
-	private CustomSortableTable wMessages;
+	private CustomTable wMessages = null;
 
 	private HashMap<String, String>[] mStore = null;
 
@@ -191,7 +191,9 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 		verticalSplitPanel.setSize("100%", "100%");
 		// verticalSplitPanel.setSplitPosition("50%");
 
-		wMessages = new CustomSortableTable();
+		wMessages = new CustomTable();
+		wMessages.setAllowSelection(true);
+		wMessages.setMultipleSelection(true);
 		verticalSplitPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
 		wMessages.addColumn("Selected", "selected");
@@ -200,16 +202,11 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 		wMessages.addColumn("Subject", "subject"); // col 3
 		wMessages.addColumn("Delete", "delete"); // col 4
 		wMessages.setIndexName("id");
-		wMessages.addClickHandler(new ClickHandler() {
+		wMessages.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent evt) {
-				Cell clickedCell = wMessages.getCellForEvent(evt);
-				int row = clickedCell.getRowIndex();
-				int col = clickedCell.getCellIndex();
-				// Get information on row...
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				try {
-					final Integer messageId = new Integer(wMessages
-							.getValueByRow(row));
+					final Integer messageId = Integer.parseInt(data.get("id"));
 					if (col == 4) {
 						deleteMessage(messageId);
 					} else {
@@ -397,8 +394,10 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 		// Keep a copy of the data in the local store
 		mStore = data;
 		// Clear any current contents
-		wMessages.clear();
+		wMessages.clearData();
+		JsonUtil.debug("loaddata");
 		wMessages.loadData(data);
+		JsonUtil.debug("after loaddata");
 		// Quickly add something blank to the message view so loading image goes
 		// away
 		messageView.setHTML("<br/>&nbsp;<br/>&nbsp;<br/>");

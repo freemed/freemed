@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -49,12 +50,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class PrescriptionRefillBox extends WidgetInterface {
 	protected Integer patid = 0;
 
-	protected CustomSortableTable wRequests = null;
+	protected CustomTable wRequests = null;
 	protected FlexTable flexTable = new FlexTable();
 
 	public PrescriptionRefillBox() {
@@ -72,25 +72,24 @@ public class PrescriptionRefillBox extends WidgetInterface {
 
 	protected void showDoctor() {
 		cleanView();
-		wRequests = new CustomSortableTable();
+		wRequests = new CustomTable();
+		wRequests.setMaximumRows(10);
+		wRequests.setAllowSelection(false);
 		wRequests.setSize("100%", "100%");
 		wRequests.addColumn("Date", "stamp"); // col 0
 		wRequests.addColumn("User", "user"); // col 1
 		wRequests.addColumn("Patient", "patient"); // col 2
 		wRequests.addColumn("RX Orig", "rxorig"); // col 3
 		wRequests.addColumn("Note", "note"); // col 4
-		wRequests.addColumn("approved", "approved");// col 5
+		wRequests.addColumn("Approved", "approved");// col 5
 		wRequests.addColumn("locked", "locked"); // col 6
-		wRequests.addColumn("id", "id"); // col 7
 
 		wRequests.setIndexName("id");
 
-		wRequests.addClickHandler(new ClickHandler() {
+		wRequests.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				Cell clickedCell = wRequests.getCellForEvent(event);
-				int row = clickedCell.getRowIndex();
-				final Integer id = new Integer(wRequests.getValueByRow(row));
+			public void handleRowClick(HashMap<String, String> data, int col) {
+				final Integer id = Integer.parseInt(data.get("id"));
 				JsonUtil.debug(Integer.toString(id));
 			}
 		});

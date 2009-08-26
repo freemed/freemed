@@ -76,7 +76,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import eu.future.earth.gwt.client.DateEditFieldWithPicker;
 import eu.future.earth.gwt.client.TimeBox;
 import eu.future.earth.gwt.client.date.AbstractWholeDayField;
 import eu.future.earth.gwt.client.date.BaseDateRenderer;
@@ -486,7 +485,8 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private TextArea text = new TextArea();
 
-		private DateEditFieldWithPicker date;
+		// private DateEditFieldWithPicker date;
+		private CustomDatePicker date;
 
 		private CheckBox wholeDay = new CheckBox();
 
@@ -508,7 +508,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private EventData data = null;
 
-		SupportModuleListBox selectTemplate = null;
+		private SupportModuleListBox selectTemplate = null;
 
 		private DateEventActions command = DateEventActions.ADD;
 
@@ -524,7 +524,6 @@ public class SchedulerWidget extends WidgetInterface implements
 		 * @param newListener
 		 * @param newData
 		 * @param newCommand
-		 * @wbp.parser.constructor
 		 */
 
 		public StringEventDataDialog(DateRenderer renderer,
@@ -536,7 +535,8 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			boolean reverseTime = false;
 
-			date = new DateEditFieldWithPicker("MM/dd/yyyy");
+			// date = new DateEditFieldWithPicker("MM/dd/yyyy");
+			date = new CustomDatePicker();
 			start = new TimeBox(renderer.show24HourClock() ? "HH:mm"
 					: "hh:mmaa");
 			end = new TimeBox(renderer.show24HourClock() ? "HH:mm" : "hh:mmaa");
@@ -549,9 +549,8 @@ public class SchedulerWidget extends WidgetInterface implements
 				reverseTime = true;
 			}
 
-			date
-					.setDate(!reverseTime ? data.getStartTime() : data
-							.getEndTime());
+			date.setValue(!reverseTime ? data.getStartTime() : data
+					.getEndTime());
 			start.setDate(!reverseTime ? data.getStartTime() : data
 					.getEndTime());
 

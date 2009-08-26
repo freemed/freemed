@@ -33,14 +33,13 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
@@ -59,11 +58,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class PatientSearchScreen extends ScreenInterface {
 
-	protected CustomSortableTable sortableTable = null;
+	protected CustomTable sortableTable = null;
 
 	protected Label sortableTableEmptyLabel = new Label();
 
@@ -72,8 +70,6 @@ public class PatientSearchScreen extends ScreenInterface {
 	protected ListBox wFieldName = null;
 
 	protected TextBox wFieldValue = null;
-
-	protected HashMap<String, String> patientMap = null;
 
 	public PatientSearchScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -132,13 +128,10 @@ public class PatientSearchScreen extends ScreenInterface {
 			}
 		});
 
-		// Initialize patient mapping
-		patientMap = new HashMap<String, String>();
-
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		sortableTable = new CustomSortableTable();
+		sortableTable = new CustomTable();
 		sortableTable.setWidth("100%");
 		sortableTable.addColumn("Last Name", "last_name");
 		sortableTable.addColumn("First Name", "first_name");
@@ -146,18 +139,17 @@ public class PatientSearchScreen extends ScreenInterface {
 		sortableTable.addColumn("Internal ID", "patient_id");
 		sortableTable.addColumn("Date of Birth", "date_of_birth");
 		sortableTable.addColumn("Age", "age");
-		sortableTable.addClickHandler(new ClickHandler() {
+		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent evt) {
-				Cell clickedCell = sortableTable.getCellForEvent(evt);
-				int row = clickedCell.getRowIndex();
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Get information on row...
 				try {
-					final Integer patientId = new Integer(sortableTable
-							.getValueByRow(row));
-					final String patientName = (String) sortableTable.getText(
-							row, 0)
-							+ ", " + (String) sortableTable.getText(row, 1);
+					final Integer patientId = new Integer(data
+							.get("patient_id"));
+					final String patientName = data.get("last_name") + ", "
+							+ data.get("first_name") + " ["
+							+ data.get("date_of_birth") + "] "
+							+ data.get("patient_id");
 					spawnPatientScreen(patientId, patientName);
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
@@ -192,9 +184,7 @@ public class PatientSearchScreen extends ScreenInterface {
 
 	@SuppressWarnings("unchecked")
 	protected void refreshSearch() {
-		sortableTable.clear();
-		clearSearchResults();
-		patientMap.clear();
+		sortableTable.clearData();
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> a = new HashMap<String, String>();
 			a.put("last_name", "Hackenbush");
@@ -282,48 +272,6 @@ public class PatientSearchScreen extends ScreenInterface {
 						}
 					});
 		}
-	}
-
-	/**
-	 * Clear all contents of the SortableTable, since the generic clear() method
-	 * does not clear set cell contents.
-	 */
-	public void clearSearchResults() {
-		for (int rowIter = 0; rowIter < patientMap.size(); rowIter++) {
-			for (int colIter = 0; colIter < 6; colIter++) {
-				sortableTable.clearCell(rowIter, colIter);
-			}
-		}
-	}
-
-	/**
-	 * Set contents of numbered output row.
-	 * 
-	 * @param res
-	 *            HashMap containing return values from
-	 *            PatientInterfaceAsync.Search() method
-	 * @param rowIndex
-	 *            Index row, starting at 0 for any results.
-	 */
-	public void setResultRow(HashMap<String, String> res, int rowIndex) {
-		try {
-			sortableTable.setValue(rowIndex + 1, 0, (String) res
-					.get("last_name"));
-			sortableTable.setValue(rowIndex + 1, 1, (String) res
-					.get("first_name"));
-			sortableTable.setValue(rowIndex + 1, 2, (String) res
-					.get("middle_name"));
-			sortableTable.setValue(rowIndex + 1, 3, (String) res
-					.get("patient_id"));
-			sortableTable.setValue(rowIndex + 1, 4, (String) res
-					.get("date_of_birth"));
-			sortableTable.setValue(rowIndex + 1, 5, (String) res.get("age"));
-		} catch (NullPointerException npe) {
-			GWT.log("NPE caught: ", npe);
-		}
-
-		// Add value to lookup table, by patient id (supposedly unique field)
-		patientMap.put((String) res.get("patient_id"), (String) res.get("id"));
 	}
 
 	/**
