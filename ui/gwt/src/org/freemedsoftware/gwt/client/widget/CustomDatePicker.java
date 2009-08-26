@@ -30,17 +30,30 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.HashSetter;
+import org.freemedsoftware.gwt.client.JsonUtil;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.datepicker.client.DatePicker;
+import com.google.gwt.user.datepicker.client.DateBox;
 
-public class CustomDatePicker extends DatePicker implements HashSetter {
+public class CustomDatePicker extends DateBox implements HashSetter,
+		DateBox.Format {
 
 	protected String hashMapping = null;
 
+	protected DateTimeFormat dateFormat = DateTimeFormat
+			.getFormat("yyyy-MM-dd");
+
+	public CustomDatePicker() {
+		this.setFormat(this);
+	}
+
 	public void setValue(String s) {
-		Date dt = importSqlDate(s);
-		setValue(dt);
+		if (s == null) {
+			setValue(new Date(), true);
+		} else {
+			Date dt = importSqlDate(s);
+			setValue(dt);
+		}
 	}
 
 	public void setHashMapping(String hm) {
@@ -52,8 +65,7 @@ public class CustomDatePicker extends DatePicker implements HashSetter {
 	}
 
 	public String getStoredValue() {
-		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd");
-		return df.format(getValue());
+		return dateFormat.format(getValue());
 	}
 
 	public void setFromHash(HashMap<String, String> data) {
@@ -62,18 +74,58 @@ public class CustomDatePicker extends DatePicker implements HashSetter {
 	}
 
 	public Date importSqlDate(String date) {
-		Calendar calendar = new GregorianCalendar();
-		calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
-		calendar
-				.set(Calendar.MONTH, Integer.parseInt(date.substring(5, 7)) - 1);
-		calendar.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+		if (date == null) {
+			return new Date();
+		} else if (date == "") {
+			return new Date();
+		} else {
+			Calendar calendar = new GregorianCalendar();
+			calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+			calendar.set(Calendar.MONTH,
+					Integer.parseInt(date.substring(5, 7)) - 1);
+			calendar
+					.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
 
-		calendar.set(Calendar.HOUR, 1);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.HOUR, 1);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
 
-		return new Date(calendar.getTime().getTime());
+			return new Date(calendar.getTime().getTime());
+		}
+	}
+
+	@Override
+	public String format(DateBox dateBox, Date date) {
+		try {
+			return dateFormat.format(date);
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+			return new DateBox.DefaultFormat().format(dateBox, date);
+		}
+	}
+
+	@Override
+	public Date parse(DateBox dateBox, String text, boolean reportError) {
+		// Try default parser
+		DateBox.Format f = new DateBox.DefaultFormat();
+		Date p = f.parse(dateBox, text, false);
+		if (p == null) {
+			return importSqlDate(text);
+		} else {
+			return p;
+		}
+	}
+
+	@Override
+	public void reset(DateBox dateBox, boolean abandon) {
+		// Just do whatever the superclass would do
+		try {
+			DateBox.Format f = new DateBox.DefaultFormat();
+			f.reset(dateBox, abandon);
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
 	}
 
 }
