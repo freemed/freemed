@@ -107,7 +107,8 @@ public class CustomTable extends Composite implements ClickHandler {
 		 * 
 		 * @param data
 		 */
-		public abstract void handleRowClick(HashMap<String, String> data);
+		public abstract void handleRowClick(HashMap<String, String> data,
+				int col);
 	}
 
 	protected FlexTable flexTable = null;
@@ -444,6 +445,7 @@ public class CustomTable extends Composite implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		Cell clickedCell = flexTable.getCellForEvent(event);
 		int row = clickedCell.getRowIndex();
+		int col = clickedCell.getCellIndex();
 		if (row == 0) {
 			// Handle row header click
 		} else {
@@ -462,7 +464,7 @@ public class CustomTable extends Composite implements ClickHandler {
 
 			// Handle single click with handler, regardless
 			if (tableRowClickHandler != null) {
-				tableRowClickHandler.handleRowClick(getDataByRow(row));
+				tableRowClickHandler.handleRowClick(getDataByRow(row), col);
 			}
 		}
 	}

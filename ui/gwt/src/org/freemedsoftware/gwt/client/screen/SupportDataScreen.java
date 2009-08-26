@@ -71,7 +71,7 @@ public class SupportDataScreen extends ScreenInterface {
 		sortableTable.addColumn("Version", "module_version");
 		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void handleRowClick(HashMap<String, String> data) {
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				String moduleClass = data.get("module_class");
 				String moduleName = data.get("module_name");
 				SupportDataManagementScreen screen = new SupportDataManagementScreen();
