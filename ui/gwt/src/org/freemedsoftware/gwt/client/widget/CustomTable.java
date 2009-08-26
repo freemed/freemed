@@ -34,10 +34,15 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
@@ -133,10 +138,38 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	protected TableRowClickHandler tableRowClickHandler = null;
 
+	protected HorizontalPanel buttonContainer = new HorizontalPanel();
+
+	protected Button bPrevious = new Button("Previous");
+	protected Label bLabel = new Label();
+	protected Button bNext = new Button("Next");
+
+	protected int curMinRow = 0;
+
 	public CustomTable() {
+		VerticalPanel vPanel = new VerticalPanel();
+
 		flexTable = new FlexTable();
 		flexTable.setStyleName("sortableTable");
 		flexTable.addClickHandler(this);
+		vPanel.add(flexTable);
+
+		// Build button container
+		vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		vPanel.add(new HTML(""));
+		vPanel.add(bPrevious);
+		vPanel.add(bLabel);
+		vPanel.add(bNext);
+
+		// Button container by default is not visible
+		buttonContainer.setVisible(false);
+		vPanel.add(buttonContainer);
+
+		// Assign handlers to previous and next
+		bPrevious.setEnabled(false);
+		bPrevious.addClickHandler(this);
+		bNext.setEnabled(false);
+		bNext.addClickHandler(this);
 
 		// Set header row information properly
 		RowFormatter rowFormatter = flexTable.getRowFormatter();
@@ -283,9 +316,11 @@ public class CustomTable extends Composite implements ClickHandler {
 	 */
 	public String getValueFromIndex(int row, String key) {
 		JsonUtil.debug("getValueFromIndex: row = "
-				+ new Integer(row - 1).toString() + ", key = " + key);
-		JsonUtil.debug("getValueFromIndex: return = " + data[row - 1].get(key));
-		return (String) data[row - 1].get(key);
+				+ new Integer(curMinRow + (row - 1)).toString() + ", key = "
+				+ key);
+		JsonUtil.debug("getValueFromIndex: return = "
+				+ data[curMinRow + (row - 1)].get(key));
+		return (String) data[curMinRow + (row - 1)].get(key);
 	}
 
 	/**
@@ -335,39 +370,59 @@ public class CustomTable extends Composite implements ClickHandler {
 		}
 	}
 
+	public void loadData(HashMap<String, String>[] newData) {
+		// By default, regular data load with no offset
+		loadData(newData, 0);
+	}
+
 	/**
 	 * @param newData
 	 */
-	public void loadData(HashMap<String, String>[] newData) {
-		data = newData;
+	public void loadData(HashMap<String, String>[] newData, int offset) {
+		if (data != newData) {
+			JsonUtil
+					.debug("loadData: forcing load of new data instead of repositioning");
+			data = newData;
+		}
 		if (data != null) {
-			int rows = (data.length < maximumRows.intValue()) ? data.length
-					: maximumRows.intValue();
-			GWT.log("rows = " + new Integer(rows).toString(), null);
-			for (int iter = 0; iter < rows; iter++) {
+			int rows = ((data.length - offset) < maximumRows) ? (data.length - offset)
+					: maximumRows;
+			JsonUtil.debug("rows = " + rows + ", maximumRows = " + maximumRows
+					+ ", offset = " + offset);
+
+			// Before we go any further, clear indexMap, otherwise bad click
+			// values...
+			JsonUtil.debug("clearing indexmap for custom table");
+			indexMap.clear();
+
+			for (int iter = offset; iter < (rows + offset); iter++) {
+				int actualRow = iter - offset;
+
+				JsonUtil.debug("iter = " + iter + ", actualRow = " + actualRow);
+
 				// Set the value in the index map so clicks can be converted
-				String indexValue = (String) data[iter].get(indexName);
-				String rowValue = String.valueOf(iter + 1);
-				indexMap.put((String) rowValue, (String) indexValue);
+				String indexValue = data[iter].get(indexName);
+				String rowValue = String.valueOf(actualRow + 1);
+				indexMap.put(rowValue, indexValue);
+
 				for (int jter = 0; jter < columns.size(); jter++) {
 					// Populate the column
 					if (widgetInterface != null) {
 						Widget content = widgetInterface.setColumn(columns.get(
 								jter).getHashMapping(), data[iter]);
 						if (content != null) {
-							flexTable.setWidget(iter + 1, jter, content);
+							flexTable.setWidget(actualRow + 1, jter, content);
 						} else {
-							flexTable.setText(iter + 1, jter,
-									(String) data[iter].get((String) columns
-											.get(jter).getHashMapping()));
+							flexTable.setText(actualRow + 1, jter, data[iter]
+									.get(columns.get(jter).getHashMapping()));
 						}
 					} else {
-						flexTable.setText(iter + 1, jter, (String) data[iter]
-								.get((String) columns.get(jter)
-										.getHashMapping()));
+						flexTable.setText(actualRow + 1, jter, data[iter]
+								.get(columns.get(jter).getHashMapping()));
 					}
 				}
 			}
+			JsonUtil.debug("formattable");
 			formatTable(rows);
 		} else {
 			JsonUtil.debug("Skipping loadData code due to null data presented");
@@ -382,7 +437,7 @@ public class CustomTable extends Composite implements ClickHandler {
 		try {
 			selected.remove(index);
 		} catch (Exception e) {
-			GWT.log("Exception", e);
+			JsonUtil.debug("selectionRemove exception: " + e);
 		}
 	}
 
@@ -441,30 +496,78 @@ public class CustomTable extends Composite implements ClickHandler {
 		this.formatTable(data.length < maximumRows ? data.length : maximumRows);
 	}
 
+	private void previousPage() {
+		JsonUtil.debug("previousPage");
+		curMinRow -= maximumRows;
+		loadData(data, curMinRow);
+		redrawButtons();
+	}
+
+	private void nextPage() {
+		JsonUtil.debug("nextPage");
+		curMinRow += maximumRows;
+		loadData(data, curMinRow);
+		redrawButtons();
+	}
+
+	private void redrawButtons() {
+		JsonUtil.debug("redrawButtons");
+		if (curMinRow <= 0) {
+			bPrevious.setEnabled(true);
+		} else {
+			bPrevious.setEnabled(false);
+		}
+
+		if (curMinRow + maximumRows < data.length) {
+			bNext.setEnabled(true);
+		} else {
+			bNext.setEnabled(false);
+		}
+
+		// Rewrite label
+		String min = new Integer(curMinRow + 1).toString();
+		String max = new Integer(
+				(curMinRow + maximumRows < data.length) ? curMinRow
+						+ maximumRows + 1 : data.length).toString();
+		bLabel.setText(min + " to " + max + " of " + data.length);
+	}
+
 	@Override
 	public void onClick(ClickEvent event) {
-		Cell clickedCell = flexTable.getCellForEvent(event);
-		int row = clickedCell.getRowIndex();
-		int col = clickedCell.getCellIndex();
-		if (row == 0) {
-			// Handle row header click
-		} else {
-			if (allowSelection) {
-				if (multipleSelection) {
-					// Remove past selection
-					if (selected.size() > 0) {
-						selected.clear();
-					}
-				}
-				// We do the selection thing, then refresh display in the
-				// toggleSelection routine
-				toggleSelection(getValueByRow(row));
-
+		if (event.getSource() == bPrevious) {
+			// only process previous page if possible
+			if (curMinRow > 0) {
+				previousPage();
 			}
+		} else if (event.getSource() == bPrevious) {
+			// Only process next page if there are possible more values to
+			// display
+			if (curMinRow + maximumRows < data.length) {
+				nextPage();
+			}
+		} else {
+			Cell clickedCell = flexTable.getCellForEvent(event);
+			int row = clickedCell.getRowIndex();
+			int col = clickedCell.getCellIndex();
+			if (row == 0) {
+				// Handle row header click
+			} else {
+				if (allowSelection) {
+					if (multipleSelection) {
+						// Remove past selection
+						if (selected.size() > 0) {
+							selected.clear();
+						}
+					}
+					// We do the selection thing, then refresh display in the
+					// toggleSelection routine
+					toggleSelection(getValueByRow(row));
+				}
 
-			// Handle single click with handler, regardless
-			if (tableRowClickHandler != null) {
-				tableRowClickHandler.handleRowClick(getDataByRow(row), col);
+				// Handle single click with handler, regardless
+				if (tableRowClickHandler != null) {
+					tableRowClickHandler.handleRowClick(getDataByRow(row), col);
+				}
 			}
 		}
 	}
