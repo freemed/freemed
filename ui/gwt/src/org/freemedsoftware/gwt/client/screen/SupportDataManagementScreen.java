@@ -34,8 +34,9 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -56,7 +57,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -71,7 +71,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 
 	protected TextBox searchText = null;
 
-	protected CustomSortableTable sortableTable = null;
+	protected CustomTable sortableTable = null;
 
 	protected String moduleName = null;
 
@@ -128,19 +128,15 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		searchButton.setStylePrimaryName("freemed-PushButton");
 		searchButton.setText("Search");
 
-		sortableTable = new CustomSortableTable();
+		sortableTable = new CustomTable();
 		verticalPanel.add(sortableTable);
 		sortableTable.setSize("100%", "100%");
-		sortableTable.addClickHandler(new ClickHandler() {
+		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent evt) {
-				Cell clickedCell = ((CustomSortableTable) evt.getSource())
-						.getCellForEvent(evt);
-				int row = clickedCell.getRowIndex();
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Get information on row...
 				try {
-					final Integer recordId = new Integer(sortableTable
-							.getValueByRow(row));
+					final Integer recordId = Integer.parseInt(data.get("oid"));
 					SupportModuleEntry entry = new SupportModuleEntry(
 							moduleName, recordId);
 					entry.setDoneCommand(thisRef);
@@ -204,7 +200,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 					"SimpleUIBuilder").item(0);
 			if (simpleUIBuilderNode != null) {
 				NodeList elements = dom.getElementsByTagName("Element");
-				sortableTable.clear();
+				sortableTable.clearData();
 				for (int iter = 0; iter < elements.getLength(); iter++) {
 					Element e = (Element) elements.item(iter);
 					if (e.getAttribute("display").compareTo("1") == 0) {

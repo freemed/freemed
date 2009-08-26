@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.screen;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,9 +34,11 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -59,12 +62,11 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ReportingScreen extends ScreenInterface {
 
-	protected CustomSortableTable reportTable;
+	protected CustomTable reportTable;
 
 	protected FlexTable reportParametersTable;
 
@@ -85,7 +87,6 @@ public class ReportingScreen extends ScreenInterface {
 	};
 
 	public ReportingScreen() {
-
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");
@@ -99,18 +100,17 @@ public class ReportingScreen extends ScreenInterface {
 		pleaseChooseALabel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 
-		reportTable = new CustomSortableTable();
+		reportTable = new CustomTable();
 		verticalPanel.add(reportTable);
+		reportTable.setAllowSelection(false);
 		reportTable.setSize("100%", "100%");
 		reportTable.setIndexName("report_uuid");
 		reportTable.addColumn("Name", "report_name");
 		reportTable.addColumn("Description", "report_desc");
-		reportTable.addClickHandler(new ClickHandler() {
+		reportTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent evt) {
-				Cell clickedCell = reportTable.getCellForEvent(evt);
-				int row = clickedCell.getRowIndex();
-				String uuid = reportTable.getValueByRow(row);
+			public void handleRowClick(HashMap<String, String> data, int col) {
+				String uuid = data.get("report_uuid");
 				thisReportUUID = uuid;
 				getReportInformation(uuid);
 			}
@@ -291,14 +291,22 @@ public class ReportingScreen extends ScreenInterface {
 					.get("report_param_name_" + iS));
 			Widget w = null;
 			if (type.compareToIgnoreCase("Date") == 0) {
-				w = new SimpleDatePicker();
-				((SimpleDatePicker) w).addChangeHandler(new ChangeHandler() {
-					@Override
-					public void onChange(ChangeEvent evt) {
-						reportParameters.put(i, ((SimpleDatePicker) evt
-								.getSource()).getCurrentDate().toString());
-					}
-				});
+				w = new CustomDatePicker();
+				((CustomDatePicker) w)
+						.addValueChangeHandler(new ValueChangeHandler<Date>() {
+							@Override
+							public void onValueChange(
+									ValueChangeEvent<Date> event) {
+								Date dt = ((CustomDatePicker) event.getSource())
+										.getValue();
+								CustomDatePicker w = ((CustomDatePicker) event
+										.getSource());
+								String formatted = w.getFormat().format(
+										new DateBox(), dt);
+
+								reportParameters.put(i, formatted);
+							}
+						});
 			} else if (type.compareToIgnoreCase("Provider") == 0) {
 				w = new SupportModuleWidget("ProviderModule");
 				((SupportModuleWidget) w)

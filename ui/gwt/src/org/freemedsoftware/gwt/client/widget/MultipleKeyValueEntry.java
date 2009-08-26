@@ -42,7 +42,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class MultipleKeyValueEntry extends Composite {
 
@@ -167,7 +166,7 @@ public class MultipleKeyValueEntry extends Composite {
 
 	protected Widget valueWidget;
 
-	protected CustomSortableTable displayTable;
+	protected CustomTable displayTable;
 
 	protected HashMap<String, KeyValuePair> keys;
 
@@ -203,12 +202,11 @@ public class MultipleKeyValueEntry extends Composite {
 		setValueWidgetType(WidgetType.DEFAULT, "");
 		layoutTable.setWidget(0, 1, valueWidget);
 
-		displayTable = new CustomSortableTable();
+		displayTable = new CustomTable();
 		displayTable.addColumn("Name", "displayName");
 		displayTable.addColumn("Value", "value");
 		layoutTable.setWidget(1, 0, displayTable);
 		formatter.setColSpan(0, 1, 2);
-
 	}
 
 	/**
@@ -286,8 +284,7 @@ public class MultipleKeyValueEntry extends Composite {
 			((CustomListBox) valueWidget).setWidgetValue(newValue);
 			break;
 		case DATEPICKER:
-			((SimpleDatePicker) valueWidget)
-					.setCurrentDate(importSqlDate(newValue));
+			((CustomDatePicker) valueWidget).setValue(importSqlDate(newValue));
 			break;
 		case MODULEPICKLIST:
 			((SupportModuleWidget) valueWidget).setValue(new Integer(newValue));
@@ -339,7 +336,7 @@ public class MultipleKeyValueEntry extends Composite {
 		case SELECT_YN:
 			return ((CustomListBox) valueWidget).getWidgetValue();
 		case DATEPICKER:
-			return ((SimpleDatePicker) valueWidget).getCurrentDate().toString();
+			return ((CustomDatePicker) valueWidget).getStoredValue();
 		case MODULEPICKLIST:
 			return ((SupportModuleWidget) valueWidget).getValue().toString();
 		case TEXTBOX:
@@ -369,8 +366,28 @@ public class MultipleKeyValueEntry extends Composite {
 			((CustomListBox) valueWidget).addChangeHandler(onSelect);
 			break;
 		case DATEPICKER:
-			valueWidget = new SimpleDatePicker();
-			((SimpleDatePicker) valueWidget).addChangeHandler(onSelect);
+			valueWidget = new CustomDatePicker();
+			((CustomDatePicker) valueWidget)
+					.addValueChangeHandler(new ValueChangeHandler<Date>() {
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							// Acquire value from current widget
+							String v = getValueWidgetValue();
+
+							// Grab value pair and set current
+							KeyValuePair kvp = keys.get(currentKey);
+							kvp.setValue(v);
+
+							// Push back in
+							keys.put(currentKey, kvp);
+
+							// Clear the form
+							valueWidget.setVisible(false);
+							keyWidget.setWidgetValue("");
+							currentKey = "";
+							currentType = null;
+						}
+					});
 			break;
 		case MODULEPICKLIST:
 			valueWidget = new SupportModuleWidget();

@@ -42,7 +42,7 @@ import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -222,7 +222,7 @@ public class PatientProblemList extends WidgetInterface {
 
 	protected TabPanel tabPanel = null;
 
-	protected HashMap<String, CustomSortableTable> tables = new HashMap<String, CustomSortableTable>();
+	protected HashMap<String, CustomTable> tables = new HashMap<String, CustomTable>();
 
 	protected HashMap<String, Label> messages = new HashMap<String, Label>();
 
@@ -307,7 +307,7 @@ public class PatientProblemList extends WidgetInterface {
 	}
 
 	private void createSummaryTable(Widget tab, String criteria) {
-		CustomSortableTable t = new CustomSortableTable();
+		CustomTable t = new CustomTable();
 		t.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
 			public Widget setColumn(String columnName,
 					HashMap<String, String> data) {
@@ -322,6 +322,7 @@ public class PatientProblemList extends WidgetInterface {
 				return ab;
 			}
 		});
+		t.setAllowSelection(false);
 		t.setMaximumRows(maximumRows);
 		t.addColumn("Date", "date_mdy");
 		t.addColumn("Module", "type");
@@ -573,7 +574,7 @@ public class PatientProblemList extends WidgetInterface {
 				messages.get(crit).setVisible(false);
 				JsonUtil.debug("Populating table " + k + " with "
 						+ new Integer(res.size()).toString() + " entries");
-				CustomSortableTable thisTable = tables.get(k);
+				CustomTable thisTable = tables.get(k);
 				HashMap<String, String>[] thisData = (HashMap<String, String>[]) res
 						.toArray(new HashMap<?, ?>[0]);
 				thisTable.loadData(thisData);

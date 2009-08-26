@@ -143,9 +143,9 @@ public class PatientSearchScreen extends ScreenInterface {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Get information on row...
+				JsonUtil.debug("search table handle row click");
 				try {
-					final Integer patientId = new Integer(data
-							.get("patient_id"));
+					final Integer patientId = new Integer(data.get("id"));
 					final String patientName = data.get("last_name") + ", "
 							+ data.get("first_name") + " ["
 							+ data.get("date_of_birth") + "] "

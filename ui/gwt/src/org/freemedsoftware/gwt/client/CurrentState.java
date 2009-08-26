@@ -298,7 +298,7 @@ public class CurrentState {
 
 								JsonUtil
 										.debug("Retrieved good looking content");
-
+								JsonUtil.debug(response.getText());
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
 										.shoehornJson(JSONParser.parse(response
 												.getText()),

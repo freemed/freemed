@@ -48,10 +48,10 @@ public class RecentMedicationsList extends WidgetInterface {
 
 	protected Integer patientId = new Integer(0);
 
-	protected CustomSortableTable medicationsTable;
+	protected CustomTable medicationsTable;
 
 	public RecentMedicationsList() {
-		medicationsTable = new CustomSortableTable();
+		medicationsTable = new CustomTable();
 		initWidget(medicationsTable);
 		medicationsTable.addColumn("Drug", "mdrug");
 		medicationsTable.addColumn("Dosage", "mdosage");
@@ -68,7 +68,7 @@ public class RecentMedicationsList extends WidgetInterface {
 	@SuppressWarnings("unchecked")
 	protected void populate() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			medicationsTable.clear();
+			medicationsTable.clearData();
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 			{
 				HashMap<String, String> item1 = new HashMap<String, String>();
@@ -121,7 +121,7 @@ public class RecentMedicationsList extends WidgetInterface {
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {
-								medicationsTable.clear();
+								medicationsTable.clearData();
 								try {
 									medicationsTable.loadData(r);
 								} catch (Exception e) {
@@ -138,7 +138,7 @@ public class RecentMedicationsList extends WidgetInterface {
 			getProxy().GetMostRecent(patientId,
 					new AsyncCallback<HashMap<String, String>[]>() {
 						public void onSuccess(HashMap<String, String>[] m) {
-							medicationsTable.clear();
+							medicationsTable.clearData();
 							try {
 								medicationsTable.loadData(m);
 							} catch (Exception e) {

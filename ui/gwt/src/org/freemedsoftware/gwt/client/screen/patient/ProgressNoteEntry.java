@@ -31,8 +31,9 @@ import org.freemedsoftware.gwt.client.widget.CustomTextArea;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,8 +42,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
@@ -59,7 +58,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 	final protected String moduleName = "ProgressNotes";
 
 	protected String patientIdName = "pnotespat";
-	
+
 	public ProgressNoteEntry() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -72,15 +71,15 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		final Button wSubmit = new Button("Submit");
 		buttonBar.add(wSubmit);
-		wSubmit.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		wSubmit.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent evt) {
 				submitForm();
 			}
 		});
 		final Button wReset = new Button("Reset");
 		buttonBar.add(wReset);
-		wReset.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		wReset.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent evt) {
 				resetForm();
 			}
 		});
@@ -97,8 +96,8 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(0, 0, label);
 
 		final HorizontalPanel dateContainer = new HorizontalPanel();
-		final SimpleDatePicker wImportDate = new SimpleDatePicker();
-		wImportDate.setWeekendSelectable(true);
+		final CustomDatePicker wImportDate = new CustomDatePicker();
+		// wImportDate.setWeekendSelectable(true);
 		dateContainer.add(wImportDate);
 		final Button wImportPrevious = new Button("Import");
 		dateContainer.add(wImportPrevious);

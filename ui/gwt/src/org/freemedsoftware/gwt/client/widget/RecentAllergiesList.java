@@ -48,10 +48,10 @@ public class RecentAllergiesList extends WidgetInterface {
 
 	protected Integer patientId = new Integer(0);
 
-	protected CustomSortableTable allergiesTable;
+	protected CustomTable allergiesTable;
 
 	public RecentAllergiesList() {
-		allergiesTable = new CustomSortableTable();
+		allergiesTable = new CustomTable();
 		initWidget(allergiesTable);
 		allergiesTable.addColumn("Allergy", "allergy");
 		allergiesTable.addColumn("Reaction", "reaction");
@@ -66,7 +66,7 @@ public class RecentAllergiesList extends WidgetInterface {
 	@SuppressWarnings("unchecked")
 	protected void populate() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			allergiesTable.clear();
+			allergiesTable.clearData();
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 			{
 				HashMap<String, String> item1 = new HashMap<String, String>();
@@ -113,7 +113,7 @@ public class RecentAllergiesList extends WidgetInterface {
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {
-								allergiesTable.clear();
+								allergiesTable.clearData();
 								try {
 									allergiesTable.loadData(r);
 								} catch (Exception e) {
@@ -130,7 +130,7 @@ public class RecentAllergiesList extends WidgetInterface {
 			getProxy().GetMostRecent(patientId,
 					new AsyncCallback<HashMap<String, String>[]>() {
 						public void onSuccess(HashMap<String, String>[] m) {
-							allergiesTable.clear();
+							allergiesTable.clearData();
 							try {
 								allergiesTable.loadData(m);
 							} catch (Exception e) {

@@ -139,12 +139,18 @@ public class FreemedInterface implements EntryPoint {
 	}
 
 	public void resume() {
+		JsonUtil.debug("resume()");
 		if (!active) {
+			JsonUtil.debug("create main screen object");
 			mainScreen = new MainScreen();
+			JsonUtil.debug("assign locale");
 			CurrentState.assignLocale(loginDialog.getLanguageSelected());
+			JsonUtil.debug("set visibility");
 			UIObject.setVisible(RootPanel.get("loginScreenOuter").getElement(),
 					false);
+			JsonUtil.debug("add main screen");
 			RootPanel.get("rootPanel").add(mainScreen);
+			JsonUtil.debug("set freemed interface properly");
 			mainScreen.setFreemedInterface(this);
 			active = true;
 		} else {

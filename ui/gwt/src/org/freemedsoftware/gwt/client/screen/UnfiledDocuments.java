@@ -38,11 +38,13 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -64,12 +66,10 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.thapar.gwt.user.ui.client.widget.simpledatepicker.SimpleDatePicker;
 
 public class UnfiledDocuments extends ScreenInterface {
 
-	protected CustomSortableTable wDocuments = null;
+	protected CustomTable wDocuments = null;
 
 	protected ListBox wRotate = null;
 
@@ -79,7 +79,7 @@ public class UnfiledDocuments extends ScreenInterface {
 
 	protected SupportModuleWidget wProvider = null, wCategory = null;
 
-	protected SimpleDatePicker wDate = null;
+	protected CustomDatePicker wDate = null;
 
 	protected Integer currentId = new Integer(0);
 
@@ -100,24 +100,22 @@ public class UnfiledDocuments extends ScreenInterface {
 		mainHorizontalPanel.add(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
-		wDocuments = new CustomSortableTable();
+		wDocuments = new CustomTable();
 		verticalPanel.add(wDocuments);
 		wDocuments.setIndexName("id");
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
-		wDocuments.addClickHandler(new ClickHandler() {
+		wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				Cell clickedCell = wDocuments.getCellForEvent(event);
-				int row = clickedCell.getRowIndex();
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Import current id
 				try {
-					currentId = new Integer(wDocuments.getValueByRow(row));
+					currentId = Integer.parseInt(data.get("id"));
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);
 				} finally {
 					// Populate
-					String pDate = wDocuments.getValueFromIndex(row, "uffdate");
+					String pDate = data.get("uffdate");
 					Calendar thisCal = new GregorianCalendar();
 					thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
 							.substring(0, 4)));
@@ -125,7 +123,7 @@ public class UnfiledDocuments extends ScreenInterface {
 							.substring(5, 6)) - 1);
 					thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
 							.substring(8, 9)));
-					wDate.setSelectedDate(thisCal.getTime());
+					wDate.setValue(thisCal.getTime());
 
 					// Show the form
 					flexTable.setVisible(true);
@@ -152,8 +150,8 @@ public class UnfiledDocuments extends ScreenInterface {
 		final Label dateLabel = new Label("Date : ");
 		flexTable.setWidget(0, 0, dateLabel);
 
-		wDate = new SimpleDatePicker();
-		wDate.setCurrentDate(new Date());
+		wDate = new CustomDatePicker();
+		wDate.setValue(new Date());
 		flexTable.setWidget(0, 1, wDate);
 
 		final Label patientLabel = new Label("Patient : ");

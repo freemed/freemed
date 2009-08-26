@@ -30,7 +30,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientProblemList;
 import org.freemedsoftware.gwt.client.widget.PatientTagsWidget;
 import org.freemedsoftware.gwt.client.widget.RecentAllergiesList;
@@ -89,7 +89,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		verticalPanel.add(cActionItems);
 		verticalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 
-		final CustomSortableTable customSortableTable = new CustomSortableTable();
+		final CustomTable customSortableTable = new CustomTable();
 		verticalPanel.add(customSortableTable);
 
 		final VerticalPanel verticalPanel_1 = new VerticalPanel();

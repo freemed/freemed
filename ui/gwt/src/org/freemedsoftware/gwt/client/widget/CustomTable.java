@@ -483,6 +483,14 @@ public class CustomTable extends Composite implements ClickHandler {
 	}
 
 	/**
+	 * Get underlying FlexTable object.
+	 * @return
+	 */
+	public FlexTable getFlexTable() {
+		return flexTable;
+	}
+	
+	/**
 	 * Toggle a multiple selection for a row by its index.
 	 * 
 	 * @param index

@@ -32,9 +32,10 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -52,9 +53,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,7 +61,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class UserManagementScreen extends ScreenInterface implements
 		ClickHandler {
 
-	protected CustomSortableTable wUsers = new CustomSortableTable();
+	protected CustomTable wUsers = new CustomTable();
 
 	protected TextBox tbUsername, tbPassword, tbPasswordverify, tbDescription;
 
@@ -75,7 +74,6 @@ public class UserManagementScreen extends ScreenInterface implements
 	protected String className = "UserManagementScreen";
 
 	public UserManagementScreen() {
-
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -178,15 +176,15 @@ public class UserManagementScreen extends ScreenInterface implements
 		wUsers.addColumn("Type", "usertype"); // col 3
 		wUsers.setIndexName("id");
 
-		wUsers.addTableListener(new TableListener() {
-			public void onCellClicked(SourcesTableEvents ste, int row, int col) {
-				final Integer id = new Integer(wUsers.getValueByRow(row));
+		wUsers.setTableRowClickHandler(new TableRowClickHandler() {
+			@Override
+			public void handleRowClick(HashMap<String, String> data, int col) {
+				final Integer id = Integer.parseInt(data.get("id"));
 			}
 		});
 
 		// TODO:Backend needs to be fixed first
 		retrieveAllUsers();
-
 	}
 
 	public void onClick(ClickEvent evt) {
@@ -338,7 +336,7 @@ public class UserManagementScreen extends ScreenInterface implements
 											.getText()),
 											"HashMap<String,String>[]");
 							if (data != null) {
-								wUsers.clear();
+								wUsers.clearData();
 								wUsers.loadData(data);
 							}
 						}

@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.DocumentScreen;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -50,7 +51,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class DocumentBox extends WidgetInterface {
 
@@ -59,7 +59,7 @@ public class DocumentBox extends WidgetInterface {
 
 	protected HashMap<String, String>[] data = null;
 
-	protected CustomSortableTable wDocuments = new CustomSortableTable();
+	protected CustomTable wDocuments = new CustomTable();
 
 	protected DocumentScreen documentScreen = null;
 
@@ -102,12 +102,10 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.setIndexName("id");
 
 		documentScreen = new DocumentScreen();
-		wDocuments.addClickHandler(new ClickHandler() {
+		wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				Cell clickedCell = wDocuments.getCellForEvent(event);
-				int row = clickedCell.getRowIndex();
-				final Integer uffId = new Integer(wDocuments.getValueByRow(row));
+			public void handleRowClick(HashMap<String, String> data, int col) {
+				final Integer uffId = Integer.parseInt(data.get("id"));
 				documentScreen.setData(uffId);
 				Util.spawnTab("File Document", documentScreen);
 			}
@@ -183,7 +181,7 @@ public class DocumentBox extends WidgetInterface {
 	}
 
 	public void loadData(HashMap<String, String>[] d) {
-		wDocuments.clear();
+		wDocuments.clearData();
 		wDocuments.loadData(d);
 		setData(d);
 		setCounter();

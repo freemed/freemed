@@ -36,6 +36,10 @@ import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -45,14 +49,11 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class PatientAddresses extends Composite {
 
@@ -152,7 +153,7 @@ public class PatientAddresses extends Composite {
 
 	protected Integer patientId = new Integer(0);
 
-	protected CustomSortableTable flexTable;
+	protected CustomTable flexTable;
 
 	protected HashMap<Integer, Address> addresses;
 
@@ -166,7 +167,7 @@ public class PatientAddresses extends Composite {
 		VerticalPanel vP = new VerticalPanel();
 		initWidget(vP);
 
-		flexTable = new CustomSortableTable();
+		flexTable = new CustomTable();
 		flexTable.addColumn("Residence Type", "type");
 		flexTable.addColumn("Relationship", "relation");
 		flexTable.addColumn("Address Line 1", "line1");
@@ -179,8 +180,8 @@ public class PatientAddresses extends Composite {
 		vP.add(hP);
 
 		Button addAddressButton = new Button("Add Address");
-		addAddressButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		addAddressButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent evt) {
 				Address a = new Address();
 				a.setActive(Boolean.FALSE);
 				addAddress(addresses.size() + 1, a);
@@ -218,7 +219,7 @@ public class PatientAddresses extends Composite {
 		type.addItem("H - Home", "H");
 		type.addItem("W - Work", "W");
 		type.setWidgetValue(a.getType());
-		flexTable.setWidget(pos, 0, type);
+		flexTable.getFlexTable().setWidget(pos, 0, type);
 
 		final CustomListBox relation = new CustomListBox();
 		relation.setVisibleItemCount(1);
@@ -228,26 +229,27 @@ public class PatientAddresses extends Composite {
 		relation.addItem("SH - Shelter", "SH");
 		relation.addItem("U - Unrelated", "U");
 		relation.setWidgetValue(a.getRelation());
-		flexTable.setWidget(pos, 1, relation);
+		flexTable.getFlexTable().setWidget(pos, 1, relation);
 
 		final TextBox line1 = new TextBox();
 		line1.setText(a.getLine1());
-		flexTable.setWidget(pos, 2, line1);
+		flexTable.getFlexTable().setWidget(pos, 2, line1);
 
 		final TextBox line2 = new TextBox();
 		line2.setText(a.getLine2());
-		flexTable.setWidget(pos, 3, line2);
+		flexTable.getFlexTable().setWidget(pos, 3, line2);
 
 		final TextBox csz = new TextBox();
 		csz.setText(a.getCsz());
-		flexTable.setWidget(pos, 4, csz);
+		flexTable.getFlexTable().setWidget(pos, 4, csz);
 
 		final CheckBox active = new CheckBox();
-		active.setChecked(a.getActive().booleanValue());
-		flexTable.setWidget(pos, 5, active);
+		active.setValue(a.getActive().booleanValue());
+		flexTable.getFlexTable().setWidget(pos, 5, active);
 
-		ChangeListener cl = new ChangeListener() {
-			public void onChange(Widget sender) {
+		ChangeHandler cl = new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
 				Address x = addresses.get(pos);
 				x.setType(type.getWidgetValue());
 				x.setRelation(relation.getWidgetValue());
@@ -255,30 +257,30 @@ public class PatientAddresses extends Composite {
 				x.setLine2(line2.getText());
 				x.setCsz(csz.getText());
 				x.setUpdated(Boolean.TRUE);
-				x.setActive(new Boolean(active.isChecked()));
+				x.setActive(new Boolean(active.getValue()));
 				addresses.put(pos, x);
 
 				// Sanity check: uncheck all other active ones
-				if (active.isChecked()) {
+				if (active.getValue()) {
 					setActiveAddress(pos);
 				}
 			}
 		};
 
 		// Implement changelisteners
-		type.addChangeListener(cl);
-		relation.addChangeListener(cl);
-		line1.addChangeListener(cl);
-		line2.addChangeListener(cl);
-		csz.addChangeListener(cl);
-		active.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		type.addChangeHandler(cl);
+		relation.addChangeHandler(cl);
+		line1.addChangeHandler(cl);
+		line2.addChangeHandler(cl);
+		csz.addChangeHandler(cl);
+		active.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent evt) {
 				Address x = addresses.get(pos);
-				x.setActive(new Boolean(((CheckBox) w).isChecked()));
+				x.setActive(((CheckBox) evt.getSource()).getValue());
 				addresses.put(pos, x);
 
 				// Sanity check: uncheck all other active ones
-				if (((CheckBox) w).isChecked()) {
+				if (((CheckBox) evt.getSource()).getValue()) {
 					setActiveAddress(pos);
 				}
 			}
@@ -393,8 +395,9 @@ public class PatientAddresses extends Composite {
 		while (kI.hasNext()) {
 			Integer thisKey = kI.next();
 			if (thisKey.compareTo(p) != 0) {
-				CheckBox cb = (CheckBox) flexTable.getWidget(thisKey, 5);
-				cb.setChecked(false);
+				CheckBox cb = (CheckBox) flexTable.getFlexTable().getWidget(
+						thisKey, 5);
+				cb.setValue(false);
 			}
 		}
 	}

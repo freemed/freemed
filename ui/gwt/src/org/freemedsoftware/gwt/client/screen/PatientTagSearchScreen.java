@@ -33,13 +33,12 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -51,13 +50,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class PatientTagSearchScreen extends ScreenInterface {
 
 	private TextBox tagWidget = null;
 
-	private CustomSortableTable customSortableTable = null;
+	private CustomTable customSortableTable = null;
 
 	public PatientTagSearchScreen() {
 		FlexTable layout = new FlexTable();
@@ -77,7 +75,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 			}
 		});
 
-		customSortableTable = new CustomSortableTable();
+		customSortableTable = new CustomTable();
 		customSortableTable.setWidth("100%");
 		layout.setWidget(1, 0, customSortableTable);
 		layout.getFlexCellFormatter().setColSpan(1, 0, 4);
@@ -87,24 +85,18 @@ public class PatientTagSearchScreen extends ScreenInterface {
 		customSortableTable.addColumn("First Name", "first_name");
 		customSortableTable.addColumn("DOB", "date_of_birth");
 		customSortableTable.addColumn("Patient ID", "patient_id");
-		customSortableTable.addClickHandler(new ClickHandler() {
+		customSortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				Cell clickedCell = ((CustomSortableTable) event.getSource())
-						.getCellForEvent(event);
-				int row = clickedCell.getRowIndex();
-
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				Integer patientId = null;
 				String patientName = null;
 				try {
-					patientId = new Integer(customSortableTable
-							.getValueByRow(row));
+					patientId = Integer.parseInt(data.get("patient_id"));
 					JsonUtil.debug("patientId = " + patientId.toString());
-					patientName = customSortableTable.getValueFromIndex(row,
-							"last_name")
-							+ ", "
-							+ customSortableTable.getValueFromIndex(row,
-									"first_name");
+					patientName = data.get("last_name") + ", "
+							+ data.get("first_name") + " ["
+							+ data.get("date_of_birth") + "] "
+							+ data.get("patient_id");
 					JsonUtil.debug("patientName = " + patientName);
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);

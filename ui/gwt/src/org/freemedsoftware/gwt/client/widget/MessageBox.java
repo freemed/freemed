@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -51,7 +52,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class MessageBox extends WidgetInterface {
 
@@ -59,7 +59,7 @@ public class MessageBox extends WidgetInterface {
 
 	protected HashMap<String, String>[] result;
 
-	protected CustomSortableTable wMessages = new CustomSortableTable();
+	protected CustomTable wMessages = new CustomTable();
 
 	protected HashMap<String, String>[] dataMemory;
 
@@ -93,16 +93,12 @@ public class MessageBox extends WidgetInterface {
 		wMessages.addColumn("Subject", "subject"); // col 2
 		wMessages.setIndexName("id");
 
-		wMessages.addClickHandler(new ClickHandler() {
+		wMessages.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
+			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Get information on row...
-				Cell clickedCell = wMessages.getCellForEvent(event);
-				int row = clickedCell.getRowIndex();
-				int col = clickedCell.getCellIndex();
 				try {
-					final Integer messageId = new Integer(wMessages
-							.getValueByRow(row));
+					final Integer messageId = Integer.parseInt(data.get("id"));
 					if ((col == 0) || (col == 2)) {
 						MessageView messageView = new MessageView();
 						showMessage(messageId, messageView);
@@ -283,7 +279,7 @@ public class MessageBox extends WidgetInterface {
 	}
 
 	public void loadData(HashMap<String, String>[] data) {
-		wMessages.clear();
+		wMessages.clearData();
 		wMessages.loadData(data);
 		// Save the data internally
 		dataMemory = data;

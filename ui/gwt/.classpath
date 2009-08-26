@@ -2,10 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
+	<classpathentry exported="true" kind="var" path="GWT_HOME/gwt-user.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.bouwkamp.gwt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/simpledatepicker.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/simplesortabletable.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gchart-2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com.gwtsandbox.colorpicker.ColorPicker.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gwt-dnd-2.6.4.jar"/>
@@ -13,6 +11,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/gwt-incubator-march-02-2009.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-date-emulation-1.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-date-1.0.0.jar"/>
-	<!-- <classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-extras-0.9.9.jar"/> -->
+	<classpathentry exported="true" kind="lib" path="lib/gwt-widgets-0.2.0.jar"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="output" path="www"/>
 </classpath>
