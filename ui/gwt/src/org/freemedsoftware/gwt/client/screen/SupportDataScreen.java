@@ -34,12 +34,11 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.CustomSortableTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -51,11 +50,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class SupportDataScreen extends ScreenInterface {
 
-	protected CustomSortableTable sortableTable;
+	protected CustomTable sortableTable = null;
 
 	public SupportDataScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -64,18 +62,21 @@ public class SupportDataScreen extends ScreenInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		sortableTable = new CustomSortableTable();
+		sortableTable = new CustomTable();
+		sortableTable.setMultipleSelection(false);
+		sortableTable.setAllowSelection(false);
 		sortableTable.setWidth("80%");
 		sortableTable.setIndexName("module_class");
 		sortableTable.addColumn("Name", "module_name");
 		sortableTable.addColumn("Version", "module_version");
-		sortableTable.addClickHandler(new ClickHandler() {
+		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				Cell clickedCell = sortableTable.getCellForEvent(event);
-				int row = clickedCell.getRowIndex();
-				// String moduleName = sortableTable.getValueByRow(row);
-				handleClick(row);
+			public void handleRowClick(HashMap<String, String> data) {
+				String moduleClass = data.get("module_class");
+				String moduleName = data.get("module_name");
+				SupportDataManagementScreen screen = new SupportDataManagementScreen();
+				screen.setModuleName(moduleClass);
+				Util.spawnTab(moduleName, screen);
 			}
 		});
 		verticalPanel.add(sortableTable);
@@ -167,12 +168,4 @@ public class SupportDataScreen extends ScreenInterface {
 		}
 	}
 
-	protected void handleClick(int idx) {
-		String moduleClass = sortableTable.getValueFromIndex(idx,
-				"module_class");
-		String moduleName = sortableTable.getValueFromIndex(idx, "module_name");
-		SupportDataManagementScreen screen = new SupportDataManagementScreen();
-		screen.setModuleName(moduleClass);
-		Util.spawnTab(moduleName, screen);
-	}
 }
