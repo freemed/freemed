@@ -27,7 +27,8 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.HashMap;
 
 import com.bouwkamp.gwt.user.client.ui.RoundedPanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -36,7 +37,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class PatientInfoBar extends Composite {
 
@@ -73,8 +73,8 @@ public class PatientInfoBar extends Composite {
 
 		final Image wBookAppointment = new Image(
 				"resources/images/book_appt.32x32.png");
-		wBookAppointment.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		wBookAppointment.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
 
 			}
 		});

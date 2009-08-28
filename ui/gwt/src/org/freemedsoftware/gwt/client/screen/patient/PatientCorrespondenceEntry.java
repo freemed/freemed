@@ -30,14 +30,14 @@ import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
 import org.freemedsoftware.gwt.client.widget.CustomTextBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 
@@ -102,15 +102,15 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		final Button wSubmit = new Button("Submit");
 		buttonBar.add(wSubmit);
-		wSubmit.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		wSubmit.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
 		final Button wReset = new Button("Reset");
 		buttonBar.add(wReset);
-		wReset.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		wReset.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
 				resetForm();
 			}
 		});

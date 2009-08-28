@@ -71,7 +71,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 
 	private CustomTable wMessages = null;
 
-	private HashMap<String, String>[] mStore = null;
+	// private HashMap<String, String>[] mStore = null;
 
 	protected HTML messageView;
 
@@ -269,8 +269,10 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 		// Add or remove from itemlist
 		if (c.getValue()) {
 			selectedItems.add((Integer) item);
+			wMessages.selectionAdd(item.toString());
 		} else {
 			selectedItems.remove((Object) item);
+			wMessages.selectionRemove(item.toString());
 		}
 	}
 
@@ -392,7 +394,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 	 */
 	public void populateByData(HashMap<String, String>[] data) {
 		// Keep a copy of the data in the local store
-		mStore = data;
+		// mStore = data;
 		// Clear any current contents
 		wMessages.clearData();
 		JsonUtil.debug("loaddata");

@@ -80,6 +80,7 @@ public class AccordionPanel extends Composite {
 
 	public void add(String label, final Widget content) {
 		final Label l = new Label(label);
+		l.setWidth("100%");
 		l.setStylePrimaryName(getStylePrimaryName() + "-title");
 		final SimplePanel sp = new SimplePanel();
 		sp.setWidget(content);

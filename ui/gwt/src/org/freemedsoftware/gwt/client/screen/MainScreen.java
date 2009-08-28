@@ -549,6 +549,15 @@ public class MainScreen extends Composite {
 									new SupportDataScreen());
 						}
 					}));
+			utilitiesAccPanel.add(new MenuIcon(new Image(GWT
+					.getHostPageBaseURL()
+					+ "/resources/images/user_config.32x32.png"),
+					"User Management", new Command() {
+						public void execute() {
+							Util.spawnTab("User Management",
+									new UserManagementScreen());
+						}
+					}));
 
 			accordionPanel.add("Utilities", utilitiesAccPanel);
 

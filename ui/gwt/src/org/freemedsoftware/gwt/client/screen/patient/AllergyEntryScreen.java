@@ -32,6 +32,8 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -42,11 +44,9 @@ import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public class AllergyEntryScreen extends PatientScreenInterface {
 
@@ -88,8 +88,8 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		final Button saveButton = new Button();
 		flexTable.setWidget(3, 1, saveButton);
 		saveButton.setText("Save");
-		saveButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		saveButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
 				// TODO add function to check input
 				if (checkInput()) {
 					saveButton.setEnabled(false);
@@ -105,8 +105,8 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		final Button resetButton = new Button();
 		flexTable.setWidget(3, 2, resetButton);
 		resetButton.setText("Reset");
-		resetButton.addClickListener(new ClickListener() {
-			public void onClick(Widget w) {
+		resetButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
 				resetForm();
 			}
 		});

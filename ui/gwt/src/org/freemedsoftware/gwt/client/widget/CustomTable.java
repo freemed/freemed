@@ -126,6 +126,8 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	protected Integer maximumRows = new Integer(20);
 
+	protected Integer visibleRows = maximumRows;
+
 	protected HashMap<String, String>[] data = null;
 
 	protected boolean multipleSelection = false;
@@ -387,6 +389,7 @@ public class CustomTable extends Composite implements ClickHandler {
 		if (data != null) {
 			int rows = ((data.length - offset) < maximumRows) ? (data.length - offset)
 					: maximumRows;
+			visibleRows = rows;
 			JsonUtil.debug("rows = " + rows + ", maximumRows = " + maximumRows
 					+ ", offset = " + offset);
 
@@ -429,15 +432,25 @@ public class CustomTable extends Composite implements ClickHandler {
 		}
 	}
 
-	protected void selectionAdd(String index) {
+	public void selectionAdd(String index) {
 		selected.add(index);
+
+		// Reformat table if there is data present
+		if (data != null && visibleRows > 0) {
+			formatTable(visibleRows);
+		}
 	}
 
-	protected void selectionRemove(String index) {
+	public void selectionRemove(String index) {
 		try {
 			selected.remove(index);
 		} catch (Exception e) {
 			JsonUtil.debug("selectionRemove exception: " + e);
+		}
+
+		// Reformat table if there is data present
+		if (data != null && visibleRows > 0) {
+			formatTable(visibleRows);
 		}
 	}
 
@@ -484,12 +497,13 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	/**
 	 * Get underlying FlexTable object.
+	 * 
 	 * @return
 	 */
 	public FlexTable getFlexTable() {
 		return flexTable;
 	}
-	
+
 	/**
 	 * Toggle a multiple selection for a row by its index.
 	 * 
