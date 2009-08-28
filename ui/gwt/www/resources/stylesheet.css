@@ -752,7 +752,7 @@ a:hover {
 	}
 
 .accordion-title {
-	background: #EFEFE3 url(images/stipedbg.png) repeat-x scroll 0%;
+	background: #999999 none;
 	border: 0pt none;
 	padding: 3px;
 	color: white;
