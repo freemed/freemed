@@ -24,22 +24,35 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.util.HashMap;
+
+import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
 import org.freemedsoftware.gwt.client.widget.CustomTextArea;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -49,9 +62,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 	protected CustomTextArea wDescription;
 
-	protected SupportModuleWidget wProvider;
-
-	protected SuggestBox wTemplate;
+	protected SupportModuleWidget wProvider, wTemplate;
 
 	protected CustomRichTextArea S, O, A, P, I, E, R;
 
@@ -131,8 +142,81 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		final Label templateLabel = new Label("Template : ");
 		flexTable.setWidget(4, 0, templateLabel);
 
-		final SuggestBox wTemplate = new SuggestBox();
-		flexTable.setWidget(4, 1, wTemplate);
+		final HorizontalPanel templatePanel = new HorizontalPanel();
+
+		wTemplate = new SupportModuleWidget("ProgressNotesTemplates");
+		templatePanel.add(wTemplate);
+
+		Button importTemplate = new Button("Import");
+		importTemplate.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (wTemplate.getValue() != null && wTemplate.getValue() != 0) {
+					JsonUtil.debug("loading template " + wTemplate.getValue());
+					if (Util.getProgramMode() == ProgramMode.STUBBED) {
+						CurrentState.getToaster().addItem(
+								"ProgressNotesTemplates", "Template loaded.",
+								Toaster.TOASTER_INFO);
+					} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+						String[] params = { JsonUtil.jsonify(wTemplate
+								.getValue()) };
+						RequestBuilder builder = new RequestBuilder(
+								RequestBuilder.POST,
+								URL
+										.encode(Util
+												.getJsonRequest(
+														"org.freemedsoftware.module.ProgressNotesTemplates.GetTemplate",
+														params)));
+						try {
+							builder.sendRequest(null, new RequestCallback() {
+								public void onError(
+										com.google.gwt.http.client.Request request,
+										Throwable ex) {
+									GWT.log("Exception", ex);
+									CurrentState.getToaster().addItem(
+											"ProgressNotesTemplates",
+											"Failed to load template.",
+											Toaster.TOASTER_ERROR);
+								}
+
+								public void onResponseReceived(
+										com.google.gwt.http.client.Request request,
+										com.google.gwt.http.client.Response response) {
+									if (200 == response.getStatusCode()) {
+										@SuppressWarnings("unchecked")
+										HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+												.shoehornJson(JSONParser
+														.parse(response
+																.getText()),
+														"HashMap<String,String>");
+										if (result != null) {
+											loadTemplateData(result);
+											CurrentState.getToaster().addItem(
+													"ProgressNotesTemplates",
+													"Loaded template.",
+													Toaster.TOASTER_INFO);
+										}
+									} else {
+										Window.alert(response.toString());
+									}
+								}
+							});
+						} catch (RequestException e) {
+							GWT.log("Exception", e);
+							CurrentState.getToaster().addItem(
+									"ProgressNotesTemplates",
+									"Failed to load template.",
+									Toaster.TOASTER_ERROR);
+						}
+					} else {
+						// TODO: Make this work with GWT-RPC
+					}
+				}
+			}
+		});
+		templatePanel.add(importTemplate);
+
+		flexTable.setWidget(4, 1, templatePanel);
 
 		final SimplePanel containerS = new SimplePanel();
 		tabPanel.add(containerS, "S");
@@ -194,6 +278,21 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		containerR.add(recentMedicationsList);
 
 		tabPanel.selectTab(0);
+	}
+
+	/**
+	 * Internal method to load a template record into the current form.
+	 * 
+	 * @param data
+	 */
+	protected void loadTemplateData(HashMap<String, String> data) {
+		S.setHTML(data.get("pnt_S"));
+		O.setHTML(data.get("pnt_O"));
+		A.setHTML(data.get("pnt_A"));
+		P.setHTML(data.get("pnt_P"));
+		I.setHTML(data.get("pnt_I"));
+		E.setHTML(data.get("pnt_E"));
+		R.setHTML(data.get("pnt_R"));
 	}
 
 	public String getModuleName() {
