@@ -33,14 +33,14 @@ class Vitals extends EMRModule {
 			"vitalsdescrip" => SQL__VARCHAR(100),
 			"vitalsdoc" => SQL__INT_UNSIGNED(0),
 			"vitalseoc" => SQL__INT_UNSIGNED(0),
-			"vitals_wt" => SQL__INT_UNSIGNED(0),
-			"vitals_ht" => SQL__INT_UNSIGNED(0),
+			"vitals_wt" => SQL__REAL,
+			"vitals_ht" => SQL__REAL,
 			"vitals_sbp" => SQL__INT_UNSIGNED(0),
 			"vitals_dbp" => SQL__INT_UNSIGNED(0),
 			"vitals_hr" => SQL__INT_UNSIGNED(0),
 			"vitals_rr" => SQL__INT_UNSIGNED(0),
 			"vitals_temp" => SQL__REAL,
-			"vitals_BMI" => SQL__INT_UNSIGNED(0),
+			"vitals_BMI" => SQL__REAL,
 			"iso" => SQL__VARCHAR(15),
 			"locked" => SQL__INT_UNSIGNED(0),
 			"id" => SQL__SERIAL
@@ -100,9 +100,9 @@ class Vitals extends EMRModule {
 			__("Date") => fm_date_entry("vitalsdt"),
 
 			__("<u>W</u>eight (pounds)") =>
-			html_form::text_widget('vitals_wt', array('id'=>'vitals_wt','length'=>5)),
+			html_form::text_widget('vitals_wt', array('id'=>'vitals_wt','length'=>7)),
 			__("<u>H</u>eight (inches)") =>
-			html_form::text_widget('vitals_ht', array('id'=>'vitals_ht','length'=>5)),
+			html_form::text_widget('vitals_ht', array('id'=>'vitals_ht','length'=>7)),
 			__("<u>S</u>ystolic BP") =>
 			html_form::text_widget('vitals_sbp', /*'VIRTUAL',*/ 5, 100),
 			__("<u>D</u>iastolic BP") =>
@@ -114,7 +114,7 @@ class Vitals extends EMRModule {
 			__("<u>T</u>emperature (F)") =>
 			html_form::text_widget('vitals_temp', /*'VIRTUAL',*/ 5, 100),
 		 	__("<u>B</u>MI") =>
-			html_form::text_widget('vitals_BMI', array('id'=>'vitals_BMI','length'=>5)).
+			html_form::text_widget('vitals_BMI', array('id'=>'vitals_BMI','length'=>7)).
 			"<input type=\"button\" onclick=\"document.getElementById('vitals_BMI').value = ( document.getElementById('vitals_wt').value / ( document.getElementById('vitals_ht').value * document.getElementById('vitals_ht').value ) ) * 703; return true;\" value=\"".__("Calculate")."\" />",
 		);
 		if(check_module("EpisodeOfCare")) {
