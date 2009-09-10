@@ -10,8 +10,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/cobogw-gwt-1.2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gwt-incubator-march-02-2009.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-date-emulation-1.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ftr-gwt-library-date-1.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gwt-widgets-0.2.0.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/ftr-gwt-library-date-1.1.0.jar"/>
 	<classpathentry kind="output" path="www"/>
 </classpath>
