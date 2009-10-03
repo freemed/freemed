@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `xmr_element` (
 	patient_form_id		INT UNSIGNED NOT NULL,
 	atom_id			INT UNSIGNED NOT NULL,
 	stamp			TIMESTAMP NOT NULL DEFAULT NOW(),
+	obx_source		ENUM ( 'unknown', 'observed', 'reported', 'provider-reported' ) NOT NULL DEFAULT 'unknown',
 	user			INT UNSIGNED NOT NULL,
 	value			TEXT,
 	id			SERIAL
@@ -67,6 +68,7 @@ BEGIN
 	DROP TRIGGER xmr_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE xmr_element ADD COLUMN obx_source ENUM ( 'unknown', 'observed', 'reported', 'provider-reported' ) NOT NULL DEFAULT 'unknown' AFTER stamp;
 END
 //
 DELIMITER ;

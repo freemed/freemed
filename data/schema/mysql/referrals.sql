@@ -24,28 +24,29 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `referrals` (
-	refpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	refprovorig		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	refprovdest		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	refstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	refdx			VARCHAR (255) NOT NULL DEFAULT '',
-	refpayor		INT UNSIGNED NOT NULL DEFAULT 0,
-	refcoverage		INT UNSIGNED NOT NULL DEFAULT 0,
-	refreasons		TEXT,
-	refstatus		INT UNSIGNED NOT NULL DEFAULT 0,
-	refurgency		INT UNSIGNED NOT NULL DEFAULT 0,
-	refentered		INT UNSIGNED NOT NULL DEFAULT 0,
-	refapptblob		BLOB,
-	refdirection		ENUM ( 'inbound', 'outbound' ) DEFAULT 'outbound',
-	refpayorapproval	ENUM ( 'unknown', 'denied', 'approved' ) DEFAULT 'unknown',
-	refcomorbids		VARCHAR(255),
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	  refpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, refprovorig		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, refprovdest		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, refstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, refdx			VARCHAR (255) NOT NULL DEFAULT ''
+	, refpayor		INT UNSIGNED NOT NULL DEFAULT 0
+	, refcoverage		INT UNSIGNED NOT NULL DEFAULT 0
+	, refreasons		TEXT
+	, refstatus		INT UNSIGNED NOT NULL DEFAULT 0
+	, refurgency		INT UNSIGNED NOT NULL DEFAULT 0
+	, refentered		INT UNSIGNED NOT NULL DEFAULT 0
+	, refapptblob		BLOB
+	, refdirection		ENUM ( 'inbound', 'outbound' ) DEFAULT 'outbound'
+	, refpayorapproval	ENUM ( 'unknown', 'denied', 'approved' ) DEFAULT 'unknown'
+	, refcomorbids		VARCHAR (255)
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
-	PRIMARY KEY		( id ),
 
-	FOREIGN KEY		( refpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, PRIMARY KEY		( id )
+
+	, FOREIGN KEY		( refpatient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS referrals_Upgrade;

@@ -1,3 +1,5 @@
+#!/bin/bash
+#
 # $Id$
 #
 # Authors:
@@ -20,22 +22,27 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CREATE TABLE IF NOT EXISTS `icd9` (
-	icd9code		VARCHAR (6) NOT NULL,
-	icd10code		VARCHAR (7),
-	icd9descrip		VARCHAR (100) NOT NULL UNIQUE,
-	icd10descrip		VARCHAR (100),
-	icdmetadesc		VARCHAR (100),
-	icdng			DATE,
-	icddrg			DATE,
-	icdnum			INT UNSIGNED DEFAULT 0,
-	icdamt			REAL DEFAULT 0.0,
-	icdcoll			REAL DEFAULT 0.0,
-	id			SERIAL
+RVU_FILE=RVU09D.zip
+HCPCS_FILE=09anweb.zip
+CURDIR="$( pwd )"
 
-	#	Define keys
+cd "$( cd "$(dirname "$0")"; pwd )"
 
-	, KEY			( icd9code )
-	, KEY			( icd9descrip )
-);
+# Retrieve original file
+wget -c "http://www.cms.hhs.gov/physicianfeesched/downloads/$RVU_FILE" -O "$RVU_FILE"
+wget -c "http://www.cms.hhs.gov/HCPCSReleaseCodeSets/Downloads/${HCPCS_FILE}?agree=yes&next=Accept" -O "${HCPCS_FILE}"
+
+# Extract all files from archive
+rm -rf extract
+mkdir extract
+( \
+	cd extract ; \
+	unzip ../$RVU_FILE ; \
+	unzip ../$HCPCS_FILE ; \
+	mv PPRRVU*.csv ../PPRRVU.csv \
+)
+rm extract -Rf
+
+# Restore previous directory
+cd "$CURDIR"
 

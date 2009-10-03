@@ -40,3 +40,51 @@ CREATE TABLE IF NOT EXISTS `cpt` (
 	id			SERIAL
 );
 
+CREATE TABLE IF NOT EXISTS `hcpcs` (
+	  hcpcs				CHAR( 7 ) NOT NULL UNIQUE
+	, modifier			CHAR( 2 )
+	, description			VARCHAR( 100 )
+	, status_code			CHAR( 1 )
+	, not_used_for_medicare		VARCHAR ( 100 )
+	, work_rvu			DECIMAL( 10, 2 )
+	, trans_non_fac_pe_rvu		DECIMAL( 10, 2 )
+	, trans_non_fac_na_indic	VARCHAR( 10 )
+	, fi_non_fac_pe_rvu		DECIMAL( 10, 2 )
+	, fi_non_fac_na_indic		VARCHAR( 10 )
+	, trans_fac_pe_rvu		DECIMAL( 10, 2 )
+	, trans_fac_na_indic		VARCHAR( 10 )
+	, fi_fac_pe_rvu			DECIMAL( 10, 2 )
+	, fi_fac_na_indic		VARCHAR( 10 )
+	, mp_rvu			DECIMAL( 10, 2 )
+	, trans_non_fac_total		DECIMAL( 10, 2 )
+	, fi_non_fac_total		DECIMAL( 10, 2 )
+	, trans_fac_total		DECIMAL( 10, 2 )
+	, fi_fac_total			DECIMAL( 10, 2 )
+	, pctc_ind			TINYINT NOT NULL
+	, glob_days			VARCHAR( 20 )
+	, pre_op			DECIMAL( 10, 2 )
+	, intra_op			DECIMAL( 10, 2 )
+	, post_op			DECIMAL( 10, 2 )
+	, multi_proc			TINYINT NOT NULL
+	, bilat_surg			TINYINT NOT NULL
+	, asst_surg			TINYINT NOT NULL
+	, co_surg			TINYINT NOT NULL
+	, team_surg			TINYINT NOT NULL
+	, endo_base			CHAR( 5 )
+	, conv_factor			DECIMAL( 10, 5 )
+	, supervision_dx_proc		VARCHAR( 10 )
+	, calculation_flag		TINYINT NOT NULL
+	, diag_imag_fam_indic		CHAR( 2 )
+	, non_fac_pe_opps_payment_amt	DECIMAL( 10, 2 )
+	, fac_pe_opps_payment_amt	DECIMAL( 10, 2 )
+	, mp_opps_payment_amt		DECIMAL( 10, 2 )
+
+	, PRIMARY KEY ( hcpcs )
+	, INDEX ( description )
+	, INDEX ( status_code )
+);
+
+LOAD DATA LOCAL INFILE "data/source/cpt/PPRRVU.csv"
+	INTO TABLE hcpcs
+	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 11 LINES;
+

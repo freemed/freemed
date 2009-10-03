@@ -24,14 +24,14 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `patient_ids` (
-	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	foreign_id		VARCHAR (50) NOT NULL,
-	facility		INT UNSIGNED,
-	practice		INT UNSIGNED,
-	stamp			TIMESTAMP NOT NULL DEFAULT NOW(),
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL
+	  patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, foreign_id		VARCHAR (50) NOT NULL
+	, facility		INT UNSIGNED
+	, practice		INT UNSIGNED
+	, stamp			TIMESTAMP NOT NULL DEFAULT NOW()
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id			SERIAL
 
 	# Define keys
 
