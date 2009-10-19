@@ -140,7 +140,7 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	protected TableRowClickHandler tableRowClickHandler = null;
 
-	protected HorizontalPanel buttonContainer = new HorizontalPanel();
+	protected HorizontalPanel buttonContainer = null;
 
 	protected Button bPrevious = new Button("Previous");
 	protected Label bLabel = new Label();
@@ -157,11 +157,13 @@ public class CustomTable extends Composite implements ClickHandler {
 		vPanel.add(flexTable);
 
 		// Build button container
-		vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		vPanel.add(new HTML(""));
-		vPanel.add(bPrevious);
-		vPanel.add(bLabel);
-		vPanel.add(bNext);
+		buttonContainer = new HorizontalPanel();
+		buttonContainer
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		buttonContainer.add(new HTML(""));
+		buttonContainer.add(bPrevious);
+		buttonContainer.add(bLabel);
+		buttonContainer.add(bNext);
 
 		// Button container by default is not visible
 		buttonContainer.setVisible(false);
@@ -178,7 +180,7 @@ public class CustomTable extends Composite implements ClickHandler {
 		rowFormatter.setStyleName(0, "tableHeader");
 
 		// Last thing to do, set the widget.
-		initWidget(flexTable);
+		initWidget(vPanel);
 	}
 
 	public void setTableWidgetColumnSetInterface(TableWidgetColumnSetInterface i) {
@@ -390,8 +392,16 @@ public class CustomTable extends Composite implements ClickHandler {
 			int rows = ((data.length - offset) < maximumRows) ? (data.length - offset)
 					: maximumRows;
 			visibleRows = rows;
-			JsonUtil.debug("rows = " + rows + ", maximumRows = " + maximumRows
-					+ ", offset = " + offset);
+			// JsonUtil.debug("rows = " + rows + ", maximumRows = " +
+			// maximumRows
+			// + ", offset = " + offset);
+
+			// Decide visibility of buttons
+			if (data.length > maximumRows) {
+				buttonContainer.setVisible(true);
+			} else {
+				buttonContainer.setVisible(false);
+			}
 
 			// Before we go any further, clear indexMap, otherwise bad click
 			// values...
@@ -401,7 +411,8 @@ public class CustomTable extends Composite implements ClickHandler {
 			for (int iter = offset; iter < (rows + offset); iter++) {
 				int actualRow = iter - offset;
 
-				JsonUtil.debug("iter = " + iter + ", actualRow = " + actualRow);
+				// JsonUtil.debug("iter = " + iter + ", actualRow = " +
+				// actualRow);
 
 				// Set the value in the index map so clicks can be converted
 				String indexValue = data[iter].get(indexName);
@@ -425,8 +436,23 @@ public class CustomTable extends Composite implements ClickHandler {
 					}
 				}
 			}
+
+			// Set extra data rows to nothing
+			if (visibleRows < maximumRows) {
+				for (int iter = visibleRows; iter <= maximumRows; iter++) {
+					try {
+						indexMap.remove(iter + 1);
+					} catch (Exception ex) {
+					}
+					for (int jter = 0; jter < columns.size(); jter++) {
+						flexTable.setText(iter + 1, jter, "");
+					}
+				}
+			}
+
 			JsonUtil.debug("formattable");
 			formatTable(rows);
+			redrawButtons();
 		} else {
 			JsonUtil.debug("Skipping loadData code due to null data presented");
 		}
@@ -535,9 +561,9 @@ public class CustomTable extends Composite implements ClickHandler {
 	private void redrawButtons() {
 		JsonUtil.debug("redrawButtons");
 		if (curMinRow <= 0) {
-			bPrevious.setEnabled(true);
-		} else {
 			bPrevious.setEnabled(false);
+		} else {
+			bPrevious.setEnabled(true);
 		}
 
 		if (curMinRow + maximumRows < data.length) {
@@ -561,7 +587,7 @@ public class CustomTable extends Composite implements ClickHandler {
 			if (curMinRow > 0) {
 				previousPage();
 			}
-		} else if (event.getSource() == bPrevious) {
+		} else if (event.getSource() == bNext) {
 			// Only process next page if there are possible more values to
 			// display
 			if (curMinRow + maximumRows < data.length) {
@@ -575,7 +601,7 @@ public class CustomTable extends Composite implements ClickHandler {
 				// Handle row header click
 			} else {
 				if (allowSelection) {
-					if (multipleSelection) {
+					if (!multipleSelection) {
 						// Remove past selection
 						if (selected.size() > 0) {
 							selected.clear();
