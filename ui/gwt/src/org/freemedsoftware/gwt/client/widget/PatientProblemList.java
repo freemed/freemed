@@ -30,10 +30,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
@@ -171,7 +173,7 @@ public class PatientProblemList extends WidgetInterface {
 			} else if (sender == deleteImage) {
 				if (Window
 						.confirm("Are you sure you want to delete this item?")) {
-					deleteItem(internalId);
+					deleteItem(internalId, data);
 				}
 			} else if (sender == modifyImage) {
 				modifyItem(internalId, data);
@@ -267,8 +269,87 @@ public class PatientProblemList extends WidgetInterface {
 		Util.spawnTabPatient("Modify", i, patientScreen);
 	}
 
-	public void deleteItem(Integer item) {
+	public void deleteItem(Integer item, HashMap<String, String> data) {
+		final String module = data.get("module");
+		final Integer internalId = Integer.parseInt(data.get("oid"));
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { module, JsonUtil.jsonify(internalId) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleDeleteMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						JsonUtil.debug(ex.toString());
+						CurrentState.getToaster()
+								.addItem(module, "Unable to remove entry",
+										Toaster.TOASTER_ERROR);
+					}
 
+					public void onResponseReceived(Request request,
+							Response response) {
+						JsonUtil.debug("onResponseReceived");
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								JsonUtil.debug(response.getText());
+								Boolean r = (Boolean) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Boolean");
+								if (r) {
+									loadData();
+									CurrentState.getToaster().addItem(module,
+											"Removed item.",
+											Toaster.TOASTER_INFO);
+								} else {
+									CurrentState.getToaster().addItem(module,
+											"Unable to remove entry",
+											Toaster.TOASTER_ERROR);
+								}
+							} else {
+								JsonUtil.debug(response.toString());
+								CurrentState.getToaster().addItem(module,
+										"Unable to remove entry",
+										Toaster.TOASTER_ERROR);
+							}
+						}
+					}
+				});
+			} catch (RequestException e) {
+				JsonUtil.debug(e.toString());
+				CurrentState.getToaster().addItem(module,
+						"Unable to remove entry", Toaster.TOASTER_ERROR);
+			}
+		} else {
+			ModuleInterfaceAsync service = null;
+			try {
+				service = (ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+			} catch (Exception e) {
+				GWT.log("Failed to get proxy for ModuleInterface", e);
+			}
+			service.ModuleDeleteMethod(module, internalId,
+					new AsyncCallback<Integer>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							JsonUtil.debug(caught.toString());
+							CurrentState.getToaster().addItem(module,
+									"Unable to remove entry",
+									Toaster.TOASTER_ERROR);
+						}
+
+						@Override
+						public void onSuccess(Integer result) {
+							loadData();
+							CurrentState.getToaster().addItem(module,
+									"Removed item.", Toaster.TOASTER_INFO);
+						}
+					});
+		}
 	}
 
 	public void setPatientId(Integer id) {
