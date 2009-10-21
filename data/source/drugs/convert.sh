@@ -33,6 +33,9 @@ echo " "
 rm -rf extract
 rm ../../drugs/* -f
 
+NDCZIP=UCM070838.zip
+EOBZIP=UCM163762.zip
+
 mkdir extract
 (
 	cd extract
@@ -41,7 +44,7 @@ mkdir extract
 	echo " "
 
 	echo -n " --> Extracting ziptext.zip ... "
-	unzip -qLL ../ziptext.zip
+	unzip -qLL ../${NDCZIP}
 	echo " done <--"
 
 	cvt listings.txt ndc_listings 1-7,9-14,16-19,21-30,32-41,43-43,45-144
@@ -61,7 +64,7 @@ mkdir extract
 	echo " "
 
 	echo -n " --> Extracting ziptext.zip ... "
-	unzip -qLL ../eobzip.zip
+	unzip -qLL ../${EOBZIP}
 	echo " done <--"
 
 	echo " --> Converting products.txt to orangebook_products <-- "
