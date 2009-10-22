@@ -36,6 +36,7 @@ class ProviderStatus extends SupportModule {
 	var $table_name     = "phystatus";
 
 	var $variables = array ( "phystatus" );
+  var $widget_hash        = "##phystatus##";
 
 	public function __construct ( ) {
 		// For i18n: __("Provider Status")
