@@ -29,7 +29,7 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface PatientTag extends RemoteService {
-	public String[] ListTags(String criteria);
+	public HashMap<String, String> ListTags(String criteria);
 
 	public Boolean CreateTag(Integer patientId, String tagName);
 

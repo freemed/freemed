@@ -34,11 +34,12 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -49,11 +50,10 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class PatientTagSearchScreen extends ScreenInterface {
 
-	private TextBox tagWidget = null;
+	private PatientTagWidget tagWidget = null;
 
 	private CustomTable customSortableTable = null;
 
@@ -63,14 +63,14 @@ public class PatientTagSearchScreen extends ScreenInterface {
 
 		Label tagLabel = new Label("Search for Tag: ");
 		layout.setWidget(0, 0, tagLabel);
-		tagWidget = new TextBox();
+		tagWidget = new PatientTagWidget();
 		layout.setWidget(0, 2, tagWidget);
-		tagWidget.addChangeHandler(new ChangeHandler() {
+		tagWidget.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
-			public void onChange(ChangeEvent evt) {
-				TextBox w = (TextBox) evt.getSource();
-				if (w.getText().length() > 2) {
-					searchForTag(w.getText());
+			public void onValueChange(ValueChangeEvent<String> evt) {
+				PatientTagWidget w = (PatientTagWidget) evt.getSource();
+				if (w.getValue().length() > 2) {
+					searchForTag(w.getValue());
 				}
 			}
 		});
@@ -130,7 +130,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 	 *            Textual tag name.
 	 */
 	public void setTagValue(String tagValue) {
-		tagWidget.setText(tagValue);
+		tagWidget.setValue(tagValue);
 		searchForTag(tagValue);
 	}
 
