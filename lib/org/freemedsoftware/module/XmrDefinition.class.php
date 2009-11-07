@@ -40,19 +40,28 @@ class XmrDefinition extends SupportModule {
 	var $widget_hash = "##form_name## (##form_locale##)";
 
 	var $variables = array (
-		'form_name',
-		'form_description',
-		'form_locale',
-		'form_template'
+		  'form_name'
+		, 'form_description'
+		, 'form_locale'
+		, 'form_template'
+		, 'form_page_count'
 	);
 
 	var $element_keys = array (
-		'form_id',
-		'text_name',
-		'parent_concept_id',
-		'concept_id',
-		'quant_id',
-		'external_population'
+		  'form_id'
+		, 'text_name'
+		, 'code_set'
+		, 'parent_concept_id'
+		, 'concept_id'
+		, 'quant_code_set'
+		, 'quant_id'
+		, 'external_population'
+		, 'widget_type'
+		, 'widget_options'
+		, 'form_source_page'
+		, 'form_destination_page'
+		, 'form_x'
+		, 'form_y'
 	);
 
 	public function __construct () {
@@ -66,6 +75,26 @@ class XmrDefinition extends SupportModule {
 		// Run constructor
 		parent::__construct();
 	} // end constructor
+
+	// Method: GetFormElementsWithDefaults
+	//
+	// Parameters:
+	//
+	//	$id - Form id
+	//
+	public function GetFormElementsWithDefaults( $id ) {
+		$q = "SELECT * FROM xmr_definition_element WHERE form_id = " . $GLOBALS['sql']->escape( $id );
+		$res = $GLOBALS['sql']->queryAll( $q );
+		$elements = array();
+		foreach ( $res AS $r ) {
+			$elements[] = (array) $r;
+		}
+
+		// TODO: FIXME: get actual defaults instead of none
+		$defaults = array(array());
+
+		return array( $elements, $defaults );
+	} // end method GetFormElementsWithDefaults
 
 	// Method: SetElements
 	//

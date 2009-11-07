@@ -25,13 +25,13 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/xmr_definition.sql
 
 CREATE TABLE IF NOT EXISTS `xmr` (
-	patient			BIGINT UNSIGNED NOT NULL,
-	form_id			INT UNSIGNED NOT NULL,
-	stamp			TIMESTAMP NOT NULL DEFAULT NOW(),
-	provider		INT UNSIGNED NOT NULL,
-	user			INT UNSIGNED NOT NULL,
-	locked			INT UNSIGNED NOT NULL,
-	id			SERIAL
+	  patient		BIGINT UNSIGNED NOT NULL
+	, form_id		INT UNSIGNED NOT NULL
+	, stamp			TIMESTAMP NOT NULL DEFAULT NOW()
+	, provider		INT UNSIGNED NOT NULL
+	, user			INT UNSIGNED NOT NULL
+	, locked		INT UNSIGNED NOT NULL
+	, id			SERIAL
 
 	#	Define keys
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
@@ -39,21 +39,19 @@ CREATE TABLE IF NOT EXISTS `xmr` (
 );
 
 CREATE TABLE IF NOT EXISTS `xmr_element` (
-	patient			BIGINT UNSIGNED NOT NULL,
-	patient_form_id		INT UNSIGNED NOT NULL,
-	atom_id			INT UNSIGNED NOT NULL,
-	stamp			TIMESTAMP NOT NULL DEFAULT NOW(),
-	obx_source		ENUM ( 'unknown', 'observed', 'reported', 'provider-reported' ) NOT NULL DEFAULT 'unknown',
-	user			INT UNSIGNED NOT NULL,
-	value			TEXT,
-	id			SERIAL
+	  patient			BIGINT UNSIGNED NOT NULL
+	, patient_form_id		INT UNSIGNED NOT NULL
+	, atom_id			INT UNSIGNED NOT NULL
+	, stamp				TIMESTAMP NOT NULL DEFAULT NOW()
+	, obx_source			ENUM ( 'unknown', 'observed', 'reported', 'provider-reported' ) NOT NULL DEFAULT 'unknown'
+	, user				INT UNSIGNED NOT NULL
+	, value				TEXT
+	, id				SERIAL
 
 	#	Define keys
-	, KEY			( patient )
-	, KEY			( atom_id )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( patient_form_id ) REFERENCES xmr.id ON DELETE CASCADE
-	, FOREIGN KEY		( atom_id ) REFERENCES xmr_definition_element.id ON DELETE CASCADE
+	, FOREIGN KEY			( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY			( patient_form_id ) REFERENCES xmr.id ON DELETE CASCADE
+	, FOREIGN KEY			( atom_id ) REFERENCES xmr_definition_element.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS xmr_Upgrade;

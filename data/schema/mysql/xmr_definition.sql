@@ -21,29 +21,49 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `xmr_definition` (
-	form_name		VARCHAR (150) NOT NULL,
-	form_description	VARCHAR (250),
-	form_locale		CHAR (5) NOT NULL DEFAULT 'en_US',
-	form_template		TEXT,
-	id			SERIAL
+	  form_name			VARCHAR (150) NOT NULL
+	, form_description		VARCHAR (250)
+	, form_locale			CHAR (5) NOT NULL DEFAULT 'en_US'
+	, form_template			BLOB
+		COMMENT 'Template file or uniform locator'
+	, form_page_count		INT UNSIGNED DEFAULT 1
+		COMMENT 'Total number of pages in destination form'
+	, id				SERIAL
 
 	#	Define keys
 
-	, KEY			( form_name )
+	, KEY				( form_name )
+	, KEY				( form_locale )
 );
 
 CREATE TABLE IF NOT EXISTS `xmr_definition_element` (
-	form_id			INT UNSIGNED NOT NULL,
-	text_name		VARCHAR (250) NOT NULL,
-	parent_concept_id	CHAR (10),
-	concept_id		CHAR (10),
-	quant_id		CHAR (10),
-	external_population	BOOL DEFAULT FALSE,
-	id			SERIAL
+	  form_id			INT UNSIGNED NOT NULL
+	, text_name			VARCHAR (250) NOT NULL
+	, code_set			CHAR (20) NOT NULL
+	, parent_concept_id		CHAR (10)
+	, concept_id			CHAR (10)
+	, quant_code_set		CHAR (20)
+	, quant_id			CHAR (10)
+	, external_population		BOOL DEFAULT FALSE
+		COMMENT 'Populated from outside the XMR system? (outside includes EMR)'
+
+	, widget_type			CHAR (30) NOT NULL DEFAULT 'TEXT'
+	, widget_options		TEXT
+
+	, form_source_page		INT UNSIGNED DEFAULT 1
+		COMMENT 'Page number from source document'
+	, form_destination_page		INT UNSIGNED DEFAULT 1
+		COMMENT 'Output page number in multipage output'
+	, form_x			INT UNSIGNED
+		COMMENT 'Destination X position'
+	, form_y			INT UNSIGNED
+		COMMENT 'Destination Y position'
+
+	, id				SERIAL
 
 	#	Define keys
 
-	, KEY			( form_id )
-	, KEY			( parent_concept_id, concept_id )
+	, KEY				( form_id )
+	, KEY				( code_set, parent_concept_id, concept_id )
 );
 

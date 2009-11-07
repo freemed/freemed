@@ -39,10 +39,19 @@ class Xmr extends EMRModule {
 	var $widget_hash    = "##stamp## ##fr_formname##";
 
 	var $variables = array (
-		'patient',
-		'form_id',
-		'provider',
-		'user'
+		  'patient'
+		, 'form_id'
+		, 'provider'
+		, 'user'
+	);
+
+	var $element_keys = array (
+		  'patient'
+		, 'patient_form_id'
+		, 'atom_id'
+		, 'obx_source'
+		, 'user'
+		, 'value'
 	);
 
 	public function __construct ( ) {
@@ -61,6 +70,60 @@ class Xmr extends EMRModule {
 		// Run parent constructor
 		parent::__construct ( );
 	} // end constructor Xmr
+
+	// Method: SetElements
+	//
+	// Parameters:
+	//
+	//	$id - Form ID
+	//
+	//	$elements - Array of hashes
+	//	* form_id - Link to parent form record
+	//	* text_name - Textual name
+	//	* parent_concept_id - UMLS parent concept ID
+	//	* concept_id - UMLS concept ID
+	//	* quant_id - UMLS quantifier concept ID
+	//	* external_population - Boolean flag to determine if this is populated by other parts of the medical record
+	//	* altered - Boolean flag to determine whether or not this entry has been altered.
+	//	* id - 0 if new, otherwise the current id
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function SetElements ( $id, $elements ) {
+		$es = (array) $elements;
+		foreach ( $es AS $a ) {
+			// Force as an array
+			$a = (array) $a;
+
+			// Preprocessing
+			$a['form_id'] = $id;
+
+			// If id = 0, process as new entry
+			if ( ( (int) $a['id'] ) == 0 ) {
+				syslog( LOG_DEBUG, "SetElements: adding new address for $id" );
+				$GLOBALS['sql']->load_data( $a );
+				$query = $GLOBALS['sql']->insert_query(
+					'xmr_element',
+					$this->element_keys
+				);
+				$GLOBALS['sql']->query( $query );
+			} else {
+				if ( $a['altered'] ) {
+					syslog( LOG_DEBUG, "SetElements: modifying address for form $id, id = ".$a['id'] );
+					$GLOBALS['sql']->load_data( $a );
+					$query = $GLOBALS['sql']->update_query(
+						'xmr_element',
+						$this->element_keys,
+						array( 'id' => $a['id'] )
+					);
+					$GLOBALS['sql']->query( $query );
+				}
+			}
+		}
+		return true;
+	} // end method SetElements
 
 } // end class Xmr
 
