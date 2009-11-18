@@ -76,6 +76,10 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
 
     /**
      * Split the "[owner|schema].table" notation into an array
+     *
+     * @param string $table [schema and] table name
+     *
+     * @return array array(schema, table)
      * @access private
      */
     function splitTableSchema($table)

@@ -101,6 +101,7 @@ define('MDB2_ERROR_MANAGER_PARSE',      -33);
 define('MDB2_ERROR_LOADMODULE',         -34);
 define('MDB2_ERROR_INSUFFICIENT_DATA',  -35);
 define('MDB2_ERROR_NO_PERMISSION',      -36);
+define('MDB2_ERROR_DISCONNECT_FAILED',  -37);
 
 // }}}
 // {{{ Verbose constants
@@ -403,7 +404,7 @@ class MDB2
     // {{{ function &connect($dsn, $options = false)
 
     /**
-     * Create a new MDB2 connection object and connect to the specified
+     * Create a new MDB2_Driver_* connection object and connect to the specified
      * database
      *
      * IMPORTANT: In order for MDB2 to work properly it is necessary that
@@ -417,15 +418,15 @@ class MDB2
      *     $db = MDB2::connect($dsn);
      *          ^^
      *
-     * @param   mixed   'data source name', see the MDB2::parseDSN
-     *                            method for a description of the dsn format.
-     *                            Can also be specified as an array of the
-     *                            format returned by MDB2::parseDSN.
-     * @param   array   An associative array of option names and
-     *                            their values.
+     * @param mixed $dsn     'data source name', see the MDB2::parseDSN
+     *                       method for a description of the dsn format.
+     *                       Can also be specified as an array of the
+     *                       format returned by MDB2::parseDSN.
+     * @param array $options An associative array of option names and
+     *                       their values.
      *
-     * @return  mixed   a newly created MDB2 connection object, or a MDB2
-     *                  error object on error
+     * @return mixed a newly created MDB2 connection object, or a MDB2
+     *               error object on error
      *
      * @access  public
      * @see     MDB2::parseDSN
@@ -566,7 +567,7 @@ class MDB2
      */
     function apiVersion()
     {
-        return '2.5.0b1';
+        return '2.5.0b2';
     }
 
     // }}}
@@ -767,6 +768,7 @@ class MDB2
                 MDB2_ERROR_TRUNCATED          => 'truncated',
                 MDB2_ERROR_DEADLOCK           => 'deadlock detected',
                 MDB2_ERROR_NO_PERMISSION      => 'no permission',
+                MDB2_ERROR_DISCONNECT_FAILED  => 'disconnect failed',
             );
         }
 
@@ -1145,8 +1147,11 @@ class MDB2_Driver_Common extends PEAR
      *  <li>$options['emulate_prepared'] -> boolean: force prepared statements to be emulated</li>
      *  <li>$options['datatype_map'] -> array: map user defined datatypes to other primitive datatypes</li>
      *  <li>$options['datatype_map_callback'] -> array: callback function/method that should be called</li>
-     *  <li>$options['bindname_format'] -> string: regular expression pattern for named parameters
+     *  <li>$options['bindname_format'] -> string: regular expression pattern for named parameters</li>
+     *  <li>$options['multi_query'] -> boolean: determines if queries returning multiple result sets should be executed</li>
      *  <li>$options['max_identifiers_length'] -> integer: max identifier length</li>
+     *  <li>$options['default_fk_action_onupdate'] -> string: default FOREIGN KEY ON UPDATE action ['RESTRICT'|'NO ACTION'|'SET DEFAULT'|'SET NULL'|'CASCADE']</li>
+     *  <li>$options['default_fk_action_ondelete'] -> string: default FOREIGN KEY ON DELETE action ['RESTRICT'|'NO ACTION'|'SET DEFAULT'|'SET NULL'|'CASCADE']</li>
      * </ul>
      *
      * @var     array
@@ -1196,6 +1201,8 @@ class MDB2_Driver_Common extends PEAR
         'lob_allow_url_include' => false,
         'bindname_format' => '(?:\d+)|(?:[a-zA-Z][a-zA-Z0-9_]*)',
         'max_identifiers_length' => 30,
+        'default_fk_action_onupdate' => 'RESTRICT',
+        'default_fk_action_ondelete' => 'RESTRICT',
     );
 
     /**
@@ -1426,26 +1433,34 @@ class MDB2_Driver_Common extends PEAR
      * callbacks etc.  Basically a wrapper for PEAR::raiseError
      * without the message string.
      *
-     * @param   mixed   integer error code, or a PEAR error object (all other
-     *                  parameters are ignored if this parameter is an object
-     * @param   int     error mode, see PEAR_Error docs
-     * @param   mixed   If error mode is PEAR_ERROR_TRIGGER, this is the
-         *              error level (E_USER_NOTICE etc).  If error mode is
-     *                  PEAR_ERROR_CALLBACK, this is the callback function,
-     *                  either as a function name, or as an array of an
-     *                  object and method name.  For other error modes this
-     *                  parameter is ignored.
-     * @param   string  Extra debug information.  Defaults to the last
-     *                  query and native error code.
-     * @param   string  name of the method that triggered the error
+     * @param mixed  $code     integer error code, or a PEAR error object (all 
+     *                         other parameters are ignored if this parameter is
+     *                         an object
+     * @param int    $mode     error mode, see PEAR_Error docs
+     * @param mixed  $options  If error mode is PEAR_ERROR_TRIGGER, this is the
+     *                         error level (E_USER_NOTICE etc). If error mode is
+     *                         PEAR_ERROR_CALLBACK, this is the callback function,
+     *                         either as a function name, or as an array of an
+     *                         object and method name. For other error modes this
+     *                         parameter is ignored.
+     * @param string $userinfo Extra debug information. Defaults to the last
+     *                         query and native error code.
+     * @param string $method   name of the method that triggered the error
+     * @param string $dummy1   not used
+     * @param bool   $dummy2   not used
      *
-     * @return PEAR_Error   instance of a PEAR Error object
-     *
-     * @access  public
-     * @see     PEAR_Error
+     * @return PEAR_Error instance of a PEAR Error object
+     * @access public
+     * @see    PEAR_Error
      */
-    function &raiseError($code = null, $mode = null, $options = null, $userinfo = null, $method = null)
-    {
+    function &raiseError($code = null,
+                         $mode = null,
+                         $options = null,
+                         $userinfo = null,
+                         $method = null,
+                         $dummy1 = null,
+                         $dummy2 = false
+    ) {
         $userinfo = "[Error message: $userinfo]\n";
         // The error is yet a MDB2 error object
         if (PEAR::isError($code)) {
@@ -2264,11 +2279,10 @@ class MDB2_Driver_Common extends PEAR
     /**
      * Log out and disconnect from the database.
      *
-     * @param   bool    if the disconnect should be forced even if the
-     *                  connection is opened persistently
+     * @param boolean $force whether the disconnect should be forced even if the
+     *                       connection is opened persistently
      *
-     * @return  mixed   true on success, false if not connected and error
-     *                  object on error
+     * @return mixed true on success, false if not connected and error object on error
      *
      * @access  public
      */
@@ -2381,6 +2395,26 @@ class MDB2_Driver_Common extends PEAR
             break;
         }
         return $dsn;
+    }
+
+    // }}}
+    // {{{ _isNewLinkSet()
+
+    /**
+     * Check if the 'new_link' option is set
+     *
+     * @return boolean
+     *
+     * @access protected
+     */
+    function _isNewLinkSet()
+    {
+        return (isset($this->dsn['new_link'])
+            && ($this->dsn['new_link'] === true
+             || (is_string($this->dsn['new_link']) && preg_match('/^true$/i', $this->dsn['new_link']))
+             || (is_numeric($this->dsn['new_link']) && 0 != (int)$this->dsn['new_link'])
+            )
+        );
     }
 
     // }}}
@@ -2738,8 +2772,7 @@ class MDB2_Driver_Common extends PEAR
     /**
      * Execute a SQL REPLACE query. A REPLACE query is identical to a INSERT
      * query, except that if there is already a row in the table with the same
-     * key field values, the REPLACE query just updates its values instead of
-     * inserting a new row.
+     * key field values, the old row is deleted before the new row is inserted.
      *
      * The REPLACE type of query does not make part of the SQL standards. Since
      * practically only MySQL and SQLite implement it natively, this type of
@@ -2911,13 +2944,10 @@ class MDB2_Driver_Common extends PEAR
             $query = $result;
         }
         $placeholder_type_guess = $placeholder_type = null;
-        $question = '?';
-        $colon = ':';
+        $question  = '?';
+        $colon     = ':';
         $positions = array();
-        $position = 0;
-        $ignores = $this->sql_comments;
-        $ignores[] = $this->string_quoting;
-        $ignores[] = $this->identifier_quoting;
+        $position  = 0;
         while ($position < strlen($query)) {
             $q_position = strpos($query, $question, $position);
             $c_position = strpos($query, $colon, $position);
@@ -3008,9 +3038,9 @@ class MDB2_Driver_Common extends PEAR
      */
     function _skipDelimitedStrings($query, $position, $p_position)
     {
-        $ignores = $this->sql_comments;
-        $ignores[] = $this->string_quoting;
+        $ignores = $this->string_quoting;
         $ignores[] = $this->identifier_quoting;
+        $ignores = array_merge($ignores, $this->sql_comments);
         
         foreach ($ignores as $ignore) {
             if (!empty($ignore['start'])) {
@@ -3026,7 +3056,13 @@ class MDB2_Driver_Common extends PEAR
                                 return $err;
                             }
                         }
-                    } while ($ignore['escape'] && $query[($end_quote - 1)] == $ignore['escape']);
+                    } while ($ignore['escape']
+                        && $end_quote-1 != $start_quote
+                        && $query[($end_quote - 1)] == $ignore['escape']
+                        && (   $ignore['escape_pattern'] !== $ignore['escape']
+                            || $query[($end_quote - 2)] != $ignore['escape'])
+                    );
+
                     $position = $end_quote + 1;
                     return $position;
                 }
@@ -3148,7 +3184,7 @@ class MDB2_Driver_Common extends PEAR
     function getSequenceName($sqn)
     {
         return sprintf($this->options['seqname_format'],
-            preg_replace('/[^a-z0-9_\$.]/i', '_', $sqn));
+            preg_replace('/[^a-z0-9_\-\$.]/i', '_', $sqn));
     }
 
     // }}}
@@ -3166,7 +3202,7 @@ class MDB2_Driver_Common extends PEAR
     function getIndexName($idx)
     {
         return sprintf($this->options['idxname_format'],
-            preg_replace('/[^a-z0-9_\$]/i', '_', $idx));
+            preg_replace('/[^a-z0-9_\-\$.]/i', '_', $idx));
     }
 
     // }}}
@@ -3235,12 +3271,12 @@ class MDB2_Driver_Common extends PEAR
      * the first row of the result set and then frees
      * the result set.
      *
-     * @param   string  the SELECT query statement to be executed.
-     * @param   string  optional argument that specifies the expected
-     *       datatype of the result set field, so that an eventual conversion
-     *       may be performed. The default datatype is text, meaning that no
-     *       conversion is performed
-     * @param   int     the column number to fetch
+     * @param string $query  the SELECT query statement to be executed.
+     * @param string $type   optional argument that specifies the expected
+     *                       datatype of the result set field, so that an eventual
+     *                       conversion may be performed. The default datatype is
+     *                       text, meaning that no conversion is performed
+     * @param mixed  $colnum the column number (or name) to fetch
      *
      * @return  mixed   MDB2_OK or field value on success, a MDB2 error on failure
      *
@@ -3296,15 +3332,14 @@ class MDB2_Driver_Common extends PEAR
      * Execute the specified query, fetch the value from the first column of
      * each row of the result set into an array and then frees the result set.
      *
-     * @param   string  the SELECT query statement to be executed.
-     * @param   string  optional argument that specifies the expected
-     *       datatype of the result set field, so that an eventual conversion
-     *       may be performed. The default datatype is text, meaning that no
-     *       conversion is performed
-     * @param   int     the row number to fetch
+     * @param string $query  the SELECT query statement to be executed.
+     * @param string $type   optional argument that specifies the expected
+     *                       datatype of the result set field, so that an eventual
+     *                       conversion may be performed. The default datatype is text,
+     *                       meaning that no conversion is performed
+     * @param mixed  $colnum the column number (or name) to fetch
      *
      * @return  mixed   MDB2_OK or data array on success, a MDB2 error on failure
-     *
      * @access  public
      */
     function queryCol($query, $type = null, $colnum = 0)
@@ -3514,11 +3549,10 @@ class MDB2_Result_Common extends MDB2_Result
     /**
      * fetch single column from the next row from a result set
      *
-     * @param   int     the column number to fetch
-     * @param   int     number of the row where the data can be found
+     * @param int|string the column number (or name) to fetch
+     * @param int        number of the row where the data can be found
      *
-     * @return  string  data on success, a MDB2 error on failure
-     *
+     * @return string data on success, a MDB2 error on failure
      * @access  public
      */
     function fetchOne($colnum = 0, $rownum = null)
@@ -3541,10 +3575,9 @@ class MDB2_Result_Common extends MDB2_Result
     /**
      * Fetch and return a column from the current row pointer position
      *
-     * @param   int     the column number to fetch
+     * @param int|string the column number (or name) to fetch
      *
-     * @return  mixed   data array on success, a MDB2 error on failure
-     *
+     * @return  mixed data array on success, a MDB2 error on failure
      * @access  public
      */
     function fetchCol($colnum = 0)
@@ -4091,15 +4124,15 @@ class MDB2_Statement_Common
     /**
      * Execute a prepared query statement.
      *
-     * @param   array   specifies all necessary information
-     *       for bindParam() the array elements must use keys corresponding to
-     *       the number of the position of the parameter.
-     * @param   mixed   specifies which result class to use
-     * @param   mixed   specifies which class to wrap results in
+     * @param array specifies all necessary information
+     *              for bindParam() the array elements must use keys corresponding
+     *              to the number of the position of the parameter.
+     * @param mixed specifies which result class to use
+     * @param mixed specifies which class to wrap results in
      *
-     * @return  mixed   a result handle or MDB2_OK on success, a MDB2 error on failure
-     *
-     * @access  public
+     * @return mixed MDB2_Result or integer (affected rows) on success,
+     *               a MDB2 error on failure
+     * @access public
      */
     function &execute($values = null, $result_class = true, $result_wrap_class = false)
     {
@@ -4129,8 +4162,8 @@ class MDB2_Statement_Common
      * @param   mixed   specifies which result class to use
      * @param   mixed   specifies which class to wrap results in
      *
-     * @return  mixed   MDB2_Result or integer on success, a MDB2 error on failure
-     *
+     * @return mixed MDB2_Result or integer (affected rows) on success,
+     *               a MDB2 error on failure
      * @access  private
      */
     function &_execute($result_class = true, $result_wrap_class = false)
