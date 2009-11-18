@@ -38,7 +38,7 @@ class FreemedDb extends MDB2 {
 
 	protected function init ( $multi_query = false ) {
 		PEAR::setErrorHandling ( PEAR_ERROR_RETURN );
-		$uri = "mysqli://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
+		$uri = DB_ENGINE . "://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
 		$this->db =& MDB2::factory ( $uri );
 		if ( PEAR::isError ( $this->db ) ) {
 			trigger_error ( $this->db->getMessage(), E_USER_ERROR );
