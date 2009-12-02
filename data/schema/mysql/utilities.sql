@@ -55,5 +55,6 @@ CALL utilities_Upgrade( );
 
 #	Load packaged utilities
 
+SOURCE data/schema/mysql/utilities/utility_MoveTag.sql
 SOURCE data/schema/mysql/utilities/utility_ReassignAppointments.sql
 
