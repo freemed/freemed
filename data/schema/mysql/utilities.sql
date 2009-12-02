@@ -21,22 +21,22 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `utilities` (
-	utility_name			VARCHAR (100) NOT NULL,
-	utility_uuid			CHAR (36) NOT NULL,
-	utility_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
-	utility_desc			TEXT,
-	utility_sp			VARCHAR (150) NOT NULL,
-	utility_param_count		TINYINT(3) NOT NULL DEFAULT 0,
-	utility_param_names		TEXT,
-	utility_param_types		TEXT,
-	utility_param_options		TEXT,
-	utility_param_optional		TEXT,
-	utility_acl			VARCHAR (150),
+	  utility_name			VARCHAR (100) NOT NULL
+	, utility_uuid			CHAR (36) NOT NULL
+	, utility_locale		CHAR (5) NOT NULL DEFAULT 'en_US'
+	, utility_desc			TEXT
+	, utility_sp			VARCHAR (150) NOT NULL
+	, utility_param_count		TINYINT(3) NOT NULL DEFAULT 0
+	, utility_param_names		TEXT
+	, utility_param_types		TEXT
+	, utility_param_options		TEXT
+	, utility_param_optional	TEXT
+	, utility_acl			VARCHAR (150)
 
 	#	Define keys
 
-	PRIMARY KEY			( utility_uuid ),
-	KEY				( utility_name, utility_locale )
+	, PRIMARY KEY			( utility_uuid )
+	, KEY				( utility_name, utility_uuid )
 );
 
 DROP PROCEDURE IF EXISTS utilities_Upgrade;
@@ -46,7 +46,7 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Upgrades
-	#CALL FreeMED_Module_GetVersion( 'reporting', @V );
+	#CALL FreeMED_Module_GetVersion( 'utilities', @V );
 
 	#CALL FreeMED_Module_UpdateVersion( 'utilities', 1 );
 END//
@@ -55,4 +55,5 @@ CALL utilities_Upgrade( );
 
 #	Load packaged utilities
 
+SOURCE data/schema/mysql/utilities/utility_ReassignAppointments.sql
 
