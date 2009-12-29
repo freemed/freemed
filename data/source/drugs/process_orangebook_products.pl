@@ -50,8 +50,9 @@ while (<>) {
 	push @out, $parts[9];
 	push @out, $parts[10];
 	push @out, $parts[11];
+	push @out, $parts[12];
 
-	print join("\t", @out);
+	print join("|", @out);
 	print "\n";
 }
 

@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS orangebook_products (
 	, trade_name		VARCHAR (150)
 	, applicant		CHAR (20)
 	, strength		VARCHAR (250)
+	, appl_no		ENUM ( 'N', 'A' )
 	, nda_number		CHAR (6) NOT NULL
 	, product_number	CHAR (3) NOT NULL
 	, te_code		VARCHAR (30)
@@ -173,7 +174,6 @@ CREATE TABLE IF NOT EXISTS ndc_strength_lookup (
 LOAD DATA LOCAL INFILE "data/drugs/ndc_listings.csv"
 	INTO TABLE ndc_listings
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"';
-SHOW WARNINGS;
 LOAD DATA LOCAL INFILE "data/drugs/ndc_packages.csv"
 	INTO TABLE ndc_packages
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"';
@@ -207,7 +207,7 @@ LOAD DATA LOCAL INFILE "data/drugs/ndc_schedule.csv"
 
 LOAD DATA LOCAL INFILE "data/drugs/orangebook_products.tsv"
 	INTO TABLE orangebook_products
-	FIELDS TERMINATED BY "	" OPTIONALLY ENCLOSED BY '"';
+	FIELDS TERMINATED BY "|" OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
 #----- Composite tables -----
 
