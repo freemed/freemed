@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -58,6 +59,7 @@ public class ClosableTab extends Composite {
 		initWidget(panel);
 
 		final Label label = new Label(labelText);
+		label.setStyleName("gwt-tab-Label");
 		panel.add(label);
 		panel.setTitle(labelText);
 		panel.setCellHorizontalAlignment(label,
@@ -97,6 +99,10 @@ public class ClosableTab extends Composite {
 						PatientScreen ps = (PatientScreen) widget;
 						Integer patientId = ps.getPatient();
 						CurrentState.getPatientScreenMap().remove(patientId);
+					}
+					if (widget instanceof ScreenInterface) {
+						ScreenInterface screen = (ScreenInterface) widget;
+						screen.closeScreen();
 					}
 				}
 			}

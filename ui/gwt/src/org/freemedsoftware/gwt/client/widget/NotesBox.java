@@ -189,7 +189,8 @@ public class NotesBox extends WidgetInterface {
 
 		String oNote = null;
 		String[] aNote = {};
-		oNote = CurrentState.getUserConfig("notepad");
+		if(CurrentState.getUserConfig("notepad")!=null)
+			oNote = CurrentState.getUserConfig("notepad").toString();
 
 		if (oNote != "") {
 			aNote = (String[]) JsonUtil.shoehornJson(JSONParser.parse(oNote),

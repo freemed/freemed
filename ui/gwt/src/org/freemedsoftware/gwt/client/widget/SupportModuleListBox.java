@@ -61,6 +61,8 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 	protected String selectText = "Select an Item";
 
 	protected Command command = null;
+	
+	protected String holdWidgetValue=null;
 
 	public SupportModuleListBox(String s) {
 		moduleName = s;
@@ -125,6 +127,8 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 
 								}
 								listBox.setEnabled(true);
+								if(holdWidgetValue!=null)
+									setWidgetValue(holdWidgetValue);
 							} else {
 								Window.alert(response.toString());
 							}
@@ -196,10 +200,12 @@ public class SupportModuleListBox extends WidgetInterface implements HashSetter 
 	 * @param val
 	 */
 	public void setWidgetValue(String val) {
+		holdWidgetValue = val;
 		if (listBox.getItemCount() > 0) {
 			for (int iter = 0; iter < listBox.getItemCount(); iter++) {
 				if (listBox.getValue(iter).compareTo(val) == 0) {
 					listBox.setItemSelected(iter, true);
+					holdWidgetValue = null;
 				}
 			}
 		}

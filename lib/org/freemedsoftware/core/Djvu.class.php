@@ -125,6 +125,57 @@ class Djvu {
 		}
 	} // end method GetPage
 
+	// Method: GetPageSized
+	//
+	//	Get page image with a particular target page size.
+	//
+	// Parameters:
+	//
+	//	$page - Page number to return
+	//
+	//	$w - Width
+	//
+	//	$h - Height
+	//
+	//	$contents - (optional) Boolean, return the contents instead of the
+	//	filename. Defaults to false.
+	//
+	//	$force_ps - (optional) Boolean, force no JPEG conversion. Defaults
+	//	to false.
+	//
+	//	$force_rotate - (optional) Boolean, force 90 degree rotation
+	//
+	// Returns:
+	//
+	//	Either JPEG image of file in string or name of temporary file.
+	//
+	public function GetPageSized ( $page, $w, $h, $contents = false, $force_ps = false, $force_rotation = true ) {
+		$filename = $this->filename;
+		$cache_name = PHYSICAL_LOCATION . '/data/cache/djvu/' . $this->md5 . '.' . $page . '.' . ( $force_rotation ? 'rotated.' : '' ) . ( $force_ps ? 'ps' : 'jpg' );
+
+		if ( ! file_exists( $cache_name ) ) {
+			$temp = tempnam('/tmp', 'djvu');
+			$rotate = $force_rotation ? " 90 " : " 0 ";
+			$command = "ddjvu -format=pnm -size=" . escapeshellarg($w . "x" . $h) . " -page=" . ($page+0) . " " . escapeshellarg($filename) . " " . escapeshellarg($temp) . " ; cat " . escapeshellarg($temp) . " | /usr/bin/pnmrotate ${rotate} | /usr/bin/pnmtojpeg > " . escapeshellarg( $cache_name );
+
+			exec( $command );
+			unlink( $temp );
+		} else {
+			// Touch it to avoid reaping if it has been accessed
+			exec( "touch " . escapeshellarg( $cache_name ) );
+		}
+
+		if ($contents) {
+			ob_start( );
+			readfile( $cache_name );
+			$c = ob_get_contents( );
+			ob_end_clean( );
+			return $c;
+		} else {
+			return $cache_name;
+		}
+	} // end method GetPageSized
+
 	// Method: GetPageThumbnail
 	//
 	//	Get textual content of a page thumbnail.

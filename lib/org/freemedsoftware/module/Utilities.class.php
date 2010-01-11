@@ -57,6 +57,7 @@ class Utilities extends SupportModule {
 	//	* utility_uuid
 	//
 	public function GetUtilities ( $locale = NULL ) {
+		freemed::acl_enforce( 'admin', 'menu' );
 		$query = "SELECT utility_name, utility_desc, utility_uuid FROM utilities WHERE utility_locale=". $GLOBALS['sql']->quote( $locale == NULL ? DEFAULT_LANGUAGE : $locale ). " ORDER BY utility_name";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetUtilities
@@ -76,6 +77,7 @@ class Utilities extends SupportModule {
 	//	Array of hashes
 	//
 	public function GetUtilityParameters ( $uuid, $flatten = true ) {
+		freemed::acl_enforce( 'admin', 'config' );
 		$query = "SELECT * FROM utilities WHERE utility_uuid=".$GLOBALS['sql']->quote( $uuid );
 		$r = $GLOBALS['sql']->queryRow( $query );
 		$return = array ();
@@ -125,6 +127,7 @@ class Utilities extends SupportModule {
 	//	Utility
 	//
 	public function ExecuteUtility ( $uuid, $param ) {
+		freemed::acl_enforce( 'admin', 'config' );
 		$utility = $this->GetUtilityParameters( $uuid );
 
 		// Sanity checking

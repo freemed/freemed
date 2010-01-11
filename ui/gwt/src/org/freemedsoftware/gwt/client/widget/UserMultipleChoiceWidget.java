@@ -206,7 +206,7 @@ public class UserMultipleChoiceWidget extends Composite {
 						iter));
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				final Integer i = new Integer(values[iter]);
-				String[] params = {};
+				String[] params = {i.toString()};
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL

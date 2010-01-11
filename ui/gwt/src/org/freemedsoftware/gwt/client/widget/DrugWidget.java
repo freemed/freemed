@@ -44,6 +44,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -278,7 +279,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 					// TODO: make this do something in stubbed mode
 				} else {
 					JsonUtil.debug("Calling populateStrength()");
-					populateStrength(value);
+					populateStrength(value, null);
 				}
 			}
 		});
@@ -287,7 +288,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 		container.add(drugStrength);
 	}
 
-	protected void populateStrength(Integer drugValue) {
+	protected void populateStrength(Integer drugValue, final Command after) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			drugStrength.addItem("125MG", "1");
 			drugStrength.addItem("500MG", "2");
@@ -321,6 +322,9 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 										drugStrength.addItem(r[iter][0],
 												r[iter][1]);
 									}
+									if (after != null) {
+										after.execute();
+									}
 								}
 							} else {
 								GWT.log("Result " + response.getStatusText(),
@@ -341,16 +345,38 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 		hashMapping = hm;
 	}
 
-	public String getStoredValue() {
-		return drugNameLookup.getStoredValue();
-	}
-
 	public String getHashMapping() {
 		return hashMapping;
 	}
 
 	public void setFromHash(HashMap<String, String> data) {
-		// setValue(Integer.parseInt(data.get(hashMapping)));
+		setValue(data.get(hashMapping));
+	}
+
+	public void setValue(String value) {
+		try {
+			String[] values = value.split("-");
+			drugNameLookup.setValue(Integer.parseInt(values[0]));
+			final String strengthVal = values[1];
+			this.populateStrength(Integer.parseInt(values[0]), new Command() {
+				@Override
+				public void execute() {
+					drugStrength.setWidgetValue(strengthVal);
+				}
+			});
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
+	}
+
+	public String getValue() {
+		return drugNameLookup.getValue().toString() + "-"
+				+ drugStrength.getWidgetValue();
+	}
+
+	@Override
+	public String getStoredValue() {
+		return getValue();
 	}
 
 }

@@ -23,13 +23,17 @@
  */
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -55,7 +59,28 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 	protected TextBox reactionTextBox = new TextBox();
 	protected TextBox severityTextBox = new TextBox();
 	protected final String className = "org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen";
-
+	
+	protected PatientScreen parentScreen;
+	
+	private static List<AllergyEntryScreen> allergyEntryScreenList=null;
+	
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static AllergyEntryScreen getInstance(){
+		AllergyEntryScreen allergyEntryScreen=null; 
+		if(allergyEntryScreenList==null)
+			allergyEntryScreenList=new ArrayList<AllergyEntryScreen>();
+		if(allergyEntryScreenList.size()<AppConstants.MAX_PATIENT_ALLERGY_TABS)//creates & returns new next instance of AllergyEntryScreen
+			allergyEntryScreenList.add(allergyEntryScreen=new AllergyEntryScreen());
+		else{ //returns last instance of AllergyEntryScreen from list 
+			allergyEntryScreen = allergyEntryScreenList.get(AppConstants.MAX_PATIENT_ALLERGY_TABS-1);
+		}	
+		return allergyEntryScreen;
+	}
+	
+	public static boolean removeInstance(AllergyEntryScreen allergyEntryScreen){
+		return allergyEntryScreenList.remove(allergyEntryScreen);
+	}
+	
 	public AllergyEntryScreen() {
 
 		final FlexTable flexTable = new FlexTable();
@@ -132,7 +157,8 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 	}
 
 	public void saveForm() {
-		data.put("patient", Integer.toString(patientId));
+		data.put("patient", patientScreen.getPatient().toString());
+		
 		data.put("allergy", allergyTextBox.getText());
 		data.put("reaction", reactionTextBox.getText());
 		data.put("severity", severityTextBox.getText());
@@ -164,6 +190,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 							if (r != null) {
 								CurrentState.getToaster().addItem(className,
 										"Added Allergy.", Toaster.TOASTER_INFO);
+								parentScreen.populate();
 							}
 						} else {
 							CurrentState.getToaster().addItem(className,
@@ -181,5 +208,18 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		}
 
 	}
-
+//
+//	public PatientScreen getParentScreen() {
+//		return parentScreen;
+//	}
+//
+//	public void setParentScreen(PatientScreen parentScreen) {
+//		this.parentScreen = parentScreen;
+//	}
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

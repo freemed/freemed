@@ -32,15 +32,22 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen;
+import org.freemedsoftware.gwt.client.screen.patient.DrugSampleEntry;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
+import org.freemedsoftware.gwt.client.screen.patient.FormEntry;
+import org.freemedsoftware.gwt.client.screen.patient.ImmunizationEntry;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PatientLinkEntry;
+import org.freemedsoftware.gwt.client.screen.patient.PatientReportingScreen;
 import org.freemedsoftware.gwt.client.screen.patient.PrescriptionsScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
+import org.freemedsoftware.gwt.client.screen.patient.VitalsEntry;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -71,84 +78,134 @@ public class PatientScreen extends ScreenInterface {
 	protected SummaryScreen summaryScreen = null;
 
 	public PatientScreen() {
+
+		final boolean canModify = CurrentState.isActionAllowed(
+				AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY,
+				AppConstants.NEW_PATIENT);
+
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
 		patientInfoBar = new PatientInfoBar();
+		patientInfoBar.setParentScreen(this);
 		verticalPanel.add(patientInfoBar);
 
 		{
 			final MenuBar menuBar = new MenuBar();
 			verticalPanel.add(menuBar);
 
-			final MenuBar menuBar_1 = new MenuBar(true);
+			if (canModify) {
+				final MenuBar menuBar_1 = new MenuBar(true);
 
-			menuBar_1.addItem("Allergy", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Allergy", new AllergyEntryScreen(),
-							getObject());
-				}
-			});
+				menuBar_1.addItem("Allergy", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Allergy",
+								AllergyEntryScreen.getInstance(), getObject());
+					}
+				});
 
-			menuBar_1.addItem("Encounter", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Encounter", new EncounterScreen(),
-							getObject());
-				}
-			});
+				menuBar_1.addItem("Drug Sample", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Drug Sample",
+								DrugSampleEntry.getInstance(), getObject());
+					}
+				});
 
-			menuBar_1.addItem("Foreign ID", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Foreign ID", new PatientIdEntry(),
-							getObject());
-				}
-			});
+				menuBar_1.addItem("Encounter", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Encounter",
+								EncounterScreen.getInstance(), getObject());
+					}
+				});
 
-			menuBar_1.addItem("Letter", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Letter", new LetterEntry(),
-							getObject());
-				}
-			});
+				menuBar_1.addItem("Foreign ID", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Foreign ID",
+								PatientIdEntry.getInstance(), getObject());
+					}
+				});
 
-			menuBar_1.addItem("Patient Correspondence", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Patient Correspondence",
-							new PatientCorrespondenceEntry(), getObject());
-				}
-			});
+				menuBar_1.addItem("Form", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Form", FormEntry.getInstance(),
+								getObject());
+					}
+				});
 
-			menuBar_1.addItem("Progress Note", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Progress Note",
-							new ProgressNoteEntry(), getObject());
-				}
-			});
+				menuBar_1.addItem("Immunization", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Immunization",
+								ImmunizationEntry.getInstance(), getObject());
+					}
+				});
 
-			menuBar_1.addItem("Prescription", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Prescription",
-							new PrescriptionsScreen(), getObject());
-				}
-			});
+				menuBar_1.addItem("Letter", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Letter",  LetterEntry.getInstance(),
+								getObject());
+					}
+				});
 
-			menuBar_1.addItem("Referral", new Command() {
-				public void execute() {
-					Util.spawnTabPatient("Referral", new ReferralEntry(),
-							getObject());
-				}
-			});
+				menuBar_1.addItem("Patient Correspondence", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Patient Correspondence",
+								 PatientCorrespondenceEntry.getInstance(), getObject());
+					}
+				});
 
-			menuBar.addItem("New", menuBar_1);
+				menuBar_1.addItem("Patient Link", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Patient Link",
+								 PatientLinkEntry.getInstance(), getObject());
+					}
+				});
 
+				menuBar_1.addItem("Progress Note", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Progress Note",
+								 ProgressNoteEntry.getInstance(), getObject());
+					}
+				});
+
+				menuBar_1.addItem("Prescription", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Prescription",
+								 PrescriptionsScreen.getInstance(), getObject());
+					}
+				});
+
+				menuBar_1.addItem("Referral", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Referral",  ReferralEntry.getInstance(),
+								getObject());
+					}
+				});
+
+				menuBar_1.addItem("Vitals", new Command() {
+					public void execute() {
+						Util.spawnTabPatient("Vitals", new VitalsEntry(),
+								getObject());
+					}
+				});
+
+				menuBar.addItem("New", menuBar_1);
+			}
 			final MenuBar menuBar_2 = new MenuBar(true);
+
+			menuBar_2.addItem("Patient Reporting", new Command() {
+				public void execute() {
+					Util.spawnTabPatient("Patient Reporting",
+							 PatientReportingScreen.getInstance(), getObject());
+				}
+			});
 
 			menuBar_2.addItem("Billing", (Command) null);
 
 			menuBar_2.addItem("Trending", (Command) null);
 
 			menuBar.addItem("Reporting", menuBar_2);
+
 		}
 
 		final VerticalPanel verticalPanel_1 = new VerticalPanel();
@@ -289,5 +346,9 @@ public class PatientScreen extends ScreenInterface {
 		patientInfoBar.setPatientFromMap(patientInfo);
 		summaryScreen.setPatientId(patientId);
 		summaryScreen.loadData();
+	}
+
+	protected PatientScreen getPatientScreen() {
+		return this;
 	}
 }

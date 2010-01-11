@@ -24,10 +24,18 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.WorkList;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SchedulerScreen extends ScreenInterface {
@@ -38,9 +46,36 @@ public class SchedulerScreen extends ScreenInterface {
 
 	protected VerticalPanel verticalPanel = null;
 
+	private static List<SchedulerScreen> schedulerScreenList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static SchedulerScreen getInstance(){
+		SchedulerScreen schedulerScreen=null; 
+		if(schedulerScreenList==null)
+			schedulerScreenList=new ArrayList<SchedulerScreen>();
+		if(schedulerScreenList.size()<AppConstants.MAX_SCHEDULER_TABS)//creates & returns new next instance of SchedulerScreen
+			schedulerScreenList.add(schedulerScreen=new SchedulerScreen());
+		else{ //returns last instance of SchedulerScreen from list 
+			schedulerScreen = schedulerScreenList.get(AppConstants.MAX_SCHEDULER_TABS-1);
+			schedulerScreen.getSchedulerWidget().refreshData();
+		}	
+		return schedulerScreen;
+	}
+	
+	public static boolean removeInstance(SchedulerScreen schedulerScreen){
+		return schedulerScreenList.remove(schedulerScreen);
+	}
+	
 	public SchedulerScreen() {
 		verticalPanel = new VerticalPanel();
-		scheduler = new SchedulerWidget();
+		int startHour         = 10;
+		int endHour           = 18;
+		int intervalPerHour   = 15;
+		if(Util.getProgramMode() == ProgramMode.JSONRPC){
+			startHour         = Integer.parseInt(CurrentState.getSystemConfig("calshr"));
+			endHour           = Integer.parseInt(CurrentState.getSystemConfig("calehr"));
+			intervalPerHour   = 60 / Integer.parseInt(CurrentState.getSystemConfig("calinterval"));
+		}
+		scheduler = new SchedulerWidget(startHour,endHour,intervalPerHour);
 		verticalPanel.add(scheduler);
 		initWidget(verticalPanel);
 	}
@@ -48,5 +83,10 @@ public class SchedulerScreen extends ScreenInterface {
 	public SchedulerWidget getSchedulerWidget() {
 		return scheduler;
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

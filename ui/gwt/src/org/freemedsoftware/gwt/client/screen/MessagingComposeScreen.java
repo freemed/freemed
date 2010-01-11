@@ -47,6 +47,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -92,6 +93,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 		flexTable.setWidget(1, 0, subjectLabel);
 
 		wSubject = new TextBox();
+		wSubject.setWidth("100%");
 		flexTable.setWidget(1, 1, wSubject);
 
 		final Label urgencyLabel = new Label("Urgency : ");
@@ -106,14 +108,11 @@ public class MessagingComposeScreen extends ScreenInterface {
 		wUrgency.addItem("5 (Bulk)");
 		wUrgency.setSelectedIndex(2);
 
-		final TextBox wSubject = new TextBox();
-		flexTable.setWidget(1, 1, wSubject);
-		wSubject.setWidth("100%");
-
 		final Label patientLabel = new Label("Patient : ");
 		flexTable.setWidget(2, 0, patientLabel);
 
 		wPatient = new PatientWidget();
+		wPatient.setWidth("100%");
 		flexTable.setWidget(2, 1, wPatient);
 
 		wText = new TextArea();
@@ -212,8 +211,11 @@ public class MessagingComposeScreen extends ScreenInterface {
 								CurrentState.statusBarRemove(className);
 								CurrentState.getToaster().addItem(className,
 										"Sent message.", Toaster.TOASTER_INFO);
-								if (!sendAnother && parentScreen != null) {
-									parentScreen.populate("");
+								if (!sendAnother) {
+									if(parentScreen != null){
+										parentScreen.populate("");
+										parentScreen.populateTagWidget();
+									}
 									getThisObject().closeScreen();
 								}
 							}
@@ -264,5 +266,24 @@ public class MessagingComposeScreen extends ScreenInterface {
 			GWT.log("Exception", ex);
 		}
 		return p;
+	}
+	
+	public String getSubject(){
+		return this.wSubject.getText();
+	}
+	public void setSubject(String subject){
+		this.wSubject.setText(subject);
+	}
+	public String getBodyText(){
+		return this.wText.getText();
+	}
+	public void setBodyText(String bodyText){
+		this.wText.setText(bodyText);
+	}
+	public void setTo(Integer userId){
+		wTo.setValue(new Integer[] {userId});
+	}
+	public void setPatient(Integer patientId){
+		wPatient.setValue(patientId);
 	}
 }

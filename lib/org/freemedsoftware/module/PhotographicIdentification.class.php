@@ -153,7 +153,7 @@ class PhotographicIdentification extends EMRModule {
 
 		// Drop the blob to temp file
 		$origfilename = tempnam( '/tmp', 'photoIdUpload' );
-		file_put_contents( $origfilename, $blob, FILE_BINARY );
+		file_put_contents( $origfilename, $blob );
 
 		syslog( LOG_INFO, "originalfilename = $origfilename");
 		$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
@@ -172,6 +172,61 @@ class PhotographicIdentification extends EMRModule {
 		return false;
 	} // end method UploadPhotoIDInline
 
+	// Method: ImportMugshotPhoto
+	//
+	//	Upload photographic ID using mugshot inline upload
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	// Returns:
+	//
+	//	Boolean, success.
+	//
+	public function ImportMugshotPhoto ( ) {
+		// Pull patient ID from URL passing in mugshot widget
+		$patient = (int)($_POST['username']);
+
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		// Create the upload wrapper here
+		$q = $GLOBALS['sql']->insert_query(
+			$this->table_name,
+			array (
+				'p_user' => freemed::user_cache()->user_number,
+				'p_patient' => $patient
+			)
+		);
+		syslog( LOG_INFO, $q );
+		$GLOBALS['sql']->query( $q );
+		$id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+
+		// Get data from mugshot widget
+		$blob = base64_decode( $_POST['img'] );
+		//$width = $_POST['width'];
+		//$height = $_POST['height'];
+
+		// Drop the blob to temp file
+		$origfilename = tempnam( '/tmp', 'photoIdUpload' );
+		file_put_contents( $origfilename, $blob );
+
+		syslog( LOG_INFO, "originalfilename = $origfilename");
+		$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
+		if ( $success ) {
+			syslog( LOG_INFO, get_class($this)."| found file ".$_FILES['file']['name'] );
+			$q = $GLOBALS['sql']->update_query(
+				$this->table_name,
+				array(
+					'p_filename' => $pds->ResolveFilename( $patient, get_class($this), $id )
+				), array( 'id' => $id )
+			);
+			syslog( LOG_INFO, $q );
+			$GLOBALS['sql']->query( $q );
+			return true;
+		}
+		return false;
+	} // end method ImportMugshotPhoto
+
 	// Method: GetPhotoID
 	//
 	//	Get BLOB of latest photo id, or no photo image if there is none.
@@ -183,6 +238,7 @@ class PhotographicIdentification extends EMRModule {
 	//	$force_id - (optional) Forced ID, for viewing past photos.
 	//
 	public function GetPhotoID ( $patient, $force_id = false ) {
+		ob_start();
 		if ( ! $force_id ) {
 			$pic = $GLOBALS['sql']->queryOneStoredProc( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
 		} else {
@@ -190,6 +246,7 @@ class PhotographicIdentification extends EMRModule {
 			$pic = $pds->ResolveFilename( $patient+0, get_class($this), $force_id+0 );
 		}
 		if ( ! $pic ) { $pic = 'ui/dojo/htdocs/images/teak/noimage.250x250.png'; }
+		ob_end_clean();
 		ob_start();
 		readfile( $pic );
 		$x = ob_get_contents();
@@ -204,7 +261,8 @@ class PhotographicIdentification extends EMRModule {
 		Header( 'Cache-Control: no-store, no-cache, must-revalidate' );
 		Header( 'Cache-Control: post-check=0, pre-check=0', false );
 		Header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
-		ob_end_flush();
+		ob_end_clean();
+		print $x;
 		die();
 	} // end method GetPhotoID
 

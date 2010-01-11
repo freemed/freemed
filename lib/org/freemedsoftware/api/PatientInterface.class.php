@@ -261,7 +261,7 @@ class PatientInterface {
 	//
 	//	Array of hashes.
 	//
-	public function Search ( $_criteria ) {
+/*	public function Search ( $_criteria ) {
 		$criteria = (array) $_criteria;
 		if (!count($criteria)) { return array(); }
 
@@ -301,6 +301,69 @@ class PatientInterface {
 		$query = "SELECT p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p LEFT OUTER JOIN patient_address pa ON p.id = pa.patient WHERE ".join(' AND ', $c)." AND pa.active = 1 ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method Search
+
+*/
+
+				
+	public function Search ( $_criteria ) {
+		freemed::acl_enforce( 'emr', 'search' );
+		$criteria = (array) $_criteria;
+		if (!count($criteria)) { return array(); }
+
+		foreach ($criteria AS $k => $v) {
+			switch ($k) {
+				
+				
+				case 'ptssn':
+				if ($v) { $c[] = "p.ptssn LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+				
+				
+				case 'ptdmv':
+				if ($v) { $c[] = "p.ptdmv LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+				case 'ptemail':
+				if ($v) { $c[] = "p.ptemail LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+				
+				
+				case 'ptwphone':
+				if ($v) { $c[] = "p.ptwphone LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+				
+				case 'pthphone':
+				if ($v) { $c[] = "p.pthphone LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+				
+				case 'city':
+				if ($v) { $c[] = "pa.city LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'ptzip':
+				if ($v) { $c[] = "p.ptzip LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'ptid':
+				if ($v) { $c[] = "p.ptid LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+
+				case 'age':
+				if ($v) { $c[] = "FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) = ".$GLOBALS['sql']->quote($v+0); }
+				break;
+
+				default: break;
+			}
+		} // end foreach
+
+		// Only look for 
+		if ( !isset( $criteria['archive'] ) ) { $c[] = "p.ptarchive = 0"; }
+
+		$query = "SELECT distinct p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p LEFT OUTER JOIN patient_address pa ON p.id = pa.patient WHERE ".join(' AND ', $c)." AND pa.active = 1 ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method Search
+				
+
+
 
 	// Method: PatientInformation
 	//
@@ -364,6 +427,7 @@ class PatientInterface {
 	//	* value - Text representing patient record identifying info.
 	//
 	public function picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
+		freemed::acl_enforce( 'emr', 'search' );
 		$limit = ($_limit < 10) ? 10 : $_limit;
 		if (strlen($string) < $inputlimit) {
 			syslog(LOG_INFO, "under $inputlimit");

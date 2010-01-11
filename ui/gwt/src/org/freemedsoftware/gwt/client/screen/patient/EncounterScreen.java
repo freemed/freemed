@@ -35,6 +35,7 @@ import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.SuperbillTemplateAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -86,6 +87,25 @@ public class EncounterScreen extends PatientScreenInterface {
 
 	protected VerticalPanel popoutPanel = null;
 
+	private static List<EncounterScreen> encounterList=null;
+	
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static EncounterScreen getInstance(){
+		EncounterScreen encounterScreen=null; 
+		if(encounterList==null)
+			encounterList=new ArrayList<EncounterScreen>();
+		if(encounterList.size()<AppConstants.MAX_PATIENT_ENCOUNTER_TABS)//creates & returns new next instance of EncounterScreen
+			encounterList.add(encounterScreen=new EncounterScreen());
+		else{ //returns last instance of EncounterScreen from list 
+			encounterScreen = encounterList.get(AppConstants.MAX_PATIENT_ENCOUNTER_TABS-1);
+		}	
+		return encounterScreen;
+	}
+	
+	public static boolean removeInstance(EncounterScreen encounterScreen){
+		return encounterList.remove(encounterScreen);
+	}
+	
 	public EncounterScreen() {
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 
@@ -401,5 +421,10 @@ public class EncounterScreen extends PatientScreenInterface {
 
 		}
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

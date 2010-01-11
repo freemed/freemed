@@ -32,6 +32,7 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.WidgetInterface;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.DocumentBox;
 import org.freemedsoftware.gwt.client.widget.MessageBox;
 import org.freemedsoftware.gwt.client.widget.NoInsertAtEndIndexedDropController;
@@ -42,18 +43,16 @@ import org.freemedsoftware.gwt.client.widget.WorkList;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class DashboardScreen extends ScreenInterface {
 
@@ -70,7 +69,7 @@ public class DashboardScreen extends ScreenInterface {
 		 * @wbp.parser.constructor
 		 */
 
-		public DashboardItemContainer(String title, WidgetInterface contents) {
+		public DashboardItemContainer(String title, WidgetInterface contents,Widget defaultIcon) {
 			final VerticalPanel container = new VerticalPanel();
 			initWidget(container);
 			content = contents;
@@ -78,22 +77,27 @@ public class DashboardScreen extends ScreenInterface {
 			label = new Label(title);
 
 			final HorizontalPanel hP = new HorizontalPanel();
+			if(defaultIcon!=null){
+				hP.add(defaultIcon);
+				hP.setSpacing(2);
+				}
 			hP.add(label);
 			hP.setStylePrimaryName("freemed-DashboardLabel");
-			final PushButton button = new PushButton();
-			button.getUpFace().setImage(
-					new Image("resources/images/close_x.16x16.png"));
-
-			button.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					remove();
-				}
-			});
+//			final PushButton button = new PushButton();
+//			button.setStyleName("gwt-simple-button");
+//			button.getUpFace().setImage(
+//					new Image("resources/images/close_x.16x16.png"));
+//
+//			button.addClickHandler(new ClickHandler() {
+//				@Override
+//				public void onClick(ClickEvent event) {
+//					remove();
+//				}
+//			});
 
 			hP.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
-			hP.add(button);
+//			hP.add(button);
 
 			container.add(hP);
 			container.add(contents);
@@ -210,8 +214,8 @@ public class DashboardScreen extends ScreenInterface {
 	public void addBaseWidgets() {
 		// Add Default Widgets
 		createDraggableWidget("Work List", 0);
-		createDraggableWidget("Messages", 0);
-		createDraggableWidget("Notepad", 1);
+		createDraggableWidget("Messages", 1);
+//		createDraggableWidget("Notepad", 1);
 		createDraggableWidget("Prescription Refills", 2);
 		createDraggableWidget("Unfiled Documents", 0);
 	}
@@ -243,6 +247,17 @@ public class DashboardScreen extends ScreenInterface {
 	}
 
 	public void clearView() {
+		
+		if(vPanelColHead.length==0){// For GWT Hosted Mode it is necessary 
+			vPanelColHead = new VerticalPanel[cols];
+			dropController= new NoInsertAtEndIndexedDropController[cols];
+			vPanelCol= new VerticalPanel[cols];
+			for(int i=0;i<cols;i++){
+				vPanelColHead[i] = new VerticalPanel();
+				vPanelCol[i] = new VerticalPanel();
+			}
+		}
+		
 		for (int i = 0; i < vPanelColHead.length; i++) {
 			vPanelColHead[i].removeFromParent();
 		}
@@ -253,10 +268,10 @@ public class DashboardScreen extends ScreenInterface {
 
 		for (int i = 0; i < cols; i++) {
 			vPanelColHead[i] = new VerticalPanel();
-			DashboardItemContainer dbic = new DashboardItemContainer("Column #"
-					+ Integer.toString(i + 1));
-			dbic.setStyle("freemed-DashboardLabel-Column");
-			vPanelColHead[i].add(dbic);
+//			DashboardItemContainer dbic = new DashboardItemContainer("Column #"
+//					+ Integer.toString(i + 1));
+//			dbic.setStyle("freemed-DashboardLabel-Column");
+//			vPanelColHead[i].add(dbic);
 
 			vPanelCol[i] = new VerticalPanel();
 			// vPanelCol[i].setSize(Integer.toString(100/cols)+"%", "100%");
@@ -277,23 +292,23 @@ public class DashboardScreen extends ScreenInterface {
 		DashboardItemContainer d = null;
 		JsonUtil.debug(title + " adding");
 		if (title == "Work List") {
-			d = new DashboardItemContainer("Work List", workList);
+			d = new DashboardItemContainer("Work List", workList,workList.getDefaultIcon());
 			removeListItem("Work List");
 			if (CurrentState.getDefaultProvider() != null) {
 				workList.setProvider(CurrentState.getDefaultProvider());
 			}
 		} else if (title == "Messages") {
-			d = new DashboardItemContainer("Messages", messageBox);
+			d = new DashboardItemContainer("Messages", messageBox,messageBox.getDefaultIcon());
 			removeListItem("Messages");
 		} else if (title == "Notepad") {
-			d = new DashboardItemContainer("Notepad", notesBox);
+			d = new DashboardItemContainer("Notepad", notesBox,null);
 			removeListItem("Notepad");
 		} else if (title == "Prescription Refills") {
 			d = new DashboardItemContainer("Prescription Refills",
-					prescriptionRefillBox);
+					prescriptionRefillBox,prescriptionRefillBox.getDefaultIcon());
 			removeListItem("Prescription Refills");
 		} else if (title == "Unfiled Documents") {
-			d = new DashboardItemContainer("Unfiled Documents", documentBox);
+			d = new DashboardItemContainer("Unfiled Documents", documentBox,documentBox.getDefaultIcon());
 			removeListItem("Unfiled Documents");
 		}
 
@@ -337,8 +352,10 @@ public class DashboardScreen extends ScreenInterface {
 		Integer i = 0;
 
 		try {
-			c = CurrentState.getUserConfig("dashboard");
-			i = Integer.parseInt(CurrentState.getUserConfig("dashboardcols"));
+			if(CurrentState.getUserConfig("dashboard")!=null)
+				c = ((Object)CurrentState.getUserConfig("dashboard")).toString();
+			if(CurrentState.getUserConfig("dashboardcols")!=null)
+				i = Integer.parseInt(((Object)CurrentState.getUserConfig("dashboardcols")).toString());
 		} catch (Exception ex) {
 			JsonUtil.debug("restoreArrangement(): Caught exception "
 					+ ex.toString());
@@ -398,4 +415,10 @@ public class DashboardScreen extends ScreenInterface {
 		CurrentState.setUserConfig("dashboard", JsonUtil.jsonify(order));
 	}
 
+	public void refreshDashBoardWidgets(){
+		messageBox.retrieveData("");
+		workList.retrieveData();
+		prescriptionRefillBox.retrieveData();
+		documentBox.retrieveData();
+	}
 }

@@ -35,6 +35,23 @@ class Callin extends SupportModule {
 
 	var $table_name = "callin";
 
+        var $widget_hash = '##cilname##, ##cifname## ##cimname##';
+
+	var $variables = array (
+		'cilname',
+		'cifname',
+		'cimname',
+		'cihphone',
+		'ciwphone',
+		'cidob',
+		'cicomplaint',
+		'cifacility',
+		'ciphysician',
+		'ciuser',
+		'citookcall',
+		'cipatient'
+	);
+
 	public function __construct ( ) {
 		// __("Call-in Patients")
 
@@ -42,18 +59,46 @@ class Callin extends SupportModule {
 		parent::__construct();
 	} // end constructor Callin
 
+	protected function add_pre ( &$data ) {
+	} // end method add_pre
+
+	protected function mod_pre ( &$data ) {
+	} // end method mod_pre
+
 	// Method: GetAll
 	//
 	//	Get array of all call-in patient records.
+	//
+	// Parameters:
+	//
+	//	$id - Database ID
+	//
+	// Returns:
+	//
+	//	Hash.
+	public function GetAll () {
+		freemed::acl_enforce( 'emr', 'search' );
+		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin ORDER BY cidatestamp DESC";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAll
+	
+	// Method: GetDetailedRecord
+	//
+	//	Get detailed record of call-in patient.
 	//
 	// Returns:
 	//
 	//	Array of hashes
 	//
-	public function GetAll ( ) {
-		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin ORDER BY cidatestamp DESC";
-		return $GLOBALS['sql']->queryAll( $q );
-	} // end method GetAll
+	public function GetDetailedRecord( $id) {
+		freemed::acl_enforce( 'emr', 'search' );
+		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
+		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility"
+		.",CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
+		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id;
+		return $GLOBALS['sql']->queryRow( $q );
+	} // end method GetDetailedRecord
+	
 
 }
 

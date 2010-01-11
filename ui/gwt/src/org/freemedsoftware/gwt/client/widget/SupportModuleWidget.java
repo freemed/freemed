@@ -80,7 +80,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 				searchBox.setText("");
 				searchBox.setTitle("");
 			} else {
-				textBox.setEnabled(false);
+//				textBox.setEnabled(false);
 				String[] params = { moduleName, widgetValue.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
@@ -107,7 +107,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
 													"String");
-									textBox.setEnabled(true);
+//									textBox.setEnabled(true);
 									if (result != null) {
 										searchBox.setText(result);
 										searchBox.setTitle(result);
@@ -206,7 +206,8 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 									}
 									cb.onSuggestionsReady(r,
 											new SuggestOracle.Response(items));
-								}
+								}else // if no result then set value to 0
+									setValue(0);
 							} else {
 								GWT.log("Result " + response.getStatusText(),
 										null);
@@ -324,5 +325,9 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 
 	public void setFromHash(HashMap<String, String> data) {
 		setValue(Integer.parseInt(data.get(hashMapping)));
+	}
+	
+	public void setEnable(boolean val){
+		textBox.setEnabled(val);
 	}
 }

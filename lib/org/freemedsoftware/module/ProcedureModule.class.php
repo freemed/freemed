@@ -103,18 +103,6 @@ class ProcedureModule extends EMRModule {
 	} // end constructor 
 
 	protected function add_pre ( &$data ) {
-		$data['proccurcovtp'] = ( ($data['proccov4']) ? WORKCOMP : 0 );
-		$data['proccurcovtp'] = ( ($data['proccov3']) ? TERTIARY : 0 );
-		$data['proccurcovtp'] = ( ($data['proccov2']) ? SECONDARY : 0 );
-		$data['proccurcovtp'] = ( ($data['proccov1']) ? PRIMARY : 0 );
-		$data['proccurcovid'] = ( ($data['proccov4']) ? $data['proccov4'] : 0 );
-		$data['proccurcovid'] = ( ($data['proccov3']) ? $data['proccov3'] : 0 );
-		$data['proccurcovid'] = ( ($data['proccov2']) ? $data['proccov2'] : 0 );
-		$data['proccurcovid'] = ( ($data['proccov1']) ? $data['proccov1'] : 0 );
-		$data['proccharges'] = $data['procbalorig'];
-		$data['procbalcurrent'] = $data['procbalorig'];
-		$data['procamtpaid'] = 0;
-		$data['procbilled'] = 0;
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end add_pre
 
@@ -128,39 +116,6 @@ class ProcedureModule extends EMRModule {
 				'comment' => __("Procedure created")
 			)
 		);
-
-		// Commit to ledger
-		$query = $GLOBALS['sql']->insert_query(
-			'payrec',
-			array(
-				'payrecdtadd' => date('Y-m-d'),
-				'payrecdtmod' => '0000-00-00',
-				'payrecpatient' => $data['patient'],
-				'payrecdt' => $data['procdt'],
-				'payreccat' => PROCEDURE,
-				'payrecproc' => $id,
-				'payrecsource' => $data['proccurcovtp'],
-				'payreclink' => $data['proccurcovid'],
-				'payrectype' => '0',
-				'payrecnum' => '',
-				'payrecamt' => $data['procbalorig'],
-				'payrecdescrip' => $data['proccomment'],
-				'payreclock' => 'unlocked'
-			)
-		);
-		$result = $GLOBALS['sql']->query ($query);
-
-		// updating patient diagnoses
-		$query = $GLOBALS['sql']->update_query(
-			'patient',
-			array(
-				'ptdiag1' => $data['procdiag1'],
-				'ptdiag2' => $data['procdiag2'],
-				'ptdiag3' => $data['procdiag3'],
-				'ptdiag4' => $data['procdiag4']
-			), array ('id' => $data['patient'])
-		);
-		$result = $GLOBALS['sql']->query( $query );
 
 		// Deduct from authorization, if there is one
 		// specified
@@ -178,58 +133,10 @@ class ProcedureModule extends EMRModule {
 	} // end method add_post
 	
 	protected function mod_pre ( &$data ) {	
-		$data['proccurcovtp'] = ( ($data['proccov4']) ? WORKCOMP : 0 );
-		$data['proccurcovtp'] = ( ($data['proccov3']) ? TERTIARY : 0 );
-		$data['proccurcovtp'] = ( ($data['proccov2']) ? SECONDARY : 0 );
-		$data['proccurcovtp'] = ( ($data['proccov1']) ? PRIMARY : 0 );
-		$data['proccurcovid'] = ( ($data['proccov4']) ? $data['proccov4'] : 0 );
-		$data['proccurcovid'] = ( ($data['proccov3']) ? $data['proccov3'] : 0 );
-		$data['proccurcovid'] = ( ($data['proccov2']) ? $data['proccov2'] : 0 );
-		$data['proccurcovid'] = ( ($data['proccov1']) ? $data['proccov1'] : 0 );
-		$data['procbalcurrent'] = $data['procbalorig'];
-		$data['procamtpaid'] = 0;
-		$data['procbilled'] = 0;
 		$data['user'] = freemed::user_cache()->user_number;
-				
-		// Save old record for authorization update
-		$tmp = $GLOBALS['sql']->get_link( 'procrec', $data['id'] );
-		$data['procauthsaved'] = $tmp['procauth'];
 	} // end method mod_pre
 
 	protected function mod_post ( &$data ) {
-		$query = $GLOBALS['sql']->update_query(
-			'payrec',
-			array(
-				'payrecdtmod' => date('Y-m-d'),
-				'payrecdt' => $data['procdt'],
-				'payrecsource' => $data['proccurcovtp'],
-				'payreclink' => $data['proccurcovid'],
-				'payrectype' => '0',
-				'payrecnum' => '',
-				'payrecamt' => $data['procbalorig'],
-				'payrecdescrip' => $data['proccomment'],
-				'payreclock' => 'unlocked'
-			),
-			array (
-				'payrecproc' => $data['id'],
-				'payreccat' => PROCEDURE,
-				'payrectype' => '0'
-			)
-		);
-		$result = $GLOBALS['sql']->query( $query );
-
-		// updating patient diagnoses
-		$query = $GLOBALS['sql']->update_query(
-			'patient',
-			array(
-				'ptdiag1' => $data['procdiag1'],
-				'ptdiag2' => $data['procdiag2'],
-				'ptdiag3' => $data['procdiag3'],
-				'ptdiag4' => $data['procdiag4']
-			), array ('id' => $data['patient'])
-		);
-		$result = $GLOBALS['sql']->query( $query );
-
 		// Check if authorization changed
 		if ($data['procauth'] != $data['procauthsaved']) {
 			$a = CreateObject('org.freemedsoftware.core.Authorizations');

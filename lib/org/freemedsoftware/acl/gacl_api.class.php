@@ -1470,6 +1470,67 @@ class gacl_api extends gacl {
 	}
 
 	/**
+	 * get_group_acl_id()
+	 *
+	 * Gets the group_acl_id given the aro group id.
+	 *
+	 * Will only return one group acl id, so if there are duplicate names, it will return false.
+	 *
+	 * @return int Returns Group ID if found and Group ID is unique in database, otherwise, returns FALSE
+	 *
+	 * @param string Group Value
+	 * @param string Group Name
+	 * @param string Group Type, either 'ARO' or 'AXO'
+	 */
+	function get_group_acl_id($id, $group_type = 'ARO') {
+
+		$this->debug_text("get_group_id(): Value: $value, Name: $name, Type: $group_type" );
+
+		switch(strtolower(trim($group_type))) {
+			case 'axo':
+				$table = $this->_db_table_prefix .'axo_groups_map';
+				break;
+			default:
+				$table = $this->_db_table_prefix .'aro_groups_map';
+				break;
+		}
+
+		$id = trim($id);
+
+		if (empty($id)) {
+			$this->debug_text("get_group_acl_id(): at least id is required");
+			return false;
+		}
+
+		$query = 'SELECT acl_id FROM '. $table .' WHERE ';
+	        $query .= ' group_id='. $this->db->quote($id);
+		
+		$rs = $this->db->Execute($query);
+
+		if (!is_object($rs)) {
+			$this->debug_db('get_group_acl_id');
+			return false;
+		}
+
+		$row_count = $rs->RecordCount();
+
+		if ($row_count > 1) {
+			$this->debug_text("get_group_acl_id(): Returned $row_count rows, can only return one. ");
+			return false;
+		}
+
+		if ($row_count == 0) {
+			$this->debug_text("get_group_acl_id(): Returned $row_count rows");
+			return false;
+		}
+
+		$row = $rs->FetchRow();
+
+		//Return the ID.
+		return $row[0];
+	}
+
+	/**
 	 * get_group_children()
 	 *
 	 * Gets a groups child IDs

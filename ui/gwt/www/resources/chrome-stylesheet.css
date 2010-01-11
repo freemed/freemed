@@ -65,7 +65,7 @@ a:hover {
 	size: 8pt;
 }
 
-.taskbarIcon:hover,.taskbarIcon-hover {
+.taskbarIcon:hover, .taskbarIcon-hover {
 	background-color: #ccccff;
 	border: 1px solid #555555;
 	cursor: pointer;
@@ -76,18 +76,14 @@ a:hover {
 /************************************** END: Task bar icons styles ****/
 	/************************************** Tab panel CSS from KitchenSink */
 .gwt-TabPanel {
-	margin-top: 4px;
+	margin-top: 2px;
 	height: 100%;
 	width: 100%;
 }
 
-.gwt-TabPanelBottom {
-	background-color: #E8EEF7;
-}
-
 .gwt-TabBar {
 	padding-top: 2px;
-	border-bottom: 4px solid #87B3FF;
+	border-bottom: 1px solid #999999;
 	background-color: #fff;
 }
 
@@ -113,8 +109,7 @@ a:hover {
 	padding-top: 3px;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright: 10px;
-	background-color: #e8eef7;
-	border-bottom: 2px solid white;
+	background-color: #e3e3e3;
 	margin-right: 2px;
 }
 
@@ -137,8 +132,7 @@ a:hover {
 	padding-top: 3px;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright: 10px;
-	background-color: #87b3ff;
-	border-bottom: 2px solid #87b3ff;
+	background-color: #bcbcbc;
 	margin-right: 2px;
 }
 
@@ -228,8 +222,8 @@ a:hover {
 	font-size: 12px;
 	/* background-attachment: fixed; */
 	background-color: transparent;
-	background-image: url(images/login_button.png);
-	background-repeat: no-repeat;
+	background-image: url('images/login_button.png');
+	background-repeat: no-repeat
 }
 
 .freemed-LoginFields {
@@ -244,17 +238,17 @@ a:hover {
 	width: 137px;
 	height: 36px;
 	color: transparent;
-	background-image: url(images/button_on.png);
+	background-image: url('images/button_on.png');
 	cursor: hand;
-	table-layout: auto;
+	table-layout: auto
 }
 
 /************************************** END: Login Panel Styles ****/
 .freemed-LogoMainMenuBar {
 	background-postion: top left;
 	background-color: transparent;
-	background-image: url(images/freemed_PE_logo.40x67.png);
-	background-repeat: no-repeat;
+	background-image: url('images/freemed_PE_logo.40x67.png');
+	background-repeat: no-repeat
 }
 
 .freemed-ScreenInterface {
@@ -276,7 +270,7 @@ a:hover {
 
 .gwt-MainMenuBar {
 	height: 40px;
-	background-position: bottom left;
+	background-position:  left bottom;
 	overflow-x: hidden;
 	overflow-y: hidden;
 	color: White;
@@ -284,9 +278,9 @@ a:hover {
 	font-variant: small-caps;
 	font-weight: bold;
 	background-color: #224f5b;
-	background-image: url(images/menu_bar_bg.png);
+	background-image: url('images/menu_bar_bg.png');
 	background-repeat: repeat-x;
-	cursor: default;
+	cursor: default
 }
 
 .freemed-SystemMenuItem { /*	height: 19px;  */
@@ -301,9 +295,9 @@ a:hover {
 }
 
 .freemed-System {
-	background-image: url(images/dashboard.16x16.png);
+	background-image: url('images/dashboard.16x16.png');
 	background-repeat: no-repeat;
-	background-postion: center left;
+	background-postion: center left
 }
 
 .freemed-SystemMenuItem:hover .freemed-SystemMenuItem-hover {
@@ -324,10 +318,10 @@ a:hover {
 	font-variant: small-caps;
 	font-weight: bold;
 	background-color: transparent;
-	background-image: url(images/dashboard.16x16.png);
+	background-image: url('images/dashboard.16x16.png');
 	background-repeat: no-repeat;
 	cursor: pointer;
-	cursor: hand;
+	cursor: hand
 }
 
 .gwt-PatientMenuItem {
@@ -341,12 +335,12 @@ a:hover {
 	font-variant: small-caps;
 	font-weight: bold;
 	background-color: transparent;
-	background-image: url(images/patient.16x16.png);
+	background-image: url('images/patient.16x16.png');
 	background-repeat: no-repeat;
 	overflow-x: hidden;
 	overflow-y: hidden;
 	cursor: pointer;
-	cursor: hand;
+	cursor: hand
 }
 
 .gwt-LogoMainMenuBar { /*
@@ -389,12 +383,11 @@ a:hover {
 .freemed-MainMenuBar {
 	overflow-x: hidden;
 	overflow-y: hidden;
-	padding: 1px 4px 0px 20px;
 	border: 1px solid #87B3FF;
 	background-color: #FFFFFF;
-	background-image: url(images/menu_bar_bg.png);
+	background-image: url('images/menu_bar_bg.png');
 	background-repeat: repeat-x;
-	cursor: default;
+	cursor: default; padding-left:20px; padding-right:4px; padding-top:1px; padding-bottom:0px
 }
 
 .freemed-MainMenuBar .freemed-PrimaryMenuItem {
@@ -409,22 +402,21 @@ a:hover {
 	background-position: 0px 0px;
 	color: #333333;
 	background-color: transparent;
-	background-image: url(images/login_button.105x60.png);
-	background-repeat: no-repeat;
+	background-image: url('images/login_button.105x60.png');
+	background-repeat: no-repeat
 }
 
 .freemed-PrimaryMenuItem {
 	/*	background-image: url(images/freemed-PrimaryMenuItem_bg_L.png);  */
-	background-position: top left;
 	background-position: 0px -30px;
 	overflow-x: hidden;
 	overflow-y: hidden;
 	margin-top: 7px;
 	padding: 0px;
-	border: 0px;
+	border: 0px none;
 	background-color: transparent;
-	background-image: url(images/login_button.105x60.png);
-	background-repeat: no-repeat;
+	background-image: url('images/login_button.105x60.png');
+	background-repeat: no-repeat
 }
 
 #freemed-PrimaryMenuItem-title {
@@ -462,19 +454,19 @@ a:hover {
 	width: 150px;
 }
 
-.freemed-ToasterItem-Info,.freemed-ToasterItem-Last-Info {
+.freemed-ToasterItem-Info, .freemed-ToasterItem-Last-Info {
 	background-color: #ccffcc;
 }
 
-.freemed-ToasterItem-Warning,.freemed-ToasterItem-Last-Warning {
+.freemed-ToasterItem-Warning, .freemed-ToasterItem-Last-Warning {
 	background-color: #ffa500;
 }
 
-.freemed-ToasterItem-Error,.freemed-ToasterItem-Last-Error {
+.freemed-ToasterItem-Error, .freemed-ToasterItem-Last-Error {
 	background-color: #ffcccc;
 }
 
-.freemed-ToasterItem,.freemed-ToasterItem-Last {
+.freemed-ToasterItem, .freemed-ToasterItem-Last {
 	size: 8pt;
 	cursor: hand;
 }
@@ -483,12 +475,12 @@ a:hover {
 	border-bottom: 1px dashed #555555;
 }
 
-.freemed-PushButton,.freemed-Button {
+.freemed-PushButton, .freemed-Button {
 	border: 1px solid #555555;
 	background-color: #dddddd;
 }
 
-.freemed-PushButton:hover,freemed-Button:hover {
+.freemed-PushButton:hover, freemed-button:hover {
 	background-color: #555555;
 	color: #aaaaff;
 	cursor: pointer;
@@ -547,7 +539,7 @@ a:hover {
 	padding: 5px;
 }
 
-.freemed-PatientTagPopup,.freemed-SchedulerEventDialog,.freemed-InfoDialog
+.freemed-PatientTagPopup, .freemed-SchedulerEventDialog, .freemed-InfoDialog
 	{
 	border: 1px solid #555555;
 	background-color: #ffffff;
@@ -555,7 +547,7 @@ a:hover {
 	padding: 7px;
 }
 
-.freemed-Scheduler-eventDialog .Caption,.freemed-InfoDialog .Caption {
+.freemed-Scheduler-eventDialog .Caption, .freemed-InfoDialog .Caption {
 	font-weight: bold;
 }
 
@@ -565,7 +557,7 @@ a:hover {
 	display: inline;
 }
 
-.freemed-PatientTag,.freemed-PatientTagRemove {
+.freemed-PatientTag, .freemed-PatientTagRemove {
 	cursor: pointer;
 	cursor: hand;
 }
@@ -575,18 +567,21 @@ a:hover {
 	margin-right: 7px;
 }
 
-.freemed-PatientSummaryHeading,.freemed-DashboardLabel {
+.freemed-PatientSummaryHeading, .freemed-DashboardLabel {
 	font-size: 10pt;
 	font-face: sans-serif, verdana;
 	font-weight: bold;
+	/*
 	border-top: 1px solid #000000;
 	border-bottom: 0px;
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
+	*/
 	padding-left: 10px;
 	padding-right: 30px;
 	margin-left: 10px;
 	margin-bottom: 0px;
+	margin-top: 20px;
 	background-color: #ffffff;
 }
 
@@ -602,19 +597,22 @@ a:hover {
 	background-color: #ffffff;
 }
 
-.freemed-PatientSummaryContainer,.freemed-WorkListContainer {
+.freemed-PatientSummaryContainer, .freemed-WorkListContainer {
+	/*
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	border-top: 1px solid #000000;
+	
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
+	*/
 	margin-top: 0px;
 	padding: 5px;
 	width: 100%;
 }
 
-.freemed-Scheduler-eventDialog,.freemed-EmrPrintDialog,.freemed-CreateAnnotationPopup
+.freemed-Scheduler-eventDialog, .freemed-EmrPrintDialog, .freemed-CreateAnnotationPopup
 	{
 	border: 2px solid #000000;
 	padding: 5px;
@@ -632,12 +630,17 @@ a:hover {
 }
 
 .freemed-WidgetContainer {
+	/*
 	border-left: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	border-top: 1px solid #000000;
+	
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	*/
 	margin-top: 0px;
 	padding: 5px;
 	width: 100%;
@@ -658,7 +661,7 @@ a:hover {
 
 .freemed-Popup-sPanelInner {
 	border: 1px solid #000000;
-	background-color: #9999ff;
+	background-color: #cccccc;
 	padding: 15px;
 }
 
@@ -677,7 +680,7 @@ a:hover {
 
 .freemed-NotesBox-textarea {
 	background-color: yellow;
-	border: 0;
+	border: 0px none;
 }
 
 .freemed-NotesBox-textarea_outer {
@@ -705,7 +708,7 @@ a:hover {
 /* Accordion CSS */
 
 .accordion-item-selected {
-	background: #aaaaff;
+	background: #a4a4a4;
 	width: 100%;
 	cursor: pointer;
 	cursor: hand;
@@ -741,14 +744,13 @@ a:hover {
 
 .accordion-panel {
 	background-color: transparent;
-	background-image: url(images/stipedbg.png);
+	background-image: url('images/stipedbg.png');
 	background-repeat: repeat-x repeat-y;
 	width: 100%;
 	height: 100%;
-	border: 0;
+	border: 0px none;
 	margin: 0;
-	padding: 20px;
-	font-family: verdana;
+	font-family: verdana
 	}
 
 .accordion-title {
@@ -768,12 +770,11 @@ a:hover {
 	}
 
 .accordion2-title {
-	background: #EFEFE3 url(images/stipedbg.png) repeat-x scroll 0%;
+	background: #EFEFE3 url('images/stipedbg.png') repeat-x;
 	border: 0pt none;
-	padding: 3px;
 	padding-left: 10px;
 	color: white;
-	font-weight: bold;
+	font-weight: bold; padding-right:3px; padding-top:3px; padding-bottom:3px
 	}
 
 .accordion2-title-selected {
@@ -784,3 +785,76 @@ a:hover {
 	width: 250px;
 	}
 
+.stackPanelHeader{
+	font-size: 14px;
+	font-weight: bold;
+}
+.Application-links {
+  background: #eee url('images/brushed.gif');
+  
+}
+.gwt-tab-Label{
+	white-space: nowrap;
+}
+.gwt-simple-button{
+	cursor: pointer;
+	margin-left: 3px;
+}
+.large-header-label {
+ background: #9c9fa2;
+ color: black;
+ font-size: 26px;
+ font-weight: bold;
+ text-align: center;
+}
+.medium-header-label {
+ background: #cccccc; 
+ font-size: 15px;
+ font-weight: bold;
+ text-align: center;
+}
+.small-header-label {
+ background: #cccccc;
+ color: black;
+ font-size: 14px;
+ font-weight: bold;
+}
+.radio-label{ 
+ font-size: 15px;
+ font-weight: normal;
+}
+.label{ 
+    font-size: 15px;
+	font-weight: bold;
+}
+.label_italic{	
+	font-style: italic;
+}
+.label_red{	
+	color: red;	
+}
+.label_bold{	
+	font-weight: bold;	
+}
+.label_small{
+	font-size: 10px;
+	font-family:verdana;
+	text-align:center;
+}
+.freemed_hor_panel{
+	width: 100%;
+    height: 30%; 
+}
+.label_bold_red{	
+	font-weight: bold;	
+	color: red;
+}
+.freemed-PopupPanel {
+  border: 3px solid #e3e3e3;
+  padding: 3px;
+  background: white;
+  margin-left:17%;
+}
+.width100Perc{
+width:100%;
+}

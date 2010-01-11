@@ -46,6 +46,7 @@ class Ledger {
 	//	Array of associative arrays containing aging information.
 	//
 	public function AgingReportQualified ( $criteria ) {
+		freemed::acl_enforce( 'financial', 'summary' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		foreach ($criteria AS $k => $v) {
 			//print "criteria key = $k, value = $v<hr/>\n";

@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
@@ -91,6 +92,24 @@ public class UnfiledDocuments extends ScreenInterface {
 
 	protected HashMap<String, String>[] store = null;
 
+	private static List<UnfiledDocuments> unfiledDocumentsList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static UnfiledDocuments getInstance(){
+		UnfiledDocuments unfiledDocuments=null; 
+		
+		if(unfiledDocumentsList==null)
+			unfiledDocumentsList=new ArrayList<UnfiledDocuments>();
+		if(unfiledDocumentsList.size()<AppConstants.MAX_UNFILLED_TABS)//creates & returns new next instance of UnfiledDocuments
+			unfiledDocumentsList.add(unfiledDocuments=new UnfiledDocuments());
+		else //returns last instance of UnfiledDocuments from list 
+			unfiledDocuments = unfiledDocumentsList.get(AppConstants.MAX_UNFILLED_TABS-1);
+		return unfiledDocuments;
+	}
+
+	public static boolean removeInstance(UnfiledDocuments unfiledDocuments){
+		return unfiledDocumentsList.remove(unfiledDocuments);
+	}
+	
 	public UnfiledDocuments() {
 		final HorizontalPanel mainHorizontalPanel = new HorizontalPanel();
 		initWidget(mainHorizontalPanel);
@@ -495,5 +514,11 @@ public class UnfiledDocuments extends ScreenInterface {
 			GWT.log("Exception", e);
 		}
 		return p;
+	}
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
 	}
 }

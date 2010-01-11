@@ -85,6 +85,51 @@ class Pharmacy extends SupportModule {
 		}
 	} // end method mod_pre
 
+
+	// Method: picklist
+	//
+	//	Generate associative array of Pharmacy table id to Pharmacy
+	//	text based on criteria given.
+	//
+	// Parameters:
+	//
+	//	$string - String containing text parameters.
+	//
+	//	$limit - (optional) Limit number of results. Defaults to 10.
+	//
+	//	$inputlimit - (optional) Lower limit number of digits which
+	//	have to be entered in order for this routine to return a
+	//	valid value. Defaults to 2.
+	//
+	// Returns:
+	//
+	//	Associative array.
+	//	* key - Facility table id key
+	//	* value - Text representing Pharmacy record identifying info.
+	//
+	public function picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
+		$limit = ($_limit < 10) ? 10 : $_limit;
+		if (strlen($string) < $inputlimit) {
+			syslog(LOG_INFO, "under $inputlimit");
+			return false;
+		}
+
+		$string = trim(addslashes( $string ));
+		
+		$query = "SELECT * FROM pharmacy WHERE phname LIKE '".addslashes($string)."%'".
+			" LIMIT $limit";
+			
+		syslog(LOG_INFO, "PICK| $query");
+		$result = $GLOBALS['sql']->queryAll( $query );
+		if (count($result) < 1) { return array (); }
+		$count = 0;
+		foreach ($result AS $r) {
+			$return[(int)$r['id']] = trim($this->to_text($r));
+		}
+		syslog(LOG_INFO, "picklist| found ".count($return)." results returned");
+		return $return;
+	} // end public function picklist
+
 } // end class Pharmacy
 
 register_module ("Pharmacy");

@@ -98,7 +98,7 @@ class PatientCoverages extends EMRModule {
 
 	protected function add_pre ( &$data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$data['covstatus'] = ACTIVE;
+		$data['covstatus'] = "1";
 		$data['covdtadd'] = date('Y-m-d');
 		$data['covdtmod'] = date('Y-m-d');
 		$data['covdteff'] = $s->ImportDate( $data['covdteff'] );
@@ -109,7 +109,7 @@ class PatientCoverages extends EMRModule {
 
 	protected function mod_pre ( &$data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$data['covstatus'] = ACTIVE;
+		$data['covstatus'] = "1";
 		$data['covdtmod'] = date('Y-m-d');
 		$data['covdteff'] = $s->ImportDate( $data['covdteff'] );
 		$data['covrelinfodt'] = $s->ImportDate( $data['covrelinfodt'] );
@@ -141,6 +141,24 @@ class PatientCoverages extends EMRModule {
 		return $res;
 	} // end method GetCoverages
 
+	// Method: GetAllCoverages
+	//
+	//	Get list of coverages for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAllCoverages ( $patient) {
+		$q = "SELECT c.* from coverage c WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient )." AND c.covstatus =1 ORDER BY c.covstatus DESC";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetCoverages
+
 	// Method: RemoveOldCoverage
 	//
 	//	Move old coverage to deleted status.
@@ -155,11 +173,32 @@ class PatientCoverages extends EMRModule {
 	//
 	//	Boolean, if successful.
 	//
-	public function RemoveOldCoverage ( $patient, $covtype ) {
-		$query = "UPDATE coverage SET covstatus=".$GLOBALS['sql']->quote( DELETED )." WHERE covtype=".$GLOBALS['sql']->quote( $covtype )." AND covpatient=".$GLOBALS['sql']->quote( $patient );
+	public function RemoveOldCoverage ( $patient, $covtype = NULL ) {
+		$query = "UPDATE coverage SET covstatus=".$GLOBALS['sql']->quote( DELETED )." WHERE covpatient=".$GLOBALS['sql']->quote( $patient );;
+		if($covtype)
+			$query = $query." AND covtype=".$GLOBALS['sql']->quote( $covtype );
 		$result = $GLOBALS['sql']->query( $query );
 		return ( $result ? true : false );
 	} // end method RemoveOldCoverage
+
+	// Method: GetCoverages
+	//
+	//	Get primary coverage for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	// Returns:
+	//
+	//	hash
+	//
+	public function GetPrimaryCoverage( $patient) {
+		$q = "SELECT i.insconame as insuranceName, c.covpatinsno as policyNo,CASE WHEN c.covrel='S' THEN CONCAT(p.ptfname,',',p.ptlname,' ',p.ptmname) ELSE CONCAT(c.covfname,',',c.covlname,' ',c.covmname) END as CardHolderName,covrel as relationToPatient,CASE WHEN c.covrel='S' THEN p.ptdob ELSE c.covdob END as policyHolderDOB, c.coveffdt as effectiveDate, c.covdeduct as deductible,a.authnum as authorization,a.authdtbegin as effectDateOfAuth,c.covcopay as copay,a.authtype as typeofAuth FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id LEFT OUTER JOIN authorizations a ON a.authpatient = c.covpatient LEFT OUTER JOIN patient p ON c.covpatient = p.id WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient )." ORDER BY c.covstatus ASC";
+		$r = $GLOBALS['sql']->queryRow( $q );
+
+		return $r;
+	} // end method GetPrimaryCoverage	
 
 } // end class PatientCoverages
 

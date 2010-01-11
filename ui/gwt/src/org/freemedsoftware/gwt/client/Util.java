@@ -24,7 +24,12 @@
 
 package org.freemedsoftware.gwt.client;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.Api.Authorizations;
 import org.freemedsoftware.gwt.client.Api.AuthorizationsAsync;
@@ -70,19 +75,28 @@ import org.freemedsoftware.gwt.client.Public.Protocol;
 import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
+import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.HeadElement;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -344,6 +358,45 @@ public final class Util {
 	}
 
 	/**
+	 * sets facility into session so that it can be retrieved & show on home
+	 * page after refresh
+	 * 
+	 * @param facility
+	 *            String facility selected at login
+	 */
+	public static synchronized void setFacilityInSession(String facilityName,
+			String facilityId) {
+		if (thisProgramMode == ProgramMode.STUBBED) {
+			// TODO STUBBED Mode stuff
+		} else if (thisProgramMode == ProgramMode.JSONRPC) {
+			String[] params = { facilityName, facilityId };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.FacilityModule.SetDefaultFacility",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							JsonUtil.debug("Util: SetDefaultFacility:"
+									+ response.getText());
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		}
+	}
+
+	/**
 	 * Create new tab in main window with specified title and ScreenInterface
 	 * 
 	 * @param title
@@ -353,6 +406,21 @@ public final class Util {
 	 */
 	public static synchronized void spawnTab(String title,
 			ScreenInterface screen) {
+		Util.spawnTab(title, screen, null);
+	}
+
+	/**
+	 * Create new tab in main window with specified title and ScreenInterface
+	 * 
+	 * @param title
+	 *            String title of the new tab
+	 * @param screen
+	 *            Object containing extended composite with content
+	 * @param ClosableTabInterface
+	 *            Object implementing onclose & isReadyToClose functions
+	 */
+	public static synchronized void spawnTab(String title,
+			ScreenInterface screen, ClosableTabInterface closableTabInterface) {
 		boolean recycle = false;
 
 		// Special handling for PatientScreen
@@ -393,12 +461,62 @@ public final class Util {
 				CurrentState.getTabPanel().add((Widget) screen,
 						new ClosableTab(title, (Widget) screen, null));
 			} else {
-				CurrentState.getTabPanel().add((Widget) screen,
-						new ClosableTab(title, (Widget) screen));
+				if (CurrentState.getTabPanel().getWidgetIndex(screen) == -1)
+					CurrentState.getTabPanel().add(
+							(Widget) screen,
+							new ClosableTab(title, (Widget) screen,
+									closableTabInterface));
 			}
 			CurrentState.getTabPanel().selectTab(
-					CurrentState.getTabPanel().getWidgetCount() - 1);
+					CurrentState.getTabPanel().getWidgetIndex(screen));
 		}
+	}
+
+	/**
+	 * Close tab from main window
+	 * 
+	 * @param screen
+	 *            Object containing extended composite with content
+	 */
+	public static synchronized void closeTab(ScreenInterface screen) {
+
+		TabPanel t = CurrentState.getTabPanel();
+		t.selectTab(t.getWidgetIndex(screen) - 1);
+		t.remove(t.getWidgetIndex(screen));
+
+		// Special handling for PatientScreen
+		if (screen instanceof PatientScreen) {
+			HashMap<Integer, PatientScreen> map = CurrentState
+					.getPatientScreenMap();
+			Integer oldId = ((PatientScreen) screen).getPatient();
+			if (map.get(oldId) != null) {
+				map.remove(oldId);
+			}
+		}
+	}
+
+	/**
+	 * Close all tabs from main window after logout
+	 * 
+	 */
+	public static synchronized void closeAllTabs() {
+
+		TabPanel t = CurrentState.getTabPanel();
+		while (t.getWidgetCount() > 1) {
+
+			ScreenInterface screen = (ScreenInterface) t.getWidget(1);
+			// Special handling for PatientScreen
+			if (screen instanceof PatientScreen) {
+				HashMap<Integer, PatientScreen> map = CurrentState
+						.getPatientScreenMap();
+				Integer oldId = ((PatientScreen) screen).getPatient();
+				if (map.get(oldId) != null) {
+					map.remove(oldId);
+				}
+			}
+			screen.closeScreen();
+		}
+		t.selectTab(0);
 	}
 
 	/**
@@ -439,6 +557,26 @@ public final class Util {
 	}
 
 	/**
+	 * Execute a piece of code asynchronously.
+	 * 
+	 * @param cb
+	 */
+	public static void runAsync(final Command cb) {
+		GWT.runAsync(new RunAsyncCallback() {
+			@Override
+			public void onSuccess() {
+				cb.execute();
+			}
+
+			@Override
+			public void onFailure(Throwable reason) {
+				Window
+						.alert("Could not connect to the server! Please contact your system administrator.");
+			}
+		});
+	}
+
+	/**
 	 * Logout of the system and pop up a login dialog.
 	 * 
 	 * @param state
@@ -464,11 +602,14 @@ public final class Util {
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
+							// closeAllTabs();
 							CurrentState.getMainScreen().hide();
 							UIObject.setVisible(RootPanel.get(
 									"loginScreenOuter").getElement(), true);
 							CurrentState.getFreemedInterface().getLoginDialog()
 									.center();
+							CurrentState.getFreemedInterface().getLoginDialog()
+									.setFocusToPasswordField();
 						} else {
 							Window.alert("Failed to log out.");
 						}
@@ -500,6 +641,202 @@ public final class Util {
 				Window.alert("Could not create proxy for Login");
 			}
 		}
+	}
+
+	/**
+	 * Validate if it is number or not
+	 * 
+	 * @param value
+	 */
+
+	public static synchronized boolean isNumber(String value) {
+		boolean flag;
+		try {
+			Integer val = new Integer(value);
+			flag = true;
+		} catch (Exception e) {
+			flag = false;
+		}
+		return flag;
+	}
+
+	/**
+	 * Compare dates.
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return 0 (in case of same i.e. date1 is equals to date), 1 (in case of
+	 *         date1 is After(Greater) than date2), -1 (in case of date is
+	 *         Before(less) than date2)
+	 */
+	public static synchronized int compareDate(Date date1, Date date2) {
+		Date d1, d2 = null;
+		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd");
+		int compare;
+		d1 = df.parse(df.format(date1));
+		d2 = df.parse(df.format(date2));
+		compare = d1.compareTo(d2);
+		return compare;
+	}
+
+	/**
+	 * Format date in SQL format.
+	 * 
+	 * @param date
+	 * @return String formated date for transmission into db table
+	 */
+	public static synchronized String getSQLDate(Date date) {
+		// 2009-12-18 15:41:56
+		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
+		return df.format(date);
+	}
+
+	/**
+	 * Parse SQL formatted date into Java object.
+	 * 
+	 * @param date
+	 *            SQL formatted date string.
+	 * @return Parsed Date
+	 */
+	public static synchronized Date getSQLDate(String dateStr) {
+		// 2009-12-18 15:41:56
+		Date date=null;
+		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
+		try{
+			date = df.parse(dateStr);
+		}catch(Exception e){}
+		try{
+			df = DateTimeFormat.getFormat("yyyy-MM-dd");
+			date = df.parse(dateStr);
+		}catch(Exception e){}
+		return date;
+	}
+
+	/**
+	 * Calculates age w.r.t provided DOB
+	 * 
+	 * @param date
+	 *            SQL formatted date string.
+	 * @return age
+	 */
+	public static synchronized int calculateAge(Date DOB) {
+		int age = -1;
+		Calendar calDOB = new GregorianCalendar();
+		calDOB.setTime(DOB);
+		Calendar calNow = new GregorianCalendar();
+		calNow.setTime(new Date());
+		age = calNow.get(Calendar.YEAR) - calDOB.get(Calendar.YEAR); 
+		return age;
+	}
+	
+	/**
+	 * Update the style sheets to reflect the current theme and direction.
+	 * 
+	 * @param currentTheme
+	 * @param lastTheme
+	 */
+	public static void updateStyleSheets(String currentTheme, String lastTheme) {
+		// Generate the names of the style sheets to include
+		String gwtStyleSheet = "resources/themes/" + currentTheme + "/"
+				+ currentTheme + ".css";
+		String showcaseStyleSheet = "resources/" + currentTheme
+				+ "-stylesheet.css";
+		if (LocaleInfo.getCurrentLocale().isRTL()) {
+			gwtStyleSheet = gwtStyleSheet.replace(".css", "_rtl.css");
+			showcaseStyleSheet = showcaseStyleSheet.replace(".css", "_rtl.css");
+		}
+		// Find existing style sheets that need to be removed
+		boolean styleSheetsFound = false;
+		final HeadElement headElem = StyleSheetLoader.getHeadElement();
+		final List<Element> toRemove = new ArrayList<Element>();
+		NodeList<Node> children = headElem.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node node = children.getItem(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element elem = Element.as(node);
+				if (elem.getTagName().equalsIgnoreCase("link")
+						&& elem.getPropertyString("rel").equalsIgnoreCase(
+								"stylesheet")) {
+					styleSheetsFound = true;
+					String href = elem.getPropertyString("href");
+					// If the correct style sheets are already loaded, then we
+					// should have
+					// nothing to remove.
+					if (href.contains(lastTheme)) {
+						toRemove.add(elem);
+					}
+				}
+			}
+		}
+		lastTheme = currentTheme;
+		// Return if we already have the correct style sheets
+
+		if (styleSheetsFound && toRemove.size() == 0) {
+			return;
+		}
+
+		// Detach the app while we manipulate the styles to avoid rendering
+		// issues
+		RootPanel.get().remove(CurrentState.getMainScreen());
+
+		// Remove the old style sheets
+		for (Element elem : toRemove) {
+			headElem.removeChild(elem);
+		}
+
+		// Load the GWT theme style sheet
+		String modulePath = GWT.getHostPageBaseURL();
+		Command callback = new Command() {
+			/**
+			 * The number of style sheets that have been loaded and executed
+			 * this command.
+			 */
+			private int numStyleSheetsLoaded = 0;
+
+			public void execute() {
+				/*
+				 * Wait until all style sheets have loaded before re-attaching
+				 * the app.
+				 */
+				numStyleSheetsLoaded++;
+				if (numStyleSheetsLoaded < 2) {
+					return;
+				}
+
+				/*
+				 * Different themes use different background colors for the body
+				 * element, but IE only changes the background of the visible
+				 * content on the page instead of changing the background color
+				 * of the entire page. By changing the display style on the body
+				 * element, we force IE to redraw the background correctly.
+				 */
+				RootPanel.getBodyElement().getStyle().setProperty("display",
+						"none");
+				RootPanel.getBodyElement().getStyle()
+						.setProperty("display", "");
+				RootPanel.get().add(CurrentState.getMainScreen());
+			}
+		};
+		StyleSheetLoader.loadStyleSheet(modulePath + gwtStyleSheet,
+				getCurrentReferenceStyleName("gwt", currentTheme), callback);
+
+		/*
+		 * Load the showcase specific style sheet after the GWT theme style
+		 * sheet so that custom styles supercede the theme styles.
+		 */
+		StyleSheetLoader.loadStyleSheet(modulePath + showcaseStyleSheet,
+				getCurrentReferenceStyleName("Application", currentTheme),
+				callback);
+		CurrentState.LAST_THEME = currentTheme;
+	}
+
+	public static String getCurrentReferenceStyleName(String prefix,
+			String CUR_THEME) {
+		String gwtRef = prefix + "-Reference-" + CUR_THEME;
+		if (LocaleInfo.getCurrentLocale().isRTL()) {
+			gwtRef += "-rtl";
+		}
+		return gwtRef;
 	}
 
 }

@@ -47,6 +47,13 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 		this.setFormat(this);
 	}
 
+	public CustomDatePicker(Date date)
+	{
+		this.setValue(date);
+		this.setFormat(this);
+	}
+	
+	
 	public void setValue(String s) {
 		if (s == null) {
 			setValue(new Date(), true);

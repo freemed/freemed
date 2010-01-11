@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+  $Id$
+ 
+  Authors:
+       Jeff Buchbinder <jeff@freemedsoftware.org>
+ 
+  FreeMED Electronic Medical Record and Practice Management System
+  Copyright (C) 1999-2009 FreeMED Software Foundation
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ -->
+<SimpleUIBuilder module="Taxonomy">
+	<Elements>
+		<Element field="text_name" title="Descriptive Name" type="TEXT" options="20" display="1" />
+		<Element field="taxonomy_type" title="Type" type="SELECT" options="concept,qualifier,quantifier" display="1" />
+		<Element field="code_set" title="Code Set" type="SELECT" options="UMLS,SNOMED-CT,LOINC" display="1" />
+		<Element field="code_value" title="Code Value" type="TEXT" display="1" />
+		<Element field="widget_type" title="Widget Type (Quantifier only)" type="SELECT" options="None|,Module|MODULE,Select Widget|SELECT,Text|TEXT,Checkbox|CHECKBOX" />
+		<Element field="widget_options" title="Widget Options (Quantifier only)" type="TEXT" />
+		<Element field="subs" title="Sub Members" type="MODULE_MULTIPLE" options="Taxonomy" />
+	</Elements>
+</SimpleUIBuilder>

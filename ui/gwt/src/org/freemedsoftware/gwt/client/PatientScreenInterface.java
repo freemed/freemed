@@ -45,6 +45,11 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	 */
 	public void assignPatientScreen(PatientScreen p) {
 		patientScreen = p;
+
+		// If the parent screen exists, push patient id into patient screen
+		if (patientScreen != null) {
+			setPatientId(patientScreen.getPatient());
+		}
 	}
 
 	/**
@@ -52,8 +57,10 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	 */
 	public void closeScreen() {
 		TabPanel t = patientScreen.getTabPanel();
-		t.selectTab(t.getWidgetIndex(this) - 1);
-		t.remove(t.getWidgetIndex(this));
+		if(t.getWidgetIndex(this)!=-1){
+			t.selectTab(t.getWidgetIndex(this) - 1);
+			t.remove(t.getWidgetIndex(this));
+		}
 	}
 
 	/**
@@ -72,6 +79,10 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	 */
 	public void setPatientId(Integer id) {
 		patientId = id;
+	}
+
+	public Integer getPatientId() {
+		return patientId;
 	}
 
 }

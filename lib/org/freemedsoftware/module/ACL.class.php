@@ -170,6 +170,34 @@ class ACL extends SupportModule {
 		return $acl_id;
 	} // end method UserAdd
 
+	// Method: UserDel
+	//
+	//	Add an ACL ARO object in the "individual" section of the
+	//	ARO objects for the specified user.
+	//
+	// Parameters:
+	//
+	//	$id - Record ID for the user in question
+	//
+	public function UserDel ( $id ) {
+		freemed::acl_enforce( 'admin', 'config' );
+		// Create ACL manipulation class
+		$acl = $this->acl_object();
+
+		$aro_id = $acl->get_object_id('user',$id,'ARO');
+
+		// delete an ARO object
+		$acl_result = $acl->del_object(
+			$aro_id, // ACL identifier
+			'ARO', // identify this as an ARO
+			true // Erase all references from all acl tables
+		);
+
+		// Send back true if deleted successfully or false in failure
+		
+		return $acl_result;
+	} // end method UserAdd
+
 	// Method: AddUserToGroup
 	//
 	// Parameters:
@@ -285,17 +313,45 @@ class ACL extends SupportModule {
 	//
 	//	Array of array [ key, value ]
 	//
-	public function UserGroups ( ) {
+	public function UserGroups ($returnHashes=FALSE ) {
+		
 		$acl = $this->acl_object();
 		$raw = $acl->sort_groups('ARO');
+		
 		foreach ($raw[0] AS $key => $value) {
 			if ($value=='Users') { $users = $key; }
 		}
 		if (!isset($users)) { trigger_error("Should never get here!", E_USER_ERROR); }
 		foreach ( $raw[$users] AS $k => $v ) {
-			$return[] = array ( $v, $k );
+			if($returnHashes)
+				$return[] = array('id'=>''.$k,'groupname'=>$v);
+			else
+				$return[] = array ( $v, $k );
 		}
+		
 		return $return;
+	} // end method UserGroups
+
+
+	// Method: GetUserGroups
+	//
+	//	Get list of  user groups (AROs)
+	//
+	//param
+	//      userId
+	//
+	// Returns:
+	//
+	//	Array of array [ key, value ]
+	//
+	public function GetUserGroups ($userId ) {
+				
+		$acl = $this->acl_object();
+		$aro_id = $acl->get_object_id('user',$userId,'ARO');
+		$return = $acl->get_object_groups($aro_id);
+		
+	
+	return $return;
 	} // end method UserGroups
 
 	// Method: UserInGroup
@@ -360,7 +416,109 @@ class ACL extends SupportModule {
 			$GLOBALS['sql']->query('DROP TABLE acl_'.$t);
 		}
 	} // end method _drop_old_tables
+	
+	
+	// Method: GetAllPermissions
+	//
+	//	Get list of user groups (AROs)
+	//
+	// Returns:
+	//
+	//	Array of Hashes with value as sub array
+	//
+	public function GetAllPermissions() {
+		
+		$acl = $this->acl_object();
+		$raw = $acl->get_objects(NULL,1,'ACO');
+		
+		return $raw;
+	} // end method GetAllPermissions
 
+	// Method: AddGroupWithPermissions
+	//
+	//	Add new Group with permissions (ACOs) 
+	//
+	// Returns:
+	//
+	//	true if Added successfully 
+	//	
+	public function AddGroupWithPermissions ($data,$aco_array) {
+		freemed::acl_enforce( 'admin', 'config' );
+		$o = $this->acl_object( );
+		$name = $data['groupName'];
+		$aro_group_ids = array($o->add_group($name, $name, 10));
+		return $o->add_acl($aco_array, NULL, $aro_group_ids, NULL, NULL, 1, 1, 1, $name.' Access', 'user');
+		
+	} // end method AddGroupWithPermissions
+
+	// Method: ModGroupWithPermissions
+	//
+	//	Modify existing group with new provided ACOs
+	//
+	// Returns:
+	//
+	//	true if Modified successfully 
+	//	
+	public function ModGroupWithPermissions ($data,$aco_array) {
+		freemed::acl_enforce( 'admin', 'config' );
+		$acl = $this->acl_object( );
+		$name = $data['groupName'];
+		$group_id = $data['groupId'];
+		
+		$isModified = $acl->edit_group($group_id, $name, $name, 10);
+		if($isModified){
+			$acl_id = $acl->get_group_acl_id($group_id);
+			$isModified = $acl->edit_acl($acl_id, $aco_array,NULL, array($group_id));
+		}
+		
+		return $isModified;
+		
+	} // end method ModGroupWithPermissions
+
+	// Method: GetGroupPermissions
+	//
+	//	Gets the Permissions(ACOs objects) of passed group_id
+	//
+	// Returns:
+	//
+	//	array of hashes with sub hashes in values Map<key, Map<key,vlue>>
+	//	
+	public function GetGroupPermissions ($group_id) {
+		freemed::acl_enforce( 'admin', 'config' );
+		$acl = $this->acl_object( );
+		$group_acl_id = $acl->get_group_acl_id($group_id);
+		$acl_Object = $acl->get_acl($group_acl_id);
+		$acos=$acl_Object['aco'];
+		foreach ( $acos AS $k => $v ) {
+				foreach ( $v AS $k1 => $v1 ){
+					$innerMap[$v1] = '1';
+				}
+				$return[$k] = $innerMap ;
+		}
+		return $return;
+		
+	} // end method GetGroupPermissions
+
+	// Method: DelGroupWithPermissions
+	//
+	//	Deletes group and its Permissions(ACOs Objects )
+	//
+	// Returns:
+	//
+	//	true if deleted successfully 
+	//	
+	public function DelGroupWithPermissions ($group_id) {
+		freemed::acl_enforce( 'admin', 'config' );
+		$acl = $this->acl_object( );
+		$group_acl_id = $acl->get_group_acl_id($group_id);
+		$isGroupDeleted = $acl->del_group($group_id, FALSE);
+		
+		if($isGroupDeleted)
+			$isGroupDeleted = $acl->del_acl($group_acl_id);
+		
+		return $isGroupDeleted;
+		
+	} // end method GetGroupPermissions
 } // end class ACL
 
 register_module('ACL');

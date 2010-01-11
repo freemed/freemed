@@ -24,7 +24,11 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTextBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
@@ -43,6 +47,25 @@ public class PatientIdEntry extends PatientEntryScreenInterface {
 
 	protected String patientIdName = "patient";
 
+	private static List<PatientIdEntry> patientIdEntryList=null;
+	
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static PatientIdEntry getInstance(){
+		PatientIdEntry patientIdEntry=null; 
+		if(patientIdEntryList==null)
+			patientIdEntryList=new ArrayList<PatientIdEntry>();
+		if(patientIdEntryList.size()<AppConstants.MAX_PATIENT_FOREIGNID_TABS)//creates & returns new next instance of PatientIdEntry
+			patientIdEntryList.add(patientIdEntry=new PatientIdEntry());
+		else{ //returns last instance of PatientIdEntry from list 
+			patientIdEntry = patientIdEntryList.get(AppConstants.MAX_PATIENT_FOREIGNID_TABS-1);
+		}	
+		return patientIdEntry;
+	}
+	
+	public static boolean removeInstance(PatientIdEntry patientIdEntry){
+		return patientIdEntryList.remove(patientIdEntry);
+	}
+	
 	public PatientIdEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -102,5 +125,10 @@ public class PatientIdEntry extends PatientEntryScreenInterface {
 	public void resetForm() {
 
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

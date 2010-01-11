@@ -32,6 +32,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
@@ -80,6 +81,8 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 	public SupportDataManagementScreen() {
 		final SupportDataManagementScreen thisRef = this;
 
+		final boolean canAddData = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.SUPPORT_DATA);
+		
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -136,11 +139,17 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Get information on row...
 				try {
-					final Integer recordId = Integer.parseInt(data.get("oid"));
-					SupportModuleEntry entry = new SupportModuleEntry(
-							moduleName, recordId);
-					entry.setDoneCommand(thisRef);
-					Util.spawnTab(moduleName + ": " + "Edit", entry);
+					if(canAddData){
+						Integer recordId = null;
+						if(data.get("oid")!=null)
+							recordId = Integer.parseInt(data.get("oid"));
+						else if(data.get("id")!=null)
+							recordId = Integer.parseInt(data.get("id"));
+						SupportModuleEntry entry = new SupportModuleEntry(
+								moduleName, recordId);
+						entry.setDoneCommand(thisRef);
+						Util.spawnTab(moduleName + ": " + "Edit", entry);
+					}
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
 				}

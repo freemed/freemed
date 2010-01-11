@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -49,6 +50,27 @@ import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 
 public class CustomTable extends Composite implements ClickHandler {
+
+	@Override
+	public void setSize(String width, String height) {
+		// TODO Auto-generated method stub
+		super.setSize(width, height);
+		flexTable.setSize(width, height);
+	}
+
+	@Override
+	public void setHeight(String height) {
+		// TODO Auto-generated method stub
+		super.setHeight(height);
+		flexTable.setHeight(height);
+	}
+
+	@Override
+	public void setWidth(String width) {
+		// TODO Auto-generated method stub
+		super.setWidth(width);
+		flexTable.setWidth("100%");
+	}
 
 	public class Column {
 		protected String heading;
@@ -147,6 +169,8 @@ public class CustomTable extends Composite implements ClickHandler {
 	protected Button bNext = new Button("Next");
 
 	protected int curMinRow = 0;
+
+	protected boolean sortDesc = true;
 
 	public CustomTable() {
 		VerticalPanel vPanel = new VerticalPanel();
@@ -598,7 +622,7 @@ public class CustomTable extends Composite implements ClickHandler {
 			int row = clickedCell.getRowIndex();
 			int col = clickedCell.getCellIndex();
 			if (row == 0) {
-				// Handle row header click
+				sortData(col);
 			} else {
 				if (allowSelection) {
 					if (!multipleSelection) {
@@ -620,4 +644,77 @@ public class CustomTable extends Composite implements ClickHandler {
 		}
 	}
 
+	/**
+	 * Removes all selected ids from list.
+	 */
+	public void clearAllSelections() {
+		if (selected.size() > 0) {
+			selected.clear();
+		}
+	}
+
+	/**
+	 * Returns list of all selected items.
+	 */
+	public List<String> getSelected() {
+		return selected;
+	}
+
+	/**
+	 * Returns the total countselected ids.
+	 */
+	public int getSelectedCount() {
+		return selected.size();
+	}
+
+	/**
+	 * This function will sort the data by column clicked param column.
+	 */
+	protected void sortData(int col) {
+		if (data != null && data.length > 0) {
+			String heading = columns.get(col).getHashMapping();
+			HashMap<String, String> tempmap;
+			for (int i = curMinRow; i < data.length; i++)
+				for (int j = curMinRow; j < data.length; j++) {
+					if (i != j
+							&& needSwap(data[i].get(heading), data[j]
+									.get(heading))) {
+						tempmap = data[i];
+						data[i] = data[j];
+						data[j] = tempmap;
+					}
+				}
+			sortDesc = !sortDesc;
+			loadData(data, curMinRow);
+		}
+	}
+
+	protected boolean needSwap(String str1, String str2) {
+		boolean success = false;
+		str1 = str1.toLowerCase().toString();
+		str2 = str2.toLowerCase().toString();
+		int str1Length = str1.length();
+		if (sortDesc) {
+			for (int i = 0; i < str1Length; i++) {
+				if (str1.charAt(i) < str2.charAt(i)) {
+					success = true;
+					break;
+				} else if (str1.charAt(i) > str2.charAt(i)) {
+					success = false;
+					break;
+				}
+			}
+		} else {
+			for (int i = 0; i < str1Length; i++) {
+				if (str1.charAt(i) > str2.charAt(i)) {
+					success = true;
+					break;
+				} else if (str1.charAt(i) < str2.charAt(i)) {
+					success = false;
+					break;
+				}
+			}
+		}
+		return success;
+	}
 }

@@ -51,6 +51,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class DocumentBox extends WidgetInterface {
 
@@ -62,7 +63,7 @@ public class DocumentBox extends WidgetInterface {
 	protected CustomTable wDocuments = new CustomTable();
 
 	protected DocumentScreen documentScreen = null;
-
+    private PushButton showDocumentsButton;
 	public DocumentBox() {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
@@ -73,26 +74,27 @@ public class DocumentBox extends WidgetInterface {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 
-		final PushButton showDocumentsButton = new PushButton("", "");
-		showDocumentsButton.getUpFace().setImage(
-				new Image("resources/images/unfiled.32x32.png"));
-		showDocumentsButton.getDownFace().setImage(
-				new Image("resources/images/unfiled.32x32.png"));
+//		final PushButton showDocumentsButton = new PushButton("", "");
+//		showDocumentsButton.setStyleName("gwt-simple-button");
+//		showDocumentsButton.getUpFace().setImage(
+//				new Image("resources/images/unfiled.16x16.png"));
+//		showDocumentsButton.getDownFace().setImage(
+//				new Image("resources/images/unfiled.16x16.png"));
 
 		verticalPanel.add(horizontalPanel);
-		horizontalPanel.add(showDocumentsButton);
+//		horizontalPanel.add(showDocumentsButton);
 		verticalPanel.add(wDocuments);
 
-		showDocumentsButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				if (wDocuments.isVisible()) {
-					wDocuments.setVisible(false);
-				} else {
-					wDocuments.setVisible(true);
-				}
-			}
-		});
+//		showDocumentsButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent evt) {
+//				if (wDocuments.isVisible()) {
+//					wDocuments.setVisible(false);
+//				} else {
+//					wDocuments.setVisible(true);
+//				}
+//			}
+//		});
 
 		retrieveData();
 
@@ -115,6 +117,29 @@ public class DocumentBox extends WidgetInterface {
 		horizontalPanel.add(documentsCountLabel);
 	}
 
+	public Widget getDefaultIcon(){
+		if(showDocumentsButton==null){
+			showDocumentsButton = new PushButton("", "");
+			showDocumentsButton.setStyleName("gwt-simple-button");
+			showDocumentsButton.getUpFace().setImage(
+					new Image("resources/images/unfiled.16x16.png"));
+			showDocumentsButton.getDownFace().setImage(
+					new Image("resources/images/unfiled.16x16.png"));
+	
+			showDocumentsButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					if (wDocuments.isVisible()) {
+						wDocuments.setVisible(false);
+					} else {
+						wDocuments.setVisible(true);
+					}
+				}
+			});
+		}
+		return showDocumentsButton;
+	}
+	
 	public void retrieveData() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Runs in STUBBED MODE => Feed with Sample Data

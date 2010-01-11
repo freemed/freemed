@@ -79,6 +79,11 @@ class Allergies extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
+	protected function add_post( $id, &$data ) { 
+		return $this->SetAtoms2 ( $data['patient'], $id, $data );
+	}
+	
+	
 	// Method: GetMostRecent
 	//
 	//	Get atoms for most recent set of allergies.
@@ -181,8 +186,39 @@ class Allergies extends EMRModule {
 				}
 			}
 		}
+		
 		return true;
 	} // end method SetAtoms
+
+
+	public function SetAtoms2 ( $patient,$aid, $atoms ) {
+		$a = (array) $atoms;
+		// Preprocessing
+		$a['aid'] = $aid;
+		$a['patient'] = $patient;
+		// If id = 0, process as new entry
+		if ( ( (int) $a['id'] ) == 0 ) {
+			syslog( LOG_DEBUG, "SetAtoms2: adding new Allergies_atomic for $patient" );
+			$GLOBALS['sql']->load_data( $a );
+			$query = $GLOBALS['sql']->insert_query(
+				'allergies_atomic',
+				$this->atomic_keys
+			);
+			$GLOBALS['sql']->query( $query );
+		} else {
+			if ( $a['altered'] ) {
+				syslog( LOG_DEBUG, "SetAtoms2: modifying Allergies_atomic for $patient, id = ".$a['id'] );
+				$GLOBALS['sql']->load_data( $a );
+				$query = $GLOBALS['sql']->update_query(
+					'allergies_atomic',
+					$this->atomic_keys,
+					array( 'id' => $a['id'] )
+				);
+				$GLOBALS['sql']->query( $query );
+			}
+		}
+		return true;
+	} // end method SetAtoms2
 
 } // end class Allergies
 

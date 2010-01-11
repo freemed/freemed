@@ -343,7 +343,7 @@ class Remitt {
 		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
 		// For now, just use the first ones ... FIXME FIXME FIXME
 		$bc = $bs = $ch = 1;
-		$xml = $this->RenderPayerXML($billkey_hash['procedures'], $bc, $bs, $ch);
+		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $bc, $bs, $ch);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
 		$remitt = HTTP_Session2::get( 'remitt' );
 		$this->_connection->SetCredentials(
@@ -428,6 +428,8 @@ class Remitt {
 	//
 	// Parameters:
 	//
+	//	$billkey - Unique bill key identifier
+	//
 	//	$procedures - Array of procedure id keys to be processed.
 	//
 	//	$bc - Billing contact id. Defaults to 1.
@@ -440,7 +442,7 @@ class Remitt {
 	//
 	//	Text of XML file.
 	//
-	public function RenderPayerXML ( $_procedures, $bc=1, $bs=1, $ch=1 ) {
+	public function RenderPayerXML ( $billkey, $_procedures, $bc=1, $bs=1, $ch=1 ) {
 		// Sanitize and fold procedures array
 		if (is_array($_procedures)) {
 			foreach ($_procedures AS $k => $v) {
@@ -466,6 +468,7 @@ class Remitt {
 				$this->_tag('program', PACKAGENAME, true).
 				$this->_tag('version', VERSION, true),
 			false).
+			$this->_tag('billinguid', $billkey, true).
 			$this->_date('currentdate', date('Y-m-d')).
 			$this->_tag('currenttime',
 				$this->_tag('hour', date('H'), true).

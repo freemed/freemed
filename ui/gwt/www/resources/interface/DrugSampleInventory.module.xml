@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+  $Id$
+ 
+  Authors:
+       Jeff Buchbinder <jeff@freemedsoftware.org>
+ 
+  FreeMED Electronic Medical Record and Practice Management System
+  Copyright (C) 1999-2009 FreeMED Software Foundation
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ -->
+<SimpleUIBuilder module="DrugSampleInventory">
+	<Elements>
+		<Element field="drugndc" title="Drug" type="DRUG" display="1" />
+		<Element field="packagecount" title="Package Count" type="TEXT" options="10" />
+		<Element field="location" title="Location" type="TEXT" options="75" />
+		<Element field="drugco" title="Drug Company" type="TEXT" options="50" />
+		<Element field="drugrep" title="Drug Representative" type="TEXT" options="50" />
+		<Element field="invoice" title="Invoice Number" type="TEXT" options="75" display="1" />
+		<Element field="samplecount" title="Sample Count" type="TEXT" options="10" />
+		<Element field="samplecountremain" title="Sample Count Remaining" type="TEXT" options="10" />
+		<Element field="lot" title="Lot Number" type="TEXT" options="30" display="1" />
+		<Element field="expiration" title="Expiration Date" type="DATE" display="1" />
+		<Element field="received" title="Received On Date" type="DATE" />
+		<Element field="assignedto" title="Assigned To" type="TEXT" options="75" />
+		<Element field="disposeby" title="Disposed By" type="TEXT" options="10" />
+		<Element field="disposedate" title="Disposed Date" type="DATE" />
+		<Element field="disposemethod" title="Disposal Method" type="TEXT" options="75" />
+		<Element field="disposereason" title="Disposal Reason" type="TEXT" options="75" />
+		<Element field="witness" title="Witness" type="TEXT" options="75" />
+	</Elements>
+</SimpleUIBuilder>

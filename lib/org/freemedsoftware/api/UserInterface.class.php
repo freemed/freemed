@@ -126,11 +126,14 @@ class UserInterface {
 
 	// Method: GetEMRConfiguration
 	public function GetEMRConfiguration ( ) {
+		$this->GetUserLeftNavigationMenu();
+		$this->GetUserTheme();
 		if (is_array($this->user->manage_config)) {
 			return $this->user->manage_config;
 		} else {
 			return array();
 		}
+		
 	} // end method GetEMRConfiguration
 
 	public function GetNewMessages ( ) {
@@ -237,6 +240,11 @@ class UserInterface {
 		// Create user ACL object
 		module_function( 'ACL', 'UserAdd', array( $new_id ) );
 
+		if($ourdata['useracl'] && !is_array( $ourdata['useracl'] ) ){
+			$ourdata['useracl'] = explode(",",$ourdata['useracl']);
+		}
+		
+	
 		// ACL routine for adding all ACL groups
 		if ( is_array( $ourdata['useracl'] ) ) {
 			foreach ( $ourdata['useracl'] AS $acl ) {
@@ -282,6 +290,10 @@ class UserInterface {
 		$this->del_pre( $id + 0 );
 		$query = "DELETE FROM user WHERE id = '".addslashes( $id+0 )."'";
 		$result = $GLOBALS['sql']->query ( $query );
+		
+		// delete user ACL object
+		module_function( 'ACL', 'UserDel', $id);
+		
 		return true;
 	} // end function del
 
@@ -313,17 +325,25 @@ class UserInterface {
 
 		// Protect admin user
 		if ( $ourdata['id'] + 0 == 1 ) { return false; }
-
+		$tempVariables = $this->variables;
+		unset($tempVariables[1]);
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
-		$result = $GLOBALS['sql']->query (
-			$GLOBALS['sql']->update_query (
+		$result =  $GLOBALS['sql']->query($GLOBALS['sql']->update_query (
 				'user',
-				$this->variables,
+				$tempVariables,
 				array ( "id" => $data['id'] )
-			)
-		);
-
+			));
+		
+		if($data['useracl']){
+			if(!is_array( $data['useracl'] )){
+				$data['useracl'] = explode(",",$data['useracl']);
+			}
+		}
+		else {
+			$data['useracl'] = array($data['useracl']);
+		}
+			
 		if ( is_array( $data['useracl'] ) ) {
 			$groups = module_function ( 'ACL', 'UserGroups' );
 			foreach ( $groups AS $group ) {
@@ -349,11 +369,280 @@ class UserInterface {
 
 	private function mod_pre ( $data ) { 
 		// Handle MD5 hashing
-		if ( strlen($data['userpassword']) != 32 ) {
+		if ($data['userpassword'] && strlen($data['userpassword']) != 32 ) {
 			$data['userpassword'] = md5( $data['userpassword'] );
 		}
 	}
+	
+	public function getRel(){
+		return freemed::religion_picklist();
+	}
 
+	// Method: GetUserTheme
+	//
+	//	Get list of left Navigation options 
+	//
+	// Returns:
+	//
+	//	user theme.
+	//
+	public function GetUserTheme ( ) {
+		$user = freemed::user_cache();
+
+		$theme = $user->getManageConfig('Theme');
+		
+		if(!$theme)
+			$user->setManageConfig( 'Theme', 'chrome' );
+		
+		return $theme;
+	} // end method GetConfigSections
+
+	// Method: GetUserLeftNavigationMenu
+	//
+	//	Get list of left Navigation options 
+	//
+	// Returns:
+	//
+	//	Array of menu options.
+	//
+	public function GetUserLeftNavigationMenu ( ) {
+		$user = freemed::user_cache();
+		$user_level = $user->local_record['userlevel'];
+
+		
+		$userLeftNavigationMenu = $user->getManageConfig('LeftNavigationMenu');
+		
+		
+		////////System menu/////////
+		$this->checkSystemMenu(&$userLeftNavigationMenu);
+		////////////////////////////
+		
+		////////Patient menu/////////
+		$this->checkPatientMenu(&$userLeftNavigationMenu);
+		////////////////////////////////
+		
+		
+		////////Documents menu/////////
+		$this->checkDocumentsMenu(&$userLeftNavigationMenu);
+		////////////////////////////////
+		
+		
+		////////Dosing menu/////////
+		$this->checkDosingMenu(&$userLeftNavigationMenu);
+		///////////////////////////////
+		
+		
+		////////Billing menu/////////
+		$this->checkBillingMenu(&$userLeftNavigationMenu);
+		////////////////////////////////
+		
+		
+		////////Reporting menu/////////
+		$this->checkReportingMenu(&$userLeftNavigationMenu);
+		////////////////////////////////
+		
+		////////Utilities menu/////////	
+		$this->checkUtilitiesMenu(&$userLeftNavigationMenu);
+		////////////////////////////////
+		
+		
+		$user->setManageConfig( 'LeftNavigationMenu', $userLeftNavigationMenu );
+
+		
+		return  $userLeftNavigationMenu;//$userLeftNavigationMenu;
+	} // end method GetConfigSections
+
+
+
+	public function getPermissionsBits($read=0,$write=0,$modify=0,$delete=0,$show=0){
+		if($read || $write || $modify || $delete)
+			return $read.$write.$modify.$delete.$show;
+		
+		return false;	
+	}
+
+
+	
+	// Method: checkSystemMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkSystemMenu (&$userLeftNavigationMenu ) {
+		$SystemAccessOptionsDB = $userLeftNavigationMenu['System'];
+		
+		$SystemAccessOptions['Dashboard'] = $this->getPermissionsBits(1,1,1,1,1);
+		
+		$SystemAccessOptions['Scheduler'] = $this->getPermissionsBits(freemed::acl( 'scheduling', 'view' )?1:0,freemed::acl( 'scheduling', 'book' )?1:0,
+		freemed::acl( 'scheduling', 'move' )?1:0,freemed::acl( 'scheduling', 'book' )?1:0,1);
+		if(!$SystemAccessOptions['Scheduler'])
+			unset($SystemAccessOptions['Scheduler']);
+		
+		$SystemAccessOptions['Messages']  = $this->getPermissionsBits(1,1,1,1,1);
+		
+		$sysSer = serialize($SystemAccessOptions);
+		if(strlen(serialize($SystemAccessOptions)) != (strlen(serialize($SystemAccessOptionsDB))-13))
+			$userLeftNavigationMenu['System'] = $SystemAccessOptions;
+	} // end method checkSystemMenu
+
+	// Method: checkPatientMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkPatientMenu (&$userLeftNavigationMenu ) {
+		$PatientAccessOptionsDB =  $userLeftNavigationMenu['Patient'];
+		$emrRead   = freemed::acl( 'emr', 'search' )?1:0;
+		$emrWrite  = freemed::acl( 'emr', 'entry' )?1:0;
+		$emrModify = freemed::acl( 'emr', 'modify' )?1:0;
+		$emrDelete =  freemed::acl( 'emr', 'delete' )?1:0;
+		if($emrRead || $emrWrite || $emrModify || $emrDelete){
+
+			$PatientAccessOptions['Search']      =  $this->getPermissionsBits($emrRead,0,0,0,1);
+			if(!$PatientAccessOptions['Search'])
+				unset($PatientAccessOptions['Search']);
+			
+			$PatientAccessOptions['New Patient'] =  $this->getPermissionsBits(0,$emrWrite,$emrModify,$emrDelete,1);
+			if(!$PatientAccessOptions['New Patient'])
+				unset($PatientAccessOptions['New Patient']);
+			
+			$PatientAccessOptions['Groups']      =  $this->getPermissionsBits($emrRead,$emrWrite,$emrModify,$emrDelete,1);
+			if(!$PatientAccessOptions['Groups'])
+				unset($PatientAccessOptions['Groups']);
+				
+			$PatientAccessOptions['Call In']     =  $this->getPermissionsBits($emrRead,$emrWrite,$emrModify,$emrDelete,1);
+			if(!$PatientAccessOptions['Call In'])
+				unset($PatientAccessOptions['Call In']);
+				
+			$PatientAccessOptions['Rx Refill']   =  $this->getPermissionsBits(0,$emrWrite,$emrModify,$emrDelete,1);
+			if(!$PatientAccessOptions['Rx Refill'])
+				unset($PatientAccessOptions['Rx Refill']);
+				
+			$PatientAccessOptions['Tag Search']  =  $this->getPermissionsBits($emrRead,0,0,0,1);
+			if(!$PatientAccessOptions['Tag Search'])
+				unset($PatientAccessOptions['Tag Search']);
+				
+			if(strlen(serialize($PatientAccessOptions)) != (strlen(serialize($PatientAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Patient'] = $PatientAccessOptions;
+		}
+		else
+		 unset($userLeftNavigationMenu['Patient']);
+		
+	} // end method checkPatientMenu
+	
+	
+	
+	// Method: checkDocumentsMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkDocumentsMenu (&$userLeftNavigationMenu ) {
+		$DocumentsAccessOptionsDB = $userLeftNavigationMenu['Documents'];
+		
+		$DocumentsAccessOptions['Unfiled'] =  $this->getPermissionsBits(1,1,1,1,1);
+		$DocumentsAccessOptions['Unread']  =  $this->getPermissionsBits(1,1,1,1,1);	
+
+		if(strlen(serialize($DocumentsAccessOptions)) != (strlen(serialize($DocumentsAccessOptionsDB))-13))
+			$userLeftNavigationMenu['Documents'] = $DocumentsAccessOptions;
+	} // end method checkDocumentsMenu
+	
+	
+	
+	// Method: checkDosingMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkDosingMenu (&$userLeftNavigationMenu ) {
+		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
+		$DosingAccessOptions['Medication Inventory'] =  $this->getPermissionsBits(1,1,1,1,1);
+		$DosingAccessOptions['Open Dosing Station']  =  $this->getPermissionsBits(1,1,1,1,1);
+		$DosingAccessOptions['Dispense Dose']        =  $this->getPermissionsBits(1,1,1,1,1);
+		if(strlen(serialize($DosingAccessOptions)) != (strlen(serialize($DosingAccessOptionsDB))-13))
+			$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
+	} // end method checkDosingMenu
+	
+	
+	
+	// Method: checkBillingMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkBillingMenu (&$userLeftNavigationMenu ) {
+		$BillingAccessOptionsDB = $userLeftNavigationMenu['Billing'];
+		$billingRead = freemed::acl( 'financial', 'menu' ) | freemed::acl( 'financial', 'summary' );
+		
+		if($billingRead){
+			$BillingAccessOptions['Account Receivable'] = $this->getPermissionsBits($billingRead,0,0,0,1);
+			$BillingAccessOptions['Claims Manager']     = $this->getPermissionsBits($billingRead,0,0,0,1);
+			$BillingAccessOptions['Remitt Billing']     = $this->getPermissionsBits($billingRead,0,0,0,1);
+			$BillingAccessOptions['Super Bills']        = $this->getPermissionsBits($billingRead,0,0,0,1);
+			if(strlen(serialize($BillingAccessOptions)) != (strlen(serialize($BillingAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Billing'] = $BillingAccessOptions;
+		}else
+		    unset($userLeftNavigationMenu['Billing']);
+	} // end method checkBillingMenu
+	
+	
+	
+	// Method: checkReportingMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkReportingMenu (&$userLeftNavigationMenu ) {
+		$ReportingAccessOptionsDB = $userLeftNavigationMenu['Reporting'];
+		$reportRead  = freemed::acl( 'reporting', 'menu' );
+		$reportWrite = freemed::acl( 'reporting', 'generate' );
+		if($reportRead || $reportWrite){
+			$ReportingAccessOptions['Reporting Engine'] = $this->getPermissionsBits($reportRead,$reportWrite,0,0,1);
+			if(strlen(serialize($ReportingAccessOptions)) != (strlen(serialize($ReportingAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Reporting'] = $ReportingAccessOptions;
+		}else
+			unset($userLeftNavigationMenu['Reporting']);
+	} // end method checkReportingMenu
+	
+	
+	
+	// Method: checkUtilitiesMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkUtilitiesMenu (&$userLeftNavigationMenu ) {
+		$adminRead = freemed::acl( 'admin', 'menu' );
+		$adminWrite = freemed::acl( 'admin', 'config' );
+		if($adminRead || $adminWrite){
+			$UtilitiesAccessOptionsDB = $userLeftNavigationMenu['Utilities'];
+			
+			$UtilitiesAccessOptions['Utilities']         = $this->getPermissionsBits($adminRead,$adminWrite,0,0,1);
+			
+	   	        $UtilitiesAccessOptions['Support Data']         = $this->getPermissionsBits($adminRead,$adminWrite,0,0,1);
+			
+			$UtilitiesAccessOptions['User Management']      = $this->getPermissionsBits(0,$adminWrite,0,0,1);
+			if(!$UtilitiesAccessOptions['User Management'])
+				unset($UtilitiesAccessOptions['User Management']);
+			
+			$UtilitiesAccessOptions['System Configuration'] = $this->getPermissionsBits(0,$adminWrite,0,0,1);
+			if(!$UtilitiesAccessOptions['System Configuration'])
+				unset($UtilitiesAccessOptions['System Configuration']);
+			
+			$UtilitiesAccessOptions['DB Administration']    = $this->getPermissionsBits(0,$adminWrite,0,0,1);
+			if(!$UtilitiesAccessOptions['DB Administration'])
+				unset($UtilitiesAccessOptions['DB Administration']);
+				
+			$UtilitiesAccessOptions['ACL']    = $this->getPermissionsBits(0,$adminWrite,0,0,1);
+			if(!$UtilitiesAccessOptions['ACL'])
+				unset($UtilitiesAccessOptions['ACL']);	
+				
+			if(strlen(serialize($UtilitiesAccessOptions)) != (strlen(serialize($UtilitiesAccessOptionsDB))-13))
+			    $userLeftNavigationMenu['Utilities'] = $UtilitiesAccessOptions;
+		} 
+		else
+			unset($userLeftNavigationMenu['Utilities']);
+	} // end method checkUtilitiesMenu
 } // end class UserInterface
 
 ?>

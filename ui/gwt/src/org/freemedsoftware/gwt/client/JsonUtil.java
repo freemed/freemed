@@ -30,12 +30,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dev.jjs.ast.js.JsonArray;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Window;
 
 public class JsonUtil {
 
@@ -48,17 +50,80 @@ public class JsonUtil {
 	@SuppressWarnings("unchecked")
 	public static synchronized String jsonify(Object o) {
 		if (o != null) {
-
-			if (o instanceof HashMap && (((HashMap<String, String>) o) != null)) {
-				JSONObject out = new JSONObject();
-				HashMap<String, String> ng = (HashMap<String, String>) o;
-				Iterator<String> iter = ng.keySet().iterator();
-				while (iter.hasNext()) {
-					String key = iter.next();
-					out.put(key, new JSONString(ng.get(key)));
-				}
-				return out.toString();
+			
+			if (o instanceof HashMap && (((HashMap<String, HashMap<String, String>>) o) != null)) {
+				try{
+					JSONObject out = new JSONObject();
+					HashMap<String, HashMap<String, String>> ng = (HashMap<String, HashMap<String, String>>) o;
+					Iterator<String> iter = ng.keySet().iterator();
+					while (iter.hasNext()) {
+						String key = iter.next();
+						HashMap<String, String> ngInner = ng.get(key);
+						Iterator<String> iterInner = ngInner.keySet().iterator();
+						JSONObject inner = new JSONObject();
+						while (iterInner.hasNext()) {
+							String keyInner = iterInner.next();
+							inner.put(keyInner, new JSONString(ngInner.get(keyInner)));
+						}
+						out.put(key, inner);
+						
+					}
+					return out.toString();
+				}catch(ClassCastException e){e.printStackTrace();}
 			}
+			
+			if (o instanceof HashMap && (((HashMap<String, String>) o) != null)) {
+				try{
+					JSONObject out = new JSONObject();
+					HashMap<String, String> ng = (HashMap<String, String>) o;
+					Iterator<String> iter = ng.keySet().iterator();
+					while (iter.hasNext()) {
+						String key = iter.next();
+						out.put(key, new JSONString(ng.get(key)));
+					}
+					return out.toString();
+				}catch(ClassCastException e){e.printStackTrace();}
+			}
+
+			if (o instanceof HashMap && (((HashMap<String, String[]>) o) != null)) {
+				try{
+					JSONObject out = new JSONObject();
+					HashMap<String, String[]> ng = (HashMap<String, String[]>) o;
+					Iterator<String> iter = ng.keySet().iterator();
+					while (iter.hasNext()) {
+						String key = iter.next();
+						String[] temparray=ng.get(key);
+						JSONArray jsonArray = new JSONArray();
+						for(int index=0;index<temparray.length;index++)
+						{
+							jsonArray.set(index, new JSONString(temparray[index]));
+						}
+						out.put(key, jsonArray);
+					}
+					return out.toString();
+				}catch(ClassCastException e){e.printStackTrace();}
+			}
+
+			if (o instanceof HashMap && (((HashMap<String, List>) o) != null)) {
+				try{
+					JSONObject out = new JSONObject();
+					HashMap<String, List> ng = (HashMap<String, List>) o;
+					Iterator<String> iter = ng.keySet().iterator();
+					while (iter.hasNext()) {
+						String key = iter.next();
+						Iterator<String> iterator= ng.get(key).iterator();
+						JSONArray jsonArray = new JSONArray();
+						for(int index=0;iterator.hasNext();index++)
+						{
+							String aa = iterator.next();
+							jsonArray.set(index, new JSONString(aa));
+						}
+						out.put(key, jsonArray);
+					}
+					return out.toString();
+				}catch(ClassCastException e){e.printStackTrace();}
+			}
+			
 			if (o instanceof HashMap[]
 					&& (((HashMap<String, String>[]) o) != null)) {
 				JSONArray out = new JSONArray();
@@ -155,6 +220,30 @@ public class JsonUtil {
 			return (HashMap<String, String>[]) result
 					.toArray(new HashMap<?, ?>[0]);
 		}
+		if (t.compareToIgnoreCase("HashMap<String,String>[][]") == 0) {
+			List<HashMap<?, ?>[]> result = new ArrayList<HashMap<?, ?>[]>();
+			JSONArray oArray = r.isArray();
+			for (int wayOuterIter = 0; wayOuterIter < oArray.size(); wayOuterIter++) {
+				List<HashMap<?, ?>> innerResult = new ArrayList<HashMap<?, ?>>();
+				JSONArray a = r.isArray();
+				for (int oIter = 0; oIter < a.size(); oIter++) {
+					HashMap<String, String> item = new HashMap<String, String>();
+					JSONObject obj = a.get(oIter).isObject();
+					Iterator<String> iter = obj.keySet().iterator();
+					while (iter.hasNext()) {
+						String k = iter.next();
+						if (obj.get(k).isString() != null) {
+							item.put(k, obj.get(k).isString().stringValue());
+						}
+					}
+					innerResult.add(oIter, item);
+				}
+				result.add(wayOuterIter, innerResult
+						.toArray(new HashMap<?, ?>[0]));
+			}
+			return (HashMap<String, String>[][]) result
+					.toArray(new HashMap<?, ?>[0][0]);
+		}
 		if (t.compareToIgnoreCase("HashMap<String,String>") == 0) {
 			JSONObject obj = r.isObject();
 			HashMap<String, String> result = new HashMap<String, String>();
@@ -166,6 +255,39 @@ public class JsonUtil {
 				}
 			}
 			return (HashMap<String, String>) result;
+		}
+		if (t.compareToIgnoreCase("HashMap<String,Object>") == 0) {
+			JSONObject obj = r.isObject();
+			HashMap<String, Object> result = new HashMap<String, Object>();
+			Iterator<String> iter = obj.keySet().iterator();
+			while (iter.hasNext()) {
+				String k = iter.next();
+				if (obj.get(k) != null) {
+					result.put(k, obj.get(k));
+				}
+			}
+			return (HashMap<String, Object>) result;
+		}
+		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,String>>") == 0) {
+			HashMap<String, HashMap<String, String>> oResult = new HashMap<String, HashMap<String, String>>();
+			JSONObject oA = r.isObject();
+			if (oA != null) {
+				Iterator<String> outerIter = oA.keySet().iterator();
+				while (outerIter.hasNext()) {
+					String innerKey = outerIter.next();
+					HashMap<String, String> item = new HashMap<String, String>();
+					JSONObject obj = oA.get(innerKey).isObject();
+					Iterator<String> iter = obj.keySet().iterator();
+					while (iter.hasNext()) {
+						String k = iter.next();
+						if (obj.get(k).isString() != null) {
+							item.put(k, obj.get(k).isString().stringValue());
+						}
+					}
+					oResult.put(innerKey, (HashMap<String, String>) item);
+				}
+			}
+			return (HashMap<String, HashMap<String, String>>) oResult;
 		}
 		if (t.compareToIgnoreCase("HashMap<Integer,String>") == 0) {
 			JSONObject obj = r.isObject();
@@ -193,6 +315,8 @@ public class JsonUtil {
 								if (inner.get(iIter).isString() != null) {
 									xI.add(iIter, inner.get(iIter).isString()
 											.stringValue());
+								}else if (inner.get(iIter).isNumber() != null) {
+									xI.add(iIter, inner.get(iIter).isNumber().toString());
 								}
 							}
 						}
@@ -243,6 +367,6 @@ public class JsonUtil {
 	 */
 	public static native void debug(String st)/*-{
 		if (typeof console !=  "undefined") console.debug (st);
-		}-*/;
+	}-*/;
 
 }

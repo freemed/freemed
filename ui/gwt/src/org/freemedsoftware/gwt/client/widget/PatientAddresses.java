@@ -40,9 +40,11 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
@@ -57,24 +59,39 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PatientAddresses extends Composite {
 
-	protected class Address {
-		protected String line1, line2, csz, type, relation;
+	public class Address {
+		protected String line1, line2, type, relation;
+
+		protected String city, stpr, postal, country;
 
 		protected Boolean active, updated;
 
 		public Address() {
 		}
 
-		public Address(String myLine1, String myLine2, String myCsz,
-				String myType, String myRelation, Boolean myActive,
-				Boolean myUpdated) {
+		public Address(String myLine1, String myLine2, String myType,
+				String myRelation, Boolean myActive, Boolean myUpdated) {
 			setLine1(myLine1);
 			setLine2(myLine2);
-			setCsz(myCsz);
 			setType(myType);
 			setRelation(myRelation);
 			setActive(myActive);
 			setUpdated(myUpdated);
+		}
+
+		public Address(String myLine1, String myLine2, String myType,
+				String myRelation, Boolean myActive, Boolean myUpdated,
+				String city, String stpr, String postal, String country) {
+			setLine1(myLine1);
+			setLine2(myLine2);
+			setType(myType);
+			setRelation(myRelation);
+			setActive(myActive);
+			setUpdated(myUpdated);
+			setCity(city);
+			setStpr(stpr);
+			setPostal(postal);
+			setCountry(country);
 		}
 
 		/**
@@ -86,7 +103,11 @@ public class PatientAddresses extends Composite {
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("line1", getLine1());
 			map.put("line2", getLine2());
-			map.put("csz", getCsz());
+			// map.put("csz", getCsz());
+			map.put("city", getCity());
+			map.put("stpr", getStpr());
+			map.put("postal", getPostal());
+			map.put("country", getCountry());
 			map.put("relation", getRelation());
 			map.put("type", getType());
 			map.put("active", getActive() ? "1" : "0");
@@ -102,9 +123,9 @@ public class PatientAddresses extends Composite {
 			return line2;
 		}
 
-		public String getCsz() {
-			return csz;
-		}
+		// public String getCsz() {
+		// return csz;
+		// }
 
 		public String getType() {
 			return type;
@@ -130,9 +151,9 @@ public class PatientAddresses extends Composite {
 			line2 = myStreet;
 		}
 
-		public void setCsz(String myCsz) {
-			csz = myCsz;
-		}
+		// public void setCsz(String myCsz) {
+		// csz = myCsz;
+		// }
 
 		public void setActive(Boolean myActive) {
 			active = myActive;
@@ -148,6 +169,38 @@ public class PatientAddresses extends Composite {
 
 		public void setRelation(String myRelation) {
 			relation = myRelation;
+		}
+
+		public String getCity() {
+			return city;
+		}
+
+		public void setCity(String city) {
+			this.city = city;
+		}
+
+		public String getStpr() {
+			return stpr;
+		}
+
+		public void setStpr(String stpr) {
+			this.stpr = stpr;
+		}
+
+		public String getPostal() {
+			return postal;
+		}
+
+		public void setPostal(String postal) {
+			this.postal = postal;
+		}
+
+		public String getCountry() {
+			return country;
+		}
+
+		public void setCountry(String country) {
+			this.country = country;
 		}
 	}
 
@@ -172,7 +225,11 @@ public class PatientAddresses extends Composite {
 		flexTable.addColumn("Relationship", "relation");
 		flexTable.addColumn("Address Line 1", "line1");
 		flexTable.addColumn("Address Line 2", "line2");
-		flexTable.addColumn("City, State Postal", "csz");
+		// flexTable.addColumn("City, State Postal", "csz");
+		flexTable.addColumn("City", "city");
+		flexTable.addColumn("St/Pr", "stpr");
+		flexTable.addColumn("Postal", "postal");
+		flexTable.addColumn("Country", "country");
 		flexTable.addColumn("Active?", "active");
 		vP.add(flexTable);
 
@@ -239,13 +296,31 @@ public class PatientAddresses extends Composite {
 		line2.setText(a.getLine2());
 		flexTable.getFlexTable().setWidget(pos, 3, line2);
 
-		final TextBox csz = new TextBox();
-		csz.setText(a.getCsz());
-		flexTable.getFlexTable().setWidget(pos, 4, csz);
+		// final TextBox csz = new TextBox();
+		// csz.setText(a.getCsz());
+		// flexTable.getFlexTable().setWidget(pos, 4, csz);
+
+		final TextBox city = new TextBox();
+		city.setText(a.getCity());
+		flexTable.getFlexTable().setWidget(pos, 4, city);
+
+		final TextBox stpr = new TextBox();
+		stpr.setWidth("5em");
+		stpr.setText(a.getStpr());
+		flexTable.getFlexTable().setWidget(pos, 5, stpr);
+
+		final TextBox postal = new TextBox();
+		postal.setWidth("5em");
+		postal.setText(a.getPostal());
+		flexTable.getFlexTable().setWidget(pos, 6, postal);
+
+		final TextBox country = new TextBox();
+		country.setText(a.getCountry());
+		flexTable.getFlexTable().setWidget(pos, 7, country);
 
 		final CheckBox active = new CheckBox();
 		active.setValue(a.getActive().booleanValue());
-		flexTable.getFlexTable().setWidget(pos, 5, active);
+		flexTable.getFlexTable().setWidget(pos, 8, active);
 
 		ChangeHandler cl = new ChangeHandler() {
 			@Override
@@ -255,7 +330,11 @@ public class PatientAddresses extends Composite {
 				x.setRelation(relation.getWidgetValue());
 				x.setLine1(line1.getText());
 				x.setLine2(line2.getText());
-				x.setCsz(csz.getText());
+				// x.setCsz(csz.getText());
+				x.setCity(city.getText());
+				x.setStpr(stpr.getText());
+				x.setPostal(postal.getText());
+				x.setCountry(country.getText());
 				x.setUpdated(Boolean.TRUE);
 				x.setActive(new Boolean(active.getValue()));
 				addresses.put(pos, x);
@@ -272,7 +351,11 @@ public class PatientAddresses extends Composite {
 		relation.addChangeHandler(cl);
 		line1.addChangeHandler(cl);
 		line2.addChangeHandler(cl);
-		csz.addChangeHandler(cl);
+		// csz.addChangeHandler(cl);
+		city.addChangeHandler(cl);
+		stpr.addChangeHandler(cl);
+		postal.addChangeHandler(cl);
+		country.addChangeHandler(cl);
 		active.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				Address x = addresses.get(pos);
@@ -294,7 +377,16 @@ public class PatientAddresses extends Composite {
 		List<HashMap<String, String>> l = new ArrayList<HashMap<String, String>>();
 		Iterator<Integer> iter = addresses.keySet().iterator();
 		while (iter.hasNext()) {
-			l.add(addresses.get(iter.next()).getMap());
+			HashMap<String, String> mmp = addresses.get(iter.next()).getMap();
+			Iterator<String> iter2 = mmp.keySet().iterator();
+			while (iter2.hasNext()) {// Needed to do this because it is causing
+				// json String conversion fail due to
+				// undefined values.
+				String key = iter2.next();
+				if (mmp.get(key) == null)
+					mmp.remove(key);
+			}
+			l.add(mmp);
 		}
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
 
@@ -447,9 +539,15 @@ public class PatientAddresses extends Composite {
 									Address a = new Address();
 									a.setLine1(result[iter].get("line1"));
 									a.setLine2(result[iter].get("line2"));
-									a.setCsz(result[iter].get("csz"));
+									// a.setCsz(result[iter].get("csz"));
+									a.setCity(result[iter].get("city"));
+									a.setStpr(result[iter].get("stpr"));
+									a.setPostal(result[iter].get("postal"));
+									a.setCountry(result[iter].get("country"));
 									a.setRelation(result[iter].get("relation"));
 									a.setType(result[iter].get("type"));
+									a.setActive(new Boolean(result[iter]
+											.get("active") == "1"));
 									// Pass new address object to interface
 									// builder
 									addAddress(new Integer(iter + 1), a);
@@ -480,7 +578,11 @@ public class PatientAddresses extends Composite {
 									Address a = new Address();
 									a.setLine1(result[iter].get("line1"));
 									a.setLine2(result[iter].get("line2"));
-									a.setCsz(result[iter].get("csz"));
+									// a.setCsz(result[iter].get("csz"));
+									a.setCity(result[iter].get("city"));
+									a.setStpr(result[iter].get("stpr"));
+									a.setPostal(result[iter].get("postal"));
+									a.setCountry(result[iter].get("country"));
 									a.setRelation(result[iter].get("relation"));
 									a.setType(result[iter].get("type"));
 									// Pass new address object to interface
@@ -496,6 +598,43 @@ public class PatientAddresses extends Composite {
 
 			}
 		}
+	}
+
+	public void deleteAddress() {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO stubbed mode goes here
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { patientId.toString() };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.PatientModule.DeleteAddresses",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.getMessage());
+			}
+		} else {
+			// TODO normal mode code goes here
+		}
+	}
+
+	public HashMap<Integer, Address> getAddresses() {
+		return addresses;
 	}
 
 }

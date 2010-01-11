@@ -28,11 +28,11 @@ package org.freemedsoftware.gwt.client.widget;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.screen.MessagingComposeScreen;
+import org.freemedsoftware.gwt.client.screen.MessagingScreen;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -46,6 +46,36 @@ public class MessageView extends WidgetInterface {
 	protected Command onClose = null;
 
 	protected HTML text = new HTML("");
+	
+	protected String msgSubject;
+	
+	protected String msgBody;
+	
+	protected Integer msgFromId;
+	
+	protected Integer msgPatientId;
+	
+	protected String msgDate;
+	
+	protected String msgFrom;
+	
+	protected MessagingScreen messagingScreen;
+	
+	public MessagingScreen getMessagingScreen() {
+		return messagingScreen;
+	}
+
+	public void setMessagingScreen(MessagingScreen messagingScreen) {
+		this.messagingScreen = messagingScreen;
+	}
+
+	public String getMsgSubject() {
+		return msgSubject;
+	}
+
+	public void setMsgSubject(String msgSubject) {
+		this.msgSubject = msgSubject;
+	}
 
 	public MessageView() {
 		final SimplePanel sPanel = new SimplePanel();
@@ -79,7 +109,13 @@ public class MessageView extends WidgetInterface {
 		replyWrapper.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
-				Util.spawnTab("Messages", new MessagingComposeScreen());
+				MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
+				messagingComposeScreen.setSubject("RE: "+msgSubject);
+				messagingComposeScreen.setTo(msgFromId);
+				messagingComposeScreen.setPatient(msgPatientId);
+				messagingComposeScreen.setBodyText(createMessageBody());
+				messagingComposeScreen.setParentScreen(getMessagingScreen());
+				Util.spawnTab("Messages", messagingComposeScreen);
 				if (onClose != null) {
 					onClose.execute();
 				}
@@ -105,7 +141,16 @@ public class MessageView extends WidgetInterface {
 			@Override
 			public void onClick(ClickEvent evt) {
 				// TODO: create that
-				Window.alert("Forward");
+//				Window.alert("Forward");
+				MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
+				messagingComposeScreen.setSubject("FW: "+msgSubject);
+				messagingComposeScreen.setBodyText(createMessageBody());
+				messagingComposeScreen.setPatient(msgPatientId);
+				messagingComposeScreen.setParentScreen(getMessagingScreen());
+				Util.spawnTab("Messages", messagingComposeScreen);
+				if (onClose != null) {
+					onClose.execute();
+				}
 			}
 		});
 		horizontalPanel.add(forwardWrapper);
@@ -115,12 +160,62 @@ public class MessageView extends WidgetInterface {
 
 	}
 
+	public String createMessageBody(){
+		String body="\n\n--------------------------\n"
+		           +"From: "+msgFrom+"\n"
+		           +"Date: "+msgDate+"\n"
+		           +"Subject: "+msgSubject+"\n\n\n"
+		           +msgBody;
+		
+		return body;
+	}
+	
 	public void setText(String t) {
 		text.setHTML(t);
 	}
 
 	public void setOnClose(Command c) {
 		onClose = c;
+	}
+
+	public String getMsgBody() {
+		return msgBody;
+	}
+
+	public void setMsgBody(String msgBody) {
+		this.msgBody = msgBody;
+	}
+
+	public Integer getMsgPatientId() {
+		return msgPatientId;
+	}
+
+	public void setMsgPatientId(Integer msgPatientId) {
+		this.msgPatientId = msgPatientId;
+	}
+
+	public Integer getMsgFromId() {
+		return msgFromId;
+	}
+
+	public void setMsgFromId(Integer msgFromId) {
+		this.msgFromId = msgFromId;
+	}
+
+	public String getMsgDate() {
+		return msgDate;
+	}
+
+	public void setMsgDate(String msgDate) {
+		this.msgDate = msgDate;
+	}
+
+	public String getMsgFrom() {
+		return msgFrom;
+	}
+
+	public void setMsgFrom(String msgFrom) {
+		this.msgFrom = msgFrom;
 	}
 
 }

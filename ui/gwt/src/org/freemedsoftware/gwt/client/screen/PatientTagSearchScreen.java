@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -56,6 +57,33 @@ public class PatientTagSearchScreen extends ScreenInterface {
 	private PatientTagWidget tagWidget = null;
 
 	private CustomTable customSortableTable = null;
+
+	private static List<PatientTagSearchScreen> patientTagSearchScreenFormList = null;
+
+	// Creates only desired amount of instances if we follow this pattern
+	// otherwise we have public constructor as well
+	public static PatientTagSearchScreen getInstance() {
+		PatientTagSearchScreen patientTagSearchScreen = null;
+
+		if (patientTagSearchScreenFormList == null) {
+			patientTagSearchScreenFormList = new ArrayList<PatientTagSearchScreen>();
+		}
+		if (patientTagSearchScreenFormList.size() < AppConstants.MAX_TAGSEARCH_TABS) {
+			// creates & returns new next instance of PatientTagSearchScreen
+			patientTagSearchScreenFormList
+					.add(patientTagSearchScreen = new PatientTagSearchScreen());
+		} else {
+			// returns last instance of PatientTagSearchScreen from list
+			patientTagSearchScreen = patientTagSearchScreenFormList
+					.get(AppConstants.MAX_TAGSEARCH_TABS - 1);
+		}
+		return patientTagSearchScreen;
+	}
+
+	public static boolean removeInstance(
+			PatientTagSearchScreen patientTagSearchScreen) {
+		return patientTagSearchScreenFormList.remove(patientTagSearchScreen);
+	}
 
 	public PatientTagSearchScreen() {
 		FlexTable layout = new FlexTable();
@@ -91,7 +119,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 				Integer patientId = null;
 				String patientName = null;
 				try {
-					patientId = Integer.parseInt(data.get("patient_id"));
+					patientId = Integer.parseInt(data.get("patient_record"));
 					JsonUtil.debug("patientId = " + patientId.toString());
 					patientName = data.get("last_name") + ", "
 							+ data.get("first_name") + " ["
@@ -200,4 +228,10 @@ public class PatientTagSearchScreen extends ScreenInterface {
 		}
 	}
 
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

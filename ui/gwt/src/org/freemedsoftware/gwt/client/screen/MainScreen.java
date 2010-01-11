@@ -25,6 +25,9 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.FreemedInterface;
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -32,7 +35,7 @@ import org.freemedsoftware.gwt.client.SystemNotifications;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.widget.AccordionPanel;
+import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
 import org.freemedsoftware.gwt.client.widget.InfoDialog;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -55,20 +58,23 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DecoratedStackPanel;
+import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MainScreen extends Composite {
 
@@ -100,34 +106,28 @@ public class MainScreen extends Composite {
 			fireAction = action;
 		}
 
-		@Override
 		public void onClick(ClickEvent event) {
 			if (fireAction != null) {
 				fireAction.execute();
 			}
 		}
 
-		@Override
 		public void onMouseOver(MouseOverEvent event) {
 			this.setStyleName("accordion-item-selected");
 		}
 
-		@Override
 		public void onMouseOut(MouseOutEvent event) {
 			this.setStyleName("accordion-item-unselected");
 		}
 
-		@Override
 		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 			return addDomHandler(handler, MouseOverEvent.getType());
 		}
 
-		@Override
 		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 			return addDomHandler(handler, MouseOutEvent.getType());
 		}
 
-		@Override
 		public HandlerRegistration addClickHandler(ClickHandler handler) {
 			return addDomHandler(handler, ClickEvent.getType());
 		}
@@ -140,265 +140,197 @@ public class MainScreen extends Composite {
 
 	protected FreemedInterface freemedInterface;
 
-	protected final TabPanel tabPanel;
+	protected final DecoratedTabPanel tabPanel;
 
 	protected final HorizontalSplitPanel statusBarContainer;
 
 	protected final Label statusBar1, statusBar2;
 
+	protected final Label loginUserInfo = new Label();
+
+	protected final Label facilityInfo = new Label();
 	// protected final CurrentState state = new CurrentState();
 
 	protected final SystemNotifications notifications = new SystemNotifications();
 
 	protected final DashboardScreen dashboard = new DashboardScreen();
 
+	protected final HashMap<String, MenuIcon> leftNavMenuContainer = new HashMap<String, MenuIcon>();
+
+	protected final VerticalPanel mainAccPanel;
+	protected final VerticalPanel patientAccPanel;
+	protected final VerticalPanel documentAccPanel;
+	protected final VerticalPanel billingAccPanel;
+	protected final VerticalPanel reportingAccPanel;
+	protected final VerticalPanel utilitiesAccPanel;
+	protected final DecoratedStackPanel stackPanel;
+
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
 		initWidget(mainPanel);
-		mainPanel.setSize("98%", "98%");
+		mainPanel.setSize("100%", "100%");
 
-		CurrentState.retrieveUserConfiguration(true);
+		// CurrentState.retrieveUserConfiguration(true);
+		CurrentState.retrieveSystemConfiguration(true);
+
+		// populateLeftNavigationPanel();
 
 		JsonUtil.debug("MainScreen: call populateDefaultProvider");
 		populateDefaultProvider();
 
+		JsonUtil.debug("MainScreen: call populateDefaultFacility");
 		JsonUtil
 				.debug("MainScreen: assign object to CurrentState static object");
 		CurrentState.assignMainScreen(this);
 
-		if (false) {
-			final HorizontalPanel horizontalPanel = new HorizontalPanel();
-			mainPanel.add(horizontalPanel, DockPanel.NORTH);
-			horizontalPanel.setWidth("100%");
-			/*
-			 * Currently using the PushButton widget for a "go back to the
-			 * beginning" Button, mainly because I couldn't set css background
-			 * image to function correctly. -JA
-			 */
+		/*
+		 * Top Header panel to use top header shortcuts e.g logoff,add patient
+		 * etc
+		 */
 
-			final PushButton pushButton_1 = new PushButton();
-			horizontalPanel.add(pushButton_1);
-			pushButton_1.setSize("67px", "40px");
-			horizontalPanel.setCellWidth(pushButton_1, "40px");
-			horizontalPanel.setCellHeight(pushButton_1, "100%");
-			pushButton_1.setStyleName("freemed-LogoMainMenuBar");
-			/*
-			 * Start of the Main menu/toolbar. CSS inherits are VERY important,
-			 * see the stylesheet.css for clearer explanation
-			 */
-			{
-				final MenuBar menuBar = new MenuBar();
-				horizontalPanel.add(menuBar);
-				menuBar.setSize("100%", "40px");
-				menuBar.setStylePrimaryName("freemed-MainMenuBar");
+		VerticalPanel topHeaderPanel = new VerticalPanel();
+		topHeaderPanel.ensureDebugId("topHeaderPanel");
+		topHeaderPanel.setStyleName("Application-links");
+		topHeaderPanel.setWidth("100%");
 
-				menuBar_1 = new MenuBar();
-				menuBar_1.setAutoOpen(true);
-				menuBar_1.setStylePrimaryName("freemed-SecondaryMenuBar");
-				menuBar_1.setStyleName("freemed-SecondaryMenuBar");
+		Image logoImage = new Image();
+		logoImage.setUrl("resources/images/FreemedHeader.jpg");
+		logoImage.setSize("100%", "55px");
+		topHeaderPanel.add(logoImage);
+		topHeaderPanel.setCellHorizontalAlignment(logoImage,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		topHeaderPanel.setCellWidth(logoImage, "100%");
 
-				final MenuItem menuItem_2 = menuBar_1.addItem("messaging",
-						new Command() {
-							public void execute() {
-								Util
-										.spawnTab("Messages",
-												new MessagingScreen());
+		HorizontalPanel topHeaderHorPanel = new HorizontalPanel();
+		topHeaderHorPanel.setWidth("100%");
+
+		// adding facilityInfoPanel at top right beside short cuts panel
+		HorizontalPanel facilityInfoPanel = new HorizontalPanel();
+		facilityInfoPanel.setStyleName("Application-links");
+
+		// Adding loginuserinfo link
+		Image homeImage = new Image();
+		homeImage.setUrl("resources/images/home-icon.png");
+		homeImage.setSize("15px", "100%");
+		facilityInfoPanel.add(homeImage);
+		facilityInfoPanel.add(facilityInfo);
+
+		// setFacilityInfo(null);
+		// Adding UserInfoPanel into top headerhorpanel
+		topHeaderHorPanel.add(facilityInfoPanel);
+		topHeaderHorPanel.setCellHorizontalAlignment(facilityInfoPanel,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		topHeaderHorPanel.setCellWidth(facilityInfoPanel, "20%");
+
+		// adding userInfoPanel at top right beside short cuts panel
+		HorizontalPanel userInfoPanel = new HorizontalPanel();
+		userInfoPanel.setStyleName("Application-links");
+
+		// Adding loginuserinfo link
+		Image userImage = new Image();
+		userImage.setUrl("resources/images/user-icon.png");
+		userImage.setSize("13px", "100%");
+		userInfoPanel.add(userImage);
+		userInfoPanel.add(loginUserInfo);
+
+		setLoginUserInfo();
+		// Adding UserInfoPanel into top headerhorpanel
+		topHeaderHorPanel.add(userInfoPanel);
+		topHeaderHorPanel.setCellHorizontalAlignment(userInfoPanel,
+				HasHorizontalAlignment.ALIGN_RIGHT);
+		topHeaderHorPanel.setCellWidth(userInfoPanel, "65%");
+
+		// adding shortcuts panel at top right corder
+		HorizontalPanel shortCutsPanel = new HorizontalPanel();
+		shortCutsPanel.setStyleName("Application-links");
+
+		// Adding preferences link
+		HTML preferencesLink = new HTML(
+				"<a href=\"javascript:undefined;\">preferences</a>");
+		preferencesLink.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				// logout event when clicked on logout link
+				// if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Window.alert("Running in stubbed mode");
+				// } else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				final PreferencesScreen preferencesScreen = PreferencesScreen
+						.getInstance();
+				Util.spawnTab("Preferences", preferencesScreen,
+						new ClosableTabInterface() {
+							@Override
+							public boolean isReadyToClose() {
+								return true;
+							}
+
+							@Override
+							public void onClose() {
+								PreferencesScreen
+										.removeInstance(preferencesScreen);
 							}
 						});
-				menuItem_2.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_scheduler = menuBar_1.addItem(
-						"scheduler", new Command() {
-							public void execute() {
-								Util.spawnTab("Scheduler",
-										new SchedulerScreen());
-							}
-						});
-				menuItem_scheduler.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_7 = menuBar_1.addItem("config",
-						new Command() {
-							public void execute() {
-								Util.spawnTab("Configuration",
-										new ConfigurationScreen());
-							}
-						});
-				menuItem_7.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_users = menuBar_1.addItem(
-						"User Management", new Command() {
-							public void execute() {
-								Util.spawnTab("User Management",
-										new UserManagementScreen());
-							}
-						});
-				menuItem_users.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_3 = menuBar_1.addItem("logout",
-						new Command() {
-							public void execute() {
-								try {
-									dashboard.saveArrangement();
-								} catch (Exception ex) {
-									JsonUtil
-											.debug("dashboard.saveArrangement() threw an exception, continue");
-								}
-								Util.logout();
-							}
-						});
-				menuItem_3.setStyleName("freemed-SecondaryMenuItem");
-				/*
-				 * all the primary menu items are currently housed in static
-				 * width/height since css backgrounds are batched buttons. This
-				 * definitely needs to be worked on. hopefully using a more
-				 * fluid css technique. probably will require more in code html
-				 * markup.
-				 */
-				final MenuItem menuItem = menuBar
-						.addItem(
-								"<span id=\"freemed-PrimaryMenuItem-title\">system</span>",
-								true, menuBar_1);
-				menuItem.setSubMenu(menuBar_1);
-				menuItem.setSize("105px", "30px");
-				menuItem.setStylePrimaryName("freemed-PrimaryMenuItem");
-
-				final MenuBar menuBar_3 = new MenuBar();
-				menuBar_3.setAutoOpen(true);
-				menuBar_3.setStyleName("freemed-SecondaryMenuBar");
-
-				final MenuItem menuItem_4 = menuBar_3.addItem("search",
-						new Command() {
-							public void execute() {
-								Util.spawnTab("Search",
-										new PatientSearchScreen());
-							}
-						});
-				menuItem_4.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_5 = menuBar_3.addItem("entry",
-						new Command() {
-							public void execute() {
-								Util.spawnTab("New Patient", new PatientForm());
-							}
-						});
-				menuItem_5.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_6 = menuBar_3.addItem("tags",
-						new Command() {
-							public void execute() {
-								Util.spawnTab("Tag Search",
-										new PatientTagSearchScreen());
-							}
-						});
-				menuItem_6.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_1 = menuBar
-						.addItem(
-								"<span id=\"freemed-PrimaryMenuItem-title\">patient</span>",
-								true, menuBar_3);
-				menuItem_1.setSize("105px", "30px");
-				menuItem_1.setStyleName("freemed-PrimaryMenuItem");
-
-				// Document management bar
-				final MenuBar menuBar_document = new MenuBar();
-				menuBar_document.setAutoOpen(true);
-				menuBar_document.setStyleName("freemed-SecondaryMenuBar");
-				final MenuItem menuItem_document = menuBar
-						.addItem(
-								"<span id=\"freemed-PrimaryMenuItem-title\">documents</span>",
-								true, menuBar_document);
-				menuItem_document.setSize("105px", "30px");
-				menuItem_document.setStyleName("freemed-PrimaryMenuItem");
-				final MenuItem menuItem_unfiled = menuBar_document.addItem(
-						"unfiled", new Command() {
-							public void execute() {
-								Util.spawnTab("Unfiled Documents",
-										new UnfiledDocuments());
-							}
-						});
-				menuItem_unfiled.setStyleName("freemed-SecondaryMenuItem");
-
-				// Support functionality
-				final MenuBar menuBar_report = new MenuBar();
-				menuBar_report.setAutoOpen(true);
-				menuBar_report.setStyleName("freemed-SecondaryMenuBar");
-				final MenuItem menuItemBar_report = menuBar
-						.addItem(
-								"<span id=\"freemed-PrimaryMenuItem-title\">reporting</span>",
-								true, menuBar_report);
-				menuItemBar_report.setSize("105px", "30px");
-				menuItemBar_report.setStyleName("freemed-PrimaryMenuItem");
-				final MenuItem menuItem_report = menuBar_report.addItem(
-						"reporting", new Command() {
-							public void execute() {
-								Util.spawnTab("Reporting",
-										new ReportingScreen());
-							}
-						});
-				menuItem_report.setStyleName("freemed-SecondaryMenuItem");
-
-				// Data functionality
-				final MenuBar menuBar_data = new MenuBar();
-				menuBar_data.setAutoOpen(true);
-				menuBar_data.setStyleName("freemed-SecondaryMenuBar");
-				final MenuItem menuItemBar_data = menuBar
-						.addItem(
-								"<span id=\"freemed-PrimaryMenuItem-title\">data entry</span>",
-								true, menuBar_data);
-				menuItemBar_data.setSize("105px", "30px");
-				menuItemBar_data.setStyleName("freemed-PrimaryMenuItem");
-				final MenuItem menuItem_data = menuBar_data.addItem(
-						"support data", new Command() {
-							public void execute() {
-								Util.spawnTab("Support Data",
-										new SupportDataScreen());
-							}
-						});
-				menuItem_data.setStyleName("freemed-SecondaryMenuItem");
-
-				// Support functionality
-				final MenuBar menuBar_support = new MenuBar();
-				menuBar_support.setAutoOpen(true);
-				menuBar_support.setStyleName("freemed-SecondaryMenuBar");
-				final MenuItem menuItemBar_support = menuBar
-						.addItem(
-								"<span id=\"freemed-PrimaryMenuItem-title\">support</span>",
-								true, menuBar_support);
-				menuItemBar_support.setSize("105px", "30px");
-				menuItemBar_support.setStyleName("freemed-PrimaryMenuItem");
-
-				final MenuItem menuItem_communitySupport = menuBar_support
-						.addItem("community support", new Command() {
-							public void execute() {
-								InfoDialog d = new InfoDialog();
-								d.setCaption("Community Support");
-								d
-										.setContent(new HTML(
-												"TODO: describe community support blurb here."));
-								d.center();
-							}
-						});
-				menuItem_communitySupport
-						.setStyleName("freemed-SecondaryMenuItem");
-
-				final MenuItem menuItem_commercialSupport = menuBar_support
-						.addItem("commercial support", new Command() {
-							public void execute() {
-								InfoDialog d = new InfoDialog();
-								d.setCaption("Commercial Support");
-								d
-										.setContent(new HTML(
-												"Commercial support is available for <b>FreeMED</b> through the Foundation's commercial support partners."
-														+ "<br/><br/>"
-														+ "More information is available at <a href=\"http://freemedsoftware.org/commercial_support\" target=\"_new\">http://freemedsoftware.org/commercial_support</a>."));
-								d.center();
-							}
-						});
-				menuItem_commercialSupport
-						.setStyleName("freemed-SecondaryMenuItem");
+				// }
 			}
+		});
+		shortCutsPanel.add(preferencesLink);
 
-		}
+		// Adding spacer
+		HTML spacer = new HTML("&nbsp&nbsp | &nbsp&nbsp");
+		shortCutsPanel.add(spacer);
+
+		// Adding support link
+		HTML supportLink = new HTML(
+				"<a href=\"javascript:undefined;\">support</a>");
+		supportLink.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				InfoDialog d = new InfoDialog();
+				d.setCaption("Support");
+				d
+						.setContent(new HTML(
+								"Commercial support is available for <b>FreeMED</b> through the Foundation's commercial support partners."
+										+ "<br/><br/>"
+										+ "More information is available at <a href=\"http://freemedsoftware.org/commercial_support\" target=\"_new\">http://freemedsoftware.org/commercial_support</a>."
+										+ "<br/><br/>"
+										+ "<hr/>"
+										+ "<br/></br>"
+										+ "Community support is available on the FreeMED group at "
+										+ "<a href=\"http://groups.google.com/group/freemed-support?hl=en\">http://groups.google.com/group/freemed-support?hl=en</a>."));
+				d.center();
+			}
+		});
+		shortCutsPanel.add(supportLink);
+
+		// Adding logout link
+		spacer = new HTML("&nbsp&nbsp | &nbsp&nbsp");
+		shortCutsPanel.add(spacer);
+
+		// Adding logout link
+		HTML logoutLink = new HTML(
+				"<a href=\"javascript:undefined;\">logout</a>");
+		logoutLink.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				// logout event when clicked on logout link
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
+					Window.alert("Running in stubbed mode");
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					Util.logout();
+				}
+			}
+		});
+		shortCutsPanel.add(logoutLink);
+
+		// Adding shortCutsPanel into top header
+		topHeaderHorPanel.add(shortCutsPanel);
+		topHeaderHorPanel.setCellHorizontalAlignment(shortCutsPanel,
+				HasHorizontalAlignment.ALIGN_RIGHT);
+
+		// Adding tophorpanel into top topheaderpanel
+		topHeaderPanel.add(topHeaderHorPanel);
+		topHeaderPanel.setCellWidth(topHeaderHorPanel, "100%");
+
+		// Adding top header to main panel
+		mainPanel.add(topHeaderPanel, DockPanel.NORTH);
+		mainPanel.setCellWidth(topHeaderPanel, "100%");
+		mainPanel.setCellHeight(topHeaderPanel, "3%");
 
 		/*
 		 * SimplePanel to hold (hopefully) a horizontal sub menu, going to try
@@ -406,166 +338,72 @@ public class MainScreen extends Composite {
 		 */
 
 		JsonUtil.debug("MainScreen: create accordion panel");
-		AccordionPanel accordionPanel = new AccordionPanel();
-		accordionPanel.setHeight("100%");
-		accordionPanel.setWidth("250px");
+
+		// Creating Left Navigation area with decorated stack panel
+		stackPanel = new DecoratedStackPanel();
+		stackPanel.setSize("100%", "100%");
+
 		{
 			JsonUtil.debug("MainScreen: add main pane");
-			VerticalPanel mainAccPanel = new VerticalPanel();
+			mainAccPanel = new VerticalPanel();
 			mainAccPanel.setStyleName("accordion-panel");
 			mainAccPanel
 					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			mainAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/messaging.32x32.png"), "Messaging",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Messages", new MessagingScreen());
-						}
-					}));
-			mainAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/scheduler.32x32.png"), "Scheduler",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Scheduler", new SchedulerScreen());
-						}
-					}));
-			mainAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/user_config.32x32.png"),
-					"Configuration", new Command() {
-						public void execute() {
-							Util.spawnTab("Configuration",
-									new ConfigurationScreen());
-						}
-					}));
-			mainAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/q_help.32x32.png"), "Support",
-					new Command() {
-						public void execute() {
-							InfoDialog d = new InfoDialog();
-							d.setCaption("Support");
-							d
-									.setContent(new HTML(
-											"Commercial support is available for <b>FreeMED</b> through the Foundation's commercial support partners."
-													+ "<br/><br/>"
-													+ "More information is available at <a href=\"http://freemedsoftware.org/commercial_support\" target=\"_new\">http://freemedsoftware.org/commercial_support</a>."
-													+ "<br/><br/>"
-													+ "<hr/>"
-													+ "<br/></br>"
-													+ "Community support is available on the FreeMED group at "
-													+ "<a href=\"http://groups.google.com/group/freemed-support?hl=en\">http://groups.google.com/group/freemed-support?hl=en</a>."));
-							d.center();
-						}
-					}));
-
-			mainAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/stop_cx.32x32.png"), "Logout",
-					new Command() {
-						public void execute() {
-							try {
-								dashboard.saveArrangement();
-							} catch (Exception ex) {
-								JsonUtil.debug("dashboard.saveArrangement()"
-										+ " threw an exception, continue");
-							}
-							Util.logout();
-						}
-					}));
-
-			accordionPanel.add("Main", mainAccPanel);
+			// adding Main Panel(System) into stack panel
+			// stackPanel.add(mainAccPanel,
+			// getHeaderString(AppConstants.SYSTEM_CATEGORY, null), true);
 
 			JsonUtil.debug("MainScreen: add patient pane");
-			VerticalPanel patientAccPanel = new VerticalPanel();
+			patientAccPanel = new VerticalPanel();
 			patientAccPanel.setStyleName("accordion-panel");
 			patientAccPanel
 					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			patientAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/chart_search.32x32.png"), "Search",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Search", new PatientSearchScreen());
-						}
-					}));
-			patientAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/patient_entry.32x32.png"),
-					"New Patient", new Command() {
-						public void execute() {
-							Util.spawnTab("New Patient", new PatientForm());
-						}
-					}));
-			patientAccPanel.add(new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "/resources/images/patient.32x32.png"), "Tag Search",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Tag Search",
-									new PatientTagSearchScreen());
-						}
-					}));
-			accordionPanel.add("Patient", patientAccPanel);
+			// adding Patient Panel into stack panel
+			// stackPanel.add(patientAccPanel,
+			// getHeaderString(AppConstants.PATIENT_CATEGORY, null), true);
 
 			JsonUtil.debug("MainScreen: add document pane");
-			VerticalPanel documentAccPanel = new VerticalPanel();
+			documentAccPanel = new VerticalPanel();
 			documentAccPanel.setStyleName("accordion-panel");
 			documentAccPanel
 					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			documentAccPanel.add(new MenuIcon(new Image(GWT
-					.getHostPageBaseURL()
-					+ "/resources/images/unfiled.32x32.png"), "Unfiled",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Unfiled Documents",
-									new UnfiledDocuments());
-						}
-					}));
-			documentAccPanel.add(new MenuIcon(new Image(GWT
-					.getHostPageBaseURL()
-					+ "/resources/images/unread.32x32.png"), "Unfiled",
-					new Command() {
-						public void execute() {
-							// Util.spawnTab("Unread Documents",new
-							// UnreadDocuments());
-						}
-					}));
-			accordionPanel.add("Documents", documentAccPanel);
+			// adding Documents Panel into stack panel
+			// stackPanel.add(documentAccPanel,
+			// getHeaderString(AppConstants.DOCUMENTS_CATEGORY, null), true);
+			JsonUtil.debug("MainScreen: add Billing pane");
+			billingAccPanel = new VerticalPanel();
+			billingAccPanel.setStyleName("accordion-panel");
+			billingAccPanel
+					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			// adding Billing Panel into stack panel
+			// stackPanel.add(billingAccPanel,
+			// getHeaderString(AppConstants.BILLING_CATEGORY, null), true);
+
+			JsonUtil.debug("MainScreen: add Reporting pane");
+			reportingAccPanel = new VerticalPanel();
+			reportingAccPanel.setStyleName("accordion-panel");
+			reportingAccPanel
+					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			// adding Reporting Panel into stack panel
+			// stackPanel.add(reportingAccPanel,
+			// getHeaderString(AppConstants.REPORTING_CATEGORY, null), true);
 
 			JsonUtil.debug("MainScreen: add utilities pane");
-			VerticalPanel utilitiesAccPanel = new VerticalPanel();
+			utilitiesAccPanel = new VerticalPanel();
 			utilitiesAccPanel.setStyleName("accordion-panel");
 			utilitiesAccPanel
 					.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			utilitiesAccPanel.add(new MenuIcon(new Image(GWT
-					.getHostPageBaseURL()
-					+ "/resources/images/reporting.32x32.png"), "Reporting",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Reporting", new ReportingScreen());
-						}
-					}));
-			utilitiesAccPanel.add(new MenuIcon(new Image(GWT
-					.getHostPageBaseURL()
-					+ "/resources/images/modules.32x32.png"), "Support Data",
-					new Command() {
-						public void execute() {
-							Util.spawnTab("Support Data",
-									new SupportDataScreen());
-						}
-					}));
-			utilitiesAccPanel.add(new MenuIcon(new Image(GWT
-					.getHostPageBaseURL()
-					+ "/resources/images/user_config.32x32.png"),
-					"User Management", new Command() {
-						public void execute() {
-							Util.spawnTab("User Management",
-									new UserManagementScreen());
-						}
-					}));
 
-			accordionPanel.add("Utilities", utilitiesAccPanel);
+			// adding Utilities Panel into stack panel
+			// stackPanel.add(utilitiesAccPanel,
+			// getHeaderString(AppConstants.UTILITIES_CATEGORY, null), true);
 
 			// Disable for now
 			// accordionPanel.selectPanel("Main");
 		}
 		JsonUtil
 				.debug("MainScreen: create container hpanel for accordion and tabs");
+
 		HorizontalPanel menuAndContent = new HorizontalPanel();
 		menuAndContent.setSize("100%", "100%");
 
@@ -573,17 +411,21 @@ public class MainScreen extends Composite {
 		menuAndContent.setSpacing(0);
 		// menuAndContent.setCellWidth(accordionPanel, "250px");
 
-		JsonUtil.debug("MainScreen: create tabPanel");
-		tabPanel = new TabPanel();
-		tabPanel.setSize("100%", "100%");
-		tabPanel.setWidth(new Integer(menuAndContent.getOffsetWidth() - 250)
-				.toString()
-				+ "px");
-		// menuAndContent.setCellWidth(tabPanel, "auto");
-
 		JsonUtil.debug("MainScreen: add accordion and tab panel to container");
-		menuAndContent.add(accordionPanel);
+		menuAndContent.add(stackPanel);
+		stackPanel.ensureDebugId("cwStackPanel");
+
+		// defining left navigation area width
+		menuAndContent.setCellWidth(stackPanel, "17%");
+
+		JsonUtil.debug("MainScreen: create tabPanel");
+		tabPanel = new DecoratedTabPanel();
+		tabPanel.setSize("100%", "100%");
+		tabPanel.setAnimationEnabled(true);
 		menuAndContent.add(tabPanel);
+		// defining content area width
+		menuAndContent.setCellWidth(tabPanel, "83%");
+
 		menuAndContent.setCellHorizontalAlignment(tabPanel,
 				HasHorizontalAlignment.ALIGN_LEFT);
 		JsonUtil.debug("MainScreen: add container to dock panel");
@@ -600,6 +442,7 @@ public class MainScreen extends Composite {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");
 				dashboard.afterStateSet();
+//				initMainScreen();
 			}
 		});
 
@@ -626,6 +469,8 @@ public class MainScreen extends Composite {
 			statusBar2.setText("STUBBED / TEST MODE");
 		}
 
+		populateDefaultFacility();
+
 		// Create notification toaster
 		JsonUtil.debug("MainScreen: create toaster");
 		Toaster toaster = new Toaster();
@@ -637,15 +482,534 @@ public class MainScreen extends Composite {
 		JsonUtil.debug("MainScreen: start notifications");
 		notifications.start();
 
+		if(Util.getProgramMode() == ProgramMode.STUBBED)
+			initNavigations();
+		
 		// Force showing the screen
 		// show();
+	}
+
+	public void initMainScreen() {
+		initNavigations();
+		String theme = CurrentState.getUserConfig("Theme").toString()
+				.replaceAll("\"", "");
+		CurrentState.CUR_THEME = theme;
+		Util.updateStyleSheets(CurrentState.CUR_THEME, CurrentState.LAST_THEME);
+	}
+
+	public void initNavigations() {
+		JsonUtil.debug("MainScreen.initNavigations: start");
+		emptyLeftNavMenuContainer();
+		/*
+		 * Start Adding System panel options
+		 */
+		boolean showSystemPanel = false;
+		HashMap<String, HashMap<String, String>> leftNavigationMenu = CurrentState
+				.getLeftNavigationOptions();
+		if (leftNavigationMenu.get(AppConstants.SYSTEM_CATEGORY) != null || Util.getProgramMode() == ProgramMode.STUBBED) {
+			if (isNeedToCreate(AppConstants.SYSTEM_CATEGORY,
+					AppConstants.DASHBOARD)) {
+				showSystemPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/dashboard.32x32.png"),
+						AppConstants.DASHBOARD, new Command() {
+							public void execute() {
+								Util
+										.spawnTab(AppConstants.DASHBOARD,
+												dashboard);
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.DASHBOARD, menuIcon);
+				mainAccPanel.add(menuIcon);
+			}
+
+			if (isNeedToCreate(AppConstants.SYSTEM_CATEGORY,
+					AppConstants.SCHEDULER)) {
+				showSystemPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/scheduler.32x32.png"),
+						AppConstants.SCHEDULER, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.SCHEDULER,
+										SchedulerScreen.getInstance());				
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.SCHEDULER, menuIcon);
+				mainAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.SYSTEM_CATEGORY,
+					AppConstants.MESSAGES)) {
+				showSystemPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/messaging.32x32.png"),
+						AppConstants.MESSAGES, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.MESSAGES,
+										MessagingScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.MESSAGES, menuIcon);
+				mainAccPanel.add(menuIcon);
+			}
+		}
+
+		if (showSystemPanel)
+			addWighetToStack(mainAccPanel, AppConstants.SYSTEM_CATEGORY);
+
+		// ////////////////////////////////End Adding System panel options
+		// ///////////////////////////
+
+		/*
+		 * Start Adding Patient panel options
+		 */
+		boolean showPatientPanel = false;
+		if (leftNavigationMenu.get(AppConstants.PATIENT_CATEGORY) != null || Util.getProgramMode() == ProgramMode.STUBBED) {
+			if (isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+					AppConstants.SEARCH)) {
+				showPatientPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/chart_search.32x32.png"),
+						AppConstants.SEARCH, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.SEARCH,
+										PatientSearchScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.SEARCH, menuIcon);
+				patientAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+					AppConstants.NEW_PATIENT)) {
+				showPatientPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/patient_entry.32x32.png"),
+						AppConstants.NEW_PATIENT, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.NEW_PATIENT,
+										PatientForm.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.NEW_PATIENT, menuIcon);
+				patientAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+					AppConstants.GROUPS)) {
+				showPatientPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/callin.32x32.png"),
+						AppConstants.GROUPS, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.GROUPS,
+										PatientsGroupScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.GROUPS, menuIcon);
+				patientAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+					AppConstants.CALL_IN)) {
+				showPatientPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/callin.32x32.png"),
+						AppConstants.CALL_IN, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.CALL_IN,
+										CallInScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.CALL_IN, menuIcon);
+				patientAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+					AppConstants.RX_REFILL)) {
+				showPatientPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/rx_refill.32x32.png"),
+						"Rx Refill", new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.RX_REFILL,
+										RxRefillScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.RX_REFILL, menuIcon);
+				patientAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+					AppConstants.TAG_SEARCH)) {
+				showPatientPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/patient.32x32.png"),
+						AppConstants.TAG_SEARCH, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.TAG_SEARCH,
+										PatientTagSearchScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.TAG_SEARCH, menuIcon);
+				patientAccPanel.add(menuIcon);
+			}
+		}
+
+		if (showPatientPanel)
+			addWighetToStack(patientAccPanel, AppConstants.PATIENT_CATEGORY);
+
+		// ////////////////////////////////End Adding Patient panel options
+		// ///////////////////////////
+
+		/*
+		 * Start Adding Documents panel options
+		 */
+		boolean showDocumentPanel = false;
+		if (leftNavigationMenu.get(AppConstants.DOCUMENTS_CATEGORY) != null || Util.getProgramMode() == ProgramMode.STUBBED) {
+			if (isNeedToCreate(AppConstants.DOCUMENTS_CATEGORY,
+					AppConstants.UNFILED)) {
+				showDocumentPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/unfiled.32x32.png"),
+						AppConstants.UNFILED, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.UNFILED
+										+ " Documents", UnfiledDocuments.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.UNFILED, menuIcon);
+				documentAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.DOCUMENTS_CATEGORY,
+					AppConstants.UNREAD)) {
+				showDocumentPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/unread.32x32.png"),
+						AppConstants.UNREAD, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.UNREAD
+										+ " Documents", UnreadDocuments.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.UNREAD, menuIcon);
+				documentAccPanel.add(menuIcon);
+			}
+		}
+
+		if (showDocumentPanel)
+			addWighetToStack(documentAccPanel, AppConstants.DOCUMENTS_CATEGORY);
+
+		// ////////////////////////////////End Adding Documents panel options
+		// ///////////////////////////
+
+
+		/*
+		 * Start Adding Billing panel options
+		 */
+		boolean showBillingPanel = false;
+		if (leftNavigationMenu.get(AppConstants.BILLING_CATEGORY) != null || Util.getProgramMode() == ProgramMode.STUBBED) {
+			if (isNeedToCreate(AppConstants.BILLING_CATEGORY,
+					AppConstants.ACCOUNT_RECEIVABLE)) {
+				showBillingPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/accounts_receivable.32x32.png"),
+						AppConstants.ACCOUNT_RECEIVABLE, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.ACCOUNT_RECEIVABLE,
+										AccountsReceivableScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.ACCOUNT_RECEIVABLE,
+						menuIcon);
+				billingAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.BILLING_CATEGORY,
+					AppConstants.CLAIMS_MANAGER)) {
+				showBillingPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/claims_manage.32x32.png"),
+						AppConstants.CLAIMS_MANAGER, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.CLAIMS_MANAGER,
+										ClaimsManager.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.CLAIMS_MANAGER, menuIcon);
+				billingAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.BILLING_CATEGORY,
+					AppConstants.REMITT_BILLING)) {
+				showBillingPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/remitt.32x32.png"),
+						AppConstants.REMITT_BILLING, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.REMITT_BILLING,
+										RemittBilling.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.REMITT_BILLING, menuIcon);
+				billingAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.BILLING_CATEGORY,
+					AppConstants.SUPER_BILLS)) {
+				showBillingPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/superbill.32x32.png"),
+						AppConstants.SUPER_BILLS, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.SUPER_BILLS,
+										SuperBills.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.SUPER_BILLS, menuIcon);
+				billingAccPanel.add(menuIcon);
+			}
+		}
+
+		if (showBillingPanel)
+			addWighetToStack(billingAccPanel, AppConstants.BILLING_CATEGORY);
+
+		// ////////////////////////////////End Adding Billing panel options
+		// ///////////////////////////
+
+		/*
+		 * Start Adding Reporting panel options
+		 */
+		boolean showReportingPanel = false;
+		if (leftNavigationMenu.get(AppConstants.REPORTING_CATEGORY) != null || Util.getProgramMode() == ProgramMode.STUBBED) {
+			if (isNeedToCreate(AppConstants.REPORTING_CATEGORY,
+					AppConstants.REPORTING_ENGINE)) {
+				showReportingPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/reporting.32x32.png"),
+						AppConstants.REPORTING_ENGINE, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.REPORTING_ENGINE,
+										ReportingScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.REPORTING_ENGINE,
+						menuIcon);
+				reportingAccPanel.add(menuIcon);
+			}
+		}
+
+		if (showReportingPanel)
+			addWighetToStack(reportingAccPanel, AppConstants.REPORTING_CATEGORY);
+
+		// ////////////////////////////////End Adding Reporting panel options
+		// ///////////////////////////
+
+		/*
+		 * Start Adding Utilities panel options
+		 */
+		boolean showUtilitiesPanel = false;
+		if (leftNavigationMenu.get(AppConstants.UTILITIES_CATEGORY) != null  || Util.getProgramMode() == ProgramMode.STUBBED) {
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.UTILITIES_SCREEN)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/reporting.32x32.png"),
+						AppConstants.UTILITIES_SCREEN, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.UTILITIES_SCREEN,
+										UtilitiesScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.UTILITIES_SCREEN,
+						menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.SUPPORT_DATA)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/modules.32x32.png"),
+						AppConstants.SUPPORT_DATA, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.SUPPORT_DATA,
+										SupportDataScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.SUPPORT_DATA, menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.USER_MANAGEMENT)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/user_config.32x32.png"),
+						AppConstants.USER_MANAGEMENT, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.USER_MANAGEMENT,
+										UserManagementScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer
+						.put(AppConstants.USER_MANAGEMENT, menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.SYSTEM_CONFIGURATION)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/settings.32x32.png"),
+						AppConstants.SYSTEM_CONFIGURATION, new Command() {
+							public void execute() {
+								Util.spawnTab(
+										AppConstants.SYSTEM_CONFIGURATION,
+										ConfigurationScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.SYSTEM_CONFIGURATION,
+						menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+			/*
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.DB_ADMINISTRATION)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/settings.32x32.png"),
+						AppConstants.DB_ADMINISTRATION, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.DB_ADMINISTRATION,
+										null);
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.DB_ADMINISTRATION,
+						menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+			*/
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.ACL)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/reporting.32x32.png"),
+						AppConstants.ACL, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.ACL,
+										ACLScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.ACL,
+						menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+		}
+
+		if (showUtilitiesPanel)
+			addWighetToStack(utilitiesAccPanel, getHeaderString(
+					AppConstants.UTILITIES_CATEGORY, null));
+		// ////////////////////////////////End Adding utilities panel options
+		// ///////////////////////////
+
+	}
+
+	public void removeWighetFromStack(Widget widget) {
+		stackPanel.remove(widget);
+		stackPanel.showStack(0);
+	}
+
+	public void addWighetToStack(Widget widget, String title) {
+		if (stackPanel.getWidgetIndex(widget) == -1)
+			stackPanel.add(widget, getHeaderString(title, null), true);
+		stackPanel.showStack(0);
+	}
+
+	/*
+	 * evaluate whether this menu option should be visible or not
+	 * 
+	 * @param title of the navigation option
+	 */
+	public boolean isNeedToCreate(String menuCatagory, String title) {
+		if(CurrentState.isActionAllowed(AppConstants.SHOW, menuCatagory, title))
+			return true;
+		if(leftNavMenuContainer.get(title) != null){
+			MenuIcon menuIcon = leftNavMenuContainer.get(title);
+			menuIcon.removeFromParent();
+			menuIcon = null;
+			leftNavMenuContainer.remove(title);
+		}
+			
+		return false;
+	}
+
+	private String getHeaderString(String text, AbstractImagePrototype image) {
+		// Add the image and text to a horizontal panel
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(0);
+		hPanel.setWidth("100%");
+		hPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		if (image != null)
+			hPanel.add(image.createImage());
+		HTML headerText = new HTML(text);
+		headerText.setStyleName("stackPanelHeader");
+		hPanel.add(headerText);
+
+		// Return the HTML string for the panel
+		return hPanel.getElement().getString();
+	}
+
+	public void setLoginUserInfo() {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO stubbed mode goes here
+			loginUserInfo.setText("Stubbed Mode user");
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.core.User.GetName", params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String userName = response.getText().replaceAll(
+									"\"", "");
+							loginUserInfo.setText(userName);
+							CurrentState.assignDefaultUser(userName);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.getMessage());
+			}
+		} else {
+
+			// TODO normal mode code goes here
+		}
 	}
 
 	public Label getStatusBar() {
 		return statusBar1;
 	}
 
-	public TabPanel getTabPanel() {
+	public DecoratedTabPanel getTabPanel() {
 		return tabPanel;
 	}
 
@@ -725,4 +1089,103 @@ public class MainScreen extends Composite {
 		}
 	}
 
+	public void populateDefaultFacility() {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// Do gornicht.
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = {};
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.FacilityModule.GetDefaultFacility",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						CurrentState.getToaster().addItem("MainScreen",
+								"Could not determine Facility information.",
+								Toaster.TOASTER_ERROR);
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()
+								&& response.getText() != null
+								&& response.getText() != "null") {
+							HashMap<String, String> data = (HashMap<String, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>");
+							if (data != null) {
+								JsonUtil
+										.debug("MainScreen.populateDefaultFacility: found "
+												+ data.get("facility"));
+								CurrentState.assignDefaultFacility(Integer
+										.parseInt(data.get("id")));
+								setFacility(data.get("facility").replaceAll(
+										"\"", ""));
+							} else {
+								JsonUtil
+										.debug("MainScreen.populateDefaultProvider: found error");
+
+							}
+						} else {
+							// populateDefaultFacility();
+						}
+					}
+				});
+			} catch (RequestException e) {
+				CurrentState.getToaster().addItem("MainScreen",
+						"Could not determine facility information.",
+						Toaster.TOASTER_ERROR);
+			}
+		} else {
+			// TODO: GWT-RPC support for this function
+		}
+	}
+
+	public void emptyLeftNavMenuContainer() {
+		JsonUtil.debug("MainScreen.emptyLeftNavMenuContainer: start");
+		Iterator<String> itr = leftNavMenuContainer.keySet().iterator();
+		while (itr.hasNext()) {
+			String key = itr.next();
+			MenuIcon menuIcon = leftNavMenuContainer.get(key);
+			menuIcon.removeFromParent();
+			menuIcon = null;
+			leftNavMenuContainer.remove(key);
+		}
+		removeWighetFromStack(mainAccPanel);
+		removeWighetFromStack(patientAccPanel);
+		removeWighetFromStack(documentAccPanel);
+		removeWighetFromStack(billingAccPanel);
+		removeWighetFromStack(reportingAccPanel);
+		removeWighetFromStack(utilitiesAccPanel);
+	}
+
+	public void refreshMainScreen() {
+		JsonUtil.debug("MainScreen.refreshMainScreen: start");
+		setLoginUserInfo();
+		dashboard.refreshDashBoardWidgets();
+		setFacility(CurrentState.getFreemedInterface().getLoginDialog()
+				.getSelectedFacilityName());
+		CurrentState.assignDefaultFacility(Integer.parseInt(CurrentState
+				.getFreemedInterface().getLoginDialog()
+				.getSelectedFacilityValue()));
+		// populateLeftNavigationPanel();
+		CurrentState.retrieveUserConfiguration(true,new Command() {
+			public void execute() {
+				JsonUtil.debug("MainScreen: Set State of dashboard");
+				dashboard.afterStateSet();
+//				initMainScreen();
+			}
+		});
+		CurrentState.retrieveSystemConfiguration(false);
+		JsonUtil.debug("MainScreen.refreshMainScreen: end");
+	}
+
+	public void setFacility(String facility) {
+		facilityInfo.setText(facility);
+	}
 }

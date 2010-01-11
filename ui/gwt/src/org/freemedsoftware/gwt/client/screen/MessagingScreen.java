@@ -38,9 +38,12 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.MessageView;
+import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
@@ -57,6 +60,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -69,6 +73,28 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MessagingScreen extends ScreenInterface implements ClickHandler {
 
+	private static List<MessagingScreen> messagingScreensList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static MessagingScreen getInstance(){
+		MessagingScreen messagingScreen=null; 
+		
+		if(messagingScreensList==null)
+			messagingScreensList=new ArrayList<MessagingScreen>();
+		if(messagingScreensList.size()<AppConstants.MAX_MESSAGNING_TABS)//creating & returning new next instance of MessagingScreen
+			messagingScreensList.add(messagingScreen=new MessagingScreen());
+		else{ //returns last instance of MessagingScreen from list 
+			messagingScreen = messagingScreensList.get(AppConstants.MAX_MESSAGNING_TABS-1);
+			// Start population routine
+			messagingScreen.populate("");
+			messagingScreen.populateTagWidget();
+		}
+		return messagingScreen;
+	} 
+
+	public static boolean removeInstance(MessagingScreen messagingScreen){
+		return messagingScreensList.remove(messagingScreen);
+	}
+	
 	private CustomTable wMessages = null;
 
 	// private HashMap<String, String>[] mStore = null;
@@ -83,7 +109,11 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 
 	protected CustomListBox messageTagSelect = new CustomListBox();
 
-	public MessagingScreen() {
+	protected Popup popupMessageView;
+	public MessageView msgView;
+	
+	//Making constructor private to implement singleton Design Pattern 
+	private MessagingScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -146,7 +176,11 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 			public void onClick(ClickEvent evt) {
 				if (Window
 						.confirm("Are you sure you want to delete these item(s)?")) {
-					Window.alert("STUB: delete items");
+					List<String> slectedItems=wMessages.getSelected();
+					Iterator<String> itr=slectedItems.iterator();//Get all selected items from custom table
+					while(itr.hasNext())
+						deleteMessage(Integer.parseInt(itr.next()));//delete messages one by one
+					populate(messageTagSelect.getWidgetValue());
 				}
 			}
 		});
@@ -157,9 +191,8 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 			public void onChange(ChangeEvent event) {
 				try {
 					String effective = messageTagSelect.getWidgetValue();
-					Window
-							.alert("effective value of tag widget = "
-									+ effective);
+					wMessages.clearAllSelections();
+					populate(effective);
 				} catch (Exception ex) {
 					Window.alert(ex.toString());
 				}
@@ -192,15 +225,15 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 		// verticalSplitPanel.setSplitPosition("50%");
 
 		wMessages = new CustomTable();
-		wMessages.setAllowSelection(true);
-		wMessages.setMultipleSelection(true);
+//		wMessages.setAllowSelection(true);
+//		wMessages.setMultipleSelection(true);
 		verticalSplitPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
 		wMessages.addColumn("Selected", "selected");
 		wMessages.addColumn("Received", "stamp"); // col 1
 		wMessages.addColumn("From", "from_user"); // col 2
 		wMessages.addColumn("Subject", "subject"); // col 3
-		wMessages.addColumn("Delete", "delete"); // col 4
+//		wMessages.addColumn("Delete", "delete"); // col 4
 		wMessages.setIndexName("id");
 		wMessages.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
@@ -209,8 +242,21 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 					final Integer messageId = Integer.parseInt(data.get("id"));
 					if (col == 4) {
 						deleteMessage(messageId);
-					} else {
+					} else if(col != 0) {
 						showMessage(messageId);
+						msgView = new MessageView();
+						msgView.setMsgFrom(data.get("from_user"));
+						msgView.setMsgDate(data.get("stamp"));
+//						showMessage(messageId);
+						msgView.setMessagingScreen(getMessagingScreen());
+						popupMessageView = new Popup();
+						popupMessageView.setNewWidget(msgView);
+						msgView.setOnClose(new Command() {
+							public void execute() {
+								popupMessageView.hide();
+							}
+						});
+						popupMessageView.initialize();
 					}
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
@@ -463,7 +509,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 											"MessagingScreen",
 											"Deleted message.",
 											Toaster.TOASTER_INFO);
-									populate("");
+									//populate(tag);
 								}
 							} else {
 								CurrentState.getToaster().addItem(
@@ -524,7 +570,9 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 				txt = "";
 				break;
 			}
-			messageView.setHTML(txt);
+//			messageView.setHTML(txt);
+			msgView.setText(txt);
+//			showMessagePopup(txt, "Message subject");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { "MessagesModule", JsonUtil.jsonify(messageId) };
 			RequestBuilder builder = new RequestBuilder(
@@ -549,9 +597,17 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
-									messageView.setHTML(r.get("msgtext")
+//									messageView.setHTML(r.get("msgtext")
+//											.replace("\\", "").replace("\n",
+//													"<br/>"));
+//									showMessagePopup(r.get("msgtext").replace("\\", "").replace("\n","<br/>"), "Message subject");
+									msgView.setText(r.get("msgtext")
 											.replace("\\", "").replace("\n",
 													"<br/>"));
+									msgView.setMsgFromId(Integer.parseInt(r.get("msgby")));
+									msgView.setMsgSubject(r.get("msgsubject"));
+									msgView.setMsgPatientId(Integer.parseInt(r.get("msgpatient")));
+									msgView.setMsgBody(r.get("msgtext"));
 								}
 							} else {
 							}
@@ -572,8 +628,8 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 			service.ModuleGetRecordMethod("MessagesModule", messageId,
 					new AsyncCallback<HashMap<String, String>>() {
 						public void onSuccess(HashMap<String, String> data) {
-							messageView.setHTML(data.get("msgtext").replace(
-									"\\", "").replace("\n", "<br/>"));
+//							messageView.setHTML(data.get("msgtext").replace(
+//									"\\", "").replace("\n", "<br/>"));
 						}
 
 						public void onFailure(Throwable t) {
@@ -582,5 +638,22 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 					});
 		}
 	}
+	
+	public void showMessagePopup(String message,String Subject){
+		/*
+		InfoDialog d = new InfoDialog();
+		d.setSize("100%", "100%");
+		d.setCaption(Subject);
+		d
+				.setContent(new HTML(message));
+		d.center();
+		*/
 
+	}
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

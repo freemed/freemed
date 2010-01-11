@@ -108,6 +108,7 @@ class Login {
 			$authdata = HTTP_Session2::get( 'authdata' );
 			$authdata['username'] = $username;
 			$authdata['user'] = $r['id'];
+			setcookie("user", $r['id'], time() + 3600, "/");
 			HTTP_Session2::set( 'authdata', $authdata );
 
 			$this->SessionPopulate();

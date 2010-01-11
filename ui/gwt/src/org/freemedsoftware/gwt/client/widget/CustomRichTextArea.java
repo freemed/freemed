@@ -50,4 +50,13 @@ public class CustomRichTextArea extends RichTextArea implements HashSetter {
 		setHTML(data.get(hashMapping));
 	}
 
+	public native void insertHTML(String html) /*-{
+		var el = this.@com.google.gwt.user.client.ui.UIObject::getElement()(); 
+		if (el.contentWindow.document.selection) { 
+		el.contentWindow.document.selection.createRange().pasteHTML(html); // For IE 
+		} else { 
+		el.contentDocument.execCommand('insertHTML',false,html); // For Mozilla 
+		}
+	}-*/;
+
 }

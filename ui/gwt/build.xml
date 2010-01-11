@@ -26,6 +26,8 @@
 <project name="FreemedInterface" default="build" basedir=".">
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="/opt/gwt" />
+  <property name="version" value="0.9.0" />
+  <property name="docs" value="doc" />
   <defaultexcludes remove="**/.svn/**"/>
 
   <path id="project.class.path">
@@ -63,6 +65,19 @@
 
   </target>
 
+  <target name="docs" depends="gwtc">
+    <mkdir dir="${docs}" />
+    <javadoc packagenames="org.freemedsoftware.*"
+      sourcepath="src"
+      defaultexcludes="yes"
+      destdir="${docs}"
+      author="true"
+      version="true"
+      use="true"
+      windowtitle="FreeMED UI Documentation Version: ${version}">
+    </javadoc>
+  </target>
+
   <target name="hosted" description="Run hosted mode">
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
       <classpath>
@@ -93,6 +108,7 @@
     <delete dir="build" failonerror="false" />
     <delete dir="www/FreemedInterface" failonerror="false" />
     <delete dir="www/org" failonerror="false" />
+    <delete dir="${docs}" failonerror="false" />
   </target>
 
 </project>

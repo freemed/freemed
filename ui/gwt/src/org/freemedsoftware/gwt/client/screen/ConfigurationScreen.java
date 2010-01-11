@@ -24,8 +24,10 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -33,6 +35,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -66,7 +69,28 @@ public class ConfigurationScreen extends ScreenInterface {
 
 	protected HashMap<String, Integer> containerWidgetCount;
 
+	private static List<ConfigurationScreen> configurationScreenList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static ConfigurationScreen getInstance(){
+		ConfigurationScreen configurationScreen=null; 
+		
+		if(configurationScreenList==null)
+			configurationScreenList=new ArrayList<ConfigurationScreen>();
+		if(configurationScreenList.size()<AppConstants.MAX_CONFIGURATION_TABS)//creates & returns new next instance of ConfigurationScreen
+			configurationScreenList.add(configurationScreen=new ConfigurationScreen());
+		else //returns last instance of ConfigurationScreen from list 
+			configurationScreen = configurationScreenList.get(AppConstants.MAX_CONFIGURATION_TABS-1);
+		return configurationScreen;
+	}  
+	
+	public static boolean removeInstance(ConfigurationScreen configurationScreen){
+		return configurationScreenList.remove(configurationScreen);
+	}
+	
 	public ConfigurationScreen() {
+		
+		final boolean canChange =  CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.SYSTEM_CONFIGURATION);
+		
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setWidth("100%");
@@ -77,16 +101,17 @@ public class ConfigurationScreen extends ScreenInterface {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
-
-		final Button commitChangesButton = new Button();
-		horizontalPanel.add(commitChangesButton);
-		commitChangesButton.setText("Commit Changes");
-		commitChangesButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				commitValues();
-			}
-		});
+		if(canChange){
+			final Button commitChangesButton = new Button();
+			horizontalPanel.add(commitChangesButton);
+			commitChangesButton.setText("Commit Changes");
+			commitChangesButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					commitValues();
+				}
+			});
+		}
 
 		populate();
 	}
@@ -142,6 +167,7 @@ public class ConfigurationScreen extends ScreenInterface {
 										"ConfigurationScreen",
 										"Updated configuration.",
 										Toaster.TOASTER_INFO);
+								CurrentState.retrieveSystemConfiguration(true);//re-evaluate system configuration
 							} else {
 								CurrentState.getToaster().addItem(
 										"ConfigurationScreen",
@@ -332,9 +358,16 @@ public class ConfigurationScreen extends ScreenInterface {
 	}
 
 	protected void addToStack(HashMap<String, String> r) {
+		final boolean canChange =  CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.SYSTEM_CONFIGURATION); 
 		// Add initial widget, get appropriate count and container
 		JsonUtil.debug(r.get("c_option") + " (" + r.get("c_type") + ")");
 		Widget w = addWidget(r);
+		if(!canChange){
+			if(w instanceof TextBox)
+				((TextBox)w).setEnabled(false);
+			else if(w instanceof CustomListBox)
+				((CustomListBox)w).setEnabled(false);
+		}
 		FlexTable f = containers.get(r.get("c_section"));
 		JsonUtil.debug(" --- got flextable");
 		Integer c = new Integer(0);
@@ -385,5 +418,10 @@ public class ConfigurationScreen extends ScreenInterface {
 		}
 		return proxy;
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

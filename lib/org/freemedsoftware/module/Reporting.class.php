@@ -57,6 +57,7 @@ class Reporting extends SupportModule {
 	//	* report_uuid
 	//
 	public function GetReports ( $locale = NULL ) {
+		freemed::acl_enforce( 'reporting', 'menu' );
 		$query = "SELECT report_name, report_desc, report_uuid FROM reporting WHERE report_locale=". $GLOBALS['sql']->quote( $locale == NULL ? DEFAULT_LANGUAGE : $locale ). " ORDER BY report_name";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetReports
@@ -76,6 +77,7 @@ class Reporting extends SupportModule {
 	//	Array of hashes
 	//
 	public function GetReportParameters ( $uuid, $flatten = true ) {
+		freemed::acl_enforce( 'reporting', 'generate' );
 		$query = "SELECT * FROM reporting WHERE report_uuid=".$GLOBALS['sql']->quote( $uuid );
 		$r = $GLOBALS['sql']->queryRow( $query );
 		$return = array ();
@@ -128,6 +130,7 @@ class Reporting extends SupportModule {
 	//	Report
 	//
 	public function GenerateReport ( $uuid, $format, $param ) {
+		freemed::acl_enforce( 'reporting', 'generate' );
 		$report = $this->GetReportParameters( $uuid );
 
 		// Sanity checking
@@ -237,6 +240,7 @@ class Reporting extends SupportModule {
 	//	$query - SQL query as created by <GenerateReport>
 	//
 	protected function GenerateReport_Graph ( $param, $format, $query ) {
+		freemed::acl_enforce( 'reporting', 'generate' );
 		// Execute query
 		$res = $GLOBALS['sql']->queryAllStoredProc( $query );
 
@@ -315,6 +319,7 @@ class Reporting extends SupportModule {
 	//	$query - SQL query as created by <GenerateReport>
 	//
 	protected function GenerateReport_Rlib ( $param, $format, $query ) {
+		freemed::acl_enforce( 'reporting', 'generate' );
 		switch ( $format ) {
 			case 'html':	$outformat = 'html';	$ext = 'html';	break;
 			case 'csv':	$outformat = 'csv';	$ext = 'csv';	break;

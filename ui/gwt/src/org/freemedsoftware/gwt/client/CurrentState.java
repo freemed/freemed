@@ -25,11 +25,17 @@
 package org.freemedsoftware.gwt.client;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.screen.MainScreen.MenuIcon;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.http.client.Request;
@@ -40,6 +46,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 
@@ -51,22 +58,37 @@ public class CurrentState {
 
 	protected static Toaster toaster = null;
 
-	protected static TabPanel tabPanel = null;
+	protected static DecoratedTabPanel tabPanel = null;
 
 	protected static String locale = "en_US";
 
 	protected static Integer defaultProvider = new Integer(0);
+	
+	protected static Integer defaultFacility = new Integer(0);
+	
+	protected static String defaultUser = "";
 
 	protected static HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
 
-	protected static HashMap<String, String> userConfiguration = new HashMap<String, String>();
+	protected static HashMap<String, Object> userConfiguration = new HashMap<String, Object>();
+	
+	protected static HashMap<String, String> systemConfiguration = new HashMap<String, String>();
 
 	protected static FreemedInterface freemedInterface = null;
 
 	protected static MainScreen mainScreen = null;
 
+	protected static HashMap<String, HashMap<String,String>> leftNavigationOptions = new HashMap<String, HashMap<String,String>>();
+
+	public static String CUR_THEME="chrome";
+	
+	public static String LAST_THEME="chrome";
+	
+	public final static int BREAK_HOUR = 13;
+	
 	public CurrentState() {
 		retrieveUserConfiguration(true);
+		retrieveSystemConfiguration(true, null);
 	}
 
 	/**
@@ -103,11 +125,29 @@ public class CurrentState {
 	}
 
 	/**
+	 * Assign default facility.
+	 * 
+	 * @param f
+	 */
+	public static void assignDefaultFacility(Integer f) {
+		defaultFacility = f;
+	}
+
+	/**
+	 * Assign default User.
+	 * 
+	 * @param u
+	 */
+	public static void assignDefaultUser(String u) {
+		defaultUser = u;
+	}
+	
+	/**
 	 * Assign tab panel object.
 	 * 
 	 * @param t
 	 */
-	public static void assignTabPanel(TabPanel t) {
+	public static void assignTabPanel(DecoratedTabPanel t) {
 		tabPanel = t;
 	}
 
@@ -161,6 +201,14 @@ public class CurrentState {
 		return defaultProvider;
 	}
 
+	public static Integer getDefaultFacility() {
+		return defaultFacility;
+	}
+
+	public static String getDefaultUser() {
+		return defaultUser;
+	}
+	
 	public static FreemedInterface getFreemedInterface() {
 		return freemedInterface;
 	}
@@ -187,7 +235,7 @@ public class CurrentState {
 	 * @param key
 	 * @return
 	 */
-	public static String getUserConfig(String key) {
+	public static Object getUserConfig(String key) {
 		JsonUtil.debug("getUserConfig() called");
 		if (userConfiguration.size() != 0) {
 			return userConfiguration.get(key);
@@ -198,12 +246,28 @@ public class CurrentState {
 	}
 
 	/**
+	 * Get system specific configuration value, or "" if there is no value.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static String getSystemConfig(String key) {
+		JsonUtil.debug("getSystemConfig() called");
+		if (systemConfiguration.size() != 0) {
+			return systemConfiguration.get(key);
+		}
+		JsonUtil.debug("getSystemConfig(): was unable to find systemConfiguration "
+				+ "| key = " + key);
+		return "";
+	}
+	
+	/**
 	 * Set user specific configuration value.
 	 * 
 	 * @param key
 	 * @param value
 	 */
-	public static void setUserConfig(String key, Object value) {
+	public static synchronized void setUserConfig(String key, Object value) {
 		// Set key locally
 		if (value == null) {
 			value = new String("");
@@ -211,6 +275,8 @@ public class CurrentState {
 		}
 		if (value instanceof String) {
 			userConfiguration.put(key, (String) value);
+		}  else if (value instanceof HashMap) {
+			userConfiguration.put(key, JsonUtil.jsonify(value));
 		} else if (value instanceof Serializable) {
 			userConfiguration.put(key, ((Serializable) value).toString());
 		} else {
@@ -295,25 +361,27 @@ public class CurrentState {
 								Response response) {
 							if (200 == response.getStatusCode()
 									&& !response.getText().contentEquals("[]")) {
-
-								JsonUtil
-										.debug("Retrieved good looking content");
-								JsonUtil.debug(response.getText());
-								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+								HashMap<String, Object> r = (HashMap<String, Object>) JsonUtil
 										.shoehornJson(JSONParser.parse(response
 												.getText()),
-												"HashMap<String,String>");
+												"HashMap<String,Object>");
 								if (r != null) {
 									JsonUtil
 											.debug("successfully retrieved User Configuration");
 									userConfiguration = r;
-
+									if(userConfiguration.get("LeftNavigationMenu")!=null){
+										leftNavigationOptions = (HashMap<String, HashMap<String,String>>) JsonUtil.shoehornJson(
+												JSONParser.parse(CurrentState.getUserConfig("LeftNavigationMenu").toString()),
+												"HashMap<String,HashMap<String,String>>");
+//										mainScreen.initNavigations();
+										mainScreen.initMainScreen();
+									}
 									if (onLoad != null) {
 										onLoad.execute();
 									}
 								}
 							} else {
-								userConfiguration = new HashMap<String, String>();
+								userConfiguration = new HashMap<String, Object>();
 								if (onLoad != null) {
 									onLoad.execute();
 								}
@@ -329,4 +397,150 @@ public class CurrentState {
 		}
 	}
 
+	public static HashMap<String, HashMap<String,String>> getLeftNavigationOptions() {
+		return leftNavigationOptions;
+	}
+
+	public static void setLeftNavigationOptions(
+		HashMap<String, HashMap<String, String>> options) {
+		leftNavigationOptions = options;
+	}
+	
+	public static void printNavOptions(){
+		final HashMap<String, HashMap<String, String>> leftNavCategories = CurrentState.getLeftNavigationOptions();
+		Iterator<String> itrCats = leftNavCategories.keySet().iterator();
+		while(itrCats.hasNext()){
+			final String categoryName = itrCats.next();
+			HashMap<String, String> options =leftNavCategories.get(categoryName);
+			Iterator<String> itr = options.keySet().iterator();
+			while(itr.hasNext()){
+				String key = itr.next();
+					JsonUtil.debug("CurrentState:printNavOptions - key :"+key+" value:"+options.get(key));
+			}
+		}
+	}
+	
+	/**
+	 * Pull system configuration settings into CurrentState object.
+	 * 
+	 * @param forceReload
+	 */
+	public static void retrieveSystemConfiguration(boolean forceReload)
+	{
+		CurrentState.retrieveSystemConfiguration(forceReload, null);
+	}
+	
+	/**
+	 * Pull system configuration settings into CurrentState object.
+	 * 
+	 * @param forceReload
+	 * @param onLoad   -  executes command after loading
+	 */
+	public static void retrieveSystemConfiguration(boolean forceReload,
+			final Command onLoad) {
+
+		JsonUtil.debug("retrieveUserConfiguration called");
+
+		if (systemConfiguration == null || forceReload || systemConfiguration.size()==0) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// STUBBED mode
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.SystemConfig.GetAllSysOptions",
+												new String[] {})));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+						}
+
+						@SuppressWarnings("unchecked")
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()
+									&& !response.getText().contentEquals("[]")) {
+
+								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (r != null) {
+									JsonUtil
+											.debug("successfully retrieved System Configuration");
+									systemConfiguration = r;
+
+									if (onLoad != null) {
+										onLoad.execute();
+									}
+								}
+							} else {
+								systemConfiguration = new HashMap<String, String>();
+								if (onLoad != null) {
+									onLoad.execute();
+								}
+							}
+						}
+					});
+				} catch (RequestException e) {
+				}
+
+			} else {
+				// GWT-RPC
+			}
+		}
+	}
+	
+	
+	
+
+	/*
+	 * evaluate whether this menu option should be visible or not
+	 * 
+	 * @param title of the navigation option
+	 */
+	public static boolean isActionAllowed(int action,String menuCatagory, String option) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			return true;
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			if (leftNavigationOptions.get(menuCatagory) == null)// If menuCatagory not available
+				return false;
+			String optionVal = leftNavigationOptions.get(menuCatagory).get(option);
+			if (optionVal != null) {
+				switch(action){
+					case AppConstants.READ:
+	  			    case AppConstants.WRITE:
+	  			    case AppConstants.MODIFY:
+	  			    case AppConstants.DELETE:
+	  			    case AppConstants.SHOW: {
+						if (optionVal.charAt(action - 1) == '1')
+							return true;
+	  			    }
+				}
+				
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check the hours of dates whether these dates lie in between break hours 
+	 * @param forceReload
+	 * @param onLoad   -  executes command after loading
+	 */
+	public static synchronized boolean canBookAppoinment(Date startTime,Date endTime) {
+		boolean flag=true;
+		Calendar cDate = new GregorianCalendar();
+		cDate.setTime(startTime);
+		if(cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR )
+			flag=false;
+		cDate.setTime(endTime);
+		if(cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR && cDate.get(Calendar.MINUTE)!=0)
+			flag=false;
+		
+		return  flag;
+	} 
+	
 }

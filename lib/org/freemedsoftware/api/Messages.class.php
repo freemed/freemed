@@ -172,7 +172,7 @@ class Messages {
 		} else if ( strpos( $message['for'], ',' ) !== false ) {
 			$msgFor = split( ',', $message['for'] );
 		} else {
-			$msgFor = array( $message['user'] );
+			$msgFor = array( $message['for'] );
 		}
 
 		// Handle message group if one is specified

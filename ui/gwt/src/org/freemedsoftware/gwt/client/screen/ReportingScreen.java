@@ -29,11 +29,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
@@ -86,7 +88,28 @@ public class ReportingScreen extends ScreenInterface {
 		PDF, XLS, HTML, TEXT, XML
 	};
 
+	private static List<ReportingScreen> reportingScreenList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static ReportingScreen getInstance(){
+		ReportingScreen reportingScreen=null; 
+		
+		if(reportingScreenList==null)
+			reportingScreenList=new ArrayList<ReportingScreen>();
+		if(reportingScreenList.size()<AppConstants.MAX_REPORTING_TABS)//creates & returns new next instance of ReportingScreen
+			reportingScreenList.add(reportingScreen=new ReportingScreen());
+		else //returns last instance of ReportingScreen from list 
+			reportingScreen = reportingScreenList.get(AppConstants.MAX_REPORTING_TABS-1);
+		return reportingScreen;
+	}
+	
+	public static boolean removeInstance(ReportingScreen reportingScreen){
+		return reportingScreenList.remove(reportingScreen);
+	}
+	
 	public ReportingScreen() {
+		
+		final boolean canGenerate = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.REPORTING_CATEGORY, AppConstants.REPORTING_ENGINE);
+		
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");
@@ -110,9 +133,11 @@ public class ReportingScreen extends ScreenInterface {
 		reportTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				String uuid = data.get("report_uuid");
-				thisReportUUID = uuid;
-				getReportInformation(uuid);
+				if(canGenerate){
+					String uuid = data.get("report_uuid");
+					thisReportUUID = uuid;
+					getReportInformation(uuid);
+				}
 			}
 		});
 
@@ -419,5 +444,10 @@ public class ReportingScreen extends ScreenInterface {
 		}
 		return p;
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

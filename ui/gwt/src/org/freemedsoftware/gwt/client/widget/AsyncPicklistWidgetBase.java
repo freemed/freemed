@@ -231,6 +231,7 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface implements
 	public void clear() {
 		searchBox.setText("");
 		map.clear();
+		setValue(0);
 	}
 
 	/**
@@ -257,5 +258,12 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface implements
 				return value;
 			}
 		});
+	}
+
+	@Override
+	public void setWidth(String width) {
+		// TODO Auto-generated method stub
+		super.setWidth(width);
+		searchBox.setWidth(width);
 	}
 }

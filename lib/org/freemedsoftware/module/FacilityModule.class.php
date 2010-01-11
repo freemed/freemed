@@ -117,6 +117,71 @@ class FacilityModule extends SupportModule {
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
+        public function GetDefaultFacility(){
+        	//if(true)return HTTP_Session2::get( 'facility_id' );
+        	if(HTTP_Session2::get( 'facility_id' )){
+        		$defaultDFacility['id']=HTTP_Session2::get( 'facility_id' )."";
+        		$defaultDFacility['facility']=HTTP_Session2::get( 'facility_name' );
+        		return $defaultDFacility;
+        	}
+        	
+        	return HTTP_Session2::get( 'facility_name' );
+        }
+        public function SetDefaultFacility($facilityName,$facilityId){
+        	//setcookie("facility_name", $facilityName, time() + 3600, "/");
+        	//setcookie("facility_id", $facilityId, time() + 3600, "/");
+        	if(!HTTP_Session2::get( 'facility_name' )){
+        		HTTP_Session2::set('facility_name', $facilityName);
+        		HTTP_Session2::set('facility_id', $facilityId);
+        	}
+        	return HTTP_Session2::get( 'facility_id' ).HTTP_Session2::get( 'facility_name' );
+        }
+
+
+	// Method: picklist
+	//
+	//	Generate associative array of facility table id to facility
+	//	text based on criteria given.
+	//
+	// Parameters:
+	//
+	//	$string - String containing text parameters.
+	//
+	//	$limit - (optional) Limit number of results. Defaults to 10.
+	//
+	//	$inputlimit - (optional) Lower limit number of digits which
+	//	have to be entered in order for this routine to return a
+	//	valid value. Defaults to 2.
+	//
+	// Returns:
+	//
+	//	Associative array.
+	//	* key - Facility table id key
+	//	* value - Text representing Facility record identifying info.
+	//
+	public function picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
+		$limit = ($_limit < 10) ? 10 : $_limit;
+		if (strlen($string) < $inputlimit) {
+			syslog(LOG_INFO, "under $inputlimit");
+			return false;
+		}
+
+		$string = trim(addslashes( $string ));
+		
+		$query = "SELECT * FROM facility WHERE psrname LIKE '".addslashes($string)."%'".
+			" LIMIT $limit";
+			
+		syslog(LOG_INFO, "PICK| $query");
+		$result = $GLOBALS['sql']->queryAll( $query );
+		if (count($result) < 1) { return array (); }
+		$count = 0;
+		foreach ($result AS $r) {
+			$return[(int)$r['id']] = trim($this->to_text($r));
+		}
+		syslog(LOG_INFO, "picklist| found ".count($return)." results returned");
+		return $return;
+	} // end public function picklist
+
 } // end class FacilityModule
 
 register_module ("FacilityModule");

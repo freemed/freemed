@@ -20,6 +20,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+SOURCE data/schema/mysql/taxonomy.sql
+
 CREATE TABLE IF NOT EXISTS `xmr_definition` (
 	  form_name			VARCHAR (150) NOT NULL
 	, form_description		VARCHAR (250)

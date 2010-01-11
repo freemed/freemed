@@ -1,0 +1,41 @@
+/* $Id$ */
+
+li.mugshot, #mugshot_preview li.mugshot {
+	background: none;
+}
+
+ul.mugshot {
+	list-style-type : none;
+	list-style-image: none;
+	margin : 0;
+	padding : 0;
+}
+
+ul.mugshot li {
+	float : left;
+	border : 1px #cccccc solid;
+	margin : 0.5em;
+	padding : 1em;
+}
+
+#mugshot_preview li.mugshot {
+	border: none;
+	margin: 0;
+	padding: 1em 0 0 0;
+}
+
+.mugshot .previous {
+	display:block;
+	float:right;
+	text-align:right;
+	width:42%;
+	padding-bottom: 10px;
+}
+
+.mugshot .next {
+	display:block;
+	float:left;
+	text-align:left;
+	width:42%;
+	padding-bottom: 10px;
+}

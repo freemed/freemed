@@ -27,7 +27,7 @@ define ('DB_NAME', "<{$name|escape}>"); // database name
 define ('DB_USER', "<{$username|escape}>"); // SQL server username
 define ('DB_PASSWORD', "<{$password|escape}>"); // SQL server password
 define ('PATID_PREFIX', "<{$patientidprefix|escape}>"); // used to generate internal practice ID
-define ('UI', "dojo");	// set default template
+define ('UI', "gwt");	// set default template
 define ('HOST', "<{$host|escape}>"); // host name for this system
 define ('BASE_URL', '/freemed'); // offset (i.e. http://here/package)
 define ('SESSION_PROTECTION', true); // strong session protection?

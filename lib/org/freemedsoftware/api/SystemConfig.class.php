@@ -50,6 +50,26 @@ class SystemConfig {
 		}
 		return $result;
 	} // end method GetAll
+	
+	// Method: GetBySection
+	//
+	// Returns:
+	//
+	//	hashes
+	//
+	public function GetAllSysOptions () {
+		// Perform search
+		$query = "SELECT c_option,c_value FROM config ";
+		
+		$result = $GLOBALS['sql']->queryAll( $query );
+		
+		foreach ( $result AS $r ){
+			$sysOptions[$r['c_option']] = $r['c_value'];
+		}
+		return $sysOptions;
+		
+		//return $result;
+	} // end public function GetValue
 
 	// Method: GetValue
 	//
@@ -65,6 +85,23 @@ class SystemConfig {
 		// Perform search
 		$query = "SELECT c_value FROM config WHERE c_option=".$GLOBALS['sql']->quote( $config );
 		$result = $GLOBALS['sql']->queryOne( $query );
+		return $result;
+	} // end public function GetValue
+
+	// Method: GetBySection
+	//
+	// Parameters:
+	//
+	//	$section - section name
+	//
+	// Returns:
+	//
+	//	Configuration values against provided section.
+	//
+	public function GetBySection ($section) {
+		// Perform search
+		$query = "SELECT * FROM config WHERE c_section=".$GLOBALS['sql']->quote( $section );
+		$result = $GLOBALS['sql']->queryAll( $query );
 		return $result;
 	} // end public function GetValue
 
@@ -92,6 +129,7 @@ class SystemConfig {
 	//	$val - Configuration value
 	//
 	function SetValue ( $var, $val ) {
+		freemed::acl_enforce( 'admin', 'config' );
 		if (! freemed::acl ( 'admin', 'config' ) ) { 
 			syslog(LOG_INFO, "Attempted SystemConfig.SetValue without authorization");
 			return false;
@@ -145,6 +183,8 @@ class SystemConfig {
 
 		return true;
 	} // end method SetValues
+
+
 
 } // end class Config
 

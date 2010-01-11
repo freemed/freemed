@@ -97,7 +97,7 @@ public class LoginDialog extends DialogBox {
 		userLogin.setText("");
 		userLogin.setAccessKey('u');
 		userLogin.setTabIndex(1);
-
+		
 		final Label passwordLabel = new Label("password");
 		absolutePanel.add(passwordLabel, 25, 100);
 		passwordLabel.setStylePrimaryName("gwt-Label-RAlign");
@@ -273,6 +273,8 @@ public class LoginDialog extends DialogBox {
 		});
 
 		this.setWidget(simplePanel);
+		
+		userLogin.setFocus(true);//set focus to user name input box
 	}
 
 	public void attemptLogin() {
@@ -305,6 +307,22 @@ public class LoginDialog extends DialogBox {
 		}
 	}
 
+	public void setFocusToUserField(){
+		try {
+			userLogin.setFocus(true);
+		} catch (Exception e) {
+			GWT.log("Caught exception: ", e);
+		}		
+	}
+	
+	public void setFocusToPasswordField(){
+		try {
+			loginPassword.setFocus(true);
+		} catch (Exception e) {
+			GWT.log("Caught exception: ", e);
+		}		
+	}
+	
 	public void show() {
 		super.show();
 		try {
@@ -324,5 +342,19 @@ public class LoginDialog extends DialogBox {
 
 	public String getLanguageSelected() {
 		return languageList.getWidgetValue();
+	}
+	
+	public String getSelectedFacilityName() {
+		String facilityName = null;
+		if(facilityList!=null && facilityList.getItemCount()>0)
+			facilityName = facilityList.getItemText(facilityList.getSelectedIndex());
+		return facilityName;
+	}
+	public String getSelectedFacilityValue() {
+		return facilityList.getWidgetValue();
+	}
+
+	public String getLoggedInUser() {
+		return userLogin.getText();
 	}
 }

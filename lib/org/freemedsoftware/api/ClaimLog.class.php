@@ -82,6 +82,7 @@ class ClaimLog {
 	//	Array of associative arrays containing aging information.
 	//
 	function AgingReportQualified ( $criteria ) {
+		freemed::acl_enforce( 'financial', 'summary' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 
 		foreach ($criteria AS $k => $v) {
@@ -737,7 +738,7 @@ ORDER BY
 	//	Array.
 	//
 	public function RebillDistinctPayers ( ) {
-		$query = "SELECT DISTINCT i,id, i.insconame FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE p.procbalcurrent > 0 AND p.procbilled = 1 ORDER BY i.insconame";
+		$query = "SELECT DISTINCT i.id, i.insconame FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE p.procbalcurrent > 0 AND p.procbilled = 1 ORDER BY i.insconame";
 		$result = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $result AS $r ) {
 			$return[$r['id'] + 0] = $r['insconame'];

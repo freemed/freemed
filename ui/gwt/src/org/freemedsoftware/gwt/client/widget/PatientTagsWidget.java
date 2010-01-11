@@ -35,10 +35,10 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientTagSearchScreen;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -67,19 +67,19 @@ public class PatientTagsWidget extends WidgetInterface {
 
 	protected final FlowPanel flowPanel;
 
-	protected final TextBox wEntry;
+	protected final PatientTagWidget wEntry;
 
 	public PatientTagsWidget() {
 		flowPanel = new FlowPanel();
 		initWidget(flowPanel);
 
-		wEntry = new TextBox();
+		wEntry = new PatientTagWidget();
 		flowPanel.add(wEntry);
-		wEntry.addChangeHandler(new ChangeHandler() {
+		wEntry.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
-			public void onChange(ChangeEvent evt) {
-				TextBox t = (TextBox) evt.getSource();
-				if (t.getText().length() > 2) {
+			public void onValueChange(ValueChangeEvent<String> event) {
+				PatientTagWidget t = (PatientTagWidget) event.getSource();
+				if (t.getTextEntryWidget().getText().length() > 2) {
 					addTag(t.getText());
 				}
 			}
@@ -93,7 +93,7 @@ public class PatientTagsWidget extends WidgetInterface {
 	 */
 	public void addTag(final String tag) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			wEntry.setText("");
+			wEntry.clear();
 			addTagToDisplay(tag);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(patientId), tag };
@@ -115,7 +115,7 @@ public class PatientTagsWidget extends WidgetInterface {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (r != null) {
-								wEntry.setText("");
+								wEntry.clear();
 								addTagToDisplay(tag);
 								CurrentState.getToaster().addItem(
 										"PatientTags", "Added tag.",
@@ -135,7 +135,7 @@ public class PatientTagsWidget extends WidgetInterface {
 		} else {
 			getProxy().CreateTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
-					wEntry.setText("");
+					wEntry.clear();
 					addTagToDisplay(tag);
 					CurrentState.getToaster().addItem("PatientTags",
 							"Added tag.", Toaster.TOASTER_INFO);

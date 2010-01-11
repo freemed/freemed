@@ -92,6 +92,24 @@ class Authorizations extends EMRModule {
 		$data['authdtmod'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	}
+	
+	// Method: GetAllAuthorizations
+	//
+	//	Get list of Authorizations for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAllAuthorizations ( $patient) {
+		$q = "SELECT a.* from authorizations a WHERE a.authpatient = ".$GLOBALS['sql']->quote( $patient );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetCoverages
 
 } // end class Authorizations
 

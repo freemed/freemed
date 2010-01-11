@@ -33,13 +33,14 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
@@ -49,6 +50,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -71,6 +73,24 @@ public class PatientSearchScreen extends ScreenInterface {
 
 	protected TextBox wFieldValue = null;
 
+	private static List<PatientSearchScreen> patientSearchScreenList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static PatientSearchScreen getInstance(){
+		PatientSearchScreen patientSearchScreen=null; 
+		
+		if(patientSearchScreenList==null)
+			patientSearchScreenList=new ArrayList<PatientSearchScreen>();
+		if(patientSearchScreenList.size()<AppConstants.MAX_SEARCH_TABS)//creates & returns new next instance of PatientSearchScreen
+			patientSearchScreenList.add(patientSearchScreen=new PatientSearchScreen());
+		else //returns last instance of PatientSearchScreen from list 
+			patientSearchScreen = patientSearchScreenList.get(AppConstants.MAX_SEARCH_TABS-1);
+		return patientSearchScreen;
+	}  
+	
+	public static boolean removeInstance(PatientSearchScreen patientSearchScreen){
+		return patientSearchScreenList.remove(patientSearchScreen);
+	}
+	
 	public PatientSearchScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -90,7 +110,10 @@ public class PatientSearchScreen extends ScreenInterface {
 				// Log.debug("Patient value = " + val.toString());
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
-						spawnPatientScreen(val, wSmartSearch.getText());
+						String ptInfo=wSmartSearch.getText();
+						if(ptInfo.indexOf("]")!=-1)
+							ptInfo = ptInfo.substring(0, ptInfo.indexOf("["));
+						spawnPatientScreen(val, ptInfo);
 						clearForm();
 					}
 				} catch (Exception e) {
@@ -109,24 +132,33 @@ public class PatientSearchScreen extends ScreenInterface {
 		flexTable.setWidget(1, 1, wFieldName);
 		wFieldName.setVisibleItemCount(1);
 		wFieldName.addItem("Internal ID", "ptid");
-		wFieldName.addItem("Social Security Number", "ssn");
-		wFieldName.addItem("Drivers License", "dmv");
-		wFieldName.addItem("Email Address", "email");
+		wFieldName.addItem("Social Security Number", "ptssn");
+		wFieldName.addItem("Drivers License", "ptdmv");
+		wFieldName.addItem("Email Address", "ptemail");
 		wFieldName.addItem("City", "city");
-		wFieldName.addItem("Zip/Postal Code", "zip");
-		wFieldName.addItem("Home Phone", "hphone");
-		wFieldName.addItem("Work Phone", "wphone");
+		wFieldName.addItem("Zip/Postal Code", "ptzip");
+		wFieldName.addItem("Home Phone", "pthphone");
+		wFieldName.addItem("Work Phone", "ptwphone");
 		wFieldName.addItem("Age", "age");
 
 		wFieldValue = new TextBox();
 		flexTable.setWidget(2, 1, wFieldValue);
 		wFieldValue.setWidth("100%");
-		wFieldValue.addChangeHandler(new ChangeHandler() {
+		wFieldValue.addKeyUpHandler(new KeyUpHandler(){
+
+			@Override
+			public void onKeyUp(KeyUpEvent arg0) {
+				// TODO Auto-generated method stub
+				refreshSearch();
+				
+			}});
+		
+	/*	wFieldValue.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				refreshSearch();
+				
 			}
-		});
+		});*/
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
@@ -147,8 +179,7 @@ public class PatientSearchScreen extends ScreenInterface {
 				try {
 					final Integer patientId = new Integer(data.get("id"));
 					final String patientName = data.get("last_name") + ", "
-							+ data.get("first_name") + " ["
-							+ data.get("date_of_birth") + "] "
+							+ data.get("first_name") 
 							+ data.get("patient_id");
 					spawnPatientScreen(patientId, patientName);
 				} catch (Exception e) {
@@ -157,6 +188,8 @@ public class PatientSearchScreen extends ScreenInterface {
 			}
 		});
 
+		//+ " ["
+		//+ data.get("date_of_birth") + "] "
 		final VerticalPanel stPanel = new VerticalPanel();
 		stPanel.setWidth("100%");
 		stPanel.add(sortableTable);
@@ -172,14 +205,21 @@ public class PatientSearchScreen extends ScreenInterface {
 		// Set visible focus *after* this is shown, otherwise it won't focus.
 		try {
 			wSmartSearch.setFocus(true);
+			onFocus();
 		} catch (Exception e) {
 			GWT.log("Caught exception: ", e);
 		}
 	}
 
 	public void onFocus() {
-		super.onFocus();
-		wSmartSearch.getTextEntryWidget().setFocus(true);
+		Timer timer = new Timer() {
+			public void run() {
+				wSmartSearch.setFocus(true);
+			}
+		};
+		// Run initial polling ...
+		timer.schedule(500);
+		timer.run();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -223,11 +263,14 @@ public class PatientSearchScreen extends ScreenInterface {
 												.getText()),
 												"HashMap<String,String>[]");
 								if (result.length > 0) {
+									
+									//Window.alert(result.length+"Result length");
 									sortableTableEmptyLabel.setVisible(false);
 								} else {
 									sortableTableEmptyLabel.setVisible(true);
 								}
 								sortableTable.loadData(result);
+							
 							} else {
 								Window.alert(response.toString());
 								sortableTableEmptyLabel.setVisible(true);
@@ -289,5 +332,10 @@ public class PatientSearchScreen extends ScreenInterface {
 		wSmartSearch.clear();
 		wFieldValue.setText("");
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

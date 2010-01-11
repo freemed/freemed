@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -55,6 +56,24 @@ public class SupportDataScreen extends ScreenInterface {
 
 	protected CustomTable sortableTable = null;
 
+	private static List<SupportDataScreen> supportDataScreenList=null;
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static SupportDataScreen getInstance(){
+		SupportDataScreen supportDataScreen=null; 
+		
+		if(supportDataScreenList==null)
+			supportDataScreenList=new ArrayList<SupportDataScreen>();
+		if(supportDataScreenList.size()<AppConstants.MAX_SUPPORTDATA_TABS)//creates & returns new next instance of SupportDataScreen
+			supportDataScreenList.add(supportDataScreen=new SupportDataScreen());
+		else //returns last instance of SupportDataScreen from list 
+			supportDataScreen = supportDataScreenList.get(AppConstants.MAX_SUPPORTDATA_TABS-1);
+		return supportDataScreen;
+	}
+	
+	public static boolean removeInstance(SupportDataScreen supportDataScreen){
+		return supportDataScreenList.remove(supportDataScreen);
+	}
+	
 	public SupportDataScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -167,5 +186,10 @@ public class SupportDataScreen extends ScreenInterface {
 					});
 		}
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

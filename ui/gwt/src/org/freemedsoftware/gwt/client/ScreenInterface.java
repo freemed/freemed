@@ -31,7 +31,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
 
-	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
 
 	public ScreenInterface() {
 		super();
@@ -73,8 +72,11 @@ public abstract class ScreenInterface extends WidgetInterface {
 	 */
 	public void closeScreen() {
 		TabPanel t = CurrentState.getTabPanel();
-		t.selectTab(t.getWidgetIndex(this) - 1);
-		t.remove(t.getWidgetIndex(this));
+		if(t.getWidgetIndex(this)!=-1){
+			t.selectTab(t.getWidgetIndex(this) - 1);
+			t.remove(t.getWidgetIndex(this));
+		}
+		this.removeFromParent();
 	}
 
 }

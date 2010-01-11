@@ -87,6 +87,8 @@ BEGIN
 
 	#----- Remove triggers
 	DROP TRIGGER procrec_Delete;
+	DROP TRIGGER procrec_PreInsert;
+	DROP TRIGGER procrec_PreUpdate;
 	DROP TRIGGER procrec_Insert;
 	DROP TRIGGER procrec_Update;
 
@@ -123,6 +125,79 @@ CREATE TRIGGER procrec_Delete
 	END;
 //
 
+CREATE TRIGGER procrec_PreInsert
+	BEFORE INSERT ON procrec
+	FOR EACH ROW BEGIN
+		# Set initial charges and balance
+		SET NEW.proccharges = NEW.procbalorig;
+		SET NEW.procbalcurrent = NEW.procbalorig;
+		SET NEW.procamtpaid = 0;
+		SET NEW.procbilled = 0;
+
+		# Figure out current coverage "type"
+		SET NEW.proccurcovtp = 0;
+		IF NEW.proccov4 > 0 THEN
+			SET NEW.proccurcovtp = 4;
+		END IF;
+		IF NEW.proccov3 > 0 THEN
+			SET NEW.proccurcovtp = 3;
+		END IF;
+		IF NEW.proccov2 > 0 THEN
+			SET NEW.proccurcovtp = 2;
+		END IF;
+		IF NEW.proccov1 > 0 THEN
+			SET NEW.proccurcovtp = 1;
+		END IF;
+
+		IF NEW.proccurcovtp = 1 THEN
+			SET NEW.proccurcovid = NEW.proccov1;
+		ELSEIF NEW.proccurcovtp = 2 THEN
+			SET NEW.proccurcovid = NEW.proccov2;
+		ELSEIF NEW.proccurcovtp = 3 THEN
+			SET NEW.proccurcovid = NEW.proccov3;
+		ELSEIF NEW.proccurcovtp = 4 THEN
+			SET NEW.proccurcovid = NEW.proccov4;
+		END IF;
+	END;
+//
+
+CREATE TRIGGER procrec_PreUpdate
+	BEFORE UPDATE ON procrec
+	FOR EACH ROW BEGIN
+		# Set charges and balance
+		SET NEW.procbalcurrent = NEW.procbalorig;
+		SET NEW.procbilled = 0;
+
+		# Figure out current coverage "type"
+		SET NEW.proccurcovtp = 0;
+		IF NEW.proccov4 > 0 THEN
+			SET NEW.proccurcovtp = 4;
+		END IF;
+		IF NEW.proccov3 > 0 THEN
+			SET NEW.proccurcovtp = 3;
+		END IF;
+		IF NEW.proccov2 > 0 THEN
+			SET NEW.proccurcovtp = 2;
+		END IF;
+		IF NEW.proccov1 > 0 THEN
+			SET NEW.proccurcovtp = 1;
+		END IF;
+
+		IF NEW.proccurcovtp = 1 THEN
+			SET NEW.proccurcovid = NEW.proccov1;
+		ELSEIF NEW.proccurcovtp = 2 THEN
+			SET NEW.proccurcovid = NEW.proccov2;
+		ELSEIF NEW.proccurcovtp = 3 THEN
+			SET NEW.proccurcovid = NEW.proccov3;
+		ELSEIF NEW.proccurcovtp = 4 THEN
+			SET NEW.proccurcovid = NEW.proccov4;
+		END IF;
+
+		# Save old record for authorization data (TODO?)
+		#SET NEW.procauthsaved = OLD.procauth;
+	END;
+//
+
 CREATE TRIGGER procrec_Insert
 	AFTER INSERT ON procrec
 	FOR EACH ROW BEGIN
@@ -149,6 +224,46 @@ CREATE TRIGGER procrec_Insert
 		IF NEW.procdiag4 > 0 THEN
 			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdt );
 		END IF;
+
+		# Add to ledger
+		INSERT INTO payrec (
+				  payrecdtadd
+				, payrecdtmod
+				, payrecpatient
+				, payrecdt
+				, payreccat
+				, payrecproc
+				, payrecsource
+				, payreclink
+				, payrectype
+				, payrecnum
+				, payrecamt
+				, payrecdescrip
+				, payreclock
+			) VALUES (
+				  NOW()
+				, '0000-00-00'
+				, NEW.procpatient
+				, NEW.procdt
+				, 5
+				, NEW.id
+				, NEW.proccurcovtp
+				, NEW.proccurcovid
+				, 0
+				, ''
+				, NEW.procbalorig
+				, NEW.proccomment
+				, 'unlocked'
+			);
+
+		# Update ptdiagX fields
+		UPDATE patient SET
+				  ptdiag1 = NEW.procdiag1
+				, ptdiag2 = NEW.procdiag2
+				, ptdiag3 = NEW.procdiag3
+				, ptdiag4 = NEW.procdiag4
+			WHERE
+				id = NEW.procpatient;
 
 	END;
 //
@@ -184,6 +299,36 @@ CREATE TRIGGER procrec_Update
 			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdt );
 		END IF;
 
+		# Update payment record
+		UPDATE payrec SET
+				  payrecdtmod = NOW()
+				, payrecdt = NEW.procdt
+				, payrecsource = NEW.proccurcovtp
+				, payreclink = NEW.proccurcovid
+				, payrectype = 0
+				, payrecnum = ""
+				, payrecamt = NEW.procbalorig
+				, payrecdescrip = NEW.proccomment
+				, payreclock = "unlocked"
+			WHERE
+				    payrecproc = NEW.id
+				AND payreccat = 5
+				AND payrectype = 0;
+
+		# Update ptdiagX fields
+		UPDATE patient SET
+				  ptdiag1 = NEW.procdiag1
+				, ptdiag2 = NEW.procdiag2
+				, ptdiag3 = NEW.procdiag3
+				, ptdiag4 = NEW.procdiag4
+			WHERE
+				id = NEW.procpatient;
+
+		# Update authorization
+		IF NEW.procauth <> OLD.procauth THEN
+			# TODO: make this work
+			SET @a = 1;
+		END IF;
 	END;
 //
 

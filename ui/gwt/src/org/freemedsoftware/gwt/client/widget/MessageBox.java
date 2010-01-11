@@ -52,6 +52,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MessageBox extends WidgetInterface {
 
@@ -65,6 +66,8 @@ public class MessageBox extends WidgetInterface {
 
 	protected Popup popupMessageView;
 
+	private PushButton showMessagesButton;
+	
 	public MessageBox() {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
@@ -77,14 +80,15 @@ public class MessageBox extends WidgetInterface {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 
-		final PushButton showMessagesButton = new PushButton("", "");
-		showMessagesButton.getUpFace().setImage(
-				new Image("resources/images/messaging.32x32.png"));
-		showMessagesButton.getDownFace().setImage(
-				new Image("resources/images/messaging.32x32.png"));
+//		showMessagesButton = new PushButton("", "");
+//		showMessagesButton.setStyleName("gwt-simple-button");
+//		showMessagesButton.getUpFace().setImage(
+//				new Image("resources/images/messaging.16x16.png"));
+//		showMessagesButton.getDownFace().setImage(
+//				new Image("resources/images/messaging.16x16.png"));
 
 		verticalPanel.add(horizontalPanel);
-		horizontalPanel.add(showMessagesButton);
+//		horizontalPanel.add(showMessagesButton);
 
 		verticalPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
@@ -102,6 +106,8 @@ public class MessageBox extends WidgetInterface {
 					if ((col == 0) || (col == 2)) {
 						MessageView messageView = new MessageView();
 						showMessage(messageId, messageView);
+						messageView.setMsgFrom(data.get("from_user"));
+						messageView.setMsgDate(data.get("stamp"));
 						popupMessageView = new Popup();
 						popupMessageView.setNewWidget(messageView);
 						messageView.setOnClose(new Command() {
@@ -121,15 +127,15 @@ public class MessageBox extends WidgetInterface {
 		wMessages.setVisible(false);
 		// Click listener for both: the button and the label
 
-		showMessagesButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				if (wMessages.isVisible() == false)
-					wMessages.setVisible(true);
-				else
-					wMessages.setVisible(false);
-			}
-		});
+//		showMessagesButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent evt) {
+//				if (wMessages.isVisible() == false)
+//					wMessages.setVisible(true);
+//				else
+//					wMessages.setVisible(false);
+//			}
+//		});
 		messageCountLabel.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -146,6 +152,27 @@ public class MessageBox extends WidgetInterface {
 		retrieveData("");
 	}
 
+	public Widget getDefaultIcon(){
+		if(showMessagesButton==null){
+			showMessagesButton = new PushButton("", "");
+			showMessagesButton.setStyleName("gwt-simple-button");
+			showMessagesButton.getUpFace().setImage(
+					new Image("resources/images/messaging.16x16.png"));
+			showMessagesButton.getDownFace().setImage(
+					new Image("resources/images/messaging.16x16.png"));
+			showMessagesButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					if (wMessages.isVisible() == false)
+						wMessages.setVisible(true);
+					else
+						wMessages.setVisible(false);
+				}
+			});
+		}
+		return showMessagesButton;
+	} 
+	
 	public void showMessage(Integer messageId, MessageView messageView) {
 		final MessageView view = messageView;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -180,6 +207,10 @@ public class MessageBox extends WidgetInterface {
 							if (r != null) {
 								view.setText(r.get("msgtext").replace("\\", "")
 										.replace("\n", "<br/>"));
+								view.setMsgFromId(Integer.parseInt(r.get("msgby")));
+								view.setMsgSubject(r.get("msgsubject"));
+								view.setMsgPatientId(Integer.parseInt(r.get("msgpatient")));
+								view.setMsgBody(r.get("msgtext"));
 							}
 						} else {
 						}
@@ -193,7 +224,7 @@ public class MessageBox extends WidgetInterface {
 		}
 	}
 
-	protected void retrieveData(String searchtag) {
+	public void retrieveData(String searchtag) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Runs in STUBBED MODE => Feed with Sample Data
 			HashMap<String, String>[] sampleData = getSampleData();

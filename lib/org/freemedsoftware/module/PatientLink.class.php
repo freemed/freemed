@@ -25,7 +25,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 
 class PatientLink extends SupportModule {
 
-	var $MODULE_NAME = "Patient Tag";
+	var $MODULE_NAME = "Patient Link";
 	var $MODULE_VERSION = "0.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "28e6a139-9d8d-4532-b054-43fe9d0aae01";
@@ -38,7 +38,6 @@ class PatientLink extends SupportModule {
 	var $order_field = "stamp";
 	var $patient_field = "srcpatient";
 
-	//var $widget_hash = "##tag## (##datecreate## - ##dateexpire##)";
 	var $widget_hash = "##linktype## ##linkdetails##";
 
 	public function __construct ( ) {

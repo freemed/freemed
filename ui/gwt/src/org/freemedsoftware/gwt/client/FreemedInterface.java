@@ -24,6 +24,7 @@
 
 package org.freemedsoftware.gwt.client;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
@@ -36,6 +37,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -91,9 +93,11 @@ public class FreemedInterface implements EntryPoint {
 								} else {
 									// Force login loop
 									loginDialog.center();
+									loginDialog.setFocusToUserField();
 								}
 							} else {
 								loginDialog.center();
+								loginDialog.setFocusToUserField();
 							}
 						} else {
 							Window.alert(response.toString());
@@ -140,6 +144,7 @@ public class FreemedInterface implements EntryPoint {
 
 	public void resume() {
 		JsonUtil.debug("resume()");
+		Util.setFacilityInSession(loginDialog.getSelectedFacilityName(),loginDialog.getSelectedFacilityValue());
 		if (!active) {
 			JsonUtil.debug("create main screen object");
 			mainScreen = new MainScreen();
@@ -152,8 +157,15 @@ public class FreemedInterface implements EntryPoint {
 			RootPanel.get("rootPanel").add(mainScreen);
 			JsonUtil.debug("set freemed interface properly");
 			mainScreen.setFreemedInterface(this);
+			CurrentState.setUserConfig("user", Cookies.getCookie("user"));
 			active = true;
+//			mainScreen.setFacility(loginDialog.getSelectedFacilityName());
+//			CurrentState.assignDefaultFacility(Integer.parseInt(loginDialog.getSelectedFacilityValue()));
 		} else {
+			//mainScreen.setFacilityInfo(CurrentState.getFreemedInterface().loginDialog.getSelectedFacilityName());
+			if(!(CurrentState.getDefaultUser().length()>0 && CurrentState.getDefaultUser().equalsIgnoreCase(loginDialog.getLoggedInUser())))
+				Util.closeAllTabs();
+			mainScreen.refreshMainScreen();
 			try {
 				UIObject.setVisible(RootPanel.get("loginScreenOuter")
 						.getElement(), false);

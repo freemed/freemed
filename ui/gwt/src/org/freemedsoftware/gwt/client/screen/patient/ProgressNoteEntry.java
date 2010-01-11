@@ -24,13 +24,16 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
 import org.freemedsoftware.gwt.client.widget.CustomTextArea;
@@ -70,6 +73,25 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 	protected String patientIdName = "pnotespat";
 
+	private static List<ProgressNoteEntry> ProgressNoteEntryList=null;
+	
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static ProgressNoteEntry getInstance(){
+		ProgressNoteEntry progressNoteEntry=null; 
+		if(ProgressNoteEntryList==null)
+			ProgressNoteEntryList=new ArrayList<ProgressNoteEntry>();
+		if(ProgressNoteEntryList.size()<AppConstants.MAX_PATIENT_PROGRESS_NOTE_TABS)//creates & returns new next instance of ProgressNoteEntry
+			ProgressNoteEntryList.add(progressNoteEntry=new ProgressNoteEntry());
+		else{ //returns last instance of ProgressNoteEntry from list 
+			progressNoteEntry = ProgressNoteEntryList.get(AppConstants.MAX_PATIENT_PROGRESS_NOTE_TABS-1);
+		}	
+		return progressNoteEntry;
+	}
+	
+	public static boolean removeInstance(ProgressNoteEntry progressNoteEntry){
+		return ProgressNoteEntryList.remove(progressNoteEntry);
+	}
+	
 	public ProgressNoteEntry() {
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -307,5 +329,11 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		I.setHTML(new String(""));
 		E.setHTML(new String(""));
 		R.setHTML(new String(""));
+	}
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
 	}
 }

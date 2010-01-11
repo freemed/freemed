@@ -81,7 +81,10 @@ class PatientModule extends SupportModule {
 		'ptrace',
 		'ptreligion',
 		'ptarchive',
-		'iso'
+		'iso',
+		'ptblood',
+		'ptbudg',
+		'ptbilltype'
 	);
 	var $address_keys = array (
 		'patient',
@@ -121,6 +124,12 @@ class PatientModule extends SupportModule {
 			}
 		}
 	} // end method add_pre
+
+	protected function mod_pre ( &$data ) {
+	} // end method mod_pre
+
+	protected function del_pre ( &$data ) {
+	} // end method del_pre
 
 	// Method: GetAddresses
 	//
@@ -198,6 +207,23 @@ class PatientModule extends SupportModule {
 		}
 		return true;
 	} // end method SetAddresses
+
+	// Method: DeleteAddresses
+	//
+	//	Delete all addresses associated with a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function DeleteAddresses ( $patient ) {
+		$q = "delete FROM patient_address WHERE patient = ". ( $patient + 0 );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method DeleteAddresses
 
 	// Method: Search
 	//

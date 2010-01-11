@@ -54,7 +54,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 	protected static String helpprefix = "Help for";
 
 	public enum WidgetType {
-		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER
+		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG
 	};
 
 	/**
@@ -187,6 +187,8 @@ public class SimpleUIBuilder extends WidgetInterface {
 			w = new PatientWidget();
 		} else if (type == WidgetType.COLOR) {
 			w = new CustomColorPicker();
+		} else if (type == WidgetType.DRUG) {
+			w = new DrugWidget();
 		} else if (type == WidgetType.DELIMITER) {
 			w = new Label(title);
 			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
@@ -276,6 +278,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		if (widget.compareToIgnoreCase("DELIMITER") == 0) {
 			return WidgetType.DELIMITER;
 		}
+		if (widget.compareToIgnoreCase("DRUG") == 0) {
+			return WidgetType.DRUG;
+		}
 
 		// By default, return text
 
@@ -344,6 +349,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		if (w instanceof PatientWidget) {
 			return ((PatientWidget) w).getValue().toString();
 		}
+		if (w instanceof DrugWidget) {
+			return ((DrugWidget) w).getStoredValue();
+		}
 		return null;
 	}
 
@@ -366,7 +374,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 				((CustomListBox) w).setWidgetValue(value);
 			}
 			if (w instanceof SupportModuleWidget) {
-				((SupportModuleWidget) w).setValue(new Integer(value));
+				((SupportModuleWidget) w).setValue(Integer.parseInt(value));
 			}
 			if (w instanceof SupportModuleMultipleChoiceWidget) {
 				((SupportModuleMultipleChoiceWidget) w)
@@ -376,7 +384,10 @@ public class SimpleUIBuilder extends WidgetInterface {
 				((CustomColorPicker) w).setValue(value);
 			}
 			if (w instanceof PatientWidget) {
-				((PatientWidget) w).setValue(new Integer(value));
+				((PatientWidget) w).setValue(Integer.parseInt(value));
+			}
+			if (w instanceof DrugWidget) {
+				((DrugWidget) w).setValue(value);
 			}
 		}
 	}

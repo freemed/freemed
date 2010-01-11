@@ -57,7 +57,7 @@ public class SummaryScreen extends PatientScreenInterface {
 
 	protected PatientTagsWidget patientTags = null;
 
-	protected Image photoId = null;
+//	protected Image photoId = null;
 
 	public SummaryScreen() {
 		final FlexTable flexTable = new FlexTable();
@@ -98,6 +98,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		final Label clinicalInformationLabel = new Label("Clinical Information");
 		clinicalInformationLabel
 				.setStylePrimaryName("freemed-PatientSummaryHeading");
+		clinicalInformationLabel.setWidth("78%");
 		verticalPanel_1.add(clinicalInformationLabel);
 		final SimplePanel cClinicalInformation = new SimplePanel();
 		cClinicalInformation
@@ -115,26 +116,28 @@ public class SummaryScreen extends PatientScreenInterface {
 		addChildWidget(patientTags);
 
 		final Image tagsLabel = new Image();
-		tagsLabel.setUrl("resources/images/dashboard.32x32.png");
+		tagsLabel.setUrl("resources/images/dashboard.16x16.png");
 		tagsLabel.setTitle("Patient Tags");
 		clinicalInformationTabPanel.add(clinicalTagsPanel, tagsLabel);
 
+		/*
 		final SimplePanel clinicalPhotoIdPanel = new SimplePanel();
 		final Image photoIdLabel = new Image();
-		photoIdLabel.setUrl("resources/images/patient.32x32.png");
+		photoIdLabel.setUrl("resources/images/patient.16x16.png");
 		photoIdLabel.setTitle("Photo Identification");
 		photoId = new Image();
 		photoId.setWidth("230px");
 		clinicalPhotoIdPanel.add(photoId);
 		clinicalInformationTabPanel.add(clinicalPhotoIdPanel, photoIdLabel);
-
+		*/
+		
 		final SimplePanel clinicalMedicationsPanel = new SimplePanel();
 		recentMedicationsList = new RecentMedicationsList();
 		clinicalMedicationsPanel.add(recentMedicationsList);
 		addChildWidget(recentMedicationsList);
 
 		final Image medicationsLabel = new Image();
-		medicationsLabel.setUrl("resources/images/rx_prescriptions.32x32.png");
+		medicationsLabel.setUrl("resources/images/rx_prescriptions.16x16.png");
 		medicationsLabel.setTitle("Medications");
 		clinicalInformationTabPanel.add(clinicalMedicationsPanel,
 				medicationsLabel);
@@ -145,7 +148,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		addChildWidget(recentAllergiesList);
 
 		final Image allergiesLabel = new Image();
-		allergiesLabel.setUrl("resources/images/allergy.32x32.png");
+		allergiesLabel.setUrl("resources/images/allergy.16x16.png");
 		allergiesLabel.setTitle("Allergies");
 		clinicalInformationTabPanel.add(clinicalAllergiesPanel, allergiesLabel);
 
@@ -183,11 +186,13 @@ public class SummaryScreen extends PatientScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Don't populate
 		} else {
+			/*
 			photoId
 					.setUrl(Util
 							.getJsonRequest(
 									"org.freemedsoftware.module.PhotographicIdentification.GetPhotoID",
 									new String[] { patientId.toString() }));
+			*/
 		}
 
 		try {
@@ -202,6 +207,10 @@ public class SummaryScreen extends PatientScreenInterface {
 		} catch (Exception ex) {
 			JsonUtil.debug("Exception in problemList: " + ex.toString());
 		}
+	}
+	
+	public void setPatientId(int patientId){
+		problemList.setPatientId(patientId);
 	}
 
 }

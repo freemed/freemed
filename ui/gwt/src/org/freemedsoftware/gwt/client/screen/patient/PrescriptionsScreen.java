@@ -24,13 +24,16 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.DrugWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
@@ -60,6 +63,25 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 	final SupportModuleWidget wQuantity = new SupportModuleWidget(
 			"DrugQuantityQualifiers");
 
+	private static List<PrescriptionsScreen> prescriptionsScreenList=null;
+	
+	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	public static PrescriptionsScreen getInstance(){
+		PrescriptionsScreen prescriptionsScreen=null; 
+		if(prescriptionsScreenList==null)
+			prescriptionsScreenList=new ArrayList<PrescriptionsScreen>();
+		if(prescriptionsScreenList.size()<AppConstants.MAX_PATIENT_PRESCRIPTOIN_TABS)//creates & returns new next instance of PrescriptionsScreen
+			prescriptionsScreenList.add(prescriptionsScreen=new PrescriptionsScreen());
+		else{ //returns last instance of PrescriptionsScreen from list 
+			prescriptionsScreen = prescriptionsScreenList.get(AppConstants.MAX_PATIENT_PRESCRIPTOIN_TABS-1);
+		}	
+		return prescriptionsScreen;
+	}
+	
+	public static boolean removeInstance(PrescriptionsScreen prescriptionsScreen){
+		return prescriptionsScreenList.remove(prescriptionsScreen);
+	}
+	
 	public PrescriptionsScreen() {
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
@@ -236,5 +258,10 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 	public void resetForm() {
 		// TODO
 	}
-
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }

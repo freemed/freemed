@@ -46,9 +46,9 @@ public class Popup extends PopupPanel {
 
 	protected final VerticalPanel verticalPanel = new VerticalPanel();
 
-	protected Integer widthmodifier = 4;
+	protected Integer widthmodifier = 3;
 
-	protected Integer heightmodifier = 3;
+	protected Integer heightmodifier =4;
 
 	protected Integer widthoffset = 0;
 
@@ -64,6 +64,7 @@ public class Popup extends PopupPanel {
 	}
 
 	public void initialize() {
+		this.setStyleName("freemed-PopupPanel");
 		sPanelInner.setStylePrimaryName("freemed-Popup-sPanelInner");
 		sPanelOuter.add(sPanelInner);
 		sPanelOuter.setStylePrimaryName("freemed-Popup-sPanelOuter");

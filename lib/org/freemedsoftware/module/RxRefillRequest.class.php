@@ -37,9 +37,10 @@ class RxRefillRequest extends EMRModule {
 	var $table_name = 'rxrefillrequest';
 	var $patient_field = 'patient';
 	var $order_field = 'stamp';
-
+	
+	// 	'stamp' - removed and allowed to set the default 
+	//  will set to the current timestamp     
 	var $variables = array (
-		'stamp',
 		'patient',
 		'provider',
 		'rxorig',
@@ -71,7 +72,16 @@ class RxRefillRequest extends EMRModule {
 	//	Array of hashes.
 	//
 	public function GetAll ( ) {
-		$query = "SELECT * FROM ".$this->table_name." ORDER BY stamp DESC";
+		freemed::acl_enforce( 'emr', 'search' );
+		$query = "select a.stamp as stamp, c.username as user, 
+          concat(b.ptlname, ' ', b.ptmname, ' ', b.ptfname) as patient, 
+          a.provider, a.rxorig as rxorig, a.note as note,a.approved as approved, 
+          a.locked as locked, a.id as id 
+          from " . $this->table_name . " as a, 
+          patient as b, 
+          user as c 
+          where a.patient = b.id and c.id = a.user ORDER BY stamp DESC";
+		
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetAll
 

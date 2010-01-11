@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
@@ -388,27 +389,31 @@ public class PatientProblemList extends WidgetInterface {
 	}
 
 	private void createSummaryTable(Widget tab, String criteria) {
+		final boolean canModify = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.NEW_PATIENT);
 		CustomTable t = new CustomTable();
-		t.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
-			public Widget setColumn(String columnName,
-					HashMap<String, String> data) {
-				// Render only action column, otherwise skip renderer
-				if (columnName.compareToIgnoreCase("action") != 0) {
-					return null;
+		if(canModify){
+			t.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+				public Widget setColumn(String columnName,
+						HashMap<String, String> data) {
+					// Render only action column, otherwise skip renderer
+					if (columnName.compareToIgnoreCase("action") != 0) {
+						return null;
+					}
+					ActionBar ab = new ActionBar(data);
+					// Add to mapping, so we can control lots of these things
+					addToActionBarMap(Integer.parseInt(data.get("id")), ab);
+					// Push value back to table
+					return ab;
 				}
-				ActionBar ab = new ActionBar(data);
-				// Add to mapping, so we can control lots of these things
-				addToActionBarMap(Integer.parseInt(data.get("id")), ab);
-				// Push value back to table
-				return ab;
-			}
-		});
+			});
+		}
 		t.setAllowSelection(false);
 		t.setMaximumRows(maximumRows);
 		t.addColumn("Date", "date_mdy");
 		t.addColumn("Module", "type");
 		t.addColumn("Summary", "summary");
-		t.addColumn("Action", "action");
+		if(canModify)
+			t.addColumn("Action", "action");
 
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.add(t);

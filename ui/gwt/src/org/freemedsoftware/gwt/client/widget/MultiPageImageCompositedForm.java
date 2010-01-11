@@ -26,9 +26,12 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -36,6 +39,16 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -81,6 +94,8 @@ public class MultiPageImageCompositedForm extends Composite implements
 	 */
 	protected SimplePanel contentPanel = new SimplePanel();
 
+	protected Command onFormLoaded = null;
+
 	public MultiPageImageCompositedForm() {
 		super();
 		VerticalPanel vPanel = new VerticalPanel();
@@ -125,6 +140,14 @@ public class MultiPageImageCompositedForm extends Composite implements
 		refreshButtons();
 	}
 
+	public void setOnFormLoaded(Command c) {
+		onFormLoaded = c;
+	}
+
+	public Command getOnFormLoaded() {
+		return onFormLoaded;
+	}
+
 	/**
 	 * Update button state properly depending on current page position.
 	 */
@@ -155,8 +178,102 @@ public class MultiPageImageCompositedForm extends Composite implements
 	 * @param form
 	 */
 	public void loadFormFromServer(Integer form) {
-		// TODO: load form from server
-		// TODO: create child ImageCompositedForm widget with proper background
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// STUB
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { "XmrDefinition", JsonUtil.jsonify(form) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleGetRecordMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						CurrentState.getToaster().addItem("XmrDefinition",
+								"Failed to load data.", Toaster.TOASTER_ERROR);
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						JsonUtil.debug("onResponseReceived");
+						if (200 == response.getStatusCode()) {
+							JsonUtil.debug(response.getText());
+							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>");
+							if (r != null) {
+								populateFormDefinition(r);
+							}
+						} else {
+							CurrentState.getToaster().addItem("XmrDefinition",
+									"Failed to load data.",
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.toString());
+			}
+		} else {
+			ModuleInterfaceAsync service = null;
+			try {
+				service = (ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+			} catch (Exception e) {
+				JsonUtil.debug(e.toString());
+				CurrentState.getToaster().addItem("XmrDefinition",
+						"Failed to load form.", Toaster.TOASTER_ERROR);
+			}
+			service.ModuleGetRecordMethod("XmrDefinition", form,
+					new AsyncCallback<HashMap<String, String>>() {
+						public void onSuccess(HashMap<String, String> r) {
+							populateFormDefinition(r);
+						}
+
+						public void onFailure(Throwable t) {
+							CurrentState.getToaster().addItem("XmrDefinition",
+									"Failed to load form.",
+									Toaster.TOASTER_ERROR);
+						}
+					});
+		}
+	}
+
+	/**
+	 * Callback for populating multi-form widget with <ImageCompositedForm>
+	 * widgets.
+	 * 
+	 * @param r
+	 */
+	protected void populateFormDefinition(HashMap<String, String> r) {
+		Integer pageCount = 0;
+		try {
+			pageCount = Integer.parseInt(r.get("form_page_count"));
+		} catch (NumberFormatException ex) {
+
+		}
+
+		// Remove all pages from the stack
+		this.pages.clear();
+
+		// Create all pages
+		for (int pageIter = 1; pageIter <= pageCount; pageIter++) {
+			this.createImageCompositedForm(Integer.parseInt(r.get("id")),
+					pageIter);
+		}
+
+		// Make sure to refresh button bar status
+		refreshButtons();
+
+		// Only do this once the form has been loaded
+		if (onFormLoaded != null) {
+			onFormLoaded.execute();
+		}
 	}
 
 	/**
@@ -234,7 +351,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 		}
 
 		// By default, return text
-		JsonUtil.debug(this.getClass().getCanonicalName()
+		JsonUtil.debug("MultiPageImageCompositedForm"
 				+ ": Unimplemented type '" + widget
 				+ "' found. Fallback to type TEXT.");
 		return WidgetType.TEXT;
@@ -315,7 +432,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new CustomTextBox();
-			JsonUtil.debug(this.getClass().getCanonicalName()
+			JsonUtil.debug("MultiPageImageCompositedForm"
 					+ ": Unimplemented type '" + type
 					+ "' found. Fallback to TextBox.");
 		}
@@ -363,7 +480,12 @@ public class MultiPageImageCompositedForm extends Composite implements
 
 		// Place on page
 		ImageCompositedForm thisPage = pages.get(page);
-		thisPage.addWidget((Widget) w, x, y);
+		if (thisPage != null) {
+			thisPage.addWidget((Widget) w, x, y);
+		} else {
+			JsonUtil.debug("Could not add widget to page " + page + " at " + x
+					+ "," + y);
+		}
 	}
 
 }
