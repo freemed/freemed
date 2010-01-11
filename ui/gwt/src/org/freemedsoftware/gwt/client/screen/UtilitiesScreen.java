@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
@@ -78,6 +79,30 @@ public class UtilitiesScreen extends ScreenInterface {
 	protected Label thisUtilityName = new Label();
 
 	protected PushButton utilityActionButton;
+
+	private static List<UtilitiesScreen> utilitiesScreenList = null;
+
+	// Creates only desired amount of instances if we follow this pattern
+	// otherwise we have public constructor as well
+	public static UtilitiesScreen getInstance() {
+		UtilitiesScreen utilitiesScreen = null;
+
+		if (utilitiesScreenList == null) {
+			utilitiesScreenList = new ArrayList<UtilitiesScreen>();
+		}
+		if (utilitiesScreenList.size() < AppConstants.MAX_UTILITIES_TABS) {
+			// creates & returns new next instance of SupportDataScreen
+			utilitiesScreenList.add(utilitiesScreen = new UtilitiesScreen());
+		} else { // returns last instance of UtilitiesScreen from list
+			utilitiesScreen = utilitiesScreenList
+					.get(AppConstants.MAX_UTILITIES_TABS - 1);
+		}
+		return utilitiesScreen;
+	}
+
+	public static boolean removeInstance(UtilitiesScreen utilitiesScreen) {
+		return utilitiesScreenList.remove(utilitiesScreen);
+	}
 
 	public UtilitiesScreen() {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -218,7 +243,7 @@ public class UtilitiesScreen extends ScreenInterface {
 	 * @param data
 	 */
 	protected void populateUtilityParameters(HashMap<String, String> data) {
-		utilityParametersTable.clear();
+		utilityParametersTable.clear(true);
 		utilityParameters.clear();
 
 		thisUtilityName.setText(data.get("utility_name"));
@@ -353,4 +378,10 @@ public class UtilitiesScreen extends ScreenInterface {
 		}
 	}
 
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		removeInstance(this);
+	}
 }
