@@ -27,13 +27,14 @@
 
 {[method namespace='org.freemedsoftware.api.PatientInterface.ToText' param0=$pnotespat param1=0 var='patientName']}
 {[method namespace='org.freemedsoftware.module.ProviderModule.fullName' param0=$pnotesdoc param1=1 var='providerName']}
-{[link link=$pnotesdoc table='physician' field='phypracname' var='providerPractice']}
-{[link link=$pnotesdoc table='physician' field='phyaddr1a' var='providerAddress']}
-{[link link=$pnotesdoc table='physician' field='phycitya' var='providerCity']}
-{[link link=$pnotesdoc table='physician' field='phystatea' var='providerState']}
-{[link link=$pnotesdoc table='physician' field='phyzipa' var='providerZip']}
-{[link link=$pnotesdoc table='physician' field='phyphonea' var='providerPhone']}
-{[link link=$pnotesdoc table='physician' field='phyfaxa' var='providerFax']}}
+{[link link=$pnotesdoc table='physician' field='phypractice' var='providerPracticeId']}
+{[link link=$providerPracticeId table='practice' field='pracname' var='providerPractice']}
+{[link link=$providerPracticeId table='practice' field='addr1a' var='providerAddress']}
+{[link link=$providerPracticeId table='practice' field='citya' var='providerCity']}
+{[link link=$providerPracticeId table='practice' field='statea' var='providerState']}
+{[link link=$providerPracticeId table='practice' field='zipa' var='providerZip']}
+{[link link=$providerPracticeId table='practice' field='phonea' var='providerPhone']}
+{[link link=$providerPracticeId table='practice' field='faxa' var='providerFax']}}
 
 \documentclass{article}
 
