@@ -25,9 +25,11 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
@@ -55,26 +57,7 @@ public class LetterEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "Letters";
 
-	protected String patientIdName = "letterpatient";
-
-	private static List<LetterEntry> letterEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static LetterEntry getInstance(){
-		LetterEntry letterEntry=null; 
-		if(letterEntryList==null)
-			letterEntryList=new ArrayList<LetterEntry>();
-		if(letterEntryList.size()<AppConstants.MAX_PATIENT_LETTER_TABS)//creates & returns new next instance of LetterEntry
-			letterEntryList.add(letterEntry=new LetterEntry());
-		else{ //returns last instance of LetterEntry from list 
-			letterEntry = letterEntryList.get(AppConstants.MAX_PATIENT_LETTER_TABS-1);
-		}	
-		return letterEntry;
-	}
-	
-	public static boolean removeInstance(LetterEntry letterEntry){
-		return letterEntryList.remove(letterEntry);
-	}
+	protected String patientIdName = "letterpatient";	
 	
 	public LetterEntry() {
 
@@ -147,6 +130,7 @@ public class LetterEntry extends PatientEntryScreenInterface {
 			}
 		});
 		verticalPanel.add(buttonBar);
+		Util.setFocus(wFrom);
 	}
 
 	public String getModuleName() {
@@ -156,10 +140,5 @@ public class LetterEntry extends PatientEntryScreenInterface {
 	public void resetForm() {
 
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

@@ -198,6 +198,7 @@ public class CustomRadioButtonGroup extends Composite implements ValueChangeHand
 		public void setWidgetValue(String widgetValue) {
 			this.widgetValue = widgetValue;
 		}
+		
 		@Override
 		public void onClick(ClickEvent event) {
 			JsonUtil.debug("CustomRadioButton:onClick Called");
@@ -211,5 +212,8 @@ public class CustomRadioButtonGroup extends Composite implements ValueChangeHand
 		// TODO Auto-generated method stub
 		super.setWidth(width);
 		radioButtonsPanel.setWidth(width);
+	}
+	public void setFocus(){
+		customRadioButtonGroup.get(0).setFocus(true);
 	}
 }

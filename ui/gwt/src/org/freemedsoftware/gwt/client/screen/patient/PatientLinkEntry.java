@@ -25,9 +25,11 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTextArea;
@@ -52,26 +54,7 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 
 	protected CustomListBox wType = null;
 
-	protected PatientWidget wLinkPatient = null;
-
-	private static List<PatientLinkEntry> patientLinkEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static PatientLinkEntry getInstance(){
-		PatientLinkEntry patientLinkEntry=null; 
-		if(patientLinkEntryList==null)
-			patientLinkEntryList=new ArrayList<PatientLinkEntry>();
-		if(patientLinkEntryList.size()<AppConstants.MAX_PATIENT_LINK_TABS)//creates & returns new next instance of PatientLinkEntry
-			patientLinkEntryList.add(patientLinkEntry=new PatientLinkEntry());
-		else{ //returns last instance of PatientLinkEntry from list 
-			patientLinkEntry = patientLinkEntryList.get(AppConstants.MAX_PATIENT_LINK_TABS-1);
-		}	
-		return patientLinkEntry;
-	}
-	
-	public static boolean removeInstance(PatientLinkEntry patientLinkEntry){
-		return patientLinkEntryList.remove(patientLinkEntry);
-	}
+	protected PatientWidget wLinkPatient = null;	
 	
 	public PatientLinkEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -146,6 +129,7 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 			}
 		});
 		verticalPanel.add(buttonBar);
+		Util.setFocus(wLinkPatient);
 	}
 
 	public String getModuleName() {
@@ -154,10 +138,5 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 
 	public void resetForm() {
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

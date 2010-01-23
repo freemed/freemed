@@ -167,7 +167,7 @@ public class CustomTable extends Composite implements ClickHandler {
 	protected Button bPrevious = new Button("Previous");
 	protected Label bLabel = new Label();
 	protected Button bNext = new Button("Next");
-
+	protected int actionRow=-1;
 	protected int curMinRow = 0;
 
 	protected boolean sortDesc = true;
@@ -307,7 +307,16 @@ public class CustomTable extends Composite implements ClickHandler {
 		}
 		return false;
 	}
-
+	
+	public Widget getWidget(int col)
+	{
+		return flexTable.getWidget(actionRow, col);
+	}
+	
+	public String getCellText(int r, int c)
+	{
+		return flexTable.getText(r, c);
+	}
 	/**
 	 * Resolve value of row based on the physical row number on the actual view.
 	 * Meant to be used for things like TableListener.
@@ -442,7 +451,7 @@ public class CustomTable extends Composite implements ClickHandler {
 				String indexValue = data[iter].get(indexName);
 				String rowValue = String.valueOf(actualRow + 1);
 				indexMap.put(rowValue, indexValue);
-
+				actionRow=actualRow+1;
 				for (int jter = 0; jter < columns.size(); jter++) {
 					// Populate the column
 					if (widgetInterface != null) {
@@ -620,6 +629,7 @@ public class CustomTable extends Composite implements ClickHandler {
 		} else {
 			Cell clickedCell = flexTable.getCellForEvent(event);
 			int row = clickedCell.getRowIndex();
+			actionRow=row;
 			int col = clickedCell.getCellIndex();
 			if (row == 0) {
 				sortData(col);
@@ -667,6 +677,9 @@ public class CustomTable extends Composite implements ClickHandler {
 		return selected.size();
 	}
 
+	public int getActionRow(){
+		return actionRow;
+	}
 	/**
 	 * This function will sort the data by column clicked param column.
 	 */

@@ -480,11 +480,9 @@ class Remitt {
 		$bcobj = $GLOBALS['sql']->get_link( 'bcontact', $bc );
 		$buffer .= "\n\t<!-- billing contact $bc -->\n\n".
 			"<billingcontact>\n".
-			$this->_tag('name', $bcobj['bcname'], true).
-			$this->_addr('address', $bcobj['bcaddr'], $bsobj['bccity'], $bsobj['bsctate'], $bsobj['bczip']).
+			$this->_tag('name', $bcobj['bcfname'] . ' ' . $bcobj['bclname'], true).
+			$this->_addr('address', $bcobj['bcaddr'], $bcobj['bccity'], $bcobj['bcstate'], $bcobj['bczip']).
 			$this->_phone('phone', $bcobj['bcphone']).
-			$this->_tag('tin', $bcobj['bctin'], true).
-			$this->_tag('etin', $bcobj['bcetin'], true).
 			"</billingcontact>\n\n";
 
 		// Handle billing service
@@ -733,6 +731,9 @@ class Remitt {
 		$buffer .= $this->_tag('hcfacode', !$f['psrpos'] ? 11 : freemed::get_link_field($f['psrpos'], 'pos', 'posname'), true);
 		$buffer .= $this->_tag('x12code', !$f['psrpos'] ? 11 : freemed::get_link_field($f['psrpos'], 'pos', 'posname'), true);
 		$buffer .= $this->_tag('ein', $f['psrein'], true);
+		$buffer .= $this->_tag('npi', $f['psrnpi'], true);
+		$buffer .= $this->_tag('taxonomy', $f['psrtaxonomy'], true);
+		$buffer .= $this->_tag('clia', $f['psrclia'], true);
 
 		$buffer .= "</facility>\n";
 		return $buffer;
@@ -764,6 +765,7 @@ class Remitt {
 		// Common stuff
 		$buffer .= $this->_tag('id', $i['covpatinsno'], true);
 		$buffer .= $this->_tag('planname', $i['covplanname'], true);
+		$buffer .= $this->_tag('instype', freemed::get_link_field($i['covinstp'], 'covtypes', 'covtpname'), true);
 		$buffer .= $this->_tag('groupname', $i['covplanname'], true);
 		$buffer .= $this->_tag('groupnumber', $i['covpatgrpno'], true);
 		$buffer .= $this->_tag('isemployed', (!empty($i['covemployer']))+0, true);
@@ -842,9 +844,9 @@ class Remitt {
 		return $buffer;		
 	} // end method _RenderPayer
 
-	protected function _RenderPractice ( $facility ) {
-		$f = $GLOBALS['sql']->get_link( 'physician', $facility );
-		$buffer .= "<practice id=\"".htmlentities($facility)."\">\n";
+	protected function _RenderPractice ( $practice ) {
+		$f = $GLOBALS['sql']->get_link( 'practice', $practice );
+		$buffer .= "<practice id=\"".htmlentities($practice)."\">\n";
 
 		// loop through payers that are in the system
 		foreach ($this->ref['insco'] as $i) {
@@ -867,14 +869,14 @@ class Remitt {
 			}
 		}
 
-		$buffer .= $this->_tag('name', $f['phypracname'], true);
-		$buffer .= $this->_addr('address', $f['phyaddr1a'],
-			$f['phycitya'], $f['phystatea'], $f['phyzipa']);
-		$buffer .= $this->_phone('phone', $f['phyphonea']);
-			// FIXME: THESE ARE NOT RIGHT ANYMORE
-		$buffer .= $this->_tag('x12id', $f['psrx12id'], true);
-		$buffer .= $this->_tag('x12idtype', $f['psrx12idtype'], true);
-		$buffer .= $this->_tag('ein', ( $f['phypracein'] ? $f['phypracein'] : $f['physsn'] ), true);
+		$buffer .= $this->_tag('name', $f['pracname'], true);
+		$buffer .= $this->_addr('address', $f['addr1a'],
+			$f['citya'], $f['statea'], $f['zipa']);
+		$buffer .= $this->_phone('phone', $f['phonea']);
+		//$buffer .= $this->_tag('x12id', $f['x12id'], true);
+		//$buffer .= $this->_tag('x12idtype', $f['x12idtype'], true);
+		$buffer .= $this->_tag('ein', $f['ein'], true);
+		$buffer .= $this->_tag('npi', $f['pracnpi'], true);
 
 		$buffer .= "</practice>\n";
 		return $buffer;
@@ -901,12 +903,84 @@ class Remitt {
 	protected function _RenderProcedure ( $procedure ) {
 		$p = $GLOBALS['sql']->get_link( 'procrec', $procedure );
 
+		// Aadded new tags to use in the patient statement MD 05-03-2008
+		$query = "SELECT payrecamt, payreccat, payrecsource, payreclink, payrecdt FROM payrec WHERE payrecproc='".$procedure."'"; 
+		$pay_result = $GLOBALS['sql']->queryAll($query);
+
+		foreach($pay_result AS $r) {
+			$payrecdt     = $r["payrecdt"];
+			$payrecamt    = $r["payrecamt"];
+			$payreclink   = $r["payreclink"];
+			$ins_id = freemed::get_link_field($payreclink, 'coverage', 'covinsco');
+			$ins_name = freemed::get_link_field($ins_id, 'insco', 'insconame');
+			$payrecsource = $r["payrecsource"];
+			$payreccat    = $r["payreccat"];
+
+			if  ($payreccat==11 and $payrecsource==0) {
+				$copay = $payrecamt;
+				$copay_dt = $payrecdt;
+			}
+			if ($payreccat==0 and $payrecsource==1) {
+				$pri_pay += $payrecamt;
+				$pri_pay_dt = $payrecdt;
+				$pri_name = $ins_name;
+			} elseif  ($payreccat==0 and $payrecsource==2) {
+				$sec_pay += $payrecamt;
+				$sec_pay_dt = $payrecdt;
+				$sec_name = $ins_name;
+			} elseif  ($payreccat==0 and $payrecsource==3) {
+				$tet_pay += $payrecamt;
+				$tet_pay_dt = $payrecdt;
+				$tet_name = $ins_name;
+			} elseif  (($payreccat==0 or $payreccat==11) and $payrecsource==0) {
+				$pat_pay += $payrecamt;
+				$pat_pay_dt = $payrecdt;
+			}
+			elseif  ($payreccat==1 and $payrecsource==5) {
+				$mng_adj += $payrecamt;
+				$mng_adj_dt = $payrecdt;
+			}
+			else ;		  
+		} // wend
+		
+		$payhistory=NULL;
+		if  ($pat_pay > 0) {
+			$payhistory = "Patient $".$pat_pay." (".$pat_pay_dt."); ";
+		}
+		if  ($pri_pay > 0) {
+			$payhistory.= substr($pri_name,0,14)." $".$pri_pay." (".$pri_pay_dt."); ";
+		}
+		if  ($sec_pay > 0) {
+			$payhistory.= substr($sec_name,0,14)." $".$sec_pay." (".$sec_pay_dt."); ";
+		}
+		if  ($tet_pay > 0) {
+			$payhistory.= substr($tet_name,0,6)." $".$tet_pay." (".$tet_pay_dt."); ";
+		}
+		if  ($mng_adj > 0) {
+			$payhistory.= " Doctor adj $".$mng_adj." (".$mng_adj_dt."); ";
+		}
+		if  ($payhistory==NULL) {
+			$payhistory = "No payment has been received for this service";
+		} else {
+			$payhistory = ucwords("Paid By: ".strtolower($payhistory));
+		}
+
 		$buffer .= "<procedure id=\"".htmlentities($procedure)."\">\n".
 			$this->_tag('cpt4code', freemed::get_link_field($p['proccpt'], 'cpt', 'cptcode'), true).
 			$this->_tag('cpt5code', freemed::get_link_field($p['proccpt'], 'cpt', 'cptcode'), true).
 			$this->_tag('cptdescription', freemed::get_link_field($p['proccpt'], 'cpt', 'cptnameint'), true).
 			$this->_tag('cptcob', '0', true).
-			$this->_tag('cptcharges', $p['proccharges'], true).
+			$this->_tag('cptcharges', $p['procbalorig'], true). //replaced proccharges with procbalorig
+			$this->_tag('allowcharges', $p['proccharges'], true). //added new tag
+			$this->_tag('comment', $p['proccomment'], true). //added new tag
+			$this->_tag('pripay', $pri_pay, true). //added new tags for total paid by primary
+			$this->_date('pripaydt', $pri_pay_dt). //added new tag for date pay by primary
+			$this->_tag('pripayname', $pri_name, true). //added new tag for primary name
+			$this->_tag('patpay', $pat_pay, true). //added new tag for total paid by patient
+			$this->_date('patpaydt', $pat_pay_dt). //added new tag for patient pay date
+			$this->_tag('copay', $copay, true). //added new tag for copayment
+			$this->_date('copaydt', $copay_dt). //added new tag for copayment date
+			$this->_tag('payhistory', $payhistory, true). //added new tag for pay history comment
 			$this->_tag('cptcount', 1, true).
 			$this->_tag('cptemergency', '0', true).
 			$this->_tag('cptepsdt', '0', true).
@@ -949,10 +1023,14 @@ class Remitt {
 		$map = unserialize(freemed::get_link_field($coverage['covinsco'], 'insco', 'inscoidmap'));
 
 		// Handle second key
-		if ($covnum != 0) {
-			$covnum++; 
-			if ($covnum < 1 or $covnum > 4) { $covnum = 0; }
+		switch ($p['proccurcovtp']) {
+			case 2:   $covnum = 1; break;
+			case 3:   $covnum = 1; break;
+			case 4:   $covnum = 1; break;
+			case 1:   $covnum = 2; break;
+			default:  $covnum = 0; break;
 		}
+
 		$buffer .= $this->_tag('secondinsuredkey', $p['proccov'.$covnum], true);
 		$this->_AddDependency('coverage', $p['proccov'.$covnum]);
 		$coverage = $GLOBALS['sql']->get_link( 'coverage', $p['proccov'.$covnum] );
@@ -981,6 +1059,9 @@ class Remitt {
 		// Check for TOS override from procedure record
 		if ($p['proctosoverride'] > 0) { $tos = $p['proctosoverride']; }
 
+		// Get provider record
+		$provider = $GLOBALS['sql']->get_link( 'physician', $p['procphysician'] );
+
 		// Various resubmission codes, etc
 		$buffer .=
 			$this->_tag('medicaidresubmissioncode', $p['procmedicaidresub'], true).
@@ -988,16 +1069,16 @@ class Remitt {
 			$this->_tag('hcfalocaluse19', $map[$p['procphysician']]['local19'], true).
 			$this->_tag('hcfalocaluse10d', $map[$p['procphysician']]['local10d'], true).
 			$this->_tag('hcfalocaluse24k', $map[$p['procphysician']]['local24k'], true).
-			$this->_tag('amountpaid', $p['procamtpaid'], true).
+			$this->_tag('amountpaid', (double) $p['procamtpaid'], true).
 			$this->_tag('providerkey', $p['procphysician'], true).
 			$this->_tag('referringproviderkey', $p['procrefdoc'], true).
 			$this->_tag('facilitykey', $p['procpos'], true).
-			$this->_tag('practicekey', $p['procphysician'], true).
+			$this->_tag('practicekey', $provider['phypractice'], true).
 			$this->_tag('typeofservice', $tos, true).
 			'';
 		$this->_AddDependency('physician', $p['procphysician']);
 		$this->_AddDependency('physician', $p['procrefdoc']);
-		$this->_AddDependency('practice', $p['procphysician']);
+		$this->_AddDependency('practice', $provider['phypractice']);
 		$this->_AddDependency('facility', $p['procpos']);
 
 		// Authorizations

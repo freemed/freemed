@@ -51,6 +51,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -60,6 +61,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PatientAddresses extends Composite {
 
 	public class Address {
+		protected Integer addressId;
+		
 		protected String line1, line2, type, relation;
 
 		protected String city, stpr, postal, country;
@@ -101,6 +104,8 @@ public class PatientAddresses extends Composite {
 		 */
 		public HashMap<String, String> getMap() {
 			HashMap<String, String> map = new HashMap<String, String>();
+			if(addressId!=null)
+				map.put("id",addressId.toString());
 			map.put("line1", getLine1());
 			map.put("line2", getLine2());
 			// map.put("csz", getCsz());
@@ -202,6 +207,14 @@ public class PatientAddresses extends Composite {
 		public void setCountry(String country) {
 			this.country = country;
 		}
+
+		public Integer getAddressId() {
+			return addressId;
+		}
+
+		public void setAddressId(Integer addressId) {
+			this.addressId = addressId;
+		}
 	}
 
 	protected Integer patientId = new Integer(0);
@@ -231,6 +244,7 @@ public class PatientAddresses extends Composite {
 		flexTable.addColumn("Postal", "postal");
 		flexTable.addColumn("Country", "country");
 		flexTable.addColumn("Active?", "active");
+		flexTable.addColumn("Action", null);
 		vP.add(flexTable);
 
 		HorizontalPanel hP = new HorizontalPanel();
@@ -264,7 +278,7 @@ public class PatientAddresses extends Composite {
 	 * @param a
 	 *            Address object containing population data.
 	 */
-	public void addAddress(final Integer pos, Address a) {
+	public void addAddress(final Integer pos,final Address a) {
 		// Keep a record of this
 		addresses.put(pos, a);
 
@@ -321,7 +335,22 @@ public class PatientAddresses extends Composite {
 		final CheckBox active = new CheckBox();
 		active.setValue(a.getActive().booleanValue());
 		flexTable.getFlexTable().setWidget(pos, 8, active);
-
+		
+		final Button deleteLink=new Button("Delete");
+		flexTable.getFlexTable().setWidget(pos, 9,deleteLink );
+		
+		deleteLink.addClickHandler(new ClickHandler(){
+			@Override
+			public void onClick(ClickEvent event) {
+				for(int i=0;i<=9;i++)
+					flexTable.getFlexTable().clearCell(pos, i);
+			     deleteAddress(a);
+			}
+			
+		});
+		
+		
+		
 		ChangeHandler cl = new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -386,6 +415,9 @@ public class PatientAddresses extends Composite {
 				if (mmp.get(key) == null)
 					mmp.remove(key);
 			}
+			mmp.put("patient", patientId.toString());
+			if(mmp.get("id")!=null)
+				mmp.put("altered", "true");
 			l.add(mmp);
 		}
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
@@ -537,6 +569,7 @@ public class PatientAddresses extends Composite {
 								for (int iter = 0; iter < result.length; iter++) {
 									// Create new address object
 									Address a = new Address();
+									a.setAddressId(Integer.parseInt(result[iter].get("id")));
 									a.setLine1(result[iter].get("line1"));
 									a.setLine2(result[iter].get("line2"));
 									// a.setCsz(result[iter].get("csz"));
@@ -611,6 +644,39 @@ public class PatientAddresses extends Composite {
 							.encode(Util
 									.getJsonRequest(
 											"org.freemedsoftware.module.PatientModule.DeleteAddresses",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Window.alert(ex.toString());
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Window.alert(e.getMessage());
+			}
+		} else {
+			// TODO normal mode code goes here
+		}
+	}
+	
+	public void deleteAddress(Address a) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO stubbed mode goes here
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { a.getAddressId().toString() };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.PatientModule.DeleteAddressById",
 											params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {

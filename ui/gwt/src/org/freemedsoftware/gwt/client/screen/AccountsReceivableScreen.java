@@ -48,6 +48,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -206,11 +207,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		} catch (Exception e) {
 			GWT.log("Caught exception: ", e);
 		}
-	}
-
-	public void onFocus() {
-		super.onFocus();
-//		wSmartSearch.getTextEntryWidget().setFocus(true);
+		Util.setFocus(patientlnTextBox);
 	}
 
 	public void updateProviderList(){
@@ -372,6 +369,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		patientlnTextBox.setText("");
 		wProviderList.setItemSelected(0, true);
 		wDos.getTextBox().setValue("");
+		patientlnTextBox.setFocus(true);
 	}
 	@Override
 	public void closeScreen() {

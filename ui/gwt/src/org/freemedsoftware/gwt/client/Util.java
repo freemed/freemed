@@ -74,8 +74,12 @@ import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Public.Protocol;
 import org.freemedsoftware.gwt.client.Public.ProtocolAsync;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.widget.AsyncPicklistWidgetBase;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
+import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
+import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
+import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -92,15 +96,24 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public final class Util {
+
+	/**
+	 * If true then JSONRPC calls can be sent to third server in hosted mode 
+	 * Set server URL in relay.jsp	
+	 */
+	public static boolean GWT_HOSTED_MODE = true;
 
 	public static enum ProgramMode {
 		NORMAL, STUBBED, JSONRPC
@@ -145,6 +158,8 @@ public final class Util {
 	public static synchronized String getJsonRequest(String method,
 			String[] args) {
 		String url = getBaseUrl() + "/relay.php/json";
+		if(GWT_HOSTED_MODE)
+			url =  getBaseUrl() + "/relay.jsp";
 		try {
 			String params = new String();
 			for (int iter = 0; iter < args.length; iter++) {
@@ -154,7 +169,10 @@ public final class Util {
 				params += "param" + new Integer(iter).toString() + "="
 						+ URL.encodeComponent(args[iter]);
 			}
-			return url + "/" + method + "?" + params;
+			if(GWT_HOSTED_MODE)
+				return url + "?module=" + method +  (params.length()>0?"&"+params:"");
+			else
+				return url + "/" + method + "?" + params;	
 		} catch (Exception e) {
 			return url + "/" + method;
 		}
@@ -342,7 +360,7 @@ public final class Util {
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (200 == response.getStatusCode()) {
-						if (response.getText().compareToIgnoreCase("true") == 0) {
+						if (response.getText().trim().compareToIgnoreCase("true") == 0) {
 							whenDone.execute();
 						} else {
 							whenFail.execute();
@@ -388,6 +406,7 @@ public final class Util {
 						if (200 == response.getStatusCode()) {
 							JsonUtil.debug("Util: SetDefaultFacility:"
 									+ response.getText());
+							CurrentState.getMainScreen().populateDefaultFacility();
 						}
 					}
 				});
@@ -532,11 +551,48 @@ public final class Util {
 	 */
 	public static synchronized void spawnTabPatient(String title,
 			PatientScreenInterface screen, PatientScreen pScreen) {
-		screen.assignPatientScreen(pScreen);
-		pScreen.getTabPanel().add((Widget) screen,
-				new ClosableTab(title, (Widget) screen));
-		pScreen.getTabPanel().selectTab(
-				pScreen.getTabPanel().getWidgetCount() - 1);
+            boolean recycle=false;
+			HashMap<Integer, HashMap<String,PatientScreenInterface>> map = CurrentState
+					.getPatientSubScreenMap();
+			Integer oldId = pScreen.getPatient();
+			HashMap<String,PatientScreenInterface> subHashMap=null;
+			if (map.get(oldId) == null) {
+				// We don't find it, we have to instantiate new
+				recycle = false;
+				subHashMap=new HashMap<String,PatientScreenInterface>();
+				subHashMap.put(screen.getClass().getName(),screen);
+				// Push into mapping
+				map.put(oldId, subHashMap );
+			}else if(map.get(oldId).get(screen.getClass().getName())==null){
+				// We don't find the required screen
+				recycle = false;
+				subHashMap=map.get(oldId);
+				subHashMap.put(screen.getClass().getName(),screen);
+			}
+			else {
+				recycle = true; // skip actual instantiation
+
+				// Get screen
+				PatientScreenInterface existingScreen = map.get(oldId).get(screen.getClass().getName());
+
+				// Activate that screen
+				try {
+					pScreen.getTabPanel().selectTab(
+							pScreen.getTabPanel().getWidgetIndex(
+									existingScreen));
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+					JsonUtil.debug("Exception selecting tb: " + ex.toString());
+				}
+			}
+			// Activate the instantiated screen.
+			if (!recycle) {
+				screen.assignPatientScreen(pScreen);
+				pScreen.getTabPanel().add((Widget) screen,
+						new ClosableTab(title, (Widget) screen));
+				pScreen.getTabPanel().selectTab(
+						pScreen.getTabPanel().getWidgetCount() - 1);
+			}				
 	}
 
 	/**
@@ -704,11 +760,15 @@ public final class Util {
 		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
 		try{
 			date = df.parse(dateStr);
-		}catch(Exception e){}
+		}catch(Exception e){JsonUtil.debug(e.getMessage());}
 		try{
-			df = DateTimeFormat.getFormat("yyyy-MM-dd");
-			date = df.parse(dateStr);
-		}catch(Exception e){}
+			if(date==null)
+			{
+				df = DateTimeFormat.getFormat("yyyy-MM-dd");
+				date = df.parse(dateStr);
+			}
+		
+		}catch(Exception e){JsonUtil.debug(e.getMessage());e.printStackTrace();}
 		return date;
 	}
 
@@ -838,5 +898,66 @@ public final class Util {
 		}
 		return gwtRef;
 	}
+	
+	/**
+	 *Set Focus on the Widget after a time delay of 500ms 
+	 *
+	 *@param Widget - The widget to be focused.
+	 *
+	 */
+	public static void setFocus(final Widget widget){
+		Timer timer = new Timer() {
+			public void run() {
+				if(widget instanceof AsyncPicklistWidgetBase){
+					((AsyncPicklistWidgetBase)widget).setFocus(true);
+				}	
+				if(widget instanceof FocusWidget){
+					((FocusWidget)widget).setFocus(true);
+				}
+				if(widget instanceof CustomRadioButtonGroup){
+					((CustomRadioButtonGroup)widget).setFocus();
+				}
+				if(widget instanceof UserMultipleChoiceWidget){
+					((UserMultipleChoiceWidget)widget).setFocus();
+				}
+				if(widget instanceof PatientTagWidget){
+					((PatientTagWidget)widget).setFocus(true);
+				}
+			}
+		};
+		// Run initial polling ...
+		timer.schedule(500);
+		timer.run();		
+	}
 
+	/**
+	 * Create Label Widget to act as a Vertical spacer
+	 * 
+	 * @param Height - height in pixels or percentages
+	 * 
+	 * return
+	 *       Widget
+	 */
+	
+	public static Widget getVSpacer(String height){
+		final Label vSpacer = new Label();
+		vSpacer.setHeight(height);
+		return vSpacer;
+	}
+
+	/**
+	 * Create Label Widget to act as a Horizontal spacer
+	 * 
+	 * @param Width - width in pixels or percentages
+	 * 
+	 * return
+	 *       Widget
+	 */
+	
+	public static Widget getHSpacer(String width){
+		final Label vSpacer = new Label();
+		vSpacer.setWidth(width);
+		return vSpacer;
+	}
+	
 }

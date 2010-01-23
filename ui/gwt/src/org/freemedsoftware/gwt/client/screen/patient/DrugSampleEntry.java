@@ -25,10 +25,12 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTextArea;
 import org.freemedsoftware.gwt.client.widget.CustomTextBox;
@@ -36,6 +38,8 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -48,25 +52,6 @@ public class DrugSampleEntry extends PatientEntryScreenInterface {
 	protected SupportModuleWidget wDrugSample = null, wPrescriber = null;
 	protected CustomTextBox wAmount = null;
 	protected CustomTextArea wInstructions = null;
-
-	private static List<DrugSampleEntry> drugSampleEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static DrugSampleEntry getInstance(){
-		DrugSampleEntry drugSampleEntry=null; 
-		if(drugSampleEntryList==null)
-			drugSampleEntryList=new ArrayList<DrugSampleEntry>();
-		if(drugSampleEntryList.size()<AppConstants.MAX_PATIENT_DRUG_SAMPLE_TABS)//creates & returns new next instance of DrugSampleEntry
-			drugSampleEntryList.add(drugSampleEntry=new DrugSampleEntry());
-		else{ //returns last instance of DrugSampleEntry from list 
-			drugSampleEntry = drugSampleEntryList.get(AppConstants.MAX_PATIENT_DRUG_SAMPLE_TABS-1);
-		}	
-		return drugSampleEntry;
-	}
-	
-	public static boolean removeInstance(DrugSampleEntry drugSampleEntry){
-		return drugSampleEntryList.remove(drugSampleEntry);
-	}
 	
 	public DrugSampleEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -121,6 +106,7 @@ public class DrugSampleEntry extends PatientEntryScreenInterface {
 			}
 		});
 		verticalPanel.add(buttonBar);
+		Util.setFocus(wDrugSample);
 	}
 
 	public String getModuleName() {
@@ -137,11 +123,7 @@ public class DrugSampleEntry extends PatientEntryScreenInterface {
 		wDrugSample.clear();
 		wAmount.setText("0");
 		wInstructions.setText("");
+		wDrugSample.setFocus(true);
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

@@ -183,6 +183,14 @@ class SystemConfig {
 
 		return true;
 	} // end method SetValues
+	
+	public function GetServerTime()
+	{
+		
+		$today = date('Y-m-d H:i:s');
+		//$date_obj = date_create($today);
+		return $today;
+	}
 
 
 

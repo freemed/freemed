@@ -64,21 +64,41 @@ public class Popup extends PopupPanel {
 	}
 
 	public void initialize() {
+		super.setSize("100%", "100%");   // fitting the pop-up size to the content it contains
+		super.setHeight("100%");
 		this.setStyleName("freemed-PopupPanel");
 		sPanelInner.setStylePrimaryName("freemed-Popup-sPanelInner");
 		sPanelOuter.add(sPanelInner);
 		sPanelOuter.setStylePrimaryName("freemed-Popup-sPanelOuter");
-		sPanelOuter.setWidth(Integer.toString(Window.getClientWidth() / 2)
-				.concat("px"));
-		scrollPanel.setHeight(Integer.toString(Window.getClientHeight() / 2)
-				.concat("px"));
+		//sPanelOuter.setWidth(Integer.toString(Window.getClientWidth() / 2)
+		//		.concat("px"));
+		//scrollPanel.setHeight(Integer.toString(Window.getClientHeight() / 2)
+		//		.concat("px"));
 		scrollPanel.add(mWidget);
 		verticalPanel.add(scrollPanel);
 		verticalPanel.add(new HTML("<br/><br/><small>("
 				+ "Click outside this popup to close it." + ")</small>"));
 		sPanelInner.add(verticalPanel);
+		verticalPanel.setWidth("100%");
+		verticalPanel.setHeight("100%");
 		setWidget(sPanelOuter);
 		setPosition();
+	}
+	public void clear() {
+		//this.setStyleName("freemed-PopupPanel");
+		//sPanelInner.setStylePrimaryName("freemed-Popup-sPanelInner");
+		sPanelOuter.remove(sPanelInner);
+		//sPanelOuter.setStylePrimaryName("freemed-Popup-sPanelOuter");
+		//sPanelOuter.setWidth(Integer.toString(Window.getClientWidth() / 2).concat("px"));
+		//scrollPanel.setHeight(Integer.toString(Window.getClientHeight() / 2).concat("px"));
+		scrollPanel.remove(mWidget);
+		verticalPanel.remove(scrollPanel);
+		verticalPanel.remove(new HTML("<br/><br/><small>("
+				+ "Click outside this popup to close it." + ")</small>"));
+		sPanelInner.remove(verticalPanel);
+		//setWidget(sPanelOuter);
+		
+		super.clear();
 	}
 
 	public void setPosition() {

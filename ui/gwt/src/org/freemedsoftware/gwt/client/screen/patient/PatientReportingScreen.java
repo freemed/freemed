@@ -85,24 +85,6 @@ public class PatientReportingScreen extends PatientScreenInterface {
 		PDF, XLS, HTML, TEXT, XML
 	};
 
-	private static List<PatientReportingScreen> patientReportingScreenList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static PatientReportingScreen getInstance(){
-		PatientReportingScreen patientReportingScreen=null; 
-		if(patientReportingScreenList==null)
-			patientReportingScreenList=new ArrayList<PatientReportingScreen>();
-		if(patientReportingScreenList.size()<AppConstants.MAX_PATIENT_REPORTING_TABS)//creates & returns new next instance of PatientReportingScreen
-			patientReportingScreenList.add(patientReportingScreen=new PatientReportingScreen());
-		else{ //returns last instance of PatientReportingScreen from list 
-			patientReportingScreen = patientReportingScreenList.get(AppConstants.MAX_PATIENT_REPORTING_TABS-1);
-		}	
-		return patientReportingScreen;
-	}
-	
-	public static boolean removeInstance(PatientReportingScreen patientReportingScreen){
-		return patientReportingScreenList.remove(patientReportingScreen);
-	}
 	
 	public PatientReportingScreen() {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -414,10 +396,5 @@ public class PatientReportingScreen extends PatientScreenInterface {
 			// TODO: Not done yet.
 		}
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+
 }

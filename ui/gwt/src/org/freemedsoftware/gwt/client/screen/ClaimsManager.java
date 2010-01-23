@@ -47,6 +47,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -280,7 +281,7 @@ public class ClaimsManager extends ScreenInterface {
 		verticalPanel.add(flextable);
 		verticalPanel.add(claimsManagerTable);
 		populate();
-
+		Util.setFocus(rbNoSearch);
 	}
 
 	private void populate() {

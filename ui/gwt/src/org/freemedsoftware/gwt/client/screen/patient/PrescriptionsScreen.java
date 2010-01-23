@@ -62,25 +62,6 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 	final DrugWidget wDrug = new DrugWidget();
 	final SupportModuleWidget wQuantity = new SupportModuleWidget(
 			"DrugQuantityQualifiers");
-
-	private static List<PrescriptionsScreen> prescriptionsScreenList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static PrescriptionsScreen getInstance(){
-		PrescriptionsScreen prescriptionsScreen=null; 
-		if(prescriptionsScreenList==null)
-			prescriptionsScreenList=new ArrayList<PrescriptionsScreen>();
-		if(prescriptionsScreenList.size()<AppConstants.MAX_PATIENT_PRESCRIPTOIN_TABS)//creates & returns new next instance of PrescriptionsScreen
-			prescriptionsScreenList.add(prescriptionsScreen=new PrescriptionsScreen());
-		else{ //returns last instance of PrescriptionsScreen from list 
-			prescriptionsScreen = prescriptionsScreenList.get(AppConstants.MAX_PATIENT_PRESCRIPTOIN_TABS-1);
-		}	
-		return prescriptionsScreen;
-	}
-	
-	public static boolean removeInstance(PrescriptionsScreen prescriptionsScreen){
-		return prescriptionsScreenList.remove(prescriptionsScreen);
-	}
 	
 	public PrescriptionsScreen() {
 		final FlexTable flexTable = new FlexTable();
@@ -176,6 +157,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 				resetForm();
 			}
 		});
+		Util.setFocus(wProvider);
 	}
 
 	public void savePrescription() {
@@ -258,10 +240,5 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 	public void resetForm() {
 		// TODO
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

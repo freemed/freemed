@@ -47,6 +47,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -155,8 +156,9 @@ public class MessagingComposeScreen extends ScreenInterface {
 				clearForm();
 			}
 		});
+		Util.setFocus(wTo);
 	}
-
+	
 	public void setParentScreen(MessagingScreen p) {
 		parentScreen = p;
 	}
@@ -170,6 +172,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 		wTo.setValue(new Integer[] {});
 		wSubject.setText("");
 		wText.setText("");
+		wTo.setFocus();
 	}
 
 	public void sendMessage(final boolean sendAnother) {

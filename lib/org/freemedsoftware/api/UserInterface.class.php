@@ -558,8 +558,11 @@ class UserInterface {
 		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
 		$DosingAccessOptions['Medication Inventory'] =  $this->getPermissionsBits(1,1,1,1,1);
 		$DosingAccessOptions['Open Dosing Station']  =  $this->getPermissionsBits(1,1,1,1,1);
+		$DosingAccessOptions['Close Dosing Station']     =  $this->getPermissionsBits(1,1,1,1,1);
 		$DosingAccessOptions['Dispense Dose']        =  $this->getPermissionsBits(1,1,1,1,1);
-		if(strlen(serialize($DosingAccessOptions)) != (strlen(serialize($DosingAccessOptionsDB))-13))
+		$DosingAccessOptions['Reconcile Bottle']     =  $this->getPermissionsBits(1,1,1,1,1);
+		$DosingAccessOptions['Bottle Transfer']     =  $this->getPermissionsBits(1,1,1,1,1);
+		if(strlen(serialize($DosingAccessOptions))  != (strlen(serialize($DosingAccessOptionsDB))-13))
 			$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
 	} // end method checkDosingMenu
 	

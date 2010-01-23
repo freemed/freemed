@@ -61,6 +61,7 @@ BEGIN
 	#----- Remove triggers
 	DROP TRIGGER drugsampleinv_PreInsert;
 	DROP TRIGGER drugsampleinv_PreUpdate;
+
 END//
 DELIMITER ;
 CALL drugsampleinv_Upgrade( );
@@ -72,16 +73,24 @@ DELIMITER //
 CREATE TRIGGER drugsampleinv_PreInsert
 	BEFORE INSERT ON drugsampleinv
 	FOR EACH ROW BEGIN
-		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', 1) INTO NEW.drugcode;
-		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', -1) INTO NEW.strength;
+		DECLARE t_drugcode VARCHAR (75);
+		DECLARE t_strength VARCHAR (75);
+		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', 1) INTO t_drugcode;
+		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', -1) INTO t_strength;
+		SET NEW.drugcode = t_drugcode;
+		SET NEW.strength = t_strength;
 	END;
 //
 
 CREATE TRIGGER drugsampleinv_PreUpdate
 	BEFORE UPDATE ON drugsampleinv
 	FOR EACH ROW BEGIN
-		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', 1) INTO NEW.drugcode;
-		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', -1) INTO NEW.strength;
+		DECLARE t_drugcode VARCHAR (75);
+		DECLARE t_strength VARCHAR (75);
+		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', 1) INTO t_drugcode;
+		SELECT SUBSTRING_INDEX(NEW.drugndc, '-', -1) INTO t_strength;
+		SET NEW.drugcode = t_drugcode;
+		SET NEW.strength = t_strength;
 	END;
 //
 

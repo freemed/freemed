@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
@@ -53,25 +54,6 @@ public class FormEntry extends PatientEntryScreenInterface {
 			"FormTemplate");
 
 	protected MultiPageImageCompositedForm wWidget = new MultiPageImageCompositedForm();
-
-	private static List<FormEntry> formEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static FormEntry getInstance(){
-		FormEntry patientIdEntry=null; 
-		if(formEntryList==null)
-			formEntryList=new ArrayList<FormEntry>();
-		if(formEntryList.size()<AppConstants.MAX_PATIENT_FORM_TABS)//creates & returns new next instance of FormEntry
-			formEntryList.add(patientIdEntry=new FormEntry());
-		else{ //returns last instance of FormEntry from list 
-			patientIdEntry = formEntryList.get(AppConstants.MAX_PATIENT_FORM_TABS-1);
-		}	
-		return patientIdEntry;
-	}
-	
-	public static boolean removeInstance(FormEntry patientIdEntry){
-		return formEntryList.remove(patientIdEntry);
-	}
 	
 	public FormEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -132,10 +114,5 @@ public class FormEntry extends PatientEntryScreenInterface {
 	public void resetForm() {
 		wForm.clear();
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

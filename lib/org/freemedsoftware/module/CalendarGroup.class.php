@@ -86,7 +86,7 @@ class CalendarGroup extends SupportModule {
 	//
 	public function GetDetailedRecord( $id ) {
 		freemed::acl_enforce( 'emr', 'search' );
-		$q = "SELECT cg.id,cg.groupname,cg.grouplength,cg.groupfrequency,cg.groupmembers, CONCAT(f.psrname,' ',f.psrnote,' (',f.psrcity,',',f.psrstate,')') as groupfacility  FROM calgroup cg  left outer join facility f on f.id=cg.groupfacility where cg.id=".$GLOBALS['sql']->quote( $id );
+		$q = "SELECT cg.id,cg.groupname,cg.grouplength,cg.groupfrequency,cg.groupmembers,cg.groupfacility as facility, CONCAT(f.psrname,' ',f.psrnote,' (',f.psrcity,',',f.psrstate,')') as groupfacility  FROM calgroup cg  left outer join facility f on f.id=cg.groupfacility where cg.id=".$GLOBALS['sql']->quote( $id );
 		$groupResult = $GLOBALS['sql']->queryRow( $q );
 		if($groupResult){
 			$members = $groupResult['groupmembers'];

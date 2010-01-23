@@ -25,6 +25,7 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
@@ -99,6 +100,11 @@ public class ClosableTab extends Composite {
 						PatientScreen ps = (PatientScreen) widget;
 						Integer patientId = ps.getPatient();
 						CurrentState.getPatientScreenMap().remove(patientId);
+						
+					}if (widget instanceof PatientScreenInterface) {
+						PatientScreenInterface ps = (PatientScreenInterface) widget;
+						Integer patientId = ps.getPatientId();
+						CurrentState.getPatientSubScreenMap().remove(patientId);
 					}
 					if (widget instanceof ScreenInterface) {
 						ScreenInterface screen = (ScreenInterface) widget;

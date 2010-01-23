@@ -47,12 +47,14 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -60,7 +62,7 @@ public class RxRefillScreen extends ScreenInterface {
 
 	private PatientWidget patient = null;
 	protected Integer patientId = new Integer(0);
-	TextBox noteBox = null; 
+	TextArea noteBox = null; 
 	
 	private static List<RxRefillScreen> RxRefillScreenList=null;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
@@ -109,6 +111,7 @@ public class RxRefillScreen extends ScreenInterface {
 		
 		
 		patient = new PatientWidget();
+		patient.setWidth("250");
 		patient.addChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
@@ -144,7 +147,8 @@ public class RxRefillScreen extends ScreenInterface {
 		noteLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		horizontalPanel2.setCellWidth(noteLabel, "5%");
 		
-		noteBox = new TextBox();
+		noteBox = new TextArea();
+		noteBox.setPixelSize(250, 200);
 		horizontalPanel2.add(noteBox);
 		horizontalPanel2.setCellHorizontalAlignment(noteBox, HasHorizontalAlignment.ALIGN_LEFT);
 		
@@ -231,10 +235,9 @@ public class RxRefillScreen extends ScreenInterface {
 		buttonPanel.add(cancelButton);
 		
 		//buttons_Horizontal_Panel ends
-
 		
+		Util.setFocus(patient);		
 	}
-
 
 	
 	MultiWordSuggestOracle createPatientsOracle()

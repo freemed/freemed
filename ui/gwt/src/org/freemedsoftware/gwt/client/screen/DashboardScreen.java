@@ -43,13 +43,17 @@ import org.freemedsoftware.gwt.client.widget.WorkList;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -81,19 +85,21 @@ public class DashboardScreen extends ScreenInterface {
 				hP.add(defaultIcon);
 				hP.setSpacing(2);
 				}
+			final PushButton button = new PushButton();
+			button.setStyleName("gwt-simple-button");
+			button.getUpFace().setImage(
+					new Image("resources/images/close1_x.16x16.png"));
+
+			button.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					remove();
+				}
+			});
+			hP.add(button);
 			hP.add(label);
 			hP.setStylePrimaryName("freemed-DashboardLabel");
-//			final PushButton button = new PushButton();
-//			button.setStyleName("gwt-simple-button");
-//			button.getUpFace().setImage(
-//					new Image("resources/images/close_x.16x16.png"));
-//
-//			button.addClickHandler(new ClickHandler() {
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					remove();
-//				}
-//			});
+			
 
 			hP.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 

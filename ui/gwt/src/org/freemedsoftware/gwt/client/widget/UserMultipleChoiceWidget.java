@@ -85,7 +85,7 @@ public class UserMultipleChoiceWidget extends Composite {
 			}
 		});
 	}
-
+	
 	protected void pushWidgetValue(Integer val) {
 		List<Integer> a = new ArrayList<Integer>();
 		if (widgetValues != null) {
@@ -141,6 +141,10 @@ public class UserMultipleChoiceWidget extends Composite {
 	 */
 	public Integer[] getValues() {
 		return widgetValues;
+	}
+	
+	public void setFocus(){
+		userWidget.setFocus(true);
 	}
 
 	/**

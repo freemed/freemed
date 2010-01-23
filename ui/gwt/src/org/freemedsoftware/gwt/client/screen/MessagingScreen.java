@@ -243,10 +243,11 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 					if (col == 4) {
 						deleteMessage(messageId);
 					} else if(col != 0) {
-						showMessage(messageId);
+						showMessage(messageId);						
 						msgView = new MessageView();
 						msgView.setMsgFrom(data.get("from_user"));
 						msgView.setMsgDate(data.get("stamp"));
+						msgView.setText(msgView.createMessageHtml(data.get("from_user"), data.get("stamp"), data.get("subject"), data.get("content")));
 //						showMessage(messageId);
 						msgView.setMessagingScreen(getMessagingScreen());
 						popupMessageView = new Popup();
@@ -257,6 +258,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 							}
 						});
 						popupMessageView.initialize();
+						
 					}
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
@@ -601,9 +603,9 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler {
 //											.replace("\\", "").replace("\n",
 //													"<br/>"));
 //									showMessagePopup(r.get("msgtext").replace("\\", "").replace("\n","<br/>"), "Message subject");
-									msgView.setText(r.get("msgtext")
-											.replace("\\", "").replace("\n",
-													"<br/>"));
+									//msgView.setText(r.get("msgtext")
+										//	.replace("\\", "").replace("\n",
+										//			"<br/>"));
 									msgView.setMsgFromId(Integer.parseInt(r.get("msgby")));
 									msgView.setMsgSubject(r.get("msgsubject"));
 									msgView.setMsgPatientId(Integer.parseInt(r.get("msgpatient")));

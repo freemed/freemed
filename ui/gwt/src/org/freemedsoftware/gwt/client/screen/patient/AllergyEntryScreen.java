@@ -46,6 +46,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -61,25 +62,6 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 	protected final String className = "org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen";
 	
 	protected PatientScreen parentScreen;
-	
-	private static List<AllergyEntryScreen> allergyEntryScreenList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static AllergyEntryScreen getInstance(){
-		AllergyEntryScreen allergyEntryScreen=null; 
-		if(allergyEntryScreenList==null)
-			allergyEntryScreenList=new ArrayList<AllergyEntryScreen>();
-		if(allergyEntryScreenList.size()<AppConstants.MAX_PATIENT_ALLERGY_TABS)//creates & returns new next instance of AllergyEntryScreen
-			allergyEntryScreenList.add(allergyEntryScreen=new AllergyEntryScreen());
-		else{ //returns last instance of AllergyEntryScreen from list 
-			allergyEntryScreen = allergyEntryScreenList.get(AppConstants.MAX_PATIENT_ALLERGY_TABS-1);
-		}	
-		return allergyEntryScreen;
-	}
-	
-	public static boolean removeInstance(AllergyEntryScreen allergyEntryScreen){
-		return allergyEntryScreenList.remove(allergyEntryScreen);
-	}
 	
 	public AllergyEntryScreen() {
 
@@ -135,6 +117,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 				resetForm();
 			}
 		});
+		Util.setFocus(allergyTextBox);
 	}
 
 	public boolean checkInput() {
@@ -154,6 +137,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		allergyTextBox.setText("");
 		reactionTextBox.setText("");
 		severityTextBox.setText("");
+		allergyTextBox.setFocus(true);
 	}
 
 	public void saveForm() {
@@ -216,10 +200,5 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 //	public void setParentScreen(PatientScreen parentScreen) {
 //		this.parentScreen = parentScreen;
 //	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

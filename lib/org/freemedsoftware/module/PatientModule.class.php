@@ -224,6 +224,11 @@ class PatientModule extends SupportModule {
 		$q = "delete FROM patient_address WHERE patient = ". ( $patient + 0 );
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method DeleteAddresses
+	
+	public function DeleteAddressById ( $id ) {
+		$q = "delete FROM patient_address WHERE id = ". ( $id );
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 
 	// Method: Search
 	//

@@ -144,7 +144,6 @@ public class FreemedInterface implements EntryPoint {
 
 	public void resume() {
 		JsonUtil.debug("resume()");
-		Util.setFacilityInSession(loginDialog.getSelectedFacilityName(),loginDialog.getSelectedFacilityValue());
 		if (!active) {
 			JsonUtil.debug("create main screen object");
 			mainScreen = new MainScreen();
@@ -159,10 +158,7 @@ public class FreemedInterface implements EntryPoint {
 			mainScreen.setFreemedInterface(this);
 			CurrentState.setUserConfig("user", Cookies.getCookie("user"));
 			active = true;
-//			mainScreen.setFacility(loginDialog.getSelectedFacilityName());
-//			CurrentState.assignDefaultFacility(Integer.parseInt(loginDialog.getSelectedFacilityValue()));
 		} else {
-			//mainScreen.setFacilityInfo(CurrentState.getFreemedInterface().loginDialog.getSelectedFacilityName());
 			if(!(CurrentState.getDefaultUser().length()>0 && CurrentState.getDefaultUser().equalsIgnoreCase(loginDialog.getLoggedInUser())))
 				Util.closeAllTabs();
 			mainScreen.refreshMainScreen();
@@ -173,5 +169,6 @@ public class FreemedInterface implements EntryPoint {
 			}
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
 		}
+		Util.setFacilityInSession(loginDialog.getSelectedFacilityName(),loginDialog.getSelectedFacilityValue());
 	}
 }

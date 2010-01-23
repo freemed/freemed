@@ -154,7 +154,6 @@ public class MessageView extends WidgetInterface {
 			}
 		});
 		horizontalPanel.add(forwardWrapper);
-
 		verticalPanel.add(text);
 		sPanel.add(verticalPanel);
 
@@ -169,11 +168,17 @@ public class MessageView extends WidgetInterface {
 		
 		return body;
 	}
+	public String createMessageHtml(String from,String date,String subject,String body){		
+		return "From: "+from+"<br>"
+		           +"Date: "+date+"<br>"
+		           +"Subject: "+subject+"<br><br><br>"
+		           +body;
+	}
 	
 	public void setText(String t) {
 		text.setHTML(t);
 	}
-
+	
 	public void setOnClose(Command c) {
 		onClose = c;
 	}

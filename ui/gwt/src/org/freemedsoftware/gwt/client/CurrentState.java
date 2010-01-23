@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
@@ -69,6 +70,8 @@ public class CurrentState {
 	protected static String defaultUser = "";
 
 	protected static HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
+	
+	protected static HashMap<Integer, HashMap<String,PatientScreenInterface>> patientSubScreenMap = new HashMap<Integer, HashMap<String,PatientScreenInterface>>();
 
 	protected static HashMap<String, Object> userConfiguration = new HashMap<String, Object>();
 	
@@ -541,6 +544,10 @@ public class CurrentState {
 			flag=false;
 		
 		return  flag;
+	}
+
+	public static HashMap<Integer, HashMap<String,PatientScreenInterface>> getPatientSubScreenMap() {
+		return patientSubScreenMap;
 	} 
 	
 }

@@ -54,6 +54,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -244,6 +245,7 @@ public class UserManagementScreen extends ScreenInterface implements
 
 		// TODO:Backend needs to be fixed first
 		retrieveAllUsers();
+		Util.setFocus(tbUsername);
 	}
 
 	public void onClick(ClickEvent evt) {
@@ -466,6 +468,7 @@ public class UserManagementScreen extends ScreenInterface implements
 			CheckBox checkBox = aclGroupsMap.get(key);
 			checkBox.setValue(false);
 		}
+		tbUsername.setFocus(true);
 	}
 
 	public void retrieveAllUsers() {

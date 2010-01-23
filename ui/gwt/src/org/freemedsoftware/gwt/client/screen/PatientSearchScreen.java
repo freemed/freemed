@@ -205,21 +205,10 @@ public class PatientSearchScreen extends ScreenInterface {
 		// Set visible focus *after* this is shown, otherwise it won't focus.
 		try {
 			wSmartSearch.setFocus(true);
-			onFocus();
 		} catch (Exception e) {
 			GWT.log("Caught exception: ", e);
 		}
-	}
-
-	public void onFocus() {
-		Timer timer = new Timer() {
-			public void run() {
-				wSmartSearch.setFocus(true);
-			}
-		};
-		// Run initial polling ...
-		timer.schedule(500);
-		timer.run();
+		Util.setFocus(wSmartSearch);
 	}
 
 	@SuppressWarnings("unchecked")

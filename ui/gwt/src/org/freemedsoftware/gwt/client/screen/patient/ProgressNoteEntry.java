@@ -72,25 +72,6 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 	final protected String moduleName = "ProgressNotes";
 
 	protected String patientIdName = "pnotespat";
-
-	private static List<ProgressNoteEntry> ProgressNoteEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static ProgressNoteEntry getInstance(){
-		ProgressNoteEntry progressNoteEntry=null; 
-		if(ProgressNoteEntryList==null)
-			ProgressNoteEntryList=new ArrayList<ProgressNoteEntry>();
-		if(ProgressNoteEntryList.size()<AppConstants.MAX_PATIENT_PROGRESS_NOTE_TABS)//creates & returns new next instance of ProgressNoteEntry
-			ProgressNoteEntryList.add(progressNoteEntry=new ProgressNoteEntry());
-		else{ //returns last instance of ProgressNoteEntry from list 
-			progressNoteEntry = ProgressNoteEntryList.get(AppConstants.MAX_PATIENT_PROGRESS_NOTE_TABS-1);
-		}	
-		return progressNoteEntry;
-	}
-	
-	public static boolean removeInstance(ProgressNoteEntry progressNoteEntry){
-		return ProgressNoteEntryList.remove(progressNoteEntry);
-	}
 	
 	public ProgressNoteEntry() {
 
@@ -300,6 +281,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		containerR.add(recentMedicationsList);
 
 		tabPanel.selectTab(0);
+		Util.setFocus(wProvider);
 	}
 
 	/**
@@ -330,10 +312,5 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		E.setHTML(new String(""));
 		R.setHTML(new String(""));
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

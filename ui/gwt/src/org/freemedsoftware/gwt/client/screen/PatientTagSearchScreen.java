@@ -48,6 +48,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -140,8 +141,8 @@ public class PatientTagSearchScreen extends ScreenInterface {
 
 			}
 		});
+		Util.setFocus(tagWidget);
 	}
-
 	/**
 	 * Populate the screen with data.
 	 * 

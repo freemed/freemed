@@ -26,9 +26,11 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
@@ -60,26 +62,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 
 	protected CustomListBox wRecovered = null;
 
-	protected CustomTextArea wNotes = null;
-
-	private static List<ImmunizationEntry> immunizationEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static ImmunizationEntry getInstance(){
-		ImmunizationEntry immunizationEntry=null; 
-		if(immunizationEntryList==null)
-			immunizationEntryList=new ArrayList<ImmunizationEntry>();
-		if(immunizationEntryList.size()<AppConstants.MAX_PATIENT_IMMUNIZATION_TABS)//creates & returns new next instance of ImmunizationEntry
-			immunizationEntryList.add(immunizationEntry=new ImmunizationEntry());
-		else{ //returns last instance of ImmunizationEntry from list 
-			immunizationEntry = immunizationEntryList.get(AppConstants.MAX_PATIENT_IMMUNIZATION_TABS-1);
-		}	
-		return immunizationEntry;
-	}
-	
-	public static boolean removeInstance(ImmunizationEntry immunizationEntry){
-		return immunizationEntryList.remove(immunizationEntry);
-	}
+	protected CustomTextArea wNotes = null;	
 	
 	public ImmunizationEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
@@ -183,6 +166,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 			}
 		});
 		verticalPanel.add(buttonBar);
+		Util.setFocus(wProvider);
 	}
 
 	public String getModuleName() {
@@ -199,11 +183,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		wLotNumber.setValue("");
 		wRecovered.setWidgetValue("1");
 		wNotes.setValue("");
+		wProvider.setFocus(true);
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+	
 }

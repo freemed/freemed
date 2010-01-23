@@ -72,6 +72,7 @@ import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -215,7 +216,6 @@ public class MainScreen extends Composite {
 		facilityInfoPanel.add(homeImage);
 		facilityInfoPanel.add(facilityInfo);
 
-		// setFacilityInfo(null);
 		// Adding UserInfoPanel into top headerhorpanel
 		topHeaderHorPanel.add(facilityInfoPanel);
 		topHeaderHorPanel.setCellHorizontalAlignment(facilityInfoPanel,
@@ -243,7 +243,32 @@ public class MainScreen extends Composite {
 		// adding shortcuts panel at top right corder
 		HorizontalPanel shortCutsPanel = new HorizontalPanel();
 		shortCutsPanel.setStyleName("Application-links");
+		
+		PushButton schedulerButton=new PushButton();
+		schedulerButton.setStyleName("gwt-simple-button");
+		schedulerButton.getUpFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/scheduler.16x16.png"));
+		schedulerButton.getDownFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "/resources/images/scheduler.16x16.png"));
+		schedulerButton.addClickHandler(new ClickHandler(){
 
+			public void onClick(ClickEvent event){
+				Util.spawnTab(AppConstants.SCHEDULER,
+						SchedulerScreen.getInstance());
+			}
+		});
+		shortCutsPanel.add(schedulerButton);
+		
+		// Adding spacer
+		HTML separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
+		
 		// Adding preferences link
 		HTML preferencesLink = new HTML(
 				"<a href=\"javascript:undefined;\">preferences</a>");
@@ -272,10 +297,10 @@ public class MainScreen extends Composite {
 			}
 		});
 		shortCutsPanel.add(preferencesLink);
-
-		// Adding spacer
-		HTML spacer = new HTML("&nbsp&nbsp | &nbsp&nbsp");
-		shortCutsPanel.add(spacer);
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
 
 		// Adding support link
 		HTML supportLink = new HTML(
@@ -298,10 +323,11 @@ public class MainScreen extends Composite {
 			}
 		});
 		shortCutsPanel.add(supportLink);
-
 		// Adding logout link
-		spacer = new HTML("&nbsp&nbsp | &nbsp&nbsp");
-		shortCutsPanel.add(spacer);
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
 
 		// Adding logout link
 		HTML logoutLink = new HTML(
@@ -512,7 +538,7 @@ public class MainScreen extends Composite {
 				showSystemPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/dashboard.32x32.png"),
+						+ "resources/images/dashboard.32x32.png"),
 						AppConstants.DASHBOARD, new Command() {
 							public void execute() {
 								Util
@@ -529,7 +555,7 @@ public class MainScreen extends Composite {
 				showSystemPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/scheduler.32x32.png"),
+						+ "resources/images/scheduler.32x32.png"),
 						AppConstants.SCHEDULER, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.SCHEDULER,
@@ -544,7 +570,7 @@ public class MainScreen extends Composite {
 				showSystemPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/messaging.32x32.png"),
+						+ "resources/images/messaging.32x32.png"),
 						AppConstants.MESSAGES, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.MESSAGES,
@@ -572,7 +598,7 @@ public class MainScreen extends Composite {
 				showPatientPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/chart_search.32x32.png"),
+						+ "resources/images/chart_search.32x32.png"),
 						AppConstants.SEARCH, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.SEARCH,
@@ -587,7 +613,7 @@ public class MainScreen extends Composite {
 				showPatientPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/patient_entry.32x32.png"),
+						+ "resources/images/patient_entry.32x32.png"),
 						AppConstants.NEW_PATIENT, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.NEW_PATIENT,
@@ -602,7 +628,7 @@ public class MainScreen extends Composite {
 				showPatientPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/callin.32x32.png"),
+						+ "resources/images/callin.32x32.png"),
 						AppConstants.GROUPS, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.GROUPS,
@@ -617,7 +643,7 @@ public class MainScreen extends Composite {
 				showPatientPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/callin.32x32.png"),
+						+ "resources/images/callin.32x32.png"),
 						AppConstants.CALL_IN, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.CALL_IN,
@@ -632,7 +658,7 @@ public class MainScreen extends Composite {
 				showPatientPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/rx_refill.32x32.png"),
+						+ "resources/images/rx_refill.32x32.png"),
 						"Rx Refill", new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.RX_REFILL,
@@ -647,7 +673,7 @@ public class MainScreen extends Composite {
 				showPatientPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/patient.32x32.png"),
+						+ "resources/images/patient.32x32.png"),
 						AppConstants.TAG_SEARCH, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.TAG_SEARCH,
@@ -675,7 +701,7 @@ public class MainScreen extends Composite {
 				showDocumentPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/unfiled.32x32.png"),
+						+ "resources/images/unfiled.32x32.png"),
 						AppConstants.UNFILED, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.UNFILED
@@ -690,7 +716,7 @@ public class MainScreen extends Composite {
 				showDocumentPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/unread.32x32.png"),
+						+ "resources/images/unread.32x32.png"),
 						AppConstants.UNREAD, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.UNREAD
@@ -719,7 +745,7 @@ public class MainScreen extends Composite {
 				showBillingPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/accounts_receivable.32x32.png"),
+						+ "resources/images/accounts_receivable.32x32.png"),
 						AppConstants.ACCOUNT_RECEIVABLE, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.ACCOUNT_RECEIVABLE,
@@ -735,7 +761,7 @@ public class MainScreen extends Composite {
 				showBillingPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/claims_manage.32x32.png"),
+						+ "resources/images/claims_manage.32x32.png"),
 						AppConstants.CLAIMS_MANAGER, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.CLAIMS_MANAGER,
@@ -750,7 +776,7 @@ public class MainScreen extends Composite {
 				showBillingPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/remitt.32x32.png"),
+						+ "resources/images/remitt.32x32.png"),
 						AppConstants.REMITT_BILLING, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.REMITT_BILLING,
@@ -765,7 +791,7 @@ public class MainScreen extends Composite {
 				showBillingPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/superbill.32x32.png"),
+						+ "resources/images/superbill.32x32.png"),
 						AppConstants.SUPER_BILLS, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.SUPER_BILLS,
@@ -793,7 +819,7 @@ public class MainScreen extends Composite {
 				showReportingPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/reporting.32x32.png"),
+						+ "resources/images/reporting.32x32.png"),
 						AppConstants.REPORTING_ENGINE, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.REPORTING_ENGINE,
@@ -822,7 +848,7 @@ public class MainScreen extends Composite {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/reporting.32x32.png"),
+						+ "resources/images/reporting.32x32.png"),
 						AppConstants.UTILITIES_SCREEN, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.UTILITIES_SCREEN,
@@ -838,7 +864,7 @@ public class MainScreen extends Composite {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/modules.32x32.png"),
+						+ "resources/images/modules.32x32.png"),
 						AppConstants.SUPPORT_DATA, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.SUPPORT_DATA,
@@ -853,7 +879,7 @@ public class MainScreen extends Composite {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/user_config.32x32.png"),
+						+ "resources/images/user_config.32x32.png"),
 						AppConstants.USER_MANAGEMENT, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.USER_MANAGEMENT,
@@ -869,7 +895,7 @@ public class MainScreen extends Composite {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/settings.32x32.png"),
+						+ "resources/images/settings.32x32.png"),
 						AppConstants.SYSTEM_CONFIGURATION, new Command() {
 							public void execute() {
 								Util.spawnTab(
@@ -904,7 +930,7 @@ public class MainScreen extends Composite {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/reporting.32x32.png"),
+						+ "resources/images/reporting.32x32.png"),
 						AppConstants.ACL, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.ACL,
@@ -1168,12 +1194,6 @@ public class MainScreen extends Composite {
 		JsonUtil.debug("MainScreen.refreshMainScreen: start");
 		setLoginUserInfo();
 		dashboard.refreshDashBoardWidgets();
-		setFacility(CurrentState.getFreemedInterface().getLoginDialog()
-				.getSelectedFacilityName());
-		CurrentState.assignDefaultFacility(Integer.parseInt(CurrentState
-				.getFreemedInterface().getLoginDialog()
-				.getSelectedFacilityValue()));
-		// populateLeftNavigationPanel();
 		CurrentState.retrieveUserConfiguration(true,new Command() {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");

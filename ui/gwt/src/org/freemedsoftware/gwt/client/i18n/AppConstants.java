@@ -52,8 +52,11 @@ public interface AppConstants extends Constants {
 	// Settings for options available under Dosing Left Panel
 	public static int MAX_MED_INVENTORY_TABS = 1;
 	public static int MAX_OPEN_DOSING_STATION_TABS = 1;
+	public static int MAX_CLOSE_DOSING_STATION_TABS = 1;
 	public static int MAX_DISPENSE_DOSE_TABS = 1;
-
+	public static int MAX_BOTTLE_TRANSFER_TABS = 1;
+	public static int MAX_RECONCILE_BOTTLE_TABS = 1;
+	
 	// Settings for options available under Billing Left Panel
 	public static int MAX_CLAIMSMANAGER_TABS = 1;
 
@@ -97,8 +100,11 @@ public interface AppConstants extends Constants {
 	public final static String DOSING_MENU_CATEGORY = "Dosing Menu";
 	public final static String MEDICATION_INVENTORY = "Medication Inventory";
 	public final static String OPEN_DOSING_STATION = "Open Dosing Station";
+	public final static String CLOSE_DOSING_STATION = "Close Dosing Station";
 	public final static String DISPENSE_DOSE = "Dispense Dose";
-
+	public final static String BOTTLE_TRANSFER = "Bottle Transfer";
+	public final static String RECONCILE_BOTTLE = "Reconcile Bottle";
+	
 	// Billing Category
 	public final static String BILLING_CATEGORY = "Billing";
 	public final static String ACCOUNT_RECEIVABLE = "Account Receivable";
@@ -157,7 +163,9 @@ public interface AppConstants extends Constants {
 	public static int MAX_PATIENT_DOSING_MESSAGE_TABS = 1;
 
 	// Settings for options available under TREATMENT PLAN Menu
-	public static int MAX_PATIENT_INITIAL_CONTACT_TABS = 1;
+	public static int MAX_PATIENT_INITIAL_INTAKE_TABS = 1;
+	public static int MAX_PATIENT_COUNCELOR_INTAKE_TABS = 1;
+	
 
 	//////////////////////////////////////////////////////////////////////////////
 	

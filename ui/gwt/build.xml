@@ -79,6 +79,9 @@
   </target>
 
   <target name="hosted" description="Run hosted mode">
+  	<copy todir="war">
+  	      <fileset dir="www" excludes="www/**/*.svn*"/>
+  	</copy>
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
       <classpath>
         <pathelement location="src"/>

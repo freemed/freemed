@@ -50,6 +50,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -172,6 +173,7 @@ public class ACLScreen extends ScreenInterface implements
 
 		// TODO:Backend needs to be fixed first
 		retrieveAllGroups();
+		Util.setFocus(groupName);
 	}
 
 	public void onClick(ClickEvent evt) {
@@ -362,6 +364,7 @@ public class ACLScreen extends ScreenInterface implements
 			CheckBox key = itr.next();
 			key.setValue(false);
 		}
+		groupName.setFocus(true);
 	}
 
 	public void retrieveAllGroups() {

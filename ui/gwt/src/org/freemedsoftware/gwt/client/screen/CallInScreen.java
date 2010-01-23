@@ -41,6 +41,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleListBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
@@ -48,10 +49,13 @@ import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
+import org.freemedsoftware.gwt.client.widget.Popup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -83,6 +87,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	VerticalPanel verticalPanelMenu = new VerticalPanel();
 	VerticalPanel verticalPanelEntry = new VerticalPanel();
 
+	protected Integer selectedEntryId;
 	protected CustomTable callInTable;
 	protected static String locale = "en_US";
 	protected TabPanel tabPanel;
@@ -117,9 +122,10 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	protected TextBox txtTookCall;
 
 	protected FlexTable callinPatientDetail;
+	protected Popup callinDetailPopup;
 
 	// Declreaing Button
-	protected Button btnAdd;
+	protected Button btnAdd;	
 	protected Button btnClear;
 	protected ProviderWidget provider;
 	protected SupportModuleWidget facility;
@@ -156,7 +162,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		final boolean canDelete = CurrentState.isActionAllowed(AppConstants.DELETE, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
 		final boolean canWrite  = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
 		final boolean canBook   = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.SYSTEM_CATEGORY, AppConstants.SCHEDULER);
-
+		final boolean canModify   = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
+    
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");
@@ -166,6 +173,14 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		verticalPanel.setSize("100%", "100%");
 
 		tabPanel = new TabPanel();
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {		
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				// TODO Auto-generated method stub
+				 if (event.getSelectedItem() == 1)
+					 txtLastName.setFocus(true);				
+			}		
+		});
 		verticalPanel.add(tabPanel);
 
 		/*
@@ -291,7 +306,37 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 					}
 				}
 			});
+			
+		if(canModify){
+			final Button modifyButton = new Button();
+			menuButtonsPanel.add(modifyButton);
+			modifyButton.setText("Modify");
+			modifyButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					if (callInTable.getSelectedCount() < 1)
+						Window.alert("Please select an entry!");
+					else if(callInTable.getSelectedCount() > 1)
+						Window.alert("You can modify only a single entry at a time!");
+					else {
+						List<String> slectedItems = callInTable.getSelected();
+						Iterator<String> itr = slectedItems.iterator();// Get all
+																		// selected
+																		// items
+																		// from
+																		// custom
+																		// table
+						tabPanel.selectTab(1);
+						btnAdd.setText("Modify");
+						selectedEntryId=Integer.parseInt(itr.next());
+						modifyEntry(selectedEntryId);
+					}
+				}
+			});
 		}
+			
+		}
+		
 		verticalPanelMenu.add(menuButtonsPanel);
 		callInTable = new CustomTable();
 		verticalPanelMenu.add(callInTable);
@@ -315,7 +360,13 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 					if (col != 0 || !(canBook || canWrite || canDelete )) {
 						final Integer callinId = Integer.parseInt(data
 								.get("id"));
+						callinDetailPopup=new Popup();
+						callinDetailPopup.setPixelSize(500, 20);
+						callinPatientDetail=new FlexTable();
 						showCallinInfo(callinId);
+						PopupView viewInfo=new PopupView(callinPatientDetail);
+						callinDetailPopup.setNewWidget(viewInfo);
+						callinDetailPopup.initialize();
 					}
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
@@ -341,7 +392,6 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 		callinPatientDetail = new FlexTable();
 		callinPatientDetail.setWidth("35%");
-		verticalPanelMenu.add(callinPatientDetail);
 		tabPanel.add(verticalPanelMenu, "Menu");
 		if(canWrite)
 			tabPanel.add(createEntryTabBar(), "Entry");
@@ -587,6 +637,59 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			// TODO NORMAL MODE STUFF
 		}
 	}
+	
+	protected void modifyEntry(Integer callinId) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO STUBBED MODE STUFF
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(callinId) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.Callin.GetDetailedRecord",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> data = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (data != null) {
+									txtFirstName.setText(data.get("firstname"));
+									txtMiddleName.setText(data.get("middlename"));
+									txtLastName.setText(data.get("lastname"));
+									
+									
+									taComplaints.setText(data.get("complaint"));									
+									dateBox.setValue(data.get("dob"));									
+									facility.setValue(Integer.parseInt(data.get("facilityid")));
+									provider.setValue(Integer.parseInt(data.get("physicianid")));
+									
+									txtHomePhone.setText(data.get("phone_home"));
+									txtWorkPhone.setText(data.get("phone_work"));
+									txtTookCall.setText(data.get("took_call"));
+								}
+							} else {
+							}
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		} else {
+			// TODO NORMAL MODE STUFF
+		}
+	}
 
 	protected void openPatientForm(final Integer callinId) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -714,14 +817,28 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO STUBBED MODE STUFF
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				String[] params = { JsonUtil.jsonify(populateHashMap()) };
-				RequestBuilder builder = new RequestBuilder(
+				RequestBuilder builder=null;
+				if(btnAdd.getText().equals("Add"))
+				{
+				String[] params = { JsonUtil.jsonify(populateHashMap(null)) };
+				builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
 								.encode(Util
 										.getJsonRequest(
 												"org.freemedsoftware.module.Callin.add",
 												params)));
+				}
+				else{
+					String[] params = { JsonUtil.jsonify(populateHashMap(selectedEntryId)) };
+					builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.module.Callin.mod",
+													params)));
+				}
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
@@ -729,17 +846,33 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 						public void onResponseReceived(Request request,
 								Response response) {
-							if (200 == response.getStatusCode()) {
-								Integer r = (Integer) JsonUtil.shoehornJson(
+							if (200 == response.getStatusCode()) {	
+								Integer r=null;
+								r = (Integer) JsonUtil.shoehornJson(
 										JSONParser.parse(response.getText()),
-										"Integer");
-								if (r != 0) {
+										"Integer");								
+									if (r != null) {
 									clearForm();
-									populate();
+									populate();									
 									CurrentState.getToaster().addItem(
 											"Callin Form",
-											"Entry successfully added.");
-								}
+											"Entry successfully added.");									
+								}else {
+									r=(Boolean) JsonUtil.shoehornJson(
+														JSONParser.parse(response.getText()),
+												"Boolean")?1:0;
+									if(r==1){
+										clearForm();
+											populate();	
+											CurrentState.getToaster().addItem(
+													"Callin Form",
+													"Entry successfully modified.");
+											btnAdd.setText("Add");
+									}else{
+										
+									}
+								}									
+								
 							} else {
 								CurrentState.getToaster().addItem(
 										"Callin Form", "Callin Form failed.");
@@ -766,6 +899,9 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 		txtHomePhone.setText("");
 		txtWorkPhone.setText("");
+		if(btnAdd.getText().equals("Modify"))
+			btnAdd.setText("Add");
+		txtLastName.setFocus(true);
 
 	}
 
@@ -789,9 +925,10 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		return true;
 	}
 
-	protected HashMap<String, String> populateHashMap() {
+	protected HashMap<String, String> populateHashMap(Integer id ) {
 		HashMap<String, String> m = new HashMap<String, String>();
-
+		
+		m.put((String) "id", String.valueOf(id));
 		m.put((String) "cilname", (String) txtLastName.getText());
 		m.put((String) "cifname", (String) txtFirstName.getText());
 		m.put((String) "cimname", (String) txtMiddleName.getText());
@@ -1132,7 +1269,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 				msg += "Please specify provider." + "\n";
 			}
 
-			if (msg != "") {
+			if (!msg.equalsIgnoreCase("")) {
 				Window.alert(msg);
 				return false;
 			}

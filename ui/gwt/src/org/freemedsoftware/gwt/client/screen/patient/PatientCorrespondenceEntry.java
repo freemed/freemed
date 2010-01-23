@@ -25,9 +25,11 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
@@ -55,26 +57,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 
 	final protected String moduleName = "PatientCorrespondence";
 
-	protected String patientIdName = "letterpatient";
-
-	private static List<PatientCorrespondenceEntry> patientCorrespondenceEntryList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static PatientCorrespondenceEntry getInstance(){
-		PatientCorrespondenceEntry patientCorrespondenceEntry=null; 
-		if(patientCorrespondenceEntryList==null)
-			patientCorrespondenceEntryList=new ArrayList<PatientCorrespondenceEntry>();
-		if(patientCorrespondenceEntryList.size()<AppConstants.MAX_PATIENT_CORRECPONDENCE_TABS)//creates & returns new next instance of PatientCorrespondenceEntry
-			patientCorrespondenceEntryList.add(patientCorrespondenceEntry=new PatientCorrespondenceEntry());
-		else{ //returns last instance of PatientCorrespondenceEntry from list 
-			patientCorrespondenceEntry = patientCorrespondenceEntryList.get(AppConstants.MAX_PATIENT_CORRECPONDENCE_TABS-1);
-		}	
-		return patientCorrespondenceEntry;
-	}
-	
-	public static boolean removeInstance(PatientCorrespondenceEntry patientCorrespondenceEntry){
-		return patientCorrespondenceEntryList.remove(patientCorrespondenceEntry);
-	}
+	protected String patientIdName = "letterpatient";	
 	
 	public PatientCorrespondenceEntry() {
 
@@ -138,6 +121,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 			}
 		});
 		verticalPanel.add(buttonBar);
+		Util.setFocus(wFrom);
 	}
 
 	public String getModuleName() {
@@ -147,10 +131,5 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 	public void resetForm() {
 
 	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
-	}
+
 }

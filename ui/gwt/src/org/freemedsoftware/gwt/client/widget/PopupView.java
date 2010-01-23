@@ -103,6 +103,8 @@ public class PopupView extends WidgetInterface {
 
 
 		verticalPanel.add(w);
+		
+		verticalPanel.setWidth("100%");
 
 //		verticalPanel.add(text);
 		sPanel.add(verticalPanel);

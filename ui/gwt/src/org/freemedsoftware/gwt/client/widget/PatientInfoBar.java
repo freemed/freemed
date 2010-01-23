@@ -69,12 +69,18 @@ public class PatientInfoBar extends Composite {
 	protected Image photoId = null;
 
 	protected ScreenInterface parentScreen;
+	
+	protected String provideName;
 
 	protected DisclosurePanel wDropdown = null;
 
 	public void setExpandPatientDetails() {
 		if (!wDropdown.isOpen())
 			wDropdown.setOpen(true);
+	}
+	
+	public String getProviderName(){
+		return provideName;
 	}
 
 	public PatientInfoBar() {
@@ -262,6 +268,7 @@ public class PatientInfoBar extends Composite {
 									.getHTML()
 									+ "<br> <b>PCP</b>: "
 									+ response.getText().replaceAll("\"", ""));
+							provideName=response.getText().replaceAll("\"", "");
 						}
 					}
 				});

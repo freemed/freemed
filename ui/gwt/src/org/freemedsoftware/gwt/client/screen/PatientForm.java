@@ -47,12 +47,15 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses.Address;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -61,6 +64,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -195,6 +199,20 @@ public class PatientForm extends ScreenInterface {
 		initWidget(verticalPanel);
 
 		final TabPanel tabPanel = new TabPanel();
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {		
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				// TODO Auto-generated method stub
+				 if (event.getSelectedItem() == 0)
+					 title.setFocus();	
+				 if (event.getSelectedItem() == 2)
+					 preferredContact.setFocus(true);
+				 if (event.getSelectedItem() == 3)
+					 martialStatus.setFocus(true);
+				 if (event.getSelectedItem() == 4)
+					 preferredPharmacy.setFocus(true);
+			}		
+		});
 		verticalPanel.add(tabPanel);
 
 		final FlexTable demographicsTable = new FlexTable();
@@ -229,6 +247,7 @@ public class PatientForm extends ScreenInterface {
 		wLastName = new TextBox();
 		demographicsTable.setWidget(1, 1, wLastName);
 		wLastName.setTabIndex(1);
+		wLastName.setFocus(true);
 		wLastName.setWidth("100%");
 		wLastName.addKeyUpHandler(new KeyUpHandler() {
 			@Override
@@ -825,7 +844,7 @@ public class PatientForm extends ScreenInterface {
 													if (r) {
 //														addressContainer.setPatient(patientId);
 														
-														addressContainer.deleteAddress();
+														//addressContainer.deleteAddress();
 														addressContainer.commitChanges();
 														
 														patientCoverages.commitChanges();
@@ -870,8 +889,8 @@ public class PatientForm extends ScreenInterface {
 		
 		patientAuthorizations = new PatientAuthorizations();
 		tabPanel.add(patientAuthorizations, "Authorizations");
+		Util.setFocus(title);	
 	}
-	
 	/**
 	 * Create new tab for patient.
 	 * 

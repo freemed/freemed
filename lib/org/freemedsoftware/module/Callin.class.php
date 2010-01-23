@@ -92,9 +92,9 @@ class Callin extends SupportModule {
 	//
 	public function GetDetailedRecord( $id) {
 		freemed::acl_enforce( 'emr', 'search' );
-		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
-		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility"
-		.",CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
+		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
+		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility, f.id as facilityid"
+		.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
 		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id;
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method GetDetailedRecord

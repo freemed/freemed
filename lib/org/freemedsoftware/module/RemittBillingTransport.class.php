@@ -304,6 +304,37 @@ class RemittBillingTransport extends BillingModule {
 		return $res;
 	} // end method PatientsToBill
 
+	// Method: ProceduresToBill
+	//
+	//	Get list of all procedures to bill for a specified patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	// Returns:
+	//
+	//	Array containing list of procedures to bill for this patient.
+	//
+	public function ProceduresToBill ( $patient ) {
+		$query = "SELECT id FROM procrec ".
+			// Needs to have a balance of over 0
+			"WHERE procbalcurrent > '0' AND ".
+			// And patient must jive
+			"procpatient = '".addslashes($patient)."' AND ".
+			// Needs to be billable (at all) -- examine this one!
+			//"procbillable = '0' AND ".
+			// No patient responsibility bills
+			"proccurcovtp > 0 AND ".
+			// (Not sure) Needs not to be billed already
+			"procbilled = '0' ".
+			// Order by date of procedure
+			"ORDER BY procdt";
+
+		$return = $GLOBALS['sql']->queryCol( $query );
+		return $return;
+	} // end method ProceduresToBill
+
 	// Method: GetClaimInformation
 	//
 	//	Resolve additional bill information for a list of claim ids.

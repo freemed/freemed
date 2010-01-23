@@ -85,26 +85,7 @@ public class EncounterScreen extends PatientScreenInterface {
 
 	protected Integer pxCount = 0;
 
-	protected VerticalPanel popoutPanel = null;
-
-	private static List<EncounterScreen> encounterList=null;
-	
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static EncounterScreen getInstance(){
-		EncounterScreen encounterScreen=null; 
-		if(encounterList==null)
-			encounterList=new ArrayList<EncounterScreen>();
-		if(encounterList.size()<AppConstants.MAX_PATIENT_ENCOUNTER_TABS)//creates & returns new next instance of EncounterScreen
-			encounterList.add(encounterScreen=new EncounterScreen());
-		else{ //returns last instance of EncounterScreen from list 
-			encounterScreen = encounterList.get(AppConstants.MAX_PATIENT_ENCOUNTER_TABS-1);
-		}	
-		return encounterScreen;
-	}
-	
-	public static boolean removeInstance(EncounterScreen encounterScreen){
-		return encounterList.remove(encounterScreen);
-	}
+	protected VerticalPanel popoutPanel = null;	
 	
 	public EncounterScreen() {
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -218,6 +199,7 @@ public class EncounterScreen extends PatientScreenInterface {
 			}
 		});
 		popoutPanel.add(submitButton);
+		Util.setFocus(superbillTemplate);
 	}
 
 	/**
@@ -420,11 +402,5 @@ public class EncounterScreen extends PatientScreenInterface {
 			}
 
 		}
-	}
-	@Override
-	public void closeScreen() {
-		// TODO Auto-generated method stub
-		super.closeScreen();
-		removeInstance(this);
 	}
 }
