@@ -21,23 +21,27 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `cpt` (
-	cptcode			CHAR (7) NOT NULL,
-	cptnameint		VARCHAR (50),
-	cptnameext		VARCHAR (50),
-	cptgender		ENUM ( 'n', 'm', 'f' ) DEFAULT 'n',
-	cpttaxed		ENUM ( 'n', 'y' ) DEFAULT 'n',
-	cpttype			INT UNSIGNED DEFAULT 0,
-	cptreqcpt		TEXT,
-	cptexccpt		TEXT,
-	cptreqicd		TEXT,
-	cptexcicd		TEXT,
-	cptrelval		REAL DEFAULT 1,
-	cptdeftos		INT UNSIGNED DEFAULT 0,
-	cptdefstdfee		REAL DEFAULT 0,
-	cptstdfee		TEXT,
-	cpttos			TEXT,
-	cpttosprfx		TEXT,
-	id			SERIAL
+	  cptcode		CHAR (7) NOT NULL UNIQUE
+	, cptnameint		VARCHAR (50)
+	, cptnameext		VARCHAR (50)
+	, cptgender		ENUM ( 'n', 'm', 'f' ) DEFAULT 'n'
+	, cpttaxed		ENUM ( 'n', 'y' ) DEFAULT 'n'
+	, cpttype		INT UNSIGNED DEFAULT 0
+	, cptreqcpt		TEXT
+	, cptexccpt		TEXT
+	, cptreqicd		TEXT
+	, cptexcicd		TEXT
+	, cptrelval		REAL DEFAULT 1
+	, cptdeftos		INT UNSIGNED DEFAULT 0
+	, cptdefstdfee		DECIMAL( 10, 2 ) DEFAULT 0.00
+	, cptstdfee		TEXT
+	, cpttos		TEXT
+	, cpttosprfx		TEXT
+	, id			SERIAL
+
+	, PRIMARY KEY		( id )
+	, INDEX			( cptcode )
+	, INDEX			( cptnameint )
 );
 
 CREATE TABLE IF NOT EXISTS `hcpcs` (
@@ -84,7 +88,37 @@ CREATE TABLE IF NOT EXISTS `hcpcs` (
 	, INDEX ( status_code )
 );
 
+TRUNCATE hcpcs;
 LOAD DATA LOCAL INFILE "data/source/cpt/PPRRVU.csv"
 	INTO TABLE hcpcs
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 11 LINES;
+
+DROP PROCEDURE IF EXISTS cpt_Upgrade;
+DELIMITER //
+CREATE PROCEDURE cpt_Upgrade ( )
+BEGIN
+	DECLARE cpt_Count INT UNSIGNED DEFAULT 0;
+
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	SELECT COUNT(*) INTO cpt_Count FROM cpt;
+
+	# Only migrate data in if there's nothing in the CPT codes table
+	IF cpt_Count = 0 THEN
+		INSERT INTO cpt (
+			  cptcode
+			, cptnameint
+			, cptnameext
+		) SELECT
+			  hcpcs
+			, description
+			, description
+		FROM hcpcs;
+	END IF;
+
+END//
+DELIMITER ;
+
+# Force attempt at upgrade
+CALL cpt_Upgrade();
 

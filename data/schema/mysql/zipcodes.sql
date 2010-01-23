@@ -21,19 +21,20 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `zipcodes` (
-	zip			CHAR (5) NOT NULL,
-	city			CHAR (25) NOT NULL,
-	state			CHAR (3) NOT NULL,
-	latitude		REAL,
-	longitude		REAL,
-	timezone		INT,
-	dst			INT UNSIGNED NOT NULL DEFAULT 0,
-	country			CHAR (100) NOT NULL DEFAULT 'United States',
-	id			SERIAL,
+	  zip			CHAR (5) NOT NULL
+	, city			CHAR (30) NOT NULL
+	, state			CHAR (3) NOT NULL
+	, latitude		REAL
+	, longitude		REAL
+	, timezone		INT
+	, dst			INT UNSIGNED NOT NULL DEFAULT 0
+	, country		CHAR (100) NOT NULL DEFAULT 'United States'
+	, id			SERIAL
 
 	# Define keys
 
-	KEY			( city, state, zip, country )
+	, KEY			( city, state, zip, country )
+	, KEY			( latitude, longitude )
 );
 
 DROP PROCEDURE IF EXISTS zipcodes_Upgrade;
