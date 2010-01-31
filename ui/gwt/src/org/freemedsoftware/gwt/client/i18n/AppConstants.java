@@ -56,6 +56,7 @@ public interface AppConstants extends Constants {
 	public static int MAX_DISPENSE_DOSE_TABS = 1;
 	public static int MAX_BOTTLE_TRANSFER_TABS = 1;
 	public static int MAX_RECONCILE_BOTTLE_TABS = 1;
+	public static int MAX_INVENTORY_REPORTS=1;
 	
 	// Settings for options available under Billing Left Panel
 	public static int MAX_CLAIMSMANAGER_TABS = 1;
@@ -104,6 +105,7 @@ public interface AppConstants extends Constants {
 	public final static String DISPENSE_DOSE = "Dispense Dose";
 	public final static String BOTTLE_TRANSFER = "Bottle Transfer";
 	public final static String RECONCILE_BOTTLE = "Reconcile Bottle";
+	public final static String INVENTORY_REPORTS = "Inventory Reports";
 	
 	// Billing Category
 	public final static String BILLING_CATEGORY = "Billing";

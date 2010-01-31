@@ -96,16 +96,6 @@ public class ClosableTab extends Composite {
 					widget.removeFromParent();
 
 					// If we're dealing with PatientScreen, remove from mapping
-					if (widget instanceof PatientScreen) {
-						PatientScreen ps = (PatientScreen) widget;
-						Integer patientId = ps.getPatient();
-						CurrentState.getPatientScreenMap().remove(patientId);
-						
-					}if (widget instanceof PatientScreenInterface) {
-						PatientScreenInterface ps = (PatientScreenInterface) widget;
-						Integer patientId = ps.getPatientId();
-						CurrentState.getPatientSubScreenMap().remove(patientId);
-					}
 					if (widget instanceof ScreenInterface) {
 						ScreenInterface screen = (ScreenInterface) widget;
 						screen.closeScreen();

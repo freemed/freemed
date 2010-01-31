@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	report_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
 	report_desc			TEXT,
 	report_type			VARCHAR (150) NOT NULL DEFAULT 'standard',
+	report_category			VARCHAR (150) NOT NULL DEFAULT 'reporting_engine'
 	report_sp			VARCHAR (150) NOT NULL,
 	report_param_count		TINYINT(3) NOT NULL DEFAULT 0,
 	report_param_names		TEXT,
@@ -52,6 +53,7 @@ BEGIN
 
 	ALTER IGNORE TABLE reporting ADD COLUMN report_type VARCHAR (150) NOT NULL DEFAULT 'standard' AFTER report_desc;
 	ALTER IGNORE TABLE reporting ADD COLUMN report_formatting BLOB AFTER report_acl;
+	ALTER IGNORE TABLE reporting ADD COLUMN report_category VARCHAR (150) NOT NULL DEFAULT 'reporting_engine' AFTER report_type;
 
 	CALL FreeMED_Module_UpdateVersion( 'reporting', 1 );
 END//

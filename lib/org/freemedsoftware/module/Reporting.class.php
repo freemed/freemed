@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class Reporting extends SupportModule {
 
 	var $MODULE_NAME = "Reporting";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.1.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "689d7681-2ea3-40b1-b3be-b56790c6e075";
 	var $MODULE_HIDDEN = true;
@@ -49,6 +49,8 @@ class Reporting extends SupportModule {
 	//	$locale - (optional) Locale of reports to look up. Defaults to
 	//	DEFAULT_LANGUAGE as defined in lib/settings.php
 	//
+	//	$rpt_cat - (optional) Reporting category.
+	//
 	// Returns:
 	//
 	//	Array of hashes containing:
@@ -56,9 +58,9 @@ class Reporting extends SupportModule {
 	//	* report_desc
 	//	* report_uuid
 	//
-	public function GetReports ( $locale = NULL ) {
+	public function GetReports ( $locale = NULL, $rpt_cat = NULL ) {
 		freemed::acl_enforce( 'reporting', 'menu' );
-		$query = "SELECT report_name, report_desc, report_uuid FROM reporting WHERE report_locale=". $GLOBALS['sql']->quote( $locale == NULL ? DEFAULT_LANGUAGE : $locale ). " ORDER BY report_name";
+		$query = "SELECT report_name, report_desc, report_uuid FROM reporting WHERE report_locale=". $GLOBALS['sql']->quote( $locale == NULL ? DEFAULT_LANGUAGE : $locale ). " " . ( $rpt_cat != NULL ? " AND report_category=".$GLOBALS['sql']->quote( $rpt_cat ) : "" ) . " ORDER BY report_name";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetReports
 
@@ -131,31 +133,36 @@ class Reporting extends SupportModule {
 	//
 	public function GenerateReport ( $uuid, $format, $param ) {
 		freemed::acl_enforce( 'reporting', 'generate' );
-		$report = $this->GetReportParameters( $uuid );
+		$report = $this->GetReportParameters( $uuid,false );
 
 		// Sanity checking
 		if (!$report['report_name']) { return false; }
 
-		$s = CreateObject('org.freemedsoftware.api.Scheduler');
+		$s = CreateObject('org.freemedsoftware.api.Scheduler');		
 		foreach ($report['params'] AS $k => $v) {
 			if ( !$v['optional'] and !$param[$k] ) {
 				syslog(LOG_INFO, get_class($this)."| parameter $k failed for report $uuid");
 				return false;
 			}
-
+			
+			
 			switch ($v['type']) {
-				case 'Date':
+				case 'Date':				
 				$pass[] = $GLOBALS['sql']->quote( $s->ImportDate( $param[$k] ) );
 				break;
-
+				
+				case 'Facility':
+				$pass[] = $GLOBALS['sql']->quote( ((int) HTTP_Session2::get('facility_id')));
+				break;
+				
 				default:
 				$pass[] = $GLOBALS['sql']->quote( $param[$k] );
 				break;
 			}
 		}
-
 		// Form query
 		$query = "CALL ".$report['report_sp']." ( ". @join( ', ', $pass )." ); ";
+		
 		//print_r($result); die();
 
 		// Handle graphing, or at least non-standard, reports
@@ -172,6 +179,7 @@ class Reporting extends SupportModule {
 
 			case 'html':
 			$result = $GLOBALS['sql']->queryAllStoredProc( $query );
+			
 			$buf = "<html><head><title>".htmlentities( $report['report_name'] )."</title></head>\n";
 			$buf .= "<body>";
 			$buf .= "<h1>".htmlentities( $report['report_name'] )."</h1>\n";

@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.EMRModule');
 class MessagesModule extends EMRModule {
 
 	var $MODULE_NAME = "Message";
-	var $MODULE_VERSION = "0.8.0";
+	var $MODULE_VERSION = "0.8.1";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "52b87bd6-08f2-4f8a-a7c9-159c56927ade";
 	var $MODULE_HIDDEN = true;

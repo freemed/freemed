@@ -60,6 +60,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -350,5 +351,13 @@ public class PatientScreen extends ScreenInterface {
 
 	protected PatientScreen getPatientScreen() {
 		return this;
+	}
+	@Override
+	public void closeScreen() {
+		// TODO Auto-generated method stub
+		super.closeScreen();
+		Integer patientId = getPatient();
+		CurrentState.getPatientScreenMap().remove(patientId);
+		CurrentState.getPatientSubScreenMap().remove(patientId);
 	}
 }

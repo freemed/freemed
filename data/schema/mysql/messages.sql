@@ -22,27 +22,28 @@
 
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `messages` (
-	msgby		INT UNSIGNED,
-	msgtime		TIMESTAMP (14) DEFAULT NOW(),
-	msgfor		INT UNSIGNED,
-	msgrecip	TEXT,
-	msgpatient	BIGINT UNSIGNED,
-	msgperson	VARCHAR (50),
-	msgurgency	INT UNSIGNED DEFAULT 3,
-	msgsubject	VARCHAR (75),
-	msgtext		TEXT,
-	msgread		INT UNSIGNED DEFAULT 0,
-	msgunique	VARCHAR(32),
-	msgtag		VARCHAR(32),
-	active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id		SERIAL,
+	  msgby		INT UNSIGNED
+	, msgtime	TIMESTAMP (14) DEFAULT NOW()
+	, msgfor	INT UNSIGNED
+	, msgrecip	TEXT
+	, msgpatient	BIGINT UNSIGNED
+	, msgperson	VARCHAR (50)
+	, msgurgency	INT UNSIGNED DEFAULT 3
+	, msgsubject	VARCHAR (75)
+	, msgtext	TEXT
+	, msgread	INT UNSIGNED DEFAULT 0
+	, msgunique	VARCHAR(32)
+	, msgtag	VARCHAR(32)
+	, active	ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id		SERIAL
 
 	#	Define keys
 
-	KEY 		( msgfor ),
-	FOREIGN KEY	( msgpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY 		( msgfor )
+	, FOREIGN KEY	( msgpatient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS messages_Upgrade;
@@ -83,7 +84,7 @@ CREATE TRIGGER messages_Insert
 		ELSE
 			SET @re = NEW.msgsubject;
 		END IF;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient ) VALUES ( NEW.msgtime, NEW.msgfor, CONCAT( 'Msg RE: ', @re ), 'messages', NEW.msgpatient );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.msgtime, NEW.msgfor, CONCAT( 'Msg RE: ', @re ), 'messages', NEW.msgpatient, 'NEW' );
 	END;
 //
 

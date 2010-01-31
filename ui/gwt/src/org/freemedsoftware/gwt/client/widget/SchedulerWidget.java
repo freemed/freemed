@@ -77,7 +77,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -1028,8 +1027,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public Label getHeaderElement() {
-			return (Label) ((RoundedPanel) ((VerticalPanel) super.getWidget())
-					.getWidget(0)).getWidget();
+			return (Label)((HorizontalPanel)((RoundedPanel) ((VerticalPanel) super.getWidget())
+					.getWidget(0)).getWidget()).getWidget(0);
 		}
 
 		public Widget getClickableItem() {
@@ -1063,6 +1062,7 @@ public class SchedulerWidget extends WidgetInterface implements
 									.getPatientName());
 						}
 					});
+				
 				getHeaderElement().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent arg0) {
@@ -1073,7 +1073,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						dialog.center();
 					}
 				});
-
+				
 				if (real.getEndTime() == null) {
 					super.setTitle(format.format(real.getStartTime()) + "  "
 							+ real.getProviderName());
@@ -1148,6 +1148,7 @@ public class SchedulerWidget extends WidgetInterface implements
 								dialog.center();
 							}
 						});
+						
 					}else CurrentState.getToaster().addItem(
 							"Scheduler",
 							"Access Denied!\nCan not edit appointments.",Toaster.TOASTER_ERROR);
@@ -1417,7 +1418,9 @@ public class SchedulerWidget extends WidgetInterface implements
 			// TODO: FACILITY MISSING!
 			Boolean b = false;
 			if (s == "add") {
-				params[0] = JsonUtil.jsonify(d);
+//				params[0] = JsonUtil.jsonify(d);
+				String[] newParams = {JsonUtil.jsonify(d)};
+				params = newParams;
 				rpcparams.put("url",
 						"org.freemedsoftware.api.Scheduler.SetAppointment");
 				rpcparams.put("responseOk", "Adding Appointment successful.");
@@ -1427,8 +1430,11 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else if (s == "move") {
 				d.put("id", data.getIdentifier());
 
-				params[0] = JsonUtil.jsonify(d.get("id"));
-				params[1] = JsonUtil.jsonify(d);
+				String[] newParams = {JsonUtil.jsonify(d.get("id")),JsonUtil.jsonify(d)};
+				params = newParams;
+				
+//				params[0] = JsonUtil.jsonify(d.get("id"));
+//				params[1] = JsonUtil.jsonify(d);
 
 				rpcparams.put("url",
 						"org.freemedsoftware.api.Scheduler.MoveAppointment");
@@ -1439,8 +1445,10 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else if (s == "remove") {
 				d.put("id", data.getIdentifier());
 				d.put("calstatus", "cancelled");
-				params[0] = JsonUtil.jsonify(d.get("id"));
-				params[1] = JsonUtil.jsonify(d);
+				String[] newParams = {JsonUtil.jsonify(d.get("id")),JsonUtil.jsonify(d)};
+				params = newParams;
+//				params[0] = JsonUtil.jsonify(d.get("id"));
+//				params[1] = JsonUtil.jsonify(d);
 				rpcparams.put("url",
 						"org.freemedsoftware.api.Scheduler.MoveAppointment");
 				rpcparams.put("responseOk", "Removing Appointment successful.");

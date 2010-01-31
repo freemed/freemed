@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class PatientScreenInterface extends ScreenInterface {
@@ -61,6 +62,8 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 			t.selectTab(t.getWidgetIndex(this) - 1);
 			t.remove(t.getWidgetIndex(this));
 		}
+		Integer patientId = getPatientId();
+		CurrentState.getPatientSubScreenMap().get(patientId).remove(this.getClass().getName());
 	}
 
 	/**

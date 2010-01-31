@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class SystemNotifications extends SupportModule {
 
 	var $MODULE_NAME = "System Notification";
-	var $MODULE_VERSION = "0.1";
+	var $MODULE_VERSION = "0.2";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "b26cb12a-39ad-47bf-bd2a-f2b7824c6145";
 	var $MODULE_HIDDEN = true;

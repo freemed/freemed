@@ -30,15 +30,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
-import org.freemedsoftware.gwt.client.screen.MainScreen.MenuIcon;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -64,31 +63,33 @@ public class CurrentState {
 	protected static String locale = "en_US";
 
 	protected static Integer defaultProvider = new Integer(0);
-	
+
 	protected static Integer defaultFacility = new Integer(0);
-	
+
 	protected static String defaultUser = "";
 
 	protected static HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
-	
-	protected static HashMap<Integer, HashMap<String,PatientScreenInterface>> patientSubScreenMap = new HashMap<Integer, HashMap<String,PatientScreenInterface>>();
+
+	protected static HashMap<Integer, HashMap<String, PatientScreenInterface>> patientSubScreenMap = new HashMap<Integer, HashMap<String, PatientScreenInterface>>();
 
 	protected static HashMap<String, Object> userConfiguration = new HashMap<String, Object>();
-	
+
 	protected static HashMap<String, String> systemConfiguration = new HashMap<String, String>();
 
 	protected static FreemedInterface freemedInterface = null;
 
 	protected static MainScreen mainScreen = null;
 
-	protected static HashMap<String, HashMap<String,String>> leftNavigationOptions = new HashMap<String, HashMap<String,String>>();
+	protected static HashMap<String, HashMap<String, String>> leftNavigationOptions = new HashMap<String, HashMap<String, String>>();
 
-	public static String CUR_THEME="chrome";
-	
-	public static String LAST_THEME="chrome";
-	
+	protected static HandlerManager eventBus = new HandlerManager(null);
+
+	public static String CUR_THEME = "chrome";
+
+	public static String LAST_THEME = "chrome";
+
 	public final static int BREAK_HOUR = 13;
-	
+
 	public CurrentState() {
 		retrieveUserConfiguration(true);
 		retrieveSystemConfiguration(true, null);
@@ -144,7 +145,7 @@ public class CurrentState {
 	public static void assignDefaultUser(String u) {
 		defaultUser = u;
 	}
-	
+
 	/**
 	 * Assign tab panel object.
 	 * 
@@ -211,7 +212,11 @@ public class CurrentState {
 	public static String getDefaultUser() {
 		return defaultUser;
 	}
-	
+
+	public static HandlerManager getEventBus() {
+		return eventBus;
+	}
+
 	public static FreemedInterface getFreemedInterface() {
 		return freemedInterface;
 	}
@@ -259,11 +264,12 @@ public class CurrentState {
 		if (systemConfiguration.size() != 0) {
 			return systemConfiguration.get(key);
 		}
-		JsonUtil.debug("getSystemConfig(): was unable to find systemConfiguration "
-				+ "| key = " + key);
+		JsonUtil
+				.debug("getSystemConfig(): was unable to find systemConfiguration "
+						+ "| key = " + key);
 		return "";
 	}
-	
+
 	/**
 	 * Set user specific configuration value.
 	 * 
@@ -278,7 +284,7 @@ public class CurrentState {
 		}
 		if (value instanceof String) {
 			userConfiguration.put(key, (String) value);
-		}  else if (value instanceof HashMap) {
+		} else if (value instanceof HashMap) {
 			userConfiguration.put(key, JsonUtil.jsonify(value));
 		} else if (value instanceof Serializable) {
 			userConfiguration.put(key, ((Serializable) value).toString());
@@ -372,11 +378,17 @@ public class CurrentState {
 									JsonUtil
 											.debug("successfully retrieved User Configuration");
 									userConfiguration = r;
-									if(userConfiguration.get("LeftNavigationMenu")!=null){
-										leftNavigationOptions = (HashMap<String, HashMap<String,String>>) JsonUtil.shoehornJson(
-												JSONParser.parse(CurrentState.getUserConfig("LeftNavigationMenu").toString()),
-												"HashMap<String,HashMap<String,String>>");
-//										mainScreen.initNavigations();
+									if (userConfiguration
+											.get("LeftNavigationMenu") != null) {
+										leftNavigationOptions = (HashMap<String, HashMap<String, String>>) JsonUtil
+												.shoehornJson(
+														JSONParser
+																.parse(CurrentState
+																		.getUserConfig(
+																				"LeftNavigationMenu")
+																		.toString()),
+														"HashMap<String,HashMap<String,String>>");
+										// mainScreen.initNavigations();
 										mainScreen.initMainScreen();
 									}
 									if (onLoad != null) {
@@ -400,51 +412,55 @@ public class CurrentState {
 		}
 	}
 
-	public static HashMap<String, HashMap<String,String>> getLeftNavigationOptions() {
+	public static HashMap<String, HashMap<String, String>> getLeftNavigationOptions() {
 		return leftNavigationOptions;
 	}
 
 	public static void setLeftNavigationOptions(
-		HashMap<String, HashMap<String, String>> options) {
+			HashMap<String, HashMap<String, String>> options) {
 		leftNavigationOptions = options;
 	}
-	
-	public static void printNavOptions(){
-		final HashMap<String, HashMap<String, String>> leftNavCategories = CurrentState.getLeftNavigationOptions();
+
+	public static void printNavOptions() {
+		final HashMap<String, HashMap<String, String>> leftNavCategories = CurrentState
+				.getLeftNavigationOptions();
 		Iterator<String> itrCats = leftNavCategories.keySet().iterator();
-		while(itrCats.hasNext()){
+		while (itrCats.hasNext()) {
 			final String categoryName = itrCats.next();
-			HashMap<String, String> options =leftNavCategories.get(categoryName);
+			HashMap<String, String> options = leftNavCategories
+					.get(categoryName);
 			Iterator<String> itr = options.keySet().iterator();
-			while(itr.hasNext()){
+			while (itr.hasNext()) {
 				String key = itr.next();
-					JsonUtil.debug("CurrentState:printNavOptions - key :"+key+" value:"+options.get(key));
+				JsonUtil.debug("CurrentState:printNavOptions - key :" + key
+						+ " value:" + options.get(key));
 			}
 		}
 	}
-	
+
 	/**
 	 * Pull system configuration settings into CurrentState object.
 	 * 
 	 * @param forceReload
 	 */
-	public static void retrieveSystemConfiguration(boolean forceReload)
-	{
+	public static void retrieveSystemConfiguration(boolean forceReload) {
 		CurrentState.retrieveSystemConfiguration(forceReload, null);
 	}
-	
+
 	/**
 	 * Pull system configuration settings into CurrentState object.
 	 * 
 	 * @param forceReload
-	 * @param onLoad   -  executes command after loading
+	 * @param onLoad
+	 *            - executes command after loading
 	 */
 	public static void retrieveSystemConfiguration(boolean forceReload,
 			final Command onLoad) {
 
 		JsonUtil.debug("retrieveUserConfiguration called");
 
-		if (systemConfiguration == null || forceReload || systemConfiguration.size()==0) {
+		if (systemConfiguration == null || forceReload
+				|| systemConfiguration.size() == 0) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// STUBBED mode
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -495,59 +511,64 @@ public class CurrentState {
 			}
 		}
 	}
-	
-	
-	
 
 	/*
 	 * evaluate whether this menu option should be visible or not
 	 * 
 	 * @param title of the navigation option
 	 */
-	public static boolean isActionAllowed(int action,String menuCatagory, String option) {
+	public static boolean isActionAllowed(int action, String menuCatagory,
+			String option) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			return true;
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			if (leftNavigationOptions.get(menuCatagory) == null)// If menuCatagory not available
+			if (leftNavigationOptions.get(menuCatagory) == null)// If
+				// menuCatagory
+				// not available
 				return false;
-			String optionVal = leftNavigationOptions.get(menuCatagory).get(option);
+			String optionVal = leftNavigationOptions.get(menuCatagory).get(
+					option);
 			if (optionVal != null) {
-				switch(action){
-					case AppConstants.READ:
-	  			    case AppConstants.WRITE:
-	  			    case AppConstants.MODIFY:
-	  			    case AppConstants.DELETE:
-	  			    case AppConstants.SHOW: {
-						if (optionVal.charAt(action - 1) == '1')
-							return true;
-	  			    }
+				switch (action) {
+				case AppConstants.READ:
+				case AppConstants.WRITE:
+				case AppConstants.MODIFY:
+				case AppConstants.DELETE:
+				case AppConstants.SHOW: {
+					if (optionVal.charAt(action - 1) == '1')
+						return true;
 				}
-				
+				}
+
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Check the hours of dates whether these dates lie in between break hours 
+	 * Check the hours of dates whether these dates lie in between break hours
+	 * 
 	 * @param forceReload
-	 * @param onLoad   -  executes command after loading
+	 * @param onLoad
+	 *            - executes command after loading
 	 */
-	public static synchronized boolean canBookAppoinment(Date startTime,Date endTime) {
-		boolean flag=true;
+	public static synchronized boolean canBookAppoinment(Date startTime,
+			Date endTime) {
+		boolean flag = true;
 		Calendar cDate = new GregorianCalendar();
 		cDate.setTime(startTime);
-		if(cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR )
-			flag=false;
+		if (cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR)
+			flag = false;
 		cDate.setTime(endTime);
-		if(cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR && cDate.get(Calendar.MINUTE)!=0)
-			flag=false;
-		
-		return  flag;
+		if (cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR
+				&& cDate.get(Calendar.MINUTE) != 0)
+			flag = false;
+
+		return flag;
 	}
 
-	public static HashMap<Integer, HashMap<String,PatientScreenInterface>> getPatientSubScreenMap() {
+	public static HashMap<Integer, HashMap<String, PatientScreenInterface>> getPatientSubScreenMap() {
 		return patientSubScreenMap;
-	} 
-	
+	}
+
 }

@@ -236,7 +236,7 @@ public class ReportingScreen extends ScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { locale };
+			String[] params = { locale,"reporting_engine" };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL.encode(Util.getJsonRequest(
 							"org.freemedsoftware.module.Reporting.GetReports",

@@ -21,50 +21,20 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `systemnotification` (
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
-	nuser			INT UNSIGNED NOT NULL DEFAULT 0,
-	ntext			VARCHAR (250) NOT NULL DEFAULT '',
-	nmodule			VARCHAR (250) NOT NULL DEFAULT '',
-	npatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	  stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	, nuser			INT UNSIGNED NOT NULL DEFAULT 0
+	, ntext			VARCHAR (250) NOT NULL DEFAULT ''
+	, naction		VARCHAR (25) NOT NULL DEFAULT ''
+	, nmodule		VARCHAR (250) NOT NULL DEFAULT ''
+	, npatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Default key
 
-	PRIMARY KEY		( id ),
-	KEY			( stamp, nuser )
+	, PRIMARY KEY		( id )
+	, KEY			( stamp, nuser )
 
 	, FOREIGN KEY		( nuser ) REFERENCES user.id ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS `systemtaskinbox` (
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	patient			BIGINT (20) UNSIGNED NOT NULL DEFAULT 0,
-	box			VARCHAR (250) NOT NULL DEFAULT '',
-	module			VARCHAR (250) NOT NULL DEFAULT '',
-	oid			BIGINT (20) UNSIGNED NOT NULL,
-	summary			VARCHAR (250) NOT NULL DEFAULT '',
-	id			SERIAL
-
-	#	Keys
-	, KEY			( user, box )
-	, KEY			( patient )
-);
-
-CREATE TABLE IF NOT EXISTS `systemtaskinboxsummary` (
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	box			VARCHAR (250) NOT NULL DEFAULT '',
-	count			INT UNSIGNED NOT NULL DEFAULT 0
-
-	, PRIMARY KEY		( user, box )
-);
-
-CREATE TABLE IF NOT EXISTS `systemtaskinboxpatientsummary` (
-	patient			INT UNSIGNED NOT NULL DEFAULT 0,
-	box			VARCHAR (250) NOT NULL DEFAULT '',
-	count			INT UNSIGNED NOT NULL DEFAULT 0
-
-	, PRIMARY KEY		( patient, box )
 );
 
 DROP PROCEDURE IF EXISTS systemnotification_Upgrade;
@@ -79,11 +49,49 @@ BEGIN
 	DROP TRIGGER systemtaskinbox_Delete;
 
 	#----- Upgrades
+        CALL FreeMED_Module_GetVersion( 'systemnotification', @V );
+
+        # Version 2
+        IF @V < 2 THEN
+		ALTER IGNORE TABLE systemnotification ADD COLUMN naction VARCHAR (25) NOT NULL DEFAULT '' AFTER ntext;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'systemnotification', 2 );
 END
 //
 DELIMITER ;
-
 CALL systemnotification_Upgrade( );
+
+CREATE TABLE IF NOT EXISTS `systemtaskinbox` (
+	  stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, patient		BIGINT (20) UNSIGNED NOT NULL DEFAULT 0
+	, box			VARCHAR (250) NOT NULL DEFAULT ''
+	, module		VARCHAR (250) NOT NULL DEFAULT ''
+	, oid			BIGINT (20) UNSIGNED NOT NULL
+	, summary		VARCHAR (250) NOT NULL DEFAULT ''
+	, id			SERIAL
+
+	#	Keys
+	, KEY			( user, box )
+	, KEY			( patient )
+);
+
+CREATE TABLE IF NOT EXISTS `systemtaskinboxsummary` (
+	  user			INT UNSIGNED NOT NULL DEFAULT 0
+	, box			VARCHAR (250) NOT NULL DEFAULT ''
+	, count			INT UNSIGNED NOT NULL DEFAULT 0
+
+	, PRIMARY KEY		( user, box )
+);
+
+CREATE TABLE IF NOT EXISTS `systemtaskinboxpatientsummary` (
+	  patient		INT UNSIGNED NOT NULL DEFAULT 0
+	, box			VARCHAR (250) NOT NULL DEFAULT ''
+	, count			INT UNSIGNED NOT NULL DEFAULT 0
+
+	, PRIMARY KEY		( patient, box )
+);
 
 DELIMITER //
 

@@ -193,7 +193,7 @@ public class MainScreen extends Composite {
 		topHeaderPanel.ensureDebugId("topHeaderPanel");
 		topHeaderPanel.setStyleName("Application-links");
 		topHeaderPanel.setWidth("100%");
-
+		
 		Image logoImage = new Image();
 		logoImage.setUrl("resources/images/FreemedHeader.jpg");
 		logoImage.setSize("100%", "55px");
@@ -205,55 +205,59 @@ public class MainScreen extends Composite {
 		HorizontalPanel topHeaderHorPanel = new HorizontalPanel();
 		topHeaderHorPanel.setWidth("100%");
 
-		// adding facilityInfoPanel at top right beside short cuts panel
 		HorizontalPanel facilityInfoPanel = new HorizontalPanel();
 		facilityInfoPanel.setStyleName("Application-links");
-
-		// Adding loginuserinfo link
+		
+		// adding userInfoPanel at top left
+		HorizontalPanel userInfoPanel = new HorizontalPanel();
+		userInfoPanel.setStyleName("Application-links");
+		Image userImage = new Image();
+		userImage.setUrl("resources/images/user-icon.png");
+		userImage.setSize("13px", "100%");
+		userInfoPanel.add(userImage);
+		userInfoPanel.add(loginUserInfo);// Adding loginuserinfo link
+		setLoginUserInfo();
+		// Adding UserInfoPanel into top headerhorpanel
+		HorizontalPanel hp=new HorizontalPanel();
+	
 		Image homeImage = new Image();
 		homeImage.setUrl("resources/images/home-icon.png");
 		homeImage.setSize("15px", "100%");
 		facilityInfoPanel.add(homeImage);
 		facilityInfoPanel.add(facilityInfo);
 
+		HTML separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		
+		hp.add(userInfoPanel);
+		hp.add(separator);
+		hp.add(facilityInfoPanel);
 		// Adding UserInfoPanel into top headerhorpanel
-		topHeaderHorPanel.add(facilityInfoPanel);
+		topHeaderHorPanel.add(hp);
+		topHeaderHorPanel.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_LEFT);
 		topHeaderHorPanel.setCellHorizontalAlignment(facilityInfoPanel,
-				HasHorizontalAlignment.ALIGN_CENTER);
-		topHeaderHorPanel.setCellWidth(facilityInfoPanel, "20%");
+				HasHorizontalAlignment.ALIGN_LEFT);
+		//topHeaderHorPanel.setCellWidth(facilityInfoPanel, "20%");
 
-		// adding userInfoPanel at top right beside short cuts panel
-		HorizontalPanel userInfoPanel = new HorizontalPanel();
-		userInfoPanel.setStyleName("Application-links");
-
-		// Adding loginuserinfo link
-		Image userImage = new Image();
-		userImage.setUrl("resources/images/user-icon.png");
-		userImage.setSize("13px", "100%");
-		userInfoPanel.add(userImage);
-		userInfoPanel.add(loginUserInfo);
-
-		setLoginUserInfo();
-		// Adding UserInfoPanel into top headerhorpanel
-		topHeaderHorPanel.add(userInfoPanel);
-		topHeaderHorPanel.setCellHorizontalAlignment(userInfoPanel,
-				HasHorizontalAlignment.ALIGN_RIGHT);
-		topHeaderHorPanel.setCellWidth(userInfoPanel, "65%");
-
+		
+		
 		// adding shortcuts panel at top right corder
 		HorizontalPanel shortCutsPanel = new HorizontalPanel();
 		shortCutsPanel.setStyleName("Application-links");
 		
+		// adding scheduler link
 		PushButton schedulerButton=new PushButton();
 		schedulerButton.setStyleName("gwt-simple-button");
 		schedulerButton.getUpFace().setImage(
 				new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/scheduler.16x16.png"));
+						+ "resources/images/scheduler.16x16.png"));
 		schedulerButton.getDownFace().setImage(
 				new Image(GWT
 						.getHostPageBaseURL()
-						+ "/resources/images/scheduler.16x16.png"));
+						+ "resources/images/scheduler.16x16.png"));
 		schedulerButton.addClickHandler(new ClickHandler(){
 
 			public void onClick(ClickEvent event){
@@ -264,7 +268,7 @@ public class MainScreen extends Composite {
 		shortCutsPanel.add(schedulerButton);
 		
 		// Adding spacer
-		HTML separator = new HTML("|");
+		separator = new HTML("|");
 		separator.setWidth("8px");
 		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		shortCutsPanel.add(separator);
@@ -1017,7 +1021,7 @@ public class MainScreen extends Composite {
 						if (200 == response.getStatusCode()) {
 							String userName = response.getText().replaceAll(
 									"\"", "");
-							loginUserInfo.setText(userName);
+							loginUserInfo.setText(userName.trim());
 							CurrentState.assignDefaultUser(userName);
 						}
 					}

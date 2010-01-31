@@ -49,7 +49,7 @@ public class SystemNotifications {
 	/**
 	 * Interval between polls to backend, specified in seconds.
 	 */
-	protected final int POLL_INTERVAL = 60;
+	protected final int POLL_INTERVAL = 30;
 
 	public SystemNotifications() {
 
@@ -172,8 +172,16 @@ public class SystemNotifications {
 	 */
 	protected void handleNotification(HashMap<String, String> event) {
 		try {
-			CurrentState.getToaster().addItem(event.get("nmodule"),
-					event.get("ntext"));
+			JsonUtil.debug("Firing event for " + JsonUtil.jsonify(event));
+		} catch (Exception ex) {
+			JsonUtil.debug(ex.toString());
+		}
+		try {
+			SystemEvent e = new SystemEvent();
+			e.setSourceModule(event.get("nmodule"));
+			e.setAction(event.get("naction"));
+			e.setText(event.get("ntext"));
+			CurrentState.getEventBus().fireEvent(e);
 		} catch (Exception ex) {
 			JsonUtil.debug(ex.toString());
 		}

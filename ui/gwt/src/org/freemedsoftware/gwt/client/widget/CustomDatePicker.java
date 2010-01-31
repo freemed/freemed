@@ -44,7 +44,9 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 			.getFormat("yyyy-MM-dd");
 
 	public CustomDatePicker() {
-		this.setFormat(this);
+		try{
+			this.setFormat(this);
+		}catch(Exception e){}
 	}
 
 	public CustomDatePicker(Date date)
@@ -55,7 +57,7 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	
 	
 	public void setValue(String s) {
-		if (s == null) {
+		if (s == null || s.equalsIgnoreCase("")) {
 			setValue(new Date(), true);
 		} else {
 			Date dt = importSqlDate(s);
