@@ -141,7 +141,7 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				searchBox.setText("Hackenbush, Hugo Z (STUB)");
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				textBox.setEnabled(false);
+				//textBox.setEnabled(false);
 				String[] params = { val.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
@@ -155,14 +155,14 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 						public void onError(
 								com.google.gwt.http.client.Request request,
 								Throwable ex) {
-							textBox.setEnabled(true);
+							//textBox.setEnabled(true);
 							Window.alert(ex.toString());
 						}
 
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
-							textBox.setEnabled(true);
+							//textBox.setEnabled(true);
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								if (200 == response.getStatusCode()) {
@@ -180,7 +180,7 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 						}
 					});
 				} catch (RequestException e) {
-					textBox.setEnabled(true);
+					//textBox.setEnabled(true);
 					Window.alert(e.toString());
 				}
 			} else {

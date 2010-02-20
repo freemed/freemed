@@ -126,6 +126,26 @@ class ModuleInterface {
 		syslog(LOG_INFO, module_function( $module, 'picklist', array ( $criteria ) ) );
 		return module_function( $module, 'picklist', array ( $criteria ) );
 	} // end method ModuleSupportPicklistMethod
+	
+	// Method: EMRSupportPicklistMethod
+	//
+	// Parameters:
+	//
+	//	$module - Module name
+	//
+	//	$patient - patient id
+	//
+	//	$criteria - Search text
+	//
+	// Returns:
+	//
+	//	Associative array of values. Key = id, value = display name
+	//
+	public function EMRSupportPicklistMethod ( $module, $patient, $criteria ) {
+		syslog(LOG_INFO, module_function( $module, 'picklist', array ( $patient, $criteria ) ) );
+		return module_function( $module, 'picklist', array ( $patient,$criteria ) );
+	} // end method ModuleSupportPicklistMethod
+
 
 	// Method: ModuleToTextMethod
 	//

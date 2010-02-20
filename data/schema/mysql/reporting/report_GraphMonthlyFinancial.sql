@@ -59,6 +59,7 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
+		report_category,
 		report_sp,
 		report_param_count
 	) VALUES (
@@ -67,6 +68,7 @@ INSERT INTO `reporting` (
 		'11810586-c7ab-43d6-b1bc-6d9823397f3a',
 		'en_US',
 		'Show financial totals by month.',
+		'reporting_engine',
 		'report_GraphMonthlyFinancial_en_US',
 		0
 	);

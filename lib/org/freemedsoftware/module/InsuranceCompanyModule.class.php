@@ -27,7 +27,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class InsuranceCompanyModule extends SupportModule {
 
 	var $MODULE_NAME = "Insurance Companies";
-	var $MODULE_VERSION = "0.4.1";
+	var $MODULE_VERSION = "0.5";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "01692334-2893-452e-8e55-08ad65c4d17d";
 
@@ -37,32 +37,34 @@ class InsuranceCompanyModule extends SupportModule {
 	var $table_name = "insco";
 
 	var $variables		= array (
-		"inscodtmod",
-		"insconame",
-		"inscoalias",
-		"inscoaddr1",
-		"inscoaddr2",
-		"inscocity",
-		"inscostate",
-		"inscozip",
-		"inscophone",
-		"inscofax",
-		"inscocontact",
-		"inscoid",
-		"inscowebsite",
-		"inscoemail",
-		"inscogroup",
-		"inscotype",
-		"inscoassign",
-		"inscomod",
-		"inscoidmap",
-		"inscox12id",
+		  "inscodtmod"
+		, "insconame"
+		, "inscoalias"
+		, "inscoaddr1"
+		, "inscoaddr2"
+		, "inscocity"
+		, "inscostate"
+		, "inscozip"
+		, "inscophone"
+		, "inscofax"
+		, "inscocontact"
+		, "inscoid"
+		, "inscowebsite"
+		, "inscoemail"
+		, "inscogroup"
+		, "inscotype"
+		, "inscoassign"
+		, "inscomod"
+		, "inscoidmap"
+		, "inscox12id"
 		// Billing related information
-		"inscodefoutput",
-		"inscodefformat",
-		"inscodeftarget",
-		"inscodefformate",
-		"inscodeftargete"
+		, "inscodefoutput"
+		, "inscodefformat"
+		, "inscodeftarget"
+		, "inscodeftargetopt"
+		, "inscodefformate"
+		, "inscodeftargete"
+		, "inscodeftargetopte"
 	);
 
 	var $widget_hash = '##insconame## (##inscocity##, ##inscostate##)';

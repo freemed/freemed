@@ -41,6 +41,8 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTimeBox;
+import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleListBox;
@@ -49,7 +51,6 @@ import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
-import org.freemedsoftware.gwt.client.widget.Popup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -80,7 +81,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import eu.future.earth.gwt.client.TimeBox;
 
 public class CallInScreen extends ScreenInterface implements ClickHandler {
 
@@ -1008,9 +1008,9 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 		private HorizontalPanel timePanel = new HorizontalPanel();
 
-		private TimeBox start;
+		private CustomTimeBox start;
 
-		private TimeBox end;
+		private CustomTimeBox end;
 
 		private Button cancel = null;
 
@@ -1033,8 +1033,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			setText("New Appointment");
 			
 			date = new CustomDatePicker(new Date());
-			start = new TimeBox();
-			end = new TimeBox();
+			start = new CustomTimeBox();
+			end = new CustomTimeBox();
 
 			start.setDate(new Date());
 			
@@ -1313,7 +1313,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			d.put("calminute", calminute);
 			d.put("calduration", calduration);
 
-			d.put("caltype", "temp");
+			d.put("caltype", AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT);
 			d.put("calpatient", patient.getValue().toString());
 			d.put("calphysician", provider.getValue().toString());
 			d.put("calprenote", text.getText());

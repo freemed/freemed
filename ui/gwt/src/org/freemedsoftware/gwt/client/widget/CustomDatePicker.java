@@ -57,14 +57,18 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	
 	
 	public void setValue(String s) {
-		if (s == null || s.equalsIgnoreCase("")) {
-			setValue(new Date(), true);
-		} else {
-			Date dt = importSqlDate(s);
-			setValue(dt);
-		}
+		setValue(s, false);
 	}
 
+	public void setValue(String s,boolean fireEvent) {
+		if (s == null || s.equalsIgnoreCase("")) {
+			setValue(new Date(), fireEvent);
+		} else {
+			Date dt = importSqlDate(s);
+			setValue(dt,fireEvent);
+		}
+	}
+	
 	public void setHashMapping(String hm) {
 		hashMapping = hm;
 	}
@@ -74,7 +78,7 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	}
 
 	public String getStoredValue() {
-		return dateFormat.format(getValue());
+		return getValue()!=null?dateFormat.format(getValue()):null;
 	}
 
 	public void setFromHash(HashMap<String, String> data) {
@@ -83,25 +87,25 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	}
 
 	public Date importSqlDate(String date) {
-		if (date == null) {
-			return new Date();
-		} else if (date == "") {
-			return new Date();
-		} else {
-			Calendar calendar = new GregorianCalendar();
-			calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
-			calendar.set(Calendar.MONTH,
-					Integer.parseInt(date.substring(5, 7)) - 1);
-			calendar
-					.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
-
-			calendar.set(Calendar.HOUR, 1);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-
-			return new Date(calendar.getTime().getTime());
-		}
+			if (date == null) {
+				return null;//new Date();
+			} else if (date.equalsIgnoreCase("") || date.equalsIgnoreCase("0000-00-00") || date.equalsIgnoreCase("0000-00-00 00:00:00")) {
+				return null;//new Date();
+			} else {
+				Calendar calendar = new GregorianCalendar();
+				calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
+				calendar.set(Calendar.MONTH,
+						Integer.parseInt(date.substring(5, 7)) - 1);
+				calendar
+						.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
+	
+				calendar.set(Calendar.HOUR, 1);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+	
+				return new Date(calendar.getTime().getTime());
+			}
 	}
 
 	@Override

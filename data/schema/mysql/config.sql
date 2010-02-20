@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2009 FreeMED Software Foundation
+# Copyright (C) 1999-2010 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ CALL config_Register (
 );
 CALL config_Register (
 	'remitt_port',
-	'127.0.0.1',
+	'7688',
 	'Remitt Server Port',
 	'REMITT Billing',
 	'Text',
@@ -110,7 +110,7 @@ CALL config_Register (
 );
 CALL config_Register (
 	'remitt_protocol',
-	'127.0.0.1',
+	'http',
 	'Remitt Server Protocol',
 	'REMITT Billing',
 	'Text',
@@ -118,7 +118,7 @@ CALL config_Register (
 );
 CALL config_Register (
 	'remitt_user',
-	'127.0.0.1',
+	'remitt',
 	'Remitt Authentication Username',
 	'REMITT Billing',
 	'Text',
@@ -126,8 +126,24 @@ CALL config_Register (
 );
 CALL config_Register (
 	'remitt_pass',
-	'127.0.0.1',
+	'remitt',
 	'Remitt Password',
+	'REMITT Billing',
+	'Text',
+	''
+);
+CALL config_Register (
+	'remitt_cbuser',
+	'remittcb',
+	'Remitt Callback Username',
+	'REMITT Billing',
+	'Text',
+	''
+);
+CALL config_Register (
+	'remitt_cbpass',
+	'remittcb',
+	'Remitt Callback Password',
 	'REMITT Billing',
 	'Text',
 	''
@@ -167,6 +183,15 @@ CALL config_Register (
 	'Scheduler',
 	'Select',
 	'5,10,15,20,30'
+);
+
+CALL config_Register (
+	'calbreakhour',
+	'13',
+	'Scheduler Break Hour',
+	'Scheduler',
+	'Select',
+	'0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23'
 );
 
 CALL config_Register (

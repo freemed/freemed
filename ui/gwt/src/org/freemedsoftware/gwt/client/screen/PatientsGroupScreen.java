@@ -40,8 +40,12 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.ClosableTab;
+import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTimeBox;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.PopupView;
@@ -55,10 +59,10 @@ import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -71,26 +75,298 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import eu.future.earth.gwt.client.TimeBox;
 
 public class PatientsGroupScreen extends ScreenInterface implements ClickHandler {
 
+	public class NoteEntryWidget extends Composite{
+		private List<GroupMember> groupMembers;
+		private Integer groupId;
+		private Integer appointmentId;
+		private Integer provider;
+
+		public NoteEntryWidget(){
+		}
+		public NoteEntryWidget(List<GroupMember> groupMembers){
+			this.groupMembers = groupMembers;
+		}
+		public void init(){
+			VerticalPanel noteEntryWidgetVPanel = new VerticalPanel();
+			initWidget(noteEntryWidgetVPanel);
+			
+			Label groupNoteLabel = new Label("Create Group Note" );
+			groupNoteLabel.setStyleName("medium-header-label");
+			noteEntryWidgetVPanel.add(groupNoteLabel);
+			
+			final HorizontalPanel horizontalPanel = new HorizontalPanel();
+			noteEntryWidgetVPanel.add(horizontalPanel);
+			final VerticalPanel membersPanel = new VerticalPanel();
+			horizontalPanel.add(membersPanel);
+			final VerticalPanel detailDiscussionPanel = new VerticalPanel();
+			horizontalPanel.add(detailDiscussionPanel);
+
+			final FlexTable flexTable = new FlexTable();
+			int row = 0;
+			membersPanel.add(flexTable);
+			///start adding group memebers
+			Iterator<GroupMember> iterator = groupMembers.iterator();
+			while(iterator.hasNext()){
+				final GroupMember groupMember = iterator.next();
+				CheckBox checkBox = new CheckBox(groupMember.getName());
+				flexTable.setWidget(row, 0, checkBox);
+				final TextArea textArea = new TextArea();
+				textArea.addValueChangeHandler(new ValueChangeHandler<String>() {
+					@Override
+					public void onValueChange(ValueChangeEvent<String> arg0) {
+						if(groupMember.isSelected())
+							groupMember.setNote(textArea.getText());
+					}
+				});
+				flexTable.setWidget(row, 1, textArea);
+				checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+					@Override
+					public void onValueChange(ValueChangeEvent<Boolean> arg0) {
+							groupMember.setSelected(arg0.getValue());
+							groupMember.setNote(textArea.getText());
+					}
+				});
+				row++;
+			}
+			
+			HorizontalPanel detailDiscussionHPanel = new HorizontalPanel();
+			detailDiscussionPanel.add(detailDiscussionHPanel);
+			
+			Label label = new Label("Description :");
+			detailDiscussionHPanel.add(label);
+			final TextBox description = new TextBox();
+			detailDiscussionHPanel.add(description);
+			
+			detailDiscussionHPanel = new HorizontalPanel();
+			detailDiscussionPanel.add(detailDiscussionHPanel);
+			
+			label = new Label("Discussion :");
+			detailDiscussionHPanel.add(label);
+			final TextArea discussion = new TextArea();
+			discussion.setWidth("250%");
+			discussion.getElement().setPropertyString("rows", "12");
+			detailDiscussionHPanel.add(discussion);
+			
+			Button addButton = new Button("Add");
+			addButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					String msg="";
+					if(description.getText().trim().length()==0)
+						msg += "Description";
+					if(discussion.getText().trim().length()==0)
+						msg += "\nDiscussion";
+					if(msg.length()>0)
+						Window.alert("Please fill the following fields\n"+msg);
+					else{
+						commitChanges(description.getText(),discussion.getText());
+					}
+				}
+			});
+			noteEntryWidgetVPanel.add(addButton);
+		}
+		public List<GroupMember> getGroupMembers() {
+			return groupMembers;
+		}
+		public void setGroupMembers(List<GroupMember> groupMembers) {
+			this.groupMembers = groupMembers;
+		}
+		public Integer getAppointmentId() {
+			return appointmentId;
+		}
+		public void setAppointmentId(Integer appointmentId) {
+			this.appointmentId = appointmentId;
+		}
+		public Integer getProvider() {
+			return provider;
+		}
+		public void setProvider(Integer provider) {
+			this.provider = provider;
+		}
+		public Integer getGroupId() {
+			return groupId;
+		}
+		public void setGroupId(Integer groupId) {
+			this.groupId = groupId;
+		}
+		public void commitChanges(String description,String discussion){
+			Iterator<GroupMember> iterator = groupMembers.iterator();
+			while(iterator.hasNext()){
+				GroupMember groupMember = iterator.next();
+				////////preparing and saving data into CallGroupAttend table
+				HashMap<String, String> data = new HashMap<String, String>();
+				data.put("calgroupid", groupId.toString());
+				data.put("calid", appointmentId.toString());
+				data.put("patientid", groupMember.getId().toString());
+				if(groupMember.isSelected())
+					data.put("calstatus", "attended");
+				else
+					data.put("calstatus", "noshow");
+				saveCallGroupAttend(data);
+				////////preparing and saving data into treatment clinical Note table
+				if(groupMember.isSelected()){
+					data = new HashMap<String, String>();
+					data.put("tcncalgroup", groupId.toString());
+					data.put("tcngroupnote",discussion );
+					data.put("tcndescription", description);
+					data.put("patient", groupMember.getId().toString());
+					data.put("tcndiscussiondesc", groupMember.getNote());
+					data.put("tcnmedphys", provider.toString());
+					saveClinicalNote(data);
+				}
+				
+				
+			}
+			groupNoteTabs.remove(groupId);
+			tabPanel.remove(this);
+			tabPanel.selectTab(0);
+		}
+		public void saveCallGroupAttend(HashMap<String, String> data){
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// TODO STUBBED MODE STUFF
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { JsonUtil.jsonify(data) };
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+						URL.encode(Util.getJsonRequest(
+								"org.freemedsoftware.module.CalendarGroupAttendance.add", params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							CurrentState.getToaster().addItem("CalendarGroup Screen",
+									"Failed to add entry.",
+									Toaster.TOASTER_ERROR);
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (Util.checkValidSessionResponse(response.getText())) {
+								if (200 == response.getStatusCode()) {
+									Integer r = (Integer) JsonUtil.shoehornJson(
+											JSONParser.parse(response.getText()),
+											"Integer");
+								}
+							}
+						}
+					});
+				} catch (RequestException e) {
+				}
+			} else {
+				// TODO NORMAL MODE STUFF
+			}
+		}
+		public void saveClinicalNote(HashMap<String, String> data){
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// TODO STUBBED MODE STUFF
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { JsonUtil.jsonify(data) };
+				RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+						URL.encode(Util.getJsonRequest(
+								"org.freemedsoftware.module.TreatmentGroupNote.add", params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							CurrentState.getToaster().addItem("CalendarGroup Screen",
+									"Failed to add entry.",
+									Toaster.TOASTER_ERROR);
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (Util.checkValidSessionResponse(response.getText())) {
+								if (200 == response.getStatusCode()) {
+									Integer r = (Integer) JsonUtil.shoehornJson(
+											JSONParser.parse(response.getText()),
+											"Integer");
+									if(r!=null)
+									CurrentState.getToaster().addItem("CalendarGroup Screen",
+											"Note added successfully.",
+											Toaster.TOASTER_INFO);
+								}else{
+									CurrentState.getToaster().addItem("CalendarGroup Screen",
+											"Failed to add note.",
+											Toaster.TOASTER_ERROR);
+								}
+							}
+						}
+					});
+				} catch (RequestException e) {
+				}
+			} else {
+				// TODO NORMAL MODE STUFF
+			}
+		}
+	}
+	
+	public class GroupMember{
+		private Integer id = null;
+		private String name = null;
+		private String note = null;
+		private boolean isSelected=false;
+		
+		public GroupMember(){
+		}
+		public GroupMember(Integer id,String name){
+			this(id,name,null,false);
+		}
+		public GroupMember(Integer id,String name,String note){
+			this(id,name,note,false);
+		}
+		public GroupMember(Integer id,String name,String note,boolean isSelected){
+			this.id = id;
+			this.name = name;
+			this.note = note;
+			this.isSelected = isSelected;
+		}
+		public Integer getId() {
+			return id;
+		}
+
+		public void setId(Integer id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getNote() {
+			return note;
+		}
+
+		public void setNote(String note) {
+			this.note = note;
+		}
+
+		public boolean isSelected() {
+			return isSelected;
+		}
+
+		public void setSelected(boolean isSelected) {
+			this.isSelected = isSelected;
+		}
+	}
+	
 	VerticalPanel verticalPanelMenu = new VerticalPanel();
 	VerticalPanel verticalPanelEntry = new VerticalPanel();
 	
@@ -108,8 +384,9 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	protected TextBox groupLength;
 
 	protected VerticalPanel membersPanel;
-	protected List<PatientWidget> groupMembersList =new ArrayList<PatientWidget>();
+	protected List<PatientWidget> groupMembersListInEntryForm =new ArrayList<PatientWidget>();
 	
+	protected VerticalPanel groupDetailPanel;
 	protected FlexTable groupDetailTable;
 	protected Popup groupDetailPopup;
 
@@ -117,9 +394,21 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	protected Button btnAdd;
 	protected Button btnClear;
 
+	protected CustomListBox groupAppointmentsList=new CustomListBox();
+	
+	protected List<GroupMember> groupMembersListInPopUp = new ArrayList<GroupMember>();
+	
 	// /////////////////
 	private static List<PatientsGroupScreen> patientsGroupScreenList = null;
+	
+	private HashMap<Integer, NoteEntryWidget> groupNoteTabs = new HashMap<Integer, NoteEntryWidget>();;
 
+	final boolean canDelete = CurrentState.isActionAllowed(AppConstants.DELETE, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
+	final boolean canWrite  = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
+	final boolean canBook   = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.SYSTEM_CATEGORY, AppConstants.SCHEDULER);
+	final boolean canModify   = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
+	final boolean canRead   = CurrentState.isActionAllowed(AppConstants.READ, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
+	
 	// Creates only desired amount of instances if we follow this pattern
 	// otherwise we have public constructor as well
 	public static PatientsGroupScreen getInstance() {
@@ -146,11 +435,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	}
 	
 	public PatientsGroupScreen() {
-		
-		final boolean canDelete = CurrentState.isActionAllowed(AppConstants.DELETE, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
-		final boolean canWrite  = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
-		final boolean canBook   = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.SYSTEM_CATEGORY, AppConstants.SCHEDULER);
-		final boolean canModify   = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
 		
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
@@ -322,17 +606,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				try {
-					if (col != 0 || !(canBook || canWrite || canDelete )) {
-						final Integer groupId = Integer.parseInt(data
-								.get("id"));
-						groupDetailPopup=new Popup();
-						//groupDetailPopup.setPixelSize(500, 20);
-						groupDetailTable=new FlexTable();
-						showGroupInfo(groupId);
-						PopupView viewInfo=new PopupView(groupDetailTable);
-						groupDetailPopup.setNewWidget(viewInfo);
-						groupDetailPopup.initialize();
-					}
+					if(col!=0)
+						showGroupInfo(Integer.parseInt(data.get("id")));
 				} catch (Exception e) {
 					GWT.log("Caught exception: ", e);
 				}
@@ -355,11 +630,10 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 					}
 				});
 
-		groupDetailTable = new FlexTable();
-		groupDetailTable.setWidth("50%");
 		tabPanel.add(verticalPanelMenu, "Menu");
 		if(canWrite)
 			tabPanel.add(createEntryTabBar(), "Entry");
+	
 		// tabPanel.add(new VerticalPanel(),"Entry");
 		tabPanel.selectTab(0);
 		// createEntryTabBar();
@@ -370,7 +644,114 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		// //////
 		populate();
 	}
+	
+	public Widget getGroupNoteEntryPanel(){
+		VerticalPanel verticalPanel = new VerticalPanel();
+//		verticalPanel.add();
+		return verticalPanel;
+	}
+	
+	public void getGroupAppointments(final Integer groupId,final String groupName){
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO: handle stubbed
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { groupId.toString() };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL
+							.encode(Util.getJsonRequest(
+									"org.freemedsoftware.api.Scheduler.FindGroupAppointmentsDates",
+									params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+						GWT.log("Exception", ex);
+					}
 
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (result != null && result.length>0) {
+								groupAppointmentsList = new CustomListBox();
+								for(int i=0;i<result.length;i++){
+									groupAppointmentsList.addItem(result[i].get("caldateof"),result[i].get("id")+":"+result[i].get("calphysician"));
+								}
+								HorizontalPanel horizontalPanel = new HorizontalPanel();
+								horizontalPanel.add(new Label("Select Appointment Date:"));
+								horizontalPanel.add(groupAppointmentsList);
+								Button createNote = new Button("Create Notes");
+								createNote.addClickHandler(new ClickHandler() {
+									@Override
+									public void onClick(ClickEvent arg0) {
+										NoteEntryWidget noteEntryWidget = null;
+										if(groupNoteTabs.get(groupId)==null){
+											noteEntryWidget= new NoteEntryWidget();
+											noteEntryWidget.setGroupId(groupId);
+											String appointmentDetails = groupAppointmentsList.getStoredValue();
+
+											noteEntryWidget.setAppointmentId(Integer.parseInt(appointmentDetails.substring(0,appointmentDetails.indexOf(":"))));
+											noteEntryWidget.setGroupMembers(groupMembersListInPopUp);
+											noteEntryWidget.setProvider(Integer.parseInt(appointmentDetails.substring(appointmentDetails.indexOf(":")+1)));
+											noteEntryWidget.init();
+											groupNoteTabs.put(groupId,noteEntryWidget);
+											tabPanel.add(
+													(Widget) noteEntryWidget,
+													new ClosableTab(groupName, (Widget) noteEntryWidget,
+															new ClosableTabInterface() {
+															
+																@Override
+																public void onClose() {
+																	// TODO Auto-generated method stub
+																	groupNoteTabs.remove(groupId);
+																}
+															
+																@Override
+																public boolean isReadyToClose() {
+																	// TODO Auto-generated method stub
+																	return true;
+																}
+															
+															}));
+										}else{
+											noteEntryWidget = groupNoteTabs.get(groupId);
+										}
+										tabPanel.selectTab(tabPanel.getWidgetIndex(noteEntryWidget));
+										groupDetailPopup.hide();
+										
+									}
+								});
+								horizontalPanel.add(createNote);
+								groupDetailPanel.add(horizontalPanel);
+							} else {
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception", e);
+			}
+		} else {
+			getProxy().GetReports(locale,
+					new AsyncCallback<HashMap<String, String>[]>() {
+						public void onSuccess(HashMap<String, String>[] r) {
+							patientGroupTable.loadData(r);
+						}
+
+						public void onFailure(Throwable t) {
+							GWT.log("Exception", t);
+						}
+					});
+		}
+	}
+	
 	public PatientsGroupScreen getPatientGroupScreen() {
 		return this;
 	}
@@ -461,7 +842,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			PatientWidget patientWidget = new PatientWidget();
 			patientWidget.setWidth("300px");
 			membersPanel.add(patientWidget);
-			groupMembersList.add(patientWidget);
+			groupMembersListInEntryForm.add(patientWidget);
 		}
 		flexTable.setWidget(2, 1, membersPanel);
 		verticalPanelEntry.add(flexTable);
@@ -472,7 +853,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			PatientWidget patientWidget = new PatientWidget();
 			patientWidget.setWidth("300px");
 			membersPanel.add(patientWidget);
-			groupMembersList.add(patientWidget);	
+			groupMembersListInEntryForm.add(patientWidget);	
 			}
 		});
 		//flexTable.setWidget(3, 2, addMoreMember);
@@ -499,10 +880,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	}
 
 	public void populate() {
-		while (groupDetailTable.getRowCount() > 0)
-			// clearing detail of group (given below the table)
-			groupDetailTable.removeRow(0);
-
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -567,7 +944,16 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	}
 
 
-	protected void showGroupInfo(Integer groupId) {
+	public void showGroupInfo(Integer groupId) {
+		if (canRead) {
+			groupDetailPopup=new Popup();
+			groupDetailPanel=new VerticalPanel();
+			groupDetailTable=new FlexTable();
+			groupDetailPanel.add(groupDetailTable);
+			PopupView viewInfo=new PopupView(groupDetailPanel);
+			groupDetailPopup.setNewWidget(viewInfo);
+			groupDetailPopup.initialize();
+		}else return;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO STUBBED MODE STUFF
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -647,9 +1033,9 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 											PatientWidget patientWidget = new PatientWidget();
 											patientWidget.setWidth("200px");
 											membersPanel.add(patientWidget);
-											groupMembersList.add(patientWidget);
+											groupMembersListInEntryForm.add(patientWidget);
 										}
-									groupMembersList.get(i).setValue(Integer.parseInt(groupMembers[i]));
+									groupMembersListInEntryForm.get(i).setValue(Integer.parseInt(groupMembers[i]));
 									}
 																
 									
@@ -669,8 +1055,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	
 
 	public void diplayGroupDetails(HashMap<String, String> data){
-	while (groupDetailTable.getRowCount() > 0)
-			groupDetailTable.removeRow(0);
+	
 		groupDetailTable.setWidget(0, 0, new Label("Group Name:"));
 		groupDetailTable.setWidget(0, 1, new Label(data.get("groupname")));
 
@@ -685,13 +1070,26 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		groupDetailTable.setWidget(3, 1, new Label(data.get("grouplength")));
 
 		groupDetailTable.setWidget(4, 0, new Label("Group Members:"));
+	
+		String[] groupMembersNames=null;
+		
 		if (data.get("groupmembersName") != null) {
-			String[] groupMembers = data.get("groupmembersName").split("\n");
-			for (int i = 0; i < groupMembers.length; i++) {
+			groupMembersNames = data.get("groupmembersName").split("\n");
+
+			for (int i = 0; i < groupMembersNames.length; i++) {
 				groupDetailTable
-						.setWidget(4 + i, 1, new Label(groupMembers[i]));
+						.setWidget(4 + i, 1, new Label(groupMembersNames[i]));
 			}
 		}
+		String[] groupMembersId=null;
+		if(data.get("groupmembers")!=null)
+			groupMembersId = data.get("groupmembers").split(",");
+		groupMembersListInPopUp = new ArrayList<GroupMember>();
+		if(groupMembersId!=null && groupMembersNames!=null)
+			for (int i = 0; i < groupMembersId.length; i++) {
+				groupMembersListInPopUp.add(new GroupMember(Integer.parseInt(groupMembersId[i]),groupMembersNames[i]));
+			}
+		getGroupAppointments(Integer.parseInt(data.get("id")),data.get("groupname"));
 	}
 	
 	public void saveForm() {
@@ -776,16 +1174,16 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		if(btnAdd.getText().equals("Modify"))
 			btnAdd.setText("Add");
 		
-		for(int i=0;i<groupMembersList.size();i++){
+		for(int i=0;i<groupMembersListInEntryForm.size();i++){
 			membersPanel.remove(0);
 		}
 		
-		groupMembersList =new ArrayList<PatientWidget>();
+		groupMembersListInEntryForm =new ArrayList<PatientWidget>();
 			for(int i=0;i<4;i++){
 				PatientWidget patientWidget = new PatientWidget();
 				patientWidget.setWidth("200px");
 				membersPanel.add(patientWidget);
-				groupMembersList.add(patientWidget);
+				groupMembersListInEntryForm.add(patientWidget);
 			}
 			groupName.setFocus(true);
 		
@@ -797,7 +1195,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			msg += "Please specify a group name." + "\n";
 		}
 		
-		Iterator<PatientWidget> itr = groupMembersList.iterator();
+		Iterator<PatientWidget> itr = groupMembersListInEntryForm.iterator();
 		int members=0;
 		HashSet<Integer> tempPatientValues = new HashSet<Integer>();
 		while(itr.hasNext()){
@@ -815,7 +1213,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		if(members<2)
 			msg += "Please specify more than one group members." + "\n";
 		
-		if (msg != "") {
+		if (!msg.equals("")) {
 			Window.alert(msg);
 			return false;
 		}
@@ -831,7 +1229,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			m.put((String) "groupfacility", facilityModuleWidget.getValue().toString());
 		m.put((String) "groupfrequency", (String) groupFrequency.getText());
 		m.put((String) "grouplength", (String) groupLength.getText());
-		Iterator<PatientWidget> itr = groupMembersList.iterator();
+		Iterator<PatientWidget> itr = groupMembersListInEntryForm.iterator();
 		String members="";
 		while(itr.hasNext()){
 			PatientWidget patientWidget = itr.next();
@@ -907,9 +1305,9 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 
 		private HorizontalPanel timePanel = new HorizontalPanel();
 
-		private TimeBox start;
+		private CustomTimeBox start;
 
-		private TimeBox end;
+		private CustomTimeBox end;
 
 		private Button cancel = null;
 
@@ -932,8 +1330,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			setText("New Appointment");
 			
 			date = new CustomDatePicker(new Date());
-			start = new TimeBox();
-			end = new TimeBox();
+			start = new CustomTimeBox();
+			end = new CustomTimeBox();
 
 			start.setDate(new Date());
 			
@@ -1165,7 +1563,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 				msg += "Please specify provider." + "\n";
 			}
 
-			if (msg != "") {
+			if (!msg.equals("")) {
 				Window.alert(msg);
 				return false;
 			}
@@ -1209,8 +1607,9 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			d.put("calminute", calminute);
 			d.put("calduration", calduration);
 
-			d.put("caltype", "group");
+			d.put("caltype", AppConstants.APPOINTMENT_TYPE_GROUP);
 			d.put("calpatient", group.getValue().toString());
+			d.put("calgroupid", group.getValue().toString());
 			d.put("calphysician", provider.getValue().toString());
 			d.put("calprenote", text.getText());
 

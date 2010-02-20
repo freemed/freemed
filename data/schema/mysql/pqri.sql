@@ -20,26 +20,26 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
------ Drop all old tables -----
+#----- Drop all old tables -----
 
 DROP TABLE IF EXISTS pqri_source;
 
------ Table definitions -----
+#----- Table definitions -----
 
-CREATE TABLE IF NOT EXISTS pqri_source (
+CREATE TABLE pqri_source (
 	  topic_measure		INT UNSIGNED
 	, coding_system		ENUM ( 'CPT_II', 'C4', 'I9', 'HCPCS' ) NOT NULL
 	, code			VARCHAR ( 20 )
-	, modifier		ENUM ( '', '1P', '2P', '3P', '8P' ) NOT NULL
+	, modifier		ENUM ( '', '1P', '2P', '3P', '8P', '? 52, 53, 73 or 74' ) NOT NULL
 	, place_of_service	CHAR (3) NOT NULL DEFAULT ''
 	, effective_date	VARCHAR (20)
 
 	, KEY			( coding_system, code )
 );
 
------ Import PQRI from CSV export files -----
+#----- Import PQRI from CSV export files -----
 
-LOAD DATA LOCAL INFILE "data/locale/en_US/pqri.en_US.data"
+LOAD DATA LOCAL INFILE 'data/source/pqri/2009_PQRI_SingleSource_PUBLIC_CodeMaster_120808.csv'
 	INTO TABLE pqri_source
-	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"';
+	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 

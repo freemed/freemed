@@ -50,6 +50,11 @@ public class CustomListBox extends ListBox implements HashSetter {
 			return new String("");
 		}
 	}
+	public CustomListBox(){
+	}
+	public CustomListBox(boolean isMultiSelecionList){
+		super(isMultiSelecionList);
+	}
 
 	/**
 	 * Set the active value of the ListBox widget to be val.

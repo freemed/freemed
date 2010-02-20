@@ -64,6 +64,26 @@ class Reporting extends SupportModule {
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetReports
 
+	// Method: GetReportByName
+	//
+	//	Get report against provided name.
+	//
+	// Parameters:
+	//
+	//	$reportName - name of the report to be searched
+
+	//
+	// Returns:
+	//
+	//	* report_uuid
+	//
+	public function GetReport ( $reportName ) {
+		freemed::acl_enforce( 'reporting', 'menu' );
+		$query = "SELECT report_uuid FROM reporting WHERE report_name =". $GLOBALS['sql']->quote( $reportName);
+		$result = $GLOBALS['sql']->queryrow( $query );
+		return $result['report_uuid'];
+	} // end method GetReports
+
 	// Method: GetReportParameters
 	//
 	//	Get information on this report, including parameters.
@@ -96,17 +116,20 @@ class Reporting extends SupportModule {
 		} else {
 			$names = explode( ',', $r['report_param_names'] );
 			$types = explode( ',', $r['report_param_types'] );
+			$options = explode( ',', $r['report_param_options'] );
 			$optional = explode( ',', $r['report_param_optional'] );
 			for ( $p = 0; $p < $r['report_param_count'] ; $p++ ) {
 				if ( defined('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES') || $flatten ) {
 					// Force flattening of output for GWT
 					$return['report_param_name_'.$p] = $names[$p];
 					$return['report_param_type_'.$p] = $types[$p];
+					$return['report_param_options_'.$p] = $options[$p];
 					$return['report_param_optional_'.$p] = ( $optional[$p] ? true : false );
 				} else {
 					$return['params'][$p] = array (
 						'name' => $names[$p],
 						'type' => $types[$p],
+						'options' => $options[$p],
 						'optional' => ( $optional[$p] ? true : false )
 					);
 				}
@@ -133,8 +156,9 @@ class Reporting extends SupportModule {
 	//
 	public function GenerateReport ( $uuid, $format, $param ) {
 		freemed::acl_enforce( 'reporting', 'generate' );
-		$report = $this->GetReportParameters( $uuid,false );
-
+		
+		$report = $this->GetReportParameters( $uuid, false );
+		
 		// Sanity checking
 		if (!$report['report_name']) { return false; }
 
@@ -155,6 +179,17 @@ class Reporting extends SupportModule {
 				$pass[] = $GLOBALS['sql']->quote( ((int) HTTP_Session2::get('facility_id')));
 				break;
 				
+				case 'BottleID':
+				case 'EMRModule':
+				case 'SupportModule':
+				$pass[] = $param[$k]+0;
+				break;
+
+				case 'User':
+				$pass[] = (int) freemed::user_cache()->user_number;
+				break;
+
+				
 				default:
 				$pass[] = $GLOBALS['sql']->quote( $param[$k] );
 				break;
@@ -167,7 +202,7 @@ class Reporting extends SupportModule {
 
 		// Handle graphing, or at least non-standard, reports
 		if ( $report['report_type'] != 'standard' ) {
-			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query ) );
+			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query, $pass ) );
 		}
 
 		switch ( strtolower( $format ) ) {
@@ -231,7 +266,8 @@ class Reporting extends SupportModule {
 			break;
 		}
 	} // end method GenerateReport
-
+	
+	
 	//----- Pluggable methods go below -----
 
 	// Method: GenerateReport_Graph
@@ -247,7 +283,7 @@ class Reporting extends SupportModule {
 	//
 	//	$query - SQL query as created by <GenerateReport>
 	//
-	protected function GenerateReport_Graph ( $param, $format, $query ) {
+	protected function GenerateReport_Graph ( $param, $format, $query, $params = NULL ) {
 		freemed::acl_enforce( 'reporting', 'generate' );
 		// Execute query
 		$res = $GLOBALS['sql']->queryAllStoredProc( $query );
@@ -326,7 +362,7 @@ class Reporting extends SupportModule {
 	//
 	//	$query - SQL query as created by <GenerateReport>
 	//
-	protected function GenerateReport_Rlib ( $param, $format, $query ) {
+	protected function GenerateReport_Rlib ( $param, $format, $query, $params = NULL ) {
 		freemed::acl_enforce( 'reporting', 'generate' );
 		switch ( $format ) {
 			case 'html':	$outformat = 'html';	$ext = 'html';	break;
@@ -365,6 +401,98 @@ class Reporting extends SupportModule {
 		rlib_free( $rlib );
 		die();
 	} // end method GenerateReport_Rlib
+
+	// Method: GenerateReport_Jasper
+	//
+	//	Internal method used to generate JasperReports-based reports
+	//
+	// Parameters:
+	//
+	//	$param - Hash of report information, as returned by 
+	//	<GetReportParameters>
+	//
+	//	$format - Format of the report
+	//
+	//	$query - SQL query as created by <GenerateReport>
+	//
+	//	$params - Optional array of parameters to pass to the report.
+	//
+	protected function GenerateReport_Jasper ( $param, $format, $query, $params = NULL ) {
+		//return $params;
+		freemed::acl_enforce( 'reporting', 'generate' );
+		switch ( $format ) {
+			case 'html':	$outformat = 'HTML';	$ext = 'html';	break;
+			case 'xml':	$outformat = 'XML';	$ext = 'xml';	break;
+			case 'pdf':	$outformat = 'PDF';	$ext = 'pdf';	break;
+			case 'xls':	$outformat = 'XLS';	$ext = 'xls';	break;
+			default:	$outformat = 'PDF';	$ext = 'pdf';	break;
+		} // end switch format
+
+		// Create connection string
+		$jdbc_url = "jdbc:mysql://" . DB_HOST . ":3306/" . DB_NAME;
+
+		// Prepare parameters
+		$parameters = "";
+		if ($params != NULL && count($params) > 0) {
+			foreach ($params AS $k => $p) {
+				$parameters .= " --param=" . $p;
+				switch ($param['params'][$k]['type']) {
+					case 'Date':
+					$parameters .= " --paramformat=date";
+					break;
+
+					case 'Facility':
+					case 'User':
+					case 'BottleID':
+					case 'EMRModule':
+					case 'SupportModule':
+					$parameters .= " --paramformat=int";
+					break;
+
+					default:
+					$parameters .= " --paramformat=string";
+					break;
+				}
+			}
+		}
+
+		$reportprefix = $param['report_formatting'] . "." . mktime();
+
+		// Wrap and generate
+		$cmd = "java -jar " . PHYSICAL_LOCATION . "/scripts/jasper/JasperWrapper.jar --dburl=" . escapeshellarg( $jdbc_url ) . " --dbuser=" . escapeshellarg( DB_USER) . " --dbpass=" . escapeshellarg( DB_PASSWORD ) . " --ipath=" . escapeshellarg( PHYSICAL_LOCATION . '/data/report/' ) . " --opath=" . escapeshellarg( PHYSICAL_LOCATION . '/data/cache/' ) . " --oprefix=" . escapeshellarg( $reportprefix ) . " --format=" . escapeshellarg( $outformat ) . " --report=" . escapeshellarg( $param['report_formatting'] . ".jrxml" ) . " " . $parameters;
+		syslog(LOG_INFO, "Jasper cmd = $cmd");
+		// Execute actual report generation
+		`$cmd 2>&1 | logger -t JasperWrapper`;
+		$output_file = PHYSICAL_LOCATION . "/data/cache/" . $reportprefix . "." . $ext;
+		
+		switch ( $format ) {
+			case 'xls':
+			Header( 'Content-type: application/x-ms-excel' );
+			break;
+
+			case 'html':
+			Header( 'Content-type: text/html' );
+			break;
+
+			case 'xml':
+			Header( 'Content-type: text/xml' );
+			break;
+
+			case 'pdf':
+			default:
+			Header( 'Content-type: application/pdf' );
+			break;
+		}
+		
+		Header ("Content-Transfer-Encoding:­binary"); 
+		Header ("Content-Disposition: inline; filename=\"" . $param['report_formatting'] . ".${ext}\"");
+		Header ("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+		Header ("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+		readfile( $output_file );		
+		@unlink( $output_file );
+		@unlink( $output_file . '_files' );
+		die();
+	} // end method GenerateReport_Jasper
 
 } // end class Reporting
 

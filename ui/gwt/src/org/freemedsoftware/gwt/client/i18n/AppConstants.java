@@ -136,38 +136,14 @@ public interface AppConstants extends Constants {
 	public static final int SHOW   =5;
 	/////////////////////////////End Permissions Constants//////////////////////////
 	
-	/*
-	 * These variables define total number of tabs that can be opened after
-	 * clicking the related Menu option in PatientScreen.
-	 */
-
-	// Settings for options available under New Menu
-	public static int MAX_PATIENT_ALLERGY_TABS = 1;
-	public static int MAX_PATIENT_DRUG_SAMPLE_TABS = 1;
-	public static int MAX_PATIENT_ENCOUNTER_TABS = 1;
-	public static int MAX_PATIENT_FOREIGNID_TABS = 1;
-	public static int MAX_PATIENT_FORM_TABS = 1;
-	public static int MAX_PATIENT_IMMUNIZATION_TABS = 1;
-	public static int MAX_PATIENT_LETTER_TABS = 1;
-	public static int MAX_PATIENT_CORRECPONDENCE_TABS = 1;
-	public static int MAX_PATIENT_LINK_TABS = 1;
-	public static int MAX_PATIENT_PROGRESS_NOTE_TABS = 1;
-	public static int MAX_PATIENT_PRESCRIPTOIN_TABS = 1;
-	public static int MAX_PATIENT_REFFERRAL_TABS = 1;
-
-	// Settings for options available under Reporting Menu
-	public static int MAX_PATIENT_REPORTING_TABS = 1;
-	public static int MAX_BILLING_TABS = 3;
-	public static int MAX_TRENDING_TABS = 1;
-	// Settings for options available under DOSING Menu
-	public static int MAX_PATIENT_DOSE_PLAN_TABS = 1;
-	public static int MAX_PATIENT_DOSE_HOLD_TABS = 1;
-	public static int MAX_PATIENT_DOSING_MESSAGE_TABS = 1;
-
-	// Settings for options available under TREATMENT PLAN Menu
-	public static int MAX_PATIENT_INITIAL_INTAKE_TABS = 1;
-	public static int MAX_PATIENT_COUNCELOR_INTAKE_TABS = 1;
 	
+	/////////////////////////////Reporting Constants//////////////////////////
+	public final static String REPORTING_TREATMENT = "treatment_report";
+	/////////////////////////////End Permissions Constants//////////////////////////
+	
+	public final static String APPOINTMENT_TYPE_PATIENT = "pat";
+	public final static String APPOINTMENT_TYPE_GROUP = "group";
+	public final static String APPOINTMENT_TYPE_CALLIN_PATIENT = "temp";
 
 	//////////////////////////////////////////////////////////////////////////////
 	

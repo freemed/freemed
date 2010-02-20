@@ -352,7 +352,54 @@ class ACL extends SupportModule {
 		
 	
 	return $return;
-	} // end method UserGroups
+	} 
+	// Method: GetUserGroupNames
+	//
+	//	Get list of  user group names(AROs)
+	//
+	//param
+	//      userId
+	//
+	// Returns:
+	//
+	//	Array of array [ key, value ]
+	//
+	public function GetUserGroupNames ($userId ) {
+		
+		$acl = $this->acl_object();
+		$aro_id = $acl->get_object_id('user',$userId,'ARO');
+		$return = $this->getNames($aro_id);
+		
+	
+		return $return;
+	}
+	
+	private function getNames($aro_id)
+	{
+		$q="SELECT gm.group_id,g.name FROM acl_groups_aro_map gm left join acl_aro_groups g on g.id = gm.group_id  WHERE gm.aro_id=".$GLOBALS['sql']->quote( $aro_id );
+		return $GLOBALS['sql']->queryAll( $q );	
+	}
+	
+	
+	public function getIDByName($name)
+	{
+		
+		$q="SELECT g.id FROM acl_aro_groups g WHERE g.name='".$GLOBALS['sql']->quote( $aro_id )."'";
+		
+		
+		$result= $GLOBALS['sql']->queryAll( $q );	
+		
+		if(count($result)==0)
+		{
+			return 0;
+		}
+		else
+		{
+			
+			return $result[0]['id']+0;
+		}
+	}
+	// end method UserGroups
 
 	// Method: UserInGroup
 	//

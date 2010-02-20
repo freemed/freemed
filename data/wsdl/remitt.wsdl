@@ -1,0 +1,440 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="remittService" targetNamespace="http://server.remitt.org/" xmlns:ns1="http://cxf.apache.org/bindings/xformat" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://server.remitt.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://server.remitt.org/" xmlns:tns="http://server.remitt.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:element name="getPluginOptions" type="tns:getPluginOptions" />
+<xsd:complexType name="getPluginOptions">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="pluginclass" type="xsd:string" />
+<xsd:element minOccurs="0" name="qualifyingoption" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getPluginOptionsResponse" type="tns:getPluginOptionsResponse" />
+<xsd:complexType name="getPluginOptionsResponse">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="return" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getStatus" type="tns:getStatus" />
+<xsd:complexType name="getStatus">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="jobid" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getStatusResponse" type="tns:getStatusResponse" />
+<xsd:complexType name="getStatusResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getOutputYears" type="tns:getOutputYears" />
+<xsd:complexType name="getOutputYears">
+<xsd:sequence />
+</xsd:complexType>
+<xsd:element name="getOutputYearsResponse" type="tns:getOutputYearsResponse" />
+<xsd:complexType name="getOutputYearsResponse">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="return" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="changePassword" type="tns:changePassword" />
+<xsd:complexType name="changePassword">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="pw" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="changePasswordResponse" type="tns:changePasswordResponse" />
+<xsd:complexType name="changePasswordResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:boolean" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="insertPayload" type="tns:insertPayload" />
+<xsd:complexType name="insertPayload">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="inputPayload" type="xsd:string" />
+<xsd:element minOccurs="0" name="renderPlugin" type="xsd:string" />
+<xsd:element minOccurs="0" name="renderOption" type="xsd:string" />
+<xsd:element minOccurs="0" name="transportPlugin" type="xsd:string" />
+<xsd:element minOccurs="0" name="transportOption" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="insertPayloadResponse" type="tns:insertPayloadResponse" />
+<xsd:complexType name="insertPayloadResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="setConfigValue" type="tns:setConfigValue" />
+<xsd:complexType name="setConfigValue">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="namespace" type="xsd:string" />
+<xsd:element minOccurs="0" name="option" type="xsd:string" />
+<xsd:element minOccurs="0" name="value" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="setConfigValueResponse" type="tns:setConfigValueResponse" />
+<xsd:complexType name="setConfigValueResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:boolean" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getProtocolVersion" type="tns:getProtocolVersion" />
+<xsd:complexType name="getProtocolVersion">
+<xsd:sequence />
+</xsd:complexType>
+<xsd:element name="getProtocolVersionResponse" type="tns:getProtocolVersionResponse" />
+<xsd:complexType name="getProtocolVersionResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getFile" type="tns:getFile" />
+<xsd:complexType name="getFile">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="category" type="xsd:string" />
+<xsd:element minOccurs="0" name="filename" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getFileResponse" type="tns:getFileResponse" />
+<xsd:complexType name="getFileResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:base64Binary" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getCurrentUserName" type="tns:getCurrentUserName" />
+<xsd:complexType name="getCurrentUserName">
+<xsd:sequence />
+</xsd:complexType>
+<xsd:element name="getCurrentUserNameResponse" type="tns:getCurrentUserNameResponse" />
+<xsd:complexType name="getCurrentUserNameResponse">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getOutputMonths" type="tns:getOutputMonths" />
+<xsd:complexType name="getOutputMonths">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="targetYear" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getOutputMonthsResponse" type="tns:getOutputMonthsResponse" />
+<xsd:complexType name="getOutputMonthsResponse">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="return" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getPlugins" type="tns:getPlugins" />
+<xsd:complexType name="getPlugins">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="category" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getPluginsResponse" type="tns:getPluginsResponse" />
+<xsd:complexType name="getPluginsResponse">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="return" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getFileList" type="tns:getFileList" />
+<xsd:complexType name="getFileList">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="category" type="xsd:string" />
+<xsd:element minOccurs="0" name="criteria" type="xsd:string" />
+<xsd:element minOccurs="0" name="value" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getFileListResponse" type="tns:getFileListResponse" />
+<xsd:complexType name="getFileListResponse">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="return" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="getCurrentUserNameResponse">
+    <wsdl:part element="tns:getCurrentUserNameResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getProtocolVersion">
+    <wsdl:part element="tns:getProtocolVersion" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPlugins">
+    <wsdl:part element="tns:getPlugins" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCurrentUserName">
+    <wsdl:part element="tns:getCurrentUserName" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPluginOptions">
+    <wsdl:part element="tns:getPluginOptions" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getFileListResponse">
+    <wsdl:part element="tns:getFileListResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getStatusResponse">
+    <wsdl:part element="tns:getStatusResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getOutputYearsResponse">
+    <wsdl:part element="tns:getOutputYearsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPluginsResponse">
+    <wsdl:part element="tns:getPluginsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getOutputMonthsResponse">
+    <wsdl:part element="tns:getOutputMonthsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getFile">
+    <wsdl:part element="tns:getFile" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getStatus">
+    <wsdl:part element="tns:getStatus" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setConfigValueResponse">
+    <wsdl:part element="tns:setConfigValueResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getOutputYears">
+    <wsdl:part element="tns:getOutputYears" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="insertPayload">
+    <wsdl:part element="tns:insertPayload" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="changePasswordResponse">
+    <wsdl:part element="tns:changePasswordResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="changePassword">
+    <wsdl:part element="tns:changePassword" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getOutputMonths">
+    <wsdl:part element="tns:getOutputMonths" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPluginOptionsResponse">
+    <wsdl:part element="tns:getPluginOptionsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getFileList">
+    <wsdl:part element="tns:getFileList" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getProtocolVersionResponse">
+    <wsdl:part element="tns:getProtocolVersionResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setConfigValue">
+    <wsdl:part element="tns:setConfigValue" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="insertPayloadResponse">
+    <wsdl:part element="tns:insertPayloadResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getFileResponse">
+    <wsdl:part element="tns:getFileResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="IServiceInterface">
+    <wsdl:operation name="getPluginOptions">
+      <wsdl:input message="tns:getPluginOptions" name="getPluginOptions">
+    </wsdl:input>
+      <wsdl:output message="tns:getPluginOptionsResponse" name="getPluginOptionsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStatus">
+      <wsdl:input message="tns:getStatus" name="getStatus">
+    </wsdl:input>
+      <wsdl:output message="tns:getStatusResponse" name="getStatusResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOutputYears">
+      <wsdl:input message="tns:getOutputYears" name="getOutputYears">
+    </wsdl:input>
+      <wsdl:output message="tns:getOutputYearsResponse" name="getOutputYearsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="changePassword">
+      <wsdl:input message="tns:changePassword" name="changePassword">
+    </wsdl:input>
+      <wsdl:output message="tns:changePasswordResponse" name="changePasswordResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="insertPayload">
+      <wsdl:input message="tns:insertPayload" name="insertPayload">
+    </wsdl:input>
+      <wsdl:output message="tns:insertPayloadResponse" name="insertPayloadResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setConfigValue">
+      <wsdl:input message="tns:setConfigValue" name="setConfigValue">
+    </wsdl:input>
+      <wsdl:output message="tns:setConfigValueResponse" name="setConfigValueResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProtocolVersion">
+      <wsdl:input message="tns:getProtocolVersion" name="getProtocolVersion">
+    </wsdl:input>
+      <wsdl:output message="tns:getProtocolVersionResponse" name="getProtocolVersionResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getFile">
+      <wsdl:input message="tns:getFile" name="getFile">
+    </wsdl:input>
+      <wsdl:output message="tns:getFileResponse" name="getFileResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCurrentUserName">
+      <wsdl:input message="tns:getCurrentUserName" name="getCurrentUserName">
+    </wsdl:input>
+      <wsdl:output message="tns:getCurrentUserNameResponse" name="getCurrentUserNameResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOutputMonths">
+      <wsdl:input message="tns:getOutputMonths" name="getOutputMonths">
+    </wsdl:input>
+      <wsdl:output message="tns:getOutputMonthsResponse" name="getOutputMonthsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPlugins">
+      <wsdl:input message="tns:getPlugins" name="getPlugins">
+    </wsdl:input>
+      <wsdl:output message="tns:getPluginsResponse" name="getPluginsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getFileList">
+      <wsdl:input message="tns:getFileList" name="getFileList">
+    </wsdl:input>
+      <wsdl:output message="tns:getFileListResponse" name="getFileListResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="remittServiceSoapBinding" type="tns:IServiceInterface">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="getPluginOptions">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getPluginOptions">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getPluginOptionsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOutputYears">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getOutputYears">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getOutputYearsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStatus">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getStatus">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getStatusResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="changePassword">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="changePassword">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="changePasswordResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="insertPayload">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="insertPayload">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="insertPayloadResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setConfigValue">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="setConfigValue">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="setConfigValueResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProtocolVersion">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getProtocolVersion">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getProtocolVersionResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCurrentUserName">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getCurrentUserName">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getCurrentUserNameResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getFile">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getFile">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getFileResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getOutputMonths">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getOutputMonths">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getOutputMonthsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPlugins">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getPlugins">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getPluginsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getFileList">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="getFileList">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getFileListResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="remittService">
+    <wsdl:port binding="tns:remittServiceSoapBinding" name="ServicePort">
+      <soap:address location="http://localhost:8080/remitt/services/interface" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

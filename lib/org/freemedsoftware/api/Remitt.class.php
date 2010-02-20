@@ -28,18 +28,16 @@
 //
 class Remitt {
 
-	var $ref; // references hash
-	var $_cache; // result cache
-	var $_connection; // XMLRPC connection
+	protected $ref; // references hash
+	protected $_cache; // result cache
 
 	public function __construct ( ) {
-		$this->protocol = 'http';
+		$this->protocol = freemed::config_value('remitt_protocol');
 		$this->server = freemed::config_value('remitt_server');
 		$this->port = freemed::config_value('remitt_port'); 
-		if (!$this->port) { $this->port = '7688'; }
-		$this->_connection = CreateObject('org.freemedsoftware.core.xmlrpc_client', '/RPC2', $this->server, $this->port);
-		// TODO: set credentials ...
-		
+		$this->username = freemed::config_value('remitt_username'); 
+		$this->password = freemed::config_value('remitt_password'); 
+		if (!$this->port) { $this->port = '8180'; }
 	} // end constructor
 
 	// Method: GetFileList
@@ -57,16 +55,13 @@ class Remitt {
 	//	Array of files
 	//
 	public function GetFileList ( $type, $criteria, $value ) {
-		$results = $this->_call(
-			'Remitt.Interface.FileList',
-			array (
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $criteria, 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $value, 'string')
-			),
-			false
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			  'category' => $type
+			, 'criteria' => $criteria
+			, 'value' => $value
 		);
-		return $results;
+		return ( $sc->getFileList( $params )->return );
 	} // end method GetFileList
 
 	// Method: GetProtocolVersion
@@ -79,14 +74,9 @@ class Remitt {
 	//	Version number.
 	//
 	public function GetProtocolVersion ( ) {
-		if (!$this->GetServerStatus()) { return NULL; }
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
-		);
-		$version = $this->_call( 'Remitt.Interface.ProtocolVersion' );
-		return $version;
+		$sc = $this->getSoapClient( );
+		$params = (object) array( );
+		return ( $sc->getProtocolVersion( $params )->return );
 	} // end method GetProtocolVersion
 
 	// Method: GetServerStatus
@@ -116,28 +106,23 @@ class Remitt {
 	//
 	// Returns:
 	//
-	//	NULL meaning still in process, or name of result file.
+	//	Integer, indicating status:
+	//	* 0: completed
+	//	* 1: validation
+	//	* 2: render
+	//	* 3: translation
+	//	* 4: transmission
+	//	* 5: unknown
 	//
 	public function GetStatus ( $unique ) {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			'jobId' => $unique
 		);
-		$status = $this->_call(
-			'Remitt.Interface.GetStatus',
-			array(
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $unique, 'string')
-			)
-		);
-		switch ($status) {
-			case -1: return NULL;
-			case -2: return NULL;
-			default: return $status;
-		} // end switch status
+		return ( $sc->getStatus( $params )->return );
 	} // end method GetStatus
 
 	// Method: ListOptions
@@ -161,30 +146,19 @@ class Remitt {
 	//	Array of available options for the specified plugin
 	//
 	public function ListOptions ( $type, $plugin, $media = NULL, $format = NULL ) {
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
-		);
+		$sc = $this->getSoapClient( );
 
 		if (!isset($this->_cache['ListOptions'][$type][$plugin]['x_'.$format])) {
 			if ($format) {
-				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $this->_call(
-					'Remitt.Interface.ListOptions',
-					array(
-						CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string'),
-						CreateObject('org.freemedsoftware.core.xmlrpcval', $plugin, 'string'),
-						CreateObject('org.freemedsoftware.core.xmlrpcval', $format, 'string')
-					)
+				$params = (object) array(
+					'pluginClass' => $plugin
 				);
+				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $sc->getPluginOptions( $params )->return;
 			} else {
-				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $this->_call(
-					'Remitt.Interface.ListOptions',
-					array(
-						CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string'),
-						CreateObject('org.freemedsoftware.core.xmlrpcval', $plugin, 'string')
-					)
+				$params = (object) array(
+					'pluginClass' => $plugin
 				);
+				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $sc->getPluginOptions( $params )->return;
 			}
 		}
 
@@ -210,19 +184,11 @@ class Remitt {
 	//	Array of available plugins
 	//
 	public function ListPlugins ( $type ) {
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
-		);
-
+		$params = (object) array( 'category' => $type );
 		if (!isset($this->_cache['ListPlugins'][$type])) {
-			$this->_cache['ListPlugins'][$type] = $this->_call(
-				'Remitt.Interface.ListPlugins',
-				array(
-					CreateObject('org.freemedsoftware.core.xmlrpcval', $type, 'string')
-				)
-			);
+			$sc = $this->getSoapClient( );
+			$this->_cache['ListPlugins'][$type] = 
+				( $sc->getPlugins( $params )->return );
 		}
 		return $this->_cache['ListPlugins'][$type];
 	} // end method ListPlugins
@@ -239,23 +205,12 @@ class Remitt {
 	//
 	//	Hash of years => number of output files available.
 	//
-	public function ListOutputMonths ( $year = NULL ) {
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
+	public function ListOutputMonths ( $year ) {
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			'targetYear' => (int) $year
 		);
-		if ($year) {
-			$months = $this->_call( 
-				'Remitt.Interface.GetOutputMonths',
-				array (
-					CreateObject('org.freemedsoftware.core.xmlrpcval', $year, 'string'),
-				)
-			);
-		} else {
-			$months = $this->_call( 'Remitt.Interface.GetOutputMonths' );
-		}
-		if (!is_array($months)) { $months = array ( $months ); }
+		$months = $sc->getOutputMonths( $params )->return;
 		return $months;
 	} // end method ListOutputMonths
 			
@@ -268,75 +223,32 @@ class Remitt {
 	//	Hash of years => number of output files available.
 	//
 	public function ListOutputYears ( ) {
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
-		);
-		$years = $this->_call( 'Remitt.Interface.GetOutputYears' );
-		if (!is_array($years)) { $years = array ( $years ); }
+		$sc = $this->getSoapClient( );
+		$params = (object) array( );
+		$years = $sc->getOutputYears( $params )->return;
 		return $years;
 	} // end method ListOutputYears
 			
-	// Method: Login
+	// Method: ProcessBill
 	//
-	//	Logs into the Remitt server, and stores authentication
-	//	data received in the session.
+	//	Wraps insertPayload functionality on REMITT server to
+	//	send payerxml payload for billing.
 	//
 	// Parameters:
 	//
-	//	$username - Username to be passed to the Remitt server
+	//	$billkey -
 	//
-	//	$password - Password to be passed to the Remitt server
+	//	$render - Render "option", in this case XSLT stylesheet
 	//
-	public function Login ( $username, $password ) {
-/*
-		// Check for session data
-		$remitt = HTTP_Session2::get( 'remitt' );
-		if ($remitt) { 
-			// Set credentials properly
-			$this->_connection->SetCredentials(
-				  $remitt['sessionid']
-				, $remitt['key']
-			);
-
-			// Skip the rest
-			return false; 
-		}
-*/
-
-		// Otherwise, attempt to establish credentials
-		//print "Logging in with $username and $password<br/>\n";
-		$this->_connection->SetCredentials($username, $password);
-		$message = CreateObject('org.freemedsoftware.core.xmlrpcmsg',
-			'Remitt.Interface.SystemLogin',
-			array(
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $username, 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $password, 'string')
-			)
-		);
-		$response_raw = $this->_connection->send(
-			$message,
-			0,
-			$this->protocol
-		);
-		$response = $response_raw->deserialize();
-		HTTP_Session2::set( 'remitt', $response );
-
-		// Set credentials properly
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
-		);
-		//print "Got this: "; print_r($response); print "<br/>\n";
-
-		// Return to program
-		return true;
-	} // end method Login
-
-	// Method: ProcessBill
-	public function ProcessBill ( $billkey, $render, $transport ) {
+	//	$transportPlugin -
+	//
+	//	$transportOption -
+	//
+	// Returns:
+	//
+	//	Integer, REMITT internal processing queue number.
+	//
+	public function ProcessBill ( $billkey, $render, $transportPlugin, $transportOption ) {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
@@ -344,23 +256,15 @@ class Remitt {
 		// For now, just use the first ones ... FIXME FIXME FIXME
 		$bc = $bs = $ch = 1;
 		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $bc, $bs, $ch);
-		//print "length of xml = ".strlen($xml)."<br/>\n";
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			  'inputPayload' => $xml
+			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
+			, 'renderOption' => $render
+			, 'transportPlugin' => $transportPlugin
+			, 'transportOption' => $transportOption
 		);
-		//print "calling with ( ..., XSLT, $render, $transport ) <br/>\n";
-		$output = $this->_call(
-			'Remitt.Interface.Execute',
-			array(
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $xml, 'base64'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', 'XSLT', 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $render, 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $transport, 'string')
-			)
-		);
-		return $output;
+		return $sc->insertPayload( $params )->return;
 	} // end method ProcessBill
 
 	// Method: ProcessStatement
@@ -371,22 +275,16 @@ class Remitt {
 		// For now, just use the first ones ... FIXME FIXME FIXME
 		$xml = $this->RenderStatementXML($procedures);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
-		$remitt = HTTP_Session2::get( 'remitt' );
-		$this->_connection->SetCredentials(
-			  $remitt['sessionid']
-			, $remitt['key']
+		$sc = $this->getSoapClient( );
+		// TODO: FIXME: THESE ARE BROKEN AT THE MOMENT
+		$params = (object) array(
+			  'inputPayload' => $xml
+			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
+			, 'renderOption' => 'statement'
+			, 'transportPlugin' => 'PDF'
+			, 'transportOption' => ''
 		);
-		//print "calling with ( ..., XSLT, $render, $transport ) <br/>\n";
-		$output = $this->_call(
-			'Remitt.Interface.Execute',
-			array(
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $xml, 'base64'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', 'XSLT', 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', 'statement', 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', 'PDF', 'string')
-			)
-		);
-		return $output;
+		return $sc->insertPayload( $params )->return;
 	} // end method ProcessStatement
 
 	// Method: StoreBillKey
@@ -1173,115 +1071,35 @@ class Remitt {
 			"</".htmlentities($tag).">\n";
 	} // end method _tag
 
-	// Method: _autoserialize
-	//
-	//	Automagically determines what kind of resource this is
-	//	supposed to be and creates a org.freemedsoftware.core.xmlrpcval object to
-	//	wrap it in.
-	//
-	// Parameters:
-	//
-	//	$mixed - Original object, any type
+	// Method: getCachedWSDL
 	//
 	// Returns:
 	//
-	//	org.freemedsoftware.core.xmlrpcval object
+	//	Get cache file name for WSDL
 	//
-	protected function _autoserialize ( $mixed ) {
-		// Handle already serialized
-		if (is_object($mixed) and method_exists($mixed, 'serialize')) {
-			return $mixed;
+	protected function getCachedWSDL ( ) {
+		$cached_name = PHYSICAL_LOCATION . '/data/cache/remitt.wsdl';
+
+		if ( ! file_exists( $cached_name ) ) {
+			syslog(LOG_INFO, "caching wsdl from ".$ds['dsurl']);
+			$url = $this->protocol . '://' . $this->username . ':' . $this->password . '@' . $this->server . ":" . $this->port . "/remitt/services/Interface?wsdl";
+			syslog(LOG_INFO, "url = $url");
+			file_put_contents( $cached_name, file_get_contents($url) );
 		}
 
-		if (is_array($mixed)) {
-			// If dealing with an array, recursively figure out
-			@reset($mixed);
-			while(list($k, $v) = @each($mixed)) {
-				$ele[$k] = $this->_autoserialize($v);
-			}
-			// Determine if struct or array as we return it
-			return CreateObject (
-				'org.freemedsoftware.core.xmlrpcval',
-				$ele,
-				$this->_is_struct($ele) ? 'struct' : 'array'
-			);
-		} elseif (strpos($mixed, '<') !== false) {
-			// This is an *awful* way to check for binary data,
-			// and is probably broken in a thousand ways.
-			return CreateObject (
-				'org.freemedsoftware.core.xmlrpcval',
-				$mixed,
-				'base64'
-			);
-		} else {
-			// Otherwise, use PHP auto-typing
-			$type = (is_integer($mixed) ? 'int' : gettype($mixed));
-			return CreateObject (
-				'org.freemedsoftware.core.xmlrpcval',
-				$mixed,
-				$type
-			);
-		}
-	} // end method _autoserialize
+		return $cached_name;
+	} // end method getCachedWSDL
 
-	// Method: _call
-	//
-	//	Call Remitt server with the specified parameters. This
-	//	should only be used by internal Remitt methods to
-	//	complete abstraction.
-	//
-	// Parameters:
-	//
-	//	$method - Method on the Remitt server to call
-	//
-	//	$parameters - (optional) Array of parameters to call
-	//	$method with. Defaults to NULL.
-	//
-	//	$debug - (optional) Whether debug code should be shown.
-	//	Defaults to false.
-	//
-	// Returns:
-	//
-	//	Reply to call as PHP variable.
-	//
-	protected function _call ( $method, $parameters = NULL, $debug = false ) {
-		// Form proper message object
-		if ($parameters != NULL) {
-			$message = CreateObject(
-				'org.freemedsoftware.core.xmlrpcmsg',
-				$method,
-				( is_array($parameters) ? $parameters : array($parameters) )
-			);
-		} else {
-			$message = CreateObject(
-				'org.freemedsoftware.core.xmlrpcmsg',
-				$method
-			);
-		}
-		if ($debug) { print_r($message); }
-
-		// If we're debugging, we set the debug flag
-		$this->_connection->setDebug ( $debug );
-
-		// Dispatch message to server
-		$response = $this->_connection->send (
-			$message,
-			0,
-			$this->protocol
-		);
-		if ($debug) { print_r($response); }
-
-		// Deserialize response
-		$d = $response->deserialize();
-
-		// Handle faults
-		if ($response->fn) {
-			trigger_error(__("XML-RPC Fault:")." ".$d['faultCode']." (".$d['faultString'].")", E_USER_ERROR);
-		} else {
-			// If there is no fault, return as usual
-			return $d;
-		}
-	} // end method _call
+	protected function getSoapClient() {
+		$wsdl = $this->getCachedWSDL( );
+		$sc = new SoapClient( $this->getCachedWSDL(), array(
+			  'login' => $this->username
+			, 'password' => $this->password
+			, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
+			, 'location' => str_replace('?wsdl', '', $wsdl) // force this to work through proxies
+		));
+		return $sc;
+	} // end method getSoapClient
 
 	// Method: _is_struct
 	//

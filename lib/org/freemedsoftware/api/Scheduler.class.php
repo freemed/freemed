@@ -459,6 +459,29 @@ class Scheduler {
 			"ORDER BY caldateof, calhour, calminute";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method FindGroupAppointments
+	
+	// Method: FindGroupAppointmentsDates
+	//
+	//	Given a group id, return the appointments dates in that group
+	//
+	// Parameters:
+	//
+	//	$group_id - id for the group that is being searched for
+	//
+	// Returns:
+	//
+	//	Array of associative arrays containing appointments 
+	//	Dates Only
+	//
+	public function FindGroupAppointmentsDates ( $group_id ) {
+		$query = "SELECT id,calphysician,caldateof FROM scheduler WHERE ( ".
+			"calgroupid = '".addslashes($group_id)."' ".
+			"AND calstatus != 'cancelled' ".
+			" ) ".
+			"ORDER BY caldateof, calhour, calminute";
+		return $GLOBALS['sql']->queryAll( $query );
+	} // end method FindGroupAppointments
+	
 	public function find_group_appointments ( $group_id ) { return $this->FindGroupAppointments( $group_id ); }
 
 	// Method: GetAppointment
@@ -1241,4 +1264,3 @@ class Scheduler {
 } // end method Scheduler
 
 ?>
-	                                                

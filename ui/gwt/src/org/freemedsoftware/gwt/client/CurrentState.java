@@ -88,7 +88,7 @@ public class CurrentState {
 
 	public static String LAST_THEME = "chrome";
 
-	public final static int BREAK_HOUR = 13;
+	public static Integer BREAK_HOUR = null;
 
 	public CurrentState() {
 		retrieveUserConfiguration(true);
@@ -569,6 +569,14 @@ public class CurrentState {
 
 	public static HashMap<Integer, HashMap<String, PatientScreenInterface>> getPatientSubScreenMap() {
 		return patientSubScreenMap;
+	}
+
+	public static Integer getBREAK_HOUR() {
+		return BREAK_HOUR;
+	}
+
+	public static void setBREAK_HOUR(Integer break_hour) {
+		BREAK_HOUR = break_hour;
 	}
 
 }

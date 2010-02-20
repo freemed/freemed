@@ -60,7 +60,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -73,6 +72,8 @@ public class PatientScreen extends ScreenInterface {
 	protected PatientInfoBar patientInfoBar = null;
 
 	protected Integer patientId = new Integer(0);
+	
+	protected String  patientName = new String("");
 
 	protected HashMap<String, String> patientInfo;
 
@@ -206,7 +207,6 @@ public class PatientScreen extends ScreenInterface {
 			menuBar_2.addItem("Trending", (Command) null);
 
 			menuBar.addItem("Reporting", menuBar_2);
-
 		}
 
 		final VerticalPanel verticalPanel_1 = new VerticalPanel();
@@ -346,6 +346,7 @@ public class PatientScreen extends ScreenInterface {
 		// Push out to child widgets
 		patientInfoBar.setPatientFromMap(patientInfo);
 		summaryScreen.setPatientId(patientId);
+		patientName = info.get("patient_name");
 		summaryScreen.loadData();
 	}
 
@@ -359,5 +360,9 @@ public class PatientScreen extends ScreenInterface {
 		Integer patientId = getPatient();
 		CurrentState.getPatientScreenMap().remove(patientId);
 		CurrentState.getPatientSubScreenMap().remove(patientId);
+	}
+
+	public String getPatientName() {
+		return patientName;
 	}
 }

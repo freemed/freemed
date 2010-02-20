@@ -54,7 +54,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 	protected static String helpprefix = "Help for";
 
 	public enum WidgetType {
-		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG
+		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG, MULTILIST,SINGLELIST
 	};
 
 	/**
@@ -192,7 +192,12 @@ public class SimpleUIBuilder extends WidgetInterface {
 		} else if (type == WidgetType.DELIMITER) {
 			w = new Label(title);
 			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
-		} else {
+		}else if(type == WidgetType.MULTILIST){
+			w=new CustomMulltiSelectListBox(options,true);
+		}else if(type == WidgetType.SINGLELIST){
+			w=new CustomMulltiSelectListBox(options,false);
+		}
+		else {
 			// Unimplemented, use text box as fallback
 			w = new CustomTextBox();
 			JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" + type
@@ -281,7 +286,12 @@ public class SimpleUIBuilder extends WidgetInterface {
 		if (widget.compareToIgnoreCase("DRUG") == 0) {
 			return WidgetType.DRUG;
 		}
-
+		if (widget.compareToIgnoreCase("MULTILIST") == 0) {
+			return WidgetType.MULTILIST;
+		}
+		if (widget.compareToIgnoreCase("SINGLELIST") == 0) {
+			return WidgetType.SINGLELIST;
+		}
 		// By default, return text
 
 		JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" + widget
@@ -352,6 +362,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		if (w instanceof DrugWidget) {
 			return ((DrugWidget) w).getStoredValue();
 		}
+		if (w instanceof CustomMulltiSelectListBox) {
+			return ((CustomMulltiSelectListBox) w).getWidgetValue();
+		}
 		return null;
 	}
 
@@ -388,6 +401,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 			if (w instanceof DrugWidget) {
 				((DrugWidget) w).setValue(value);
+			}
+			if (w instanceof CustomMulltiSelectListBox) {
+				((CustomMulltiSelectListBox) w).populateMultiList(value);
 			}
 		}
 	}

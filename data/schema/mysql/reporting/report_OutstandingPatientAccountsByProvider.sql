@@ -63,6 +63,7 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
+		report_category,
 		report_sp,
 		report_param_count
 	) VALUES (
@@ -70,6 +71,7 @@ INSERT INTO `reporting` (
 		'5ddd29ae-e0e2-47cc-a321-316be9c831b5',
 		'en_US',
 		'Summary of patient account amounts per provider.',
+		'reporting_engine',
 		'report_OutstandingPatientAccountsByProvider_en_US',
 		0
 	);

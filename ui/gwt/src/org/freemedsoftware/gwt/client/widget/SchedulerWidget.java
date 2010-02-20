@@ -43,6 +43,7 @@ import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.screen.PatientsGroupScreen;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -81,7 +82,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import eu.future.earth.gwt.client.TimeBox;
 import eu.future.earth.gwt.client.date.AbstractWholeDayField;
 import eu.future.earth.gwt.client.date.BaseDateRenderer;
 import eu.future.earth.gwt.client.date.DateEvent;
@@ -141,6 +141,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		private String id = null;
 
 		private Integer patientId = null;
+		
+		private Integer groupId = null;
 
 		private Integer providerId = null;
 
@@ -156,7 +158,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private Integer appointmentTemplateId;
 
-		private String resourceType = "pat";
+		private String resourceType = AppConstants.APPOINTMENT_TYPE_PATIENT;
 
 		public Integer getAppointmentTemplateId() {
 			return appointmentTemplateId;
@@ -308,6 +310,14 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public void setResourceType(String resourceType) {
 			this.resourceType = resourceType;
+		}
+
+		public Integer getGroupId() {
+			return groupId;
+		}
+
+		public void setGroupId(Integer groupId) {
+			this.groupId = groupId;
 		}
 
 	}
@@ -582,9 +592,9 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private HorizontalPanel timePanel = new HorizontalPanel();
 
-		private TimeBox start;
+		private CustomTimeBox start;
 
-		private TimeBox end;
+		private CustomTimeBox end;
 
 		private DateEventListener listener = null;
 
@@ -594,6 +604,8 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private Button delete = null;
 
+		private CustomListBox appointmentType = null;
+		
 		private EventData data = null;
 
 		private SupportModuleListBox selectTemplate = null;
@@ -625,9 +637,9 @@ public class SchedulerWidget extends WidgetInterface implements
 			
 			// date = new DateEditFieldWithPicker("MM/dd/yyyy");
 			date = new CustomDatePicker();
-			start = new TimeBox(renderer.show24HourClock() ? "HH:mm"
+			start = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm"
 					: "hh:mmaa");
-			end = new TimeBox(renderer.show24HourClock() ? "HH:mm" : "hh:mmaa");
+			end = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm" : "hh:mmaa");
 			command = newCommand;
 			data = (EventData) newData;
 			listener = newListener;
@@ -660,8 +672,10 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			final FlexTable table = new FlexTable();
 
-			table.setWidget(0, 0, new Label("Date"));
-			table.setWidget(0, 1, date);
+			int row = 0;
+			
+			table.setWidget(row, 0, new Label("Date"));
+			table.setWidget(row, 1, date);
 
 			timePanel.add(start);
 			timePanel.add(new Label("-"));
@@ -673,42 +687,87 @@ public class SchedulerWidget extends WidgetInterface implements
 				time.add(timePanel);
 			}
 
-			table.setWidget(0, 2, time);
+			table.setWidget(row, 2, time);
 			table.getFlexCellFormatter().setHorizontalAlignment(0, 2,
 					HorizontalPanel.ALIGN_LEFT);
 
-			if (data.getResourceType() != null) {
-				if (data.getResourceType().equalsIgnoreCase("pat")) {
+			row++;
+			
+			if(command == DateEventActions.ADD){ // if not in edit mode
+			
+				appointmentType = new CustomListBox();
+				appointmentType.setWidth("100%");
+				appointmentType.addItem("Patient",AppConstants.APPOINTMENT_TYPE_PATIENT);
+				appointmentType.addItem("Call-In Patient",AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT);
+				appointmentType.addItem("Group",AppConstants.APPOINTMENT_TYPE_GROUP);
+				
+				table.setWidget(row, 0, new Label("Type"));
+				table.setWidget(row, 1, appointmentType);
+			
+			}
+			
+			row++;
+			
+			final Label entityLabel = new Label("Patient");
+			
+			if (command == DateEventActions.UPDATE) {
+				if (data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)) {
 					patient = new PatientWidget();
-					table.setWidget(1, 0, new Label("Patient"));
-					table.setWidget(1, 1, patient);
-				} else if (data.getResourceType().equalsIgnoreCase("temp")) {
+					table.setWidget(row, 0, entityLabel);
+					table.setWidget(row, 1, patient);
+				} else if (data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT)) {
 					supportWidget = new SupportModuleWidget("Callin");
-					table.setWidget(1, 0, new Label("call-in Patient"));
-					table.setWidget(1, 1, supportWidget);
-				} else if (data.getResourceType().equalsIgnoreCase("group")) {
+					entityLabel.setText("Call-In Patient");
+					table.setWidget(row, 0, entityLabel);
+					table.setWidget(row, 1, supportWidget);
+				} else if (data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)) {
 					supportWidget = new SupportModuleWidget("CalendarGroup");
-					table.setWidget(1, 0, new Label("Group"));
-					table.setWidget(1, 1, supportWidget);
+					entityLabel.setText("Group");
+					table.setWidget(row, 0, new Label("Group"));
+					table.setWidget(row, 1, supportWidget);
 				}
 			} else {
 				patient = new PatientWidget();
-				table.setWidget(1, 0, new Label("Patient"));
-				table.setWidget(1, 1, patient);
+				table.setWidget(row, 0, entityLabel);
+				table.setWidget(row, 1, patient);
 			}
-			try {
-				patient.setValue(data.getPatientId());
+			if(patient!=null){
+				if(data.getPatientId()!=null)
+					patient.setValue(data.getPatientId());
 				patient.addChangeHandler(this);
-			} catch (Exception ex) {
-				JsonUtil.debug(ex.toString());
-			}
-			try {
+			}else {
 				supportWidget.setValue(data.getPatientId());
 				supportWidget.addChangeHandler(this);
-			} catch (Exception ex) {
-				JsonUtil.debug(ex.toString());
 			}
-
+			
+			final int entityRow = row;
+			
+			if(command == DateEventActions.ADD){
+				appointmentType.addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent arg0) {
+						int index = appointmentType.getSelectedIndex();
+						data.setResourceType(appointmentType.getValue(index));
+						if(appointmentType.getItemText(index).equalsIgnoreCase("Patient")){
+							supportWidget = null;
+							patient = new PatientWidget();
+							entityLabel.setText("Patient");
+							table.setWidget(entityRow, 1, patient);
+						}else if(appointmentType.getItemText(index).equalsIgnoreCase("Group")){
+							patient = null;
+							supportWidget = new SupportModuleWidget("CalendarGroup");
+							entityLabel.setText("Group");
+							table.setWidget(entityRow, 1, supportWidget);
+						}else if(appointmentType.getItemText(index).equalsIgnoreCase("Call-In Patient")){
+							patient = null;
+							supportWidget = new SupportModuleWidget("Callin");
+							entityLabel.setText("Call-In Patient");
+							table.setWidget(entityRow, 1, supportWidget);
+						}
+					}
+				});
+			}
+			
 			provider = new SupportModuleWidget();
 			provider.setModuleName("ProviderModule");
 			try {
@@ -732,19 +791,45 @@ public class SchedulerWidget extends WidgetInterface implements
 					toggleButton();
 				}
 			});
-			table.setWidget(2, 0, new Label("Provider"));
+			
+			row++;
+			
+			table.setWidget(row, 0, new Label("Provider"));
 			// Only set default provider *if* there is one, and if the
 			// current event data hasn't already set it.
 			if (CurrentState.getDefaultProvider().intValue() > 0
 					&& (data.getProviderId() == null || data.getProviderId() == 0)) {
 				provider.setValue(CurrentState.getDefaultProvider());
 			}
-			table.setWidget(2, 1, provider);
+			table.setWidget(row, 1, provider);
 
-			table.setWidget(3, 0, new Label("Description"));
-			table.setWidget(3, 1, text);
-			table.getFlexCellFormatter().setColSpan(1, 1, 2);
+			row++;
+			
+			table.setWidget(row, 0, new Label("Description"));
+			table.setWidget(row, 1, text);
+			table.getFlexCellFormatter().setColSpan(row, 1, 2);
 
+			row++;
+			
+			final Label templateLabel = new Label("Template");
+			table.setWidget(row, 0, templateLabel);
+			selectTemplate = new SupportModuleListBox("AppointmentTemplates",
+					"Select a Template");
+			table.setWidget(row, 1, selectTemplate);
+
+			selectTemplate.initChangeListener(new Command() {
+				public void execute() {
+					updateFromTemplate(Integer.parseInt(selectTemplate
+							.getStoredValue()));
+				}
+			});
+			try {
+				selectTemplate.setWidgetValue(data.getAppointmentTemplateId()
+						.toString());
+			} catch (Exception ex) {
+				JsonUtil.debug(ex.toString());
+			}
+			
 			cancel = new Button("Cancel");
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
@@ -774,27 +859,9 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			button.add(new HTML(" "));
 			button.add(cancel);
-			table.setWidget(5, 1, button);
+			row++;
+			table.setWidget(row, 1, button);
 			setWidget(table);
-
-			final Label templateLabel = new Label("Template");
-			table.setWidget(4, 0, templateLabel);
-			selectTemplate = new SupportModuleListBox("AppointmentTemplates",
-					"Select a Template");
-			table.setWidget(4, 1, selectTemplate);
-
-			selectTemplate.initChangeListener(new Command() {
-				public void execute() {
-					updateFromTemplate(Integer.parseInt(selectTemplate
-							.getStoredValue()));
-				}
-			});
-			try {
-				selectTemplate.setWidgetValue(data.getAppointmentTemplateId()
-						.toString());
-			} catch (Exception ex) {
-				JsonUtil.debug(ex.toString());
-			}
 			toggleButton();
 		}
 
@@ -1053,27 +1120,41 @@ public class SchedulerWidget extends WidgetInterface implements
 						&& real.getEventBackgroundColor().length() > 0)
 					description.getElement().getStyle().setProperty(
 							"backgroundColor", real.getEventBackgroundColor());
-				if (real.getResourceType() != null
-						&& real.getResourceType().equalsIgnoreCase("pat"))
-					description.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent arg0) {
-							spawnPatientScreen(real.getPatientId(), real
-									.getPatientName());
+				if (real.getResourceType() != null){
+						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)){
+							description.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent arg0) {
+									spawnPatientScreen(real.getPatientId(), real
+											.getPatientName());
+								}
+							});
+						}
+						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)){
+							description.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent arg0) {
+									spawnGroupScreen(real.getPatientId());//group id stored in it
+								}
+							});
+						}
+				}
+				if (CurrentState.isActionAllowed(AppConstants.MODIFY,
+						AppConstants.SYSTEM_CATEGORY,
+						AppConstants.SCHEDULER)){
+						getHeaderElement().addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent arg0) {
+								final StringEventDataDialog dialog = new StringEventDataDialog(
+										getDateRenderer(), getDateEventListener(),
+										real, DateEventActions.UPDATE);
+								dialog.show();
+								dialog.center();
 						}
 					});
-				
-				getHeaderElement().addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent arg0) {
-						final StringEventDataDialog dialog = new StringEventDataDialog(
-								getDateRenderer(), getDateEventListener(),
-								real, DateEventActions.UPDATE);
-						dialog.show();
-						dialog.center();
-					}
-				});
-				
+				}else CurrentState.getToaster().addItem(
+						"Scheduler",
+						"Access Denied!\nCan not edit appointments.",Toaster.TOASTER_ERROR);
 				if (real.getEndTime() == null) {
 					super.setTitle(format.format(real.getStartTime()) + "  "
 							+ real.getProviderName());
@@ -1124,15 +1205,25 @@ public class SchedulerWidget extends WidgetInterface implements
 						description.getElement().getStyle().setProperty(
 								"backgroundColor",
 								real.getEventBackgroundColor());
-					if (real.getResourceType() != null
-							&& real.getResourceType().equalsIgnoreCase("pat"))
-						description.addClickHandler(new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent arg0) {
-								spawnPatientScreen(real.getPatientId(), real
-										.getPatientName());
-							}
-						});
+					if (real.getResourceType() != null){
+						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)){
+							description.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent arg0) {
+									spawnPatientScreen(real.getPatientId(), real
+											.getPatientName());
+								}
+							});
+						}
+						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)){
+							description.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent arg0) {
+									spawnGroupScreen(real.getPatientId());//group id stored in it
+								}
+							});
+						}
+					}
 					// super.setTitle(format.format(real.getStartTime())+"<br>
 					// "+real.getProviderName());
 					if (CurrentState.isActionAllowed(AppConstants.MODIFY,
@@ -1178,6 +1269,19 @@ public class SchedulerWidget extends WidgetInterface implements
 		s.setPatient(patient);
 		Util.spawnTab(patientName, s);
 	}
+	
+	/**
+	 * spawn tab for Group.
+	 * 
+	 * @param patient
+	 */
+	public void spawnGroupScreen(Integer groupId) {
+		Util.spawnTab(AppConstants.GROUPS,
+				PatientsGroupScreen.getInstance());
+		PatientsGroupScreen.getInstance().showGroupInfo(groupId);
+	}
+	
+	
 
 	public class EventCacheController implements EventController {
 
@@ -1410,6 +1514,8 @@ public class SchedulerWidget extends WidgetInterface implements
 			d.put("calduration", Integer.toString(dur));
 			d.put("caltype", data.getResourceType());
 			d.put("calpatient", data.getPatientId().toString());
+			if(data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP))
+				d.put("calgroupid", data.getPatientId().toString());
 			d.put("calphysician", data.getProviderId().toString());
 			d.put("calprenote", data.getDescription());
 			if (data.getAppointmentTemplateId() != null)

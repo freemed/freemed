@@ -52,6 +52,7 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
+		report_category,
 		report_sp,
 		report_param_count
 	) VALUES (
@@ -59,6 +60,7 @@ INSERT INTO `reporting` (
 		'b2ed1a07-e078-4a6a-821b-b21df43ab583',
 		'en_US',
 		'Distribution of patients by zip code.',
+		'reporting_engine',
 		'report_PatientZipCodeDistribution_en_US',
 		0
 	);

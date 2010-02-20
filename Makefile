@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2009 FreeMED Software Foundation
+# Copyright (C) 1999-2010 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 prefix=/usr
 INSTDIR=$(DESTDIR)$(prefix)/share/freemed
 SUBDIR=data doc lib locale scripts ui
+SUBDIRCOPY=services
 
 all:
 	# Nothing to do
@@ -35,6 +36,10 @@ install:
 	cp -vf .htaccess *.php *.html $(INSTDIR)
 	for d in $(SUBDIR); do \
 		make -C $$d install DESTDIR=$(DESTDIR) INSTDIR=$(INSTDIR); \
+	done
+	for d in $(SUBDIRCOPY); do \
+		mkdir -p $(INSTDIR)/$$d; \
+		cp -vf $$d/* $(INSTDIR)/$$d/; \
 	done
 
 clean:

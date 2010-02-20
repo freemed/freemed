@@ -51,6 +51,7 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
+		report_category,
 		report_sp,
 		report_param_count
 	) VALUES (
@@ -58,6 +59,7 @@ INSERT INTO `reporting` (
 		'771722fb-914c-44b1-a8da-3f22299905cf',
 		'en_US',
 		'List of patients in the system.',
+		'reporting_engine',
 		'report_PatientList_en_US',
 		0
 	);

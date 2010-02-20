@@ -172,7 +172,15 @@ public class MainScreen extends Composite {
 		mainPanel.setSize("100%", "100%");
 
 		// CurrentState.retrieveUserConfiguration(true);
-		CurrentState.retrieveSystemConfiguration(true);
+		CurrentState.retrieveSystemConfiguration(true,new Command() {
+			@Override
+			public void execute() {
+				if(CurrentState.getSystemConfig("calbreakhour")!=null)
+					CurrentState.setBREAK_HOUR(Integer.parseInt(CurrentState.getSystemConfig("calbreakhour")));
+				else
+					CurrentState.setBREAK_HOUR(13);
+			}
+		});
 
 		// populateLeftNavigationPanel();
 

@@ -117,12 +117,20 @@ public class CustomRadioButtonGroup extends Composite implements ValueChangeHand
 	}
 	
 	public void setWidgetValue(String value){
+		setWidgetValue(value, false);
+		
+	}
+	
+	public void setWidgetValue(String value,boolean fireEvent){
 		Iterator<CustomRadioButton> itr=customRadioButtonGroup.iterator();
 		CustomRadioButton customRadioButton;
 		while(itr.hasNext()){
 			customRadioButton=itr.next();
 			if(customRadioButton.getWidgetValue().equals(value)){
 				customRadioButton.setValue(true);
+				if(fireEvent && customRadioButton.fireAction!=null){
+					customRadioButton.fireAction.execute();
+				}
 				break;
 			}
 		}
@@ -139,11 +147,18 @@ public class CustomRadioButtonGroup extends Composite implements ValueChangeHand
 	}
 	
 	public void clear(){
+		this.clear(false);
+	}
+	
+	public void clear(boolean fireEvent){
 		Iterator<CustomRadioButton> itr=customRadioButtonGroup.iterator();
 		CustomRadioButton customRadioButton;
 		while(itr.hasNext()){
 			customRadioButton=itr.next();
 			customRadioButton.setValue(false);
+			if(fireEvent && customRadioButton.fireAction!=null){
+				customRadioButton.fireAction.execute();
+			}
 		}
 		
 	}

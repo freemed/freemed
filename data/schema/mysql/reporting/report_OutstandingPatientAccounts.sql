@@ -62,6 +62,7 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
+		report_category,
 		report_sp,
 		report_param_count
 	) VALUES (
@@ -69,6 +70,7 @@ INSERT INTO `reporting` (
 		'b9f7f1f0-445b-4c1e-a45b-af18caed9db5',
 		'en_US',
 		'List of all patients with outstanding account balances.',
+		'reporting_engine',
 		'report_OutstandingPatientAccounts_en_US',
 		0
 	);

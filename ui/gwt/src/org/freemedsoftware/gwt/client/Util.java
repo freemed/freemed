@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.Api.Authorizations;
@@ -77,8 +78,13 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.AsyncPicklistWidgetBase;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
+import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
 import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
+import org.freemedsoftware.gwt.client.widget.ProviderWidget;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -95,25 +101,31 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
+
+import eu.future.earth.gwt.client.TimeBox;
 
 public final class Util {
 
 	/**
-	 * If true then JSONRPC calls can be sent to third server in hosted mode 
-	 * Set server URL in relay.jsp	
+	 * If true then JSONRPC calls can be sent to third server in hosted mode Set
+	 * server URL in relay.jsp
 	 */
-	public static boolean GWT_HOSTED_MODE = true;
+	public static boolean GWT_HOSTED_MODE = false;
 
 	public static enum ProgramMode {
 		NORMAL, STUBBED, JSONRPC
@@ -158,8 +170,8 @@ public final class Util {
 	public static synchronized String getJsonRequest(String method,
 			String[] args) {
 		String url = getBaseUrl() + "/relay.php/json";
-		if(GWT_HOSTED_MODE)
-			url =  getBaseUrl() + "/relay.jsp";
+		if (GWT_HOSTED_MODE)
+			url = getBaseUrl() + "/relay.jsp";
 		try {
 			String params = new String();
 			for (int iter = 0; iter < args.length; iter++) {
@@ -169,10 +181,11 @@ public final class Util {
 				params += "param" + new Integer(iter).toString() + "="
 						+ URL.encodeComponent(args[iter]);
 			}
-			if(GWT_HOSTED_MODE)
-				return url + "?module=" + method +  (params.length()>0?"&"+params:"");
+			if (GWT_HOSTED_MODE)
+				return url + "?module=" + method
+						+ (params.length() > 0 ? "&" + params : "");
 			else
-				return url + "/" + method + "?" + params;	
+				return url + "/" + method + "?" + params;
 		} catch (Exception e) {
 			return url + "/" + method;
 		}
@@ -360,7 +373,8 @@ public final class Util {
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (200 == response.getStatusCode()) {
-						if (response.getText().trim().compareToIgnoreCase("true") == 0) {
+						if (response.getText().trim().compareToIgnoreCase(
+								"true") == 0) {
 							whenDone.execute();
 						} else {
 							whenFail.execute();
@@ -406,7 +420,8 @@ public final class Util {
 						if (200 == response.getStatusCode()) {
 							JsonUtil.debug("Util: SetDefaultFacility:"
 									+ response.getText());
-							CurrentState.getMainScreen().populateDefaultFacility();
+							CurrentState.getMainScreen()
+									.populateDefaultFacility();
 						}
 					}
 				});
@@ -551,48 +566,47 @@ public final class Util {
 	 */
 	public static synchronized void spawnTabPatient(String title,
 			PatientScreenInterface screen, PatientScreen pScreen) {
-            boolean recycle=false;
-			HashMap<Integer, HashMap<String,PatientScreenInterface>> map = CurrentState
-					.getPatientSubScreenMap();
-			Integer oldId = pScreen.getPatient();
-			HashMap<String,PatientScreenInterface> subHashMap=null;
-			if (map.get(oldId) == null) {
-				// We don't find it, we have to instantiate new
-				recycle = false;
-				subHashMap=new HashMap<String,PatientScreenInterface>();
-				subHashMap.put(screen.getClass().getName(),screen);
-				// Push into mapping
-				map.put(oldId, subHashMap );
-			}else if(map.get(oldId).get(screen.getClass().getName())==null){
-				// We don't find the required screen
-				recycle = false;
-				subHashMap=map.get(oldId);
-				subHashMap.put(screen.getClass().getName(),screen);
-			}
-			else {
-				recycle = true; // skip actual instantiation
+		boolean recycle = false;
+		HashMap<Integer, HashMap<String, PatientScreenInterface>> map = CurrentState
+				.getPatientSubScreenMap();
+		Integer oldId = pScreen.getPatient();
+		HashMap<String, PatientScreenInterface> subHashMap = null;
+		if (map.get(oldId) == null) {
+			// We don't find it, we have to instantiate new
+			recycle = false;
+			subHashMap = new HashMap<String, PatientScreenInterface>();
+			subHashMap.put(screen.getClass().getName(), screen);
+			// Push into mapping
+			map.put(oldId, subHashMap);
+		} else if (map.get(oldId).get(screen.getClass().getName()) == null) {
+			// We don't find the required screen
+			recycle = false;
+			subHashMap = map.get(oldId);
+			subHashMap.put(screen.getClass().getName(), screen);
+		} else {
+			recycle = true; // skip actual instantiation
 
-				// Get screen
-				PatientScreenInterface existingScreen = map.get(oldId).get(screen.getClass().getName());
+			// Get screen
+			PatientScreenInterface existingScreen = map.get(oldId).get(
+					screen.getClass().getName());
 
-				// Activate that screen
-				try {
-					pScreen.getTabPanel().selectTab(
-							pScreen.getTabPanel().getWidgetIndex(
-									existingScreen));
-				} catch (Exception ex) {
-					GWT.log("Exception", ex);
-					JsonUtil.debug("Exception selecting tb: " + ex.toString());
-				}
-			}
-			// Activate the instantiated screen.
-			if (!recycle) {
-				screen.assignPatientScreen(pScreen);
-				pScreen.getTabPanel().add((Widget) screen,
-						new ClosableTab(title, (Widget) screen));
+			// Activate that screen
+			try {
 				pScreen.getTabPanel().selectTab(
-						pScreen.getTabPanel().getWidgetCount() - 1);
-			}				
+						pScreen.getTabPanel().getWidgetIndex(existingScreen));
+			} catch (Exception ex) {
+				GWT.log("Exception", ex);
+				JsonUtil.debug("Exception selecting tb: " + ex.toString());
+			}
+		}
+		// Activate the instantiated screen.
+		if (!recycle) {
+			screen.assignPatientScreen(pScreen);
+			pScreen.getTabPanel().add((Widget) screen,
+					new ClosableTab(title, (Widget) screen));
+			pScreen.getTabPanel().selectTab(
+					pScreen.getTabPanel().getWidgetCount() - 1);
+		}
 	}
 
 	/**
@@ -756,19 +770,23 @@ public final class Util {
 	 */
 	public static synchronized Date getSQLDate(String dateStr) {
 		// 2009-12-18 15:41:56
-		Date date=null;
+		Date date = null;
 		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
-		try{
+		try {
 			date = df.parse(dateStr);
-		}catch(Exception e){JsonUtil.debug(e.getMessage());}
-		try{
-			if(date==null)
-			{
+		} catch (Exception e) {
+			JsonUtil.debug(e.getMessage());
+		}
+		try {
+			if (date == null) {
 				df = DateTimeFormat.getFormat("yyyy-MM-dd");
 				date = df.parse(dateStr);
 			}
-		
-		}catch(Exception e){JsonUtil.debug(e.getMessage());e.printStackTrace();}
+
+		} catch (Exception e) {
+			JsonUtil.debug(e.getMessage());
+			e.printStackTrace();
+		}
 		return date;
 	}
 
@@ -785,10 +803,10 @@ public final class Util {
 		calDOB.setTime(DOB);
 		Calendar calNow = new GregorianCalendar();
 		calNow.setTime(new Date());
-		age = calNow.get(Calendar.YEAR) - calDOB.get(Calendar.YEAR); 
+		age = calNow.get(Calendar.YEAR) - calDOB.get(Calendar.YEAR);
 		return age;
 	}
-	
+
 	/**
 	 * Update the style sheets to reflect the current theme and direction.
 	 * 
@@ -898,48 +916,49 @@ public final class Util {
 		}
 		return gwtRef;
 	}
-	
+
 	/**
-	 *Set Focus on the Widget after a time delay of 500ms 
-	 *
-	 *@param Widget - The widget to be focused.
-	 *
+	 * Set Focus on the Widget after a time delay of 500ms
+	 * 
+	 * @param Widget -
+	 *            The widget to be focused.
+	 * 
 	 */
-	public static void setFocus(final Widget widget){
+	public static void setFocus(final Widget widget) {
 		Timer timer = new Timer() {
 			public void run() {
-				if(widget instanceof AsyncPicklistWidgetBase){
-					((AsyncPicklistWidgetBase)widget).setFocus(true);
-				}	
-				if(widget instanceof FocusWidget){
-					((FocusWidget)widget).setFocus(true);
+				if (widget instanceof AsyncPicklistWidgetBase) {
+					((AsyncPicklistWidgetBase) widget).setFocus(true);
 				}
-				if(widget instanceof CustomRadioButtonGroup){
-					((CustomRadioButtonGroup)widget).setFocus();
+				if (widget instanceof FocusWidget) {
+					((FocusWidget) widget).setFocus(true);
 				}
-				if(widget instanceof UserMultipleChoiceWidget){
-					((UserMultipleChoiceWidget)widget).setFocus();
+				if (widget instanceof CustomRadioButtonGroup) {
+					((CustomRadioButtonGroup) widget).setFocus();
 				}
-				if(widget instanceof PatientTagWidget){
-					((PatientTagWidget)widget).setFocus(true);
+				if (widget instanceof UserMultipleChoiceWidget) {
+					((UserMultipleChoiceWidget) widget).setFocus();
+				}
+				if (widget instanceof PatientTagWidget) {
+					((PatientTagWidget) widget).setFocus(true);
 				}
 			}
 		};
 		// Run initial polling ...
 		timer.schedule(500);
-		timer.run();		
+		timer.run();
 	}
 
 	/**
 	 * Create Label Widget to act as a Vertical spacer
 	 * 
-	 * @param Height - height in pixels or percentages
+	 * @param Height -
+	 *            height in pixels or percentages
 	 * 
-	 * return
-	 *       Widget
+	 * return Widget
 	 */
-	
-	public static Widget getVSpacer(String height){
+
+	public static Widget getVSpacer(String height) {
 		final Label vSpacer = new Label();
 		vSpacer.setHeight(height);
 		return vSpacer;
@@ -948,16 +967,362 @@ public final class Util {
 	/**
 	 * Create Label Widget to act as a Horizontal spacer
 	 * 
-	 * @param Width - width in pixels or percentages
+	 * @param Width -
+	 *            width in pixels or percentages
 	 * 
-	 * return
-	 *       Widget
+	 * return Widget
 	 */
-	
-	public static Widget getHSpacer(String width){
+
+	public static Widget getHSpacer(String width) {
 		final Label vSpacer = new Label();
 		vSpacer.setWidth(width);
 		return vSpacer;
 	}
+
+	/**
+	 * passed widget map component's value will be set to default
+	 * 
+	 * @param HashMap
+	 *            <String, Widget> - list of any ui component that belongs
+	 *            Widget
+	 * 
+	 */
+
+	public static void resetWidgetMap(HashMap<String, Widget> map) {
+		Iterator<String> iterator = map.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			Widget widget = map.get(key);
+			if (widget instanceof CustomRadioButtonGroup)
+				((CustomRadioButtonGroup) widget).clear(true);
+			else if (widget instanceof TextArea)
+				((TextArea) widget).setText("");
+			else if (widget instanceof TimeBox)
+				((TimeBox) widget).setDate(new Date());
+			else if (widget instanceof TextBox)
+				((TextBox) widget).setText("");
+			else if (widget instanceof CustomDatePicker)
+				((CustomDatePicker) widget).getTextBox().setText("");
+			else if (widget instanceof CheckBox)
+				((CheckBox) widget).setValue(false, true);
+			else if (widget instanceof ProviderWidget) {
+				((ProviderWidget) widget).setValue(0);
+				((ProviderWidget) widget).getTextEntryWidget().setText("");
+			} else if (widget instanceof CustomListBox) {
+				((CustomListBox) widget).setSelectedIndex(0);
+			} else if (widget instanceof SupportModuleWidget) {
+				((SupportModuleWidget) widget).clear();
+			}
+		}
+	}
+
+	/**
+	 * reads all widgets values and put them into new jsonifyable map
+	 * 
+	 * @param HashMap
+	 *            <String, Widget> - key as column and value as UI component
+	 * 
+	 * return HashMap<String, String> jsonifyable
+	 */
+
+	public static HashMap<String, String> populateHashMap(
+			HashMap<String, Widget> containerFormFields) {
+		HashMap<String, String> formDataMap = new HashMap<String, String>();
+		Iterator<String> iterator = containerFormFields.keySet().iterator();
+		while (iterator.hasNext()) {
+			try {
+				String key = iterator.next();
+				Widget widget = containerFormFields.get(key);
+				if (widget instanceof CustomRadioButtonGroup) {
+					if (((CustomRadioButtonGroup) widget).getWidgetValue() != null) {
+						formDataMap.put(key, ((CustomRadioButtonGroup) widget)
+								.getWidgetValue());
+					}
+				} else if (widget instanceof TimeBox
+						&& ((TimeBox) widget).isEnabled()) {
+					if (((TimeBox) widget).getValue() != null)
+						formDataMap.put(key, Util.getSQLDate(((TimeBox) widget)
+								.getValue(new Date())));
+				} else if (widget instanceof TextArea
+						&& ((TextArea) widget).isEnabled()) {
+					if (((TextArea) widget).getText() != null)
+						formDataMap.put(key, ((TextArea) widget).getText());
+				} else if (widget instanceof CheckBox
+						&& ((CheckBox) widget).isEnabled()) {
+					formDataMap.put(key, ((CheckBox) widget).getValue() ? "1"
+							: "0");
+				} else if (widget instanceof TextBox
+						&& ((TextBox) widget).isEnabled()) {
+					if (((TextBox) widget).getText() != null)
+						formDataMap.put(key, ((TextBox) widget).getText());
+				} else if (widget instanceof CustomDatePicker) {
+					if (((CustomDatePicker) widget).getStoredValue() != null)
+						formDataMap.put(key, ((CustomDatePicker) widget)
+								.getStoredValue());
+				} else if (widget instanceof ProviderWidget) {
+					if (((ProviderWidget) widget).getStoredValue() != null)
+						formDataMap.put(key, ((ProviderWidget) widget)
+								.getStoredValue());
+				} else if (widget instanceof CustomListBox) {
+					if (((CustomListBox) widget).getStoredValue() != null)
+						formDataMap.put(key, ((CustomListBox) widget)
+								.getStoredValue());
+				} else if (widget instanceof SupportModuleWidget) {
+					if (((SupportModuleWidget) widget).getStoredValue() != null) {
+						formDataMap.put(key, ((SupportModuleWidget) widget)
+								.getStoredValue());
+					}
+				}
+			} catch (Exception e) {
+				JsonUtil.debug(e.getMessage());
+			}
+		}
+		return formDataMap;
+	}
+
+	/**
+	 * reads data map and puts values to widget map components
+	 * 
+	 * @param HashMap
+	 *            <String, String> - Data map containing keys as column and
+	 *            value as column value
+	 * 
+	 * @param HashMap
+	 *            <String, Widget> - key as column and value as UI component
+	 * 
+	 */
+
+	public static void populateForm(
+			HashMap<String, Widget> containerFormFields,
+			HashMap<String, String> data) {
+		Iterator<String> iterator = containerFormFields.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			Widget widget = containerFormFields.get(key);
+			if (data.get(key) != null && !data.get(key).equals("")) {
+				if (widget instanceof CustomRadioButtonGroup) {
+					((CustomRadioButtonGroup) widget).setWidgetValue(data
+							.get(key), true);
+				} else if (widget instanceof TimeBox) {
+					((TimeBox) widget).setDate(Util.getSQLDate(data.get(key)));
+				} else if (widget instanceof TextBox) {
+					((TextBox) widget).setText(data.get(key));
+				} else if (widget instanceof TextArea) {
+					((TextArea) widget).setText(data.get(key));
+				} else if (widget instanceof CheckBox) {
+					((CheckBox) widget).setValue(data.get(key)
+							.equalsIgnoreCase("1") ? true : false, true);
+				} else if (widget instanceof CustomDatePicker) {
+					((CustomDatePicker) widget).setValue(data.get(key));
+				} else if (widget instanceof ProviderWidget) {
+					((ProviderWidget) widget).setValue(Integer.parseInt(data
+							.get(key)));
+				} else if (widget instanceof CustomListBox) {
+					((CustomListBox) widget).setWidgetValue(data.get(key));
+				} else if (widget instanceof SupportModuleWidget) {
+					((SupportModuleWidget) widget).setValue(Integer
+							.parseInt(data.get(key)));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Calls only module methods under  org.freemedsoftware.module package
+	 * 
+	 * @param module - module name
+	 *
+	 * @param method - method name of above module           
+	 * 
+	 * @param id     - row id of above module table
+	 * 
+	 * 
+	 */
+	
+	public static void callModuleMethod(final String module,
+			final String method, final Integer id){
+		callModuleMethod(module, method, id, null, null, null, null);
+	}
+	
+	/**
+	 * Calls only module methods under  org.freemedsoftware.module package
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name of above module           
+	 * 
+	 * @param id         - row id of above module table
+	 * 
+	 * @param successMsg - after getting successful response this string will be displayed in Toaster
+	 * 
+	 * @param failMsg    - after getting errors in response this string will be displayed in Toaster
+	 * 
+	 */
+	
+	public static void callModuleMethod(final String module,
+			final String method, final Integer id, final String successMsg,
+			final String failMsg) {
+		callModuleMethod(module, method, id, null, successMsg, null, failMsg);
+	}
+	
+	/**
+	 * Calls only module methods under  org.freemedsoftware.module package
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name of above module           
+	 * 
+	 * @param id         - row id of above module table
+	 * 
+	 * @param onSuccess  - after getting successful response this command will be executed
+	 * 
+	 * @param onFail     - after getting errors in response this command will be executed
+	 * 
+	 */
+	
+	public static void callModuleMethod(final String module,
+			final String method, final Integer id, final Command onSuccess,
+			final Command onFail) {
+		callModuleMethod(module, method, id, onSuccess, null, onFail, null);
+	}
+	
+	/**
+	 * Calls only module methods under  org.freemedsoftware.module package
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name of above module           
+	 * 
+	 * @param id         - row id of above module table
+	 * 
+	 * @param onSuccess  - after getting successful response this command will be executed
+	 * 
+	 * @param successMsg - after getting successful response this string will be displayed in Toaster
+	 * 
+	 * @param onFail     - after getting errors in response this command will be executed
+	 * 
+	 * @param failMsg    - after getting errors in response this string will be displayed in Toaster
+	 * 
+	 */
+	
+	
+	public static void callModuleMethod(final String module,
+			final String method, final Integer id, final Command onSuccess,
+			final String successMsg, final Command onFail,final String failMsg) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO: STUBBED
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			// JSON-RPC
+			String[] params = { JsonUtil.jsonify(id) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module." + module + "." + method,
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						JsonUtil
+								.debug("Error on calling org.freemedsoftware.module."
+										+ module + "." + method);
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Integer r = (Integer) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Integer");
+							if (r != null) {
+								if(onSuccess!=null)
+									onSuccess.execute();
+								if(successMsg!=null)
+								CurrentState.getToaster().addItem(module,
+										successMsg,
+										Toaster.TOASTER_INFO);
+							} else {
+								Boolean b = (Boolean) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Boolean");
+								if (b != null && b.booleanValue()) {
+									if(onSuccess!=null)
+										onSuccess.execute();
+									if(successMsg!=null)
+									CurrentState.getToaster().addItem(module,
+											successMsg,
+											Toaster.TOASTER_INFO);
+								}
+							}
+						} else {
+							if(onFail!=null)
+								onFail.execute();
+							if(failMsg!=null)
+							CurrentState.getToaster().addItem(module,
+									failMsg,
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				if(onFail!=null)
+					onFail.execute();
+				if(failMsg!=null)
+				CurrentState.getToaster().addItem(module,
+						failMsg,
+						Toaster.TOASTER_ERROR);
+			}
+		} else {
+			// GWT-RPC
+		}
+	}
+
+	
+	public static void generateReport(final String reportName,final String format, final List<String> reportParams) {
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO: STUBBED
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			// JSON-RPC
+			String[] params = { JsonUtil.jsonify(reportName) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.Reporting.GetReport",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						JsonUtil
+								.debug("Error on calling org.freemedsoftware.module.Reporting.GetReport");
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							String thisReportUUID = (String) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"String");
+							if(thisReportUUID!=null){
+							Window.open(Util.getJsonRequest(
+									"org.freemedsoftware.module.Reporting.GenerateReport",
+									new String[] { thisReportUUID, format,
+											JsonUtil.jsonify(reportParams.toArray(new String[0])) }), reportName, "");
+							}
+						} else {
+							CurrentState.getToaster().addItem("reporting",
+									"Failed to generate report : "+reportName,
+									Toaster.TOASTER_ERROR);
+						}
+					}
+				});
+			} catch (RequestException e) {
+				CurrentState.getToaster().addItem("reporting",
+						"Failed to generate report : "+reportName,
+						Toaster.TOASTER_ERROR);
+			}
+		} else {
+			// GWT-RPC
+		}
+	}
+	
 	
 }

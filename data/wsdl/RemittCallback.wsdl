@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://client.remitt.org/RemittCallback/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="RemittCallback"
+	targetNamespace="http://client.remitt.org/RemittCallback/">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://client.remitt.org/RemittCallback/">
+			<xsd:element name="getProtocolVersion">
+				<xsd:complexType>
+					<xsd:sequence>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getProtocolVersionResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="out" type="xsd:double" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="sendRemittancePayload">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="payloadType" type="xsd:int">
+						</xsd:element>
+						<xsd:element name="originalReference" type="xsd:string">
+						</xsd:element>
+						<xsd:element name="payload" type="xsd:string">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="sendRemittancePayloadResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="out" type="xsd:int"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="getProtocolVersionRequest">
+		<wsdl:part element="tns:getProtocolVersion" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="getProtocolVersionResponse">
+		<wsdl:part element="tns:getProtocolVersionResponse" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="sendRemittancePayloadRequest">
+		<wsdl:part name="parameters" element="tns:sendRemittancePayload"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="sendRemittancePayloadResponse">
+		<wsdl:part name="parameters" element="tns:sendRemittancePayloadResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="RemittCallback">
+		<wsdl:operation name="getProtocolVersion">
+			<wsdl:input message="tns:getProtocolVersionRequest" />
+			<wsdl:output message="tns:getProtocolVersionResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="sendRemittancePayload">
+			<wsdl:input message="tns:sendRemittancePayloadRequest"></wsdl:input>
+			<wsdl:output message="tns:sendRemittancePayloadResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="RemittCallbackSOAP" type="tns:RemittCallback">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getProtocolVersion">
+			<soap:operation
+				soapAction="http://client.remitt.org/RemittCallback/getProtocolVersion" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="sendRemittancePayload">
+			<soap:operation
+				soapAction="http://client.remitt.org/RemittCallback/sendRemittancePayload" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="RemittCallback">
+		<wsdl:port binding="tns:RemittCallbackSOAP" name="RemittCallbackSOAP">
+			<soap:address location="http://client.remitt.org/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

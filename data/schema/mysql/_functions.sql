@@ -253,3 +253,39 @@ END;
 
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS DAYS_INT_TO_STRING;
+
+DELIMITER //
+
+# Function: DAYS_INT_TO_STRING
+#
+#	Converts days, passed in the format '0,1,2', into name of days('Sunday,Monday,Tuesday')
+#
+# Parameters:
+#
+#	s - Days in integer format and seperated by comma. VARCHAR(255)
+#
+# Returns:
+#
+#	VARCHAR (255) containing name of days and seperated by comma
+#
+CREATE FUNCTION DAYS_INT_TO_STRING ( s VARCHAR(255) )
+	RETURNS VARCHAR(255)
+	LANGUAGE SQL
+	DETERMINISTIC
+BEGIN
+	DECLARE dat VARCHAR(11);
+	DECLARE len INT(4);
+	SET s=REPLACE(s,'0','Sun');
+	SET s=REPLACE(s,'1','Mon');
+	SET s=REPLACE(s,'2','Tue');
+	SET s=REPLACE(s,'3','Wed');
+	SET s=REPLACE(s,'4','Thu');
+	SET s=REPLACE(s,'5','Fri');
+	SET s=REPLACE(s,'6','Sat');
+	SET len=LENGTH(s);
+	return SUBSTRing(s from 1 for len-1 );
+END;
+//
+
+DELIMITER ;

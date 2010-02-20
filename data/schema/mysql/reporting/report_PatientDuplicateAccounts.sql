@@ -51,6 +51,7 @@ INSERT INTO `reporting` (
 		report_uuid,
 		report_locale,
 		report_desc,
+		report_category,
 		report_sp,
 		report_param_count
 	) VALUES (
@@ -58,6 +59,7 @@ INSERT INTO `reporting` (
 		'b1f1f894-7046-4f70-a40a-2ebad66aed27',
 		'en_US',
 		'Duplicate patient accounts in the system.',
+		'reporting_engine',
 		'report_PatientDuplicateAccounts_en_US',
 		0
 	);
