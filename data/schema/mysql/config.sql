@@ -248,3 +248,23 @@ CALL config_Register (
 	''
 );
 
+#----- Mirth export -----
+
+CALL config_Register (
+	'mirth_enable',
+	'0',
+	'Enable Mirth interface?',
+	'Mirth',
+	'YesNo',
+	''
+);
+
+CALL config_Register (
+	'mirth_endpoint',
+	'http://localhost:8081/services/Mirth',
+	'Mirth SOAP Endpoint',
+	'Mirth',
+	'Text',
+	''
+);
+

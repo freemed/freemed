@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://components.mule.server.mirth.webreach.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://components.mule.server.mirth.webreach.com" xmlns:intf="http://components.mule.server.mirth.webreach.com" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+  <wsdl:message name="acceptMessageRequest">
+    <wsdl:part name="in0" type="xsd:string">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="acceptMessageResponse">
+    <wsdl:part name="acceptMessageReturn" type="xsd:string">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="_Proxy6">
+    <wsdl:operation name="acceptMessage" parameterOrder="in0">
+      <wsdl:input message="impl:acceptMessageRequest" name="acceptMessageRequest">
+    </wsdl:input>
+      <wsdl:output message="impl:acceptMessageResponse" name="acceptMessageResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MirthSoapBinding" type="impl:_Proxy6">
+    <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="acceptMessage">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="acceptMessageRequest">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
+      </wsdl:input>
+      <wsdl:output name="acceptMessageResponse">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://components.mule.server.mirth.webreach.com" use="encoded"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="_Proxy6Service">
+    <wsdl:port binding="impl:MirthSoapBinding" name="Mirth">
+      <wsdlsoap:address location="http://localhost:8081/services/Mirth"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
