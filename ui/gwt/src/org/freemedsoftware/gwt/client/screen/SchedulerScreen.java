@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ public class SchedulerScreen extends ScreenInterface {
 		verticalPanel = new VerticalPanel();
 		int startHour         = 10;
 		int endHour           = 18;
-		int intervalPerHour   = 15;
+		int intervalPerHour   = 4;
 		if(Util.getProgramMode() == ProgramMode.JSONRPC){
 			startHour         = Integer.parseInt(CurrentState.getSystemConfig("calshr"));
 			endHour           = Integer.parseInt(CurrentState.getSystemConfig("calehr"));

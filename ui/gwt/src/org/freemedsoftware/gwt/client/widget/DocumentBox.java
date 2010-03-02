@@ -5,7 +5,7 @@
  *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.DocumentScreen;
+import org.freemedsoftware.gwt.client.screen.UnfiledDocuments;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -52,6 +54,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.freemedsoftware.gwt.client.screen.UnfiledDocuments;
 
 public class DocumentBox extends WidgetInterface {
 
@@ -64,6 +67,8 @@ public class DocumentBox extends WidgetInterface {
 
 	protected DocumentScreen documentScreen = null;
     private PushButton showDocumentsButton;
+
+	protected UnfiledDocuments unfiledDocs;
 	public DocumentBox() {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
@@ -103,13 +108,16 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.addColumn("Filename", "ufffilename"); // col 1
 		wDocuments.setIndexName("id");
 
-		documentScreen = new DocumentScreen();
+		
 		wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				final Integer uffId = Integer.parseInt(data.get("id"));
-				documentScreen.setData(uffId);
-				Util.spawnTab("File Document", documentScreen);
+				//final Integer uffId = Integer.parseInt(data.get("id"));
+				unfiledDocs = UnfiledDocuments.getInstance();
+				unfiledDocs.setSelectedDocument(data);
+				Util.spawnTab(AppConstants.UNFILED
+						+ " Documents", UnfiledDocuments.getInstance());
+				//Util.spawnTab("File Document", documentScreen);
 			}
 		});
 		// Collapsed view

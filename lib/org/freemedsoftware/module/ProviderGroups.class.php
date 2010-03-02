@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2009 FreeMED Software Foundation
+ // Copyright (C) 1999-2010 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ class ProviderGroups extends SupportModule {
 	var $record_name    = "Provider Group";
 	var $order_field    = "phygroupname";
 
+	var $widget_hash    = '##phygroupname##';
+
 	var $variables = array (
 		"phygroupname",
 		"phygroupfac",
@@ -48,28 +50,33 @@ class ProviderGroups extends SupportModule {
 
 	public function __construct () {
 		// For i18n: __("Provider Groups")
-
+/*
 		$this->table_join = array (
 			'phygroupfac' => 'facility'
 		);
+		
 		$this->list_view = array (
 			__("Physician Group Name") => "phygroupname",
 			__("Default Facility")     => "psrname"
 		);
-
+*/
 		// Run constructor
 		parent::__construct();
 	} // end constructor
 
 	protected function add_pre ( &$data ) {
+		/*
 		$data['phygroupidmap'] = serialize ( $data['phygroupidmap'] );
 		$data['phygroupidmap'] = join ( ',', $data['phygroupdocs'] );
+		*/
 		$data['phygroupdtadd'] = date("Y-m-d");
 	}
 
 	protected function mod_pre ( &$data ) {
+		/*
 		$data['phygroupidmap'] = serialize ( $data['phygroupidmap'] );
 		$data['phygroupidmap'] = join ( ',', $data['phygroupdocs'] );
+		*/
 		$data['phygroupdtmod'] = date("Y-m-d");
 	}
 

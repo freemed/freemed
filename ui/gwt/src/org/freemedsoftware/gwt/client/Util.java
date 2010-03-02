@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1128,24 +1128,9 @@ public final class Util {
 	}
 
 	/**
-	 * Calls only module methods under  org.freemedsoftware.module package
+	 * Calls server side methods 
 	 * 
-	 * @param module - module name
-	 *
-	 * @param method - method name of above module           
-	 * 
-	 * @param id     - row id of above module table
-	 * 
-	 * 
-	 */
-	
-	public static void callModuleMethod(final String module,
-			final String method, final Integer id){
-		callModuleMethod(module, method, id, null, null, null, null);
-	}
-	
-	/**
-	 * Calls only module methods under  org.freemedsoftware.module package
+	 * @param package   - package of particular module
 	 * 
 	 * @param module     - module name
 	 *
@@ -1153,129 +1138,91 @@ public final class Util {
 	 * 
 	 * @param id         - row id of above module table
 	 * 
-	 * @param successMsg - after getting successful response this string will be displayed in Toaster
+	 * @param paramsMap  - data to be posted
 	 * 
-	 * @param failMsg    - after getting errors in response this string will be displayed in Toaster
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
 	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
 	 */
 	
-	public static void callModuleMethod(final String module,
-			final String method, final Integer id, final String successMsg,
-			final String failMsg) {
-		callModuleMethod(module, method, id, null, successMsg, null, failMsg);
-	}
-	
-	/**
-	 * Calls only module methods under  org.freemedsoftware.module package
-	 * 
-	 * @param module     - module name
-	 *
-	 * @param method     - method name of above module           
-	 * 
-	 * @param id         - row id of above module table
-	 * 
-	 * @param onSuccess  - after getting successful response this command will be executed
-	 * 
-	 * @param onFail     - after getting errors in response this command will be executed
-	 * 
-	 */
-	
-	public static void callModuleMethod(final String module,
-			final String method, final Integer id, final Command onSuccess,
-			final Command onFail) {
-		callModuleMethod(module, method, id, onSuccess, null, onFail, null);
-	}
-	
-	/**
-	 * Calls only module methods under  org.freemedsoftware.module package
-	 * 
-	 * @param module     - module name
-	 *
-	 * @param method     - method name of above module           
-	 * 
-	 * @param id         - row id of above module table
-	 * 
-	 * @param onSuccess  - after getting successful response this command will be executed
-	 * 
-	 * @param successMsg - after getting successful response this string will be displayed in Toaster
-	 * 
-	 * @param onFail     - after getting errors in response this command will be executed
-	 * 
-	 * @param failMsg    - after getting errors in response this string will be displayed in Toaster
-	 * 
-	 */
-	
-	
-	public static void callModuleMethod(final String module,
-			final String method, final Integer id, final Command onSuccess,
-			final String successMsg, final Command onFail,final String failMsg) {
+	private static void callServerMethod(final String packageName,final String className,
+			final String method, final Integer id,final HashMap<String, String> paramsMap,final CustomRequestCallback requestCallback,final String responseType) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: STUBBED
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// JSON-RPC
-			String[] params = { JsonUtil.jsonify(id) };
+			String[] params ={};
+			if(id==null && paramsMap!=null){
+				String[] tempParams = {JsonUtil.jsonify(paramsMap)};
+				params = tempParams;
+			}else if(id!=null && paramsMap==null){
+				String[] tempParams = {JsonUtil.jsonify(id)};
+				params = tempParams;
+			}else if(id!=null && paramsMap!=null){
+				String[] tempParams = {JsonUtil.jsonify(id),JsonUtil.jsonify(paramsMap)};
+				params = tempParams;
+			}
+			
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.module." + module + "." + method,
+							packageName+"." + className + "." + method,
 							params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						JsonUtil
-								.debug("Error on calling org.freemedsoftware.module."
-										+ module + "." + method);
+						if(requestCallback!=null)
+							requestCallback.onError();
 					}
 
 					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"Integer");
-							if (r != null) {
-								if(onSuccess!=null)
-									onSuccess.execute();
-								if(successMsg!=null)
-								CurrentState.getToaster().addItem(module,
-										successMsg,
-										Toaster.TOASTER_INFO);
-							} else {
-								Boolean b = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
-										"Boolean");
-								if (b != null && b.booleanValue()) {
-									if(onSuccess!=null)
-										onSuccess.execute();
-									if(successMsg!=null)
-									CurrentState.getToaster().addItem(module,
-											successMsg,
-											Toaster.TOASTER_INFO);
-								}
+							if(requestCallback!=null){
+								Object result = (HashMap<String, String>) JsonUtil
+								.shoehornJson(JSONParser
+										.parse(response.getText()),
+										responseType);
+								requestCallback.jsonifiedData(result);
 							}
-						} else {
-							if(onFail!=null)
-								onFail.execute();
-							if(failMsg!=null)
-							CurrentState.getToaster().addItem(module,
-									failMsg,
-									Toaster.TOASTER_ERROR);
 						}
 					}
 				});
 			} catch (RequestException e) {
-				if(onFail!=null)
-					onFail.execute();
-				if(failMsg!=null)
-				CurrentState.getToaster().addItem(module,
-						failMsg,
-						Toaster.TOASTER_ERROR);
-			}
+		}
 		} else {
 			// GWT-RPC
 		}
 	}
+	public static void callApiMethod(final String className,
+			final String method, final Integer id,HashMap<String, String> paramsMap,final CustomRequestCallback requestCallback,final String responseType){
+			callServerMethod("org.freemedsoftware.api",className, method, id, paramsMap, requestCallback, responseType);
+	}
+	public static void callApiMethod(final String className,
+			final String method, final Integer id,final CustomRequestCallback requestCallback,final String responseType){
+		callServerMethod("org.freemedsoftware.api",className, method, id, null, requestCallback, responseType);
+	}
 
+	public static void callModuleMethod(final String className,
+			final String method, final Integer id,HashMap<String, String> paramsMap,final CustomRequestCallback requestCallback,final String responseType){
+			callServerMethod("org.freemedsoftware.module",className, method, id, paramsMap, requestCallback, responseType);
+	}
+	public static void callModuleMethod(final String className,
+			final String method, final Integer id,final CustomRequestCallback requestCallback,final String responseType){
+		callServerMethod("org.freemedsoftware.module",className, method, id, null, requestCallback, responseType);
+	}
+	
+	public static void showErrorMsg(String module,String msg){
+		CurrentState.getToaster().addItem(module,
+				msg,
+				Toaster.TOASTER_ERROR);
+	}
+
+	public static void showInfoMsg(String module,String msg){
+		CurrentState.getToaster().addItem(module,
+				msg,
+				Toaster.TOASTER_INFO);
+	}
 	
 	public static void generateReport(final String reportName,final String format, final List<String> reportParams) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {

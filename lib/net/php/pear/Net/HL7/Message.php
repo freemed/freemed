@@ -90,25 +90,25 @@ class Net_HL7_Message {
         
         // Control characters and other HL7 properties
         //
-        $hl7Globals["SEGMENT_SEPARATOR"] ? 
+        !empty($hl7Globals["SEGMENT_SEPARATOR"]) ? 
             $this->_segmentSeparator = $hl7Globals["SEGMENT_SEPARATOR"] :
             $this->_segmentSeparator = "\015";
-        $hl7Globals["FIELD_SEPARATOR"] ? 
+        !empty($hl7Globals["FIELD_SEPARATOR"]) ? 
             $this->_fieldSeparator = $hl7Globals["FIELD_SEPARATOR"] :
             $this->_fieldSeparator = "|";
-        $hl7Globals["COMPONENT_SEPARATOR"] ? 
+        !empty($hl7Globals["COMPONENT_SEPARATOR"]) ? 
             $this->_componentSeparator = $hl7Globals["COMPONENT_SEPARATOR"] :
             $this->_componentSeparator = "^";
-        $hl7Globals["SUBCOMPONENT_SEPARATOR"] ? 
+        !empty($hl7Globals["SUBCOMPONENT_SEPARATOR"]) ? 
             $this->_subcomponentSeparator = $hl7Globals["SUBCOMPONENT_SEPARATOR"] :
             $this->_subcomponentSeparator = "&";
-        $hl7Globals["REPETITION_SEPARATOR"] ? 
+        !empty($hl7Globals["REPETITION_SEPARATOR"]) ? 
             $this->_repetitionSeparator = $hl7Globals["REPETITION_SEPARATOR"] :
             $this->_repetitionSeparator = "~";
-        $hl7Globals["ESCAPE_CHAR"] ? 
+        !empty($hl7Globals["ESCAPE_CHAR"]) ? 
             $this->_escapeChar = $hl7Globals["ESCAPE_CHAR"] :
             $this->_escapeChar = "\\";
-        $hl7Globals["HL7_VERSION"] ? 
+        !empty($hl7Globals["HL7_VERSION"]) ? 
             $this->_hl7Version = $hl7Globals["HL7_VERSION"] :
             $this->_hl7Version = "2.2";
 
@@ -301,7 +301,7 @@ class Net_HL7_Message {
         foreach ($this->_segments as $seg) {
 
             if ($seg->getName() == $name) {
-                array_push($segmentsByName, &$seg);
+                array_push($segmentsByName, $seg);
             }
         }
     

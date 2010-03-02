@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2009 FreeMED Software Foundation
+ // Copyright (C) 1999-2010 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -68,6 +68,10 @@ execSql( "ALTER TABLE physician CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL
 execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
+printHeader( "Fix eventual patient table issue" );
+execSql("ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;");
+execSql("ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;");
+
 printHeader( "Include aggregation table definition" );
 loadSchema( 'patient' );
 loadSchema( 'patient_emr' );
@@ -84,6 +88,9 @@ execSql( "CREATE TABLE allergies_old SELECT * FROM allergies;" );
 execSql( "DROP TABLE allergies;" );
 execSql( "CREATE TABLE medications_old SELECT * FROM medications;" );
 execSql( "DROP TABLE medications;" );
+
+printHeader( "Drop drug sample inventory" );
+execSql( "DROP TABLE drugsampleinv;" );
 
 printHeader( "Force module table build" );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );

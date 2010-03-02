@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2009 FreeMED Software Foundation
+# Copyright (C) 1999-2010 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	covpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	coveffdt		TEXT,
 	covinsco		INT UNSIGNED,
-	covpatinsno		VARCHAR (50),
+	covpatinsno		VARCHAR (50) NOT NULL,
 	covpatgrpno		VARCHAR (50),
 	covtype			INT UNSIGNED,
 	covstatus		INT UNSIGNED DEFAULT 0,
@@ -57,12 +57,13 @@ CREATE TABLE IF NOT EXISTS `coverage` (
 	covcopay		REAL,
 	covdeduct		REAL,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			SERIAL,
+	id			SERIAL
 
 	#	Define keys
 
-	KEY			( covpatient, covinsco, covrel ),
-	FOREIGN KEY		( covpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY			( covpatient, covinsco, covrel )
+	, FOREIGN KEY		( covpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY			( covpatinsno )
 );
 
 DROP PROCEDURE IF EXISTS coverage_Upgrade;
@@ -77,9 +78,10 @@ BEGIN
 	DROP TRIGGER coverage_Update;
 
 	#----- Upgrades
-	ALTER TABLE coverage ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER covdeduct;
-END
-//
+	ALTER IGNORE TABLE coverage ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER covdeduct;
+	ALTER IGNORE TABLE coverage CHANGE COLUMN covpatinsno covpatinsno VARCHAR (50) NOT NULL;
+	ALTER IGNORE TABLE coverage ADD KEY ( covpatinsno );
+END//
 DELIMITER ;
 CALL coverage_Upgrade( );
 

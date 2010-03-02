@@ -6,7 +6,7 @@
  *      Philipp Meng <pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,9 +247,6 @@ public class DashboardScreen extends ScreenInterface {
 	public void afterStateSet() {
 		JsonUtil.debug("DashBoard: AfterStateSet() called");
 		restoreArrangement();
-		if (CurrentState.getDefaultProvider() > 0) {
-			workList.setProvider(CurrentState.getDefaultProvider());
-		}
 	}
 
 	public void clearView() {
@@ -300,7 +297,7 @@ public class DashboardScreen extends ScreenInterface {
 		if (title == "Work List") {
 			d = new DashboardItemContainer("Work List", workList,workList.getDefaultIcon());
 			removeListItem("Work List");
-			if (CurrentState.getDefaultProvider() != null) {
+			if (CurrentState.getDefaultProvider() != null && CurrentState.getDefaultProvider()!=0) {
 				workList.setProvider(CurrentState.getDefaultProvider());
 			}
 		} else if (title == "Messages") {
@@ -396,6 +393,10 @@ public class DashboardScreen extends ScreenInterface {
 				return false;
 			}
 		}
+	}
+	
+	public void setProvider(Integer prov){
+		workList.setProvider(prov);
 	}
 
 	public void saveArrangement() {

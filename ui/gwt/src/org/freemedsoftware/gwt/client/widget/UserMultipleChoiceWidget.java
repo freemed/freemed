@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ public class UserMultipleChoiceWidget extends Composite {
 	/**
 	 * Remove all current values from the widget.
 	 */
-	protected void clearValues() {
+	public void clearValues() {
 		try {
 			container.clear();
 		} catch (Exception ex) {
@@ -133,7 +133,7 @@ public class UserMultipleChoiceWidget extends Composite {
 		}
 		widgetValues = null;
 	}
-
+	
 	/**
 	 * Get integer values associated with this widget.
 	 * 

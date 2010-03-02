@@ -6,7 +6,7 @@
  *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,6 +262,7 @@ public class MessageBox extends WidgetInterface {
 									JSONParser.parse(response.getText()),
 									"Integer");
 							if (data != null) {
+								JsonUtil.debug("Msg count from server is:"+data);
 								loadCounter(data);
 							}
 						}
@@ -327,10 +328,11 @@ public class MessageBox extends WidgetInterface {
 	 */
 	public void loadCounter(Integer count) {
 		String text;
+		JsonUtil.debug("Msg count is:"+count);
 		if (count < 1) {
-			text = "You have " + count.toString() + " new messages!";
+			text = "There are no new messages.";			
 		} else {
-			text = "There are no new messages.";
+			text = "You have " + count.toString() + " new messages!";
 		}
 		messageCountLabel.setText(text);
 	}

@@ -6,7 +6,7 @@
  *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 			String options, String value, String help) {
 		Widget w;
 
-		if (type == WidgetType.TEXT) {
+		if (type.equals(WidgetType.TEXT)) {
 			w = new CustomTextBox();
 			try {
 				Integer len = new Integer(options);
@@ -163,11 +163,11 @@ public class SimpleUIBuilder extends WidgetInterface {
 				}
 			} catch (Exception ex) {
 			}
-		} else if (type == WidgetType.MODULE) {
+		} else if (type.equals(WidgetType.MODULE)) {
 			w = new SupportModuleWidget(options);
-		} else if (type == WidgetType.MODULE_MULTIPLE) {
+		} else if (type.equals(WidgetType.MODULE_MULTIPLE)) {
 			w = new SupportModuleMultipleChoiceWidget(options);
-		} else if (type == WidgetType.SELECT) {
+		} else if (type.equals(WidgetType.SELECT)) {
 			w = new CustomListBox();
 
 			// Push in all "options" values
@@ -183,18 +183,18 @@ public class SimpleUIBuilder extends WidgetInterface {
 					}
 				}
 			}
-		} else if (type == WidgetType.PATIENT) {
+		} else if (type.equals(WidgetType.PATIENT)) {
 			w = new PatientWidget();
-		} else if (type == WidgetType.COLOR) {
+		} else if (type.equals(WidgetType.COLOR)) {
 			w = new CustomColorPicker();
-		} else if (type == WidgetType.DRUG) {
+		} else if (type.equals(WidgetType.DRUG)) {
 			w = new DrugWidget();
-		} else if (type == WidgetType.DELIMITER) {
+		} else if (type.equals(WidgetType.DELIMITER)) {
 			w = new Label(title);
 			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
-		}else if(type == WidgetType.MULTILIST){
+		}else if(type.equals(WidgetType.MULTILIST)){
 			w=new CustomMulltiSelectListBox(options,true);
-		}else if(type == WidgetType.SINGLELIST){
+		}else if(type.equals(WidgetType.SINGLELIST)){
 			w=new CustomMulltiSelectListBox(options,false);
 		}
 		else {
@@ -207,7 +207,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 		// Add to indices and display
 		widgets.put(name, w);
 
-		if (type == WidgetType.DELIMITER) {
+		if (type.equals(WidgetType.DELIMITER)) {
 			table.setWidget(widgets.size() - 1, 0, w);
 			table.getFlexCellFormatter().setColSpan(widgets.size() - 1, 0, 2);
 		} else {

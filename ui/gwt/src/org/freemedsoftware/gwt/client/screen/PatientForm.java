@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,6 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses.Address;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -64,7 +63,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -435,7 +433,13 @@ public class PatientForm extends ScreenInterface {
 		socialSecurityNumber = new TextBox();
 		personalTable.setWidget(3, 1, socialSecurityNumber);
 		socialSecurityNumber.setWidth("100%");
+		socialSecurityNumber.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent arg0) {
+				generatePracticeId();
+			}
 		
+		});
 
 		
 		final Label raceLabel = new Label("Race");
@@ -1048,17 +1052,7 @@ public class PatientForm extends ScreenInterface {
 									martialStatus.setWidgetValue((String) result.get((String) "ptmarital"));
 									employmentStatus.setWidgetValue((String) result.get((String) "ptempl"));
 									socialSecurityNumber.setText((String) result.get((String) "ptssn"));
-									
-									socialSecurityNumber.addKeyUpHandler(new KeyUpHandler() {
-										@Override
-										public void onKeyUp(KeyUpEvent arg0) {
-											generatePracticeId();
-										}
-									
-									});
-				
-				
-				
+
 									race.setWidgetValue((String) result.get((String) "ptrace"));
 									religion.setWidgetValue((String) result.get((String) "ptreligion"));
 									typeofBilling.setWidgetValue((String) result.get((String) "ptbilltype"));
@@ -1113,8 +1107,8 @@ public class PatientForm extends ScreenInterface {
 	}
 	
 	public void generatePracticeId(){
-		if(wFirstName.getText()!="" && wLastName.getText()!="" && socialSecurityNumber.getText().length()>0){
-			String wMiddleNameTXT = wMiddleName.getText().length()>0?wMiddleName.getText().charAt(0)+"":"";
+		if(!wFirstName.getText().trim().equals("") && !wLastName.getText().trim().equals("") && !socialSecurityNumber.getText().trim().equals("")){
+			String wMiddleNameTXT = wMiddleName.getText().trim().equals("")?"X":wMiddleName.getText().charAt(0)+"";
 			String ptid = wFirstName.getText().charAt(0)+wMiddleNameTXT+wLastName.getText().charAt(0)+"-";
 			ptid+=socialSecurityNumber.getText();
 			patientPracticeID.setText(ptid);
@@ -1224,7 +1218,7 @@ public class PatientForm extends ScreenInterface {
 			while (iter.hasNext()) {
 				Integer key = iter.next();
 				Address address=(Address)addressMap.get(key);
-				if(address.getLine1()==null || address.getLine1()==""){
+				if(address.getLine1()==null || address.getLine1().equals("")){
 					msg += "Please specify atleast one address." + "\n";
 					break;
 				}
@@ -1234,7 +1228,7 @@ public class PatientForm extends ScreenInterface {
 		
 		
 		
-		if (msg != "") {
+		if (!msg.equals("")) {
 			Window.alert(msg);
 			return false;
 		}

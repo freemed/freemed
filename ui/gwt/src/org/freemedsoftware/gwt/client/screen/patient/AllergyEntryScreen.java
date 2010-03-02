@@ -5,7 +5,7 @@
  *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,13 @@
  */
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -46,7 +42,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -60,8 +55,6 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 	protected TextBox reactionTextBox = new TextBox();
 	protected TextBox severityTextBox = new TextBox();
 	protected final String className = "org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen";
-	
-	protected PatientScreen parentScreen;
 	
 	public AllergyEntryScreen() {
 
@@ -168,13 +161,13 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							String[] r = (String[]) JsonUtil.shoehornJson(
+							Integer r = (Integer) JsonUtil.shoehornJson(
 									JSONParser.parse(response.getText()),
-									"String[]");
+									"Integer");
 							if (r != null) {
 								CurrentState.getToaster().addItem(className,
 										"Added Allergy.", Toaster.TOASTER_INFO);
-								parentScreen.populate();
+								patientScreen.getSummaryScreen().populateClinicalInformation();
 							}
 						} else {
 							CurrentState.getToaster().addItem(className,
@@ -191,6 +184,42 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 			// TODO: GWT-RPC Stuff
 		}
 
+	}
+	
+	public void populate(){
+		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { JsonUtil.jsonify(patientId) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.Allergies.GetMostRecent",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
+							if (r != null) {
+								allergyTextBox.setText(r[0].get("allergy"));
+								reactionTextBox.setText(r[0].get("reaction"));
+								severityTextBox.setText(r[0].get("severity"));
+							}
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		} 
 	}
 //
 //	public PatientScreen getParentScreen() {

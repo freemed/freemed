@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,7 +289,8 @@ public class PatientAddresses extends Composite {
 		type.setVisibleItemCount(1);
 		type.addItem("H - Home", "H");
 		type.addItem("W - Work", "W");
-		type.setWidgetValue(a.getType());
+		if(a.getType()!=null)
+			type.setWidgetValue(a.getType());
 		flexTable.getFlexTable().setWidget(pos, 0, type);
 
 		final CustomListBox relation = new CustomListBox();
@@ -299,7 +300,8 @@ public class PatientAddresses extends Composite {
 		relation.addItem("C - Cousin", "C");
 		relation.addItem("SH - Shelter", "SH");
 		relation.addItem("U - Unrelated", "U");
-		relation.setWidgetValue(a.getRelation());
+		if(a.getRelation()!=null)
+			relation.setWidgetValue(a.getRelation());
 		flexTable.getFlexTable().setWidget(pos, 1, relation);
 
 		final TextBox line1 = new TextBox();

@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -102,7 +103,7 @@ public class WorkList extends WidgetInterface {
 		message.setText("There are no items scheduled for this day.");
 		vPanel.add(message);
 		message.setVisible(false);
-		retrieveData();
+		//retrieveData();
 		vPanel.add(workListTable);
 
 		workListTable.setSize("100%", "100%");
@@ -219,6 +220,8 @@ public class WorkList extends WidgetInterface {
 														"HashMap<String,String>[]");
 										if (r != null) {
 											if (r.length > 0) {
+												providerLabel.setVisible(false);
+												workListTable.setVisible(true);
 												populateWorkList(r);
 											}
 										}
@@ -244,6 +247,7 @@ public class WorkList extends WidgetInterface {
 			}
 		}else{
 			workListTable.setVisible(false);
+			providerLabel.setVisible(true);
 			providerLabel.setText("Provider not available!");
 		}
 	}

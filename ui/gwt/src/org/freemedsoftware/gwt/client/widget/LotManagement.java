@@ -282,7 +282,7 @@ public class LotManagement extends Composite {
 				String[] params = { JsonUtil.jsonify(map)};
 				
 				RequestBuilder builder = new RequestBuilder(
-						RequestBuilder.POST,URL.encode(Util.getJsonRequest("org.freemedsoftware.module.MethadoneLotRegistration.setLotMngt",params)));			
+						RequestBuilder.POST,URL.encode(Util.getJsonRequest("org.freemedsoftware.module.DosingMethadoneLotRegistration.setLotMngt",params)));			
 				
 				try {
 					builder.sendRequest(null,new RequestCallback() {public void onError(Request request,Throwable ex) {						

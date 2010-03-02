@@ -45,8 +45,10 @@ class RemittCallback {
 	} // end method getProtocolVersion
 
 	public function sendRemittancePayload( $payloadType, $originalReference, $payload ) {
-		// TODO: implement processing remittance payloads
-		return 0;
+		// TODO: handle payloadType properly. For now, assume 835 XML
+		//$billkey = $originalReference;
+		$parser = CreateObject( 'org.freemedsoftware.core.Parser_835XML', $payload );
+		return $parser->Handle();
 	} // end method sendRemittancePayload
 
 } // end class RemittCallback

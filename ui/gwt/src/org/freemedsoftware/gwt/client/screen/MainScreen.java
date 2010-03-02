@@ -6,7 +6,7 @@
  *      Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -454,7 +454,7 @@ public class MainScreen extends Composite {
 		stackPanel.ensureDebugId("cwStackPanel");
 
 		// defining left navigation area width
-		menuAndContent.setCellWidth(stackPanel, "17%");
+		menuAndContent.setCellWidth(stackPanel, "12%");
 
 		JsonUtil.debug("MainScreen: create tabPanel");
 		tabPanel = new DecoratedTabPanel();
@@ -462,7 +462,7 @@ public class MainScreen extends Composite {
 		tabPanel.setAnimationEnabled(true);
 		menuAndContent.add(tabPanel);
 		// defining content area width
-		menuAndContent.setCellWidth(tabPanel, "83%");
+		menuAndContent.setCellWidth(tabPanel, "88%");
 
 		menuAndContent.setCellHorizontalAlignment(tabPanel,
 				HasHorizontalAlignment.ALIGN_LEFT);
@@ -1099,6 +1099,7 @@ public class MainScreen extends Composite {
 											.debug("MainScreen.populateDefaultProvider: found "
 													+ r.toString());
 									CurrentState.assignDefaultProvider(r);
+									dashboard.setProvider(r);
 								} else {
 									JsonUtil
 											.debug("MainScreen.populateDefaultProvider: found error");

@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,7 +212,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 				sortableTable.clearData();
 				for (int iter = 0; iter < elements.getLength(); iter++) {
 					Element e = (Element) elements.item(iter);
-					if (e.getAttribute("display").compareTo("1") == 0) {
+					if (e.getAttribute("display")!=null && e.getAttribute("display").compareTo("1") == 0) {
 						sortableTable.addColumn(e.getAttribute("title"), e
 								.getAttribute("field"));
 						wField.addItem(e.getAttribute("title"), e

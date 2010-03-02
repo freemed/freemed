@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,9 @@ public class PatientInfoBar extends Composite {
 	protected Integer patientId = new Integer(0);
 
 	protected Image photoId = null;
-
+	
+	protected Image allergyImg = null;
+	
 	protected ScreenInterface parentScreen;
 	
 	protected String provideName;
@@ -101,6 +103,11 @@ public class PatientInfoBar extends Composite {
 		horizontalPanel.setCellWidth(horizontalsubPanel, "70%");
 		// horizontalsubPanel .add(wPatientName);
 		horizontalsubPanel.add(wPatientVisibleInfo);
+
+		allergyImg = new Image("resources/images/allergy.16x16.png");
+		allergyImg.setVisible(false);
+		horizontalsubPanel.add(allergyImg);
+		
 		if (CurrentState.isActionAllowed(AppConstants.MODIFY,
 				AppConstants.PATIENT_CATEGORY, AppConstants.NEW_PATIENT)) {
 			editLink = new HTML(
@@ -187,20 +194,24 @@ public class PatientInfoBar extends Composite {
 	public void setPatientFromMap(HashMap<String, String> map) {
 		try {
 			wPatientName.setText((String) map.get("patient_name"));
-			wPatientVisibleInfo.setHTML((String) map.get("patient_name") + " "
-					+ "[" + (String) map.get("date_of_birth") + "] "
-					+ (String) map.get("ptid") + "<br/>");
+			String ptInfoHTML = (String) map.get("patient_name") + " "
+			+ "[" + (String) map.get("date_of_birth") + "] "
+			+ (String)map.get("age")+" old, "
+			+ (String) map.get("ptid") + "<br/>";
+			if(map.get("pcp")!=null)
+				ptInfoHTML = ptInfoHTML + "<br> <b>PCP</b>: "+map.get("pcp");
+			if(map.get("facility")!=null)
+				ptInfoHTML = ptInfoHTML + "<br> <b>Facility</b>: "+map.get("facility");
+			if(map.get("pharmacy")!=null)
+				ptInfoHTML = ptInfoHTML + "<br> <b>Pharmacy</b>: "+map.get("pharmacy");
 
-			if (map.get("ptpcp") != "" && map.get("ptpcp") != "0")
-				setPCPInfo(map.get("ptpcp"));
-			if (map.get("ptprimaryfacility") != ""
-					&& map.get("ptprimaryfacility") != "0")
-				setFacilityInfo(map.get("ptprimaryfacility"));
-			if (map.get("ptpharmacy") != "" && map.get("ptpharmacy") != "0")
-				setPharmacyInfo(map.get("ptpharmacy"));
+			wPatientVisibleInfo.setHTML(ptInfoHTML);
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if(map.get("hasallergy").equalsIgnoreCase("true")){
+			allergyImg.setVisible(true);
 		}
 		try {
 			wPatientHiddenInfo.setHTML("<small>"
@@ -241,115 +252,4 @@ public class PatientInfoBar extends Composite {
 		this.parentScreen = parentScreen;
 	}
 
-	public void setPCPInfo(String pcpId) {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// TODO stubbed mode goes here
-			wPatientVisibleInfo.setHTML(wPatientVisibleInfo.getHTML()
-					+ "<b>PCP</b>: " + "Stubbed mode PCP");
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { pcpId, "phyfname" };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.ProviderModule.to_text",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable ex) {
-						Window.alert(ex.toString());
-					}
-
-					public void onResponseReceived(Request request,
-							Response response) {
-						if (200 == response.getStatusCode()) {
-							wPatientVisibleInfo.setHTML(wPatientVisibleInfo
-									.getHTML()
-									+ "<br> <b>PCP</b>: "
-									+ response.getText().replaceAll("\"", ""));
-							provideName=response.getText().replaceAll("\"", "");
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert(e.getMessage());
-			}
-		} else {
-			// TODO normal mode code goes here
-		}
-	}
-
-	public void setFacilityInfo(String facilityId) {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// TODO stubbed mode goes here
-			wPatientVisibleInfo.setHTML(wPatientVisibleInfo.getHTML()
-					+ "<b>Facility</b>: " + "Stubbed mode facility");
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { facilityId, "psrname" };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.FacilityModule.to_text",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable ex) {
-						Window.alert(ex.toString());
-					}
-
-					public void onResponseReceived(Request request,
-							Response response) {
-						if (200 == response.getStatusCode()) {
-							wPatientVisibleInfo.setHTML(wPatientVisibleInfo
-									.getHTML()
-									+ "<br> <b>Facility</b>: "
-									+ response.getText().replaceAll("\"", ""));
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert(e.getMessage());
-			}
-		} else {
-			// TODO normal mode code goes here
-		}
-	}
-
-	public void setPharmacyInfo(String pharmacyId) {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// TODO stubbed mode goes here
-			wPatientVisibleInfo.setHTML(wPatientVisibleInfo.getHTML()
-					+ "<b>Pharmacy</b>: " + "Stubbed mode facility");
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { pharmacyId, "phname" };
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.module.Pharmacy.to_text",
-							params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable ex) {
-						Window.alert(ex.toString());
-					}
-
-					public void onResponseReceived(Request request,
-							Response response) {
-						if (200 == response.getStatusCode()) {
-							wPatientVisibleInfo.setHTML(wPatientVisibleInfo
-									.getHTML()
-									+ "<br> <b>Pharmacy</b>: "
-									+ response.getText().replaceAll("\"", ""));
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert(e.getMessage());
-			}
-		} else {
-			// TODO normal mode code goes here
-		}
-	}
 }

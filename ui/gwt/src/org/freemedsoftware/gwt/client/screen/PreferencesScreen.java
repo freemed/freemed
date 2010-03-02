@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -47,6 +49,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -77,6 +80,8 @@ public class PreferencesScreen extends ScreenInterface {
 	protected boolean isThemeChanged = false;
 
 	protected boolean isNavigatioMenuChanged = false;
+	
+	protected CustomListBox printersList = null; 
 
 	private static List<PreferencesScreen> preferencesScreenList = null;
 
@@ -124,6 +129,8 @@ public class PreferencesScreen extends ScreenInterface {
 			public void onClick(ClickEvent event) {
 				if (isThemeChanged)
 					CurrentState.setUserConfig("Theme", CurrentState.CUR_THEME);
+				CurrentState.setUserConfig("defaultPrinter", printersList.getStoredValue());
+				
 				if (isNavigatioMenuChanged)
 					CurrentState.setUserConfig("LeftNavigationMenu",
 							CurrentState.getLeftNavigationOptions());
@@ -328,6 +335,43 @@ public class PreferencesScreen extends ScreenInterface {
 		navigationsVerticalPanel.add(navigationsFlexTable);
 		// Adding password tab
 		tabPanel.add(navigationsVerticalPanel, "Navigations");
+		
+		final FlexTable printersFlexTable = new FlexTable();
+		printersFlexTable.addStyleName("cw-FlexTable");
+
+		printersFlexTable.setHTML(0, 0, "Select default printer");
+
+		printersList = new CustomListBox();
+		printersList.addItem("HPLJ", "HPLJ");
+		Util.callApiMethod("Printing", "GetPrinters", null, new CustomRequestCallback(){
+			@Override
+			public void onError() {
+			}
+			@Override
+			public void jsonifiedData(Object data) {
+				HashMap<String,String> result = (HashMap<String,String>)data;
+				Iterator<String> iterator = result.keySet().iterator();
+				while(iterator.hasNext()){
+					String key = iterator.next();
+					printersList.addItem(key, result.get(key));
+				}
+				printersList.setWidgetValue((String)CurrentState.getUserConfig("defaultPrinter"));
+			}
+		}, "HashMap<String,String>");
+		
+	
+
+		printersFlexTable.setWidget(0, 1, printersList);
+
+		printersList.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent evt) {
+			
+			}
+		});
+		VerticalPanel printersVerticalPanel = new VerticalPanel();
+		printersVerticalPanel.add(printersFlexTable);
+		// Adding theme tab
+		tabPanel.add(printersVerticalPanel, "Printers");
 
 	}
 

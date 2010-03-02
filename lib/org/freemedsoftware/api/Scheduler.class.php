@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2009 FreeMED Software Foundation
+ // Copyright (C) 1999-2010 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -155,6 +155,73 @@ class Scheduler {
 		$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
 		return $GLOBALS['sql']->queryAll ( $query );
 	} // end method GetDailyAppointmentsRange
+
+	// Method: GetDailyAppointmentsRangeByProviderGroup
+	//
+	// Parameters:
+	//
+	//	$datefrom - Starting date.
+	//
+	//	$dateto - Ending date.
+	//
+	//	$providerGroup - (optional) Provider number
+	//
+	// Returns:
+	//
+	//	Hash of daily appointments
+	//	* scheduler_id
+	//	* patient
+	//	* patient_id
+	//	* provider
+	//	* provider_id
+	//	* note
+	//	* hour
+	//	* minute
+	//	* appointment_time
+	//	* duration
+	//	* status
+	//	* status_color
+	//	* resource_type ( pat, temp )
+	//
+	// SeeAlso:
+	//	<GetDailyAppointments>
+	//
+	public function GetDailyAppointmentsRangeByProviderGroup ( $datefrom = NULL, $dateto = NULL, $providerGroup = 0 ) {
+		freemed::acl_enforce( 'scheduling', 'view' );
+
+		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
+		if ($dateto != NULL) {
+			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
+		} else {
+			// Single date query ....
+			$r_q = "s.caldateof = '".addslashes($this_date)."'";
+		}
+		
+		$pg = CreateObject( 'org.freemedsoftware.module.ProviderGroups' );
+		$phygroupidmap = $pg->getRecord($providerGroup);
+		$phygroupidmap = $phygroupidmap['phygroupidmap'];
+			
+		if($phygroupidmap){	
+			$phygroupids = explode(',',$phygroupidmap );
+			
+			
+			$providersJoin = ' and (';
+			$idsCount = count($phygroupids);
+			$index = 1;
+			foreach($phygroupids as $pid){
+				$providersJoin =$providersJoin." s.calphysician=".$GLOBALS['sql']->quote($pid);
+				if($index!=$idsCount)
+				$providersJoin =$providersJoin." or";
+				$index++;
+			}
+			$providersJoin = $providersJoin.' )';
+			
+			$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".$providersJoin." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
+			return $GLOBALS['sql']->queryAll ( $query );
+			
+		}
+		return null;
+	} // end method GetDailyAppointmentsRangeByProviderGroup
 
 	// Method: GetDailyAppointmentScheduler
 	//

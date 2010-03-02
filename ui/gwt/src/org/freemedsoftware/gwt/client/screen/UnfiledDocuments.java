@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,6 +255,32 @@ public class UnfiledDocuments extends ScreenInterface {
 		// Last thing is to initialize, otherwise we're going to get some
 		// NullPointerException errors
 		loadData();
+	}
+	
+	public void setSelectedDocument(HashMap<String, String> data){
+		currentId = Integer.parseInt(data.get("id"));
+		String pDate = data.get("uffdate");
+		Calendar thisCal = new GregorianCalendar();
+		thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
+				.substring(0, 4)));
+		thisCal.set(Calendar.MONTH, Integer.parseInt(pDate
+				.substring(5, 6)) - 1);
+		thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
+				.substring(8, 9)));
+		wDate.setValue(thisCal.getTime());
+
+		// Show the form
+		flexTable.setVisible(true);
+		horizontalPanel.setVisible(true);
+
+		// Show the image in the viewer
+		djvuViewer.setInternalId(currentId);
+		try {
+			djvuViewer.loadPage(1);
+		} catch (Exception ex) {
+			JsonUtil.debug("Errorrrrrr");
+		}
+		djvuViewer.setVisible(true);
 	}
 
 	protected void fileDirectly() {

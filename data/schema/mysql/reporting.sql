@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2009 FreeMED Software Foundation
+# Copyright (C) 1999-2010 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `reporting` (
 	report_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
 	report_desc			TEXT,
 	report_type			VARCHAR (150) NOT NULL DEFAULT 'standard',
-	report_category			VARCHAR (150) NOT NULL DEFAULT 'reporting_engine'
+	report_category			VARCHAR (150) NOT NULL DEFAULT 'reporting_engine',
 	report_sp			VARCHAR (150) NOT NULL,
 	report_param_count		TINYINT(3) NOT NULL DEFAULT 0,
 	report_param_names		TEXT,

@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 	protected final TextArea wText;
 
-	protected final UserMultipleChoiceWidget wTo;
+	protected UserMultipleChoiceWidget wTo;
 
 	protected final TextBox wSubject;
 
@@ -75,13 +75,15 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 	protected final String className = "org.freemedsoftware.gwt.client.MessagingComposeScreen";
 
+	protected FlexTable flexTable;
+
 	public MessagingComposeScreen() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		final FlexTable flexTable = new FlexTable();
+		flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
 
 		final Label toLabel = new Label("To : ");
@@ -220,6 +222,12 @@ public class MessagingComposeScreen extends ScreenInterface {
 										parentScreen.populateTagWidget();
 									}
 									getThisObject().closeScreen();
+								}
+								else{
+									wSubject.setText("");
+									wPatient.clear();
+									wText.setText("");									
+									wTo.setValue(new Integer[] {});
 								}
 							}
 						} else {

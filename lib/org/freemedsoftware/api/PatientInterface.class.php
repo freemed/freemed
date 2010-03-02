@@ -388,7 +388,14 @@ class PatientInterface {
 	//
 	public function PatientInformation( $id ) {
 		syslog(LOG_INFO, (int)$id);
-		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) AS age, pa.line1 AS address_line_1, pa.line2 AS address_line_2, CONCAT( pa.city, ', ', pa.stpr, ' ', pa.postal ) AS csz, p.* FROM patient p LEFT OUTER JOIN patient_address pa ON ( pa.patient = p.id AND pa.active = TRUE ) WHERE p.id = " . ( $id + 0 ) . " GROUP BY p.id";
+		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, case when ( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365)>=2 then concat(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365),' years') else concat(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 30),' months') end AS age, pa.line1 AS address_line_1, pa.line2 AS address_line_2, CONCAT( pa.city, ', ', pa.stpr, ' ', pa.postal ) AS csz,case when p.id in (select al.patient from allergies al where al.patient=".$GLOBALS['sql']->quote( $id )." and active='active') then 'true' else 'false' end as hasallergy, p.* "
+		.",CONCAT( phy.phylname, ', ', phy.phyfname, ' ', phy.phymname ) AS pcp,CONCAT( fac.psrname, ' (', fac.psrcity, ', ', fac.psrstate,')' ) AS facility,CONCAT( ph.phname, ' (', ph.phcity, ', ', ph.phstate,')' ) AS pharmacy "
+		."FROM patient p "
+		."LEFT OUTER JOIN patient_address pa ON ( pa.patient = p.id AND pa.active = TRUE ) "
+		."LEFT OUTER JOIN physician phy ON ( phy.id = p.ptpcp) "
+		."LEFT OUTER JOIN facility fac ON ( fac.id = p.ptprimaryfacility) "
+		."LEFT OUTER JOIN pharmacy ph ON ( ph.id = p.ptpharmacy) "
+		."WHERE p.id = " . $GLOBALS['sql']->quote( $id ). " GROUP BY p.id";
 		syslog(LOG_INFO, $q);
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation

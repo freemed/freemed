@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2009 FreeMED Software Foundation
+ // Copyright (C) 1999-2010 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -161,7 +161,6 @@ class ProviderModule extends SupportModule {
 		$query = "SELECT * FROM ".$this->table_name.
 			" ".$this->FormJoinClause()." ".
 			( is_array($c) ? " WHERE  ( ".join(' OR ',$c)." ) " : "" ).
-			" AND phyref='no' ".
 			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
 			" LIMIT 20";
 		//syslog(LOG_INFO, $query);
@@ -171,6 +170,7 @@ class ProviderModule extends SupportModule {
 			$return[$r['id']] = trim( $this->to_text( $r ) );
 		}
 		return $return;
+		
 	} // end method picklist
 
 	// Method: LookupNPI

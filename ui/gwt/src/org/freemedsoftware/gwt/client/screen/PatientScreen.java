@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,10 @@ public class PatientScreen extends ScreenInterface {
 
 	protected SummaryScreen summaryScreen = null;
 
+	protected String providerName;
+
+	protected String providerId;
+
 	public PatientScreen() {
 
 		final boolean canModify = CurrentState.isActionAllowed(
@@ -102,8 +106,10 @@ public class PatientScreen extends ScreenInterface {
 
 				menuBar_1.addItem("Allergy", new Command() {
 					public void execute() {
+						AllergyEntryScreen allergyEntryScreen = new AllergyEntryScreen();
 						Util.spawnTabPatient("Allergy",
-								new AllergyEntryScreen(), getObject());
+								allergyEntryScreen, getObject());
+						allergyEntryScreen.populate();
 					}
 				});
 
@@ -255,7 +261,17 @@ public class PatientScreen extends ScreenInterface {
 	public Integer getPatient() {
 		return patientId;
 	}
-
+	
+	/**
+	 * Get provider name.
+	 * 
+	 * @return Integer of patient id.
+	 */
+	
+	public String getProviderName(){
+		return providerName;
+	}
+	
 	public void populate() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();
@@ -347,6 +363,8 @@ public class PatientScreen extends ScreenInterface {
 		patientInfoBar.setPatientFromMap(patientInfo);
 		summaryScreen.setPatientId(patientId);
 		patientName = info.get("patient_name");
+		providerName = info.get("pcp");
+		providerId = info.get("pcpid");
 		summaryScreen.loadData();
 	}
 
@@ -364,5 +382,9 @@ public class PatientScreen extends ScreenInterface {
 
 	public String getPatientName() {
 		return patientName;
+	}
+
+	public SummaryScreen getSummaryScreen() {
+		return summaryScreen;
 	}
 }

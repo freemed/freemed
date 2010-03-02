@@ -6,7 +6,7 @@
  *      Philipp Meng	<pmeng@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2009 FreeMED Software Foundation
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 import org.freemedsoftware.gwt.client.CurrentState;
@@ -609,6 +610,10 @@ public class SchedulerWidget extends WidgetInterface implements
 		private EventData data = null;
 
 		private SupportModuleListBox selectTemplate = null;
+		
+		private CustomListBox nextAvailable = null;
+		
+		private CustomListBox nextAvailableDateTime = null;
 
 		private DateEventActions command = DateEventActions.ADD;
 
@@ -637,6 +642,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			
 			// date = new DateEditFieldWithPicker("MM/dd/yyyy");
 			date = new CustomDatePicker();
+			date.setWidth("100%");
 			start = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm"
 					: "hh:mmaa");
 			end = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm" : "hh:mmaa");
@@ -735,9 +741,11 @@ public class SchedulerWidget extends WidgetInterface implements
 				if(data.getPatientId()!=null)
 					patient.setValue(data.getPatientId());
 				patient.addChangeHandler(this);
+				patient.setWidth("100%");
 			}else {
 				supportWidget.setValue(data.getPatientId());
 				supportWidget.addChangeHandler(this);
+				supportWidget.setWidth("100%");
 			}
 			
 			final int entityRow = row;
@@ -769,6 +777,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 			
 			provider = new SupportModuleWidget();
+			provider.setWidth("100%");
 			provider.setModuleName("ProviderModule");
 			try {
 				provider.setValue(data.getProviderId());
@@ -829,6 +838,155 @@ public class SchedulerWidget extends WidgetInterface implements
 			} catch (Exception ex) {
 				JsonUtil.debug(ex.toString());
 			}
+			
+			row++;
+			
+			final Label nextAvailableLabel = new Label("Next Available"); 
+			table.setWidget(row, 0, nextAvailableLabel);
+			
+			nextAvailable = new CustomListBox();
+			nextAvailable.setWidth("100%");
+			nextAvailable.addItem("--", "--");
+			nextAvailable.addItem("One Week From Now", "inaweek");
+			nextAvailable.addItem("Two Weeks From Now", "in2weeks");
+			nextAvailable.addItem("One Month From Now", "inamonth");
+			nextAvailable.addItem("Weekdays Only", "weekdays");
+			nextAvailable.addItem("Mondays Only", "mon");
+			nextAvailable.addItem("Tuesdays Only", "tue");
+			nextAvailable.addItem("Wednesdays Only", "wed");
+			nextAvailable.addItem("Thursdays Only", "thu");
+			nextAvailable.addItem("Fridays Only", "fri");
+			nextAvailable.addItem("Saturdays Only", "sat");
+
+			nextAvailable.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent arg0) {
+					String choice = nextAvailable.getStoredValue();
+					HashMap<String, String> params = new HashMap<String, String>();
+					
+					Calendar cal = new GregorianCalendar();
+					cal.setTime(date.getValue());
+					
+					Calendar nextDayCal = new GregorianCalendar();
+					nextDayCal.setTime(date.getValue());
+					nextDayCal.add(Calendar.DAY_OF_MONTH, 1);
+					
+					if(choice.equals("inaweek")){
+						cal.add(Calendar.DAY_OF_MONTH, 7);
+						params.put("date", Util.getSQLDate(cal.getTime()));
+						params.put("days", "7");
+					}// end inaweek
+					else if(choice.equals("in2weeks")){ 
+						cal.add(Calendar.DAY_OF_MONTH, 14);
+						params.put("date", Util.getSQLDate(cal.getTime()));
+						params.put("days", "7");
+					}// end in2weeks
+					else if(choice.equals("inamonth")){
+						cal.add(Calendar.DAY_OF_MONTH, 28);
+						params.put("date", Util.getSQLDate(cal.getTime()));
+						params.put("days", "7");
+					}// end inamonth
+					else if(choice.equals("weekdays")){
+						cal.add(Calendar.DAY_OF_MONTH, 7);
+						params.put("date", Util.getSQLDate(cal.getTime()));
+						params.put("weekday", "true");
+					}// end weekdays
+					else if(choice.equals("mon")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "1");
+					}// end mon
+					else if(choice.equals("mon")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "1");
+					} // end mon
+					else if(choice.equals("tue")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "2");
+					} // end tue
+					else if(choice.equals("wed")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "3");
+					} // end wed
+					else if(choice.equals("thu")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "4"); 
+					}// end thu
+					else if(choice.equals("fri")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "5"); 
+					} // end fri
+					else if(choice.equals("sat")){
+						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+						params.put("days", "28");
+						params.put("forceday", "5");  
+					}// end sat
+					else{
+						nextAvailableDateTime.clear();
+						nextAvailableDateTime.setEnabled(false);
+					}
+					if(params.size()>0){
+						if(provider.getValue() !=null && provider.getValue()!=0)
+							params.put("provider", provider.getValue().toString());
+						params.put("duration", (60/intervalsPerHour)+"");
+						nextAvailableDateTime.clear();
+						nextAvailableDateTime.setEnabled(false);
+						updateNextAvailableDateTime(params);
+					}
+				}
+			});
+			
+			table.setWidget(row, 1, nextAvailable);
+			
+			row++;
+			
+			final Label nextAvailableDateTimeLabel = new Label("Date/Time"); 
+			table.setWidget(row, 0, nextAvailableDateTimeLabel);
+			
+			nextAvailableDateTime = new CustomListBox();
+			nextAvailableDateTime.setEnabled(false);
+			nextAvailableDateTime.setWidth("100%");
+			table.setWidget(row, 1, nextAvailableDateTime);
+			
+			nextAvailableDateTime.addChangeHandler(new ChangeHandler() {
+				Date prvDate 	  = null;
+				Date prvStartDate = null;
+				Date prvEndDate   = null;
+				@Override
+				public void onChange(ChangeEvent arg0) {
+					if(prvDate == null)
+						prvDate = date.getValue();
+					if(prvStartDate == null)
+						prvStartDate = start.getValue(date.getValue());
+					if(prvEndDate == null)
+						prvEndDate = end.getValue(date.getValue());
+					
+					String dateStr = nextAvailableDateTime.getStoredValue();
+					
+					if(!dateStr.equals("----")){
+						Date slotDate = Util.getSQLDate(dateStr);
+						start.setDate(slotDate);
+						date.setValue(slotDate);
+						Calendar c = new GregorianCalendar();
+						c.setTime(slotDate);
+						
+						c.add(Calendar.HOUR_OF_DAY, (int) Math
+								.ceil(intervalsPerHour / 60));
+						c.add(Calendar.MINUTE, (60 / intervalsPerHour));
+						end.setDate(c.getTime());
+					}else{
+						date.setValue(prvDate);
+						start.setDate(prvStartDate);
+						end.setDate(prvEndDate); 
+					}
+					
+				}
+			});
 			
 			cancel = new Button("Cancel");
 			cancel.setFocus(true);
@@ -1033,7 +1191,79 @@ public class SchedulerWidget extends WidgetInterface implements
 				// GWT-RPC
 			}
 		}
+		/**
+		 * 
+		 * 
+		 */
+		public void updateNextAvailableDateTime(HashMap<String, String> paramsHash) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// TODO: STUBBED
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				// JSON-RPC
+				String[] params = { JsonUtil.jsonify(paramsHash) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.Scheduler.next_available",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							JsonUtil
+									.debug("Error on retrieving Next Available Slots");
+						}
 
+						@SuppressWarnings("unchecked")
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								if (response.getText().compareToIgnoreCase(
+										"false") != 0) {
+									String[][] result = (String[][]) JsonUtil
+									.shoehornJson(JSONParser
+											.parse(response.getText()),
+											"String[][]");
+									Calendar calendar =new GregorianCalendar();
+									int len = result.length;
+									JsonUtil
+									.debug("len found:"+len);
+									if(len>0){
+										nextAvailableDateTime.addItem("----", "----");
+										nextAvailableDateTime.setEnabled(true);
+										for(int indexOuter=0;indexOuter<len;indexOuter++){
+											String slotDateTime = "";
+											slotDateTime = result[indexOuter][0];
+											slotDateTime = slotDateTime + " " +result[indexOuter][1]+":"+result[indexOuter][2]+":00";
+											nextAvailableDateTime.addItem(Util.getSQLDate(slotDateTime).toString(), slotDateTime);
+										}	
+									}else{
+										CurrentState.getToaster().addItem("Scheduler",
+												"Next Available Items Not Available.",
+												Toaster.TOASTER_ERROR);										
+									}
+									
+								} else {
+									JsonUtil
+											.debug("Received dummy response from JSON backend");
+								}
+							} else {
+								CurrentState.getToaster().addItem("Scheduler",
+										"Failed to get Next Available items.",
+										Toaster.TOASTER_ERROR);
+							}
+						}
+					});
+				} catch (RequestException e) {
+					CurrentState.getToaster().addItem("Scheduler",
+							"Failed to get Next Available items.",
+							Toaster.TOASTER_ERROR);
+				}
+			} else {
+				// GWT-RPC
+			}
+		}
 		@Override
 		public void onValueChange(ValueChangeEvent<Integer> event) {
 			// TODO Auto-generated method stub
@@ -1145,11 +1375,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						getHeaderElement().addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent arg0) {
-								final StringEventDataDialog dialog = new StringEventDataDialog(
-										getDateRenderer(), getDateEventListener(),
-										real, DateEventActions.UPDATE);
-								dialog.show();
-								dialog.center();
+								handleNewOrEditAppointment(real);
 						}
 					});
 				}else CurrentState.getToaster().addItem(
@@ -1167,6 +1393,51 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 	}
 
+	public void handleNewOrEditAppointment(final EventData real){
+		
+		final Popup popup = new Popup();
+		
+		VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.setWidth("100%");
+		Button bookNewAppointment = new Button("New Appointment");
+		bookNewAppointment.setWidth("80%");
+		bookNewAppointment.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				final EventData data = new EventData();
+				data.setStartTime(real.getStartTime());
+				data.setEndTime(real.getEndTime());
+				final StringEventDataDialog dialog = new StringEventDataDialog(
+						getDateRenderer(), getDateEventListener(),
+						data);
+				popup.hide();
+				dialog.show();
+				dialog.center();
+			}
+		});
+		verticalPanel.add(bookNewAppointment);
+		verticalPanel.setCellHorizontalAlignment(bookNewAppointment, HasHorizontalAlignment.ALIGN_CENTER);
+		Button editAppointment = new Button("Edit Appointment");
+		editAppointment.setWidth("80%");
+		editAppointment.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				final StringEventDataDialog dialog = new StringEventDataDialog(
+						getDateRenderer(), getDateEventListener(),
+						real, DateEventActions.UPDATE);
+				popup.hide();
+				dialog.show();
+				dialog.center();
+			}
+		});
+		verticalPanel.add(editAppointment);
+		verticalPanel.setCellHorizontalAlignment(editAppointment, HasHorizontalAlignment.ALIGN_CENTER);
+		PopupView popupView = new PopupView(verticalPanel);
+		
+		popup.setNewWidget(popupView);
+		popup.initialize();
+	}
+	
 	public class MonthField extends AbstractMonthField {
 
 		private Label description = new Label(); // NOPMD;
@@ -1232,11 +1503,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						getHeaderElement().addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent arg0) {
-								final StringEventDataDialog dialog = new StringEventDataDialog(
-										getDateRenderer(), getDateEventListener(),
-										real, DateEventActions.UPDATE);
-								dialog.show();
-								dialog.center();
+								handleNewOrEditAppointment(real);
 							}
 						});
 						
@@ -1382,15 +1649,15 @@ public class SchedulerWidget extends WidgetInterface implements
 		@SuppressWarnings("unchecked")
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
-			if (provider.getValue() != 0)
-				getEventsForRange(start, end, provider.getValue(), caller,
+			if (filterModule.getValue() != 0)
+				getEventsForRange(start, end, filterModule.getValue(),filterModulesAndMethods.get(SELECTED_MODULE), caller,
 						doRefresh);
 			else
 				getEventsForRange(start, end,
-						CurrentState.getDefaultProvider(), caller, doRefresh);
+						CurrentState.getDefaultProvider(),filterModulesAndMethods.get(SELECTED_MODULE), caller, doRefresh);
 		}
 
-		public void getEventsForRange(Date start, Date end, Integer provider,
+		public void getEventsForRange(Date start, Date end, Integer id,String method,
 				final MultiView caller, final boolean doRefresh) {
 			JsonUtil.debug("getEventsForRange()");
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -1398,13 +1665,13 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				// JSON-RPC
 				String[] params = { dateToSql(start), dateToSql(end),
-						provider.toString() };
+						id.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
 								.encode(Util
 										.getJsonRequest(
-												"org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange",
+												"org.freemedsoftware.api.Scheduler."+method,
 												params)));
 				try {
 					loadingDialog.center();
@@ -1639,8 +1906,12 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	private Label label = new Label("");
 
-	private ProviderWidget provider = new ProviderWidget();
+	private SupportModuleWidget filterModule = new SupportModuleWidget();
 
+	private HashMap<String, String> filterModulesAndMethods = new HashMap<String, String>();
+	
+	private String SELECTED_MODULE = "";
+	
 	private MultiView multiPanel = null;
 
 	private EventCacheController eventCacheController = null;
@@ -1654,18 +1925,23 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	protected DateTimeFormat ymdFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
 	
+	protected int intervalsPerHour = 0;
+	
 	public SchedulerWidget() {
 		this(6, 24, 4);// startHour=6,endHour=24,intervalPerHour=4
 	}
 
 	public SchedulerWidget(int startHour, int endHour, int intervalPerHour) {
 		super();
+		this.intervalsPerHour = intervalPerHour;
+		filterModulesAndMethods.put("ProviderModule", "GetDailyAppointmentsRange");
+		filterModulesAndMethods.put("ProviderGroups", "GetDailyAppointmentsRangeByProviderGroup");
+		SELECTED_MODULE = "ProviderModule";
+		
 		eventCacheController = new EventCacheController();
 		multiPanel = new MultiView(eventCacheController,
 				new StringPanelRenderer(startHour, endHour, intervalPerHour));
-
 		panel.setWidth("100%");
-
 		final HorizontalPanel loadingContainer = new HorizontalPanel();
 		loadingContainer.add(new Image("resources/images/loading.gif"));
 		loadingContainer.add(new HTML("<h3>" + "Loading" + "</h3>"));
@@ -1673,10 +1949,14 @@ public class SchedulerWidget extends WidgetInterface implements
 		loadingDialog.setWidget(loadingContainer);
 		loadingDialog.hide();
 
+		final VerticalPanel headerArea = new VerticalPanel();
+		headerArea.setWidth("100%");
+		
 		final HorizontalPanel fields = new HorizontalPanel();
 		fields.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		fields.setWidth("100%");
-		panel.add(fields, DockPanel.NORTH);
+		headerArea.add(fields);
+		panel.add(headerArea, DockPanel.NORTH);
 		
 		fields.add(label);
 		fields.setCellHeight(label, "50%");
@@ -1684,22 +1964,36 @@ public class SchedulerWidget extends WidgetInterface implements
 		final HorizontalPanel filterPanel = new HorizontalPanel();
 		fields.add(filterPanel);
 		fields.setCellWidth(filterPanel, "50%");
-		Label selectProvider = new Label("Filter by Provider:");
-		filterPanel.add(selectProvider);
-		selectProvider.setStyleName("label");
-		filterPanel.add(provider);
-		provider.setWidth("300px");
-		provider.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+		Label selectFilterLabel = new Label("Filter by :");
+		selectFilterLabel.setStyleName("label");
+		filterPanel.add(selectFilterLabel);
+			
+		final CustomListBox selectFilter = new CustomListBox();
+		selectFilter.addItem("Provider", "ProviderModule");
+		selectFilter.addItem("Provider Groups", "ProviderGroups");
+		selectFilter.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent arg0) {
+				SELECTED_MODULE = selectFilter.getStoredValue();
+				filterModule.setModuleName(SELECTED_MODULE);
+				filterModule.setValue(0);
+			}
+		});
+		filterPanel.add(selectFilter);
+		
+		filterModule.setModuleName("ProviderModule");
+		filterModule.setWidth("300px");
+		filterModule.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				Integer val = ((ProviderWidget) event.getSource()).getValue();
+				Integer val = ((SupportModuleWidget) event.getSource()).getValue();
 				// Log.debug("Patient value = " + val.toString());
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
 						multiPanel.clearData();
 						eventCacheController.getEventsForRange(multiPanel
 								.getCurrent().getFirstDateLogical(), multiPanel
-								.getCurrent().getLastDateLogical(), val,
+								.getCurrent().getLastDateLogical(), val,filterModulesAndMethods.get(SELECTED_MODULE),
 								multiPanel, true);
 					}
 				} catch (Exception e) {
@@ -1708,12 +2002,14 @@ public class SchedulerWidget extends WidgetInterface implements
 				}
 			}
 		});
+		filterPanel.add(filterModule);
+		
 		Button clearButton = new Button("clear");
 		clearButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent arg0) {
-				provider.setValue(0);
+				filterModule.setValue(0);
 				eventCacheController.getEventsForRange(multiPanel.getCurrent()
 						.getFirstDateLogical(), multiPanel.getCurrent()
 						.getLastDateLogical(), multiPanel, true);
@@ -1721,26 +2017,43 @@ public class SchedulerWidget extends WidgetInterface implements
 		});
 		filterPanel.add(clearButton);
 
+		final HorizontalPanel fields2Panel = new HorizontalPanel();
+		HTML showPicker = new HTML("<a href='javascript:undefined;'>Cal Jump</a>");
+		fields2Panel.add(showPicker);
 
-		VerticalPanel posPanel = new VerticalPanel();
+		headerArea.add(fields2Panel);
+		
+		final VerticalPanel posPanel = new VerticalPanel();
+		posPanel.setVisible(false);
 		posPanel.setWidth("100%");
 		HorizontalPanel pickerHolder = new HorizontalPanel();
 		pickerHolder.add(posPanel);
 		pickerHolder.add(multiPanel);
-
-		HTML space = new HTML(" ");
+		
+		showPicker.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				posPanel.setVisible(!posPanel.isVisible());
+				if(posPanel.isVisible())
+					multiPanel.setPixelSize((Window.getClientWidth()*78)/100, (Window.getClientHeight()*70)/100);
+				else
+					multiPanel.setPixelSize((Window.getClientWidth()*85)/100, (Window.getClientHeight()*70)/100);
+			}
+		});
+		
+		HTML space = new HTML("");
 		posPanel.add(space);
 		space.setHeight("40px");
 		posPanel.add(navigator);
-
-		pickerHolder.setCellWidth(posPanel, "200px");
+		//navigator.setVisible(false);
+		//pickerHolder.setCellWidth(posPanel, "200px");
 		pickerHolder.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
 
 		pickerHolder.setCellWidth(multiPanel, "100%");
 		multiPanel.setWidth("100%");
-		multiPanel.setPixelSize((Window.getClientWidth()*67)/100, (Window.getClientHeight()*70)/100);
+		multiPanel.setPixelSize((Window.getClientWidth()*85)/100, (Window.getClientHeight()*70)/100);
 
-		posPanel.setWidth("200px");
+//		posPanel.setWidth("200px");
 
 		panel.add(pickerHolder, DockPanel.CENTER);
 		pickerHolder.setWidth("100%");

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+    $Id$
+    
+    Authors:
+    Philipp Meng <pmeng@freemedsoftware.org>
+	    
+	    FreeMED Electronic Medical Record and Practice Management System
+	    Copyright (C) 1999-2010 FreeMED Software Foundation
+	    
+	    This program is free software; you can redistribute it and/or modify
+	    it under the terms of the GNU General Public License as published by
+	    the Free Software Foundation; either version 2 of the License, or
+	    (at your option) any later version.
+	    
+	    This program is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	    
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	    -->
+	    <SimpleUIBuilder module="ProviderGroups">
+		    <Elements>
+			    <Element field="phygroupname" title="Physician Group Name" type="TEXT" options="52" display="1" />
+			    <Element field="phygroupfac" title="Default Facility" type="MODULE" options="FacilityModule"/>
+			    <Element field="phygroupspe1" title="Specialty 1" type="MODULE" options="ProviderSpecialties" display="1"  help="Enter here the specialty the Group has."/>
+			    <Element field="phygroupidmap" title="Physicians" type="MODULE_MULTIPLE" options="ProviderModule" help="Enter here all Providers belonging to this group."/>
+			    
+		    </Elements>
+	    </SimpleUIBuilder>
