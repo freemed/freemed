@@ -35,7 +35,7 @@ class ProcedureModule extends EMRModule {
 	var $table_name  = "procrec";
 	var $record_name = "Procedure";
 	var $patient_field = "procpatient";
-	var $proc_fields = array(
+	var $variables = array(
 		"procpatient",
 		"proceoc",
 		"proccpt",
@@ -120,7 +120,7 @@ class ProcedureModule extends EMRModule {
 		// Deduct from authorization, if there is one
 		// specified
 		if ($data['procauth'] > 0) {
-			$a = CreateObject('org.freemedsoftwae.core.Authorizations');
+			$a = CreateObject('org.freemedsoftware.api.Authorizations');
 			// Check for valid first
 			if ( $a->valid( $data['procauth'], $data['procdt'] ) ) {
 				if ($a->use_authorization($_REQUEST['procauth'])) {
@@ -139,7 +139,7 @@ class ProcedureModule extends EMRModule {
 	protected function mod_post ( &$data ) {
 		// Check if authorization changed
 		if ($data['procauth'] != $data['procauthsaved']) {
-			$a = CreateObject('org.freemedsoftware.core.Authorizations');
+			$a = CreateObject('org.freemedsoftware.api.Authorizations');
 			// Try to remove old authorization
 			if ($data['procauthsaved'] > 0) {
 				$a->replace_authorization($data['procauthsaved']);
@@ -262,7 +262,7 @@ class ProcedureModule extends EMRModule {
 		// step six:
 		//   adjust values to proper precision
 		$charge = bcadd ($charge, 0, 2);
-		return $charge;
+		return $charge+0;
 	} // end method CalculateCharge
 
 	// Method: RuleInterface
@@ -399,7 +399,76 @@ class ProcedureModule extends EMRModule {
 			$sql->query('UPDATE '.$this->table_name.' SET proccptmod2=0,proccptmod3=0 WHERE id>0');
 		}
 	} // end method _update
-
+	
+	public function getProcedureInfo($patient){
+		$query="SELECT pr.id AS Id, pr.procdt AS proc_date,CONCAT(cpt.cptcode,' ',cptnameint) AS proc_code, CONCAT(cm.cptmod,' ',cm.cptmoddescrip) AS proc_mod, pr.proccomment AS comment ".
+		"FROM ".$this->table_name." pr LEFT OUTER JOIN cpt ON cpt.id =pr.proccpt LEFT OUTER JOIN cptmod cm ON cm.id=pr.proccptmod ".
+		"WHERE pr.procpatient=".$GLOBALS['sql']->quote( $patient )." ORDER BY pr.id DESC";
+		return $GLOBALS['sql']->queryAll( $query );
+	}
+	
+	public function getLastProc($patient){
+		$query="select * from procrec where procpatient=".$GLOBALS['sql']->quote( $patient )." order by id DESC limit 1";
+		return $GLOBALS['sql']->queryRow( $query );
+	}
+	
+	public function getProcByID($id){
+		$query="select * from procrec where id=".$GLOBALS['sql']->quote( $id );
+		return $GLOBALS['sql']->queryRow( $query );
+	}
+	
+	public function getCoverages($id){
+		$query1="select c.id as Id, CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer from procrec pr ".
+				"LEFT OUTER JOIN coverage c ON pr.proccov1 = c.id ".
+				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
+				"where pr.id=".$GLOBALS['sql']->quote( $id );
+		$result1 = $GLOBALS['sql']->queryRow( $query1 );
+		$query2="select c.id as Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer from procrec pr ".
+				"LEFT OUTER JOIN coverage c ON pr.proccov2 = c.id ".
+				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
+				"where pr.id=".$GLOBALS['sql']->quote( $id );
+		$result2 = $GLOBALS['sql']->queryRow( $query2 );
+		$query13="select c.id as Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer from procrec pr ".
+				"LEFT OUTER JOIN coverage c ON pr.proccov3 = c.id ".
+				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
+				"where pr.id=".$GLOBALS['sql']->quote( $id );
+		$result3 = $GLOBALS['sql']->queryRow( $query3 );
+		$query4="select c.id as Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer from procrec pr ".
+				"LEFT OUTER JOIN coverage c ON pr.proccov4 = c.id ".
+				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
+				"where pr.id=".$GLOBALS['sql']->quote( $id );
+		$result4 = $GLOBALS['sql']->queryRow( $query4 );
+		
+		if($result1['payer']!=null){
+			$i=count($data);
+			$data[$i]['id']="1";
+			$data[$i]['payer']=$result1['payer'];
+			$data[$i]['type']="Primary";
+		}
+		if($result2['payer']!=null){	
+			$i=count($data);
+			$data[$i]['id']="2";
+			$data[$i]['payer']=$result2['payer'];
+			$data[$i]['type']="Secondary";
+		}
+		if($result3['payer']!=null){
+			$i=count($data);
+			$data[$i]['id']="3";
+			$data[$i]['payer']=$result3['payer'];
+			$data[$i]['type']="Tertiary";
+		}
+		if($result4['payer']!=null){
+			$i=count($data);
+			$data[$i]['id']="4";
+			$data[$i]['payer']=$result4['payer'];
+			$data[$i]['payer']="Work Comp";
+		}
+		return $data;
+	}
 } // end class ProcedureModule
 
 register_module ("ProcedureModule");

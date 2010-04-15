@@ -21,8 +21,10 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `cptmod` (
-	cptmod			CHAR (2) NOT NULL,
-	cptmoddescrip		VARCHAR (50) DEFAULT '',
-	id			SERIAL
+	  cptmod		CHAR (2) NOT NULL
+	, cptmoddescrip		VARCHAR (50) DEFAULT ''
+	, id			SERIAL
+
+	, CONSTRAINT UNIQUE KEY ( cptmod )
 );
 

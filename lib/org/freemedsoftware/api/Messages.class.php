@@ -159,28 +159,33 @@ class Messages {
 	function send ($m) {
 		$message = (array) $m;
 		$this_user = freemed::user_cache();
-
+		
 		// Check for error conditions
-		if (($message['patient'] < 1) and (empty($message['person']))) { 
+		if (($message['patient'] < 1) and empty($message['for']) and empty($message['group'])) { 
 			syslog( LOG_INFO, "Messages| did not find patient or person" );
 			return false;
 		}
 
 		// Determine message recipients
-		if ( is_array( $message[ 'for' ] ) ) {
-			$msgFor = $message['for'];
-		} else if ( strpos( $message['for'], ',' ) !== false ) {
-			$msgFor = split( ',', $message['for'] );
-		} else {
-			$msgFor = array( $message['for'] );
+		if($message[ 'for' ]){
+			if ( is_array( $message[ 'for' ] ) ) {
+				$msgFor = $message['for'];
+			} else if ( strpos( $message['for'], ',' ) !== false ) {
+				$msgFor = split( ',', $message['for'] );
+			} else {
+				$msgFor = array( $message['for'] );
+			}
 		}
 
 		// Handle message group if one is specified
 		if ( $message['group'] > 0 ) {
 			$g = $GLOBALS['sql']->get_link( 'usergroup', $message['group'] );
-			$msgFor = array_merge( $msgFor, explode( ',', $g ) );
+			if($msgFor)
+				$msgFor = array_merge( $msgFor, explode( ',', $g['usergroup'] ) );
+			else
+				$msgFor = explode( ',', $g['usergroup'] );
 		}
-
+		
 		// Unique timestamp
 		$unique = mktime();
 

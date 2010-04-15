@@ -192,8 +192,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("XmrDefinition",
-								"Failed to load data.", Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("XmrDefinition", "Failed to load data.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -210,9 +209,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 								populateFormDefinition(r);
 							}
 						} else {
-							CurrentState.getToaster().addItem("XmrDefinition",
-									"Failed to load data.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("XmrDefinition", "Failed to load data.");
 						}
 					}
 				});
@@ -226,8 +223,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
 			} catch (Exception e) {
 				JsonUtil.debug(e.toString());
-				CurrentState.getToaster().addItem("XmrDefinition",
-						"Failed to load form.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("XmrDefinition", "Failed to load data.");
 			}
 			service.ModuleGetRecordMethod("XmrDefinition", form,
 					new AsyncCallback<HashMap<String, String>>() {
@@ -236,9 +232,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 						}
 
 						public void onFailure(Throwable t) {
-							CurrentState.getToaster().addItem("XmrDefinition",
-									"Failed to load form.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("XmrDefinition", "Failed to load data.");
 						}
 					});
 		}

@@ -28,12 +28,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
+
 import com.google.gwt.user.client.ui.Composite;
 
 public abstract class WidgetInterface extends Composite {
 
 	protected List<WidgetInterface> children = new ArrayList<WidgetInterface>();
 
+	protected boolean canRead   = false;// (true/false) for current module READ access
+	
+	protected boolean canWrite  = false;// (true/false) for current module WRITE access
+	
+	protected boolean canModify = false;// (true/false) for current module MODIFY access
+	
+	protected boolean canDelete = false;// (true/false) for current module DELETE access
+	
+	protected boolean canLock   = false;// (true/false) for current module LOCK access
+	
+	public WidgetInterface(){
+	}
+	public WidgetInterface(String moduleName){
+		if(moduleName!=null){// setting appropriate booleans by using ACL Permissions 
+			canRead   = CurrentState.isActionAllowed(moduleName, AppConstants.READ);
+			canWrite  = CurrentState.isActionAllowed(moduleName, AppConstants.WRITE);
+			canModify = CurrentState.isActionAllowed(moduleName, AppConstants.MODIFY);
+			canDelete = CurrentState.isActionAllowed(moduleName, AppConstants.DELETE);
+			canLock   = CurrentState.isActionAllowed(moduleName, AppConstants.LOCK);
+		}
+	}
+	
 	/**
 	 * Method used to initialize widget, called after state is set.
 	 */

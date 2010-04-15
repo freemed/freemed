@@ -79,6 +79,27 @@ class ProviderGroups extends SupportModule {
 		*/
 		$data['phygroupdtmod'] = date("Y-m-d");
 	}
+	public function getProviderIds($id)
+	{
+		$q="SELECT phygroupidmap as provs FROM phygroup WHERE id=".$GLOBALS['sql']->quote( $id );
+	
+		$result=$GLOBALS['sql']->queryRow ($q );
+		$arr= explode(",",$result['provs']);
+		return $arr;		
+	}
+	// Method: getGroupIds
+	//
+	//	Get array of all group ids in which provider exists.
+	//
+	// Returns:
+	//
+	//	array of Hashes.
+	public function getGroupIds($providerId)
+	{
+		$q="select id from phygroup where find_in_set(".$GLOBALS['sql']->quote( $providerId ).",phygroupidmap)";
+		return $GLOBALS['sql']->queryAll ($q );;		
+	}
+
 
 } // end class ProviderGroups
 

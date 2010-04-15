@@ -25,16 +25,14 @@
 package org.freemedsoftware.gwt.client;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.event.shared.HandlerManager;
@@ -61,9 +59,11 @@ public class CurrentState {
 	protected static DecoratedTabPanel tabPanel = null;
 
 	protected static String locale = "en_US";
+	
+	protected static String currentPageHelp = "main";
 
 	protected static Integer defaultProvider = new Integer(0);
-
+	
 	protected static Integer defaultFacility = new Integer(0);
 
 	protected static String defaultUser = "";
@@ -73,6 +73,8 @@ public class CurrentState {
 	protected static HashMap<Integer, HashMap<String, PatientScreenInterface>> patientSubScreenMap = new HashMap<Integer, HashMap<String, PatientScreenInterface>>();
 
 	protected static HashMap<String, Object> userConfiguration = new HashMap<String, Object>();
+	
+	protected static HashMap<String, String> userModules = new HashMap<String, String>();
 
 	protected static HashMap<String, String> systemConfiguration = new HashMap<String, String>();
 
@@ -80,16 +82,18 @@ public class CurrentState {
 
 	protected static MainScreen mainScreen = null;
 
-	protected static HashMap<String, HashMap<String, String>> leftNavigationOptions = new HashMap<String, HashMap<String, String>>();
+	protected static HashMap<String, HashMap<String, Integer>> leftNavigationOptions = new HashMap<String, HashMap<String, Integer>>();
 
 	protected static HandlerManager eventBus = new HandlerManager(null);
 
 	public static String CUR_THEME = "chrome";
-
+	
 	public static String LAST_THEME = "chrome";
 
-	public static Integer BREAK_HOUR = null;
-
+	public static Integer defaultProviderGroup = null;
+	
+	public static String SYSTEM_NOTIFY_TYPE = "";
+ 
 	public CurrentState() {
 		retrieveUserConfiguration(true);
 		retrieveSystemConfiguration(true, null);
@@ -173,6 +177,16 @@ public class CurrentState {
 	}
 
 	/**
+	 * Assign current page.
+	 * 
+	 * @param l
+	 *            current page string, default is "main"
+	 */
+	public static void assignCurrentPageHelp(String currentPageHelp) {
+		CurrentState.currentPageHelp = currentPageHelp;
+	}
+	
+	/**
 	 * Add an item to the status bar stack.
 	 * 
 	 * @param module
@@ -201,6 +215,10 @@ public class CurrentState {
 		return locale;
 	}
 
+	public static String getCurrentPageHelp() {
+		return currentPageHelp;
+	}
+	
 	public static Integer getDefaultProvider() {
 		return defaultProvider;
 	}
@@ -245,7 +263,8 @@ public class CurrentState {
 	 */
 	public static Object getUserConfig(String key) {
 		JsonUtil.debug("getUserConfig() called");
-		if (userConfiguration.size() != 0) {
+		
+		if (userConfiguration.size() != 0 && userConfiguration.containsKey(key)) {
 			return userConfiguration.get(key);
 		}
 		JsonUtil.debug("getUserConfig(): was unable to find userConfiguration "
@@ -253,6 +272,31 @@ public class CurrentState {
 		return "";
 	}
 
+	/**
+	 * Get user specific configuration JSONified value, or "" if there is no value.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static Object getUserConfig(String key,String objectType) {
+		JsonUtil.debug("getUserConfig() called");
+		JsonUtil.debug("key:"+key);
+		JsonUtil.debug("objectType:"+objectType);
+		if (userConfiguration.size() != 0 && userConfiguration.containsKey(key)) {
+			try{
+				return JsonUtil
+				.shoehornJson(JSONParser.parse(userConfiguration.get(key).toString()
+						),
+						objectType);
+			}catch(Exception e){
+				return userConfiguration.get(key);//if already Jsonified
+			}
+		}
+		JsonUtil.debug("getUserConfig(): was unable to find userConfiguration "
+				+ "| key = " + key);
+		return "";
+	}
+	
 	/**
 	 * Get system specific configuration value, or "" if there is no value.
 	 * 
@@ -306,28 +350,20 @@ public class CurrentState {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						getToaster().addItem("CurrentState",
-								"Failed to update configuration value.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("CurrentState", "Failed to update configuration value.");
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							getToaster().addItem("CurrentState",
-									"Updated configuration value.",
-									Toaster.TOASTER_INFO);
+							Util.showInfoMsg("CurrentState", "Updated configuration value.");
 						} else {
-							getToaster().addItem("CurrentState",
-									"Failed to update configuration value.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("CurrentState", "Failed to update configuration value.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				getToaster().addItem("CurrentState",
-						"Failed to update configuration value.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("CurrentState", "Failed to update configuration value.");
 			}
 
 		} else {
@@ -378,17 +414,19 @@ public class CurrentState {
 									JsonUtil
 											.debug("successfully retrieved User Configuration");
 									userConfiguration = r;
+									if( userConfiguration.get("usermodules")!=null ){
+										userModules = (HashMap<String, String>)getUserConfig("usermodules", "HashMap<String,String>");
+									}
 									if (userConfiguration
 											.get("LeftNavigationMenu") != null) {
-										leftNavigationOptions = (HashMap<String, HashMap<String, String>>) JsonUtil
+										leftNavigationOptions = (HashMap<String, HashMap<String, Integer>>) JsonUtil
 												.shoehornJson(
 														JSONParser
 																.parse(CurrentState
 																		.getUserConfig(
 																				"LeftNavigationMenu")
 																		.toString()),
-														"HashMap<String,HashMap<String,String>>");
-										// mainScreen.initNavigations();
+														"HashMap<String,HashMap<String,Integer>>");
 										mainScreen.initMainScreen();
 									}
 									if (onLoad != null) {
@@ -412,31 +450,15 @@ public class CurrentState {
 		}
 	}
 
-	public static HashMap<String, HashMap<String, String>> getLeftNavigationOptions() {
+	public static HashMap<String, HashMap<String, Integer>> getLeftNavigationOptions() {
 		return leftNavigationOptions;
 	}
 
 	public static void setLeftNavigationOptions(
-			HashMap<String, HashMap<String, String>> options) {
+			HashMap<String, HashMap<String, Integer>> options) {
 		leftNavigationOptions = options;
 	}
 
-	public static void printNavOptions() {
-		final HashMap<String, HashMap<String, String>> leftNavCategories = CurrentState
-				.getLeftNavigationOptions();
-		Iterator<String> itrCats = leftNavCategories.keySet().iterator();
-		while (itrCats.hasNext()) {
-			final String categoryName = itrCats.next();
-			HashMap<String, String> options = leftNavCategories
-					.get(categoryName);
-			Iterator<String> itr = options.keySet().iterator();
-			while (itr.hasNext()) {
-				String key = itr.next();
-				JsonUtil.debug("CurrentState:printNavOptions - key :" + key
-						+ " value:" + options.get(key));
-			}
-		}
-	}
 
 	/**
 	 * Pull system configuration settings into CurrentState object.
@@ -512,13 +534,12 @@ public class CurrentState {
 		}
 	}
 
-	/*
+	/**
 	 * evaluate whether this menu option should be visible or not
 	 * 
-	 * @param title of the navigation option
+	 * @param menuOption  : name of the navigation option
 	 */
-	public static boolean isActionAllowed(int action, String menuCatagory,
-			String option) {
+	public static boolean isMenuAllowed(String menuCatagory,String menuOption) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			return true;
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -526,25 +547,60 @@ public class CurrentState {
 				// menuCatagory
 				// not available
 				return false;
-			String optionVal = leftNavigationOptions.get(menuCatagory).get(
-					option);
-			if (optionVal != null) {
+			Integer optionVal = leftNavigationOptions.get(menuCatagory).get(
+					menuOption);
+			if (optionVal != null && optionVal== 1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * Checks the permission string and evaluates the current action 
+	 * 
+	 * @param module - module to be check
+	 * @param action - int value against read/write/delete/modify/lock/show from constants Class
+	 */
+	public static boolean isActionAllowed(String module,int action ) {
+		//if(true) return true; // temporarily blocked permissions 
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			return true;
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			if (userModules.get(module) == null)// If
+				// module
+				// not available
+				return false;
+			String permissionBits = userModules.get(module);
+			if (permissionBits != null) {
 				switch (action) {
-				case AppConstants.READ:
-				case AppConstants.WRITE:
-				case AppConstants.MODIFY:
-				case AppConstants.DELETE:
-				case AppConstants.SHOW: {
-					if (optionVal.charAt(action - 1) == '1')
-						return true;
-				}
+					case AppConstants.READ:
+					case AppConstants.WRITE:
+					case AppConstants.MODIFY:
+					case AppConstants.DELETE:
+					case AppConstants.LOCK: {
+						if (permissionBits.charAt(action - 1) == '1')
+							return true;
+					}
+					break;
+					case AppConstants.SHOW: {
+						if (Integer.parseInt(userModules.get(module)) != 0)
+							return true;
+						
+					}
+					break;
 				}
 
 			}
 		}
 		return false;
 	}
-
+	public static boolean isAnyActionAllowed(String module,int action1 , int action2 ){
+		return isActionAllowed(module, action1) | isActionAllowed(module, action2);
+	}
+	public static boolean isAnyActionAllowed(String module,int action1 , int action2, int action3 ){
+		return isAnyActionAllowed(module, action1,action2) | isActionAllowed(module, action3);
+	}
 	/**
 	 * Check the hours of dates whether these dates lie in between break hours
 	 * 
@@ -555,28 +611,12 @@ public class CurrentState {
 	public static synchronized boolean canBookAppoinment(Date startTime,
 			Date endTime) {
 		boolean flag = true;
-		Calendar cDate = new GregorianCalendar();
-		cDate.setTime(startTime);
-		if (cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR)
-			flag = false;
-		cDate.setTime(endTime);
-		if (cDate.get(Calendar.HOUR_OF_DAY) == BREAK_HOUR
-				&& cDate.get(Calendar.MINUTE) != 0)
-			flag = false;
-
+		flag = isActionAllowed(SchedulerWidget.moduleName, AppConstants.WRITE);
 		return flag;
 	}
 
 	public static HashMap<Integer, HashMap<String, PatientScreenInterface>> getPatientSubScreenMap() {
 		return patientSubScreenMap;
-	}
-
-	public static Integer getBREAK_HOUR() {
-		return BREAK_HOUR;
-	}
-
-	public static void setBREAK_HOUR(Integer break_hour) {
-		BREAK_HOUR = break_hour;
 	}
 
 }

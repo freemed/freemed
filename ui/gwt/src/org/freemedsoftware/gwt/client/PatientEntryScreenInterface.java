@@ -56,6 +56,14 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 
 	protected String moduleName;
 
+	public PatientEntryScreenInterface() {
+		super();
+	}
+	
+	public PatientEntryScreenInterface(String moduleName) {
+		super(moduleName);
+	}
+	
 	/**
 	 * Add widget to list of HashMap'd data points represented by this form.
 	 * 
@@ -104,9 +112,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							Toaster t = CurrentState.getToaster();
-							t.addItem(moduleName, "Failed to update.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg(moduleName, "Failed to update.");
 						}
 
 						public void onResponseReceived(Request request,
@@ -116,21 +122,15 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 										JSONParser.parse(response.getText()),
 										"Integer");
 								if (r != null) {
-									Toaster t = CurrentState.getToaster();
-									t.addItem(moduleName, "Updated.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg(moduleName, "Updated.");
 								}
 							} else {
-								Toaster t = CurrentState.getToaster();
-								t.addItem(moduleName, "Failed to update.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg(moduleName, "Failed to update.");
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Toaster t = CurrentState.getToaster();
-					t.addItem(moduleName, "Failed to update.",
-							Toaster.TOASTER_ERROR);
+					Util.showErrorMsg(moduleName, "Failed to update.");
 				}
 			} else {
 				if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -145,9 +145,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								Toaster t = CurrentState.getToaster();
-								t.addItem(moduleName, "Failed to add.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg(moduleName, "Failed to add.");
 							}
 
 							public void onResponseReceived(Request request,
@@ -158,35 +156,25 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 													.parse(response.getText()),
 													"Integer");
 									if (r != null) {
-										Toaster t = CurrentState.getToaster();
-										t.addItem(moduleName, "Added.",
-												Toaster.TOASTER_INFO);
+										Util.showInfoMsg(moduleName, "Added.");
 									}
 								} else {
-									Toaster t = CurrentState.getToaster();
-									t.addItem(moduleName, "Failed to add.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg(moduleName, "Failed to add.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						Toaster t = CurrentState.getToaster();
-						t.addItem(moduleName, "Failed to update.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg(moduleName, "Failed to update.");
 					}
 				} else {
 					service.ModuleModifyMethod(moduleName, rec,
 							new AsyncCallback<Integer>() {
 								public void onSuccess(Integer result) {
-									Toaster t = CurrentState.getToaster();
-									t.addItem(moduleName, "Updated.",
-											Toaster.TOASTER_INFO);
+									Util.showErrorMsg(moduleName, "Failed to update.");
 								}
 
 								public void onFailure(Throwable th) {
-									Toaster t = CurrentState.getToaster();
-									t.addItem(moduleName, "Failed to update.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg(moduleName, "Failed to update.");
 								}
 							});
 				}
@@ -196,15 +184,11 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			service.ModuleAddMethod(moduleName, rec,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer result) {
-							Toaster t = CurrentState.getToaster();
-							t.addItem(moduleName, "Added.",
-									Toaster.TOASTER_INFO);
+							Util.showInfoMsg(moduleName, "Added.");
 						}
 
 						public void onFailure(Throwable th) {
-							Toaster t = CurrentState.getToaster();
-							t.addItem(moduleName, "Failed to add.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg(moduleName, "Failed to Add.");
 						}
 					});
 		}
@@ -238,8 +222,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem(moduleName,
-								"Failed to load data.", Toaster.TOASTER_ERROR);
+						Util.showErrorMsg(moduleName, "Failed to load data.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -256,9 +239,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 								populateData(r);
 							}
 						} else {
-							CurrentState.getToaster().addItem(moduleName,
-									"Failed to load data.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg(moduleName, "Failed to load data.");
 						}
 					}
 				});
@@ -274,9 +255,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 						}
 
 						public void onFailure(Throwable t) {
-							CurrentState.getToaster().addItem(moduleName,
-									"Failed to load data.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg(moduleName, "Failed to load data.");
 						}
 					});
 		}

@@ -62,6 +62,12 @@ class SchedulerStatusType extends SupportModule {
 			// Run constructor
 		parent::__construct();
 	} // end constructor
+	
+	public function getStatusType(){
+		$q="select id as Id,sdescrip as descp,scolor as status_color from schedulerstatustype";
+		$result=$GLOBALS['sql']->queryAll( $q );
+		return $result;
+	}
 
 } // end class SchedulerStatusType
 

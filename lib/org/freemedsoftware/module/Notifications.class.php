@@ -38,12 +38,14 @@ class Notifications extends EMRModule {
 	var $order_field = 'ntarget';
 
 	var $variables = array (
-		'noriginal',
-		'ntarget',
-		'ndescrip',
-		'nuser',
-		'nfor',
-		'npatient'
+		  'noriginal'
+		, 'ntarget'
+		, 'ndescrip'
+		, 'nuser'
+		, 'nfor'
+		, 'npatient'
+		, 'nmodule'
+		, 'naction'
 	);
 
 	public function __construct () {

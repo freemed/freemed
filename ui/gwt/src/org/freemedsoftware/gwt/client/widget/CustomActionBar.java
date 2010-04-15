@@ -83,7 +83,7 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		this.handleCustomAction = handleCustomAction;
 		
 		// Pull ID for future
-		internalId = Integer.parseInt(item.get("id"));
+		internalId = Integer.parseInt(item.get("id")==null?item.get("Id"):item.get("id"));
 		data = item;
 
 		locked = (data.get("locked")!=null && Integer.parseInt(data.get("locked")) > 0);
@@ -188,20 +188,35 @@ public class CustomActionBar extends Composite implements ClickHandler {
 	}
 	
 	protected void showHideAction(int action,boolean show){
-		if(action == HandleCustomAction.ADD)
-			addImage.setVisible(show);
-		else if(action == HandleCustomAction.DELETE)
-			deleteImage.setVisible(show);
-		else if(action == HandleCustomAction.MODIFY)
-			modifyImage.setVisible(show);
-		else if(action == HandleCustomAction.VIEW)
-			viewImage.setVisible(show);
-		else if(action == HandleCustomAction.PRINT)
-			printImage.setVisible(show);
-		else if(action == HandleCustomAction.LOCK)
-			lockImage.setVisible(show);
-		else if(action == HandleCustomAction.LOCKED)
-			lockedImage.setVisible(show);
+		try{
+			if(action == HandleCustomAction.ADD)
+				addImage.setVisible(show);
+			else if(action == HandleCustomAction.DELETE)
+				deleteImage.setVisible(show);
+			else if(action == HandleCustomAction.MODIFY)
+				modifyImage.setVisible(show);
+			else if(action == HandleCustomAction.VIEW)
+				viewImage.setVisible(show);
+			else if(action == HandleCustomAction.PRINT)
+				printImage.setVisible(show);
+			else if(action == HandleCustomAction.LOCK)
+				lockImage.setVisible(show);
+			else if(action == HandleCustomAction.LOCKED)
+				lockedImage.setVisible(show);
+		}catch(Exception e){}
+	}
+	
+	public void applyPermissions(boolean read,boolean write,boolean delete,boolean modify,boolean lock){
+		if(!read){
+			hideAction(HandleCustomAction.VIEW);
+			hideAction(HandleCustomAction.PRINT);
+		}
+		if(!modify)
+			hideAction(HandleCustomAction.MODIFY);
+		if(!delete)
+			hideAction(HandleCustomAction.DELETE);
+		if(!lock)
+			hideAction(HandleCustomAction.LOCK);
 	}
 	
 	public void lock(){

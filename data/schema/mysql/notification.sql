@@ -24,18 +24,20 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `notification` (
-	noriginal		DATE,
-	ntarget			DATE,
-	ndescrip		TEXT,
-	nuser			INT UNSIGNED NOT NULL DEFAULT 0,
-	nfor			INT UNSIGNED NOT NULL DEFAULT 0,
-	npatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	id			SERIAL,
+	  noriginal		DATE NOT NULL
+	, ntarget		DATE NOT NULL
+	, ndescrip		TEXT
+	, nuser			INT UNSIGNED NOT NULL DEFAULT 0
+	, nfor			INT UNSIGNED NOT NULL DEFAULT 0
+	, npatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, nmodule		VARCHAR (100) DEFAULT NULL
+	, naction		VARCHAR (100) DEFAULT NULL
+	, id			SERIAL
 
 	#	Default key
 
-	KEY			( nuser, npatient, nfor, ntarget ),
-	FOREIGN KEY		( npatient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY			( nuser, npatient, nfor, ntarget )
+	, FOREIGN KEY		( npatient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS notification_Upgrade;
@@ -50,6 +52,8 @@ BEGIN
 	DROP TRIGGER notification_Update;
 
 	#----- Upgrades
+	ALTER TABLE notification ADD COLUMN nmodule VARCHAR (100) DEFAULT NULL AFTER npatient;
+	ALTER TABLE notification ADD COLUMN naction VARCHAR (100) DEFAULT NULL AFTER nmodule;
 END
 //
 DELIMITER ;

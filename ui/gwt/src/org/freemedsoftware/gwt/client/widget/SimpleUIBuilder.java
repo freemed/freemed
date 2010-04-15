@@ -30,6 +30,7 @@ import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.WidgetInterface;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -37,7 +38,6 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -54,7 +54,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 	protected static String helpprefix = "Help for";
 
 	public enum WidgetType {
-		MODULE, MODULE_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG, MULTILIST,SINGLELIST
+		MODULE, MODULE_MULTIPLE, USER_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG, MULTILIST,SINGLELIST,DATE
 	};
 
 	/**
@@ -99,7 +99,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		Button commitChangesButton = new Button("Commit Changes");
+		CustomButton commitChangesButton = new CustomButton("Commit Changes",AppConstants.ICON_ADD);
 		horizontalPanel.add(commitChangesButton);
 		commitChangesButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -167,6 +167,8 @@ public class SimpleUIBuilder extends WidgetInterface {
 			w = new SupportModuleWidget(options);
 		} else if (type.equals(WidgetType.MODULE_MULTIPLE)) {
 			w = new SupportModuleMultipleChoiceWidget(options);
+		} else if (type.equals(WidgetType.USER_MULTIPLE)) {
+			w = new UserMultipleChoiceWidget();
 		} else if (type.equals(WidgetType.SELECT)) {
 			w = new CustomListBox();
 
@@ -185,7 +187,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 		} else if (type.equals(WidgetType.PATIENT)) {
 			w = new PatientWidget();
-		} else if (type.equals(WidgetType.COLOR)) {
+		}else if (type.equals(WidgetType.DATE)) {
+			w = new CustomDatePicker();
+		}else if (type.equals(WidgetType.COLOR)) {
 			w = new CustomColorPicker();
 		} else if (type.equals(WidgetType.DRUG)) {
 			w = new DrugWidget();
@@ -268,6 +272,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		if (widget.compareToIgnoreCase("MODULE_MULTIPLE") == 0) {
 			return WidgetType.MODULE_MULTIPLE;
 		}
+		if (widget.compareToIgnoreCase("USER_MULTIPLE") == 0) {
+			return WidgetType.USER_MULTIPLE;
+		}
 		if (widget.compareToIgnoreCase("MODULE") == 0) {
 			return WidgetType.MODULE;
 		}
@@ -291,6 +298,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		}
 		if (widget.compareToIgnoreCase("SINGLELIST") == 0) {
 			return WidgetType.SINGLELIST;
+		}
+		if (widget.compareToIgnoreCase("DATE") == 0) {
+			return WidgetType.DATE;
 		}
 		// By default, return text
 
@@ -353,6 +363,10 @@ public class SimpleUIBuilder extends WidgetInterface {
 			return ((SupportModuleMultipleChoiceWidget) w)
 					.getCommaSeparatedValues();
 		}
+		if (w instanceof UserMultipleChoiceWidget) {
+			return ((UserMultipleChoiceWidget) w)
+					.getCommaSeparatedValues();
+		}
 		if (w instanceof CustomColorPicker) {
 			return ((CustomColorPicker) w).getValue();
 		}
@@ -364,6 +378,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		}
 		if (w instanceof CustomMulltiSelectListBox) {
 			return ((CustomMulltiSelectListBox) w).getWidgetValue();
+		}
+		if (w instanceof CustomDatePicker) {
+			return ((CustomDatePicker) w).getTextBox().getText();
 		}
 		return null;
 	}
@@ -393,6 +410,10 @@ public class SimpleUIBuilder extends WidgetInterface {
 				((SupportModuleMultipleChoiceWidget) w)
 						.setCommaSeparatedValues(value);
 			}
+			if (w instanceof UserMultipleChoiceWidget) {
+				((UserMultipleChoiceWidget) w)
+						.setCommaSeparatedValues(value);
+			}
 			if (w instanceof CustomColorPicker) {
 				((CustomColorPicker) w).setValue(value);
 			}
@@ -404,6 +425,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 			if (w instanceof CustomMulltiSelectListBox) {
 				((CustomMulltiSelectListBox) w).populateMultiList(value);
+			}
+			if (w instanceof CustomDatePicker) {
+				((CustomDatePicker) w).getTextBox().setText(value);
 			}
 		}
 	}

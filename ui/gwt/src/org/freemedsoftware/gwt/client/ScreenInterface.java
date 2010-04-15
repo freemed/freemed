@@ -24,16 +24,17 @@
 
 package org.freemedsoftware.gwt.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
 
-
+	
 	public ScreenInterface() {
 		super();
+	}
+	
+	public ScreenInterface(String moduleName) {
+		super(moduleName);
 	}
 
 	/**

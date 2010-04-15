@@ -67,7 +67,7 @@ class Login {
 	//
 	//	Boolean, login status.
 	//
-	public function Validate ( $username, $password ) {
+	public function Validate ( $username, $password,$location=NULL ) {
 		syslog (LOG_INFO, "username = ".$username);
 		//$username = $data['username'];
 		//$password = $data['password'];
@@ -110,7 +110,9 @@ class Login {
 			$authdata['user'] = $r['id'];
 			setcookie("user", $r['id'], time() + 3600, "/");
 			HTTP_Session2::set( 'authdata', $authdata );
-
+			// Set user facility
+			if($location)
+				HTTP_Session2::set( 'facility_id', $location );
 			$this->SessionPopulate();
 
 			// Set ipaddr for SESSION_PROTECTION

@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -112,6 +113,7 @@ public class Popup extends PopupPanel {
 				// setStylePrimaryName("freemed-MessageBox-Popup");
 			}
 		});
+		this.getElement().getStyle().setPosition(Position.FIXED);
 	}
 
 	public void setWidthOffset(Integer i) {

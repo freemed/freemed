@@ -286,7 +286,7 @@ public class LoginDialog extends DialogBox {
 			loginButton.setEnabled(false);
 
 			try {
-				Util.login(userLogin.getText(), loginPassword.getText(),
+				Util.login(userLogin.getText(), loginPassword.getText(),facilityList.getStoredValue(),
 						new Command() {
 							public void execute() {
 								hide();

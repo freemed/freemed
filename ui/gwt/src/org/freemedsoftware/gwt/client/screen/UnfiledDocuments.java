@@ -32,9 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
@@ -42,9 +44,11 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
+import org.freemedsoftware.gwt.client.widget.DocumentThumbnailsWidget;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -57,7 +61,9 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -73,7 +79,9 @@ public class UnfiledDocuments extends ScreenInterface {
 	protected CustomTable wDocuments = null;
 
 	protected ListBox wRotate = null;
-
+	
+	protected UserMultipleChoiceWidget users;
+	
 	protected TextBox wNote = null;
 
 	protected PatientWidget wPatient = null;
@@ -93,7 +101,18 @@ public class UnfiledDocuments extends ScreenInterface {
 	protected HashMap<String, String>[] store = null;
 
 	private static List<UnfiledDocuments> unfiledDocumentsList=null;
+
+	protected CheckBox cbRemoveFirstPage;
+
+	protected TextBox faxConfirmationNumber;
+
+	protected VerticalPanel batchSplitVp;
+
+	protected HorizontalPanel mainHorizontalPanel;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
+	
+	public final static String moduleName = "UnfiledDocuments";
+	
 	public static UnfiledDocuments getInstance(){
 		UnfiledDocuments unfiledDocuments=null; 
 		
@@ -111,10 +130,19 @@ public class UnfiledDocuments extends ScreenInterface {
 	}
 	
 	public UnfiledDocuments() {
-		final HorizontalPanel mainHorizontalPanel = new HorizontalPanel();
-		initWidget(mainHorizontalPanel);
+		super(moduleName);
+		VerticalPanel parentVp=new VerticalPanel();
+		parentVp.setSize("10o%", "100%");
+		initWidget(parentVp);
+		mainHorizontalPanel = new HorizontalPanel();
+		parentVp.add(mainHorizontalPanel);
+		
 		mainHorizontalPanel.setSize("100%", "100%");
-
+		
+		batchSplitVp = new VerticalPanel();
+		batchSplitVp.setSize("100%", "100%");
+		batchSplitVp.setVisible(false);
+		parentVp.add(batchSplitVp);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		mainHorizontalPanel.add(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
@@ -133,29 +161,32 @@ public class UnfiledDocuments extends ScreenInterface {
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);
 				} finally {
-					// Populate
-					String pDate = data.get("uffdate");
-					Calendar thisCal = new GregorianCalendar();
-					thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
-							.substring(0, 4)));
-					thisCal.set(Calendar.MONTH, Integer.parseInt(pDate
-							.substring(5, 6)) - 1);
-					thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
-							.substring(8, 9)));
-					wDate.setValue(thisCal.getTime());
-
-					// Show the form
-					flexTable.setVisible(true);
-					horizontalPanel.setVisible(true);
-
-					// Show the image in the viewer
-					djvuViewer.setInternalId(currentId);
-					try {
-						djvuViewer.loadPage(1);
-					} catch (Exception ex) {
-						JsonUtil.debug(ex.toString());
+					if(canWrite){
+						// Populate
+						String pDate = data.get("uffdate");
+						Calendar thisCal = new GregorianCalendar();
+						thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
+								.substring(0, 4)));
+						thisCal.set(Calendar.MONTH, Integer.parseInt(pDate
+								.substring(5, 6)) - 1);
+						thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
+								.substring(8, 9)));
+						wDate.setValue(thisCal.getTime());
+	
+						// Show the form
+						flexTable.setVisible(true);
+						horizontalPanel.setVisible(true);
 					}
-					djvuViewer.setVisible(true);
+					if(canRead){
+						// Show the image in the viewer
+						djvuViewer.setInternalId(currentId);
+						try {
+							djvuViewer.loadPage(1);
+						} catch (Exception ex) {
+							JsonUtil.debug(ex.toString());
+						}
+						djvuViewer.setVisible(true);
+					}
 				}
 			}
 		});
@@ -192,25 +223,41 @@ public class UnfiledDocuments extends ScreenInterface {
 		wNote = new TextBox();
 		flexTable.setWidget(3, 1, wNote);
 		wNote.setWidth("100%");
+		
+		final Label notifyLabel = new Label("Notify : ");
+		flexTable.setWidget(4, 0, notifyLabel);
 
+		users = new UserMultipleChoiceWidget();
+		flexTable.setWidget(4, 1, users);
+		//wNote.setWidth("100%");
+		
 		final Label categoryLabel = new Label("Category : ");
-		flexTable.setWidget(4, 0, categoryLabel);
+		flexTable.setWidget(5, 0, categoryLabel);
 
 		wCategory = new SupportModuleWidget();
 		wCategory.setModuleName("DocumentCategory");
-		flexTable.setWidget(4, 1, wCategory);
-
+		flexTable.setWidget(5, 1, wCategory);
+		
+		final Label faxNumberLabel = new Label("Fax Confirmation Number : ");
+		flexTable.setWidget(6, 0, faxNumberLabel);
+		
+		faxConfirmationNumber = new TextBox();
+		flexTable.setWidget(6, 1, faxConfirmationNumber);
+		
+		
 		final Label rotateLabel = new Label("Rotate : ");
-		flexTable.setWidget(5, 0, rotateLabel);
+		flexTable.setWidget(7, 0, rotateLabel);
 
 		wRotate = new ListBox();
-		flexTable.setWidget(5, 1, wRotate);
+		flexTable.setWidget(7, 1, wRotate);
 		wRotate.addItem("No rotation", "0");
 		wRotate.addItem("Rotate left", "270");
 		wRotate.addItem("Rotate right", "90");
 		wRotate.addItem("Flip", "180");
 		wRotate.setVisibleItemCount(1);
-
+		
+		cbRemoveFirstPage = new CheckBox("Remove First Page");
+		flexTable.setWidget(8, 0, cbRemoveFirstPage);
 		horizontalPanel = new HorizontalPanel();
 		horizontalPanel.setVisible(false);
 		horizontalPanel
@@ -245,7 +292,42 @@ public class UnfiledDocuments extends ScreenInterface {
 			}
 		});
 		horizontalPanel.add(fileDirectlyButton);
+		
+		final PushButton splitBatchButton = new PushButton();
+		splitBatchButton.setHTML("Split Batch");
+		splitBatchButton.setStylePrimaryName("freemed-PushButton");
+		splitBatchButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (djvuViewer.getPageCount()>1) {
 
+					final DocumentThumbnailsWidget dtw= new DocumentThumbnailsWidget(djvuViewer,new CustomRequestCallback() {
+						@Override
+						public void onError() {
+
+						}
+						@Override
+						public void jsonifiedData(Object data) {
+							if(data instanceof Integer) {
+								loadData();								
+							}
+							else if(data instanceof Integer[]) {
+								splitBatch((Integer[])data);
+							}
+							
+						}
+					});
+					batchSplitVp.add(dtw);
+					mainHorizontalPanel.setVisible(false);
+					batchSplitVp.setVisible(true);
+					
+				}
+				else if (djvuViewer.getPageCount()==1) {				
+					Window.alert("Current document has only one page");
+				}
+			}
+		});
+		horizontalPanel.add(splitBatchButton);
 		djvuViewer = new DjvuViewer();
 		djvuViewer.setType(DjvuViewer.UNFILED_DOCUMENTS);
 		mainHorizontalPanel.add(djvuViewer);
@@ -254,7 +336,8 @@ public class UnfiledDocuments extends ScreenInterface {
 
 		// Last thing is to initialize, otherwise we're going to get some
 		// NullPointerException errors
-		loadData();
+		if(canRead)
+			loadData();
 	}
 	
 	public void setSelectedDocument(HashMap<String, String> data){
@@ -289,11 +372,17 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "patient", (String) wPatient.getValue().toString());
 		p.put((String) "category", (String) wCategory.getValue().toString());
 		p.put((String) "physician", (String) wProvider.getValue().toString());
-		p.put((String) "withoutfirstpage", (String) "");
+		if(cbRemoveFirstPage.getValue())
+			p.put((String) "withoutfirstpage", (String) "1");
+		else
+			p.put((String) "withoutfirstpage", (String) "");
 		p.put((String) "filedirectly", (String) "1");
 		p.put((String) "note", (String) wNote.getText());
+		p.put((String) "faxback", (String)faxConfirmationNumber.getText());
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
+		if(users.getCommaSeparatedValues()!=null)
+			p.put((String) "notify",  users.getCommaSeparatedValues());
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			CurrentState.getToaster().addItem("UnfiledDocuments",
 					"Processed unfiled document.", Toaster.TOASTER_INFO);
@@ -323,17 +412,12 @@ public class UnfiledDocuments extends ScreenInterface {
 										JSONParser.parse(response.getText()),
 										"Integer");
 								if (r != null) {
-									CurrentState.getToaster().addItem(
-											"UnfiledDocuments",
-											"Processed unfiled document.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("UnfiledDocuments",
+											"Processed unfiled document.");
 									loadData();
 								}
 							} else {
-								CurrentState.getToaster().addItem(
-										"UnfiledDocuments",
-										"Failed to file document.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("UnfiledDocuments","Failed to file document.");
 							}
 						}
 					}
@@ -346,17 +430,12 @@ public class UnfiledDocuments extends ScreenInterface {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer o) {
-							CurrentState.getToaster().addItem(
-									"UnfiledDocuments",
-									"Processed unfiled document.");
+							Util.showInfoMsg("UnfiledDocuments","Processed unfiled document.");
 							loadData();
 						}
 
 						public void onFailure(Throwable t) {
-							CurrentState.getToaster().addItem(
-									"UnfiledDocuments",
-									"Failed to file document.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("UnfiledDocuments","Failed to file document.");
 							GWT.log("Exception", t);
 						}
 					});
@@ -368,9 +447,12 @@ public class UnfiledDocuments extends ScreenInterface {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void loadData() {
+		batchSplitVp.setVisible(false);
+		batchSplitVp.clear();
 		djvuViewer.setVisible(false);
 		flexTable.setVisible(false);
 		horizontalPanel.setVisible(false);
+		mainHorizontalPanel.setVisible(true);
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 			{
@@ -443,11 +525,17 @@ public class UnfiledDocuments extends ScreenInterface {
 		p.put((String) "patient", (String) wPatient.getValue().toString());
 		p.put((String) "category", (String) "");
 		p.put((String) "physician", (String) wProvider.getValue().toString());
-		p.put((String) "withoutfirstpage", (String) "");
+		if(cbRemoveFirstPage.getValue())
+			p.put((String) "withoutfirstpage", (String) "1");
+		else
+			p.put((String) "withoutfirstpage", (String) "");
 		p.put((String) "filedirectly", (String) "0");
 		p.put((String) "note", (String) wNote.getText());
+		p.put((String) "faxback", (String)faxConfirmationNumber.getText());
 		p.put((String) "flip", (String) wRotate.getValue(wRotate
 				.getSelectedIndex()));
+		if(users.getCommaSeparatedValues()!=null)
+			p.put((String) "notify",  users.getCommaSeparatedValues());
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			CurrentState.getToaster().addItem("UnfiledDocuments",
 					"Processed unfiled document.", Toaster.TOASTER_INFO);
@@ -464,9 +552,7 @@ public class UnfiledDocuments extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("UnfiledDocuments",
-								"Failed to file document.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("UnfiledDocuments","Failed to send document to provider.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -477,16 +563,10 @@ public class UnfiledDocuments extends ScreenInterface {
 										JSONParser.parse(response.getText()),
 										"Integer");
 								if (r != null) {
-									CurrentState.getToaster().addItem(
-											"UnfiledDocuments",
-											"Sent to provider.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("UnfiledDocuments","Sent to provider.");
 								}
 							} else {
-								CurrentState.getToaster().addItem(
-										"UnfiledDocuments",
-										"Failed to file document.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("UnfiledDocuments","Failed to send document to provider.");
 							}
 						}
 					}
@@ -499,15 +579,52 @@ public class UnfiledDocuments extends ScreenInterface {
 			getModuleProxy().ModuleModifyMethod("UnfiledDocuments", p,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer o) {
-							CurrentState.getToaster().addItem(
-									"UnfiledDocuments", "Sent to provider.",
-									Toaster.TOASTER_INFO);
+							Util.showInfoMsg("UnfiledDocuments","Sent to provider.");
 						}
 
 						public void onFailure(Throwable t) {
 							GWT.log("Exception", t);
 						}
 					});
+		}
+	}
+
+	public void splitBatch(Integer [] pageNos)
+	{
+		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { currentId.toString(),JsonUtil.jsonify(pageNos) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.UnfiledDocuments.batchSplit",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (200 == response.getStatusCode()) {
+							
+						} else {
+							JsonUtil.debug(response.toString());
+						}
+					}
+				});
+			} catch (RequestException e) {
+				JsonUtil.debug(e.toString());
+			}
+
+		} else {
+			
 		}
 	}
 
@@ -519,7 +636,16 @@ public class UnfiledDocuments extends ScreenInterface {
 	protected boolean validateForm() {
 		return true;
 	}
-
+	protected MessagesAsync getProxy() {
+		MessagesAsync p = null;
+		try {
+			p = (MessagesAsync) Util
+					.getProxy("org.freemedsoftware.gwt.client.Api.Messages");
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
+		}
+		return p;
+	}
 	protected UnfiledDocumentsAsync getDocumentsProxy() {
 		UnfiledDocumentsAsync p = null;
 		try {

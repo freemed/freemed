@@ -24,22 +24,19 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomRichTextArea;
 import org.freemedsoftware.gwt.client.widget.CustomTextArea;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -50,7 +47,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -83,14 +79,14 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final Button wSubmit = new Button("Submit");
+		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				submitForm();
 			}
 		});
-		final Button wReset = new Button("Reset");
+		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
@@ -113,7 +109,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		final CustomDatePicker wImportDate = new CustomDatePicker();
 		// wImportDate.setWeekendSelectable(true);
 		dateContainer.add(wImportDate);
-		final Button wImportPrevious = new Button("Import");
+		final CustomButton wImportPrevious = new CustomButton("Import",AppConstants.ICON_IMPORT);
 		dateContainer.add(wImportPrevious);
 		flexTable.setWidget(0, 1, dateContainer);
 
@@ -150,16 +146,14 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		wTemplate = new SupportModuleWidget("ProgressNotesTemplates");
 		templatePanel.add(wTemplate);
 
-		Button importTemplate = new Button("Import");
+		CustomButton importTemplate = new CustomButton("Import",AppConstants.ICON_IMPORT);
 		importTemplate.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (wTemplate.getValue() != null && wTemplate.getValue() != 0) {
 					JsonUtil.debug("loading template " + wTemplate.getValue());
 					if (Util.getProgramMode() == ProgramMode.STUBBED) {
-						CurrentState.getToaster().addItem(
-								"ProgressNotesTemplates", "Template loaded.",
-								Toaster.TOASTER_INFO);
+						Util.showInfoMsg("ProgressNotesTemplates", "Template loaded.");
 					} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 						String[] params = { JsonUtil.jsonify(wTemplate
 								.getValue()) };
@@ -176,10 +170,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 										com.google.gwt.http.client.Request request,
 										Throwable ex) {
 									GWT.log("Exception", ex);
-									CurrentState.getToaster().addItem(
-											"ProgressNotesTemplates",
-											"Failed to load template.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("ProgressNotesTemplates", "Failed to load template.");
 								}
 
 								public void onResponseReceived(
@@ -194,10 +185,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 														"HashMap<String,String>");
 										if (result != null) {
 											loadTemplateData(result);
-											CurrentState.getToaster().addItem(
-													"ProgressNotesTemplates",
-													"Loaded template.",
-													Toaster.TOASTER_INFO);
+											Util.showInfoMsg("ProgressNotesTemplates", "Loaded template.");
 										}
 									} else {
 										Window.alert(response.toString());
@@ -206,10 +194,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 							});
 						} catch (RequestException e) {
 							GWT.log("Exception", e);
-							CurrentState.getToaster().addItem(
-									"ProgressNotesTemplates",
-									"Failed to load template.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("ProgressNotesTemplates", "Failed to load template.");
 						}
 					} else {
 						// TODO: Make this work with GWT-RPC

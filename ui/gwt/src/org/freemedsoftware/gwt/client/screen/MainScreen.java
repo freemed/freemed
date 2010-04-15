@@ -35,7 +35,7 @@ import org.freemedsoftware.gwt.client.SystemNotifications;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.InfoDialog;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
@@ -175,10 +175,6 @@ public class MainScreen extends Composite {
 		CurrentState.retrieveSystemConfiguration(true,new Command() {
 			@Override
 			public void execute() {
-				if(CurrentState.getSystemConfig("calbreakhour")!=null)
-					CurrentState.setBREAK_HOUR(Integer.parseInt(CurrentState.getSystemConfig("calbreakhour")));
-				else
-					CurrentState.setBREAK_HOUR(13);
 			}
 		});
 
@@ -281,6 +277,31 @@ public class MainScreen extends Composite {
 		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		shortCutsPanel.add(separator);
 		
+		// adding Patient Search Link
+		PushButton ptSearchButton=new PushButton();
+		ptSearchButton.setStyleName("gwt-simple-button");
+		ptSearchButton.getUpFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/chart_search.16x16.png"));
+		ptSearchButton.getDownFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/chart_search.16x16.png"));
+		ptSearchButton.addClickHandler(new ClickHandler(){
+
+			public void onClick(ClickEvent event){
+				Util.spawnTab(AppConstants.SEARCH,
+						PatientSearchScreen.getInstance());
+			}
+		});
+		shortCutsPanel.add(ptSearchButton);
+		
+		// Adding spacer
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
 		// Adding preferences link
 		HTML preferencesLink = new HTML(
 				"<a href=\"javascript:undefined;\">preferences</a>");
@@ -292,19 +313,7 @@ public class MainScreen extends Composite {
 				// } else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				final PreferencesScreen preferencesScreen = PreferencesScreen
 						.getInstance();
-				Util.spawnTab("Preferences", preferencesScreen,
-						new ClosableTabInterface() {
-							@Override
-							public boolean isReadyToClose() {
-								return true;
-							}
-
-							@Override
-							public void onClose() {
-								PreferencesScreen
-										.removeInstance(preferencesScreen);
-							}
-						});
+				Util.spawnTab("Preferences", preferencesScreen);
 				// }
 			}
 		});
@@ -342,6 +351,27 @@ public class MainScreen extends Composite {
 		shortCutsPanel.add(separator);
 
 		// Adding logout link
+		HTML helpLink = new HTML(
+				"<a href=\"javascript:undefined;\">Help</a>");
+		helpLink.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				// logout event when clicked on logout link
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
+					Window.alert("Running in stubbed mode");
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					Window.open(Util.getHelpRequest(), "Help", "width=600,height=400,resizable=yes");
+					
+				}
+			}
+		});
+		shortCutsPanel.add(helpLink);
+
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
+
+		// Adding logout link
 		HTML logoutLink = new HTML(
 				"<a href=\"javascript:undefined;\">logout</a>");
 		logoutLink.addClickHandler(new ClickHandler() {
@@ -350,12 +380,13 @@ public class MainScreen extends Composite {
 				if (Util.getProgramMode() == ProgramMode.STUBBED) {
 					Window.alert("Running in stubbed mode");
 				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					dashboard.saveArrangement();
 					Util.logout();
 				}
 			}
 		});
 		shortCutsPanel.add(logoutLink);
-
+		
 		// Adding shortCutsPanel into top header
 		topHeaderHorPanel.add(shortCutsPanel);
 		topHeaderHorPanel.setCellHorizontalAlignment(shortCutsPanel,
@@ -480,6 +511,7 @@ public class MainScreen extends Composite {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");
 				dashboard.afterStateSet();
+				
 //				initMainScreen();
 			}
 		});
@@ -529,10 +561,10 @@ public class MainScreen extends Composite {
 
 	public void initMainScreen() {
 		initNavigations();
-		String theme = CurrentState.getUserConfig("Theme").toString()
-				.replaceAll("\"", "");
-		CurrentState.CUR_THEME = theme;
+		CurrentState.CUR_THEME = CurrentState.getUserConfig(AppConstants.SYSTEM_THEME,"String").toString();
 		Util.updateStyleSheets(CurrentState.CUR_THEME, CurrentState.LAST_THEME);
+		CurrentState.SYSTEM_NOTIFY_TYPE = CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString();
+		populateDefaultFacility();
 	}
 
 	public void initNavigations() {
@@ -542,7 +574,7 @@ public class MainScreen extends Composite {
 		 * Start Adding System panel options
 		 */
 		boolean showSystemPanel = false;
-		HashMap<String, HashMap<String, String>> leftNavigationMenu = CurrentState
+		HashMap<String, HashMap<String, Integer>> leftNavigationMenu = CurrentState
 				.getLeftNavigationOptions();
 		if (leftNavigationMenu.get(AppConstants.SYSTEM_CATEGORY) != null || Util.getProgramMode() == ProgramMode.STUBBED) {
 			if (isNeedToCreate(AppConstants.SYSTEM_CATEGORY,
@@ -842,6 +874,22 @@ public class MainScreen extends Composite {
 						menuIcon);
 				reportingAccPanel.add(menuIcon);
 			}
+			if (isNeedToCreate(AppConstants.REPORTING_CATEGORY,
+					AppConstants.REPORTING_LOG)) {
+				showReportingPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/reporting.32x32.png"),
+						AppConstants.REPORTING_LOG, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.REPORTING_LOG,
+										ReportingLogScreen.getInstance());
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.REPORTING_LOG,
+						menuIcon);
+				reportingAccPanel.add(menuIcon);
+			}
 		}
 
 		if (showReportingPanel)
@@ -856,18 +904,18 @@ public class MainScreen extends Composite {
 		boolean showUtilitiesPanel = false;
 		if (leftNavigationMenu.get(AppConstants.UTILITIES_CATEGORY) != null  || Util.getProgramMode() == ProgramMode.STUBBED) {
 			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
-					AppConstants.UTILITIES_SCREEN)) {
+					AppConstants.TOOLS_SCREEN)) {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
 						+ "resources/images/reporting.32x32.png"),
-						AppConstants.UTILITIES_SCREEN, new Command() {
+						AppConstants.TOOLS_SCREEN, new Command() {
 							public void execute() {
-								Util.spawnTab(AppConstants.UTILITIES_SCREEN,
-										UtilitiesScreen.getInstance());
+								Util.spawnTab(AppConstants.TOOLS_SCREEN,
+										ToolsScreen.getInstance());
 							}
 						});
-				leftNavMenuContainer.put(AppConstants.UTILITIES_SCREEN,
+				leftNavMenuContainer.put(AppConstants.TOOLS_SCREEN,
 						menuIcon);
 				utilitiesAccPanel.add(menuIcon);
 			}
@@ -942,7 +990,7 @@ public class MainScreen extends Composite {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "resources/images/reporting.32x32.png"),
+						+ "resources/images/settings.32x32.png"),
 						AppConstants.ACL, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.ACL,
@@ -980,7 +1028,7 @@ public class MainScreen extends Composite {
 	 * @param title of the navigation option
 	 */
 	public boolean isNeedToCreate(String menuCatagory, String title) {
-		if(CurrentState.isActionAllowed(AppConstants.SHOW, menuCatagory, title))
+		if(CurrentState.isMenuAllowed(menuCatagory, title))
 			return true;
 		if(leftNavMenuContainer.get(title) != null){
 			MenuIcon menuIcon = leftNavMenuContainer.get(title);
@@ -1027,8 +1075,7 @@ public class MainScreen extends Composite {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							String userName = response.getText().replaceAll(
-									"\"", "");
+							String userName = (String)JsonUtil.shoehornJson(response.getText(),"String");
 							loginUserInfo.setText(userName.trim());
 							CurrentState.assignDefaultUser(userName);
 						}
@@ -1099,7 +1146,6 @@ public class MainScreen extends Composite {
 											.debug("MainScreen.populateDefaultProvider: found "
 													+ r.toString());
 									CurrentState.assignDefaultProvider(r);
-									dashboard.setProvider(r);
 								} else {
 									JsonUtil
 											.debug("MainScreen.populateDefaultProvider: found error");
@@ -1115,9 +1161,7 @@ public class MainScreen extends Composite {
 						}
 					});
 				} catch (RequestException e) {
-					CurrentState.getToaster().addItem("MainScreen",
-							"Could not determine provider information.",
-							Toaster.TOASTER_ERROR);
+					Util.showErrorMsg("MainScreen", "Could not determine provider information.");
 				}
 			} else {
 				// TODO: GWT-RPC support for this function
@@ -1143,9 +1187,7 @@ public class MainScreen extends Composite {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("MainScreen",
-								"Could not determine Facility information.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("MainScreen", "Could not determine Facility information.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -1163,8 +1205,7 @@ public class MainScreen extends Composite {
 												+ data.get("facility"));
 								CurrentState.assignDefaultFacility(Integer
 										.parseInt(data.get("id")));
-								setFacility(data.get("facility").replaceAll(
-										"\"", ""));
+								setFacility(data.get("facility"));
 							} else {
 								JsonUtil
 										.debug("MainScreen.populateDefaultProvider: found error");
@@ -1176,9 +1217,7 @@ public class MainScreen extends Composite {
 					}
 				});
 			} catch (RequestException e) {
-				CurrentState.getToaster().addItem("MainScreen",
-						"Could not determine facility information.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("MainScreen", "Could not determine Facility information.");
 			}
 		} else {
 			// TODO: GWT-RPC support for this function
@@ -1211,7 +1250,8 @@ public class MainScreen extends Composite {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");
 				dashboard.afterStateSet();
-//				initMainScreen();
+//				dashboard.refreshDashBoardWidgets();
+				initMainScreen();
 			}
 		});
 		CurrentState.retrieveSystemConfiguration(false);

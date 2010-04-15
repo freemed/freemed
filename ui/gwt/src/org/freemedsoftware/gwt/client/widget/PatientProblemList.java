@@ -74,7 +74,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PatientProblemList extends WidgetInterface {
-
+	
+	public final static String moduleName = PatientScreen.moduleName;
+	
 	public class ActionBar extends Composite implements ClickHandler {
 
 		protected final String IMAGE_ANNOTATE = "resources/images/add1.16x16.png";
@@ -240,6 +242,7 @@ public class PatientProblemList extends WidgetInterface {
 	protected PatientScreen patientScreen = null;
 
 	public PatientProblemList() {
+		super(moduleName);
 		SimplePanel panel = new SimplePanel();
 		tabPanel = new TabPanel();
 		tabPanel.setSize("100%", "100%");
@@ -389,7 +392,6 @@ public class PatientProblemList extends WidgetInterface {
 	}
 
 	private void createSummaryTable(Widget tab, String criteria) {
-		final boolean canModify = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.NEW_PATIENT);
 		CustomTable t = new CustomTable();
 		if(canModify){
 			t.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {

@@ -50,6 +50,15 @@ public class CustomListBox extends ListBox implements HashSetter {
 			return new String("");
 		}
 	}
+	
+	public String getWidgetText() {
+		try {
+			return getItemText(getSelectedIndex());
+		} catch (Exception e) {
+			return new String("");
+		}
+	}
+	
 	public CustomListBox(){
 	}
 	public CustomListBox(boolean isMultiSelecionList){

@@ -32,9 +32,11 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -47,10 +49,8 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -64,6 +64,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 	protected final TextArea wText;
 
 	protected UserMultipleChoiceWidget wTo;
+	protected SupportModuleWidget wGroupTo;
 
 	protected final TextBox wSubject;
 
@@ -89,8 +90,21 @@ public class MessagingComposeScreen extends ScreenInterface {
 		final Label toLabel = new Label("To : ");
 		flexTable.setWidget(0, 0, toLabel);
 
+		final HorizontalPanel toPanel = new HorizontalPanel();
+		toPanel.setWidth("100%");
+		flexTable.setWidget(0, 1, toPanel);
+		
+		final Label userLabel = new Label("user:");
+		toPanel.add(userLabel);
 		wTo = new UserMultipleChoiceWidget();
-		flexTable.setWidget(0, 1, wTo);
+		toPanel.add(wTo);
+		
+		final Label groupLabel = new Label("group:");
+		toPanel.add(groupLabel);
+		wGroupTo = new SupportModuleWidget("UserGroups");
+		toPanel.add(wGroupTo);
+		
+		
 
 		final Label subjectLabel = new Label("Subject : ");
 		flexTable.setWidget(1, 0, subjectLabel);
@@ -129,29 +143,28 @@ public class MessagingComposeScreen extends ScreenInterface {
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		final Button sendButton = new Button();
+		final CustomButton sendButton = new CustomButton("Send",AppConstants.ICON_SEND);
 		horizontalPanel.add(sendButton);
-		sendButton.setText("Send");
 		sendButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				sendMessage(false);
+				if(validateForm())
+					sendMessage(false);
 			}
 		});
 
-		final Button sendAnotherButton = new Button();
+		final CustomButton sendAnotherButton = new CustomButton("Send and Compose Another",AppConstants.ICON_COMPOSE_MAIL);
 		horizontalPanel.add(sendAnotherButton);
-		sendAnotherButton.setText("Send and Compose Another");
 		sendAnotherButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				sendMessage(true);
+				if(validateForm())
+					sendMessage(true);
 			}
 		});
 
-		final Button clearButton = new Button();
+		final CustomButton clearButton = new CustomButton("Clear",AppConstants.ICON_CLEAR);
 		horizontalPanel.add(clearButton);
-		clearButton.setText("Clear");
 		clearButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -177,21 +190,41 @@ public class MessagingComposeScreen extends ScreenInterface {
 		wTo.setFocus();
 	}
 
+	protected boolean validateForm() {
+		String msg = new String("");
+		if (wTo.getCommaSeparatedValues().equals("") &&
+				wGroupTo.getStoredValue().equals("0")) {
+			msg += "Please specify at least one recipient or a group." + "\n";
+		}
+		if (wSubject.getText().trim().length() == 0) {
+			msg += "Please specify subject." + "\n";
+		}
+		if (msg.length()>0) {
+			Window.alert(msg);
+			return false;
+		}
+
+		return true;
+	}
+	
 	public void sendMessage(final boolean sendAnother) {
 		CurrentState.statusBarAdd(className, "Sending Message");
 
 		// Form data
 		HashMap<String, String> data = new HashMap<String, String>();
-		data.put("patient", wPatient.getValue().toString());
-		data.put("for", wTo.getCommaSeparatedValues());
+		if(wPatient.getValue()!=null)
+			data.put("patient", wPatient.getValue().toString());
+		if(wTo.getCommaSeparatedValues()!=null)
+			data.put("for", wTo.getCommaSeparatedValues());
+		if(wGroupTo.getStoredValue()!=null)
+			data.put("group", wGroupTo.getStoredValue());
 		data.put("text", wText.getText());
 		data.put("subject", wSubject.getText());
 		data.put("urgency", wUrgency.getWidgetValue());
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			CurrentState.statusBarRemove(className);
-			CurrentState.getToaster().addItem(className, "Sent message.",
-					Toaster.TOASTER_INFO);
+			Util.showInfoMsg(className, "Message Sent.");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(data) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -201,9 +234,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						CurrentState.statusBarRemove(className);
-						CurrentState.getToaster().addItem(className,
-								"Failed to send message.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg(className, "Failed to send message.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -214,8 +245,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 									"String[]");
 							if (r != null) {
 								CurrentState.statusBarRemove(className);
-								CurrentState.getToaster().addItem(className,
-										"Sent message.", Toaster.TOASTER_INFO);
+								Util.showInfoMsg(className, "Message Sent.");
 								if (!sendAnother) {
 									if(parentScreen != null){
 										parentScreen.populate("");
@@ -232,22 +262,18 @@ public class MessagingComposeScreen extends ScreenInterface {
 							}
 						} else {
 							CurrentState.statusBarRemove(className);
-							CurrentState.getToaster().addItem(className,
-									"Failed to send message.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg(className, "Failed to send message.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				CurrentState.getToaster().addItem(className,
-						"Failed to send message.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg(className, "Failed to send message.");
 			}
 		} else {
 			getProxy().Send(data, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean result) {
 					CurrentState.statusBarRemove(className);
-					CurrentState.getToaster().addItem(className,
-							"Sent message.", Toaster.TOASTER_INFO);
+					Util.showErrorMsg(className, "Failed to send message.");
 					if (!sendAnother && parentScreen != null) {
 						parentScreen.populate("");
 						getThisObject().closeScreen();
@@ -256,8 +282,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 				public void onFailure(Throwable t) {
 					CurrentState.statusBarRemove(className);
-					CurrentState.getToaster().addItem(className,
-							"Failed to send message.", Toaster.TOASTER_ERROR);
+					Util.showErrorMsg(className, "Failed to send message.");
 				}
 			});
 		}

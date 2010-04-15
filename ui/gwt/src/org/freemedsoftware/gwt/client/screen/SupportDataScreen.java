@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -36,7 +35,6 @@ import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -53,6 +51,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SupportDataScreen extends ScreenInterface {
+
+	public final static String moduleName = "admin";
 
 	protected CustomTable sortableTable = null;
 
@@ -75,6 +75,7 @@ public class SupportDataScreen extends ScreenInterface {
 	}
 	
 	public SupportDataScreen() {
+		super(moduleName);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -133,9 +134,7 @@ public class SupportDataScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("SupportDataScreen",
-								"Could not load list of support data modules.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -148,12 +147,7 @@ public class SupportDataScreen extends ScreenInterface {
 												"HashMap<String,String>[]");
 								sortableTable.loadData(r);
 							} else {
-								CurrentState
-										.getToaster()
-										.addItem(
-												"SupportDataScreen",
-												"Could not load list of support data modules.",
-												Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 							}
 						}
 					}
@@ -176,12 +170,7 @@ public class SupportDataScreen extends ScreenInterface {
 						}
 
 						public void onFailure(Throwable t) {
-							CurrentState
-									.getToaster()
-									.addItem(
-											"SupportDataScreen",
-											"Could not load list of support data modules.",
-											Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 						}
 					});
 		}

@@ -1,0 +1,123 @@
+<!--
+	// $Id$
+	// $Author$
+	// $Log$
+	// Revision 1.1  2004/03/09 20:02:17  rufustfirefly
+	// Fixed help system to work with newskin and new location.
+	//
+	// Revision 1.2  2001/12/06 16:25:51  rufustfirefly
+	// more documentation changes/additions
+	//
+	// Revision 1.1  2001/11/21 21:03:27  rufustfirefly
+	// all helpfiles had .php removed
+	//
+	// Revision 1.4  2001/11/20 22:00:29  rufustfirefly
+	// cleanup and helpfile updates
+	//
+	// Revision 1.3  2001/11/19 22:54:41  rufustfirefly
+	// new system for interlinked documentation (substitution via percents)
+	//
+	// Revision 1.2  2001/11/19 20:47:33  rufustfirefly
+	// updated with CVS tags in HTML comment
+	//
+-->
+
+Welcome to FreeMED, the world's premiere web-based
+open-source practice management and electronic medical
+record software!
+
+<P>
+
+The main menu is the center of FreeMED's navigation. From
+here, you can use access any part of the FreeMED software.
+On the top of this page there are five navigation buttons
+named System, Main, User, Patients and Notify.  The function of 
+the categories under each of these navigation buttons will 
+be discussed in separate help screens as you navigate through
+FreeMED. On the Main Menu page you will see the following categories:
+
+<P>
+
+<UL>
+
+        <LI> <I>Messages</I> - Directly below the navigation buttons is
+        a notification displaying the number of messages which have been sent
+        to the user.  Clicking on this notification will take you to the 
+	message center containing the messages.  One can also access the 
+	message center by clicking on "Unread Messages" near the bottom 
+	of this screen or by clicking on the envelope next to the name of 
+	the user at the very bottom of the screen.
+
+	<LI><I>Patient Scheduler</I> - This displays the number of appointments
+	that the provider has. Clicking in "you have x appointmnent(s) today" 
+	will take you to the user's daily schedule.  This daily schedule can 
+	also be reached by clicking on User -> Day View. Clicking on 
+	"x appointment(s) this week" will take you to the weekly schedule 
+	which can also be reached by clicking on User -> Week View.
+
+
+	<LI><I>Work Lists</I> -You may not see this category unless it has been 
+	enabled for you. To enable viewing of work lists, click on 
+	Main -> Administrative Menu -> System Configuration -> Work Lists and 
+	then choose enable and the users who will see it.
+	Once Work Lists are enabled you will see all of the patients coming to 
+	the office today, the time of their appointments and their status.
+	If you click on the letters directly beneath the word Status, you will 
+	see a drop-down list of A3C (Anticipating Arrival at Counter), 
+	CIAC (Checked in at Counter), E/PIP (Encounter/Procedure in Progress), 
+	E/PIC (Encounter/Procedure is Complete), CO (Checked out) and NS (No Show). 
+	If you forget what these letter mean, just put the mouse pointer in the 
+	letters without clicking. You will then see the explanation for each set 
+	of letters.</br>
+	If you want to add more categories, click on Main -> Support Data ->
+	Scheduler Status Type.  You can also change the color that is associated
+	with each of the categories.</br>
+	If you see that the work list of a provider lists a time with the words
+	"Non-Patient Related", it means that the provider 
+	has a non-patient related scheduled activity.  The provider may be 
+	traveling from the hospital to the office for instance.
+
+        <LI><I>Updates</I> This displays secruity feed update information.
+	If desired, one can remove this category from view by changing the 
+	name of updates.module.php in the /usr/share/freemed/modules directory.
+
+	<LI><I>Unread Faxes</I> - If this menu is present, it means that the 
+	provider has received faxes or scanned records that the provider must
+	review. Clicking on "Read" will take you to the list of the records 
+	which must be reviewed.  Then clicking on "View" will display the 
+	record.   
+
+	<LI><I> Unread Messages</I> - If this menu is present, it means 
+	that the provider has received messages from other users.  Clicking 
+	on "View" will take you to the message center containing the messages. 
+	One can also reach the message center by clicking on the envelope 
+	next to the name of the user at the very bottom of the screen. 
+	The features of the Message Center are explained in the "Messages" 
+	category above.
+
+	<LI><I>Unfiled Faxes</I> - If this menu is present, it means that 
+	records have been scanned or faxed into FreeMED. "Unfiled Faxes" 
+	are generally viewed by the staff. To set who will see Unfiled Faxes, 
+	go to Main -> Administrative Menu -> System Configuration -> 
+	Unfiled Faxes. You can then set who will see Unfiled Faxes. If you 
+	click on [File], you will be taken to list of all Unfiled Faxes. 
+	You can "Del" a document or you can "View" it.
+	If you click on View, you will see the document. You will also see the
+	data that has to be attached to the document in order to file it. 
+
+	<LI><I>Superbill</I> - If this menu is present, it allows the billing
+	department to see which procedures are ready to be billed.
+	You can add a  Suberbill like this by clicking on a patient's chart
+	going to the Progress Notes module, clicking on Add and clicking on
+	the Superbill tab.  This is explained more fully in the Help Menu of
+	Progress Notes Box module.
+
+	<LI><I> Letter Corrections</I> - If this menu is present, you are a 
+	typist who has typed a letter for a provider.  The provider has 
+	added suggested corrections and returned the letter to you so that
+	you can make the indicated corrections.
+
+	<LI><I> Unread Letters</I> - If this menu is present, you will see 
+	letters which have been typed by a typist and returned to the provider 
+	for proof-reading and correction.  After the letters are approved, the 
+	secretary can then fax or print the letters.

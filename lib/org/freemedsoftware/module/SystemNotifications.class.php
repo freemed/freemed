@@ -61,7 +61,7 @@ class SystemNotifications extends SupportModule {
 	//
 	public function GetFromTimestamp ( $timestamp ) {
 		$this_user = freemed::user_cache( );
-		$q = "SELECT *, SUBSTRING_INDEX(NOW() + 0, '.', 1) AS 'timestamp' FROM ".$this->table_name." WHERE nuser = ".$GLOBALS['sql']->quote( $this_user->user_number )." AND stamp >= ".$GLOBALS['sql']->quote( $timestamp );
+		$q = "SELECT NOW() AS `stamp`, ".$GLOBALS['sql']->quote( $this_user->user_number )." AS `nuser`, '' AS `ntext`, '' AS 'naction', '' AS `nmodule`, 0 AS `npatient`, 0 AS `id`, SUBSTRING_INDEX(NOW() + 0, '.', 1) AS `timestamp` UNION SELECT *, SUBSTRING_INDEX(NOW() + 0, '.', 1) AS 'timestamp' FROM ".$this->table_name." WHERE ( nuser = ".$GLOBALS['sql']->quote( $this_user->user_number )." OR nuser = 0 ) AND stamp + 0 >= ".$GLOBALS['sql']->quote( $timestamp )." AND stamp <= NOW()";
 		$res = $GLOBALS['sql']->queryAll( $q );
 		return $res;
 	} // end method GetFromTimestamp

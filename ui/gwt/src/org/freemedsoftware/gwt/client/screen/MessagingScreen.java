@@ -41,11 +41,11 @@ import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.MessageView;
 import org.freemedsoftware.gwt.client.widget.Popup;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
@@ -65,7 +65,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -74,7 +73,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class MessagingScreen extends ScreenInterface implements ClickHandler,
 		SystemEvent.Handler {
-
 	private static List<MessagingScreen> messagingScreensList = null;
 
 	// Creates only desired amount of instances if we follow this pattern
@@ -118,179 +116,189 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 	protected Popup popupMessageView;
 	public MessageView msgView;
 
+	public final static String moduleName = "MessagesModule";
+	
 	// Making constructor private to implement singleton Design Pattern
 	private MessagingScreen() {
+		super(moduleName);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		final Button composeButton = new Button();
-		horizontalPanel.add(composeButton);
-		composeButton.setText("Compose");
-		composeButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				final MessagingComposeScreen p = new MessagingComposeScreen();
-				p.setParentScreen(getMessagingScreen());
-				CurrentState.getTabPanel().add(p,
-						new ClosableTab("Compose Message", p));
-				CurrentState.getTabPanel().selectTab(
-						CurrentState.getTabPanel().getWidgetCount() - 1);
-			}
-		});
-
-		final Button selectAllButton = new Button();
-		horizontalPanel.add(selectAllButton);
-		selectAllButton.setText("Select All");
-		selectAllButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent wvt) {
-				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
-				while (iter.hasNext()) {
-					CheckBox t = iter.next();
-					t.setValue(true);
-					if (!selectedItems.contains(checkboxStack.get(t))) {
-						selectedItems.add(checkboxStack.get(t));
+		if(canRead){
+			horizontalPanel.add(messageTagSelect);
+			messageTagSelect.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					try {
+						String effective = messageTagSelect.getWidgetValue();
+						wMessages.clearAllSelections();
+						populate(effective);
+					} catch (Exception ex) {
+						Window.alert(ex.toString());
 					}
 				}
-			}
-		});
+			});
+		}
+		
+		if(canWrite){
+			final CustomButton composeButton = new CustomButton("Compose",AppConstants.ICON_COMPOSE_MAIL);
+			horizontalPanel.add(composeButton);
+			composeButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					final MessagingComposeScreen p = new MessagingComposeScreen();
+					p.setParentScreen(getMessagingScreen());
+					CurrentState.getTabPanel().add(p,
+							new ClosableTab("Compose Message", p));
+					CurrentState.getTabPanel().selectTab(
+							CurrentState.getTabPanel().getWidgetCount() - 1);
+				}
+			});
+		}
 
-		final Button selectNoneButton = new Button();
-		horizontalPanel.add(selectNoneButton);
-		selectNoneButton.setText("Select None");
-		selectNoneButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
-				while (iter.hasNext()) {
-					CheckBox t = iter.next();
-					t.setValue(false);
-					if (selectedItems.contains(checkboxStack.get(t))) {
-						selectedItems.remove(checkboxStack.get(t));
+		if(canModify){
+			final CustomButton selectButton = new CustomButton("Change",AppConstants.ICON_CHANGE);
+			horizontalPanel.add(selectButton);
+			selectButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					populate(((CustomListBox) evt.getSource()).getWidgetValue());
+				}
+			});
+		}
+		if(canModify){
+			final CustomButton moveButton = new CustomButton("Move",AppConstants.ICON_MOVE_MAIL);
+			horizontalPanel.add(moveButton);
+			moveButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					Window.alert("STUB: move message(s)");
+				}
+			});
+		}
+		
+		if(canRead){
+			final CustomButton selectAllButton = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+			horizontalPanel.add(selectAllButton);
+			selectAllButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent wvt) {
+					Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
+					while (iter.hasNext()) {
+						CheckBox t = iter.next();
+						t.setValue(true);
+						if (!selectedItems.contains(checkboxStack.get(t))) {
+							selectedItems.add(checkboxStack.get(t));
+						}
 					}
 				}
-			}
-		});
-
-		final Button deleteButton = new Button();
-		horizontalPanel.add(deleteButton);
-		deleteButton.setText("Delete");
-		deleteButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				if (Window
-						.confirm("Are you sure you want to delete these item(s)?")) {
-					List<String> slectedItems = wMessages.getSelected();
-					// Get all selected items from custom table
-					Iterator<String> itr = slectedItems.iterator();
-					while (itr.hasNext()) {
-						deleteMessage(Integer.parseInt(itr.next()));
+			});
+		}
+		if(canRead){
+			final CustomButton selectNoneButton = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
+			horizontalPanel.add(selectNoneButton);
+			selectNoneButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					Iterator<CheckBox> iter = checkboxStack.keySet().iterator();
+					while (iter.hasNext()) {
+						CheckBox t = iter.next();
+						t.setValue(false);
+						if (selectedItems.contains(checkboxStack.get(t))) {
+							selectedItems.remove(checkboxStack.get(t));
+						}
 					}
-					populate(messageTagSelect.getWidgetValue());
 				}
-			}
-		});
-
-		horizontalPanel.add(messageTagSelect);
-		messageTagSelect.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				try {
-					String effective = messageTagSelect.getWidgetValue();
-					wMessages.clearAllSelections();
-					populate(effective);
-				} catch (Exception ex) {
-					Window.alert(ex.toString());
+			});
+		}
+		if(canDelete){
+			final CustomButton deleteButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+			horizontalPanel.add(deleteButton);
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					if (Window
+							.confirm("Are you sure you want to delete these item(s)?")) {
+						List<String> slectedItems = wMessages.getSelected();
+						// Get all selected items from custom table
+						Iterator<String> itr = slectedItems.iterator();
+						while (itr.hasNext()) {
+							deleteMessage(Integer.parseInt(itr.next()));
+						}
+						populate(messageTagSelect.getWidgetValue());
+					}
 				}
-			}
 		});
-
-		final Button selectButton = new Button();
-		horizontalPanel.add(selectButton);
-		selectButton.setText("Change");
-		selectButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				populate(((CustomListBox) evt.getSource()).getWidgetValue());
-			}
-		});
-
-		final Button moveButton = new Button();
-		horizontalPanel.add(moveButton);
-		moveButton.setText("Move");
-		moveButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				Window.alert("STUB: move message(s)");
-			}
-		});
-
+		}
 		final VerticalPanel verticalSplitPanel = new VerticalPanel();
 		verticalPanel.add(verticalSplitPanel);
 		verticalSplitPanel.setSize("100%", "100%");
 		// verticalSplitPanel.setSplitPosition("50%");
 
-		wMessages = new CustomTable();
-		// wMessages.setAllowSelection(true);
-		// wMessages.setMultipleSelection(true);
-		verticalSplitPanel.add(wMessages);
-		wMessages.setSize("100%", "100%");
-		wMessages.addColumn("Selected", "selected");
-		wMessages.addColumn("Received", "stamp"); // col 1
-		wMessages.addColumn("From", "from_user"); // col 2
-		wMessages.addColumn("Subject", "subject"); // col 3
-		// wMessages.addColumn("Delete", "delete"); // col 4
-		wMessages.setIndexName("id");
-		wMessages.setTableRowClickHandler(new TableRowClickHandler() {
-			@Override
-			public void handleRowClick(HashMap<String, String> data, int col) {
-				try {
-					final Integer messageId = Integer.parseInt(data.get("id"));
-					if (col == 4) {
-						deleteMessage(messageId);
-					} else if (col != 0) {
-						showMessage(messageId);
-						msgView = new MessageView();
-						msgView.setMsgFrom(data.get("from_user"));
-						msgView.setMsgDate(data.get("stamp"));
-						msgView.setText(msgView.createMessageHtml(data
-								.get("from_user"), data.get("stamp"), data
-								.get("subject"), data.get("content")));
-						// showMessage(messageId);
-						msgView.setMessagingScreen(getMessagingScreen());
-						popupMessageView = new Popup();
-						popupMessageView.setNewWidget(msgView);
-						msgView.setOnClose(new Command() {
-							public void execute() {
-								popupMessageView.hide();
-							}
-						});
-						popupMessageView.initialize();
-
-					}
-				} catch (Exception e) {
-					GWT.log("Caught exception: ", e);
-				}
-			}
-		});
-		wMessages
-				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
-					public Widget setColumn(String columnName,
-							HashMap<String, String> data) {
-						Integer id = Integer.parseInt(data.get("id"));
-						if (columnName.compareTo("selected") == 0) {
-							CheckBox c = new CheckBox();
-							c.addClickHandler(getMessagingScreen());
-							checkboxStack.put(c, id);
-							return c;
-						} else {
-							return (Widget) null;
+		if(canRead){
+		
+			wMessages = new CustomTable();
+			// wMessages.setAllowSelection(true);
+			// wMessages.setMultipleSelection(true);
+			verticalSplitPanel.add(wMessages);
+			wMessages.setSize("100%", "100%");
+			wMessages.addColumn("Selected", "selected");
+			wMessages.addColumn("Received", "stamp"); // col 1
+			wMessages.addColumn("From", "from_user"); // col 2
+			wMessages.addColumn("Subject", "subject"); // col 3
+			// wMessages.addColumn("Delete", "delete"); // col 4
+			wMessages.setIndexName("id");
+			wMessages.setTableRowClickHandler(new TableRowClickHandler() {
+				@Override
+				public void handleRowClick(HashMap<String, String> data, int col) {
+					try {
+						final Integer messageId = Integer.parseInt(data.get("id"));
+						if (col == 4) {
+							deleteMessage(messageId);
+						} else if (col != 0) {
+							showMessage(messageId);
+							msgView = new MessageView();
+							msgView.setMessageId(messageId);
+							msgView.setMsgFrom(data.get("from_user"));
+							msgView.setMsgDate(data.get("stamp"));
+							msgView.setText(msgView.createMessageHtml(data
+									.get("from_user"), data.get("stamp"), data
+									.get("subject"), data.get("content")));
+							// showMessage(messageId);
+							msgView.setMessagingScreen(getMessagingScreen());
+							popupMessageView = new Popup();
+							popupMessageView.setNewWidget(msgView);
+							msgView.setOnClose(new Command() {
+								public void execute() {
+									popupMessageView.hide();
+								}
+							});
+							popupMessageView.initialize();
+	
 						}
+					} catch (Exception e) {
+						GWT.log("Caught exception: ", e);
 					}
-				});
-
+				}
+			});
+			wMessages
+					.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+						public Widget setColumn(String columnName,
+								HashMap<String, String> data) {
+							Integer id = Integer.parseInt(data.get("id"));
+							if (columnName.compareTo("selected") == 0) {
+								CheckBox c = new CheckBox();
+								c.addClickHandler(getMessagingScreen());
+								checkboxStack.put(c, id);
+								return c;
+							} else {
+								return (Widget) null;
+							}
+						}
+					});
+		}
 		messageView = new HTML("<img src=\"" + LOADING_IMAGE
 				+ "\" border=\"0\" />");
 		verticalSplitPanel.add(messageView);
@@ -496,8 +504,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 
 	protected void deleteMessage(Integer messageId) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			CurrentState.getToaster().addItem("MessagingScreen",
-					"Deleted message.", Toaster.TOASTER_INFO);
+			Util.showInfoMsg("MessagingScreen", "Deleted message.");
 			populate("");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(messageId) };
@@ -507,9 +514,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("MessagingScreen",
-								"Failed to delete message.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -520,17 +525,11 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 										JSONParser.parse(response.getText()),
 										"Boolean");
 								if (r != null) {
-									CurrentState.getToaster().addItem(
-											"MessagingScreen",
-											"Deleted message.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("MessagingScreen", "Deleted message.");
 									// populate(tag);
 								}
 							} else {
-								CurrentState.getToaster().addItem(
-										"MessagingScreen",
-										"Failed to delete message.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
 							}
 						}
 					}
@@ -544,25 +543,20 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 				service = (MessagesAsync) Util
 						.getProxy("org.freemedsoftware.gwt.client.Api.Messages");
 			} catch (Exception e) {
-				CurrentState.getToaster().addItem("MessagingScreen",
-						"Failed to delete message.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
 			}
 			service.Remove(messageId, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean data) {
 					if (data) {
-						CurrentState.getToaster().addItem("MessagingScreen",
-								"Deleted message.", Toaster.TOASTER_INFO);
+						Util.showInfoMsg("MessagingScreen", "Deleted message.");
 						populate("");
 					} else {
-						CurrentState.getToaster().addItem("MessagingScreen",
-								"Failed to delete message.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
 					}
 				}
 
 				public void onFailure(Throwable t) {
-					CurrentState.getToaster().addItem("MessagingScreen",
-							"Failed to delete message.", Toaster.TOASTER_ERROR);
+					Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
 				}
 			});
 		}
@@ -681,8 +675,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 	public void onSystemEvent(SystemEvent e) {
 		if (e.getSourceModule() == "messages") {
 			populate(messageTagSelect.getWidgetValue());
-			CurrentState.getToaster().addItem("Messages",
-					"You have new messages.", Toaster.TOASTER_INFO);
+			Util.showInfoMsg("MessagingScreen", "You have new messages.");
 		}
 	}
 }

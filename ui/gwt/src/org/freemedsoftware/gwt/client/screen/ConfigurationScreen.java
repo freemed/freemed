@@ -36,8 +36,8 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -51,7 +51,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -60,6 +59,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ConfigurationScreen extends ScreenInterface {
+	
+	public final static String moduleName = "admin";
 
 	protected TabPanel tabPanel;
 
@@ -88,8 +89,7 @@ public class ConfigurationScreen extends ScreenInterface {
 	}
 	
 	public ConfigurationScreen() {
-		
-		final boolean canChange =  CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.SYSTEM_CONFIGURATION);
+		super(moduleName);
 		
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -101,10 +101,9 @@ public class ConfigurationScreen extends ScreenInterface {
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
-		if(canChange){
-			final Button commitChangesButton = new Button();
+		if(canModify){
+			final CustomButton commitChangesButton = new CustomButton("Commit Changes",AppConstants.ICON_ADD);
 			horizontalPanel.add(commitChangesButton);
-			commitChangesButton.setText("Commit Changes");
 			commitChangesButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -139,8 +138,7 @@ public class ConfigurationScreen extends ScreenInterface {
 
 	protected void commitValues() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			CurrentState.getToaster().addItem("ConfigurationScreen",
-					"Updated configuration.", Toaster.TOASTER_INFO);
+			Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(getAllValues()) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -150,10 +148,7 @@ public class ConfigurationScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem(
-								"ConfigurationScreen",
-								"Failed to update configuration.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -163,42 +158,26 @@ public class ConfigurationScreen extends ScreenInterface {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (r.booleanValue()) {
-								CurrentState.getToaster().addItem(
-										"ConfigurationScreen",
-										"Updated configuration.",
-										Toaster.TOASTER_INFO);
+								Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
 								CurrentState.retrieveSystemConfiguration(true);//re-evaluate system configuration
 							} else {
-								CurrentState.getToaster().addItem(
-										"ConfigurationScreen",
-										"Failed to update configuration.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
 							}
 						} else {
-							CurrentState.getToaster().addItem(
-									"ConfigurationScreen",
-									"Failed to update configuration.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				CurrentState.getToaster().addItem("ConfigurationScreen",
-						"Failed to update configuration.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
 			}
 		} else {
 			getProxy().SetValues(getAllValues(), new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean result) {
 					if (result.booleanValue()) {
-						CurrentState.getToaster().addItem(
-								"ConfigurationScreen",
-								"Updated configuration.", Toaster.TOASTER_INFO);
+						Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
 					} else {
-						CurrentState.getToaster().addItem(
-								"ConfigurationScreen",
-								"Failed to update configuration.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
 					}
 				}
 
@@ -358,11 +337,11 @@ public class ConfigurationScreen extends ScreenInterface {
 	}
 
 	protected void addToStack(HashMap<String, String> r) {
-		final boolean canChange =  CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.SYSTEM_CONFIGURATION); 
+ 
 		// Add initial widget, get appropriate count and container
 		JsonUtil.debug(r.get("c_option") + " (" + r.get("c_type") + ")");
 		Widget w = addWidget(r);
-		if(!canChange){
+		if(!canModify){
 			if(w instanceof TextBox)
 				((TextBox)w).setEnabled(false);
 			else if(w instanceof CustomListBox)

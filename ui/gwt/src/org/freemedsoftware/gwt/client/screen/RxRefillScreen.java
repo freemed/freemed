@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -47,19 +48,18 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class RxRefillScreen extends ScreenInterface {
-
+	
+	public final static String moduleName = "RxRefillRequest";
+	
 	private PatientWidget patient = null;
 	protected Integer patientId = new Integer(0);
 	TextArea noteBox = null; 
@@ -85,6 +85,7 @@ public class RxRefillScreen extends ScreenInterface {
 	}
 	
 	public RxRefillScreen() {
+		super(moduleName);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
@@ -154,15 +155,19 @@ public class RxRefillScreen extends ScreenInterface {
 		
 		//note_TextField_Horizontal_Panel ends
 		
+		//buttons_Horizontal_Panel_Container starts
+		final HorizontalPanel buttonPanelContainer = new HorizontalPanel();
+		buttonPanelContainer.setWidth("30%");
+		verticalPanel.add(buttonPanelContainer);
 		
 		//buttons_Horizontal_Panel starts
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
-		verticalPanel.add(buttonPanel);
-		verticalPanel.setCellHorizontalAlignment(buttonPanel, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonPanel.setSize("18%", "100%");
+		buttonPanelContainer.add(buttonPanel);
+		buttonPanelContainer.setCellHorizontalAlignment(buttonPanel, HasHorizontalAlignment.ALIGN_CENTER);
+//		verticalPanel.setCellHorizontalAlignment(buttonPanel, HasHorizontalAlignment.ALIGN_RIGHT);
 		
 		
-		final Button submitButton = new Button("Submit Request");
+		final CustomButton submitButton = new CustomButton("Submit Request",AppConstants.ICON_ADD);
 		
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -231,7 +236,7 @@ public class RxRefillScreen extends ScreenInterface {
 		});	
 		buttonPanel.add(submitButton);
 		
-		final Button cancelButton = new Button("Cancel");
+		final CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
 		buttonPanel.add(cancelButton);
 		
 		//buttons_Horizontal_Panel ends

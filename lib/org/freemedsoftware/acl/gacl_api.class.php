@@ -3911,6 +3911,314 @@ class gacl_api extends gacl {
 	}
 
 	/**
+	 * add_blocked_objects()
+	 *
+	 * Inserts an aco which is blocked for a user 
+	 *
+	 * @return boolean Returns true if aco added successfully
+	 *
+	 * @param string Object aro_value
+	 * @param string Object sections_with_values (hashes with sub arrays in values Map<key, String[]>)
+	 * @param string Object object_type
+	 */
+	function add_blocked_objects($aro_value, $sections_with_values,$object_type='aco'){
+		switch(strtolower(trim($object_type))) {
+			case 'aco'://Currently only acos are required. Later on we will add other types
+				$object_type = 'aco';
+				$object_blocked_table = $this->_db_table_prefix .'aco_map_blocked';
+				break;
+		}
+
+		$this->debug_text("add_blocked_objects(): aro_value:$aro_value");
+
+		$section_value = trim($section_value);
+		$value = trim($value);
+
+		if (empty($aro_value)) {
+			$this->debug_text("add_blocked_objects(): aro_value ($aro_value) is empty, this is required");
+			return false;
+		}
+
+		if (empty($sections_with_values)) {
+			$this->debug_text("add_blocked_objects(): sections_with_values ($sections_with_values) is empty, this is required");
+			return false;
+		}
+
+		if (empty($object_type) ) {
+			$this->debug_text("add_blocked_objects(): Object Type ($object_type) is empty, this is required");
+			return false;
+		}
+
+		$query = 'insert into '. $object_blocked_table .' (aro_value,section_value,value) VALUES';
+		
+		foreach ( $sections_with_values AS $section => $valueArray ) {
+			
+			foreach ($valueArray AS $value )	{
+				$query = $query.'( '. $aro_value .', '. $this->db->quote($section) .', '. $this->db->quote($value) .'),';	 
+			}
+		}
+		
+		$query = substr($query,0,strlen($query)-1);
+		
+		$rs = $this->db->Execute($query);
+	
+		if (!is_object($rs)) {
+			$this->debug_db('add_blocked_objects');
+			return false;
+		} else {
+			$this->debug_text("add_blocked_objects(): Added add_blocked_objects");
+			return true;
+		}
+	}
+
+	/**
+	 * del_blocked_objects()
+	 *
+	 * delete all acos which were blocked for a user 
+	 *
+	 * @return boolean Returns true if aco deleted successfully
+	 *
+	 * @param string Object aro_value
+	 * @param string Object object_type
+	 */
+	function del_blocked_objects($aro_value,$object_type='aco'){
+		switch(strtolower(trim($object_type))) {
+			case 'aco':
+				$object_type = 'aco';
+				$object_blocked_table = $this->_db_table_prefix .'aco_map_blocked';
+				break;
+		}
+
+		$this->debug_text("del_blocked_objects(): aro_value: $aro_value");
+
+		if (empty($aro_value) ) {
+			$this->debug_text("del_blocked_objects(): aro_value ($aro_value) is empty, this is required");
+			return false;
+		}
+
+		if (empty($object_type) ) {
+			$this->debug_text("del_blocked_objects(): Object Type ($object_type) is empty, this is required");
+			return false;
+		}
+
+		// The section is empty (or emptied by this method)
+
+		$query = "DELETE FROM $object_blocked_table where aro_value='$aro_value'";
+		$rs = $this->db->Execute($query);
+
+		if (!is_object($rs)) {
+			$this->debug_db('del_blocked_objects');
+			return false;
+		} else {
+			$this->debug_text("del_blocked_objects(): deleted aro_value: $aro_value ");
+			return true;
+		}
+
+
+
+		return false;
+	}
+
+	/**
+	 * get_blocked_objects ()
+	 *
+	 * Grabs all Objects in the database of specific aro_value
+	 *
+	 * @return array Returns objects in format suitable for add_acl and is_conflicting_acl
+	 *	- i.e. Associative array, item={Section Value}, key={Array of Object Values} i.e. ["<Section Value>" => ["<Value 1>", "<Value 2>", "<Value 3>"], ...]
+	 *
+	 * @param int aro_value user id
+	 * @param string Object Type, either 'ACO', 'ARO', 'AXO'
+	 */
+	function get_blocked_objects($aro_value, $object_type = 'aco') {
+		switch (strtolower(trim($object_type))) {
+			case 'aco':
+				$object_type = 'aco';
+				$table = $this->_db_table_prefix .'aco_map_blocked';
+				break;
+			default:
+				$this->debug_text('get_blocked_objects(): Invalid Object Type: '. $object_type);
+				return FALSE;
+		}
+		
+		$this->debug_text("get_blocked_objects(): ARO Value: $aro_value Object Type: $object_type");
+
+		$query = "SELECT section_value,value FROM ". $table." where aro_value='$aro_value'";
+
+
+
+		$rs = $this->db->Execute($query);
+
+		if (!is_object($rs)) {
+			$this->debug_db('get_blocked_objects');
+			return FALSE;
+		}
+
+		$retarr = array();
+
+		while ($row = $rs->FetchRow()) {
+			$retarr[$row[0]][] = $row[1];
+		}
+
+		// Return objects
+		return $retarr;
+	}
+
+	/**
+	 * add_allowed_objects()
+	 *
+	 * Inserts an aco which is blocked for a user 
+	 *
+	 * @return boolean Returns true if aco added successfully
+	 *
+	 * @param string Object aro_value
+	 * @param string Object sections_with_values (hashes with sub arrays in values Map<key, String[]>)
+	 * @param string Object object_type
+	 */
+	function add_allowed_objects($aro_value, $sections_with_values,$object_type='aco'){
+		switch(strtolower(trim($object_type))) {
+			case 'aco'://Currently only acos are required. Later on we will add other types
+				$object_type = 'aco';
+				$object_blocked_table = $this->_db_table_prefix .'aco_map_allowed';
+				break;
+		}
+
+		$this->debug_text("add_allowed_objects(): aro_value:$aro_value");
+
+		$section_value = trim($section_value);
+		$value = trim($value);
+
+		if (empty($aro_value)) {
+			$this->debug_text("add_allowed_objects(): aro_value ($aro_value) is empty, this is required");
+			return false;
+		}
+
+		if (empty($sections_with_values)) {
+			$this->debug_text("add_allowed_objects(): sections_with_values ($sections_with_values) is empty, this is required");
+			return false;
+		}
+
+		if (empty($object_type) ) {
+			$this->debug_text("add_allowed_objects(): Object Type ($object_type) is empty, this is required");
+			return false;
+		}
+
+		$query = 'insert into '. $object_blocked_table .' (aro_value,section_value,value) VALUES';
+		
+		foreach ( $sections_with_values AS $section => $valueArray ) {
+			
+			foreach ($valueArray AS $value )	{
+				$query = $query.'( '. $aro_value .', '. $this->db->quote($section) .', '. $this->db->quote($value) .'),';	 
+			}
+		}
+		
+		$query = substr($query,0,strlen($query)-1);
+		
+		$rs = $this->db->Execute($query);
+	
+		if (!is_object($rs)) {
+			$this->debug_db('add_allowed_objects');
+			return false;
+		} else {
+			$this->debug_text("add_allowed_objects(): Added add_allowed_objects");
+			return true;
+		}
+	}
+
+	/**
+	 * del_allowed_objects()
+	 *
+	 * delete all acos which were allowed for a user 
+	 *
+	 * @return boolean Returns true if aco deleted successfully
+	 *
+	 * @param string Object aro_value
+	 * @param string Object object_type
+	 */
+	function del_allowed_objects($aro_value,$object_type='aco'){
+		switch(strtolower(trim($object_type))) {
+			case 'aco':
+				$object_type = 'aco';
+				$object_allowed_table = $this->_db_table_prefix .'aco_map_allowed';
+				break;
+		}
+
+		$this->debug_text("del_allowed_objects(): aro_value: $aro_value");
+
+		if (empty($aro_value) ) {
+			$this->debug_text("del_allowed_objects(): aro_value ($aro_value) is empty, this is required");
+			return false;
+		}
+
+		if (empty($object_type) ) {
+			$this->debug_text("del_allowed_objects(): Object Type ($object_type) is empty, this is required");
+			return false;
+		}
+
+		// The section is empty (or emptied by this method)
+
+		$query = "DELETE FROM $object_allowed_table where aro_value='$aro_value'";
+		$rs = $this->db->Execute($query);
+
+		if (!is_object($rs)) {
+			$this->debug_db('del_allowed_objects');
+			return false;
+		} else {
+			$this->debug_text("del_allowed_objects(): deleted aro_value: $aro_value ");
+			return true;
+		}
+
+
+
+		return false;
+	}
+
+	/**
+	 * get_allowed_objects ()
+	 *
+	 * Grabs all Objects in the database of specific aro_value
+	 *
+	 * @return array Returns objects in format suitable for add_acl and is_conflicting_acl
+	 *	- i.e. Associative array, item={Section Value}, key={Array of Object Values} i.e. ["<Section Value>" => ["<Value 1>", "<Value 2>", "<Value 3>"], ...]
+	 *
+	 * @param int aro_value user id
+	 * @param string Object Type, either 'ACO', 'ARO', 'AXO'
+	 */
+	function get_allowed_objects($aro_value, $object_type = 'aco') {
+		switch (strtolower(trim($object_type))) {
+			case 'aco':
+				$object_type = 'aco';
+				$table = $this->_db_table_prefix .'aco_map_allowed';
+				break;
+			default:
+				$this->debug_text('get_allowed_objects(): Invalid Object Type: '. $object_type);
+				return FALSE;
+		}
+
+		$this->debug_text("get_allowed_objects(): ARO Value: $aro_value Object Type: $object_type");
+
+		$query = "SELECT section_value,value FROM ". $table." where aro_value='$aro_value'";
+
+
+
+		$rs = $this->db->Execute($query);
+
+		if (!is_object($rs)) {
+			$this->debug_db('get_allowed_objects');
+			return FALSE;
+		}
+
+		$retarr = array();
+
+		while ($row = $rs->FetchRow()) {
+			$retarr[$row[0]][] = $row[1];
+		}
+
+		// Return objects
+		return $retarr;
+	}
+
+	/**
 	 * clear_database()
 	 *
 	 * Deletes all data from the phpGACL tables. USE WITH CAUTION.

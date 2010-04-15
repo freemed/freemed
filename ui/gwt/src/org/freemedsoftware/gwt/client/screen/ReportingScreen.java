@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -67,6 +66,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ReportingScreen extends ScreenInterface {
+
+	public final static String moduleName = "reporting";
 
 	protected CustomTable reportTable;
 
@@ -107,8 +108,7 @@ public class ReportingScreen extends ScreenInterface {
 	}
 	
 	public ReportingScreen() {
-		
-		final boolean canGenerate = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.REPORTING_CATEGORY, AppConstants.REPORTING_ENGINE);
+		super(moduleName);
 		
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
@@ -133,7 +133,7 @@ public class ReportingScreen extends ScreenInterface {
 		reportTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				if(canGenerate){
+				if(canWrite){
 					String uuid = data.get("report_uuid");
 					thisReportUUID = uuid;
 					getReportInformation(uuid);

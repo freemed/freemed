@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class BillKey extends SupportModule {
 
 	var $MODULE_NAME = "Bill Keys";
-	var $MODULE_VERSION = "0.6.2";
+	var $MODULE_VERSION = "0.6.3";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "54e71fb9-8197-44a8-be8b-7233c459ac81";
 	var $MODULE_HIDDEN = true;
@@ -34,15 +34,13 @@ class BillKey extends SupportModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name = "billkey";
-
+	var $variables = array (	
+	    'billkeydate',
+	    'billkey',
+	    'bkprocs'
+	);
+	
 	public function __construct () {
-		// __("Bill Keys")
-		$this->table_definition = array (
-			'billkeydate' => SQL__DATE,
-			'billkey' => SQL__BLOB,
-			'id' => SQL__SERIAL
-		);
-
 		// Call parent constructor
 		parent::__construct();
 	} // end constructor 

@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	proccov2		INT UNSIGNED DEFAULT 0,
 	proccov3		INT UNSIGNED DEFAULT 0,
 	proccov4		INT UNSIGNED DEFAULT 0,
+	proccert		INT UNSIGNED DEFAULT 0,   
 	procclmtp		INT UNSIGNED DEFAULT 0,
 	procmedicaidref		VARCHAR (20),
 	procmedicaidresub	VARCHAR (20),
@@ -165,8 +166,8 @@ CREATE TRIGGER procrec_PreUpdate
 	BEFORE UPDATE ON procrec
 	FOR EACH ROW BEGIN
 		# Set charges and balance
-		SET NEW.procbalcurrent = NEW.procbalorig;
-		SET NEW.procbilled = 0;
+		#SET NEW.procbalcurrent = NEW.procbalorig;
+		#SET NEW.procbilled = 0;
 
 		# Figure out current coverage "type"
 		SET NEW.proccurcovtp = 0;
@@ -202,7 +203,7 @@ CREATE TRIGGER procrec_Insert
 	AFTER INSERT ON procrec
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
-		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
+		SELECT CONCAT(cptcode, ' - ', cptnameint) INTO c FROM cpt WHERE id=NEW.proccpt;
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'procrec', NEW.procpatient, NEW.id, NEW.procdt, c, NEW.user );
 
 		#	Diagnosis 1
@@ -272,7 +273,7 @@ CREATE TRIGGER procrec_Update
 	AFTER UPDATE ON procrec
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
-		SELECT CONCAT(cptcode, ' - ', cptdescrip) INTO c FROM cpt WHERE id=NEW.proccpt;
+		SELECT CONCAT(cptcode, ' - ', cptnameint) INTO c FROM cpt WHERE id=NEW.proccpt;
 		UPDATE `patient_emr` SET stamp=NEW.procdt, patient=NEW.procpatient, summary=c, user=NEW.user WHERE module='procrec' AND oid=NEW.id;
 
 		#	Diagnosis 1

@@ -30,12 +30,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
@@ -65,7 +67,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -76,7 +77,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PatientForm extends ScreenInterface {
-
+	
 	protected CustomDatePicker wDob;
 
 	protected TextBox emailAddress;
@@ -117,7 +118,7 @@ public class PatientForm extends ScreenInterface {
 	
 	protected CustomRadioButtonGroup gender;
 
-	protected Button submitButton, addressAddButton, addressModifyButton;
+	protected CustomButton submitButton, addressAddButton, addressModifyButton;
 
 	protected Integer patientId = new Integer(0);
 
@@ -125,7 +126,11 @@ public class PatientForm extends ScreenInterface {
 	
 	protected PatientCoverages patientCoverages;
 	
+	protected String CoveragesModuleName = "PatientCoverages";
+	
 	protected PatientAuthorizations patientAuthorizations;
+	
+	protected String AuthorizationsModuleName = "Authorizations";
 
 	protected CustomListBox martialStatus;
 	
@@ -175,6 +180,8 @@ public class PatientForm extends ScreenInterface {
 	public final static String moduleName = "PatientModule";
 
 	private static List<PatientForm> patientFormList=null;
+
+	protected SupportModuleWidget primaryFacility;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
 	public static PatientForm getInstance(){
 		PatientForm patientForm=null; 
@@ -208,7 +215,7 @@ public class PatientForm extends ScreenInterface {
 				 if (event.getSelectedItem() == 3)
 					 martialStatus.setFocus(true);
 				 if (event.getSelectedItem() == 4)
-					 preferredPharmacy.setFocus(true);
+					 primaryFacility.setFocus(true);
 			}		
 		});
 		verticalPanel.add(tabPanel);
@@ -554,7 +561,15 @@ public class PatientForm extends ScreenInterface {
 //		bloodType.addItem("AB-","AB-");
 //		bloodType.setVisibleItemCount(1);
 //		medicalTable.setWidget(0, 1, bloodType);
-
+		
+		final Label primaryFacilityLabel = new Label("Primary Facility");
+		medicalTable.setWidget(0, 0, primaryFacilityLabel);
+		
+		primaryFacility = new SupportModuleWidget("FacilityModule");
+		medicalTable.setWidget(0, 1, primaryFacility);
+		primaryFacility.setWidth("100%");
+		
+		
 		final Label preferredPharmacyLabel = new Label("Preferred Pharmacy");
 		medicalTable.setWidget(1, 0, preferredPharmacyLabel);
 		
@@ -637,12 +652,12 @@ public class PatientForm extends ScreenInterface {
 		verticalPanel.add(horizontalPanel);
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		horizontalPanel.setWidth("100%");
+		verticalPanel.setCellHorizontalAlignment(horizontalPanel,HasHorizontalAlignment.ALIGN_CENTER);
+//		horizontalPanel.setWidth("100%");
 
 		
-		submitButton = new Button();
+		submitButton = new CustomButton("Commit",AppConstants.ICON_ADD);
 		horizontalPanel.add(submitButton);
-		submitButton.setText("Commit");
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -652,9 +667,7 @@ public class PatientForm extends ScreenInterface {
 					if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 						submitButton.setEnabled(true);
-						CurrentState.getToaster().addItem("Patient",
-								"Updated patient information.",
-								Toaster.TOASTER_INFO);
+						Util.showInfoMsg("PatientForm", "Updated patient information.");
 						addressContainer.setOnCompletion(new Command() {
 							public void execute() {
 								closeScreen();
@@ -683,14 +696,17 @@ public class PatientForm extends ScreenInterface {
 													});
 											addressContainer.commitChanges();
 											
-											patientCoverages.setPatient(o);
-											patientCoverages
-													.setOnCompletion(new Command() {
-														public void execute() {
-															closeScreen();
-														}
-													});
-											patientCoverages.commitChanges();
+											if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.MODIFY)){
+												patientCoverages.setPatient(o);
+												patientCoverages
+														.setOnCompletion(new Command() {
+															public void execute() {
+																closeScreen();
+															}
+														});
+												patientCoverages.commitChanges();
+											}
+											
 											
 											patientAuthorizations.setPatient(o);
 											patientAuthorizations
@@ -784,16 +800,20 @@ public class PatientForm extends ScreenInterface {
 																					.getText()),
 																	"Integer");
 													if (r != 0) {
-														if(callinId.intValue()>0)//If callin patient is is being entered. 
-															deleteEntryFromCallin(callinId);
+														if(callinId.intValue()>0){//If callin patient is is being entered. 
+															covertCallinIntakeToIntake(callinId,r);
+														}
 														addressContainer.setPatient(r);
 														addressContainer.commitChanges();
 														
-														patientCoverages.setPatient(r);
-														patientCoverages.commitChanges();
-														
-														patientAuthorizations.setPatient(r);
-														patientAuthorizations.commitChanges();
+														if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.WRITE)){
+															patientCoverages.setPatient(r);
+															patientCoverages.commitChanges();
+														}
+														if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.WRITE)){
+															patientAuthorizations.setPatient(r);
+															patientAuthorizations.commitChanges();
+														}
 														
 														spawnPatientScreen(r);
 														CurrentState
@@ -851,9 +871,10 @@ public class PatientForm extends ScreenInterface {
 														//addressContainer.deleteAddress();
 														addressContainer.commitChanges();
 														
-														patientCoverages.commitChanges();
-														
-														patientAuthorizations.commitChanges();
+														if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.MODIFY))
+															patientCoverages.commitChanges();
+														if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.MODIFY))
+															patientAuthorizations.commitChanges();
 														
 														spawnPatientScreen(patientId);
 														CurrentState
@@ -882,17 +903,34 @@ public class PatientForm extends ScreenInterface {
 				} else {
 					// Form validation failed, allow user to continue
 					submitButton.setEnabled(true);
-					CurrentState.getToaster().addItem("PatientForm",
-							"Form validation failed");
+					Util.showErrorMsg("PatientForm", "Form validation failed.");
 				}
 			}
 		});
 	
-		patientCoverages = new PatientCoverages();
-		tabPanel.add(patientCoverages, "Coverages");
+		CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				// TODO Auto-generated method stub
+				try{
+					closeScreen();
+				}catch(Exception e){}
+
+				if(patientId!=0)
+					spawnPatientScreen(patientId);
+			}
+		});
+		horizontalPanel.add(cancelButton);
 		
-		patientAuthorizations = new PatientAuthorizations();
-		tabPanel.add(patientAuthorizations, "Authorizations");
+		if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.SHOW)){
+			patientCoverages = new PatientCoverages();
+			tabPanel.add(patientCoverages, "Coverages");
+		}
+		if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.SHOW)){
+			patientAuthorizations = new PatientAuthorizations();
+			tabPanel.add(patientAuthorizations, "Authorizations");
+		}
 		Util.setFocus(title);	
 	}
 	/**
@@ -1015,9 +1053,10 @@ public class PatientForm extends ScreenInterface {
 									
 									addressContainer.setPatient(patientId);
 									
-									patientCoverages.setPatient(patientId);
-									
-									patientAuthorizations.setPatient(patientId);
+									if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.READ))
+										patientCoverages.setPatient(patientId);
+									if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.READ))
+										patientAuthorizations.setPatient(patientId);
 									
 									// Demographics screen
 //									wTitle.setWidgetValue((String) result
@@ -1061,6 +1100,8 @@ public class PatientForm extends ScreenInterface {
 									
 									// Medical screen
 //									bloodType.setWidgetValue((String) result.get((String) "ptblood"));
+									if(result.get((String) "ptprimaryfacility")!=null & result.get((String) "ptprimaryfacility").length()>0)
+										primaryFacility.setValue(new Integer(result.get((String) "ptprimaryfacility")));
 									if(result.get((String) "ptpharmacy")!=null & result.get((String) "ptpharmacy").length()>0)
 										preferredPharmacy.setValue(new Integer(result.get((String) "ptpharmacy")));
 									if(result.get((String) "ptdoc")!=null & result.get((String) "ptdoc").length()>0)
@@ -1110,7 +1151,11 @@ public class PatientForm extends ScreenInterface {
 		if(!wFirstName.getText().trim().equals("") && !wLastName.getText().trim().equals("") && !socialSecurityNumber.getText().trim().equals("")){
 			String wMiddleNameTXT = wMiddleName.getText().trim().equals("")?"X":wMiddleName.getText().charAt(0)+"";
 			String ptid = wFirstName.getText().charAt(0)+wMiddleNameTXT+wLastName.getText().charAt(0)+"-";
-			ptid+=socialSecurityNumber.getText();
+			String ssn = socialSecurityNumber.getText();
+			if(ssn.length()<4)
+				ptid+=ssn;
+			else
+				ptid+=ssn.substring(ssn.length()-4);
 			patientPracticeID.setText(ptid);
 		}
 	} 
@@ -1164,6 +1209,8 @@ public class PatientForm extends ScreenInterface {
 		
 		// Medical screen
 //		m.put((String) "ptblood", (String) bloodType.getWidgetValue());
+		if(primaryFacility.getText().length()>0)
+			m.put((String) "ptprimaryfacility", (String) primaryFacility.getStoredValue());
 		if(preferredPharmacy.getText().length()>0)
 			m.put((String) "ptpharmacy", (String) preferredPharmacy.getStoredValue());
 		if(inHouseDoctor.getText().length()>0)
@@ -1246,6 +1293,24 @@ public class PatientForm extends ScreenInterface {
 		phoneWork.setText(workPhone);
 		this.callinId = callinId;
 		this.callInScreen = callInScreen;
+	}
+	
+	protected void covertCallinIntakeToIntake(final Integer callinId,Integer patientId) {
+		List paramList = new ArrayList();
+		paramList.add(callinId);
+		paramList.add(patientId);
+		Util.callModuleMethod("org.freemedsoftware.module.TreatmentInitialIntake", "convertCallinIntakeToPatientIntake", paramList,new CustomRequestCallback() {
+			@Override
+			public void onError() {
+			}
+			@Override
+			public void jsonifiedData(Object data) {
+				if(data!=null && ((Boolean)data).booleanValue()){
+					deleteEntryFromCallin(callinId);
+				}
+			}
+		}, "Boolean");
+		
 	}
 	
 	protected void deleteEntryFromCallin(Integer callinId) {

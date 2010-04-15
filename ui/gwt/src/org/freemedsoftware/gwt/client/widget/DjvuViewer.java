@@ -283,7 +283,36 @@ public class DjvuViewer extends Composite implements ClickHandler {
 			wForwardBottom.setEnabled(true);
 		}
 	}
+	
+	public Image getPageThumbnail(int pageNumber) throws Exception {
+		Image im=new Image();
+		im.setSize("200px", "282px");
+		
+		// Handle all issues ...
+		if (internalId.compareTo(new Integer(0)) == 0) {
+			throw new Exception("Internal id not set");
+		}
+		if (viewerType == 0) {
+			throw new Exception("Document type not set");
+		}
+		if (patientId.compareTo(new Integer(0)) == 0
+				&& viewerType == SCANNED_DOCUMENTS) {
+			throw new Exception("Patient id not set");
+		}
 
+		// Set image URL to the appropriate page
+		if (Util.isStubbedMode()) {
+			JsonUtil.debug("stubbed mode! not loading image");
+		} else {
+			String myUrl = Util.getJsonRequest(resolvePageViewMethod(),
+					new String[] { internalId.toString(),
+							new Integer(pageNumber).toString() });
+			JsonUtil.debug("image URL = " + myUrl);
+			im.setUrl(myUrl);
+		}
+		return im;
+	}
+	
 	protected void pageNext() {
 		try {
 			loadPage(currentPage + 1);
@@ -361,6 +390,14 @@ public class DjvuViewer extends Composite implements ClickHandler {
 		String[] params = { (String) internalId.toString() };
 		Window.open(Util.getJsonRequest(resolveNamespace() + ".GetDocumentPDF",
 				params), "View", "");
+	}
+	
+	public int getPageCount(){
+		return numberOfPages;
+	}
+	
+	public int getCurrentPage(){
+		return currentPage;
 	}
 
 }

@@ -93,3 +93,16 @@ END
 //
 DELIMITER ;
 
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS  `callin_delete`$$
+
+CREATE
+    /*[DEFINER = { user | CURRENT_USER }]*/
+    TRIGGER `callin_delete` AFTER DELETE ON `callin`
+    FOR EACH ROW BEGIN
+	/*deleting entry from treatment_initial_intake*/
+	delete from treatment_initial_intake where patient = OLD.id and intaketype = 'callin';
+    END$$
+
+DELIMITER ;

@@ -535,3 +535,7 @@ CREATE TABLE IF NOT EXISTS `patient_phone_lookup` (
 
 CALL patient_Upgrade( );
 
+#----- Make sure patient data store definition is loaded
+
+SOURCE data/schema/mysql/pds.sql
+

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
@@ -36,9 +37,10 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -51,12 +53,10 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -81,8 +81,14 @@ public class PreferencesScreen extends ScreenInterface {
 
 	protected boolean isNavigatioMenuChanged = false;
 	
+	protected CustomListBox themesList = null;
+	
 	protected CustomListBox printersList = null; 
 
+	protected CustomListBox providerGroupList =null;
+	
+	protected CustomListBox systemNotificationSettingsList =null;
+	
 	private static List<PreferencesScreen> preferencesScreenList = null;
 
 	// Creates only desired amount of instances if we follow this pattern
@@ -121,22 +127,33 @@ public class PreferencesScreen extends ScreenInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		final Button commitChangesButton = new Button();
+		final CustomButton commitChangesButton = new CustomButton("Commit Changes",AppConstants.ICON_ADD);
 		horizontalPanel.add(commitChangesButton);
-		commitChangesButton.setText("Commit Changes");
 		commitChangesButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				////////////////Handling UI////////////////////////
 				if (isThemeChanged)
-					CurrentState.setUserConfig("Theme", CurrentState.CUR_THEME);
+					CurrentState.setUserConfig(AppConstants.SYSTEM_THEME, CurrentState.CUR_THEME);
 				CurrentState.setUserConfig("defaultPrinter", printersList.getStoredValue());
+				CurrentState.setUserConfig("providerGroup", providerGroupList.getStoredValue());
+				CurrentState.setUserConfig(AppConstants.SYSTEM_NOTIFICATION, systemNotificationSettingsList.getStoredValue());
+				CurrentState.SYSTEM_NOTIFY_TYPE = systemNotificationSettingsList.getStoredValue();
+				try{
+					CurrentState.defaultProviderGroup=new Integer(providerGroupList.getStoredValue());
+				}
+				catch(Exception e){
+					
+				}
+				////////////////End Handling UI////////////////////////
 				
+				////////////////Handling Navigation////////////////////////
 				if (isNavigatioMenuChanged)
 					CurrentState.setUserConfig("LeftNavigationMenu",
 							CurrentState.getLeftNavigationOptions());
 				CurrentState.getMainScreen().initNavigations();
-				CurrentState.getToaster().addItem("Preferences Screen.",
-						"Preferences saved!!!", Toaster.TOASTER_INFO);
+				////////////////End Handling Navigation////////////////////////
+				Util.showInfoMsg("PreferencesScreen", "Preferences saved!!!");
 				if (currentPassword.getText().length() > 0
 						|| newPassword.getText().length() > 0
 						|| newPassword.getText().length() > 0)
@@ -146,9 +163,22 @@ public class PreferencesScreen extends ScreenInterface {
 			}
 		});
 
-		// populate();
+		setDefaultPreferences();
+		loadPrefererences();
 	}
 
+	public void setDefaultPreferences(){
+		if(CurrentState.getUserConfig(AppConstants.SYSTEM_THEME)==null)
+			CurrentState.setUserConfig(AppConstants.SYSTEM_THEME, CurrentState.CUR_THEME);
+		if(CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION)==null)
+			CurrentState.setUserConfig(AppConstants.SYSTEM_NOTIFICATION, systemNotificationSettingsList.getStoredValue());
+	}
+	
+	public void loadPrefererences(){
+		themesList.setWidgetValue(CurrentState.getUserConfig(AppConstants.SYSTEM_THEME,"String").toString());
+		systemNotificationSettingsList.setWidgetValue(CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString());
+	}
+	
 	public void refreshPreferences() {
 		JsonUtil.debug("PreferencesScreen:refreshPreferences - start");
 		// refreshing Navigations
@@ -183,13 +213,10 @@ public class PreferencesScreen extends ScreenInterface {
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
-								validateUser(response.getText(),
+								validateUser((String)JsonUtil.shoehornJson(response.getText(),"String"),
 										currentPassword.getText());
 							} else
-								CurrentState.getToaster().addItem(
-										"change password failed.",
-										"password change failed!!!",
-										Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("PreferencesScreen", "password change failed!!!");
 						}
 					});
 				} catch (RequestException e) {
@@ -205,7 +232,6 @@ public class PreferencesScreen extends ScreenInterface {
 	}
 
 	public void validateUser(String username, String password) {
-		username = username.replaceAll("\"", "");
 		String[] params = { username, password };
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL
 				.encode(Util.getJsonRequest(
@@ -222,10 +248,7 @@ public class PreferencesScreen extends ScreenInterface {
 						if (response.getText().compareToIgnoreCase("true") == 0) {
 							changePassword();
 						} else
-							CurrentState.getToaster().addItem(
-									"invalid password changed.",
-									"invalid password!!!",
-									Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("PreferencesScreen", "invalid password!!!");
 					}
 				}
 			});
@@ -250,19 +273,13 @@ public class PreferencesScreen extends ScreenInterface {
 						Response response) {
 					if (Util.checkValidSessionResponse(response.getText())) {
 						if (200 == response.getStatusCode()) {
-							CurrentState.getToaster().addItem(
-									"password changed.",
-									"password changed successfully!!!",
-									Toaster.TOASTER_INFO);
+							Util.showInfoMsg("PreferencesScreen", "password changed successfully!!!");
 							currentPassword.setText("");
 							newPassword.setText("");
 							confirmNewPassword.setText("");
 							Util.closeTab(getPreferencesScreen());
 						} else
-							CurrentState.getToaster()
-									.addItem("password changed failed.",
-											"password failed!!!",
-											Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("FaxSubsystem", "password change failed!!!");
 					}
 				}
 			});
@@ -279,18 +296,20 @@ public class PreferencesScreen extends ScreenInterface {
 	 */
 	protected void createTabs() {
 
-		// Preparing themes tab elements
-		final FlexTable themeFlexTable = new FlexTable();
-		themeFlexTable.addStyleName("cw-FlexTable");
+		//////////////////////////////////// Preparing UI Tab Elements //////////////////////////////////
+		final FlexTable uiFlexTable = new FlexTable();
+		uiFlexTable.addStyleName("cw-FlexTable");
 
-		themeFlexTable.setHTML(0, 0, "Select theme to apply");
+		int row = 0;
 
-		final ListBox themesList = new ListBox();
+		uiFlexTable.setHTML(row, 0, "Select theme to apply");
+
+		themesList = new CustomListBox();
 		themesList.addItem("chrome");
 		themesList.addItem("standard");
 		themesList.addItem("dark");
 
-		themeFlexTable.setWidget(0, 1, themesList);
+		uiFlexTable.setWidget(row, 1, themesList);
 
 		themesList.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent evt) {
@@ -301,12 +320,34 @@ public class PreferencesScreen extends ScreenInterface {
 						CurrentState.LAST_THEME);
 			}
 		});
-		VerticalPanel themesVerticalPanel = new VerticalPanel();
-		themesVerticalPanel.add(themeFlexTable);
+		
+		row++;
+		
+		providerGroupList = new CustomListBox();
+		populateProviderGroupList();
+		Label provGroupLabel=new Label("Defaul Provider Group :");
+		uiFlexTable.setWidget(row, 0, provGroupLabel);
+		uiFlexTable.setWidget(row, 1, providerGroupList);
+		
+		row++;
+		
+		Label notificationLabel=new Label("Show System Notifications :");
+		uiFlexTable.setWidget(row, 0, notificationLabel);
+		systemNotificationSettingsList = new CustomListBox();
+		systemNotificationSettingsList.addItem(AppConstants.SYSTEM_NOTIFY_NONE);
+		systemNotificationSettingsList.addItem(AppConstants.SYSTEM_NOTIFY_ALL);
+		systemNotificationSettingsList.addItem(AppConstants.SYSTEM_NOTIFY_INFO);
+		systemNotificationSettingsList.addItem(AppConstants.SYSTEM_NOTIFY_ERROR);
+		uiFlexTable.setWidget(row, 1, systemNotificationSettingsList);
+		
+		VerticalPanel uiVerticalPanel = new VerticalPanel();
+		uiVerticalPanel.add(uiFlexTable);
 		// Adding theme tab
-		tabPanel.add(themesVerticalPanel, "Theme");
-
-		// preparing password tab
+		tabPanel.add(uiVerticalPanel, "UI");
+		////////////////////////////////////End Preparing UI Tab Elements //////////////////////////////////
+		
+		
+		//////////////////////////////////// Preparing Password Tab //////////////////////////////////
 		final FlexTable passwordsFlexTable = new FlexTable();
 		passwordsFlexTable.addStyleName("cw-FlexTable");
 
@@ -326,7 +367,9 @@ public class PreferencesScreen extends ScreenInterface {
 		passwordsVerticalPanel.add(passwordsFlexTable);
 		// Adding password tab
 		tabPanel.add(passwordsVerticalPanel, "Password");
+		//////////////////////////////////// End Preparing Password Tab //////////////////////////////////
 
+		//////////////////////////////////// Preparing Navigations Tab //////////////////////////////////
 		navigationsVerticalPanel = new VerticalPanel();
 		Label navLabel = new Label("Show following items for navigation.");
 		navLabel.setStyleName("label");
@@ -335,15 +378,16 @@ public class PreferencesScreen extends ScreenInterface {
 		navigationsVerticalPanel.add(navigationsFlexTable);
 		// Adding password tab
 		tabPanel.add(navigationsVerticalPanel, "Navigations");
-		
+		//////////////////////////////////// End Preparing Navigations Tab //////////////////////////////////
+
+		//////////////////////////////////// Preparing Printer Tab //////////////////////////////////
 		final FlexTable printersFlexTable = new FlexTable();
 		printersFlexTable.addStyleName("cw-FlexTable");
 
 		printersFlexTable.setHTML(0, 0, "Select default printer");
 
 		printersList = new CustomListBox();
-		printersList.addItem("HPLJ", "HPLJ");
-		Util.callApiMethod("Printing", "GetPrinters", null, new CustomRequestCallback(){
+		Util.callApiMethod("Printing", "GetPrinters", (List)null, new CustomRequestCallback(){
 			@Override
 			public void onError() {
 			}
@@ -355,7 +399,7 @@ public class PreferencesScreen extends ScreenInterface {
 					String key = iterator.next();
 					printersList.addItem(key, result.get(key));
 				}
-				printersList.setWidgetValue((String)CurrentState.getUserConfig("defaultPrinter"));
+				printersList.setWidgetValue(""+CurrentState.getUserConfig("defaultPrinter"));
 			}
 		}, "HashMap<String,String>");
 		
@@ -372,7 +416,7 @@ public class PreferencesScreen extends ScreenInterface {
 		printersVerticalPanel.add(printersFlexTable);
 		// Adding theme tab
 		tabPanel.add(printersVerticalPanel, "Printers");
-
+		////////////////////////////////////End Preparing Printer Tab //////////////////////////////////
 	}
 
 	protected void createNavigatonOptions() {
@@ -382,7 +426,7 @@ public class PreferencesScreen extends ScreenInterface {
 		navigationsCheckboxes.clear();
 		navigationsFlexTable.addStyleName("cw-FlexTable");
 
-		final HashMap<String, HashMap<String, String>> leftNavCategories = CurrentState
+		final HashMap<String, HashMap<String, Integer>> leftNavCategories = CurrentState
 				.getLeftNavigationOptions();
 		Iterator<String> itrCats = leftNavCategories.keySet().iterator();
 		int i = 0;
@@ -391,15 +435,15 @@ public class PreferencesScreen extends ScreenInterface {
 			Label navLabel = new Label(categoryName);
 			navLabel.setStyleName("label");
 			navigationsFlexTable.setWidget(i++, 0, navLabel);
-			final HashMap<String, String> leftNavOpts = leftNavCategories
+			final HashMap<String, Integer> leftNavOpts = leftNavCategories
 					.get(categoryName);
 			Iterator<String> itr = leftNavOpts.keySet().iterator();
 			while (itr.hasNext()) {
 				final String Option = itr.next();
-				final String OptionVal = leftNavOpts.get(Option);
+				final Integer OptionVal = leftNavOpts.get(Option);
 				navigationsFlexTable.setHTML(i, 0, Option);
 				final CheckBox checkBox = new CheckBox();
-				if (OptionVal.charAt(4) == '1')
+				if (OptionVal == 1)
 					checkBox.setValue(true);
 				else
 					checkBox.setValue(false);
@@ -407,11 +451,10 @@ public class PreferencesScreen extends ScreenInterface {
 					@Override
 					public void onClick(ClickEvent arg0) {
 						isNavigatioMenuChanged = true;
-						String newOptVal = OptionVal.substring(0, 4);
 						if (checkBox.getValue()) {
-							leftNavOpts.put(Option, newOptVal+"1");
+							leftNavOpts.put(Option, 1);
 						} else {
-							leftNavOpts.put(Option, newOptVal+"0");
+							leftNavOpts.put(Option, 0);
 						}
 					}
 				});
@@ -423,7 +466,72 @@ public class PreferencesScreen extends ScreenInterface {
 		navigationsVerticalPanel.add(navigationsFlexTable);
 
 	}
+	
+	public void populateProviderGroupList()
+	{
 
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { "ProviderGroups"};
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(
+							com.google.gwt.http.client.Request request,
+							Throwable ex) {
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(
+							com.google.gwt.http.client.Request request,
+							com.google.gwt.http.client.Response response) {
+						if (Util.checkValidSessionResponse(response.getText())) {
+							if (200 == response.getStatusCode()) {
+								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (result != null) {
+									providerGroupList.clear();
+									Set<String> keys = result.keySet();
+									Iterator<String> iter = keys.iterator();
+
+									providerGroupList.addItem("","" );
+									while (iter.hasNext()) {
+										
+										final String key = (String) iter.next();
+										final String val = (String) result
+												.get(key);
+										JsonUtil.debug(val);
+										providerGroupList.addItem(val,key );
+										
+									}
+									providerGroupList.setWidgetValue(CurrentState.getUserConfig("providerGroup","String")+"");
+									
+								}else{} // if no result then set value to 0
+									//setValue(0);
+							} else {
+								GWT.log("Result " + response.getStatusText(),
+										null);
+							}
+						}
+					}
+				});
+			} catch (RequestException e) {
+				GWT.log("Exception thrown: ", e);
+			}
+		} else {
+			
+		}
+	}
+	
 	public PreferencesScreen getPreferencesScreen() {
 		return this;
 	}

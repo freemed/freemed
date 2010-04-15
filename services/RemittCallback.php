@@ -31,13 +31,6 @@ if ($uri == "wsdl" ) {
 	die();
 }
 
-$soap = new SoapServer(
-	  PHYSICAL_LOCATION . '/data/wsdl/RemittCallback.wsdl'
-	, array( 'uri' => $_SERVER['REQUEST_URI'] )
-);
-$soap->setClass( 'RemittCallback' );
-$soap->handle( );
-
 class RemittCallback {
 
 	public function getProtocolVersion() {
@@ -45,12 +38,57 @@ class RemittCallback {
 	} // end method getProtocolVersion
 
 	public function sendRemittancePayload( $payloadType, $originalReference, $payload ) {
+		// Insert into table properly
+		$query = $GLOBALS['sql']->insert_query(
+			'rqueue',
+			array (
+			          'payload' => $payload
+				, 'reference_id' => (int) $originalReference
+			        , 'processed' => 0
+			)
+		);
+		$GLOBALS['sql']->query( $query );
+		return 1;
+
 		// TODO: handle payloadType properly. For now, assume 835 XML
 		//$billkey = $originalReference;
-		$parser = CreateObject( 'org.freemedsoftware.core.Parser_835XML', $payload );
-		return $parser->Handle();
+		//$parser = CreateObject( 'org.freemedsoftware.core.Parser_835XML', $payload );
+		//return $parser->Handle();
 	} // end method sendRemittancePayload
 
 } // end class RemittCallback
+
+/*
+$soap = new SoapServer(
+	  PHYSICAL_LOCATION . '/data/wsdl/RemittCallback.wsdl'
+	, array( 'uri' => $_SERVER['REQUEST_URI'] )
+);
+$soap->setClass( 'RemittCallback' );
+$soap->handle( );
+*/
+
+// Since SoapServer on PHP5 is a piece of crap in most places, we'll hack
+// around it using nusoap for the moment.
+
+require_once ( PHYSICAL_LOCATION . '/lib/agata7/classes/util/nusoap.php' );
+
+function getProtocolVersion() {
+	return RemittCallback::getProtocolVersion();
+}
+
+function sendRemittancePayload( $payloadType, $originalReference, $payload ) {
+	return RemittCallback::sendRemittancePayload( $payloadType, $originalReference, $payload );
+}
+
+// Create the server instance
+$server = new soap_server;
+
+// Register the method to expose
+$server->register( 'getProtocolVersion' );
+$server->register( 'sendRemittancePayload' );
+
+// Use the request to (try to) invoke the service
+$HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
+$server->service($HTTP_RAW_POST_DATA);
 
 ?>

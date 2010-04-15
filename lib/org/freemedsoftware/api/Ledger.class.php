@@ -46,7 +46,7 @@ class Ledger {
 	//	Array of associative arrays containing aging information.
 	//
 	public function AgingReportQualified ( $criteria ) {
-		freemed::acl_enforce( 'financial', 'summary' );
+		freemed::acl_enforce( 'financial', 'read' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		foreach ($criteria AS $k => $v) {
 			//print "criteria key = $k, value = $v<hr/>\n";
@@ -63,8 +63,8 @@ class Ledger {
 					break;
 				} // end inner aging switch
 				if ($upper) $q[] =
-				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".addslashes($s->ImportDate( $lower )).") AND ".
-				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".addslashes($s->ImportDate( $upper )).")";
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".addslashes( $lower ).") AND ".
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".addslashes( $upper ).")";
 				break; // end aging case
 
 				case 'billed':
@@ -75,6 +75,10 @@ class Ledger {
 				if ($v) $q[] = "pa.payrecdt = '".addslashes($s->ImportDate( $v ))."'";
 				break; // end date
 
+				case 'date_of':
+				if ($v) $q[] = "p.procdt = '".addslashes($s->ImportDate( $v ))."'";
+				break; // end procedure date
+
 				case 'procedure':
 				if ($v) $q[] = "p.id = '".addslashes($v)."'";
 				break; // end procedure case
@@ -83,6 +87,10 @@ class Ledger {
 				if ($v) $q[] = "pr.id = '".addslashes($v)."'";
 				break; // end provider case
 
+				case 'facility':
+				if ($v) $q[] = "p.procpos = '".addslashes($v)."'";
+				break; // end facility case
+				
 				case 'patient':
 				if ($v) $q[] = "pt.id = '".addslashes($v)."'";
 				break; // end patient case
@@ -347,6 +355,7 @@ class Ledger {
 				"coverage FROM procrec WHERE ".
 				"id = '".addslashes($proc)."'";
 			$result = $GLOBALS['sql']->queryRow($query);
+			$coverage=$result['coverage'];
 			extract( $result );
 		} else {
 			$coverage = 0;
@@ -362,8 +371,7 @@ class Ledger {
 		);
 		syslog(LOG_INFO, "queue_for_rebill | query = $query");
 		$result &= $GLOBALS['sql']->query ( $query );
-			
-		return $result;
+		return (boolean) $result;
 	} // end method queue_for_rebill
 
 	// Method: post_adjustment
@@ -408,19 +416,7 @@ class Ledger {
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
-		$query = $GLOBALS['sql']->update_query(
-			'procrec',
-			array (
-				'procbalcurrent' => 
-				$this_procedure['procbalcurrent'] - $amount,
-
-				'procamtpaid' =>
-				$this_procedure['procamtpaid'] + $amount
-			), array ( 'id' => $procedure )
-		);
-		$proc_result = $GLOBALS['sql']->query ( $query );
-
-		return ($proc_result and $pay_result);
+		return (boolean) $pay_result;
 	} // end method post_adjustment
 
 	// Method: post_copay
@@ -440,44 +436,29 @@ class Ledger {
 	//
 	//	Boolean, if successful
 	//
-	function post_copay ( $procedure, $amount, $comment = '' ) {
-		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
-		$this_procedure = $procedure_object->get_procedure( );
-
-		// Derive the patient from the procedure
-		$patient = $this->_procedure_to_patient ( $procedure );
-
-		// Create payment record query
+	function post_copay ( $data) {
 		$query = $GLOBALS['sql']->insert_query (
 			'payrec',
 			array (
-				'payrecdtadd' => date('Y-m-d'),
-				'payrecdtmod' => date('Y-m-d'),
-				'payrecdt' => date('Y-m-d'),
-				'payrecpatient' => $patient,
+				'payrecdtadd' => $data['pdate'],
+				'payrecdtmod' => $data['pdate'],
+				'payrecdt' => $data['pdate'],
+				'payrecpatient' => $data['patient'],
 				'payreccat' => COPAY,
-				'payrecproc' => $procedure,
-				'payrecamt' => $amount,
-				'payrecdescrip' => $comment,
+				'payrecproc' => $data['procedure'],
+				'payrecsource' => $data['source'],
+				'payreclink' => $data['coverage'],
+				'payrectype' => $data['type'], 
+					// 1 for check, etc
+				'payrecnum' => $data['payment_detail_number'],
+				'payrecamt' => $data['amount'],
+				'payrecdescrip' => $data['comment'],
 				'payreclock' => 'unlocked'
 			)
 		);
-		$pay_result = $GLOBALS['sql']->query ( $query );
+		$pay_result = $GLOBALS['sql']->query ( $query );		
 
-		$query = $GLOBALS['sql']->update_query(
-			'procrec',
-			array (
-				'procbalcurrent' => 
-				$this_procedure['procbalcurrent'] - $amount,
-
-				'procamtpaid' =>
-				$this_procedure['procamtpaid'] + $amount
-			), array ( 'id' => $procedure )
-		);
-		$proc_result = $GLOBALS['sql']->query ( $query );
-
-		return ($proc_result and $pay_result);
+		return (boolean) $pay_result;
 	} // end method post_copay
 
 	// Method: post_deductable
@@ -497,7 +478,49 @@ class Ledger {
 	//
 	//	Boolean, if successful
 	//
-	function post_deductable ( $procedure, $amount, $comment = '' ) {
+	function post_deductable ( $data) {
+		$query = $GLOBALS['sql']->insert_query (
+			'payrec',
+			array (
+				'payrecdtadd' => $data['pdate'],
+				'payrecdtmod' => $data['pdate'],
+				'payrecdt' => $data['pdate'],
+				'payrecpatient' => $data['patient'],
+				'payreccat' => DEDUCTABLE,
+				'payrecproc' => $data['procedure'],
+				'payrecsource' => $data['source'],
+				'payreclink' => $data['coverage'],
+				'payrectype' => $data['type'], 
+					// 1 for check, etc
+				'payrecnum' => $data['payment_detail_number'],
+				'payrecamt' => $data['amount'],
+				'payrecdescrip' => $data['comment'],
+				'payreclock' => 'unlocked'
+			)
+		);
+		$pay_result = $GLOBALS['sql']->query ( $query );
+
+		return (boolean) $pay_result;
+	} // end method post_deductable
+	
+	// Method: post_withhold
+	//
+	//	Post a withhold for the specified procedure.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure id key
+	//
+	//	$amount - Amount of the withhold, as a positive number
+	//
+	//	$comment - (optional) Text comment for the record. Defaults
+	//	to a null string.
+	//
+	// Returns:
+	//
+	//	Boolean, if successful
+	//
+	function post_withhold( $procedure, $amount, $comment = '' ) {
 		// Get information about this procedure
 		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
 		$this_procedure = $procedure_object->get_procedure( );
@@ -513,7 +536,7 @@ class Ledger {
 				'payrecdtmod' => date('Y-m-d'),
 				'payrecdt' => date('Y-m-d'),
 				'payrecpatient' => $patient,
-				'payreccat' => DEDUCTABLE,
+				'payreccat' => WITHHOLD,
 				'payrecproc' => $procedure,
 				'payrecamt' => $amount,
 				'payrecdescrip' => $comment,
@@ -522,21 +545,58 @@ class Ledger {
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
-		$query = $GLOBALS['sql']->update_query(
-			'procrec',
+		return (boolean) $pay_result;
+	} // end method post_withhold
+	
+	// Method: post_refund
+	//
+	//	Post a refund for the specified procedure.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure id key
+	//
+	//	$amount - Amount of the withhold, as a positive number
+	//
+	//	$destination
+	//
+	//	$comment - (optional) Text comment for the record. Defaults
+	//	to a null string.
+	//
+	// Returns:
+	//
+	//	Boolean, if successful
+	//
+	
+	function post_refund( $procedure, $amount, $destination, $comment = '' ) {
+		// Get information about this procedure
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
+		$this_procedure = $procedure_object->get_procedure( );
+
+		// Derive the patient from the procedure
+		$patient = $this->_procedure_to_patient ( $procedure );
+
+		// Create payment record query
+		$query = $GLOBALS['sql']->insert_query (
+			'payrec',
 			array (
-				'procbalcurrent' => 
-				$this_procedure['procbalcurrent'] - $amount,
-
-				'procamtpaid' =>
-				$this_procedure['procamtpaid'] + $amount
-			), array ( 'id' => $procedure )
+				'payrecdtadd' => date('Y-m-d'),
+				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
+				'payrecpatient' => $patient,
+				'payreclink' => $destination,
+				'payreccat' => REFUND,
+				'payrecproc' => $procedure,
+				'payrecamt' => $amount,
+				'payrecdescrip' => $comment,
+				'payreclock' => 'unlocked'
+			)
 		);
-		$proc_result = $GLOBALS['sql']->query ( $query );
+		$pay_result = $GLOBALS['sql']->query ( $query );
 
-		return ($proc_result and $pay_result);
-	} // end method post_deductable
-
+		return (boolean) $pay_result;
+	} // end method post_refund
+	
 	// Method: post_fee_adjustment
 	//
 	//	Post a fee adjustment for the specified procedure.
@@ -556,7 +616,7 @@ class Ledger {
 	//
 	//	Boolean, if successful
 	//
-	function post_fee_adjustment ( $procedure, $coverage,
+	function post_fee_adjustment ( $procedure, $source,
 				$amount, $comment = '' ) {
 		// Get information about this procedure
 		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
@@ -566,9 +626,15 @@ class Ledger {
 		$patient = $this->_procedure_to_patient ( $procedure );
 
 		// Figure out who gave us this
-		$coverage_object = CreateObject('org.freemedsoftware.core.Coverage', $coverage);
-		$who = $coverage_object->covinsco;
-
+		if($source!=0){
+			$coverage=$this_procedure['proccov'.$source];
+			$coverage_object = CreateObject('org.freemedsoftware.core.Coverage', $coverage);
+			$this_coverage = $coverage_object->get_coverage();
+			$who = $this_coverage['covinsco'];
+		}
+		else{
+			$source=0;
+		}
 		// Calculate the new proc charges
 		$new_amount = $this_procedure['proccharges'] - abs($amount);
 
@@ -589,15 +655,15 @@ class Ledger {
 			)
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
-
+		
 		$query = $GLOBALS['sql']->update_query(
 			'procrec',
 			array (
 				'procbalcurrent' => 
-				$this_procedure['procbalcurrent'] - $amount,
+				$this_procedure['procbalcurrent'] - $new_amount,
 
 				'proccharges' =>
-				$this_procedure['proccharges'] - $amount
+				$this_procedure['proccharges'] - $new_amount
 			), array ( 'id' => $procedure )
 		);
 		$proc_result = $GLOBALS['sql']->query ( $query );
@@ -626,13 +692,13 @@ class Ledger {
 		$query = $GLOBALS['sql']->insert_query (
 			'payrec',
 			array (
-				'payrecdtadd' => date('Y-m-d'),
-				'payrecdtmod' => date('Y-m-d'),
-				'payrecdt' => date('Y-m-d'),
+				'payrecdtadd' => $data['pdate'],
+				'payrecdtmod' => $data['pdate'],
+				'payrecdt' => $data['pdate'],
 				'payrecpatient' => $data['patient'],
 				'payreccat' => '0', // payment
 				'payrecproc' => $data['procedure'],
-				'payrecsource' => '1',
+				'payrecsource' => $data['source'],
 				'payreclink' => $data['coverage'],
 				'payrectype' => $data['type'], 
 					// 1 for check, etc
@@ -644,25 +710,7 @@ class Ledger {
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
 
-		// Get information about this procedure
-		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $data['procedure']);
-		$this_procedure = $procedure_object->get_procedure( );
-
-		$amount_paid = $data['amount'] + $this_procedure['procamtpaid'];
-		$current_balance = $this_procedure['procbalorig'] -
-				$amount_paid;
-
-		$query = $GLOBALS['sql']->update_query(
-			'procrec',
-			array (
-				'procbalcurrent' => $current_balance,
-				'procamtpaid' => $amount_paid
-			), array ( 'id' => $data['procedure'] )
-		);
-		syslog(LOG_INFO, "post_payment | query = $query");
-		$proc_result = $GLOBALS['sql']->query ( $query );
-
-		return ($proc_query and $pay_query);
+		return (boolean) $pay_result;
 	} // end method post_payment
 
 	// Method: post_payment_cash
@@ -686,16 +734,50 @@ class Ledger {
 	// See Also:
 	//	<post_payment>
 	//
-	function post_payment_cash ( $procedure, $coverage,
-				$amount, $comment ) {
+	function post_payment_cash ( $procedure, $pdate,
+				$amount, $comment, $ptid='',$cov='',$category = PAYMENT  ) {
+		// Get information about this procedure
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
+		$this_procedure = $procedure_object->get_procedure( );
+		
+		if($cov!=''){
+			$data['patient'] = $ptid;			
+			if($cov==0){
+				$coverage=0;
+				$source=0;
+			}
+			else{				
+				$coverage=$cov;
+				$coverage_object = CreateObject('org.freemedsoftware.core.Coverage', $cov);
+				$this_coverage = $coverage_object->get_coverage( );
+				$source=$this_coverage["covtype"];
+			}
+		}
+		else{
+			$data['patient'] = $this->_procedure_to_patient($procedure);
+			$source=$this_procedure['proccurcovtp'];
+			if($source==0){
+				$coverage=0;
+			}
+			else{				
+				$coverage=$this_procedure['proccurcovid'];
+			}
+		}
 		// Determine patient from procedure
-		$data['patient'] = $this->_procedure_to_patient($procedure);
+		$data['pdate']=$pdate;
+		
 		$data['procedure'] = $procedure;
 		$data['amount'] = $amount;
 		$data['coverage'] = $coverage;
 		$data['type'] = '0'; // cash
+		$data['source']=$source;
 		$data['comment'] = $comment;
-		return $this->post_payment ( $data );		
+		if($category == PAYMENT)
+			return $this->post_payment ( $data );
+		else if($category == DEDUCTABLE)
+			return $this->post_deductable ( $data );
+		else if($category == COPAY)
+			return $this->post_copay ( $data );	
 	} // end method post_payment_cash
 
 	// Method: post_payment_check
@@ -721,17 +803,51 @@ class Ledger {
 	// See Also:
 	//	<post_payment>
 	//
-	function post_payment_check ( $procedure, $coverage,
-				$check_number, $amount, $comment ) {
+	function post_payment_check ( $procedure, $pdate,
+				$check_number, $type, $amount, $comment, $ptid='', $cov='',$category = PAYMENT   ) {
+		
+		// Get information about this procedure
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
+		$this_procedure = $procedure_object->get_procedure( );
+		if($cov!=''){	
+			$data['patient'] = $ptid;		
+			if($cov==0){
+				$coverage=0;
+				$source=0;
+			}
+			else{				
+				$coverage=$cov;
+				$coverage_object = CreateObject('org.freemedsoftware.core.Coverage', $cov);
+				$this_coverage = $coverage_object->get_coverage( );
+				$source=$this_coverage["covtype"];
+			}
+		}
+		else{
+			$data['patient'] = $this->_procedure_to_patient($procedure);
+			$source=$this_procedure['proccurcovtp'];
+			if($source==0){
+				$coverage=0;
+			}
+			else{				
+				$coverage=$this_procedure['proccurcovid'];
+			}
+		}
+		
 		// Determine patient from procedure
-		$data['patient'] = $this->_procedure_to_patient($procedure);
+		$data['pdate']=$pdate;
 		$data['procedure'] = $procedure;
 		$data['amount'] = $amount;
 		$data['coverage'] = $coverage;
 		$data['payment_detail_number'] = $check_number;
-		$data['type'] = '1';
+		$data['type'] = $type;
+		$data['source']=$source;
 		$data['comment'] = $comment;
-		return $this->post_payment ( $data );		
+		if($category == PAYMENT)
+			return $this->post_payment ( $data );
+		else if($category == DEDUCTABLE)
+			return $this->post_deductable ( $data );	
+		else if($category == COPAY)
+			return $this->post_copay ( $data );
 	} // end method post_payment_check
 
 	// Method: post_payment_credit_card
@@ -762,20 +878,117 @@ class Ledger {
 	// See Also:
 	//	<post_payment>
 	//
-	function post_payment_credit_card ( $procedure, $coverage,
-				$cc_number, $exp_m, $exp_y, $amount, $comment ) {
+	function post_payment_credit_card ( $procedure, $pdate,
+				$cc_number, $exp_m, $exp_y, $amount, $comment, $ptid='', $cov='',$category = PAYMENT  ) {
+		
+		// Get information about this procedure
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
+		$this_procedure = $procedure_object->get_procedure( );
+		$this_procedure = $procedure_object->get_procedure( );
+		if($cov!=''){
+			$data['patient'] = $ptid;			
+			if($cov==0){
+				$coverage=0;
+				$source=0;
+			}
+			else{				
+				$coverage=$cov;
+				$coverage_object = CreateObject('org.freemedsoftware.core.Coverage', $cov);
+				$this_coverage = $coverage_object->get_coverage( );
+				$source=$this_coverage["covtype"];
+			}
+		}
+		else{
+			$data['patient'] = $this->_procedure_to_patient($procedure);
+			$source=$this_procedure['proccurcovtp'];
+			if($source==0){
+				$coverage=0;
+			}
+			else{				
+				$coverage=$this_procedure['proccurcovid'];
+			}
+		}
 		// Determine patient from procedure
-		$data['patient'] = $this->_procedure_to_patient($procedure);
+		$data['pdate']=$pdate;
 		$data['procedure'] = $procedure;
 		$data['amount'] = $amount;
 		$data['coverage'] = $coverage;
 		$data['payment_detail_number'] = $cc_number. ':' .
 				$exp_m . ':' . $exp_y;
 		$data['type'] = '3';
+		$data['source']=$source;
 		$data['comment'] = $comment;
-		return $this->post_payment ( $data );		
+		if($category == PAYMENT)
+			return $this->post_payment ( $data );
+		else if($category == DEDUCTABLE)
+			return $this->post_deductable ( $data );
+		else if($category == COPAY)
+			return $this->post_copay ( $data );
+					
 	} // end method post_payment_credit_card
 
+	// Method: post_transfer
+	//
+	//	Post a transfer of a particular type to the system for
+	//	the specified procedure.
+	//
+	// Parameters:
+	//
+	//	$procedure - Procedure id key
+	//
+	//	$coverage - Coverage that check is related to
+	//	$comment - (optional) Text comment for the record. Defaults
+	//	to a null string.
+	//
+	// Returns:
+	//
+	//	Boolean, if successful
+	//
+	function post_transfer ( $procedure, $source,
+				 $comment = '' ) {
+		// Get information about this procedure
+		$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procedure);
+		$this_procedure = $procedure_object->get_procedure( );
+
+		// Derive the patient from the procedure
+		$patient = $this->_procedure_to_patient ( $procedure );
+
+		// Figure out who gave us this
+		if($source!=0)
+		{
+			$coverage=$this_procedure['proccov'.$source];
+		}
+		else
+		{
+			$coverage=0;
+		}
+
+		// Calculate the new proc charges
+		$new_amount = $this_procedure['procbalcurrent'];
+
+		// Create payment record query
+		$query = $GLOBALS['sql']->insert_query (
+			'payrec',
+			array (
+				'payrecdtadd' => date('Y-m-d'),
+				'payrecdtmod' => date('Y-m-d'),
+				'payrecdt' => date('Y-m-d'),
+				'payrecpatient' => $patient,
+				'payreclink' => $coverage,
+				'payreccat' => TRANSFER,
+				'payrecsource' => $source,
+				'payrecproc' => $procedure,
+				'payrecamt' => $new_amount ,
+				'payrecdescrip' => $comment,
+				'payreclock' => 'unlocked'
+			)
+		);
+		$pay_result = $GLOBALS['sql']->query ( $query );
+		                             
+		return (boolean) $pay_result;
+	} // end method post_transfer
+	
+	
 	// Method: PostWriteoff
 	//
 	//	Post a write-off of a particular type to the system for
@@ -824,8 +1037,20 @@ class Ledger {
 			)
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
+				
+		$query = $GLOBALS['sql']->update_query(
+			'procrec',
+			array (
+				'proccharges' => 
+				$this_procedure['proccharges'] - $current_balance,
 
-		return true;
+				'procbalcurrent' =>
+				$this_procedure['proccharges'] - $current_balance - $this_procedure['procamtpaid']
+			), array ( 'id' => $procedure )
+		);
+		$proc_result = $GLOBALS['sql']->query ( $query );
+                             
+		return ($proc_result and $pay_result);
 	} // end method PostWriteoff
 
 	// Method: unpostable
@@ -923,6 +1148,170 @@ class Ledger {
 		}
 		return $return;
 	} // end method _query_to_result_array
+
+	public function getLedgerInfo($procid){
+		$pay_query  = "SELECT id AS Id, payrecdt AS pay_date, payrecdescrip AS pay_desc, payrecamt AS pay_amount, payrectype AS pay_type, ".
+		"payrecproc as pay_proc,payreccat as pay_cat,payrecsource as pay_src FROM payrec WHERE payrecproc=".$GLOBALS['sql']->quote( $procid )." ORDER BY id ASC";
+		//return $pay_query;
+		$pay_result = $GLOBALS['sql']->queryAll ( $pay_query );
+		//return $pay_result;
+		$total_charges = 0;
+		$total_payments =0;
+		for ($i=0;$i<count($pay_result);$i++) {
+			$r = $pay_result[$i];
+	                $payrecdate      = $r["pay_date"];
+	                $payrecdescrip   = $r["pay_desc"];
+	                $payrecamt       = $r["pay_amount"];
+	                $payrectype      = $r["pay_type"];
+	                $payreccat	= $r["pay_cat"];	
+			$payrecsource	=$r["pay_src"];
+			$data[$i]['date']=$payrecdate;
+			$data[$i]['desc']=$payrecdescrip;
+			
+			switch ($payreccat) {
+		                case ADJUSTMENT: // adjustments 1
+		                   $data[$i]['type'] = 'Adjustment';
+	                    	   $data[$i]['payment']= bcadd($payrecamt, 0, 2);
+		                   $data[$i]['charge'] = "";
+		                   $total_payments += $payrecamt;
+		                   break;
+		                case REFUND: // refunds 2
+		                    $data[$i]['type'] = 'Refund';
+		                    $data[$i]['charge'] = bcadd($payrecamt, 0, 2);;
+		                    $data[$i]['payment'] = "";
+		                    $total_charges  += $payrecamt;
+		                    break;
+		                case DENIAL: // denial 3
+		                    $data[$i]['type'] = 'Denial';
+		                    $data[$i]['charge']= "".(-1.0*bcadd(($payrecamt), 0, 2));
+		                    $data[$i]['payment'] = "";
+		                     $total_charges  -= $payrecamt;
+		                    break;
+		                case WRITEOFF: // writeoff 12 
+		                    $data[$i]['type'] = 'Writeoff';
+		                    $data[$i]['charge'] = "".(-1.0*bcadd(($payrecamt), 0, 2));
+		                    $data[$i]['payment'] = "";
+		                    $total_charges  -= $payrecamt;
+		                    break;
+		                case REBILL: // rebill 4
+		                    $data[$i]['type']  = 'Rebill';
+		                    $data[$i]['charge'] = "";
+		                    $data[$i]['payment'] = "";
+		                    break;
+		                case PROCEDURE: // charge 5
+		                    $data[$i]['type'] = 'Charge';
+		                    $data[$i]['charge'] = bcadd($payrecamt, 0, 2);
+		                    $data[$i]['payment'] = "";
+		                     $total_charges  += $payrecamt;
+		                    break;
+		                case TRANSFER: // transfer 6
+		                     $ptypearray=unserialize(PAYER_TYPES);
+		                    $data[$i]['type'] = "Transfer to ".$ptypearray[$payrecsource+0];
+		                    $data[$i]['charge'] = "";
+		                    $data[$i]['payment'] = "";
+		                    break;
+		                case WITHHOLD: // withhold 7
+		                    $data[$i]['type'] = 'Withhold';
+		                     $data[$i]['charge']= "".(-1.0*bcadd(($payrecamt), 0, 2));
+		                    $data[$i]['payment'] = "";
+		                     $total_charges  -= $payrecamt;
+		                    break;
+		                case DEDUCTABLE: // deductable 8
+		                    $data[$i]['type'] = 'Deductable';
+		                    $data[$i]['charge']= "".(-1.0*bcadd(($payrecamt), 0, 2));
+		                    $data[$i]['payment'] = "";
+		                     $total_charges  -= $payrecamt;
+		                    break;
+		                case FEEADJUST: // feeadjust 9
+		                    $data[$i]['type'] = 'Allowed Amount - Fee Adjusted';
+		                    $data[$i]['charge']= "".(-1.0*bcadd(($payrecamt), 0, 2));
+		                    $data[$i]['payment'] = "";
+		                    $total_charges  -= $payrecamt;
+		                    break;
+		                case BILLED: // billed 10
+		                   $ptypearray=unserialize(PAYER_TYPES);
+		                   $data[$i]['type'] = "Billed ".$ptypearray[$payrecsource+0];
+		                   $data[$i]['charge'] = "";
+		                   $data[$i]['payment'] = "";
+		                   break;
+		                case COPAY: // COPAY 11
+		                   $data[$i]['type'] = 'Copay';
+		                   $data[$i]['payment']= bcadd($payrecamt, 0, 2);
+		                   $data[$i]['charge'] = "";
+		                   $total_payments += $payrecamt;
+		                   break;
+		                case PAYMENT: 		                  
+		                default:  // default is payment
+		                    $ptypearray=unserialize(PAYER_TYPES);
+		                    $data[$i]['type'] = "Payment ".$ptypearray[$payrecsource+0];
+		                    $data[$i]['payment']= bcadd($payrecamt, 0, 2);
+		                    $data[$i]['charge'] = "";
+		                    $total_payments += $payrecamt;
+		                    break;
+	                } // end of categry switch (name)
+	          	
+           	 } // wend?
+           	 $index=count($data);
+           	 $data[$index]['total_charges']="".$total_charges;
+           	  $data[$index]['total_payments']="".$total_payments;
+                return $data;
+	}
+	
+	public function getCoveragesCopayInfo($ptid, $procid){
+		if($procid==0){
+			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covcopay AS copay, c.covtype AS type from coverage c ".
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where covtype=1 AND c.covcopay >0 AND c.covpatient=".$GLOBALS['sql']->quote( $ptid );
+		}
+		else{
+			$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procid);
+			$this_procedure = $procedure_object->get_procedure( );
+			$covid=$this_procedure['proccurcovid'];
+			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covcopay AS copay, c.covtype AS type from coverage c ".
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covcopay >0 AND c.id=".$covid;			
+		}
+		
+		$result = $GLOBALS['sql']->queryRow($query);
+		if($result!= NULL){
+			$type=$result['type']+0;
+			$ptypearray=unserialize(PAYER_TYPES);
+			$result['type']=$ptypearray[$type];
+		}
+
+		return $result;
+	}
+	
+	public function getCoveragesDeductableInfo($ptid, $procid){
+		if($procid==0){
+			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covdeduct AS deduct, c.covtype AS type from coverage c ".
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where covtype=1 AND c.covdeduct >0 AND c.covpatient=".$GLOBALS['sql']->quote( $ptid );
+		}
+		else{
+			$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procid);
+			$this_procedure = $procedure_object->get_procedure( );
+			$covid=$this_procedure['proccurcovid'];
+			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covdeduct AS deduct, c.covtype AS type from coverage c ".
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covdeduct >0 AND c.id=".$covid;
+		}
+		$result = $GLOBALS['sql']->queryRow($query);
+		if($result!=NULL){
+			$type=$result['type']+0;
+			$ptypearray=unserialize(PAYER_TYPES);
+			$result['type']=$ptypearray[$type];
+		}
+
+		return $result;
+	}
+	
+	public function mistake($procid) {
+
+		$query = "DELETE FROM payrec WHERE payrecproc=".$GLOBALS['sql']->quote( $procid );
+                $pay_result = $GLOBALS['sql']->queryAll($query);
+                
+                $query = "DELETE FROM procrec WHERE id=".$GLOBALS['sql']->quote( $procid );
+                $proc_result = $GLOBALS['sql']->queryAll($query);
+               
+                return ($proc_result and $pay_result); 
+        }
 
 } // end class Ledger
 

@@ -858,3 +858,39 @@ a:hover {
 .width100Perc{
 width:100%;
 }
+
+.gwt-CustomPushButton-up, .gwt-CustomPushButton-up-hovering, .gwt-CustomPushButton-up-disabled, .gwt-CustomPushButton-down, .gwt-CustomPushButton-down-hovering, .gwt-CustomPushButton-down-disabled {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  margin:0;
+  text-decoration:none;
+}
+.gwt-CustomPushButton-up, .gwt-CustomPushButton-up-hovering, .gwt-CustomPushButton-up-disabled {
+  padding:1px 2px;
+}
+.gwt-CustomPushButton-up {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-up-hovering {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-up-disabled {
+  border:1px outset #CCCCCC;
+  cursor:default;
+  opacity:0.5;
+}
+.gwt-CustomPushButton-down, .gwt-CustomPushButton-down-hovering, .gwt-CustomPushButton-down-disabled {
+  padding:2px 2px 1px 2px;
+}
+.gwt-CustomPushButton-down {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-down-hovering {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-down-disabled {
+  border:1px outset #CCCCCC;
+  cursor:default;
+  opacity:0.5;
+}

@@ -126,6 +126,11 @@ class UserInterface {
 
 	// Method: GetEMRConfiguration
 	public function GetEMRConfiguration ( ) {
+		$user_id = $this->user->user_number;
+		
+		$usermodules = module_function( 'ACL', 'GetUserPermissions', array ( $user_id ) );
+		
+		$this->SetConfigValue('usermodules',$usermodules);
 		$this->GetUserLeftNavigationMenu();
 		$this->GetUserTheme();
 		if (is_array($this->user->manage_config)) {
@@ -167,7 +172,7 @@ class UserInterface {
 	//	Associative array
 	//
 	public function GetRecord ( $id ) {
-		freemed::acl_enforce( 'admin', 'config' );
+		freemed::acl_enforce( 'admin', 'write' );
 		return $GLOBALS['sql']->queryRow( 'SELECT * FROM user WHERE id=' . $GLOBALS['sql']->quote( $id ).' AND id>1' );
 	} // end method GetRecord
 
@@ -184,7 +189,7 @@ class UserInterface {
 	//	Array of hashes.
 	//
 	public function GetRecords ( $limit = 100, $criteria_field = NULL, $criteria = NULL ) {
-		freemed::acl_enforce( 'admin', 'config' );
+		freemed::acl_enforce( 'admin', 'write' );
 
 		// Check to make sure that if $criteria_field is declared that it's valid
 		$variables = array (
@@ -222,13 +227,13 @@ class UserInterface {
 	//	specified, _add will return the id number if successful
 	//	or false if unsuccessful.
 	//
-	public function add ( $data ) {
-		freemed::acl_enforce( 'admin', 'config' );
-
+	public function add ( $data,$blockedACOs=NULL,$allowedACOs=NULL ) {
+		freemed::acl_enforce( 'admin', 'write' );
+		
 		$ourdata = (array) $data;
 		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
-
+		
 		$query = $GLOBALS['sql']->insert_query (
 			'user',
 			$this->variables
@@ -250,6 +255,16 @@ class UserInterface {
 			foreach ( $ourdata['useracl'] AS $acl ) {
 				$o = module_function( 'ACL', 'AddUserToGroup', array ( $new_id, $acl ) );
 			}
+		}
+			
+		// ACL routine for adding all blockedACOs 
+		if ($blockedACOs ) {
+			 $blockedACOsSuccess = module_function( 'ACL', 'AddBlockedACOs', array ( $new_id, $blockedACOs ) );
+		}
+		
+		// ACL routine for adding all allowedACOs 
+		if ($allowedACOs ) {
+			 $allowedACOsSuccess = module_function( 'ACL', 'AddAllowedACOs', array ( $new_id, $allowedACOs ) );
 		}
 
 		// Return user ID
@@ -282,18 +297,20 @@ class UserInterface {
 	//	<del_pre>
 	//
 	public function del ( $id ) {
-		freemed::acl_enforce( 'admin', 'config' );
-
+		freemed::acl_enforce( 'admin', 'write' );
+		
 		// Protect admin user
 		if ( $id + 0 == 1 ) { return false; }
 
 		$this->del_pre( $id + 0 );
 		$query = "DELETE FROM user WHERE id = '".addslashes( $id+0 )."'";
 		$result = $GLOBALS['sql']->query ( $query );
-		
+
 		// delete user ACL object
 		module_function( 'ACL', 'UserDel', $id);
-		
+		module_function( 'ACL', 'DelBlockedACOs', $id);
+		module_function( 'ACL', 'DelAllowedACOs', $id);
+
 		return true;
 	} // end function del
 
@@ -310,8 +327,8 @@ class UserInterface {
 	// See Also:
 	//	<mod_pre>
 	//
-	public function mod ( $data ) {
-		freemed::acl_enforce( 'admin', 'config' );
+	public function mod ( $data,$blockedACOs=NULL,$allowedACOs=NULL ) {
+		freemed::acl_enforce( 'admin', 'write' );
 
 		if ( is_array( $data ) ) {
 			if ( !$data['id'] ) { return false; }
@@ -326,7 +343,8 @@ class UserInterface {
 		// Protect admin user
 		if ( $ourdata['id'] + 0 == 1 ) { return false; }
 		$tempVariables = $this->variables;
-		unset($tempVariables[1]);
+		if(!$data['userpassword']) // remove password from variables if no need to change the password
+			unset($tempVariables[1]);
 		$this->mod_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$result =  $GLOBALS['sql']->query($GLOBALS['sql']->update_query (
@@ -343,7 +361,9 @@ class UserInterface {
 		else {
 			$data['useracl'] = array($data['useracl']);
 		}
-			
+		
+		// Create user ACL object If not already exists in ACL tables
+		module_function( 'ACL', 'UserAdd', array( $data['id'] ) );
 		if ( is_array( $data['useracl'] ) ) {
 			$groups = module_function ( 'ACL', 'UserGroups' );
 			foreach ( $groups AS $group ) {
@@ -359,9 +379,27 @@ class UserInterface {
 				}
 				if ( !$found && $inThisGroup ) {
 					// Need to remove
+					$abc = $abc.':rm:';
 					$o = module_function( 'ACL', 'RemoveUserFromGroup', array ( $data['id'], $group[1] ) );
 				}
 			}
+		}
+		
+		
+		// ACL routine for adding all blockedACOs 
+		if ($blockedACOs ) {
+		 	 module_function( 'ACL', 'DelBlockedACOs', $data['id']);
+			 $blockedACOsSuccess = module_function( 'ACL', 'AddBlockedACOs', array ( $data['id'], $blockedACOs ) );
+		}else{//else remove blocked permission if exists
+			module_function( 'ACL', 'DelBlockedACOs', $data['id']);
+		}
+		
+		// ACL routine for adding all allowedACOs 
+		if ($allowedACOs ) {
+			 module_function( 'ACL', 'DelAllowedACOs', $data['id']);
+			 $allowedACOsSuccess = module_function( 'ACL', 'AddAllowedACOs', array ( $data['id'], $allowedACOs ) );
+		}else{//else remove blocked permission if exists
+			module_function( 'ACL', 'DelAllowedACOs', $data['id']);
 		}
 
 		return $result ? true : false;
@@ -461,8 +499,11 @@ class UserInterface {
 		return false;	
 	}
 
+	public function getShowBit($read=0,$write=0,$modify=0,$delete=0,$show=0){
+		return $read|$write|$modify|$delete|$show;
+	}
 
-	
+/*	
 	// Method: checkSystemMenu
 	//
 	//param	
@@ -484,7 +525,43 @@ class UserInterface {
 		if(strlen(serialize($SystemAccessOptions)) != (strlen(serialize($SystemAccessOptionsDB))-13))
 			$userLeftNavigationMenu['System'] = $SystemAccessOptions;
 	} // end method checkSystemMenu
+	*/
 
+	// Method: checkSystemMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkSystemMenu (&$userLeftNavigationMenu ) {
+		$SystemAccessOptionsDB = $userLeftNavigationMenu['System'];
+		
+		$SystemAccessOptions['Dashboard'] = 1;
+		
+		//Schedulaing Group stuff
+		$schedulerTableWrite   = freemed::acl( 'SchedulerTable', 'write' )?1:0;
+		$schedulerTableRead    = freemed::acl( 'SchedulerTable', 'read' )?1:0;
+		$schedulerTableDelete  = freemed::acl( 'SchedulerTable', 'delete' )?1:0;
+		$schedulerTableModify  = freemed::acl( 'SchedulerTable', 'modify' )?1:0;
+		$schedulerTable        = $this->getShowBit($schedulerTableRead,$schedulerTableWrite,$schedulerTableModify,$schedulerTableDelete);
+		$SystemAccessOptions['Scheduler'] = $schedulerTable;
+		if(!$SystemAccessOptions['Scheduler'])
+			unset($SystemAccessOptions['Scheduler']);
+
+		//Schedulaing Group stuff
+		$messagesWrite   = freemed::acl( 'SchedulerTable', 'write' )?1:0;
+		$messagesRead    = freemed::acl( 'SchedulerTable', 'read' )?1:0;
+		$messagesDelete  = freemed::acl( 'SchedulerTable', 'delete' )?1:0;
+		$messagesModify  = freemed::acl( 'SchedulerTable', 'modify' )?1:0;
+		$messages        = $this->getShowBit($messagesRead,$messagesWrite,$messagesModify,$messagesDelete);		
+		$SystemAccessOptions['Messages'] = $messages;
+		if(!$SystemAccessOptions['Messages'])
+			unset($SystemAccessOptions['Messages']);
+		
+		if(strlen(serialize($SystemAccessOptions)) != (strlen(serialize($SystemAccessOptionsDB))-13))
+			$userLeftNavigationMenu['System'] = $SystemAccessOptions;
+	} // end method checkSystemMenu
+
+/*
 	// Method: checkPatientMenu
 	//
 	//param	
@@ -529,9 +606,75 @@ class UserInterface {
 		 unset($userLeftNavigationMenu['Patient']);
 		
 	} // end method checkPatientMenu
+	*/
+	 // This will be uncommented when New ACL Implementation will be enabled
+	public function checkPatientMenu (&$userLeftNavigationMenu ) {
+		$PatientAccessOptionsDB =  $userLeftNavigationMenu['Patient'];
+		
+		//Patient sub-menu stuff
+		$emrRead       =  freemed::acl( 'emr', 'read' )?1:0;
+		$emrWrite      =  freemed::acl( 'emr', 'write' )?1:0;
+		$emrModify     =  freemed::acl( 'emr', 'modify' )?1:0;
+		$emrDelete     =  freemed::acl( 'emr', 'delete' )?1:0;
+		$patientSearch =  $this->getShowBit($emrRead,0,0,0,0);
+		$patientForm   =  $this->getShowBit($emrRead,$emrWrite,$emrModify,$emrDelete);
+		
+		//Patient Group stuff
+		$groupWrite   = freemed::acl( 'CalendarGroup', 'write' )?1:0;
+		$groupRead    = freemed::acl( 'CalendarGroup', 'read' )?1:0;
+		$groupDelete  = freemed::acl( 'CalendarGroup', 'delete' )?1:0;
+		$groupModify  = freemed::acl( 'CalendarGroup', 'modify' )?1:0;
+		$group        = $this->getShowBit($groupRead,$groupWrite,$groupModify,$groupDelete);
+		
+		//Patient Group stuff
+		$callinWrite   = freemed::acl( 'Callin', 'write' )?1:0;
+		$callinRead    = freemed::acl( 'Callin', 'read' )?1:0;
+		$callinDelete  = freemed::acl( 'Callin', 'delete' )?1:0;
+		$callinModify  = freemed::acl( 'Callin', 'modify' )?1:0;
+		$callin        = $this->getShowBit($callinRead,$callinWrite,$callinModify,$callinDelete);
+		
+		//RXRefill stuff
+		$rxRefillWrite  = freemed::acl( 'RxRefillRequest', 'write' )?1:0;
+		
+		//Patient Tag stuff
+		$patientTagRead  = freemed::acl( 'PatientTag', 'read' )?1:0;
+		
+		
+		if($patientForm || $patientSearch || $group || $callin || $rxRefillWrite || $patientTagWrite){
+
+			$PatientAccessOptions['Search']      =  $patientSearch;
+			if(!$PatientAccessOptions['Search'])
+				unset($PatientAccessOptions['Search']);
+			
+			$PatientAccessOptions['New Patient'] =  $patientForm;
+			if(!$PatientAccessOptions['New Patient'])
+				unset($PatientAccessOptions['New Patient']);
+			
+			$PatientAccessOptions['Groups']      =  $group;
+			if(!$PatientAccessOptions['Groups'])
+				unset($PatientAccessOptions['Groups']);
+				
+			$PatientAccessOptions['Call In']     =  $callin;
+			if(!$PatientAccessOptions['Call In'])
+				unset($PatientAccessOptions['Call In']);
+				
+			$PatientAccessOptions['Rx Refill']   =  $rxRefillWrite;
+			if(!$PatientAccessOptions['Rx Refill'])
+				unset($PatientAccessOptions['Rx Refill']);
+				
+			$PatientAccessOptions['Tag Search']  =  $patientTagRead;
+			if(!$PatientAccessOptions['Tag Search'])
+				unset($PatientAccessOptions['Tag Search']);
+				
+			if(strlen(serialize($PatientAccessOptions)) != (strlen(serialize($PatientAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Patient'] = $PatientAccessOptions;
+		}
+		else
+		 unset($userLeftNavigationMenu['Patient']);
+		
+	} // end method checkPatientMenu
 	
-	
-	
+	/*
 	// Method: checkDocumentsMenu
 	//
 	//param	
@@ -546,14 +689,54 @@ class UserInterface {
 		if(strlen(serialize($DocumentsAccessOptions)) != (strlen(serialize($DocumentsAccessOptionsDB))-13))
 			$userLeftNavigationMenu['Documents'] = $DocumentsAccessOptions;
 	} // end method checkDocumentsMenu
+	*/
+
+	// Method: checkDocumentsMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkDocumentsMenu (&$userLeftNavigationMenu ) {
+		$DocumentsAccessOptionsDB = $userLeftNavigationMenu['Documents'];
+
+		//Unfiled Documents stuff
+		$unfiledRead    = freemed::acl( 'UnfiledDocuments', 'read' )?1:0;
+		$unfiledWrite   = freemed::acl( 'UnfiledDocuments', 'write' )?1:0;
+		$unfiledModify  = freemed::acl( 'UnfiledDocuments', 'modify' )?1:0;
+		$unfiledDelete  = freemed::acl( 'UnfiledDocuments', 'delete' )?1:0;
+		$unfiled        = $this->getShowBit($unfiledRead,$unfiledWrite,$unfiledModify,$unfiledDelete);
+
+		//Unread Documents stuff
+		$unReadRead    = freemed::acl( 'UnreadDocuments', 'read' )?1:0;
+		$unReadWrite   = freemed::acl( 'UnreadDocuments', 'write' )?1:0;
+		$unReadModify  = freemed::acl( 'UnreadDocuments', 'modify' )?1:0;
+		$unReaddDelete = freemed::acl( 'UnreadDocuments', 'delete' )?1:0;
+		$unRead        = $this->getShowBit($unReadRead,$unReadWrite,$unReadModify,$unReaddDelete);
+		
+		if($unfiled || $unRead){
+			
+			$DocumentsAccessOptions['Unfiled'] = $unfiled;
+			if(!$DocumentsAccessOptions['Unfiled'])
+				unset($DocumentsAccessOptions['Unfiled']);	
+			
+			$DocumentsAccessOptions['Unread'] = $unRead;
+			if(!$DocumentsAccessOptions['Unread'])
+				unset($DocumentsAccessOptions['Unread']);	
+			
+			if(strlen(serialize($DocumentsAccessOptions)) != (strlen(serialize($DocumentsAccessOptionsDB))-13))
+			$userLeftNavigationMenu['Documents'] = $DocumentsAccessOptions;
 	
+		}else
+			unset($userLeftNavigationMenu['Documents']);			
+	} // end method checkDocumentsMenu
 	
-	
+/*	
 	// Method: checkDosingMenu
 	//
 	//param	
 	//      userLeftNavigationMenu passed by reference 
 	//
+
 	public function checkDosingMenu (&$userLeftNavigationMenu ) {
 		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
 		$DosingAccessOptions['Medication Inventory'] =  $this->getPermissionsBits(1,1,1,1,1);
@@ -563,12 +746,91 @@ class UserInterface {
 		$DosingAccessOptions['Reconcile Bottle']     =  $this->getPermissionsBits(1,1,1,1,1);
 		$DosingAccessOptions['Bottle Transfer']     =  $this->getPermissionsBits(1,1,1,1,1);
 		$DosingAccessOptions['Inventory Reports']     =  $this->getPermissionsBits(1,1,1,1,1);
+		$DosingAccessOptions['Methodone Billing']     =  $this->getPermissionsBits(1,1,1,1,1);
 		if(strlen(serialize($DosingAccessOptions))  != (strlen(serialize($DosingAccessOptionsDB))-13))
 			$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
+	} // end method checkDosingMenu	
+*/	
+// This will be uncommented when New ACL Implementation will be enabled
+	public function checkDosingMenu (&$userLeftNavigationMenu ) {
+		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
+		
+		//Medication Inventory
+		$methadoneRead       = freemed::acl( 'BulkMethadone', 'read' )?1:0;
+		$methadoneWrite      = freemed::acl( 'BulkMethadone', 'write' )?1:0;
+		$lotMngRead          = freemed::acl( 'DosingMethadoneLotRegistration', 'read' )?1:0;
+		$lotMngWrite         = freemed::acl( 'DosingMethadoneLotRegistration', 'write' )?1:0;
+		$lotRecRead          = freemed::acl( 'DosingLotReceipt', 'read' )?1:0;
+		$medicationInventry  = $this->getShowBit($methadoneRead,$methadoneWrite,$lotMngRead  ,$lotMngWrite,$lotRecRead );
+		
+		//Open/Close Dosing Station stuff
+		$openCloseStationWrite   = freemed::acl( 'DosingStation', 'write' )?1:0;
+		
+		//Dispense Dose stuff
+		$dispneseWrite    = freemed::acl( 'DoseRecord', 'write' )?1:0;
+		$dispneseRead     = freemed::acl( 'DoseRecord', 'read' )?1:0;
+		$dispneseDelete   = freemed::acl( 'DoseRecord', 'delete' )?1:0;
+		$dispneseModify   = freemed::acl( 'DoseRecord', 'modify' )?1:0;
+		$dispenseDose     = $this->getShowBit($dispneseRead,$dispneseWrite,$dispneseModify  ,$dispneseDelete );
+
+		//Bottle Transfer stuff
+		$bottleTransferWrite   = freemed::acl( 'BottleTransfer', 'write' )?1:0;
+		$bottleTransferRead    = freemed::acl( 'BottleTransfer', 'read' )?1:0;
+		$bottleTransfer        = $this->getShowBit($bottleTransferRead,$bottleTransferWrite);
+		
+		//Reconcile Bottle stuff
+		$reconcileBottleWrite  = freemed::acl( 'DosingReconcileBottle', 'write' )?1:0;
+		$reconcileBottle       = $this->getShowBit($reconcileBottleWrite);
+		
+		
+		//Methodone Billing stuff
+		$ProcedureModuleWrite  = freemed::acl( 'ProcedureModule', 'write' )?1:0;
+		$ProcedureModule       = $this->getShowBit($ProcedureModuleWrite);
+		
+		if($medicationInventry || $openCloseStationWrite || $dispenseDose || $bottleTransfer || $reconcileBottle || $ProcedureModule){
+			
+			$DosingAccessOptions['Medication Inventory'] =  $medicationInventry;
+			if(!$DosingAccessOptions['Medication Inventory'])
+					unset($DosingAccessOptions['Medication Inventory']);
+			
+					
+			$DosingAccessOptions['Open Dosing Station']  =  $openCloseStationWrite;
+			if(!$DosingAccessOptions['Open Dosing Station'])
+					unset($DosingAccessOptions['Open Dosing Station']);
+					
+			$DosingAccessOptions['Close Dosing Station']     =  $openCloseStationWrite;
+			if(!$DosingAccessOptions['Close Dosing Station'])
+					unset($DosingAccessOptions['Close Dosing Station']);
+					
+			$DosingAccessOptions['Dispense Dose']        =  $dispenseDose;
+			if(!$DosingAccessOptions['Dispense Dose'])
+					unset($DosingAccessOptions['Dispense Dose']);
+					
+			$DosingAccessOptions['Reconcile Bottle']     =  $reconcileBottle;
+			if(!$DosingAccessOptions['Reconcile Bottle'])
+					unset($DosingAccessOptions['Reconcile Bottle']);
+					
+			$DosingAccessOptions['Bottle Transfer']     =  $bottleTransfer;
+			if(!$DosingAccessOptions['Bottle Transfer'])
+					unset($DosingAccessOptions['Bottle Transfer']);
+					
+			$DosingAccessOptions['Inventory Reports']     =  $this->getShowBit($medicationInventry,$openCloseStationWrite,$dispenseDose,$reconcileBottle,$bottleTransfer);
+			if(!$DosingAccessOptions['Inventory Reports'])
+					unset($DosingAccessOptions['Inventory Reports']);
+					
+			$DosingAccessOptions['Methodone Billing']     =  $ProcedureModule;
+			if(!$DosingAccessOptions['Methodone Billing'])
+					unset($DosingAccessOptions['Methodone Billing']);
+					
+			if(strlen(serialize($DosingAccessOptions))  != (strlen(serialize($DosingAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
+				
+		}
+		else	
+			unset($userLeftNavigationMenu['Dosing Menu']);
 	} // end method checkDosingMenu
-	
-	
-	
+
+/*
 	// Method: checkBillingMenu
 	//
 	//param	
@@ -576,7 +838,7 @@ class UserInterface {
 	//
 	public function checkBillingMenu (&$userLeftNavigationMenu ) {
 		$BillingAccessOptionsDB = $userLeftNavigationMenu['Billing'];
-		$billingRead = freemed::acl( 'financial', 'menu' ) | freemed::acl( 'financial', 'summary' );
+		$billingRead = (freemed::acl( 'financial', 'menu' ) | freemed::acl( 'financial', 'summary' ))?1:0;
 		
 		if($billingRead){
 			$BillingAccessOptions['Account Receivable'] = $this->getPermissionsBits($billingRead,0,0,0,1);
@@ -588,9 +850,64 @@ class UserInterface {
 		}else
 		    unset($userLeftNavigationMenu['Billing']);
 	} // end method checkBillingMenu
+*/
+	// This will be uncommented when New ACL Implementation will be enabled
+	// Method: checkBillingMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkBillingMenu (&$userLeftNavigationMenu ) {
+		$BillingAccessOptionsDB = $userLeftNavigationMenu['Billing'];
+		
+		//Account Recievable Stuff
+		$accountReceivable = $this->getShowBit(1,1,1,1,1);
+		
+		// Claims Manager Stuff
+		$claimLogWrite = freemed::acl( 'ClaimLogTable', 'write' )?1:0;
+		$claimLogRead  = freemed::acl( 'ClaimLogTable', 'read' )?1:0;
+		$claimLog      =  $this->getShowBit($claimLogRead,$claimLogWrite,0,0,0 );
+		
+		// Remitt Billing Stuff
+		$remittBillingTransportWrite = freemed::acl( 'RemittBillingTransport', 'write' )?1:0;
+		$remittBillingTransportRead  = freemed::acl( 'RemittBillingTransport', 'read' )?1:0;
+		$remittBillingTransport      =  $this->getShowBit($remittBillingTransportRead,$remittBillingTransportWrite,0,0,0 );
+
+		// Super Billing Stuff
+		$superBillRead  = freemed::acl( 'RemittBillingTransport', 'read' )?1:0;
+		$superBill      =  $this->getShowBit($superBillRead,0,0,0,0 );		
+		
+		
+		if($claimLog || $remittBillingTransport || $superBill){
+			
+			$BillingAccessOptions['Account Receivable']     =  $accountReceivable;
+			if(!$BillingAccessOptions['Account Receivable'])
+				unset($BillingAccessOptions['Account Receivable']);
+				
+			$BillingAccessOptions['Claims Manager']     =  $claimLog;
+			if(!$BillingAccessOptions['Claims Manager'])
+				unset($BillingAccessOptions['Claims Manager']);
+				
+			$BillingAccessOptions['Remitt Billing']     =  $remittBillingTransport;	
+			if(!$BillingAccessOptions['Remitt Billing'])
+				unset($BillingAccessOptions['Remitt Billing']);	
+
+			$BillingAccessOptions['Remitt Billing']     =  $remittBillingTransport;	
+			if(!$BillingAccessOptions['Remitt Billing'])
+				unset($BillingAccessOptions['Remitt Billing']);	
+
+			$BillingAccessOptions['Super Bills']     =  $remittBillingTransport;	
+			if(!$BillingAccessOptions['Super Bills'])
+				unset($BillingAccessOptions['Super Bills']);	
+
+			if(strlen(serialize($BillingAccessOptions)) != (strlen(serialize($BillingAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Billing'] = $BillingAccessOptions;
+		}else
+		    unset($userLeftNavigationMenu['Billing']);
+	} // end method checkBillingMenu
 	
 	
-	
+/*	
 	// Method: checkReportingMenu
 	//
 	//param	
@@ -598,32 +915,80 @@ class UserInterface {
 	//
 	public function checkReportingMenu (&$userLeftNavigationMenu ) {
 		$ReportingAccessOptionsDB = $userLeftNavigationMenu['Reporting'];
-		$reportRead  = freemed::acl( 'reporting', 'menu' );
-		$reportWrite = freemed::acl( 'reporting', 'generate' );
+		$reportRead  = freemed::acl( 'reporting', 'read' )?1:0;
+		$reportWrite = freemed::acl( 'reporting', 'write' )?1:0;
 		if($reportRead || $reportWrite){
+			
 			$ReportingAccessOptions['Reporting Engine'] = $this->getPermissionsBits($reportRead,$reportWrite,0,0,1);
+			if(!$ReportingAccessOptions['Reporting Engine'])
+				unset($ReportingAccessOptions['Reporting Engine']);	
+			
+			$ReportingAccessOptions['Reporting Log'] = $this->getPermissionsBits($reportRead,$reportWrite,0,0,1);
+			if(!$ReportingAccessOptions['Reporting Log'])
+				unset($ReportingAccessOptions['Reporting Log']);	
+			
 			if(strlen(serialize($ReportingAccessOptions)) != (strlen(serialize($ReportingAccessOptionsDB))-13))
 				$userLeftNavigationMenu['Reporting'] = $ReportingAccessOptions;
+	
+		}else
+			unset($userLeftNavigationMenu['Reporting']);
+	} // end method checkReportingMenu
+*/	
+
+	// This will be uncommented when New ACL Implementation will be enabled
+	// Method: checkReportingMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkReportingMenu (&$userLeftNavigationMenu ) {
+		$ReportingAccessOptionsDB = $userLeftNavigationMenu['Reporting'];
+		$reportEngineRead  = freemed::acl( 'reporting', 'read' )?1:0;
+		$reportEngineWrite = freemed::acl( 'reporting', 'write' )?1:0;
+		$reportEngine      = $this->getShowBit($reportEngineRead,$reportEngineWrite,0,0,0 );		
+		
+		$reportingPrintLogRead  = freemed::acl( 'ReportingPrintLog', 'read' )?1:0;
+		$reportingPrintLogWrite = freemed::acl( 'ReportingPrintLog', 'delete' )?1:0;
+		$reportingPrintLog      = $this->getShowBit($reportingPrintLogRead,0,0,$reportingPrintLogWrite,0 );		
+		
+		if($reportEngine || $reportingPrintLog){
+			
+			$ReportingAccessOptions['Reporting Engine'] = $reportEngine;
+			if(!$ReportingAccessOptions['Reporting Engine'])
+				unset($ReportingAccessOptions['Reporting Engine']);	
+			
+			$ReportingAccessOptions['Reporting Log'] = $reportingPrintLog;
+			if(!$ReportingAccessOptions['Reporting Log'])
+				unset($ReportingAccessOptions['Reporting Log']);	
+			
+			if(strlen(serialize($ReportingAccessOptions)) != (strlen(serialize($ReportingAccessOptionsDB))-13))
+				$userLeftNavigationMenu['Reporting'] = $ReportingAccessOptions;
+	
 		}else
 			unset($userLeftNavigationMenu['Reporting']);
 	} // end method checkReportingMenu
 	
-	
-	
+/*	
 	// Method: checkUtilitiesMenu
 	//
 	//param	
 	//      userLeftNavigationMenu passed by reference 
 	//
 	public function checkUtilitiesMenu (&$userLeftNavigationMenu ) {
-		$adminRead = freemed::acl( 'admin', 'menu' );
-		$adminWrite = freemed::acl( 'admin', 'config' );
+		$adminRead = freemed::acl( 'admin', 'menu' )?1:0;
+		$adminWrite = freemed::acl( 'admin', 'config' )?1:0;
 		if($adminRead || $adminWrite){
 			$UtilitiesAccessOptionsDB = $userLeftNavigationMenu['Utilities'];
 			
 			$UtilitiesAccessOptions['Utilities']         = $this->getPermissionsBits($adminRead,$adminWrite,0,0,1);
 			
+			if(!$UtilitiesAccessOptions['Utilities'])
+				unset($UtilitiesAccessOptions['Utilities']);
+			
 	   	        $UtilitiesAccessOptions['Support Data']         = $this->getPermissionsBits($adminRead,$adminWrite,0,0,1);
+	   	        
+	   	        if(!$UtilitiesAccessOptions['Support Data'])
+				unset($UtilitiesAccessOptions['Support Data']);
 			
 			$UtilitiesAccessOptions['User Management']      = $this->getPermissionsBits(0,$adminWrite,0,0,1);
 			if(!$UtilitiesAccessOptions['User Management'])
@@ -647,6 +1012,70 @@ class UserInterface {
 		else
 			unset($userLeftNavigationMenu['Utilities']);
 	} // end method checkUtilitiesMenu
+*/
+	
+	// Method: checkUtilitiesMenu
+	//
+	//param	
+	//      userLeftNavigationMenu passed by reference 
+	//
+	public function checkUtilitiesMenu (&$userLeftNavigationMenu ) {
+		//Tools stuff
+		$toolsRead = freemed::acl( 'Tools', 'read' )?1:0;
+		$toolsWrite = freemed::acl( 'Tools', 'write' )?1:0;
+		$toolsModify = freemed::acl( 'Tools', 'modify' )?1:0;
+
+		$tools = $this->getShowBit($toolsRead,$toolsWrite,$toolsModify);
+		
+		//Admin stuff
+		$adminRead   = freemed::acl( 'admin', 'read' )?1:0;
+		$adminWrite  = freemed::acl( 'admin', 'write' )?1:0;
+		$adminDelete = freemed::acl( 'admin', 'delete' )?1:0;
+		$adminModify = freemed::acl( 'admin', 'modify' )?1:0;
+		$admin = $this->getShowBit($adminRead,$adminWrite,$adminDelete,$adminModify);
+		
+		//ACL stuff
+		$aclRead   = freemed::acl( 'acl', 'read' )?1:0;
+		$aclWrite  = freemed::acl( 'acl', 'write' )?1:0;
+		$aclDelete = freemed::acl( 'acl', 'delete' )?1:0;
+		$aclModify = freemed::acl( 'acl', 'modify' )?1:0;
+		$acl = $this->getShowBit($aclRead,$aclWrite,$aclDelete,$aclModify);
+		
+		if($tools || $admin || $acl){
+			$UtilitiesAccessOptionsDB = $userLeftNavigationMenu['Tools'];
+			
+			$UtilitiesAccessOptions['Tools']         = $tools;
+			if(!$UtilitiesAccessOptions['Tools'])
+				unset($UtilitiesAccessOptions['Tools']);
+			
+	   	        $UtilitiesAccessOptions['Support Data']         = $admin;
+	   	        
+	   	        if(!$UtilitiesAccessOptions['Support Data'])
+				unset($UtilitiesAccessOptions['Support Data']);
+			
+			$UtilitiesAccessOptions['User Management']      = $admin;
+			if(!$UtilitiesAccessOptions['User Management'])
+				unset($UtilitiesAccessOptions['User Management']);
+			
+			$UtilitiesAccessOptions['System Configuration'] = $admin;
+			if(!$UtilitiesAccessOptions['System Configuration'])
+				unset($UtilitiesAccessOptions['System Configuration']);
+			
+			$UtilitiesAccessOptions['DB Administration']    = $admin;
+			if(!$UtilitiesAccessOptions['DB Administration'])
+				unset($UtilitiesAccessOptions['DB Administration']);
+				
+			$UtilitiesAccessOptions['ACL']    = $acl;
+			if(!$UtilitiesAccessOptions['ACL'])
+				unset($UtilitiesAccessOptions['ACL']);	
+				
+			if(strlen(serialize($UtilitiesAccessOptions)) != (strlen(serialize($UtilitiesAccessOptionsDB))-13))
+			    $userLeftNavigationMenu['Utilities'] = $UtilitiesAccessOptions;
+		} 
+		else
+			unset($userLeftNavigationMenu['Utilities']);
+	} // end method checkUtilitiesMenu
+	
 } // end class UserInterface
 
 ?>

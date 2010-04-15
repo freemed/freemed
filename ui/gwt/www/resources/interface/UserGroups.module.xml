@@ -26,6 +26,6 @@
 	<Elements>
 		<Element field="usergroupname" title="Name" type="TEXT" options="20" display="1" />
 		<Element field="usergroupfac" title="Facility" type="MODULE" options="FacilityModule" />
-		<Element field="usergroup" title="Group Members" type="MODULE_MULTIPLE" options="ProviderModule" />
+		<Element field="usergroup" title="Group Members" type="USER_MULTIPLE" />
 	</Elements>
 </SimpleUIBuilder>

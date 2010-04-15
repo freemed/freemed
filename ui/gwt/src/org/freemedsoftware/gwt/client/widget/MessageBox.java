@@ -97,32 +97,33 @@ public class MessageBox extends WidgetInterface {
 		wMessages.addColumn("Subject", "subject"); // col 2
 		wMessages.setIndexName("id");
 
-		wMessages.setTableRowClickHandler(new TableRowClickHandler() {
-			@Override
-			public void handleRowClick(HashMap<String, String> data, int col) {
-				// Get information on row...
-				try {
-					final Integer messageId = Integer.parseInt(data.get("id"));
-					if ((col == 0) || (col == 2)) {
-						MessageView messageView = new MessageView();
-						showMessage(messageId, messageView);
-						messageView.setMsgFrom(data.get("from_user"));
-						messageView.setMsgDate(data.get("stamp"));
-						popupMessageView = new Popup();
-						popupMessageView.setNewWidget(messageView);
-						messageView.setOnClose(new Command() {
-							public void execute() {
-								popupMessageView.hide();
-							}
-						});
-						popupMessageView.initialize();
+		if(canRead){
+			wMessages.setTableRowClickHandler(new TableRowClickHandler() {
+				@Override
+				public void handleRowClick(HashMap<String, String> data, int col) {
+					// Get information on row...
+					try {
+						final Integer messageId = Integer.parseInt(data.get("id"));
+						if ((col == 0) || (col == 2)) {
+							MessageView messageView = new MessageView();
+							showMessage(messageId, messageView);
+							messageView.setMsgFrom(data.get("from_user"));
+							messageView.setMsgDate(data.get("stamp"));
+							popupMessageView = new Popup();
+							popupMessageView.setNewWidget(messageView);
+							messageView.setOnClose(new Command() {
+								public void execute() {
+									popupMessageView.hide();
+								}
+							});
+							popupMessageView.initialize();
+						}
+					} catch (Exception e) {
+						GWT.log("Caught exception: ", e);
 					}
-				} catch (Exception e) {
-					GWT.log("Caught exception: ", e);
 				}
-			}
-		});
-
+			});
+		}
 		// Standard is collapsed view of the Messagebox
 		wMessages.setVisible(false);
 		// Click listener for both: the button and the label

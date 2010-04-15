@@ -48,7 +48,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -103,7 +102,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		// Create new container, push in
 		final HorizontalPanel hp = new HorizontalPanel();
 		hp.add(new Label(text));
-		Button removeButton = new Button("X");
+		CustomButton removeButton = new CustomButton("X");
 		removeButton.setTitle("Click to remove this item from this list.");
 		removeButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -179,8 +178,10 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 			Iterator<String> iter = Arrays.asList(s).iterator();
 			while (iter.hasNext()) {
 				String n = iter.next();
-				JsonUtil.debug("setCSV (multiple choice) : found " + n);
-				a.add(Integer.parseInt(n));
+				if(!n.equals("")){
+					JsonUtil.debug("setCSV (multiple choice) : found " + n);
+					a.add(Integer.parseInt(n));
+				}
 			}
 			setValue(a.toArray(new Integer[0]));
 		}

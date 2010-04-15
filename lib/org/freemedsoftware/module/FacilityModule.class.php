@@ -117,27 +117,16 @@ class FacilityModule extends SupportModule {
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
+
         public function GetDefaultFacility(){
-        	//if(true)return HTTP_Session2::get( 'facility_id' );
         	if(HTTP_Session2::get( 'facility_id' )){
         		$defaultDFacility['id']=HTTP_Session2::get( 'facility_id' )."";
-        		$defaultDFacility['facility']=HTTP_Session2::get( 'facility_name' );
+        		$defaultDFacility['facility']=$this->get_field(HTTP_Session2::get( 'facility_id'),'psrname');
         		return $defaultDFacility;
-        	}
+        	}	
         	
-        	return HTTP_Session2::get( 'facility_name' );
         }
-        public function SetDefaultFacility($facilityName,$facilityId){
-        	//setcookie("facility_name", $facilityName, time() + 3600, "/");
-        	//setcookie("facility_id", $facilityId, time() + 3600, "/");
-        	if(!HTTP_Session2::get( 'facility_name' )){
-        		HTTP_Session2::set('facility_name', $facilityName);
-        		HTTP_Session2::set('facility_id', $facilityId);
-        	}
-        	return HTTP_Session2::get( 'facility_id' ).HTTP_Session2::get( 'facility_name' );
-        }
-
-
+        
 	// Method: picklist
 	//
 	//	Generate associative array of facility table id to facility

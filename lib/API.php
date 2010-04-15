@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2010 FreeMED Software Foundation
+ // Copyright (C) 1999-2009 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -880,7 +880,31 @@ class freemed {
 			__("Buddhist") => '31'
 		);
 	} // end function freemed::religion_widget
-
+	
+	// Function freemed::coverage_relationship_picklist
+	//
+	// Returns:
+	//
+	//	Hash of possible options for coverage relationships
+	//
+	function coverage_relationship_picklist ( ) {
+		// HL7 v2.3.1 compliant race widget (table 0006)
+		return array (
+			"---" => '',
+			__("S") => 'Self',
+			__("C") => 'Child',
+			__("H") => 'Husband',
+			__("W") => 'Wife',
+			__("D") => 'Child Not Fin',
+			__("SC") => 'Step Child',
+			__("FC") => 'Foster Child',
+			__("WC") => 'Ward of Court',
+			__("HD") => 'HC Dependent',
+			__("SD") => 'Sponsored Dependent',
+			__("LR") => 'Medicare Legal Rep',
+			__("O") => 'Other'
+		);
+	} // end function freemed::religion_widget
 	// Function: freemed::secure_filename
 	//
 	//	Remove potentially hazardous characters from filenames

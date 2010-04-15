@@ -36,7 +36,7 @@ class TableMaintenance {
 	//	$table - Table name
 	//
 	public function ExportStockData ( $table ) {
-		freemed::acl_enforce( 'admin', 'menu' );
+		freemed::acl_enforce( 'admin', 'read' );
 		// Produce a physical location
 		$physical_file = PHYSICAL_LOCATION . "/data/locale/" . DEFAULT_LANGUAGE .
 			"/" .  $table . "." . DEFAULT_LANGUAGE . ".data.". 
@@ -66,7 +66,7 @@ class TableMaintenance {
  	//      $tables - array of table names 
  	// 
  	public function ExportTables ( $tables ) { 
- 		freemed::acl_enforce( 'admin', 'menu' );
+ 		freemed::acl_enforce( 'admin', 'read' );
  		foreach ($tables['exporttables'] as $v) { 
  			$created = $this->ExportStockData($v); 
  			if (!$created) { return false; } 
@@ -87,7 +87,7 @@ class TableMaintenance {
  	//      Array of arrays containing ( module name, table name). 
  	// 
  	public function GetModuleTables ( $param = '' ) { 
- 		freemed::acl_enforce( 'admin', 'menu' );
+ 		freemed::acl_enforce( 'admin', 'read' );
  		$q = "SELECT m.module_name AS m_name, m.module_table AS m_table FROM modules m WHERE m.module_name LIKE '".addslashes( $param )."%' ORDER BY m.module_name"; 
  		$res = $GLOBALS['sql']->queryAll( $q ); 
  		if (!count($res)) { return array(); } 
@@ -114,7 +114,7 @@ class TableMaintenance {
 	//	Array of hashes.
 	//
 	public function GetModules ( $assoc, $like = NULL, $picklist = false ) {
-		freemed::acl_enforce( 'admin', 'menu' );
+		freemed::acl_enforce( 'admin', 'read' );
 		$query = "SELECT module_name, module_version, module_class FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote( $assoc ).", module_associations ) ". ( $like ? " AND LOWER(module_name) LIKE '%".$GLOBALS['sql']->escape( strtolower($like) )."%'" : "" )." ORDER BY module_name";
 		$result = $GLOBALS['sql']->queryAll( $query );
 		if ( $picklist ) {
@@ -135,7 +135,7 @@ class TableMaintenance {
 	//	$table_name - Table name
 	//
 	public function ImportStockData ( $table_name ) {
-		freemed::acl_enforce( 'admin', 'config' );
+		freemed::acl_enforce( 'admin', 'write' );
 		// Produce a physical location
 		$physical_file = PHYSICAL_LOCATION . "/data/locale/" . DEFAULT_LANGUAGE .
 			"/" .  $table_name . "." . DEFAULT_LANGUAGE . ".data";
@@ -160,7 +160,7 @@ class TableMaintenance {
  	//      $tables - array of table names 
  	// 
  	public function ImportTables ( $tables ) { 
- 		freemed::acl_enforce( 'admin', 'config' );
+ 		freemed::acl_enforce( 'admin', 'write' );
  		foreach ($tables['exporttables'] as $v) { 
  			//$created = $this->ImportStockData($v); 
  			if (!$created) { return false; } 

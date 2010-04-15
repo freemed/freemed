@@ -84,7 +84,7 @@ class PatientTag extends SupportModule {
 	//	Array of key = value hashes.
 	//
 	public function ListTags ( $criteria ) {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		if (strlen($criteria) < 3) { return array(); }
 		$query = "SELECT DISTINCT(tag) AS tag FROM ".$this->table_name." WHERE tag LIKE '%".$GLOBALS['sql']->escape( $criteria )."%' AND ( dateexpire = 0 OR dateexpire > NOW() ) ORDER BY tag LIMIT 20";
 		$result = $GLOBALS['sql']->queryCol( $query );

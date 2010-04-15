@@ -101,7 +101,7 @@ public class SystemNotifications {
 			return true;
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// JSON-RPC
-			String[] params = { Integer.toString((int) mutexTimestamp) };
+			String[] params = { Long.toString(mutexTimestamp) };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
 					URL
@@ -112,10 +112,7 @@ public class SystemNotifications {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem(
-								"SystemNotifications",
-								"Failed to get system notifications.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("SystemNotifications", "Failed to get system notifications.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -130,8 +127,23 @@ public class SystemNotifications {
 								if (r != null) {
 									if (r.length > 0) {
 										// Update our working timestamp
-										mutexTimestamp = Integer.parseInt(r[0]
-												.get("timestamp"));
+										try {
+											mutexTimestamp = Long
+													.parseLong(r[0]
+															.get("timestamp"));
+											JsonUtil
+													.debug("SystemNotifications(): Received timestamp "
+															+ r[0]
+																	.get("timestamp"));
+											JsonUtil
+													.debug("SystemNotifications(): Parsed timestamp as "
+															+ mutexTimestamp);
+										} catch (Exception ex) {
+											JsonUtil
+													.debug("SystemNotifications(): Exception parsing mutex timestamp"
+															+ r[0]
+																	.get("timestamp"));
+										}
 										for (int iter = 0; iter < r.length; iter++) {
 											handleNotification(r[iter]);
 										}
@@ -139,13 +151,10 @@ public class SystemNotifications {
 								}
 							} else {
 								JsonUtil
-										.debug("Received dummy response from JSON backend");
+										.debug("SystemNotifications(): Received dummy response from JSON backend");
 							}
 						} else {
-							CurrentState.getToaster().addItem(
-									"SystemNotifications",
-									"Failed to get system notifications.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("SystemNotifications", "Failed to get system notifications.");
 						}
 
 						// Release mutex
@@ -153,9 +162,7 @@ public class SystemNotifications {
 					}
 				});
 			} catch (RequestException e) {
-				CurrentState.getToaster().addItem("SystemNotifications",
-						"Failed to get system notifications.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("SystemNotifications", "Failed to get system notifications.");
 			}
 		} else {
 			// GWT-RPC
@@ -172,7 +179,8 @@ public class SystemNotifications {
 	 */
 	protected void handleNotification(HashMap<String, String> event) {
 		try {
-			JsonUtil.debug("Firing event for " + JsonUtil.jsonify(event));
+			JsonUtil.debug("SystemNotifications(): Firing event for "
+					+ JsonUtil.jsonify(event));
 		} catch (Exception ex) {
 			JsonUtil.debug(ex.toString());
 		}

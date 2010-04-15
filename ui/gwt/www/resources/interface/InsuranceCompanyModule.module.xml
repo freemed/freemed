@@ -24,29 +24,29 @@
 	    -->
 	    <SimpleUIBuilder module="InsuranceCompanyModule">
 		    <Elements>
-			    <Element field="insconame" title="Insurancecompany Name" type="TEXT" options="50" display="1"/>
-			    <Element field="inscoalias" title="Alias" type="TEXT" options="30" display="1"/>
-			    <Element field="inscoaddr1" title="Adress Line 1" type="TEXT" options="45"/>
-			    <Element field="inscoaddr2" title="Adress Line 2" type="TEXT" options="45"/>
+			    <Element field="insconame" title="Payer Name" type="TEXT" options="50" display="1"/>
+			    <Element field="inscoalias" title="Payer Display Name" type="TEXT" options="30" display="1"/>
+			    <Element field="inscoaddr1" title="Address Line 1" type="TEXT" options="45"/>
+			    <Element field="inscoaddr2" title="Address Line 2" type="TEXT" options="45"/>
 			    <Element field="inscocity" title="City" type="TEXT" options="30"/>
 			    <Element field="inscostate" title="State" type="TEXT" options="3"/>
-			    <Element field="inscozip" title="ZIP" type="TEXT" options="10"/>
+			    <Element field="inscozip" title="Postal Code" type="TEXT" options="10"/>
 			    <Element field="inscophone" title="Phone Number" type="TEXT" options="16"/>
 			    <Element field="inscofax" title="Fax Number" type="TEXT" options="16"/>
 			    <Element field="inscocontact" title="Contact Person's Name" type="TEXT" options="100"/>
-			    <Element field="inscoid" title="inscoid???" type="TEXT" options="10"/>
+			    <Element field="inscoid" title="Internal Identifier" type="TEXT" options="10"/>
 			    <Element field="inscowebsite" title="Homepage" type="TEXT" options="100"/>
-			    <Element field="inscoemail" title="email adress" type="TEXT" options="50"/>
-			    <Element field="inscogroup" title="Select Insurance Company Group" type="MODULE" options="InsuranceCompanyGroup"/>
-			    <Element field="inscotype" title="inscotype???" type="TEXT" options="25"/>
-			    <Element field="inscoassign" title="inscoassign???" type="TEXT" options="16"/>
-			    <Element field="inscomod" title="Insurance Modifiers" type="MODULE_MULTIPLE" options="InsuranceModifiers"/>
-			    <Element field="inscoidmap" title="inscoidmap???" type="TEXT" options="16"/>
+			    <Element field="inscoemail" title="Contact Email Address" type="TEXT" options="50"/>
+			    <Element field="inscogroup" title="Insurance Company Group" type="MODULE" options="InsuranceCompanyGroup"/>
+			    <!-- <Element field="inscotype" title="inscotype???" type="TEXT" options="25"/> -->
+			    <!-- <Element field="inscoassign" title="inscoassign???" type="TEXT" options="16"/> -->
+			    <Element field="inscomod" title="Modifiers" type="MODULE_MULTIPLE" options="InsuranceModifiers"/>
+			    <!-- <Element field="inscoidmap" title="inscoidmap???" type="TEXT" options="16"/> -->
 			    <Element field="inscox12id" title="X12 Payer ID Code" type="TEXT" options="32"/>
 			    <Element field="inscodefoutput" title="Default Output Format" type="SELECT" options="Electronic|electronic,Paper|paper"/>
-			    <Element field="inscodefformat" title="Paper: Default Format" type="TEXT" options="50"/>
-			    <Element field="inscodeftarget" title="Paper: Default Target" type="TEXT" options="50"/>
-			    <Element field="inscodefformate" title="Electronic: Default Format" type="TEXT" options="50"/>
-			    <Element field="inscodeftargete" title="Electronic: Default Format" type="TEXT" options="50"/>
+			    <Element field="inscodefformat" title="Paper: Default Format" type="SELECT" options="HCFA/CMS 1500|cms1500"/>
+			    <Element field="inscodeftarget" title="Paper: Default Target" type="SELECT" options="org.remitt.plugin.transport.StoreFilePdf"/>
+			    <Element field="inscodefformate" title="Electronic: Default Format" type="SELECT" options="4010 X12 837 Professional|837p,HCFA/CMS 1500|cms1500"/>
+			    <Element field="inscodeftargete" title="Electronic: Default Format" type="SELECT" options="org.remitt.plugin.transport.StoreFile,org.remitt.plugin.transport.ClaimLogicTransport,org.remitt.plugin.transport.GatewayEdiTransport,org.remitt.plugin.transport.ScriptedHttpTransport"/>
 		    </Elements>
 	    </SimpleUIBuilder>

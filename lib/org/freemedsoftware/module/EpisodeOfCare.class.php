@@ -130,6 +130,11 @@ class EpisodeOfCare extends EMRModule {
 	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
+	
+	public function getEOCValues($patient){
+		$q="SELECT id AS Id, CONCAT(eocdescrip,'(',eocstartdate,' to ',eocdtlastsimilar,')') AS eoc_info FROM ".$this->table_name." WHERE eocpatient=".$GLOBALS['sql']->quote( $patient );
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 
 } // end class EpisodeOfCare
 

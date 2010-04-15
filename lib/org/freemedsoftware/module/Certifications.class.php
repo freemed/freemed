@@ -78,6 +78,11 @@ class Certifications extends SupportModule {
 		}
 		*/
 	} // end function _update
+	
+	public function getCertifications($ptid){
+		$q="SELECT id as Id,certdesc as cert_desc FROM certifications WHERE certpatient=".$GLOBALS['sql']->quote( $ptid );
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 }
 
 register_module('Certifications');

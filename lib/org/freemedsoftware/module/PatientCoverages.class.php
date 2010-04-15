@@ -199,7 +199,13 @@ class PatientCoverages extends EMRModule {
 
 		return $r;
 	} // end method GetPrimaryCoverage	
+	
+	public function GetCoverageByType( $patient,$type) {
+		$q = "SELECT a.id as Id,b.insconame as comp_name FROM coverage as a,insco as b WHERE a.covstatus=1 AND a.covtype=".$GLOBALS['sql']->quote( $type )." AND covpatient=".$GLOBALS['sql']->quote( $patient )." AND a.covinsco=b.id";
 
+		$r = $GLOBALS['sql']->queryAll( $q );
+		return $r;
+	} // end method GetPrimaryCoverage
 } // end class PatientCoverages
 
 register_module("PatientCoverages");

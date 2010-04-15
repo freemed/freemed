@@ -54,10 +54,11 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.freemedsoftware.gwt.client.screen.UnfiledDocuments;
 
 public class DocumentBox extends WidgetInterface {
 
+	public final static String moduleName = "UnfiledDocuments";
+	
 	protected Label documentsCountLabel = new Label(
 			"You have no unfiled Documents!");
 
@@ -70,6 +71,7 @@ public class DocumentBox extends WidgetInterface {
 
 	protected UnfiledDocuments unfiledDocs;
 	public DocumentBox() {
+		super(moduleName);
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		sPanel.setStyleName("freemed-WidgetContainer");
@@ -108,18 +110,19 @@ public class DocumentBox extends WidgetInterface {
 		wDocuments.addColumn("Filename", "ufffilename"); // col 1
 		wDocuments.setIndexName("id");
 
-		
-		wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
-			@Override
-			public void handleRowClick(HashMap<String, String> data, int col) {
-				//final Integer uffId = Integer.parseInt(data.get("id"));
-				unfiledDocs = UnfiledDocuments.getInstance();
-				unfiledDocs.setSelectedDocument(data);
-				Util.spawnTab(AppConstants.UNFILED
-						+ " Documents", UnfiledDocuments.getInstance());
-				//Util.spawnTab("File Document", documentScreen);
-			}
-		});
+		if(canRead){
+			wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
+				@Override
+				public void handleRowClick(HashMap<String, String> data, int col) {
+					//final Integer uffId = Integer.parseInt(data.get("id"));
+					unfiledDocs = UnfiledDocuments.getInstance();
+					unfiledDocs.setSelectedDocument(data);
+					Util.spawnTab(AppConstants.UNFILED
+							+ " Documents", UnfiledDocuments.getInstance());
+					//Util.spawnTab("File Document", documentScreen);
+				}
+			});
+		}
 		// Collapsed view
 		wDocuments.setVisible(false);
 		horizontalPanel.add(documentsCountLabel);

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AccountPaid_en_US" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<parameter name="param0" class="java.util.Date"/>
+	<parameter name="param1" class="java.util.Date"/>
+	<queryString language="SQL">
+		<![CDATA[call report_AccountPaid_en_US($P{param0},$P{param1});]]>
+	</queryString>
+	<field name="Date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Charges" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Payments" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Copays" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Adjustments" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="65" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="1" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Title" x="0" y="5" width="310" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Account Paid Graph From ]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement style="Column header" x="310" y="5" width="150" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param0}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Title" x="460" y="5" width="38" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[To]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement style="Column header" x="498" y="5" width="150" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="61" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="2" y="38" width="76" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Printed On:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="78" y="38" width="325" height="20"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="400" splitType="Stretch">
+			<bar3DChart>
+				<chart>
+					<reportElement x="20" y="13" width="720" height="380"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Charges"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{Date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{Charges}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Payments"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{Date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{Payments}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Copay"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{Date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{Copays}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Adjustment"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{Date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{Adjustments}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot>
+					<plot/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+					<categoryAxisFormat>
+						<axisFormat>
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat>
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</bar3DChart>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

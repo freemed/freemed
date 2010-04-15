@@ -129,8 +129,8 @@ class SystemConfig {
 	//	$val - Configuration value
 	//
 	function SetValue ( $var, $val ) {
-		freemed::acl_enforce( 'admin', 'config' );
-		if (! freemed::acl ( 'admin', 'config' ) ) { 
+		freemed::acl_enforce( 'admin', 'write' );
+		if (! freemed::acl ( 'admin', 'write' ) ) { 
 			syslog(LOG_INFO, "Attempted SystemConfig.SetValue without authorization");
 			return false;
 		}
@@ -168,7 +168,7 @@ class SystemConfig {
 	//	Boolean, success.
 	//
 	public function SetValues( $hash ) {
-		freemed::acl_enforce( 'admin', 'config' );
+		freemed::acl_enforce( 'admin', 'write' );
 
 		if ( ! is_object( $hash ) && ! is_array( $hash ) ) {
 			return false;

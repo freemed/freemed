@@ -39,20 +39,24 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.CustomTimeBox;
 import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
+import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleListBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -67,7 +71,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -87,6 +90,10 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	VerticalPanel verticalPanelMenu = new VerticalPanel();
 	VerticalPanel verticalPanelEntry = new VerticalPanel();
 
+	protected VerticalPanel entryVPanel = null;
+	
+	VerticalPanel basicForm = null;
+	
 	protected Integer selectedEntryId;
 	protected CustomTable callInTable;
 	protected static String locale = "en_US";
@@ -125,14 +132,19 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	protected Popup callinDetailPopup;
 
 	// Declreaing Button
-	protected Button btnAdd;	
-	protected Button btnClear;
+	protected CustomButton btnAdd;	
+	protected CustomButton btnClear;
 	protected ProviderWidget provider;
 	protected SupportModuleWidget facility;
 
 	// /////////////////
+	
+	protected CustomListBox formSelection = new CustomListBox();
+	
 	private static List<CallInScreen> CallInScreenList = null;
 
+	public final static String ModuleName =  "Callin";
+	
 	// Creates only desired amount of instances if we follow this pattern
 	// otherwise we have public constructor as well
 	public static CallInScreen getInstance() {
@@ -159,10 +171,10 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	}
 	
 	public CallInScreen() {
-		final boolean canDelete = CurrentState.isActionAllowed(AppConstants.DELETE, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
-		final boolean canWrite  = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
-		final boolean canBook   = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.SYSTEM_CATEGORY, AppConstants.SCHEDULER);
-		final boolean canModify   = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.CALL_IN);
+		final boolean canDelete = CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE);
+		final boolean canWrite  = CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE);
+		final boolean canBook   = CurrentState.isActionAllowed(SchedulerWidget.moduleName, AppConstants.WRITE);
+		final boolean canModify = CurrentState.isActionAllowed(ModuleName, AppConstants.MODIFY);
     
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
@@ -177,7 +189,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				// TODO Auto-generated method stub
-				 if (event.getSelectedItem() == 1)
+				 if (event.getSelectedItem() == 1 && formSelection.getWidgetValue().equals("Basic"))
 					 txtLastName.setFocus(true);				
 			}		
 		});
@@ -193,9 +205,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		final HorizontalPanel menuButtonsPanel = new HorizontalPanel();
 		menuButtonsPanel.setSpacing(1);
 		if(canDelete || canWrite || canBook){
-			final Button selectAllButton = new Button();
+			final CustomButton selectAllButton = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
 			menuButtonsPanel.add(selectAllButton);
-			selectAllButton.setText("Select All");
 			selectAllButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent wvt) {
@@ -210,9 +221,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			});
 		}
 		if(canDelete || canWrite || canBook){
-			final Button selectNoneButton = new Button();
+			final CustomButton selectNoneButton = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
 			menuButtonsPanel.add(selectNoneButton);
-			selectNoneButton.setText("Select None");
 			selectNoneButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -228,9 +238,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		}
 		
 		if(canDelete){
-			final Button deleteButton = new Button();
+			final CustomButton deleteButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
 			menuButtonsPanel.add(deleteButton);
-			deleteButton.setText("Delete");
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -256,9 +265,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			});
 		}
 		if(canWrite){
-			final Button enterButton = new Button();
+			final CustomButton enterButton = new CustomButton("Create Patient",AppConstants.ICON_ADD_PERSON);
 			menuButtonsPanel.add(enterButton);
-			enterButton.setText("Enter");
 			enterButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -281,9 +289,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		}
 
 		if(canBook){
-			final Button bookButton = new Button();
+			final CustomButton bookButton = new CustomButton("Book",AppConstants.ICON_BOOK_APP);
 			menuButtonsPanel.add(bookButton);
-			bookButton.setText("Book");
 			bookButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -308,9 +315,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			});
 			
 		if(canModify){
-			final Button modifyButton = new Button();
+			final CustomButton modifyButton = new CustomButton("Modify",AppConstants.ICON_MODIFY);
 			menuButtonsPanel.add(modifyButton);
-			modifyButton.setText("Modify");
 			modifyButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -327,7 +333,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 																		// custom
 																		// table
 						tabPanel.selectTab(1);
-						btnAdd.setText("Modify");
+//						btnAdd.setText("Modify");
 						selectedEntryId=Integer.parseInt(itr.next());
 						modifyEntry(selectedEntryId);
 					}
@@ -393,8 +399,26 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		callinPatientDetail = new FlexTable();
 		callinPatientDetail.setWidth("35%");
 		tabPanel.add(verticalPanelMenu, "Menu");
-		if(canWrite)
-			tabPanel.add(createEntryTabBar(), "Entry");
+		if(canWrite){
+//			tabPanel.add(createEntryTabBar(), "Entry");
+			entryVPanel = new VerticalPanel();
+			tabPanel.add(entryVPanel, "Entry");
+			final HorizontalPanel selectionHPanel = new HorizontalPanel();
+			selectionHPanel.setStyleName("small-header-label");
+			entryVPanel.add(selectionHPanel);
+			selectionHPanel.setSpacing(5);
+			final Label selectionLabel = new Label("Select Form Type:");
+			selectionHPanel.add(selectionLabel);
+			formSelection = new CustomListBox();
+			selectionHPanel.add(formSelection);
+			formSelection.addItem("","");
+			formSelection.addItem("Basic Entry Form","Basic");
+			formSelection.addChangeHandler(new ChangeHandler(){
+				public void onChange(ChangeEvent arg0) {
+					handleFormSelection();
+				}
+			});
+		}
 		// tabPanel.add(new VerticalPanel(),"Entry");
 		tabPanel.selectTab(0);
 		// createEntryTabBar();
@@ -406,6 +430,20 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		populate();
 	}
 
+	protected void handleFormSelection(){
+		if(formSelection.getStoredValue().equals("Basic")){
+			if(basicForm==null)
+				basicForm = createBasicEntryForm();
+			entryVPanel.add(basicForm);
+			if(basicForm!=null)	
+				entryVPanel.remove(basicForm);
+		}else if(formSelection.getStoredValue().equals("")){
+			if(basicForm!=null)		
+				entryVPanel.remove(basicForm);
+			
+		}
+	}
+	
 	public CallInScreen getCallInScreen() {
 		return this;
 	}
@@ -466,7 +504,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		return verContInformation;
 	}
 
-	private VerticalPanel createEntryTabBar() {
+	private VerticalPanel createBasicEntryForm() {
 
 		HorizontalPanel horPanel = new HorizontalPanel();
 
@@ -493,7 +531,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		taComplaints = new TextArea();
 		taComplaints.setCharacterWidth(22);
 		taComplaints.setVisibleLines(5); // FIXME
-		btnAdd = new Button("Add");
+		btnAdd = new CustomButton("Add",AppConstants.ICON_ADD);
 		btnAdd.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -501,7 +539,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 				saveForm();
 			}
 		});
-		btnClear = new Button("Clear");
+		btnClear = new CustomButton("Clear",AppConstants.ICON_CLEAR);
 		btnClear.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -638,7 +676,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		}
 	}
 	
-	protected void modifyEntry(Integer callinId) {
+	protected void modifyEntry(final Integer callinId) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO STUBBED MODE STUFF
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -648,7 +686,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 					URL
 							.encode(Util
 									.getJsonRequest(
-											"org.freemedsoftware.module.Callin.GetDetailedRecord",
+											"org.freemedsoftware.module.Callin.GetDetailedRecordWithIntake",
 											params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
@@ -665,19 +703,27 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 												.getText()),
 												"HashMap<String,String>");
 								if (data != null) {
-									txtFirstName.setText(data.get("firstname"));
-									txtMiddleName.setText(data.get("middlename"));
-									txtLastName.setText(data.get("lastname"));
 									
+									if(data.get("intaketype")==null){
+										formSelection.setWidgetValue("Basic");
+										handleFormSelection();
 									
-									taComplaints.setText(data.get("complaint"));									
-									dateBox.setValue(data.get("dob"));									
-									facility.setValue(Integer.parseInt(data.get("facilityid")));
-									provider.setValue(Integer.parseInt(data.get("physicianid")));
-									
-									txtHomePhone.setText(data.get("phone_home"));
-									txtWorkPhone.setText(data.get("phone_work"));
-									txtTookCall.setText(data.get("took_call"));
+										txtFirstName.setText(data.get("firstname"));
+										txtMiddleName.setText(data.get("middlename"));
+										txtLastName.setText(data.get("lastname"));
+										
+										
+										taComplaints.setText(data.get("complaint"));									
+										dateBox.setValue(data.get("dob"));									
+										facility.setValue(Integer.parseInt(data.get("facilityid")));
+										provider.setValue(Integer.parseInt(data.get("physicianid")));
+										
+										txtHomePhone.setText(data.get("phone_home"));
+										txtWorkPhone.setText(data.get("phone_work"));
+										txtTookCall.setText(data.get("took_call"));
+										
+										btnAdd.setText("Modify");
+									}
 								}
 							} else {
 							}
@@ -854,9 +900,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 									if (r != null) {
 									clearForm();
 									populate();									
-									CurrentState.getToaster().addItem(
-											"Callin Form",
-											"Entry successfully added.");									
+									Util.showInfoMsg("Callin Form", "Entry successfully added.");
 								}else {
 									r=(Boolean) JsonUtil.shoehornJson(
 														JSONParser.parse(response.getText()),
@@ -864,9 +908,9 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 									if(r==1){
 										clearForm();
 											populate();	
-											CurrentState.getToaster().addItem(
-													"Callin Form",
-													"Entry successfully modified.");
+											formSelection.setWidgetValue("");
+											tabPanel.selectTab(0);
+											Util.showInfoMsg("Callin Form", "Entry successfully modified.");
 											btnAdd.setText("Add");
 									}else{
 										
@@ -874,8 +918,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 								}									
 								
 							} else {
-								CurrentState.getToaster().addItem(
-										"Callin Form", "Callin Form failed.");
+								Util.showErrorMsg("Callin Form", "Callin Form failed.");
 							}
 						}
 					});
@@ -917,7 +960,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			msg += "Please specify date of birth." + "\n";
 		}
 
-		if (msg != "") {
+		if (!msg.equals("")) {
 			Window.alert(msg);
 			return false;
 		}
@@ -957,9 +1000,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("CallinScreen",
-								"Failed to delete entry.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("Callin Form", "Failed to delete entry.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -970,16 +1011,11 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 										JSONParser.parse(response.getText()),
 										"Boolean");
 								if (r != null) {
-									CurrentState.getToaster().addItem(
-											"CallinScreen", "Entry deleted.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("Callin Form", "Entry deleted.");
 									// populate(tag);
 								}
 							} else {
-								CurrentState.getToaster().addItem(
-										"CallinScreen",
-										"Failed to delete entry.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("Callin Form", "Failed to delete entry.");
 							}
 						}
 					}
@@ -1012,9 +1048,9 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 		private CustomTimeBox end;
 
-		private Button cancel = null;
+		private CustomButton cancel = null;
 
-		private Button ok = null;
+		private CustomButton ok = null;
 
 		private SupportModuleListBox selectTemplate = null;
 
@@ -1083,7 +1119,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			table.setWidget(3, 1, text);
 			table.getFlexCellFormatter().setColSpan(1, 1, 2);
 
-			cancel = new Button("Cancel");
+			cancel = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
 			cancel.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -1094,14 +1130,18 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
 
-			ok = new Button("Ok");
+			ok = new CustomButton("Ok",AppConstants.ICON_ADD);
 			ok.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
 					if(!CurrentState.canBookAppoinment(start.getValue(date.getValue()), end.getValue(date.getValue()))){
-						CurrentState.getToaster().addItem("Scheduler",
-								"Can not book appointment in between("+CurrentState.BREAK_HOUR+":00 -"+(CurrentState.BREAK_HOUR+1)+":00) !",
-								Toaster.TOASTER_ERROR);
+						/*
+						Util.showErrorMsg("Callin Form",
+								"Can not book appointment in between("
+										+ CurrentState.BREAK_HOUR + ":00 -"
+										+ (CurrentState.BREAK_HOUR + 1)
+										+ ":00) !");
+						*/
 						return;
 					}
 
@@ -1195,16 +1235,12 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								CurrentState.getToaster().addItem("Scheduler",
-										"Failed to get scheduler items.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("Callin Form", "Failed to get scheduler items.");
 							}
 						}
 					});
 				} catch (RequestException e) {
-					CurrentState.getToaster().addItem("Scheduler",
-							"Failed to get scheduler items.",
-							Toaster.TOASTER_ERROR);
+					Util.showErrorMsg("Callin Form", "Failed to get scheduler items.");
 				}
 			} else {
 				// GWT-RPC
@@ -1235,21 +1271,14 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 									Response response) {
 								if (200 == response.getStatusCode()) {
 									hide();
-									CurrentState.getToaster().addItem(
-											"CallinScheduler",
-											"Appointment saved successfully.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("Callin Form", "Appointment saved successfully.");
 								} else {
-									CurrentState.getToaster().addItem("Scheduler",
-											"Failed to save appointment.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("Callin Form", "Failed to save appointment.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						CurrentState.getToaster().addItem("Scheduler",
-								"Failed to save appointment.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("Callin Form", "Failed to save appointment.");
 					}
 				} else {
 					// GWT-RPC

@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
@@ -55,6 +56,8 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 
 	protected String hashMapping = null;
 
+	protected CustomRequestCallback callback=null;
+	
 	public SupportModuleWidget() {
 		super();
 	}
@@ -111,6 +114,9 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 									if (result != null) {
 										searchBox.setText(result);
 										searchBox.setTitle(result);
+										if(callback!=null){
+											callback.jsonifiedData("done");
+										}
 									}
 								} else {
 									Window.alert(response.toString());
@@ -329,5 +335,9 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 	
 	public void setEnable(boolean val){
 		textBox.setEnabled(val);
+	}
+	
+	public void setAfterSetValueCallBack(CustomRequestCallback cb){
+		callback=cb;
 	}
 }

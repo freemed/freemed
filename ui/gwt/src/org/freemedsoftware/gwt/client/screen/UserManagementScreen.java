@@ -27,19 +27,22 @@ package org.freemedsoftware.gwt.client.screen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.BlockScreenWidget;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -47,6 +50,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -54,11 +59,10 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -70,6 +74,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class UserManagementScreen extends ScreenInterface implements
 		ClickHandler {
 
+	public final static String moduleName = "admin";
+
 	protected CustomTable wUsers = new CustomTable();
 
 	protected Integer userId = null;
@@ -77,21 +83,41 @@ public class UserManagementScreen extends ScreenInterface implements
 	protected TextBox tbUsername,tbDescription;
 
 	protected PasswordTextBox tbPassword,tbPasswordverify;
+
+	protected  HTML changePasswordLink;
 	
 	protected CustomListBox lbUserType;
 
 	protected SupportModuleWidget lbActualPhysician;
 
-	protected Button addUserButton, clearButton, deleteUserButton;
+	protected CustomButton addUserButton, clearButton, deleteUserButton, copyButton;
 
 	protected String className = "UserManagementScreen";
 
-	protected List<Integer> aclGroupsIds=new ArrayList<Integer>();
+	protected Set<Integer> aclSelectedGroupsIdsList=new HashSet<Integer>();
 	
-	protected HorizontalPanel aclGroupsPanel=new HorizontalPanel();
+	protected FlexTable aclGroupsTable=new FlexTable();
 	
-	protected HashMap<Integer,CheckBox> aclGroupsMap=new HashMap<Integer,CheckBox>();
+	protected HashMap<Integer,CheckBox> aclGroupsCheckBoxesMap=new HashMap<Integer,CheckBox>();//
 	
+	protected HashMap<String,CheckBox> allAclPermissionsMap=new HashMap<String,CheckBox>();//Contains all Permissions by using key as "Section:Value" and value as "CheckBox"
+	
+	protected HashMap<String, Integer> selectedPermissionsMap = new HashMap<String, Integer>();//Contains selected Permissions by using key as "Section:Value" and Integer as count of selected groups that contains this "Section and value" 
+	
+	protected HashMap<String, List> blockedPermissionsMap = new HashMap<String, List>();//The Permissions which exist in selected Group but unchecked under enhanced permissions
+	
+	protected HashMap<String, List> allowedPermissionsMap = new HashMap<String, List>();//The Permissions which does not exist in selected Group but checked under enhanced permissions
+	
+	protected CustomTable customizePermissionsTable = new CustomTable();
+	
+	final String showCustPermissionsString = "Enhance Permissions";
+	
+	final String hideCustPermissionsString = "Hide Permissions";
+
+	protected CustomButton customizePermissionsLink = new CustomButton(showCustPermissionsString,AppConstants.ICON_ADD);
+	
+	protected VerticalPanel addUserVPanel = null; 
+	protected TabPanel tabPanel = null;
 	private static List<UserManagementScreen> userManagementScreenList=null;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
 	public static UserManagementScreen getInstance(){
@@ -111,20 +137,24 @@ public class UserManagementScreen extends ScreenInterface implements
 	}
 	
 	public UserManagementScreen() {
-		
-		final boolean canAddUser =  CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.USER_MANAGEMENT);
+		super(moduleName);
 		
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
-		final TabPanel tabPanel = new TabPanel();
+		tabPanel = new TabPanel();
 		verticalPanel.add(tabPanel);
-
+		
+		addUserVPanel = new VerticalPanel();
 		// Panel #1
-		if(canAddUser){
-			final FlexTable userAddTable = new FlexTable();
-			tabPanel.add(userAddTable, "Add User");
-			tabPanel.selectTab(0);
+		if(canWrite || canModify){
+			if(canWrite)
+				tabPanel.add(addUserVPanel, "Add User");
+			
+			final FlexTable  userAddTable = new FlexTable();
+			addUserVPanel.add(userAddTable);
+			
+			
 			final Label usernameLabel = new Label("User Name");
 			userAddTable.setWidget(0, 0, usernameLabel);
 	
@@ -144,10 +174,35 @@ public class UserManagementScreen extends ScreenInterface implements
 			final Label passwordverifyLabel = new Label("Password (Verify)");
 			userAddTable.setWidget(2, 0, passwordverifyLabel);
 	
+			final HorizontalPanel horizontalPanel = new HorizontalPanel();
+			userAddTable.setWidget(2, 1, horizontalPanel);
+			
 			tbPasswordverify = new PasswordTextBox();
-			userAddTable.setWidget(2, 1, tbPasswordverify);
-			userAddTable.getFlexCellFormatter().setColSpan(2, 1, 2);
 			tbPasswordverify.setWidth("10em");
+			horizontalPanel.add(tbPasswordverify);
+			
+			final String changePassString = "<a href='javascript:undefined'> change password </a>";
+			final String donotChangePassString = "<a href='javascript:undefined'>don't change password </a>";
+			changePasswordLink = new HTML(changePassString);
+			changePasswordLink.setVisible(false);
+			changePasswordLink.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					if(tbPassword.isEnabled()){
+						tbPassword.setEnabled(false);
+						tbPasswordverify.setEnabled(false);
+						changePasswordLink.setHTML(changePassString);
+					}else{
+						tbPassword.setEnabled(true);
+						tbPasswordverify.setEnabled(true);
+						changePasswordLink.setHTML(donotChangePassString);
+					}
+				}
+			});
+			horizontalPanel.add(changePasswordLink);
+			
+			userAddTable.getFlexCellFormatter().setColSpan(2, 1, 2);
+			
 	
 			final Label descriptionLabel = new Label("Description");
 			userAddTable.setWidget(3, 0, descriptionLabel);
@@ -194,27 +249,45 @@ public class UserManagementScreen extends ScreenInterface implements
 	
 			final Label aclLabel = new Label("User Groups");
 			userAddTable.setWidget(6, 0, aclLabel);
-			userAddTable.setWidget(6, 1, aclGroupsPanel);
+			userAddTable.setWidget(6, 1, aclGroupsTable);
 			
 			HorizontalPanel buttonsPanel = new HorizontalPanel();
-			addUserButton = new Button();
-			addUserButton.setText("Add User");
+			addUserButton = new CustomButton("Add User",AppConstants.ICON_ADD_PERSON);
 			addUserButton.addClickHandler(this);
 			buttonsPanel.add(addUserButton);
 	
-			deleteUserButton = new Button();
-			deleteUserButton.setText("Delete User");
+			copyButton = new CustomButton("Copy",AppConstants.ICON_ADD);
+			copyButton.addClickHandler(this);
+			copyButton.setVisible(false);
+			buttonsPanel.add(copyButton);
+
+			buttonsPanel.add(customizePermissionsLink);
+			
+			deleteUserButton = new CustomButton("Delete User",AppConstants.ICON_REMOVE_PERSON);
 			deleteUserButton.addClickHandler(this);
 			deleteUserButton.setVisible(false);
 			buttonsPanel.add(deleteUserButton);
 			
-			clearButton = new Button();
-			clearButton.setText("Clear");
+			clearButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
 			clearButton.addClickHandler(this);
 			buttonsPanel.add(clearButton);
-			
+
 			userAddTable.setWidget(7, 1, buttonsPanel);
 			getACLGroups();
+			
+			showEnhancedPermssions(false);
+			customizePermissionsTable.removeTableStyle();
+			addUserVPanel.add(customizePermissionsTable);
+			
+			
+			customizePermissionsLink.addClickHandler(new ClickHandler() {
+				boolean show = false;
+				@Override
+				public void onClick(ClickEvent arg0) {
+					show = !show;
+					showEnhancedPermssions(show);
+				}//End onlick
+			});//End customizePermissionsLink AddClick Handler
 		}
 		// Panel #2
 
@@ -233,21 +306,184 @@ public class UserManagementScreen extends ScreenInterface implements
 		wUsers.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				if(canAddUser){
+				if(canWrite || canModify){
+					if(!canWrite){
+						tabPanel.add(addUserVPanel, "Modify User");
+						tabPanel.selectTab(1);
+					}else
+						tabPanel.selectTab(0);
 					clearForm();
 					userId = Integer.parseInt(data.get("id"));
 					getUserDetails(userId);
 					getUserGroup(userId);
-					tabPanel.selectTab(0);
+					
+					Util.callModuleMethod("ACL", "GetBlockedACOs", userId, new CustomRequestCallback() {
+						@Override
+						public void onError() {
+						}
+						
+						@Override
+						public void jsonifiedData(Object data) {
+							HashMap<String, List> result = (HashMap<String, List>)data; 
+							if(result!=null && result.size()>0){
+								alreadyShowingEnhancedPermissions = true;
+								blockedPermissionsMap =(HashMap<String,List>)data;
+								alreadyShowingEnhancedPermissions = false;
+								//setCheckBoxesValue((HashMap<String, String[]>)data, false);
+							}
+							Util.callModuleMethod("ACL", "GetAllowedACOs", userId, new CustomRequestCallback() {
+								@Override
+								public void onError() {
+								}
+								@Override
+								public void jsonifiedData(Object data) {
+									HashMap<String, List> result = (HashMap<String, List>)data; 
+									if(result!=null && result.size()>0){
+										allowedPermissionsMap =(HashMap<String,List>)data; 
+										alreadyShowingEnhancedPermissions = false;
+										//setCheckBoxesValue((HashMap<String, String[]>)data, false);
+									}
+									if(blockedPermissionsMap!=null && blockedPermissionsMap.size()>0 || allowedPermissionsMap!=null && allowedPermissionsMap.size()>0)
+										showEnhancedPermssions(true);
+								}
+							}, "HashMap<String,List>");
+						}
+					}, "HashMap<String,List>");
+
 				}
 			}
 		});
-
+		
+		
 		// TODO:Backend needs to be fixed first
 		retrieveAllUsers();
+		tabPanel.selectTab(0);
 		Util.setFocus(tbUsername);
 	}
-
+	boolean alreadyShowingEnhancedPermissions = false;
+	protected synchronized void showEnhancedPermssions(boolean show){
+		if(!show){
+			customizePermissionsTable.setVisible(false);
+			customizePermissionsLink.setText(showCustPermissionsString);
+		}else{
+			customizePermissionsTable.setVisible(true);
+			customizePermissionsLink.setText(hideCustPermissionsString);
+			if(allAclPermissionsMap.size()==0){
+				final BlockScreenWidget blockScreenWidget = new BlockScreenWidget("Please wait while modules are being populated....");
+				addUserVPanel.add(blockScreenWidget);
+				Label moduleHeading = new Label("Modules");
+				moduleHeading.setStyleName("label");
+				customizePermissionsTable.getFlexTable().setWidget(0, 0, moduleHeading);
+				HorizontalPanel headerButtonPanels = new HorizontalPanel();
+				customizePermissionsTable.getFlexTable().setWidget(0, 1, headerButtonPanels);
+				CustomButton selectAllBtn = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+				selectAllBtn.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent arg0) {
+						Iterator<String> iterator = allAclPermissionsMap.keySet().iterator();
+						while(iterator.hasNext()){
+							allAclPermissionsMap.get(iterator.next()).setValue(true);
+						}
+					}
+				});
+				headerButtonPanels.add(selectAllBtn);
+				CustomButton selectNoneBtn =new CustomButton(" Select None",AppConstants.ICON_SELECT_NONE);
+				selectNoneBtn.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent arg0) {
+						Iterator<String> iterator = allAclPermissionsMap.keySet().iterator();
+						while(iterator.hasNext()){
+							allAclPermissionsMap.get(iterator.next()).setValue(false);
+						}
+						Iterator<Integer> itrGroupIds = aclGroupsCheckBoxesMap.keySet().iterator();
+						while(itrGroupIds.hasNext()){
+							aclGroupsCheckBoxesMap.get(itrGroupIds.next()).setValue(false);
+						}
+						blockedPermissionsMap.clear();
+						allowedPermissionsMap.clear();
+						selectedPermissionsMap.clear();
+					}
+				});
+				headerButtonPanels.add(selectNoneBtn);
+				
+				//Getting list of all available permissions from acl_aco table
+				Util.callModuleMethod("ACL", "GetAllPermissions", (Integer)null, new CustomRequestCallback() {
+					@Override
+					public void onError() {
+						Window.alert("ssssssssss");
+						addUserVPanel.remove(blockScreenWidget);
+					}
+					@Override
+					public void jsonifiedData(Object data) {
+						if(data!=null){
+							HashMap<String,String[]> result = (HashMap<String,String[]>)data;
+							int row = 1;
+							Iterator<String> iterator = result.keySet().iterator();
+							while(iterator.hasNext()){
+								final String section = iterator.next();
+								final String[] values = result.get(section);
+								HorizontalPanel temPanel=new HorizontalPanel();
+								for(int i=0;i<values.length;i++){
+										final String value=values[i];
+										final CheckBox checkBox = new CheckBox(value);
+										temPanel.add(checkBox );
+										allAclPermissionsMap.put(section+":"+value,checkBox);
+								}
+								CustomButton selectNoneBtn = new CustomButton("None",AppConstants.ICON_SELECT_NONE);
+								selectNoneBtn.addClickHandler(new ClickHandler() {
+									@Override
+									public void onClick(ClickEvent arg0) {
+										for(int i=0;i<values.length;i++){
+											final String value=values[i];
+											allAclPermissionsMap.get(section+":"+value).setValue(false);
+									}
+									}
+								});
+								temPanel.add(selectNoneBtn);
+								
+								CustomButton selectAllBtn = new CustomButton("All",AppConstants.ICON_SELECT_ALL);
+								selectAllBtn.addClickHandler(new ClickHandler() {
+									@Override
+									public void onClick(ClickEvent arg0) {
+										for(int i=0;i<values.length;i++){
+											final String value=values[i];
+											allAclPermissionsMap.get(section+":"+value).setValue(true);
+									}
+									}
+								});
+								temPanel.add(selectAllBtn);
+								Label label = new Label(section);
+								label.setStyleName("label");
+								customizePermissionsTable.getFlexTable().setWidget(row, 0, label);
+								
+								customizePermissionsTable.getFlexTable().setWidget(row, 1, temPanel);
+								row++;
+							}// end while
+							reselectGroups();
+						}
+						addUserVPanel.remove(blockScreenWidget);
+					}//end jsonifiedData
+				}, "HashMap<String,String[]>");
+			}else// end if allAclPermissionsMap.size() == 0
+				reselectGroups();
+		}//End else
+		
+	}  
+	
+	public void reselectGroups(){
+		//Reselecting the checkboxes so that onclick could be fired and required checkboxes can be checked by default.
+		Iterator<Integer> itr = aclGroupsCheckBoxesMap.keySet().iterator();
+		while(itr.hasNext()){
+			Integer key = itr.next();
+			CheckBox checkBox = aclGroupsCheckBoxesMap.get(key);
+			if(checkBox.getValue()){
+				JsonUtil.debug("reselectGroups:"+key);
+				checkBox.setValue(false);
+				checkBox.setValue(true,true);
+			}
+		}//End while
+	}
+	
 	public void onClick(ClickEvent evt) {
 		Widget w = (Widget) evt.getSource();
 		if (w == addUserButton) {
@@ -261,7 +497,7 @@ public class UserManagementScreen extends ScreenInterface implements
 				}
 					
 				hm.put("username", tbUsername.getText());
-				if(userId==null)
+				if(tbPassword.isEnabled())
 					hm.put("userpassword", tbPassword.getText());
 
 				hm.put("userdescrip", tbDescription.getText());
@@ -272,18 +508,32 @@ public class UserManagementScreen extends ScreenInterface implements
 					hm.put("userrealphy", lbActualPhysician.getValue().toString());
 				}
 				String useracl="";
-				Iterator<Integer> itr = aclGroupsIds.iterator();
+				Iterator<Integer> itr = aclSelectedGroupsIdsList.iterator();
 				while(itr.hasNext()){
 					useracl=useracl+itr.next().toString();
 					if(itr.hasNext())
 						useracl=useracl+",";
 				}
 				hm.put("useracl", useracl);
-
+				
+				List paramsList = new ArrayList();
+				paramsList.add(JsonUtil.jsonify(hm));
+				
+				if(customizePermissionsTable.isVisible()){
+					calculateBlockedAndAllowedACLSections();
+					if(blockedPermissionsMap.size()>0)
+						paramsList.add(JsonUtil.jsonify(blockedPermissionsMap));
+					else
+						paramsList.add("");
+					if(allowedPermissionsMap.size()>0)
+						paramsList.add(JsonUtil.jsonify(allowedPermissionsMap));
+					else
+						paramsList.add("");
+				}
 				if (Util.getProgramMode() == ProgramMode.STUBBED) {
 					// Do nothing.
 				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					String[] params = { JsonUtil.jsonify(hm) };
+					String[] params = (String[])paramsList.toArray(new String[0]);
 					RequestBuilder builder = new RequestBuilder(
 							RequestBuilder.POST,
 							URL
@@ -294,9 +544,7 @@ public class UserManagementScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								CurrentState.getToaster().addItem(className,
-										"Failed to add user.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
 							}
 
 							public void onResponseReceived(Request request,
@@ -307,10 +555,7 @@ public class UserManagementScreen extends ScreenInterface implements
 													.parse(response.getText()),
 													"Integer");
 									if (r != null) {
-										CurrentState.getToaster().addItem(
-												className,
-												"Successfully Added User.",
-												Toaster.TOASTER_INFO);
+										Util.showInfoMsg("UserManagementScreen", "Successfully Added User.");
 										retrieveAllUsers();
 										clearForm();
 									}else{
@@ -319,25 +564,18 @@ public class UserManagementScreen extends ScreenInterface implements
 												.parse(response.getText()),
 												"Boolean");
 										if(b){
-											CurrentState.getToaster().addItem(
-													className,
-													"Successfully Modified User.",
-													Toaster.TOASTER_INFO);
+											Util.showInfoMsg("UserManagementScreen", "Successfully Modified User.");
 											retrieveAllUsers();
 											clearForm();
 										}
 									}
 								} else {
-									CurrentState.getToaster().addItem(
-											className, "Failed to add user.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						CurrentState.getToaster().addItem(className,
-								"Failed to send message.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
 					}
 				} else {
 					// TODO: Create GWT-RPC stuff here
@@ -361,9 +599,7 @@ public class UserManagementScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								CurrentState.getToaster().addItem(className,
-										"Failed to delete user.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
 							}
 
 							public void onResponseReceived(Request request,
@@ -374,24 +610,17 @@ public class UserManagementScreen extends ScreenInterface implements
 												.parse(response.getText()),
 												"Boolean");
 										if(flag){
-											CurrentState.getToaster().addItem(
-													className,
-													"Successfully deleted User.",
-													Toaster.TOASTER_INFO);
+											Util.showInfoMsg("UserManagementScreen", "Successfully deleted User.");
 											retrieveAllUsers();
 											clearForm();
 										}
 								} else {
-									CurrentState.getToaster().addItem(
-											className, "Failed to delete user.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						CurrentState.getToaster().addItem(className,
-								"Failed to delete user.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
 					}
 				} else {
 					// TODO: Create GWT-RPC stuff here
@@ -400,6 +629,8 @@ public class UserManagementScreen extends ScreenInterface implements
 			}
 		} else if (w == clearButton) {
 			clearForm();
+		} else if (w == copyButton) {
+			clearForm();
 		}
 	}
 
@@ -407,12 +638,12 @@ public class UserManagementScreen extends ScreenInterface implements
 		String base = "Please check the following fields:" + " ";
 		String[] s = {};
 		String pw = null;
-		if (tbUsername.getText() == "") {
+		if (tbUsername.getText().equals("")) {
 			s[s.length] = "Username";
 		}
 		if(userId==null){//if modifying user then no need to get new password
-			if (tbPassword.getText() != "") {
-				if (tbPassword.getText() != tbPasswordverify.getText()) {
+			if (!tbPassword.getText().equals("")) {
+				if (!tbPassword.getText().equals(tbPasswordverify.getText())) {
 					pw = "Passwords do not match!";
 				}
 			} else {
@@ -420,14 +651,14 @@ public class UserManagementScreen extends ScreenInterface implements
 			}
 		}
 
-		if (tbDescription.getText() == "") {
+		if (tbDescription.getText().equals("")) {
 			s[s.length] = "User Description";
 		}
 
-		if (lbUserType.getWidgetValue() == "null") {
+		if (lbUserType.getWidgetValue().equals("null")) {
 			s[s.length] = "User Type";
-		} else if (lbUserType.getWidgetValue() == "phy") {
-			if (lbActualPhysician.getText() == "") {
+		} else if (lbUserType.getWidgetValue().equals("phy")) {
+			if (lbActualPhysician.getText() .equals("")) {
 				s[s.length] = "Actual Physician";
 			}
 		}
@@ -454,23 +685,61 @@ public class UserManagementScreen extends ScreenInterface implements
 		tbPassword.setText("");
 		tbPasswordverify.setEnabled(true);
 		tbPasswordverify.setText("");
+		changePasswordLink.setVisible(false);
 		tbDescription.setText("");
 		lbUserType.setWidgetValue("null");
 		lbActualPhysician.clear();
 		addUserButton.setText("Add User");
 		userId=null;
 		deleteUserButton.setVisible(false);
-		aclGroupsIds.clear();
+		copyButton.setVisible(false);
+		aclSelectedGroupsIdsList.clear();
 		lbActualPhysician.setVisible(false);
-		Iterator<Integer> itr = aclGroupsMap.keySet().iterator();
+		Iterator<Integer> itr = aclGroupsCheckBoxesMap.keySet().iterator();
 		while(itr.hasNext()){
 			Integer key = itr.next();
-			CheckBox checkBox = aclGroupsMap.get(key);
+			CheckBox checkBox = aclGroupsCheckBoxesMap.get(key);
 			checkBox.setValue(false);
 		}
+		
+
+		Iterator<String> itr2 = allAclPermissionsMap.keySet().iterator();
+		while(itr2.hasNext()){
+			String key = itr2.next();
+			CheckBox checkBox = allAclPermissionsMap.get(key);
+			checkBox.setValue(false);
+		}
+		
+		
+		showEnhancedPermssions(false);
+		selectedPermissionsMap.clear();
+		blockedPermissionsMap.clear(); 
+		allowedPermissionsMap.clear();
+		
 		tbUsername.setFocus(true);
+		
+		if(!canWrite && canModify)
+			tabPanel.remove(addUserVPanel);
 	}
 
+	public void copyUser(){
+		tbUsername.setText("");
+		tbPassword.setEnabled(true);
+		tbPassword.setText("");
+		tbPasswordverify.setEnabled(true);
+		tbPasswordverify.setText("");
+		changePasswordLink.setVisible(false);
+		tbDescription.setText("");
+		lbUserType.setWidgetValue("null");
+		lbActualPhysician.clear();
+		addUserButton.setText("Add User");
+		userId=null;
+		deleteUserButton.setVisible(false);
+		copyButton.setVisible(false);
+		lbActualPhysician.setVisible(false);
+		tbUsername.setFocus(true);
+	}
+	
 	public void retrieveAllUsers() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Do nothing
@@ -590,9 +859,11 @@ public class UserManagementScreen extends ScreenInterface implements
 								}
 								}catch(Exception e){JsonUtil.debug("user real physician not found"+userId);}
 								addUserButton.setText("Modify User");
+								changePasswordLink.setVisible(true);
 								tbPassword.setEnabled(false);
 								tbPasswordverify.setEnabled(false);
 								deleteUserButton.setVisible(true);
+								copyButton.setVisible(true);
 							}
 						}
 					}
@@ -607,7 +878,8 @@ public class UserManagementScreen extends ScreenInterface implements
 
 	}
 	
-	public void getUserGroup(Integer userId) {
+	public void getUserGroup(final Integer userId) {
+		aclSelectedGroupsIdsList.clear();
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Do nothing
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -636,11 +908,10 @@ public class UserManagementScreen extends ScreenInterface implements
 								Integer groupId=null;
 									for(int i=0;i<data.length;i++){
 										groupId = Integer.parseInt(data[i]);
-										CheckBox checkBox = aclGroupsMap.get(groupId);
+										CheckBox checkBox = aclGroupsCheckBoxesMap.get(groupId);
 										checkBox.setValue(true);
-										aclGroupsIds.add(groupId);
+										aclSelectedGroupsIdsList.add(groupId);
 									}
-								
 							}
 						}
 					}
@@ -655,26 +926,127 @@ public class UserManagementScreen extends ScreenInterface implements
 
 	}
 	
+	protected int requestTracker = 0;
 	public void addACLGroup(final String[][] data){
+		int row=0,col=0;
 		for(int i=0;i<data.length;i++){
 				final String groupName=data[i][0];
 				final Integer groupId=Integer.parseInt(data[i][1]);
 				final CheckBox checkBox = new CheckBox(groupName);
-				checkBox.addClickHandler(new ClickHandler() {
-				
+				checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+					HashMap<String,List> thisGroupMap = null;
 					@Override
-					public void onClick(ClickEvent arg0) {
-						if(checkBox.getValue())
-							aclGroupsIds.add(groupId);
-						else 
-							aclGroupsIds.remove(groupId);
+					public void onValueChange(ValueChangeEvent<Boolean> arg0) {
+						if(checkBox.getValue()){
+							if(!aclSelectedGroupsIdsList.contains(groupId))
+								aclSelectedGroupsIdsList.add(groupId);
+							if(thisGroupMap==null){
+								Util.callModuleMethod("ACL", "GetGroupPermissions", groupId, new CustomRequestCallback() {
+									@Override
+									public void onError() {
+									}
+									@Override
+									public void jsonifiedData(Object data) {
+										thisGroupMap = (HashMap<String,List>) data;
+										setCheckBoxesValue(thisGroupMap, true,false);
+										setCheckBoxesValue(blockedPermissionsMap, false,true);
+										setCheckBoxesValue(allowedPermissionsMap, true,true);
+									}
+								}, "HashMap<String,List>");
+							}else{
+								setCheckBoxesValue(thisGroupMap, true,false);
+								setCheckBoxesValue(blockedPermissionsMap, false,true);
+								setCheckBoxesValue(allowedPermissionsMap, true,true);
+							}
+						}
+						else{ 
+							aclSelectedGroupsIdsList.remove(groupId);
+							setCheckBoxesValue(thisGroupMap, false,false);
+						}
+				
 					}
 				
 				});
-				aclGroupsPanel.add(checkBox );
-				aclGroupsMap.put(groupId, checkBox);
+				
+				
+				aclGroupsTable.setWidget(row, col, checkBox );
+				aclGroupsCheckBoxesMap.put(groupId, checkBox);
+				if((i+1)%3==0){
+					row++;
+					col=0;
+				}else col++;	
 		}
 	}
+	public void setCheckBoxesValue(HashMap<String,List> container,boolean checked,boolean skipSelection){
+		if(allAclPermissionsMap.size()>0){
+			Iterator<String> iterator = container.keySet().iterator();
+			while(iterator.hasNext()){
+				final String section = iterator.next();
+				List values = container.get(section);
+				Iterator<String> innserItr = values.iterator(); 
+				while(innserItr.hasNext()){
+						final String value=innserItr.next();
+						String key = section+":"+value;
+						if(checked){
+							if(!skipSelection){
+								Integer thisSectionValueContainerGroupCount = selectedPermissionsMap.get(key);
+								if(thisSectionValueContainerGroupCount==null)
+									thisSectionValueContainerGroupCount=1;
+								else
+									thisSectionValueContainerGroupCount++;
+								selectedPermissionsMap.put(key,thisSectionValueContainerGroupCount);
+							}
+							allAclPermissionsMap.get(key).setValue(checked);
+						}else{
+							if(!skipSelection){
+								Integer thisSectionValueContainerGroupCount = selectedPermissionsMap.get(key);
+								if(thisSectionValueContainerGroupCount==null || thisSectionValueContainerGroupCount==1){
+									selectedPermissionsMap.remove(key);
+								}else{
+									thisSectionValueContainerGroupCount--;
+									selectedPermissionsMap.put(key,thisSectionValueContainerGroupCount);
+								}
+							}
+							allAclPermissionsMap.get(key).setValue(checked);
+						}
+				}//end for loop
+			}// end while loop
+		}//End outer most if
+	}
+	
+	public void calculateBlockedAndAllowedACLSections(){
+		allowedPermissionsMap.clear();
+		blockedPermissionsMap.clear();
+		JsonUtil.debug("Additional section   ");
+		Iterator<String> iterator = allAclPermissionsMap.keySet().iterator();
+		while(iterator.hasNext()){
+			String key = iterator.next();
+			CheckBox sectionValue = allAclPermissionsMap.get(key);
+			if(sectionValue.getValue()){
+				if(selectedPermissionsMap.get(key)==null){
+					JsonUtil.debug("Additional section           :             "+key);
+					String[] sectionWithValue = key.split(":");
+					List sectionValuesList = allowedPermissionsMap.get(sectionWithValue[0]);
+					if(sectionValuesList==null)
+						sectionValuesList = new ArrayList();
+					sectionValuesList.add(sectionWithValue[1]);
+					allowedPermissionsMap.put(sectionWithValue[0], sectionValuesList);
+				}
+			}else{
+				if(selectedPermissionsMap.get(key)!=null){
+					JsonUtil.debug("Blocked section           :             "+key);
+					
+					String[] sectionWithValue = key.split(":");
+					List sectionValuesList = blockedPermissionsMap.get(sectionWithValue[0]);
+					if(sectionValuesList==null)
+						sectionValuesList = new ArrayList();
+					sectionValuesList.add(sectionWithValue[1]);
+					blockedPermissionsMap.put(sectionWithValue[0], sectionValuesList);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void closeScreen() {
 		// TODO Auto-generated method stub

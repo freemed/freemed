@@ -60,9 +60,11 @@ class Callin extends SupportModule {
 	} // end constructor Callin
 
 	protected function add_pre ( &$data ) {
+		$data['ciuser'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 
 	protected function mod_pre ( &$data ) {
+		$data['ciuser'] = freemed::user_cache()->user_number;
 	} // end method mod_pre
 
 	// Method: GetAll
@@ -77,7 +79,7 @@ class Callin extends SupportModule {
 	//
 	//	Hash.
 	public function GetAll () {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin ORDER BY cidatestamp DESC";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
@@ -91,12 +93,39 @@ class Callin extends SupportModule {
 	//	Array of hashes
 	//
 	public function GetDetailedRecord( $id) {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
 		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility, f.id as facilityid"
 		.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
 		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id;
 		return $GLOBALS['sql']->queryRow( $q );
+	} // end method GetDetailedRecord
+	
+	// Method: GetDetailedRecordWithIntake
+	//
+	//	Get detailed record of call-in patient.
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetDetailedRecordWithIntake( $id) {
+		freemed::acl_enforce( 'emr', 'read' );
+		
+		$id = $GLOBALS['sql']->quote($id);
+		
+		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
+		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, f.psrname as facility, f.id as facilityid"
+		.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
+		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id;
+		$return = $GLOBALS['sql']->queryRow( $q );
+		$q = "select * from treatment_initial_intake where intaketype = 'callin' and patient = ".$id;
+		$r = $GLOBALS['sql']->queryRow( $q );
+		//return $r;
+		if($r){
+			$return	= array_merge($r,$return);
+		}
+		return $return;
 	} // end method GetDetailedRecord
 	
 

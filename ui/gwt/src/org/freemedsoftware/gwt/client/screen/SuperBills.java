@@ -31,12 +31,12 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SuperBills extends ScreenInterface {
+
+	public final static String moduleName = "SuperBill";
 
 	protected CustomTable superBillsTable;	
 
@@ -59,6 +59,7 @@ public class SuperBills extends ScreenInterface {
 	}
 	
 	public SuperBills() {
+		super(moduleName);
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");

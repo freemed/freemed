@@ -204,15 +204,35 @@ class FreemedDb extends MDB2 {
 	//
 	//	$values - Hash of values
 	//
+	//	$date_fields - (optional) Array of date/timestamp fields
+	//	which should remove invalid entries rather than commit them.
+	//
 	// Returns:
 	//
 	//	INSERT SQL query
 	//
-	public function insert_query ( $table, $values ) {
+	public function insert_query ( $table, $values, $date_fields=NULL ) {
 		$in_loop = false;
 		foreach ($values AS $k => $v) {
 			if ( (($k+0) > 0) or empty( $k ) ) {
 				$k = $v; $v = $this->data[$k];
+			}
+
+			// Check for date_fields
+			if ($date_fields != NULL) {
+				$found = false;
+				foreach ($date_fields AS $df) {
+					if ($df == $k) { $found = true; }
+				}
+				// Check for bad values
+				if ( $found ) {
+					if ( $v == '' ) {
+						continue;
+					}
+					if ( $v == '0000-00-00' ) {
+						continue;
+					}
+				}
 			}
 
 			// Handle timestamp
@@ -241,14 +261,36 @@ class FreemedDb extends MDB2 {
 	//
 	//	$where - Hash of values to qualify the update
 	//
+	//	$date_fields - (optional) Array of date/timestamp fields
+	//	which should remove invalid entries rather than commit them.
+	//
 	// Returns:
 	//
 	//	UPDATE SQL query
 	//
-	public function update_query ( $table, $values, $where ) {
+	public function update_query ( $table, $values, $where, $date_fields=NULL ) {
 		foreach ( $values AS $k => $v ) {
 			if ( (($k+0) > 0) or empty( $k ) ) {
 				$k = $v; $v = $this->data[$k];
+			}
+
+			// Check for date_fields
+			if ($date_fields != NULL) {
+				$found = false;
+				foreach ($date_fields AS $df) {
+					if ($df == $k) { $found = true; }
+				}
+				// Check for bad values
+				if ( $found ) {
+					if ( $v == '' ) {
+						$values_clause[] = "`".$this->db->escape($k)."` = NULL";
+						continue;
+					}
+					if ( $v == '0000-00-00' ) {
+						$values_clause[] = "`".$this->db->escape($k)."` = NULL";
+						continue;
+					}
+				}
 			}
 
 			// Handle timestamp

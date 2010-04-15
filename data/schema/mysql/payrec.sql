@@ -88,7 +88,7 @@ CREATE TRIGGER payrec_Insert
 
 		# Deductable (8), Withholding (7)
 		IF FIND_IN_SET( NEW.payreccat, '7,8' ) THEN
-			UPDATE procrec SET proccharges = proccharges - ABS(NEW.payrecamt), procbalcurrent = procbalcurrent - ABS(procamtpaid) WHERE id=NEW.payrecproc;
+			UPDATE procrec SET proccharges = proccharges - ABS(NEW.payrecamt), procbalcurrent = procbalcurrent - ABS(NEW.payrecamt) WHERE id=NEW.payrecproc;
 		END IF;
 
 		# Feeadjust (1)
@@ -99,7 +99,7 @@ CREATE TRIGGER payrec_Insert
 
 		# Refund (2)
 		IF NEW.payreccat = 2 THEN
-			UPDATE procrec SET procbalcurrent = proccharges - procamtpaid, proccharges = proccharges - NEW.payrecamt WHERE id=NEW.payrecproc;
+			UPDATE procrec SET procbalcurrent = proccharges - NEW.payrecamt, proccharges = proccharges - NEW.payrecamt WHERE id=NEW.payrecproc;
 		END IF;
 
 		# Rebill (4)
@@ -114,7 +114,7 @@ CREATE TRIGGER payrec_Insert
 
 		# Payment (0), Copayment (11)
 		IF FIND_IN_SET( NEW.payreccat, '0,11' ) THEN
-			UPDATE procrec SET procamtpaid = procamtpaid + ABS(NEW.payrecamt), procbalcurrent = proccharges - ( procamtpaid + ABS(NEW.payrecamt) ) WHERE id=NEW.payrecproc;
+			UPDATE procrec SET procamtpaid = procamtpaid + ABS(NEW.payrecamt), procbalcurrent = procbalcurrent - ABS(NEW.payrecamt) WHERE id=NEW.payrecproc;
 		END IF;
 
 	END;

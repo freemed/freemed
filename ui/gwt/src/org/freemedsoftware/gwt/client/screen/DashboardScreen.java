@@ -46,7 +46,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -198,18 +197,29 @@ public class DashboardScreen extends ScreenInterface {
 		dragController.setBehaviorConstrainedToBoundaryPanel(false);
 		dragController.setBehaviorMultipleSelection(false);
 
-		// Create a new fresh view
+		
+
+	}
+
+	public void loadWidgets()
+	{
 		clearView();
 
-		Boolean b = restoreArrangement();
+		Boolean b = false;
+		try{
+			b=restoreArrangement();
+		}
+		catch(Exception e)
+		{
+			JsonUtil.debug(e.getMessage());
+		}
 		if (b == false) {
 			addBaseWidgets();
 		}
 
 		preventCollapse();
-
+		afterStateSet();
 	}
-
 	public void addDashboardItem() {
 		String s = listBoxWidgets
 				.getItemText(listBoxWidgets.getSelectedIndex());
@@ -246,11 +256,32 @@ public class DashboardScreen extends ScreenInterface {
 
 	public void afterStateSet() {
 		JsonUtil.debug("DashBoard: AfterStateSet() called");
+		try{
+			if(CurrentState.getDefaultProvider()==0)
+			{
+				String pID = (String) JsonUtil
+				.shoehornJson(JSONParser
+						.parse(CurrentState.getUserConfig("providerGroup").toString()),
+						"String");
+				
+				CurrentState.defaultProviderGroup=new Integer(pID);
+				//Window.alert("DashBoard:"+pID);
+				workList.setProviderGroup(CurrentState.defaultProviderGroup);
+			}
+			else
+			{
+				prescriptionRefillBox.showDoctor();
+				workList.retrieveData();
+			}
+		}
+		catch(Exception e){
+			JsonUtil.debug("InitScreen setting Provied Group:"+e.getMessage());
+		}
+		
 		restoreArrangement();
 	}
 
 	public void clearView() {
-		
 		if(vPanelColHead.length==0){// For GWT Hosted Mode it is necessary 
 			vPanelColHead = new VerticalPanel[cols];
 			dropController= new NoInsertAtEndIndexedDropController[cols];
@@ -294,23 +325,25 @@ public class DashboardScreen extends ScreenInterface {
 	public void createDraggableWidget(String title, Integer col) {
 		DashboardItemContainer d = null;
 		JsonUtil.debug(title + " adding");
-		if (title == "Work List") {
-			d = new DashboardItemContainer("Work List", workList,workList.getDefaultIcon());
+		if (title.equals("Work List") && CurrentState.getSystemConfig("work_list").equals("1")) {
+			if(CurrentState.isActionAllowed(WorkList.moduleName, AppConstants.SHOW))
+				d = new DashboardItemContainer("Work List", workList,workList.getDefaultIcon());
 			removeListItem("Work List");
-			if (CurrentState.getDefaultProvider() != null && CurrentState.getDefaultProvider()!=0) {
-				workList.setProvider(CurrentState.getDefaultProvider());
-			}
-		} else if (title == "Messages") {
-			d = new DashboardItemContainer("Messages", messageBox,messageBox.getDefaultIcon());
+			
+		} else if (title.equals("Messages")) {
+			if(CurrentState.isActionAllowed(MessagingScreen.moduleName, AppConstants.SHOW))
+				d = new DashboardItemContainer("Messages", messageBox,messageBox.getDefaultIcon());
 			removeListItem("Messages");
-		} else if (title == "Notepad") {
+		} else if (title.equals("Notepad")) {
 			d = new DashboardItemContainer("Notepad", notesBox,null);
 			removeListItem("Notepad");
-		} else if (title == "Prescription Refills") {
-			d = new DashboardItemContainer("Prescription Refills",
+		} else if (title.equals("Prescription Refills")) {
+			if(CurrentState.isActionAllowed(RxRefillScreen.moduleName, AppConstants.SHOW))
+				d = new DashboardItemContainer("Prescription Refills",
 					prescriptionRefillBox,prescriptionRefillBox.getDefaultIcon());
 			removeListItem("Prescription Refills");
-		} else if (title == "Unfiled Documents") {
+		} else if (title.equals("Unfiled Documents")) {
+			if(CurrentState.isActionAllowed(UnfiledDocuments.moduleName, AppConstants.SHOW))
 			d = new DashboardItemContainer("Unfiled Documents", documentBox,documentBox.getDefaultIcon());
 			removeListItem("Unfiled Documents");
 		}
@@ -324,7 +357,7 @@ public class DashboardScreen extends ScreenInterface {
 
 	public Integer itemInList(String s) {
 		for (int i = 0; i < listBoxWidgets.getItemCount(); i++) {
-			if (listBoxWidgets.getValue(i) == s) {
+			if (listBoxWidgets.getValue(i).equals(s)) {
 				return i;
 			}
 		}
@@ -358,7 +391,7 @@ public class DashboardScreen extends ScreenInterface {
 			if(CurrentState.getUserConfig("dashboard")!=null)
 				c = ((Object)CurrentState.getUserConfig("dashboard")).toString();
 			if(CurrentState.getUserConfig("dashboardcols")!=null)
-				i = Integer.parseInt(((Object)CurrentState.getUserConfig("dashboardcols")).toString());
+				i = Integer.parseInt(((Object)CurrentState.getUserConfig("dashboardcols","String")).toString());
 		} catch (Exception ex) {
 			JsonUtil.debug("restoreArrangement(): Caught exception "
 					+ ex.toString());
@@ -395,9 +428,6 @@ public class DashboardScreen extends ScreenInterface {
 		}
 	}
 	
-	public void setProvider(Integer prov){
-		workList.setProvider(prov);
-	}
 
 	public void saveArrangement() {
 		// This method saves the current Arrangement of the Widgets moved by the
@@ -408,9 +438,9 @@ public class DashboardScreen extends ScreenInterface {
 		CurrentState.setUserConfig("dashboardcols", JsonUtil.jsonify(columns));
 
 		for (int i = (columns - 1); i >= 0; i--) {
-
+			
 			VerticalPanel vP = (VerticalPanel) ((VerticalPanel) hPanel
-					.getWidget(i)).getWidget(1);
+					.getWidget(i)).getWidget(0);
 
 			Integer rows = vP.getWidgetCount();
 			for (int j = 0; j < rows - 1; j++) {
@@ -419,13 +449,33 @@ public class DashboardScreen extends ScreenInterface {
 				order.put(t, Integer.toString(i));
 			}
 		}
-		CurrentState.setUserConfig("dashboard", JsonUtil.jsonify(order));
+		CurrentState.setUserConfig("dashboard", order);
 	}
 
 	public void refreshDashBoardWidgets(){
-		messageBox.retrieveData("");
-		workList.retrieveData();
-		prescriptionRefillBox.retrieveData();
-		documentBox.retrieveData();
+		try{
+			messageBox.retrieveData("");
+		}
+		catch(Exception e){
+			JsonUtil.debug("Unable to load dashboard messages.");
+		}
+		try{
+				workList.retrieveData();
+		}
+		catch(Exception e){
+			JsonUtil.debug("Unable to load dashboard workList.");
+		}
+		try{
+			prescriptionRefillBox.retrieveData();
+		}
+		catch(Exception e){
+			JsonUtil.debug("Unable to load dashboard prescriptionRefillBox.");
+		}
+		try{
+			documentBox.retrieveData();
+		}
+		catch(Exception e){
+			JsonUtil.debug("Unable to load dashboard documentBox.");
+		}
 	}
 }

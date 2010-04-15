@@ -21,25 +21,25 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `reporting` (
-	report_name			VARCHAR (100) NOT NULL,
-	report_uuid			CHAR (36) NOT NULL,
-	report_locale			CHAR (5) NOT NULL DEFAULT 'en_US',
-	report_desc			TEXT,
-	report_type			VARCHAR (150) NOT NULL DEFAULT 'standard',
-	report_category			VARCHAR (150) NOT NULL DEFAULT 'reporting_engine',
-	report_sp			VARCHAR (150) NOT NULL,
-	report_param_count		TINYINT(3) NOT NULL DEFAULT 0,
-	report_param_names		TEXT,
-	report_param_types		TEXT,
-	report_param_options		TEXT,
-	report_param_optional		TEXT,
-	report_acl			VARCHAR (150),
-	report_formatting		BLOB,
+	  report_name			VARCHAR (100) NOT NULL
+	, report_uuid			CHAR (36) NOT NULL
+	, report_locale			CHAR (5) NOT NULL DEFAULT 'en_US'
+	, report_desc			TEXT
+	, report_type			VARCHAR (150) NOT NULL DEFAULT 'standard'
+	, report_category		VARCHAR (150) NOT NULL DEFAULT 'reporting_engine'
+	, report_sp			VARCHAR (150) NOT NULL
+	, report_param_count		TINYINT(3) NOT NULL DEFAULT 0
+	, report_param_names		TEXT
+	, report_param_types		TEXT
+	, report_param_options		TEXT
+	, report_param_optional		TEXT
+	, report_acl			VARCHAR (150)
+	, report_formatting		BLOB
 
 	#	Define keys
 
-	PRIMARY KEY			( report_uuid ),
-	KEY				( report_name, report_locale )
+	, PRIMARY KEY			( report_uuid )
+	, KEY				( report_name, report_locale )
 );
 
 DROP PROCEDURE IF EXISTS reporting_Upgrade;
@@ -62,13 +62,20 @@ CALL reporting_Upgrade;
 
 #	Load packaged reports
 
+SOURCE data/schema/mysql/reporting/report_AccountPaid.sql
+SOURCE data/schema/mysql/reporting/report_ChargeGraph.sql
 SOURCE data/schema/mysql/reporting/report_GraphMonthlyFinancial.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
 SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql
+SOURCE data/schema/mysql/reporting/report_PatientAgedDetail.sql
 SOURCE data/schema/mysql/reporting/report_PatientAgingReport.sql
 SOURCE data/schema/mysql/reporting/report_PatientCensusByCarrier.sql
+SOURCE data/schema/mysql/reporting/report_PatientDemographic.sql
 SOURCE data/schema/mysql/reporting/report_PatientDuplicateAccounts.sql
 SOURCE data/schema/mysql/reporting/report_PatientList.sql
+SOURCE data/schema/mysql/reporting/report_PatientReceipt_en_US.sql
 SOURCE data/schema/mysql/reporting/report_PatientZipCodeDistribution.sql
+SOURCE data/schema/mysql/reporting/report_ReceivablesGraph.sql
+SOURCE data/schema/mysql/reporting/report_TransactionGraph_en_US.sql
 

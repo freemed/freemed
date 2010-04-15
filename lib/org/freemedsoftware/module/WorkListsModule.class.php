@@ -285,8 +285,8 @@ class WorkListsModule extends BaseModule {
 			}
 		}
 
-		$query = "SELECT s.id AS id, p.id AS s_patient_id, CONCAT(p.ptlname,', ', p.ptfname) AS s_patient, s.calprenote AS s_note, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration, s.caldateof AS s_date, CONCAT(phy.phyfname, ' ', phy.phylname) AS s_provider FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient LEFT OUTER JOIN physician phy ON phy.id=s.calphysician WHERE ". $add_sql." s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
-
+		$query = "SELECT s.id AS id, s.calpatient AS s_patient_id,s.caltype as appointment_type, CASE s.caltype WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(p.ptlname, ', ', p.ptfname, IF(LENGTH(p.ptmname)>0,CONCAT(' ',p.ptmname),''), IF(LENGTH(p.ptsuffix)>0,CONCAT(' ',p.ptsuffix),''), ' (', p.ptid, ')') END AS s_patient, s.calprenote AS s_note, s.calhour AS s_hour, s.calminute AS s_minute, s.calduration AS s_duration, s.caldateof AS s_date, CONCAT(phy.phyfname, ' ', phy.phylname) AS s_provider FROM scheduler s LEFT OUTER JOIN patient p ON p.id=s.calpatient LEFT OUTER JOIN physician phy ON phy.id=s.calphysician LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id WHERE ". $add_sql." s.calphysician='".addslashes($provider)."' AND s.calstatus != 'cancelled' ORDER BY s_hour, s_minute";
+		
 		$q = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $q AS $r ) {
 			$current_status = module_function( 'schedulerpatientstatus', 'getPatientStatus', array( $r['s_patient_id'], $r['id'] ) );
@@ -297,6 +297,7 @@ class WorkListsModule extends BaseModule {
 			}
 		
 			$return[] = array (
+				'id' => $r['id'],
 				'note' => $r['s_note'],
 				'status_name' => $name_lookup[$current_status[0]],
 				'status_fullname' => $fullname_lookup[$current_status[0]],
@@ -304,6 +305,7 @@ class WorkListsModule extends BaseModule {
 				'provider' => $r['s_provider'],
 				'patient' => $r['s_patient_id'],
 				'patient_name' => $r['s_patient'],
+				'appointment_type' => $r['appointment_type'],
 				'hour' => $r['s_hour'],
 				'minute' => sprintf( '%02d', $r['s_minute'] ),
 				'time' => $r['s_hour'] . ':' . sprintf( '%02d', $r['s_minute'] ),

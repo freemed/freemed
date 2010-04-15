@@ -22,6 +22,7 @@
 
 SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
+SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler_status` (
 	csstamp			TIMESTAMP (14) DEFAULT NOW(),
@@ -93,6 +94,7 @@ CREATE TRIGGER scheduler_status_Insert
 		IF f > 0 THEN
 			CALL scheduler_status_record_delta( f, NEW.id );
 		END IF;
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.csstamp, 0, NEW.csnote, 'scheduler_status', NEW.cspatient, 'NEW' );
 	END;
 //
 
@@ -100,6 +102,7 @@ CREATE TRIGGER scheduler_status_Update
 	AFTER UPDATE ON scheduler_status
 	FOR EACH ROW BEGIN
 		UPDATE `patient_emr` SET stamp=NEW.csstamp, patient=NEW.cspatient, summary=NEW.csnote, user=NEW.csuser WHERE module='scheduler_status' AND oid=NEW.id;
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.csstamp, 0, NEW.csnote, 'scheduler_status', NEW.cspatient, 'UPDATE' );
 	END;
 //
 

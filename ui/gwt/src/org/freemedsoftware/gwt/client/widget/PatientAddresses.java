@@ -34,6 +34,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -50,8 +51,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -250,7 +249,7 @@ public class PatientAddresses extends Composite {
 		HorizontalPanel hP = new HorizontalPanel();
 		vP.add(hP);
 
-		Button addAddressButton = new Button("Add Address");
+		CustomButton addAddressButton = new CustomButton("Add Address",AppConstants.ICON_ADD);
 		addAddressButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				Address a = new Address();
@@ -338,7 +337,7 @@ public class PatientAddresses extends Composite {
 		active.setValue(a.getActive().booleanValue());
 		flexTable.getFlexTable().setWidget(pos, 8, active);
 		
-		final Button deleteLink=new Button("Delete");
+		final CustomButton deleteLink=new CustomButton("Delete",AppConstants.ICON_DELETE);
 		flexTable.getFlexTable().setWidget(pos, 9,deleteLink );
 		
 		deleteLink.addClickHandler(new ClickHandler(){
@@ -425,8 +424,7 @@ public class PatientAddresses extends Composite {
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			CurrentState.getToaster().addItem("PatientAddresses",
-					"Updated patient addresses.", Toaster.TOASTER_INFO);
+			Util.showInfoMsg("PatientAddresses", "Updated patient addresses.");
 			if (onCompletion != null) {
 				onCompletion.execute();
 			}
@@ -445,9 +443,7 @@ public class PatientAddresses extends Composite {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						CurrentState.getToaster().addItem("PatientAddresses",
-								"Failed to update patient addresses.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("PatientAddresses", "Failed to update patient addresses.");
 					}
 
 					public void onResponseReceived(
@@ -458,10 +454,7 @@ public class PatientAddresses extends Composite {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (result != null) {
-								CurrentState.getToaster().addItem(
-										"PatientAddresses",
-										"Updated patient addresses.",
-										Toaster.TOASTER_INFO);
+								Util.showInfoMsg("PatientAddresses", "Updated patient addresses.");
 								if (onCompletion != null) {
 									onCompletion.execute();
 								}
@@ -473,9 +466,7 @@ public class PatientAddresses extends Composite {
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				CurrentState.getToaster().addItem("PatientAddresses",
-						"Failed to update patient addresses.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("PatientAddresses", "Failed to update patient addresses.");
 			}
 		} else {
 			PatientModuleAsync service = null;
@@ -488,10 +479,7 @@ public class PatientAddresses extends Composite {
 				service.SetAddresses(patientId, map,
 						new AsyncCallback<Boolean>() {
 							public void onSuccess(Boolean result) {
-								CurrentState.getToaster().addItem(
-										"PatientAddresses",
-										"Updated patient addresses.",
-										Toaster.TOASTER_INFO);
+								Util.showInfoMsg("PatientAddresses", "Updated patient addresses.");
 								if (onCompletion != null) {
 									onCompletion.execute();
 								}
@@ -499,10 +487,7 @@ public class PatientAddresses extends Composite {
 
 							public void onFailure(Throwable t) {
 								GWT.log("Exception", t);
-								CurrentState.getToaster().addItem(
-										"PatientAddresses",
-										"Failed to update patient addresses.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("PatientAddresses", "Failed to update patient addresses.");
 							}
 						});
 

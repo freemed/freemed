@@ -56,6 +56,27 @@ class Printing {
 		return $r;
 	} // end method GetPrinters
 
+	// Method: PrinterAvailable
+	//
+	//	Checks passed printer availability
+	//
+	// Parameters:
+	//
+	//	$param - Printer Name
+	//
+	// Returns:
+	//
+	//	boolean - return true if available otherwise return false
+	//
+	public function PrinterAvailable( $printer ) {
+		$p = $this->printer->driver->GetPrinters();
+		foreach ( $p AS $v ) {
+			if ( $v  == $printer ) 
+				return true;
+		}
+		return false;
+	} // end method GetPrinters
+
 } // end class PrinterWrapper
 
 ?>

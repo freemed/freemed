@@ -54,9 +54,6 @@ class CalendarGroup extends SupportModule {
 
 	protected function add_pre ( &$data ) {
 	} // end method add_pre
-
-	protected function del_pre ( &$data ) {
-	} // end method del_pre
 	
 	// Method: GetAll
 	//
@@ -66,7 +63,7 @@ class CalendarGroup extends SupportModule {
 	//
 	//	array of Hashes.
 	public function GetAll () {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$q = "SELECT cg.id,cg.groupname,cg.grouplength,cg.groupfrequency, CONCAT(f.psrname,' ',f.psrnote,' (',f.psrcity,',',f.psrstate,')') as groupfacility  FROM calgroup cg  left outer join facility f on f.id=cg.groupfacility";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
@@ -85,7 +82,7 @@ class CalendarGroup extends SupportModule {
 	//	hash
 	//
 	public function GetDetailedRecord( $id ) {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$q = "SELECT cg.id,cg.groupname,cg.grouplength,cg.groupfrequency,cg.groupmembers,cg.groupfacility as facility, CONCAT(f.psrname,' ',f.psrnote,' (',f.psrcity,',',f.psrstate,')') as groupfacility  FROM calgroup cg  left outer join facility f on f.id=cg.groupfacility where cg.id=".$GLOBALS['sql']->quote( $id );
 		$groupResult = $GLOBALS['sql']->queryRow( $q );
 		if($groupResult){

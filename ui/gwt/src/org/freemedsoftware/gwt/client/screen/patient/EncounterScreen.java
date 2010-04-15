@@ -29,15 +29,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.SuperbillTemplateAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
@@ -56,7 +55,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class EncounterScreen extends PatientScreenInterface {
@@ -191,8 +189,7 @@ public class EncounterScreen extends PatientScreenInterface {
 		popoutPanel.add(pxPicklist);
 
 		// Submit button
-		PushButton submitButton = new PushButton("Add Encounter");
-		submitButton.setStylePrimaryName("freemed-PushButton");
+		CustomButton submitButton = new CustomButton("Add Encounter",AppConstants.ICON_ADD);
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -340,9 +337,7 @@ public class EncounterScreen extends PatientScreenInterface {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						CurrentState.getToaster().addItem("SuperbillTemplate",
-								"Failed to load template.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -360,17 +355,13 @@ public class EncounterScreen extends PatientScreenInterface {
 								populateSuperbill(result);
 							}
 						} else {
-							CurrentState.getToaster().addItem(
-									"SuperbillTemplate",
-									"Failed to load template.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
 						}
 					}
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				CurrentState.getToaster().addItem("SuperbillTemplate",
-						"Failed to load template.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
 			}
 		} else {
 			try {
@@ -388,17 +379,13 @@ public class EncounterScreen extends PatientScreenInterface {
 									}
 
 									public void onFailure(Throwable caught) {
-										CurrentState.getToaster().addItem(
-												"SuperbillTemplate",
-												"Failed to load template.",
-												Toaster.TOASTER_ERROR);
+										Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
 									}
 
 								});
 			} catch (Exception e) {
 				e.printStackTrace();
-				CurrentState.getToaster().addItem("SuperbillTemplate",
-						"Failed to load template.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
 			}
 
 		}

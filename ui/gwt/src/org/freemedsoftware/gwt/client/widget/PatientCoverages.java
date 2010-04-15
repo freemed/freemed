@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -47,7 +48,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -446,6 +446,8 @@ public class PatientCoverages extends Composite {
 	protected CurrentState state = null;
 
 	protected Command onCompletion = null;
+	
+	protected String ModuleName = "PatientCoverages";
 
 	public PatientCoverages() {
 		coverages = new HashMap<Integer, Coverage>();
@@ -458,15 +460,17 @@ public class PatientCoverages extends Composite {
 
 		HorizontalPanel hP = new HorizontalPanel();
 		verticalPanel.add(hP);
-
-		Button addCoveragesButton = new Button("Add Coverage");
-		addCoveragesButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent evt) {
-				Coverage a = new Coverage();
-				addCoverage(coverages.size() + 1, a);
-			}
-		});
-		hP.add(addCoveragesButton);
+		
+		if(CurrentState.isActionAllowed(ModuleName,AppConstants.WRITE)){
+			CustomButton addCoveragesButton = new CustomButton("Add Coverage",AppConstants.ICON_ADD);
+			addCoveragesButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent evt) {
+					Coverage a = new Coverage();
+					addCoverage(coverages.size() + 1, a);
+				}
+			});
+			hP.add(addCoveragesButton);
+		}
 	}
 
 	/**
@@ -492,6 +496,7 @@ public class PatientCoverages extends Composite {
 		int row=0;
 
 		final CustomTable flexTable = new CustomTable();
+		flexTable.removeTableStyle();
 		coveragesPanel.add(flexTable);
 		
 		final Label insuranceCompanyLabel = new Label("Insurance Company:");
@@ -504,19 +509,20 @@ public class PatientCoverages extends Composite {
 		final SupportModuleWidget coverageInsuranceType = new SupportModuleWidget("CoverageTypes");
 		flexTable.getFlexTable().setWidget(row, 3, coverageInsuranceType);
 		
-		final Label deleCoverageLabel = new Label("Delete This Coverage:");
-		flexTable.getFlexTable().setWidget(row, 4, deleCoverageLabel);
-		Button deleCoverageButton = new Button("Delete");
-		deleCoverageButton.setWidth("100%");
-		deleCoverageButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent evt) {
-				coveragesPanel.remove(flexTable);
-				if(coverage.getCoverageId()!=null)
-					deleteCoverage(coverage.getCoverageId());
-			}
-		});
-		flexTable.getFlexTable().setWidget(row, 5, deleCoverageButton);
-		
+		if(CurrentState.isActionAllowed(ModuleName,AppConstants.DELETE)){
+			final Label deleCoverageLabel = new Label("Delete This Coverage:");
+			flexTable.getFlexTable().setWidget(row, 4, deleCoverageLabel);
+			CustomButton deleCoverageButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+			deleCoverageButton.setWidth("100%");
+			deleCoverageButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent evt) {
+					coveragesPanel.remove(flexTable);
+					if(coverage.getCoverageId()!=null)
+						deleteCoverage(coverage.getCoverageId());
+				}
+			});
+			flexTable.getFlexTable().setWidget(row, 5, deleCoverageButton);
+		}
 		row++;
 		
 		final Label providerAcceptsAssigmentLabel = new Label("Provider Accepts Assigment:");
@@ -867,8 +873,7 @@ public class PatientCoverages extends Composite {
 			if(mmp.get("id")!=null)
 				url = "org.freemedsoftware.module.PatientCoverages.Mod";
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			CurrentState.getToaster().addItem("PatientCoverages",
-					"Updated patient Coverages.", Toaster.TOASTER_INFO);
+			Util.showInfoMsg("PatientCoverages", "Updated patient Coverages.");
 			if (onCompletion != null) {
 				onCompletion.execute();
 			}
@@ -887,9 +892,7 @@ public class PatientCoverages extends Composite {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						CurrentState.getToaster().addItem("PatientCoverages",
-								"Failed to update patient Coverages.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("PatientCoverages", "Failed to update patient Coverages.");
 					}
 
 					public void onResponseReceived(
@@ -900,10 +903,7 @@ public class PatientCoverages extends Composite {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (result != null) {
-								CurrentState.getToaster().addItem(
-										"PatientCoverages",
-										"Updated patient Coverages.",
-										Toaster.TOASTER_INFO);
+								Util.showInfoMsg("PatientCoverages", "Updated patient Coverages.");
 								if (onCompletion != null) {
 									onCompletion.execute();
 								}
@@ -915,9 +915,7 @@ public class PatientCoverages extends Composite {
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				CurrentState.getToaster().addItem("PatientCoverages",
-						"Failed to update patient Coverages.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("PatientCoverages", "Failed to update patient Coverages.");
 			}
 		}
 		}

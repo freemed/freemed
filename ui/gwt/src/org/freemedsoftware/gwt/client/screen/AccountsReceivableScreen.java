@@ -28,15 +28,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.LedgerPopup;
+import org.freemedsoftware.gwt.client.widget.PatientWidget;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,16 +53,16 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class AccountsReceivableScreen extends ScreenInterface {
 
@@ -71,15 +76,34 @@ public class AccountsReceivableScreen extends ScreenInterface {
 	
 	protected TextBox patientlnTextBox=null;
 	
-	protected Button searchButton=null;
+	protected CustomButton searchButton=null;
 	
-	protected Button clearButton=null;
-
-	protected ListBox wProviderList = null;
+	protected CustomButton clearButton=null;
 
 	protected CustomDatePicker wDos;
 
 	private static List<AccountsReceivableScreen> accountsReceivableScreenList=null;
+
+	protected FlexTable parentSearchTable;
+
+	protected VerticalPanel searchCriteriaVPanel;
+
+	protected FlexTable searchCriteriaTable;
+
+	protected VerticalPanel currentCriteriaPanel;
+
+	protected FlexTable existingCriteriaTable;
+	
+	protected HashMap<String, String> widgetTracker = new HashMap<String, String>();//It will contains widget and their respective row number so that we can use them for cretieria
+	protected HashMap<String, Widget> widgetContainer = new HashMap<String, Widget>();
+
+	protected HashMap<String,HorizontalPanel> widgetAddedToCreteria = new HashMap<String,HorizontalPanel>();//It will contains widget and their respective row number so that we can use them for cretieria
+	
+	protected HashMap<String, String> otherCreteriaMap = new HashMap<String, String>();
+
+	protected PatientWidget patientWidget;
+
+	protected SupportModuleWidget providerWidget,facilityModule;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
 	public static AccountsReceivableScreen getInstance(){
 		AccountsReceivableScreen accountsReceivableScreen=null; 
@@ -101,55 +125,84 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
-		//First FlexTable for holding first name & last name
-		final FlexTable patientCriteriaflexTable = new FlexTable();
-		patientCriteriaflexTable.setWidth("40%");
+		parentSearchTable = new FlexTable();
+		parentSearchTable.setSize("100%", "100%");
+		parentSearchTable.setBorderWidth(1	);
+		parentSearchTable.getElement().getStyle().setProperty("borderCollapse", "collapse");
+		verticalPanel.add(parentSearchTable);
 		
-		final Label criteriaLabel = new Label("Patient Criteria ");
-		criteriaLabel.setStyleName("small-header-label");
-		criteriaLabel.setWidth("40%");
-		verticalPanel.add(criteriaLabel);
+		searchCriteriaVPanel = new VerticalPanel();
+		searchCriteriaVPanel.setWidth("100%");
+		searchCriteriaVPanel.setSpacing(5);
+		parentSearchTable.setWidget(0, 0, searchCriteriaVPanel);
+		parentSearchTable.getFlexCellFormatter().getElement(0, 0).setAttribute("width", "50%");
+		parentSearchTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
+		Label lbSearch=new Label("Search Criteria");
+		lbSearch.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+		lbSearch.getElement().getStyle().setProperty("fontSize", "15px");
+		lbSearch.getElement().getStyle().setProperty("textDecoration", "underline");
+		lbSearch.getElement().getStyle().setProperty("fontWeight", "bold");
+		searchCriteriaTable = new FlexTable();
+		searchCriteriaVPanel.add(lbSearch);
+		searchCriteriaVPanel.add(searchCriteriaTable);
 		
-		final Label smartSearchLabel = new Label("Name(Last,First):  ");
-		patientCriteriaflexTable.setWidget(1, 0, smartSearchLabel);
-
+		int row = 0;
+		
+		final Label smartLNameSearchLabel = new Label("Patient Last Name:  ");
+		searchCriteriaTable.setWidget(row, 0, smartLNameSearchLabel);
+		
 		patientlnTextBox = new TextBox();
-		patientCriteriaflexTable.setWidget(1, 1, patientlnTextBox);
+		searchCriteriaTable.setWidget(row, 1, patientlnTextBox);
+		widgetTracker.put("Patient Last Name", row+":1:"+"last_name");
+		widgetContainer.put("Patient Last Name", patientlnTextBox);
+		
+		final Label smartFNameSearchLabel = new Label("Patient First Name:  ");
+		searchCriteriaTable.setWidget(row, 2, smartFNameSearchLabel);
+		
 		patientfnTextBox = new TextBox();
-		patientCriteriaflexTable.setWidget(1, 2, patientfnTextBox);
+		searchCriteriaTable.setWidget(row, 3, patientfnTextBox);
+		widgetTracker.put("Patient First Name", row+":3:"+"last_name");
+		widgetContainer.put("Patient First Name", patientfnTextBox);
+		row++;
 		
-		verticalPanel.add(patientCriteriaflexTable);
-		
-		final Label claimCriteriaLabel = new Label("Claim Criteria ");
-		claimCriteriaLabel.setStyleName("small-header-label");
-		claimCriteriaLabel.setWidth("40%");
-		verticalPanel.add(claimCriteriaLabel);
-		
-		//Second FlexTable for holding  claim Criteria fields provider,date
-		final FlexTable claimCriteriaflexTable = new FlexTable();
-		claimCriteriaflexTable.setWidth("27%");
+		final Label ptFullName = new Label("Patient Full Name:  ");
+		searchCriteriaTable.setWidget(row, 0, ptFullName);
+		patientWidget = new PatientWidget();
+		searchCriteriaTable.setWidget(row, 1, patientWidget);
+		widgetTracker.put("Patient", row+":1:"+"patient");
+		widgetContainer.put("Patient", patientWidget);
+		row++;
 		
 		final Label fieldSearchLabel = new Label("Provider: ");
-		claimCriteriaflexTable.setWidget(1, 0, fieldSearchLabel);
+		searchCriteriaTable.setWidget(row, 0, fieldSearchLabel);
 
-		wProviderList = new ListBox();
-		claimCriteriaflexTable.setWidget(1, 1, wProviderList);
-		wProviderList.setVisibleItemCount(1);
+		providerWidget = new SupportModuleWidget("ProviderModule");
+		searchCriteriaTable.setWidget(row, 1, providerWidget);
+		widgetTracker.put("Provider", row+":1:"+"provider");
+		widgetContainer.put("Provider", providerWidget);
+		row++;
+
+		final Label facilityLabel = new Label("Facility: ");
+		searchCriteriaTable.setWidget(row, 0, facilityLabel);
+
+		facilityModule = new SupportModuleWidget("FacilityModule");
+		searchCriteriaTable.setWidget(row, 1, facilityModule);
+		widgetTracker.put("Facility", row+":1:"+"facility");
+		widgetContainer.put("Facility", facilityModule);
+		row++;
 		
-		//search & update providers list
-		updateProviderList();
-
 		final Label dateOfServiceLabel = new Label("Date of Service: ");
-		claimCriteriaflexTable.setWidget(2, 0, dateOfServiceLabel);
+		searchCriteriaTable.setWidget(row, 0, dateOfServiceLabel);
 
 		wDos = new CustomDatePicker();
-		claimCriteriaflexTable.setWidget(2, 1, wDos);
-
-		verticalPanel.add(claimCriteriaflexTable);
+		searchCriteriaTable.setWidget(row, 1, wDos);
+		widgetTracker.put("Date of Service", row+":1:"+"date_of");
+		widgetContainer.put("Date of Service", wDos);
+		row++;
 		
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setSpacing(5);
-		searchButton = new Button("Search");
+		searchButton = new CustomButton("Search",AppConstants.ICON_SEARCH);
 		searchButton.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -159,7 +212,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		}
 		);
 		buttonPanel.add(searchButton);
-		clearButton = new Button("Clear");
+		clearButton = new CustomButton("Clear",AppConstants.ICON_CLEAR);
 		clearButton.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -173,7 +226,22 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		buttonPanel.setSpacing(5);
 
 		
-		claimCriteriaflexTable.setWidget(3, 1, buttonPanel);
+		searchCriteriaTable.setWidget(5, 1, buttonPanel);		
+		
+		currentCriteriaPanel = new VerticalPanel();
+		currentCriteriaPanel.setWidth("100%");
+		currentCriteriaPanel.setSpacing(5);
+		Label lbExistingCri=new Label("Current Criteria");
+		lbExistingCri.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+		lbExistingCri.getElement().getStyle().setProperty("fontSize", "15px");
+		lbExistingCri.getElement().getStyle().setProperty("textDecoration", "underline");
+		lbExistingCri.getElement().getStyle().setProperty("fontWeight", "bold");
+		existingCriteriaTable = new FlexTable();
+		currentCriteriaPanel.add(lbExistingCri);
+//		currentCriteriaPanel.add(existingCriteriaTable);
+		parentSearchTable.setWidget(0, 1, currentCriteriaPanel);
+		parentSearchTable.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
+		
 		
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
@@ -182,6 +250,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		//creating search result table
 		sortableTable = new CustomTable();
 		sortableTable.setWidth("100%");
+		sortableTable.addColumn("Selected", "selected");
 		sortableTable.addColumn("Svc Date", "date_of");
 		sortableTable.addColumn("Acct Bal", "total_balance");
 		sortableTable.addColumn("Provider", "provider");
@@ -192,6 +261,72 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		sortableTable.addColumn("Date", "payment_date");
 		sortableTable.addColumn("Adjs", "money_in");
 		sortableTable.addColumn("Charges", "money_out");
+		sortableTable.addColumn("Action","action");
+		sortableTable.setIndexName("item");
+		
+		sortableTable.setTableRowClickHandler(new TableRowClickHandler(){
+			@Override
+			public void handleRowClick(HashMap<String, String> data, int col) {
+				if(col==1){
+					otherCreteriaMap.put("Date of Service", data.get("date_of")+":date_of:"+data.get("date_of"));
+					refreshSearch();
+				}else if(col==3){
+					otherCreteriaMap.put("Provider", data.get("provider")+":provider:"+data.get("provider_id"));
+					refreshSearch();
+				}else if(col==4){
+					otherCreteriaMap.put("Patient", data.get("patient")+":patient:"+data.get("patient_id"));
+					refreshSearch();
+				}else if(col==6){
+					otherCreteriaMap.put("Item Type", data.get("item_type")+":type:"+data.get("item_type_id"));
+					refreshSearch();
+				}else if(col==7){
+					otherCreteriaMap.put("Procedure", data.get("procedure_id")+":procedure:"+data.get("procedure_id"));
+					refreshSearch();
+				}
+				
+			}
+		});
+		
+		sortableTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+			public Widget setColumn(String columnName,
+					final HashMap<String, String> data) {
+					Integer id = Integer.parseInt(data.get("procedure_id"));
+					if (columnName.compareTo("action") == 0) {
+					
+					HorizontalPanel actionPanel = new HorizontalPanel();
+					actionPanel.setSpacing(5);
+					HTML  htmlLedger= new HTML(
+					"<a href=\"javascript:undefined;\" style='color:blue'>Ledger</a>");
+					actionPanel.add(htmlLedger);
+					
+					htmlLedger.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(
+										ClickEvent arg0) {
+									LedgerPopup ledgerPopup = new LedgerPopup(data.get("procedure_id"),data.get("patient_id"),data.get("proc_cov_type"));
+									ledgerPopup.removeAction(LedgerPopup.DEDUCTABLE);
+									ledgerPopup.removeAction(LedgerPopup.COPAY);
+									ledgerPopup.show();
+									ledgerPopup.center();
+								}
+
+							});
+					return actionPanel;
+					
+					}if (columnName.compareTo("selected") == 0) {
+					CheckBox c = new CheckBox();
+					c.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent arg0) {
+						}
+					});
+//					checkboxStack.put(c, id);
+					return c;
+				} else {
+					return (Widget) null;
+				}
+			}
+		});
 
 
 		sortableTableEmptyLabel.setStylePrimaryName("freemed-MessageText");
@@ -209,72 +344,9 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		}
 		Util.setFocus(patientlnTextBox);
 	}
-
-	public void updateProviderList(){
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			wProviderList.addItem("---", "---");
-			wProviderList.addItem("Provider 1", "ptid");
-			wProviderList.addItem("Provider 2", "ssn");
-			wProviderList.addItem("Provider 3", "dmv");
-			wProviderList.addItem("Provider 4", "email");
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.ProviderModule.InternalPicklist",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(
-							com.google.gwt.http.client.Request request,
-							Throwable ex) {
-						Window.alert(ex.toString());
-					}
-
-					@SuppressWarnings("unchecked")
-					public void onResponseReceived(
-							com.google.gwt.http.client.Request request,
-							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							if (Util.checkValidSessionResponse(response
-									.getText())) {
-								HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
-												"HashMap<Integer,String>");
-								if (result != null) {
-									Set<Integer> keys = result.keySet();
-									Iterator<Integer> iter = keys.iterator();
-
-									List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
-//									map.clear();
-									wProviderList.addItem("---", "---");
-									while (iter.hasNext()) {
-										Integer keyInt = (Integer) iter.next();
-										String key = keyInt.toString();
-										String val = (String) result
-												.get(keyInt);
-										wProviderList.addItem(val, key);
-//										addKeyValuePair(items, val, key);
-									}
-//									cb.onSuggestionsReady(r,
-//											new SuggestOracle.Response(items));
-								}
-							}
-						} else {
-							Window.alert(response.toString());
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert(e.toString());
-			}
-		}
+	public AccountsReceivableScreen getAccountsReceivableScreen(){
+		return this;
 	}
-	
 	@SuppressWarnings("unchecked")
 	protected void refreshSearch() {
 	if(validateForm()){//validate form first
@@ -299,11 +371,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 			sortableTable.loadData((HashMap<String, String>[]) l
 					.toArray(new HashMap<?, ?>[0]));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			HashMap<String, String> criteria = new HashMap<String, String>();
-			criteria.put("date", wDos.getTextBox().getValue());
-			criteria.put("provider", wProviderList.getValue(wProviderList.getSelectedIndex()));
-			criteria.put("first_name", patientfnTextBox.getValue());
-			criteria.put("last_name", patientlnTextBox.getValue());
+			HashMap<String, String> criteria = populateCreteria();
 
 			String[] params = { JsonUtil.jsonify(criteria) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -350,13 +418,104 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		}
 	}
 
+//	public HashMap<String, String> populateCreteria(){
+//		HashMap<String, String> criteria = new HashMap<String, String>();
+//		criteria.put("date", wDos.getTextBox().getValue());
+//		criteria.put("provider", providerWidget.getStoredValue());
+//		criteria.put("first_name", patientfnTextBox.getValue());
+//		criteria.put("last_name", patientlnTextBox.getValue());
+//		criteria.put("patient", patientWidget.getStoredValue());
+//		return criteria;
+//	}
+	
+	public HashMap<String, String> populateCreteria(){
+		HashMap<String, String> criteria = new HashMap<String, String>();
+		Iterator<String> iterator = widgetTracker.keySet().iterator();
+		while(iterator.hasNext()){
+			final String widgetLabel   = iterator.next();
+			final Widget widget = widgetContainer.get(widgetLabel);
+			String widgetValue = Util.getWidgetValue(widget);
+			if(widgetValue!=null && !widgetValue.equals("") && !widgetValue.equals("0")){
+				String rowColKey   = widgetTracker.get(widgetLabel);
+				String []reqData = rowColKey.split(":");
+				final Integer row = Integer.parseInt(reqData[0]);
+				final Integer col = Integer.parseInt(reqData[1]);
+				showHideWidget(widgetLabel, false);
+				criteria.put(reqData[2], widgetValue);
+				if(widgetAddedToCreteria.get(widgetLabel)==null){//If alreday in creteria then dont add 
+					final HorizontalPanel horizontalPanel = new HorizontalPanel();
+					currentCriteriaPanel.add(horizontalPanel);
+					Label label = new Label(((Label)searchCriteriaTable.getWidget(row, col-1)).getText()+":");
+					label.setStyleName("label_bold");
+					horizontalPanel.add(label);
+					horizontalPanel.add(new Label(Util.getWidgetText(widget)));
+					CustomButton button = new CustomButton("X");
+					button.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent arg0) {
+							currentCriteriaPanel.remove(horizontalPanel);
+							widgetAddedToCreteria.remove(widgetLabel);
+							showHideWidget(widgetLabel, true);
+							Util.resetWidget(widget);
+							refreshSearch();
+						}
+					});
+					horizontalPanel.add(button);
+					widgetAddedToCreteria.put(widgetLabel,horizontalPanel);
+				}
+			}
+			
+		}
+		Iterator<String> OtherCretitr = otherCreteriaMap.keySet().iterator();
+		while(OtherCretitr.hasNext()){
+			final String widgetLabel = OtherCretitr.next();
+			showHideWidget(widgetLabel, false);	
+			final String []values = otherCreteriaMap.get(widgetLabel).split(":");
+			final String labelValue = values[0];
+			criteria.put(values[1], values[2]);
+			if(widgetAddedToCreteria.get(widgetLabel)==null){
+				final HorizontalPanel horizontalPanel = new HorizontalPanel();
+				currentCriteriaPanel.add(horizontalPanel);
+				Label label = new Label(widgetLabel+":");
+				label.setStyleName("label_bold");
+				horizontalPanel.add(label);
+				horizontalPanel.add(new Label(labelValue));
+				CustomButton button = new CustomButton("X");
+				button.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent arg0) {
+						currentCriteriaPanel.remove(horizontalPanel);
+						otherCreteriaMap.remove(widgetLabel);
+						widgetAddedToCreteria.remove(widgetLabel);
+						showHideWidget(widgetLabel, true);
+						refreshSearch();
+					}
+				});
+				horizontalPanel.add(button);
+				widgetAddedToCreteria.put(widgetLabel,horizontalPanel);
+			}
+		}
+		return criteria;
+	}
+
+	public void showHideWidget(String widgetLabel,boolean visible){
+		if(widgetContainer.get(widgetLabel)!=null){
+			String rowColKey   = widgetTracker.get(widgetLabel);
+			String []reqData = rowColKey.split(":");
+			final Integer row = Integer.parseInt(reqData[0]);
+			final Integer col = Integer.parseInt(reqData[1]);
+			searchCriteriaTable.getWidget(row, col).setVisible(visible);
+			searchCriteriaTable.getWidget(row, col-1).setVisible(visible);
+		}
+	}
+	
 	protected boolean validateForm() {
 		String msg = new String("");
-		if (wProviderList.getSelectedIndex()<1) {
-			msg += "Please specify provider." + "\n";
-		}
+		//if (wProviderList.getSelectedIndex()<1) {
+		//	msg += "Please specify provider." + "\n";
+		//}
 		
-		if (msg != "") {
+		if (!msg.equals("")) {
 			Window.alert(msg);
 			return false;
 		}
@@ -367,9 +526,21 @@ public class AccountsReceivableScreen extends ScreenInterface {
 	public void clearForm() {
 		patientfnTextBox.setText("");
 		patientlnTextBox.setText("");
-		wProviderList.setItemSelected(0, true);
+		providerWidget.clear();
 		wDos.getTextBox().setValue("");
 		patientlnTextBox.setFocus(true);
+		patientWidget.clear();
+		
+		
+		Iterator<String> iterator = widgetAddedToCreteria.keySet().iterator();
+		while(iterator.hasNext()){
+			String widgetLabel  = iterator.next();
+			showHideWidget(widgetLabel, true);
+			widgetAddedToCreteria.get(widgetLabel).removeFromParent();
+		}
+		widgetAddedToCreteria.clear();
+		otherCreteriaMap.clear();
+		refreshSearch();
 	}
 	@Override
 	public void closeScreen() {

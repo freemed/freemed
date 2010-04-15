@@ -29,7 +29,7 @@
 			    <Element field="cptnameext" title="External Name" type="TEXT" options="50" display="1" />
 			    <Element field="cptgender" title="Gender Restriction" type="SELECT" options="No restriction|n,Male|m,Female|f" />
 			    <Element field="cpttaxed" title="Taxed?" type="SELECT" options="No|n,Yes|y" />
-			    <Element field="cpttype" title="Internal Service Type" type="MODULE" options="CptTypes"/>
+			    <Element field="cpttype" title="Internal Service Type" type="MODULE" options="InternalServiceTypes"/>
 			    <Element field="cptreqcpt" title="Required Procedural Codes" type="MODULE_MULTIPLE" options="CptCodes" help="Required Procedures as Cpt Codes"/>
 			    <Element field="cptexccpt" title="Excluded Procedural Codes" type="MODULE_MULTIPLE" options="CptCodes" help="Excluded Procedures as Cpt Codes"/>
 			    <Element field="cptreqicd" title="Required Diagnoses" type="MODULE_MULTIPLE" options="IcdCodes" help="Required Diagnoses as ICD Codes"/>

@@ -78,6 +78,12 @@ public class UserMultipleChoiceWidget extends Composite {
 				UserWidget sender = (UserWidget) event.getSource();
 				Integer val = sender.getValue();
 				String label = sender.getText();
+				if (val == null) {
+					return;
+				}
+				if (val == 0) {
+					return;
+				}
 				JsonUtil.debug("value = " + val.toString() + ", label = "
 						+ label);
 				addValue(label, val);
@@ -154,13 +160,15 @@ public class UserMultipleChoiceWidget extends Composite {
 	 */
 	public String getCommaSeparatedValues() {
 		String buffer = new String("");
-		Iterator<Integer> iter = Arrays.asList(widgetValues).iterator();
-		while (iter.hasNext()) {
-			buffer += iter.next();
-			if (iter.hasNext()) {
-				buffer += ",";
+		try{
+			Iterator<Integer> iter = Arrays.asList(widgetValues).iterator();
+			while (iter.hasNext()) {
+				buffer += iter.next();
+				if (iter.hasNext()) {
+					buffer += ",";
+				}
 			}
-		}
+		}catch(Exception e){JsonUtil.debug("UserMultipleChoiceWidget: list empty");}
 		return buffer.toString();
 	}
 

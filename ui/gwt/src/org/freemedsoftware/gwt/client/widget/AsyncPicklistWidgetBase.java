@@ -120,7 +120,7 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface implements
 
 		initWidget(layout);
 	}
-
+	
 	public TextBox getTextEntryWidget() {
 		return textBox;
 	}
@@ -229,6 +229,7 @@ abstract public class AsyncPicklistWidgetBase extends WidgetInterface implements
 	 * 
 	 */
 	public void clear() {
+		
 		searchBox.setText("");
 		map.clear();
 		setValue(0);

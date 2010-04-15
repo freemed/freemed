@@ -37,6 +37,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.freemedsoftware.gwt.client.JsonUtil;
+
 public class Toaster extends PopupPanel {
 
 	public static final int TOASTER_INFO = 0;
@@ -170,14 +172,17 @@ public class Toaster extends PopupPanel {
 		try {
 			container.remove((Widget) itemWidgets.get(module));
 		} catch (Exception e) {
+			JsonUtil.debug(e.toString());
 		}
 		try {
 			itemWidgets.remove(module);
 		} catch (Exception e) {
+			JsonUtil.debug(e.toString());
 		}
 		try {
 			items.remove(module);
 		} catch (Exception e) {
+			JsonUtil.debug(e.toString());
 		}
 
 		// Refresh

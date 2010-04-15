@@ -30,12 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -164,19 +164,22 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	protected HorizontalPanel buttonContainer = null;
 
-	protected Button bPrevious = new Button("Previous");
+	protected CustomButton bPrevious = new CustomButton("Previous",AppConstants.ICON_PREV);
 	protected Label bLabel = new Label();
-	protected Button bNext = new Button("Next");
+	protected CustomButton bNext = new CustomButton("Next",AppConstants.ICON_NEXT);
 	protected int actionRow=-1;
 	protected int curMinRow = 0;
-
+	protected String rowStyle="tableRow";
+	protected String TABLE_STYLE_NAME="sortableTable";
+	protected String ALTERNATE_ROW_STYLE="customRowStyle";
+	protected String TABLE_HEADER_STYLE = "tableHeader";
 	protected boolean sortDesc = true;
 
 	public CustomTable() {
 		VerticalPanel vPanel = new VerticalPanel();
 
 		flexTable = new FlexTable();
-		flexTable.setStyleName("sortableTable");
+		flexTable.setStyleName(TABLE_STYLE_NAME);
 		flexTable.addClickHandler(this);
 		vPanel.add(flexTable);
 
@@ -201,7 +204,7 @@ public class CustomTable extends Composite implements ClickHandler {
 
 		// Set header row information properly
 		RowFormatter rowFormatter = flexTable.getRowFormatter();
-		rowFormatter.setStyleName(0, "tableHeader");
+		rowFormatter.setStyleName(0, TABLE_HEADER_STYLE);
 
 		// Last thing to do, set the widget.
 		initWidget(vPanel);
@@ -214,7 +217,20 @@ public class CustomTable extends Composite implements ClickHandler {
 	public void setTableRowClickHandler(TableRowClickHandler t) {
 		tableRowClickHandler = t;
 	}
-
+	
+	public void setRowStyle(String s){
+		rowStyle=s;
+	}
+	
+	public void setAlternateRowStyle(String s){
+		ALTERNATE_ROW_STYLE=s;
+	}
+	
+	public void setTableStyle(String s){
+		flexTable.removeStyleName(TABLE_STYLE_NAME);
+		TABLE_STYLE_NAME=s;
+		flexTable.setStyleName(TABLE_STYLE_NAME);
+	}
 	/**
 	 * Add an additional column definition.
 	 * 
@@ -273,9 +289,9 @@ public class CustomTable extends Composite implements ClickHandler {
 						// Alternating rows
 						if (rowIndex % 2 == 0) {
 							rowFormatter.setStyleName(rowIndex,
-									"customRowStyle");
+									ALTERNATE_ROW_STYLE);
 						} else {
-							rowFormatter.setStyleName(rowIndex, "tableRow");
+							rowFormatter.setStyleName(rowIndex, rowStyle);
 						}
 					}
 					// Set column alignments and fonts
@@ -394,8 +410,8 @@ public class CustomTable extends Composite implements ClickHandler {
 			int rows = (data.length < maxRows) ? data.length : maxRows;
 			RowFormatter rowFormatter = flexTable.getRowFormatter();
 			for (int iter = 0; iter < rows; iter++) {
-				rowFormatter.removeStyleName(iter + 1, "tableRow");
-				rowFormatter.removeStyleName(iter + 1, "customRowStyle");
+				rowFormatter.removeStyleName(iter + 1, rowStyle);
+				rowFormatter.removeStyleName(iter + 1, ALTERNATE_ROW_STYLE);
 				for (int jter = 0; jter < columns.size(); jter++) {
 					flexTable.clearCell(iter + 1, jter);
 				}
@@ -729,5 +745,10 @@ public class CustomTable extends Composite implements ClickHandler {
 			}
 		}
 		return success;
+	}
+	
+	public void removeTableStyle(){
+		this.flexTable.getElement().removeAttribute("class");
+		this.flexTable.getElement().removeAttribute("style");
 	}
 }

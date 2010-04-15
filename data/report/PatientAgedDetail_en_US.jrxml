@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientAgedDetail_en_US" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<queryString language="SQL">
+		<![CDATA[call report_PatientAgedDetail_en_US();]]>
+	</queryString>
+	<field name="ptname" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="insconame" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="procdt" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="procbalcurrent" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="procage" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ptid" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="Patient_Total" class="java.lang.Double" resetType="Group" resetGroup="ptid" calculation="Sum">
+		<variableExpression><![CDATA[$F{procbalcurrent}]]></variableExpression>
+	</variable>
+	<variable name="Grand_Total" class="java.lang.Double" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{procbalcurrent}]]></variableExpression>
+	</variable>
+	<group name="ptid">
+		<groupExpression><![CDATA[$F{ptid}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<textField evaluationTime="Group" evaluationGroup="ptid">
+					<reportElement style="SubTitle" x="538" y="2" width="101" height="20" forecolor="#000000"/>
+					<textElement textAlignment="Right">
+						<font size="13" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{Patient_Total}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="760" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="1" y="2" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" size="13" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Patient Total]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="63" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="5" width="337" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Patient Aged Detail Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="40" width="76" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Printed On:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="77" y="38" width="325" height="20"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="1" y="1" width="759" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="1" y="60" width="759" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="0" y="19" width="214" height="15"/>
+				<textElement/>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="214" y="19" width="213" height="15"/>
+				<textElement/>
+				<text><![CDATA[Insurance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="427" y="19" width="111" height="15"/>
+				<textElement/>
+				<text><![CDATA[DOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="538" y="19" width="111" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="649" y="19" width="111" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Days Old]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="Detail" isPrintRepeatedValues="false" x="0" y="0" width="214" height="15" isPrintInFirstWholeBand="true" printWhenGroupChanges="ptid"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ptname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" isPrintRepeatedValues="false" x="214" y="0" width="213" height="15" printWhenGroupChanges="ptid"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{insconame}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement style="Detail" x="427" y="0" width="111" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{procdt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="538" y="0" width="101" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{procbalcurrent}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="649" y="0" width="110" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{procage}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="639" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="719" y="0" width="40" height="20"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="8" width="120" height="24"/>
+				<textElement>
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grand Total]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="538" y="16" width="101" height="24"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{Grand_Total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

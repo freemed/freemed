@@ -1274,6 +1274,112 @@ class PaymentModule extends EMRModule {
 	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
+	
+	public function getUnAttachedPayments($ptid){
+		$query="SELECT id as Id, CONCAT(payrecamt,'  (',payrecdtadd,')') as pay_info from payrec where payrecproc=0 AND payrecpatient=".$GLOBALS['sql']->quote( $ptid )." AND payreccat=".PAYMENT;
+		return $GLOBALS['sql']->queryAll( $query );
+	}
+	
+	public function getUnAttachedCopays($ptid){
+		$query="SELECT id as Id, CONCAT(payrecamt,'  (',payrecdtadd,')') as pay_info from payrec where payrecproc=0 AND payrecpatient=".$GLOBALS['sql']->quote( $ptid )." AND payreccat=".COPAY;
+		return $GLOBALS['sql']->queryAll( $query );
+	}
+	
+	public function getUnAttachedDeductables($ptid){
+		$query="SELECT id as Id, CONCAT(payrecamt,'  (',payrecdtadd,')') as pay_info from payrec where payrecproc=0 AND payrecpatient=".$GLOBALS['sql']->quote( $ptid )." AND payreccat=".DEDUCTABLE;
+		return $GLOBALS['sql']->queryAll( $query );
+	}
+	
+	public function attachProcedure($pid,$procId){
+		
+		$query="select * from payrec where id=".$GLOBALS['sql']->quote( $pid );
+		$pay_result=$GLOBALS['sql']->queryRow( $query );
+		
+		$query="select * from procrec where id=".$GLOBALS['sql']->quote( $procId );
+		$proc_result=$GLOBALS['sql']->queryRow( $query );
+		
+		//return $result;
+		$pay_amount=$pay_result['payrecamt']+0;
+		$proc_bal=$proc_result['procbalcurrent']+0;
+		
+		// if advance payment is more then procedure's to be payed balance
+		if($pay_amount>$proc_bal){
+			$diff=$pay_amount-$proc_bal;
+			
+			// assigning procid to payrec record
+			$query="UPDATE payrec SET payrecproc = ".$GLOBALS['sql']->quote( $procId ).",payrecamt=".$GLOBALS['sql']->quote( $proc_bal )." WHERE id=".$GLOBALS['sql']->quote( $pid );
+			$res1= $GLOBALS['sql']->queryAll( $query );
+			
+			// updating procamtpaid and procbalcurrent values for the procedure
+			$query = $GLOBALS['sql']->update_query(
+				'procrec',
+				array (
+					'procbalcurrent' => 0,
+					'procamtpaid' => $proc_result['procamtpaid']+$proc_bal
+				), array ( 'id' => $procId )
+			);
+			$res2 = $GLOBALS['sql']->query ( $query );
+			
+			//creating a seperate payrec record for the remaining amount
+			
+			foreach($pay_result AS $k => $v){
+				if($k!='id'){
+					if($k=='payrecamt'){
+						$data[$k]=$diff;
+					}
+					else{
+						$data[$k]=$v;
+					}
+				}
+			}
+			$query = $GLOBALS['sql']->insert_query ('payrec',$data);
+			$res3 = $GLOBALS['sql']->query ( $query );
+			//return ($res1 and $res2 and $res3); FIXME something causing to return false
+			return true;
+		}
+		else{
+			// assigning procid to payrec record
+			$query="UPDATE payrec SET payrecproc = ".$GLOBALS['sql']->quote( $procId )." WHERE id=".$GLOBALS['sql']->quote( $pid );
+			$res1= $GLOBALS['sql']->queryAll( $query );
+			
+			// updating procamtpaid and procbalcurrent values for the procedure
+			$query = $GLOBALS['sql']->update_query(
+				'procrec',
+				array (
+					'procbalcurrent' => $proc_result['procbalcurrent']-$pay_amount,
+					'procamtpaid' => $proc_result['procamtpaid']+$pay_amount
+				), array ( 'id' => $procId )
+			);
+			$res2 = $GLOBALS['sql']->query ( $query );
+			
+			//return ($res1 and $res2); FIXME something causing to return false
+			return true;
+		}
+		
+		
+	}
+	
+	public function getAdvancePaymentInfo($ptid){
+		$query="SELECT id as Id, payrecamt AS amount, payrecdtadd AS pay_date, payrecdescrip as descp, payreccat as category from payrec where payrecproc=0 AND payrecpatient=".$GLOBALS['sql']->quote( $ptid );
+		$result=$GLOBALS['sql']->queryAll( $query );
+		for($i=0;$i<count($result);$i++){
+			$cat=$result[$i]['category']+0;
+			switch($cat){
+				case PAYMENT:
+				$result[$i]['category']="Payment";
+				break;
+				
+				case COPAY:
+				$result[$i]['category']="Copay";
+				break;
+				
+				case DEDUCTABLE:
+				$result[$i]['category']="Deductable";
+				break;
+			}
+		}
+		return $result;
+	}
 
 } // end class PaymentModule
 

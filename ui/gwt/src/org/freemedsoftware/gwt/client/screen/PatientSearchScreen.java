@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -50,7 +51,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -63,6 +63,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PatientSearchScreen extends ScreenInterface {
 
+	public final static String HelpPageName = "patient";
+	
 	protected CustomTable sortableTable = null;
 
 	protected Label sortableTableEmptyLabel = new Label();
@@ -92,6 +94,7 @@ public class PatientSearchScreen extends ScreenInterface {
 	}
 	
 	public PatientSearchScreen() {
+		CurrentState.assignCurrentPageHelp(HelpPageName);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -103,6 +106,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		flexTable.setWidget(0, 0, smartSearchLabel);
 
 		wSmartSearch = new PatientWidget();
+		wSmartSearch.setWidth("100%");
 		wSmartSearch.addChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {

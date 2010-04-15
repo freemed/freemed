@@ -36,22 +36,7 @@ class RemittBillingTransport extends BillingModule {
 
 		// Set configuration variables (username/password)
 		$this->_SetMetaInformation('global_config_vars', array (
-			'remitt_server', 'remitt_port', 'remitt_protocol',
-			'remitt_user', 'remitt_pass'
-		));
-		$this->_SetMetaInformation('global_config', array (
-			__("Remitt Server Hostname") =>
-			'html_form::text_widget("remitt_server", 20, 50)',
-			__("Remitt Server Port") =>
-			'html_form::text_widget("remitt_port", 6)',
-			__("Transport Protocol") =>
-			'html_form::select_widget("remitt_protocol", array ( '.
-				'"http" => "http", '.
-				'"https" => "https" ))',
-			__("Remitt Username") =>
-			'html_form::text_widget("remitt_user", 16)',
-			__("Remitt Password") =>
-			'html_form::password_widget("remitt_pass", 16)'
+			'remitt_url', 'remitt_user', 'remitt_pass'
 		));
 
 		// Set appropriate associations
@@ -94,58 +79,9 @@ class RemittBillingTransport extends BillingModule {
 		return $return;
 	}
 
-	public function GetReport ( $file_type, $report ) {
-		$remitt = CreateObject( 'org.freemedsoftware.core.Remitt', freemed::config_value('remitt_server') );
-		$remitt->Login(
-			freemed::config_value('remitt_user'),
-			freemed::config_value('remitt_pass')
-		);	
-		switch ( $file_type ) {
-			case 'report':
-			$param = array (
-				CreateObject('org.freemedsoftware.core.xmlrpcval', 'output', 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $report, 'string')
-				);
-			break; // report
-
-			case 'log':
-			$param = array (
-				CreateObject('org.freemedsoftware.core.xmlrpcval', 'log', 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $_REQUEST['year'], 'string'),
-				CreateObject('org.freemedsoftware.core.xmlrpcval', $_REQUEST['report'], 'string')
-				);
-			break; // log
-		}
-		//print "param = "; print_r($param); print "<br/>\n";
-		$report = $remitt->_call('Remitt.Interface.GetFile', $param, false);
-
-		/*
-		//Header('Content-type: text/plain');
-		if (eregi('\%PDF\-1', $report)) {
-			Header('Content-type: application/x-pdf');
-		} elseif (eregi('<html', $report)) {
-			// nothing
-		} else {
-			Header('Content-type: text/plain');
-		}
-
-		// Make sure to pass the actual filename ...
-		Header("Content-Disposition: inline; filename=\"".$_REQUEST['report']."\"");
-
-		print $report;
-		die();
-		*/
-
-		return $report;
-	} // end method GetReport
-
 	public function ProcessStatement ( $procs = NULL ) {
 		// Create new Remitt instance
-		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
-		$remitt->Login(
-			freemed::config_value('remitt_user'),
-			freemed::config_value('remitt_pass')
-		);	
+		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
 
 		// Create new ClaimLog instance
 		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
@@ -189,7 +125,7 @@ class RemittBillingTransport extends BillingModule {
 	//	return code.
 	//
 	public function GetStatus ( $uniques = NULL ) {
-		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
+		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
 
 		// Handle invalid uniques
 		if (!is_array($uniques)) {
@@ -198,7 +134,7 @@ class RemittBillingTransport extends BillingModule {
 
 		foreach ($uniques AS $b => $u) {
 			// Get individual status
-			$status[$u] = $remitt->GetStatus( $u );
+			$status["".$u] = "".$remitt->GetStatus( $u );
 		} // end foreach uniques
 
 		return $status;
@@ -218,61 +154,65 @@ class RemittBillingTransport extends BillingModule {
 	//
 	public function MarkAsBilled ( $billkeys ) {
 		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
-		if ( !is_array( $billkeys ) ) { return $claimlog->mark_billed( $billkeys ); }
+		if ( !is_array( $billkeys ) ) { return $claimlog->MarkAsBilled( $billkeys ); }
 		$mark = true;
 		foreach ( $billkeys AS $key ) {
-			$mark &= $claimlog->mark_billed ( $key );
+			$mark &= $claimlog->MarkAsBilled ( $key );
 		}
-		return $mark;
+		return (boolean) $mark;
 	} // end method MarkAsBilled
 
-	function rebillkey ( ) {
-		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
-		$remitt->Login(
-			freemed::config_value('remitt_user'),
-			freemed::config_value('remitt_pass')
-		);	
+	public function rebillkeys ($billkeys ) {
+		syslog(LOG_INFO, "rebillkeys for ".count($billkeys)." billkeys");
+		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
 		$claimlog = CreateObject('org.freemedsoftware.api.ClaimLog');
-	
-		// Get format and target from claimlog
-		$query = "SELECT * FROM claimlog WHERE ".
-			"clbillkey='".addslashes($_REQUEST['key'])."'";
-		$result = $GLOBALS['sql']->query($query);
-		$r = $GLOBALS['sql']->fetch_array($result);
+		syslog(LOG_INFO, "rebillkeys: looping");
+		foreach ($billkeys AS $billkey){
+			syslog(LOG_INFO, "rebillkeys: processing billkey $billkey");
+			// Get format and target from claimlog
+			$query = "SELECT DISTINCT clformat as format, cltarget as target,clprocedure as proc FROM claimlog WHERE ".
+				"clbillkey=".$GLOBALS['sql']->quote( $billkey );
+			syslog(LOG_INFO, "rebillkeys: $query");
+			$r = $GLOBALS['sql']->queryAll($query);
+			$q = "SELECT i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodeftargetopt AS paper_target_option, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target, i.inscodeftargetopte AS electronic_target_option FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE p.id=".$GLOBALS['sql']->quote($r[0]['proc']);
+			syslog(LOG_INFO, "rebillkeys: $q");
+			$temp=$GLOBALS['sql']->queryRow($q);
+			$target_opt="";
+			switch ($temp['output_format']) {
+				case 'paper':
+				$target_opt= $temp['paper_target_option'];
+				break;
 
-		//print "<br/><br/><br/><hr/>\n";
-		//print "key = ".$_REQUEST['key']."<br/>\n";
-		//print "clformat = ".$r['clformat']."<br/>\n";
-		//print "cltarget = ".$r['cltarget']."<br/>\n";
-		$result = $remitt->ProcessBill(
-			$_REQUEST['key'],
-			$r['clformat'],
-			$r['cltarget']
-		);
-		
-		$buffer .= "<div class=\"section\">".
-			__("Remitt Billing Sent")."</div><br/>\n";
+				case 'electronic':
+				$target_opt= $temp['electronic_target_option'];
+				break;
 
-		// Refresh to status screen
-		global $refresh;
-		$refresh = page_name()."?".
-			"module=".$_REQUEST['module']."&".
-			"type=".$_REQUEST['type']."&".
-			"action=".$_REQUEST['action']."&".
-			"billing_action=status&".
-			"uniques=".urlencode(serialize(array($_REQUEST['key'] => $result)));
-
-		$buffer .= __("Refreshing")." ... ";
-
-		// Add to claimlog
-		$result = $claimlog->log_billing (
-			$_REQUEST['key'],
-			$r['clformat'],
-			$r['cltarget'],
-			__("Remitt billing run sent")
-		);
+				default: /* do nothing */ break;
+			}
+			
+			syslog(LOG_INFO, "rebillkeys: ProcessBill( $billkey, ".$r[0]['format'].",".$r[0]['target'].",$target_opt )");
+			$result = $remitt->ProcessBill(
+				$billkey,
+				$r[0]['format'],
+				$r[0]['target'],
+				$target_opt
+			);
+			$return[] = array (
+				'result' => "".$result,
+				'billkey' => "".$billkey,
+				'format' => $r[0]['format'],
+				'target' => $r[0]['target']
+			);
+			// Add to claimlog
+			$result = $claimlog->log_billing (
+				$billkey,
+				$r[0]['format'],
+				$r[0]['target'],
+				__("Remitt billing run sent")
+			);
+		}
+		return $return;
 		/* $mark = $claimlog->mark_billed ( $this_billkey ); */
-		return $buffer;
 	} // end method rebillkey
 
 	// Method: PatientsToBill
@@ -297,10 +237,12 @@ class RemittBillingTransport extends BillingModule {
 
 		$res = $GLOBALS['sql']->queryAll($query);
 
+		/*
 		// Present 'claims' as an array
 		foreach ( $res AS $k => $v) {
 			$res[$k]['claims'] = explode(',', $v['claims']);	
 		}
+		*/
 		return $res;
 	} // end method PatientsToBill
 
@@ -372,7 +314,12 @@ class RemittBillingTransport extends BillingModule {
 	//
 	//	$claims - Array of claims for which we are billing
 	//
-	//	$overrides (optional) - Array of media changes and other exceptions (TODO)
+	//	$overrides (optional) - Array of media changes and other exceptions
+	//	$clearinghouse (optional) - 
+	//
+	//	$contact (optional) - 
+	//
+	//	$service (optional) - 
 	//
 	// Returns:
 	//
@@ -380,19 +327,15 @@ class RemittBillingTransport extends BillingModule {
 	//	* Billkey number
 	//	* Number of claims in billkey
 	//
-	public function ProcessClaims ( $patients, $claims, $overrides=NULL ) {
+	public function ProcessClaims ( $patients, $claims, $overrides=NULL, $clearinghouse = 1, $contact = 1, $service = 1 ) {
 		// Boiler plate for dealing with REMITT
-		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_server'));
-		$remitt->Login(
-			freemed::config_value('remitt_user'),
-			freemed::config_value('remitt_pass')
-		);	
+		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
 
 		// Create new ClaimLog instance
 		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
 
 		$claim_limit = 500;
-		$q = "SELECT p.id AS claim, i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE FIND_IN_SET(p.procpatient, ".$GLOBALS['sql']->quote(join(',', $patients)).") AND FIND_IN_SET(p.id, ".$GLOBALS['sql']->quote(join(',', $claims)).")";
+		$q = "SELECT p.id AS claim, i.inscodefoutput AS output_format, i.inscodefformat AS paper_format, i.inscodeftarget AS paper_target, i.inscodeftargetopt AS paper_target_option, i.inscodefformate AS electronic_format, i.inscodeftargete AS electronic_target, i.inscodeftargetopte AS electronic_target_option FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE FIND_IN_SET(p.procpatient, ".$GLOBALS['sql']->quote(join(',', $patients)).") AND FIND_IN_SET(p.id, ".$GLOBALS['sql']->quote(join(',', $claims)).")";
 		$res = $GLOBALS['sql']->queryAll( $q );
 
 		foreach ( $res AS $r ) {
@@ -400,11 +343,11 @@ class RemittBillingTransport extends BillingModule {
 
 			switch ($r['output_format']) {
 				case 'paper':
-				$s[ $r['paper_format'] . '/' . $r['paper_target'] . '/0' ][] = $r['claim'];
+				$s[ $r['paper_format'] . '/' . $r['paper_target'] . '/' . $r['paper_target_option'] . '/0' ][] = $r['claim'];
 				break;
 
 				case 'electronic':
-				$s[ $r['electronic_format'] . '/' . $r['electronic_target'] . '/0' ][] = $r['claim'];
+				$s[ $r['electronic_format'] . '/' . $r['electronic_target'] . '/' . $r['electronic_target_option'] . '/0' ][] = $r['claim'];
 				break;
 
 				default: /* do nothing */ break;
@@ -419,10 +362,10 @@ class RemittBillingTransport extends BillingModule {
 				unset( $s[$k ]);
 
 				// Pull out the components to make more
-				list ( $_format, $_target, $_count ) = explode ( '/', $k );
+				list ( $_format, $_target, $_targetopt, $_count ) = explode ( '/', $k );
 				$pos = 0; $stack = 0;
 				for ($i=0; $i<count($temp); $i++) {
-					$cur_key = $_format . '/' . $_target . '/' . $stack;
+					$cur_key = $_format . '/' . $_target . '/' . $_targetopt . '/' . $stack;
 					$s[$cur_key][] = $temp[$i];
 					if ( count($s[$cur_key]) >= $claim_limit ) { $stack++; }
 				}
@@ -437,10 +380,9 @@ class RemittBillingTransport extends BillingModule {
 			// Create new billkey
 			$billkey = array ( );
 
-			// TODO : extract this information from the system
-			//$billkey['contact'] = $_REQUEST['contact'];
-			//$billkey['clearinghouse'] = $_REQUEST['clearinghouse'];
-			//$billkey['service'] = $_REQUEST['service'];
+			$billkey['contact'] = $contact;
+			$billkey['clearinghouse'] = $clearinghouse;
+			$billkey['service'] = $service;
 
 			// Create single array of stuff
 			$billkey['procedures'] = $v;
@@ -450,10 +392,10 @@ class RemittBillingTransport extends BillingModule {
 			//$billkeys[] = $this_billkey;
 
 			// Get format and target from default
-			list ( $my_format, $my_target, $batch_id ) = explode ( '/', $k );
+			list ( $my_format, $my_target, $my_targetopt, $batch_id ) = explode ( '/', $k );
 			$results[] = array (
-				'result' => $remitt->ProcessBill( $this_billkey, $my_format, $my_target ),
-				'billkey' => $this_billkey,
+				'result' => "".($remitt->ProcessBill( $this_billkey, $my_format, $my_target, $my_targetopt )),
+				'billkey' => "".$this_billkey,
 				'format' => $my_format,
 				'target' => $my_target
 			);
@@ -470,6 +412,46 @@ class RemittBillingTransport extends BillingModule {
 		// Return what we have
 		return $results;
 	} // end method ProcessClaims
+	
+	 public function getMonthsInfo(){
+                $remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
+                $yearsresult=$remitt->ListOutputYears();
+                foreach($yearsresult as $key => $val){
+                        $monthresult=$remitt->ListOutputMonths($val[0]);
+                        $year=$val[0];
+                        for($i=0;$i<count($monthresult);$i++){
+                                $month=date("M Y",strtotime($monthresult[$i]));
+                                $data[]=array( "month" => $month);
+                        }
+                }
+                return $data;
+        }
+        
+	// Method: getMonthlyReportsDetails
+	//
+	//	get the report delatils for a particular month
+	//
+	// Parameters:
+	//
+	//	$month - month for which we want to get the report details
+	//
+	// Returns:
+	//
+	//	Array of hashes containing:
+	//	* filename
+	//	* filesize
+	//
+        public function getMonthlyReportsDetails($month){
+                $remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
+                $result= $remitt->GetFileList("output","month",date("Y-m",strtotime($month)));
+                for($i=0;$i<count($result);$i++){
+                        $index=count($data);
+                        foreach($result[$i] as $key => $val){
+                                $data[$index][$key]="".$val;
+                        }
+                }
+                return $data;
+        }
 
 } // end class RemittBillingTransport
 

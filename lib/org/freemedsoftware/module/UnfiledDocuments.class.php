@@ -249,7 +249,7 @@ class UnfiledDocuments extends SupportModule {
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
 			PHYSICAL_LOCATION . '/data/documents/unfiled/' .
 			$r['ufffilename']);
-		return $djvu->NumberOfPages();
+		return (int)$djvu->NumberOfPages();
 	} // end method NumberOfPages
 
 	// Method: batchSplit

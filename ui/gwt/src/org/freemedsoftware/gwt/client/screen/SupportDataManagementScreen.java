@@ -67,7 +67,8 @@ import com.google.gwt.xml.client.XMLParser;
 
 public class SupportDataManagementScreen extends ScreenInterface implements
 		Command {
-
+	public final static String moduleNameACL = "admin";
+	
 	protected CustomListBox wField = null;
 
 	protected TextBox searchText = null;
@@ -78,29 +79,38 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 
 	protected String rawXml = null;
 
+	public static Integer KEYWORD_LENGTH_LIMIT = null;
+	
+	public static Integer MINIMUM_RECORDS_LIMIT = null;
+	
 	public SupportDataManagementScreen() {
+		super(moduleNameACL);
+		if(KEYWORD_LENGTH_LIMIT == null)
+			KEYWORD_LENGTH_LIMIT = Integer.parseInt(CurrentState.getSystemConfig("module_search_keyword_limit")!=null?CurrentState.getSystemConfig("module_search_keyword_limit"):"2");
+		if(MINIMUM_RECORDS_LIMIT == null)
+			MINIMUM_RECORDS_LIMIT = Integer.parseInt(CurrentState.getSystemConfig("module_record_limit")!=null?CurrentState.getSystemConfig("module_record_limit"):"100");
 		final SupportDataManagementScreen thisRef = this;
 
-		final boolean canAddData = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.SUPPORT_DATA);
-		
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		final PushButton addButton = new PushButton("Add", "Add");
-		horizontalPanel.add(addButton);
-		addButton.setStylePrimaryName("freemed-PushButton");
-		addButton.setText("Add");
-		addButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				SupportModuleEntry entry = new SupportModuleEntry(moduleName);
-				entry.setDoneCommand(thisRef);
-				Util.spawnTab(moduleName + ": " + "Add", entry);
-			}
-		});
+		if(canWrite){
+			final PushButton addButton = new PushButton("Add", "Add");
+			horizontalPanel.add(addButton);
+			addButton.setStylePrimaryName("freemed-PushButton");
+			addButton.setText("Add");
+			addButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					SupportModuleEntry entry = new SupportModuleEntry(moduleName);
+					entry.setDoneCommand(thisRef);
+					Util.spawnTab(moduleName + ": " + "Add", entry);
+				}
+			});
+		}
 
 		wField = new CustomListBox();
 		horizontalPanel.add(wField);
@@ -108,7 +118,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		wField.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent evt) {
 				// If we see text, repopulate
-				if (searchText.getText().length() > 2) {
+				if (searchText.getText().length() >= KEYWORD_LENGTH_LIMIT) {
 					populateData();
 				}
 			}
@@ -119,7 +129,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			@Override
 			public void onChange(ChangeEvent evt) {
 				// If we see text, repopulate
-				if (((TextBox) evt.getSource()).getText().length() > 2) {
+				if (((TextBox) evt.getSource()).getText().length() >= KEYWORD_LENGTH_LIMIT) {
 					populateData();
 				}
 			}
@@ -131,6 +141,18 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		searchButton.setStylePrimaryName("freemed-PushButton");
 		searchButton.setText("Search");
 
+		final PushButton clearButton = new PushButton("Clear", "Clear");
+		horizontalPanel.add(clearButton);
+		clearButton.setStylePrimaryName("freemed-PushButton");
+		clearButton.setText("Clear");
+		
+		clearButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				populateData();
+			}
+		});
+		
 		sortableTable = new CustomTable();
 		verticalPanel.add(sortableTable);
 		sortableTable.setSize("100%", "100%");
@@ -139,7 +161,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Get information on row...
 				try {
-					if(canAddData){
+					if(canModify){
 						Integer recordId = null;
 						if(data.get("oid")!=null)
 							recordId = Integer.parseInt(data.get("oid"));
@@ -239,10 +261,10 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = {
 					moduleName,
-					"40",
-					(searchText.getText().length() > 2) ? wField
+					MINIMUM_RECORDS_LIMIT.toString(),
+					(searchText.getText().length() >= KEYWORD_LENGTH_LIMIT) ? wField
 							.getWidgetValue() : "",
-					(searchText.getText().length() > 2) ? searchText.getText()
+					(searchText.getText().length() >= KEYWORD_LENGTH_LIMIT) ? searchText.getText()
 							: "" };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -254,10 +276,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem(
-								"SupportDataManagementScreen",
-								"Could not load support data records.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -270,10 +289,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 												"HashMap<String,String>[]");
 								sortableTable.loadData(r);
 							} else {
-								CurrentState.getToaster().addItem(
-										"SupportDataManagementScreen",
-										"Could not load support data records.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 							}
 						}
 					}
@@ -289,19 +305,16 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			} catch (Exception e) {
 				GWT.log("Exception", e);
 			}
-			proxy.ModuleGetRecordsMethod(moduleName, 40, (searchText.getText()
+			proxy.ModuleGetRecordsMethod(moduleName, MINIMUM_RECORDS_LIMIT, (searchText.getText()
 					.length() > 2) ? wField.getWidgetValue() : "", (searchText
-					.getText().length() > 2) ? searchText.getText() : "",
+					.getText().length() >= KEYWORD_LENGTH_LIMIT) ? searchText.getText() : "",
 					new AsyncCallback<HashMap<String, String>[]>() {
 						public void onSuccess(HashMap<String, String>[] res) {
 							sortableTable.loadData(res);
 						}
 
 						public void onFailure(Throwable t) {
-							CurrentState.getToaster().addItem(
-									"SupportDataManagementScreen",
-									"Could not load support data records.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 						}
 					});
 		}

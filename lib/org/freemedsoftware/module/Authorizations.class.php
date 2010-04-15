@@ -111,6 +111,10 @@ class Authorizations extends EMRModule {
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetCoverages
 
+	public function getValidAuthorizations($ptid,$pdate){
+		$q="SELECT id AS Id,concat(authnum,'(',authdtbegin,' - ',authdtend,')') AS auth_info FROM authorizations WHERE active='active' AND ".$GLOBALS['sql']->quote( $pdate ).">= authdtbegin AND ".$GLOBALS['sql']->quote( $pdate )." <= authdtend AND authvisitsremain > 0 AND authpatient=".$GLOBALS['sql']->quote( $ptid );
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 } // end class Authorizations
 
 register_module ("Authorizations");

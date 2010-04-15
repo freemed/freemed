@@ -82,10 +82,11 @@ class ClaimLog {
 	//	Array of associative arrays containing aging information.
 	//
 	function AgingReportQualified ( $criteria ) {
-		freemed::acl_enforce( 'financial', 'summary' );
+		freemed::acl_enforce( 'financial', 'read' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 
 		foreach ($criteria AS $k => $v) {
+			
 			//print "criteria key = $k, value = $v<hr/>\n";
 			switch ($k) {
 				case 'aging':
@@ -100,8 +101,8 @@ class ClaimLog {
 					break;
 				} // end inner aging switch
 				if ($upper) $q[] =
-				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($s->ImportDate($lower)).") AND ".
-				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($s->ImportDate($upper)).")";
+				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) >= ".addslashes($lower).") AND ".
+				"(TO_DAYS(NOW()) - TO_DAYS(p.procdt) <= ".addslashes($upper).")";
 				break; // end aging case
 
 				case 'billed':
@@ -109,9 +110,21 @@ class ClaimLog {
 				break; // end billed case
 
 				case 'date':
-				if ($v) $q[] = "p.procdt = '".addslashes($s->ImportDate($v))."'";
+				if ($v && ($criteria['week']=="" || $criteria['week']==NULL)) $q[] = "p.procdt = '".addslashes($s->ImportDate($v))."'";
 				break; // end date
-
+				
+				case 'week':
+				if ($v && ($criteria['date']!="" || $criteria['date']!=NULL)) $q[] = "WEEK(p.procdt) = WEEK('".addslashes($s->ImportDate($criteria['date']))."')";
+				break; // end week
+				
+				case 'provider':
+				if ($v) $q[] = "p.procphysician = '".addslashes($v)."'";
+				break; // end patient case
+				
+				case 'facility':
+				if ($v) $q[] = "p.procpos = '".addslashes($v)."'";
+				break; // end patient case
+				
 				case 'patient':
 				if ($v) $q[] = "pt.id = '".addslashes($v)."'";
 				break; // end patient case
@@ -139,12 +152,13 @@ class ClaimLog {
 				case 'status':
 				if ($v) $q[] = "p.procstatus = '".addslashes($v)."'";
 				break;
+				
 			} // end outer criteria type switch
 		} // end criteria foreach loop
 
 		//print "debug: criteria = ".join(' AND ', $q)." <br/>\n";
 
-		$query = "SELECT CONCAT(pt.ptlname, ', ', pt.ptfname, ".
+		$query = "SELECT DISTINCT p.id AS Id, CONCAT(pt.ptlname, ', ', pt.ptfname, ".
 			"' ', pt.ptmname) AS patient, ".
 			"pt.id AS patient_id, ".
 			"p.procdt AS date_of, ".
@@ -152,21 +166,26 @@ class ClaimLog {
 			"p.procstatus AS status, ".
 			"p.procbilled AS billed, ".
 			"p.procphysician AS provider_id, ".
+			"p.proccurcovtp AS proc_cov_type, ".
 			"p.id AS claim, ".
+			"p.procpos AS pos, ".
 			"c.covpatinsno AS insured_id, ".
 			"c.covinsco AS payer_id, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate, ')') AS payer, ".
 			"i.inscoidmap AS id_map, ".
+			"cl.clbillkey AS billkey, ".
 			"TRUNCATE(p.procamtpaid, 2) AS paid, ".
 			"TRUNCATE(p.procbalcurrent, 2) AS balance ".
 			"FROM procrec p ".
 				"LEFT OUTER JOIN coverage c ON p.proccurcovid = c.id ".
 				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
 				"LEFT OUTER JOIN patient pt ON p.procpatient = pt.id ".
-			"WHERE ".
-			"p.procbalcurrent > 0 AND ".
-			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
+				"LEFT OUTER JOIN claimlog cl ON cl.clprocedure = p.id AND cl.clbillkey != 0 AND cl.clbillkey=(select max(tcl.clbillkey) from claimlog tcl where tcl.clprocedure=p.id) ".
+			"WHERE ";
+		if($criteria['balance']!='0')			
+			$query.="p.procbalcurrent > 0 AND ";
+		$query.=( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
 			"ORDER BY patient, balance DESC";
 		//print "<hr/>query = \"$query\"<hr/>\n";
 		$result = $GLOBALS['sql']->queryAll ( $query );
@@ -176,12 +195,16 @@ class ClaimLog {
 			// we can't actually extract values from it using
 			// SQL regex's, or if we could, it would be a
 			// huge waste of processor time...
+			$pm = CreateObject( 'org.freemedsoftware.module.ProviderModule' );
+			$r['provider_name']=$pm->fullName($r['provider_id']);
 			if (is_array(@unserialize($r['id_map']))) {
 				$id_map = unserialize($r['id_map']);
 				$r['id_map'] = $id_map[$r['provider_id']];
 			} else {
 				$id_map = array ();
 			}
+			$fac = CreateObject( 'org.freemedsoftware.module.FacilityModule' );
+			$r['posname']=$fac->to_text($r['pos']);
 			$return[] = $r;
 			 // patient, claims, paid, balance, ratio
 		} 
@@ -233,7 +256,75 @@ class ClaimLog {
 		}
 		return $result;
 	} // end method aging_summary_payer_full
+	
+	public function aging_summary_formatted(){
+		$data=$this->aging_summary_payer_full();
+		foreach($data as $key => $val){
 
+			$i=count($result);
+			$result[$i]['payer_name']=$key;
+			$result[$i]['payer_id']=$val['payer_id'];
+			$result[$i]['paid']=$val['paid'];
+			$everything=$val['everything'];
+			$result[$i]['ev_amount']="".bcadd($everything['amount'],0,2);
+			$result[$i]['ev_claims']=$everything['claims'];
+			$zero_thirty=$val['0-30'];
+			if($zero_thirty!=""){				
+				$result[$i]['amount_0_30']="".bcadd($zero_thirty['amount'], 0, 2);
+				$result[$i]['claims_0_30']=$zero_thirty['claims'];
+			}
+			else{
+				$result[$i]['amount_0_30']="0.00";
+				$result[$i]['claims_0_30']="0";
+			}
+			$thirty_sixty=$val['31-60'];
+			if($thirty_sixty!=""){
+				$result[$i]['amount_31_60']="".bcadd($thirty_sixty['amount'],0,2);
+				$result[$i]['claims_31_60']=$thirty_sixty['claims'];
+			}
+			else{
+				$result[$i]['amount_31_60']="0.00";
+				$result[$i]['claims_31_60']="0";
+			}
+			$sixty_ninty=$val['61-90'];
+			if($sixty_ninty!=""){
+				$result[$i]['amount_61_90']="".bcadd($sixty_ninty['amount'],0,2);
+				$result[$i]['claims_61_90']=$sixty_ninty['claims'];
+			}
+			else{
+				$result[$i]['amount_61_90']="0.00";
+				$result[$i]['claims_61_90']="0";
+			}
+			$sixty_ninty=$val['61-90'];
+			if($sixty_ninty!=""){
+				$result[$i]['amount_61_90']="".bcadd($sixty_ninty['amount'],0,2);
+				$result[$i]['claims_61_90']=$sixty_ninty['claims'];
+			}
+			else{
+				$result[$i]['amount_61_90']="0.00";
+				$result[$i]['claims_61_90']="0";
+			}
+			$ninty_hundred20=$val['91-120'];
+			if($ninty_hundred20!=""){
+				$result[$i]['amount_91_120']="".bcadd($ninty_hundred20['amount'],0,2);
+				$result[$i]['claims_91_120']=$ninty_hundred20['claims'];
+			}
+			else{
+				$result[$i]['amount_91_120']="0.00";
+				$result[$i]['claims_91_120']="0";
+			}
+			$hundred20plus=$val['120+'];
+			if($hundred20plus!=""){
+				$result[$i]['amount_120plus']="".bcadd($hundred20plus['amount'],0,2);
+				$result[$i]['claims_120plus']=$hundred20plus['claims'];
+			}
+			else{
+				$result[$i]['amount_120plus']="0.00";
+				$result[$i]['claims_120plus']="0";
+			}
+		}
+		return $result;
+	}
 	// Method: aging_summary_payer_range
 	//
 	//	Provide an "aging summary" (with number of claims and
@@ -365,36 +456,19 @@ ORDER BY
 		return $return;
 	} // end method aging_insurance_companies
 
-	// Method: aging_insurance_plans
-	//
-	//	Get a picklist of all insurance plans which have
-	//	outstanding balances in the system. Can be narrowed
-	//	to only search by one payer.
-	//
-	// Parameters:
-	//
-	//	$payer - (optional) Insurance company id key to limit
-	//	the search. Defaults to disabled.
-	//
-	// Returns:
-	//
-	//	Associative array of plan names.
-	//
-	function aging_insurance_plans ( $payer = NULL ) {
+	
+	function aging_insurance_plans ( $criteria) {
 		$query = "SELECT ".
-				"DISTINCT(c.covplanname) AS plan ".
+				"DISTINCT c.id as Id, c.covplanname AS plan ".
 			"FROM ".
-				"procrec AS p, coverage AS c ".
+				"procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id ".
 			"WHERE ".
-				"p.proccurcovid=c.id AND ".
-				// Handle by payer
-				( $payer>0 ? "c.covinsco='".addslashes($payer)."' AND " : "" ).
-				"p.procbalcurrent > 0 ".
+				"c.covplanname LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')".
 			"ORDER BY plan";
-		//print "query = \"$query\"<br/>\n";
+		
 		$result = $GLOBALS['sql']->queryAll ( $query );
 		foreach ( $result AS $r ) {
-			$return[$r['plan']] = $r['plan'];
+			$return[$r['Id']] = $r['plan'];
 		}
 		return $return;
 	} // end method aging_insurance_plans
@@ -422,18 +496,17 @@ ORDER BY
 				"' ', pt.ptmname) AS patient, ".
 			"pt.ptdob AS patient_dob, ".
 			"pt.id AS patient_id, ".
+			"c.id AS curr_cov, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate) AS payer_name, ".
 			"d.icd9code AS diagnosis, ".
 			"pt.ptssn AS ssn, ".
-			"IF(c.covrel != 'S', ".
-				"CONCAT(c.covlname, ', ', c.covfname, ".
-					"' ', c.covmname), ".
-				"CONCAT(pt.ptlname, ', ', pt.ptfname, ".
-					"' ', pt.ptmname) ) AS rp_name, ".
+			"c.covrel AS rp_name, ".
+			"IF(c.covrel != 'S', c.covdob, pt.ptdob ) AS rp_dob, ".
 			"IF(c.covrel != 'S', c.covssn, pt.ptssn) AS rp_ssn, ".
 			"p.proccov1 AS coverage_primary, ".
 			"p.proccov2 AS coverage_secondary, ".
+			"p.proccov3 AS coverage_tertiary, ".
 			"f.psrname AS facility, ".
 			"pc.cptcode AS cpt_code, ".
 			"p.proccharges AS fee, ".
@@ -443,24 +516,26 @@ ORDER BY
 			"p.procdt AS service_date, ".
 			"p.procphysician AS provider, ".
 			"p.procrefdoc AS referring_provider, ".
-			"c.covcopay AS copay, ".
-			"c.covdeduct AS deduct, ".
+			"c1.covcopay AS prim_copay, ".
+			"c1.covdeduct AS prim_deduct, ".
+			"c2.covcopay AS sec_copay, ".
+			"c2.covdeduct AS sec_deduct, ".
+			"c3.covcopay AS ter_copay, ".
+			"c3.covdeduct AS ter_deduct, ".
 			"p.id AS proc ".
 			"FROM ".
-				"patient AS pt, ".
-				"icd9 AS d, ".
-				"insco AS i, ".
-				"coverage AS c, ".
-				"procrec AS p, ".
-				"facility AS f, ".
-				( $payrec ? "payrec AS pa, " : "" ).
-				"cpt AS pc ".
-			"WHERE ".
-				"p.procpos = f.id AND ".
-				"p.procdiag1 = d.id AND ".
-				"p.proccpt = pc.id AND ".
-				"p.proccurcovid = c.id AND ".
-				"c.covinsco = i.id AND ".
+				"patient AS pt, ".				
+				( $payrec ? "payrec AS pa, " : "" ).				
+				"procrec AS p ".
+			"LEFT OUTER JOIN coverage c1 ON c1.id=p.proccov1 ".
+			"LEFT OUTER JOIN coverage c2 ON c2.id=p.proccov2 ".
+			"LEFT OUTER JOIN coverage c3 ON c3.id=p.proccov3 ".
+			"LEFT OUTER JOIN coverage c ON c.id=p.proccurcovid ".
+			"LEFT OUTER JOIN insco i ON i.id=c.covinsco ".
+			"LEFT OUTER JOIN icd9 d ON p.procdiag1 = d.id ".
+			"LEFT OUTER JOIN cpt pc ON p.proccpt = pc.id ".
+			"LEFT OUTER JOIN facility f ON p.procpos = f.id ".
+			"WHERE ".				
 				"p.procpatient = pt.id AND ".
 				( $payrec ? "pa.payrecproc = p.id AND " : "" ).
 				( $payrec ? 
@@ -468,7 +543,38 @@ ORDER BY
 					"p.id = '".addslashes($proc)."'" 
 				);
 		//print "query = \"$query\"<br/>\n";
+		
 		$r = $GLOBALS['sql']->queryRow ( $query );
+		//return $query;
+		$pm = CreateObject( 'org.freemedsoftware.module.ProviderModule' );
+		$r['provider_name']=$pm->fullName($r['provider']);
+		$r['ref_provider_name']=$pm->fullName($r['referring_provider']);
+		if($r['coverage_primary']!=null && $r['coverage_primary']!='0'){
+			$c_primary = CreateObject('org.freemedsoftware.core.Coverage', $r['coverage_primary']);
+			//return $c_primary->covinsco->get_name();
+			$r['prim_cov']=$c_primary->covinsco->get_name().' ('.$c_primary->covpatinsno.')';
+		}
+		else{
+			$r['prim_cov']="";
+		}
+		if($r['coverage_secondary']!=null && $r['coverage_secondary']!='0'){
+			$c_sec = CreateObject('org.freemedsoftware.core.Coverage', $r['coverage_secondary']);
+			$r['sec_cov']=$c_sec->covinsco->get_name().' ('.$c_sec->covpatinsno.')';
+		}
+		else{
+			$r['sec_cov']="";
+		}
+		if($r['coverage_tertiary']!=null && $r['coverage_tertiary']!='0'){
+			$c_ter = CreateObject('org.freemedsoftware.core.Coverage', $r['coverage_tertiary']);
+			$r['ter_cov']=$c_ter->covinsco->get_name().' ('.$c_ter->covpatinsno.')';
+		}
+		else{
+			$r['ter_cov']="";
+		}
+		$hash=freemed::coverage_relationship_picklist();
+		$r['rp_name']=$hash[$r['rp_name']];
+		//$c_sec = CreateObject('org.freemedsoftware.core.Coverage', $r['coverage_secondary']);
+		//$r['sec_cov']=$c_sec->covinsco->get_name().' ('.$c_sec->covpatinsno.')';
 		return $r;
 	} // end method claim_information
 
@@ -689,7 +795,7 @@ ORDER BY
 			'procbilled = 1 '.
 			'WHERE FIND_IN_SET(id, \''.$set.'\')';
 		$result = $GLOBALS['sql']->query ( $query );
-
+		
 		return ! ( $result instanceof MDB2_Error );
 	} // end method MarkClaimsAsBilled 
 
@@ -737,11 +843,11 @@ ORDER BY
 	//
 	//	Array.
 	//
-	public function RebillDistinctPayers ( ) {
-		$query = "SELECT DISTINCT i.id, i.insconame FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE p.procbalcurrent > 0 AND p.procbilled = 1 ORDER BY i.insconame";
+	public function RebillDistinctPayers ( $criteria = NULL) {
+		$query = "SELECT DISTINCT i.id AS Id, CONCAT(i.insconame, ' (', i.inscocity, ', ',i.inscostate, ')') AS payer FROM procrec p LEFT OUTER JOIN coverage c ON p.proccurcovid=c.id LEFT OUTER JOIN insco i ON c.covinsco=i.id WHERE i.insconame LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%') ORDER BY i.insconame";
 		$result = $GLOBALS['sql']->queryAll( $query );
-		foreach ( $result AS $r ) {
-			$return[$r['id'] + 0] = $r['insconame'];
+		foreach ($result AS $r) {
+			$return[$r['Id']] = trim( $r['payer'] );
 		}
 		return $return;
 	} // end method RebillDistinctPayers
@@ -866,7 +972,135 @@ ORDER BY
 		}
 		return $return;
 	} // end method _query_to_result_array
+	
+	public function getProcInfo($id){
+		$query="select  pr.id AS Id, pr.procdt AS proc_date, CONCAT(cpt.cptcode,' ',cptnameint) AS proc_code, ".
+		"pr.procphysician as prov_name, pr.procbalorig as proc_obal, ".
+		"pr.procamtallowed as proc_allowed, pr.proccharges as proc_charges, pr.procamtpaid as proc_paid, pr.procbalcurrent as proc_currbal, ".
+		"pr.procbilled as proc_billed,procdtbilled as proc_billdate from procrec pr LEFT OUTER JOIN cpt ON cpt.id =pr.proccpt where pr.id=".$GLOBALS['sql']->quote( $id );
+		$result= $GLOBALS['sql']->queryRow( $query );
+		
+		$prov  = CreateObject( 'org.freemedsoftware.module.ProviderModule' );		
+		$result["prov_name"]=$prov->fullName($result["prov_name"]+0);
+		return $result;		
+	}
+	
+	public function getProceduresInfo($proc_ids){
+		foreach ( $proc_ids AS $pid ) {			
+			$data = $this->claim_information($pid);
+			$bal=$data['balance']+0;
+			$cov=$data['curr_cov']+0;
+			if ($data['patient_id'] && $bal >0 && $cov > 0) {
+				$rcount=count($result);
+				$result[$rcount]['id']=''.$pid;
+				$result[$rcount]['pt_name']=$data['patient'];
+				$result[$rcount]['pt_id']=$data['patient_id'];
+				$result[$rcount]['clm']=$data['proc'];
+				$result[$rcount]['cpt']=$data['cpt_code'];
+				$result[$rcount]['ser_date']=$data['service_date'];
+				$result[$rcount]['paid']=bcadd($data['paid'],0,2);
+				$result[$rcount]['amnt_bill']=bcadd($data['paid'],0,2);
+				$result[$rcount]['balance']=bcadd($data['balance'], 0, 2);
+				$result[$rcount]['left']=bcadd($data['balance'], 0, 2);				
+			}
+		}
+		return $result;
+	}
+	
+	function post_check ($payer,$checkno,$data) {
+		
+		// Create ledger
+		$l = CreateObject('org.freemedsoftware.api.Ledger');
 
+			
+		// Loop through the posted checks
+		foreach ($data AS $d) {
+			
+			foreach($d as $key=>$value){
+				$val[$key]="".$value;
+			}
+			
+			// Get original procedure values
+			// Get information about this procedure
+			$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $val['proc']);
+			$this_procedure = $procedure_object->get_procedure( );
+
+			// Check for payment
+			$patient=$l->_procedure_to_patient ( $procedure );
+			if ($val['pay'] > 0 ) {
+				// Post check to ledger
+				$l->post_payment_check (
+					$val['proc'],
+					date('Y-m-d'),
+					$checkno,
+					"1",
+					$val['pay'],
+					"Payment from Payer",
+					$patient
+				);
+				
+			} // end if pay > 0
+
+			// Check for copay
+			if ($val['copay'] > 0) {
+				$l->post_payment_check (
+					$val['proc'],
+					date('Y-m-d'),
+					$checkno,
+					"1",
+					$val['copay'],
+					"COPAY",
+					$patient,
+					"",
+					COPAY
+				);
+			} // end if copay > 0
+			
+			// Check for adjustment
+			if ($val['adj'] != $this_procedure['procbalcurrent']) {
+				$l->post_fee_adjustment (
+					$val['proc'],
+					$this_procedure['proccurcovtp'],
+					$val['adj'],
+					"Fee Adjustment"
+				);
+			} // end if adj > 0
+			// Determine disallowed amount manually 
+			if (($val['pay']+$val['copay']+$val['adj']) > 0) {
+				// Where is this going?
+				$where = $l->next_coverage($val['proc']);
+			
+				// Move to the next coverage in the ledger
+				$l->move_to_next_coverage (
+					$val['proc'],
+					0
+					// Calculate disallow ... BORKED RIGHT NOW, PASS 0
+					//$proc['procbalcurrent'] - (
+					//	$_REQUEST['pay'][$k] +
+					//	$_REQUEST['copay'][$k]
+					//)
+				);
+
+				
+			} // end if disallowed amount
+		} // end foreach post var
+		
+		return true;
+	} // end method post_check
+	
+	public function rebill($proc_ids){
+		$l = CreateObject('org.freemedsoftware.api.Ledger');
+		$result=true;
+		foreach ( $proc_ids AS $pid ) {
+			$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $pid);
+			$this_procedure = $procedure_object->get_procedure( );			
+			$return=$l->queue_for_rebill($pid,$this_procedure['proccurcovtp']);
+			if($return==false){
+				$result=false;
+			}
+		}
+		return $result;
+	}
 } // end class ClaimLog
 
 ?>

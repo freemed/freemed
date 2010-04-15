@@ -349,10 +349,7 @@ public class PatientTagWidget extends WidgetInterface implements
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception thrown: ", t);
-					CurrentState.getToaster()
-							.addItem("PatientTagWidget",
-									"Exception: " + t.toString(),
-									Toaster.TOASTER_ERROR);
+					Util.showErrorMsg("PatientTagWidget", "Exception: " + t.toString());
 				}
 
 			});

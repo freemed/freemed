@@ -44,8 +44,7 @@
 	
 	<entry-point class="org.freemedsoftware.gwt.client.FreemedInterface" />
 
-        <stylesheet src="../resources/stylesheet.css" />
         <stylesheet src="../resources/SortableTable.css" />
         <stylesheet src="../resources/ScrollTable.css" />
-    
+
 </module>

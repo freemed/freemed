@@ -255,7 +255,7 @@ a, a:visited, a:hover {
 .gwt-MenuBar-horizontal .gwt-MenuItem {
   padding: 0px 10px;
   vertical-align: bottom;
-  font-weight: bold;
+  font-weight: bolder;
 }
 .gwt-MenuBar-horizontal .gwt-MenuItemSeparator {
   width: 1px;

@@ -71,7 +71,7 @@ $PAYER_TYPES = array (
 	"Tertiary",
 	"WorkComp"
 );
-
+define ('PAYER_TYPES',              serialize($PAYER_TYPES));
 	// coverage types
 define ('PATIENT',              0);
 define ('PRIMARY',              1);

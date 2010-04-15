@@ -24,19 +24,16 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.DrugWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -48,7 +45,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -57,6 +53,8 @@ import eu.future.earth.gwt.client.DateEditFieldWithPicker;
 
 public class PrescriptionsScreen extends PatientScreenInterface {
 
+	public final static String moduleName = "Prescription";
+
 	final SupportModuleWidget wProvider = new SupportModuleWidget(
 			"ProviderModule");
 	final DrugWidget wDrug = new DrugWidget();
@@ -64,6 +62,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			"DrugQuantityQualifiers");
 	
 	public PrescriptionsScreen() {
+		super(moduleName);
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 
@@ -142,7 +141,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		tSignature.setWidth("100%");
 		flexTable.getFlexCellFormatter().setColSpan(9, 1, 2);
 
-		final Button saveButton = new Button("Save");
+		final CustomButton saveButton = new CustomButton("Save",AppConstants.ICON_ADD);
 		flexTable.setWidget(10, 1, saveButton);
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -150,7 +149,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			}
 		});
 
-		final Button resetButton = new Button("Reset");
+		final CustomButton resetButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
 		flexTable.setWidget(10, 2, resetButton);
 		resetButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -194,9 +193,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("PrescriptionScreen",
-								"Failed to add Prescription",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("PrescriptionScreen", "Failed to add Prescription.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -210,26 +207,19 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 												"HashMap<String,String>");
 								if (r != null) {
 									// Successful
-									CurrentState.getToaster().addItem(
-											"PrescriptionScreen",
-											"Successfully added prescription",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("PrescriptionScreen", "Successfully added prescription.");
 								}
 							} else {
 								JsonUtil
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							CurrentState.getToaster().addItem(
-									"PrescriptionScreen",
-									"Failed to add Prescription",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("PrescriptionScreen", "Failed to add Prescription");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				CurrentState.getToaster().addItem("PrescriptionScreen",
-						"Failed to add Prescription", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("PrescriptionScreen", "Failed to add Prescription");
 			}
 		} else {
 			// GWT-RPC

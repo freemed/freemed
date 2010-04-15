@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -47,7 +48,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -232,6 +232,8 @@ public class PatientAuthorizations extends Composite {
 
 	protected Command onCompletion = null;
 
+	protected String ModuleName = "Authorizations";
+	
 	public PatientAuthorizations() {
 		authorizations = new HashMap<Integer, Authorization>();
 
@@ -243,15 +245,16 @@ public class PatientAuthorizations extends Composite {
 
 		HorizontalPanel hP = new HorizontalPanel();
 		verticalPanel.add(hP);
-
-		Button addAuthorizationButton = new Button("Add Authorization");
-		addAuthorizationButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent evt) {
-				Authorization a = new Authorization();
-				addAuthorization(authorizations.size() + 1, a);
-			}
-		});
-		hP.add(addAuthorizationButton);
+		if(CurrentState.isActionAllowed(ModuleName,AppConstants.WRITE)){
+			CustomButton addAuthorizationButton = new CustomButton("Add Authorization",AppConstants.ICON_ADD);
+			addAuthorizationButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent evt) {
+					Authorization a = new Authorization();
+					addAuthorization(authorizations.size() + 1, a);
+				}
+			});
+			hP.add(addAuthorizationButton);
+		}
 	}
 
 	/**
@@ -278,6 +281,7 @@ public class PatientAuthorizations extends Composite {
 		int row=0;
 
 		final CustomTable flexTable = new CustomTable();
+		flexTable.removeTableStyle();
 		authorizationsPanel.add(flexTable);
 		
 		final Label startingDateLabel = new Label("Starting Date:");
@@ -290,19 +294,20 @@ public class PatientAuthorizations extends Composite {
 		final CustomDatePicker endingDate = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 3, endingDate);
 		
-		final Label deleAuthorizationLabel = new Label("Delete This Authorization:");
-		flexTable.getFlexTable().setWidget(row, 4, deleAuthorizationLabel);
-		Button deleAuthorizationButton = new Button("Delete");
-		deleAuthorizationButton.setWidth("100%");
-		deleAuthorizationButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent evt) {
-				authorizationsPanel.remove(flexTable);
-				if(athorization.getAuthorizationId()!=null)
-					deleteAuthorization(athorization.getAuthorizationId());
-			}
-		});
-		flexTable.getFlexTable().setWidget(row, 5, deleAuthorizationButton);
-		
+		if(CurrentState.isActionAllowed(ModuleName,AppConstants.DELETE)){
+			final Label deleAuthorizationLabel = new Label("Delete This Authorization:");
+			flexTable.getFlexTable().setWidget(row, 4, deleAuthorizationLabel);
+			CustomButton deleAuthorizationButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+			deleAuthorizationButton.setWidth("100%");
+			deleAuthorizationButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent evt) {
+					authorizationsPanel.remove(flexTable);
+					if(athorization.getAuthorizationId()!=null)
+						deleteAuthorization(athorization.getAuthorizationId());
+				}
+			});
+			flexTable.getFlexTable().setWidget(row, 5, deleAuthorizationButton);
+		}
 		row++;
 		
 		final Label authorizationNumberLabel = new Label("Authorization Number:");
@@ -443,8 +448,7 @@ public class PatientAuthorizations extends Composite {
 			if(mmp.get("id")!=null)
 				url = "org.freemedsoftware.module.Authorizations.Mod";
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			CurrentState.getToaster().addItem("PatientAuthorization",
-					"Updated patient Coverages.", Toaster.TOASTER_INFO);
+			Util.showInfoMsg("PatientAuthorization", "Updated patient Authorization.");
 			if (onCompletion != null) {
 				onCompletion.execute();
 			}
@@ -463,9 +467,7 @@ public class PatientAuthorizations extends Composite {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						CurrentState.getToaster().addItem("PatientAuthorization",
-								"Failed to update patient Coverages.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("PatientAuthorization", "Failed to update patient Authorizations.");
 					}
 
 					public void onResponseReceived(
@@ -476,10 +478,7 @@ public class PatientAuthorizations extends Composite {
 									JSONParser.parse(response.getText()),
 									"Boolean");
 							if (result != null) {
-								CurrentState.getToaster().addItem(
-										"PatientAuthorization",
-										"Updated patient Coverages.",
-										Toaster.TOASTER_INFO);
+								Util.showInfoMsg("PatientAuthorization", "Updated patient Coverages.");
 								if (onCompletion != null) {
 									onCompletion.execute();
 								}
@@ -491,9 +490,7 @@ public class PatientAuthorizations extends Composite {
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				CurrentState.getToaster().addItem("PatientAuthorization",
-						"Failed to update patient Coverages.",
-						Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("PatientAuthorization", "Failed to update patient Authorizations.");
 			}
 		}
 		}

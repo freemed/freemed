@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ChargeGraph_en_US" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<parameter name="param0" class="java.util.Date"/>
+	<parameter name="param1" class="java.util.Date"/>
+	<parameter name="param2" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[call report_ChargeGraph_en_US($P{param0},$P{param1});]]>
+	</queryString>
+	<field name="withhold" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="deduct" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="denial" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="allowed" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="writeoff" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="66" splitType="Stretch">
+			<textField pattern="yyyy-MM-dd">
+				<reportElement style="Column header" x="487" y="5" width="150" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement style="Column header" x="299" y="5" width="150" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param0}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Title" x="0" y="5" width="299" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Charges Graph From ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Title" x="449" y="5" width="38" height="33"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[To]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="38" width="76" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Printed On:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="79" y="38" width="325" height="20"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="1" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="62" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<detail>
+		<band height="400" splitType="Stretch">
+			<bar3DChart>
+				<chart>
+					<reportElement x="19" y="20" width="720" height="356">
+						<printWhenExpression><![CDATA[$P{param2}=="bar"]]></printWhenExpression>
+					</reportElement>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Withhold"]]></seriesExpression>
+						<categoryExpression><![CDATA[$V{COLUMN_COUNT}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{withhold}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Denail"]]></seriesExpression>
+						<categoryExpression><![CDATA[$V{COLUMN_NUMBER}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{denial}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Deductible"]]></seriesExpression>
+						<categoryExpression><![CDATA[$V{COLUMN_NUMBER}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{deduct}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Allowed"]]></seriesExpression>
+						<categoryExpression><![CDATA[$V{COLUMN_NUMBER}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{allowed}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Writeoff"]]></seriesExpression>
+						<categoryExpression><![CDATA[$V{COLUMN_NUMBER}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{writeoff}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Total"]]></seriesExpression>
+						<categoryExpression><![CDATA[$V{COLUMN_NUMBER}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot>
+					<plot/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+					<categoryAxisFormat>
+						<axisFormat>
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat>
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</bar3DChart>
+			<pie3DChart>
+				<chart>
+					<reportElement x="19" y="20" width="720" height="380">
+						<printWhenExpression><![CDATA[$P{param2}=="pie"]]></printWhenExpression>
+					</reportElement>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<pieSeries>
+						<keyExpression><![CDATA["Withhold"]]></keyExpression>
+						<valueExpression><![CDATA[$F{withhold}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Denial"]]></keyExpression>
+						<valueExpression><![CDATA[$F{denial}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Deductable"]]></keyExpression>
+						<valueExpression><![CDATA[$F{deduct}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Allowed"]]></keyExpression>
+						<valueExpression><![CDATA[$F{allowed}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Writeoff"]]></keyExpression>
+						<valueExpression><![CDATA[$F{writeoff}]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<pie3DPlot>
+					<plot/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+				</pie3DPlot>
+			</pie3DChart>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

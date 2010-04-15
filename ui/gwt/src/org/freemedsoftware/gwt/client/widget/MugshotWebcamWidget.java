@@ -120,8 +120,7 @@ public class MugshotWebcamWidget extends Composite {
 			// DOM.getElementById("mugshot_url").val(mturl);
 			// DOM.getElementById("mugshot_mid").val(mid);
 		}
-		CurrentState.getToaster().addItem("MugshotWebcamWidget",
-				"Uploaded image.", Toaster.TOASTER_INFO);
+		Util.showInfoMsg("MugshotWebcamWidget", "Uploaded image.");
 		if (getOnFinishedCommand() != null) {
 			getOnFinishedCommand().execute();
 		}

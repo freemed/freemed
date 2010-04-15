@@ -25,7 +25,9 @@
 include_once ( dirname(__FILE__).'/bootstrap.test.php' );
 
 $xml = '
-<remittance>
+<remittance creditDebitFlagCode="C" paymentMethodCode="FWT" transactionSetControlNumber="5222" transactionHandlingCode="I">
+   <checkTraceNumber>0124326845</checkTraceNumber>
+   <totalPaymentAmount>2438.2</totalPaymentAmount>
    <payers class="java.util.ArrayList">
       <payer idNumber="23009VSDF3" idQualifier="EO">
          <name>DISNEY BENEFITS INCORPORATED</name>
@@ -43,7 +45,7 @@ $xml = '
                   <stateProvince>MO</stateProvince>
                   <postalCode>63031</postalCode>
                </address>
-               <identification class="java.util.ArrayList"/>
+               <identificationList class="java.util.ArrayList"/>
                <providerClaimGroups class="java.util.ArrayList">
                   <providerClaimGroup>
                      <claimPayments class="java.util.ArrayList">
@@ -64,6 +66,11 @@ $xml = '
                               <middleName>Q</middleName>
                               <suffix></suffix>
                            </insured>
+                           <amounts class="java.util.ArrayList">
+                              <amount qualifier="F5" amount="10.0"/>
+                              <amount qualifier="T" amount="5.0"/>
+                              <amount qualifier="I" amount="10.75"/>
+                           </amounts>
                         </claimPayment>
                         <claimPayment claimId="3249DS903" claimCode="4" claimStatus="DENIED">
                            <claimTotalAmount>780.23</claimTotalAmount>
@@ -82,6 +89,7 @@ $xml = '
                               <middleName></middleName>
                               <suffix></suffix>
                            </insured>
+                           <amounts class="java.util.ArrayList"/>
                         </claimPayment>
                         <claimPayment claimId="0906502334" claimCode="2" claimStatus="PROCESSED: SECONDARY">
                            <claimTotalAmount>455.0</claimTotalAmount>
@@ -95,6 +103,7 @@ $xml = '
                               <suffix></suffix>
                            </patient>
                            <insured/>
+                           <amounts class="java.util.ArrayList"/>
                         </claimPayment>
                      </claimPayments>
                      <claimAdjustments class="java.util.ArrayList">
@@ -117,6 +126,67 @@ $xml = '
                            <reasons class="java.util.ArrayList"/>
                         </claimAdjustment>
                      </claimAdjustments>
+                     <claimInformations class="java.util.ArrayList">
+                        <claimInformation>
+                           <serviceCodeQualifier>HC</serviceCodeQualifier>
+                           <serviceCode>87420</serviceCode>
+                           <serviceCodeModifiers length="0"/>
+                           <servicePeriodStart>2002-09-15 00:00:00.0 EDT</servicePeriodStart>
+                           <servicePeriodEnd>2002-09-15 00:00:00.0 EDT</servicePeriodEnd>
+                           <lineItemChargeAmount>141.0</lineItemChargeAmount>
+                           <lineItemProviderPaymentAmount>15.2</lineItemProviderPaymentAmount>
+                           <quantity>1</quantity>
+                           <claimAdjustments class="java.util.ArrayList">
+                              <claimAdjustment adjustmentGroupCode="CO">
+                                 <adjustmentGroup>CONTRACTUAL OBLIGATIONS</adjustmentGroup>
+                                 <adjustmentReasonCode>A2</adjustmentReasonCode>
+                                 <adjustmentAmount>25.8</adjustmentAmount>
+                                 <reasons class="java.util.ArrayList"/>
+                              </claimAdjustment>
+                              <claimAdjustment adjustmentGroupCode="PI">
+                                 <adjustmentGroup>PAYOR INITIATED REDUCTIONS</adjustmentGroup>
+                                 <adjustmentReasonCode>50</adjustmentReasonCode>
+                                 <adjustmentAmount>100.0</adjustmentAmount>
+                                 <reasons class="java.util.ArrayList"/>
+                              </claimAdjustment>
+                           </claimAdjustments>
+                        </claimInformation>
+                        <claimInformation>
+                           <serviceCodeQualifier>HC</serviceCodeQualifier>
+                           <serviceCode>J3301</serviceCode>
+                           <serviceCodeModifiers length="1">
+                              <serviceCodeModifier>RT</serviceCodeModifier>
+                           </serviceCodeModifiers>
+                           <lineItemChargeAmount>89.72</lineItemChargeAmount>
+                           <lineItemProviderPaymentAmount>0.0</lineItemProviderPaymentAmount>
+                           <quantity>2</quantity>
+                           <claimAdjustments class="java.util.ArrayList">
+                              <claimAdjustment adjustmentGroupCode="PI">
+                                 <adjustmentGroup>PAYOR INITIATED REDUCTIONS</adjustmentGroup>
+                                 <adjustmentReasonCode>55</adjustmentReasonCode>
+                                 <adjustmentAmount>89.72</adjustmentAmount>
+                                 <reasons class="java.util.ArrayList"/>
+                              </claimAdjustment>
+                              <claimAdjustment adjustmentGroupCode="PI">
+                                 <adjustmentGroup>PAYOR INITIATED REDUCTIONS</adjustmentGroup>
+                                 <adjustmentReasonCode>56</adjustmentReasonCode>
+                                 <adjustmentAmount>85.5</adjustmentAmount>
+                                 <reasons class="java.util.ArrayList"/>
+                              </claimAdjustment>
+                           </claimAdjustments>
+                        </claimInformation>
+                        <claimInformation>
+                           <serviceCodeQualifier>HC</serviceCodeQualifier>
+                           <serviceCode>73030</serviceCode>
+                           <serviceCodeModifiers length="1">
+                              <serviceCodeModifier>LT</serviceCodeModifier>
+                           </serviceCodeModifiers>
+                           <lineItemChargeAmount>455.0</lineItemChargeAmount>
+                           <lineItemProviderPaymentAmount>455.0</lineItemProviderPaymentAmount>
+                           <quantity>1</quantity>
+                           <claimAdjustments class="java.util.ArrayList"/>
+                        </claimInformation>
+                     </claimInformations>
                   </providerClaimGroup>
                </providerClaimGroups>
             </payee>

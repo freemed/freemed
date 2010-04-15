@@ -44,6 +44,15 @@ public abstract class PatientScreenInterface extends ScreenInterface {
 	 * 
 	 * @param p
 	 */
+	
+	public PatientScreenInterface() {
+		super();
+	}
+	
+	public PatientScreenInterface(String moduleName) {
+		super(moduleName);
+	}
+	
 	public void assignPatientScreen(PatientScreen p) {
 		patientScreen = p;
 

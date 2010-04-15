@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+    $Id$
+    
+    Authors:
+    Philipp Meng <pmeng@freemedsoftware.org>
+	    
+	    FreeMED Electronic Medical Record and Practice Management System
+	    Copyright (C) 1999-2010 FreeMED Software Foundation
+	    
+	    This program is free software; you can redistribute it and/or modify
+	    it under the terms of the GNU General Public License as published by
+	    the Free Software Foundation; either version 2 of the License, or
+	    (at your option) any later version.
+	    
+	    This program is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	    
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	    -->
+	    <SimpleUIBuilder module="BillingClearinghouse">
+		    <Elements>
+			    <Element field="chname" title="Clearinghouse Name" type="TEXT" options="100" display="1" />
+			    <Element field="chaddr" title="Clearinghouse Address" type="TEXT" options="100" display="1" />
+			    <Element field="chcity" title="City" type="TEXT" options="50" display="1" />
+			    <Element field="chstate" title="State" type="TEXT" options="50" />
+			    <Element field="chzip" title="Zip" type="TEXT" options="50" />
+			    <Element field="chphone" title="ETIN" type="TEXT" options="50"/>
+			    <Element field="chx12gssender" title="X12 GS Sender ID" type="TEXT" options="100" display="1" />
+			    <Element field="chx12gsreceiver" title="X12 GS Receiver ID" type="TEXT" options="100" display="1"/>
+		    </Elements>
+	    </SimpleUIBuilder>

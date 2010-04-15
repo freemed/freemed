@@ -63,6 +63,11 @@ class ClaimTypes extends SupportModule {
 	protected function mod_pre ( &$data ) {
 		$data['clmtpdtmod'] = date('Y-m-d');
 	}
+	
+	public function getClaimTypes(){
+		$q="SELECT id as Id,CONCAT(clmtpname,'(',clmtpdescrip,')') as claim_info FROM claimtypes";
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 
 } // end of class ClaimTypes
 

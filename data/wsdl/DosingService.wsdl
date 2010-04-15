@@ -36,6 +36,7 @@
 <xsd:sequence>
 <xsd:element minOccurs="0" name="patientName" type="xsd:string" />
 <xsd:element minOccurs="0" name="patientId" type="xsd:string" />
+<xsd:element minOccurs="0" name="patientDob" type="xsd:string" />
 <xsd:element minOccurs="0" name="providerName" type="xsd:string" />
 <xsd:element minOccurs="0" name="expires" type="xsd:string" />
 <xsd:element minOccurs="0" name="dosage" type="xsd:string" />
@@ -64,6 +65,7 @@
 <xsd:sequence>
 <xsd:element minOccurs="0" name="patientName" type="xsd:string" />
 <xsd:element minOccurs="0" name="patientId" type="xsd:string" />
+<xsd:element minOccurs="0" name="patientDob" type="xsd:string" />
 <xsd:element minOccurs="0" name="providerName" type="xsd:string" />
 <xsd:element minOccurs="0" name="counselorName" type="xsd:string" />
 <xsd:element minOccurs="0" name="testName" type="xsd:string" />

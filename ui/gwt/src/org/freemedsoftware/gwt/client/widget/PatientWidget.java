@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
@@ -52,7 +53,8 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 		HashSetter {
 
 	protected String hashMapping = null;
-
+	protected CustomRequestCallback callback=null;
+	
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -194,6 +196,9 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 													"String");
 									if (result != null) {
 										searchBox.setText(result);
+										if(callback!=null){
+											callback.jsonifiedData("done");
+										}
 									}
 								} else {
 									Window.alert(response.toString());
@@ -227,11 +232,15 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 			}
 		}
 	}
-
+	
 	public void setHashMapping(String hm) {
 		hashMapping = hm;
 	}
-
+	
+	public void setAfterSetValueCallBack(CustomRequestCallback cb){
+		callback=cb;
+	}
+	
 	public String getStoredValue() {
 		return getValue().toString();
 	}
@@ -243,5 +252,6 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 	public void setFromHash(HashMap<String, String> data) {
 		setValue(Integer.parseInt(data.get(hashMapping)));
 	}
+	
 
 }

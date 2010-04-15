@@ -276,16 +276,55 @@ CREATE FUNCTION DAYS_INT_TO_STRING ( s VARCHAR(255) )
 BEGIN
 	DECLARE dat VARCHAR(11);
 	DECLARE len INT(4);
-	SET s=REPLACE(s,'0','Sun');
-	SET s=REPLACE(s,'1','Mon');
-	SET s=REPLACE(s,'2','Tue');
-	SET s=REPLACE(s,'3','Wed');
-	SET s=REPLACE(s,'4','Thu');
-	SET s=REPLACE(s,'5','Fri');
-	SET s=REPLACE(s,'6','Sat');
-	SET len=LENGTH(s);
-	return SUBSTRing(s from 1 for len-1 );
+	SET s = REPLACE(s,'0','Sun');
+	SET s = REPLACE(s,'1','Mon');
+	SET s = REPLACE(s,'2','Tue');
+	SET s = REPLACE(s,'3','Wed');
+	SET s = REPLACE(s,'4','Thu');
+	SET s = REPLACE(s,'5','Fri');
+	SET s = REPLACE(s,'6','Sat');
+	SET len = LENGTH(s);
+	RETURN SUBSTRING(s FROM 1 FOR len-1 );
 END;
 //
 
 DELIMITER ;
+
+DROP FUNCTION IF EXISTS PAYER_TYPE;
+
+DELIMITER //
+
+# Function: PAYER_TYPE
+#
+#	Converts paysrc, passed in the format '0,1,2', into name of pay sources
+#
+# Parameters:
+#
+#	paysrc - Days in integer format
+#
+# Returns:
+#
+#	VARCHAR (255) containing name of source
+#
+
+CREATE FUNCTION PAYER_TYPE (paysrc INT )
+	RETURNS varchar(50) CHARSET latin1
+	DETERMINISTIC
+BEGIN
+	DECLARE pay_source VARCHAR(50);
+	IF paysrc = 0 THEN
+		SET pay_source = 'Patient';
+	ELSEIF paysrc = 1 THEN
+		SET pay_source = 'Primary';
+	ELSEIF paysrc = 2 THEN
+		SET pay_source = 'Secondary';
+	ELSEIF paysrc = 3 THEN
+		SET pay_source = 'Tertiary';
+	ELSEIF paysrc = 4 THEN
+		SET pay_source = 'WorkComp';
+	END IF;
+	RETURN pay_source;
+    END//
+
+DELIMITER ;
+

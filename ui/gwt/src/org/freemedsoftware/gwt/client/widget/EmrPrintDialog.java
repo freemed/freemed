@@ -30,6 +30,7 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,7 +40,6 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -51,7 +51,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class EmrPrintDialog extends DialogBox {
 
-	protected Button printfaxButton;
+	protected CustomButton printfaxButton;
 
 	protected Label messageLabel;
 
@@ -110,9 +110,9 @@ public class EmrPrintDialog extends DialogBox {
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		printfaxButton = new Button();
+		printfaxButton = new CustomButton("Print/Fax",AppConstants.ICON_PRINT);
 		horizontalPanel.add(printfaxButton);
-		printfaxButton.setText("Print/Fax");
+
 		printfaxButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -130,9 +130,8 @@ public class EmrPrintDialog extends DialogBox {
 			}
 		});
 
-		final Button cancelButton = new Button();
+		final CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
 		horizontalPanel.add(cancelButton);
-		cancelButton.setText("Cancel");
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -179,16 +178,14 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		CurrentState.getToaster()
-				.addItem("FaxSubsystem", "Sending fax to " + f);
+		Util.showInfoMsg("FaxSubsystem", "Sending fax to " + f);
 		getProxy().PrintToFax(f, items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
 			public void onFailure(Throwable t) {
-				CurrentState.getToaster().addItem("FaxSubsystemError",
-						"Error faxing document.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg("FaxSubsystemError", "Error faxing document.");
 			}
 		});
 		return 0;
@@ -201,16 +198,14 @@ public class EmrPrintDialog extends DialogBox {
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		CurrentState.getToaster().addItem("PrintSubsystem",
-				"Sending document to printer.");
+		Util.showInfoMsg("PrintSubsystem", "Sending document to printer.");
 		getProxy().PrintToPrinter("", items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
 			public void onFailure(Throwable t) {
-				CurrentState.getToaster().addItem("PrintSubsystemError",
-						"Error sending document.", Toaster.TOASTER_ERROR);
+				Util.showInfoMsg("PrintSubsystem", "Error sending document.");
 			}
 		});
 		return 0;

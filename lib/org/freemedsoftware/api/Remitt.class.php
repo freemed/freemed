@@ -32,13 +32,40 @@ class Remitt {
 	protected $_cache; // result cache
 
 	public function __construct ( ) {
-		$this->protocol = freemed::config_value('remitt_protocol');
-		$this->server = freemed::config_value('remitt_server');
-		$this->port = freemed::config_value('remitt_port'); 
-		$this->username = freemed::config_value('remitt_username'); 
-		$this->password = freemed::config_value('remitt_password'); 
-		if (!$this->port) { $this->port = '8180'; }
+		$this->url = freemed::config_value('remitt_url');
+		$this->username = freemed::config_value('remitt_user'); 
+		$this->password = freemed::config_value('remitt_pass'); 
 	} // end constructor
+
+	// Method: GetFile
+	//
+	// Parameters:
+	//
+	//	$type - Category of data
+	//
+	//	$filename - Filename to retrieve
+	//
+	//	$serve - (option) Directly serve data, instead of
+	//	returning contents. Defaults to false.
+	//
+	public function GetFile ( $type, $filename, $serve = false ) {
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			  'category' => $type
+			, 'filename' => $filename
+		);
+		$out = ( $sc->getFile( $params )->return );
+		if ($serve) {
+			switch (true) {
+				case (substr($serve,0,4) == '%PDF'):
+				Header("Content-type: application/x-pdf");
+				break;
+			}
+			print($out);
+			die();
+		}
+		return $out;
+	} // end method GetFile
 
 	// Method: GetFileList
 	//
@@ -61,7 +88,11 @@ class Remitt {
 			, 'criteria' => $criteria
 			, 'value' => $value
 		);
-		return ( $sc->getFileList( $params )->return );
+		$return = (array)( $sc->getFileList( $params )->return );
+		if ($return['filename'] != '') {
+			return array($return);
+		}
+		return $return;
 	} // end method GetFileList
 
 	// Method: GetProtocolVersion
@@ -88,6 +119,7 @@ class Remitt {
 	//	true if up, false if not
 	//
 	public function GetServerStatus ( ) {
+		return true; // FIXME, actual testing, please!
 		if (@fsockopen($this->server, $this->port, $_err, $_str, 10)) {
 			return true;
 		} else {
@@ -125,6 +157,36 @@ class Remitt {
 		return ( $sc->getStatus( $params )->return );
 	} // end method GetStatus
 
+	// Method: GetBulkStatus
+	//
+	//	Retrieves the current statuses of REMITT billing runs by
+	//	their unique identifiers.
+	//
+	// Parameters:
+	//
+	//	$uniques - Array of unique identifiers
+	//
+	// Returns:
+	//
+	//	Array of integers, indicating status:
+	//	* 0: completed
+	//	* 1: validation
+	//	* 2: render
+	//	* 3: translation
+	//	* 4: transmission
+	//	* 5: unknown
+	//
+	public function GetBulkStatus ( $uniques ) {
+		if (!$this->GetServerStatus()) {
+			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
+		}
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			'jobIds' => $uniques
+		);
+		return ( $sc->getBulkStatus( $params )->return );
+	} // end method GetBulkStatus
+
 	// Method: ListOptions
 	//
 	//	Wrapper for Remitt.Interface.ListOptions
@@ -151,12 +213,14 @@ class Remitt {
 		if (!isset($this->_cache['ListOptions'][$type][$plugin]['x_'.$format])) {
 			if ($format) {
 				$params = (object) array(
-					'pluginClass' => $plugin
+					  'pluginclass' => $plugin
+					, 'qualifyingoption' => ''
 				);
 				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $sc->getPluginOptions( $params )->return;
 			} else {
 				$params = (object) array(
-					'pluginClass' => $plugin
+					  'pluginclass' => $plugin
+					, 'qualifyingoption' => ''
 				);
 				$this->_cache['ListOptions'][$type][$plugin]['x_'.$format] = $sc->getPluginOptions( $params )->return;
 			}
@@ -164,9 +228,7 @@ class Remitt {
 
 		// Process into nice form for select widgets
 		foreach ($this->_cache['ListOptions'][$type][$plugin]['x_'.$format] AS $k => $v) {
-			if (($media == NULL) or ($v['Media'] == $media)) {
-				$r[$v['Description']] = $k;
-			}
+			$r[$v] = $v;
 		}
 		return $r;
 	} // end method ListOptions
@@ -190,7 +252,7 @@ class Remitt {
 			$this->_cache['ListPlugins'][$type] = 
 				( $sc->getPlugins( $params )->return );
 		}
-		return $this->_cache['ListPlugins'][$type];
+		return ( is_array($this->_cache['ListPlugins'][$type]) ? $this->_cache['ListPlugins'][$type] : array( $this->_cache['ListPlugins'][$type] ) );
 	} // end method ListPlugins
 			
 	// Method: ListOutputMonths
@@ -253,9 +315,7 @@ class Remitt {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
 		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
-		// For now, just use the first ones ... FIXME FIXME FIXME
-		$bc = $bs = $ch = 1;
-		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $bc, $bs, $ch);
+		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $billkey_hash['contact'], $billkey_hash['service'], $billkey_hash['clearinghouse']);
 		$sc = $this->getSoapClient( );
 		$params = (object) array(
 			  'inputPayload' => $xml
@@ -272,16 +332,15 @@ class Remitt {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
-		// For now, just use the first ones ... FIXME FIXME FIXME
+		// For now, just use the first ones ...
 		$xml = $this->RenderStatementXML($procedures);
 		//print "length of xml = ".strlen($xml)."<br/>\n";
 		$sc = $this->getSoapClient( );
-		// TODO: FIXME: THESE ARE BROKEN AT THE MOMENT
 		$params = (object) array(
 			  'inputPayload' => $xml
 			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
 			, 'renderOption' => 'statement'
-			, 'transportPlugin' => 'PDF'
+			, 'transportPlugin' => 'org.remitt.plugin.transmission.StoreFile'
 			, 'transportOption' => ''
 		);
 		return $sc->insertPayload( $params )->return;
@@ -304,17 +363,11 @@ class Remitt {
 	//	Table key for billkey
 	//
 	public function StoreBillKey ( $billkey ) {
-		$query = $GLOBALS['sql']->insert_query (
-			'billkey',
-			array(
-				'billkeydate' => date( 'Y-m-d' ),
-				'billkey' => serialize( $billkey ),
-				'bkprocs' => $billkey[ 'procedures' ]
-			)
-		);
-		$result = $GLOBALS['sql']->query($query);
-		//print "query= $query<br/>\n";
-		$id = $GLOBALS['sql']->last_record($result, 'billkey');
+		$bk = CreateObject('org.freemedsoftware.module.BillKey');
+		$data['billkeydate']=date( 'Y-m-d' );
+		$data['billkey']=serialize( $billkey );
+		$data['bkprocs']=$billkey['procedures'];
+		$id=$bk->add($data);		
 		syslog(LOG_INFO, 'Remitt.StoreBillKey| created key '.$id);
 		return $id;
 	} // end method StoreBillKey
@@ -753,15 +806,23 @@ class Remitt {
 			$map = unserialize($_i['inscoidmap']);
 			foreach ($this->ref['physician'] as $p) {
 				if ($p and $i) {
+				$pid = "";
+				$pgroup = "";
+				if (is_array($map)) {
+					if (is_array($map[$p])) {
+						$pid = $map[$p]['id'];
+						$pgroup = $map[$p]['group'];
+					}
+				}
 				$buffer .= "<id payer=\"".htmlentities($i).
 					"\" ".
 					"physician=\"".htmlentities($p)."\">".
-					htmlentities($map[$p]['id']).
+					htmlentities($pid).
 					"</id>\n";
 				$buffer .= "<groupid ".
 					"payer=\"".htmlentities($i)."\" ".
 					"physician=\"".htmlentities($p)."\">".
-					htmlentities($map[$p]['group']).
+					htmlentities($pgroup).
 					"</groupid>\n";
 				}
 			}
@@ -960,13 +1021,25 @@ class Remitt {
 		// Get provider record
 		$provider = $GLOBALS['sql']->get_link( 'physician', $p['procphysician'] );
 
+		$hcfalocaluse19 = '';
+		$hcfalocaluse10d = '';
+		$hcfalocaluse24k = '';
+		if (is_array($map)) {
+			if (is_array($map[$p['procphysician']])) {
+
+				$hcfalocaluse19 = $map[$p['procphysician']]['local19'];
+				$hcfalocaluse10d = $map[$p['procphysician']]['local10d'];
+				$hcfalocaluse24k =  $map[$p['procphysician']]['local24k'];
+			}
+		}
+
 		// Various resubmission codes, etc
 		$buffer .=
 			$this->_tag('medicaidresubmissioncode', $p['procmedicaidresub'], true).
 			$this->_tag('medicaidoriginalreference', $p['procmedicaidresub'], true).
-			$this->_tag('hcfalocaluse19', $map[$p['procphysician']]['local19'], true).
-			$this->_tag('hcfalocaluse10d', $map[$p['procphysician']]['local10d'], true).
-			$this->_tag('hcfalocaluse24k', $map[$p['procphysician']]['local24k'], true).
+			$this->_tag('hcfalocaluse19', $hcfalocaluse19, true).
+			$this->_tag('hcfalocaluse10d', $hcfalocaluse10d, true).
+			$this->_tag('hcfalocaluse24k', $hcfalocaluse24k, true).
 			$this->_tag('amountpaid', (double) $p['procamtpaid'], true).
 			$this->_tag('providerkey', $p['procphysician'], true).
 			$this->_tag('referringproviderkey', $p['procrefdoc'], true).
@@ -1078,11 +1151,12 @@ class Remitt {
 	//	Get cache file name for WSDL
 	//
 	protected function getCachedWSDL ( ) {
-		$cached_name = PHYSICAL_LOCATION . '/data/cache/remitt.wsdl';
+		$cached_name = PHYSICAL_LOCATION . '/data/wsdl/remitt.wsdl';
 
 		if ( ! file_exists( $cached_name ) ) {
-			syslog(LOG_INFO, "caching wsdl from ".$ds['dsurl']);
-			$url = $this->protocol . '://' . $this->username . ':' . $this->password . '@' . $this->server . ":" . $this->port . "/remitt/services/Interface?wsdl";
+			syslog(LOG_INFO, "caching wsdl from " . $this->url);
+			preg_match('@^([a-z]+://)([A-Za-z0-9:/]+)@i', $this->url, $m);
+			$url = $m[1] . $this->username . ':' . $this->password . '@' . $m[2]; 
 			syslog(LOG_INFO, "url = $url");
 			file_put_contents( $cached_name, file_get_contents($url) );
 		}
@@ -1091,41 +1165,14 @@ class Remitt {
 	} // end method getCachedWSDL
 
 	protected function getSoapClient() {
-		$wsdl = $this->getCachedWSDL( );
 		$sc = new SoapClient( $this->getCachedWSDL(), array(
 			  'login' => $this->username
 			, 'password' => $this->password
 			, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
-			, 'location' => str_replace('?wsdl', '', $wsdl) // force this to work through proxies
+			, 'location' => $this->url . "?wsdl"
 		));
 		return $sc;
 	} // end method getSoapClient
-
-	// Method: _is_struct
-	//
-	//	Determines if in an array is a structure (associative array)
-	//	or a regular array.
-	//
-	// Parameters:
-	//
-	//	$var - Variable to be typed
-	//
-	// Returns:
-	//
-	//	Boolean, true if $var is an associative array, false if it
-	//	is not.
-	//
-	protected function _is_struct ( $var ) {
-		// Catch non-array instance
-		if (!is_array($var)) return false;
-
-		// If there are non-numeric keys, it is a structure, otherwise
-		// default to false.
-		foreach ($var AS $k => $v) {
-			if (!is_integer($k)) return true;
-		}
-		return false;
-	} // end method _is_struct
 
 } // end class Remitt
 

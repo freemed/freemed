@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -70,10 +70,10 @@ public class PerformBilling extends ScreenInterface {
 
 		HorizontalPanel horizontalPanel1 = new HorizontalPanel();
 		horizontalPanel1.setSpacing(5);
-		horizontalPanel1.add(new Button("Process"));
-		horizontalPanel1.add(new Button("Select All"));
-		horizontalPanel1.add(new Button("Select None"));
-		horizontalPanel1.add(new Button("Return to MainMenu"));
+		horizontalPanel1.add(new CustomButton("Process",AppConstants.ICON_RUN));
+		horizontalPanel1.add(new CustomButton("Select All",AppConstants.ICON_SELECT_ALL));
+		horizontalPanel1.add(new CustomButton("Select None",AppConstants.ICON_SELECT_NONE));
+		horizontalPanel1.add(new CustomButton("Return to MainMenu",AppConstants.ICON_PREV));
 		performBillPanel.add(horizontalPanel1);		
 	
 	}

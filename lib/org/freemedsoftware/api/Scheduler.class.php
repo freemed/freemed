@@ -144,7 +144,7 @@ class Scheduler {
 	//	<GetDailyAppointments>
 	//
 	public function GetDailyAppointmentsRange ( $datefrom = NULL, $dateto = NULL, $provider = 0 ) {
-		freemed::acl_enforce( 'scheduling', 'view' );
+		freemed::acl_enforce( 'scheduling', 'read' );
 		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
 		if ($dateto != NULL) {
 			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
@@ -187,7 +187,7 @@ class Scheduler {
 	//	<GetDailyAppointments>
 	//
 	public function GetDailyAppointmentsRangeByProviderGroup ( $datefrom = NULL, $dateto = NULL, $providerGroup = 0 ) {
-		freemed::acl_enforce( 'scheduling', 'view' );
+		freemed::acl_enforce( 'scheduling', 'read' );
 
 		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
 		if ($dateto != NULL) {
@@ -774,7 +774,7 @@ class Scheduler {
 	//	Boolean, whether successful.
 	//
 	public function MoveAppointment ( $original, $data = NULL ) {
-		freemed::acl_enforce( 'scheduling', 'move' );
+		freemed::acl_enforce( 'scheduling', 'modify' );
 		// Check for bogus data
 		if ($data == NULL) { return false; }
 		$ourdata = (array) $data;
@@ -1013,22 +1013,30 @@ class Scheduler {
 		} else {
 			$starting_time = freemed::config_value("calshr");
 		}
+		//$b_criteria;
 		if ($_criteria['location']) {
 			$b_criteria[] = "calfacility = '".addslashes($_criteria['location'])."'";
+		}
+		if ($_criteria['provider']) {
+			$b_criteria[] = "calphysician = '".addslashes($_criteria['provider'])."'";
 		}
 
 		// After we have gotten all of the prospective days, run
 		// some maps to see what we have
 		foreach ($c_days AS $this_day) {
-			$m_criteria = array_merge(
-				$b_criteria,
-				array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'")
-			);
+			//if($b_criteria)
+				$m_criteria = array_merge(
+					$b_criteria,
+					array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'")
+				);
+			//else	
+			//	$m_criteria = array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'");
+				
+			
 			$map = $this->map(
 				"SELECT * FROM scheduler WHERE ".
 				join(' AND ', $m_criteria)
 			);
-
 			// Loop through the map and use map_fit() queries
 			// to return the first possible fit
 			for($h=$starting_time; $h<freemed::config_value('calehr'); $h++) {
@@ -1052,6 +1060,45 @@ class Scheduler {
 			return $res;
 		}
 	} // end method next_available
+
+	// Method: canBookAppointment
+	//
+	//	checks blocked time slots against provider and return a boolean identifying 
+	//
+	// Parameters:
+	//
+	//	$providerId - provider id of current appointment
+	//
+	//	$starthour - start hour of new appointment
+	//	$startmin  - start hour of new appointment
+	//	$duration  - duration of new appointment
+	//
+	// Returns:
+	//
+	//	true  - if slot is available
+	//	false  - if slot is blocked
+	//
+
+	public function canBookAppointment($providerId,$starthour,$startmin,$duration){
+		freemed::acl_enforce( 'scheduling', 'write' );
+		$schedulerBlockSlots = CreateObject('org.freemedsoftware.module.SchedulerBlockSlots');
+		$blockTimeSlots = $schedulerBlockSlots->GetBlockedTimeSlots($providerId);
+		
+		$startTimeStamp = strtotime($starthour.":".$startmin.":00");
+		$startTime = date('H:i:s',$startTimeStamp);
+		$endTime = date('H:i:s', strtotime("+$duration minutes", $startTimeStamp));
+		
+		foreach($blockTimeSlots as $slot){
+			$newStartTimeStamp = strtotime($slot['sbshour'].":".$slot['sbsminute'].":00");
+			$newStartTime = date('H:i:s',$newStartTimeStamp);
+			$newDuration = $slot['sbsduration'];
+			$newEndTime = date('H:i:s', strtotime("+$newDuration minutes", $newStartTimeStamp));
+			if(($startTime>=$newStartTime && $startTime<$newEndTime) || ($endTime>=$newStartTime && $endTime<$newEndTime)){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	// Method: next_time_increment
 	//
@@ -1094,7 +1141,7 @@ class Scheduler {
 	//	id of created appointment
 	//
 	public function SetAppointment ( $data = NULL ) {
-		freemed::acl_enforce( 'scheduling', 'book' );
+		freemed::acl_enforce( 'scheduling', 'write' );
 		// Check for bogus data
 		if ($data == NULL) { return false; }
 		$ourdata = (array) $data;
@@ -1175,6 +1222,7 @@ class Scheduler {
 		// Pass the group key back to FreeMED
 		return $key;
 	} // end method SetGroupAppointment
+	
 	public function set_group_appointment ( $patients, $data ) { return $this->SetGroupAppointment ( $patients, $data ); }
 
 	// Method: set_recurring_appointment

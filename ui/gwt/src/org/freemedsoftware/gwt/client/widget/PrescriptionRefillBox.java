@@ -32,6 +32,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.screen.RxRefillScreen;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -45,7 +46,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -56,6 +56,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PrescriptionRefillBox extends WidgetInterface {
+	
+	public final static String moduleName = RxRefillScreen.moduleName;
+	
 	protected Integer patid = 0;
 
 	protected CustomTable wRequests = null;
@@ -64,7 +67,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 	private PushButton rxRefillPrescriptionButton;
 	
 	public PrescriptionRefillBox() {
-
+		super(moduleName);
 		final SimplePanel simplePanel = new SimplePanel();
 		simplePanel.setStyleName("freemed-WidgetContainer");
 		// simplePanel.addStyleName("freemed-PrescriptionRefillBoxContainer");
@@ -94,7 +97,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		return rxRefillPrescriptionButton;
 	} 
 	
-	protected void showDoctor() {
+	public void showDoctor() {
 		cleanView();
 		wRequests = new CustomTable();
 		wRequests.setMaximumRows(10);
@@ -142,10 +145,9 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.setWidget(2, 1, textBox);
 		textBox.setWidth("100%");
 
-		final Button sendButton = new Button();
+		final CustomButton sendButton = new CustomButton("Send Request",AppConstants.ICON_SEND);
 		flexTable.setWidget(3, 1, sendButton);
 
-		sendButton.setText("Send Request");
 		sendButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -172,11 +174,8 @@ public class PrescriptionRefillBox extends WidgetInterface {
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								CurrentState.getToaster().addItem(
-										"PrescriptionRefillBox",
-										"Error adding refill request."
-												+ ex.toString(),
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("PrescriptionRefillBox", "Error adding refill request."
+										+ ex.toString());
 							}
 
 							public void onResponseReceived(Request request,
@@ -187,18 +186,10 @@ public class PrescriptionRefillBox extends WidgetInterface {
 													.parse(response.getText()),
 													"Integer");
 									if (r != 0) {
-										CurrentState
-												.getToaster()
-												.addItem(
-														"PrescriptionRefillBox",
-														"Prescription refill successfully saved.",
-														Toaster.TOASTER_INFO);
+										Util.showInfoMsg("PrescriptionRefillBox", "Prescription refill successfully saved.");
 									}
 								} else {
-									CurrentState.getToaster().addItem(
-											"PrescriptionRefillBox",
-											"Error adding prescription refill",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("PrescriptionRefillBox", "Error adding prescription refill");
 								}
 							}
 						});
@@ -216,7 +207,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 
 	protected void cleanView() {
 		
-		final boolean canWriteRX = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.PATIENT_CATEGORY, AppConstants.RX_REFILL);
+		final boolean canWriteRX = CurrentState.isActionAllowed(RxRefillScreen.moduleName, AppConstants.WRITE);
 		
 		flexTable.clear();
 		final Label selectViewLabel = new Label("Select View");
@@ -226,7 +217,8 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.setWidget(0, 1, selectUser);
 		selectUser.addItem("Select access level");
 		selectUser.addItem("doctor");
-		selectUser.addItem("staff");
+		if(canWrite)
+			selectUser.addItem("staff");
 		selectUser.setVisibleItemCount(1);
 
 		selectUser.addChangeHandler(new ChangeHandler() {

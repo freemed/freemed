@@ -42,6 +42,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
@@ -49,9 +50,9 @@ import org.freemedsoftware.gwt.client.widget.CustomTimeBox;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.PopupView;
+import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleListBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
@@ -73,7 +74,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -164,7 +164,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			discussion.getElement().setPropertyString("rows", "12");
 			detailDiscussionHPanel.add(discussion);
 			
-			Button addButton = new Button("Add");
+			CustomButton addButton = new CustomButton("Add",AppConstants.ICON_ADD);
 			addButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -220,19 +220,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 				else
 					data.put("calstatus", "noshow");
 				saveCallGroupAttend(data);
-				////////preparing and saving data into treatment clinical Note table
-				if(groupMember.isSelected()){
-					data = new HashMap<String, String>();
-					data.put("tcncalgroup", groupId.toString());
-					data.put("tcngroupnote",discussion );
-					data.put("tcndescription", description);
-					data.put("patient", groupMember.getId().toString());
-					data.put("tcndiscussiondesc", groupMember.getNote());
-					data.put("tcnmedphys", provider.toString());
-					saveClinicalNote(data);
-				}
-				
-				
 			}
 			groupNoteTabs.remove(groupId);
 			tabPanel.remove(this);
@@ -249,9 +236,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							CurrentState.getToaster().addItem("CalendarGroup Screen",
-									"Failed to add entry.",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg("CalendarGroupScreen", "Failed to add entry.");
 						}
 
 						public void onResponseReceived(Request request,
@@ -261,47 +246,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 									Integer r = (Integer) JsonUtil.shoehornJson(
 											JSONParser.parse(response.getText()),
 											"Integer");
-								}
-							}
-						}
-					});
-				} catch (RequestException e) {
-				}
-			} else {
-				// TODO NORMAL MODE STUFF
-			}
-		}
-		public void saveClinicalNote(HashMap<String, String> data){
-			if (Util.getProgramMode() == ProgramMode.STUBBED) {
-				// TODO STUBBED MODE STUFF
-			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				String[] params = { JsonUtil.jsonify(data) };
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-						URL.encode(Util.getJsonRequest(
-								"org.freemedsoftware.module.TreatmentGroupNote.add", params)));
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						public void onError(Request request, Throwable ex) {
-							CurrentState.getToaster().addItem("CalendarGroup Screen",
-									"Failed to add entry.",
-									Toaster.TOASTER_ERROR);
-						}
-
-						public void onResponseReceived(Request request,
-								Response response) {
-							if (Util.checkValidSessionResponse(response.getText())) {
-								if (200 == response.getStatusCode()) {
-									Integer r = (Integer) JsonUtil.shoehornJson(
-											JSONParser.parse(response.getText()),
-											"Integer");
-									if(r!=null)
-									CurrentState.getToaster().addItem("CalendarGroup Screen",
-											"Note added successfully.",
-											Toaster.TOASTER_INFO);
-								}else{
-									CurrentState.getToaster().addItem("CalendarGroup Screen",
-											"Failed to add note.",
-											Toaster.TOASTER_ERROR);
 								}
 							}
 						}
@@ -391,8 +335,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	protected Popup groupDetailPopup;
 
 	// Declreaing Button
-	protected Button btnAdd;
-	protected Button btnClear;
+	protected CustomButton btnAdd;
+	protected CustomButton btnClear;
 
 	protected CustomListBox groupAppointmentsList=new CustomListBox();
 	
@@ -403,11 +347,13 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	
 	private HashMap<Integer, NoteEntryWidget> groupNoteTabs = new HashMap<Integer, NoteEntryWidget>();;
 
-	final boolean canDelete = CurrentState.isActionAllowed(AppConstants.DELETE, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
-	final boolean canWrite  = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
-	final boolean canBook   = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.SYSTEM_CATEGORY, AppConstants.SCHEDULER);
-	final boolean canModify   = CurrentState.isActionAllowed(AppConstants.MODIFY, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
-	final boolean canRead   = CurrentState.isActionAllowed(AppConstants.READ, AppConstants.PATIENT_CATEGORY, AppConstants.GROUPS);
+	public final static String ModuleName = "CalendarGroup"; 	
+	
+	final boolean canDelete = CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE);
+	final boolean canWrite  = CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE);
+	final boolean canBook   = CurrentState.isActionAllowed(SchedulerWidget.moduleName, AppConstants.WRITE);
+	final boolean canModify = CurrentState.isActionAllowed(ModuleName, AppConstants.MODIFY);
+	final boolean canRead   = CurrentState.isActionAllowed(ModuleName, AppConstants.READ);
 	
 	// Creates only desired amount of instances if we follow this pattern
 	// otherwise we have public constructor as well
@@ -465,9 +411,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		final HorizontalPanel menuButtonsPanel = new HorizontalPanel();
 		menuButtonsPanel.setSpacing(1);
 		if(canDelete || canWrite || canBook){
-			final Button selectAllButton = new Button();
+			final CustomButton selectAllButton = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
 			menuButtonsPanel.add(selectAllButton);
-			selectAllButton.setText("Select All");
 			selectAllButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent wvt) {
@@ -483,9 +428,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		}
 		
 		if(canDelete || canWrite || canBook){
-			final Button selectNoneButton = new Button();
+			final CustomButton selectNoneButton = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
 			menuButtonsPanel.add(selectNoneButton);
-			selectNoneButton.setText("Select None");
 			selectNoneButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -500,39 +444,9 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			});
 		}
 
-		if(canDelete){
-			final Button deleteButton = new Button();
-			menuButtonsPanel.add(deleteButton);
-			deleteButton.setText("Delete");
-			deleteButton.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent evt) {
-					if (patientGroupTable.getSelectedCount() < 1)
-						Window.alert("Please select at least one entry!");
-					else if (Window
-							.confirm("Are you sure you want to delete these item(s)?")) {
-						List<String> slectedItems = patientGroupTable.getSelected();
-						Iterator<String> itr = slectedItems.iterator();// Get all
-																		// selected
-																		// items
-																		// from
-																		// custom
-																		// table
-						while (itr.hasNext())
-							deleteEntry(Integer.parseInt(itr.next()));// delete
-																		// messages
-																		// one by
-																		// one
-						populate();
-					}
-				}
-			});
-		}
-		
 		if(canBook){
-			final Button bookButton = new Button();
+			final CustomButton bookButton = new CustomButton("Book",AppConstants.ICON_BOOK_APP);
 			menuButtonsPanel.add(bookButton);
-			bookButton.setText("Book");
 			bookButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -558,9 +472,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		}
 		
 	if(canModify){
-		final Button modifyButton = new Button();
+		final CustomButton modifyButton = new CustomButton("Modify",AppConstants.ICON_MODIFY);
 		menuButtonsPanel.add(modifyButton);
-		modifyButton.setText("Modify");
 		modifyButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -581,6 +494,34 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 					btnAdd.setText("Modify");
 					selectedEntryId=Integer.parseInt(itr.next());
 					modifyEntry(selectedEntryId);
+				}
+			}
+		});
+	}
+	
+	if(canDelete){
+		final CustomButton deleteButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+		menuButtonsPanel.add(deleteButton);
+		deleteButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent evt) {
+				if (patientGroupTable.getSelectedCount() < 1)
+					Window.alert("Please select at least one entry!");
+				else if (Window
+						.confirm("Are you sure you want to delete these item(s)?")) {
+					List<String> slectedItems = patientGroupTable.getSelected();
+					Iterator<String> itr = slectedItems.iterator();// Get all
+																	// selected
+																	// items
+																	// from
+																	// custom
+																	// table
+					while (itr.hasNext())
+						deleteEntry(Integer.parseInt(itr.next()));// delete
+																	// messages
+																	// one by
+																	// one
+					populate();
 				}
 			}
 		});
@@ -645,12 +586,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		populate();
 	}
 	
-	public Widget getGroupNoteEntryPanel(){
-		VerticalPanel verticalPanel = new VerticalPanel();
-//		verticalPanel.add();
-		return verticalPanel;
-	}
-	
 	public void getGroupAppointments(final Integer groupId,final String groupName){
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
@@ -686,48 +621,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 								HorizontalPanel horizontalPanel = new HorizontalPanel();
 								horizontalPanel.add(new Label("Select Appointment Date:"));
 								horizontalPanel.add(groupAppointmentsList);
-								Button createNote = new Button("Create Notes");
-								createNote.addClickHandler(new ClickHandler() {
-									@Override
-									public void onClick(ClickEvent arg0) {
-										NoteEntryWidget noteEntryWidget = null;
-										if(groupNoteTabs.get(groupId)==null){
-											noteEntryWidget= new NoteEntryWidget();
-											noteEntryWidget.setGroupId(groupId);
-											String appointmentDetails = groupAppointmentsList.getStoredValue();
-
-											noteEntryWidget.setAppointmentId(Integer.parseInt(appointmentDetails.substring(0,appointmentDetails.indexOf(":"))));
-											noteEntryWidget.setGroupMembers(groupMembersListInPopUp);
-											noteEntryWidget.setProvider(Integer.parseInt(appointmentDetails.substring(appointmentDetails.indexOf(":")+1)));
-											noteEntryWidget.init();
-											groupNoteTabs.put(groupId,noteEntryWidget);
-											tabPanel.add(
-													(Widget) noteEntryWidget,
-													new ClosableTab(groupName, (Widget) noteEntryWidget,
-															new ClosableTabInterface() {
-															
-																@Override
-																public void onClose() {
-																	// TODO Auto-generated method stub
-																	groupNoteTabs.remove(groupId);
-																}
-															
-																@Override
-																public boolean isReadyToClose() {
-																	// TODO Auto-generated method stub
-																	return true;
-																}
-															
-															}));
-										}else{
-											noteEntryWidget = groupNoteTabs.get(groupId);
-										}
-										tabPanel.selectTab(tabPanel.getWidgetIndex(noteEntryWidget));
-										groupDetailPopup.hide();
-										
-									}
-								});
-								horizontalPanel.add(createNote);
 								groupDetailPanel.add(horizontalPanel);
 							} else {
 							}
@@ -793,7 +686,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		groupFrequency.setWidth("300px");
 		groupLength = new TextBox();
 		groupLength.setWidth("300px");
-		btnAdd = new Button("Add");
+		btnAdd = new CustomButton("Add",AppConstants.ICON_ADD);
 		btnAdd.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -801,7 +694,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 				saveForm();
 			}
 		});
-		btnClear = new Button("Clear");
+		btnClear = new CustomButton("Clear",AppConstants.ICON_CLEAR);
 		btnClear.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -846,7 +739,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		}
 		flexTable.setWidget(2, 1, membersPanel);
 		verticalPanelEntry.add(flexTable);
-		Button addMoreMember = new Button("add another member");
+		CustomButton addMoreMember = new CustomButton("add another member",AppConstants.ICON_ADD_PERSON);
 		addMoreMember.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -857,7 +750,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			}
 		});
 		//flexTable.setWidget(3, 2, addMoreMember);
-		Button removeMember = new Button("Remove last member");
+		CustomButton removeMember = new CustomButton("Remove last member",AppConstants.ICON_REMOVE_PERSON);
 		removeMember.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -1133,9 +1026,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 								if (r != null) {
 									clearForm();
 									populate();
-									CurrentState.getToaster().addItem(
-											"Calgroup Form",
-											"Entry successfully added.");
+									Util.showInfoMsg("CalendarGroupScreen", "Entry successfully added.");
 								}else{
 									r=(Boolean) JsonUtil.shoehornJson(
 											JSONParser.parse(response.getText()),
@@ -1143,17 +1034,14 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 									if(r==1){
 										clearForm();
 											populate();	
-											CurrentState.getToaster().addItem(
-													"Callin Form",
-													"Entry successfully modified.");
+											Util.showInfoMsg("CalendarGroupScreen", "Entry successfully modified.");
 											btnAdd.setText("Add");
 									}else{
 										
 									}
 								}
 							} else {
-								CurrentState.getToaster().addItem(
-										"Calgroup Form", "Group Form failed.");
+								Util.showErrorMsg("CalendarGroupScreen", "Group Form failed.");
 							}
 						}
 					});
@@ -1254,9 +1142,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster().addItem("CalendarGroup Screen",
-								"Failed to delete entry.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("CalendarGroupScreen", "Failed to delete entry.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -1267,16 +1153,11 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 										JSONParser.parse(response.getText()),
 										"Boolean");
 								if (r != null) {
-									CurrentState.getToaster().addItem(
-											"CalendarGroup Screen", "Entry deleted.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("CalendarGroupScreen", "Entry deleted.");
 									// populate(tag);
 								}
 							} else {
-								CurrentState.getToaster().addItem(
-										"CalendarGroup Screen",
-										"Failed to delete entry.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("CalendarGroupScreen", "Failed to delete entry.");
 							}
 						}
 					}
@@ -1309,9 +1190,9 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 
 		private CustomTimeBox end;
 
-		private Button cancel = null;
+		private CustomButton cancel = null;
 
-		private Button ok = null;
+		private CustomButton ok = null;
 
 		private SupportModuleListBox selectTemplate = null;
 
@@ -1380,7 +1261,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			table.setWidget(3, 1, text);
 			table.getFlexCellFormatter().setColSpan(1, 1, 2);
 
-			cancel = new Button("Cancel");
+			cancel = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
 			cancel.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -1391,14 +1272,19 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
 
-			ok = new Button("Ok");
+			ok = new CustomButton("Ok",AppConstants.ICON_ADD);
 			ok.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
-					if(!CurrentState.canBookAppoinment(start.getValue(date.getValue()), end.getValue(date.getValue()))){
-						CurrentState.getToaster().addItem("Scheduler",
-								"Can not book appointment in between("+CurrentState.BREAK_HOUR+":00 -"+(CurrentState.BREAK_HOUR+1)+":00) !",
-								Toaster.TOASTER_ERROR);
+					if (!CurrentState.canBookAppoinment(start.getValue(date
+							.getValue()), end.getValue(date.getValue()))) {
+						/*
+						Util.showErrorMsg("CalendarGroupScreen",
+								"Can not book appointment in between("
+										+ CurrentState.BREAK_HOUR + ":00 -"
+										+ (CurrentState.BREAK_HOUR + 1)
+										+ ":00) !");
+						*/
 						return;
 					}
 
@@ -1489,16 +1375,12 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								CurrentState.getToaster().addItem("Scheduler",
-										"Failed to get scheduler items.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("CalendarGroupScreen", "Failed to get scheduler items.");
 							}
 						}
 					});
 				} catch (RequestException e) {
-					CurrentState.getToaster().addItem("Scheduler",
-							"Failed to get scheduler items.",
-							Toaster.TOASTER_ERROR);
+					Util.showErrorMsg("CalendarGroupScreen", "Failed to get scheduler items.");
 				}
 			} else {
 				// GWT-RPC
@@ -1529,21 +1411,14 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 									Response response) {
 								if (200 == response.getStatusCode()) {
 									hide();
-									CurrentState.getToaster().addItem(
-											"CallinScheduler",
-											"Appointment saved successfully.",
-											Toaster.TOASTER_INFO);
+									Util.showInfoMsg("CalendarGroupScreen", "Appointment saved successfully.");
 								} else {
-									CurrentState.getToaster().addItem("Scheduler",
-											"Failed to save appointment.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("CalendarGroupScreen", "Failed to save appointment.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						CurrentState.getToaster().addItem("Scheduler",
-								"Failed to save appointment.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("CalendarGroupScreen", "Failed to save appointment.");
 					}
 				} else {
 					// GWT-RPC

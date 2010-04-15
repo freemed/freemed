@@ -68,6 +68,9 @@ execSql( "ALTER TABLE physician CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL
 execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
+printHeader( "Fix potentially differing table column names" );
+execSql( "ALTER TABLE pharmacy CHANGE COLUMN phstpr phstate CHAR(3);" );
+
 printHeader( "Fix eventual patient table issue" );
 execSql("ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;");
 execSql("ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;");

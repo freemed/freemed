@@ -53,6 +53,7 @@ public class UnreadDocuments extends ScreenInterface {
 
 	protected Integer currentId = new Integer(0);
 
+	public final static String moduleName = "UnfiledDocuments";
 
 	protected HashMap<String, String>[] store = null;
 
@@ -75,6 +76,7 @@ public class UnreadDocuments extends ScreenInterface {
 	}
 	
 	public UnreadDocuments() {
+		super(moduleName);
 		final HorizontalPanel mainHorizontalPanel = new HorizontalPanel();
 		initWidget(mainHorizontalPanel);
 		mainHorizontalPanel.setSize("100%", "100%");
@@ -108,7 +110,8 @@ public class UnreadDocuments extends ScreenInterface {
 	
 		// Last thing is to initialize, otherwise we're going to get some
 		// NullPointerException errors
-		loadData();
+		if(canRead)
+			loadData();
 	}
 
 

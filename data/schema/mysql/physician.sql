@@ -23,54 +23,56 @@
 SOURCE data/schema/mysql/practice.sql
 
 CREATE TABLE IF NOT EXISTS `physician` (
-	phylname		VARCHAR (52) NOT NULL,
-	phyfname		VARCHAR (50) NOT NULL,
-	phymname		VARCHAR (50) NOT NULL,
-	phytitle		VARCHAR (10),
-	phypractice		INT UNSIGNED NOT NULL DEFAULT 0,
-	phypracname		VARCHAR (80),
-	phypracein		VARCHAR (16),
-	phyaddr1a		VARCHAR (30),
-	phyaddr2a		VARCHAR (30),
-	phycitya		VARCHAR (20),
-	phystatea		VARCHAR (20),
-	phyzipa			CHAR (9),
-	phyphonea		VARCHAR (16),
-	phyfaxa			VARCHAR (16),
-	phyaddr1b		VARCHAR (30),
-	phyaddr2b		VARCHAR (30),
-	phycityb		VARCHAR (20),
-	phystateb		VARCHAR (20),
-	phyzipb			CHAR (9),
-	phyphoneb		VARCHAR (16),
-	phyfaxb			VARCHAR (16),
-	phyemail		VARCHAR (50),
-	phycellular		VARCHAR (16),
-	phypager		VARCHAR (16),
-	phyupin			VARCHAR (15),
-	physsn			CHAR (9),
-	phydegrees		TEXT,
-	physpecialties		TEXT,
-	phyid1			CHAR (10),
-	phystatus		INT UNSIGNED,
-	phyref			ENUM ( 'yes', 'no' ) NOT NULL DEFAULT 'no',
-	phyrefcount		INT UNSIGNED,
-	phyrefamt		REAL DEFAULT 0.00,
-	phyrefcoll		REAL DEFAULT 0.00,
-	phychargemap		TEXT,
-	phyidmap		TEXT,
-	phygrpprac		INT UNSIGNED,
-	phyanesth		INT UNSIGNED NOT NULL DEFAULT 0,
-	phyhl7id		VARCHAR (16) DEFAULT '',
-	phydea			VARCHAR (16) NOT NULL DEFAULT '',
-	phyclia			VARCHAR (32) NOT NULL DEFAULT '',
-	phynpi			VARCHAR (32) NOT NULL DEFAULT '',
+	  phylname		VARCHAR (52) NOT NULL
+	, phyfname		VARCHAR (50) NOT NULL
+	, phymname		VARCHAR (50) NOT NULL
+	, phytitle		VARCHAR (10)
+	, phypractice		INT UNSIGNED NOT NULL DEFAULT 0
+	, phypracname		VARCHAR (80)
+	, phypracein		VARCHAR (16)
+	, phyaddr1a		VARCHAR (30)
+	, phyaddr2a		VARCHAR (30)
+	, phycitya		VARCHAR (20)
+	, phystatea		VARCHAR (20)
+	, phyzipa		CHAR (9)
+	, phyphonea		VARCHAR (16)
+	, phyfaxa		VARCHAR (16)
+	, phyaddr1b		VARCHAR (30)
+	, phyaddr2b		VARCHAR (30)
+	, phycityb		VARCHAR (20)
+	, phystateb		VARCHAR (20)
+	, phyzipb		CHAR (9)
+	, phyphoneb		VARCHAR (16)
+	, phyfaxb		VARCHAR (16)
+	, phyemail		VARCHAR (50)
+	, phycellular		VARCHAR (16)
+	, phypager		VARCHAR (16)
+	, phyupin		VARCHAR (15)
+	, physsn		CHAR (9) NOT NULL DEFAULT ''
+	, phydegrees		TEXT
+	, physpecialties	TEXT
+	, phyid1		CHAR (10)
+	, phystatus		INT UNSIGNED
+	, phyref		ENUM ( 'yes', 'no' ) NOT NULL DEFAULT 'no'
+	, phyrefcount		INT UNSIGNED
+	, phyrefamt		REAL DEFAULT 0.00
+	, phyrefcoll		REAL DEFAULT 0.00
+	, phychargemap		TEXT
+	, phyidmap		TEXT
+	, phygrpprac		INT UNSIGNED
+	, phyanesth		INT UNSIGNED NOT NULL DEFAULT 0
+	, phyhl7id		VARCHAR (16) DEFAULT ''
+	, phydea		VARCHAR (16) NOT NULL DEFAULT ''
+	, phyclia		VARCHAR (32) NOT NULL DEFAULT ''
+	, phynpi		VARCHAR (32) NOT NULL DEFAULT ''
 	
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 	, PRIMARY KEY		( id )
 	, KEY			( phylname, phyfname, phymname )
+	, KEY			( physsn )
+	, KEY			( phynpi )
 	, FOREIGN KEY		( phypractice ) REFERENCES practice.id
 );
 

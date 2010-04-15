@@ -50,6 +50,7 @@ class EMRModule extends BaseModule {
 	public $order_fields;
 	public $form_vars;
 	public $table_name;
+	public $date_variables = NULL;
 
 	// Variable: date_field
 	//
@@ -333,14 +334,15 @@ class EMRModule extends BaseModule {
 	//	<add_post>
 	// 
 	public function add ( $data ) {
-		freemed::acl_enforce( 'emr', 'entry' );
+		freemed::acl_enforce( 'emr', 'write' );
 
 		$ourdata = $this->prepare( (array) $data );
 		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$query = $GLOBALS['sql']->insert_query (
 			$this->table_name,
-			$this->variables
+			$this->variables,
+			$this->date_variables
 		);
 		$result = $GLOBALS['sql']->query ( $query );
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
@@ -419,7 +421,8 @@ class EMRModule extends BaseModule {
 				$this->variables,
 				array (
 					"id" => $data['id']
-				)
+				),
+				$this->date_variables
 			)
 		);
 		$this->mod_post( &$ourdata );

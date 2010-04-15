@@ -169,6 +169,5 @@ public class FreemedInterface implements EntryPoint {
 			}
 			RootPanel.setVisible(RootPanel.get("rootPanel").getElement(), true);
 		}
-		Util.setFacilityInSession(loginDialog.getSelectedFacilityName(),loginDialog.getSelectedFacilityValue());
 	}
 }

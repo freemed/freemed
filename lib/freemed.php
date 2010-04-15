@@ -94,7 +94,7 @@ include_once ( dirname(__FILE__)."/module.php" );
 
   // ****************** INITIALIZE SQL CONNECTION ******************
 
-define ('DB_ENGINE', 'mysql');
+define ('DB_ENGINE', 'mysqli');
 
 //----- Create SQL database object
 if (!defined('SKIP_SQL_INIT')) {

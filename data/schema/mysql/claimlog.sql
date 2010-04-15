@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS `claimlog` (
 	claction		VARCHAR (50),
 	clcomment		TEXT,
 	clformat		VARCHAR (32) DEFAULT '',
-	cltarget		VARCHAR (32) DEFAULT '',
+	cltarget		VARCHAR (128) DEFAULT '',
+	cltargetopt		VARCHAR (128) DEFAULT '',
 	clbillkey		INT UNSIGNED NOT NULL,
 	id			SERIAL,
 
@@ -36,4 +37,7 @@ CREATE TABLE IF NOT EXISTS `claimlog` (
 
 	KEY			( clprocedure, clpayrec )
 );
+
+ALTER IGNORE TABLE claimlog CHANGE COLUMN cltarget cltarget VARCHAR (128) DEFAULT '';
+ALTER IGNORE TABLE claimlog ADD COLUMN cltargetopt VARCHAR (128) DEFAULT '' AFTER cltarget;
 

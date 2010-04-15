@@ -327,10 +327,12 @@ class gacl {
 
 			$order_by = array();
 
-			$query = '
+						$query = '
 					SELECT		a.id,a.allow,a.return_value
 					FROM		'. $this->_db_table_prefix .'acl a
-					LEFT JOIN 	'. $this->_db_table_prefix .'aco_map ac ON ac.acl_id=a.id';
+					LEFT JOIN 	'. $this->_db_table_prefix .'aco_map ac ON ac.acl_id=a.id
+					LEFT JOIN 	'. $this->_db_table_prefix .'aco_map_allowed aca ON aca.aro_value ='.$this->db->quote($aro_value).' AND aca.section_value='. $this->db->quote($aco_section_value) .' AND aca.value='. $this->db->quote($aco_value) .'
+					LEFT JOIN 	'. $this->_db_table_prefix .'aco_map_blocked acb ON acb.aro_value ='.$this->db->quote($aro_value).' AND acb.section_value='. $this->db->quote($aco_section_value) .' AND acb.value='. $this->db->quote($aco_value) ;
 
 			if ($aro_section_value != $this->_group_switch) {
 				$query .= '
@@ -368,7 +370,9 @@ class gacl {
 			//AND	ac.acl_id=a.id
 			$query .= '
 					WHERE		a.enabled=1
-						AND		(ac.section_value='. $this->db->quote($aco_section_value) .' AND ac.value='. $this->db->quote($aco_value) .')';
+						AND		(ac.section_value='. $this->db->quote($aco_section_value) .' AND ac.value='. $this->db->quote($aco_value) .'
+						AND		acb.section_value IS NULL
+						OR		aca.section_value IS NOT NULL) ';
 
 			// if we are querying an aro group
 			if ($aro_section_value == $this->_group_switch) {

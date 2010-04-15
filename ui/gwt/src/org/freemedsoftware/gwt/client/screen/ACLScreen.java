@@ -30,14 +30,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.BlockScreenWidget;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -50,11 +51,10 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -65,17 +65,25 @@ import com.google.gwt.user.client.ui.Widget;
 public class ACLScreen extends ScreenInterface implements
 		ClickHandler {
 
+	public final static String moduleName = "acl";
+
 	protected CustomTable groupsTable = new CustomTable();
-	protected  FlexTable groupAddTable; 
+	protected  CustomTable groupAddTable; 
 	protected Integer groupId = null;
 	
 	protected TextBox groupName;
 
-	protected Button addGroupButton, clearButton, deleteGroupButton;
+	protected CustomButton addGroupButton, clearButton, deleteGroupButton,copyButton;
 
 	protected String className = "ACLScreen";
 
-	protected HashMap<CheckBox,String> aclPermissionsMap=new HashMap<CheckBox,String>();
+	protected HashMap<String,CheckBox> aclPermissionsMap=new HashMap<String,CheckBox>();
+	
+	protected BlockScreenWidget blockScreenWidget = null;
+	
+	protected VerticalPanel aclContainerVPanel = null;
+	
+	protected TabPanel tabPanel = null; 
 	
 	private static List<ACLScreen> aclScreenList=null;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
@@ -96,53 +104,89 @@ public class ACLScreen extends ScreenInterface implements
 	}
 	
 	public ACLScreen() {
+		super(moduleName);
 		
-		final boolean canAddGroup =  CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.UTILITIES_CATEGORY, AppConstants.ACL);
-		
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		initWidget(verticalPanel);
+		aclContainerVPanel = new VerticalPanel();
+		initWidget(aclContainerVPanel);
 
-		final TabPanel tabPanel = new TabPanel();
-		verticalPanel.add(tabPanel);
+		blockScreenWidget = new BlockScreenWidget("Please wait while modules are being populated....");
+		aclContainerVPanel.add(blockScreenWidget);
+		tabPanel = new TabPanel();
+		aclContainerVPanel.add(tabPanel);
 
 		// Panel #1
-		if(canAddGroup){
+		if(canWrite){
 			VerticalPanel groupAddPanel = new VerticalPanel();
-			groupAddTable = new FlexTable();
-			groupAddPanel.add(groupAddTable);
 			tabPanel.add(groupAddPanel, "Add Group");
 			tabPanel.selectTab(0);
-			final Label groupNameLabel = new Label("Group Name");
-			groupAddTable.setWidget(0, 0, groupNameLabel);
-	
-			groupName = new TextBox();
-			groupAddTable.setWidget(0, 1, groupName);
-			groupAddTable.getFlexCellFormatter().setColSpan(0, 1, 2);
-			groupName.setWidth("10em");
-	
-			final Label selectPermissionsLabel = new Label("Select Permissions");
-			selectPermissionsLabel.setStyleName("label");
-			groupAddTable.setWidget(1, 0, selectPermissionsLabel);
-	
 			
-			HorizontalPanel buttonsPanel = new HorizontalPanel();
-			addGroupButton = new Button();
-			addGroupButton.setText("Add Group");
+			HorizontalPanel groupNameHPanel = new HorizontalPanel();
+			groupAddPanel.add(groupNameHPanel);
+			groupNameHPanel.setSpacing(5);
+			groupNameHPanel.add(new Label("Group Name"));
+			
+			groupName = new TextBox();
+			groupName.setWidth("10em");
+			groupNameHPanel.add(groupName);
+			
+
+			groupAddTable = new CustomTable();
+			groupAddTable.removeTableStyle();
+			groupAddPanel.add(groupAddTable);
+			
+			Label moduleHeading = new Label("Modules");
+			moduleHeading.setStyleName("label");
+			groupAddTable.getFlexTable().setWidget(0, 0, moduleHeading);
+			HorizontalPanel headerButtonPanels = new HorizontalPanel();
+			headerButtonPanels.setWidth("100%");
+			groupAddTable.getFlexTable().setWidget(0, 1, headerButtonPanels);
+			CustomButton selectAllBtn = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+			selectAllBtn.setWidth("100%");
+			selectAllBtn.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					Iterator<String> iterator = aclPermissionsMap.keySet().iterator();
+					while(iterator.hasNext()){
+						aclPermissionsMap.get(iterator.next()).setValue(true);
+					}
+				}
+			});
+			headerButtonPanels.add(selectAllBtn);
+			CustomButton selectNoneBtn = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
+			selectNoneBtn.setWidth("100%");
+			selectNoneBtn.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					Iterator<String> iterator = aclPermissionsMap.keySet().iterator();
+					while(iterator.hasNext()){
+						aclPermissionsMap.get(iterator.next()).setValue(false);
+					}
+				}
+			});
+			headerButtonPanels.add(selectNoneBtn);
+			
+			addGroupButton = new CustomButton("Add Group",AppConstants.ICON_ADD);
+			addGroupButton.setWidth("100%");
 			addGroupButton.addClickHandler(this);
-			buttonsPanel.add(addGroupButton);
-	
-			deleteGroupButton = new Button();
-			deleteGroupButton.setText("Delete Group");
+			headerButtonPanels.add(addGroupButton);
+
+			copyButton = new CustomButton("Copy",AppConstants.ICON_ADD);
+			copyButton .setWidth("100%");
+			copyButton.addClickHandler(this);
+			copyButton.setVisible(false);
+			headerButtonPanels.add(copyButton);
+			
+			deleteGroupButton = new CustomButton("Delete Group",AppConstants.ICON_DELETE);
+			deleteGroupButton .setWidth("100%");
 			deleteGroupButton.addClickHandler(this);
 			deleteGroupButton.setVisible(false);
-			buttonsPanel.add(deleteGroupButton);
+			headerButtonPanels.add(deleteGroupButton);
 			
-			clearButton = new Button();
-			clearButton.setText("Clear");
+			clearButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+			clearButton.setWidth("100%");
 			clearButton.addClickHandler(this);
-			buttonsPanel.add(clearButton);
+			headerButtonPanels.add(clearButton);
 			
-			groupAddPanel.add(buttonsPanel);
 			getACLPermissions();
 		}
 		// Panel #2
@@ -161,7 +205,7 @@ public class ACLScreen extends ScreenInterface implements
 		groupsTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				if(canAddGroup){
+				if(canWrite){
 					clearForm();
 					groupId = Integer.parseInt(data.get("id"));
 					groupName.setText(data.get("groupname"));
@@ -175,13 +219,37 @@ public class ACLScreen extends ScreenInterface implements
 		retrieveAllGroups();
 		Util.setFocus(groupName);
 	}
-
+	
+	public HashMap<String, List> populateAllPermissions(){
+		HashMap<String, List> allPermiHashMap = new HashMap<String, List>();
+		
+		final Iterator<String> aclPermissionsMapItr = aclPermissionsMap.keySet().iterator();
+		
+		int permissionAddedCounter=0;
+		while(aclPermissionsMapItr.hasNext()){
+			String sectionWithValue = aclPermissionsMapItr.next();
+			CheckBox checkBox = aclPermissionsMap.get(sectionWithValue);
+			if(checkBox.getValue()){
+				String section = sectionWithValue.substring(0, sectionWithValue.indexOf(":"));
+				List sectionValues=allPermiHashMap.get(section);
+				if(sectionValues==null)
+					sectionValues = new ArrayList();
+				sectionValues.add(checkBox.getText());
+				allPermiHashMap.put(section, sectionValues);
+				permissionAddedCounter++;
+			}
+		}
+		
+		return allPermiHashMap;
+	}
+	
 	public void onClick(ClickEvent evt) {
 		Widget w = (Widget) evt.getSource();
 		if (w == addGroupButton) {
 
 			if (checkInput() == true) {
-				
+				blockScreenWidget.setText("Please wait while permissions are being applied......");
+				aclContainerVPanel.add(blockScreenWidget);
 				HashMap<String, String> m=new HashMap<String, String>();
 				m.put("groupName",groupName.getText() );
 				String requestURL="org.freemedsoftware.module.ACL.AddGroupWithPermissions";
@@ -191,22 +259,30 @@ public class ACLScreen extends ScreenInterface implements
 					m.put("groupId", groupId.toString());
 				}
 				
-				
 				final HashMap<String, List> permissions = new HashMap<String, List>();
-				Iterator<CheckBox> itr = aclPermissionsMap.keySet().iterator();
+				final HashMap<String, List> allPermiHashMap = populateAllPermissions();
 				
-				while(itr.hasNext()){
-					CheckBox checkBox = itr.next();
-					if(checkBox.getValue()){
-						String section = aclPermissionsMap.get(checkBox);
-						List sectionValues=permissions.get(section);
-						if(sectionValues==null)
-							sectionValues = new ArrayList();
-						sectionValues.add(checkBox.getText());
-						permissions.put(section, sectionValues);
+				final Iterator<String> aclPermissionsMapItr = allPermiHashMap.keySet().iterator();
+				
+				int permissionAddedCounter=0;
+				while(aclPermissionsMapItr.hasNext()){
+					String section = aclPermissionsMapItr.next();
+					permissions.put(section, allPermiHashMap.get(section));
+					permissionAddedCounter++;
+					if(permissionAddedCounter==8){
+						if(allPermiHashMap.get("admin")!=null)
+							permissions.put("admin", allPermiHashMap.get("admin"));
+						if(allPermiHashMap.get("acl")!=null)
+							permissions.put("acl", allPermiHashMap.get("acl"));
+						break;
 					}
 				}
 				
+				if(permissions.size()==0){
+					Window.alert("Please Select at least one module!");
+					aclContainerVPanel.remove(blockScreenWidget);
+					return;
+				}
 
 				if (Util.getProgramMode() == ProgramMode.STUBBED) {
 					// Do nothing.
@@ -222,9 +298,7 @@ public class ACLScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								CurrentState.getToaster().addItem(className,
-										"Failed to add Group.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("Bottle Transfer", "Failed to add Group.");
 							}
 
 							public void onResponseReceived(Request request,
@@ -235,37 +309,37 @@ public class ACLScreen extends ScreenInterface implements
 													.parse(response.getText()),
 													"Integer");
 									if (r != null) {
-										CurrentState.getToaster().addItem(
-												className,
-												"Successfully Added Group.",
-												Toaster.TOASTER_INFO);
-										retrieveAllGroups();
-										clearForm();
+										if(aclPermissionsMapItr.hasNext())
+											sendDataInChucks(aclPermissionsMapItr,allPermiHashMap,r);//Sending data to server in chunks
+										else{
+											aclContainerVPanel.remove(blockScreenWidget);
+											retrieveAllGroups();
+											clearForm();
+											Util.showInfoMsg(className, "Permissions successfully applied.");
+										}
 									}else{
 										Boolean b = (Boolean) JsonUtil
 										.shoehornJson(JSONParser
 												.parse(response.getText()),
 												"Boolean");
 										if(b){
-											CurrentState.getToaster().addItem(
-													className,
-													"Successfully Modified Group.",
-													Toaster.TOASTER_INFO);
-											retrieveAllGroups();
-											clearForm();
+											if(aclPermissionsMapItr.hasNext())
+												sendDataInChucks(aclPermissionsMapItr,allPermiHashMap,groupId);//Sending data to server in chunks
+											else{
+												aclContainerVPanel.remove(blockScreenWidget);
+												retrieveAllGroups();
+												clearForm();
+												Util.showInfoMsg(className, "Permissions successfully applied.");
+											}
 										}
 									}
 								} else {
-									CurrentState.getToaster().addItem(
-											className, "Failed to add Group.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("Bottle Transfer", "Failed to Apply Permissions.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						CurrentState.getToaster().addItem(className,
-								"Failed to send message.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("Bottle Transfer", "Failed to apply Permissions.");
 					}
 				} else {
 					// TODO: Create GWT-RPC stuff here
@@ -289,9 +363,7 @@ public class ACLScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								CurrentState.getToaster().addItem(className,
-										"Failed to delete Group.",
-										Toaster.TOASTER_ERROR);
+								Util.showErrorMsg("Bottle Transfer", "Failed to delete Group.");
 							}
 
 							public void onResponseReceived(Request request,
@@ -302,24 +374,17 @@ public class ACLScreen extends ScreenInterface implements
 												.parse(response.getText()),
 												"Boolean");
 										if(flag){
-											CurrentState.getToaster().addItem(
-													className,
-													"Successfully deleted Group.",
-													Toaster.TOASTER_INFO);
+											Util.showInfoMsg(className, "Successfully deleted Group.");
 											retrieveAllGroups();
 											clearForm();
 										}
 								} else {
-									CurrentState.getToaster().addItem(
-											className, "Failed to delete Group.",
-											Toaster.TOASTER_ERROR);
+									Util.showErrorMsg("Bottle Transfer", "Failed to add Group.");
 								}
 							}
 						});
 					} catch (RequestException e) {
-						CurrentState.getToaster().addItem(className,
-								"Failed to delete Group.",
-								Toaster.TOASTER_ERROR);
+						Util.showErrorMsg("Bottle Transfer", "Failed to add Group.");
 					}
 				} else {
 					// TODO: Create GWT-RPC stuff here
@@ -328,9 +393,46 @@ public class ACLScreen extends ScreenInterface implements
 			}
 		} else if (w == clearButton) {
 			clearForm();
+		} else if (w == copyButton) {
+			copyGroup();
 		}
 	}
 
+	private void sendDataInChucks(final Iterator<String> aclPermissionsMapItr,final HashMap<String, List> allPermissionHashMap,final int groupId){
+		final HashMap<String, List> permissions = new HashMap<String, List>();
+		if(aclPermissionsMapItr.hasNext()){
+			int permissionAddedCounter=0;
+			while(aclPermissionsMapItr.hasNext()){
+					String section = aclPermissionsMapItr.next();
+					permissions.put(section, allPermissionHashMap.get(section));
+					permissionAddedCounter++;
+					if(permissionAddedCounter==10 || !aclPermissionsMapItr.hasNext()){
+						permissionAddedCounter=0;
+						List params = new ArrayList();
+						params.add(groupId);
+						params.add(permissions);
+						Util.callModuleMethod("ACL", "AddMorePermissions", params, new CustomRequestCallback() {
+							@Override
+							public void onError() {
+							}
+							@Override
+							public void jsonifiedData(Object data) {
+								sendDataInChucks(aclPermissionsMapItr, allPermissionHashMap, groupId);
+								if(!aclPermissionsMapItr.hasNext()){
+									retrieveAllGroups();
+									clearForm();
+									Util.showInfoMsg(className, "Permissions successfully applied.");
+									aclContainerVPanel.remove(blockScreenWidget);
+								}
+							}
+						}, "Boolean");
+						permissions.clear();
+						break;
+					}
+			}
+		}
+	}
+	
 	public Boolean checkInput() {
 		String base = "Please check the following fields:" + " ";
 		String[] s = {};
@@ -359,14 +461,25 @@ public class ACLScreen extends ScreenInterface implements
 		addGroupButton.setText("Add Group");
 		groupId=null;
 		deleteGroupButton.setVisible(false);
-		Iterator<CheckBox> itr = aclPermissionsMap.keySet().iterator();
+		copyButton.setVisible(false);
+		Iterator<String> itr = aclPermissionsMap.keySet().iterator();
 		while(itr.hasNext()){
-			CheckBox key = itr.next();
-			key.setValue(false);
+			String sectionWithValue = itr.next();
+			aclPermissionsMap.get(sectionWithValue).setValue(false);
 		}
 		groupName.setFocus(true);
 	}
 
+	public void copyGroup(){
+		groupName.setText("");
+		addGroupButton.setText("Add Group");
+		groupId=null;
+		deleteGroupButton.setVisible(false);
+		copyButton.setVisible(false);
+		groupName.setFocus(true);
+	}
+	
+	
 	public void retrieveAllGroups() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Do nothing
@@ -430,12 +543,13 @@ public class ACLScreen extends ScreenInterface implements
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (response.getStatusCode() == 200) {
-							HashMap<String,Object> data = (HashMap<String,Object>) JsonUtil
+							HashMap<String,String[]> data = (HashMap<String,String[]>) JsonUtil
 									.shoehornJson(JSONParser.parse(response
 											.getText()),
-											"HashMap<String,Object>");
+											"HashMap<String,String[]>");
 							if (data != null) {
 								addACLGroupPermissions(data);
+								blockScreenWidget.removeFromParent();
 							}
 						}
 					}
@@ -471,21 +585,24 @@ public class ACLScreen extends ScreenInterface implements
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (response.getStatusCode() == 200) {
-							HashMap<String,HashMap<String,String>> data = (HashMap<String,HashMap<String,String>>) JsonUtil
+							HashMap<String,String[]> data = (HashMap<String,String[]>) JsonUtil
 									.shoehornJson(JSONParser.parse(response
 											.getText()),
-											"HashMap<String,HashMap<String,String>>");
+											"HashMap<String,String[]>");
 							if (data != null) {
-								Iterator<CheckBox> iterator = aclPermissionsMap.keySet().iterator();
+								Iterator<String> iterator = data.keySet().iterator();
 								while(iterator.hasNext()){
-									CheckBox keyCheckBox = iterator.next();
-									String section = aclPermissionsMap.get(keyCheckBox);
-									if(data.get(section)!=null && data.get(section).get(keyCheckBox.getText())!=null){
-										keyCheckBox.setValue(true);
+									final String section = iterator.next();
+									String[] values = data.get(section);
+									for(int i=0;i<values.length;i++){
+											final String value=values[i];
+											if(aclPermissionsMap.get(section+":"+value)!=null)
+												aclPermissionsMap.get(section+":"+value).setValue(true);
 									}
 								}
 								addGroupButton.setText("Modify Group");
 								deleteGroupButton.setVisible(true);
+								copyButton.setVisible(true);
 							}
 						}
 					}
@@ -500,28 +617,51 @@ public class ACLScreen extends ScreenInterface implements
 
 	}
 	
-	public void addACLGroupPermissions(final HashMap<String,Object> data){
+	public void addACLGroupPermissions(final HashMap<String,String[]> data){
 
-		int row=groupAddTable.getRowCount();
+		int row=groupAddTable.getFlexTable().getRowCount();
 		Iterator<String> iterator = data.keySet().iterator();
 		while(iterator.hasNext()){
 			final String section = iterator.next();
-			String[] values = (String[]) JsonUtil
-			.shoehornJson(JSONParser.parse(data.get(section).toString()),
-					"String[]");
+			final String[] values = data.get(section);
 			HorizontalPanel temPanel=new HorizontalPanel();
+			temPanel.setWidth("100%");
 			for(int i=0;i<values.length;i++){
 					final String value=values[i];
 					final CheckBox checkBox = new CheckBox(value);
 					temPanel.add(checkBox );
-					aclPermissionsMap.put(checkBox, section);
+					aclPermissionsMap.put(section+":"+value,checkBox);
 			}
+			
+			CustomButton clearSubLink = new CustomButton("None",AppConstants.ICON_SELECT_NONE);
+			clearSubLink.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					for(int i=0;i<values.length;i++){
+						final String value=values[i];
+						aclPermissionsMap.get(section+":"+value).setValue(false);
+				}
+				}
+			});
+			temPanel.add(clearSubLink);
+			
+			CustomButton selectAllSubLink = new CustomButton("All",AppConstants.ICON_SELECT_ALL);
+			selectAllSubLink.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent arg0) {
+					for(int i=0;i<values.length;i++){
+						final String value=values[i];
+						aclPermissionsMap.get(section+":"+value).setValue(true);
+				}
+				}
+			});
+			temPanel.add(selectAllSubLink);
 			
 			Label label = new Label(section);
 			label.setStyleName("label");
-			groupAddTable.setWidget(row, 0, label);
+			groupAddTable.getFlexTable().setWidget(row, 0, label);
 			
-			groupAddTable.setWidget(row, 1, temPanel);
+			groupAddTable.getFlexTable().setWidget(row, 1, temPanel);
 			row++;
 		}
 	}

@@ -25,6 +25,9 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.screen.MessagingComposeScreen;
@@ -42,10 +45,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class MessageView extends WidgetInterface {
-
+	
+	public final static String moduleName = MessagingScreen.moduleName;
+	
 	protected Command onClose = null;
 
 	protected HTML text = new HTML("");
+	
+	protected Integer msgId;
 	
 	protected String msgSubject;
 	
@@ -76,8 +83,13 @@ public class MessageView extends WidgetInterface {
 	public void setMsgSubject(String msgSubject) {
 		this.msgSubject = msgSubject;
 	}
+	
+	public void setMessageId(Integer mid){
+		this.msgId=mid;
+	}
 
 	public MessageView() {
+		super(moduleName);
 		final SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
 		VerticalPanel verticalPanel = new VerticalPanel();
@@ -92,68 +104,123 @@ public class MessageView extends WidgetInterface {
 		// because it
 		// allows us, that the user can click on both to provoke the event
 		//
-		// Reply Button
+		
+		if(canWrite){
+			// Reply Button
+			final Image replyButton = new Image(
+					"resources/images/messaging.32x32.png");
+			final Label replyLabel = new Label("Reply");
+			VerticalPanel replyVerticalPanel = new VerticalPanel();
+			replyVerticalPanel.add(replyButton);
+			replyVerticalPanel.add(replyLabel);
+			replyVerticalPanel
+					.setStylePrimaryName("freemed-MessageView-verticalPanelButton");
+			final FocusPanel replyWrapper = new FocusPanel();
+			replyWrapper.add(replyVerticalPanel);
+			replyWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
+	
+			replyWrapper.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
+					messagingComposeScreen.setSubject("RE: "+msgSubject);
+					messagingComposeScreen.setTo(msgFromId);
+					messagingComposeScreen.setPatient(msgPatientId);
+					messagingComposeScreen.setBodyText(createMessageBody());
+					messagingComposeScreen.setParentScreen(getMessagingScreen());
+					Util.spawnTab("Messages:RE", messagingComposeScreen);
+					if (onClose != null) {
+						onClose.execute();
+					}
+				}
+			});
+			horizontalPanel.add(replyWrapper);
+	
+			// Forward Button
+	
+			final Image forwardButton = new Image(
+					"resources/images/messaging.32x32.png");
+			final Label forwardLabel = new Label("Forward");
+			VerticalPanel forwardVerticalPanel = new VerticalPanel();
+			forwardVerticalPanel.add(forwardButton);
+			forwardVerticalPanel.add(forwardLabel);
+			forwardVerticalPanel
+					.setStylePrimaryName("freemed-MessageView-verticalPanelButton");
+			final FocusPanel forwardWrapper = new FocusPanel();
+			forwardWrapper.add(forwardVerticalPanel);
+			forwardWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
+	
+			forwardWrapper.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					// TODO: create that
+	//				Window.alert("Forward");
+					MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
+					messagingComposeScreen.setSubject("FW: "+msgSubject);
+					messagingComposeScreen.setBodyText(createMessageBody());
+					messagingComposeScreen.setPatient(msgPatientId);
+					messagingComposeScreen.setParentScreen(getMessagingScreen());
+					Util.spawnTab("Messages:FW", messagingComposeScreen);
+					if (onClose != null) {
+						onClose.execute();
+					}
+				}
+			});
+			horizontalPanel.add(forwardWrapper);
+	
+			// New Button
+	
+			final Image newMsgButton = new Image(
+					"resources/images/messaging.32x32.png");
+			final Label newMsgLabel = new Label("New");
+			VerticalPanel newMsgVerticalPanel = new VerticalPanel();
+			newMsgVerticalPanel.add(newMsgButton);
+			newMsgVerticalPanel.add(newMsgLabel);
+			newMsgVerticalPanel
+					.setStylePrimaryName("freemed-MessageView-verticalPanelButton");
+			final FocusPanel newMsgWrapper = new FocusPanel();
+			newMsgWrapper.add(newMsgVerticalPanel);
+			newMsgWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
+	
+			newMsgWrapper.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent evt) {
+					// TODO: create that
+	//				Window.alert("Forward");
+					MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
+					messagingComposeScreen.setParentScreen(getMessagingScreen());
+					Util.spawnTab("Compose Message", messagingComposeScreen);
+					if (onClose != null) {
+						onClose.execute();
+					}
+				}
+			});
+			horizontalPanel.add(newMsgWrapper);
+		
+		}
+		// Print Button
 
-		final Image replyButton = new Image(
-				"resources/images/messaging.32x32.png");
-		final Label replyLabel = new Label("Reply");
-		VerticalPanel replyVerticalPanel = new VerticalPanel();
-		replyVerticalPanel.add(replyButton);
-		replyVerticalPanel.add(replyLabel);
-		replyVerticalPanel
+		final Image printButton = new Image(
+				"resources/images/ico.printer.32x32.png");
+		final Label printLabel = new Label("Print");
+		VerticalPanel printVerticalPanel = new VerticalPanel();
+		printVerticalPanel.add(printButton);
+		printVerticalPanel.add(printLabel);
+		printVerticalPanel
 				.setStylePrimaryName("freemed-MessageView-verticalPanelButton");
-		final FocusPanel replyWrapper = new FocusPanel();
-		replyWrapper.add(replyVerticalPanel);
-		replyWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
+		final FocusPanel printWrapper = new FocusPanel();
+		printWrapper.add(printVerticalPanel);
+		printWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
 
-		replyWrapper.addClickHandler(new ClickHandler() {
+		printWrapper.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
-				MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
-				messagingComposeScreen.setSubject("RE: "+msgSubject);
-				messagingComposeScreen.setTo(msgFromId);
-				messagingComposeScreen.setPatient(msgPatientId);
-				messagingComposeScreen.setBodyText(createMessageBody());
-				messagingComposeScreen.setParentScreen(getMessagingScreen());
-				Util.spawnTab("Messages", messagingComposeScreen);
-				if (onClose != null) {
-					onClose.execute();
-				}
+				List<String> reportParams = new ArrayList<String>();
+				reportParams.add(""+msgId);
+				Util.generateReportToPrinter("Email Message", "pdf", reportParams);
 			}
 		});
-		horizontalPanel.add(replyWrapper);
-
-		// Forward Button
-
-		final Image forwardButton = new Image(
-				"resources/images/messaging.32x32.png");
-		final Label forwardLabel = new Label("Forward");
-		VerticalPanel forwardVerticalPanel = new VerticalPanel();
-		forwardVerticalPanel.add(forwardButton);
-		forwardVerticalPanel.add(forwardLabel);
-		forwardVerticalPanel
-				.setStylePrimaryName("freemed-MessageView-verticalPanelButton");
-		final FocusPanel forwardWrapper = new FocusPanel();
-		forwardWrapper.add(forwardVerticalPanel);
-		forwardWrapper.setStylePrimaryName("freemed-MessageView-buttonWrapper");
-
-		forwardWrapper.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				// TODO: create that
-//				Window.alert("Forward");
-				MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
-				messagingComposeScreen.setSubject("FW: "+msgSubject);
-				messagingComposeScreen.setBodyText(createMessageBody());
-				messagingComposeScreen.setPatient(msgPatientId);
-				messagingComposeScreen.setParentScreen(getMessagingScreen());
-				Util.spawnTab("Messages", messagingComposeScreen);
-				if (onClose != null) {
-					onClose.execute();
-				}
-			}
-		});
-		horizontalPanel.add(forwardWrapper);
+		horizontalPanel.add(printWrapper);
 		verticalPanel.add(text);
 		sPanel.add(verticalPanel);
 

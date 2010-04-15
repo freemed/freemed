@@ -93,28 +93,12 @@ DELIMITER ;
 #----- Define basic configuration values
 
 CALL config_Register (
-	'remitt_server',
-	'127.0.0.1',
-	'Remitt Server Hostname',
+	'remitt_url',
+	'http://localhost:8080/remitt/services/interface?wsdl',
+	'Remitt Service URL',
 	'REMITT Billing',
 	'Text',
-	'127.0.0.1'
-);
-CALL config_Register (
-	'remitt_port',
-	'7688',
-	'Remitt Server Port',
-	'REMITT Billing',
-	'Text',
-	'7688'
-);
-CALL config_Register (
-	'remitt_protocol',
-	'http',
-	'Remitt Server Protocol',
-	'REMITT Billing',
-	'Text',
-	'http'
+	'http://localhost:8080/remitt/services/interface?wsdl'
 );
 CALL config_Register (
 	'remitt_user',
@@ -201,6 +185,15 @@ CALL config_Register (
 	'UI',
 	'Select',
 	'tab,singlepage'
+);
+
+CALL config_Register (
+	'work_list',
+	'1',
+	'Work List',
+	'UI',
+	'YesNo',
+	''
 );
 
 CALL config_Register (

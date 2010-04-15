@@ -24,14 +24,12 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTextArea;
@@ -40,7 +38,6 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -151,14 +148,14 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final Button wSubmit = new Button("Submit");
+		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final Button wReset = new Button("Reset");
+		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {

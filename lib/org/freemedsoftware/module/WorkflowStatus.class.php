@@ -78,7 +78,7 @@ class WorkflowStatus extends SupportModule {
 	//	Array of hashes
 	//
 	public function StatusMapForDate( $date ) {
-		freemed::acl_enforce( 'scheduling', 'view' );
+		freemed::acl_enforce( 'scheduling', 'read' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$u = freemed::user_cache();
 		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $s->ImportDate( $date ) ) .", " . $GLOBALS['sql']->quote( $u->getManageConfig( 'workflow_status_age' ) + 0 ) . " )";

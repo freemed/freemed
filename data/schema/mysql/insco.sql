@@ -41,15 +41,20 @@ CREATE TABLE IF NOT EXISTS `insco` (
 	, inscoassign		INT UNSIGNED
 	, inscomod		TEXT
 	, inscoidmap		TEXT
-	, inscox12id		VARCHAR (32)
+	, inscox12id		VARCHAR (32) NOT NULL DEFAULT ''
 	, inscodefoutput	ENUM ( 'electronic', 'paper' ) DEFAULT 'electronic'
-	, inscodefformat	VARCHAR (50)
-	, inscodeftarget	VARCHAR (50)
-	, inscodeftargetopt	VARCHAR (50)
-	, inscodefformate	VARCHAR (50)
-	, inscodeftargete	VARCHAR (50)
-	, inscodeftargetopte	VARCHAR (50)
+	, inscodefformat	VARCHAR (50) DEFAULT 'cms1500'
+	, inscodeftarget	VARCHAR (120) DEFAULT 'org.remitt.plugin.transpo
+rt.StoreFilePdf'
+	, inscodeftargetopt	VARCHAR (50) DEFAULT ''
+	, inscodefformate	VARCHAR (50) DEFAULT '837p'
+	, inscodeftargete	VARCHAR (120) DEFAULT 'org.remitt.plugin.transport.StoreFile'
+	, inscodeftargetopte	VARCHAR (50) DEFAULT ''
 	, id			SERIAL
+
+	# Keys
+	, KEY ( insconame )
+	, KEY ( inscox12id )
 );
 
 DROP PROCEDURE IF EXISTS insco_Upgrade;

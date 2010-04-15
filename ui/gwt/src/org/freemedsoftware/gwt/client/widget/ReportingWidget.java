@@ -35,6 +35,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.screen.ReportingScreen;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -88,7 +89,7 @@ public class ReportingWidget extends Composite {
 	private ReportingWidget(){}
 	public ReportingWidget(String reportCategory) {
 		
-		final boolean canGenerate = CurrentState.isActionAllowed(AppConstants.WRITE, AppConstants.REPORTING_CATEGORY, AppConstants.REPORTING_ENGINE);
+		final boolean canGenerate = CurrentState.isActionAllowed(ReportingScreen.moduleName,AppConstants.WRITE);
 		
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
@@ -363,6 +364,27 @@ public class ReportingWidget extends Composite {
 												.toString());
 							}
 						});
+			} else if (type.compareToIgnoreCase("List") == 0) {
+				w = new CustomListBox();// getting module name from options
+				String[] items = options.split(";");
+				((CustomListBox) w).addItem("Select", "select");
+				for (int index = 0; index < items.length; index++) {
+					String[] item = items[index].split(":");
+					String text = item[0];
+					String value = item[1];
+					if (index == 0)
+						text = text.substring(1);
+					if (index == items.length - 1)
+						value = value.substring(0, value.length() - 1);
+					((CustomListBox) w).addItem(text, value);
+				}
+				((CustomListBox) w).addChangeHandler(new ChangeHandler() {
+					@Override
+					public void onChange(ChangeEvent event) {
+						reportParameters.put(i, ((CustomListBox) event
+								.getSource()).getStoredValue());
+					}
+				});
 			}
 			else {
 				// Default to text box

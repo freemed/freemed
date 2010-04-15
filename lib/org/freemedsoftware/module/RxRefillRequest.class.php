@@ -72,7 +72,7 @@ class RxRefillRequest extends EMRModule {
 	//	Array of hashes.
 	//
 	public function GetAll ( ) {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$query = "select a.stamp as stamp, c.username as user, 
           concat(b.ptlname, ' ', b.ptmname, ' ', b.ptfname) as patient, 
           a.provider, a.rxorig as rxorig, a.note as note,a.approved as approved, 

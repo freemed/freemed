@@ -25,12 +25,12 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.HashMap;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -43,12 +43,13 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class AllergyEntryScreen extends PatientScreenInterface {
+
+	public final static String moduleName = "Allergies";
 
 	protected HashMap<String, String> data = new HashMap<String, String>();
 	protected TextBox allergyTextBox = new TextBox();
@@ -57,7 +58,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 	protected final String className = "org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen";
 	
 	public AllergyEntryScreen() {
-
+		super(moduleName);
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 
@@ -85,9 +86,8 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		flexTable.getFlexCellFormatter().setColSpan(2, 1, 2);
 		severityTextBox.setWidth("100%");
 
-		final Button saveButton = new Button();
+		final CustomButton saveButton = new CustomButton("Save",AppConstants.ICON_ADD);
 		flexTable.setWidget(3, 1, saveButton);
-		saveButton.setText("Save");
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				// TODO add function to check input
@@ -102,9 +102,8 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 			}
 		});
 
-		final Button resetButton = new Button();
+		final CustomButton resetButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
 		flexTable.setWidget(3, 2, resetButton);
-		resetButton.setText("Reset");
 		resetButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				resetForm();
@@ -141,8 +140,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		data.put("severity", severityTextBox.getText());
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			CurrentState.getToaster().addItem(className, "Added Allergy.",
-					Toaster.TOASTER_INFO);
+			Util.showInfoMsg(className, "Allergy Added .");
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(data) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -153,9 +151,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						CurrentState.getToaster()
-								.addItem(className, "Failed to add Allergy.",
-										Toaster.TOASTER_ERROR);
+						Util.showErrorMsg(className, "Failed to add Allergy.");
 					}
 
 					public void onResponseReceived(Request request,
@@ -165,20 +161,16 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 									JSONParser.parse(response.getText()),
 									"Integer");
 							if (r != null) {
-								CurrentState.getToaster().addItem(className,
-										"Added Allergy.", Toaster.TOASTER_INFO);
+								Util.showInfoMsg(className, "Allergy added.");
 								patientScreen.getSummaryScreen().populateClinicalInformation();
 							}
 						} else {
-							CurrentState.getToaster().addItem(className,
-									"Failed to add Allergy",
-									Toaster.TOASTER_ERROR);
+							Util.showErrorMsg(className, "Failed to add Allergy.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				CurrentState.getToaster().addItem(className,
-						"Failed to add Allergy.", Toaster.TOASTER_ERROR);
+				Util.showErrorMsg(className, "Failed to add Allergy.");
 			}
 		} else {
 			// TODO: GWT-RPC Stuff

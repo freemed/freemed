@@ -59,7 +59,7 @@ class Reporting extends SupportModule {
 	//	* report_uuid
 	//
 	public function GetReports ( $locale = NULL, $rpt_cat = NULL ) {
-		freemed::acl_enforce( 'reporting', 'menu' );
+		freemed::acl_enforce( 'reporting', 'read' );
 		$query = "SELECT report_name, report_desc, report_uuid FROM reporting WHERE report_locale=". $GLOBALS['sql']->quote( $locale == NULL ? DEFAULT_LANGUAGE : $locale ). " " . ( $rpt_cat != NULL ? " AND report_category=".$GLOBALS['sql']->quote( $rpt_cat ) : "" ) . " ORDER BY report_name";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetReports
@@ -78,7 +78,7 @@ class Reporting extends SupportModule {
 	//	* report_uuid
 	//
 	public function GetReport ( $reportName ) {
-		freemed::acl_enforce( 'reporting', 'menu' );
+		freemed::acl_enforce( 'reporting', 'read' );
 		$query = "SELECT report_uuid FROM reporting WHERE report_name =". $GLOBALS['sql']->quote( $reportName);
 		$result = $GLOBALS['sql']->queryrow( $query );
 		return $result['report_uuid'];
@@ -99,7 +99,7 @@ class Reporting extends SupportModule {
 	//	Array of hashes
 	//
 	public function GetReportParameters ( $uuid, $flatten = true ) {
-		freemed::acl_enforce( 'reporting', 'generate' );
+		freemed::acl_enforce( 'reporting', 'write' );
 		$query = "SELECT * FROM reporting WHERE report_uuid=".$GLOBALS['sql']->quote( $uuid );
 		$r = $GLOBALS['sql']->queryRow( $query );
 		$return = array ();
@@ -154,8 +154,8 @@ class Reporting extends SupportModule {
 	//
 	//	Report
 	//
-	public function GenerateReport ( $uuid, $format, $param ) {
-		freemed::acl_enforce( 'reporting', 'generate' );
+	public function GenerateReport ( $uuid, $format, $param,$send_to_printer=null ) {
+		freemed::acl_enforce( 'reporting', 'write' );
 		
 		$report = $this->GetReportParameters( $uuid, false );
 		
@@ -181,6 +181,7 @@ class Reporting extends SupportModule {
 				
 				case 'BottleID':
 				case 'TestStatus':
+				case 'MessageID':
 				case 'EMRModule':
 				case 'SupportModule':
 				$pass[] = $param[$k]+0;
@@ -189,7 +190,11 @@ class Reporting extends SupportModule {
 				case 'User':
 				$pass[] = (int) freemed::user_cache()->user_number;
 				break;
-
+				
+				case 'Integer':
+				case 'int':
+				$pass[] = $param[$k]+0;
+				break;
 				
 				default:
 				$pass[] = $GLOBALS['sql']->quote( $param[$k] );
@@ -200,10 +205,10 @@ class Reporting extends SupportModule {
 		$query = "CALL ".$report['report_sp']." ( ". @join( ', ', $pass )." ); ";
 		
 		//print_r($result); die();
-
+		
 		// Handle graphing, or at least non-standard, reports
 		if ( $report['report_type'] != 'standard' ) {
-			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query, $pass ) );
+			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query, $pass,$send_to_printer ) );
 		}
 
 		switch ( strtolower( $format ) ) {
@@ -245,7 +250,7 @@ class Reporting extends SupportModule {
 			case 'pdf':
 			$pdf = CreateObject( 'org.freemedsoftware.core.FPDF_Report' );
 			$pdf->LoadData( $report['report_name'], $query );
-			$pdf->Export();
+ 		        $pdf->Export();
 			break; // pdf
 
 			case 'xml':
@@ -285,7 +290,7 @@ class Reporting extends SupportModule {
 	//	$query - SQL query as created by <GenerateReport>
 	//
 	protected function GenerateReport_Graph ( $param, $format, $query, $params = NULL ) {
-		freemed::acl_enforce( 'reporting', 'generate' );
+		freemed::acl_enforce( 'reporting', 'write' );
 		// Execute query
 		$res = $GLOBALS['sql']->queryAllStoredProc( $query );
 
@@ -364,7 +369,7 @@ class Reporting extends SupportModule {
 	//	$query - SQL query as created by <GenerateReport>
 	//
 	protected function GenerateReport_Rlib ( $param, $format, $query, $params = NULL ) {
-		freemed::acl_enforce( 'reporting', 'generate' );
+		freemed::acl_enforce( 'reporting', 'write' );
 		switch ( $format ) {
 			case 'html':	$outformat = 'html';	$ext = 'html';	break;
 			case 'csv':	$outformat = 'csv';	$ext = 'csv';	break;
@@ -418,9 +423,22 @@ class Reporting extends SupportModule {
 	//
 	//	$params - Optional array of parameters to pass to the report.
 	//
-	protected function GenerateReport_Jasper ( $param, $format, $query, $params = NULL ) {
+	protected function GenerateReport_Jasper ( $param, $format, $query, $params = NULL,$send_to_printer=null ) {
 		//return $params;
-		freemed::acl_enforce( 'reporting', 'generate' );
+		freemed::acl_enforce( 'reporting', 'write' );
+		
+		//Checking for default printer if send_to_print is true
+		if($send_to_printer){
+			$defaultPrinter = freemed::user_cache()->getManageConfig('defaultPrinter');
+			if(!$defaultPrinter)
+				return "DPNS";//Default printer not set
+				
+			$printing = CreateObject( 'org.freemedsoftware.api.Printing' );
+			$printerAvailable = $printing->PrinterAvailable($defaultPrinter);
+			if(!$printerAvailable)
+				return "PNA";//Printer not available
+		}		
+		
 		switch ( $format ) {
 			case 'html':	$outformat = 'HTML';	$ext = 'html';	break;
 			case 'xml':	$outformat = 'XML';	$ext = 'xml';	break;
@@ -446,11 +464,17 @@ class Reporting extends SupportModule {
 					case 'User':
 					case 'BottleID':
 					case 'TestStatus':
+					case 'MessageID':
 					case 'EMRModule':
 					case 'SupportModule':
 					$parameters .= " --paramformat=int";
 					break;
-
+					
+					case 'Integer':
+					case 'int':
+					$parameters .= " --paramformat=int";
+					break;
+				
 					default:
 					$parameters .= " --paramformat=string";
 					break;
@@ -466,6 +490,14 @@ class Reporting extends SupportModule {
 		// Execute actual report generation
 		`$cmd 2>&1 | logger -t JasperWrapper`;
 		$output_file = PHYSICAL_LOCATION . "/data/cache/" . $reportprefix . "." . $ext;
+		
+		//If send_to_printer then send print command and returns
+		if($send_to_printer){
+			$printer = CreateObject( 'org.freemedsoftware.core.PrinterWrapper' );
+			$printer->driver->PrintFile( $defaultPrinter, $output_file );
+			unlink( $output_file );
+			return "PRINTED";
+		}
 		
 		switch ( $format ) {
 			case 'xls':

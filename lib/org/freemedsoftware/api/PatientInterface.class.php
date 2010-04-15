@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2009 FreeMED Software Foundation
+ // Copyright (C) 1999-2010 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -306,7 +306,7 @@ class PatientInterface {
 
 				
 	public function Search ( $_criteria ) {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$criteria = (array) $_criteria;
 		if (!count($criteria)) { return array(); }
 
@@ -434,7 +434,7 @@ class PatientInterface {
 	//	* value - Text representing patient record identifying info.
 	//
 	public function picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
-		freemed::acl_enforce( 'emr', 'search' );
+		freemed::acl_enforce( 'emr', 'read' );
 		$limit = ($_limit < 10) ? 10 : $_limit;
 		if (strlen($string) < $inputlimit) {
 			syslog(LOG_INFO, "under $inputlimit");

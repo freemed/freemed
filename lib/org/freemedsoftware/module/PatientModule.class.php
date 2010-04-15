@@ -84,7 +84,8 @@ class PatientModule extends SupportModule {
 		'iso',
 		'ptblood',
 		'ptbudg',
-		'ptbilltype'
+		'ptbilltype',
+		'ptprimaryfacility'
 	);
 	var $address_keys = array (
 		'patient',
@@ -125,8 +126,26 @@ class PatientModule extends SupportModule {
 		}
 	} // end method add_pre
 
+	protected function add_post ( $id, $data ) {
+		$m = CreateObject( 'org.freemedsoftware.core.Generator_HL7v2_A04' );
+		$mirth = CreateObject( 'org.freemedsoftware.core.MirthExport' );
+		if ($m) {
+			$out = $m->generate( $id );
+			$mirth->SendMessage( $out );
+		}
+	} // end method add_post
+
 	protected function mod_pre ( &$data ) {
 	} // end method mod_pre
+
+	protected function mod_post ( &$data ) {
+		$m = CreateObject( 'org.freemedsoftware.core.Generator_HL7v2_A08' );
+		$mirth = CreateObject( 'org.freemedsoftware.core.MirthExport' );
+		if ($m) {
+			$out = $m->generate( $data['id'] );
+			$mirth->SendMessage( $out );
+		}
+	} // end method mod_post
 
 	protected function del_pre ( &$data ) {
 	} // end method del_pre

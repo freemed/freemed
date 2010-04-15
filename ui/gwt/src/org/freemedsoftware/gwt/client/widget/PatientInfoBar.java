@@ -33,18 +33,12 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientForm;
+import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
 import com.bouwkamp.gwt.user.client.ui.RoundedPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -65,6 +59,8 @@ public class PatientInfoBar extends Composite {
 	protected HTML wPatientVisibleInfo;
 
 	protected Integer patientId = new Integer(0);
+	protected String patientPracticeId = null;
+	protected String patientDob = null;
 
 	protected Image photoId = null;
 	
@@ -83,6 +79,10 @@ public class PatientInfoBar extends Composite {
 	
 	public String getProviderName(){
 		return provideName;
+	}
+
+	public String getPatientDob() {
+		return patientDob;
 	}
 
 	public PatientInfoBar() {
@@ -108,8 +108,7 @@ public class PatientInfoBar extends Composite {
 		allergyImg.setVisible(false);
 		horizontalsubPanel.add(allergyImg);
 		
-		if (CurrentState.isActionAllowed(AppConstants.MODIFY,
-				AppConstants.PATIENT_CATEGORY, AppConstants.NEW_PATIENT)) {
+		if (CurrentState.isActionAllowed(PatientScreen.moduleName, AppConstants.MODIFY)) {
 			editLink = new HTML(
 					"(<a href=\"javascript:undefined;\" style='color:blue'>edit</a>)");
 			editLink.addClickHandler(new ClickHandler() {
@@ -184,6 +183,10 @@ public class PatientInfoBar extends Composite {
 	public Integer getPatientId() {
 		return patientId;
 	}
+	
+	public String getPatientPracticeId() {
+		return patientPracticeId;
+	}
 
 	/**
 	 * Set patient information with HashMap returned from PatientInformation()
@@ -193,11 +196,12 @@ public class PatientInfoBar extends Composite {
 	 */
 	public void setPatientFromMap(HashMap<String, String> map) {
 		try {
+			provideName=map.get("pcp");
 			wPatientName.setText((String) map.get("patient_name"));
 			String ptInfoHTML = (String) map.get("patient_name") + " "
 			+ "[" + (String) map.get("date_of_birth") + "] "
 			+ (String)map.get("age")+" old, "
-			+ (String) map.get("ptid") + "<br/>";
+			+ (String) map.get("ptid");
 			if(map.get("pcp")!=null)
 				ptInfoHTML = ptInfoHTML + "<br> <b>PCP</b>: "+map.get("pcp");
 			if(map.get("facility")!=null)
@@ -206,6 +210,7 @@ public class PatientInfoBar extends Composite {
 				ptInfoHTML = ptInfoHTML + "<br> <b>Pharmacy</b>: "+map.get("pharmacy");
 
 			wPatientVisibleInfo.setHTML(ptInfoHTML);
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -225,6 +230,8 @@ public class PatientInfoBar extends Composite {
 		}
 		try {
 			patientId = new Integer((String) map.get("id"));
+			patientPracticeId = (String) map.get("ptid");
+			patientDob = (String) map.get("date_of_birth");
 		} catch (Exception e) {
 			JsonUtil.debug(e.toString());
 		} finally {
