@@ -83,8 +83,8 @@ public class EncounterScreen extends PatientScreenInterface {
 
 	protected Integer pxCount = 0;
 
-	protected VerticalPanel popoutPanel = null;	
-	
+	protected VerticalPanel popoutPanel = null;
+
 	public EncounterScreen() {
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 
@@ -189,7 +189,8 @@ public class EncounterScreen extends PatientScreenInterface {
 		popoutPanel.add(pxPicklist);
 
 		// Submit button
-		CustomButton submitButton = new CustomButton("Add Encounter",AppConstants.ICON_ADD);
+		CustomButton submitButton = new CustomButton("Add Encounter",
+				AppConstants.ICON_ADD);
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -337,7 +338,8 @@ public class EncounterScreen extends PatientScreenInterface {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
+						Util.showErrorMsg("SuperbillTemplate",
+								"Failed to load template.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -355,13 +357,15 @@ public class EncounterScreen extends PatientScreenInterface {
 								populateSuperbill(result);
 							}
 						} else {
-							Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
+							Util.showErrorMsg("SuperbillTemplate",
+									"Failed to load template.");
 						}
 					}
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
+				Util.showErrorMsg("SuperbillTemplate",
+						"Failed to load template.");
 			}
 		} else {
 			try {
@@ -379,13 +383,15 @@ public class EncounterScreen extends PatientScreenInterface {
 									}
 
 									public void onFailure(Throwable caught) {
-										Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
+										Util.showErrorMsg("SuperbillTemplate",
+												"Failed to load template.");
 									}
 
 								});
 			} catch (Exception e) {
 				e.printStackTrace();
-				Util.showErrorMsg("SuperbillTemplate", "Failed to load template.");
+				Util.showErrorMsg("SuperbillTemplate",
+						"Failed to load template.");
 			}
 
 		}

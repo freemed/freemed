@@ -194,7 +194,8 @@ class PatientCoverages extends EMRModule {
 	//	hash
 	//
 	public function GetPrimaryCoverage( $patient) {
-		$q = "SELECT i.insconame as insuranceName, c.covpatinsno as policyNo,CASE WHEN c.covrel='S' THEN CONCAT(p.ptfname,',',p.ptlname,' ',p.ptmname) ELSE CONCAT(c.covfname,',',c.covlname,' ',c.covmname) END as CardHolderName,covrel as relationToPatient,CASE WHEN c.covrel='S' THEN p.ptdob ELSE c.covdob END as policyHolderDOB, c.coveffdt as effectiveDate, c.covdeduct as deductible,a.authnum as authorization,a.authdtbegin as effectDateOfAuth,c.covcopay as copay,a.authtype as typeofAuth FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id LEFT OUTER JOIN authorizations a ON a.authpatient = c.covpatient LEFT OUTER JOIN patient p ON c.covpatient = p.id WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient )." ORDER BY c.covstatus ASC";
+		//$q = "SELECT i.insconame as insuranceName, c.covpatinsno as policyNo,CASE WHEN c.covrel='S' THEN CONCAT(p.ptfname,',',p.ptlname,' ',p.ptmname) ELSE CONCAT(c.covfname,',',c.covlname,' ',c.covmname) END as CardHolderName,covrel as relationToPatient,CASE WHEN c.covrel='S' THEN p.ptdob ELSE c.covdob END as policyHolderDOB, c.coveffdt as effectiveDate, c.covdeduct as deductible,a.authnum as authorization,a.authdtbegin as effectDateOfAuth,c.covcopay as copay,a.authtype as typeofAuth FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id LEFT OUTER JOIN authorizations a ON a.authpatient = c.covpatient LEFT OUTER JOIN patient p ON c.covpatient = p.id WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient )." ORDER BY c.covstatus ASC";
+		$q = "SELECT * from coverage where covtype=1 and covpatient = ".$GLOBALS['sql']->quote( $patient );
 		$r = $GLOBALS['sql']->queryRow( $q );
 
 		return $r;

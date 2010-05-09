@@ -64,7 +64,12 @@ CALL reporting_Upgrade;
 
 SOURCE data/schema/mysql/reporting/report_AccountPaid.sql
 SOURCE data/schema/mysql/reporting/report_ChargeGraph.sql
+SOURCE data/schema/mysql/reporting/report_DailyAdjustmentJournal.sql
+SOURCE data/schema/mysql/reporting/report_DailyCashReceiptJournal.sql
+SOURCE data/schema/mysql/reporting/report_DailyEndOfDayProcessingSummary.sql
 SOURCE data/schema/mysql/reporting/report_GraphMonthlyFinancial.sql
+SOURCE data/schema/mysql/reporting/report_MonthlyCashCollectionSummary.sql
+SOURCE data/schema/mysql/reporting/report_MonthlyClientBalanceDue.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
 SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql

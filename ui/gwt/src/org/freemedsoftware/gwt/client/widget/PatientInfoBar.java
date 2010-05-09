@@ -27,6 +27,7 @@ package org.freemedsoftware.gwt.client.widget;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -39,8 +40,10 @@ import com.bouwkamp.gwt.user.client.ui.RoundedPanel;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -53,6 +56,8 @@ public class PatientInfoBar extends Composite {
 	protected Label wPatientName;
 
 	protected HTML editLink;
+	
+	protected HTML viewLink;
 
 	protected HTML wPatientHiddenInfo;
 
@@ -99,6 +104,7 @@ public class PatientInfoBar extends Composite {
 		wPatientName = new Label("");
 		wPatientVisibleInfo = new HTML();
 		HorizontalPanel horizontalsubPanel = new HorizontalPanel();
+		horizontalsubPanel.setSpacing(2);
 		horizontalPanel.add(horizontalsubPanel);
 		horizontalPanel.setCellWidth(horizontalsubPanel, "70%");
 		// horizontalsubPanel .add(wPatientName);
@@ -120,6 +126,16 @@ public class PatientInfoBar extends Composite {
 				}
 			});
 			horizontalsubPanel.add(editLink);
+		}
+		if (CurrentState.isActionAllowed(PatientScreen.moduleName, AppConstants.READ)) {
+			viewLink = new HTML(
+					"(<a href=\"javascript:undefined;\" style='color:blue'>view</a>)");
+			viewLink.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					showPatientDetails();
+				}
+			});
+			horizontalsubPanel.add(viewLink);
 		}
 		wDropdown = new DisclosurePanel("");
 
@@ -259,4 +275,186 @@ public class PatientInfoBar extends Composite {
 		this.parentScreen = parentScreen;
 	}
 
+	public void showPatientDetails(){
+		Util.callApiMethod("PatientInterface", "PatientDetailedInformation", patientId, new CustomRequestCallback() {
+		
+			@Override
+			public void onError() {
+				// TODO Auto-generated method stub
+		
+			}
+		
+			@Override
+			public void jsonifiedData(Object data) {
+				// TODO Auto-generated method stub
+				if(data!=null){
+					
+					HorizontalPanel infoPane=new HorizontalPanel();
+					infoPane.add(loadPersonalInfo(data));
+					infoPane.add(loadCoverageInfo(data));
+					infoPane.add(loadAuthInfo(data));
+					infoPane.setSpacing(3);
+					Popup popup = new Popup();
+					PopupView popupView = new PopupView(infoPane);
+					popup.setNewWidget(popupView);
+					popup.initialize();
+					popup.show();
+				}
+			}
+		
+		}, "HashMap<String,String>");
+	}
+	
+	
+	
+	
+	public FlexTable loadPersonalInfo(Object data)
+	{
+		
+		HashMap< String, String> retrieveData=(HashMap<String, String>)data;
+		FlexTable personalInfoTable = new FlexTable();
+		personalInfoTable.setBorderWidth(1);
+		Label personaInfolbl=new Label("Personal Info");
+		personaInfolbl.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		personalInfoTable.setWidget(0, 0, personaInfolbl);
+		personalInfoTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		personalInfoTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+		int row=1;
+		personalInfoTable.setWidget(row, 0, new Label("Marital Status"));
+		personalInfoTable.setWidget(row, 1, new Label(retrieveData.get("ptmarital")));
+		row++;
+		personalInfoTable.setWidget(row, 0, new Label("Religion"));
+		personalInfoTable.setWidget(row, 1, new Label(PatientForm.returnReligion(Integer.parseInt(retrieveData.get("ptreligion")))));
+		row++;
+		personalInfoTable.setWidget(row, 0, new Label("Race"));
+		personalInfoTable.setWidget(row, 1, new Label(PatientForm.returnRace(Integer.parseInt(retrieveData.get("ptrace")))));
+		row++;
+		personalInfoTable.setWidget(row, 0, new Label("Type OF Billing"));
+		personalInfoTable.setWidget(row, 1, new Label(PatientForm.returnTypeOfBilling(retrieveData.get("ptbilltype"))));
+		row++;
+		personalInfoTable.setWidget(row, 0, new Label("Employee Status"));
+		personalInfoTable.setWidget(row, 1, new Label(PatientForm.returnEmploymentStatus(retrieveData.get("ptempl"))));
+		row++;
+		personalInfoTable.setWidget(row, 0, new Label("Amount"));
+		personalInfoTable.setWidget(row, 1, new Label(PatientForm.returnEmploymentStatus(retrieveData.get("ptbudg"))));
+		
+		return personalInfoTable;
+	
+	}
+	
+	
+	
+	
+	
+	public FlexTable loadCoverageInfo(Object data)
+	{
+		
+		
+		
+		HashMap< String, String> retrieveData=(HashMap<String, String>)data;
+		FlexTable coverageInfoTable = new FlexTable();
+		coverageInfoTable.setBorderWidth(1);
+		Label coverageInfolbl=new Label("Coverage Info");
+		coverageInfolbl.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		coverageInfoTable.setWidget(0, 0, coverageInfolbl);
+		coverageInfoTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		coverageInfoTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+		
+		
+	int row=1;
+		coverageInfoTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+		coverageInfoTable.setWidget(row, 0, new Label("Insurance Company"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("covinsco")));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Group - Plan Name"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("covplanname")));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Insurance ID Number"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("covpatinsno")));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Insurance Group Number"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("covpatgrpno")));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Start Date"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("coveffdt")));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Relationship to Insured"));
+		coverageInfoTable.setWidget(row, 1, new Label(PatientCoverages.returnRelationshipToInsured(retrieveData.get("covrel"))));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Copay"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("covcopay")));
+		row++;
+		coverageInfoTable.setWidget(row, 0, new Label("Deductable"));
+		coverageInfoTable.setWidget(row, 1, new Label(retrieveData.get("covdeduct")));
+		
+		return coverageInfoTable;
+	
+	}
+	
+	
+	
+	
+	
+	
+	public FlexTable loadAuthInfo(Object data)
+	{
+		
+		
+		
+		HashMap< String, String> retrieveData=(HashMap<String, String>)data;
+		FlexTable AuthInfoTable = new FlexTable();
+		AuthInfoTable.setBorderWidth(1);
+		
+		Label authInfolbl=new Label("Authorization Info");
+		authInfolbl.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		
+		
+		AuthInfoTable.setWidget(0, 0, authInfolbl);
+		AuthInfoTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		AuthInfoTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+		
+		
+		int row=1;
+		AuthInfoTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+		AuthInfoTable.setWidget(row, 0, new Label("Starting Date:"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authdtbegin")));
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Ending Date:"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authdtend")));
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Authorization Number"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authnum")));
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Authorization Type"));
+		AuthInfoTable.setWidget(row, 1, new Label(PatientAuthorizations.returnAuthorizationType(Integer.parseInt(retrieveData.get("authtype")))));
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Authorization Provider"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authdtend")));
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Provider Identifier"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authprovid")));
+		
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Authorizing Insurance Company"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authinsco")));
+		
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Number of Visits"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authvisits")));
+		
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Used Visits"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authvisitsused")));
+		
+		row++;
+		AuthInfoTable.setWidget(row, 0, new Label("Comment"));
+		AuthInfoTable.setWidget(row, 1, new Label(retrieveData.get("authcomment")));
+		
+		
+		return AuthInfoTable;
+	
+	}
+	
+	
+	
 }

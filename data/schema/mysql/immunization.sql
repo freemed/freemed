@@ -24,25 +24,26 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `immunization` (
-	dateof			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	patient			BIGINT UNSIGNED NOT NULL,
-	provider		BIGINT UNSIGNED NOT NULL,
-	eoc			INT UNSIGNED,
-	immunization		INT UNSIGNED NOT NULL DEFAULT 0,
-	route			INT UNSIGNED NOT NULL DEFAULT 0,
-	body_site		INT UNSIGNED NOT NULL DEFAULT 0,
-	manufacturer		VARCHAR (100),
-	lot_number		VARCHAR (20),
-	previous_doses		INT UNSIGNED NOT NULL DEFAULT 0,
-	recovered		BOOL NOT NULL DEFAULT TRUE,
-	notes			TEXT,
-	locked			INT UNSIGNED NOT NULL DEFAULT 0,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	  dateof		TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, patient		BIGINT UNSIGNED NOT NULL
+	, provider		BIGINT UNSIGNED NOT NULL
+	, admin_provider	BIGINT UNSIGNED NOT NULL
+	, eoc			INT UNSIGNED
+	, immunization		INT UNSIGNED NOT NULL DEFAULT 0
+	, route			INT UNSIGNED NOT NULL DEFAULT 0
+	, body_site		INT UNSIGNED NOT NULL DEFAULT 0
+	, manufacturer		VARCHAR (100)
+	, lot_number		VARCHAR (20)
+	, previous_doses	INT UNSIGNED NOT NULL DEFAULT 0
+	, recovered		BOOL NOT NULL DEFAULT TRUE
+	, notes			TEXT
+	, locked		INT UNSIGNED NOT NULL DEFAULT 0
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id			SERIAL
 
 	#	Define keys
-	KEY			( patient, dateof, provider )
+	, KEY			( patient, dateof, provider )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
@@ -60,6 +61,7 @@ BEGIN
 	#----- Upgrades
 	ALTER IGNORE TABLE immunization ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
 	ALTER IGNORE TABLE immunization ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	ALTER IGNORE TABLE immunization ADD COLUMN admin_provider BIGINT UNSIGNED NOT NULL AFTER provider;
 END
 //
 DELIMITER ;

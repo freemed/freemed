@@ -1,17 +1,22 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.RemittBillingWidget.BillingType;
 
 
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -26,18 +31,29 @@ public class RemittReportsWidget extends Composite{
 
 	protected VerticalPanel panel;
 	protected FlexTable allReportTable;
+	protected VerticalPanel reportsPanel;
+	protected VerticalPanel rebillPanel;
 	
 	public RemittReportsWidget(){
 		panel = new VerticalPanel();
 		panel.setSpacing(10);
 		initWidget(panel);
-		allReportTable = new FlexTable();
-		allReportTable.setWidth("80%");
-		panel.add(allReportTable);
+		reportsPanel = new VerticalPanel();
+		reportsPanel.setWidth("100%");
+		rebillPanel = new VerticalPanel();
+		rebillPanel.setWidth("100%");
+		rebillPanel.setVisible(false);
+
+		panel.add(reportsPanel);
+		panel.add(rebillPanel);
 		loadMonthsInfo();
 	}
 	
 	public void loadMonthsInfo(){
+		allReportTable = new FlexTable();
+		allReportTable.setWidth("80%");
+		reportsPanel.clear();
+		reportsPanel.add(allReportTable);
 		Util.callModuleMethod("RemittBillingTransport", "getMonthsInfo",
 				(Integer) null, new CustomRequestCallback() {
 					@Override
@@ -62,6 +78,7 @@ public class RemittReportsWidget extends Composite{
 								reportsInfoTable.setWidth("100%");
 								reportsInfoTable.addColumn("Report", "filename");
 								reportsInfoTable.addColumn("Size", "filesize");
+								reportsInfoTable.addColumn("Date Sent", "inserted");
 								reportsInfoTable.addColumn("Action", "action");
 								reportsInfoTable
 								.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -73,7 +90,7 @@ public class RemittReportsWidget extends Composite{
 											HorizontalPanel actionPanel = new HorizontalPanel();
 											actionPanel.setSpacing(5);
 											HTML  htmlLedger= new HTML(
-											"<a href=\"javascript:undefined;\" style='color:blue'>View</a>");
+											"<a href=\"javascript:undefined;\">View</a>");
 									
 											
 											htmlLedger.addClickHandler(new ClickHandler() {
@@ -89,11 +106,58 @@ public class RemittReportsWidget extends Composite{
 														}
 
 													});
+											HTML  htmlReSend=null;
+											if(data.get("originalId")!=null){
+												htmlReSend= new HTML(
+												"<a href=\"javascript:undefined;\">Re-Send</a>");
+										
+												
+												htmlReSend.addClickHandler(new ClickHandler() {
+															@Override
+															public void onClick(
+																	ClickEvent arg0) {
+																
+																CustomRequestCallback cb = new CustomRequestCallback() {
+																	@Override
+																	public void onError() {
 	
+																	}
+	
+																	@Override
+																	public void jsonifiedData(Object data) {
+																		rebillPanel.setVisible(false);
+																		reportsPanel.setVisible(true);																	
+																		loadMonthsInfo();
+	
+																	}
+																};
+																reportsPanel.setVisible(false);
+																rebillPanel.clear();
+																
+																HashSet<String> hs=new HashSet<String>();
+																hs.add(data.get("originalId"));
+																RemittBillingWidget billClaimsWidget = new RemittBillingWidget(
+																		hs, cb, BillingType.REBILL);
+																rebillPanel.add(billClaimsWidget);
+																rebillPanel.setVisible(true);
+	
+								
+															}
+	
+														});
+											}
+											else{
+												htmlReSend= new HTML(
+												"<a href=\"javascript:undefined;\"  style=\"cursor:default;color: blue;\">Re-Send</a>");
+											}
 											actionPanel.add(htmlLedger);
+											actionPanel.add(htmlReSend);
 											return actionPanel;
 										}
-										
+										else if (columnName.compareTo("inserted") == 0) {
+											Label lb=new Label(data.get("inserted").substring(0, 10));
+											return lb;
+										}
 										else {
 											return (Widget) null;
 										}
@@ -120,7 +184,7 @@ public class RemittReportsWidget extends Composite{
 								
 								});
 								hpanel.setWidth("100%");
-								hpanel.setStyleName("tableHeader");
+								hpanel.setStyleName(AppConstants.STYLE_TABLE_HEADER);
 								Label infoLb=new Label(result[i].get("month"));
 								hpanel.add(expandLb);
 								hpanel.add(infoLb);

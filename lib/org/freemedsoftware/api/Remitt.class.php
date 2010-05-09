@@ -319,6 +319,7 @@ class Remitt {
 		$sc = $this->getSoapClient( );
 		$params = (object) array(
 			  'inputPayload' => $xml
+			, 'originalId' => (string) $billkey
 			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
 			, 'renderOption' => $render
 			, 'transportPlugin' => $transportPlugin
@@ -706,8 +707,11 @@ class Remitt {
 			$buffer .= $this->_tag('sex', strtolower($i['covsex']), true);
 		} else {
 			// Self
+			$piobj = CreateObject( 'org.freemedsoftware.api.PatientInterface' );
+			$pi = $piobj->PatientInformation( $i['covpatient'] );
+
 			$buffer .= $this->_name('name', $p['ptlname'], $p['ptfname'], $p['ptmname']);
-			$buffer .= $this->_addr('address', $p['ptaddr1'], $p['ptcity'], $p['ptstate'], $p['ptzip']);
+			$buffer .= $this->_addr('address', $pi['address_line_1'], $pi['city'], $pi['state'], $pi['postal']);
 			$buffer .= $this->_phone('phone', $p['pthphone']);
 			$buffer .= $this->_date('dateofbirth', $p['ptdob']);
 			$buffer .= $this->_tag('sex', strtolower($p['ptsex']), true);
@@ -731,11 +735,15 @@ class Remitt {
 
 	protected function _RenderPatient ( $patient ) {
 		$p = $GLOBALS['sql']->get_link( 'patient', $patient );
+
+		$piobj = CreateObject( 'org.freemedsoftware.api.PatientInterface' );
+		$pi = $piobj->PatientInformation( $patient );
+
 		$buffer .= "<patient id=\"".htmlentities($patient)."\">\n";
 
 		$buffer .= $this->_name('name', $p['ptlname'], $p['ptfname'], $p['ptmname']);
-		$buffer .= $this->_addr('address', $p['ptaddr1'],
-			$p['ptcity'], $p['ptstate'], $p['ptzip']);
+		$buffer .= $this->_addr('address', $pi['address_line_1'],
+			$pi['city'], $pi['state'], $pi['postal']);
 		$buffer .= $this->_phone('phone', $p['pthphone']);
 		$buffer .= $this->_tag('sex', strtolower($p['ptsex']), true);
 		$buffer .= $this->_tag('socialsecuritynumber', $p['ptssn'], true);
@@ -745,6 +753,9 @@ class Remitt {
 		$buffer .= $this->_tag('ispregnant', ($p['ptpreg'] == 'pregnant')+0, true);
 		$buffer .= $this->_tag('issingle', ($p['ptmarital'] == 'single')+0, true);
 		$buffer .= $this->_tag('ismarried', ($p['ptmarital'] == 'married')+0, true);
+		$buffer .= $this->_tag('isdivorced', ($p['ptmarital'] == 'divorced')+0, true);
+		$buffer .= $this->_tag('isseparated', ($p['ptmarital'] == 'separated')+0, true);
+		$buffer .= $this->_tag('iswidowed', ($p['ptmarital'] == 'widowed')+0, true);
 		$buffer .= $this->_tag('ismaritalotherhcfa', ( ($p['ptmarital'] != 'married') and ($p['ptmarital'] != 'single') )+0, true);
 		$buffer .= $this->_tag('isemployed', (
 				( $p['ptempl'] != 'y' ) and

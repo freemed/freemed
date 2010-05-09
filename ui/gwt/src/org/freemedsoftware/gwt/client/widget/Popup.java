@@ -77,7 +77,7 @@ public class Popup extends PopupPanel {
 		//		.concat("px"));
 		scrollPanel.add(mWidget);
 		verticalPanel.add(scrollPanel);
-		verticalPanel.add(new HTML("<br/><br/><small>("
+		verticalPanel.add(new HTML("<small>("
 				+ "Click outside this popup to close it." + ")</small>"));
 		sPanelInner.add(verticalPanel);
 		verticalPanel.setWidth("100%");
@@ -86,7 +86,6 @@ public class Popup extends PopupPanel {
 		setPosition();
 	}
 	public void clear() {
-		//this.setStyleName("freemed-PopupPanel");
 		//sPanelInner.setStylePrimaryName("freemed-Popup-sPanelInner");
 		sPanelOuter.remove(sPanelInner);
 		//sPanelOuter.setStylePrimaryName("freemed-Popup-sPanelOuter");

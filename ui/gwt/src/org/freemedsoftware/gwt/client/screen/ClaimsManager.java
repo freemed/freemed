@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -38,10 +37,10 @@ import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.AgingSummaryWidget;
 import org.freemedsoftware.gwt.client.widget.BlockScreenWidget;
 import org.freemedsoftware.gwt.client.widget.ClaimDetailsWidget;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
-import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomModuleWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.LedgerWidget;
@@ -91,7 +90,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
-import org.freemedsoftware.gwt.client.widget.AgingSummaryWidget;
 
 public class ClaimsManager extends ScreenInterface {
 
@@ -218,7 +216,7 @@ public class ClaimsManager extends ScreenInterface {
 		ledgerStep1HPanel = new HorizontalPanel();
 		ledgerStep1HPanel.setSpacing(10);
 		Label actionType = new Label("Action");
-		// actionType.setStyleName("label");
+		// actionType.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		ledgerStep1HPanel.add(actionType);
 		// ledgerStep1HPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		actionsList = new ListBox();
@@ -459,17 +457,11 @@ public class ClaimsManager extends ScreenInterface {
 		panelAging.setSpacing(9);
 		// panelAging.setSize("10","2"); //FIXME
 		rb120Plus = new RadioButton("aging", "120+");
-		rb120Plus.setStyleName("radio-label");
 		rb91To120 = new RadioButton("aging", "91-120");
-		rb91To120.setStyleName("radio-label");
 		rb61To90 = new RadioButton("aging", "61-90");
-		rb61To90.setStyleName("radio-label");
 		rb31To60 = new RadioButton("aging", "31-60");
-		rb31To60.setStyleName("radio-label");
 		rb0To30 = new RadioButton("aging", "0-30");
-		rb0To30.setStyleName("radio-label");
 		rbNoSearch = new RadioButton("aging", "No Search");
-		rbNoSearch.setStyleName("radio-label");
 		panelAging.add(rb120Plus);
 		panelAging.add(rb91To120);
 		panelAging.add(rb61To90);
@@ -618,7 +610,7 @@ public class ClaimsManager extends ScreenInterface {
 		procDetailsHPanel = new HorizontalPanel();
 		// procDetailsHPanel.setSize("100%", "100%");
 		procDetailFlexTable = new FlexTable();
-		procDetailFlexTable.setStyleName("sortableTable");
+		procDetailFlexTable.setStyleName(AppConstants.STYLE_TABLE);
 		procDetailFlexTable.setWidth("100%");
 		viewLedgerDetails = new HTML(
 				"<a href=\"javascript:undefined;\" style='color:blue'>View Details</a>");
@@ -1107,7 +1099,7 @@ public class ClaimsManager extends ScreenInterface {
 		actionsList.setSelectedIndex(0);
 
 		Label lblHeading2 = new Label("Procedure");
-		lblHeading2.setStyleName("label");
+		lblHeading2.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		HorizontalPanel topHp = new HorizontalPanel();
 		topHp.setSpacing(5);
 		topHp.add(lblHeading2);
@@ -1168,7 +1160,7 @@ public class ClaimsManager extends ScreenInterface {
 									int col = 0;
 									Label procDateLb = new Label(
 											"Procedure Date");
-									procDateLb.setStyleName("label_bold");
+									procDateLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label procDateVal = new Label(result
 											.get("proc_date"));
 									procDetailFlexTable.setWidget(0, col,
@@ -1176,155 +1168,155 @@ public class ClaimsManager extends ScreenInterface {
 									FlexCellFormatter cellFormatter = procDetailFlexTable
 											.getFlexCellFormatter();
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											procDateVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									Label procCode = new Label("Procedure Code");
-									procCode.setStyleName("label_bold");
+									procCode.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label procCodeVal = new Label(result
 											.get("proc_code"));
 									procDetailFlexTable.setWidget(0, col,
 											procCode);
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											procCodeVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									Label provLb = new Label("Provider");
-									provLb.setStyleName("label_bold");
+									provLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label provVal = new Label(result
 											.get("prov_name"));
 									procDetailFlexTable.setWidget(0, col,
 											provLb);
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											provVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									Label chargedLb = new Label("Charged");
-									chargedLb.setStyleName("label_bold");
+									chargedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label chargedVal = new Label(result
 											.get("proc_obal"));
 									procDetailFlexTable.setWidget(0, col,
 											chargedLb);
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											chargedVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									if (result.get("proc_allowed") != null
 											&& !result.get("proc_allowed")
 													.equals("")) {
 										Label allowedLb = new Label("Allowed");
-										allowedLb.setStyleName("label_bold");
+										allowedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 										Label allowedVal = new Label(result
 												.get("proc_allowed"));
 										procDetailFlexTable.setWidget(0, col,
 												allowedLb);
 										cellFormatter.setStyleName(0, col,
-												"tableHeader");
+												AppConstants.STYLE_TABLE_HEADER);
 										procDetailFlexTable.setWidget(1, col,
 												allowedVal);
 										cellFormatter.setStyleName(1, col,
-												"customRowStyle");
+												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 										col++;
 									}
 
 									Label chargesLb = new Label("Charges");
-									chargesLb.setStyleName("label_bold");
+									chargesLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label chargesVal = new Label(result
 											.get("proc_charges"));
 									procDetailFlexTable.setWidget(0, col,
 											chargesLb);
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											chargesVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									Label procPaidLb = new Label("Paid");
-									procPaidLb.setStyleName("label_bold");
+									procPaidLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label procPaidVal = new Label(result
 											.get("proc_paid"));
 									procDetailFlexTable.setWidget(0, col,
 											procPaidLb);
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											procPaidVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									Label balanceLb = new Label("Balance");
-									balanceLb.setStyleName("label_bold");
+									balanceLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label balanceVal = new Label(result
 											.get("proc_currbal"));
 									procDetailFlexTable.setWidget(0, col,
 											balanceLb);
 									cellFormatter.setStyleName(0, col,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 									procDetailFlexTable.setWidget(1, col,
 											balanceVal);
 									cellFormatter.setStyleName(1, col,
-											"customRowStyle");
+											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
 									if (result.get("proc_billed").equals("1")) {
 										Label billedLb = new Label("Billed");
-										billedLb.setStyleName("label_bold");
+										billedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 										Label billedVal = new Label("Yes");
 										procDetailFlexTable.setWidget(0, col,
 												billedLb);
 										cellFormatter.setStyleName(0, col,
-												"tableHeader");
+												AppConstants.STYLE_TABLE_HEADER);
 										procDetailFlexTable.setWidget(1, col,
 												billedVal);
 										cellFormatter.setStyleName(1, 8,
-												"customRowStyle");
+												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 										col++;
 
 										Label dateBilledLb = new Label(
 												"Date Billed");
-										dateBilledLb.setStyleName("label_bold");
+										dateBilledLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 										Label dateBilledVal = new Label(result
 												.get("proc_billdate"));
 										procDetailFlexTable.setWidget(0, col,
 												dateBilledLb);
 										cellFormatter.setStyleName(0, col,
-												"tableHeader");
+												AppConstants.STYLE_TABLE_HEADER);
 										procDetailFlexTable.setWidget(1, col,
 												dateBilledVal);
 										cellFormatter.setStyleName(1, col,
-												"customRowStyle");
+												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 										col++;
 									} else {
 										Label billedLb = new Label("Billed");
-										billedLb.setStyleName("label_bold");
+										billedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 										Label billedVal = new Label("No");
 										procDetailFlexTable.setWidget(0, col,
 												billedLb);
 										cellFormatter.setStyleName(0, col,
-												"tableHeader");
+												AppConstants.STYLE_TABLE_HEADER);
 										procDetailFlexTable.setWidget(1, col,
 												billedVal);
 										cellFormatter.setStyleName(1, col,
-												"customRowStyle");
+												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 										col++;
 									}
 
@@ -1558,7 +1550,7 @@ public class ClaimsManager extends ScreenInterface {
 
 	public void addExistingSearchCriteria(String k, String name, String value) {
 		Label lbName = new Label(name);
-		lbName.setStyleName("label");
+		lbName.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		Label lbVal = new Label(value);
 		final String key = k;
 		final CustomButton remove = new CustomButton("X");

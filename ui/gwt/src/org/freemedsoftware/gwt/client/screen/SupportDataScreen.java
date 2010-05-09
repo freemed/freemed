@@ -65,8 +65,10 @@ public class SupportDataScreen extends ScreenInterface {
 			supportDataScreenList=new ArrayList<SupportDataScreen>();
 		if(supportDataScreenList.size()<AppConstants.MAX_SUPPORTDATA_TABS)//creates & returns new next instance of SupportDataScreen
 			supportDataScreenList.add(supportDataScreen=new SupportDataScreen());
-		else //returns last instance of SupportDataScreen from list 
+		else{ //returns last instance of SupportDataScreen from list 
 			supportDataScreen = supportDataScreenList.get(AppConstants.MAX_SUPPORTDATA_TABS-1);
+			supportDataScreen.populate();
+		}
 		return supportDataScreen;
 	}
 	
@@ -123,6 +125,7 @@ public class SupportDataScreen extends ScreenInterface {
 			sortableTable.loadData((HashMap<String, String>[]) r
 					.toArray(new HashMap<?, ?>[0]));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			sortableTable.showloading(true);
 			String[] params = { "SupportModule", "" };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -147,6 +150,7 @@ public class SupportDataScreen extends ScreenInterface {
 												"HashMap<String,String>[]");
 								sortableTable.loadData(r);
 							} else {
+								sortableTable.showloading(false);
 								Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 							}
 						}

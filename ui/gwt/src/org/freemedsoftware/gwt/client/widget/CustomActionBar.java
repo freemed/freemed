@@ -43,6 +43,7 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		public final static int MODIFY 	= 5;
 		public final static int LOCK 	= 6;
 		public final static int LOCKED 	= 7;
+		public final static int CLONE 	= 8;
 		
 		public void handleAction(int id,HashMap<String, String> data,int action);
 	} 
@@ -54,6 +55,8 @@ public class CustomActionBar extends Composite implements ClickHandler {
 	protected final String IMAGE_DELETE   = "resources/images/summary_delete.16x16.png";
 	
 	protected final String IMAGE_VIEW	  = "resources/images/summary_view.16x16.png";
+	
+	protected final String IMAGE_CLONE   = "resources/images/copy-icon.16x16.png";
 	
 	protected final String IMAGE_LOCK	  = "resources/images/summary_lock.16x16.png";
 	
@@ -73,7 +76,7 @@ public class CustomActionBar extends Composite implements ClickHandler {
 
 	protected Image addImage = null, deleteImage = null,
 			modifyImage = null, lockImage = null, lockedImage = null,
-			printImage = null,viewImage = null;
+			printImage = null,viewImage = null, cloneImage = null;
 
 	public CustomActionBar(HashMap<String, String> item){
 		this(item, null);
@@ -111,6 +114,12 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		deleteImage.addClickHandler(this);
 		hPanel.add(deleteImage);
 		
+		
+		cloneImage = new Image(IMAGE_CLONE);
+		cloneImage.setTitle("Clone");
+		cloneImage.addClickHandler(this);
+		hPanel.add(cloneImage);
+		
 		viewImage = new Image(IMAGE_VIEW);
 		viewImage.setTitle("View");
 		viewImage.addClickHandler(this);
@@ -138,6 +147,7 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		printImage.setTitle("Print");
 		printImage.addClickHandler(this);
 		hPanel.add(printImage);
+
 		
 	}
 
@@ -165,6 +175,8 @@ public class CustomActionBar extends Composite implements ClickHandler {
 			action = HandleCustomAction.VIEW;
 		}else if(sender == printImage){
 			action = HandleCustomAction.PRINT;
+		}else if(sender == cloneImage){
+			action = HandleCustomAction.CLONE;
 		}else if(sender == lockedImage){
 			Window.alert("This record has been locked, and can no longer be modified.");
 			return;
@@ -203,6 +215,8 @@ public class CustomActionBar extends Composite implements ClickHandler {
 				lockImage.setVisible(show);
 			else if(action == HandleCustomAction.LOCKED)
 				lockedImage.setVisible(show);
+			else if(action == HandleCustomAction.CLONE)
+				cloneImage.setVisible(show);
 		}catch(Exception e){}
 	}
 	
@@ -217,6 +231,7 @@ public class CustomActionBar extends Composite implements ClickHandler {
 			hideAction(HandleCustomAction.DELETE);
 		if(!lock)
 			hideAction(HandleCustomAction.LOCK);
+		hideAction(HandleCustomAction.CLONE);
 	}
 	
 	public void lock(){

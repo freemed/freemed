@@ -172,6 +172,49 @@ public class PatientCoverages extends Composite {
 			return map;
 		}
 
+		/**
+		 * Retrieve HashMap for object used from RPC.
+		 * 
+		 * @return
+		 */
+		public void loadData(HashMap<String, String> data) {
+			if(data.get("id")!=null)
+				setCoverageId(Integer.parseInt(data.get("id")));
+			if(data.get("covinsco")!=null)
+				setInsuranceCompany(Integer.parseInt(data.get("covinsco")));
+			if(data.get("covinstp")!=null)
+				setCoverageInsuranceType(Integer.parseInt(data.get("covinstp")));
+			setProviderAcceptsAssigment(data.get("covprovasgn"));
+			setAssigmentOfBenefits(data.get("covbenasgn"));
+			setReleaseOfInformation(data.get("covrelinfo"));
+			setReleaseDateSigned(data.get("covrelinfodt"));
+			setGroupPlanName(data.get("covplanname"));
+			setStartDate(data.get("coveffdt"));//temporary
+			setInsuranceIDNumber(data.get("covpatinsno"));
+			setInsuranceGroupNumber(data.get("covpatgrpno"));
+			setInsuranceType(data.get("covtype"));
+			setRelationshipToInsured(data.get("covrel"));
+			if(!getRelationshipToInsured().equalsIgnoreCase("S")){
+				setInsuredFirstName(data.get("covfname"));
+				setInsuredLastName(data.get("covlname"));
+				setInsuredMiddleName(data.get("covmname"));
+				setInsuredDOB(data.get("covdob"));
+				setInsuredSex(data.get("covsex"));
+				setInsuredSSN(data.get("covssn"));
+				setInsuredAddress1(data.get("covaddr1"));
+				setInsuredAddress2(data.get("covaddr2"));
+				setInsuredCity(data.get("covcity"));
+				setInsuredState(data.get("covstate"));
+				setInsuredZip(data.get("covzip"));
+			}
+			setCopay(data.get("covcopay"));
+			setDeductable(data.get("covdeduct"));
+			setReplaceLikeCoverage(data.get(""));
+			setIsAssigning(data.get("covisassigning"));
+			setSchoolNameForInsured(data.get("covschool"));
+			setEmployerOfInsured(data.get("covemployer"));
+		}
+		
 		public String getProviderAcceptsAssigment() {
 			return providerAcceptsAssigment;
 		}
@@ -453,9 +496,11 @@ public class PatientCoverages extends Composite {
 		coverages = new HashMap<Integer, Coverage>();
 
 		VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.setWidth("100%");
 		initWidget(verticalPanel);
 
 		coveragesPanel = new VerticalPanel();
+		coveragesPanel.setWidth("100%");
 		verticalPanel.add(coveragesPanel);
 
 		HorizontalPanel hP = new HorizontalPanel();
@@ -482,6 +527,12 @@ public class PatientCoverages extends Composite {
 		onCompletion = oc;
 	}
 
+	public void addCoverage(HashMap<String, String> coverageData){
+		Coverage coverage = new Coverage();
+		coverage.loadData(coverageData);
+		addCoverage(coverages.size()+1, coverage);
+	}
+	
 	/**
 	 * Add additional Coverage object to a particular position on the flexTable.
 	 * 
@@ -496,6 +547,7 @@ public class PatientCoverages extends Composite {
 		int row=0;
 
 		final CustomTable flexTable = new CustomTable();
+		flexTable.setWidth("100%");
 		flexTable.removeTableStyle();
 		coveragesPanel.add(flexTable);
 		
@@ -965,6 +1017,7 @@ public class PatientCoverages extends Composite {
 									// Create new Coverage object
 									
 									Coverage x = new Coverage();
+									/*
 									x.setCoverageId(Integer.parseInt(result[iter].get("id")));
 									x.setInsuranceCompany(Integer.parseInt(result[iter].get("covinsco")));
 									x.setCoverageInsuranceType(Integer.parseInt(result[iter].get("covinstp")));
@@ -997,6 +1050,8 @@ public class PatientCoverages extends Composite {
 									x.setIsAssigning(result[iter].get("covisassigning"));
 									x.setSchoolNameForInsured(result[iter].get("covschool"));
 									x.setEmployerOfInsured(result[iter].get("covemployer"));
+									*/
+									x.loadData(result[iter]);
 									// builder
 									addCoverage(new Integer(iter + 1), x);
 								}
@@ -1049,4 +1104,68 @@ public class PatientCoverages extends Composite {
 		return coverages;
 	}
 
+	
+	
+	
+	public static String returnRelationshipToInsured(String id)
+	{
+		if(id.equalsIgnoreCase("C"))
+		{
+			return "Child";
+		}
+		
+		else if(id.equalsIgnoreCase("H"))
+		{
+			return "Husband";
+		}
+		
+		
+		
+		else if(id.equalsIgnoreCase("s"))
+		{
+			return "Self";
+		}
+		else if(id.equalsIgnoreCase("W"))
+		{
+			return "Wife";
+		}
+		
+		else if(id.equalsIgnoreCase("D"))
+		{
+			return "Child Not Fin";
+		}
+		
+		
+		else if(id.equalsIgnoreCase("SC"))
+		{
+			return "Step Child";
+		}
+		else if(id.equalsIgnoreCase("FC"))
+		{
+			return "Foster Child";
+		}
+		else if(id.equalsIgnoreCase("WC"))
+		{
+			return "Ward of Court";
+		}
+		else if(id.equalsIgnoreCase("HD"))
+		{
+			return "HC Dependent";
+		}
+		
+		else if(id.equalsIgnoreCase("SD"))
+		{
+			return "Sponsored Dependent";
+		}
+		
+		else if(id.equalsIgnoreCase("LR"))
+		{
+			return "Medicare Legal Rep";
+		}
+		
+		
+		else
+	       return "other";
+
+	}
 }

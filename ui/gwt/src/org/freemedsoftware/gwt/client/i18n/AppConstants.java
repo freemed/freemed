@@ -56,7 +56,7 @@ public interface AppConstants extends Constants {
 	public static int MAX_DISPENSE_DOSE_TABS 		= 1;
 	public static int MAX_BOTTLE_TRANSFER_TABS 		= 1;
 	public static int MAX_RECONCILE_BOTTLE_TABS 	= 1;
-	public static int MAX_METHODONE_BILLING_TABS 	= 1;
+	public static int MAX_METHADONE_BILLING_TABS 	= 1;
 	public static int MAX_INVENTORY_REPORTS=1;
 	
 	// Settings for options available under Billing Left Panel
@@ -75,6 +75,11 @@ public interface AppConstants extends Constants {
 	public static int MAX_PREFERENCES_TABS       = 1;
 	public static int MAX_ACCOUNTRECIEVABLE_TABS = 1;
 
+	// System Core Acknowledgments
+	public static String INVALID_SESSION      = "INVALID_SESSION";
+	public static String USER_TYPE_PROVIDER        = "phy";
+	public static String USER_TYPE_MISCELLANEOUS   = "misc";
+	
 	/*
 	 * These following variables define Left Navigation Labels w.r.t Category
 	 */
@@ -106,7 +111,7 @@ public interface AppConstants extends Constants {
 	public final static String DISPENSE_DOSE 	    = "Dispense Dose";
 	public final static String BOTTLE_TRANSFER      = "Bottle Transfer";
 	public final static String RECONCILE_BOTTLE     = "Reconcile Bottle";
-	public final static String METHODONE_BILLING    = "Methodone Billing";
+	public final static String METHADONE_BILLING    = "Methadone Billing";
 	public final static String INVENTORY_REPORTS    = "Inventory Reports";
 	
 	// Billing Category
@@ -189,4 +194,23 @@ public interface AppConstants extends Constants {
 	
 	//////////////////////////////////////////////////////////////////////////////
 	
+	/////////////////////////////Styles//////////////////////////////////
+	
+	public final static String STYLE_LABEL_SMALL	        	=   "label_small";
+	public final static String STYLE_LABEL_NORMAL_BOLD        	=   "label_bold";
+	public final static String STYLE_LABEL_NORMAL_ITALIC        =   "label_italic";
+	public final static String STYLE_LABEL_LARGE_BOLD  			=   "label_large_bold";	
+	public final static String STYLE_LABEL_ALERT        		=   "label_red";
+	public final static String STYLE_LABEL_ALERT_BOLD        	=   "label_bold_red";
+	public final static String STYLE_LABEL_HEADER_SMALL       	=   "small-header-label";
+	public final static String STYLE_LABEL_HEADER_MEDIUM       	=   "medium-header-label";
+	public final static String STYLE_LABEL_HEADER_LARGE       	=   "large-header-label";
+	public final static String STYLE_LABEL_TAB			      	=   "gwt-tab-Label";	
+	public final static String STYLE_BUTTON_SIMPLE		       	=   "gwt-simple-button";
+	public final static String STYLE_BUTTON_WIDGETS_CONTAINER  	=   "freemed-WidgetContainer";
+	public final static String STYLE_HEADER_PANEL				=	"Application-links";
+	public final static String STYLE_TABLE						=	"sortableTable";
+	public final static String STYLE_TABLE_HEADER				=	"tableHeader";
+	public final static String STYLE_TABLE_ROW					=	"tableRow";
+	public final static String STYLE_TABLE_ROW_ALTERNATE		=	"customRowStyle";
 }

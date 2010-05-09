@@ -44,13 +44,11 @@ public class FormEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "Form";
 
-	protected String patientIdName = "patient";
-
 	protected SupportModuleWidget wForm = new SupportModuleWidget(
 			"FormTemplate");
 
 	protected MultiPageImageCompositedForm wWidget = new MultiPageImageCompositedForm();
-	
+
 	public FormEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -81,14 +79,16 @@ public class FormEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton("Submit",
+				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton("Reset",
+				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -110,5 +110,5 @@ public class FormEntry extends PatientEntryScreenInterface {
 	public void resetForm() {
 		wForm.clear();
 	}
-	
+
 }

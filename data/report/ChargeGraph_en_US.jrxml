@@ -160,23 +160,23 @@
 				</chart>
 				<pieDataset>
 					<pieSeries>
-						<keyExpression><![CDATA["Withhold"]]></keyExpression>
+						<keyExpression><![CDATA["Withhold = "+$F{withhold}]]></keyExpression>
 						<valueExpression><![CDATA[$F{withhold}]]></valueExpression>
 					</pieSeries>
 					<pieSeries>
-						<keyExpression><![CDATA["Denial"]]></keyExpression>
+						<keyExpression><![CDATA["Denial = "+$F{denial}]]></keyExpression>
 						<valueExpression><![CDATA[$F{denial}]]></valueExpression>
 					</pieSeries>
 					<pieSeries>
-						<keyExpression><![CDATA["Deductable"]]></keyExpression>
+						<keyExpression><![CDATA["Deductableb = "+$F{deduct}]]></keyExpression>
 						<valueExpression><![CDATA[$F{deduct}]]></valueExpression>
 					</pieSeries>
 					<pieSeries>
-						<keyExpression><![CDATA["Allowed"]]></keyExpression>
+						<keyExpression><![CDATA["Allowed = "+$F{allowed}]]></keyExpression>
 						<valueExpression><![CDATA[$F{allowed}]]></valueExpression>
 					</pieSeries>
 					<pieSeries>
-						<keyExpression><![CDATA["Writeoff"]]></keyExpression>
+						<keyExpression><![CDATA["Writeoff = " + $F{writeoff}]]></keyExpression>
 						<valueExpression><![CDATA[$F{writeoff}]]></valueExpression>
 					</pieSeries>
 				</pieDataset>

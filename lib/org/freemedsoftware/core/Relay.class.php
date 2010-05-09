@@ -45,6 +45,7 @@ class Relay {
 		if ( substr($method, 0, 27) != 'org.freemedsoftware.public.' ) {
 			if ( ! CallMethod ( 'org.freemedsoftware.public.Login.LoggedIn' ) ) {
 				syslog( LOG_INFO, "Access attempt for '${method}' denied due to user not being logged in" );
+				return 'INVALID_SESSION';
 				trigger_error( "Access attempt for '${method}' denied due to user not being logged in", E_USER_ERROR );
 			}
 		}

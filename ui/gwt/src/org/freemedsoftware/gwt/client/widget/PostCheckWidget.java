@@ -39,7 +39,7 @@ public class PostCheckWidget extends Composite {
 	protected TextBox tbTotalAmount;
 	protected FlexTable postCheckInfoFlexTable;
 	protected HashSet<String> procs;
-	protected CustomModuleWidget payerWidget;
+//	protected CustomModuleWidget payerWidget;
 	protected CustomTable proceduresInfoTable;
 	protected CustomRequestCallback callback;
 	ArrayList<String> pids;
@@ -52,16 +52,16 @@ public class PostCheckWidget extends Composite {
 		initWidget(vPanel);
 		postCheckInfoFlexTable = new FlexTable();
 		// postCheckInfoFlexTable.setWidth("100%");
-		Label payerLb = new Label("Payer");
-		payerWidget = new CustomModuleWidget(
-				"api.ClaimLog.RebillDistinctPayers");
+//		Label payerLb = new Label("Payer");
+//		payerWidget = new CustomModuleWidget(
+//				"api.ClaimLog.RebillDistinctPayers");
 		Label checkNumberLb = new Label("Check Number");
 		tbCheckNo = new TextBox();
 		Label totalAmountLb = new Label("Total Amount");
 		tbTotalAmount = new TextBox();
 
-		postCheckInfoFlexTable.setWidget(0, 0, payerLb);
-		postCheckInfoFlexTable.setWidget(0, 1, payerWidget);
+//		postCheckInfoFlexTable.setWidget(0, 0, payerLb);
+//		postCheckInfoFlexTable.setWidget(0, 1, payerWidget);
 		postCheckInfoFlexTable.setWidget(1, 0, checkNumberLb);
 		postCheckInfoFlexTable.setWidget(1, 1, tbCheckNo);
 		postCheckInfoFlexTable.setWidget(2, 0, totalAmountLb);
@@ -181,6 +181,7 @@ public class PostCheckWidget extends Composite {
 							final TextBox tbCopay = new TextBox();
 							tbCopay.setWidth("100%");
 							tbCopay.setText("0");
+							ArrayList params = new ArrayList();							
 							tbCopay.addChangeHandler(new ChangeHandler() {
 
 								@Override
@@ -213,14 +214,50 @@ public class PostCheckWidget extends Composite {
 								}
 
 							});
+							params.add(data.get("pt_id"));
+							params.add(data.get("id"));
+
+							Util.callApiMethod("Ledger", "getCoveragesCopayInfo", params,
+									new CustomRequestCallback() {
+										@Override
+										public void onError() {
+										}
+
+										@Override
+										public void jsonifiedData(Object d) {
+											if (data != null) {
+												HashMap<String, String> result = (HashMap<String, String>) d;
+												//tbAmount.setEnabled(false);
+												if (result!=null) {
+													tbCopay
+																	.setText(result.get("copay"));
+													try{
+														Label lbLeft = new Label();
+														float left=0;
+														float copay=Float.parseFloat(result.get("copay"));
+														left = Float.parseFloat(data.get("left"));														
+														lbLeft.setText(""+(left-copay));
+														proceduresInfoTable.getFlexTable().setWidget(actionRow, 10, lbLeft);
+													}
+													catch(Exception e){
+														Window.alert("aaaa");
+													}
+															//tbAmount.setEnabled(false);								
+												}
+											}
+										}
+									}, "HashMap<String,String>");
 							return tbCopay;
 						} else if (columnName.compareTo("left") == 0) {
 							int row=proceduresInfoTable.getActionRow();
 							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 10, "10%");
-							Label tbLeft = new Label();
-							tbLeft.setWidth("100%");
-							tbLeft.setText(data.get("left"));
-							return tbLeft;
+							try{
+								Label lb = (Label) proceduresInfoTable.getWidget(10);
+								return lb;
+							}
+							catch(Exception e){
+								return new Label();
+							}
 						}
 						else if (columnName.compareTo("adj_bal") == 0) {
 							int row=proceduresInfoTable.getActionRow();
@@ -390,7 +427,10 @@ public class PostCheckWidget extends Composite {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { "" + payerWidget.getStoredValue(),
+//			String[] params = { "" + payerWidget.getStoredValue(),
+//					JsonUtil.jsonify(tbCheckNo.getText()),
+//					JsonUtil.jsonify(maps) };
+			String[] params = { "" ,
 					JsonUtil.jsonify(tbCheckNo.getText()),
 					JsonUtil.jsonify(maps) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,

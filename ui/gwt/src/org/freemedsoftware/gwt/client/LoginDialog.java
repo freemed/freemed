@@ -66,6 +66,8 @@ public class LoginDialog extends DialogBox {
 
 	protected final PushButton loginButton;
 
+	protected final Image loadingImage;
+	
 	protected FreemedInterface freemedInterface = null;
 
 	protected DialogBox dialog;
@@ -241,7 +243,7 @@ public class LoginDialog extends DialogBox {
 			public void onClick(ClickEvent w) {
 				attemptLogin();
 			}
-		});
+		});		
 		loginButton.setTabIndex(5);
 		absolutePanel.add(loginButton, 83, 233);
 		loginButton.setStylePrimaryName("gwt-LoginButton");
@@ -249,6 +251,12 @@ public class LoginDialog extends DialogBox {
 		final Label loginLabel = new Label("Login");
 		absolutePanel.add(loginLabel, 140, 242);
 		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
+		
+		loadingImage = new Image(GWT
+				.getHostPageBaseURL()
+				+ "resources/images/login_loading.32x27.gif");
+		loadingImage.setVisible(false);
+		absolutePanel.add(loadingImage, 185, 237);
 
 		final SimplePanel simplePanel = new SimplePanel();
 		simplePanel.setWidget(absolutePanel);
@@ -283,12 +291,14 @@ public class LoginDialog extends DialogBox {
 			hide();
 			freemedInterface.resume();
 		} else {
+			loadingImage.setVisible(true);
 			loginButton.setEnabled(false);
 
 			try {
 				Util.login(userLogin.getText(), loginPassword.getText(),facilityList.getStoredValue(),
 						new Command() {
 							public void execute() {
+								loadingImage.setVisible(false);
 								hide();
 								loginPassword.setText("");
 								freemedInterface.resume();
@@ -296,6 +306,7 @@ public class LoginDialog extends DialogBox {
 							}
 						}, new Command() {
 							public void execute() {
+								loadingImage.setVisible(false);
 								show();
 								loginPassword.setText("");
 								loginButton.setEnabled(true);

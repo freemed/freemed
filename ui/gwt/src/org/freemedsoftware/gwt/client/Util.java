@@ -97,6 +97,12 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.HeadElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -113,7 +119,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -656,7 +665,7 @@ public final class Util {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							// closeAllTabs();
-							CurrentState.getMainScreen().hide();
+							CurrentState.getMainScreen().setVisible(false);
 							UIObject.setVisible(RootPanel.get(
 									"loginScreenOuter").getElement(), true);
 							CurrentState.getFreemedInterface().getLoginDialog()
@@ -709,6 +718,14 @@ public final class Util {
 			flag = true;
 		} catch (Exception e) {
 			flag = false;
+		}
+		if(!flag){
+			try {
+				Float val = new Float(value);
+				flag = true;
+			} catch (Exception e) {
+				flag = false;
+			}
 		}
 		return flag;
 	}
@@ -772,7 +789,15 @@ public final class Util {
 		}
 		return date;
 	}
-
+	/**
+	 * getTodayDate
+	 * @return date string
+	 */
+	public static String getTodayDate(){
+		Calendar cal = new GregorianCalendar();
+		return cal.getTime().toString();
+	}
+	
 	/**
 	 * Calculates age w.r.t provided DOB
 	 * 
@@ -917,7 +942,7 @@ public final class Util {
 					((FocusWidget) widget).setFocus(true);
 				}
 				if (widget instanceof CustomRadioButtonGroup) {
-					((CustomRadioButtonGroup) widget).setFocus();
+					((CustomRadioButtonGroup) widget).setFocus(true);
 				}
 				if (widget instanceof UserMultipleChoiceWidget) {
 					((UserMultipleChoiceWidget) widget).setFocus();
@@ -1151,7 +1176,7 @@ public final class Util {
 					((ProviderWidget) widget).setValue(Integer.parseInt(data
 							.get(key)));
 				} else if (widget instanceof CustomListBox) {
-					((CustomListBox) widget).setWidgetValue(data.get(key));
+					((CustomListBox) widget).setWidgetValue(data.get(key),true);
 				} else if (widget instanceof SupportModuleWidget) {
 					((SupportModuleWidget) widget).setValue(Integer
 							.parseInt(data.get(key)));
@@ -1429,6 +1454,78 @@ public final class Util {
 			}
 		
 		}, "Integer");
+	}
+	/**
+	 * Attaches the mouseover help popup
+	 * 
+	 * @param widget   - Widget for which mouseover help popup is required
+	 * 
+	 * @param title    - title of the help dialog 
+	 * 
+	 * @param help     - detailed text explaining the topic
+	 * 
+	 */
+	public static void attachHelp(final Widget widget,String title, String help,final boolean showOnLeft){
+		final PopupPanel popup = new PopupPanel();
+		final HTML html = new HTML();
+		html.setHTML("<b>" + title
+				+ "</b><br/><br/>" + help);
+
+		popup.add(html);
+		popup.setStyleName("freemed-HelpPopup");
+		if(widget instanceof FocusWidget){
+			((FocusWidget)widget).addMouseOutHandler(new MouseOutHandler() {
+				@Override
+				public void onMouseOut(MouseOutEvent event) {
+					// Hide help PopUp
+					popup.hide();
+				}
+	
+			});
+			((FocusWidget)widget).addMouseDownHandler(new MouseDownHandler() {
+				@Override
+				public void onMouseDown(MouseDownEvent event) {
+					// Hide help PopUp
+					popup.hide();
+				}
+	
+			});
+			((FocusWidget)widget).addMouseMoveHandler(new MouseMoveHandler() {
+				@Override
+				public void onMouseMove(MouseMoveEvent event) {
+					// Do nothing
+					popup.show();
+					popup.setPopupPosition(widget.getAbsoluteLeft() + (showOnLeft?-1*popup.getOffsetWidth():20),
+							widget.getAbsoluteTop() + 20);
+				}
+			});
+		}else if(widget instanceof Image){
+			((Image)widget).addMouseOutHandler(new MouseOutHandler() {
+				@Override
+				public void onMouseOut(MouseOutEvent event) {
+					// Hide help PopUp
+					popup.hide();
+				}
+	
+			});
+			((Image)widget).addMouseDownHandler(new MouseDownHandler() {
+				@Override
+				public void onMouseDown(MouseDownEvent event) {
+					// Hide help PopUp
+					popup.hide();
+				}
+	
+			});
+			((Image)widget).addMouseMoveHandler(new MouseMoveHandler() {
+				@Override
+				public void onMouseMove(MouseMoveEvent event) {
+					// Do nothing
+					popup.show();
+					popup.setPopupPosition(widget.getAbsoluteLeft() + (showOnLeft?-1*popup.getOffsetWidth():20),
+							widget.getAbsoluteTop() + 20);
+				}
+			});
+		}
 	}
 	
 }

@@ -176,6 +176,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 			populate((HashMap<String, String>[]) results
 					.toArray(new HashMap<?, ?>[0]));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			customSortableTable.showloading(true);
 			String[] params = { t, JsonUtil.jsonify(Boolean.FALSE) };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -201,6 +202,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 								populate(r);
 							}
 						} else {
+							customSortableTable.showloading(false);
 							GWT.log("Exception", null);
 						}
 					}

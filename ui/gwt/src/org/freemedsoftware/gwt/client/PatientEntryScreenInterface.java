@@ -29,7 +29,6 @@ import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -59,11 +58,11 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 	public PatientEntryScreenInterface() {
 		super();
 	}
-	
+
 	public PatientEntryScreenInterface(String moduleName) {
 		super(moduleName);
 	}
-	
+
 	/**
 	 * Add widget to list of HashMap'd data points represented by this form.
 	 * 
@@ -91,17 +90,25 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 		Iterator<String> iter = setters.keySet().iterator();
 		while (iter.hasNext()) {
 			String k = iter.next();
+			JsonUtil.debug("grabbing key " + k + " from setters");
 			rec.put(k, setters.get(k).getStoredValue());
 		}
 
 		// Set patient ID
 		rec.put(patientIdName, patientId.toString());
 
+		// Debug
+		JsonUtil
+				.debug("PatientEntryScreenInterface.submitForm() called with : "
+						+ JsonUtil.jsonify(rec));
+
 		if (!internalId.equals(new Integer(0))) {
 			// Modify
+			JsonUtil
+					.debug("PatientEntryScreenInterface.submitForm() attempting modify");
 			rec.put("id", (String) internalId.toString());
 			if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				String[] params = { moduleName, JsonUtil.jsonify(rec) };
+				String[] params = { getModuleName(), JsonUtil.jsonify(rec) };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
@@ -112,7 +119,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							Util.showErrorMsg(moduleName, "Failed to update.");
+							Util.showErrorMsg(getModuleName(), "Failed to update.");
 						}
 
 						public void onResponseReceived(Request request,
@@ -122,77 +129,86 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 										JSONParser.parse(response.getText()),
 										"Integer");
 								if (r != null) {
-									Util.showInfoMsg(moduleName, "Updated.");
+									Util.showInfoMsg(getModuleName(), "Updated.");
 								}
 							} else {
-								Util.showErrorMsg(moduleName, "Failed to update.");
+								Util.showErrorMsg(getModuleName(),
+										"Failed to update.");
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Util.showErrorMsg(moduleName, "Failed to update.");
+					Util.showErrorMsg(getModuleName(), "Failed to update.");
 				}
-			} else {
-				if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					String[] params = { moduleName, JsonUtil.jsonify(rec) };
-					RequestBuilder builder = new RequestBuilder(
-							RequestBuilder.POST,
-							URL
-									.encode(Util
-											.getJsonRequest(
-													"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
-													params)));
-					try {
-						builder.sendRequest(null, new RequestCallback() {
-							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg(moduleName, "Failed to add.");
+			} else { // if programmode == JSONRPC (modify)
+				// Modify
+				service.ModuleModifyMethod(getModuleName(), rec,
+						new AsyncCallback<Integer>() {
+							public void onSuccess(Integer result) {
+								Util.showErrorMsg(getModuleName(),
+										"Failed to update.");
 							}
 
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									Integer r = (Integer) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													"Integer");
-									if (r != null) {
-										Util.showInfoMsg(moduleName, "Added.");
-									}
-								} else {
-									Util.showErrorMsg(moduleName, "Failed to add.");
-								}
+							public void onFailure(Throwable th) {
+								Util.showErrorMsg(getModuleName(),
+										"Failed to update.");
 							}
 						});
-					} catch (RequestException e) {
-						Util.showErrorMsg(moduleName, "Failed to update.");
-					}
-				} else {
-					service.ModuleModifyMethod(moduleName, rec,
-							new AsyncCallback<Integer>() {
-								public void onSuccess(Integer result) {
-									Util.showErrorMsg(moduleName, "Failed to update.");
-								}
-
-								public void onFailure(Throwable th) {
-									Util.showErrorMsg(moduleName, "Failed to update.");
-								}
-							});
-				}
 			}
-		} else {
-			// Add
-			service.ModuleAddMethod(moduleName, rec,
-					new AsyncCallback<Integer>() {
-						public void onSuccess(Integer result) {
-							Util.showInfoMsg(moduleName, "Added.");
+		} else { // if this is an "add" request ...
+			JsonUtil
+					.debug("PatientEntryScreenInterface.submitForm() attempting add");
+			if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				JsonUtil.debug("Try to build parameters");
+				String[] params = { getModuleName(), JsonUtil.jsonify(rec) };
+				JsonUtil.debug("Create requestbuilder for " + getModuleName() + ", " + JsonUtil.jsonify(rec) );
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
+												params)));
+				JsonUtil.debug("Entering try statement");
+				try {
+					JsonUtil.debug("Sending request");
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							Util.showErrorMsg(getModuleName(), "Failed to add.");
 						}
 
-						public void onFailure(Throwable th) {
-							Util.showErrorMsg(moduleName, "Failed to Add.");
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								Integer r = (Integer) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Integer");
+								if (r != null) {
+									Util.showInfoMsg(getModuleName(), "Added.");
+								}
+							} else {
+								Util.showErrorMsg(getModuleName(), "Failed to add.");
+							}
 						}
 					});
-		}
-	}
+				} catch (RequestException e) {
+					Util.showErrorMsg(getModuleName(), "Failed to update.");
+				}
+			} else { // add clause GWT-RPC
+				// Add
+				service.ModuleAddMethod(getModuleName(), rec,
+						new AsyncCallback<Integer>() {
+							public void onSuccess(Integer result) {
+								Util.showInfoMsg(getModuleName(), "Added.");
+							}
+
+							public void onFailure(Throwable th) {
+								Util.showErrorMsg(getModuleName(), "Failed to Add.");
+							}
+						});
+			} // end add cause
+		} // if add/mod selector
+	} // end submitForm
 
 	/**
 	 * Set internal record id, if applicable, and fire off data load.
@@ -222,7 +238,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg(moduleName, "Failed to load data.");
+						Util.showErrorMsg(getModuleName(), "Failed to load data.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -239,7 +255,8 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 								populateData(r);
 							}
 						} else {
-							Util.showErrorMsg(moduleName, "Failed to load data.");
+							Util.showErrorMsg(getModuleName(),
+									"Failed to load data.");
 						}
 					}
 				});
@@ -248,14 +265,15 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 			}
 		} else {
 			ModuleInterfaceAsync service = getProxy();
-			service.ModuleGetRecordMethod(moduleName, internalId,
+			service.ModuleGetRecordMethod(getModuleName(), internalId,
 					new AsyncCallback<HashMap<String, String>>() {
 						public void onSuccess(HashMap<String, String> r) {
 							populateData(r);
 						}
 
 						public void onFailure(Throwable t) {
-							Util.showErrorMsg(moduleName, "Failed to load data.");
+							Util.showErrorMsg(getModuleName(),
+									"Failed to load data.");
 						}
 					});
 		}

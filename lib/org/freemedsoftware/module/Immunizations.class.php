@@ -41,6 +41,7 @@ class Immunizations extends EMRModule {
 		'dateof',
 		'patient',
 		'provider',
+		'admin_provider',
 		'eoc',
 		'immunization',
 		'route',

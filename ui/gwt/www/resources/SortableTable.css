@@ -23,10 +23,12 @@
  */
 
 TABLE.sortableTable TD {
-	border-bottom:solid #93BEE2 1px;
-	BORDER-RIGHT:1px solid #93BEE2;
-	border-left:1px solid #93BEE2;
-	border-top:1px solid #93BEE2;
+	/*
+	border-bottom:solid #93BEE2 0px;
+	BORDER-RIGHT:0px solid #93BEE2;
+	border-left:0px solid #93BEE2;
+	border-top:0px solid #93BEE2;
+	*/
 }
 
 TABLE.sortableTable TBODY {
@@ -40,7 +42,7 @@ TABLE.sortableTable TBODY {
 	font-size:12px;
 	color:#FFFFFF;
 	font-weight:bold;
-	background: #104A7B;
+	background: #535353;
 }
 
 .headerStyle{

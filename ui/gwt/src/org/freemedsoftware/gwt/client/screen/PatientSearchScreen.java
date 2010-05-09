@@ -35,11 +35,14 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -63,8 +66,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PatientSearchScreen extends ScreenInterface {
 
-	public final static String HelpPageName = "patient";
-	
 	protected CustomTable sortableTable = null;
 
 	protected Label sortableTableEmptyLabel = new Label();
@@ -94,7 +95,6 @@ public class PatientSearchScreen extends ScreenInterface {
 	}
 	
 	public PatientSearchScreen() {
-		CurrentState.assignCurrentPageHelp(HelpPageName);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -105,6 +105,10 @@ public class PatientSearchScreen extends ScreenInterface {
 		final Label smartSearchLabel = new Label("Smart Search : ");
 		flexTable.setWidget(0, 0, smartSearchLabel);
 
+		final HorizontalPanel searchHPanel = new HorizontalPanel();
+		searchHPanel.setWidth("100%");
+		flexTable.setWidget(0, 1, searchHPanel);
+		
 		wSmartSearch = new PatientWidget();
 		wSmartSearch.setWidth("100%");
 		wSmartSearch.addChangeHandler(new ValueChangeHandler<Integer>() {
@@ -127,8 +131,28 @@ public class PatientSearchScreen extends ScreenInterface {
 			}
 		});
 		addChildWidget(wSmartSearch);
-		flexTable.setWidget(0, 1, wSmartSearch);
+		searchHPanel.add(wSmartSearch);
+		
 
+		if(CurrentState.getMainScreen().isNeedToCreate(AppConstants.PATIENT_CATEGORY,
+				AppConstants.NEW_PATIENT)){
+			final CustomButton newPatient = new CustomButton("Add New Patient",
+					AppConstants.ICON_ADD_PERSON);
+			newPatient.addClickHandler(new ClickHandler() {
+	
+				@Override
+				public void onClick(ClickEvent arg0) {
+					PatientForm patientForm = PatientForm.getInstance();
+					patientForm.setPrimaryFacility(CurrentState
+							.getDefaultFacility());
+					Util.spawnTab(AppConstants.NEW_PATIENT, patientForm);
+				}
+	
+			});
+			searchHPanel.add(newPatient);
+		}
+		
+		
 		final Label fieldSearchLabel = new Label("Field Search : ");
 		flexTable.setWidget(1, 0, fieldSearchLabel);
 

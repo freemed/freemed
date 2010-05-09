@@ -59,7 +59,7 @@ public class PatientAuthorizations extends Composite {
 
 	public class Authorization {
 		
-		protected Integer authorizationId ;
+		protected Integer authorizationId = 0 ;
 		
 		protected String startingDate ;
 		
@@ -69,11 +69,11 @@ public class PatientAuthorizations extends Composite {
 		
 		protected String authorizationType;
 
-		protected Integer authorizingProvider;
+		protected Integer authorizingProvider = 0;
 		
 		protected String providerIdentifier = "";
 		
-		protected Integer authorizingInsuranceCompany ;
+		protected Integer authorizingInsuranceCompany = 0 ;
 		
 		protected String numberofVisits = "";
 		
@@ -111,6 +111,25 @@ public class PatientAuthorizations extends Composite {
 			return map;
 		}
 
+		public void loadData(HashMap<String, String> data){
+			if(data.get("id")!=null)
+				setAuthorizationId(Integer.parseInt(data.get("id")));
+			setStartingDate(data.get("authdtbegin"));
+			setEndingDate(data.get("authdtend"));
+			if(data.get("authnum")!=null)
+			setAuthorizationNumber(data.get("authnum"));
+			if(data.get("authtype")!=null)
+				setAuthorizationType(data.get("authtype"));
+			if(data.get("authprov")!=null)
+				setAuthorizingProvider(Integer.parseInt(data.get("authprov")));
+			if(data.get("authprovid")!=null)
+				setProviderIdentifier(data.get("authprovid"));
+			if(data.get("authinsco")!=null)
+				setAuthorizingInsuranceCompany(Integer.parseInt(data.get("authinsco")));
+			setNumberofVisits(data.get("authvisits"));
+			setUsedVisits(data.get("authvisitsused"));
+			setComment(data.get("authcomment"));
+		}
 
 		public Integer getAuthorizationId() {
 			return authorizationId;
@@ -238,9 +257,11 @@ public class PatientAuthorizations extends Composite {
 		authorizations = new HashMap<Integer, Authorization>();
 
 		VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.setWidth("100%");
 		initWidget(verticalPanel);
 
 		authorizationsPanel = new VerticalPanel();
+		authorizationsPanel.setWidth("100%");
 		verticalPanel.add(authorizationsPanel);
 
 		HorizontalPanel hP = new HorizontalPanel();
@@ -266,6 +287,12 @@ public class PatientAuthorizations extends Composite {
 		onCompletion = oc;
 	}
 
+	public void addAuthorization(HashMap<String, String> data){
+		Authorization athorization = new Authorization();
+		athorization.loadData(data);
+		addAuthorization(authorizations.size()+1, athorization);
+	}
+	
 	/**
 	 * Add additional Authorization object to a particular position on the flexTable.
 	 * 
@@ -281,6 +308,7 @@ public class PatientAuthorizations extends Composite {
 		int row=0;
 
 		final CustomTable flexTable = new CustomTable();
+		flexTable.setWidth("100%");
 		flexTable.removeTableStyle();
 		authorizationsPanel.add(flexTable);
 		
@@ -539,6 +567,7 @@ public class PatientAuthorizations extends Composite {
 								for (int iter = 0; iter < result.length; iter++) {
 									// Create new Authorization object
 									Authorization x = new Authorization();
+									/*
 									x.setAuthorizationId(Integer.parseInt(result[iter].get("id")));
 									x.setStartingDate(result[iter].get("authdtbegin"));
 									x.setEndingDate(result[iter].get("authdtend"));
@@ -552,7 +581,8 @@ public class PatientAuthorizations extends Composite {
 									x.setNumberofVisits(result[iter].get("authvisits"));
 									x.setUsedVisits(result[iter].get("authvisitsused"));
 									x.setComment(result[iter].get("authcomment"));
-
+									*/
+									x.loadData(result[iter]);
 									// builder
 									addAuthorization(new Integer(iter + 1), x);
 								}
@@ -603,6 +633,46 @@ public class PatientAuthorizations extends Composite {
 
 	public HashMap<Integer, Authorization> getAuthorizations() {
 		return authorizations;
+	}
+	
+	
+	public static String returnAuthorizationType(int id)
+	{
+		
+		if(id==1)
+		{
+			return "physician";
+		}
+		
+		else if(id==2)
+		{
+			return "insurance company";
+		}
+		
+		else if(id==3)
+		{
+			return "certificate of medical neccessity";
+		}
+		
+		
+		else if(id==4)
+		{
+			return "surgical";
+		}
+		else if(id==5)
+		{
+			return "worker's compensation";
+		}
+		
+		else if(id==6)
+		{
+			return "consulatation";
+		}
+		
+		else
+	       return "None Selected";
+	
+		
 	}
 
 }

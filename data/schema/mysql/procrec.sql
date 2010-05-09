@@ -27,57 +27,58 @@ SOURCE data/schema/mysql/cpt.sql
 SOURCE data/schema/mysql/dxhistory.sql
 
 CREATE TABLE IF NOT EXISTS `procrec` (
-	procpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	proceoc			TEXT,
-	proccpt			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	proccptmod		INT UNSIGNED DEFAULT 0,
-	proccptmod2		INT UNSIGNED DEFAULT 0,
-	proccptmod3		INT UNSIGNED DEFAULT 0,
-	procdiag1		INT UNSIGNED DEFAULT 0,
-	procdiag2		INT UNSIGNED DEFAULT 0,
-	procdiag3		INT UNSIGNED DEFAULT 0,
-	procdiag4		INT UNSIGNED DEFAULT 0,
-	proccharges		REAL DEFAULT 0.0,
-	procunits		REAL DEFAULT 1.0,
-	procvoucher		VARCHAR (25),
-	procphysician		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	procdt			DATE,
-	procdtend		DATE,
-	procpos			INT UNSIGNED DEFAULT 0,
-	proccomment		TEXT,
-	procbalorig		REAL,
-	procbalcurrent		REAL,
-	procamtpaid		REAL,
-	procbilled		INT UNSIGNED DEFAULT 0,
-	procbillable		INT UNSIGNED DEFAULT 0,
-	procauth		INT UNSIGNED DEFAULT 0,
-	procrefdoc		INT UNSIGNED DEFAULT 0,
-	procrefdt		DATE,
-	procamtallowed		REAL,
-	procdtbilled		TEXT,
-	proccurcovid		INT UNSIGNED DEFAULT 0,
-	proccurcovtp		INT UNSIGNED DEFAULT 0,
-	proccov1		INT UNSIGNED DEFAULT 0,
-	proccov2		INT UNSIGNED DEFAULT 0,
-	proccov3		INT UNSIGNED DEFAULT 0,
-	proccov4		INT UNSIGNED DEFAULT 0,
-	proccert		INT UNSIGNED DEFAULT 0,   
-	procclmtp		INT UNSIGNED DEFAULT 0,
-	procmedicaidref		VARCHAR (20),
-	procmedicaidresub	VARCHAR (20),
-	proclabcharges		REAL DEFAULT 0.0,
-	procstatus		VARCHAR (50),
-	procslidingscale	CHAR (1),
-	proctosoverride		INT UNSIGNED DEFAULT 0,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY		( id ),
+	  procpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, proceoc		TEXT
+	, proccpt		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, proccptmod		INT UNSIGNED DEFAULT 0
+	, proccptmod2		INT UNSIGNED DEFAULT 0
+	, proccptmod3		INT UNSIGNED DEFAULT 0
+	, procdiag1		INT UNSIGNED DEFAULT 0
+	, procdiag2		INT UNSIGNED DEFAULT 0
+	, procdiag3		INT UNSIGNED DEFAULT 0
+	, procdiag4		INT UNSIGNED DEFAULT 0
+	, procdiagset		ENUM ( '9', '10' ) NOT NULL DEFAULT '9'
+	, proccharges		REAL DEFAULT 0.0
+	, procunits		REAL DEFAULT 1.0
+	, procvoucher		VARCHAR (25)
+	, procphysician		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, procdt		DATE
+	, procdtend		DATE
+	, procpos		INT UNSIGNED DEFAULT 0
+	, proccomment		TEXT
+	, procbalorig		REAL
+	, procbalcurrent	REAL
+	, procamtpaid		REAL
+	, procbilled		INT UNSIGNED DEFAULT 0
+	, procbillable		INT UNSIGNED DEFAULT 0
+	, procauth		INT UNSIGNED DEFAULT 0
+	, procrefdoc		INT UNSIGNED DEFAULT 0
+	, procrefdt		DATE
+	, procamtallowed	REAL
+	, procdtbilled		TEXT
+	, proccurcovid		INT UNSIGNED DEFAULT 0
+	, proccurcovtp		INT UNSIGNED DEFAULT 0
+	, proccov1		INT UNSIGNED DEFAULT 0
+	, proccov2		INT UNSIGNED DEFAULT 0
+	, proccov3		INT UNSIGNED DEFAULT 0
+	, proccov4		INT UNSIGNED DEFAULT 0
+	, proccert		INT UNSIGNED DEFAULT 0
+	, procclmtp		INT UNSIGNED DEFAULT 0
+	, procmedicaidref	VARCHAR (20)
+	, procmedicaidresub	VARCHAR (20)
+	, proclabcharges	REAL DEFAULT 0.0
+	, procstatus		VARCHAR (50)
+	, procslidingscale	CHAR (1)
+	, proctosoverride	INT UNSIGNED DEFAULT 0
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+	, PRIMARY KEY		( id )
 
 	#	Define keys
 
-	FOREIGN KEY		( procpatient ) REFERENCES patient.id ON DELETE CASCADE,
-	FOREIGN KEY		( proccpt ) REFERENCES cpt.id,
-	FOREIGN KEY		( procphysician ) REFERENCES physician.id
+	, FOREIGN KEY		( procpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( proccpt ) REFERENCES cpt.id
+	, FOREIGN KEY		( procphysician ) REFERENCES physician.id
 );
 
 DROP PROCEDURE IF EXISTS procrec_Upgrade;
@@ -107,6 +108,8 @@ BEGIN
 	IF @V < 2 THEN
 		ALTER IGNORE TABLE procrec ADD COLUMN procdtend DATE AFTER procdt;
 	END IF;
+
+	ALTER IGNORE TABLE procrec ADD COLUMN procdiagset ENUM ( '9', '10' ) NOT NULL DEFAULT 9 AFTER procdiag4;
 
 	CALL FreeMED_Module_UpdateVersion( 'procrec', 2 );
 END
@@ -208,22 +211,22 @@ CREATE TRIGGER procrec_Insert
 
 		#	Diagnosis 1
 		IF NEW.procdiag1 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag1, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag1, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		#	Diagnosis 2
 		IF NEW.procdiag2 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag2, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag2, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		#	Diagnosis 3
 		IF NEW.procdiag3 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag3, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag3, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		#	Diagnosis 4
 		IF NEW.procdiag4 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		# Add to ledger
@@ -263,6 +266,7 @@ CREATE TRIGGER procrec_Insert
 				, ptdiag2 = NEW.procdiag2
 				, ptdiag3 = NEW.procdiag3
 				, ptdiag4 = NEW.procdiag4
+				, ptdiagset = NEW.procdiagset
 			WHERE
 				id = NEW.procpatient;
 
@@ -279,25 +283,25 @@ CREATE TRIGGER procrec_Update
 		#	Diagnosis 1
 		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag1;
 		IF NEW.procdiag1 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag1, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag1, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		#	Diagnosis 2
 		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag2;
 		IF NEW.procdiag2 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag2, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag2, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		#	Diagnosis 3
 		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag3;
 		IF NEW.procdiag3 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag3, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag3, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		#	Diagnosis 4
 		DELETE FROM `dxhistory` WHERE procrec=OLD.id AND dx=OLD.procdiag4;
 		IF NEW.procdiag4 > 0 THEN
-			INSERT INTO `dxhistory` ( patient, procrec, dx, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdt );
+			INSERT INTO `dxhistory` ( patient, procrec, dx, dxset, stamp ) VALUES ( NEW.procpatient, NEW.id, NEW.procdiag4, NEW.procdiagset, NEW.procdt );
 		END IF;
 
 		# Update payment record
@@ -322,6 +326,7 @@ CREATE TRIGGER procrec_Update
 				, ptdiag2 = NEW.procdiag2
 				, ptdiag3 = NEW.procdiag3
 				, ptdiag4 = NEW.procdiag4
+				, ptdiagset = NEW.procdiagset
 			WHERE
 				id = NEW.procpatient;
 

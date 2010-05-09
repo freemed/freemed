@@ -141,6 +141,7 @@ public class UnreadDocuments extends ScreenInterface {
 			wDocuments.loadData(results
 					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			wDocuments.showloading(true);
 			String[] params = {};
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -167,6 +168,7 @@ public class UnreadDocuments extends ScreenInterface {
 									wDocuments.loadData(r);
 								}
 							} else {
+								wDocuments.showloading(false);
 							}
 						}
 					}

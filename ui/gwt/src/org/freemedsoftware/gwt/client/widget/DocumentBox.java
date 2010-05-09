@@ -73,21 +73,24 @@ public class DocumentBox extends WidgetInterface {
 	public DocumentBox() {
 		super(moduleName);
 		SimplePanel sPanel = new SimplePanel();
+		sPanel.setWidth("100%");
 		initWidget(sPanel);
-		sPanel.setStyleName("freemed-WidgetContainer");
+		sPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER);
 		final VerticalPanel verticalPanel = new VerticalPanel();
-
+		verticalPanel.setWidth("100%");
 		sPanel.setWidget(verticalPanel);
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 
 //		final PushButton showDocumentsButton = new PushButton("", "");
-//		showDocumentsButton.setStyleName("gwt-simple-button");
+//		showDocumentsButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 //		showDocumentsButton.getUpFace().setImage(
 //				new Image("resources/images/unfiled.16x16.png"));
 //		showDocumentsButton.getDownFace().setImage(
 //				new Image("resources/images/unfiled.16x16.png"));
-
+		Label headerLabel = new Label("Unfiled Documents");
+		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		horizontalPanel.add(headerLabel);
 		verticalPanel.add(horizontalPanel);
 //		horizontalPanel.add(showDocumentsButton);
 		verticalPanel.add(wDocuments);
@@ -103,14 +106,14 @@ public class DocumentBox extends WidgetInterface {
 //			}
 //		});
 
-		retrieveData();
+//		retrieveData();
 
 		wDocuments.setSize("100%", "100%");
 		wDocuments.addColumn("Date", "uffdate"); // col 0
 		wDocuments.addColumn("Filename", "ufffilename"); // col 1
 		wDocuments.setIndexName("id");
-
-		if(canRead){
+		wDocuments.setMaximumRows(7);
+		if(true){
 			wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
 				@Override
 				public void handleRowClick(HashMap<String, String> data, int col) {
@@ -124,14 +127,14 @@ public class DocumentBox extends WidgetInterface {
 			});
 		}
 		// Collapsed view
-		wDocuments.setVisible(false);
-		horizontalPanel.add(documentsCountLabel);
+//		wDocuments.setVisible(false);
+//		horizontalPanel.add(documentsCountLabel);
 	}
 
 	public Widget getDefaultIcon(){
 		if(showDocumentsButton==null){
 			showDocumentsButton = new PushButton("", "");
-			showDocumentsButton.setStyleName("gwt-simple-button");
+			showDocumentsButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			showDocumentsButton.getUpFace().setImage(
 					new Image("resources/images/unfiled.16x16.png"));
 			showDocumentsButton.getDownFace().setImage(
@@ -150,6 +153,10 @@ public class DocumentBox extends WidgetInterface {
 		}
 		return showDocumentsButton;
 	}
+
+	public void clearView(){
+		wDocuments.clearData();
+	}
 	
 	public void retrieveData() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -157,6 +164,7 @@ public class DocumentBox extends WidgetInterface {
 			HashMap<String, String>[] sampleData = getSampleData();
 			loadData(sampleData);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			wDocuments.showloading(true);
 			// Use JSON-RPC to retrieve the data
 			String[] documentparams = {};
 
@@ -183,7 +191,7 @@ public class DocumentBox extends WidgetInterface {
 											"HashMap<String,String>[]");
 							if (data != null) {
 								loadData(data);
-							}
+							}else wDocuments.showloading(false);
 						}
 					}
 				});

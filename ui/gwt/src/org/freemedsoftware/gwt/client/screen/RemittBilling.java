@@ -202,7 +202,7 @@ public class RemittBilling extends ScreenInterface {
 		claimsSubmissionTable.addColumn("Total Claims", "claim_count");
 		claimsSubmissionTable.setIndexName("patient_id");
 		claimsSubmissionTable.setMultipleSelection(true);
-		
+		claimsSubmissionTable.showloading(true);
 		Util.callModuleMethod("RemittBillingTransport", "PatientsToBill", (Integer)null, new CustomRequestCallback() {
 			@Override
 			public void onError() {
@@ -211,6 +211,8 @@ public class RemittBilling extends ScreenInterface {
 			public void jsonifiedData(Object data) {
 				if(data!=null){
 					claimsSubmissionTable.loadData((HashMap<String, String>[])data);
+				}else{
+					claimsSubmissionTable.showloading(false);
 				}
 			}
 		}, "HashMap<String,String>[]");

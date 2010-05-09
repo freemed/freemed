@@ -36,6 +36,7 @@
 	<inherits name="com.googlecode.gchart.GChart" />
 	<inherits name="eu.future.earth.gwt.FtrGwtDate" />
 	<inherits name="pl.rmalinowski.gwt2swf.GWT2SWF" />
+	<inherits name="com.google.gwt.widgetideas.GWTCanvas" />
 
 	<!-- Limit to Firefox for quicker test builds -->
 	<!--

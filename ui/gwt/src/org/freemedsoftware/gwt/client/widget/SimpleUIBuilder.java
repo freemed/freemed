@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
+import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
@@ -38,6 +39,8 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -48,13 +51,14 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 
 public class SimpleUIBuilder extends WidgetInterface {
 
 	protected static String helpprefix = "Help for";
 
 	public enum WidgetType {
-		MODULE, MODULE_MULTIPLE, USER_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG, MULTILIST,SINGLELIST,DATE
+		MODULE, MODULE_MULTIPLE, USER_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG, MULTILIST, SINGLELIST, DATE, CHECKBOX
 	};
 
 	/**
@@ -99,7 +103,8 @@ public class SimpleUIBuilder extends WidgetInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		CustomButton commitChangesButton = new CustomButton("Commit Changes",AppConstants.ICON_ADD);
+		CustomButton commitChangesButton = new CustomButton("Commit Changes",
+				AppConstants.ICON_ADD);
 		horizontalPanel.add(commitChangesButton);
 		commitChangesButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -187,21 +192,22 @@ public class SimpleUIBuilder extends WidgetInterface {
 			}
 		} else if (type.equals(WidgetType.PATIENT)) {
 			w = new PatientWidget();
-		}else if (type.equals(WidgetType.DATE)) {
+		} else if (type.equals(WidgetType.DATE)) {
 			w = new CustomDatePicker();
-		}else if (type.equals(WidgetType.COLOR)) {
+		} else if (type.equals(WidgetType.COLOR)) {
 			w = new CustomColorPicker();
 		} else if (type.equals(WidgetType.DRUG)) {
 			w = new DrugWidget();
 		} else if (type.equals(WidgetType.DELIMITER)) {
 			w = new Label(title);
 			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
-		}else if(type.equals(WidgetType.MULTILIST)){
-			w=new CustomMulltiSelectListBox(options,true);
-		}else if(type.equals(WidgetType.SINGLELIST)){
-			w=new CustomMulltiSelectListBox(options,false);
-		}
-		else {
+		} else if (type.equals(WidgetType.MULTILIST)) {
+			w = new CustomMulltiSelectListBox(options, true);
+		} else if (type.equals(WidgetType.SINGLELIST)) {
+			w = new CustomMulltiSelectListBox(options, false);
+		} else if (type.equals(WidgetType.CHECKBOX)) {
+			w = new CheckBox();
+		} else {
 			// Unimplemented, use text box as fallback
 			w = new CustomTextBox();
 			JsonUtil.debug("SimpleUIBuilder: Unimplemented type '" + type
@@ -220,37 +226,8 @@ public class SimpleUIBuilder extends WidgetInterface {
 			if (help != null) {
 				final Image image = new Image();
 				image.setUrl("resources/images/q_help.16x16.png");
+				Util.attachHelp(image, helpprefix + " " + title, help, false);
 
-				final PopupPanel popup = new PopupPanel();
-				final HTML html = new HTML();
-				html.setHTML("<b>" + helpprefix + " " + title
-						+ "</b><br/><br/>" + help);
-
-				popup.add(html);
-				popup.setStyleName("freemed-HelpPopup");
-
-				image.addMouseOutHandler(new MouseOutHandler() {
-					@Override
-					public void onMouseOut(MouseOutEvent event) {
-						// Hide help PopUp
-						popup.hide();
-					}
-
-				});
-				image.addMouseMoveHandler(new MouseMoveHandler() {
-					@Override
-					public void onMouseMove(MouseMoveEvent event) {
-						// Do nothing
-						popup.setPopupPositionAndShow(new PositionCallback() {
-							public void setPosition(int offsetWidth,
-									int offsetHeight) {
-								// Show it relative to the mouse-pointer.
-								popup.setPopupPosition(offsetWidth + 20,
-										offsetHeight + 20);
-							}
-						});
-					}
-				});
 				table.setWidget(widgets.size() - 1, 2, image);
 			}
 		}
@@ -301,6 +278,9 @@ public class SimpleUIBuilder extends WidgetInterface {
 		}
 		if (widget.compareToIgnoreCase("DATE") == 0) {
 			return WidgetType.DATE;
+		}
+		if (widget.compareToIgnoreCase("CHECKBOX") == 0) {
+			return WidgetType.CHECKBOX;
 		}
 		// By default, return text
 
@@ -364,8 +344,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 					.getCommaSeparatedValues();
 		}
 		if (w instanceof UserMultipleChoiceWidget) {
-			return ((UserMultipleChoiceWidget) w)
-					.getCommaSeparatedValues();
+			return ((UserMultipleChoiceWidget) w).getCommaSeparatedValues();
 		}
 		if (w instanceof CustomColorPicker) {
 			return ((CustomColorPicker) w).getValue();
@@ -381,6 +360,12 @@ public class SimpleUIBuilder extends WidgetInterface {
 		}
 		if (w instanceof CustomDatePicker) {
 			return ((CustomDatePicker) w).getTextBox().getText();
+		}
+		if (w instanceof CheckBox) {
+			if (((CheckBox) w).getValue())
+				return "1";
+			else
+				return "0";
 		}
 		return null;
 	}
@@ -411,8 +396,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 						.setCommaSeparatedValues(value);
 			}
 			if (w instanceof UserMultipleChoiceWidget) {
-				((UserMultipleChoiceWidget) w)
-						.setCommaSeparatedValues(value);
+				((UserMultipleChoiceWidget) w).setCommaSeparatedValues(value);
 			}
 			if (w instanceof CustomColorPicker) {
 				((CustomColorPicker) w).setValue(value);
@@ -426,8 +410,11 @@ public class SimpleUIBuilder extends WidgetInterface {
 			if (w instanceof CustomMulltiSelectListBox) {
 				((CustomMulltiSelectListBox) w).populateMultiList(value);
 			}
-			if (w instanceof CustomDatePicker) {
-				((CustomDatePicker) w).getTextBox().setText(value);
+			if (w instanceof CheckBox) {
+				if(value.equals("0"))
+					((CheckBox) w).setValue(false);
+				else
+					((CheckBox) w).setValue(true);
 			}
 		}
 	}

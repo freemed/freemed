@@ -822,8 +822,8 @@ a:hover {
  font-size: 15px;
  font-weight: normal;
 }
-.label{ 
-    font-size: 15px;
+.label_large_bold{ 
+    	font-size: 15px;
 	font-weight: bold;
 }
 .label_italic{	
@@ -867,7 +867,7 @@ width:100%;
   text-decoration:none;
 }
 .gwt-CustomPushButton-up, .gwt-CustomPushButton-up-hovering, .gwt-CustomPushButton-up-disabled {
-  padding:1px 2px;
+  padding: 3px 3px 3px 3px;
 }
 .gwt-CustomPushButton-up {
   cursor:pointer;
@@ -876,12 +876,11 @@ width:100%;
   cursor:pointer;
 }
 .gwt-CustomPushButton-up-disabled {
-  border:1px outset #CCCCCC;
   cursor:default;
   opacity:0.5;
 }
 .gwt-CustomPushButton-down, .gwt-CustomPushButton-down-hovering, .gwt-CustomPushButton-down-disabled {
-  padding:2px 2px 1px 2px;
+  padding: 4px 2px 2px 4px;
 }
 .gwt-CustomPushButton-down {
   cursor:pointer;
@@ -890,7 +889,16 @@ width:100%;
   cursor:pointer;
 }
 .gwt-CustomPushButton-down-disabled {
-  border:1px outset #CCCCCC;
   cursor:default;
   opacity:0.5;
 }
+.gwt-CustomPushButton-inner{
+	background-image:url('images/btn-light-bg.png');
+	vertical-align:middle;
+	font-size:12;
+	text-align: center;
+}
+a:link {color: blue;text-decoration: underline}
+a:visited {color: blue;text-decoration: underline}
+a:active {color: blue;text-decoration: underline}
+a:hover {text-decoration: underline; color: red;}

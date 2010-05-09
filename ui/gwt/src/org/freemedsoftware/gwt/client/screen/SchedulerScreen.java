@@ -66,6 +66,7 @@ public class SchedulerScreen extends ScreenInterface {
 	}
 	
 	public SchedulerScreen() {
+		
 		verticalPanel = new VerticalPanel();
 		int startHour         = 10;
 		int endHour           = 18;

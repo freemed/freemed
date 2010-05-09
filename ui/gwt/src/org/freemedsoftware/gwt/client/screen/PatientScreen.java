@@ -53,6 +53,8 @@ import org.freemedsoftware.gwt.client.screen.patient.VitalsEntry;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -61,6 +63,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -69,8 +72,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PatientScreen extends ScreenInterface {
 
 	public final static String moduleName = "emr";
-	
-	public final static String HelpPageName = "manage";
 	
 	protected TabPanel tabPanel;
 
@@ -90,7 +91,6 @@ public class PatientScreen extends ScreenInterface {
 
 	public PatientScreen() {
 		super(moduleName);
-		CurrentState.assignCurrentPageHelp(HelpPageName);
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
@@ -251,6 +251,19 @@ public class PatientScreen extends ScreenInterface {
 		summaryScreen.assignPatientScreen(getObject());
 		addChildWidget(summaryScreen);
 		tabPanel.selectTab(0);
+		
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+			@Override
+			public void onSelection(SelectionEvent<Integer> arg0) {
+				if(tabPanel.getWidget(arg0.getSelectedItem()) instanceof ScreenInterface){
+					ScreenInterface screenInterface = ((ScreenInterface)tabPanel.getWidget(arg0.getSelectedItem()));
+					String className = screenInterface.getClass().getName();
+					className = className.substring(className.lastIndexOf('.')+1);
+					CurrentState.assignCurrentPageHelp(className);
+				}
+			}
+		});
+		
 	}
 
 	/**

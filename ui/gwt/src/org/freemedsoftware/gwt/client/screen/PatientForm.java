@@ -39,6 +39,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
+import org.freemedsoftware.gwt.client.widget.CustomDialogBox;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses;
@@ -57,6 +58,8 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -67,7 +70,9 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -132,7 +137,7 @@ public class PatientForm extends ScreenInterface {
 	
 	protected String AuthorizationsModuleName = "Authorizations";
 
-	protected CustomListBox martialStatus;
+	protected CustomRadioButtonGroup martialStatus;
 	
 	protected CustomListBox employmentStatus;
 	
@@ -180,6 +185,7 @@ public class PatientForm extends ScreenInterface {
 	public final static String moduleName = "PatientModule";
 
 	private static List<PatientForm> patientFormList=null;
+	protected static HashMap<Integer,String> religions=null;
 
 	protected SupportModuleWidget primaryFacility;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
@@ -201,15 +207,21 @@ public class PatientForm extends ScreenInterface {
 	
 	public PatientForm() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.setWidth("100%");
 		initWidget(verticalPanel);
 
+		final CheckBox tabView = new CheckBox("Tab View");
+		tabView.setValue(true);
+		
+		verticalPanel.add(tabView);
+		
 		final TabPanel tabPanel = new TabPanel();
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {		
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				// TODO Auto-generated method stub
 				 if (event.getSelectedItem() == 0)
-					 title.setFocus();	
+					 title.setFocus(true);	
 				 if (event.getSelectedItem() == 2)
 					 preferredContact.setFocus(true);
 				 if (event.getSelectedItem() == 3)
@@ -220,7 +232,13 @@ public class PatientForm extends ScreenInterface {
 		});
 		verticalPanel.add(tabPanel);
 
+		final VerticalPanel nonTabViewContainer = new VerticalPanel();
+		nonTabViewContainer.setWidth("100%");
+		nonTabViewContainer.setVisible(false);
+		verticalPanel.add(nonTabViewContainer);
+		
 		final FlexTable demographicsTable = new FlexTable();
+		demographicsTable.setWidth("100%");
 		tabPanel.add(demographicsTable, "Demographics");
 
 		final Label titleLabel = new Label("Title");
@@ -346,9 +364,11 @@ public class PatientForm extends ScreenInterface {
 		// wDob.setTabIndex(6);
 
 		addressContainer = new PatientAddresses();
+		addressContainer.setWidth("100%");
 		tabPanel.add(addressContainer, "Address");
 
 		final FlexTable contactTable = new FlexTable();
+		contactTable.setWidth("100%");
 		tabPanel.add(contactTable, "Contact");
 
 		final Label preferredContactLabel = new Label("Preferred Contact");
@@ -400,18 +420,19 @@ public class PatientForm extends ScreenInterface {
 		
 		//creating personal tab
 		final FlexTable personalTable = new FlexTable();
+		personalTable.setWidth("100%");
 		tabPanel.add(personalTable, "Personal");
 
 		final Label martialStatusLabel = new Label("Marital Status");
 		personalTable.setWidget(0, 0, martialStatusLabel);
 
-		martialStatus = new CustomListBox();
+		martialStatus = new CustomRadioButtonGroup("martialStatus");
 		martialStatus.addItem( "Single","single");
 		martialStatus.addItem("Married","married");
 		martialStatus.addItem("Divorced","divorced");
 		martialStatus.addItem("Separated","separated");
 		martialStatus.addItem("Widowed","widowed");
-		martialStatus.setVisibleItemCount(1);
+//		martialStatus.setVisibleItemCount(1);
 		personalTable.setWidget(0, 1, martialStatus);
 
 		final Label employmentStatusLabel = new Label("Employment Status");
@@ -540,6 +561,7 @@ public class PatientForm extends ScreenInterface {
 		
 		//creating Medical tab
 		final FlexTable medicalTable = new FlexTable();
+		medicalTable.setWidth("100%");
 		tabPanel.add(medicalTable, "Medical");
 
 //		final Label bloodTypeLabel = new Label("Blood Type");
@@ -661,249 +683,70 @@ public class PatientForm extends ScreenInterface {
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
-				submitButton.setEnabled(false);
-				if (validateForm()) {
-
-					if (Util.getProgramMode() == ProgramMode.STUBBED) {
-
-						submitButton.setEnabled(true);
-						Util.showInfoMsg("PatientForm", "Updated patient information.");
-						addressContainer.setOnCompletion(new Command() {
-							public void execute() {
-								closeScreen();
+//				submitButton.setEnabled(false);
+				if(validateForm()){
+					if(patientId==null || patientId==0){
+						List params = new ArrayList();
+						HashMap<String, String> creteria = new HashMap<String, String>();
+						creteria.put("ptlname", (String) wLastName.getText());
+						creteria.put("ptfname", (String) wFirstName.getText());
+						creteria.put("ptdob", (String) wDob.getStoredValue());
+						params.add(creteria);
+	
+						Util.callApiMethod("PatientInterface", "GetDuplicatePatients", params, new CustomRequestCallback() {
+						
+							@Override
+							public void onError() {
+	//							submitButton.setEnabled(true);
 							}
-						});
-						addressContainer.commitChanges();
-					} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
-						if (patientId == 0) {
-							// Add
-							getModuleProxy().ModuleAddMethod(moduleName,
-									populateHashMap(),
-									new AsyncCallback<Integer>() {
-										public void onSuccess(Integer o) {
-											CurrentState
-													.getToaster()
-													.addItem(
-															"Patient",
-															"Updated patient information.",
-															Toaster.TOASTER_INFO);
-											addressContainer.setPatient(o);
-											addressContainer
-													.setOnCompletion(new Command() {
-														public void execute() {
-															closeScreen();
-														}
-													});
-											addressContainer.commitChanges();
-											
-											if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.MODIFY)){
-												patientCoverages.setPatient(o);
-												patientCoverages
-														.setOnCompletion(new Command() {
-															public void execute() {
-																closeScreen();
-															}
-														});
-												patientCoverages.commitChanges();
-											}
-											
-											
-											patientAuthorizations.setPatient(o);
-											patientAuthorizations
-													.setOnCompletion(new Command() {
-														public void execute() {
-															closeScreen();
-														}
-													});
-											patientAuthorizations.commitChanges();
-										}
-
-										public void onFailure(Throwable t) {
-											JsonUtil.debug("Exception");
-											submitButton.setEnabled(true);
-										}
-									});
-						} else {
-							// Modify
-							getModuleProxy().ModuleModifyMethod(moduleName,
-									populateHashMap(),
-									new AsyncCallback<Integer>() {
-										public void onSuccess(Integer o) {
-											CurrentState
-													.getToaster()
-													.addItem(
-															"Patient",
-															"Updated patient information.",
-															Toaster.TOASTER_INFO);
-											addressContainer
-													.setOnCompletion(new Command() {
-														public void execute() {
-															closeScreen();
-														}
-													});
-											addressContainer.commitChanges();
-											
-											patientCoverages
-											.setOnCompletion(new Command() {
-												public void execute() {
-													closeScreen();
-												}
-											});
-											patientCoverages.commitChanges();
-											
-											patientAuthorizations
-											.setOnCompletion(new Command() {
-												public void execute() {
-													closeScreen();
-												}
-											});
-											patientAuthorizations.commitChanges();
-										}
-
-										public void onFailure(Throwable t) {
-											JsonUtil.debug("Exception");
-											submitButton.setEnabled(true);
-										}
-									});
-						}
-					} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-
-						if (patientId == 0) {
-
-							// Add
-							String[] params = { JsonUtil
-									.jsonify(populateHashMap()) };
-							RequestBuilder builder = new RequestBuilder(
-									RequestBuilder.POST,
-									URL
-											.encode(Util
-													.getJsonRequest(
-															"org.freemedsoftware.module.PatientModule.add",
-															params)));
-							try {
-								builder.sendRequest(null,
-										new RequestCallback() {
-											public void onError(
-													Request request,
-													Throwable ex) {
-											}
-
-											public void onResponseReceived(
-													Request request,
-													Response response) {
-												if (200 == response
-														.getStatusCode()) {
-													Integer r = (Integer) JsonUtil
-															.shoehornJson(
-																	JSONParser
-																			.parse(response
-																					.getText()),
-																	"Integer");
-													if (r != 0) {
-														if(callinId.intValue()>0){//If callin patient is is being entered. 
-															covertCallinIntakeToIntake(callinId,r);
-														}
-														addressContainer.setPatient(r);
-														addressContainer.commitChanges();
-														
-														if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.WRITE)){
-															patientCoverages.setPatient(r);
-															patientCoverages.commitChanges();
-														}
-														if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.WRITE)){
-															patientAuthorizations.setPatient(r);
-															patientAuthorizations.commitChanges();
-														}
-														
-														spawnPatientScreen(r);
-														CurrentState
-																.getToaster()
-																.addItem(
-																		"PatientForm",
-																		"Patient successfully added.");
-													}
-												} else {
-													CurrentState
-															.getToaster()
-															.addItem(
-																	"PatientForm",
-																	"Adding Patient failed.");
-												}
+						
+							@Override
+							public void jsonifiedData(Object data) {
+								HashMap<String, String> result = (HashMap<String, String>)data;
+								if(result==null || result.size()==0)
+									commitChanges();
+								else{
+									final CustomDialogBox customDialogBox = new CustomDialogBox();
+									final VerticalPanel verticalPanel = new VerticalPanel();
+									customDialogBox.setContent(verticalPanel);
+									Label label = new Label("Mathes found!!!!");
+									label.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+									verticalPanel.add(label);
+									Iterator<String> iterator = result.keySet().iterator();
+									while(iterator.hasNext()){
+										final String key   = iterator.next();
+										String value = result.get(key); 
+										HTML patient = new HTML("<a href='javascript:undefined'>"+value+"</a>");
+										patient.addClickHandler(new ClickHandler() {
+										
+											@Override
+											public void onClick(ClickEvent arg0) {
+												customDialogBox.hide();
+												spawnPatientScreen(Integer.parseInt(key));
 											}
 										});
-							} catch (RequestException e) {
+										verticalPanel.add(patient);
+									}
+									CustomButton continueButton = new CustomButton("Continue");
+									continueButton.addClickHandler(new ClickHandler() {
+									
+										@Override
+										public void onClick(ClickEvent arg0) {
+											// TODO Auto-generated method stub
+											commitChanges();
+										}
+									
+									});
+									verticalPanel.add(continueButton);
+									
+									customDialogBox.show();
+									customDialogBox.center();
+								}
 							}
-
-						} else {
-
-							// Modify
-							String[] params = { JsonUtil
-									.jsonify(populateHashMap()) };
-							RequestBuilder builder = new RequestBuilder(
-									RequestBuilder.POST,
-									URL
-											.encode(Util
-													.getJsonRequest(
-															"org.freemedsoftware.module.PatientModule.mod",
-															params)));
-							try {
-								builder.sendRequest(null,
-										new RequestCallback() {
-											public void onError(
-													Request request,
-													Throwable ex) {
-											}
-
-											public void onResponseReceived(
-													Request request,
-													Response response) {
-												if (200 == response
-														.getStatusCode()) {
-													Boolean r = (Boolean) JsonUtil
-															.shoehornJson(
-																	JSONParser
-																			.parse(response
-																					.getText()),
-																	"boolean");
-													if (r) {
-//														addressContainer.setPatient(patientId);
-														
-														//addressContainer.deleteAddress();
-														addressContainer.commitChanges();
-														
-														if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.MODIFY))
-															patientCoverages.commitChanges();
-														if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.MODIFY))
-															patientAuthorizations.commitChanges();
-														
-														spawnPatientScreen(patientId);
-														CurrentState
-																.getToaster()
-																.addItem(
-																		"PatientForm",
-																		"Patient information successfully modified.");
-													}
-												} else {
-													CurrentState
-															.getToaster()
-															.addItem(
-																	"PatientForm",
-																	"Adding Patient failed.");
-												}
-											}
-										});
-							} catch (RequestException e) {
-							}
-
-						}
-
-					}
-
-					closeScreen();
-				} else {
-					// Form validation failed, allow user to continue
-					submitButton.setEnabled(true);
-					Util.showErrorMsg("PatientForm", "Form validation failed.");
+						}, "HashMap<String,String>");
+						
+					}else
+					commitChanges();
 				}
 			}
 		});
@@ -925,14 +768,346 @@ public class PatientForm extends ScreenInterface {
 		
 		if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.SHOW)){
 			patientCoverages = new PatientCoverages();
+			patientCoverages.setWidth("100%");
 			tabPanel.add(patientCoverages, "Coverages");
 		}
 		if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.SHOW)){
 			patientAuthorizations = new PatientAuthorizations();
+			patientAuthorizations.setWidth("100%");
 			tabPanel.add(patientAuthorizations, "Authorizations");
 		}
+		
+		tabView.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> arg0) {
+				if(arg0.getValue()){
+					tabPanel.clear();
+					//Adding Demographics
+					tabPanel.add(demographicsTable, "Demographics");
+					//Adding Address
+					tabPanel.add(addressContainer, "Address");
+					//Adding Contact
+					tabPanel.add(contactTable, "Contact");
+					//Adding Personal
+					tabPanel.add(personalTable, "Personal");
+					//Adding Medical
+					tabPanel.add(medicalTable, "Medical");
+					//Adding Coverages
+					tabPanel.add(patientCoverages, "Coverages");
+					//Adding Authorizations
+					tabPanel.add(patientAuthorizations, "Authorizations");
+					
+					nonTabViewContainer.setVisible(false);
+					tabPanel.setVisible(true);
+					tabPanel.selectTab(0);
+				}else{
+					nonTabViewContainer.clear();
+					//Adding Demographics
+					Label label = new Label("Demographics");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(demographicsTable);
+					demographicsTable.setWidth("100%");
+					
+					//Adding Address
+					label = new Label("Address");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(addressContainer);
+					addressContainer.setWidth("100%");
+					
+					//Adding Contact
+					label = new Label("Contact");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(contactTable);
+					contactTable.setWidth("100%");
+
+					//Adding Personal
+					label = new Label("Personal");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(personalTable);
+					personalTable.setWidth("100%");
+					
+					//Adding Medical
+					label = new Label("Medical");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(medicalTable);
+					medicalTable.setWidth("100%");
+					
+					//Adding Coverages
+					label = new Label("Coverages");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(patientCoverages);
+					patientCoverages.setWidth("100%");
+					
+					//Adding Authorizations
+					label = new Label("Authorizations");
+					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
+					nonTabViewContainer.add(label);
+					nonTabViewContainer.add(patientAuthorizations);
+					patientAuthorizations.setWidth("100%");
+					
+					tabPanel.setVisible(false);
+					nonTabViewContainer.setVisible(true);
+				}
+		
+			}
+		
+		});
+		
 		Util.setFocus(title);	
 	}
+	
+	public void commitChanges(){
+		if (validateForm()) {
+
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+
+				submitButton.setEnabled(true);
+				Util.showInfoMsg("PatientForm", "Updated patient information.");
+				addressContainer.setOnCompletion(new Command() {
+					public void execute() {
+						closeScreen();
+					}
+				});
+				addressContainer.commitChanges();
+			} else if (Util.getProgramMode() == ProgramMode.NORMAL) {
+				if (patientId == 0) {
+					// Add
+					getModuleProxy().ModuleAddMethod(moduleName,
+							populateHashMap(),
+							new AsyncCallback<Integer>() {
+								public void onSuccess(Integer o) {
+									CurrentState
+											.getToaster()
+											.addItem(
+													"Patient",
+													"Updated patient information.",
+													Toaster.TOASTER_INFO);
+									addressContainer.setPatient(o);
+									addressContainer
+											.setOnCompletion(new Command() {
+												public void execute() {
+													closeScreen();
+												}
+											});
+									addressContainer.commitChanges();
+									
+									if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.MODIFY)){
+										patientCoverages.setPatient(o);
+										patientCoverages
+												.setOnCompletion(new Command() {
+													public void execute() {
+														closeScreen();
+													}
+												});
+										patientCoverages.commitChanges();
+									}
+									
+									
+									patientAuthorizations.setPatient(o);
+									patientAuthorizations
+											.setOnCompletion(new Command() {
+												public void execute() {
+													closeScreen();
+												}
+											});
+									patientAuthorizations.commitChanges();
+								}
+
+								public void onFailure(Throwable t) {
+									JsonUtil.debug("Exception");
+									submitButton.setEnabled(true);
+								}
+							});
+				} else {
+					// Modify
+					getModuleProxy().ModuleModifyMethod(moduleName,
+							populateHashMap(),
+							new AsyncCallback<Integer>() {
+								public void onSuccess(Integer o) {
+									CurrentState
+											.getToaster()
+											.addItem(
+													"Patient",
+													"Updated patient information.",
+													Toaster.TOASTER_INFO);
+									addressContainer
+											.setOnCompletion(new Command() {
+												public void execute() {
+													closeScreen();
+												}
+											});
+									addressContainer.commitChanges();
+									
+									patientCoverages
+									.setOnCompletion(new Command() {
+										public void execute() {
+											closeScreen();
+										}
+									});
+									patientCoverages.commitChanges();
+									
+									patientAuthorizations
+									.setOnCompletion(new Command() {
+										public void execute() {
+											closeScreen();
+										}
+									});
+									patientAuthorizations.commitChanges();
+								}
+
+								public void onFailure(Throwable t) {
+									JsonUtil.debug("Exception");
+									submitButton.setEnabled(true);
+								}
+							});
+				}
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+
+				if (patientId == 0) {
+					// Add
+					String[] params = { JsonUtil
+							.jsonify(populateHashMap()) };
+					RequestBuilder builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.module.PatientModule.add",
+													params)));
+					try {
+						builder.sendRequest(null,
+								new RequestCallback() {
+									public void onError(
+											Request request,
+											Throwable ex) {
+									}
+
+									public void onResponseReceived(
+											Request request,
+											Response response) {
+										if (200 == response
+												.getStatusCode()) {
+											Integer r = (Integer) JsonUtil
+													.shoehornJson(
+															JSONParser
+																	.parse(response
+																			.getText()),
+															"Integer");
+											if (r != 0) {
+												if(callinId.intValue()>0){//If callin patient is is being entered. 
+													covertCallinIntakeToIntake(callinId,r);
+												}
+												addressContainer.setPatient(r);
+												addressContainer.commitChanges();
+												
+												if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.WRITE)){
+													patientCoverages.setPatient(r);
+													patientCoverages.commitChanges();
+												}
+												if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.WRITE)){
+													patientAuthorizations.setPatient(r);
+													patientAuthorizations.commitChanges();
+												}
+												
+												spawnPatientScreen(r);
+												CurrentState
+														.getToaster()
+														.addItem(
+																"PatientForm",
+																"Patient successfully added.");
+											}
+										} else {
+											CurrentState
+													.getToaster()
+													.addItem(
+															"PatientForm",
+															"Adding Patient failed.");
+										}
+									}
+								});
+					} catch (RequestException e) {
+					}
+
+				} else {
+
+					// Modify
+					String[] params = { JsonUtil
+							.jsonify(populateHashMap()) };
+					RequestBuilder builder = new RequestBuilder(
+							RequestBuilder.POST,
+							URL
+									.encode(Util
+											.getJsonRequest(
+													"org.freemedsoftware.module.PatientModule.mod",
+													params)));
+					try {
+						builder.sendRequest(null,
+								new RequestCallback() {
+									public void onError(
+											Request request,
+											Throwable ex) {
+									}
+
+									public void onResponseReceived(
+											Request request,
+											Response response) {
+										if (200 == response
+												.getStatusCode()) {
+											Boolean r = (Boolean) JsonUtil
+													.shoehornJson(
+															JSONParser
+																	.parse(response
+																			.getText()),
+															"boolean");
+											if (r) {
+//												addressContainer.setPatient(patientId);
+												
+												//addressContainer.deleteAddress();
+												addressContainer.commitChanges();
+												
+												if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.MODIFY))
+													patientCoverages.commitChanges();
+												if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.MODIFY))
+													patientAuthorizations.commitChanges();
+												
+												spawnPatientScreen(patientId);
+												CurrentState
+														.getToaster()
+														.addItem(
+																"PatientForm",
+																"Patient information successfully modified.");
+											}
+										} else {
+											CurrentState
+													.getToaster()
+													.addItem(
+															"PatientForm",
+															"Adding Patient failed.");
+										}
+									}
+								});
+					} catch (RequestException e) {
+					}
+
+				}
+
+			}
+
+			closeScreen();
+		} else {
+			// Form validation failed, allow user to continue
+			submitButton.setEnabled(true);
+			Util.showErrorMsg("PatientForm", "Form validation failed.");
+		}
+	}
+	
 	/**
 	 * Create new tab for patient.
 	 * 
@@ -944,7 +1119,9 @@ public class PatientForm extends ScreenInterface {
 		String patientName = wLastName.getText()+", "+wFirstName.getText()+" "+wMiddleName.getText();
 		Util.spawnTab(patientName, s);
 	}
-	
+	public void setPrimaryFacility(Integer facilityId){
+		primaryFacility.setValue(facilityId);
+	}
 	public void setPatientId(Integer newPatientId) {
 		patientId = newPatientId;
 		if (newPatientId > 0) {
@@ -1198,7 +1375,8 @@ public class PatientForm extends ScreenInterface {
 //		phoneFax.setText((String) m.get((String) "ptfax"));
 
 		// Personal screen
-		m.put((String) "ptmarital", (String) martialStatus.getWidgetValue());
+		if(martialStatus.getWidgetValue()!=null)
+			m.put((String) "ptmarital", (String) martialStatus.getWidgetValue());
 		m.put((String) "ptempl", (String) employmentStatus.getWidgetValue());
 		m.put((String) "ptssn", (String) socialSecurityNumber.getText());
 		m.put((String) "ptrace", (String) race.getWidgetValue());
@@ -1282,17 +1460,20 @@ public class PatientForm extends ScreenInterface {
 
 		return true;
 	}
-
-	public void setInfoFromCallin(CallInScreen callInScreen,Integer callinId,String lname,String fname,String mname,String dob,int provider,String homePhone,String workPhone){
-		wFirstName.setText(fname);
-		wLastName.setText(lname);
-		wMiddleName.setText(mname);
-		wDob.setValue(dob);
-		primaryCarePhysician.setValue(provider);
-		phoneHome.setText(homePhone);
-		phoneWork.setText(workPhone);
+	public void setInfoFromCallin(CallInScreen callInScreen,Integer callinId,HashMap data){
+		
+		wFirstName.setText(data.get("cifname")==null?"":data.get("cifname").toString());
+		wLastName.setText(data.get("cilname")==null?"":data.get("cilname").toString());
+		wMiddleName.setText(data.get("cimname")==null?"":data.get("cimname").toString());
+		wDob.setValue(data.get("cidob")==null?"":data.get("cidob").toString());
+		primaryCarePhysician.setValue(data.get("ciphysician")==null?0:Integer.parseInt(data.get("ciphysician").toString()));
+		phoneHome.setText(data.get("cihphone")==null?"":data.get("cihphone").toString());
+		phoneWork.setText(data.get("ciwphone")==null?"":data.get("ciwphone").toString());
 		this.callinId = callinId;
 		this.callInScreen = callInScreen;
+		data.remove("id");
+		patientCoverages.addCoverage(data);
+		patientAuthorizations.addAuthorization(data);
 	}
 	
 	protected void covertCallinIntakeToIntake(final Integer callinId,Integer patientId) {
@@ -1348,4 +1529,176 @@ public class PatientForm extends ScreenInterface {
 		super.closeScreen();
 		removeInstance(this);
 	}
+	
+	
+	
+	
+	public static String returnEmploymentStatus(String id){
+		
+		if(id.equalsIgnoreCase("y"))
+		{
+			return "Yes";
+		}
+		
+		else if(id.equalsIgnoreCase("n"))
+		{
+			return "No";
+		}
+		
+		else if(id.equalsIgnoreCase("p"))
+		{
+			return "Part time";
+		}
+		
+		
+		else if(id.equalsIgnoreCase("s"))
+		{
+			return "Self";
+		}
+		else if(id.equalsIgnoreCase("r"))
+		{
+			return "Retired";
+		}
+		
+		else if(id.equalsIgnoreCase("M"))
+		{
+			return "Military";
+		}
+		
+		else
+	       return "Unknown";
+	
+	}
+	
+	
+	public static String returnRace(int id){
+		
+		if(id==1)
+		{
+			return "Hispanic, white";
+		}
+		
+		else if(id==2)
+		{
+			return "Hispanic, black";
+		}
+		
+		else if(id==3)
+		{
+			return "American Indian or Alaska Native";
+		}
+		
+		
+		else if(id==4)
+		{
+			return "Black, not of Hispanic origin";
+		}
+		else if(id==5)
+		{
+			return "Asian or Pacific Islander";
+		}
+		
+		else if(id==6)
+		{
+			return "White, not of Hispanic origin";
+		}
+		
+		else
+	       return "unknown race";
+	
+	}
+	
+	
+	
+	
+	
+	
+  public static String returnReligion(int id){
+		
+	 HashMap<Integer, String> religionList=religions();
+	  
+	return religionList.get(id); 
+	
+	}
+	
+	
+	
+	
+	
+	
+	
+	public static HashMap<Integer, String> religions()
+	{
+		religions=new HashMap<Integer, String>();
+		
+		religions.put(0, "Catholic");
+		religions.put(1, "Jewish");
+		religions.put(2, "Eastern Orthodox");
+		
+		religions.put(3, "Baptist");
+		religions.put(4, "Methodist");
+		religions.put(5, "Lutheran");
+		religions.put(6, "Presbyterian");
+		religions.put(7, "United Church of God");
+		religions.put(8, "Episcopalian");
+		religions.put(9, "Adventist");
+		religions.put(10, "Assembly of God");
+		religions.put(11, "Brethren");
+		religions.put(12, "Christian Scientist");
+		religions.put(13, "Church of Christ");
+		religions.put(14, "Church of God");
+		religions.put(15, "Disciples of Christ");
+		religions.put(16, "Evangelical Covenant");
+		religions.put(17, "Friends");
+		religions.put(18, "Jehovah's Witness");
+		religions.put(19, "Latter-Day Saints");
+		religions.put(20, "Islam");
+		religions.put(21, "Nazarene");
+		religions.put(22, "Other");
+		religions.put(23, "Pentecostal");
+		religions.put(24, "Protestant, Other");
+		religions.put(25, "Protestant, No Denomenation");
+		religions.put(26, "Reformed");
+		religions.put(27, "Salvation Army");
+		religions.put(28, "Unitarian; Universalist");
+		religions.put(29, "Unknown/No preference");
+		religions.put(30, "Native American");
+		religions.put(31, "Buddhist");
+		return religions;
+	}
+	
+	
+	
+	
+	
+	
+	
+	public static String returnTypeOfBilling(String id){
+		if(id.equalsIgnoreCase("mon"))
+		{
+			return "Monthly Billing On Account";
+		}
+		
+		else if(id.equalsIgnoreCase("sta"))
+		{
+			return "Statement Billing";
+		}
+		
+		else if(id.equalsIgnoreCase("chg"))
+		{
+			return "Charge Card Billing";
+		}
+		
+		
+	
+		else
+	       return "NONE SELECTED";
+	
+	}
+	
+	
+	
+	
+	
+	
 }

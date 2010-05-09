@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -42,6 +43,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -146,9 +148,11 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	protected HashMap<String, String> indexMap = new HashMap<String, String>();
 
-	protected Integer maximumRows = new Integer(20);
+	protected Integer maximumRows = new Integer(25);
 
 	protected Integer visibleRows = maximumRows;
+	
+	protected Integer defaultRows = maximumRows;
 
 	protected HashMap<String, String>[] data = null;
 
@@ -164,16 +168,28 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	protected HorizontalPanel buttonContainer = null;
 
-	protected CustomButton bPrevious = new CustomButton("Previous",AppConstants.ICON_PREV);
+
 	protected Label bLabel = new Label();
-	protected CustomButton bNext = new CustomButton("Next",AppConstants.ICON_NEXT);
 	protected int actionRow=-1;
 	protected int curMinRow = 0;
-	protected String rowStyle="tableRow";
-	protected String TABLE_STYLE_NAME="sortableTable";
-	protected String ALTERNATE_ROW_STYLE="customRowStyle";
-	protected String TABLE_HEADER_STYLE = "tableHeader";
+	protected String rowStyle = AppConstants.STYLE_TABLE_ROW;
+	protected String TABLE_STYLE_NAME = AppConstants.STYLE_TABLE;
+	protected String ALTERNATE_ROW_STYLE = AppConstants.STYLE_TABLE_ROW_ALTERNATE;
+	protected String TABLE_HEADER_STYLE = AppConstants.STYLE_TABLE_HEADER;
 	protected boolean sortDesc = true;
+	
+	protected Image loadingImage = null;
+	protected Label noItemFound  = null;
+
+	CustomButton nextBtn=new CustomButton("Next",AppConstants.ICON_NEXT);
+	CustomButton previousBtn=new CustomButton("Previous",AppConstants.ICON_PREV);
+
+	protected HTML perPageDefault;
+
+	protected HTML perPage50;
+
+	protected HTML perPage100;
+	
 
 	public CustomTable() {
 		VerticalPanel vPanel = new VerticalPanel();
@@ -183,24 +199,88 @@ public class CustomTable extends Composite implements ClickHandler {
 		flexTable.addClickHandler(this);
 		vPanel.add(flexTable);
 
+		loadingImage = new Image(GWT.getHostPageBaseURL()+"resources/images/custom_table_loading.gif");
+		loadingImage.setVisible(false);
+		vPanel.add(loadingImage);
+		vPanel.setCellHorizontalAlignment(loadingImage, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		noItemFound = new Label("No Item Found!!");
+		noItemFound.setVisible(false);
+		noItemFound .setStyleName(AppConstants.STYLE_LABEL_NORMAL_ITALIC);
+		vPanel.add(noItemFound);
+		vPanel.setCellHorizontalAlignment(noItemFound, HasHorizontalAlignment.ALIGN_CENTER);
+		
+
+		nextBtn.addClickHandler(this);
+		previousBtn.addClickHandler(this);
+
+		
+		Label perPageLb=new Label("Per Page:");
+		perPageDefault = new HTML("25");
+		perPage50 = new HTML("<a href=\"javascript:undefined;\">50</a>");
+		perPage100 = new HTML("<a href=\"javascript:undefined;\">100</a>");
+		perPageDefault.addClickHandler(new ClickHandler() {
+		
+			@Override
+			public void onClick(ClickEvent arg0) {
+				perPageDefault.setHTML(""+defaultRows);
+				perPage50.setHTML("<a href=\"javascript:undefined;\">50</a>");
+				perPage100.setHTML("<a href=\"javascript:undefined;\">100</a>");
+				HashMap<String, String>[] tempDate=data;
+				clearData();
+				maximumRows=defaultRows;
+				loadData(tempDate,0);
+			}
+		
+		});
+		perPage50.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				perPage50.setHTML("50");
+				perPageDefault.setHTML("<a href=\"javascript:undefined;\">"+defaultRows+"</a>");
+				perPage100.setHTML("<a href=\"javascript:undefined;\">100</a>");				
+				HashMap<String, String>[] tempDate=data;
+				clearData();
+				maximumRows=50;
+				loadData(tempDate,0);
+			}
+		
+		});
+		perPage100.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				perPage100.setHTML("100");
+				perPageDefault.setHTML("<a href=\"javascript:undefined;\">"+defaultRows+"</a>");
+				perPage50.setHTML("<a href=\"javascript:undefined;\">50</a>");
+				HashMap<String, String>[] tempDate=data;
+				clearData();
+				maximumRows=100;
+				loadData(tempDate,0);
+			}
+		
+		});
 		// Build button container
 		buttonContainer = new HorizontalPanel();
+		buttonContainer.setSpacing(2);
+		buttonContainer.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonContainer
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonContainer.add(new HTML(""));
-		buttonContainer.add(bPrevious);
+		buttonContainer.add(previousBtn);
 		buttonContainer.add(bLabel);
-		buttonContainer.add(bNext);
-
+		//buttonContainer.setCellVerticalAlignment(bLabel, HasVerticalAlignment.ALIGN_MIDDLE);
+		buttonContainer.add(nextBtn);
+		buttonContainer.add(perPageLb);
+		buttonContainer.add(perPageDefault);
+		buttonContainer.add(perPage50);
+		buttonContainer.add(perPage100);
 		// Button container by default is not visible
 		buttonContainer.setVisible(false);
 		vPanel.add(buttonContainer);
 
 		// Assign handlers to previous and next
-		bPrevious.setEnabled(false);
-		bPrevious.addClickHandler(this);
-		bNext.setEnabled(false);
-		bNext.addClickHandler(this);
 
 		// Set header row information properly
 		RowFormatter rowFormatter = flexTable.getRowFormatter();
@@ -209,7 +289,20 @@ public class CustomTable extends Composite implements ClickHandler {
 		// Last thing to do, set the widget.
 		initWidget(vPanel);
 	}
-
+	public void showloading(boolean show){
+		if(show){
+			noItemFound.setVisible(false);
+			clearData();//clear data before showing loading image
+		}else{
+			if(data.length==0){
+				clearData();
+				noItemFound.setVisible(true);//If Not Record found then show text
+			}
+			else
+				noItemFound.setVisible(false);//If Record found then hide text
+		}
+		loadingImage.setVisible(show);
+	}
 	public void setTableWidgetColumnSetInterface(TableWidgetColumnSetInterface i) {
 		widgetInterface = i;
 	}
@@ -228,7 +321,6 @@ public class CustomTable extends Composite implements ClickHandler {
 	
 	public void setTableStyle(String s){
 		flexTable.removeStyleName(TABLE_STYLE_NAME);
-		TABLE_STYLE_NAME=s;
 		flexTable.setStyleName(TABLE_STYLE_NAME);
 	}
 	/**
@@ -416,7 +508,9 @@ public class CustomTable extends Composite implements ClickHandler {
 					flexTable.clearCell(iter + 1, jter);
 				}
 			}
-
+			while(flexTable.getRowCount()>1){
+				flexTable.removeRow(1);
+			}
 			// Remove all data
 			data = null;
 			indexMap.clear();
@@ -438,6 +532,7 @@ public class CustomTable extends Composite implements ClickHandler {
 			data = newData;
 		}
 		if (data != null) {
+			showloading(false);
 			int rows = ((data.length - offset) < maximumRows) ? (data.length - offset)
 					: maximumRows;
 			visibleRows = rows;
@@ -446,7 +541,7 @@ public class CustomTable extends Composite implements ClickHandler {
 			// + ", offset = " + offset);
 
 			// Decide visibility of buttons
-			if (data.length > maximumRows) {
+			if (data.length > defaultRows) {
 				buttonContainer.setVisible(true);
 			} else {
 				buttonContainer.setVisible(false);
@@ -456,7 +551,7 @@ public class CustomTable extends Composite implements ClickHandler {
 			// values...
 			JsonUtil.debug("clearing indexmap for custom table");
 			indexMap.clear();
-
+			
 			for (int iter = offset; iter < (rows + offset); iter++) {
 				int actualRow = iter - offset;
 
@@ -546,6 +641,8 @@ public class CustomTable extends Composite implements ClickHandler {
 	 */
 	public void setMaximumRows(Integer max) {
 		maximumRows = max;
+		defaultRows=max;
+		perPageDefault.setHTML(""+defaultRows);
 	}
 
 	/**
@@ -610,15 +707,15 @@ public class CustomTable extends Composite implements ClickHandler {
 	private void redrawButtons() {
 		JsonUtil.debug("redrawButtons");
 		if (curMinRow <= 0) {
-			bPrevious.setEnabled(false);
+			previousBtn.setEnabled(false);
 		} else {
-			bPrevious.setEnabled(true);
+			previousBtn.setEnabled(true);
 		}
 
 		if (curMinRow + maximumRows < data.length) {
-			bNext.setEnabled(true);
+			nextBtn.setEnabled(true);
 		} else {
-			bNext.setEnabled(false);
+			nextBtn.setEnabled(false);
 		}
 
 		// Rewrite label
@@ -631,12 +728,12 @@ public class CustomTable extends Composite implements ClickHandler {
 
 	@Override
 	public void onClick(ClickEvent event) {
-		if (event.getSource() == bPrevious) {
+		if (event.getSource() == previousBtn) {
 			// only process previous page if possible
 			if (curMinRow > 0) {
 				previousPage();
 			}
-		} else if (event.getSource() == bNext) {
+		} else if (event.getSource() == nextBtn) {
 			// Only process next page if there are possible more values to
 			// display
 			if (curMinRow + maximumRows < data.length) {
@@ -748,7 +845,6 @@ public class CustomTable extends Composite implements ClickHandler {
 	}
 	
 	public void removeTableStyle(){
-		this.flexTable.getElement().removeAttribute("class");
-		this.flexTable.getElement().removeAttribute("style");
+		this.flexTable.removeStyleName(TABLE_STYLE_NAME);
 	}
 }

@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
@@ -71,22 +72,27 @@ public class MessageBox extends WidgetInterface {
 	public MessageBox() {
 		SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
-		sPanel.setStyleName("freemed-WidgetContainer");
+		sPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
+		sPanel.setWidth("100%");
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
-
+		verticalPanel.setWidth("100%");
 		sPanel.setWidget(verticalPanel);
 		// sPanel.addStyleName("freemed-MessageBoxContainer");
 
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 
 //		showMessagesButton = new PushButton("", "");
-//		showMessagesButton.setStyleName("gwt-simple-button");
+//		showMessagesButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 //		showMessagesButton.getUpFace().setImage(
 //				new Image("resources/images/messaging.16x16.png"));
 //		showMessagesButton.getDownFace().setImage(
 //				new Image("resources/images/messaging.16x16.png"));
 
+		Label headerLabel = new Label("Messages");
+		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		horizontalPanel.add(headerLabel);
+		
 		verticalPanel.add(horizontalPanel);
 //		horizontalPanel.add(showMessagesButton);
 
@@ -96,8 +102,8 @@ public class MessageBox extends WidgetInterface {
 		wMessages.addColumn("From", "from_user"); // col 1
 		wMessages.addColumn("Subject", "subject"); // col 2
 		wMessages.setIndexName("id");
-
-		if(canRead){
+		wMessages.setMaximumRows(7);
+		if(true){
 			wMessages.setTableRowClickHandler(new TableRowClickHandler() {
 				@Override
 				public void handleRowClick(HashMap<String, String> data, int col) {
@@ -125,7 +131,7 @@ public class MessageBox extends WidgetInterface {
 			});
 		}
 		// Standard is collapsed view of the Messagebox
-		wMessages.setVisible(false);
+//		wMessages.setVisible(false);
 		// Click listener for both: the button and the label
 
 //		showMessagesButton.addClickHandler(new ClickHandler() {
@@ -137,26 +143,26 @@ public class MessageBox extends WidgetInterface {
 //					wMessages.setVisible(false);
 //			}
 //		});
-		messageCountLabel.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent evt) {
-				if (wMessages.isVisible() == false)
-					wMessages.setVisible(true);
-				else
-					wMessages.setVisible(false);
-			}
-		});
+//		messageCountLabel.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent evt) {
+//				if (wMessages.isVisible() == false)
+//					wMessages.setVisible(true);
+//				else
+//					wMessages.setVisible(false);
+//			}
+//		});
 
-		horizontalPanel.add(messageCountLabel);
+//		horizontalPanel.add(messageCountLabel);
 
 		// Load the Data; we have no searchtag - we search for everything
-		retrieveData("");
+//		retrieveData("");
 	}
 
 	public Widget getDefaultIcon(){
 		if(showMessagesButton==null){
 			showMessagesButton = new PushButton("", "");
-			showMessagesButton.setStyleName("gwt-simple-button");
+			showMessagesButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			showMessagesButton.getUpFace().setImage(
 					new Image("resources/images/messaging.16x16.png"));
 			showMessagesButton.getDownFace().setImage(
@@ -225,6 +231,10 @@ public class MessageBox extends WidgetInterface {
 		}
 	}
 
+	public void clearView(){
+		wMessages.clearData();
+	}
+	
 	public void retrieveData(String searchtag) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Runs in STUBBED MODE => Feed with Sample Data
@@ -273,6 +283,7 @@ public class MessageBox extends WidgetInterface {
 				// nothing here right now
 			}
 
+			wMessages.showloading(true);
 			// Get data
 			RequestBuilder dataBuilder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -298,7 +309,7 @@ public class MessageBox extends WidgetInterface {
 							if (data != null) {
 								setResult(data);
 								loadData(data);
-							}
+							}else wMessages.showloading(false);
 						}
 					}
 				});

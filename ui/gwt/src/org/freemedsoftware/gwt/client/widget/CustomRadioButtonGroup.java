@@ -228,7 +228,9 @@ public class CustomRadioButtonGroup extends Composite implements ValueChangeHand
 		super.setWidth(width);
 		radioButtonsPanel.setWidth(width);
 	}
-	public void setFocus(){
-		customRadioButtonGroup.get(0).setFocus(true);
+
+	public void setFocus(boolean focus){
+		customRadioButtonGroup.get(0).setFocus(focus);
 	}
+
 }

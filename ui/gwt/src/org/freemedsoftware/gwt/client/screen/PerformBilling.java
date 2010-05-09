@@ -64,7 +64,7 @@ public class PerformBilling extends ScreenInterface {
 		performBillPanel.setSize("100%", "100%");
 
 		final Label performBillingLabel = new Label("Performing Bills");
-		performBillingLabel.setStyleName("large-header-label");
+		performBillingLabel.setStyleName(AppConstants.STYLE_LABEL_HEADER_LARGE);
 		performBillPanel.add(performBillingLabel);
 		performBillingLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 

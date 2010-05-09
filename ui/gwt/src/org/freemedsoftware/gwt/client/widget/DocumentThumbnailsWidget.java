@@ -36,10 +36,10 @@ public class DocumentThumbnailsWidget  extends Composite{
 		vPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 		vPanel.setSpacing(10);
 		Label lblHeadingStep2 = new Label("Batch Split");
-	    lblHeadingStep2.setStyleName("label");
+	    lblHeadingStep2.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 	    vPanel.add(lblHeadingStep2);
 		Label lbMessage = new Label("Click on the page from where you want to split.");
-		lbMessage.setStyleName("label_italic");
+		lbMessage.setStyleName(AppConstants.STYLE_LABEL_NORMAL_ITALIC);
 		vPanel.add(lbMessage);
 		thumbnailParentContainer=new HorizontalPanel[ROWS_PER_SCREEN];
 		for(int i=0;i<thumbnailParentContainer.length;i++){

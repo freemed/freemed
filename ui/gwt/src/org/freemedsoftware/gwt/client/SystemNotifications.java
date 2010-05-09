@@ -27,7 +27,7 @@ package org.freemedsoftware.gwt.client;
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -89,10 +89,10 @@ public class SystemNotifications {
 	public boolean poll() {
 		JsonUtil.debug("SystemNotifications.poll() called");
 
-		if (mutexStatus) {
-			JsonUtil.debug("mutexStatus indicates run in progress.");
-			return false;
-		}
+//		if (mutexStatus) {
+//			JsonUtil.debug("mutexStatus indicates run in progress.");
+//			return false;
+//		}
 
 		mutexStatus = true;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -120,6 +120,11 @@ public class SystemNotifications {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							if (response.getText().compareToIgnoreCase("false") != 0) {
+								if(response.getText().trim().equalsIgnoreCase(AppConstants.INVALID_SESSION)){
+									Util.logout();
+									mutexStatus = false;
+									return;
+								}
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
 										.shoehornJson(JSONParser.parse(response
 												.getText()),

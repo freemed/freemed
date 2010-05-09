@@ -54,9 +54,9 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "Referrals";
 
-	protected String patientIdName = "refpatient";
-	
 	public ReferralEntry() {
+		this.patientIdName = "refpatient";
+
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -150,14 +150,16 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton("Submit",
+				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton("Reset",
+				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -184,5 +186,5 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		wUrgency.setWidgetValue("0");
 		wOriginalProvider.setFocus(true);
 	}
-	
+
 }

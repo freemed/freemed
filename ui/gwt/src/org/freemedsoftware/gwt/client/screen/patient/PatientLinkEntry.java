@@ -44,15 +44,15 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "PatientLink";
 
-	protected String patientIdName = "srcpatient";
-
 	protected CustomTextArea wNotes = null;
 
 	protected CustomListBox wType = null;
 
-	protected PatientWidget wLinkPatient = null;	
-	
+	protected PatientWidget wLinkPatient = null;
+
 	public PatientLinkEntry() {
+		this.patientIdName = "srcpatient";
+
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 
@@ -64,17 +64,22 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 		final Label linkPatientLabel = new Label("Link Patient");
 		flexTable.setWidget(pos, 0, linkPatientLabel);
 		wLinkPatient = new PatientWidget();
-		wLinkPatient.setHashMapping("dstpatient");
-		addEntryWidget("dstpatient", wLinkPatient);
+		wLinkPatient.setHashMapping("destpatient");
+		addEntryWidget("destpatient", wLinkPatient);
 		flexTable.setWidget(pos, 1, wLinkPatient);
 		pos++;
 
 		final Label typeLabel = new Label("Relationship");
 		flexTable.setWidget(pos, 0, typeLabel);
-		wType = new CustomListBox();		
+		wType = new CustomListBox();
 		wType.addItem("Spouse (01)", "01");
-		wType.addItem("Natural Child, Insured has financial responsibility (19)", "19");
-		wType.addItem("Natural Child, insured does not have financial responsibility (43)", "43");
+		wType.addItem(
+				"Natural Child, Insured has financial responsibility (19)",
+				"19");
+		wType
+				.addItem(
+						"Natural Child, insured does not have financial responsibility (43)",
+						"43");
 		wType.addItem("Step Child (17)", "17");
 		wType.addItem("Foster Child (10)", "10");
 		wType.addItem("Ward of the Court (15)", "15");
@@ -110,14 +115,16 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton("Submit",
+				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton("Reset",
+				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -134,5 +141,5 @@ public class PatientLinkEntry extends PatientEntryScreenInterface {
 
 	public void resetForm() {
 	}
-	
+
 }

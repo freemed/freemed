@@ -23,6 +23,8 @@
  */
 package org.freemedsoftware.gwt.client.widget;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
@@ -40,6 +42,24 @@ public class CustomButton extends PushButton {
 	protected CustomButton() {
 	}
 
+	@Override
+	protected void onAttach() {
+		// TODO Auto-generated method stub
+		super.onAttach();
+		int btnWidth = this.getElement().getFirstChildElement().getFirstChildElement().getOffsetWidth();
+		this.getElement().getStyle().setWidth(btnWidth, Unit.PX);
+		
+	}
+
+	@Override
+	protected void onClick() {
+		// TODO Auto-generated method stub
+		this.getElement().getStyle().clearWidth();
+		super.onClick();
+		int btnWidth = this.getElement().getFirstChildElement().getFirstChildElement().getOffsetWidth();
+		this.getElement().getStyle().setWidth(btnWidth, Unit.PX);
+	}
+
 	public CustomButton(String title) {
 		initButton(title, null, null);
 		// TODO Auto-generated constructor stub
@@ -55,6 +75,7 @@ public class CustomButton extends PushButton {
 
 	protected void initButton(String title,String imageName,Image icon){
 		this.setStyleName("gwt-CustomPushButton gwt-CustomPushButton-up");
+		
 		this.title     = title;
 		this.imageName = imageName;
 		this.icon      = icon;
@@ -68,15 +89,15 @@ public class CustomButton extends PushButton {
 		
 		//Creating Label for Text
 		buttonTable.setHTML(0,1,"&nbsp;&nbsp; "+title+" &nbsp;&nbsp;");
-		buttonTable.getCellFormatter().getElement(0, 1).setAttribute("style", "background-image:url('"+imagesDirectory+"btn-light-bg.png');vertical-align:middle;font-size:12;");
-		
+		buttonTable.getCellFormatter().setStyleName(0, 1, "gwt-CustomPushButton-inner");
 		//Checking for icon creation
 		if(icon!=null || imageName!=null){
 			//Creating icon stuff
 			if(imageName!=null)
 				icon = new Image(imagesDirectory + imageName);
 			buttonTable.setWidget(0,2,icon);
-			buttonTable.getCellFormatter().getElement(0, 2).setAttribute("style", "background-image:url('"+imagesDirectory+"btn-light-bg.png');vertical-align:middle;");
+			buttonTable.getCellFormatter().setStyleName(0, 2, "gwt-CustomPushButton-inner");
+			
 			Image rightRoundedEdge = new Image(imagesDirectory + "btn-right-light.png");
 			buttonTable.setWidget(0,3,rightRoundedEdge);
 		}else{
@@ -90,6 +111,7 @@ public class CustomButton extends PushButton {
 		this.getDownFace().setHTML(buttonTable.toString());
 		this.getUpHoveringFace().setHTML(buttonTable.toString());
 		this.getUpFace().setHTML(buttonTable.toString());
+		
 	}	
 	
 	public void setText(String title){

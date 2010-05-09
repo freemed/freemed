@@ -372,7 +372,7 @@ public class UserManagementScreen extends ScreenInterface implements
 				final BlockScreenWidget blockScreenWidget = new BlockScreenWidget("Please wait while modules are being populated....");
 				addUserVPanel.add(blockScreenWidget);
 				Label moduleHeading = new Label("Modules");
-				moduleHeading.setStyleName("label");
+				moduleHeading.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 				customizePermissionsTable.getFlexTable().setWidget(0, 0, moduleHeading);
 				HorizontalPanel headerButtonPanels = new HorizontalPanel();
 				customizePermissionsTable.getFlexTable().setWidget(0, 1, headerButtonPanels);
@@ -453,7 +453,7 @@ public class UserManagementScreen extends ScreenInterface implements
 								});
 								temPanel.add(selectAllBtn);
 								Label label = new Label(section);
-								label.setStyleName("label");
+								label.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 								customizePermissionsTable.getFlexTable().setWidget(row, 0, label);
 								
 								customizePermissionsTable.getFlexTable().setWidget(row, 1, temPanel);

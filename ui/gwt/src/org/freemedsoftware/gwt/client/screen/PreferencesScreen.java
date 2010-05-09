@@ -372,7 +372,7 @@ public class PreferencesScreen extends ScreenInterface {
 		//////////////////////////////////// Preparing Navigations Tab //////////////////////////////////
 		navigationsVerticalPanel = new VerticalPanel();
 		Label navLabel = new Label("Show following items for navigation.");
-		navLabel.setStyleName("label");
+		navLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		navigationsVerticalPanel.add(navLabel);
 		createNavigatonOptions();
 		navigationsVerticalPanel.add(navigationsFlexTable);
@@ -433,7 +433,7 @@ public class PreferencesScreen extends ScreenInterface {
 		while (itrCats.hasNext()) {
 			final String categoryName = itrCats.next();
 			Label navLabel = new Label(categoryName);
-			navLabel.setStyleName("label");
+			navLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 			navigationsFlexTable.setWidget(i++, 0, navLabel);
 			final HashMap<String, Integer> leftNavOpts = leftNavCategories
 					.get(categoryName);

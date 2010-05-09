@@ -57,4 +57,5 @@ CALL tools_Upgrade( );
 
 SOURCE data/schema/mysql/tools/tool_MoveTag.sql
 SOURCE data/schema/mysql/tools/tool_ReassignAppointments.sql
+SOURCE data/schema/mysql/tools/tool_RemittAssignment.sql
 

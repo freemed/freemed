@@ -250,7 +250,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		//creating search result table
 		sortableTable = new CustomTable();
 		sortableTable.setWidth("100%");
-		sortableTable.addColumn("Selected", "selected");
+//		sortableTable.addColumn("", "selected");
 		sortableTable.addColumn("Svc Date", "date_of");
 		sortableTable.addColumn("Acct Bal", "total_balance");
 		sortableTable.addColumn("Provider", "provider");
@@ -328,7 +328,6 @@ public class AccountsReceivableScreen extends ScreenInterface {
 			}
 		});
 
-
 		sortableTableEmptyLabel.setStylePrimaryName("freemed-MessageText");
 		sortableTableEmptyLabel
 				.setText("No patients found with the specified criteria.");
@@ -396,7 +395,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 									sortableTableEmptyLabel.setVisible(false);
 								} else {
 									sortableTableEmptyLabel.setVisible(true);
-									Window.alert("No record found!!!");
+									Util.showErrorMsg(getClass().getName(), "No record found!!!");
 								}
 								sortableTable.loadData(result);
 							} else {
@@ -446,7 +445,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 					final HorizontalPanel horizontalPanel = new HorizontalPanel();
 					currentCriteriaPanel.add(horizontalPanel);
 					Label label = new Label(((Label)searchCriteriaTable.getWidget(row, col-1)).getText()+":");
-					label.setStyleName("label_bold");
+					label.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 					horizontalPanel.add(label);
 					horizontalPanel.add(new Label(Util.getWidgetText(widget)));
 					CustomButton button = new CustomButton("X");
@@ -477,7 +476,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 				final HorizontalPanel horizontalPanel = new HorizontalPanel();
 				currentCriteriaPanel.add(horizontalPanel);
 				Label label = new Label(widgetLabel+":");
-				label.setStyleName("label_bold");
+				label.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 				horizontalPanel.add(label);
 				horizontalPanel.add(new Label(labelValue));
 				CustomButton button = new CustomButton("X");

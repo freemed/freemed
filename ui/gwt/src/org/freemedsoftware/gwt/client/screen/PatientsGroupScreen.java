@@ -108,7 +108,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 			initWidget(noteEntryWidgetVPanel);
 			
 			Label groupNoteLabel = new Label("Create Group Note" );
-			groupNoteLabel.setStyleName("medium-header-label");
+			groupNoteLabel.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 			noteEntryWidgetVPanel.add(groupNoteLabel);
 			
 			final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -349,11 +349,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 
 	public final static String ModuleName = "CalendarGroup"; 	
 	
-	final boolean canDelete = CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE);
-	final boolean canWrite  = CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE);
 	final boolean canBook   = CurrentState.isActionAllowed(SchedulerWidget.moduleName, AppConstants.WRITE);
-	final boolean canModify = CurrentState.isActionAllowed(ModuleName, AppConstants.MODIFY);
-	final boolean canRead   = CurrentState.isActionAllowed(ModuleName, AppConstants.READ);
 	
 	// Creates only desired amount of instances if we follow this pattern
 	// otherwise we have public constructor as well
@@ -381,7 +377,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	}
 	
 	public PatientsGroupScreen() {
-		
+		super(ModuleName);
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");
@@ -403,7 +399,6 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 
 		/*
 		 * final Label callInLabel = new Label("Call-in Patient Management.");
-		 * callInLabel.setStyleName("large-header-label");
 		 * verticalPanelMenu.add(callInLabel);
 		 * callInLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		 */
@@ -722,7 +717,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		VerticalPanel membersLabelPanel = new VerticalPanel();
 		membersLabelPanel.add(new Label("Group Members "));
 		Label requirelabel = new Label("(must have more than one member)");
-		requirelabel.setStyleName("label");
+		requirelabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		membersLabelPanel.add(requirelabel);
 		membersLabelPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 		
@@ -776,6 +771,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			patientGroupTable.showloading(true);
 			String[] params = { locale };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL
@@ -803,6 +799,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 								patientGroupTable.clearAllSelections();
 								patientGroupTable.loadData(result);
 							} else {
+								patientGroupTable.showloading(false);
 							}
 						} else {
 						}

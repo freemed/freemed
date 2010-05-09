@@ -90,7 +90,6 @@ public class ConfigurationScreen extends ScreenInterface {
 	
 	public ConfigurationScreen() {
 		super(moduleName);
-		
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
 		verticalPanel.setWidth("100%");
@@ -348,6 +347,7 @@ public class ConfigurationScreen extends ScreenInterface {
 				((CustomListBox)w).setEnabled(false);
 		}
 		FlexTable f = containers.get(r.get("c_section"));
+		f.setWidth("");
 		JsonUtil.debug(" --- got flextable");
 		Integer c = new Integer(0);
 		try {

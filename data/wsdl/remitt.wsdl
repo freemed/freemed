@@ -2,6 +2,8 @@
   <wsdl:types>
 <xs:schema elementFormDefault="unqualified" targetNamespace="http://server.remitt.org/" version="1.0" xmlns:ns1="http://jaxb.dev.java.net/array" xmlns:tns="http://server.remitt.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 <xs:import namespace="http://jaxb.dev.java.net/array" />
+<xs:element name="addKeyToKeyring" type="tns:addKeyToKeyring" />
+<xs:element name="addKeyToKeyringResponse" type="tns:addKeyToKeyringResponse" />
 <xs:element name="addRemittUser" type="tns:addRemittUser" />
 <xs:element name="addRemittUserResponse" type="tns:addRemittUserResponse" />
 <xs:element name="changePassword" type="tns:changePassword" />
@@ -159,6 +161,7 @@
 </xs:complexType>
 <xs:complexType name="insertPayload">
 <xs:sequence>
+<xs:element minOccurs="0" name="originalId" type="xs:string" />
 <xs:element minOccurs="0" name="inputPayload" type="xs:string" />
 <xs:element minOccurs="0" name="renderPlugin" type="xs:string" />
 <xs:element minOccurs="0" name="renderOption" type="xs:string" />
@@ -240,6 +243,18 @@
 <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="xs:string" />
 </xs:sequence>
 </xs:complexType>
+<xs:complexType name="addKeyToKeyring">
+<xs:sequence>
+<xs:element minOccurs="0" name="keyname" type="xs:string" />
+<xs:element minOccurs="0" name="privatekey" type="xs:base64Binary" />
+<xs:element minOccurs="0" name="publickey" type="xs:base64Binary" />
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="addKeyToKeyringResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
 <xs:complexType name="getPlugins">
 <xs:sequence>
 <xs:element minOccurs="0" name="category" type="xs:string" />
@@ -266,6 +281,8 @@
 <xs:sequence>
 <xs:element minOccurs="0" name="filename" type="xs:string" />
 <xs:element minOccurs="0" name="filesize" type="xs:int" />
+<xs:element minOccurs="0" name="inserted" type="xs:dateTime" />
+<xs:element minOccurs="0" name="originalId" type="xs:string" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>
@@ -278,257 +295,195 @@
 </xs:schema>
   </wsdl:types>
   <wsdl:message name="addRemittUserResponse">
-    <wsdl:part element="tns:addRemittUserResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:addRemittUserResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="listRemittUsers">
-    <wsdl:part element="tns:listRemittUsers" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:listRemittUsers" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getEligibility">
-    <wsdl:part element="tns:getEligibility" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getEligibility" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getFileListResponse">
-    <wsdl:part element="tns:getFileListResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getFileListResponse" name="parameters" />
+  </wsdl:message>
+  <wsdl:message name="addKeyToKeyring">
+    <wsdl:part element="tns:addKeyToKeyring" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getPluginsResponse">
-    <wsdl:part element="tns:getPluginsResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getPluginsResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getOutputMonthsResponse">
-    <wsdl:part element="tns:getOutputMonthsResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getOutputMonthsResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getOutputYears">
-    <wsdl:part element="tns:getOutputYears" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getOutputYears" name="parameters" />
   </wsdl:message>
   <wsdl:message name="parseDataResponse">
-    <wsdl:part element="tns:parseDataResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:parseDataResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getEligibilityResponse">
-    <wsdl:part element="tns:getEligibilityResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getEligibilityResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getOutputMonths">
-    <wsdl:part element="tns:getOutputMonths" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getOutputMonths" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getFileList">
-    <wsdl:part element="tns:getFileList" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getFileList" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getConfigValuesResponse">
-    <wsdl:part element="tns:getConfigValuesResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getConfigValuesResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="setConfigValue">
-    <wsdl:part element="tns:setConfigValue" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:setConfigValue" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getProtocolVersionResponse">
-    <wsdl:part element="tns:getProtocolVersionResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getProtocolVersionResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getBulkStatusResponse">
-    <wsdl:part element="tns:getBulkStatusResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getBulkStatusResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="insertPayloadResponse">
-    <wsdl:part element="tns:insertPayloadResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:insertPayloadResponse" name="parameters" />
+  </wsdl:message>
+  <wsdl:message name="addKeyToKeyringResponse">
+    <wsdl:part element="tns:addKeyToKeyringResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getCurrentUserNameResponse">
-    <wsdl:part element="tns:getCurrentUserNameResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getCurrentUserNameResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getProtocolVersion">
-    <wsdl:part element="tns:getProtocolVersion" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getProtocolVersion" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getPlugins">
-    <wsdl:part element="tns:getPlugins" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getPlugins" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getCurrentUserName">
-    <wsdl:part element="tns:getCurrentUserName" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getCurrentUserName" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getPluginOptions">
-    <wsdl:part element="tns:getPluginOptions" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getPluginOptions" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getBulkStatus">
-    <wsdl:part element="tns:getBulkStatus" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getBulkStatus" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getOutputYearsResponse">
-    <wsdl:part element="tns:getOutputYearsResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getOutputYearsResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getStatusResponse">
-    <wsdl:part element="tns:getStatusResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getStatusResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getStatus">
-    <wsdl:part element="tns:getStatus" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getStatus" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getFile">
-    <wsdl:part element="tns:getFile" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getFile" name="parameters" />
   </wsdl:message>
   <wsdl:message name="setConfigValueResponse">
-    <wsdl:part element="tns:setConfigValueResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:setConfigValueResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="insertPayload">
-    <wsdl:part element="tns:insertPayload" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:insertPayload" name="parameters" />
   </wsdl:message>
   <wsdl:message name="changePasswordResponse">
-    <wsdl:part element="tns:changePasswordResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:changePasswordResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getConfigValues">
-    <wsdl:part element="tns:getConfigValues" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getConfigValues" name="parameters" />
   </wsdl:message>
   <wsdl:message name="parseData">
-    <wsdl:part element="tns:parseData" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:parseData" name="parameters" />
   </wsdl:message>
   <wsdl:message name="changePassword">
-    <wsdl:part element="tns:changePassword" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:changePassword" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getPluginOptionsResponse">
-    <wsdl:part element="tns:getPluginOptionsResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getPluginOptionsResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="addRemittUser">
-    <wsdl:part element="tns:addRemittUser" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:addRemittUser" name="parameters" />
   </wsdl:message>
   <wsdl:message name="listRemittUsersResponse">
-    <wsdl:part element="tns:listRemittUsersResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:listRemittUsersResponse" name="parameters" />
   </wsdl:message>
   <wsdl:message name="getFileResponse">
-    <wsdl:part element="tns:getFileResponse" name="parameters">
-    </wsdl:part>
+    <wsdl:part element="tns:getFileResponse" name="parameters" />
   </wsdl:message>
   <wsdl:portType name="Service">
     <wsdl:operation name="getPluginOptions">
-      <wsdl:input message="tns:getPluginOptions" name="getPluginOptions">
-    </wsdl:input>
-      <wsdl:output message="tns:getPluginOptionsResponse" name="getPluginOptionsResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getPluginOptions" name="getPluginOptions" />
+      <wsdl:output message="tns:getPluginOptionsResponse" name="getPluginOptionsResponse" />
     </wsdl:operation>
     <wsdl:operation name="getStatus">
-      <wsdl:input message="tns:getStatus" name="getStatus">
-    </wsdl:input>
-      <wsdl:output message="tns:getStatusResponse" name="getStatusResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getStatus" name="getStatus" />
+      <wsdl:output message="tns:getStatusResponse" name="getStatusResponse" />
     </wsdl:operation>
     <wsdl:operation name="getOutputYears">
-      <wsdl:input message="tns:getOutputYears" name="getOutputYears">
-    </wsdl:input>
-      <wsdl:output message="tns:getOutputYearsResponse" name="getOutputYearsResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getOutputYears" name="getOutputYears" />
+      <wsdl:output message="tns:getOutputYearsResponse" name="getOutputYearsResponse" />
     </wsdl:operation>
     <wsdl:operation name="parseData">
-      <wsdl:input message="tns:parseData" name="parseData">
-    </wsdl:input>
-      <wsdl:output message="tns:parseDataResponse" name="parseDataResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:parseData" name="parseData" />
+      <wsdl:output message="tns:parseDataResponse" name="parseDataResponse" />
     </wsdl:operation>
     <wsdl:operation name="getEligibility">
-      <wsdl:input message="tns:getEligibility" name="getEligibility">
-    </wsdl:input>
-      <wsdl:output message="tns:getEligibilityResponse" name="getEligibilityResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getEligibility" name="getEligibility" />
+      <wsdl:output message="tns:getEligibilityResponse" name="getEligibilityResponse" />
     </wsdl:operation>
     <wsdl:operation name="listRemittUsers">
-      <wsdl:input message="tns:listRemittUsers" name="listRemittUsers">
-    </wsdl:input>
-      <wsdl:output message="tns:listRemittUsersResponse" name="listRemittUsersResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:listRemittUsers" name="listRemittUsers" />
+      <wsdl:output message="tns:listRemittUsersResponse" name="listRemittUsersResponse" />
     </wsdl:operation>
     <wsdl:operation name="getConfigValues">
-      <wsdl:input message="tns:getConfigValues" name="getConfigValues">
-    </wsdl:input>
-      <wsdl:output message="tns:getConfigValuesResponse" name="getConfigValuesResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getConfigValues" name="getConfigValues" />
+      <wsdl:output message="tns:getConfigValuesResponse" name="getConfigValuesResponse" />
     </wsdl:operation>
     <wsdl:operation name="changePassword">
-      <wsdl:input message="tns:changePassword" name="changePassword">
-    </wsdl:input>
-      <wsdl:output message="tns:changePasswordResponse" name="changePasswordResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:changePassword" name="changePassword" />
+      <wsdl:output message="tns:changePasswordResponse" name="changePasswordResponse" />
     </wsdl:operation>
     <wsdl:operation name="insertPayload">
-      <wsdl:input message="tns:insertPayload" name="insertPayload">
-    </wsdl:input>
-      <wsdl:output message="tns:insertPayloadResponse" name="insertPayloadResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:insertPayload" name="insertPayload" />
+      <wsdl:output message="tns:insertPayloadResponse" name="insertPayloadResponse" />
     </wsdl:operation>
     <wsdl:operation name="setConfigValue">
-      <wsdl:input message="tns:setConfigValue" name="setConfigValue">
-    </wsdl:input>
-      <wsdl:output message="tns:setConfigValueResponse" name="setConfigValueResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:setConfigValue" name="setConfigValue" />
+      <wsdl:output message="tns:setConfigValueResponse" name="setConfigValueResponse" />
     </wsdl:operation>
     <wsdl:operation name="getProtocolVersion">
-      <wsdl:input message="tns:getProtocolVersion" name="getProtocolVersion">
-    </wsdl:input>
-      <wsdl:output message="tns:getProtocolVersionResponse" name="getProtocolVersionResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getProtocolVersion" name="getProtocolVersion" />
+      <wsdl:output message="tns:getProtocolVersionResponse" name="getProtocolVersionResponse" />
     </wsdl:operation>
     <wsdl:operation name="getFile">
-      <wsdl:input message="tns:getFile" name="getFile">
-    </wsdl:input>
-      <wsdl:output message="tns:getFileResponse" name="getFileResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getFile" name="getFile" />
+      <wsdl:output message="tns:getFileResponse" name="getFileResponse" />
     </wsdl:operation>
     <wsdl:operation name="getCurrentUserName">
-      <wsdl:input message="tns:getCurrentUserName" name="getCurrentUserName">
-    </wsdl:input>
-      <wsdl:output message="tns:getCurrentUserNameResponse" name="getCurrentUserNameResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getCurrentUserName" name="getCurrentUserName" />
+      <wsdl:output message="tns:getCurrentUserNameResponse" name="getCurrentUserNameResponse" />
     </wsdl:operation>
     <wsdl:operation name="getBulkStatus">
-      <wsdl:input message="tns:getBulkStatus" name="getBulkStatus">
-    </wsdl:input>
-      <wsdl:output message="tns:getBulkStatusResponse" name="getBulkStatusResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getBulkStatus" name="getBulkStatus" />
+      <wsdl:output message="tns:getBulkStatusResponse" name="getBulkStatusResponse" />
     </wsdl:operation>
     <wsdl:operation name="addRemittUser">
-      <wsdl:input message="tns:addRemittUser" name="addRemittUser">
-    </wsdl:input>
-      <wsdl:output message="tns:addRemittUserResponse" name="addRemittUserResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:addRemittUser" name="addRemittUser" />
+      <wsdl:output message="tns:addRemittUserResponse" name="addRemittUserResponse" />
     </wsdl:operation>
     <wsdl:operation name="getOutputMonths">
-      <wsdl:input message="tns:getOutputMonths" name="getOutputMonths">
-    </wsdl:input>
-      <wsdl:output message="tns:getOutputMonthsResponse" name="getOutputMonthsResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getOutputMonths" name="getOutputMonths" />
+      <wsdl:output message="tns:getOutputMonthsResponse" name="getOutputMonthsResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="addKeyToKeyring">
+      <wsdl:input message="tns:addKeyToKeyring" name="addKeyToKeyring" />
+      <wsdl:output message="tns:addKeyToKeyringResponse" name="addKeyToKeyringResponse" />
     </wsdl:operation>
     <wsdl:operation name="getPlugins">
-      <wsdl:input message="tns:getPlugins" name="getPlugins">
-    </wsdl:input>
-      <wsdl:output message="tns:getPluginsResponse" name="getPluginsResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getPlugins" name="getPlugins" />
+      <wsdl:output message="tns:getPluginsResponse" name="getPluginsResponse" />
     </wsdl:operation>
     <wsdl:operation name="getFileList">
-      <wsdl:input message="tns:getFileList" name="getFileList">
-    </wsdl:input>
-      <wsdl:output message="tns:getFileListResponse" name="getFileListResponse">
-    </wsdl:output>
+      <wsdl:input message="tns:getFileList" name="getFileList" />
+      <wsdl:output message="tns:getFileListResponse" name="getFileListResponse" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="RemittServiceSoapBinding" type="tns:Service">
@@ -674,6 +629,15 @@
         <soap:body use="literal" />
       </wsdl:input>
       <wsdl:output name="getOutputMonthsResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addKeyToKeyring">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addKeyToKeyring">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addKeyToKeyringResponse">
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>

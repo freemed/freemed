@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `patient` (
 	ptdiag2			INT UNSIGNED,
 	ptdiag3			INT UNSIGNED,
 	ptdiag4			INT UNSIGNED,
+	ptdiagset		ENUM ( '9', '10' ) NOT NULL DEFAULT '9',
 	ptid			VARCHAR (10),
 	pthistbal		REAL,
 	ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' ),
@@ -177,6 +178,8 @@ BEGIN
 			FROM patient
 			WHERE ptarchive = 0 AND LENGTH( ptmphone ) > 0;
 	END IF;
+
+	ALTER IGNORE TABLE patient ADD COLUMN ptdiagset ENUM ( '9', '10' ) NOT NULL DEFAULT '9' AFTER ptdiag4;
 END
 //
 DELIMITER ;

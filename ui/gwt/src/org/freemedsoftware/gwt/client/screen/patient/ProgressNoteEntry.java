@@ -67,9 +67,8 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 	final protected String moduleName = "ProgressNotes";
 
-	protected String patientIdName = "pnotespat";
-	
 	public ProgressNoteEntry() {
+		this.patientIdName = "pnotespat";
 
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -79,14 +78,16 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton("Submit",
+				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton("Reset",
+				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
@@ -109,7 +110,8 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		final CustomDatePicker wImportDate = new CustomDatePicker();
 		// wImportDate.setWeekendSelectable(true);
 		dateContainer.add(wImportDate);
-		final CustomButton wImportPrevious = new CustomButton("Import",AppConstants.ICON_IMPORT);
+		final CustomButton wImportPrevious = new CustomButton("Import",
+				AppConstants.ICON_IMPORT);
 		dateContainer.add(wImportPrevious);
 		flexTable.setWidget(0, 1, dateContainer);
 
@@ -146,14 +148,16 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		wTemplate = new SupportModuleWidget("ProgressNotesTemplates");
 		templatePanel.add(wTemplate);
 
-		CustomButton importTemplate = new CustomButton("Import",AppConstants.ICON_IMPORT);
+		CustomButton importTemplate = new CustomButton("Import",
+				AppConstants.ICON_IMPORT);
 		importTemplate.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (wTemplate.getValue() != null && wTemplate.getValue() != 0) {
 					JsonUtil.debug("loading template " + wTemplate.getValue());
 					if (Util.getProgramMode() == ProgramMode.STUBBED) {
-						Util.showInfoMsg("ProgressNotesTemplates", "Template loaded.");
+						Util.showInfoMsg("ProgressNotesTemplates",
+								"Template loaded.");
 					} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 						String[] params = { JsonUtil.jsonify(wTemplate
 								.getValue()) };
@@ -170,7 +174,8 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 										com.google.gwt.http.client.Request request,
 										Throwable ex) {
 									GWT.log("Exception", ex);
-									Util.showErrorMsg("ProgressNotesTemplates", "Failed to load template.");
+									Util.showErrorMsg("ProgressNotesTemplates",
+											"Failed to load template.");
 								}
 
 								public void onResponseReceived(
@@ -185,7 +190,9 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 														"HashMap<String,String>");
 										if (result != null) {
 											loadTemplateData(result);
-											Util.showInfoMsg("ProgressNotesTemplates", "Loaded template.");
+											Util.showInfoMsg(
+													"ProgressNotesTemplates",
+													"Loaded template.");
 										}
 									} else {
 										Window.alert(response.toString());
@@ -194,7 +201,8 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 							});
 						} catch (RequestException e) {
 							GWT.log("Exception", e);
-							Util.showErrorMsg("ProgressNotesTemplates", "Failed to load template.");
+							Util.showErrorMsg("ProgressNotesTemplates",
+									"Failed to load template.");
 						}
 					} else {
 						// TODO: Make this work with GWT-RPC
@@ -297,5 +305,5 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		E.setHTML(new String(""));
 		R.setHTML(new String(""));
 	}
-	
+
 }

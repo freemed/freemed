@@ -503,30 +503,6 @@ class UserInterface {
 		return $read|$write|$modify|$delete|$show;
 	}
 
-/*	
-	// Method: checkSystemMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
-	public function checkSystemMenu (&$userLeftNavigationMenu ) {
-		$SystemAccessOptionsDB = $userLeftNavigationMenu['System'];
-		
-		$SystemAccessOptions['Dashboard'] = $this->getPermissionsBits(1,1,1,1,1);
-		
-		$SystemAccessOptions['Scheduler'] = $this->getPermissionsBits(freemed::acl( 'scheduling', 'view' )?1:0,freemed::acl( 'scheduling', 'book' )?1:0,
-		freemed::acl( 'scheduling', 'move' )?1:0,freemed::acl( 'scheduling', 'book' )?1:0,1);
-		if(!$SystemAccessOptions['Scheduler'])
-			unset($SystemAccessOptions['Scheduler']);
-		
-		$SystemAccessOptions['Messages']  = $this->getPermissionsBits(1,1,1,1,1);
-		
-		$sysSer = serialize($SystemAccessOptions);
-		if(strlen(serialize($SystemAccessOptions)) != (strlen(serialize($SystemAccessOptionsDB))-13))
-			$userLeftNavigationMenu['System'] = $SystemAccessOptions;
-	} // end method checkSystemMenu
-	*/
-
 	// Method: checkSystemMenu
 	//
 	//param	
@@ -561,52 +537,6 @@ class UserInterface {
 			$userLeftNavigationMenu['System'] = $SystemAccessOptions;
 	} // end method checkSystemMenu
 
-/*
-	// Method: checkPatientMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
-	public function checkPatientMenu (&$userLeftNavigationMenu ) {
-		$PatientAccessOptionsDB =  $userLeftNavigationMenu['Patient'];
-		$emrRead   = freemed::acl( 'emr', 'search' )?1:0;
-		$emrWrite  = freemed::acl( 'emr', 'entry' )?1:0;
-		$emrModify = freemed::acl( 'emr', 'modify' )?1:0;
-		$emrDelete =  freemed::acl( 'emr', 'delete' )?1:0;
-		if($emrRead || $emrWrite || $emrModify || $emrDelete){
-
-			$PatientAccessOptions['Search']      =  $this->getPermissionsBits($emrRead,0,0,0,1);
-			if(!$PatientAccessOptions['Search'])
-				unset($PatientAccessOptions['Search']);
-			
-			$PatientAccessOptions['New Patient'] =  $this->getPermissionsBits(0,$emrWrite,$emrModify,$emrDelete,1);
-			if(!$PatientAccessOptions['New Patient'])
-				unset($PatientAccessOptions['New Patient']);
-			
-			$PatientAccessOptions['Groups']      =  $this->getPermissionsBits($emrRead,$emrWrite,$emrModify,$emrDelete,1);
-			if(!$PatientAccessOptions['Groups'])
-				unset($PatientAccessOptions['Groups']);
-				
-			$PatientAccessOptions['Call In']     =  $this->getPermissionsBits($emrRead,$emrWrite,$emrModify,$emrDelete,1);
-			if(!$PatientAccessOptions['Call In'])
-				unset($PatientAccessOptions['Call In']);
-				
-			$PatientAccessOptions['Rx Refill']   =  $this->getPermissionsBits(0,$emrWrite,$emrModify,$emrDelete,1);
-			if(!$PatientAccessOptions['Rx Refill'])
-				unset($PatientAccessOptions['Rx Refill']);
-				
-			$PatientAccessOptions['Tag Search']  =  $this->getPermissionsBits($emrRead,0,0,0,1);
-			if(!$PatientAccessOptions['Tag Search'])
-				unset($PatientAccessOptions['Tag Search']);
-				
-			if(strlen(serialize($PatientAccessOptions)) != (strlen(serialize($PatientAccessOptionsDB))-13))
-				$userLeftNavigationMenu['Patient'] = $PatientAccessOptions;
-		}
-		else
-		 unset($userLeftNavigationMenu['Patient']);
-		
-	} // end method checkPatientMenu
-	*/
 	 // This will be uncommented when New ACL Implementation will be enabled
 	public function checkPatientMenu (&$userLeftNavigationMenu ) {
 		$PatientAccessOptionsDB =  $userLeftNavigationMenu['Patient'];
@@ -674,22 +604,6 @@ class UserInterface {
 		
 	} // end method checkPatientMenu
 	
-	/*
-	// Method: checkDocumentsMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
-	public function checkDocumentsMenu (&$userLeftNavigationMenu ) {
-		$DocumentsAccessOptionsDB = $userLeftNavigationMenu['Documents'];
-		
-		$DocumentsAccessOptions['Unfiled'] =  $this->getPermissionsBits(1,1,1,1,1);
-		$DocumentsAccessOptions['Unread']  =  $this->getPermissionsBits(1,1,1,1,1);	
-
-		if(strlen(serialize($DocumentsAccessOptions)) != (strlen(serialize($DocumentsAccessOptionsDB))-13))
-			$userLeftNavigationMenu['Documents'] = $DocumentsAccessOptions;
-	} // end method checkDocumentsMenu
-	*/
 
 	// Method: checkDocumentsMenu
 	//
@@ -730,27 +644,7 @@ class UserInterface {
 			unset($userLeftNavigationMenu['Documents']);			
 	} // end method checkDocumentsMenu
 	
-/*	
-	// Method: checkDosingMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
 
-	public function checkDosingMenu (&$userLeftNavigationMenu ) {
-		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
-		$DosingAccessOptions['Medication Inventory'] =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Open Dosing Station']  =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Close Dosing Station']     =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Dispense Dose']        =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Reconcile Bottle']     =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Bottle Transfer']     =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Inventory Reports']     =  $this->getPermissionsBits(1,1,1,1,1);
-		$DosingAccessOptions['Methodone Billing']     =  $this->getPermissionsBits(1,1,1,1,1);
-		if(strlen(serialize($DosingAccessOptions))  != (strlen(serialize($DosingAccessOptionsDB))-13))
-			$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
-	} // end method checkDosingMenu	
-*/	
 // This will be uncommented when New ACL Implementation will be enabled
 	public function checkDosingMenu (&$userLeftNavigationMenu ) {
 		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
@@ -818,9 +712,9 @@ class UserInterface {
 			if(!$DosingAccessOptions['Inventory Reports'])
 					unset($DosingAccessOptions['Inventory Reports']);
 					
-			$DosingAccessOptions['Methodone Billing']     =  $ProcedureModule;
-			if(!$DosingAccessOptions['Methodone Billing'])
-					unset($DosingAccessOptions['Methodone Billing']);
+			$DosingAccessOptions['Methadone Billing']     =  $ProcedureModule;
+			if(!$DosingAccessOptions['Methadone Billing'])
+					unset($DosingAccessOptions['Methadone Billing']);
 					
 			if(strlen(serialize($DosingAccessOptions))  != (strlen(serialize($DosingAccessOptionsDB))-13))
 				$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
@@ -830,27 +724,6 @@ class UserInterface {
 			unset($userLeftNavigationMenu['Dosing Menu']);
 	} // end method checkDosingMenu
 
-/*
-	// Method: checkBillingMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
-	public function checkBillingMenu (&$userLeftNavigationMenu ) {
-		$BillingAccessOptionsDB = $userLeftNavigationMenu['Billing'];
-		$billingRead = (freemed::acl( 'financial', 'menu' ) | freemed::acl( 'financial', 'summary' ))?1:0;
-		
-		if($billingRead){
-			$BillingAccessOptions['Account Receivable'] = $this->getPermissionsBits($billingRead,0,0,0,1);
-			$BillingAccessOptions['Claims Manager']     = $this->getPermissionsBits($billingRead,0,0,0,1);
-			$BillingAccessOptions['Remitt Billing']     = $this->getPermissionsBits($billingRead,0,0,0,1);
-			$BillingAccessOptions['Super Bills']        = $this->getPermissionsBits($billingRead,0,0,0,1);
-			if(strlen(serialize($BillingAccessOptions)) != (strlen(serialize($BillingAccessOptionsDB))-13))
-				$userLeftNavigationMenu['Billing'] = $BillingAccessOptions;
-		}else
-		    unset($userLeftNavigationMenu['Billing']);
-	} // end method checkBillingMenu
-*/
 	// This will be uncommented when New ACL Implementation will be enabled
 	// Method: checkBillingMenu
 	//
@@ -907,33 +780,6 @@ class UserInterface {
 	} // end method checkBillingMenu
 	
 	
-/*	
-	// Method: checkReportingMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
-	public function checkReportingMenu (&$userLeftNavigationMenu ) {
-		$ReportingAccessOptionsDB = $userLeftNavigationMenu['Reporting'];
-		$reportRead  = freemed::acl( 'reporting', 'read' )?1:0;
-		$reportWrite = freemed::acl( 'reporting', 'write' )?1:0;
-		if($reportRead || $reportWrite){
-			
-			$ReportingAccessOptions['Reporting Engine'] = $this->getPermissionsBits($reportRead,$reportWrite,0,0,1);
-			if(!$ReportingAccessOptions['Reporting Engine'])
-				unset($ReportingAccessOptions['Reporting Engine']);	
-			
-			$ReportingAccessOptions['Reporting Log'] = $this->getPermissionsBits($reportRead,$reportWrite,0,0,1);
-			if(!$ReportingAccessOptions['Reporting Log'])
-				unset($ReportingAccessOptions['Reporting Log']);	
-			
-			if(strlen(serialize($ReportingAccessOptions)) != (strlen(serialize($ReportingAccessOptionsDB))-13))
-				$userLeftNavigationMenu['Reporting'] = $ReportingAccessOptions;
-	
-		}else
-			unset($userLeftNavigationMenu['Reporting']);
-	} // end method checkReportingMenu
-*/	
 
 	// This will be uncommented when New ACL Implementation will be enabled
 	// Method: checkReportingMenu
@@ -968,51 +814,6 @@ class UserInterface {
 			unset($userLeftNavigationMenu['Reporting']);
 	} // end method checkReportingMenu
 	
-/*	
-	// Method: checkUtilitiesMenu
-	//
-	//param	
-	//      userLeftNavigationMenu passed by reference 
-	//
-	public function checkUtilitiesMenu (&$userLeftNavigationMenu ) {
-		$adminRead = freemed::acl( 'admin', 'menu' )?1:0;
-		$adminWrite = freemed::acl( 'admin', 'config' )?1:0;
-		if($adminRead || $adminWrite){
-			$UtilitiesAccessOptionsDB = $userLeftNavigationMenu['Utilities'];
-			
-			$UtilitiesAccessOptions['Utilities']         = $this->getPermissionsBits($adminRead,$adminWrite,0,0,1);
-			
-			if(!$UtilitiesAccessOptions['Utilities'])
-				unset($UtilitiesAccessOptions['Utilities']);
-			
-	   	        $UtilitiesAccessOptions['Support Data']         = $this->getPermissionsBits($adminRead,$adminWrite,0,0,1);
-	   	        
-	   	        if(!$UtilitiesAccessOptions['Support Data'])
-				unset($UtilitiesAccessOptions['Support Data']);
-			
-			$UtilitiesAccessOptions['User Management']      = $this->getPermissionsBits(0,$adminWrite,0,0,1);
-			if(!$UtilitiesAccessOptions['User Management'])
-				unset($UtilitiesAccessOptions['User Management']);
-			
-			$UtilitiesAccessOptions['System Configuration'] = $this->getPermissionsBits(0,$adminWrite,0,0,1);
-			if(!$UtilitiesAccessOptions['System Configuration'])
-				unset($UtilitiesAccessOptions['System Configuration']);
-			
-			$UtilitiesAccessOptions['DB Administration']    = $this->getPermissionsBits(0,$adminWrite,0,0,1);
-			if(!$UtilitiesAccessOptions['DB Administration'])
-				unset($UtilitiesAccessOptions['DB Administration']);
-				
-			$UtilitiesAccessOptions['ACL']    = $this->getPermissionsBits(0,$adminWrite,0,0,1);
-			if(!$UtilitiesAccessOptions['ACL'])
-				unset($UtilitiesAccessOptions['ACL']);	
-				
-			if(strlen(serialize($UtilitiesAccessOptions)) != (strlen(serialize($UtilitiesAccessOptionsDB))-13))
-			    $userLeftNavigationMenu['Utilities'] = $UtilitiesAccessOptions;
-		} 
-		else
-			unset($userLeftNavigationMenu['Utilities']);
-	} // end method checkUtilitiesMenu
-*/
 	
 	// Method: checkUtilitiesMenu
 	//
@@ -1075,6 +876,27 @@ class UserInterface {
 		else
 			unset($userLeftNavigationMenu['Utilities']);
 	} // end method checkUtilitiesMenu
+	
+	//Method: getDashBoardDetails
+	//		
+	//	
+	//return
+	//        hashes containing unread messages count,unfiled documents count etc 
+	public function getDashBoardDetails(){
+		$messages = createObject("org.freemedsoftware.module.MessagesModule");
+		$return['unreadMsgs'] = $messages->UnreadMessages()."";
+		$unfiledDocuments = createObject("org.freemedsoftware.module.UnfiledDocuments");
+		$return['unfiledDocuments'] = $unfiledDocuments->GetCount()."";
+		return $return;
+	}
+	
+	//Method: GetUserType
+	//
+	//return
+	//       return string containging usertype
+	public function GetUserType(){
+		return $this->user->local_record['usertype'];
+	}
 	
 } // end class UserInterface
 

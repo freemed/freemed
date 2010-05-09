@@ -48,19 +48,17 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "Immunizations";
 
-	protected String patientIdName = "patient";
-
 	protected CustomDatePicker dateOfWidget = null;
 
 	protected SupportModuleWidget wProvider = null, wImmunization = null,
-			wBodySite = null, wRoute = null;
+			wBodySite = null, wRoute = null, wAdminProvider = null;
 
 	protected CustomTextBox wManufacturer = null, wLotNumber = null;
 
 	protected CustomListBox wRecovered = null;
 
-	protected CustomTextArea wNotes = null;	
-	
+	protected CustomTextArea wNotes = null;
+
 	public ImmunizationEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -84,6 +82,14 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		wProvider.setHashMapping("provider");
 		addEntryWidget("provider", wProvider);
 		flexTable.setWidget(pos, 1, wProvider);
+		pos++;
+
+		final Label adminProviderLabel = new Label("Administering Provider");
+		flexTable.setWidget(pos, 0, adminProviderLabel);
+		wAdminProvider = new SupportModuleWidget("ProviderModule");
+		wAdminProvider.setHashMapping("admin_provider");
+		addEntryWidget("admin_provider", wAdminProvider);
+		flexTable.setWidget(pos, 1, wAdminProvider);
 		pos++;
 
 		final Label immunizationLabel = new Label("Immunization");
@@ -148,14 +154,16 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton("Submit",
+				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton("Reset",
+				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -182,5 +190,5 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		wNotes.setValue("");
 		wProvider.setFocus(true);
 	}
-	
+
 }

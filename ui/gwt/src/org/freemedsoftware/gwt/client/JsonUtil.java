@@ -221,7 +221,7 @@ public class JsonUtil {
 	}
 	@SuppressWarnings("unchecked")
 	public static synchronized Object shoehornJson(JSONValue r, String t) {
-		if(r==null)
+		if(r==null || r.toString().equals("null"))
 			return null;
 		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,String>[]>") == 0) {
 			HashMap<String, HashMap<String, String>[]> oResult = new HashMap<String, HashMap<String, String>[]>();
@@ -497,7 +497,7 @@ public class JsonUtil {
 		}
 		if (t.compareToIgnoreCase("Float") == 0) {
 			if (r.isNumber() != null) {
-				return (Float) new Float((int) r.isNumber().doubleValue());
+				return (Float) new Float((float) r.isNumber().doubleValue());
 			}
 		}
 		if (t.compareToIgnoreCase("Boolean") == 0) {

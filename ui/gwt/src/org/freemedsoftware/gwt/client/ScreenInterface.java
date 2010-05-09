@@ -27,7 +27,6 @@ package org.freemedsoftware.gwt.client;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
-
 	
 	public ScreenInterface() {
 		super();

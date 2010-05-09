@@ -159,6 +159,7 @@ public class FreemedInterface implements EntryPoint {
 			CurrentState.setUserConfig("user", Cookies.getCookie("user"));
 			active = true;
 		} else {
+			mainScreen.setVisible(true);
 			if(!(CurrentState.getDefaultUser().length()>0 && CurrentState.getDefaultUser().equalsIgnoreCase(loginDialog.getLoggedInUser())))
 				Util.closeAllTabs();
 			mainScreen.refreshMainScreen();

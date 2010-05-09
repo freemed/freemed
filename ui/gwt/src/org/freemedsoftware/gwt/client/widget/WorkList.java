@@ -80,20 +80,26 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 	protected Label[] providersLb;
 	protected Integer[] providers;
 	protected VerticalPanel vPanel;
+	protected VerticalPanel tablesVPanel;
 	protected HorizontalPanel paneltop;
 
 	public WorkList() {
 		super(moduleName);
-		SimplePanel sPanel = new SimplePanel();
 		vPanel = new VerticalPanel();
-		vPanel.setSpacing(10);
-		sPanel.setWidget(vPanel);
-		sPanel.addStyleName("freemed-WorkListContainer");
-		initWidget(sPanel);
-
-		providerLabel = new Label("Refresh to get latest schedules!");
-
+		vPanel.setWidth("100%");
+//		vPanel.setSpacing(10);
+//		sPanel.addStyleName("freemed-WorkListContainer");
+		initWidget(vPanel);
+		
+		Label headerLabel = new Label("Work List");
+		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		vPanel.add(headerLabel);
+		
 		paneltop = new HorizontalPanel();
+		
+//		providerLabel = new Label("Refresh to get latest schedules!");
+		providerLabel = new Label();
+		
 		// hPaneltop.add(refreshButton);
 		paneltop.add(providerLabel);
 		vPanel.add(paneltop);
@@ -102,7 +108,10 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		message.setStylePrimaryName("freemed-MessageText");
 		message.setText("There are no items scheduled for this day.");
 		vPanel.add(message);
-		message.setVisible(false);
+		
+		tablesVPanel = new VerticalPanel();
+		vPanel.add(tablesVPanel);
+//		message.setVisible(false);
 		// retrieveData();
 
 		// Register on the event bus
@@ -161,7 +170,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 
 	public Widget getDefaultIcon() {
 		refreshButton = new PushButton();
-		refreshButton.setStyleName("gwt-simple-button");
+		refreshButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 		refreshButton.getUpFace().setImage(
 				new Image("resources/images/summary_modify.16x16.png"));
 		refreshButton.getDownFace().setImage(
@@ -234,13 +243,18 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 	}
 
 	public void setProviderGroup(Integer pId) {
-		providerGroupId = pId;
-		populateStatus();
-		retrieveData();
+		if(pId!=null){
+			providerGroupId = pId;
+			populateStatus();
+			retrieveData();
+		}
 	}
-
+	
+	public void clearView(){
+		tablesVPanel.clear();
+	}
+	
 	public void retrieveData() {
-		vPanel.clear();
 		vPanel.add(paneltop);
 		vPanel.add(message);
 		if(CurrentState.getDefaultProvider()==0)
@@ -315,7 +329,6 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		final int index = i;
 		providersLb[i] = new Label();
 		providersLb[i].setVisible(false);
-		// providersLb[i].setStyleName("tableHeader");
 		providersLb[i].getElement().getStyle().setProperty("cursor", "pointer");
 		providersLb[i].getElement().getStyle()
 				.setProperty("fontWeight", "bold");
@@ -574,7 +587,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 												VerticalPanel vp = new VerticalPanel();
 												vp.add(providersLb[index]);
 												vp.add(workListsTables[index]);
-												vPanel.add(vp);
+												tablesVPanel.add(vp);
 
 												providersLb[index]
 														.setVisible(true);

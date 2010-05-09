@@ -105,7 +105,6 @@ public class ACLScreen extends ScreenInterface implements
 	
 	public ACLScreen() {
 		super(moduleName);
-		
 		aclContainerVPanel = new VerticalPanel();
 		initWidget(aclContainerVPanel);
 
@@ -135,7 +134,7 @@ public class ACLScreen extends ScreenInterface implements
 			groupAddPanel.add(groupAddTable);
 			
 			Label moduleHeading = new Label("Modules");
-			moduleHeading.setStyleName("label");
+			moduleHeading.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 			groupAddTable.getFlexTable().setWidget(0, 0, moduleHeading);
 			HorizontalPanel headerButtonPanels = new HorizontalPanel();
 			headerButtonPanels.setWidth("100%");
@@ -658,7 +657,7 @@ public class ACLScreen extends ScreenInterface implements
 			temPanel.add(selectAllSubLink);
 			
 			Label label = new Label(section);
-			label.setStyleName("label");
+			label.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 			groupAddTable.getFlexTable().setWidget(row, 0, label);
 			
 			groupAddTable.getFlexTable().setWidget(row, 1, temPanel);

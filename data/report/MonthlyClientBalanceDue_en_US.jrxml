@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MonthlyClientBalanceDue_en_US" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<parameter name="param0" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[call report_MonthlyClientBalanceDue_en_US($P{param0});]]>
+	</queryString>
+	<field name="Source" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Balance" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patientname" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="balanceTotal" class="java.lang.Double" resetType="Group" resetGroup="Source" calculation="Sum">
+		<variableExpression><![CDATA[$F{Balance}]]></variableExpression>
+	</variable>
+	<variable name="totalBalance" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{Balance}]]></variableExpression>
+	</variable>
+	<group name="Source">
+		<groupExpression><![CDATA[$F{Source}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement x="0" y="18" width="448" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Third Party: " + $F{Source}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<textField>
+					<reportElement x="0" y="15" width="448" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Third Party " + $F{Source} + "Balance"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Source" pattern="###0.00">
+					<reportElement x="376" y="15" width="158" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{balanceTotal}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="40" width="760" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="43" width="760" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="376" y="1" width="158" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="320" y="0" width="82" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CODAC 1]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement positionType="Float" x="0" y="0" width="93" height="43"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="680" y="0" width="80" height="21"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="169" y="32" width="344" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Client Balance Summary by Third Party for All Clients For the Period Ending "+$P{param0}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="376" y="19" width="158" height="15"/>
+				<textElement/>
+				<text><![CDATA[Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="43" y="19" width="277" height="15"/>
+				<textElement/>
+				<text><![CDATA[Client Name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField pattern="###0.00">
+				<reportElement style="Detail" x="376" y="1" width="158" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Balance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="43" y="0" width="277" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patientname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="40" splitType="Stretch">
+			<textField pattern="###0.00">
+				<reportElement x="376" y="10" width="158" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalBalance}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="10" width="402" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Total Due: -------------------------------------------------------------------------------->]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

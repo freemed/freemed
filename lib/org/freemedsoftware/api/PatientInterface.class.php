@@ -61,6 +61,40 @@ class PatientInterface {
 		}
 	} // end method CheckForDuplicatePatient
 
+	// Method: GetDuplicatePatients
+	//
+	//	Check for duplicate patients existing based on provided criteria.
+	//
+	// Parameters:
+	//
+	//	$criteria - Hash.
+	//	* ptlname - Last name
+	//	* ptfname - First name
+	//	* ptmname - Middle name
+	//	* ptsuffix - Suffix
+	//	* ptdob - Date of birth
+	//
+	// Returns:
+	//
+	//	array of hashes.
+	//
+	public function GetDuplicatePatients ( $criteria ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$q = "SELECT * FROM patient p WHERE ".
+			"ptlname=".$GLOBALS['sql']->quote( $criteria['ptlname'] )." AND ".
+			"ptfname=".$GLOBALS['sql']->quote( $criteria['ptfname'] )." AND ".
+			( $criteria['ptmname'] ? "ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND " : "" ).
+			( $criteria['ptsuffix'] ? "ptsuffix=".$GLOBALS['sql']->quote( $criteria['ptsuffix'] )." AND " : "" ).
+			( $criteria['ptdob'] ? "ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND " : "" ).
+			"ptarchive=0";
+		$res = $GLOBALS['sql']->queryAll( $q );
+		foreach( res AS $r) {
+			$_obj = CreateObject('org.freemedsoftware.core.Patient', $r);
+			$return[(int)$r['id']] = trim(stripslashes($_obj->to_text()));
+		}
+		return 	$return?array($return):$return;
+	} // end method CheckForDuplicatePatient
+
 	// Method: DxForPatient
 	//
 	//	Find all diagnoses associated with patients.
@@ -361,9 +395,6 @@ class PatientInterface {
 		$query = "SELECT distinct p.ptlname AS last_name, p.ptfname AS first_name, p.ptmname AS middle_name, p.ptid AS patient_id, FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) AS age, p.ptdob AS date_of_birth, p.id AS id FROM patient p LEFT OUTER JOIN patient_address pa ON p.id = pa.patient WHERE ".join(' AND ', $c)." AND pa.active = 1 ORDER BY p.ptlname, p.ptfname, p.ptmname LIMIT 20";
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method Search
-				
-
-
 
 	// Method: PatientInformation
 	//
@@ -385,17 +416,71 @@ class PatientInterface {
 	//	* address_line_1
 	//	* address_line_2
 	//	* csz
+	//	* city
+	//	* state
+	//	* postal
+	//	* hasallergy
+	//	* facility
+	//	* pharmacy
+	//	* pcp
 	//
 	public function PatientInformation( $id ) {
 		syslog(LOG_INFO, (int)$id);
-		$q = "SELECT CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name, p.ptid AS patient_id, p.ptdob AS date_of_birth, DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy, case when ( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365)>=2 then concat(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365),' years') else concat(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 30),' months') end AS age, pa.line1 AS address_line_1, pa.line2 AS address_line_2, CONCAT( pa.city, ', ', pa.stpr, ' ', pa.postal ) AS csz,case when p.id in (select al.patient from allergies al where al.patient=".$GLOBALS['sql']->quote( $id )." and active='active') then 'true' else 'false' end as hasallergy, p.* "
-		.",CONCAT( phy.phylname, ', ', phy.phyfname, ' ', phy.phymname ) AS pcp,CONCAT( fac.psrname, ' (', fac.psrcity, ', ', fac.psrstate,')' ) AS facility,CONCAT( ph.phname, ' (', ph.phcity, ', ', ph.phstate,')' ) AS pharmacy "
+		$q = "SELECT "
+		."CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name"
+		.", p.ptid AS patient_id"
+		.", p.ptdob AS date_of_birth"
+		.", DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy"
+		.", CASE WHEN ( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) >= 2 THEN CONCAT(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365),' years') ELSE CONCAT(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 30),' months') END AS age"
+		.", pa.line1 AS address_line_1"
+		.", pa.line2 AS address_line_2"
+		.", pa.city AS city"
+		.", pa.stpr AS state"
+		.", pa.postal AS postal"
+		.", CONCAT( pa.city, ', ', pa.stpr, ' ', pa.postal ) AS csz"
+		.", CASE WHEN p.id IN ( SELECT al.patient FROM allergies al WHERE al.patient=".$GLOBALS['sql']->quote( $id )." AND active = 'active' ) THEN 'true' ELSE 'false' END AS hasallergy, p.* "
+		.", CONCAT( phy.phylname, ', ', phy.phyfname, ' ', phy.phymname ) AS pcp"
+		.", CONCAT( fac.psrname, ' (', fac.psrcity, ', ', fac.psrstate,')' ) AS facility"
+		.", CONCAT( ph.phname, ' (', ph.phcity, ', ', ph.phstate,')' ) AS pharmacy "
 		."FROM patient p "
 		."LEFT OUTER JOIN patient_address pa ON ( pa.patient = p.id AND pa.active = TRUE ) "
 		."LEFT OUTER JOIN physician phy ON ( phy.id = p.ptpcp) "
 		."LEFT OUTER JOIN facility fac ON ( fac.id = p.ptprimaryfacility) "
 		."LEFT OUTER JOIN pharmacy ph ON ( ph.id = p.ptpharmacy) "
 		."WHERE p.id = " . $GLOBALS['sql']->quote( $id ). " GROUP BY p.id";
+		syslog(LOG_INFO, $q);
+		return $GLOBALS['sql']->queryRow( $q );
+	} // end method PatientInformation
+
+	// Method: PatientDetailedInformation
+	//
+	//	detailed patient information for a single patient including coverages & authorizations data
+	//
+	// Parameters:
+	//
+	//	$id - Patient id
+	//
+	// Returns:
+	//
+	//	Hash. Contains:
+	//	* all personal Information
+	//	* Coverages data
+	//	* authorization data
+	//
+	public function PatientDetailedInformation( $id ) {
+		syslog(LOG_INFO, (int)$id);
+		$patient = $GLOBALS['sql']->quote( $id );
+		$q = "select p.ptmarital,p.ptempl,p.ptssn,p.ptrace,p.ptreligion,p.ptbilltype,p.ptbudg, ".
+			"CONCAT(icov.insconame,' (',icov.inscocity,', ', icov.inscostate,')') as covinsco,".
+			"c.covplanname,c.covpatinsno,c.covpatgrpno,c.coveffdt,c.covrel,c.covcopay,c.covdeduct, ".
+			"a.*, ".
+			"CONCAT(iauth.insconame,' (',iauth.inscocity,', ', iauth.inscostate,')') as authinsco ".
+			"from patient p ".
+			"left join coverage c on c.covtype=1 and c.covpatient = ".$patient.
+			" left join insco icov on icov.id = c.covinsco ".
+			" left join authorizations a on a.authpatient = ".$patient. 
+			" left join insco iauth on iauth.id = a.authinsco ".
+			" where p.id = " . $patient. " GROUP BY p.id";
 		syslog(LOG_INFO, $q);
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation

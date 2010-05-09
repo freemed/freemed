@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DailyEndOfDayProcessing_en_US(&apos;2010-04-29&apos;); " language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<subDataset name="dataset1"/>
+	<queryString>
+		<![CDATA[call report_DailyEndOfDayProcessingSummary_en_US('2010-04-29');]]>
+	</queryString>
+	<field name="Summary Type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Source" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Collection &amp; Charges" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Cash Adj &amp; Credits" class="java.lang.Object">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="summaryGroupCollection" class="java.lang.Double" resetType="Group" resetGroup="Summary Type" calculation="Sum">
+		<variableExpression><![CDATA[$F{Collection & Charges}]]></variableExpression>
+	</variable>
+	<variable name="summaryGroupAdj" class="java.lang.Double" resetType="Group" resetGroup="Summary Type" calculation="Sum">
+		<variableExpression><![CDATA[$F{Cash Adj & Credits}]]></variableExpression>
+	</variable>
+	<group name="Summary Type">
+		<groupExpression><![CDATA[$F{Summary Type}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<textField>
+					<reportElement style="SubTitle" x="0" y="16" width="172" height="15" forecolor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{Summary Type}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<textField>
+					<reportElement style="SubTitle" x="0" y="7" width="172" height="15" forecolor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{Summary Type} + " Total"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="361" y="0" width="122" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="361" y="2" width="122" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="486" y="2" width="122" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="486" y="0" width="122" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="611" y="0" width="122" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="611" y="2" width="122" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="Summary Type" pattern="###0.00">
+					<reportElement style="Detail" x="608" y="7" width="125" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{summaryGroupCollection}+$V{summaryGroupAdj}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Summary Type" pattern="###0.00">
+					<reportElement style="Detail" x="361" y="7" width="122" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{summaryGroupCollection}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Summary Type" pattern="###0.00">
+					<reportElement style="Detail" x="483" y="7" width="125" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{summaryGroupAdj}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="25" width="757" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="27" width="757" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement positionType="Float" x="0" y="0" width="93" height="43"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="320" y="0" width="82" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CODAC 1]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="680" y="0" width="80" height="21"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="245" y="22" width="232" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Final End-of-Day Summary Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="760" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="361" y="19" width="122" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Collection & Charges]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="483" y="19" width="125" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Cash Adj & Credits]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="148" y="19" width="49" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Source]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="608" y="19" width="125" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Net Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27">
+			<textField>
+				<reportElement x="361" y="3" width="122" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Collection & Charges}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="SubTitle" x="54" y="3" width="307" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Source}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="483" y="3" width="125" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Cash Adj & Credits}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="41" y="3" width="13" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[**]]></text>
+			</staticText>
+			<textField pattern="###0.00">
+				<reportElement x="611" y="3" width="122" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Collection & Charges}+$F{Cash Adj & Credits}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

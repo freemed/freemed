@@ -136,6 +136,7 @@ public class ReportingLogScreen extends ScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Do nothing
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			printLogTable.showloading(true);
 			Util.callModuleMethod(module, "GetAllRecords", (List)null, new CustomRequestCallback() {
 			
 				@Override

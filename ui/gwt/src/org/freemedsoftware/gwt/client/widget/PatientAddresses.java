@@ -230,9 +230,11 @@ public class PatientAddresses extends Composite {
 		addresses = new HashMap<Integer, Address>();
 
 		VerticalPanel vP = new VerticalPanel();
+		vP.setWidth("100%");
 		initWidget(vP);
 
 		flexTable = new CustomTable();
+		flexTable.setWidth("100%");
 		flexTable.addColumn("Residence Type", "type");
 		flexTable.addColumn("Relationship", "relation");
 		flexTable.addColumn("Address Line 1", "line1");

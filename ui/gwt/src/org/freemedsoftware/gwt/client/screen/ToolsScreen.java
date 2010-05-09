@@ -186,6 +186,7 @@ public class ToolsScreen extends ScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			toolTable.showloading(true);
 			String[] params = {};
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -214,6 +215,7 @@ public class ToolsScreen extends ScreenInterface {
 							if (result != null) {
 								toolTable.loadData(result);
 							} else {
+								toolTable.showloading(false);
 							}
 						} else {
 						}

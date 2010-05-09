@@ -180,12 +180,14 @@ public class UnfiledDocuments extends ScreenInterface {
 					if(canRead){
 						// Show the image in the viewer
 						djvuViewer.setInternalId(currentId);
+						/*
 						try {
 							djvuViewer.loadPage(1);
 						} catch (Exception ex) {
 							JsonUtil.debug(ex.toString());
 						}
 						djvuViewer.setVisible(true);
+						*/
 					}
 				}
 			}
@@ -472,6 +474,7 @@ public class UnfiledDocuments extends ScreenInterface {
 			wDocuments.loadData(results
 					.toArray((HashMap<String, String>[]) new HashMap<?, ?>[0]));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			wDocuments.showloading(true);
 			String[] params = {};
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -498,6 +501,7 @@ public class UnfiledDocuments extends ScreenInterface {
 									wDocuments.loadData(r);
 								}
 							} else {
+								wDocuments.showloading(false);
 							}
 						}
 					}

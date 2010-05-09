@@ -31,6 +31,7 @@ import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.FinancialWidget;
 import org.freemedsoftware.gwt.client.widget.PatientProblemList;
 import org.freemedsoftware.gwt.client.widget.PatientTagsWidget;
 import org.freemedsoftware.gwt.client.widget.RecentAllergiesList;
@@ -56,6 +57,8 @@ public class SummaryScreen extends PatientScreenInterface {
 	protected RecentAllergiesList recentAllergiesList = null;
 
 	protected PatientTagsWidget patientTags = null;
+	
+	FinancialWidget financialWidget=null;
 
 //	protected Image photoId = null;
 
@@ -158,12 +161,10 @@ public class SummaryScreen extends PatientScreenInterface {
 		final Label financialLabel = new Label("Financial");
 		financialLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
 		verticalPanel_2.add(financialLabel);
-
-		JsonUtil.debug("build financial flex table");
-		final FlexTable financialFlexTable = new FlexTable();
+		financialWidget=new FinancialWidget();
 		final SimplePanel cFinancial = new SimplePanel();
 		cFinancial.setStylePrimaryName("freemed-PatientSummaryContainer");
-		cFinancial.setWidget(financialFlexTable);
+		cFinancial.setWidget(financialWidget);
 		verticalPanel_2.add(cFinancial);
 
 		JsonUtil.debug("selectTab(0)");
@@ -204,6 +205,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		try {
 			problemList.setPatientId(patientId);
 			problemList.setPatientScreen(patientScreen);
+			financialWidget.setPatientId(patientId);
 		} catch (Exception ex) {
 			JsonUtil.debug("Exception in problemList: " + ex.toString());
 		}

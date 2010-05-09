@@ -43,8 +43,6 @@ public class PatientIdEntry extends PatientEntryScreenInterface {
 
 	protected String moduleName = "PatientIds";
 
-	protected String patientIdName = "patient";
-	
 	public PatientIdEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -80,14 +78,16 @@ public class PatientIdEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton("Submit",
+				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton("Reset",
+				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -103,7 +103,7 @@ public class PatientIdEntry extends PatientEntryScreenInterface {
 	}
 
 	public void resetForm() {
-		
+
 	}
 
 }

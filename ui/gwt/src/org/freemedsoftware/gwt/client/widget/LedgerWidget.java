@@ -102,6 +102,7 @@ public class LedgerWidget extends Composite {
 	protected CustomRadioButtonGroup paymentTypeGroup;
 	protected String covid;
 	protected String deductId;
+	protected Label payTypelb;
 
 	public LedgerWidget(String prid, String pId, String pct, PayCategory pcat,
 			CustomRequestCallback cb) {
@@ -172,7 +173,7 @@ public class LedgerWidget extends Composite {
 		descLb = new Label("Description");
 		tbDesc = new TextArea();
 		headLb = new Label();
-		headLb.setStyleName("label");
+		headLb.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		ledgerPanel.add(headLb);
 		ledgerFlexTable = new FlexTable();
 		// paymentFlexTable.setSize("100%", "100%");
@@ -210,10 +211,9 @@ public class LedgerWidget extends Composite {
 		}
 
 		fieldCounter = 0;
-		Label payTypelb = new Label("Payment Type");
+		payTypelb = new Label("Payment Type");
 		paymentTypeGroup = new CustomRadioButtonGroup("actiontype");
-		ledgerFlexTable.setWidget(fieldCounter, 0, payTypelb);
-		ledgerFlexTable.setWidget(fieldCounter, 1, paymentTypeGroup);
+		
 
 		paymentTypeGroup.addItem("Payment", "1", new Command() {
 			@Override
@@ -240,7 +240,11 @@ public class LedgerWidget extends Composite {
 	}
 
 	public void createPayUI() {
-		fieldCounter = 1;
+		fieldCounter = 0;
+		ledgerFlexTable.clear();
+		ledgerFlexTable.setWidget(fieldCounter, 0, payTypelb);
+		ledgerFlexTable.setWidget(fieldCounter, 1, paymentTypeGroup);
+		fieldCounter++;
 		if (procId.equals("0")) {
 			Label paySrclb = new Label("Payment Source");
 			paySrcList = new CustomListBox();
@@ -343,8 +347,11 @@ public class LedgerWidget extends Composite {
 
 	private void createCopayUI() {
 		// headLb.setText("Copay");
-		fieldCounter = 1;
-		
+		fieldCounter = 0;
+		ledgerFlexTable.clear();
+		ledgerFlexTable.setWidget(fieldCounter, 0, payTypelb);
+		ledgerFlexTable.setWidget(fieldCounter, 1, paymentTypeGroup);
+		fieldCounter++;
 		Label payMethodlb = new Label("Payment Method");
 		payTypeList = new CustomListBox();
 		payTypeList.addItem("NONE SELECTED");
@@ -455,8 +462,11 @@ public class LedgerWidget extends Composite {
 
 	private void createDeductableUI() {
 		// headLb.setText("Deductable");
-		fieldCounter = 1;
-		
+		fieldCounter = 0;
+		ledgerFlexTable.clear();
+		ledgerFlexTable.setWidget(fieldCounter, 0, payTypelb);
+		ledgerFlexTable.setWidget(fieldCounter, 1, paymentTypeGroup);
+		fieldCounter++;
 		Label payMethodlb = new Label("Payment Method");
 		payTypeList = new CustomListBox();
 		payTypeList.addItem("NONE SELECTED");
@@ -657,7 +667,7 @@ public class LedgerWidget extends Composite {
 		ledgerInfoFlexTable.setText(0, 4, "Payments");
 		ledgerInfoFlexTable.setText(0, 5, "Balance");
 		RowFormatter rowFormatter = ledgerInfoFlexTable.getRowFormatter();
-		rowFormatter.setStyleName(0, "tableHeader");
+		rowFormatter.setStyleName(0, AppConstants.STYLE_TABLE_HEADER);
 		CustomButton closeBtn = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
 		final LedgerWidget lw = this;
 		closeBtn.addClickHandler(new ClickHandler() {
@@ -1019,12 +1029,12 @@ public class LedgerWidget extends Composite {
 										RowFormatter rowFormatter = ledgerInfoFlexTable
 												.getRowFormatter();
 										rowFormatter.setStyleName(row,
-												"tableRow");
+												AppConstants.STYLE_TABLE_ROW);
 									} else {
 										RowFormatter rowFormatter = ledgerInfoFlexTable
 												.getRowFormatter();
 										rowFormatter.setStyleName(row,
-												"customRowStyle");
+												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									}
 								} else {
 									ledgerInfoFlexTable
@@ -1042,7 +1052,7 @@ public class LedgerWidget extends Composite {
 									RowFormatter rowFormatter = ledgerInfoFlexTable
 											.getRowFormatter();
 									rowFormatter.setStyleName(row,
-											"tableHeader");
+											AppConstants.STYLE_TABLE_HEADER);
 								}
 							}
 						} else {

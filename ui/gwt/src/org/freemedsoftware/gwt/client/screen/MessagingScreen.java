@@ -105,8 +105,6 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 
 	protected HTML messageView;
 
-	protected final static String LOADING_IMAGE = "resources/images/loading.gif";
-
 	protected HashMap<CheckBox, Integer> checkboxStack = new HashMap<CheckBox, Integer>();
 
 	protected List<Integer> selectedItems = new ArrayList<Integer>();
@@ -299,10 +297,6 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 						}
 					});
 		}
-		messageView = new HTML("<img src=\"" + LOADING_IMAGE
-				+ "\" border=\"0\" />");
-		verticalSplitPanel.add(messageView);
-		messageView.setSize("100%", "100%");
 		// verticalSplitPanel.setSize("100%", "100%");
 
 		// Start population routine
@@ -401,6 +395,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			HashMap<String, String>[] dummyData = getStubData();
 			populateByData(dummyData);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			wMessages.showloading(true);
 			String[] params = { tag, JsonUtil.jsonify(Boolean.FALSE) };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -425,7 +420,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 												"HashMap<String,String>[]");
 								if (r != null) {
 									populateByData(r);
-								}
+								}else wMessages.showloading(false);
 							} else {
 							}
 						}

@@ -418,11 +418,16 @@ class RemittBillingTransport extends BillingModule {
                 $yearsresult=$remitt->ListOutputYears();
                 foreach($yearsresult as $key => $val){
                         $monthresult=$remitt->ListOutputMonths($val[0]);
-                        $year=$val[0];
-                        for($i=0;$i<count($monthresult);$i++){
-                                $month=date("M Y",strtotime($monthresult[$i]));
-                                $data[]=array( "month" => $month);
-                        }
+                        if(!is_array($monthresult)){
+                        	$month=date("M Y",strtotime($monthresult));
+	                        $data[]=array( "month" => $month);
+                	}
+                	else{
+	                        for($i=0;$i<count($monthresult);$i++){
+	                                $month=date("M Y",strtotime($monthresult[$i]));
+	                                $data[]=array( "month" => $month);
+	                        }
+	                }
                 }
                 return $data;
         }

@@ -283,9 +283,9 @@ public class ReportingWidget extends Composite {
 	 * @param data
 	 */
 	protected void populateReportParameters(HashMap<String, String> data) {
+		
 		reportParametersTable.clear();
 		reportParameters.clear();
-
 		thisReportName.setText(data.get("report_name"));
 
 		for (int iter = 0; iter < new Integer(data.get("report_param_count"))
@@ -294,8 +294,8 @@ public class ReportingWidget extends Composite {
 			final String iS = new Integer(iter).toString();
 			String type = data.get("report_param_type_" + iS);
 			String options = data.get("report_param_options_" + iS);
-			reportParametersTable.setText(iter, 0, data
-					.get("report_param_name_" + iS));
+			reportParametersTable.setWidget(iter, 0, new Label(data
+					.get("report_param_name_" + iS)));
 			Widget w = null;
 			if (type.compareToIgnoreCase("Date") == 0) {
 				w = new CustomDatePicker();

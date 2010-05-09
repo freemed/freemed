@@ -171,10 +171,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	}
 	
 	public CallInScreen() {
-		final boolean canDelete = CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE);
-		final boolean canWrite  = CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE);
+		super(ModuleName);
 		final boolean canBook   = CurrentState.isActionAllowed(SchedulerWidget.moduleName, AppConstants.WRITE);
-		final boolean canModify = CurrentState.isActionAllowed(ModuleName, AppConstants.MODIFY);
     
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
@@ -197,7 +195,6 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 		/*
 		 * final Label callInLabel = new Label("Call-in Patient Management.");
-		 * callInLabel.setStyleName("large-header-label");
 		 * verticalPanelMenu.add(callInLabel);
 		 * callInLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		 */
@@ -404,7 +401,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			entryVPanel = new VerticalPanel();
 			tabPanel.add(entryVPanel, "Entry");
 			final HorizontalPanel selectionHPanel = new HorizontalPanel();
-			selectionHPanel.setStyleName("small-header-label");
+			selectionHPanel.setStyleName(AppConstants.STYLE_LABEL_HEADER_SMALL);
 			entryVPanel.add(selectionHPanel);
 			selectionHPanel.setSpacing(5);
 			final Label selectionLabel = new Label("Select Form Type:");
@@ -470,7 +467,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	private VerticalPanel createContactInformation() {
 		/* HorizontalPanel horContInformation= new HorizontalPanel(); */
 		VerticalPanel verContInformation = new VerticalPanel();
-		verContInformation.setStyleName("small-header-label");
+		verContInformation.setStyleName(AppConstants.STYLE_LABEL_HEADER_SMALL);
 
 		// contInfoFlexTable.setSize(width, height); FIXME
 		Label lblContactInformation = new Label("Contact Information");
@@ -579,12 +576,17 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		// verticalPanelEntry.add(flexTable);
 		verticalPanelEntry.add(horPanel);
 
-		FlexTable panelButtons = new FlexTable();
-		panelButtons.setWidth("20%");
-		panelButtons.setWidget(0, 25, btnAdd);
-		panelButtons.setWidget(0, 26, btnClear);
+//		FlexTable panelButtons = new FlexTable();
+//		panelButtons.setWidth("20%");
+//		panelButtons.setWidget(0, 25, btnAdd);
+//		panelButtons.setWidget(0, 26, btnClear);
+		
+		HorizontalPanel panelButtons = new HorizontalPanel();
+		panelButtons.add(btnAdd);
+		panelButtons.add(btnClear);
 
 		verticalPanelEntry.add(panelButtons);
+		verticalPanelEntry.setCellHorizontalAlignment(panelButtons, HasHorizontalAlignment.ALIGN_CENTER);
 
 		return verticalPanelEntry;
 	}
@@ -762,20 +764,10 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 												"HashMap<String,String>");
 								if (data != null) {
 									PatientForm patientForm = new PatientForm();
-									String fname = data.get("cifname");
-									String lname = data.get("cilname");
-									String mname = data.get("cimname");
-									String dob = data.get("cidob");
-									String provider = data.get("ciphysician");
-									String homePhone = data.get("cihphone");
-									String workPhone = data.get("ciwphone");
 									patientForm.setInfoFromCallin(
-											getCallInScreen(), callinId, lname,
-											fname, mname, dob, Integer
-													.parseInt(provider),
-											homePhone, workPhone);
-									Util.spawnTab(lname + "," + fname + " "
-											+ mname, patientForm);
+											getCallInScreen(), callinId, data);
+									Util.spawnTab(data.get("cilname") + "," + data.get("cifname") + " "
+											+ data.get("cimname"), patientForm);
 								}
 							} else {
 							}
@@ -797,6 +789,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			callInTable.showloading(true);
 			String[] params = { locale };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL
@@ -824,6 +817,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 								callInTable.clearAllSelections();
 								callInTable.loadData(result);
 							} else {
+								callInTable.showloading(false);
 							}
 						} else {
 						}

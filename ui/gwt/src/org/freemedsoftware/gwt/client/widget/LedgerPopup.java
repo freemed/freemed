@@ -142,7 +142,7 @@ public class LedgerPopup extends DialogBox {
  						totalDetailsTable.setHTML(row, 3, totalCharges+"");
  						totalDetailsTable.setHTML(row, 4, totalPayments+"");
  						totalDetailsTable.setHTML(row, 5, (totalCharges-totalPayments)+"");
- 						totalDetailsTable.getRowFormatter().setStyleName(row, "tableHeader");
+ 						totalDetailsTable.getRowFormatter().setStyleName(row, AppConstants.STYLE_TABLE_HEADER);
 					}
 				}, "HashMap<String,String>[]");
 				final CustomButton backBtn = new CustomButton("Back",AppConstants.ICON_PREV);

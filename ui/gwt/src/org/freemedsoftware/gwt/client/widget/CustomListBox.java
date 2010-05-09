@@ -28,6 +28,10 @@ import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.HashSetter;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class CustomListBox extends ListBox implements HashSetter {
@@ -75,11 +79,30 @@ public class CustomListBox extends ListBox implements HashSetter {
 			for (int iter = 0; iter < getItemCount(); iter++) {
 				if (getValue(iter).compareTo(val) == 0) {
 					this.setItemSelected(iter, true);
+					
 				}
 			}
 		}
 	}
-
+	
+	/**
+	 * Set the active value of the ListBox widget to be val.
+	 * 
+	 * @param val
+	 * @param fireevent fires associated events
+	 */
+	public void setWidgetValue(String val,boolean fireEvent) {
+		if (getItemCount() > 0) {
+			for (int iter = 0; iter < getItemCount(); iter++) {
+				if (getValue(iter).compareTo(val) == 0) {
+					this.setItemSelected(iter, true);
+					DomEvent.fireNativeEvent(Document.get().createChangeEvent(),
+							this); 
+				}
+			}
+		}
+	}
+	
 	public void setHashMapping(String hm) {
 		hashMapping = hm;
 	}

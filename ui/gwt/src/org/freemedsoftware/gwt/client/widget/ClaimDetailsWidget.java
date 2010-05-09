@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.ClaimsManager;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProcedureScreen;
@@ -85,13 +86,13 @@ public class ClaimDetailsWidget  extends Composite{
 		claimsInfoParentTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
 		
 		Label lbPatient=new Label("Patient:");
-		lbPatient.setStyleName("label_bold");
+		lbPatient.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		lbPatientVal = new Label();
 		Label lbdob=new Label("Date of Birth:");
-		lbdob.setStyleName("label_bold");
+		lbdob.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbdobVal=new Label();
 		Label lbSSN=new Label("SSN:");
-		lbSSN.setStyleName("label_bold");
+		lbSSN.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbSSNVal=new Label();
 		
 		covInfoTable.setWidget(0, 0, lbPatient);
@@ -102,13 +103,13 @@ public class ClaimDetailsWidget  extends Composite{
 		covInfoTable.setWidget(0, 5, lbSSNVal);
 		
 		final Label lbRespParty=new Label("Resp. Party:");
-		lbRespParty.setStyleName("label_bold");
+		lbRespParty.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRespPartyVal=new Label();
 		final Label lbRpDob=new Label("Date of Birth:");
-		lbRpDob.setStyleName("label_bold");
+		lbRpDob.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRpDobVal=new Label();
 		final Label lbRpSSN=new Label("SSN:");
-		lbRpSSN.setStyleName("label_bold");
+		lbRpSSN.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRpSSNVal=new Label();
 		
 		covInfoTable.setWidget(1, 0, lbRespParty);
@@ -119,7 +120,7 @@ public class ClaimDetailsWidget  extends Composite{
 		covInfoTable.setWidget(1, 5, lbRpSSNVal);
 		
 		final Label lbPrimary=new Label("Primary Coverage/Location/Ins. No./Copay/Deductible");
-		lbPrimary.setStyleName("label_bold");
+		lbPrimary.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbPrimaryVal=new Label();
 		
 		covTypesTable.setWidget(0, 0, lbPrimary);
@@ -128,7 +129,7 @@ public class ClaimDetailsWidget  extends Composite{
 		covTypesTable.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
 
 		final Label lbSecondary=new Label("Secondary Coverage/Location/Ins. No./Copay/Deductible");
-		lbSecondary.setStyleName("label_bold");
+		lbSecondary.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbSecondaryVal=new Label();
 		
 		covTypesTable.setWidget(1, 0, lbSecondary);
@@ -137,7 +138,7 @@ public class ClaimDetailsWidget  extends Composite{
 		covTypesTable.getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
 		
 		final Label lbTertiary=new Label("Tertiary Coverage/Location/Ins. No./Copay/Deductible");
-		lbTertiary.setStyleName("label_bold");
+		lbTertiary.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbTertiaryVal=new Label();
 		
 		covTypesTable.setWidget(2, 0, lbTertiary);
@@ -164,17 +165,17 @@ public class ClaimDetailsWidget  extends Composite{
 		claimsInfoParentTable.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
 
 		Label lbDos=new Label("Date of Service:");
-		lbDos.setStyleName("label_bold");
+		lbDos.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbDosVal=new Label();	
 		
 		clInfoTable.setWidget(0, 0, lbDos);
 		clInfoTable.setWidget(0, 1, lbDosVal);
 		
 		Label lbProvider=new Label("Provider:");
-		lbProvider.setStyleName("label_bold");
+		lbProvider.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbProviderVal=new Label();		
 		Label lbRefProv=new Label("Referring Provider:");
-		lbRefProv.setStyleName("label_bold");
+		lbRefProv.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRefProvVal=new Label();
 		
 		clInfoTable.setWidget(1, 0, lbProvider);
@@ -184,10 +185,10 @@ public class ClaimDetailsWidget  extends Composite{
 				
 		
 		Label lbPOS=new Label("POS:");
-		lbPOS.setStyleName("label_bold");
+		lbPOS.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbPOSVal=new Label();
 		Label lbCharges=new Label("Charges:");
-		lbCharges.setStyleName("label_bold");
+		lbCharges.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbChargesVal=new Label();
 		
 		clInfoTable.setWidget(2, 0, lbPOS);
@@ -196,10 +197,10 @@ public class ClaimDetailsWidget  extends Composite{
 		clInfoTable.setWidget(2, 3, lbChargesVal);			
 		
 		Label lbCPT=new Label("CPT:");
-		lbCPT.setStyleName("label_bold");
+		lbCPT.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbCPTVal=new Label();
 		Label lbPaid=new Label("Paid:");
-		lbPaid.setStyleName("label_bold");
+		lbPaid.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbPaidVal=new Label();
 		
 		clInfoTable.setWidget(3, 0, lbCPT);
@@ -208,10 +209,10 @@ public class ClaimDetailsWidget  extends Composite{
 		clInfoTable.setWidget(3, 3, lbPaidVal);			
 		
 		Label lbICD=new Label("ICD:");
-		lbICD.setStyleName("label_bold");
+		lbICD.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbICDVal=new Label();		
 		Label lbBalance=new Label("Balance:");
-		lbBalance.setStyleName("label_bold");
+		lbBalance.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbBalanceVal=new Label();
 
 		clInfoTable.setWidget(4, 0, lbICD);

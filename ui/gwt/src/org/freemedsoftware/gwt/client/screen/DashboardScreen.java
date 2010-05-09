@@ -46,6 +46,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -85,7 +86,7 @@ public class DashboardScreen extends ScreenInterface {
 				hP.setSpacing(2);
 				}
 			final PushButton button = new PushButton();
-			button.setStyleName("gwt-simple-button");
+			button.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			button.getUpFace().setImage(
 					new Image("resources/images/close1_x.16x16.png"));
 
@@ -196,8 +197,6 @@ public class DashboardScreen extends ScreenInterface {
 		boundaryPanel.add(hPanel);
 		dragController.setBehaviorConstrainedToBoundaryPanel(false);
 		dragController.setBehaviorMultipleSelection(false);
-
-		
 
 	}
 

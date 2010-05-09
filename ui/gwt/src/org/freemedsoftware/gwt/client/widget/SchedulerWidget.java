@@ -633,7 +633,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				DateEventListener newListener, Object newData,
 				DateEventActions newCommand) {
 			super();
-
+			CurrentState.assignCurrentPageHelp("book_appointment");
 			this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
 
 			boolean reverseTime = false;
@@ -2005,7 +2005,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			final HorizontalPanel buttonPanel = new HorizontalPanel(); 
 			flexTable.setWidget(row, 1, buttonPanel);
 			
-			submit = new CustomButton("add",AppConstants.ICON_ADD);
+			submit = new CustomButton("Add",AppConstants.ICON_ADD);
 			submit.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -2057,7 +2057,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				}
 			});
 			buttonPanel.add(submit);
-			clear = new CustomButton("clear",AppConstants.ICON_CLEAR);
+			clear = new CustomButton("Clear",AppConstants.ICON_CLEAR);
 			clear.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -2092,7 +2092,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				});
 			buttonPanel.add(delete);
 			}
-			cancel =  new CustomButton("cancel",AppConstants.ICON_CLEAR);
+			cancel =  new CustomButton("Cancel",AppConstants.ICON_CLEAR);
 			buttonPanel.add(cancel);
 			cancel.addClickHandler(new ClickHandler() {
 				@Override
@@ -2310,7 +2310,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		fields.add(filterPanel);
 //		fields.setCellWidth(filterPanel, "50%");
 		Label selectFilterLabel = new Label("Filter by :");
-		selectFilterLabel.setStyleName("label");
+		selectFilterLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		filterPanel.add(selectFilterLabel);
 			
 		final CustomListBox selectFilter = new CustomListBox();

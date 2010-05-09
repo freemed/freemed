@@ -178,6 +178,10 @@ public class DjvuViewer extends Composite implements ClickHandler {
 									"Integer");
 							if (r != null) {
 								numberOfPages = r;
+								try{
+									loadPage(1);
+								}catch(Exception e){}
+								setVisible(true);
 							}
 						} else {
 						}

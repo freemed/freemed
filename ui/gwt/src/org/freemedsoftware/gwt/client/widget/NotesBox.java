@@ -32,6 +32,7 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.WidgetInterface;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -83,7 +84,7 @@ public class NotesBox extends WidgetInterface {
 
 			simplePanel.setSize("100%", "100%");
 
-			simplePanel.setStyleName("freemed-WidgetContainer");
+			simplePanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
 			simplePanel.addStyleName("freemed-NotesBoxContainer");
 
 			textArea.addChangeHandler(this);

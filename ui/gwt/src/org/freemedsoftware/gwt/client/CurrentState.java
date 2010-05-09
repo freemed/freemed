@@ -35,6 +35,7 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -44,9 +45,15 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.XMLParser;
 
 public class CurrentState {
 
@@ -67,6 +74,8 @@ public class CurrentState {
 	protected static Integer defaultFacility = new Integer(0);
 
 	protected static String defaultUser = "";
+	
+	protected static String userType = "";
 
 	protected static HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
 
@@ -75,7 +84,7 @@ public class CurrentState {
 	protected static HashMap<String, Object> userConfiguration = new HashMap<String, Object>();
 	
 	protected static HashMap<String, String> userModules = new HashMap<String, String>();
-
+	
 	protected static HashMap<String, String> systemConfiguration = new HashMap<String, String>();
 
 	protected static FreemedInterface freemedInterface = null;
@@ -150,6 +159,15 @@ public class CurrentState {
 		defaultUser = u;
 	}
 
+	/**
+	 * Assign User Type.
+	 * 
+	 * @param u
+	 */
+	public static void assignUserType(String u) {
+		userType = u;
+	}
+	
 	/**
 	 * Assign tab panel object.
 	 * 
@@ -231,6 +249,10 @@ public class CurrentState {
 		return defaultUser;
 	}
 
+	public static String getUserType() {
+		return userType;
+	}
+	
 	public static HandlerManager getEventBus() {
 		return eventBus;
 	}
@@ -618,5 +640,5 @@ public class CurrentState {
 	public static HashMap<Integer, HashMap<String, PatientScreenInterface>> getPatientSubScreenMap() {
 		return patientSubScreenMap;
 	}
-
+	
 }

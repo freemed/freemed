@@ -47,12 +47,14 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PrescriptionRefillBox extends WidgetInterface {
@@ -68,12 +70,18 @@ public class PrescriptionRefillBox extends WidgetInterface {
 	
 	public PrescriptionRefillBox() {
 		super(moduleName);
-		final SimplePanel simplePanel = new SimplePanel();
-		simplePanel.setStyleName("freemed-WidgetContainer");
+		final VerticalPanel simplePanel = new VerticalPanel();
+		simplePanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
 		// simplePanel.addStyleName("freemed-PrescriptionRefillBoxContainer");
 		initWidget(simplePanel);
-
-		simplePanel.setWidget(flexTable);
+		
+	    HorizontalPanel	horizontalPanel = new HorizontalPanel();
+		Label headerLabel = new Label("Rx Refills");
+		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		horizontalPanel.add(headerLabel);
+		simplePanel.add(horizontalPanel);
+		
+		simplePanel.add(flexTable);
 		flexTable.setSize("100%", "100%");
 
 		cleanView();
@@ -82,7 +90,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 	public Widget getDefaultIcon(){
 		if(rxRefillPrescriptionButton==null){
 			rxRefillPrescriptionButton = new PushButton("", "");
-			rxRefillPrescriptionButton.setStyleName("gwt-simple-button");
+			rxRefillPrescriptionButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			rxRefillPrescriptionButton.getUpFace().setImage(
 					new Image("resources/images/rx_prescriptions.16x16.png"));
 			rxRefillPrescriptionButton.getDownFace().setImage(
@@ -110,7 +118,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		wRequests.addColumn("Note", "note"); // col 4
 		wRequests.addColumn("Approved", "approved");// col 5
 		wRequests.addColumn("locked", "locked"); // col 6
-
+		wRequests.setMaximumRows(7);
 		wRequests.setIndexName("id");
 
 		wRequests.setTableRowClickHandler(new TableRowClickHandler() {
@@ -126,7 +134,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 	}
 
-	protected void showStaff() {
+	public void showStaff() {
 
 		cleanView();
 
@@ -205,11 +213,10 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		});
 	}
 
-	protected void cleanView() {
-		
-		final boolean canWriteRX = CurrentState.isActionAllowed(RxRefillScreen.moduleName, AppConstants.WRITE);
+	public void cleanView() {
 		
 		flexTable.clear();
+		/*
 		final Label selectViewLabel = new Label("Select View");
 		flexTable.setWidget(0, 0, selectViewLabel);
 
@@ -217,7 +224,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.setWidget(0, 1, selectUser);
 		selectUser.addItem("Select access level");
 		selectUser.addItem("doctor");
-		if(canWrite)
+//		if(canWrite)
 			selectUser.addItem("staff");
 		selectUser.setVisibleItemCount(1);
 
@@ -231,6 +238,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 				}
 			}
 		});
+		*/
 	}
 
 	public void retrieveData() {
@@ -239,6 +247,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 			// HashMap<String, String>[] sampleData = getSampleData();
 			// loadData(sampleData);
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			wRequests.showloading(true);
 			// Use JSON-RPC to retrieve the data
 			String[] requestparams = {};
 
@@ -265,7 +274,8 @@ public class PrescriptionRefillBox extends WidgetInterface {
 											"HashMap<String,String>[]");
 							if (data != null) {
 								loadData(data);
-							}
+							}else
+								wRequests.showloading(false);
 						}
 					}
 				});

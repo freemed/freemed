@@ -135,7 +135,9 @@ class ProcedureModule extends EMRModule {
 	protected function mod_pre ( &$data ) {	
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end method mod_pre
-
+	
+	
+	
 	protected function mod_post ( &$data ) {
 		// Check if authorization changed
 		if ($data['procauth'] != $data['procauthsaved']) {
@@ -468,6 +470,18 @@ class ProcedureModule extends EMRModule {
 			$data[$i]['payer']="Work Comp";
 		}
 		return $data;
+	}
+	
+	public function getNonZeroBalProcs($patient){
+		$query="SELECT id AS id, procdt AS dos, proccharges AS charge, procamtpaid AS payment,procbalcurrent as arrear ".
+		"FROM ".$this->table_name." WHERE procpatient=".$GLOBALS['sql']->quote( $patient )." AND procbalcurrent>0 ORDER BY procdt DESC";
+		return $GLOBALS['sql']->queryAll( $query );
+	}
+	
+	public function getTotalArrears($patient){
+		$query="SELECT sum(procbalcurrent) as tarrears ".
+		"FROM ".$this->table_name." WHERE procpatient=".$GLOBALS['sql']->quote( $patient )." AND procbalcurrent>0 ORDER BY procdt DESC";
+		return $GLOBALS['sql']->queryRow( $query );
 	}
 } // end class ProcedureModule
 
