@@ -30,7 +30,7 @@ class ShimStation extends SupportModule {
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "49d646d4-d272-4a48-891a-168847ce7457";
 	
-	var $PACKAGE_MINIMUM_VERSION = '0.9.0';
+	var $PACKAGE_MINIMUM_VERSION = '0.8.6';
 
 	var $table_name = "shimstation";
 

@@ -35,14 +35,14 @@ class Pharmacy extends SupportModule {
 	var $record_name    = "Pharmacies";
 	var $table_name     = "pharmacy";
 
-	var $widget_hash    = "##phname## (##phcity##, ##phstate##)";
+	var $widget_hash    = "##phname## (##phcity##, ##phstpr##)";
 
 	var $variables = array (
 		'phname',
 		'phaddr1',
 		'phaddr2',
 		'phcity',
-		'phstate',
+		'phstpr',
 		'phzip',
 		'phfax',
 		'phemail',
@@ -57,7 +57,7 @@ class Pharmacy extends SupportModule {
 			__("City, State") => "citystate"
 		);
 		$this->additional_fields = array (
-			"CONCAT(phcity, ', ', phstate) AS citystate"
+			"CONCAT(phcity, ', ', phstpr) AS citystate"
 		);
 
 		parent::__construct();
@@ -68,7 +68,7 @@ class Pharmacy extends SupportModule {
 		if ($data['phcsz']) {
 			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
 				$data['phcity'] = $reg[1];
-				$data['phstate'] = $reg[2];
+				$data['phstpr'] = $reg[2];
 				$data['phzip'] = $reg[3];
 			}
 		}
@@ -79,7 +79,7 @@ class Pharmacy extends SupportModule {
 		if ($data['phcsz']) {
 			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
 				$data['phcity'] = $reg[1];
-				$data['phstate'] = $reg[2];
+				$data['phstpr'] = $reg[2];
 				$data['phzip'] = $reg[3];
 			}
 		}

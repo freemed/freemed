@@ -450,7 +450,7 @@ class PatientInterface {
 		.", CASE WHEN p.id IN ( SELECT al.patient FROM allergies al WHERE al.patient=".$GLOBALS['sql']->quote( $id )." AND active = 'active' ) THEN 'true' ELSE 'false' END AS hasallergy, p.* "
 		.", CONCAT( phy.phylname, ', ', phy.phyfname, ' ', phy.phymname ) AS pcp"
 		.", CONCAT( fac.psrname, ' (', fac.psrcity, ', ', fac.psrstate,')' ) AS facility"
-		.", CONCAT( ph.phname, ' (', ph.phcity, ', ', ph.phstate,')' ) AS pharmacy "
+		.", CONCAT( ph.phname, ' (', ph.phcity, ', ', ph.phstpr,')' ) AS pharmacy "
 		."FROM patient p "
 		."LEFT OUTER JOIN patient_address pa ON ( pa.patient = p.id AND pa.active = TRUE ) "
 		."LEFT OUTER JOIN physician phy ON ( phy.id = p.ptpcp) "

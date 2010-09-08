@@ -193,6 +193,8 @@ class Callin extends SupportModule {
 		}
 		return $return;
 	} // end method GetDetailedRecord
+
+}
 	
 register_module('Callin');
 
