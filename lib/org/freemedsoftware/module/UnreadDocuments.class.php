@@ -26,6 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class UnreadDocuments extends SupportModule {
 
 	var $MODULE_NAME = "Unread Document";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_HIDDEN = true;
 
 	var $MODULE_FILE = __FILE__;
@@ -110,10 +111,8 @@ class UnreadDocuments extends SupportModule {
 	//	Integer, number of pages in the specified document
 	//
 	public function NumberOfPages ( $id ) {
-		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . '/data/documents/unread/' .
-			$r['urffilename']);
+			$this->GetLocalCachedFile( $id ) );
 		return $djvu->NumberOfPages();
 	} // end method NumberOfPages
 
@@ -136,10 +135,8 @@ class UnreadDocuments extends SupportModule {
 	//
 	public function GetDocumentPage( $id, $page, $thumbnail = false ) {
 		// Return image ...
-		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . '/data/documents/unread/' .
-			$r['urffilename']);
+			$this->GetLocalCachedFile( $id ) );
 
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
@@ -178,19 +175,11 @@ class UnreadDocuments extends SupportModule {
 	public function MoveToAnotherProvider ( $id, $to ) {
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 
-		$filename = freemed::secure_filename( $rec['urffilename'] );
-
-		// Document sanity check
-		if ( ! file_exists('data/documents/unread/'.$filename) or empty($filename) ) {
-			syslog(LOG_INFO, "UnreadDocument| attempted to file document that doesn't exist ($filename)");
-			return false;
-		}
-
 		$q = $GLOBALS['sql']->update_query(
 			$this->table_name,
 			array (
-				'urfphysician' => $to
-			), array ( 'id' => $id )
+				'urfphysician' => (int) $to
+			), array ( 'id' => (int) $id )
 		);
 		$r = $GLOBALS['sql']->query( $q );
 		return true;
@@ -215,11 +204,11 @@ class UnreadDocuments extends SupportModule {
 
 		$this_user = freemed::user_cache()->user_number;
 		
-		$filename = freemed::secure_filename( $data['urffilename'] );
+		$filename = $this->GetLocalCachedFile( $id );
 		syslog( LOG_DEBUG, "user = this_user, filename = $filename" );
 
 		// Document sanity check
-		if (!file_exists('data/documents/unread/'.$filename) or empty($filename)) {
+		if ( $data['id'] == 0 ) {
 			syslog(LOG_INFO, "UnreadDocument| attempted to file document that doesn't exist ($filename)");
 			return false;
 		}
@@ -262,12 +251,8 @@ class UnreadDocuments extends SupportModule {
 		$result2 = $GLOBALS['sql']->query( $query2 );
 
 		// Move actual file to new location
-		//echo "mv data/documents/unread/$filename $new_filename -f<br/>\n";
-		$dirname = dirname($new_filename);
-		syslog( LOG_DEBUG, "mkdir -p '$dirname'" );
-		`mkdir -p "$dirname"`;
-		syslog( LOG_DEBUG, "mv 'data/documents/unread/$filename' '$new_filename' -f" );
-		`mv "data/documents/unread/${filename}" "${new_filename}" -f`;
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		$pds->StoreFile( $data['urfpatient'], "scanneddocuments", $new_id, file_get_contents( $this->GetLocalCachedFile( $id ) ) );
 
 		$q = "DELETE FROM ".$this->table_name." WHERE id=".$GLOBALS['sql']->quote( $id );
 		syslog( LOG_DEBUG, "q = $q" );
@@ -291,6 +276,49 @@ class UnreadDocuments extends SupportModule {
 		$r = $GLOBALS['sql']->queryOne( $q );
 		return $r;
 	} // end method GetCount
+
+	// Method: GetLocalCachedFile
+	//
+	// Parameters:
+	//
+	//	$id - Table id
+	//
+	// Returns:
+	//
+	//	Path to locally cached filesystem copy of database object.
+	//
+	public function GetLocalCachedFile( $id ) {
+		// Create hash for filename
+		$hash = PHYSICAL_LOCATION . "/data/cache/" . $this->table_name . "-" . md5( $id );
+
+		// If it exists, return file name
+		if (file_exists( $hash )) {
+			return $hash;
+		} else {
+			// ... otherwise cache it first ...
+	                $r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+			file_put_contents( $hash, $r['urffile'] );
+			// ... then return the hash.
+			return $hash;
+		}
+	} // end method GetLocalCachedFile
+
+	protected function UpdateFileFromCachedFile( $id ) {
+		$hash = PHYSICAL_LOCATION . "/data/cache/" . $this->table_name . "-" . md5( $id );	
+
+		if (!file_exists( $hash )) {
+			return false;
+		} else {
+			$query = $GLOBALS['sql']->update_query(
+				$this->table_name,
+				array (
+					'urffile' => file_get_contents( $hash )	
+				), array ( 'id' => $id )
+			);
+			$GLOBALS['sql']->query( $query );
+			return true;
+		}
+	} // end method UpdateFileFromCachedFile
 
 } // end class UnreadDocuments
 

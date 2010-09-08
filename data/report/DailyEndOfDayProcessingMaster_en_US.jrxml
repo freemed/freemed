@@ -5,43 +5,62 @@
 	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["E:\\adnan\\freemed\\Freemed Project\\data\\report\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["/usr/share/freemed/data/report/"]]></defaultValueExpression>
 	</parameter>
-	<queryString language="SQL">
-		<![CDATA[select * from user]]>
+	<parameter name="param0" class="java.util.Date"/>
+	<parameter name="param1" class="java.lang.Integer"/>
+	<parameter name="ipath" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 1;]]>
 	</queryString>
-	<field name="username" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="id" class="java.math.BigInteger">
+	<field name="1" class="java.lang.Long">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<summary>
-		<band height="802" splitType="Stretch">
+	<detail>
+		<band height="100" splitType="Prevent">
 			<subreport>
 				<reportElement x="0" y="0" width="760" height="67"/>
+				<subreportParameter name="param0">
+					<subreportParameterExpression><![CDATA[$P{param0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="param1">
+					<subreportParameterExpression><![CDATA[$P{param1}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "sub_DailyEndOfDayProcessingSummary_en_US.jasper"]]></subreportExpression>
-			</subreport>
-			<break>
-				<reportElement x="0" y="67" width="100" height="1"/>
-			</break>
-			<subreport>
-				<reportElement x="0" y="69" width="760" height="78"/>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "sub_DailyCashReceiptJournal_en_US.jasper"]]></subreportExpression>
-			</subreport>
-			<break>
-				<reportElement x="0" y="149" width="100" height="1"/>
-			</break>
-			<subreport runToBottom="true">
-				<reportElement x="0" y="150" width="760" height="77"/>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "sub_DailyAdjustmentJournal_en_US.jasper"]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{ipath}+"sub_DailyEndOfDayProcessingSummary_en_US.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-	</summary>
+		<band height="100" splitType="Prevent">
+			<subreport>
+				<reportElement x="0" y="0" width="760" height="78"/>
+				<subreportParameter name="param0">
+					<subreportParameterExpression><![CDATA[$P{param0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="param1">
+					<subreportParameterExpression><![CDATA[$P{param1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{ipath} + "sub_DailyCashReceiptJournal_en_US.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="100" splitType="Prevent">
+			<subreport runToBottom="true">
+				<reportElement x="0" y="0" width="760" height="77"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="param0">
+					<subreportParameterExpression><![CDATA[$P{param0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="param1">
+					<subreportParameterExpression><![CDATA[$P{param1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{ipath} + "sub_DailyAdjustmentJournal_en_US.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
 </jasperReport>

@@ -21,9 +21,25 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `unfileddocuments` (
-	uffstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	uffdate			DATE NOT NULL,
-	ufffilename		VARCHAR (150) NOT NULL,
-	id			SERIAL
+	  uffstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, uffdate		DATE NOT NULL
+	, ufffilename		VARCHAR (150) NOT NULL
+	, ufffile		LONGBLOB
+	, ufffilesize		INT UNSIGNED NOT NULL DEFAULT 0
+	, id			SERIAL
 );
+
+DROP PROCEDURE IF EXISTS unfileddocuments_Upgrade;
+DELIMITER //
+CREATE PROCEDURE unfileddocuments_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+	ALTER IGNORE TABLE unfileddocuments ADD COLUMN ufffile LONGBLOB AFTER ufffilename;
+	ALTER IGNORE TABLE unfileddocuments ADD COLUMN ufffilesize INT UNSIGNED NOT NULL DEFAULT 0 AFTER ufffile;
+END
+//
+DELIMITER ;
+CALL unfileddocuments_Upgrade( );
 

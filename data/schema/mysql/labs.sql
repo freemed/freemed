@@ -24,48 +24,49 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `labs` (
-	labpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	labfiller		TEXT,
-	labstatus		CHAR (2),
-	labprovider		INT UNSIGNED NOT NULL DEFAULT 0,
-	labordercode		VARCHAR (16),
-	laborderdescrip		VARCHAR (250),
-	labcomponentcode	VARCHAR (16),
-	labcomponentdescrip	VARCHAR (250),
-	labfillernum		VARCHAR (16),
-	labplacernum		VARCHAR (16),
-	labtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	labresultstatus		CHAR (1),
-	labnotes		TEXT,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	  labpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, labfiller		TEXT
+	, labstatus		CHAR (2)
+	, labprovider		INT UNSIGNED NOT NULL DEFAULT 0
+	, labordercode		VARCHAR (16)
+	, laborderdescrip	VARCHAR (250)
+	, labcomponentcode	VARCHAR (16)
+	, labcomponentdescrip	VARCHAR (250)
+	, labfillernum		VARCHAR (16)
+	, labplacernum		VARCHAR (16)
+	, labtimestamp		TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, labresultstatus	CHAR (1)
+	, labnotes		TEXT
+	, orderid		INT UNSIGNED NOT NULL DEFAULT 0 
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id			SERIAL
 
 	#	Define keys
-	KEY			( labpatient, labprovider, labtimestamp ),
-	FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY			( labpatient, labprovider, labtimestamp )
+	, FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `labresults` (
-	labid			BIGINT UNSIGNED NOT NULL,
-	labpatient		BIGINT UNSIGNED NOT NULL,
-	labobsnote		TEXT,
-	labobscode		VARCHAR (150),
-	labobsdescrip		VARCHAR (250),
-	labobsvalue		TEXT,
-	labobsunit		VARCHAR (150),
-	labobsranges		VARCHAR (50),
-	labobsabnormal		CHAR (5),
-	labobsstatus		CHAR (1),
-	labobsreported		TIMESTAMP (14),
-	labobsfiller		VARCHAR (60),
-	id			SERIAL,
+	  labid			BIGINT UNSIGNED NOT NULL
+	, labpatient		BIGINT UNSIGNED NOT NULL
+	, labobsnote		TEXT
+	, labobscode		VARCHAR (150)
+	, labobsdescrip		VARCHAR (250)
+	, labobsvalue		TEXT
+	, labobsunit		VARCHAR (150)
+	, labobsranges		VARCHAR (50)
+	, labobsabnormal	CHAR (5)
+	, labobsstatus		CHAR (1)
+	, labobsreported	TIMESTAMP (14)
+	, labobsfiller		VARCHAR (60)
+	, id			SERIAL
 
 	#	Define keys
 
-	KEY			( labpatient, labid ),
-	FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE,
-	FOREIGN KEY		( labid ) REFERENCES labs.id ON DELETE CASCADE
+	, KEY			( labpatient, labid )
+	, FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( labid ) REFERENCES labs.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS labs_Upgrade;
@@ -82,6 +83,7 @@ BEGIN
 	#----- Upgrades
 	ALTER IGNORE TABLE labs ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER labnotes;
 	ALTER IGNORE TABLE labs ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
+	ALTER IGNORE TABLE labs ADD COLUMN orderid INT UNSIGNED NOT NULL DEFAULT 0 AFTER labnotes;
 END
 //
 DELIMITER ;
@@ -118,19 +120,22 @@ DROP PROCEDURE IF EXISTS labs_Trending;
 
 DELIMITER //
 
-CREATE PROCEDURE labs_Trending (
-		IN patientId BIGINT UNSIGNED
-		IN labValues VARCHAR (250)
-	)
-BEGIN
-	DECLARE dtCur AS CURSOR FOR
-		SELECT DISTINCT(DATE_FORMAT(l.labtimestamp, '%Y-%m-%d')) AS dt
-		FROM labresults r
-			LEFT OUTER JOIN labs l ON l.id = r.labid
-		WHERE l.labpatient = patientId
-			AND FIND_IN_SET(r.labobscode, labValues);
-END;
-//
+#CREATE PROCEDURE labs_Trending (
+#		  IN patientId BIGINT UNSIGNED
+#		, IN labValues VARCHAR (250)
+#	)
+#BEGIN
+#	DECLARE dtCur AS CURSOR FOR
+#		SELECT DISTINCT(DATE_FORMAT(l.labtimestamp, '%Y-%m-%d'))
+#		FROM labresults r
+#			LEFT OUTER JOIN labs l ON l.id = r.labid
+#		WHERE l.labpatient = patientId
+#			AND FIND_IN_SET(r.labobscode, labValues);
+#	#DECLARE done BOOL DEFAULT FALSE;
+#	#DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = TRUE;
+#
+#END;
+#//
 
 DELIMITER //
 

@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 	, procstatus		VARCHAR (50)
 	, procslidingscale	CHAR (1)
 	, proctosoverride	INT UNSIGNED DEFAULT 0
+	, orderid		INT UNSIGNED NOT NULL DEFAULT 0
 	, user			INT UNSIGNED NOT NULL DEFAULT 0
 	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 	, PRIMARY KEY		( id )
@@ -110,6 +111,7 @@ BEGIN
 	END IF;
 
 	ALTER IGNORE TABLE procrec ADD COLUMN procdiagset ENUM ( '9', '10' ) NOT NULL DEFAULT 9 AFTER procdiag4;
+	ALTER IGNORE TABLE procrec ADD COLUMN orderid INT UNSIGNED NOT NULL DEFAULT 0 AFTER proctosoverride;
 
 	CALL FreeMED_Module_UpdateVersion( 'procrec', 2 );
 END
@@ -132,6 +134,15 @@ CREATE TRIGGER procrec_Delete
 CREATE TRIGGER procrec_PreInsert
 	BEFORE INSERT ON procrec
 	FOR EACH ROW BEGIN
+		DECLARE newid,prevmaxid INT;
+		DECLARE currbal double  DEFAULT 0;
+		DECLARE prdesc BLOB; 
+		DECLARE prdt DATE;
+		DECLARE no_more_records,isFound,prid,prcat,pramt,prsrc,prlnk,prtype,prnum,isSplitReq,temp INT UNSIGNED DEFAULT 0;
+		DECLARE prec_curr CURSOR FOR
+		SELECT id,payreccat,payrecamt,payrecdt,payrecsource,payreclink,payrectype,payrecnum,payrecdescrip FROM payrec where payrecproc=0 AND payrecpatient=NEW.procpatient;
+		DECLARE  CONTINUE HANDLER FOR NOT FOUND 
+		SET  no_more_records = 1;
 		# Set initial charges and balance
 		SET NEW.proccharges = NEW.procbalorig;
 		SET NEW.procbalcurrent = NEW.procbalorig;
@@ -162,6 +173,81 @@ CREATE TRIGGER procrec_PreInsert
 		ELSEIF NEW.proccurcovtp = 4 THEN
 			SET NEW.proccurcovid = NEW.proccov4;
 		END IF;
+		SELECT IFNULL(MAX(id),0) INTO prevmaxid from procrec;
+		SET newid=prevmaxid+1;
+		SET currbal=NEW.procbalcurrent;
+		OPEN  prec_curr;
+	
+		FETCH  prec_curr INTO prid,prcat,pramt,prdt,prsrc,prlnk,prtype,prnum,prdesc;
+		REPEAT		
+			SET isSplitReq=0;
+			SET currbal=currbal-pramt;
+			IF FIND_IN_SET( prcat, '0,11' ) THEN
+				IF pramt <= NEW.procbalcurrent THEN
+					SET NEW.procbalcurrent=NEW.procbalcurrent-ABS(pramt);
+					SET NEW.procamtpaid=NEW.procamtpaid+ABS(pramt);
+					UPDATE payrec SET payrecproc=newid WHERE id=prid;
+				ELSE 
+					UPDATE payrec SET payrecproc=newid,payrecamt=NEW.procbalcurrent WHERE id=prid;
+					SET temp=pramt-NEW.procbalcurrent;					
+					SET NEW.procamtpaid=NEW.procamtpaid+NEW.procbalcurrent;
+					SET NEW.procbalcurrent=0;
+					SET isSplitReq=1;
+				END IF;
+			END IF;
+			IF  prcat=8 THEN
+				IF pramt < NEW.procbalcurrent THEN
+					SET NEW.procbalcurrent=NEW.procbalcurrent-ABS(pramt);
+					SET NEW.proccharges=NEW.proccharges-ABS(pramt);
+					UPDATE payrec SET payrecproc=newid WHERE id=prid;
+				ELSE
+					UPDATE payrec SET payrecproc=newid,payrecamt=NEW.procbalcurrent WHERE id=prid;
+					SET temp=pramt-NEW.procbalcurrent;					
+					SET NEW.proccharges=NEW.proccharges-NEW.procbalcurrent;
+					SET NEW.procbalcurrent=0;
+					SET isSplitReq=1;
+				END IF;
+			END IF;
+			
+			IF isSplitReq=1 THEN
+				INSERT INTO payrec(
+					 payrecdtadd
+					, payrecdtmod
+					, payrecpatient
+					, payrecdt
+					, payreccat
+					, payrecproc
+					, payrecsource
+					, payreclink
+					, payrectype
+					, payrecnum
+					, payrecamt
+					, payrecdescrip
+					, payreclock
+				) VALUES (
+					  NOW()
+					, '0000-00-00'
+					, NEW.procpatient
+					, prdt
+					, prcat
+					, 0
+					, prsrc
+					, prlnk
+					, prtype
+					, prnum
+					, temp
+					, prdesc
+					, 'unlocked'
+				);
+			END IF;
+		
+		IF currbal<0 Then	
+			SET no_more_records = 1;
+		END IF;
+		FETCH  prec_curr INTO prid,prcat,pramt,prdt,prsrc,prlnk,prtype,prnum,prdesc;
+		UNTIL  no_more_records = 1
+		END REPEAT;
+		CLOSE  prec_curr;
 	END;
 //
 
@@ -206,6 +292,9 @@ CREATE TRIGGER procrec_Insert
 	AFTER INSERT ON procrec
 	FOR EACH ROW BEGIN
 		DECLARE c VARCHAR(250);
+		DECLARE auth_visits INT UNSIGNED default 0;
+		DECLARE auth_visits_used INT UNSIGNED default 0;
+		
 		SELECT CONCAT(cptcode, ' - ', cptnameint) INTO c FROM cpt WHERE id=NEW.proccpt;
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'procrec', NEW.procpatient, NEW.id, NEW.procdt, c, NEW.user );
 
@@ -269,6 +358,14 @@ CREATE TRIGGER procrec_Insert
 				, ptdiagset = NEW.procdiagset
 			WHERE
 				id = NEW.procpatient;
+				
+		#Updating Authorization visits
+		IF NEW.procauth > 0 THEN
+			SELECT authvisits,authvisitsused INTO auth_visits,auth_visits_used FROM authorizations WHERE id = NEW.procauth;
+			IF auth_visits_used<auth_visits THEN
+				update authorizations set  authvisitsused = auth_visits_used + 1, authvisitsremain = auth_visits - authvisitsused where id = NEW.procauth;
+			END IF;
+		END IF;				
 
 	END;
 //

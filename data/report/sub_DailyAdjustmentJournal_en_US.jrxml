@@ -4,8 +4,10 @@
 	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
 	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
-	<queryString language="SQL">
-		<![CDATA[call report_DailyAdjustmentJournal_en_US('2010-04-29');]]>
+	<parameter name="param0" class="java.util.Date"/>
+	<parameter name="param1" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[call report_DailyAdjustmentJournal_en_US($P{param0},$P{param1});]]>
 	</queryString>
 	<field name="Type" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -14,6 +16,9 @@
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="Source" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patientnum" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="patientname" class="java.lang.String">
@@ -28,7 +33,7 @@
 	<field name="Invoice Amount" class="java.lang.Double">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="Credit Amount" class="java.lang.Double">
+	<field name="Credit Amount" class="java.lang.Long">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="Reason" class="java.lang.String">
@@ -37,6 +42,16 @@
 	<field name="Service Dates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="Facility Name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="subtypeid" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="inscoid" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="practice" class="java.lang.String"/>
 	<variable name="sourceInvoiceSum" class="java.lang.Double" resetType="Group" resetGroup="Source" calculation="Sum">
 		<variableExpression><![CDATA[$F{Invoice Amount}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -61,6 +76,12 @@
 		<variableExpression><![CDATA[$F{Credit Amount}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
+	<variable name="finalInvoiceAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{Invoice Amount}]]></variableExpression>
+	</variable>
+	<variable name="finalCreditAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{Credit Amount}]]></variableExpression>
+	</variable>
 	<group name="Type">
 		<groupExpression><![CDATA[$F{Type}]]></groupExpression>
 		<groupHeader>
@@ -68,35 +89,47 @@
 				<textField>
 					<reportElement style="SubTitle" x="1" y="16" width="506" height="24" forecolor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font size="12" isBold="false"/>
+						<font size="14" isBold="true" isUnderline="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[" *** " + $F{Type} + "***"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{Type}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="40">
-				<textField>
-					<reportElement style="SubTitle" x="1" y="8" width="311" height="17" forecolor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font size="12" isBold="false"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["Total *** " + $F{Type} + "***"]]></textFieldExpression>
-				</textField>
+			<band height="30">
 				<textField evaluationTime="Group" evaluationGroup="Sub Type" pattern="###0.00">
-					<reportElement x="318" y="8" width="79" height="17"/>
+					<reportElement x="343" y="6" width="63" height="17"/>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{typeInvoiceSum}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Sub Type" pattern="###0.00">
-					<reportElement x="399" y="8" width="77" height="17"/>
+					<reportElement x="406" y="6" width="68" height="17"/>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{typeCreditSum}]]></textFieldExpression>
 				</textField>
+				<textField>
+					<reportElement style="SubTitle" x="1" y="6" width="311" height="17" forecolor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Total  " + $F{Type}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="2" y="26" width="760" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="2" y="28" width="760" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupFooter>
 	</group>
@@ -107,46 +140,58 @@
 				<textField>
 					<reportElement style="SubTitle" x="22" y="10" width="460" height="20" forecolor="#000000"/>
 					<textElement>
-						<font size="12" isBold="false"/>
+						<font size="12" isBold="false" isUnderline="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["**" + $F{Sub Type}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{Sub Type}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="40">
+			<band height="30">
 				<textField>
-					<reportElement style="SubTitle" x="22" y="10" width="294" height="17" forecolor="#000000"/>
+					<reportElement style="SubTitle" x="17" y="6" width="294" height="17" forecolor="#000000"/>
 					<textElement>
 						<font size="12" isBold="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["* Total " + $F{Sub Type}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[" Total " + $F{Sub Type}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Sub Type" pattern="###0.00">
-					<reportElement x="316" y="10" width="79" height="17"/>
+					<reportElement x="343" y="6" width="63" height="17"/>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subTypeInvoiceSum}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Sub Type" pattern="###0.00">
-					<reportElement x="397" y="10" width="77" height="17"/>
+					<reportElement x="406" y="6" width="68" height="17"/>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subTypeCreditSum}]]></textFieldExpression>
 				</textField>
+				<line>
+					<reportElement x="17" y="21" width="742" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="17" y="23" width="742" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Source">
 		<groupExpression><![CDATA[$F{Source}]]></groupExpression>
 		<groupHeader>
-			<band height="50">
+			<band height="30">
 				<textField>
-					<reportElement style="Detail" x="43" y="13" width="197" height="15"/>
+					<reportElement style="Detail" x="43" y="9" width="197" height="15"/>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA["* 3rd Party: " + $F{Source}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[" 3rd Party: " + $F{Source}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -155,34 +200,40 @@
 				<textField>
 					<reportElement style="Detail" x="43" y="7" width="273" height="15"/>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA["** Total " + $F{Source}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Total " + $F{Source}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement positionType="FixRelativeToBottom" x="316" y="0" width="77" height="1"/>
+					<reportElement positionType="FixRelativeToBottom" x="343" y="0" width="63" height="1"/>
 					<graphicElement>
 						<pen lineWidth="0.5" lineColor="#999999"/>
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement positionType="FixRelativeToBottom" x="397" y="0" width="77" height="1"/>
+					<reportElement positionType="FixRelativeToBottom" x="406" y="0" width="68" height="1"/>
 					<graphicElement>
 						<pen lineWidth="0.5" lineColor="#999999"/>
 					</graphicElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Source" pattern="###0.00">
-					<reportElement x="316" y="7" width="79" height="15"/>
+					<reportElement x="343" y="7" width="63" height="15"/>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{sourceInvoiceSum}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Source" pattern="###0.00">
-					<reportElement x="395" y="7" width="79" height="15"/>
+					<reportElement x="406" y="7" width="68" height="15"/>
 					<textElement textAlignment="Right">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{sourceCreditSum}]]></textFieldExpression>
 				</textField>
+				<line>
+					<reportElement x="43" y="22" width="718" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupFooter>
 	</group>
@@ -190,8 +241,11 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
 		<band height="70" splitType="Stretch">
-			<textField pattern="MM/dd/yyyy HH:mm">
+			<textField pattern="MM/dd/yyyy">
 				<reportElement positionType="Float" x="1" y="0" width="93" height="43"/>
 				<textElement>
 					<font fontName="Arial" size="14"/>
@@ -206,58 +260,55 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="342" y="0" width="67" height="21"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="14" isBold="false"/>
-				</textElement>
-				<text><![CDATA[CODAC 1]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="312" y="21" width="131" height="21"/>
+				<reportElement positionType="Float" x="316" y="20" width="131" height="21"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Adjustments Journal]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="239" y="0" width="282" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{practice}+" - "+$F{Facility Name}]]></textFieldExpression>
+			</textField>
 		</band>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<staticText>
-				<reportElement style="Column header" x="69" y="12" width="109" height="15"/>
+				<reportElement style="Column header" x="87" y="1" width="49" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Client Name]]></text>
+				<text><![CDATA[Client]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="178" y="12" width="69" height="15"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement style="Column header" x="223" y="0" width="51" height="31"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Trans Num]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="247" y="12" width="69" height="15"/>
+				<reportElement style="Column header" x="274" y="16" width="69" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Trans Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="316" y="12" width="79" height="15"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement style="Column header" x="343" y="0" width="63" height="31"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<text><![CDATA[Invoice Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="395" y="12" width="79" height="15"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement style="Column header" x="406" y="0" width="63" height="31"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<text><![CDATA[Credit Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="477" y="12" width="140" height="15"/>
+				<reportElement style="Column header" x="477" y="16" width="140" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Reason]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="621" y="12" width="140" height="15"/>
+				<reportElement style="Column header" x="621" y="16" width="140" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Service Dates]]></text>
 			</staticText>
@@ -273,36 +324,46 @@
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
+			<staticText>
+				<reportElement style="Column header" x="76" y="16" width="43" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Num]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="119" y="16" width="104" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Name]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement style="Detail" x="69" y="0" width="109" height="15"/>
+				<reportElement style="Detail" x="119" y="0" width="104" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{patientname}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Detail" x="174" y="0" width="69" height="15"/>
-				<textElement textAlignment="Right"/>
+				<reportElement style="Detail" x="223" y="0" width="51" height="15"/>
+				<textElement/>
 				<textFieldExpression class="java.lang.Long"><![CDATA[$F{Trans Num}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MM/dd/yyyy">
-				<reportElement style="Detail" x="243" y="0" width="69" height="15"/>
+				<reportElement style="Detail" x="274" y="0" width="69" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{Trans Date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement style="Detail" x="316" y="0" width="79" height="15"/>
+				<reportElement style="Detail" x="343" y="0" width="63" height="15"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Invoice Amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement style="Detail" x="395" y="0" width="79" height="15"/>
+				<reportElement style="Detail" x="406" y="0" width="68" height="15"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Credit Amount}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement style="Detail" x="482" y="1" width="135" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Reason}]]></textFieldExpression>
@@ -312,9 +373,56 @@
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Service Dates}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="76" y="1" width="46" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{patientnum}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<summary>
-		<band splitType="Stretch"/>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="9" width="146" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Final Total:]]></text>
+			</staticText>
+			<textField pattern="###0.00">
+				<reportElement x="343" y="10" width="63" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalInvoiceAmount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="406" y="10" width="67" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalCreditAmount}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="355" y="33" width="50" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="355" y="36" width="50" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="423" y="36" width="50" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="423" y="33" width="50" height="1"/>
+			</line>
+		</band>
 	</summary>
 </jasperReport>

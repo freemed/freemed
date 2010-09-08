@@ -97,7 +97,7 @@ CALL config_Register (
 	'http://localhost:8080/remitt/services/interface?wsdl',
 	'Remitt Service URL',
 	'REMITT Billing',
-	'Text',
+	'URL',
 	'http://localhost:8080/remitt/services/interface?wsdl'
 );
 CALL config_Register (
@@ -113,7 +113,7 @@ CALL config_Register (
 	'remitt',
 	'Remitt Password',
 	'REMITT Billing',
-	'Text',
+	'Password',
 	''
 );
 CALL config_Register (
@@ -129,8 +129,17 @@ CALL config_Register (
 	'remittcb',
 	'Remitt Callback Password',
 	'REMITT Billing',
-	'Text',
+	'Password',
 	''
+);
+
+CALL config_Register (
+	'remitt_elig',
+	'',
+	'Eligibility Plugin',
+	'REMITT Billing',
+	'Select',
+	',org.remitt.plugin.eligibility.GatewayEDIEligibility'
 );
 
 CALL config_Register (
@@ -179,12 +188,21 @@ CALL config_Register (
 );
 
 CALL config_Register (
-	'patient_form',
-	'tab',
-	'Patient Form',
-	'UI',
-	'Select',
-	'tab,singlepage'
+	'calshow24hourclock',
+	'0',
+	'Show 24 Hour Clock',
+	'Scheduler',
+	'YesNo',
+	''
+);
+
+CALL config_Register (
+	'calintervalheight',
+	'50',
+	'Interval Height',
+	'Scheduler',
+	'Text',
+	''
 );
 
 CALL config_Register (
@@ -193,6 +211,24 @@ CALL config_Register (
 	'Work List',
 	'UI',
 	'YesNo',
+	''
+);
+
+CALL config_Register (
+	'form_autosave',
+	'1',
+	'Form Autosave',
+	'UI',
+	'YesNo',
+	''
+);
+
+CALL config_Register (
+	'form_autosave_interval',
+	'60',
+	'Form Autosave Time Interval (seconds)',
+	'UI',
+	'Text',
 	''
 );
 
@@ -237,7 +273,7 @@ CALL config_Register (
 	'',
 	'XMPP Password',
 	'Notifications',
-	'Text',
+	'Password',
 	''
 );
 

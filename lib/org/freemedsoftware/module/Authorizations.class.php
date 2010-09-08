@@ -109,12 +109,67 @@ class Authorizations extends EMRModule {
 	public function GetAllAuthorizations ( $patient) {
 		$q = "SELECT a.* from authorizations a WHERE a.authpatient = ".$GLOBALS['sql']->quote( $patient );
 		return $GLOBALS['sql']->queryAll( $q );
-	} // end method GetCoverages
+	} // end method GetAllAuthorizations
+
+	// Method: GetAllAuthorizationsWithDetail
+	//
+	//	Get list of Authorizations for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAllAuthorizationsWithDetail ( $patient) {
+		$q = "SELECT a.*,CONCAT( ins.insconame, ' (', ins.inscocity, ', ', ins.inscostate, ')') AS insco,CONCAT(ph.phylname, ', ', ph.phyfname) AS provider from authorizations a LEFT JOIN insco ins ON ins.id = a.authinsco LEFT OUTER JOIN physician ph ON a.authprov=ph.id WHERE a.authpatient = ".$GLOBALS['sql']->quote( $patient );
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAllAuthorizationsWithDetail
 
 	public function getValidAuthorizations($ptid,$pdate){
 		$q="SELECT id AS Id,concat(authnum,'(',authdtbegin,' - ',authdtend,')') AS auth_info FROM authorizations WHERE active='active' AND ".$GLOBALS['sql']->quote( $pdate ).">= authdtbegin AND ".$GLOBALS['sql']->quote( $pdate )." <= authdtend AND authvisitsremain > 0 AND authpatient=".$GLOBALS['sql']->quote( $ptid );
 		return $GLOBALS['sql']->queryAll( $q );
 	}
+	
+	public function getActionItemsQuery($isCountQuery=NULL,$patient = NULL){
+		$today = date('Y-m-d H:i:s');
+		
+		$reminderDays = 5;
+		
+		$user = $GLOBALS['sql']->quote(freemed::user_cache()->user_number);
+		
+		
+		
+		$selection_q = "auth.id,p.id as patient_id,CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name"
+			.",'".$this->MODULE_NAME."' as status_name,'".get_class($this)."' as status_module"
+			.",case when '2010-07-08 12:33:24' >=(auth.authdtend - INTERVAL 5 DAY) then 'Will Expire' "
+			."when (auth.authvisitsused/auth.authvisits*100)>95  then 'Used Visits 95%' end as summary"
+			.",'form_expire' as type"
+			.",auth.authdtend as stamp ";
+		$selection_q_count = " count(*) as count ";	
+		
+		$query = "select ".($isCountQuery?$selection_q_count:$selection_q)." from "
+			.$this->table_name." auth "
+			."left join patient p on p.id=auth.authpatient "
+			."where "
+			."('".$today."' >=(auth.authdtend - INTERVAL 5 DAY) || (auth.authvisitsused/auth.authvisits*100)>95 "
+			." and auth.active='active' and auth.user=".$user.") "
+			.($patient?" and auth.authpatient=".$GLOBALS['sql']->quote($patient):" order by auth.authpatient ");
+		return $query;
+	}
+	
+	public function getActionItems($patient = NULL){
+		return $GLOBALS['sql']->queryAll( $this->getActionItemsQuery(false,$patient) );
+	}
+	
+	public function getActionItemsCount($patient = NULL){
+		$return = $GLOBALS['sql']->queryRow( $this->getActionItemsQuery(true,$patient) );
+		return $return['count'];
+	}	
+	
 } // end class Authorizations
 
 register_module ("Authorizations");

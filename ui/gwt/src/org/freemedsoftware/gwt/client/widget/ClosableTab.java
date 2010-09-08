@@ -24,11 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
-import org.freemedsoftware.gwt.client.CurrentState;
-import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

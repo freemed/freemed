@@ -35,23 +35,14 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 
 public class SimpleUIBuilder extends WidgetInterface {
 
@@ -411,7 +402,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 				((CustomMulltiSelectListBox) w).populateMultiList(value);
 			}
 			if (w instanceof CheckBox) {
-				if(value.equals("0"))
+				if (value.equals("0"))
 					((CheckBox) w).setValue(false);
 				else
 					((CheckBox) w).setValue(true);

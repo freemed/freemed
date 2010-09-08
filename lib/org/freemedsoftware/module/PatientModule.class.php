@@ -36,7 +36,8 @@ class PatientModule extends SupportModule {
 	var $table_name = "patient";
 
 	var $acl_category = 'emr';
-
+	var $archive_field = "ptarchive";
+	
 	var $variables = array (
 		'ptdtadd',
 		'ptdtmod',
@@ -85,7 +86,8 @@ class PatientModule extends SupportModule {
 		'ptblood',
 		'ptbudg',
 		'ptbilltype',
-		'ptprimaryfacility'
+		'ptprimaryfacility',
+		'ptprimarylanguage'
 	);
 	var $address_keys = array (
 		'patient',

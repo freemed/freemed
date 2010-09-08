@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `immunization` (
 	, previous_doses	INT UNSIGNED NOT NULL DEFAULT 0
 	, recovered		BOOL NOT NULL DEFAULT TRUE
 	, notes			TEXT
+	, orderid		INT UNSIGNED NOT NULL DEFAULT 0
 	, locked		INT UNSIGNED NOT NULL DEFAULT 0
 	, user			INT UNSIGNED NOT NULL DEFAULT 0
 	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
@@ -62,6 +63,7 @@ BEGIN
 	ALTER IGNORE TABLE immunization ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
 	ALTER IGNORE TABLE immunization ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 	ALTER IGNORE TABLE immunization ADD COLUMN admin_provider BIGINT UNSIGNED NOT NULL AFTER provider;
+	ALTER IGNORE TABLE immunization ADD COLUMN orderid INT UNSIGNED NOT NULL DEFAULT 0 AFTER notes;
 END
 //
 DELIMITER ;

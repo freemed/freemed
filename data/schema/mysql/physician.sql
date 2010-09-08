@@ -81,7 +81,7 @@ DELIMITER //
 CREATE PROCEDURE physician_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
-
+	ALTER IGNORE TABLE physician ADD COLUMN phyarchive INT(10) UNSIGNED DEFAULT 0 AFTER phynpi;
 	#----- Upgrades
 	CALL FreeMED_Module_GetVersion( 'physician', @V );
 

@@ -35,8 +35,7 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.RxRefillScreen;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
@@ -50,47 +49,73 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PrescriptionRefillBox extends WidgetInterface {
-	
+
 	public final static String moduleName = RxRefillScreen.moduleName;
-	
+
 	protected Integer patid = 0;
 
 	protected CustomTable wRequests = null;
 	protected FlexTable flexTable = new FlexTable();
 
 	private PushButton rxRefillPrescriptionButton;
+
+	protected final VerticalPanel contentVPanel;
 	
 	public PrescriptionRefillBox() {
 		super(moduleName);
-		final VerticalPanel simplePanel = new VerticalPanel();
-		simplePanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
-		// simplePanel.addStyleName("freemed-PrescriptionRefillBoxContainer");
-		initWidget(simplePanel);
+		VerticalPanel superVPanel = new VerticalPanel();
+		initWidget(superVPanel);
+		superVPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
+		superVPanel.setWidth("100%");
+
 		
-	    HorizontalPanel	horizontalPanel = new HorizontalPanel();
-		Label headerLabel = new Label("Rx Refills");
+		HorizontalPanel headerHPanel = new HorizontalPanel();
+		headerHPanel.setSpacing(5);
+		superVPanel.add(headerHPanel);
+		
+		final Image colExpBtn = new Image(Util.getResourcesURL()+"collapse.15x15.png");
+		colExpBtn.getElement().getStyle().setCursor(Cursor.POINTER);
+		headerHPanel.add(colExpBtn);
+		colExpBtn.addClickHandler(new ClickHandler() {
+			boolean expaned = false;
+			@Override
+			public void onClick(ClickEvent arg0) {
+				if(expaned){
+					colExpBtn.setUrl(Util.getResourcesURL()+"collapse.15x15.png");
+					contentVPanel.setVisible(true);
+				}else{
+					colExpBtn.setUrl(Util.getResourcesURL()+"expand.15x15.png");
+					contentVPanel.setVisible(false);
+				}
+					expaned = !expaned;
+			}
+		});
+
+		Label headerLabel = new Label("RX REFILLS");
+		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-		horizontalPanel.add(headerLabel);
-		simplePanel.add(horizontalPanel);
+
+		contentVPanel = new VerticalPanel();
+		contentVPanel.setWidth("100%");
+		superVPanel.add(contentVPanel);
 		
-		simplePanel.add(flexTable);
+		contentVPanel.add(flexTable);
 		flexTable.setSize("100%", "100%");
 
 		cleanView();
 	}
 
-	public Widget getDefaultIcon(){
-		if(rxRefillPrescriptionButton==null){
+	public Widget getDefaultIcon() {
+		if (rxRefillPrescriptionButton == null) {
 			rxRefillPrescriptionButton = new PushButton("", "");
-			rxRefillPrescriptionButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+			rxRefillPrescriptionButton
+					.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			rxRefillPrescriptionButton.getUpFace().setImage(
 					new Image("resources/images/rx_prescriptions.16x16.png"));
 			rxRefillPrescriptionButton.getDownFace().setImage(
@@ -103,8 +128,8 @@ public class PrescriptionRefillBox extends WidgetInterface {
 			});
 		}
 		return rxRefillPrescriptionButton;
-	} 
-	
+	}
+
 	public void showDoctor() {
 		cleanView();
 		wRequests = new CustomTable();
@@ -153,12 +178,24 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		flexTable.setWidget(2, 1, textBox);
 		textBox.setWidth("100%");
 
-		final CustomButton sendButton = new CustomButton("Send Request",AppConstants.ICON_SEND);
+		final CustomButton sendButton = new CustomButton("Send Request",
+				AppConstants.ICON_SEND);
 		flexTable.setWidget(3, 1, sendButton);
 
 		sendButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
+				String msg = "";
+				if(Integer.parseInt(patientWidget.getStoredValue())==0)
+					msg = "Please select patient!!";
+				if(textBox.getText().trim().length()==0)
+					msg += "\n Please add a short note!!!";
+				
+				if(msg.length()>0){
+					Util.showErrorMsg(moduleName, msg);
+					return;
+				}
+					
 				patid = patientWidget.value;
 
 				HashMap<String, String> data = new HashMap<String, String>();
@@ -182,8 +219,9 @@ public class PrescriptionRefillBox extends WidgetInterface {
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg("PrescriptionRefillBox", "Error adding refill request."
-										+ ex.toString());
+								Util.showErrorMsg("PrescriptionRefillBox",
+										"Error adding refill request."
+												+ ex.toString());
 							}
 
 							public void onResponseReceived(Request request,
@@ -194,10 +232,14 @@ public class PrescriptionRefillBox extends WidgetInterface {
 													.parse(response.getText()),
 													"Integer");
 									if (r != 0) {
-										Util.showInfoMsg("PrescriptionRefillBox", "Prescription refill successfully saved.");
+										Util
+												.showInfoMsg(
+														"PrescriptionRefillBox",
+														"Prescription refill successfully saved.");
 									}
 								} else {
-									Util.showErrorMsg("PrescriptionRefillBox", "Error adding prescription refill");
+									Util.showErrorMsg("PrescriptionRefillBox",
+											"Error adding prescription refill");
 								}
 							}
 						});
@@ -214,31 +256,23 @@ public class PrescriptionRefillBox extends WidgetInterface {
 	}
 
 	public void cleanView() {
-		
+
 		flexTable.clear();
 		/*
-		final Label selectViewLabel = new Label("Select View");
-		flexTable.setWidget(0, 0, selectViewLabel);
-
-		final ListBox selectUser = new ListBox();
-		flexTable.setWidget(0, 1, selectUser);
-		selectUser.addItem("Select access level");
-		selectUser.addItem("doctor");
-//		if(canWrite)
-			selectUser.addItem("staff");
-		selectUser.setVisibleItemCount(1);
-
-		selectUser.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent evt) {
-				if (selectUser.getSelectedIndex() == 1) {
-					showDoctor();
-				} else if (selectUser.getSelectedIndex() == 2) {
-					showStaff();
-				}
-			}
-		});
-		*/
+		 * final Label selectViewLabel = new Label("Select View");
+		 * flexTable.setWidget(0, 0, selectViewLabel);
+		 * 
+		 * final ListBox selectUser = new ListBox(); flexTable.setWidget(0, 1,
+		 * selectUser); selectUser.addItem("Select access level");
+		 * selectUser.addItem("doctor"); // if(canWrite)
+		 * selectUser.addItem("staff"); selectUser.setVisibleItemCount(1);
+		 * 
+		 * selectUser.addChangeHandler(new ChangeHandler() {
+		 * 
+		 * @Override public void onChange(ChangeEvent evt) { if
+		 * (selectUser.getSelectedIndex() == 1) { showDoctor(); } else if
+		 * (selectUser.getSelectedIndex() == 2) { showStaff(); } } });
+		 */
 	}
 
 	public void retrieveData() {
@@ -274,7 +308,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 											"HashMap<String,String>[]");
 							if (data != null) {
 								loadData(data);
-							}else
+							} else
 								wRequests.showloading(false);
 						}
 					}

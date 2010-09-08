@@ -74,9 +74,12 @@ public interface AppConstants extends Constants {
 	// Top header
 	public static int MAX_PREFERENCES_TABS       = 1;
 	public static int MAX_ACCOUNTRECIEVABLE_TABS = 1;
-
+	public static int MAX_DASHBOARD_TABS       = 1;
 	// System Core Acknowledgments
-	public static String INVALID_SESSION      = "INVALID_SESSION";
+	public static String INVALID_SESSION    	   = "INVALID_SESSION";
+	public static String INVALID_RESPONSE    	   = "INVALID_RESPONSE";
+	public static String INVALID_USER	    	   = "INVALID_USER";
+	public static String NOT_IN_FACILITY    	   = "NOT_IN_FACILITY";
 	public static String USER_TYPE_PROVIDER        = "phy";
 	public static String USER_TYPE_MISCELLANEOUS   = "misc";
 	
@@ -116,7 +119,7 @@ public interface AppConstants extends Constants {
 	
 	// Billing Category
 	public final static String BILLING_CATEGORY   = "Billing";
-	public final static String ACCOUNT_RECEIVABLE = "Account Receivable";
+	public final static String ACCOUNT_RECEIVABLE = "Accounts Receivable";
 	public final static String CLAIMS_MANAGER     = "Claims Manager";
 	public final static String REMITT_BILLING     = "Remitt Billing";
 	public final static String SUPER_BILLS        = "Super Bills";
@@ -130,6 +133,7 @@ public interface AppConstants extends Constants {
 	public final static String UTILITIES_CATEGORY   = "Utilities";
 	public final static String TOOLS_SCREEN         = "Tools";
 	public final static String SUPPORT_DATA 	    = "Support Data";
+	public final static String FIELD_CHECKER		= "Field Checker";	
 	public final static String USER_MANAGEMENT      = "User Management";
 	public final static String SYSTEM_CONFIGURATION = "System Configuration";
 	public final static String DB_ADMINISTRATION    = "DB Administration";
@@ -191,7 +195,8 @@ public interface AppConstants extends Constants {
 	public final static String ICON_DONE      	  =   "select_all.14X14.png";
 	public final static String ICON_SEND      	  =   "change_mail.14X14.png";
 	public final static String ICON_RUN      	  =   "chart_config.16x16.png";
-	
+	public final static String ICON_UP      	  =   "arrow_up.16x16.png";
+	public final static String ICON_DOWN      	  =   "arrow_down.16x16.png";
 	//////////////////////////////////////////////////////////////////////////////
 	
 	/////////////////////////////Styles//////////////////////////////////
@@ -213,4 +218,11 @@ public interface AppConstants extends Constants {
 	public final static String STYLE_TABLE_HEADER				=	"tableHeader";
 	public final static String STYLE_TABLE_ROW					=	"tableRow";
 	public final static String STYLE_TABLE_ROW_ALTERNATE		=	"customRowStyle";
+	
+	///////////////////////////////Action Items related vars//////////////////////////////////
+	public static int MAX_ACTION_ITEMS_TABS 					= 1;
+	public final static String ACTION_ITEMS						=	"Action Items";
+	public final static String ACTION_ITEM_TYPE_REVIEW			=	"form_review";
+	public final static String ACTION_ITEM_TYPE_INCOMPLET		=	"form_incomplete";
+	public final static String ACTION_ITEM_TYPE_EXPIRE			=	"form_expire";
 }

@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -57,6 +58,8 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 	
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
+		if(req.length()<CurrentState.getMinCharCountForSmartSearch())
+			return;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();

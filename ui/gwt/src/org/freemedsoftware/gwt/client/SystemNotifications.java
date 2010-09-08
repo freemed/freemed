@@ -36,6 +36,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 
 public class SystemNotifications {
@@ -89,10 +90,10 @@ public class SystemNotifications {
 	public boolean poll() {
 		JsonUtil.debug("SystemNotifications.poll() called");
 
-//		if (mutexStatus) {
-//			JsonUtil.debug("mutexStatus indicates run in progress.");
-//			return false;
-//		}
+		// if (mutexStatus) {
+		// JsonUtil.debug("mutexStatus indicates run in progress.");
+		// return false;
+		// }
 
 		mutexStatus = true;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -112,7 +113,8 @@ public class SystemNotifications {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("SystemNotifications", "Failed to get system notifications.");
+						Util.showErrorMsg("SystemNotifications",
+								"Failed to get system notifications.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -120,8 +122,16 @@ public class SystemNotifications {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							if (response.getText().compareToIgnoreCase("false") != 0) {
-								if(response.getText().trim().equalsIgnoreCase(AppConstants.INVALID_SESSION)){
-									Util.logout();
+								if (response.getText().trim().equalsIgnoreCase(
+										AppConstants.INVALID_SESSION)) {
+									Util.logout(new Command() {
+									
+										@Override
+										public void execute() {
+											stop();
+										}
+									
+									});
 									mutexStatus = false;
 									return;
 								}
@@ -159,7 +169,8 @@ public class SystemNotifications {
 										.debug("SystemNotifications(): Received dummy response from JSON backend");
 							}
 						} else {
-							Util.showErrorMsg("SystemNotifications", "Failed to get system notifications.");
+							Util.showErrorMsg("SystemNotifications",
+									"Failed to get system notifications.");
 						}
 
 						// Release mutex
@@ -167,7 +178,8 @@ public class SystemNotifications {
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("SystemNotifications", "Failed to get system notifications.");
+				Util.showErrorMsg("SystemNotifications",
+						"Failed to get system notifications.");
 			}
 		} else {
 			// GWT-RPC

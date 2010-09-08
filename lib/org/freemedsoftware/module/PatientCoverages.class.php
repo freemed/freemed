@@ -159,6 +159,24 @@ class PatientCoverages extends EMRModule {
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetCoverages
 
+	// Method: GetAllCoveragesWithDetail
+	//
+	//	Get list of coverages for a patient.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient ID
+	//
+	//
+	// Returns:
+	//
+	//	Array of hashes
+	//
+	public function GetAllCoveragesWithDetail ( $patient) {
+		$q = "SELECT c.*,CONCAT( ins.insconame, ' (', ins.inscocity, ', ', ins.inscostate, ')') AS insco from coverage c LEFT JOIN insco ins ON ins.id = c.covinsco WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient )." AND c.covstatus =1 ORDER BY c.covstatus DESC";
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetCoverages
+
 	// Method: RemoveOldCoverage
 	//
 	//	Move old coverage to deleted status.

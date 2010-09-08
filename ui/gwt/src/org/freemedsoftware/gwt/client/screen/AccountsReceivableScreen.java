@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.LedgerPopup;
+import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -57,6 +58,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -81,6 +83,12 @@ public class AccountsReceivableScreen extends ScreenInterface {
 	protected CustomButton clearButton=null;
 
 	protected CustomDatePicker wDos;
+	
+	protected CustomDatePicker wDos2;
+	
+	protected CustomDatePicker wDos3;
+	
+	protected PatientTagWidget tagWidget;
 
 	private static List<AccountsReceivableScreen> accountsReceivableScreenList=null;
 
@@ -200,6 +208,34 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		widgetContainer.put("Date of Service", wDos);
 		row++;
 		
+		final Label transactionDateFrom = new Label("Transaction Date From: ");
+		searchCriteriaTable.setWidget(row, 0, transactionDateFrom);
+		
+		wDos2 = new CustomDatePicker();
+		searchCriteriaTable.setWidget(row, 1, wDos2);
+		widgetTracker.put("Transaction Date From", row+":1:"+"date_from");
+		widgetContainer.put("Transaction Date From", wDos2);
+		
+		final Label transactionDateTo = new Label("Transaction Date To: ");
+		searchCriteriaTable.setWidget(row, 2, transactionDateTo);
+		
+		wDos3 = new CustomDatePicker();
+		searchCriteriaTable.setWidget(row, 3, wDos3);
+		widgetTracker.put("Transaction Date To", row+":3:"+"date_to");
+		widgetContainer.put("Transaction Date To", wDos3);
+		
+		row++;
+		
+		final Label tagSearch = new Label("Tag Search: ");
+		searchCriteriaTable.setWidget(row, 0, tagSearch);
+		
+		tagWidget = new PatientTagWidget();
+		searchCriteriaTable.setWidget(row, 1, tagWidget);
+		widgetTracker.put("Tag Search", row+":1:"+"tag");
+		widgetContainer.put("Tag Search", tagWidget);
+		
+		row++;
+		
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setSpacing(5);
 		searchButton = new CustomButton("Search",AppConstants.ICON_SEARCH);
@@ -226,7 +262,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		buttonPanel.setSpacing(5);
 
 		
-		searchCriteriaTable.setWidget(5, 1, buttonPanel);		
+		searchCriteriaTable.setWidget(row, 1, buttonPanel);		
 		
 		currentCriteriaPanel = new VerticalPanel();
 		currentCriteriaPanel.setWidth("100%");
@@ -322,6 +358,16 @@ public class AccountsReceivableScreen extends ScreenInterface {
 					});
 //					checkboxStack.put(c, id);
 					return c;
+				
+				} else if (data.get("total_balance") != null) {
+					Float balance = Float.parseFloat(data.get("total_balance"));
+					Label label = new Label(data.get(columnName));
+					if (balance==0) 
+						label.getElement().getStyle().setColor("#0B6126");
+					 else if (balance<0)
+						label.getElement().getStyle().setColor("#FF0000");
+					return label;
+	
 				} else {
 					return (Widget) null;
 				}
@@ -431,7 +477,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		HashMap<String, String> criteria = new HashMap<String, String>();
 		Iterator<String> iterator = widgetTracker.keySet().iterator();
 		while(iterator.hasNext()){
-			final String widgetLabel   = iterator.next();
+			final String widgetLabel  = iterator.next();
 			final Widget widget = widgetContainer.get(widgetLabel);
 			String widgetValue = Util.getWidgetValue(widget);
 			if(widgetValue!=null && !widgetValue.equals("") && !widgetValue.equals("0")){
@@ -444,7 +490,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 				if(widgetAddedToCreteria.get(widgetLabel)==null){//If alreday in creteria then dont add 
 					final HorizontalPanel horizontalPanel = new HorizontalPanel();
 					currentCriteriaPanel.add(horizontalPanel);
-					Label label = new Label(((Label)searchCriteriaTable.getWidget(row, col-1)).getText()+":");
+					Label label = new Label(((Label)searchCriteriaTable.getWidget(row, col-1)).getText()/*+":"*/);
 					label.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 					horizontalPanel.add(label);
 					horizontalPanel.add(new Label(Util.getWidgetText(widget)));
@@ -452,6 +498,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 					button.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent arg0) {
+//							Window.alert(arg0)
 							currentCriteriaPanel.remove(horizontalPanel);
 							widgetAddedToCreteria.remove(widgetLabel);
 							showHideWidget(widgetLabel, true);
@@ -527,9 +574,12 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		patientlnTextBox.setText("");
 		providerWidget.clear();
 		wDos.getTextBox().setValue("");
+		wDos2.getTextBox().setValue("");
+		wDos3.getTextBox().setValue("");
 		patientlnTextBox.setFocus(true);
 		patientWidget.clear();
-		
+		facilityModule.clear();
+		tagWidget.clear();
 		
 		Iterator<String> iterator = widgetAddedToCreteria.keySet().iterator();
 		while(iterator.hasNext()){

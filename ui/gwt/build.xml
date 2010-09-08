@@ -32,7 +32,7 @@
 
   <path id="project.class.path">
     <pathelement location="${gwt.sdk}/gwt-user.jar"/>
-    <fileset dir="${gwt.sdk}" includes="gwt-dev*.jar"/>
+    <fileset dir="${gwt.sdk}" includes="gwt-dev.jar"/>
     <!-- Add any additional non-server libs (such as JUnit) -->
     <fileset dir="lib" includes="**/*.jar"/>
   </path>

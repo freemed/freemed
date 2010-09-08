@@ -2,6 +2,7 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -121,6 +122,10 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 	protected boolean isModifying=false;
 	protected boolean isCloning=false;
 	protected String existingProcCharge="";
+
+	protected CustomDatePicker procEndDate;
+
+	protected Integer cloneRecId;
 	public ProcedureScreen() {
 		super(moduleName);
 		verticalPanel = new VerticalPanel();
@@ -142,7 +147,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		lbBasicInfo.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		lbCoverage = new Label("Coverage");
 		lbCoverage.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
-		lbMisc = new Label("Lab/Payment/Other");
+		lbMisc = new Label("Lab");
 		lbMisc.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		entryTabPanel.add(basicInfoVPanel, lbBasicInfo.getText());
 		entryTabPanel.add(coverageVPanel, lbCoverage.getText());
@@ -167,7 +172,19 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (validateProcedure()) {
-					verifyAdvancePayment();
+					String strStart=procDate.getStoredValue();
+					String strEnd=procEndDate.getStoredValue();
+					Date dtStart=Util.getSQLDate(strStart);
+					Date dtEnd=Util.getSQLDate(strEnd);
+
+					long days=((dtEnd.getTime()-dtStart.getTime())/1000/60/60/24)+1;//(procEndDate.getValue().getTime()-procDate.getValue().getTime())/(24 * 60 * 60 * 1000);
+					long units= Long.parseLong(tbUnits.getText());
+					if(days!=units){
+						if(Window.confirm("The number of units does not match with the From and To date, Do you want to Proceed?"))
+							showProcedureCostPopup();
+					}
+					else
+						showProcedureCostPopup();
 
 				}
 			}
@@ -227,13 +244,23 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 
 		// Adding procedure date
 		Label lbProcDate = new Label("Date of Service");
+		HorizontalPanel hPanel=new HorizontalPanel();
+		hPanel.setSpacing(10);
 		procDate = new CustomDatePicker();
 		procDate.setValue(new Date());
 		procDate.setWidth("170px");
+		Label lbTo = new Label(" to ");
+		procEndDate = new CustomDatePicker();
+		procEndDate.setValue(new Date());
+		procEndDate.setWidth("170px");
+		hPanel.add(procDate);
+		hPanel.add(lbTo);
+		hPanel.add(procEndDate);
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbProcDate);
 		basicInfoflexTable.getFlexCellFormatter().getElement(fieldCounter, 0)
 				.getStyle().setProperty("textIndent", "10px");
-		basicInfoflexTable.setWidget(fieldCounter, 1, procDate);
+		basicInfoflexTable.setWidget(fieldCounter, 1, hPanel);
+		basicInfoflexTable.getFlexCellFormatter().setColSpan(fieldCounter, 1, 3);
 		fieldCounter++;
 
 		// Adding Facility
@@ -523,27 +550,6 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		tbMedResubCode = new TextBox();
 		miscFlexTable.setWidget(fieldCounter, 0, lbMedResubCode);
 		miscFlexTable.setWidget(fieldCounter, 1, tbMedResubCode);
-		fieldCounter++;
-
-		Label lbAttColPay = new Label("Attach Collected Payment");
-		collectedPayList = new CustomListBox();
-		collectedPayList.addItem("NONE SELECTED");
-		miscFlexTable.setWidget(fieldCounter, 0, lbAttColPay);
-		miscFlexTable.setWidget(fieldCounter, 1, collectedPayList);
-		fieldCounter++;
-
-		Label lbAttColCopay = new Label("Attach Collected Copay");
-		collectedCopayList = new CustomListBox();
-		collectedCopayList.addItem("NONE SELECTED");
-		miscFlexTable.setWidget(fieldCounter, 0, lbAttColCopay);
-		miscFlexTable.setWidget(fieldCounter, 1, collectedCopayList);
-		fieldCounter++;
-
-		Label lbAttColDeduct = new Label("Attach Collected Deductible");
-		collectedDeductList = new CustomListBox();
-		collectedDeductList.addItem("NONE SELECTED");
-		miscFlexTable.setWidget(fieldCounter, 0, lbAttColDeduct);
-		miscFlexTable.setWidget(fieldCounter, 1, collectedDeductList);
 		fieldCounter++;
 	}
 
@@ -986,7 +992,6 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 				
 				String ptid = JsonUtil.jsonify(patientId.toString());
 				String[] params = { selCov, selUnits, selCode, selPro, ptid };
-	
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
@@ -1028,59 +1033,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		}
 	}
 
-	public void verifyAdvancePayment() {
-		if ((collectedPayList.getItemCount() > 1 && collectedPayList
-				.getSelectedIndex() > 0)
-				|| (collectedCopayList.getItemCount() > 1 && collectedCopayList
-						.getSelectedIndex() > 0)
-				|| (collectedDeductList.getItemCount() > 1 && collectedDeductList
-						.getSelectedIndex() > 0)) {
-			showProcedureCostPopup();
-		} else if(collectedPayList.getItemCount() ==1 
-				&& collectedCopayList.getItemCount() == 1 
-				&& collectedDeductList.getItemCount() == 1 ){
-			showProcedureCostPopup();
-		}		
-		else {
-			VerticalPanel vp = new VerticalPanel();
-			vp.setSpacing(5);
-			Label lbMsg = new Label(
-					"There is payment in the system, do you want to apply this payment now?");
-			vp.add(lbMsg);
-			HorizontalPanel confirmPanel = new HorizontalPanel();
-			vp.add(confirmPanel);
-			vp.setCellHorizontalAlignment(confirmPanel,
-					HasHorizontalAlignment.ALIGN_CENTER);
-			confirmPanel.setSpacing(5);
-			final Popup confirmPopup = new Popup();
-			confirmPopup.setPixelSize(500, 20);
-			PopupView viewInfo = new PopupView(vp);
-			confirmPopup.setNewWidget(viewInfo);
-			confirmPopup.initialize();
-			CustomButton yesBtn = new CustomButton("Yes");
-			yesBtn.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent arg0) {
-					entryTabPanel.selectTab(2);
-					confirmPopup.hide();
-				}
-
-			});
-			CustomButton noBtn = new CustomButton("No");
-			noBtn.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent arg0) {
-					showProcedureCostPopup();
-					confirmPopup.hide();
-				}
-
-			});
-			confirmPanel.add(yesBtn);
-			confirmPanel.add(noBtn);
-		}
-	}
+	
 
 	private boolean validateProcedure() {
 		String msg = "";
@@ -1105,17 +1058,17 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 				|| procCodeWidget.getStoredValue().equals("0")
 				|| procCodeWidget.getText().trim().equals(""))
 			msg += "Please Specify the Procedural code.\n";
-		if (tbUnits.getText() == null || procCodeWidget.getText().equals(""))
-			msg += "Please Specify the Units.\n";
-		if (tbUnits.getText() == null || procCodeWidget.getText().equals(""))
+		if (tbUnits.getText() == null || tbUnits.getText().equals(""))
 			msg += "Please Specify the Units.\n";
 		else if (!Util.isNumber(tbUnits.getText())) {
 			msg += "The specified valued for Units is not correct Number \n";
 		}
+		
 		if (!msg.equals("")) {
 			Window.alert(msg);
 			return false;
 		}
+		
 		return true;
 	}
 
@@ -1161,33 +1114,6 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 							}
 						}
 						if (check) {
-							if (collectedPayList.getSelectedIndex() != 0) {
-								if (modRecId == 0)
-									attachProcId(collectedPayList
-											.getStoredValue(), recid.toString());
-								else
-									attachProcId(collectedPayList
-											.getStoredValue(), modRecId
-											.toString());
-							}
-							if (collectedCopayList.getSelectedIndex() != 0) {
-								if (modRecId == 0)
-									attachProcId(collectedCopayList
-											.getStoredValue(), recid.toString());
-								else
-									attachProcId(collectedCopayList
-											.getStoredValue(), modRecId
-											.toString());
-							}
-							if (collectedDeductList.getSelectedIndex() != 0) {
-								if (modRecId == 0)
-									attachProcId(collectedDeductList
-											.getStoredValue(), recid.toString());
-								else
-									attachProcId(collectedDeductList
-											.getStoredValue(), modRecId
-											.toString());
-							}
 							if (modRecId == 0)
 								Util.showInfoMsg("ProcedureModule",
 										"New Procedure Created.");
@@ -1195,7 +1121,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 								Util.showInfoMsg("ProcedureModule",
 										"Procedure Modified.");
 							modRecId = 0;
-							//topTabPanel.selectTab(1);
+							topTabPanel.selectTab(1);
 							reset();
 							getPreviousProcData();
 							loadProcedureTableData();
@@ -1249,6 +1175,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		if (procDate.getTextBox().getText() != null
 				|| !procDate.getTextBox().getText().equals(""))
 			map.put((String) "procdt", procDate.getTextBox().getText());
+		if (procEndDate.getTextBox().getText() != null
+				|| !procEndDate.getTextBox().getText().equals(""))
+			map.put((String) "procdtend", procEndDate.getTextBox().getText());
 		if (procCodeWidget.getStoredValue() != null
 				|| !procCodeWidget.getStoredValue().equals(""))
 			map.put((String) "proccpt", procCodeWidget.getStoredValue());
@@ -1561,62 +1490,6 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		}
 	}
 
-	public void attachProcId(String payid, String procid) {
-		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			// ////////////////////
-			String[] params = { payid, procid };
-
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.PaymentModule.attachProcedure",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(
-							com.google.gwt.http.client.Request request,
-							Throwable ex) {
-					}
-
-					@SuppressWarnings("unchecked")
-					public void onResponseReceived(
-							com.google.gwt.http.client.Request request,
-							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							if (Util.checkValidSessionResponse(response
-									.getText())) {
-								try {
-									Boolean result = (Boolean) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													"Boolean");
-									if (result) {
-										Util
-												.showInfoMsg("PaymentModule",
-														"Advance Payment Successfully Attached.");
-									} else {
-										Util
-												.showErrorMsg("PaymentModule",
-														"Advance Payment Failed to Attach.");
-									}
-								} catch (Exception e) {
-
-								}
-							}
-						} else {
-						}
-					}
-				});
-			} catch (RequestException e) {
-				Window.alert(e.toString());
-			}
-		} else {
-
-		}
-	}
-
 	public void loadUnAttachedPay(final String funcName, final CustomListBox lb) {
 
 		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -1739,6 +1612,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 			else if(map.get("procdt") != null && isModifying) {
 				procDate.setValue(map.get("procdt"));
 			}
+			else if(map.get("procdtend") != null && isModifying) {
+				procEndDate.setValue(map.get("procdtend"));
+			}
 			if(map.get("proccharges") != null && (isModifying || isCloning)){
 				existingProcCharge=map.get("proccharges");
 				
@@ -1802,7 +1678,11 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 			// reset();
 			actionBtn.setText("Modify");
 			getProcDetails(modRecId);
-		} else
+		}
+		else if(isCloning){
+			getProcDetails(cloneRecId);
+		}
+		else
 			getPreviousProcData();
 		loadAuthorizations();
 		loadCertifications();
@@ -1811,13 +1691,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		loadCoverage(2);
 		loadCoverage(3);
 		loadCoverage(4);
-		loadUnAttachedPay("getUnAttachedPayments", collectedPayList);
-		loadUnAttachedPay("getUnAttachedCopays", collectedCopayList);
-		loadUnAttachedPay("getUnAttachedDeductables", collectedDeductList);
 	}
 
 	public void reset() {
-		entryTabPanel.selectTab(0);
 		actionBtn.setText("Add");
 		modRecId = 0;
 		existingProcCharge="";
@@ -1857,6 +1733,11 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 	public void setModificationRecordId(Integer modid) {
 		modRecId = modid;
 		isModifying=true;
+	}
+	
+	public void setCloneRecordID(Integer cid){
+		cloneRecId = cid;
+		isCloning=true;
 	}
 
 }

@@ -1380,6 +1380,13 @@ class PaymentModule extends EMRModule {
 		}
 		return $result;
 	}
+	
+	public function getLastRecord($patient){
+		$query = "SELECT * FROM `".$this->table_name."` ".
+			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ORDER BY id DESC";
+		$res = $GLOBALS['sql']->queryRow( $query );
+		return $res;
+	}
 
 } // end class PaymentModule
 

@@ -91,19 +91,33 @@ class ScannedDocuments extends EMRModule {
 	}
 
 	protected function add_post ( $id, &$data ) {
-		// Handle upload
-		if (!($imagefilename = freemed::store_image( $data[$this->patient_field], "imageupload", $id))) {
-			syslog("Failed to upload");
-			return false;
-		}
-
-		$query = $GLOBALS['sql']->update_query (
-			$this->table_name,
-			array ( "imagefile" => $imagefilename ),
-			array ( "id" => $last_record )
-		);
-		$result = $GLOBALS['sql']->query ($query);
+		$this->uploadFile($id, &$data);
  	}
+
+	protected function uploadFile($id,&$data){
+		if($_FILES["imageupload"]["tmp_name"]){
+			$origfilename = $_FILES["imageupload"]["tmp_name"];
+			syslog( LOG_INFO, "originalfilename = $origfilename");
+			$patient = $data[$this->patient_field];
+			syslog( LOG_INFO, "patient = $patient");
+			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+			$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
+			if ( $success ) {
+				syslog( LOG_INFO, get_class($this)."| found file ".$_FILES['imageupload']['name'] );
+				$q = $GLOBALS['sql']->update_query(
+					$this->table_name,
+					array(
+						'imagefile' => $pds->ResolveFilename( $patient, get_class($this), $id )
+					), array( 'id' => $id )
+				);
+				syslog( LOG_INFO, $q );
+				$GLOBALS['sql']->query( $q );
+				return true;
+			}else
+				syslog( LOG_INFO, "failed to store file!!!!" );			
+		}else 
+			syslog( LOG_INFO, "file not found!!!!" );			
+	}
 
 	protected function del_pre ( $id ) {
 		unlink(freemed::image_filename(
@@ -117,29 +131,12 @@ class ScannedDocuments extends EMRModule {
 		list ( $data['imagetype'], $data['imagecat'] ) = explode('/', $data['imagetypecat']);
 		$data['user'] = freemed::user_cache()->user_number;
 	}
-
+	
+	protected function mod_post(&$data){
+		$this->uploadFile($data['id'], &$data);
+	}
+	
 	function additional_move ( $id, $from, $to ) {
-		$orig = freemed::image_filename($from, $id, 'djvu');
-		$new = freemed::image_filename($to, $id, 'djvu');
-		$q = $GLOBALS['sql']->update_query(
-			$this->table_name,
-			array ( 'imagefilename' => $new ),
-			array ( 'id' => $id )
-		);
-
-		syslog(LOG_INFO, "Scanned Documents| moved $orig to $new");
-
-		$result = $GLOBALS['sql']->query($q);
-		//if (!$result) { return false; }
-
-		$result = rename ( $orig, $new );
-		$dir = dirname($new);
-		`mkdir -p "$dir"`;
-		`mv "$orig" "$new"`;
-		//print "mv \"$orig\" \"$new\"<br/>\n";
-		//print "orig = $orig, new = $new<br/>\n";
-		//if (!$result) { return false; }
-
 		return true;
 	} // end method additional_move
 
@@ -163,10 +160,13 @@ class ScannedDocuments extends EMRModule {
 	public function GetDocumentPage( $id, $page, $thumbnail = false ) {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
-		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . '/' . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		
+		if($thumbnail)
+			$pds->ServeFileThumbnail($r[$this->patient_field],get_class($this),$id,"image/jpeg");
+		else
+			$pds->ServeFile($r[$this->patient_field],get_class($this),$id,"image/jpeg");
 
-		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
 	} // end method GetDocumentPage
 
 	// Method: NumberOfPages
@@ -183,9 +183,13 @@ class ScannedDocuments extends EMRModule {
 	//
 	public function NumberOfPages ( $id ) {
 		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
-		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . '/' . freemed::image_filename( $r[$this->patient_field], $id, 'djvu' ));
+		/*$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		
+		$djvu = CreateObject('org.freemedsoftware.core.Djvu',
+			$pds->GetLocalCachedFile( $r[$this->patient_field], get_class($this), $id ) );
 		return $djvu->NumberOfPages();
+		*/
+		return $r['imagefile']?1:0;
 	} // end method NumberOfPages
 
 	function tc_picklist ( ) {
@@ -230,7 +234,8 @@ class ScannedDocuments extends EMRModule {
 	protected function print_override ( $id ) {
 		// Create djvu object
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
-		$filename = freemed::image_filename($rec[$this->patient_field], $id, 'djvu');
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		$filename = $pds->GetLocalCachedFile( $r[$this->patient_field], get_class($this), $id );
 		$d = CreateObject('org.freemedsoftware.core.Djvu', $filename);
 		return $d->ToPDF( true );
 	} // end method print_override
@@ -245,6 +250,12 @@ class ScannedDocuments extends EMRModule {
 			array ( $varname, false, 'phyfaxa' )
 		);
 	} // end method fax_widget
+
+	public function GetPatientAllRecords($patient){
+		$patient = $GLOBALS['sql']->quote($patient);
+		$q = "select im.id,im.imagedt,im.imagefile,im.imagetype,im.imagecat,CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician from images im left join physician ph on ph.id = im.imagephy where im.imagepat=".$patient;
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 
 } // end of class ScannedDocuments
 

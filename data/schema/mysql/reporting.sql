@@ -66,12 +66,16 @@ SOURCE data/schema/mysql/reporting/report_AccountPaid.sql
 SOURCE data/schema/mysql/reporting/report_ChargeGraph.sql
 SOURCE data/schema/mysql/reporting/report_DailyAdjustmentJournal.sql
 SOURCE data/schema/mysql/reporting/report_DailyCashReceiptJournal.sql
+SOURCE data/schema/mysql/reporting/report_DailyEndOfDayProcessingMaster.sql
 SOURCE data/schema/mysql/reporting/report_DailyEndOfDayProcessingSummary.sql
+SOURCE data/schema/mysql/reporting/report_DailyPostedDoctorOrderSchedule.sql
 SOURCE data/schema/mysql/reporting/report_GraphMonthlyFinancial.sql
 SOURCE data/schema/mysql/reporting/report_MonthlyCashCollectionSummary.sql
 SOURCE data/schema/mysql/reporting/report_MonthlyClientBalanceDue.sql
-SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
+SOURCE data/schema/mysql/reporting/report_MonthlyMasterJournalDetail.sql
+SOURCE data/schema/mysql/reporting/report_MonthlyMasterJournalSummary.sql
 SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccountsByProvider.sql
+SOURCE data/schema/mysql/reporting/report_OutstandingPatientAccounts.sql
 SOURCE data/schema/mysql/reporting/report_PatientAccountActivity.sql
 SOURCE data/schema/mysql/reporting/report_PatientAgedDetail.sql
 SOURCE data/schema/mysql/reporting/report_PatientAgingReport.sql
@@ -80,7 +84,10 @@ SOURCE data/schema/mysql/reporting/report_PatientDemographic.sql
 SOURCE data/schema/mysql/reporting/report_PatientDuplicateAccounts.sql
 SOURCE data/schema/mysql/reporting/report_PatientList.sql
 SOURCE data/schema/mysql/reporting/report_PatientReceipt_en_US.sql
+SOURCE data/schema/mysql/reporting/report_PatientReceiptShort_en_US.sql
 SOURCE data/schema/mysql/reporting/report_PatientZipCodeDistribution.sql
+SOURCE data/schema/mysql/reporting/report_PrintEmail.sql
 SOURCE data/schema/mysql/reporting/report_ReceivablesGraph.sql
+SOURCE data/schema/mysql/reporting/report_ReconciliationBottles.sql
 SOURCE data/schema/mysql/reporting/report_TransactionGraph_en_US.sql
 

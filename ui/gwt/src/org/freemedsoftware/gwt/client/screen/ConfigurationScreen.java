@@ -53,6 +53,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -128,8 +129,11 @@ public class ConfigurationScreen extends ScreenInterface {
 			if (widgets.get(cur) instanceof CustomListBox) {
 				v.put(cur, ((CustomListBox) widgets.get(cur)).getWidgetValue());
 			}
-			if (widgets.get(cur) instanceof TextBox) {
+			else if (widgets.get(cur) instanceof TextBox) {
 				v.put(cur, ((TextBox) widgets.get(cur)).getText());
+			}
+			else if (widgets.get(cur) instanceof PasswordTextBox) {
+				v.put(cur, ((PasswordTextBox) widgets.get(cur)).getText());
 			}
 		}
 		return v;
@@ -159,6 +163,7 @@ public class ConfigurationScreen extends ScreenInterface {
 							if (r.booleanValue()) {
 								Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
 								CurrentState.retrieveSystemConfiguration(true);//re-evaluate system configuration
+								closeScreen();
 							} else {
 								Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
 							}
@@ -326,6 +331,19 @@ public class ConfigurationScreen extends ScreenInterface {
 			w.setText(r.get("c_value"));
 			widgets.put(r.get("c_option"), w);
 			return w;
+		} else if (widgetType.compareToIgnoreCase("Password") == 0) {
+			// TODO: implement passwords 
+			PasswordTextBox w = new PasswordTextBox();
+			w.setText(r.get("c_value"));
+			widgets.put(r.get("c_option"), w);
+			return w;
+		} else if (widgetType.compareToIgnoreCase("URL") == 0) {
+			// Default to text box
+			TextBox w = new TextBox();
+			w.setText(r.get("c_value"));
+			widgets.put(r.get("c_option"), w);			
+			w.setWidth("300px");
+			return w;
 		} else {
 			// Text
 			TextBox w = new TextBox();
@@ -345,6 +363,8 @@ public class ConfigurationScreen extends ScreenInterface {
 				((TextBox)w).setEnabled(false);
 			else if(w instanceof CustomListBox)
 				((CustomListBox)w).setEnabled(false);
+			else if(w instanceof PasswordTextBox)
+				((PasswordTextBox)w).setEnabled(false);
 		}
 		FlexTable f = containers.get(r.get("c_section"));
 		f.setWidth("");

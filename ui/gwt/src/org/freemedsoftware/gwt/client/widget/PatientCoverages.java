@@ -58,70 +58,69 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PatientCoverages extends Composite {
 
 	public class Coverage {
-		
-		protected Integer coverageId ;
-		
-		protected Integer insuranceCompany ;
+
+		protected Integer coverageId;
+
+		protected Integer insuranceCompany;
 
 		protected Integer coverageInsuranceType;
-		
+
 		protected String providerAcceptsAssigment = "";
-		
+
 		protected String assigmentOfBenefits = "";
-		
+
 		protected String releaseOfInformation = "";
-		
+
 		protected String releaseDateSigned = null;
-		
+
 		protected String groupPlanName = "";
-		
+
 		protected String startDate = null;
-		
+
 		protected String insuranceIDNumber = "";
-		
+
 		protected String insuranceGroupNumber = "";
-		
+
 		protected String insuranceType = "";
-		
+
 		protected String relationshipToInsured = "";
-		
+
 		protected String insuredFirstName = "";
-		
+
 		protected String insuredLastName = "";
-		
+
 		protected String insuredMiddleName = "";
-		
+
 		protected String insuredDOB = "";
-		
+
 		protected String insuredSex = "";
-		
+
 		protected String insuredSSN = "";
-		
+
 		protected String insuredAddress1 = "";
-		
+
 		protected String insuredAddress2 = "";
-		
+
 		protected String insuredCity = "";
-		
+
 		protected String insuredState = "";
-		
+
 		protected String insuredZip = "";
-		
+
 		protected String copay = "";
-		
+
 		protected String deductable = "";
-		
+
 		protected String replaceLikeCoverage = "";
-		
+
 		protected String isAssigning = "";
-		
+
 		protected String schoolNameForInsured = "";
-		
+
 		protected String employerOfInsured = "";
 
 		public Coverage() {
 		}
-
 
 		/**
 		 * Retrieve HashMap for object used from RPC.
@@ -130,26 +129,26 @@ public class PatientCoverages extends Composite {
 		 */
 		public HashMap<String, String> getMap() {
 			HashMap<String, String> map = new HashMap<String, String>();
-			if(coverageId!=null)
-				map.put("id",coverageId.toString());
-			if(getInsuranceCompany()!=null)
+			if (coverageId != null)
+				map.put("id", coverageId.toString());
+			if (getInsuranceCompany() != null)
 				map.put("covinsco", getInsuranceCompany().toString());
-			if(getCoverageInsuranceType()!=null)	
+			if (getCoverageInsuranceType() != null)
 				map.put("covinstp", getCoverageInsuranceType().toString());
 			map.put("covprovasgn", getProviderAcceptsAssigment());
 			map.put("covbenasgn", getAssigmentOfBenefits());
 			map.put("covrelinfo", getReleaseOfInformation());
-			if(getReleaseDateSigned()!=null)
+			if (getReleaseDateSigned() != null)
 				map.put("covrelinfodt", getReleaseDateSigned().toString());
 			map.put("covplanname", getGroupPlanName());
-			if(getStartDate()!=null)
+			if (getStartDate() != null)
 				map.put("coveffdt", getStartDate().toString());
 			map.put("covpatinsno", getInsuranceIDNumber());
 			map.put("covpatgrpno", getInsuranceGroupNumber());
 			map.put("covtype", getInsuranceType());
 			map.put("covrel", getRelationshipToInsured());
 
-			if(!getRelationshipToInsured().equalsIgnoreCase("S")){
+			if (!getRelationshipToInsured().equalsIgnoreCase("S")) {
 				map.put("covfname", getInsuredFirstName());
 				map.put("covlname", getInsuredLastName());
 				map.put("covmname", getInsuredMiddleName());
@@ -162,14 +161,23 @@ public class PatientCoverages extends Composite {
 				map.put("covstate", getInsuredState());
 				map.put("covzip", getInsuredZip());
 			}
-			
+
 			map.put("covcopay", getCopay());
 			map.put("covdeduct", getDeductable());
 			map.put("", getReplaceLikeCoverage());
 			map.put("covisassigning", getIsAssigning());
 			map.put("covschool", getSchoolNameForInsured());
 			map.put("covemployer", getEmployerOfInsured());
-			return map;
+			HashMap<String, String> newMap = new HashMap<String, String>();
+			Iterator<String> iterator = map.keySet().iterator();
+			while(iterator.hasNext()){
+				String key = iterator.next();
+				String value = map.get(key);
+				if(value!=null){
+					newMap.put(key, value);
+				}
+			}
+			return newMap;
 		}
 
 		/**
@@ -178,23 +186,23 @@ public class PatientCoverages extends Composite {
 		 * @return
 		 */
 		public void loadData(HashMap<String, String> data) {
-			if(data.get("id")!=null)
+			if (data.get("id") != null)
 				setCoverageId(Integer.parseInt(data.get("id")));
-			if(data.get("covinsco")!=null)
+			if (data.get("covinsco") != null)
 				setInsuranceCompany(Integer.parseInt(data.get("covinsco")));
-			if(data.get("covinstp")!=null)
+			if (data.get("covinstp") != null)
 				setCoverageInsuranceType(Integer.parseInt(data.get("covinstp")));
 			setProviderAcceptsAssigment(data.get("covprovasgn"));
 			setAssigmentOfBenefits(data.get("covbenasgn"));
 			setReleaseOfInformation(data.get("covrelinfo"));
 			setReleaseDateSigned(data.get("covrelinfodt"));
 			setGroupPlanName(data.get("covplanname"));
-			setStartDate(data.get("coveffdt"));//temporary
+			setStartDate(data.get("coveffdt"));// temporary
 			setInsuranceIDNumber(data.get("covpatinsno"));
 			setInsuranceGroupNumber(data.get("covpatgrpno"));
 			setInsuranceType(data.get("covtype"));
 			setRelationshipToInsured(data.get("covrel"));
-			if(!getRelationshipToInsured().equalsIgnoreCase("S")){
+			if (!getRelationshipToInsured().equalsIgnoreCase("S")) {
 				setInsuredFirstName(data.get("covfname"));
 				setInsuredLastName(data.get("covlname"));
 				setInsuredMiddleName(data.get("covmname"));
@@ -367,116 +375,93 @@ public class PatientCoverages extends Composite {
 			this.coverageId = coverageId;
 		}
 
-
 		public String getInsuredFirstName() {
 			return insuredFirstName;
 		}
-
 
 		public void setInsuredFirstName(String insuredFirstName) {
 			this.insuredFirstName = insuredFirstName;
 		}
 
-
 		public String getInsuredLastName() {
 			return insuredLastName;
 		}
-
 
 		public void setInsuredLastName(String insuredLastName) {
 			this.insuredLastName = insuredLastName;
 		}
 
-
 		public String getInsuredMiddleName() {
 			return insuredMiddleName;
 		}
-
 
 		public void setInsuredMiddleName(String insuredMiddleName) {
 			this.insuredMiddleName = insuredMiddleName;
 		}
 
-
 		public String getInsuredDOB() {
 			return insuredDOB;
 		}
-
 
 		public void setInsuredDOB(String insuredDOB) {
 			this.insuredDOB = insuredDOB;
 		}
 
-
 		public String getInsuredSex() {
 			return insuredSex;
 		}
-
 
 		public void setInsuredSex(String insuredSex) {
 			this.insuredSex = insuredSex;
 		}
 
-
 		public String getInsuredSSN() {
 			return insuredSSN;
 		}
-
 
 		public void setInsuredSSN(String insuredSSN) {
 			this.insuredSSN = insuredSSN;
 		}
 
-
 		public String getInsuredAddress1() {
 			return insuredAddress1;
 		}
-
 
 		public void setInsuredAddress1(String insuredAddress1) {
 			this.insuredAddress1 = insuredAddress1;
 		}
 
-
 		public String getInsuredAddress2() {
 			return insuredAddress2;
 		}
-
 
 		public void setInsuredAddress2(String insuredAddress2) {
 			this.insuredAddress2 = insuredAddress2;
 		}
 
-
 		public String getInsuredCity() {
 			return insuredCity;
 		}
-
 
 		public void setInsuredCity(String insuredCity) {
 			this.insuredCity = insuredCity;
 		}
 
-
 		public String getInsuredState() {
 			return insuredState;
 		}
-
 
 		public void setInsuredState(String insuredState) {
 			this.insuredState = insuredState;
 		}
 
-
 		public String getInsuredZip() {
 			return insuredZip;
 		}
 
-
 		public void setInsuredZip(String insuredZip) {
 			this.insuredZip = insuredZip;
 		}
-
 
 	}
 
@@ -489,9 +474,13 @@ public class PatientCoverages extends Composite {
 	protected CurrentState state = null;
 
 	protected Command onCompletion = null;
-	
+
 	protected String ModuleName = "PatientCoverages";
 
+	protected CustomButton addCoveragesButton = null; 
+	
+	protected Integer maxCoveragesCount = null; 
+	
 	public PatientCoverages() {
 		coverages = new HashMap<Integer, Coverage>();
 
@@ -505,13 +494,16 @@ public class PatientCoverages extends Composite {
 
 		HorizontalPanel hP = new HorizontalPanel();
 		verticalPanel.add(hP);
-		
-		if(CurrentState.isActionAllowed(ModuleName,AppConstants.WRITE)){
-			CustomButton addCoveragesButton = new CustomButton("Add Coverage",AppConstants.ICON_ADD);
+
+		if (CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE)) {
+			addCoveragesButton = new CustomButton("Add Coverage",
+					AppConstants.ICON_ADD);
 			addCoveragesButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent evt) {
 					Coverage a = new Coverage();
 					addCoverage(coverages.size() + 1, a);
+					if(maxCoveragesCount!=null && coverages.size()==maxCoveragesCount)
+						addCoveragesButton.setVisible(false);
 				}
 			});
 			hP.add(addCoveragesButton);
@@ -527,10 +519,38 @@ public class PatientCoverages extends Composite {
 		onCompletion = oc;
 	}
 
-	public void addCoverage(HashMap<String, String> coverageData){
+	public void addCoverage(HashMap<String, String> coverageData) {
 		Coverage coverage = new Coverage();
 		coverage.loadData(coverageData);
-		addCoverage(coverages.size()+1, coverage);
+		addCoverage(coverages.size() + 1, coverage);
+	}
+
+	public void addEmptyCoverage() {
+		Coverage coverage = new Coverage();
+		addCoverage(coverages.size() + 1, coverage);
+	}
+	
+	public HashMap<String, String> getCoverageData(int index){
+		Coverage coverage = coverages.get(index);
+		return coverage!=null?coverage.getMap():null;
+	}
+
+	public void loadCoverageData(int index, HashMap<String, String> data){
+		Coverage coverage = coverages.get(index);
+		if(coverage==null){
+			addCoverage(data);
+			if(maxCoveragesCount==coverages.size())
+				addCoveragesButton.setVisible(false);
+		}else
+			coverage.loadData(data);
+	}
+	public void removeCoverage(int index){
+		if(coverages.get(index)!=null){
+			coveragesPanel.remove(index-1);
+			coverages.remove(index);
+			if(coverages.size()<maxCoveragesCount)
+			addCoveragesButton.setVisible(true);
+		}
 	}
 	
 	/**
@@ -541,66 +561,80 @@ public class PatientCoverages extends Composite {
 	 * @param coverage
 	 *            Coverage object containing population data.
 	 */
+	@SuppressWarnings("unchecked")
 	public void addCoverage(final Integer pos, final Coverage coverage) {
 		// Keep a record of this
 		coverages.put(pos, coverage);
-		int row=0;
+		int row = 0;
 
 		final CustomTable flexTable = new CustomTable();
 		flexTable.setWidth("100%");
 		flexTable.removeTableStyle();
 		coveragesPanel.add(flexTable);
-		
+
 		final Label insuranceCompanyLabel = new Label("Insurance Company:");
 		flexTable.getFlexTable().setWidget(row, 0, insuranceCompanyLabel);
-		final SupportModuleWidget insuranceCompany = new SupportModuleWidget("InsuranceCompanyModule");
+		final SupportModuleWidget insuranceCompany = new SupportModuleWidget(
+				"InsuranceCompanyModule");
 		flexTable.getFlexTable().setWidget(row, 1, insuranceCompany);
 
-		final Label coverageInsuranceTypeLabel = new Label("Coverage Insurance Type:");
+		final Label coverageInsuranceTypeLabel = new Label(
+				"Coverage Insurance Type:");
 		flexTable.getFlexTable().setWidget(row, 2, coverageInsuranceTypeLabel);
-		final SupportModuleWidget coverageInsuranceType = new SupportModuleWidget("CoverageTypes");
+		final SupportModuleWidget coverageInsuranceType = new SupportModuleWidget(
+				"CoverageTypes");
 		flexTable.getFlexTable().setWidget(row, 3, coverageInsuranceType);
-		
-		if(CurrentState.isActionAllowed(ModuleName,AppConstants.DELETE)){
+
+		if (CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE)) {
 			final Label deleCoverageLabel = new Label("Delete This Coverage:");
 			flexTable.getFlexTable().setWidget(row, 4, deleCoverageLabel);
-			CustomButton deleCoverageButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+			CustomButton deleCoverageButton = new CustomButton("Delete",
+					AppConstants.ICON_DELETE);
 			deleCoverageButton.setWidth("100%");
 			deleCoverageButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent evt) {
 					coveragesPanel.remove(flexTable);
-					if(coverage.getCoverageId()!=null)
+					coverages.remove(pos);
+					if(maxCoveragesCount!=null && coverages.size()<maxCoveragesCount)
+						addCoveragesButton.setVisible(true);
+					if (coverage.getCoverageId() != null)
 						deleteCoverage(coverage.getCoverageId());
 				}
 			});
 			flexTable.getFlexTable().setWidget(row, 5, deleCoverageButton);
 		}
 		row++;
-		
-		final Label providerAcceptsAssigmentLabel = new Label("Provider Accepts Assigment:");
-		flexTable.getFlexTable().setWidget(row, 0, providerAcceptsAssigmentLabel);
-		final CustomRadioButtonGroup providerAcceptsAssigment = new CustomRadioButtonGroup("providerAcceptsAssigment"+pos);
+
+		final Label providerAcceptsAssigmentLabel = new Label(
+				"Provider Accepts Assigment:");
+		flexTable.getFlexTable().setWidget(row, 0,
+				providerAcceptsAssigmentLabel);
+		final CustomRadioButtonGroup providerAcceptsAssigment = new CustomRadioButtonGroup(
+				"providerAcceptsAssigment" + pos);
 		providerAcceptsAssigment.addItem("Yes", "1");
 		providerAcceptsAssigment.addItem("No", "0");
 		flexTable.getFlexTable().setWidget(row, 1, providerAcceptsAssigment);
 
-		final Label assigmentOfBenefitsLabel = new Label("Assigment Of Benefits:");
+		final Label assigmentOfBenefitsLabel = new Label(
+				"Assigment Of Benefits:");
 		flexTable.getFlexTable().setWidget(row, 2, assigmentOfBenefitsLabel);
-		final CustomRadioButtonGroup assigmentOfBenefits = new CustomRadioButtonGroup("assigmentOfBenefits"+pos);
+		final CustomRadioButtonGroup assigmentOfBenefits = new CustomRadioButtonGroup(
+				"assigmentOfBenefits" + pos);
 		assigmentOfBenefits.addItem("Yes", "1");
 		assigmentOfBenefits.addItem("No", "0");
 		flexTable.getFlexTable().setWidget(row, 3, assigmentOfBenefits);
 
-		final Label releaseOfInformationLabel = new Label("Release Of Information:");
+		final Label releaseOfInformationLabel = new Label(
+				"Release Of Information:");
 		flexTable.getFlexTable().setWidget(row, 4, releaseOfInformationLabel);
-		final CustomRadioButtonGroup releaseOfInformation = new CustomRadioButtonGroup("releaseOfInformation"+pos);
+		final CustomRadioButtonGroup releaseOfInformation = new CustomRadioButtonGroup(
+				"releaseOfInformation" + pos);
 		releaseOfInformation.addItem("Yes", "1");
 		releaseOfInformation.addItem("No", "0");
 		flexTable.getFlexTable().setWidget(row, 5, releaseOfInformation);
-		
+
 		row++;
 
-		
 		final Label releaseDateSignedLabel = new Label("Release Date Signed:");
 		flexTable.getFlexTable().setWidget(row, 0, releaseDateSignedLabel);
 		final CustomDatePicker releaseDateSigned = new CustomDatePicker();
@@ -615,7 +649,7 @@ public class PatientCoverages extends Composite {
 		flexTable.getFlexTable().setWidget(row, 4, startDateLabel);
 		final CustomDatePicker startDate = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 5, startDate);
-		
+
 		row++;
 
 		final Label insuranceIDNumberLabel = new Label("Insurance ID Number:");
@@ -623,23 +657,26 @@ public class PatientCoverages extends Composite {
 		final TextBox insuranceIDNumber = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, insuranceIDNumber);
 
-		final Label insuranceGroupNumberLabel = new Label("Insurance Group Number:");
+		final Label insuranceGroupNumberLabel = new Label(
+				"Insurance Group Number:");
 		flexTable.getFlexTable().setWidget(row, 2, insuranceGroupNumberLabel);
 		final TextBox insuranceGroupNumber = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, insuranceGroupNumber);
-		
+
 		final Label insuranceTypeLabel = new Label("Insurance Type:");
 		flexTable.getFlexTable().setWidget(row, 4, insuranceTypeLabel);
-		final CustomRadioButtonGroup insuranceType = new CustomRadioButtonGroup("insuranceType"+pos);
+		final CustomRadioButtonGroup insuranceType = new CustomRadioButtonGroup(
+				"insuranceType" + pos);
 		insuranceType.addItem("Primary", "1");
 		insuranceType.addItem("Secondary", "2");
 		insuranceType.addItem("Tertiary", "3");
 		insuranceType.addItem("Work Comp", "4");
 		flexTable.getFlexTable().setWidget(row, 5, insuranceType);
-		
+
 		row++;
 
-		final Label relationshipToInsuredLabel = new Label("Relationship to Insured:");
+		final Label relationshipToInsuredLabel = new Label(
+				"Relationship to Insured:");
 		flexTable.getFlexTable().setWidget(row, 0, relationshipToInsuredLabel);
 		final CustomListBox relationshipToInsured = new CustomListBox();
 		relationshipToInsured.addItem("Self", "S");
@@ -656,7 +693,7 @@ public class PatientCoverages extends Composite {
 		relationshipToInsured.addItem("Other", "O");
 		flexTable.getFlexTable().setWidget(row, 1, relationshipToInsured);
 
-		final int insStartRow=row,insStartCol= 2;
+		final int insStartRow = row, insStartCol = 2;
 
 		final Label insuredFirstNameLabel = new Label("Insured First Name:");
 		flexTable.getFlexTable().setWidget(row, 2, insuredFirstNameLabel);
@@ -682,12 +719,13 @@ public class PatientCoverages extends Composite {
 
 		final Label insuredSexLabel = new Label("Insured Sex:");
 		flexTable.getFlexTable().setWidget(row, 4, insuredSexLabel);
-		final CustomRadioButtonGroup insuredSex = new CustomRadioButtonGroup("insuredSex"+pos);
-		insuredSex.addItem("Male","m");
-		insuredSex.addItem("Female","f");
-		insuredSex.addItem("Transgendered","t");
+		final CustomRadioButtonGroup insuredSex = new CustomRadioButtonGroup(
+				"insuredSex" + pos);
+		insuredSex.addItem("Male", "m");
+		insuredSex.addItem("Female", "f");
+		insuredSex.addItem("Transgendered", "t");
 		flexTable.getFlexTable().setWidget(row, 5, insuredSex);
-		
+
 		row++;
 
 		final Label insuredSSNLabel = new Label("Insured SSN:");
@@ -722,7 +760,7 @@ public class PatientCoverages extends Composite {
 		final TextBox insuredZip = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 5, insuredZip);
 
-		final int insEndRow=row,insEndCol= 5;
+		final int insEndRow = row, insEndCol = 5;
 
 		row++;
 
@@ -735,24 +773,28 @@ public class PatientCoverages extends Composite {
 		flexTable.getFlexTable().setWidget(row, 2, deductableLabel);
 		final TextBox deductable = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, deductable);
-		
-		final Label replaceLikeCoverageLabel = new Label("Replace Like Coverage:");
+
+		final Label replaceLikeCoverageLabel = new Label(
+				"Replace Like Coverage:");
 		flexTable.getFlexTable().setWidget(row, 4, replaceLikeCoverageLabel);
-		final CustomRadioButtonGroup replaceLikeCoverage = new CustomRadioButtonGroup("replaceLikeCoverage"+pos);
+		final CustomRadioButtonGroup replaceLikeCoverage = new CustomRadioButtonGroup(
+				"replaceLikeCoverage" + pos);
 		replaceLikeCoverage.addItem("Yes", "1");
 		replaceLikeCoverage.addItem("No", "0");
 		flexTable.getFlexTable().setWidget(row, 5, replaceLikeCoverage);
 
 		row++;
-		
+
 		final Label isAssigningLabel = new Label("Is Assigning?");
 		flexTable.getFlexTable().setWidget(row, 0, isAssigningLabel);
-		final CustomRadioButtonGroup isAssigning = new CustomRadioButtonGroup("isAssigning"+pos);
+		final CustomRadioButtonGroup isAssigning = new CustomRadioButtonGroup(
+				"isAssigning" + pos);
 		isAssigning.addItem("Yes", "1");
 		isAssigning.addItem("No", "0");
 		flexTable.getFlexTable().setWidget(row, 1, isAssigning);
 
-		final Label schoolNameForInsuredLabel = new Label("School Name for Insured:");
+		final Label schoolNameForInsuredLabel = new Label(
+				"School Name for Insured:");
 		flexTable.getFlexTable().setWidget(row, 2, schoolNameForInsuredLabel);
 		final TextBox schoolNameForInsured = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, schoolNameForInsured);
@@ -761,23 +803,27 @@ public class PatientCoverages extends Composite {
 		flexTable.getFlexTable().setWidget(row, 4, employerOfInsuredLabel);
 		final TextBox employerOfInsured = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 5, employerOfInsured);
-		
+
 		final ChangeHandler cl = new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
 				Coverage x = coverages.get(pos);
 				x.setInsuranceCompany(insuranceCompany.getValue());
 				x.setCoverageInsuranceType(coverageInsuranceType.getValue());
-				x.setProviderAcceptsAssigment(providerAcceptsAssigment.getWidgetValue());
+				x.setProviderAcceptsAssigment(providerAcceptsAssigment
+						.getWidgetValue());
 				x.setAssigmentOfBenefits(assigmentOfBenefits.getWidgetValue());
-				x.setReleaseOfInformation(releaseOfInformation.getWidgetValue());
+				x
+						.setReleaseOfInformation(releaseOfInformation
+								.getWidgetValue());
 				x.setReleaseDateSigned(releaseDateSigned.getStoredValue());
 				x.setGroupPlanName(groupPlanName.getText());
 				x.setStartDate(startDate.getStoredValue());
 				x.setInsuranceIDNumber(insuranceIDNumber.getText());
 				x.setInsuranceGroupNumber(insuranceGroupNumber.getText());
 				x.setInsuranceType(insuranceType.getWidgetValue());
-				x.setRelationshipToInsured(relationshipToInsured.getWidgetValue());
+				x.setRelationshipToInsured(relationshipToInsured
+						.getWidgetValue());
 
 				x.setCopay(copay.getText());
 				x.setDeductable(deductable.getText());
@@ -785,9 +831,11 @@ public class PatientCoverages extends Composite {
 				x.setIsAssigning(isAssigning.getWidgetValue());
 				x.setSchoolNameForInsured(schoolNameForInsured.getText());
 				x.setEmployerOfInsured(employerOfInsured.getText());
-				
-				if(!relationshipToInsured.getWidgetValue().equalsIgnoreCase("S")){
-					showHideInsuredField(flexTable.getFlexTable(), insStartRow, insStartCol, insEndRow, insEndCol, true);
+
+				if (!relationshipToInsured.getWidgetValue().equalsIgnoreCase(
+						"S")) {
+					showHideInsuredField(flexTable.getFlexTable(), insStartRow,
+							insStartCol, insEndRow, insEndCol, true);
 					x.setInsuredFirstName(insuredFirstName.getValue());
 					x.setInsuredLastName(insuredLastName.getValue());
 					x.setInsuredMiddleName(insuredMiddleName.getValue());
@@ -799,12 +847,12 @@ public class PatientCoverages extends Composite {
 					x.setInsuredCity(insuredCity.getValue());
 					x.setInsuredState(insuredState.getValue());
 					x.setInsuredZip(insuredZip.getValue());
-					
-				}else{
-					showHideInsuredField(flexTable.getFlexTable(), insStartRow, insStartCol, insEndRow, insEndCol, false);
+
+				} else {
+					showHideInsuredField(flexTable.getFlexTable(), insStartRow,
+							insStartCol, insEndRow, insEndCol, false);
 				}
-				
-					
+
 				coverages.put(pos, x);
 
 			}
@@ -816,11 +864,12 @@ public class PatientCoverages extends Composite {
 			}
 		};
 
-		if(coverage.getInsuranceCompany()!=null)
+		if (coverage.getInsuranceCompany() != null)
 			insuranceCompany.setValue(coverage.getInsuranceCompany());
-		if(coverage.getCoverageInsuranceType()!=null)
+		if (coverage.getCoverageInsuranceType() != null)
 			coverageInsuranceType.setValue(coverage.getCoverageInsuranceType());
-		providerAcceptsAssigment.setWidgetValue(coverage.getProviderAcceptsAssigment());
+		providerAcceptsAssigment.setWidgetValue(coverage
+				.getProviderAcceptsAssigment());
 		assigmentOfBenefits.setWidgetValue(coverage.getAssigmentOfBenefits());
 		releaseOfInformation.setWidgetValue(coverage.getReleaseOfInformation());
 		releaseDateSigned.setValue(coverage.getReleaseDateSigned());
@@ -829,11 +878,16 @@ public class PatientCoverages extends Composite {
 		insuranceIDNumber.setValue(coverage.getInsuranceIDNumber());
 		insuranceGroupNumber.setValue(coverage.getInsuranceGroupNumber());
 		insuranceType.setWidgetValue(coverage.getInsuranceType());
-		relationshipToInsured.setWidgetValue(coverage.getRelationshipToInsured());
-		
-		if(coverage.getCoverageId()!=null && relationshipToInsured.getWidgetValue()!=null && !relationshipToInsured.getWidgetValue().equalsIgnoreCase("S")){
-			showHideInsuredField(flexTable.getFlexTable(), insStartRow, insStartCol, insEndRow, insEndCol, true);
-			
+		relationshipToInsured.setWidgetValue(coverage
+				.getRelationshipToInsured());
+
+		if (coverage.getCoverageId() != null
+				&& relationshipToInsured.getWidgetValue() != null
+				&& !relationshipToInsured.getWidgetValue()
+						.equalsIgnoreCase("S")) {
+			showHideInsuredField(flexTable.getFlexTable(), insStartRow,
+					insStartCol, insEndRow, insEndCol, true);
+
 			insuredLastName.setValue(coverage.getInsuredLastName());
 			insuredMiddleName.setValue(coverage.getInsuredMiddleName());
 			insuredFirstName.setValue(coverage.getInsuredFirstName());
@@ -845,10 +899,11 @@ public class PatientCoverages extends Composite {
 			insuredSSN.setValue(coverage.getInsuredSSN());
 			insuredSex.setWidgetValue(coverage.getInsuredSex());
 			insuredDOB.setValue(coverage.getInsuredDOB());
-		}else{
-			showHideInsuredField(flexTable.getFlexTable(), insStartRow, insStartCol, insEndRow, insEndCol, false);
+		} else {
+			showHideInsuredField(flexTable.getFlexTable(), insStartRow,
+					insStartCol, insEndRow, insEndCol, false);
 		}
-// insuredName.addValueChangeHandler(valueChangeHandler);
+		// insuredName.addValueChangeHandler(valueChangeHandler);
 		copay.setValue(coverage.getCopay());
 		deductable.setValue(coverage.getDeductable());
 		replaceLikeCoverage.setWidgetValue(coverage.getReplaceLikeCoverage());
@@ -869,7 +924,7 @@ public class PatientCoverages extends Composite {
 		insuranceGroupNumber.addValueChangeHandler(valueChangeHandler);
 		insuranceType.addValueChangeHandler(valueChangeHandler);
 		relationshipToInsured.addChangeHandler(cl);
-		
+
 		insuredFirstName.addChangeHandler(cl);
 		insuredLastName.addChangeHandler(cl);
 		insuredMiddleName.addChangeHandler(cl);
@@ -881,8 +936,7 @@ public class PatientCoverages extends Composite {
 		insuredCity.addChangeHandler(cl);
 		insuredState.addChangeHandler(cl);
 		insuredZip.addChangeHandler(cl);
-		
-		
+
 		copay.addValueChangeHandler(valueChangeHandler);
 		deductable.addValueChangeHandler(valueChangeHandler);
 		replaceLikeCoverage.addValueChangeHandler(valueChangeHandler);
@@ -890,86 +944,86 @@ public class PatientCoverages extends Composite {
 		schoolNameForInsured.addValueChangeHandler(valueChangeHandler);
 		employerOfInsured.addValueChangeHandler(valueChangeHandler);
 		// End Implement changelisteners
-		
+
 	}
-	
-	public void showHideInsuredField(FlexTable flexTable,int startRow,int startCol,int endRow,int endCol,boolean action){
-		int row=startRow,col=startCol;
-			while(row<=endRow ){
-				flexTable.getWidget(row, col++).setVisible(action);
-				if(row==endRow && col>endCol)
+
+	public void showHideInsuredField(FlexTable flexTable, int startRow,
+			int startCol, int endRow, int endCol, boolean action) {
+		int row = startRow, col = startCol;
+		while (row <= endRow) {
+			flexTable.getWidget(row, col++).setVisible(action);
+			if (row == endRow && col > endCol)
 				break;
-				if(col>5){
-					row++;
-					col=0;
-				}
+			if (col > 5) {
+				row++;
+				col = 0;
 			}
+		}
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public void commitChanges() {
 		// Form map
-		HashMap<String, String>[] map;
+		// HashMap<String, String>[] map;
 		Iterator<Integer> iter = coverages.keySet().iterator();
 		while (iter.hasNext()) {
 			HashMap<String, String> mmp = coverages.get(iter.next()).getMap();
 			Iterator<String> innerItr = mmp.keySet().iterator();
-			while(innerItr.hasNext()){
+			while (innerItr.hasNext()) {
 				String key = innerItr.next();
-				if(mmp.get(key)==null)
+				if (mmp.get(key) == null)
 					mmp.remove(key);
 			}
-			
+
 			mmp.put("covpatient", patientId.toString());
 			String url = "org.freemedsoftware.module.PatientCoverages.Add";
-			if(mmp.get("id")!=null)
+			if (mmp.get("id") != null)
 				url = "org.freemedsoftware.module.PatientCoverages.Mod";
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			Util.showInfoMsg("PatientCoverages", "Updated patient Coverages.");
-			if (onCompletion != null) {
-				onCompletion.execute();
-			}
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { JsonUtil.jsonify(mmp) };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											url,
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(
-							com.google.gwt.http.client.Request request,
-							Throwable ex) {
-						GWT.log("Exception", ex);
-						Util.showErrorMsg("PatientCoverages", "Failed to update patient Coverages.");
-					}
-
-					public void onResponseReceived(
-							com.google.gwt.http.client.Request request,
-							com.google.gwt.http.client.Response response) {
-						if (200 == response.getStatusCode()) {
-							Boolean result = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"Boolean");
-							if (result != null) {
-								Util.showInfoMsg("PatientCoverages", "Updated patient Coverages.");
-								if (onCompletion != null) {
-									onCompletion.execute();
-								}
-							}
-						} else {
-							Window.alert(response.toString());
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				Util.showInfoMsg("PatientCoverages",
+						"Updated patient Coverages.");
+				if (onCompletion != null) {
+					onCompletion.execute();
+				}
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { JsonUtil.jsonify(mmp) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST, URL.encode(Util.getJsonRequest(
+								url, params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(
+								com.google.gwt.http.client.Request request,
+								Throwable ex) {
+							GWT.log("Exception", ex);
+							Util.showErrorMsg("PatientCoverages",
+									"Failed to update patient Coverages.");
 						}
-					}
-				});
-			} catch (RequestException e) {
-				GWT.log("Exception", e);
-				Util.showErrorMsg("PatientCoverages", "Failed to update patient Coverages.");
+
+						public void onResponseReceived(
+								com.google.gwt.http.client.Request request,
+								com.google.gwt.http.client.Response response) {
+							if (200 == response.getStatusCode()) {
+								Boolean result = (Boolean) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()), "Boolean");
+								if (result != null) {
+									Util.showInfoMsg("PatientCoverages",
+											"Updated patient Coverages.");
+									if (onCompletion != null) {
+										onCompletion.execute();
+									}
+								}
+							} else {
+								Window.alert(response.toString());
+							}
+						}
+					});
+				} catch (RequestException e) {
+					GWT.log("Exception", e);
+					Util.showErrorMsg("PatientCoverages",
+							"Failed to update patient Coverages.");
+				}
 			}
-		}
 		}
 	}
 
@@ -1015,42 +1069,9 @@ public class PatientCoverages extends Composite {
 							if (result != null) {
 								for (int iter = 0; iter < result.length; iter++) {
 									// Create new Coverage object
-									
+
 									Coverage x = new Coverage();
-									/*
-									x.setCoverageId(Integer.parseInt(result[iter].get("id")));
-									x.setInsuranceCompany(Integer.parseInt(result[iter].get("covinsco")));
-									x.setCoverageInsuranceType(Integer.parseInt(result[iter].get("covinstp")));
-									x.setProviderAcceptsAssigment(result[iter].get("covprovasgn"));
-									x.setAssigmentOfBenefits(result[iter].get("covbenasgn"));
-									x.setReleaseOfInformation(result[iter].get("covrelinfo"));
-									x.setReleaseDateSigned(result[iter].get("covrelinfodt"));
-									x.setGroupPlanName(result[iter].get("covplanname"));
-									x.setStartDate(result[iter].get("coveffdt"));//temporary
-									x.setInsuranceIDNumber(result[iter].get("covpatinsno"));
-									x.setInsuranceGroupNumber(result[iter].get("covpatgrpno"));
-									x.setInsuranceType(result[iter].get("covtype"));
-									x.setRelationshipToInsured(result[iter].get("covrel"));
-									if(!x.getRelationshipToInsured().equalsIgnoreCase("S")){
-										x.setInsuredFirstName(result[iter].get("covfname"));
-										x.setInsuredLastName(result[iter].get("covlname"));
-										x.setInsuredMiddleName(result[iter].get("covmname"));
-										x.setInsuredDOB(result[iter].get("covdob"));
-										x.setInsuredSex(result[iter].get("covsex"));
-										x.setInsuredSSN(result[iter].get("covssn"));
-										x.setInsuredAddress1(result[iter].get("covaddr1"));
-										x.setInsuredAddress2(result[iter].get("covaddr2"));
-										x.setInsuredCity(result[iter].get("covcity"));
-										x.setInsuredState(result[iter].get("covstate"));
-										x.setInsuredZip(result[iter].get("covzip"));
-									}
-									x.setCopay(result[iter].get("covcopay"));
-									x.setDeductable(result[iter].get("covdeduct"));
-									x.setReplaceLikeCoverage(result[iter].get(""));
-									x.setIsAssigning(result[iter].get("covisassigning"));
-									x.setSchoolNameForInsured(result[iter].get("covschool"));
-									x.setEmployerOfInsured(result[iter].get("covemployer"));
-									*/
+					
 									x.loadData(result[iter]);
 									// builder
 									addCoverage(new Integer(iter + 1), x);
@@ -1072,13 +1093,10 @@ public class PatientCoverages extends Composite {
 			// TODO stubbed mode goes here
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { cid.toString() };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.PatientCoverages.del",
-											params)));
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.PatientCoverages.del",
+							params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
@@ -1104,68 +1122,53 @@ public class PatientCoverages extends Composite {
 		return coverages;
 	}
 
-	
-	
-	
-	public static String returnRelationshipToInsured(String id)
-	{
-		if(id.equalsIgnoreCase("C"))
-		{
+	public static String returnRelationshipToInsured(String id) {
+		if (id.equalsIgnoreCase("C")) {
 			return "Child";
 		}
-		
-		else if(id.equalsIgnoreCase("H"))
-		{
+
+		else if (id.equalsIgnoreCase("H")) {
 			return "Husband";
 		}
-		
-		
-		
-		else if(id.equalsIgnoreCase("s"))
-		{
+
+		else if (id.equalsIgnoreCase("s")) {
 			return "Self";
-		}
-		else if(id.equalsIgnoreCase("W"))
-		{
+		} else if (id.equalsIgnoreCase("W")) {
 			return "Wife";
 		}
-		
-		else if(id.equalsIgnoreCase("D"))
-		{
+
+		else if (id.equalsIgnoreCase("D")) {
 			return "Child Not Fin";
 		}
-		
-		
-		else if(id.equalsIgnoreCase("SC"))
-		{
+
+		else if (id.equalsIgnoreCase("SC")) {
 			return "Step Child";
-		}
-		else if(id.equalsIgnoreCase("FC"))
-		{
+		} else if (id.equalsIgnoreCase("FC")) {
 			return "Foster Child";
-		}
-		else if(id.equalsIgnoreCase("WC"))
-		{
+		} else if (id.equalsIgnoreCase("WC")) {
 			return "Ward of Court";
-		}
-		else if(id.equalsIgnoreCase("HD"))
-		{
+		} else if (id.equalsIgnoreCase("HD")) {
 			return "HC Dependent";
 		}
-		
-		else if(id.equalsIgnoreCase("SD"))
-		{
+
+		else if (id.equalsIgnoreCase("SD")) {
 			return "Sponsored Dependent";
 		}
-		
-		else if(id.equalsIgnoreCase("LR"))
-		{
+
+		else if (id.equalsIgnoreCase("LR")) {
 			return "Medicare Legal Rep";
 		}
-		
-		
-		else
-	       return "other";
 
+		else
+			return "other";
+
+	}
+
+	public Integer getMaxCoveragesCount() {
+		return maxCoveragesCount;
+	}
+
+	public void setMaxCoveragesCount(Integer maxCoveragesCount) {
+		this.maxCoveragesCount = maxCoveragesCount;
 	}
 }

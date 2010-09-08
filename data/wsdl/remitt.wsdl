@@ -106,14 +106,8 @@
 <xs:element maxOccurs="unbounded" minOccurs="0" name="messages" nillable="true" type="xs:string" />
 <xs:element minOccurs="0" name="rawResponse" type="xs:string" />
 <xs:element minOccurs="0" name="status" type="tns:eligibilityStatus" />
-<xs:element minOccurs="0" name="successCode" type="tns:successCode" />
+<xs:element minOccurs="0" name="successCode" type="tns:eligibilitySuccessCode" />
 </xs:sequence>
-</xs:complexType>
-<xs:complexType name="eligibilityStatus">
-<xs:sequence />
-</xs:complexType>
-<xs:complexType name="successCode">
-<xs:sequence />
 </xs:complexType>
 <xs:complexType name="listRemittUsers">
 <xs:sequence />
@@ -129,6 +123,7 @@
 <xs:element minOccurs="0" name="callbackServiceUri" type="xs:string" />
 <xs:element minOccurs="0" name="callbackServiceWsdlUri" type="xs:string" />
 <xs:element minOccurs="0" name="callbackUsername" type="xs:string" />
+<xs:element minOccurs="0" name="contactEmail" type="xs:string" />
 <xs:element minOccurs="0" name="password" type="xs:string" />
 <xs:element maxOccurs="unbounded" minOccurs="0" name="roles" nillable="true" type="xs:string" />
 <xs:element minOccurs="0" name="username" type="xs:string" />
@@ -285,6 +280,26 @@
 <xs:element minOccurs="0" name="originalId" type="xs:string" />
 </xs:sequence>
 </xs:complexType>
+<xs:simpleType name="eligibilityStatus">
+<xs:restriction base="xs:string">
+<xs:enumeration value="OK" />
+<xs:enumeration value="BAD" />
+<xs:enumeration value="CONTINUATION" />
+<xs:enumeration value="SERVER_ERROR" />
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="eligibilitySuccessCode">
+<xs:restriction base="xs:string">
+<xs:enumeration value="SUCCESS" />
+<xs:enumeration value="VALIDATION_FAILURE" />
+<xs:enumeration value="PAYER_TIMEOUT" />
+<xs:enumeration value="PAYER_NOT_SUPPORTED" />
+<xs:enumeration value="SYSTEM_ERROR" />
+<xs:enumeration value="PAYER_ENROLLMENT_REQUIRED" />
+<xs:enumeration value="PROVIDER_ENROLLMENT_REQUIRED" />
+<xs:enumeration value="PRODUCT_REQUIRED" />
+</xs:restriction>
+</xs:simpleType>
 </xs:schema>
 <xs:schema targetNamespace="http://jaxb.dev.java.net/array" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 <xs:complexType final="#all" name="intArray">

@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.screen.ReportingScreen;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
@@ -64,7 +65,7 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 public class PatientReportingScreen extends PatientScreenInterface {
 
-	public final static String moduleName = "PatientReporting";
+	public final static String moduleName = ReportingScreen.moduleName;
 
 	protected CustomTable reportTable;
 

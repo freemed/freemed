@@ -36,6 +36,7 @@ import org.freemedsoftware.gwt.client.SystemNotifications;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.AccordionPanel;
 import org.freemedsoftware.gwt.client.widget.CustomIFrame;
 import org.freemedsoftware.gwt.client.widget.InfoDialog;
 import org.freemedsoftware.gwt.client.widget.Toaster;
@@ -159,7 +160,7 @@ public class MainScreen extends Composite {
 
 //	protected final DashboardScreen dashboard = new DashboardScreen();
 	
-	protected final DashboardScreenNew dashboardScreenNew = new DashboardScreenNew();
+	protected final DashboardScreenNew dashboardScreenNew = DashboardScreenNew.getInstance();
 
 	protected final HashMap<String, MenuIcon> leftNavMenuContainer = new HashMap<String, MenuIcon>();
 
@@ -169,8 +170,9 @@ public class MainScreen extends Composite {
 	protected final VerticalPanel billingAccPanel;
 	protected final VerticalPanel reportingAccPanel;
 	protected final VerticalPanel utilitiesAccPanel;
-	protected final DecoratedStackPanel stackPanel;
-//	protected final AccordionPanel stackPanel;
+//	protected final DecoratedStackPanel stackPanel;
+	protected final AccordionPanel stackPanel;
+	protected final HorizontalPanel shortCutsPanel;
 
 	public MainScreen() {
 		final DockPanel mainPanel = new DockPanel();
@@ -178,11 +180,7 @@ public class MainScreen extends Composite {
 		mainPanel.setSize("100%", "100%");
 
 		// CurrentState.retrieveUserConfiguration(true);
-		CurrentState.retrieveSystemConfiguration(true,new Command() {
-			@Override
-			public void execute() {
-			}
-		});
+		CurrentState.retrieveSystemConfiguration(true);
 
 		// populateLeftNavigationPanel();
 
@@ -254,191 +252,8 @@ public class MainScreen extends Composite {
 		
 		
 		// adding shortcuts panel at top right corder
-		final HorizontalPanel shortCutsPanel = new HorizontalPanel();
-		shortCutsPanel.setStyleName(AppConstants.STYLE_HEADER_PANEL	);
-
-		// adding current page help link
-		PushButton helpButton=new PushButton();
-		helpButton.setTitle("help");
-		helpButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-		helpButton.getUpFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/q_help.16x16.png"));
-		helpButton.getDownFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/q_help.16x16.png"));
-		helpButton.addClickHandler(new ClickHandler(){
-
-			public void onClick(ClickEvent event){
-				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					Window.alert("Running in stubbed mode");
-				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					CustomIFrame customIFrame = new CustomIFrame(Util.getHelpRequest(),(int)(Window.getClientWidth()*.60),(int)(Window.getClientHeight()*.60));
-					shortCutsPanel.add(customIFrame);
-					customIFrame.show();
-					customIFrame.center();
-				}
-			}
-		});
-		Util.attachHelp(helpButton, "Help Icon", "You can see the help of current selected tab!",true);
-		shortCutsPanel.add(helpButton);
-
-		// Adding spacer
-		separator = new HTML("|");
-		separator.setWidth("8px");
-		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		shortCutsPanel.add(separator);
 		
-		// adding scheduler link
-		PushButton schedulerButton=new PushButton();
-		schedulerButton.setTitle("scheduler");
-		schedulerButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-		schedulerButton.getUpFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/scheduler.16x16.png"));
-		schedulerButton.getDownFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/scheduler.16x16.png"));
-		schedulerButton.addClickHandler(new ClickHandler(){
-
-			public void onClick(ClickEvent event){
-				Util.spawnTab(AppConstants.SCHEDULER,
-						SchedulerScreen.getInstance());
-			}
-		});
-		Util.attachHelp(schedulerButton, "Scheduler", "You can see and book new appointments!",true);
-		shortCutsPanel.add(schedulerButton);
-		
-		// Adding spacer
-		separator = new HTML("|");
-		separator.setWidth("8px");
-		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		shortCutsPanel.add(separator);
-		
-		// adding Patient Search Link
-		PushButton ptSearchButton=new PushButton();
-		ptSearchButton.setTitle("search patient");
-		ptSearchButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-		ptSearchButton.getUpFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/patient_icon.16x16.png"));
-		ptSearchButton.getDownFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/patient_icon.16x16.png"));
-		ptSearchButton.addClickHandler(new ClickHandler(){
-
-			public void onClick(ClickEvent event){
-				Util.spawnTab(AppConstants.SEARCH,
-						PatientSearchScreen.getInstance());
-			}
-		});
-		Util.attachHelp(ptSearchButton, "Patient Search", "Search the patients with differnent options!",true);
-		shortCutsPanel.add(ptSearchButton);
-		
-		// Adding spacer
-		separator = new HTML("|");
-		separator.setWidth("8px");
-		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		shortCutsPanel.add(separator);
-		// Adding preferences link
-		PushButton preferencesButton=new PushButton();
-		preferencesButton.setTitle("preferences");
-		preferencesButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-		preferencesButton.getUpFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/preferences.16x16.png"));
-		preferencesButton.getDownFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/preferences.16x16.png"));
-		preferencesButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				// logout event when clicked on logout link
-				// if (Util.getProgramMode() == ProgramMode.STUBBED) {
-				// Window.alert("Running in stubbed mode");
-				// } else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				final PreferencesScreen preferencesScreen = PreferencesScreen
-						.getInstance();
-				Util.spawnTab("Preferences", preferencesScreen);
-				// }
-			}
-		});
-		Util.attachHelp(preferencesButton, "Preferences", "Set your prefereneces here!",true);
-		shortCutsPanel.add(preferencesButton);
-		separator = new HTML("|");
-		separator.setWidth("8px");
-		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		shortCutsPanel.add(separator);
-
-		// Adding support link
-		PushButton supportButton=new PushButton();
-		supportButton.setTitle("support");
-		supportButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-		supportButton.getUpFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/support.16x16.png"));
-		supportButton.getDownFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/support.16x16.png"));
-		supportButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				InfoDialog d = new InfoDialog();
-				d.setCaption("Support");
-				d
-						.setContent(new HTML(
-								"Commercial support is available for <b>FreeMED</b> through the Foundation's commercial support partners."
-										+ "<br/><br/>"
-										+ "More information is available at <a href=\"http://freemedsoftware.org/commercial_support\" target=\"_new\">http://freemedsoftware.org/commercial_support</a>."
-										+ "<br/><br/>"
-										+ "<hr/>"
-										+ "<br/></br>"
-										+ "Community support is available on the FreeMED group at "
-										+ "<a href=\"http://groups.google.com/group/freemed-support?hl=en\">http://groups.google.com/group/freemed-support?hl=en</a>."));
-				d.center();
-			}
-		});
-		Util.attachHelp(supportButton, "Support", "Check support details here!",true);
-		shortCutsPanel.add(supportButton);
-		// Adding logout link
-		separator = new HTML("|");
-		separator.setWidth("8px");
-		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		shortCutsPanel.add(separator);
-
-		// Adding logout link
-		PushButton logoutButton=new PushButton();
-		logoutButton.setTitle("logout");
-		logoutButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-		logoutButton.getUpFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/logoff.16x16.png"));
-		logoutButton.getDownFace().setImage(
-				new Image(GWT
-						.getHostPageBaseURL()
-						+ "resources/images/logoff.16x16.png"));
-		logoutButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				// logout event when clicked on logout link
-				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					Window.alert("Running in stubbed mode");
-				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-//					dashboard.saveArrangement();
-					Util.logout();
-				}
-			}
-		});
-		Util.attachHelp(logoutButton, "Logout", "Click here to logout!",true);
-		shortCutsPanel.add(logoutButton);
+		shortCutsPanel = new HorizontalPanel();
 		
 		// Adding shortCutsPanel into top header
 		topHeaderHorPanel.add(shortCutsPanel);
@@ -462,9 +277,9 @@ public class MainScreen extends Composite {
 		JsonUtil.debug("MainScreen: create accordion panel");
 
 		// Creating Left Navigation area with decorated stack panel
-		stackPanel = new DecoratedStackPanel();
+		stackPanel = new AccordionPanel();
 		stackPanel.setWidth("100%");
-		stackPanel.setHeight("100%");
+//		stackPanel.setHeight("100%");
 
 		{
 			JsonUtil.debug("MainScreen: add main pane");
@@ -567,10 +382,8 @@ public class MainScreen extends Composite {
 		CurrentState.retrieveUserConfiguration(true, new Command() {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");
-//				dashboard.loadWidgets();
+				dashboardScreenNew.loadWidgets();
 				dashboardScreenNew.reloadDashboard();
-				
-//				initMainScreen();
 			}
 		});
 
@@ -579,6 +392,11 @@ public class MainScreen extends Composite {
 		// mainPanel.setCellWidth(tabPanel, "100%");
 		// mainPanel.setCellHeight(tabPanel, "100%");
 
+		final HTML poweredByLabel = new HTML("Powered By FreeMED&trade;");
+		poweredByLabel.setStyleName(AppConstants.STYLE_LABEL_SMALL);
+		mainPanel.add(poweredByLabel, DockPanel.SOUTH);
+		mainPanel.setCellHorizontalAlignment(poweredByLabel, HasHorizontalAlignment.ALIGN_CENTER);
+		
 		JsonUtil.debug("MainScreen: split panel");
 		statusBarContainer = new HorizontalSplitPanel();
 		mainPanel.add(statusBarContainer, DockPanel.SOUTH);
@@ -596,14 +414,15 @@ public class MainScreen extends Composite {
 		if (Util.isStubbedMode()) {
 			statusBar2.setText("STUBBED / TEST MODE");
 		}
-
 		populateDefaultFacility();
 
 		// Create notification toaster
 		JsonUtil.debug("MainScreen: create toaster");
-		Toaster toaster = new Toaster();
-		CurrentState.assignToaster(toaster);
-		toaster.setTimeout(10);
+		if(CurrentState.getToaster()==null){
+			Toaster toaster = new Toaster();
+			CurrentState.assignToaster(toaster);
+			toaster.setTimeout(7);
+		}
 
 		// Handle system notifications
 		// notifications.setState(getCurrentState());
@@ -629,6 +448,205 @@ public class MainScreen extends Composite {
 		// show();
 	}
 
+	protected void initTopHeaderNavPanel(){
+
+		shortCutsPanel.clear();
+		
+		shortCutsPanel.setStyleName(AppConstants.STYLE_HEADER_PANEL	);
+		// adding current page help link
+		PushButton helpButton=new PushButton();
+		helpButton.setTitle("help");
+		helpButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+		helpButton.getUpFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/help.16x16.png"));
+		helpButton.getDownFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/help.16x16.png"));
+		helpButton.addClickHandler(new ClickHandler(){
+
+			public void onClick(ClickEvent event){
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
+					Window.alert("Running in stubbed mode");
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+					CustomIFrame customIFrame = new CustomIFrame(Util.getHelpRequest(),(int)(Window.getClientWidth()*.60),(int)(Window.getClientHeight()*.60));
+					shortCutsPanel.add(customIFrame);
+					customIFrame.show();
+					customIFrame.center();
+				}
+			}
+		});
+		Util.attachHelp(helpButton, "Help Icon", "Help for the currently selected tab.",true);
+		shortCutsPanel.add(helpButton);
+
+		HTML separator = null;
+		if(CurrentState.isMenuAllowed(AppConstants.SYSTEM_CATEGORY,AppConstants.SCHEDULER)){
+			// Adding spacer
+			separator = new HTML("|");
+			separator.setWidth("8px");
+			separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			shortCutsPanel.add(separator);
+			
+			// adding scheduler link
+			PushButton schedulerButton=new PushButton();
+			schedulerButton.setTitle("scheduler");
+			schedulerButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+			schedulerButton.getUpFace().setImage(
+					new Image(GWT
+							.getHostPageBaseURL()
+							+ "resources/images/scheduler.16x16.png"));
+			schedulerButton.getDownFace().setImage(
+					new Image(GWT
+							.getHostPageBaseURL()
+							+ "resources/images/scheduler.16x16.png"));
+			schedulerButton.addClickHandler(new ClickHandler(){
+	
+				public void onClick(ClickEvent event){
+					Util.spawnTab(AppConstants.SCHEDULER,
+							SchedulerScreen.getInstance());
+				}
+			});
+			Util.attachHelp(schedulerButton, "Scheduler", "View and book appointments.",true);
+			shortCutsPanel.add(schedulerButton);
+		}
+		
+		if(CurrentState.isMenuAllowed(AppConstants.PATIENT_CATEGORY,AppConstants.SEARCH)){
+			// Adding spacer
+			separator = new HTML("|");
+			separator.setWidth("8px");
+			separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			shortCutsPanel.add(separator);
+			
+			// adding Patient Search Link
+			PushButton ptSearchButton=new PushButton();
+			ptSearchButton.setTitle("search patient");
+			ptSearchButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+			ptSearchButton.getUpFace().setImage(
+					new Image(GWT
+							.getHostPageBaseURL()
+							+ "resources/images/patient_icon.16x16.png"));
+			ptSearchButton.getDownFace().setImage(
+					new Image(GWT
+							.getHostPageBaseURL()
+							+ "resources/images/patient_icon.16x16.png"));
+			ptSearchButton.addClickHandler(new ClickHandler(){
+	
+				public void onClick(ClickEvent event){
+					Util.spawnTab(AppConstants.SEARCH,
+							PatientSearchScreen.getInstance());
+				}
+			});
+			Util.attachHelp(ptSearchButton, "Patient Search", "Search for patients.",true);
+		shortCutsPanel.add(ptSearchButton);
+		}
+		// Adding spacer
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
+		// Adding preferences link
+		PushButton preferencesButton=new PushButton();
+		preferencesButton.setTitle("preferences");
+		preferencesButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+		preferencesButton.getUpFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/preferences.16x16.png"));
+		preferencesButton.getDownFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/preferences.16x16.png"));
+		preferencesButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				// logout event when clicked on logout link
+				// if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Window.alert("Running in stubbed mode");
+				// } else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				final PreferencesScreen preferencesScreen = PreferencesScreen
+						.getInstance();
+				Util.spawnTab("Preferences", preferencesScreen);
+				// }
+			}
+		});
+		Util.attachHelp(preferencesButton, "Preferences", "Set your user prefereneces.",true);
+		shortCutsPanel.add(preferencesButton);
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
+
+		// Adding support link
+		PushButton supportButton=new PushButton();
+		supportButton.setTitle("support");
+		supportButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+		supportButton.getUpFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/support.16x16.png"));
+		supportButton.getDownFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/support.16x16.png"));
+		supportButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				InfoDialog d = new InfoDialog();
+				d.setCaption("Support");
+				d
+						.setContent(new HTML(
+								"Commercial support is available for <b>FreeMED</b> through the Foundation's commercial support partners."
+										+ "<br/><br/>"
+										+ "More information is available at <a href=\"http://freemedsoftware.org/commercial_support\" target=\"_new\">http://freemedsoftware.org/commercial_support</a>."
+										+ "<br/><br/>"
+										+ "<hr/>"
+										+ "<br/></br>"
+										+ "Community support is available on the FreeMED group at "
+										+ "<a href=\"http://groups.google.com/group/freemed-support?hl=en\">http://groups.google.com/group/freemed-support?hl=en</a>."));
+				d.center();
+			}
+		});
+		Util.attachHelp(supportButton, "Support", "More information about support.",true);
+		shortCutsPanel.add(supportButton);
+		// Adding logout link
+		separator = new HTML("|");
+		separator.setWidth("8px");
+		separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		shortCutsPanel.add(separator);
+
+		// Adding logout link
+		PushButton logoutButton=new PushButton();
+		logoutButton.setTitle("logout");
+		logoutButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
+		logoutButton.getUpFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/logout.16x16.png"));
+		logoutButton.getDownFace().setImage(
+				new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/logout.16x16.png"));
+		logoutButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				// logout event when clicked on logout link
+				if (Util.getProgramMode() == ProgramMode.STUBBED) {
+					Window.alert("Running in stubbed mode");
+				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+//					dashboard.saveArrangement();
+					Util.logout(new Command() {
+						@Override
+						public void execute() {
+							// TODO Auto-generated method stub
+							notifications.stop();
+						}
+					});
+				}
+			}
+		});
+		Util.attachHelp(logoutButton, "Logout", "Logout of FreeMED.",true);
+		shortCutsPanel.add(logoutButton);
+	} 
+	
 	public MainScreen getMainScreen(){
 		return this;
 	}
@@ -637,11 +655,15 @@ public class MainScreen extends Composite {
 		initNavigations();
 		CurrentState.CUR_THEME = CurrentState.getUserConfig(AppConstants.SYSTEM_THEME,"String").toString();
 		Util.updateStyleSheets(CurrentState.CUR_THEME, CurrentState.LAST_THEME);
-		CurrentState.SYSTEM_NOTIFY_TYPE = CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString();
+		CurrentState.assignSYSTEM_NOTIFY_TYPE(CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString());
 		populateDefaultFacility();
 	}
 
 	public void initNavigations() {
+		
+		//Initializing to header navigations
+		initTopHeaderNavPanel();
+		
 		JsonUtil.debug("MainScreen.initNavigations: start");
 		emptyLeftNavMenuContainer();
 		/*
@@ -865,7 +887,7 @@ public class MainScreen extends Composite {
 				showBillingPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
 						.getHostPageBaseURL()
-						+ "resources/images/accounts_receivable.32x32.png"),
+						+ "resources/images/accounts_receivableNew.32x32.png"),
 						AppConstants.ACCOUNT_RECEIVABLE, new Command() {
 							public void execute() {
 								Util.spawnTab(AppConstants.ACCOUNT_RECEIVABLE,
@@ -1011,6 +1033,22 @@ public class MainScreen extends Composite {
 				utilitiesAccPanel.add(menuIcon);
 			}
 			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
+					AppConstants.FIELD_CHECKER)) {
+				showUtilitiesPanel = true;
+				MenuIcon menuIcon = new MenuIcon(new Image(GWT
+						.getHostPageBaseURL()
+						+ "resources/images/modules.32x32.png"),
+						AppConstants.FIELD_CHECKER, new Command() {
+							public void execute() {
+								Util.spawnTab(AppConstants.FIELD_CHECKER,
+										ModuleFieldCheckerTypeEntryScreen.getInstance());
+								ModuleFieldCheckerTypeEntryScreen.getInstance().retrieveAndFillListData();
+							}
+						});
+				leftNavMenuContainer.put(AppConstants.FIELD_CHECKER, menuIcon);
+				utilitiesAccPanel.add(menuIcon);
+			}
+			if (isNeedToCreate(AppConstants.UTILITIES_CATEGORY,
 					AppConstants.USER_MANAGEMENT)) {
 				showUtilitiesPanel = true;
 				MenuIcon menuIcon = new MenuIcon(new Image(GWT
@@ -1083,7 +1121,8 @@ public class MainScreen extends Composite {
 			addWighetToStack(utilitiesAccPanel, AppConstants.UTILITIES_CATEGORY);
 		// ////////////////////////////////End Adding utilities panel options
 		// ///////////////////////////
-		stackPanel.showStack(0);//seselectPanel(0);
+		stackPanel.selectPanel(0);//showStack(0);//seselectPanel(0);
+		JsonUtil.debug("MainScreen.initNavigations: ends");
 	}
 
 	public void removeWighetFromStack(Widget widget) {
@@ -1092,8 +1131,11 @@ public class MainScreen extends Composite {
 	}
 
 	public void addWighetToStack(Widget widget, String title) {
-		if (stackPanel.getWidgetIndex(widget) == -1)
+		/*if (stackPanel.getWidgetIndex(widget) == -1)
 			stackPanel.add(widget,getHeaderString(title,null),true);
+			*/
+		if (stackPanel.getPanelIndex(widget) == -1)
+			stackPanel.add(title,widget);
 	}
 
 	/*
@@ -1314,17 +1356,21 @@ public class MainScreen extends Composite {
 		removeWighetFromStack(billingAccPanel);
 		removeWighetFromStack(reportingAccPanel);
 		removeWighetFromStack(utilitiesAccPanel);
+		JsonUtil.debug("MainScreen.emptyLeftNavMenuContainer: ends");
 	}
 
 	public void refreshMainScreen() {
 		JsonUtil.debug("MainScreen.refreshMainScreen: start");
 		setLoginUserInfo();
+		notifications.start();
+//		emptyLeftNavMenuContainer();
 		CurrentState.retrieveUserConfiguration(true,new Command() {
 			public void execute() {
 				JsonUtil.debug("MainScreen: Set State of dashboard");
 //				dashboard.afterStateSet();
 //				dashboard.refreshDashBoardWidgets();
 //				dashboard.refreshDashBoardWidgets();
+				dashboardScreenNew.loadWidgets();
 				dashboardScreenNew.reloadDashboard();
 				initMainScreen();
 			}

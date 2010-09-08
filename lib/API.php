@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2009 FreeMED Software Foundation
+ // Copyright (C) 1999-2010 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -904,7 +904,8 @@ class freemed {
 			__("LR") => 'Medicare Legal Rep',
 			__("O") => 'Other'
 		);
-	} // end function freemed::religion_widget
+	} // end function freemed::coverage_relationship_picklist
+
 	// Function: freemed::secure_filename
 	//
 	//	Remove potentially hazardous characters from filenames

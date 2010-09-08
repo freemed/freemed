@@ -39,6 +39,7 @@ class SchedulerBlockSlots extends SupportModule {
 		'sbshour',
 		'sbsminute',
 		'sbsduration',
+		'sbdate',
 		'sbsprovider',
 		'sbsprovidergroup',
 		'user'
@@ -70,7 +71,7 @@ class SchedulerBlockSlots extends SupportModule {
 	//	array of Hashes.
 	public function GetAll () {
 		freemed::acl_enforce( 'admin', 'write' );
-		$q = "select sbs.id, sbs.sbshour as starthour,sbs.sbsminute as startmin,sbs.sbsduration as duration,".
+		$q = "select sbs.id, sbs.sbshour as starthour,sbs.sbsminute as startmin,sbs.sbsduration as duration,sbs.sbdate as date,".
 			"sbs.sbsprovider,sbs.sbsprovidergroup,sbs.stamp as entered_on,u.userdescrip as entered_by,".
 			"concat(p.phylname,' ,',p.phyfname,' ',p.phymname) as provider,pg.phygroupname as provider_group ".
 			"from scheduler_block_slots sbs ".
@@ -87,14 +88,14 @@ class SchedulerBlockSlots extends SupportModule {
 	// Returns:
 	//
 	//	array of Hashes.
-	public function GetBlockedTimeSlots ($providerid) {
+	public function GetBlockedTimeSlots ($providerid,$date=null) {
 		
 		freemed::acl_enforce( 'scheduling', 'write' );
 		
 		$providerGroups = CreateObject('org.freemedsoftware.module.ProviderGroups');
 		$providerGroupsIds = $providerGroups->getGroupIds($providerid);
 		 	
-		$q = "select sbshour,sbsminute,sbsduration from scheduler_block_slots where sbsprovider=".$GLOBALS['sql']->quote( $providerid );
+		$q = "select sbshour,sbsminute,sbsduration from scheduler_block_slots where sbsprovider=".$GLOBALS['sql']->quote( $providerid ).($date?" and sbdate='".$date."'":"");
 		foreach($providerGroupsIds as $ids){
 			$q = $q . " or sbsprovidergroup = ".$ids['id'] ;
 		}

@@ -37,6 +37,7 @@ import org.freemedsoftware.gwt.client.screen.patient.AdvancePayment;
 import org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.DrugSampleEntry;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
+import org.freemedsoftware.gwt.client.screen.patient.EpisodeOfCareScreen;
 import org.freemedsoftware.gwt.client.screen.patient.FormEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ImmunizationEntry;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
@@ -48,6 +49,7 @@ import org.freemedsoftware.gwt.client.screen.patient.PrescriptionsScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProcedureScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
+import org.freemedsoftware.gwt.client.screen.patient.ScannedDocumentsEntryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.SummaryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.VitalsEntry;
 import org.freemedsoftware.gwt.client.widget.PatientInfoBar;
@@ -63,7 +65,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -102,7 +103,9 @@ public class PatientScreen extends ScreenInterface {
 		{
 			final MenuBar menuBar = new MenuBar();
 			verticalPanel.add(menuBar);
-
+			
+			boolean menuItemAdded = false;
+			
 			final MenuBar menuBar_1 = new MenuBar(true);
 			if(CurrentState.isActionAllowed(AllergyEntryScreen.moduleName, AppConstants.WRITE)){
 				menuBar_1.addItem("Allergy", new Command() {
@@ -113,6 +116,7 @@ public class PatientScreen extends ScreenInterface {
 						allergyEntryScreen.populate();
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			if(true){
@@ -122,14 +126,29 @@ public class PatientScreen extends ScreenInterface {
 								new DrugSampleEntry(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 			if(true){
-				menuBar_1.addItem("Encounter", new Command() {
+				menuBar_1.addItem("Episode of Care", new Command() {
 					public void execute() {
-						Util.spawnTabPatient("Encounter",
-								new EncounterScreen(), getObject());
+						EpisodeOfCareScreen eoc=new EpisodeOfCareScreen();
+						Util.spawnTabPatient("Episode of Care",
+								eoc, getObject());
+						eoc.loadData();
 					}
 				});
+				menuItemAdded = true;
+			}
+			if(true){
+				menuBar_1.addItem("Encounter/Progress Notes", new Command() {
+					public void execute() {
+						EncounterScreen ens=new EncounterScreen();
+						Util.spawnTabPatient("Encounter/Progress Notes",
+								ens, getObject());
+						ens.laodData();
+					}
+				});
+				menuItemAdded = true;
 			}
 			
 			if(true){
@@ -139,6 +158,7 @@ public class PatientScreen extends ScreenInterface {
 								new PatientIdEntry(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 			
 			if(true){
@@ -148,6 +168,7 @@ public class PatientScreen extends ScreenInterface {
 								getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			if(true){
@@ -157,6 +178,7 @@ public class PatientScreen extends ScreenInterface {
 								new ImmunizationEntry(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 			
 			if(true){
@@ -166,6 +188,7 @@ public class PatientScreen extends ScreenInterface {
 								getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 			
 			if(true){
@@ -175,6 +198,7 @@ public class PatientScreen extends ScreenInterface {
 								 new PatientCorrespondenceEntry(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			if(true){
@@ -184,6 +208,7 @@ public class PatientScreen extends ScreenInterface {
 								 new PatientLinkEntry(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			if(true){
@@ -193,6 +218,7 @@ public class PatientScreen extends ScreenInterface {
 								 new ProgressNoteEntry(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			if(CurrentState.isActionAllowed(PrescriptionsScreen.moduleName, AppConstants.WRITE)){
@@ -202,6 +228,7 @@ public class PatientScreen extends ScreenInterface {
 								 new PrescriptionsScreen(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			if(true){
@@ -211,6 +238,7 @@ public class PatientScreen extends ScreenInterface {
 								getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 			
 			if(true){
@@ -220,9 +248,23 @@ public class PatientScreen extends ScreenInterface {
 								getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
-			menuBar.addItem("New", menuBar_1);
+			if(true){
+				menuBar_1.addItem("Scanned Documents", new Command() {
+					public void execute() {
+						ScannedDocumentsEntryScreen scannedDocumentsEntryScreen = new ScannedDocumentsEntryScreen();
+						Util.spawnTabPatient("Scanned Documents", scannedDocumentsEntryScreen,
+								getObject());
+						scannedDocumentsEntryScreen.populateAvailableData();
+					}
+				});
+				menuItemAdded = true;
+			}
+			if(menuItemAdded)
+				menuBar.addItem("New", menuBar_1);
+			menuItemAdded = false;
 			final MenuBar menuBar_2 = new MenuBar(true);
 			if(CurrentState.isActionAllowed(PatientReportingScreen.moduleName, AppConstants.SHOW)){
 				menuBar_2.addItem("Patient Reporting", new Command() {
@@ -231,6 +273,7 @@ public class PatientScreen extends ScreenInterface {
 								 new PatientReportingScreen(), getObject());
 					}
 				});
+				menuItemAdded = true;
 			}
 
 			menuBar_2.addItem("Billing", (Command) null);

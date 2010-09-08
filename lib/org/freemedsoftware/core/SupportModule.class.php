@@ -142,6 +142,14 @@ class SupportModule extends BaseModule {
 	//	Defaults to 'support'.
 	//
 	var $acl_category = 'support';
+	
+	
+	// Variable: $this->acl_category
+	//
+	//	Category of ACL query to be performed by module functions.
+	//	Defaults to 'support'.
+	//
+	var $archive_field = '';
 
 	// contructor method
 	public function __construct () {
@@ -227,7 +235,8 @@ class SupportModule extends BaseModule {
 		if (!$this->acl_access('add') and !$this->defeat_acl) {
 			//trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
 		}
-
+		
+		
 		$ourdata = $this->prepare( (array) $data );
 		$this->add_pre( &$ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
@@ -239,6 +248,7 @@ class SupportModule extends BaseModule {
 		$result = $GLOBALS['sql']->query ( $query );
 
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+		
 		$this->add_post( $new_id, &$ourdata );
 		return $new_id;
 	} // end function add
@@ -270,7 +280,21 @@ class SupportModule extends BaseModule {
 		}
 
 		$this->del_pre( $id + 0 );
-		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
+		if($this->archive_field=="")
+			$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
+		else
+			$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=1 WHERE id = '".addslashes( $id+0 )."'";
+		$result = $GLOBALS['sql']->query ( $query );
+		return true;
+	} // end function del
+	
+	public function un_archive ( $id ) {
+		if ( !$this->acl_access( 'delete' ) ) {
+			//trigger_error(__("You don't have permission to do that."), E_USER_ERROR);
+		}
+
+		$this->del_pre( $id + 0 );
+		$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=0 WHERE id = '".addslashes( $id+0 )."'";
 		$result = $GLOBALS['sql']->query ( $query );
 		return true;
 	} // end function del
@@ -371,7 +395,18 @@ class SupportModule extends BaseModule {
 				return false;
 			}
 		}
-		$q = "SELECT *,".( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ).$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".( $criteria_field ? " WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' " : "" )." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT ${limit}";
+		$condition="";
+		if($criteria_field!=NULL)
+			$condition=" WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' ";
+		if($this->archive_field!=""){
+			if($criteria_field!=NULL)
+				$condition=$condition." AND ".$this->archive_field." != 1 ";
+			else 
+				$condition=" WHERE ".$this->archive_field." != 1 ";	
+		}
+		
+		$q = "SELECT *,".( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ).$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".$condition." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT ${limit}";
+		//return $q;
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
 
@@ -411,7 +446,7 @@ class SupportModule extends BaseModule {
 	//
 	//	Array of hashes
 	//
-	function picklist ( $criteria = NULL ) {
+	function picklist ( $criteria = NULL,$fieldValues=NULL ) {
 		if (!(strpos($this->widget_hash, "##") === false)) {
 			$value = '';
 			$hash_split = explode('##', $this->widget_hash);
@@ -423,10 +458,37 @@ class SupportModule extends BaseModule {
 		} else {
 			$c[] = "LOWER(".$this->widget_hash.") LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
 		}
-
+		$condition="";
+		if(is_array($c))
+			$condition=" WHERE (".join(' OR ',$c).")";
+		if($this->archive_field!=""){
+			if(is_array($c)!=NULL)
+				$condition=$condition." AND (".$this->archive_field." != 1 OR ".$this->archive_field." IS NULL) ";
+			else 
+				$condition=" WHERE ".$this->archive_field." != 1 OR ".$this->archive_field." IS NULL ";	
+		}
+		if($fieldValues!=NULL){
+			$count=0;
+			$fieldsq='';
+			foreach ($fieldValues AS $k => $v) {
+				if($count==0){
+					$fieldsq=$k."= '".$v."' ";
+				}
+				else{
+					$fieldsq=$fieldsq." AND ".$k."= '".$v."' ";
+				}
+				$count++;				
+			}
+			if($condition==''){
+				$condition=" WHERE ".$fieldsq;	
+			}
+			else{
+				$condition=$condition." AND ".$fieldsq;	
+			}
+		}
+		//return $condition;
 		$query = "SELECT * FROM ".$this->table_name.
-			" ".$this->FormJoinClause()." ".
-			( is_array($c) ? " WHERE ".join(' OR ',$c) : "" ).
+			" ".$this->FormJoinClause()." ".$condition.
 			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
 			" LIMIT 20";
 		//syslog(LOG_INFO, $query);

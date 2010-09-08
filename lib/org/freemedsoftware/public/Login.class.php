@@ -95,6 +95,18 @@ class Login {
 			syslog(LOG_INFO, "org.freemedsoftware.public.Validate: could not find user '${username}'");
 			return false;
 		}
+
+		//If user is not admin
+		if(!($r['id'] == 1)){
+			// Find this user in provided facility
+	  		$r2 = $GLOBALS['sql']->queryRow("SELECT id FROM user WHERE username = '".addslashes($username)."' and FIND_IN_SET(".$GLOBALS['sql']->quote($location).",userfac)");
+		
+			// If the user isn't allowed in provied facility
+			if (!$r2['id']) {
+				syslog(LOG_INFO, "org.freemedsoftware.public.Validate: could not find user '${username}' in facility '$location'");
+				return "NOT_IN_FACILITY";//Not in this facility
+			}
+		}
 	
 		//syslog(LOG_INFO, "pw in db = $r[userpassword]");
 

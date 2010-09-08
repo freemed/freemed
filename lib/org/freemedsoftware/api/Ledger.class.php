@@ -106,6 +106,27 @@ class Ledger {
 				case 'type':
 				if ($v) $q[] = "pa.payreccat = '".addslashes($v)."'";
 				break;
+				
+				case 'date_from':
+				if ($v) $q[] = "pa.payrecdtadd >= '".addslashes($v)."'";
+				break;
+				
+				case 'date_to':
+				if ($v) $q[] = "pa.payrecdtadd <= '".addslashes($v)."'";
+				break;
+				
+				case 'tag':
+				$tag_object = CreateObject('org.freemedsoftware.module.PatientTag');
+				$obj = $tag_object->SimpleTagSearch($v);
+				for($i = 0; $i < count($obj); $i++){
+					$patient_ids[] = "p.procpatient = '".$obj[$i]['patient_record']."'";
+				}
+				$condition = join(' OR ', $patient_ids);
+				if($condition != "") {
+					$condition = '('.$condition.')';
+				}
+				$q[] = $condition;
+				break;
 			} // end outer criteria type switch
 		} // end criteria foreach loop
 
@@ -124,7 +145,7 @@ class Ledger {
 			"p.id AS procedure_id, ".
 			"p.procdt AS date_of, ".
 			"DATE_FORMAT(p.procdt, '%m/%d/%Y') AS date_of_mdy, ".
-			"pa.payrecdt AS payment_date, ".
+			"pa.payrecdtadd AS payment_date, ".
 			"DATE_FORMAT(pa.payrecdt, '%m/%d/%Y') AS payment_date_mdy, ".
 			"pa.payreccat AS item_type_id, ".
 			"CASE pa.payreccat ".
@@ -1260,7 +1281,7 @@ class Ledger {
 	public function getCoveragesCopayInfo($ptid, $procid){
 		if($procid==0){
 			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covcopay AS copay, c.covtype AS type from coverage c ".
-			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where covtype=1 AND c.covcopay >0 AND c.covpatient=".$GLOBALS['sql']->quote( $ptid );
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covcopay >0 AND c.covpatient=".$GLOBALS['sql']->quote( $ptid )." ORDER BY c.covtype LIMIT 1";
 		}
 		else{
 			$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procid);
@@ -1283,7 +1304,7 @@ class Ledger {
 	public function getCoveragesDeductableInfo($ptid, $procid){
 		if($procid==0){
 			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covdeduct AS deduct, c.covtype AS type from coverage c ".
-			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where covtype=1 AND c.covdeduct >0 AND c.covpatient=".$GLOBALS['sql']->quote( $ptid );
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covdeduct >0 AND c.covpatient=".$GLOBALS['sql']->quote( $ptid )." ORDER BY c.covtype LIMIT 1";
 		}
 		else{
 			$procedure_object = CreateObject('org.freemedsoftware.api.Procedure', $procid);

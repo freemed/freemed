@@ -176,9 +176,6 @@ class Reporting extends SupportModule {
 				break;
 				
 				case 'Facility':
-				$pass[] = $GLOBALS['sql']->quote( ((int) HTTP_Session2::get('facility_id')));
-				break;
-				
 				case 'BottleID':
 				case 'TestStatus':
 				case 'MessageID':

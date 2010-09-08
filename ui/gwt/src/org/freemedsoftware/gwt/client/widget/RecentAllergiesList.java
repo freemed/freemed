@@ -52,6 +52,7 @@ public class RecentAllergiesList extends WidgetInterface {
 
 	public RecentAllergiesList() {
 		allergiesTable = new CustomTable();
+		allergiesTable.setWidth("100%");
 		initWidget(allergiesTable);
 		allergiesTable.addColumn("Allergy", "allergy");
 		allergiesTable.addColumn("Reaction", "reaction");

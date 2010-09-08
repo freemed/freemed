@@ -24,8 +24,13 @@
  */
  %>
 <%@page import="java.io.IOException"%>
+<%@page import="org.apache.commons.httpclient.HttpMethod"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="org.apache.commons.httpclient.NameValuePair"%>
 <%@page import="org.apache.commons.httpclient.HttpClient"%>
 <%@page import="org.apache.commons.httpclient.methods.GetMethod"%>
+<%@page import="org.apache.commons.httpclient.methods.PostMethod"%>
 <%@page import="org.apache.commons.httpclient.params.HttpMethodParams"%>
 <%@page	import="org.apache.commons.httpclient.DefaultHttpMethodRetryHandler"%>
 <%@page import="org.apache.commons.httpclient.HttpStatus"%>
@@ -38,28 +43,48 @@
 			HttpServletResponse response) {
 		try {
 			String module = request.getParameter("module");
-			String queryString = request.getQueryString();
+			String url = serverURL + module;
+			
+			Map map = request.getParameterMap();
+			int paramCount = 1;
+			if(map.size()>1)
+				paramCount = map.size();
+			NameValuePair[] nameValuePair = new NameValuePair[paramCount-1];  
+			//map.remove("module");
 			String params = "";
-			int paramIndex = queryString.indexOf("param0");
-			if (paramIndex != -1)
-				params = queryString.substring(paramIndex);
-			String url = serverURL + module + "?" + params;
-
-			GetMethod method = new GetMethod(url);
-
+			int index = 0;
+			Iterator iterator = map.keySet().iterator();
+			while(iterator.hasNext()){
+				Object key = iterator.next();
+				if(!key.toString().equalsIgnoreCase("module")){
+					NameValuePair valuePair = new NameValuePair(key.toString(),request.getParameter(key.toString()));
+					nameValuePair[index++] = valuePair; 
+					params = params + key.toString()+"=" +  request.getParameter(key.toString())+"&";
+				}
+			}
+			
+			HttpMethod method = null;
+			
+			if(request.getMethod().trim().equalsIgnoreCase("GET")){
+				method = new GetMethod(url+"?"+params);
+			}else{ 
+				method = new PostMethod(url);
+				if(nameValuePair.length>0){
+					((PostMethod)method).addParameters(nameValuePair);
+				}
+			}
+			
 			// Provide custom retry handler is necessary
 			method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-					new DefaultHttpMethodRetryHandler(3, false));
-
+					new DefaultHttpMethodRetryHandler(1, false));
+					
 			try {
 				// Execute the method.
 				int statusCode = client.executeMethod(method);
-
 				if (statusCode != HttpStatus.SC_OK) {
 					System.err.println("Method failed: "
 							+ method.getStatusLine());
 				}
-
 				// Read the response body.
 				byte[] responseBody = method.getResponseBody();
 
@@ -67,6 +92,11 @@
 				// Use caution: ensure correct character encoding and is not binary data
 				//System.out.println(new String(responseBody));
 				response.getWriter().write(new String(responseBody));
+			/*if(true){
+				response.getWriter().write("2222");
+				return;
+			}
+			*/
 
 			} catch (HttpException e) {
 				System.err.println("Fatal protocol violation: "
@@ -81,6 +111,7 @@
 			}
 		} catch (Exception e) {
 		}
+		
 	}%>
 
 <%

@@ -28,7 +28,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
@@ -48,7 +50,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -57,7 +58,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 
 public class LedgerWidget extends Composite {
@@ -103,6 +103,8 @@ public class LedgerWidget extends Composite {
 	protected String covid;
 	protected String deductId;
 	protected Label payTypelb;
+	protected boolean hasInsurance=false;
+	protected int covCount; 
 
 	public LedgerWidget(String prid, String pId, String pct, PayCategory pcat,
 			CustomRequestCallback cb) {
@@ -115,6 +117,7 @@ public class LedgerWidget extends Composite {
 		ledgerPanel.setSpacing(10);
 		initWidget(ledgerPanel);
 		moduleName = "org.freemedsoftware.api.Ledger";
+		covCount=0;
 		createCommonElements();
 		handlePayCategory(paycat);
 	}
@@ -180,15 +183,16 @@ public class LedgerWidget extends Composite {
 		ledgerPanel.add(ledgerFlexTable);
 		buttonsActionPanel = new HorizontalPanel();
 		buttonsActionPanel.setSpacing(5);
-		CustomButton submitBtn = new CustomButton("Submit",AppConstants.ICON_SEND);
+		CustomButton submitBtn = new CustomButton("Submit",
+				AppConstants.ICON_SEND);
 		submitBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				prepareDate();
 			}
-
 		});
-		CustomButton cancelBtn = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		CustomButton cancelBtn = new CustomButton("Cancel",
+				AppConstants.ICON_CANCEL);
 		final LedgerWidget lw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -213,7 +217,6 @@ public class LedgerWidget extends Composite {
 		fieldCounter = 0;
 		payTypelb = new Label("Payment Type");
 		paymentTypeGroup = new CustomRadioButtonGroup("actiontype");
-		
 
 		paymentTypeGroup.addItem("Payment", "1", new Command() {
 			@Override
@@ -226,7 +229,6 @@ public class LedgerWidget extends Composite {
 			public void execute() {
 				createCopayUI();
 			}
-
 		});
 		paymentTypeGroup.addItem("Deductable", "3", new Command() {
 			@Override
@@ -249,7 +251,6 @@ public class LedgerWidget extends Composite {
 			Label paySrclb = new Label("Payment Source");
 			paySrcList = new CustomListBox();
 			paySrcList.addItem("Patient", "0");
-			loadInsuranceList(paySrcList);
 			loadCoverageByType(1, paySrcList);
 			loadCoverageByType(2, paySrcList);
 			loadCoverageByType(3, paySrcList);
@@ -257,6 +258,15 @@ public class LedgerWidget extends Composite {
 			ledgerFlexTable.setWidget(fieldCounter, 0, paySrclb);
 			ledgerFlexTable.setWidget(fieldCounter, 1, paySrcList);
 			fieldCounter++;
+		}
+		else{
+			if(procCovType.equals("0")){
+				paymentTypeGroup.customRadioButtonGroup.get(1).setEnabled(false);
+				paymentTypeGroup.customRadioButtonGroup.get(2).setEnabled(false);
+			}
+			else{
+				hasInsurance=true;
+			}
 		}
 		Label payMethodlb = new Label("Payment Method");
 		payTypeList = new CustomListBox();
@@ -345,6 +355,7 @@ public class LedgerWidget extends Composite {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createCopayUI() {
 		// headLb.setText("Copay");
 		fieldCounter = 0;
@@ -374,7 +385,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 0, payMethodlb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payTypeList);
 		fieldCounter++;
-		
+
 		payDateLb.setText("Date of Copay");
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
@@ -399,12 +410,11 @@ public class LedgerWidget extends Composite {
 						if (data != null) {
 							HashMap<String, String> result = (HashMap<String, String>) data;
 							tbAmount.setText("");
-							//tbAmount.setEnabled(false);
-							if (result!=null) {
-										tbAmount
-												.setText(result.get("copay"));
-										covid = result.get("Id");
-										//tbAmount.setEnabled(false);								
+							// tbAmount.setEnabled(false);
+							if (result != null) {
+								tbAmount.setText(result.get("copay"));
+								covid = result.get("Id");
+								// tbAmount.setEnabled(false);
 							}
 						}
 					}
@@ -413,7 +423,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbAmount);
 
 		fieldCounter++;
-		
+
 		commonFieldsCount = fieldCounter;
 		ledgerPanel.add(buttonsActionPanel);
 	}
@@ -435,7 +445,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbAmount);
 		fieldCounter++;
-		
+
 		ledgerPanel.add(buttonsActionPanel);
 	}
 
@@ -460,6 +470,7 @@ public class LedgerWidget extends Composite {
 		ledgerPanel.add(buttonsActionPanel);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createDeductableUI() {
 		// headLb.setText("Deductable");
 		fieldCounter = 0;
@@ -489,7 +500,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 0, payMethodlb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payTypeList);
 		fieldCounter++;
-		
+
 		payDateLb.setText("Date of Deductible");
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
@@ -514,12 +525,11 @@ public class LedgerWidget extends Composite {
 						if (data != null) {
 							HashMap<String, String> result = (HashMap<String, String>) data;
 							tbAmount.setText("");
-							//tbAmount.setEnabled(false);
-							if (result!=null) {
+							// tbAmount.setEnabled(false);
+							if (result != null) {
 
-										tbAmount.setText(result
-												.get("deduct"));
-										covid = result.get("Id");
+								tbAmount.setText(result.get("deduct"));
+								covid = result.get("Id");
 							}
 						}
 					}
@@ -668,7 +678,8 @@ public class LedgerWidget extends Composite {
 		ledgerInfoFlexTable.setText(0, 5, "Balance");
 		RowFormatter rowFormatter = ledgerInfoFlexTable.getRowFormatter();
 		rowFormatter.setStyleName(0, AppConstants.STYLE_TABLE_HEADER);
-		CustomButton closeBtn = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		CustomButton closeBtn = new CustomButton("Cancel",
+				AppConstants.ICON_CANCEL);
 		final LedgerWidget lw = this;
 		closeBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -716,6 +727,7 @@ public class LedgerWidget extends Composite {
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
+											hasInsurance=true;
 											for (int i = 0; i < result.length; i++) {
 												insList.addItem(result[i]
 														.get("payer"),
@@ -725,8 +737,13 @@ public class LedgerWidget extends Composite {
 
 										}
 									}
+									else{
+										paymentTypeGroup.customRadioButtonGroup.get(1).setEnabled(false);
+										paymentTypeGroup.customRadioButtonGroup.get(2).setEnabled(false);
+									}
 								} catch (Exception e) {
-									// Window.alert(e.getMessage());
+									//Window.alert(e.getMessage());
+									//paymentTypeGroup.customRadioButtonGroup.get(2).setEnabled(false);
 								}
 							}
 						} else {
@@ -746,7 +763,7 @@ public class LedgerWidget extends Composite {
 		boolean isHandled = false;
 		ArrayList<String> parameters = new ArrayList<String>();
 		String errMsg = "";
-		
+
 		if (paycat == PayCategory.PAYMENT) {
 			parameters.add(procId);
 			parameters.add(payDate.getTextBox().getText());
@@ -770,8 +787,8 @@ public class LedgerWidget extends Composite {
 				} else {
 					parameters.add("4");
 				}
-			} 
-			
+			}
+
 			else if (payTypeList.getValue(payTypeList.getSelectedIndex())
 					.equals("3")) {
 				functionName = moduleName + ".post_payment_credit_card";
@@ -782,16 +799,16 @@ public class LedgerWidget extends Composite {
 				}
 				parameters.add(monthsList.getValue(monthsList
 						.getSelectedIndex()));
-				parameters.add(yearsList.getValue(yearsList
-						.getSelectedIndex()));
-			} 
-			
+				parameters
+						.add(yearsList.getValue(yearsList.getSelectedIndex()));
+			}
+
 			else {
 				errMsg += "Please Select the Payment Type \n";
 			}
-			if(paymentTypeGroup.getWidgetValue().equals("1")){
+			if (paymentTypeGroup.getWidgetValue().equals("1")) {
 				String tempMsg = validateIntegerTextBox(tbAmount,
-				"Payment Amount");
+						"Payment Amount");
 				if (!tempMsg.equals("")) {
 					errMsg += tempMsg + "\n";
 				}
@@ -801,40 +818,37 @@ public class LedgerWidget extends Composite {
 					parameters.add(patientId);
 					parameters.add(paySrcList.getStoredValue());
 				}
-			}
-			else if(paymentTypeGroup.getWidgetValue().equals("2")){
+			} else if (paymentTypeGroup.getWidgetValue().equals("2")) {
 				String tempMsg = validateIntegerTextBox(tbAmount,
-				"Copay Amount");
+						"Copay Amount");
 				if (!tempMsg.equals("")) {
 					errMsg += tempMsg + "\n";
 				}
 				parameters.add(tbAmount.getText());
 				parameters.add(tbDesc.getText());
 				parameters.add(patientId);
-				if(covid.trim().equals(""))
+				if (covid.trim().equals(""))
 					parameters.add("0");
 				else
 					parameters.add(covid);
-				parameters.add("11"); //copay
-			}
-			else if(paymentTypeGroup.getWidgetValue().equals("3")){
+				parameters.add("11"); // copay
+			} else if (paymentTypeGroup.getWidgetValue().equals("3")) {
 				String tempMsg = validateIntegerTextBox(tbAmount,
-				"Deductible Amount");
+						"Deductible Amount");
 				if (!tempMsg.equals("")) {
 					errMsg += tempMsg + "\n";
 				}
 				parameters.add(tbAmount.getText());
 				parameters.add(tbDesc.getText());
 				parameters.add(patientId);
-				if(covid.trim().equals(""))
+				if (covid.trim().equals(""))
 					parameters.add("0");
 				else
 					parameters.add(covid);
-				parameters.add("8"); //deductible
-			}				
-		} 
-		
-		
+				parameters.add("8"); // deductible
+			}
+		}
+
 		else if (paycat == PayCategory.ADJUSTMENT) {
 			functionName = moduleName + ".post_adjustment";
 			parameters.add(procId);
@@ -845,9 +859,8 @@ public class LedgerWidget extends Composite {
 			}
 			parameters.add(tbAmount.getText());
 			parameters.add(tbDesc.getText());
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.WITHHOLD) {
 			functionName = moduleName + ".post_withhold";
 			parameters.add(procId);
@@ -857,16 +870,14 @@ public class LedgerWidget extends Composite {
 			}
 			parameters.add(tbAmount.getText());
 			parameters.add(tbDesc.getText());
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.WRITEOFF) {
 			functionName = moduleName + ".PostWriteoff";
 			parameters.add(procId);
 			parameters.add(tbDesc.getText());
 		}
-		
-		
+
 		else if (paycat == PayCategory.ALLOWEDAMOUNT) {
 			functionName = moduleName + ".post_fee_adjustment";
 			parameters.add(procId);
@@ -881,15 +892,13 @@ public class LedgerWidget extends Composite {
 			}
 			parameters.add(tbAmount.getText());
 			parameters.add(tbDesc.getText());
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.DENIAL) {
 			functionName = moduleName + ".move_to_next_coverage";
 			parameters.add(procId);
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.REFUND) {
 			functionName = moduleName + ".post_refund";
 			parameters.add(procId);
@@ -900,30 +909,26 @@ public class LedgerWidget extends Composite {
 			parameters.add(tbAmount.getText());
 			parameters.add(destinationList.getStoredValue());
 			parameters.add(tbDesc.getText());
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.REBILLED) {
 			functionName = moduleName + ".queue_for_rebill";
 			parameters.add(procId);
 			parameters.add(procCovType);
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.TRANSFER) {
 			functionName = moduleName + ".post_transfer";
 			parameters.add(procId);
 			parameters.add(transferList.getStoredValue());
 			parameters.add(tbDesc.getText());
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.MISTAKE) {
 			functionName = moduleName + ".mistake";
 			parameters.add(procId);
-		} 
-		
-		
+		}
+
 		else if (paycat == PayCategory.LEDGER) {
 			isHandled = true;
 			functionName = moduleName + ".getLedgerInfo";
@@ -965,6 +970,12 @@ public class LedgerWidget extends Composite {
 								Util.showInfoMsg("Ledger",
 										"Payment operation succeeded.");
 								lw.removeFromParent();
+								if(paycat == PayCategory.PAYMENT || paycat==PayCategory.COPAY || paycat==PayCategory.DEDUCTABLE)
+								{
+									if(CurrentState.getSystemConfig("auto_print_ptrcpt").equals("1")){
+										printShortPatientReceipt();
+									}
+								}
 								if ((paycat == PayCategory.REBILLED || paycat == PayCategory.WRITEOFF)
 										&& !procId.equals("0")) {
 									callback.jsonifiedData("close");
@@ -1001,6 +1012,7 @@ public class LedgerWidget extends Composite {
 				public void onError(Request request, Throwable ex) {
 				}
 
+				@SuppressWarnings("unchecked")
 				public void onResponseReceived(Request request,
 						Response response) {
 
@@ -1033,8 +1045,10 @@ public class LedgerWidget extends Composite {
 									} else {
 										RowFormatter rowFormatter = ledgerInfoFlexTable
 												.getRowFormatter();
-										rowFormatter.setStyleName(row,
-												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
+										rowFormatter
+												.setStyleName(
+														row,
+														AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									}
 								} else {
 									ledgerInfoFlexTable
@@ -1096,12 +1110,14 @@ public class LedgerWidget extends Composite {
 								try {
 									// Window.alert("Response is:"+type+"
 									// :"+response.getText());
+									covCount++;
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
+											hasInsurance=true;
 											String typeName = "";
 											if (type == 1)
 												typeName = "Primary ";
@@ -1120,6 +1136,10 @@ public class LedgerWidget extends Composite {
 											}
 										} else {
 
+										}
+										if(covCount==4 && !hasInsurance){
+											paymentTypeGroup.customRadioButtonGroup.get(1).setEnabled(false);
+											paymentTypeGroup.customRadioButtonGroup.get(2).setEnabled(false);
 										}
 									}
 								} catch (Exception e) {
@@ -1147,6 +1167,32 @@ public class LedgerWidget extends Composite {
 					+ " is not correct Number" + "\n";
 		}
 		return msg;
+	}
+	
+	public void printShortPatientReceipt(){
+		ArrayList<String> params = new ArrayList<String>();
+		params.add("" + patientId);
+		Util.callModuleMethod("PaymentModule", "getLastRecord", params,
+				new CustomRequestCallback() {
+					@Override
+					public void onError() {
+					}
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void jsonifiedData(Object data) {
+						if (data != null) {
+							HashMap<String, String> result = (HashMap<String, String>) data;
+							if (result != null) {
+								List<String> reportParams = new ArrayList<String>();
+								reportParams.add(result.get("id"));
+								reportParams.add("1");
+								Util.generateReportToPrinter("Patient Receipt Short", "pdf",
+										reportParams);
+							}
+						}
+					}
+				}, "HashMap<String,String>");
 	}
 
 }

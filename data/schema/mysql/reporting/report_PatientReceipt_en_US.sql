@@ -45,7 +45,7 @@ CREATE PROCEDURE `report_PatientReceipt_en_US`(IN procrecid INT)
 	FROM payrec pr
         left join patient p on p.id= pr.payrecpatient
 	WHERE pr.payrecproc = procrecid
-	ORDER BY pr.id ASC;
+	ORDER BY pr.id,pr.payreccat ASC;
 
 	#CONTINUE HANDLER
 	DECLARE  CONTINUE HANDLER FOR NOT FOUND 
@@ -100,8 +100,8 @@ CREATE PROCEDURE `report_PatientReceipt_en_US`(IN procrecid INT)
 		SET payrec_charge  = -1*payrec_amt;
 	ELSEIF procrec_cat = 8 THEN
 		SET payrec_type    = 'Deductable';
-		SET payrec_payment = 0;
-		SET payrec_charge  = -1*payrec_amt;
+		SET payrec_payment = -1*payrec_amt;
+		SET payrec_charge  = 0;
 	ELSEIF procrec_cat = 9 THEN
 		SET payrec_type    = 'Allowed Amount - Fee Adjusted';
 		SET payrec_payment = 0;

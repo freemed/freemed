@@ -1,3 +1,27 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
@@ -13,10 +37,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class AgingSummaryWidget extends Composite{
-	CustomRequestCallback callback=null;
-	public AgingSummaryWidget(CustomRequestCallback cb){
-		callback=cb;
+public class AgingSummaryWidget extends Composite {
+	CustomRequestCallback callback = null;
+
+	public AgingSummaryWidget(CustomRequestCallback cb) {
+		callback = cb;
 		VerticalPanel panel = new VerticalPanel();
 		panel.setSpacing(10);
 		initWidget(panel);
@@ -41,87 +66,89 @@ public class AgingSummaryWidget extends Composite{
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				try {
-					if (col == 0){						
-						HashMap<String, String> map=new HashMap<String, String>();
+					if (col == 0) {
+						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("payer", data.get("payer_id"));
 						map.put("payer_name", data.get("payer_name"));
 						asw.removeFromParent();
 						callback.jsonifiedData(map);
 					}
-					if (col == 1){
-						HashMap<String, String> map=new HashMap<String, String>();
+					if (col == 1) {
+						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("payer", data.get("payer_id"));
 						map.put("payer_name", data.get("payer_name"));
 						map.put("aging", "0-30");
 						asw.removeFromParent();
 						callback.jsonifiedData(map);
 					}
-					if (col == 3){
-						HashMap<String, String> map=new HashMap<String, String>();
+					if (col == 3) {
+						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("payer", data.get("payer_id"));
 						map.put("payer_name", data.get("payer_name"));
 						map.put("aging", "31-60");
 						asw.removeFromParent();
 						callback.jsonifiedData(map);
 					}
-					if (col == 5){
-						HashMap<String, String> map=new HashMap<String, String>();
+					if (col == 5) {
+						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("payer", data.get("payer_id"));
 						map.put("payer_name", data.get("payer_name"));
-						map.put("aging", "61-90");	
+						map.put("aging", "61-90");
 						asw.removeFromParent();
 						callback.jsonifiedData(map);
 					}
-					if (col == 7){
-						HashMap<String, String> map=new HashMap<String, String>();
+					if (col == 7) {
+						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("payer", data.get("payer_id"));
 						map.put("payer_name", data.get("payer_name"));
 						map.put("aging", "91-120");
 						asw.removeFromParent();
 						callback.jsonifiedData(map);
 					}
-					if (col == 9){
-						HashMap<String, String> map=new HashMap<String, String>();
+					if (col == 9) {
+						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("payer", data.get("payer_id"));
 						map.put("payer_name", data.get("payer_name"));
 						map.put("aging", "120+");
 						asw.removeFromParent();
 						callback.jsonifiedData(map);
-					}			
-					
+					}
+
 				} catch (Exception e) {
 					JsonUtil.debug("ClaimManager.java: Caught exception: "
 							+ e.toString());
 				}
 			}
 		});
-		Util.callApiMethod("ClaimLog", "aging_summary_formatted", (Integer)null,
-				new CustomRequestCallback() {
+		Util.callApiMethod("ClaimLog", "aging_summary_formatted",
+				(Integer) null, new CustomRequestCallback() {
 					@Override
 					public void onError() {
 					}
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public void jsonifiedData(Object data) {
 						if (data != null) {
-							HashMap<String, String> [] result = (HashMap<String, String>[]) data;
+							HashMap<String, String>[] result = (HashMap<String, String>[]) data;
 							agingSummaryTable.loadData(result);
 						}
 					}
 				}, "HashMap<String,String>[]");
 		panel.add(agingSummaryTable);
-		
-		CustomButton closeBtn=new CustomButton("Close",AppConstants.ICON_CANCEL);
+
+		CustomButton closeBtn = new CustomButton("Close",
+				AppConstants.ICON_CANCEL);
 		closeBtn.addClickHandler(new ClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {				
+			public void onClick(ClickEvent event) {
 				asw.removeFromParent();
 				callback.jsonifiedData("cancel");
 			}
 
 		});
-		
+
 		panel.add(closeBtn);
-		
+
 	}
 }

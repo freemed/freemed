@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class UnfiledDocuments extends SupportModule {
 
 	var $MODULE_NAME = "Unfiled Documents";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.3";
 	var $MODULE_FILE = __FILE__;
 	var $MODULE_UID = "edcf764c-1c99-4abd-924a-39d795541b44";
 	var $MODULE_HIDDEN = true;
@@ -69,14 +69,6 @@ class UnfiledDocuments extends SupportModule {
 		parent::__construct();
 	} // end constructor UnfiledDocuments
 
-	protected function del_pre ( $id ) {
-		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
-		$filename = freemed::secure_filename($rec['ufffilename']);
-
-		// Remove file name
-		unlink('data/documents/unfiled/'.$filename);
-	} // end method del_pre
-
 	protected function add_pre ( &$data ) {
 		syslog( LOG_DEBUG, get_class($this)."::add_pre ( ... )" );
 		// Temporarily set filename to something absurd
@@ -89,12 +81,13 @@ class UnfiledDocuments extends SupportModule {
 		if ( $_FILES['file']['name'] != '' ) {
 			if ( $_FILES['file']['error'] == UPLOAD_ERR_OK ) {
 				$orig = $_FILES['file']['name'];
-				if ( move_uploaded_file( $_FILES['file']['tmp_name'], 'data/documents/unfiled/'.$orig ) ) {
+				if ( file_exists( $_FILES['file']['tmp_name'] ) ) {
 					syslog( LOG_INFO, get_class($this)."::add_post received $orig for id $id" );
 					$query = $GLOBALS['sql']->update_query(
 						$this->table_name,
 						array (
-							'ufffilename' => $orig
+							  'ufffilename' => $orig
+							, 'ufffile' => file_get_contents( $_FILES['file']['tmp_name'] )
 						),
 						array ( 'id' => $id )
 					);
@@ -109,20 +102,21 @@ class UnfiledDocuments extends SupportModule {
 	protected function mod_pre ( &$data ) {
 		$id = $data['id'];
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
-		$filename = freemed::secure_filename( $rec['ufffilename'] );
+		$filename = $this->GetLocalCachedFile( $id );
 
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['date'] = $s->ImportDate( $data['date'] );
 
 		// Catch multiple people using the same document
-		if (!file_exists('data/documents/unfiled/'.$filename)) {
+		if ( $rec['ufffile'] == '' ) {
 			trigger_error(__("Document file does not exist!"));
 		}
 
 		if ($data['flip'] == 1) {
 			syslog(LOG_INFO, "flip");
-			$command = "./scripts/flip_djvu.sh \"\$(pwd)/data/documents/unfiled/${filename}\"";
+			$command = "./scripts/flip_djvu.sh \"${filename}\"";
 			system("$command");
+			$this->UpdateFileFromCachedFile( $id );
 		}
 
 		if (!empty($data['faxback'])) {
@@ -145,8 +139,9 @@ class UnfiledDocuments extends SupportModule {
 		// If we're removing the first page, do that now
 		if ($data['withoutfirstpage']) {
 			syslog(LOG_INFO, "remove 1st page");
-			$command = "/usr/bin/djvm -d ".escapeshellarg("data/documents/unfiled/${filename}")." 1";
+			$command = "/usr/bin/djvm -d ".escapeshellarg($filename)." 1";
 			system("$command");
+			$this->UpdateFileFromCachedFile( $id );
 		}
 
 		// Figure category / type
@@ -185,30 +180,16 @@ class UnfiledDocuments extends SupportModule {
 			);
 
 			// Move actual file to new location
-			//echo "mv data/documents/unfiled/$filename $new_filename -f<br/>\n";
-			$dirname = dirname($new_filename);
-			$output = system('mkdir -p '.escapeshellarg($dirname));
-			syslog(LOG_INFO, 'mkdir -p '.escapeshellarg($dirname));
-			syslog(LOG_INFO, "DEBUG: $output");
-			if ($filename) {
-				$output = exec('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg($new_filename).' -f');
-				syslog(LOG_INFO, "UnfiledDocument| mv data/documents/unfiled/$filename $new_filename -f"); }
-				syslog(LOG_INFO, "DEBUG: $output");
+			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+			$pds->StoreFile( $data['urfpatient'], "scanneddocuments", $new_id, file_get_contents( $this->GetLocalCachedFile( $id ) ) );
 		} else {
-			// Move actual file to new location
-			//echo "mv data/documents/unfiled/$filename data/documents/unread/$filename -f";
-			if ($filename) {
-				$output = exec('mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f');
-				syslog(LOG_INFO, 'mv '.escapeshellarg("data/documents/unfiled/${filename}").' '.escapeshellarg("data/documents/unread/${filename}").' -f');
-				syslog(LOG_INFO, "DEBUG: $output");
-			}
-
 			// Insert new table query in unread
 			$result = $GLOBALS['sql']->query($GLOBALS['sql']->insert_query(
 				'unreaddocuments',
 				array (
 					"urfdate" => $data['date'],
 					"urffilename" => $filename,
+					"urffile" => file_get_contents( $filename  ),
 					"urfpatient" => $data['patient'],
 					"urfphysician" => $data['physician'],
 					"urftype" => $data['category'],
@@ -245,10 +226,8 @@ class UnfiledDocuments extends SupportModule {
 	//	Integer, number of pages in the specified document
 	//
 	public function NumberOfPages ( $id ) {
-		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			PHYSICAL_LOCATION . '/data/documents/unfiled/' .
-			$r['ufffilename']);
+			$this->GetLocalCachedFile( $id ) );
 		return (int)$djvu->NumberOfPages();
 	} // end method NumberOfPages
 
@@ -268,8 +247,7 @@ class UnfiledDocuments extends SupportModule {
 		// Get page information
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			FREEMED_DIR . '/data/documents/unfiled/' .
-			$r['ufffilename']);
+			$this->GetLocalCachedFile( $id ) );
 		$pages = $djvu->NumberOfPages();
 		$chunks = $djvu->StoredChunks();
 
@@ -278,7 +256,7 @@ class UnfiledDocuments extends SupportModule {
 		$dir = $dir_prefix.'.d';
 
 		// Extract
-		$filename = $djvu->filename;
+		$filename = $djvu->GetFileName();
 		system('mkdir '.escapeshellarg($dir));
 		//print "dir = $dir<br/>\n";
 		system('djvmcvt -i '.escapeshellarg($filename).' '.escapeshellarg($dir).' '.escapeshellarg("$dir/index.djvu"));;
@@ -321,7 +299,8 @@ class UnfiledDocuments extends SupportModule {
 					$this->table_name,
 					array (
 						'uffdate' => $r['uffdate'],
-						'ufffilename' => basename(trim($new_filename))
+						'ufffilename' => basename(trim($new_filename)),
+						'ufffile' => file_get_contents( $new_filename )
 					)
 				)
 			);
@@ -332,6 +311,7 @@ class UnfiledDocuments extends SupportModule {
 		// Cleanup
 		unlink($dir);
 		unlink($dir_prefix);
+		return true;
 	} // end method batchSplit
 
 	// Method: GetDocumentPage
@@ -355,8 +335,7 @@ class UnfiledDocuments extends SupportModule {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			FREEMED_DIR . '/data/documents/unfiled/' .
-			$r['ufffilename']);
+			$this->GetLocalCachedFile( $id ) );
 
 		Header( "Content-type: image/jpeg" );
 		return readfile( $thumbnail ? $djvu->GetPageThumbnail( $page ) : $djvu->GetPage( $page, false, false, false ) );
@@ -385,12 +364,10 @@ class UnfiledDocuments extends SupportModule {
 	//
 	public function faxback ( $id, $faxback ) {
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
-		$filename = freemed::secure_filename( $rec['ufffilename'] );
 
 		// Analyze File
 		$djvu = CreateObject('org.freemedsoftware.core.Djvu', 
-			FREEMED_DIR . '/data/documents/unfiled/' .
-			$filename);
+			$this->GetLocalCachedFile( $id ) );
 		$pages = $djvu->NumberOfPages( );
 
 		// Fax the first page back
@@ -497,6 +474,49 @@ class UnfiledDocuments extends SupportModule {
 		$r = $GLOBALS['sql']->queryOne( $q );
 		return $r;
 	} // end method GetCount
+
+	// Method: GetLocalCachedFile
+	//
+	// Parameters:
+	//
+	//	$id - Table id
+	//
+	// Returns:
+	//
+	//	Path to locally cached filesystem copy of database object.
+	//
+	protected function GetLocalCachedFile( $id ) {
+		// Create hash for filename
+		$hash = PHYSICAL_LOCATION . "/data/cache/" . $this->table_name . "-" . md5( $id );
+
+		// If it exists, return file name
+		if (file_exists( $hash )) {
+			return $hash;
+		} else {
+			// ... otherwise cache it first ...
+	                $r = $GLOBALS['sql']->get_link( $this->table_name, $id );
+			file_put_contents( $hash, $r['ufffile'] );
+			// ... then return the hash.
+			return $hash;
+		}
+	} // end method GetLocalCachedFile
+
+	protected function UpdateFileFromCachedFile( $id ) {
+		$hash = PHYSICAL_LOCATION . "/data/cache/" . $this->table_name . "-" . md5( $id );	
+
+		if (!file_exists( $hash )) {
+			return false;
+		} else {
+			$query = $GLOBALS['sql']->update_query(
+				$this->table_name,
+				array (
+					'ufffile' => file_get_contents( $hash )	
+				), array ( 'id' => $id )
+			);
+			$GLOBALS['sql']->query( $query );
+			return true;
+		}
+	} // end method UpdateFileFromCachedFile
 
 } // end class UnfiledDocuments
 

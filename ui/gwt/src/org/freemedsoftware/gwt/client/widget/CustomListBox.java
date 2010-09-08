@@ -29,9 +29,7 @@ import java.util.HashMap;
 import org.freemedsoftware.gwt.client.HashSetter;
 
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class CustomListBox extends ListBox implements HashSetter {

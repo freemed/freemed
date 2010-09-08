@@ -54,6 +54,17 @@ class Djvu {
 		return substr( exec( "md5sum " . escapeshellarg( $this->filename ) ), 0, 32 );
 	} // end method MD5Checksum
 
+	// Method: GetFileName
+	//
+	// Returns:
+	//
+	//	Name of the File
+	//
+	
+	public function GetFileName(){
+		return $this->filename;
+	}
+	
 	// Method: NumberOfPages
 	//
 	// Returns:
@@ -216,7 +227,7 @@ class Djvu {
 	//
 	//	Array of chunk names.
 	//
-	protected function StoredChunks ( ) {
+	public function StoredChunks ( ) {
 		$filename = $this->filename;
 
 		$raw = `djvm -l "$filename"`;

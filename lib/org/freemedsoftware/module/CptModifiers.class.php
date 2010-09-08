@@ -36,10 +36,12 @@ class CptModifiers extends SupportModule {
 	var $table_name     = "cptmod";
 
 	var $widget_hash    = '##cptmod## - ##cptmoddescrip##';
-
+	var $archive_field = "cptmodarchive";
+	
 	var $variables = array (
 		"cptmod",
-		"cptmoddescrip"
+		"cptmoddescrip",
+		"cptmodarchive"
 	);
 
 	public function __construct () {

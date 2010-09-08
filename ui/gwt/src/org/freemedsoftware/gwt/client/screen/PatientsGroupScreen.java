@@ -55,6 +55,7 @@ import org.freemedsoftware.gwt.client.widget.SupportModuleListBox;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.SchedulerWidget.EventData;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
 
 import com.google.gwt.core.client.GWT;
@@ -351,6 +352,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 	
 	final boolean canBook   = CurrentState.isActionAllowed(SchedulerWidget.moduleName, AppConstants.WRITE);
 	
+	
 	// Creates only desired amount of instances if we follow this pattern
 	// otherwise we have public constructor as well
 	public static PatientsGroupScreen getInstance() {
@@ -449,18 +451,12 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 						Window.alert("Please select at least one entry!");
 					else {
 						List<String> slectedItems = patientGroupTable.getSelected();
-						Iterator<String> itr = slectedItems.iterator();// Get all
-																		// selected
-																		// items
-																		// from
-																		// custom
-																		// table
-						while (itr.hasNext()) {
-							final StringEventDataDialog dialog = new StringEventDataDialog();
-							dialog.setPatient(Integer.parseInt(itr.next()));
-							dialog.show();
-							dialog.center();
-						}
+						SchedulerScreen schedulerScreen = SchedulerScreen.getInstance();
+						EventData eventData = schedulerScreen.getSchedulerWidget().getNewExternalDataEvent();
+						eventData.setPatientId(Integer.parseInt(slectedItems.get(0)));
+						eventData.setResourceType(AppConstants.APPOINTMENT_TYPE_GROUP);
+						schedulerScreen.getSchedulerWidget().setExternalDataEvent(eventData);
+						Util.spawnTab(AppConstants.SCHEDULER,schedulerScreen);
 					}
 				}
 			});
@@ -536,7 +532,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		patientGroupTable.addColumn("Group Name", "groupname");
 		patientGroupTable.addColumn("Group Facility", "groupfacility");
 		patientGroupTable.addColumn("Group Frequency (in days)", "groupfrequency");
-		patientGroupTable.addColumn("Group Member", "grouplength");
+		patientGroupTable.addColumn("Group Length (min)", "grouplength");
 
 		patientGroupTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
@@ -669,6 +665,7 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		Label groupFacilityLabel = new Label("Group Facility");
 		Label groupFrequencyLabel = new Label("Group Frequency (in days)");
 		Label groupLengthLabel = new Label("Group Length");
+		groupLengthLabel.setVisible(false);
 
 		// TextBoxs for FirsName and LastName
 		groupName = new TextBox();
@@ -680,6 +677,8 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		groupFrequency = new TextBox();
 		groupFrequency.setWidth("300px");
 		groupLength = new TextBox();
+		groupLength.setEnabled(false);
+		groupLength.setVisible(false);
 		groupLength.setWidth("300px");
 		btnAdd = new CustomButton("Add",AppConstants.ICON_ADD);
 		btnAdd.addClickHandler(new ClickHandler() {
@@ -916,12 +915,11 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 									facilityModuleWidget.setValue(Integer.parseInt(data.get("facility")));
 									groupFrequency.setText(data.get("groupfrequency"));
 									groupLength.setText(data.get("grouplength"));
-									
 									String[] groupMembers = data.get("groupmembers").split(",");
 									for(int i=0;i<groupMembers.length;i++){
 										if(i>3){
 											PatientWidget patientWidget = new PatientWidget();
-											patientWidget.setWidth("200px");
+											patientWidget.setWidth("300px");
 											membersPanel.add(patientWidget);
 											groupMembersListInEntryForm.add(patientWidget);
 										}
@@ -1058,15 +1056,23 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		facilityModuleWidget.setValue(0);
 		if(btnAdd.getText().equals("Modify"))
 			btnAdd.setText("Add");
-		
+
 		for(int i=0;i<groupMembersListInEntryForm.size();i++){
+			groupMembersListInEntryForm.get(0).clear();
+			groupMembersListInEntryForm.get(0).removeFromParent();
+			groupMembersListInEntryForm.remove(0);
+		}
+		
+		for(int i=0;i<membersPanel.getWidgetCount();i++){
 			membersPanel.remove(0);
 		}
 		
+		groupMembersListInEntryForm.clear();
+		membersPanel.clear();
 		groupMembersListInEntryForm =new ArrayList<PatientWidget>();
 			for(int i=0;i<4;i++){
 				PatientWidget patientWidget = new PatientWidget();
-				patientWidget.setWidth("200px");
+				patientWidget.setWidth("300px");
 				membersPanel.add(patientWidget);
 				groupMembersListInEntryForm.add(patientWidget);
 			}
@@ -1113,16 +1119,19 @@ public class PatientsGroupScreen extends ScreenInterface implements ClickHandler
 		if(facilityModuleWidget.getValue()!=null)
 			m.put((String) "groupfacility", facilityModuleWidget.getValue().toString());
 		m.put((String) "groupfrequency", (String) groupFrequency.getText());
-		m.put((String) "grouplength", (String) groupLength.getText());
 		Iterator<PatientWidget> itr = groupMembersListInEntryForm.iterator();
 		String members="";
+		Integer membersLength = 0;
 		while(itr.hasNext()){
 			PatientWidget patientWidget = itr.next();
-			if(patientWidget.getStoredValue()!=null && patientWidget.getText().length()>0)
+			if(patientWidget.getStoredValue()!=null && patientWidget.getText().length()>0){
 				members=members+patientWidget.getStoredValue()+",";
+				membersLength++;
+			}
 		}
 		if(members.length()>0)
 			members = members.substring(0, members.length()-1); // removing last comma(,)
+		m.put((String) "grouplength", membersLength.toString());
 		m.put((String) "groupmembers", members);
 
 		return m;

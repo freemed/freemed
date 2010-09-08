@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -57,6 +58,10 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 	protected String hashMapping = null;
 
 	protected CustomRequestCallback callback=null;
+
+	protected boolean hasAdditionalParameters;
+
+	protected HashMap<String, String> addParameters;
 	
 	public SupportModuleWidget() {
 		super();
@@ -65,9 +70,10 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 	public SupportModuleWidget(String module) {
 		// Load superclass constructor first...
 		super();
+		hasAdditionalParameters = false;
 		setModuleName(module);
 	}
-
+	
 	/**
 	 * Set value of current widget based on integer value, asynchronously.
 	 * 
@@ -163,6 +169,8 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
+		if(req.length()<CurrentState.getMinCharCountForSmartSearch())
+			return;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
@@ -173,14 +181,29 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { moduleName, req };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
-											params)));
+			
+			RequestBuilder builder=null;
+			if(hasAdditionalParameters){
+				String[] params= { moduleName, req,JsonUtil.jsonify(addParameters) };
+				builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
+												params)));
+			}
+			else{
+				String[] params = { moduleName, req };
+				builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
+												params)));
+			}
+			
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -339,5 +362,14 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 	
 	public void setAfterSetValueCallBack(CustomRequestCallback cb){
 		callback=cb;
+	}
+	
+	public void setAdditionalParameters(HashMap<String, String> m){
+		hasAdditionalParameters = true;
+		addParameters = m;
+	}
+	public void removeAdditionalParameters(){
+		hasAdditionalParameters = false;
+		addParameters = null;
 	}
 }

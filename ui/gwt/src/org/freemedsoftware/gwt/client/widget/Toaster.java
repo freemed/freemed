@@ -30,6 +30,7 @@ import java.util.Iterator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
@@ -82,7 +83,12 @@ public class Toaster extends PopupPanel {
 	 * @param toasterStatus
 	 *            TOASTER_INFO, TOASTER_WARN, TOASTER_ERROR
 	 */
-	public void addItem(final String module, String value, int toasterStatus) {
+	public void addItem(final String module1, String value, int toasterStatus) {
+		final String module;
+		if(items.get(module1)!=null)
+			module = module1 + Random.nextInt();
+		else
+			module = module1;
 		// Add items to hash
 		items.put(module, value);
 
@@ -151,7 +157,7 @@ public class Toaster extends PopupPanel {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 						int left = (Window.getClientWidth() - offsetWidth) - 5;
 						int top = (Window.getClientHeight() - offsetHeight) - 5;
-						setPopupPosition(left, top);
+						setPopupPosition(left, top+Window.getScrollTop());
 					}
 				});
 

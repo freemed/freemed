@@ -35,7 +35,7 @@ class InsuranceCompanyModule extends SupportModule {
 
 	var $record_name = "Insurance Company";
 	var $table_name = "insco";
-
+	var $archive_field = "inscoarchive";
 	var $variables		= array (
 		  "inscodtmod"
 		, "insconame"
@@ -65,6 +65,7 @@ class InsuranceCompanyModule extends SupportModule {
 		, "inscodefformate"
 		, "inscodeftargete"
 		, "inscodeftargetopte"
+		, "inscoarchive"
 	);
 
 	var $widget_hash = '##insconame## (##inscocity##, ##inscostate##)';

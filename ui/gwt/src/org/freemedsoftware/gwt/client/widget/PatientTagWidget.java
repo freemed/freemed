@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
@@ -222,6 +221,7 @@ public class PatientTagWidget extends WidgetInterface implements
 	public void clear() {
 		searchBox.setText("");
 		map.clear();
+		setValue("");
 	}
 
 	/**
@@ -349,7 +349,8 @@ public class PatientTagWidget extends WidgetInterface implements
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception thrown: ", t);
-					Util.showErrorMsg("PatientTagWidget", "Exception: " + t.toString());
+					Util.showErrorMsg("PatientTagWidget", "Exception: "
+							+ t.toString());
 				}
 
 			});

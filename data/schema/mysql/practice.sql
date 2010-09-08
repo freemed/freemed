@@ -56,7 +56,7 @@ DELIMITER //
 CREATE PROCEDURE practice_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
-
+	ALTER IGNORE TABLE practice ADD COLUMN pracarchive INT(10) UNSIGNED DEFAULT 0 AFTER pracnpi;
 	#----- Upgrades
 	CALL FreeMED_Module_GetVersion( 'practice', @V );
 

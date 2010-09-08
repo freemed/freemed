@@ -24,14 +24,14 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `patientlinks` (
-	stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	srcpatient		BIGINT (20) NOT NULL DEFAULT 0,
-	destpatient		BIGINT (20) NOT NULL DEFAULT 0,
-	linktype		VARCHAR (50) NOT NULL DEFAULT '',
-	linkdetails		TEXT,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL
+	  stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, srcpatient		BIGINT (20) NOT NULL DEFAULT 0
+	, destpatient		BIGINT (20) NOT NULL DEFAULT 0
+	, linktype		VARCHAR (50) NOT NULL DEFAULT ''
+	, linkdetails		TEXT
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id			SERIAL
 
 	#	Define keys
 

@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.screen.UnfiledDocuments;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
@@ -70,43 +71,49 @@ public class DocumentBox extends WidgetInterface {
     private PushButton showDocumentsButton;
 
 	protected UnfiledDocuments unfiledDocs;
+	
+	protected final VerticalPanel contentVPanel;
+	
 	public DocumentBox() {
 		super(moduleName);
-		SimplePanel sPanel = new SimplePanel();
-		sPanel.setWidth("100%");
-		initWidget(sPanel);
-		sPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER);
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		verticalPanel.setWidth("100%");
-		sPanel.setWidget(verticalPanel);
+		VerticalPanel superVPanel = new VerticalPanel();
+		initWidget(superVPanel);
+		superVPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
+		superVPanel.setWidth("100%");
 
-		final HorizontalPanel horizontalPanel = new HorizontalPanel();
+		
+		HorizontalPanel headerHPanel = new HorizontalPanel();
+		headerHPanel.setSpacing(5);
+		superVPanel.add(headerHPanel);
+		
+		final Image colExpBtn = new Image(Util.getResourcesURL()+"collapse.15x15.png");
+		colExpBtn.getElement().getStyle().setCursor(Cursor.POINTER);
+		headerHPanel.add(colExpBtn);
+		colExpBtn.addClickHandler(new ClickHandler() {
+			boolean expaned = false;
+			@Override
+			public void onClick(ClickEvent arg0) {
+				if(expaned){
+					colExpBtn.setUrl(Util.getResourcesURL()+"collapse.15x15.png");
+					contentVPanel.setVisible(true);
+				}else{
+					colExpBtn.setUrl(Util.getResourcesURL()+"expand.15x15.png");
+					contentVPanel.setVisible(false);
+				}
+					expaned = !expaned;
+			}
+		});
 
-//		final PushButton showDocumentsButton = new PushButton("", "");
-//		showDocumentsButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-//		showDocumentsButton.getUpFace().setImage(
-//				new Image("resources/images/unfiled.16x16.png"));
-//		showDocumentsButton.getDownFace().setImage(
-//				new Image("resources/images/unfiled.16x16.png"));
-		Label headerLabel = new Label("Unfiled Documents");
+		Label headerLabel = new Label("UNFILED DOCUMENTS");
+		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-		horizontalPanel.add(headerLabel);
-		verticalPanel.add(horizontalPanel);
-//		horizontalPanel.add(showDocumentsButton);
-		verticalPanel.add(wDocuments);
+		
+		contentVPanel = new VerticalPanel(); 
+		contentVPanel.setWidth("100%");
+		superVPanel.add(contentVPanel);
+		
+		contentVPanel.add(wDocuments);
 
-//		showDocumentsButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent evt) {
-//				if (wDocuments.isVisible()) {
-//					wDocuments.setVisible(false);
-//				} else {
-//					wDocuments.setVisible(true);
-//				}
-//			}
-//		});
-
-//		retrieveData();
 
 		wDocuments.setSize("100%", "100%");
 		wDocuments.addColumn("Date", "uffdate"); // col 0

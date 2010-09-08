@@ -36,7 +36,7 @@ $ds = $GLOBALS['sql']->queryAll( "SELECT * FROM images;" );
 print "[done]\n";
 
 print " - Removing any existing images ... ";
-$GLOBALS['sql']->query( "DELETE FROM pds WHERE module = 'images';" );
+$GLOBALS['sql']->query( "DELETE FROM pds WHERE module = 'scanneddocuments';" );
 print "[done]\n";
 
 print " - Looping through all scanned documents.\n";
@@ -50,7 +50,28 @@ foreach ($ds AS $d) {
 	if ( ! file_exists( $fn ) ) {
 		print "[FAILED, DOESN'T EXIST]\n";
 	} else {
-		$GLOBALS['sql']->query( "INSERT INTO pds ( id, patient, module, contents ) VALUES ( ".$GLOBALS['sql']->quote($d['id']).", ".$GLOBALS['sql']->quote($d['imagepat']).", ".$GLOBALS['sql']->quote("images").", ".$GLOBALS['sql']->quote(file_get_contents($fn))." );" );
+		$GLOBALS['sql']->query( "INSERT INTO pds ( id, patient, module, contents ) VALUES ( ".$GLOBALS['sql']->quote($d['id']).", ".$GLOBALS['sql']->quote($d['imagepat']).", ".$GLOBALS['sql']->quote("scanneddocuments").", ".$GLOBALS['sql']->quote(file_get_contents($fn))." );" );
+		print "[done]\n";
+	}
+}
+
+// Loop through the photoid table
+print " - Getting all photo id ... ";
+$ds = $GLOBALS['sql']->queryAll( "SELECT * FROM photoid;" );
+print "[done]\n";
+
+print " - Removing any existing photoid ... ";
+$GLOBALS['sql']->query( "DELETE FROM pds WHERE module = 'photographicidentification';" );
+print "[done]\n";
+
+print " - Looping through all photoid.\n";
+foreach ($ds AS $d) {
+	$fn = $d['p_filename'];
+	print " - Processing photoid id " . $d['id'] ." for patient id " . $d['imagepat'] . " ( filename = ${fn} ) ... ";
+	if ( ! file_exists( $fn ) ) {
+		print "[FAILED, DOESN'T EXIST]\n";
+	} else {
+		$GLOBALS['sql']->query( "INSERT INTO pds ( id, patient, module, contents ) VALUES ( ".$GLOBALS['sql']->quote($d['id']).", ".$GLOBALS['sql']->quote($d['p_patient']).", ".$GLOBALS['sql']->quote("photographicidentification").", ".$GLOBALS['sql']->quote(file_get_contents($fn))." );" );
 		print "[done]\n";
 	}
 }

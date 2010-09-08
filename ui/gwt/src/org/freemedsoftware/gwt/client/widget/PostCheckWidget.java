@@ -1,3 +1,27 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
@@ -39,7 +63,7 @@ public class PostCheckWidget extends Composite {
 	protected TextBox tbTotalAmount;
 	protected FlexTable postCheckInfoFlexTable;
 	protected HashSet<String> procs;
-//	protected CustomModuleWidget payerWidget;
+	// protected CustomModuleWidget payerWidget;
 	protected CustomTable proceduresInfoTable;
 	protected CustomRequestCallback callback;
 	ArrayList<String> pids;
@@ -52,16 +76,16 @@ public class PostCheckWidget extends Composite {
 		initWidget(vPanel);
 		postCheckInfoFlexTable = new FlexTable();
 		// postCheckInfoFlexTable.setWidth("100%");
-//		Label payerLb = new Label("Payer");
-//		payerWidget = new CustomModuleWidget(
-//				"api.ClaimLog.RebillDistinctPayers");
+		// Label payerLb = new Label("Payer");
+		// payerWidget = new CustomModuleWidget(
+		// "api.ClaimLog.RebillDistinctPayers");
 		Label checkNumberLb = new Label("Check Number");
 		tbCheckNo = new TextBox();
 		Label totalAmountLb = new Label("Total Amount");
 		tbTotalAmount = new TextBox();
 
-//		postCheckInfoFlexTable.setWidget(0, 0, payerLb);
-//		postCheckInfoFlexTable.setWidget(0, 1, payerWidget);
+		// postCheckInfoFlexTable.setWidget(0, 0, payerLb);
+		// postCheckInfoFlexTable.setWidget(0, 1, payerWidget);
 		postCheckInfoFlexTable.setWidget(1, 0, checkNumberLb);
 		postCheckInfoFlexTable.setWidget(1, 1, tbCheckNo);
 		postCheckInfoFlexTable.setWidget(2, 0, totalAmountLb);
@@ -85,6 +109,7 @@ public class PostCheckWidget extends Composite {
 		proceduresInfoTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public Widget setColumn(String columnName,
 							final HashMap<String, String> data) {
@@ -92,8 +117,10 @@ public class PostCheckWidget extends Composite {
 						final int actionRow = proceduresInfoTable
 								.getActionRow();
 						if (columnName.compareTo("balance") == 0) {
-							int row=proceduresInfoTable.getActionRow();
-							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 6, "10%");
+							int row = proceduresInfoTable.getActionRow();
+							proceduresInfoTable.getFlexTable()
+									.getFlexCellFormatter().setWidth(row, 6,
+											"10%");
 							pids.add(data.get("id"));
 							final TextBox tbAllowedAmount = new TextBox();
 							tbAllowedAmount.setWidth("100%");
@@ -137,8 +164,10 @@ public class PostCheckWidget extends Composite {
 									});
 							return tbAllowedAmount;
 						} else if (columnName.compareTo("pay") == 0) {
-							int row=proceduresInfoTable.getActionRow();
-							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 8, "10%");
+							int row = proceduresInfoTable.getActionRow();
+							proceduresInfoTable.getFlexTable()
+									.getFlexCellFormatter().setWidth(row, 8,
+											"10%");
 							final TextBox tbPayment = new TextBox();
 							tbPayment.setWidth("100%");
 							tbPayment.setText("0");
@@ -176,12 +205,14 @@ public class PostCheckWidget extends Composite {
 							});
 							return tbPayment;
 						} else if (columnName.compareTo("copay") == 0) {
-							int row=proceduresInfoTable.getActionRow();
-							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 9, "10%");
+							int row = proceduresInfoTable.getActionRow();
+							proceduresInfoTable.getFlexTable()
+									.getFlexCellFormatter().setWidth(row, 9,
+											"10%");
 							final TextBox tbCopay = new TextBox();
 							tbCopay.setWidth("100%");
 							tbCopay.setText("0");
-							ArrayList params = new ArrayList();							
+							ArrayList params = new ArrayList();
 							tbCopay.addChangeHandler(new ChangeHandler() {
 
 								@Override
@@ -217,7 +248,8 @@ public class PostCheckWidget extends Composite {
 							params.add(data.get("pt_id"));
 							params.add(data.get("id"));
 
-							Util.callApiMethod("Ledger", "getCoveragesCopayInfo", params,
+							Util.callApiMethod("Ledger",
+									"getCoveragesCopayInfo", params,
 									new CustomRequestCallback() {
 										@Override
 										public void onError() {
@@ -227,53 +259,67 @@ public class PostCheckWidget extends Composite {
 										public void jsonifiedData(Object d) {
 											if (data != null) {
 												HashMap<String, String> result = (HashMap<String, String>) d;
-												//tbAmount.setEnabled(false);
-												if (result!=null) {
-													tbCopay
-																	.setText(result.get("copay"));
-													try{
+												// tbAmount.setEnabled(false);
+												if (result != null) {
+													tbCopay.setText(result
+															.get("copay"));
+													try {
 														Label lbLeft = new Label();
-														float left=0;
-														float copay=Float.parseFloat(result.get("copay"));
-														left = Float.parseFloat(data.get("left"));														
-														lbLeft.setText(""+(left-copay));
-														proceduresInfoTable.getFlexTable().setWidget(actionRow, 10, lbLeft);
-													}
-													catch(Exception e){
+														float left = 0;
+														float copay = Float
+																.parseFloat(result
+																		.get("copay"));
+														left = Float
+																.parseFloat(data
+																		.get("left"));
+														lbLeft
+																.setText(""
+																		+ (left - copay));
+														proceduresInfoTable
+																.getFlexTable()
+																.setWidget(
+																		actionRow,
+																		10,
+																		lbLeft);
+													} catch (Exception e) {
 														Window.alert("aaaa");
 													}
-															//tbAmount.setEnabled(false);								
+													// tbAmount.setEnabled(false);
 												}
 											}
 										}
 									}, "HashMap<String,String>");
 							return tbCopay;
 						} else if (columnName.compareTo("left") == 0) {
-							int row=proceduresInfoTable.getActionRow();
-							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 10, "10%");
-							try{
-								Label lb = (Label) proceduresInfoTable.getWidget(10);
+							int row = proceduresInfoTable.getActionRow();
+							proceduresInfoTable.getFlexTable()
+									.getFlexCellFormatter().setWidth(row, 10,
+											"10%");
+							try {
+								Label lb = (Label) proceduresInfoTable
+										.getWidget(10);
 								return lb;
-							}
-							catch(Exception e){
+							} catch (Exception e) {
 								return new Label();
 							}
-						}
-						else if (columnName.compareTo("adj_bal") == 0) {
-							int row=proceduresInfoTable.getActionRow();
-							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 7, "10%");
+						} else if (columnName.compareTo("adj_bal") == 0) {
+							int row = proceduresInfoTable.getActionRow();
+							proceduresInfoTable.getFlexTable()
+									.getFlexCellFormatter().setWidth(row, 7,
+											"10%");
 							Label adjbal = new Label();
 							adjbal.setText(data.get("adj_bal"));
 							return adjbal;
-						}
-						else if (columnName.compareTo("amnt_bill") == 0) {
-							int row=proceduresInfoTable.getActionRow();
-							proceduresInfoTable.getFlexTable().getFlexCellFormatter().setWidth(row, 5, "10%");
+						} else if (columnName.compareTo("amnt_bill") == 0) {
+							int row = proceduresInfoTable.getActionRow();
+							proceduresInfoTable.getFlexTable()
+									.getFlexCellFormatter().setWidth(row, 5,
+											"10%");
 							Label amntbill = new Label();
 							amntbill.setText(data.get("amnt_bill"));
 							return amntbill;
 						}
-						
+
 						else {
 							return (Widget) null;
 						}
@@ -282,9 +328,9 @@ public class PostCheckWidget extends Composite {
 				});
 		HorizontalPanel actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		//actionPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		
-		CustomButton postBtn = new CustomButton("Post",AppConstants.ICON_ADD);
+		// actionPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+
+		CustomButton postBtn = new CustomButton("Post", AppConstants.ICON_ADD);
 		postBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -292,7 +338,8 @@ public class PostCheckWidget extends Composite {
 			}
 
 		});
-		CustomButton cancelBtn = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		CustomButton cancelBtn = new CustomButton("Cancel",
+				AppConstants.ICON_CANCEL);
 		final PostCheckWidget pcw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -307,7 +354,8 @@ public class PostCheckWidget extends Composite {
 		vPanel.add(postCheckInfoFlexTable);
 		vPanel.add(proceduresInfoTable);
 		vPanel.add(actionPanel);
-		vPanel.setCellHorizontalAlignment(actionPanel, HasHorizontalAlignment.ALIGN_RIGHT);
+		vPanel.setCellHorizontalAlignment(actionPanel,
+				HasHorizontalAlignment.ALIGN_RIGHT);
 		pids = new ArrayList<String>();
 		loadSeletedProcedureInfo();
 	}
@@ -330,6 +378,7 @@ public class PostCheckWidget extends Composite {
 						Window.alert(ex.toString());
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 
@@ -362,11 +411,12 @@ public class PostCheckWidget extends Composite {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void prepareDataForPostCheck() {
 		FlexTable procsInfoTable = proceduresInfoTable.getFlexTable();
-		ArrayList<String> pays = new ArrayList<String>();
-		ArrayList<String> copays = new ArrayList<String>();
-		ArrayList<String> adjs = new ArrayList<String>();
+		// ArrayList<String> pays = new ArrayList<String>();
+		// ArrayList<String> copays = new ArrayList<String>();
+		// ArrayList<String> adjs = new ArrayList<String>();
 		HashMap<String, String>[] procsMaps = new HashMap[pids.size()];
 		float amount = 0;
 		for (int i = 1; i < (pids.size() + 1); i++) {
@@ -423,15 +473,14 @@ public class PostCheckWidget extends Composite {
 	}
 
 	public void postCheck(HashMap<String, String>[] maps) {
-		final PostCheckWidget pcw=this;
+		final PostCheckWidget pcw = this;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-//			String[] params = { "" + payerWidget.getStoredValue(),
-//					JsonUtil.jsonify(tbCheckNo.getText()),
-//					JsonUtil.jsonify(maps) };
-			String[] params = { "" ,
-					JsonUtil.jsonify(tbCheckNo.getText()),
+			// String[] params = { "" + payerWidget.getStoredValue(),
+			// JsonUtil.jsonify(tbCheckNo.getText()),
+			// JsonUtil.jsonify(maps) };
+			String[] params = { "", JsonUtil.jsonify(tbCheckNo.getText()),
 					JsonUtil.jsonify(maps) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL.encode(Util.getJsonRequest(
@@ -445,7 +494,7 @@ public class PostCheckWidget extends Composite {
 
 					public void onResponseReceived(Request request,
 							Response response) {
-						
+
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								pcw.removeFromParent();

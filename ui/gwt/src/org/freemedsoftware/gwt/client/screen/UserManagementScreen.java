@@ -39,13 +39,16 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.BlockScreenWidget;
+import org.freemedsoftware.gwt.client.widget.CustomAlert;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
+import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -99,6 +102,8 @@ public class UserManagementScreen extends ScreenInterface implements
 	protected FlexTable aclGroupsTable=new FlexTable();
 	
 	protected HashMap<Integer,CheckBox> aclGroupsCheckBoxesMap=new HashMap<Integer,CheckBox>();//
+	
+	protected HashMap<Integer,CheckBox> facilitiesCheckBoxesMap=new HashMap<Integer,CheckBox>();//
 	
 	protected HashMap<String,CheckBox> allAclPermissionsMap=new HashMap<String,CheckBox>();//Contains all Permissions by using key as "Section:Value" and value as "CheckBox"
 	
@@ -154,31 +159,39 @@ public class UserManagementScreen extends ScreenInterface implements
 			final FlexTable  userAddTable = new FlexTable();
 			addUserVPanel.add(userAddTable);
 			
+			int row = 0;
 			
 			final Label usernameLabel = new Label("User Name");
-			userAddTable.setWidget(0, 0, usernameLabel);
+			userAddTable.setWidget(row, 0, usernameLabel);
 	
 			tbUsername = new TextBox();
-			userAddTable.setWidget(0, 1, tbUsername);
-			userAddTable.getFlexCellFormatter().setColSpan(0, 1, 2);
-			tbUsername.setWidth("10em");
+			userAddTable.setWidget(row, 1, tbUsername);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
+			tbUsername.setWidth("20em");
 	
+			row++;
+			
 			final Label passwordLabel = new Label("Password");
-			userAddTable.setWidget(1, 0, passwordLabel);
+			userAddTable.setWidget(row, 0, passwordLabel);
 	
 			tbPassword = new PasswordTextBox();
-			userAddTable.setWidget(1, 1, tbPassword);
-			userAddTable.getFlexCellFormatter().setColSpan(1, 1, 2);
-			tbPassword.setWidth("10em");
+			userAddTable.setWidget(row, 1, tbPassword);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
+			tbPassword.setWidth("20em");
 	
+			row++;
+			
 			final Label passwordverifyLabel = new Label("Password (Verify)");
-			userAddTable.setWidget(2, 0, passwordverifyLabel);
+			userAddTable.setWidget(row, 0, passwordverifyLabel);
 	
 			final HorizontalPanel horizontalPanel = new HorizontalPanel();
-			userAddTable.setWidget(2, 1, horizontalPanel);
+			horizontalPanel.setWidth("100%");
+			userAddTable.setWidget(row, 1, horizontalPanel);
+			
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
 			
 			tbPasswordverify = new PasswordTextBox();
-			tbPasswordverify.setWidth("10em");
+			tbPasswordverify.setWidth("20em");
 			horizontalPanel.add(tbPasswordverify);
 			
 			final String changePassString = "<a href='javascript:undefined'> change password </a>";
@@ -200,35 +213,86 @@ public class UserManagementScreen extends ScreenInterface implements
 				}
 			});
 			horizontalPanel.add(changePasswordLink);
-			
-			userAddTable.getFlexCellFormatter().setColSpan(2, 1, 2);
-			
+
+			row++;
 	
 			final Label descriptionLabel = new Label("Description");
-			userAddTable.setWidget(3, 0, descriptionLabel);
+			userAddTable.setWidget(row, 0, descriptionLabel);
 	
 			tbDescription = new TextBox();
-			userAddTable.setWidget(3, 1, tbDescription);
-			userAddTable.getFlexCellFormatter().setColSpan(3, 1, 2);
+			userAddTable.setWidget(row, 1, tbDescription);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
 			tbDescription.setWidth("100%");
 	
+			row++;
+			
+			final Label userfnameLabel = new Label("First Name");
+			userAddTable.setWidget(row, 0, userfnameLabel);
+	
+			tbUserFirstName = new TextBox();
+			userAddTable.setWidget(row, 1, tbUserFirstName);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
+			tbUserFirstName.setWidth("20em");
+	
+			row++;
+	
+			
+			final Label userMiddlenameLabel = new Label("Middle Name");
+			userAddTable.setWidget(row, 0, userMiddlenameLabel);
+	
+			tbUserMiddleName = new TextBox();
+			userAddTable.setWidget(row, 1, tbUserMiddleName);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
+			tbUserMiddleName.setWidth("20em");
+	
+			row++;
+	
+			
+			final Label userLastNameLabel = new Label("Last Name");
+			userAddTable.setWidget(row, 0, userLastNameLabel);
+	
+			tbUserLastName = new TextBox();
+			userAddTable.setWidget(row, 1, tbUserLastName);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
+			tbUserLastName.setWidth("20em");
+	
+			row++;
+	
+			
+			final Label userTitleLabel = new Label("User Title");
+			userAddTable.setWidget(row, 0, userTitleLabel);
+	
+			tbUserTitle= new CustomRadioButtonGroup("title");
+			tbUserTitle.addItem("Mr");
+			tbUserTitle.addItem("Mrs");
+			tbUserTitle.addItem("Ms");
+			tbUserTitle.addItem("Dr");
+			tbUserTitle.addItem("Fr");
+			userAddTable.setWidget(row, 1, tbUserTitle);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
+			tbUserTitle.setWidth("20em");
+	
+			row++;
+	
 			final Label userTypeLabel = new Label("User Type");
-			userAddTable.setWidget(4, 0, userTypeLabel);
+			userAddTable.setWidget(row, 0, userTypeLabel);
 	
 			lbUserType = new CustomListBox();
-			userAddTable.setWidget(4, 1, lbUserType);
-			userAddTable.getFlexCellFormatter().setColSpan(4, 1, 2);
+			userAddTable.setWidget(row, 1, lbUserType);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
 			lbUserType.addItem("Select User Type", "null");
 			lbUserType.addItem("Miscellaneous", "misc");
 			lbUserType.addItem("Provider", "phy");
 	
+			row++;
+			
 			final Label actualPhysicianLabel = new Label("Actual Physician");
-			userAddTable.setWidget(5, 0, actualPhysicianLabel);
+			userAddTable.setWidget(row, 0, actualPhysicianLabel);
 			actualPhysicianLabel.setVisible(false);
 	
 			lbActualPhysician = new SupportModuleWidget("ProviderModule");
-			userAddTable.setWidget(5, 1, lbActualPhysician);
-			userAddTable.getFlexCellFormatter().setColSpan(5, 1, 2);
+			userAddTable.setWidget(row, 1, lbActualPhysician);
+			userAddTable.getFlexCellFormatter().setColSpan(row, 1, 2);
 			lbActualPhysician.setVisible(false);
 	
 			lbUserType.addChangeHandler(new ChangeHandler() {
@@ -247,9 +311,55 @@ public class UserManagementScreen extends ScreenInterface implements
 				}
 			});
 	
+			row++;
+			
+			final Label facilityLabel = new Label("Facility");
+			userAddTable.setWidget(row, 0, facilityLabel);
+			VerticalPanel facilityVPanel = new VerticalPanel();
+			facilityVPanel.setStyleName("top-border-only");
+			userAddTable.setWidget(row, 1, facilityVPanel);
+			final FlexTable facilityTable = new FlexTable();
+			facilityVPanel.add(facilityTable);
+			Util.callModuleMethod("FacilityModule", "GetAll", (Integer)null, new CustomRequestCallback() {
+			
+				@Override
+				public void onError() {
+					// TODO Auto-generated method stub
+			
+				}
+			
+				@Override
+				public void jsonifiedData(Object data) {
+					// TODO Auto-generated method stub
+					int tempRow = 0;
+					int tempCol = 0;
+					HashMap<String, String>[] result =(HashMap<String, String>[])data;
+					for(int i=0;i<result.length;i++){
+						HashMap<String, String> facilityMap = result[i];
+						CheckBox checkBox = new CheckBox(facilityMap.get("psrname"));
+						Integer id= Integer.parseInt(facilityMap.get("id"));
+						facilitiesCheckBoxesMap.put(id, checkBox);
+						facilityTable.setWidget(tempRow, tempCol, checkBox);
+						tempCol++;
+						if(tempCol==3){
+							tempCol = 0;
+							tempRow++; 
+						}
+							
+					}
+					
+				}
+			
+			}, "HashMap<String,String>[]");
+			
+			row++;
+			
 			final Label aclLabel = new Label("User Groups");
-			userAddTable.setWidget(6, 0, aclLabel);
-			userAddTable.setWidget(6, 1, aclGroupsTable);
+			userAddTable.setWidget(row, 0, aclLabel);
+			final VerticalPanel aclGroupsVpanel = new VerticalPanel();
+			aclGroupsVpanel.setStyleName("top-border-only");
+			aclGroupsVpanel.add(aclGroupsTable);
+			userAddTable.setWidget(row, 1, aclGroupsVpanel);
 			
 			HorizontalPanel buttonsPanel = new HorizontalPanel();
 			addUserButton = new CustomButton("Add User",AppConstants.ICON_ADD_PERSON);
@@ -272,7 +382,9 @@ public class UserManagementScreen extends ScreenInterface implements
 			clearButton.addClickHandler(this);
 			buttonsPanel.add(clearButton);
 
-			userAddTable.setWidget(7, 1, buttonsPanel);
+			row++;
+			
+			userAddTable.setWidget(row, 1, buttonsPanel);
 			getACLGroups();
 			
 			showEnhancedPermssions(false);
@@ -299,8 +411,12 @@ public class UserManagementScreen extends ScreenInterface implements
 		wUsers.setSize("100%", "100%");
 		wUsers.addColumn("Username", "username"); // col 0
 		wUsers.addColumn("Description", "userdescrip"); // col 1
-		wUsers.addColumn("Level", "userlevel"); // col 2
-		wUsers.addColumn("Type", "usertype"); // col 3
+		wUsers.addColumn("First Name", "userfname"); // col 2
+		wUsers.addColumn("Last Name", "userlname"); // col 3
+		wUsers.addColumn("Middle Name", "usermname"); // col 4
+		wUsers.addColumn("Title", "usertitle"); // col 5
+		wUsers.addColumn("Level", "userlevel"); // col 6
+		wUsers.addColumn("Type", "usertype"); // col 7
 		wUsers.setIndexName("id");
 
 		wUsers.setTableRowClickHandler(new TableRowClickHandler() {
@@ -410,7 +526,6 @@ public class UserManagementScreen extends ScreenInterface implements
 				Util.callModuleMethod("ACL", "GetAllPermissions", (Integer)null, new CustomRequestCallback() {
 					@Override
 					public void onError() {
-						Window.alert("ssssssssss");
 						addUserVPanel.remove(blockScreenWidget);
 					}
 					@Override
@@ -489,144 +604,37 @@ public class UserManagementScreen extends ScreenInterface implements
 		if (w == addUserButton) {
 
 			if (checkInput() == true) {
-				String requestURL="org.freemedsoftware.api.UserInterface.add";
-				HashMap<String, String> hm = new HashMap<String, String>();
-				if(userId!=null){
-					hm.put("id", userId.toString());
-					requestURL="org.freemedsoftware.api.UserInterface.mod";
-				}
+				if(userId!=null)
+					addUser();
+				else{
+					List params = new ArrayList();
+					params.add(tbUsername.getText());
+					Util.callApiMethod("UserInterface", "CheckDupilcate", params, new CustomRequestCallback() {
 					
-				hm.put("username", tbUsername.getText());
-				if(tbPassword.isEnabled())
-					hm.put("userpassword", tbPassword.getText());
-
-				hm.put("userdescrip", tbDescription.getText());
-				String usertype = lbUserType.getValue(lbUserType
-						.getSelectedIndex());
-				hm.put("usertype", usertype);
-				if (usertype == "phy") {
-					hm.put("userrealphy", lbActualPhysician.getValue().toString());
+						@Override
+						public void onError() {
+							Util.showErrorMsg(moduleName, "Failed!");
+						}
+					
+						@Override
+						public void jsonifiedData(Object data) {
+							if(data==null)
+								onError();
+							Boolean flag = (Boolean)data;
+							if(flag){
+								Util.showErrorMsg(moduleName, "User Already Exists!!!");
+								Util.alert("This user is already in the system!!");
+							}else
+								addUser();
+						}
+					
+					}, "Boolean");
 				}
-				String useracl="";
-				Iterator<Integer> itr = aclSelectedGroupsIdsList.iterator();
-				while(itr.hasNext()){
-					useracl=useracl+itr.next().toString();
-					if(itr.hasNext())
-						useracl=useracl+",";
-				}
-				hm.put("useracl", useracl);
-				
-				List paramsList = new ArrayList();
-				paramsList.add(JsonUtil.jsonify(hm));
-				
-				if(customizePermissionsTable.isVisible()){
-					calculateBlockedAndAllowedACLSections();
-					if(blockedPermissionsMap.size()>0)
-						paramsList.add(JsonUtil.jsonify(blockedPermissionsMap));
-					else
-						paramsList.add("");
-					if(allowedPermissionsMap.size()>0)
-						paramsList.add(JsonUtil.jsonify(allowedPermissionsMap));
-					else
-						paramsList.add("");
-				}
-				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					// Do nothing.
-				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					String[] params = (String[])paramsList.toArray(new String[0]);
-					RequestBuilder builder = new RequestBuilder(
-							RequestBuilder.POST,
-							URL
-									.encode(Util
-											.getJsonRequest(requestURL
-													,
-													params)));
-					try {
-						builder.sendRequest(null, new RequestCallback() {
-							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
-							}
-
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									Integer r = (Integer) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													"Integer");
-									if (r != null) {
-										Util.showInfoMsg("UserManagementScreen", "Successfully Added User.");
-										retrieveAllUsers();
-										clearForm();
-									}else{
-										Boolean b = (Boolean) JsonUtil
-										.shoehornJson(JSONParser
-												.parse(response.getText()),
-												"Boolean");
-										if(b){
-											Util.showInfoMsg("UserManagementScreen", "Successfully Modified User.");
-											retrieveAllUsers();
-											clearForm();
-										}
-									}
-								} else {
-									Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
-								}
-							}
-						});
-					} catch (RequestException e) {
-						Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
-					}
-				} else {
-					// TODO: Create GWT-RPC stuff here
-				}
-
 			}
 		}else if (w == deleteUserButton) {
-
-			if (true) {
-				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					// Do nothing.
-				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					String[] params = { JsonUtil.jsonify(userId) };
-					RequestBuilder builder = new RequestBuilder(
-							RequestBuilder.POST,
-							URL
-									.encode(Util
-											.getJsonRequest("org.freemedsoftware.api.UserInterface.del"
-													,
-													params)));
-					try {
-						builder.sendRequest(null, new RequestCallback() {
-							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
-							}
-
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-										Boolean flag = (Boolean) JsonUtil
-										.shoehornJson(JSONParser
-												.parse(response.getText()),
-												"Boolean");
-										if(flag){
-											Util.showInfoMsg("UserManagementScreen", "Successfully deleted User.");
-											retrieveAllUsers();
-											clearForm();
-										}
-								} else {
-									Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
-								}
-							}
-						});
-					} catch (RequestException e) {
-						Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
-					}
-				} else {
-					// TODO: Create GWT-RPC stuff here
-				}
-
-			}
+			
+			deleteUser();
+	
 		} else if (w == clearButton) {
 			clearForm();
 		} else if (w == copyButton) {
@@ -634,47 +642,202 @@ public class UserManagementScreen extends ScreenInterface implements
 		}
 	}
 
+	protected void addUser(){
+		String requestURL="org.freemedsoftware.api.UserInterface.add";
+		HashMap<String, String> hm = new HashMap<String, String>();
+		if(userId!=null){
+			hm.put("id", userId.toString());
+			requestURL="org.freemedsoftware.api.UserInterface.mod";
+		}
+			
+		hm.put("username", tbUsername.getText());
+		if(tbPassword.isEnabled())
+			hm.put("userpassword", tbPassword.getText());
+
+		hm.put("userfname", tbUserFirstName.getText());
+		hm.put("userlname", tbUserLastName.getText());
+		hm.put("usermname", tbUserMiddleName.getText());
+		hm.put("usertitle", tbUserTitle.getWidgetValue());
+		hm.put("userdescrip", tbDescription.getText());
+		String usertype = lbUserType.getValue(lbUserType
+				.getSelectedIndex());
+		hm.put("usertype", usertype);
+		if (usertype == "phy") {
+			hm.put("userrealphy", lbActualPhysician.getValue().toString());
+		}
+		
+		String userfac="";
+		Iterator<Integer> itr = facilitiesCheckBoxesMap.keySet().iterator();
+		while(itr.hasNext()){
+			Integer id = itr.next();
+			CheckBox checkBox =  facilitiesCheckBoxesMap.get(id);
+			if(checkBox.getValue())
+				userfac=userfac+id.toString()+",";
+		}
+		hm.put("userfac", userfac);
+		String useracl="";
+		itr = aclSelectedGroupsIdsList.iterator();
+		while(itr.hasNext()){
+			useracl=useracl+itr.next().toString();
+			if(itr.hasNext())
+				useracl=useracl+",";
+		}
+		hm.put("useracl", useracl);
+		
+		List paramsList = new ArrayList();
+		paramsList.add(JsonUtil.jsonify(hm));
+		
+		if(customizePermissionsTable.isVisible()){
+			calculateBlockedAndAllowedACLSections();
+			if(blockedPermissionsMap.size()>0)
+				paramsList.add(JsonUtil.jsonify(blockedPermissionsMap));
+			else
+				paramsList.add("");
+			if(allowedPermissionsMap.size()>0)
+				paramsList.add(JsonUtil.jsonify(allowedPermissionsMap));
+			else
+				paramsList.add("");
+		}
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// Do nothing.
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = (String[])paramsList.toArray(new String[0]);
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(requestURL
+											,
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							Integer r = (Integer) JsonUtil
+									.shoehornJson(JSONParser
+											.parse(response.getText()),
+											"Integer");
+							if (r != null) {
+								Util.showInfoMsg("UserManagementScreen", "Successfully Added User.");
+								retrieveAllUsers();
+								clearForm();
+							}else{
+								Boolean b = (Boolean) JsonUtil
+								.shoehornJson(JSONParser
+										.parse(response.getText()),
+										"Boolean");
+								if(b){
+									Util.showInfoMsg("UserManagementScreen", "Successfully Modified User.");
+									retrieveAllUsers();
+									clearForm();
+								}
+							}
+						} else {
+							Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Util.showErrorMsg("UserManagementScreen", "Failed to add user.");
+			}
+		} else {
+			// TODO: Create GWT-RPC stuff here
+		}
+
+	}
+	
+	protected void deleteUser(){
+		if (true) {
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				// Do nothing.
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { JsonUtil.jsonify(userId) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest("org.freemedsoftware.api.UserInterface.del"
+												,
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+									Boolean flag = (Boolean) JsonUtil
+									.shoehornJson(JSONParser
+											.parse(response.getText()),
+											"Boolean");
+									if(flag){
+										Util.showInfoMsg("UserManagementScreen", "Successfully deleted User.");
+										retrieveAllUsers();
+										clearForm();
+									}
+							} else {
+								Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
+							}
+						}
+					});
+				} catch (RequestException e) {
+					Util.showErrorMsg("UserManagementScreen", "Failed to delete user.");
+				}
+			} else {
+				// TODO: Create GWT-RPC stuff here
+			}
+
+		}
+	}
+	
 	public Boolean checkInput() {
 		String base = "Please check the following fields:" + " ";
-		String[] s = {};
-		String pw = null;
+		String msg = "";
 		if (tbUsername.getText().equals("")) {
-			s[s.length] = "Username";
+			msg += "\nUsername";
 		}
 		if(userId==null){//if modifying user then no need to get new password
 			if (!tbPassword.getText().equals("")) {
 				if (!tbPassword.getText().equals(tbPasswordverify.getText())) {
-					pw = "Passwords do not match!";
+					msg += "\nPasswords do not match!";
 				}
 			} else {
-				s[s.length] = "Password";
+				msg += "\nPassword";
 			}
 		}
 
-		if (tbDescription.getText().equals("")) {
-			s[s.length] = "User Description";
+		if (tbUserFirstName.getText().equals("")) {
+			msg += "\nFirst Name!";
 		}
 
+		if (tbUserLastName.getText().equals("")) {
+			msg += "\nLast Name!";
+		}
+
+		if (tbUserTitle.getWidgetValue()==null) {
+			msg += "\nTitle!";
+		}
+		
 		if (lbUserType.getWidgetValue().equals("null")) {
-			s[s.length] = "User Type";
+			msg += "\nUser Type";
 		} else if (lbUserType.getWidgetValue().equals("phy")) {
 			if (lbActualPhysician.getText() .equals("")) {
-				s[s.length] = "Actual Physician";
+				msg += "\nActual Physician";
 			}
 		}
 
-		if (s.length == 0 && pw == null) {
+		if (msg.length() == 0) {
 			return true;
 		}
 
-		for (int i = 0; i < s.length; i++) {
-			base = base + s[i];
-			if (i != s.length - 1) {
-				base = base + ", ";
-			}
-		}
-
-		Window.alert(base + "\n" + pw);
+		Window.alert(base+msg + "\n" );
 
 		return false;
 	}
@@ -685,6 +848,10 @@ public class UserManagementScreen extends ScreenInterface implements
 		tbPassword.setText("");
 		tbPasswordverify.setEnabled(true);
 		tbPasswordverify.setText("");
+		tbUserFirstName.setText("");
+		tbUserLastName.setText("");
+		tbUserMiddleName.setText("");
+		tbUserTitle.setWidgetValue("");
 		changePasswordLink.setVisible(false);
 		tbDescription.setText("");
 		lbUserType.setWidgetValue("null");
@@ -699,6 +866,13 @@ public class UserManagementScreen extends ScreenInterface implements
 		while(itr.hasNext()){
 			Integer key = itr.next();
 			CheckBox checkBox = aclGroupsCheckBoxesMap.get(key);
+			checkBox.setValue(false);
+		}
+		
+		itr = facilitiesCheckBoxesMap.keySet().iterator();
+		while(itr.hasNext()){
+			Integer key = itr.next();
+			CheckBox checkBox = facilitiesCheckBoxesMap.get(key);
 			checkBox.setValue(false);
 		}
 		
@@ -851,13 +1025,26 @@ public class UserManagementScreen extends ScreenInterface implements
 							if (data != null) {
 								tbUsername.setText(data.get("username"));
 								tbDescription.setText(data.get("userdescrip"));
+								tbUserFirstName.setText(data.get("userfname"));
+								tbUserLastName.setText(data.get("userlname"));
+								tbUserMiddleName.setText(data.get("usermname"));
+								tbUserTitle.setWidgetValue(data.get("usertitle"));
 								lbUserType.setWidgetValue(data.get("usertype"));
-								try{
-								if(data.get("usertype").equalsIgnoreCase("phy")){
-									lbActualPhysician.setValue(Integer.parseInt(data.get("userrealphy")));
-									lbActualPhysician.setVisible(true);
+								if(data.get("usertype")!=null && data.get("usertype").equalsIgnoreCase("phy")){
+										lbActualPhysician.setValue(Integer.parseInt(data.get("userrealphy")));
+										lbActualPhysician.setVisible(true);
 								}
-								}catch(Exception e){JsonUtil.debug("user real physician not found"+userId);}
+								
+								if(data.get("userfac")!=null && data.get("userfac").length()>0){
+									String[] userFacilities = data.get("userfac").split(",");
+									for(int i=0;i<userFacilities.length;i++){
+										Integer id = Integer.parseInt(userFacilities[i]);
+										CheckBox checkBox = facilitiesCheckBoxesMap.get(id);
+										if(checkBox!=null)
+											checkBox.setValue(true);
+									}
+								}
+								
 								addUserButton.setText("Modify User");
 								changePasswordLink.setVisible(true);
 								tbPassword.setEnabled(false);
@@ -927,6 +1114,14 @@ public class UserManagementScreen extends ScreenInterface implements
 	}
 	
 	protected int requestTracker = 0;
+
+	protected TextBox tbUserFirstName;
+
+	protected TextBox tbUserMiddleName;
+
+	protected TextBox tbUserLastName;
+
+	protected CustomRadioButtonGroup tbUserTitle;
 	public void addACLGroup(final String[][] data){
 		int row=0,col=0;
 		for(int i=0;i<data.length;i++){

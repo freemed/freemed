@@ -35,14 +35,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.cobogw.gwt.user.client.ui.RoundedPanel;
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomCommand;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.screen.CallInScreen;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.PatientsGroupScreen;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -87,6 +88,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import eu.future.earth.gwt.client.FtrGwtDateCss;
 import eu.future.earth.gwt.client.date.AbstractWholeDayField;
 import eu.future.earth.gwt.client.date.BaseDateRenderer;
 import eu.future.earth.gwt.client.date.DateEvent;
@@ -146,7 +148,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		private String id = null;
 
 		private Integer patientId = null;
-		
+
 		private Integer groupId = null;
 
 		private Integer providerId = null;
@@ -336,34 +338,36 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private int intervalsPerHour = 4;
 
+		private boolean show24HourClock = false;
+		
+		private int intervalHeight = 50;
+		
 		public StringPanelRenderer() {
 			super();
 		}
 
-		public StringPanelRenderer(int startHour, int endHour,
-				int intervalPerHour) {
-			super();
-			this.startHour = startHour;
-			this.endHour = endHour;
-			this.intervalsPerHour = intervalPerHour;
-		}
-
 		public void createNewAfterClick(Date currentDate,
 				DateEventListener listener) {
-			if(!CurrentState.isActionAllowed(moduleName,AppConstants.WRITE)){
-				Util.showErrorMsg("Scheduler", "Access Denied!\nCan not book appointments.");
+			if (!CurrentState.isActionAllowed(moduleName, AppConstants.WRITE)) {
+				Util.showErrorMsg("Scheduler",
+						"Access Denied!\nCan not book appointments.");
 				return;
 			}
 			if (!CurrentState.canBookAppoinment(currentDate, currentDate)) {
 				/*
-				Util.showErrorMsg("Scheduler", "Can not book appointment in between("
-						+ CurrentState.BREAK_HOUR + ":00 -"
-						+ (CurrentState.BREAK_HOUR + 1) + ":00) !");
-				*/
+				 * Util.showErrorMsg("Scheduler",
+				 * "Can not book appointment in between(" +
+				 * CurrentState.BREAK_HOUR + ":00 -" + (CurrentState.BREAK_HOUR
+				 * + 1) + ":00) !");
+				 */
 				return;
 			}
 
-			final EventData data = new EventData();
+			EventData data = null;
+			if(externalDataEvent ==null)
+				data = new EventData();
+			else
+				data = externalDataEvent;
 			data.setStartTime(currentDate);
 			Calendar c = new GregorianCalendar();
 			c.setTime(currentDate);
@@ -384,18 +388,20 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public void createNewAfterClick(Date currentDate, Date endDate,
 				DateEventListener listener) {
-			
-			if(!CurrentState.isActionAllowed(moduleName,AppConstants.WRITE)){
-				Util.showErrorMsg("Scheduler", "Access Denied!\nCan not book appointments.");
+
+			if (!CurrentState.isActionAllowed(moduleName, AppConstants.WRITE)) {
+				Util.showErrorMsg("Scheduler",
+						"Access Denied!\nCan not book appointments.");
 				return;
 			}
-			
+
 			if (!CurrentState.canBookAppoinment(currentDate, endDate)) {
 				/*
-				Util.showErrorMsg("Scheduler", "Can not book appointment in between("
-						+ CurrentState.BREAK_HOUR + ":00 -"
-						+ (CurrentState.BREAK_HOUR + 1) + ":00) !");
-				*/
+				 * Util.showErrorMsg("Scheduler",
+				 * "Can not book appointment in between(" +
+				 * CurrentState.BREAK_HOUR + ":00 -" + (CurrentState.BREAK_HOUR
+				 * + 1) + ":00) !");
+				 */
 				return;
 			}
 			final EventData data = new EventData();
@@ -433,11 +439,11 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getEndHour() {
-			return this.endHour;
+			return endHour;
 		}
 
 		public int getStartHour() {
-			return this.startHour;
+			return startHour;
 		}
 
 		public int showDaysInWeek() {
@@ -535,7 +541,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getEventMinimumHeight() {
-			return 50;
+			return intervalHeight;
 		}
 
 		public int getEventTopHeight() {
@@ -543,11 +549,11 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public int getIntervalHeight() {
-			return 50;
+			return intervalHeight;
 		}
 
 		public int getIntervalsPerHour() {
-			return this.intervalsPerHour;
+			return intervalsPerHour;
 		}
 
 		public int getScrollHour() {
@@ -559,7 +565,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 
 		public boolean show24HourClock() {
-			return true;
+			return show24HourClock;
 		}
 
 		public boolean showIntervalTimes() {
@@ -568,6 +574,26 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		public boolean isEnabled(Date event) {
 			return true;
+		}
+
+		public void setStartHour(int startHour) {
+			this.startHour = startHour;
+		}
+
+		public void setEndHour(int endHour) {
+			this.endHour = endHour;
+		}
+
+		public void setIntervalsPerHour(int intervalsPerHour) {
+			this.intervalsPerHour = intervalsPerHour;
+		}
+
+		public void setShow24HourClock(boolean show24HourClock) {
+			this.show24HourClock = show24HourClock;
+		}
+
+		public void setIntervalHeight(int intervalHeight) {
+			this.intervalHeight = intervalHeight;
 		}
 	}
 
@@ -603,14 +629,14 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		private CustomButton delete = null;
 
-		private CustomListBox appointmentType = null;
-		
+		private CustomRadioButtonGroup appointmentType = null;
+
 		private EventData data = null;
 
 		private SupportModuleListBox selectTemplate = null;
-		
+
 		private CustomListBox nextAvailable = null;
-		
+
 		private CustomListBox nextAvailableDateTime = null;
 
 		private DateEventActions command = DateEventActions.ADD;
@@ -629,7 +655,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		 * @param newCommand
 		 */
 
-		public StringEventDataDialog(DateRenderer renderer,
+		public StringEventDataDialog(final DateRenderer renderer,
 				DateEventListener newListener, Object newData,
 				DateEventActions newCommand) {
 			super();
@@ -637,13 +663,15 @@ public class SchedulerWidget extends WidgetInterface implements
 			this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
 
 			boolean reverseTime = false;
-			
+
 			// date = new DateEditFieldWithPicker("MM/dd/yyyy");
 			date = new CustomDatePicker();
 			date.setWidth("100%");
+			text.setWidth("60%");
 			start = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm"
 					: "hh:mmaa");
-			end = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm" : "hh:mmaa");
+			end = new CustomTimeBox(renderer.show24HourClock() ? "HH:mm"
+					: "hh:mmaa");
 			command = newCommand;
 			data = (EventData) newData;
 			listener = newListener;
@@ -677,7 +705,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			final FlexTable table = new FlexTable();
 
 			int row = 0;
-			
+
 			table.setWidget(row, 0, new Label("Date"));
 			table.setWidget(row, 1, date);
 
@@ -696,80 +724,89 @@ public class SchedulerWidget extends WidgetInterface implements
 					HorizontalPanel.ALIGN_LEFT);
 
 			row++;
-			
-			if(command == DateEventActions.ADD){ // if not in edit mode
-			
-				appointmentType = new CustomListBox();
+
+			if (command == DateEventActions.ADD && externalDataEvent==null) { // if not in edit mode
+
+				appointmentType = new CustomRadioButtonGroup("appointmentType");
 				appointmentType.setWidth("100%");
-				appointmentType.addItem("Patient",AppConstants.APPOINTMENT_TYPE_PATIENT);
-				appointmentType.addItem("Call-In Patient",AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT);
-				appointmentType.addItem("Group",AppConstants.APPOINTMENT_TYPE_GROUP);
+				appointmentType.addItem("Patient",
+						AppConstants.APPOINTMENT_TYPE_PATIENT);
+				appointmentType.addItem("Call-In Patient",
+						AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT);
+				appointmentType.addItem("Group",
+						AppConstants.APPOINTMENT_TYPE_GROUP);
 				
+				appointmentType.setWidgetValue(AppConstants.APPOINTMENT_TYPE_PATIENT);
+
 				table.setWidget(row, 0, new Label("Type"));
 				table.setWidget(row, 1, appointmentType);
-			
+
 			}
-			
+
 			row++;
-			
+
 			final Label entityLabel = new Label("Patient");
-			
-			if (command == DateEventActions.UPDATE) {
-				if (data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)) {
+
+			if (command == DateEventActions.UPDATE || externalDataEvent!=null) {
+				if (data.getResourceType().equalsIgnoreCase(
+						AppConstants.APPOINTMENT_TYPE_PATIENT)) {
 					patient = new PatientWidget();
-					table.setWidget(row, 0, entityLabel);
-					table.setWidget(row, 1, patient);
-				} else if (data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT)) {
+					patient.setWidth("100%");
+					patient.setValue(data.getPatientId());
+					patient.addChangeHandler(this);
+				} else if (data.getResourceType().equalsIgnoreCase(
+						AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT)) {
 					supportWidget = new SupportModuleWidget("Callin");
+					supportWidget.setWidth("100%");
+					supportWidget.addChangeHandler(this);
+					supportWidget.setValue(data.getPatientId());
 					entityLabel.setText("Call-In Patient");
-					table.setWidget(row, 0, entityLabel);
-					table.setWidget(row, 1, supportWidget);
-				} else if (data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)) {
+				} else if (data.getResourceType().equalsIgnoreCase(
+						AppConstants.APPOINTMENT_TYPE_GROUP)) {
 					supportWidget = new SupportModuleWidget("CalendarGroup");
+					supportWidget.setWidth("100%");
+					supportWidget.addChangeHandler(this);
+					supportWidget.setValue(data.getPatientId());
 					entityLabel.setText("Group");
-					table.setWidget(row, 0, new Label("Group"));
-					table.setWidget(row, 1, supportWidget);
 				}
+				table.setWidget(row, 0, entityLabel);
+				table.setWidget(row, 1, supportWidget==null?patient:supportWidget);
+				
 			} else {
 				patient = new PatientWidget();
+				patient.setWidth("100%");
+				patient.addChangeHandler(this);
 				table.setWidget(row, 0, entityLabel);
 				table.setWidget(row, 1, patient);
 			}
-			if(patient!=null){
-				if(data.getPatientId()!=null)
-					patient.setValue(data.getPatientId());
-				patient.addChangeHandler(this);
-				patient.setWidth("100%");
-			}else {
-				supportWidget.setValue(data.getPatientId());
-				supportWidget.addChangeHandler(this);
-				supportWidget.setWidth("100%");
-			}
-			
+
 			final int entityRow = row;
-			
-			if(command == DateEventActions.ADD){
-				appointmentType.addChangeHandler(new ChangeHandler() {
+
+			if (appointmentType!=null) {
+				appointmentType.addValueChangeHandler(new ValueChangeHandler() {
 					@Override
-					public void onChange(ChangeEvent arg0) {
-						int index = appointmentType.getSelectedIndex();
-						data.setResourceType(appointmentType.getValue(index));
-						if(appointmentType.getItemText(index).equalsIgnoreCase("Patient")){
+					public void onValueChange(ValueChangeEvent arg0) {
+						String selectedValue = appointmentType.getWidgetValue();
+						data.setResourceType(selectedValue);
+						if (selectedValue.equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)) {
 							supportWidget = null;
 							patient = new PatientWidget();
+							patient.setWidth("100%");
 							entityLabel.setText("Patient");
 							table.setWidget(entityRow, 1, patient);
-						}else if(appointmentType.getItemText(index).equalsIgnoreCase("Group")){
+						} else if (selectedValue.equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)) {
 							patient = null;
-							supportWidget = new SupportModuleWidget("CalendarGroup");
+							supportWidget = new SupportModuleWidget(
+									"CalendarGroup");
 							entityLabel.setText("Group");
 							table.setWidget(entityRow, 1, supportWidget);
-						}else if(appointmentType.getItemText(index).equalsIgnoreCase("Call-In Patient")){
+						} else if (selectedValue.equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT)) {
 							patient = null;
 							supportWidget = new SupportModuleWidget("Callin");
 							entityLabel.setText("Call-In Patient");
 							table.setWidget(entityRow, 1, supportWidget);
 						}
+						supportWidget.setWidth("100%");
 					}
 				});
 			}
@@ -786,15 +823,16 @@ public class SchedulerWidget extends WidgetInterface implements
 			provider.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<Integer> arg0) {
-					if(arg0.getValue()==0){
+					if (arg0.getValue() == 0) {
 						nextAvailable.setSelectedIndex(0);
 						nextAvailableDateTime.setSelectedIndex(0);
 						nextAvailableDateTime.setEnabled(false);
-						
-						DomEvent.fireNativeEvent(Document.get().createChangeEvent(),
-								nextAvailableDateTime); 
-						
+
+						DomEvent.fireNativeEvent(Document.get()
+								.createChangeEvent(), nextAvailableDateTime);
+
 					}
+					toggleButton();
 				}
 			});
 			text.addChangeHandler(this);
@@ -812,9 +850,9 @@ public class SchedulerWidget extends WidgetInterface implements
 					toggleButton();
 				}
 			});
-			
+
 			row++;
-			
+
 			table.setWidget(row, 0, new Label("Provider"));
 			// Only set default provider *if* there is one, and if the
 			// current event data hasn't already set it.
@@ -825,13 +863,13 @@ public class SchedulerWidget extends WidgetInterface implements
 			table.setWidget(row, 1, provider);
 
 			row++;
-			
+
 			table.setWidget(row, 0, new Label("Description"));
 			table.setWidget(row, 1, text);
 			table.getFlexCellFormatter().setColSpan(row, 1, 2);
 
 			row++;
-			
+
 			final Label templateLabel = new Label("Template");
 			table.setWidget(row, 0, templateLabel);
 			selectTemplate = new SupportModuleListBox("AppointmentTemplates",
@@ -850,12 +888,12 @@ public class SchedulerWidget extends WidgetInterface implements
 			} catch (Exception ex) {
 				JsonUtil.debug(ex.toString());
 			}
-			
+
 			row++;
-			
-			final Label nextAvailableLabel = new Label("Next Available"); 
+
+			final Label nextAvailableLabel = new Label("Next Available");
 			table.setWidget(row, 0, nextAvailableLabel);
-			
+
 			nextAvailable = new CustomListBox();
 			nextAvailable.setWidth("100%");
 			nextAvailable.addItem("--", "--");
@@ -875,139 +913,151 @@ public class SchedulerWidget extends WidgetInterface implements
 				public void onChange(ChangeEvent arg0) {
 					String choice = nextAvailable.getStoredValue();
 					HashMap<String, String> params = new HashMap<String, String>();
-					
+
 					Calendar cal = new GregorianCalendar();
 					cal.setTime(date.getValue());
-					
+
 					Calendar nextDayCal = new GregorianCalendar();
 					nextDayCal.setTime(date.getValue());
 					nextDayCal.add(Calendar.DAY_OF_MONTH, 1);
-					
-					if(choice.equals("inaweek")){
+
+					if (choice.equals("inaweek")) {
 						cal.add(Calendar.DAY_OF_MONTH, 7);
 						params.put("date", Util.getSQLDate(cal.getTime()));
 						params.put("days", "7");
 					}// end inaweek
-					else if(choice.equals("in2weeks")){ 
+					else if (choice.equals("in2weeks")) {
 						cal.add(Calendar.DAY_OF_MONTH, 14);
 						params.put("date", Util.getSQLDate(cal.getTime()));
 						params.put("days", "7");
 					}// end in2weeks
-					else if(choice.equals("inamonth")){
+					else if (choice.equals("inamonth")) {
 						cal.add(Calendar.DAY_OF_MONTH, 28);
 						params.put("date", Util.getSQLDate(cal.getTime()));
 						params.put("days", "7");
 					}// end inamonth
-					else if(choice.equals("weekdays")){
-						//cal.add(Calendar.DAY_OF_MONTH, 7);
+					else if (choice.equals("weekdays")) {
+						// cal.add(Calendar.DAY_OF_MONTH, 7);
 						params.put("date", Util.getSQLDate(cal.getTime()));
 						params.put("weekday", "true");
 					}// end weekdays
-					else if(choice.equals("mon")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("mon")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
 						params.put("forceday", "1");
 					}// end mon
-					else if(choice.equals("mon")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("mon")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
 						params.put("forceday", "1");
 					} // end mon
-					else if(choice.equals("tue")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("tue")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
 						params.put("forceday", "2");
 					} // end tue
-					else if(choice.equals("wed")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("wed")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
 						params.put("forceday", "3");
 					} // end wed
-					else if(choice.equals("thu")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("thu")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
-						params.put("forceday", "4"); 
+						params.put("forceday", "4");
 					}// end thu
-					else if(choice.equals("fri")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("fri")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
-						params.put("forceday", "5"); 
+						params.put("forceday", "5");
 					} // end fri
-					else if(choice.equals("sat")){
-						params.put("date", Util.getSQLDate(nextDayCal.getTime()));
+					else if (choice.equals("sat")) {
+						params.put("date", Util
+								.getSQLDate(nextDayCal.getTime()));
 						params.put("days", "28");
-						params.put("forceday", "5");  
+						params.put("forceday", "5");
 					}// end sat
-					else{
+					else {
 						nextAvailableDateTime.clear();
 						nextAvailableDateTime.setEnabled(false);
 					}
-					if(params.size()>0){
-						if(provider.getValue() !=null && provider.getValue()!=0)
-							params.put("provider", provider.getValue().toString());
-						params.put("duration", (60/intervalsPerHour)+"");
+					if (params.size() > 0) {
+						if (provider.getValue() != null
+								&& provider.getValue() != 0)
+							params.put("provider", provider.getValue()
+									.toString());
+						params.put("duration", (60 / renderer.getIntervalsPerHour()) + "");
 						nextAvailableDateTime.clear();
 						nextAvailableDateTime.setEnabled(false);
 						updateNextAvailableDateTime(params);
 					}
 				}
 			});
-			
+
 			table.setWidget(row, 1, nextAvailable);
-			
+
 			row++;
-			
-			final Label nextAvailableDateTimeLabel = new Label("Date/Time"); 
+
+			final Label nextAvailableDateTimeLabel = new Label("Date/Time");
 			table.setWidget(row, 0, nextAvailableDateTimeLabel);
-			
+
 			nextAvailableDateTime = new CustomListBox();
 			nextAvailableDateTime.setEnabled(false);
 			nextAvailableDateTime.setWidth("100%");
 			table.setWidget(row, 1, nextAvailableDateTime);
-			
+
 			nextAvailableDateTime.addChangeHandler(new ChangeHandler() {
-				/////making these values global so that we can track original time on de-selecting the next available slots   
-				Date prvDate 	  = null;
+				// ///making these values global so that we can track original
+				// time on de-selecting the next available slots
+				Date prvDate = null;
 				Date prvStartDate = null;
-				Date prvEndDate   = null;
-				///end globals
+				Date prvEndDate = null;
+
+				// /end globals
 				@Override
 				public void onChange(ChangeEvent arg0) {
-					if(prvDate == null)
+					if (prvDate == null)
 						prvDate = date.getValue();
-					if(prvStartDate == null)
+					if (prvStartDate == null)
 						prvStartDate = start.getValue(date.getValue());
-					if(prvEndDate == null)
+					if (prvEndDate == null)
 						prvEndDate = end.getValue(date.getValue());
-					
+
 					String dateStr = nextAvailableDateTime.getStoredValue();
-					
-					if(!dateStr.equals("----") && nextAvailableDateTime.isEnabled()){
+
+					if (!dateStr.equals("----")
+							&& nextAvailableDateTime.isEnabled()) {
 						Date slotDate = Util.getSQLDate(dateStr);
 						start.setDate(slotDate);
 						date.setValue(slotDate);
 						Calendar c = new GregorianCalendar();
 						c.setTime(slotDate);
-						
+
 						c.add(Calendar.HOUR_OF_DAY, (int) Math
-								.ceil(intervalsPerHour / 60));
-						c.add(Calendar.MINUTE, (60 / intervalsPerHour));
+								.ceil(renderer.getIntervalsPerHour() / 60));
+						c.add(Calendar.MINUTE, (60 / renderer.getIntervalsPerHour()));
 						end.setDate(c.getTime());
-					}else{
+					} else {
 						date.setValue(prvDate);
 						start.setDate(prvStartDate);
-						end.setDate(prvEndDate); 
+						end.setDate(prvEndDate);
 					}
-					
+
 				}
 			});
-			
-			cancel = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+
+			cancel = new CustomButton("Cancel", AppConstants.ICON_CANCEL);
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
 			cancel.addClickHandler(this);
 
-			ok = new CustomButton("Book",AppConstants.ICON_BOOK_APP);
+			ok = new CustomButton("Book", AppConstants.ICON_BOOK_APP);
 			ok.setEnabled(false);
 			ok.setFocus(true);
 			ok.setAccessKey('o');
@@ -1016,9 +1066,10 @@ public class SchedulerWidget extends WidgetInterface implements
 			final HorizontalPanel button = new HorizontalPanel();
 			button.add(ok);
 
-			if(CurrentState.isActionAllowed(moduleName,AppConstants.DELETE)){
+			if (CurrentState.isActionAllowed(moduleName, AppConstants.DELETE)) {
 				if (command == DateEventActions.UPDATE) {
-					delete = new CustomButton("Delete",AppConstants.ICON_DELETE);
+					delete = new CustomButton("Delete",
+							AppConstants.ICON_DELETE);
 					delete.setFocus(true);
 					delete.setAccessKey('d');
 					delete.addClickHandler(this);
@@ -1060,10 +1111,11 @@ public class SchedulerWidget extends WidgetInterface implements
 					if (!CurrentState.canBookAppoinment(start.getValue(date
 							.getValue()), end.getValue(date.getValue()))) {
 						/*
-						Util.showErrorMsg("Scheduler", "Can not book appointment in between("
-								+ CurrentState.BREAK_HOUR + ":00 -"
-								+ (CurrentState.BREAK_HOUR + 1) + ":00) !");
-						*/
+						 * Util.showErrorMsg("Scheduler",
+						 * "Can not book appointment in between(" +
+						 * CurrentState.BREAK_HOUR + ":00 -" +
+						 * (CurrentState.BREAK_HOUR + 1) + ":00) !");
+						 */
 						return;
 					}
 					List paramsList = new ArrayList();
@@ -1072,69 +1124,95 @@ public class SchedulerWidget extends WidgetInterface implements
 					calstart.setTime(start.getValue(new Date()));
 					paramsList.add(calstart.get(Calendar.HOUR_OF_DAY));
 					paramsList.add(calstart.get(Calendar.MINUTE));
-					
+
 					Calendar calend = new GregorianCalendar();
 					calstart.setTime(end.getValue(new Date()));
-					
-					Integer dur = (calend.get(Calendar.HOUR) - calstart.get(Calendar.HOUR));
+
+					Integer dur = (calend.get(Calendar.HOUR) - calstart
+							.get(Calendar.HOUR));
 					if (dur < 0) {
 						dur = dur + 24;
 					}
 					dur = (dur * 60)
-							+ (calend.get(Calendar.MINUTE) - calstart.get(Calendar.MINUTE));
+							+ (calend.get(Calendar.MINUTE) - calstart
+									.get(Calendar.MINUTE));
 					paramsList.add(dur);
-					Util.callApiMethod("Scheduler", "canBookAppointment", paramsList, new CustomRequestCallback() {
-					
-						@Override
-						public void onError() {
-							// TODO Auto-generated method stub
-					
-						}
-					
-						@Override
-						public void jsonifiedData(Object result) {
-							if(result!=null && ((Boolean)result).booleanValue()){
-								if (data == null) {
-									data = new EventData();
+					paramsList.add(date.getStoredValue());
+					Util.callApiMethod("Scheduler", "canBookAppointment",
+							paramsList, new CustomRequestCallback() {
+
+								@Override
+								public void onError() {
+									// TODO Auto-generated method stub
+
 								}
-								if (wholeDay.getValue()) {
-									data.setStartTime(date.getValue());
-								} else {
-									data.setStartTime(start.getValue(date.getValue()));
-									data.setEndTime(end.getValue(date.getValue()));
+
+								@Override
+								public void jsonifiedData(Object result) {
+									if (result != null
+											&& ((Boolean) result)
+													.booleanValue()) {
+										if (data == null) {
+											data = new EventData();
+										}
+										if (wholeDay.getValue()) {
+											data.setStartTime(date.getValue());
+										} else {
+											data.setStartTime(start
+													.getValue(date.getValue()));
+											data.setEndTime(end.getValue(date
+													.getValue()));
+										}
+										data.setDescription(text.getText());
+										data
+												.setProviderName(provider
+														.getText());
+										data.setProviderId(provider.getValue());
+										if (patient != null) {
+											data.setPatientName(patient
+													.getText());
+											JsonUtil.debug("patient name = "
+													+ patient.getText());
+											data.setPatientId(patient
+													.getValue());
+										} else {
+											data.setPatientName(supportWidget
+													.getText());
+											JsonUtil.debug("resource name = "
+													+ supportWidget.getText());
+											data.setPatientId(supportWidget
+													.getValue());
+										}
+
+										if (Util.isNumber(selectTemplate
+												.getWidgetValue()))
+											data
+													.setAppointmentTemplateId(Integer
+															.parseInt(selectTemplate
+																	.getWidgetValue()));
+
+										data
+												.setData(((data.getPatientId() != null && data
+														.getPatientId() > 0) ? data
+														.getPatientName()
+														+ ": "
+														: "")
+														+ data.getDescription());
+										final DateEvent newEvent = new DateEvent(
+												getStringEventDataDialog(),
+												data);
+
+										newEvent.setCommand(command);
+										listener.handleDateEvent(newEvent);
+										hide();
+										externalDataEvent = null;
+									} else if (result != null)
+										Util
+												.showErrorMsg("Schedular",
+														"This time slot is blocked by given provider!");
 								}
-								data.setDescription(text.getText());
-								data.setProviderName(provider.getText());
-								data.setProviderId(provider.getValue());
-								if (patient != null) {
-									data.setPatientName(patient.getText());
-									JsonUtil.debug("patient name = " + patient.getText());
-									data.setPatientId(patient.getValue());
-								} else {
-									data.setPatientName(supportWidget.getText());
-									JsonUtil.debug("resource name = "
-											+ supportWidget.getText());
-									data.setPatientId(supportWidget.getValue());
-								}
-	
-								if (Util.isNumber(selectTemplate.getWidgetValue()))
-									data.setAppointmentTemplateId(Integer
-											.parseInt(selectTemplate.getWidgetValue()));
-	
-								data.setData(((data.getPatientId() != null && data
-										.getPatientId() > 0) ? data.getPatientName() + ": "
-										: "")
-										+ data.getDescription());
-								final DateEvent newEvent = new DateEvent(getStringEventDataDialog(), data);
-	
-								newEvent.setCommand(command);
-								listener.handleDateEvent(newEvent);
-								hide();			
-							}else if(result!=null)
-								Util.showErrorMsg("Schedular", "This time slot is blocked by given provider!");
-						}
-					
-					}, "Boolean");
+
+							}, "Boolean");
 				} else {
 					if (sender == cancel) {
 						hide();
@@ -1153,10 +1231,10 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		}
 
-		protected StringEventDataDialog getStringEventDataDialog(){
+		protected StringEventDataDialog getStringEventDataDialog() {
 			return this;
 		}
-		
+
 		protected void toggleButton() {
 			if (text.getText().length() > 1
 					&& (patient != null && patient.getValue() > 0 || supportWidget != null
@@ -1223,22 +1301,26 @@ public class SchedulerWidget extends WidgetInterface implements
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								Util.showErrorMsg("Scheduler", "Failed to get scheduler items.");
+								Util.showErrorMsg("Scheduler",
+										"Failed to get scheduler items.");
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Util.showErrorMsg("Scheduler", "Failed to get scheduler items.");
+					Util.showErrorMsg("Scheduler",
+							"Failed to get scheduler items.");
 				}
 			} else {
 				// GWT-RPC
 			}
 		}
+
 		/**
 		 * 
 		 * 
 		 */
-		public void updateNextAvailableDateTime(HashMap<String, String> paramsHash) {
+		public void updateNextAvailableDateTime(
+				HashMap<String, String> paramsHash) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO: STUBBED
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -1265,42 +1347,53 @@ public class SchedulerWidget extends WidgetInterface implements
 								if (response.getText().compareToIgnoreCase(
 										"false") != 0) {
 									String[][] result = (String[][]) JsonUtil
-									.shoehornJson(JSONParser
-											.parse(response.getText()),
-											"String[][]");
-									Calendar calendar =new GregorianCalendar();
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"String[][]");
+									Calendar calendar = new GregorianCalendar();
 									int len = result.length;
-									JsonUtil
-									.debug("len found:"+len);
-									if(len>0){
-										nextAvailableDateTime.addItem("----", "----");
+									JsonUtil.debug("len found:" + len);
+									if (len > 0) {
+										nextAvailableDateTime.addItem("----",
+												"----");
 										nextAvailableDateTime.setEnabled(true);
-										for(int indexOuter=0;indexOuter<len;indexOuter++){
+										for (int indexOuter = 0; indexOuter < len; indexOuter++) {
 											String slotDateTime = "";
 											slotDateTime = result[indexOuter][0];
-											slotDateTime = slotDateTime + " " +result[indexOuter][1]+":"+result[indexOuter][2]+":00";
-											nextAvailableDateTime.addItem(Util.getSQLDate(slotDateTime).toString(), slotDateTime);
-										}	
-									}else{
-										Util.showErrorMsg("Scheduler", "Next Available Items Not Available.");
+											slotDateTime = slotDateTime + " "
+													+ result[indexOuter][1]
+													+ ":"
+													+ result[indexOuter][2]
+													+ ":00";
+											nextAvailableDateTime.addItem(Util
+													.getSQLDate(slotDateTime)
+													.toString(), slotDateTime);
+										}
+									} else {
+										Util
+												.showErrorMsg("Scheduler",
+														"Next Available Items Not Available.");
 									}
-									
+
 								} else {
 									JsonUtil
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								Util.showErrorMsg("Scheduler", "Failed to get Next Available items.");
+								Util.showErrorMsg("Scheduler",
+										"Failed to get Next Available items.");
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Util.showErrorMsg("Scheduler", "Failed to get Next Available items.");
+					Util.showErrorMsg("Scheduler",
+							"Failed to get Next Available items.");
 				}
 			} else {
 				// GWT-RPC
 			}
 		}
+
 		@Override
 		public void onValueChange(ValueChangeEvent<Integer> event) {
 			// TODO Auto-generated method stub
@@ -1360,11 +1453,6 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		}
 
-		public Label getHeaderElement() {
-			return (Label)((HorizontalPanel)((RoundedPanel) ((VerticalPanel) super.getWidget())
-					.getWidget(0)).getWidget()).getWidget(0);
-		}
-
 		public Widget getClickableItem() {
 			return description;
 		}
@@ -1383,38 +1471,41 @@ public class SchedulerWidget extends WidgetInterface implements
 				 * SchedulerCss.EVENT_HEADER_MONDAY); }
 				 */
 				description.setText((String) real.getData());
+				description.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent arg0) {
+						if (real.getResourceType() != null) {
+							if (real.getResourceType().equalsIgnoreCase(
+									AppConstants.APPOINTMENT_TYPE_PATIENT))
+								spawnPatientScreen(real.getPatientId(),
+										real.getPatientName());
+							else if(real.getResourceType().equalsIgnoreCase(
+									AppConstants.APPOINTMENT_TYPE_GROUP))
+								spawnGroupScreen(real.getPatientId());
+							else if(real.getResourceType().equalsIgnoreCase(
+									AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT))
+								spawnCallinScreen(real);
+						}
+					}
+
+				});
 				if (real.getEventBackgroundColor() != null
 						&& real.getEventBackgroundColor().length() > 0)
 					description.getElement().getStyle().setProperty(
 							"backgroundColor", real.getEventBackgroundColor());
-				if (real.getResourceType() != null){
-						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)){
-							description.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent arg0) {
-									spawnPatientScreen(real.getPatientId(), real
-											.getPatientName());
-								}
-							});
-						}
-						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)){
-							description.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent arg0) {
-									spawnGroupScreen(real.getPatientId());//group id stored in it
-								}
-							});
-						}
-				}
-				if(CurrentState.isActionAllowed(moduleName,AppConstants.MODIFY)){
-						getHeaderElement().addClickHandler(new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent arg0) {
-								handleNewOrEditAppointment(real);
+				
+				if (CurrentState.isActionAllowed(moduleName,
+						AppConstants.MODIFY)) {
+					title.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent arg0) {
+							handleNewOrEditAppointment(real);
 						}
 					});
-				}else 
-					Util.showErrorMsg("Scheduler", "Access Denied!\nCan not edit appointments.");
+				} else
+					Util.showErrorMsg("Scheduler",
+							"Access Denied!\nCan not edit appointments.");
 				if (real.getEndTime() == null) {
 					super.setTitle(format.format(real.getStartTime()) + "  "
 							+ real.getProviderName());
@@ -1427,13 +1518,14 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 	}
 
-	public void handleNewOrEditAppointment(final EventData real){
-		
+	public void handleNewOrEditAppointment(final EventData real) {
+
 		final Popup popup = new Popup();
-		
+
 		VerticalPanel verticalPanel = new VerticalPanel();
 		verticalPanel.setWidth("100%");
-		CustomButton bookNewAppointment = new CustomButton("New Appointment",AppConstants.ICON_ADD);
+		CustomButton bookNewAppointment = new CustomButton("New Appointment",
+				AppConstants.ICON_ADD);
 		bookNewAppointment.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -1442,52 +1534,71 @@ public class SchedulerWidget extends WidgetInterface implements
 				data.setStartTime(real.getStartTime());
 				data.setEndTime(real.getEndTime());
 				final StringEventDataDialog dialog = new StringEventDataDialog(
-						getDateRenderer(), getDateEventListener(),
-						data);
+						getDateRenderer(), getDateEventListener(), data);
 				dialog.show();
 				dialog.center();
 			}
 		});
 		verticalPanel.add(bookNewAppointment);
-		verticalPanel.setCellHorizontalAlignment(bookNewAppointment, HasHorizontalAlignment.ALIGN_CENTER);
-		CustomButton editAppointment = new CustomButton("Edit Appointment",AppConstants.ICON_MODIFY);
+		verticalPanel.setCellHorizontalAlignment(bookNewAppointment,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		CustomButton editAppointment = new CustomButton("Edit Appointment",
+				AppConstants.ICON_MODIFY);
 
 		editAppointment.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 				popup.hide();
 				final StringEventDataDialog dialog = new StringEventDataDialog(
-						getDateRenderer(), getDateEventListener(),
-						real, DateEventActions.UPDATE);
+						getDateRenderer(), getDateEventListener(), real,
+						DateEventActions.UPDATE);
 				dialog.show();
 				dialog.center();
 			}
 		});
 		verticalPanel.add(editAppointment);
-		verticalPanel.setCellHorizontalAlignment(editAppointment, HasHorizontalAlignment.ALIGN_CENTER);
+		verticalPanel.setCellHorizontalAlignment(editAppointment,
+				HasHorizontalAlignment.ALIGN_CENTER);
 		PopupView popupView = new PopupView(verticalPanel);
-		
+
 		popup.setNewWidget(popupView);
 		popup.initialize();
 	}
-	
+
 	public class MonthField extends AbstractMonthField {
 
 		private Label description = new Label(); // NOPMD;
 
 		private DateTimeFormat format = DateTimeFormat.getFormat("HH:mm"); // NOPMD;
 
+		protected VerticalPanel verticalPanel = new VerticalPanel();
+		
+		private Label title = new Label();
+		
 		public MonthField(DateRenderer renderer) {
 			super(renderer);
-			super.setBody(description);
-		}
-
-		public Label getHeaderElement() {
-			return (Label) ((HorizontalPanel) super.getPanel()).getWidget(0);
+			getPanel().setSize("100%", "100%");
+			super.setBody(verticalPanel);
+			verticalPanel.setSpacing(1);
+			verticalPanel.setSize("100%", "100%");
+			verticalPanel.add(title);
+			title.setSize("100%", "100%");
+			title.setStyleName(FtrGwtDateCss.EVENT_DAY_HEADER);
+			verticalPanel.setCellHeight(title, "20%");
+			verticalPanel.add(description);
+			description.setSize("100%", "100%");
+			description.setStyleName(FtrGwtDateCss.EVENT_DAY_PANEL);
+			verticalPanel.setCellHeight(description, "80%");
 		}
 
 		public Widget getClickableItem() {
 			return description;
+		}
+
+		@Override
+		public Widget getDraggableItem() {
+			// TODO Auto-generated method stub
+			return title;
 		}
 
 		GregorianCalendar helper = new GregorianCalendar();
@@ -1499,53 +1610,55 @@ public class SchedulerWidget extends WidgetInterface implements
 					final EventData real = (EventData) theData;
 					helper.setTime(real.getStartTime());
 					/*
-					 * if (helper.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-					 * super
+					 * if (helper.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+					 * { super
 					 * .setEventStyleName(SchedulerCss.WHOLEDAY_PANEL_MONDAY); }
 					 */
 					description.setText(real.getData());
+					description.addClickHandler(new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent arg0) {
+							if (real.getResourceType() != null) {
+								if (real.getResourceType().equalsIgnoreCase(
+										AppConstants.APPOINTMENT_TYPE_PATIENT))
+									spawnPatientScreen(real.getPatientId(),
+											real.getPatientName());
+								else if(real.getResourceType().equalsIgnoreCase(
+										AppConstants.APPOINTMENT_TYPE_GROUP))
+									spawnGroupScreen(real.getPatientId());
+								else if(real.getResourceType().equalsIgnoreCase(
+										AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT))
+									spawnCallinScreen(real);
+							}
+						}
+
+					});
 					if (real.getEventBackgroundColor() != null
 							&& real.getEventBackgroundColor().length() > 0)
 						description.getElement().getStyle().setProperty(
 								"backgroundColor",
 								real.getEventBackgroundColor());
-					if (real.getResourceType() != null){
-						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)){
-							description.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent arg0) {
-									spawnPatientScreen(real.getPatientId(), real
-											.getPatientName());
-								}
-							});
-						}
-						if(real.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)){
-							description.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent arg0) {
-									spawnGroupScreen(real.getPatientId());//group id stored in it
-								}
-							});
-						}
-					}
 					// super.setTitle(format.format(real.getStartTime())+"<br>
 					// "+real.getProviderName());
-					if(CurrentState.isActionAllowed(moduleName,AppConstants.MODIFY)){
-						getHeaderElement().addClickHandler(new ClickHandler() {
+					if (CurrentState.isActionAllowed(moduleName,
+							AppConstants.MODIFY)) {
+						title.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent arg0) {
 								handleNewOrEditAppointment(real);
 							}
 						});
-						
-					}else 
-						Util.showErrorMsg("Scheduler", "Access Denied!\nCan not edit appointments.");
+
+					} else
+						Util.showErrorMsg("Scheduler",
+								"Access Denied!\nCan not edit appointments.");
 
 					if (real.getEndTime() == null) {
-						super.setTitle(format.format(real.getStartTime())
+						title.setText(format.format(real.getStartTime())
 								+ "\n" + real.getProviderName());
 					} else {
-						super.setTitle(format.format(real.getStartTime()) + "-"
+						title.setText(format.format(real.getStartTime()) + "-"
 								+ format.format(real.getEndTime()) + "\n"
 								+ real.getProviderName());
 					}
@@ -1566,20 +1679,69 @@ public class SchedulerWidget extends WidgetInterface implements
 		s.setPatient(patient);
 		Util.spawnTab(patientName, s);
 	}
-	
+
 	/**
 	 * spawn tab for Group.
 	 * 
 	 * @param patient
 	 */
 	public void spawnGroupScreen(Integer groupId) {
-		Util.spawnTab(AppConstants.GROUPS,
-				PatientsGroupScreen.getInstance());
+		Util.spawnTab(AppConstants.GROUPS, PatientsGroupScreen.getInstance());
 		PatientsGroupScreen.getInstance().showGroupInfo(groupId);
 	}
-	
-	
 
+	/**
+	 * spawn tab for call-in.
+	 * 
+	 * @param patient
+	 */
+	public void spawnCallinScreen(EventData realData) {
+		handleCallinPatient(realData);
+	}	
+	
+	public void handleCallinPatient(final EventData realData) {
+
+		final Popup popup = new Popup();
+		popup.setPixelSize(500, 100);
+		VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.setWidth("100%");
+		verticalPanel.add(new Label("Do you want to create patient?"));
+		HorizontalPanel buttonContainer = new HorizontalPanel();
+		verticalPanel.add(buttonContainer);
+		verticalPanel.setCellHorizontalAlignment(buttonContainer, HasHorizontalAlignment.ALIGN_CENTER);
+		CustomButton yesBtn = new CustomButton("Yes");
+		yesBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				popup.hide();
+				CallInScreen.getInstance().callinConvertFromPatient(realData.getPatientId(), new CustomCommand() {
+					@Override
+					public void execute(Object id) {
+						refreshData();
+						Util.spawnPatientScreen((Integer)id, realData.getPatientName());
+					}
+				
+				});
+			}
+		});
+		buttonContainer.add(yesBtn);
+		CustomButton noBtn = new CustomButton("No");
+
+		noBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				popup.hide();
+				Util.spawnTab(AppConstants.CALL_IN, CallInScreen.getInstance());
+				CallInScreen.getInstance().showCallinInfo(realData.getPatientId());
+			}
+		});
+		buttonContainer.add(noBtn);
+		PopupView popupView = new PopupView(verticalPanel);
+
+		popup.setNewWidget(popupView);
+		popup.initialize();
+	}
+	
 	public class EventCacheController implements EventController {
 
 		private HashMap<String, EventData> items = new HashMap<String, EventData>();
@@ -1680,15 +1842,18 @@ public class SchedulerWidget extends WidgetInterface implements
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
 			if (filterModule.getValue() != 0)
-				getEventsForRange(start, end, filterModule.getValue(),filterModulesAndMethods.get(SELECTED_MODULE), caller,
+				getEventsForRange(start, end, filterModule.getValue(),
+						filterModulesAndMethods.get(SELECTED_MODULE), caller,
 						doRefresh);
 			else
 				getEventsForRange(start, end,
-						CurrentState.getDefaultProvider(),filterModulesAndMethods.get(SELECTED_MODULE), caller, doRefresh);
+						CurrentState.getDefaultProvider(),
+						filterModulesAndMethods.get(SELECTED_MODULE), caller,
+						doRefresh);
 		}
 
-		public void getEventsForRange(Date start, Date end, Integer id,String method,
-				final MultiView caller, final boolean doRefresh) {
+		public void getEventsForRange(Date start, Date end, Integer id,
+				String method, final MultiView caller, final boolean doRefresh) {
 			JsonUtil.debug("getEventsForRange()");
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				// TODO: STUBBED
@@ -1697,18 +1862,16 @@ public class SchedulerWidget extends WidgetInterface implements
 				String[] params = { dateToSql(start), dateToSql(end),
 						id.toString() };
 				RequestBuilder builder = new RequestBuilder(
-						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.Scheduler."+method,
-												params)));
+						RequestBuilder.POST, URL.encode(Util.getJsonRequest(
+								"org.freemedsoftware.api.Scheduler." + method,
+								params)));
 				try {
 					loadingDialog.center();
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
 							loadingDialog.hide();
-							Util.showErrorMsg("Scheduler", "Failed to get scheduler items.");
+							Util.showErrorMsg("Scheduler",
+									"Failed to get scheduler items.");
 						}
 
 						public void onResponseReceived(Request request,
@@ -1744,13 +1907,15 @@ public class SchedulerWidget extends WidgetInterface implements
 											.debug("Received dummy response from JSON backend");
 								}
 							} else {
-								Util.showErrorMsg("Scheduler", "Failed to get scheduler items.");
+								Util.showErrorMsg("Scheduler",
+										"Failed to get scheduler items.");
 							}
 						}
 					});
 				} catch (RequestException e) {
 					loadingDialog.hide();
-					Util.showErrorMsg("Scheduler", "Failed to get scheduler items.");
+					Util.showErrorMsg("Scheduler",
+							"Failed to get scheduler items.");
 				}
 			} else {
 				// GWT-RPC
@@ -1805,7 +1970,8 @@ public class SchedulerWidget extends WidgetInterface implements
 			d.put("calduration", Integer.toString(dur));
 			d.put("caltype", data.getResourceType());
 			d.put("calpatient", data.getPatientId().toString());
-			if(data.getResourceType().equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP))
+			if (data.getResourceType().equalsIgnoreCase(
+					AppConstants.APPOINTMENT_TYPE_GROUP))
 				d.put("calgroupid", data.getPatientId().toString());
 			d.put("calphysician", data.getProviderId().toString());
 			d.put("calprenote", data.getDescription());
@@ -1815,8 +1981,8 @@ public class SchedulerWidget extends WidgetInterface implements
 			// TODO: FACILITY MISSING!
 			Boolean b = false;
 			if (s == "add") {
-//				params[0] = JsonUtil.jsonify(d);
-				String[] newParams = {JsonUtil.jsonify(d)};
+				// params[0] = JsonUtil.jsonify(d);
+				String[] newParams = { JsonUtil.jsonify(d) };
 				params = newParams;
 				rpcparams.put("url",
 						"org.freemedsoftware.api.Scheduler.SetAppointment");
@@ -1827,11 +1993,12 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else if (s == "move") {
 				d.put("id", data.getIdentifier());
 
-				String[] newParams = {JsonUtil.jsonify(d.get("id")),JsonUtil.jsonify(d)};
+				String[] newParams = { JsonUtil.jsonify(d.get("id")),
+						JsonUtil.jsonify(d) };
 				params = newParams;
-				
-//				params[0] = JsonUtil.jsonify(d.get("id"));
-//				params[1] = JsonUtil.jsonify(d);
+
+				// params[0] = JsonUtil.jsonify(d.get("id"));
+				// params[1] = JsonUtil.jsonify(d);
 
 				rpcparams.put("url",
 						"org.freemedsoftware.api.Scheduler.MoveAppointment");
@@ -1842,10 +2009,11 @@ public class SchedulerWidget extends WidgetInterface implements
 			} else if (s == "remove") {
 				d.put("id", data.getIdentifier());
 				d.put("calstatus", "cancelled");
-				String[] newParams = {JsonUtil.jsonify(d.get("id")),JsonUtil.jsonify(d)};
+				String[] newParams = { JsonUtil.jsonify(d.get("id")),
+						JsonUtil.jsonify(d) };
 				params = newParams;
-//				params[0] = JsonUtil.jsonify(d.get("id"));
-//				params[1] = JsonUtil.jsonify(d);
+				// params[0] = JsonUtil.jsonify(d.get("id"));
+				// params[1] = JsonUtil.jsonify(d);
 				rpcparams.put("url",
 						"org.freemedsoftware.api.Scheduler.MoveAppointment");
 				rpcparams.put("responseOk", "Removing Appointment successful.");
@@ -1928,34 +2096,36 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 	}
 
-	public class BlockTimeSlotPopup extends DialogBox{
+	public class BlockTimeSlotPopup extends DialogBox {
 
 		private Integer blockTimeId = null;
 		private TabPanel tabPanel;
 		private CustomTimeBox startTime;
 		private CustomTimeBox endTime;
+		private CustomDatePicker date;
 		private ProviderWidget provider;
 		private SupportModuleWidget providerGroup;
 		private CustomButton submit;
 		private CustomButton clear;
 		private CustomButton delete;
 		private CustomButton cancel;
-		
+
 		private CustomTable customTable = null;
-		
+
 		public BlockTimeSlotPopup() {
 			super();
 			this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
 			init();
 		}
-		private void init(){
-			
-			VerticalPanel blockTimeSlotPopupContainer = new VerticalPanel(); 
-			
+
+		private void init() {
+
+			VerticalPanel blockTimeSlotPopupContainer = new VerticalPanel();
+
 			HorizontalPanel closeButtonContainer = new HorizontalPanel();
 			blockTimeSlotPopupContainer.add(closeButtonContainer);
 			closeButtonContainer.setWidth("100%");
-			
+
 			Image closeImage = new Image("resources/images/close_x.16x16.png");
 			closeImage.addClickHandler(new ClickHandler() {
 				@Override
@@ -1964,100 +2134,129 @@ public class SchedulerWidget extends WidgetInterface implements
 				}
 			});
 			closeButtonContainer.add(closeImage);
-			closeButtonContainer.setCellHorizontalAlignment(closeImage, HasHorizontalAlignment.ALIGN_RIGHT);
+			closeButtonContainer.setCellHorizontalAlignment(closeImage,
+					HasHorizontalAlignment.ALIGN_RIGHT);
 			tabPanel = new TabPanel();
 			blockTimeSlotPopupContainer.add(tabPanel);
-			
+
 			final VerticalPanel entryVPanel = new VerticalPanel();
 			final FlexTable flexTable = new FlexTable();
 			entryVPanel.add(flexTable);
-			
-			int row=0;
-			
+
+			int row = 0;
+
 			final Label startTimeLabel = new Label("Start Time");
 			flexTable.setWidget(row, 0, startTimeLabel);
-			startTime = new CustomTimeBox();
+			startTime = new CustomTimeBox(show24HourClock ? "HH:mm"
+					: "hh:mmaa");
 			flexTable.setWidget(row, 1, startTime);
-			
+
 			row++;
-			
+
 			final Label endTimeLabel = new Label("End Time");
 			flexTable.setWidget(row, 0, endTimeLabel);
-			endTime = new CustomTimeBox();
+			endTime = new CustomTimeBox(show24HourClock ? "HH:mm"
+					: "hh:mmaa");
 			flexTable.setWidget(row, 1, endTime);
-			
+
+			row++;
+
+			final Label dateLabel = new Label("Date");
+			flexTable.setWidget(row, 0, dateLabel);
+			date = new CustomDatePicker();
+			flexTable.setWidget(row, 1, date);
+
 			row++;
 
 			final Label providerLabel = new Label("Provider");
 			flexTable.setWidget(row, 0, providerLabel);
 			provider = new ProviderWidget();
 			flexTable.setWidget(row, 1, provider);
-			
+
 			row++;
-			
+
 			final Label groupLabel = new Label("Group");
 			flexTable.setWidget(row, 0, groupLabel);
 			providerGroup = new SupportModuleWidget("ProviderGroups");
 			flexTable.setWidget(row, 1, providerGroup);
-			
+
 			row++;
-			
-			final HorizontalPanel buttonPanel = new HorizontalPanel(); 
+
+			final HorizontalPanel buttonPanel = new HorizontalPanel();
 			flexTable.setWidget(row, 1, buttonPanel);
-			
-			submit = new CustomButton("Add",AppConstants.ICON_ADD);
+
+			submit = new CustomButton("Add", AppConstants.ICON_ADD);
 			submit.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
-					if(validateForm()){
+					if (validateForm()) {
 						List params = new ArrayList();
 						params.add(populateData());
 						String method = "Add";
-						if(blockTimeId==null){
-							Util.callModuleMethod("SchedulerBlockSlots", "Add", params,new CustomRequestCallback() {
-								@Override
-								public void onError() {
-									Util.showErrorMsg("schedularWidget", "Failed To Add Time Slot.");
-								}
-								@Override
-								public void jsonifiedData(Object data) {
-									if(data!=null){
-										clearForm();
-										tabPanel.selectTab(1);
-										Util.showInfoMsg("schedularWidget", "Time Slot Added.");
-										retrieveBlockTimeSlots();
-									}
-									else{
-										Util.showErrorMsg("schedularWidget", "Failed To Add Time Slot.");
-									}
-								}
-							}, "Integer");
-						}else{
-							Util.callModuleMethod("SchedulerBlockSlots", "Mod", params,new CustomRequestCallback() {
-								@Override
-								public void onError() {
-										Util.showErrorMsg("schedularWidget", "Failed To Modify Time Slot.");
-								}
-								@Override
-								public void jsonifiedData(Object data) {
-									if(data!=null && ((Boolean)data).booleanValue()){
-										Util.showInfoMsg("schedularWidget", "Time Slot Modified.");
-										clearForm();
-										tabPanel.selectTab(1);
-										retrieveBlockTimeSlots();
-									}
-									else{
-											Util.showErrorMsg("schedularWidget", "Failed To Modify Time Slot.");
-									}
-								}
-						}, "Boolean");
+						if (blockTimeId == null) {
+							Util.callModuleMethod("SchedulerBlockSlots", "Add",
+									params, new CustomRequestCallback() {
+										@Override
+										public void onError() {
+											Util.showErrorMsg(
+													"schedularWidget",
+													"Failed To Add Time Slot.");
+										}
+
+										@Override
+										public void jsonifiedData(Object data) {
+											if (data != null) {
+												clearForm();
+												tabPanel.selectTab(1);
+												Util.showInfoMsg(
+														"schedularWidget",
+														"Time Slot Added.");
+												retrieveBlockTimeSlots();
+											} else {
+												Util
+														.showErrorMsg(
+																"schedularWidget",
+																"Failed To Add Time Slot.");
+											}
+										}
+									}, "Integer");
+						} else {
+							Util.callModuleMethod("SchedulerBlockSlots", "Mod",
+									params, new CustomRequestCallback() {
+										@Override
+										public void onError() {
+											Util
+													.showErrorMsg(
+															"schedularWidget",
+															"Failed To Modify Time Slot.");
+										}
+
+										@Override
+										public void jsonifiedData(Object data) {
+											if (data != null
+													&& ((Boolean) data)
+															.booleanValue()) {
+												Util.showInfoMsg(
+														"schedularWidget",
+														"Time Slot Modified.");
+												clearForm();
+												tabPanel.selectTab(1);
+												retrieveBlockTimeSlots();
+											} else {
+												Util
+														.showErrorMsg(
+																"schedularWidget",
+																"Failed To Modify Time Slot.");
+											}
+										}
+									}, "Boolean");
 						}
 
 					}
 				}
 			});
 			buttonPanel.add(submit);
-			clear = new CustomButton("Clear",AppConstants.ICON_CLEAR);
+			clear = new CustomButton("Clear", AppConstants.ICON_CLEAR);
 			clear.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -2065,34 +2264,43 @@ public class SchedulerWidget extends WidgetInterface implements
 				}
 			});
 			buttonPanel.add(clear);
-			if(CurrentState.isActionAllowed(blockSlotsModuleName,AppConstants.DELETE)){
-				delete = new CustomButton("delete",AppConstants.ICON_DELETE);
+			if (CurrentState.isActionAllowed(blockSlotsModuleName,
+					AppConstants.DELETE)) {
+				delete = new CustomButton("delete", AppConstants.ICON_DELETE);
 				delete.setVisible(false);
 				delete.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent arg0) {
-						Util.callModuleMethod("SchedulerBlockSlots", "Del", blockTimeId,new CustomRequestCallback() {
-							@Override
-							public void onError() {
-								Util.showErrorMsg("schedularWidget", "Failed To Delete Time Slot.");
-							}
-							@Override
-							public void jsonifiedData(Object data) {
-								if(data!=null && ((Boolean)data).booleanValue()){
-									Util.showInfoMsg("schedularWidget", "Time Slot Deleted.");
-									clearForm();
-									tabPanel.selectTab(1);
-									retrieveBlockTimeSlots();
-								}
-								else
-									Util.showErrorMsg("schedularWidget", "Failed To Delete Time Slot.");
-							}
-						}, "Boolean");
+						Util.callModuleMethod("SchedulerBlockSlots", "Del",
+								blockTimeId, new CustomRequestCallback() {
+									@Override
+									public void onError() {
+										Util.showErrorMsg("schedularWidget",
+												"Failed To Delete Time Slot.");
+									}
+
+									@Override
+									public void jsonifiedData(Object data) {
+										if (data != null
+												&& ((Boolean) data)
+														.booleanValue()) {
+											Util.showInfoMsg("schedularWidget",
+													"Time Slot Deleted.");
+											clearForm();
+											tabPanel.selectTab(1);
+											retrieveBlockTimeSlots();
+										} else
+											Util
+													.showErrorMsg(
+															"schedularWidget",
+															"Failed To Delete Time Slot.");
+									}
+								}, "Boolean");
 					}
 				});
-			buttonPanel.add(delete);
+				buttonPanel.add(delete);
 			}
-			cancel =  new CustomButton("Cancel",AppConstants.ICON_CLEAR);
+			cancel = new CustomButton("Cancel", AppConstants.ICON_CLEAR);
 			buttonPanel.add(cancel);
 			cancel.addClickHandler(new ClickHandler() {
 				@Override
@@ -2100,102 +2308,132 @@ public class SchedulerWidget extends WidgetInterface implements
 					geTimeSlotPopup().hide();
 				}
 			});
-			if(CurrentState.isActionAllowed(blockSlotsModuleName,AppConstants.WRITE)){
+			if (CurrentState.isActionAllowed(blockSlotsModuleName,
+					AppConstants.WRITE)) {
 				tabPanel.add(entryVPanel, "Entry");
 			}
-			
+
 			final VerticalPanel listVPanel = new VerticalPanel();
 			customTable = new CustomTable();
 			listVPanel.add(customTable);
-			
+
 			customTable.addColumn("Start Time", "starttime");
 			customTable.addColumn("End Time", "endtime");
+			customTable.addColumn("date", "date");
 			customTable.addColumn("Provider", "provider");
 			customTable.addColumn("Group", "provider_group");
 			customTable.addColumn("User", "entered_by");
 
-			if(CurrentState.isActionAllowed(blockSlotsModuleName,AppConstants.MODIFY)){
+			if (CurrentState.isActionAllowed(blockSlotsModuleName,
+					AppConstants.MODIFY)) {
 				customTable.setTableRowClickHandler(new TableRowClickHandler() {
 					@Override
-					public void handleRowClick(HashMap<String, String> data, int col) {
+					public void handleRowClick(HashMap<String, String> data,
+							int col) {
 						blockTimeId = Integer.parseInt(data.get("id"));
 						Calendar calStart = new GregorianCalendar();
 						calStart.setTime(new Date());
-						calStart.set(Calendar.HOUR_OF_DAY, Integer.parseInt(data.get("starthour")));
-						calStart.set(Calendar.MINUTE, Integer.parseInt(data.get("startmin")));
+						calStart.set(Calendar.HOUR_OF_DAY, Integer
+								.parseInt(data.get("starthour")));
+						calStart.set(Calendar.MINUTE, Integer.parseInt(data
+								.get("startmin")));
 						startTime.setDate(calStart.getTime());
-						calStart.add(Calendar.MINUTE, Integer.parseInt(data.get("duration")));
+						calStart.add(Calendar.MINUTE, Integer.parseInt(data
+								.get("duration")));
 						endTime.setDate(calStart.getTime());
-						if(data.get("sbsprovider")!=null)
-							provider.setValue(Integer.parseInt(data.get("sbsprovider")));
-						if(data.get("sbsprovidergroup")!=null)
-							providerGroup.setValue(Integer.parseInt(data.get("sbsprovidergroup")));
+						date.setValue(data.get("date"));
+						if (data.get("sbsprovider") != null)
+							provider.setValue(Integer.parseInt(data
+									.get("sbsprovider")));
+						if (data.get("sbsprovidergroup") != null)
+							providerGroup.setValue(Integer.parseInt(data
+									.get("sbsprovidergroup")));
 						delete.setVisible(true);
 						submit.setText("modify");
 						tabPanel.selectTab(0);
 					}
-			});
+				});
 			}
-			customTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
-				public Widget setColumn(String columnName,
-						HashMap<String, String> data) {
-					if(columnName.equals("starttime")){
-						String starthour = data.get("starthour");
-						String startmin  = data.get("startmin");
-						starthour = starthour.length()>1? starthour : "0"+starthour;
-						startmin = startmin.length()>1? startmin : "0"+startmin;
-						return new Label(starthour+":"+startmin);
-					}else if(columnName.equals("endtime")){
-						Calendar calendar = new GregorianCalendar();
-						calendar.setTime(new Date());
-						calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(data.get("starthour")));
-						calendar.set(Calendar.MINUTE, Integer.parseInt(data.get("startmin")));
-						calendar.add(Calendar.MINUTE, Integer.parseInt(data.get("duration")));
-						
-						String endhour = calendar.get(Calendar.HOUR_OF_DAY)+"";
-						String endmin  = calendar.get(Calendar.MINUTE)+"";
-						endhour = endhour.length()>1? endhour : "0"+endhour;
-						endmin = endmin.length()>1? endmin : "0"+endmin;
-						
-						return new Label(endhour+":"+endmin);
-					}
-					return null;
-				}
-			});
-			if(CurrentState.isActionAllowed(blockSlotsModuleName,AppConstants.READ))
+			customTable
+					.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+						public Widget setColumn(String columnName,
+								HashMap<String, String> data) {
+							if (columnName.equals("starttime")) {
+								String starthour = data.get("starthour");
+								String startmin = data.get("startmin");
+								starthour = starthour.length() > 1 ? starthour
+										: "0" + starthour;
+								startmin = startmin.length() > 1 ? startmin
+										: "0" + startmin;
+								return new Label(starthour + ":" + startmin);
+							} else if (columnName.equals("endtime")) {
+								Calendar calendar = new GregorianCalendar();
+								calendar.setTime(new Date());
+								calendar.set(Calendar.HOUR_OF_DAY, Integer
+										.parseInt(data.get("starthour")));
+								calendar.set(Calendar.MINUTE, Integer
+										.parseInt(data.get("startmin")));
+								calendar.add(Calendar.MINUTE, Integer
+										.parseInt(data.get("duration")));
+
+								String endhour = calendar
+										.get(Calendar.HOUR_OF_DAY)
+										+ "";
+								String endmin = calendar.get(Calendar.MINUTE)
+										+ "";
+								endhour = endhour.length() > 1 ? endhour : "0"
+										+ endhour;
+								endmin = endmin.length() > 1 ? endmin : "0"
+										+ endmin;
+
+								return new Label(endhour + ":" + endmin);
+							}
+							return null;
+						}
+					});
+			if (CurrentState.isActionAllowed(blockSlotsModuleName,
+					AppConstants.READ))
 				tabPanel.add(listVPanel, "List");
 			tabPanel.selectTab(0);
-			
+
 			setWidget(blockTimeSlotPopupContainer);
 			retrieveBlockTimeSlots();
 		}
-		public BlockTimeSlotPopup geTimeSlotPopup(){
+
+		public BlockTimeSlotPopup geTimeSlotPopup() {
 			return this;
 		}
-		public void retrieveBlockTimeSlots(){
-			Util.callModuleMethod("SchedulerBlockSlots", "GetAll", (List)null,new CustomRequestCallback() {
-				@Override
-				public void onError() {
-				}
-				@Override
-				public void jsonifiedData(Object data) {
-					customTable.loadData((HashMap<String, String>[])data);
-				}
-			}, "HashMap<String,String>[]");
+
+		public void retrieveBlockTimeSlots() {
+			Util.callModuleMethod("SchedulerBlockSlots", "GetAll", (List) null,
+					new CustomRequestCallback() {
+						@Override
+						public void onError() {
+						}
+
+						@SuppressWarnings("unchecked")
+						@Override
+						public void jsonifiedData(Object data) {
+							customTable
+									.loadData((HashMap<String, String>[]) data);
+						}
+					}, "HashMap<String,String>[]");
 		}
-		public boolean validateForm(){
+
+		public boolean validateForm() {
 			String msg = new String("");
-			if (startTime.getValue()==null) {
+			if (startTime.getValue() == null) {
 				msg += "Please specify start time." + "\n";
 			}
-			if (endTime.getValue()==null) {
+			if (endTime.getValue() == null) {
 				msg += "Please specify end time." + "\n";
 			}
-			
-			if (provider.getStoredValue().equals("0") && providerGroup.getStoredValue().equals("0")) {
+
+			if (provider.getStoredValue().equals("0")
+					&& providerGroup.getStoredValue().equals("0")) {
 				msg += "Please specify atleast provider or group." + "\n";
 			}
-			
+
 			if (!msg.equals("")) {
 				Window.alert(msg);
 				return false;
@@ -2203,53 +2441,58 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			return true;
 		}
-		
-		public void clearForm(){
-				provider.clear();
-				providerGroup.clear();
-				delete.setVisible(false);
-				submit.setText("add");
-				blockTimeId = null;
+
+		public void clearForm() {
+			provider.clear();
+			providerGroup.clear();
+			date.getTextBox().setText("");
+			delete.setVisible(false);
+			submit.setText("add");
+			blockTimeId = null;
 		}
-		
-		public HashMap<String, String> populateData(){
+
+		public HashMap<String, String> populateData() {
 			HashMap<String, String> data = new HashMap<String, String>();
-			
-			if(blockTimeId!=null)
+
+			if (blockTimeId != null)
 				data.put("id", blockTimeId.toString());
-			
+
 			Calendar calstart = new GregorianCalendar();
 			calstart.setTime(startTime.getValue(new Date()));
-			data.put("sbshour", calstart.get(Calendar.HOUR_OF_DAY)+"");
-			data.put("sbsmin", calstart.get(Calendar.MINUTE)+"");
-			
+			data.put("sbshour", calstart.get(Calendar.HOUR_OF_DAY) + "");
+			data.put("sbsmin", calstart.get(Calendar.MINUTE) + "");
+
 			Calendar calend = new GregorianCalendar();
 			calend.setTime(endTime.getValue(new Date()));
-			
-			Integer dur = (calend.get(Calendar.HOUR) - calstart.get(Calendar.HOUR));
+
+			Integer dur = (calend.get(Calendar.HOUR) - calstart
+					.get(Calendar.HOUR));
 			if (dur < 0) {
 				dur = dur + 24;
 			}
 			dur = (dur * 60)
-					+ (calend.get(Calendar.MINUTE) - calstart.get(Calendar.MINUTE));
+					+ (calend.get(Calendar.MINUTE) - calstart
+							.get(Calendar.MINUTE));
 
 			data.put("sbsduration", Integer.toString(dur));
-			
+
+			data.put("sbdate", date.getStoredValue());
+
 			data.put("sbsprovider", provider.getStoredValue());
 			data.put("sbsprovidergroup", providerGroup.getStoredValue());
-			
+
 			return data;
 		}
-	} 
-	
+	}
+
 	private Label label = new Label("");
 
 	private SupportModuleWidget filterModule = new SupportModuleWidget();
 
 	private HashMap<String, String> filterModulesAndMethods = new HashMap<String, String>();
-	
+
 	private String SELECTED_MODULE = "";
-	
+
 	private MultiView multiPanel = null;
 
 	private EventCacheController eventCacheController = null;
@@ -2262,28 +2505,50 @@ public class SchedulerWidget extends WidgetInterface implements
 	protected DialogBox loadingDialog = new DialogBox();
 
 	protected DateTimeFormat ymdFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-	
-	protected int intervalsPerHour = 0;
-	
+
 	public static String moduleName = "scheduling";
-	
+
 	protected String blockSlotsModuleName = "SchedulerBlockSlots";
+
+	protected EventData externalDataEvent = null;
+	
+	boolean show24HourClock = false;
 	
 	public SchedulerWidget() {
-		this(6, 24, 4);// startHour=6,endHour=24,intervalPerHour=4
-	}
-
-	public SchedulerWidget(int startHour, int endHour, int intervalPerHour) {
 		super(moduleName);
 		
-		this.intervalsPerHour = intervalPerHour;
-		filterModulesAndMethods.put("ProviderModule", "GetDailyAppointmentsRange");
-		filterModulesAndMethods.put("ProviderGroups", "GetDailyAppointmentsRangeByProviderGroup");
-		SELECTED_MODULE = "ProviderModule";
 		
+		////////////Applying stored configurations////////////////
+		int startHour            = 10;
+		int endHour              = 18;
+		int intervalsPerHour      = 4;
+		show24HourClock = false;
+		int intervalHeight       = 50; 
+		if(Util.getProgramMode() == ProgramMode.JSONRPC){
+			startHour         =  CurrentState.getSystemConfig("calshr")!=null?Integer.parseInt(CurrentState.getSystemConfig("calshr")):startHour;
+			endHour           =  CurrentState.getSystemConfig("calehr")!=null?Integer.parseInt(CurrentState.getSystemConfig("calehr")):endHour;
+			intervalsPerHour  =  CurrentState.getSystemConfig("calinterval")!=null?(60 / Integer.parseInt(CurrentState.getSystemConfig("calinterval"))):intervalsPerHour;
+			intervalHeight    =  CurrentState.getSystemConfig("calintervalheight")!=null?Integer.parseInt(CurrentState.getSystemConfig("calintervalheight")):intervalHeight;
+			show24HourClock   =  CurrentState.getSystemConfig("calshow24hourclock")!=null?(Integer.parseInt(CurrentState.getSystemConfig("calshow24hourclock"))==1):show24HourClock;
+		}
+		StringPanelRenderer panelRenderer = new StringPanelRenderer();
+		panelRenderer.setStartHour(startHour);
+		panelRenderer.setEndHour(endHour);
+		panelRenderer.setIntervalsPerHour(intervalsPerHour);
+		panelRenderer.setShow24HourClock(show24HourClock);
+		panelRenderer.setIntervalHeight(intervalHeight);
+		////////////End configurations////////////////		
+		
+		
+		filterModulesAndMethods.put("ProviderModule",
+				"GetDailyAppointmentsRange");
+		filterModulesAndMethods.put("ProviderGroups",
+				"GetDailyAppointmentsRangeByProviderGroup");
+		SELECTED_MODULE = "ProviderModule";
+
 		eventCacheController = new EventCacheController();
 		multiPanel = new MultiView(eventCacheController,
-				new StringPanelRenderer(startHour, endHour, intervalPerHour));
+				panelRenderer);
 		panel.setWidth("100%");
 		final HorizontalPanel loadingContainer = new HorizontalPanel();
 		loadingContainer.add(new Image("resources/images/loading.gif"));
@@ -2294,25 +2559,24 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		final VerticalPanel headerArea = new VerticalPanel();
 		headerArea.setWidth("100%");
-		
+
 		final HorizontalPanel fields = new HorizontalPanel();
 		fields.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		fields.setWidth("100%");
 		headerArea.add(fields);
 		panel.add(headerArea, DockPanel.NORTH);
-		
+
 		/*
-		fields.add(label);
-		fields.setCellHeight(label, "50%");
-		*/
-		
+		 * fields.add(label); fields.setCellHeight(label, "50%");
+		 */
+
 		final HorizontalPanel filterPanel = new HorizontalPanel();
 		fields.add(filterPanel);
-//		fields.setCellWidth(filterPanel, "50%");
+		// fields.setCellWidth(filterPanel, "50%");
 		Label selectFilterLabel = new Label("Filter by :");
 		selectFilterLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		filterPanel.add(selectFilterLabel);
-			
+
 		final CustomListBox selectFilter = new CustomListBox();
 		selectFilter.addItem("Provider", "ProviderModule");
 		selectFilter.addItem("Provider Groups", "ProviderGroups");
@@ -2325,20 +2589,22 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		});
 		filterPanel.add(selectFilter);
-		
+
 		filterModule.setModuleName("ProviderModule");
 		filterModule.setWidth("300px");
 		filterModule.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				Integer val = ((SupportModuleWidget) event.getSource()).getValue();
+				Integer val = ((SupportModuleWidget) event.getSource())
+						.getValue();
 				// Log.debug("Patient value = " + val.toString());
 				try {
 					if (val.compareTo(new Integer(0)) != 0) {
 						multiPanel.clearData();
 						eventCacheController.getEventsForRange(multiPanel
 								.getCurrent().getFirstDateLogical(), multiPanel
-								.getCurrent().getLastDateLogical(), val,filterModulesAndMethods.get(SELECTED_MODULE),
+								.getCurrent().getLastDateLogical(), val,
+								filterModulesAndMethods.get(SELECTED_MODULE),
 								multiPanel, true);
 					}
 				} catch (Exception e) {
@@ -2348,8 +2614,9 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		});
 		filterPanel.add(filterModule);
-		
-		CustomButton clearButton = new CustomButton("clear",AppConstants.ICON_CLEAR);
+
+		CustomButton clearButton = new CustomButton("clear",
+				AppConstants.ICON_CLEAR);
 		clearButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -2367,7 +2634,8 @@ public class SchedulerWidget extends WidgetInterface implements
 		CustomButton showPicker = new CustomButton("Jump");
 		fields2Panel.add(showPicker);
 
-		if(CurrentState.isActionAllowed(blockSlotsModuleName,AppConstants.SHOW)){
+		if (CurrentState.isActionAllowed(blockSlotsModuleName,
+				AppConstants.SHOW)) {
 			CustomButton showBlockSlots = new CustomButton("Block Slots");
 			showBlockSlots.addClickHandler(new ClickHandler() {
 				@Override
@@ -2379,40 +2647,45 @@ public class SchedulerWidget extends WidgetInterface implements
 			});
 			fields2Panel.add(showBlockSlots);
 		}
-		
+
 		headerArea.add(fields2Panel);
-		
+
 		final VerticalPanel posPanel = new VerticalPanel();
 		posPanel.setVisible(false);
 		posPanel.setWidth("100%");
 		HorizontalPanel pickerHolder = new HorizontalPanel();
 		pickerHolder.add(posPanel);
 		pickerHolder.add(multiPanel);
-		
+
 		showPicker.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 				posPanel.setVisible(!posPanel.isVisible());
-				if(posPanel.isVisible())
-					multiPanel.setPixelSize((Window.getClientWidth()*78)/100, (Window.getClientHeight()*70)/100);
+				if (posPanel.isVisible())
+					multiPanel.setPixelSize(
+							(Window.getClientWidth() * 78) / 100, (Window
+									.getClientHeight() * 70) / 100);
 				else
-					multiPanel.setPixelSize((Window.getClientWidth()*87)/100, (Window.getClientHeight()*70)/100);
+					multiPanel.setPixelSize(
+							(Window.getClientWidth() * 87) / 100, (Window
+									.getClientHeight() * 70) / 100);
 			}
 		});
-		
+
 		HTML space = new HTML("");
 		posPanel.add(space);
 		space.setHeight("40px");
 		posPanel.add(navigator);
-		//navigator.setVisible(false);
-		//pickerHolder.setCellWidth(posPanel, "200px");
+		// navigator.setVisible(false);
+		// pickerHolder.setCellWidth(posPanel, "200px");
 		pickerHolder.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
 
 		pickerHolder.setCellWidth(multiPanel, "100%");
 		multiPanel.setWidth("100%");
-		multiPanel.setPixelSize((Window.getClientWidth()*87)/100, (Window.getClientHeight()*70)/100);
+		multiPanel.setPixelSize((Window.getClientWidth() * 87) / 100, (Window
+				.getClientHeight() * 300) / 100);
 
-//		posPanel.setWidth("200px");
+		// posPanel.setWidth("200px");
 
 		panel.add(pickerHolder, DockPanel.CENTER);
 		pickerHolder.setWidth("100%");
@@ -2517,5 +2790,11 @@ public class SchedulerWidget extends WidgetInterface implements
 
 	public DateRenderer getDateRenderer() {
 		return multiPanel.getRenderer();
+	}
+	public EventData getNewExternalDataEvent(){
+		return new EventData();
+	}
+	public void setExternalDataEvent(EventData eventData){
+		this.externalDataEvent = eventData;
 	}
 }

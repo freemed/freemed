@@ -30,21 +30,40 @@ DELIMITER //
 #	Monthly Client Balance Due
 #
 
-CREATE PROCEDURE report_MonthlyClientBalanceDue_en_US (IN endDate DATE)
+CREATE PROCEDURE report_MonthlyClientBalanceDue_en_US ( IN endDate DATE,IN facID INT)
 BEGIN
 	SET @sql = CONCAT(		
 		"SELECT ",
+			"(SELECT pracname from practice ORDER BY id LIMIT 1) as practice, ",
+			"IFNULL(i.id,0) AS insid,"
 			"IFNULL(i.insconame,'Not Assigned To Third Party') AS Source, ",
-			"SUM(p.procbalcurrent) as 'Balance',",
-			"CONCAT(pt.ptlname,', ',pt.ptfname,' ',pt.ptmname) AS patientname ",
-		"FROM procrec p ",
+			"pt.id AS patientnum,",
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1),' ',SUBSTRING(pt.ptmname FROM 1 FOR 1)) AS patientname, ",
+			"f.psrname AS 'Facility Name', ",
+			"CASE WHEN (td.tddischargedt IS NULL OR tii.admitdate>td.tddischargedt)",
+				" THEN 'A' ELSE 'D' END as status, ",
+			"CASE WHEN (td.tddischargedt IS NULL OR tii.admitdate>td.tddischargedt)",
+				" THEN IF(SUM(p.procbalcurrent)>=0,SUM(p.procbalcurrent),0) ELSE 0 END as Debit, ",
+			"CASE WHEN (td.tddischargedt IS NULL OR tii.admitdate>td.tddischargedt)",
+				" THEN IF(SUM(p.procbalcurrent)<0,ABS(SUM(p.procbalcurrent)),0) ",
+				" ELSE 0 END as Credit, ",
+			"CASE WHEN (td.tddischargedt IS NULL OR tii.admitdate>td.tddischargedt) ",
+				"THEN 0 ELSE SUM(p.procbalcurrent) END as Balance, ",
+			"CASE WHEN (td.tddischargedt IS NULL OR tii.admitdate>td.tddischargedt) ",
+				"THEN '' ELSE td.tddischargedt END as dchDate ",
+		"FROM facility f,procrec p ",
 			"LEFT OUTER JOIN patient pt ON pt.id = p.procpatient ",
 			"LEFT OUTER JOIN coverage c ON c.id = p.proccurcovid  ",
 			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
+			"LEFT OUTER JOIN treatment_discharge td ON td.patient=p.procpatient AND td.tddischargedt=",
+				"(SELECT MAX(tddischargedt) from treatment_discharge where p.procpatient)",
+			"LEFT OUTER JOIN treatment_initial_intake tii ON tii.patient=p.procpatient AND tii.admitdate=",
+				"(SELECT MAX(admitdate) from treatment_initial_intake where p.procpatient)",
 		"WHERE ",
 			"p.procdt<='",endDate,"' AND ",
-			"p.procbalcurrent > 0 ",
-			"GROUP BY p.procpatient "
+			"p.procpos=",facID," AND ",
+			"p.procpos=f.id ",
+			"GROUP BY p.procpatient ORDER BY insid,patientnum"
 	);
 	PREPARE s FROM @sql ;
 	EXECUTE s ;
@@ -76,12 +95,12 @@ INSERT INTO `reporting` (
 		'en_US',
 		'Monthly Client Balance Due',
 		'jasper',
-		'report',
+		'reporting_engine',
 		'report_MonthlyClientBalanceDue_en_US',
-		1,
-		'End Date',
-		'Date',
-		'0',
-		'report_MonthlyClientBalanceDue_en_US'
+		2,
+		'End Date,Facility',
+		'Date,Facility',
+		'0,0',
+		'MonthlyClientBalanceDue_en_US'
 	);
 

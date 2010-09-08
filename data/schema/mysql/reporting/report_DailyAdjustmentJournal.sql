@@ -30,28 +30,144 @@ DELIMITER //
 #	'Daily Adjustment Journal',
 #
 
-CREATE PROCEDURE report_DailyAdjustmentJournal_en_US (IN cDate DATE)
+CREATE PROCEDURE report_DailyAdjustmentJournal_en_US (IN cDate DATE,IN facID INT)
 BEGIN
-	SET @sql = CONCAT(		
-		"SELECT ",
+	SET @sql = CONCAT(
+		"SELECT data.*,(SELECT pracname from practice ORDER BY id LIMIT 1) as practice FROM "
+		"((SELECT ",
 			"'Invoices' as 'Type',",
-			"'Third Party Adj' AS 'Sub Type', ",
+			"'3rd Party Adj' AS 'Sub Type', ",
 			"IFNULL(i.insconame,'Others') AS Source, ",
-			"CONCAT(pt.ptlname,', ',pt.ptfname,' ',pt.ptmname) AS patientname, ",
-			"0 AS 'Trans Num', ",
-			"pr.payrecdt AS 'Trans Date', ",
+			"pt.id AS patientnum,"
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1)) AS patientname, ",
+			"pr.id AS 'Trans Num', ",
+			"pr.payrecdtadd AS 'Trans Date', ",
 			"pr.payrecamt AS 'Invoice Amount', ",			
 			"0 AS 'Credit Amount', ",
 			"pr.payrecdescrip AS Reason, ",
-			"CONCAT(prec.procdt,' - ',IFNULL(prec.procdtend,'')) AS 'Service Dates' ",
-		"FROM payrec pr ",
+			"CONCAT(DATE_FORMAT(prec.procdt, '%m/%d/%Y'),' - ',IFNULL(DATE_FORMAT(prec.procdtend, '%m/%d/%Y'),'')) AS 'Service Dates', ",
+			"f.psrname AS 'Facility Name', ",
+			"1 AS subtypeid, "
+			"i.id AS inscoid "
+		"FROM facility f,procrec prec,payrec pr ",
 			"LEFT OUTER JOIN coverage c ON c.id = pr.payreclink  ",
 			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
 			"LEFT OUTER JOIN patient pt ON pt.id = pr.payrecpatient ",
-			"LEFT OUTER JOIN procrec prec ON prec.id=pr.payrecproc ",
 		"WHERE ",
 			"pr.payreccat = 5 AND ",
-			"pr.payrecdt='",cDate,"' "
+			"pr.payreclink!=0 AND ",
+			"pr.payrecdtadd='",cDate,"' AND ",
+			"prec.id=pr.payrecproc AND ",
+			"prec.procpos=",facID," AND ",
+			"prec.procpos=f.id ) ",
+		"UNION ",
+		"(SELECT ",
+			"'Invoices' as 'Type',",
+			"'Lab Fee' AS 'Sub Type', ",
+			"'Not Assigned To Third Party' AS Source, ",
+			"pt.id AS patientnum,"
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1)) AS patientname, ",
+			"pr.id AS 'Trans Num', ",
+			"pr.payrecdtadd AS 'Trans Date', ",
+			"prec.proclabcharges AS 'Invoice Amount', ",			
+			"0 AS 'Credit Amount', ",
+			"pr.payrecdescrip AS Reason, ",
+			"CONCAT(DATE_FORMAT(prec.procdt, '%m/%d/%Y'),' - ',IFNULL(DATE_FORMAT(prec.procdtend, '%m/%d/%Y'),'')) AS 'Service Dates', ",
+			"f.psrname AS 'Facility Name', ",
+			"2 AS subtypeid, "
+			"0 AS inscoid "
+		"FROM facility f,procrec prec,payrec pr ",
+			"LEFT OUTER JOIN coverage c ON c.id = pr.payreclink  ",
+			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
+			"LEFT OUTER JOIN patient pt ON pt.id = pr.payrecpatient ",
+		"WHERE ",
+			"pr.payreccat = 5 AND ",
+			"pr.payrecdtadd='",cDate,"' AND ",
+			"prec.proclabcharges > 0 AND ",
+			"prec.id=pr.payrecproc AND ",
+			"prec.procpos=",facID," AND ",
+			"prec.procpos=f.id ) ",
+		"UNION ",
+		"(SELECT ",
+			"'Invoices' as 'Type',",
+			"'Self Pay' AS 'Sub Type', ",
+			"'Not Assigned To Third Party' AS Source, ",
+			"pt.id AS patientnum,"
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1)) AS patientname, ",
+			"pr.id AS 'Trans Num', ",
+			"pr.payrecdtadd AS 'Trans Date', ",
+			"pr.payrecamt AS 'Invoice Amount', ",			
+			"0 AS 'Credit Amount', ",
+			"pr.payrecdescrip AS Reason, ",
+			"CONCAT(DATE_FORMAT(prec.procdt, '%m/%d/%Y'),' - ',IFNULL(DATE_FORMAT(prec.procdtend, '%m/%d/%Y'),'')) AS 'Service Dates', ",
+			"f.psrname AS 'Facility Name', ",
+			"3 AS subtypeid, "
+			"0 AS inscoid "
+		"FROM facility f,procrec prec,payrec pr ",
+			"LEFT OUTER JOIN coverage c ON c.id = pr.payreclink  ",
+			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
+			"LEFT OUTER JOIN patient pt ON pt.id = pr.payrecpatient ",
+		"WHERE ",
+			"pr.payreccat = 5 AND ",
+			"pr.payreclink=0 AND ",
+			"pr.payrecdtadd='",cDate,"' AND ",
+			"prec.id=pr.payrecproc AND ",
+			"prec.procpos=",facID," AND ",
+			"prec.procpos=f.id ) ",
+		"UNION ",
+		"(SELECT ",
+			"'Credits' as 'Type',",
+			"'3rd Party Adj' AS 'Sub Type', ",
+			"IFNULL(i.insconame,'Others') AS Source, ",
+			"pt.id AS patientnum,"
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1)) AS patientname, ",
+			"pr.id AS 'Trans Num', ",
+			"pr.payrecdtadd AS 'Trans Date', ",
+			"0 AS 'Invoice Amount', ",			
+			"pr.payrecamt AS 'Credit Amount', ",
+			"pr.payrecdescrip AS Reason, ",
+			"CONCAT(DATE_FORMAT(prec.procdt, '%m/%d/%Y'),' - ',IFNULL(DATE_FORMAT(prec.procdtend, '%m/%d/%Y'),'')) AS 'Service Dates', ",
+			"f.psrname AS 'Facility Name', ",
+			"1 AS subtypeid, "
+			"i.id AS inscoid "
+		"FROM facility f,procrec prec,payrec pr ",
+			"LEFT OUTER JOIN coverage c ON c.id = pr.payreclink  ",
+			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
+			"LEFT OUTER JOIN patient pt ON pt.id = pr.payrecpatient ",
+		"WHERE ",
+			"pr.payreccat IN (1,2,7,9,12) AND ",
+			"pr.payreclink!=0 AND ",
+			"pr.payrecdtadd='",cDate,"' AND ",
+			"prec.id=pr.payrecproc AND ",
+			"prec.procpos=",facID," AND ",
+			"prec.procpos=f.id ORDER BY Source) ",
+		"UNION ",
+		"(SELECT ",
+			"'Credits' as 'Type',",
+			"'Self Pay' AS 'Sub Type', ",
+			"'Not Assigned to Third Party' AS Source, ",
+			"pt.id AS patientnum,"
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1)) AS patientname, ",
+			"pr.id AS 'Trans Num', ",
+			"pr.payrecdtadd AS 'Trans Date', ",
+			"0 AS 'Invoice Amount', ",			
+			"pr.payrecamt AS 'Credit Amount', ",
+			"pr.payrecdescrip AS Reason, ",
+			"CONCAT(DATE_FORMAT(prec.procdt, '%m/%d/%Y'),' - ',IFNULL(DATE_FORMAT(prec.procdtend, '%m/%d/%Y'),'')) AS 'Service Dates', ",
+			"f.psrname AS 'Facility Name', ",
+			"2 AS subtypeid, "
+			"0 AS inscoid "
+		"FROM facility f,procrec prec,payrec pr ",
+			"LEFT OUTER JOIN coverage c ON c.id = pr.payreclink  ",
+			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
+			"LEFT OUTER JOIN patient pt ON pt.id = pr.payrecpatient ",
+		"WHERE ",
+			"pr.payreccat IN (1,2,12) AND ",
+			"pr.payreclink=0 AND ",
+			"pr.payrecdtadd='",cDate,"' AND ",
+			"prec.id=pr.payrecproc AND ",
+			"prec.procpos=",facID," AND ",
+			"prec.procpos=f.id )) data ORDER BY data.Type, data.subtypeid, data.inscoid ASC"
 	);
 	PREPARE s FROM @sql ;
 	EXECUTE s ;
@@ -85,10 +201,10 @@ INSERT INTO `reporting` (
 		'jasper',
 		'sub_report',
 		'report_DailyAdjustmentJournal_en_US',
-		1,
-		'Date',
-		'Date',
-		'0',
-		'report_DailyAdjustmentJournal_en_US'
+		2,
+		'Date,Facility',
+		'Date,Facility',
+		'0,0',
+		'sub_DailyAdjustmentJournal_en_US'
 	);
 

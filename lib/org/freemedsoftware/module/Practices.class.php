@@ -34,6 +34,8 @@ class Practices extends SupportModule {
 
 	var $record_name    = "Practice";
 	var $table_name     = "practice";
+	var $archive_field = "pracarchive";
+	
 	var $variables      = array (
 		"pracname",
 		"ein",

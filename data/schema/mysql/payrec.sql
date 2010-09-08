@@ -129,3 +129,11 @@ CREATE TRIGGER payrec_Update
 
 DELIMITER ;
 
+CALL config_Register (
+	'auto_print_ptrcpt',
+	'0',
+	'Automatically Print Patient Receipt',
+	'UI',
+	'YesNo',
+	''
+);

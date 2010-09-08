@@ -26,374 +26,428 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Module.SuperbillTemplateAsync;
+
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.widget.CustomButton;
-import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget;
+import org.freemedsoftware.gwt.client.widget.EncounterWidget;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget.CallbackType;
+import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterCommandType;
+import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterFormMode;
+import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterFormType;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
+import java.util.List;
 public class EncounterScreen extends PatientScreenInterface {
-
-	protected final static int COLUMNS = 3;
-
-	protected HashMap<String, String>[] dx = null;
-
-	protected FlexTable dxTable = null;
-
-	protected SupportModuleWidget dxPicklist = new SupportModuleWidget(
-			"IcdCodes");
-
-	protected HashMap<String, Boolean> dxValues = new HashMap<String, Boolean>();
-
-	protected Integer dxCount = 0;
-
-	protected HashMap<String, String>[] px = null;
-
-	protected FlexTable pxTable = null;
-
-	protected SupportModuleWidget pxPicklist = new SupportModuleWidget(
-			"CptCodes");
-
-	protected HashMap<String, Boolean> pxValues = new HashMap<String, Boolean>();
-
-	protected Integer pxCount = 0;
-
-	protected VerticalPanel popoutPanel = null;
+	protected VerticalPanel verticalPanel;
+	protected TabPanel tabPanel;
+	protected VerticalPanel entryVerticalPanel;
+	protected EncounterWidget encounterWidget;
+	protected CustomTable enotesCustomTable;
+	protected Boolean isAdding = true;
+	protected HashMap<String, String> moddata;
+	protected HashMap<String,List<String>> sections;
 
 	public EncounterScreen() {
-		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-
-			public void onUncaughtException(Throwable e) {
-				JsonUtil.debug(e.getMessage());
-			}
-
-		});
-		VerticalPanel verticalPanel = new VerticalPanel();
-		verticalPanel.setSpacing(5);
+		moddata = new HashMap<String, String>();
+		sections = new HashMap<String,List<String>>();
+		verticalPanel = new VerticalPanel();
+		verticalPanel.setSize("100%", "100%");
+		entryVerticalPanel = new VerticalPanel();
+		tabPanel = new TabPanel();
+		tabPanel.add(entryVerticalPanel, "Add");
+		verticalPanel.add(tabPanel);
 		initWidget(verticalPanel);
-
-		final HorizontalPanel superbillHPanel = new HorizontalPanel();
-		verticalPanel.add(superbillHPanel);
-
-		final Label superbillLabel = new Label(
-				"Encounter/Superbill Template : ");
-		superbillHPanel.add(superbillLabel);
-		final SupportModuleWidget superbillTemplate = new SupportModuleWidget(
-				"SuperbillTemplate");
-		superbillTemplate.addChangeHandler(new ValueChangeHandler<Integer>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				Integer value = event.getValue();
-				if (value > 0) {
-					populateSuperbillFromId(value);
-					popoutPanel.setVisible(true);
-				}
-			}
-		});
-		superbillTemplate
-				.setTitle("Select a template to use for constructing this encounter.");
-		superbillHPanel.add(superbillTemplate);
-
-		popoutPanel = new VerticalPanel();
-		popoutPanel.setVisible(false);
-		verticalPanel.add(popoutPanel);
-
-		popoutPanel.add(new HTML("<b>" + "Diagnoses" + "</b>"));
-		dxTable = new FlexTable();
-		dxTable.setWidth("100%");
-		popoutPanel.add(dxTable);
-		dxPicklist.addChangeHandler(new ValueChangeHandler<Integer>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				SupportModuleWidget w = (SupportModuleWidget) event.getSource();
-				if (w.getValue() > 0) {
-					// Push additional copy in
-					final String value = w.getValue().toString();
-					String label = w.getText();
-					dxCount++;
-					CheckBox cb = new CheckBox(label);
-					cb.setValue(true);
-					dxValues.put(value, true);
-					cb.addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent evt) {
-							Boolean cur = dxValues.get(value);
-							dxValues.put(value, !cur.booleanValue());
-						}
-					});
-					dxTable.setWidget((dxCount == 0 ? 0 : dxCount / COLUMNS),
-							(dxCount == 0 ? 0 : dxCount % COLUMNS), cb);
-
-					// Reset the value when we're done
-					((SupportModuleWidget) w).setValue(0);
-				}
-			}
-		});
-		popoutPanel.add(dxPicklist);
-		popoutPanel.add(new HTML("<b>" + "Procedures" + "</b>"));
-		pxTable = new FlexTable();
-		pxTable.setWidth("100%");
-		popoutPanel.add(pxTable);
-		pxPicklist.addChangeHandler(new ValueChangeHandler<Integer>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				SupportModuleWidget w = (SupportModuleWidget) event.getSource();
-				if (((SupportModuleWidget) w).getValue() > 0) {
-					// Push additional copy in
-					final String value = (((SupportModuleWidget) w).getValue())
-							.toString();
-					String label = ((SupportModuleWidget) w).getText();
-					pxCount++;
-					CheckBox cb = new CheckBox(label);
-					cb.setValue(true);
-					pxValues.put(value, true);
-					cb.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent evt) {
-							Boolean cur = pxValues.get(value);
-							pxValues.put(value, !cur.booleanValue());
-						}
-					});
-					pxTable.setWidget((pxCount == 0 ? 0 : pxCount / COLUMNS),
-							(pxCount == 0 ? 0 : pxCount % COLUMNS), cb);
-
-					// Reset the value when we're done
-					((SupportModuleWidget) w).setValue(0);
-				}
-			}
-		});
-		popoutPanel.add(pxPicklist);
-
-		// Submit button
-		CustomButton submitButton = new CustomButton("Add Encounter",
-				AppConstants.ICON_ADD);
-		submitButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-			}
-		});
-		popoutPanel.add(submitButton);
-		Util.setFocus(superbillTemplate);
+		tabPanel.selectTab(0);
 	}
 
-	/**
-	 * Get composite's diagnosis values.
-	 * 
-	 * @return
-	 */
-	public String[] getDxValues() {
-		List<String> r = new ArrayList<String>();
-		Iterator<String> iter = dxValues.keySet().iterator();
-		while (iter.hasNext()) {
-			String v = iter.next();
-			if (dxValues.get(v).booleanValue()) {
-				r.add(v);
-			}
+	public void laodData() {
+		createEncounterNotesListTab();
+		createEncounterNotesAdditionTab();
+	}
+
+	public void createEncounterNotesAdditionTab() {
+		EncounterFormMode mod;
+		String templateName = "";
+		if (isAdding) {
+			mod = EncounterFormMode.ADD;
+		} else {
+			if (moddata.get("pnotestemplate") != null)
+				templateName = moddata.get("pnotestemplate");
+			mod = EncounterFormMode.EDIT;
 		}
-		return (String[]) r.toArray(new String[0]);
-	}
-
-	/**
-	 * Get composite's procedure values.
-	 * 
-	 * @return
-	 */
-	public String[] getPxValues() {
-		List<String> r = new ArrayList<String>();
-		Iterator<String> iter = pxValues.keySet().iterator();
-		while (iter.hasNext()) {
-			String v = iter.next();
-			if (pxValues.get(v).booleanValue()) {
-				r.add(v);
-			}
-		}
-		return (String[]) r.toArray(new String[0]);
-	}
-
-	/**
-	 * Internal method to populate "superbill" form with dx and px elements from
-	 * RPC.
-	 * 
-	 * @param data
-	 */
-	protected void populateSuperbill(
-			HashMap<String, HashMap<String, String>[]> data) {
-		dx = data.get("dx");
-		px = data.get("px");
-
-		// Populate diagnoses
-		dxTable.clear();
-		dxValues.clear();
-		if (dx.length > 0) {
-			for (int iter = 0; iter < dx.length; iter++) {
-				int row = (int) ((iter == 0) ? 0 : iter / COLUMNS);
-				int col = (iter == 0) ? 0 : iter % COLUMNS;
-				final String value = dx[iter].get("id");
-				CheckBox w = new CheckBox();
-				String label = dx[iter].get("code") + " ("
-						+ dx[iter].get("descrip") + ")";
-				// Bold the title if it's a previous entry
-				if (Integer.parseInt(dx[iter].get("previous")) == 1) {
-					w.setHTML("<b>" + label + "</b>");
-					dxValues.put(value, Boolean.TRUE);
-				} else {
-					w.setText(label);
-					dxValues.put(value, Boolean.FALSE);
-				}
-				w.addClickHandler(new ClickHandler() {
+		encounterWidget = new EncounterWidget(
+				EncounterFormType.ENCOUNTER_NOTE_VALUES, mod, sections,
+				templateName, moddata, patientId.toString(),
+				new CustomRequestCallback() {
 					@Override
-					public void onClick(ClickEvent evt) {
-						Boolean cur = dxValues.get(value);
-						dxValues.put(value, !cur.booleanValue());
+					public void onError() {
+
+					}
+
+					@Override
+					public void jsonifiedData(Object data) {
+						if (data instanceof EncounterCommandType) {
+							if (((EncounterCommandType) data) == EncounterCommandType.CREATE_TEMPLATE) {
+								final EncounterTemplateWidget encounterTemplateWidget = new EncounterTemplateWidget(
+										new CustomRequestCallback() {
+											@Override
+											public void onError() {
+
+											}
+
+											@Override
+											public void jsonifiedData(
+													Object data) {
+												if (data instanceof CallbackType) {
+													if (((CallbackType) data) == CallbackType.CANCEL) {
+														tabPanel
+																.remove(tabPanel
+																		.getWidgetCount() - 1);
+														tabPanel.selectTab(0);
+													} else if (((CallbackType) data) == CallbackType.UPDATED) {
+														tabPanel
+																.remove(tabPanel
+																		.getWidgetCount() - 1);
+														tabPanel.selectTab(0);
+													}
+												} else if (data instanceof Integer[]) {
+													// splitBatch((Integer[])data);
+												}
+
+											}
+										});
+								tabPanel.add(encounterTemplateWidget,
+										"Encounter Template");
+								tabPanel
+										.selectTab(tabPanel.getWidgetCount() - 1);
+							}
+							else if (((EncounterCommandType) data) == EncounterCommandType.EDIT_TEMPLATE) {
+								final EncounterTemplateWidget encounterTemplateWidget = new EncounterTemplateWidget(
+										new CustomRequestCallback() {
+											@Override
+											public void onError() {
+
+											}
+
+											@Override
+											public void jsonifiedData(
+													Object data) {
+												if (data instanceof CallbackType) {
+													if (((CallbackType) data) == CallbackType.CANCEL) {
+														tabPanel
+																.remove(tabPanel
+																		.getWidgetCount() - 1);
+														tabPanel.selectTab(0);
+													} else if (((CallbackType) data) == CallbackType.UPDATED) {
+														tabPanel
+																.remove(tabPanel
+																		.getWidgetCount() - 1);
+														tabPanel.selectTab(0);
+													}
+												} else if (data instanceof Integer[]) {
+													// splitBatch((Integer[])data);
+												}
+
+											}
+										});
+								encounterTemplateWidget.getTemplateValues(encounterWidget.getSelectedTemplate());
+								tabPanel.add(encounterTemplateWidget,
+										"Encounter Template");
+								tabPanel
+										.selectTab(tabPanel.getWidgetCount() - 1);
+							} else if (((EncounterCommandType) data) == EncounterCommandType.UPDATE) {
+								reset();
+								tabPanel.selectTab(1);
+								loadEncountersList();
+								entryVerticalPanel.clear();
+								createEncounterNotesAdditionTab();
+							}
+							else if (((EncounterCommandType) data) == EncounterCommandType.RESET) {
+								reset();
+								tabPanel.selectTab(0);
+								loadEncountersList();
+								entryVerticalPanel.clear();
+								createEncounterNotesAdditionTab();
+							}
+						}
+
 					}
 				});
-				dxTable.setWidget(row, col, w);
-			}
-			dxCount = dx.length;
-		}
-
-		// Populate procedures
-		pxTable.clear();
-		pxValues.clear();
-		if (px.length > 0) {
-			for (int iter = 0; iter < px.length; iter++) {
-				int row = (int) ((iter == 0) ? 0 : iter / COLUMNS);
-				int col = (iter == 0) ? 0 : iter % COLUMNS;
-				final String value = px[iter].get("id");
-				CheckBox w = new CheckBox();
-				String label = px[iter].get("code") + " ("
-						+ px[iter].get("descrip") + ")";
-
-				// Bold the title if it's a previous entry
-				int previous = 0;
-				try {
-					previous = Integer.parseInt(px[iter].get("previous"));
-				} catch (Exception ex) {
-				}
-				if (previous == 1) {
-					w.setHTML("<b>" + label + "</b>");
-					pxValues.put(value, Boolean.TRUE);
-				} else {
-					w.setText(label);
-					pxValues.put(value, Boolean.FALSE);
-				}
-				w.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent evt) {
-						Boolean cur = pxValues.get(value);
-						pxValues.put(value, !cur.booleanValue());
-					}
-				});
-				pxTable.setWidget(row, col, w);
-			}
-			pxCount = px.length;
-		}
+		entryVerticalPanel.add(encounterWidget);
 	}
 
-	/**
-	 * Callback for encounter/superbill template selection widget.
-	 * 
-	 * @param superbillId
-	 */
-	protected void populateSuperbillFromId(Integer superbillId) {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// FIXME: make this work under stubbed mode.
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { JsonUtil.jsonify(superbillId),
-					JsonUtil.jsonify(patientId) };
+	public void createEncounterNotesListTab() {
+		VerticalPanel listPanel = new VerticalPanel();
+		tabPanel.add(listPanel, "List");
+		enotesCustomTable = new CustomTable();
+		enotesCustomTable.setIndexName("id");
+		// patientCustomTable.setSize("100%", "100%");
+		enotesCustomTable.setWidth("100%");
+		enotesCustomTable.addColumn("Date", "note_date");
+		enotesCustomTable.addColumn("Type", "note_type");
+		enotesCustomTable.addColumn("Description", "note_desc");
+		enotesCustomTable.addColumn("Submitter", "user");
+		enotesCustomTable.addColumn("Action", "action");
+		
+		
+		enotesCustomTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+			public Widget setColumn(String columnName,
+					HashMap<String, String> data) {
+				// Render only action column, otherwise skip renderer
+				if (columnName.compareToIgnoreCase("action") != 0) {
+					return null;
+				}
+				final CustomActionBar actionBar = new CustomActionBar(data);
+				actionBar.applyPermissions(false, false, CurrentState.isActionAllowed("EncounterNotes", AppConstants.DELETE), CurrentState.isActionAllowed("EncounterNotes", AppConstants.MODIFY), false);
+					
+				actionBar.setHandleCustomAction(new HandleCustomAction(){
+					@Override
+					public void handleAction(int id,
+							HashMap<String, String> data, int action) {
+						if(action == HandleCustomAction.MODIFY){
+								try {
+									isAdding = false;
+									laodEncounterNoteInfo(data.get("id"));
+									tabPanel.selectTab(0);
+								} catch (Exception e) {
+									GWT.log("Caught exception: ", e);
+								}
+							
+						}
+						else if(action == HandleCustomAction.DELETE){
+							deleteNote(data.get("id"));
+						}
+					}
+				});
+				// Push value back to table
+				return actionBar;
+			}
+		});
+		
+		listPanel.add(enotesCustomTable);
+		loadEncountersList();
+	}
+
+	public void loadEncountersList() {
+		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+
+			String[] params = { patientId.toString() };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
 					URL
 							.encode(Util
 									.getJsonRequest(
-											"org.freemedsoftware.module.SuperbillTemplate.GetTemplate",
+											"org.freemedsoftware.module.EncounterNotes.getEncountersList",
 											params)));
+
 			try {
 				builder.sendRequest(null, new RequestCallback() {
-					public void onError(
-							com.google.gwt.http.client.Request request,
-							Throwable ex) {
-						GWT.log("Exception", ex);
-						Util.showErrorMsg("SuperbillTemplate",
-								"Failed to load template.");
+					public void onError(Request request, Throwable ex) {
 					}
 
-					@SuppressWarnings("unchecked")
-					public void onResponseReceived(
-							com.google.gwt.http.client.Request request,
-							com.google.gwt.http.client.Response response) {
+					public void onResponseReceived(Request request,
+							Response response) {
+
 						if (200 == response.getStatusCode()) {
-							HashMap<String, HashMap<String, String>[]> result = (HashMap<String, HashMap<String, String>[]>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
-											"HashMap<String,HashMap<String,String>[]>");
-							JsonUtil.debug("got result");
-							if (result != null) {
-								JsonUtil.debug("calling populate superbill");
-								populateSuperbill(result);
+							try {
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>[]");
+								if (r != null) {
+							
+									enotesCustomTable.loadData(r);
+								} else {
+
+								}
+							} catch (Exception e) {
+
 							}
+
 						} else {
-							Util.showErrorMsg("SuperbillTemplate",
-									"Failed to load template.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				GWT.log("Exception", e);
-				Util.showErrorMsg("SuperbillTemplate",
-						"Failed to load template.");
 			}
-		} else {
-			try {
-				SuperbillTemplateAsync proxy = (SuperbillTemplateAsync) Util
-						.getProxy("org.freemedsoftware.gwt.client.Module.SuperbillTemplate");
-				proxy
-						.GetTemplate(
-								superbillId,
-								patientId,
-								new AsyncCallback<HashMap<String, HashMap<String, String>[]>>() {
-
-									public void onSuccess(
-											HashMap<String, HashMap<String, String>[]> result) {
-										populateSuperbill(result);
-									}
-
-									public void onFailure(Throwable caught) {
-										Util.showErrorMsg("SuperbillTemplate",
-												"Failed to load template.");
-									}
-
-								});
-			} catch (Exception e) {
-				e.printStackTrace();
-				Util.showErrorMsg("SuperbillTemplate",
-						"Failed to load template.");
-			}
-
 		}
+	}
+
+
+	public void laodEncounterNoteInfo(String id) {
+		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { id };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.EncounterNotes.getEncounterNoteInfo",
+											params)));
+
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+
+						if (200 == response.getStatusCode()) {
+							try {
+								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (r != null) {
+									moddata = r;
+									if (r.get("pnotestemplate") == null
+											|| r.get("pnotestemplate").equals(
+													"") || r.get("pnotestemplate").equals("0") ) {
+										
+										entryVerticalPanel.clear();
+										createEncounterNotesAdditionTab();
+
+									} else {
+										getTemplateValues(moddata
+												.get("pnotestemplate"));
+									}
+								} else {
+								}
+							} catch (Exception e) {
+							}
+
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		}
+	}
+
+	public void getTemplateValues(String templateId) {
+		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { templateId };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.EncounterNotesTemplate.getTemplateInfo",
+											params)));
+
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+
+						if (200 == response.getStatusCode()) {
+							try {
+								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"HashMap<String,String>");
+								if (r != null) {
+									String secStr = r.get("pnotestsections");
+									sections=(HashMap<String, List<String>>) JsonUtil
+									.shoehornJson(JSONParser.parse(secStr),
+											"HashMap<String,List>");
+									entryVerticalPanel.clear();
+									createEncounterNotesAdditionTab();
+								} else {
+
+								}
+							} catch (Exception e) {
+
+							}
+
+						} else {
+
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		}
+	}
+
+	public void deleteNote(String id) {
+		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { id };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.module.EncounterNotes.del",
+											params)));
+
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
+
+					public void onResponseReceived(Request request,
+							Response response) {
+
+						if (200 == response.getStatusCode()) {
+							try {
+								Boolean r = (Boolean) JsonUtil
+										.shoehornJson(JSONParser.parse(response
+												.getText()),
+												"Boolean");
+								if(r){
+									Util
+									.showInfoMsg("EncounterNotes",
+											"Encounter Note Successfully Deleted.");
+									loadEncountersList();
+								}
+								
+							} catch (Exception e) {
+
+							}
+
+						} else {
+
+						}
+					}
+				});
+			} catch (RequestException e) {
+			}
+		}
+	}
+	
+	public void reset() {
+		isAdding = true;
+		sections.clear();
+		moddata.clear();
 	}
 }

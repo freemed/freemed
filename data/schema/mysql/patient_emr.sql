@@ -23,23 +23,23 @@
 SOURCE data/schema/mysql/patient.sql
 
 CREATE TABLE IF NOT EXISTS `patient_emr` (
-	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-	module			VARCHAR (150) NOT NULL,
-	oid			INT UNSIGNED NOT NULL,
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
-	summary			VARCHAR (250) DEFAULT '',
-	locked			BOOL NOT NULL DEFAULT FALSE,
-	annotation		TEXT,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	provider		INT UNSIGNED NOT NULL DEFAULT 0,
-	language		CHAR( 5 ) DEFAULT '',
-	status			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	, module		VARCHAR (150) NOT NULL
+	, oid			INT UNSIGNED NOT NULL
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	, summary		VARCHAR (250) DEFAULT ''
+	, locked		BOOL NOT NULL DEFAULT FALSE
+	, annotation		TEXT
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, provider		INT UNSIGNED NOT NULL DEFAULT 0
+	, language		CHAR( 5 ) DEFAULT ''
+	, status		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id			SERIAL
 
 	#	Define keys
 
-	KEY			( patient, module, oid ),
-	KEY			( module, oid )
+	, KEY			( patient, module, oid )
+	, KEY			( module, oid )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 

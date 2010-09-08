@@ -86,3 +86,16 @@ CREATE TRIGGER notification_Update
 
 DELIMITER ;
 
+#
+# Configuration settings
+#
+
+CALL config_Register (
+	'form_review_reminder',
+	'15',
+	'Form Review Reminder (days before)',
+	'Notifications',
+	'Number',
+	''
+);
+

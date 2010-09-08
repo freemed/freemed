@@ -39,6 +39,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
+import org.freemedsoftware.gwt.client.widget.TemplateWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -90,7 +91,11 @@ public class PreferencesScreen extends ScreenInterface {
 	protected CustomListBox systemNotificationSettingsList =null;
 	
 	private static List<PreferencesScreen> preferencesScreenList = null;
+	protected HashMap<String, List<String>> sectionFieldsMap;
 
+	protected TemplateWidget templateWidget;
+
+	protected HashMap<String, List<String>> selectedSections;
 	// Creates only desired amount of instances if we follow this pattern
 	// otherwise we have public constructor as well
 	public static PreferencesScreen getInstance() {
@@ -122,6 +127,14 @@ public class PreferencesScreen extends ScreenInterface {
 
 		tabPanel = new TabPanel();
 		verticalPanel.add(tabPanel);
+		sectionFieldsMap=new HashMap<String, List<String>>();
+		List<String> widgetsList=new ArrayList<String>();
+		widgetsList.add("WORK LIST");
+		widgetsList.add("MESSAGES");
+		widgetsList.add("UNFILED DOCUMENTS");
+		widgetsList.add("RX REFILLS");
+		widgetsList.add("ACTION ITEMS");
+		sectionFieldsMap.put("Sections", widgetsList);
 		createTabs();
 		tabPanel.selectTab(0);
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -138,7 +151,8 @@ public class PreferencesScreen extends ScreenInterface {
 				CurrentState.setUserConfig("defaultPrinter", printersList.getStoredValue());
 				CurrentState.setUserConfig("providerGroup", providerGroupList.getStoredValue());
 				CurrentState.setUserConfig(AppConstants.SYSTEM_NOTIFICATION, systemNotificationSettingsList.getStoredValue());
-				CurrentState.SYSTEM_NOTIFY_TYPE = systemNotificationSettingsList.getStoredValue();
+				CurrentState.setUserConfig("defaultWidgets", templateWidget.getSelectedSectionFeildsMap());
+				CurrentState.assignSYSTEM_NOTIFY_TYPE(systemNotificationSettingsList.getStoredValue());
 				try{
 					CurrentState.defaultProviderGroup=new Integer(providerGroupList.getStoredValue());
 				}
@@ -160,9 +174,12 @@ public class PreferencesScreen extends ScreenInterface {
 					chagePasswordProcess();
 				else
 					Util.closeTab(getPreferencesScreen());
+				DashboardScreenNew dashboard=DashboardScreenNew.getInstance();
+				dashboard.loadWidgets();
+				dashboard.reloadDashboard();
 			}
 		});
-
+		
 		setDefaultPreferences();
 		loadPrefererences();
 	}
@@ -176,7 +193,21 @@ public class PreferencesScreen extends ScreenInterface {
 	
 	public void loadPrefererences(){
 		themesList.setWidgetValue(CurrentState.getUserConfig(AppConstants.SYSTEM_THEME,"String").toString());
-		systemNotificationSettingsList.setWidgetValue(CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString());
+		String notification = CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString();
+		if(notification.trim().length()!=0)
+			systemNotificationSettingsList.setWidgetValue(CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString());
+		else // by default error's notifications should me appear
+			systemNotificationSettingsList.setWidgetValue(AppConstants.SYSTEM_NOTIFY_ERROR);
+		selectedSections = null;
+		try{
+			selectedSections=(HashMap<String,List<String>>)CurrentState.getUserConfig("defaultWidgets","HashMap<String,List>");
+		}
+		catch(Exception e){
+			//Window.alert("exception:"+e.getMessage());
+		}
+		if(selectedSections==null)
+			selectedSections=sectionFieldsMap;
+		templateWidget.loadValues(selectedSections);
 	}
 	
 	public void refreshPreferences() {
@@ -393,6 +424,8 @@ public class PreferencesScreen extends ScreenInterface {
 			}
 			@Override
 			public void jsonifiedData(Object data) {
+				if(data==null)
+					return;
 				HashMap<String,String> result = (HashMap<String,String>)data;
 				Iterator<String> iterator = result.keySet().iterator();
 				while(iterator.hasNext()){
@@ -417,6 +450,14 @@ public class PreferencesScreen extends ScreenInterface {
 		// Adding theme tab
 		tabPanel.add(printersVerticalPanel, "Printers");
 		////////////////////////////////////End Preparing Printer Tab //////////////////////////////////
+		
+		////////////////////////////////////Preparing Widgets Tab //////////////////////////////////
+
+		VerticalPanel widgetsVerticalPanel = new VerticalPanel();
+		templateWidget = new TemplateWidget(sectionFieldsMap);
+		widgetsVerticalPanel.add(templateWidget);
+		tabPanel.add(widgetsVerticalPanel, "Dashboard Widgets");
+		//////////////////////////////////// End Widgets Tab //////////////////////////////////
 	}
 
 	protected void createNavigatonOptions() {

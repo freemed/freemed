@@ -160,8 +160,10 @@ public class FreemedInterface implements EntryPoint {
 			active = true;
 		} else {
 			mainScreen.setVisible(true);
-			if(!(CurrentState.getDefaultUser().length()>0 && CurrentState.getDefaultUser().equalsIgnoreCase(loginDialog.getLoggedInUser())))
+			if(!(CurrentState.getDefaultUser().length()>0 && CurrentState.getDefaultUser().equalsIgnoreCase(loginDialog.getLoggedInUser()))){
 				Util.closeAllTabs();
+				mainScreen.emptyLeftNavMenuContainer();
+			}
 			mainScreen.refreshMainScreen();
 			try {
 				UIObject.setVisible(RootPanel.get("loginScreenOuter")

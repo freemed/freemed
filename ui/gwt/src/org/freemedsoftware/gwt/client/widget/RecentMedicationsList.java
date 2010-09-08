@@ -52,6 +52,7 @@ public class RecentMedicationsList extends WidgetInterface {
 
 	public RecentMedicationsList() {
 		medicationsTable = new CustomTable();
+		medicationsTable.setWidth("100%");
 		initWidget(medicationsTable);
 		medicationsTable.addColumn("Drug", "mdrug");
 		medicationsTable.addColumn("Dosage", "mdosage");
@@ -127,6 +128,9 @@ public class RecentMedicationsList extends WidgetInterface {
 								} catch (Exception e) {
 									GWT.log("Exception", e);
 								}
+							}
+							else {
+								medicationsTable.noItemFound.setVisible(true);
 							}
 						} else {
 						}

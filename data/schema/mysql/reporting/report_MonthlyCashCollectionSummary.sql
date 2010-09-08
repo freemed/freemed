@@ -30,25 +30,53 @@ DELIMITER //
 #	Monthly Report - Cash Collections Summary
 #
 
-CREATE PROCEDURE report_MonthlyCashCollectionSummary_en_US (IN startDate DATE,IN endDate DATE)
+CREATE PROCEDURE report_MonthlyCashCollectionSummary_en_US (IN startDate DATE, IN endDate DATE,IN facID INT)
 BEGIN
 	SET @sql = CONCAT(
 		"SELECT ",
+			"(SELECT pracname from practice ORDER BY id LIMIT 1) as practice,",
+			"CASE WHEN pr.payreclink=0 THEN 1 ELSE 2 END type,",
 			"pt.ptid AS patientid, ",
-			"CONCAT(pt.ptlname,', ',pt.ptfname,' ',pt.ptmname) AS patientname, ",
-			"IFNULL(i.insconame,'Others') AS insurance,",
-			"( SELECT IFNULL(SUM(payrecamt),0) FROM payrec p1 WHERE p1.payrecpatient = pr.payrecpatient AND p1.payreclink = pr.payreclink AND p1.payreccat = 0 AND p1.payrectype = 0 AND p1.payrecdt>='",startDate,"' AND p1.payrecdt<='",endDate,"' ) AS cash, ",
-			"( SELECT IFNULL(SUM(payrecamt),0) FROM payrec p2 WHERE p2.payrecpatient = pr.payrecpatient AND p2.payreclink = pr.payreclink AND p2.payreccat = 0 AND p2.payrectype IN (1,4) AND p2.payrecdt>='",startDate,"' AND p2.payrecdt<='",endDate,"' ) AS checque, ",
-			"( SELECT IFNULL(SUM(payrecamt),0) FROM payrec p3 WHERE p3.payrecpatient = pr.payrecpatient AND p3.payreclink = pr.payreclink AND p3.payreccat = 0 AND p3.payrectype = 3 AND p3.payrecdt>='",startDate,"' AND p3.payrecdt<='",endDate,"' ) AS creditcard,",
-			"( SELECT IFNULL(SUM(payrecamt),0) FROM payrec p4 WHERE p4.payrecpatient = pr.payrecpatient AND p4.payreclink = pr.payreclink AND p4.payreccat=11 AND p4.payrecdt>='",startDate,"' AND p4.payrecdt<='",endDate,"' ) AS copay ",
-		"FROM payrec pr ",
+			"pt.id AS patientnum,"
+			"CONCAT(SUBSTRING(pt.ptlname FROM 1 FOR 3),', ',SUBSTRING(pt.ptfname FROM 1 FOR 1)) AS patientname, ",
+			"IFNULL(i.insconame,'Not Assigned to Third Party') AS insurance,",
+			"( SELECT ",
+				"IFNULL(SUM(payrecamt),0) FROM facility f,cpt c,payrec p1,procrec prc ",
+				"WHERE p1.payrecpatient = pr.payrecpatient AND p1.payreclink = pr.payreclink AND ",
+				"p1.payrecproc=prc.id AND prc.proccpt=c.id AND c.cptcode!='80101' AND f.id=",facID," ",
+				"AND p1.payreccat = 0 AND p1.payrectype = 0 AND p1.payrecdt>='",startDate,"' AND p1.payrecdt<='",endDate,"' ) AS cash, ",
+			"( SELECT ",
+				"IFNULL(SUM(payrecamt),0) FROM facility f,cpt c,payrec p2,procrec prc ",
+				"WHERE p2.payrecpatient = pr.payrecpatient AND p2.payreclink = pr.payreclink AND ",
+				"p2.payrecproc=prc.id AND prc.proccpt=c.id AND c.cptcode!='80101' AND f.id=",facID," ",
+				"AND p2.payreccat = 0 AND p2.payrectype IN (1,4) AND p2.payrecdt>='",startDate,"' AND p2.payrecdt<='",endDate,"' ) AS checque, ",
+			"( SELECT ",
+				"IFNULL(SUM(payrecamt),0) FROM facility f,cpt c,payrec p3,procrec prc ",
+				"WHERE p3.payrecpatient = pr.payrecpatient AND p3.payreclink = pr.payreclink AND ",
+				"p3.payrecproc=prc.id AND prc.proccpt=c.id AND c.cptcode!='80101' AND f.id=",facID," ",
+				"AND p3.payreccat = 0 AND p3.payrectype = 3 AND p3.payrecdt>='",startDate,"' AND p3.payrecdt<='",endDate,"' ) AS creditcard,",
+			"( SELECT ",
+				"IFNULL(SUM(payrecamt),0) FROM facility f,cpt c,payrec p4,procrec prc ",
+				"WHERE p4.payrecpatient = pr.payrecpatient AND p4.payreclink = pr.payreclink AND ",
+				"p4.payrecproc=prc.id AND prc.proccpt=c.id AND c.cptcode!='80101' AND f.id=",facID," ",
+				"AND p4.payreccat=11 AND p4.payrecdt>='",startDate,"' AND p4.payrecdt<='",endDate,"' ) AS copay ,",
+			"( SELECT ",
+				"IFNULL(SUM(payrecamt),0) FROM facility f,cpt c,payrec p5,procrec prc ",
+				"WHERE p5.payrecpatient = pr.payrecpatient AND p5.payreclink = pr.payreclink AND ",
+				"p5.payrecproc=prc.id AND prc.proccpt=c.id AND c.cptcode='80101' AND f.id=",facID," AND "
+				"p5.payreccat IN(0,11) AND p5.payrecdt>='",startDate,"' AND p5.payrecdt<='",endDate,"' ) AS uabsn ,",
+			"f.psrname AS 'Facility Name' ",
+		"FROM facility f,procrec prec,payrec pr ",
 			"LEFT OUTER JOIN coverage c ON c.id = pr.payreclink  ",
 			"LEFT OUTER JOIN insco i ON i.id = c.covinsco ",
 			"LEFT OUTER JOIN patient pt ON pt.id = pr.payrecpatient ",
 		"WHERE "
+			"prec.id=pr.payrecproc AND ",
+			"prec.procpos=",facID," AND ",
+			"prec.procpos=f.id AND ",
 			"pr.payreccat IN ( 0, 11 ) AND ",
 			"pr.payrecdt>='",startDate,"' AND pr.payrecdt<='",endDate,"' "
-			"GROUP BY pr.payrecpatient, pr.payreclink" 
+			"GROUP BY pr.payrecpatient, pr.payreclink ORDER by type" 
 	);
 	PREPARE s FROM @sql ;
 	EXECUTE s ;
@@ -80,12 +108,12 @@ INSERT INTO `reporting` (
 		'en_US',
 		'Monthly Cash Collection Summary',
 		'jasper',
-		'report',
+		'reporting_engine',
 		'report_MonthlyCashCollectionSummary_en_US',
-		2,
-		'Start Date,End Date',
-		'Date,Date',
-		'0',
-		'report_MonthlyCashCollectionSummary_en_US'
+		3,
+		'Start Date,End Date,Facility',
+		'Date,Date,Facility',
+		'0,0,0',
+		'MonthlyCashCollectionSummary_en_US'
 	);
 

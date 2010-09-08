@@ -128,7 +128,7 @@ class Tools extends SupportModule {
 	//
 	public function ExecuteTool ( $uuid, $param ) {
 		freemed::acl_enforce( 'admin', 'write' );
-		$tool = $this->GetToolParameters( $uuid );
+		$tool = $this->GetToolParameters( $uuid,false );
 
 		// Sanity checking
 		if (!$tool['tool_name']) { return false; }

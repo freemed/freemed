@@ -50,7 +50,8 @@ class ProcedureModule extends EMRModule {
 		"procunits",
 		"procvoucher",
 		"procphysician",
-		"procdt",		
+		"procdt",
+		"procdtend",	
 		"procpos",
 		"proccomment",
 		"procbalorig",
@@ -258,7 +259,7 @@ class ProcedureModule extends EMRModule {
 		//   calculate formula...
 		$charge = ($base_value * $procunits * $relative_value) - $discount; 
 		if ($charge == 0)
-		$charge = $cpt_code_stdfee;
+		$charge = $cpt_code_stdfee*$procunits;
 		if ($debug) $display_buffer .= " (charge = \"$charge\") \n";
 
 		// step six:
@@ -410,39 +411,39 @@ class ProcedureModule extends EMRModule {
 	}
 	
 	public function getLastProc($patient){
-		$query="select * from procrec where procpatient=".$GLOBALS['sql']->quote( $patient )." order by id DESC limit 1";
+		$query="select * FROM procrec where procpatient=".$GLOBALS['sql']->quote( $patient )." order by id DESC limit 1";
 		return $GLOBALS['sql']->queryRow( $query );
 	}
 	
 	public function getProcByID($id){
-		$query="select * from procrec where id=".$GLOBALS['sql']->quote( $id );
+		$query="select * FROM procrec WHERE id=".$GLOBALS['sql']->quote( $id );
 		return $GLOBALS['sql']->queryRow( $query );
 	}
 	
 	public function getCoverages($id){
-		$query1="select c.id as Id, CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
-				"i.inscostate, ')') AS payer from procrec pr ".
+		$query1="select c.id AS Id, CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer FROM procrec pr ".
 				"LEFT OUTER JOIN coverage c ON pr.proccov1 = c.id ".
 				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
-				"where pr.id=".$GLOBALS['sql']->quote( $id );
+				"WHERE pr.id=".$GLOBALS['sql']->quote( $id );
 		$result1 = $GLOBALS['sql']->queryRow( $query1 );
-		$query2="select c.id as Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
-				"i.inscostate, ')') AS payer from procrec pr ".
+		$query2="select c.id AS Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer FROM procrec pr ".
 				"LEFT OUTER JOIN coverage c ON pr.proccov2 = c.id ".
 				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
-				"where pr.id=".$GLOBALS['sql']->quote( $id );
+				"WHERE pr.id=".$GLOBALS['sql']->quote( $id );
 		$result2 = $GLOBALS['sql']->queryRow( $query2 );
-		$query13="select c.id as Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
-				"i.inscostate, ')') AS payer from procrec pr ".
+		$query3="select c.id AS Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer FROM procrec pr ".
 				"LEFT OUTER JOIN coverage c ON pr.proccov3 = c.id ".
 				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
-				"where pr.id=".$GLOBALS['sql']->quote( $id );
+				"WHERE pr.id=".$GLOBALS['sql']->quote( $id );
 		$result3 = $GLOBALS['sql']->queryRow( $query3 );
-		$query4="select c.id as Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
-				"i.inscostate, ')') AS payer from procrec pr ".
+		$query4="select c.id AS Id,CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
+				"i.inscostate, ')') AS payer FROM procrec pr ".
 				"LEFT OUTER JOIN coverage c ON pr.proccov4 = c.id ".
 				"LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
-				"where pr.id=".$GLOBALS['sql']->quote( $id );
+				"WHERE pr.id=".$GLOBALS['sql']->quote( $id );
 		$result4 = $GLOBALS['sql']->queryRow( $query4 );
 		
 		if($result1['payer']!=null){
@@ -473,15 +474,21 @@ class ProcedureModule extends EMRModule {
 	}
 	
 	public function getNonZeroBalProcs($patient){
-		$query="SELECT id AS id, procdt AS dos, proccharges AS charge, procamtpaid AS payment,procbalcurrent as arrear ".
+		$query="SELECT id AS id, procdt AS dos, proccharges AS charge, procamtpaid AS payment,procbalcurrent AS arrear ".
 		"FROM ".$this->table_name." WHERE procpatient=".$GLOBALS['sql']->quote( $patient )." AND procbalcurrent>0 ORDER BY procdt DESC";
 		return $GLOBALS['sql']->queryAll( $query );
 	}
 	
 	public function getTotalArrears($patient){
-		$query="SELECT sum(procbalcurrent) as tarrears ".
+		$query="SELECT sum(procbalcurrent) AS tarrears ".
 		"FROM ".$this->table_name." WHERE procpatient=".$GLOBALS['sql']->quote( $patient )." AND procbalcurrent>0 ORDER BY procdt DESC";
 		return $GLOBALS['sql']->queryRow( $query );
+	}
+	
+	public function getPatientProcHistory($patient){
+		$query="SELECT i.icd9code AS icode, i.icd9descrip AS idesc, CONCAT(pr.procdt,' to ',IFNULL(pr.procdtend,'')) AS pdate FROM ".$this->table_name. " pr LEFT OUTER JOIN icd9 i ON i.id=pr.procdiag1 ".
+		" WHERE procpatient=".$GLOBALS['sql']->quote( $patient )." AND procbalcurrent>0 ORDER BY procdt DESC";
+		return $GLOBALS['sql']->queryAll( $query );
 	}
 } // end class ProcedureModule
 

@@ -38,7 +38,8 @@ class FacilityModule extends SupportModule {
 	var $order_by       = "psrname";
 
 	var $widget_hash = "##psrname## ##psrnote## (##psrcity##, ##psrstate##)";
-
+	var $archive_field = "psrarchive";
+	
 	var $variables = array (
 		"psrname",
 		"psraddr1",
@@ -58,7 +59,8 @@ class FacilityModule extends SupportModule {
 		"psrnpi",
 		"psrtaxonomy",
 		'psrx12id',
-		'psrx12idtype'
+		'psrx12idtype',
+		'psrarchive'
 	);
 
 	var $rpc_field_map = array (

@@ -49,7 +49,7 @@ DELIMITER //
 CREATE PROCEDURE facility_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
-
+	ALTER IGNORE TABLE facility ADD COLUMN psrarchive INT(10) UNSIGNED DEFAULT 0 AFTER psrx12idtype;
 	#----- Upgrades
 	CALL FreeMED_Module_GetVersion( 'facility', @V );
 

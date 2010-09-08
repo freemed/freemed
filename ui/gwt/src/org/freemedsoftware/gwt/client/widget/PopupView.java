@@ -25,19 +25,11 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
-import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
-import org.freemedsoftware.gwt.client.screen.MessagingComposeScreen;
-import org.freemedsoftware.gwt.client.screen.MessagingScreen;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,7 +39,7 @@ public class PopupView extends WidgetInterface {
 	protected Command onClose = null;
 
 	protected HTML text = new HTML("");
-	
+
 	public PopupView() {
 		final SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
@@ -60,25 +52,18 @@ public class PopupView extends WidgetInterface {
 		//
 		// TODO: Replace Images by new ones
 		// We don't use a Button, but an image+label inside a focusPanel,
-		// because it
-		// allows us, that the user can click on both to provoke the event
+		// because it allows us, that the user can click on both to provoke the
+		// event
 		//
 		// Reply Button
 
-
-
 		// Forward Button
-
-
-
-
 
 		verticalPanel.add(text);
 		sPanel.add(verticalPanel);
 
 	}
 
-	
 	public PopupView(Widget w) {
 		final SimplePanel sPanel = new SimplePanel();
 		initWidget(sPanel);
@@ -96,24 +81,17 @@ public class PopupView extends WidgetInterface {
 		//
 		// Reply Button
 
-
-
 		// Forward Button
 
-
-
 		verticalPanel.add(w);
-		
+
 		verticalPanel.setWidth("100%");
 
-//		verticalPanel.add(text);
+		// verticalPanel.add(text);
 		sPanel.add(verticalPanel);
 
 	}
-	
-	
-	
-	
+
 	public void setText(String t) {
 		text.setHTML(t);
 	}

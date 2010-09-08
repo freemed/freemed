@@ -28,29 +28,29 @@
  */
 package org.freemedsoftware.gwt.client.widget;
 
+import com.allen_sauer.gwt.dnd.client.drop.IndexedDropController;
 import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.allen_sauer.gwt.dnd.client.drop.IndexedDropController;
 
 /**
  * IndexedDropController that disallows dropping after the last child, which is
  * assumed to be dummy spacer widget preventing parent collapse.
  */
+@SuppressWarnings("deprecation")
 public class NoInsertAtEndIndexedDropController extends IndexedDropController {
 
-  private IndexedPanel dropTarget;
+	private IndexedPanel dropTarget;
 
-  public NoInsertAtEndIndexedDropController(IndexedPanel dropTarget) {
-    super(dropTarget);
-    this.dropTarget = dropTarget;
-  }
+	public NoInsertAtEndIndexedDropController(IndexedPanel dropTarget) {
+		super(dropTarget);
+		this.dropTarget = dropTarget;
+	}
 
-  @Override
-  protected void insert(Widget widget, int beforeIndex) {
-    if (beforeIndex == dropTarget.getWidgetCount()) {
-      beforeIndex--;
-    }
-    super.insert(widget, beforeIndex);
-  }
+	@Override
+	protected void insert(Widget widget, int beforeIndex) {
+		if (beforeIndex == dropTarget.getWidgetCount()) {
+			beforeIndex--;
+		}
+		super.insert(widget, beforeIndex);
+	}
 }

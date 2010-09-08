@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReceiptShort_en_US" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<parameter name="param0" class="java.lang.Integer"/>
+	<parameter name="param1" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[call report_PatientReceiptShort_en_US($P{param0},$P{param1})]]>
+	</queryString>
+	<field name="Client" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="facname" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="facadd1" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="facadd2" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="faccityinfo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Phone" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ptadd1" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ptcityinfo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="New Balance" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="paytype" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Description" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="practice" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="230" splitType="Stretch">
+			<textField>
+				<reportElement style="Detail" x="472" y="11" width="260" height="15" forecolor="#000000"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Client}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="12" y="11" width="326" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{practice}+" - "+$F{facname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="12" y="29" width="326" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{facadd1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="12" y="48" width="326" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{faccityinfo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="38" y="68" width="300" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Phone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="433" y="29" width="299" height="15" forecolor="#000000"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ptadd1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="433" y="48" width="299" height="15" forecolor="#000000"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ptcityinfo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement style="Detail" x="644" y="136" width="115" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{New Balance}.doubleValue()+$F{Amount}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="451" y="155" width="105" height="15" forecolor="#000000"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{paytype}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement style="Detail" x="644" y="192" width="115" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{New Balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement style="Detail" x="644" y="155" width="115" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="85" y="192" width="300" height="31"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{Description}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" x="433" y="11" width="39" height="15" forecolor="#000000"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Client]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="0" y="192" width="85" height="31" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[Description:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="386" y="155" width="65" height="15" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[Amt Rcvd,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="386" y="192" width="170" height="15" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[New Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="386" y="136" width="170" height="15" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[Old Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="345" y="94" width="88" height="19" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="15" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[RECIEPT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="12" y="68" width="26" height="15" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[Tel:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="101" width="345" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="104" width="345" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="433" y="101" width="327" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="433" y="104" width="327" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement style="Column header" x="290" y="115" width="96" height="15" forecolor="#000000"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Column header" x="251" y="115" width="39" height="15" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="386" y="115" width="39" height="15" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[Time]]></text>
+			</staticText>
+			<textField pattern="HH:mm">
+				<reportElement style="Column header" x="425" y="115" width="103" height="15" forecolor="#000000"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="134" width="760" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="224" width="760" height="1"/>
+			</line>
+			<line>
+				<reportElement x="385" y="135" width="1" height="89"/>
+			</line>
+			<line>
+				<reportElement x="0" y="134" width="1" height="89"/>
+			</line>
+			<line>
+				<reportElement x="759" y="136" width="1" height="89"/>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="0" y="136" width="385" height="44" forecolor="#000000"/>
+				<textElement/>
+				<text><![CDATA[If you notice any errors on this receipt, please notify our staff immediately.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="186" width="384" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="644" y="178" width="115" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="644" y="182" width="115" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

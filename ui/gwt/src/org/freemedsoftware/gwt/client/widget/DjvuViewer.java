@@ -73,6 +73,8 @@ public class DjvuViewer extends Composite implements ClickHandler {
 
 	protected final Image wImage;
 
+	protected boolean thumbNailMode = false;
+	
 	protected final PushButton wBackTop, wForwardTop, wBackBottom,
 			wForwardBottom, wViewTop, wViewBottom;
 
@@ -180,7 +182,9 @@ public class DjvuViewer extends Composite implements ClickHandler {
 								numberOfPages = r;
 								try{
 									loadPage(1);
-								}catch(Exception e){}
+								}catch(Exception e){
+									JsonUtil.debug(e.getMessage());
+								}
 								setVisible(true);
 							}
 						} else {
@@ -257,10 +261,19 @@ public class DjvuViewer extends Composite implements ClickHandler {
 		if (Util.isStubbedMode()) {
 			JsonUtil.debug("stubbed mode! not loading image");
 		} else {
-			String myUrl = Util.getJsonRequest(resolvePageViewMethod(),
-					new String[] { internalId.toString(),
-							new Integer(pageNumber).toString() });
-			JsonUtil.debug("image URL = " + myUrl);
+			String myUrl = "";
+			if(!thumbNailMode){
+				myUrl = Util.getJsonRequest(resolvePageViewMethod(),
+						new String[] { internalId.toString(),
+								new Integer(pageNumber).toString() });
+				JsonUtil.debug("image URL = " + myUrl);
+				
+			}else{
+				myUrl = Util.getJsonRequest(resolvePageViewMethod(),
+						new String[] { internalId.toString(),
+								new Integer(pageNumber).toString(),new Boolean(true).toString() });
+				JsonUtil.debug("image URL = " + myUrl);
+			}
 			wImage.setUrl(myUrl);
 		}
 
@@ -310,7 +323,7 @@ public class DjvuViewer extends Composite implements ClickHandler {
 		} else {
 			String myUrl = Util.getJsonRequest(resolvePageViewMethod(),
 					new String[] { internalId.toString(),
-							new Integer(pageNumber).toString() });
+							new Integer(pageNumber).toString(),new Boolean(true).toString() });
 			JsonUtil.debug("image URL = " + myUrl);
 			im.setUrl(myUrl);
 		}
@@ -391,8 +404,8 @@ public class DjvuViewer extends Composite implements ClickHandler {
 	 * Open up full page view.
 	 */
 	public void viewDocument() {
-		String[] params = { (String) internalId.toString() };
-		Window.open(Util.getJsonRequest(resolveNamespace() + ".GetDocumentPDF",
+		String[] params = { (String) internalId.toString(),new Integer(currentPage).toString() };
+		Window.open(Util.getJsonRequest(resolvePageViewMethod(),
 				params), "View", "");
 	}
 	
@@ -402,6 +415,14 @@ public class DjvuViewer extends Composite implements ClickHandler {
 	
 	public int getCurrentPage(){
 		return currentPage;
+	}
+
+	public boolean isThumbNailMode() {
+		return thumbNailMode;
+	}
+
+	public void setThumbNailMode(boolean thumbNailMode) {
+		this.thumbNailMode = thumbNailMode;
 	}
 
 }

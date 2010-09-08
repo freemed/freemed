@@ -88,11 +88,11 @@ class PatientInterface {
 			( $criteria['ptdob'] ? "ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND " : "" ).
 			"ptarchive=0";
 		$res = $GLOBALS['sql']->queryAll( $q );
-		foreach( res AS $r) {
+		foreach( $res AS $r) {
 			$_obj = CreateObject('org.freemedsoftware.core.Patient', $r);
 			$return[(int)$r['id']] = trim(stripslashes($_obj->to_text()));
 		}
-		return 	$return?array($return):$return;
+		return 	$return;
 	} // end method CheckForDuplicatePatient
 
 	// Method: DxForPatient
@@ -384,6 +384,14 @@ class PatientInterface {
 				case 'age':
 				if ($v) { $c[] = "FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365 ) = ".$GLOBALS['sql']->quote($v+0); }
 				break;
+				
+				case 'ptfname':
+				if ($v) { $c[] = "p.ptfname LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
+				
+				case 'ptlname':
+				if ($v) { $c[] = "p.ptlname LIKE '%".$GLOBALS['sql']->escape( $v )."%'"; }
+				break;
 
 				default: break;
 			}
@@ -430,6 +438,7 @@ class PatientInterface {
 		."CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name"
 		.", p.ptid AS patient_id"
 		.", p.ptdob AS date_of_birth"
+		.", p.ptprimarylanguage AS language"
 		.", DATE_FORMAT(p.ptdob, '%m/%d/%Y') AS date_of_birth_mdy"
 		.", CASE WHEN ( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365) >= 2 THEN CONCAT(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 365),' years') ELSE CONCAT(FLOOR( ( TO_DAYS(NOW()) - TO_DAYS(p.ptdob) ) / 30),' months') END AS age"
 		.", pa.line1 AS address_line_1"
@@ -452,7 +461,7 @@ class PatientInterface {
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method PatientInformation
 
-	// Method: PatientDetailedInformation
+	// Method: PatientEMRView
 	//
 	//	detailed patient information for a single patient including coverages & authorizations data
 	//
@@ -467,23 +476,107 @@ class PatientInterface {
 	//	* Coverages data
 	//	* authorization data
 	//
-	public function PatientDetailedInformation( $id ) {
+	public function PatientEMRView( $id ) {
 		syslog(LOG_INFO, (int)$id);
-		$patient = $GLOBALS['sql']->quote( $id );
-		$q = "select p.ptmarital,p.ptempl,p.ptssn,p.ptrace,p.ptreligion,p.ptbilltype,p.ptbudg, ".
-			"CONCAT(icov.insconame,' (',icov.inscocity,', ', icov.inscostate,')') as covinsco,".
-			"c.covplanname,c.covpatinsno,c.covpatgrpno,c.coveffdt,c.covrel,c.covcopay,c.covdeduct, ".
-			"a.*, ".
-			"CONCAT(iauth.insconame,' (',iauth.inscocity,', ', iauth.inscostate,')') as authinsco ".
-			"from patient p ".
-			"left join coverage c on c.covtype=1 and c.covpatient = ".$patient.
-			" left join insco icov on icov.id = c.covinsco ".
-			" left join authorizations a on a.authpatient = ".$patient. 
-			" left join insco iauth on iauth.id = a.authinsco ".
-			" where p.id = " . $patient. " GROUP BY p.id";
+		$patient = $GLOBALS['sql']->quote( (int) $id );
+		$q = "SELECT "
+			. "  p.id "
+			. ", p.ptmarital "
+			. ", p.ptempl "
+			. ", p.ptssn "
+			. ", p.ptrace "
+			. ", p.ptreligion "
+			. ", p.ptbilltype "
+			. ", p.ptbudg "
+			. " FROM patient p "
+			. " WHERE p.id = " . $patient;
 		syslog(LOG_INFO, $q);
-		return $GLOBALS['sql']->queryRow( $q );
+		$return = $GLOBALS['sql']->queryRow( $q );
+		$pt_info['ptinfo'] = array($return);
+		//Coverages Info
+		$pt_coverages_obj = CreateObject('org.freemedsoftware.module.PatientCoverages');
+		$pt_coverages     = $pt_coverages_obj->GetAllCoveragesWithDetail($patient);
+		if($pt_coverages)
+			$pt_info['ptcoverages'] = $pt_coverages;
+		//Authorizations Info
+		$pt_auth_obj = CreateObject('org.freemedsoftware.module.Authorizations');
+		$pt_auth     = $pt_auth_obj->GetAllAuthorizationsWithDetail($patient);
+		if($pt_auth)
+		 	$pt_info['ptauth'] = $pt_auth;
+		return 	$pt_info;
 	} // end method PatientInformation
+
+	// Method: PatientEMRViewWithIntake
+	//
+	//	detailed patient information for a single patient including coverages & authorizations data
+	//
+	// Parameters:
+	//
+	//	$id - Patient id
+	//
+	// Returns:
+	//
+	//	Hash. Contains:
+	//	* all personal Information
+	//	* Coverages data
+	//	* authorization data
+	//
+	public function PatientEMRViewWithIntake( $id ) {
+		syslog(LOG_INFO, (int)$id);
+		$return = $this->PatientEMRView($id);
+		$initialIntake = CreateObject('org.freemedsoftware.module.TreatmentInitialIntake');
+		$intakeData = $initialIntake->GetPatientAdmitDateWithProgram($id);
+		if($intakeData)
+			$return['ptinfo'] = array(array_merge($return['ptinfo'][0],$intakeData));
+			
+		return $return;
+	} // end method PatientInformation
+
+	// Method: TrackView
+	//
+	//	Track patient view. (Drop breadcrumb for history, etc.)
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$view - (optional) Part of the EMR to track view for.
+	//
+	public function TrackView( $patient, $view = 'EMR' ) {
+		$this_user = freemed::user_cache();
+		$GLOBALS['sql']->query(
+			  "INSERT INTO patient_view_history "
+			. " ( user, patient, viewed ) "
+			. " VALUES ( "
+			       . $GLOBALS['sql']->quote( $this_user->user_number )
+			. ", " . $GLOBALS['sql']->quote( (int) $patient )
+			. ", " . $GLOBALS['sql']->quote( $view )
+			. " ); "
+		);
+	} // end method TrackView
+
+	// Method: GetTrackHistory
+	//
+	//	Get patient tracking history.
+	//
+	// Parameters:
+	//
+	//	$patient - Patient id
+	//
+	//	$view - (optional) Part of the EMR to track view for.
+	//
+	public function GetTrackHistory( $patient, $view = 'EMR' ) {
+		$this_user = freemed::user_cache();
+		return $GLOBALS['sql']->queryAll(
+			  "SELECT "
+			. " patient, stamp "
+			. " FROM patient_view_history "
+			. " WHERE "
+				. " user = " . $GLOBALS['sql']->quote( $this_user->user_number )
+				. " AND viewed = " . $GLOBALS['sql']->quote( $view )
+			. " ORDER BY stamp DESC ; "
+		);
+	} // end method GetTrackHistory
 
 	// Method: TotalInSystem
 	//

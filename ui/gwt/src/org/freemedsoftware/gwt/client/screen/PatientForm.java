@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
+import org.freemedsoftware.gwt.client.widget.CustomConfirmBox;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomDialogBox;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
@@ -147,6 +148,8 @@ public class PatientForm extends ScreenInterface {
 	
 	protected CustomListBox religion;
 	
+	protected CustomListBox languages;
+	
 	protected TextBox driverLicence; 
 
 	protected CustomListBox typeofBilling;
@@ -179,9 +182,6 @@ public class PatientForm extends ScreenInterface {
 	protected Label otherPhysician3Label;
 	protected Label otherPhysician4Label;
 	
-	protected Integer callinId = 0;
-	protected CallInScreen callInScreen=null;
-	
 	public final static String moduleName = "PatientModule";
 
 	private static List<PatientForm> patientFormList=null;
@@ -202,7 +202,7 @@ public class PatientForm extends ScreenInterface {
 	}
 	
 	public static boolean removeInstance(PatientForm patientForm){
-		return patientFormList.remove(patientForm);
+		return patientFormList!=null?patientFormList.remove(patientForm):false;
 	}
 	
 	public PatientForm() {
@@ -524,16 +524,22 @@ public class PatientForm extends ScreenInterface {
 		religion.setVisibleItemCount(1);
 		personalTable.setWidget(5, 1, religion);
 		
+		final Label languageLabel = new Label("Language");
+		personalTable.setWidget(6, 0, languageLabel);
+		languages = new CustomListBox();
+		personalTable.setWidget(6, 1, languages);
+		loadLanguages();
+		
 		final Label driverLicenceLabel = new Label("Driver's License (No State)");
-		personalTable.setWidget(6, 0, driverLicenceLabel);
+		personalTable.setWidget(7, 0, driverLicenceLabel);
 
 		driverLicence = new TextBox();
-		personalTable.setWidget(6, 1, driverLicence);
+		personalTable.setWidget(7, 1, driverLicence);
 		driverLicence.setWidth("100%");
 		
 		
 		final Label typeofBillingLabel = new Label("Type of Billing");
-		personalTable.setWidget(7, 0, typeofBillingLabel);
+		personalTable.setWidget(8, 0, typeofBillingLabel);
 
 		typeofBilling = new CustomListBox();
 		typeofBilling.addItem("NONE SELECTED","");
@@ -541,21 +547,21 @@ public class PatientForm extends ScreenInterface {
 		typeofBilling.addItem("Statement Billing","sta");
 		typeofBilling.addItem("Charge Card Billing","chg");
 		typeofBilling.setVisibleItemCount(1);
-		personalTable.setWidget(7, 1, typeofBilling);
+		personalTable.setWidget(8, 1, typeofBilling);
 		
 		
 		final Label monthlyBudgetAmountLabel = new Label("Monthly Budget Amount");
-		personalTable.setWidget(8, 0, monthlyBudgetAmountLabel);
+		personalTable.setWidget(9, 0, monthlyBudgetAmountLabel);
 
 		monthlyBudgetAmount = new TextBox();
-		personalTable.setWidget(8, 1, monthlyBudgetAmount);
+		personalTable.setWidget(9, 1, monthlyBudgetAmount);
 		monthlyBudgetAmount.setWidth("100%");
 		
 		final Label patientPracticeIdLabel = new Label("Patient Practice ID");
-		personalTable.setWidget(9, 0, patientPracticeIdLabel);
+		personalTable.setWidget(10, 0, patientPracticeIdLabel);
 
 		patientPracticeID = new TextBox();
-		personalTable.setWidget(9, 1, patientPracticeID);
+		personalTable.setWidget(10, 1, patientPracticeID);
 		patientPracticeID.setTabIndex(7);
 		patientPracticeID.setWidth("100%");
 		
@@ -706,41 +712,14 @@ public class PatientForm extends ScreenInterface {
 								if(result==null || result.size()==0)
 									commitChanges();
 								else{
-									final CustomDialogBox customDialogBox = new CustomDialogBox();
-									final VerticalPanel verticalPanel = new VerticalPanel();
-									customDialogBox.setContent(verticalPanel);
-									Label label = new Label("Mathes found!!!!");
-									label.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-									verticalPanel.add(label);
-									Iterator<String> iterator = result.keySet().iterator();
-									while(iterator.hasNext()){
-										final String key   = iterator.next();
-										String value = result.get(key); 
-										HTML patient = new HTML("<a href='javascript:undefined'>"+value+"</a>");
-										patient.addClickHandler(new ClickHandler() {
-										
-											@Override
-											public void onClick(ClickEvent arg0) {
-												customDialogBox.hide();
-												spawnPatientScreen(Integer.parseInt(key));
-											}
-										});
-										verticalPanel.add(patient);
-									}
-									CustomButton continueButton = new CustomButton("Continue");
-									continueButton.addClickHandler(new ClickHandler() {
+									String msg = "This patient is already in the system. Do you want to continue adding?";
+									Util.confirm(msg,new Command() {
 									
 										@Override
-										public void onClick(ClickEvent arg0) {
-											// TODO Auto-generated method stub
+										public void execute() {
 											commitChanges();
 										}
-									
-									});
-									verticalPanel.add(continueButton);
-									
-									customDialogBox.show();
-									customDialogBox.center();
+									},null);
 								}
 							}
 						}, "HashMap<String,String>");
@@ -1001,9 +980,6 @@ public class PatientForm extends ScreenInterface {
 																			.getText()),
 															"Integer");
 											if (r != 0) {
-												if(callinId.intValue()>0){//If callin patient is is being entered. 
-													covertCallinIntakeToIntake(callinId,r);
-												}
 												addressContainer.setPatient(r);
 												addressContainer.commitChanges();
 												
@@ -1271,6 +1247,7 @@ public class PatientForm extends ScreenInterface {
 
 									race.setWidgetValue((String) result.get((String) "ptrace"));
 									religion.setWidgetValue((String) result.get((String) "ptreligion"));
+									languages.setWidgetValue((String) result.get((String) "ptprimarylanguage"));
 									typeofBilling.setWidgetValue((String) result.get((String) "ptbilltype"));
 									monthlyBudgetAmount.setText((String) result.get((String) "ptbudg"));
 									patientPracticeID.setText((String) result.get((String) "ptid"));
@@ -1381,6 +1358,7 @@ public class PatientForm extends ScreenInterface {
 		m.put((String) "ptssn", (String) socialSecurityNumber.getText());
 		m.put((String) "ptrace", (String) race.getWidgetValue());
 		m.put((String) "ptreligion", (String) religion.getWidgetValue());
+		m.put((String) "ptprimarylanguage", (String) languages.getWidgetValue());
 		m.put((String) "ptbilltype", (String) typeofBilling.getWidgetValue());
 		m.put((String) "ptbudg", (String) monthlyBudgetAmount.getText());
 		m.put((String) "ptid", (String) patientPracticeID.getText());
@@ -1460,69 +1438,30 @@ public class PatientForm extends ScreenInterface {
 
 		return true;
 	}
-	public void setInfoFromCallin(CallInScreen callInScreen,Integer callinId,HashMap data){
-		
-		wFirstName.setText(data.get("cifname")==null?"":data.get("cifname").toString());
-		wLastName.setText(data.get("cilname")==null?"":data.get("cilname").toString());
-		wMiddleName.setText(data.get("cimname")==null?"":data.get("cimname").toString());
-		wDob.setValue(data.get("cidob")==null?"":data.get("cidob").toString());
-		primaryCarePhysician.setValue(data.get("ciphysician")==null?0:Integer.parseInt(data.get("ciphysician").toString()));
-		phoneHome.setText(data.get("cihphone")==null?"":data.get("cihphone").toString());
-		phoneWork.setText(data.get("ciwphone")==null?"":data.get("ciwphone").toString());
-		this.callinId = callinId;
-		this.callInScreen = callInScreen;
-		data.remove("id");
-		patientCoverages.addCoverage(data);
-		patientAuthorizations.addAuthorization(data);
-	}
-	
-	protected void covertCallinIntakeToIntake(final Integer callinId,Integer patientId) {
-		List paramList = new ArrayList();
-		paramList.add(callinId);
-		paramList.add(patientId);
-		Util.callModuleMethod("org.freemedsoftware.module.TreatmentInitialIntake", "convertCallinIntakeToPatientIntake", paramList,new CustomRequestCallback() {
+
+	public void loadLanguages(){
+
+		Util.callModuleMethod("org.freemedsoftware.module.i18nLanguages", "GetAll", (Integer)null, new CustomRequestCallback() {
 			@Override
 			public void onError() {
 			}
 			@Override
 			public void jsonifiedData(Object data) {
-				if(data!=null && ((Boolean)data).booleanValue()){
-					deleteEntryFromCallin(callinId);
+				if(data!=null ){
+					try{
+						HashMap<String,String>[] langs=(HashMap<String,String>[])data;
+						for(int i=0;i<langs.length;i++){
+							languages.addItem(langs[i].get("language"), langs[i].get("abbrev"));
+						}
+					}
+					catch(Exception e){
+						
+					}
 				}
 			}
-		}, "Boolean");
-		
+		}, "HashMap<String,String>[]");
 	}
 	
-	protected void deleteEntryFromCallin(Integer callinId) {
-		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			// TODO STUBBED MODE STUFF
-		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { JsonUtil.jsonify(callinId) };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.Callin.del",
-											params)));
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable ex) {
-					}
-
-					@SuppressWarnings("unchecked")
-					public void onResponseReceived(Request request,
-							Response response) {
-						callInScreen.populate();
-					}
-				});
-			} catch (RequestException e) {
-			}
-		} else {
-			// TODO NORMAL MODE STUFF
-		}
-	}
 	@Override
 	public void closeScreen() {
 		// TODO Auto-generated method stub

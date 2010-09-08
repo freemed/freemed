@@ -21,13 +21,13 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `i18nlanguages` (
-	abbrev				CHAR (5) UNIQUE NOT NULL,
-	language			VARCHAR (150) NOT NULL,
-	id				SERIAL,
+	  abbrev			CHAR (5) UNIQUE NOT NULL
+	, language			VARCHAR (150) NOT NULL
+	, id				SERIAL
 
 	#	Define keys
 
-	PRIMARY KEY			( abbrev )
+	, PRIMARY KEY			( abbrev )
 );
 
 DROP PROCEDURE IF EXISTS i18n_PopulateLanguage;
@@ -51,5 +51,6 @@ DELIMITER ;
 CALL i18n_PopulateLanguage( 'en_US', 'English' );
 CALL i18n_PopulateLanguage( 'de_DE', 'Deutsch' );
 CALL i18n_PopulateLanguage( 'fr_FR', 'Francais' );
-CALL i18n_PopulateLanguage( 'es_MX', 'Spanish(Mexico)' );
+CALL i18n_PopulateLanguage( 'es_MX', 'Spanish (Mexico)' );
 CALL i18n_PopulateLanguage( 'pl_PL', 'Polski' );
+

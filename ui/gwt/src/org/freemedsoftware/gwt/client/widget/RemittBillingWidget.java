@@ -1,3 +1,26 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 package org.freemedsoftware.gwt.client.widget;
 
 import java.util.ArrayList;
@@ -74,10 +97,10 @@ public class RemittBillingWidget extends Composite {
 
 	private void createBillingUI(HashSet<String> p) {
 		procs = p;
-		
+
 		procsInfoMap = new HashMap<String, HashMap<String, String>>();
-		Iterator<String> it = procs.iterator();
-		
+		// Iterator<String> it = procs.iterator();
+
 		claimsTable = new CustomTable();
 		claimsTable.setAllowSelection(false);
 		claimsTable.setSize("100%", "100%");
@@ -140,7 +163,7 @@ public class RemittBillingWidget extends Composite {
 		loadSeletedProcedureInfo();
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		postBtn = new CustomButton("Post Claim/s",AppConstants.ICON_ADD);
+		postBtn = new CustomButton("Post Claim/s", AppConstants.ICON_ADD);
 		postBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -148,7 +171,7 @@ public class RemittBillingWidget extends Composite {
 			}
 
 		});
-		cancelBtn = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		cancelBtn = new CustomButton("Cancel", AppConstants.ICON_CANCEL);
 		final RemittBillingWidget rbw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -172,7 +195,7 @@ public class RemittBillingWidget extends Composite {
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
 
-		cancelBtn = new CustomButton("Close",AppConstants.ICON_CANCEL);
+		cancelBtn = new CustomButton("Close", AppConstants.ICON_CANCEL);
 		final RemittBillingWidget rbw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -208,6 +231,7 @@ public class RemittBillingWidget extends Composite {
 						Window.alert(ex.toString());
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 
@@ -220,9 +244,10 @@ public class RemittBillingWidget extends Composite {
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length > 0) {
-											for(int i=0;i<result.length;i++){
+											for (int i = 0; i < result.length; i++) {
 												HashMap<String, String> hm = new HashMap<String, String>();
-												procsInfoMap.put(result[i].get("id"), hm);												
+												procsInfoMap.put(result[i]
+														.get("id"), hm);
 											}
 											claimsTable.loadData(result);
 										}
@@ -397,7 +422,8 @@ public class RemittBillingWidget extends Composite {
 
 		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// ////////////////////
-			String[] params = { patientIds.toString(), procIds.toString(), "","1","1","1"};
+			String[] params = { patientIds.toString(), procIds.toString(), "",
+					"1", "1", "1" };
 
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
@@ -499,13 +525,15 @@ public class RemittBillingWidget extends Composite {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void showStatus(HashMap<String, String>[] data) {
 		vPanel.clear();
 		vPanel.add(statusTable);
 		actionPanel.clear();
 		cancelBtn.setText("Close");
 
-		CustomButton markAllBilled = new CustomButton("Mark All Bacthes as Billed",AppConstants.ICON_SELECT_ALL);
+		CustomButton markAllBilled = new CustomButton(
+				"Mark All Bacthes as Billed", AppConstants.ICON_SELECT_ALL);
 		actionPanel.add(markAllBilled);
 		actionPanel.add(cancelBtn);
 		vPanel.add(actionPanel);
@@ -573,19 +601,19 @@ public class RemittBillingWidget extends Composite {
 									if (result != null) {
 										Iterator<String> iterator = result
 												.keySet().iterator();
-										boolean isAllCompleted=true;
-										while (iterator.hasNext()&& isAllCompleted) {
+										boolean isAllCompleted = true;
+										while (iterator.hasNext()
+												&& isAllCompleted) {
 											String id = iterator.next();
 											String item = result.get(id);
-											if(!item.equals("0"))
-											{
-												isAllCompleted=false;												
+											if (!item.equals("0")) {
+												isAllCompleted = false;
 											}
-											if(fileNamesMap.get(id)==null){
-												isAllCompleted=false;
+											if (fileNamesMap.get(id) == null) {
+												isAllCompleted = false;
 											}
 										}
-										if(isAllCompleted)
+										if (isAllCompleted)
 											t.cancel();
 										for (int i = 0; i < ss.length; i++) {
 											ss[i] = new HashMap<String, String>();
@@ -670,7 +698,6 @@ public class RemittBillingWidget extends Composite {
 							Throwable ex) {
 					}
 
-					@SuppressWarnings("unchecked")
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
@@ -706,7 +733,7 @@ public class RemittBillingWidget extends Composite {
 	}
 
 	public void getFileName(final String id) {
-		final RemittBillingWidget rbw = this;
+		// final RemittBillingWidget rbw = this;
 		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// ////////////////////
 			String[] params = { "output", "payload", JsonUtil.jsonify(id) };
@@ -730,13 +757,14 @@ public class RemittBillingWidget extends Composite {
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								try {
-									HashMap<String,String>[] result = (HashMap<String,String>[]) JsonUtil
+									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
-										for ( HashMap<String,String> r : result ) {
-											fileNamesMap.put(id, r.get("filename"));
+										for (HashMap<String, String> r : result) {
+											fileNamesMap.put(id, r
+													.get("filename"));
 										}
 									}
 								} catch (Exception e) {
@@ -756,7 +784,7 @@ public class RemittBillingWidget extends Composite {
 	}
 
 	public void getFile(final String name) {
-		String[] params = { "output", name,"html" };
+		String[] params = { "output", name, "html" };
 		Window.open(URL.encode(Util.getJsonRequest(
 				"org.freemedsoftware.api.Remitt.GetFile", params)), name, "");
 

@@ -23,82 +23,83 @@
 SOURCE data/schema/mysql/_functions.sql
 
 CREATE TABLE IF NOT EXISTS `patient` (
-	ptdtadd			DATE,
-	ptdtmod			DATE,
-	ptbal			REAL,
-	ptbalfwd		REAL,
-	ptunapp			REAL,
-	ptdoc			VARCHAR (150),
-	ptrefdoc		VARCHAR (150),
-	ptpcp			VARCHAR (150),
-	ptphy1			VARCHAR (150),
-	ptphy2			VARCHAR (150),
-	ptphy3			VARCHAR (150),
-	ptphy4			VARCHAR (150),
-	ptbilltype		ENUM( 'sta', 'mon', 'chg' ) NOT NULL,
-	ptbudg			REAL,
-	ptsalut			VARCHAR (8),
-	ptlname			VARCHAR (50) NOT NULL,
-	ptmaidenname		VARCHAR (50),
-	ptfname			VARCHAR (50) NOT NULL,
-	ptmname			VARCHAR (50),
-	ptsuffix		VARCHAR (10),
-	ptaddr1			VARCHAR (45),
-	ptaddr2			VARCHAR (45),
-	ptcity			VARCHAR (45),
-	ptstate			VARCHAR (20),
-	ptzip			CHAR (10),
-	ptcountry		VARCHAR (50),
-	ptprefcontact		VARCHAR (10) NOT NULL DEFAULT 'home',
-	pthphone		VARCHAR (16),
-	ptwphone		VARCHAR (16),
-	ptmphone		VARCHAR (16),
-	ptfax			VARCHAR (16),
-	ptemail			VARCHAR (80),
-	ptsex			ENUM( 'm', 'f', 't' ) NOT NULL,
-	ptdob			DATE,
-	ptssn			VARCHAR (9),
-	ptdmv			VARCHAR (15),
-	ptdtlpay		DATE,
-	ptamtlpay		REAL,
-	ptpaytype		INT UNSIGNED,
-	ptdtbill		DATE,
-	ptamtbill		REAL,
-	ptstatus		INT UNSIGNED,
-	ptytdchg		REAL,
-	ptar			REAL,
-	ptextinf		TEXT,
-	ptdisc			REAL,
-	ptdol			DATE,
-	ptdiag1			INT UNSIGNED,
-	ptdiag2			INT UNSIGNED,
-	ptdiag3			INT UNSIGNED,
-	ptdiag4			INT UNSIGNED,
-	ptdiagset		ENUM ( '9', '10' ) NOT NULL DEFAULT '9',
-	ptid			VARCHAR (10),
-	pthistbal		REAL,
-	ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' ),
-	ptempl			ENUM ( 'y', 'n', 'r', 'p', 's', 'm', 'u' ),
-	ptemp1			INT UNSIGNED,
-	ptemp2			INT UNSIGNED,
-	ptnextofkin		TEXT,
-	ptblood			CHAR (3),
-	ptdead			INT UNSIGNED NOT NULL DEFAULT 0,
-	ptdeaddt		DATE,
-	pttimestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
-	ptemritimestamp		TIMESTAMP (16),
-	ptemriversion		BLOB,
-	ptpharmacy		INT UNSIGNED,
-	ptrace			INT UNSIGNED,
-	ptreligion		INT UNSIGNED,
-	ptarchive		INT UNSIGNED DEFAULT 0,
-	ptprimaryfacility	INT UNSIGNED DEFAULT 0,
-	iso			VARCHAR (15),
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	  ptdtadd		DATE
+	, ptdtmod		DATE
+	, ptbal			REAL
+	, ptbalfwd		REAL
+	, ptunapp		REAL
+	, ptdoc			VARCHAR (150)
+	, ptrefdoc		VARCHAR (150)
+	, ptpcp			VARCHAR (150)
+	, ptphy1		VARCHAR (150)
+	, ptphy2		VARCHAR (150)
+	, ptphy3		VARCHAR (150)
+	, ptphy4		VARCHAR (150)
+	, ptbilltype		ENUM( 'sta', 'mon', 'chg' ) NOT NULL
+	, ptbudg		REAL
+	, ptsalut		VARCHAR (8)
+	, ptlname		VARCHAR (50) NOT NULL
+	, ptmaidenname		VARCHAR (50)
+	, ptfname		VARCHAR (50) NOT NULL
+	, ptmname		VARCHAR (50)
+	, ptsuffix		VARCHAR (10)
+	, ptaddr1		VARCHAR (45)
+	, ptaddr2		VARCHAR (45)
+	, ptcity		VARCHAR (45)
+	, ptstate		VARCHAR (20)
+	, ptzip			CHAR (10)
+	, ptcountry		VARCHAR (50)
+	, ptprefcontact		VARCHAR (10) NOT NULL DEFAULT 'home'
+	, pthphone		VARCHAR (16)
+	, ptwphone		VARCHAR (16)
+	, ptmphone		VARCHAR (16)
+	, ptfax			VARCHAR (16)
+	, ptemail		VARCHAR (80)
+	, ptsex			ENUM( 'm', 'f', 't' ) NOT NULL
+	, ptdob			DATE
+	, ptssn			VARCHAR (9)
+	, ptdmv			VARCHAR (15)
+	, ptdtlpay		DATE
+	, ptamtlpay		REAL
+	, ptpaytype		INT UNSIGNED
+	, ptdtbill		DATE
+	, ptamtbill		REAL
+	, ptstatus		INT UNSIGNED
+	, ptytdchg		REAL
+	, ptar			REAL
+	, ptextinf		TEXT
+	, ptdisc		REAL
+	, ptdol			DATE
+	, ptdiag1		INT UNSIGNED
+	, ptdiag2		INT UNSIGNED
+	, ptdiag3		INT UNSIGNED
+	, ptdiag4		INT UNSIGNED
+	, ptdiagset		ENUM ( '9', '10' ) NOT NULL DEFAULT '9'
+	, ptid			VARCHAR (10)
+	, pthistbal		REAL
+	, ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' )
+	, ptempl		ENUM ( 'y', 'n', 'r', 'p', 's', 'm', 'u' )
+	, ptemp1		INT UNSIGNED
+	, ptemp2		INT UNSIGNED
+	, ptnextofkin		TEXT
+	, ptblood		CHAR (3)
+	, ptdead		INT UNSIGNED NOT NULL DEFAULT 0
+	, ptdeaddt		DATE
+	, pttimestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	, ptemritimestamp	TIMESTAMP (16)
+	, ptemriversion		BLOB
+	, ptpharmacy		INT UNSIGNED
+	, ptrace		INT UNSIGNED
+	, ptreligion		INT UNSIGNED
+	, ptarchive		INT UNSIGNED DEFAULT 0
+	, ptprimaryfacility	INT UNSIGNED DEFAULT 0
+	, ptprimarylanguage	CHAR (5) NOT NULL DEFAULT 'en'
+	, iso			VARCHAR (15)
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
-	KEY			( ptlname, ptfname, ptmname, ptid, ptdob ),
-	PRIMARY KEY		( id )
+	, KEY			( ptlname, ptfname, ptmname, ptid, ptdob )
+	, PRIMARY KEY		( id )
 );
 
 DROP PROCEDURE IF EXISTS patient_trigger_Remove;
@@ -180,6 +181,8 @@ BEGIN
 	END IF;
 
 	ALTER IGNORE TABLE patient ADD COLUMN ptdiagset ENUM ( '9', '10' ) NOT NULL DEFAULT '9' AFTER ptdiag4;
+
+	ALTER IGNORE TABLE patient ADD COLUMN ptprimarylanguage CHAR (5) NOT NULL DEFAULT 'en' AFTER ptprimaryfacility;
 END
 //
 DELIMITER ;
@@ -412,18 +415,18 @@ DELIMITER ;
 #----- Address table
 
 CREATE TABLE IF NOT EXISTS `patient_address` (
-	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
-	type			CHAR (2) NOT NULL DEFAULT 'H',
-	active			BOOL NOT NULL DEFAULT FALSE,
-	relate			CHAR (2) NOT NULL DEFAULT 'S',
-	line1			VARCHAR (100),
-	line2			VARCHAR (100),
-	city			VARCHAR (100),
-	stpr			VARCHAR (100),
-	postal			CHAR (10) NOT NULL,
-	country			CHAR (60) NOT NULL,
-	id			SERIAL
+	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	, type			CHAR (2) NOT NULL DEFAULT 'H'
+	, active		BOOL NOT NULL DEFAULT FALSE
+	, relate		CHAR (2) NOT NULL DEFAULT 'S'
+	, line1			VARCHAR (100)
+	, line2			VARCHAR (100)
+	, city			VARCHAR (100)
+	, stpr			VARCHAR (100)
+	, postal		CHAR (10) NOT NULL
+	, country		CHAR (60) NOT NULL
+	, id			SERIAL
 
 	, KEY ( patient, stamp )
 );
@@ -453,69 +456,69 @@ DELIMITER ;
 #----- Prior demographics holding table
 
 CREATE TABLE IF NOT EXISTS `patient_prior` (
-	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
 
-	ptlname			VARCHAR (50) NOT NULL,
-	ptmaidenname		VARCHAR (50),
-	ptfname			VARCHAR (50) NOT NULL,
-	ptmname			VARCHAR (50),
-	ptsuffix		VARCHAR (10),
-	ptaddr1			VARCHAR (45),
-	ptaddr2			VARCHAR (45),
-	ptcity			VARCHAR (45),
-	ptstate			VARCHAR (20),
-	ptzip			CHAR (10),
-	ptcountry		VARCHAR (50),
-	ptprefcontact		VARCHAR (10) NOT NULL DEFAULT 'home',
-	pthphone		VARCHAR (16),
-	ptwphone		VARCHAR (16),
-	ptmphone		VARCHAR (16),
-	ptfax			VARCHAR (16),
-	ptemail			VARCHAR (80),
-	ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' ),
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	, ptlname		VARCHAR (50) NOT NULL
+	, ptmaidenname		VARCHAR (50)
+	, ptfname		VARCHAR (50) NOT NULL
+	, ptmname		VARCHAR (50)
+	, ptsuffix		VARCHAR (10)
+	, ptaddr1		VARCHAR (45)
+	, ptaddr2		VARCHAR (45)
+	, ptcity		VARCHAR (45)
+	, ptstate		VARCHAR (20)
+	, ptzip			CHAR (10)
+	, ptcountry		VARCHAR (50)
+	, ptprefcontact		VARCHAR (10) NOT NULL DEFAULT 'home'
+	, pthphone		VARCHAR (16)
+	, ptwphone		VARCHAR (16)
+	, ptmphone		VARCHAR (16)
+	, ptfax			VARCHAR (16)
+	, ptemail		VARCHAR (80)
+	, ptmarital		ENUM ( 'single', 'married', 'divorced', 'separated', 'widowed', 'unknown' )
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 
-	PRIMARY KEY		( id )
+	, PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
-	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
 
-	ptdoc			VARCHAR (150),
-	ptrefdoc		VARCHAR (150),
-	ptpcp			VARCHAR (150),
-	ptphy1			VARCHAR (150),
-	ptphy2			VARCHAR (150),
-	ptphy3			VARCHAR (150),
-	ptphy4			VARCHAR (150),
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	, ptdoc			VARCHAR (150)
+	, ptrefdoc		VARCHAR (150)
+	, ptpcp			VARCHAR (150)
+	, ptphy1		VARCHAR (150)
+	, ptphy2		VARCHAR (150)
+	, ptphy3		VARCHAR (150)
+	, ptphy4		VARCHAR (150)
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 
-	PRIMARY KEY		( id )
+	, PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
-	patient			BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-	stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
 
-	last_name		VARCHAR (30),
-	first_name		VARCHAR (30),
-	year_of_birth		CHAR (4),
-	ssn			CHAR (4),
-	pin			VARCHAR (150),	# future use
-	archive			INT UNSIGNED DEFAULT 0,
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	, last_name		VARCHAR (30)
+	, first_name		VARCHAR (30)
+	, year_of_birth		CHAR (4)
+	, ssn			CHAR (4)
+	, pin			VARCHAR (150)	# future use
+	, archive		INT UNSIGNED DEFAULT 0
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 
-	PRIMARY KEY		( id )
+	, PRIMARY KEY		( id )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
@@ -532,6 +535,20 @@ CREATE TABLE IF NOT EXISTS `patient_phone_lookup` (
 	, PRIMARY KEY		( id )
 	, KEY			( phone_number )
 	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `patient_view_history` (
+	  user			INT UNSIGNED NOT NULL
+	, patient		BIGINT UNSIGNED NOT NULL
+	, stamp			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	, viewed		VARCHAR (100) NOT NULL DEFAULT 'EMR'
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+
+	#	Define keys
+
+	, PRIMARY KEY		( id )
+	, KEY			( user )
+	, KEY			( patient, viewed )
 );
 
 #----- Call upgrade at end of DTD so that all tables are created properly

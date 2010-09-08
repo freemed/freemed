@@ -34,8 +34,8 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.WorkList;
+import org.freemedsoftware.gwt.client.widget.SchedulerWidget.EventData;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SchedulerScreen extends ScreenInterface {
@@ -68,22 +68,16 @@ public class SchedulerScreen extends ScreenInterface {
 	public SchedulerScreen() {
 		
 		verticalPanel = new VerticalPanel();
-		int startHour         = 10;
-		int endHour           = 18;
-		int intervalPerHour   = 4;
-		if(Util.getProgramMode() == ProgramMode.JSONRPC){
-			startHour         = Integer.parseInt(CurrentState.getSystemConfig("calshr"));
-			endHour           = Integer.parseInt(CurrentState.getSystemConfig("calehr"));
-			intervalPerHour   = 60 / Integer.parseInt(CurrentState.getSystemConfig("calinterval"));
-		}
-		scheduler = new SchedulerWidget(startHour,endHour,intervalPerHour);
+		scheduler = new SchedulerWidget();
 		verticalPanel.add(scheduler);
 		initWidget(verticalPanel);
 	}
 
+	
 	public SchedulerWidget getSchedulerWidget() {
 		return scheduler;
 	}
+	
 	@Override
 	public void closeScreen() {
 		// TODO Auto-generated method stub

@@ -37,6 +37,7 @@
 	<inherits name="eu.future.earth.gwt.FtrGwtDate" />
 	<inherits name="pl.rmalinowski.gwt2swf.GWT2SWF" />
 	<inherits name="com.google.gwt.widgetideas.GWTCanvas" />
+	<inherits name="com.gc.gwt.wysiwyg.Editor" />
 
 	<!-- Limit to Firefox for quicker test builds -->
 	<!--

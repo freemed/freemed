@@ -30,20 +30,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
@@ -55,6 +53,8 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
+		if(req.length()<CurrentState.getMinCharCountForSmartSearch())
+			return;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
@@ -141,7 +141,7 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				searchBox.setText("Hackenbush, Hugo Z (STUB)");
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				//textBox.setEnabled(false);
+				// textBox.setEnabled(false);
 				String[] params = { val.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
@@ -155,14 +155,14 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 						public void onError(
 								com.google.gwt.http.client.Request request,
 								Throwable ex) {
-							//textBox.setEnabled(true);
+							// textBox.setEnabled(true);
 							Window.alert(ex.toString());
 						}
 
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
-							//textBox.setEnabled(true);
+							// textBox.setEnabled(true);
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								if (200 == response.getStatusCode()) {
@@ -180,7 +180,7 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 						}
 					});
 				} catch (RequestException e) {
-					//textBox.setEnabled(true);
+					// textBox.setEnabled(true);
 					Window.alert(e.toString());
 				}
 			} else {

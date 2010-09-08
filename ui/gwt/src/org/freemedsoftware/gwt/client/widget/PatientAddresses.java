@@ -35,6 +35,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.PatientCoverages.Coverage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -105,20 +106,45 @@ public class PatientAddresses extends Composite {
 			HashMap<String, String> map = new HashMap<String, String>();
 			if(addressId!=null)
 				map.put("id",addressId.toString());
-			map.put("line1", getLine1());
-			map.put("line2", getLine2());
+			if(getLine1()!=null)
+				map.put("line1", getLine1());
+			if(getLine2()!=null)
+				map.put("line2", getLine2());
 			// map.put("csz", getCsz());
-			map.put("city", getCity());
-			map.put("stpr", getStpr());
-			map.put("postal", getPostal());
-			map.put("country", getCountry());
-			map.put("relation", getRelation());
-			map.put("type", getType());
+			if(getCity()!=null)
+				map.put("city", getCity());
+			if(getStpr()!=null)
+				map.put("stpr", getStpr());
+			if(getPostal()!=null)
+				map.put("postal", getPostal());
+			if(getCountry()!=null)
+				map.put("country", getCountry());
+			if(getRelation()!=null)
+				map.put("relation", getRelation());
+			if(getType()!=null)
+				map.put("type", getType());
 			map.put("active", getActive() ? "1" : "0");
 			map.put("updated", getUpdated() ? "1" : "0");
 			return map;
 		}
 
+		public void loadData(HashMap<String, String> data){
+
+			if(data.get("id")!=null)
+				setAddressId(Integer.parseInt(data.get("id")));
+			setLine1(data.get("line1"));
+			setLine2(data.get("line2"));
+			// a.setCsz(result[iter].get("csz"));
+			setCity(data.get("city"));
+			setStpr(data.get("stpr"));
+			setPostal(data.get("postal"));
+			setCountry(data.get("country"));
+			setRelation(data.get("relation"));
+			setType(data.get("type"));
+			setActive(new Boolean(data
+					.get("active") == "1"));
+		}
+		
 		public String getLine1() {
 			return line1;
 		}
@@ -271,6 +297,12 @@ public class PatientAddresses extends Composite {
 		onCompletion = oc;
 	}
 
+	public void addAddress(HashMap<String, String> addressData) {
+		Address address = new Address();
+		address.loadData(addressData);
+		addAddress(addresses.size() + 1, address);
+	}
+	
 	/**
 	 * Add additional address object to a particular position on the flexTable.
 	 * 
@@ -410,14 +442,6 @@ public class PatientAddresses extends Composite {
 		Iterator<Integer> iter = addresses.keySet().iterator();
 		while (iter.hasNext()) {
 			HashMap<String, String> mmp = addresses.get(iter.next()).getMap();
-			Iterator<String> iter2 = mmp.keySet().iterator();
-			while (iter2.hasNext()) {// Needed to do this because it is causing
-				// json String conversion fail due to
-				// undefined values.
-				String key = iter2.next();
-				if (mmp.get(key) == null)
-					mmp.remove(key);
-			}
 			mmp.put("patient", patientId.toString());
 			if(mmp.get("id")!=null)
 				mmp.put("altered", "true");
@@ -558,20 +582,9 @@ public class PatientAddresses extends Composite {
 								for (int iter = 0; iter < result.length; iter++) {
 									// Create new address object
 									Address a = new Address();
-									a.setAddressId(Integer.parseInt(result[iter].get("id")));
-									a.setLine1(result[iter].get("line1"));
-									a.setLine2(result[iter].get("line2"));
-									// a.setCsz(result[iter].get("csz"));
-									a.setCity(result[iter].get("city"));
-									a.setStpr(result[iter].get("stpr"));
-									a.setPostal(result[iter].get("postal"));
-									a.setCountry(result[iter].get("country"));
-									a.setRelation(result[iter].get("relation"));
-									a.setType(result[iter].get("type"));
-									a.setActive(new Boolean(result[iter]
-											.get("active") == "1"));
 									// Pass new address object to interface
 									// builder
+									a.loadData(result[iter]);
 									addAddress(new Integer(iter + 1), a);
 								}
 							}

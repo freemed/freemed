@@ -29,11 +29,12 @@ class ProviderModule extends SupportModule {
 	var $MODULE_VERSION = "0.3.6";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID     = "d7eeac23-fa84-410a-af46-36a67b7813a1";
-
+	
 	var $PACKAGE_MINIMUM_VERSION = '0.7.0';
 
 	var $record_name    = "Provider";
 	var $table_name     = "physician";
+	var $archive_field = "phyarchive";
 	var $variables      = array (
 	        "phylname",
 		"phyfname",
@@ -75,7 +76,8 @@ class ProviderModule extends SupportModule {
 		"phyhl7id",
 		"phydea",
 		"phyclia",
-		"phynpi"
+		"phynpi",
+		"phyarchive"
 	); // end of variables list
 	var $order_field = 'phylname, phyfname';
 

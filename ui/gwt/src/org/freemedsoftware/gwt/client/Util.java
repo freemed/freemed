@@ -81,6 +81,8 @@ import org.freemedsoftware.gwt.client.screen.ReportingScreen;
 import org.freemedsoftware.gwt.client.widget.AsyncPicklistWidgetBase;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.ClosableTabInterface;
+import org.freemedsoftware.gwt.client.widget.CustomAlert;
+import org.freemedsoftware.gwt.client.widget.CustomConfirmBox;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
@@ -90,6 +92,7 @@ import org.freemedsoftware.gwt.client.widget.ProviderWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
+import org.freemedsoftware.gwt.client.widget.UserWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -109,6 +112,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.json.client.JSONParser;
@@ -205,6 +209,27 @@ public final class Util {
 	}
 
 	/**
+	 * Get full url of FreeMED JSON relay.
+	 * 
+	 * @param method
+	 *            Fully qualified method name
+	 * @return URL to pass with JSON request
+	 */
+	public static synchronized String getJsonRequest(String method) {
+		String url = getBaseUrl() + "/relay.php/json";
+		if (GWT_HOSTED_MODE)
+			url = getBaseUrl() + "/relay.jsp";
+		try {
+			if (GWT_HOSTED_MODE)
+				return url + "?module=" + method;
+			else
+				return url + "/" + method;
+		} catch (Exception e) {
+			return url + "/" + method;
+		}
+	}
+	
+	/**
 	 * Get full url of FreeMED help pages.
 	 * 
 	 * @return URL to pass with JSON request
@@ -224,6 +249,17 @@ public final class Util {
 		return new String(getBaseUrl() + "/relay-gwt.php");
 	}
 
+	/**
+	 * Get the "resources URL" used 
+	 * 
+	 * @return URL
+	 */
+	public static synchronized String getResourcesURL() {
+		return new String(GWT
+				.getHostPageBaseURL()
+				+ "resources/images/");
+	}
+	
 	/**
 	 * Find out if we're running in stub mode or not.
 	 * 
@@ -388,7 +424,7 @@ public final class Util {
 	}
 	
 	public static void login(String username, String password,String location,
-			final Command whenDone, final Command whenFail) {
+			final CustomCommand whenDone, final CustomCommand whenFail) {
 		List paramList = new ArrayList();
 		paramList.add(username);
 		paramList.add(password);
@@ -406,19 +442,23 @@ public final class Util {
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (200 == response.getStatusCode()) {
-						if (response.getText().trim().compareToIgnoreCase(
-								"true") == 0) {
-							whenDone.execute();
-						} else {
-							whenFail.execute();
-						}
+						String res = (String) JsonUtil.shoehornJson(JSONParser
+								.parse(response.getText()), "String");
+						if(res==null)
+							res = response.getText().trim();
+						if ( res.compareToIgnoreCase("true")== 0) {
+							whenDone.execute(null);
+						} else if(res.compareToIgnoreCase("false") == 0) {
+							whenFail.execute(AppConstants.INVALID_USER);
+						} else if(res.compareToIgnoreCase(AppConstants.NOT_IN_FACILITY) == 0)
+							whenFail.execute(AppConstants.NOT_IN_FACILITY);
 					} else {
-						whenFail.execute();
+						whenFail.execute(AppConstants.INVALID_RESPONSE);
 					}
 				}
 			});
 		} catch (RequestException e) {
-			whenFail.execute();
+			whenFail.execute(AppConstants.INVALID_RESPONSE);
 		}
 	}
 
@@ -612,7 +652,7 @@ public final class Util {
 	public static boolean checkValidSessionResponse(String response) {
 		final String fail = "denied due to user not being logged in";
 		if (response.indexOf(fail) != -1) {
-			Util.logout();
+			Util.logout(null);
 			return false;
 		}
 		return true;
@@ -643,7 +683,7 @@ public final class Util {
 	 * 
 	 * @param state
 	 */
-	public static void logout() {
+	public static void logout(final Command onSuccess) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -665,6 +705,8 @@ public final class Util {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							// closeAllTabs();
+							if(onSuccess!=null)
+								onSuccess.execute();
 							CurrentState.getMainScreen().setVisible(false);
 							UIObject.setVisible(RootPanel.get(
 									"loginScreenOuter").getElement(), true);
@@ -1070,6 +1112,14 @@ public final class Util {
 			if (((PatientWidget) widget).getStoredValue() != null) {
 				widegtValue = ((PatientWidget) widget).getStoredValue();
 			}
+		} else if (widget instanceof UserWidget) {
+			if (((UserWidget) widget).getValue() != null) {
+				widegtValue = ((UserWidget) widget).getValue().toString();
+			}
+		} else if (widget instanceof PatientTagWidget) {
+			if (((PatientTagWidget) widget).getValue() != null) {
+				widegtValue = ((PatientTagWidget) widget).getValue().toString();
+			}
 		}
 		return widegtValue;
 	}
@@ -1108,6 +1158,14 @@ public final class Util {
 			if (((PatientWidget) widget).getStoredValue() != null) {
 				widegtText = ((PatientWidget) widget).getText();
 			}
+		} else if (widget instanceof UserWidget) {
+			if (((UserWidget) widget).getValue() != null) {
+				widegtText = ((UserWidget) widget).getText();
+			}
+		} else if (widget instanceof PatientTagWidget) {
+			if (((PatientTagWidget) widget).getValue() != null) {
+				widegtText = ((PatientTagWidget) widget).getText();
+			}
 		}
 		return widegtText;
 	}
@@ -1134,6 +1192,10 @@ public final class Util {
 				((SupportModuleWidget) widget).clear();
 			} else if (widget instanceof PatientWidget) {
 				((PatientWidget) widget).clear();
+			} else if (widget instanceof UserWidget) {
+				((UserWidget) widget).clear();
+			} else if (widget instanceof PatientTagWidget) {
+				((PatientTagWidget) widget).clear();
 			}
 			
 	}
@@ -1180,6 +1242,12 @@ public final class Util {
 				} else if (widget instanceof SupportModuleWidget) {
 					((SupportModuleWidget) widget).setValue(Integer
 							.parseInt(data.get(key)));
+				} else if (widget instanceof PatientWidget) {
+					((PatientWidget) widget).setValue(Integer.parseInt(data
+							.get(key)));
+				} else if (widget instanceof UserWidget) {
+					((UserWidget) widget).setValue(Integer.parseInt(data
+							.get(key)));
 				}
 			}
 		}
@@ -1201,26 +1269,44 @@ public final class Util {
 	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
 	 */
 	private static void callServerMethod(final String packageName,final String className,
-			final String method, final List paramsList,final CustomRequestCallback requestCallback,final String responseType) {
+			final String method, final List paramsList,final CustomRequestCallback requestCallback,final String responseType,Method requestMethod) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: STUBBED
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// JSON-RPC
+			String params = "";
 			List<String> paramsStr = new ArrayList<String>();
 			if(paramsList!=null){
+				int i = 0;
 				Iterator iterator = paramsList.iterator();
 				while(iterator.hasNext()){
 					Object object = iterator.next();
-					paramsStr.add(JsonUtil.jsonify(object));
+					if(requestMethod == RequestBuilder.GET)
+						paramsStr.add(JsonUtil.jsonify(object));
+					else{
+						if(params.length()>0)
+							params+="&";
+						params += "param"+i+++"="+JsonUtil.jsonify(object);
+					}
 				}
 			}
 			
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							packageName+"." + className + "." + method,
-							paramsStr.toArray(new String[0]))));
+			String methodURL = packageName+"." + className + "." + method;
+			
+			RequestBuilder builder = null;
+			if(requestMethod == RequestBuilder.POST){
+				builder = new RequestBuilder(requestMethod,
+						URL.encode(Util.getJsonRequest(methodURL)));
+				builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+				builder.setHeader("Content-length", params.length()+"");
+				builder.setHeader("Connection", "close");
+			}else{
+				builder = new RequestBuilder(requestMethod,
+						URL.encode(Util.getJsonRequest(methodURL,
+								paramsStr.toArray(new String[0]))));	
+			}
 			try {
-				builder.sendRequest(null, new RequestCallback() {
+				builder.sendRequest(params, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						if(requestCallback!=null)
 							requestCallback.onError();
@@ -1246,29 +1332,174 @@ public final class Util {
 			// GWT-RPC
 		}
 	}
-	
+	/**
+	 * Calls callApiMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param paramsList - list of parameters of any type or multi-type
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 */	
 	public static void callApiMethod(final String className,
 			final String method, final List paramsList,final CustomRequestCallback requestCallback,final String responseType){
-			callServerMethod("org.freemedsoftware.api",className, method, paramsList, requestCallback, responseType);
+			callServerMethod("org.freemedsoftware.api",className, method, paramsList, requestCallback, responseType,RequestBuilder.POST);
 	}
+	/**
+	 * Calls callApiMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param id		 - Integer
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 */	
 	public static void callApiMethod(final String className,
 			final String method, final Integer id,final CustomRequestCallback requestCallback,final String responseType){
 		List paramlst = new ArrayList();
 		paramlst.add(id);
-		callServerMethod("org.freemedsoftware.api",className, method, paramlst, requestCallback, responseType);
+		callServerMethod("org.freemedsoftware.api",className, method, paramlst, requestCallback, responseType,RequestBuilder.POST);
 	}
-
+	/**
+	 * Calls callModuleMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param paramsList - list of parameters of any type or multi-type
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 */	
 	public static void callModuleMethod(final String className,
 			final String method, final List paramsList,final CustomRequestCallback requestCallback,final String responseType){
-			callServerMethod("org.freemedsoftware.module",className, method, paramsList, requestCallback, responseType);
+			callServerMethod("org.freemedsoftware.module",className, method, paramsList, requestCallback, responseType,RequestBuilder.POST);
 	}
+	/**
+	 * Calls callModuleMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param id		 - Integer
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 */	
 	public static void callModuleMethod(final String className,
 			final String method, final Integer id,final CustomRequestCallback requestCallback,final String responseType){
 		List paramlst = new ArrayList();
 		paramlst.add(id);
-		callServerMethod("org.freemedsoftware.module",className, method, paramlst, requestCallback, responseType);
+		callServerMethod("org.freemedsoftware.module",className, method, paramlst, requestCallback, responseType,RequestBuilder.POST);
 	}
-
+	/**
+	 * Calls callApiMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param paramsList - list of parameters of any type or multi-type
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 * 
+	 * @param Method     - Request Method e.g GET,POST
+	 */	
+	public static void callApiMethod(final String className,
+			final String method, final List paramsList,final CustomRequestCallback requestCallback,final String responseType,Method requestMethod){
+			callServerMethod("org.freemedsoftware.api",className, method, paramsList, requestCallback, responseType,requestMethod);
+	}
+	/**
+	 * Calls callApiMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param id	 	- Integer id
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 * 
+	 * @param Method     - Request Method e.g GET,POST
+	 */		
+	public static void callApiMethod(final String className,
+			final String method, final Integer id,final CustomRequestCallback requestCallback,final String responseType,Method requestMethod){
+		List paramlst = new ArrayList();
+		paramlst.add(id);
+		callServerMethod("org.freemedsoftware.api",className, method, paramlst, requestCallback, responseType,requestMethod);
+	}
+	/**
+	 * Calls callModuleMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param paramsList - list of parameters of any type or multi-type
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 * 
+	 * @param Method     - Request Method e.g GET,POST
+	 */	
+	public static void callModuleMethod(final String className,
+			final String method, final List paramsList,final CustomRequestCallback requestCallback,final String responseType,Method requestMethod){
+			callServerMethod("org.freemedsoftware.module",className, method, paramsList, requestCallback, responseType,requestMethod);
+	}
+	/**
+	 * Calls callModuleMethod method 
+	 * 
+	 * @param package   - package name
+	 * 
+	 * @param module     - module name
+	 *
+	 * @param method     - method name           
+	 * 
+	 * @param id	     - Integer id
+	 * 
+	 * @param requestCallback - calls its onError & jsonifiedData function on getting response from server
+	 * 
+	 * @param responseType - type of response e.g Integer,HashMap<String,String>,String[],String[][] etc
+	 * 
+	 * @param Method     - Request Method e.g GET,POST
+	 */	
+	public static void callModuleMethod(final String className,
+			final String method, final Integer id,final CustomRequestCallback requestCallback,final String responseType,Method requestMethod){
+		List paramlst = new ArrayList();
+		paramlst.add(id);
+		callServerMethod("org.freemedsoftware.module",className, method, paramlst, requestCallback, responseType,requestMethod);
+	}
 	/**
 	 * Shows error messages on screen 
 	 * 
@@ -1279,9 +1510,9 @@ public final class Util {
 	 */
 	
 	public static void showErrorMsg(String module,String msg){
-		JsonUtil.debug("Error SYSTEM_NOTIFY_TYPE" + CurrentState.SYSTEM_NOTIFY_TYPE);
-		if(CurrentState.SYSTEM_NOTIFY_TYPE.equals(AppConstants.SYSTEM_NOTIFY_ERROR)
-				||CurrentState.SYSTEM_NOTIFY_TYPE.equals(AppConstants.SYSTEM_NOTIFY_ALL))
+		JsonUtil.debug("Error SYSTEM_NOTIFY_TYPE:" + CurrentState.getSYSTEM_NOTIFY_TYPE()+" module:"+module+" msg:"+msg);
+		if(CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_ERROR)
+				||CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_ALL))
 		CurrentState.getToaster().addItem(module,
 				msg,
 				Toaster.TOASTER_ERROR);
@@ -1297,9 +1528,9 @@ public final class Util {
 	 */
 	
 	public static void showInfoMsg(String module,String msg){
-		JsonUtil.debug("INFO SYSTEM_NOTIFY_TYPE" + CurrentState.SYSTEM_NOTIFY_TYPE);
-		if(CurrentState.SYSTEM_NOTIFY_TYPE.equals(AppConstants.SYSTEM_NOTIFY_INFO)
-				||CurrentState.SYSTEM_NOTIFY_TYPE.equals(AppConstants.SYSTEM_NOTIFY_ALL))
+		JsonUtil.debug("Info SYSTEM_NOTIFY_TYPE:" + CurrentState.getSYSTEM_NOTIFY_TYPE()+" module:"+module+" msg:"+msg);
+		if(CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_INFO)
+				||CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_ALL))
 		CurrentState.getToaster().addItem(module,
 				msg,
 				Toaster.TOASTER_INFO);
@@ -1526,6 +1757,41 @@ public final class Util {
 				}
 			});
 		}
+	}
+	/**
+	 * Show alert popup
+	 * 
+	 * @param msg     - text explaining the conditions
+	 * 
+	 */
+	public static void alert(String msg){
+		CustomAlert customAlert = new CustomAlert(msg);
+	}
+	/**
+	 * Show alert confirm
+	 * 
+	 * @param msg     - text explaining the conditions
+	 * 
+	 * @param onYes   - Calls execute on Yes
+	 * 
+	 * @param onNo   - Calls execute on No
+	 * 
+	 */
+	public static void confirm(String msg,Command onYes,Command onNo){
+		CustomConfirmBox customConfirmBox = new CustomConfirmBox(msg,onYes,onNo);
+		customConfirmBox.setAutoHide(true);
+		customConfirmBox.show();
+	}
+
+	/**
+	 * Create new tab for patient.
+	 * 
+	 * @param patient
+	 */
+	public static void spawnPatientScreen(Integer patient,String patientName) {
+		PatientScreen s = new PatientScreen();
+		s.setPatient(patient);
+		Util.spawnTab(patientName, s);
 	}
 	
 }

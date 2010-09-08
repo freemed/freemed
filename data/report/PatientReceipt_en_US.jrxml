@@ -39,19 +39,19 @@
 		<variableExpression><![CDATA[$F{payment}]]></variableExpression>
 	</variable>
 	<variable name="balance" class="java.lang.Double">
-		<variableExpression><![CDATA[$V{charge_sum} - $V{payment_sum}]]></variableExpression>
+		<variableExpression><![CDATA[$V{charge_sum} + $V{payment_sum}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="76" splitType="Stretch">
+		<band height="95" splitType="Stretch">
 			<staticText>
-				<reportElement x="154" y="10" width="404" height="31"/>
-				<textElement textAlignment="Center">
+				<reportElement x="159" y="5" width="404" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="24"/>
 				</textElement>
-				<text><![CDATA[CODAC Patient Receipt]]></text>
+				<text><![CDATA[CODAC]]></text>
 			</staticText>
 			<textField pattern="EEEEE MM/dd/yyyy" isBlankWhenNull="true">
 				<reportElement x="10" y="15" width="133" height="20"/>
@@ -59,22 +59,29 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="77" y="49" width="300" height="20"/>
+				<reportElement x="77" y="65" width="300" height="20"/>
 				<textElement>
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{patient}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="10" y="49" width="66" height="21"/>
+				<reportElement x="10" y="65" width="66" height="21"/>
 				<textElement>
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Patient:]]></text>
 			</staticText>
 			<line>
-				<reportElement x="12" y="71" width="748" height="1"/>
+				<reportElement x="0" y="87" width="760" height="1"/>
 			</line>
+			<staticText>
+				<reportElement x="166" y="34" width="404" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[CODAC Patient Receipt]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
@@ -133,18 +140,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="16" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="14" y="15" width="656" height="1"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
-			<textField>
-				<reportElement style="Detail" x="14" y="0" width="111" height="15"/>
-				<textElement/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
-			</textField>
+		<band height="23" splitType="Stretch">
 			<textField>
 				<reportElement style="Detail" x="125" y="0" width="111" height="15"/>
 				<textElement/>
@@ -169,35 +165,43 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment}]]></textFieldExpression>
 			</textField>
-		</band>
-	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy">
+				<reportElement style="Detail" x="14" y="1" width="111" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
+			</textField>
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="14" y="3" width="555" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="10" y="16" width="660" height="4"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="26" splitType="Stretch">
+			<line>
+				<reportElement x="3" y="12" width="754" height="1"/>
 			</line>
 		</band>
 	</columnFooter>
 	<pageFooter>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement style="Column header" x="447" y="0" width="80" height="20"/>
+				<reportElement style="Column header" x="640" y="0" width="80" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="527" y="0" width="40" height="20"/>
+				<reportElement style="Column header" x="720" y="0" width="40" height="20"/>
 				<textElement>
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField pattern="EEEEE dd MMMMM yyyy">
+			<textField pattern="EEEEE MM/dd/yyyy">
 				<reportElement style="Column header" x="14" y="0" width="197" height="20"/>
 				<textElement>
 					<font size="10" isBold="false"/>
@@ -209,28 +213,28 @@
 	<summary>
 		<band height="40" splitType="Stretch">
 			<textField>
-				<reportElement x="369" y="0" width="89" height="17"/>
+				<reportElement x="369" y="4" width="89" height="17"/>
 				<textElement textAlignment="Right">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{charge_sum}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="14" y="0" width="100" height="20"/>
+				<reportElement x="14" y="4" width="100" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="470" y="0" width="100" height="20"/>
+				<reportElement x="470" y="4" width="100" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{payment_sum}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="600" y="2" width="70" height="20"/>
+				<reportElement x="600" y="6" width="70" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12" isBold="true"/>
 				</textElement>

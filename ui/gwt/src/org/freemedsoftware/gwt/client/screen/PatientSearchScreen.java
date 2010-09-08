@@ -68,8 +68,6 @@ public class PatientSearchScreen extends ScreenInterface {
 
 	protected CustomTable sortableTable = null;
 
-	protected Label sortableTableEmptyLabel = new Label();
-
 	protected PatientWidget wSmartSearch = null;
 
 	protected ListBox wFieldName = null;
@@ -168,6 +166,8 @@ public class PatientSearchScreen extends ScreenInterface {
 		wFieldName.addItem("Home Phone", "pthphone");
 		wFieldName.addItem("Work Phone", "ptwphone");
 		wFieldName.addItem("Age", "age");
+		wFieldName.addItem("First Name", "ptfname");
+		wFieldName.addItem("Last Name", "ptlname");
 
 		wFieldValue = new TextBox();
 		flexTable.setWidget(2, 1, wFieldValue);
@@ -192,6 +192,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		verticalPanel.add(horizontalPanel);
 
 		sortableTable = new CustomTable();
+		sortableTable.setNoItemsText("No patients found with the specified criteria.");
 		sortableTable.setWidth("100%");
 		sortableTable.addColumn("Last Name", "last_name");
 		sortableTable.addColumn("First Name", "first_name");
@@ -222,12 +223,6 @@ public class PatientSearchScreen extends ScreenInterface {
 		stPanel.setWidth("100%");
 		stPanel.add(sortableTable);
 		stPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		sortableTableEmptyLabel.setStylePrimaryName("freemed-MessageText");
-		sortableTableEmptyLabel
-				.setText("No patients found with the specified criteria.");
-		sortableTableEmptyLabel.setVisible(true);
-		stPanel.add(sortableTableEmptyLabel);
-
 		verticalPanel.add(stPanel);
 
 		// Set visible focus *after* this is shown, otherwise it won't focus.
@@ -279,25 +274,16 @@ public class PatientSearchScreen extends ScreenInterface {
 										.shoehornJson(JSONParser.parse(response
 												.getText()),
 												"HashMap<String,String>[]");
-								if (result.length > 0) {
-									
-									//Window.alert(result.length+"Result length");
-									sortableTableEmptyLabel.setVisible(false);
-								} else {
-									sortableTableEmptyLabel.setVisible(true);
-								}
 								sortableTable.loadData(result);
 							
 							} else {
 								Window.alert(response.toString());
-								sortableTableEmptyLabel.setVisible(true);
 							}
 						}
 					}
 				});
 			} catch (RequestException e) {
 				Window.alert(e.toString());
-				sortableTableEmptyLabel.setVisible(true);
 			}
 		} else {
 			PatientInterfaceAsync service = null;
@@ -318,16 +304,10 @@ public class PatientSearchScreen extends ScreenInterface {
 							// Log.info("found " + new
 							// Integer(r.length).toString() + "
 							// results for Search");
-							if (result.length > 0) {
-								sortableTableEmptyLabel.setVisible(false);
-							} else {
-								sortableTableEmptyLabel.setVisible(true);
-							}
 							sortableTable.loadData(result);
 						}
 
 						public void onFailure(Throwable t) {
-							sortableTableEmptyLabel.setVisible(true);
 							// Log.error("Caught exception: ", t);
 						}
 					});

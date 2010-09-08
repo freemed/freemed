@@ -21,23 +21,27 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `user` (
-	username			VARCHAR (16) NOT NULL,
-	userpassword			CHAR (32) NOT NULL,
-	userdescrip			VARCHAR (50) NOT NULL DEFAULT '',
-	userlevel			BLOB,
-	usertype			ENUM ( 'phy', 'misc', 'super' ),
-	userfac				BLOB,
-	userphy				BLOB,
-	userphygrp			BLOB,
-	userrealphy			INT UNSIGNED NOT NULL DEFAULT 0,
-	usermanageopt			BLOB,
-	useremail			VARCHAR (250),
-	usersms				VARCHAR (25),
-	usersmsprovider			INT UNSIGNED NOT NULL DEFAULT 0,
-	id				SERIAL,
+	  username			VARCHAR (16) NOT NULL UNIQUE
+	, userpassword			CHAR (32) NOT NULL
+	, userdescrip			VARCHAR (50) NOT NULL DEFAULT ''
+	, userlevel			BLOB
+	, usertype			ENUM ( 'phy', 'misc', 'super' )
+	, userfac			BLOB
+	, userphy			BLOB
+	, userphygrp			BLOB
+	, userrealphy			INT UNSIGNED NOT NULL DEFAULT 0
+	, usermanageopt			BLOB
+	, useremail			VARCHAR (250)
+	, usersms			VARCHAR (25)
+	, usersmsprovider		INT UNSIGNED NOT NULL DEFAULT 0
+	, userfname 			VARCHAR(50) NOT NULL DEFAULT ''
+	, userlname 			VARCHAR(50) NOT NULL DEFAULT ''
+	, usermname 			VARCHAR(50) NOT NULL DEFAULT ''
+	, usertitle 			VARCHAR(50) NOT NULL DEFAULT ''
+	, id				SERIAL
 
 	#	Define keys
-	PRIMARY KEY 			( id )
+	, PRIMARY KEY 			( id )
 );
 
 DROP PROCEDURE IF EXISTS user_Upgrade;
@@ -49,6 +53,11 @@ BEGIN
 	ALTER IGNORE TABLE user ADD COLUMN useremail VARCHAR (250) AFTER usermanageopt;
 	ALTER IGNORE TABLE user ADD COLUMN usersms VARCHAR (25) AFTER useremail;
 	ALTER IGNORE TABLE user ADD COLUMN usersmsprovider INT UNSIGNED NOT NULL DEFAULT 0 AFTER usersms;
+	ALTER IGNORE TABLE user ADD COLUMN userfname VARCHAR(50) NOT NULL DEFAULT '' AFTER userdescrip;
+	ALTER IGNORE TABLE user ADD COLUMN userlname VARCHAR(50) NOT NULL DEFAULT '' AFTER userfname;
+	ALTER IGNORE TABLE user ADD COLUMN usermname VARCHAR(50) NOT NULL DEFAULT '' AFTER userlname;
+	ALTER IGNORE TABLE user ADD COLUMN usertitle VARCHAR(50) NOT NULL DEFAULT '' AFTER usermname;
+	ALTER IGNORE TABLE user CHANGE COLUMN username username	VARCHAR (16) NOT NULL UNIQUE;
 END
 //
 DELIMITER ;

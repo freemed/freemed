@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+  $Id$
+ 
+  Authors:
+       Jeff Buchbinder <jeff@freemedsoftware.org>
+ 
+  FreeMED Electronic Medical Record and Practice Management System
+  Copyright (C) 1999-2010 FreeMED Software Foundation
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ -->
+<SimpleUIBuilder module="OrdersStock">
+	<Elements>
+		<Element field="name" title="Order Name" type="TEXT" options="20" display="1" />
+		<Element field="ordertype" title="Type" type="SELECT" options="consult,radiology,lab,immunization,procedure,rx" display="1" />
+		<Element field="orderpriority" title="Priority" type="SELECT" options="Routine|R,Stat|S" />
+		<Element field="summary" title="Summary" type="TEXT" />
+		<Element field="notes" title="Notes" type="TEXT" />
+
+		<Element field="radiologycode" title="Lab Panel Code" type="MODULE" options="CptCodes" />
+
+        <!-- labpanelcodeset       INT UNSIGNED DEFAULT 0 -->
+		<Element field="labpanelcode" title="Lab Panel Code" type="MODULE" options="CptCodes" />
+		<Element field="labspecimenactioncode" title="Lab Specimen Action Code" options="SCHEDULE THE TESTS SPECIFIED BELOW|S,ADD ORDERED TESTS TO THE EXISTING SPECIMEN|A,GENERATED ORDER; REFLEX ORDER|G,LAB TO OBTAIN SPECIMEN FROM PATIENT|L,SPECIMEN OBTAINED BY SERVICE OTHER THAN LAB|O,PENDING SPECIMEN; ORDER SENT PRIOR TO DELIVERY|P,REVISED ORDER|R" />
+
+		<Element field="immunizationcode" title="Immunization Code" type="MODULE" options="Bccdc" />
+		<Element field="immunizationunits" title="Immunization Units" type="TEXT" />
+
+		<Element field="procedurecode" title="Procedure Code" type="MODULE" options="CptCodes" />
+
+	</Elements>
+</SimpleUIBuilder>

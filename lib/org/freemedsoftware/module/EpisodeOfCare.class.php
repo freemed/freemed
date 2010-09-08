@@ -135,6 +135,16 @@ class EpisodeOfCare extends EMRModule {
 		$q="SELECT id AS Id, CONCAT(eocdescrip,'(',eocstartdate,' to ',eocdtlastsimilar,')') AS eoc_info FROM ".$this->table_name." WHERE eocpatient=".$GLOBALS['sql']->quote( $patient );
 		return $GLOBALS['sql']->queryAll( $q );
 	}
+	
+	public function getAllValues($patient){
+		$q="SELECT * FROM ".$this->table_name." WHERE eocpatient=".$GLOBALS['sql']->quote( $patient );
+		return $GLOBALS['sql']->queryAll( $q );
+	}
+	
+	public function getHospitalizations($patient){
+		$q="SELECT eochosadmdt AS admit_date, eochosdischrgdt AS disch_date FROM ".$this->table_name." WHERE eocpatient=".$GLOBALS['sql']->quote( $patient );
+		return $GLOBALS['sql']->queryAll( $q );
+	}
 
 } // end class EpisodeOfCare
 

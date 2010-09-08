@@ -38,7 +38,6 @@ import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
@@ -48,6 +47,8 @@ import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
@@ -68,15 +69,16 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PatientProblemList extends WidgetInterface {
-	
+
 	public final static String moduleName = PatientScreen.moduleName;
-	
+
 	public class ActionBar extends Composite implements ClickHandler {
 
 		protected final String IMAGE_ANNOTATE = "resources/images/add1.16x16.png";
@@ -116,11 +118,13 @@ public class PatientProblemList extends WidgetInterface {
 			annotateImage = new Image(IMAGE_ANNOTATE);
 			annotateImage.setTitle("Add Annotation");
 			annotateImage.addClickHandler(this);
+			annotateImage.getElement().getStyle().setCursor(Cursor.POINTER);
 			hPanel.add(annotateImage);
 
 			printImage = new Image(IMAGE_PRINT);
 			printImage.setTitle("Print");
 			printImage.addClickHandler(this);
+			printImage.getElement().getStyle().setCursor(Cursor.POINTER);
 			hPanel.add(printImage);
 
 			// Display all unlocked things
@@ -128,11 +132,13 @@ public class PatientProblemList extends WidgetInterface {
 				deleteImage = new Image(IMAGE_DELETE);
 				deleteImage.setTitle("Remove");
 				deleteImage.addClickHandler(this);
+				deleteImage.getElement().getStyle().setCursor(Cursor.POINTER);
 				hPanel.add(deleteImage);
 
 				modifyImage = new Image(IMAGE_MODIFY);
 				modifyImage.setTitle("Edit");
 				modifyImage.addClickHandler(this);
+				modifyImage.getElement().getStyle().setCursor(Cursor.POINTER);
 				hPanel.add(modifyImage);
 			} else {
 				// Display all actions for locked items
@@ -249,7 +255,12 @@ public class PatientProblemList extends WidgetInterface {
 		tabPanel.setVisible(true);
 		panel.setWidget(tabPanel);
 		initWidget(panel);
-
+		TabBar tbar = tabPanel.getTabBar();
+		Element tabBarFirstChild = tbar.getElement().getFirstChildElement()
+				.getFirstChildElement().getFirstChildElement();
+		tabBarFirstChild.setAttribute("width", "100%");
+		tabBarFirstChild.setInnerHTML("HEALTH SUMMARY");
+		tabBarFirstChild.setClassName("label_bold");
 		// All
 		Image allImage = new Image("resources/images/chart_full.16x16.png");
 		allImage.setTitle("All");
@@ -393,43 +404,49 @@ public class PatientProblemList extends WidgetInterface {
 
 	private void createSummaryTable(Widget tab, String criteria) {
 		CustomTable t = new CustomTable();
-		if(canModify){
-			t.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
-				public Widget setColumn(String columnName,
-						HashMap<String, String> data) {
-					// Render only action column, otherwise skip renderer
-					if (columnName.compareToIgnoreCase("action") != 0) {
-						return null;
-					}
-					ActionBar ab = new ActionBar(data);
-					// Add to mapping, so we can control lots of these things
-					addToActionBarMap(Integer.parseInt(data.get("id")), ab);
-					// Push value back to table
-					return ab;
-				}
-			});
+		t.setWidth("100%");
+		if (canModify) {
+			t
+					.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+						public Widget setColumn(String columnName,
+								HashMap<String, String> data) {
+							// Render only action column, otherwise skip
+							// renderer
+							if (columnName.compareToIgnoreCase("action") != 0) {
+								return null;
+							}
+							ActionBar ab = new ActionBar(data);
+							// Add to mapping, so we can control lots of these
+							// things
+							addToActionBarMap(Integer.parseInt(data.get("id")),
+									ab);
+							// Push value back to table
+							return ab;
+						}
+					});
 		}
 		t.setAllowSelection(false);
 		t.setMaximumRows(maximumRows);
 		t.addColumn("Date", "date_mdy");
 		t.addColumn("Module", "type");
 		t.addColumn("Summary", "summary");
-		if(canModify)
+		if (canModify)
 			t.addColumn("Action", "action");
 
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.add(t);
 
-		Label m = new Label();
-		m.setText("No items.");
-		m.setStylePrimaryName("freemed-MessageText");
-		m.setVisible(false);
-		vPanel.add(m);
+//		Label m = new Label();
+//		m.setText("No Item Found!!.");
+//		m.setStylePrimaryName("label_italic");
+//		m.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+//		m.setVisible(false);
+//		vPanel.add(m);
 
 		tabPanel.add(vPanel, tab);
 
 		tables.put(criteria, t);
-		messages.put(criteria, m);
+//		messages.put(criteria, m);
 	}
 
 	protected PatientEntryScreenInterface resolvePatientScreen(String moduleName) {

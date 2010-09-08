@@ -102,6 +102,7 @@ public class Popup extends PopupPanel {
 	}
 
 	public void setPosition() {
+		
 		setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 			public void setPosition(int offsetWidth, int offsetHeight) {
 				int left = ((Window.getClientWidth() - offsetWidth) / widthmodifier)
@@ -112,6 +113,7 @@ public class Popup extends PopupPanel {
 				// setStylePrimaryName("freemed-MessageBox-Popup");
 			}
 		});
+		//center();
 		this.getElement().getStyle().setPosition(Position.FIXED);
 	}
 
@@ -129,5 +131,9 @@ public class Popup extends PopupPanel {
 
 	public void setHeightModifier(Integer modifier) {
 		heightmodifier = modifier;
+	}
+	public void show(){
+		super.show();
+		center();
 	}
 }

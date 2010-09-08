@@ -346,11 +346,50 @@ class EMRModule extends BaseModule {
 		);
 		$result = $GLOBALS['sql']->query ( $query );
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
+		$this->moduleFieldCheck(get_class($this),$new_id,$data);
 		$this->add_post( $new_id, &$ourdata );
 
 		return $new_id;
 	} // end public function add
-
+	
+	//Mthod: moduleFieldCheck
+	//
+	//      This method will check whether this module belongs to work flow and also evaluate the complete/uncomplete status of this module form
+	//
+	// Parameters:
+	//
+	//	$moduleClass - module class name of called module
+	//	$data        - form data to be saved
+	protected function moduleFieldCheck ( $moduleClass,$new_id,$data ) {
+		$moduleFieldCheckerTypeObj = createObject("org.freemedsoftware.module.ModuleFieldCheckerType");
+		$result = $moduleFieldCheckerTypeObj->getModuleInfo( $moduleClass );
+		$module_fields = "";
+		if($result){
+		        $fields= explode(',',$result['fields']);
+			
+			for ( $counter =0; $counter < count($fields); $counter++)
+			{
+				
+				if($data[$fields[$counter]]=="")
+				{
+					$module_fields=$module_fields.$fields[$counter].",";
+					//break;
+				}
+			}
+			if(strlen($module_fields)>0){
+				$moduleFieldCheckerObj = createObject("org.freemedsoftware.module.ModuleFieldChecker");
+				$moduleData['stamp'] = date('Y-m-d H:i:s');
+				$moduleData['patient'] = $data[$this->patient_field];
+				$moduleData['user'] = freemed::user_cache()->user_number;
+				$moduleData['module_type'] = $result['id'];
+				$moduleData['module_fields'] = $module_fields;
+				$moduleData['module_record'] = $new_id;
+				$moduleFieldCheckerObj->add($moduleData);
+			}
+		}
+		
+	} // end function moduleFieldCheck
+	
 	protected function add_pre( &$data ) { }
 	protected function add_post( $id, &$data ) { }
 
@@ -426,6 +465,8 @@ class EMRModule extends BaseModule {
 			)
 		);
 		$this->mod_post( &$ourdata );
+
+		$this->moduleFieldCheck(get_class($this),$data['id'],$data);
 
 		// Unlock row, since update is done
 		$lock->UnlockRow( $data['id'] );

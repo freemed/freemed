@@ -24,20 +24,22 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `unreaddocuments` (
-	urfstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	urfdate			DATE NOT NULL,
-	urffilename		VARCHAR (150) NOT NULL,
-	urftype			VARCHAR (50),
-	urfpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	urfphysician		INT UNSIGNED NOT NULL DEFAULT 0,
-	urfnote			TEXT,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			SERIAL,
+	  urfstamp		TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, urfdate		DATE NOT NULL
+	, urffilename		VARCHAR (150) NOT NULL
+	, urftype		VARCHAR (50)
+	, urfpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, urfphysician		INT UNSIGNED NOT NULL DEFAULT 0
+	, urfnote		TEXT
+	, urffile		LONGBLOB
+	, urffilesize		INT UNSIGNED NOT NULL DEFAULT 0
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, id			SERIAL
 
 	#	Define keys
 
-	KEY			( urfphysician, urfpatient ),
-	FOREIGN KEY		( urfpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, KEY			( urfphysician, urfpatient )
+	, FOREIGN KEY		( urfpatient ) REFERENCES patient.id ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS unreaddocuments_Upgrade;
@@ -53,6 +55,8 @@ BEGIN
 
 	#----- Upgrades
 	ALTER IGNORE TABLE unreaddocuments ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER urfnote;
+	ALTER IGNORE TABLE unreaddocuments ADD COLUMN urffile LONGBLOB AFTER urfnote;
+	ALTER IGNORE TABLE unreaddocuments ADD COLUMN urffilesize INT UNSIGNED NOT NULL DEFAULT 0 AFTER urffile;
 END
 //
 DELIMITER ;

@@ -46,41 +46,44 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class LedgerPopup extends DialogBox {
 
 	protected CustomTable procedureTable = null;
-	
+
 	protected String procedureId = "";
-	
+
 	protected CustomListBox actionList = null;
-	
-	public static String REBILL         = "Rebill";
-	public static String PAYMENT        = "Payment";
-	public static String COPAY          = "Copay";
-	public static String ADJUSTMENT	    = "Adjustment";
-	public static String DEDUCTABLE     = "Deductable";
-	public static String WITH_HOLD	    = "Withhold";
-	public static String TRANSFER       = "Transfer";
+
+	public static String REBILL = "Rebill";
+	public static String PAYMENT = "Payment";
+	public static String COPAY = "Copay";
+	public static String ADJUSTMENT = "Adjustment";
+	public static String DEDUCTABLE = "Deductable";
+	public static String WITH_HOLD = "Withhold";
+	public static String TRANSFER = "Transfer";
 	public static String ALLOWED_AMOUNT = "Allowed Amount";
-	public static String DENIAL         = "Denial";
-	public static String WRITE_OFF 		= "Writeoff";
-	public static String REFUND		    = "Refund";
-	public static String MISTAKE		= "Mistake";
-	public static String LEDGER		    = "Ledger";
-	
-	private LedgerPopup(){}
-	
-	public LedgerPopup(final String procedureId,final String patientId,final String procCovSrc){
+	public static String DENIAL = "Denial";
+	public static String WRITE_OFF = "Writeoff";
+	public static String REFUND = "Refund";
+	public static String MISTAKE = "Mistake";
+	public static String LEDGER = "Ledger";
+
+	@SuppressWarnings("unused")
+	private LedgerPopup() {
+	}
+
+	public LedgerPopup(final String procedureId, final String patientId,
+			final String procCovSrc) {
 		super();
 		this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
-		
+
 		this.procedureId = procedureId;
-		
+
 		VerticalPanel popupContainer = new VerticalPanel();
 		setWidget(popupContainer);
-		
-		/////Top header
+
+		// ///Top header
 		final HorizontalPanel closeButtonContainer = new HorizontalPanel();
 		popupContainer.add(closeButtonContainer);
 		closeButtonContainer.setWidth("100%");
-		
+
 		Image closeImage = new Image("resources/images/close_x.16x16.png");
 		closeImage.addClickHandler(new ClickHandler() {
 			@Override
@@ -89,21 +92,22 @@ public class LedgerPopup extends DialogBox {
 			}
 		});
 		closeButtonContainer.add(closeImage);
-		closeButtonContainer.setCellHorizontalAlignment(closeImage, HasHorizontalAlignment.ALIGN_RIGHT);
+		closeButtonContainer.setCellHorizontalAlignment(closeImage,
+				HasHorizontalAlignment.ALIGN_RIGHT);
 
-		//content panel
+		// content panel
 		final VerticalPanel contentVPanel = new VerticalPanel();
 		popupContainer.add(contentVPanel);
-		
-		
+
 		final VerticalPanel defaultVPanel = new VerticalPanel();
 		contentVPanel.add(defaultVPanel);
-		/////View details
+		// ///View details
 		final HorizontalPanel viewDetailHPanel = new HorizontalPanel();
 		defaultVPanel.add(viewDetailHPanel);
-		final Label procedureLabel= new Label("Procedure");
+		final Label procedureLabel = new Label("Procedure");
 		viewDetailHPanel.add(procedureLabel);
-		CustomButton showDetails = new CustomButton("View Details",AppConstants.ICON_VIEW);
+		CustomButton showDetails = new CustomButton("View Details",
+				AppConstants.ICON_VIEW);
 		viewDetailHPanel.add(showDetails);
 
 		showDetails.addClickHandler(new ClickHandler() {
@@ -122,30 +126,40 @@ public class LedgerPopup extends DialogBox {
 				viewDetailsTable.addColumn("Charges", "charge");
 				viewDetailsTable.addColumn("Payments", "payment");
 				viewDetailsTable.addColumn("Balance", "");
-				Util.callApiMethod("Ledger", "getLedgerInfo", new Integer(procedureId), new CustomRequestCallback() {
+				Util.callApiMethod("Ledger", "getLedgerInfo", new Integer(
+						procedureId), new CustomRequestCallback() {
 					@Override
 					public void onError() {
-						
+
 					}
+
+					@SuppressWarnings("unchecked")
 					@Override
 					public void jsonifiedData(Object data) {
-						HashMap<String, String> []result = (HashMap<String, String>[])data;
+						HashMap<String, String>[] result = (HashMap<String, String>[]) data;
 						viewDetailsTable.setMaximumRows(result.length);
 						viewDetailsTable.loadData(result);
-						HashMap<String, String> totals = result[result.length-1];
- 						Integer totalCharges = new Integer(result[result.length-1].get("total_charges"));
- 						Integer totalPayments = new Integer(result[result.length-1].get("total_payments"));
- 						
- 						FlexTable totalDetailsTable = viewDetailsTable.getFlexTable();
- 						int row= totalDetailsTable.getRowCount();
- 						totalDetailsTable.setHTML(row, 0, "Total");
- 						totalDetailsTable.setHTML(row, 3, totalCharges+"");
- 						totalDetailsTable.setHTML(row, 4, totalPayments+"");
- 						totalDetailsTable.setHTML(row, 5, (totalCharges-totalPayments)+"");
- 						totalDetailsTable.getRowFormatter().setStyleName(row, AppConstants.STYLE_TABLE_HEADER);
+						// HashMap<String, String> totals =
+						// result[result.length-1];
+						Integer totalCharges = new Integer(
+								result[result.length - 1].get("total_charges"));
+						Integer totalPayments = new Integer(
+								result[result.length - 1].get("total_payments"));
+
+						FlexTable totalDetailsTable = viewDetailsTable
+								.getFlexTable();
+						int row = totalDetailsTable.getRowCount();
+						totalDetailsTable.setHTML(row, 0, "Total");
+						totalDetailsTable.setHTML(row, 3, totalCharges + "");
+						totalDetailsTable.setHTML(row, 4, totalPayments + "");
+						totalDetailsTable.setHTML(row, 5,
+								(totalCharges - totalPayments) + "");
+						totalDetailsTable.getRowFormatter().setStyleName(row,
+								AppConstants.STYLE_TABLE_HEADER);
 					}
 				}, "HashMap<String,String>[]");
-				final CustomButton backBtn = new CustomButton("Back",AppConstants.ICON_PREV);
+				final CustomButton backBtn = new CustomButton("Back",
+						AppConstants.ICON_PREV);
 				contentVPanel.add(backBtn);
 				backBtn.addClickHandler(new ClickHandler() {
 					@Override
@@ -156,12 +170,9 @@ public class LedgerPopup extends DialogBox {
 				});
 			}
 		});
-		
-		
-		
-		
-		///custom table
-		
+
+		// /custom table
+
 		procedureTable = new CustomTable();
 		procedureTable.removeTableStyle();
 		defaultVPanel.add(procedureTable);
@@ -175,12 +186,12 @@ public class LedgerPopup extends DialogBox {
 		procedureTable.addColumn("Balance", "proc_currbal");
 		procedureTable.addColumn("Billed", "proc_billed");
 		procedureTable.setIndexName("Id");
-		
-		////////////action area
+
+		// //////////action area
 		final HorizontalPanel actionHPanel = new HorizontalPanel();
 		final Label actionLabel = new Label("Action");
 		actionHPanel.add(actionLabel);
-		actionList =new CustomListBox();
+		actionList = new CustomListBox();
 		actionList.addItem("NONE SELECTED");
 		actionList.addItem(REBILL);
 		actionList.addItem(PAYMENT);
@@ -196,125 +207,132 @@ public class LedgerPopup extends DialogBox {
 		actionList.addItem(MISTAKE);
 		actionList.addItem(LEDGER);
 		actionHPanel.add(actionList);
-		final CustomButton proceedButton = new CustomButton("Proceed",AppConstants.ICON_NEXT);
+		final CustomButton proceedButton = new CustomButton("Proceed",
+				AppConstants.ICON_NEXT);
 		actionHPanel.add(proceedButton);
 		proceedButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				if(actionList.getSelectedIndex()!=0)
-				{
-					LedgerWidget pw=null;
-					CustomRequestCallback cb=new CustomRequestCallback(){
+				if (actionList.getSelectedIndex() != 0) {
+					LedgerWidget pw = null;
+					CustomRequestCallback cb = new CustomRequestCallback() {
 						@Override
 						public void onError() {
 
 						}
+
 						@Override
 						public void jsonifiedData(Object data) {
-							if(data.toString().equals("update"))
-							{
+							if (data.toString().equals("update")) {
 								contentVPanel.clear();
 								contentVPanel.add(defaultVPanel);
 								refreshData();
-							}							
-							else if(data.toString().equals("close")){
+							} else if (data.toString().equals("close")) {
 								contentVPanel.clear();
 								contentVPanel.add(defaultVPanel);
 								refreshData();
-							}else if(data.toString().equals("cancel")){
+							} else if (data.toString().equals("cancel")) {
 								contentVPanel.clear();
 								contentVPanel.add(defaultVPanel);
 								refreshData();
 							}
 						}
 					};
-					boolean hasUI=true;
-					if(actionList.getSelectedIndex()==1){
-						hasUI=false;
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.REBILLED,cb);
-					}
-					else if(actionList.getSelectedIndex()==2){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.PAYMENT,cb);						
-					}else if(actionList.getSelectedIndex()==3){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.COPAY,cb);						
-					}
-					else if(actionList.getSelectedIndex()==4){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.ADJUSTMENT,cb);						
-					}
-					else if(actionList.getSelectedIndex()==5){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.DEDUCTABLE,cb);						
-					}
-					else if(actionList.getSelectedIndex()==6){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.WITHHOLD,cb);						
-					}
-					else if(actionList.getSelectedIndex()==7){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.TRANSFER,cb);						
-					}
-					else if(actionList.getSelectedIndex()==8){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.ALLOWEDAMOUNT,cb);						
-					}
-					else if(actionList.getSelectedIndex()==9){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.DENIAL,cb);						
-					}
-					else if(actionList.getSelectedIndex()==10){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.WRITEOFF,cb);						
-					}
-					else if(actionList.getSelectedIndex()==11){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.REFUND,cb);						
-					}
-					else if(actionList.getSelectedIndex()==12){
-						hasUI=false;
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.MISTAKE,cb);						
-					}
-					else if(actionList.getSelectedIndex()==13){
-						pw=new LedgerWidget(procedureId,patientId,procCovSrc,PayCategory.LEDGER,cb);						
+					boolean hasUI = true;
+					if (actionList.getSelectedIndex() == 1) {
+						hasUI = false;
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.REBILLED, cb);
+					} else if (actionList.getSelectedIndex() == 2) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.PAYMENT, cb);
+					} else if (actionList.getSelectedIndex() == 3) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.COPAY, cb);
+					} else if (actionList.getSelectedIndex() == 4) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.ADJUSTMENT, cb);
+					} else if (actionList.getSelectedIndex() == 5) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.DEDUCTABLE, cb);
+					} else if (actionList.getSelectedIndex() == 6) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.WITHHOLD, cb);
+					} else if (actionList.getSelectedIndex() == 7) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.TRANSFER, cb);
+					} else if (actionList.getSelectedIndex() == 8) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.ALLOWEDAMOUNT, cb);
+					} else if (actionList.getSelectedIndex() == 9) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.DENIAL, cb);
+					} else if (actionList.getSelectedIndex() == 10) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.WRITEOFF, cb);
+					} else if (actionList.getSelectedIndex() == 11) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.REFUND, cb);
+					} else if (actionList.getSelectedIndex() == 12) {
+						hasUI = false;
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.MISTAKE, cb);
+					} else if (actionList.getSelectedIndex() == 13) {
+						pw = new LedgerWidget(procedureId, patientId,
+								procCovSrc, PayCategory.LEDGER, cb);
 					}
 
-					if(pw!=null)
-					{								
-						if(hasUI){
+					if (pw != null) {
+						if (hasUI) {
 							contentVPanel.clear();
 							contentVPanel.add(pw);
 						}
 					}
-				}
-				else{
+				} else {
 					Window.alert("Please select the action type");
 				}
 			}
 		});
 		defaultVPanel.add(actionHPanel);
-		defaultVPanel.setCellHorizontalAlignment(actionHPanel, HasHorizontalAlignment.ALIGN_CENTER);
+		defaultVPanel.setCellHorizontalAlignment(actionHPanel,
+				HasHorizontalAlignment.ALIGN_CENTER);
 		refreshData();
 	}
-	public void refreshData(){
-		Util.callApiMethod("ClaimLog", "getProcInfo", new Integer(procedureId), new CustomRequestCallback(){
-			@Override
-			public void onError() {
-			}
-			@Override
-			public void jsonifiedData(Object data) {
-				HashMap<String, String> []result = new HashMap[1];
-				result[0] = (HashMap<String, String>)data;
-				if(result[0].get("proc_allowed")!=null)
-					procedureTable.addColumn("Allowed", result[0].get("proc_allowed"));
-				if(result[0].get("proc_billed").equalsIgnoreCase("1"))
-					result[0].put("proc_billed", "Yes");
-				else
-					result[0].put("proc_billed", "No");
-				procedureTable.loadData(result);
-			}
-		}, "HashMap<String,String>");
+
+	public void refreshData() {
+		Util.callApiMethod("ClaimLog", "getProcInfo", new Integer(procedureId),
+				new CustomRequestCallback() {
+					@Override
+					public void onError() {
+					}
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void jsonifiedData(Object data) {
+						HashMap<String, String>[] result = new HashMap[1];
+						result[0] = (HashMap<String, String>) data;
+						if (result[0].get("proc_allowed") != null)
+							procedureTable.addColumn("Allowed", result[0]
+									.get("proc_allowed"));
+						if (result[0].get("proc_billed").equalsIgnoreCase("1"))
+							result[0].put("proc_billed", "Yes");
+						else
+							result[0].put("proc_billed", "No");
+						procedureTable.loadData(result);
+					}
+				}, "HashMap<String,String>");
 	}
-	public void removeAction(String action){
-		for(int index=0;index<actionList.getItemCount();index++){
-			if(actionList.getItemText(index).equals(action)){
+
+	public void removeAction(String action) {
+		for (int index = 0; index < actionList.getItemCount(); index++) {
+			if (actionList.getItemText(index).equals(action)) {
 				actionList.removeItem(index);
 				break;
 			}
 		}
 	}
-	public LedgerPopup getLedgerPopup(){
+
+	public LedgerPopup getLedgerPopup() {
 		return this;
 	}
 }

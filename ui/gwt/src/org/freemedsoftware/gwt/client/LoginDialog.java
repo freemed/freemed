@@ -27,7 +27,9 @@ package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
+import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -235,10 +237,13 @@ public class LoginDialog extends DialogBox {
 			});
 		}
 
-		final Image image = new Image("resources/images/button_on.png");
-		image.setSize("100%", "100%");
+		final Image imageUp = new Image("resources/images/button_on.png");
+		imageUp.setSize("100%", "100%");
 
-		loginButton = new PushButton(image);
+		final Image imageDown = new Image("resources/images/button_on_down.png");
+		imageDown.setSize("100%", "100%");
+		
+		loginButton = new PushButton(imageUp,imageDown);
 		loginButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				attemptLogin();
@@ -248,9 +253,9 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.add(loginButton, 83, 233);
 		loginButton.setStylePrimaryName("gwt-LoginButton");
 
-		final Label loginLabel = new Label("Login");
-		absolutePanel.add(loginLabel, 140, 242);
-		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
+//		final Label loginLabel = new Label("Login");
+//		absolutePanel.add(loginLabel, 140, 242);
+//		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
 		
 		loadingImage = new Image(GWT
 				.getHostPageBaseURL()
@@ -296,20 +301,37 @@ public class LoginDialog extends DialogBox {
 
 			try {
 				Util.login(userLogin.getText(), loginPassword.getText(),facilityList.getStoredValue(),
-						new Command() {
-							public void execute() {
+						new CustomCommand() {
+							public void execute(Object data) {
 								loadingImage.setVisible(false);
 								hide();
 								loginPassword.setText("");
 								freemedInterface.resume();
 								loginButton.setEnabled(true);
 							}
-						}, new Command() {
-							public void execute() {
+						}, new CustomCommand() {
+							public void execute(Object data) {
 								loadingImage.setVisible(false);
 								show();
 								loginPassword.setText("");
 								loginButton.setEnabled(true);
+								String msg = "";
+								if(data.toString().equalsIgnoreCase(AppConstants.INVALID_USER))
+									msg = "The user name or password is incorrect. Please try again.";
+								else if(data.toString().equalsIgnoreCase(AppConstants.NOT_IN_FACILITY))
+									msg = "You can't login using facility '"+facilityList.getItemText(facilityList.getSelectedIndex())+"'.";
+								else if(data.toString().equalsIgnoreCase(AppConstants.INVALID_RESPONSE))
+									msg = "Unable to connect server.";
+								if(CurrentState.getToaster()==null){
+									Toaster toaster = new Toaster();
+									CurrentState.assignToaster(toaster);
+									toaster.setTimeout(7);
+								}
+								
+								CurrentState.getToaster().addItem("Login",
+										msg,
+										Toaster.TOASTER_ERROR);
+								
 							}
 
 						});

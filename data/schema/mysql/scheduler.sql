@@ -27,30 +27,30 @@ SOURCE data/schema/mysql/workflow_status.sql
 SOURCE data/schema/mysql/schedulingrules.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler` (
-	caldateof		DATE,
-	calcreated		TIMESTAMP NOT NULL DEFAULT NOW(),
-	calmodified		TIMESTAMP (16),
-	caltype			ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat',
-	calhour			INT UNSIGNED,
-	calminute		INT UNSIGNED,
-	calduration		INT UNSIGNED,
-	calfacility		INT UNSIGNED,
-	calroom			INT UNSIGNED,
-	calphysician		INT UNSIGNED,
-	calpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	calcptcode		INT UNSIGNED,
-	calstatus		ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled',
-	calprenote		VARCHAR (250),
-	calpostnote		TEXT,
-	calmark			INT UNSIGNED NOT NULL DEFAULT 0,
-	calgroupid		INT UNSIGNED NOT NULL DEFAULT 0,
-	calgroupmembers		TEXT,
-	calrecurnote		VARCHAR (100),
-	calrecurid		INT UNSIGNED NOT NULL DEFAULT 0,
-	calappttemplate		INT UNSIGNED NOT NULL DEFAULT 0,
-	calattendees		VARCHAR (250),
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	id			SERIAL
+	  caldateof		DATE
+	, calcreated		TIMESTAMP NOT NULL DEFAULT NOW()
+	, calmodified		TIMESTAMP (16)
+	, caltype		ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat'
+	, calhour		INT UNSIGNED
+	, calminute		INT UNSIGNED
+	, calduration		INT UNSIGNED
+	, calfacility		INT UNSIGNED
+	, calroom		INT UNSIGNED
+	, calphysician		INT UNSIGNED
+	, calpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, calcptcode		INT UNSIGNED
+	, calstatus		ENUM ( 'scheduled', 'confirmed', 'attended', 'cancelled', 'noshow', 'tenative' ) NOT NULL DEFAULT 'scheduled'
+	, calprenote		VARCHAR (250)
+	, calpostnote		TEXT
+	, calmark		INT UNSIGNED NOT NULL DEFAULT 0
+	, calgroupid		INT UNSIGNED NOT NULL DEFAULT 0
+	, calgroupmembers	TEXT
+	, calrecurnote		VARCHAR (100)
+	, calrecurid		INT UNSIGNED NOT NULL DEFAULT 0
+	, calappttemplate	INT UNSIGNED NOT NULL DEFAULT 0
+	, calattendees		VARCHAR (250)
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, id			SERIAL
 
 	# Define keys
 

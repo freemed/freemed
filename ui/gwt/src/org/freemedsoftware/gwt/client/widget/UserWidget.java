@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.UserInterfaceAsync;
@@ -47,8 +48,11 @@ import com.google.gwt.user.client.ui.SuggestOracle.Request;
 
 public class UserWidget extends AsyncPicklistWidgetBase {
 
+	protected String userType;
+
 	public UserWidget() {
 		super();
+		userType="";
 	}
 
 	/**
@@ -67,7 +71,6 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 				searchBox.setTitle("");
 			} else {
 				String[] params = { widgetValue.toString() };
-				textBox.setEnabled(false);
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
 						URL
@@ -93,7 +96,6 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 											.shoehornJson(JSONParser
 													.parse(response.getText()),
 													"HashMap<String,String>");
-									textBox.setEnabled(true);
 									if (result != null) {
 										searchBox.setText(result
 												.get("userdescrip"));
@@ -101,14 +103,13 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 												.get("userdescrip"));
 									}
 								} else {
-									textBox.setEnabled(true);
 									Window.alert(response.toString());
 								}
 							}
 						}
 					});
 				} catch (RequestException e) {
-					textBox.setEnabled(true);
+
 				}
 			}
 		} else {
@@ -118,17 +119,17 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						.getProxy("org.freemedsoftware.gwt.client.Api.UserInterface"));
 			} catch (Exception e) {
 			}
-			textBox.setEnabled(false);
+			
 			service.GetRecord(widgetValue,
 					new AsyncCallback<HashMap<String, String>>() {
 						public void onSuccess(HashMap<String, String> r) {
-							textBox.setEnabled(true);
+							
 							searchBox.setText(r.get("userdescrip"));
 							searchBox.setTitle(r.get("userdescrip"));
 						}
 
 						public void onFailure(Throwable t) {
-							textBox.setEnabled(true);
+							
 						}
 					});
 
@@ -137,6 +138,8 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
+		if(req.length()<CurrentState.getMinCharCountForSmartSearch())
+			return;		
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
@@ -147,11 +150,22 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { req };
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-					URL.encode(Util.getJsonRequest(
-							"org.freemedsoftware.api.UserInterface.GetUsers",
-							params)));
+			
+			RequestBuilder builder=null;
+			if(userType.equals("")){
+				String[] params = { req };
+				 builder = new RequestBuilder(RequestBuilder.POST,
+						URL.encode(Util.getJsonRequest(
+								"org.freemedsoftware.api.UserInterface.GetUsers",
+								params)));
+			}
+			else{
+				String[] params = { req,userType };
+				 builder = new RequestBuilder(RequestBuilder.POST,
+						URL.encode(Util.getJsonRequest(
+								"org.freemedsoftware.api.UserInterface.GetUsers",
+								params)));
+			}
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -277,5 +291,9 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						}
 					});
 		}
+	}
+	
+	public void setUserType(String type){
+		userType = type;
 	}
 }

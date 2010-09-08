@@ -23,12 +23,12 @@
 SOURCE data/schema/mysql/patient.sql
 
 CREATE TABLE IF NOT EXISTS `workflow_status` (
-	stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	status_type		INT UNSIGNED NOT NULL,
-	status_completed	BOOL DEFAULT FALSE,
-	id			SERIAL
+	  stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, status_type		INT UNSIGNED NOT NULL
+	, status_completed	BOOL DEFAULT FALSE
+	, id			SERIAL
 
 	#	Define keys
 
@@ -36,11 +36,11 @@ CREATE TABLE IF NOT EXISTS `workflow_status` (
 );
 
 CREATE TABLE IF NOT EXISTS `workflow_status_summary` (
-	stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
-	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	completed		TEXT,
-	uncompleted		TEXT,
-	id			SERIAL
+	  stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	, patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, completed		TEXT
+	, uncompleted		TEXT
+	, id			SERIAL
 
 	#	Define keys
 

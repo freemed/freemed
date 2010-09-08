@@ -36,7 +36,7 @@ class CptCodes extends SupportModule {
 	var $table_name = "cpt";
 	var $order_fields = "cptcode";
 	var $widget_hash = "##cptcode## ##cptnameint##";
-
+	var $archive_field = "cptarchive";
 	public function __construct () {
 		$this->variables = array (
 			"cptcode",
@@ -54,7 +54,8 @@ class CptCodes extends SupportModule {
 			"cptdefstdfee",
 			"cptstdfee",
 			"cpttos",
-			"cpttosprfx"
+			"cpttosprfx",
+			"cptarchive"
 		);
 
 		$this->list_view = array (

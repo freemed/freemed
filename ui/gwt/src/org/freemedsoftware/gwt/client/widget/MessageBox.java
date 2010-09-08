@@ -37,6 +37,7 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.Request;
@@ -69,34 +70,49 @@ public class MessageBox extends WidgetInterface {
 
 	private PushButton showMessagesButton;
 	
+	protected final VerticalPanel contentVPanel;
+	
 	public MessageBox() {
-		SimplePanel sPanel = new SimplePanel();
-		initWidget(sPanel);
-		sPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
-		sPanel.setWidth("100%");
+		VerticalPanel superVPanel = new VerticalPanel();
+		initWidget(superVPanel);
+		superVPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
+		superVPanel.setWidth("100%");
 
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		verticalPanel.setWidth("100%");
-		sPanel.setWidget(verticalPanel);
+		
+		HorizontalPanel headerHPanel = new HorizontalPanel();
+		headerHPanel.setSpacing(5);
+		superVPanel.add(headerHPanel);
+		
+		final Image colExpBtn = new Image(Util.getResourcesURL()+"collapse.15x15.png");
+		colExpBtn.getElement().getStyle().setCursor(Cursor.POINTER);
+		headerHPanel.add(colExpBtn);
+		colExpBtn.addClickHandler(new ClickHandler() {
+			boolean expaned = false;
+			@Override
+			public void onClick(ClickEvent arg0) {
+				if(expaned){
+					colExpBtn.setUrl(Util.getResourcesURL()+"collapse.15x15.png");
+					contentVPanel.setVisible(true);
+				}else{
+					colExpBtn.setUrl(Util.getResourcesURL()+"expand.15x15.png");
+					contentVPanel.setVisible(false);
+				}
+					expaned = !expaned;
+			}
+		});
+
+		Label headerLabel = new Label("MESSAGES");
+		headerHPanel.add(headerLabel);
+		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
+		
+		
+		
+		contentVPanel = new VerticalPanel();
+		contentVPanel.setWidth("100%");
+		superVPanel.add(contentVPanel);
 		// sPanel.addStyleName("freemed-MessageBoxContainer");
 
-		final HorizontalPanel horizontalPanel = new HorizontalPanel();
-
-//		showMessagesButton = new PushButton("", "");
-//		showMessagesButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
-//		showMessagesButton.getUpFace().setImage(
-//				new Image("resources/images/messaging.16x16.png"));
-//		showMessagesButton.getDownFace().setImage(
-//				new Image("resources/images/messaging.16x16.png"));
-
-		Label headerLabel = new Label("Messages");
-		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-		horizontalPanel.add(headerLabel);
-		
-		verticalPanel.add(horizontalPanel);
-//		horizontalPanel.add(showMessagesButton);
-
-		verticalPanel.add(wMessages);
+		contentVPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
 		wMessages.addColumn("Received", "stamp"); // col 0
 		wMessages.addColumn("From", "from_user"); // col 1

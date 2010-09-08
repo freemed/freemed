@@ -153,6 +153,19 @@ class ClaimLog {
 				if ($v) $q[] = "p.procstatus = '".addslashes($v)."'";
 				break;
 				
+				case 'tag':
+				$tag_object = CreateObject('org.freemedsoftware.module.PatientTag');
+				$obj = $tag_object->SimpleTagSearch($v);
+				for($i = 0; $i < count($obj); $i++){
+					$patient_ids[] = "p.procpatient = '".$obj[$i]['patient_record']."'";
+				}
+				$condition = join(' OR ', $patient_ids);
+				if($condition != "") {
+					$condition = '('.$condition.')';
+				}
+				$q[] = $condition;
+				break;
+				
 			} // end outer criteria type switch
 		} // end criteria foreach loop
 
@@ -183,7 +196,7 @@ class ClaimLog {
 				"LEFT OUTER JOIN patient pt ON p.procpatient = pt.id ".
 				"LEFT OUTER JOIN claimlog cl ON cl.clprocedure = p.id AND cl.clbillkey != 0 AND cl.clbillkey=(select max(tcl.clbillkey) from claimlog tcl where tcl.clprocedure=p.id) ".
 			"WHERE ";
-		if($criteria['balance']!='0')			
+		if(($criteria['zerobalance']+0)=='0')			
 			$query.="p.procbalcurrent > 0 AND ";
 		$query.=( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
 			"ORDER BY patient, balance DESC";

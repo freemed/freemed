@@ -157,6 +157,49 @@ class Remitt {
 		return ( $sc->getStatus( $params )->return );
 	} // end method GetStatus
 
+	// Method: GetEligibility
+	//
+	//	Check eligibility for criteria.
+	//
+	// Parameters:
+	//
+	//	$plugin - Fully qualified plugin name.
+	//
+	//	$parameters - Associative array of parameters
+	//	* npi
+	//	* insuranceId
+	//	* insuredLastName
+	//	* insuredFirstName
+	//	* insuredDateOfBirth
+	//	* insuredGender
+	//	* insuredState
+	//	* insuredSsn
+	//	* dependentLastName
+	//	* dependentFirstName
+	//	* dependentDateOfBirth
+	//	* dependentGender
+	//	* dependentRelationship
+	//	* serviceType
+	//	* cardIssueDate
+	//	* groupId
+	//
+	// Returns:
+	//
+	//	Associative array of information explaining
+	//	eligibility.
+	//
+	public function GetEligibility ( $plugin, $parameters ) {
+		if (!$this->GetServerStatus()) {
+			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
+		}
+		$sc = $this->getSoapClient( );
+		$params = (object) array(
+			  'plugin' => $plugin
+			, 'parameters' => $parameters
+		);
+		return ( $sc->getEligibility( $params )->return );
+	} // end method GetEligibility
+
 	// Method: GetBulkStatus
 	//
 	//	Retrieves the current statuses of REMITT billing runs by

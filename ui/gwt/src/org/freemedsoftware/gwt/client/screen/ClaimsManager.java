@@ -44,6 +44,7 @@ import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomModuleWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.LedgerWidget;
+import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.PostCheckWidget;
@@ -163,6 +164,10 @@ public class ClaimsManager extends ScreenInterface {
 
 	protected VerticalPanel verticalPanel;
 
+	protected PatientTagWidget tagWidget;
+
+	protected Label lbTagSearch;
+
 	public static ClaimsManager getInstance() {
 		ClaimsManager claimsManagerScreen = null;
 
@@ -193,6 +198,7 @@ public class ClaimsManager extends ScreenInterface {
 		lblBillingStatus = new Label("Billing Status");
 		lblDateOfService = new Label("Date of Service");
 		lbPatientWidget = new Label("Patient Full Name");
+		lbTagSearch = new Label("Tag Search: ");
 		// TextBoxs for FirsName and LastName
 		txtFirstName = new TextBox();
 		txtFirstName.setWidth("200px");
@@ -431,6 +437,9 @@ public class ClaimsManager extends ScreenInterface {
 				"width", "50%");
 		parentSearchTable.getFlexCellFormatter().setVerticalAlignment(0, 1,
 				HasVerticalAlignment.ALIGN_TOP);
+			
+		tagWidget = new PatientTagWidget();
+
 		tabPanel = new TabPanel();
 		initWidget(tabPanel);
 
@@ -451,8 +460,9 @@ public class ClaimsManager extends ScreenInterface {
 		searchCriteriaTable.setWidget(4, 0, lblPlanName);
 		searchCriteriaTable.setWidget(5, 0, lblName);
 		searchCriteriaTable.setWidget(6, 0, lbPatientWidget);
-		searchCriteriaTable.setWidget(7, 0, lblBillingStatus);
-		searchCriteriaTable.setWidget(8, 0, lblDateOfService);
+		searchCriteriaTable.setWidget(7, 0, lbTagSearch);
+		searchCriteriaTable.setWidget(8, 0, lblBillingStatus);
+		searchCriteriaTable.setWidget(9, 0, lblDateOfService);
 		panelAging = new HorizontalPanel();
 		panelAging.setSpacing(9);
 		// panelAging.setSize("10","2"); //FIXME
@@ -543,6 +553,15 @@ public class ClaimsManager extends ScreenInterface {
 			}
 
 		});
+		tagWidget.addValueChangeHandler(new ValueChangeHandler<String>() {
+		
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				refreshSearch();
+			}
+		
+		});
+		searchCriteriaTable.setWidget(7, 1, tagWidget);
 		// ///////////////////////////
 		rbQueued = new RadioButton("status", "Queued");
 		rbQueued.addClickHandler(new ClickHandler() {
@@ -566,10 +585,10 @@ public class ClaimsManager extends ScreenInterface {
 		statusHp.add(rbQueued);
 		statusHp.add(rbBilled);
 
-		searchCriteriaTable.setWidget(7, 1, statusHp);
+		searchCriteriaTable.setWidget(8, 1, statusHp);
 		// ////////////////////////////
-		searchCriteriaTable.setWidget(8, 1, dateBox);
-		searchCriteriaTable.setWidget(8, 2, cbWholeWeek);
+		searchCriteriaTable.setWidget(9, 1, dateBox);
+		searchCriteriaTable.setWidget(9, 2, cbWholeWeek);
 
 		dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
@@ -605,8 +624,8 @@ public class ClaimsManager extends ScreenInterface {
 		panelButtons.add(btnSearchClaim);
 		panelButtons.add(btnClear);
 		panelButtons.add(btnAgingSummary);
-		searchCriteriaTable.setWidget(9, 1, panelButtons);
-		searchCriteriaTable.getFlexCellFormatter().setColSpan(9, 1, 2);
+		searchCriteriaTable.setWidget(10, 1, panelButtons);
+		searchCriteriaTable.getFlexCellFormatter().setColSpan(10, 1, 2);
 		procDetailsHPanel = new HorizontalPanel();
 		// procDetailsHPanel.setSize("100%", "100%");
 		procDetailFlexTable = new FlexTable();
@@ -825,18 +844,41 @@ public class ClaimsManager extends ScreenInterface {
 									});
 							return c;
 						} else if (columnName.compareTo("status") == 0) {
+							Float balance = Float.parseFloat(data.get("balance"));
+							Label label = new Label(); 
 							if (data.get("billed").equals("0")) {
-								return new Label("Queued");
-							} else
-								return new Label("Billed");
+								label.setText("Queued");
+								if (balance==0) 
+									label.getElement().getStyle().setColor("#5B5B3B");
+								 else if (balance<0)
+									label.getElement().getStyle().setColor("#FF0000");
+							}
+							 else{
+								label.setText("Billed");
+								label.getElement().getStyle().setColor("#6000A0");
+							 }
+							
+							return label;
+						} else if (data.get("balance") != null) {
+							Float balance = Float.parseFloat(data.get("balance"));
+							Label label = new Label(data.get(columnName));
+							if (data.get("billed").equals("1")) 
+								label.getElement().getStyle().setColor("#6000A0");
+							else if (balance==0) 
+								label.getElement().getStyle().setColor("#5B5B3B");
+							 else if (balance<0)
+								label.getElement().getStyle().setColor("#FF0000");
+							return label;
 
 						} else {
 							return (Widget) null;
 						}
-
 					}
+					
 				});
+		
 
+		
 		claimsManagerTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -1452,6 +1494,12 @@ public class ClaimsManager extends ScreenInterface {
 				addExistingSearchCriteria("last_name", "Last Name", txtLastName
 						.getText());
 			}
+			if (tagWidget.getValue()!=null && !tagWidget.getValue().equals("")) {
+				addExistingSearchCriteria("tag", "Tag", tagWidget.getValue());
+				criteria.put("tag", tagWidget.getValue());
+				tagWidget.setVisible(false);
+				lbTagSearch.setVisible(false);
+			}
 			if (rbQueued.getValue()) {
 				criteria.put("billed", "0");
 				statusHp.setVisible(false);
@@ -1479,9 +1527,9 @@ public class ClaimsManager extends ScreenInterface {
 						.getTextBox().getText());
 			}
 			if (cbShowZeroBalance.getValue()) {
-				criteria.put("balance", "0");
+				criteria.put("zerobalance", "1");
 				cbShowZeroBalance.setVisible(false);
-				addExistingSearchCriteria("balance", "Include Zero Balance", "");
+				addExistingSearchCriteria("zerobalance", "Include Zero Balance", "");
 			}
 			if (cbWholeWeek.getValue()) {
 				criteria.put("week", "1");
@@ -1627,13 +1675,18 @@ public class ClaimsManager extends ScreenInterface {
 					lblDateOfService.setVisible(true);
 					dateBox.setVisible(true);
 				}
-				if (key.equals("balance")) {
+				if (key.equals("zerobalance")) {
 					cbShowZeroBalance.setValue(false);
 					cbShowZeroBalance.setVisible(true);
 				}
 				if (key.equals("week")) {
 					cbWholeWeek.setValue(false);
 					cbWholeWeek.setVisible(true);
+				}
+				if (key.equals("tag")) {
+					tagWidget.setVisible(true);
+					lbTagSearch.setVisible(true);
+					tagWidget.clear();
 				}
 				// parentTR = tempNode;
 
@@ -1694,6 +1747,10 @@ public class ClaimsManager extends ScreenInterface {
 		lbPatientWidget.setVisible(true);
 		patientWidget.clear();
 		patientWidget.setVisible(true);
+		
+		tagWidget.setVisible(true);
+		lbTagSearch.setVisible(true);
+		tagWidget.clear();
 
 		statusHp.setVisible(true);
 		lblBillingStatus.setVisible(true);

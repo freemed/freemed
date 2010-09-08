@@ -76,4 +76,9 @@ public class CustomDialogBox extends DialogBox {
 	public CustomDialogBox getCustomDialogBox(){
 		return this;
 	}
+	@Override
+	public void show(){
+		super.show();
+		center();
+	}
 }

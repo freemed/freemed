@@ -1,0 +1,923 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MonthlyMasterJournalSummary_en_US" language="groovy" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="Title" isDefault="false" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
+	<parameter name="param0" class="java.util.Date"/>
+	<parameter name="param1" class="java.util.Date"/>
+	<parameter name="param2" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[call report_MonthlyMasterJournalSummary_en_US($P{param0} ,$P{param1},$P{param2});]]>
+	</queryString>
+	<field name="type" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="3rd Party" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_intake" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_labfee" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_discharge" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_methadone" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_other" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_allw_intake" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_allw_labfee" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_allw_discharge" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_allw_methadone" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sale_all_other" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_intake" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_labfee" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_discharge" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_methadone" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_other" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_allw_intake" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_allw_labfee" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_allw_discharge" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsales_allw_methadone" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dfsale_all_other" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cash_collected" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="psrname" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="practice" class="java.lang.String"/>
+	<variable name="defrSalesTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$F{dfsales_intake}.doubleValue()+$F{dfsales_labfee}.doubleValue()+$F{dfsales_discharge}.doubleValue()+$F{dfsales_methadone}.doubleValue()+$F{dfsales_other}.doubleValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="defrAllwTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[0.0-$F{dfsales_allw_intake}.doubleValue()-$F{dfsales_allw_labfee}.doubleValue()-$F{dfsales_allw_discharge}.doubleValue()-$F{dfsales_allw_methadone}.doubleValue()-$F{dfsale_all_other}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="salesTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[$F{sales_intake}.doubleValue()+$F{sales_labfee}.doubleValue()+$F{sales_discharge}.doubleValue()+$F{sales_methadone}.doubleValue()+$F{sales_other}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="allwTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[0.0-$F{sales_allw_intake}.doubleValue()-$F{sales_allw_labfee}.doubleValue()-$F{sales_allw_discharge}.doubleValue()-$F{sales_allw_methadone}.doubleValue()-$F{sale_all_other}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="finalSlIntake" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_intake}]]></variableExpression>
+	</variable>
+	<variable name="finalSlLabfee" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_labfee}]]></variableExpression>
+	</variable>
+	<variable name="finalSlDischarge" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_discharge}]]></variableExpression>
+	</variable>
+	<variable name="finalSlMethadone" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_methadone}]]></variableExpression>
+	</variable>
+	<variable name="finalSlOther" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_other}]]></variableExpression>
+	</variable>
+	<variable name="finalSlAllwIntake" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_allw_intake}]]></variableExpression>
+	</variable>
+	<variable name="finalSlAllwLabfee" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_allw_labfee}]]></variableExpression>
+	</variable>
+	<variable name="finalSlAllwDischarge" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_allw_discharge}]]></variableExpression>
+	</variable>
+	<variable name="finalSlAllwMethadone" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sales_allw_methadone}]]></variableExpression>
+	</variable>
+	<variable name="finalSlAllwOther" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{sale_all_other}]]></variableExpression>
+	</variable>
+	<variable name="finalDefrSlIntake" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_intake}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlLabfee" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_labfee}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlDischarge" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_discharge}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlMethadone" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_methadone}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlOther" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_other}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlAllwIntake" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_allw_intake}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlAllwLabfee" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_allw_labfee}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlAllwDischarge" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_allw_discharge}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlAllwMethadone" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsales_allw_methadone}]]></variableExpression>
+	</variable>
+	<variable name="finalDfSlAllwOther" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{dfsale_all_other}]]></variableExpression>
+	</variable>
+	<variable name="finalCashCollected" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{cash_collected}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="90" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="264" y="19" width="232" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Master Journal Summary Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="420" y="40" width="26" height="21"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[thru]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="680" y="0" width="80" height="21"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="245" y="41" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[For the period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="245" y="60" width="270" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<text><![CDATA[For 3rd Party Not Assigned To Third Party]]></text>
+			</staticText>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement positionType="Float" x="0" y="0" width="93" height="43"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="345" y="40" width="75" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param0}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="447" y="40" width="75" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="264" y="1" width="232" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{practice}+ " - "+$F{psrname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<staticText>
+				<reportElement style="Column header" x="0" y="19" width="61" height="15"/>
+				<textElement/>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="100" y="19" width="117" height="15"/>
+				<textElement/>
+				<text><![CDATA[3rd Party]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="223" y="19" width="61" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Intake]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="293" y="19" width="61" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Lab Fees]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="363" y="19" width="61" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Discharge]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="430" y="19" width="69" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Methadone]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="506" y="19" width="61" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="575" y="19" width="50" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="391" y="0" width="42" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Sales]]></text>
+			</staticText>
+			<line>
+				<reportElement x="223" y="17" width="402" height="1"/>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="633" y="4" width="55" height="30"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Cash Collected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="697" y="4" width="63" height="30"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Net Effect to A/R]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="105" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="7" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Defr Sales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="22" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Defr Allowances]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="43" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Sales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="58" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Allowances]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="7" width="117" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{3rd Party}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="224" y="7" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_intake}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="294" y="7" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_labfee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="364" y="7" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_discharge}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="431" y="7" width="69" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_methadone}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="7" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_other}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="224" y="22" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_allw_intake}.doubleValue()!=0?$F{dfsales_allw_intake}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="294" y="22" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_allw_labfee}.doubleValue()!=0?$F{dfsales_allw_labfee}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="364" y="22" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_allw_discharge}.doubleValue()!=0?$F{dfsales_allw_discharge}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="431" y="22" width="69" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsales_allw_methadone}.doubleValue()!=0?$F{dfsales_allw_methadone}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="22" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{dfsale_all_other}.doubleValue()!=0?$F{dfsale_all_other}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="217" y="75" width="543" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="79" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Net]]></text>
+			</staticText>
+			<textField pattern="###0.00">
+				<reportElement x="224" y="43" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_intake}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="294" y="43" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_labfee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="364" y="43" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_discharge}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="431" y="43" width="69" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_methadone}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="43" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_other}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="224" y="58" width="61" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_allw_intake}.doubleValue()!=0?$F{sales_allw_intake}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="294" y="58" width="61" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_allw_labfee}.doubleValue()!=0?$F{sales_allw_labfee}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="364" y="58" width="61" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_allw_discharge}.doubleValue()!=0?$F{sales_allw_discharge}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="431" y="58" width="69" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_allw_methadone}.doubleValue()!=0?$F{sales_allw_methadone}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="58" width="61" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sale_all_other}.doubleValue()!=0?$F{sale_all_other}.doubleValue()*-1.0:0.0]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="224" y="79" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_intake}.doubleValue()-$F{sales_allw_intake}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="293" y="79" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_labfee}.doubleValue()-$F{sales_allw_labfee}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="363" y="79" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_discharge}.doubleValue()-$F{sales_allw_discharge}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="506" y="79" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_other}.doubleValue()-$F{sale_all_other}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="430" y="79" width="68" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{sales_methadone}.doubleValue()-$F{sales_allw_methadone}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="103" width="760" height="1"/>
+			</line>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="7" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{defrSalesTotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="22" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{defrAllwTotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="43" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{salesTotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="58" width="46" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{allwTotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="79" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{salesTotal}.doubleValue()+$V{allwTotal}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="633" y="79" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{cash_collected}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="705" y="79" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{salesTotal}.doubleValue()+$V{allwTotal}.doubleValue()-$F{cash_collected}.doubleValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="140" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="61" width="139" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Total Allowances]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="25" width="139" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Total Defr Allowances]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="46" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Total Sales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="10" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Total Defr Sales]]></text>
+			</staticText>
+			<textField pattern="###0.00">
+				<reportElement x="225" y="46" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlIntake}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="293" y="46" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlLabfee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="364" y="46" width="59" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlDischarge}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="433" y="46" width="65" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlMethadone}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="506" y="46" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlOther}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="225" y="61" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0-$V{finalSlAllwIntake}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="293" y="61" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalSlAllwLabfee}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="364" y="61" width="59" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalSlAllwDischarge}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="433" y="60" width="65" height="16"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalSlAllwMethadone}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="61" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalSlAllwOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="224" y="10" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDefrSlIntake}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="294" y="10" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDfSlLabfee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="363" y="10" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDfSlDischarge}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="433" y="10" width="67" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDfSlMethadone}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="10" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDfSlOther}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="223" y="25" width="62" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalDfSlAllwIntake}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="294" y="25" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalDfSlAllwLabfee}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="363" y="25" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalDfSlAllwDischarge}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="433" y="25" width="66" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalDfSlAllwMethadone}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="507" y="25" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalDfSlAllwOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="46" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlIntake}.doubleValue()+$V{finalSlLabfee}.doubleValue()+$V{finalSlDischarge}.doubleValue()+$V{finalSlMethadone}.doubleValue()+$V{finalSlOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="61" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalSlAllwIntake}.doubleValue()-$V{finalSlAllwLabfee}.doubleValue()-$V{finalSlAllwDischarge}.doubleValue()-$V{finalSlAllwMethadone}.doubleValue()-$V{finalSlAllwOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="10" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDefrSlIntake}.doubleValue()+$V{finalDfSlLabfee}.doubleValue()+$V{finalDfSlDischarge}.doubleValue()+$V{finalDfSlMethadone}.doubleValue()+$V{finalDfSlOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="25" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[0.0-$V{finalDfSlAllwIntake}.doubleValue()-$V{finalDfSlAllwLabfee}.doubleValue()-$V{finalDfSlAllwDischarge}.doubleValue()-$V{finalDfSlAllwMethadone}.doubleValue()-$V{finalDfSlAllwOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="83" width="88" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Tot Net]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="223" y="79" width="545" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField pattern="###0.00">
+				<reportElement x="225" y="83" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlIntake}.doubleValue()-$V{finalSlAllwIntake}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="293" y="83" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlLabfee}.doubleValue()-$V{finalSlAllwLabfee}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="363" y="83" width="59" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlDischarge}.doubleValue()-$V{finalSlAllwDischarge}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="436" y="83" width="65" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlMethadone}.doubleValue()-$V{finalSlAllwMethadone}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="506" y="83" width="61" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlOther}.doubleValue()-$V{finalSlAllwOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="579" y="83" width="46" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlIntake}.doubleValue()+$V{finalSlLabfee}.doubleValue()+$V{finalSlDischarge}.doubleValue()+$V{finalSlMethadone}.doubleValue()+$V{finalSlOther}.doubleValue()-$V{finalSlAllwIntake}.doubleValue()-$V{finalSlAllwLabfee}.doubleValue()-$V{finalSlAllwDischarge}.doubleValue()-$V{finalSlAllwMethadone}.doubleValue()-$V{finalSlAllwOther}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="633" y="83" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalCashCollected}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="705" y="83" width="55" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalSlIntake}.doubleValue()+$V{finalSlLabfee}.doubleValue()+$V{finalSlDischarge}.doubleValue()+$V{finalSlMethadone}.doubleValue()+$V{finalSlOther}.doubleValue()-$V{finalSlAllwIntake}.doubleValue()-$V{finalSlAllwLabfee}.doubleValue()-$V{finalSlAllwDischarge}.doubleValue()-$V{finalSlAllwMethadone}.doubleValue()-$V{finalSlAllwOther}.doubleValue()-$V{finalCashCollected}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="296" y="105" width="60" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="225" y="102" width="60" height="1"/>
+			</line>
+			<line>
+				<reportElement x="296" y="102" width="60" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="225" y="105" width="60" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="365" y="106" width="60" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="436" y="103" width="60" height="1"/>
+			</line>
+			<line>
+				<reportElement x="365" y="103" width="60" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="436" y="106" width="60" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="508" y="106" width="60" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="579" y="103" width="46" height="1"/>
+			</line>
+			<line>
+				<reportElement x="508" y="103" width="60" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="579" y="106" width="46" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="634" y="103" width="54" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="634" y="106" width="54" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="705" y="103" width="55" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="705" y="106" width="55" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

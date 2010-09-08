@@ -5,8 +5,9 @@
 	<style name="Column header" isDefault="false" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" isDefault="false" fontName="Arial" fontSize="12"/>
 	<parameter name="param0" class="java.util.Date"/>
+	<parameter name="param1" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[call report_MonthlyClientBalanceDue_en_US($P{param0});]]>
+		<![CDATA[call report_MonthlyClientBalanceDue_en_US($P{param0},$P{param1});]]>
 	</queryString>
 	<field name="Source" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -14,14 +15,45 @@
 	<field name="Balance" class="java.lang.Double">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="patientnum" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="patientname" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="Facility Name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Debit" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Credit" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dchDate" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="practice" class="java.lang.String"/>
 	<variable name="balanceTotal" class="java.lang.Double" resetType="Group" resetGroup="Source" calculation="Sum">
 		<variableExpression><![CDATA[$F{Balance}]]></variableExpression>
 	</variable>
 	<variable name="totalBalance" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{Balance}]]></variableExpression>
+	</variable>
+	<variable name="totalDebit" class="java.lang.Double" resetType="Group" resetGroup="Source" calculation="Sum">
+		<variableExpression><![CDATA[$F{Debit}]]></variableExpression>
+	</variable>
+	<variable name="totalCredits" class="java.lang.Double" resetType="Group" resetGroup="Source" calculation="Sum">
+		<variableExpression><![CDATA[$F{Credit}]]></variableExpression>
+	</variable>
+	<variable name="finalDebit" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{Debit}]]></variableExpression>
+	</variable>
+	<variable name="finalCredit" class="java.lang.Integer" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{Credit}]]></variableExpression>
 	</variable>
 	<group name="Source">
 		<groupExpression><![CDATA[$F{Source}]]></groupExpression>
@@ -39,15 +71,17 @@
 		<groupFooter>
 			<band height="50">
 				<textField>
-					<reportElement x="0" y="15" width="448" height="20"/>
+					<reportElement x="0" y="7" width="320" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["Third Party " + $F{Source} + "Balance"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Third Party " + $F{Source} + " Balance"]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Source" pattern="###0.00">
-					<reportElement x="376" y="15" width="158" height="20"/>
-					<textElement textAlignment="Right">
+					<reportElement x="574" y="7" width="77" height="20">
+						<printWhenExpression><![CDATA[$V{balanceTotal}!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="12"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{balanceTotal}]]></textFieldExpression>
@@ -65,7 +99,64 @@
 					</graphicElement>
 				</line>
 				<line>
-					<reportElement positionType="FixRelativeToBottom" x="376" y="1" width="158" height="1"/>
+					<reportElement positionType="FixRelativeToBottom" x="574" y="1" width="77" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="477" y="1" width="77" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="385" y="1" width="77" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="Source" pattern="###0.00">
+					<reportElement x="478" y="7" width="77" height="20">
+						<printWhenExpression><![CDATA[$V{totalCredits}!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalCredits}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Source" pattern="###0.00">
+					<reportElement x="385" y="7" width="77" height="20">
+						<printWhenExpression><![CDATA[$V{totalDebit}!=0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalDebit}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="385" y="30" width="77" height="1"/>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="385" y="33" width="77" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="478" y="30" width="77" height="1"/>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="478" y="33" width="77" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="574" y="30" width="77" height="1"/>
+				</line>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="574" y="33" width="77" height="1"/>
 					<graphicElement>
 						<pen lineStyle="Solid"/>
 					</graphicElement>
@@ -77,15 +168,11 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
 		<band height="70" splitType="Stretch">
-			<staticText>
-				<reportElement positionType="Float" x="320" y="0" width="82" height="21"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="14" isBold="false"/>
-				</textElement>
-				<text><![CDATA[CODAC 1]]></text>
-			</staticText>
-			<textField pattern="dd/MM/yyyy HH:mm">
+			<textField pattern="MM/dd/yyyy">
 				<reportElement positionType="Float" x="0" y="0" width="93" height="43"/>
 				<textElement>
 					<font fontName="Arial" size="14"/>
@@ -99,51 +186,182 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="169" y="32" width="344" height="20" isPrintWhenDetailOverflows="true"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="185" y="21" width="391" height="22" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12"/>
+					<font fontName="Arial" size="14"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Client Balance Summary by Third Party for All Clients For the Period Ending "+$P{param0}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Client Balance Summary by Third Party for All Clients For the"]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="185" y="1" width="391" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{practice}+" - "+$F{Facility Name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="400" y="43" width="77" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{param0}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="304" y="43" width="96" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<text><![CDATA[Period Ending]]></text>
+			</staticText>
 		</band>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="36" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="760" height="1"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
+		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement style="Column header" x="376" y="19" width="158" height="15"/>
-				<textElement/>
+				<reportElement style="Column header" x="574" y="18" width="77" height="15"/>
+				<textElement textAlignment="Right"/>
 				<text><![CDATA[Balance]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="43" y="19" width="277" height="15"/>
+				<reportElement style="Column header" x="54" y="18" width="93" height="15"/>
 				<textElement/>
-				<text><![CDATA[Client Name]]></text>
+				<text><![CDATA[Name]]></text>
 			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="0" y="18" width="43" height="15"/>
+				<textElement/>
+				<text><![CDATA[Num]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="21" y="0" width="47" height="15"/>
+				<textElement/>
+				<text><![CDATA[Client]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="196" y="15" width="93" height="15"/>
+				<textElement/>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="369" y="18" width="93" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Debit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="462" y="18" width="93" height="15"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Credit]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="412" y="16" width="142" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="574" y="0" width="158" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Discharged]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="574" y="16" width="158" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="651" y="18" width="77" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="416" y="0" width="158" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Active Balance]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="16" width="83" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="37" width="760" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="34" width="760" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="1" width="760" height="15" backcolor="#EAEAEA">
+					<printWhenExpression><![CDATA[$V{Source_COUNT} % 2 == 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement style="Detail" x="54" y="0" width="93" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{patientname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="1" width="43" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{patientnum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="1" width="93" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
 			<textField pattern="###0.00">
-				<reportElement style="Detail" x="376" y="1" width="158" height="15"/>
+				<reportElement x="369" y="0" width="93" height="16">
+					<printWhenExpression><![CDATA[$F{Debit}!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Debit}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="462" y="1" width="93" height="15">
+					<printWhenExpression><![CDATA[$F{Credit}!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Credit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="651" y="1" width="77" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dchDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement style="Detail" x="574" y="1" width="77" height="15">
+					<printWhenExpression><![CDATA[$F{Balance}!=0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="12"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{Balance}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="Detail" x="43" y="0" width="277" height="15"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{patientname}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -156,19 +374,90 @@
 	<summary>
 		<band height="40" splitType="Stretch">
 			<textField pattern="###0.00">
-				<reportElement x="376" y="10" width="158" height="20"/>
+				<reportElement x="574" y="10" width="77" height="20">
+					<printWhenExpression><![CDATA[$V{totalBalance}!=0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="12"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalBalance}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="10" width="402" height="20"/>
+				<reportElement x="147" y="10" width="238" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<text><![CDATA[Total Due: -------------------------------------------------------------------------------->]]></text>
+				<text><![CDATA[Total Due:]]></text>
 			</staticText>
+			<textField pattern="###0.00">
+				<reportElement x="385" y="10" width="77" height="20">
+					<printWhenExpression><![CDATA[$V{finalDebit}!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{finalDebit}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="477" y="10" width="77" height="20">
+					<printWhenExpression><![CDATA[$V{finalCredit}!=0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{finalCredit}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="385" y="5" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="478" y="5" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="574" y="5" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="385" y="32" width="77" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="385" y="35" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="478" y="32" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="478" y="35" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="574" y="32" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="574" y="35" width="77" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
 		</band>
 	</summary>
 </jasperReport>

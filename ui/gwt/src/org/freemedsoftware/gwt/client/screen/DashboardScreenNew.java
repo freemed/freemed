@@ -25,13 +25,16 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.ActionItemsBox;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.DocumentBox;
 import org.freemedsoftware.gwt.client.widget.MessageBox;
@@ -74,10 +77,36 @@ public class DashboardScreenNew extends ScreenInterface {
 	protected Label documentsDetails	 = null;
 	protected String documentsDetailsStr = "unfiled documents available.";
 	
-	public DashboardScreenNew() {
-		// Initialize everything
-		//initialzing main vertical panel
-		final VerticalPanel dashBoardContainer = new VerticalPanel();
+	//Action Items vars
+	protected ActionItemsBox actionItemsBox = null;
+	protected Label actionItemsCountLabel  = null;
+	protected Label actionItemsDetails		= null;
+	protected String actionItemsDetailsStr = "new messages in your inbox.";
+
+	protected VerticalPanel dashBoardContainer;
+	protected VerticalPanel widgetsPanel=new VerticalPanel();
+
+	protected List<String> widgets;
+	private static List<DashboardScreenNew> dashboardScreenList = null;
+	public static DashboardScreenNew getInstance() {
+		DashboardScreenNew dashboardScreen = null;
+
+		if (dashboardScreenList == null)
+			dashboardScreenList = new ArrayList<DashboardScreenNew>();
+		if (dashboardScreenList.size() < AppConstants.MAX_DASHBOARD_TABS) {
+			// creates & returns new next instance of preferencesScreen
+			dashboardScreenList
+					.add(dashboardScreen = new DashboardScreenNew());
+		} else {
+			// returns last instance of preferencesScreen from list
+			dashboardScreen = dashboardScreenList
+					.get(AppConstants.MAX_DASHBOARD_TABS - 1);
+		}
+		return dashboardScreen;
+	}
+	
+	private DashboardScreenNew() {
+		dashBoardContainer = new VerticalPanel();
 		dashBoardContainer.setWidth("100%");
 		
 		//Adding Header Panel
@@ -85,9 +114,6 @@ public class DashboardScreenNew extends ScreenInterface {
 		
 		//Adding Quick Links Panel
 		dashBoardContainer.add(createQuickLinksPanel());		
-
-		//Adding Widgets Panel
-		dashBoardContainer.add(createWidgetsPanel());
 		
 		initWidget(dashBoardContainer);
 		
@@ -121,6 +147,7 @@ public class DashboardScreenNew extends ScreenInterface {
 				// TODO Auto-generated method stub
 				lastUpdateLabel.setText("Last updated on "+Util.getTodayDate());
 				clearView();
+				loadWidgets();
 				reloadDashboard();
 			}
 		
@@ -128,6 +155,13 @@ public class DashboardScreenNew extends ScreenInterface {
 		
 		
 		return headerHPanel;
+	}
+	
+	public void loadWidgets(){
+		//Adding Widgets Panel
+		dashBoardContainer.remove(widgetsPanel);
+		widgetsPanel=createWidgetsPanel();
+		dashBoardContainer.add(widgetsPanel);
 	}
 	
 	protected HorizontalPanel createQuickLinksPanel(){
@@ -138,6 +172,8 @@ public class DashboardScreenNew extends ScreenInterface {
 		
 		int row = 0;
 		
+		
+		//Messages Quick link & detail area
 		msgsCountLabel = new Label();
 		msgsCountLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		quickSummaryTable.setWidget(row, 0, msgsCountLabel);
@@ -162,7 +198,7 @@ public class DashboardScreenNew extends ScreenInterface {
 		});
 		
 		row++;
-
+		//Documents Quick link & detail area
 		documentsCountLabel = new Label();
 		documentsCountLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		quickSummaryTable.setWidget(row, 0, documentsCountLabel);
@@ -186,6 +222,32 @@ public class DashboardScreenNew extends ScreenInterface {
 			}
 		
 		});
+
+		row++;
+		//Documents Quick link & detail area
+		actionItemsCountLabel = new Label();
+		actionItemsCountLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
+		quickSummaryTable.setWidget(row, 0, actionItemsCountLabel);
+		quickSummaryTable.getCellFormatter().setVerticalAlignment(row, 0, HasVerticalAlignment.ALIGN_TOP);
+		
+		final VerticalPanel actionItemsDetailsVPanel = new VerticalPanel();
+		final HTML actionItemsDetailsHeader = new HTML("<a href='javascript:undefined' >Action Items</a>");
+		actionItemsDetailsHeader.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
+		actionItemsDetailsVPanel.add(actionItemsDetailsHeader);
+		
+		actionItemsDetails = new Label();
+		actionItemsDetailsVPanel.add(actionItemsDetails);
+		quickSummaryTable.setWidget(row, 1, actionItemsDetailsVPanel);
+		
+		actionItemsDetailsHeader.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				// TODO Auto-generated method stub
+				Util.spawnTab(AppConstants.ACTION_ITEMS, ActionItemsScreen.getInstance());
+			}
+		
+		});
 		
 		for(int i = row+1;i<5;i++){
 			quickSummaryTable.setText(i,0, "");
@@ -194,34 +256,57 @@ public class DashboardScreenNew extends ScreenInterface {
 		return linksHPanel;
 	}
 	protected VerticalPanel createWidgetsPanel(){
-		final VerticalPanel widgtsVPanel = new VerticalPanel();
-		widgtsVPanel.setWidth("100%");
-		
-		//Adding work list
+		 widgets = null;
 		try{
-			workList = new WorkList();
-			workList.setWidth("70%");
-			widgtsVPanel.add(workList);
+			HashMap<String,List<String>> selectedSections=(HashMap<String,List<String>>)CurrentState.getUserConfig("defaultWidgets","HashMap<String,List>");
+			widgets=selectedSections.get("Sections");
+		}
+		catch(Exception e){
+		}
+		int loopMax=0;
+		if(widgets==null)
+			loopMax=1;
+		else
+			loopMax=widgets.size();
+		final VerticalPanel widgtsVPanel = new VerticalPanel();
+		for(int i=0;i<loopMax;i++){
+			widgtsVPanel.setWidth("100%");
 			
-		}catch(Exception e){}
-		
-		//Adding messages panel
-		messageBox = new MessageBox();
-		messageBox.setWidth("70%");
-		widgtsVPanel.add(messageBox);
-		
-		//Adding Documents panel
-		documentBox = new DocumentBox();
-		documentBox.setWidth("70%");
-		widgtsVPanel.add(documentBox);
-		
-		//Adding notes box
-//		widgtsVPanel.add(notesBox);
-		
-		//Adding prescription refills
-		prescriptionRefillBox = new  PrescriptionRefillBox();
-		prescriptionRefillBox.setWidth("70%");
-		widgtsVPanel.add(prescriptionRefillBox);
+			//Adding work list
+			if((widgets!=null && widgets.get(i).equals("WORK LIST")) || widgets==null){
+				try{
+					workList = new WorkList();
+					workList.setWidth("70%");
+					widgtsVPanel.add(workList);
+					
+				}catch(Exception e){}
+			}
+			//Adding messages panel
+			if((widgets!=null && widgets.get(i).equals("MESSAGES")) || widgets==null){
+				messageBox = new MessageBox();
+				messageBox.setWidth("70%");
+				widgtsVPanel.add(messageBox);
+			}
+			
+			if((widgets!=null && widgets.get(i).equals("UNFILED DOCUMENTS")) || widgets==null){
+				documentBox = new DocumentBox();
+				documentBox.setWidth("70%");
+				widgtsVPanel.add(documentBox);
+			}
+			
+			//Adding prescription refills
+			if((widgets!=null && widgets.get(i).equals("RX REFILLS")) || widgets==null){
+				prescriptionRefillBox = new  PrescriptionRefillBox();
+				prescriptionRefillBox.setWidth("70%");
+				widgtsVPanel.add(prescriptionRefillBox);
+			}
+			//Adding Action Items panel
+			if((widgets!=null && widgets.get(i).equals("ACTION ITEMS")) || widgets==null){
+				actionItemsBox = new ActionItemsBox(true);
+				actionItemsBox.setWidth("70%");
+				widgtsVPanel.add(actionItemsBox);	
+			}
+		}
 		
 		return widgtsVPanel;
 	}	
@@ -247,38 +332,58 @@ public class DashboardScreenNew extends ScreenInterface {
 				//updating documents info
 				documentsCountLabel.setText(result.get("unfiledDocuments"));
 				documentsDetails.setText(result.get("unfiledDocuments") + " " + documentsDetailsStr);
+				
+				//updating Action Items info
+				actionItemsCountLabel.setText(result.get("actionItems"));
+				actionItemsDetails.setText(result.get("actionItems") + " " + actionItemsDetailsStr);
 			}
 		
 		}, "HashMap<String,String>");
 		
 		//Handling Worklist		
-		workList.setProviderGroup(CurrentState.defaultProviderGroup);
-		
-		//Handling Messages
-		messageBox.retrieveData("");
-		
-		//Handling Documents Refills
-		documentBox.retrieveData();
-		
-		//Handling Prescriptions Refills
-		prescriptionRefillBox.cleanView();
-		Util.callApiMethod("UserInterface", "GetUserType", (Integer)null, new CustomRequestCallback() {
-		
-			@Override
-			public void onError() {
+		int loopMax=0;
+		if(widgets==null)
+			loopMax=1;
+		else
+			loopMax=widgets.size();
+		for(int i=0;i<loopMax;i++){
+			if((widgets!=null && widgets.get(i).equals("WORK LIST")) || widgets==null)
+				workList.setProviderGroup(CurrentState.defaultProviderGroup);
+			
+			//Handling Messages
+			if((widgets!=null && widgets.get(i).equals("MESSAGES")) || widgets==null)
+				messageBox.retrieveData("");
+			
+			//Handling Documents Refills
+			if((widgets!=null && widgets.get(i).equals("UNFILED DOCUMENTS")) || widgets==null)
+				documentBox.retrieveData();
+			
+			//Handling Prescriptions Refills
+			if((widgets!=null && widgets.get(i).equals("RX REFILLS")) || widgets==null){
+				prescriptionRefillBox.cleanView();
+				Util.callApiMethod("UserInterface", "GetUserType", (Integer)null, new CustomRequestCallback() {
+				
+					@Override
+					public void onError() {
+					}
+				
+					@Override
+					public void jsonifiedData(Object data) {
+						String userType = (String)data;
+						CurrentState.assignUserType(userType);
+						if(userType.equalsIgnoreCase(AppConstants.USER_TYPE_PROVIDER))
+							prescriptionRefillBox.showDoctor();
+						else if(userType.equalsIgnoreCase(AppConstants.USER_TYPE_MISCELLANEOUS))
+							prescriptionRefillBox.showStaff();
+					}
+				
+				}, "String");
 			}
+			//Handling Messages
+			if((widgets!=null && widgets.get(i).equals("ACTION ITEMS")) || widgets==null)
+				actionItemsBox.retrieveData();
+		}
 		
-			@Override
-			public void jsonifiedData(Object data) {
-				String userType = (String)data;
-				CurrentState.assignUserType(userType);
-				if(userType.equalsIgnoreCase(AppConstants.USER_TYPE_PROVIDER))
-					prescriptionRefillBox.showDoctor();
-				else if(userType.equalsIgnoreCase(AppConstants.USER_TYPE_MISCELLANEOUS))
-					prescriptionRefillBox.showStaff();
-			}
-		
-		}, "String");
 	}
 	
 	public void clearView(){
@@ -289,18 +394,32 @@ public class DashboardScreenNew extends ScreenInterface {
 		//setting to default documents info
 		documentsCountLabel.setText("");
 		documentsDetails.setText("");
-		
-		//Handling Worklist		
-		workList.clearView();
-		
-		//Handling Messages
-		messageBox.clearView();
-		
-		//Handling Documents Refills
-		documentBox.clearView();
-		
-		//Handling Prescriptions Refills
-		prescriptionRefillBox.cleanView();
+
+		//setting to default Action Items info
+		actionItemsCountLabel.setText("");
+		actionItemsDetails.setText("");		
+		int loopMax=0;
+		if(widgets==null)
+			loopMax=1;
+		else
+			loopMax=widgets.size();
+		//Handling Worklist
+		for(int i=0;i<loopMax;i++){
+			if((widgets!=null && widgets.get(i).equals("WORK LIST")) || widgets==null)
+				workList.clearView();
+			
+			//Handling Messages
+			if((widgets!=null && widgets.get(i).equals("MESSAGES")) || widgets==null)
+				messageBox.clearView();
+			
+			//Handling Documents Refills
+			if((widgets!=null && widgets.get(i).equals("UNFILED DOCUMENTS")) || widgets==null)
+				documentBox.clearView();
+			
+			//Handling Prescriptions Refills
+			if((widgets!=null && widgets.get(i).equals("RX REFILLS")) || widgets==null)
+				prescriptionRefillBox.cleanView();
+		}
 		
 	}
 }

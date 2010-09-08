@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -295,6 +296,7 @@ public class ReportingScreen extends ScreenInterface {
 		for (int iter = 0; iter < reportParameters.size(); iter++) {
 			r.add(iter, reportParameters.get(Integer.valueOf(iter)));
 		}
+		
 		return r.toArray(new String[0]);
 	}
 
@@ -314,8 +316,8 @@ public class ReportingScreen extends ScreenInterface {
 			final int i = iter;
 			final String iS = new Integer(iter).toString();
 			String type = data.get("report_param_type_" + iS);
-			reportParametersTable.setText(iter, 0, data
-					.get("report_param_name_" + iS));
+			reportParametersTable.setWidget(iter, 0, new Label(data
+					.get("report_param_name_" + iS)));
 			Widget w = null;
 			if (type.compareToIgnoreCase("Date") == 0) {
 				w = new CustomDatePicker();
@@ -358,6 +360,21 @@ public class ReportingScreen extends ScreenInterface {
 										.getSource()).getValue().toString());
 							}
 						});
+			} else if (type.compareToIgnoreCase("Facility") == 0) {
+				SupportModuleWidget fm= new SupportModuleWidget("FacilityModule");				
+				w=fm;
+				fm.setValue(CurrentState.getDefaultFacility());
+				reportParameters.put(i, CurrentState.getDefaultFacility().toString());
+				((SupportModuleWidget) w)
+						.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+							@Override
+							public void onValueChange(
+									ValueChangeEvent<Integer> event) {
+								reportParameters.put(i, ((SupportModuleWidget) event
+										.getSource()).getStoredValue().toString());
+							}
+						});
+				
 			} else {
 				// Default to text box
 				w = new TextBox();
@@ -369,8 +386,12 @@ public class ReportingScreen extends ScreenInterface {
 					}
 				});
 			}
-			reportParameters.put(iter, "");
-			reportParametersTable.setWidget(iter, 1, w);
+			if(type.compareToIgnoreCase("User") != 0)
+			{
+				if(type.compareToIgnoreCase("Facility") != 0)
+					reportParameters.put(iter, "");
+				reportParametersTable.setWidget(iter, 1, w);
+			}
 		}
 
 		// Show this when everything is populated

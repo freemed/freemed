@@ -26,7 +26,6 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
@@ -192,7 +191,8 @@ public class MultiPageImageCompositedForm extends Composite implements
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("XmrDefinition", "Failed to load data.");
+						Util.showErrorMsg("XmrDefinition",
+								"Failed to load data.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -209,7 +209,8 @@ public class MultiPageImageCompositedForm extends Composite implements
 								populateFormDefinition(r);
 							}
 						} else {
-							Util.showErrorMsg("XmrDefinition", "Failed to load data.");
+							Util.showErrorMsg("XmrDefinition",
+									"Failed to load data.");
 						}
 					}
 				});
@@ -232,7 +233,8 @@ public class MultiPageImageCompositedForm extends Composite implements
 						}
 
 						public void onFailure(Throwable t) {
-							Util.showErrorMsg("XmrDefinition", "Failed to load data.");
+							Util.showErrorMsg("XmrDefinition",
+									"Failed to load data.");
 						}
 					});
 		}

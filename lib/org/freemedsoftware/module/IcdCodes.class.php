@@ -37,7 +37,7 @@ class IcdCodes extends SupportModule {
 	var $record_name	 = "ICD9 Code";
 	var $order_field	 = "icd9code,icdnum";
 	var $widget_hash	 = "##icd9code## ##icd9descrip##";
-
+	var $archive_field = "icdarchive";
 	var $variables = array (
 		"icd9code",
 		"icd10code",
@@ -47,7 +47,8 @@ class IcdCodes extends SupportModule {
 		"icddrg",
 		"icdng",
 		"icdamt",
-		"icdcoll"
+		"icdcoll",
+		"icdarchive"
 	);
 
 	public function __construct () {

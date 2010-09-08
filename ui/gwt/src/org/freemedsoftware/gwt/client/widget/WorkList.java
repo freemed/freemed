@@ -42,6 +42,7 @@ import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -59,14 +60,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkList extends WidgetInterface implements SystemEvent.Handler {
-	
+
 	public final static String moduleName = "WorkListsModule";
-	
+
 	protected Label providerLabel = null;
 	protected Integer providerGroupId = null;
 
@@ -85,21 +85,46 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 
 	public WorkList() {
 		super(moduleName);
-		vPanel = new VerticalPanel();
-		vPanel.setWidth("100%");
-//		vPanel.setSpacing(10);
-//		sPanel.addStyleName("freemed-WorkListContainer");
-		initWidget(vPanel);
+		VerticalPanel superVPanel = new VerticalPanel();
+		superVPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
+		superVPanel.setWidth("100%");
+		initWidget(superVPanel);
+
+		HorizontalPanel headerHPanel = new HorizontalPanel();
+		headerHPanel.setSpacing(5);
+		superVPanel.add(headerHPanel);
 		
-		Label headerLabel = new Label("Work List");
+		final Image colExpBtn = new Image(Util.getResourcesURL()+"collapse.15x15.png");
+		colExpBtn.getElement().getStyle().setCursor(Cursor.POINTER);
+		headerHPanel.add(colExpBtn);
+		colExpBtn.addClickHandler(new ClickHandler() {
+			boolean expaned = false;
+			@Override
+			public void onClick(ClickEvent arg0) {
+				if(expaned){
+					colExpBtn.setUrl(Util.getResourcesURL()+"collapse.15x15.png");
+					vPanel.setVisible(true);
+				}else{
+					colExpBtn.setUrl(Util.getResourcesURL()+"expand.15x15.png");
+					vPanel.setVisible(false);
+				}
+					expaned = !expaned;
+			}
+		});
+
+		Label headerLabel = new Label("WORK LIST");
+		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-		vPanel.add(headerLabel);
+		
+		vPanel = new VerticalPanel();
+		superVPanel.add(vPanel);
+		vPanel.setWidth("100%");
 		
 		paneltop = new HorizontalPanel();
-		
-//		providerLabel = new Label("Refresh to get latest schedules!");
+
+		// providerLabel = new Label("Refresh to get latest schedules!");
 		providerLabel = new Label();
-		
+
 		// hPaneltop.add(refreshButton);
 		paneltop.add(providerLabel);
 		vPanel.add(paneltop);
@@ -108,10 +133,10 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		message.setStylePrimaryName("freemed-MessageText");
 		message.setText("There are no items scheduled for this day.");
 		vPanel.add(message);
-		
+
 		tablesVPanel = new VerticalPanel();
 		vPanel.add(tablesVPanel);
-//		message.setVisible(false);
+		// message.setVisible(false);
 		// retrieveData();
 
 		// Register on the event bus
@@ -156,7 +181,8 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 										statusColorsMap.get(statusid));
 
 					} else {
-						Util.showErrorMsg("Patient Status", "Patient Status Change Failed.");
+						Util.showErrorMsg("Patient Status",
+								"Patient Status Change Failed.");
 
 						// printLabelForAllTakeHome();
 					}
@@ -243,22 +269,21 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 	}
 
 	public void setProviderGroup(Integer pId) {
-		if(pId!=null){
+		if (pId != null) {
 			providerGroupId = pId;
 			populateStatus();
 			retrieveData();
 		}
 	}
-	
-	public void clearView(){
+
+	public void clearView() {
 		tablesVPanel.clear();
 	}
-	
+
 	public void retrieveData() {
 		vPanel.add(paneltop);
 		vPanel.add(message);
-		if(CurrentState.getDefaultProvider()==0)
-		{
+		if (CurrentState.getDefaultProvider() == 0) {
 			providerGroupId = CurrentState.defaultProviderGroup;
 			if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				String[] params = { providerGroupId.toString() };
@@ -275,10 +300,9 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 								com.google.gwt.http.client.Request request,
 								Throwable ex) {
 							Window.alert(ex.toString() + "error1");
-	
+
 						}
-	
-						@SuppressWarnings("unchecked")
+
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
@@ -286,23 +310,25 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 								if (Util.checkValidSessionResponse(response
 										.getText())) {
 									String provs[] = (String[]) JsonUtil
-											.shoehornJson(JSONParser.parse(response
-													.getText()), "String[]");
+											.shoehornJson(JSONParser
+													.parse(response.getText()),
+													"String[]");
 									if (provs != null) {
 										if (provs.length != 0) {
 											providers = new Integer[provs.length];
 											workListsTables = new CustomTable[provs.length];
 											providersLb = new Label[provs.length];
 											for (int i = 0; i < provs.length; i++) {
-												providers[i] = new Integer(provs[i]);
+												providers[i] = new Integer(
+														provs[i]);
 												getProviderInfo(i);
 											}
-	
+
 										} else {
-	
+
 										}
 									}
-	
+
 								}
 							} else {
 								Window.alert(response.toString() + "error2");
@@ -312,11 +338,10 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 				} catch (RequestException e) {
 					Window.alert(e.toString());
 				}
-	
+
 			} else {
 			}
-		}
-		else{
+		} else {
 			providers = new Integer[1];
 			workListsTables = new CustomTable[1];
 			providersLb = new Label[1];
@@ -364,7 +389,6 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 
 					}
 
-					@SuppressWarnings("unchecked")
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
@@ -401,7 +425,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		workListsTables[i].setRowStyle("");
 		workListsTables[i].setAlternateRowStyle("");
 		workListsTables[i].setTableStyle("");
-		if(CurrentState.getDefaultProvider()>0)
+		if (CurrentState.getDefaultProvider() > 0)
 			workListsTables[i].setVisible(true);
 		else
 			workListsTables[i].setVisible(false);
@@ -472,11 +496,12 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 							public void onClick(ClickEvent evt) {
 								Integer entityId = Integer.parseInt(data
 										.get("patient"));
-								if(data.get("appointment_type").equals("pat")){
+								if (data.get("appointment_type").equals("pat")) {
 									PatientScreen p = new PatientScreen();
 									p.setPatient(entityId);
 									Util.spawnTab(data.get("patient_name"), p);
-								}else if(data.get("appointment_type").equals("group")){
+								} else if (data.get("appointment_type").equals(
+										"group")) {
 									spawnGroupScreen(entityId);
 								}
 							}
@@ -524,19 +549,21 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		retrieveData(i);
 
 	}
+
 	/**
 	 * spawn tab for Group.
 	 * 
 	 * @param patient
 	 */
 	public void spawnGroupScreen(Integer groupId) {
-		Util.spawnTab(AppConstants.GROUPS,
-				PatientsGroupScreen.getInstance());
+		Util.spawnTab(AppConstants.GROUPS, PatientsGroupScreen.getInstance());
 		PatientsGroupScreen.getInstance().showGroupInfo(groupId);
 	}
+
 	private void retrieveData(int i) {
 		final int index = i;
-		if ((providerGroupId != null && providerGroupId != 0)|| CurrentState.getDefaultProvider()>0) {
+		if ((providerGroupId != null && providerGroupId != 0)
+				|| CurrentState.getDefaultProvider() > 0) {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -552,7 +579,8 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
-							Util.showErrorMsg("WorkLists", "Failed to get work list.");
+							Util.showErrorMsg("WorkLists",
+									"Failed to get work list.");
 						}
 
 						@SuppressWarnings("unchecked")
@@ -603,7 +631,8 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 
 								}
 							} else {
-								Util.showErrorMsg("WorkLists", "Failed to get work list.");
+								Util.showErrorMsg("WorkLists",
+										"Failed to get work list.");
 							}
 						}
 					});
@@ -635,12 +664,14 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		if (eventMutex == false) {
 			eventMutex = true;
 			if (e.getSourceModule().equals("scheduler_status")) {
-				Util.showInfoMsg("WorkLists", "Updated patient status available");
+				Util.showInfoMsg("WorkLists",
+						"Updated patient status available");
 				retrieveData();
 			}
 			eventMutex = false;
 		} else {
-			JsonUtil.debug("WorkList duplicate system event, dropping on floor");
+			JsonUtil
+					.debug("WorkList duplicate system event, dropping on floor");
 		}
 	}
 

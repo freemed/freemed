@@ -101,8 +101,14 @@ public class CurrentState {
 
 	public static Integer defaultProviderGroup = null;
 	
-	public static String SYSTEM_NOTIFY_TYPE = "";
+	private static String SYSTEM_NOTIFY_TYPE = AppConstants.SYSTEM_NOTIFY_ERROR;
  
+	public static boolean FormAutosaveEnable = true;
+	
+	protected static Integer FormAutosaveInterval = 60*1000;
+	
+	protected static Integer MinCharCountForSmartSearch = 1; 
+	
 	public CurrentState() {
 		retrieveUserConfiguration(true);
 		retrieveSystemConfiguration(true, null);
@@ -203,6 +209,44 @@ public class CurrentState {
 	public static void assignCurrentPageHelp(String currentPageHelp) {
 		CurrentState.currentPageHelp = currentPageHelp;
 	}
+
+	/**
+	 * Assign Form Autosave flag
+	 * 
+	 * @param boolean
+	 */
+	public static void assignFormAutoSave(Boolean enable) {
+		FormAutosaveEnable = enable;
+	}
+
+	/**
+	 * Assign Form FormAutosave Interval
+	 * 
+	 * @param boolean
+	 */
+	public static void assignFormAutoSaveInterval(Integer interval) {
+		FormAutosaveInterval = interval;
+	}
+
+	/**
+	 * Assign minimum characters count for smart search fields
+	 * 
+	 * @param boolean
+	 */
+	public static void assignMinCharCountForSmartSearch(Integer charCount) {
+		MinCharCountForSmartSearch = charCount;
+	}
+
+	/**
+	 * Assign SYSTEM_NOTIFY_TYPE
+	 * 
+	 * @param boolean
+	 */
+	public static void assignSYSTEM_NOTIFY_TYPE(String notify_type) {
+		if(notify_type!=null && notify_type.length()>0)
+			SYSTEM_NOTIFY_TYPE = notify_type;
+	}
+	
 	
 	/**
 	 * Add an item to the status bar stack.
@@ -273,10 +317,26 @@ public class CurrentState {
 		return toaster;
 	}
 
+	public static boolean getFormAutoSave() {
+		return FormAutosaveEnable;
+	}
+	
+	public static Integer getFormAutoSaveInterval() {
+		return FormAutosaveInterval;
+	}
+	
+	public static Integer getMinCharCountForSmartSearch() {
+		return MinCharCountForSmartSearch;
+	}
+	
 	public static HashMap<Integer, PatientScreen> getPatientScreenMap() {
 		return patientScreenMap;
 	}
 
+	public static String getSYSTEM_NOTIFY_TYPE() {
+		return SYSTEM_NOTIFY_TYPE;
+	}
+	
 	/**
 	 * Get user specific configuration value, or "" if there is no value.
 	 * 
@@ -534,7 +594,7 @@ public class CurrentState {
 									JsonUtil
 											.debug("successfully retrieved System Configuration");
 									systemConfiguration = r;
-
+									reEvaluateSystemConfiguration();
 									if (onLoad != null) {
 										onLoad.execute();
 									}
@@ -556,6 +616,17 @@ public class CurrentState {
 		}
 	}
 
+	protected static void reEvaluateSystemConfiguration(){
+		if(getSystemConfig("form_autosave")!=null)
+			assignFormAutoSave(getSystemConfig("form_autosave").equalsIgnoreCase("1"));
+		
+		if(getSystemConfig("form_autosave_interval")!=null)
+			assignFormAutoSaveInterval(Integer.parseInt(getSystemConfig("form_autosave_interval")) * 1000);
+		
+		if(getSystemConfig("smart_search_char_len")!=null)
+			assignMinCharCountForSmartSearch(Integer.parseInt(getSystemConfig("smart_search_char_len")));
+	}
+	
 	/**
 	 * evaluate whether this menu option should be visible or not
 	 * 

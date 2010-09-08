@@ -25,6 +25,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -107,33 +108,39 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		modifyImage = new Image(IMAGE_MODIFY);
 		modifyImage.setTitle("Edit");
 		modifyImage.addClickHandler(this);
+		modifyImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(modifyImage);
 		
 		deleteImage = new Image(IMAGE_DELETE);
 		deleteImage.setTitle("Remove");
 		deleteImage.addClickHandler(this);
+		deleteImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(deleteImage);
 		
 		
 		cloneImage = new Image(IMAGE_CLONE);
 		cloneImage.setTitle("Clone");
 		cloneImage.addClickHandler(this);
+		cloneImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(cloneImage);
 		
 		viewImage = new Image(IMAGE_VIEW);
 		viewImage.setTitle("View");
 		viewImage.addClickHandler(this);
+		viewImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(viewImage);
 		
 		lockImage= new Image(IMAGE_LOCK);
-		lockImage.setTitle("lock image");
+		lockImage.setTitle("lock record");
 		lockImage.addClickHandler(this);
+		lockImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		lockImage.setVisible(false);
 		hPanel.add(lockImage);
 		
 		lockedImage= new Image(IMAGE_LOCKED);
 		lockedImage.setTitle("locked");
 		lockedImage.addClickHandler(this);
+		lockedImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		lockedImage.setVisible(false);
 		hPanel.add(lockedImage);
 		
@@ -146,6 +153,7 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		printImage = new Image(IMAGE_PRINT);
 		printImage.setTitle("Print");
 		printImage.addClickHandler(this);
+		printImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(printImage);
 
 		
@@ -197,6 +205,17 @@ public class CustomActionBar extends Composite implements ClickHandler {
 
 	public void hideAction(int action){
 		showHideAction(action, false);
+	}
+
+	public void hideAll(){
+		addImage.setVisible(false);
+		deleteImage.setVisible(false);
+		modifyImage.setVisible(false);
+		viewImage.setVisible(false);
+		printImage.setVisible(false);
+		lockImage.setVisible(false);
+		lockedImage.setVisible(false);
+		cloneImage.setVisible(false);
 	}
 	
 	protected void showHideAction(int action,boolean show){

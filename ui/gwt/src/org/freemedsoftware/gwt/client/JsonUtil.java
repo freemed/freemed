@@ -216,12 +216,13 @@ public class JsonUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static synchronized Object shoehornJson(String r, String t){
+	public static synchronized Object shoehornJson(String r, String t) {
 		return shoehornJson(JSONParser.parse(r), t);
 	}
+
 	@SuppressWarnings("unchecked")
 	public static synchronized Object shoehornJson(JSONValue r, String t) {
-		if(r==null || r.toString().equals("null"))
+		if (r == null || r.toString().equals("null"))
 			return null;
 		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,String>[]>") == 0) {
 			HashMap<String, HashMap<String, String>[]> oResult = new HashMap<String, HashMap<String, String>[]>();
@@ -370,7 +371,8 @@ public class JsonUtil {
 					while (iter.hasNext()) {
 						String k = iter.next();
 						if (obj.get(k).isNumber() != null) {
-							item.put(k, (int)obj.get(k).isNumber().doubleValue());
+							item.put(k, (int) obj.get(k).isNumber()
+									.doubleValue());
 						}
 					}
 					oResult.put(innerKey, (HashMap<String, Integer>) item);
@@ -398,7 +400,7 @@ public class JsonUtil {
 			while (iter.hasNext()) {
 				String k = iter.next();
 				if (obj.get(k).isNumber() != null) {
-					result.put(k, (int)obj.get(k).isNumber().doubleValue());
+					result.put(k, (int) obj.get(k).isNumber().doubleValue());
 				}
 			}
 			return (HashMap<String, Integer>) result;
@@ -452,7 +454,8 @@ public class JsonUtil {
 					if (a.isArray() != null) {
 						for (int iter = 0; iter < a.size(); iter++) {
 							if (a.get(iter).isString() != null) {
-								//x.add(iter, a.get(iter).isString().stringValue());
+								// x.add(iter,
+								// a.get(iter).isString().stringValue());
 								x[iter] = a.get(iter).isString().stringValue();
 							}
 						}
@@ -462,7 +465,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, String[]>) oResult;
 		}
-		
+
 		if (t.compareToIgnoreCase("HashMap<String,List>") == 0) {
 			HashMap<String, List> oResult = new HashMap<String, List>();
 			JSONObject oA = r.isObject();
@@ -475,7 +478,8 @@ public class JsonUtil {
 					if (a.isArray() != null) {
 						for (int iter = 0; iter < a.size(); iter++) {
 							if (a.get(iter).isString() != null) {
-								//x.add(iter, a.get(iter).isString().stringValue());
+								// x.add(iter,
+								// a.get(iter).isString().stringValue());
 								x.add(a.get(iter).isString().stringValue());
 							}
 						}

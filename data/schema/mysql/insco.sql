@@ -46,15 +46,17 @@ CREATE TABLE IF NOT EXISTS `insco` (
 	, inscodefformat	VARCHAR (50) DEFAULT 'cms1500'
 	, inscodeftarget	VARCHAR (120) DEFAULT 'org.remitt.plugin.transpo
 rt.StoreFilePdf'
-	, inscodeftargetopt	VARCHAR (50) DEFAULT ''
+	, inscodeftargetopt	VARCHAR (75) DEFAULT ''
 	, inscodefformate	VARCHAR (50) DEFAULT '837p'
 	, inscodeftargete	VARCHAR (120) DEFAULT 'org.remitt.plugin.transport.StoreFile'
 	, inscodeftargetopte	VARCHAR (50) DEFAULT ''
+	, inscoarchive		INT(10) UNSIGNED DEFAULT 0
 	, id			SERIAL
 
 	# Keys
 	, KEY ( insconame )
 	, KEY ( inscox12id )
+	, KEY ( inscoarchive )
 );
 
 DROP PROCEDURE IF EXISTS insco_Upgrade;
@@ -77,6 +79,8 @@ BEGIN
 
 		#	Update REMITT modules (TODO, if need be)
 	END IF;
+	ALTER IGNORE TABLE insco ADD COLUMN inscoarchive INT(10) UNSIGNED DEFAULT 0 AFTER inscodeftargetopte;
+	ALTER IGNORE TABLE insco ADD INDEX inscoarchive ( inscoarchive );
 
 	CALL FreeMED_Module_UpdateVersion( 'insco', 2 );
 END

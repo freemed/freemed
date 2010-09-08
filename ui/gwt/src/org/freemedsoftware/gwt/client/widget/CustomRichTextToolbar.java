@@ -32,11 +32,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ImageBundle;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RichTextArea;
@@ -46,97 +47,43 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CustomRichTextToolbar extends Composite {
 
-	public interface Images extends ImageBundle {
+	public interface Images extends ClientBundle {
 
-		/**
-		 * @gwt.resource bold.gif
-		 */
-		AbstractImagePrototype bold();
+		ImageResource bold();
 
-		/**
-		 * @gwt.resource createLink.gif
-		 */
-		AbstractImagePrototype createLink();
+		ImageResource createLink();
 
-		/**
-		 * @gwt.resource hr.gif
-		 */
-		AbstractImagePrototype hr();
+		ImageResource hr();
 
-		/**
-		 * @gwt.resource indent.gif
-		 */
-		AbstractImagePrototype indent();
+		ImageResource indent();
 
-		/**
-		 * @gwt.resource insertImage.gif
-		 */
-		AbstractImagePrototype insertImage();
+		ImageResource insertImage();
 
-		/**
-		 * @gwt.resource italic.gif
-		 */
-		AbstractImagePrototype italic();
+		ImageResource italic();
 
-		/**
-		 * @gwt.resource justifyCenter.gif
-		 */
-		AbstractImagePrototype justifyCenter();
+		ImageResource justifyCenter();
 
-		/**
-		 * @gwt.resource justifyLeft.gif
-		 */
-		AbstractImagePrototype justifyLeft();
+		ImageResource justifyLeft();
 
-		/**
-		 * @gwt.resource justifyRight.gif
-		 */
-		AbstractImagePrototype justifyRight();
+		ImageResource justifyRight();
 
-		/**
-		 * @gwt.resource ol.gif
-		 */
-		AbstractImagePrototype ol();
+		ImageResource ol();
 
-		/**
-		 * @gwt.resource outdent.gif
-		 */
-		AbstractImagePrototype outdent();
+		ImageResource outdent();
 
-		/**
-		 * @gwt.resource removeFormat.gif
-		 */
-		AbstractImagePrototype removeFormat();
+		ImageResource removeFormat();
 
-		/**
-		 * @gwt.resource removeLink.gif
-		 */
-		AbstractImagePrototype removeLink();
+		ImageResource removeLink();
 
-		/**
-		 * @gwt.resource strikeThrough.gif
-		 */
-		AbstractImagePrototype strikeThrough();
+		ImageResource strikeThrough();
 
-		/**
-		 * @gwt.resource subscript.gif
-		 */
-		AbstractImagePrototype subscript();
+		ImageResource subscript();
 
-		/**
-		 * @gwt.resource superscript.gif
-		 */
-		AbstractImagePrototype superscript();
+		ImageResource superscript();
 
-		/**
-		 * @gwt.resource ul.gif
-		 */
-		AbstractImagePrototype ul();
+		ImageResource ul();
 
-		/**
-		 * @gwt.resource underline.gif
-		 */
-		AbstractImagePrototype underline();
+		ImageResource underline();
 	}
 
 	/**
@@ -227,18 +174,18 @@ public class CustomRichTextToolbar extends Composite {
 		public void onChange(ChangeEvent event) {
 			Widget sender = (Widget) event.getSource();
 			if (sender == backColors) {
-				basic.setBackColor(backColors.getValue(backColors
+				formatter.setBackColor(backColors.getValue(backColors
 						.getSelectedIndex()));
 				backColors.setSelectedIndex(0);
 			} else if (sender == foreColors) {
-				basic.setForeColor(foreColors.getValue(foreColors
+				formatter.setForeColor(foreColors.getValue(foreColors
 						.getSelectedIndex()));
 				foreColors.setSelectedIndex(0);
 			} else if (sender == fonts) {
-				basic.setFontName(fonts.getValue(fonts.getSelectedIndex()));
+				formatter.setFontName(fonts.getValue(fonts.getSelectedIndex()));
 				fonts.setSelectedIndex(0);
 			} else if (sender == fontSizes) {
-				basic.setFontSize(fontSizesConstants[fontSizes
+				formatter.setFontSize(fontSizesConstants[fontSizes
 						.getSelectedIndex() - 1]);
 				fontSizes.setSelectedIndex(0);
 			}
@@ -248,90 +195,90 @@ public class CustomRichTextToolbar extends Composite {
 		public void onClick(ClickEvent event) {
 			Widget sender = (Widget) event.getSource();
 			if (sender == bold) {
-				basic.toggleBold();
+				formatter.toggleBold();
 				return;
 			}
 			if (sender == italic) {
-				basic.toggleItalic();
+				formatter.toggleItalic();
 				return;
 			}
 			if (sender == underline) {
-				basic.toggleUnderline();
+				formatter.toggleUnderline();
 				return;
 			}
 			if (sender == subscript) {
-				basic.toggleSubscript();
+				formatter.toggleSubscript();
 				return;
 			}
 			if (sender == superscript) {
-				basic.toggleSuperscript();
+				formatter.toggleSuperscript();
 				return;
 			}
 			if (sender == strikethrough) {
-				extended.toggleStrikethrough();
+				formatter.toggleStrikethrough();
 				return;
 			}
 			if (sender == indent) {
-				extended.rightIndent();
+				formatter.rightIndent();
 				return;
 			}
 			if (sender == outdent) {
-				extended.leftIndent();
+				formatter.leftIndent();
 				return;
 			}
 			if (sender == justifyLeft) {
-				basic.setJustification(RichTextArea.Justification.LEFT);
+				formatter.setJustification(RichTextArea.Justification.LEFT);
 				return;
 			}
 			if (sender == justifyCenter) {
-				basic.setJustification(RichTextArea.Justification.CENTER);
+				formatter.setJustification(RichTextArea.Justification.CENTER);
 				return;
 			}
 			if (sender == justifyRight) {
-				basic.setJustification(RichTextArea.Justification.RIGHT);
+				formatter.setJustification(RichTextArea.Justification.RIGHT);
 				return;
 			}
 			if (sender == insertImage) {
 				String url = Window.prompt("Enter an image URL:", "http://");
 				if (url != null) {
-					extended.insertImage(url);
+					formatter.insertImage(url);
 				}
 				return;
 			}
 			if (sender == createLink) {
 				String url = Window.prompt("Enter a link URL:", "http://");
 				if (url != null) {
-					extended.createLink(url);
+					formatter.createLink(url);
 				}
 				return;
 			}
 			if (sender == removeLink) {
-				extended.removeLink();
+				formatter.removeLink();
 				return;
 			}
 			if (sender == hr) {
-				extended.insertHorizontalRule();
+				formatter.insertHorizontalRule();
 				return;
 			}
 			if (sender == ol) {
-				extended.insertOrderedList();
+				formatter.insertOrderedList();
 				return;
 			}
 			if (sender == ul) {
-				extended.insertUnorderedList();
+				formatter.insertUnorderedList();
 				return;
 			}
 			if (sender == removeFormat) {
-				extended.removeFormat();
+				formatter.removeFormat();
 				return;
 			}
 			if (sender == richText) {
-				// We use the RichTextArea's onKeyUp event to update the toolbar
-				// status.
-				// This will catch any cases where the user moves the cursur
-				// using the
-				// keyboard, or uses one of the browser's built-in keyboard
-				// shortcuts.
+				/*
+				 * We use the RichTextArea's onKeyUp event to update the toolbar
+				 * status. This will catch any cases where the user moves the
+				 * cursor using the keyboard, or uses one of the browser's
+				 * built-in keyboard shortcuts.
+				 */
 				updateStatus();
 			}
 		}
@@ -339,12 +286,12 @@ public class CustomRichTextToolbar extends Composite {
 		public void onKeyUp(KeyUpEvent event) {
 			Widget sender = (Widget) event.getSource();
 			if (sender == richText) {
-				// We use the RichTextArea's onKeyUp event to update the toolbar
-				// status.
-				// This will catch any cases where the user moves the cursur
-				// using the
-				// keyboard, or uses one of the browser's built-in keyboard
-				// shortcuts.
+				/*
+				 * We use the RichTextArea's onKeyUp event to update the toolbar
+				 * status. This will catch any cases where the user moves the
+				 * cursor using the keyboard, or uses one of the browser's
+				 * built-in keyboard shortcuts.
+				 */
 				updateStatus();
 			}
 		}
@@ -362,8 +309,7 @@ public class CustomRichTextToolbar extends Composite {
 	private EventListener listener = new EventListener();
 
 	private CustomRichTextArea richText;
-	private RichTextArea.BasicFormatter basic;
-	private RichTextArea.ExtendedFormatter extended;
+	private RichTextArea.Formatter formatter;
 
 	private VerticalPanel outer = new VerticalPanel();
 	private HorizontalPanel topPanel = new HorizontalPanel();
@@ -400,8 +346,7 @@ public class CustomRichTextToolbar extends Composite {
 	 */
 	public CustomRichTextToolbar(CustomRichTextArea richText) {
 		this.richText = richText;
-		this.basic = richText.getBasicFormatter();
-		this.extended = richText.getExtendedFormatter();
+		this.formatter = richText.getFormatter();
 
 		outer.add(topPanel);
 		outer.add(bottomPanel);
@@ -411,7 +356,7 @@ public class CustomRichTextToolbar extends Composite {
 		initWidget(outer);
 		setStyleName("gwt-RichTextToolbar");
 
-		if (basic != null) {
+		if (formatter != null) {
 			topPanel.add(bold = createToggleButton(images.bold(), strings
 					.bold()));
 			topPanel.add(italic = createToggleButton(images.italic(), strings
@@ -428,9 +373,6 @@ public class CustomRichTextToolbar extends Composite {
 					.justifyCenter(), strings.justifyCenter()));
 			topPanel.add(justifyRight = createPushButton(images.justifyRight(),
 					strings.justifyRight()));
-		}
-
-		if (extended != null) {
 			topPanel.add(strikethrough = createToggleButton(images
 					.strikeThrough(), strings.strikeThrough()));
 			topPanel.add(indent = createPushButton(images.indent(), strings
@@ -448,9 +390,6 @@ public class CustomRichTextToolbar extends Composite {
 			// strings.removeLink()));
 			topPanel.add(removeFormat = createPushButton(images.removeFormat(),
 					strings.removeFormat()));
-		}
-
-		if (basic != null) {
 			bottomPanel.add(backColors = createColorList("Background"));
 			bottomPanel.add(foreColors = createColorList("Foreground"));
 			bottomPanel.add(fonts = createFontList());
@@ -510,16 +449,15 @@ public class CustomRichTextToolbar extends Composite {
 		return lb;
 	}
 
-	private PushButton createPushButton(AbstractImagePrototype img, String tip) {
-		PushButton pb = new PushButton(img.createImage());
+	private PushButton createPushButton(ImageResource img, String tip) {
+		PushButton pb = new PushButton(new Image(img.getURL()));
 		pb.addClickHandler(listener);
 		pb.setTitle(tip);
 		return pb;
 	}
 
-	private ToggleButton createToggleButton(AbstractImagePrototype img,
-			String tip) {
-		ToggleButton tb = new ToggleButton(img.createImage());
+	private ToggleButton createToggleButton(ImageResource img, String tip) {
+		ToggleButton tb = new ToggleButton(new Image(img.getURL()));
 		tb.addClickHandler(listener);
 		tb.setTitle(tip);
 		return tb;
@@ -529,16 +467,13 @@ public class CustomRichTextToolbar extends Composite {
 	 * Updates the status of all the stateful buttons.
 	 */
 	private void updateStatus() {
-		if (basic != null) {
-			bold.setDown(basic.isBold());
-			italic.setDown(basic.isItalic());
-			underline.setDown(basic.isUnderlined());
-			subscript.setDown(basic.isSubscript());
-			superscript.setDown(basic.isSuperscript());
-		}
-
-		if (extended != null) {
-			strikethrough.setDown(extended.isStrikethrough());
+		if (formatter != null) {
+			bold.setDown(formatter.isBold());
+			italic.setDown(formatter.isItalic());
+			underline.setDown(formatter.isUnderlined());
+			subscript.setDown(formatter.isSubscript());
+			superscript.setDown(formatter.isSuperscript());
+			strikethrough.setDown(formatter.isStrikethrough());
 		}
 	}
 

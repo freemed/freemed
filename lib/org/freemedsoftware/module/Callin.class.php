@@ -37,6 +37,10 @@ class Callin extends SupportModule {
 
         var $widget_hash = '##cilname##, ##cifname## ##cimname##';
 
+	var $archive_field = "ciarchive";
+
+	var $archive_check = "1";
+
 	var $variables = array (
 		'cilname',
 		'cifname',
@@ -47,9 +51,40 @@ class Callin extends SupportModule {
 		'cicomplaint',
 		'cifacility',
 		'ciphysician',
+		'ciisinsured',
+		'coveffdt',
+		'covinsco',
+		'covpatinsno',
+		'covpatgrpno',
+		'covtype',
+		'covstatus',
+		'covrel',
+		'covlname',
+		'covfname',
+		'covmname',
+		'covaddr1',
+		'covaddr2',
+		'covcity',
+		'covstate',
+		'covzip',
+		'covdob',
+		'covsex',
+		'covssn',
+		'covinstp',
+		'covprovasgn',
+		'covbenasgn',
+		'covrelinfo',
+		'covrelinfodt',
+		'covplanname',
+		'covisassigning',
+		'covschool',
+		'covemployer',
+		'covcopay',
+		'covdeduct',
 		'ciuser',
 		'citookcall',
-		'cipatient'
+		'cipatient',
+		'ciarchive'
 	);
 
 	public function __construct ( ) {
@@ -57,6 +92,8 @@ class Callin extends SupportModule {
 
 		// Call parent constructor
 		parent::__construct();
+		if($this->archive_field)
+			$this->archive_check = "(".$this->archive_field." IS NULL OR ".$this->archive_field."=0)";
 	} // end constructor Callin
 
 	protected function add_pre ( &$data ) {
@@ -80,9 +117,41 @@ class Callin extends SupportModule {
 	//	Hash.
 	public function GetAll () {
 		freemed::acl_enforce( 'emr', 'read' );
-		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin ORDER BY cidatestamp DESC";
+		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y %H:%m:%s') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin WHERE ".$this->archive_check." ORDER BY cidatestamp DESC";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
+
+	// Method: GetAllWithInsurance
+	//
+	//	Get array of all call-in patient records.
+	//
+	// Parameters:
+	//
+	//	$id - Database ID
+	//
+	// Returns:
+	//
+	//	Hash.
+	public function GetAllWithInsurance ($criteria=NULL) {
+		freemed::acl_enforce( 'emr', 'read' );
+		$conditions = "";
+		if($criteria!=NULL){
+			if($criteria['cilname'])
+				$conditions=$conditions.($conditions?" AND ":" ")."ci.cilname like '%".$criteria['cilname']."%'";
+			if($criteria['cifname'])
+				$conditions=$conditions.($conditions?" AND ":" ")."ci.cilname like '%".$criteria['cilname']."%'";
+			if($criteria['id'])
+				$conditions=$conditions.($conditions?" AND ":" ")."ci.id =".$GLOBALS['sql']->quote($criteria['id']);
+			if(!$criteria['ciarchive'])
+				$conditions=$conditions.($conditions?" AND ":" ").$this->archive_check;
+		}else
+			$conditions=$this->archive_check;
+		if(!$conditions)
+			$conditions = 1;
+		
+		$q = "SELECT CONCAT(ci.cilname, ', ', ci.cifname, ' ', ci.cimname) AS name, ci.cicomplaint AS complaint, ci.citookcall AS took_call, ci.cidatestamp AS call_date,ci.ciarchive as archive, DATE_FORMAT(ci.cidatestamp, '%m\/%d\/%Y %H:%m:%s') AS call_date_mdy, CONCAT(CASE WHEN ci.cihphone!='' then CONCAT('(H)',ci.cihphone) ELSE '' END, CASE WHEN ci.ciwphone!='' THEN CONCAT(' (W)',ci.ciwphone) ELSE '' END,CASE WHEN si.iiptmphone!='' THEN CONCAT(' (M)',si.iiptmphone) ELSE '' END) as contact_phone, ci.id,CASE WHEN ci.ciisinsured=1 THEN CONCAT( insci.insconame, ' (', insci.inscocity, ', ', insci.inscostate, ')') ELSE CONCAT( insii.insconame, ' (', insii.inscocity, ', ', insii.inscostate, ')') END AS coverage FROM callin ci LEFT JOIN insco insci on insci.id = ci.covinsco and ci.ciisinsured=1 LEFT JOIN treatment_initial_intake tii on tii.intaketype='callin' and tii.patient = ci.id LEFT JOIN sa_intake si on si.id = tii.saintakeid LEFT JOIN insco insii on insii.id = si.iiinsurancename and si.iiisinsured ='y' WHERE ".$conditions." ORDER BY ci.cidatestamp DESC";		
+		return $GLOBALS['sql']->queryAll( $q );
+	} // end method GetAllWithInsurance
 	
 	// Method: GetDetailedRecord
 	//
@@ -97,7 +166,7 @@ class Callin extends SupportModule {
 		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
 		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility, f.id as facilityid"
 		.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
-		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id;
+		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id." AND ".$this->archive_check;
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method GetDetailedRecord
 	
@@ -114,12 +183,9 @@ class Callin extends SupportModule {
 		
 		$id = $GLOBALS['sql']->quote($id);
 		
-		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
-		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, f.psrname as facility, f.id as facilityid"
-		.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
-		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id;
+		$q = "select * FROM callin c where c.id=".$id." AND ".$this->archive_check;
 		$return = $GLOBALS['sql']->queryRow( $q );
-		$q = "select * from treatment_initial_intake where intaketype = 'callin' and patient = ".$id;
+		$q = "select tii.id as treatment_id,tii.* from treatment_initial_intake tii where tii.intaketype = 'callin' and tii.patient = ".$id;
 		$r = $GLOBALS['sql']->queryRow( $q );
 		//return $r;
 		if($r){

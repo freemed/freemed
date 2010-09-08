@@ -41,6 +41,7 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
@@ -49,7 +50,9 @@ import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -73,6 +76,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class UnfiledDocuments extends ScreenInterface {
 
@@ -152,42 +156,122 @@ public class UnfiledDocuments extends ScreenInterface {
 		wDocuments.setIndexName("id");
 		wDocuments.addColumn("Date", "uffdate");
 		wDocuments.addColumn("Filename", "ufffilename");
+		wDocuments.addColumn("Action", "action");
+		wDocuments
+		.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+			public Widget setColumn(String columnName,
+					HashMap<String, String> data) {
+				// Render only action column, otherwise skip renderer
+				if (columnName.compareToIgnoreCase("action") != 0) {
+					return null;
+				}
+				final CustomActionBar actionBar = new CustomActionBar(
+						data);
+				actionBar.applyPermissions(false, false, true,
+						false, false);
+				actionBar
+						.setHandleCustomAction(new HandleCustomAction() {
+							@Override
+							public void handleAction(int id,
+									HashMap<String, String> data,
+									int action) {
+								if (action == HandleCustomAction.DELETE) {
+									try {
+										String[] params = { ""+id };
+										RequestBuilder builder = new RequestBuilder(
+												RequestBuilder.POST,
+												URL
+														.encode(Util
+																.getJsonRequest(
+																		"org.freemedsoftware.module.UnfiledDocuments.del",
+																		params)));
+										try {
+											builder.sendRequest(null, new RequestCallback() {
+												public void onError(Request request, Throwable ex) {
+													Window.alert(ex.toString());
+												}
+
+												public void onResponseReceived(Request request,
+														Response response) {
+
+													if (Util.checkValidSessionResponse(response.getText())) {
+														if (200 == response.getStatusCode()) {
+															try {
+																Boolean result = (Boolean) JsonUtil
+																		.shoehornJson(JSONParser
+																				.parse(response.getText()),
+																				"Boolean");
+																if(result){
+																	Util.showInfoMsg("UnfiledDocuments",
+																	"Document Successfully Deleted.");
+																	loadData();
+																}
+															} catch (Exception e) {
+																Util.showErrorMsg("UnfiledDocuments",
+																		"Document failed to Delete");
+															}
+														} else {
+															Util.showErrorMsg("UnfiledDocuments",
+															"Document failed to Delete");
+														}
+													}
+												}
+											});
+										} catch (RequestException e) {
+											Util.showErrorMsg("UnfiledDocuments",
+											"Document failed to Delete");
+										}
+									} catch (Exception e) {
+										Util.showErrorMsg("UnfiledDocuments",
+										"Document failed to Delete");
+									}
+								} 
+							}
+						});
+
+				// Push value back to table
+				return actionBar;
+			}
+		});
 		wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				// Import current id
-				try {
-					currentId = Integer.parseInt(data.get("id"));
-				} catch (Exception ex) {
-					GWT.log("Exception", ex);
-				} finally {
-					if(canWrite){
-						// Populate
-						String pDate = data.get("uffdate");
-						Calendar thisCal = new GregorianCalendar();
-						thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
-								.substring(0, 4)));
-						thisCal.set(Calendar.MONTH, Integer.parseInt(pDate
-								.substring(5, 6)) - 1);
-						thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
-								.substring(8, 9)));
-						wDate.setValue(thisCal.getTime());
-	
-						// Show the form
-						flexTable.setVisible(true);
-						horizontalPanel.setVisible(true);
-					}
-					if(canRead){
-						// Show the image in the viewer
-						djvuViewer.setInternalId(currentId);
-						/*
-						try {
-							djvuViewer.loadPage(1);
-						} catch (Exception ex) {
-							JsonUtil.debug(ex.toString());
+				if(col==0 || col ==1)
+				{
+					// Import current id
+					try {
+						currentId = Integer.parseInt(data.get("id"));
+					} catch (Exception ex) {
+						GWT.log("Exception", ex);
+					} finally {
+						if(canWrite){
+							// Populate
+							String pDate = data.get("uffdate");
+							Calendar thisCal = new GregorianCalendar();
+							thisCal.set(Calendar.YEAR, Integer.parseInt(pDate
+									.substring(0, 4)));
+							thisCal.set(Calendar.MONTH, Integer.parseInt(pDate
+									.substring(5, 6)) - 1);
+							thisCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(pDate
+									.substring(8, 9)));
+							wDate.setValue(thisCal.getTime());
+		
+							// Show the form
+							flexTable.setVisible(true);
+							horizontalPanel.setVisible(true);
 						}
-						djvuViewer.setVisible(true);
-						*/
+						if(canRead){
+							// Show the image in the viewer
+							djvuViewer.setInternalId(currentId);
+							/*
+							try {
+								djvuViewer.loadPage(1);
+							} catch (Exception ex) {
+								JsonUtil.debug(ex.toString());
+							}
+							djvuViewer.setVisible(true);
+							*/
+						}
 					}
 				}
 			}
@@ -609,7 +693,7 @@ public class UnfiledDocuments extends ScreenInterface {
 					public void onError(
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
-
+						Util.showErrorMsg("UnfiledDocuments","Document failed to split");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -617,13 +701,24 @@ public class UnfiledDocuments extends ScreenInterface {
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
-							
+							Boolean r = (Boolean) JsonUtil.shoehornJson(
+									JSONParser.parse(response.getText()),
+									"Boolean");
+							if (r != null && r) {
+								Util.showInfoMsg("UnfiledDocuments","Document successfully splitted");
+								loadData();
+							}
+							else{
+								Util.showErrorMsg("UnfiledDocuments","Document failed to split");
+							}
 						} else {
+							Util.showErrorMsg("UnfiledDocuments","Document failed to split");
 							JsonUtil.debug(response.toString());
 						}
 					}
 				});
 			} catch (RequestException e) {
+				Util.showErrorMsg("UnfiledDocuments","Document failed to split");
 				JsonUtil.debug(e.toString());
 			}
 

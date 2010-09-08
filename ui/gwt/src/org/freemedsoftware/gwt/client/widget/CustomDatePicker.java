@@ -61,10 +61,11 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	}
 
 	public void setValue(String s,boolean fireEvent) {
-		if (s == null || s.equalsIgnoreCase("")) {
+		if (s == null || s.equalsIgnoreCase("") /*|| s.equalsIgnoreCase("0000-00-00")*/) {
 			setValue(new Date(), fireEvent);
 		} else {
 			Date dt = importSqlDate(s);
+			JsonUtil.debug("CustomDatePicker.setValue: " + dt);
 			setValue(dt,fireEvent);
 		}
 	}
@@ -78,7 +79,14 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	}
 
 	public String getStoredValue() {
-		return getValue()!=null?dateFormat.format(getValue()):null;
+		String storedValue = null;
+		try{
+			JsonUtil.debug("CustomDatePicker.getStoredValue: " + getValue()!=null?dateFormat.format(getValue()):null);
+			storedValue	= dateFormat.format(getValue());
+		}catch (Exception e) {
+			JsonUtil.debug("CustomDatePicker.getStoredValue:"+e.getMessage());
+		}
+		return storedValue;
 	}
 
 	public void setFromHash(HashMap<String, String> data) {
@@ -91,21 +99,22 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 				return null;//new Date();
 			} else if (date.equalsIgnoreCase("") || date.equalsIgnoreCase("0000-00-00") || date.equalsIgnoreCase("0000-00-00 00:00:00")) {
 				return null;//new Date();
-			} else {
+			} else if(date.indexOf("-")!=-1) {
 				Calendar calendar = new GregorianCalendar();
 				calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0, 4)));
 				calendar.set(Calendar.MONTH,
 						Integer.parseInt(date.substring(5, 7)) - 1);
 				calendar
 						.set(Calendar.DATE, Integer.parseInt(date.substring(8, 10)));
-	
-				calendar.set(Calendar.HOUR, 1);
+				/*
+				calendar.set(Calendar.HOUR, 0);
 				calendar.set(Calendar.MINUTE, 0);
 				calendar.set(Calendar.SECOND, 0);
 				calendar.set(Calendar.MILLISECOND, 0);
-	
+				*/
+				JsonUtil.debug("CustomDatePicker.importSqlDate: " + new Date(calendar.getTime().getTime()));
 				return new Date(calendar.getTime().getTime());
-			}
+			}else return null;
 	}
 
 	@Override
@@ -113,7 +122,7 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 		try {
 			return dateFormat.format(date);
 		} catch (Exception ex) {
-			JsonUtil.debug(ex.toString());
+			JsonUtil.debug("CustomDatePicker.format: " + ex.toString());
 			return new DateBox.DefaultFormat().format(dateBox, date);
 		}
 	}
@@ -122,10 +131,12 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 	public Date parse(DateBox dateBox, String text, boolean reportError) {
 		// Try default parser
 		DateBox.Format f = new DateBox.DefaultFormat();
-		Date p = f.parse(dateBox, text, false);
+		Date p = importSqlDate(text);//f.parse(dateBox, text, false);
 		if (p == null) {
-			return importSqlDate(text);
+			JsonUtil.debug("CustomDatePicker.parse: " + importSqlDate(text));
+			return f.parse(dateBox, text, false);//importSqlDate(text);
 		} else {
+			JsonUtil.debug("CustomDatePicker.parse: " + p);
 			return p;
 		}
 	}
@@ -137,7 +148,7 @@ public class CustomDatePicker extends DateBox implements HashSetter,
 			DateBox.Format f = new DateBox.DefaultFormat();
 			f.reset(dateBox, abandon);
 		} catch (Exception ex) {
-			JsonUtil.debug(ex.toString());
+			JsonUtil.debug("CustomDatePicker.reset: " + ex.toString());
 		}
 	}
 

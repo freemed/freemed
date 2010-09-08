@@ -1,0 +1,142 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *		Jeremy Allen <ieziar.jeremy <--at--> gmail.com>
+ *		Philipp Meng <pmeng@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2010 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+.Application-links {
+  background: #eee url('images/brushed.gif');
+  
+}
+.gwt-tab-Label{
+	white-space: nowrap;
+}
+.gwt-simple-button{
+	cursor: pointer;
+	margin-left: 3px;
+}
+.large-header-label {
+ background: #9c9fa2;
+ color: black;
+ font-size: 26px;
+ font-weight: bold;
+ text-align: center;
+}
+.medium-header-label {
+ background: #cccccc; 
+ font-size: 15px;
+ font-weight: bold;
+ text-align: center;
+}
+.small-header-label {
+ background: #cccccc;
+ color: black;
+ font-size: 14px;
+ font-weight: bold;
+}
+.radio-label{ 
+ font-size: 15px;
+ font-weight: normal;
+}
+.label_large_bold{ 
+    	font-size: 15px;
+	font-weight: bold;
+}
+.label_italic{	
+	font-style: italic;
+}
+.label_red{	
+	color: red;	
+}
+.label_bold{	
+	font-weight: bold;	
+}
+.label_small{
+	font-size: 10px;
+	font-family:verdana;
+	text-align:center;
+}
+.freemed_hor_panel{
+	width: 100%;
+    height: 30%; 
+}
+.label_bold_red{	
+	font-weight: bold;	
+	color: red;
+}
+.freemed-PopupPanel {
+  border: 3px solid #e3e3e3;
+  padding: 3px;
+  background: white;
+  margin-left:17%;
+}
+.width100Perc{
+width:100%;
+}
+
+.gwt-CustomPushButton-up, .gwt-CustomPushButton-up-hovering, .gwt-CustomPushButton-up-disabled, .gwt-CustomPushButton-down, .gwt-CustomPushButton-down-hovering, .gwt-CustomPushButton-down-disabled {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  margin:0;
+  text-decoration:none;
+}
+.gwt-CustomPushButton-up, .gwt-CustomPushButton-up-hovering, .gwt-CustomPushButton-up-disabled {
+  padding: 3px 3px 3px 3px;
+}
+.gwt-CustomPushButton-up {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-up-hovering {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-up-disabled {
+  cursor:default;
+  opacity:0.5;
+}
+.gwt-CustomPushButton-down, .gwt-CustomPushButton-down-hovering, .gwt-CustomPushButton-down-disabled {
+  padding: 4px 2px 2px 4px;
+}
+.gwt-CustomPushButton-down {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-down-hovering {
+  cursor:pointer;
+}
+.gwt-CustomPushButton-down-disabled {
+  cursor:default;
+  opacity:0.5;
+}
+.gwt-CustomPushButton-inner{
+	background-image:url('images/btn-light-bg.png');
+	vertical-align:middle;
+	font-size:12;
+	text-align: center;
+}
+a:link {color: blue;text-decoration: underline}
+a:visited {color: blue;text-decoration: underline}
+a:active {color: blue;text-decoration: underline}
+a:hover {text-decoration: underline; color: red;}
+
+.top-border-only{
+	border-top: 1px solid #bcbcbc;
+}

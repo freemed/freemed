@@ -24,7 +24,6 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 

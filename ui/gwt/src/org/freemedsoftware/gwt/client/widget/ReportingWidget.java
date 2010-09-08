@@ -81,16 +81,22 @@ public class ReportingWidget extends Composite {
 
 	protected PushButton reportActionHTML, reportActionXML, reportActionPDF;
 
-	protected Integer patientId=null;// In case input widget belongs to EMRMODULE  	
-	
+	protected Integer patientId = null;// In case input widget belongs to
+										// EMRMODULE
+
 	public enum ReportType {
 		PDF, XLS, HTML, TEXT, XML
 	};
-	private ReportingWidget(){}
+
+	@SuppressWarnings("unused")
+	private ReportingWidget() {
+	}
+
 	public ReportingWidget(String reportCategory) {
-		
-		final boolean canGenerate = CurrentState.isActionAllowed(ReportingScreen.moduleName,AppConstants.WRITE);
-		
+
+		final boolean canGenerate = CurrentState.isActionAllowed(
+				ReportingScreen.moduleName, AppConstants.WRITE);
+
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		initWidget(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");
@@ -114,7 +120,7 @@ public class ReportingWidget extends Composite {
 		reportTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				if(canGenerate){
+				if (canGenerate) {
 					String uuid = data.get("report_uuid");
 					thisReportUUID = uuid;
 					getReportInformation(uuid);
@@ -217,7 +223,7 @@ public class ReportingWidget extends Composite {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { locale,reportCategory};
+			String[] params = { locale, reportCategory };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 					URL.encode(Util.getJsonRequest(
 							"org.freemedsoftware.module.Reporting.GetReports",
@@ -283,7 +289,7 @@ public class ReportingWidget extends Composite {
 	 * @param data
 	 */
 	protected void populateReportParameters(HashMap<String, String> data) {
-		
+
 		reportParametersTable.clear();
 		reportParameters.clear();
 		thisReportName.setText(data.get("report_name"));
@@ -339,7 +345,8 @@ public class ReportingWidget extends Composite {
 							}
 						});
 			} else if (type.compareToIgnoreCase("SupportModule") == 0) {
-				w = new SupportModuleWidget(options);//  getting module name from options
+				w = new SupportModuleWidget(options);// getting module name from
+														// options
 				((SupportModuleWidget) w)
 						.addChangeHandler(new ValueChangeHandler<Integer>() {
 							@Override
@@ -352,16 +359,16 @@ public class ReportingWidget extends Composite {
 							}
 						});
 			} else if (type.compareToIgnoreCase("EMRModule") == 0) {
-				w = new EMRModuleWidget(options,patientId);// getting module name from options
+				w = new EMRModuleWidget(options, patientId);// getting module
+															// name from options
 				((EMRModuleWidget) w)
 						.addChangeHandler(new ValueChangeHandler<Integer>() {
 							@Override
 							public void onValueChange(
 									ValueChangeEvent<Integer> event) {
 								reportParameters.put(i,
-										((EMRModuleWidget) event
-												.getSource()).getValue()
-												.toString());
+										((EMRModuleWidget) event.getSource())
+												.getValue().toString());
 							}
 						});
 			} else if (type.compareToIgnoreCase("List") == 0) {
@@ -385,8 +392,7 @@ public class ReportingWidget extends Composite {
 								.getSource()).getStoredValue());
 					}
 				});
-			}
-			else {
+			} else {
 				// Default to text box
 				w = new TextBox();
 				((TextBox) w).addChangeHandler(new ChangeHandler() {
@@ -474,6 +480,7 @@ public class ReportingWidget extends Composite {
 		}
 		return p;
 	}
+
 	public void setPatientId(Integer patientId) {
 		this.patientId = patientId;
 	}

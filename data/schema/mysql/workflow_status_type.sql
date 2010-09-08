@@ -21,11 +21,11 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `workflow_status_type` (
-	status_name		VARCHAR (250) NOT NULL,
-	status_order		INT NOT NULL DEFAULT 0,
-	status_module		VARCHAR (250) NOT NULL,
-	active			BOOL NOT NULL DEFAULT TRUE,
-	id			SERIAL
+	  status_name		VARCHAR (250) NOT NULL
+	, status_order		INT NOT NULL DEFAULT 0
+	, status_module		VARCHAR (250) NOT NULL
+	, active		BOOL NOT NULL DEFAULT TRUE
+	, id			SERIAL
 );
 
 DROP PROCEDURE IF EXISTS workflow_status_type_Upgrade;

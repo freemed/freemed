@@ -33,8 +33,13 @@ class UserInterface {
 		'username',
 		'userpassword',
 		'userdescrip',
+		'userfname',
+		'userlname',
+		'usermname',
+		'usertitle',
 		'userlevel',
 		'usertype',
+		'userfac',
 		'userrealphy',
 		'usermanageopt',
 		'useremail',
@@ -83,8 +88,48 @@ class UserInterface {
 	//
 	//	Array of arrays containing ( user description, id ).
 	//
-	public function GetUsers ( $param = '' ) {
-		$q = "SELECT u.userdescrip AS description, u.id AS id FROM user u WHERE u.userdescrip LIKE '".addslashes( $param )."%' ORDER BY u.userdescrip";
+	public function GetUsers ( $param = '',$usertype='' ) {
+		$criteria = addslashes( $param );
+		if (!(strpos($criteria, ',') === false)) {
+			list ($last, $first) = explode( ',', $criteria);
+		} else {
+			if (!(strpos($criteria, ' ') === false)) {
+				list ($first, $last) = explode( ' ', $criteria );
+			} else {
+				$either = $criteria;
+			}
+		}
+		$last = trim( $last );
+		$first = trim( $first );
+		$either = trim( $either );
+
+		if ($first and $last) {
+			$q[] = "( ptlname LIKE '".addslashes($userlname)."%' AND ".
+				" userfname LIKE '".addslashes($first)."%' )";
+		} elseif ($first) {
+                	$q[] = "userfname LIKE '".addslashes($first)."%'";
+		} elseif ($last) {
+                	$q[] = "userlname LIKE '".addslashes($last)."%'";
+		} else {
+			$q[] = "userfname LIKE '".addslashes($either)."%'";
+			$q[] = "userlname LIKE '".addslashes($either)."%'";
+		}
+		$condition="";
+		$temp="";
+		$temp=join(' OR ', $q);
+		if($temp!='' && $temp!=NULL)
+			$condition=" WHERE (".$temp.") ";
+		if($usertype!=""){
+			if($condition==""){
+					$condition=" WHERE usertype='".$temp."' ";
+			}
+			else{
+				$condition=$condition." AND usertype='".$usertype."' ";
+			}
+		}
+		
+		$q = "SELECT CONCAT(userfname,' ',usermname,' ',userlname,', ',usertitle) AS description, u.id AS id FROM user u ".$condition." ORDER BY u.userdescrip";
+		//return $q;
 		$res = $GLOBALS['sql']->queryAll( $q );
 		foreach ( $res AS $r ) {
 			$return[] = array ( $r['description'], $r['id'] );
@@ -465,11 +510,6 @@ class UserInterface {
 		////////////////////////////////
 		
 		
-		////////Dosing menu/////////
-		$this->checkDosingMenu(&$userLeftNavigationMenu);
-		///////////////////////////////
-		
-		
 		////////Billing menu/////////
 		$this->checkBillingMenu(&$userLeftNavigationMenu);
 		////////////////////////////////
@@ -645,85 +685,6 @@ class UserInterface {
 	} // end method checkDocumentsMenu
 	
 
-// This will be uncommented when New ACL Implementation will be enabled
-	public function checkDosingMenu (&$userLeftNavigationMenu ) {
-		$DosingAccessOptionsDB = $userLeftNavigationMenu['Dosing Menu'];
-		
-		//Medication Inventory
-		$methadoneRead       = freemed::acl( 'BulkMethadone', 'read' )?1:0;
-		$methadoneWrite      = freemed::acl( 'BulkMethadone', 'write' )?1:0;
-		$lotMngRead          = freemed::acl( 'DosingMethadoneLotRegistration', 'read' )?1:0;
-		$lotMngWrite         = freemed::acl( 'DosingMethadoneLotRegistration', 'write' )?1:0;
-		$lotRecRead          = freemed::acl( 'DosingLotReceipt', 'read' )?1:0;
-		$medicationInventry  = $this->getShowBit($methadoneRead,$methadoneWrite,$lotMngRead  ,$lotMngWrite,$lotRecRead );
-		
-		//Open/Close Dosing Station stuff
-		$openCloseStationWrite   = freemed::acl( 'DosingStation', 'write' )?1:0;
-		
-		//Dispense Dose stuff
-		$dispneseWrite    = freemed::acl( 'DoseRecord', 'write' )?1:0;
-		$dispneseRead     = freemed::acl( 'DoseRecord', 'read' )?1:0;
-		$dispneseDelete   = freemed::acl( 'DoseRecord', 'delete' )?1:0;
-		$dispneseModify   = freemed::acl( 'DoseRecord', 'modify' )?1:0;
-		$dispenseDose     = $this->getShowBit($dispneseRead,$dispneseWrite,$dispneseModify  ,$dispneseDelete );
-
-		//Bottle Transfer stuff
-		$bottleTransferWrite   = freemed::acl( 'BottleTransfer', 'write' )?1:0;
-		$bottleTransferRead    = freemed::acl( 'BottleTransfer', 'read' )?1:0;
-		$bottleTransfer        = $this->getShowBit($bottleTransferRead,$bottleTransferWrite);
-		
-		//Reconcile Bottle stuff
-		$reconcileBottleWrite  = freemed::acl( 'DosingReconcileBottle', 'write' )?1:0;
-		$reconcileBottle       = $this->getShowBit($reconcileBottleWrite);
-		
-		
-		//Methodone Billing stuff
-		$ProcedureModuleWrite  = freemed::acl( 'ProcedureModule', 'write' )?1:0;
-		$ProcedureModule       = $this->getShowBit($ProcedureModuleWrite);
-		
-		if($medicationInventry || $openCloseStationWrite || $dispenseDose || $bottleTransfer || $reconcileBottle || $ProcedureModule){
-			
-			$DosingAccessOptions['Medication Inventory'] =  $medicationInventry;
-			if(!$DosingAccessOptions['Medication Inventory'])
-					unset($DosingAccessOptions['Medication Inventory']);
-			
-					
-			$DosingAccessOptions['Open Dosing Station']  =  $openCloseStationWrite;
-			if(!$DosingAccessOptions['Open Dosing Station'])
-					unset($DosingAccessOptions['Open Dosing Station']);
-					
-			$DosingAccessOptions['Close Dosing Station']     =  $openCloseStationWrite;
-			if(!$DosingAccessOptions['Close Dosing Station'])
-					unset($DosingAccessOptions['Close Dosing Station']);
-					
-			$DosingAccessOptions['Dispense Dose']        =  $dispenseDose;
-			if(!$DosingAccessOptions['Dispense Dose'])
-					unset($DosingAccessOptions['Dispense Dose']);
-					
-			$DosingAccessOptions['Reconcile Bottle']     =  $reconcileBottle;
-			if(!$DosingAccessOptions['Reconcile Bottle'])
-					unset($DosingAccessOptions['Reconcile Bottle']);
-					
-			$DosingAccessOptions['Bottle Transfer']     =  $bottleTransfer;
-			if(!$DosingAccessOptions['Bottle Transfer'])
-					unset($DosingAccessOptions['Bottle Transfer']);
-					
-			$DosingAccessOptions['Inventory Reports']     =  $this->getShowBit($medicationInventry,$openCloseStationWrite,$dispenseDose,$reconcileBottle,$bottleTransfer);
-			if(!$DosingAccessOptions['Inventory Reports'])
-					unset($DosingAccessOptions['Inventory Reports']);
-					
-			$DosingAccessOptions['Methadone Billing']     =  $ProcedureModule;
-			if(!$DosingAccessOptions['Methadone Billing'])
-					unset($DosingAccessOptions['Methadone Billing']);
-					
-			if(strlen(serialize($DosingAccessOptions))  != (strlen(serialize($DosingAccessOptionsDB))-13))
-				$userLeftNavigationMenu['Dosing Menu'] = $DosingAccessOptions;
-				
-		}
-		else	
-			unset($userLeftNavigationMenu['Dosing Menu']);
-	} // end method checkDosingMenu
-
 	// This will be uncommented when New ACL Implementation will be enabled
 	// Method: checkBillingMenu
 	//
@@ -753,9 +714,9 @@ class UserInterface {
 		
 		if($claimLog || $remittBillingTransport || $superBill){
 			
-			$BillingAccessOptions['Account Receivable']     =  $accountReceivable;
-			if(!$BillingAccessOptions['Account Receivable'])
-				unset($BillingAccessOptions['Account Receivable']);
+			$BillingAccessOptions['Accounts Receivable']     =  $accountReceivable;
+			if(!$BillingAccessOptions['Accounts Receivable'])
+				unset($BillingAccessOptions['Accounts Receivable']);
 				
 			$BillingAccessOptions['Claims Manager']     =  $claimLog;
 			if(!$BillingAccessOptions['Claims Manager'])
@@ -850,9 +811,12 @@ class UserInterface {
 				unset($UtilitiesAccessOptions['Tools']);
 			
 	   	        $UtilitiesAccessOptions['Support Data']         = $admin;
-	   	        
 	   	        if(!$UtilitiesAccessOptions['Support Data'])
 				unset($UtilitiesAccessOptions['Support Data']);
+
+	   	        $UtilitiesAccessOptions['Field Checker']         = $admin;
+	   	        if(!$UtilitiesAccessOptions['Field Checker'])
+				unset($UtilitiesAccessOptions['Field Checker']);
 			
 			$UtilitiesAccessOptions['User Management']      = $admin;
 			if(!$UtilitiesAccessOptions['User Management'])
@@ -883,12 +847,17 @@ class UserInterface {
 	//return
 	//        hashes containing unread messages count,unfiled documents count etc 
 	public function getDashBoardDetails(){
+		// Messages
 		$messages = createObject("org.freemedsoftware.module.MessagesModule");
 		$return['unreadMsgs'] = $messages->UnreadMessages()."";
+		// unfiled documents
 		$unfiledDocuments = createObject("org.freemedsoftware.module.UnfiledDocuments");
 		$return['unfiledDocuments'] = $unfiledDocuments->GetCount()."";
+		//Action Items
+		$actionItems = createObject("org.freemedsoftware.api.ActionItems");
+		$return['actionItems'] = $actionItems->getActionItemsCount()."";
 		return $return;
-	}
+	} // end getDashBoardDetails method
 	
 	//Method: GetUserType
 	//
@@ -896,7 +865,17 @@ class UserInterface {
 	//       return string containging usertype
 	public function GetUserType(){
 		return $this->user->local_record['usertype'];
-	}
+	}//end method GetUserType
+	
+	//Method: CheckDupilcate
+	//
+	//return
+	//       return boolean 
+	public function CheckDupilcate($user_name){
+		$q="select id from user where username = ".$GLOBALS['sql']->quote($user_name);
+		$return = $GLOBALS['sql']->queryAll( $q );
+		return $return?true:false;
+	}//end method CheckDupilcate	
 	
 } // end class UserInterface
 

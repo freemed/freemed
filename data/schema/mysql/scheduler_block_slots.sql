@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `scheduler_block_slots` (
 	sbshour			    INT UNSIGNED NOT NULL,
 	sbsminute			INT UNSIGNED NOT NULL,
 	sbsduration			INT UNSIGNED NOT NULL,
+	sbdate                      DATE,
 	sbsprovider		    INT UNSIGNED NOT NULL,
 	sbsprovidergroup	    INT UNSIGNED NOT NULL,
 	stamp				TIMESTAMP (14) NOT NULL DEFAULT NOW(),

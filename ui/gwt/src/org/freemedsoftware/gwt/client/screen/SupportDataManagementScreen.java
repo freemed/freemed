@@ -24,9 +24,12 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
+import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -34,10 +37,13 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.Toaster;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -58,6 +64,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -156,25 +163,57 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		sortableTable = new CustomTable();
 		verticalPanel.add(sortableTable);
 		sortableTable.setSize("100%", "100%");
-		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
-			@Override
-			public void handleRowClick(HashMap<String, String> data, int col) {
-				// Get information on row...
-				try {
-					if(canModify){
+		sortableTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+			public Widget setColumn(String columnName,
+					HashMap<String, String> data) {
+				// Render only action column, otherwise skip renderer
+				if (columnName.compareToIgnoreCase("action") != 0) {
+					return null;
+				}
+				final CustomActionBar actionBar = new CustomActionBar(data);
+				actionBar.applyPermissions(false, false, canDelete, canModify, false);
+				actionBar.setHandleCustomAction(new HandleCustomAction(){
+					@Override
+					public void handleAction(int id,
+							HashMap<String, String> data, int action) {
+						//Evaluating id
 						Integer recordId = null;
 						if(data.get("oid")!=null)
 							recordId = Integer.parseInt(data.get("oid"));
 						else if(data.get("id")!=null)
 							recordId = Integer.parseInt(data.get("id"));
-						SupportModuleEntry entry = new SupportModuleEntry(
-								moduleName, recordId);
-						entry.setDoneCommand(thisRef);
-						Util.spawnTab(moduleName + ": " + "Edit", entry);
+						//Checing action type
+						if(action == HandleCustomAction.MODIFY){
+							//Preparing record to be able modified
+							SupportModuleEntry entry = new SupportModuleEntry(
+									moduleName, recordId);
+							entry.setDoneCommand(thisRef);
+							Util.spawnTab(moduleName + ": " + "Edit", entry);
+						}else if(action == HandleCustomAction.DELETE){
+							Util.callModuleMethod(moduleName, "del", recordId, new CustomRequestCallback() {
+							
+								@Override
+								public void onError() {
+									// TODO Auto-generated method stub
+							
+								}
+							
+								@Override
+								public void jsonifiedData(Object data) {
+									if((Boolean)data){
+										populateData();
+										Util.showInfoMsg(moduleName, "Record deleted succcessfully!!");
+									}else
+										Util.showInfoMsg(moduleName, "Failed to delete record!!");
+							
+								}
+							
+							}, "Boolean");
+						}
 					}
-				} catch (Exception e) {
-					GWT.log("Caught exception: ", e);
-				}
+				});
+				// Push value back to table
+				return actionBar;
 			}
 		});
 	}
@@ -241,6 +280,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 								.getAttribute("field"));
 					}
 				}
+				sortableTable.addColumn("Action", "action");
 			} else {
 				// Deal with other possibilities
 			}
@@ -256,6 +296,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		} catch (Exception ex) {
 			JsonUtil.debug(ex.toString());
 		}
+		sortableTable.showloading(true);
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: populate in stubbed mode
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -291,10 +332,12 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 							} else {
 								Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
 							}
+							sortableTable.showloading(false);
 						}
 					}
 				});
 			} catch (RequestException e) {
+				sortableTable.showloading(false);
 				Window.alert(e.toString());
 			}
 		} else {
@@ -311,10 +354,12 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 					new AsyncCallback<HashMap<String, String>[]>() {
 						public void onSuccess(HashMap<String, String>[] res) {
 							sortableTable.loadData(res);
+							sortableTable.showloading(false);
 						}
 
 						public void onFailure(Throwable t) {
 							Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+							sortableTable.showloading(false);
 						}
 					});
 		}

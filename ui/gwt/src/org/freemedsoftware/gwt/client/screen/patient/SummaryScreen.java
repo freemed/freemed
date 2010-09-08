@@ -30,6 +30,7 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.widget.ActionItemsBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.FinancialWidget;
 import org.freemedsoftware.gwt.client.widget.PatientProblemList;
@@ -38,11 +39,14 @@ import org.freemedsoftware.gwt.client.widget.RecentAllergiesList;
 import org.freemedsoftware.gwt.client.widget.RecentMedicationsList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -50,6 +54,8 @@ public class SummaryScreen extends PatientScreenInterface {
 
 	protected HashMap<String, String>[] dataStore;
 
+	protected ActionItemsBox actionItemsBox = null;
+	
 	protected PatientProblemList problemList = null;
 
 	protected RecentMedicationsList recentMedicationsList = null;
@@ -66,11 +72,33 @@ public class SummaryScreen extends PatientScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 		flexTable.setSize("100%", "100%");
+		
+		final VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.setWidth("70%");
+		flexTable.setWidget(0, 0, verticalPanel);
 
+		/*final Label actionItemsLabel = new Label("ACTION ITEMS");
+		actionItemsLabel.setStylePrimaryName("label_bold");
+		verticalPanel.add(actionItemsLabel);
+		final SimplePanel cActionItems = new SimplePanel();
+		cActionItems.setStylePrimaryName("freemed-PatientSummaryContainer");
+		verticalPanel.add(cActionItems);
+		verticalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);*/
+
+		//Adding messages panel
+		actionItemsBox = new ActionItemsBox(false);
+		actionItemsBox.setWidth("100%");
+		actionItemsBox.setEnableCollapse(false);
+		verticalPanel.add(actionItemsBox);
+		
+		final CustomTable customSortableTable = new CustomTable();
+		verticalPanel.add(customSortableTable);
+		
 		final VerticalPanel problemContainer = new VerticalPanel();
-		final Label problemLabel = new Label("Problems");
-		problemLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
-		problemContainer.add(problemLabel);
+		problemContainer.setWidth("70%");
+		//final Label problemLabel = new Label("Problems");
+		//problemLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
+		//problemContainer.add(problemLabel);
 
 		final SimplePanel cProblemList = new SimplePanel();
 		cProblemList.setStylePrimaryName("freemed-PatientSummaryContainer");
@@ -78,39 +106,33 @@ public class SummaryScreen extends PatientScreenInterface {
 		problemList.setPatientScreen(patientScreen);
 		cProblemList.setWidget(problemList);
 		problemContainer.add(cProblemList);
+		flexTable.setWidget(1, 0, problemContainer);
 
-		flexTable.setWidget(0, 0, problemContainer);
-
-		final VerticalPanel verticalPanel = new VerticalPanel();
-		flexTable.setWidget(0, 1, verticalPanel);
-
-		final Label actionItemsLabel = new Label("Action Items");
-		actionItemsLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
-		verticalPanel.add(actionItemsLabel);
-		final SimplePanel cActionItems = new SimplePanel();
-		cActionItems.setStylePrimaryName("freemed-PatientSummaryContainer");
-		verticalPanel.add(cActionItems);
-		verticalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-
-		final CustomTable customSortableTable = new CustomTable();
-		verticalPanel.add(customSortableTable);
+		
 
 		final VerticalPanel verticalPanel_1 = new VerticalPanel();
-		flexTable.setWidget(1, 0, verticalPanel_1);
+		verticalPanel_1.setWidth("70%");
+		flexTable.setWidget(2, 0, verticalPanel_1);
 
-		final Label clinicalInformationLabel = new Label("Clinical Information");
-		clinicalInformationLabel
-				.setStylePrimaryName("freemed-PatientSummaryHeading");
-		clinicalInformationLabel.setWidth("78%");
-		verticalPanel_1.add(clinicalInformationLabel);
+		//final Label clinicalInformationLabel = new Label("Clinical Information");
+		//clinicalInformationLabel
+		//		.setStylePrimaryName("freemed-PatientSummaryHeading");
+		//clinicalInformationLabel.setWidth("78%");
+		//verticalPanel_1.add(clinicalInformationLabel);
 		final SimplePanel cClinicalInformation = new SimplePanel();
-		cClinicalInformation
-				.setStylePrimaryName("freemed-PatientSummaryContainer");
-		cClinicalInformation.setWidth("90%");
+		//cClinicalInformation
+		//		.setStylePrimaryName("freemed-PatientSummaryContainer");
+		cClinicalInformation.setWidth("100%");
 		verticalPanel_1.add(cClinicalInformation);
 		verticalPanel_1.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 
 		final TabPanel clinicalInformationTabPanel = new TabPanel();
+		clinicalInformationTabPanel.setSize("100%", "100%");
+		TabBar tbar=clinicalInformationTabPanel.getTabBar();
+		Element tabBarFirstChild=tbar.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
+		tabBarFirstChild.setAttribute("width", "100%");
+		tabBarFirstChild.setInnerHTML("CLINICAL INFORMATION");
+		tabBarFirstChild.setClassName("label_bold");
 		cClinicalInformation.setWidget(clinicalInformationTabPanel);
 
 		final SimplePanel clinicalTagsPanel = new SimplePanel();
@@ -156,11 +178,9 @@ public class SummaryScreen extends PatientScreenInterface {
 		clinicalInformationTabPanel.add(clinicalAllergiesPanel, allergiesLabel);
 
 		final VerticalPanel verticalPanel_2 = new VerticalPanel();
-		flexTable.setWidget(1, 1, verticalPanel_2);
+		verticalPanel_2.setWidth("70%");
+		flexTable.setWidget(3, 0, verticalPanel_2);
 
-		final Label financialLabel = new Label("Financial");
-		financialLabel.setStylePrimaryName("freemed-PatientSummaryHeading");
-		verticalPanel_2.add(financialLabel);
 		financialWidget=new FinancialWidget();
 		final SimplePanel cFinancial = new SimplePanel();
 		cFinancial.setStylePrimaryName("freemed-PatientSummaryContainer");
@@ -172,6 +192,13 @@ public class SummaryScreen extends PatientScreenInterface {
 	}
 
 	public void loadData() {
+		try{
+			actionItemsBox.setPatientId(patientId);
+			actionItemsBox.retrieveData();
+		}catch (Exception e) {
+			GWT.log("Exception", e);
+		}
+		
 		try {
 			recentMedicationsList.setPatientId(patientId);
 		} catch (Exception ex) {
@@ -206,6 +233,7 @@ public class SummaryScreen extends PatientScreenInterface {
 			problemList.setPatientId(patientId);
 			problemList.setPatientScreen(patientScreen);
 			financialWidget.setPatientId(patientId);
+			financialWidget.setPatientScreen(patientScreen);
 		} catch (Exception ex) {
 			JsonUtil.debug("Exception in problemList: " + ex.toString());
 		}

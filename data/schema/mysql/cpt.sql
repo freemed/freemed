@@ -44,6 +44,21 @@ CREATE TABLE IF NOT EXISTS `cpt` (
 	, INDEX			( cptnameint )
 );
 
+
+DROP PROCEDURE IF EXISTS cpt_Upgrade;
+DELIMITER //
+CREATE PROCEDURE cpt_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+	ALTER IGNORE TABLE cpt ADD COLUMN cptarchive INT(10) UNSIGNED DEFAULT 0 AFTER cpttosprfx;
+	#----- Upgrades
+
+END
+//
+DELIMITER ;
+CALL cpt_Upgrade( );
+
+
 CREATE TABLE IF NOT EXISTS `hcpcs` (
 	  hcpcs				CHAR( 7 ) NOT NULL UNIQUE
 	, modifier			CHAR( 2 )
