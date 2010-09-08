@@ -111,13 +111,6 @@ BEGIN
 	FROM callin
 	WHERE id = callinpatient and ciisinsured = 1;		
 	
-
-	#Converting Callin Initial Intake to Patient Initial Intake
-	UPDATE treatment_initial_intake SET
-		patient = newPatientId, intaketype = 'pat'
-	WHERE
-		patient = callinpatient AND intaketype = 'callin';
-
 	#	Alter the original record to point here
 	UPDATE callin SET cipatient = newPatientId, ciarchive = 1 WHERE id = callinpatient;
 	#	Send back this value
@@ -126,17 +119,5 @@ END
 //
 DELIMITER ;
 
-DELIMITER //
-
-DROP TRIGGER IF EXISTS  `callin_delete`//
-
-CREATE
-    /*[DEFINER = { user | CURRENT_USER }]*/
-    TRIGGER `callin_delete` AFTER DELETE ON `callin`
-    FOR EACH ROW BEGIN
-	/*deleting entry from treatment_initial_intake*/
-	DELETE FROM treatment_initial_intake WHERE patient = OLD.id AND intaketype = 'callin';
-    END//
-
-DELIMITER ;
+DROP TRIGGER IF EXISTS  `callin_delete`;
 

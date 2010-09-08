@@ -88,6 +88,5 @@ SOURCE data/schema/mysql/reporting/report_PatientReceiptShort_en_US.sql
 SOURCE data/schema/mysql/reporting/report_PatientZipCodeDistribution.sql
 SOURCE data/schema/mysql/reporting/report_PrintEmail.sql
 SOURCE data/schema/mysql/reporting/report_ReceivablesGraph.sql
-SOURCE data/schema/mysql/reporting/report_ReconciliationBottles.sql
 SOURCE data/schema/mysql/reporting/report_TransactionGraph_en_US.sql
 
