@@ -45,7 +45,7 @@ public class EventsWidget extends DialogBox {
 
 	private String entityName = null;
 	
-	protected boolean canRead=true,canWrite=true,canDelete=true,canModify=true; 
+	protected boolean canRead=true,canWrite=true,canDelete=false,canModify=false; 
 	
 	public static final String moduleName = "Events";
 	
@@ -347,7 +347,7 @@ public class EventsWidget extends DialogBox {
 	public void clearForm() {
 		eventAction.setWidgetValue("");
 		eventNote.setText("");
-		delete.setVisible(false);
+		if(delete!=null)delete.setVisible(false);
 		submit.setText("Add");
 		eventId = null;
 	}

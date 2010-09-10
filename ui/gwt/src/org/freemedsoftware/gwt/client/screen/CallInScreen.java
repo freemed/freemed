@@ -288,6 +288,8 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 							SchedulerScreen schedulerScreen = SchedulerScreen.getInstance();
 							EventData eventData = schedulerScreen.getSchedulerWidget().getNewExternalDataEvent();
 							eventData.setPatientId(id);
+							if(data.get("provider")!=null)
+								eventData.setProviderId(Integer.parseInt(data.get("provider")));
 							eventData.setResourceType(AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT);
 							schedulerScreen.getSchedulerWidget().setExternalDataEvent(eventData);
 							Util.spawnTab(AppConstants.SCHEDULER,schedulerScreen);

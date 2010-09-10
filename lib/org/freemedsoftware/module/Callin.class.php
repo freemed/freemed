@@ -149,7 +149,7 @@ class Callin extends SupportModule {
 		if(!$conditions)
 			$conditions = 1;
 		
-		$q = "SELECT CONCAT(ci.cilname, ', ', ci.cifname, ' ', ci.cimname) AS name, ci.cicomplaint AS complaint, ci.citookcall AS took_call, ci.cidatestamp AS call_date,ci.ciarchive as archive, DATE_FORMAT(ci.cidatestamp, '%m\/%d\/%Y %H:%m:%s') AS call_date_mdy, CONCAT(CASE WHEN ci.cihphone!='' then CONCAT('(H)',ci.cihphone) ELSE '' END, CASE WHEN ci.ciwphone!='' THEN CONCAT(' (W)',ci.ciwphone) ELSE '' END) as contact_phone, ci.id, CONCAT( insci.insconame, ' (', insci.inscocity, ', ', insci.inscostate, ')') AS coverage FROM callin ci LEFT JOIN insco insci on insci.id = ci.covinsco and ci.ciisinsured=1 WHERE ".$conditions." ORDER BY ci.cidatestamp DESC";		
+		$q = "SELECT CONCAT(ci.cilname, ', ', ci.cifname, ' ', ci.cimname) AS name, ci.cicomplaint AS complaint, ci.citookcall AS took_call, ci.cidatestamp AS call_date,ci.ciarchive as archive, DATE_FORMAT(ci.cidatestamp, '%m\/%d\/%Y %H:%m:%s') AS call_date_mdy, ci.ciphysician AS provider, CONCAT(CASE WHEN ci.cihphone!='' then CONCAT('(H)',ci.cihphone) ELSE '' END, CASE WHEN ci.ciwphone!='' THEN CONCAT(' (W)',ci.ciwphone) ELSE '' END) as contact_phone, ci.id, CONCAT( insci.insconame, ' (', insci.inscocity, ', ', insci.inscostate, ')') AS coverage FROM callin ci LEFT JOIN insco insci on insci.id = ci.covinsco and ci.ciisinsured=1 WHERE ".$conditions." ORDER BY ci.cidatestamp DESC";		
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAllWithInsurance
 	
