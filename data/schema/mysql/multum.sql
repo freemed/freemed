@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
------ Drop all old tables -----
+#----- Drop all old tables -----
 
 DROP TABLE IF EXISTS icd_9;
 DROP TABLE IF EXISTS multum_combination_drug;
@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS ndc_pregnancy_category;
 DROP TABLE IF EXISTS ndc_source;
 DROP TABLE IF EXISTS multum;
 
------ Table definitions -----
+#----- Table definitions -----
 
 CREATE TABLE IF NOT EXISTS icd_9 (
 	icd_9			VARCHAR (20), 
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS ndc_source (
 	country				VARCHAR (100)
 );
 
------ Aggregation table definition -----
+#----- Aggregation table definition -----
 
 CREATE TABLE IF NOT EXISTS multum (
 	multum_id			VARCHAR (12) NOT NULL,
@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS multum (
 	, KEY ( description, multum_id )
 );
 
------ Import multum database from CSV export files -----
+#----- Import multum database from CSV export files -----
 
 LOAD DATA LOCAL INFILE "data/multum/icd_9.csv"
 	INTO TABLE icd_9
@@ -254,7 +254,7 @@ LOAD DATA LOCAL INFILE "data/multum/ndc_source.csv"
 	INTO TABLE ndc_source
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
------ Recomposite table from individual components -----
+#----- Recomposite table from individual components -----
 INSERT INTO multum
 	SELECT
 		  mdc.drug_id

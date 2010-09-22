@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `clinicregistration` (
 	, user				INT UNSIGNED NOT NULL DEFAULT 0
 	, facility			INT UNSIGNED NOT NULL DEFAULT 0
 	, archive			INT UNSIGNED NOT NULL DEFAULT 0
+	, patient			INT UNSIGNED NOT NULL DEFAULT 0
 
 	, lastname			VARCHAR (50)
 	, lastname2			VARCHAR (50)

@@ -38,6 +38,17 @@ CREATE TABLE IF NOT EXISTS `claimlog` (
 	KEY			( clprocedure, clpayrec )
 );
 
-ALTER IGNORE TABLE claimlog CHANGE COLUMN cltarget cltarget VARCHAR (128) DEFAULT '';
-ALTER IGNORE TABLE claimlog ADD COLUMN cltargetopt VARCHAR (128) DEFAULT '' AFTER cltarget;
+DROP PROCEDURE IF EXISTS claimlog_Upgrade;
+DELIMITER //
+CREATE PROCEDURE claimlog_Upgrade ( )
+BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
+
+	#----- Upgrades
+	ALTER IGNORE TABLE claimlog CHANGE COLUMN cltarget cltarget VARCHAR (128) DEFAULT '';
+	ALTER IGNORE TABLE claimlog ADD COLUMN cltargetopt VARCHAR (128) DEFAULT '' AFTER cltarget;
+END
+//
+DELIMITER ;
+CALL claimlog_Upgrade( );
 

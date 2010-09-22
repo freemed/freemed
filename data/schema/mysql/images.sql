@@ -59,35 +59,27 @@ BEGIN
 	DROP TRIGGER images_Update;
 
 	#----- Upgrades
-	CALL FreeMED_Module_GetVersion( 'images', @V );
 
-	# Version 1
-	IF @V < 1 THEN
-		#	Version 0.3
-		ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
+	#	Version 0.3
+	ALTER IGNORE TABLE images ADD COLUMN imagecat VARCHAR(50) DEFAULT '' AFTER imagetype;
 
-		#	Version 0.4
-		ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
+	#	Version 0.4
+	ALTER IGNORE TABLE images ADD COLUMN imagephy INT UNSIGNED DEFAULT 0 AFTER imagefile;
 
-		#	Version 0.4.1
-		ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+	#	Version 0.4.1
+	ALTER IGNORE TABLE images ADD COLUMN locked INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
 
-		#	Version 0.4.2
-		ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
+	#	Version 0.4.2
+	ALTER IGNORE TABLE images ADD COLUMN imagereviewed INT UNSIGNED NOT NULL DEFAULT 0 AFTER imagephy;
 
-		#	Version 0.4.3
-		ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
+	#	Version 0.4.3
+	ALTER IGNORE TABLE images ADD COLUMN imageformat CHAR(4) NOT NULL DEFAULT 'djvu' AFTER imagefile;
 
-		ALTER IGNORE TABLE images ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
-		ALTER IGNORE TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
-	END IF;
+	ALTER IGNORE TABLE images ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER locked;
+	ALTER IGNORE TABLE images ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 
 	# Version 2
-	IF @V < 2 THEN
-		ALTER TABLE images ADD COLUMN imagetext TEXT AFTER imagereviewed;
-	END IF;
-
-	CALL FreeMED_Module_UpdateVersion( 'images', 2 );
+	ALTER TABLE images ADD COLUMN imagetext TEXT AFTER imagereviewed;
 END
 //
 DELIMITER ;
