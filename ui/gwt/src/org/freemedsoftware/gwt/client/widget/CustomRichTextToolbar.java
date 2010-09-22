@@ -48,7 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CustomRichTextToolbar extends Composite {
 
 	public interface Images extends ClientBundle {
-
+/*
 		ImageResource bold();
 
 		ImageResource createLink();
@@ -84,6 +84,7 @@ public class CustomRichTextToolbar extends Composite {
 		ImageResource ul();
 
 		ImageResource underline();
+		*/
 	}
 
 	/**
@@ -357,6 +358,7 @@ public class CustomRichTextToolbar extends Composite {
 		setStyleName("gwt-RichTextToolbar");
 
 		if (formatter != null) {
+			/*
 			topPanel.add(bold = createToggleButton(images.bold(), strings
 					.bold()));
 			topPanel.add(italic = createToggleButton(images.italic(), strings
@@ -390,6 +392,7 @@ public class CustomRichTextToolbar extends Composite {
 			// strings.removeLink()));
 			topPanel.add(removeFormat = createPushButton(images.removeFormat(),
 					strings.removeFormat()));
+			*/
 			bottomPanel.add(backColors = createColorList("Background"));
 			bottomPanel.add(foreColors = createColorList("Foreground"));
 			bottomPanel.add(fonts = createFontList());
