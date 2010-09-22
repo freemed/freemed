@@ -53,7 +53,7 @@ function CallMethod ( $namespace ) {
 	$path = ResolveObjectPath ( $namespace, true );
 	$class_name = ResolveClassName ( $namespace, true );
 	$method = ResolveMethodName ( $namespace );
-	if ( ! ereg ( '^[A-Za-z0-9_]+$', $method ) or empty ( $method ) ) {
+	if ( ! preg_match ( '/^[A-Za-z0-9_]+$/', $method ) or empty ( $method ) ) {
 		trigger_error( "CallMethod: invalid method '${method}' given", E_USER_ERROR );
 	}
 
@@ -223,7 +223,7 @@ function ResolveObjectPath ( $object, $methodResolution = false ) {
 	switch (true) {
 		case substr( $object, 0, 27 ) == 'org.freemedsoftware.module.':
 			$cname = str_replace ( 'org.freemedsoftware.module.', '', $object );
-			$cname = eregi_replace( '\..+', '', $cname );
+			$cname = preg_replace( '/\..+/i', '', $cname );
 			$module_path = resolve_module( $cname );
 			if (! $module_path ) {	
 				trigger_error( "Could not resolve object path ${object}", E_USER_ERROR );
@@ -233,7 +233,7 @@ function ResolveObjectPath ( $object, $methodResolution = false ) {
 
 		case substr( $object, 0, 13 ) == 'net.php.pear.':
 			$name = str_replace ( 'net.php.pear.', '', $object );
-			$name = eregi_replace( '\..+', '', $name );
+			$name = preg_replace( '/\..+/i', '', $name );
 			ini_set('include_path', ini_get('include_path').':'.dirname(__FILE__).'/net/php/pear');
 			$my_class = str_replace( '_', '/', $name );
 			$path = dirname(__FILE__).'/net/php/pear/'.$my_class.'.php';
