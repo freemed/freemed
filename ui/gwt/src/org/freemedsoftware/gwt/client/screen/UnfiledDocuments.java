@@ -122,10 +122,10 @@ public class UnfiledDocuments extends ScreenInterface {
 		
 		if(unfiledDocumentsList==null)
 			unfiledDocumentsList=new ArrayList<UnfiledDocuments>();
-		if(unfiledDocumentsList.size()<AppConstants.MAX_UNFILLED_TABS)//creates & returns new next instance of UnfiledDocuments
+		if(unfiledDocumentsList.size()<AppConstants.MAX_UNFILED_TABS)//creates & returns new next instance of UnfiledDocuments
 			unfiledDocumentsList.add(unfiledDocuments=new UnfiledDocuments());
 		else //returns last instance of UnfiledDocuments from list 
-			unfiledDocuments = unfiledDocumentsList.get(AppConstants.MAX_UNFILLED_TABS-1);
+			unfiledDocuments = unfiledDocumentsList.get(AppConstants.MAX_UNFILED_TABS-1);
 		return unfiledDocuments;
 	}
 

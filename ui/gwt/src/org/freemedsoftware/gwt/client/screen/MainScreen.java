@@ -731,14 +731,15 @@ public class MainScreen extends Composite {
 			showSystemPanel = true;
 			MenuIcon menuIcon = new MenuIcon(new Image(GWT.getHostPageBaseURL()
 					+ "resources/images/dashboard.32x32.png"),
-					AppConstants.DASHBOARD, new Command() {
+					AppConstants.CLINIC_REGISTRATION, new Command() {
 						public void execute() {
 							ClinicRegistrationEntry clinicRegistrationEntry = new ClinicRegistrationEntry();
 							Util.spawnTab(AppConstants.CLINIC_REGISTRATION,
 									clinicRegistrationEntry);
 						}
 					});
-			leftNavMenuContainer.put(AppConstants.DASHBOARD, menuIcon);
+			leftNavMenuContainer
+					.put(AppConstants.CLINIC_REGISTRATION, menuIcon);
 			mainAccPanel.add(menuIcon);
 		}
 

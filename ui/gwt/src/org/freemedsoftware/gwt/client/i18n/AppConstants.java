@@ -37,6 +37,7 @@ public interface AppConstants extends Constants {
 	public static int MAX_MESSAGNING_TABS 	 = 1;
 	public static int MAX_SCHEDULER_TABS 	 = 1;
 	public static int MAX_CONFIGURATION_TABS = 1;
+	public static int MAX_TRIAGE_TABS        = 1;
 
 	// Settings for options available under Patients Left Panel
 	public static int MAX_SEARCH_TABS 		 = 1;
@@ -46,8 +47,8 @@ public interface AppConstants extends Constants {
 	public static int MAX_RXREFILL_TABS 	 = 1;
 	public static int MAX_TAGSEARCH_TABS	 = 1;
 	// Settings for options available under Documents Left Panel
-	public static int MAX_UNFILLED_TABS = 1;
-	public static int MAX_UNREAD_TABS 	= 1;
+	public static int MAX_UNFILED_TABS = 1;
+	public static int MAX_UNREAD_TABS  = 1;
 
 	// Settings for options available under Dosing Left Panel
 	public static int MAX_MED_INVENTORY_TABS        = 1;
