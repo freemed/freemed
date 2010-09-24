@@ -40,7 +40,6 @@ import org.freemedsoftware.gwt.client.screen.patient.VitalsEntry;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
@@ -55,7 +54,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -170,8 +168,11 @@ public class TriageScreen extends ScreenInterface implements
 		wExistingPatient.addChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				migrateToPatient(currentId, event.getValue());
-				loadVitalsScreen(event.getValue());
+				Integer patientSelected = event.getValue();
+				if (patientSelected != null && patientSelected != 0) {
+					migrateToPatient(currentId, patientSelected);
+					loadVitalsScreen(patientSelected);
+				}
 			}
 		});
 		flexTable.setWidget(pos, 1, wExistingPatient);
