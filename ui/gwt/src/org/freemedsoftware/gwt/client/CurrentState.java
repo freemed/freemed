@@ -35,7 +35,6 @@ import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -45,15 +44,9 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.Element;
-import com.google.gwt.xml.client.Node;
-import com.google.gwt.xml.client.NodeList;
-import com.google.gwt.xml.client.XMLParser;
 
 public class CurrentState {
 
@@ -66,15 +59,15 @@ public class CurrentState {
 	protected static DecoratedTabPanel tabPanel = null;
 
 	protected static String locale = "en_US";
-	
+
 	protected static String currentPageHelp = "main";
 
 	protected static Integer defaultProvider = new Integer(0);
-	
+
 	protected static Integer defaultFacility = new Integer(0);
 
 	protected static String defaultUser = "";
-	
+
 	protected static String userType = "";
 
 	protected static HashMap<Integer, PatientScreen> patientScreenMap = new HashMap<Integer, PatientScreen>();
@@ -82,9 +75,9 @@ public class CurrentState {
 	protected static HashMap<Integer, HashMap<String, PatientScreenInterface>> patientSubScreenMap = new HashMap<Integer, HashMap<String, PatientScreenInterface>>();
 
 	protected static HashMap<String, Object> userConfiguration = new HashMap<String, Object>();
-	
+
 	protected static HashMap<String, String> userModules = new HashMap<String, String>();
-	
+
 	protected static HashMap<String, String> systemConfiguration = new HashMap<String, String>();
 
 	protected static FreemedInterface freemedInterface = null;
@@ -96,19 +89,19 @@ public class CurrentState {
 	protected static HandlerManager eventBus = new HandlerManager(null);
 
 	public static String CUR_THEME = "chrome";
-	
+
 	public static String LAST_THEME = "chrome";
 
 	public static Integer defaultProviderGroup = null;
-	
+
 	private static String SYSTEM_NOTIFY_TYPE = AppConstants.SYSTEM_NOTIFY_ERROR;
- 
+
 	public static boolean FormAutosaveEnable = true;
-	
-	protected static Integer FormAutosaveInterval = 60*1000;
-	
-	protected static Integer MinCharCountForSmartSearch = 1; 
-	
+
+	protected static Integer FormAutosaveInterval = 60 * 1000;
+
+	protected static Integer MinCharCountForSmartSearch = 1;
+
 	public CurrentState() {
 		retrieveUserConfiguration(true);
 		retrieveSystemConfiguration(true, null);
@@ -173,7 +166,7 @@ public class CurrentState {
 	public static void assignUserType(String u) {
 		userType = u;
 	}
-	
+
 	/**
 	 * Assign tab panel object.
 	 * 
@@ -243,11 +236,13 @@ public class CurrentState {
 	 * @param boolean
 	 */
 	public static void assignSYSTEM_NOTIFY_TYPE(String notify_type) {
-		if(notify_type!=null && notify_type.length()>0)
+		if (notify_type != null && notify_type.length() > 0) {
 			SYSTEM_NOTIFY_TYPE = notify_type;
+		} else {
+			SYSTEM_NOTIFY_TYPE = AppConstants.SYSTEM_NOTIFY_ALL;
+		}
 	}
-	
-	
+
 	/**
 	 * Add an item to the status bar stack.
 	 * 
@@ -280,7 +275,7 @@ public class CurrentState {
 	public static String getCurrentPageHelp() {
 		return currentPageHelp;
 	}
-	
+
 	public static Integer getDefaultProvider() {
 		return defaultProvider;
 	}
@@ -296,7 +291,7 @@ public class CurrentState {
 	public static String getUserType() {
 		return userType;
 	}
-	
+
 	public static HandlerManager getEventBus() {
 		return eventBus;
 	}
@@ -320,15 +315,15 @@ public class CurrentState {
 	public static boolean getFormAutoSave() {
 		return FormAutosaveEnable;
 	}
-	
+
 	public static Integer getFormAutoSaveInterval() {
 		return FormAutosaveInterval;
 	}
-	
+
 	public static Integer getMinCharCountForSmartSearch() {
 		return MinCharCountForSmartSearch;
 	}
-	
+
 	public static HashMap<Integer, PatientScreen> getPatientScreenMap() {
 		return patientScreenMap;
 	}
@@ -336,7 +331,7 @@ public class CurrentState {
 	public static String getSYSTEM_NOTIFY_TYPE() {
 		return SYSTEM_NOTIFY_TYPE;
 	}
-	
+
 	/**
 	 * Get user specific configuration value, or "" if there is no value.
 	 * 
@@ -345,7 +340,7 @@ public class CurrentState {
 	 */
 	public static Object getUserConfig(String key) {
 		JsonUtil.debug("getUserConfig() called");
-		
+
 		if (userConfiguration.size() != 0 && userConfiguration.containsKey(key)) {
 			return userConfiguration.get(key);
 		}
@@ -355,30 +350,29 @@ public class CurrentState {
 	}
 
 	/**
-	 * Get user specific configuration JSONified value, or "" if there is no value.
+	 * Get user specific configuration JSONified value, or "" if there is no
+	 * value.
 	 * 
 	 * @param key
 	 * @return
 	 */
-	public static Object getUserConfig(String key,String objectType) {
+	public static Object getUserConfig(String key, String objectType) {
 		JsonUtil.debug("getUserConfig() called");
-		JsonUtil.debug("key:"+key);
-		JsonUtil.debug("objectType:"+objectType);
+		JsonUtil.debug("key:" + key);
+		JsonUtil.debug("objectType:" + objectType);
 		if (userConfiguration.size() != 0 && userConfiguration.containsKey(key)) {
-			try{
-				return JsonUtil
-				.shoehornJson(JSONParser.parse(userConfiguration.get(key).toString()
-						),
-						objectType);
-			}catch(Exception e){
-				return userConfiguration.get(key);//if already Jsonified
+			try {
+				return JsonUtil.shoehornJson(JSONParser.parse(userConfiguration
+						.get(key).toString()), objectType);
+			} catch (Exception e) {
+				return userConfiguration.get(key);// if already Jsonified
 			}
 		}
 		JsonUtil.debug("getUserConfig(): was unable to find userConfiguration "
 				+ "| key = " + key);
 		return "";
 	}
-	
+
 	/**
 	 * Get system specific configuration value, or "" if there is no value.
 	 * 
@@ -432,20 +426,24 @@ public class CurrentState {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("CurrentState", "Failed to update configuration value.");
+						Util.showErrorMsg("CurrentState",
+								"Failed to update configuration value.");
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
-							Util.showInfoMsg("CurrentState", "Updated configuration value.");
+							Util.showInfoMsg("CurrentState",
+									"Updated configuration value.");
 						} else {
-							Util.showErrorMsg("CurrentState", "Failed to update configuration value.");
+							Util.showErrorMsg("CurrentState",
+									"Failed to update configuration value.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("CurrentState", "Failed to update configuration value.");
+				Util.showErrorMsg("CurrentState",
+						"Failed to update configuration value.");
 			}
 
 		} else {
@@ -496,8 +494,10 @@ public class CurrentState {
 									JsonUtil
 											.debug("successfully retrieved User Configuration");
 									userConfiguration = r;
-									if( userConfiguration.get("usermodules")!=null ){
-										userModules = (HashMap<String, String>)getUserConfig("usermodules", "HashMap<String,String>");
+									if (userConfiguration.get("usermodules") != null) {
+										userModules = (HashMap<String, String>) getUserConfig(
+												"usermodules",
+												"HashMap<String,String>");
 									}
 									if (userConfiguration
 											.get("LeftNavigationMenu") != null) {
@@ -540,7 +540,6 @@ public class CurrentState {
 			HashMap<String, HashMap<String, Integer>> options) {
 		leftNavigationOptions = options;
 	}
-
 
 	/**
 	 * Pull system configuration settings into CurrentState object.
@@ -616,23 +615,27 @@ public class CurrentState {
 		}
 	}
 
-	protected static void reEvaluateSystemConfiguration(){
-		if(getSystemConfig("form_autosave")!=null)
-			assignFormAutoSave(getSystemConfig("form_autosave").equalsIgnoreCase("1"));
-		
-		if(getSystemConfig("form_autosave_interval")!=null)
-			assignFormAutoSaveInterval(Integer.parseInt(getSystemConfig("form_autosave_interval")) * 1000);
-		
-		if(getSystemConfig("smart_search_char_len")!=null)
-			assignMinCharCountForSmartSearch(Integer.parseInt(getSystemConfig("smart_search_char_len")));
+	protected static void reEvaluateSystemConfiguration() {
+		if (getSystemConfig("form_autosave") != null)
+			assignFormAutoSave(getSystemConfig("form_autosave")
+					.equalsIgnoreCase("1"));
+
+		if (getSystemConfig("form_autosave_interval") != null)
+			assignFormAutoSaveInterval(Integer
+					.parseInt(getSystemConfig("form_autosave_interval")) * 1000);
+
+		if (getSystemConfig("smart_search_char_len") != null)
+			assignMinCharCountForSmartSearch(Integer
+					.parseInt(getSystemConfig("smart_search_char_len")));
 	}
-	
+
 	/**
 	 * evaluate whether this menu option should be visible or not
 	 * 
-	 * @param menuOption  : name of the navigation option
+	 * @param menuOption
+	 *            : name of the navigation option
 	 */
-	public static boolean isMenuAllowed(String menuCatagory,String menuOption) {
+	public static boolean isMenuAllowed(String menuCatagory, String menuOption) {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			return true;
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -642,21 +645,23 @@ public class CurrentState {
 				return false;
 			Integer optionVal = leftNavigationOptions.get(menuCatagory).get(
 					menuOption);
-			if (optionVal != null && optionVal== 1) {
+			if (optionVal != null && optionVal == 1) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/*
-	 * Checks the permission string and evaluates the current action 
+	 * Checks the permission string and evaluates the current action
 	 * 
 	 * @param module - module to be check
-	 * @param action - int value against read/write/delete/modify/lock/show from constants Class
+	 * 
+	 * @param action - int value against read/write/delete/modify/lock/show from
+	 * constants Class
 	 */
-	public static boolean isActionAllowed(String module,int action ) {
-		//if(true) return true; // temporarily blocked permissions 
+	public static boolean isActionAllowed(String module, int action) {
+		// if(true) return true; // temporarily blocked permissions
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			return true;
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -667,20 +672,20 @@ public class CurrentState {
 			String permissionBits = userModules.get(module);
 			if (permissionBits != null) {
 				switch (action) {
-					case AppConstants.READ:
-					case AppConstants.WRITE:
-					case AppConstants.MODIFY:
-					case AppConstants.DELETE:
-					case AppConstants.LOCK: {
-						if (permissionBits.charAt(action - 1) == '1')
-							return true;
-					}
+				case AppConstants.READ:
+				case AppConstants.WRITE:
+				case AppConstants.MODIFY:
+				case AppConstants.DELETE:
+				case AppConstants.LOCK: {
+					if (permissionBits.charAt(action - 1) == '1')
+						return true;
+				}
 					break;
-					case AppConstants.SHOW: {
-						if (Integer.parseInt(userModules.get(module)) != 0)
-							return true;
-						
-					}
+				case AppConstants.SHOW: {
+					if (Integer.parseInt(userModules.get(module)) != 0)
+						return true;
+
+				}
 					break;
 				}
 
@@ -688,12 +693,19 @@ public class CurrentState {
 		}
 		return false;
 	}
-	public static boolean isAnyActionAllowed(String module,int action1 , int action2 ){
-		return isActionAllowed(module, action1) | isActionAllowed(module, action2);
+
+	public static boolean isAnyActionAllowed(String module, int action1,
+			int action2) {
+		return isActionAllowed(module, action1)
+				| isActionAllowed(module, action2);
 	}
-	public static boolean isAnyActionAllowed(String module,int action1 , int action2, int action3 ){
-		return isAnyActionAllowed(module, action1,action2) | isActionAllowed(module, action3);
+
+	public static boolean isAnyActionAllowed(String module, int action1,
+			int action2, int action3) {
+		return isAnyActionAllowed(module, action1, action2)
+				| isActionAllowed(module, action3);
 	}
+
 	/**
 	 * Check the hours of dates whether these dates lie in between break hours
 	 * 
@@ -711,5 +723,5 @@ public class CurrentState {
 	public static HashMap<Integer, HashMap<String, PatientScreenInterface>> getPatientSubScreenMap() {
 		return patientSubScreenMap;
 	}
-	
+
 }
