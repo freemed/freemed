@@ -95,7 +95,7 @@ CREATE TRIGGER clinicregistration_PreInsert
 CREATE TRIGGER clinicregistration_Insert
 	AFTER INSERT ON clinicregistration
 	FOR EACH ROW BEGIN
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.dateof, 0, 'Registration', 'clinicregistration', 0, 'NEW' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.dateof, 0, 'Registration', 'clinicregistration', 0, 'NEW' );
 	END;
 //
 DELIMITER ;

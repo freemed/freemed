@@ -35,7 +35,7 @@ class ClinicRegistration extends SupportModule {
 
 	var $table_name = "clinicregistration";
 
-        var $widget_hash = '##cilname##, ##cifname## ##cimname##';
+        var $widget_hash = '##lastname## ##lastname2##, ##firstname##';
 
 	var $archive_field = "archive";
 
