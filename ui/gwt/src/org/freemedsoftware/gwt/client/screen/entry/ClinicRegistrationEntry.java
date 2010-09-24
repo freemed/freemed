@@ -174,7 +174,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 	}
 
 	public String getModuleName() {
-		return "Immunizations";
+		return "ClinicRegistration";
 	}
 
 	public void resetForm() {
@@ -195,7 +195,11 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		while (iter.hasNext()) {
 			String k = iter.next();
 			JsonUtil.debug("grabbing key " + k + " from setters");
-			rec.put(k, setters.get(k).getStoredValue());
+			try {
+				rec.put(k, setters.get(k).getStoredValue());
+			} catch (Exception ex) {
+				JsonUtil.debug("key " + k + ": " + ex.toString());
+			}
 		}
 
 		// Debug
