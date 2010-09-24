@@ -80,7 +80,7 @@ DELIMITER //
 CREATE TRIGGER rqueue_Insert
 	AFTER INSERT ON rqueue
 	FOR EACH ROW BEGIN
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.insert_stamp, 0, 'Remittance', 'rqueue', 0, 'NEW' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.insert_stamp, 0, 'Remittance', 'rqueue', 0, 'NEW' );
 	END;
 //
 

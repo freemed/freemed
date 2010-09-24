@@ -170,7 +170,7 @@ CREATE TRIGGER vitals_Insert
 
 		# Move to atomic records
 
-		IF v_temp_status = 'recorded' THEN
+		IF NEW.v_temp_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			INSERT INTO `vitals_atomic` (
@@ -194,7 +194,7 @@ CREATE TRIGGER vitals_Insert
 			);
 		END IF;
 
-		IF v_bp_status = 'recorded' THEN
+		IF NEW.v_bp_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			INSERT INTO `vitals_atomic` (
@@ -238,7 +238,7 @@ CREATE TRIGGER vitals_Insert
 			);
 		END IF;
 
-		IF v_pulseox_status = 'recorded' THEN
+		IF NEW.v_pulseox_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			# TODO: FLOW RATE
@@ -264,7 +264,7 @@ CREATE TRIGGER vitals_Insert
 			);
 		END IF;
 
-		IF v_pulse_status = 'recorded' THEN
+		IF NEW.v_pulse_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			INSERT INTO `vitals_atomic` (
@@ -288,7 +288,7 @@ CREATE TRIGGER vitals_Insert
 			);
 		END IF;
 
-		IF v_glucose_status = 'recorded' THEN
+		IF NEW.v_glucose_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			INSERT INTO `vitals_atomic` (
@@ -314,7 +314,7 @@ CREATE TRIGGER vitals_Insert
 
 		# TODO: RESPIRATORY RATE
 
-		IF v_cvp_status = 'recorded' THEN
+		IF NEW.v_cvp_status = 'recorded' THEN
 			INSERT INTO `vitals_atomic` (
 				  dateof
 				, patient
@@ -338,7 +338,7 @@ CREATE TRIGGER vitals_Insert
 
 		# TODO : CG VALUES
 
-		IF v_h_status = 'recorded' THEN
+		IF NEW.v_h_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			INSERT INTO `vitals_atomic` (
@@ -362,7 +362,7 @@ CREATE TRIGGER vitals_Insert
 			);
 		END IF;
 
-		IF v_w_status = 'recorded' THEN
+		IF NEW.v_w_status = 'recorded' THEN
 			# TODO: FORM QUALIFIER
 
 			INSERT INTO `vitals_atomic` (

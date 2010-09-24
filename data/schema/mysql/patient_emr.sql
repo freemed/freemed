@@ -21,6 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SOURCE data/schema/mysql/patient.sql
+SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `patient_emr` (
 	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
@@ -50,6 +51,7 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 
 	#----- Remove triggers
+	DROP TRIGGER patient_emr_PreInsert;
 	DROP TRIGGER patient_emr_Insert;
 
 	ALTER IGNORE TABLE patient_emr ADD COLUMN language CHAR( 5 ) DEFAULT '' AFTER provider;
@@ -57,8 +59,8 @@ BEGIN
 END;
 //
 
-CREATE TRIGGER patient_emr_Insert
-	AFTER INSERT ON patient_emr
+CREATE TRIGGER patient_emr_PreInsert
+	BEFORE INSERT ON patient_emr
 	FOR EACH ROW BEGIN
 		DECLARE prov INT UNSIGNED;
 
@@ -66,11 +68,20 @@ CREATE TRIGGER patient_emr_Insert
 		IF NEW.provider = 0 THEN
 			SELECT userrealphy INTO prov FROM user WHERE id=NEW.user;
 			IF prov > 0 THEN
-				UPDATE patient_emr SET provider=prov WHERE id=NEW.id;
+				SET NEW.provider = prov;
 			END IF;
 		END IF;
 	END;
 //
+
+CREATE TRIGGER patient_emr_Insert
+	AFTER INSERT ON patient_emr
+	FOR EACH ROW BEGIN
+		#	Fire off a notification
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.stamp, 0, NEW.module, 'patient_emr', NEW.patient, 'NEW' );
+	END;
+//
+
 DELIMITER ;
 
 CALL patient_emr_Upgrade ( );

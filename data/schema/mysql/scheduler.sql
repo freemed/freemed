@@ -121,7 +121,7 @@ CREATE TRIGGER scheduler_Delete
 			DELETE FROM `workflow_status` WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = OLD.caldateof AND patient = OLD.calpatient;
 			DELETE FROM `workflow_status_summary` WHERE DATE_FORMAT( stamp, '%Y-%m-%d' ) = OLD.caldateof AND patient = OLD.calpatient;
 		END IF;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NOW(), 0, CONCAT( LPAD( OLD.calhour, 2, '0' ), ':', LPAD( OLD.calminute, 2, '0' ), ' (', OLD.calduration, 'm) - ', OLD.calprenote ), 'scheduler', OLD.calpatient, 'DELETE' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NOW(), 0, CONCAT( LPAD( OLD.calhour, 2, '0' ), ':', LPAD( OLD.calminute, 2, '0' ), ' (', OLD.calduration, 'm) - ', OLD.calprenote ), 'scheduler', OLD.calpatient, 'DELETE' );
 	END;
 //
 
@@ -132,7 +132,7 @@ CREATE TRIGGER scheduler_Insert
 			INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, user ) VALUES ( 'scheduler', NEW.calpatient, NEW.id, NEW.caldateof, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), NEW.user );
 			CALL patientWorkflowUpdateStatus( NEW.calpatient, NEW.caldateof, 'scheduler', TRUE, NEW.user );
 		END IF;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.calcreated, 0, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), 'scheduler', NEW.calpatient, 'NEW' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.calcreated, 0, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), 'scheduler', NEW.calpatient, 'NEW' );
 	END;
 //
 
@@ -152,7 +152,7 @@ CREATE TRIGGER scheduler_Update
 				CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, OLD.caldateof );
 			END IF;
 		END IF;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NOW(), 0, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), 'scheduler', NEW.calpatient, 'UPDATE' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NOW(), 0, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), 'scheduler', NEW.calpatient, 'UPDATE' );
 	END;
 //
 

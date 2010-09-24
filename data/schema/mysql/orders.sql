@@ -99,7 +99,7 @@ CREATE TRIGGER orders_Insert
 	AFTER INSERT ON orders
 	FOR EACH ROW BEGIN
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status, provider ) VALUES ( 'orders', NEW.patient, NEW.id, NEW.dateof, NEW.summary, NEW.locked, NEW.user, NEW.active, NEW.provider );
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.dateof, 0, NEW.summary, 'orders', NEW.patient, 'NEW' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.dateof, 0, NEW.summary, 'orders', NEW.patient, 'NEW' );
 	END;
 //
 
@@ -107,7 +107,7 @@ CREATE TRIGGER orders_Update
 	AFTER UPDATE ON orders
 	FOR EACH ROW BEGIN
 		UPDATE `patient_emr` SET stamp=NEW.dateof, patient=NEW.patient, summary=NEW.summary, locked=NEW.locked, user=NEW.user, status=NEW.active, provider=NEW.provider WHERE module='orders' AND oid=NEW.id;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.dateof, 0, NEW.summary, 'orders', NEW.patient, 'UPDATE' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.dateof, 0, NEW.summary, 'orders', NEW.patient, 'UPDATE' );
 	END;
 //
 

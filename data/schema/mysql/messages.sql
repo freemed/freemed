@@ -84,7 +84,7 @@ CREATE TRIGGER messages_Insert
 		ELSE
 			SET @re = NEW.msgsubject;
 		END IF;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.msgtime, NEW.msgfor, CONCAT( 'Msg RE: ', @re ), 'messages', NEW.msgpatient, 'NEW' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NEW.msgtime, NEW.msgfor, CONCAT( 'Msg RE: ', @re ), 'messages', NEW.msgpatient, 'NEW' );
 	END;
 //
 
