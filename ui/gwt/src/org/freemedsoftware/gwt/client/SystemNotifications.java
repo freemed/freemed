@@ -125,12 +125,12 @@ public class SystemNotifications {
 								if (response.getText().trim().equalsIgnoreCase(
 										AppConstants.INVALID_SESSION)) {
 									Util.logout(new Command() {
-									
+
 										@Override
 										public void execute() {
 											stop();
 										}
-									
+
 									});
 									mutexStatus = false;
 									return;
@@ -206,6 +206,10 @@ public class SystemNotifications {
 			e.setSourceModule(event.get("nmodule"));
 			e.setAction(event.get("naction"));
 			e.setText(event.get("ntext"));
+			try {
+				e.setPatient(Integer.parseInt(event.get("npatient")));
+			} catch (NumberFormatException nfe) {
+			}
 			CurrentState.getEventBus().fireEvent(e);
 		} catch (Exception ex) {
 			JsonUtil.debug(ex.toString());

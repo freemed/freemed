@@ -72,6 +72,8 @@ public class TriageScreen extends ScreenInterface implements
 
 	protected Integer currentId = new Integer(0);
 
+	protected Label showPatientName = null;
+
 	protected FlexTable flexTable;
 
 	protected HashMap<String, String>[] store = null;
@@ -133,6 +135,9 @@ public class TriageScreen extends ScreenInterface implements
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				try {
 					currentId = Integer.parseInt(data.get("id"));
+					showPatientName.setText(data.get("lastname") + ", "
+							+ data.get("firstname") + " ( " + "DOB: "
+							+ data.get("dob") + " )");
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);
 				} finally {
@@ -150,6 +155,10 @@ public class TriageScreen extends ScreenInterface implements
 
 		int pos = 0;
 
+		showPatientName = new Label();
+		showPatientName.setStyleName("freemed-PatientSummaryHeading");
+		flexTable.setWidget(pos, 1, showPatientName);
+
 		final Label findExistingPatient = new Label("Find existing patient : ");
 		flexTable.setWidget(++pos, 0, findExistingPatient);
 		wExistingPatient = new PatientWidget();
@@ -158,6 +167,7 @@ public class TriageScreen extends ScreenInterface implements
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				Integer patientSelected = event.getValue();
 				if (patientSelected != null && patientSelected != 0) {
+					showPatientName.setText("");
 					migrateToPatient(currentId, patientSelected);
 					loadVitalsScreen(patientSelected);
 				}
@@ -171,6 +181,7 @@ public class TriageScreen extends ScreenInterface implements
 		wMigrateToPatient.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				showPatientName.setText("");
 				createPatient(currentId);
 			}
 		});
@@ -420,7 +431,7 @@ public class TriageScreen extends ScreenInterface implements
 	@Override
 	public void onSystemEvent(SystemEvent e) {
 		if (e.getSourceModule() == "clinicregistration") {
-			if (currentId == null) {
+			if (currentId == null || currentId == 0) {
 				loadData();
 			}
 			Util.showInfoMsg("TriageScreen", "Patients waiting for triage.");

@@ -75,4 +75,14 @@ public class SystemEvent extends GwtEvent<SystemEvent.Handler> {
 		this.text = s;
 	}
 
+	private Integer patient = null;
+
+	public Integer getPatient() {
+		return patient;
+	}
+
+	public void setPatient(Integer p) {
+		this.patient = p;
+	}
+
 }

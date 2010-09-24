@@ -33,6 +33,7 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
+import org.freemedsoftware.gwt.client.SystemEvent;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
@@ -75,7 +76,8 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PatientProblemList extends WidgetInterface {
+public class PatientProblemList extends WidgetInterface implements
+		SystemEvent.Handler {
 
 	public final static String moduleName = PatientScreen.moduleName;
 
@@ -276,6 +278,9 @@ public class PatientProblemList extends WidgetInterface {
 		createSummaryTable(lettersImage, "letters,patletter");
 
 		tabPanel.selectTab(0);
+
+		// Register on the event bus
+		CurrentState.getEventBus().addHandler(SystemEvent.TYPE, this);
 	}
 
 	public void modifyItem(Integer item, HashMap<String, String> data) {
@@ -436,17 +441,17 @@ public class PatientProblemList extends WidgetInterface {
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.add(t);
 
-//		Label m = new Label();
-//		m.setText("No Item Found!!.");
-//		m.setStylePrimaryName("label_italic");
-//		m.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-//		m.setVisible(false);
-//		vPanel.add(m);
+		// Label m = new Label();
+		// m.setText("No Item Found!!.");
+		// m.setStylePrimaryName("label_italic");
+		// m.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		// m.setVisible(false);
+		// vPanel.add(m);
 
 		tabPanel.add(vPanel, tab);
 
 		tables.put(criteria, t);
-//		messages.put(criteria, m);
+		// messages.put(criteria, m);
 	}
 
 	protected PatientEntryScreenInterface resolvePatientScreen(String moduleName) {
@@ -474,7 +479,7 @@ public class PatientProblemList extends WidgetInterface {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void loadData() {
+	public void loadData() {
 		// Clear mappings during populate
 		selected.clear();
 		actionBarMap.clear();
@@ -676,7 +681,11 @@ public class PatientProblemList extends WidgetInterface {
 			}
 
 			if (res.size() > 0) {
-				messages.get(crit).setVisible(false);
+				try {
+					messages.get(crit).setVisible(false);
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.toString());
+				}
 				JsonUtil.debug("Populating table " + k + " with "
 						+ new Integer(res.size()).toString() + " entries");
 				CustomTable thisTable = tables.get(k);
@@ -690,4 +699,14 @@ public class PatientProblemList extends WidgetInterface {
 			}
 		}
 	}
+
+	@Override
+	public void onSystemEvent(SystemEvent e) {
+		if (e.getPatient() == patientId) {
+			// if (e.getSourceModule() == "vitals") {
+			loadData();
+			// }
+		}
+	}
+
 }

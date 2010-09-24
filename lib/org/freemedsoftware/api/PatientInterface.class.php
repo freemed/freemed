@@ -634,12 +634,18 @@ class PatientInterface {
 		$either = trim( $either );
 
 		if ($first and $last) {
+			$q[] = "ptfname LIKE '".addslashes($either)."%'";
+			$q[] = "ptlname LIKE '".addslashes($either)."%'";
 			$q[] = "( ptlname LIKE '".addslashes($last)."%' AND ".
 				" ptfname LIKE '".addslashes($first)."%' )";
 		} elseif ($first) {
+			$q[] = "ptfname LIKE '".addslashes($either)."%'";
+			$q[] = "ptlname LIKE '".addslashes($either)."%'";
                 	$q[] = "ptfname LIKE '".addslashes($first)."%'";
                 	$q[] = "ptid LIKE '%".addslashes($first)."%'";
 		} elseif ($last) {
+			$q[] = "ptfname LIKE '".addslashes($either)."%'";
+			$q[] = "ptlname LIKE '".addslashes($either)."%'";
                 	$q[] = "ptlname LIKE '".addslashes($last)."%'";
                 	$q[] = "ptid LIKE '%".addslashes($last)."%'";
 		} else {
