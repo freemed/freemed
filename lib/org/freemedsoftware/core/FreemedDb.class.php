@@ -232,6 +232,9 @@ class FreemedDb extends MDB2 {
 					if ( $v == '0000-00-00' ) {
 						continue;
 					}
+					if ( $v == '0000-00-00 00:00:00' ) {
+						continue;
+					}
 				}
 			}
 

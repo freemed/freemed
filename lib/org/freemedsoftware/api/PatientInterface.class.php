@@ -435,7 +435,7 @@ class PatientInterface {
 	public function PatientInformation( $id ) {
 		syslog(LOG_INFO, (int)$id);
 		$q = "SELECT "
-		."CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name"
+		."CONCAT( p.ptlname, ', ', p.ptfname, IF(NOT ISNULL(p.ptmname), CONCAT(' ', p.ptmname), '') ) AS patient_name"
 		.", p.ptid AS patient_id"
 		.", p.ptdob AS date_of_birth"
 		.", p.ptprimarylanguage AS language"

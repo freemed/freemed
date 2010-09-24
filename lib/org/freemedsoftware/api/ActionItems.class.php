@@ -30,6 +30,7 @@ class ActionItems {
 	public function __constructor ( ) { }
 
 	public function getActionItems($patient = NULL){
+		/*
 		//intensified Treatment Notes 
 		$intensifiedTreatmentNotes = createObject("org.freemedsoftware.module.IntensifiedTreatmentNotes");
 		$intensifiedTreatmentNotesArr = $intensifiedTreatmentNotes->getActionItems($patient);
@@ -42,6 +43,7 @@ class ActionItems {
 		//Clinical Assesment Notes 
 		$clinicalAssessmentNotes = createObject("org.freemedsoftware.module.ClinicalAssessmentNotes");
 		$clinicalAssessmentNotesArr = $clinicalAssessmentNotes->getActionItems($patient);
+		*/
 
 		//Authorizations
 		$authorizations = createObject("org.freemedsoftware.module.Authorizations");
@@ -55,6 +57,7 @@ class ActionItems {
 	}
 
 	public function getActionItemsCount($patient = NULL){
+		/*
 		//intensified Treatment Notes 
 		$intensifiedTreatmentNotes = createObject("org.freemedsoftware.module.IntensifiedTreatmentNotes");
 		$intensifiedTreatmentNotesCount = $intensifiedTreatmentNotes->getActionItemsCount($patient);
@@ -66,6 +69,7 @@ class ActionItems {
 		//Clinical Assesment Notes 
 		$clinicalAssessmentNotes = createObject("org.freemedsoftware.module.ClinicalAssessmentNotes");
 		$clinicalAssessmentNotesCount = $clinicalAssessmentNotes->getActionItemsCount($patient);
+		*/
 
 		//Authorizations 
 		$authorizations = createObject("org.freemedsoftware.module.Authorizations");
@@ -77,7 +81,6 @@ class ActionItems {
 		
 		return $intensifiedTreatmentNotesCount + $moduleFieldCheckerCount + $treatmentClinicalNoteCount + $authorizationsCount + $clinicalAssessmentNotesCount;
 	}
-
 
 } // end class ActionItems
 

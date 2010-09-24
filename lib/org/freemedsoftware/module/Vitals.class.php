@@ -37,6 +37,10 @@ class Vitals extends EMRModule {
 	var $patient_field = "patient";
 	var $widget_hash   = "##note##";
 
+	var $date_variables = array (
+		'dateof'
+	);
+
 	var $variables = array (
 		  'dateof'
 		, 'patient'
@@ -136,6 +140,11 @@ class Vitals extends EMRModule {
 		if ( $data['dateof'] ) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 			$data['dateof'] = $s->ImportDate( $data['dateof'] );
+		}
+
+		// Make sure date stamp doesn't bomb
+		if ($data['dataof'] == '') {
+			unset( $data['dateof'] );
 		}
 	}
 

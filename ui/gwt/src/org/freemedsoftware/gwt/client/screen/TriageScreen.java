@@ -194,6 +194,7 @@ public class TriageScreen extends ScreenInterface implements
 			public void execute() {
 				Util.spawnTabPatient("Vitals", new VitalsEntry(), psI);
 				clearForm();
+				loadData();
 			}
 		});
 	}
@@ -220,9 +221,16 @@ public class TriageScreen extends ScreenInterface implements
 							Response response) {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
-								Integer r = (Integer) JsonUtil.shoehornJson(
+								String raw = (String) JsonUtil.shoehornJson(
 										JSONParser.parse(response.getText()),
-										"Integer");
+										"String");
+								Integer r = null;
+								try {
+									r = Integer.parseInt(raw);
+								} catch (Exception ex) {
+									JsonUtil
+											.debug("Unable to parse returned patient id");
+								}
 								if (r != null) {
 									Util.showInfoMsg("TriageScreen",
 											"New patient record created.");
@@ -286,6 +294,9 @@ public class TriageScreen extends ScreenInterface implements
 								}
 							} else {
 							}
+
+							// Force refresh after migrate is complete.
+							loadData();
 						}
 					}
 				});
