@@ -81,7 +81,7 @@ class ClinicRegistration extends SupportModule {
 	//
 	public function GetAll () {
 		freemed::acl_enforce( 'emr', 'read' );
-		$q = "SELECT * FROM FROM ".$this->table_name." WHERE processed = FALSE ORDER BY dateof DESC";
+		$q = "SELECT *, CONCAT(lastname, ' ', lastname2) AS fulllastname FROM ".$this->table_name." WHERE processed = FALSE ORDER BY dateof DESC";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 

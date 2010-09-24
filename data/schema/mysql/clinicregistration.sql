@@ -104,7 +104,7 @@ DROP PROCEDURE IF EXISTS clinicregistration_MigrateToPatient;
 DELIMITER //
 CREATE PROCEDURE clinicregistration_MigrateToPatient ( IN userId INT UNSIGNED, IN clinicregid INT UNSIGNED, IN patientId INT UNSIGNED )
 BEGIN
-	UPDATE clinicregistration SET patient = patientId, processed = TRUE, userprocessed = userId WHERE id = clinicregid;
+	UPDATE clinicregistration SET patient = patientId, processed = TRUE, processeduser = userId WHERE id = clinicregid;
 END
 //
 
@@ -120,10 +120,9 @@ BEGIN
 		  ptlname
 		, ptfname
 		, ptdob
-		, ptgender
+		, ptsex
 	) SELECT
 		  CONCAT(lastname, IF(ISNULL(lastname2),'',CONCAT(' ', lastname2)))
-		, lastname2
 		, firstname
 		, dob
 		, gender
@@ -131,7 +130,7 @@ BEGIN
 
 	SELECT LAST_INSERT_ID() INTO newPatientId;
 
-	UPDATE clinicregistration SET patient = newPatientId, processed = TRUE, userprocessed = userId WHERE id = clinicregid;
+	UPDATE clinicregistration SET patient = newPatientId, processed = TRUE, processeduser = userId WHERE id = clinicregid;
 
 	# Send back new patient id
 	SELECT newPatientId;
