@@ -40,10 +40,11 @@ import org.freemedsoftware.gwt.client.screen.patient.VitalsEntry;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
-import org.freemedsoftware.gwt.client.widget.UserMultipleChoiceWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.Request;
@@ -57,7 +58,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -66,17 +66,11 @@ public class TriageScreen extends ScreenInterface implements
 
 	protected CustomTable wTriagePendingList = null;
 
-	protected ListBox wRotate = null;
-
-	protected UserMultipleChoiceWidget users;
-
 	protected TextBox wNote = null;
 
 	protected PatientWidget wExistingPatient = null;
 
 	protected Integer currentId = new Integer(0);
-
-	protected HorizontalPanel horizontalPanel;
 
 	protected FlexTable flexTable;
 
@@ -137,19 +131,13 @@ public class TriageScreen extends ScreenInterface implements
 		wTriagePendingList.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
-				if (col == 0 || col == 1) {
-					// Import current id
-					try {
-						currentId = Integer.parseInt(data.get("id"));
-					} catch (Exception ex) {
-						GWT.log("Exception", ex);
-					} finally {
-						if (canWrite) {
-							// Show the form
-							flexTable.setVisible(true);
-							horizontalPanel.setVisible(true);
-						}
-					}
+				try {
+					currentId = Integer.parseInt(data.get("id"));
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+				} finally {
+					// Show the form
+					flexTable.setVisible(true);
 				}
 			}
 		});
@@ -180,6 +168,12 @@ public class TriageScreen extends ScreenInterface implements
 		flexTable.setWidget(++pos, 0, new Label("or"));
 		CustomButton wMigrateToPatient = new CustomButton("Create New Patient",
 				AppConstants.ICON_ADD_PERSON);
+		wMigrateToPatient.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				createPatient(currentId);
+			}
+		});
 		flexTable.setWidget(pos, 1, wMigrateToPatient);
 
 		// Register on the event bus
@@ -187,9 +181,7 @@ public class TriageScreen extends ScreenInterface implements
 
 		// Last thing is to initialize, otherwise we're going to get some
 		// NullPointerException errors
-		if (canRead) {
-			loadData();
-		}
+		loadData();
 	}
 
 	protected void loadVitalsScreen(Integer patientId) {
@@ -235,6 +227,10 @@ public class TriageScreen extends ScreenInterface implements
 									Util.showInfoMsg("TriageScreen",
 											"New patient record created.");
 									loadVitalsScreen(r);
+								} else {
+									Util
+											.showInfoMsg("TriageScreen",
+													"Failed to create new patient record.");
 								}
 							} else {
 								Util.showInfoMsg("TriageScreen",
@@ -307,7 +303,6 @@ public class TriageScreen extends ScreenInterface implements
 	@SuppressWarnings("unchecked")
 	protected void loadData() {
 		flexTable.setVisible(false);
-		horizontalPanel.setVisible(false);
 		mainHorizontalPanel.setVisible(true);
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
@@ -402,7 +397,6 @@ public class TriageScreen extends ScreenInterface implements
 
 	public void clearForm() {
 		flexTable.setVisible(false);
-		horizontalPanel.setVisible(false);
 		currentId = null;
 	}
 

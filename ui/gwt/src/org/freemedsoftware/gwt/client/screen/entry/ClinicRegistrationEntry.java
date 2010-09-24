@@ -25,7 +25,6 @@
 package org.freemedsoftware.gwt.client.screen.entry;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.freemedsoftware.gwt.client.EntryScreenInterface;
 import org.freemedsoftware.gwt.client.HashSetter;
@@ -191,6 +190,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		ModuleInterfaceAsync service = getProxy();
 		// Form hashmap ...
 		final HashMap<String, String> rec = new HashMap<String, String>();
+		/*
 		Iterator<String> iter = setters.keySet().iterator();
 		while (iter.hasNext()) {
 			String k = iter.next();
@@ -200,6 +200,21 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 			} catch (Exception ex) {
 				JsonUtil.debug("key " + k + ": " + ex.toString());
 			}
+		}
+		*/
+
+		if (wDateOfBirth.getStoredValue() != null) {
+			rec.put("dob", wDateOfBirth.getStoredValue());
+		}
+		rec.put("lastname", wLastName1.getValue());
+		rec.put("lastname2", wLastName2.getValue());
+		rec.put("firstname", wFirstName.getValue());
+		rec.put("notes", wNotes.getValue());
+		if (wGender.getWidgetValue() != null) {
+			rec.put("gender", wGender.getWidgetValue());
+		}
+		if (wAge.getValue() != null && wAge.getValue() != "") {
+			rec.put("age", wAge.getValue());
 		}
 
 		// Debug
