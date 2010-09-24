@@ -66,7 +66,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 	protected CustomDatePicker wDateOfBirth = null;
 
 	protected CustomTextBox wLastName1 = null, wLastName2 = null,
-			wFirstName = null;
+			wFirstName = null, wAge = null;
 
 	protected CustomListBox wGender = null;
 
@@ -111,6 +111,14 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		wDateOfBirth.setHashMapping("dob");
 		addEntryWidget("dob", wDateOfBirth);
 		flexTable.setWidget(pos, 1, wDateOfBirth);
+		pos++;
+
+		final Label ageLabel = new Label("Age (if no date of birth)");
+		flexTable.setWidget(pos, 0, ageLabel);
+		wAge = new CustomTextBox();
+		wAge.setHashMapping("age");
+		addEntryWidget("age", wAge);
+		flexTable.setWidget(pos, 1, wAge);
 		pos++;
 
 		final Label genderLabel = new Label("Gender");
@@ -170,11 +178,12 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 	}
 
 	public void resetForm() {
-		wDateOfBirth.setValue("");
+		wDateOfBirth.setValue((String) null);
 		wLastName1.setValue("");
 		wLastName2.setValue("");
 		wFirstName.setValue("");
 		wNotes.setValue("");
+		wAge.setValue("");
 		Util.setFocus(wLastName1);
 	}
 

@@ -25,7 +25,6 @@
 package org.freemedsoftware.gwt.client.widget;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 
@@ -117,7 +116,7 @@ public class CustomButton extends PushButton {
 		this.getDownFace().setHTML(buttonTable.toString());
 		this.getUpHoveringFace().setHTML(buttonTable.toString());
 		this.getUpFace().setHTML(buttonTable.toString());
-		
+
 	}
 
 	public void setText(String title) {

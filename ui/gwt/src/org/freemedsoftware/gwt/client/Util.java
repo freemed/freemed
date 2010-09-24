@@ -425,10 +425,10 @@ public final class Util {
 	
 	public static void login(String username, String password,String location,
 			final CustomCommand whenDone, final CustomCommand whenFail) {
-		List paramList = new ArrayList();
+		List<String> paramList = new ArrayList<String>();
 		paramList.add(username);
 		paramList.add(password);
-		if(location!=null)
+		if(location!=null) 
 			paramList.add(location);	
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, URL
 				.encode(Util.getJsonRequest(
@@ -470,9 +470,9 @@ public final class Util {
 	 * @param screen
 	 *            Object containing extended composite with content
 	 */
-	public static synchronized void spawnTab(String title,
+	public static synchronized ScreenInterface spawnTab(String title,
 			ScreenInterface screen) {
-		Util.spawnTab(title, screen, null);
+		return Util.spawnTab(title, screen, null);
 	}
 
 	/**
@@ -485,7 +485,7 @@ public final class Util {
 	 * @param ClosableTabInterface
 	 *            Object implementing onclose & isReadyToClose functions
 	 */
-	public static synchronized void spawnTab(String title,
+	public static synchronized ScreenInterface spawnTab(String title,
 			ScreenInterface screen, ClosableTabInterface closableTabInterface) {
 		boolean recycle = false;
 
@@ -536,6 +536,9 @@ public final class Util {
 			CurrentState.getTabPanel().selectTab(
 					CurrentState.getTabPanel().getWidgetIndex(screen));
 		}
+		
+		// Pass screen back
+		return screen;
 	}
 
 	/**

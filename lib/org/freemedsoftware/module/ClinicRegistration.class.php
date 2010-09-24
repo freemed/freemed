@@ -85,6 +85,17 @@ class ClinicRegistration extends SupportModule {
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
+	public function createPatient( $crid ) {
+		$query = "CALL clinicregistration_CreatePatient ( " . $GLOBALS['sql']->quote(freemed::user_cache()->user_number) . ", " . $GLOBALS['sql']->quote($crid) . " );";
+		return $GLOBALS['sql']->queryOneStoredProc( $query );
+	} // end method createPatient
+
+	public function migrateToPatient( $crid, $pid ) {
+		$query = "CALL clinicregistration_MigrateToPatient ( " . $GLOBALS['sql']->quote(freemed::user_cache()->user_number) . ", " . $GLOBALS['sql']->quote($crid) . ", " . $GLOBALS['sql']->quote($pid) . " );";
+		$GLOBALS['sql']->queryOneStoredProc( $query );
+		return true;
+	} // end method migrateToPatient
+
 } // end class ClinicRegistration
 	
 register_module('ClinicRegistration');

@@ -492,12 +492,9 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 				basicForm = createBasicEntryForm();
 			basicFormEntryTabPanel.selectTab(0);
 			entryVPanel.add(basicForm);
-			if(basicForm!=null)	
-				entryVPanel.remove(basicForm);
 		}else if(formSelection.getStoredValue().equals("")){
 			if(basicForm!=null)		
 				entryVPanel.remove(basicForm);
-			
 		}
 	}
 	protected void showPopupAfterSaveCallin(final Integer id){

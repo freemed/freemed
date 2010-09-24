@@ -33,7 +33,6 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.screen.patient.AdvancePayment;
 import org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.DrugSampleEntry;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
@@ -46,7 +45,6 @@ import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientLinkEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientReportingScreen;
 import org.freemedsoftware.gwt.client.screen.patient.PrescriptionsScreen;
-import org.freemedsoftware.gwt.client.screen.patient.ProcedureScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ScannedDocumentsEntryScreen;
@@ -89,6 +87,8 @@ public class PatientScreen extends ScreenInterface {
 	protected String providerName;
 
 	protected String providerId;
+	
+	protected Command onLoad = null;
 
 	public PatientScreen() {
 		super(moduleName);
@@ -357,6 +357,15 @@ public class PatientScreen extends ScreenInterface {
 		return patientInfoBar;
 	}
 	
+	/**
+	 * Set <Command> to be run upon data population.
+	 * 
+	 * @param onLoad
+	 */
+	public void setOnLoad(Command onLoad) {
+		this.onLoad = onLoad;
+	}
+	
 	public void populate() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();
@@ -443,6 +452,10 @@ public class PatientScreen extends ScreenInterface {
 		providerName = info.get("pcp");
 		providerId = info.get("pcpid");
 		summaryScreen.loadData();
+		
+		if (onLoad != null) {
+			onLoad.execute();
+		}
 	}
 
 	protected PatientScreen getPatientScreen() {

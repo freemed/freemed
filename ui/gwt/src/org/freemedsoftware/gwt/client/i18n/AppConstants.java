@@ -93,6 +93,7 @@ public interface AppConstants extends Constants {
 	public final static String SCHEDULER 	   = "Scheduler";
 	public final static String MESSAGES        = "Messages";
 	public final static String CLINIC_REGISTRATION = "Clinic Registration";
+	public final static String TRIAGE          = "Triage";
 	
 	// Patient Category
 	public final static String PATIENT_CATEGORY = "Patient";

@@ -726,11 +726,11 @@ public class MainScreen extends Composite {
 			}
 		}
 
-		// Clinic
+		// Clinic Registration
 		if (true) {
 			showSystemPanel = true;
 			MenuIcon menuIcon = new MenuIcon(new Image(GWT.getHostPageBaseURL()
-					+ "resources/images/dashboard.32x32.png"),
+					+ "resources/images/add_plus.32x32.png"),
 					AppConstants.CLINIC_REGISTRATION, new Command() {
 						public void execute() {
 							ClinicRegistrationEntry clinicRegistrationEntry = new ClinicRegistrationEntry();
@@ -742,6 +742,25 @@ public class MainScreen extends Composite {
 					.put(AppConstants.CLINIC_REGISTRATION, menuIcon);
 			mainAccPanel.add(menuIcon);
 		}
+		
+		// Triage
+		if (true) {
+			showSystemPanel = true;
+			MenuIcon menuIcon = new MenuIcon(new Image(GWT.getHostPageBaseURL()
+					+ "resources/images/doc_referout.32x32.png"),
+					AppConstants.TRIAGE, new Command() {
+						public void execute() {
+							TriageScreen triageScreen = new TriageScreen();
+							Util.spawnTab(AppConstants.TRIAGE,
+									triageScreen);
+						}
+					});
+			leftNavMenuContainer
+					.put(AppConstants.TRIAGE, menuIcon);
+			mainAccPanel.add(menuIcon);
+		}
+
+		
 
 		if (showSystemPanel)
 			addWighetToStack(mainAccPanel, AppConstants.SYSTEM_CATEGORY);

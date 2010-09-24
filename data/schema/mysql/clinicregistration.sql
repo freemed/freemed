@@ -20,10 +20,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+SOURCE data/schema/mysql/systemnotification.sql
+
 CREATE TABLE IF NOT EXISTS `clinicregistration` (
 	  dateof			TIMESTAMP (14) NOT NULL DEFAULT NOW()
 	, processed			BOOL NOT NULL DEFAULT FALSE
 	, user				INT UNSIGNED NOT NULL DEFAULT 0
+	, processeduser			INT UNSIGNED NOT NULL DEFAULT 0
 	, facility			INT UNSIGNED NOT NULL DEFAULT 0
 	, archive			INT UNSIGNED NOT NULL DEFAULT 0
 	, patient			INT UNSIGNED NOT NULL DEFAULT 0
@@ -52,10 +55,12 @@ BEGIN
 
 	#----- Remove triggers
 	DROP TRIGGER clinicregistration_Delete;
+	DROP TRIGGER clinicregistration_Insert;
 	DROP TRIGGER clinicregistration_PreInsert;
 	DROP TRIGGER clinicregistration_Update;
 
 	#----- Upgrades
+	ALTER IGNORE TABLE clinicregistration ADD COLUMN processeduser INT UNSIGNED NOT NULL DEFAULT 0 AFTER user;
 END
 //
 DELIMITER ;
@@ -85,6 +90,52 @@ CREATE TRIGGER clinicregistration_PreInsert
 			SET NEW.age = CAST( ( TO_DAYS(NOW()) - TO_DAYS( NEW.dob ) ) / 365 AS UNSIGNED );
 		END IF;
 	END;
+//
+
+CREATE TRIGGER clinicregistration_Insert
+	AFTER INSERT ON clinicregistration
+	FOR EACH ROW BEGIN
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, action ) VALUES ( NEW.dateof, 0, 'Registration', 'clinicregistration', 0, 'NEW' );
+	END;
+//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS clinicregistration_MigrateToPatient;
+DELIMITER //
+CREATE PROCEDURE clinicregistration_MigrateToPatient ( IN userId INT UNSIGNED, IN clinicregid INT UNSIGNED, IN patientId INT UNSIGNED )
+BEGIN
+	UPDATE clinicregistration SET patient = patientId, processed = TRUE, userprocessed = userId WHERE id = clinicregid;
+END
+//
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS clinicregistration_CreatePatient;
+DELIMITER //
+CREATE PROCEDURE clinicregistration_CreatePatient ( IN userId INT UNSIGNED, IN clinicregid INT UNSIGNED )
+BEGIN
+	DECLARE newPatientId INT UNSIGNED;
+
+	INSERT INTO patient (
+		  ptlname
+		, ptfname
+		, ptdob
+		, ptgender
+	) SELECT
+		  CONCAT(lastname, IF(ISNULL(lastname2),'',CONCAT(' ', lastname2)))
+		, lastname2
+		, firstname
+		, dob
+		, gender
+	FROM clinicregistration WHERE id = clinicregid;
+
+	SELECT LAST_INSERT_ID() INTO newPatientId;
+
+	UPDATE clinicregistration SET patient = newPatientId, processed = TRUE, userprocessed = userId WHERE id = clinicregid;
+
+	# Send back new patient id
+	SELECT newPatientId;
+END
 //
 
 DELIMITER ;
