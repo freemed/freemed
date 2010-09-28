@@ -1532,8 +1532,8 @@ public final class Util {
 	
 	public static void showInfoMsg(String module,String msg){
 		JsonUtil.debug("Info SYSTEM_NOTIFY_TYPE:" + CurrentState.getSYSTEM_NOTIFY_TYPE()+" module:"+module+" msg:"+msg);
-		if(CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_INFO)
-				||CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_ALL))
+		if(!CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_ERROR)
+				&& !CurrentState.getSYSTEM_NOTIFY_TYPE().equalsIgnoreCase(AppConstants.SYSTEM_NOTIFY_NONE))
 		CurrentState.getToaster().addItem(module,
 				msg,
 				Toaster.TOASTER_INFO);
