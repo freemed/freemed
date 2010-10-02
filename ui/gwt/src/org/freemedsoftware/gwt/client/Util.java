@@ -804,6 +804,11 @@ public final class Util {
 	 * @return
 	 */
 	public static synchronized Date sqlToDate(String sqlDate) {
+		if (sqlDate == null || sqlDate == "") {
+			JsonUtil
+					.debug("sqlToDate was passed a null value, returning current date");
+			return new Date();
+		}
 		DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd");
 		return df.parse(sqlDate);
 	}

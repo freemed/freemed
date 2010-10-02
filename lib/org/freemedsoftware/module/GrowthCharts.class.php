@@ -72,7 +72,7 @@ class GrowthCharts extends SupportModule {
 				$table = "wtage";
 			}
 		}
-		return $GLOBALS['sql']->queryAll( "SELECT * FROM grwothchart_" . $table . " WHERE sex = " . (int) $egender );
+		return $GLOBALS['sql']->queryAll( "SELECT * FROM growthchart_" . $table . " WHERE sex = " . (int) $egender );
 	} // end method GetGrowthChartValues
 
 } // end class GrowthCharts

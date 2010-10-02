@@ -24,7 +24,10 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
@@ -38,6 +41,8 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gchart.client.GChart;
 
 public class GrowthChartScreen extends PatientScreenInterface {
@@ -49,18 +54,35 @@ public class GrowthChartScreen extends PatientScreenInterface {
 
 		protected String title;
 
-		protected String[][] stockData = new String[][] {};
+		protected HashMap<String, String>[] stockData = null;
 
 		public GrowthChart() {
 			setChartSize(WIDTH, HEIGHT);
 			setWidth("100%");
+
+			getXAxis().setTickCount(0);
+			getXAxis().setTickLength(6);
+			getXAxis().setTickThickness(1);
+			getXAxis().setAxisMin(0);
+			getXAxis().setTickLabelThickness(20);
+			getXAxis().setAxisLabelThickness(20);
+
+			getYAxis().setAxisMin(0);
+			getYAxis().setAxisMax(100);
+			getYAxis().setTickCount(11);
+			getYAxis().setHasGridlines(false);
+			getYAxis().setTickLabelFormat("#,###");
+			// setChartFootnotes("");
+			setChartFootnotesThickness(50);
+
+			update();
 		}
 
-		public String[][] getStockData() {
+		public HashMap<String, String>[] getStockData() {
 			return this.stockData;
 		}
 
-		public void setStockData(String[][] stockData) {
+		public void setStockData(HashMap<String, String>[] stockData) {
 			this.stockData = stockData;
 		}
 
@@ -75,9 +97,17 @@ public class GrowthChartScreen extends PatientScreenInterface {
 		}
 
 		public void drawStockCurves() {
+			if (stockData == null) {
+				JsonUtil
+						.debug("Can't draw curves, no data has been loaded yet!");
+				return;
+			}
+
 			// Figure number of data curves
-			int offset = 4;
-			int numCurves = stockData[0].length - offset;
+			JsonUtil.debug("stockData.length = " + stockData.length);
+			int offset = 5;
+			int numCurves = stockData[0].size() - offset;
+			List<String> keys = new ArrayList<String>(stockData[0].keySet());
 
 			for (int c = 0; c < numCurves; c++) {
 				// Create individual curves
@@ -88,24 +118,42 @@ public class GrowthChartScreen extends PatientScreenInterface {
 				getCurve().getSymbol().setSymbolType(SymbolType.LINE);
 
 				// Iterate through all data points on the chart
-				for (int p = 0; p < stockData.length; p++) {
-					getCurve().addPoint(Double.parseDouble(stockData[p][0]),
-							Double.parseDouble(stockData[p][c + offset]));
+				for (int iter = 0; iter < stockData.length; iter++) {
+					getCurve().addPoint(
+							Double.parseDouble(stockData[iter].get("agemos")),
+							Double.parseDouble(stockData[iter].get(keys.get(c
+									+ offset))));
 				}
 			}
-		}
 
+			update();
+		}
 	}
 
 	protected String gender = "";
 
-	protected Boolean height = false;
-
 	protected Date birthDate = new Date();
 
 	protected GrowthChart growthChart = new GrowthChart();
-	
+
+	protected GrowthChart hChart = new GrowthChart();
+	protected GrowthChart wChart = new GrowthChart();
+
 	public GrowthChartScreen() {
+		VerticalPanel vPanel = new VerticalPanel();
+		initWidget(vPanel);
+
+		vPanel.add(new Label("Height/Length"));
+		vPanel.add(hChart);
+		vPanel.add(new Label("Weight"));
+		vPanel.add(wChart);
+	}
+
+	public void init() {
+		// Start callbacks to populate data
+		populateStockData(true, hChart);
+		populateStockData(false, wChart);
+		// TODO: populate with patient data
 	}
 
 	public void setGender(String mf) {
@@ -127,7 +175,7 @@ public class GrowthChartScreen extends PatientScreenInterface {
 		return (int) (ageMs / (1000 * 3600 * (365 / 12)));
 	}
 
-	public void populateStockData() {
+	public void populateStockData(boolean height, final GrowthChart chart) {
 		Boolean infant = false;
 		if (getMonthsAge(birthDate) < 36) {
 			infant = true;
@@ -153,15 +201,18 @@ public class GrowthChartScreen extends PatientScreenInterface {
 								"Failed to retrieve stock growth chart data.");
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
-						if (200 == response.getStatusCode()) {
-							String[][] r = (String[][]) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
-									"String[][]");
+						if (200 == response.getStatusCode()
+								|| response.getText() == "false") {
+							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>[]");
 							if (r != null) {
-								growthChart.setStockData(r);
-								growthChart.drawStockCurves();
+								chart.setStockData(r);
+								chart.drawStockCurves();
 							}
 						} else {
 							Util

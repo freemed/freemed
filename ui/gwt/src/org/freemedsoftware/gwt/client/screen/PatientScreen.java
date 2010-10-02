@@ -286,10 +286,11 @@ public class PatientScreen extends ScreenInterface {
 				menuBar_2.addItem("Growth Charts", new Command() {
 					public void execute() {
 						GrowthChartScreen growthChartScreen = new GrowthChartScreen();
-						growthChartScreen.setGender(patientInfo.get("ptgender")
-								.toLowerCase());
+						JsonUtil.debug("Calling growth charts with ptsex = " + patientInfo.get("ptsex"));
+						growthChartScreen.setGender(patientInfo.get("ptsex"));
 						growthChartScreen.setBirthDate(Util
 								.sqlToDate(patientInfo.get("ptdob")));
+						growthChartScreen.init();
 						Util.spawnTabPatient("Growth Charts",
 								growthChartScreen, getObject());
 					}
