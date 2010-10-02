@@ -40,6 +40,41 @@ class GrowthCharts extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
+	// Method: GetGrowthChartValues
+	//
+	// Parameters:
+	//
+	//	$gender - m/f indicate male or female chart
+	//
+	//	$height - boolean, height/length if true, weight if
+	//	false
+	//
+	//	$infant - boolean, < 24 months if true, > 24 mo if false
+	//
+	public function GetGrowthChartValues( $gender, $height, $infant ) {
+		switch ( $gender ) {
+			case 'm': case 'M':
+				$egender = 1; break;
+			case 'f': case 'F':
+				$egender = 2; break;
+			default: $egender = 1; break;
+		}
+		if ( $height ) {
+			if ( $infant ) {
+				$table = "lenageinf";
+			} else {
+				$table = "statage";
+			}
+		} else {
+			if ( $infant ) {
+				$table = "wtageinf";
+			} else {
+				$table = "wtage";
+			}
+		}
+		return $GLOBALS['sql']->queryAll( "SELECT * FROM grwothchart_" . $table . " WHERE sex = " . (int) $egender );
+	} // end method GetGrowthChartValues
+
 } // end class GrowthCharts
 
 register_module ("GrowthCharts");
