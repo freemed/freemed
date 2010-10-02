@@ -484,6 +484,7 @@ public class EncounterWidget extends Composite {
 	public EncounterWidget(EncounterFormType fType, EncounterFormMode fMod,
 			NoteType nt, HashMap<String, List<String>> secFldMap, String tname,
 			HashMap<String, String> valuesMap, CustomRequestCallback c) {
+		JsonUtil.debug("EncounterWidget constructor");
 		ntype = nt;
 		if (valuesMap == null)
 			templateValuesMap = new HashMap<String, String>();
@@ -501,6 +502,7 @@ public class EncounterWidget extends Composite {
 			HashMap<String, List<String>> secFldMap, String tid,
 			HashMap<String, String> valuesMap, String ptid,
 			CustomRequestCallback c) {
+		JsonUtil.debug("EncounterWidget constructor");
 		if (valuesMap == null)
 			templateValuesMap = new HashMap<String, String>();
 		else
@@ -517,6 +519,7 @@ public class EncounterWidget extends Composite {
 	}
 
 	private void initialize() {
+		JsonUtil.debug("EncounterWidget.initialize()");
 		vPanel = new VerticalPanel();
 		initWidget(vPanel);
 		vPanel.setWidth("100%");

@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.screen.patient.DrugSampleEntry;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
 import org.freemedsoftware.gwt.client.screen.patient.EpisodeOfCareScreen;
 import org.freemedsoftware.gwt.client.screen.patient.FormEntry;
+import org.freemedsoftware.gwt.client.screen.patient.GrowthChartScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ImmunizationEntry;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
@@ -71,14 +72,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PatientScreen extends ScreenInterface {
 
 	public final static String moduleName = "emr";
-	
+
 	protected TabPanel tabPanel;
 
 	protected PatientInfoBar patientInfoBar = null;
 
 	protected Integer patientId = new Integer(0);
-	
-	protected String  patientName = new String("");
+
+	protected String patientName = new String("");
 
 	protected HashMap<String, String> patientInfo;
 
@@ -87,7 +88,7 @@ public class PatientScreen extends ScreenInterface {
 	protected String providerName;
 
 	protected String providerId;
-	
+
 	protected Command onLoad = null;
 
 	public PatientScreen() {
@@ -103,23 +104,24 @@ public class PatientScreen extends ScreenInterface {
 		{
 			final MenuBar menuBar = new MenuBar();
 			verticalPanel.add(menuBar);
-			
+
 			boolean menuItemAdded = false;
-			
+
 			final MenuBar menuBar_1 = new MenuBar(true);
-			if(CurrentState.isActionAllowed(AllergyEntryScreen.moduleName, AppConstants.WRITE)){
+			if (CurrentState.isActionAllowed(AllergyEntryScreen.moduleName,
+					AppConstants.WRITE)) {
 				menuBar_1.addItem("Allergy", new Command() {
 					public void execute() {
 						AllergyEntryScreen allergyEntryScreen = new AllergyEntryScreen();
-						Util.spawnTabPatient("Allergy",
-								allergyEntryScreen, getObject());
+						Util.spawnTabPatient("Allergy", allergyEntryScreen,
+								getObject());
 						allergyEntryScreen.populate();
 					}
 				});
 				menuItemAdded = true;
 			}
 
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Drug Sample", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Drug Sample",
@@ -128,30 +130,30 @@ public class PatientScreen extends ScreenInterface {
 				});
 				menuItemAdded = true;
 			}
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Episode of Care", new Command() {
 					public void execute() {
-						EpisodeOfCareScreen eoc=new EpisodeOfCareScreen();
-						Util.spawnTabPatient("Episode of Care",
-								eoc, getObject());
+						EpisodeOfCareScreen eoc = new EpisodeOfCareScreen();
+						Util.spawnTabPatient("Episode of Care", eoc,
+								getObject());
 						eoc.loadData();
 					}
 				});
 				menuItemAdded = true;
 			}
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Encounter/Progress Notes", new Command() {
 					public void execute() {
-						EncounterScreen ens=new EncounterScreen();
-						Util.spawnTabPatient("Encounter/Progress Notes",
-								ens, getObject());
+						EncounterScreen ens = new EncounterScreen();
+						Util.spawnTabPatient("Encounter/Progress Notes", ens,
+								getObject());
 						ens.laodData();
 					}
 				});
 				menuItemAdded = true;
 			}
-			
-			if(true){
+
+			if (true) {
 				menuBar_1.addItem("Foreign ID", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Foreign ID",
@@ -160,8 +162,8 @@ public class PatientScreen extends ScreenInterface {
 				});
 				menuItemAdded = true;
 			}
-			
-			if(true){
+
+			if (true) {
 				menuBar_1.addItem("Form", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Form", new FormEntry(),
@@ -171,7 +173,7 @@ public class PatientScreen extends ScreenInterface {
 				menuItemAdded = true;
 			}
 
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Immunization", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Immunization",
@@ -180,68 +182,69 @@ public class PatientScreen extends ScreenInterface {
 				});
 				menuItemAdded = true;
 			}
-			
-			if(true){
+
+			if (true) {
 				menuBar_1.addItem("Letter", new Command() {
 					public void execute() {
-						Util.spawnTabPatient("Letter",  new LetterEntry(),
+						Util.spawnTabPatient("Letter", new LetterEntry(),
 								getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
-			
-			if(true){
+
+			if (true) {
 				menuBar_1.addItem("Patient Correspondence", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Patient Correspondence",
-								 new PatientCorrespondenceEntry(), getObject());
+								new PatientCorrespondenceEntry(), getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
 
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Patient Link", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Patient Link",
-								 new PatientLinkEntry(), getObject());
+								new PatientLinkEntry(), getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
 
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Progress Note", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Progress Note",
-								 new ProgressNoteEntry(), getObject());
+								new ProgressNoteEntry(), getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
 
-			if(CurrentState.isActionAllowed(PrescriptionsScreen.moduleName, AppConstants.WRITE)){
+			if (CurrentState.isActionAllowed(PrescriptionsScreen.moduleName,
+					AppConstants.WRITE)) {
 				menuBar_1.addItem("Prescription", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Prescription",
-								 new PrescriptionsScreen(), getObject());
+								new PrescriptionsScreen(), getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
 
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Referral", new Command() {
 					public void execute() {
-						Util.spawnTabPatient("Referral",  new ReferralEntry(),
+						Util.spawnTabPatient("Referral", new ReferralEntry(),
 								getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
-			
-			if(true){
+
+			if (true) {
 				menuBar_1.addItem("Vitals", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Vitals", new VitalsEntry(),
@@ -251,32 +254,48 @@ public class PatientScreen extends ScreenInterface {
 				menuItemAdded = true;
 			}
 
-			if(true){
+			if (true) {
 				menuBar_1.addItem("Scanned Documents", new Command() {
 					public void execute() {
 						ScannedDocumentsEntryScreen scannedDocumentsEntryScreen = new ScannedDocumentsEntryScreen();
-						Util.spawnTabPatient("Scanned Documents", scannedDocumentsEntryScreen,
-								getObject());
+						Util.spawnTabPatient("Scanned Documents",
+								scannedDocumentsEntryScreen, getObject());
 						scannedDocumentsEntryScreen.populateAvailableData();
 					}
 				});
 				menuItemAdded = true;
 			}
-			if(menuItemAdded)
+			if (menuItemAdded)
 				menuBar.addItem("New", menuBar_1);
 			menuItemAdded = false;
 			final MenuBar menuBar_2 = new MenuBar(true);
-			if(CurrentState.isActionAllowed(PatientReportingScreen.moduleName, AppConstants.SHOW)){
+			if (CurrentState.isActionAllowed(PatientReportingScreen.moduleName,
+					AppConstants.SHOW)) {
 				menuBar_2.addItem("Patient Reporting", new Command() {
 					public void execute() {
 						Util.spawnTabPatient("Patient Reporting",
-								 new PatientReportingScreen(), getObject());
+								new PatientReportingScreen(), getObject());
 					}
 				});
 				menuItemAdded = true;
 			}
 
 			menuBar_2.addItem("Billing", (Command) null);
+
+			if (true) {
+				menuBar_2.addItem("Growth Charts", new Command() {
+					public void execute() {
+						GrowthChartScreen growthChartScreen = new GrowthChartScreen();
+						growthChartScreen.setGender(patientInfo.get("ptgender")
+								.toLowerCase());
+						growthChartScreen.setBirthDate(Util
+								.sqlToDate(patientInfo.get("ptdob")));
+						Util.spawnTabPatient("Growth Charts",
+								growthChartScreen, getObject());
+					}
+				});
+				menuItemAdded = true;
+			}
 
 			menuBar_2.addItem("Trending", (Command) null);
 
@@ -294,19 +313,21 @@ public class PatientScreen extends ScreenInterface {
 		summaryScreen.assignPatientScreen(getObject());
 		addChildWidget(summaryScreen);
 		tabPanel.selectTab(0);
-		
+
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			@Override
 			public void onSelection(SelectionEvent<Integer> arg0) {
-				if(tabPanel.getWidget(arg0.getSelectedItem()) instanceof ScreenInterface){
-					ScreenInterface screenInterface = ((ScreenInterface)tabPanel.getWidget(arg0.getSelectedItem()));
+				if (tabPanel.getWidget(arg0.getSelectedItem()) instanceof ScreenInterface) {
+					ScreenInterface screenInterface = ((ScreenInterface) tabPanel
+							.getWidget(arg0.getSelectedItem()));
 					String className = screenInterface.getClass().getName();
-					className = className.substring(className.lastIndexOf('.')+1);
+					className = className
+							.substring(className.lastIndexOf('.') + 1);
 					CurrentState.assignCurrentPageHelp(className);
 				}
 			}
 		});
-		
+
 	}
 
 	/**
@@ -342,21 +363,21 @@ public class PatientScreen extends ScreenInterface {
 	public Integer getPatient() {
 		return patientId;
 	}
-	
+
 	/**
 	 * Get provider name.
 	 * 
 	 * @return Integer of patient id.
 	 */
-	
-	public String getProviderName(){
+
+	public String getProviderName() {
 		return providerName;
 	}
 
 	public PatientInfoBar getPatientInfoBar() {
 		return patientInfoBar;
 	}
-	
+
 	/**
 	 * Set <Command> to be run upon data population.
 	 * 
@@ -365,7 +386,7 @@ public class PatientScreen extends ScreenInterface {
 	public void setOnLoad(Command onLoad) {
 		this.onLoad = onLoad;
 	}
-	
+
 	public void populate() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			HashMap<String, String> dummy = new HashMap<String, String>();
@@ -391,7 +412,8 @@ public class PatientScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("Patientscreen", "Failed to retrieve patient information.");
+						Util.showErrorMsg("Patientscreen",
+								"Failed to retrieve patient information.");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -406,12 +428,14 @@ public class PatientScreen extends ScreenInterface {
 								populatePatientInformation(r);
 							}
 						} else {
-							Util.showErrorMsg("Patientscreen", "Failed to retrieve patient information.");
+							Util.showErrorMsg("Patientscreen",
+									"Failed to retrieve patient information.");
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("Patientscreen", "Failed to retrieve patient information.");
+				Util.showErrorMsg("Patientscreen",
+						"Failed to retrieve patient information.");
 			}
 		} else {
 			// Set off async method to get information
@@ -430,7 +454,8 @@ public class PatientScreen extends ScreenInterface {
 
 						public void onFailure(Throwable t) {
 							GWT.log("FAILURE: ", t);
-							Util.showErrorMsg("Patientscreen", "Failed to retrieve patient information.");
+							Util.showErrorMsg("Patientscreen",
+									"Failed to retrieve patient information.");
 						}
 					});
 		}
@@ -452,7 +477,7 @@ public class PatientScreen extends ScreenInterface {
 		providerName = info.get("pcp");
 		providerId = info.get("pcpid");
 		summaryScreen.loadData();
-		
+
 		if (onLoad != null) {
 			onLoad.execute();
 		}
@@ -461,6 +486,7 @@ public class PatientScreen extends ScreenInterface {
 	protected PatientScreen getPatientScreen() {
 		return this;
 	}
+
 	@Override
 	public void closeScreen() {
 		// TODO Auto-generated method stub

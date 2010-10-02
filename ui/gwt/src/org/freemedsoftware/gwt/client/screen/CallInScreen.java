@@ -488,13 +488,16 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	
 	protected void handleFormSelection(){
 		if(formSelection.getStoredValue().equals("Basic")){
-			if(basicForm==null)
+			JsonUtil.debug("Found basic callin form selected");
+			if(basicForm==null) {
 				basicForm = createBasicEntryForm();
+			}
 			basicFormEntryTabPanel.selectTab(0);
 			entryVPanel.add(basicForm);
 		}else if(formSelection.getStoredValue().equals("")){
-			if(basicForm!=null)		
+			if(basicForm!=null)	{
 				entryVPanel.remove(basicForm);
+			}
 		}
 	}
 	protected void showPopupAfterSaveCallin(final Integer id){
@@ -615,7 +618,6 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	}
 
 	private VerticalPanel createBasicEntryForm() {
-
 		final VerticalPanel verticalPanelEntry = new VerticalPanel();
 		verticalPanelEntry.setWidth("100%");
 		
@@ -726,8 +728,6 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		panelButtons.add(btnAdd);
 		panelButtons.add(btnClear);
-
-		
 
 		return verticalPanelEntry;
 	}

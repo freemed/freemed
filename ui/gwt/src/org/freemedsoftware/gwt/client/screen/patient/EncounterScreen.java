@@ -24,15 +24,14 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
@@ -40,7 +39,6 @@ import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget;
 import org.freemedsoftware.gwt.client.widget.EncounterWidget;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget.CallbackType;
 import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterCommandType;
@@ -55,12 +53,10 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.util.List;
 public class EncounterScreen extends PatientScreenInterface {
 	protected VerticalPanel verticalPanel;
 	protected TabPanel tabPanel;
@@ -69,11 +65,11 @@ public class EncounterScreen extends PatientScreenInterface {
 	protected CustomTable enotesCustomTable;
 	protected Boolean isAdding = true;
 	protected HashMap<String, String> moddata;
-	protected HashMap<String,List<String>> sections;
+	protected HashMap<String, List<String>> sections;
 
 	public EncounterScreen() {
 		moddata = new HashMap<String, String>();
-		sections = new HashMap<String,List<String>>();
+		sections = new HashMap<String, List<String>>();
 		verticalPanel = new VerticalPanel();
 		verticalPanel.setSize("100%", "100%");
 		entryVerticalPanel = new VerticalPanel();
@@ -144,8 +140,7 @@ public class EncounterScreen extends PatientScreenInterface {
 										"Encounter Template");
 								tabPanel
 										.selectTab(tabPanel.getWidgetCount() - 1);
-							}
-							else if (((EncounterCommandType) data) == EncounterCommandType.EDIT_TEMPLATE) {
+							} else if (((EncounterCommandType) data) == EncounterCommandType.EDIT_TEMPLATE) {
 								final EncounterTemplateWidget encounterTemplateWidget = new EncounterTemplateWidget(
 										new CustomRequestCallback() {
 											@Override
@@ -174,7 +169,9 @@ public class EncounterScreen extends PatientScreenInterface {
 
 											}
 										});
-								encounterTemplateWidget.getTemplateValues(encounterWidget.getSelectedTemplate());
+								encounterTemplateWidget
+										.getTemplateValues(encounterWidget
+												.getSelectedTemplate());
 								tabPanel.add(encounterTemplateWidget,
 										"Encounter Template");
 								tabPanel
@@ -185,8 +182,7 @@ public class EncounterScreen extends PatientScreenInterface {
 								loadEncountersList();
 								entryVerticalPanel.clear();
 								createEncounterNotesAdditionTab();
-							}
-							else if (((EncounterCommandType) data) == EncounterCommandType.RESET) {
+							} else if (((EncounterCommandType) data) == EncounterCommandType.RESET) {
 								reset();
 								tabPanel.selectTab(0);
 								loadEncountersList();
@@ -212,42 +208,52 @@ public class EncounterScreen extends PatientScreenInterface {
 		enotesCustomTable.addColumn("Description", "note_desc");
 		enotesCustomTable.addColumn("Submitter", "user");
 		enotesCustomTable.addColumn("Action", "action");
-		
-		
-		enotesCustomTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
-			public Widget setColumn(String columnName,
-					HashMap<String, String> data) {
-				// Render only action column, otherwise skip renderer
-				if (columnName.compareToIgnoreCase("action") != 0) {
-					return null;
-				}
-				final CustomActionBar actionBar = new CustomActionBar(data);
-				actionBar.applyPermissions(false, false, CurrentState.isActionAllowed("EncounterNotes", AppConstants.DELETE), CurrentState.isActionAllowed("EncounterNotes", AppConstants.MODIFY), false);
-					
-				actionBar.setHandleCustomAction(new HandleCustomAction(){
-					@Override
-					public void handleAction(int id,
-							HashMap<String, String> data, int action) {
-						if(action == HandleCustomAction.MODIFY){
-								try {
-									isAdding = false;
-									laodEncounterNoteInfo(data.get("id"));
-									tabPanel.selectTab(0);
-								} catch (Exception e) {
-									GWT.log("Caught exception: ", e);
-								}
-							
+
+		enotesCustomTable
+				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+					public Widget setColumn(String columnName,
+							HashMap<String, String> data) {
+						// Render only action column, otherwise skip renderer
+						if (columnName.compareToIgnoreCase("action") != 0) {
+							return null;
 						}
-						else if(action == HandleCustomAction.DELETE){
-							deleteNote(data.get("id"));
-						}
+						final CustomActionBar actionBar = new CustomActionBar(
+								data);
+						actionBar.applyPermissions(false, false, CurrentState
+								.isActionAllowed("EncounterNotes",
+										AppConstants.DELETE), CurrentState
+								.isActionAllowed("EncounterNotes",
+										AppConstants.MODIFY), false);
+
+						actionBar
+								.setHandleCustomAction(new HandleCustomAction() {
+									@Override
+									public void handleAction(int id,
+											HashMap<String, String> data,
+											int action) {
+										if (action == HandleCustomAction.MODIFY) {
+											try {
+												isAdding = false;
+												laodEncounterNoteInfo(data
+														.get("id"));
+												tabPanel.selectTab(0);
+											} catch (Exception e) {
+												GWT
+														.log(
+																"Caught exception: ",
+																e);
+											}
+
+										} else if (action == HandleCustomAction.DELETE) {
+											deleteNote(data.get("id"));
+										}
+									}
+								});
+						// Push value back to table
+						return actionBar;
 					}
 				});
-				// Push value back to table
-				return actionBar;
-			}
-		});
-		
+
 		listPanel.add(enotesCustomTable);
 		loadEncountersList();
 	}
@@ -269,6 +275,7 @@ public class EncounterScreen extends PatientScreenInterface {
 					public void onError(Request request, Throwable ex) {
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 
@@ -279,7 +286,7 @@ public class EncounterScreen extends PatientScreenInterface {
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {
-							
+
 									enotesCustomTable.loadData(r);
 								} else {
 
@@ -297,7 +304,6 @@ public class EncounterScreen extends PatientScreenInterface {
 		}
 	}
 
-
 	public void laodEncounterNoteInfo(String id) {
 		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { id };
@@ -314,6 +320,7 @@ public class EncounterScreen extends PatientScreenInterface {
 					public void onError(Request request, Throwable ex) {
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 
@@ -327,8 +334,10 @@ public class EncounterScreen extends PatientScreenInterface {
 									moddata = r;
 									if (r.get("pnotestemplate") == null
 											|| r.get("pnotestemplate").equals(
-													"") || r.get("pnotestemplate").equals("0") ) {
-										
+													"")
+											|| r.get("pnotestemplate").equals(
+													"0")) {
+
 										entryVerticalPanel.clear();
 										createEncounterNotesAdditionTab();
 
@@ -366,6 +375,7 @@ public class EncounterScreen extends PatientScreenInterface {
 					public void onError(Request request, Throwable ex) {
 					}
 
+					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 
@@ -377,9 +387,10 @@ public class EncounterScreen extends PatientScreenInterface {
 												"HashMap<String,String>");
 								if (r != null) {
 									String secStr = r.get("pnotestsections");
-									sections=(HashMap<String, List<String>>) JsonUtil
-									.shoehornJson(JSONParser.parse(secStr),
-											"HashMap<String,List>");
+									sections = (HashMap<String, List<String>>) JsonUtil
+											.shoehornJson(JSONParser
+													.parse(secStr),
+													"HashMap<String,List>");
 									entryVerticalPanel.clear();
 									createEncounterNotesAdditionTab();
 								} else {
@@ -402,13 +413,10 @@ public class EncounterScreen extends PatientScreenInterface {
 	public void deleteNote(String id) {
 		if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { id };
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.EncounterNotes.del",
-											params)));
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.EncounterNotes.del",
+							params)));
 
 			try {
 				builder.sendRequest(null, new RequestCallback() {
@@ -420,17 +428,16 @@ public class EncounterScreen extends PatientScreenInterface {
 
 						if (200 == response.getStatusCode()) {
 							try {
-								Boolean r = (Boolean) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
-												"Boolean");
-								if(r){
+								Boolean r = (Boolean) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Boolean");
+								if (r) {
 									Util
-									.showInfoMsg("EncounterNotes",
-											"Encounter Note Successfully Deleted.");
+											.showInfoMsg("EncounterNotes",
+													"Encounter Note Successfully Deleted.");
 									loadEncountersList();
 								}
-								
+
 							} catch (Exception e) {
 
 							}
@@ -444,7 +451,7 @@ public class EncounterScreen extends PatientScreenInterface {
 			}
 		}
 	}
-	
+
 	public void reset() {
 		isAdding = true;
 		sections.clear();
