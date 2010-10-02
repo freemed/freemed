@@ -26,7 +26,7 @@ for i in *.xls; do
 	echo " - Processing $i"
 	(
 		../../../scripts/xls2csv.pl $i A1:Z100 | head -1 ;
-		../../../scripts/xls2csv.pl $i A1:Z100 | grep -v Sex
+		../../../scripts/xls2csv.pl $i A1:Z1000 | grep -v Sex
 
 	) > ${i//xls}csv
 done
