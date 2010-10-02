@@ -3506,8 +3506,13 @@ public class EncounterWidget extends Composite {
 		final String textWidth = "" + (int) (Window.getClientWidth() / 3);
 		final String radWidth = "" + (int) (Window.getClientWidth() / 6);
 		final String labelWidth = "" + (int) (Window.getClientWidth() / 5);
-		final int maxbillables = Integer.parseInt(CurrentState
-				.getSystemConfig("max_billable"));
+		int find_maxbillables = 0;
+		try {
+			find_maxbillables = Integer.parseInt(CurrentState
+					.getSystemConfig("max_billable"));
+		} catch (Exception ex) {
+		}
+		final int maxbillables = find_maxbillables;
 		HashMap<String, HashMap<String, String>> billMap = null;
 		if (templateValuesMap.get("pnotestbillable") != null
 				&& !templateValuesMap.get("pnotestbillable").equals("")) {
