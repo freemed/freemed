@@ -187,8 +187,8 @@ public class PatientProblemList extends WidgetInterface implements
 				CreateAnnotationPopup p = new CreateAnnotationPopup(data);
 				p.center();
 			} else if (sender == viewImage) {
-				EmrView emrView = new EmrView(data.get("module_class"), Integer
-						.parseInt(data.get("id")));
+				EmrView emrView = new EmrView(data.get("module_namespace"),
+						Integer.parseInt(data.get("oid")));
 				Util.spawnTabPatient("View", emrView, patientScreen);
 			} else if (sender == printImage) {
 				EmrPrintDialog d = new EmrPrintDialog();
