@@ -41,6 +41,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gchart.client.GChart;
@@ -112,9 +113,9 @@ public class GrowthChartScreen extends PatientScreenInterface {
 			for (int c = 0; c < numCurves; c++) {
 				// Create individual curves
 				addCurve();
-				getCurve().getSymbol().setHeight(10);
-				getCurve().getSymbol().setWidth(10);
-				getCurve().getSymbol().setBorderWidth(3);
+				getCurve().getSymbol().setHeight(1);
+				getCurve().getSymbol().setWidth(1);
+				getCurve().getSymbol().setBorderWidth(0);
 				getCurve().getSymbol().setSymbolType(SymbolType.LINE);
 
 				// Iterate through all data points on the chart
@@ -144,9 +145,16 @@ public class GrowthChartScreen extends PatientScreenInterface {
 		initWidget(vPanel);
 
 		vPanel.add(new Label("Height/Length"));
+		vPanel.add(new HTML("&nbsp;"));
 		vPanel.add(hChart);
+		hChart.getYAxis().setAxisLabel("Height/Length");
+		hChart.getXAxis().setAxisLabel("Age (months)");
+		vPanel.add(new HTML("&nbsp;<br/>&nbsp;"));
 		vPanel.add(new Label("Weight"));
+		vPanel.add(new HTML("&nbsp;"));
 		vPanel.add(wChart);
+		wChart.getYAxis().setAxisLabel("Weight");
+		wChart.getXAxis().setAxisLabel("Age (months)");
 	}
 
 	public void init() {
