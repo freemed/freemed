@@ -115,7 +115,7 @@ public class GrowthChartScreen extends PatientScreenInterface {
 				addCurve();
 				getCurve().getSymbol().setHeight(1);
 				getCurve().getSymbol().setWidth(1);
-				getCurve().getSymbol().setBorderWidth(0);
+				getCurve().getSymbol().setBorderWidth(1);
 				getCurve().getSymbol().setSymbolType(SymbolType.LINE);
 
 				// Iterate through all data points on the chart
