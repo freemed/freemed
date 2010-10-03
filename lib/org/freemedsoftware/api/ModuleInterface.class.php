@@ -146,6 +146,10 @@ class ModuleInterface {
 		return module_function( $module, 'picklist', array ( $patient,$criteria ) );
 	} // end method ModuleSupportPicklistMethod
 
+	// Method: ModuleRenderHtmlMethod
+	public function ModuleRenderHtmlMethod( $module, $id ) {
+		module_function( $module, 'RenderHtmlView', array ( $id ) );
+	} // end method ModuleRenderHtmlMethod
 
 	// Method: ModuleToTextMethod
 	//

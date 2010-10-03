@@ -799,6 +799,70 @@ class EMRModule extends BaseModule {
 		return true;
 	} // end method PrintSinglePDF
 
+	// Method: RenderHtmlView
+	//
+	// Parameters:
+	//
+	//	$id - ID for the record associated with the current module.
+	//
+	public function RenderHtmlView( $id ) {
+		// Sanity checking
+		if ((int) $id <= 0) { return false; }
+
+		// Actual renderer for formatting array
+		if ($this->patient_field) {
+			// If this is an EMR module with additional
+			// fields, import them
+			$query = "SELECT *".
+				( (count($this->summary_query)>0) ? 
+				",".join(",", $this->summary_query)." " : " " ).
+				"FROM ".$this->table_name." ".
+				"WHERE id='".addslashes($record)."'";
+			$rec = $GLOBALS['sql']->queryRow($query);
+		} else {
+			$rec = $GLOBALS['sql']->get_link( $t, $record );
+		} // end checking for summary_query
+
+		// Make sure we import everything but id from patient
+		$pat = $GLOBALS['sql']->get_link( 'patient', $rec[$this->patient_field] );
+		unset ($pat['id']);
+		foreach ($pat AS $k => $v) {
+			if (!isset($rec[$k])) { $rec[$k] = $v; }
+		}
+
+		$template = $table_name;
+		$basedir = dirname(__FILE__)."/../../../..";
+		if (!file_exists("$basedir/data/emrview/${template}.tpl")) {
+			print "$basedir/data/emrview/$template.tpl<br/>\n";
+			die("Could not load $template template.");
+		}
+
+		// Initialize Smarty engine, with caching
+		if (!is_object($this->smarty)) {
+			$this->smarty = CreateObject( 'net.php.smarty.Smarty' );
+			$this->smarty->template_dir = "$basedir/data/emrview/";
+			$this->smarty->compile_dir = "$basedir/data/cache/smarty/templates_c/";
+			$this->smarty->cache_dir = "$basedir/data/cache/smarty/cache/";
+			$this->smarty->left_delimiter = '<!--{';
+			$this->smarty->right_delimiter = '}-->';
+		}
+
+		// Load rec data
+		$this->smarty->assign( 'rec', $rec );
+		if (is_array($rec)) {
+			foreach ($rec AS $k => $v) {
+				$this->smarty->assign( $k, $v );
+			}
+		}
+
+		// Get the important part into the buffer
+		$buffer = $this->smarty->fetch( "${template}.tpl" );
+
+		print $buffer;
+
+		die();
+	} // end method RenderHtmlView
+
 	// Method: RenderSinglePDF
 	//
 	//	Creates a single record PDF which is returned with headers to

@@ -40,6 +40,7 @@ import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
+import org.freemedsoftware.gwt.client.screen.patient.EmrView;
 import org.freemedsoftware.gwt.client.screen.patient.LetterEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientCorrespondenceEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
@@ -91,13 +92,15 @@ public class PatientProblemList extends WidgetInterface implements
 
 		protected final String IMAGE_PRINT = "resources/images/ico.printer.16x16.png";
 
+		protected final String IMAGE_VIEW = "resources/images/summary_view.16x16.png";
+
 		protected Integer internalId = 0;
 
 		protected HashMap<String, String> data = null;
 
 		protected Image annotateImage = null, deleteImage = null,
 				modifyImage = null, unlockedImage = null, lockedImage = null,
-				printImage = null;
+				printImage = null, viewImage = null;
 
 		protected CheckBox cb = null;
 
@@ -128,6 +131,12 @@ public class PatientProblemList extends WidgetInterface implements
 			printImage.addClickHandler(this);
 			printImage.getElement().getStyle().setCursor(Cursor.POINTER);
 			hPanel.add(printImage);
+
+			viewImage = new Image(IMAGE_VIEW);
+			viewImage.setTitle("View");
+			viewImage.addClickHandler(this);
+			viewImage.getElement().getStyle().setCursor(Cursor.POINTER);
+			hPanel.add(viewImage);
 
 			// Display all unlocked things
 			if (!locked) {
@@ -177,6 +186,10 @@ public class PatientProblemList extends WidgetInterface implements
 			} else if (sender == annotateImage) {
 				CreateAnnotationPopup p = new CreateAnnotationPopup(data);
 				p.center();
+			} else if (sender == viewImage) {
+				EmrView emrView = new EmrView(data.get("module_class"), Integer
+						.parseInt(data.get("id")));
+				Util.spawnTabPatient("View", emrView, patientScreen);
 			} else if (sender == printImage) {
 				EmrPrintDialog d = new EmrPrintDialog();
 				d.setItems(new Integer[] { Integer.parseInt(data.get("id")) });
