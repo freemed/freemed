@@ -77,7 +77,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <tr>
 	<th>Disp</th>
-	<td><!--{$rxquantity}--> <!--{if $rxquantityqual}--><!--{[$quanqual}--><!--{/if}--></td>
+	<td><!--{$rxquantity}--> <!--{if $rxquantityqual}--><!--{$quanqual}--><!--{/if}--></td>
 </tr>
 <!--{if $rxsig}-->
 <tr>
