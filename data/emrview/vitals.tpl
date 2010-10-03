@@ -26,7 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 <table cellpadding="5">
 
-<!--{if $v_temp_status = 'recorded'}-->
+<!--{if $v_temp_status eq 'recorded'}-->
 <tr>
 	<th>Temp</th>
 	<td><!--{$v_temp_value}--> <!--{$v_temp_units}--></td>
@@ -34,7 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_pulse_status = 'recorded'}-->
+<!--{if $v_pulse_status eq 'recorded'}-->
 <tr>
 	<th>Pulse</th>
 	<td><!--{$v_pulse_value}--></td>
@@ -42,7 +42,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_pulseox_status = 'recorded'}-->
+<!--{if $v_pulseox_status eq 'recorded'}-->
 <tr>
 	<th>Pulse OX</th>
 	<td><!--{$v_pulseox_flowrate}--></td>
@@ -51,7 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_glucose_status = 'recorded'}-->
+<!--{if $v_glucose_status eq 'recorded'}-->
 <tr>
 	<th>Glucose</th>
 	<td><!--{$v_glucose_value}--> <!--{$v_glucose_units}--></td>
@@ -59,7 +59,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_resp_status = 'recorded'}-->
+<!--{if $v_resp_status eq 'recorded'}-->
 <tr>
 	<th>Respiration</th>
 	<td><!--{$v_resp_value}--></td>
@@ -68,7 +68,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_bp_status = 'recorded'}-->
+<!--{if $v_bp_status eq 'recorded'}-->
 <tr>
 	<th>BP</th>
 	<td><!--{$v_bp_s_value}--> / <!--{$v_bp_d_value}--></td>
@@ -76,7 +76,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_cvp_status = 'recorded'}-->
+<!--{if $v_cvp_status eq 'recorded'}-->
 <tr>
 	<th>CVP</th>
 	<td><!--{$v_cvp_value}--></td>
@@ -84,7 +84,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_cg_status = 'recorded'}-->
+<!--{if $v_cg_status eq 'recorded'}-->
 <tr>
 	<th>CG</th>
 	<td><!--{$v_cg_value}--> <!--{$v_cg_units}--></td>
@@ -92,7 +92,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_h_status = 'recorded'}-->
+<!--{if $v_h_status eq 'recorded'}-->
 <tr>
 	<th>Height</th>
 	<td><!--{$v_h_value}--> <!--{$v_h_units}--></td>
@@ -100,7 +100,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_w_status = 'recorded'}-->
+<!--{if $v_w_status eq 'recorded'}-->
 <tr>
 	<th>Weight</th>
 	<td><!--{$v_w_value}--> <!--{$v_w_units}--></td>
@@ -108,7 +108,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 </tr>
 <!--{/if}-->
 
-<!--{if $v_pain_status = 'recorded'}-->
+<!--{if $v_pain_status eq 'recorded'}-->
 <tr>
 	<th>Pain</th>
 	<td><!--{$v_pain_value}--></td>

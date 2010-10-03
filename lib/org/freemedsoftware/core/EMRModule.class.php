@@ -830,8 +830,8 @@ class EMRModule extends BaseModule {
 			if (!isset($rec[$k])) { $rec[$k] = $v; }
 		}
 
-		$template = $table_name;
-		$basedir = dirname(__FILE__)."/../../../..";
+		$template = $this->table_name;
+		$basedir = PHYSICAL_LOCATION;
 		if (!file_exists("$basedir/data/emrview/${template}.tpl")) {
 			print "$basedir/data/emrview/$template.tpl<br/>\n";
 			die("Could not load $template template.");
@@ -855,11 +855,8 @@ class EMRModule extends BaseModule {
 			}
 		}
 
-		// Get the important part into the buffer
-		$buffer = $this->smarty->fetch( "${template}.tpl" );
-
-		print $buffer;
-
+		// Render
+		$this->smarty->display( "${template}.tpl" );
 		die();
 	} // end method RenderHtmlView
 
