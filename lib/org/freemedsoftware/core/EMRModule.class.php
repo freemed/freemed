@@ -817,10 +817,10 @@ class EMRModule extends BaseModule {
 				( (count($this->summary_query)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
-				"WHERE id='".addslashes($record)."'";
+				"WHERE id='".addslashes($id)."'";
 			$rec = $GLOBALS['sql']->queryRow($query);
 		} else {
-			$rec = $GLOBALS['sql']->get_link( $t, $record );
+			$rec = $GLOBALS['sql']->get_link( $t, $id );
 		} // end checking for summary_query
 
 		// Make sure we import everything but id from patient
