@@ -35,12 +35,13 @@ public class EmrView extends PatientScreenInterface {
 	protected Frame view = new Frame();
 
 	public EmrView(String module, Integer id) {
+		String url = Util
+				.getJsonRequest(
+						"org.freemedsoftware.api.ModuleInterface.ModuleRenderHtmlMethod",
+						new String[] { module, JsonUtil.jsonify(id) });
+		JsonUtil.debug("EmrView: " + url);
+		view.setUrl(url);
 		initWidget(view);
-		view
-				.setUrl(Util
-						.getJsonRequest(
-								"org.freemedsoftware.api.ModuleInterface.ModuleRenderHtmlMethod",
-								new String[] { module, JsonUtil.jsonify(id) }));
 	}
 
 }

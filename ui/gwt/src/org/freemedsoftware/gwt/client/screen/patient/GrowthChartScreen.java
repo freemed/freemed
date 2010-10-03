@@ -70,7 +70,7 @@ public class GrowthChartScreen extends PatientScreenInterface {
 			getYAxis().setAxisMin(0);
 			getYAxis().setAxisMax(100);
 			getYAxis().setTickCount(11);
-			getYAxis().setHasGridlines(false);
+			getYAxis().setHasGridlines(true);
 			getYAxis().setTickLabelFormat("#,###");
 			// setChartFootnotes("");
 			setChartFootnotesThickness(50);
