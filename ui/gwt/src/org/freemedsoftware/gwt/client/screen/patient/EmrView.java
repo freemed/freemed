@@ -37,13 +37,16 @@ public class EmrView extends PatientScreenInterface {
 
 	public EmrView(String module, Integer id) {
 		SimplePanel simplePanel = new SimplePanel();
+		simplePanel.setWidth("100%");
+		view.setWidth("100%");
+		view.setHeight("450px");
 		String url = Util
 				.getJsonRequest(
 						"org.freemedsoftware.api.ModuleInterface.ModuleRenderHtmlMethod",
 						new String[] { module, JsonUtil.jsonify(id) });
-		JsonUtil.debug("EmrView: " + url);
-		simplePanel.setWidget(simplePanel);
+		JsonUtil.debug("EmrView load url : " + url);
 		view.setUrl(url);
+		simplePanel.setWidget(view);
 		initWidget(simplePanel);
 	}
 
