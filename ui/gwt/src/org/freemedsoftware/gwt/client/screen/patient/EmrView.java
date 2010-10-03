@@ -29,19 +29,22 @@ import org.freemedsoftware.gwt.client.PatientScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class EmrView extends PatientScreenInterface {
 
 	protected Frame view = new Frame();
 
 	public EmrView(String module, Integer id) {
+		SimplePanel simplePanel = new SimplePanel();
 		String url = Util
 				.getJsonRequest(
 						"org.freemedsoftware.api.ModuleInterface.ModuleRenderHtmlMethod",
 						new String[] { module, JsonUtil.jsonify(id) });
 		JsonUtil.debug("EmrView: " + url);
+		simplePanel.setWidget(simplePanel);
 		view.setUrl(url);
-		initWidget(view);
+		initWidget(simplePanel);
 	}
 
 }
