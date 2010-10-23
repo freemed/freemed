@@ -9,6 +9,8 @@
 <xs:element name="getJobStatusResponse" type="tns:getJobStatusResponse" />
 <xs:element name="getProtocolVersion" type="tns:getProtocolVersion" />
 <xs:element name="getProtocolVersionResponse" type="tns:getProtocolVersionResponse" />
+<xs:element name="requestDosingAction" type="tns:requestDosingAction" />
+<xs:element name="requestDosingActionResponse" type="tns:requestDosingActionResponse" />
 <xs:element name="requestLabel" type="tns:requestLabel" />
 <xs:element name="requestLabelResponse" type="tns:requestLabelResponse" />
 <xs:element name="requestSignature" type="tns:requestSignature" />
@@ -21,6 +23,17 @@
 <xs:complexType name="getJobStatusResponse">
 <xs:sequence>
 <xs:element minOccurs="0" name="return" type="tns:signatureStatus" />
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="requestDosingAction">
+<xs:sequence>
+<xs:element minOccurs="0" name="command" type="tns:dosingPumpCommand" />
+<xs:element minOccurs="0" name="param" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="requestDosingActionResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="xs:string" />
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="getDevices">
@@ -122,11 +135,23 @@
 <xs:enumeration value="NEW" />
 </xs:restriction>
 </xs:simpleType>
+<xs:simpleType name="dosingPumpCommand">
+<xs:restriction base="xs:string">
+<xs:enumeration value="DISPENSE" />
+<xs:enumeration value="CLEAR_OPENING" />
+<xs:enumeration value="CLEAR_CLOSING" />
+<xs:enumeration value="PRIME" />
+<xs:enumeration value="GET_STATUS" />
+<xs:enumeration value="GET_INTERVAL" />
+<xs:enumeration value="SET_INTERVAL" />
+</xs:restriction>
+</xs:simpleType>
 <xs:simpleType name="deviceCapability">
 <xs:restriction base="xs:string">
 <xs:enumeration value="DEVICE_SIGNATURE_TABLET" />
 <xs:enumeration value="DEVICE_VITAL_SIGNS" />
 <xs:enumeration value="DEVICE_LABEL_PRINTER" />
+<xs:enumeration value="DEVICE_DOSING_PUMP" />
 </xs:restriction>
 </xs:simpleType>
 <xs:element name="DeviceNotAvailableException" type="tns:DeviceNotAvailableException" />
@@ -137,6 +162,14 @@
   </wsdl:types>
   <wsdl:message name="requestSignatureResponse">
     <wsdl:part element="tns:requestSignatureResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="requestDosingAction">
+    <wsdl:part element="tns:requestDosingAction" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="requestDosingActionResponse">
+    <wsdl:part element="tns:requestDosingActionResponse" name="parameters">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="requestLabelResponse">
@@ -155,12 +188,12 @@
     <wsdl:part element="tns:requestLabel" name="parameters">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="getJobStatus">
-    <wsdl:part element="tns:getJobStatus" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="requestSignature">
     <wsdl:part element="tns:requestSignature" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getJobStatus">
+    <wsdl:part element="tns:getJobStatus" name="parameters">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="getDevices">
@@ -192,6 +225,12 @@
       <wsdl:input message="tns:getJobStatus" name="getJobStatus">
     </wsdl:input>
       <wsdl:output message="tns:getJobStatusResponse" name="getJobStatusResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="requestDosingAction">
+      <wsdl:input message="tns:requestDosingAction" name="requestDosingAction">
+    </wsdl:input>
+      <wsdl:output message="tns:requestDosingActionResponse" name="requestDosingActionResponse">
     </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="getDevices">
@@ -237,6 +276,15 @@
         <soap:body use="literal" />
       </wsdl:input>
       <wsdl:output name="getJobStatusResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="requestDosingAction">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="requestDosingAction">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="requestDosingActionResponse">
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
