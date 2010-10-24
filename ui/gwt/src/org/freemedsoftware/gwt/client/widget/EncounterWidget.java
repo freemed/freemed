@@ -557,14 +557,13 @@ public class EncounterWidget extends Composite {
 			addBtn = new CustomButton("Add", AppConstants.ICON_ADD);
 			if (!CurrentState.isActionAllowed("EncounterNotes",
 					AppConstants.WRITE)) {
-				addBtn.setVisible(false);
-
+				//addBtn.setVisible(false);
 			}
 		} else {
 			addBtn = new CustomButton("Modify", AppConstants.ICON_CHANGE);
 			if (!CurrentState.isActionAllowed("EncounterNotes",
 					AppConstants.MODIFY)) {
-				addBtn.setVisible(false);
+				//addBtn.setVisible(false);
 			}
 		}
 		addBtn.addClickHandler(new ClickHandler() {
