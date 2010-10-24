@@ -6,12 +6,7 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>com.swtdesigner.gwt.GWTBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
+			<name>com.instantiations.designer.gwt.GWTBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -20,10 +15,15 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>com.swtdesigner.gwt.GWTNature</nature>
+		<nature>com.instantiations.designer.gwt.GWTNature</nature>
 		<nature>com.google.gwt.eclipse.core.gwtNature</nature>
 	</natures>
 </projectDescription>

@@ -14,6 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/gwt2swf-0.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/gwt-incubator-20100204-r1747.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/editor-0.1.4.jar"/>
-	<classpathentry exported="true" kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="output" path="www"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
