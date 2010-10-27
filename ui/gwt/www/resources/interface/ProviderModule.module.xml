@@ -29,7 +29,7 @@
 			    <Element field="phymname" title="Middle Name" type="TEXT" options="50" display="1" />
 			    <Element field="phytitle" title="Title" type="TEXT" options="10" display="1" />
 			    <Element field="phypractice" title="Practice" type="MODULE" options="Practices"/>
-			    <Element field="phyemail" title="E-Mail Adress" type="TEXT" options="50" display="1" />
+			    <Element field="phyemail" title="E-Mail Address" type="TEXT" options="50" display="1" />
 			    <Element field="phycellular" title="Cell Phone" type="TEXT" options="16" display="1" />
 			    <Element field="phypager" title="Pager" type="TEXT" options="16" display="1" />
 			    <Element field="phyupin" title="UPIN# (Unique Physician Identification Number)" type="TEXT" options="15"/>
