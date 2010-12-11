@@ -88,6 +88,8 @@ CREATE TRIGGER clinicregistration_PreInsert
 		# Determine age before full insert
 		IF NEW.age = 0 THEN
 			SET NEW.age = CAST( ( TO_DAYS(NOW()) - TO_DAYS( NEW.dob ) ) / 365 AS UNSIGNED );
+		ELSEIF NEW.dob = NULL THEN
+			SET NEW.dob = DATE_SUB(NOW(), INTERVAL NEW.age YEAR);
 		END IF;
 	END;
 //
