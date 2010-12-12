@@ -37,6 +37,19 @@ class Rules extends SupportModule {
 	var $table_name     = "rules";
 	var $widget_hash    = "##rule_descrip## [##rule_prio##]";
 	var $order_fields   = "rule_type, rule_prio, rule_descrip";
+	var $variables = array (
+		  'rule_descrip'
+		, 'rule_prio'
+		, 'rule_type'
+		, 'rule_clause_if_facility_eq'
+		, 'rule_clause_if_facility'
+		, 'rule_clause_if_cpt_eq'
+		, 'rule_clause_if_cpt'
+		, 'rule_clause_if_cptmod_eq'
+		, 'rule_clause_if_cptmod'
+		, 'rule_clause_then_charges'
+		, 'rule_clause_then_tos'
+	);
 
 	public function __construct ( ) {
 		// __("Rules")
@@ -89,145 +102,60 @@ class Rules extends SupportModule {
 
 			// Determine if "if clause" is met (assume so at outset, then disprove)
 			$if_clause_met = true;
-			foreach ($if AS $r) {
+
+			$check = array (
+				  'procpos' => 'facility'
+				, 'proccpt' => 'cpt'
+				, 'proccptmod' => 'cptmod'
+				, 'proccptmod2' => 'cptmod'
+				, 'proccptmod3' => 'cptmod'
+			);
+			$found = array ( );
+
+			foreach ($check AS $k => $c) {
 				// For each variable clause, determine if we are "matching" criteria
-				switch ($r['equivalence']) {
-					case '=':
-					if ($d[$r['field']] != $r['value']) { $if_clause_met = false; }
+				$values = explode( ",", $rule['rule_clause_if_'.$c] );
+				switch ($rule['rule_clause_if_' . $c . '_eq']) {
+					case 'EQ':
+					if (in_array($data[$k], $values)) {
+						$if_clause_met = true;
+						$found[$c] = true;
+					} else {
+						$if_clause_met = false;
+					}
 					break;	
 
-					case '!=':
-					if ($d[$r['field']] == $r['value']) { $if_clause_met = false; }
+					case 'NE':
+					if (in_array($data[$k], $values)) {
+						$if_clause_met = false;
+					} else {
+						$if_clause_met = true;
+						$found[$c] = true;
+					}
 					break;
 
 					default:
-					trigger_error(__("Rule set encountered unknown equivalence operator."), E_USER_ERROR);
 					break;
 				} // end switch equivalence
+
+				// Override to stop duplicate field checks from bombing out
+				if ($found[$c]) { $if_clause_met = true; }
 			}
 
 			// If the "IF" clause is met, execute then
 			if ($if_clause_met) {
-				foreach ($then AS $r) {
-					// Switch by assignment, only touch if not touched
-					switch ($r['assignment']) {
-						case '=':
-						if (!$touched[$r['field']]) {
-							$d[$r['field']] = $r['value'];
-							$touched[$r['field']] = 1;
-						}
-						break;
-
-						case '*=':
-						if (!$touched[$r['field']]) {
-							$d[$r['field']] *= $r['value'];
-							$touched[$r['field']] = 1;
-						}
-						break;
-					} // end switch assignment
-				} // end each then element
+				if ($r['rule_clause_then_charges'] != '') {
+					$d['proccharges'] = $r['rule_clause_then_charges'];
+				}
+				if ($r['rule_clause_then_tos'] > 0) {
+					$d['proctos'] = $r['rule_clause_then_tos'];
+				}
 			} // end if if_clause_met
 		} // end rules result loop
 
 		// Return interpreted data array
 		return $d;
 	} // end method interpreter
-
-	protected function add_pre ( ) {
-		$data['type'] = ereg_replace('[^A-Za-z0-9_ ]', '', $data['type']);
-		
-		// Get the interface for the if and then clauses
-		$ifclause = module_function($data['type'], freemed::module_get_meta($data['type'], 'RuleInterface'), array('if'));
-		$thenclause = module_function($data['type'], freemed::module_get_meta($data['type'], 'RuleInterface'), array('then'));
-
-		// Determine what we're doing
-		foreach ($ifclause AS $if) {
-			// Determine if it is active
-			//print "looping for $if[0] <br/>\n";
-			if ($data['check_if_'.$if[0]] == 1) {
-				//print "REQUEST if[0] = ".$_REQUEST[$if[0]]."<br/>\n";
-				$clause['if'][] = array (
-					'field' => $if[0],
-					'equivalence' => $data['equivalence_if_'.$if[0]],
-					'value' => $data[$if[0]]
-				);
-			}
-		}
-
-		if (!is_array($clause['if'])) {
-			trigger_error(__("No IF clause was defined."), E_USER_ERROR);
-		}
-		foreach ($thenclause AS $then) {
-			// Determine if it is active
-			if ($data['check_then_'.$then[0]] == 1) {
-				$clause['then'][] = array (
-					'field' => $then[0],
-					'assignment' => $data['assign_then_'.$then[0]],
-					'value' => $data[$then[0]]
-				);
-			}
-		}
-		if (!is_array($clause['then'])) {
-			trigger_error(__("No THEN clause was defined."), E_USER_ERROR);
-		}
-
-		$data['rule_created'] = SQL__NOW;
-		$data['rule_clause_if'] = serialize($clause['if']);
-		$data['rule_clause_then'] = serialize($clause['then']);
-	}
-
-	/*
-	// FIXME FIXME FIXME
-	function mod ( ) {
-		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
-		
-		$template = CreateObject('_FreeMED.FormTemplate', $rec['fr_template']);
-		$information = $template->GetInformation();
-		$controls = $template->GetControls();
-
-		// Only update timestamp on master record
-		$fr_query = $GLOBALS['sql']->update_query(
-			$this->table_name,
-			array (
-				'fr_timestamp' => SQL__NOW,
-			),
-			array ( 'id' => $_REQUEST['id'] )
-		);
-		$fr_result = $GLOBALS['sql']->query ( $fr_query );
-
-		// Get id for association
-		$fid = $_REQUEST['id'];
-
-		foreach ($controls AS $k => $v) {
-			// Decide if we have defined the control
-			if (method_exists($this, 'control_'.$v['type'])) {
-				// Call the appropriate method
-				$value = call_user_func(
-					array(&$this, 'control_'.$v['type']),
-					'serialize',
-					$v
-				);
-
-				// Build UPDATE query
-				$query = "UPDATE form_record SET fr_value = '".addslashes($value)."' WHERE fr_id='".addslashes($fid)."' AND fr_uuid='".$v['uuid']."'";
-				$result = $GLOBALS['sql']->query ( $query );
-			}
-		} // end foreach controls
-
-		// Return to where we came from:
-		if ($_REQUEST['return'] == 'manage') {
-			$GLOBALS['refresh'] = "manage.php?id=".urlencode($_REQUEST['patient']);
-		} else {
-			$GLOBALS['refresh'] = "module_loader.php?module=".urlencode(get_class($this));
-		}
-	} // end method mod
-	*/
-
-	protected function del_pre ( $id ) {
-		// Delete all attached pieces
-		$q = "DELETE FROM form_record WHERE fr_id = '".addslashes($id)."'";
-		$GLOBALS['sql']->query($q);
-	}
 
 } // end class Rules
 
