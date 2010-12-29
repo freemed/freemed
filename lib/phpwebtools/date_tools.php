@@ -115,7 +115,7 @@ function date_vars ($varname) {
   return array ($varname, $varname."_m", $varname."_d", $varname."_y");
 } // end function date_vars
 
-function date_diff ($begin_date, $end_date="") {
+function my_date_diff ($begin_date, $end_date="") {
   if (empty($end_date)) $end_date = date ("Y-m-d");
 
   $begin_y = substr ($begin_date, 0, 4) + 0;
@@ -156,12 +156,12 @@ function date_diff ($begin_date, $end_date="") {
 
   // return as a list
   return array ($year_diff, $month_diff, $day_diff);
-} // end function date_diff
+} // end function my_date_diff
 
 function date_diff_display ($begin_date, $end_date="", $year_text="year(s)",
                             $month_text="month(s)", $day_text="day(s)") {
   // grab the difference			    
-  list ($y, $m, $d) = date_diff ($begin_date, $end_date);
+  list ($y, $m, $d) = my_date_diff ($begin_date, $end_date);
 
   // handle born today
   if ( ($y==0) and ($m==0) and ($d==0) )

@@ -122,7 +122,7 @@ class Patient {
 	//	Text string describing the patient's age.
 	//
 	function numericAge ( ) {
-		return array_element(date_diff($this->local_record["ptdob"]), 0);
+		return array_element(my_date_diff($this->local_record["ptdob"]), 0);
 	} // end method numericAge
 
 	// Method: date_of_last_procedure

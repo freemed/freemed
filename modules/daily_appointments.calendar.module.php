@@ -85,7 +85,7 @@ class DailyAppointmentCalendar extends CalendarModule {
 		foreach ($r AS $a) {
 			$patient = CreateObject('_FreeMED.Patient', $a['calpatient']);
 			$provider = CreateObject('_FreeMED.Physician', $a['calphysician']);
-			$age = array_element(date_diff($patient->local_record['ptdob']), 0);
+			$age = array_element(my_date_diff($patient->local_record['ptdob']), 0);
 			print "<tr>\n".
 				"<td>".$a['caldateof']."</td>\n".
 				"<td>".fc_get_time_string($a['calhour'],$a['calminute'])."</td>\n".
