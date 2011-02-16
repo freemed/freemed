@@ -41,7 +41,7 @@ class FormsModule extends EMRModule {
 		);
 		$this->summary_options |= SUMMARY_PRINT | SUMMARY_DELETE;
 
-		$this->acl = array ( 'emr' );
+		$this->acl = array ( 'emr', 'bill' );
 
 		// Run parent constructor
 		$this->EMRModule();
