@@ -1,0 +1,305 @@
+<formtemplate>
+	<information>
+		<name>Valley Regional OR Booking</name>
+		<pdf>vrh.pdf</pdf>
+		<creator>1</creator>
+	</information>
+	<page oid="1">
+
+		<!-- Patient Full Name -->
+		<element xpos="144" ypos="67" xsize="0" ysize="0" type="data">
+			<data table="patient" field="method:fullName" type="string"/>
+		</element>
+
+		<!-- Patient Date of Birth -->
+		<element xpos="445" ypos="64" xsize="0" ysize="0" type="data">
+			<data table="patient" field="method:dateOfBirthShort" type="string"/>
+		</element>
+
+		<!-- Patient Address -->
+		<element xpos="144" ypos="93" xsize="0" ysize="0" type="data">
+			<data table="patient" field="ptaddr1" type="string"/>
+		</element>
+		<element xpos="144" ypos="110" xsize="0" ysize="0" type="data">
+			<data table="patient" field="method:cityStateZip" type="string"/>
+		</element>
+
+		<!-- Patient Home Phone -->
+		<element xpos="139" ypos="142" xsize="0" ysize="0" type="data">
+			<data table="patient" field="pthphone" type="phone"/>
+		</element>
+
+		<!-- Patient Work Phone -->
+		<element xpos="409" ypos="139" xsize="0" ysize="0" type="data">
+			<data table="patient" field="ptwphone" type="phone"/>
+		</element>
+
+		<!-- Other contact phone number -->
+                <element xpos="158" ypos="158" xsize="0" ysize="0" type="data">
+		        <data table="control" field="otherphone" type="string"/>
+		</element>
+
+		<!-- Other contact person -->
+		<element xpos="430" ypos="155" xsize="0" ysize="0" type="data">
+		        <data table="control" field="otherperson" type="string"/>
+		</element>
+
+		<!-- Patient PCP -->
+		<element xpos="154" ypos="370" xsize="0" ysize="0" type="data">
+		        <data table="control" field="pcp" type="string" />
+		</element>		
+
+		<!-- PAT Date -->
+		<element xpos="117" ypos="485" xsize="0" ysize="0" type="data">
+		        <data table="control" field="patdate" type="string"/>
+		</element>
+
+		<!-- PAT Time -->
+		<element xpos="298" ypos="483" xsize="0" ysize="0" type="data">
+		        <data table="control" field="pattime" type="string"/>
+		</element>
+
+		<!-- Phone (Yes)  -->
+		<element xpos="443" ypos="480" xsize="17" ysize="17" type="outline">
+		        <data table="control" field="ptphone" type="conditional" value="Y" />
+		</element>
+
+		<!-- Phone (No)  -->
+		<element xpos="462" ypos="480" xsize="17" ysize="17" type="outline">
+		        <data table="control" field="ptphone" type="conditional" value="N" />
+		</element>
+
+		<!-- Patient Surgeon -->
+		<element xpos="106" ypos="191" xsize="0" ysize="0" type="data">
+			<data table="control" field="surgeon" type="string" />
+		</element>
+
+		<!-- Patient Assistant -->
+		<element xpos="388" ypos="188" xsize="0" ysize="0" type="data">
+			<data table="control" field="assistant" type="string" />
+		</element>
+
+		<!-- Diagnosis -->
+		<element xpos="121" ypos="224" xsize="0" ysize="0" type="data">
+			<data table="control" field="diagnosis" type="link" value="icdmaintenance:icd9descrip" />		
+		</element>
+
+		<!-- Diagnosis (ICD Code) -->
+		<element xpos="264" ypos="224" xsize="0" ysize="0" type="data">
+		        <data table="control" field="diagnosis" type="link" value="icdmaintenance:icd9code" />
+		</element>
+
+		<!-- Procedure -->
+		<element xpos="121" ypos="240" xsize="0" ysize="0" type="data">
+			<data table="control" field="procedure" type="link" value="cptmaintenance:cptnameint" />
+		</element>
+
+		<!-- Procedure2 -->
+		<element xpos="381" ypos="238" xsize="0" ysize="0" type="data">
+		        <data table="control" field="procedure2" type="link" value="cptmaintenance:cptnameint" />
+		</element>
+
+		<!-- Procedure (CPT Code) -->
+		<element xpos="300" ypos="240" xsize="0" ysize="0" type="data">
+		        <data table="control" field="procedure" type="link" value="cptmaintenance:cptcode" />
+		</element>
+
+		<!-- Procedure2 (CPT Code) -->
+		<element xpos="540" ypos="238" xsize="0" ysize="0" type="data">
+		        <data table="control" field="procedure" type="link" value="cptmaintenance:cptcode" />
+		</element>
+		
+
+		<!-- Procedure Length -->
+		<element xpos="524" ypos="205" xsize="0" ysize="0" type="data">
+			<data table="control" field="procedure_length" type="string" />
+		</element>
+
+		<!-- Date of Surgery -->
+		<element xpos="136" ypos="208" xsize="0" ysize="0" type="data">
+			<data table="control" field="surgery_date" type="date"/>
+		</element>
+
+		<!-- Surgery Time -->
+		<element xpos="324" ypos="206" xsize="0" ysize="0" type="data">
+			<data table="control" field="surgery_time" type="string"/>
+		</element>
+		
+		<!-- Anesthesia Type (General) -->
+		<element xpos="77" ypos="367" xsize="0" ysize="0" type="data">
+			<data table="control" field="anesthesia_type" type="conditional" value="General" />
+		</element>
+
+		<!-- Anesthesia Type (Regional) -->
+		<element xpos="132" ypos="367" xsize="0" ysize="0" type="data">
+			<data table="control" field="anesthesia_type" type="conditional" value="Regional" />
+		</element>
+
+		<!-- Anesthesia Type (Spinal) -->
+		<element xpos="195" ypos="367" xsize="0" ysize="0" type="data">
+			<data table="control" field="anesthesia_type" type="conditional" value="Spinal" />
+		</element>
+
+		<!-- Anesthesia Type (Epidural) -->
+		<element xpos="238" ypos="367" xsize="0" ysize="0" type="data">
+			<data table="control" field="anesthesia_type" type="conditional" value="Epidural" />
+		</element>
+
+		<!-- Anesthesia Type (Local) -->
+		<element xpos="293" ypos="367" xsize="0" ysize="0" type="data">
+			<data table="control" field="anesthesia_type" type="conditional" value="Local" />
+		</element>
+
+		<!-- Admission Type (SDS) -->
+		<element xpos="373" ypos="450" xsize="0" ysize="0" type="data">
+			<data table="control" field="admission_type" type="conditional" value="SDS" />
+		</element>
+
+		<!-- Admission Type (Full Admit) -->
+		<element xpos="219" ypos="452" xsize="0" ysize="0" type="data">
+			<data table="control" field="admission_type" type="conditional" value="Full Admit" />
+		</element>
+
+		<!-- Location (Procedure Room) -->
+		<element xpos="526" ypos="449" xsize="0" ysize="0" type="data">
+			<data table="control" field="admission_type" type="conditional" value="Procedure Room" />
+		</element>
+
+		<!-- PRIMARY INSURANCE INFORMATION -->
+
+		<!-- Primary Insurance Name -->
+		<element xpos="433" ypos="90" xsize="0" ysize="0" type="data">
+			<data table="control" field="insurance_name" type="string"/>
+		</element>
+
+		<!-- Primary Insurance Number -->
+		<element xpos="445" ypos="106" xsize="0" ysize="0" type="data">
+			<data table="control" field="insurance_number" type="string"/>
+		</element>
+
+		<!-- Pre-Certification Number -->
+		<element xpos="486" ypos="123" xsize="0" ysize="0" type="data">
+			<data table="control" field="certification_number" type="string"/>
+		</element>
+
+		<!-- Special Equipment Needs -->
+		<element xpos="49" ypos="323" xsize="0" ysize="0" type="data">
+			<data table="control" field="needs" type="string"/>
+		</element>
+		
+
+		<!--
+		<element xpos="369" ypos="142" xsize="66" ysize="18" type="data">
+			<data table="control" field="test_text" type="string"/>
+			<comment/>
+		</element>
+		<element xpos="559" ypos="196" xsize="118" ysize="16" type="data">
+			<data table="control" field="test_select" type="conditional" value="Y" />
+			<comment/>
+		</element>
+		-->
+	</page>
+	<controls>
+		<control uuid="5b19399a-644f-11da-9067-00110921bf16"
+			name="Date of Surgery"
+			type="date"
+			variable="surgery_date" />
+		<control uuid="4d6059a4-7a35-11da-8b33-00110921bf16"
+			name="Surgery Time"
+			type="string"
+			variable="surgery_time" />
+                <control uuid="c82e60a0-644f-11da-91b7-00110921bf16"
+			name="Admission Type"
+			type="select"
+			variable="admission_type"
+			options="Full Admit|SDS|Procedure Room" />
+		<control uuid="d9e593da-6450-11da-9d0b-00110921bf16"
+			name="Surgeon"
+			variable="surgeon"
+			type="string"
+			limits="75" />
+		<control uuid="dd93e498-69ad-4132-9ab5-ce8d3060218f"
+		        name="Assistant"
+		        variable="assistant"
+		        type="string"
+		        limits="75" />
+		<control uuid="ee860735-c452-4a7b-a5c3-0614542ab173"
+		        name="Other contact person"
+			variable="otherperson"
+			type="string"
+			limits="75" />
+		<control uuid="fadf6578-ba56-4c75-a74a-c97ce5e2b5fd"
+		        name="Phone number of other contact"
+			variable="otherphone"
+			type="string"
+			limits="75" />		        
+		<control uuid="449ccefa-7fa4-11da-8951-0000c05eaafd"
+			name="Diagnosis"
+			variable="diagnosis"
+			type="module"
+			options="icdmaintenance"
+			limits="75" />
+		<control uuid="449ccefa-7fa4-11da-8951-0000c05eaafd"
+			name="Procedure"
+			variable="procedure"
+			type="module"
+			options="cptmaintenance"
+			limits="100" />
+		<control uuid="e82bdea2-f8d8-43fb-afc3-9e7a9a36027c"
+		        name="Procedure2"
+			variable="procedure2"
+			type="module"
+			options="cptmaintenance"
+			limits="100" />
+		<control uuid="7ce229c2-7fa4-11da-8dc3-0000c05eaafd"
+			name="Procedure Length"
+			variable="procedure_length"
+			type="string" />
+		<control uuid="4c32c294-f87b-4053-9498-f62880017d7d"
+		        name="Primary Care Physician"
+			type="string"
+			variable="pcp"
+			limits="75" />
+		<control uuid="3063d0ba-7a35-11da-977f-00110921bf16"
+		         name="Insurance"
+			 variable="insurance_name"
+			 type="string"
+			 limits="75" />
+	        <control uuid="2bca79dc-7a35-11da-88ce-00110921bf16"
+		         name="Insurance Number"
+			 variable="insurance_number"
+			 type="string"
+			 limits="75" />
+		<control uuid="2741a9ee-7a35-11da-9140-00110921bf16"
+		         name="Pre-Certification Number"
+		         variable="certification_number"
+			 type="string" />
+		<control uuid="00b44f86-7a38-11da-ab36-00110921bf16"
+		       	name="Special Equipment Needs"
+			variable="needs"
+			type="string"
+			limits="75"/>
+		<control uuid="3fc59ee7-6521-490c-a091-680e83ef8f41"
+		         name="PAT Date"
+			 variable="patdate"
+			 type="string"
+			 limits="30"/>
+		<control uuid="e5f7ea1b-c6c4-48b6-872b-35e5c1be9ec5"
+		         name="Time"
+			 variable="pattime"
+			 type="string"
+			 limits="30"/>
+		<control uuid="74b21255-2d3b-4b71-83be-aea91decc560"
+		         name="Phone"
+			 type="select"
+			 variable="ptphone"
+			 options="N|Y" />
+
+		<!--
+		<control uuid=""
+			name=""
+			variable=""
+			type="string" />
+		-->
+	</controls>
+</formtemplate>
