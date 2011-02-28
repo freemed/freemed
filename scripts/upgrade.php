@@ -140,8 +140,8 @@ execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/sto
 
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
-include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/ACL.class.php' );
 include_once( dirname(__FILE__).'/../lib/acl.php' );
+include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/ACL.class.php' );
 $a = new ACL();
 $q = "SELECT username, id FROM user WHERE id > 0";
 $r = $GLOBALS['sql']->queryAll( $q );
