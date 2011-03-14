@@ -68,7 +68,6 @@ SOURCE data/schema/mysql/reporting/report_DailyAdjustmentJournal.sql
 SOURCE data/schema/mysql/reporting/report_DailyCashReceiptJournal.sql
 SOURCE data/schema/mysql/reporting/report_DailyEndOfDayProcessingMaster.sql
 SOURCE data/schema/mysql/reporting/report_DailyEndOfDayProcessingSummary.sql
-SOURCE data/schema/mysql/reporting/report_DailyPostedDoctorOrderSchedule.sql
 SOURCE data/schema/mysql/reporting/report_GraphMonthlyFinancial.sql
 SOURCE data/schema/mysql/reporting/report_MonthlyCashCollectionSummary.sql
 SOURCE data/schema/mysql/reporting/report_MonthlyClientBalanceDue.sql
