@@ -104,6 +104,7 @@ printHeader( "Load admin table definitions" );
 loadSchema( 'session' );
 loadSchema( 'modules' );
 loadSchema( 'user' );
+loadSchema( 'config' );
 loadSchema( 'scheduler' );
 
 printHeader( "Install ACL tables" );

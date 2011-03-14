@@ -76,6 +76,7 @@ execSql("ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;
 execSql("ALTER IGNORE TABLE patient ADD COLUMN ptprefcontact VARCHAR (10) NOT NULL DEFAULT 'home' AFTER ptcountry;");
 
 printHeader( "Include aggregation table definition" );
+loadSchema( 'config' );
 loadSchema( 'patient' );
 loadSchema( 'patient_emr' );
 loadSchema( 'patienttag' );
