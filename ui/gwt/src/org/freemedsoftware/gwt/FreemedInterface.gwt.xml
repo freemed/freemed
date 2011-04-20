@@ -5,7 +5,7 @@
    -      Jeff Buchbinder <jeff@freemedsoftware.org>
    -
    - FreeMED Electronic Medical Record and Practice Management System
-   - Copyright (C) 1999-2010 FreeMED Software Foundation
+   - Copyright (C) 1999-2011 FreeMED Software Foundation
    -
    - This program is free software; you can redistribute it and/or modify
    - it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 	<inherits name="com.google.gwt.http.HTTP" />
 	<inherits name="com.google.gwt.json.JSON" />
 	<inherits name="com.google.gwt.xml.XML" />
-	<inherits name="com.gwtsandbox.colorpicker.ColorPicker" />
+	<inherits name="net.auroris.ColorPicker.client" />
 	<inherits name="com.bouwkamp.gwt.user.User" />
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name="org.cobogw.gwt.user.User" />

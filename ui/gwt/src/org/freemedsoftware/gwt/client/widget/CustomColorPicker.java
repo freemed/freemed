@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2010 FreeMED Software Foundation
+ * Copyright (C) 1999-2011 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,27 +26,26 @@ package org.freemedsoftware.gwt.client.widget;
 
 import java.util.HashMap;
 
+import net.auroris.ColorPicker.client.ColorPicker;
+
 import org.freemedsoftware.gwt.client.HashSetter;
 
 import com.google.gwt.core.client.GWT;
-import com.gwtsandbox.colorpicker.client.ui.ColorSelectedEvent;
-import com.gwtsandbox.colorpicker.client.ui.HSVColorPicker;
-import com.gwtsandbox.colorpicker.client.util.ColorUtils;
+import com.google.gwt.event.dom.client.ChangeEvent;
 
-public class CustomColorPicker extends HSVColorPicker implements HashSetter {
+public class CustomColorPicker extends ColorPicker implements HashSetter {
 
 	protected String value = "";
 
 	protected String hashMapping = null;
 
-	public void onColorSelected(ColorSelectedEvent e) {
+	@Override
+	public void onChange(ChangeEvent e) {
 		// Call superclass methods first
-		super.onColorSelected(e);
+		super.onChange(e);
 
 		// Assign value
-		value = "#" + formatHexPair(Integer.toHexString(e.getRed()))
-				+ formatHexPair(Integer.toHexString(e.getGreen()))
-				+ formatHexPair(Integer.toHexString(e.getBlue()));
+		value = "#" + this.getHexColor();
 	}
 
 	/**
@@ -65,23 +64,9 @@ public class CustomColorPicker extends HSVColorPicker implements HashSetter {
 	 */
 	public void setValue(String tuplet) {
 		try {
-			Integer red = Integer.parseInt("0x" + tuplet.substring(1, 2));
-			Integer green = Integer.parseInt("0x" + tuplet.substring(3, 2));
-			Integer blue = Integer.parseInt("0x" + tuplet.substring(5, 2));
-
-			// Set widget values
-			txtRed.setText(Integer.toString(red));
-			txtGreen.setText(Integer.toString(green));
-			txtBlue.setText(Integer.toString(blue));
-			double[] HSV = ColorUtils.RGBtoHSV(red, green, blue);
-			txtHue.setText(Integer.toString((int) (HSV[0] * 255)));
-			txtSaturation.setText(Integer.toString((int) (HSV[1] * 255)));
-			txtValue.setText(Integer.toString((int) (HSV[2] * 255)));
-
-			colorPalleteGen.setStaticHue((int) (HSV[0] * 255));
-			colorPallete.redrawPalette();
-		} catch (NumberFormatException ex) {
-			GWT.log("NumberFormatException", ex);
+			setHex(tuplet.replaceAll("#", ""));
+		} catch (Exception ex) {
+			GWT.log("Exception", ex);
 		}
 	}
 
