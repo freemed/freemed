@@ -224,7 +224,7 @@ public class JsonUtil {
 	public static synchronized Object shoehornJson(JSONValue r, String t) {
 		if (r == null || r.toString().equals("null"))
 			return null;
-		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,String>[]>") == 0) {
+		if (t.equals("HashMap<String,HashMap<String,String>[]>")) {
 			HashMap<String, HashMap<String, String>[]> oResult = new HashMap<String, HashMap<String, String>[]>();
 			JSONObject oA = r.isObject();
 			if (oA != null) {
@@ -253,7 +253,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, HashMap<String, String>[]>) oResult;
 		}
-		if (t.compareToIgnoreCase("HashMap<String,String>[]") == 0) {
+		if (t.equals("HashMap<String,String>[]")) {
 			List<HashMap<?, ?>> result = new ArrayList<HashMap<?, ?>>();
 			JSONArray a = r.isArray();
 			for (int oIter = 0; oIter < a.size(); oIter++) {
@@ -271,7 +271,7 @@ public class JsonUtil {
 			return (HashMap<String, String>[]) result
 					.toArray(new HashMap<?, ?>[0]);
 		}
-		if (t.compareToIgnoreCase("HashMap<String,Object>[]") == 0) {
+		if (t.equals("HashMap<String,Object>[]")) {
 			List<HashMap<?, ?>> result = new ArrayList<HashMap<?, ?>>();
 			JSONArray a = r.isArray();
 			for (int oIter = 0; oIter < a.size(); oIter++) {
@@ -289,7 +289,7 @@ public class JsonUtil {
 			return (HashMap<String, String>[]) result
 					.toArray(new HashMap<?, ?>[0]);
 		}
-		if (t.compareToIgnoreCase("HashMap<String,String>[][]") == 0) {
+		if (t.equals("HashMap<String,String>[][]")) {
 			List<HashMap<?, ?>[]> result = new ArrayList<HashMap<?, ?>[]>();
 			JSONArray oArray = r.isArray();
 			for (int wayOuterIter = 0; wayOuterIter < oArray.size(); wayOuterIter++) {
@@ -313,7 +313,7 @@ public class JsonUtil {
 			return (HashMap<String, String>[][]) result
 					.toArray(new HashMap<?, ?>[0][0]);
 		}
-		if (t.compareToIgnoreCase("HashMap<String,String>") == 0) {
+		if (t.equals("HashMap<String,String>")) {
 			JSONObject obj = r.isObject();
 			HashMap<String, String> result = new HashMap<String, String>();
 			Iterator<String> iter = obj.keySet().iterator();
@@ -325,7 +325,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, String>) result;
 		}
-		if (t.compareToIgnoreCase("HashMap<String,Object>") == 0) {
+		if (t.equals("HashMap<String,Object>")) {
 			JSONObject obj = r.isObject();
 			HashMap<String, Object> result = new HashMap<String, Object>();
 			Iterator<String> iter = obj.keySet().iterator();
@@ -337,7 +337,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, Object>) result;
 		}
-		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,String>>") == 0) {
+		if (t.equals("HashMap<String,HashMap<String,String>>")) {
 			HashMap<String, HashMap<String, String>> oResult = new HashMap<String, HashMap<String, String>>();
 			JSONObject oA = r.isObject();
 			if (oA != null) {
@@ -358,7 +358,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, HashMap<String, String>>) oResult;
 		}
-		if (t.compareToIgnoreCase("HashMap<String,HashMap<String,Integer>>") == 0) {
+		if (t.equals("HashMap<String,HashMap<String,Integer>>")) {
 			HashMap<String, HashMap<String, Integer>> oResult = new HashMap<String, HashMap<String, Integer>>();
 			JSONObject oA = r.isObject();
 			if (oA != null) {
@@ -380,7 +380,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, HashMap<String, Integer>>) oResult;
 		}
-		if (t.compareToIgnoreCase("HashMap<Integer,String>") == 0) {
+		if (t.equals("HashMap<Integer,String>")) {
 			JSONObject obj = r.isObject();
 			HashMap<Integer, String> result = new HashMap<Integer, String>();
 			Iterator<String> iter = obj.keySet().iterator();
@@ -393,7 +393,7 @@ public class JsonUtil {
 			}
 			return (HashMap<Integer, String>) result;
 		}
-		if (t.compareToIgnoreCase("HashMap<String,Integer>") == 0) {
+		if (t.equals("HashMap<String,Integer>")) {
 			JSONObject obj = r.isObject();
 			HashMap<String, Integer> result = new HashMap<String, Integer>();
 			Iterator<String> iter = obj.keySet().iterator();
@@ -405,7 +405,7 @@ public class JsonUtil {
 			}
 			return (HashMap<String, Integer>) result;
 		}
-		if (t.compareToIgnoreCase("String[][]") == 0) {
+		if (t.equals("String[][]")) {
 			JSONArray outer = r.isArray();
 			List<String[]> x = new ArrayList<String[]>();
 			if (r.isArray() != null) {
@@ -430,7 +430,7 @@ public class JsonUtil {
 				return (String[][]) x.toArray(new String[0][0]);
 			}
 		}
-		if (t.compareToIgnoreCase("String[]") == 0) {
+		if (t.equals("String[]")) {
 			JSONArray a = r.isArray();
 			List<String> x = new ArrayList<String>();
 			if (r.isArray() != null) {
