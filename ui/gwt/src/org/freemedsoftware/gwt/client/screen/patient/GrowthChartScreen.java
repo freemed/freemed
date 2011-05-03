@@ -61,7 +61,7 @@ public class GrowthChartScreen extends PatientScreenInterface {
 			setChartSize(WIDTH, HEIGHT);
 			setWidth("100%");
 
-			getXAxis().setTickCount(0);
+			getXAxis().setTickCount(11);
 			getXAxis().setTickLength(6);
 			getXAxis().setTickThickness(1);
 			getXAxis().setAxisMin(0);
@@ -144,14 +144,13 @@ public class GrowthChartScreen extends PatientScreenInterface {
 		VerticalPanel vPanel = new VerticalPanel();
 		initWidget(vPanel);
 
-		vPanel.add(new Label("Height/Length"));
-		vPanel.add(new HTML("&nbsp;"));
+		hChart.setTitle("Height/Length");
 		vPanel.add(hChart);
 		hChart.getYAxis().setAxisLabel("Height/Length");
 		hChart.getXAxis().setAxisLabel("Age (months)");
-		vPanel.add(new HTML("&nbsp;<br/>&nbsp;"));
-		vPanel.add(new Label("Weight"));
 		vPanel.add(new HTML("&nbsp;"));
+
+		wChart.setTitle("Weight");
 		vPanel.add(wChart);
 		wChart.getYAxis().setAxisLabel("Weight");
 		wChart.getXAxis().setAxisLabel("Age (months)");
