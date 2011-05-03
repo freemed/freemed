@@ -20,9 +20,15 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>com.instantiations.designer.gwt.GWTNature</nature>
 		<nature>com.google.gwt.eclipse.core.gwtNature</nature>
 	</natures>

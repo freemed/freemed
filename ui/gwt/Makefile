@@ -25,15 +25,15 @@ THISDIR=ui/gwt
 all: interface
 
 interface:
-	ant gwtc
-	rm www/org -Rf
+	( cd lib ; ./install-deps.sh )
+	mvn
 
 install: interface
 	mkdir -p $(INSTDIR)/$(THISDIR)
 	cp -rvf www $(INSTDIR)/$(THISDIR)
 
 clean:
-	ant clean
+	mvn clean
 
 dist-clean: clean
 	rm -rf .gwt
