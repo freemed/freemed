@@ -33,6 +33,7 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.screen.patient.AdvancePayment;
 import org.freemedsoftware.gwt.client.screen.patient.AllergyEntryScreen;
 import org.freemedsoftware.gwt.client.screen.patient.DrugSampleEntry;
 import org.freemedsoftware.gwt.client.screen.patient.EncounterScreen;
@@ -46,6 +47,7 @@ import org.freemedsoftware.gwt.client.screen.patient.PatientIdEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientLinkEntry;
 import org.freemedsoftware.gwt.client.screen.patient.PatientReportingScreen;
 import org.freemedsoftware.gwt.client.screen.patient.PrescriptionsScreen;
+import org.freemedsoftware.gwt.client.screen.patient.ProcedureScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProgressNoteEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ReferralEntry;
 import org.freemedsoftware.gwt.client.screen.patient.ScannedDocumentsEntryScreen;
@@ -269,6 +271,30 @@ public class PatientScreen extends ScreenInterface {
 				menuBar.addItem("New", menuBar_1);
 			menuItemAdded = false;
 			final MenuBar menuBar_2 = new MenuBar(true);
+			
+            if(CurrentState.isActionAllowed(ProcedureScreen.moduleName, AppConstants.SHOW)){
+                menuBar_2.addItem("Manage Procedures", new Command() {
+                        public void execute() {
+                                ProcedureScreen ps =  new ProcedureScreen();
+                                Util.spawnTabPatient("Manage Procedures", ps, getObject());
+                                ps.loadData();
+                        }
+                });
+                menuItemAdded = true;
+            }
+            
+            if(true){
+                menuBar_2.addItem("Payment", new Command() {
+                        public void execute() {
+                                AdvancePayment ap =  new AdvancePayment();
+                                Util.spawnTabPatient("Payment", ap, getObject());
+                                ap.loadUI();
+                        }
+                });
+                menuItemAdded = true;
+            }
+
+			
 			if (CurrentState.isActionAllowed(PatientReportingScreen.moduleName,
 					AppConstants.SHOW)) {
 				menuBar_2.addItem("Patient Reporting", new Command() {
@@ -280,7 +306,7 @@ public class PatientScreen extends ScreenInterface {
 				menuItemAdded = true;
 			}
 
-			menuBar_2.addItem("Billing", (Command) null);
+			menuBar_2.addItem("Billing/Payment", (Command) null);
 
 			if (true) {
 				menuBar_2.addItem("Growth Charts", new Command() {
