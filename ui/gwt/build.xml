@@ -41,7 +41,7 @@
     <mkdir dir="build" />
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
       <classpath>
-        <pathelement location="src"/>
+        <pathelement location="src/main/java"/>
         <path refid="project.class.path"/>
       </classpath>
       <!-- JVM arguments -->
@@ -84,7 +84,7 @@
   	</copy>
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
       <classpath>
-        <pathelement location="src"/>
+        <pathelement location="src/main/java"/>
         <path refid="project.class.path"/>
       </classpath>
       <jvmarg value="-Xmx1024M"/>
