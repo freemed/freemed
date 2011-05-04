@@ -118,13 +118,21 @@
 				<version>2.1.0</version>
 				<configuration>
 					<module>org.freemedsoftware.gwt.FreemedInterface</module>
+					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<localWorkers>1</localWorkers>
+					<logLevel>WARN</logLevel>
+					<style>OBFUSCATED</style>
+					<inplace>false</inplace>
+					<webappDirectory>www</webappDirectory>
+					<soyc>false</soyc>
+					<disableCastChecking>true</disableCastChecking>
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
+							<goal>clean</goal>
 							<goal>compile</goal>
-							<goal>generateAsync</goal>
-							<!-- <goal>test</goal> -->
+							<goal>resources</goal>
 						</goals>
 					</execution>
 				</executions>
