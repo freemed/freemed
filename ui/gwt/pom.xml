@@ -124,6 +124,7 @@
 					<style>OBFUSCATED</style>
 					<inplace>false</inplace>
 					<webappDirectory>www</webappDirectory>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
 					<soyc>false</soyc>
 					<disableCastChecking>true</disableCastChecking>
 				</configuration>
