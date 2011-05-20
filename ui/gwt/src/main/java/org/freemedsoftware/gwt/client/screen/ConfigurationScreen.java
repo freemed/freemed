@@ -38,6 +38,7 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -128,6 +129,9 @@ public class ConfigurationScreen extends ScreenInterface {
 			String cur = iter.next();
 			if (widgets.get(cur) instanceof CustomListBox) {
 				v.put(cur, ((CustomListBox) widgets.get(cur)).getWidgetValue());
+			}
+			else if (widgets.get(cur) instanceof SupportModuleWidget) {
+				v.put(cur, ((SupportModuleWidget) widgets.get(cur)).getStoredValue());
 			}
 			else if (widgets.get(cur) instanceof TextBox) {
 				v.put(cur, ((TextBox) widgets.get(cur)).getText());
@@ -318,6 +322,11 @@ public class ConfigurationScreen extends ScreenInterface {
 			// Add to index
 			widgets.put(r.get("c_option"), w);
 			return w;
+		} else if (widgetType.compareToIgnoreCase("SupportModule") == 0) {
+			SupportModuleWidget w = new SupportModuleWidget(r.get("c_options"));
+			w.setValue(Integer.getInteger(r.get("c_value")));
+			widgets.put(r.get("c_option"), w);
+			return w;
 		} else if (widgetType.compareToIgnoreCase("YesNo") == 0) {
 			CustomListBox w = new CustomListBox();
 			w.addItem("Yes", "1");
@@ -361,6 +370,8 @@ public class ConfigurationScreen extends ScreenInterface {
 		if(!canModify){
 			if(w instanceof TextBox)
 				((TextBox)w).setEnabled(false);
+			else if(w instanceof SupportModuleWidget)
+				((SupportModuleWidget)w).setEnable(true);
 			else if(w instanceof CustomListBox)
 				((CustomListBox)w).setEnabled(false);
 			else if(w instanceof PasswordTextBox)
