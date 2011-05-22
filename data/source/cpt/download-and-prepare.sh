@@ -22,8 +22,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-RVU_FILE=RVU09D.zip
-HCPCS_FILE=09anweb.zip
+RVU_FILE=RVU11A.zip
+HCPCS_FILE=11anweb.zip
 CURDIR="$( pwd )"
 
 cd "$( cd "$(dirname "$0")"; pwd )"
