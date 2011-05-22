@@ -25,6 +25,7 @@
 
 if (!$_SERVER['argc']) { die ("cannot be called via web"); }
 
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
 
 define ( 'SESSION_DISABLE', true );

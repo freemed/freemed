@@ -57,6 +57,9 @@ if (ini_get('post_max_size')+0 < 64) {
 	@ini_set('post_max_size', '64M');
 }
 
+//----- Disable useless E_NOTICE error reporting, freaks users out.
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 //----- Use our *own* stuff, no one else's stuff
 if (function_exists('set_include_path')) {
 	set_include_path(dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/net/php/pear/');
@@ -76,11 +79,13 @@ $cal_ending_hour   = "18"; // end at 6 o'clock pm
 set_time_limit (0);
 
   // quick hack for Lynx caching pages problem
-if (strstr($HTTP_USER_AGENT, "Lynx")) {
+if (isset($_SERVER['HTTP_USER_AGENT'])) {
+if (strstr($_SERVER['HTTP_USER_AGENT'], "Lynx")) {
 	// force no caching
 	Header ("Cache-Control: no-cache, must-revalidate");
 	Header ("Pragma: no-cache");
 } // end checking for lynx
+}
 
   // ****************** CHECK FOR PHP MODULES **********************
 
