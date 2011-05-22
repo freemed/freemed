@@ -111,7 +111,7 @@ sub process_page {
 	}
 
 	# End page and attach
-	$txt->compress;
+	#$txt->compress;
 } # end sub process_page
 
 sub get_pdf_height {
