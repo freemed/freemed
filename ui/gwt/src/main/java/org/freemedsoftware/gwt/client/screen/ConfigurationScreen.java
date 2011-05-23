@@ -324,7 +324,7 @@ public class ConfigurationScreen extends ScreenInterface {
 			return w;
 		} else if (widgetType.compareToIgnoreCase("SupportModule") == 0) {
 			SupportModuleWidget w = new SupportModuleWidget(r.get("c_options"));
-			w.setValue(Integer.getInteger(r.get("c_value")));
+			w.setValue(Integer.parseInt(r.get("c_value")));
 			widgets.put(r.get("c_option"), w);
 			return w;
 		} else if (widgetType.compareToIgnoreCase("YesNo") == 0) {
