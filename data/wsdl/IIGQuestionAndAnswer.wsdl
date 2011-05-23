@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.hummingbytes.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://www.hummingbytes.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.hummingbytes.com/">
+      <s:element name="PutIIGQuestion">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ClientID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AlertType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Channel" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Destination" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Subject" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Question" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AnswerType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AnswerChoices" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="XmlQuestion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ExtraData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="StartTime" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EndTime" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PutIIGQuestionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PutIIGQuestionResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIIGQuestionStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ClientID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="QuestionID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIIGQuestionStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIIGQuestionStatusResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIIGAnswer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ClientID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="QuestionID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIIGAnswerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIIGAnswerResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RemoveIIGQuestion">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ClientID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="QuestionID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RemoveIIGQuestionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RemoveIIGQuestionResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="PutIIGQuestionSoapIn">
+    <wsdl:part name="parameters" element="tns:PutIIGQuestion" />
+  </wsdl:message>
+  <wsdl:message name="PutIIGQuestionSoapOut">
+    <wsdl:part name="parameters" element="tns:PutIIGQuestionResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGQuestionStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIIGQuestionStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGQuestionStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIIGQuestionStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGAnswerSoapIn">
+    <wsdl:part name="parameters" element="tns:GetIIGAnswer" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGAnswerSoapOut">
+    <wsdl:part name="parameters" element="tns:GetIIGAnswerResponse" />
+  </wsdl:message>
+  <wsdl:message name="RemoveIIGQuestionSoapIn">
+    <wsdl:part name="parameters" element="tns:RemoveIIGQuestion" />
+  </wsdl:message>
+  <wsdl:message name="RemoveIIGQuestionSoapOut">
+    <wsdl:part name="parameters" element="tns:RemoveIIGQuestionResponse" />
+  </wsdl:message>
+  <wsdl:message name="PutIIGQuestionHttpGetIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="AlertType" type="s:string" />
+    <wsdl:part name="Channel" type="s:string" />
+    <wsdl:part name="Destination" type="s:string" />
+    <wsdl:part name="Subject" type="s:string" />
+    <wsdl:part name="Question" type="s:string" />
+    <wsdl:part name="AnswerType" type="s:string" />
+    <wsdl:part name="AnswerChoices" type="s:string" />
+    <wsdl:part name="XmlQuestion" type="s:string" />
+    <wsdl:part name="ExtraData" type="s:string" />
+    <wsdl:part name="StartTime" type="s:string" />
+    <wsdl:part name="EndTime" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PutIIGQuestionHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGQuestionStatusHttpGetIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="QuestionID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGQuestionStatusHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGAnswerHttpGetIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="QuestionID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGAnswerHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="RemoveIIGQuestionHttpGetIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="QuestionID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RemoveIIGQuestionHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="PutIIGQuestionHttpPostIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="AlertType" type="s:string" />
+    <wsdl:part name="Channel" type="s:string" />
+    <wsdl:part name="Destination" type="s:string" />
+    <wsdl:part name="Subject" type="s:string" />
+    <wsdl:part name="Question" type="s:string" />
+    <wsdl:part name="AnswerType" type="s:string" />
+    <wsdl:part name="AnswerChoices" type="s:string" />
+    <wsdl:part name="XmlQuestion" type="s:string" />
+    <wsdl:part name="ExtraData" type="s:string" />
+    <wsdl:part name="StartTime" type="s:string" />
+    <wsdl:part name="EndTime" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="PutIIGQuestionHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGQuestionStatusHttpPostIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="QuestionID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGQuestionStatusHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGAnswerHttpPostIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="QuestionID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetIIGAnswerHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="RemoveIIGQuestionHttpPostIn">
+    <wsdl:part name="ClientID" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="QuestionID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="RemoveIIGQuestionHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:portType name="IIGQuestionAndAnswerSoap">
+    <wsdl:operation name="PutIIGQuestion">
+      <wsdl:input message="tns:PutIIGQuestionSoapIn" />
+      <wsdl:output message="tns:PutIIGQuestionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <wsdl:input message="tns:GetIIGQuestionStatusSoapIn" />
+      <wsdl:output message="tns:GetIIGQuestionStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <wsdl:input message="tns:GetIIGAnswerSoapIn" />
+      <wsdl:output message="tns:GetIIGAnswerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <wsdl:input message="tns:RemoveIIGQuestionSoapIn" />
+      <wsdl:output message="tns:RemoveIIGQuestionSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="IIGQuestionAndAnswerHttpGet">
+    <wsdl:operation name="PutIIGQuestion">
+      <wsdl:input message="tns:PutIIGQuestionHttpGetIn" />
+      <wsdl:output message="tns:PutIIGQuestionHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <wsdl:input message="tns:GetIIGQuestionStatusHttpGetIn" />
+      <wsdl:output message="tns:GetIIGQuestionStatusHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <wsdl:input message="tns:GetIIGAnswerHttpGetIn" />
+      <wsdl:output message="tns:GetIIGAnswerHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <wsdl:input message="tns:RemoveIIGQuestionHttpGetIn" />
+      <wsdl:output message="tns:RemoveIIGQuestionHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="IIGQuestionAndAnswerHttpPost">
+    <wsdl:operation name="PutIIGQuestion">
+      <wsdl:input message="tns:PutIIGQuestionHttpPostIn" />
+      <wsdl:output message="tns:PutIIGQuestionHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <wsdl:input message="tns:GetIIGQuestionStatusHttpPostIn" />
+      <wsdl:output message="tns:GetIIGQuestionStatusHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <wsdl:input message="tns:GetIIGAnswerHttpPostIn" />
+      <wsdl:output message="tns:GetIIGAnswerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <wsdl:input message="tns:RemoveIIGQuestionHttpPostIn" />
+      <wsdl:output message="tns:RemoveIIGQuestionHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="IIGQuestionAndAnswerSoap" type="tns:IIGQuestionAndAnswerSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PutIIGQuestion">
+      <soap:operation soapAction="http://www.hummingbytes.com/PutIIGQuestion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <soap:operation soapAction="http://www.hummingbytes.com/GetIIGQuestionStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <soap:operation soapAction="http://www.hummingbytes.com/GetIIGAnswer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <soap:operation soapAction="http://www.hummingbytes.com/RemoveIIGQuestion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="IIGQuestionAndAnswerSoap12" type="tns:IIGQuestionAndAnswerSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PutIIGQuestion">
+      <soap12:operation soapAction="http://www.hummingbytes.com/PutIIGQuestion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <soap12:operation soapAction="http://www.hummingbytes.com/GetIIGQuestionStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <soap12:operation soapAction="http://www.hummingbytes.com/GetIIGAnswer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <soap12:operation soapAction="http://www.hummingbytes.com/RemoveIIGQuestion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="IIGQuestionAndAnswerHttpGet" type="tns:IIGQuestionAndAnswerHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="PutIIGQuestion">
+      <http:operation location="/PutIIGQuestion" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <http:operation location="/GetIIGQuestionStatus" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <http:operation location="/GetIIGAnswer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <http:operation location="/RemoveIIGQuestion" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="IIGQuestionAndAnswerHttpPost" type="tns:IIGQuestionAndAnswerHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="PutIIGQuestion">
+      <http:operation location="/PutIIGQuestion" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGQuestionStatus">
+      <http:operation location="/GetIIGQuestionStatus" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetIIGAnswer">
+      <http:operation location="/GetIIGAnswer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveIIGQuestion">
+      <http:operation location="/RemoveIIGQuestion" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="IIGQuestionAndAnswer">
+    <wsdl:port name="IIGQuestionAndAnswerSoap" binding="tns:IIGQuestionAndAnswerSoap">
+      <soap:address location="https://www.hummingbytes.com/SecureWebservices/IIGQuestionAndAnswer.asmx" />
+    </wsdl:port>
+    <wsdl:port name="IIGQuestionAndAnswerSoap12" binding="tns:IIGQuestionAndAnswerSoap12">
+      <soap12:address location="https://www.hummingbytes.com/SecureWebservices/IIGQuestionAndAnswer.asmx" />
+    </wsdl:port>
+    <wsdl:port name="IIGQuestionAndAnswerHttpGet" binding="tns:IIGQuestionAndAnswerHttpGet">
+      <http:address location="https://www.hummingbytes.com/SecureWebservices/IIGQuestionAndAnswer.asmx" />
+    </wsdl:port>
+    <wsdl:port name="IIGQuestionAndAnswerHttpPost" binding="tns:IIGQuestionAndAnswerHttpPost">
+      <http:address location="https://www.hummingbytes.com/SecureWebservices/IIGQuestionAndAnswer.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
