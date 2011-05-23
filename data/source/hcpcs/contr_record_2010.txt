@@ -1,0 +1,1012 @@
+1
+  CMS RIF REPORT
+  AS OF: 10/28/2009
+
+
+       NAME                   LENGTH   BEG  END                                         CONTENTS
+  -----------------------------------------------------------------------------------------------------------------------
+  ***  HCPCS Contractor Record - 2010
+                               320      1    320    REC
+
+                                                    2010 Healthcare Common Procedure Coding System (HCPCS)
+                                                    Contractor record description.
+
+                                                    STANDARD ALIAS : HCPCS_CNTRCTR_10_REC
+                                                    SYSTEM   ALIAS : HCPCS10C
+
+  1.   Healthcare Common Procedure Coding System Code
+                                 5      1      5    CHAR
+
+                                                    The Healthcare Common Prodecure Coding System (HCPCS) is a
+                                                    collection of codes that represent procedures, supplies,
+                                                    products and services which may be provided to Medicare
+                                                    beneficiaries and to individuals enrolled in private health
+                                                    insurance programs. The codes are divided into two
+                                                    levels, or groups, as described Below:
+
+                                                    Level I
+                                                    Codes and descriptors copyrighted by the American Medical
+                                                    Association's current procedural terminology, fourth
+                                                    edition (CPT-4). These are 5 position numeric codes
+                                                    representing physician and nonphysician services.
+
+                                                    **** NOTE: ****
+                                                    CPT-4 codes including both long and short descriptions
+                                                    shall be used in accordance with the CMS/AMA agreement.
+                                                    Any other use violates the AMA copyright.
+
+                                                    Level II
+                                                    Includes codes and descriptors copyrighted by the
+                                                    American Dental Association's current dental terminology,
+                                                    seventh edition (CDT-7/8). These are 5 position
+                                                    alpha-numeric codes comprising the d series. All other
+                                                    level II codes and descriptors are approved and
+                                                    maintained jointly by the alpha-numeric editorial panel
+                                                    (consisting of CMS, the Health Insurance Association of
+                                                    America, and the Blue Cross and Blue Shield Association).
+                                                    These are 5 position alpha- numeric codes representing
+                                                    primarily items and nonphysician services that are not
+                                                    represented in the level I codes.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : HCPCS_CD
+                                                    STANDARD ALIAS : HCPCS_CD
+                                                    TITLE    ALIAS : HCPCS_CD
+
+                                                    LENGTH         : 5
+
+  2.   HCPCS Code Redefinition Group
+                                 5      1      5    GRP
+
+
+                                                    REDEFINE   : HCPCS_CD
+
+  3.   FILLER                                       CHAR
+                                 3      1      3
+                                                    DB2      ALIAS : FILLER
+
+                                                    LENGTH         : 3
+
+  4.   HCPCS Modifier Code
+                                 2      4      5    CHAR
+
+                                                    A modifier provides the means by which the reporting
+                                                    physician or provider can indicate that a service or
+                                                    procedure that has been performed has been altered by some
+                                                    specific circumstance but not changed in its definition or
+                                                    code.     The judicious application of modifiers obviates the
+                                                    necessity for separate procedure listings that may describe
+                                                    the modifying circumstance.     Modifiers may be used to
+                                                    indicate to the recipient of a report that:
+                                                    > A service or procedure has both a professional
+                                                    and technical component.
+                                                    > A service or procedure was performed by more
+                                                    than one physician and/or in more than one
+                                                    location.
+                                                    > A service or procedure has been increased or
+                                                    reduced.
+                                                    > Only part of a service was performed.
+                                                    > An adjunctive service was performed.
+                                                    > A bilateral procedure was performed.
+                                                    > A service or procedure was provided more than
+                                                    once.
+                                                    > Unusual events occurred.
+
+                                                    HCPCS modifier codes are divided into two levels, or
+                                                    groups, as described below:
+
+                                                    Level I
+                                                    Codes and descriptors copyrighted by the American Medical
+                                                    Association's current procedural terminology, fourth
+                                                    edition (CPT-4).     These are 2 position numeric codes.
+
+                                                    **** NOTE: ****
+                                                    CPT-4 codes including both long and short descriptions
+                                                    shall be used in accordance with the CMS/AMA agreement.
+                                                    Any other use violates the AMA copyright.
+
+                                                    Level II
+                                                    Codes and descriptors approved and maintained jointly by
+                                                    the alpha-numeric editorial panel (consisting of CMS, the
+                                                    Health Insurance Association of America, and the Blue
+                                                    Cross and Blue Shield Association).     These are 2 position
+                                                    alpha-numeric codes.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : MDFR
+                                                    STANDARD ALIAS : HCPCS_MDFR_CD
+
+                                                    LENGTH         : 2
+
+                                                    SOURCE         :    CMS
+
+  5.   HCPCS Sequence Number
+                                 5      6     10    NUM
+
+                                                    Sequence number by 100s.     Used to group procedure
+                                                    or modifier codes together.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    STANDARD ALIAS : HCPCS_SQNC_NUM
+
+                                                    LENGTH         : 5    SIGNED : N
+
+  6.   HCPCS Record Identification Code
+                                 1     11     11    CHAR
+
+                                                    Code to identify record type
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : RIC
+                                                    STANDARD ALIAS : HCPCS_REC_IDENT_CD
+
+                                                    LENGTH         : 1
+
+                                                    CODES         :
+                                                       3 = First line of procedure record
+                                                           also contains detail information
+                                                           in positions 92-275
+                                                       4 = Second, third, fourth, etc., Description
+                                                           of procedure record.  No detail information
+                                                           in positions 92-275
+                                                       7 = First line of modifier record
+                                                           also contains detail information
+                                                           in positions 92-275
+                                                       8 = Second, third, fourth, etc., Description
+                                                           of modifier record.  No detail information
+                                                           in positions 92-275
+
+  7.   HCPCS Long Description
+                                80     12     91    CHAR
+
+                                                    Contains all text of procedure or modifier long
+                                                    descriptions.
+
+                                                    The AMA owns the copyright on the CPT codes and
+                                                    descriptions; CPT codes and descriptions are not
+                                                    public property and must always be used in compliance
+                                                    with copyright law.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : DESC_TXT
+                                                    STANDARD ALIAS : HCPCS_LONG_DESC_TXT
+
+                                                    LENGTH         : 80
+
+  8.   HCPCS Short Description
+                                28     92    119    CHAR
+
+                                                    Short descriptive text of procedure or modifier code
+                                                    (28 characters or less).
+
+                                                    The AMA owns the copyright on the CPT codes and
+                                                    descriptions; CPT codes and descriptions are not
+                                                    public property and must always be used in compliance
+                                                    with copyright law.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : SHRTDESC
+                                                    STANDARD ALIAS : HCPCS_SHRT_DESC_TXT
+                                                    TITLE    ALIAS : HCPCS_SHORT_DESC_TEXT
+
+                                                    LENGTH         : 28
+
+  9.   HCPCS Pricing Indicator Code
+                                 2    120    121    CHAR
+
+                                                    Code used to identify the appropriate methodology for
+                                                    developing unique pricing amounts under part B.     A procedure
+                                                    may have one to four pricing codes.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : PRCNGCD
+                                                    STANDARD ALIAS : HCPCS_PRCNG_IND_CD
+
+                                                    LENGTH         : 2
+
+                                                    CODES         :
+                                                       00 = Service not separately priced by part B
+                                                            (e.G., services not covered, bundled, used
+                                                            by part a only, etc.)
+                                                       Physician Fee Schedule And Non-Physician Practitioners
+                                                       ------------------------------------------------------
+                                                       Linked To The Physician Fee Schedule
+                                                       ------------------------------------
+                                                       11 = Price established using national rvu's
+                                                       12 = Price established using national anesthesia
+                                                            base units
+                                                       13 = Price established by carriers (e.G., not
+                                                            otherwise classified, individual determination,
+                                                            carrier discretion)
+                                                       Clinical Lab Fee Schedule
+                                                       -------------------------
+                                                       21 = Price subject to national limitation amount
+                                                       22 = Price established by carriers (e.G.,
+                                                            gap-fills, carrier established panels)
+                                                       Durable Medical Equipment, Prosthetics, Orthotics,
+                                                       --------------------------------------------------
+                                                       Supplies And Surgical Dressings
+                                                       -------------------------------
+                                                       31 = Frequently serviced DME (price
+                                                            subject to floors and ceilings)
+                                                       32 = Inexpensive & routinely purchased
+                                                            DME (price subject to floors and
+                                                            ceilings)
+                                                       33 = Oxygen and oxygen equipment (price
+                                                            subject to floors and ceilings)
+                                                       34 = DME supplies (price subject to floors
+                                                            and ceilings)
+                                                       35 = Surgical dressings (price subject to
+                                                            floors and ceilings)
+                                                       36 = Capped rental DME (price subject to
+                                                            floors and ceilings)
+                                                       37 = Ostomy, tracheostomy and urological
+                                                            supplies (price subject to floors and
+                                                            ceilings)
+                                                       38 = Orthotics, prosthetics, prosthetic
+                                                            devices & vision services (price subject
+                                                            to floors and ceilings)
+                                                       39 = Parenteral and Enteral Nutrition
+                                                       45 = Customized DME items
+                                                       46 = Carrier priced (e.g., not otherwise classified,
+                                                            individual determination, carrier discretion,
+                                                            gap-filled  amounts)
+                                                       Other
+                                                       -----
+                                                       51 = Drugs
+                                                       52 = Reasonable charge
+                                                       53 = Statute
+                                                       54 = Vaccinations
+                                                       55 = Priced by carriers under clinical psychologist
+                                                            fee schedule (not applicable as of january 1, 1998)
+                                                       56 = Priced by carriers under clinical
+                                                            social worker fee schedule (not applicable as of
+                                                            january 1, 1998)
+                                                       57 = Other carrier priced
+                                                       99 = Value not established
+
+                                                    OCCURS MIN: 4 OCCURS MAX: 0
+
+  10.  HCPCS Multiple Pricing Indicator Code
+                                 1    128    128    CHAR
+
+                                                    Code used to identify instances where a procedure
+                                                    could be priced under multiple methodologies.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : MULTCD
+                                                    STANDARD ALIAS : HCPCS_MLTPL_PRCNG_IND_CD
+
+                                                    LENGTH         : 1
+
+                                                    CODES         :
+                                                       9 = Not applicable as HCPCS not priced separately
+                                                           by part B (pricing indicator is 00) or value
+                                                           is not established (pricing indicator is '99')
+                                                       A = Not applicable as HCPCS priced under one
+                                                           methodology
+                                                       B = Professional component of HCPCS priced using
+                                                           RVU's, while technical component and global
+                                                           service priced by Medicare part B carriers
+                                                       C = Physician interpretation of clinical lab service
+                                                           is priced under physician fee schedule using
+                                                           RVU's, while pricing of lab service is paid
+                                                           under clinical lab fee schedule
+                                                       D = Service performed by physician is priced under
+                                                           physician fee schedule using RVU's, while service
+                                                           performed by clinical psychologist is priced
+                                                           under clinical psychologist fee schedule
+                                                           (not applicable as of January 1, 1998)
+                                                       E = Service performed by physician is priced under
+                                                           physician fee schedule using RVU's, service
+                                                           performed by clinical psychologist is priced
+                                                           under clinical psychologist's fee schedule and
+                                                           service performed by clinical social worker
+                                                           is priced under clinical social worker fee
+                                                           schedule (not applicable as of January 1, 1998)
+                                                       F = Service performed by physician is priced under
+                                                           physician fee schedule by carriers, service
+                                                           performed by clinical psychologist is priced
+                                                           under clinical psychologist's fee schedule and
+                                                           service performed by clinical social worker
+                                                           is priced under clinical social worker fee
+                                                           schedule (not applicable as of January 1, 1998)
+                                                       G = Clinical lab service priced under reasonable
+                                                           charge when service is submitted on claim with
+                                                           blood products, while service is priced under
+                                                           clinical lab fee schedule when there are no
+                                                           blood products on claim.
+
+  11.  HCPCS Coverage Issues Manual Reference Section Number
+                                 6    129    134    CHAR
+
+                                                    Number identifying the reference section of the
+                                                    coverage issues manual.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : CIM
+                                                    STANDARD ALIAS : HCPCS_CIM_RFRNC_SECT_NUM
+
+                                                    LENGTH         : 6
+
+                                                    OCCURS MIN: 3 OCCURS MAX: 0
+
+  12.  HCPCS Medicare Carriers Manual Reference Section Number
+                                 8    147    154    CHAR
+
+                                                    Number identifying a section of the Medicare carriers
+                                                    manual.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : MCM
+                                                    STANDARD ALIAS : HCPCS_MCM_RFRNC_SECT_NUM
+
+                                                    LENGTH         : 8
+
+                                                    OCCURS MIN: 3 OCCURS MAX: 0
+
+  13.  HCPCS Statute Number
+                                10    171    180    CHAR
+
+                                                    Number identifying statute reference for coverage or
+                                                    noncoverage of procedure or service.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : STATUTE
+                                                    STANDARD ALIAS : HCPCS_STATUTE_NUM
+
+                                                    LENGTH         : 10
+
+  14.  HCPCS Lab Certification Code
+                                 3    181    183    CHAR
+
+                                                    Code used to classify laboratory procedures according
+                                                    to the specialty certification categories listed by
+                                                    CMS.     Any generally certified laboratory (e.g., 100)
+                                                    may perform any of the tests in its subgroups (e.g.,
+                                                    110, 120, etc.).
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : LABCERT
+                                                    STANDARD ALIAS : HCPCS_LAB_CRTFCTN_CD
+
+                                                    LENGTH         : 3
+
+                                                    CODES         :
+                                                       010 = Histocompatibility testing
+                                                       100 = Microbiology
+                                                             110 = Bacteriology
+                                                             115 = Mycobacteriology
+                                                             120 = Mycology
+                                                             130 = Parasitology
+                                                             140 = Virology
+                                                             150 = Other microbiology
+                                                       200 = Diagnostic immunology
+                                                             210 = Syphilis serology
+                                                             220 = General immunology
+                                                       300 = Chemistry
+                                                             310 = Routine chemistry
+                                                             320 = Urinalysis
+                                                             330 = Endocrinology
+                                                             340 = Toxicology
+                                                             350 = Other chemistry
+                                                       400 = Hematology
+                                                       500 = Immunohematology
+                                                             510 = Abo group & RH type
+                                                             520 = Antibody detection (transfusion)
+                                                             530 = Antibody detection (nontransfusion)
+                                                             540 = Antibody identification
+                                                             550 = Compatibility testing
+                                                             560 = Other immunohematology
+                                                       600 = Pathology
+                                                             610 = Histopathology
+                                                             620 = Oral pathology
+                                                             630 = Cytology
+                                                       800 = Radiobioassay
+                                                       900 = Clinical cytogenetics
+
+                                                    OCCURS MIN: 8 OCCURS MAX: 0
+
+  15.  HCPCS Cross Reference Code
+                                 5    205    209    CHAR
+
+                                                    An explicit reference crosswalking a deleted code
+                                                    or a code that is not valid for Medicare to a
+                                                    valid current code (or range of codes).
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : XREF
+                                                    STANDARD ALIAS : HCPCS_XREF_CD
+
+                                                    LENGTH         : 5
+
+                                                    OCCURS MIN: 5 OCCURS MAX: 0
+
+  16.  HCPCS Coverage Code
+                                 1    230    230    CHAR
+
+                                                    A code denoting Medicare coverage status.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : CVRG_CD
+                                                    STANDARD ALIAS : HCPCS_CVRG_CD
+
+                                                    LENGTH         : 1
+
+                                                    CODES         :
+                                                       D = Special coverage instructions apply
+                                                       I = Not payable by Medicare
+                                                       M = Non-covered by Medicare
+                                                       S = Non-covered by Medicare statute
+                                                       C = Carrier judgment
+
+  17.  HCPCS ASC Payment Group Code
+                                 2    231    232    GRP
+                                                    CHAR
+
+                                                    The 'YY' indicator represents that this procedure is approved to be
+                                                    performed in an ambulatory surgical center.  You must access the ASC
+                                                    tables on the mainframe or CMS website to get the dollar amounts.
+
+                                                    Payment group rates, which are updated annually, (most recently on Ap
+                                                    1, 2004), are as follows:     Group 1 - $333; Group 2 - $446;
+                                                    Group 3 - $510; Group 4 - $630; Group 5 - $717; Group 6 -
+                                                    $826 ($676 for intraocular lenses IOLS); Group 7 - $995;
+                                                    Group 8 - $973 ($823+$150 for IOLS); Group 9 - $1339.
+                                                    The $150 payment allowance in groups 6 and 8 is for
+                                                    intraocular lenses.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : ASCIND
+                                                    STANDARD ALIAS : HCPCS_ASC_PMT_GRP_CD
+
+                                                    LENGTH         : 2
+
+                                                    EDIT RULES :
+                                                             CODE: YY
+                                                             BLANK = Not Approved For ASC
+
+  18.  HCPCS ASC Payment Group Effective Date
+                                 8    233    240    GRP
+                                                    NUM
+
+                                                    The date the procedure is assigned to the ASC
+                                                    payment group.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : ASCGRP
+                                                    STANDARD ALIAS : HCPCS_ASC_PMT_GRP_EFCTV_DT
+                                                    TITLE    ALIAS : HCPCS_ASC_PMT_GROUP_EFCTV_DT
+
+                                                    LENGTH         : 8    SIGNED : N
+
+                                                    EDIT RULES :
+                                                             YYYYMMDD
+
+  19.  HCPCS MOG Payment Group Code
+                                 3    241    243    GRP
+                                                    CHAR
+
+                                                    Medicare outpatient groups (MOG) payment group code
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : MOGGRP
+                                                    STANDARD ALIAS : HCPCS_MOG_PMT_GRP_CD
+
+                                                    LENGTH         : 3
+
+                                                    COMMENTS :
+                                                    1St digit indicates the body system
+                                                    2nd digit is sequential numbering within the body system
+                                                    3rd digit is the level of intensity where:
+                                                    '1', '2', '3' or '4' represents levels
+                                                    for a given group type
+                                                    '0' and '9' represent single level
+                                                    for a given group type
+
+                                                    CODES         :
+                                                       No MOG applies
+
+                                                       000 = No MOG applies
+
+                                                       Integumentary
+
+                                                       102 = Level II needle biopsy/aspiration
+                                                       112 = Level II incision and drainage
+                                                       132 = Level II debridement/destruction
+                                                       142 = Level II excision/biopsy
+                                                       143 = Level III excision/biopsy
+                                                       151 = Level I skin repair
+                                                       152 = Level II skin repair
+                                                       153 = Level III skin repair
+                                                       160 = Incision/excision breast
+                                                       169 = Breast reconstruction/mastectomy
+
+                                                       Musculoskeletal
+
+                                                       201 = Level I skull and facial bone procedures
+                                                       202 = Level II skull and facial bone procedures
+                                                       211 = Level I hand musculoskeletal procedures
+                                                       212 = Level II hand musculoskeletal procedures
+                                                       221 = Level I foot musculoskeletal procedures
+                                                       222 = Level II foot musculoskeletal procedures
+                                                       231 = Level I musculoskeletal procedures
+                                                       232 = Level II musculoskeletal procedures
+                                                       233 = Level III musculoskeletal procedures
+                                                       241 = Level I arthroscopy
+                                                       242 = Level II arthroscopy
+                                                       260 = Closed treatment fracture finger/toe/trunk
+                                                       269 = Closed treatment fracture/dislocation/except
+                                                             finger/toe/trunk
+                                                       270 = Open/percutaneous treatment fracture or dislocation
+                                                       279 = Bone/joint manipulation under anesthesia
+                                                       280 = Bunion procedures
+                                                       289 = Arthroplasty
+                                                       290 = Arthroplasty with prosthesis
+
+                                                       ENT/Respiratory/Cardiovascular/Lymphatic/Endocrine
+
+                                                       302 = Level II ENT procedures
+                                                       303 = Level III ENT procedures
+                                                       304 = Level IV ENT procedures
+                                                       309 = Implantation of cochlear device (ASC rate does
+                                                             not include cost of implant)
+                                                       310 = Nasal cauterization/packing
+                                                       319 = Tonsil/adenoid procedures
+                                                       322 = Level II endoscopy upper airway
+                                                       323 = Level III endoscopy upper airway
+                                                       329 = Endoscopy lower airway
+                                                       330 = Thoracentesis/lavage procedures
+                                                       350 = Placement transvenous caths/cutdown
+                                                       359 = Removal/revision, pacemaker/vascular device
+                                                       360 = Vascular ligation
+                                                       369 = Vascular repair/fistula construction
+                                                       370 = Lymph node excisions
+                                                       379 = Thyroid/lymphadenectomy procedures
+
+                                                       Digestive
+
+                                                       400 = Esophageal dilation without endoscopy
+                                                       410 = Esophagoscopy
+                                                       421 = Level I upper GI endoscopy/intubation
+                                                       422 = Level II upper GI endoscopy/intubation
+                                                       429 = Lower GI endoscopy
+                                                       430 = Anoscopy and diagnostic sigmoidoscopy
+                                                       439 = Therapeutic proctosigmoidoscopy
+                                                       440 = Small intestine endoscopy
+                                                       449 = Percutaneous biliary endoscopic procedures
+                                                       450 = Endoscopic retrograde cholangio-pancreatography
+                                                             (ERCP)
+                                                       460 = Hernia/hydrocele procedures
+                                                       472 = Level II anal/rectal procedures
+                                                       473 = Level III anal/rectal procedures
+                                                       480 = Peritoneal and abdominal procedures
+                                                       490 = Tube procedures
+
+                                                       Urinary/Genital
+
+                                                       501 = Level I laparoscopy
+                                                       502 = Level II laparoscopy
+                                                       509 = Lithotripsy
+                                                       511 = Level I cystourethroscopy and other
+                                                             genitourinary procedures
+                                                       512 = Level II cystourethroscopy and other
+                                                             genitourinary procedures
+                                                       513 = Level III cystourethroscopy and other
+                                                             genitourinary procedures
+                                                       521 = Level I urethral procedures
+                                                       522 = Level II urethral procedures
+                                                       530 = Circumcision
+                                                       539 = Penile procedures
+                                                       540 = Insertion of penile prosthesis (ASC rate does
+                                                             include cost of implant)
+                                                       549 = Testes/epididymis procedures
+                                                       550 = Prostrate biopsy
+                                                       562 = Level II female reproductive procedures
+                                                       563 = Level III female reproductive procedures
+                                                       570 = Surgical hysteroscopy
+                                                       579 = D & C
+                                                       580 = Spontaneous abortion
+                                                       589 = Therapeutic abortion
+
+                                                       Nervous/Eye
+
+                                                       602 = Level II nervous system injections
+                                                       609 = Revision/removal neurological device
+                                                       610 = Implantation of neurostimulator electrodes (ASC
+                                                             rate does not include cost of implant)
+                                                       619 = Implantation of neurological devices (asc rate
+                                                             does not include cost of implant)
+                                                       621 = Level I nerve procedures
+                                                       622 = Level II nerve procedures
+                                                       629 = Spinal tap
+                                                       639 = Laser eye procedures except retinal
+                                                       640 = Cataract procedures
+                                                       649 = Cataract procedures with IOL insert (includes
+                                                             $150 insert)
+                                                       651 = Level I anterior segment eye procedures
+                                                       652 = Level II anterior segment eye procedures
+                                                       659 = Corneal transplant (ASC rate includes price
+                                                             of transplant)
+                                                       660 = Posterior segment eye procedures
+                                                       669 = Strabismus/muscle procedures
+                                                       673 = Level III eye procedure
+                                                       674 = Level IV eye procedure
+                                                       680 = Vitrectomy
+                                                       689 = Implantation/replacement of intraitreal drug
+
+  20.  HCPCS MOG Payment Policy Indicator
+                                 1    244    244    CHAR
+
+                                                    Indicator identifying whether a HCPCS code is subject
+                                                    to payment of an ASC facility fee, to a separate
+                                                    fee under another provision of Medicare, or to no
+                                                    fee at all.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : MOGIND
+                                                    STANDARD ALIAS : HCPCS_MOG_PMT_PLCY_IND_CD
+
+                                                    LENGTH         : 1
+
+                                                    CODES         :
+                                                       1 = ASC covered procedure
+                                                       2 = Bundled service/no separate payment
+                                                       3 = Excluded from ASC list
+                                                       4 = Invalid code/90 day grace period
+                                                       6 = Separate payment when furnished in an ASC
+                                                       7 = ASC restricted coverage procedure
+                                                       9 = ASC payment not applicable
+
+  21.  HCPCS MOG Effective Date
+                                 8    245    252    GRP
+                                                    NUM
+
+                                                    The date the procedure is assigned to the Medicare
+                                                    outpatient group (MOG) payment group.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : MOGDTE
+                                                    STANDARD ALIAS : HCPCS_MOG_PMT_GRP_EFCTV_DT
+
+                                                    LENGTH         : 8    SIGNED : N
+
+                                                    EDIT RULES :
+                                                             YYYYMMDD
+
+  22.  HCPCS Processing Note Number
+                                 4    253    256    CHAR
+
+                                                    Number identifying the processing note contained
+                                                    in Appendix A of the HCPCS manual.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : PROCNOTE
+                                                    STANDARD ALIAS : HCPCS_PRCSG_NOTE_NUM
+
+                                                    LENGTH         : 4
+
+  23.  HCPCS Berenson-Eggers Type Of Service Code
+                                 3    257    259    CHAR
+
+                                                    This field is valid beginning with 2003 data.
+                                                    The Berenson-Eggers Type of Service (BETOS) for the
+                                                    procedure code based on generally agreed upon clinically
+                                                    meaningful groupings of procedures and services.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : BETOS
+                                                    STANDARD ALIAS : HCPCS_BETOS_CD
+                                                    TITLE    ALIAS : BETOS_CD
+
+                                                    LENGTH         : 3
+
+                                                    CODE TABLE     : BETOS_TB
+
+  24.  FILLER                                       CHAR
+                                 1    260    260
+                                                    DB2      ALIAS : FILLER
+
+                                                    LENGTH         : 1
+
+  25.  HCPCS Type Of Service Code
+                                 1    261    261    CHAR
+
+                                                    The carrier assigned CMS type of service which
+                                                    describes the particular kind(s) of service
+                                                    represented by the procedure code.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : TYPESRVC
+                                                    STANDARD ALIAS : HCPCS_TYPE_SRVC_CD
+
+                                                    LENGTH         : 1
+
+                                                    CODE TABLE     : CMS_TYPE_SRVC_TB
+
+                                                    OCCURS MIN: 5 OCCURS MAX: 0
+
+  26.  HCPCS Anesthesia Base Unit Quantity
+                                 3    266    268    NUM
+
+                                                    The base unit represents the level of intensity for
+                                                    anesthesia procedure services that reflects all
+                                                    activities except time.     These activities include
+                                                    usual preoperative and post-operative visits, the
+                                                    administration of fluids and/or blood incident to
+                                                    anesthesia care, and monitering procedures.
+                                                    (Note: the payment amount for anesthesia services
+                                                    is based on a calculation using base unit, time
+                                                    units, and the conversion factor.)
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : BASEUNIT
+                                                    STANDARD ALIAS : HCPCS_ANSTHSA_BASE_UNIT_QTY
+                                                    TITLE    ALIAS : HCPCS_ANESTHESIA_BASE_UNIT_QTY
+
+                                                    LENGTH         : 3    SIGNED : N
+
+  27.  HCPCS Code Added Date
+                                 8    269    276    NUM
+
+                                                    The year the HCPCS code was added to the Healthcare
+                                                    common procedure coding system.
+
+                                                    DB2      ALIAS : HCPCS_CD_ADD_DT
+                                                    SAS      ALIAS : ADD_DT
+                                                    STANDARD ALIAS : HCPCS_CD_ADD_DT
+
+                                                    LENGTH         : 8    SIGNED : N
+
+                                                    EDIT RULES :
+                                                             YYYYMMDD
+
+  28.  HCPCS Action Effective Date
+                                 8    277    284    NUM
+
+                                                    Effective date of action to a procedure or
+                                                    modifier code
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : EFCTV_DT
+                                                    STANDARD ALIAS : HCPCS_ACTN_EFCTV_DT
+
+                                                    LENGTH         : 8    SIGNED : N
+
+                                                    EDIT RULES :
+                                                             YYYYMMDD
+
+  29.  HCPCS Termination Date
+                                 8    285    292    NUM
+
+                                                    Last date for which a procedure or modifier
+                                                    code may be used by Medicare providers.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : TERM_DT
+                                                    STANDARD ALIAS : HCPCS_TRMNTN_DT
+                                                    TITLE    ALIAS : HCPCS_TERMINATION_DT
+
+                                                    LENGTH         : 8    SIGNED : N
+
+                                                    EDIT RULES :
+                                                             YYYYMMDD
+
+  30.  HCPCS Action Code
+                                 1    293    293    CHAR
+
+                                                    A code denoting the change made to a procedure
+                                                    or modifier code within the HCPCS system.
+
+                                                    DB2      ALIAS : UNDEFINED
+                                                    SAS      ALIAS : ACTN_CD
+                                                    STANDARD ALIAS : HCPCS_ACTN_CD
+
+                                                    LENGTH         : 1
+
+                                                    CODES         :
+                                                       A = Add procedure or modifier code
+                                                       B = Change in both administrative data field
+                                                           and long description of procedure or
+                                                           modifier code
+                                                       C = Change in long description of procedure or
+                                                           modifier code
+                                                       D = Discontinue procedure or modifier code
+                                                       F = Change in administrative data field of
+                                                           procedure or modifier code
+                                                       N = No maintenance for this code
+                                                       P = Payment change (MOG, pricing indicator codes,
+                                                           anesthesia base units,Ambulatory Surgical Centers)
+                                                       R = Re-activate discontinued/deleted procedure
+                                                           or modifier code
+                                                       S = Change in short description of procedure code
+                                                       T = Miscellaneous change (BETOS, type of service)
+
+  31.  FILLER                                       CHAR
+                                27    294    320
+                                                    DB2      ALIAS : FILLER
+
+                                                    LENGTH         : 27
+
+
+
+                                                          *******************************************************
+
+
+H3PM.R_RIF_MAIN_Q,Q1,F
+1
+  TABLE OF CODES APPENDIX                               HCPCS_CNTRCTR_10_REC
+   FROM CA REPOSITORY RIF REPORT
+
+
+ BETOS_TB                                                   BETOS Table
+
+
+
+   M1A = Office visits - new
+   M1B = Office visits - established
+   M2A = Hospital visit - initial
+   M2B = Hospital visit - subsequent
+   M2C = Hospital visit - critical care
+   M3  = Emergency room visit
+   M4A = Home visit
+   M4B = Nursing home visit
+   M5A = Specialist - pathology
+   M5B = Specialist - psychiatry
+   M5C = Specialist - opthamology
+   M5D = Specialist - other
+   M6  = Consultations
+   P0  = Anesthesia
+   P1A = Major procedure - breast
+   P1B = Major procedure - colectomy
+   P1C = Major procedure - cholecystectomy
+   P1D = Major procedure - turp
+   P1E = Major procedure - hysterectomy
+   P1F = Major procedure - explor/decompr/excisdisc
+   P1G = Major procedure - Other
+   P2A = Major procedure, cardiovascular-CABG
+   P2B = Major procedure, cardiovascular-Aneurysm repair
+   P2C = Major Procedure, cardiovascular-Thromboendarterectomy
+   P2D = Major procedure, cardiovascualr-Coronary angioplasty (PTCA)
+   P2E = Major procedure, cardiovascular-Pacemaker insertion
+   P2F = Major procedure, cardiovascular-Other
+   P3A = Major procedure, orthopedic - Hip fracture repair
+   P3B = Major procedure, orthopedic - Hip replacement
+   P3C = Major procedure, orthopedic - Knee replacement
+   P3D = Major procedure, orthopedic - other
+   P4A = Eye procedure - corneal transplant
+   P4B = Eye procedure - cataract removal/lens insertion
+   P4C = Eye procedure - retinal detachment
+   P4D = Eye procedure - treatment of retinal lesions
+   P4E = Eye procedure - other
+   P5A = Ambulatory procedures - skin
+   P5B = Ambulatory procedures - musculoskeletal
+   P5C = Ambulatory procedures - inguinal hernia repair
+   P5D = Ambulatory procedures - lithotripsy
+   P5E = Ambulatory procedures - other
+   P6A = Minor procedures - skin
+   P6B = Minor procedures - musculoskeletal
+   P6C = Minor procedures - other (Medicare fee schedule)
+   P6D = Minor procedures - other (non-Medicare fee schedule)
+   P7A = Oncology - radiation therapy
+   P7B = Oncology - other
+   P8A = Endoscopy - arthroscopy
+   P8B = Endoscopy - upper gastrointestinal
+   P8C = Endoscopy - sigmoidoscopy
+   P8D = Endoscopy - colonoscopy
+   P8E = Endoscopy - cystoscopy
+   P8F = Endoscopy - bronchoscopy
+   P8G = Endoscopy - laparoscopic cholecystectomy
+   P8H = Endoscopy - laryngoscopy
+   P8I = Endoscopy - other
+   P9A = Dialysis services (medicare fee schedule)
+   P9B = Dialysis services (non-medicare fee schedule)
+   I1A = Standard imaging - chest
+   I1B = Standard imaging - musculoskeletal
+   I1C = Standard imaging - breast
+   I1D = Standard imaging - contrast gastrointestinal
+   I1E = Standard imaging - nuclear medicine
+   I1F = Standard imaging - other
+   I2A = Advanced imaging - CAT/CT/CTA: brain/head/neck
+   I2B = Advanced imaging - CAT/CT/CTA: other
+   I2C = Advanced imaging - MRI/MRA: brain/head/neck
+   I2D = Advanced imaging - MRI/MRA: other
+   I3A = Echography/ultrasonography - eye
+   I3B = Echography/ultrasonography - abdomen/pelvis
+   I3C = Echography/ultrasonography - heart
+   I3D = Echography/ultrasonography - carotid arteries
+   I3E = Echography/ultrasonography - prostate, transrectal
+   I3F = Echography/ultrasonography - other
+   I4A = Imaging/procedure - heart including cardiac
+                              catheterization
+   I4B = Imaging/procedure - other
+   T1A = Lab tests - routine venipuncture (non Medicare
+                     fee schedule)
+   T1B = Lab tests - automated general profiles
+   T1C = Lab tests - urinalysis
+   T1D = Lab tests - blood counts
+   T1E = Lab tests - glucose
+   T1F = Lab tests - bacterial cultures
+   T1G = Lab tests - other (Medicare fee schedule)
+   T1H = Lab tests - other (non-Medicare fee schedule)
+   T2A = Other tests - electrocardiograms
+   T2B = Other tests - cardiovascular stress tests
+   T2C = Other tests - EKG monitoring
+   T2D = Other tests - other
+   D1A = Medical/surgical supplies
+   D1B = Hospital beds
+   D1C = Oxygen and supplies
+   D1D = Wheelchairs
+   D1E = Other DME
+   D1F = Prosthetic/Orthotic devices
+   D1G = Drugs Administered through DME
+   O1A = Ambulance
+   O1B = Chiropractic
+   O1C = Enteral and parenteral
+   O1D = Chemotherapy
+   O1E = Other drugs
+   O1F = Hearing and speech services
+   O1G = Immunizations/Vaccinations
+   Y1  = Other - Medicare fee schedule
+   Y2  = Other - non-Medicare fee schedule
+   Z1  = Local codes
+   Z2  = Undefined codes
+
+ CMS_TYPE_SRVC_TB                                    CMS Type of Service Table
+
+
+
+  1 = Medical care
+  2 = Surgery
+  3 = Consultation
+  4 = Diagnostic radiology
+  5 = Diagnostic laboratory
+  6 = Therapeutic radiology
+  7 = Anesthesia
+  8 = Assistant at surgery
+  9 = Other medical items or services
+  0 = Whole blood only eff 01/96,
+      whole blood or packed red cells before 01/96
+  A = Used durable medical equipment (DME)
+  B = High risk screening mammography
+      (obsolete 1/1/98)
+  C = Low risk screening mammography
+      (obsolete 1/1/98)
+  D = Ambulance (eff 04/95)
+  E = Enteral/parenteral nutrients/supplies
+      (eff 04/95)
+  F = Ambulatory surgical center (facility
+      usage for surgical services)
+  G = Immunosuppressive drugs
+  H = Hospice services (discontinued 01/95)
+  I = Purchase of DME (installment basis)
+      (discontinued 04/95)
+  J = Diabetic shoes (eff 04/95)
+  K = Hearing items and services (eff 04/95)
+  L = ESRD supplies (eff 04/95)
+      (renal supplier in the home before 04/95)
+  M = Monthly capitation payment for dialysis
+  N = Kidney donor
+  P = Lump sum purchase of DME, prosthetics,
+      orthotics
+  Q = Vision items or services
+  R = Rental of DME
+  S = Surgical dressings or other medical supplies
+      (eff 04/95)
+  T = Psychological therapy (term. 12/31/97)
+      outpatient mental health limitation (eff. 1/1/98)
+  U = Occupational therapy
+  V = Pneumococcal/flu vaccine (eff 01/96),
+      Pneumococcal/flu/hepatitis B vaccine (eff 04/95-12/95),
+      Pneumococcal only before 04/95
+  W = Physical therapy
+  Y = Second opinion on elective surgery
+      (obsoleted 1/97)
+  Z = Third opinion on elective surgery
+      (obsoleted 1/97)
+
+
+ 10/28/2009
+  H3PM.R_RIF_TOC_RPT_Q,F
+                                       ******************************************************
+
