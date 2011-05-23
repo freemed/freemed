@@ -7,7 +7,7 @@
  //      Philipp Meng <pmeng@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2010 FreeMED Software Foundation
+ // Copyright (C) 1999-2011 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -141,6 +141,9 @@ $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
 
 printHeader( "Force module definition upgrades (round 2)" );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
+
+printHeader( "Force module definition upgrades (round 3, external call)" );
+`php ./scripts/cron/module.php`;
 
 print "\n\nfinished.\n";
 
