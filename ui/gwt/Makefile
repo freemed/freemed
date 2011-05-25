@@ -27,8 +27,7 @@ all: interface
 interface:
 	( cd lib ; ./install-deps.sh )
 	rm -Rf src/main/webapp/FreemedInterface 2>&1 > /dev/null
-	mvn gwt:compile
-	cp src/main/webapp/* www/ -vfR
+	mvn compile war:exploded gwt:compile
 
 install: interface
 	mkdir -p $(INSTDIR)/$(THISDIR)
@@ -36,6 +35,7 @@ install: interface
 
 clean:
 	mvn clean
+	rm www/* -Rf
 
 dist-clean: clean
 	rm -rf .gwt

@@ -21,11 +21,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-APPDIR=`dirname $0`;
-CP="$APPDIR/src:$APPDIR/bin:/opt/gwt/gwt-user.jar:/opt/gwt/gwt-dev.jar:/usr/lib/gwt/gwt-user.jar:/usr/lib/gwt/gwt-dev.jar"
-for JAR in lib/*.jar; do
-	CP="${CP}:$APPDIR/lib/$(basename "$JAR")"
-done
 echo "Launching application ... "
-java -Xmx1024M -cp "$CP" com.google.gwt.dev.DevMode -war "$APPDIR/www" "$@" -startupUrl FreemedInterface.html org.freemedsoftware.gwt.FreemedInterface;
+mvn compile war:exploded gwt:run
 
