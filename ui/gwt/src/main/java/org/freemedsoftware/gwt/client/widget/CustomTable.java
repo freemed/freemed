@@ -789,6 +789,10 @@ public class CustomTable extends Composite implements ClickHandler {
 			}
 		} else {
 			Cell clickedCell = flexTable.getCellForEvent(event);
+			if (clickedCell == null) {
+				JsonUtil.debug("Ignoring null cell");
+				return;
+			}
 			int row = clickedCell.getRowIndex();
 			actionRow = row;
 			int col = clickedCell.getCellIndex();
