@@ -120,18 +120,27 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<webappDirectory>www</webappDirectory>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.1.0</version>
 				<configuration>
-					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
+					<hostedWebapp>www</hostedWebapp>
 					<runTarget>/FreemedInterface.html</runTarget>
 					<module>org.freemedsoftware.gwt.FreemedInterface</module>
 					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
 					<localWorkers>1</localWorkers>
 					<logLevel>WARN</logLevel>
 					<style>OBFUSCATED</style>
-					<inplace>true</inplace>
+					<inplace>false</inplace>
 					<webappDirectory>www</webappDirectory>
 					<warSourceDirectory>src/main/webapp</warSourceDirectory>
 					<soyc>false</soyc>
