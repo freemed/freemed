@@ -9,6 +9,8 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
@@ -35,27 +37,25 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public class ToolsExecutionScreen  extends ScreenInterface {
-	
+public class ToolsExecutionScreen extends ScreenInterface {
+
 	public final static String moduleNameACL = "admin";
 	protected PushButton toolActionButton;
 	private HashMap<String, String> map;
 	protected String thisToolUUID = null;
 	protected FlexTable toolParametersTable;
 	protected HashMap<Integer, String> toolParameters = new HashMap<Integer, String>();
-	public ToolsExecutionScreen(String toolName, String tooluuid){
+
+	public ToolsExecutionScreen(String toolName, String tooluuid) {
 		super(moduleNameACL);
 		final VerticalPanel paramContainer = new VerticalPanel();
 		initWidget(paramContainer);
 		toolParametersTable = new FlexTable();
 		paramContainer.add(toolParametersTable);
-		
+
 		HorizontalPanel toolActionPanel = new HorizontalPanel();
 
-		toolActionButton = new PushButton();
-		toolActionButton
-				.setHTML("<img src=\"resources/images/check_go.32x32.png\" /><br/>"
-						+ "Run");
+		toolActionButton = new CustomButton("Run", AppConstants.ICON_RUN);
 		toolActionButton.setStylePrimaryName("freemed-PushButton");
 		toolActionButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -66,25 +66,22 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 		toolActionPanel.add(toolActionButton);
 
 		paramContainer.add(toolActionPanel);
-		thisToolUUID=tooluuid;
-		
+		thisToolUUID = tooluuid;
+
 		getToolInformation(thisToolUUID);
-		
+
 	}
-	
+
 	protected void runTool() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// TODO: handle stubbed
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			//toolTable.showloading(true);
-			String[] params = {thisToolUUID,JsonUtil.jsonify(getParameters())};
-			RequestBuilder builder = new RequestBuilder(
-					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.Tools.ExecuteTool",
-											params)));
+			// toolTable.showloading(true);
+			String[] params = { thisToolUUID, JsonUtil.jsonify(getParameters()) };
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.Tools.ExecuteTool",
+							params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -110,7 +107,7 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 			// TODO: Make this work with GWT-RPC
 		}
 	}
-	
+
 	/**
 	 * Get parameters for a specific tool by uuid.
 	 * 
@@ -146,7 +143,7 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 											.getText()),
 											"HashMap<String,String>");
 							if (result != null) {
-								map=result;
+								map = result;
 								populateToolParameters(result);
 							}
 						} else {
@@ -160,7 +157,7 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 			// TODO: Make this work with GWT-RPC
 		}
 	}
-	
+
 	/**
 	 * Callback to convert tool parameter information into a form.
 	 * 
@@ -175,8 +172,8 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 			final int i = iter;
 			final String iS = new Integer(iter).toString();
 			String type = data.get("tool_param_type_" + iS);
-			toolParametersTable.setText(iter, 0, data
-					.get("tool_param_name_" + iS));
+			toolParametersTable.setText(iter, 0, data.get("tool_param_name_"
+					+ iS));
 			Widget w = null;
 			if (type.compareToIgnoreCase("Date") == 0) {
 				w = new CustomDatePicker();
@@ -215,9 +212,8 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 							@Override
 							public void onValueChange(
 									ValueChangeEvent<String> event) {
-								toolParameters.put(i,
-										((PatientTagWidget) event.getSource())
-												.getValue());
+								toolParameters.put(i, ((PatientTagWidget) event
+										.getSource()).getValue());
 							}
 						});
 			} else if (type.compareToIgnoreCase("Patient") == 0) {
@@ -260,7 +256,7 @@ public class ToolsExecutionScreen  extends ScreenInterface {
 		// Show this when everything is populated
 		toolParametersTable.setVisible(true);
 	}
-	
+
 	/**
 	 * Get array of parameter values for current tool.
 	 * 
