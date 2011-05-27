@@ -29,7 +29,6 @@ import java.util.HashMap;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.widget.SimpleUIBuilder;
-import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -82,59 +81,58 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 	 * @param id
 	 */
 	public void setInternalId(Integer id) {
-		ModuleInterfaceAsync service = null;
-		try {
-			service = (ModuleInterfaceAsync) Util
-					.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
-		} catch (Exception ex) {
-			GWT.log("Exception", ex);
-		} finally {
-			internalId = id;
-			if (Util.getProgramMode() == ProgramMode.STUBBED) {
-				// TODO: Emulate stubbed mode
-			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-				String[] params = { moduleName, JsonUtil.jsonify(id) };
-				RequestBuilder builder = new RequestBuilder(
-						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.ModuleInterface.ModuleGetRecordMethod",
-												params)));
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						public void onError(Request request, Throwable ex) {
-						}
+		internalId = id;
+		if (Util.getProgramMode() == ProgramMode.STUBBED) {
+			// TODO: Emulate stubbed mode
+		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+			String[] params = { moduleName, JsonUtil.jsonify(id) };
+			RequestBuilder builder = new RequestBuilder(
+					RequestBuilder.POST,
+					URL
+							.encode(Util
+									.getJsonRequest(
+											"org.freemedsoftware.api.ModuleInterface.ModuleGetRecordMethod",
+											params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+					}
 
-						@SuppressWarnings("unchecked")
-						public void onResponseReceived(Request request,
-								Response response) {
-							if (200 == response.getStatusCode()) {
-								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
-												"HashMap<String,String>");
-								if (r != null) {
-									ui.setValues(r);
-								}
-							} else {
-							}
-						}
-					});
-				} catch (RequestException e) {
-				}
-			} else {
-				service.ModuleGetRecordMethod(moduleName, id,
-						new AsyncCallback<HashMap<String, String>>() {
-							public void onSuccess(HashMap<String, String> r) {
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
+									.shoehornJson(JSONParser.parse(response
+											.getText()),
+											"HashMap<String,String>");
+							if (r != null) {
 								ui.setValues(r);
 							}
-
-							public void onFailure(Throwable t) {
-								GWT.log("Exception", t);
-							}
-						});
+						} else {
+						}
+					}
+				});
+			} catch (RequestException e) {
 			}
+		} else {
+			ModuleInterfaceAsync service = null;
+			try {
+				service = (ModuleInterfaceAsync) Util
+						.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+			} catch (Exception ex) {
+				GWT.log("Exception", ex);
+			}
+			service.ModuleGetRecordMethod(moduleName, id,
+					new AsyncCallback<HashMap<String, String>>() {
+						public void onSuccess(HashMap<String, String> r) {
+							ui.setValues(r);
+						}
+
+						public void onFailure(Throwable t) {
+							GWT.log("Exception", t);
+						}
+					});
 		}
 	}
 
@@ -143,133 +141,147 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 			JsonUtil.debug("Found internalId, using modify");
 			data.put("id", internalId.toString());
 		}
-		ModuleInterfaceAsync service = null;
-		try {
-			service = (ModuleInterfaceAsync) Util
-					.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
-		} catch (Exception ex) {
-			GWT.log("Exception", ex);
-		} finally {
-			if (internalId.intValue() == 0) {
-				// Add record
-				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					Util.showInfoMsg(moduleName, "Added successfully.");
-					if (doneCommand != null) {
-						doneCommand.execute();
-					}
-					closeScreen();
-				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					String[] params = { moduleName, JsonUtil.jsonify(data) };
-					RequestBuilder builder = new RequestBuilder(
-							RequestBuilder.POST,
-							URL
-									.encode(Util
-											.getJsonRequest(
-													"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
-													params)));
-					try {
-						builder.sendRequest(null, new RequestCallback() {
-							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg(moduleName, "Failed to add record.");
-							}
 
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									Integer r = (Integer) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													"Integer");
-									if (r != null) {
-										Util.showInfoMsg(moduleName, "Added successfully.");
-										if (doneCommand != null) {
-											doneCommand.execute();
-										}
-										closeScreen();
-									}
-								} else {
-									Util.showErrorMsg(moduleName, "Failed to add record.");
-								}
-							}
-						});
-					} catch (RequestException e) {
-						Util.showErrorMsg(moduleName, "Failed to add record.");
-					}
-				} else {
-					service.ModuleAddMethod(moduleName, data,
-							new AsyncCallback<Integer>() {
-								public void onSuccess(Integer r) {
-									Util.showInfoMsg(moduleName, "Added successfully.");
+		if (internalId.intValue() == 0) {
+			// Add record
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				Util.showInfoMsg(moduleName, "Added successfully.");
+				if (doneCommand != null) {
+					doneCommand.execute();
+				}
+				closeScreen();
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { moduleName, JsonUtil.jsonify(data) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleAddMethod",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							Util.showErrorMsg(moduleName,
+									"Failed to add record.");
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								Integer r = (Integer) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Integer");
+								if (r != null) {
+									Util.showInfoMsg(moduleName,
+											"Added successfully.");
 									if (doneCommand != null) {
 										doneCommand.execute();
 									}
 									closeScreen();
 								}
-
-								public void onFailure(Throwable t) {
-									GWT.log("Exception", t);
-								}
-							});
+							} else {
+								Util.showErrorMsg(moduleName,
+										"Failed to add record.");
+							}
+						}
+					});
+				} catch (RequestException e) {
+					Util.showErrorMsg(moduleName, "Failed to add record.");
 				}
 			} else {
-				// Modify record
-				if (Util.getProgramMode() == ProgramMode.STUBBED) {
-					Util.showInfoMsg(moduleName, "Modified successfully.");
-					closeScreen();
-				} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-					String[] params = { moduleName, JsonUtil.jsonify(data) };
-					RequestBuilder builder = new RequestBuilder(
-							RequestBuilder.POST,
-							URL
-									.encode(Util
-											.getJsonRequest(
-													"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
-													params)));
-					try {
-						builder.sendRequest(null, new RequestCallback() {
-							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg(moduleName, "Failed to modify record.");
+				ModuleInterfaceAsync service = null;
+				try {
+					service = (ModuleInterfaceAsync) Util
+							.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+				}
+				service.ModuleAddMethod(moduleName, data,
+						new AsyncCallback<Integer>() {
+							public void onSuccess(Integer r) {
+								Util.showInfoMsg(moduleName,
+										"Added successfully.");
+								if (doneCommand != null) {
+									doneCommand.execute();
+								}
+								closeScreen();
 							}
 
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									Boolean r = (Boolean) JsonUtil
-											.shoehornJson(JSONParser
-													.parse(response.getText()),
-													"Boolean");
-									if (r != false && r != null) {
-										Util.showInfoMsg(moduleName, "Modified successfully");
-										if (doneCommand != null) {
-											doneCommand.execute();
-										}
-										closeScreen();
-									} else {
-										Util.showErrorMsg(moduleName, "Failed to modify record.");
-									}
-								} else {
-									Util.showErrorMsg(moduleName, "Failed to modify record.");
-								}
+							public void onFailure(Throwable t) {
+								GWT.log("Exception", t);
 							}
 						});
-					} catch (RequestException e) {
-					}
-				} else {
-					service.ModuleModifyMethod(moduleName, data,
-							new AsyncCallback<Integer>() {
-								public void onSuccess(Integer r) {
-									Util.showInfoMsg(moduleName, "Modified successfully.");
+			}
+		} else {
+			// Modify record
+			if (Util.getProgramMode() == ProgramMode.STUBBED) {
+				Util.showInfoMsg(moduleName, "Modified successfully.");
+				closeScreen();
+			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
+				String[] params = { moduleName, JsonUtil.jsonify(data) };
+				RequestBuilder builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL
+								.encode(Util
+										.getJsonRequest(
+												"org.freemedsoftware.api.ModuleInterface.ModuleModifyMethod",
+												params)));
+				try {
+					builder.sendRequest(null, new RequestCallback() {
+						public void onError(Request request, Throwable ex) {
+							Util.showErrorMsg(moduleName,
+									"Failed to modify record.");
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							if (200 == response.getStatusCode()) {
+								Boolean r = (Boolean) JsonUtil.shoehornJson(
+										JSONParser.parse(response.getText()),
+										"Boolean");
+								if (r != false && r != null) {
+									Util.showInfoMsg(moduleName,
+											"Modified successfully");
 									if (doneCommand != null) {
 										doneCommand.execute();
 									}
 									closeScreen();
+								} else {
+									Util.showErrorMsg(moduleName,
+											"Failed to modify record.");
 								}
-
-								public void onFailure(Throwable t) {
-									GWT.log("Exception", t);
-								}
-							});
+							} else {
+								Util.showErrorMsg(moduleName,
+										"Failed to modify record.");
+							}
+						}
+					});
+				} catch (RequestException e) {
 				}
+			} else {
+				ModuleInterfaceAsync service = null;
+				try {
+					service = (ModuleInterfaceAsync) Util
+							.getProxy("org.freemedsoftware.gwt.client.Api.ModuleInterface");
+				} catch (Exception ex) {
+					GWT.log("Exception", ex);
+				}
+				service.ModuleModifyMethod(moduleName, data,
+						new AsyncCallback<Integer>() {
+							public void onSuccess(Integer r) {
+								Util.showInfoMsg(moduleName,
+										"Modified successfully.");
+								if (doneCommand != null) {
+									doneCommand.execute();
+								}
+								closeScreen();
+							}
+
+							public void onFailure(Throwable t) {
+								GWT.log("Exception", t);
+							}
+						});
 			}
 		}
 
