@@ -73,6 +73,8 @@ public class JsonUtil {
 					return out.toString();
 				} catch (ClassCastException e) {
 					e.printStackTrace();
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.getMessage());
 				}
 			}
 			if (o instanceof HashMap
@@ -98,6 +100,8 @@ public class JsonUtil {
 					return out.toString();
 				} catch (ClassCastException e) {
 					e.printStackTrace();
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.getMessage());
 				}
 			}
 			if (o instanceof HashMap && (((HashMap<String, String>) o) != null)) {
@@ -112,6 +116,8 @@ public class JsonUtil {
 					return out.toString();
 				} catch (ClassCastException e) {
 					e.printStackTrace();
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.getMessage());
 				}
 			}
 
@@ -134,6 +140,8 @@ public class JsonUtil {
 					return out.toString();
 				} catch (ClassCastException e) {
 					e.printStackTrace();
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.getMessage());
 				}
 			}
 
@@ -155,6 +163,8 @@ public class JsonUtil {
 					return out.toString();
 				} catch (ClassCastException e) {
 					e.printStackTrace();
+				} catch (Exception ex) {
+					JsonUtil.debug(ex.getMessage());
 				}
 			}
 
@@ -215,7 +225,6 @@ public class JsonUtil {
 	 *            String representation of return value
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static synchronized Object shoehornJson(String r, String t) {
 		return shoehornJson(JSONParser.parse(r), t);
 	}
