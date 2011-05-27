@@ -548,7 +548,9 @@ public class CustomTable extends Composite implements ClickHandler {
 	public void loadData(HashMap<String, String>[] newData) {
 		// By default, regular data load with no offset
 		clearData();
-		loadData(newData, 0);
+		if (newData != null) {
+			loadData(newData, 0);
+		}
 	}
 
 	/**
