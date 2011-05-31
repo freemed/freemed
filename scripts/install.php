@@ -31,7 +31,13 @@ ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
 define ( 'SESSION_DISABLE', true );
 
 print "FreeMED CLI Installation Tool\n";
-print "(c) 2009 FreeMED Software Foundation\n\n";
+print "(c) 2009-2011 FreeMED Software Foundation\n\n";
+
+$nimode = false;
+if ($_SERVER['argc'][0] == '--ni') {
+	$nimode = true;
+	print "[Using non-interactive mode]\n";
+}
 
 if ( ! file_exists ( './scripts/install.php' ) ) {
 	print "You must run this from the root directory of your FreeMED install.\n\n";
@@ -43,7 +49,7 @@ if ( ! file_exists ( 'lib/settings.php' ) ) {
 	die();
 }
 
-function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
+function getInput ( $mask ) { global $nimode; if ($nimode) { print "[non-interactive mode]\n"; return true; } fscanf(STDIN, "${mask}\n", $x); return $x; }
 
 //Check for MySQL-Version and inform the user about the necessarity of SUPER-rights for MySQL
 //When the user likes, he can enter his root-user/pass to override declaration in lib/settings.php
@@ -51,7 +57,7 @@ $output = shell_exec('mysql -V');
 preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version);
 if ($version[0] >= "5.0.4") {
 	print "You have MySQL Version ".$version[0]." installed. There are problems with creating triggers on the Tables with non-root privleges (creating triggers requires SUPER privileges). Does the username/password specified in lib/settings.php have SUPER privileges? (yes/no) [no] ";
-	if (getInput('%s') != 'yes') {
+	if (!$nimode && getInput('%s') != 'yes') {
 		print "\n\nWithout the correct rights, this script won't work. You can enter the username and password of a user with SUPER privileges here. These settings will not be saved, they are only used by this script. The settings in lib/settings.php are kept and used by all transactions of FreeMED in the future. Do you want to do that? (yes/no) [no] ";
 		if (getInput('%s') != 'yes') {
 			print "Installation interrupted by user.\n";			
@@ -76,7 +82,7 @@ function printHeader ( $x ) { print "\n\n ----->> ${x} <<-----\n\n"; }
 function loadSchema ( $s ) { $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
 
 print "\nPlease type 'yes' if you're *sure* you want to do this : ";
-if ( getInput( '%s' ) != 'yes' ) {
+if ( !$nimode && getInput( '%s' ) != 'yes' ) {
 	print "\nI didn't think so. :(\n";
 	die();
 }
@@ -118,6 +124,10 @@ $username = getInput( '%s' );
 if ($username == "") { $username = "root"; }
 print "\nPlease enter a password for your administrative account : ";
 $password = getInput( '%s' );
+if ($nimode) {
+	$username = 'root';
+	$password = 'password';
+}
 LoadObjectDependency( "org.freemedsoftware.public.Installation" );
 Installation::CreateAdministrationAccount( $username, $password );
 print "\n\n";
