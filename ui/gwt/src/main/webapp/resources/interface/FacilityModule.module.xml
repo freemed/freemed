@@ -39,8 +39,8 @@
 			    <Element field="psrein" title="Employer Identification Number" type="TEXT" options="9" help="Enter here the Employer Identification Number."/>
 			    <Element field="psrnpi" title="National Provider Identification" type="TEXT" options="32"/>
 			    <Element field="psrtaxonomy" title="Taxonomy Number" type="TEXT" options="32"/>
-			    <Element field="psrintext" title="psrintext????" type="TEXT" options="10"/>
-			    <Element field="psrpos" title="psrpos????" type="TEXT" options="10"/>
+			    <Element field="psrintext" title="Internal or External Facility" type="SELECT" options="Internal|0,External|1"/>
+			    <Element field="psrpos" title="Place of Service Code" type="MODULE" options="PlaceOfService"/>
 			    <Element field="psrx12id" title="X12 Identifier" type="TEXT" options="24"/>
 			    <Element field="psrx12idtype" title="X12 Identifier Type" type="TEXT" options="10"/>
 	    </Elements>
