@@ -1,5 +1,5 @@
 /*
- * $Id: CallInScreen.java 4643 2009-10-21 11:50:05Z Fawad $
+ * $Id$
  *
  * Authors:
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
@@ -85,8 +85,8 @@ public class RemittBilling extends ScreenInterface {
 		tabPanel = new TabPanel();
 		initWidget(tabPanel);
 		///////////////////////////////////////////////////////
-		//tabPanel.add(getPerformBillingUI(), "Perform Billing");
-		tabPanel.add(getBillingStatusUI(), "Billing Status");
+		tabPanel.add(getPerformBillingUI(), "Perform Billing");
+//		tabPanel.add(getBillingStatusUI(), "Billing Status");
 //		tabPanel.add(getReBillingUI(), "Rebill");
 		tabPanel.add(getShowReportsUI(), "Show Reports");
 		
