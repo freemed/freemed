@@ -45,9 +45,9 @@
 			    <Element field="inscox12id" title="X12 Payer ID Code" type="TEXT" options="32"/>
 			    <Element field="inscodefoutput" title="Default Output Format" type="SELECT" options="Electronic|electronic,Paper|paper"/>
 			    <Element field="inscodefformat" title="Paper: Default Format" type="SELECT" options="HCFA/CMS 1500|cms1500"/>
-			    <Element field="inscodeftarget" title="Paper: Default Target" type="SELECT" options="org.remitt.plugin.transport.StoreFilePdf"/>
+			    <Element field="inscodeftarget" title="Paper: Default Target" type="SELECT" options="org.remitt.plugin.transport.StoreFilePdf,org.remitt.plugin.transport.StoreFile"/>
 			    <Element field="inscodeftargetopt" title="Paper: Default Target Option" type="TEXT" options="32"/>
-			    <Element field="inscodefformate" title="Electronic: Default Format" type="SELECT" options="4010 X12 837 Professional|837p,HCFA/CMS 1500|cms1500"/>
+			    <Element field="inscodefformate" title="Electronic: Default Format" type="SELECT" options="ANSI X12 4010 837 Professional|4010_837p,ANSI X12 5010 837 Professional|5010_837p,HCFA/CMS 1500|cms1500"/>
 			    <Element field="inscodeftargete" title="Electronic: Default Target" type="SELECT" options="org.remitt.plugin.transport.StoreFile,org.remitt.plugin.transport.ClaimLogicTransport,org.remitt.plugin.transport.GatewayEdiTransport,org.remitt.plugin.transport.ScriptedHttpTransport"/>
 			    <Element field="inscodeftargetopte" title="Electronic: Default Target Option" type="TEXT" options="32"/>
 		    </Elements>
