@@ -44,8 +44,7 @@ CREATE TABLE IF NOT EXISTS `insco` (
 	, inscox12id		VARCHAR (32) NOT NULL DEFAULT ''
 	, inscodefoutput	ENUM ( 'electronic', 'paper' ) DEFAULT 'electronic'
 	, inscodefformat	VARCHAR (50) DEFAULT 'cms1500'
-	, inscodeftarget	VARCHAR (120) DEFAULT 'org.remitt.plugin.transpo
-rt.StoreFilePdf'
+	, inscodeftarget	VARCHAR (120) DEFAULT 'org.remitt.plugin.transport.StoreFilePdf'
 	, inscodeftargetopt	VARCHAR (75) DEFAULT ''
 	, inscodefformate	VARCHAR (50) DEFAULT '837p'
 	, inscodeftargete	VARCHAR (120) DEFAULT 'org.remitt.plugin.transport.StoreFile'
