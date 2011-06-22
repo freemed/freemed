@@ -94,11 +94,11 @@ DELIMITER ;
 
 CALL config_Register (
 	'remitt_url',
-	'http://localhost:8080/remitt/services/Service?wsdl',
+	'http://localhost:8080/remitt/services/interface?wsdl',
 	'Remitt Service URL',
 	'REMITT Billing',
 	'URL',
-	'http://localhost:8080/remitt/services/Service?wsdl'
+	'http://localhost:8080/remitt/services/interface?wsdl'
 );
 CALL config_Register (
 	'remitt_user',
