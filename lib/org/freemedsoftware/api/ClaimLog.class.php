@@ -512,6 +512,7 @@ ORDER BY
 			"c.id AS curr_cov, ".
 			"CONCAT(i.insconame, ' (', i.inscocity, ', ', ".
 				"i.inscostate) AS payer_name, ".
+			"i.inscodefoutput AS default_format, ".
 			"d.icd9code AS diagnosis, ".
 			"pt.ptssn AS ssn, ".
 			"c.covrel AS rp_name, ".
