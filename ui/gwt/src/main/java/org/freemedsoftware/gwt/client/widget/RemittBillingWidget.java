@@ -120,9 +120,8 @@ public class RemittBillingWidget extends Composite {
 						if (columnName.compareTo("format") == 0) {
 
 							final CustomListBox formatListBox = new CustomListBox();
-							formatListBox.addItem(
-									"Electric - hcfa 1500/FreeClaims", "0");
-							formatListBox.addItem("Paper - hcfa 1500/PDF", "1");
+							formatListBox.addItem("Electric", "0");
+							formatListBox.addItem("Paper", "1");
 							formatListBox.addChangeHandler(new ChangeHandler() {
 
 								@Override
@@ -163,7 +162,7 @@ public class RemittBillingWidget extends Composite {
 		loadSeletedProcedureInfo();
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		postBtn = new CustomButton("Post Claim/s", AppConstants.ICON_ADD);
+		postBtn = new CustomButton("Post Claim(s)", AppConstants.ICON_ADD);
 		postBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
