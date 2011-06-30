@@ -24,7 +24,9 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.PatientScreenInterface;
@@ -36,6 +38,13 @@ import org.freemedsoftware.gwt.client.widget.CustomListBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -47,13 +56,42 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 	public final static String moduleName = "Prescription";
 
 	protected CustomButton cConsult, cRadiology, cImmunization, cLab,
-			cProcedure, cRx, cTemplates;
+			cProcedure, cRx, cTemplates, addOrderButton, removeOrderButton;
 
 	protected FlexTable panelA, panelB, panelC, panelD;
 
+	/**
+	 * Second panel list of potential orders to select from.
+	 */
+	protected CustomListBox wPossibleOrders = new CustomListBox(true);
+	protected Map<String, OrderItem> possibleOrders = new HashMap<String, OrderItem>();
+
+	/**
+	 * Third panel list of selected orders which are set to be added to patient
+	 * regimen.
+	 */
 	protected CustomListBox wSelectedOrders = new CustomListBox(true);
+	protected Map<String, OrderItem> selectedOrders = new HashMap<String, OrderItem>();
 
 	protected boolean initialPosition = true;
+
+	public enum OrderType {
+		CONSULT, RADIOLOGY, IMMUNIZATION, LAB, PROCEDURE, RX, TEMPLATE
+	}
+
+	public class OrderItem implements Serializable {
+		private static final long serialVersionUID = -273414904970876362L;
+
+		private OrderType type;
+
+		public void setType(OrderType type) {
+			this.type = type;
+		}
+
+		public OrderType getType() {
+			return type;
+		}
+	}
 
 	public class OrderItemButton extends CustomButton {
 
@@ -70,9 +108,28 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		flexTable.setWidget(0, 0, panelA);
 		panelB = new FlexTable();
 		flexTable.setWidget(0, 1, panelB);
+		panelB.setWidget(0, 0, new HTML("<em>" + "Select orders to add"
+				+ "</em>"));
+		wPossibleOrders.setVisibleItemCount(30);
+		panelB.setWidget(1, 0, wPossibleOrders);
+		wPossibleOrders.setEnabled(false);
+		addOrderButton = new CustomButton("Add Order(s)", AppConstants.ICON_ADD);
+		addOrderButton.addClickHandler(this);
+		panelB.setWidget(2, 0, addOrderButton);
+		addOrderButton.setEnabled(false);
+
 		panelC = new FlexTable();
 		wSelectedOrders.setVisibleItemCount(30);
-		panelC.setWidget(0, 0, wSelectedOrders);
+		panelC.setWidget(0, 0, new HTML("<em>"
+				+ "Choose an order to modify or remove" + "</em>"));
+		panelC.setWidget(1, 0, wSelectedOrders);
+		wSelectedOrders.setEnabled(false);
+
+		removeOrderButton = new CustomButton("Remove", AppConstants.ICON_DELETE);
+		removeOrderButton.addClickHandler(this);
+		panelC.setWidget(2, 0, removeOrderButton);
+		removeOrderButton.setEnabled(false);
+
 		flexTable.setWidget(0, 2, panelC);
 		panelD = new FlexTable();
 		// Last panel is hidden, much as first two panels will be
@@ -92,9 +149,18 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 			}
 		});
 
+		final CustomButton changePositionButton = new CustomButton("<-->",
+				AppConstants.ICON_CHANGE);
+		actionPanel.setWidget(0, 1, changePositionButton);
+		changePositionButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent w) {
+				switchPosition();
+			}
+		});
+
 		final CustomButton resetButton = new CustomButton("Reset",
 				AppConstants.ICON_CLEAR);
-		actionPanel.setWidget(0, 1, resetButton);
+		actionPanel.setWidget(0, 2, resetButton);
 		resetButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				resetForm();
@@ -110,7 +176,7 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 	 */
 	protected FlexTable createCategoryPanel() {
 		FlexTable f = new FlexTable();
-		f.setWidget(0, 0, new HTML("<b>" + "Category" + "</b>"));
+		f.setWidget(0, 0, new HTML("<em>" + "Category" + "</em>"));
 
 		int pos = 0;
 
@@ -167,7 +233,13 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		return f;
 	}
 
-	protected void populateOrderPickPanel(String type) {
+	/**
+	 * Populate the second pane with possible candidates to add to the third
+	 * pane.
+	 * 
+	 * @param type
+	 */
+	protected void populateOrderPickPanel(OrderType type) {
 		// Make sure nothing prior exists there
 		panelB.clear();
 
@@ -177,8 +249,12 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		// TODO: FIXME: this needs not to be like this
 		String[][] items = { new String[] {}, new String[] {}, new String[] {},
 				new String[] {}, new String[] {} };
+		// Display in three columns, add click listener and custom type ???
 
-		// Display in three columns, add click listener and custom type
+
+		// Enable second panel picklist
+		wPossibleOrders.setEnabled(true);
+		addOrderButton.setEnabled(true);
 	}
 
 	public void save() {
@@ -190,30 +266,48 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			// JSON-RPC
 			String[] params = { JsonUtil.jsonify(data) };
-			/*
-			 * RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
-			 * URL.encode(Util.getJsonRequest(
-			 * "org.freemedsoftware.module.Prescription.add", params))); try {
-			 * builder.sendRequest(null, new RequestCallback() { public void
-			 * onError(Request request, Throwable ex) {
-			 * Util.showErrorMsg("ClinicalOrdersEntry",
-			 * "Failed to add Prescription."); }
-			 * 
-			 * @SuppressWarnings("unchecked") public void
-			 * onResponseReceived(Request request, Response response) { if (200
-			 * == response.getStatusCode()) { if
-			 * (response.getText().compareToIgnoreCase("false") != 0) {
-			 * HashMap<String, String>[] r = (HashMap<String, String>[])
-			 * JsonUtil .shoehornJson(JSONParser.parse(response .getText()),
-			 * "HashMap<String,String>"); if (r != null) { // Successful
-			 * Util.showInfoMsg("ClinicalOrdersEntry",
-			 * "Successfully added prescription."); } } else { JsonUtil
-			 * .debug("Received dummy response from JSON backend"); } } else {
-			 * Util.showErrorMsg("ClinicalOrdersEntry",
-			 * "Failed to add Prescription"); } } }); } catch (RequestException
-			 * e) { Util.showErrorMsg("ClinicalOrdersEntry",
-			 * "Failed to add orders"); }
-			 */
+
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+					URL.encode(Util.getJsonRequest(
+							"org.freemedsoftware.module.ClinicalOrders.add",
+							params)));
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable ex) {
+						Util.showErrorMsg("ClinicalOrdersEntry",
+								"Failed to add order.");
+					}
+
+					@SuppressWarnings("unchecked")
+					public void onResponseReceived(Request request,
+							Response response) {
+						if (200 == response.getStatusCode()) {
+							if (response.getText().compareToIgnoreCase("false") != 0) {
+								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
+										.shoehornJson(
+												JSONParser.parseStrict(response
+														.getText()),
+												"HashMap<String,String>");
+								if (r != null) { // Successful
+									Util.showInfoMsg("ClinicalOrdersEntry",
+											"Successfully added order.");
+								}
+							} else {
+								JsonUtil
+										.debug("Received dummy response from JSON backend");
+							}
+						} else {
+							Util.showErrorMsg("ClinicalOrdersEntry",
+									"Failed to add Prescription");
+						}
+					}
+				});
+			} catch (RequestException e) {
+				Util
+						.showErrorMsg("ClinicalOrdersEntry",
+								"Failed to add orders");
+			}
+
 		} else {
 			// GWT-RPC
 		}
@@ -244,12 +338,27 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 	public void onClick(ClickEvent event) {
 		Object source = event.getSource();
 		if (source == cConsult) {
+			populateOrderPickPanel(OrderType.CONSULT);
 		} else if (source == cRadiology) {
+			populateOrderPickPanel(OrderType.RADIOLOGY);
 		} else if (source == cImmunization) {
+			populateOrderPickPanel(OrderType.IMMUNIZATION);
 		} else if (source == cLab) {
+			populateOrderPickPanel(OrderType.LAB);
 		} else if (source == cProcedure) {
+			populateOrderPickPanel(OrderType.PROCEDURE);
 		} else if (source == cRx) {
+			populateOrderPickPanel(OrderType.RX);
 		} else if (source == cTemplates) {
+			populateOrderPickPanel(OrderType.TEMPLATE);
+		} else if (source == removeOrderButton) {
+			// Check to see if an order is currently selected
+			if (wSelectedOrders.getStoredValue() != ""
+					&& wSelectedOrders.getStoredValue() != "0") {
+				// Remove value
+				selectedOrders.remove(wSelectedOrders.getStoredValue());
+				wSelectedOrders.removeItem(wSelectedOrders.getSelectedIndex());
+			}
 		} else if (source instanceof OrderItemButton) {
 			// Use button text or other instance to determine which item was
 			// added, etc.
