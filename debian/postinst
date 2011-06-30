@@ -26,7 +26,7 @@
 
 # Patch PHP ini file to have more than 8M per process
 if [ -f /etc/php5/apache2/php.ini ]; do
-	perl -pi -e "s|8M|64M|;" /etc/php5/apache2/php.ini
+	perl -pi -e "s|8M|128M|;" /etc/php5/apache2/php.ini
 fi
 
 # Apache user has to own freemed
@@ -36,7 +36,7 @@ echo "[done]"
 
 # Change writeable permissions for data/, img/store, etc
 echo -n "Updating permissions ... "
-chmod -Rf a+w /usr/share/freemed/{data/{cache,backup},img/store}
+chmod -Rf a+w /usr/share/freemed/data/{cache,backup}
 echo "[done]"
 
 # Attempt to create freemed mysql database ... will have no password if

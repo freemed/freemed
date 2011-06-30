@@ -8,6 +8,9 @@ Standards-Version: 3.6.0
 Package: freemed
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Depends: perl, libxml-parser-perl, libtext-iconv-perl, cron, djvulibre-bin, netpbm, imagemagick, php5, php5-mysql, php5-gd, php5-cli, php5-cgi, php5-curl, libapache2-mod-php5, tetex-bin, tetex-extra, cupsys, cupsys-client, gs-common, xpdf-utils, mysql-server-5.0 (>= 5.0.22), mysql-client-5.0 (>= 5.0.22), djvulibre-bin, libxml-simple-perl, libpdf-api2-perl, hylafax-client, hylafax-server, wv
+Depends: openssh-server, openssh-client, subversion, mysql-server-5.1, php5-mysql, apache2, libapache2-mod-php5, libcgi-session-perl, libxml-parser-perl, libtext-iconv-perl, djvulibre-bin, netpbm, graphicsmagick-imagemagick-compat, cupsys, cupsys-client, gs-common, php5-cgi, php5-gd, php5-curl, xpdf-utils, bzip2, pdfjam, php5-cli, gs, dcmtk, gettext, tetex-bin, tetex-extra, vim, build-essential, libjpeg62-dev, libpng12-dev, zlib1g-dev, sudo, lynx, pv, php5-dev, re2c, hylafax-client, hylafax-server, ghfaxviewer, libfax-hylafax-client-perl, wv, 
+Depends: mysql-client-5.1, mysql-server-5.1, php5-mysql, apache2, libapache2-mod-php5, libxml-parser-perl, libtext-iconv-perl, djvulibre-bin, netpbm, graphicsmagick-imagemagick-compat, cupsys, cupsys-client, gs-common, php5-cgi, php5-gd, php5-curl, xpdf-utils, bzip2, pdfjam, php5-cli, gs, dcmtk, gettext, texinfo, openjdk-6-jdk, ant, msttcorefonts, sudo, dbconfig-common
+Conficts: php5-suhosin
 Suggests: remitt, cdrecord, mkisofs, php5-eaccelerator
 Description: FreeMED Opensource Electronic Medical Record System
+
