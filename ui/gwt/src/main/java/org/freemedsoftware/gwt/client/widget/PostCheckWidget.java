@@ -357,10 +357,10 @@ public class PostCheckWidget extends Composite {
 		vPanel.setCellHorizontalAlignment(actionPanel,
 				HasHorizontalAlignment.ALIGN_RIGHT);
 		pids = new ArrayList<String>();
-		loadSeletedProcedureInfo();
+		loadSelectedProcedureInfo();
 	}
 
-	public void loadSeletedProcedureInfo() {
+	public void loadSelectedProcedureInfo() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {

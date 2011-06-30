@@ -159,7 +159,7 @@ public class RemittBillingWidget extends Composite {
 					}
 				});
 		vPanel.add(claimsTable);
-		loadSeletedProcedureInfo();
+		loadSelectedProcedureInfo();
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
 		postBtn = new CustomButton("Post Claim(s)", AppConstants.ICON_ADD);
@@ -212,7 +212,7 @@ public class RemittBillingWidget extends Composite {
 		rebill();
 	}
 
-	public void loadSeletedProcedureInfo() {
+	public void loadSelectedProcedureInfo() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -532,7 +532,7 @@ public class RemittBillingWidget extends Composite {
 		cancelBtn.setText("Close");
 
 		CustomButton markAllBilled = new CustomButton(
-				"Mark All Bacthes as Billed", AppConstants.ICON_SELECT_ALL);
+				"Mark All Batches as Billed", AppConstants.ICON_SELECT_ALL);
 		actionPanel.add(markAllBilled);
 		actionPanel.add(cancelBtn);
 		vPanel.add(actionPanel);
