@@ -123,9 +123,9 @@ public class RemittBillingWidget extends Composite {
 							formatListBox.addItem("Electric", "0");
 							formatListBox.addItem("Paper", "1");
 							if (procsInfoMap.get(data.get("default_format")).equals("paper")) {
-								formatListBox.setValue(1);
+								formatListBox.setWidgetValue("1");
 							} else {
-								formatListBox.setValue(0);
+								formatListBox.setWidgetValue("0");
 							}
 							formatListBox.addChangeHandler(new ChangeHandler() {
 

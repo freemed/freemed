@@ -44,5 +44,5 @@ mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-incubator -Dv
 
 mvn install:install-file -DgroupId=org.cobogw.gwt -DartifactId=org.cobogw.gwt -Dversion=1.3 -Dpackaging=jar -Dfile=org.cobogw.gwt-1.3.jar
 
-mvn install:install-file -DgroupId=com.google.code.gwt-log -DartifactId=gwt-log -Dversion=3.0.2 -Dpackaging=jar -Dfile=gwt-log-3.0.2.jar
+mvn install:install-file -DgroupId=com.google.code.gwt-log -DartifactId=gwt-log -Dversion=3.1.3 -Dpackaging=jar -Dfile=gwt-log-3.1.3.jar
 

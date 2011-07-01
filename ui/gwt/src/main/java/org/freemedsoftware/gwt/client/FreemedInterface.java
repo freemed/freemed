@@ -24,11 +24,11 @@
 
 package org.freemedsoftware.gwt.client;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.MainScreen;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -58,6 +58,8 @@ public class FreemedInterface implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+	    Log.setUncaughtExceptionHandler();
+
 		// Test to make sure we're logged in
 		loginDialog = new LoginDialog();
 		loginDialog.setFreemedInterface(this);
