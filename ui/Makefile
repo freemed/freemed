@@ -28,7 +28,7 @@ all:
 install:
 	mkdir -p $(INSTDIR)/$(THISDIR)
 	make -C gwt install
-	cp -rvf dojo $(INSTDIR)/$(THISDIR)
+	cp -rvf dojo mobile  $(INSTDIR)/$(THISDIR)
 
 clean:
 	make -C gwt clean
