@@ -27,11 +27,11 @@ package org.freemedsoftware.gwt.client;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class ScreenInterface extends WidgetInterface {
-	
+
 	public ScreenInterface() {
 		super();
 	}
-	
+
 	public ScreenInterface(String moduleName) {
 		super(moduleName);
 	}
@@ -72,7 +72,7 @@ public abstract class ScreenInterface extends WidgetInterface {
 	 */
 	public void closeScreen() {
 		TabPanel t = CurrentState.getTabPanel();
-		if(t.getWidgetIndex(this)!=-1){
+		if (t.getWidgetIndex(this) != -1) {
 			t.selectTab(t.getWidgetIndex(this) - 1);
 			t.remove(t.getWidgetIndex(this));
 		}
