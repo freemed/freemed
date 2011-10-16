@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -62,10 +64,10 @@ public class AdvancePayment extends PatientEntryScreenInterface {
 		advPaymentsViewTable = new CustomTable();
 		advPaymentsViewTable.setIndexName("Id");
 		advPaymentsViewTable.setSize("100%", "100%");
-		advPaymentsViewTable.addColumn("Payment Amount", "amount");
-		advPaymentsViewTable.addColumn("Payment Date", "pay_date");
-		advPaymentsViewTable.addColumn("Description", "descp");
-		advPaymentsViewTable.addColumn("Payment Category", "category");
+		advPaymentsViewTable.addColumn(_("Payment Amount"), "amount");
+		advPaymentsViewTable.addColumn(_("Payment Date"), "pay_date");
+		advPaymentsViewTable.addColumn(_("Description"), "descp");
+		advPaymentsViewTable.addColumn(_("Payment Category"), "category");
 		dataVerticalPanel.add(advPaymentsViewTable);
 		initWidget(vpanel);
 	}

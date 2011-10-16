@@ -24,14 +24,16 @@
 
 package org.freemedsoftware.gwt.client.screen.entry;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.EntryScreenInterface;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
@@ -80,7 +82,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 
 		int pos = 0;
 
-		final Label lastName1Label = new Label("Last Name 1");
+		final Label lastName1Label = new Label(_("Last Name 1"));
 		flexTable.setWidget(pos, 0, lastName1Label);
 		wLastName1 = new CustomTextBox();
 		wLastName1.setHashMapping("lastname");
@@ -88,7 +90,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wLastName1);
 		pos++;
 
-		final Label lastName2Label = new Label("Last Name 2");
+		final Label lastName2Label = new Label(_("Last Name 2"));
 		flexTable.setWidget(pos, 0, lastName2Label);
 		wLastName2 = new CustomTextBox();
 		wLastName2.setHashMapping("lastname2");
@@ -96,7 +98,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wLastName2);
 		pos++;
 
-		final Label firstNameLabel = new Label("First Name");
+		final Label firstNameLabel = new Label(_("First Name"));
 		flexTable.setWidget(pos, 0, firstNameLabel);
 		wFirstName = new CustomTextBox();
 		wFirstName.setHashMapping("firstname");
@@ -104,7 +106,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wFirstName);
 		pos++;
 
-		final Label dateOfBirthLabel = new Label("Date of Birth");
+		final Label dateOfBirthLabel = new Label(_("Date of Birth"));
 		flexTable.setWidget(pos, 0, dateOfBirthLabel);
 		wDateOfBirth = new CustomDatePicker();
 		wDateOfBirth.setHashMapping("dob");
@@ -112,7 +114,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wDateOfBirth);
 		pos++;
 
-		final Label ageLabel = new Label("Age (if no date of birth)");
+		final Label ageLabel = new Label(_("Age (if no date of birth)"));
 		flexTable.setWidget(pos, 0, ageLabel);
 		wAge = new CustomTextBox();
 		wAge.setHashMapping("age");
@@ -120,7 +122,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wAge);
 		pos++;
 
-		final Label genderLabel = new Label("Gender");
+		final Label genderLabel = new Label(_("Gender"));
 		flexTable.setWidget(pos, 0, genderLabel);
 		wGender = new CustomListBox();
 		wGender.addItem("Male", "m");
@@ -130,7 +132,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wGender);
 		pos++;
 
-		final Label notesLabel = new Label("Notes");
+		final Label notesLabel = new Label(_("Notes"));
 		flexTable.setWidget(pos, 0, notesLabel);
 		wNotes = new CustomTextArea();
 		wNotes.setHashMapping("notes");
@@ -142,7 +144,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",
+		final CustomButton wSubmit = new CustomButton(_("Submit"),
 				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -150,7 +152,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",
+		final CustomButton wReset = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
@@ -239,42 +241,42 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 				JsonUtil.debug("Sending request");
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg(getModuleName(), "Failed to add.");
+						Util.showErrorMsg(getModuleName(), _("Failed to add."));
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (r != null) {
-								Util.showInfoMsg(getModuleName(), "Added.");
+								Util.showInfoMsg(getModuleName(), _("Added successfully."));
 								resetForm();
 							}
 						} else {
 							Util
 									.showErrorMsg(getModuleName(),
-											"Failed to add.");
+											_("Failed to add."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg(getModuleName(), "Failed to update.");
+				Util.showErrorMsg(getModuleName(), _("Failed to update."));
 			}
 		} else { // add clause GWT-RPC
 			// Add
 			service.ModuleAddMethod(getModuleName(), rec,
 					new AsyncCallback<Integer>() {
 						public void onSuccess(Integer result) {
-							Util.showInfoMsg(getModuleName(), "Added.");
+							Util.showInfoMsg(getModuleName(), _("Added successfully."));
 							resetForm();
 						}
 
 						public void onFailure(Throwable th) {
 							Util
 									.showErrorMsg(getModuleName(),
-											"Failed to Add.");
+											_("Failed to add."));
 						}
 					});
 		} // end add cause

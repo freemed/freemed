@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -131,7 +133,7 @@ public class SummaryScreen extends PatientScreenInterface {
 		Element tabBarFirstChild = tbar.getElement().getFirstChildElement()
 				.getFirstChildElement().getFirstChildElement();
 		tabBarFirstChild.setAttribute("width", "100%");
-		tabBarFirstChild.setInnerHTML("CLINICAL INFORMATION");
+		tabBarFirstChild.setInnerHTML(_("CLINICAL INFORMATION"));
 		tabBarFirstChild.setClassName("label_bold");
 		cClinicalInformation.setWidget(clinicalInformationTabPanel);
 
@@ -142,7 +144,7 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final Image tagsLabel = new Image();
 		tagsLabel.setUrl("resources/images/dashboard.16x16.png");
-		tagsLabel.setTitle("Patient Tags");
+		tagsLabel.setTitle(_("Patient Tags"));
 		clinicalInformationTabPanel.add(clinicalTagsPanel, tagsLabel);
 
 		/*
@@ -161,7 +163,7 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final Image medicationsLabel = new Image();
 		medicationsLabel.setUrl("resources/images/rx_prescriptions.16x16.png");
-		medicationsLabel.setTitle("Medications");
+		medicationsLabel.setTitle(_("Medications"));
 		clinicalInformationTabPanel.add(clinicalMedicationsPanel,
 				medicationsLabel);
 
@@ -172,7 +174,7 @@ public class SummaryScreen extends PatientScreenInterface {
 
 		final Image allergiesLabel = new Image();
 		allergiesLabel.setUrl("resources/images/allergy.16x16.png");
-		allergiesLabel.setTitle("Allergies");
+		allergiesLabel.setTitle(_("Allergies"));
 		clinicalInformationTabPanel.add(clinicalAllergiesPanel, allergiesLabel);
 
 		final VerticalPanel verticalPanel_2 = new VerticalPanel();

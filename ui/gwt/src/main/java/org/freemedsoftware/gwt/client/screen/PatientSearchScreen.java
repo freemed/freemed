@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +34,13 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.PatientWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -100,7 +102,7 @@ public class PatientSearchScreen extends ScreenInterface {
 		verticalPanel.add(flexTable);
 		flexTable.setWidth("100%");
 
-		final Label smartSearchLabel = new Label("Smart Search : ");
+		final Label smartSearchLabel = new Label(_("Smart Search") + " : ");
 		flexTable.setWidget(0, 0, smartSearchLabel);
 
 		final HorizontalPanel searchHPanel = new HorizontalPanel();
@@ -134,7 +136,7 @@ public class PatientSearchScreen extends ScreenInterface {
 
 		if(CurrentState.getMainScreen().isNeedToCreate(AppConstants.PATIENT_CATEGORY,
 				AppConstants.NEW_PATIENT)){
-			final CustomButton newPatient = new CustomButton("Add New Patient",
+			final CustomButton newPatient = new CustomButton(_("Add New Patient"),
 					AppConstants.ICON_ADD_PERSON);
 			newPatient.addClickHandler(new ClickHandler() {
 	
@@ -151,23 +153,23 @@ public class PatientSearchScreen extends ScreenInterface {
 		}
 		
 		
-		final Label fieldSearchLabel = new Label("Field Search : ");
+		final Label fieldSearchLabel = new Label(_("Field Search") + " : ");
 		flexTable.setWidget(1, 0, fieldSearchLabel);
 
 		wFieldName = new ListBox();
 		flexTable.setWidget(1, 1, wFieldName);
 		wFieldName.setVisibleItemCount(1);
-		wFieldName.addItem("Internal ID", "ptid");
-		wFieldName.addItem("Social Security Number", "ptssn");
-		wFieldName.addItem("Drivers License", "ptdmv");
-		wFieldName.addItem("Email Address", "ptemail");
-		wFieldName.addItem("City", "city");
-		wFieldName.addItem("Zip/Postal Code", "ptzip");
-		wFieldName.addItem("Home Phone", "pthphone");
-		wFieldName.addItem("Work Phone", "ptwphone");
-		wFieldName.addItem("Age", "age");
-		wFieldName.addItem("First Name", "ptfname");
-		wFieldName.addItem("Last Name", "ptlname");
+		wFieldName.addItem(_("Internal ID"), "ptid");
+		wFieldName.addItem(_("Social Security Number"), "ptssn");
+		wFieldName.addItem(_("Drivers License"), "ptdmv");
+		wFieldName.addItem(_("Email Address"), "ptemail");
+		wFieldName.addItem(_("City"), "city");
+		wFieldName.addItem(_("Zip/Postal Code"), "ptzip");
+		wFieldName.addItem(_("Home Phone"), "pthphone");
+		wFieldName.addItem(_("Work Phone"), "ptwphone");
+		wFieldName.addItem(_("Age"), "age");
+		wFieldName.addItem(_("First Name"), "ptfname");
+		wFieldName.addItem(_("Last Name"), "ptlname");
 
 		wFieldValue = new TextBox();
 		flexTable.setWidget(2, 1, wFieldValue);
@@ -192,14 +194,14 @@ public class PatientSearchScreen extends ScreenInterface {
 		verticalPanel.add(horizontalPanel);
 
 		sortableTable = new CustomTable();
-		sortableTable.setNoItemsText("No patients found with the specified criteria.");
+		sortableTable.setNoItemsText(_("No patients found with the specified criteria."));
 		sortableTable.setWidth("100%");
-		sortableTable.addColumn("Last Name", "last_name");
-		sortableTable.addColumn("First Name", "first_name");
-		sortableTable.addColumn("Middle", "middle_name");
-		sortableTable.addColumn("Internal ID", "patient_id");
-		sortableTable.addColumn("Date of Birth", "date_of_birth");
-		sortableTable.addColumn("Age", "age");
+		sortableTable.addColumn(_("Last Name"), "last_name");
+		sortableTable.addColumn(_("First Name"), "first_name");
+		sortableTable.addColumn(_("Middle"), "middle_name");
+		sortableTable.addColumn(_("Internal ID"), "patient_id");
+		sortableTable.addColumn(_("Date of Birth"), "date_of_birth");
+		sortableTable.addColumn(_("Age"), "age");
 		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -271,7 +273,7 @@ public class PatientSearchScreen extends ScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								sortableTable.loadData(result);

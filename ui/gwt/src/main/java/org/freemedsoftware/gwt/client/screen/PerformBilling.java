@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +39,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PerformBilling extends ScreenInterface {
-
-		
 
 	private static List<PerformBilling> performBillingScreenList=null;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
@@ -63,27 +63,19 @@ public class PerformBilling extends ScreenInterface {
 		horizontalPanel.add(performBillPanel);
 		performBillPanel.setSize("100%", "100%");
 
-		final Label performBillingLabel = new Label("Performing Bills");
+		final Label performBillingLabel = new Label(_("Performing Bills"));
 		performBillingLabel.setStyleName(AppConstants.STYLE_LABEL_HEADER_LARGE);
 		performBillPanel.add(performBillingLabel);
 		performBillingLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		HorizontalPanel horizontalPanel1 = new HorizontalPanel();
 		horizontalPanel1.setSpacing(5);
-		horizontalPanel1.add(new CustomButton("Process",AppConstants.ICON_RUN));
-		horizontalPanel1.add(new CustomButton("Select All",AppConstants.ICON_SELECT_ALL));
-		horizontalPanel1.add(new CustomButton("Select None",AppConstants.ICON_SELECT_NONE));
-		horizontalPanel1.add(new CustomButton("Return to MainMenu",AppConstants.ICON_PREV));
+		horizontalPanel1.add(new CustomButton(_("Process"), AppConstants.ICON_RUN));
+		horizontalPanel1.add(new CustomButton(_("Select All"), AppConstants.ICON_SELECT_ALL));
+		horizontalPanel1.add(new CustomButton(_("Select None"), AppConstants.ICON_SELECT_NONE));
+		horizontalPanel1.add(new CustomButton(_("Return to Main Menu"), AppConstants.ICON_PREV));
 		performBillPanel.add(horizontalPanel1);		
 	
 	}
-
-	
-
-
-
-
-
-
 
 }

@@ -1,5 +1,7 @@
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,7 +57,7 @@ public class ToolsExecutionScreen extends ScreenInterface {
 
 		HorizontalPanel toolActionPanel = new HorizontalPanel();
 
-		toolActionButton = new CustomButton("Run", AppConstants.ICON_RUN);
+		toolActionButton = new CustomButton(_("Run"), AppConstants.ICON_RUN);
 		toolActionButton.setStylePrimaryName("freemed-PushButton");
 		toolActionButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -90,7 +92,6 @@ public class ToolsExecutionScreen extends ScreenInterface {
 						GWT.log("Exception", ex);
 					}
 
-					@SuppressWarnings("unchecked")
 					public void onResponseReceived(
 							com.google.gwt.http.client.Request request,
 							com.google.gwt.http.client.Response response) {
@@ -139,7 +140,7 @@ public class ToolsExecutionScreen extends ScreenInterface {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (result != null) {

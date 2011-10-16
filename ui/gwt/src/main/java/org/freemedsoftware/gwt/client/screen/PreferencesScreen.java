@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -129,12 +131,12 @@ public class PreferencesScreen extends ScreenInterface {
 		verticalPanel.add(tabPanel);
 		sectionFieldsMap=new HashMap<String, List<String>>();
 		List<String> widgetsList=new ArrayList<String>();
-		widgetsList.add("WORK LIST");
-		widgetsList.add("MESSAGES");
-		widgetsList.add("UNFILED DOCUMENTS");
-		widgetsList.add("RX REFILLS");
-		widgetsList.add("ACTION ITEMS");
-		sectionFieldsMap.put("Sections", widgetsList);
+		widgetsList.add(_("WORK LIST"));
+		widgetsList.add(_("MESSAGES"));
+		widgetsList.add(_("UNFILED DOCUMENTS"));
+		widgetsList.add(_("RX REFILLS"));
+		widgetsList.add(_("ACTION ITEMS"));
+		sectionFieldsMap.put(_("Sections"), widgetsList);
 		createTabs();
 		tabPanel.selectTab(0);
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
@@ -167,7 +169,7 @@ public class PreferencesScreen extends ScreenInterface {
 							CurrentState.getLeftNavigationOptions());
 				CurrentState.getMainScreen().initNavigations();
 				////////////////End Handling Navigation////////////////////////
-				Util.showInfoMsg("PreferencesScreen", "Preferences saved!!!");
+				Util.showInfoMsg("PreferencesScreen", _("Preferences saved."));
 				if (currentPassword.getText().length() > 0
 						|| newPassword.getText().length() > 0
 						|| newPassword.getText().length() > 0)
@@ -191,6 +193,7 @@ public class PreferencesScreen extends ScreenInterface {
 			CurrentState.setUserConfig(AppConstants.SYSTEM_NOTIFICATION, systemNotificationSettingsList.getStoredValue());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void loadPrefererences(){
 		themesList.setWidgetValue(CurrentState.getUserConfig(AppConstants.SYSTEM_THEME,"String").toString());
 		String notification = CurrentState.getUserConfig(AppConstants.SYSTEM_NOTIFICATION,"String").toString();
@@ -247,7 +250,7 @@ public class PreferencesScreen extends ScreenInterface {
 								validateUser((String)JsonUtil.shoehornJson(response.getText(),"String"),
 										currentPassword.getText());
 							} else
-							Util.showErrorMsg("PreferencesScreen", "password change failed!!!");
+							Util.showErrorMsg("PreferencesScreen", _("Password change failed."));
 						}
 					});
 				} catch (RequestException e) {
@@ -258,7 +261,7 @@ public class PreferencesScreen extends ScreenInterface {
 				// TODO normal mode code goes here
 			}
 		} else {
-			Window.alert("enter correct information to change password.");
+			Window.alert(_("Enter correct information to change password."));
 		}
 	}
 
@@ -279,7 +282,7 @@ public class PreferencesScreen extends ScreenInterface {
 						if (response.getText().compareToIgnoreCase("true") == 0) {
 							changePassword();
 						} else
-						Util.showErrorMsg("PreferencesScreen", "invalid password!!!");
+						Util.showErrorMsg("PreferencesScreen", _("Invalid password."));
 					}
 				}
 			});
@@ -304,13 +307,13 @@ public class PreferencesScreen extends ScreenInterface {
 						Response response) {
 					if (Util.checkValidSessionResponse(response.getText())) {
 						if (200 == response.getStatusCode()) {
-							Util.showInfoMsg("PreferencesScreen", "password changed successfully!!!");
+							Util.showInfoMsg("PreferencesScreen", _("Password changed successfully."));
 							currentPassword.setText("");
 							newPassword.setText("");
 							confirmNewPassword.setText("");
 							Util.closeTab(getPreferencesScreen());
 						} else
-							Util.showErrorMsg("FaxSubsystem", "password change failed!!!");
+							Util.showErrorMsg("FaxSubsystem", _("Password change failed."));
 					}
 				}
 			});
@@ -333,7 +336,7 @@ public class PreferencesScreen extends ScreenInterface {
 
 		int row = 0;
 
-		uiFlexTable.setHTML(row, 0, "Select theme to apply");
+		uiFlexTable.setHTML(row, 0, _("Select theme to apply"));
 
 		themesList = new CustomListBox();
 		themesList.addItem("chrome");
@@ -356,13 +359,13 @@ public class PreferencesScreen extends ScreenInterface {
 		
 		providerGroupList = new CustomListBox();
 		populateProviderGroupList();
-		Label provGroupLabel=new Label("Defaul Provider Group :");
+		Label provGroupLabel=new Label(_("Default Provider Group") + " :");
 		uiFlexTable.setWidget(row, 0, provGroupLabel);
 		uiFlexTable.setWidget(row, 1, providerGroupList);
 		
 		row++;
 		
-		Label notificationLabel=new Label("Show System Notifications :");
+		Label notificationLabel=new Label(_("Show System Notifications") + " :");
 		uiFlexTable.setWidget(row, 0, notificationLabel);
 		systemNotificationSettingsList = new CustomListBox();
 		systemNotificationSettingsList.addItem(AppConstants.SYSTEM_NOTIFY_NONE);
@@ -382,40 +385,40 @@ public class PreferencesScreen extends ScreenInterface {
 		final FlexTable passwordsFlexTable = new FlexTable();
 		passwordsFlexTable.addStyleName("cw-FlexTable");
 
-		passwordsFlexTable.setHTML(0, 0, "Enter current password :");
+		passwordsFlexTable.setHTML(0, 0, _("Enter current password") + " :");
 		currentPassword = new PasswordTextBox();
 		passwordsFlexTable.setWidget(0, 1, currentPassword);
 
-		passwordsFlexTable.setHTML(1, 0, "Enter new password :");
+		passwordsFlexTable.setHTML(1, 0, _("Enter new password") + " :");
 		newPassword = new PasswordTextBox();
 		passwordsFlexTable.setWidget(1, 1, newPassword);
 
-		passwordsFlexTable.setHTML(2, 0, "Confirm new password :");
+		passwordsFlexTable.setHTML(2, 0, _("Confirm new password") + " :");
 		confirmNewPassword = new PasswordTextBox();
 		passwordsFlexTable.setWidget(2, 1, confirmNewPassword);
 
 		VerticalPanel passwordsVerticalPanel = new VerticalPanel();
 		passwordsVerticalPanel.add(passwordsFlexTable);
 		// Adding password tab
-		tabPanel.add(passwordsVerticalPanel, "Password");
+		tabPanel.add(passwordsVerticalPanel, _("Password"));
 		//////////////////////////////////// End Preparing Password Tab //////////////////////////////////
 
 		//////////////////////////////////// Preparing Navigations Tab //////////////////////////////////
 		navigationsVerticalPanel = new VerticalPanel();
-		Label navLabel = new Label("Show following items for navigation.");
+		Label navLabel = new Label(_("Show following items for navigation."));
 		navLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		navigationsVerticalPanel.add(navLabel);
 		createNavigatonOptions();
 		navigationsVerticalPanel.add(navigationsFlexTable);
 		// Adding password tab
-		tabPanel.add(navigationsVerticalPanel, "Navigations");
+		tabPanel.add(navigationsVerticalPanel, _("Navigations"));
 		//////////////////////////////////// End Preparing Navigations Tab //////////////////////////////////
 
 		//////////////////////////////////// Preparing Printer Tab //////////////////////////////////
 		final FlexTable printersFlexTable = new FlexTable();
 		printersFlexTable.addStyleName("cw-FlexTable");
 
-		printersFlexTable.setHTML(0, 0, "Select default printer");
+		printersFlexTable.setHTML(0, 0, _("Select default printer"));
 
 		printersList = new CustomListBox();
 		Util.callApiMethod("Printing", "GetPrinters", (List)null, new CustomRequestCallback(){
@@ -426,6 +429,7 @@ public class PreferencesScreen extends ScreenInterface {
 			public void jsonifiedData(Object data) {
 				if(data==null)
 					return;
+				@SuppressWarnings("unchecked")
 				HashMap<String,String> result = (HashMap<String,String>)data;
 				Iterator<String> iterator = result.keySet().iterator();
 				while(iterator.hasNext()){
@@ -448,7 +452,7 @@ public class PreferencesScreen extends ScreenInterface {
 		VerticalPanel printersVerticalPanel = new VerticalPanel();
 		printersVerticalPanel.add(printersFlexTable);
 		// Adding theme tab
-		tabPanel.add(printersVerticalPanel, "Printers");
+		tabPanel.add(printersVerticalPanel, _("Printers"));
 		////////////////////////////////////End Preparing Printer Tab //////////////////////////////////
 		
 		////////////////////////////////////Preparing Widgets Tab //////////////////////////////////
@@ -456,7 +460,7 @@ public class PreferencesScreen extends ScreenInterface {
 		VerticalPanel widgetsVerticalPanel = new VerticalPanel();
 		templateWidget = new TemplateWidget(sectionFieldsMap);
 		widgetsVerticalPanel.add(templateWidget);
-		tabPanel.add(widgetsVerticalPanel, "Dashboard Widgets");
+		tabPanel.add(widgetsVerticalPanel, _("Dashboard Widgets"));
 		//////////////////////////////////// End Widgets Tab //////////////////////////////////
 	}
 
@@ -514,7 +518,7 @@ public class PreferencesScreen extends ScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { "ProviderGroups"};
+			String[] params = { "ProviderGroups" };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
 					URL
@@ -536,7 +540,7 @@ public class PreferencesScreen extends ScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (result != null) {

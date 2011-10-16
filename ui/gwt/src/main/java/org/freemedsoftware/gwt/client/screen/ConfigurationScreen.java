@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,8 +35,8 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.SystemConfigAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
@@ -103,7 +105,7 @@ public class ConfigurationScreen extends ScreenInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 		if(canModify){
-			final CustomButton commitChangesButton = new CustomButton("Commit Changes",AppConstants.ICON_ADD);
+			final CustomButton commitChangesButton = new CustomButton(_("Commit Changes"), AppConstants.ICON_ADD);
 			horizontalPanel.add(commitChangesButton);
 			commitChangesButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -145,7 +147,7 @@ public class ConfigurationScreen extends ScreenInterface {
 
 	protected void commitValues() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
+			Util.showInfoMsg("ConfigurationScreen", _("Updated configuration."));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(getAllValues()) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -155,37 +157,37 @@ public class ConfigurationScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
+						Util.showErrorMsg("ConfigurationScreen", _("Failed to update configuration."));
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean r = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (r.booleanValue()) {
-								Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
+								Util.showInfoMsg("ConfigurationScreen", _("Updated configuration."));
 								CurrentState.retrieveSystemConfiguration(true);//re-evaluate system configuration
 								closeScreen();
 							} else {
-								Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
+								Util.showErrorMsg("ConfigurationScreen", _("Failed to update configuration."));
 							}
 						} else {
-							Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
+							Util.showErrorMsg("ConfigurationScreen", _("Failed to update configuration."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
+				Util.showErrorMsg("ConfigurationScreen", _("Failed to update configuration."));
 			}
 		} else {
 			getProxy().SetValues(getAllValues(), new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean result) {
 					if (result.booleanValue()) {
-						Util.showInfoMsg("ConfigurationScreen", "Updated configuration.");
+						Util.showInfoMsg("ConfigurationScreen", _("Updated configuration."));
 					} else {
-						Util.showErrorMsg("ConfigurationScreen", "Failed to update configuration.");
+						Util.showErrorMsg("ConfigurationScreen", _("Failed to update configuration."));
 					}
 				}
 
@@ -221,7 +223,7 @@ public class ConfigurationScreen extends ScreenInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							String[] r = (String[]) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"String[]");
 							// Create the actual tabs
 							createTabs(r);
@@ -272,7 +274,7 @@ public class ConfigurationScreen extends ScreenInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							for (int iter = 0; iter < r.length; iter++) {

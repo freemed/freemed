@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,24 +37,24 @@ import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomDialogBox;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.EventsWidget;
 import org.freemedsoftware.gwt.client.widget.PatientCoverages;
 import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
-import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.EventData;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -83,7 +85,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
 
 public class CallInScreen extends ScreenInterface implements ClickHandler {
 
@@ -184,7 +185,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		menuButtonsPanel.setSpacing(1);
 		headerHPanel.add(menuButtonsPanel);
 		if(canDelete || canWrite || canBook){
-			final CustomButton selectAllButton = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+			final CustomButton selectAllButton = new CustomButton(_("Select All"), AppConstants.ICON_SELECT_ALL);
 			menuButtonsPanel.add(selectAllButton);
 			selectAllButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -200,7 +201,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			});
 		}
 		if(canDelete || canWrite || canBook){
-			final CustomButton selectNoneButton = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
+			final CustomButton selectNoneButton = new CustomButton(_("Select None"), AppConstants.ICON_SELECT_NONE);
 			menuButtonsPanel.add(selectNoneButton);
 			selectNoneButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -211,15 +212,15 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		}
 		
 		if(canDelete){
-			final CustomButton deleteButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+			final CustomButton deleteButton = new CustomButton(_("Delete"), AppConstants.ICON_DELETE);
 			menuButtonsPanel.add(deleteButton);
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (callInTable.getSelectedCount() < 1)
-						Window.alert("Please select at least one entry!");
+						Window.alert(_("Please select at least one entry!"));
 					else if (Window
-							.confirm("Are you sure you want to delete these item(s)?")) {
+							.confirm(_("Are you sure you want to delete these item(s)?"))) {
 						List<String> slectedItems = callInTable.getSelected();
 						Iterator<String> itr = slectedItems.iterator();// Get all
 																		// selected
@@ -239,15 +240,15 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			});
 		}
 		if(canWrite){
-			final CustomButton enterButton = new CustomButton("Create Patient",AppConstants.ICON_ADD_PERSON);
+			final CustomButton enterButton = new CustomButton(_("Create Patient"), AppConstants.ICON_ADD_PERSON);
 			menuButtonsPanel.add(enterButton);
 			enterButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (callInTable.getSelectedCount() < 1)
-						Window.alert("Please select at least one entry!");
+						Window.alert(_("Please select at least one entry!"));
 					else if(callInTable.getSelectedCount() > 1)
-						Window.alert("You can create only a single patient at a time!");
+						Window.alert(_("You can create only a single patient at a time!"));
 					else {
 						List<String> slectedItems = callInTable.getSelected();
 						Integer id = Integer.parseInt(slectedItems.get(0));
@@ -263,7 +264,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 							
 							});
 						}else{
-							Window.alert("You can't create patient of archived enteries!");	
+							Window.alert(_("You can't create patient of archived enteries!"));	
 						}
 					}
 				}
@@ -271,15 +272,15 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		}
 
 		if(canBook){
-			final CustomButton bookButton = new CustomButton("Book",AppConstants.ICON_BOOK_APP);
+			final CustomButton bookButton = new CustomButton(_("Book"), AppConstants.ICON_BOOK_APP);
 			menuButtonsPanel.add(bookButton);
 			bookButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (callInTable.getSelectedCount() < 1)
-						Window.alert("Please select at least one entry!");
+						Window.alert(_("Please select at least one entry!"));
 					else if(callInTable.getSelectedCount() > 1)
-						Window.alert("You can Book only a single appointment at a time!");
+						Window.alert(_("You can book only a single appointment at a time!"));
 					else {
 						List<String> slectedItems = callInTable.getSelected();
 						Integer id = Integer.parseInt(slectedItems.get(0));
@@ -294,7 +295,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 							schedulerScreen.getSchedulerWidget().setExternalDataEvent(eventData);
 							Util.spawnTab(AppConstants.SCHEDULER,schedulerScreen);
 						}else{
-							Window.alert("You can't Book archived enteries!");	
+							Window.alert(_("You can't book archived enteries!"));	
 						}
 
 						
@@ -303,15 +304,15 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			});
 			
 		if(canModify){
-			final CustomButton modifyButton = new CustomButton("Modify",AppConstants.ICON_MODIFY);
+			final CustomButton modifyButton = new CustomButton(_("Modify"), AppConstants.ICON_MODIFY);
 			menuButtonsPanel.add(modifyButton);
 			modifyButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (callInTable.getSelectedCount() < 1)
-						Window.alert("Please select an entry!");
+						Window.alert(_("Please select an entry!"));
 					else if(callInTable.getSelectedCount() > 1)
-						Window.alert("You can modify only a single entry at a time!");
+						Window.alert(_("You can modify only a single entry at a time!"));
 					else {
 						List<String> slectedItems = callInTable.getSelected();
 						Integer id = Integer.parseInt(slectedItems.get(0));
@@ -322,7 +323,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 							selectedEntryId = id;
 							modifyEntry(selectedEntryId);
 						}else{
-							Util.confirm("You can not modify archived Record. Do you want to un-archive this Record ?", new Command() {
+							Util.confirm(_("You can not modify an archived record. Do you want to un-archive this record?"), new Command() {
 							
 								@Override
 								public void execute() {
@@ -339,15 +340,15 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		}
 		
 		if(canWrite){
-			final CustomButton addEventButton = new CustomButton("Add Event",AppConstants.ICON_ADD);
+			final CustomButton addEventButton = new CustomButton(_("Add Event"), AppConstants.ICON_ADD);
 			menuButtonsPanel.add(addEventButton);
 			addEventButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (callInTable.getSelectedCount() < 1)
-						Window.alert("Please select an entry!");
+						Window.alert(_("Please select an entry!"));
 					else if(callInTable.getSelectedCount() > 1)
-						Window.alert("You can modify only a single entry at a time!");
+						Window.alert(_("You can modify only a single entry at a time!"));
 					else {
 						List<String> slectedItems = callInTable.getSelected();
 							Integer id = Integer.parseInt(slectedItems.get(0));
@@ -364,7 +365,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 
 		if(canRead){
-			final CustomButton searchButton = new CustomButton("Search",AppConstants.ICON_SEARCH);
+			final CustomButton searchButton = new CustomButton(_("Search"), AppConstants.ICON_SEARCH);
 			menuButtonsPanel.add(searchButton);
 			searchButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -383,11 +384,11 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		// ///
 		if(canDelete || canWrite || canBook)
 			callInTable.addColumn("", "selected");
-		callInTable.addColumn("Date", "call_date_mdy");
-		callInTable.addColumn("Name", "name");
-		callInTable.addColumn("Contact Phone", "contact_phone");
-		callInTable.addColumn("Coverage", "coverage");
-		callInTable.addColumn("Complaint", "complaint");
+		callInTable.addColumn(_("Date"), "call_date_mdy");
+		callInTable.addColumn(_("Name"), "name");
+		callInTable.addColumn(_("Contact Phone"), "contact_phone");
+		callInTable.addColumn(_("Coverage"), "coverage");
+		callInTable.addColumn(_("Complaint"), "complaint");
 
 		callInTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
@@ -424,21 +425,21 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 					}
 				});
 
-		tabPanel.add(verticalPanelMenu, "Menu");
+		tabPanel.add(verticalPanelMenu, _("Menu"));
 		if(canWrite){
 //			tabPanel.add(createEntryTabBar(), "Entry");
 			entryVPanel = new VerticalPanel();
-			tabPanel.add(entryVPanel, "Entry");
+			tabPanel.add(entryVPanel, _("Entry"));
 			final HorizontalPanel selectionHPanel = new HorizontalPanel();
 			selectionHPanel.setStyleName(AppConstants.STYLE_LABEL_HEADER_SMALL);
 			entryVPanel.add(selectionHPanel);
 			selectionHPanel.setSpacing(5);
-			final Label selectionLabel = new Label("Select Form Type:");
+			final Label selectionLabel = new Label(_("Select Form Type") + ":");
 			selectionHPanel.add(selectionLabel);
 			formSelection = new CustomListBox();
 			selectionHPanel.add(formSelection);
 			formSelection.addItem("","");
-			formSelection.addItem("Basic Entry Form","Basic");
+			formSelection.addItem(_("Basic Entry Form"), "Basic");
 			formSelection.addChangeHandler(new ChangeHandler(){
 				public void onChange(ChangeEvent arg0) {
 					handleFormSelection();
@@ -461,7 +462,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 			@Override
 			public void onError() {
-				Util.showErrorMsg(ModuleName, "Failed To Create Patient!!!");
+				Util.showErrorMsg(ModuleName, _("Failed to create patient!"));
 			}
 		
 			@Override
@@ -469,9 +470,9 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 				if(id!=null && ((Integer)id)>0){
 					if(onSuccess!=null)
 						onSuccess.execute(id);
-					Util.showInfoMsg(ModuleName, "Patient Created Successfully!!!");
+					Util.showInfoMsg(ModuleName, _("Patient created successfully."));
 				}else
-					Util.showErrorMsg(ModuleName, "Failed To Create Patient!!!");
+					Util.showErrorMsg(ModuleName, _("Failed to create patient."));
 			}
 		}, "Integer");
 	}
@@ -505,7 +506,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 
 		VerticalPanel verticalPanel = new VerticalPanel();
 		verticalPanel.setWidth("100%");
-		CustomButton bookAppointment = new CustomButton("Book Appointment",
+		CustomButton bookAppointment = new CustomButton(_("Book Appointment"),
 				AppConstants.ICON_BOOK_APP);
 		bookAppointment.addClickHandler(new ClickHandler() {
 			@Override
@@ -522,7 +523,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		verticalPanel.add(bookAppointment);
 		verticalPanel.setCellHorizontalAlignment(bookAppointment,
 				HasHorizontalAlignment.ALIGN_CENTER);
-		CustomButton showList = new CustomButton("Show List",
+		CustomButton showList = new CustomButton(_("Show List"),
 				AppConstants.ICON_VIEW);
 
 		showList.addClickHandler(new ClickHandler() {
@@ -577,14 +578,14 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		verContInformation.setStyleName(AppConstants.STYLE_LABEL_HEADER_SMALL);
 
 		// contInfoFlexTable.setSize(width, height); FIXME
-		Label lblContactInformation = new Label("Contact Information");
+		Label lblContactInformation = new Label(_("Contact Information"));
 		verContInformation.add(lblContactInformation);
 		verContInformation.setCellHorizontalAlignment(lblContactInformation,
 				HasHorizontalAlignment.ALIGN_CENTER);
 
 		FlexTable contInfoFlexTable = new FlexTable();
 		int row = 0;
-		final Label lblHomePhone = new Label("Home Phone");
+		final Label lblHomePhone = new Label(_("Home Phone"));
 		contInfoFlexTable.setWidget(row, 0, lblHomePhone);
 		final  TextBox txtHomePhone = new TextBox();
 		txtHomePhone.setWidth("150px");
@@ -593,7 +594,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblWorkPhone = new Label("Work Phone");
+		final Label lblWorkPhone = new Label(_("Work Phone"));
 		contInfoFlexTable.setWidget(row, 0, lblWorkPhone);
 		final TextBox txtWorkPhone = new TextBox();
 		txtWorkPhone.setWidth("150px");
@@ -602,7 +603,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblTookCall = new Label("Took Call");
+		final Label lblTookCall = new Label(_("Took Call"));
 		contInfoFlexTable.setWidget(row, 0, lblTookCall);
 		final TextBox txtTookCall = new TextBox();
 		txtTookCall.setWidth("150px");
@@ -626,14 +627,14 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		verticalPanelEntry.add(basicFormEntryTabPanel);
 		
 		HorizontalPanel horPanel = new HorizontalPanel();
-		basicFormEntryTabPanel.add(horPanel,"Contact");
+		basicFormEntryTabPanel.add(horPanel, _("Contact"));
 		horPanel.setWidth("");
 		
 		final FlexTable flexTable = new FlexTable();
 		horPanel.add(flexTable);
 		int row = 0;
 		
-		final Label lblLastName = new Label("Last Name");
+		final Label lblLastName = new Label(_("Last Name"));
 		flexTable.setWidget(row, 0, lblLastName);
 		final TextBox txtLastName = new TextBox();
 		txtLastName.setWidth("200px");
@@ -642,7 +643,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblFirstName = new Label("First Name");
+		final Label lblFirstName = new Label(_("First Name"));
 		flexTable.setWidget(row, 0, lblFirstName);
 		final TextBox txtFirstName = new TextBox();
 		txtFirstName.setWidth("200px");		
@@ -651,7 +652,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblMiddleName = new Label("Middle Name");
+		final Label lblMiddleName = new Label(_("Middle Name"));
 		flexTable.setWidget(row, 0, lblMiddleName);
 		final TextBox txtMiddleName = new TextBox();
 		txtMiddleName.setWidth("200px");
@@ -660,7 +661,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblDob = new Label("Date of Birth");
+		final Label lblDob = new Label(_("Date of Birth"));
 		flexTable.setWidget(row, 0, lblDob);
 		final CustomDatePicker dobBox = new CustomDatePicker();
 		flexTable.setWidget(row, 1, dobBox);
@@ -668,7 +669,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblComplaint = new Label("Complaint");
+		final Label lblComplaint = new Label(_("Complaint"));
 		flexTable.setWidget(row, 0, lblComplaint);
 		final TextArea taComplaints = new TextArea();
 		taComplaints.setCharacterWidth(22);
@@ -678,7 +679,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblFacility = new Label("Facility");
+		final Label lblFacility = new Label(_("Facility"));
 		flexTable.setWidget(row, 0, lblFacility);
 		final SupportModuleWidget facility = new SupportModuleWidget("FacilityModule");
 		facility.setValue(CurrentState.getDefaultFacility());
@@ -688,7 +689,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label lblPhysician = new Label("Provider");
+		final Label lblPhysician = new Label(_("Provider"));
 		flexTable.setWidget(row, 0, lblPhysician);
 		final ProviderWidget provider = new ProviderWidget();
 		provider.setWidth("200px");
@@ -696,7 +697,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		basicFormFields.put("ciphysician", provider);
 		
 		
-		btnAdd = new CustomButton("Add",AppConstants.ICON_ADD);
+		btnAdd = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 		btnAdd.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -704,7 +705,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 				saveForm();
 			}
 		});
-		btnClear = new CustomButton("Clear",AppConstants.ICON_CLEAR);
+		btnClear = new CustomButton(_("Clear"), AppConstants.ICON_CLEAR);
 		btnClear.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -718,7 +719,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		//handling coverages
 		callinPatientCoverages = new PatientCoverages();
 		callinPatientCoverages.setMaxCoveragesCount(1);
-		basicFormEntryTabPanel.add(callinPatientCoverages,"Insurance");
+		basicFormEntryTabPanel.add(callinPatientCoverages, _("Insurance"));
 		
 		basicFormEntryTabPanel.selectTab(0);
 		
@@ -756,7 +757,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> data = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (data != null) {
@@ -767,47 +768,47 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 										callinPatientDetail.removeRow(0);
 									int row=0;
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Name:"));
+											new Label(_("Name") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("name")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Date of Birth:"));
+											new Label(_("Date of Birth") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("dob")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("complaint:"));
+											new Label(_("Complaint") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("complaint")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Home Phone:"));
+											new Label(_("Home Phone") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("phone_home")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Work Phone:"));
+											new Label(_("Work Phone") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("phone_work")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Facility:"));
+											new Label(_("Facility") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("facility")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Provider:"));
+											new Label(_("Provider") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("physician")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Call Date:"));
+											new Label(_("Call Date") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("call_date")));
 
 									callinPatientDetail.setWidget(row, 0,
-											new Label("Took Call:"));
+											new Label(_("Took Call") + ":"));
 									callinPatientDetail.setWidget(row++, 1,
 											new Label(data.get("took_call")));
 									
@@ -852,7 +853,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> data = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (data != null) {
@@ -893,7 +894,6 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 					public void onError(Request request, Throwable ex) {
 					}
 
-					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 						populate(searchCriteria);
@@ -945,7 +945,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {
@@ -993,7 +993,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 				// TODO STUBBED MODE STUFF
 			} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				RequestBuilder builder=null;
-				if(btnAdd.getText().equals("Add"))
+				if(btnAdd.getText().equals(_("Add")))
 				{
 				String[] params = { JsonUtil.jsonify(populateHashMap(null)) };
 				builder = new RequestBuilder(
@@ -1024,23 +1024,23 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 							if (200 == response.getStatusCode()) {	
 								Integer r=null;
 								r = (Integer) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Integer");								
 									if (r != null) {
 //									clearForm();
 //									populate();
 										showPopupAfterSaveCallin(r);
-									Util.showInfoMsg("Callin Form", "Entry successfully added.");
+									Util.showInfoMsg("Callin Form", _("Entry successfully added."));
 								}else {
 									r=(Boolean) JsonUtil.shoehornJson(
-														JSONParser.parse(response.getText()),
+														JSONParser.parseStrict(response.getText()),
 												"Boolean")?1:0;
 									if(r==1){
 //										clearForm();
 //											populate();	
 											formSelection.setWidgetValue("");
 											tabPanel.selectTab(0);
-											Util.showInfoMsg("Callin Form", "Entry successfully modified.");
+											Util.showInfoMsg("Callin Form", _("Entry successfully modified."));
 											btnAdd.setText("Add");
 											showPopupAfterSaveCallin(selectedEntryId);
 									}else{
@@ -1049,7 +1049,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 								}									
 								
 							} else {
-								Util.showErrorMsg("Callin Form", "Callin Form failed.");
+								Util.showErrorMsg("Callin Form", _("Callin form failed."));
 							}
 						}
 					});
@@ -1078,13 +1078,13 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 	protected boolean validateForm() {
 		String msg = new String("");
 		if (((TextBox)basicFormFields.get("cilname")).getText().length() < 2) {
-			msg += "Please specify a last name." + "\n";
+			msg += _("Please specify a last name.") + "\n";
 		}
 		if (((TextBox)basicFormFields.get("cifname")).getText().length() < 2) {
-			msg += "Please specify a first name." + "\n";
+			msg += _("Please specify a first name.") + "\n";
 		}
 		if (((CustomDatePicker)basicFormFields.get("cidob")).getTextBox().getText().length() < 10) {
-			msg += "Please specify date of birth." + "\n";
+			msg += _("Please specify date of birth.") + "\n";
 		}
 
 		if (!msg.equals("")) {
@@ -1121,7 +1121,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("Callin Form", "Failed to delete entry.");
+						Util.showErrorMsg("Callin Form", _("Failed to delete entry."));
 					}
 
 					public void onResponseReceived(Request request,
@@ -1129,15 +1129,15 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								Boolean r = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if (r != null) {
-									Util.showInfoMsg("Callin Form", "Entry deleted.");
+									Util.showInfoMsg("Callin Form", _("Entry deleted."));
 									if(curItem==totalItems)
 										populate(null);
 								}
 							} else {
-								Util.showErrorMsg("Callin Form", "Failed to delete entry.");
+								Util.showErrorMsg("Callin Form", _("Failed to delete entry."));
 							}
 						}
 					}
@@ -1156,7 +1156,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		int row = 0;
 		
-		final Label firstLastNameLabel = new Label("Name (Last, First):");
+		final Label firstLastNameLabel = new Label(_("Name (Last, First)") + ":");
 		flexTable.setWidget(row, 0, firstLastNameLabel);
 		final TextBox lastName = new TextBox();
 		flexTable.setWidget(row, 1, lastName);
@@ -1165,12 +1165,12 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final Label fullNameLabel = new Label("Call-In Patient:");
+		final Label fullNameLabel = new Label(_("Call-In Patient") + ":");
 		flexTable.setWidget(row, 0, fullNameLabel);
 		final SupportModuleWidget fullName = new SupportModuleWidget("Callin");
 		flexTable.setWidget(row, 1, fullName);
 		
-		final CheckBox showArchived = new CheckBox("Include Archived");
+		final CheckBox showArchived = new CheckBox(_("Include Archived") + ":");
 		flexTable.setWidget(row, 2, showArchived);
 		showArchived.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
@@ -1186,7 +1186,7 @@ public class CallInScreen extends ScreenInterface implements ClickHandler {
 		
 		row++;
 		
-		final CustomButton searchBTN = new CustomButton("Search",AppConstants.ICON_SEARCH);
+		final CustomButton searchBTN = new CustomButton(_("Search"), AppConstants.ICON_SEARCH);
 		flexTable.setWidget(row, 1, searchBTN);
 		searchCriteria = null;
 		searchBTN.addClickHandler(new ClickHandler() {

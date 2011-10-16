@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
@@ -33,14 +35,14 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.DjvuViewer;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
-import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -55,14 +57,14 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
 public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 
@@ -76,12 +78,8 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 	protected VerticalPanel containerScannedDocumentsListPanel;
 	
 	protected CustomTable containerScannedDocumentsTable;
-
 	
 	protected HashMap<String, Widget> containerScannedDocumentsFormFields = new HashMap<String, Widget>();//containerInitialForm Fields Container
-	
-
-	
 		
 	protected Integer scannedDocumentId = null;
 	
@@ -109,7 +107,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 
 		final HorizontalPanel tabViewPanel = new HorizontalPanel();
 		final CheckBox tabView = new CheckBox();
-		tabView.setText("Tab View");
+		tabView.setText(_("Tab View"));
 		tabView.setValue(true);
 		tabViewPanel.add(tabView);
 		
@@ -149,7 +147,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 			scannedDocumentsListLabel.setVisible(false);
 			
 			if((canModify && !canWrite && scannedDocumentId!=null))
-				tabPanel.add(containerScannedDocumentsForm, "Modify");
+				tabPanel.add(containerScannedDocumentsForm, _("Modify"));
 			tabPanel.selectTab(0);
 			containerVerticalPanel.setVisible(false);
 			
@@ -183,72 +181,72 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		containerScannedDocumentsForm.add(flexTable);
 		
-		Label label = new Label("Date");
+		Label label = new Label(_("Date"));
 		flexTable.setWidget(row, 0, label);
 		final CustomDatePicker date = new CustomDatePicker();
 		flexTable.setWidget(row, 1, date);
 		containerScannedDocumentsFormFields.put("imagedt", date);
 		row++;
 		
-		label = new Label("Type of Image");
+		label = new Label(_("Type of Image"));
 		flexTable.setWidget(row, 0, label);
 		final CustomListBox typeOfImage = new CustomListBox();
-		typeOfImage.addItem("Operative Report","op_report/misc");
-		typeOfImage.addItem("- Colonoscopy","op_report/colonoscopy");
-		typeOfImage.addItem("- Endoscopy","op_report/endoscopy");
-		typeOfImage.addItem("Miscellaneous","misc/misc");
-		typeOfImage.addItem("- Consult","misc/consult");
-		typeOfImage.addItem("- Discharge Summary","misc/discharge_summary");
-		typeOfImage.addItem("- History and Physical","misc/history_and_physical");
-		typeOfImage.addItem("Lab Report","lab_report/misc");
+		typeOfImage.addItem(_("Operative Report"),"op_report/misc");
+		typeOfImage.addItem("- " + _("Colonoscopy"),"op_report/colonoscopy");
+		typeOfImage.addItem("- " + _("Endoscopy"),"op_report/endoscopy");
+		typeOfImage.addItem(_("Miscellaneous"),"misc/misc");
+		typeOfImage.addItem("- " + _("Consult"),"misc/consult");
+		typeOfImage.addItem("- " + _("Discharge Summary"),"misc/discharge_summary");
+		typeOfImage.addItem("- " + _("History and Physical"),"misc/history_and_physical");
+		typeOfImage.addItem(_("Lab Report"),"lab_report/misc");
 		typeOfImage.addItem("- CBC","lab_report/cbc");
 		typeOfImage.addItem("- C8","lab_report/c8");
 		typeOfImage.addItem("- LFT","lab_report/lft");
-		typeOfImage.addItem("- Lipid Profile","lab_report/lipid_profile");
+		typeOfImage.addItem("- " + _("Lipid Profile"),"lab_report/lipid_profile");
 		typeOfImage.addItem("- UA","lab_report/ua");
-		typeOfImage.addItem("- Thyroid Profile","lab_report/thyroid_profile");
-		typeOfImage.addItem("Letters","letters/misc");
-		typeOfImage.addItem("Oncology","oncology/misc");
-		typeOfImage.addItem("Hospital Records","hospital/misc");
-		typeOfImage.addItem("- Discharge Summary","hospital/discharge");
-		typeOfImage.addItem("Pathology","pathology/misc");
-		typeOfImage.addItem("Patient","patient/misc");
-		typeOfImage.addItem("- Consent","patient/consent");
-		typeOfImage.addItem("- History","patient/history");
-		typeOfImage.addItem("- Time Out","patient/time_out");
-		typeOfImage.addItem("Questionnaire","questionnaire/misc");
-		typeOfImage.addItem("Radiology","radiology/misc");
-		typeOfImage.addItem("- Abdominal Radiograph","radiology/abdominal_radiograph");
-		typeOfImage.addItem("- Chest Radiograph","radiology/chest_radiograph");
-		typeOfImage.addItem("- Abdominal CT Reports","radiology/abdominal_ct_reports");
-		typeOfImage.addItem("- Chest CT Reports","radiology/chest_ct_reports");
-		typeOfImage.addItem("- Mammogram Reports","radiology/mammogram_reports");
-		typeOfImage.addItem("Insurance Card","insurance_card");
-		typeOfImage.addItem("Referral","referral/misc");
-		typeOfImage.addItem("- Notes","referral/notes");
-		typeOfImage.addItem("- Radiographs","referral/radiographs");
-		typeOfImage.addItem("- Lab Reports","referral/lab_reports");
-		typeOfImage.addItem("- Consult","referral/consult");
-		typeOfImage.addItem("Financial Information","financial/misc");
+		typeOfImage.addItem("- " + _("Thyroid Profile"),"lab_report/thyroid_profile");
+		typeOfImage.addItem(_("Letters"),"letters/misc");
+		typeOfImage.addItem(_("Oncology"),"oncology/misc");
+		typeOfImage.addItem(_("Hospital Records"),"hospital/misc");
+		typeOfImage.addItem("- " + _("Discharge Summary"),"hospital/discharge");
+		typeOfImage.addItem(_("Pathology"),"pathology/misc");
+		typeOfImage.addItem(_("Patient"),"patient/misc");
+		typeOfImage.addItem("- " + _("Consent"),"patient/consent");
+		typeOfImage.addItem("- " + _("History"),"patient/history");
+		typeOfImage.addItem("- " + _("Time Out"),"patient/time_out");
+		typeOfImage.addItem(_("Questionnaire"),"questionnaire/misc");
+		typeOfImage.addItem(_("Radiology"),"radiology/misc");
+		typeOfImage.addItem("- " + _("Abdominal Radiograph"),"radiology/abdominal_radiograph");
+		typeOfImage.addItem("- " + _("Chest Radiograph"),"radiology/chest_radiograph");
+		typeOfImage.addItem("- " + _("Abdominal CT Reports"),"radiology/abdominal_ct_reports");
+		typeOfImage.addItem("- " + _("Chest CT Reports"),"radiology/chest_ct_reports");
+		typeOfImage.addItem("- " + _("Mammogram Reports"),"radiology/mammogram_reports");
+		typeOfImage.addItem(_("Insurance Card"),"insurance_card");
+		typeOfImage.addItem(_("Referral"),"referral/misc");
+		typeOfImage.addItem("- " + _("Notes"),"referral/notes");
+		typeOfImage.addItem("- " + _("Radiographs"),"referral/radiographs");
+		typeOfImage.addItem("- " + _("Lab Reports"),"referral/lab_reports");
+		typeOfImage.addItem("- " + _("Consult"),"referral/consult");
+		typeOfImage.addItem(_("Financial Information"),"financial/misc");
 		flexTable.setWidget(row, 1, typeOfImage);
 		containerScannedDocumentsFormFields.put("imagetypecat", typeOfImage);
 		row++;
 		
-		label = new Label("Physician");
+		label = new Label(_("Physician"));
 		flexTable.setWidget(row, 0, label);
 		final ProviderWidget provider = new ProviderWidget();
 		flexTable.setWidget(row, 1, provider);
 		containerScannedDocumentsFormFields.put("imagephy", provider);
 		row++;
 		
-		label = new Label("Description");
+		label = new Label(_("Description"));
 		flexTable.setWidget(row, 0, label);
 		final TextArea description = new TextArea();
 		flexTable.setWidget(row, 1, description);
 		containerScannedDocumentsFormFields.put("imagedesc", description);
 		row++;
 		
-		label = new Label("Attach Image");
+		label = new Label(_("Attach Image"));
 		flexTable.setWidget(row, 0, label);
 		final FileUpload fileUpload = new FileUpload();
 		fileUpload.setName("imageupload");
@@ -260,14 +258,14 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 		
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent arg0) {
-				Integer id = (Integer)JsonUtil.shoehornJson(JSONParser.parse(arg0.getResults()), "Integer");
+				Integer id = (Integer)JsonUtil.shoehornJson(JSONParser.parseStrict(arg0.getResults()), "Integer");
 				if(id!=null){
-					Util.showInfoMsg(moduleName, "Document Added Successfully!!");
+					Util.showInfoMsg(moduleName, _("Document added successfully."));
 					formPanel.reset();
 					resetForm();
 					populateAvailableData();
 				}else{
-					Util.showErrorMsg(moduleName, "Failed to add document!!");
+					Util.showErrorMsg(moduleName, _("Failed to add document."));
 				}
 				
 			}
@@ -281,7 +279,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 		flexTable.setWidget(row, 1, buttonContainer);
 		
 		
-		wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		wSubmit = new CustomButton(_("Submit"),AppConstants.ICON_ADD);
 		buttonContainer.add(wSubmit);
 		
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -305,7 +303,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 		
 		});
 		
-		CustomButton resetButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		CustomButton resetButton = new CustomButton(_("Reset"), AppConstants.ICON_CLEAR);
 		buttonContainer.add(resetButton);
 		
 		resetButton.addClickHandler(new ClickHandler() {
@@ -318,7 +316,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 		
 		});
 		
-		wDelete = new CustomButton("Delete",AppConstants.ICON_DELETE);
+		wDelete = new CustomButton(_("Delete"), AppConstants.ICON_DELETE);
 		buttonContainer.add(wDelete);
 		wDelete.setVisible(false);
 		wDelete.addClickHandler(new ClickHandler() {
@@ -346,12 +344,12 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 		containerScannedDocumentsTable = new CustomTable();
 		containerScannedDocumentsTable.setWidth("100%");
 		horizontalPanel.add(containerScannedDocumentsTable);
-		containerScannedDocumentsTable.addColumn("Date", "imagedt");
-		containerScannedDocumentsTable.addColumn("image", "imagefile");
-		containerScannedDocumentsTable.addColumn("Type", "imagetype");
-		containerScannedDocumentsTable.addColumn("Category", "imagecat");
-		containerScannedDocumentsTable.addColumn("Physician", "physician");
-		containerScannedDocumentsTable.addColumn("Action", "action");
+		containerScannedDocumentsTable.addColumn(_("Date"), "imagedt");
+		containerScannedDocumentsTable.addColumn(_("Image"), "imagefile");
+		containerScannedDocumentsTable.addColumn(_("Type"), "imagetype");
+		containerScannedDocumentsTable.addColumn(_("Category"), "imagecat");
+		containerScannedDocumentsTable.addColumn(_("Physician"), "physician");
+		containerScannedDocumentsTable.addColumn(_("Action"), "action");
 		containerScannedDocumentsTable.setIndexName("id");
 		
 		containerScannedDocumentsTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -375,14 +373,14 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 						else if(action == HandleCustomAction.LOCK){
 							Util.callModuleMethod(SCANNED_DOCUMENT, "lock",id,new CustomRequestCallback() {
 								public void onError() {
-									Util.showErrorMsg(SCANNED_DOCUMENT, "Failed to lock item!");
+									Util.showErrorMsg(SCANNED_DOCUMENT, _("Failed to lock item."));
 								}
 								public void jsonifiedData(Object data) {
 									if(((Boolean)data).booleanValue()){
 										actionBar.lock();
-										Util.showInfoMsg(SCANNED_DOCUMENT, "Item locked successfully!");
+										Util.showInfoMsg(SCANNED_DOCUMENT, _("Item locked successfully."));
 									}else
-										Util.showErrorMsg(SCANNED_DOCUMENT, "Failed to lock item!");
+										Util.showErrorMsg(SCANNED_DOCUMENT, _("Failed to lock item."));
 								}
 							
 							},"Boolean");
@@ -410,11 +408,11 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 	protected void modifyEntry(HashMap<String, String> data){
 		scannedDocumentId = Integer.parseInt(data.get("id"));
 		retrieveAndFillData(SCANNED_DOCUMENT,"org.freemedsoftware.module."+SCANNED_DOCUMENT+".GetRecord",scannedDocumentId, containerScannedDocumentsFormFields);
-		wSubmit.setText("Modify");
+		wSubmit.setText(_("Modify"));
 		wDelete.setVisible(true);
 		tabPanel.selectTab(0);
 		if(!canWrite && canModify){
-			tabPanel.add(containerScannedDocumentsForm, "Modify");
+			tabPanel.add(containerScannedDocumentsForm, _("Modify"));
 			tabPanel.selectTab(1);
 		}
 	}
@@ -471,7 +469,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean b = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if(b!=null && b.booleanValue()){
 								retrieveAndFillListData();
@@ -480,7 +478,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 								tabPanel.selectTab(1);
 							}
 						} else {
-							Util.showErrorMsg("ScannedDocuments", "Counselor Intake Form failed.");
+							Util.showErrorMsg("ScannedDocuments", _("Failed to delete document."));
 						}
 					}
 				});
@@ -508,7 +506,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						JsonUtil
-								.debug("Error on retrieving AppointmentTemplate");
+								.debug("Error on retrieving document");
 					}
 
 					@SuppressWarnings("unchecked")
@@ -519,7 +517,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 									"false") != 0) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 										.shoehornJson(JSONParser
-												.parse(response.getText()),
+												.parseStrict(response.getText()),
 												"HashMap<String,String>");
 								Util.populateForm(containerFormFields, result);
 							} else {
@@ -527,12 +525,12 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							Util.showErrorMsg("ScannedDocuments", "Failed to get Clinical Assessment Notes items.");
+							Util.showErrorMsg("ScannedDocuments", _("Failed to get document."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("ScannedDocuments", "Failed to get Clinical Assessment Notes items.");
+				Util.showErrorMsg("ScannedDocuments", _("Failed to get document."));
 			}
 		} else {
 			// GWT-RPC
@@ -567,7 +565,7 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 									"false") != 0) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 										.shoehornJson(JSONParser
-												.parse(response.getText()),
+												.parseStrict(response.getText()),
 												"HashMap<String,String>[]");
 								if (result != null) {
 									containerScannedDocumentsTable.loadData(result);
@@ -578,12 +576,12 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							Util.showErrorMsg("ScannedDocuments", "Failed to get Clinical Assessment Notes items.");
+							Util.showErrorMsg("ScannedDocuments", _("Failed to get document."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("ScannedDocuments", "Failed to get Clinical Assessment Notes items.");
+				Util.showErrorMsg("ScannedDocuments", _("Failed to get document."));
 			}
 		} else {
 			// GWT-RPC
@@ -612,20 +610,20 @@ public class ScannedDocumentsEntryScreen extends PatientEntryScreenInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (r != null) {
 								populateAvailableData();
-								Util.showInfoMsg("ScannedDocuments", "Entry successfully added.");
+								Util.showInfoMsg("ScannedDocuments", _("Entry successfully added."));
 							}else{
 								Boolean b = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if(b!=null)
-									Util.showInfoMsg("ScannedDocuments", "Entry successfully modified.");
+									Util.showInfoMsg("ScannedDocuments", _("Entry successfully modified."));
 							}
 						} else {
-							Util.showErrorMsg("ScannedDocuments", "Clinical Assessment Notes Form failed.");
+							Util.showErrorMsg("ScannedDocuments", _("Entry failed."));
 						}
 					}
 				});

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -66,43 +68,43 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 
-		final Label dateLabel = new Label("Starting Date");
+		final Label dateLabel = new Label(_("Starting Date"));
 		flexTable.setWidget(0, 0, dateLabel);
 		dateLabel.setDirection(Direction.RTL);
 
-		final Label providerLabel = new Label("Provider");
+		final Label providerLabel = new Label(_("Provider"));
 		flexTable.setWidget(1, 0, providerLabel);
 		providerLabel.setDirection(Direction.RTL);
 
-		final Label drugLabel = new Label("Drug");
+		final Label drugLabel = new Label(_("Drug"));
 		flexTable.setWidget(2, 0, drugLabel);
 		drugLabel.setDirection(Direction.RTL);
 
-		final Label quantityLabel = new Label("Quantity");
+		final Label quantityLabel = new Label(_("Quantity"));
 		flexTable.setWidget(3, 0, quantityLabel);
 		quantityLabel.setDirection(Direction.RTL);
 
-		final Label intervalLabel = new Label("Interval");
+		final Label intervalLabel = new Label(_("Interval"));
 		flexTable.setWidget(4, 0, intervalLabel);
 		intervalLabel.setDirection(Direction.RTL);
 
-		final Label substitutionsLabel = new Label("Substitutions");
+		final Label substitutionsLabel = new Label(_("Substitutions"));
 		flexTable.setWidget(5, 0, substitutionsLabel);
 		substitutionsLabel.setDirection(Direction.RTL);
 
-		final Label coverageStatusLabel = new Label("Coverage Status");
+		final Label coverageStatusLabel = new Label(_("Coverage Status"));
 		flexTable.setWidget(6, 0, coverageStatusLabel);
 		coverageStatusLabel.setDirection(Direction.RTL);
 
-		final Label refillsLabel = new Label("Refills");
+		final Label refillsLabel = new Label(_("Refills"));
 		flexTable.setWidget(7, 0, refillsLabel);
 		refillsLabel.setDirection(Direction.RTL);
 
-		final Label signatureLabel = new Label("Signature");
+		final Label signatureLabel = new Label(_("Signature"));
 		flexTable.setWidget(8, 0, signatureLabel);
 		signatureLabel.setDirection(Direction.RTL);
 
-		final Label noteLabel = new Label("Note");
+		final Label noteLabel = new Label(_("Note"));
 		flexTable.setWidget(9, 0, noteLabel);
 		noteLabel.setDirection(Direction.RTL);
 
@@ -141,7 +143,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 		tSignature.setWidth("100%");
 		flexTable.getFlexCellFormatter().setColSpan(9, 1, 2);
 
-		final CustomButton saveButton = new CustomButton("Save",AppConstants.ICON_ADD);
+		final CustomButton saveButton = new CustomButton(_("Save"), AppConstants.ICON_ADD);
 		flexTable.setWidget(10, 1, saveButton);
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -149,7 +151,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			}
 		});
 
-		final CustomButton resetButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton resetButton = new CustomButton(_("Reset"), AppConstants.ICON_CLEAR);
 		flexTable.setWidget(10, 2, resetButton);
 		resetButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -193,7 +195,7 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("PrescriptionScreen", "Failed to add Prescription.");
+						Util.showErrorMsg("PrescriptionScreen", _("Failed to add prescription."));
 					}
 
 					@SuppressWarnings("unchecked")
@@ -202,24 +204,24 @@ public class PrescriptionsScreen extends PatientScreenInterface {
 						if (200 == response.getStatusCode()) {
 							if (response.getText().compareToIgnoreCase("false") != 0) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
 									// Successful
-									Util.showInfoMsg("PrescriptionScreen", "Successfully added prescription.");
+									Util.showInfoMsg("PrescriptionScreen", _("Successfully added prescription."));
 								}
 							} else {
 								JsonUtil
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							Util.showErrorMsg("PrescriptionScreen", "Failed to add Prescription");
+							Util.showErrorMsg("PrescriptionScreen", _("Failed to add prescription"));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("PrescriptionScreen", "Failed to add Prescription");
+				Util.showErrorMsg("PrescriptionScreen", _("Failed to add prescription"));
 			}
 		} else {
 			// GWT-RPC

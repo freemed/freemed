@@ -24,14 +24,16 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
@@ -87,45 +89,45 @@ public class MessagingComposeScreen extends ScreenInterface {
 		flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
 
-		final Label toLabel = new Label("To : ");
+		final Label toLabel = new Label(_("To") + " : ");
 		flexTable.setWidget(0, 0, toLabel);
 
 		final HorizontalPanel toPanel = new HorizontalPanel();
 		toPanel.setWidth("100%");
 		flexTable.setWidget(0, 1, toPanel);
 		
-		final Label userLabel = new Label("user:");
+		final Label userLabel = new Label(_("User") + " : ");
 		toPanel.add(userLabel);
 		wTo = new UserMultipleChoiceWidget();
 		toPanel.add(wTo);
 		
-		final Label groupLabel = new Label("group:");
+		final Label groupLabel = new Label(_("Group") + " : ");
 		toPanel.add(groupLabel);
 		wGroupTo = new SupportModuleWidget("UserGroups");
 		toPanel.add(wGroupTo);
 		
 		
 
-		final Label subjectLabel = new Label("Subject : ");
+		final Label subjectLabel = new Label(_("Subject") + " : ");
 		flexTable.setWidget(1, 0, subjectLabel);
 
 		wSubject = new TextBox();
 		wSubject.setWidth("100%");
 		flexTable.setWidget(1, 1, wSubject);
 
-		final Label urgencyLabel = new Label("Urgency : ");
+		final Label urgencyLabel = new Label(_("Urgency") + " : ");
 		flexTable.setWidget(3, 0, urgencyLabel);
 
 		wUrgency = new CustomListBox();
 		flexTable.setWidget(3, 1, wUrgency);
-		wUrgency.addItem("1 (Urgent)");
-		wUrgency.addItem("2 (Expedited)");
-		wUrgency.addItem("3 (Standard)");
-		wUrgency.addItem("4 (Notification)");
-		wUrgency.addItem("5 (Bulk)");
+		wUrgency.addItem(_("1 (Urgent)"));
+		wUrgency.addItem(_("2 (Expedited)"));
+		wUrgency.addItem(_("3 (Standard)"));
+		wUrgency.addItem(_("4 (Notification)"));
+		wUrgency.addItem(_("5 (Bulk)"));
 		wUrgency.setSelectedIndex(2);
 
-		final Label patientLabel = new Label("Patient : ");
+		final Label patientLabel = new Label(_("Patient") + " : ");
 		flexTable.setWidget(2, 0, patientLabel);
 
 		wPatient = new PatientWidget();
@@ -143,7 +145,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		final CustomButton sendButton = new CustomButton("Send",AppConstants.ICON_SEND);
+		final CustomButton sendButton = new CustomButton(_("Send"),AppConstants.ICON_SEND);
 		horizontalPanel.add(sendButton);
 		sendButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -153,7 +155,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 			}
 		});
 
-		final CustomButton sendAnotherButton = new CustomButton("Send and Compose Another",AppConstants.ICON_COMPOSE_MAIL);
+		final CustomButton sendAnotherButton = new CustomButton(_("Send and Compose Another"),AppConstants.ICON_COMPOSE_MAIL);
 		horizontalPanel.add(sendAnotherButton);
 		sendAnotherButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -163,7 +165,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 			}
 		});
 
-		final CustomButton clearButton = new CustomButton("Clear",AppConstants.ICON_CLEAR);
+		final CustomButton clearButton = new CustomButton(_("Clear"),AppConstants.ICON_CLEAR);
 		horizontalPanel.add(clearButton);
 		clearButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -194,10 +196,10 @@ public class MessagingComposeScreen extends ScreenInterface {
 		String msg = new String("");
 		if (wTo.getCommaSeparatedValues().equals("") &&
 				wGroupTo.getStoredValue().equals("0")) {
-			msg += "Please specify at least one recipient or a group." + "\n";
+			msg += _("Please specify at least one recipient or a group.") + "\n";
 		}
 		if (wSubject.getText().trim().length() == 0) {
-			msg += "Please specify subject." + "\n";
+			msg += _("Please specify subject.") + "\n";
 		}
 		if (msg.length()>0) {
 			Window.alert(msg);
@@ -208,7 +210,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 	}
 	
 	public void sendMessage(final boolean sendAnother) {
-		CurrentState.statusBarAdd(className, "Sending Message");
+		CurrentState.statusBarAdd(className, _("Sending Message"));
 
 		// Form data
 		HashMap<String, String> data = new HashMap<String, String>();
@@ -224,7 +226,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			CurrentState.statusBarRemove(className);
-			Util.showInfoMsg(className, "Message Sent.");
+			Util.showInfoMsg(className, _("Message Sent."));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(data) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -234,18 +236,18 @@ public class MessagingComposeScreen extends ScreenInterface {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						CurrentState.statusBarRemove(className);
-						Util.showErrorMsg(className, "Failed to send message.");
+						Util.showErrorMsg(className, _("Failed to send message."));
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							String[] r = (String[]) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"String[]");
 							if (r != null) {
 								CurrentState.statusBarRemove(className);
-								Util.showInfoMsg(className, "Message Sent.");
+								Util.showInfoMsg(className, _("Message Sent."));
 								if (!sendAnother) {
 									if(parentScreen != null){
 										parentScreen.populate("");
@@ -262,18 +264,18 @@ public class MessagingComposeScreen extends ScreenInterface {
 							}
 						} else {
 							CurrentState.statusBarRemove(className);
-							Util.showErrorMsg(className, "Failed to send message.");
+							Util.showErrorMsg(className, _("Failed to send message."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg(className, "Failed to send message.");
+				Util.showErrorMsg(className, _("Failed to send message."));
 			}
 		} else {
 			getProxy().Send(data, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean result) {
 					CurrentState.statusBarRemove(className);
-					Util.showErrorMsg(className, "Failed to send message.");
+					Util.showErrorMsg(className, _("Failed to send message."));
 					if (!sendAnother && parentScreen != null) {
 						parentScreen.populate("");
 						getThisObject().closeScreen();
@@ -282,7 +284,7 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 				public void onFailure(Throwable t) {
 					CurrentState.statusBarRemove(className);
-					Util.showErrorMsg(className, "Failed to send message.");
+					Util.showErrorMsg(className, _("Failed to send message."));
 				}
 			});
 		}

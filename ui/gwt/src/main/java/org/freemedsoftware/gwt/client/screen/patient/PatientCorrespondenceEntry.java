@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
@@ -62,7 +64,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
 
-		final Label dateLabel = new Label("Date : ");
+		final Label dateLabel = new Label(_("Date") + " : ");
 		flexTable.setWidget(0, 0, dateLabel);
 
 		wDate = new CustomDatePicker();
@@ -70,7 +72,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 		addEntryWidget("letterdt", wDate);
 		flexTable.setWidget(0, 1, wDate);
 
-		final Label fromLabel = new Label("From : ");
+		final Label fromLabel = new Label(_("From") + " : ");
 		flexTable.setWidget(1, 0, fromLabel);
 
 		wFrom = new SupportModuleWidget();
@@ -79,7 +81,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 		addEntryWidget("letterfrom", wFrom);
 		flexTable.setWidget(1, 1, wFrom);
 
-		final Label subjectLabel = new Label("Subject : ");
+		final Label subjectLabel = new Label(_("Subject") + " : ");
 		flexTable.setWidget(2, 0, subjectLabel);
 
 		wSubject = new CustomTextBox();
@@ -88,7 +90,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(2, 1, wSubject);
 		wSubject.setWidth("100%");
 
-		final Label templateLabel = new Label("Template : ");
+		final Label templateLabel = new Label(_("Template") + " : ");
 		flexTable.setWidget(3, 0, templateLabel);
 
 		final Label messageLabel = new Label("Message : ");
@@ -101,7 +103,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",
+		final CustomButton wSubmit = new CustomButton(_("Submit"),
 				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -109,7 +111,7 @@ public class PatientCorrespondenceEntry extends PatientEntryScreenInterface {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",
+		final CustomButton wReset = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {

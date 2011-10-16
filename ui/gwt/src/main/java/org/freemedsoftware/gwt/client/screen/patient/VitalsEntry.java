@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
@@ -114,13 +116,13 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		int pos = 0;
 
 		// Header row
-		flexTable.setWidget(pos, 0, new Label("Unavailable"));
-		flexTable.setWidget(pos, 1, new Label("Refused"));
-		flexTable.setWidget(pos, 2, new Label("Record"));
+		flexTable.setWidget(pos, 0, new Label(_("Unavailable")));
+		flexTable.setWidget(pos, 1, new Label(_("Refused")));
+		flexTable.setWidget(pos, 2, new Label(_("Record")));
 		pos++;
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Temperature"));
+			flexTable.setWidget(pos, 3, new Label(_("Temperature")));
 			pos++;
 
 			temperatureContainer = new CustomRadioButtonContainer();
@@ -175,7 +177,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Pulse"));
+			flexTable.setWidget(pos, 3, new Label(_("Pulse")));
 			pos++;
 
 			pulseContainer = new CustomRadioButtonContainer();
@@ -249,7 +251,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Pulse Ox"));
+			flexTable.setWidget(pos, 3, new Label(_("Pulse Ox")));
 			pos++;
 
 			pulseOxContainer = new CustomRadioButtonContainer();
@@ -306,7 +308,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Blood Glucose"));
+			flexTable.setWidget(pos, 3, new Label(_("Blood Glucose")));
 			pos++;
 
 			glucoseContainer = new CustomRadioButtonContainer();
@@ -357,7 +359,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Respiration"));
+			flexTable.setWidget(pos, 3, new Label(_("Respiration")));
 			pos++;
 
 			respirationContainer = new CustomRadioButtonContainer();
@@ -411,7 +413,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Blood Pressure"));
+			flexTable.setWidget(pos, 3, new Label(_("Blood Pressure")));
 			pos++;
 
 			bpContainer = new CustomRadioButtonContainer();
@@ -595,7 +597,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Height"));
+			flexTable.setWidget(pos, 3, new Label(_("Height")));
 			pos++;
 
 			hContainer = new CustomRadioButtonContainer();
@@ -645,7 +647,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Weight"));
+			flexTable.setWidget(pos, 3, new Label(_("Weight")));
 			pos++;
 
 			wContainer = new CustomRadioButtonContainer();
@@ -709,7 +711,7 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 		}
 
 		{
-			flexTable.setWidget(pos, 3, new Label("Pain"));
+			flexTable.setWidget(pos, 3, new Label(_("Pain")));
 			pos++;
 
 			painContainer = new CustomRadioButtonContainer();
@@ -761,14 +763,14 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton(_("Submit"), AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton(_("Reset"), AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {

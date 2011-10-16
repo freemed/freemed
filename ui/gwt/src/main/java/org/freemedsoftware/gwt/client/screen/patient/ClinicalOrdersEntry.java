@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,7 +110,7 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		flexTable.setWidget(0, 0, panelA);
 		panelB = new FlexTable();
 		flexTable.setWidget(0, 1, panelB);
-		panelB.setWidget(0, 0, new HTML("<em>" + "Select orders to add"
+		panelB.setWidget(0, 0, new HTML("<em>" + _("Select orders to add")
 				+ "</em>"));
 		wPossibleOrders.setVisibleItemCount(30);
 		panelB.setWidget(1, 0, wPossibleOrders);
@@ -121,11 +123,11 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		panelC = new FlexTable();
 		wSelectedOrders.setVisibleItemCount(30);
 		panelC.setWidget(0, 0, new HTML("<em>"
-				+ "Choose an order to modify or remove" + "</em>"));
+				+ _("Choose an order to modify or remove") + "</em>"));
 		panelC.setWidget(1, 0, wSelectedOrders);
 		wSelectedOrders.setEnabled(false);
 
-		removeOrderButton = new CustomButton("Remove", AppConstants.ICON_DELETE);
+		removeOrderButton = new CustomButton(_("Remove"), AppConstants.ICON_DELETE);
 		removeOrderButton.addClickHandler(this);
 		panelC.setWidget(2, 0, removeOrderButton);
 		removeOrderButton.setEnabled(false);
@@ -140,7 +142,7 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 		flexTable.setWidget(1, 0, actionPanel);
 		flexTable.getFlexCellFormatter().setColSpan(1, 0, 4);
 
-		final CustomButton saveButton = new CustomButton("Add",
+		final CustomButton saveButton = new CustomButton(_("Add"),
 				AppConstants.ICON_ADD);
 		actionPanel.setWidget(0, 0, saveButton);
 		saveButton.addClickHandler(new ClickHandler() {
@@ -158,7 +160,7 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 			}
 		});
 
-		final CustomButton resetButton = new CustomButton("Reset",
+		final CustomButton resetButton = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		actionPanel.setWidget(0, 2, resetButton);
 		resetButton.addClickHandler(new ClickHandler() {
@@ -176,54 +178,54 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 	 */
 	protected FlexTable createCategoryPanel() {
 		FlexTable f = new FlexTable();
-		f.setWidget(0, 0, new HTML("<em>" + "Category" + "</em>"));
+		f.setWidget(0, 0, new HTML("<em>" + _("Category") + "</em>"));
 
 		int pos = 0;
 
 		pos++;
-		cConsult = new CustomButton("Consult");
+		cConsult = new CustomButton(_("Consult"));
 		cConsult.addClickHandler(this);
 		f.setWidget(0, pos, cConsult);
 		f.getFlexCellFormatter().setAlignment(0, pos,
 				HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		pos++;
-		cRadiology = new CustomButton("Radiology");
+		cRadiology = new CustomButton(_("Radiology"));
 		cRadiology.addClickHandler(this);
 		f.setWidget(0, pos, cRadiology);
 		f.getFlexCellFormatter().setAlignment(0, pos,
 				HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		pos++;
-		cLab = new CustomButton("Lab");
+		cLab = new CustomButton(_("Lab"));
 		cLab.addClickHandler(this);
 		f.setWidget(0, pos, cLab);
 		f.getFlexCellFormatter().setAlignment(0, pos,
 				HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		pos++;
-		cImmunization = new CustomButton("Immunization");
+		cImmunization = new CustomButton(_("Immunization"));
 		cImmunization.addClickHandler(this);
 		f.setWidget(0, pos, cImmunization);
 		f.getFlexCellFormatter().setAlignment(0, pos,
 				HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		pos++;
-		cProcedure = new CustomButton("Procedure");
+		cProcedure = new CustomButton(_("Procedure"));
 		cProcedure.addClickHandler(this);
 		f.setWidget(0, pos, cProcedure);
 		f.getFlexCellFormatter().setAlignment(0, pos,
 				HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		pos++;
-		cRx = new CustomButton("Prescription");
+		cRx = new CustomButton(_("Prescription"));
 		cRx.addClickHandler(this);
 		f.setWidget(0, pos, cRx);
 		f.getFlexCellFormatter().setAlignment(0, pos,
 				HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		pos++;
-		cTemplates = new CustomButton("Templates");
+		cTemplates = new CustomButton(_("Templates"));
 		cTemplates.addClickHandler(this);
 		f.setWidget(0, pos, cTemplates);
 		f.getFlexCellFormatter().setAlignment(0, pos,
@@ -275,7 +277,7 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						Util.showErrorMsg("ClinicalOrdersEntry",
-								"Failed to add order.");
+								_("Failed to add order."));
 					}
 
 					@SuppressWarnings("unchecked")
@@ -290,7 +292,7 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 												"HashMap<String,String>");
 								if (r != null) { // Successful
 									Util.showInfoMsg("ClinicalOrdersEntry",
-											"Successfully added order.");
+											_("Successfully added order."));
 								}
 							} else {
 								JsonUtil
@@ -298,14 +300,14 @@ public class ClinicalOrdersEntry extends PatientScreenInterface implements
 							}
 						} else {
 							Util.showErrorMsg("ClinicalOrdersEntry",
-									"Failed to add Prescription");
+									_("Failed to add orders."));
 						}
 					}
 				});
 			} catch (RequestException e) {
 				Util
 						.showErrorMsg("ClinicalOrdersEntry",
-								"Failed to add orders");
+								_("Failed to add orders."));
 			}
 
 		} else {

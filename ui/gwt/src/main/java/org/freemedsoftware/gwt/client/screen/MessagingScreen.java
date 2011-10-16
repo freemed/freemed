@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,20 +36,20 @@ import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.SystemEvent;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.Api.MessagesAsync;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Module.MessagesModule;
 import org.freemedsoftware.gwt.client.Module.MessagesModuleAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.ClosableTab;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.MessageView;
-import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.MessageView;
+import org.freemedsoftware.gwt.client.widget.Popup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -141,7 +143,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 		}
 		
 		if(canWrite){
-			final CustomButton composeButton = new CustomButton("Compose",AppConstants.ICON_COMPOSE_MAIL);
+			final CustomButton composeButton = new CustomButton(_("Compose"),AppConstants.ICON_COMPOSE_MAIL);
 			horizontalPanel.add(composeButton);
 			composeButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -149,7 +151,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 					final MessagingComposeScreen p = new MessagingComposeScreen();
 					p.setParentScreen(getMessagingScreen());
 					CurrentState.getTabPanel().add(p,
-							new ClosableTab("Compose Message", p));
+							new ClosableTab(_("Compose Message"), p));
 					CurrentState.getTabPanel().selectTab(
 							CurrentState.getTabPanel().getWidgetCount() - 1);
 				}
@@ -157,7 +159,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 		}
 
 		if(canModify){
-			final CustomButton selectButton = new CustomButton("Change",AppConstants.ICON_CHANGE);
+			final CustomButton selectButton = new CustomButton(_("Change"),AppConstants.ICON_CHANGE);
 			horizontalPanel.add(selectButton);
 			selectButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -167,7 +169,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			});
 		}
 		if(canModify){
-			final CustomButton moveButton = new CustomButton("Move",AppConstants.ICON_MOVE_MAIL);
+			final CustomButton moveButton = new CustomButton(_("Move"),AppConstants.ICON_MOVE_MAIL);
 			horizontalPanel.add(moveButton);
 			moveButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -178,7 +180,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 		}
 		
 		if(canRead){
-			final CustomButton selectAllButton = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+			final CustomButton selectAllButton = new CustomButton(_("Select All"),AppConstants.ICON_SELECT_ALL);
 			horizontalPanel.add(selectAllButton);
 			selectAllButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -195,7 +197,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			});
 		}
 		if(canRead){
-			final CustomButton selectNoneButton = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
+			final CustomButton selectNoneButton = new CustomButton(_("Select None"),AppConstants.ICON_SELECT_NONE);
 			horizontalPanel.add(selectNoneButton);
 			selectNoneButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -212,13 +214,13 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			});
 		}
 		if(canDelete){
-			final CustomButton deleteButton = new CustomButton("Delete",AppConstants.ICON_DELETE);
+			final CustomButton deleteButton = new CustomButton(_("Delete"),AppConstants.ICON_DELETE);
 			horizontalPanel.add(deleteButton);
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (Window
-							.confirm("Are you sure you want to delete these item(s)?")) {
+							.confirm(_("Are you sure you want to delete these item(s)?"))) {
 						List<String> slectedItems = wMessages.getSelected();
 						// Get all selected items from custom table
 						Iterator<String> itr = slectedItems.iterator();
@@ -242,11 +244,11 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			// wMessages.setMultipleSelection(true);
 			verticalSplitPanel.add(wMessages);
 			wMessages.setSize("100%", "100%");
-			wMessages.addColumn("Selected", "selected");
-			wMessages.addColumn("Received", "stamp"); // col 1
-			wMessages.addColumn("From", "from_user"); // col 2
-			wMessages.addColumn("Subject", "subject"); // col 3
-			// wMessages.addColumn("Delete", "delete"); // col 4
+			wMessages.addColumn(_("Selected"), "selected");
+			wMessages.addColumn(_("Received"), "stamp"); // col 1
+			wMessages.addColumn(_("From"), "from_user"); // col 2
+			wMessages.addColumn(_("Subject"), "subject"); // col 3
+			// wMessages.addColumn(_("Delete"), "delete"); // col 4
 			wMessages.setIndexName("id");
 			wMessages.setTableRowClickHandler(new TableRowClickHandler() {
 				@Override
@@ -366,7 +368,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String[][] r = (String[][]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()), "String[][]");
 								if (r != null) {
 									messageTagSelect.clear();
@@ -415,7 +417,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {
@@ -509,7 +511,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
+						Util.showErrorMsg("MessagingScreen", _("Failed to delete message."));
 					}
 
 					public void onResponseReceived(Request request,
@@ -517,14 +519,14 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								Boolean r = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if (r != null) {
-									Util.showInfoMsg("MessagingScreen", "Deleted message.");
+									Util.showInfoMsg("MessagingScreen", _("Deleted message."));
 									// populate(tag);
 								}
 							} else {
-								Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
+								Util.showErrorMsg("MessagingScreen", _("Failed to delete message."));
 							}
 						}
 					}
@@ -538,20 +540,20 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 				service = (MessagesAsync) Util
 						.getProxy("org.freemedsoftware.gwt.client.Api.Messages");
 			} catch (Exception e) {
-				Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
+				Util.showErrorMsg("MessagingScreen", _("Failed to delete message."));
 			}
 			service.Remove(messageId, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean data) {
 					if (data) {
-						Util.showInfoMsg("MessagingScreen", "Deleted message.");
+						Util.showInfoMsg("MessagingScreen", _("Deleted message."));
 						populate("");
 					} else {
-						Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
+						Util.showErrorMsg("MessagingScreen", _("Failed to delete message."));
 					}
 				}
 
 				public void onFailure(Throwable t) {
-					Util.showErrorMsg("MessagingScreen", "Failed to delete message.");
+					Util.showErrorMsg("MessagingScreen", _("Failed to delete message."));
 				}
 			});
 		}
@@ -597,7 +599,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
@@ -670,7 +672,7 @@ public class MessagingScreen extends ScreenInterface implements ClickHandler,
 	public void onSystemEvent(SystemEvent e) {
 		if (e.getSourceModule() == "messages") {
 			populate(messageTagSelect.getWidgetValue());
-			Util.showInfoMsg("MessagingScreen", "You have new messages.");
+			Util.showInfoMsg("MessagingScreen", _("You have new messages."));
 		}
 	}
 }

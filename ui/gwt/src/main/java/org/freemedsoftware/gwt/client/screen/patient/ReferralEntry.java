@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
@@ -63,7 +65,7 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		verticalPanel.add(flexTable);
 
-		final Label originalProviderLabel = new Label("Original Provider");
+		final Label originalProviderLabel = new Label(_("Original Provider"));
 		flexTable.setWidget(0, 0, originalProviderLabel);
 
 		wOriginalProvider = new SupportModuleWidget("ProviderModule");
@@ -71,7 +73,7 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		addEntryWidget("refprovorig", wOriginalProvider);
 		flexTable.setWidget(0, 1, wOriginalProvider);
 
-		final Label referredToLabel = new Label("Referred To");
+		final Label referredToLabel = new Label(_("Referred To"));
 		flexTable.setWidget(1, 0, referredToLabel);
 
 		wDestinationProvider = new SupportModuleWidget("ProviderModule");
@@ -79,7 +81,7 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		addEntryWidget("refprovdest", wDestinationProvider);
 		flexTable.setWidget(1, 1, wDestinationProvider);
 
-		final Label diagnosesLabel = new Label("Diagnoses");
+		final Label diagnosesLabel = new Label(_("Diagnoses"));
 		flexTable.setWidget(2, 0, diagnosesLabel);
 
 		wDx = new SupportModuleMultipleChoiceWidget("IcdCodes");
@@ -87,15 +89,15 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		addEntryWidget("refdx", wDx);
 		flexTable.setWidget(2, 1, wDx);
 
-		final Label referralDirectionLabel = new Label("Referral Direction");
+		final Label referralDirectionLabel = new Label(_("Referral Direction"));
 		flexTable.setWidget(3, 0, referralDirectionLabel);
 
 		wDirection = new CustomListBox();
 		flexTable.setWidget(3, 1, wDirection);
 		wDirection.setHashMapping("refdirection");
 		addEntryWidget("refdirection", wDirection);
-		wDirection.addItem("outbound", "outbound");
-		wDirection.addItem("inbound", "inbound");
+		wDirection.addItem(_("outbound"), "outbound");
+		wDirection.addItem(_("inbound"), "inbound");
 		wDirection.setVisibleItemCount(1);
 
 		final Label reasonsLabel = new Label("Reasons");
@@ -106,7 +108,7 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		addEntryWidget("refreasons", wReasons);
 		flexTable.setWidget(5, 1, wReasons);
 
-		final Label comorbidsLabel = new Label("Comorbids");
+		final Label comorbidsLabel = new Label(_("Comorbids"));
 		flexTable.setWidget(6, 0, comorbidsLabel);
 
 		wComorbids = new SupportModuleMultipleChoiceWidget("IcdCodes");
@@ -122,7 +124,7 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		addEntryWidget("refpayor", wPayor);
 		flexTable.setWidget(7, 1, wPayor);
 
-		final Label payorApprovalLabel = new Label("Payor Approval");
+		final Label payorApprovalLabel = new Label(_("Payor Approval"));
 		flexTable.setWidget(8, 0, payorApprovalLabel);
 
 		wPayorApproval = new CustomListBox();
@@ -134,23 +136,23 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 		wPayorApproval.addItem("approved");
 		wPayorApproval.setVisibleItemCount(1);
 
-		final Label urgencyLabel = new Label("Urgency");
+		final Label urgencyLabel = new Label(_("Urgency"));
 		flexTable.setWidget(4, 0, urgencyLabel);
 
 		wUrgency = new CustomListBox();
 		flexTable.setWidget(4, 1, wUrgency);
 		wUrgency.setHashMapping("refurgency");
 		addEntryWidget("refurgency", wUrgency);
-		wUrgency.addItem("not specified", "0");
-		wUrgency.addItem("low priority", "1");
-		wUrgency.addItem("normal", "2");
-		wUrgency.addItem("urgent", "3");
-		wUrgency.addItem("emergency", "4");
+		wUrgency.addItem(_("not specified"), "0");
+		wUrgency.addItem(_("low priority"), "1");
+		wUrgency.addItem(_("normal"), "2");
+		wUrgency.addItem(_("urgent"), "3");
+		wUrgency.addItem(_("emergency"), "4");
 		wUrgency.setVisibleItemCount(1);
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",
+		final CustomButton wSubmit = new CustomButton(_("Submit"),
 				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -158,7 +160,7 @@ public class ReferralEntry extends PatientEntryScreenInterface {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",
+		final CustomButton wReset = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {

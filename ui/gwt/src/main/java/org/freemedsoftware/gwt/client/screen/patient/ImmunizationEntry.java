@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.Date;
 
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
@@ -68,7 +70,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 
 		int pos = 0;
 
-		final Label dateOfLabel = new Label("Date of");
+		final Label dateOfLabel = new Label(_("Date of"));
 		flexTable.setWidget(pos, 0, dateOfLabel);
 		dateOfWidget = new CustomDatePicker();
 		dateOfWidget.setHashMapping("dateof");
@@ -76,7 +78,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, dateOfWidget);
 		pos++;
 
-		final Label providerLabel = new Label("Provider");
+		final Label providerLabel = new Label(_("Provider"));
 		flexTable.setWidget(pos, 0, providerLabel);
 		wProvider = new SupportModuleWidget("ProviderModule");
 		wProvider.setHashMapping("provider");
@@ -84,7 +86,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wProvider);
 		pos++;
 
-		final Label adminProviderLabel = new Label("Administering Provider");
+		final Label adminProviderLabel = new Label(_("Administering Provider"));
 		flexTable.setWidget(pos, 0, adminProviderLabel);
 		wAdminProvider = new SupportModuleWidget("ProviderModule");
 		wAdminProvider.setHashMapping("admin_provider");
@@ -92,7 +94,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wAdminProvider);
 		pos++;
 
-		final Label immunizationLabel = new Label("Immunization");
+		final Label immunizationLabel = new Label(_("Immunization"));
 		flexTable.setWidget(pos, 0, immunizationLabel);
 		wImmunization = new SupportModuleWidget("Bccdc");
 		wImmunization.setHashMapping("immunization");
@@ -100,7 +102,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wImmunization);
 		pos++;
 
-		final Label routeLabel = new Label("Route");
+		final Label routeLabel = new Label(_("Route"));
 		flexTable.setWidget(pos, 0, routeLabel);
 		wRoute = new SupportModuleWidget("RouteOfAdministration");
 		wRoute.setHashMapping("route");
@@ -108,7 +110,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wRoute);
 		pos++;
 
-		final Label bodySiteLabel = new Label("Body Site");
+		final Label bodySiteLabel = new Label(_("Body Site"));
 		flexTable.setWidget(pos, 0, bodySiteLabel);
 		wBodySite = new SupportModuleWidget("BodySite");
 		wBodySite.setHashMapping("body_site");
@@ -116,7 +118,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wBodySite);
 		pos++;
 
-		final Label manufacturerLabel = new Label("Manufacturer");
+		final Label manufacturerLabel = new Label(_("Manufacturer"));
 		flexTable.setWidget(pos, 0, manufacturerLabel);
 		wManufacturer = new CustomTextBox();
 		wManufacturer.setHashMapping("manufacturer");
@@ -124,7 +126,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wManufacturer);
 		pos++;
 
-		final Label lotNumberLabel = new Label("Lot Number");
+		final Label lotNumberLabel = new Label(_("Lot Number"));
 		flexTable.setWidget(pos, 0, lotNumberLabel);
 		wLotNumber = new CustomTextBox();
 		wLotNumber.setHashMapping("lot_number");
@@ -132,17 +134,17 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(pos, 1, wLotNumber);
 		pos++;
 
-		final Label recoveredLabel = new Label("Recovered");
+		final Label recoveredLabel = new Label(_("Recovered"));
 		flexTable.setWidget(pos, 0, recoveredLabel);
 		wRecovered = new CustomListBox();
-		wRecovered.addItem("Yes", "1");
-		wRecovered.addItem("No", "0");
+		wRecovered.addItem(_("Yes"), "1");
+		wRecovered.addItem(_("No"), "0");
 		wRecovered.setHashMapping("recovered");
 		addEntryWidget("recovered", wRecovered);
 		flexTable.setWidget(pos, 1, wRecovered);
 		pos++;
 
-		final Label notesLabel = new Label("Notes");
+		final Label notesLabel = new Label(_("Notes"));
 		flexTable.setWidget(pos, 0, notesLabel);
 		wNotes = new CustomTextArea();
 		wNotes.setHashMapping("notes");
@@ -154,7 +156,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",
+		final CustomButton wSubmit = new CustomButton(_("Submit"),
 				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -162,7 +164,7 @@ public class ImmunizationEntry extends PatientEntryScreenInterface {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",
+		final CustomButton wReset = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {

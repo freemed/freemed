@@ -1,9 +1,8 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -12,15 +11,17 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
+import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.SupportModuleMultipleChoiceWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -32,19 +33,10 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
-import org.freemedsoftware.gwt.client.widget.CustomButton;
-import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
-import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterCommandType;
-import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterFormMode;
-
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -136,13 +128,13 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		addPanel.add(entryPanel);
 		listPanel = new VerticalPanel();
 		listPanel.setSize("100%", "100%");
-		tabPanel.add(addPanel, "Add");
-		tabPanel.add(listPanel,"List");
+		tabPanel.add(addPanel, _("Add"));
+		tabPanel.add(listPanel, _("List"));
 		tabPanel.selectTab(1);
 		createEntryScreen();
 		HorizontalPanel actionPanel=new HorizontalPanel();
 		actionPanel.setSpacing(10);
-		btnAdd = new CustomButton("Add",AppConstants.ICON_ADD);
+		btnAdd = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 		btnAdd.addClickHandler(new ClickHandler() {
 		
 			@Override
@@ -151,7 +143,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 			}
 		
 		});
-		CustomButton btnReset=new CustomButton("Reset",AppConstants.ICON_REFRESH);
+		CustomButton btnReset=new CustomButton(_("Reset"), AppConstants.ICON_REFRESH);
 		btnReset.addClickHandler(new ClickHandler() {
 		
 			@Override
@@ -173,7 +165,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		genInfoPanel.setSpacing(5);
 		
 		entryPanel.add(genInfoPanel);
-		Label lbGenInfo=new Label(" General Information  ");
+		Label lbGenInfo=new Label(" " + _("General Information") + "  ");
 		lbGenInfo.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		genInfoPanel.add(lbGenInfo);
 		FlexTable generalInfoTable=new FlexTable();
@@ -181,7 +173,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		genInfoPanel.add(generalInfoTable);
 		
 		int row=0;
-		Label lbDesc=new Label("Description");
+		Label lbDesc=new Label(_("Description"));
 		lbDesc.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbDesc = new TextArea();
 		tbDesc.setWidth("300px");
@@ -190,11 +182,11 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.getFlexCellFormatter().setColSpan(row, 1, 2);
 		row++;
 		
-		Label lbDtFirstOcc=new Label("Date of First Occurance");
+		Label lbDtFirstOcc=new Label(_("Date of First Occurance"));
 		lbDtFirstOcc.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		dtFirstOcc = new CustomDatePicker();
 		dtFirstOcc.setWidth(fieldsWidth);
-		Label lbDtCurrOnset=new Label("Date of Current Onset");
+		Label lbDtCurrOnset=new Label(_("Date of Current Onset"));
 		lbDtCurrOnset.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		dtCurrOnset = new CustomDatePicker();
 		dtCurrOnset.setWidth(fieldsWidth);
@@ -204,7 +196,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.setWidget(row, 3, dtCurrOnset);
 		row++;
 		
-		Label lbReffPhy=new Label("Referring Physician");
+		Label lbReffPhy=new Label(_("Referring Physician"));
 		lbReffPhy.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		reffPhy = new SupportModuleWidget("ProviderModule");
 		reffPhy.setWidth(fieldsWidth);
@@ -212,7 +204,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.setWidget(row, 1, reffPhy);
 		row++;
 		
-		Label lbFacility=new Label("Facility");
+		Label lbFacility=new Label(_("Facility"));
 		lbFacility.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		facWidget = new SupportModuleWidget("FacilityModule");
 		facWidget.setWidth(fieldsWidth);
@@ -220,35 +212,35 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.setWidget(row, 1, facWidget);
 		row++;
 		
-		Label lbDiagFam = new Label("Diagnosis Family");
+		Label lbDiagFam = new Label(_("Diagnosis Family"));
 		lbDiagFam.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		diagFamWidget = new SupportModuleMultipleChoiceWidget("DiagnosisFamily");
 		generalInfoTable.setWidget(row, 0, lbDiagFam);
 		generalInfoTable.setWidget(row, 1, diagFamWidget);
 		row++;
 		
-		Label lbDisability=new Label("Disability Type");
+		Label lbDisability=new Label(_("Disability Type"));
 		lbDisability.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listDisability = new CustomListBox();
 		listDisability.setWidth(fieldsWidth);
-		listDisability.addItem("Unknown", "0");
+		listDisability.addItem(_("Unknown"), "0");
 		listDisability.addItem("LT", "1");
 		listDisability.addItem("ST", "2");
-		listDisability.addItem("Permanent", "3");
-		listDisability.addItem("No Disability", "4");
+		listDisability.addItem(_("Permanent"), "3");
+		listDisability.addItem(_("No Disability"), "4");
 		generalInfoTable.setWidget(row, 0, lbDisability);
 		generalInfoTable.setWidget(row, 1, listDisability);
 		row++;
 		
-		Label lbDsbFrDate=new Label("Disability From Date");
+		Label lbDsbFrDate=new Label(_("Disability From Date"));
 		lbDsbFrDate.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		dsbFrDate = new CustomDatePicker();
 		dsbFrDate.setWidth(fieldsWidth);
-		Label lbDsbToDate=new Label("Disability To Date");
+		Label lbDsbToDate=new Label(_("Disability To Date"));
 		lbDsbToDate.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		dsbToDate = new CustomDatePicker();
 		dsbToDate.setWidth(fieldsWidth);
-		Label lbDsbWrpDate=new Label("Disability Back to Work Date");
+		Label lbDsbWrpDate=new Label(_("Disability Back to Work Date"));
 		lbDsbWrpDate.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		dtDsbWrpDate = new CustomDatePicker();
 		dtDsbWrpDate.setWidth(fieldsWidth);
@@ -260,10 +252,10 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.setWidget(row, 5, dtDsbWrpDate);
 		row++;		
 		
-		Label lbRelTo=new Label("Related to:");
+		Label lbRelTo=new Label(_("Related to") + ":");
 		lbRelTo.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		HorizontalPanel hpChecks=new HorizontalPanel();
-		cbRelPreg = new CheckBox("Pregnancy");
+		cbRelPreg = new CheckBox(_("Pregnancy"));
 		cbRelPreg.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 		
 			@Override
@@ -280,7 +272,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 			}
 		
 		});
-		cbRelEmp = new CheckBox("Employment");
+		cbRelEmp = new CheckBox(_("Employment"));
 		cbRelEmp.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -297,7 +289,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 			}
 		
 		});
-		cbRelAuto = new CheckBox("Automobile");
+		cbRelAuto = new CheckBox(_("Automobile"));
 		cbRelAuto.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -314,7 +306,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 			}
 		
 		});
-		cbRelOtherCause = new CheckBox("Other Cause");
+		cbRelOtherCause = new CheckBox(_("Other Cause"));
 		cbRelOtherCause.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -340,7 +332,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.getFlexCellFormatter().setColSpan(row, 1, 2);
 		row++;
 		
-		Label lbState=new Label("State/Province");
+		Label lbState=new Label(_("State/Province"));
 		lbState.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbStateProv = new TextBox();
 		tbStateProv.setWidth(fieldsWidth);
@@ -348,33 +340,33 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		generalInfoTable.setWidget(row, 1, tbStateProv);
 		row++;
 		
-		Label lbEpisodeType=new Label("Episode Type");
+		Label lbEpisodeType=new Label(_("Episode Type"));
 		lbEpisodeType.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listEpisodeType = new CustomListBox();
 		listEpisodeType.setWidth(fieldsWidth);
-		listEpisodeType.addItem("NONE SELECTED", "0");
-		listEpisodeType.addItem("acute", "acute");
-		listEpisodeType.addItem("chronic", "chronic");
-		listEpisodeType.addItem("chronic recurrent", "chronic recurrent");
-		listEpisodeType.addItem("historical", "historical");
+		listEpisodeType.addItem(_("NONE SELECTED"), "0");
+		listEpisodeType.addItem(_("acute"), "acute");
+		listEpisodeType.addItem(_("chronic"), "chronic");
+		listEpisodeType.addItem(_("chronic recurrent"), "chronic recurrent");
+		listEpisodeType.addItem(_("historical"), "historical");
 		generalInfoTable.setWidget(row, 0, lbEpisodeType);
 		generalInfoTable.setWidget(row, 1, listEpisodeType);
 		row++;
 		
-		Label lbHospital=new Label("Hospital");
+		Label lbHospital=new Label(_("Hospital"));
 		lbHospital.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		radHospital = new CustomRadioButtonGroup("hos");
-		radHospital.addItem("Yes", "1");
-		radHospital.addItem("No", "0");
+		radHospital.addItem(_("Yes"), "1");
+		radHospital.addItem(_("No"), "0");
 		generalInfoTable.setWidget(row, 0, lbHospital);
 		generalInfoTable.setWidget(row, 1, radHospital);
 		row++;
 		
-		Label lbHosAdmDt=new Label("Hospital Admission Date");
+		Label lbHosAdmDt=new Label(_("Hospital Admission Date"));
 		lbHosAdmDt.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		hosAdmDt = new CustomDatePicker();
 		hosAdmDt.setWidth(fieldsWidth);
-		Label lbHosDscDt=new Label("Hospitial Discharge Date");
+		Label lbHosDscDt=new Label(_("Hospitial Discharge Date"));
 		lbHosDscDt.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		hosDscDt = new CustomDatePicker();
 		hosDscDt.setWidth(fieldsWidth);
@@ -392,14 +384,14 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyPanel.setSize("100%", "100%");
 		pregnencyPanel.setSpacing(5);
 		entryPanel.add(pregnencyPanel);
-		Label lbPregnency=new Label("Pregnancy Related Information");
+		Label lbPregnency=new Label(_("Pregnancy Related Information"));
 		lbPregnency.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		pregnencyPanel.add(lbPregnency);
 		FlexTable pregnencyTable=new FlexTable();
 		pregnencyPanel.add(pregnencyTable);
 		
 		int row=0;
-		Label lbCycleLength=new Label("Length of Cycle");
+		Label lbCycleLength=new Label(_("Length of Cycle"));
 		lbCycleLength.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listCycleLength = new CustomListBox();
 		for(int i=10;i<41;i++){
@@ -409,7 +401,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyTable.setWidget(row, 1, listCycleLength);
 		row++;
 		
-		Label lbGravida=new Label("Gravida");
+		Label lbGravida=new Label(_("Gravida"));
 		lbGravida.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listGravida = new CustomListBox();
 		for(int i=0;i<16;i++){
@@ -419,7 +411,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyTable.setWidget(row, 1, listGravida);
 		row++;
 		
-		Label lbPara=new Label("Para");
+		Label lbPara=new Label(_("Para"));
 		lbPara.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listPara = new CustomListBox();
 		for(int i=0;i<16;i++){
@@ -429,7 +421,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyTable.setWidget(row, 1, listPara);
 		row++;
 		
-		Label lbAbortions=new Label("Abortions");
+		Label lbAbortions=new Label(_("Abortions"));
 		lbAbortions.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listAbortions = new CustomListBox();
 		for(int i=0;i<16;i++){
@@ -439,7 +431,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyTable.setWidget(row, 1, listAbortions);
 		row++;
 		
-		Label lbLastMensPrd=new Label("Last Menstrual Period");
+		Label lbLastMensPrd=new Label(_("Last Menstrual Period"));
 		lbLastMensPrd.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		lastMensPrd = new CustomDatePicker();
 		lastMensPrd.setWidth(fieldsWidth);
@@ -447,7 +439,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyTable.setWidget(row, 1, lastMensPrd);
 		row++;
 		
-		Label lbDateOfConfinement=new Label("Date of Confinement");
+		Label lbDateOfConfinement=new Label(_("Date of Confinement"));
 		lbDateOfConfinement.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		dtOfConf = new CustomDatePicker();
 		dtOfConf.setWidth(fieldsWidth);
@@ -455,7 +447,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		pregnencyTable.setWidget(row, 1, dtOfConf);
 		row++;
 		
-		Label lbMiscarries=new Label("Miscarries");
+		Label lbMiscarries=new Label(_("Miscarries"));
 		lbMiscarries.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listMiscarries = new CustomListBox();
 		for(int i=0;i<16;i++){
@@ -471,14 +463,14 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementPanel.setSize("100%", "100%");
 		employementPanel.setSpacing(5);
 		entryPanel.add(employementPanel);
-		Label lbEmployement=new Label("Employment Related Information");
+		Label lbEmployement=new Label(_("Employment Related Information"));
 		lbEmployement.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		employementPanel.add(lbEmployement);
 		FlexTable employementTable=new FlexTable();
 		employementPanel.add(employementTable);
 		
 		int row=0;
-		Label lbEmpName=new Label("Name of Employer");
+		Label lbEmpName=new Label(_("Name of Employer"));
 		lbEmpName.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmpName = new TextBox();
 		tbEmpName.setWidth(fieldsWidth);
@@ -486,7 +478,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmpName);
 		row++;
 		
-		Label lbAdd1=new Label("Address (Line 1)");
+		Label lbAdd1=new Label(_("Address (Line 1)"));
 		lbAdd1.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeAdd1 = new TextBox();
 		tbEmployeeAdd1.setWidth(fieldsWidth);
@@ -494,7 +486,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmployeeAdd1);
 		row++;
 		
-		Label lbAdd2=new Label("Address (Line 2)");
+		Label lbAdd2=new Label(_("Address (Line 2)"));
 		lbAdd2.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeAdd2 = new TextBox();
 		tbEmployeeAdd2.setWidth(fieldsWidth);
@@ -502,7 +494,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmployeeAdd2);
 		row++;
 		
-		Label lbCityStPrvcPstCode=new Label("City, State/Prov, Postal Code");
+		Label lbCityStPrvcPstCode=new Label(_("City, State/Prov, Postal Code"));
 		lbCityStPrvcPstCode.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		HorizontalPanel hp=new HorizontalPanel();
 		hp.setSpacing(5);
@@ -518,7 +510,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, hp);
 		row++;
 		
-		Label lbCountry=new Label("Country");
+		Label lbCountry=new Label(_("Country"));
 		lbCountry.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeCountry = new TextBox();
 		tbEmployeeCountry.setWidth(fieldsWidth);
@@ -526,7 +518,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmployeeCountry);
 		row++;
 		
-		Label lbFileNumber=new Label("File Number");
+		Label lbFileNumber=new Label(_("File Number"));
 		lbFileNumber.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeFileNumber = new TextBox();
 		tbEmployeeFileNumber.setWidth(fieldsWidth);
@@ -534,7 +526,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmployeeFileNumber);
 		row++;
 		
-		Label lbContactName=new Label("Contact Name");
+		Label lbContactName=new Label(_("Contact Name"));
 		lbContactName.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeContactName = new TextBox();
 		tbEmployeeContactName.setWidth(fieldsWidth);
@@ -542,7 +534,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmployeeContactName);
 		row++;
 		
-		Label lbContactPhone=new Label("Contact Phone");
+		Label lbContactPhone=new Label(_("Contact Phone"));
 		lbContactPhone.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeContactPhone = new TextBox();
 		tbEmployeeContactPhone.setWidth(fieldsWidth);
@@ -550,7 +542,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementTable.setWidget(row, 1, tbEmployeeContactPhone);
 		row++;
 		
-		Label lbEmailAddress=new Label("Email Address");
+		Label lbEmailAddress=new Label(_("Email Address"));
 		lbEmailAddress.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEmployeeEmailAddress = new TextBox();
 		tbEmployeeEmailAddress.setWidth(fieldsWidth);
@@ -564,14 +556,14 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobilePanel.setSize("100%", "100%");
 		automobilePanel.setSpacing(5);
 		entryPanel.add(automobilePanel);
-		Label lbAutomobile=new Label("Automobile Related Information");
+		Label lbAutomobile=new Label(_("Automobile Related Information"));
 		lbAutomobile.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		automobilePanel.add(lbAutomobile);
 		FlexTable automobileTable=new FlexTable();
 		automobilePanel.add(automobileTable);
 		
 		int row=0;
-		Label lbAutoIns=new Label("Auto Insurance");
+		Label lbAutoIns=new Label(_("Auto Insurance"));
 		lbAutoIns.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoIns = new TextBox();
 		tbAutoIns.setWidth(fieldsWidth);
@@ -579,7 +571,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoIns);
 		row++;
 		
-		Label lbAutoAdd1=new Label("Address (Line 1)");
+		Label lbAutoAdd1=new Label(_("Address (Line 1)"));
 		lbAutoAdd1.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoAdd1 = new TextBox();
 		tbAutoAdd1.setWidth(fieldsWidth);
@@ -587,7 +579,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoAdd1);
 		row++;
 		
-		Label lbAutoAdd2=new Label("Address (Line 2)");
+		Label lbAutoAdd2=new Label(_("Address (Line 2)"));
 		lbAutoAdd2.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoAdd2 = new TextBox();
 		tbAutoAdd2.setWidth(fieldsWidth);
@@ -595,7 +587,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoAdd2);
 		row++;
 		
-		Label lbAutoCityStPrvcPstCode=new Label("City, State/Prov, Postal Code");
+		Label lbAutoCityStPrvcPstCode=new Label(_("City, State/Prov, Postal Code"));
 		lbAutoCityStPrvcPstCode.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		HorizontalPanel hpAuto=new HorizontalPanel();
 		hpAuto.setSpacing(5);
@@ -611,7 +603,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, hpAuto);
 		row++;
 		
-		Label lbAutoCountry=new Label("Country");
+		Label lbAutoCountry=new Label(_("Country"));
 		lbAutoCountry.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoCountry = new TextBox();
 		tbAutoCountry.setWidth(fieldsWidth);
@@ -619,7 +611,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoCountry);
 		row++;
 		
-		Label lbAutoCaseNumber=new Label("Case Number");
+		Label lbAutoCaseNumber=new Label(_("Case Number"));
 		lbAutoCaseNumber.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoCaseNumber = new TextBox();
 		tbAutoCaseNumber.setWidth(fieldsWidth);
@@ -627,7 +619,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoCaseNumber);
 		row++;
 		
-		Label lbAutoContactName=new Label("Contact Name");
+		Label lbAutoContactName=new Label(_("Contact Name"));
 		lbAutoContactName.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoContactName = new TextBox();
 		tbAutoContactName.setWidth(fieldsWidth);
@@ -635,7 +627,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoContactName);
 		row++;
 		
-		Label lbAutoContactPhone=new Label("Contact Phone");
+		Label lbAutoContactPhone=new Label(_("Contact Phone"));
 		lbAutoContactPhone.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoContactPhone = new TextBox();
 		tbAutoContactPhone.setWidth(fieldsWidth);
@@ -643,7 +635,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoContactPhone);
 		row++;
 		
-		Label lbAutoEmailAddress=new Label("Email Address");
+		Label lbAutoEmailAddress=new Label(_("Email Address"));
 		lbAutoEmailAddress.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbAutoEmailAddress = new TextBox();
 		tbAutoEmailAddress.setWidth(fieldsWidth);
@@ -651,7 +643,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		automobileTable.setWidget(row, 1, tbAutoEmailAddress);
 		row++;
 		
-		Label lbTimeOfAccident=new Label("Time of Accident");
+		Label lbTimeOfAccident=new Label(_("Time of Accident"));
 		lbTimeOfAccident.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		listHours = new CustomListBox();
 		for(int i=0;i<13;i++){
@@ -681,14 +673,14 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		otherPanel.setSize("100%", "100%");
 		otherPanel.setSpacing(5);
 		entryPanel.add(otherPanel);
-		Label lbOther=new Label("Other Related Information ");
+		Label lbOther=new Label(_("Other Related Information"));
 		lbOther.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		otherPanel.add(lbOther);
 		FlexTable otherTable=new FlexTable();
 		otherPanel.add(otherTable);
 		
 		int row=0;
-		Label lbConRelatedTo=new Label("Condition Related to");
+		Label lbConRelatedTo=new Label(_("Condition Related to"));
 		lbConRelatedTo.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbConRelatedTo = new TextBox();
 		tbConRelatedTo.setWidth(fieldsWidth);
@@ -817,13 +809,13 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 							if (200 == response.getStatusCode()) {
 								if (isAdding) {
 									Integer r = (Integer) JsonUtil.shoehornJson(
-											JSONParser.parse(response.getText()),
+											JSONParser.parseStrict(response.getText()),
 											"Integer");
 	
 									if (r != 0) {
 										Util
 												.showInfoMsg("EpisodeOfCare",
-														"Episode of Care Successfully Created.");
+														_("Episode of Care successfully created."));
 										reset();
 										loadEocList();
 										tabPanel.selectTab(1);
@@ -833,13 +825,13 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 	
 								} else {
 									Boolean r = (Boolean) JsonUtil.shoehornJson(
-											JSONParser.parse(response.getText()),
+											JSONParser.parseStrict(response.getText()),
 											"Boolean");
 		
 									if (r) {
 										Util
 												.showInfoMsg("EpisodeOfCare",
-														"Episode of Care Successfully Modified.");
+														_("Episode of Care successfully modified."));
 										reset();
 										loadEocList();
 										tabPanel.selectTab(1);
@@ -863,9 +855,9 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		eocCustomTable.setIndexName("id");
 		// patientCustomTable.setSize("100%", "100%");
 		eocCustomTable.setWidth("100%");
-		eocCustomTable.addColumn("Starting Date", "eocstartdate");
-		eocCustomTable.addColumn("Description", "eocdescrip");
-		eocCustomTable.addColumn("Action", "action");
+		eocCustomTable.addColumn(_("Starting Date"), "eocstartdate");
+		eocCustomTable.addColumn(_("Description"), "eocdescrip");
+		eocCustomTable.addColumn(_("Action"), "action");
 		
 		
 		eocCustomTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -1048,12 +1040,12 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 
 						if (200 == response.getStatusCode()) {
 							try {
+								@SuppressWarnings("unchecked")
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
-								if (r != null) {
-							
+								if (r != null) {							
 									eocCustomTable.loadData(r);
 								} else {
 
@@ -1093,13 +1085,13 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 						if (200 == response.getStatusCode()) {
 							try {
 								Boolean r = (Boolean) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"Boolean");
 								if(r){
 									Util
 									.showInfoMsg("EpisodeOfCare",
-											"Episode Of Care Successfully Deleted.");
+											_("Episode Of Care successfully deleted."));
 									loadEocList();
 								}
 								
@@ -1127,7 +1119,7 @@ public class EpisodeOfCareScreen extends PatientScreenInterface{
 		employementPanel=null;
 		otherPanel=null;
 		isAdding=true;
-		btnAdd.setText("Add");
+		btnAdd.setText(_("Add"));
 		entryPanel.clear();
 		createEntryScreen();
 	}

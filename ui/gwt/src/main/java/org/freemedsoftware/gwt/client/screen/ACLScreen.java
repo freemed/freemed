@@ -25,6 +25,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,7 +56,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -108,7 +109,7 @@ public class ACLScreen extends ScreenInterface implements
 		aclContainerVPanel = new VerticalPanel();
 		initWidget(aclContainerVPanel);
 
-		blockScreenWidget = new BlockScreenWidget("Please wait while modules are being populated....");
+		blockScreenWidget = new BlockScreenWidget(_("Please wait while modules are being populated...."));
 		aclContainerVPanel.add(blockScreenWidget);
 		tabPanel = new TabPanel();
 		aclContainerVPanel.add(tabPanel);
@@ -116,13 +117,13 @@ public class ACLScreen extends ScreenInterface implements
 		// Panel #1
 		if(canWrite){
 			VerticalPanel groupAddPanel = new VerticalPanel();
-			tabPanel.add(groupAddPanel, "Add Group");
+			tabPanel.add(groupAddPanel, _("Add Group"));
 			tabPanel.selectTab(0);
 			
 			HorizontalPanel groupNameHPanel = new HorizontalPanel();
 			groupAddPanel.add(groupNameHPanel);
 			groupNameHPanel.setSpacing(5);
-			groupNameHPanel.add(new Label("Group Name"));
+			groupNameHPanel.add(new Label(_("Group Name")));
 			
 			groupName = new TextBox();
 			groupName.setWidth("10em");
@@ -133,13 +134,13 @@ public class ACLScreen extends ScreenInterface implements
 			groupAddTable.removeTableStyle();
 			groupAddPanel.add(groupAddTable);
 			
-			Label moduleHeading = new Label("Modules");
+			Label moduleHeading = new Label(_("Modules"));
 			moduleHeading.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 			groupAddTable.getFlexTable().setWidget(0, 0, moduleHeading);
 			HorizontalPanel headerButtonPanels = new HorizontalPanel();
 			headerButtonPanels.setWidth("100%");
 			groupAddTable.getFlexTable().setWidget(0, 1, headerButtonPanels);
-			CustomButton selectAllBtn = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+			CustomButton selectAllBtn = new CustomButton(_("Select All"), AppConstants.ICON_SELECT_ALL);
 			selectAllBtn.setWidth("100%");
 			selectAllBtn.addClickHandler(new ClickHandler() {
 				@Override
@@ -151,7 +152,7 @@ public class ACLScreen extends ScreenInterface implements
 				}
 			});
 			headerButtonPanels.add(selectAllBtn);
-			CustomButton selectNoneBtn = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
+			CustomButton selectNoneBtn = new CustomButton(_("Select None"), AppConstants.ICON_SELECT_NONE);
 			selectNoneBtn.setWidth("100%");
 			selectNoneBtn.addClickHandler(new ClickHandler() {
 				@Override
@@ -164,24 +165,24 @@ public class ACLScreen extends ScreenInterface implements
 			});
 			headerButtonPanels.add(selectNoneBtn);
 			
-			addGroupButton = new CustomButton("Add Group",AppConstants.ICON_ADD);
+			addGroupButton = new CustomButton(_("Add Group"), AppConstants.ICON_ADD);
 			addGroupButton.setWidth("100%");
 			addGroupButton.addClickHandler(this);
 			headerButtonPanels.add(addGroupButton);
 
-			copyButton = new CustomButton("Copy",AppConstants.ICON_ADD);
+			copyButton = new CustomButton(_("Copy"), AppConstants.ICON_ADD);
 			copyButton .setWidth("100%");
 			copyButton.addClickHandler(this);
 			copyButton.setVisible(false);
 			headerButtonPanels.add(copyButton);
 			
-			deleteGroupButton = new CustomButton("Delete Group",AppConstants.ICON_DELETE);
+			deleteGroupButton = new CustomButton(_("Delete Group"),AppConstants.ICON_DELETE);
 			deleteGroupButton .setWidth("100%");
 			deleteGroupButton.addClickHandler(this);
 			deleteGroupButton.setVisible(false);
 			headerButtonPanels.add(deleteGroupButton);
 			
-			clearButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+			clearButton = new CustomButton(_("Reset"),AppConstants.ICON_CLEAR);
 			clearButton.setWidth("100%");
 			clearButton.addClickHandler(this);
 			headerButtonPanels.add(clearButton);
@@ -191,12 +192,12 @@ public class ACLScreen extends ScreenInterface implements
 		// Panel #2
 
 		final FlexTable groupListTable = new FlexTable();
-		tabPanel.add(groupListTable, "List Groups");
+		tabPanel.add(groupListTable, _("List Groups"));
 
 		groupListTable.setWidget(0, 0, groupsTable);
 
 		groupsTable.setSize("100%", "100%");
-		groupsTable.addColumn("Group Name", "groupname"); // col 0
+		groupsTable.addColumn(_("Group Name"), "groupname"); // col 0
 //		groupsTable.addColumn("Group Value", "groupvalue"); // col 1
 //		groupsTable.addColumn("Parent Group", "parentgroup"); // col 2
 		groupsTable.setIndexName("id");
@@ -247,7 +248,7 @@ public class ACLScreen extends ScreenInterface implements
 		if (w == addGroupButton) {
 
 			if (checkInput() == true) {
-				blockScreenWidget.setText("Please wait while permissions are being applied......");
+				blockScreenWidget.setText(_("Please wait while permissions are being applied..."));
 				aclContainerVPanel.add(blockScreenWidget);
 				HashMap<String, String> m=new HashMap<String, String>();
 				m.put("groupName",groupName.getText() );
@@ -278,7 +279,7 @@ public class ACLScreen extends ScreenInterface implements
 				}
 				
 				if(permissions.size()==0){
-					Window.alert("Please Select at least one module!");
+					Window.alert(_("Please select at least one module!"));
 					aclContainerVPanel.remove(blockScreenWidget);
 					return;
 				}
@@ -297,7 +298,7 @@ public class ACLScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg("Bottle Transfer", "Failed to add Group.");
+								Util.showErrorMsg("ACL", _("Failed to add."));
 							}
 
 							public void onResponseReceived(Request request,
@@ -305,7 +306,7 @@ public class ACLScreen extends ScreenInterface implements
 								if (200 == response.getStatusCode()) {
 									Integer r = (Integer) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"Integer");
 									if (r != null) {
 										if(aclPermissionsMapItr.hasNext())
@@ -314,12 +315,12 @@ public class ACLScreen extends ScreenInterface implements
 											aclContainerVPanel.remove(blockScreenWidget);
 											retrieveAllGroups();
 											clearForm();
-											Util.showInfoMsg(className, "Permissions successfully applied.");
+											Util.showInfoMsg(className, _("Permissions successfully applied."));
 										}
 									}else{
 										Boolean b = (Boolean) JsonUtil
 										.shoehornJson(JSONParser
-												.parse(response.getText()),
+												.parseStrict(response.getText()),
 												"Boolean");
 										if(b){
 											if(aclPermissionsMapItr.hasNext())
@@ -328,12 +329,12 @@ public class ACLScreen extends ScreenInterface implements
 												aclContainerVPanel.remove(blockScreenWidget);
 												retrieveAllGroups();
 												clearForm();
-												Util.showInfoMsg(className, "Permissions successfully applied.");
+												Util.showInfoMsg(className, _("Permissions successfully applied."));
 											}
 										}
 									}
 								} else {
-									Util.showErrorMsg("Bottle Transfer", "Failed to Apply Permissions.");
+									Util.showErrorMsg("ACL", _("Failed to apply permissions."));
 								}
 							}
 						});
@@ -362,7 +363,7 @@ public class ACLScreen extends ScreenInterface implements
 					try {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
-								Util.showErrorMsg("Bottle Transfer", "Failed to delete Group.");
+								Util.showErrorMsg("ACL", _("Failed to delete."));
 							}
 
 							public void onResponseReceived(Request request,
@@ -370,20 +371,20 @@ public class ACLScreen extends ScreenInterface implements
 								if (200 == response.getStatusCode()) {
 										Boolean flag = (Boolean) JsonUtil
 										.shoehornJson(JSONParser
-												.parse(response.getText()),
+												.parseStrict(response.getText()),
 												"Boolean");
 										if(flag){
-											Util.showInfoMsg(className, "Successfully deleted Group.");
+											Util.showInfoMsg(className, _("Successfully deleted."));
 											retrieveAllGroups();
 											clearForm();
 										}
 								} else {
-									Util.showErrorMsg("Bottle Transfer", "Failed to add Group.");
+									Util.showErrorMsg("ACL", _("Failed to add."));
 								}
 							}
 						});
 					} catch (RequestException e) {
-						Util.showErrorMsg("Bottle Transfer", "Failed to add Group.");
+						Util.showErrorMsg("ACL", _("Failed to add."));
 					}
 				} else {
 					// TODO: Create GWT-RPC stuff here
@@ -420,7 +421,7 @@ public class ACLScreen extends ScreenInterface implements
 								if(!aclPermissionsMapItr.hasNext()){
 									retrieveAllGroups();
 									clearForm();
-									Util.showInfoMsg(className, "Permissions successfully applied.");
+									Util.showInfoMsg(className, _("Permissions successfully applied."));
 									aclContainerVPanel.remove(blockScreenWidget);
 								}
 							}
@@ -433,7 +434,7 @@ public class ACLScreen extends ScreenInterface implements
 	}
 	
 	public Boolean checkInput() {
-		String base = "Please check the following fields:" + " ";
+		String base = _("Please check the following fields") + ": ";
 		String[] s = {};
 		if (groupName.getText() == "") {
 			s[s.length] = "Group Name";
@@ -457,7 +458,7 @@ public class ACLScreen extends ScreenInterface implements
 
 	public void clearForm() {
 		groupName.setText("");
-		addGroupButton.setText("Add Group");
+		addGroupButton.setText(_("Add Group"));
 		groupId=null;
 		deleteGroupButton.setVisible(false);
 		copyButton.setVisible(false);
@@ -471,7 +472,7 @@ public class ACLScreen extends ScreenInterface implements
 
 	public void copyGroup(){
 		groupName.setText("");
-		addGroupButton.setText("Add Group");
+		addGroupButton.setText(_("Add Group"));
 		groupId=null;
 		deleteGroupButton.setVisible(false);
 		copyButton.setVisible(false);
@@ -501,7 +502,7 @@ public class ACLScreen extends ScreenInterface implements
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (data != null) {
@@ -543,7 +544,7 @@ public class ACLScreen extends ScreenInterface implements
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String,String[]> data = (HashMap<String,String[]>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String[]>");
 							if (data != null) {
@@ -585,7 +586,7 @@ public class ACLScreen extends ScreenInterface implements
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String,String[]> data = (HashMap<String,String[]>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String[]>");
 							if (data != null) {
@@ -599,7 +600,7 @@ public class ACLScreen extends ScreenInterface implements
 												aclPermissionsMap.get(section+":"+value).setValue(true);
 									}
 								}
-								addGroupButton.setText("Modify Group");
+								addGroupButton.setText(_("Modify Group"));
 								deleteGroupButton.setVisible(true);
 								copyButton.setVisible(true);
 							}
@@ -632,7 +633,7 @@ public class ACLScreen extends ScreenInterface implements
 					aclPermissionsMap.put(section+":"+value,checkBox);
 			}
 			
-			CustomButton clearSubLink = new CustomButton("None",AppConstants.ICON_SELECT_NONE);
+			CustomButton clearSubLink = new CustomButton(_("None"), AppConstants.ICON_SELECT_NONE);
 			clearSubLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -644,7 +645,7 @@ public class ACLScreen extends ScreenInterface implements
 			});
 			temPanel.add(clearSubLink);
 			
-			CustomButton selectAllSubLink = new CustomButton("All",AppConstants.ICON_SELECT_ALL);
+			CustomButton selectAllSubLink = new CustomButton(_("All"), AppConstants.ICON_SELECT_ALL);
 			selectAllSubLink.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {

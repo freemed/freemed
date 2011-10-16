@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
@@ -56,26 +58,26 @@ public class DrugSampleEntry extends PatientEntryScreenInterface {
 
 		int i = 0;
 
-		flexTable.setWidget(i, 0, new Label("Drug Sample"));
+		flexTable.setWidget(i, 0, new Label(_("Drug Sample")));
 		wDrugSample = new SupportModuleWidget("DrugSampleInventory");
 		wDrugSample.setHashMapping("drugsampleid");
 		addEntryWidget("drugsampleid", wDrugSample);
 		flexTable.setWidget(i, 1, wDrugSample);
 		i++;
 
-		flexTable.setWidget(i, 0, new Label("Provider"));
+		flexTable.setWidget(i, 0, new Label(_("Provider")));
 		wPrescriber = new SupportModuleWidget("ProviderModule");
 		wPrescriber.setHashMapping("prescriber");
 		addEntryWidget("prescriber", wPrescriber);
 		flexTable.setWidget(i, 1, wPrescriber);
 
-		flexTable.setWidget(i, 0, new Label("Amount"));
+		flexTable.setWidget(i, 0, new Label(_("Amount")));
 		wAmount = new CustomTextBox();
 		wAmount.setHashMapping("amount");
 		addEntryWidget("amount", wAmount);
 		flexTable.setWidget(i, 1, wAmount);
 
-		flexTable.setWidget(i, 0, new Label("Instructions"));
+		flexTable.setWidget(i, 0, new Label(_("Instructions")));
 		wInstructions = new CustomTextArea();
 		wInstructions.setHashMapping("instructions");
 		addEntryWidget("instructions", wInstructions);
@@ -85,14 +87,14 @@ public class DrugSampleEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		final CustomButton wSubmit = new CustomButton(_("Submit"), AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton wReset = new CustomButton(_("Reset"), AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {

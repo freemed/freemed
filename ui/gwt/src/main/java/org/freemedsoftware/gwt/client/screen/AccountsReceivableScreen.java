@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,12 +39,12 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.LedgerPopup;
 import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -58,7 +60,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -145,7 +146,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		parentSearchTable.setWidget(0, 0, searchCriteriaVPanel);
 		parentSearchTable.getFlexCellFormatter().getElement(0, 0).setAttribute("width", "50%");
 		parentSearchTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-		Label lbSearch=new Label("Search Criteria");
+		Label lbSearch=new Label(_("Search Criteria"));
 		lbSearch.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 		lbSearch.getElement().getStyle().setProperty("fontSize", "15px");
 		lbSearch.getElement().getStyle().setProperty("textDecoration", "underline");
@@ -156,7 +157,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		
 		int row = 0;
 		
-		final Label smartLNameSearchLabel = new Label("Patient Last Name:  ");
+		final Label smartLNameSearchLabel = new Label(_("Patient Last Name") + ": ");
 		searchCriteriaTable.setWidget(row, 0, smartLNameSearchLabel);
 		
 		patientlnTextBox = new TextBox();
@@ -164,81 +165,81 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		widgetTracker.put("Patient Last Name", row+":1:"+"last_name");
 		widgetContainer.put("Patient Last Name", patientlnTextBox);
 		
-		final Label smartFNameSearchLabel = new Label("Patient First Name:  ");
+		final Label smartFNameSearchLabel = new Label(_("Patient First Name") + ": ");
 		searchCriteriaTable.setWidget(row, 2, smartFNameSearchLabel);
 		
 		patientfnTextBox = new TextBox();
 		searchCriteriaTable.setWidget(row, 3, patientfnTextBox);
-		widgetTracker.put("Patient First Name", row+":3:"+"last_name");
-		widgetContainer.put("Patient First Name", patientfnTextBox);
+		widgetTracker.put(_("Patient First Name"), row+":3:"+"last_name");
+		widgetContainer.put(_("Patient First Name"), patientfnTextBox);
 		row++;
 		
-		final Label ptFullName = new Label("Patient Full Name:  ");
+		final Label ptFullName = new Label(_("Patient Full Name") + ": ");
 		searchCriteriaTable.setWidget(row, 0, ptFullName);
 		patientWidget = new PatientWidget();
 		searchCriteriaTable.setWidget(row, 1, patientWidget);
-		widgetTracker.put("Patient", row+":1:"+"patient");
-		widgetContainer.put("Patient", patientWidget);
+		widgetTracker.put(_("Patient"), row+":1:"+"patient");
+		widgetContainer.put(_("Patient"), patientWidget);
 		row++;
 		
-		final Label fieldSearchLabel = new Label("Provider: ");
+		final Label fieldSearchLabel = new Label(_("Provider") + ": ");
 		searchCriteriaTable.setWidget(row, 0, fieldSearchLabel);
 
 		providerWidget = new SupportModuleWidget("ProviderModule");
 		searchCriteriaTable.setWidget(row, 1, providerWidget);
-		widgetTracker.put("Provider", row+":1:"+"provider");
-		widgetContainer.put("Provider", providerWidget);
+		widgetTracker.put(_("Provider"), row+":1:"+"provider");
+		widgetContainer.put(_("Provider"), providerWidget);
 		row++;
 
-		final Label facilityLabel = new Label("Facility: ");
+		final Label facilityLabel = new Label(_("Facility") + ": ");
 		searchCriteriaTable.setWidget(row, 0, facilityLabel);
 
 		facilityModule = new SupportModuleWidget("FacilityModule");
 		searchCriteriaTable.setWidget(row, 1, facilityModule);
-		widgetTracker.put("Facility", row+":1:"+"facility");
-		widgetContainer.put("Facility", facilityModule);
+		widgetTracker.put(_("Facility"), row+":1:"+"facility");
+		widgetContainer.put(_("Facility"), facilityModule);
 		row++;
 		
-		final Label dateOfServiceLabel = new Label("Date of Service: ");
+		final Label dateOfServiceLabel = new Label(_("Date of Service") + ": ");
 		searchCriteriaTable.setWidget(row, 0, dateOfServiceLabel);
 
 		wDos = new CustomDatePicker();
 		searchCriteriaTable.setWidget(row, 1, wDos);
-		widgetTracker.put("Date of Service", row+":1:"+"date_of");
-		widgetContainer.put("Date of Service", wDos);
+		widgetTracker.put(_("Date of Service"), row+":1:"+"date_of");
+		widgetContainer.put(_("Date of Service"), wDos);
 		row++;
 		
-		final Label transactionDateFrom = new Label("Transaction Date From: ");
+		final Label transactionDateFrom = new Label(_("Transaction Date From") + ": ");
 		searchCriteriaTable.setWidget(row, 0, transactionDateFrom);
 		
 		wDos2 = new CustomDatePicker();
 		searchCriteriaTable.setWidget(row, 1, wDos2);
-		widgetTracker.put("Transaction Date From", row+":1:"+"date_from");
-		widgetContainer.put("Transaction Date From", wDos2);
+		widgetTracker.put(_("Transaction Date From"), row+":1:"+"date_from");
+		widgetContainer.put(_("Transaction Date From"), wDos2);
 		
-		final Label transactionDateTo = new Label("Transaction Date To: ");
+		final Label transactionDateTo = new Label(_("Transaction Date To") + ": ");
 		searchCriteriaTable.setWidget(row, 2, transactionDateTo);
 		
 		wDos3 = new CustomDatePicker();
 		searchCriteriaTable.setWidget(row, 3, wDos3);
-		widgetTracker.put("Transaction Date To", row+":3:"+"date_to");
-		widgetContainer.put("Transaction Date To", wDos3);
+		widgetTracker.put(_("Transaction Date To"), row+":3:"+"date_to");
+		widgetContainer.put(_("Transaction Date To"), wDos3);
 		
 		row++;
 		
-		final Label tagSearch = new Label("Tag Search: ");
+		final Label tagSearch = new Label(_("Tag Search") + ": ");
 		searchCriteriaTable.setWidget(row, 0, tagSearch);
 		
 		tagWidget = new PatientTagWidget();
 		searchCriteriaTable.setWidget(row, 1, tagWidget);
-		widgetTracker.put("Tag Search", row+":1:"+"tag");
-		widgetContainer.put("Tag Search", tagWidget);
+		widgetTracker.put(_("Tag Search"), row+":1:"+"tag");
+		widgetContainer.put(_("Tag Search"), tagWidget);
 		
 		row++;
 		
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setSpacing(5);
-		searchButton = new CustomButton("Search",AppConstants.ICON_SEARCH);
+		searchButton = new CustomButton(_("Search") ,AppConstants.ICON_SEARCH);
 		searchButton.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -248,7 +249,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		}
 		);
 		buttonPanel.add(searchButton);
-		clearButton = new CustomButton("Clear",AppConstants.ICON_CLEAR);
+		clearButton = new CustomButton(_("Clear"),AppConstants.ICON_CLEAR);
 		clearButton.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -267,7 +268,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		currentCriteriaPanel = new VerticalPanel();
 		currentCriteriaPanel.setWidth("100%");
 		currentCriteriaPanel.setSpacing(5);
-		Label lbExistingCri=new Label("Current Criteria");
+		Label lbExistingCri=new Label(_("Current Criteria"));
 		lbExistingCri.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 		lbExistingCri.getElement().getStyle().setProperty("fontSize", "15px");
 		lbExistingCri.getElement().getStyle().setProperty("textDecoration", "underline");
@@ -287,36 +288,36 @@ public class AccountsReceivableScreen extends ScreenInterface {
 		sortableTable = new CustomTable();
 		sortableTable.setWidth("100%");
 //		sortableTable.addColumn("", "selected");
-		sortableTable.addColumn("Svc Date", "date_of");
-		sortableTable.addColumn("Acct Bal", "total_balance");
-		sortableTable.addColumn("Provider", "provider");
-		sortableTable.addColumn("Patient", "patient");
-		sortableTable.addColumn("Item", "item");
-		sortableTable.addColumn("Type", "item_type");
-		sortableTable.addColumn("Svc", "procedure_id");
-		sortableTable.addColumn("Date", "payment_date");
-		sortableTable.addColumn("Adjs", "money_in");
-		sortableTable.addColumn("Charges", "money_out");
-		sortableTable.addColumn("Action","action");
+		sortableTable.addColumn(_("Svc Date"), "date_of");
+		sortableTable.addColumn(_("Acct Bal"), "total_balance");
+		sortableTable.addColumn(_("Provider"), "provider");
+		sortableTable.addColumn(_("Patient"), "patient");
+		sortableTable.addColumn(_("Item"), "item");
+		sortableTable.addColumn(_("Type"), "item_type");
+		sortableTable.addColumn(_("Svc"), "procedure_id");
+		sortableTable.addColumn(_("Date"), "payment_date");
+		sortableTable.addColumn(_("Adjs"), "money_in");
+		sortableTable.addColumn(_("Charges"), "money_out");
+		sortableTable.addColumn(_("Action"), "action");
 		sortableTable.setIndexName("item");
 		
 		sortableTable.setTableRowClickHandler(new TableRowClickHandler(){
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				if(col==1){
-					otherCreteriaMap.put("Date of Service", data.get("date_of")+":date_of:"+data.get("date_of"));
+					otherCreteriaMap.put(_("Date of Service"), data.get("date_of")+":date_of:"+data.get("date_of"));
 					refreshSearch();
 				}else if(col==3){
-					otherCreteriaMap.put("Provider", data.get("provider")+":provider:"+data.get("provider_id"));
+					otherCreteriaMap.put(_("Provider"), data.get("provider")+":provider:"+data.get("provider_id"));
 					refreshSearch();
 				}else if(col==4){
-					otherCreteriaMap.put("Patient", data.get("patient")+":patient:"+data.get("patient_id"));
+					otherCreteriaMap.put(_("Patient"), data.get("patient")+":patient:"+data.get("patient_id"));
 					refreshSearch();
 				}else if(col==6){
-					otherCreteriaMap.put("Item Type", data.get("item_type")+":type:"+data.get("item_type_id"));
+					otherCreteriaMap.put(_("Item Type"), data.get("item_type")+":type:"+data.get("item_type_id"));
 					refreshSearch();
 				}else if(col==7){
-					otherCreteriaMap.put("Procedure", data.get("procedure_id")+":procedure:"+data.get("procedure_id"));
+					otherCreteriaMap.put(_("Procedure"), data.get("procedure_id")+":procedure:"+data.get("procedure_id"));
 					refreshSearch();
 				}
 				
@@ -332,7 +333,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 					HorizontalPanel actionPanel = new HorizontalPanel();
 					actionPanel.setSpacing(5);
 					HTML  htmlLedger= new HTML(
-					"<a href=\"javascript:undefined;\" style='color:blue'>Ledger</a>");
+					"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Ledger") + "</a>");
 					actionPanel.add(htmlLedger);
 					
 					htmlLedger.addClickHandler(new ClickHandler() {
@@ -376,7 +377,7 @@ public class AccountsReceivableScreen extends ScreenInterface {
 
 		sortableTableEmptyLabel.setStylePrimaryName("freemed-MessageText");
 		sortableTableEmptyLabel
-				.setText("No patients found with the specified criteria.");
+				.setText(_("No patients found with the specified criteria."));
 		sortableTableEmptyLabel.setVisible(true);
 
 		verticalPanel.add(sortableTable);
@@ -434,14 +435,14 @@ public class AccountsReceivableScreen extends ScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (result.length > 0) {
 									sortableTableEmptyLabel.setVisible(false);
 								} else {
 									sortableTableEmptyLabel.setVisible(true);
-									Util.showErrorMsg(getClass().getName(), "No record found!!!");
+									Util.showErrorMsg(getClass().getName(), _("No record found!"));
 								}
 								sortableTable.loadData(result);
 							} else {

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -41,7 +43,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.i18n.client.HasDirection.Direction;
+import com.google.gwt.i18n.shared.AnyRtlDirectionEstimator;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -63,17 +65,17 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		final FlexTable flexTable = new FlexTable();
 		initWidget(flexTable);
 
-		final Label allergyLabel = new Label("Allergy");
+		final Label allergyLabel = new Label(_("Allergy"));
 		flexTable.setWidget(0, 0, allergyLabel);
-		allergyLabel.setDirection(Direction.RTL);
+		allergyLabel.setDirectionEstimator(new AnyRtlDirectionEstimator());
 
-		final Label reactionLabel = new Label("Reaction");
+		final Label reactionLabel = new Label(_("Reaction"));
 		flexTable.setWidget(1, 0, reactionLabel);
-		reactionLabel.setDirection(Direction.RTL);
+		reactionLabel.setDirectionEstimator(new AnyRtlDirectionEstimator());
 
-		final Label severityLabel = new Label("Severity");
+		final Label severityLabel = new Label(_("Severity"));
 		flexTable.setWidget(2, 0, severityLabel);
-		severityLabel.setDirection(Direction.RTL);
+		severityLabel.setDirectionEstimator(new AnyRtlDirectionEstimator());
 
 		flexTable.setWidget(0, 1, allergyTextBox);
 		flexTable.getFlexCellFormatter().setColSpan(0, 1, 2);
@@ -87,7 +89,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		flexTable.getFlexCellFormatter().setColSpan(2, 1, 2);
 		severityTextBox.setWidth("100%");
 
-		final CustomButton saveButton = new CustomButton("Save",AppConstants.ICON_ADD);
+		final CustomButton saveButton = new CustomButton(_("Save"), AppConstants.ICON_ADD);
 		flexTable.setWidget(3, 1, saveButton);
 		saveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -98,12 +100,12 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 					// at the very end: close screen
 					closeScreen();
 				} else {
-					Window.alert("Please fill in all fields!");
+					Window.alert(_("Please fill in all fields!"));
 				}
 			}
 		});
 
-		final CustomButton resetButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		final CustomButton resetButton = new CustomButton(_("Reset"), AppConstants.ICON_CLEAR);
 		flexTable.setWidget(3, 2, resetButton);
 		resetButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
@@ -141,7 +143,7 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 		data.put("severity", severityTextBox.getText());
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			Util.showInfoMsg(className, "Allergy Added .");
+			Util.showInfoMsg(className, _("Allergy added."));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 			String[] params = { JsonUtil.jsonify(data) };
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
@@ -152,26 +154,26 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg(className, "Failed to add Allergy.");
+						Util.showErrorMsg(className, _("Failed to add allergy."));
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (r != null) {
-								Util.showInfoMsg(className, "Allergy added.");
+								Util.showInfoMsg(className, _("Allergy added."));
 								patientScreen.getSummaryScreen().populateClinicalInformation();
 							}
 						} else {
-							Util.showErrorMsg(className, "Failed to add Allergy.");
+							Util.showErrorMsg(className, _("Failed to add allergy."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg(className, "Failed to add Allergy.");
+				Util.showErrorMsg(className, _("Failed to add allergy."));
 			}
 		} else {
 			// TODO: GWT-RPC Stuff
@@ -197,8 +199,9 @@ public class AllergyEntryScreen extends PatientScreenInterface {
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
+							@SuppressWarnings("unchecked")
 							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {

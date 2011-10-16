@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +37,11 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.ModuleSearchWidget;
-import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.ModuleSearchWidget;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -87,9 +89,9 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 	
 	protected String patientIdName = "patient";
 	
-	protected Label moduleFieldCheckerTypeEntryLabel 	 = new Label("Add");
+	protected Label moduleFieldCheckerTypeEntryLabel 	 = new Label(_("Add"));
 	
-	protected Label moduleFieldCheckerTypeListLabel 	 = new Label("List");
+	protected Label moduleFieldCheckerTypeListLabel 	 = new Label(_("List"));
 	
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
 	
@@ -169,7 +171,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 			moduleFieldCheckerTypeListLabel.setVisible(false);
 			
 			if((canModify && !canWrite && moduleId!=null))
-				tabPanel.add(containerModuleFieldCheckerTypeForm, "Modify");
+				tabPanel.add(containerModuleFieldCheckerTypeForm, _("Modify"));
 			tabPanel.selectTab(0);
 			containerVerticalPanel.setVisible(false);
 			
@@ -204,7 +206,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 //		flexTable.setWidth("100%");
 		containerModuleFieldCheckerTypeForm.add(flexTable);
 
-		final Label statusNameLabel = new Label("Name:");
+		final Label statusNameLabel = new Label(_("Name") + " : ");
 		flexTable.setWidget(row, 0, statusNameLabel);
 		
 		name = new TextBox();
@@ -213,7 +215,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 		
 		row++;
 		
-		final Label smartSearchLabel = new Label("Module : ");
+		final Label smartSearchLabel = new Label(_("Module") + " : ");
 		flexTable.setWidget(row, 0, smartSearchLabel);
 
 		module = new ModuleSearchWidget(ModuleSearchWidget.MODULE_TYPE_EMR);
@@ -232,7 +234,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 
 		row++;	
 		
-		final Label statusFieldsLabel = new Label("Fields:");
+		final Label statusFieldsLabel = new Label(_("Fields") + " : ");
 		flexTable.setWidget(row,0,statusFieldsLabel);
 		moduleFieldsTable = new FlexTable();
 		flexTable.setWidget(row,1,moduleFieldsTable);
@@ -247,7 +249,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 		containerModuleFieldCheckerTypeForm.add(buttonContainer);
 		
 		
-		wSubmit = new CustomButton("Submit",AppConstants.ICON_ADD);
+		wSubmit = new CustomButton(_("Submit"),AppConstants.ICON_ADD);
 		buttonContainer.add(wSubmit);
 		
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -272,7 +274,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 					
 						@Override
 						public void onError() {
-							Util.showErrorMsg(MODULE_NAME, "failed to add module!!");
+							Util.showErrorMsg(MODULE_NAME, _("Failed to add module!"));
 						}
 					
 						@Override
@@ -282,31 +284,31 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 								if(id>0){
 									retrieveAndFillListData();
 									resetForm();
-									Util.showInfoMsg(MODULE_NAME,"added succefully!!");
+									Util.showInfoMsg(MODULE_NAME, _("Added successfully!"));
 								}else 
-									Util.showErrorMsg(MODULE_NAME, "module already added!!");
+									Util.showErrorMsg(MODULE_NAME, _("Module already added!!"));
 							}else if(data instanceof Boolean ){
 								Boolean modified = (Boolean)data;
 								if(modified){
 									retrieveAndFillListData();
 									resetForm();
-									Util.showInfoMsg(MODULE_NAME,"modified succefully!!");
+									Util.showInfoMsg(MODULE_NAME, _("Modified succefully!"));
 								}else 
-									Util.showErrorMsg(MODULE_NAME, "failed to modify!!");
+									Util.showErrorMsg(MODULE_NAME, _("Failed to modify!"));
 							}
 						}
 					
 					}, method.equalsIgnoreCase("add")?"Integer":"Boolean");
 					
 			}else 
-				Util.showErrorMsg(MODULE_NAME,"Please choose some fields to make them mandatory!!");
+				Util.showErrorMsg(MODULE_NAME, _("Please choose some fields to make them mandatory!"));
 				
 				
 			}
 		
 		});
 		
-		CustomButton resetButton = new CustomButton("Reset",AppConstants.ICON_CLEAR);
+		CustomButton resetButton = new CustomButton(_("Reset"),AppConstants.ICON_CLEAR);
 		buttonContainer.add(resetButton);
 		
 		resetButton.addClickHandler(new ClickHandler() {
@@ -418,9 +420,9 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 		containerModuleFieldCheckerTypeTable = new CustomTable();
 		containerModuleFieldCheckerTypeTable.setWidth("100%");
 		horizontalPanel.add(containerModuleFieldCheckerTypeTable);
-		containerModuleFieldCheckerTypeTable.addColumn("Name", "name");
-		containerModuleFieldCheckerTypeTable.addColumn("Module", "module");
-		containerModuleFieldCheckerTypeTable.addColumn("Action", "action");
+		containerModuleFieldCheckerTypeTable.addColumn(_("Name"), "name");
+		containerModuleFieldCheckerTypeTable.addColumn(_("Module"), "module");
+		containerModuleFieldCheckerTypeTable.addColumn(_("Action"), "action");
 		containerModuleFieldCheckerTypeTable.setIndexName("id");
 		
 		containerModuleFieldCheckerTypeTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -456,7 +458,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 		name.setText(data.get("name"));
 		module.setValue(data.get("module"));
 		populateFields(data.get("module"), data.get("fields"));
-		wSubmit.setText("Modify");
+		wSubmit.setText(_("Modify"));
 		wDelete.setVisible(true);
 		tabPanel.selectTab(0);
 		if(!canWrite && canModify){
@@ -514,7 +516,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean b = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if(b!=null && b.booleanValue()){
 								retrieveAndFillListData();
@@ -523,7 +525,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 								tabPanel.selectTab(1);
 							}
 						} else {
-							Util.showErrorMsg(moduleName, "Failed to delete record!");
+							Util.showErrorMsg(moduleName, _("Failed to delete record!"));
 						}
 					}
 				});
@@ -551,7 +553,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						JsonUtil
-								.debug("Error on retrieving data!");
+								.debug(_("Error on retrieving data!"));
 					}
 
 					@SuppressWarnings("unchecked")
@@ -562,7 +564,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 									"false") != 0) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 										.shoehornJson(JSONParser
-												.parse(response.getText()),
+												.parseStrict(response.getText()),
 												"HashMap<String,String>");
 								Util.populateForm(containerFormFields, result);
 							} else {
@@ -570,12 +572,12 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							Util.showErrorMsg(moduleName, "Failed to get items!");
+							Util.showErrorMsg(moduleName, _("Failed to get items!"));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg(moduleName, "Failed to get items!");
+				Util.showErrorMsg(moduleName, _("Failed to get items!"));
 			}
 		} else {
 			// GWT-RPC
@@ -610,7 +612,7 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 									"false") != 0) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 										.shoehornJson(JSONParser
-												.parse(response.getText()),
+												.parseStrict(response.getText()),
 												"HashMap<String,String>[]");
 								if (result != null) {
 									containerModuleFieldCheckerTypeTable.loadData(result);
@@ -621,12 +623,12 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 										.debug("Received dummy response from JSON backend");
 							}
 						} else {
-							Util.showErrorMsg(moduleName, "Failed to get items!");
+							Util.showErrorMsg(moduleName, _("Failed to get items!"));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg(moduleName, "Failed to get items!");
+				Util.showErrorMsg(moduleName, _("Failed to get items!"));
 			}
 		} else {
 			// GWT-RPC
@@ -655,20 +657,20 @@ public class ModuleFieldCheckerTypeEntryScreen extends PatientEntryScreenInterfa
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (r != null) {
 								populateAvailableData();
-								Util.showInfoMsg(moduleName, "Entry successfully added.");
+								Util.showInfoMsg(moduleName, _("Entry successfully added."));
 							}else{
 								Boolean b = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if(b!=null)
-									Util.showInfoMsg(moduleName, "Entry successfully modified.");
+									Util.showInfoMsg(moduleName, _("Entry successfully modified."));
 							}
 						} else {
-							Util.showErrorMsg(moduleName, "Failed to save data!");
+							Util.showErrorMsg(moduleName, _("Failed to save data!"));
 						}
 					}
 				});

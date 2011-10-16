@@ -27,14 +27,10 @@ package org.freemedsoftware.gwt.client.screen;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.ScreenInterface;
-import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget;
 import org.freemedsoftware.gwt.client.widget.WorkList;
-import org.freemedsoftware.gwt.client.widget.SchedulerWidget.EventData;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -66,7 +62,6 @@ public class SchedulerScreen extends ScreenInterface {
 	}
 	
 	public SchedulerScreen() {
-		
 		verticalPanel = new VerticalPanel();
 		scheduler = new SchedulerWidget();
 		verticalPanel.add(scheduler);

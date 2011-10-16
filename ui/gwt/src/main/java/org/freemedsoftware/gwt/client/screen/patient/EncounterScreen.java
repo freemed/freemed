@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,12 +37,12 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
-import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget;
-import org.freemedsoftware.gwt.client.widget.EncounterWidget;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
+import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
+import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget;
 import org.freemedsoftware.gwt.client.widget.EncounterTemplateWidget.CallbackType;
+import org.freemedsoftware.gwt.client.widget.EncounterWidget;
 import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterCommandType;
 import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterFormMode;
 import org.freemedsoftware.gwt.client.widget.EncounterWidget.EncounterFormType;
@@ -74,7 +76,7 @@ public class EncounterScreen extends PatientScreenInterface {
 		verticalPanel.setSize("100%", "100%");
 		entryVerticalPanel = new VerticalPanel();
 		tabPanel = new TabPanel();
-		tabPanel.add(entryVerticalPanel, "Add");
+		tabPanel.add(entryVerticalPanel, _("Add"));
 		verticalPanel.add(tabPanel);
 		initWidget(verticalPanel);
 		tabPanel.selectTab(0);
@@ -203,11 +205,11 @@ public class EncounterScreen extends PatientScreenInterface {
 		enotesCustomTable.setIndexName("id");
 		// patientCustomTable.setSize("100%", "100%");
 		enotesCustomTable.setWidth("100%");
-		enotesCustomTable.addColumn("Date", "note_date");
-		enotesCustomTable.addColumn("Type", "note_type");
-		enotesCustomTable.addColumn("Description", "note_desc");
-		enotesCustomTable.addColumn("Submitter", "user");
-		enotesCustomTable.addColumn("Action", "action");
+		enotesCustomTable.addColumn(_("Date"), "note_date");
+		enotesCustomTable.addColumn(_("Type"), "note_type");
+		enotesCustomTable.addColumn(_("Description"), "note_desc");
+		enotesCustomTable.addColumn(_("Submitter"), "user");
+		enotesCustomTable.addColumn(_("Action"), "action");
 
 		enotesCustomTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -282,11 +284,10 @@ public class EncounterScreen extends PatientScreenInterface {
 						if (200 == response.getStatusCode()) {
 							try {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {
-
 									enotesCustomTable.loadData(r);
 								} else {
 
@@ -327,7 +328,7 @@ public class EncounterScreen extends PatientScreenInterface {
 						if (200 == response.getStatusCode()) {
 							try {
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
@@ -382,14 +383,14 @@ public class EncounterScreen extends PatientScreenInterface {
 						if (200 == response.getStatusCode()) {
 							try {
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
 									String secStr = r.get("pnotestsections");
 									sections = (HashMap<String, List<String>>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(secStr),
+													.parseStrict(secStr),
 													"HashMap<String,List>");
 									entryVerticalPanel.clear();
 									createEncounterNotesAdditionTab();
@@ -429,12 +430,12 @@ public class EncounterScreen extends PatientScreenInterface {
 						if (200 == response.getStatusCode()) {
 							try {
 								Boolean r = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if (r) {
 									Util
 											.showInfoMsg("EncounterNotes",
-													"Encounter Note Successfully Deleted.");
+													_("Encounter Note successfully deleted."));
 									loadEncountersList();
 								}
 

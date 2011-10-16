@@ -25,6 +25,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -391,7 +393,7 @@ public class MainScreen extends Composite {
 		// mainPanel.setCellWidth(tabPanel, "100%");
 		// mainPanel.setCellHeight(tabPanel, "100%");
 
-		final HTML poweredByLabel = new HTML("Powered By FreeMED&trade;");
+		final HTML poweredByLabel = new HTML(_("Powered By FreeMED&trade;"));
 		poweredByLabel.setStyleName(AppConstants.STYLE_LABEL_SMALL);
 		mainPanel.add(poweredByLabel, DockPanel.SOUTH);
 		mainPanel.setCellHorizontalAlignment(poweredByLabel,
@@ -404,7 +406,7 @@ public class MainScreen extends Composite {
 		statusBarContainer.setSplitPosition("50%");
 
 		JsonUtil.debug("MainScreen: status bar");
-		statusBar1 = new Label("Ready");
+		statusBar1 = new Label(_("Ready"));
 		statusBar1.setStyleName("statusBar");
 		statusBarContainer.add(statusBar1);
 		CurrentState.assignStatusBar(statusBar1);
@@ -457,7 +459,7 @@ public class MainScreen extends Composite {
 		shortCutsPanel.setStyleName(AppConstants.STYLE_HEADER_PANEL);
 		// adding current page help link
 		PushButton helpButton = new PushButton();
-		helpButton.setTitle("help");
+		helpButton.setTitle(_("help"));
 		helpButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 		helpButton.getUpFace().setImage(
 				new Image(GWT.getHostPageBaseURL()
@@ -481,8 +483,8 @@ public class MainScreen extends Composite {
 				}
 			}
 		});
-		Util.attachHelp(helpButton, "Help Icon",
-				"Help for the currently selected tab.", true);
+		Util.attachHelp(helpButton, _("Help Icon"),
+				_("Help for the currently selected tab."), true);
 		shortCutsPanel.add(helpButton);
 
 		HTML separator = null;
@@ -497,7 +499,7 @@ public class MainScreen extends Composite {
 
 			// adding scheduler link
 			PushButton schedulerButton = new PushButton();
-			schedulerButton.setTitle("scheduler");
+			schedulerButton.setTitle(_("scheduler"));
 			schedulerButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			schedulerButton.getUpFace().setImage(
 					new Image(GWT.getHostPageBaseURL()
@@ -512,8 +514,8 @@ public class MainScreen extends Composite {
 							.getInstance());
 				}
 			});
-			Util.attachHelp(schedulerButton, "Scheduler",
-					"View and book appointments.", true);
+			Util.attachHelp(schedulerButton, _("Scheduler"),
+					_("View and book appointments."), true);
 			shortCutsPanel.add(schedulerButton);
 		}
 
@@ -528,7 +530,7 @@ public class MainScreen extends Composite {
 
 			// adding Patient Search Link
 			PushButton ptSearchButton = new PushButton();
-			ptSearchButton.setTitle("search patient");
+			ptSearchButton.setTitle(_("search patient"));
 			ptSearchButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			ptSearchButton.getUpFace().setImage(
 					new Image(GWT.getHostPageBaseURL()
@@ -543,8 +545,8 @@ public class MainScreen extends Composite {
 							.getInstance());
 				}
 			});
-			Util.attachHelp(ptSearchButton, "Patient Search",
-					"Search for patients.", true);
+			Util.attachHelp(ptSearchButton, _("Patient Search"),
+					_("Search for patients."), true);
 			shortCutsPanel.add(ptSearchButton);
 		}
 		// Adding spacer
@@ -554,7 +556,7 @@ public class MainScreen extends Composite {
 		shortCutsPanel.add(separator);
 		// Adding preferences link
 		PushButton preferencesButton = new PushButton();
-		preferencesButton.setTitle("preferences");
+		preferencesButton.setTitle(_("preferences"));
 		preferencesButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 		preferencesButton.getUpFace().setImage(
 				new Image(GWT.getHostPageBaseURL()
@@ -570,12 +572,12 @@ public class MainScreen extends Composite {
 				// } else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
 				final PreferencesScreen preferencesScreen = PreferencesScreen
 						.getInstance();
-				Util.spawnTab("Preferences", preferencesScreen);
+				Util.spawnTab(_("Preferences"), preferencesScreen);
 				// }
 			}
 		});
-		Util.attachHelp(preferencesButton, "Preferences",
-				"Set your user prefereneces.", true);
+		Util.attachHelp(preferencesButton, _("Preferences"),
+				_("Set your user prefereneces."), true);
 		shortCutsPanel.add(preferencesButton);
 		separator = new HTML("|");
 		separator.setWidth("8px");
@@ -584,7 +586,7 @@ public class MainScreen extends Composite {
 
 		// Adding support link
 		PushButton supportButton = new PushButton();
-		supportButton.setTitle("support");
+		supportButton.setTitle(_("support"));
 		supportButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 		supportButton.getUpFace().setImage(
 				new Image(GWT.getHostPageBaseURL()
@@ -609,8 +611,8 @@ public class MainScreen extends Composite {
 				d.center();
 			}
 		});
-		Util.attachHelp(supportButton, "Support",
-				"More information about support.", true);
+		Util.attachHelp(supportButton, _("Support"),
+				_("More information about support."), true);
 		shortCutsPanel.add(supportButton);
 		// Adding logout link
 		separator = new HTML("|");
@@ -620,7 +622,7 @@ public class MainScreen extends Composite {
 
 		// Adding logout link
 		PushButton logoutButton = new PushButton();
-		logoutButton.setTitle("logout");
+		logoutButton.setTitle(_("logout"));
 		logoutButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 		logoutButton.getUpFace().setImage(
 				new Image(GWT.getHostPageBaseURL()
@@ -645,7 +647,7 @@ public class MainScreen extends Composite {
 				}
 			}
 		});
-		Util.attachHelp(logoutButton, "Logout", "Logout of FreeMED.", true);
+		Util.attachHelp(logoutButton, _("Logout"), _("Logout of FreeMED."), true);
 		shortCutsPanel.add(logoutButton);
 	}
 
@@ -1288,7 +1290,7 @@ public class MainScreen extends Composite {
 									.getToaster()
 									.addItem(
 											"MainScreen",
-											"Could not determine provider information.",
+											_("Could not determine provider information."),
 											Toaster.TOASTER_ERROR);
 						}
 
@@ -1312,14 +1314,14 @@ public class MainScreen extends Composite {
 										.getToaster()
 										.addItem(
 												"MainScreen",
-												"Could not determine provider information.",
+												_("Could not determine provider information."),
 												Toaster.TOASTER_ERROR);
 							}
 						}
 					});
 				} catch (RequestException e) {
 					Util.showErrorMsg("MainScreen",
-							"Could not determine provider information.");
+							_("Could not determine provider information."));
 				}
 			} else {
 				// TODO: GWT-RPC support for this function
@@ -1346,7 +1348,7 @@ public class MainScreen extends Composite {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						Util.showErrorMsg("MainScreen",
-								"Could not determine Facility information.");
+								_("Could not determine Facility information."));
 					}
 
 					public void onResponseReceived(Request request,
@@ -1354,8 +1356,9 @@ public class MainScreen extends Composite {
 						if (200 == response.getStatusCode()
 								&& response.getText() != null
 								&& response.getText() != "null") {
+							@SuppressWarnings("unchecked")
 							HashMap<String, String> data = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (data != null) {
@@ -1377,7 +1380,7 @@ public class MainScreen extends Composite {
 				});
 			} catch (RequestException e) {
 				Util.showErrorMsg("MainScreen",
-						"Could not determine Facility information.");
+						_("Could not determine Facility information."));
 			}
 		} else {
 			// TODO: GWT-RPC support for this function

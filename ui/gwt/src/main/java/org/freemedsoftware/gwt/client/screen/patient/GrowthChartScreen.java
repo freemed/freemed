@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,9 +44,9 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gchart.client.GChart;
+
 
 public class GrowthChartScreen extends PatientScreenInterface {
 
@@ -144,16 +146,16 @@ public class GrowthChartScreen extends PatientScreenInterface {
 		VerticalPanel vPanel = new VerticalPanel();
 		initWidget(vPanel);
 
-		hChart.setTitle("Height/Length");
+		hChart.setTitle(_("Height/Length"));
 		vPanel.add(hChart);
-		hChart.getYAxis().setAxisLabel("Height/Length");
-		hChart.getXAxis().setAxisLabel("Age (months)");
+		hChart.getYAxis().setAxisLabel(_("Height/Length"));
+		hChart.getXAxis().setAxisLabel(_("Age (months)"));
 		vPanel.add(new HTML("&nbsp;"));
 
-		wChart.setTitle("Weight");
+		wChart.setTitle(_("Weight"));
 		vPanel.add(wChart);
-		wChart.getYAxis().setAxisLabel("Weight");
-		wChart.getXAxis().setAxisLabel("Age (months)");
+		wChart.getYAxis().setAxisLabel(_("Weight"));
+		wChart.getXAxis().setAxisLabel(_("Age (months)"));
 	}
 
 	public void init() {
@@ -214,7 +216,7 @@ public class GrowthChartScreen extends PatientScreenInterface {
 						if (200 == response.getStatusCode()
 								|| response.getText() == "false") {
 							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {
@@ -224,13 +226,13 @@ public class GrowthChartScreen extends PatientScreenInterface {
 						} else {
 							Util
 									.showErrorMsg("GrowthCharts",
-											"Failed to retrieve stock growth chart data.");
+											_("Failed to retrieve stock growth chart data."));
 						}
 					}
 				});
 			} catch (RequestException e) {
 				Util.showErrorMsg("GrowthCharts",
-						"Failed to retrieve stock growth chart data.");
+						_("Failed to retrieve stock growth chart data."));
 			}
 		} else {
 			JsonUtil.debug("Unimplemented GrowthCharts RPC");

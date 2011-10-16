@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
@@ -78,7 +80,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 
 		final HorizontalPanel buttonBar = new HorizontalPanel();
 		buttonBar.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton wSubmit = new CustomButton("Submit",
+		final CustomButton wSubmit = new CustomButton(_("Submit"),
 				AppConstants.ICON_ADD);
 		buttonBar.add(wSubmit);
 		wSubmit.addClickHandler(new ClickHandler() {
@@ -86,7 +88,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 				submitForm();
 			}
 		});
-		final CustomButton wReset = new CustomButton("Reset",
+		final CustomButton wReset = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		buttonBar.add(wReset);
 		wReset.addClickHandler(new ClickHandler() {
@@ -97,25 +99,25 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		verticalPanel.add(buttonBar);
 
 		final SimplePanel simplePanel = new SimplePanel();
-		tabPanel.add(simplePanel, "Summary");
+		tabPanel.add(simplePanel, _("Summary"));
 
 		final FlexTable flexTable = new FlexTable();
 		simplePanel.setWidget(flexTable);
 		flexTable.setSize("100%", "100%");
 
-		final Label label = new Label("Import Previous Notes for ");
+		final Label label = new Label(_("Import Previous Notes for") + " ");
 		flexTable.setWidget(0, 0, label);
 
 		final HorizontalPanel dateContainer = new HorizontalPanel();
 		final CustomDatePicker wImportDate = new CustomDatePicker();
 		// wImportDate.setWeekendSelectable(true);
 		dateContainer.add(wImportDate);
-		final CustomButton wImportPrevious = new CustomButton("Import",
+		final CustomButton wImportPrevious = new CustomButton(_("Import"),
 				AppConstants.ICON_IMPORT);
 		dateContainer.add(wImportPrevious);
 		flexTable.setWidget(0, 1, dateContainer);
 
-		final Label dateLabel = new Label("Date : ");
+		final Label dateLabel = new Label(_("Date") + " : ");
 		flexTable.setWidget(1, 0, dateLabel);
 
 		wDate = new CustomDatePicker();
@@ -123,7 +125,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		addEntryWidget("pnotesdt", wDate);
 		flexTable.setWidget(1, 1, wDate);
 
-		final Label providerLabel = new Label("Provider : ");
+		final Label providerLabel = new Label(_("Provider") + " : ");
 		flexTable.setWidget(2, 0, providerLabel);
 
 		wProvider = new SupportModuleWidget("ProviderModule");
@@ -131,7 +133,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		addEntryWidget("pnotesphy", wProvider);
 		flexTable.setWidget(2, 1, wProvider);
 
-		final Label descriptionLabel = new Label("Description : ");
+		final Label descriptionLabel = new Label(_("Description") + " : ");
 		flexTable.setWidget(3, 0, descriptionLabel);
 
 		wDescription = new CustomTextArea();
@@ -140,7 +142,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		flexTable.setWidget(3, 1, wDescription);
 		wDescription.setWidth("100%");
 
-		final Label templateLabel = new Label("Template : ");
+		final Label templateLabel = new Label(_("Template") + " : ");
 		flexTable.setWidget(4, 0, templateLabel);
 
 		final HorizontalPanel templatePanel = new HorizontalPanel();
@@ -148,7 +150,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 		wTemplate = new SupportModuleWidget("ProgressNotesTemplates");
 		templatePanel.add(wTemplate);
 
-		CustomButton importTemplate = new CustomButton("Import",
+		CustomButton importTemplate = new CustomButton(_("Import"),
 				AppConstants.ICON_IMPORT);
 		importTemplate.addClickHandler(new ClickHandler() {
 			@Override
@@ -175,7 +177,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 										Throwable ex) {
 									GWT.log("Exception", ex);
 									Util.showErrorMsg("ProgressNotesTemplates",
-											"Failed to load template.");
+											_("Failed to load template."));
 								}
 
 								public void onResponseReceived(
@@ -185,14 +187,14 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 										@SuppressWarnings("unchecked")
 										HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 												.shoehornJson(JSONParser
-														.parse(response
+														.parseStrict(response
 																.getText()),
 														"HashMap<String,String>");
 										if (result != null) {
 											loadTemplateData(result);
 											Util.showInfoMsg(
 													"ProgressNotesTemplates",
-													"Loaded template.");
+													_("Loaded template."));
 										}
 									} else {
 										Window.alert(response.toString());
@@ -202,7 +204,7 @@ public class ProgressNoteEntry extends PatientEntryScreenInterface {
 						} catch (RequestException e) {
 							GWT.log("Exception", e);
 							Util.showErrorMsg("ProgressNotesTemplates",
-									"Failed to load template.");
+									_("Failed to load template."));
 						}
 					} else {
 						// TODO: Make this work with GWT-RPC

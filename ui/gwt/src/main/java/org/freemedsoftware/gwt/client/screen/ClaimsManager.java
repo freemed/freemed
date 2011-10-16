@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,18 +45,18 @@ import org.freemedsoftware.gwt.client.widget.ClaimDetailsWidget;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomModuleWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.LedgerWidget;
+import org.freemedsoftware.gwt.client.widget.LedgerWidget.PayCategory;
 import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.PostCheckWidget;
 import org.freemedsoftware.gwt.client.widget.RemittBillingWidget;
-import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
-import org.freemedsoftware.gwt.client.widget.LedgerWidget.PayCategory;
 import org.freemedsoftware.gwt.client.widget.RemittBillingWidget.BillingType;
 import org.freemedsoftware.gwt.client.widget.SchedulerWidget.SchedulerCss;
+import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -75,6 +77,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -88,7 +91,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
@@ -100,7 +102,7 @@ public class ClaimsManager extends ScreenInterface {
 	protected CustomTable claimsManagerTable;
 	protected DialogBox ledgerPopup;
 	protected ListBox actionsList;
-	// Declering Labels for calaimManager
+	// Declaring Labels for claimManager
 	Label lblAging;
 	Label lblProvider;
 	Label lblPayerCriteria;
@@ -112,7 +114,7 @@ public class ClaimsManager extends ScreenInterface {
 	Label lblBillingStatus;
 	Label lblDateOfService;
 
-	// Declreaing TexBoxes for last and firt Name in the Claim Manager.
+	// Declaring TexBoxes for last and first Name in the Claim Manager.
 	TextBox txtLastName;
 	TextBox txtFirstName;
 	// DatePicker for date of service
@@ -189,16 +191,16 @@ public class ClaimsManager extends ScreenInterface {
 	public ClaimsManager() {
 		super(moduleName);
 		// Intializing all labels.
-		lblAging = new Label("Aging");
-		lblFacility = new Label("Facility");
-		lblProvider = new Label("Provider");
-		lblPayer = new Label("Payer");
-		lblPlanName = new Label("Plan Name");
-		lblName = new Label("Name (Last, First)");
-		lblBillingStatus = new Label("Billing Status");
-		lblDateOfService = new Label("Date of Service");
-		lbPatientWidget = new Label("Patient Full Name");
-		lbTagSearch = new Label("Tag Search: ");
+		lblAging = new Label(_("Aging"));
+		lblFacility = new Label(_("Facility"));
+		lblProvider = new Label(_("Provider"));
+		lblPayer = new Label(_("Payer"));
+		lblPlanName = new Label(_("Plan Name"));
+		lblName = new Label(_("Name (Last, First)"));
+		lblBillingStatus = new Label(_("Billing Status"));
+		lblDateOfService = new Label(_("Date of Service"));
+		lbPatientWidget = new Label(_("Patient Full Name"));
+		lbTagSearch = new Label(_("Tag Search") + ": ");
 		// TextBoxs for FirsName and LastName
 		txtFirstName = new TextBox();
 		txtFirstName.setWidth("200px");
@@ -211,38 +213,38 @@ public class ClaimsManager extends ScreenInterface {
 		dateBox = new DateBox();
 		dateBox
 				.setFormat(new DefaultFormat(DateTimeFormat
-						.getShortDateFormat()));
-		cbShowZeroBalance = new CheckBox("Include Zero Balances");
-		cbWholeWeek = new CheckBox("Select Week");
+						.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT)));
+		cbShowZeroBalance = new CheckBox(_("Include Zero Balances"));
+		cbWholeWeek = new CheckBox(_("Select Week"));
 		// Buttons for
-		btnSearchClaim = new CustomButton("Search Claim",AppConstants.ICON_SEARCH);
+		btnSearchClaim = new CustomButton(_("Search Claim"), AppConstants.ICON_SEARCH);
 		popupVPanel = new VerticalPanel();
 		popupVPanel.setSize("100%", "100%");
 		popupVPanel.setSpacing(5);
 		ledgerStep1HPanel = new HorizontalPanel();
 		ledgerStep1HPanel.setSpacing(10);
-		Label actionType = new Label("Action");
+		Label actionType = new Label(_("Action"));
 		// actionType.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		ledgerStep1HPanel.add(actionType);
 		// ledgerStep1HPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		actionsList = new ListBox();
-		actionsList.addItem("NONE SELECTED");
-		actionsList.addItem("Rebill");
-		actionsList.addItem("Payment");
+		actionsList.addItem(_("NONE SELECTED"));
+		actionsList.addItem(_("Rebill"));
+		actionsList.addItem(_("Payment"));
 		// actionsList.addItem("Copay");
-		actionsList.addItem("Adjustment");
+		actionsList.addItem(_("Adjustment"));
 		// actionsList.addItem("Deductable");
-		actionsList.addItem("Withhold");
-		actionsList.addItem("Transfer");
-		actionsList.addItem("Allowed Amount");
-		actionsList.addItem("Denial");
-		actionsList.addItem("Writeoff");
-		actionsList.addItem("Refund");
+		actionsList.addItem(_("Withhold"));
+		actionsList.addItem(_("Transfer"));
+		actionsList.addItem(_("Allowed Amount"));
+		actionsList.addItem(_("Denial"));
+		actionsList.addItem(_("Writeoff"));
+		actionsList.addItem(_("Refund"));
 		// actionsList.addItem("Mistake");
-		actionsList.addItem("Ledger");
+		actionsList.addItem(_("Ledger"));
 		ledgerStep1HPanel.add(actionsList);
 
-		CustomButton selectLineItemBtn = new CustomButton("Proceed",AppConstants.ICON_NEXT);
+		CustomButton selectLineItemBtn = new CustomButton(_("Proceed"), AppConstants.ICON_NEXT);
 		ledgerStep1HPanel.add(selectLineItemBtn);
 		selectLineItemBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -317,7 +319,7 @@ public class ClaimsManager extends ScreenInterface {
 						}
 					}
 				} else {
-					Window.alert("Please select the action type");
+					Window.alert(_("Please select the action type"));
 				}
 			}
 
@@ -342,7 +344,7 @@ public class ClaimsManager extends ScreenInterface {
 			}
 
 		});
-		btnClear = new CustomButton("Clear",AppConstants.ICON_CLEAR);
+		btnClear = new CustomButton(_("Clear"), AppConstants.ICON_CLEAR);
 		btnClear.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -351,7 +353,7 @@ public class ClaimsManager extends ScreenInterface {
 
 		});
 
-		btnAgingSummary = new CustomButton("Aging Summary",AppConstants.ICON_VIEW);
+		btnAgingSummary = new CustomButton(_("Aging Summary"), AppConstants.ICON_VIEW);
 		btnAgingSummary.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -365,6 +367,7 @@ public class ClaimsManager extends ScreenInterface {
 					public void jsonifiedData(Object data) {
 						tabPanel.selectTab(0);
 						if (data instanceof HashMap) {
+							@SuppressWarnings("unchecked")
 							HashMap<String, String> map = (HashMap<String, String>) data;
 							if (map.get("payer") != null) {
 								payerWidget.setValue(Integer.parseInt(map
@@ -408,7 +411,7 @@ public class ClaimsManager extends ScreenInterface {
 		searchCriteriaVPanel = new VerticalPanel();
 		searchCriteriaVPanel.setWidth("100%");
 		searchCriteriaVPanel.setSpacing(5);
-		Label lbSearch = new Label("Claims Criteria");
+		Label lbSearch = new Label(_("Claims Criteria"));
 		lbSearch.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 		lbSearch.getElement().getStyle().setProperty("fontSize", "15px");
 		lbSearch.getElement().getStyle().setProperty("textDecoration",
@@ -421,7 +424,7 @@ public class ClaimsManager extends ScreenInterface {
 		currentCriteriaPanel = new VerticalPanel();
 		currentCriteriaPanel.setWidth("100%");
 		currentCriteriaPanel.setSpacing(5);
-		Label lbExistingCri = new Label("Current Criteria");
+		Label lbExistingCri = new Label(_("Current Criteria"));
 		lbExistingCri.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 		lbExistingCri.getElement().getStyle().setProperty("fontSize", "15px");
 		lbExistingCri.getElement().getStyle().setProperty("textDecoration",
@@ -444,7 +447,7 @@ public class ClaimsManager extends ScreenInterface {
 		initWidget(tabPanel);
 
 		final HorizontalPanel searchHorizontalPanel = new HorizontalPanel();
-		tabPanel.add(searchHorizontalPanel, "Search");
+		tabPanel.add(searchHorizontalPanel, _("Search"));
 		tabPanel.selectTab(0);
 		searchHorizontalPanel.setSize("100%", "100%");
 
@@ -563,7 +566,7 @@ public class ClaimsManager extends ScreenInterface {
 		});
 		searchCriteriaTable.setWidget(7, 1, tagWidget);
 		// ///////////////////////////
-		rbQueued = new RadioButton("status", "Queued");
+		rbQueued = new RadioButton("status", _("Queued"));
 		rbQueued.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -572,7 +575,7 @@ public class ClaimsManager extends ScreenInterface {
 			}
 
 		});
-		rbBilled = new RadioButton("status", "Billed");
+		rbBilled = new RadioButton("status", _("Billed"));
 		rbBilled.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -632,7 +635,7 @@ public class ClaimsManager extends ScreenInterface {
 		procDetailFlexTable.setStyleName(AppConstants.STYLE_TABLE);
 		procDetailFlexTable.setWidth("100%");
 		viewLedgerDetails = new HTML(
-				"<a href=\"javascript:undefined;\" style='color:blue'>View Details</a>");
+				"<a href=\"javascript:undefined;\" style='color:blue'>" + _("View Details") + "</a>");
 		viewLedgerDetails.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -668,16 +671,16 @@ public class ClaimsManager extends ScreenInterface {
 		claimsManagerTable.setSize("100%", "100%");
 		claimsManagerTable.setIndexName("Id");
 		claimsManagerTable.addColumn("S", "selected");
-		claimsManagerTable.addColumn("DOS", "date_of");
-		claimsManagerTable.addColumn("Facility", "posname");
-		claimsManagerTable.addColumn("Patient", "patient");
-		claimsManagerTable.addColumn("Provider", "provider_name");
-		claimsManagerTable.addColumn("Payer", "payer");
-		claimsManagerTable.addColumn("Paid", "paid");
-		claimsManagerTable.addColumn("Balance", "balance");
-		claimsManagerTable.addColumn("Status", "status");
-		claimsManagerTable.addColumn("Claim", "claim");
-		claimsManagerTable.addColumn("Action", "action");
+		claimsManagerTable.addColumn(_("DOS"), "date_of");
+		claimsManagerTable.addColumn(_("Facility"), "posname");
+		claimsManagerTable.addColumn(_("Patient"), "patient");
+		claimsManagerTable.addColumn(_("Provider"), "provider_name");
+		claimsManagerTable.addColumn(_("Payer"), "payer");
+		claimsManagerTable.addColumn(_("Paid"), "paid");
+		claimsManagerTable.addColumn(_("Balance"), "balance");
+		claimsManagerTable.addColumn(_("Status"), "status");
+		claimsManagerTable.addColumn(_("Claim"), "claim");
+		claimsManagerTable.addColumn(_("Action"), "action");
 		claimsManagerTable.getFlexTable().getFlexCellFormatter().setWidth(0, 0,
 				"5px");
 		checkBoxesList = new ArrayList<CheckBox>();
@@ -693,7 +696,7 @@ public class ClaimsManager extends ScreenInterface {
 							HorizontalPanel actionPanel = new HorizontalPanel();
 							actionPanel.setSpacing(5);
 							HTML htmlLedger = new HTML(
-									"<a href=\"javascript:undefined;\" style='color:blue'>Ledger</a>");
+									"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Ledger") + "</a>");
 
 							htmlLedger.addClickHandler(new ClickHandler() {
 								@Override
@@ -708,7 +711,7 @@ public class ClaimsManager extends ScreenInterface {
 							});
 
 							HTML htmlEMR = new HTML(
-									"<a href=\"javascript:undefined;\" style='color:blue'>EMR</a>");
+									"<a href=\"javascript:undefined;\" style='color:blue'>" + _("EMR") + "</a>");
 
 							htmlEMR.addClickHandler(new ClickHandler() {
 								@Override
@@ -729,7 +732,7 @@ public class ClaimsManager extends ScreenInterface {
 									|| data.get("billed").equals("")
 									|| data.get("billed").equals("0")) {
 								htmlBill = new HTML(
-										"<a href=\"javascript:undefined;\" style='color:blue'>Bill</a>");
+										"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Bill") + "</a>");
 
 								htmlBill.addClickHandler(new ClickHandler() {
 									@Override
@@ -764,7 +767,7 @@ public class ClaimsManager extends ScreenInterface {
 								});
 							} else {
 								htmlBill = new HTML(
-										"<a href=\"javascript:undefined;\" style='color:blue'>ReBill</a>");
+										"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Rebill") + "</a>");
 
 								htmlBill.addClickHandler(new ClickHandler() {
 									@Override
@@ -795,12 +798,12 @@ public class ClaimsManager extends ScreenInterface {
 													selectedBillKeys, cb,
 													BillingType.REBILL);
 											tabPanel.add(billClaimsWidget,
-													"Re-Bill Claims");
+													_("Re-Bill Claims"));
 											tabPanel.selectTab(tabPanel
 													.getWidgetCount() - 1);
 										} else {
 											Window
-													.alert("The selected claim is not submitted before");
+													.alert(_("The selected claim was not submitted before"));
 										}
 									}
 
@@ -847,14 +850,14 @@ public class ClaimsManager extends ScreenInterface {
 							Float balance = Float.parseFloat(data.get("balance"));
 							Label label = new Label(); 
 							if (data.get("billed").equals("0")) {
-								label.setText("Queued");
+								label.setText(_("Queued"));
 								if (balance==0) 
 									label.getElement().getStyle().setColor("#5B5B3B");
 								 else if (balance<0)
 									label.getElement().getStyle().setColor("#FF0000");
 							}
 							 else{
-								label.setText("Billed");
+								label.setText(_("Billed"));
 								label.getElement().getStyle().setColor("#6000A0");
 							 }
 							
@@ -974,7 +977,7 @@ public class ClaimsManager extends ScreenInterface {
 						ClaimDetailsWidget claimDetail = new ClaimDetailsWidget(
 								Integer.parseInt(data.get("claim")), Integer
 										.parseInt(data.get("patient_id")),data.get("patient"), cb);
-						tabPanel.add(claimDetail, "Claim Details: "
+						tabPanel.add(claimDetail, _("Claim Details") + ": "
 								+ data.get("claim"));
 						tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 					}
@@ -993,7 +996,7 @@ public class ClaimsManager extends ScreenInterface {
 		buttonsHPanel.add(buttonsHPanelRight);
 		buttonsHPanel.setCellHorizontalAlignment(buttonsHPanelRight,
 				HorizontalPanel.ALIGN_RIGHT);
-		final CustomButton selectAllBtn = new CustomButton("Select All",AppConstants.ICON_SELECT_ALL);
+		final CustomButton selectAllBtn = new CustomButton(_("Select All"), AppConstants.ICON_SELECT_ALL);
 		buttonsHPanelLeft.add(selectAllBtn);
 		selectAllBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1006,7 +1009,7 @@ public class ClaimsManager extends ScreenInterface {
 			}
 		});
 
-		final CustomButton selectNoneBtn = new CustomButton("Select None",AppConstants.ICON_SELECT_NONE);
+		final CustomButton selectNoneBtn = new CustomButton(_("Select None"), AppConstants.ICON_SELECT_NONE);
 		buttonsHPanelLeft.add(selectNoneBtn);
 		selectNoneBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1019,7 +1022,7 @@ public class ClaimsManager extends ScreenInterface {
 			}
 		});
 
-		final CustomButton postCheckBtn = new CustomButton("Post Check",AppConstants.ICON_SEND);
+		final CustomButton postCheckBtn = new CustomButton(_("Post Check"), AppConstants.ICON_SEND);
 		buttonsHPanelLeft.add(postCheckBtn);
 		postCheckBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1040,12 +1043,12 @@ public class ClaimsManager extends ScreenInterface {
 				};
 				PostCheckWidget postCheckWidget = new PostCheckWidget(
 						selectedProcs, cb);
-				tabPanel.add(postCheckWidget, "Post Check");
+				tabPanel.add(postCheckWidget, _("Post Check"));
 				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 			}
 		});
 
-		final CustomButton billClaimsBtn = new CustomButton("Bill Claims");
+		final CustomButton billClaimsBtn = new CustomButton(_("Bill Claims"));
 		buttonsHPanelRight.add(billClaimsBtn);
 		billClaimsBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1066,12 +1069,12 @@ public class ClaimsManager extends ScreenInterface {
 				};
 				RemittBillingWidget billClaimsWidget = new RemittBillingWidget(
 						selectedProcs, cb, BillingType.BILL);
-				tabPanel.add(billClaimsWidget, "Billing Queue");
+				tabPanel.add(billClaimsWidget, _("Billing Queue"));
 				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 			}
 		});
 
-		final CustomButton markBilledBtn = new CustomButton("Mark Billed",AppConstants.ICON_SELECT_ALL);
+		final CustomButton markBilledBtn = new CustomButton(_("Mark Billed"), AppConstants.ICON_SELECT_ALL);
 		buttonsHPanelRight.add(markBilledBtn);
 		markBilledBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1080,7 +1083,7 @@ public class ClaimsManager extends ScreenInterface {
 			}
 		});
 
-		final CustomButton rebillClaimsBtn = new CustomButton("Re-Bill Claims");
+		final CustomButton rebillClaimsBtn = new CustomButton(_("Rebill Claims"));
 		buttonsHPanelRight.add(rebillClaimsBtn);
 		rebillClaimsBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1101,7 +1104,7 @@ public class ClaimsManager extends ScreenInterface {
 				};
 				RemittBillingWidget billClaimsWidget = new RemittBillingWidget(
 						selectedBillKeys, cb, BillingType.REBILL);
-				tabPanel.add(billClaimsWidget, "Re-Bill Claims");
+				tabPanel.add(billClaimsWidget, _("Rebill Claims"));
 				tabPanel.selectTab(tabPanel.getWidgetCount() - 1);
 			}
 		});
@@ -1140,7 +1143,7 @@ public class ClaimsManager extends ScreenInterface {
 		popupVPanel.add(popupClosePanel);
 		actionsList.setSelectedIndex(0);
 
-		Label lblHeading2 = new Label("Procedure");
+		Label lblHeading2 = new Label(_("Procedure"));
 		lblHeading2.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		HorizontalPanel topHp = new HorizontalPanel();
 		topHp.setSpacing(5);
@@ -1193,15 +1196,16 @@ public class ClaimsManager extends ScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								try {
+									@SuppressWarnings("unchecked")
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>");
 
 									procDetailFlexTable.clear();
 									int col = 0;
 									Label procDateLb = new Label(
-											"Procedure Date");
+											_("Procedure Date"));
 									procDateLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label procDateVal = new Label(result
 											.get("proc_date"));
@@ -1217,7 +1221,7 @@ public class ClaimsManager extends ScreenInterface {
 											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
-									Label procCode = new Label("Procedure Code");
+									Label procCode = new Label(_("Procedure Code"));
 									procCode.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label procCodeVal = new Label(result
 											.get("proc_code"));
@@ -1231,7 +1235,7 @@ public class ClaimsManager extends ScreenInterface {
 											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
-									Label provLb = new Label("Provider");
+									Label provLb = new Label(_("Provider"));
 									provLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label provVal = new Label(result
 											.get("prov_name"));
@@ -1245,7 +1249,7 @@ public class ClaimsManager extends ScreenInterface {
 											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
-									Label chargedLb = new Label("Charged");
+									Label chargedLb = new Label(_("Charged"));
 									chargedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label chargedVal = new Label(result
 											.get("proc_obal"));
@@ -1262,7 +1266,7 @@ public class ClaimsManager extends ScreenInterface {
 									if (result.get("proc_allowed") != null
 											&& !result.get("proc_allowed")
 													.equals("")) {
-										Label allowedLb = new Label("Allowed");
+										Label allowedLb = new Label(_("Allowed"));
 										allowedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 										Label allowedVal = new Label(result
 												.get("proc_allowed"));
@@ -1277,7 +1281,7 @@ public class ClaimsManager extends ScreenInterface {
 										col++;
 									}
 
-									Label chargesLb = new Label("Charges");
+									Label chargesLb = new Label(_("Charges"));
 									chargesLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label chargesVal = new Label(result
 											.get("proc_charges"));
@@ -1291,7 +1295,7 @@ public class ClaimsManager extends ScreenInterface {
 											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
-									Label procPaidLb = new Label("Paid");
+									Label procPaidLb = new Label(_("Paid"));
 									procPaidLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label procPaidVal = new Label(result
 											.get("proc_paid"));
@@ -1305,7 +1309,7 @@ public class ClaimsManager extends ScreenInterface {
 											AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 									col++;
 
-									Label balanceLb = new Label("Balance");
+									Label balanceLb = new Label(_("Balance"));
 									balanceLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 									Label balanceVal = new Label(result
 											.get("proc_currbal"));
@@ -1320,9 +1324,9 @@ public class ClaimsManager extends ScreenInterface {
 									col++;
 
 									if (result.get("proc_billed").equals("1")) {
-										Label billedLb = new Label("Billed");
+										Label billedLb = new Label(_("Billed"));
 										billedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-										Label billedVal = new Label("Yes");
+										Label billedVal = new Label(_("Yes"));
 										procDetailFlexTable.setWidget(0, col,
 												billedLb);
 										cellFormatter.setStyleName(0, col,
@@ -1334,7 +1338,7 @@ public class ClaimsManager extends ScreenInterface {
 										col++;
 
 										Label dateBilledLb = new Label(
-												"Date Billed");
+												_("Date Billed"));
 										dateBilledLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 										Label dateBilledVal = new Label(result
 												.get("proc_billdate"));
@@ -1348,9 +1352,9 @@ public class ClaimsManager extends ScreenInterface {
 												AppConstants.STYLE_TABLE_ROW_ALTERNATE);
 										col++;
 									} else {
-										Label billedLb = new Label("Billed");
+										Label billedLb = new Label(_("Billed"));
 										billedLb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-										Label billedVal = new Label("No");
+										Label billedVal = new Label(_("No"));
 										procDetailFlexTable.setWidget(0, col,
 												billedLb);
 										cellFormatter.setStyleName(0, col,
@@ -1379,7 +1383,7 @@ public class ClaimsManager extends ScreenInterface {
 
 	@SuppressWarnings("unchecked")
 	protected void refreshSearch() {
-		final BlockScreenWidget blockScreenWidget = new BlockScreenWidget("Loading claims, please wait...");
+		final BlockScreenWidget blockScreenWidget = new BlockScreenWidget(_("Loading claims, please wait..."));
 		verticalPanel.add(blockScreenWidget);
 		claimsManagerTable.clearData();
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
@@ -1410,27 +1414,27 @@ public class ClaimsManager extends ScreenInterface {
 			boolean isAgingSelected = false;
 			if (rb120Plus.getValue()) {
 				criteria.put("aging", "120+");
-				addExistingSearchCriteria("aging", "Aging", "120+");
+				addExistingSearchCriteria("aging", _("Aging"), "120+");
 				isAgingSelected = true;
 			}
 			if (rb91To120.getValue()) {
 				criteria.put("aging", "91-120");
-				addExistingSearchCriteria("aging", "Aging", "91-120");
+				addExistingSearchCriteria("aging", _("Aging"), "91-120");
 				isAgingSelected = true;
 			}
 			if (rb61To90.getValue()) {
 				criteria.put("aging", "61-90");
-				addExistingSearchCriteria("aging", "Aging", "61-90");
+				addExistingSearchCriteria("aging", _("Aging"), "61-90");
 				isAgingSelected = true;
 			}
 			if (rb31To60.getValue()) {
 				criteria.put("aging", "31-60");
-				addExistingSearchCriteria("aging", "Aging", "31-60");
+				addExistingSearchCriteria("aging", _("Aging"), "31-60");
 				isAgingSelected = true;
 			}
 			if (rb0To30.getValue()) {
 				criteria.put("aging", "0-30");
-				addExistingSearchCriteria("aging", "Aging", "0-30");
+				addExistingSearchCriteria("aging", _("Aging"), "0-30");
 				isAgingSelected = true;
 			}
 			if (isAgingSelected) {
@@ -1449,7 +1453,7 @@ public class ClaimsManager extends ScreenInterface {
 				criteria.put("facility", facilityWidget.getStoredValue());
 				facilityWidget.setVisible(false);
 				lblFacility.setVisible(false);
-				addExistingSearchCriteria("facility", "Facility",
+				addExistingSearchCriteria("facility", _("Facility"),
 						facilityWidget.getText());
 			}
 			if (provWidget.getStoredValue() != null
@@ -1457,7 +1461,7 @@ public class ClaimsManager extends ScreenInterface {
 				criteria.put("provider", provWidget.getStoredValue());
 				provWidget.setVisible(false);
 				lblProvider.setVisible(false);
-				addExistingSearchCriteria("provider", "Provider", provWidget
+				addExistingSearchCriteria("provider", _("Provider"), provWidget
 						.getText());
 			}
 			if (payerWidget.getStoredValue() != null
@@ -1465,7 +1469,7 @@ public class ClaimsManager extends ScreenInterface {
 				criteria.put("payer", payerWidget.getStoredValue());
 				lblPayer.setVisible(false);
 				payerWidget.setVisible(false);
-				addExistingSearchCriteria("payer", "Payer", payerWidget
+				addExistingSearchCriteria("payer", _("Payer"), payerWidget
 						.getText());
 			}
 			if (planWidget.getStoredValue() != null
@@ -1473,7 +1477,7 @@ public class ClaimsManager extends ScreenInterface {
 				criteria.put("plan", planWidget.getStoredValue());
 				lblPlanName.setVisible(false);
 				planWidget.setVisible(false);
-				addExistingSearchCriteria("plan", "Plan Name", planWidget
+				addExistingSearchCriteria("plan", _("Plan Name"), planWidget
 						.getText());
 			}
 			if (patientWidget.getStoredValue() != null
@@ -1481,21 +1485,21 @@ public class ClaimsManager extends ScreenInterface {
 				criteria.put("patient", patientWidget.getStoredValue());
 				lbPatientWidget.setVisible(false);
 				patientWidget.setVisible(false);
-				addExistingSearchCriteria("patient", "Patient Full Name",
+				addExistingSearchCriteria("patient", _("Patient Full Name"),
 						patientWidget.getText());
 			}
 			criteria.put("first_name", txtFirstName.getValue());
 			if (!txtFirstName.getText().equals("")) {
-				addExistingSearchCriteria("first_name", "First Name",
+				addExistingSearchCriteria("first_name", _("First Name"),
 						txtFirstName.getText());
 			}
 			criteria.put("last_name", txtLastName.getValue());
 			if (!txtLastName.getText().equals("")) {
-				addExistingSearchCriteria("last_name", "Last Name", txtLastName
+				addExistingSearchCriteria("last_name", _("Last Name"), txtLastName
 						.getText());
 			}
 			if (tagWidget.getValue()!=null && !tagWidget.getValue().equals("")) {
-				addExistingSearchCriteria("tag", "Tag", tagWidget.getValue());
+				addExistingSearchCriteria("tag", _("Tag"), tagWidget.getValue());
 				criteria.put("tag", tagWidget.getValue());
 				tagWidget.setVisible(false);
 				lbTagSearch.setVisible(false);
@@ -1506,7 +1510,7 @@ public class ClaimsManager extends ScreenInterface {
 				lblBillingStatus.setVisible(false);
 				rbQueued.setVisible(false);
 				rbBilled.setVisible(false);
-				addExistingSearchCriteria("billed", "Billing Status", "Queued");
+				addExistingSearchCriteria("billed", _("Billing Status"), _("Queued"));
 			}
 			if (rbBilled.getValue()) {
 				criteria.put("billed", "1");
@@ -1514,7 +1518,7 @@ public class ClaimsManager extends ScreenInterface {
 				lblBillingStatus.setVisible(false);
 				rbQueued.setVisible(false);
 				rbBilled.setVisible(false);
-				addExistingSearchCriteria("billed", "Billing Status", "Billed");
+				addExistingSearchCriteria("billed", _("Billing Status"), _("Billed"));
 			}
 			// Check for date of Service.
 			if (dateBox.getValue() == null || dateBox.getValue().equals("")) {
@@ -1523,13 +1527,13 @@ public class ClaimsManager extends ScreenInterface {
 				criteria.put("date", dateBox.getTextBox().getValue());
 				lblDateOfService.setVisible(false);
 				dateBox.setVisible(false);
-				addExistingSearchCriteria("date", "Procedures On", dateBox
+				addExistingSearchCriteria("date", _("Procedures On"), dateBox
 						.getTextBox().getText());
 			}
 			if (cbShowZeroBalance.getValue()) {
 				criteria.put("zerobalance", "1");
 				cbShowZeroBalance.setVisible(false);
-				addExistingSearchCriteria("zerobalance", "Include Zero Balance", "");
+				addExistingSearchCriteria("zerobalance", _("Include Zero Balance"), "");
 			}
 			if (cbWholeWeek.getValue()) {
 				criteria.put("week", "1");
@@ -1558,7 +1562,7 @@ public class ClaimsManager extends ScreenInterface {
 							if (200 == response.getStatusCode()) {
 								try{
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-											.shoehornJson(JSONParser.parse(response
+											.shoehornJson(JSONParser.parseStrict(response
 													.getText()),
 													"HashMap<String,String>[]");
 	

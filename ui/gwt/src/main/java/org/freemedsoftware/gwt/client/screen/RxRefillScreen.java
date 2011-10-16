@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,10 +41,10 @@ import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDialogBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -112,7 +114,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		verticalPanel.add(horizontalPanel);
 		horizontalPanel.setSize("100%", "100%");
 
-		final Label reRefillLabel = new Label("Prescription Refill Request.");
+		final Label reRefillLabel = new Label(_("Prescription Refill Request"));
 		horizontalPanel.add(reRefillLabel);
 		reRefillLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		//top_Label_Horizontal_Panel ends
@@ -122,7 +124,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		verticalPanel.add(horizontalPanel1);
 		horizontalPanel1.setSize("100%", "100%");
 		
-		final Label patientLabel = new Label("Patient:");
+		final Label patientLabel = new Label(_("Patient") + ":");
 		horizontalPanel1.add(patientLabel);
 		patientLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		horizontalPanel1.setCellWidth(patientLabel, "5%");
@@ -184,7 +186,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 //		verticalPanel.setCellHorizontalAlignment(buttonPanel, HasHorizontalAlignment.ALIGN_RIGHT);
 		
 		
-		final CustomButton submitButton = new CustomButton("Submit Request",AppConstants.ICON_ADD);
+		final CustomButton submitButton = new CustomButton(_("Submit Request"), AppConstants.ICON_ADD);
 		
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -214,14 +216,12 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 								public void onResponseReceived(
 										Request request,
 										Response response) {
-									
-									
 								
 									if (200 == response.getStatusCode()) {
 										Integer r = (Integer) JsonUtil
 												.shoehornJson(
 														JSONParser
-																.parse(response
+																.parseStrict(response
 																		.getText()),
 														"Integer");
 										if (r != 0) {
@@ -234,14 +234,14 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 												.getToaster()
 												.addItem(
 														"RxRefillScreen",
-														"RxRefill succefully added.");
+														_("Prescription refill successfully added."));
 										}
 									} else {
 										CurrentState
 												.getToaster()
 												.addItem(
 														"RxRefillScreen",
-														"Adding RxRefill failed.");
+														_("Adding prescription refill failed."));
 									}
 								}
 
@@ -255,7 +255,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		});	
 		buttonPanel.add(submitButton);
 		
-		final CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		final CustomButton cancelButton = new CustomButton(_("Cancel"), AppConstants.ICON_CANCEL);
 		buttonPanel.add(cancelButton);
 		
 		//buttons_Horizontal_Panel ends
@@ -295,14 +295,14 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		rxRefillTable.setSize("100%", "100%");
 		verticalPanel.add(rxRefillTable);
 		if(CurrentState.getUserType().equalsIgnoreCase(AppConstants.USER_TYPE_PROVIDER))
-			rxRefillTable.addColumn("Selected", "selected");
-		rxRefillTable.addColumn("Date", "stamp"); // col 0
-		rxRefillTable.addColumn("User", "user"); // col 1
-		rxRefillTable.addColumn("Patient", "patient"); // col 2
+			rxRefillTable.addColumn(_("Selected"), "selected");
+		rxRefillTable.addColumn(_("Date"), "stamp"); // col 0
+		rxRefillTable.addColumn(_("User"), "user"); // col 1
+		rxRefillTable.addColumn(_("Patient"), "patient"); // col 2
 //		rxRefillTable.addColumn("RX Orig", "rxorig"); // col 3
-		rxRefillTable.addColumn("Note", "note"); // col 4
-		rxRefillTable.addColumn("Approved", "approved");// col 5
-		rxRefillTable.addColumn("locked", "locked"); // col 6
+		rxRefillTable.addColumn(_("Note"), "note"); // col 4
+		rxRefillTable.addColumn(_("Approved"), "approved");// col 5
+		rxRefillTable.addColumn(_("Locked"), "locked"); // col 6
 		retrieveData();
 		rxRefillTable
 		.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -408,7 +408,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (data != null) {
@@ -466,7 +466,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		horizontalPanel1.setSize("100%", "100%");
 		vpanel.add(horizontalPanel1);
 		
-		final Label patientLabel = new Label("Provider: ");
+		final Label patientLabel = new Label(_("Provider") + ": ");
 		horizontalPanel1.add(patientLabel);
 		patientLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		horizontalPanel1.setCellWidth(patientLabel, "60px");
@@ -507,7 +507,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		horizontalPanel2.setCellHorizontalAlignment(noteBox, HasHorizontalAlignment.ALIGN_LEFT);
 		
 		final HorizontalPanel buttonContainer = new HorizontalPanel();
-		final CustomButton sendButton= new CustomButton("Send");
+		final CustomButton sendButton= new CustomButton(_("Send"));
 		buttonContainer.add(sendButton);
 		buttonContainer.setSize("50", "50");
 		sendButton.getElement().setAttribute("style", "float:left");
@@ -546,6 +546,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 			@Override
 			public void jsonifiedData(Object data) {
 				if (data != null) {
+					@SuppressWarnings("unchecked")
 					HashMap<String, String> [] result = (HashMap<String, String>[]) data;
 					if(result!=null){
 						
@@ -556,7 +557,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		
 		refillDetailPopup.hide();
 		
-		Util.showInfoMsg(className, "Request sent to provider.");
+		Util.showInfoMsg(className, _("Request sent to provider."));
 	}
 	
 }

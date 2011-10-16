@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +88,7 @@ public class ToolsScreen extends ScreenInterface {
 		horizontalPanel.add(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
-		final Label pleaseChooseALabel = new Label("Please choose a tool.");
+		final Label pleaseChooseALabel = new Label(_("Please choose a tool."));
 		verticalPanel.add(pleaseChooseALabel);
 		pleaseChooseALabel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -96,8 +98,8 @@ public class ToolsScreen extends ScreenInterface {
 		toolTable.setAllowSelection(false);
 		toolTable.setSize("100%", "100%");
 		toolTable.setIndexName("tool_uuid");
-		toolTable.addColumn("Name", "tool_name");
-		toolTable.addColumn("Description", "tool_desc");
+		toolTable.addColumn(_("Name"), "tool_name");
+		toolTable.addColumn(_("Description"), "tool_desc");
 		toolTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -138,7 +140,7 @@ public class ToolsScreen extends ScreenInterface {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {

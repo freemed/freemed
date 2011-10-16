@@ -1,8 +1,9 @@
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,15 +16,15 @@ import org.freemedsoftware.gwt.client.Util;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 import org.freemedsoftware.gwt.client.widget.Popup;
 import org.freemedsoftware.gwt.client.widget.PopupView;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Node;
@@ -40,7 +41,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -134,8 +134,8 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 
 		initWidget(verticalPanel);
 		topTabPanel = new TabPanel();
-		topTabPanel.add(newProcedureVerticalPanelMain, "Add");
-		topTabPanel.add(viewPlanVerticalPanel, "List");
+		topTabPanel.add(newProcedureVerticalPanelMain, _("Add"));
+		topTabPanel.add(viewPlanVerticalPanel, _("List"));
 		topTabPanel.selectTab(1);
 		verticalPanel.add(topTabPanel);
 
@@ -143,11 +143,11 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoVPanel = new VerticalPanel();
 		coverageVPanel = new VerticalPanel();
 		miscVPanel = new VerticalPanel();
-		lbBasicInfo = new Label("Service Information");
+		lbBasicInfo = new Label(_("Service Information"));
 		lbBasicInfo.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
-		lbCoverage = new Label("Coverage");
+		lbCoverage = new Label(_("Coverage"));
 		lbCoverage.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
-		lbMisc = new Label("Lab");
+		lbMisc = new Label(_("Lab"));
 		lbMisc.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 		entryTabPanel.add(basicInfoVPanel, lbBasicInfo.getText());
 		entryTabPanel.add(coverageVPanel, lbCoverage.getText());
@@ -156,7 +156,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		createProedureStep1Vpanel();
 		createProedureStep2Vpanel();
 		createProedureStep3Vpanel();
-		cbTabView = new CheckBox("Tab View");
+		cbTabView = new CheckBox(_("Tab View"));
 		cbTabView.setValue(true);
 		cbTabView.addClickHandler(new ClickHandler() {
 			@Override
@@ -167,7 +167,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		newProcedureVerticalPanelMain.add(cbTabView);
 		newProcedureVerticalPanelMain.add(entryTabPanel);
 
-		actionBtn = new CustomButton("Add", AppConstants.ICON_ADD);
+		actionBtn = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 		actionBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -180,16 +180,16 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 					long days=((dtEnd.getTime()-dtStart.getTime())/1000/60/60/24)+1;//(procEndDate.getValue().getTime()-procDate.getValue().getTime())/(24 * 60 * 60 * 1000);
 					long units= Long.parseLong(tbUnits.getText());
 					if(days!=units){
-						if(Window.confirm("The number of units does not match with the From and To date, Do you want to Proceed?"))
+						if(Window.confirm(_("The number of units does not match with the From and To date, Do you want to proceed?"))) {													
 							showProcedureCostPopup();
-					}
-					else
+						}
+					} else {
 						showProcedureCostPopup();
-
+					}
 				}
 			}
 		});
-		CustomButton resetBtn = new CustomButton("Reset",
+		CustomButton resetBtn = new CustomButton(_("Reset"),
 				AppConstants.ICON_CLEAR);
 		resetBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -213,13 +213,13 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		int fieldCounter = 0;
 		basicInfoVPanel.add(basicInfoflexTable);
 		basicInfoflexTable.setWidth("100%");
-		Label lbProvs = new Label("Provider");
+		Label lbProvs = new Label(_("Provider"));
 		lbProvs.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbProvs);
 		fieldCounter++;
 
-		Label lbProvider = new Label("Provider");
+		Label lbProvider = new Label(_("Provider"));
 		providerWidget = new SupportModuleWidget("ProviderModule");
 		providerWidget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbProvider);
@@ -228,7 +228,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 1, providerWidget);
 		fieldCounter++;
 		// Adding Referring Provider
-		Label lbRefProvider = new Label("Referring Provider");
+		Label lbRefProvider = new Label(_("Referring Provider"));
 		refProviderWidget = new SupportModuleWidget("ProviderModule");
 		refProviderWidget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbRefProvider);
@@ -237,13 +237,13 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 1, refProviderWidget);
 		fieldCounter++;
 
-		Label lbProcedure = new Label("Procedure");
+		Label lbProcedure = new Label(_("Procedure"));
 		lbProcedure.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbProcedure);
 		fieldCounter++;
 
 		// Adding procedure date
-		Label lbProcDate = new Label("Date of Service");
+		Label lbProcDate = new Label(_("Date of Service"));
 		HorizontalPanel hPanel=new HorizontalPanel();
 		hPanel.setSpacing(10);
 		procDate = new CustomDatePicker();
@@ -264,7 +264,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding Facility
-		Label lbFacility = new Label("Place of Service");
+		Label lbFacility = new Label(_("Place of Service"));
 		posWidget = new SupportModuleWidget("FacilityModule");
 		posWidget.setValue(CurrentState.getDefaultFacility());
 		posWidget.setWidth("170px");
@@ -275,9 +275,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding Claim Types
-		Label lbClaimType = new Label("Claim Type");
+		Label lbClaimType = new Label(_("Claim Type"));
 		listClaimTypes = new CustomListBox();
-		listClaimTypes.addItem("NONE SELECTED");
+		listClaimTypes.addItem(_("NONE SELECTED"));
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbClaimType);
 		basicInfoflexTable.getFlexCellFormatter().getElement(fieldCounter, 0)
 				.getStyle().setProperty("textIndent", "10px");
@@ -285,7 +285,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding Units
-		Label lbUnits = new Label("Units");
+		Label lbUnits = new Label(_("Units"));
 		tbUnits = new TextBox();
 		tbUnits.setText("1");
 		tbUnits.setWidth("170px");
@@ -297,18 +297,18 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 
 		// Adding Episode of Care
 		CustomButton removeTest = new CustomButton("X");
-		Label lbEoc = new Label("Episode of Care");
+		Label lbEoc = new Label(_("Episode of Care"));
 		eocVPanel = new VerticalPanel();
 		eocFlexTable = new FlexTable();
 		eocVPanel.add(eocFlexTable);
 		HTML addAnother = new HTML(
-				"<a href=\"javascript:undefined;\" style='color:blue'>Add Episode of Care</a>");
+				"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Add Episode of Care") + "</a>");
 
 		addAnother.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				CustomListBox eoc = new CustomListBox();
-				eoc.addItem("NONE SELECTED");
+				eoc.addItem(_("NONE SELECTED"));
 				if (eocMap != null && eocMap.size() > 0) {
 					Set<String> keys = eocMap.keySet();
 					Iterator<String> iter = keys.iterator();
@@ -358,7 +358,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding CPT Code
-		Label lbCPTCodes = new Label("Procedural Code");
+		Label lbCPTCodes = new Label(_("Procedural Code"));
 		procCodeWidget = new SupportModuleWidget("CptCodes");
 		procCodeWidget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbCPTCodes);
@@ -367,7 +367,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 1, procCodeWidget);
 		//fieldCounter++;
 
-		Label lbModifier1 = new Label("Modifier 1");
+		Label lbModifier1 = new Label(_("Modifier 1"));
 		procModifier1Widget = new SupportModuleWidget("CptModifiers");
 		procModifier1Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 2, lbModifier1);
@@ -376,7 +376,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 3, procModifier1Widget);
 		//fieldCounter++;
 
-		Label lbModifier2 = new Label("Modifier 2");
+		Label lbModifier2 = new Label(_("Modifier 2"));
 		procModifier2Widget = new SupportModuleWidget("CptModifiers");
 		procModifier2Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 4, lbModifier2);
@@ -385,7 +385,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 5, procModifier2Widget);
 		//fieldCounter++;
 
-		Label lbModifier3 = new Label("Modifier 3");
+		Label lbModifier3 = new Label(_("Modifier 3"));
 		procModifier3Widget = new SupportModuleWidget("CptModifiers");
 		procModifier3Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 6, lbModifier3);
@@ -396,7 +396,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 
 		// Adding Diagnosis Codes
 
-		Label lbDiagCode1 = new Label("Diagnosis Code 1");
+		Label lbDiagCode1 = new Label(_("Diagnosis Code 1"));
 		diagCode1Widget = new SupportModuleWidget("IcdCodes");
 		diagCode1Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbDiagCode1);
@@ -405,7 +405,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 1, diagCode1Widget);
 		//fieldCounter++;
 
-		Label lbDiagCode2 = new Label("Diagnosis Code 2");
+		Label lbDiagCode2 = new Label(_("Diagnosis Code 2"));
 		diagCode2Widget = new SupportModuleWidget("IcdCodes");
 		diagCode2Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 2, lbDiagCode2);
@@ -414,7 +414,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 3, diagCode2Widget);
 		//fieldCounter++;
 
-		Label lbDiagCode3 = new Label("Diagnosis Code 3");
+		Label lbDiagCode3 = new Label(_("Diagnosis Code 3"));
 		diagCode3Widget = new SupportModuleWidget("IcdCodes");
 		diagCode3Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 4, lbDiagCode3);
@@ -423,7 +423,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		basicInfoflexTable.setWidget(fieldCounter, 5, diagCode3Widget);
 		//fieldCounter++;
 
-		Label lbDiagCode4 = new Label("Diagnosis Code 4");
+		Label lbDiagCode4 = new Label(_("Diagnosis Code 4"));
 		diagCode4Widget = new SupportModuleWidget("IcdCodes");
 		diagCode4Widget.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 6, lbDiagCode4);
@@ -433,7 +433,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding Voucher Number
-		Label lbVoucher = new Label("Voucher Number");
+		Label lbVoucher = new Label(_("Voucher Number"));
 		tbVoucherNo = new TextBox();
 		tbVoucherNo.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbVoucher);
@@ -443,9 +443,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding Authorization
-		Label lbAuthorization = new Label("Authorization");
+		Label lbAuthorization = new Label(_("Authorization"));
 		listAuthorizations = new CustomListBox();
-		listAuthorizations.addItem("NONE SELECTED");
+		listAuthorizations.addItem(_("NONE SELECTED"));
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbAuthorization);
 		basicInfoflexTable.getFlexCellFormatter().getElement(fieldCounter, 0)
 				.getStyle().setProperty("textIndent", "10px");
@@ -455,7 +455,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		// Adding Certifications
 		Label lbCertifications = new Label("Certifications");
 		listCertifications = new CustomListBox();
-		listCertifications.addItem("NONE SELECTED");
+		listCertifications.addItem(_("NONE SELECTED"));
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbCertifications);
 		basicInfoflexTable.getFlexCellFormatter().getElement(fieldCounter, 0)
 				.getStyle().setProperty("textIndent", "10px");
@@ -463,7 +463,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding last date of visit
-		Label lbLastDate = new Label("Date of Last Visit");
+		Label lbLastDate = new Label(_("Date of Last Visit"));
 		lastVisitDate = new CustomDatePicker();
 		lastVisitDate.setWidth("170px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbLastDate);
@@ -473,7 +473,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		fieldCounter++;
 
 		// Adding Comment
-		Label lbComment = new Label("Comment");
+		Label lbComment = new Label(_("Comment"));
 		tbComments = new TextArea();
 		tbComments.setWidth("400px");
 		basicInfoflexTable.setWidget(fieldCounter, 0, lbComment);
@@ -491,7 +491,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 
 		int fieldCounter = 0;
 
-		lbPrimCoverage = new Label("Primary Coverage");
+		lbPrimCoverage = new Label(_("Primary Coverage"));
 		lbPrimCoverage.setVisible(false);
 		cbPrimary = new CheckBox();
 		cbPrimary.setVisible(false);
@@ -499,7 +499,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		coverageFlexTable.setWidget(fieldCounter, 1, cbPrimary);
 		fieldCounter++;
 
-		lbSecCoverage = new Label("Secondary Coverage");
+		lbSecCoverage = new Label(_("Secondary Coverage"));
 		lbSecCoverage.setVisible(false);
 		cbSec = new CheckBox();
 		cbSec.setVisible(false);
@@ -507,7 +507,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		coverageFlexTable.setWidget(fieldCounter, 1, cbSec);
 		fieldCounter++;
 
-		lbTertCoverage = new Label("Tertiary Coverage");
+		lbTertCoverage = new Label(_("Tertiary Coverage"));
 		lbTertCoverage.setVisible(false);
 		cbTert = new CheckBox();
 		cbTert.setVisible(false);
@@ -515,7 +515,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		coverageFlexTable.setWidget(fieldCounter, 1, cbTert);
 		fieldCounter++;
 
-		lbWorkCoverage = new Label("Work Comp Coverage");
+		lbWorkCoverage = new Label(_("Work Comp Coverage"));
 		lbWorkCoverage.setVisible(false);
 		cbWork = new CheckBox();
 		cbWork.setVisible(false);
@@ -532,21 +532,21 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		int fieldCounter = 0;
 
 		// Adding Outside Lab Charges
-		Label lbOutsideLabCharges = new Label("Outside Lab Charges");
+		Label lbOutsideLabCharges = new Label(_("Outside Lab Charges"));
 		tbOutsideLabCharges = new TextBox();
 		miscFlexTable.setWidget(fieldCounter, 0, lbOutsideLabCharges);
 		miscFlexTable.setWidget(fieldCounter, 1, tbOutsideLabCharges);
 		fieldCounter++;
 
 		// Adding Medicaid Original Reference
-		Label lbMedOrigRef = new Label("Medicaid Original Reference");
+		Label lbMedOrigRef = new Label(_("Medicaid Original Reference"));
 		tbMedOrigRef = new TextBox();
 		miscFlexTable.setWidget(fieldCounter, 0, lbMedOrigRef);
 		miscFlexTable.setWidget(fieldCounter, 1, tbMedOrigRef);
 		fieldCounter++;
 
 		// Adding Medicaid Resubmission Code
-		Label lbMedResubCode = new Label("Medicaid Resubmission Code");
+		Label lbMedResubCode = new Label(_("Medicaid Resubmission Code"));
 		tbMedResubCode = new TextBox();
 		miscFlexTable.setWidget(fieldCounter, 0, lbMedResubCode);
 		miscFlexTable.setWidget(fieldCounter, 1, tbMedResubCode);
@@ -556,9 +556,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 	public void switchView(boolean isTabView) {
 		if (isTabView) {
 			entryTabPanel.setVisible(true);
-			entryTabPanel.add(basicInfoVPanel, "Basic Information");
-			entryTabPanel.add(coverageVPanel, "Coverage");
-			entryTabPanel.add(miscVPanel, "Miscellaneous");
+			entryTabPanel.add(basicInfoVPanel, _("Basic Information"));
+			entryTabPanel.add(coverageVPanel, _("Coverage"));
+			entryTabPanel.add(miscVPanel, _("Miscellaneous"));
 
 			lbBasicInfo.setVisible(false);
 			lbCoverage.setVisible(false);
@@ -611,7 +611,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (result != null) {
@@ -669,7 +669,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (result != null) {
@@ -724,7 +724,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (result != null) {
@@ -787,7 +787,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 									// :"+response.getText());
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
@@ -884,7 +884,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 									// :"+response.getText());
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
@@ -919,17 +919,17 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 	public void createCostFlexTable() {
 		finalStepFlexTable = new FlexTable();
 		finalStepFlexTable.setSize("100%", "100%");
-		Label lbProceduralCode = new Label("Procedural Code");
+		Label lbProceduralCode = new Label(_("Procedural Code"));
 		Label proceduralCodeVal = new Label(procCodeWidget.getText());
 		finalStepFlexTable.setWidget(0, 0, lbProceduralCode);
 		finalStepFlexTable.setWidget(0, 1, proceduralCodeVal);
 
-		Label lbUnits = new Label("Units");
+		Label lbUnits = new Label(_("Units"));
 		Label unitsVal = new Label(tbUnits.getText());
 		finalStepFlexTable.setWidget(1, 0, lbUnits);
 		finalStepFlexTable.setWidget(1, 1, unitsVal);
 
-		Label lbCalCharge = new Label("Calculated Charge");
+		Label lbCalCharge = new Label(_("Calculated Charge"));
 		tbCalculatedCharge = new TextBox();
 		if(isModifying || isCloning){
 			tbCalculatedCharge.setText(existingProcCharge);
@@ -937,13 +937,13 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		finalStepFlexTable.setWidget(2, 0, lbCalCharge);
 		finalStepFlexTable.setWidget(2, 1, tbCalculatedCharge);
 
-		Label lbInsuranceBillable = new Label("Insurance Billable?");
+		Label lbInsuranceBillable = new Label(_("Insurance Billable?"));
 		cbInsuranceBilable = new CheckBox();
 		cbInsuranceBilable.setValue(true);
 		finalStepFlexTable.setWidget(3, 0, lbInsuranceBillable);
 		finalStepFlexTable.setWidget(3, 1, cbInsuranceBilable);
 
-		CustomButton addProcedure = new CustomButton("Finish",
+		CustomButton addProcedure = new CustomButton(_("Finish"),
 				AppConstants.ICON_ADD);
 		addProcedure.addClickHandler(new ClickHandler() {
 			@Override
@@ -959,7 +959,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 	private void showProcedureCostPopup() {
 		createCostFlexTable();
 		VerticalPanel vp = new VerticalPanel();
-		Label lbHead = new Label("Calculated Cost");
+		Label lbHead = new Label(_("Calculated Cost"));
 		lbHead.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		vp.add(lbHead);
 		vp.add(finalStepFlexTable);
@@ -1008,13 +1008,12 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 							GWT.log("Exception", ex);
 						}
 	
-						@SuppressWarnings("unchecked")
 						public void onResponseReceived(
 								com.google.gwt.http.client.Request request,
 								com.google.gwt.http.client.Response response) {
 							if (200 == response.getStatusCode()) {
 								Float result = (Float) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Float");
 	
 								if (result != null) {
@@ -1040,28 +1039,28 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		if (providerWidget.getStoredValue() == null
 				|| providerWidget.getStoredValue().equals("0")
 				|| providerWidget.getText().trim().equals(""))
-			msg += "Please Specify the Provider.\n";
+			msg += _("Please specify the provider.") + "\n";
 		if (procDate.getTextBox().getText() == null
 				|| procDate.getTextBox().getText().equals(""))
-			msg += "Please Specify the Procedure Date.\n";
+			msg += _("Please specify the procedure date.") + "\n";
 		if (diagCode1Widget.getStoredValue() == null
 				|| diagCode1Widget.getStoredValue().equals("0")
 				|| diagCode1Widget.getText().trim().equals(""))
-			msg += "Please Specify diagnosis code 1.\n";
+			msg += _("Please specify diagnosis code 1.") + "\n";
 		if (posWidget.getStoredValue() == null
 				|| posWidget.getStoredValue().equals("0")
 				|| posWidget.getText().trim().equals(""))
-			msg += "Please Specify the Place of Service.\n";
+			msg += _("Please specify the place of service.") + "\n";
 		if (listClaimTypes.getSelectedIndex() == 0)
-			msg += "Please Specify the Type of Claim.\n";
+			msg += _("Please specify the type of claim.") + "\n";
 		if (procCodeWidget.getStoredValue() == null
 				|| procCodeWidget.getStoredValue().equals("0")
 				|| procCodeWidget.getText().trim().equals(""))
-			msg += "Please Specify the Procedural code.\n";
+			msg += _("Please specify the procedural code.") + "\n";
 		if (tbUnits.getText() == null || tbUnits.getText().equals(""))
-			msg += "Please Specify the Units.\n";
+			msg += _("Please specify the units.") + "\n";
 		else if (!Util.isNumber(tbUnits.getText())) {
-			msg += "The specified valued for Units is not correct Number \n";
+			msg += _("The specified valued for units is not correct number.") + "\n";
 		}
 		
 		if (!msg.equals("")) {
@@ -1099,7 +1098,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 						Integer recid = 0;
 						if (modRecId == 0) {
 							Integer result = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (result != null && result > 0) {
 								check = true;
@@ -1107,7 +1106,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 							}
 						} else {
 							Boolean result = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (result != null && result) {
 								check = true;
@@ -1116,10 +1115,10 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 						if (check) {
 							if (modRecId == 0)
 								Util.showInfoMsg("ProcedureModule",
-										"New Procedure Created.");
+										_("New procedure created."));
 							else
 								Util.showInfoMsg("ProcedureModule",
-										"Procedure Modified.");
+										_("Procedure modified."));
 							modRecId = 0;
 							topTabPanel.selectTab(1);
 							reset();
@@ -1129,7 +1128,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 						}
 					} else {
 						Util.showErrorMsg("ProcedureModule",
-								"Procedure creation failed.");
+								_("Procedure creation failed."));
 					}
 				}
 			});
@@ -1278,11 +1277,11 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		procedureViewTable = new CustomTable();
 		procedureViewTable.setIndexName("Id");
 		procedureViewTable.setSize("100%", "100%");
-		procedureViewTable.addColumn("Procedure Date", "proc_date");
-		procedureViewTable.addColumn("Procedure Code", "proc_code");
-		procedureViewTable.addColumn("Modifier", "proc_mod");
-		procedureViewTable.addColumn("Comments", "comment");
-		procedureViewTable.addColumn("Action", "action");
+		procedureViewTable.addColumn(_("Procedure Date"), "proc_date");
+		procedureViewTable.addColumn(_("Procedure Code"), "proc_code");
+		procedureViewTable.addColumn(_("Modifier"), "proc_mod");
+		procedureViewTable.addColumn(_("Comments"), "comment");
+		procedureViewTable.addColumn(_("Action"), "action");
 		modRecId = 0;
 		procedureViewTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -1332,7 +1331,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 										}
 										else if (action == HandleCustomAction.CLONE) {
 											try {											
-												actionBtn.setText("Clone");
+												actionBtn.setText(_("Clone"));
 												reset();
 												isCloning=true;
 												entryTabPanel.selectTab(0);
@@ -1379,9 +1378,10 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								try {
+									@SuppressWarnings("unchecked")
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>");
 									topTabPanel.selectTab(0);
 									fillFields(result);
@@ -1426,8 +1426,9 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 
+								@SuppressWarnings("unchecked")
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								procedureViewTable.loadData(result);
@@ -1469,9 +1470,10 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								try {
+									@SuppressWarnings("unchecked")
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>");
 									fillFields(result);
 								} catch (Exception e) {
@@ -1520,7 +1522,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 									// :"+response.getText());
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
@@ -1626,7 +1628,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 				for (int i = 0; i < eocVals.length; i++) {
 					eocFlexTable.clear();
 					CustomListBox eoc = new CustomListBox();
-					eoc.addItem("NONE SELECTED");
+					eoc.addItem(_("NONE SELECTED"));
 					if (eocMap != null && eocMap.size() > 0) {
 						Set<String> keys = eocMap.keySet();
 						Iterator<String> iter = keys.iterator();
@@ -1676,7 +1678,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 		loadProcedureTableData();
 		if (modRecId > 0) {
 			// reset();
-			actionBtn.setText("Modify");
+			actionBtn.setText(_("Modify"));
 			getProcDetails(modRecId);
 		}
 		else if(isCloning){
@@ -1694,7 +1696,7 @@ public class ProcedureScreen extends PatientEntryScreenInterface {
 	}
 
 	public void reset() {
-		actionBtn.setText("Add");
+		actionBtn.setText(_("Add"));
 		modRecId = 0;
 		existingProcCharge="";
 		isModifying=false;

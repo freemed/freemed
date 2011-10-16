@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen.patient;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,9 +38,9 @@ import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.screen.ReportingScreen;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
+import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.PatientWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -98,7 +100,7 @@ public class PatientReportingScreen extends PatientScreenInterface {
 		horizontalPanel.add(verticalPanel);
 		verticalPanel.setSize("100%", "100%");
 
-		final Label pleaseChooseALabel = new Label("Please choose a report.");
+		final Label pleaseChooseALabel = new Label(_("Please choose a report."));
 		verticalPanel.add(pleaseChooseALabel);
 		pleaseChooseALabel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -108,8 +110,8 @@ public class PatientReportingScreen extends PatientScreenInterface {
 		reportTable.setAllowSelection(false);
 		reportTable.setSize("100%", "100%");
 		reportTable.setIndexName("report_uuid");
-		reportTable.addColumn("Name", "report_name");
-		reportTable.addColumn("Description", "report_desc");
+		reportTable.addColumn(_("Name"), "report_name");
+		reportTable.addColumn(_("Description"), "report_desc");
 		reportTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -236,7 +238,7 @@ public class PatientReportingScreen extends PatientScreenInterface {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {
@@ -382,7 +384,7 @@ public class PatientReportingScreen extends PatientScreenInterface {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (result != null) {

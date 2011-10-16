@@ -61,6 +61,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 public class TriageScreen extends ScreenInterface implements
 		SystemEvent.Handler {
 
@@ -122,13 +124,13 @@ public class TriageScreen extends ScreenInterface implements
 		wTriagePendingList.setIndexName("id");
 
 		// Form columns
-		wTriagePendingList.addColumn("Registration Time", "dateof");
-		wTriagePendingList.addColumn("Last Name", "lastname");
-		wTriagePendingList.addColumn("First Name", "firstname");
-		wTriagePendingList.addColumn("DOB", "dob");
-		wTriagePendingList.addColumn("Gender", "gender");
-		wTriagePendingList.addColumn("Age", "age");
-		wTriagePendingList.addColumn("Notes", "notes");
+		wTriagePendingList.addColumn(_("Registration Time"), "dateof");
+		wTriagePendingList.addColumn(_("Last Name"), "lastname");
+		wTriagePendingList.addColumn(_("First Name"), "firstname");
+		wTriagePendingList.addColumn(_("DOB"), "dob");
+		wTriagePendingList.addColumn(_("Gender"), "gender");
+		wTriagePendingList.addColumn(_("Age"), "age");
+		wTriagePendingList.addColumn(_("Notes"), "notes");
 
 		wTriagePendingList.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
@@ -159,7 +161,7 @@ public class TriageScreen extends ScreenInterface implements
 		showPatientName.setStyleName("freemed-PatientSummaryHeading");
 		flexTable.setWidget(pos, 1, showPatientName);
 
-		final Label findExistingPatient = new Label("Find existing patient : ");
+		final Label findExistingPatient = new Label(_("Find existing patient") + " : ");
 		flexTable.setWidget(++pos, 0, findExistingPatient);
 		wExistingPatient = new PatientWidget();
 		wExistingPatient.addChangeHandler(new ValueChangeHandler<Integer>() {
@@ -176,7 +178,7 @@ public class TriageScreen extends ScreenInterface implements
 		flexTable.setWidget(pos, 1, wExistingPatient);
 
 		flexTable.setWidget(++pos, 0, new Label("or"));
-		CustomButton wMigrateToPatient = new CustomButton("Create New Patient",
+		CustomButton wMigrateToPatient = new CustomButton(_("Create New Patient"),
 				AppConstants.ICON_ADD_PERSON);
 		wMigrateToPatient.addClickHandler(new ClickHandler() {
 			@Override
@@ -198,12 +200,12 @@ public class TriageScreen extends ScreenInterface implements
 	protected void loadVitalsScreen(Integer patientId) {
 		PatientScreen patientScreen = new PatientScreen();
 		patientScreen.setPatient(patientId);
-		final PatientScreen psI = (PatientScreen) Util.spawnTab("Patient",
+		final PatientScreen psI = (PatientScreen) Util.spawnTab(_("Patient"),
 				patientScreen);
 		psI.setOnLoad(new Command() {
 			@Override
 			public void execute() {
-				Util.spawnTabPatient("Vitals", new VitalsEntry(), psI);
+				Util.spawnTabPatient(_("Vitals"), new VitalsEntry(), psI);
 				clearForm();
 				loadData();
 			}
@@ -225,7 +227,7 @@ public class TriageScreen extends ScreenInterface implements
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						Util.showInfoMsg("TriageScreen",
-								"Failed to create new patient record.");
+								_("Failed to create new patient record."));
 					}
 
 					public void onResponseReceived(Request request,
@@ -233,7 +235,7 @@ public class TriageScreen extends ScreenInterface implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String raw = (String) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"String");
 								Integer r = null;
 								try {
@@ -244,16 +246,16 @@ public class TriageScreen extends ScreenInterface implements
 								}
 								if (r != null) {
 									Util.showInfoMsg("TriageScreen",
-											"New patient record created.");
+											_("New patient record created."));
 									loadVitalsScreen(r);
 								} else {
 									Util
 											.showInfoMsg("TriageScreen",
-													"Failed to create new patient record.");
+													_("Failed to create new patient record."));
 								}
 							} else {
 								Util.showInfoMsg("TriageScreen",
-										"Failed to create new patient record.");
+										_("Failed to create new patient record."));
 							}
 						}
 					}
@@ -261,7 +263,7 @@ public class TriageScreen extends ScreenInterface implements
 			} catch (RequestException e) {
 				JsonUtil.debug(e.getMessage());
 				Util.showInfoMsg("TriageScreen",
-						"Failed to create new patient record.");
+						_("Failed to create new patient record."));
 			}
 		} else {
 			JsonUtil.debug("NOT IMPLEMENTED YET");
@@ -299,7 +301,7 @@ public class TriageScreen extends ScreenInterface implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								Boolean r = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if (r != null) {
 								}
@@ -329,6 +331,7 @@ public class TriageScreen extends ScreenInterface implements
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 			results.add(new HashMap<String, String>() {
+				private static final long serialVersionUID = -208742530745599186L;
 				{
 					// FIXME: need test values
 					put("id", "1");
@@ -337,6 +340,7 @@ public class TriageScreen extends ScreenInterface implements
 				}
 			});
 			results.add(new HashMap<String, String>() {
+				private static final long serialVersionUID = -2068691951700967021L;
 				{
 					// FIXME: need test values
 					put("id", "2");
@@ -367,7 +371,7 @@ public class TriageScreen extends ScreenInterface implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {
@@ -434,7 +438,7 @@ public class TriageScreen extends ScreenInterface implements
 			if (currentId == null || currentId == 0) {
 				loadData();
 			}
-			Util.showInfoMsg("TriageScreen", "Patients waiting for triage.");
+			Util.showInfoMsg("TriageScreen", _("Patients waiting for triage."));
 		}
 	}
 }
