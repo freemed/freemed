@@ -92,16 +92,6 @@ public class I18nUtil {
 			BUSY_LOADING = false;
 			JsonUtil.debug(e.toString());
 		}
-
-		int iter = 0;
-		while (BUSY_LOADING && iter < MAX_LOAD_WAIT_LOOPS) {
-			try {
-				Thread.sleep(MAX_LOAD_WAIT_LOOP_MS);
-			} catch (InterruptedException e) {
-				JsonUtil.debug(e.toString());
-			}
-			iter++;
-		}
 	}
 
 	/**
