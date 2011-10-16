@@ -27,5 +27,5 @@
 
 D="$( cd "$(dirname "$0")"; pwd )"
 
-( cd "$D" ; xgettext -c -k'_' -o ../../locale/freemed-gwt.pot $(find src | grep '\.java$' | grep -v svn) )
+( cd "$D" ; xgettext -c -k'_' -o ../../locale/gwt.pot $(find src | grep '\.java$' | grep -v svn) )
 
