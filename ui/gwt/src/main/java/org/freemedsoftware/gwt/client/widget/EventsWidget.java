@@ -1,9 +1,8 @@
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,9 +22,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,11 +41,12 @@ public class EventsWidget extends DialogBox {
 	private Integer eventSourceId = null;
 
 	private String entityName = null;
-	
-	protected boolean canRead=true,canWrite=true,canDelete=false,canModify=false; 
-	
+
+	protected boolean canRead = true, canWrite = true, canDelete = false,
+			canModify = false;
+
 	public static final String moduleName = "Events";
-	
+
 	private CustomTable customTable = null;
 
 	private EventsWidget() {
@@ -57,36 +55,38 @@ public class EventsWidget extends DialogBox {
 		createUI();
 	}
 
-	public EventsWidget(String eventTypeModule,Integer eventSourceId,String entityName){
+	public EventsWidget(String eventTypeModule, Integer eventSourceId,
+			String entityName) {
 		super();
 		this.entityName = entityName;
 		this.eventTypeModule = eventTypeModule;
 		this.eventSourceId = eventSourceId;
 		init();
 	}
-	
-	public EventsWidget(String eventTypeModule,Integer eventSourceId) {
+
+	public EventsWidget(String eventTypeModule, Integer eventSourceId) {
 		super();
 		this.eventTypeModule = eventTypeModule;
 		this.eventSourceId = eventSourceId;
 		init();
 	}
 
-	private void init(){
+	private void init() {
 		this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
 		String msg = "";
-		if(this.eventTypeModule==null || this.eventTypeModule.trim().length()==0)
-			msg = "Please specify Event Type!\n";
-		if(this.eventSourceId==null || this.eventSourceId==0)
-			msg += "Please specify source ID!\n";
-		if(msg.length()==0)
+		if (this.eventTypeModule == null
+				|| this.eventTypeModule.trim().length() == 0)
+			msg = _("Please specify event type.") + "\n";
+		if (this.eventSourceId == null || this.eventSourceId == 0)
+			msg += _("Please specify the source ID!") + "\n";
+		if (msg.length() == 0)
 			createUI();
-		else{
+		else {
 			Window.alert(msg);
 			hide();
 		}
 	}
-	
+
 	private void createUI() {
 
 		VerticalPanel blockTimeSlotPopupContainer = new VerticalPanel();
@@ -114,28 +114,27 @@ public class EventsWidget extends DialogBox {
 
 		int row = 0;
 
-		final Label eventTitleLabel = new Label("Action:");
+		final Label eventTitleLabel = new Label(_("Action") + ":");
 		flexTable.setWidget(row, 0, eventTitleLabel);
 		eventAction = new CustomListBox();
-		eventAction.addItem(".....", "");
-		eventAction.addItem("Call", "call");
-		eventAction.addItem("Email", "email");
+		eventAction.addItem(_("NONE SELECTED"), "");
+		eventAction.addItem(_("Call"), "call");
+		eventAction.addItem(_("Email"), "email");
 		flexTable.setWidget(row, 1, eventAction);
 
 		row++;
-		
-		final Label providerLabel = new Label("Note:");
+
+		final Label providerLabel = new Label(_("Note") + ":");
 		flexTable.setWidget(row, 0, providerLabel);
 		eventNote = new TextArea();
 		flexTable.setWidget(row, 1, eventNote);
 
 		row++;
 
-
 		final HorizontalPanel buttonPanel = new HorizontalPanel();
 		flexTable.setWidget(row, 1, buttonPanel);
 
-		submit = new CustomButton("Add", AppConstants.ICON_ADD);
+		submit = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 		submit.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -144,40 +143,34 @@ public class EventsWidget extends DialogBox {
 					params.add(populateData());
 					String method = "Add";
 					if (eventId == null) {
-						Util.callModuleMethod(moduleName, "Add",
-								params, new CustomRequestCallback() {
+						Util.callModuleMethod(moduleName, "Add", params,
+								new CustomRequestCallback() {
 									@Override
 									public void onError() {
-										Util.showErrorMsg(
-												moduleName,
-												"Failed To Add Event!!");
+										Util.showErrorMsg(moduleName,
+												_("Failed to add event."));
 									}
 
 									@Override
 									public void jsonifiedData(Object data) {
 										if (data != null) {
 											clearForm();
-											Util.showInfoMsg(
-													moduleName,
-													"Event Added!!");
+											Util.showInfoMsg(moduleName,
+													_("Event added."));
 											retrieveEvents();
 										} else {
-											Util
-													.showErrorMsg(
-															moduleName,
-															"Failed To Add Event!!");
+											Util.showErrorMsg(moduleName,
+													_("Failed to add event."));
 										}
 									}
 								}, "Integer");
 					} else {
-						Util.callModuleMethod(moduleName, "Mod",
-								params, new CustomRequestCallback() {
+						Util.callModuleMethod(moduleName, "Mod", params,
+								new CustomRequestCallback() {
 									@Override
 									public void onError() {
-										Util
-												.showErrorMsg(
-														moduleName,
-														"Failed To Modify Event!!");
+										Util.showErrorMsg(moduleName,
+												_("Failed to modify event."));
 									}
 
 									@Override
@@ -185,16 +178,14 @@ public class EventsWidget extends DialogBox {
 										if (data != null
 												&& ((Boolean) data)
 														.booleanValue()) {
-											Util.showInfoMsg(
-													moduleName,
-													"Event Modified!!");
+											Util.showInfoMsg(moduleName,
+													_("Event modified."));
 											clearForm();
 											retrieveEvents();
 										} else {
-											Util
-													.showErrorMsg(
-															moduleName,
-															"Failed To Modify Event!!");
+											Util.showErrorMsg(
+													moduleName,
+													_("Failed to modify event."));
 										}
 									}
 								}, "Boolean");
@@ -204,7 +195,7 @@ public class EventsWidget extends DialogBox {
 			}
 		});
 		buttonPanel.add(submit);
-		clear = new CustomButton("Clear", AppConstants.ICON_CLEAR);
+		clear = new CustomButton(_("Clear"), AppConstants.ICON_CLEAR);
 		clear.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -213,40 +204,37 @@ public class EventsWidget extends DialogBox {
 		});
 		buttonPanel.add(clear);
 		if (canDelete) {
-			delete = new CustomButton("delete", AppConstants.ICON_DELETE);
+			delete = new CustomButton(_("Delete"), AppConstants.ICON_DELETE);
 			delete.setVisible(false);
 			delete.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
-					Util.callModuleMethod(moduleName, "Del",
-							eventId, new CustomRequestCallback() {
+					Util.callModuleMethod(moduleName, "Del", eventId,
+							new CustomRequestCallback() {
 								@Override
 								public void onError() {
 									Util.showErrorMsg(moduleName,
-											"Failed To Delete Event!!");
+											_("Failed to delete event."));
 								}
 
 								@Override
 								public void jsonifiedData(Object data) {
 									if (data != null
-											&& ((Boolean) data)
-													.booleanValue()) {
+											&& ((Boolean) data).booleanValue()) {
 										Util.showInfoMsg(moduleName,
-												"Event Deleted!!");
+												_("Event deleted."));
 										clearForm();
 										retrieveEvents();
 									} else
-										Util
-												.showErrorMsg(
-														moduleName,
-														"Failed To Delete Event!!");
+										Util.showErrorMsg(moduleName,
+												_("Failed to delete event."));
 								}
 							}, "Boolean");
 				}
 			});
 			buttonPanel.add(delete);
 		}
-		cancel = new CustomButton("Cancel", AppConstants.ICON_CLEAR);
+		cancel = new CustomButton(_("Cancel"), AppConstants.ICON_CLEAR);
 		buttonPanel.add(cancel);
 		cancel.addClickHandler(new ClickHandler() {
 			@Override
@@ -263,18 +251,17 @@ public class EventsWidget extends DialogBox {
 		customTable = new CustomTable();
 		customTable.setWidth("100%");
 		listVPanel.add(customTable);
-		
-		customTable.addColumn("Date", "stamp");
-		if(entityName!=null)
-			customTable.addColumn("Name","name");
-		customTable.addColumn("Action","event_action");
-		customTable.addColumn("Entered By", "user_name");
+
+		customTable.addColumn(_("Date"), "stamp");
+		if (entityName != null)
+			customTable.addColumn(_("Name"), "name");
+		customTable.addColumn(_("Action"), "event_action");
+		customTable.addColumn(_("Entered By"), "user_name");
 
 		if (canModify) {
 			customTable.setTableRowClickHandler(new TableRowClickHandler() {
 				@Override
-				public void handleRowClick(HashMap<String, String> data,
-						int col) {
+				public void handleRowClick(HashMap<String, String> data, int col) {
 					eventId = Integer.parseInt(data.get("id"));
 					eventAction.setWidgetValue(data.get("event_action"));
 					eventNote.setText(data.get("event_note"));
@@ -283,17 +270,19 @@ public class EventsWidget extends DialogBox {
 				}
 			});
 		}
-		
-		if(entityName!=null){
-			customTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
-				@Override
-				public Widget setColumn(String columnName, HashMap<String, String> data) {
-					if(columnName.equalsIgnoreCase("name"))
-						return new Label(entityName);
-					return null;
-				}
-			
-		});
+
+		if (entityName != null) {
+			customTable
+					.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+						@Override
+						public Widget setColumn(String columnName,
+								HashMap<String, String> data) {
+							if (columnName.equalsIgnoreCase("name"))
+								return new Label(entityName);
+							return null;
+						}
+
+					});
 		}
 		if (canRead)
 			mainVPanel.add(listVPanel);
@@ -302,10 +291,10 @@ public class EventsWidget extends DialogBox {
 		retrieveEvents();
 	}
 
-	public EventsWidget getThisDialog(){
-		return this; 
+	public EventsWidget getThisDialog() {
+		return this;
 	}
-	
+
 	public void retrieveEvents() {
 		List params = new ArrayList();
 		params.add(this.eventTypeModule);
@@ -319,21 +308,20 @@ public class EventsWidget extends DialogBox {
 					@SuppressWarnings("unchecked")
 					@Override
 					public void jsonifiedData(Object data) {
-						customTable
-								.loadData((HashMap<String, String>[]) data);
+						customTable.loadData((HashMap<String, String>[]) data);
 					}
 				}, "HashMap<String,String>[]");
 	}
 
 	public boolean validateForm() {
 		String msg = new String("");
-		
-		if (eventAction.getWidgetValue().trim().length()==0) {
-			msg += "Please specify Action!\n";
+
+		if (eventAction.getWidgetValue().trim().length() == 0) {
+			msg += _("Please specify action!") + "\n";
 		}
-		
-		if (eventNote.getText().trim().length()==0) {
-			msg += "Please specify Note!";
+
+		if (eventNote.getText().trim().length() == 0) {
+			msg += _("Please specify note.");
 		}
 
 		if (!msg.equals("")) {
@@ -347,8 +335,9 @@ public class EventsWidget extends DialogBox {
 	public void clearForm() {
 		eventAction.setWidgetValue("");
 		eventNote.setText("");
-		if(delete!=null)delete.setVisible(false);
-		submit.setText("Add");
+		if (delete != null)
+			delete.setVisible(false);
+		submit.setText(_("Add"));
 		eventId = null;
 	}
 
@@ -360,7 +349,7 @@ public class EventsWidget extends DialogBox {
 
 		data.put("event_action", eventAction.getWidgetValue());
 		data.put("event_note", eventNote.getText());
-		
+
 		data.put("event_type", eventTypeModule);
 		data.put("source_id", eventSourceId.toString());
 

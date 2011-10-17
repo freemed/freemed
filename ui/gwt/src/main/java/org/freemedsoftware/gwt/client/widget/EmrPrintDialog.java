@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,21 +80,21 @@ public class EmrPrintDialog extends DialogBox {
 		flexTable.setWidget(0, 0, browserMethod);
 		browserMethod.setValue(true);
 		browserMethod.setName("printingMethod");
-		browserMethod.setText("Browser");
+		browserMethod.setText(_("Browser"));
 
 		printerMethod = new RadioButton("printingMethod");
 		flexTable.setWidget(1, 0, printerMethod);
 		printerMethod.setName("printingMethod");
-		printerMethod.setText("Printer");
+		printerMethod.setText(_("Printer"));
 
 		printerWidget = new SupportModuleWidget();
-		printerWidget.setModuleName("Printers");
+		printerWidget.setModuleName(_("Printers"));
 		flexTable.setWidget(1, 1, printerWidget);
 
 		faxMethod = new RadioButton("printingMethod");
 		flexTable.setWidget(2, 0, faxMethod);
 		faxMethod.setName("printingMethod");
-		faxMethod.setText("Fax");
+		faxMethod.setText(_("Fax"));
 
 		faxNumber = new TextBox();
 		faxNumber.addFocusHandler(new FocusHandler() {
@@ -110,7 +112,8 @@ public class EmrPrintDialog extends DialogBox {
 		horizontalPanel
 				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		printfaxButton = new CustomButton("Print/Fax",AppConstants.ICON_PRINT);
+		printfaxButton = new CustomButton(_("Print/Fax"),
+				AppConstants.ICON_PRINT);
 		horizontalPanel.add(printfaxButton);
 
 		printfaxButton.addClickHandler(new ClickHandler() {
@@ -130,7 +133,8 @@ public class EmrPrintDialog extends DialogBox {
 			}
 		});
 
-		final CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		final CustomButton cancelButton = new CustomButton(_("Cancel"),
+				AppConstants.ICON_CANCEL);
 		horizontalPanel.add(cancelButton);
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -174,18 +178,19 @@ public class EmrPrintDialog extends DialogBox {
 	public int printToFax() {
 		String f = faxNumber.getText();
 		if (f.length() < 7) {
-			messageLabel.setText("Invalid fax number.");
+			messageLabel.setText(_("Invalid fax number."));
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		Util.showInfoMsg("FaxSubsystem", "Sending fax to " + f);
+		Util.showInfoMsg("FaxSubsystem", _("Sending fax to") + " " + f);
 		getProxy().PrintToFax(f, items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
 			public void onFailure(Throwable t) {
-				Util.showErrorMsg("FaxSubsystemError", "Error faxing document.");
+				Util.showErrorMsg("FaxSubsystemError",
+						_("Error faxing document."));
 			}
 		});
 		return 0;
@@ -194,18 +199,18 @@ public class EmrPrintDialog extends DialogBox {
 	public int printToPrinter() {
 		Integer p = printerWidget.getValue();
 		if (p < 1) {
-			messageLabel.setText("Please select a printer.");
+			messageLabel.setText(_("Please select a printer."));
 			printfaxButton.setEnabled(true);
 			return 1;
 		}
-		Util.showInfoMsg("PrintSubsystem", "Sending document to printer.");
+		Util.showInfoMsg("PrintSubsystem", _("Sending document to printer."));
 		getProxy().PrintToPrinter("", items, new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean o) {
 				closeDialog();
 			}
 
 			public void onFailure(Throwable t) {
-				Util.showInfoMsg("PrintSubsystem", "Error sending document.");
+				Util.showInfoMsg("PrintSubsystem", _("Error sending document."));
 			}
 		});
 		return 0;
@@ -219,8 +224,8 @@ public class EmrPrintDialog extends DialogBox {
 		}
 		args.add(a.toString());
 		String url = Util.getJsonRequest(
-				"org.freemedsoftware.api.ModuleInterface.PrintToBrowser", args
-						.toArray(new String[0]));
+				"org.freemedsoftware.api.ModuleInterface.PrintToBrowser",
+				args.toArray(new String[0]));
 		Window.open(url, "", "");
 		closeDialog();
 		return 0;

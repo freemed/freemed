@@ -31,8 +31,8 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.UserInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.UserInterfaceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
@@ -52,7 +52,7 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 
 	public UserWidget() {
 		super();
-		userType="";
+		userType = "";
 	}
 
 	/**
@@ -73,11 +73,10 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 				String[] params = { widgetValue.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.UserInterface.GetRecord",
-												params)));
+						URL.encode(Util
+								.getJsonRequest(
+										"org.freemedsoftware.api.UserInterface.GetRecord",
+										params)));
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(
@@ -94,7 +93,8 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 								if (200 == response.getStatusCode()) {
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response
+															.getText()),
 													"HashMap<String,String>");
 									if (result != null) {
 										searchBox.setText(result
@@ -119,17 +119,16 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						.getProxy("org.freemedsoftware.gwt.client.Api.UserInterface"));
 			} catch (Exception e) {
 			}
-			
+
 			service.GetRecord(widgetValue,
 					new AsyncCallback<HashMap<String, String>>() {
 						public void onSuccess(HashMap<String, String> r) {
-							
 							searchBox.setText(r.get("userdescrip"));
 							searchBox.setTitle(r.get("userdescrip"));
 						}
 
 						public void onFailure(Throwable t) {
-							
+
 						}
 					});
 
@@ -138,8 +137,8 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 
 	protected void loadSuggestions(String req, final Request r,
 			final Callback cb) {
-		if(req.length()<CurrentState.getMinCharCountForSmartSearch())
-			return;		
+		if (req.length() < CurrentState.getMinCharCountForSmartSearch())
+			return;
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Handle in a stubbed sort of way
 			List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
@@ -150,21 +149,24 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			
-			RequestBuilder builder=null;
-			if(userType.equals("")){
+
+			RequestBuilder builder = null;
+			if (userType.equals("")) {
 				String[] params = { req };
-				 builder = new RequestBuilder(RequestBuilder.POST,
-						URL.encode(Util.getJsonRequest(
-								"org.freemedsoftware.api.UserInterface.GetUsers",
-								params)));
-			}
-			else{
-				String[] params = { req,userType };
-				 builder = new RequestBuilder(RequestBuilder.POST,
-						URL.encode(Util.getJsonRequest(
-								"org.freemedsoftware.api.UserInterface.GetUsers",
-								params)));
+				builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL.encode(Util
+								.getJsonRequest(
+										"org.freemedsoftware.api.UserInterface.GetUsers",
+										params)));
+			} else {
+				String[] params = { req, userType };
+				builder = new RequestBuilder(
+						RequestBuilder.POST,
+						URL.encode(Util
+								.getJsonRequest(
+										"org.freemedsoftware.api.UserInterface.GetUsers",
+										params)));
 			}
 			try {
 				builder.sendRequest(null, new RequestCallback() {
@@ -179,8 +181,10 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String[][] result = (String[][]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()), "String[][]");
+										.shoehornJson(
+												JSONParser.parseStrict(response
+														.getText()),
+												"String[][]");
 								if (result != null) {
 									List<SuggestOracle.Suggestion> items = new ArrayList<SuggestOracle.Suggestion>();
 									map.clear();
@@ -256,12 +260,12 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
+										.shoehornJson(
+												JSONParser.parseStrict(response
+														.getText()),
 												"HashMap<String,String>");
 								if (result != null) {
-									searchBox
-											.setText(result.get("userdescrip"));
+									searchBox.setText(result.get("userdescrip"));
 								}
 							} else {
 								GWT.log("Result " + response.getStatusText(),
@@ -292,8 +296,8 @@ public class UserWidget extends AsyncPicklistWidgetBase {
 					});
 		}
 	}
-	
-	public void setUserType(String type){
+
+	public void setUserType(String type) {
 		userType = type;
 	}
 }

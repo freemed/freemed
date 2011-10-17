@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +33,8 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.TableMaintenanceAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -89,8 +91,8 @@ public class SupportDataScreen extends ScreenInterface {
 		sortableTable.setAllowSelection(false);
 		sortableTable.setWidth("80%");
 		sortableTable.setIndexName("module_class");
-		sortableTable.addColumn("Name", "module_name");
-		sortableTable.addColumn("Version", "module_version");
+		sortableTable.addColumn(_("Name"), "module_name");
+		sortableTable.addColumn(_("Version"), "module_version");
 		sortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -112,9 +114,9 @@ public class SupportDataScreen extends ScreenInterface {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			List<HashMap<String, String>> r = new ArrayList<HashMap<String, String>>();
 			String[][] stockModules = {
-					{ "AppointmentTemplates", "Appointment Templates" },
-					{ "ClaimTypes", "Claim Types" },
-					{ "CoverageTypes", "Coverage Types" } };
+					{ "AppointmentTemplates", _("Appointment Templates") },
+					{ "ClaimTypes", _("Claim Types") },
+					{ "CoverageTypes", _("Coverage Types") } };
 			for (int iter = 0; iter < stockModules.length; iter++) {
 				HashMap<String, String> a = new HashMap<String, String>();
 				a.put("module_class", stockModules[iter][0]);
@@ -137,7 +139,7 @@ public class SupportDataScreen extends ScreenInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+						Util.showErrorMsg("SupportDataScreen", _("Could not load list of support data modules."));
 					}
 
 					public void onResponseReceived(Request request,
@@ -145,13 +147,13 @@ public class SupportDataScreen extends ScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								sortableTable.loadData(r);
 							} else {
 								sortableTable.showloading(false);
-								Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+								Util.showErrorMsg("SupportDataScreen", _("Could not load list of support data modules."));
 							}
 						}
 					}
@@ -174,14 +176,13 @@ public class SupportDataScreen extends ScreenInterface {
 						}
 
 						public void onFailure(Throwable t) {
-							Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+							Util.showErrorMsg("SupportDataScreen", _("Could not load list of support data modules."));
 						}
 					});
 		}
 	}
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}

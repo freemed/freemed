@@ -120,11 +120,11 @@ public class MessagingComposeScreen extends ScreenInterface {
 
 		wUrgency = new CustomListBox();
 		flexTable.setWidget(3, 1, wUrgency);
-		wUrgency.addItem(_("1 (Urgent)"));
-		wUrgency.addItem(_("2 (Expedited)"));
-		wUrgency.addItem(_("3 (Standard)"));
-		wUrgency.addItem(_("4 (Notification)"));
-		wUrgency.addItem(_("5 (Bulk)"));
+		wUrgency.addItem("1 (" + _("Urgent") + ")");
+		wUrgency.addItem("2 (" + _("Expedited") + ")");
+		wUrgency.addItem("3 (" + _("Standard") + ")");
+		wUrgency.addItem("4 (" + _("Notification") + ")");
+		wUrgency.addItem("5 (" + _("Bulk") + ")");
 		wUrgency.setSelectedIndex(2);
 
 		final Label patientLabel = new Label(_("Patient") + " : ");

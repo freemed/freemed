@@ -33,8 +33,8 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
@@ -56,12 +56,12 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 	protected String hashMapping = null;
 
 	protected Integer patientId = null;
-	
+
 	public EMRModuleWidget() {
 		super();
 	}
 
-	public EMRModuleWidget(String module,Integer patientId) {
+	public EMRModuleWidget(String module, Integer patientId) {
 		// Load superclass constructor first...
 		super();
 		setModuleName(module);
@@ -83,15 +83,14 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 				searchBox.setText("");
 				searchBox.setTitle("");
 			} else {
-//				textBox.setEnabled(false);
+				// textBox.setEnabled(false);
 				String[] params = { moduleName, widgetValue.toString() };
 				RequestBuilder builder = new RequestBuilder(
 						RequestBuilder.POST,
-						URL
-								.encode(Util
-										.getJsonRequest(
-												"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
-												params)));
+						URL.encode(Util
+								.getJsonRequest(
+										"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
+										params)));
 				try {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(
@@ -108,9 +107,10 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response
+															.getText()),
 													"String");
-//									textBox.setEnabled(true);
+									// textBox.setEnabled(true);
 									if (result != null) {
 										searchBox.setText(result);
 										searchBox.setTitle(result);
@@ -170,14 +170,13 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 					"2"));
 			cb.onSuggestionsReady(r, new SuggestOracle.Response(items));
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
-			String[] params = { moduleName,patientId.toString(), req };
+			String[] params = { moduleName, patientId.toString(), req };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.api.ModuleInterface.EMRSupportPicklistMethod",
-											params)));
+					URL.encode(Util
+							.getJsonRequest(
+									"org.freemedsoftware.api.ModuleInterface.EMRSupportPicklistMethod",
+									params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -192,8 +191,9 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
+										.shoehornJson(
+												JSONParser.parseStrict(response
+														.getText()),
 												"HashMap<String,String>");
 								if (result != null) {
 									Set<String> keys = result.keySet();
@@ -209,7 +209,8 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 									}
 									cb.onSuggestionsReady(r,
 											new SuggestOracle.Response(items));
-								}else // if no result then set value to 0
+								} else
+									// if no result then set value to 0
 									setValue(0);
 							} else {
 								GWT.log("Result " + response.getStatusText(),
@@ -262,11 +263,10 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 			String[] params = { moduleName, val.toString() };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
-											params)));
+					URL.encode(Util
+							.getJsonRequest(
+									"org.freemedsoftware.api.ModuleInterface.ModuleToTextMethod",
+									params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -280,8 +280,8 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String result = (String) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
-										"String");
+										JSONParser.parseStrict(response
+												.getText()), "String");
 								if (result != null) {
 								}
 							} else {
@@ -329,8 +329,8 @@ public class EMRModuleWidget extends AsyncPicklistWidgetBase implements
 	public void setFromHash(HashMap<String, String> data) {
 		setValue(Integer.parseInt(data.get(hashMapping)));
 	}
-	
-	public void setEnable(boolean val){
+
+	public void setEnable(boolean val) {
 		textBox.setEnabled(val);
 	}
 

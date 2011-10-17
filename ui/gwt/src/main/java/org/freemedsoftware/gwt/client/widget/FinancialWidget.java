@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +33,8 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.patient.ProcedureScreen;
@@ -80,7 +82,7 @@ public class FinancialWidget extends WidgetInterface {
 		Element tabBarFirstChild = tbar.getElement().getFirstChildElement()
 				.getFirstChildElement().getFirstChildElement();
 		tabBarFirstChild.setAttribute("width", "100%");
-		tabBarFirstChild.setInnerHTML("FINANCIAL INFORMATION");
+		tabBarFirstChild.setInnerHTML(_("FINANCIAL INFORMATION"));
 		tabBarFirstChild.setClassName("label_bold");
 		createCurrentTab();
 	}
@@ -90,10 +92,10 @@ public class FinancialWidget extends WidgetInterface {
 		currentTable.setWidth("100%");
 		currentTable.setIndexName("id");
 		currentTable.setMaximumRows(maximumRows);
-		currentTable.addColumn("Charge", "charge");
-		currentTable.addColumn("Payment", "payment");
-		currentTable.addColumn("Arrear", "arrear");
-		currentTable.addColumn("DOS", "dos");
+		currentTable.addColumn(_("Charge"), "charge");
+		currentTable.addColumn(_("Payment"), "payment");
+		currentTable.addColumn(_("Arrear"), "arrear");
+		currentTable.addColumn(_("DOS"), "dos");
 		currentTable.getFlexTable().getFlexCellFormatter().setWidth(0, 0,
 				"70px");
 		currentTable.getFlexTable().getFlexCellFormatter().setWidth(0, 1,
@@ -104,7 +106,7 @@ public class FinancialWidget extends WidgetInterface {
 		html.setWidth("100%");
 
 		HorizontalPanel arrearsPanel = new HorizontalPanel();
-		Label lb = new Label("Total Arrears  =  ");
+		Label lb = new Label(_("Total Arrears") + "  =  ");
 		lb.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		lbArrears = new Label("0");
 		arrearsPanel.add(lb);
@@ -114,19 +116,19 @@ public class FinancialWidget extends WidgetInterface {
 		currentVerticalPanel.add(currentTable);
 		currentVerticalPanel.add(html);
 		currentVerticalPanel.add(arrearsPanel);
-		tabPanel.add(currentVerticalPanel, "Current");
+		tabPanel.add(currentVerticalPanel, _("Current"));
 	}
 	
 	public void createProceduresTab(){
 		procedureViewTable = new CustomTable();
-		tabPanel.add(procedureViewTable, "Procedures");
+		tabPanel.add(procedureViewTable, _("Procedures"));
 		procedureViewTable.setIndexName("Id");
 		procedureViewTable.setSize("100%", "100%");
-		procedureViewTable.addColumn("Procedure Date", "proc_date");
-		procedureViewTable.addColumn("Procedure Code", "proc_code");
-		procedureViewTable.addColumn("Modifier", "proc_mod");
-		procedureViewTable.addColumn("Comments", "comment");
-		procedureViewTable.addColumn("Action", "action");
+		procedureViewTable.addColumn(_("Procedure Date"), "proc_date");
+		procedureViewTable.addColumn(_("Procedure Code"), "proc_code");
+		procedureViewTable.addColumn(_("Modifier"), "proc_mod");
+		procedureViewTable.addColumn(_("Comments"), "comment");
+		procedureViewTable.addColumn(_("Action"), "action");
 		procedureViewTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
 					public Widget setColumn(String columnName,
@@ -179,7 +181,7 @@ public class FinancialWidget extends WidgetInterface {
 												ps.setCloneRecordID(id);
 												ps.setPatientId(patientId);
 												ps.loadData();
-												Util.spawnTabPatient("Manage Procedures", ps, patientScreen);
+												Util.spawnTabPatient(_("Manage Procedures"), ps, patientScreen);
 											} catch (Exception e) {
 												GWT
 														.log(
@@ -219,9 +221,9 @@ public class FinancialWidget extends WidgetInterface {
 
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
-
+								@SuppressWarnings("unchecked")
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								procedureViewTable.loadData(result);
@@ -283,10 +285,10 @@ public class FinancialWidget extends WidgetInterface {
 		final CustomTable advPaymentsViewTable = new CustomTable();
 		advPaymentsViewTable.setIndexName("Id");
 		advPaymentsViewTable.setSize("100%", "100%");
-		advPaymentsViewTable.addColumn("Payment Amount", "amount");
-		advPaymentsViewTable.addColumn("Payment Date", "pay_date");
-		advPaymentsViewTable.addColumn("Description", "descp");
-		advPaymentsViewTable.addColumn("Payment Category", "category");
+		advPaymentsViewTable.addColumn(_("Payment Amount"), "amount");
+		advPaymentsViewTable.addColumn(_("Payment Date"), "pay_date");
+		advPaymentsViewTable.addColumn(_("Description"), "descp");
+		advPaymentsViewTable.addColumn(_("Payment Category"), "category");
 		ArrayList<String> params = new ArrayList<String>();
 		params.add("" + patientId);
 		Util.callModuleMethod("PaymentModule", "getAdvancePaymentInfo", params,
@@ -320,7 +322,6 @@ public class FinancialWidget extends WidgetInterface {
 		patientScreen=ps;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadData() {
 		loadTransactionsData();
 		createProceduresTab();

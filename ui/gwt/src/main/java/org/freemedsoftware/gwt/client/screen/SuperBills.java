@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,24 +74,16 @@ public class SuperBills extends ScreenInterface {
 		verticalPanel.add(superBillsTable);
 		superBillsTable.setAllowSelection(false);
 		superBillsTable.setSize("100%", "100%");		
-		superBillsTable.addColumn("Date", "superBill_date");
-		superBillsTable.addColumn("Patient", "superBill_patient");
-		superBillsTable.addColumn("Provider", "superBill_provider");
-		superBillsTable.addColumn("Procdural Codes", "superBill_proceduaralCodes");
-	
+		superBillsTable.addColumn(_("Date"), "superBill_date");
+		superBillsTable.addColumn(_("Patient"), "superBill_patient");
+		superBillsTable.addColumn(_("Provider"), "superBill_provider");
+		superBillsTable.addColumn(_("Procdural Codes"), "superBill_proceduaralCodes");	
 	}
-
-	
-
-
 
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}
-
-
 
 }

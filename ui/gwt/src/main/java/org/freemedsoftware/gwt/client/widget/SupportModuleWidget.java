@@ -114,7 +114,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String");
 //									textBox.setEnabled(true);
 									if (result != null) {
@@ -218,7 +218,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (result != null) {
@@ -306,7 +306,7 @@ public class SupportModuleWidget extends AsyncPicklistWidgetBase implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String result = (String) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"String");
 								if (result != null) {
 								}

@@ -162,7 +162,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 		verticalPanel.add(horizontalPanel2);
 		horizontalPanel2.setSize("100%", "100%");
 		
-		final Label noteLabel = new Label("Note:");
+		final Label noteLabel = new Label(_("Note") + ":");
 		horizontalPanel2.add(noteLabel);
 		noteLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		horizontalPanel2.setCellWidth(noteLabel, "5%");
@@ -273,7 +273,7 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 				@Override
 				public void onClick(ClickEvent evt) {
 					if (rxRefillTable.getSelectedCount() < 1)
-						Window.alert("Please select an entry!");
+						Window.alert(_("Please select an entry."));
 					else {
 						List<String> slectedItems = rxRefillTable.getSelected();
 						Iterator<String> itr = slectedItems.iterator();// Get all
@@ -374,7 +374,6 @@ public class RxRefillScreen extends ScreenInterface implements ClickHandler{
 	}
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}

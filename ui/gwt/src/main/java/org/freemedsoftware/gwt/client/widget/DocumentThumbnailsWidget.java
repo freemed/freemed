@@ -37,6 +37,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 public class DocumentThumbnailsWidget extends Composite {
 
 	HorizontalPanel[] thumbnailParentContainer = null;
@@ -59,11 +61,11 @@ public class DocumentThumbnailsWidget extends Composite {
 		vPanel.setVisible(true);
 		vPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 		vPanel.setSpacing(10);
-		Label lblHeadingStep2 = new Label("Batch Split");
+		Label lblHeadingStep2 = new Label(_("Batch Split"));
 		lblHeadingStep2.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		vPanel.add(lblHeadingStep2);
 		Label lbMessage = new Label(
-				"Select the pages from where you want to split.");
+				_("Select the pages from where you want to split."));
 		lbMessage.setStyleName(AppConstants.STYLE_LABEL_NORMAL_ITALIC);
 		vPanel.add(lbMessage);
 		thumbnailParentContainer = new HorizontalPanel[ROWS_PER_SCREEN];
@@ -76,7 +78,7 @@ public class DocumentThumbnailsWidget extends Composite {
 		endcount = 0;
 		cbPages = new CheckBox[djviewer.getPageCount()];
 		for (int i = 0; i < cbPages.length; i++) {
-			cbPages[i] = new CheckBox("Page " + (i + 1));
+			cbPages[i] = new CheckBox(_("Page") + " " + (i + 1));
 		}
 		if (djviewer.getPageCount() > PAGES_PER_SCREEN) {
 			endcount = PAGES_PER_SCREEN;
@@ -88,10 +90,10 @@ public class DocumentThumbnailsWidget extends Composite {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setSpacing(5);
 		if (djviewer.getPageCount() > PAGES_PER_SCREEN) {
-			final CustomButton viewPrevios = new CustomButton("Previous",
+			final CustomButton viewPrevios = new CustomButton(_("Previous"),
 					AppConstants.ICON_PREV);
 			viewPrevios.setEnabled(false);
-			final CustomButton viewNext = new CustomButton("Next",
+			final CustomButton viewNext = new CustomButton(_("Next"),
 					AppConstants.ICON_NEXT);
 
 			viewPrevios.addClickHandler(new ClickHandler() {
@@ -131,7 +133,7 @@ public class DocumentThumbnailsWidget extends Composite {
 			hp.add(viewNext);
 
 		}
-		final CustomButton SplitBtn = new CustomButton("Split");
+		final CustomButton SplitBtn = new CustomButton(_("Split"));
 		SplitBtn.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -149,7 +151,7 @@ public class DocumentThumbnailsWidget extends Composite {
 			}
 		});
 
-		final CustomButton cancelBtn = new CustomButton("Cancel",
+		final CustomButton cancelBtn = new CustomButton(_("Cancel"),
 				AppConstants.ICON_CANCEL);
 		cancelBtn.addClickHandler(new ClickHandler() {
 

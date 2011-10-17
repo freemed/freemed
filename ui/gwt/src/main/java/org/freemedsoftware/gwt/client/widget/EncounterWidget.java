@@ -71,6 +71,8 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 public class EncounterWidget extends Composite {
 
 	EncounterFormType formtype;
@@ -524,7 +526,7 @@ public class EncounterWidget extends Composite {
 		initWidget(vPanel);
 		vPanel.setWidth("100%");
 		vPanel.setSpacing(5);
-		cbTabView = new CheckBox("Tab View");
+		cbTabView = new CheckBox(_("Tab View"));
 		cbTabView.setValue(true);
 		vPanel.add(cbTabView);
 		cbTabView.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -538,9 +540,8 @@ public class EncounterWidget extends Composite {
 		tabPanel = new TabPanel();
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		CustomButton prevBtn = new CustomButton("Previous",
+		CustomButton prevBtn = new CustomButton(_("Previous"),
 				AppConstants.ICON_PREV);
-		prevBtn = new CustomButton("Previous", AppConstants.ICON_PREV);
 		prevBtn.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -554,13 +555,13 @@ public class EncounterWidget extends Composite {
 		}
 		addBtn = null;
 		if (formmode == EncounterFormMode.ADD) {
-			addBtn = new CustomButton("Add", AppConstants.ICON_ADD);
+			addBtn = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 			if (!CurrentState.isActionAllowed("EncounterNotes",
 					AppConstants.WRITE)) {
 				//addBtn.setVisible(false);
 			}
 		} else {
-			addBtn = new CustomButton("Modify", AppConstants.ICON_CHANGE);
+			addBtn = new CustomButton(_("Modify"), AppConstants.ICON_CHANGE);
 			if (!CurrentState.isActionAllowed("EncounterNotes",
 					AppConstants.MODIFY)) {
 				//addBtn.setVisible(false);
@@ -579,7 +580,7 @@ public class EncounterWidget extends Composite {
 		});
 		CustomButton cancelButton = null;
 		if (formtype == EncounterFormType.TEMPLATE_VALUES) {
-			cancelButton = new CustomButton("Cancel", AppConstants.ICON_CANCEL);
+			cancelButton = new CustomButton(_("Cancel"), AppConstants.ICON_CANCEL);
 			cancelButton.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -589,7 +590,7 @@ public class EncounterWidget extends Composite {
 
 			});
 		} else {
-			cancelButton = new CustomButton("Reset", AppConstants.ICON_REFRESH);
+			cancelButton = new CustomButton(_("Reset"), AppConstants.ICON_REFRESH);
 			cancelButton.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -739,10 +740,10 @@ public class EncounterWidget extends Composite {
 		tabPanel.clear();
 		if (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES
 				&& cbTabView.getValue()) {
-			tabPanel.add(basicInfoPanel, "Basic Info");
+			tabPanel.add(basicInfoPanel, _("Basic Info"));
 		} else if (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES
 				&& !cbTabView.getValue()) {
-			Label lbBasicInfo = new Label("Basic Info");
+			Label lbBasicInfo = new Label(_("Basic Info"));
 			lbBasicInfo.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 			vPanel.add(lbBasicInfo);
 			vPanel.add(basicInfoPanel);
@@ -769,11 +770,11 @@ public class EncounterWidget extends Composite {
 					"Billing Information")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(billingInfoPanel, "Billing Information");
+				tabPanel.add(billingInfoPanel, _("Billing Information"));
 			} else if (((secList != null && secList.get(i).equals("Billing Information")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbBill = new Label("Billing Information");
+				Label lbBill = new Label(_("Billing Information"));
 				lbBill.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbBill);
 				vPanel.add(billingInfoPanel);
@@ -781,11 +782,11 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("SOAP Note")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(soapNotePanel, "SOAP Note");
+				tabPanel.add(soapNotePanel, _("SOAP Note"));
 			} else if (((secList != null && secList.get(i).equals("SOAP Note")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbSoapNote = new Label("SOAP Note");
+				Label lbSoapNote = new Label(_("SOAP Note"));
 				lbSoapNote.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbSoapNote);
 				vPanel.add(soapNotePanel);
@@ -793,11 +794,11 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("IER")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(ierPanel, "IER");
+				tabPanel.add(ierPanel, _("IER"));
 			} else if (((secList != null && secList.get(i).equals("IER")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbIER = new Label("IER");
+				Label lbIER = new Label(_("IER"));
 				lbIER.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbIER);
 				vPanel.add(ierPanel);
@@ -805,12 +806,12 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Vitals/Generals")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(vitalGenPanel, "Vitals/Generals");
+				tabPanel.add(vitalGenPanel, _("Vitals/Generals"));
 			} else if (((secList != null && secList.get(i).equals(
 					"Vitals/Generals")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbVitGen = new Label("Vitals/Generals");
+				Label lbVitGen = new Label(_("Vitals/Generals"));
 				lbVitGen.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbVitGen);
 				vPanel.add(vitalGenPanel);
@@ -818,11 +819,11 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("CC & HPI")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(ccHpiPanel, "CC & HPI");
+				tabPanel.add(ccHpiPanel, _("CC & HPI"));
 			} else if (((secList != null && secList.get(i).equals("CC & HPI")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbCCHPI = new Label("CC & HPI");
+				Label lbCCHPI = new Label(_("CC & HPI"));
 				lbCCHPI.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbCCHPI);
 				vPanel.add(ccHpiPanel);
@@ -831,12 +832,12 @@ public class EncounterWidget extends Composite {
 					"Past Medical History")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(pastHisPanel, "Past Medical History");
+				tabPanel.add(pastHisPanel, _("Past Medical History"));
 			} else if (((secList != null && secList.get(i).equals(
 					"Past Medical History")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbPH = new Label("Past Medical History");
+				Label lbPH = new Label(_("Past Medical History"));
 				lbPH.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbPH);
 				vPanel.add(pastHisPanel);
@@ -844,12 +845,12 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Review Of Systems")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(revOfSysPanel, "Review Of Systems");
+				tabPanel.add(revOfSysPanel, _("Review Of Systems"));
 			} else if (((secList != null && secList.get(i).equals(
 					"Review Of Systems")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbRos = new Label("Review Of Systems");
+				Label lbRos = new Label(_("Review Of Systems"));
 				lbRos.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbRos);
 				vPanel.add(revOfSysPanel);
@@ -857,12 +858,12 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Social History")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(socHisPanel, "Social History");
+				tabPanel.add(socHisPanel, _("Social History"));
 			} else if (((secList != null && secList.get(i).equals(
 					"Social History")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbSH = new Label("Social History");
+				Label lbSH = new Label(_("Social History"));
 				lbSH.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbSH);
 				vPanel.add(socHisPanel);
@@ -870,12 +871,12 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Family History")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(famHisPanel, "Family History");
+				tabPanel.add(famHisPanel, _("Family History"));
 			} else if (((secList != null && secList.get(i).equals(
 					"Family History")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbFH = new Label("Family History");
+				Label lbFH = new Label(_("Family History"));
 				lbFH.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbFH);
 				vPanel.add(famHisPanel);
@@ -884,11 +885,11 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Exam")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(examPanel, "Exam");
+				tabPanel.add(examPanel, _("Exam"));
 			} else if (((secList != null && secList.get(i).equals("Exam")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbExam = new Label("Exam");
+				Label lbExam = new Label(_("Exam"));
 				lbExam.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbExam);
 				vPanel.add(examPanel);
@@ -896,12 +897,12 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Assessment/Plan")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(assessPlanPanel, "Assessment/Plan");
+				tabPanel.add(assessPlanPanel, _("Assessment/Plan"));
 			} else if (((secList != null && secList.get(i).equals(
 					"Assessment/Plan")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& !cbTabView.getValue()) {
-				Label lbAssessPlan = new Label("Assessment/Plan");
+				Label lbAssessPlan = new Label(_("Assessment/Plan"));
 				lbAssessPlan
 						.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				vPanel.add(lbAssessPlan);
@@ -910,7 +911,7 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Free Form Entry")) || (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 					.equals("")))
 					&& cbTabView.getValue()) {
-				tabPanel.add(freeFormPanel, "Free Form Entry");
+				tabPanel.add(freeFormPanel, _("Free Form Entry"));
 				rte=new Editor();
 				editorContainer.clear();
 				editorContainer.add(rte);
@@ -923,7 +924,7 @@ public class EncounterWidget extends Composite {
 					.equals("")))
 					&& !cbTabView.getValue()) {
 				
-				Label lbFreeFormEntry = new Label("Free Form Entry");
+				Label lbFreeFormEntry = new Label(_("Free Form Entry"));
 				lbFreeFormEntry
 						.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 				
@@ -955,25 +956,25 @@ public class EncounterWidget extends Composite {
 		FlexTable basicInfoTable = new FlexTable();
 		// basicInfoTable.setWidth("20%");
 		col = 0;
-		Label lbType = new Label("Type");
+		Label lbType = new Label(_("Type"));
 		radType = new CustomRadioButtonGroup("type");
-		radType.addItem("Encounter Note", "Encounter Note", new Command() {
+		radType.addItem(_("Encounter Note"), "Encounter Note", new Command() {
 
 			@Override
 			public void execute() {
 				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("pnotesttype", "Encounter Note");
+				map.put("pnotesttype", _("Encounter Note"));
 				templateWidget.setAdditionalParameters(map);
 
 			}
 
 		});
-		radType.addItem("Progress Note", "Progress Note", new Command() {
+		radType.addItem(_("Progress Note"), "Progress Note", new Command() {
 
 			@Override
 			public void execute() {
 				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("pnotesttype", "Progress Note");
+				map.put("pnotesttype", _("Progress Note"));
 				templateWidget.setAdditionalParameters(map);
 			}
 
@@ -982,7 +983,7 @@ public class EncounterWidget extends Composite {
 		basicInfoTable.setWidget(row++, col++, radType);
 		col = 0;
 
-		Label lbEnTemplate = new Label("Notes Template");
+		Label lbEnTemplate = new Label(_("Notes Template"));
 		templateWidget.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 
 			@Override
@@ -993,7 +994,7 @@ public class EncounterWidget extends Composite {
 		});
 		
 		HTML addTemplateBtn = new HTML(
-				"<a href=\"javascript:undefined;\">Add</a>");
+				"<a href=\"javascript:undefined;\">" + _("Add") + "</a>");
 
 		addTemplateBtn.addClickHandler(new ClickHandler() {
 
@@ -1007,13 +1008,13 @@ public class EncounterWidget extends Composite {
 
 		});
 		HTML editTemplateBtn = new HTML(
-				"<a href=\"javascript:undefined;\">Edit</a>");
+				"<a href=\"javascript:undefined;\">" + _("Edit") + "</a>");
 		editTemplateBtn.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent arg0) {
 				if(templateWidget.getStoredValue()==null || templateWidget.getStoredValue().equals("0"))
-					Window.alert("No template selected");
+					Window.alert(_("No template selected."));
 				else
 					callback.jsonifiedData(EncounterCommandType.EDIT_TEMPLATE);
 				// EncounterTemplateWidget enc=new EncounterTemplateWidget();
@@ -1023,13 +1024,13 @@ public class EncounterWidget extends Composite {
 
 		});
 		HTML listTemplateBtn = new HTML(
-				"<a href=\"javascript:undefined;\">List</a>");
+				"<a href=\"javascript:undefined;\">" + _("List") + "</a>");
 		templateTable = new CustomTable();
 		templateTable.setIndexName("id");
 		// patientCustomTable.setSize("100%", "100%");
 		templateTable.setWidth("100%");
-		templateTable.addColumn("Template Name", "tempname");
-		templateTable.addColumn("Template Type", "notetype");
+		templateTable.addColumn(_("Template Name"), "tempname");
+		templateTable.addColumn(_("Template Type"), "notetype");
 		templateTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -1077,31 +1078,31 @@ public class EncounterWidget extends Composite {
 		row++;
 
 		col = 0;
-		Label lbProvider = new Label("Provider");
+		Label lbProvider = new Label(_("Provider"));
 		provWidget = new SupportModuleWidget("ProviderModule");
 		basicInfoTable.setWidget(row, col++, lbProvider);
 		basicInfoTable.setWidget(row++, col++, provWidget);
 
 		col = 0;
-		Label lbDescription = new Label("Description");
+		Label lbDescription = new Label(_("Description"));
 		tbDesc = new TextBox();
 		basicInfoTable.setWidget(row, col++, lbDescription);
 		basicInfoTable.setWidget(row++, col++, tbDesc);
 
 		col = 0;
-		Label lbEoc = new Label("Related Episode(s)");
+		Label lbEoc = new Label(_("Related Episode(s)"));
 		VerticalPanel eocVPanel = new VerticalPanel();
 		loadEOC();
 		final FlexTable eocFlexTable = new FlexTable();
 		eocVPanel.add(eocFlexTable);
 		HTML addAnother = new HTML(
-				"<a href=\"javascript:undefined;\" style='color:blue'>Add Episode of Care</a>");
+				"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Add Episode of Care") + "</a>");
 
 		addAnother.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				CustomListBox eoc = new CustomListBox();
-				eoc.addItem("NONE SELECTED");
+				eoc.addItem(_("NONE SELECTED"));
 				if (eocMap != null && eocMap.size() > 0) {
 					Set<String> keys = eocMap.keySet();
 					Iterator<String> iter = keys.iterator();
@@ -1146,7 +1147,7 @@ public class EncounterWidget extends Composite {
 		basicInfoTable.setWidget(row, col++, lbEoc);
 		basicInfoTable.setWidget(row++, col++, eocVPanel);
 		col = 0;
-		Label lbDate = new Label("Date");
+		Label lbDate = new Label(_("Date"));
 		date = new CustomDatePicker();
 		basicInfoTable.setWidget(row, col++, lbDate);
 		basicInfoTable.setWidget(row++, col++, date);
@@ -1194,7 +1195,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Procedure Code"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbProcCode = new Label("Procedure Code");
+				Label lbProcCode = new Label(_("Procedure Code"));
 				procCodeWidget = new SupportModuleWidget("CptCodes");
 				procCodeWidget.setWidth(widgetWidth);
 				// procCodeWidget.setWidth(widgetWidth);
@@ -1208,7 +1209,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Diagnosis 1"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbDiag1 = new Label("Diagnosis 1");
+				Label lbDiag1 = new Label(_("Diagnosis 1"));
 				diag1Widget = new SupportModuleWidget("IcdCodes");
 				diag1Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestdiag1")) {
@@ -1221,7 +1222,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Diagnosis 2"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbDiag2 = new Label("Diagnosis 2");
+				Label lbDiag2 = new Label(_("Diagnosis 2"));
 				diag2Widget = new SupportModuleWidget("IcdCodes");
 				diag2Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestdiag2")) {
@@ -1234,7 +1235,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Diagnosis 3"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbDiag3 = new Label("Diagnosis 3");
+				Label lbDiag3 = new Label(_("Diagnosis 3"));
 				diag3Widget = new SupportModuleWidget("IcdCodes");
 				diag3Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestdiag3")) {
@@ -1247,7 +1248,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Diagnosis 4"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbDiag4 = new Label("Diagnosis 4");
+				Label lbDiag4 = new Label(_("Diagnosis 4"));
 				diag4Widget = new SupportModuleWidget("IcdCodes");
 				diag4Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestdiag4")) {
@@ -1260,7 +1261,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Modifier 1"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbMod1 = new Label("Modifier 1");
+				Label lbMod1 = new Label(_("Modifier 1"));
 				mod1Widget = new SupportModuleWidget("CptModifiers");
 				mod1Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestmod1")) {
@@ -1273,7 +1274,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Modifier 2"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbMod2 = new Label("Modifier 2");
+				Label lbMod2 = new Label(_("Modifier 2"));
 				mod2Widget = new SupportModuleWidget("CptModifiers");
 				mod2Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestmod2")) {
@@ -1286,7 +1287,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Modifier 3"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbMod3 = new Label("Modifier 3");
+				Label lbMod3 = new Label(_("Modifier 3"));
 				mod3Widget = new SupportModuleWidget("CptModifiers");
 				mod3Widget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestmod3")) {
@@ -1299,7 +1300,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Place Of Service"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbPOS = new Label("Place Of Service");
+				Label lbPOS = new Label(_("Place Of Service"));
 				posWidget = new SupportModuleWidget("FacilityModule");
 				posWidget.setWidth(widgetWidth);
 				if (templateValuesMap.containsKey("pnotestpos")) {
@@ -1312,9 +1313,9 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Authorization")) && formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES)
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbAuth = new Label("Authorization");
+				Label lbAuth = new Label(_("Authorization"));
 				listAuthorizations = new CustomListBox();
-				listAuthorizations.addItem("NONE SELECTED", "0");
+				listAuthorizations.addItem(_("NONE SELECTED"), "0");
 				listAuthorizations.setWidth(widgetWidth);
 				billInfoTable.setWidget(row, 0, lbAuth);
 				billInfoTable.setWidget(row++, 1, listAuthorizations);
@@ -1322,10 +1323,10 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Primary Coverage")) && formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES)
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbPrimCov = new Label("Primary Coverage");
+				Label lbPrimCov = new Label(_("Primary Coverage"));
 				listPrimCov = new CustomListBox();
 				listPrimCov.setWidth(widgetWidth);
-				listPrimCov.addItem("NONE SELECTED", "0");
+				listPrimCov.addItem(_("NONE SELECTED"), "0");
 				loadCoverage(1, listPrimCov);
 				billInfoTable.setWidget(row, 0, lbPrimCov);
 				billInfoTable.setWidget(row++, 1, listPrimCov);
@@ -1334,10 +1335,10 @@ public class EncounterWidget extends Composite {
 					.equals("Secondary Coverage")) && formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES)
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbSecCov = new Label("Secondary Coverage");
+				Label lbSecCov = new Label(_("Secondary Coverage"));
 				listSecCov = new CustomListBox();
 				listSecCov.setWidth(widgetWidth);
-				listSecCov.addItem("NONE SELECTED", "0");
+				listSecCov.addItem(_("NONE SELECTED"), "0");
 				loadCoverage(2, listSecCov);
 				billInfoTable.setWidget(row, 0, lbSecCov);
 				billInfoTable.setWidget(row++, 1, listSecCov);
@@ -1345,10 +1346,10 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Tertiary Coverage")) && formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES)
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbTertCov = new Label("Tertiary Coverage");
+				Label lbTertCov = new Label(_("Tertiary Coverage"));
 				listTertCov = new CustomListBox();
 				listTertCov.setWidth(widgetWidth);
-				listTertCov.addItem("NONE SELECTED", "0");
+				listTertCov.addItem(_("NONE SELECTED"), "0");
 				loadCoverage(3, listTertCov);
 				billInfoTable.setWidget(row, 0, lbTertCov);
 				billInfoTable.setWidget(row++, 1, listTertCov);
@@ -1357,10 +1358,10 @@ public class EncounterWidget extends Composite {
 					.equals("Work Comp Coverage")) && formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES)
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbWorkCov = new Label("Work Comp");
+				Label lbWorkCov = new Label(_("Work Comp"));
 				listWorkCov = new CustomListBox();
 				listWorkCov.setWidth(widgetWidth);
-				listWorkCov.addItem("NONE SELECTED", "0");
+				listWorkCov.addItem(_("NONE SELECTED"), "0");
 				loadCoverage(4, listWorkCov);
 				billInfoTable.setWidget(row, 0, lbWorkCov);
 				billInfoTable.setWidget(row++, 1, listWorkCov);
@@ -1368,7 +1369,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Procedural Units"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbProcUnits = new Label("Procedural Units");
+				Label lbProcUnits = new Label(_("Procedural Units"));
 				tbProcUnits = new TextBox();
 				if (templateValuesMap.containsKey("pnotestprocunits")) {
 					tbProcUnits.setText(templateValuesMap
@@ -1400,7 +1401,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Subjective"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbSub = new Label("Subjective");
+				Label lbSub = new Label(_("Subjective"));
 				tbSub = new TextArea();
 				tbSub.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotes_S")) {
@@ -1414,7 +1415,7 @@ public class EncounterWidget extends Composite {
 				soapNoteTable.getFlexCellFormatter().setWidth(0, 0, "155px");
 				if (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES) {
 					final CustomListBox listInsInfo = new CustomListBox();
-					listInsInfo.addItem("Select information to insert");
+					listInsInfo.addItem(_("Select information to insert"));
 					listInsInfo.addItem("Treatments");
 					listInsInfo.addItem("Previous Operations");
 					listInsInfo.addItem("Chronic Problems");
@@ -1443,16 +1444,16 @@ public class EncounterWidget extends Composite {
 			if (((secList != null && secList.get(i).equals("Objective")) && formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES)
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbObj = new Label("Objective");
+				Label lbObj = new Label(_("Objective"));
 				listObj = new CustomListBox();
-				listObj.addItem("NONE SELECTED");
+				listObj.addItem(_("NONE SELECTED"));
 				soapNoteTable.setWidget(row, 0, lbObj);
 				soapNoteTable.setWidget(row++, 1, listObj);
 			}
 			if ((secList != null && secList.get(i).equals("Assessment"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbAssess = new Label("Assessment");
+				Label lbAssess = new Label(_("Assessment"));
 				tbAssess = new TextArea();
 				tbAssess.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotes_A")) {
@@ -1466,7 +1467,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Plan"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbPlan = new Label("Plan");
+				Label lbPlan = new Label(_("Plan"));
 				tbPlan = new TextArea();
 				tbPlan.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotes_P")) {
@@ -1498,7 +1499,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Interval"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbInt = new Label("Interval");
+				Label lbInt = new Label(_("Interval"));
 				tbInterval = new TextArea();
 				tbInterval.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotes_I")) {
@@ -1512,7 +1513,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Education"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbEducation = new Label("Education");
+				Label lbEducation = new Label(_("Education"));
 				tbEducation = new TextArea();
 				tbEducation.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotes_E")) {
@@ -1526,7 +1527,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Rx"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbRx = new Label("Rx");
+				Label lbRx = new Label(_("Rx"));
 				tbRx = new TextArea();
 				tbRx.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotes_R")) {
@@ -1539,7 +1540,7 @@ public class EncounterWidget extends Composite {
 				ierTable.setWidget(row++, 1, tbRx);
 				if (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES) {
 					final CustomListBox listRx = new CustomListBox();
-					listRx.addItem("Select information to insert");
+					listRx.addItem(_("Select information to insert"));
 					listRx.addItem("Treatments");
 					listRx.addItem("Previous Operations");
 					listRx.addItem("Chronic Problems");
@@ -1589,7 +1590,7 @@ public class EncounterWidget extends Composite {
 							.equals(""))) {
 				HorizontalPanel temperaturePanel = new HorizontalPanel();
 				temperaturePanel.setSpacing(5);
-				Label lbBp = new Label("Blood Pressure");
+				Label lbBp = new Label(_("Blood Pressure"));
 				tbBp1 = new TextBox();
 				if (templateValuesMap.containsKey("pnotessbp")) {
 					tbBp1.setText(templateValuesMap.get("pnotessbp"));
@@ -1612,7 +1613,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Temperature"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbTemp = new Label("Temperature");
+				Label lbTemp = new Label(_("Temperature"));
 				int temp1 = 90;
 
 				listTemp = new CustomListBox();
@@ -1643,7 +1644,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Heart Rate"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbHeartRate = new Label("Heart Rate");
+				Label lbHeartRate = new Label(_("Heart Rate"));
 				tbHeartRate = new TextBox();
 				if (templateValuesMap.containsKey("pnotesheartrate")) {
 					tbHeartRate.setText(templateValuesMap
@@ -1658,7 +1659,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Respiratory Rate"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbRespRate = new Label("Respiratory Rate");
+				Label lbRespRate = new Label(_("Respiratory Rate"));
 				tbRespRate = new TextBox();
 				if (templateValuesMap.containsKey("pnotesresprate")) {
 					tbRespRate.setText(templateValuesMap.get("pnotesresprate"));
@@ -1672,7 +1673,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Weight"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbWeight = new Label("Weight");
+				Label lbWeight = new Label(_("Weight"));
 				tbWeight = new TextBox();
 				if (templateValuesMap.containsKey("pnotesweight")) {
 					tbWeight.setText(templateValuesMap.get("pnotesweight"));
@@ -1685,7 +1686,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("Height"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbHeight = new Label("Height");
+				Label lbHeight = new Label(_("Height"));
 				tbHeight = new TextBox();
 				if (templateValuesMap.containsKey("pnotesheight")) {
 					tbHeight.setText(templateValuesMap.get("pnotesheight"));
@@ -1698,14 +1699,14 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("BMI"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbBMI = new Label("BMI");
+				Label lbBMI = new Label(_("BMI"));
 				tbBMIVal = new Label();
 				if (templateValuesMap.containsKey("pnotesbmi")) {
 					tbBMIVal.setText(templateValuesMap.get("pnotesbmi"));
 				} else if (templateValuesMap.containsKey("pnotestbmi")) {
 					tbBMIVal.setText(templateValuesMap.get("pnotestbmi"));
 				}
-				CustomButton calBmiBtn = new CustomButton("Calculate");
+				CustomButton calBmiBtn = new CustomButton(_("Calculate"));
 				calBmiBtn.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -1732,7 +1733,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("General (PE)"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbGeneral = new Label("General (PE)");
+				Label lbGeneral = new Label(_("General (PE)"));
 				tbGeneral = new TextArea();
 				tbGeneral.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotesgeneral")) {
@@ -1765,7 +1766,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("CC"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbCC = new Label("CC");
+				Label lbCC = new Label(_("CC"));
 				tbCC = new TextArea();
 				tbCC.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnotescc")) {
@@ -1779,7 +1780,7 @@ public class EncounterWidget extends Composite {
 			if ((secList != null && secList.get(i).equals("HPI"))
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
-				Label lbHPI = new Label("HPI");
+				Label lbHPI = new Label(_("HPI"));
 				tbHPI = new TextArea();
 				tbHPI.setSize("700px", "100px");
 				if (templateValuesMap.containsKey("pnoteshpi")) {
@@ -1810,7 +1811,7 @@ public class EncounterWidget extends Composite {
 			loopCountMax = 1;
 		List<String> secList = sectionsFieldMap
 				.get("Sections#Review Of Systems");
-		Label lbInfo = new Label("REVIEW OF SYSTEMS: (check if done)");
+		Label lbInfo = new Label(_("REVIEW OF SYSTEMS") + ": " + _("(check if done)"));
 		lbInfo.setStyleName(AppConstants.STYLE_LABEL_NORMAL_ITALIC);
 		revOfSysPanel.add(lbInfo);
 		for (int i = 0; i < loopCountMax; i++) {
@@ -1818,7 +1819,7 @@ public class EncounterWidget extends Composite {
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
 				final VerticalPanel generalPanel = new VerticalPanel();
-				cbGeneral = new CheckBox("General");
+				cbGeneral = new CheckBox(_("General"));
 				cbGeneral.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 				generalPanel.add(cbGeneral);
 				revOfSysPanel.add(generalPanel);
@@ -1867,7 +1868,7 @@ public class EncounterWidget extends Composite {
 					|| (formtype == EncounterFormType.ENCOUNTER_NOTE_VALUES && currTemplate
 							.equals(""))) {
 				final VerticalPanel headPanel = new VerticalPanel();
-				cbHead = new CheckBox("Head");
+				cbHead = new CheckBox(_("Head"));
 				cbHead.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 				headPanel.add(cbHead);
 				revOfSysPanel.add(headPanel);
@@ -1918,7 +1919,7 @@ public class EncounterWidget extends Composite {
 				final VerticalPanel eyesPanel = new VerticalPanel();
 				eyesPanel.setSpacing(5);
 
-				cbEyesRos = new CheckBox("Eyes");
+				cbEyesRos = new CheckBox(_("Eyes"));
 				cbEyesRos.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 				eyesPanel.add(cbEyesRos);
 				revOfSysPanel.add(eyesPanel);
@@ -1927,8 +1928,8 @@ public class EncounterWidget extends Composite {
 				lbInfo2.setStyleName(AppConstants.STYLE_LABEL_NORMAL_ITALIC);
 				final HorizontalPanel eyeHp = new HorizontalPanel();
 				eyeHp.getElement().getStyle().setMarginLeft(30, Unit.PX);
-				cbPoorVision = new CheckBox("poor vision");
-				cbEyesPain = new CheckBox("pain");
+				cbPoorVision = new CheckBox(_("poor vision"));
+				cbEyesPain = new CheckBox(_("pain"));
 				eyeHp.add(cbPoorVision);
 				eyeHp.add(cbEyesPain);
 				tbEyesRos = new TextArea();
@@ -1993,20 +1994,20 @@ public class EncounterWidget extends Composite {
 				final VerticalPanel entPanel = new VerticalPanel();
 				entPanel.setSpacing(5);
 
-				cbEntRos = new CheckBox("ENT");
+				cbEntRos = new CheckBox(_("ENT"));
 				cbEntRos.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 				entPanel.add(cbEntRos);
 				revOfSysPanel.add(entPanel);
-				final Label lbInfo3 = new Label("Select if abnormal");
+				final Label lbInfo3 = new Label(_("Select if abnormal"));
 				lbInfo3.getElement().getStyle().setMarginLeft(30, Unit.PX);
 				lbInfo3.setStyleName(AppConstants.STYLE_LABEL_NORMAL_ITALIC);
 				final HorizontalPanel entHp = new HorizontalPanel();
 				entHp.getElement().getStyle().setMarginLeft(30, Unit.PX);
-				cbSoreThroat = new CheckBox("sore throat");
-				cbENTPain = new CheckBox("pain");
-				cbCoryza = new CheckBox("coryza");
-				cbAcuity = new CheckBox("acuity");
-				cbDysphagia = new CheckBox("dysphagia");
+				cbSoreThroat = new CheckBox(_("sore throat"));
+				cbENTPain = new CheckBox(_("pain"));
+				cbCoryza = new CheckBox(_("coryza"));
+				cbAcuity = new CheckBox(_("acuity"));
+				cbDysphagia = new CheckBox(_("dysphagia"));
 				entHp.add(cbSoreThroat);
 				entHp.add(cbENTPain);
 				entHp.add(cbCoryza);

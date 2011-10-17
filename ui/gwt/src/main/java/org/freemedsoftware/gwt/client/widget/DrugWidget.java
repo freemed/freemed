@@ -33,8 +33,8 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -102,7 +102,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 									if (200 == response.getStatusCode()) {
 										String result = (String) JsonUtil
 												.shoehornJson(JSONParser
-														.parse(response
+														.parseStrict(response
 																.getText()),
 														"String");
 										textBox.setEnabled(true);
@@ -160,7 +160,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 								if (200 == response.getStatusCode()) {
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>");
 									if (result != null) {
 										Set<String> keys = result.keySet();
@@ -222,7 +222,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String");
 									if (result != null) {
 									}
@@ -314,7 +314,7 @@ public class DrugWidget extends WidgetInterface implements HashSetter {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								String[][] r = (String[][]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()), "String[][]");
 								if (r != null) {
 									drugStrength.clear();

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,7 +109,7 @@ public class EncounterTemplateWidget extends Composite {
 	public void createEncTemplateAdditionTab(){
 		encTempMainAddPanel = new VerticalPanel();
 		encTempMainAddPanel.setSpacing(10);
-		tabPanel.add(encTempMainAddPanel,"Add");
+		tabPanel.add(encTempMainAddPanel, _("Add"));
 		FlexTable tinfoTable=new FlexTable();
 		
 		
@@ -116,17 +118,17 @@ public class EncounterTemplateWidget extends Composite {
 		encTempAddPanel.setSpacing(6);
 		encTempMainAddPanel.add(encTempAddPanel);
 		
-		Label lbTname = new Label("Encounter Template Name:");
+		Label lbTname = new Label(_("Encounter Template Name") + ":");
 		lbTname.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		tbEncTempName = new TextBox();
 		tinfoTable.setWidget(0, 0, lbTname);
 		tinfoTable.setWidget(0, 1, tbEncTempName);
 		
-		Label lbType = new Label("Type:");
+		Label lbType = new Label(_("Type") + ":");
 		lbType.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		radType = new CustomRadioButtonGroup("type");
-		radType.addItem("Encounter Note", "Encounter Note");
-		radType.addItem("Progress Note", "Progress Note");
+		radType.addItem(_("Encounter Note"), "Encounter Note");
+		radType.addItem(_("Progress Note"), "Progress Note");
 		tinfoTable.setWidget(1, 0, lbType);
 		tinfoTable.setWidget(1, 1, radType);
 		
@@ -581,7 +583,7 @@ public class EncounterTemplateWidget extends Composite {
 						if (200 == response.getStatusCode()) {
 							try {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {
@@ -632,14 +634,14 @@ public class EncounterTemplateWidget extends Composite {
 						if (200 == response.getStatusCode()) {
 							try {
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {
 									templateValueMap = r;
 									String secStr=r.get("pnotestsections");
 									HashMap<String, List<String>> secFldMap=(HashMap<String, List<String>>) JsonUtil
-									.shoehornJson(JSONParser.parse(secStr),
+									.shoehornJson(JSONParser.parseStrict(secStr),
 											"HashMap<String,List>");
 									tbEncTempName.setText(templateValueMap.get("pnotestname"));
 									if(templateValueMap.get("pnotesttype")!=null){
@@ -685,7 +687,7 @@ public class EncounterTemplateWidget extends Composite {
 						if (200 == response.getStatusCode()) {
 							try {
 								Boolean r = (Boolean) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"Boolean");
 								if(r){

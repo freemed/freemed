@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -32,8 +34,8 @@ import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.SystemEvent;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.screen.PatientsGroupScreen;
@@ -112,7 +114,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 			}
 		});
 
-		Label headerLabel = new Label("WORK LIST");
+		Label headerLabel = new Label(_("WORK LIST"));
 		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		
@@ -131,7 +133,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 
 		message = new Label();
 		message.setStylePrimaryName("freemed-MessageText");
-		message.setText("There are no items scheduled for this day.");
+		message.setText(_("There are no items scheduled for this day."));
 		vPanel.add(message);
 
 		tablesVPanel = new VerticalPanel();
@@ -182,7 +184,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 
 					} else {
 						Util.showErrorMsg("Patient Status",
-								"Patient Status Change Failed.");
+								_("Patient status change failed."));
 
 						// printLabelForAllTakeHome();
 					}
@@ -237,7 +239,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (result != null) {
@@ -311,7 +313,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 										.getText())) {
 									String provs[] = (String[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String[]");
 									if (provs != null) {
 										if (provs.length != 0) {
@@ -323,7 +325,6 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 														provs[i]);
 												getProviderInfo(i);
 											}
-
 										} else {
 
 										}
@@ -396,7 +397,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								String provInfo = (String) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()), "String");
 								if (provInfo != null) {
 									providersLb[index].setText(provInfo);
@@ -431,11 +432,11 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 			workListsTables[i].setVisible(false);
 		workListsTables[i].setSize("110%", "100%");
 		workListsTables[i].setIndexName("id");
-		workListsTables[i].addColumn("Patient", "patient_name");
+		workListsTables[i].addColumn(_("Patient"), "patient_name");
 		// workListsTables[i].addColumn("DD/MM", "date");
-		workListsTables[i].addColumn("Time", "time");
+		workListsTables[i].addColumn(_("Time"), "time");
 		// workListsTables[i].addColumn("Description", "note");
-		workListsTables[i].addColumn("Status", "status_fullname");
+		workListsTables[i].addColumn(_("Status"), "status_fullname");
 		// workListsTables[i].setVisible(true);
 
 		workListsTables[i]
@@ -467,7 +468,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 								}
 							});
 							statusText
-									.setTitle("Click to change the status for "
+									.setTitle(_("Click to change the status for") + " "
 											+ data.get("patient_name"));
 
 							statusText.setText(data.get("status_fullname"));
@@ -489,7 +490,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 							return null;
 						}
 						Anchor a = new Anchor();
-						a.setTitle("View EMR for " + data.get("patient_name"));
+						a.setTitle(_("View EMR for") + " " + data.get("patient_name"));
 						a.setText(data.get("patient_name"));
 						a.addClickHandler(new ClickHandler() {
 							@Override
@@ -580,7 +581,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
 							Util.showErrorMsg("WorkLists",
-									"Failed to get work list.");
+									_("Failed to get work list."));
 						}
 
 						@SuppressWarnings("unchecked")
@@ -598,7 +599,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 															"false") != 0) {
 										HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
 												.shoehornJson(JSONParser
-														.parse(response
+														.parseStrict(response
 																.getText()),
 														"HashMap<String,String>[]");
 										// Window.alert(r[0].toString());
@@ -632,12 +633,12 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 								}
 							} else {
 								Util.showErrorMsg("WorkLists",
-										"Failed to get work list.");
+										_("Failed to get work list."));
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Util.showErrorMsg("WorkLists", "Failed to get work list.");
+					Util.showErrorMsg("WorkLists", _("Failed to get work list."));
 				}
 			} else {
 				// GWT-RPC
@@ -645,7 +646,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 		} else {
 			// workListTable.setVisible(false);
 			providerLabel.setVisible(true);
-			providerLabel.setText("Provider not available!");
+			providerLabel.setText(_("Provider not available."));
 		}
 	}
 
@@ -665,7 +666,7 @@ public class WorkList extends WidgetInterface implements SystemEvent.Handler {
 			eventMutex = true;
 			if (e.getSourceModule().equals("scheduler_status")) {
 				Util.showInfoMsg("WorkLists",
-						"Updated patient status available");
+						_("Updated patient status available"));
 				retrieveData();
 			}
 			eventMutex = false;

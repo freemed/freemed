@@ -82,6 +82,8 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 public class PatientForm extends ScreenInterface {
 	
 	protected CustomDatePicker wDob;
@@ -210,7 +212,7 @@ public class PatientForm extends ScreenInterface {
 		verticalPanel.setWidth("100%");
 		initWidget(verticalPanel);
 
-		final CheckBox tabView = new CheckBox("Tab View");
+		final CheckBox tabView = new CheckBox(_("Tab View"));
 		tabView.setValue(true);
 		
 		verticalPanel.add(tabView);
@@ -239,9 +241,9 @@ public class PatientForm extends ScreenInterface {
 		
 		final FlexTable demographicsTable = new FlexTable();
 		demographicsTable.setWidth("100%");
-		tabPanel.add(demographicsTable, "Demographics");
+		tabPanel.add(demographicsTable, _("Demographics"));
 
-		final Label titleLabel = new Label("Title");
+		final Label titleLabel = new Label(_("Title"));
 		demographicsTable.setWidget(0, 0, titleLabel);
 		
 		/*
@@ -264,7 +266,7 @@ public class PatientForm extends ScreenInterface {
 		title.addItem("Dr");
 		title.addItem("Fr");
 
-		final Label lastNameLabel = new Label("Last Name");
+		final Label lastNameLabel = new Label(_("Last Name"));
 		demographicsTable.setWidget(1, 0, lastNameLabel);
 
 		wLastName = new TextBox();
@@ -280,7 +282,7 @@ public class PatientForm extends ScreenInterface {
 		
 		});
 
-		final Label firstNameLabel = new Label("First Name");
+		final Label firstNameLabel = new Label(_("First Name"));
 		demographicsTable.setWidget(2, 0, firstNameLabel);
 
 		wFirstName = new TextBox();
@@ -295,7 +297,7 @@ public class PatientForm extends ScreenInterface {
 		
 		});
 		
-		final Label middleNameLabel = new Label("Middle Name");
+		final Label middleNameLabel = new Label(_("Middle Name"));
 		demographicsTable.setWidget(3, 0, middleNameLabel);
 
 		wMiddleName = new TextBox();
@@ -310,7 +312,7 @@ public class PatientForm extends ScreenInterface {
 		
 		});
 		
-		final Label suffixLabel = new Label("Suffix");
+		final Label suffixLabel = new Label(_("Suffix"));
 		demographicsTable.setWidget(4, 0, suffixLabel);
 
 		/*
@@ -335,7 +337,7 @@ public class PatientForm extends ScreenInterface {
 		suffix.addItem("III");
 		suffix.addItem("IV");
 
-		final Label genderLabel = new Label("Gender");
+		final Label genderLabel = new Label(_("Gender"));
 		demographicsTable.setWidget(5, 0, genderLabel);
 
 		/*
@@ -352,11 +354,11 @@ public class PatientForm extends ScreenInterface {
 		gender = new CustomRadioButtonGroup("gender");
 		gender.setWidth("30%");
 		demographicsTable.setWidget(5, 1, gender);
-		gender.addItem("Male", "m");
-		gender.addItem("Female", "f");
-		gender.addItem("Transgendered", "t");
+		gender.addItem(_("Male"), "m");
+		gender.addItem(_("Female"), "f");
+		gender.addItem(_("Transgendered"), "t");
 		
-		final Label dateOfBirthLabel = new Label("Date of Birth");
+		final Label dateOfBirthLabel = new Label(_("Date of Birth"));
 		demographicsTable.setWidget(6, 0, dateOfBirthLabel);
 
 		wDob = new CustomDatePicker();
@@ -365,36 +367,36 @@ public class PatientForm extends ScreenInterface {
 
 		addressContainer = new PatientAddresses();
 		addressContainer.setWidth("100%");
-		tabPanel.add(addressContainer, "Address");
+		tabPanel.add(addressContainer, _("Address"));
 
 		final FlexTable contactTable = new FlexTable();
 		contactTable.setWidth("100%");
-		tabPanel.add(contactTable, "Contact");
+		tabPanel.add(contactTable, _("Contact"));
 
-		final Label preferredContactLabel = new Label("Preferred Contact");
+		final Label preferredContactLabel = new Label(_("Preferred Contact"));
 		contactTable.setWidget(0, 0, preferredContactLabel);
 
 		preferredContact = new CustomListBox();
-		preferredContact.addItem("Home", "home");
-		preferredContact.addItem("Work", "work");
-		preferredContact.addItem("Mobile", "mobile");
-		preferredContact.addItem("Email", "email");
+		preferredContact.addItem(_("Home"), "home");
+		preferredContact.addItem(_("Work"), "work");
+		preferredContact.addItem(_("Mobile"), "mobile");
+		preferredContact.addItem(_("Email"), "email");
 		preferredContact.setVisibleItemCount(1);
 		contactTable.setWidget(0, 1, preferredContact);
 
-		final Label homePhoneLabel = new Label("Home Phone");
+		final Label homePhoneLabel = new Label(_("Home Phone"));
 		contactTable.setWidget(1, 0, homePhoneLabel);
 
-		final Label workPhoneLabel = new Label("Work Phone");
+		final Label workPhoneLabel = new Label(_("Work Phone"));
 		contactTable.setWidget(2, 0, workPhoneLabel);
 
-		final Label faxPhoneLabel = new Label("Fax Phone");
+		final Label faxPhoneLabel = new Label(_("Fax Phone"));
 		contactTable.setWidget(3, 0, faxPhoneLabel);
 
-		final Label mobilePhoneLabel = new Label("Mobile Phone");
+		final Label mobilePhoneLabel = new Label(_("Mobile Phone"));
 		contactTable.setWidget(4, 0, mobilePhoneLabel);
 
-		final Label emailAddressLabel = new Label("Email Address");
+		final Label emailAddressLabel = new Label(_("Email Address"));
 		contactTable.setWidget(5, 0, emailAddressLabel);
 
 		phoneHome = new TextBox();
@@ -421,41 +423,41 @@ public class PatientForm extends ScreenInterface {
 		//creating personal tab
 		final FlexTable personalTable = new FlexTable();
 		personalTable.setWidth("100%");
-		tabPanel.add(personalTable, "Personal");
+		tabPanel.add(personalTable, _("Personal"));
 
-		final Label martialStatusLabel = new Label("Marital Status");
+		final Label martialStatusLabel = new Label(_("Marital Status"));
 		personalTable.setWidget(0, 0, martialStatusLabel);
 
 		martialStatus = new CustomRadioButtonGroup("martialStatus");
-		martialStatus.addItem( "Single","single");
-		martialStatus.addItem("Married","married");
-		martialStatus.addItem("Divorced","divorced");
-		martialStatus.addItem("Separated","separated");
-		martialStatus.addItem("Widowed","widowed");
+		martialStatus.addItem(_("Single"), "single");
+		martialStatus.addItem(_("Married"), "married");
+		martialStatus.addItem(_("Divorced"), "divorced");
+		martialStatus.addItem(_("Separated"), "separated");
+		martialStatus.addItem(_("Widowed"), "widowed");
 //		martialStatus.setVisibleItemCount(1);
 		personalTable.setWidget(0, 1, martialStatus);
 
-		final Label employmentStatusLabel = new Label("Employment Status");
+		final Label employmentStatusLabel = new Label(_("Employment Status"));
 		personalTable.setWidget(1, 0, employmentStatusLabel);
 
 		employmentStatus = new CustomListBox();
-		employmentStatus.addItem("Yes","y");
-		employmentStatus.addItem("No","n");
-		employmentStatus.addItem("Part Time","p");
-		employmentStatus.addItem("Self","s");
-		employmentStatus.addItem("Retired","r");
-		employmentStatus.addItem("Military","m");
-		employmentStatus.addItem("Unknown","u");
+		employmentStatus.addItem(_("Yes"), "y");
+		employmentStatus.addItem(_("No"), "n");
+		employmentStatus.addItem(_("Part Time"), "p");
+		employmentStatus.addItem(_("Self"), "s");
+		employmentStatus.addItem(_("Retired"), "r");
+		employmentStatus.addItem(_("Military"), "m");
+		employmentStatus.addItem(_("Unknown"), "u");
 		employmentStatus.setVisibleItemCount(1);
 		personalTable.setWidget(1, 1, employmentStatus);
 
-		final Label patientStatusLabel = new Label("Patient Status");
+		final Label patientStatusLabel = new Label(_("Patient Status"));
 		personalTable.setWidget(2, 0, patientStatusLabel);
 		
-		final Label patientStatusValueLabel = new Label("None");
+		final Label patientStatusValueLabel = new Label(_("None"));
 		personalTable.setWidget(2, 1, patientStatusValueLabel);
 
-		final Label socialSecurityNumberLabel = new Label("Social Security Number");
+		final Label socialSecurityNumberLabel = new Label(_("Social Security Number"));
 		personalTable.setWidget(3, 0, socialSecurityNumberLabel);
 
 		socialSecurityNumber = new TextBox();
@@ -470,67 +472,67 @@ public class PatientForm extends ScreenInterface {
 		});
 
 		
-		final Label raceLabel = new Label("Race");
+		final Label raceLabel = new Label(_("Race"));
 		personalTable.setWidget(4, 0, raceLabel);
 
 		race = new CustomListBox();
-		race.addItem("unknown race","7");
-		race.addItem("Hispanic, white","1");
-		race.addItem("Hispanic, black","2");
-		race.addItem("American Indian or Alaska Native","3");
-		race.addItem("Black, not of Hispanic origin","4");
-		race.addItem("Asian or Pacific Islander","5");
-		race.addItem("White, not of Hispanic origin","6");
+		race.addItem(_("Unknown race"), "7");
+		race.addItem(_("Hispanic, white"), "1");
+		race.addItem(_("Hispanic, black"), "2");
+		race.addItem(_("American Indian or Alaska Native"), "3");
+		race.addItem(_("Black, not of Hispanic origin"), "4");
+		race.addItem(_("Asian or Pacific Islander"), "5");
+		race.addItem(_("White, not of Hispanic origin"), "6");
 		race.setVisibleItemCount(1);
 		personalTable.setWidget(4, 1, race);
 		
 		
-		final Label religionLabel = new Label("Religion");
+		final Label religionLabel = new Label(_("Religion"));
 		personalTable.setWidget(5, 0, religionLabel);
 
 		religion = new CustomListBox();
-		religion.addItem("Unknown/No preference","29");
-		religion.addItem("Catholic","0");
-		religion.addItem("Jewish","1");
-		religion.addItem("Eastern Orthodox","2");
-		religion.addItem("Baptist","3");
-		religion.addItem("Methodist","4");
-		religion.addItem("Lutheran","5");
-		religion.addItem("Presbyterian","6");
-		religion.addItem("United Church of God","7");
-		religion.addItem("Episcopalian","8");
-		religion.addItem("Adventist","9");
-		religion.addItem("Assembly of God","10");
-		religion.addItem("Brethren","11");
-		religion.addItem("Christian Scientist","12");
-		religion.addItem("Church of Christ","13");
-		religion.addItem("Church of God","14");
-		religion.addItem("Disciples of Christ","15");
-		religion.addItem("Evangelical Covenant","16");
-		religion.addItem("Friends","17");
-		religion.addItem("Jehovah's Witness","18");
-		religion.addItem("Latter-Day Saints","19");
-		religion.addItem("Islam","20");
-		religion.addItem("Nazarene","21");
-		religion.addItem("Other","22");
-		religion.addItem("Pentecostal","23");
-		religion.addItem("Protestant, Other","24");
-		religion.addItem("Protestant, No Denomenation","25");
-		religion.addItem("Reformed","26");
-		religion.addItem("Salvation Army","27");
-		religion.addItem("Unitarian; Universalist","28");
-		religion.addItem("Native American","30");
-		religion.addItem("Buddhist","31");
+		religion.addItem(_("Unknown/No preference"),"29");
+		religion.addItem(_("Catholic"),"0");
+		religion.addItem(_("Jewish"),"1");
+		religion.addItem(_("Eastern Orthodox"),"2");
+		religion.addItem(_("Baptist"),"3");
+		religion.addItem(_("Methodist"),"4");
+		religion.addItem(_("Lutheran"),"5");
+		religion.addItem(_("Presbyterian"),"6");
+		religion.addItem(_("United Church of God"),"7");
+		religion.addItem(_("Episcopalian"),"8");
+		religion.addItem(_("Adventist"),"9");
+		religion.addItem(_("Assembly of God"),"10");
+		religion.addItem(_("Brethren"),"11");
+		religion.addItem(_("Christian Scientist"),"12");
+		religion.addItem(_("Church of Christ"),"13");
+		religion.addItem(_("Church of God"),"14");
+		religion.addItem(_("Disciples of Christ"),"15");
+		religion.addItem(_("Evangelical Covenant"),"16");
+		religion.addItem(_("Friends"),"17");
+		religion.addItem(_("Jehovah's Witness"),"18");
+		religion.addItem(_("Latter-Day Saints"),"19");
+		religion.addItem(_("Islam"),"20");
+		religion.addItem(_("Nazarene"),"21");
+		religion.addItem(_("Other"),"22");
+		religion.addItem(_("Pentecostal"),"23");
+		religion.addItem(_("Protestant, Other"),"24");
+		religion.addItem(_("Protestant, No Denomination"),"25");
+		religion.addItem(_("Reformed"),"26");
+		religion.addItem(_("Salvation Army"),"27");
+		religion.addItem(_("Unitarian; Universalist"),"28");
+		religion.addItem(_("Native American"),"30");
+		religion.addItem(_("Buddhist"),"31");
 		religion.setVisibleItemCount(1);
 		personalTable.setWidget(5, 1, religion);
 		
-		final Label languageLabel = new Label("Language");
+		final Label languageLabel = new Label(_("Language"));
 		personalTable.setWidget(6, 0, languageLabel);
 		languages = new CustomListBox();
 		personalTable.setWidget(6, 1, languages);
 		loadLanguages();
 		
-		final Label driverLicenceLabel = new Label("Driver's License (No State)");
+		final Label driverLicenceLabel = new Label(_("Driver's License (No State)"));
 		personalTable.setWidget(7, 0, driverLicenceLabel);
 
 		driverLicence = new TextBox();
@@ -538,26 +540,26 @@ public class PatientForm extends ScreenInterface {
 		driverLicence.setWidth("100%");
 		
 		
-		final Label typeofBillingLabel = new Label("Type of Billing");
+		final Label typeofBillingLabel = new Label(_("Type of Billing"));
 		personalTable.setWidget(8, 0, typeofBillingLabel);
 
 		typeofBilling = new CustomListBox();
-		typeofBilling.addItem("NONE SELECTED","");
-		typeofBilling.addItem("Monthly Billing On Account","mon");
-		typeofBilling.addItem("Statement Billing","sta");
-		typeofBilling.addItem("Charge Card Billing","chg");
+		typeofBilling.addItem(_("NONE SELECTED"),"");
+		typeofBilling.addItem(_("Monthly Billing On Account"),"mon");
+		typeofBilling.addItem(_("Statement Billing"),"sta");
+		typeofBilling.addItem(_("Charge Card Billing"),"chg");
 		typeofBilling.setVisibleItemCount(1);
 		personalTable.setWidget(8, 1, typeofBilling);
 		
 		
-		final Label monthlyBudgetAmountLabel = new Label("Monthly Budget Amount");
+		final Label monthlyBudgetAmountLabel = new Label(_("Monthly Budget Amount"));
 		personalTable.setWidget(9, 0, monthlyBudgetAmountLabel);
 
 		monthlyBudgetAmount = new TextBox();
 		personalTable.setWidget(9, 1, monthlyBudgetAmount);
 		monthlyBudgetAmount.setWidth("100%");
 		
-		final Label patientPracticeIdLabel = new Label("Patient Practice ID");
+		final Label patientPracticeIdLabel = new Label(_("Patient Practice ID"));
 		personalTable.setWidget(10, 0, patientPracticeIdLabel);
 
 		patientPracticeID = new TextBox();
@@ -568,7 +570,7 @@ public class PatientForm extends ScreenInterface {
 		//creating Medical tab
 		final FlexTable medicalTable = new FlexTable();
 		medicalTable.setWidth("100%");
-		tabPanel.add(medicalTable, "Medical");
+		tabPanel.add(medicalTable, _("Medical"));
 
 //		final Label bloodTypeLabel = new Label("Blood Type");
 //		medicalTable.setWidget(0, 0, bloodTypeLabel);
@@ -590,7 +592,7 @@ public class PatientForm extends ScreenInterface {
 //		bloodType.setVisibleItemCount(1);
 //		medicalTable.setWidget(0, 1, bloodType);
 		
-		final Label primaryFacilityLabel = new Label("Primary Facility");
+		final Label primaryFacilityLabel = new Label(_("Primary Facility"));
 		medicalTable.setWidget(0, 0, primaryFacilityLabel);
 		
 		primaryFacility = new SupportModuleWidget("FacilityModule");
@@ -598,14 +600,14 @@ public class PatientForm extends ScreenInterface {
 		primaryFacility.setWidth("100%");
 		
 		
-		final Label preferredPharmacyLabel = new Label("Preferred Pharmacy");
+		final Label preferredPharmacyLabel = new Label(_("Preferred Pharmacy"));
 		medicalTable.setWidget(1, 0, preferredPharmacyLabel);
 		
 		preferredPharmacy = new SupportModuleWidget("Pharmacy");
 		medicalTable.setWidget(1, 1, preferredPharmacy);
 		preferredPharmacy.setWidth("100%");
 		
-		final Label inHouseDoctorLabel = new Label("In House Doctor");
+		final Label inHouseDoctorLabel = new Label(_("In House Doctor"));
 		medicalTable.setWidget(2, 0, inHouseDoctorLabel);
 		
 		inHouseDoctor = new ProviderWidget();
@@ -613,14 +615,14 @@ public class PatientForm extends ScreenInterface {
 		medicalTable.setWidget(2, 1, inHouseDoctor);
 		inHouseDoctor.setWidth("100%");
 
-		final Label referringDoctorLabel = new Label("Referring Doctor");
+		final Label referringDoctorLabel = new Label(_("Referring Doctor"));
 		medicalTable.setWidget(3, 0, referringDoctorLabel);
 		
 		referringDoctor = new ProviderWidget();
 		medicalTable.setWidget(3, 1, referringDoctor);
 		referringDoctor.setWidth("100%");
 
-		final Label primaryCarePhysicianLabel = new Label("Primary Care Physician");
+		final Label primaryCarePhysicianLabel = new Label(_("Primary Care Physician"));
 		medicalTable.setWidget(4, 0, primaryCarePhysicianLabel);
 		
 		primaryCarePhysician = new ProviderWidget();
@@ -628,7 +630,7 @@ public class PatientForm extends ScreenInterface {
 		primaryCarePhysician.setWidth("100%");
 
 
-		final Label numberofOtherPhysiciansLabel = new Label("Number of Other Physicians");
+		final Label numberofOtherPhysiciansLabel = new Label(_("Number of Other Physicians"));
 		medicalTable.setWidget(5, 0, numberofOtherPhysiciansLabel);
 
 		numberofOtherPhysicians = new CustomListBox();
@@ -651,22 +653,22 @@ public class PatientForm extends ScreenInterface {
 		
 		});
 
-		otherPhysician1Label = new Label("Physician 1");
+		otherPhysician1Label = new Label(_("Physician 1"));
 		medicalTable.setWidget(6, 0, otherPhysician1Label);
 		otherPhysician1=new ProviderWidget();
 		medicalTable.setWidget(6, 1, otherPhysician1);
 
-		otherPhysician2Label = new Label("Physician 2");
+		otherPhysician2Label = new Label(_("Physician 2"));
 		medicalTable.setWidget(7, 0, otherPhysician2Label);
 		otherPhysician2=new ProviderWidget();
 		medicalTable.setWidget(7, 1, otherPhysician2);
 		
-		otherPhysician3Label = new Label("Physician 3");
+		otherPhysician3Label = new Label(_("Physician 3"));
 		medicalTable.setWidget(8, 0, otherPhysician3Label);
 		otherPhysician3=new ProviderWidget();
 		medicalTable.setWidget(8, 1, otherPhysician3);
 		
-		otherPhysician4Label = new Label("Physician 4");
+		otherPhysician4Label = new Label(_("Physician 4"));
 		medicalTable.setWidget(9, 0, otherPhysician4Label);
 		otherPhysician4=new ProviderWidget();
 		medicalTable.setWidget(9, 1, otherPhysician4);		
@@ -684,7 +686,7 @@ public class PatientForm extends ScreenInterface {
 //		horizontalPanel.setWidth("100%");
 
 		
-		submitButton = new CustomButton("Commit",AppConstants.ICON_ADD);
+		submitButton = new CustomButton(_("Commit"),AppConstants.ICON_ADD);
 		horizontalPanel.add(submitButton);
 		submitButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -712,7 +714,7 @@ public class PatientForm extends ScreenInterface {
 								if(result==null || result.size()==0)
 									commitChanges();
 								else{
-									String msg = "This patient is already in the system. Do you want to continue adding?";
+									String msg = _("This patient is already in the system. Do you want to continue adding?");
 									Util.confirm(msg,new Command() {
 									
 										@Override
@@ -730,7 +732,7 @@ public class PatientForm extends ScreenInterface {
 			}
 		});
 	
-		CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		CustomButton cancelButton = new CustomButton(_("Cancel"), AppConstants.ICON_CANCEL);
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -748,12 +750,12 @@ public class PatientForm extends ScreenInterface {
 		if(CurrentState.isActionAllowed(CoveragesModuleName,AppConstants.SHOW)){
 			patientCoverages = new PatientCoverages();
 			patientCoverages.setWidth("100%");
-			tabPanel.add(patientCoverages, "Coverages");
+			tabPanel.add(patientCoverages, _("Coverages"));
 		}
 		if(CurrentState.isActionAllowed(AuthorizationsModuleName,AppConstants.SHOW)){
 			patientAuthorizations = new PatientAuthorizations();
 			patientAuthorizations.setWidth("100%");
-			tabPanel.add(patientAuthorizations, "Authorizations");
+			tabPanel.add(patientAuthorizations, _("Authorizations"));
 		}
 		
 		tabView.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -763,19 +765,19 @@ public class PatientForm extends ScreenInterface {
 				if(arg0.getValue()){
 					tabPanel.clear();
 					//Adding Demographics
-					tabPanel.add(demographicsTable, "Demographics");
+					tabPanel.add(demographicsTable, _("Demographics"));
 					//Adding Address
-					tabPanel.add(addressContainer, "Address");
+					tabPanel.add(addressContainer, _("Address"));
 					//Adding Contact
-					tabPanel.add(contactTable, "Contact");
+					tabPanel.add(contactTable, _("Contact"));
 					//Adding Personal
-					tabPanel.add(personalTable, "Personal");
+					tabPanel.add(personalTable, _("Personal"));
 					//Adding Medical
-					tabPanel.add(medicalTable, "Medical");
+					tabPanel.add(medicalTable, _("Medical"));
 					//Adding Coverages
-					tabPanel.add(patientCoverages, "Coverages");
+					tabPanel.add(patientCoverages, _("Coverages"));
 					//Adding Authorizations
-					tabPanel.add(patientAuthorizations, "Authorizations");
+					tabPanel.add(patientAuthorizations, _("Authorizations"));
 					
 					nonTabViewContainer.setVisible(false);
 					tabPanel.setVisible(true);
@@ -783,42 +785,42 @@ public class PatientForm extends ScreenInterface {
 				}else{
 					nonTabViewContainer.clear();
 					//Adding Demographics
-					Label label = new Label("Demographics");
+					Label label = new Label(_("Demographics"));
 					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 					nonTabViewContainer.add(label);
 					nonTabViewContainer.add(demographicsTable);
 					demographicsTable.setWidth("100%");
 					
 					//Adding Address
-					label = new Label("Address");
+					label = new Label(_("Address"));
 					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 					nonTabViewContainer.add(label);
 					nonTabViewContainer.add(addressContainer);
 					addressContainer.setWidth("100%");
 					
 					//Adding Contact
-					label = new Label("Contact");
+					label = new Label(_("Contact"));
 					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 					nonTabViewContainer.add(label);
 					nonTabViewContainer.add(contactTable);
 					contactTable.setWidth("100%");
 
 					//Adding Personal
-					label = new Label("Personal");
+					label = new Label(_("Personal"));
 					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 					nonTabViewContainer.add(label);
 					nonTabViewContainer.add(personalTable);
 					personalTable.setWidth("100%");
 					
 					//Adding Medical
-					label = new Label("Medical");
+					label = new Label(_("Medical"));
 					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 					nonTabViewContainer.add(label);
 					nonTabViewContainer.add(medicalTable);
 					medicalTable.setWidth("100%");
 					
 					//Adding Coverages
-					label = new Label("Coverages");
+					label = new Label(_("Coverages"));
 					label.setStyleName(AppConstants.STYLE_LABEL_HEADER_MEDIUM);
 					nonTabViewContainer.add(label);
 					nonTabViewContainer.add(patientCoverages);
@@ -848,7 +850,7 @@ public class PatientForm extends ScreenInterface {
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 
 				submitButton.setEnabled(true);
-				Util.showInfoMsg("PatientForm", "Updated patient information.");
+				Util.showInfoMsg("PatientForm", _("Updated patient information."));
 				addressContainer.setOnCompletion(new Command() {
 					public void execute() {
 						closeScreen();
@@ -866,7 +868,7 @@ public class PatientForm extends ScreenInterface {
 											.getToaster()
 											.addItem(
 													"Patient",
-													"Updated patient information.",
+													_("Updated patient information."),
 													Toaster.TOASTER_INFO);
 									addressContainer.setPatient(o);
 									addressContainer
@@ -914,7 +916,7 @@ public class PatientForm extends ScreenInterface {
 											.getToaster()
 											.addItem(
 													"Patient",
-													"Updated patient information.",
+													_("Updated patient information."),
 													Toaster.TOASTER_INFO);
 									addressContainer
 											.setOnCompletion(new Command() {
@@ -976,7 +978,7 @@ public class PatientForm extends ScreenInterface {
 											Integer r = (Integer) JsonUtil
 													.shoehornJson(
 															JSONParser
-																	.parse(response
+																	.parseStrict(response
 																			.getText()),
 															"Integer");
 											if (r != 0) {
@@ -997,14 +999,14 @@ public class PatientForm extends ScreenInterface {
 														.getToaster()
 														.addItem(
 																"PatientForm",
-																"Patient successfully added.");
+																_("Patient successfully added."));
 											}
 										} else {
 											CurrentState
 													.getToaster()
 													.addItem(
 															"PatientForm",
-															"Adding Patient failed.");
+															_("Adding patient failed."));
 										}
 									}
 								});
@@ -1039,7 +1041,7 @@ public class PatientForm extends ScreenInterface {
 											Boolean r = (Boolean) JsonUtil
 													.shoehornJson(
 															JSONParser
-																	.parse(response
+																	.parseStrict(response
 																			.getText()),
 															"boolean");
 											if (r) {
@@ -1058,14 +1060,14 @@ public class PatientForm extends ScreenInterface {
 														.getToaster()
 														.addItem(
 																"PatientForm",
-																"Patient information successfully modified.");
+																_("Patient information successfully modified."));
 											}
 										} else {
 											CurrentState
 													.getToaster()
 													.addItem(
 															"PatientForm",
-															"Adding Patient failed.");
+															_("Adding patient failed."));
 										}
 									}
 								});
@@ -1199,7 +1201,7 @@ public class PatientForm extends ScreenInterface {
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (result != null) {
@@ -1400,10 +1402,10 @@ public class PatientForm extends ScreenInterface {
 	protected boolean validateForm() {
 		String msg = new String("");
 		if (wLastName.getText().length() < 2) {
-			msg += "Please specify a last name." + "\n";
+			msg += _("Please specify a last name.") + "\n";
 		}
 		if (wFirstName.getText().length() < 2) {
-			msg += "Please specify a first name." + "\n";
+			msg += _("Please specify a first name.") + "\n";
 		}
 		if (wDob.getTextBox().getText().length()<10) {
 			msg += "Please specify date of birth." + "\n";
@@ -1412,7 +1414,7 @@ public class PatientForm extends ScreenInterface {
 //			msg += "Please specify gender." + "\n";
 //		}
 		if (gender.getWidgetValue()==null) {
-			msg += "Please specify gender." + "\n";
+			msg += _("Please specify gender.") + "\n";
 		}
 		
 		HashMap addressMap = addressContainer.getAddresses();
@@ -1422,14 +1424,13 @@ public class PatientForm extends ScreenInterface {
 				Integer key = iter.next();
 				Address address=(Address)addressMap.get(key);
 				if(address.getLine1()==null || address.getLine1().equals("")){
-					msg += "Please specify atleast one address." + "\n";
+					msg += _("Please specify at least one address.") + "\n";
 					break;
 				}
 			}
-		}else msg += "Please specify atleast one address." + "\n";
-			
-		
-		
+		} else {
+			msg += _("Please specify at least one address.") + "\n";
+		}						
 		
 		if (!msg.equals("")) {
 			Window.alert(msg);
@@ -1476,36 +1477,34 @@ public class PatientForm extends ScreenInterface {
 		
 		if(id.equalsIgnoreCase("y"))
 		{
-			return "Yes";
+			return _("Yes");
 		}
 		
 		else if(id.equalsIgnoreCase("n"))
 		{
-			return "No";
+			return _("No");
 		}
 		
 		else if(id.equalsIgnoreCase("p"))
 		{
-			return "Part time";
-		}
-		
-		
+			return _("Part time");
+		}				
 		else if(id.equalsIgnoreCase("s"))
 		{
-			return "Self";
+			return _("Self");
 		}
 		else if(id.equalsIgnoreCase("r"))
 		{
-			return "Retired";
-		}
-		
+			return _("Retired");
+		}		
 		else if(id.equalsIgnoreCase("M"))
 		{
-			return "Military";
-		}
-		
+			return _("Military");
+		}		
 		else
-	       return "Unknown";
+		{
+	       return _("Unknown");
+		}
 	
 	}
 	
@@ -1514,36 +1513,36 @@ public class PatientForm extends ScreenInterface {
 		
 		if(id==1)
 		{
-			return "Hispanic, white";
+			return _("Hispanic, white");
 		}
 		
 		else if(id==2)
 		{
-			return "Hispanic, black";
+			return _("Hispanic, black");
 		}
 		
 		else if(id==3)
 		{
-			return "American Indian or Alaska Native";
+			return _("American Indian or Alaska Native");
 		}
 		
 		
 		else if(id==4)
 		{
-			return "Black, not of Hispanic origin";
+			return _("Black, not of Hispanic origin");
 		}
 		else if(id==5)
 		{
-			return "Asian or Pacific Islander";
+			return _("Asian or Pacific Islander");
 		}
 		
 		else if(id==6)
 		{
-			return "White, not of Hispanic origin";
+			return _("White, not of Hispanic origin");
 		}
 		
 		else
-	       return "unknown race";
+	       return _("Unknown race");
 	
 	}
 	
@@ -1570,74 +1569,61 @@ public class PatientForm extends ScreenInterface {
 	{
 		religions=new HashMap<Integer, String>();
 		
-		religions.put(0, "Catholic");
-		religions.put(1, "Jewish");
-		religions.put(2, "Eastern Orthodox");
+		religions.put(0, _("Catholic"));
+		religions.put(1, _("Jewish"));
+		religions.put(2, _("Eastern Orthodox"));
 		
-		religions.put(3, "Baptist");
-		religions.put(4, "Methodist");
-		religions.put(5, "Lutheran");
-		religions.put(6, "Presbyterian");
-		religions.put(7, "United Church of God");
-		religions.put(8, "Episcopalian");
-		religions.put(9, "Adventist");
-		religions.put(10, "Assembly of God");
-		religions.put(11, "Brethren");
-		religions.put(12, "Christian Scientist");
-		religions.put(13, "Church of Christ");
-		religions.put(14, "Church of God");
-		religions.put(15, "Disciples of Christ");
-		religions.put(16, "Evangelical Covenant");
-		religions.put(17, "Friends");
-		religions.put(18, "Jehovah's Witness");
-		religions.put(19, "Latter-Day Saints");
-		religions.put(20, "Islam");
-		religions.put(21, "Nazarene");
-		religions.put(22, "Other");
-		religions.put(23, "Pentecostal");
-		religions.put(24, "Protestant, Other");
-		religions.put(25, "Protestant, No Denomenation");
-		religions.put(26, "Reformed");
-		religions.put(27, "Salvation Army");
-		religions.put(28, "Unitarian; Universalist");
-		religions.put(29, "Unknown/No preference");
-		religions.put(30, "Native American");
-		religions.put(31, "Buddhist");
+		religions.put(3, _("Baptist"));
+		religions.put(4, _("Methodist"));
+		religions.put(5, _("Lutheran"));
+		religions.put(6, _("Presbyterian"));
+		religions.put(7, _("United Church of God"));
+		religions.put(8, _("Episcopalian"));
+		religions.put(9, _("Adventist"));
+		religions.put(10, _("Assembly of God"));
+		religions.put(11, _("Brethren"));
+		religions.put(12, _("Christian Scientist"));
+		religions.put(13, _("Church of Christ"));
+		religions.put(14, _("Church of God"));
+		religions.put(15, _("Disciples of Christ"));
+		religions.put(16, _("Evangelical Covenant"));
+		religions.put(17, _("Friends"));
+		religions.put(18, _("Jehovah's Witness"));
+		religions.put(19, _("Latter-Day Saints"));
+		religions.put(20, _("Islam"));
+		religions.put(21, _("Nazarene"));
+		religions.put(22, _("Other"));
+		religions.put(23, _("Pentecostal"));
+		religions.put(24, _("Protestant, Other"));
+		religions.put(25, _("Protestant, No Denomination"));
+		religions.put(26, _("Reformed"));
+		religions.put(27, _("Salvation Army"));
+		religions.put(28, _("Unitarian; Universalist"));
+		religions.put(29, _("Unknown/No preference"));
+		religions.put(30, _("Native American"));
+		religions.put(31, _("Buddhist"));
 		return religions;
 	}
-	
-	
-	
-	
-	
-	
-	
+		
 	public static String returnTypeOfBilling(String id){
 		if(id.equalsIgnoreCase("mon"))
 		{
-			return "Monthly Billing On Account";
+			return _("Monthly Billing On Account");
 		}
 		
 		else if(id.equalsIgnoreCase("sta"))
 		{
-			return "Statement Billing";
+			return _("Statement Billing");
 		}
 		
 		else if(id.equalsIgnoreCase("chg"))
 		{
-			return "Charge Card Billing";
-		}
-		
-		
+			return _("Charge Card Billing");
+		}				
 	
 		else
-	       return "NONE SELECTED";
+	       return _("NONE SELECTED");
 	
 	}
-	
-	
-	
-	
-	
 	
 }

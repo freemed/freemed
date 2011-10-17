@@ -162,7 +162,6 @@ public class ToolsScreen extends ScreenInterface {
 
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}

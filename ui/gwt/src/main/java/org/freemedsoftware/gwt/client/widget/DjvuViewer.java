@@ -24,11 +24,13 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.Module.UnfiledDocumentsAsync;
 import org.freemedsoftware.gwt.client.Module.UnreadDocumentsAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -74,7 +76,7 @@ public class DjvuViewer extends Composite implements ClickHandler {
 	protected final Image wImage;
 
 	protected boolean thumbNailMode = false;
-	
+
 	protected final PushButton wBackTop, wForwardTop, wBackBottom,
 			wForwardBottom, wViewTop, wViewBottom;
 
@@ -97,7 +99,7 @@ public class DjvuViewer extends Composite implements ClickHandler {
 		controlBarTop.add(wPageTop);
 		wPageTop.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		wViewTop = new PushButton("View");
+		wViewTop = new PushButton(_("View"));
 		wViewTop.addClickHandler(this);
 		wViewTop.setStylePrimaryName("freemed-PushButton");
 		controlBarTop.add(wViewTop);
@@ -128,7 +130,7 @@ public class DjvuViewer extends Composite implements ClickHandler {
 		controlBarBottom.add(wPageBottom);
 		wPageBottom.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		wViewBottom = new PushButton("View");
+		wViewBottom = new PushButton(_("View"));
 		wViewBottom.addClickHandler(this);
 		wViewBottom.setStylePrimaryName("freemed-PushButton");
 		controlBarBottom.add(wViewBottom);
@@ -176,13 +178,13 @@ public class DjvuViewer extends Composite implements ClickHandler {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Integer r = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (r != null) {
 								numberOfPages = r;
-								try{
+								try {
 									loadPage(1);
-								}catch(Exception e){
+								} catch (Exception e) {
 									JsonUtil.debug(e.getMessage());
 								}
 								setVisible(true);
@@ -262,16 +264,17 @@ public class DjvuViewer extends Composite implements ClickHandler {
 			JsonUtil.debug("stubbed mode! not loading image");
 		} else {
 			String myUrl = "";
-			if(!thumbNailMode){
+			if (!thumbNailMode) {
 				myUrl = Util.getJsonRequest(resolvePageViewMethod(),
 						new String[] { internalId.toString(),
 								new Integer(pageNumber).toString() });
 				JsonUtil.debug("image URL = " + myUrl);
-				
-			}else{
+
+			} else {
 				myUrl = Util.getJsonRequest(resolvePageViewMethod(),
 						new String[] { internalId.toString(),
-								new Integer(pageNumber).toString(),new Boolean(true).toString() });
+								new Integer(pageNumber).toString(),
+								new Boolean(true).toString() });
 				JsonUtil.debug("image URL = " + myUrl);
 			}
 			wImage.setUrl(myUrl);
@@ -300,11 +303,11 @@ public class DjvuViewer extends Composite implements ClickHandler {
 			wForwardBottom.setEnabled(true);
 		}
 	}
-	
+
 	public Image getPageThumbnail(int pageNumber) throws Exception {
-		Image im=new Image();
+		Image im = new Image();
 		im.setSize("200px", "282px");
-		
+
 		// Handle all issues ...
 		if (internalId.compareTo(new Integer(0)) == 0) {
 			throw new Exception("Internal id not set");
@@ -323,13 +326,14 @@ public class DjvuViewer extends Composite implements ClickHandler {
 		} else {
 			String myUrl = Util.getJsonRequest(resolvePageViewMethod(),
 					new String[] { internalId.toString(),
-							new Integer(pageNumber).toString(),new Boolean(true).toString() });
+							new Integer(pageNumber).toString(),
+							new Boolean(true).toString() });
 			JsonUtil.debug("image URL = " + myUrl);
 			im.setUrl(myUrl);
 		}
 		return im;
 	}
-	
+
 	protected void pageNext() {
 		try {
 			loadPage(currentPage + 1);
@@ -404,16 +408,17 @@ public class DjvuViewer extends Composite implements ClickHandler {
 	 * Open up full page view.
 	 */
 	public void viewDocument() {
-		String[] params = { (String) internalId.toString(),new Integer(currentPage).toString() };
-		Window.open(Util.getJsonRequest(resolvePageViewMethod(),
-				params), "View", "");
+		String[] params = { (String) internalId.toString(),
+				new Integer(currentPage).toString() };
+		Window.open(Util.getJsonRequest(resolvePageViewMethod(), params),
+				_("View"), "");
 	}
-	
-	public int getPageCount(){
+
+	public int getPageCount() {
 		return numberOfPages;
 	}
-	
-	public int getCurrentPage(){
+
+	public int getCurrentPage() {
 		return currentPage;
 	}
 

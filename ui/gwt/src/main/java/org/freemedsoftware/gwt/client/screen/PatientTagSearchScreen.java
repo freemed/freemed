@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +33,12 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
+import org.freemedsoftware.gwt.client.widget.PatientTagWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,7 +50,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -90,7 +91,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 		FlexTable layout = new FlexTable();
 		initWidget(layout);
 
-		Label tagLabel = new Label("Search for Tag: ");
+		Label tagLabel = new Label(_("Search for Tag") + " : ");
 		layout.setWidget(0, 0, tagLabel);
 		tagWidget = new PatientTagWidget();
 		layout.setWidget(0, 2, tagWidget);
@@ -110,10 +111,10 @@ public class PatientTagSearchScreen extends ScreenInterface {
 		layout.getFlexCellFormatter().setColSpan(1, 0, 4);
 
 		customSortableTable.setIndexName("patient_record");
-		customSortableTable.addColumn("Last Name", "last_name");
-		customSortableTable.addColumn("First Name", "first_name");
-		customSortableTable.addColumn("DOB", "date_of_birth");
-		customSortableTable.addColumn("Patient ID", "patient_id");
+		customSortableTable.addColumn(_("Last Name"), "last_name");
+		customSortableTable.addColumn(_("First Name"), "first_name");
+		customSortableTable.addColumn(_("DOB"), "date_of_birth");
+		customSortableTable.addColumn(_("Patient ID"), "patient_id");
 		customSortableTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -195,7 +196,7 @@ public class PatientTagSearchScreen extends ScreenInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {
@@ -233,7 +234,6 @@ public class PatientTagSearchScreen extends ScreenInterface {
 
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}

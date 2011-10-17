@@ -23,6 +23,8 @@
  */
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import com.google.gwt.dom.client.Style.Cursor;
@@ -106,57 +108,55 @@ public class CustomActionBar extends Composite implements ClickHandler {
 
 		// Display all unlocked things
 		modifyImage = new Image(IMAGE_MODIFY);
-		modifyImage.setTitle("Edit");
+		modifyImage.setTitle(_("Edit"));
 		modifyImage.addClickHandler(this);
 		modifyImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(modifyImage);
 		
 		deleteImage = new Image(IMAGE_DELETE);
-		deleteImage.setTitle("Remove");
+		deleteImage.setTitle(_("Remove"));
 		deleteImage.addClickHandler(this);
 		deleteImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(deleteImage);
 		
 		
 		cloneImage = new Image(IMAGE_CLONE);
-		cloneImage.setTitle("Clone");
+		cloneImage.setTitle(_("Clone"));
 		cloneImage.addClickHandler(this);
 		cloneImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(cloneImage);
 		
 		viewImage = new Image(IMAGE_VIEW);
-		viewImage.setTitle("View");
+		viewImage.setTitle(_("View"));
 		viewImage.addClickHandler(this);
 		viewImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		hPanel.add(viewImage);
 		
 		lockImage= new Image(IMAGE_LOCK);
-		lockImage.setTitle("lock record");
+		lockImage.setTitle(_("Lock Record"));
 		lockImage.addClickHandler(this);
 		lockImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		lockImage.setVisible(false);
 		hPanel.add(lockImage);
 		
 		lockedImage= new Image(IMAGE_LOCKED);
-		lockedImage.setTitle("locked");
+		lockedImage.setTitle(_("Locked"));
 		lockedImage.addClickHandler(this);
 		lockedImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		lockedImage.setVisible(false);
 		hPanel.add(lockedImage);
 		
-		if(!locked){
+		if (!locked) {
 			lockImage.setVisible(true);
-		}else{
+		} else {
 			lockedImage.setVisible(true);
 		}
 		
 		printImage = new Image(IMAGE_PRINT);
-		printImage.setTitle("Print");
+		printImage.setTitle(_("Print"));
 		printImage.addClickHandler(this);
 		printImage.getElement().getStyle().setCursor(Cursor.POINTER);
-		hPanel.add(printImage);
-
-		
+		hPanel.add(printImage);		
 	}
 
 
@@ -167,15 +167,15 @@ public class CustomActionBar extends Composite implements ClickHandler {
 			action = HandleCustomAction.ADD;
 		}else if(sender == deleteImage){
 			if(locked && !haveAllRights){
-				Window.alert("You can't delete locked item!");
+				Window.alert(_("You can't delete a locked item."));
 				return;
 			}
-			if(Window.confirm("Are you sure to delete this record?")){
+			if(Window.confirm(_("Are you sure to delete this record?"))){
 				action = HandleCustomAction.DELETE;
 			}
 		}else if(sender == modifyImage){
 			if(locked && !haveAllRights){
-				Window.alert("You can't modify locked item!");
+				Window.alert(_("You can't modify a locked item."));
 				return;
 			}
 			action = HandleCustomAction.MODIFY;
@@ -186,10 +186,10 @@ public class CustomActionBar extends Composite implements ClickHandler {
 		}else if(sender == cloneImage){
 			action = HandleCustomAction.CLONE;
 		}else if(sender == lockedImage){
-			Window.alert("This record has been locked, and can no longer be modified.");
+			Window.alert(_("This record has been locked, and can no longer be modified."));
 			return;
 		}else if(sender == lockImage){
-			if(Window.confirm("Are you sure to lock this record?")){
+			if(Window.confirm(_("Are you sure to lock this record?"))){
 				action = HandleCustomAction.LOCK;
 			}else return;
 		}

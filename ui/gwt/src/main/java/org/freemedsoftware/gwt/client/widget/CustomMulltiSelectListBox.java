@@ -31,8 +31,8 @@ import java.util.Set;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
@@ -79,11 +79,10 @@ public class CustomMulltiSelectListBox extends WidgetInterface implements
 			String[] params = { module };
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
-											params)));
+					URL.encode(Util
+							.getJsonRequest(
+									"org.freemedsoftware.api.ModuleInterface.ModuleSupportPicklistMethod",
+									params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(
@@ -98,8 +97,9 @@ public class CustomMulltiSelectListBox extends WidgetInterface implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
+										.shoehornJson(
+												JSONParser.parseStrict(response
+														.getText()),
 												"HashMap<String,String>");
 								if (result != null) {
 									multiLBox.clear();
@@ -121,7 +121,7 @@ public class CustomMulltiSelectListBox extends WidgetInterface implements
 									// new SuggestOracle.Response(items));
 								} else {
 								} // if no result then set value to 0
-								// setValue(0);
+									// setValue(0);
 							} else {
 								GWT.log("Result " + response.getStatusText(),
 										null);

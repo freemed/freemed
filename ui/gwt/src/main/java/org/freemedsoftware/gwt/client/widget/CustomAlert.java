@@ -38,6 +38,7 @@ public class CustomAlert {
 	}
 	private CustomAlert(){
 	}
+	
 	protected void init(String confirmationText){
 		VerticalPanel panel = new VerticalPanel();
 		alertLabel = new Label(confirmationText);

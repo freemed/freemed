@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
@@ -48,7 +50,7 @@ public class AgingSummaryWidget extends Composite {
 		final CustomTable agingSummaryTable = new CustomTable();
 		agingSummaryTable.setSize("100%", "100%");
 		agingSummaryTable.setIndexName("payer_id");
-		agingSummaryTable.addColumn("Payer", "payer_name");
+		agingSummaryTable.addColumn(_("Payer"), "payer_name");
 		agingSummaryTable.addColumn("0-30", "amount_0_30");
 		agingSummaryTable.addColumn("C", "claims_0_30");
 		agingSummaryTable.addColumn("31-60", "amount_31_60");
@@ -59,8 +61,8 @@ public class AgingSummaryWidget extends Composite {
 		agingSummaryTable.addColumn("C", "claims_91_120");
 		agingSummaryTable.addColumn("120+", "amount_120plus");
 		agingSummaryTable.addColumn("C", "claims_120plus");
-		agingSummaryTable.addColumn("Total Claims", "ev_claims");
-		agingSummaryTable.addColumn("Total Amount", "ev_amount");
+		agingSummaryTable.addColumn(_("Total Claims"), "ev_claims");
+		agingSummaryTable.addColumn(_("Total Amount"), "ev_amount");
 		final AgingSummaryWidget asw = this;
 		agingSummaryTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
@@ -137,7 +139,7 @@ public class AgingSummaryWidget extends Composite {
 				}, "HashMap<String,String>[]");
 		panel.add(agingSummaryTable);
 
-		CustomButton closeBtn = new CustomButton("Close",
+		CustomButton closeBtn = new CustomButton(_("Close"),
 				AppConstants.ICON_CANCEL);
 		closeBtn.addClickHandler(new ClickHandler() {
 			@Override

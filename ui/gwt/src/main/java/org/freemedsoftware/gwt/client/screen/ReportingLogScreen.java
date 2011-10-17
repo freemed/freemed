@@ -45,6 +45,8 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 public class ReportingLogScreen extends ScreenInterface {
 
 	public final static String moduleName = "ReportingPrintLog";
@@ -82,15 +84,15 @@ public class ReportingLogScreen extends ScreenInterface {
 		// Panel #2
 
 		final FlexTable groupListTable = new FlexTable();
-		tabPanel.add(groupListTable, "Failed Reports");
+		tabPanel.add(groupListTable, _("Failed Reports"));
 
 		groupListTable.setWidget(0, 0, printLogTable);
 
 		printLogTable.setSize("100%", "100%");
-		printLogTable.addColumn("Report Name", "report_name"); // col 0
-		printLogTable.addColumn("Format", "report_format"); // col 1
-		printLogTable.addColumn("Date", "stamp"); // col 2
-		printLogTable.addColumn("Action", "action"); // col 2
+		printLogTable.addColumn(_("Report Name"), "report_name"); // col 0
+		printLogTable.addColumn(_("Format"), "report_format"); // col 1
+		printLogTable.addColumn(_("Date"), "stamp"); // col 2
+		printLogTable.addColumn(_("Action"), "action"); // col 2
 		printLogTable.setIndexName("id");
 
 		printLogTable.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -141,7 +143,7 @@ public class ReportingLogScreen extends ScreenInterface {
 			
 				@Override
 				public void onError() {
-					Util.showErrorMsg(module, "Failed to get log items!");
+					Util.showErrorMsg(module, _("Failed to get log items."));
 				}
 			
 				@Override
@@ -166,13 +168,13 @@ public class ReportingLogScreen extends ScreenInterface {
 			
 				@Override
 				public void onError() {
-					Util.showErrorMsg(module, "Failed to delete log items!");
+					Util.showErrorMsg(module, _("Failed to delete log items."));
 				}
 			
 				@Override
 				public void jsonifiedData(Object data) {
 					if(data!=null && ((Boolean)data).booleanValue()){
-						Util.showInfoMsg(module, "Deleted successfully!");	
+						Util.showInfoMsg(module, _("Deleted successfully."));	
 					}
 			
 				}
@@ -198,7 +200,6 @@ public class ReportingLogScreen extends ScreenInterface {
 	
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}

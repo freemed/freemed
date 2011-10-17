@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -87,7 +89,7 @@ public class ClaimDetailsWidget extends Composite {
 		claimsInfoParentTable.setWidth("100%");
 		claimDetailsPanel.add(claimsInfoParentTable);
 
-		Label lbCovInfo = new Label("Coverage Information");
+		Label lbCovInfo = new Label(_("Coverage Information"));
 		lbCovInfo.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 		lbCovInfo.getElement().getStyle().setProperty("fontSize", "15px");
 		lbCovInfo.getElement().getStyle().setProperty("textDecoration",
@@ -111,13 +113,13 @@ public class ClaimDetailsWidget extends Composite {
 		claimsInfoParentTable.getFlexCellFormatter().setVerticalAlignment(0, 0,
 				HasVerticalAlignment.ALIGN_TOP);
 
-		Label lbPatient = new Label("Patient:");
+		Label lbPatient = new Label(_("Patient") + ":");
 		lbPatient.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		lbPatientVal = new Label();
-		Label lbdob = new Label("Date of Birth:");
+		Label lbdob = new Label(_("Date of Birth") +":");
 		lbdob.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbdobVal = new Label();
-		Label lbSSN = new Label("SSN:");
+		Label lbSSN = new Label(_("SSN") + ":");
 		lbSSN.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbSSNVal = new Label();
 
@@ -128,13 +130,13 @@ public class ClaimDetailsWidget extends Composite {
 		covInfoTable.setWidget(0, 4, lbSSN);
 		covInfoTable.setWidget(0, 5, lbSSNVal);
 
-		final Label lbRespParty = new Label("Resp. Party:");
+		final Label lbRespParty = new Label(_("Resp. Party") + ":");
 		lbRespParty.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRespPartyVal = new Label();
-		final Label lbRpDob = new Label("Date of Birth:");
+		final Label lbRpDob = new Label(_("Date of Birth") + ":");
 		lbRpDob.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRpDobVal = new Label();
-		final Label lbRpSSN = new Label("SSN:");
+		final Label lbRpSSN = new Label(_("SSN") + ":");
 		lbRpSSN.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRpSSNVal = new Label();
 
@@ -146,7 +148,7 @@ public class ClaimDetailsWidget extends Composite {
 		covInfoTable.setWidget(1, 5, lbRpSSNVal);
 
 		final Label lbPrimary = new Label(
-				"Primary Coverage/Location/Ins. No./Copay/Deductible");
+				_("Primary Coverage") + "/" + _("Location") + "/" + _("Ins. No.") + "/" + _("Copay") + "/" + _("Deductible"));
 		lbPrimary.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbPrimaryVal = new Label();
 
@@ -158,7 +160,7 @@ public class ClaimDetailsWidget extends Composite {
 				HasVerticalAlignment.ALIGN_TOP);
 
 		final Label lbSecondary = new Label(
-				"Secondary Coverage/Location/Ins. No./Copay/Deductible");
+				_("Secondary Coverage") + "/" + _("Location") + "/" + _("Ins. No.") + "/" + _("Copay") + "/" + _("Deductible"));
 		lbSecondary.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbSecondaryVal = new Label();
 
@@ -170,7 +172,7 @@ public class ClaimDetailsWidget extends Composite {
 				HasVerticalAlignment.ALIGN_TOP);
 
 		final Label lbTertiary = new Label(
-				"Tertiary Coverage/Location/Ins. No./Copay/Deductible");
+				_("Tertiary Coverage") + "/" + _("Location") + "/" + _("Ins. No.") + "/" + _("Copay") + "/" + _("Deductible"));
 		lbTertiary.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbTertiaryVal = new Label();
 
@@ -181,7 +183,7 @@ public class ClaimDetailsWidget extends Composite {
 		covTypesTable.getFlexCellFormatter().setVerticalAlignment(2, 0,
 				HasVerticalAlignment.ALIGN_TOP);
 
-		Label lbClaimInfo = new Label("Claim Information");
+		Label lbClaimInfo = new Label(_("Claim Information"));
 		lbClaimInfo.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 		lbClaimInfo.getElement().getStyle().setProperty("fontSize", "15px");
 		lbClaimInfo.getElement().getStyle().setProperty("textDecoration",
@@ -201,17 +203,17 @@ public class ClaimDetailsWidget extends Composite {
 		claimsInfoParentTable.getFlexCellFormatter().setVerticalAlignment(0, 1,
 				HasVerticalAlignment.ALIGN_TOP);
 
-		Label lbDos = new Label("Date of Service:");
+		Label lbDos = new Label(_("Date of Service") + ":");
 		lbDos.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbDosVal = new Label();
 
 		clInfoTable.setWidget(0, 0, lbDos);
 		clInfoTable.setWidget(0, 1, lbDosVal);
 
-		Label lbProvider = new Label("Provider:");
+		Label lbProvider = new Label(_("Provider") + ":");
 		lbProvider.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbProviderVal = new Label();
-		Label lbRefProv = new Label("Referring Provider:");
+		Label lbRefProv = new Label(_("Referring Provider") + ":");
 		lbRefProv.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbRefProvVal = new Label();
 
@@ -220,10 +222,10 @@ public class ClaimDetailsWidget extends Composite {
 		clInfoTable.setWidget(1, 2, lbRefProv);
 		clInfoTable.setWidget(1, 3, lbRefProvVal);
 
-		Label lbPOS = new Label("POS:");
+		Label lbPOS = new Label(_("POS") + ":");
 		lbPOS.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbPOSVal = new Label();
-		Label lbCharges = new Label("Charges:");
+		Label lbCharges = new Label(_("Charges") + ":");
 		lbCharges.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbChargesVal = new Label();
 
@@ -232,10 +234,10 @@ public class ClaimDetailsWidget extends Composite {
 		clInfoTable.setWidget(2, 2, lbCharges);
 		clInfoTable.setWidget(2, 3, lbChargesVal);
 
-		Label lbCPT = new Label("CPT:");
+		Label lbCPT = new Label(_("CPT") + ":");
 		lbCPT.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbCPTVal = new Label();
-		Label lbPaid = new Label("Paid:");
+		Label lbPaid = new Label(_("Paid") + ":");
 		lbPaid.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbPaidVal = new Label();
 
@@ -244,10 +246,10 @@ public class ClaimDetailsWidget extends Composite {
 		clInfoTable.setWidget(3, 2, lbPaid);
 		clInfoTable.setWidget(3, 3, lbPaidVal);
 
-		Label lbICD = new Label("ICD:");
+		Label lbICD = new Label(_("ICD") + ":");
 		lbICD.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbICDVal = new Label();
-		Label lbBalance = new Label("Balance:");
+		Label lbBalance = new Label(_("Balance") + ":");
 		lbBalance.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		final Label lbBalanceVal = new Label();
 
@@ -367,7 +369,7 @@ public class ClaimDetailsWidget extends Composite {
 				}, "HashMap<String,String>");
 		HorizontalPanel actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		final Button addEventBtn = new Button("Add Event");
+		final Button addEventBtn = new Button(_("Add Event"));
 		addEventBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -375,7 +377,7 @@ public class ClaimDetailsWidget extends Composite {
 			}
 
 		});
-		final Button editClaimBtn = new Button("Modify Claim");
+		final Button editClaimBtn = new Button(_("Modify Claim"));
 		editClaimBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -386,12 +388,12 @@ public class ClaimDetailsWidget extends Composite {
 				ps.setModificationRecordId(claimid);
 				ps.setPatientId(patientId);
 				ps.loadData();
-				Util.spawnTabPatient("Manage Procedures", ps, p);
+				Util.spawnTabPatient(_("Manage Procedures"), ps, p);
 				ps.loadData();
 			}
 
 		});
-		final Button cancelBtn = new Button("Return to Search");
+		final Button cancelBtn = new Button(_("Return to Search"));
 		final ClaimDetailsWidget cdw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -402,7 +404,7 @@ public class ClaimDetailsWidget extends Composite {
 
 		});
 
-		final Button newSearchBtn = new Button("New Search");
+		final Button newSearchBtn = new Button(_("New Search"));
 		newSearchBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -420,10 +422,10 @@ public class ClaimDetailsWidget extends Composite {
 		final CustomTable claimsLogTable = new CustomTable();
 		claimsLogTable.setAllowSelection(false);
 		claimsLogTable.setSize("100%", "100%");
-		claimsLogTable.addColumn("Date", "date");
-		claimsLogTable.addColumn("User", "user");
-		claimsLogTable.addColumn("Action", "action");
-		claimsLogTable.addColumn("Comment", "comment");
+		claimsLogTable.addColumn(_("Date"), "date");
+		claimsLogTable.addColumn(_("User"), "user");
+		claimsLogTable.addColumn(_("Action"), "action");
+		claimsLogTable.addColumn(_("Comment"), "comment");
 		Util.callApiMethod("ClaimLog", "events_for_procedure", params,
 				new CustomRequestCallback() {
 					@Override
@@ -446,13 +448,13 @@ public class ClaimDetailsWidget extends Composite {
 		newClaimEventPanel.setVisible(true);
 		newClaimEventPanel.setSpacing(5);
 		claimDetailsPanel.setVisible(false);
-		Label lbAction = new Label("Action");
+		Label lbAction = new Label(_("Action"));
 		final CustomListBox listAction = new CustomListBox();
-		listAction.addItem("None Selected");
-		listAction.addItem("Call", "Call");
-		listAction.addItem("Email", "Email");
+		listAction.addItem(_("NONE SELECTED"), "");
+		listAction.addItem(_("Call"), "Call");
+		listAction.addItem(_("Email"), "Email");
 
-		Label lbComment = new Label("Comment");
+		Label lbComment = new Label(_("Comment"));
 		final TextArea commenttb = new TextArea();
 		FlexTable eventEntryTable = new FlexTable();
 		eventEntryTable.setWidget(0, 0, lbAction);
@@ -462,18 +464,18 @@ public class ClaimDetailsWidget extends Composite {
 
 		HorizontalPanel actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		final Button addEventBtn = new Button("Add Event");
+		final Button addEventBtn = new Button(_("Add Event"));
 		addEventBtn.addClickHandler(new ClickHandler() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onClick(ClickEvent event) {
 				String msg = "";
 				if (listAction.getSelectedIndex() == 0) {
-					msg += "Please select an action. \n";
+					msg += _("Please select an action.") + "\n";
 				}
 				if (commenttb.getText() == null
 						|| commenttb.getText().equals("")) {
-					msg += "Please enter a comment. \n";
+					msg += _("Please enter a comment.") + "\n";
 				}
 				if (msg.equals("")) {
 					final HashMap<String, String> rec = new HashMap<String, String>();
@@ -503,7 +505,7 @@ public class ClaimDetailsWidget extends Composite {
 			}
 
 		});
-		final Button claimDetailsBtn = new Button("Claim Details");
+		final Button claimDetailsBtn = new Button(_("Claim Details"));
 		claimDetailsBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

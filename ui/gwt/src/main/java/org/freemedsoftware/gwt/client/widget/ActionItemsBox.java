@@ -25,17 +25,18 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientForm;
-import org.freemedsoftware.gwt.client.screen.PatientScreen;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
@@ -51,7 +52,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -60,7 +60,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ActionItemsBox extends WidgetInterface {
 
-	protected Label messageCountLabel = new Label("You have no Action Items!");
+	protected Label messageCountLabel = new Label(_("You have no action items."));
 
 	protected HashMap<String, String>[] result;
 
@@ -112,7 +112,7 @@ public class ActionItemsBox extends WidgetInterface {
 			}
 		});
 
-		Label headerLabel = new Label("ACTION ITEMS");
+		Label headerLabel = new Label(_("ACTION ITEMS"));
 		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 
@@ -122,13 +122,13 @@ public class ActionItemsBox extends WidgetInterface {
 
 		contentVPanel.add(actionItemsTable);
 		actionItemsTable.setSize("100%", "100%");
-		actionItemsTable.addColumn("Date", "stamp"); // col 0
+		actionItemsTable.addColumn(_("Date"), "stamp"); // col 0
 		// marya
 		if(showPatientName)
-		 actionItemsTable.addColumn("Patient", "patient_name"); // col 1
-		actionItemsTable.addColumn("Module Name", "status_name"); // col 2
-		actionItemsTable.addColumn("status", "summary"); // col 4
-		actionItemsTable.addColumn("action", "action"); // col 4
+		 actionItemsTable.addColumn(_("Patient"), "patient_name"); // col 1
+		actionItemsTable.addColumn(_("Module Name"), "status_name"); // col 2
+		actionItemsTable.addColumn(_("Status"), "summary"); // col 4
+		actionItemsTable.addColumn(_("Action"), "action"); // col 4
 		actionItemsTable.setIndexName("id");
 		actionItemsTable.setMaximumRows(7);
 		if (true) {
@@ -266,7 +266,7 @@ public class ActionItemsBox extends WidgetInterface {
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							Integer data = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (data != null) {
 								JsonUtil
@@ -301,7 +301,7 @@ public class ActionItemsBox extends WidgetInterface {
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (data != null && data.length > 0) {
@@ -330,7 +330,7 @@ public class ActionItemsBox extends WidgetInterface {
 		dataMemory = data;
 		// for testing purpose only
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			messageCountLabel.setText("You have 2 new Action Items!");
+			messageCountLabel.setText("You have 2 new action items.");
 		}
 	}
 
@@ -343,9 +343,9 @@ public class ActionItemsBox extends WidgetInterface {
 		String text;
 		JsonUtil.debug("Action Items count is:" + count);
 		if (count < 1) {
-			text = "There are no Action Items messages.";
+			text = _("There are no action item messages.");
 		} else {
-			text = "You have " + count.toString() + " Action Items!";
+			text = _("You have %d action items!").replaceFirst("%d", count.toString());
 		}
 		messageCountLabel.setText(text);
 	}

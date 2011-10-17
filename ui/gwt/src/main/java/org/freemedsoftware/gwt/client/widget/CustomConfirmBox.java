@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,21 +39,25 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class CustomConfirmBox {
 
 	protected VerticalPanel contentVPanel = new VerticalPanel();
-	
+
 	protected Label confirmLabel = null;
 	protected CustomDialogBox customDialogBox = null;
 	protected boolean autoHide = false;
-	
-	public CustomConfirmBox(String confirmationText,Command onYes,Command onNo){
+
+	public CustomConfirmBox(String confirmationText, Command onYes, Command onNo) {
 		init(confirmationText, onYes, onNo);
 	}
-	public CustomConfirmBox(){
+
+	public CustomConfirmBox() {
 		init("", null, null);
 	}
-	public CustomConfirmBox(String confirmationText){
+
+	public CustomConfirmBox(String confirmationText) {
 		init(confirmationText, null, null);
 	}
-	protected void init(String confirmationText,final Command onYes,final Command onNo){
+
+	protected void init(String confirmationText, final Command onYes,
+			final Command onNo) {
 		customDialogBox = new CustomDialogBox();
 		VerticalPanel panel = new VerticalPanel();
 		customDialogBox.setContent(panel);
@@ -59,50 +65,55 @@ public class CustomConfirmBox {
 		panel.add(confirmLabel);
 		HorizontalPanel buttonHPanel = new HorizontalPanel();
 		panel.add(buttonHPanel);
-		panel.setCellHorizontalAlignment(buttonHPanel, HasHorizontalAlignment.ALIGN_CENTER);
-		final CustomButton yesBTN = new CustomButton("Yes",AppConstants.ICON_DONE);
+		panel.setCellHorizontalAlignment(buttonHPanel,
+				HasHorizontalAlignment.ALIGN_CENTER);
+		final CustomButton yesBTN = new CustomButton(_("Yes"),
+				AppConstants.ICON_DONE);
 		buttonHPanel.add(yesBTN);
 		yesBTN.addClickHandler(new ClickHandler() {
-		
+
 			@Override
 			public void onClick(ClickEvent event) {
-				if(onYes!=null)
+				if (onYes != null) {
 					onYes.execute();
-				if(autoHide)
+				}
+				if (autoHide) {
 					hide();
+				}
 			}
-		
+
 		});
-		
-		final CustomButton noBTN = new CustomButton("No",AppConstants.ICON_CANCEL);
+
+		final CustomButton noBTN = new CustomButton(_("No"),
+				AppConstants.ICON_CANCEL);
 		buttonHPanel.add(noBTN);
 		noBTN.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				if(onNo!=null)
+				if (onNo != null)
 					onNo.execute();
-				if(autoHide)
+				if (autoHide)
 					hide();
 			}
-		
+
 		});
 	}
-	
-	public void setText(String text){
+
+	public void setText(String text) {
 		confirmLabel.setText(text);
 	}
-	
-	public CustomConfirmBox getCustomConfirmBox(){
+
+	public CustomConfirmBox getCustomConfirmBox() {
 		return this;
 	}
-	
-	public void show(){
+
+	public void show() {
 		customDialogBox.show();
 		customDialogBox.center();
 	}
-	
-	public void hide(){
+
+	public void hide() {
 		customDialogBox.hide();
 	}
 

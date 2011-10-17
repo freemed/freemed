@@ -24,25 +24,22 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
-import java.util.ArrayList;
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
-import java.util.List;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
-import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.screen.entry.SupportModuleEntry;
 import org.freemedsoftware.gwt.client.widget.CustomActionBar;
+import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomTable;
-import org.freemedsoftware.gwt.client.widget.Toaster;
-import org.freemedsoftware.gwt.client.widget.CustomActionBar.HandleCustomAction;
-import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableWidgetColumnSetInterface;
 
 import com.google.gwt.core.client.GWT;
@@ -105,16 +102,16 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		verticalPanel.add(horizontalPanel);
 
 		if(canWrite){
-			final PushButton addButton = new PushButton("Add", "Add");
+			final PushButton addButton = new PushButton(_("Add"), _("Add"));
 			horizontalPanel.add(addButton);
 			addButton.setStylePrimaryName("freemed-PushButton");
-			addButton.setText("Add");
+			addButton.setText(_("Add"));
 			addButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
 					SupportModuleEntry entry = new SupportModuleEntry(moduleName);
 					entry.setDoneCommand(thisRef);
-					Util.spawnTab(moduleName + ": " + "Add", entry);
+					Util.spawnTab(moduleName + ": " + _("Add"), entry);
 				}
 			});
 		}
@@ -143,15 +140,15 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 		});
 		horizontalPanel.add(searchText);
 
-		final PushButton searchButton = new PushButton("Search", "Search");
+		final PushButton searchButton = new PushButton(_("Search"), _("Search"));
 		horizontalPanel.add(searchButton);
 		searchButton.setStylePrimaryName("freemed-PushButton");
-		searchButton.setText("Search");
+		searchButton.setText(_("Search"));
 
-		final PushButton clearButton = new PushButton("Clear", "Clear");
+		final PushButton clearButton = new PushButton(_("Clear"), _("Clear"));
 		horizontalPanel.add(clearButton);
 		clearButton.setStylePrimaryName("freemed-PushButton");
-		clearButton.setText("Clear");
+		clearButton.setText(_("Clear"));
 		
 		clearButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -188,7 +185,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 							SupportModuleEntry entry = new SupportModuleEntry(
 									moduleName, recordId);
 							entry.setDoneCommand(thisRef);
-							Util.spawnTab(moduleName + ": " + "Edit", entry);
+							Util.spawnTab(moduleName + ": " + _("Edit"), entry);
 						}else if(action == HandleCustomAction.DELETE){
 							Util.callModuleMethod(moduleName, "del", recordId, new CustomRequestCallback() {
 							
@@ -202,10 +199,9 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 								public void jsonifiedData(Object data) {
 									if((Boolean)data){
 										populateData();
-										Util.showInfoMsg(moduleName, "Record deleted succcessfully!!");
+										Util.showInfoMsg(moduleName, _("Record deleted succcessfully."));
 									}else
-										Util.showInfoMsg(moduleName, "Failed to delete record!!");
-							
+										Util.showInfoMsg(moduleName, _("Failed to delete record."));							
 								}
 							
 							}, "Boolean");
@@ -280,7 +276,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 								.getAttribute("field"));
 					}
 				}
-				sortableTable.addColumn("Action", "action");
+				sortableTable.addColumn(_("Action"), "action");
 			} else {
 				// Deal with other possibilities
 			}
@@ -317,7 +313,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+						Util.showErrorMsg("SupportDataScreen", _("Could not load list of support data modules."));
 					}
 
 					public void onResponseReceived(Request request,
@@ -325,12 +321,12 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								sortableTable.loadData(r);
 							} else {
-								Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+								Util.showErrorMsg("SupportDataScreen", _("Could not load list of support data modules."));
 							}
 							sortableTable.showloading(false);
 						}
@@ -358,7 +354,7 @@ public class SupportDataManagementScreen extends ScreenInterface implements
 						}
 
 						public void onFailure(Throwable t) {
-							Util.showErrorMsg("SupportDataScreen", "Could not load list of support data modules.");
+							Util.showErrorMsg("SupportDataScreen", _("Could not load list of support data modules."));
 							sortableTable.showloading(false);
 						}
 					});

@@ -24,14 +24,16 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.DocumentScreen;
 import org.freemedsoftware.gwt.client.screen.UnfiledDocuments;
@@ -52,101 +54,102 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DocumentBox extends WidgetInterface {
 
 	public final static String moduleName = "UnfiledDocuments";
-	
+
 	protected Label documentsCountLabel = new Label(
-			"You have no unfiled Documents!");
+			_("You have no unfiled documents."));
 
 	protected HashMap<String, String>[] data = null;
 
 	protected CustomTable wDocuments = new CustomTable();
 
 	protected DocumentScreen documentScreen = null;
-    private PushButton showDocumentsButton;
+	private PushButton showDocumentsButton;
 
 	protected UnfiledDocuments unfiledDocs;
-	
+
 	protected final VerticalPanel contentVPanel;
-	
+
 	public DocumentBox() {
 		super(moduleName);
 		VerticalPanel superVPanel = new VerticalPanel();
 		initWidget(superVPanel);
-		superVPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER );
+		superVPanel.setStyleName(AppConstants.STYLE_BUTTON_WIDGETS_CONTAINER);
 		superVPanel.setWidth("100%");
 
-		
 		HorizontalPanel headerHPanel = new HorizontalPanel();
 		headerHPanel.setSpacing(5);
 		superVPanel.add(headerHPanel);
-		
-		final Image colExpBtn = new Image(Util.getResourcesURL()+"collapse.15x15.png");
+
+		final Image colExpBtn = new Image(Util.getResourcesURL()
+				+ "collapse.15x15.png");
 		colExpBtn.getElement().getStyle().setCursor(Cursor.POINTER);
 		headerHPanel.add(colExpBtn);
 		colExpBtn.addClickHandler(new ClickHandler() {
 			boolean expaned = false;
+
 			@Override
 			public void onClick(ClickEvent arg0) {
-				if(expaned){
-					colExpBtn.setUrl(Util.getResourcesURL()+"collapse.15x15.png");
+				if (expaned) {
+					colExpBtn.setUrl(Util.getResourcesURL()
+							+ "collapse.15x15.png");
 					contentVPanel.setVisible(true);
-				}else{
-					colExpBtn.setUrl(Util.getResourcesURL()+"expand.15x15.png");
+				} else {
+					colExpBtn.setUrl(Util.getResourcesURL()
+							+ "expand.15x15.png");
 					contentVPanel.setVisible(false);
 				}
-					expaned = !expaned;
+				expaned = !expaned;
 			}
 		});
 
-		Label headerLabel = new Label("UNFILED DOCUMENTS");
+		Label headerLabel = new Label(_("UNFILED DOCUMENTS"));
 		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
-		
-		contentVPanel = new VerticalPanel(); 
+
+		contentVPanel = new VerticalPanel();
 		contentVPanel.setWidth("100%");
 		superVPanel.add(contentVPanel);
-		
+
 		contentVPanel.add(wDocuments);
 
-
 		wDocuments.setSize("100%", "100%");
-		wDocuments.addColumn("Date", "uffdate"); // col 0
-		wDocuments.addColumn("Filename", "ufffilename"); // col 1
+		wDocuments.addColumn(_("Date"), "uffdate"); // col 0
+		wDocuments.addColumn(_("Filename"), "ufffilename"); // col 1
 		wDocuments.setIndexName("id");
 		wDocuments.setMaximumRows(7);
-		if(true){
+		if (true) {
 			wDocuments.setTableRowClickHandler(new TableRowClickHandler() {
 				@Override
 				public void handleRowClick(HashMap<String, String> data, int col) {
-					//final Integer uffId = Integer.parseInt(data.get("id"));
+					// final Integer uffId = Integer.parseInt(data.get("id"));
 					unfiledDocs = UnfiledDocuments.getInstance();
 					unfiledDocs.setSelectedDocument(data);
-					Util.spawnTab(AppConstants.UNFILED
-							+ " Documents", UnfiledDocuments.getInstance());
-					//Util.spawnTab("File Document", documentScreen);
+					Util.spawnTab(AppConstants.UNFILED + " Documents",
+							UnfiledDocuments.getInstance());
+					// Util.spawnTab("File Document", documentScreen);
 				}
 			});
 		}
 		// Collapsed view
-//		wDocuments.setVisible(false);
-//		horizontalPanel.add(documentsCountLabel);
+		// wDocuments.setVisible(false);
+		// horizontalPanel.add(documentsCountLabel);
 	}
 
-	public Widget getDefaultIcon(){
-		if(showDocumentsButton==null){
+	public Widget getDefaultIcon() {
+		if (showDocumentsButton == null) {
 			showDocumentsButton = new PushButton("", "");
 			showDocumentsButton.setStyleName(AppConstants.STYLE_BUTTON_SIMPLE);
 			showDocumentsButton.getUpFace().setImage(
 					new Image("resources/images/unfiled.16x16.png"));
 			showDocumentsButton.getDownFace().setImage(
 					new Image("resources/images/unfiled.16x16.png"));
-	
+
 			showDocumentsButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent evt) {
@@ -161,10 +164,10 @@ public class DocumentBox extends WidgetInterface {
 		return showDocumentsButton;
 	}
 
-	public void clearView(){
+	public void clearView() {
 		wDocuments.clearData();
 	}
-	
+
 	public void retrieveData() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Runs in STUBBED MODE => Feed with Sample Data
@@ -177,11 +180,10 @@ public class DocumentBox extends WidgetInterface {
 
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.UnfiledDocuments.GetAll",
-											documentparams)));
+					URL.encode(Util
+							.getJsonRequest(
+									"org.freemedsoftware.module.UnfiledDocuments.GetAll",
+									documentparams)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
@@ -193,12 +195,13 @@ public class DocumentBox extends WidgetInterface {
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
-											.getText()),
+									.shoehornJson(JSONParser
+											.parseStrict(response.getText()),
 											"HashMap<String,String>[]");
 							if (data != null) {
 								loadData(data);
-							}else wDocuments.showloading(false);
+							} else
+								wDocuments.showloading(false);
 						}
 					}
 				});
@@ -245,8 +248,8 @@ public class DocumentBox extends WidgetInterface {
 	public void setCounter() {
 		Integer len = data.length;
 		if (len != 0) {
-			documentsCountLabel.setText("You have " + Integer.toString(len)
-					+ " unfiled Documents!");
+			documentsCountLabel.setText(_("You have %d unfiled documents.")
+					.replaceFirst("%d", Integer.toString(len)));
 		}
 	}
 
