@@ -40,7 +40,8 @@ mvn install:install-file -DgroupId=pl.rmalinowski.gwt2swf -DartifactId=gwt2swf -
 
 mvn install:install-file -DgroupId=com.google.code.gwt-dnd -DartifactId=gwt-dnd -Dversion=3.0.1 -Dpackaging=jar -Dfile=gwt-dnd-3.0.1.jar
 
-mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-incubator -Dversion=20100204-r1747 -Dpackaging=jar -Dfile=gwt-incubator-20100204-r1747.jar
+###mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-incubator -Dversion=20100204-r1747 -Dpackaging=jar -Dfile=gwt-incubator-20100204-r1747.jar
+mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-incubator -Dversion=20101117-r1766 -Dpackaging=jar -Dfile=gwt-incubator-20101117-r1766.jar
 
 mvn install:install-file -DgroupId=org.cobogw.gwt -DartifactId=org.cobogw.gwt -Dversion=1.3 -Dpackaging=jar -Dfile=org.cobogw.gwt-1.3.jar
 

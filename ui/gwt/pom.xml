@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-incubator</artifactId>
-			<version>20100204-r1747</version>
+			<version>20101117-r1766</version>
 		</dependency>
 
 		<dependency>
