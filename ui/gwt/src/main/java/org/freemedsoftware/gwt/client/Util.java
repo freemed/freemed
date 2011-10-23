@@ -1301,6 +1301,7 @@ public final class Util {
 	 *            - type of response e.g
 	 *            Integer,HashMap<String,String>,String[],String[][] etc
 	 */
+	@SuppressWarnings("rawtypes")
 	private static void callServerMethod(final String packageName,
 			final String className, final String method, final List paramsList,
 			final CustomRequestCallback requestCallback,
@@ -1391,6 +1392,7 @@ public final class Util {
 	 *            - type of response e.g
 	 *            Integer,HashMap<String,String>,String[],String[][] etc
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void callApiMethod(final String className,
 			final String method, final List paramsList,
 			final CustomRequestCallback requestCallback,
@@ -1421,6 +1423,7 @@ public final class Util {
 	 *            - type of response e.g
 	 *            Integer,HashMap<String,String>,String[],String[][] etc
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void callApiMethod(final String className,
 			final String method, final Integer id,
 			final CustomRequestCallback requestCallback,
@@ -1453,6 +1456,7 @@ public final class Util {
 	 *            - type of response e.g
 	 *            Integer,HashMap<String,String>,String[],String[][] etc
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void callModuleMethod(final String className,
 			final String method, final List paramsList,
 			final CustomRequestCallback requestCallback,
@@ -1483,6 +1487,7 @@ public final class Util {
 	 *            - type of response e.g
 	 *            Integer,HashMap<String,String>,String[],String[][] etc
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void callModuleMethod(final String className,
 			final String method, final Integer id,
 			final CustomRequestCallback requestCallback,
@@ -1518,6 +1523,7 @@ public final class Util {
 	 * @param Method
 	 *            - Request Method e.g GET,POST
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void callApiMethod(final String className,
 			final String method, final List paramsList,
 			final CustomRequestCallback requestCallback,
@@ -1551,6 +1557,7 @@ public final class Util {
 	 * @param Method
 	 *            - Request Method e.g GET,POST
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void callApiMethod(final String className,
 			final String method, final Integer id,
 			final CustomRequestCallback requestCallback,
@@ -1586,6 +1593,7 @@ public final class Util {
 	 * @param Method
 	 *            - Request Method e.g GET,POST
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void callModuleMethod(final String className,
 			final String method, final List paramsList,
 			final CustomRequestCallback requestCallback,
@@ -1619,6 +1627,7 @@ public final class Util {
 	 * @param Method
 	 *            - Request Method e.g GET,POST
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void callModuleMethod(final String className,
 			final String method, final Integer id,
 			final CustomRequestCallback requestCallback,
@@ -1689,6 +1698,7 @@ public final class Util {
 	 * 
 	 */
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void generateReportToBrowser(final String reportName,
 			final String format, final List<String> reportParams) {
 		List paramsList = new ArrayList();
@@ -1745,6 +1755,7 @@ public final class Util {
 	 * 
 	 */
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void generateReportToPrinter(final String reportName,
 			final String format, final List<String> reportParams,
 			final boolean saveFailed) {
@@ -1844,6 +1855,7 @@ public final class Util {
 	 * 
 	 */
 
+	@SuppressWarnings("unchecked")
 	public static void saveFailedReports(final String reportName,
 			final String format, final List<String> reportParams) {
 		Iterator<String> iterator = reportParams.iterator();
@@ -1858,6 +1870,7 @@ public final class Util {
 		paramMap.put("report_params", reportParamsStr);
 		paramMap.put("report_format", format);
 
+		@SuppressWarnings("rawtypes")
 		List paramsList = new ArrayList();
 		paramsList.add(paramMap);
 
@@ -1960,6 +1973,7 @@ public final class Util {
 	 * 
 	 */
 	public static void alert(String msg) {
+		@SuppressWarnings("unused")
 		CustomAlert customAlert = new CustomAlert(msg);
 	}
 

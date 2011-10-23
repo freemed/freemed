@@ -36,8 +36,6 @@ public class CustomAlert {
 	public CustomAlert(String confirmationText){
 		init(confirmationText);
 	}
-	private CustomAlert(){
-	}
 	
 	protected void init(String confirmationText){
 		VerticalPanel panel = new VerticalPanel();

@@ -241,6 +241,7 @@ public class FinancialWidget extends WidgetInterface {
 
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void loadTransactionsData(){
 		ArrayList params1 = new ArrayList();
 		params1.add(patientId.toString());

@@ -214,6 +214,7 @@ public class PostCheckWidget extends Composite {
 							final TextBox tbCopay = new TextBox();
 							tbCopay.setWidth("100%");
 							tbCopay.setText("0");
+							@SuppressWarnings("rawtypes")
 							ArrayList params = new ArrayList();
 							tbCopay.addChangeHandler(new ChangeHandler() {
 

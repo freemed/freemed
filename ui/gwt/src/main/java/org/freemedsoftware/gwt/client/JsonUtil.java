@@ -46,7 +46,7 @@ public class JsonUtil {
 	 * @param o
 	 * @return JSON formatted string
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static synchronized String jsonify(Object o) {
 		if (o != null) {
 
@@ -229,7 +229,7 @@ public class JsonUtil {
 		return shoehornJson(JSONParser.parseStrict(r), t);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static synchronized Object shoehornJson(JSONValue r, String t) {
 		if (r == null || r.toString().equals("null"))
 			return null;

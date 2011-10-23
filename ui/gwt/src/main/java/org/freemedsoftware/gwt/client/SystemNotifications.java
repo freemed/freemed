@@ -138,7 +138,7 @@ public class SystemNotifications {
 									return;
 								}
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {

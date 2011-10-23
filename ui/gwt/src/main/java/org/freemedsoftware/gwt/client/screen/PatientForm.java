@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.screen;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,22 +36,20 @@ import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.ScreenInterface;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
-import org.freemedsoftware.gwt.client.widget.CustomConfirmBox;
 import org.freemedsoftware.gwt.client.widget.CustomDatePicker;
-import org.freemedsoftware.gwt.client.widget.CustomDialogBox;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.CustomRadioButtonGroup;
 import org.freemedsoftware.gwt.client.widget.PatientAddresses;
+import org.freemedsoftware.gwt.client.widget.PatientAddresses.Address;
 import org.freemedsoftware.gwt.client.widget.PatientAuthorizations;
 import org.freemedsoftware.gwt.client.widget.PatientCoverages;
 import org.freemedsoftware.gwt.client.widget.ProviderWidget;
 import org.freemedsoftware.gwt.client.widget.SupportModuleWidget;
 import org.freemedsoftware.gwt.client.widget.Toaster;
-import org.freemedsoftware.gwt.client.widget.PatientAddresses.Address;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -73,7 +73,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -81,8 +80,6 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 
 public class PatientForm extends ScreenInterface {
 	
@@ -689,17 +686,18 @@ public class PatientForm extends ScreenInterface {
 		submitButton = new CustomButton(_("Commit"),AppConstants.ICON_ADD);
 		horizontalPanel.add(submitButton);
 		submitButton.addClickHandler(new ClickHandler() {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void onClick(ClickEvent evt) {
 //				submitButton.setEnabled(false);
 				if(validateForm()){
 					if(patientId==null || patientId==0){
 						List params = new ArrayList();
-						HashMap<String, String> creteria = new HashMap<String, String>();
-						creteria.put("ptlname", (String) wLastName.getText());
-						creteria.put("ptfname", (String) wFirstName.getText());
-						creteria.put("ptdob", (String) wDob.getStoredValue());
-						params.add(creteria);
+						HashMap<String, String> criteria = new HashMap<String, String>();
+						criteria.put("ptlname", (String) wLastName.getText());
+						criteria.put("ptfname", (String) wFirstName.getText());
+						criteria.put("ptdob", (String) wDob.getStoredValue());
+						params.add(criteria);
 	
 						Util.callApiMethod("PatientInterface", "GetDuplicatePatients", params, new CustomRequestCallback() {
 						
@@ -1399,6 +1397,7 @@ public class PatientForm extends ScreenInterface {
 		return p;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected boolean validateForm() {
 		String msg = new String("");
 		if (wLastName.getText().length() < 2) {
@@ -1441,7 +1440,6 @@ public class PatientForm extends ScreenInterface {
 	}
 
 	public void loadLanguages(){
-
 		Util.callModuleMethod("org.freemedsoftware.module.i18nLanguages", "GetAll", (Integer)null, new CustomRequestCallback() {
 			@Override
 			public void onError() {
@@ -1450,6 +1448,7 @@ public class PatientForm extends ScreenInterface {
 			public void jsonifiedData(Object data) {
 				if(data!=null ){
 					try{
+						@SuppressWarnings("unchecked")
 						HashMap<String,String>[] langs=(HashMap<String,String>[])data;
 						for(int i=0;i<langs.length;i++){
 							languages.addItem(langs[i].get("language"), langs[i].get("abbrev"));
@@ -1465,26 +1464,19 @@ public class PatientForm extends ScreenInterface {
 	
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
-	}
+	}	
 	
-	
-	
-	
-	public static String returnEmploymentStatus(String id){
-		
+	public static String returnEmploymentStatus(String id){		
 		if(id.equalsIgnoreCase("y"))
 		{
 			return _("Yes");
-		}
-		
+		}		
 		else if(id.equalsIgnoreCase("n"))
 		{
 			return _("No");
-		}
-		
+		}		
 		else if(id.equalsIgnoreCase("p"))
 		{
 			return _("Part time");
@@ -1504,13 +1496,10 @@ public class PatientForm extends ScreenInterface {
 		else
 		{
 	       return _("Unknown");
-		}
-	
+		}	
 	}
 	
-	
-	public static String returnRace(int id){
-		
+	public static String returnRace(int id){		
 		if(id==1)
 		{
 			return _("Hispanic, white");
@@ -1525,8 +1514,6 @@ public class PatientForm extends ScreenInterface {
 		{
 			return _("American Indian or Alaska Native");
 		}
-		
-		
 		else if(id==4)
 		{
 			return _("Black, not of Hispanic origin");
@@ -1535,44 +1522,25 @@ public class PatientForm extends ScreenInterface {
 		{
 			return _("Asian or Pacific Islander");
 		}
-		
 		else if(id==6)
 		{
 			return _("White, not of Hispanic origin");
-		}
-		
+		}		
 		else
-	       return _("Unknown race");
-	
+	       return _("Unknown race");	
 	}
 	
-	
-	
-	
-	
-	
-  public static String returnReligion(int id){
-		
-	 HashMap<Integer, String> religionList=religions();
-	  
-	return religionList.get(id); 
-	
+	public static String returnReligion(int id){		
+		HashMap<Integer, String> religionList=religions();	  
+		return religionList.get(id); 	
 	}
-	
-	
-	
-	
-	
-	
 	
 	public static HashMap<Integer, String> religions()
 	{
-		religions=new HashMap<Integer, String>();
-		
+		religions=new HashMap<Integer, String>();		
 		religions.put(0, _("Catholic"));
 		religions.put(1, _("Jewish"));
-		religions.put(2, _("Eastern Orthodox"));
-		
+		religions.put(2, _("Eastern Orthodox"));		
 		religions.put(3, _("Baptist"));
 		religions.put(4, _("Methodist"));
 		religions.put(5, _("Lutheran"));
@@ -1609,21 +1577,17 @@ public class PatientForm extends ScreenInterface {
 		if(id.equalsIgnoreCase("mon"))
 		{
 			return _("Monthly Billing On Account");
-		}
-		
+		}		
 		else if(id.equalsIgnoreCase("sta"))
 		{
 			return _("Statement Billing");
-		}
-		
+		}		
 		else if(id.equalsIgnoreCase("chg"))
 		{
 			return _("Charge Card Billing");
-		}				
-	
+		}					
 		else
-	       return _("NONE SELECTED");
-	
+	       return _("NONE SELECTED");	
 	}
 	
 }

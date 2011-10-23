@@ -289,9 +289,9 @@ public class PatientInfoBar extends Composite {
 
 					}
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public void jsonifiedData(Object svrData) {
-						// TODO Auto-generated method stub
 						if (svrData != null) {
 							HashMap<String,HashMap<String,String>[]> data = (HashMap<String,HashMap<String,String>[]>) svrData;
 							
@@ -401,8 +401,8 @@ public class PatientInfoBar extends Composite {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public FlexTable loadCoverageInfo(Object data) {
-
 		HashMap<String, String>[] hashMaps = (HashMap<String, String>[]) data;
 		
 		FlexTable coverageInfoTable = new FlexTable();

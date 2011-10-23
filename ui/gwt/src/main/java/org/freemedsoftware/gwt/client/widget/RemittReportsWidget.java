@@ -258,7 +258,7 @@ public class RemittReportsWidget extends Composite {
 				}, "HashMap<String,String>[]");
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void loadReportsDetails(String month, final CustomTable reportsTable) {
 		ArrayList params = new ArrayList();
 		params.add(month);

@@ -78,9 +78,8 @@ public class ActionItemsBox extends WidgetInterface {
 
 	private boolean showPatientName = true;
 
-	
-
 	public ActionItemsBox(boolean showPatientName) {
+		this.showPatientName = showPatientName;
 		
 		VerticalPanel superVPanel = new VerticalPanel();
 		initWidget(superVPanel);
@@ -95,11 +94,11 @@ public class ActionItemsBox extends WidgetInterface {
 		colExpBtn.getElement().getStyle().setCursor(Cursor.POINTER);
 		headerHPanel.add(colExpBtn);
 		colExpBtn.addClickHandler(new ClickHandler() {
-			boolean expaned = false;
+			boolean expanded = false;
 
 			@Override
 			public void onClick(ClickEvent arg0) {
-				if (expaned) {
+				if (expanded) {
 					colExpBtn.setUrl(Util.getResourcesURL()
 							+ "collapse.15x15.png");
 					contentVPanel.setVisible(true);
@@ -108,7 +107,7 @@ public class ActionItemsBox extends WidgetInterface {
 							+ "expand.15x15.png");
 					contentVPanel.setVisible(false);
 				}
-				expaned = !expaned;
+				expanded = !expanded;
 			}
 		});
 
@@ -124,7 +123,7 @@ public class ActionItemsBox extends WidgetInterface {
 		actionItemsTable.setSize("100%", "100%");
 		actionItemsTable.addColumn(_("Date"), "stamp"); // col 0
 		// marya
-		if(showPatientName)
+		if(this.showPatientName)
 		 actionItemsTable.addColumn(_("Patient"), "patient_name"); // col 1
 		actionItemsTable.addColumn(_("Module Name"), "status_name"); // col 2
 		actionItemsTable.addColumn(_("Status"), "summary"); // col 4
@@ -141,6 +140,7 @@ public class ActionItemsBox extends WidgetInterface {
 							try {
 								final Integer messageId = Integer.parseInt(data
 										.get("id"));
+								JsonUtil.debug("Found messageId " + messageId);
 								if ((col == 0) || (col == 2)) {
 								}
 							} catch (Exception e) {
@@ -151,6 +151,7 @@ public class ActionItemsBox extends WidgetInterface {
 		}
 		actionItemsTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
+					@Override
 					public Widget setColumn(String columnName,
 							HashMap<String, String> data) {
 						// Render only action column, otherwise skip renderer
@@ -235,6 +236,7 @@ public class ActionItemsBox extends WidgetInterface {
 		actionItemsTable.clearData();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void retrieveData() {
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			// Runs in STUBBED MODE => Feed with Sample Data
@@ -258,10 +260,12 @@ public class ActionItemsBox extends WidgetInterface {
 											actionsParams)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
+					@Override
 					public void onError(Request request, Throwable ex) {
 						GWT.log(request.toString(), ex);
 					}
 
+					@Override
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (response.getStatusCode() == 200) {
@@ -292,11 +296,12 @@ public class ActionItemsBox extends WidgetInterface {
 											actionsParams)));
 			try {
 				dataBuilder.sendRequest(null, new RequestCallback() {
+					@Override
 					public void onError(Request request, Throwable ex) {
 						GWT.log(request.toString(), ex);
 					}
 
-					@SuppressWarnings("unchecked")
+					@Override
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (response.getStatusCode() == 200) {

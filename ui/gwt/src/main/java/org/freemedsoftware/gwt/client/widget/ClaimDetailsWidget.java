@@ -466,7 +466,7 @@ public class ClaimDetailsWidget extends Composite {
 		actionPanel.setSpacing(5);
 		final Button addEventBtn = new Button(_("Add Event"));
 		addEventBtn.addClickHandler(new ClickHandler() {
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public void onClick(ClickEvent event) {
 				String msg = "";

@@ -785,9 +785,9 @@ public class SchedulerWidget extends WidgetInterface implements
 			final int entityRow = row;
 
 			if (appointmentType!=null) {
-				appointmentType.addValueChangeHandler(new ValueChangeHandler() {
+				appointmentType.addValueChangeHandler(new ValueChangeHandler<String>() {
 					@Override
-					public void onValueChange(ValueChangeEvent arg0) {
+					public void onValueChange(ValueChangeEvent<String> arg0) {
 						String selectedValue = appointmentType.getWidgetValue();
 						data.setResourceType(selectedValue);
 						if (selectedValue.equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_PATIENT)) {
@@ -1095,6 +1095,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		}
 
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public void onClick(ClickEvent evt) {
 			Widget sender = (Widget) evt.getSource();
 			if (sender == wholeDay) {
@@ -1337,12 +1338,13 @@ public class SchedulerWidget extends WidgetInterface implements
 												params)));
 				try {
 					builder.sendRequest(null, new RequestCallback() {
+						@Override
 						public void onError(Request request, Throwable ex) {
 							JsonUtil
 									.debug("Error on retrieving Next Available Slots");
 						}
 
-						@SuppressWarnings("unchecked")
+						@Override
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
@@ -1352,7 +1354,6 @@ public class SchedulerWidget extends WidgetInterface implements
 											.shoehornJson(JSONParser
 													.parseStrict(response.getText()),
 													"String[][]");
-									Calendar calendar = new GregorianCalendar();
 									int len = result.length;
 									JsonUtil.debug("len found:" + len);
 									if (len > 0) {
@@ -2048,7 +2049,7 @@ public class SchedulerWidget extends WidgetInterface implements
 								if (response.getStatusCode() == 200) {
 
 									Object r = JsonUtil.shoehornJson(JSONParser
-											.parse(response.getText()),
+											.parseStrict(response.getText()),
 											rpcparams.get("resulttype"));
 
 									if (r != null) {
@@ -2189,6 +2190,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			submit = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 			submit.addClickHandler(new ClickHandler() {
+				@SuppressWarnings({ "rawtypes", "unchecked" })
 				@Override
 				public void onClick(ClickEvent arg0) {
 					if (validateForm()) {
@@ -2196,7 +2198,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						params.add(populateData());
 						String method = "Add";
 						if (blockTimeId == null) {
-							Util.callModuleMethod("SchedulerBlockSlots", "Add",
+							Util.callModuleMethod("SchedulerBlockSlots", method,
 									params, new CustomRequestCallback() {
 										@Override
 										public void onError() {
@@ -2406,6 +2408,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			return this;
 		}
 
+		@SuppressWarnings("rawtypes")
 		public void retrieveBlockTimeSlots() {
 			Util.callModuleMethod("SchedulerBlockSlots", "GetAll", (List) null,
 					new CustomRequestCallback() {

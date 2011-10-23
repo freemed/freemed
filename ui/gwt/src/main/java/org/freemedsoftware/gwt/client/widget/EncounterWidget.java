@@ -3499,6 +3499,7 @@ public class EncounterWidget extends Composite {
 		socHisPanel.add(socialHistTable);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createExamTab() {
 		examPanel.setSpacing(10);
 		FlexTable examTable = new FlexTable();
@@ -3518,14 +3519,14 @@ public class EncounterWidget extends Composite {
 				&& !templateValuesMap.get("pnotestbillable").equals("")) {
 			isBillables = true;
 			billMap = (HashMap<String, HashMap<String, String>>) JsonUtil
-					.shoehornJson(JSONParser.parse(templateValuesMap
+					.shoehornJson(JSONParser.parseStrict(templateValuesMap
 							.get("pnotestbillable")),
 							"HashMap<String,HashMap<String,String>>");
 		} else if (templateValuesMap.get("pnotesbillable") != null
 				&& !templateValuesMap.get("pnotesbillable").equals("")) {
 			isBillables = true;
 			billMap = (HashMap<String, HashMap<String, String>>) JsonUtil
-					.shoehornJson(JSONParser.parse(templateValuesMap
+					.shoehornJson(JSONParser.parseStrict(templateValuesMap
 							.get("pnotesbillable")),
 							"HashMap<String,HashMap<String,String>>");
 		}

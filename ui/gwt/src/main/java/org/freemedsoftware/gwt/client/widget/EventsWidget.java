@@ -49,6 +49,7 @@ public class EventsWidget extends DialogBox {
 
 	private CustomTable customTable = null;
 
+	@SuppressWarnings("unused")
 	private EventsWidget() {
 		super();
 		this.setStylePrimaryName(SchedulerCss.EVENT_DIALOG);
@@ -136,6 +137,7 @@ public class EventsWidget extends DialogBox {
 
 		submit = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 		submit.addClickHandler(new ClickHandler() {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void onClick(ClickEvent arg0) {
 				if (validateForm()) {
@@ -143,7 +145,7 @@ public class EventsWidget extends DialogBox {
 					params.add(populateData());
 					String method = "Add";
 					if (eventId == null) {
-						Util.callModuleMethod(moduleName, "Add", params,
+						Util.callModuleMethod(moduleName, method, params,
 								new CustomRequestCallback() {
 									@Override
 									public void onError() {
@@ -295,6 +297,7 @@ public class EventsWidget extends DialogBox {
 		return this;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void retrieveEvents() {
 		List params = new ArrayList();
 		params.add(this.eventTypeModule);
@@ -305,7 +308,6 @@ public class EventsWidget extends DialogBox {
 					public void onError() {
 					}
 
-					@SuppressWarnings("unchecked")
 					@Override
 					public void jsonifiedData(Object data) {
 						customTable.loadData((HashMap<String, String>[]) data);

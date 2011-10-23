@@ -305,7 +305,7 @@ public class CustomRichTextToolbar extends Composite {
 			RichTextArea.FontSize.LARGE, RichTextArea.FontSize.X_LARGE,
 			RichTextArea.FontSize.XX_LARGE };
 
-	private Images images = (Images) GWT.create(Images.class);
+	//private Images images = (Images) GWT.create(Images.class);
 	private Strings strings = (Strings) GWT.create(Strings.class);
 	private EventListener listener = new EventListener();
 
@@ -452,6 +452,7 @@ public class CustomRichTextToolbar extends Composite {
 		return lb;
 	}
 
+	@SuppressWarnings("unused")
 	private PushButton createPushButton(ImageResource img, String tip) {
 		PushButton pb = new PushButton(new Image(img.getURL()));
 		pb.addClickHandler(listener);
@@ -459,6 +460,7 @@ public class CustomRichTextToolbar extends Composite {
 		return pb;
 	}
 
+	@SuppressWarnings("unused")
 	private ToggleButton createToggleButton(ImageResource img, String tip) {
 		ToggleButton tb = new ToggleButton(new Image(img.getURL()));
 		tb.addClickHandler(listener);

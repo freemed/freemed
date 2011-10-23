@@ -225,6 +225,7 @@ public class MultiPageForm extends Composite implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent event) {
 		Widget w = (Widget) event.getSource();
+		JsonUtil.debug("onClick caught for " + w);
 	}
 
 	/**
