@@ -76,6 +76,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 
 public class PatientProblemList extends WidgetInterface implements
 		SystemEvent.Handler {
@@ -121,19 +122,19 @@ public class PatientProblemList extends WidgetInterface implements
 
 			// Build icons
 			annotateImage = new Image(IMAGE_ANNOTATE);
-			annotateImage.setTitle("Add Annotation");
+			annotateImage.setTitle(_("Add Annotation"));
 			annotateImage.addClickHandler(this);
 			annotateImage.getElement().getStyle().setCursor(Cursor.POINTER);
 			hPanel.add(annotateImage);
 
 			printImage = new Image(IMAGE_PRINT);
-			printImage.setTitle("Print");
+			printImage.setTitle(_("Print"));
 			printImage.addClickHandler(this);
 			printImage.getElement().getStyle().setCursor(Cursor.POINTER);
 			hPanel.add(printImage);
 
 			viewImage = new Image(IMAGE_VIEW);
-			viewImage.setTitle("View");
+			viewImage.setTitle(_("View"));
 			viewImage.addClickHandler(this);
 			viewImage.getElement().getStyle().setCursor(Cursor.POINTER);
 			hPanel.add(viewImage);
@@ -141,13 +142,13 @@ public class PatientProblemList extends WidgetInterface implements
 			// Display all unlocked things
 			if (!locked) {
 				deleteImage = new Image(IMAGE_DELETE);
-				deleteImage.setTitle("Remove");
+				deleteImage.setTitle(_("Remove"));
 				deleteImage.addClickHandler(this);
 				deleteImage.getElement().getStyle().setCursor(Cursor.POINTER);
 				hPanel.add(deleteImage);
 
 				modifyImage = new Image(IMAGE_MODIFY);
-				modifyImage.setTitle("Edit");
+				modifyImage.setTitle(_("Edit"));
 				modifyImage.addClickHandler(this);
 				modifyImage.getElement().getStyle().setCursor(Cursor.POINTER);
 				hPanel.add(modifyImage);
@@ -189,14 +190,14 @@ public class PatientProblemList extends WidgetInterface implements
 			} else if (sender == viewImage) {
 				EmrView emrView = new EmrView(data.get("module_namespace"),
 						Integer.parseInt(data.get("oid")));
-				Util.spawnTabPatient("View", emrView, patientScreen);
+				Util.spawnTabPatient(_("View"), emrView, patientScreen);
 			} else if (sender == printImage) {
 				EmrPrintDialog d = new EmrPrintDialog();
 				d.setItems(new Integer[] { Integer.parseInt(data.get("id")) });
 				d.center();
 			} else if (sender == deleteImage) {
 				if (Window
-						.confirm("Are you sure you want to delete this item?")) {
+						.confirm(_("Are you sure you want to delete this item?"))) {
 					deleteItem(internalId, data);
 				}
 			} else if (sender == modifyImage) {
@@ -229,9 +230,9 @@ public class PatientProblemList extends WidgetInterface implements
 			textArea.setSize("300px", "300px");
 			verticalPanel.add(textArea);
 
-			PushButton submitButton = new PushButton("Add Annotation");
+			PushButton submitButton = new PushButton(_("Add Annotation"));
 			submitButton.addClickHandler(this);
-			submitButton.setText("Add Annotation");
+			submitButton.setText(_("Add Annotation"));
 			verticalPanel.add(submitButton);
 			verticalPanel.setCellHorizontalAlignment(submitButton,
 					HasHorizontalAlignment.ALIGN_CENTER);
@@ -278,16 +279,16 @@ public class PatientProblemList extends WidgetInterface implements
 		tabBarFirstChild.setClassName("label_bold");
 		// All
 		Image allImage = new Image("resources/images/chart_full.16x16.png");
-		allImage.setTitle("All");
+		allImage.setTitle(_("All"));
 		createSummaryTable(allImage, "all");
 		// Progress Notes
 		Image notesImage = new Image("resources/images/chart.16x16.png");
-		notesImage.setTitle("Progress Notes");
+		notesImage.setTitle(_("Progress Notes"));
 		createSummaryTable(notesImage, "pnotes");
 		// Letters
 		Image lettersImage = new Image(
 				"resources/images/summary_envelope.16x16.png");
-		lettersImage.setTitle("Letters");
+		lettersImage.setTitle(_("Letters"));
 		createSummaryTable(lettersImage, "letters,patletter");
 
 		tabPanel.selectTab(0);
@@ -320,7 +321,7 @@ public class PatientProblemList extends WidgetInterface implements
 					public void onError(Request request, Throwable ex) {
 						JsonUtil.debug(ex.toString());
 						CurrentState.getToaster()
-								.addItem(module, "Unable to remove entry",
+								.addItem(module, _("Unable to remove entry."),
 										Toaster.TOASTER_ERROR);
 					}
 
@@ -331,22 +332,22 @@ public class PatientProblemList extends WidgetInterface implements
 							if (200 == response.getStatusCode()) {
 								JsonUtil.debug(response.getText());
 								Boolean r = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if (r) {
 									loadData();
 									CurrentState.getToaster().addItem(module,
-											"Removed item.",
+											_("Removed item."),
 											Toaster.TOASTER_INFO);
 								} else {
 									CurrentState.getToaster().addItem(module,
-											"Unable to remove entry",
+											_("Unable to remove entry."),
 											Toaster.TOASTER_ERROR);
 								}
 							} else {
 								JsonUtil.debug(response.toString());
 								CurrentState.getToaster().addItem(module,
-										"Unable to remove entry",
+										_("Unable to remove entry."),
 										Toaster.TOASTER_ERROR);
 							}
 						}
@@ -355,7 +356,7 @@ public class PatientProblemList extends WidgetInterface implements
 			} catch (RequestException e) {
 				JsonUtil.debug(e.toString());
 				CurrentState.getToaster().addItem(module,
-						"Unable to remove entry", Toaster.TOASTER_ERROR);
+						_("Unable to remove entry."), Toaster.TOASTER_ERROR);
 			}
 		} else {
 			ModuleInterfaceAsync service = null;
@@ -371,7 +372,7 @@ public class PatientProblemList extends WidgetInterface implements
 						public void onFailure(Throwable caught) {
 							JsonUtil.debug(caught.toString());
 							CurrentState.getToaster().addItem(module,
-									"Unable to remove entry",
+									_("Unable to remove entry."),
 									Toaster.TOASTER_ERROR);
 						}
 
@@ -379,7 +380,7 @@ public class PatientProblemList extends WidgetInterface implements
 						public void onSuccess(Integer result) {
 							loadData();
 							CurrentState.getToaster().addItem(module,
-									"Removed item.", Toaster.TOASTER_INFO);
+									_("Removed item."), Toaster.TOASTER_INFO);
 						}
 					});
 		}
@@ -445,11 +446,11 @@ public class PatientProblemList extends WidgetInterface implements
 		}
 		t.setAllowSelection(false);
 		t.setMaximumRows(maximumRows);
-		t.addColumn("Date", "date_mdy");
-		t.addColumn("Module", "type");
-		t.addColumn("Summary", "summary");
+		t.addColumn(_("Date"), "date_mdy");
+		t.addColumn(_("Module"), "type");
+		t.addColumn(_("Summary"), "summary");
 		if (canModify)
-			t.addColumn("Action", "action");
+			t.addColumn(_("Action"), "action");
 
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.add(t);
@@ -560,7 +561,7 @@ public class PatientProblemList extends WidgetInterface implements
 							if (200 == response.getStatusCode()) {
 								JsonUtil.debug(response.getText());
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {

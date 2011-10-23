@@ -25,6 +25,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,8 +42,8 @@ import org.freemedsoftware.gwt.client.CustomCommand;
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.CallInScreen;
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
@@ -92,13 +94,13 @@ import eu.future.earth.gwt.client.FtrGwtDateCss;
 import eu.future.earth.gwt.client.date.AbstractWholeDayField;
 import eu.future.earth.gwt.client.date.BaseDateRenderer;
 import eu.future.earth.gwt.client.date.DateEvent;
+import eu.future.earth.gwt.client.date.DateEvent.DateEventActions;
 import eu.future.earth.gwt.client.date.DateEventListener;
 import eu.future.earth.gwt.client.date.DatePanel;
 import eu.future.earth.gwt.client.date.DateRenderer;
 import eu.future.earth.gwt.client.date.EventController;
 import eu.future.earth.gwt.client.date.EventPanel;
 import eu.future.earth.gwt.client.date.MultiView;
-import eu.future.earth.gwt.client.date.DateEvent.DateEventActions;
 import eu.future.earth.gwt.client.date.month.staend.AbstractMonthField;
 import eu.future.earth.gwt.client.date.picker.DatePickerMonthNavigator;
 import eu.future.earth.gwt.client.date.picker.DatePickerRenderer;
@@ -350,7 +352,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				DateEventListener listener) {
 			if (!CurrentState.isActionAllowed(moduleName, AppConstants.WRITE)) {
 				Util.showErrorMsg("Scheduler",
-						"Access Denied!\nCan not book appointments.");
+						_("Access denied: can not book appointments."));
 				return;
 			}
 			if (!CurrentState.canBookAppoinment(currentDate, currentDate)) {
@@ -391,7 +393,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			if (!CurrentState.isActionAllowed(moduleName, AppConstants.WRITE)) {
 				Util.showErrorMsg("Scheduler",
-						"Access Denied!\nCan not book appointments.");
+						_("Access denied: can not book appointments."));
 				return;
 			}
 
@@ -729,23 +731,23 @@ public class SchedulerWidget extends WidgetInterface implements
 
 				appointmentType = new CustomRadioButtonGroup("appointmentType");
 				appointmentType.setWidth("100%");
-				appointmentType.addItem("Patient",
+				appointmentType.addItem(_("Patient"),
 						AppConstants.APPOINTMENT_TYPE_PATIENT);
-				appointmentType.addItem("Call-In Patient",
+				appointmentType.addItem(_("Call-In Patient"),
 						AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT);
-				appointmentType.addItem("Group",
+				appointmentType.addItem(_("Group"),
 						AppConstants.APPOINTMENT_TYPE_GROUP);
 				
 				appointmentType.setWidgetValue(AppConstants.APPOINTMENT_TYPE_PATIENT);
 
-				table.setWidget(row, 0, new Label("Type"));
+				table.setWidget(row, 0, new Label(_("Type")));
 				table.setWidget(row, 1, appointmentType);
 
 			}
 
 			row++;
 
-			final Label entityLabel = new Label("Patient");
+			final Label entityLabel = new Label(_("Patient"));
 
 			if (command == DateEventActions.UPDATE || externalDataEvent!=null) {
 				if (data.getResourceType().equalsIgnoreCase(
@@ -760,14 +762,14 @@ public class SchedulerWidget extends WidgetInterface implements
 					supportWidget.setWidth("100%");
 					supportWidget.addChangeHandler(this);
 					supportWidget.setValue(data.getPatientId());
-					entityLabel.setText("Call-In Patient");
+					entityLabel.setText(_("Call-In Patient"));
 				} else if (data.getResourceType().equalsIgnoreCase(
 						AppConstants.APPOINTMENT_TYPE_GROUP)) {
 					supportWidget = new SupportModuleWidget("CalendarGroup");
 					supportWidget.setWidth("100%");
 					supportWidget.addChangeHandler(this);
 					supportWidget.setValue(data.getPatientId());
-					entityLabel.setText("Group");
+					entityLabel.setText(_("Group"));
 				}
 				table.setWidget(row, 0, entityLabel);
 				table.setWidget(row, 1, supportWidget==null?patient:supportWidget);
@@ -792,18 +794,18 @@ public class SchedulerWidget extends WidgetInterface implements
 							supportWidget = null;
 							patient = new PatientWidget();
 							patient.setWidth("100%");
-							entityLabel.setText("Patient");
+							entityLabel.setText(_("Patient"));
 							table.setWidget(entityRow, 1, patient);
 						} else if (selectedValue.equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_GROUP)) {
 							patient = null;
 							supportWidget = new SupportModuleWidget(
 									"CalendarGroup");
-							entityLabel.setText("Group");
+							entityLabel.setText(_("Group"));
 							table.setWidget(entityRow, 1, supportWidget);
 						} else if (selectedValue.equalsIgnoreCase(AppConstants.APPOINTMENT_TYPE_CALLIN_PATIENT)) {
 							patient = null;
 							supportWidget = new SupportModuleWidget("Callin");
-							entityLabel.setText("Call-In Patient");
+							entityLabel.setText(_("Call-In Patient"));
 							table.setWidget(entityRow, 1, supportWidget);
 						}
 						supportWidget.setWidth("100%");
@@ -853,7 +855,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			row++;
 
-			table.setWidget(row, 0, new Label("Provider"));
+			table.setWidget(row, 0, new Label(_("Provider")));
 			// Only set default provider *if* there is one, and if the
 			// current event data hasn't already set it.
 			if (CurrentState.getDefaultProvider().intValue() > 0
@@ -864,13 +866,13 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			row++;
 
-			table.setWidget(row, 0, new Label("Description"));
+			table.setWidget(row, 0, new Label(_("Description")));
 			table.setWidget(row, 1, text);
 			table.getFlexCellFormatter().setColSpan(row, 1, 2);
 
 			row++;
 
-			final Label templateLabel = new Label("Template");
+			final Label templateLabel = new Label(_("Template"));
 			table.setWidget(row, 0, templateLabel);
 			selectTemplate = new SupportModuleListBox("AppointmentTemplates",
 					"Select a Template");
@@ -891,22 +893,22 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			row++;
 
-			final Label nextAvailableLabel = new Label("Next Available");
+			final Label nextAvailableLabel = new Label(_("Next Available"));
 			table.setWidget(row, 0, nextAvailableLabel);
 
 			nextAvailable = new CustomListBox();
 			nextAvailable.setWidth("100%");
 			nextAvailable.addItem("--", "--");
-			nextAvailable.addItem("One Week From Now", "inaweek");
-			nextAvailable.addItem("Two Weeks From Now", "in2weeks");
-			nextAvailable.addItem("One Month From Now", "inamonth");
-			nextAvailable.addItem("Weekdays Only", "weekdays");
-			nextAvailable.addItem("Mondays Only", "mon");
-			nextAvailable.addItem("Tuesdays Only", "tue");
-			nextAvailable.addItem("Wednesdays Only", "wed");
-			nextAvailable.addItem("Thursdays Only", "thu");
-			nextAvailable.addItem("Fridays Only", "fri");
-			nextAvailable.addItem("Saturdays Only", "sat");
+			nextAvailable.addItem(_("One Week From Now"), "inaweek");
+			nextAvailable.addItem(_("Two Weeks From Now"), "in2weeks");
+			nextAvailable.addItem(_("One Month From Now"), "inamonth");
+			nextAvailable.addItem(_("Weekdays Only"), "weekdays");
+			nextAvailable.addItem(_("Mondays Only"), "mon");
+			nextAvailable.addItem(_("Tuesdays Only"), "tue");
+			nextAvailable.addItem(_("Wednesdays Only"), "wed");
+			nextAvailable.addItem(_("Thursdays Only"), "thu");
+			nextAvailable.addItem(_("Fridays Only"), "fri");
+			nextAvailable.addItem(_("Saturdays Only"), "sat");
 
 			nextAvailable.addChangeHandler(new ChangeHandler() {
 				@Override
@@ -1004,7 +1006,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			row++;
 
-			final Label nextAvailableDateTimeLabel = new Label("Date/Time");
+			final Label nextAvailableDateTimeLabel = new Label(_("Date/Time"));
 			table.setWidget(row, 0, nextAvailableDateTimeLabel);
 
 			nextAvailableDateTime = new CustomListBox();
@@ -1052,12 +1054,12 @@ public class SchedulerWidget extends WidgetInterface implements
 				}
 			});
 
-			cancel = new CustomButton("Cancel", AppConstants.ICON_CANCEL);
+			cancel = new CustomButton(_("Cancel"), AppConstants.ICON_CANCEL);
 			cancel.setFocus(true);
 			cancel.setAccessKey('c');
 			cancel.addClickHandler(this);
 
-			ok = new CustomButton("Book", AppConstants.ICON_BOOK_APP);
+			ok = new CustomButton(_("Book"), AppConstants.ICON_BOOK_APP);
 			ok.setEnabled(false);
 			ok.setFocus(true);
 			ok.setAccessKey('o');
@@ -1068,7 +1070,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			if (CurrentState.isActionAllowed(moduleName, AppConstants.DELETE)) {
 				if (command == DateEventActions.UPDATE) {
-					delete = new CustomButton("Delete",
+					delete = new CustomButton(_("Delete"),
 							AppConstants.ICON_DELETE);
 					delete.setFocus(true);
 					delete.setAccessKey('d');
@@ -1209,7 +1211,7 @@ public class SchedulerWidget extends WidgetInterface implements
 									} else if (result != null)
 										Util
 												.showErrorMsg("Schedular",
-														"This time slot is blocked by given provider!");
+														_("This time slot is blocked by given provider."));
 								}
 
 							}, "Boolean");
@@ -1280,7 +1282,7 @@ public class SchedulerWidget extends WidgetInterface implements
 										"false") != 0) {
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>");
 									if (result != null) {
 										Integer duration = Integer
@@ -1302,13 +1304,13 @@ public class SchedulerWidget extends WidgetInterface implements
 								}
 							} else {
 								Util.showErrorMsg("Scheduler",
-										"Failed to get scheduler items.");
+										_("Failed to get scheduler items."));
 							}
 						}
 					});
 				} catch (RequestException e) {
 					Util.showErrorMsg("Scheduler",
-							"Failed to get scheduler items.");
+							_("Failed to get scheduler items."));
 				}
 			} else {
 				// GWT-RPC
@@ -1348,7 +1350,7 @@ public class SchedulerWidget extends WidgetInterface implements
 										"false") != 0) {
 									String[][] result = (String[][]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String[][]");
 									Calendar calendar = new GregorianCalendar();
 									int len = result.length;
@@ -1372,7 +1374,7 @@ public class SchedulerWidget extends WidgetInterface implements
 									} else {
 										Util
 												.showErrorMsg("Scheduler",
-														"Next Available Items Not Available.");
+														_("Next available items not available."));
 									}
 
 								} else {
@@ -1381,13 +1383,13 @@ public class SchedulerWidget extends WidgetInterface implements
 								}
 							} else {
 								Util.showErrorMsg("Scheduler",
-										"Failed to get Next Available items.");
+										_("Next available items not available."));
 							}
 						}
 					});
 				} catch (RequestException e) {
 					Util.showErrorMsg("Scheduler",
-							"Failed to get Next Available items.");
+							_("Next available items not available."));
 				}
 			} else {
 				// GWT-RPC
@@ -1505,7 +1507,7 @@ public class SchedulerWidget extends WidgetInterface implements
 					});
 				} else
 					Util.showErrorMsg("Scheduler",
-							"Access Denied!\nCan not edit appointments.");
+							_("Access denied: can not edit appointments."));
 				if (real.getEndTime() == null) {
 					super.setTitle(format.format(real.getStartTime()) + "  "
 							+ real.getProviderName());
@@ -1524,7 +1526,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		VerticalPanel verticalPanel = new VerticalPanel();
 		verticalPanel.setWidth("100%");
-		CustomButton bookNewAppointment = new CustomButton("New Appointment",
+		CustomButton bookNewAppointment = new CustomButton(_("New Appointment"),
 				AppConstants.ICON_ADD);
 		bookNewAppointment.addClickHandler(new ClickHandler() {
 			@Override
@@ -1542,7 +1544,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		verticalPanel.add(bookNewAppointment);
 		verticalPanel.setCellHorizontalAlignment(bookNewAppointment,
 				HasHorizontalAlignment.ALIGN_CENTER);
-		CustomButton editAppointment = new CustomButton("Edit Appointment",
+		CustomButton editAppointment = new CustomButton(_("Edit Appointment"),
 				AppConstants.ICON_MODIFY);
 
 		editAppointment.addClickHandler(new ClickHandler() {
@@ -1652,7 +1654,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 					} else
 						Util.showErrorMsg("Scheduler",
-								"Access Denied!\nCan not edit appointments.");
+								_("Access denied: can not edit appointments."));
 
 					if (real.getEndTime() == null) {
 						title.setText(format.format(real.getStartTime())
@@ -1705,11 +1707,11 @@ public class SchedulerWidget extends WidgetInterface implements
 		popup.setPixelSize(500, 100);
 		VerticalPanel verticalPanel = new VerticalPanel();
 		verticalPanel.setWidth("100%");
-		verticalPanel.add(new Label("Do you want to create patient?"));
+		verticalPanel.add(new Label(_("Do you want to create a new patient?")));
 		HorizontalPanel buttonContainer = new HorizontalPanel();
 		verticalPanel.add(buttonContainer);
 		verticalPanel.setCellHorizontalAlignment(buttonContainer, HasHorizontalAlignment.ALIGN_CENTER);
-		CustomButton yesBtn = new CustomButton("Yes");
+		CustomButton yesBtn = new CustomButton(_("Yes"));
 		yesBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
@@ -1725,7 +1727,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			}
 		});
 		buttonContainer.add(yesBtn);
-		CustomButton noBtn = new CustomButton("No");
+		CustomButton noBtn = new CustomButton(_("No"));
 
 		noBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -1838,7 +1840,6 @@ public class SchedulerWidget extends WidgetInterface implements
 			return new GregorianCalendar();
 		}
 
-		@SuppressWarnings("unchecked")
 		public void getEventsForRange(Date start, Date end,
 				final MultiView caller, final boolean doRefresh) {
 			if (filterModule.getValue() != 0)
@@ -1871,7 +1872,7 @@ public class SchedulerWidget extends WidgetInterface implements
 						public void onError(Request request, Throwable ex) {
 							loadingDialog.hide();
 							Util.showErrorMsg("Scheduler",
-									"Failed to get scheduler items.");
+									_("Failed to get scheduler items."));
 						}
 
 						public void onResponseReceived(Request request,
@@ -1880,9 +1881,10 @@ public class SchedulerWidget extends WidgetInterface implements
 							if (200 == response.getStatusCode()) {
 								if (response.getText().compareToIgnoreCase(
 										"false") != 0) {
+									@SuppressWarnings("unchecked")
 									HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (r != null) {
 										if (r.length > 0) {
@@ -1908,14 +1910,14 @@ public class SchedulerWidget extends WidgetInterface implements
 								}
 							} else {
 								Util.showErrorMsg("Scheduler",
-										"Failed to get scheduler items.");
+										_("Failed to get scheduler items."));
 							}
 						}
 					});
 				} catch (RequestException e) {
 					loadingDialog.hide();
 					Util.showErrorMsg("Scheduler",
-							"Failed to get scheduler items.");
+							_("Failed to get scheduler items."));
 				}
 			} else {
 				// GWT-RPC
@@ -2145,7 +2147,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			int row = 0;
 
-			final Label startTimeLabel = new Label("Start Time");
+			final Label startTimeLabel = new Label(_("Start Time"));
 			flexTable.setWidget(row, 0, startTimeLabel);
 			startTime = new CustomTimeBox(show24HourClock ? "HH:mm"
 					: "hh:mmaa");
@@ -2153,7 +2155,7 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			row++;
 
-			final Label endTimeLabel = new Label("End Time");
+			final Label endTimeLabel = new Label(_("End Time"));
 			flexTable.setWidget(row, 0, endTimeLabel);
 			endTime = new CustomTimeBox(show24HourClock ? "HH:mm"
 					: "hh:mmaa");
@@ -2161,21 +2163,21 @@ public class SchedulerWidget extends WidgetInterface implements
 
 			row++;
 
-			final Label dateLabel = new Label("Date");
+			final Label dateLabel = new Label(_("Date"));
 			flexTable.setWidget(row, 0, dateLabel);
 			date = new CustomDatePicker();
 			flexTable.setWidget(row, 1, date);
 
 			row++;
 
-			final Label providerLabel = new Label("Provider");
+			final Label providerLabel = new Label(_("Provider"));
 			flexTable.setWidget(row, 0, providerLabel);
 			provider = new ProviderWidget();
 			flexTable.setWidget(row, 1, provider);
 
 			row++;
 
-			final Label groupLabel = new Label("Group");
+			final Label groupLabel = new Label(_("Group"));
 			flexTable.setWidget(row, 0, groupLabel);
 			providerGroup = new SupportModuleWidget("ProviderGroups");
 			flexTable.setWidget(row, 1, providerGroup);
@@ -2185,7 +2187,7 @@ public class SchedulerWidget extends WidgetInterface implements
 			final HorizontalPanel buttonPanel = new HorizontalPanel();
 			flexTable.setWidget(row, 1, buttonPanel);
 
-			submit = new CustomButton("Add", AppConstants.ICON_ADD);
+			submit = new CustomButton(_("Add"), AppConstants.ICON_ADD);
 			submit.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -2199,8 +2201,8 @@ public class SchedulerWidget extends WidgetInterface implements
 										@Override
 										public void onError() {
 											Util.showErrorMsg(
-													"schedularWidget",
-													"Failed To Add Time Slot.");
+													"schedulerWidget",
+													_("Failed To add time slot."));
 										}
 
 										@Override
@@ -2209,13 +2211,13 @@ public class SchedulerWidget extends WidgetInterface implements
 												clearForm();
 												tabPanel.selectTab(1);
 												Util.showInfoMsg(
-														"schedularWidget",
+														"schedulerWidget",
 														"Time Slot Added.");
 												retrieveBlockTimeSlots();
 											} else {
 												Util
 														.showErrorMsg(
-																"schedularWidget",
+																"schedulerWidget",
 																"Failed To Add Time Slot.");
 											}
 										}
@@ -2227,7 +2229,7 @@ public class SchedulerWidget extends WidgetInterface implements
 										public void onError() {
 											Util
 													.showErrorMsg(
-															"schedularWidget",
+															"schedulerWidget",
 															"Failed To Modify Time Slot.");
 										}
 
@@ -2237,7 +2239,7 @@ public class SchedulerWidget extends WidgetInterface implements
 													&& ((Boolean) data)
 															.booleanValue()) {
 												Util.showInfoMsg(
-														"schedularWidget",
+														"schedulerWidget",
 														"Time Slot Modified.");
 												clearForm();
 												tabPanel.selectTab(1);
@@ -2245,7 +2247,7 @@ public class SchedulerWidget extends WidgetInterface implements
 											} else {
 												Util
 														.showErrorMsg(
-																"schedularWidget",
+																"schedulerWidget",
 																"Failed To Modify Time Slot.");
 											}
 										}
@@ -2275,8 +2277,8 @@ public class SchedulerWidget extends WidgetInterface implements
 								blockTimeId, new CustomRequestCallback() {
 									@Override
 									public void onError() {
-										Util.showErrorMsg("schedularWidget",
-												"Failed To Delete Time Slot.");
+										Util.showErrorMsg("schedulerWidget",
+												_("Failed To delete time slot."));
 									}
 
 									@Override
@@ -2284,23 +2286,23 @@ public class SchedulerWidget extends WidgetInterface implements
 										if (data != null
 												&& ((Boolean) data)
 														.booleanValue()) {
-											Util.showInfoMsg("schedularWidget",
-													"Time Slot Deleted.");
+											Util.showInfoMsg("schedulerWidget",
+													_("Time slot deleted."));
 											clearForm();
 											tabPanel.selectTab(1);
 											retrieveBlockTimeSlots();
 										} else
 											Util
 													.showErrorMsg(
-															"schedularWidget",
-															"Failed To Delete Time Slot.");
+															"schedulerWidget",
+															_("Failed To delete time slot."));
 									}
 								}, "Boolean");
 					}
 				});
 				buttonPanel.add(delete);
 			}
-			cancel = new CustomButton("Cancel", AppConstants.ICON_CLEAR);
+			cancel = new CustomButton(_("Cancel"), AppConstants.ICON_CLEAR);
 			buttonPanel.add(cancel);
 			cancel.addClickHandler(new ClickHandler() {
 				@Override
@@ -2310,19 +2312,19 @@ public class SchedulerWidget extends WidgetInterface implements
 			});
 			if (CurrentState.isActionAllowed(blockSlotsModuleName,
 					AppConstants.WRITE)) {
-				tabPanel.add(entryVPanel, "Entry");
+				tabPanel.add(entryVPanel, _("Entry"));
 			}
 
 			final VerticalPanel listVPanel = new VerticalPanel();
 			customTable = new CustomTable();
 			listVPanel.add(customTable);
 
-			customTable.addColumn("Start Time", "starttime");
-			customTable.addColumn("End Time", "endtime");
-			customTable.addColumn("date", "date");
-			customTable.addColumn("Provider", "provider");
-			customTable.addColumn("Group", "provider_group");
-			customTable.addColumn("User", "entered_by");
+			customTable.addColumn(_("Start Time"), "starttime");
+			customTable.addColumn(_("End Time"), "endtime");
+			customTable.addColumn(_("Date"), "date");
+			customTable.addColumn(_("Provider"), "provider");
+			customTable.addColumn(_("Group"), "provider_group");
+			customTable.addColumn(_("User"), "entered_by");
 
 			if (CurrentState.isActionAllowed(blockSlotsModuleName,
 					AppConstants.MODIFY)) {
@@ -2423,15 +2425,15 @@ public class SchedulerWidget extends WidgetInterface implements
 		public boolean validateForm() {
 			String msg = new String("");
 			if (startTime.getValue() == null) {
-				msg += "Please specify start time." + "\n";
+				msg += _("Please specify start time.") + "\n";
 			}
 			if (endTime.getValue() == null) {
-				msg += "Please specify end time." + "\n";
+				msg += _("Please specify end time.") + "\n";
 			}
 
 			if (provider.getStoredValue().equals("0")
 					&& providerGroup.getStoredValue().equals("0")) {
-				msg += "Please specify atleast provider or group." + "\n";
+				msg += _("Please specify at least provider or group.") + "\n";
 			}
 
 			if (!msg.equals("")) {
@@ -2573,13 +2575,13 @@ public class SchedulerWidget extends WidgetInterface implements
 		final HorizontalPanel filterPanel = new HorizontalPanel();
 		fields.add(filterPanel);
 		// fields.setCellWidth(filterPanel, "50%");
-		Label selectFilterLabel = new Label("Filter by :");
+		Label selectFilterLabel = new Label(_("Filter by") + " :");
 		selectFilterLabel.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
 		filterPanel.add(selectFilterLabel);
 
 		final CustomListBox selectFilter = new CustomListBox();
-		selectFilter.addItem("Provider", "ProviderModule");
-		selectFilter.addItem("Provider Groups", "ProviderGroups");
+		selectFilter.addItem(_("Provider"), "ProviderModule");
+		selectFilter.addItem(_("Provider Groups"), "ProviderGroups");
 		selectFilter.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent arg0) {
@@ -2615,7 +2617,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		});
 		filterPanel.add(filterModule);
 
-		CustomButton clearButton = new CustomButton("clear",
+		CustomButton clearButton = new CustomButton(_("Clear"),
 				AppConstants.ICON_CLEAR);
 		clearButton.addClickHandler(new ClickHandler() {
 
@@ -2631,12 +2633,12 @@ public class SchedulerWidget extends WidgetInterface implements
 
 		final HorizontalPanel fields2Panel = new HorizontalPanel();
 		fields2Panel.setSpacing(5);
-		CustomButton showPicker = new CustomButton("Jump");
+		CustomButton showPicker = new CustomButton(_("Jump"));
 		fields2Panel.add(showPicker);
 
 		if (CurrentState.isActionAllowed(blockSlotsModuleName,
 				AppConstants.SHOW)) {
-			CustomButton showBlockSlots = new CustomButton("Block Slots");
+			CustomButton showBlockSlots = new CustomButton(_("Block Slots"));
 			showBlockSlots.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent arg0) {
@@ -2707,7 +2709,7 @@ public class SchedulerWidget extends WidgetInterface implements
 		switch (newEvent.getCommand()) {
 		case ADD: {
 			final EventData data = (EventData) newEvent.getData();
-			label.setText("Added event on " + data.getStartTime() + " - "
+			label.setText(_("Added event on") + " " + data.getStartTime() + " - "
 					+ data.getEndTime());
 			break;
 		}
@@ -2726,20 +2728,20 @@ public class SchedulerWidget extends WidgetInterface implements
 		}
 		case UPDATE: {
 			final EventData data = (EventData) newEvent.getData();
-			label.setText("Updated event on " + data.getStartTime() + " - "
+			label.setText(_("Updated event on") + " " + data.getStartTime() + " - "
 					+ data.getEndTime());
 			break;
 		}
 		case REMOVE: {
 			final EventData data = (EventData) newEvent.getData();
-			label.setText("Removed event on " + data.getStartTime() + " - "
+			label.setText(_("Removed event on") + " " + data.getStartTime() + " - "
 					+ data.getEndTime());
 			break;
 		}
 
 		case DRAG_DROP: {
 			final EventData data = (EventData) newEvent.getData();
-			label.setText("Removed event on " + data.getStartTime() + " - "
+			label.setText(_("Removed event on") + " " + data.getStartTime() + " - "
 					+ data.getEndTime());
 			break;
 		}

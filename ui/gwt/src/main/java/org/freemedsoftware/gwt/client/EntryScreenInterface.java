@@ -24,10 +24,12 @@
 
 package org.freemedsoftware.gwt.client;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.widget.SimpleUIBuilder;
 
 import com.google.gwt.core.client.GWT;
@@ -103,7 +105,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (r != null) {
@@ -145,7 +147,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 		if (internalId.intValue() == 0) {
 			// Add record
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
-				Util.showInfoMsg(moduleName, "Added successfully.");
+				Util.showInfoMsg(moduleName, _("Added successfully."));
 				if (doneCommand != null) {
 					doneCommand.execute();
 				}
@@ -163,18 +165,18 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
 							Util.showErrorMsg(moduleName,
-									"Failed to add record.");
+									_("Failed to add record."));
 						}
 
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
 								Integer r = (Integer) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Integer");
 								if (r != null) {
 									Util.showInfoMsg(moduleName,
-											"Added successfully.");
+											_("Added successfully."));
 									if (doneCommand != null) {
 										doneCommand.execute();
 									}
@@ -182,12 +184,12 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 								}
 							} else {
 								Util.showErrorMsg(moduleName,
-										"Failed to add record.");
+										_("Failed to add record."));
 							}
 						}
 					});
 				} catch (RequestException e) {
-					Util.showErrorMsg(moduleName, "Failed to add record.");
+					Util.showErrorMsg(moduleName, _("Failed to add record."));
 				}
 			} else {
 				ModuleInterfaceAsync service = null;
@@ -231,14 +233,14 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 					builder.sendRequest(null, new RequestCallback() {
 						public void onError(Request request, Throwable ex) {
 							Util.showErrorMsg(moduleName,
-									"Failed to modify record.");
+									_("Failed to modify record."));
 						}
 
 						public void onResponseReceived(Request request,
 								Response response) {
 							if (200 == response.getStatusCode()) {
 								Boolean r = (Boolean) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Boolean");
 								if (r != false && r != null) {
 									Util.showInfoMsg(moduleName,
@@ -249,11 +251,11 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 									closeScreen();
 								} else {
 									Util.showErrorMsg(moduleName,
-											"Failed to modify record.");
+											_("Failed to modify record."));
 								}
 							} else {
 								Util.showErrorMsg(moduleName,
-										"Failed to modify record.");
+										_("Failed to modify record."));
 							}
 						}
 					});
@@ -271,7 +273,7 @@ public abstract class EntryScreenInterface extends ScreenInterface implements
 						new AsyncCallback<Integer>() {
 							public void onSuccess(Integer r) {
 								Util.showInfoMsg(moduleName,
-										"Modified successfully.");
+										_("Modified successfully."));
 								if (doneCommand != null) {
 									doneCommand.execute();
 								}

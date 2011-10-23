@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -105,7 +107,7 @@ public class SignatureWidget {
 		customDialogBox = new CustomDialogBox();
 		VerticalPanel mainPanel = new VerticalPanel();
 		customDialogBox.setWidget(mainPanel);
-		Label lebel = new Label("Please Sign on Electronic Signature Pad!");
+		Label lebel = new Label(_("Please sign on electronic signature pad."));
 		mainPanel.add(lebel);
 		
 		HorizontalPanel imagesHPanel = new HorizontalPanel();
@@ -127,7 +129,7 @@ public class SignatureWidget {
 		mainPanel.add(horizontalPanel);
 		mainPanel.setCellHorizontalAlignment(horizontalPanel, HasHorizontalAlignment.ALIGN_CENTER);
 		
-		confirmButton = new CustomButton("Confirm",AppConstants.ICON_ADD);
+		confirmButton = new CustomButton(_("Confirm"), AppConstants.ICON_ADD);
 		confirmButton.setVisible(false);
 		horizontalPanel.add(confirmButton);
 		
@@ -142,7 +144,7 @@ public class SignatureWidget {
 		
 		});
 		
-		takeSignatureButton = new CustomButton("Take Signature",AppConstants.ICON_DONE);
+		takeSignatureButton = new CustomButton(_("Take Signature"), AppConstants.ICON_DONE);
 		takeSignatureButton.addClickHandler(new ClickHandler() {
 		
 			@Override
@@ -160,7 +162,7 @@ public class SignatureWidget {
 					@Override
 					public void onError() {
 						resetToDefault();
-						Util.showErrorMsg(MODULE_CLASS, "Failed to get Signature, Try Again!!!!");
+						Util.showErrorMsg(MODULE_CLASS, _("Failed to get signature, please try again."));
 					}
 				
 					@Override
@@ -184,7 +186,7 @@ public class SignatureWidget {
 		horizontalPanel.add(takeSignatureButton);
 
 		
-		CustomButton cancelButton = new CustomButton("Cancel",AppConstants.ICON_CANCEL);
+		CustomButton cancelButton = new CustomButton(_("Cancel"), AppConstants.ICON_CANCEL);
 		cancelButton.addClickHandler(new ClickHandler() {
 		
 			@Override
@@ -215,15 +217,15 @@ public class SignatureWidget {
 				
 					@Override
 					public void onError() {
-						Util.showErrorMsg(MODULE_CLASS, "Failed to Saved Oid!!!");
+						Util.showErrorMsg(MODULE_CLASS, _("Failed to save oid."));
 					}
 				
 					@Override
 					public void jsonifiedData(Object data) {
 						if(data!=null && (Boolean)data )
-							Util.showInfoMsg(MODULE_CLASS, "Oid Saved Successfully!!!");
+							Util.showInfoMsg(MODULE_CLASS, _("Oid saved successfully."));
 						else
-							Util.showErrorMsg(MODULE_CLASS, "Failed to Saved Oid!!!");
+							Util.showErrorMsg(MODULE_CLASS, _("Failed to save oid."));
 					}
 				
 				}, "Boolean");
@@ -273,7 +275,7 @@ public class SignatureWidget {
 							@Override
 							public void onError() {
 								resetToDefault();
-								Util.showErrorMsg(MODULE_CLASS, "Failed to get Signature!!!");
+								Util.showErrorMsg(MODULE_CLASS, _("Failed to get signature."));
 							}
 						
 							@Override
@@ -284,7 +286,7 @@ public class SignatureWidget {
 										showSignature();
 									}else if(status.equalsIgnoreCase(STATUS_ERROR)){
 										resetToDefault();
-										Util.showErrorMsg(MODULE_CLASS, "Failed to get Signature!!!");		
+										Util.showErrorMsg(MODULE_CLASS, _("Failed to get signature."));		
 									}
 								}
 							}

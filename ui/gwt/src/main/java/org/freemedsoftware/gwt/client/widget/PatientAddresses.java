@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,10 +34,9 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Module.PatientModuleAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
-import org.freemedsoftware.gwt.client.widget.PatientCoverages.Coverage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -261,23 +262,23 @@ public class PatientAddresses extends Composite {
 
 		flexTable = new CustomTable();
 		flexTable.setWidth("100%");
-		flexTable.addColumn("Residence Type", "type");
-		flexTable.addColumn("Relationship", "relation");
-		flexTable.addColumn("Address Line 1", "line1");
-		flexTable.addColumn("Address Line 2", "line2");
+		flexTable.addColumn(_("Residence Type"), "type");
+		flexTable.addColumn(_("Relationship"), "relation");
+		flexTable.addColumn(_("Address Line 1"), "line1");
+		flexTable.addColumn(_("Address Line 2"), "line2");
 		// flexTable.addColumn("City, State Postal", "csz");
-		flexTable.addColumn("City", "city");
-		flexTable.addColumn("St/Pr", "stpr");
-		flexTable.addColumn("Postal", "postal");
-		flexTable.addColumn("Country", "country");
-		flexTable.addColumn("Active?", "active");
-		flexTable.addColumn("Action", null);
+		flexTable.addColumn(_("City"), "city");
+		flexTable.addColumn(_("St/Pr"), "stpr");
+		flexTable.addColumn(_("Postal"), "postal");
+		flexTable.addColumn(_("Country"), "country");
+		flexTable.addColumn(_("Active"), "active");
+		flexTable.addColumn(_("Action"), null);
 		vP.add(flexTable);
 
 		HorizontalPanel hP = new HorizontalPanel();
 		vP.add(hP);
 
-		CustomButton addAddressButton = new CustomButton("Add Address",AppConstants.ICON_ADD);
+		CustomButton addAddressButton = new CustomButton(_("Add Address"), AppConstants.ICON_ADD);
 		addAddressButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent evt) {
 				Address a = new Address();
@@ -320,19 +321,19 @@ public class PatientAddresses extends Composite {
 
 		final CustomListBox type = new CustomListBox();
 		type.setVisibleItemCount(1);
-		type.addItem("H - Home", "H");
-		type.addItem("W - Work", "W");
+		type.addItem("H - " + _("Home"), "H");
+		type.addItem("W - " + _("Work"), "W");
 		if(a.getType()!=null)
 			type.setWidgetValue(a.getType());
 		flexTable.getFlexTable().setWidget(pos, 0, type);
 
 		final CustomListBox relation = new CustomListBox();
 		relation.setVisibleItemCount(1);
-		relation.addItem("S - Self", "S");
-		relation.addItem("P - Parents", "P");
-		relation.addItem("C - Cousin", "C");
-		relation.addItem("SH - Shelter", "SH");
-		relation.addItem("U - Unrelated", "U");
+		relation.addItem("S - " + _("Self"), "S");
+		relation.addItem("P - " + _("Parents"), "P");
+		relation.addItem("C - " + _("Cousin"), "C");
+		relation.addItem("SH - " + _("Shelter"), "SH");
+		relation.addItem("U - " + _("Unrelated"), "U");
 		if(a.getRelation()!=null)
 			relation.setWidgetValue(a.getRelation());
 		flexTable.getFlexTable().setWidget(pos, 1, relation);
@@ -371,7 +372,7 @@ public class PatientAddresses extends Composite {
 		active.setValue(a.getActive().booleanValue());
 		flexTable.getFlexTable().setWidget(pos, 8, active);
 		
-		final CustomButton deleteLink=new CustomButton("Delete",AppConstants.ICON_DELETE);
+		final CustomButton deleteLink=new CustomButton(_("Delete"),AppConstants.ICON_DELETE);
 		flexTable.getFlexTable().setWidget(pos, 9,deleteLink );
 		
 		deleteLink.addClickHandler(new ClickHandler(){
@@ -450,7 +451,7 @@ public class PatientAddresses extends Composite {
 		map = (HashMap<String, String>[]) l.toArray(new HashMap<?, ?>[0]);
 
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
-			Util.showInfoMsg("PatientAddresses", "Updated patient addresses.");
+			Util.showInfoMsg("PatientAddresses", _("Updated patient addresses."));
 			if (onCompletion != null) {
 				onCompletion.execute();
 			}
@@ -469,7 +470,7 @@ public class PatientAddresses extends Composite {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						Util.showErrorMsg("PatientAddresses", "Failed to update patient addresses.");
+						Util.showErrorMsg("PatientAddresses", _("Failed to update patient addresses."));
 					}
 
 					public void onResponseReceived(
@@ -477,10 +478,10 @@ public class PatientAddresses extends Composite {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean result = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (result != null) {
-								Util.showInfoMsg("PatientAddresses", "Updated patient addresses.");
+								Util.showInfoMsg("PatientAddresses", _("Updated patient addresses."));
 								if (onCompletion != null) {
 									onCompletion.execute();
 								}
@@ -492,7 +493,7 @@ public class PatientAddresses extends Composite {
 				});
 			} catch (RequestException e) {
 				GWT.log("Exception", e);
-				Util.showErrorMsg("PatientAddresses", "Failed to update patient addresses.");
+				Util.showErrorMsg("PatientAddresses", _("Failed to update patient addresses."));
 			}
 		} else {
 			PatientModuleAsync service = null;
@@ -505,7 +506,7 @@ public class PatientAddresses extends Composite {
 				service.SetAddresses(patientId, map,
 						new AsyncCallback<Boolean>() {
 							public void onSuccess(Boolean result) {
-								Util.showInfoMsg("PatientAddresses", "Updated patient addresses.");
+								Util.showInfoMsg("PatientAddresses", _("Updated patient addresses."));
 								if (onCompletion != null) {
 									onCompletion.execute();
 								}
@@ -513,7 +514,7 @@ public class PatientAddresses extends Composite {
 
 							public void onFailure(Throwable t) {
 								GWT.log("Exception", t);
-								Util.showErrorMsg("PatientAddresses", "Failed to update patient addresses.");
+								Util.showErrorMsg("PatientAddresses", _("Failed to update patient addresses."));
 							}
 						});
 
@@ -575,7 +576,7 @@ public class PatientAddresses extends Composite {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {

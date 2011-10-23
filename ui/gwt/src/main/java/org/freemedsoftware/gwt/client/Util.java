@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -108,11 +110,11 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.json.client.JSONParser;
@@ -196,7 +198,7 @@ public final class Util {
 					params += "&";
 				}
 				params += "param" + new Integer(iter).toString() + "="
-						+ URL.encodeComponent(args[iter]);
+						+ URL.encodeQueryString(args[iter]);
 			}
 			if (GWT_HOSTED_MODE)
 				return url + "?module=" + method
@@ -444,7 +446,7 @@ public final class Util {
 						Response response) {
 					if (200 == response.getStatusCode()) {
 						String res = (String) JsonUtil.shoehornJson(JSONParser
-								.parse(response.getText()), "String");
+								.parseStrict(response.getText()), "String");
 						if (res == null)
 							res = response.getText().trim();
 						if (res.compareToIgnoreCase("true") == 0) {
@@ -702,7 +704,7 @@ public final class Util {
 							com.google.gwt.http.client.Request request,
 							Throwable ex) {
 						GWT.log("Exception", ex);
-						Window.alert("Failed to log out.");
+						Window.alert(_("Failed to log out."));
 					}
 
 					public void onResponseReceived(
@@ -720,7 +722,7 @@ public final class Util {
 							CurrentState.getFreemedInterface().getLoginDialog()
 									.setFocusToPasswordField();
 						} else {
-							Window.alert("Failed to log out.");
+							Window.alert(_("Failed to log out."));
 						}
 					}
 				});
@@ -757,7 +759,7 @@ public final class Util {
 	 * 
 	 * @param value
 	 */
-
+	@SuppressWarnings("unused")
 	public static synchronized boolean isNumber(String value) {
 		boolean flag;
 		try {
@@ -1347,13 +1349,12 @@ public final class Util {
 							requestCallback.onError();
 					}
 
-					@SuppressWarnings("unchecked")
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (requestCallback != null) {
 							if (200 == response.getStatusCode()) {
 								Object result = JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										responseType);
 								requestCallback.jsonifiedData(result);
 							} else
@@ -1719,7 +1720,7 @@ public final class Util {
 											reportName, "");
 						} else {
 							showErrorMsg(ReportingScreen.moduleName,
-									"Report Not Found");
+									_("Report not found."));
 						}
 					}
 
@@ -1787,7 +1788,7 @@ public final class Util {
 												if (data.toString().equals(
 														"DPNS")) {
 													if (Window
-															.confirm("Default Printer Not Found!\nPress Ok to set default printer."))
+															.confirm(_("Default printer not found,") + "\n" + _("Press Ok to set default printer.")))
 														Util
 																.spawnTab(
 																		"Preferences",
@@ -1796,14 +1797,14 @@ public final class Util {
 												} else if (data.toString()
 														.equals("PNA")) {
 													showErrorMsg("Reporting",
-															"Printer Not Available!");
+															_("Printer not available."));
 												}
 											}
 										}
 
 									}, "String");
 						} else {
-							showErrorMsg("reporting", "Report Not Found");
+							showErrorMsg("reporting", _("Report not found."));
 						}
 					}
 

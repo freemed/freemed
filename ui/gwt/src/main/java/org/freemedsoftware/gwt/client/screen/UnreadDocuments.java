@@ -57,24 +57,29 @@ public class UnreadDocuments extends ScreenInterface {
 
 	protected HashMap<String, String>[] store = null;
 
-	private static List<UnreadDocuments> unreadDocumentsList=null;
-	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well
-	public static UnreadDocuments getInstance(){
-		UnreadDocuments unreadDocuments=null; 
-		
-		if(unreadDocumentsList==null)
-			unreadDocumentsList=new ArrayList<UnreadDocuments>();
-		if(unreadDocumentsList.size()<AppConstants.MAX_UNREAD_TABS)//creates & returns new next instance of unreadDocuments
-			unreadDocumentsList.add(unreadDocuments=new UnreadDocuments());
-		else //returns last instance of unreadDocuments from list 
-			unreadDocuments = unreadDocumentsList.get(AppConstants.MAX_UNREAD_TABS-1);
+	private static List<UnreadDocuments> unreadDocumentsList = null;
+
+	// Creates only desired amount of instances if we follow this pattern
+	// otherwise we have public constructor as well
+	public static UnreadDocuments getInstance() {
+		UnreadDocuments unreadDocuments = null;
+
+		if (unreadDocumentsList == null)
+			unreadDocumentsList = new ArrayList<UnreadDocuments>();
+		// creates & returns new next instance of unreadDocuments
+		if (unreadDocumentsList.size() < AppConstants.MAX_UNREAD_TABS)
+			unreadDocumentsList.add(unreadDocuments = new UnreadDocuments());
+		else
+			// returns last instance of unreadDocuments from list
+			unreadDocuments = unreadDocumentsList
+					.get(AppConstants.MAX_UNREAD_TABS - 1);
 		return unreadDocuments;
 	}
 
-	public static boolean removeInstance(UnreadDocuments unreadDocuments){
+	public static boolean removeInstance(UnreadDocuments unreadDocuments) {
 		return unreadDocumentsList.remove(unreadDocuments);
 	}
-	
+
 	public UnreadDocuments() {
 		super(moduleName);
 		final HorizontalPanel mainHorizontalPanel = new HorizontalPanel();
@@ -96,7 +101,7 @@ public class UnreadDocuments extends ScreenInterface {
 			public void handleRowClick(HashMap<String, String> data, int col) {
 				// Import current id
 				try {
-//					currentId = Integer.parseInt(data.get("id"));
+					// currentId = Integer.parseInt(data.get("id"));
 				} catch (Exception ex) {
 					GWT.log("Exception", ex);
 				} finally {
@@ -107,13 +112,11 @@ public class UnreadDocuments extends ScreenInterface {
 		});
 		wDocuments.setWidth("100%");
 
-	
 		// Last thing is to initialize, otherwise we're going to get some
 		// NullPointerException errors
-		if(canRead)
+		if (canRead)
 			loadData();
 	}
-
 
 	/**
 	 * Load table entries and reset form.
@@ -145,11 +148,10 @@ public class UnreadDocuments extends ScreenInterface {
 			String[] params = {};
 			RequestBuilder builder = new RequestBuilder(
 					RequestBuilder.POST,
-					URL
-							.encode(Util
-									.getJsonRequest(
-											"org.freemedsoftware.module.UnreadDocuments.GetAll",
-											params)));
+					URL.encode(Util
+							.getJsonRequest(
+									"org.freemedsoftware.module.UnreadDocuments.GetAll",
+									params)));
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
@@ -160,8 +162,9 @@ public class UnreadDocuments extends ScreenInterface {
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-										.shoehornJson(JSONParser.parse(response
-												.getText()),
+										.shoehornJson(
+												JSONParser.parseStrict(response
+														.getText()),
 												"HashMap<String,String>[]");
 								if (r != null) {
 									store = r;
@@ -179,6 +182,7 @@ public class UnreadDocuments extends ScreenInterface {
 			// TODO GWT STUFF
 		}
 	}
+
 	/**
 	 * Perform form validation.
 	 * 
@@ -187,9 +191,9 @@ public class UnreadDocuments extends ScreenInterface {
 	protected boolean validateForm() {
 		return true;
 	}
+
 	@Override
 	public void closeScreen() {
-		// TODO Auto-generated method stub
 		super.closeScreen();
 		removeInstance(this);
 	}

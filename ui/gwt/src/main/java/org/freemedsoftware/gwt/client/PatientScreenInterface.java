@@ -26,7 +26,6 @@ package org.freemedsoftware.gwt.client;
 
 import org.freemedsoftware.gwt.client.screen.PatientScreen;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public abstract class PatientScreenInterface extends ScreenInterface {

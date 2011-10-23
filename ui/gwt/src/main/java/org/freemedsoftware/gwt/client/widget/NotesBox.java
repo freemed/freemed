@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -130,7 +132,7 @@ public class NotesBox extends WidgetInterface {
 				label.setText(name);
 
 			} else {
-				name = "Note #" + (myKey + 1) + " ";
+				name = _("Note") + " #" + (myKey + 1) + " ";
 				label.setText(name);
 			}
 
@@ -176,7 +178,7 @@ public class NotesBox extends WidgetInterface {
 		HorizontalPanel addButtonLayout = new HorizontalPanel();
 		addButtonLayout.setStylePrimaryName("freemed-NotesBoxContainer");
 		addButtonLayout.add(new Image("resources/images/add_plus.16x16.png"));
-		addButtonLayout.add(new Label("Add Note"));
+		addButtonLayout.add(new Label(_("Add Note")));
 		addButton.getUpFace().setHTML(addButtonLayout.toString());
 		addButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -194,7 +196,7 @@ public class NotesBox extends WidgetInterface {
 			oNote = CurrentState.getUserConfig("notepad").toString();
 
 		if (oNote != "") {
-			aNote = (String[]) JsonUtil.shoehornJson(JSONParser.parse(oNote),
+			aNote = (String[]) JsonUtil.shoehornJson(JSONParser.parseStrict(oNote),
 					"String[]");
 			if (aNote.length != 0) {
 				for (int i = 0; i < aNote.length; i++) {

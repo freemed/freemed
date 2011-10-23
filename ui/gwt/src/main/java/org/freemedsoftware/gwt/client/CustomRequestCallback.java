@@ -24,9 +24,9 @@
 
 package org.freemedsoftware.gwt.client;
 
-
 public interface CustomRequestCallback {
 
 	public void jsonifiedData(Object data);
 	public void onError();
+	
 }

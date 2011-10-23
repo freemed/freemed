@@ -35,8 +35,8 @@ import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.PatientInterfaceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
@@ -94,7 +94,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<Integer,String>");
 								if (result != null) {
@@ -195,7 +195,7 @@ public class PatientWidget extends AsyncPicklistWidgetBase implements
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String");
 									if (result != null) {
 										searchBox.setText(result);

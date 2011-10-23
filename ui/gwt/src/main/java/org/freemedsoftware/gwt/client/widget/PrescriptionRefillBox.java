@@ -24,13 +24,15 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.RxRefillScreen;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -136,13 +138,13 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		wRequests.setMaximumRows(10);
 		wRequests.setAllowSelection(false);
 		wRequests.setSize("100%", "100%");
-		wRequests.addColumn("Date", "stamp"); // col 0
-		wRequests.addColumn("User", "user"); // col 1
-		wRequests.addColumn("Patient", "patient"); // col 2
-		wRequests.addColumn("RX Orig", "rxorig"); // col 3
-		wRequests.addColumn("Note", "note"); // col 4
-		wRequests.addColumn("Approved", "approved");// col 5
-		wRequests.addColumn("locked", "locked"); // col 6
+		wRequests.addColumn(_("Date"), "stamp"); // col 0
+		wRequests.addColumn(_("User"), "user"); // col 1
+		wRequests.addColumn(_("Patient"), "patient"); // col 2
+		wRequests.addColumn(_("RX Orig"), "rxorig"); // col 3
+		wRequests.addColumn(_("Note"), "note"); // col 4
+		wRequests.addColumn(_("Approved"), "approved");// col 5
+		wRequests.addColumn(_("Locked"), "locked"); // col 6
 		wRequests.setMaximumRows(7);
 		wRequests.setIndexName("id");
 
@@ -168,17 +170,17 @@ public class PrescriptionRefillBox extends WidgetInterface {
 		final PatientWidget patientWidget = new PatientWidget();
 		flexTable.setWidget(1, 1, patientWidget);
 
-		final Label selectionLabel = new Label("Select a Patient:");
+		final Label selectionLabel = new Label(_("Select a Patient") + ":");
 		flexTable.setWidget(1, 0, selectionLabel);
 
-		final Label textLabel = new Label("Add an optional note:");
+		final Label textLabel = new Label(_("Add an optional note") + ":");
 		flexTable.setWidget(2, 0, textLabel);
 
 		final TextBox textBox = new TextBox();
 		flexTable.setWidget(2, 1, textBox);
 		textBox.setWidth("100%");
 
-		final CustomButton sendButton = new CustomButton("Send Request",
+		final CustomButton sendButton = new CustomButton(_("Send Request"),
 				AppConstants.ICON_SEND);
 		flexTable.setWidget(3, 1, sendButton);
 
@@ -187,9 +189,9 @@ public class PrescriptionRefillBox extends WidgetInterface {
 			public void onClick(ClickEvent evt) {
 				String msg = "";
 				if(Integer.parseInt(patientWidget.getStoredValue())==0)
-					msg = "Please select patient!!";
+					msg = _("Please select a patient.");
 				if(textBox.getText().trim().length()==0)
-					msg += "\n Please add a short note!!!";
+					msg += "\n" + _("Please add a short note.");
 				
 				if(msg.length()>0){
 					Util.showErrorMsg(moduleName, msg);
@@ -220,7 +222,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 						builder.sendRequest(null, new RequestCallback() {
 							public void onError(Request request, Throwable ex) {
 								Util.showErrorMsg("PrescriptionRefillBox",
-										"Error adding refill request."
+										_("Error adding refill request.")
 												+ ex.toString());
 							}
 
@@ -229,17 +231,17 @@ public class PrescriptionRefillBox extends WidgetInterface {
 								if (200 == response.getStatusCode()) {
 									Integer r = (Integer) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"Integer");
 									if (r != 0) {
 										Util
 												.showInfoMsg(
 														"PrescriptionRefillBox",
-														"Prescription refill successfully saved.");
+														_("Refill request successfully saved."));
 									}
 								} else {
 									Util.showErrorMsg("PrescriptionRefillBox",
-											"Error adding prescription refill");
+											_("Error adding prescription refill request."));
 								}
 							}
 						});
@@ -303,7 +305,7 @@ public class PrescriptionRefillBox extends WidgetInterface {
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (data != null) {

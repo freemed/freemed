@@ -22,11 +22,11 @@
  */
 package org.freemedsoftware.gwt.client;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.HeadElement;
 import com.google.gwt.dom.client.LinkElement;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -82,7 +82,7 @@ public class StyleSheetLoader {
         // Fire the callback in a DeferredCommand to ensure the browser has
         // enough time to parse the styles. Otherwise, we'll get weird styling
         // issues.
-        DeferredCommand.addCommand(callback);
+        Scheduler.get().scheduleDeferred(callback);
       } else {
         schedule(10);
       }

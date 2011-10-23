@@ -126,7 +126,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 								Response response) {
 							if (200 == response.getStatusCode()) {
 								Integer r = (Integer) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Integer");
 								if (r != null) {
 									Util.showInfoMsg(getModuleName(), "Updated.");
@@ -181,7 +181,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 								Response response) {
 							if (200 == response.getStatusCode()) {
 								Integer r = (Integer) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"Integer");
 								if (r != null) {
 									Util.showInfoMsg(getModuleName(), "Added.");
@@ -248,7 +248,7 @@ public class PatientEntryScreenInterface extends PatientScreenInterface {
 						if (200 == response.getStatusCode()) {
 							JsonUtil.debug(response.getText());
 							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (r != null) {

@@ -23,6 +23,8 @@
  */
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,13 +54,13 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 
 public class LedgerWidget extends Composite {
 	public enum PayCategory {
@@ -168,12 +170,12 @@ public class LedgerWidget extends Composite {
 
 	public void createCommonElements() {
 
-		payDateLb = new Label("Date Received");
+		payDateLb = new Label(_("Date Received"));
 		payDate = new CustomDatePicker();
 		payDate.setValue(Util.getSQLDate(new Date()));
 		amountLb = new Label();
 		tbAmount = new TextBox();
-		descLb = new Label("Description");
+		descLb = new Label(_("Description"));
 		tbDesc = new TextArea();
 		headLb = new Label();
 		headLb.setStyleName(AppConstants.STYLE_LABEL_LARGE_BOLD);
@@ -183,7 +185,7 @@ public class LedgerWidget extends Composite {
 		ledgerPanel.add(ledgerFlexTable);
 		buttonsActionPanel = new HorizontalPanel();
 		buttonsActionPanel.setSpacing(5);
-		CustomButton submitBtn = new CustomButton("Submit",
+		CustomButton submitBtn = new CustomButton(_("Submit"),
 				AppConstants.ICON_SEND);
 		submitBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -191,7 +193,7 @@ public class LedgerWidget extends Composite {
 				prepareDate();
 			}
 		});
-		CustomButton cancelBtn = new CustomButton("Cancel",
+		CustomButton cancelBtn = new CustomButton(_("Cancel"),
 				AppConstants.ICON_CANCEL);
 		final LedgerWidget lw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
@@ -209,28 +211,28 @@ public class LedgerWidget extends Composite {
 
 	private void createPaymentUI() {
 		if (!procId.equals("0")) {
-			headLb.setText("Payment");
+			headLb.setText(_("Payment"));
 		} else {
-			headLb.setText("Patient Payment Responsibility");
+			headLb.setText(_("Patient Payment Responsibility"));
 		}
 
 		fieldCounter = 0;
 		payTypelb = new Label("Payment Type");
 		paymentTypeGroup = new CustomRadioButtonGroup("actiontype");
 
-		paymentTypeGroup.addItem("Payment", "1", new Command() {
+		paymentTypeGroup.addItem(_("Payment"), "1", new Command() {
 			@Override
 			public void execute() {
 				createPayUI();
 			}
 		});
-		paymentTypeGroup.addItem("Copay", "2", new Command() {
+		paymentTypeGroup.addItem(_("Copay"), "2", new Command() {
 			@Override
 			public void execute() {
 				createCopayUI();
 			}
 		});
-		paymentTypeGroup.addItem("Deductable", "3", new Command() {
+		paymentTypeGroup.addItem(_("Deductable"), "3", new Command() {
 			@Override
 			public void execute() {
 				createDeductableUI();
@@ -248,9 +250,9 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, paymentTypeGroup);
 		fieldCounter++;
 		if (procId.equals("0")) {
-			Label paySrclb = new Label("Payment Source");
+			Label paySrclb = new Label(_("Payment Source"));
 			paySrcList = new CustomListBox();
-			paySrcList.addItem("Patient", "0");
+			paySrcList.addItem(_("Patient"), "0");
 			loadCoverageByType(1, paySrcList);
 			loadCoverageByType(2, paySrcList);
 			loadCoverageByType(3, paySrcList);
@@ -270,13 +272,13 @@ public class LedgerWidget extends Composite {
 		}
 		Label payMethodlb = new Label("Payment Method");
 		payTypeList = new CustomListBox();
-		payTypeList.addItem("NONE SELECTED");
-		payTypeList.addItem("cash", "0");
-		payTypeList.addItem("cheque", "1");
-		payTypeList.addItem("money order", "2");
-		payTypeList.addItem("credit card", "3");
-		payTypeList.addItem("traveler's check", "4");
-		payTypeList.addItem("EFT", "5");
+		payTypeList.addItem(_("NONE SELECTED"),"");
+		payTypeList.addItem(_("cash"), "0");
+		payTypeList.addItem(_("cheque"), "1");
+		payTypeList.addItem(_("money order"), "2");
+		payTypeList.addItem(_("credit card"), "3");
+		payTypeList.addItem(_("traveler's check"), "4");
+		payTypeList.addItem(_("EFT"), "5");
 		payTypeList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -291,12 +293,12 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, payTypeList);
 		fieldCounter++;
 
-		payDateLb.setText("Date Received");
+		payDateLb.setText(_("Date Received"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
 
-		amountLb.setText("Payment Amount");
+		amountLb.setText(_("Payment Amount"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		tbAmount.setText("");
 		tbAmount.setEnabled(true);
@@ -312,19 +314,19 @@ public class LedgerWidget extends Composite {
 	private void handlePaymentType(String payType) {
 		fieldCounter = commonFieldsCount;
 		if (payType.equals("1") || payType.equals("4")) {
-			Label chequeNoLb = new Label("Cheque Number");
+			Label chequeNoLb = new Label(_("Cheque Number"));
 			tbCheckNo = new TextBox();
 			ledgerFlexTable.setWidget(fieldCounter, 0, chequeNoLb);
 			ledgerFlexTable.setWidget(fieldCounter, 1, tbCheckNo);
 			fieldCounter++;
 		} else if (payType.equals("3")) {
-			Label creditCardNoLb = new Label("Credit Card Number");
+			Label creditCardNoLb = new Label(_("Credit Card Number"));
 			tbCreditCardNo = new TextBox();
 			ledgerFlexTable.setWidget(fieldCounter, 0, creditCardNoLb);
 			ledgerFlexTable.setWidget(fieldCounter, 1, tbCreditCardNo);
 			fieldCounter++;
 
-			Label expDateLb = new Label("Expiration Date");
+			Label expDateLb = new Label(_("Expiration Date"));
 			monthsList = new ListBox();
 			for (int i = 1; i <= 12; i++) {
 				monthsList.addItem("" + i);
@@ -365,13 +367,13 @@ public class LedgerWidget extends Composite {
 		fieldCounter++;
 		Label payMethodlb = new Label("Payment Method");
 		payTypeList = new CustomListBox();
-		payTypeList.addItem("NONE SELECTED");
-		payTypeList.addItem("cash", "0");
-		payTypeList.addItem("cheque", "1");
-		payTypeList.addItem("money order", "2");
-		payTypeList.addItem("credit card", "3");
-		payTypeList.addItem("traveler's check", "4");
-		payTypeList.addItem("EFT", "5");
+		payTypeList.addItem(_("NONE SELECTED"), "");
+		payTypeList.addItem(_("cash"), "0");
+		payTypeList.addItem(_("cheque"), "1");
+		payTypeList.addItem(_("money order"), "2");
+		payTypeList.addItem(_("credit card"), "3");
+		payTypeList.addItem(_("traveler's check"), "4");
+		payTypeList.addItem(_("EFT"), "5");
 		payTypeList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -430,7 +432,7 @@ public class LedgerWidget extends Composite {
 
 	private void createAdjustmentUI() {
 
-		headLb.setText("Adjustment");
+		headLb.setText(_("Adjustment"));
 
 		fieldCounter = 0;
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
@@ -441,7 +443,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbDesc);
 		fieldCounter++;
 
-		amountLb.setText("Adjustment Amount");
+		amountLb.setText(_("Adjustment Amount"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbAmount);
 		fieldCounter++;
@@ -451,7 +453,7 @@ public class LedgerWidget extends Composite {
 
 	private void createWithholdUI() {
 
-		headLb.setText("Withhold");
+		headLb.setText(_("Withhold"));
 
 		fieldCounter = 0;
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
@@ -462,7 +464,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbDesc);
 		fieldCounter++;
 
-		amountLb.setText("Withhold Amount");
+		amountLb.setText(_("Withhold Amount"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbAmount);
 		fieldCounter++;
@@ -478,15 +480,15 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 0, payTypelb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, paymentTypeGroup);
 		fieldCounter++;
-		Label payMethodlb = new Label("Payment Method");
+		Label payMethodlb = new Label(_("Payment Method"));
 		payTypeList = new CustomListBox();
-		payTypeList.addItem("NONE SELECTED");
-		payTypeList.addItem("cash", "0");
-		payTypeList.addItem("cheque", "1");
-		payTypeList.addItem("money order", "2");
-		payTypeList.addItem("credit card", "3");
-		payTypeList.addItem("traveler's check", "4");
-		payTypeList.addItem("EFT", "5");
+		payTypeList.addItem(_("NONE SELECTED"), "");
+		payTypeList.addItem(_("cash"), "0");
+		payTypeList.addItem(_("cheque"), "1");
+		payTypeList.addItem(_("money order"), "2");
+		payTypeList.addItem(_("credit card"), "3");
+		payTypeList.addItem(_("traveler's check"), "4");
+		payTypeList.addItem(_("EFT"), "5");
 		payTypeList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -501,15 +503,15 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, payTypeList);
 		fieldCounter++;
 
-		payDateLb.setText("Date of Deductible");
+		payDateLb.setText(_("Date of Deductible"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
 
-		amountLb.setText("Deductable Amount");
+		amountLb.setText(_("Deductable Amount"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		deductList = new CustomListBox();
-		deductList.addItem("NONE SELECTED", "0");
+		deductList.addItem(_("NONE SELECTED"), "0");
 		covid = "";
 		ArrayList params = new ArrayList();
 		params.add(patientId);
@@ -543,10 +545,10 @@ public class LedgerWidget extends Composite {
 
 	private void createTransferUI() {
 
-		headLb.setText("Transfer");
+		headLb.setText(_("Transfer"));
 
 		fieldCounter = 0;
-		payDateLb.setText("Date of Transfer");
+		payDateLb.setText(_("Date of Transfer"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
@@ -555,7 +557,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbDesc);
 		fieldCounter++;
 
-		Label transferToLb = new Label("Transfer to");
+		Label transferToLb = new Label(_("Transfer to"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, transferToLb);
 		transferList = new CustomListBox();
 		transferList.addItem("Patient", "0");
@@ -568,18 +570,18 @@ public class LedgerWidget extends Composite {
 
 	private void createAllowedAmmountUI() {
 
-		headLb.setText("Allowed Ammount");
+		headLb.setText(_("Allowed Amount"));
 
 		fieldCounter = 0;
 
-		Label insCompanyLb = new Label("Insurance Company");
+		Label insCompanyLb = new Label(_("Insurance Company"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, insCompanyLb);
 		insCompanyList = new CustomListBox();
 		loadInsuranceList(insCompanyList);
 		ledgerFlexTable.setWidget(fieldCounter, 1, insCompanyList);
 		fieldCounter++;
 
-		payDateLb.setText("Date Received");
+		payDateLb.setText(_("Date Received"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
@@ -588,7 +590,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbDesc);
 		fieldCounter++;
 
-		amountLb.setText("Allowed Amount");
+		amountLb.setText(_("Allowed Amount"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbAmount);
 		fieldCounter++;
@@ -598,10 +600,10 @@ public class LedgerWidget extends Composite {
 
 	private void createDenialUI() {
 
-		headLb.setText("Denial");
+		headLb.setText(_("Denial"));
 
 		fieldCounter = 0;
-		payDateLb.setText("Date of Denial");
+		payDateLb.setText(_("Date of Denial"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
@@ -610,11 +612,11 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbDesc);
 		fieldCounter++;
 
-		Label adjustZeroLb = new Label("Adjust to Zero?");
+		Label adjustZeroLb = new Label(_("Adjust to Zero?"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, adjustZeroLb);
 		CustomListBox adjustZeroList = new CustomListBox();
-		adjustZeroList.addItem("No");
-		adjustZeroList.addItem("Yes");
+		adjustZeroList.addItem(_("No"));
+		adjustZeroList.addItem(_("Yes"));
 		ledgerFlexTable.setWidget(fieldCounter, 1, adjustZeroList);
 		fieldCounter++;
 
@@ -622,10 +624,10 @@ public class LedgerWidget extends Composite {
 	}
 
 	private void createWriteoffUI() {
-		headLb.setText("Writeoff");
+		headLb.setText(_("Writeoff"));
 
 		fieldCounter = 0;
-		payDateLb.setText("Date of Writeoff");
+		payDateLb.setText(_("Date of Writeoff"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
@@ -638,19 +640,19 @@ public class LedgerWidget extends Composite {
 	}
 
 	private void createRefundUI() {
-		headLb.setText("Refund");
+		headLb.setText(_("Refund"));
 		fieldCounter = 0;
 
-		payDateLb.setText("Date of Refund");
+		payDateLb.setText(_("Date of Refund"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, payDateLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, payDate);
 		fieldCounter++;
 
-		Label destinationLb = new Label("Destination");
+		Label destinationLb = new Label(_("Destination"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, destinationLb);
 		destinationList = new CustomListBox();
-		destinationList.addItem("Apply to Credit", "0");
-		destinationList.addItem("Refund to Patient", "1");
+		destinationList.addItem(_("Apply to Credit"), "0");
+		destinationList.addItem(_("Refund to Patient"), "1");
 		ledgerFlexTable.setWidget(fieldCounter, 1, destinationList);
 		fieldCounter++;
 
@@ -658,7 +660,7 @@ public class LedgerWidget extends Composite {
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbDesc);
 		fieldCounter++;
 
-		amountLb.setText("Refund Amount");
+		amountLb.setText(_("Refund Amount"));
 		ledgerFlexTable.setWidget(fieldCounter, 0, amountLb);
 		ledgerFlexTable.setWidget(fieldCounter, 1, tbAmount);
 		fieldCounter++;
@@ -670,15 +672,15 @@ public class LedgerWidget extends Composite {
 		ledgerInfoFlexTable = new FlexTable();
 		ledgerPanel.add(ledgerInfoFlexTable);
 		ledgerInfoFlexTable.setSize("100%", "100%");
-		ledgerInfoFlexTable.setText(0, 0, "Date");
-		ledgerInfoFlexTable.setText(0, 1, "Type");
-		ledgerInfoFlexTable.setText(0, 2, "Description");
-		ledgerInfoFlexTable.setText(0, 3, "Charges");
-		ledgerInfoFlexTable.setText(0, 4, "Payments");
-		ledgerInfoFlexTable.setText(0, 5, "Balance");
+		ledgerInfoFlexTable.setText(0, 0, _("Date"));
+		ledgerInfoFlexTable.setText(0, 1, _("Type"));
+		ledgerInfoFlexTable.setText(0, 2, _("Description"));
+		ledgerInfoFlexTable.setText(0, 3, _("Charges"));
+		ledgerInfoFlexTable.setText(0, 4, _("Payments"));
+		ledgerInfoFlexTable.setText(0, 5, _("Balance"));
 		RowFormatter rowFormatter = ledgerInfoFlexTable.getRowFormatter();
 		rowFormatter.setStyleName(0, AppConstants.STYLE_TABLE_HEADER);
-		CustomButton closeBtn = new CustomButton("Cancel",
+		CustomButton closeBtn = new CustomButton(_("Cancel"),
 				AppConstants.ICON_CANCEL);
 		final LedgerWidget lw = this;
 		closeBtn.addClickHandler(new ClickHandler() {
@@ -723,7 +725,7 @@ public class LedgerWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
@@ -779,7 +781,7 @@ public class LedgerWidget extends Composite {
 				parameters.add(tbCheckNo.getText());
 				if (tbCheckNo.getText() == null
 						|| tbCheckNo.getText().equals("")) {
-					errMsg += "Please Enter the Check Number \n";
+					errMsg += _("Please enter the check number.") + "\n";
 				}
 				if (payTypeList.getValue(payTypeList.getSelectedIndex())
 						.equals("1")) {
@@ -795,7 +797,7 @@ public class LedgerWidget extends Composite {
 				parameters.add(tbCreditCardNo.getText());
 				if (tbCreditCardNo.getText() == null
 						|| tbCreditCardNo.getText().equals("")) {
-					errMsg += "Please Enter the Credit Card Number \n";
+					errMsg += _("Please enter the credit card number.") + "\n";
 				}
 				parameters.add(monthsList.getValue(monthsList
 						.getSelectedIndex()));
@@ -804,11 +806,11 @@ public class LedgerWidget extends Composite {
 			}
 
 			else {
-				errMsg += "Please Select the Payment Type \n";
+				errMsg += _("Please select the payment type.") + "\n";
 			}
 			if (paymentTypeGroup.getWidgetValue().equals("1")) {
 				String tempMsg = validateIntegerTextBox(tbAmount,
-						"Payment Amount");
+						_("Payment Amount"));
 				if (!tempMsg.equals("")) {
 					errMsg += tempMsg + "\n";
 				}
@@ -820,7 +822,7 @@ public class LedgerWidget extends Composite {
 				}
 			} else if (paymentTypeGroup.getWidgetValue().equals("2")) {
 				String tempMsg = validateIntegerTextBox(tbAmount,
-						"Copay Amount");
+						_("Copay Amount"));
 				if (!tempMsg.equals("")) {
 					errMsg += tempMsg + "\n";
 				}
@@ -834,7 +836,7 @@ public class LedgerWidget extends Composite {
 				parameters.add("11"); // copay
 			} else if (paymentTypeGroup.getWidgetValue().equals("3")) {
 				String tempMsg = validateIntegerTextBox(tbAmount,
-						"Deductible Amount");
+						_("Deductible Amount"));
 				if (!tempMsg.equals("")) {
 					errMsg += tempMsg + "\n";
 				}
@@ -853,7 +855,7 @@ public class LedgerWidget extends Composite {
 			functionName = moduleName + ".post_adjustment";
 			parameters.add(procId);
 			String tempMsg = validateIntegerTextBox(tbAmount,
-					"Adjustment Amount");
+					_("Adjustment Amount"));
 			if (!tempMsg.equals("")) {
 				errMsg += tempMsg + "\n";
 			}
@@ -864,7 +866,7 @@ public class LedgerWidget extends Composite {
 		else if (paycat == PayCategory.WITHHOLD) {
 			functionName = moduleName + ".post_withhold";
 			parameters.add(procId);
-			String tempMsg = validateIntegerTextBox(tbAmount, "Withhold Amount");
+			String tempMsg = validateIntegerTextBox(tbAmount, _("Withhold Amount"));
 			if (!tempMsg.equals("")) {
 				errMsg += tempMsg + "\n";
 			}
@@ -886,7 +888,7 @@ public class LedgerWidget extends Composite {
 				parameters.add(insCompanyList.getStoredValue());
 			else
 				parameters.add("0");
-			String tempMsg = validateIntegerTextBox(tbAmount, "Allowed Amount");
+			String tempMsg = validateIntegerTextBox(tbAmount, _("Allowed Amount"));
 			if (!tempMsg.equals("")) {
 				errMsg += tempMsg + "\n";
 			}
@@ -964,11 +966,11 @@ public class LedgerWidget extends Composite {
 					if (200 == response.getStatusCode()) {
 						try {
 							Boolean result = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (result) {
 								Util.showInfoMsg("Ledger",
-										"Payment operation succeeded.");
+										_("Payment operation succeeded."));
 								lw.removeFromParent();
 								if(paycat == PayCategory.PAYMENT || paycat==PayCategory.COPAY || paycat==PayCategory.DEDUCTABLE)
 								{
@@ -984,16 +986,16 @@ public class LedgerWidget extends Composite {
 								}
 							} else {
 								Util.showErrorMsg("Ledger",
-										"Payment operation failed.");
+										_("Payment operation failed."));
 							}
 						} catch (Exception e) {
 							Util.showErrorMsg("Ledger",
-									"Payment operation failed.");
+									_("Payment operation failed."));
 						}
 					} else {
 						Util
 								.showErrorMsg("Ledger",
-										"Payment operation failed.");
+										_("Payment operation failed."));
 					}
 				}
 			});
@@ -1019,7 +1021,7 @@ public class LedgerWidget extends Composite {
 					if (200 == response.getStatusCode()) {
 
 						HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-								.shoehornJson(JSONParser.parse(response
+								.shoehornJson(JSONParser.parseStrict(response
 										.getText()), "HashMap<String,String>[]");
 
 						if (result.length > 0) {
@@ -1052,7 +1054,7 @@ public class LedgerWidget extends Composite {
 									}
 								} else {
 									ledgerInfoFlexTable
-											.setText(row, 0, "Total");
+											.setText(row, 0, _("Total"));
 									ledgerInfoFlexTable.setText(row, 3,
 											result[i].get("total_charges"));
 									ledgerInfoFlexTable.setText(row, 4,
@@ -1113,20 +1115,20 @@ public class LedgerWidget extends Composite {
 									covCount++;
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
 											hasInsurance=true;
 											String typeName = "";
 											if (type == 1)
-												typeName = "Primary ";
+												typeName = _("Primary") + " ";
 											else if (type == 2)
-												typeName = "Secondary ";
+												typeName = _("Secondary") + " ";
 											else if (type == 3)
-												typeName = "Tertiary ";
+												typeName = _("Tertiary") + " ";
 											else if (type == 4)
-												typeName = "Work Comp ";
+												typeName = _("Work Comp") + " ";
 											for (int i = 0; i < result.length; i++) {
 												HashMap<String, String> m = (HashMap<String, String>) result[i];
 
@@ -1161,7 +1163,7 @@ public class LedgerWidget extends Composite {
 	private String validateIntegerTextBox(TextBox tb, String fieldName) {
 		String msg = new String("");
 		if (tb.getText() == "" || tb.getText() == null) {
-			msg += "Please specify " + fieldName + "\n";
+			msg += _("Please specify %s.").replace("%s", fieldName) + "\n";
 		} else if (!Util.isNumber(tb.getText())) {
 			msg += "The specified valued for " + fieldName
 					+ " is not correct Number" + "\n";

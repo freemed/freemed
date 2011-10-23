@@ -34,8 +34,8 @@ import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleSearchInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.ModuleSearchInterfaceAsync;
 
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -47,7 +47,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
-
 
 public class ModuleSearchWidget extends AsyncPicklistWidgetBaseSearch implements
 		HashSetter {
@@ -109,7 +108,7 @@ public class ModuleSearchWidget extends AsyncPicklistWidgetBaseSearch implements
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								
@@ -211,7 +210,7 @@ public class ModuleSearchWidget extends AsyncPicklistWidgetBaseSearch implements
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String");
 									if (result != null) {
 										searchBox.setText(result);
@@ -256,8 +255,5 @@ public class ModuleSearchWidget extends AsyncPicklistWidgetBaseSearch implements
 		// TODO Auto-generated method stub
 		
 	}
-
-
-	
 
 }

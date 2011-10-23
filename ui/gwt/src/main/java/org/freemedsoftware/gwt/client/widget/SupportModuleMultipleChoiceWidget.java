@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,9 +35,9 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -103,7 +105,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 		final HorizontalPanel hp = new HorizontalPanel();
 		hp.add(new Label(text));
 		CustomButton removeButton = new CustomButton("X");
-		removeButton.setTitle("Click to remove this item from this list.");
+		removeButton.setTitle(_("Click to remove this item from this list."));
 		removeButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent evt) {
@@ -238,7 +240,7 @@ public class SupportModuleMultipleChoiceWidget extends WidgetInterface
 								com.google.gwt.http.client.Response response) {
 							if (200 == response.getStatusCode()) {
 								String result = (String) JsonUtil.shoehornJson(
-										JSONParser.parse(response.getText()),
+										JSONParser.parseStrict(response.getText()),
 										"String");
 								if (result != null) {
 									addValue(result, i);

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -259,7 +261,7 @@ public class PatientAuthorizations extends Composite {
 		verticalPanel.add(hP);
 		if (CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE)) {
 			CustomButton addAuthorizationButton = new CustomButton(
-					"Add Authorization", AppConstants.ICON_ADD);
+					_("Add Authorization"), AppConstants.ICON_ADD);
 			addAuthorizationButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent evt) {
 					Authorization a = new Authorization();
@@ -307,21 +309,21 @@ public class PatientAuthorizations extends Composite {
 		flexTable.removeTableStyle();
 		authorizationsPanel.add(flexTable);
 
-		final Label startingDateLabel = new Label("Starting Date:");
+		final Label startingDateLabel = new Label(_("Starting Date") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, startingDateLabel);
 		final CustomDatePicker startingDate = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 1, startingDate);
 
-		final Label endingDateLabel = new Label("Ending Date:");
+		final Label endingDateLabel = new Label(_("Ending Date") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, endingDateLabel);
 		final CustomDatePicker endingDate = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 3, endingDate);
 
 		if (CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE)) {
 			final Label deleAuthorizationLabel = new Label(
-					"Delete This Authorization:");
+					_("Delete This Authorization"));
 			flexTable.getFlexTable().setWidget(row, 4, deleAuthorizationLabel);
-			CustomButton deleAuthorizationButton = new CustomButton("Delete",
+			CustomButton deleAuthorizationButton = new CustomButton(_("Delete"),
 					AppConstants.ICON_DELETE);
 			deleAuthorizationButton.setWidth("100%");
 			deleAuthorizationButton.addClickHandler(new ClickHandler() {
@@ -336,38 +338,38 @@ public class PatientAuthorizations extends Composite {
 		row++;
 
 		final Label authorizationNumberLabel = new Label(
-				"Authorization Number:");
+				_("Authorization Number") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, authorizationNumberLabel);
 		final TextBox authorizationNumber = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, authorizationNumber);
 
-		final Label authorizationTypeLabel = new Label("Authorization Type:");
+		final Label authorizationTypeLabel = new Label(_("Authorization Type") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, authorizationTypeLabel);
 		final CustomListBox authorizationType = new CustomListBox();
-		authorizationType.addItem("NONE SELECTED", "0");
-		authorizationType.addItem("physician", "1");
-		authorizationType.addItem("insurance company", "2");
-		authorizationType.addItem("certificate of medical neccessity", "3");
-		authorizationType.addItem("surgical", "4");
-		authorizationType.addItem("worker's compensation", "5");
-		authorizationType.addItem("consulatation", "6");
+		authorizationType.addItem(_("NONE SELECTED"), "0");
+		authorizationType.addItem(_("physician"), "1");
+		authorizationType.addItem(_("insurance company"), "2");
+		authorizationType.addItem(_("certificate of medical neccessity"), "3");
+		authorizationType.addItem(_("surgical"), "4");
+		authorizationType.addItem(_("worker's compensation"), "5");
+		authorizationType.addItem(_("consulatation"), "6");
 		flexTable.getFlexTable().setWidget(row, 3, authorizationType);
 
 		final Label authorizingProviderLabel = new Label(
-				"Authorizing Provider:");
+				_("Authorizing Provider") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, authorizingProviderLabel);
 		final ProviderWidget authorizingProvider = new ProviderWidget();
 		flexTable.getFlexTable().setWidget(row, 5, authorizingProvider);
 
 		row++;
 
-		final Label providerIdentifierLabel = new Label("Provider Identifier:");
+		final Label providerIdentifierLabel = new Label(_("Provider Identifier") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, providerIdentifierLabel);
 		final TextBox providerIdentifier = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, providerIdentifier);
 
 		final Label authorizingInsuranceCompanyLabel = new Label(
-				"Authorizing Insurance Company:");
+				_("Authorizing Insurance Company") + ":");
 		flexTable.getFlexTable().setWidget(row, 2,
 				authorizingInsuranceCompanyLabel);
 		final SupportModuleWidget authorizingInsuranceCompany = new SupportModuleWidget(
@@ -376,12 +378,12 @@ public class PatientAuthorizations extends Composite {
 
 		row++;
 
-		final Label numberofVisitsLabel = new Label("Number of Visits:");
+		final Label numberofVisitsLabel = new Label(_("Number of Visits") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, numberofVisitsLabel);
 		final TextBox numberofVisits = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, numberofVisits);
 
-		final Label usedVisitsLabel = new Label("Used Visits:");
+		final Label usedVisitsLabel = new Label(_("Used Visits") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, usedVisitsLabel);
 		final TextBox usedVisits = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, usedVisits);
@@ -477,7 +479,7 @@ public class PatientAuthorizations extends Composite {
 				url = "org.freemedsoftware.module.Authorizations.Mod";
 			if (Util.getProgramMode() == ProgramMode.STUBBED) {
 				Util.showInfoMsg("PatientAuthorization",
-						"Updated patient Authorization.");
+						_("Updated patient authorizations."));
 				if (onCompletion != null) {
 					onCompletion.execute();
 				}
@@ -493,7 +495,7 @@ public class PatientAuthorizations extends Composite {
 								Throwable ex) {
 							GWT.log("Exception", ex);
 							Util.showErrorMsg("PatientAuthorization",
-									"Failed to update patient Authorizations.");
+									_("Failed to update patient authorizations."));
 						}
 
 						public void onResponseReceived(
@@ -501,11 +503,11 @@ public class PatientAuthorizations extends Composite {
 								com.google.gwt.http.client.Response response) {
 							if (200 == response.getStatusCode()) {
 								Boolean result = (Boolean) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()), "Boolean");
 								if (result != null) {
 									Util.showInfoMsg("PatientAuthorization",
-											"Updated patient Coverages.");
+											_("Updated patient authorizations."));
 									if (onCompletion != null) {
 										onCompletion.execute();
 									}
@@ -518,7 +520,7 @@ public class PatientAuthorizations extends Composite {
 				} catch (RequestException e) {
 					GWT.log("Exception", e);
 					Util.showErrorMsg("PatientAuthorization",
-							"Failed to update patient Authorizations.");
+							_("Failed to update patient authorizations."));
 				}
 			}
 		}
@@ -560,7 +562,7 @@ public class PatientAuthorizations extends Composite {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {
@@ -647,29 +649,29 @@ public class PatientAuthorizations extends Composite {
 	public static String returnAuthorizationType(int id) {
 
 		if (id == 1) {
-			return "physician";
+			return _("physician");
 		}
 
 		else if (id == 2) {
-			return "insurance company";
+			return _("insurance company");
 		}
 
 		else if (id == 3) {
-			return "certificate of medical neccessity";
+			return _("certificate of medical neccessity");
 		}
 
 		else if (id == 4) {
-			return "surgical";
+			return _("surgical");
 		} else if (id == 5) {
-			return "worker's compensation";
+			return _("worker's compensation");
 		}
 
 		else if (id == 6) {
-			return "consulatation";
+			return _("consulatation");
 		}
 
 		else
-			return "None Selected";
+			return _("None Selected");
 
 	}
 

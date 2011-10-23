@@ -89,7 +89,7 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 							if (Util.checkValidSessionResponse(response
 									.getText())) {
 								HashMap<Integer, String> result = (HashMap<Integer, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<Integer,String>");
 								if (result != null) {
@@ -168,7 +168,7 @@ public class ProviderWidget extends AsyncPicklistWidgetBase implements
 								if (200 == response.getStatusCode()) {
 									String result = (String) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"String");
 									if (result != null) {
 										searchBox.setText(result);

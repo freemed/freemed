@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,11 +101,11 @@ public class RemittReportsWidget extends Composite {
 								reportsInfoTable.setAllowSelection(false);
 								reportsInfoTable.setWidth("100%");
 								reportsInfoTable
-										.addColumn("Report", "filename");
-								reportsInfoTable.addColumn("Size", "filesize");
-								reportsInfoTable.addColumn("Date Sent",
+										.addColumn(_("Report"), "filename");
+								reportsInfoTable.addColumn(_("Size"), "filesize");
+								reportsInfoTable.addColumn(_("Date Sent"),
 										"inserted");
-								reportsInfoTable.addColumn("Action", "action");
+								reportsInfoTable.addColumn(_("Action"), "action");
 								reportsInfoTable
 										.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
 											@Override
@@ -116,7 +118,7 @@ public class RemittReportsWidget extends Composite {
 													HorizontalPanel actionPanel = new HorizontalPanel();
 													actionPanel.setSpacing(5);
 													HTML htmlLedger = new HTML(
-															"<a href=\"javascript:undefined;\">View</a>");
+															"<a href=\"javascript:undefined;\">" + _("View") + "</a>");
 
 													htmlLedger
 															.addClickHandler(new ClickHandler() {
@@ -146,7 +148,7 @@ public class RemittReportsWidget extends Composite {
 													HTML htmlReSend = null;
 													if (data.get("originalId") != null) {
 														htmlReSend = new HTML(
-																"<a href=\"javascript:undefined;\">Re-Send</a>");
+																"<a href=\"javascript:undefined;\">" + _("Re-Send") + "</a>");
 
 														htmlReSend
 																.addClickHandler(new ClickHandler() {
@@ -194,7 +196,7 @@ public class RemittReportsWidget extends Composite {
 																});
 													} else {
 														htmlReSend = new HTML(
-																"<a href=\"javascript:undefined;\"  style=\"cursor:default;color: blue;\">Re-Send</a>");
+																"<a href=\"javascript:undefined;\"  style=\"cursor:default;color: blue;\">" + _("Re-Send") + "</a>");
 													}
 													actionPanel.add(htmlLedger);
 													actionPanel.add(htmlReSend);

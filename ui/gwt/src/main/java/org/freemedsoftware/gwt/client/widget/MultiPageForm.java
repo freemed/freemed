@@ -50,19 +50,16 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MultiPageImageCompositedForm extends Composite implements
-		ClickHandler {
+public class MultiPageForm extends Composite implements ClickHandler {
 
 	public enum WidgetType {
 		MODULE, TEXT, SELECT, PATIENT, CHECKBOX, RADIO, NUMBER, DATE
@@ -70,13 +67,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 
 	public static String PAGE_METHOD = "org.freemedsoftware.module.XmrDefinition.GetPage";
 
-	protected HashMap<Integer, ImageCompositedForm> pages = new HashMap<Integer, ImageCompositedForm>();
-
-	protected Button wNextTop, wNextBottom, wPreviousTop, wPreviousBottom;
-	protected HTML topCount, bottomCount;
-
-	protected HorizontalPanel topControls = new HorizontalPanel();
-	protected HorizontalPanel bottomControls = new HorizontalPanel();
+	protected HashMap<Integer, GeneratedFormWidget> pages = new HashMap<Integer, GeneratedFormWidget>();
 
 	protected HashMap<String, HashSetter> widgets = new HashMap<String, HashSetter>();
 
@@ -91,54 +82,19 @@ public class MultiPageImageCompositedForm extends Composite implements
 	protected Integer totalPages = new Integer(1);
 
 	/**
-	 * Panel holding the currently displayed <ImageCompositedForm> widget.
+	 * Panel holding the forms.
 	 */
-	protected SimplePanel contentPanel = new SimplePanel();
+	protected DecoratedTabPanel tabPanel = new DecoratedTabPanel();
 
 	protected Command onFormLoaded = null;
 
-	public MultiPageImageCompositedForm() {
+	public MultiPageForm() {
 		super();
 		VerticalPanel vPanel = new VerticalPanel();
 		initWidget(vPanel);
-		setStyleName("freemed-MultiPageImageCompositedForm");
+		setStyleName("freemed-MultiPageForm");
 
-		wPreviousTop = new Button(_("Previous"));
-		wPreviousTop.addClickHandler(this);
-		wPreviousBottom = new Button(_("Previous"));
-		wPreviousBottom.addClickHandler(this);
-		topCount = new HTML("");
-
-		wNextTop = new Button(_("Next"));
-		wNextTop.addClickHandler(this);
-		wNextBottom = new Button(_("Next"));
-		wNextBottom.addClickHandler(this);
-		bottomCount = new HTML("");
-
-		topControls
-				.setStyleName("freemed-MultiPageImageCompositedForm-ControlBar");
-		topControls.add(wPreviousTop);
-		topControls.add(new HTML("&nbsp;"));
-		topControls.add(topCount);
-		topControls.add(new HTML("&nbsp;"));
-		topControls.add(wNextTop);
-		topControls.setWidth("100%");
-
-		bottomControls
-				.setStyleName("freemed-MultiPageImageCompositedForm-ControlBar");
-		bottomControls.add(wPreviousBottom);
-		bottomControls.add(new HTML("&nbsp;"));
-		bottomControls.add(bottomCount);
-		bottomControls.add(new HTML("&nbsp;"));
-		bottomControls.add(wNextBottom);
-		bottomControls.setWidth("100%");
-
-		vPanel.add(topControls);
-		vPanel.add(contentPanel);
-		vPanel.add(bottomControls);
-
-		// Initial state of buttons
-		refreshButtons();
+		vPanel.add(tabPanel);
 	}
 
 	public void setOnFormLoaded(Command c) {
@@ -147,30 +103,6 @@ public class MultiPageImageCompositedForm extends Composite implements
 
 	public Command getOnFormLoaded() {
 		return onFormLoaded;
-	}
-
-	/**
-	 * Update button state properly depending on current page position.
-	 */
-	public void refreshButtons() {
-		if (currentPage > 1) {
-			wPreviousTop.setEnabled(true);
-			wPreviousBottom.setEnabled(true);
-		} else {
-			wPreviousTop.setEnabled(false);
-			wPreviousBottom.setEnabled(false);
-		}
-		if (currentPage < totalPages) {
-			wNextTop.setEnabled(true);
-			wNextBottom.setEnabled(true);
-		} else {
-			wNextTop.setEnabled(false);
-			wNextBottom.setEnabled(false);
-		}
-		topCount
-				.setHTML(currentPage.toString() + " / " + totalPages.toString());
-		bottomCount.setHTML(currentPage.toString() + " / "
-				+ totalPages.toString());
 	}
 
 	/**
@@ -261,12 +193,11 @@ public class MultiPageImageCompositedForm extends Composite implements
 
 		// Create all pages
 		for (int pageIter = 1; pageIter <= pageCount; pageIter++) {
-			this.createImageCompositedForm(Integer.parseInt(r.get("id")),
-					pageIter);
+			GeneratedFormWidget w = new GeneratedFormWidget();
+			tabPanel.add(w, _("Page") + " " + pageIter);
+			this.pages.put(pageCount, w);
+			this.createForm(Integer.parseInt(r.get("id")), pageIter);
 		}
-
-		// Make sure to refresh button bar status
-		refreshButtons();
 
 		// Only do this once the form has been loaded
 		if (onFormLoaded != null) {
@@ -275,7 +206,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 	}
 
 	/**
-	 * Internal method to create an ImageCompositedForm object pointing at the
+	 * Internal method to create an <GeneratedFormWidget> object pointing at the
 	 * RPC image for the page in question. No form elements/widgets are assigned
 	 * by this method.
 	 * 
@@ -285,38 +216,15 @@ public class MultiPageImageCompositedForm extends Composite implements
 	 *            Page number, starting at 1
 	 * @return
 	 */
-	protected ImageCompositedForm createImageCompositedForm(Integer formNumber,
+	protected GeneratedFormWidget createForm(Integer formNumber,
 			Integer pageNumber) {
-		ImageCompositedForm form = new ImageCompositedForm();
-		form.setImage(Util.getJsonRequest(PAGE_METHOD, new String[] {
-				JsonUtil.jsonify(formNumber), JsonUtil.jsonify(pageNumber) }));
+		GeneratedFormWidget form = new GeneratedFormWidget();
 		return form;
-	}
-
-	/**
-	 * Change the currently displayed page in the stack.
-	 * 
-	 * @param pageNumber
-	 */
-	public void loadPage(Integer pageNumber) {
-		currentPage = pageNumber;
-		if (pages.get(pageNumber) != null) {
-			contentPanel.setWidget(pages.get(pageNumber));
-		}
-		refreshButtons();
 	}
 
 	@Override
 	public void onClick(ClickEvent event) {
 		Widget w = (Widget) event.getSource();
-		if (w == wPreviousTop || w == wPreviousBottom) {
-			loadPage(currentPage - 1);
-			return;
-		}
-		if (w == wNextTop || w == wNextBottom) {
-			loadPage(currentPage + 1);
-			return;
-		}
 	}
 
 	/**
@@ -390,7 +298,8 @@ public class MultiPageImageCompositedForm extends Composite implements
 	}
 
 	public void addWidget(String name, WidgetType type, String options,
-			String value, String help, Integer page, Integer x, Integer y) {
+			String value, String help, Integer page, Integer x, Integer y,
+			String textName) {
 		HashSetter w;
 
 		if (type == WidgetType.TEXT) {
@@ -430,8 +339,7 @@ public class MultiPageImageCompositedForm extends Composite implements
 		} else {
 			// Unimplemented, use text box as fallback
 			w = new CustomTextBox();
-			JsonUtil.debug("MultiPageImageCompositedForm"
-					+ ": Unimplemented type '" + type
+			JsonUtil.debug("MultiPageForm" + ": Unimplemented type '" + type
 					+ "' found. Fallback to TextBox.");
 		}
 
@@ -477,9 +385,9 @@ public class MultiPageImageCompositedForm extends Composite implements
 		this.setWidgetValue(name, value);
 
 		// Place on page
-		ImageCompositedForm thisPage = pages.get(page);
+		GeneratedFormWidget thisPage = pages.get(page);
 		if (thisPage != null) {
-			thisPage.addWidget((Widget) w, x, y);
+			thisPage.addWidget((Widget) w, x, y, textName);
 		} else {
 			JsonUtil.debug("Could not add widget to page " + page + " at " + x
 					+ "," + y);

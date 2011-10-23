@@ -25,14 +25,16 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
 
@@ -52,13 +54,12 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MessageBox extends WidgetInterface {
 
-	protected Label messageCountLabel = new Label("You have no new Messages!");
+	protected Label messageCountLabel = new Label(_("You have no new messages."));
 
 	protected HashMap<String, String>[] result;
 
@@ -101,7 +102,7 @@ public class MessageBox extends WidgetInterface {
 			}
 		});
 
-		Label headerLabel = new Label("MESSAGES");
+		Label headerLabel = new Label(_("MESSAGES"));
 		headerHPanel.add(headerLabel);
 		headerLabel.setStyleName(AppConstants.STYLE_LABEL_NORMAL_BOLD);
 		
@@ -114,9 +115,9 @@ public class MessageBox extends WidgetInterface {
 
 		contentVPanel.add(wMessages);
 		wMessages.setSize("100%", "100%");
-		wMessages.addColumn("Received", "stamp"); // col 0
-		wMessages.addColumn("From", "from_user"); // col 1
-		wMessages.addColumn("Subject", "subject"); // col 2
+		wMessages.addColumn(_("Received"), "stamp"); // col 0
+		wMessages.addColumn(_("From"), "from_user"); // col 1
+		wMessages.addColumn(_("Subject"), "subject"); // col 2
 		wMessages.setIndexName("id");
 		wMessages.setMaximumRows(7);
 		if(true){
@@ -224,7 +225,7 @@ public class MessageBox extends WidgetInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (r != null) {
@@ -286,7 +287,7 @@ public class MessageBox extends WidgetInterface {
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							Integer data = (Integer) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Integer");
 							if (data != null) {
 								JsonUtil.debug("Msg count from server is:"+data);
@@ -319,7 +320,7 @@ public class MessageBox extends WidgetInterface {
 							Response response) {
 						if (response.getStatusCode() == 200) {
 							HashMap<String, String>[] data = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (data != null) {

@@ -24,15 +24,17 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -54,9 +56,9 @@ public class RecentAllergiesList extends WidgetInterface {
 		allergiesTable = new CustomTable();
 		allergiesTable.setWidth("100%");
 		initWidget(allergiesTable);
-		allergiesTable.addColumn("Allergy", "allergy");
-		allergiesTable.addColumn("Reaction", "reaction");
-		allergiesTable.addColumn("Severity", "severity");
+		allergiesTable.addColumn(_("Allergy"), "allergy");
+		allergiesTable.addColumn(_("Reaction"), "reaction");
+		allergiesTable.addColumn(_("Severity"), "severity");
 	}
 
 	public void setPatientId(Integer id) {
@@ -110,7 +112,7 @@ public class RecentAllergiesList extends WidgetInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {

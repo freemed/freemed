@@ -362,7 +362,7 @@ public class CurrentState {
 		JsonUtil.debug("objectType:" + objectType);
 		if (userConfiguration.size() != 0 && userConfiguration.containsKey(key)) {
 			try {
-				return JsonUtil.shoehornJson(JSONParser.parse(userConfiguration
+				return JsonUtil.shoehornJson(JSONParser.parseStrict(userConfiguration
 						.get(key).toString()), objectType);
 			} catch (Exception e) {
 				return userConfiguration.get(key);// if already Jsonified
@@ -487,7 +487,7 @@ public class CurrentState {
 							if (200 == response.getStatusCode()
 									&& !response.getText().contentEquals("[]")) {
 								HashMap<String, Object> r = (HashMap<String, Object>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,Object>");
 								if (r != null) {
@@ -504,7 +504,7 @@ public class CurrentState {
 										leftNavigationOptions = (HashMap<String, HashMap<String, Integer>>) JsonUtil
 												.shoehornJson(
 														JSONParser
-																.parse(CurrentState
+																.parseStrict(CurrentState
 																		.getUserConfig(
 																				"LeftNavigationMenu")
 																		.toString()),
@@ -586,7 +586,7 @@ public class CurrentState {
 									&& !response.getText().contentEquals("[]")) {
 
 								HashMap<String, String> r = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (r != null) {

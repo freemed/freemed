@@ -226,7 +226,7 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static synchronized Object shoehornJson(String r, String t) {
-		return shoehornJson(JSONParser.parse(r), t);
+		return shoehornJson(JSONParser.parseStrict(r), t);
 	}
 
 	@SuppressWarnings("unchecked")

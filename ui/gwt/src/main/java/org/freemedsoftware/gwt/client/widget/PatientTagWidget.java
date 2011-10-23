@@ -31,9 +31,9 @@ import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -53,11 +53,11 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PatientTagWidget extends WidgetInterface implements
 		HasValueChangeHandlers<String> {
@@ -301,7 +301,7 @@ public class PatientTagWidget extends WidgetInterface implements
 						if (Util.checkValidSessionResponse(response.getText())) {
 							if (200 == response.getStatusCode()) {
 								HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()),
 												"HashMap<String,String>");
 								if (result != null) {

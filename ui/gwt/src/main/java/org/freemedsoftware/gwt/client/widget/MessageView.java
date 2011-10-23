@@ -25,6 +25,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,7 +130,7 @@ public class MessageView extends WidgetInterface {
 					messagingComposeScreen.setPatient(msgPatientId);
 					messagingComposeScreen.setBodyText(createMessageBody());
 					messagingComposeScreen.setParentScreen(getMessagingScreen());
-					Util.spawnTab("Messages:RE", messagingComposeScreen);
+					Util.spawnTab(_("Messages") + ":RE", messagingComposeScreen);
 					if (onClose != null) {
 						onClose.execute();
 					}
@@ -189,7 +191,7 @@ public class MessageView extends WidgetInterface {
 	//				Window.alert("Forward");
 					MessagingComposeScreen messagingComposeScreen = new MessagingComposeScreen();
 					messagingComposeScreen.setParentScreen(getMessagingScreen());
-					Util.spawnTab("Compose Message", messagingComposeScreen);
+					Util.spawnTab(_("Compose Message"), messagingComposeScreen);
 					if (onClose != null) {
 						onClose.execute();
 					}
@@ -202,7 +204,7 @@ public class MessageView extends WidgetInterface {
 
 		final Image printButton = new Image(
 				"resources/images/ico.printer.32x32.png");
-		final Label printLabel = new Label("Print");
+		final Label printLabel = new Label(_("Print"));
 		VerticalPanel printVerticalPanel = new VerticalPanel();
 		printVerticalPanel.add(printButton);
 		printVerticalPanel.add(printLabel);
@@ -217,7 +219,7 @@ public class MessageView extends WidgetInterface {
 			public void onClick(ClickEvent evt) {
 				List<String> reportParams = new ArrayList<String>();
 				reportParams.add(""+msgId);
-				Util.generateReportToPrinter("Email Message", "pdf", reportParams);
+				Util.generateReportToPrinter(_("Email Message"), "pdf", reportParams);
 			}
 		});
 		horizontalPanel.add(printWrapper);

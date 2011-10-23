@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -37,11 +39,11 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 public class MultipleKeyValueEntry extends Composite {
 
@@ -361,8 +363,8 @@ public class MultipleKeyValueEntry extends Composite {
 		case SELECT_YN:
 			valueWidget = new CustomListBox();
 			((CustomListBox) valueWidget).setVisibleItemCount(1);
-			((CustomListBox) valueWidget).addItem("Yes", "1");
-			((CustomListBox) valueWidget).addItem("No", "0");
+			((CustomListBox) valueWidget).addItem(_("Yes"), "1");
+			((CustomListBox) valueWidget).addItem(_("No"), "0");
 			((CustomListBox) valueWidget).addChangeHandler(onSelect);
 			break;
 		case DATEPICKER:

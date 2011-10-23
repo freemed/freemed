@@ -86,7 +86,7 @@ public class FreemedInterface implements EntryPoint {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean r = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (r != null) {
 								if (r.booleanValue()) {

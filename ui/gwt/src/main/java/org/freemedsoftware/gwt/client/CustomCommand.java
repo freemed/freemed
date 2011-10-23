@@ -24,7 +24,6 @@
 
 package org.freemedsoftware.gwt.client;
 
-
 public interface CustomCommand {
 	public void execute(Object data);
 }

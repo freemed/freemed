@@ -24,13 +24,15 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Module.PatientTagAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.PatientTagSearchScreen;
 
@@ -103,39 +105,39 @@ public class PatientTagsWidget extends WidgetInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showInfoMsg("PatientTags", "Failed to add tags.");
+						Util.showInfoMsg("PatientTags", _("Failed to add tags."));
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean r = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (r != null) {
 								wEntry.clear();
 								addTagToDisplay(tag);
-								Util.showInfoMsg("PatientTags", "Tag added.");
+								Util.showInfoMsg("PatientTags",_( "Tag added."));
 							}
 						} else {
-							Util.showErrorMsg("PatientTags", "Failed to add tags.");
+							Util.showErrorMsg("PatientTags", _("Failed to add tags."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("PatientTags", "Failed to add tags.");
+				Util.showErrorMsg("PatientTags", _("Failed to add tags."));
 			}
 		} else {
 			getProxy().CreateTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
 					wEntry.clear();
 					addTagToDisplay(tag);
-					Util.showInfoMsg("PatientTags", "Tag added");
+					Util.showInfoMsg("PatientTags", _("Tag added."));
 				}
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
-					Util.showErrorMsg("PatientTags", "Failed to add tags.");
+					Util.showErrorMsg("PatientTags", _("Failed to add tags."));
 				}
 			});
 		}
@@ -162,10 +164,10 @@ public class PatientTagsWidget extends WidgetInterface {
 				final PopupPanel p = new PopupPanel(true);
 				final FlexTable fT = new FlexTable();
 				fT.setWidget(0, 0, new HTML("<b>" + oldTagName + "</b>"));
-				fT.setWidget(1, 0, new Label("Rename Tag"));
+				fT.setWidget(1, 0, new Label(_("Rename Tag")));
 				final TextBox newTagName = new TextBox();
 				fT.setWidget(2, 0, newTagName);
-				final CustomButton changeTagButton = new CustomButton("Change",AppConstants.ICON_MODIFY);
+				final CustomButton changeTagButton = new CustomButton(_("Change"),AppConstants.ICON_MODIFY);
 				fT.setWidget(2, 1, changeTagButton);
 				changeTagButton.addClickHandler(new ClickHandler() {
 					@Override
@@ -204,7 +206,7 @@ public class PatientTagsWidget extends WidgetInterface {
 														Boolean r = (Boolean) JsonUtil
 																.shoehornJson(
 																		JSONParser
-																				.parse(response
+																				.parseStrict(response
 																						.getText()),
 																		"Boolean");
 														if (r != null) {
@@ -246,14 +248,14 @@ public class PatientTagsWidget extends WidgetInterface {
 						}
 					}
 				});
-				final CustomButton searchButton = new CustomButton("Search",AppConstants.ICON_SEARCH);
+				final CustomButton searchButton = new CustomButton(_("Search"),AppConstants.ICON_SEARCH);
 				fT.setWidget(2, 2, searchButton);
 				searchButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent evt) {
 						PatientTagSearchScreen searchScreen = new PatientTagSearchScreen();
 						searchScreen.setTagValue(oldTagName);
-						Util.spawnTab("Tag Search", searchScreen);
+						Util.spawnTab(_("Tag Search"), searchScreen);
 						p.hide();
 					}
 				});
@@ -298,37 +300,37 @@ public class PatientTagsWidget extends WidgetInterface {
 			try {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
-						Util.showErrorMsg("PatientTags", "Failed to remove tag.");
+						Util.showErrorMsg("PatientTags", _("Failed to remove tag."));
 					}
 
 					public void onResponseReceived(Request request,
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							Boolean r = (Boolean) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"Boolean");
 							if (r != null) {
 								hp.removeFromParent();
-								Util.showInfoMsg("PatientTags", "Tag removed.");
+								Util.showInfoMsg("PatientTags", _("Tag removed."));
 							}
 						} else {
-							Util.showErrorMsg("PatientTags", "Failed to remove tag.");
+							Util.showErrorMsg("PatientTags", _("Failed to remove tag."));
 						}
 					}
 				});
 			} catch (RequestException e) {
-				Util.showErrorMsg("PatientTags", "Failed to remove tag.");
+				Util.showErrorMsg("PatientTags", _("Failed to remove tag."));
 			}
 		} else {
 			getProxy().ExpireTag(patientId, tag, new AsyncCallback<Boolean>() {
 				public void onSuccess(Boolean o) {
 					hp.removeFromParent();
-					Util.showErrorMsg("PatientTags", "Tag removed.");
+					Util.showErrorMsg("PatientTags", _("Tag removed."));
 				}
 
 				public void onFailure(Throwable t) {
 					GWT.log("Exception", t);
-					Util.showErrorMsg("PatientTags", "Failed to remove tag.");
+					Util.showErrorMsg("PatientTags", _("Failed to remove tag."));
 				}
 			});
 		}
@@ -373,7 +375,7 @@ public class PatientTagsWidget extends WidgetInterface {
 						if (200 == response.getStatusCode()) {
 							JsonUtil.debug(response.getText());
 							String[] r = (String[]) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"String[]");
 							if (r != null) {
 								for (int iter = 0; iter < r.length; iter++) {

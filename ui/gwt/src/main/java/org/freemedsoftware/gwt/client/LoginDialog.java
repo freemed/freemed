@@ -25,8 +25,10 @@
 
 package org.freemedsoftware.gwt.client;
 
-import org.freemedsoftware.gwt.client.Public.LoginAsync;
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.Toaster;
@@ -44,7 +46,6 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -55,6 +56,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
+
 
 public class LoginDialog extends DialogBox {
 
@@ -90,7 +92,7 @@ public class LoginDialog extends DialogBox {
 		absolutePanel.setStyleName("loginPanel");
 		absolutePanel.setSize("300px", "300px");
 
-		final Label userLabel = new Label("user name");
+		final Label userLabel = new Label(_("User Name"));
 		absolutePanel.add(userLabel, 25, 71);
 		userLabel.setStylePrimaryName("gwt-Label-RAlign");
 
@@ -102,7 +104,7 @@ public class LoginDialog extends DialogBox {
 		userLogin.setAccessKey('u');
 		userLogin.setTabIndex(1);
 		
-		final Label passwordLabel = new Label("password");
+		final Label passwordLabel = new Label(_("Password"));
 		absolutePanel.add(passwordLabel, 25, 100);
 		passwordLabel.setStylePrimaryName("gwt-Label-RAlign");
 
@@ -113,7 +115,7 @@ public class LoginDialog extends DialogBox {
 		loginPassword.setText("");
 		loginPassword.setTabIndex(2);
 
-		final Label facilityLabel = new Label("facility");
+		final Label facilityLabel = new Label(_("Facility"));
 		absolutePanel.add(facilityLabel, 28, 152);
 		facilityLabel.setStylePrimaryName("gwt-Label-RAlign");
 		facilityLabel.setSize("59px", "19px");
@@ -146,7 +148,7 @@ public class LoginDialog extends DialogBox {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							String[][] r = (String[][]) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"String[][]");
 							if (r != null) {
 								for (int iter = 0; iter < r.length; iter++) {
@@ -176,7 +178,7 @@ public class LoginDialog extends DialogBox {
 			});
 		}
 
-		final Label languageLabel = new Label("language");
+		final Label languageLabel = new Label(_("Language"));
 		absolutePanel.add(languageLabel, 28, 183);
 		languageLabel.setStylePrimaryName("gwt-Label-RAlign");
 		languageLabel.setSize("59px", "19px");
@@ -207,7 +209,7 @@ public class LoginDialog extends DialogBox {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							String[][] r = (String[][]) JsonUtil.shoehornJson(
-									JSONParser.parse(response.getText()),
+									JSONParser.parseStrict(response.getText()),
 									"String[][]");
 							if (r != null) {
 								for (int iter = 0; iter < r.length; iter++) {
@@ -317,11 +319,11 @@ public class LoginDialog extends DialogBox {
 								loginButton.setEnabled(true);
 								String msg = "";
 								if(data.toString().equalsIgnoreCase(AppConstants.INVALID_USER))
-									msg = "The user name or password is incorrect. Please try again.";
+									msg = _("The user name or password is incorrect. Please try again.");
 								else if(data.toString().equalsIgnoreCase(AppConstants.NOT_IN_FACILITY))
-									msg = "You can't login using facility '"+facilityList.getItemText(facilityList.getSelectedIndex())+"'.";
+									msg = _("You can't login using facility '%s'.").replace("%s", facilityList.getItemText(facilityList.getSelectedIndex()));
 								else if(data.toString().equalsIgnoreCase(AppConstants.INVALID_RESPONSE))
-									msg = "Unable to connect server.";
+									msg = _("Unable to connect to server.");
 								if(CurrentState.getToaster()==null){
 									Toaster toaster = new Toaster();
 									CurrentState.assignToaster(toaster);

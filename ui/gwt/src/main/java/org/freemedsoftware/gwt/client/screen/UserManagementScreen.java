@@ -194,8 +194,8 @@ public class UserManagementScreen extends ScreenInterface implements
 			tbPasswordverify.setWidth("20em");
 			horizontalPanel.add(tbPasswordverify);
 			
-			final String changePassString = "<a href='javascript:undefined'>" + _("change password") + "</a>";
-			final String donotChangePassString = "<a href='javascript:undefined'>" + _("don't change password") + "</a>";
+			final String changePassString = "<a href='javascript:undefined'>" + _("Change Password") + "</a>";
+			final String donotChangePassString = "<a href='javascript:undefined'>" + _("Don't Change Password") + "</a>";
 			changePasswordLink = new HTML(changePassString);
 			changePasswordLink.setVisible(false);
 			changePasswordLink.addClickHandler(new ClickHandler() {

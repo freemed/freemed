@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
 
@@ -75,11 +77,11 @@ public class MugshotWebcamWidget extends Composite {
 		mugshotSwfWidget.addFlashVar("js_callback", "mugshotTake");
 		mugshotSwfWidget.addParam("allowScriptAccess", "sameDomain");
 		mugshotSwfWidget.addParam("quality", "high");
-		mugshotSwfWidget.setTitle("Upload a patient image using a webcam.");
+		mugshotSwfWidget.setTitle(_("Upload a patient image using a webcam."));
 		p.add(mugshotSwfWidget);
 		HTML previewPane = new HTML("<div class=\"messages status\" "
 				+ " id=\"mugshot_status\" " + " style=\"display:none;\">"
-				+ "This image will be uploaded." + "</div>"
+				+ _("This image will be uploaded.") + "</div>"
 				+ "<div id=\"mugshot_preview\" " + " style=\"display: none;\">"
 				+ "<ul class=\"mugshot\">" + "<li class=\"mugshot\">"
 				+ "<img src=\"\" id=\"mugshot_preview_img\" />"
@@ -119,7 +121,7 @@ public class MugshotWebcamWidget extends Composite {
 			// DOM.getElementById("mugshot_url").val(mturl);
 			// DOM.getElementById("mugshot_mid").val(mid);
 		}
-		Util.showInfoMsg("MugshotWebcamWidget", "Uploaded image.");
+		Util.showInfoMsg("MugshotWebcamWidget", _("Uploaded image."));
 		if (getOnFinishedCommand() != null) {
 			getOnFinishedCommand().execute();
 		}

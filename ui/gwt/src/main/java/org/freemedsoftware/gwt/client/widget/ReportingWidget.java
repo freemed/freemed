@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,8 +34,8 @@ import java.util.List;
 import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Module.ReportingAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.screen.ReportingScreen;
 import org.freemedsoftware.gwt.client.widget.CustomTable.TableRowClickHandler;
@@ -115,8 +117,8 @@ public class ReportingWidget extends Composite {
 		reportTable.setAllowSelection(false);
 		reportTable.setSize("100%", "100%");
 		reportTable.setIndexName("report_uuid");
-		reportTable.addColumn("Name", "report_name");
-		reportTable.addColumn("Description", "report_desc");
+		reportTable.addColumn(_("Name"), "report_name");
+		reportTable.addColumn(_("Description"), "report_desc");
 		reportTable.setTableRowClickHandler(new TableRowClickHandler() {
 			@Override
 			public void handleRowClick(HashMap<String, String> data, int col) {
@@ -242,7 +244,7 @@ public class ReportingWidget extends Composite {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {
@@ -443,7 +445,7 @@ public class ReportingWidget extends Composite {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String> result = (HashMap<String, String>) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>");
 							if (result != null) {

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -496,7 +498,7 @@ public class PatientCoverages extends Composite {
 		verticalPanel.add(hP);
 
 		if (CurrentState.isActionAllowed(ModuleName, AppConstants.WRITE)) {
-			addCoveragesButton = new CustomButton("Add Coverage",
+			addCoveragesButton = new CustomButton(_("Add Coverage"),
 					AppConstants.ICON_ADD);
 			addCoveragesButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent evt) {
@@ -572,23 +574,23 @@ public class PatientCoverages extends Composite {
 		flexTable.removeTableStyle();
 		coveragesPanel.add(flexTable);
 
-		final Label insuranceCompanyLabel = new Label("Insurance Company:");
+		final Label insuranceCompanyLabel = new Label(_("Insurance Company") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, insuranceCompanyLabel);
 		final SupportModuleWidget insuranceCompany = new SupportModuleWidget(
 				"InsuranceCompanyModule");
 		flexTable.getFlexTable().setWidget(row, 1, insuranceCompany);
 
 		final Label coverageInsuranceTypeLabel = new Label(
-				"Coverage Insurance Type:");
+				_("Coverage Insurance Type") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, coverageInsuranceTypeLabel);
 		final SupportModuleWidget coverageInsuranceType = new SupportModuleWidget(
 				"CoverageTypes");
 		flexTable.getFlexTable().setWidget(row, 3, coverageInsuranceType);
 
 		if (CurrentState.isActionAllowed(ModuleName, AppConstants.DELETE)) {
-			final Label deleCoverageLabel = new Label("Delete This Coverage:");
+			final Label deleCoverageLabel = new Label(_("Delete This Coverage") + ":");
 			flexTable.getFlexTable().setWidget(row, 4, deleCoverageLabel);
-			CustomButton deleCoverageButton = new CustomButton("Delete",
+			CustomButton deleCoverageButton = new CustomButton(_("Delete"),
 					AppConstants.ICON_DELETE);
 			deleCoverageButton.setWidth("100%");
 			deleCoverageButton.addClickHandler(new ClickHandler() {
@@ -606,26 +608,26 @@ public class PatientCoverages extends Composite {
 		row++;
 
 		final Label providerAcceptsAssigmentLabel = new Label(
-				"Provider Accepts Assigment:");
+				_("Provider Accepts Assigment") + ":");
 		flexTable.getFlexTable().setWidget(row, 0,
 				providerAcceptsAssigmentLabel);
 		final CustomRadioButtonGroup providerAcceptsAssigment = new CustomRadioButtonGroup(
 				"providerAcceptsAssigment" + pos);
-		providerAcceptsAssigment.addItem("Yes", "1");
-		providerAcceptsAssigment.addItem("No", "0");
+		providerAcceptsAssigment.addItem(_("Yes"), "1");
+		providerAcceptsAssigment.addItem(_("No"), "0");
 		flexTable.getFlexTable().setWidget(row, 1, providerAcceptsAssigment);
 
 		final Label assigmentOfBenefitsLabel = new Label(
-				"Assigment Of Benefits:");
+				_("Assigment Of Benefits") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, assigmentOfBenefitsLabel);
 		final CustomRadioButtonGroup assigmentOfBenefits = new CustomRadioButtonGroup(
 				"assigmentOfBenefits" + pos);
-		assigmentOfBenefits.addItem("Yes", "1");
-		assigmentOfBenefits.addItem("No", "0");
+		assigmentOfBenefits.addItem(_("Yes"), "1");
+		assigmentOfBenefits.addItem(_("No"), "0");
 		flexTable.getFlexTable().setWidget(row, 3, assigmentOfBenefits);
 
 		final Label releaseOfInformationLabel = new Label(
-				"Release Of Information:");
+				_("Release Of Information") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, releaseOfInformationLabel);
 		final CustomRadioButtonGroup releaseOfInformation = new CustomRadioButtonGroup(
 				"releaseOfInformation" + pos);
@@ -635,127 +637,127 @@ public class PatientCoverages extends Composite {
 
 		row++;
 
-		final Label releaseDateSignedLabel = new Label("Release Date Signed:");
+		final Label releaseDateSignedLabel = new Label(_("Release Date Signed") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, releaseDateSignedLabel);
 		final CustomDatePicker releaseDateSigned = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 1, releaseDateSigned);
 
-		final Label groupPlanNameLabel = new Label("Group - Plan Name:");
+		final Label groupPlanNameLabel = new Label(_("Group - Plan Name") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, groupPlanNameLabel);
 		final TextBox groupPlanName = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, groupPlanName);
 
-		final Label startDateLabel = new Label("Start Date:");
+		final Label startDateLabel = new Label(_("Start Date") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, startDateLabel);
 		final CustomDatePicker startDate = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 5, startDate);
 
 		row++;
 
-		final Label insuranceIDNumberLabel = new Label("Insurance ID Number:");
+		final Label insuranceIDNumberLabel = new Label(_("Insurance ID Number") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, insuranceIDNumberLabel);
 		final TextBox insuranceIDNumber = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, insuranceIDNumber);
 
 		final Label insuranceGroupNumberLabel = new Label(
-				"Insurance Group Number:");
+				_("Insurance Group Number") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, insuranceGroupNumberLabel);
 		final TextBox insuranceGroupNumber = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, insuranceGroupNumber);
 
-		final Label insuranceTypeLabel = new Label("Insurance Type:");
+		final Label insuranceTypeLabel = new Label(_("Insurance Type") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, insuranceTypeLabel);
 		final CustomRadioButtonGroup insuranceType = new CustomRadioButtonGroup(
 				"insuranceType" + pos);
-		insuranceType.addItem("Primary", "1");
-		insuranceType.addItem("Secondary", "2");
-		insuranceType.addItem("Tertiary", "3");
-		insuranceType.addItem("Work Comp", "4");
+		insuranceType.addItem(_("Primary"), "1");
+		insuranceType.addItem(_("Secondary"), "2");
+		insuranceType.addItem(_("Tertiary"), "3");
+		insuranceType.addItem(_("Work Comp"), "4");
 		flexTable.getFlexTable().setWidget(row, 5, insuranceType);
 
 		row++;
 
 		final Label relationshipToInsuredLabel = new Label(
-				"Relationship to Insured:");
+				_("Relationship to Insured") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, relationshipToInsuredLabel);
 		final CustomListBox relationshipToInsured = new CustomListBox();
-		relationshipToInsured.addItem("Self", "S");
-		relationshipToInsured.addItem("Child", "C");
-		relationshipToInsured.addItem("Husband", "H");
-		relationshipToInsured.addItem("Wife", "W");
-		relationshipToInsured.addItem("Child Not Fin", "D");
-		relationshipToInsured.addItem("Step Child", "SC");
-		relationshipToInsured.addItem("Foster Child", "FC");
-		relationshipToInsured.addItem("Ward of Court", "WC");
-		relationshipToInsured.addItem("HC Dependent", "HD");
-		relationshipToInsured.addItem("Sponsored Dependent", "SD");
-		relationshipToInsured.addItem("Medicare Legal Rep", "LR");
-		relationshipToInsured.addItem("Other", "O");
+		relationshipToInsured.addItem(_("Self"), "S");
+		relationshipToInsured.addItem(_("Child"), "C");
+		relationshipToInsured.addItem(_("Husband"), "H");
+		relationshipToInsured.addItem(_("Wife"), "W");
+		relationshipToInsured.addItem(_("Child Not Fin"), "D");
+		relationshipToInsured.addItem(_("Step Child"), "SC");
+		relationshipToInsured.addItem(_("Foster Child"), "FC");
+		relationshipToInsured.addItem(_("Ward of Court"), "WC");
+		relationshipToInsured.addItem(_("HC Dependent"), "HD");
+		relationshipToInsured.addItem(_("Sponsored Dependent"), "SD");
+		relationshipToInsured.addItem(_("Medicare Legal Rep"), "LR");
+		relationshipToInsured.addItem(_("Other"), "O");
 		flexTable.getFlexTable().setWidget(row, 1, relationshipToInsured);
 
 		final int insStartRow = row, insStartCol = 2;
 
-		final Label insuredFirstNameLabel = new Label("Insured First Name:");
+		final Label insuredFirstNameLabel = new Label(_("Insured First Name") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, insuredFirstNameLabel);
 		final TextBox insuredFirstName = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, insuredFirstName);
 
-		final Label insuredLastNameLabel = new Label("Insured Last Name:");
+		final Label insuredLastNameLabel = new Label(_("Insured Last Name") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, insuredLastNameLabel);
 		final TextBox insuredLastName = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 5, insuredLastName);
 
 		row++;
 
-		final Label insuredMiddleNameLabel = new Label("Insured Middle Name:");
+		final Label insuredMiddleNameLabel = new Label(_("Insured Middle Name") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, insuredMiddleNameLabel);
 		final TextBox insuredMiddleName = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, insuredMiddleName);
 
-		final Label insuredDOBLabel = new Label("Insured DOB:");
+		final Label insuredDOBLabel = new Label(_("Insured DOB") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, insuredDOBLabel);
 		final CustomDatePicker insuredDOB = new CustomDatePicker();
 		flexTable.getFlexTable().setWidget(row, 3, insuredDOB);
 
-		final Label insuredSexLabel = new Label("Insured Sex:");
+		final Label insuredSexLabel = new Label(_("Insured Gender") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, insuredSexLabel);
 		final CustomRadioButtonGroup insuredSex = new CustomRadioButtonGroup(
 				"insuredSex" + pos);
-		insuredSex.addItem("Male", "m");
-		insuredSex.addItem("Female", "f");
-		insuredSex.addItem("Transgendered", "t");
+		insuredSex.addItem(_("Male"), "m");
+		insuredSex.addItem(_("Female"), "f");
+		insuredSex.addItem(_("Transgendered"), "t");
 		flexTable.getFlexTable().setWidget(row, 5, insuredSex);
 
 		row++;
 
-		final Label insuredSSNLabel = new Label("Insured SSN:");
+		final Label insuredSSNLabel = new Label(_("Insured SSN") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, insuredSSNLabel);
 		final TextBox insuredSSN = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, insuredSSN);
 
-		final Label insuredAddress1Label = new Label("Insured Address1:");
+		final Label insuredAddress1Label = new Label(_("Insured Address Line 1") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, insuredAddress1Label);
 		final TextBox insuredAddress1 = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, insuredAddress1);
 
-		final Label insuredAddress2Label = new Label("Insured Address2:");
+		final Label insuredAddress2Label = new Label(_("Insured Address Line 2") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, insuredAddress2Label);
 		final TextBox insuredAddress2 = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 5, insuredAddress2);
 
 		row++;
 
-		final Label insuredCityLabel = new Label("Insured City:");
+		final Label insuredCityLabel = new Label(_("Insured City") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, insuredCityLabel);
 		final TextBox insuredCity = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, insuredCity);
 
-		final Label insuredStateLabel = new Label("Insured State:");
+		final Label insuredStateLabel = new Label(_("Insured State") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, insuredStateLabel);
 		final TextBox insuredState = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, insuredState);
 
-		final Label insuredZipLabel = new Label("Insured Zip:");
+		final Label insuredZipLabel = new Label(_("Insured Zip") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, insuredZipLabel);
 		final TextBox insuredZip = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 5, insuredZip);
@@ -764,42 +766,42 @@ public class PatientCoverages extends Composite {
 
 		row++;
 
-		final Label copayLabel = new Label("Copay:");
+		final Label copayLabel = new Label(_("Copay") + ":");
 		flexTable.getFlexTable().setWidget(row, 0, copayLabel);
 		final TextBox copay = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 1, copay);
 
-		final Label deductableLabel = new Label("Deductable:");
+		final Label deductableLabel = new Label(_("Deductable") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, deductableLabel);
 		final TextBox deductable = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, deductable);
 
 		final Label replaceLikeCoverageLabel = new Label(
-				"Replace Like Coverage:");
+				_("Replace Like Coverage") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, replaceLikeCoverageLabel);
 		final CustomRadioButtonGroup replaceLikeCoverage = new CustomRadioButtonGroup(
 				"replaceLikeCoverage" + pos);
-		replaceLikeCoverage.addItem("Yes", "1");
-		replaceLikeCoverage.addItem("No", "0");
+		replaceLikeCoverage.addItem(_("Yes"), "1");
+		replaceLikeCoverage.addItem(_("No"), "0");
 		flexTable.getFlexTable().setWidget(row, 5, replaceLikeCoverage);
 
 		row++;
 
-		final Label isAssigningLabel = new Label("Is Assigning?");
+		final Label isAssigningLabel = new Label(_("Is Assigning?"));
 		flexTable.getFlexTable().setWidget(row, 0, isAssigningLabel);
 		final CustomRadioButtonGroup isAssigning = new CustomRadioButtonGroup(
 				"isAssigning" + pos);
-		isAssigning.addItem("Yes", "1");
-		isAssigning.addItem("No", "0");
+		isAssigning.addItem(_("Yes"), "1");
+		isAssigning.addItem(_("No"), "0");
 		flexTable.getFlexTable().setWidget(row, 1, isAssigning);
 
 		final Label schoolNameForInsuredLabel = new Label(
-				"School Name for Insured:");
+				_("School Name for Insured") + ":");
 		flexTable.getFlexTable().setWidget(row, 2, schoolNameForInsuredLabel);
 		final TextBox schoolNameForInsured = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 3, schoolNameForInsured);
 
-		final Label employerOfInsuredLabel = new Label("Employer of Insured:");
+		final Label employerOfInsuredLabel = new Label(_("Employer of Insured") + ":");
 		flexTable.getFlexTable().setWidget(row, 4, employerOfInsuredLabel);
 		final TextBox employerOfInsured = new TextBox();
 		flexTable.getFlexTable().setWidget(row, 5, employerOfInsured);
@@ -996,7 +998,7 @@ public class PatientCoverages extends Composite {
 								Throwable ex) {
 							GWT.log("Exception", ex);
 							Util.showErrorMsg("PatientCoverages",
-									"Failed to update patient Coverages.");
+									_("Failed to update patient coverages."));
 						}
 
 						public void onResponseReceived(
@@ -1004,11 +1006,11 @@ public class PatientCoverages extends Composite {
 								com.google.gwt.http.client.Response response) {
 							if (200 == response.getStatusCode()) {
 								Boolean result = (Boolean) JsonUtil
-										.shoehornJson(JSONParser.parse(response
+										.shoehornJson(JSONParser.parseStrict(response
 												.getText()), "Boolean");
 								if (result != null) {
 									Util.showInfoMsg("PatientCoverages",
-											"Updated patient Coverages.");
+											_("Updated patient coverages."));
 									if (onCompletion != null) {
 										onCompletion.execute();
 									}
@@ -1021,7 +1023,7 @@ public class PatientCoverages extends Composite {
 				} catch (RequestException e) {
 					GWT.log("Exception", e);
 					Util.showErrorMsg("PatientCoverages",
-							"Failed to update patient Coverages.");
+							_("Failed to update patient coverages."));
 				}
 			}
 		}
@@ -1063,7 +1065,7 @@ public class PatientCoverages extends Composite {
 							com.google.gwt.http.client.Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (result != null) {
@@ -1124,43 +1126,43 @@ public class PatientCoverages extends Composite {
 
 	public static String returnRelationshipToInsured(String id) {
 		if (id.equalsIgnoreCase("C")) {
-			return "Child";
+			return _("Child");
 		}
 
 		else if (id.equalsIgnoreCase("H")) {
-			return "Husband";
+			return _("Husband");
 		}
 
 		else if (id.equalsIgnoreCase("s")) {
-			return "Self";
+			return _("Self");
 		} else if (id.equalsIgnoreCase("W")) {
-			return "Wife";
+			return _("Wife");
 		}
 
 		else if (id.equalsIgnoreCase("D")) {
-			return "Child Not Fin";
+			return _("Child Not Fin");
 		}
 
 		else if (id.equalsIgnoreCase("SC")) {
-			return "Step Child";
+			return _("Step Child");
 		} else if (id.equalsIgnoreCase("FC")) {
-			return "Foster Child";
+			return _("Foster Child");
 		} else if (id.equalsIgnoreCase("WC")) {
-			return "Ward of Court";
+			return _("Ward of Court");
 		} else if (id.equalsIgnoreCase("HD")) {
-			return "HC Dependent";
+			return _("HC Dependent");
 		}
 
 		else if (id.equalsIgnoreCase("SD")) {
-			return "Sponsored Dependent";
+			return _("Sponsored Dependent");
 		}
 
 		else if (id.equalsIgnoreCase("LR")) {
-			return "Medicare Legal Rep";
+			return _("Medicare Legal Rep");
 		}
 
 		else
-			return "other";
+			return _("Other");
 
 	}
 

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,9 +81,9 @@ public class PostCheckWidget extends Composite {
 		// Label payerLb = new Label("Payer");
 		// payerWidget = new CustomModuleWidget(
 		// "api.ClaimLog.RebillDistinctPayers");
-		Label checkNumberLb = new Label("Check Number");
+		Label checkNumberLb = new Label(_("Check Number"));
 		tbCheckNo = new TextBox();
-		Label totalAmountLb = new Label("Total Amount");
+		Label totalAmountLb = new Label(_("Total Amount"));
 		tbTotalAmount = new TextBox();
 
 		// postCheckInfoFlexTable.setWidget(0, 0, payerLb);
@@ -95,17 +97,17 @@ public class PostCheckWidget extends Composite {
 		proceduresInfoTable.setAllowSelection(false);
 		proceduresInfoTable.setSize("100%", "100%");
 		proceduresInfoTable.setIndexName("id");
-		proceduresInfoTable.addColumn("Patient", "pt_name");
-		proceduresInfoTable.addColumn("Claim", "clm");
-		proceduresInfoTable.addColumn("CPT", "cpt");
-		proceduresInfoTable.addColumn("Service Date", "ser_date");
-		proceduresInfoTable.addColumn("Paid", "paid");
-		proceduresInfoTable.addColumn("Amount Billed", "amnt_bill");
-		proceduresInfoTable.addColumn("Amount Allowed", "balance");
-		proceduresInfoTable.addColumn("Adustment Balance", "adj_bal");
-		proceduresInfoTable.addColumn("Payment", "pay");
-		proceduresInfoTable.addColumn("Copay", "copay");
-		proceduresInfoTable.addColumn("Left Over", "left");
+		proceduresInfoTable.addColumn(_("Patient"), "pt_name");
+		proceduresInfoTable.addColumn(_("Claim"), "clm");
+		proceduresInfoTable.addColumn(_("CPT"), "cpt");
+		proceduresInfoTable.addColumn(_("Service Date"), "ser_date");
+		proceduresInfoTable.addColumn(_("Paid"), "paid");
+		proceduresInfoTable.addColumn(_("Amount Billed"), "amnt_bill");
+		proceduresInfoTable.addColumn(_("Amount Allowed"), "balance");
+		proceduresInfoTable.addColumn(_("Adustment Balance"), "adj_bal");
+		proceduresInfoTable.addColumn(_("Payment"), "pay");
+		proceduresInfoTable.addColumn(_("Copay"), "copay");
+		proceduresInfoTable.addColumn(_("Left Over"), "left");
 		proceduresInfoTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
 
@@ -330,7 +332,7 @@ public class PostCheckWidget extends Composite {
 		actionPanel.setSpacing(5);
 		// actionPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
-		CustomButton postBtn = new CustomButton("Post", AppConstants.ICON_ADD);
+		CustomButton postBtn = new CustomButton(_("Post"), AppConstants.ICON_ADD);
 		postBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -338,7 +340,7 @@ public class PostCheckWidget extends Composite {
 			}
 
 		});
-		CustomButton cancelBtn = new CustomButton("Cancel",
+		CustomButton cancelBtn = new CustomButton(_("Cancel"),
 				AppConstants.ICON_CANCEL);
 		final PostCheckWidget pcw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
@@ -387,7 +389,7 @@ public class PostCheckWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length > 0) {
@@ -466,7 +468,7 @@ public class PostCheckWidget extends Composite {
 		}
 		if (amount != totalAmount) {
 			Window
-					.alert("The entered total amount is not equal to the amounts entered in individuall claims");
+					.alert(_("The total amount entered is not equal to the amounts entered in individual claims"));
 		} else {
 			postCheck(procsMaps);
 		}

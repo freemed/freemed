@@ -25,6 +25,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import org.freemedsoftware.gwt.client.WidgetInterface;
 
 import com.google.gwt.dom.client.Style.Position;
@@ -78,7 +80,7 @@ public class Popup extends PopupPanel {
 		scrollPanel.add(mWidget);
 		verticalPanel.add(scrollPanel);
 		verticalPanel.add(new HTML("<small>("
-				+ "Click outside this popup to close it." + ")</small>"));
+				+ _("Click outside this popup to close it.") + ")</small>"));
 		sPanelInner.add(verticalPanel);
 		verticalPanel.setWidth("100%");
 		verticalPanel.setHeight("100%");
@@ -94,7 +96,7 @@ public class Popup extends PopupPanel {
 		scrollPanel.remove(mWidget);
 		verticalPanel.remove(scrollPanel);
 		verticalPanel.remove(new HTML("<br/><br/><small>("
-				+ "Click outside this popup to close it." + ")</small>"));
+				+ _("Click outside this popup to close it.") + ")</small>"));
 		sPanelInner.remove(verticalPanel);
 		//setWidget(sPanelOuter);
 		

@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
@@ -114,7 +116,7 @@ public class SystemNotifications {
 				builder.sendRequest(null, new RequestCallback() {
 					public void onError(Request request, Throwable ex) {
 						Util.showErrorMsg("SystemNotifications",
-								"Failed to get system notifications.");
+								_("Failed to get system notifications."));
 					}
 
 					@SuppressWarnings("unchecked")
@@ -170,7 +172,7 @@ public class SystemNotifications {
 							}
 						} else {
 							Util.showErrorMsg("SystemNotifications",
-									"Failed to get system notifications.");
+									_("Failed to get system notifications."));
 						}
 
 						// Release mutex
@@ -179,7 +181,7 @@ public class SystemNotifications {
 				});
 			} catch (RequestException e) {
 				Util.showErrorMsg("SystemNotifications",
-						"Failed to get system notifications.");
+						_("Failed to get system notifications."));
 			}
 		} else {
 			// GWT-RPC

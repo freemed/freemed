@@ -24,15 +24,17 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
+import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.WidgetInterface;
 import org.freemedsoftware.gwt.client.Module.MedicationsAsync;
-import org.freemedsoftware.gwt.client.Util.ProgramMode;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
@@ -54,11 +56,11 @@ public class RecentMedicationsList extends WidgetInterface {
 		medicationsTable = new CustomTable();
 		medicationsTable.setWidth("100%");
 		initWidget(medicationsTable);
-		medicationsTable.addColumn("Drug", "mdrug");
-		medicationsTable.addColumn("Dosage", "mdosage");
-		medicationsTable.addColumn("Route", "mroute");
-		medicationsTable.addColumn("Interval", "minterval");
-		medicationsTable.addColumn("Prescriber", "prescriber");
+		medicationsTable.addColumn(_("Drug"), "mdrug");
+		medicationsTable.addColumn(_("Dosage"), "mdosage");
+		medicationsTable.addColumn(_("Route"), "mroute");
+		medicationsTable.addColumn(_("Interval"), "minterval");
+		medicationsTable.addColumn(_("Prescriber"), "prescriber");
 	}
 
 	public void setPatientId(Integer id) {
@@ -118,7 +120,7 @@ public class RecentMedicationsList extends WidgetInterface {
 							Response response) {
 						if (200 == response.getStatusCode()) {
 							HashMap<String, String>[] r = (HashMap<String, String>[]) JsonUtil
-									.shoehornJson(JSONParser.parse(response
+									.shoehornJson(JSONParser.parseStrict(response
 											.getText()),
 											"HashMap<String,String>[]");
 							if (r != null) {

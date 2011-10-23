@@ -25,6 +25,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -46,7 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleUIBuilder extends WidgetInterface {
 
-	protected static String helpprefix = "Help for";
+	protected static String helpprefix = _("Help for");
 
 	public enum WidgetType {
 		MODULE, MODULE_MULTIPLE, USER_MULTIPLE, TEXT, SELECT, PATIENT, COLOR, DELIMITER, DRUG, MULTILIST, SINGLELIST, DATE, CHECKBOX
@@ -94,7 +96,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 		final HorizontalPanel horizontalPanel = new HorizontalPanel();
 		verticalPanel.add(horizontalPanel);
 
-		CustomButton commitChangesButton = new CustomButton("Commit Changes",
+		CustomButton commitChangesButton = new CustomButton(_("Commit Changes"),
 				AppConstants.ICON_ADD);
 		horizontalPanel.add(commitChangesButton);
 		commitChangesButton.addClickHandler(new ClickHandler() {

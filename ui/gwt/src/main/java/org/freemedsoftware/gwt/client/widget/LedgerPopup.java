@@ -24,6 +24,8 @@
 
 package org.freemedsoftware.gwt.client.widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 import java.util.HashMap;
 
 import org.freemedsoftware.gwt.client.CustomRequestCallback;
@@ -51,19 +53,19 @@ public class LedgerPopup extends DialogBox {
 
 	protected CustomListBox actionList = null;
 
-	public static String REBILL = "Rebill";
-	public static String PAYMENT = "Payment";
-	public static String COPAY = "Copay";
-	public static String ADJUSTMENT = "Adjustment";
-	public static String DEDUCTABLE = "Deductable";
-	public static String WITH_HOLD = "Withhold";
-	public static String TRANSFER = "Transfer";
-	public static String ALLOWED_AMOUNT = "Allowed Amount";
-	public static String DENIAL = "Denial";
-	public static String WRITE_OFF = "Writeoff";
-	public static String REFUND = "Refund";
-	public static String MISTAKE = "Mistake";
-	public static String LEDGER = "Ledger";
+	public static String REBILL = _("Rebill");
+	public static String PAYMENT = _("Payment");
+	public static String COPAY = _("Copay");
+	public static String ADJUSTMENT = _("Adjustment");
+	public static String DEDUCTABLE = _("Deductable");
+	public static String WITH_HOLD = _("Withhold");
+	public static String TRANSFER = _("Transfer");
+	public static String ALLOWED_AMOUNT = _("Allowed Amount");
+	public static String DENIAL = _("Denial");
+	public static String WRITE_OFF = _("Writeoff");
+	public static String REFUND = _("Refund");
+	public static String MISTAKE = _("Mistake");
+	public static String LEDGER = _("Ledger");
 
 	@SuppressWarnings("unused")
 	private LedgerPopup() {
@@ -104,9 +106,9 @@ public class LedgerPopup extends DialogBox {
 		// ///View details
 		final HorizontalPanel viewDetailHPanel = new HorizontalPanel();
 		defaultVPanel.add(viewDetailHPanel);
-		final Label procedureLabel = new Label("Procedure");
+		final Label procedureLabel = new Label(_("Procedure"));
 		viewDetailHPanel.add(procedureLabel);
-		CustomButton showDetails = new CustomButton("View Details",
+		CustomButton showDetails = new CustomButton(_("View Details"),
 				AppConstants.ICON_VIEW);
 		viewDetailHPanel.add(showDetails);
 
@@ -120,12 +122,12 @@ public class LedgerPopup extends DialogBox {
 				viewDetailsTable.removeTableStyle();
 				viewDetailsVPanel.add(viewDetailsTable);
 				viewDetailsTable.setWidth("100%");
-				viewDetailsTable.addColumn("Date", "date");
-				viewDetailsTable.addColumn("Type", "type");
-				viewDetailsTable.addColumn("Description", "desc");
-				viewDetailsTable.addColumn("Charges", "charge");
-				viewDetailsTable.addColumn("Payments", "payment");
-				viewDetailsTable.addColumn("Balance", "");
+				viewDetailsTable.addColumn(_("Date"), "date");
+				viewDetailsTable.addColumn(_("Type"), "type");
+				viewDetailsTable.addColumn(_("Description"), "desc");
+				viewDetailsTable.addColumn(_("Charges"), "charge");
+				viewDetailsTable.addColumn(_("Payments"), "payment");
+				viewDetailsTable.addColumn(_("Balance"), "");
 				Util.callApiMethod("Ledger", "getLedgerInfo", new Integer(
 						procedureId), new CustomRequestCallback() {
 					@Override
@@ -149,7 +151,7 @@ public class LedgerPopup extends DialogBox {
 						FlexTable totalDetailsTable = viewDetailsTable
 								.getFlexTable();
 						int row = totalDetailsTable.getRowCount();
-						totalDetailsTable.setHTML(row, 0, "Total");
+						totalDetailsTable.setHTML(row, 0, _("Total"));
 						totalDetailsTable.setHTML(row, 3, totalCharges + "");
 						totalDetailsTable.setHTML(row, 4, totalPayments + "");
 						totalDetailsTable.setHTML(row, 5,
@@ -158,7 +160,7 @@ public class LedgerPopup extends DialogBox {
 								AppConstants.STYLE_TABLE_HEADER);
 					}
 				}, "HashMap<String,String>[]");
-				final CustomButton backBtn = new CustomButton("Back",
+				final CustomButton backBtn = new CustomButton(_("Back"),
 						AppConstants.ICON_PREV);
 				contentVPanel.add(backBtn);
 				backBtn.addClickHandler(new ClickHandler() {
@@ -177,22 +179,22 @@ public class LedgerPopup extends DialogBox {
 		procedureTable.removeTableStyle();
 		defaultVPanel.add(procedureTable);
 		procedureTable.setMaximumRows(4);
-		procedureTable.addColumn("Procedure Date", "proc_date");
-		procedureTable.addColumn("Procedure Code", "proc_code");
-		procedureTable.addColumn("Provider", "prov_name");
-		procedureTable.addColumn("Charged", "proc_obal");
-		procedureTable.addColumn("Charges", "proc_charges");
-		procedureTable.addColumn("Paid", "proc_paid");
-		procedureTable.addColumn("Balance", "proc_currbal");
-		procedureTable.addColumn("Billed", "proc_billed");
+		procedureTable.addColumn(_("Procedure Date"), "proc_date");
+		procedureTable.addColumn(_("Procedure Code"), "proc_code");
+		procedureTable.addColumn(_("Provider"), "prov_name");
+		procedureTable.addColumn(_("Charged"), "proc_obal");
+		procedureTable.addColumn(_("Charges"), "proc_charges");
+		procedureTable.addColumn(_("Paid"), "proc_paid");
+		procedureTable.addColumn(_("Balance"), "proc_currbal");
+		procedureTable.addColumn(_("Billed"), "proc_billed");
 		procedureTable.setIndexName("Id");
 
 		// //////////action area
 		final HorizontalPanel actionHPanel = new HorizontalPanel();
-		final Label actionLabel = new Label("Action");
+		final Label actionLabel = new Label(_("Action"));
 		actionHPanel.add(actionLabel);
 		actionList = new CustomListBox();
-		actionList.addItem("NONE SELECTED");
+		actionList.addItem(_("NONE SELECTED"));
 		actionList.addItem(REBILL);
 		actionList.addItem(PAYMENT);
 		actionList.addItem(COPAY);
@@ -207,7 +209,7 @@ public class LedgerPopup extends DialogBox {
 		actionList.addItem(MISTAKE);
 		actionList.addItem(LEDGER);
 		actionHPanel.add(actionList);
-		final CustomButton proceedButton = new CustomButton("Proceed",
+		final CustomButton proceedButton = new CustomButton(_("Proceed"),
 				AppConstants.ICON_NEXT);
 		actionHPanel.add(proceedButton);
 		proceedButton.addClickHandler(new ClickHandler() {
@@ -289,7 +291,7 @@ public class LedgerPopup extends DialogBox {
 						}
 					}
 				} else {
-					Window.alert("Please select the action type");
+					Window.alert(_("Please select the action type."));
 				}
 			}
 		});

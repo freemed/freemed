@@ -35,8 +35,8 @@ import org.freemedsoftware.gwt.client.CustomRequestCallback;
 import org.freemedsoftware.gwt.client.HashSetter;
 import org.freemedsoftware.gwt.client.JsonUtil;
 import org.freemedsoftware.gwt.client.Util;
-import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
+import org.freemedsoftware.gwt.client.Api.ModuleInterfaceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;

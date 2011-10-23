@@ -55,6 +55,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
+
 public class RemittBillingWidget extends Composite {
 	public enum BillingType {
 		BILL, REBILL
@@ -105,10 +107,10 @@ public class RemittBillingWidget extends Composite {
 		claimsTable.setAllowSelection(false);
 		claimsTable.setSize("100%", "100%");
 		claimsTable.setIndexName("id");
-		claimsTable.addColumn("Patient", "pt_name");
-		claimsTable.addColumn("Service Date", "ser_date");
-		claimsTable.addColumn("Media Format", "format");
-		claimsTable.addColumn("Coverage", "coverage");
+		claimsTable.addColumn(_("Patient"), "pt_name");
+		claimsTable.addColumn(_("Service Date"), "ser_date");
+		claimsTable.addColumn(_("Media Format"), "format");
+		claimsTable.addColumn(_("Coverage"), "coverage");
 
 		claimsTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -167,7 +169,7 @@ public class RemittBillingWidget extends Composite {
 		loadSelectedProcedureInfo();
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
-		postBtn = new CustomButton("Post Claim(s)", AppConstants.ICON_ADD);
+		postBtn = new CustomButton(_("Post Claim(s)"), AppConstants.ICON_ADD);
 		postBtn.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -175,7 +177,7 @@ public class RemittBillingWidget extends Composite {
 			}
 
 		});
-		cancelBtn = new CustomButton("Cancel", AppConstants.ICON_CANCEL);
+		cancelBtn = new CustomButton(_("Cancel"), AppConstants.ICON_CANCEL);
 		final RemittBillingWidget rbw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -199,7 +201,7 @@ public class RemittBillingWidget extends Composite {
 		actionPanel = new HorizontalPanel();
 		actionPanel.setSpacing(5);
 
-		cancelBtn = new CustomButton("Close", AppConstants.ICON_CANCEL);
+		cancelBtn = new CustomButton(_("Close"), AppConstants.ICON_CANCEL);
 		final RemittBillingWidget rbw = this;
 		cancelBtn.addClickHandler(new ClickHandler() {
 			@Override
@@ -244,7 +246,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length > 0) {
@@ -302,7 +304,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										if (result.length != 0) {
@@ -360,10 +362,10 @@ public class RemittBillingWidget extends Composite {
 		statusTable.setAllowSelection(false);
 		// statusTable.setSize("100%", "100%");
 		statusTable.setIndexName("billkey");
-		statusTable.addColumn("Identifier", "result");
-		statusTable.addColumn("File", "file");
-		statusTable.addColumn("Status", "status");
-		statusTable.addColumn("Action", "action");
+		statusTable.addColumn(_("Identifier"), "result");
+		statusTable.addColumn(_("File"), "file");
+		statusTable.addColumn(_("Status"), "status");
+		statusTable.addColumn(_("Action"), "action");
 
 		statusTable
 				.setTableWidgetColumnSetInterface(new TableWidgetColumnSetInterface() {
@@ -378,7 +380,7 @@ public class RemittBillingWidget extends Composite {
 							return lb;
 						} else if (columnName.compareTo("action") == 0) {
 							HTML html = new HTML(
-									"<a href=\"javascript:undefined;\" style='color:blue'>Mark As Billed</a>");
+									"<a href=\"javascript:undefined;\" style='color:blue'>" + _("Mark As Billed") + "</a>");
 							html.addClickHandler(new ClickHandler() {
 								@Override
 								public void onClick(ClickEvent arg0) {
@@ -454,7 +456,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result.length > 0) {
 										showStatus(result);
@@ -507,7 +509,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result.length > 0) {
 										showStatus(result);
@@ -534,10 +536,10 @@ public class RemittBillingWidget extends Composite {
 		vPanel.clear();
 		vPanel.add(statusTable);
 		actionPanel.clear();
-		cancelBtn.setText("Close");
+		cancelBtn.setText(_("Close"));
 
 		CustomButton markAllBilled = new CustomButton(
-				"Mark All Batches as Billed", AppConstants.ICON_SELECT_ALL);
+				_("Mark All Batches as Billed"), AppConstants.ICON_SELECT_ALL);
 		actionPanel.add(markAllBilled);
 		actionPanel.add(cancelBtn);
 		vPanel.add(actionPanel);
@@ -600,7 +602,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									HashMap<String, String> result = (HashMap<String, String>) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>");
 									if (result != null) {
 										Iterator<String> iterator = result
@@ -711,7 +713,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									Boolean result = (Boolean) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"Boolean");
 									if (result != null) {
 										if (result) {
@@ -763,7 +765,7 @@ public class RemittBillingWidget extends Composite {
 								try {
 									HashMap<String, String>[] result = (HashMap<String, String>[]) JsonUtil
 											.shoehornJson(JSONParser
-													.parse(response.getText()),
+													.parseStrict(response.getText()),
 													"HashMap<String,String>[]");
 									if (result != null) {
 										for (HashMap<String, String> r : result) {
