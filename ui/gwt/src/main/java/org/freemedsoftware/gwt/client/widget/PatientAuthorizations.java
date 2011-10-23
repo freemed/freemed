@@ -269,6 +269,8 @@ public class PatientAuthorizations extends Composite {
 				}
 			});
 			hP.add(addAuthorizationButton);
+		} else {
+			hP.add(new Label(_("You do not have permission to add authorizations.")));
 		}
 	}
 
@@ -415,6 +417,7 @@ public class PatientAuthorizations extends Composite {
 
 			}
 		};
+		@SuppressWarnings("rawtypes")
 		ValueChangeHandler valueChangeHandler = new ValueChangeHandler() {
 			public void onValueChange(
 					com.google.gwt.event.logical.shared.ValueChangeEvent arg0) {
