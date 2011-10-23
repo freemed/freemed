@@ -1,3 +1,27 @@
+/*
+ * $Id$
+ *
+ * Authors:
+ *      Jeff Buchbinder <jeff@freemedsoftware.org>
+ *
+ * FreeMED Electronic Medical Record and Practice Management System
+ * Copyright (C) 1999-2011 FreeMED Software Foundation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package org.freemedsoftware.gwt.client.i18n;
 
 import java.util.HashMap;
@@ -17,6 +41,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Command;
 
 /**
  * Class to facilitate dynamic locale lookups without requiring static
@@ -41,10 +66,20 @@ public class I18nUtil {
 	 * @param localeName
 	 */
 	protected static void loadLocale(String localeName) {
+		loadLocale(localeName, null);
+	}
+
+	/**
+	 * Load language definitions from the server.
+	 * 
+	 * @param localeName
+	 * @param callback
+	 */
+	public static void loadLocale(String localeName, final Command callback) {
 		String loadFrom = RESOURCES_DIR + localeName + ".json";
 		loadedLocaleName = localeName;
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL
-				.encode(loadFrom));
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+				URL.encode(loadFrom));
 		BUSY_LOADING = true;
 		try {
 			builder.sendRequest(null, new RequestCallback() {
@@ -57,8 +92,7 @@ public class I18nUtil {
 						Response response) {
 					if (200 == response.getStatusCode()) {
 						long beginTime = System.currentTimeMillis();
-						JSONValue o = JSONParser
-								.parseStrict(response.getText());
+						JSONValue o = JSONParser.parseStrict(response.getText());
 						if (o.isObject() != null) {
 							JsonUtil.debug("Bad data presented.");
 							BUSY_LOADING = false;
@@ -86,11 +120,18 @@ public class I18nUtil {
 						BUSY_LOADING = false;
 						JsonUtil.debug(response.getStatusText());
 					}
+					
+					if (callback != null) {
+						callback.execute();
+					}
 				}
 			});
 		} catch (RequestException e) {
 			BUSY_LOADING = false;
 			JsonUtil.debug(e.toString());
+			if (callback != null) {
+				callback.execute();
+			}
 		}
 	}
 

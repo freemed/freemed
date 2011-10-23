@@ -30,10 +30,13 @@ import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 import org.freemedsoftware.gwt.client.Util.ProgramMode;
 import org.freemedsoftware.gwt.client.Public.LoginAsync;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
+import org.freemedsoftware.gwt.client.i18n.I18nUtil;
 import org.freemedsoftware.gwt.client.widget.CustomListBox;
 import org.freemedsoftware.gwt.client.widget.Toaster;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -46,6 +49,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -56,7 +60,6 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
-
 
 public class LoginDialog extends DialogBox {
 
@@ -71,7 +74,7 @@ public class LoginDialog extends DialogBox {
 	protected final PushButton loginButton;
 
 	protected final Image loadingImage;
-	
+
 	protected FreemedInterface freemedInterface = null;
 
 	protected DialogBox dialog;
@@ -103,7 +106,7 @@ public class LoginDialog extends DialogBox {
 		userLogin.setText("");
 		userLogin.setAccessKey('u');
 		userLogin.setTabIndex(1);
-		
+
 		final Label passwordLabel = new Label(_("Password"));
 		absolutePanel.add(passwordLabel, 25, 100);
 		passwordLabel.setStylePrimaryName("gwt-Label-RAlign");
@@ -188,6 +191,21 @@ public class LoginDialog extends DialogBox {
 		languageList.setSize("190px", "22px");
 		languageList.setStylePrimaryName("freemed-LoginFields");
 		languageList.setTabIndex(4);
+
+		// Force load on update
+		languageList.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				I18nUtil.loadLocale(languageList.getStoredValue(),
+						new Command() {
+							@Override
+							public void execute() {
+								JsonUtil.debug("Completed async language load.");
+							}
+						});
+			}
+		});
+
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			languageList.addItem("English", "en_US");
 			languageList.addItem("Deutsch", "de_DE");
@@ -244,23 +262,22 @@ public class LoginDialog extends DialogBox {
 
 		final Image imageDown = new Image("resources/images/button_on_down.png");
 		imageDown.setSize("100%", "100%");
-		
-		loginButton = new PushButton(imageUp,imageDown);
+
+		loginButton = new PushButton(imageUp, imageDown);
 		loginButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent w) {
 				attemptLogin();
 			}
-		});		
+		});
 		loginButton.setTabIndex(5);
 		absolutePanel.add(loginButton, 83, 233);
 		loginButton.setStylePrimaryName("gwt-LoginButton");
 
-//		final Label loginLabel = new Label("Login");
-//		absolutePanel.add(loginLabel, 140, 242);
-//		loginLabel.setStylePrimaryName("gwt-Label-RAlign");
-		
-		loadingImage = new Image(GWT
-				.getHostPageBaseURL()
+		// final Label loginLabel = new Label("Login");
+		// absolutePanel.add(loginLabel, 140, 242);
+		// loginLabel.setStylePrimaryName("gwt-Label-RAlign");
+
+		loadingImage = new Image(GWT.getHostPageBaseURL()
 				+ "resources/images/login_loading.32x27.gif");
 		loadingImage.setVisible(false);
 		absolutePanel.add(loadingImage, 185, 237);
@@ -288,8 +305,8 @@ public class LoginDialog extends DialogBox {
 		});
 
 		this.setWidget(simplePanel);
-		
-		userLogin.setFocus(true);//set focus to user name input box
+
+		userLogin.setFocus(true);// set focus to user name input box
 	}
 
 	public void attemptLogin() {
@@ -302,8 +319,8 @@ public class LoginDialog extends DialogBox {
 			loginButton.setEnabled(false);
 
 			try {
-				Util.login(userLogin.getText(), loginPassword.getText(),facilityList.getStoredValue(),
-						new CustomCommand() {
+				Util.login(userLogin.getText(), loginPassword.getText(),
+						facilityList.getStoredValue(), new CustomCommand() {
 							public void execute(Object data) {
 								loadingImage.setVisible(false);
 								hide();
@@ -318,22 +335,30 @@ public class LoginDialog extends DialogBox {
 								loginPassword.setText("");
 								loginButton.setEnabled(true);
 								String msg = "";
-								if(data.toString().equalsIgnoreCase(AppConstants.INVALID_USER))
+								if (data.toString().equalsIgnoreCase(
+										AppConstants.INVALID_USER))
 									msg = _("The user name or password is incorrect. Please try again.");
-								else if(data.toString().equalsIgnoreCase(AppConstants.NOT_IN_FACILITY))
-									msg = _("You can't login using facility '%s'.").replace("%s", facilityList.getItemText(facilityList.getSelectedIndex()));
-								else if(data.toString().equalsIgnoreCase(AppConstants.INVALID_RESPONSE))
+								else if (data.toString().equalsIgnoreCase(
+										AppConstants.NOT_IN_FACILITY))
+									msg = _(
+											"You can't login using facility '%s'.")
+											.replace(
+													"%s",
+													facilityList
+															.getItemText(facilityList
+																	.getSelectedIndex()));
+								else if (data.toString().equalsIgnoreCase(
+										AppConstants.INVALID_RESPONSE))
 									msg = _("Unable to connect to server.");
-								if(CurrentState.getToaster()==null){
+								if (CurrentState.getToaster() == null) {
 									Toaster toaster = new Toaster();
 									CurrentState.assignToaster(toaster);
 									toaster.setTimeout(7);
 								}
-								
-								CurrentState.getToaster().addItem("Login",
-										msg,
+
+								CurrentState.getToaster().addItem("Login", msg,
 										Toaster.TOASTER_ERROR);
-								
+
 							}
 
 						});
@@ -342,22 +367,22 @@ public class LoginDialog extends DialogBox {
 		}
 	}
 
-	public void setFocusToUserField(){
+	public void setFocusToUserField() {
 		try {
 			userLogin.setFocus(true);
 		} catch (Exception e) {
 			GWT.log("Caught exception: ", e);
-		}		
+		}
 	}
-	
-	public void setFocusToPasswordField(){
+
+	public void setFocusToPasswordField() {
 		try {
 			loginPassword.setFocus(true);
 		} catch (Exception e) {
 			GWT.log("Caught exception: ", e);
-		}		
+		}
 	}
-	
+
 	public void show() {
 		super.show();
 		try {
@@ -378,13 +403,15 @@ public class LoginDialog extends DialogBox {
 	public String getLanguageSelected() {
 		return languageList.getWidgetValue();
 	}
-	
+
 	public String getSelectedFacilityName() {
 		String facilityName = null;
-		if(facilityList!=null && facilityList.getItemCount()>0)
-			facilityName = facilityList.getItemText(facilityList.getSelectedIndex());
+		if (facilityList != null && facilityList.getItemCount() > 0)
+			facilityName = facilityList.getItemText(facilityList
+					.getSelectedIndex());
 		return facilityName;
 	}
+
 	public String getSelectedFacilityValue() {
 		return facilityList.getWidgetValue();
 	}
