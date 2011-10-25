@@ -91,7 +91,7 @@ DELIMITER //
 
 CREATE PROCEDURE photoid_GetLatest ( IN patient BIGINT(20) UNSIGNED )
 BEGIN
-	SELECT p_filename FROM photoid WHERE p_patient = patient ORDER BY p_stamp DESC LIMIT 1;
+	SELECT id FROM photoid WHERE p_patient = patient ORDER BY p_stamp DESC LIMIT 1;
 END;
 //
 

@@ -79,7 +79,7 @@ class PatientDataStore {
 	//	Serves file back to browser with appropriate headers.
 	//
 	public function GetFile ( $patient, $module, $id ) {
-		$query = "SELECT content FROM pds WHERE patient = ".$GLOBALS['sql']->quote( $patient )." AND module = ".$GLOBALS['sql']->quote( strtolower( $module ) )." AND id = ".$GLOBALS['sql']->quote( $id );
+		$query = "SELECT contents FROM pds WHERE patient = ".$GLOBALS['sql']->quote( $patient )." AND module = ".$GLOBALS['sql']->quote( strtolower( $module ) )." AND id = ".$GLOBALS['sql']->quote( $id );
 		$r = $GLOBALS['sql']->queryOne( $query );
 
 		if ( ! $r ) {

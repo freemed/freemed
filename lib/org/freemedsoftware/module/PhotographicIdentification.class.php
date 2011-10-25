@@ -240,29 +240,32 @@ class PhotographicIdentification extends EMRModule {
 	public function GetPhotoID ( $patient, $force_id = false ) {
 		ob_start();
 		if ( ! $force_id ) {
-			$pic = $GLOBALS['sql']->queryOneStoredProc( "CALL photoId_GetLatest ( ".( $patient+0 )." ) " );
+			$id = (int) $GLOBALS['sql']->queryOneStoredProc( "CALL photoId_GetLatest ( ".( (int) $patient )." ) " );
 		} else {
-			$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
-			$pic = $pds->ResolveFilename( $patient+0, get_class($this), $force_id+0 );
+			$id = (int) $force_id;
 		}
-		if ( ! $pic ) { $pic = 'ui/dojo/htdocs/images/teak/noimage.250x250.png'; }
-		ob_end_clean();
-		ob_start();
-		readfile( $pic );
-		$x = ob_get_contents();
-		if ( strpos( $x, 'JFIF' ) > 0 ) {
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		$pic = $pds->GetFile( (int) $patient, get_class($this), $id );
+		if ( ! $pic ) {
+			$x = 'ui/dojo/htdocs/images/teak/noimage.250x250.png';
+			ob_end_clean();
+			ob_start();
+			readfile( $x );
+			$pic = ob_get_contents();
+			ob_end_clean();
+		}
+		if ( strpos( $pic, 'JFIF' ) > 0 ) {
 			Header( 'Content-type: image/jpeg' );
-		} else if ( strpos( $x, 'GIF89a' ) === 0 ) {
+		} else if ( strpos( $pic, 'GIF89a' ) === 0 ) {
 			Header( 'Content-type: image/gif' );
-		} else if ( strpos( $x, 'PNG' ) > 0 ) {
+		} else if ( strpos( $pic, 'PNG' ) > 0 ) {
 			Header( 'Content-type: image/png' );
 		}
 		Header( 'Pragma: no-cache' );
 		Header( 'Cache-Control: no-store, no-cache, must-revalidate' );
 		Header( 'Cache-Control: post-check=0, pre-check=0', false );
 		Header( 'Expires: Mon, 26 Jul 1997 05:00:00 GMT' );
-		ob_end_clean();
-		print $x;
+		print $pic;
 		die();
 	} // end method GetPhotoID
 
