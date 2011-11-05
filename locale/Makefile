@@ -28,6 +28,9 @@ all:
 		if [ -f $$i/LC_MESSAGES/dojo.po ]; then \
 			msgfmt -o $$i/LC_MESSAGES/dojo.mo $$i/LC_MESSAGES/dojo.po; \
 		fi; \
+		if [ -f $$i/LC_MESSAGES/gwt.po ]; then \
+			msgfmt -o $$i/LC_MESSAGES/gwt.mo $$i/LC_MESSAGES/gwt.po; \
+		fi; \
 	done
 
 install:
