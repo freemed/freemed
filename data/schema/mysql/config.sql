@@ -242,6 +242,15 @@ CALL config_Register (
 );
 
 CALL config_Register (
+	'metric_system',
+	'Standard',
+	'Metric System',
+	'UI',
+	'Select',
+	'Standard,Metric'
+);
+
+CALL config_Register (
 	'xmpp_notify',
 	'0',
 	'XMPP Notifications',

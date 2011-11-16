@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen.patient;
 
 import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 
+import org.freemedsoftware.gwt.client.CurrentState;
 import org.freemedsoftware.gwt.client.PatientEntryScreenInterface;
 import org.freemedsoftware.gwt.client.i18n.AppConstants;
 import org.freemedsoftware.gwt.client.widget.CustomButton;
@@ -153,8 +154,13 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 			flexTable.setWidget(pos, 3, temperatureValue);
 
 			temperatureUnits = new CustomListBox();
-			temperatureUnits.addItem("F");
-			temperatureUnits.addItem("C");
+			if (CurrentState.getSystemConfig("metric_system").equals("Standard")) {
+				temperatureUnits.addItem("F");
+				temperatureUnits.addItem("C");
+			} else {
+				temperatureUnits.addItem("C");
+				temperatureUnits.addItem("F");
+			}
 			temperatureUnits.setHashMapping("v_temp_units");
 			temperatureUnits.setEnabled(Boolean.FALSE);
 			addEntryWidget("v_temp_units", temperatureUnits);
@@ -561,8 +567,13 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 			flexTable.setWidget(pos, 3, cgValue);
 
 			cgUnits = new CustomListBox();
-			cgUnits.addItem("IN");
-			cgUnits.addItem("CM");
+			if (CurrentState.getSystemConfig("metric_system").equals("Standard")) {
+				cgUnits.addItem("IN");
+				cgUnits.addItem("CM");
+			} else {
+				cgUnits.addItem("CM");
+				cgUnits.addItem("IN");
+			}
 			cgUnits.setHashMapping("v_cg_units");
 			cgUnits.setEnabled(Boolean.FALSE);
 			addEntryWidget("v_cg_units", cgUnits);
@@ -627,8 +638,13 @@ public class VitalsEntry extends PatientEntryScreenInterface implements
 			flexTable.setWidget(pos, 3, hValue);
 
 			hUnits = new CustomListBox();
-			hUnits.addItem("IN");
-			hUnits.addItem("CM");
+			if (CurrentState.getSystemConfig("metric_system").equals("Standard")) {
+				hUnits.addItem("IN");
+				hUnits.addItem("CM");
+			} else {
+				hUnits.addItem("CM");
+				hUnits.addItem("IN");
+			}
 			hUnits.setHashMapping("v_h_units");
 			hUnits.setEnabled(Boolean.FALSE);
 			addEntryWidget("v_h_units", hUnits);
