@@ -76,6 +76,23 @@ class UserInterface {
 		return (int) $GLOBALS['sql']->queryOne( $q );
 	} // end method GetCurrentProvider
 
+	// Method: CheckDuplicate
+	//
+	//	Check for duplicate user record in the system by username.
+	//
+	// Parameters:
+	//
+	//	$username - Username
+	//
+	// Returns:
+	//
+	//	Boolean.
+	//
+	public function CheckDuplicate( $username ) {
+		$q = "SELECT COUNT(*) FROM user WHERE username = " . $GLOBALS['sql']->quote( $username );
+		return ((int) $GLOBALS['sql']->queryOne( $q )) > 0;
+	} // end method CheckDuplicate
+
 	// Method: GetUsers
 	//
 	//	Get picklist formatted user information.
