@@ -33,7 +33,7 @@ class NPI extends SupportModule {
 
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
-	var $table_name = "ndc";
+	var $table_name = "npi";
 
 	public function __construct () {
 		// Call parent constructor
