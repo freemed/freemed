@@ -233,6 +233,15 @@ CALL config_Register (
 );
 
 CALL config_Register (
+	'clinic_mode',
+	'0',
+	'Simplified Clinic Mode',
+	'UI',
+	'YesNo',
+	''
+);
+
+CALL config_Register (
 	'xmpp_notify',
 	'0',
 	'XMPP Notifications',
