@@ -28,7 +28,7 @@
 			    <Element field="bsaddr" title="Address" type="TEXT" options="100" display="1"/>
 			    <Element field="bscity" title="City" type="TEXT" options="50" />
 			    <Element field="bsstate" title="State" type="TEXT" options="50" />
-			    <Element field="bszip" title="Zip" type="TEXT" options="50" />
+			    <Element field="bszip" title="Postal Code" type="TEXT" options="50" />
 			    <Element field="bsphone" title="Phone" type="TEXT" options="50" />
 			    <Element field="bsetin" title="ETIN" type="TEXT" options="50" display="1" />
 			    <Element field="bstin" title="TIN" type="TEXT" options="50" display="1" />

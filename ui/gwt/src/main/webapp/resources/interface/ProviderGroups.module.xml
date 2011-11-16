@@ -26,8 +26,8 @@
 		    <Elements>
 			    <Element field="phygroupname" title="Physician Group Name" type="TEXT" options="52" display="1" />
 			    <Element field="phygroupfac" title="Default Facility" type="MODULE" options="FacilityModule"/>
-			    <Element field="phygroupspe1" title="Specialty 1" type="MODULE" options="ProviderSpecialties" display="1"  help="Enter here the specialty the Group has."/>
-			    <Element field="phygroupidmap" title="Physicians" type="MODULE_MULTIPLE" options="ProviderModule" help="Enter here all Providers belonging to this group."/>
+			    <Element field="phygroupspe1" title="Specialty 1" type="MODULE" options="ProviderSpecialties" display="1"  help="The specialty which should be associated with this provider group."/>
+			    <Element field="phygroupidmap" title="Physicians" type="MODULE_MULTIPLE" options="ProviderModule" help="Specify all providers belonging to this group."/>
 			    
 		    </Elements>
 	    </SimpleUIBuilder>

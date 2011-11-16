@@ -24,10 +24,10 @@
 	    -->
 	    <SimpleUIBuilder module="FormTemplates">
 		    <Elements>
-			    <Element field="f_lang" title="f_lang" type="TEXT" options="5" display="1"/>
-			    <Element field="f_name" title="f_name" type="TEXT" options="100" display="1"/>
-			    <Element field="f_template" title="f_template" type="TEXT" options="250" display="1"/>
-			    <Element field="f_electronic_template" title="f_electronic_template" type="TEXT" options="250" display="1"/>
+			    <Element field="f_lang" title="Locale" type="TEXT" options="5" display="1"/>
+			    <Element field="f_name" title="Name" type="TEXT" options="100" display="1"/>
+			    <Element field="f_template" title="Template" type="TEXT" options="250" display="1"/>
+			    <Element field="f_electronic_template" title="Electronic Template" type="TEXT" options="250" display="1"/>
 			    
 		    </Elements>
 	    </SimpleUIBuilder>

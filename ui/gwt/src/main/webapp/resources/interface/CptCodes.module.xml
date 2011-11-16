@@ -24,7 +24,7 @@
 	    -->
 	    <SimpleUIBuilder module="CptCodes">
 		    <Elements>
-			    <Element field="cptcode" title="CPT Code" type="TEXT" options="7" display="1" help="Enter here the Procedural Code."/>
+			    <Element field="cptcode" title="CPT Code" type="TEXT" options="7" display="1" help="Procedural Code" />
 			    <Element field="cptnameint" title="Internal Name" type="TEXT" options="50" display="1" />
 			    <Element field="cptnameext" title="External Name" type="TEXT" options="50" display="1" />
 			    <Element field="cptgender" title="Gender Restriction" type="SELECT" options="No restriction|n,Male|m,Female|f" />
@@ -36,6 +36,6 @@
 			    <Element field="cptexcicd" title="Excluded Diagnoses" type="MODULE_MULTIPLE" options="IcdCodes" help="Excluded Diagnoses as ICD Codes"/> />
 			    <Element field="cptrelval" title="Relative Value" type="TEXT"/>
 			    <Element field="cptdeftos" title="Default Type of Service" type="MODULE" options="TypeOfService"/>
-			    <Element field="cptdefstdfee" title="Default Standard fee" type="TEXT" display="1" />
+			    <Element field="cptdefstdfee" title="Default Standard Fee" type="TEXT" display="1" />
 		    </Elements>
 	    </SimpleUIBuilder>

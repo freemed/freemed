@@ -24,7 +24,7 @@
 	    -->
 	    <SimpleUIBuilder module="Codes">
 		    <Elements>
-			    <Element field="codedictionary" title="Dictionary Code" type="TEXT" options="7" display="1" help="Enter here the Disctionary Code."/>
+			    <Element field="codedictionary" title="Dictionary Code" type="TEXT" options="7" display="1"/>
 			    <Element field="codevalue" title="Code Value" type="TEXT" options="7" display="1"/>
 			    <Element field="codedescripinternal" title="Internal Name" type="TEXT" options="50" display="1" />
 			    <Element field="codedescripexternal" title="External Name" type="TEXT" options="50" display="1" />

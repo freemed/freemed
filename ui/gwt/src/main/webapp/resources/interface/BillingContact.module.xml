@@ -30,7 +30,7 @@
 			    <Element field="bcaddr" title="Address" type="TEXT" options="100" display="1"/>
 			    <Element field="bccity" title="City" type="TEXT" options="50" />
 			    <Element field="bcstate" title="State" type="TEXT" options="50" />
-			    <Element field="bczip" title="Zip" type="TEXT" options="50" />
+			    <Element field="bczip" title="Postal Code" type="TEXT" options="50" />
 			    <Element field="bcphone" title="Phone" type="TEXT" options="50" />
 		    </Elements>
 	    </SimpleUIBuilder>
