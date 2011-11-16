@@ -95,14 +95,14 @@ public class TriageScreen extends ScreenInterface implements
 		if (triageScreenList.size() < AppConstants.MAX_TRIAGE_TABS)
 			triageScreenList.add(triageScreen = new TriageScreen());
 		else
-			// returns last instance of UnfiledDocuments from list
+			// returns last instance of TriageScreen from list
 			triageScreen = triageScreenList
 					.get(AppConstants.MAX_TRIAGE_TABS - 1);
 		return triageScreen;
 	}
 
-	public static boolean removeInstance(TriageScreen unfiledDocuments) {
-		return triageScreenList.remove(unfiledDocuments);
+	public static boolean removeInstance(TriageScreen triageScreen) {
+		return triageScreenList.remove(triageScreen);
 	}
 
 	public TriageScreen() {

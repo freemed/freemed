@@ -26,7 +26,9 @@ package org.freemedsoftware.gwt.client.screen.entry;
 
 import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.freemedsoftware.gwt.client.EntryScreenInterface;
 import org.freemedsoftware.gwt.client.HashSetter;
@@ -73,6 +75,26 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 
 	protected CustomTextArea wNotes = null;
 
+	protected static List<ClinicRegistrationEntry> clinicRegistrationEntryScreenList = null;
+
+	public static ClinicRegistrationEntry getInstance() {
+		ClinicRegistrationEntry clinicRegistrationEntryScreen = null;
+
+		if (clinicRegistrationEntryScreenList == null)
+			clinicRegistrationEntryScreenList = new ArrayList<ClinicRegistrationEntry>();
+		if (clinicRegistrationEntryScreenList.size() < AppConstants.MAX_CLINIC_REGISTRATION_TABS)
+			clinicRegistrationEntryScreenList.add(clinicRegistrationEntryScreen = new ClinicRegistrationEntry());
+		else
+			// returns last instance of ClinicRegistrationEntry from list
+			clinicRegistrationEntryScreen = clinicRegistrationEntryScreenList
+					.get(AppConstants.MAX_CLINIC_REGISTRATION_TABS - 1);
+		return clinicRegistrationEntryScreen;
+	}
+
+	public static boolean removeInstance(ClinicRegistrationEntry clinicRegistrationEntryScreen) {
+		return clinicRegistrationEntryScreenList.remove(clinicRegistrationEntryScreen);
+	}
+
 	public ClinicRegistrationEntry() {
 		final VerticalPanel verticalPanel = new VerticalPanel();
 		initWidget(verticalPanel);
@@ -114,7 +136,7 @@ public class ClinicRegistrationEntry extends EntryScreenInterface {
 		flexTable.setWidget(pos, 1, wDateOfBirth);
 		pos++;
 
-		final Label ageLabel = new Label(_("Age (if no date of birth)"));
+		final Label ageLabel = new Label(_("Age in Years (if no date of birth)"));
 		flexTable.setWidget(pos, 0, ageLabel);
 		wAge = new CustomTextBox();
 		wAge.setHashMapping("age");
