@@ -27,5 +27,25 @@
 
 D="$( cd "$(dirname "$0")"; pwd )"
 
-( cd "$D" ; xgettext -c -k'_' -o ../../locale/gwt.pot $(find src | grep '\.java$' | grep -v svn) )
+(
+	cd "$D" 
+
+	# Convert everything to java properties files
+	find src | grep '\.module\.xml$' | grep -v svn | \
+		while read X; do
+			Y=$( echo "$X" | sed -e 's/\.module\.xml$/.properties/;' )
+			echo "$X => $Y"
+			xsltproc dump-interface.xsl $X | sed -e 's/ /\\ /g;' | \
+				sed -e 's/:/\\:/g;' > $Y
+		done
+
+	# Extract all strings
+	xgettext -c -k'_' -o ../../locale/gwt.pot \
+		$(find src | grep '\.java$' | grep -v svn) \
+		$(find src | grep '\.properties$' | grep -v svn)
+
+	# Remove any old build files
+	rm -f src/main/webapp/resources/interface/*.properties 2>&1 >> /dev/null
+
+)
 

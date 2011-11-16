@@ -46,4 +46,11 @@ foreach ( $__domains AS $_v ) {
 	_textdomain ( $_v );
 }
 
+function get_translation_matrix( $domain ) {
+	global $default_domain;
+	$default_domain = $domain;
+	$l10n = _get_reader();
+	return $l10n->cache_translations;
+} // end method get_translation_matrix
+
 ?>
