@@ -53,7 +53,7 @@ class NDCLexicon extends SupportModule {
 	//	Array of hashes
 	//
 	function TradenamePicklist ( $criteria = NULL, $limit = 20 ) {
-		$c[] = "LOWER(tradename) LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
+		$c[] = "LOWER(tradename) LIKE LOWER('".$GLOBALS['sql']->escape( $criteria )."%')";
 		$query = "SELECT * FROM ndc_name_lookup ".
 			( is_array($c) ? " WHERE ".join(' OR ',$c) : "" ).
 			" ORDER BY tradename ".
