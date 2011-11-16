@@ -38,6 +38,7 @@ public interface AppConstants extends Constants {
 	public static int MAX_SCHEDULER_TABS 	 = 1;
 	public static int MAX_CONFIGURATION_TABS = 1;
 	public static int MAX_TRIAGE_TABS        = 1;
+	public static int MAX_CLINIC_REGISTRATION_TABS = 1;
 
 	// Settings for options available under Patients Left Panel
 	public static int MAX_SEARCH_TABS 		 = 1;

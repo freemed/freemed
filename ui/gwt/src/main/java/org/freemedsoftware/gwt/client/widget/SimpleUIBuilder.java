@@ -192,7 +192,7 @@ public class SimpleUIBuilder extends WidgetInterface {
 		} else if (type.equals(WidgetType.DRUG)) {
 			w = new DrugWidget();
 		} else if (type.equals(WidgetType.DELIMITER)) {
-			w = new Label(title);
+			w = new Label(_(title));
 			w.setStyleName("freemed-SimpleUIBuilder-Delimiter");
 		} else if (type.equals(WidgetType.MULTILIST)) {
 			w = new CustomMulltiSelectListBox(options, true);
@@ -214,12 +214,12 @@ public class SimpleUIBuilder extends WidgetInterface {
 			table.setWidget(widgets.size() - 1, 0, w);
 			table.getFlexCellFormatter().setColSpan(widgets.size() - 1, 0, 2);
 		} else {
-			table.setText(widgets.size() - 1, 0, title);
+			table.setText(widgets.size() - 1, 0, _(title));
 			table.setWidget(widgets.size() - 1, 1, w);
 			if (help != null) {
 				final Image image = new Image();
 				image.setUrl("resources/images/q_help.16x16.png");
-				Util.attachHelp(image, helpprefix + " " + title, help, false);
+				Util.attachHelp(image, helpprefix + " " + _(title), help, false);
 
 				table.setWidget(widgets.size() - 1, 2, image);
 			}
