@@ -4,13 +4,14 @@
 # 
 # Translators:
 #   <directorfreemed@gmail.com>, 2011.
+# Jeff Buchbinder <freemed@gmail.com>, 2011.
 #   <yazmin.garciat@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: FreeMED\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-23 12:51-0400\n"
-"PO-Revision-Date: 2011-11-05 18:52+0000\n"
+"POT-Creation-Date: 2011-11-12 09:29-0500\n"
+"PO-Revision-Date: 2011-11-17 17:38+0000\n"
 "Last-Translator: yazyaz <yazmin.garciat@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -22,14 +23,14 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/widget/CustomConfirmBox.java:70
 #: src/main/java/org/freemedsoftware/gwt/client/widget/MultipleKeyValueEntry.java:366
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:619
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:616
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:625
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:784
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:794
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1714
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:618
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:627
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:786
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:796
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1715
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:1329
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:444
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1480
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:441
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1474
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:359
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ImmunizationEntry.java:140
 msgid "Yes"
@@ -38,14 +39,14 @@ msgstr "Si"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/CustomConfirmBox.java:87
 #: src/main/java/org/freemedsoftware/gwt/client/widget/MultipleKeyValueEntry.java:367
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:618
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:617
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:626
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:785
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:795
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1730
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:619
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:628
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:787
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:797
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1731
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:1357
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:445
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1485
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:442
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1478
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:360
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ImmunizationEntry.java:141
 msgid "No"
@@ -55,26 +56,31 @@ msgstr "No"
 msgid "Add Authorization"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:312
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:273
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:513
+msgid "You do not have permission to add authorizations."
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:314
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:502
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:858
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PrescriptionsScreen.java:71
 msgid "Starting Date"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:317
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:319
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:505
 msgid "Ending Date"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:324
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:326
 msgid "Delete This Authorization"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:326
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:328
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAddresses.java:375
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:593
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:207
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:595
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:209
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1073
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:215
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingScreen.java:217
@@ -83,16 +89,16 @@ msgstr ""
 msgid "Delete"
 msgstr "Borrar"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:341
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:343
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:508
 msgid "Authorization Number"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:346
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:348
 msgid "Authorization Type"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:349
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:351
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerPopup.java:197
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:453
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:275
@@ -106,10 +112,10 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1352
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1364
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1449
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:120
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:121
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:231
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:547
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1625
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:544
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1590
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:347
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ProcedureScreen.java:280
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ProcedureScreen.java:311
@@ -119,70 +125,70 @@ msgstr ""
 msgid "NONE SELECTED"
 msgstr "Ninguno seleccionado"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:350
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:652
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:352
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:655
 msgid "physician"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:351
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:656
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:353
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:659
 msgid "insurance company"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:352
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:660
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:354
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:663
 msgid "certificate of medical neccessity"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:353
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:664
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:355
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:667
 msgid "surgical"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:354
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:666
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:356
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:669
 msgid "worker's compensation"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:355
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:670
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:357
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:673
 msgid "consulatation"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:359
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:361
 msgid "Authorizing Provider"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:366
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:368
 msgid "Provider Identifier"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:372
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:374
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:515
 msgid "Authorizing Insurance Company"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:381
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:383
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:518
 msgid "Number of Visits"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:386
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:388
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:521
 msgid "Used Visits"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:482
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:510
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:485
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:513
 msgid "Updated patient authorizations."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:498
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:523
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:501
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:526
 msgid "Failed to update patient authorizations."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:674
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAuthorizations.java:677
 msgid "None Selected"
 msgstr ""
 
@@ -209,7 +215,7 @@ msgstr "Monto total"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:255
 #: src/main/java/org/freemedsoftware/gwt/client/widget/WorkList.java:435
 #: src/main/java/org/freemedsoftware/gwt/client/widget/RemittBillingWidget.java:110
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:128
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:127
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PrescriptionRefillBox.java:143
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:734
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:750
@@ -283,7 +289,7 @@ msgstr "Pago"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:163
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:175
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:229
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:769
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:771
 msgid "Copay"
 msgstr "Pago parcial "
 
@@ -292,28 +298,28 @@ msgid "Left Over"
 msgstr ""
 
 #. actionPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PostCheckWidget.java:335
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PostCheckWidget.java:336
 msgid "Post"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PostCheckWidget.java:343
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PostCheckWidget.java:344
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SignatureWidget.java:189
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:196
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:683
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:583
 #: src/main/java/org/freemedsoftware/gwt/client/widget/RemittBillingWidget.java:180
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:237
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:239
 #: src/main/java/org/freemedsoftware/gwt/client/widget/DocumentThumbnailsWidget.java:154
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:136
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1057
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2305
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2307
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:1269
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:735
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:733
 #: src/main/java/org/freemedsoftware/gwt/client/screen/RxRefillScreen.java:258
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PostCheckWidget.java:471
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PostCheckWidget.java:472
 msgid ""
 "The total amount entered is not equal to the amounts entered in individual "
 "claims"
@@ -340,10 +346,10 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAddresses.java:275
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientProblemList.java:453
 #: src/main/java/org/freemedsoftware/gwt/client/widget/RemittBillingWidget.java:368
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:131
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:130
 #: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:131
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:117
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:258
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:118
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:260
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataManagementScreen.java:279
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:301
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UnfiledDocuments.java:162
@@ -390,7 +396,7 @@ msgstr "Ajuste"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerPopup.java:60
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:449
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:235
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:774
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:776
 msgid "Deductable"
 msgstr ""
 
@@ -465,11 +471,11 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1150
 #: src/main/java/org/freemedsoftware/gwt/client/widget/DocumentBox.java:122
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientProblemList.java:449
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:125
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:255
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:124
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:257
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PrescriptionRefillBox.java:141
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2166
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2324
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2167
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2326
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SuperBills.java:77
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:298
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:387
@@ -489,7 +495,7 @@ msgstr "Fecha"
 
 #. col 6
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerPopup.java:126
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:127
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:122
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:676
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:959
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:743
@@ -506,7 +512,7 @@ msgstr "Tipo"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:677
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1087
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ReportingWidget.java:121
-#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:290
+#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:291
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:869
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:219
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:414
@@ -576,9 +582,9 @@ msgstr "Código de procedimiento"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:213
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1081
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:858
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2173
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2325
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2583
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2174
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2327
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2586
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SuperBills.java:79
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:185
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:190
@@ -697,7 +703,7 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/widget/MessageBox.java:105
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:135
 msgid "MESSAGES"
-msgstr ""
+msgstr "MENSAJES"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/MessageBox.java:118
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingScreen.java:248
@@ -727,7 +733,7 @@ msgstr "Sujeto"
 #. col 2
 #. rxRefillTable.addColumn("RX Orig", "rxorig"); // col 3
 #: src/main/java/org/freemedsoftware/gwt/client/widget/NotesBox.java:135
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:127
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:128
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PrescriptionRefillBox.java:145
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UnfiledDocuments.java:309
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PrescriptionsScreen.java:107
@@ -740,12 +746,12 @@ msgstr "Notas"
 msgid "Add Note"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:112
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:107
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:558
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:997
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:137
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:340
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2190
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:138
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:342
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2191
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataManagementScreen.java:105
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataManagementScreen.java:108
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataManagementScreen.java:114
@@ -765,17 +771,17 @@ msgstr ""
 msgid "Add"
 msgstr "Añadir"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:121
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:116
 msgid "Encounter Template Name"
 msgstr "Numero de visita"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:130
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:125
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:961
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:966
 msgid "Encounter Note"
 msgstr "Número de nota"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:131
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterTemplateWidget.java:126
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:972
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:977
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:221
@@ -844,7 +850,7 @@ msgid "PCP"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:227
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:118
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:121
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:194
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:199
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:200
@@ -864,17 +870,17 @@ msgid "Pharmacy"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:350
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:428
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:425
 msgid "Marital Status"
-msgstr ""
+msgstr "Estado civil"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:354
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:490
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:487
 msgid "Religion"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:359
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:475
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:472
 msgid "Race"
 msgstr ""
 
@@ -904,32 +910,32 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:420
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:577
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:577
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:579
 msgid "Insurance Company"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:424
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:645
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:647
 msgid "Group - Plan Name"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:428
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:657
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:659
 msgid "Insurance ID Number"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:433
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:663
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:665
 msgid "Insurance Group Number"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:437
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:650
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:652
 msgid "Start Date"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientInfoBar.java:442
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:681
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:683
 msgid "Relationship to Insured"
 msgstr ""
 
@@ -1011,6 +1017,8 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:368
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:1189
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:450
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:783
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:785
 msgid "Search"
 msgstr "Buscar"
 
@@ -1019,6 +1027,8 @@ msgstr "Buscar"
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:235
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:236
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:203
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:862
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:864
 msgid "Tag Search"
 msgstr "Búsqueda por etiqueta"
 
@@ -1045,7 +1055,7 @@ msgstr "Anterior"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/MultiPageImageCompositedForm.java:114
 #: src/main/java/org/freemedsoftware/gwt/client/widget/DocumentThumbnailsWidget.java:96
 msgid "Next"
-msgstr ""
+msgstr "Proximo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:92
 msgid "Coverage Information"
@@ -1056,8 +1066,8 @@ msgstr "Información de la cobertura de seguro"
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientSearchScreen.java:203
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:664
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:776
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:361
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:109
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:358
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:131
 msgid "Date of Birth"
 msgstr "Fecha de nacimiento"
 
@@ -1163,7 +1173,7 @@ msgstr "Nueva búsqueda"
 #. col 0
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:426
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PrescriptionRefillBox.java:142
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2327
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2329
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingComposeScreen.java:99
 #: src/main/java/org/freemedsoftware/gwt/client/screen/RxRefillScreen.java:300
 msgid "User"
@@ -1177,13 +1187,13 @@ msgid "Comment"
 msgstr "Comentario"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:454
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:121
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:122
 msgid "Call"
 msgstr "Llamar"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ClaimDetailsWidget.java:455
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:122
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:383
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:123
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:380
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -1208,7 +1218,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:188
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ModuleFieldCheckerTypeEntryScreen.java:252
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:147
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:169
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientIdEntry.java:83
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ReferralEntry.java:155
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/LetterEntry.java:115
@@ -1269,7 +1279,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:301
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:813
-#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:288
+#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:289
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AdvancePayment.java:67
 msgid "Payment Amount"
 msgstr "Total de pago"
@@ -1379,23 +1389,23 @@ msgid "Payment operation failed."
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:1125
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:672
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:674
 msgid "Primary"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:1127
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:673
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:675
 msgid "Secondary"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:1129
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:674
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:676
 msgid "Tertiary"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/LedgerWidget.java:1131
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:1361
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:675
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:677
 msgid "Work Comp"
 msgstr "Composición de trabajo"
 
@@ -1449,20 +1459,20 @@ msgid "Add Address"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAddresses.java:324
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:380
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:377
 msgid "Home"
-msgstr ""
+msgstr "Casa"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAddresses.java:325
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:381
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:378
 msgid "Work"
-msgstr ""
+msgstr "Trabajo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientAddresses.java:332
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:684
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1137
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:447
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1494
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:686
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1140
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:444
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1486
 msgid "Self"
 msgstr ""
 
@@ -1495,7 +1505,7 @@ msgid "Failed to update patient addresses."
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:529
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:215
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:212
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ScannedDocumentsEntryScreen.java:110
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ProcedureScreen.java:159
 msgid "Tab View"
@@ -1518,7 +1528,7 @@ msgstr "Modificar"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:593
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:382
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ModuleFieldCheckerTypeEntryScreen.java:311
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:155
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:177
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:185
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientIdEntry.java:91
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:146
@@ -1814,7 +1824,7 @@ msgstr "agudeza"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EncounterWidget.java:2010
 msgid "dysphagia"
-msgstr ""
+msgstr "disfagia"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/WorkList.java:117
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:134
@@ -1838,7 +1848,7 @@ msgstr "Tiempo"
 #. col 2
 #: src/main/java/org/freemedsoftware/gwt/client/widget/WorkList.java:439
 #: src/main/java/org/freemedsoftware/gwt/client/widget/RemittBillingWidget.java:367
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:130
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:129
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:681
 msgid "Status"
 msgstr "Status"
@@ -1888,175 +1898,175 @@ msgstr "Usted tiene %d de documentos sin archivar"
 msgid "Add Coverage"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:584
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:586
 msgid "Coverage Insurance Type"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:591
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:593
 msgid "Delete This Coverage"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:611
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:613
 msgid "Provider Accepts Assigment"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:621
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:623
 msgid "Assigment Of Benefits"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:630
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:632
 msgid "Release Of Information"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:640
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:642
 msgid "Release Date Signed"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:668
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:670
 msgid "Insurance Type"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:685
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1129
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:687
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1132
 msgid "Child"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:686
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1133
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:688
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1136
 msgid "Husband"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:687
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1139
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:689
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1142
 msgid "Wife"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:688
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1143
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:690
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1146
 msgid "Child Not Fin"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:689
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1147
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:691
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1150
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:85
 msgid "Step Child"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:690
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1149
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:692
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1152
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:86
 msgid "Foster Child"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:691
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1151
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:693
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1154
 msgid "Ward of Court"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:692
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1153
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:694
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1156
 msgid "HC Dependent"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:693
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1157
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:695
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1160
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:96
 msgid "Sponsored Dependent"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:694
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1161
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:696
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1164
 msgid "Medicare Legal Rep"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:695
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1165
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:517
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1595
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:697
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1168
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:514
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1563
 msgid "Other"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:700
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:702
 msgid "Insured First Name"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:705
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:707
 msgid "Insured Last Name"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:712
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:714
 msgid "Insured Middle Name"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:717
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:719
 msgid "Insured DOB"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:722
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:724
 msgid "Insured Gender"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:726
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:357
-msgid "Male"
-msgstr ""
-
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:727
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:358
-msgid "Female"
-msgstr ""
-
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:728
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:359
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:354
+msgid "Male"
+msgstr "Masculino"
+
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:729
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:355
+msgid "Female"
+msgstr "Femenino"
+
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:730
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:356
 msgid "Transgendered"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:733
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:735
 msgid "Insured SSN"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:738
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:740
 msgid "Insured Address Line 1"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:743
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:745
 msgid "Insured Address Line 2"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:750
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:752
 msgid "Insured City"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:755
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:757
 msgid "Insured State"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:760
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:762
 msgid "Insured Zip"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:780
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:782
 msgid "Replace Like Coverage"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:790
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:792
 msgid "Is Assigning?"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:799
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:801
 msgid "School Name for Insured"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:804
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:806
 msgid "Employer of Insured"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1001
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1026
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1004
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1029
 msgid "Failed to update patient coverages."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1013
+#: src/main/java/org/freemedsoftware/gwt/client/widget/PatientCoverages.java:1016
 msgid "Updated patient coverages."
 msgstr ""
 
@@ -2125,10 +2135,10 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/widget/RecentAllergiesList.java:61
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AllergyEntryScreen.java:76
 msgid "Severity"
-msgstr ""
+msgstr "Gravedad"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/ReportingWidget.java:120
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:257
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:259
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:388
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:771
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataScreen.java:94
@@ -2173,21 +2183,21 @@ msgstr ""
 msgid "You have no action items."
 msgstr "No tiene registros sin acción"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:115
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:114
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:138
 msgid "ACTION ITEMS"
 msgstr "REGISTROS CON ACCIÓN"
 
 #. col 1
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:129
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:128
 msgid "Module Name"
 msgstr "Nombre del módulo"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:346
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:351
 msgid "There are no action item messages."
 msgstr "No hay mensajes de registros sin acción"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:348
+#: src/main/java/org/freemedsoftware/gwt/client/widget/ActionItemsBox.java:353
 msgid "You have %d action items!"
 msgstr "Usted tiene %d registros en acción!"
 
@@ -2222,16 +2232,16 @@ msgstr "Cargo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:97
 msgid "Arrear"
-msgstr ""
+msgstr "Atrasos"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:98
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:674
 msgid "DOS"
-msgstr ""
+msgstr "Fecha del servicio"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:109
 msgid "Total Arrears"
-msgstr ""
+msgstr "Total de los atrasos"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:119
 msgid "Current"
@@ -2251,44 +2261,44 @@ msgstr "Modificador"
 msgid "Comments"
 msgstr "Comentarios"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:289
+#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:290
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AdvancePayment.java:68
 msgid "Payment Date"
 msgstr "Fecha de pago"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:291
+#: src/main/java/org/freemedsoftware/gwt/client/widget/FinancialWidget.java:292
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AdvancePayment.java:70
 msgid "Payment Category"
 msgstr "Categoría de pago"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:79
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:80
 msgid "Please specify event type."
 msgstr "Por favor especifique tipo de evento"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:81
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:82
 msgid "Please specify the source ID!"
 msgstr "Por favor especifique la fuente de su identificación!"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:151
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:163
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:153
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:165
 msgid "Failed to add event."
 msgstr "Falló anadir evento"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:159
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:161
 msgid "Event added."
 msgstr "Evento anadido"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:173
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:188
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:175
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:190
 msgid "Failed to modify event."
 msgstr "Falló en modificar el evento"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:182
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:184
 msgid "Event modified."
 msgstr "Evento modificado"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:198
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2620
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:200
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2623
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataManagementScreen.java:148
 #: src/main/java/org/freemedsoftware/gwt/client/screen/SupportDataManagementScreen.java:151
 #: src/main/java/org/freemedsoftware/gwt/client/screen/AccountsReceivableScreen.java:252
@@ -2298,24 +2308,24 @@ msgstr "Evento modificado"
 msgid "Clear"
 msgstr "Limpiar"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:217
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:230
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:219
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:232
 msgid "Failed to delete event."
 msgstr "Falló en limpiar el evento"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:225
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:227
 msgid "Event deleted."
 msgstr "Evento borrado"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:259
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:261
 msgid "Entered By"
 msgstr "Registrado por"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:320
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:322
 msgid "Please specify action!"
 msgstr "Por favor especifique una acción!"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:324
+#: src/main/java/org/freemedsoftware/gwt/client/widget/EventsWidget.java:326
 msgid "Please specify note."
 msgstr "Por favor especifique nota"
 
@@ -2329,7 +2339,7 @@ msgstr "Seleccione las páginas desde donde quiere dividir"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/DocumentThumbnailsWidget.java:136
 msgid "Split"
-msgstr ""
+msgstr "Partir"
 
 #. col 2
 #: src/main/java/org/freemedsoftware/gwt/client/widget/PrescriptionRefillBox.java:144
@@ -2376,33 +2386,33 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:83
 msgid "Browser"
-msgstr ""
+msgstr "Navegador"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:88
 msgid "Printer"
-msgstr ""
+msgstr "Impresora"
 
 #. Adding theme tab
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:91
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:455
 msgid "Printers"
-msgstr ""
+msgstr "Impresoras"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:97
 msgid "Fax"
-msgstr ""
+msgstr "Telefax"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:115
 msgid "Print/Fax"
-msgstr ""
+msgstr "Impresión / fax"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:181
 msgid "Invalid fax number."
-msgstr ""
+msgstr "No válido número de fax."
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:185
 msgid "Sending fax to"
-msgstr ""
+msgstr "El envío de fax a"
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:193
 msgid "Error faxing document."
@@ -2410,17 +2420,19 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:202
 msgid "Please select a printer."
-msgstr ""
+msgstr "Por favor, seleccione una impresora."
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:206
 msgid "Sending document to printer."
-msgstr ""
+msgstr "El envío de documentos a la impresora."
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/EmrPrintDialog.java:213
 msgid "Error sending document."
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/widget/MessageView.java:133
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:720
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:722
 msgid "Messages"
 msgstr ""
 
@@ -2448,8 +2460,8 @@ msgstr "Paciente que llamó"
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:738
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:772
 #: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:803
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2180
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2326
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2181
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2328
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingComposeScreen.java:104
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:1256
 msgid "Group"
@@ -2517,111 +2529,111 @@ msgstr ""
 msgid "Book"
 msgstr "Agenda"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1214
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1215
 msgid "This time slot is blocked by given provider."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1307
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1313
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1875
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1913
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1920
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1308
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1314
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1876
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1914
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1921
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:1383
 msgid "Failed to get scheduler items."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1377
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1386
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1392
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1378
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1387
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1393
 msgid "Next available items not available."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1510
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1657
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1511
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1658
 msgid "Access denied: can not edit appointments."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1529
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1530
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:1216
 msgid "New Appointment"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1547
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1548
 msgid "Edit Appointment"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1710
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:1711
 msgid "Do you want to create a new patient?"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2150
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2322
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2151
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2324
 msgid "Start Time"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2158
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2323
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2159
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2325
 msgid "End Time"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2205
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2207
 msgid "Failed To add time slot."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2281
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2298
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2283
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2300
 msgid "Failed To delete time slot."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2290
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2292
 msgid "Time slot deleted."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2315
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2317
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:432
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:566
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2428
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2431
 msgid "Please specify start time."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2431
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2434
 msgid "Please specify end time."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2436
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2439
 msgid "Please specify at least provider or group."
 msgstr ""
 
 #. fields.setCellWidth(filterPanel, "50%");
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2578
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2581
 msgid "Filter by"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2584
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2587
 msgid "Provider Groups"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2636
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2639
 msgid "Jump"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2641
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2644
 msgid "Block Slots"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2712
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2715
 msgid "Added event on"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2731
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2734
 msgid "Updated event on"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2737
-#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2744
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2740
+#: src/main/java/org/freemedsoftware/gwt/client/widget/SchedulerWidget.java:2747
 msgid "Removed event on"
 msgstr ""
 
@@ -2633,13 +2645,13 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/EntryScreenInterface.java:150
 #: src/main/java/org/freemedsoftware/gwt/client/EntryScreenInterface.java:179
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:254
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:272
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:276
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:294
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/XmlControlledEntry.java:264
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/XmlControlledEntry.java:296
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/XmlControlledEntry.java:320
 msgid "Added successfully."
-msgstr ""
+msgstr "Agregado con éxito."
 
 #: src/main/java/org/freemedsoftware/gwt/client/EntryScreenInterface.java:168
 #: src/main/java/org/freemedsoftware/gwt/client/EntryScreenInterface.java:187
@@ -2671,49 +2683,49 @@ msgstr ""
 msgid "Failed to log out."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1723
-#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1807
+#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1733
+#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1818
 msgid "Report not found."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1791
+#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1802
 msgid "Default printer not found,"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1791
+#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1802
 msgid "Press Ok to set default printer."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1800
+#: src/main/java/org/freemedsoftware/gwt/client/Util.java:1811
 msgid "Printer not available."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:95
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:98
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:164
 msgid "User Name"
 msgstr "Nombre del usuario"
 
 #. Adding password tab
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:107
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:110
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:403
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:815
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:181
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:529
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:184
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:526
 msgid "Language"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:322
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:340
 msgid "The user name or password is incorrect. Please try again."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:324
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:344
 msgid "You can't login using facility '%s'."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:326
+#: src/main/java/org/freemedsoftware/gwt/client/LoginDialog.java:352
 msgid "Unable to connect to server."
 msgstr ""
 
@@ -2737,7 +2749,7 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:410
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:143
 msgid "Select All"
-msgstr ""
+msgstr "Seleccionar Todo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/RemittBilling.java:126
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:204
@@ -2748,7 +2760,7 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:427
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:155
 msgid "Select None"
-msgstr ""
+msgstr "Seleccione Ninguno"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/RemittBilling.java:136
 msgid "Submit Claims"
@@ -2771,13 +2783,13 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:529
 #: src/main/java/org/freemedsoftware/gwt/client/screen/RxRefillScreen.java:298
 msgid "Selected"
-msgstr ""
+msgstr "Seleccionado"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ConfigurationScreen.java:150
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ConfigurationScreen.java:170
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ConfigurationScreen.java:188
 msgid "Updated configuration."
-msgstr ""
+msgstr "Configuración actualizada."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ConfigurationScreen.java:160
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ConfigurationScreen.java:174
@@ -2894,7 +2906,7 @@ msgstr ""
 #. //////////////End Handling Navigation////////////////////////
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:172
 msgid "Preferences saved."
-msgstr ""
+msgstr "Preferencias guardadas."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:253
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:316
@@ -2907,11 +2919,11 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:285
 msgid "Invalid password."
-msgstr ""
+msgstr "Contraseña no válida."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:310
 msgid "Password changed successfully."
-msgstr ""
+msgstr "Contraseña cambiada con éxito."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PreferencesScreen.java:339
 msgid "Select theme to apply"
@@ -2972,7 +2984,7 @@ msgid "Internal ID"
 msgstr "Identificación interna"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientSearchScreen.java:163
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:460
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:457
 msgid "Social Security Number"
 msgstr "Número de Seguridad Social"
 
@@ -2981,7 +2993,7 @@ msgid "Drivers License"
 msgstr "Licencia de manejo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientSearchScreen.java:165
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:399
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:396
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:545
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:638
 msgid "Email Address"
@@ -2994,14 +3006,14 @@ msgstr "Código postal"
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientSearchScreen.java:168
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:588
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:786
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:387
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:384
 msgid "Home Phone"
 msgstr "Número de teléfono de la casa"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientSearchScreen.java:169
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:597
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:791
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:390
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:387
 msgid "Work Phone"
 msgstr "Número de teléfono del trabajo"
 
@@ -3020,8 +3032,8 @@ msgstr "Edad"
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:415
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:820
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:1493
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:285
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:101
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:282
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:123
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:129
 msgid "First Name"
 msgstr "Nombre"
@@ -3035,7 +3047,7 @@ msgstr "Nombre"
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:416
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:824
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ClaimsManager.java:1498
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:269
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:266
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:128
 msgid "Last Name"
 msgstr "Apellido"
@@ -3228,9 +3240,9 @@ msgstr "Tomo la llamada"
 
 #. Adding Contact
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:630
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:374
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:772
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:802
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:371
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:770
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:800
 msgid "Contact"
 msgstr "Contacto"
 
@@ -3238,7 +3250,7 @@ msgstr "Contacto"
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:655
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:240
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:417
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:300
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:297
 msgid "Middle Name"
 msgstr "Segundo nombre"
 
@@ -3269,12 +3281,12 @@ msgid "Callin form failed."
 msgstr "Forma de llamada falló"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:1081
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1405
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1404
 msgid "Please specify a last name."
 msgstr "Por favor especifíque el apellido"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/CallInScreen.java:1084
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1408
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1407
 msgid "Please specify a first name."
 msgstr "Por favor especifíque el primer nombre"
 
@@ -3509,7 +3521,7 @@ msgstr "Nombre de usuario"
 #. col 4
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:418
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:828
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:246
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:243
 msgid "Title"
 msgstr "Título"
 
@@ -3528,7 +3540,7 @@ msgid "Modules"
 msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/UserManagementScreen.java:550
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:457
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:454
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:636
 msgid "None"
 msgstr ""
@@ -3814,7 +3826,7 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:234
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ClinicalOrdersEntry.java:221
 msgid "Prescription"
-msgstr ""
+msgstr "Prescripción"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:242
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:244
@@ -3826,7 +3838,7 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:254
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:208
 msgid "Vitals"
-msgstr ""
+msgstr "Signos Vitales"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:262
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:265
@@ -3835,7 +3847,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:273
 msgid "New"
-msgstr ""
+msgstr "Nuevo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:302
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:304
@@ -3849,7 +3861,7 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:314
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:322
 msgid "Growth Charts"
-msgstr ""
+msgstr "Gráficas de Crecimiento"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientScreen.java:329
 msgid "Trending"
@@ -3868,7 +3880,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingScreen.java:146
 msgid "Compose"
-msgstr ""
+msgstr "Componer"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingScreen.java:172
 msgid "Move"
@@ -3889,7 +3901,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MessagingScreen.java:675
 msgid "You have new messages."
-msgstr ""
+msgstr "Tiene mensajes nuevos."
 
 #. mainPanel.setCellWidth(tabPanel, "100%");
 #. mainPanel.setCellHeight(tabPanel, "100%");
@@ -3903,7 +3915,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:462
 msgid "help"
-msgstr ""
+msgstr "ayuda"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:486
 msgid "Help Icon"
@@ -3914,10 +3926,10 @@ msgid "Help for the currently selected tab."
 msgstr "Ayuda "
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:502
-msgid "scheduler"
-msgstr "Agendador"
-
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:513
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:517
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:705
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:707
 msgid "Scheduler"
 msgstr "Agendador"
 
@@ -3951,9 +3963,7 @@ msgid "Set your user prefereneces."
 msgstr "Seleccione las preferencias del usuario"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:589
-msgid "support"
-msgstr "Apoyo"
-
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:600
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:614
 msgid "Support"
 msgstr "Apoyo"
@@ -3963,9 +3973,6 @@ msgid "More information about support."
 msgstr "Más información de apoyo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:625
-msgid "logout"
-msgstr "Salir"
-
 #: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:650
 msgid "Logout"
 msgstr "Salir"
@@ -3974,14 +3981,124 @@ msgstr "Salir"
 msgid "Logout of FreeMED."
 msgstr "Salir de FreeMed"
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1293
-#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1317
-#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1324
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:689
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:691
+msgid "Dashboard"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:738
+msgid "Clinic Registration"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:752
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:754
+msgid "Triage"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:798
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:804
+msgid "New Patient"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:817
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:819
+msgid "Groups"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:832
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:834
+msgid "Call In"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:846
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:849
+msgid "Rx Refill"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:891
+msgid "Unfiled"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:893
+msgid "Unfiled Documents"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:906
+msgid "Unread"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:908
+msgid "Unread Documents"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:935
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:937
+msgid "Accounts Receivable"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:951
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:953
+msgid "Claims Manager"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:966
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:968
+msgid "REMITT Billing"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:981
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:983
+msgid "Superbills"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1010
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1012
+msgid "Reporting Engine"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1026
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1028
+msgid "Reporting Log"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1055
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1057
+msgid "Tools"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1070
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1072
+msgid "Support Data"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1085
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1087
+msgid "Field Checker"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1103
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1105
+msgid "User Management"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1119
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1122
+msgid "System Configuration"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1146
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1148
+msgid "Access Control"
+msgstr ""
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1289
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1313
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1320
 msgid "Could not determine provider information."
 msgstr "No se determino la información del asegurador"
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1351
-#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1383
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1347
+#: src/main/java/org/freemedsoftware/gwt/client/screen/MainScreen.java:1379
 msgid "Could not determine Facility information."
 msgstr "No se determino la información de la facilidad"
 
@@ -4019,7 +4136,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:473
 msgid "You can modify only a single entry at a time."
-msgstr ""
+msgstr "Sólo puede modificar una sola entrada a la vez."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:531
 #: src/main/java/org/freemedsoftware/gwt/client/screen/PatientsGroupScreen.java:663
@@ -4114,326 +4231,326 @@ msgid "Please specify provider."
 msgstr ""
 
 #. Adding Demographics
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:244
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:768
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:788
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:241
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:766
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:786
 msgid "Demographics"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:315
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:312
 msgid "Suffix"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:340
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:125
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:337
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:147
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:131
 msgid "Gender"
 msgstr ""
 
 #. Adding Address
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:370
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:770
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:795
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:367
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:768
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:793
 msgid "Address"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:376
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:373
 msgid "Preferred Contact"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:382
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:379
 msgid "Mobile"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:393
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:390
 msgid "Fax Phone"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:396
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:393
 msgid "Mobile Phone"
 msgstr ""
 
 #. Adding Personal
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:426
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:774
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:809
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:423
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:772
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:807
 msgid "Personal"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:432
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:429
 msgid "Single"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:433
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:430
 msgid "Married"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:434
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:431
 msgid "Divorced"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:435
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:432
 msgid "Separated"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:436
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:433
 msgid "Widowed"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:440
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:437
 msgid "Employment Status"
-msgstr ""
+msgstr "Situación laboral"
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:446
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:443
 msgid "Part Time"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:448
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1498
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:445
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1490
 msgid "Retired"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:449
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1502
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:446
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1494
 msgid "Military"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:450
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1506
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:447
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1498
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:226
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:89
 msgid "Unknown"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:454
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:451
 msgid "Patient Status"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:479
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1545
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:476
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1530
 msgid "Unknown race"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:480
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1516
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:477
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1505
 msgid "Hispanic, white"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:481
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1521
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:478
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1510
 msgid "Hispanic, black"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:482
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1526
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:479
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1515
 msgid "American Indian or Alaska Native"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:483
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1532
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:480
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1519
 msgid "Black, not of Hispanic origin"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:484
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1536
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:481
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1523
 msgid "Asian or Pacific Islander"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:485
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1541
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:482
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1527
 msgid "White, not of Hispanic origin"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:494
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1602
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:491
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1570
 msgid "Unknown/No preference"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:495
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1572
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:492
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1541
 msgid "Catholic"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:496
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1573
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:493
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1542
 msgid "Jewish"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:497
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1574
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:494
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1543
 msgid "Eastern Orthodox"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:498
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1576
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:495
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1544
 msgid "Baptist"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:499
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1577
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:496
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1545
 msgid "Methodist"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:500
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1578
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:497
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1546
 msgid "Lutheran"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:501
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1579
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:498
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1547
 msgid "Presbyterian"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:502
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1580
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:499
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1548
 msgid "United Church of God"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:503
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1581
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:500
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1549
 msgid "Episcopalian"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:504
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1582
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:501
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1550
 msgid "Adventist"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:505
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1583
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:502
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1551
 msgid "Assembly of God"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:506
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1584
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:503
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1552
 msgid "Brethren"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:507
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1585
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:504
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1553
 msgid "Christian Scientist"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:508
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1586
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:505
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1554
 msgid "Church of Christ"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:509
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1587
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:506
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1555
 msgid "Church of God"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:510
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1588
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:507
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1556
 msgid "Disciples of Christ"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:511
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1589
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:508
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1557
 msgid "Evangelical Covenant"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:512
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1590
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:509
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1558
 msgid "Friends"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:513
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1591
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:510
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1559
 msgid "Jehovah's Witness"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:514
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1592
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:511
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1560
 msgid "Latter-Day Saints"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:515
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1593
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:512
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1561
 msgid "Islam"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:516
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1594
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:513
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1562
 msgid "Nazarene"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:518
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1596
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:515
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1564
 msgid "Pentecostal"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:519
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1597
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:516
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1565
 msgid "Protestant, Other"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:520
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1598
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:517
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1566
 msgid "Protestant, No Denomination"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:521
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1599
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:518
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1567
 msgid "Reformed"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:522
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1600
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:519
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1568
 msgid "Salvation Army"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:523
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1601
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:520
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1569
 msgid "Unitarian; Universalist"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:524
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1603
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:521
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1571
 msgid "Native American"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:525
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1604
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:522
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1572
 msgid "Buddhist"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:535
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:532
 msgid "Driver's License (No State)"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:543
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:540
 msgid "Type of Billing"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:548
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1611
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:545
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1579
 msgid "Monthly Billing On Account"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:549
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1616
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:546
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1583
 msgid "Statement Billing"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:550
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1621
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:547
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1587
 msgid "Charge Card Billing"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:555
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:552
 msgid "Monthly Budget Amount"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:562
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:559
 msgid "Patient Practice ID"
 msgstr ""
 
 #. Adding Medical
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:573
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:776
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:816
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:570
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:774
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:814
 msgid "Medical"
 msgstr ""
 
@@ -4456,97 +4573,97 @@ msgstr ""
 #. bloodType.addItem("AB-","AB-");
 #. bloodType.setVisibleItemCount(1);
 #. medicalTable.setWidget(0, 1, bloodType);
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:595
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:592
 msgid "Primary Facility"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:603
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:600
 msgid "Preferred Pharmacy"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:610
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:607
 msgid "In House Doctor"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:618
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:615
 msgid "Referring Doctor"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:625
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:622
 msgid "Primary Care Physician"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:633
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:630
 msgid "Number of Other Physicians"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:656
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:653
 msgid "Physician 1"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:661
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:658
 msgid "Physician 2"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:666
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:663
 msgid "Physician 3"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:671
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:668
 msgid "Physician 4"
 msgstr ""
 
 #. horizontalPanel.setWidth("100%");
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:689
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:686
 msgid "Commit"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:717
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:715
 msgid "This patient is already in the system. Do you want to continue adding?"
-msgstr ""
+msgstr "Este paciente ya está en el sistema. ¿Quieres seguir sumando?"
 
 #. Adding Coverages
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:753
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:778
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:823
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:751
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:776
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:821
 msgid "Coverages"
 msgstr ""
 
 #. Adding Authorizations
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:758
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:780
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:756
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:778
 msgid "Authorizations"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:853
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:871
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:919
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:851
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:869
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:917
 msgid "Updated patient information."
-msgstr ""
+msgstr "Actualizada la información del paciente."
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1002
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1000
 msgid "Patient successfully added."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1009
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1070
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1007
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1068
 msgid "Adding patient failed."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1063
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1061
 msgid "Patient information successfully modified."
-msgstr ""
+msgstr "Información de los pacientes modificado correctamente."
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1417
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1416
 msgid "Please specify gender."
-msgstr ""
+msgstr "Por favor especificar el género."
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1427
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1432
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1426
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1431
 msgid "Please specify at least one address."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1490
+#: src/main/java/org/freemedsoftware/gwt/client/screen/PatientForm.java:1482
 msgid "Part time"
 msgstr ""
 
@@ -4554,35 +4671,35 @@ msgstr ""
 msgid "Please choose a tool."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:85
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:107
 msgid "Last Name 1"
-msgstr ""
+msgstr "Apellido 1"
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:93
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:115
 msgid "Last Name 2"
+msgstr "Apellido 2"
+
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:139
+msgid "Age in Years (if no date of birth)"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:117
-msgid "Age (if no date of birth)"
-msgstr ""
-
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:135
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:157
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:133
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ScannedDocumentsEntryScreen.java:226
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ImmunizationEntry.java:147
 msgid "Notes"
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:244
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:260
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:279
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:266
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:282
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:301
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:301
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:382
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:387
 msgid "Failed to add."
 msgstr ""
 
-#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:265
+#: src/main/java/org/freemedsoftware/gwt/client/screen/entry/ClinicRegistrationEntry.java:287
 msgid "Failed to update."
 msgstr ""
 
@@ -4617,19 +4734,19 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:332
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:424
 msgid "Permissions successfully applied."
-msgstr ""
+msgstr "Permisos aplicado con éxito."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:337
 msgid "Failed to apply permissions."
-msgstr ""
+msgstr "No se ha podido aplicar los permisos."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:366
 msgid "Failed to delete."
-msgstr ""
+msgstr "No se pudo eliminar."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:377
 msgid "Successfully deleted."
-msgstr ""
+msgstr "Se ha eliminado correctamente."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/ACLScreen.java:603
 msgid "Modify Group"
@@ -4642,26 +4759,26 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:164
 msgid "Find existing patient"
-msgstr ""
+msgstr "Encontrar paciente existente"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:181
 msgid "Create New Patient"
-msgstr ""
+msgstr "Crear un paciente nuevo"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:230
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:254
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:258
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:266
 msgid "Failed to create new patient record."
-msgstr ""
+msgstr "No se pudo crear registro de pacientes nuevos."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:249
 msgid "New patient record created."
-msgstr ""
+msgstr "Registro de pacientes nuevos creados."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/TriageScreen.java:441
 msgid "Patients waiting for triage."
-msgstr ""
+msgstr "Pacientes en espera de clasificación."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientIdEntry.java:73
 msgid "Foreign ID #"
@@ -4669,7 +4786,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:168
 msgid "General Information"
-msgstr ""
+msgstr "Información General"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EpisodeOfCareScreen.java:185
 msgid "Date of First Occurance"
@@ -4869,7 +4986,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/SummaryScreen.java:136
 msgid "CLINICAL INFORMATION"
-msgstr ""
+msgstr "INFORMACIÓN CLÍNICA"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/SummaryScreen.java:147
 msgid "Patient Tags"
@@ -4877,11 +4994,11 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/SummaryScreen.java:166
 msgid "Medications"
-msgstr ""
+msgstr "Medicamentos"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/SummaryScreen.java:177
 msgid "Allergies"
-msgstr ""
+msgstr "Alergias"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/EncounterScreen.java:211
 msgid "Submitter"
@@ -5135,7 +5252,7 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ScannedDocumentsEntryScreen.java:249
 msgid "Attach Image"
-msgstr ""
+msgstr "Adjuntar imagen"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ScannedDocumentsEntryScreen.java:263
 msgid "Document added successfully."
@@ -5204,11 +5321,11 @@ msgstr ""
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/GrowthChartScreen.java:229
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/GrowthChartScreen.java:235
 msgid "Failed to retrieve stock growth chart data."
-msgstr ""
+msgstr "No se pudo recuperar de archivo de datos gráfica de crecimiento."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AllergyEntryScreen.java:103
 msgid "Please fill in all fields!"
-msgstr ""
+msgstr "Por favor, rellene todos los campos!"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AllergyEntryScreen.java:146
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/AllergyEntryScreen.java:167
@@ -5255,11 +5372,11 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:79
 msgid "Natural Child, Insured has financial responsibility"
-msgstr ""
+msgstr "Hijo natural, ha asegurado la responsabilidad financiera"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:83
 msgid "Natural Child, insured does not have financial responsibility"
-msgstr ""
+msgstr "Hijo natural, no tiene asegurada la responsabilidad financiera"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:87
 msgid "Ward of the Court"
@@ -5283,15 +5400,15 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:93
 msgid "Grandchild"
-msgstr ""
+msgstr "Nieto/nieta"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:94
 msgid "Niece/Nephew"
-msgstr ""
+msgstr "Sobrina/sobrino"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:95
 msgid "Injured Plaintiff"
-msgstr ""
+msgstr "El demandante heridos"
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/PatientLinkEntry.java:97
 msgid "Minor Dependent of a Minor Dependent"
@@ -5424,11 +5541,11 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ProcedureScreen.java:1042
 msgid "Please specify the provider."
-msgstr ""
+msgstr "Por favor, especifique el proveedor."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ProcedureScreen.java:1045
 msgid "Please specify the procedure date."
-msgstr ""
+msgstr "Por favor, especifique la fecha del procedimiento."
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/patient/ProcedureScreen.java:1049
 msgid "Please specify diagnosis code 1."
@@ -5527,6 +5644,477 @@ msgstr ""
 
 #: src/main/java/org/freemedsoftware/gwt/client/screen/RxRefillScreen.java:559
 msgid "Request sent to provider."
+msgstr ""
+
+msgid "Facility Name"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Postal Code"
+msgstr ""
+
+msgid "Default Physician"
+msgstr ""
+
+msgid "Phone Number"
+msgstr ""
+
+msgid "Fax Number"
+msgstr ""
+
+msgid "Employer Identification Number"
+msgstr ""
+
+msgid "National Provider Identification"
+msgstr ""
+
+msgid "Taxonomy Number"
+msgstr ""
+
+msgid "Internal or External Facility"
+msgstr ""
+
+msgid "Place of Service Code"
+msgstr ""
+
+msgid "X12 Identifier"
+msgstr ""
+
+msgid "X12 Identifier Type"
+msgstr ""
+
+msgid "Dictionary Code"
+msgstr ""
+
+msgid "Code Value"
+msgstr ""
+
+msgid "Internal Name"
+msgstr ""
+
+msgid "External Name"
+msgstr ""
+
+msgid "Gender Restriction"
+msgstr ""
+
+msgid "Equipment"
+msgstr ""
+
+msgid "Surgery Enabled"
+msgstr ""
+
+msgid "Booking Enabled"
+msgstr ""
+
+msgid "Room IP Address"
+msgstr ""
+
+msgid "Enclosure"
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "E-Mail Address"
+msgstr ""
+
+msgid "Cell Phone"
+msgstr ""
+
+msgid "Pager"
+msgstr ""
+
+msgid "UPIN# (Unique Physician Identification Number)"
+msgstr ""
+
+msgid "Degrees"
+msgstr ""
+
+msgid "Specialties"
+msgstr ""
+
+msgid "Enter here the specialties the Provider has."
+msgstr ""
+
+msgid "Payer Name"
+msgstr ""
+
+msgid "Payer Display Name"
+msgstr ""
+
+msgid "Contact Person's Name"
+msgstr ""
+
+msgid "Internal Identifier"
+msgstr ""
+
+msgid "Homepage"
+msgstr ""
+
+msgid "Contact Email Address"
+msgstr ""
+
+msgid "Insurance Company Group"
+msgstr ""
+
+msgid "Modifiers"
+msgstr ""
+
+msgid "X12 Payer ID Code"
+msgstr ""
+
+msgid "Default Output Format"
+msgstr ""
+
+msgid "Paper: Default Format"
+msgstr ""
+
+msgid "Paper: Default Target"
+msgstr ""
+
+msgid "Paper: Default Target Option"
+msgstr ""
+
+msgid "Electronic: Default Format"
+msgstr ""
+
+msgid "Electronic: Default Target"
+msgstr ""
+
+msgid "Electronic: Default Target Option"
+msgstr ""
+
+msgid "Practice Name"
+msgstr ""
+
+msgid "Phone #"
+msgstr ""
+
+msgid "Facsimile #"
+msgstr ""
+
+msgid "NPI #"
+msgstr ""
+
+msgid "Cellular Phone #"
+msgstr ""
+
+msgid "Beeper / Pager #"
+msgstr ""
+
+msgid "Package Count"
+msgstr ""
+
+msgid "Drug Company"
+msgstr ""
+
+msgid "Drug Representative"
+msgstr ""
+
+msgid "Invoice Number"
+msgstr ""
+
+msgid "Sample Count"
+msgstr ""
+
+msgid "Sample Count Remaining"
+msgstr ""
+
+msgid "Received On Date"
+msgstr ""
+
+msgid "Assigned To"
+msgstr ""
+
+msgid "Disposed By"
+msgstr ""
+
+msgid "Disposed Date"
+msgstr ""
+
+msgid "Disposal Method"
+msgstr ""
+
+msgid "Disposal Reason"
+msgstr ""
+
+msgid "Witness"
+msgstr ""
+
+msgid "Descriptive Name"
+msgstr ""
+
+msgid "Code Set"
+msgstr ""
+
+msgid "Widget Type (Quantifier only)"
+msgstr ""
+
+msgid "Widget Options (Quantifier only)"
+msgstr ""
+
+msgid "Sub Members"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "SHIM Station Name"
+msgstr ""
+
+msgid "Station WSDL URL"
+msgstr ""
+
+msgid "Station IP"
+msgstr ""
+
+msgid "Dosing Enabled"
+msgstr ""
+
+msgid "Label Printing Enabled"
+msgstr ""
+
+msgid "Signature Enabled"
+msgstr ""
+
+msgid "Vitals Enabled"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "Required Equipment"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Composing Orders"
+msgstr ""
+
+msgid "Clearinghouse Name"
+msgstr ""
+
+msgid "Clearinghouse Address"
+msgstr ""
+
+msgid "Zip"
+msgstr ""
+
+msgid "ETIN"
+msgstr ""
+
+msgid "X12 GS Sender ID"
+msgstr ""
+
+msgid "X12 GS Receiver ID"
+msgstr ""
+
+msgid "Type of Service"
+msgstr ""
+
+msgid "Order Name"
+msgstr ""
+
+msgid "Priority"
+msgstr ""
+
+msgid "Lab Panel Code"
+msgstr ""
+
+msgid "Lab Specimen Action Code"
+msgstr ""
+
+msgid "Immunization Code"
+msgstr ""
+
+msgid "Immunization Units"
+msgstr ""
+
+msgid "Pharmacy Name"
+msgstr ""
+
+msgid "City, State Zip"
+msgstr ""
+
+msgid "Transmission Method"
+msgstr ""
+
+msgid "Facsimile Number (as dialed)"
+msgstr ""
+
+msgid "NCPDP ID Number"
+msgstr ""
+
+msgid "Rule Name"
+msgstr ""
+
+msgid "Numeric Priority"
+msgstr ""
+
+msgid "If Facility Comparison"
+msgstr ""
+
+msgid "If Facility"
+msgstr ""
+
+msgid "If CPT Code Comparison"
+msgstr ""
+
+msgid "If CPT Code"
+msgstr ""
+
+msgid "If CPT Modifier Comparison"
+msgstr ""
+
+msgid "If CPT Modifier"
+msgstr ""
+
+msgid "Then Set Charge Amount"
+msgstr ""
+
+msgid "Then Set Type of Service"
+msgstr ""
+
+msgid "Service Name"
+msgstr ""
+
+msgid "Phone"
+msgstr ""
+
+msgid "TIN"
+msgstr ""
+
+msgid "Provider Name"
+msgstr ""
+
+msgid "Mail Gateway"
+msgstr ""
+
+msgid "Number Length"
+msgstr ""
+
+msgid "Use Country Code?"
+msgstr ""
+
+msgid "Locale"
+msgstr ""
+
+msgid "Electronic Template"
+msgstr ""
+
+msgid "Degree Abbreviation"
+msgstr ""
+
+msgid "Degree Name"
+msgstr ""
+
+msgid "Physician Group Name"
+msgstr ""
+
+msgid "Default Facility"
+msgstr ""
+
+msgid "Specialty 1"
+msgstr ""
+
+msgid "Physicians"
+msgstr ""
+
+msgid "The specialty which should be associated with this provider group."
+msgstr ""
+
+msgid "Specify all providers belonging to this group."
+msgstr ""
+
+msgid "Diagnosis Codes"
+msgstr ""
+
+msgid "Procedure Codes"
+msgstr ""
+
+msgid "Priority / Order"
+msgstr ""
+
+msgid "ICD9-Code"
+msgstr ""
+
+msgid "ICD10-Code"
+msgstr ""
+
+msgid "ICD9 Descriptor"
+msgstr ""
+
+msgid "ICD10 Descriptor"
+msgstr ""
+
+msgid "Meta Description"
+msgstr ""
+
+msgid "icdng????"
+msgstr ""
+
+msgid "icddrg????"
+msgstr ""
+
+msgid "icdnum????"
+msgstr ""
+
+msgid "icdamt????"
+msgstr ""
+
+msgid "icdcoll????"
+msgstr ""
+
+msgid "Description of the ICD9 Code."
+msgstr ""
+
+msgid "Description of the ICD10 Code."
+msgstr ""
+
+msgid "CPT Code"
+msgstr ""
+
+msgid "Taxed?"
+msgstr ""
+
+msgid "Internal Service Type"
+msgstr ""
+
+msgid "Required Procedural Codes"
+msgstr ""
+
+msgid "Excluded Procedural Codes"
+msgstr ""
+
+msgid "Required Diagnoses"
+msgstr ""
+
+msgid "Excluded Diagnoses"
+msgstr ""
+
+msgid "Relative Value"
+msgstr ""
+
+msgid "Default Type of Service"
+msgstr ""
+
+msgid "Default Standard Fee"
+msgstr ""
+
+msgid "Required Procedures as Cpt Codes"
+msgstr ""
+
+msgid "Excluded Procedures as Cpt Codes"
+msgstr ""
+
+msgid "Required Diagnoses as ICD Codes"
+msgstr ""
+
+msgid "Excluded Diagnoses as ICD Codes"
 msgstr ""
 
 
