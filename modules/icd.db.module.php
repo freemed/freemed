@@ -51,7 +51,7 @@ class IcdMaintenance extends MaintenanceModule {
 			'icd10descrip' => SQL__VARCHAR(45),
 			'icdmetadesc' => SQL__VARCHAR(30),
 			'icdng' => SQL__DATE,
-			'icddrg' => SQL__DATE,
+			'icddrg' => SQL__TEXT,
 			'icdnum' => SQL__INT_UNSIGNED(0),
 			'icdamt' => SQL__REAL,
 			'icdcoll' => SQL__REAL,
