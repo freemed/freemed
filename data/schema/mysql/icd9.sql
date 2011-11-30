@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `icd9` (
 	icd10descrip		VARCHAR (100),
 	icdmetadesc		VARCHAR (100),
 	icdng			DATE,
-	icddrg			DATE,
+	icddrg			TEXT,
 	icdnum			INT UNSIGNED DEFAULT 0,
 	icdamt			REAL DEFAULT 0.0,
 	icdcoll			REAL DEFAULT 0.0,
@@ -45,6 +45,7 @@ CREATE PROCEDURE icd9_Upgrade ( )
 BEGIN
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION BEGIN END;
 	ALTER IGNORE TABLE icd9 ADD COLUMN icdarchive INT(10) UNSIGNED DEFAULT 0 AFTER icdcoll;
+	ALTER IGNORE TABLE icd9 CHANGE COLUMN icddrg icddrg TEXT;
 	#----- Upgrades
 
 END
