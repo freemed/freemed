@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2011 FreeMED Software Foundation
+ // Copyright (C) 1999-2012 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@
 <!--{/if}-->
 
 <div id="legalNotice">
-	<b>FreeMED</b> &copy; 1999-2011 (GPL) FreeMED Software Foundation
+	<b>FreeMED</b> &copy; 1999-2012 (GPL) FreeMED Software Foundation
 	( <b>http://www.freemedsoftware.org/</b> )
 	<br />
     	<small><i>FreeMED comes with ABSOLUTELY NO WARRANTY. This is free

@@ -6,7 +6,7 @@
  //     Alexandru Zbarcea <zbarcea.a@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2011 FreeMED Software Foundation
+ // Copyright (C) 1999-2012 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
