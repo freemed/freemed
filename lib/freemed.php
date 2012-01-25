@@ -29,7 +29,7 @@ define ('__FREEMED_PHP__', true);
 define ('PACKAGENAME', "FreeMED");
 define ('CODED_BY', "FreeMED Software Foundation");
 define ('VERSION', "0.8.8");	// current version
-define ('DISPLAY_VERSION', "0.9.0-dev");
+define ('DISPLAY_VERSION', "0.9.0-rc1");
 define ('PHYSICAL_LOCATION', dirname(dirname(__FILE__)) );
 define ('FREEMED_DIR', PHYSICAL_LOCATION );
 define ('GWTPHP_DIR', PHYSICAL_LOCATION . '/lib/gwtphp');
