@@ -27,10 +27,10 @@
  * @author Monte Ohrt <monte at ohrt dot com>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.6.23
+ * @version 2.6.26
  */
 
-/* $Id$ */
+/* $Id: Smarty.class.php 3163 2009-06-17 14:39:24Z monte.ohrt $ */
 
 /**
  * DIR_SEP isn't used anymore, but third party apps might
@@ -107,7 +107,7 @@ class Smarty
     /**
      * When set, smarty does uses this value as error_reporting-level.
      *
-     * @var boolean
+     * @var integer
      */
     var $error_reporting  =  null;
 
@@ -465,7 +465,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.6.23';
+    var $_version              = '2.6.26';
 
     /**
      * current template inclusion depth
@@ -1952,47 +1952,6 @@ class Smarty
 		}
 	}
   
-    /**
-     * wrapper for super global access
-     * @return mixed
-     */
-    function _get_super($type,$name)
-    {
-        // don't display anything if not allowed
-        if($this->security && !$this->security_settings['ALLOW_SUPER_GLOBALS']) {
-          $this->trigger_error('security error: super global access not allowed');
-          return false;
-        }
-        if(empty($type)||empty($name))
-          return null;
-        switch($type) {
-            case 'get':
-              return $this->request_use_auto_globals ? $_GET[$name] : $GLOBALS['HTTP_GET_VARS'][$name];
-              break;
-            case 'post':
-              return $this->request_use_auto_globals ? $_POST[$name] : $GLOBALS['HTTP_POST_VARS'][$name];
-              break;
-            case 'server':
-              return $this->request_use_auto_globals ? $_SERVER[$name] : $GLOBALS['HTTP_SERVER_VARS'][$name];
-              break;
-            case 'session':
-              return $this->request_use_auto_globals ? $_SESSION[$name] : $GLOBALS['HTTP_SESSION_VARS'][$name];
-              break;        
-            case 'request':
-              return $this->request_use_auto_globals ? $_REQUEST[$name] : $GLOBALS['HTTP_REQUEST_VARS'][$name];
-              break;        
-            case 'cookies':
-              return $this->request_use_auto_globals ? $_COOKIE[$name] : $GLOBALS['HTTP_COOKIE_VARS'][$name];
-              break;        
-            case 'env':
-              return $this->request_use_auto_globals ? $_ENV[$name] : $GLOBALS['HTTP_ENV_VARS'][$name];
-              break;        
-            default:
-              return null;
-              break;
-        }
-    }
-    
     /**#@-*/
 
 }
