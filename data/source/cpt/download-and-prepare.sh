@@ -22,23 +22,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-RVU_FILE=RVU11A.zip
-HCPCS_FILE=11anweb.zip
+RVU_FILE=http://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/PhysicianFeeSched/Downloads/RVU12AR.zip
+HCPCS_FILE=http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets/downloads/12anweb.zip
 CURDIR="$( pwd )"
 
 cd "$( cd "$(dirname "$0")"; pwd )"
 
 # Retrieve original file
-wget -c "http://www.cms.hhs.gov/physicianfeesched/downloads/$RVU_FILE" -O "$RVU_FILE"
-wget -c "http://www.cms.hhs.gov/HCPCSReleaseCodeSets/Downloads/${HCPCS_FILE}?agree=yes&next=Accept" -O "${HCPCS_FILE}"
+wget -c "${RVU_FILE}" -O "$( basename "${RVU_FILE}" )"
+wget -c "${HCPCS_FILE}" -O "$( basename "${HCPCS_FILE}" )"
 
 # Extract all files from archive
 rm -rf extract
 mkdir extract
 ( \
 	cd extract ; \
-	unzip ../$RVU_FILE ; \
-	unzip ../$HCPCS_FILE ; \
+  unzip ../$( basename "${RVU_FILE}" ) ; \
+  unzip ../$( basename "${HCPCS_FILE}" ) ; \
 	mv PPRRVU*.csv ../PPRRVU.csv \
 )
 rm extract -Rf
