@@ -4,16 +4,37 @@
   <system>
     <!--path to AppletHelper from wherever radscaper.jar file is installed, default=cgi-bin/AppletHelper.exe-->
     <!--if installed on Linux, change AppletHelper.exe to AppletHelper-->
-    <appletHelper>cgi-bin/AppletHelper</appletHelper>
+    <appletHelper>cgi-bin/AppletHelper.exe</appletHelper>
 
     <!--local path to licens file for registerred user, default=c:\radscaper.bin for Windows, default=/usr/radscaper.bin for Linux-->
     <!--<licenseFile>local_path_to_license_file</licenseFile>-->
 
-    <!--logging level (0: system, 1: exception, 2: warning, 3: debug, 4: detailed debug), default=0-->
+    <!--data file name that can be full path, default=radscaper.dat-->
+    <!--<datFile>data_file_name</datFile>-->
+
+    <!--logging level (0: system, 1: exception, 2: warning, 3: debug), default=0-->
     <logLevel>0</logLevel>
+
+    <!--use image cache to reduce network traffic, disable image cache if content is a concern (0: disable, 1: enabled), default=1-->
+    <imageCache>1</imageCache>
+
+    <!--disable the popup message window if it's annoying (0: disabled, 1: enabled), default=1-->
+    <popup>1</popup>
 
     <!--disable tag window if the information in DICOM header is a concern (0: disabled, 1: enabled), default=1-->
     <tagAllowed>1</tagAllowed>
+    
+    <!--image loading progress bar (0: disabled, 1: enabled), default=1-->
+    <loading>1</loading>
+    
+    <!--cine images within the multi-frame file when cine starts from an image of the file (0: disabled, 1: enabled), default=1-->
+    <cineFile>1</cineFile>
+    
+    <!--number of seconds up to which an image can be held in the loading queue (> 20), default=120-->
+    <dequeuingTimeout>120</dequeuingTimeout>
+    
+    <!--number of seconds up to which an image can take in the loading tread (> 10), default=60-->
+    <loadingTimeout>60</loadingTimeout>
   </system>
   
   <memory>
@@ -23,8 +44,8 @@
     <!--maximum number of columns [1, 30], default=10-->
     <maxColumn>10</maxColumn>
 
-    <!--maximum number of files to buffer [maxRow x maxColumn, 1000], default=maxRow x maxColumn-->
-    <maxFileToBuffer>100</maxFileToBuffer>
+    <!--maximum number of files to buffer [0, 1000] (0: auto), default=0-->
+    <maxFileToBuffer>0</maxFileToBuffer>
   </memory>
   
   <startup>
@@ -39,6 +60,10 @@
     
     <!--start with or without overlay (0: off, 1: on), default=1-->
     <overlay>1</overlay>
+    
+    <!--active action (0: magnifier, 1: window/level, 2: zoom, 3: pan, 4: measure distance, 5: measure ellipse area, 6: measure angle), default=0-->
+    <!--window/level is applicable only to gray scale images-->
+    <activeAction>0</activeAction>
   </startup>
   
   <measure>
@@ -66,15 +91,13 @@
     <!--default VOI LUT if there is more than one in header (>= 0), 0:ignore VOI LUT and use window center/width default=1-->
     <voilut>1</voilut>
   </contrast>
+  
   <performance>
     <!--one dimension size of magnifier window (>= 50), default=400-->
     <magnifierSize>400</magnifierSize>
     
     <!--one dimension size of window level window (>= 50), default=400-->
     <windowLevelSize>400</windowLevelSize>
-    
-    <!--mouse wheel speed [1, 10], default=1-->
-    <mouseWheelSpeed>1</mouseWheelSpeed>
   </performance>
 
   <annotation>
