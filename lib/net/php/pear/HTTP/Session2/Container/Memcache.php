@@ -9,14 +9,17 @@
  * @author   Chad Wagner <chad.wagner@gmail.com>
  * @author   Torsten Roehr <torsten.roehr@gmx.de>
  * @license  http://www.opensource.org/licenses/bsd-license.php The BSD License
- * @version  CVS: $Id: Memcache.php,v 1.3 2008/02/17 13:05:36 till Exp $
+ * @version  CVS: $Id: Memcache.php 267740 2008-10-25 16:57:41Z till $
  * @link     http://pear.php.net/package/HTTP_Session2
  */
 
+/**
+ * HTTP_Session2_Container
+ */
 require_once 'HTTP/Session2/Container.php';
 
 /**
- * HTTP/Session2/Exception.php
+ * HTTP_Session2_Exception
  */
 require_once 'HTTP/Session2/Exception.php';
 
@@ -30,7 +33,7 @@ require_once 'HTTP/Session2/Exception.php';
  * @license  http://www.opensource.org/licenses/bsd-license.php The BSD License
  * @version  Release: @package_version@
  * @link     http://pear.php.net/package/HTTP_Session2
- * @since    Class available since Release 0.6.2
+ * @since    0.6.2
  */
 class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
 {
@@ -39,7 +42,7 @@ class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
      *
      * @var object Memcache
      */
-    private $mc;
+    protected $mc;
 
     /**
      * Constructor method
@@ -61,9 +64,9 @@ class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
     }
 
     /**
-     * Connect by using the given DSN string
+     * Connect using the given Memcache object.
      *
-     * @param object $mc Memcache object
+     * @param Memcache $mc A Memcache instance.
      *
      * @return boolean
      * @throws HTTP_Session2_Exception
@@ -72,13 +75,12 @@ class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
     {
         if ($mc instanceof Memcache) {
             $this->mc = $mc;
-        } else {
-            throw new HTTP_Session2_Exception(
-                'The given memcache object was not valid in file '
-                . __FILE__ . ' at line ' . __LINE__, 41);
+            return true;
         }
-
-        return true;
+        throw new HTTP_Session2_Exception(
+            'The given memcache object was not valid in file '
+            . __FILE__ . ' at line ' . __LINE__,
+            HTTP_Session2::ERR_SYSTEM_PRECONDITION);
     }
 
     /**
@@ -114,7 +116,6 @@ class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
     {
         return true;
     }
-
     /**
      * Read session data
      *
@@ -138,9 +139,9 @@ class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
     public function write($id, $data)
     {
         $this->mc->set($this->options['prefix'] . $id,
-                       $data,
-                       MEMCACHE_COMPRESSED,
-                       time() + ini_get('session.gc_maxlifetime'));
+            $data,
+            MEMCACHE_COMPRESSED,
+            time() + ini_get('session.gc_maxlifetime'));
 
         return true;
     }
@@ -184,7 +185,6 @@ class HTTP_Session2_Container_Memcache extends HTTP_Session2_Container
         $msg  = 'The replicate feature is not available yet';
         $msg .= ' for the Memcache container.';
 
-        throw new HTTP_Session2_Exception($msg);
+        throw new HTTP_Session2_Exception($msg, HTTP_Session2::ERR_NOT_IMPLEMENTED);
     }
 }
-?>

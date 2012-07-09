@@ -8,7 +8,7 @@
  * @package  HTTP_Session2
  * @author   Till Klampaeckel <till@php.net>
  * @license  http://www.opensource.org/licenses/bsd-license.php The BSD License
- * @version  CVS: $Id: MDB2.php,v 1.17 2008/04/01 15:28:44 till Exp $
+ * @version  CVS: $Id: MDB2.php 267741 2008-10-25 17:00:06Z till $
  * @link     http://pear.php.net/package/HTTP_Session2
  */
 
@@ -59,14 +59,14 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
      *
      * @var object DB
      */
-    private $db = null;
+    protected $db = null;
 
     /**
      * Session data cache id
      *
      * @var mixed
      */
-    private $crc = false;
+    protected $crc = false;
 
     /**
      * Constrtuctor method
@@ -104,15 +104,20 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
             return true;
         }
         if (is_string($dsn) || is_array($dsn)) {
-            $this->db = MDB2::connect($dsn);
+            if (MDB2::isError($this->db = MDB2::connect($dsn))) {
+                throw new HTTP_Session2_Exception($this->db->getDebugInfo(),
+                    $this->db->getCode());
+            }
         } else if (is_object($dsn) && ($dsn instanceof MDB2_Driver_Common)) {
             $this->db = $dsn;
         } else if (MDB2::isError($dsn)) {
-            throw new HTTP_Session2_Exception($dsn->getMessage(), $dsn->getCode());
+            throw new HTTP_Session2_Exception($dsn->getDebugInfo(),
+                $dsn->getCode());
         } else {
             $msg  = "The given dsn was not valid in file ";
             $msg .= __FILE__ . " at line " . __LINE__;
-            throw new HTTP_Session2_Exception($msg);
+            throw new HTTP_Session2_Exception($msg,
+                HTTP_Session2::ERR_SYSTEM_PRECONDITION);
         }
         if (MDB2::isError($this->db)) {
             throw new HTTP_Session2_Exception($this->db->getMessage(),
@@ -291,26 +296,11 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
         }
 
         if ($this->options['autooptimize']) {
-            switch($this->db->phptype) {
-            case 'mysql':
-            case 'mysqli':
-                $query = sprintf('OPTIMIZE TABLE %s',
-                    $this->db->quoteIdentifier($this->options['table']));
-                break;
-            case 'pgsql':
-                $query = sprintf('VACUUM %s',
-                    $this->db->quoteIdentifier($this->options['table']));
-                break;
-            default:
-                $query = null;
-                break;
-            }
-            if ($query !== null) {
-                $result = $this->db->query($query);
-                if (MDB2::isError($result)) {
-                    throw new HTTP_Session2_Exception($result->getMessage(),
-                        $result->getCode());
-                }
+            $this->db->loadModule('Manager');
+            $result = $this->db->vacuum($this->options['table']);
+            if (MDB2::isError($result)) {
+                throw new HTTP_Session2_Exception($result->getMessage(),
+                    $result->getCode());
             }
         }
         return true;
@@ -319,15 +309,16 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
     /**
      * Replicate session data to specified target
      *
-     * @param string $target Target to replicate to
+     * @param string $target The target (table) to replicate to.
      * @param string $id     Id of record to replicate,
      *                       if not specified current session id will be used
      *
      * @return boolean
+     * @throws HTTP_Session2_Exception To carry any MDB2 related error out.
      */
     public function replicate($target, $id = null)
     {
-        if (is_null($id)) {
+        if ($id === null) {
             $id = HTTP_Session2::id();
         }
 
@@ -336,8 +327,8 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
         $query .= " WHERE id = " . $this->db->quote(md5($id), 'text');
         $result = $this->db->queryOne($query);
         if (MDB2::isError($result)) {
-            $this->db->raiseError($result->code, PEAR_ERROR_DIE);
-            return false;
+            throw new HTTP_Session2_Exception($result->getDebugInfo(),
+                $result->getCode());
         }
 
         // Insert new row into dest table
@@ -358,8 +349,8 @@ class HTTP_Session2_Container_MDB2 extends HTTP_Session2_Container
 
         $result = $this->db->query($query);
         if (MDB2::isError($result)) {
-            $this->db->raiseError($result->code, PEAR_ERROR_DIE);
-            return false;
+            throw new HTTP_Session2_Exception($result->getDebugInfo(),
+                $result->getCode());
         }
 
         return true;

@@ -40,7 +40,7 @@
  * @author   Alexander Radivaniovich <info@wwwlab.net>
  * @author   Tony Bibbs <tony@geeklog.net>
  * @license  http://www.opensource.org/licenses/bsd-license.php The BSD License
- * @version  CVS: $Id: Session2.php,v 1.17 2008/02/17 13:37:02 till Exp $
+ * @version  CVS: $Id: Session2.php 267739 2008-10-25 16:54:23Z till $
  * @link     http://pear.php.net/package/HTTP_Session2
  */
 
@@ -131,6 +131,17 @@ class HTTP_Session2
      *        E.g. Not enough permissions to override ini-settings.
      */
     const ERR_SYSTEM_PERM = 668;
+    
+    /**
+     * @const ERR_SYSTEM_PRECONDITION - Precondition failed. E.g. error occured and 
+     *        HTTP_Session2 can't start up, etc..
+     */
+    const ERR_SYSTEM_PRECONDITION = 669;
+
+    /**
+     * @const ERR_NOT_IMPLEMENTED Feature is not yet Implement in the container.
+     */
+    const ERR_NOT_IMPLEMENTED = 670;
 
     /**
      * Container instance
@@ -157,7 +168,9 @@ class HTTP_Session2
         $container_class     = 'HTTP_Session2_Container_' . $container;
         $container_classfile = 'HTTP/Session2/Container/' . $container . '.php';
 
-        include_once $container_classfile;
+        if (!class_exists($container_class)) {
+            include_once $container_classfile;
+        }
         if (!class_exists($container_class)) {
             throw new HTTP_Session2_Exception(
                 "Container class, $container_class, does not exist",
@@ -185,7 +198,7 @@ class HTTP_Session2
      * @see    session_id()
      * @see    session_start()
      */
-    public function start($name = 'SessionID', $id = null)
+    public static function start($name = 'SessionID', $id = null)
     {
         self::name($name);
         if (is_null(self::detectID())) {
@@ -437,12 +450,16 @@ class HTTP_Session2
      *
      * It returns the previous value of this property.
      *
-     * @param boolean $useCookies If specified it will replace the previous value
-     *                            of this property
+     * @param boolean $useCookies If specified it will replace the previous value of
+     *                            this property. By default 'null', which doesn't
+     *                            change any setting on your system. If you supply a
+     *                            parameter, please supply 'boolean'.
      *
      * @return boolean The previous value of the property
-     * @throws HTTP_Session2_Exception If ini_set fails!
+     * 
+     * @throws HTTP_Session2_Exception If ini_set() fails!
      * @see    session_set_cookie_params()
+     * @link   http://php.net/manual/en/function.session-set-cookie-params.php
      */
     public static function useCookies($useCookies = null)
     {
@@ -450,16 +467,17 @@ class HTTP_Session2
         if (ini_get('session.use_cookies') == '1') {
             $return = true;
         }
-        if ($useCookies != null) {
-            if ($useCookies) {
+        if ($useCookies !== null) {
+            if ($useCookies === true) {
                 $status = ini_set('session.use_cookies', 1);
             } else {
                 $status = ini_set('session.use_cookies', 0);
             }
             if ($status === false) {
-                throw new HTTP_Session2_Exception(
-                    'Could not set session.use_cookies, please check permissions.',
-                    self::ERR_SYSTEM_PERM);
+                $msg  = "Could not set 'session.use_cookies'. Please check your ";
+                $msg .= 'permissions to override php.ini-settings. E.g. a possible ';
+                $msg .= 'php_admin_value setting or blocked ini_set() calls ';
+                throw new HTTP_Session2_Exception($msg, self::ERR_SYSTEM_PERM);
             }
         }
         return $return;
@@ -472,9 +490,11 @@ class HTTP_Session2
      * You MUST call this method only after you have started
      * the session with the HTTP_Session2::start() method.
      *
-     * @return boolean true if the session was created
-     *                 with the current request, false otherwise
-     * @see    self::start()
+     * @return boolean true when the session was created with the current request
+     *                 false otherwise
+     *
+     * @see  self::start()
+     * @uses self::STARTED
      */
     public static function isNew()
     {
@@ -535,9 +555,9 @@ class HTTP_Session2
      * @param string $name  Name of a variable
      * @param mixed  $value Value of a variable
      *
-     * @return mixed  Old value of a variable
+     * @return mixed Old value of a variable
      */
-    public function set($name, $value)
+    public static function set($name, $value)
     {
         $return = (isset($_SESSION[$name])) ? $_SESSION[$name] : null;
         if (null === $value) {
@@ -693,8 +713,8 @@ class HTTP_Session2
      *
      * It returns the previous value of this property
      *
-     * @param boolean $gcMaxLifetime If specified it will replace the previous value
-     *                               of this property
+     * @param int $gcMaxLifetime If specified it will replace the previous value of
+     *                           this property, and must be integer.
      *
      * @return boolean The previous value of the property
      */
@@ -714,8 +734,8 @@ class HTTP_Session2
      *
      * It returns the previous value of this property
      *
-     * @param boolean $gcProbability If specified it will replace the previous value
-     *                               of this property
+     * @param int $gcProbability If specified it will replace the previous value of
+     *                           this property.
      *
      * @return boolean The previous value of the property
      */
@@ -732,5 +752,9 @@ class HTTP_Session2
     }
 }
 
+/**
+ * init {@link HTTP_Session2}
+ * 
+ * @see HTTP_Session2::init()
+ */
 HTTP_Session2::init();
-?>
