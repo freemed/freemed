@@ -39,7 +39,7 @@ CREATE TABLE pqri_source (
 
 #----- Import PQRI from CSV export files -----
 
-LOAD DATA LOCAL INFILE 'data/source/pqri/2009_PQRI_SingleSource_PUBLIC_CodeMaster_120808.csv'
+LOAD DATA LOCAL INFILE 'data/source/pqri/2012_PhysQualRptg_IndivMeasures_SingleSourceCodeMaster_011312.csv'
 	INTO TABLE pqri_source
 	FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
