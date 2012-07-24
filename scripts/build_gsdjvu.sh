@@ -21,7 +21,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-VERSION="1.3"
+VERSION="1.5"
+GSVERSION="9.05"
 PKGLOC="/tmp"
 
 echo "build_gsdjvu.sh for gsdjvu version ${VERSION}"
@@ -58,9 +59,9 @@ else
 	echo " * Already have gsdjvu v${VERSION}"
 fi
 
-if [ ! -f "${PKGLOC}/ghostscript-8.57.tar.bz2" ]; then
+if [ ! -f "${PKGLOC}/ghostscript-${GSVERSION}.tar.bz2" ]; then
 	echo -n " * Retrieving GPL ghostscript ... "
-	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-8.57.tar.bz2 -O "${PKGLOC}/ghostscript-8.57.tar.bz2" 2>&1 > /dev/null
+	wget -q -c http://downloads.sourceforge.net/ghostscript/ghostscript-${GSVERSION}.tar.bz2 -O "${PKGLOC}/ghostscript-${GSVERSION}.tar.bz2" 2>&1 > /dev/null
 	echo "[done]"
 else
 	echo " * Already have GPL ghostscript package"
@@ -81,7 +82,7 @@ echo "[done]"
 echo -n " * Copying ghostscript packages ... "
 mkdir -p gsdjvu-${VERSION}/BUILD/
 cp ${PKGLOC}/ghostscript-fonts-std-8.11.tar.gz \
-	${PKGLOC}/ghostscript-8.57.tar.bz2 \
+	${PKGLOC}/ghostscript-${GSVERSION}.tar.bz2 \
 	gsdjvu-${VERSION}/BUILD/
 echo "[done]"
 
