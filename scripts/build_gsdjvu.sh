@@ -102,6 +102,9 @@ cat<<'EOF'>${TEMP}
 < 
 < 
 < 
+289a278,279
+> 
+> touch base/gserror.h
 EOF
 patch -p0 gsdjvu-${VERSION}/build-gsdjvu < ${TEMP}
 rm -f ${TEMP}
