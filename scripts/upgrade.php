@@ -97,6 +97,7 @@ printHeader( "Drop drug sample inventory" );
 execSql( "DROP TABLE drugsampleinv;" );
 
 printHeader( "Force module table build" );
+include_once( dirname(__FILE__).'/../lib/acl.php' );
 $modules = CreateObject( 'org.freemedsoftware.core.ModuleIndex', true, false );
 
 printHeader( "Force module definition upgrades through secondary load" );
@@ -141,7 +142,6 @@ execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/sto
 
 printHeader( "Wipe and upgrade ACL tables" );
 loadSchema( 'acl' );
-include_once( dirname(__FILE__).'/../lib/acl.php' );
 include_once( dirname(__FILE__).'/../lib/org/freemedsoftware/module/ACL.class.php' );
 $a = new ACL();
 $q = "SELECT username, id FROM user WHERE id > 0";
