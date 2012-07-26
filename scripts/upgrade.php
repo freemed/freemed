@@ -31,7 +31,7 @@ include_once ( 'lib/freemed.php' );
 LoadObjectDependency( 'net.php.pear.Console_Getopt' );
 
 print "Upgrade from 0.8.x Tool\n";
-print "(c) 2008 FreeMED Software Foundation\n\n";
+print "(c) 2008-2012 FreeMED Software Foundation\n\n";
 
 function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
@@ -63,13 +63,13 @@ if ( $force ) {
 }
 
 printHeader( "Upgrade Keys" );
-execSql( "ALTER TABLE patient CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
-execSql( "ALTER TABLE physician CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
-execSql( "ALTER TABLE procrec CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
-execSql( "ALTER TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER IGNORE TABLE patient CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER IGNORE TABLE physician CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER IGNORE TABLE procrec CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
+execSql( "ALTER IGNORE TABLE rx CHANGE COLUMN id id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT;" );
 
 printHeader( "Fix potentially differing table column names" );
-execSql( "ALTER TABLE pharmacy CHANGE COLUMN phstpr phstate CHAR(3);" );
+execSql( "ALTER IGNORE TABLE pharmacy CHANGE COLUMN phstpr phstate CHAR(3);" );
 
 printHeader( "Fix eventual patient table issue" );
 execSql("ALTER IGNORE TABLE patient ADD COLUMN ptmphone CHAR(16) AFTER ptwphone;");
@@ -132,10 +132,10 @@ execSql( "UPDATE patient_address SET active = 1;" );
 execSql( "INSERT INTO patient_keypad_lookup ( patient, last_name, first_name, year_of_birth, ssn, archive ) SELECT id, STRING_TO_PHONE( ptlname ), STRING_TO_PHONE( ptfname ), YEAR( ptdob ), SUBSTRING( ptssn FROM -4 FOR 4 ), ptarchive FROM patient;");
 
 printHeader( "Building diagnosis history" );
-execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag1, NULL FROM procrec WHERE NOT ISNULL(procdiag1) AND procdiag1 > 0;" );
-execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag2, NULL FROM procrec WHERE NOT ISNULL(procdiag2) AND procdiag2 > 0;" );
-execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag3, NULL FROM procrec WHERE NOT ISNULL(procdiag3) AND procdiag3 > 0;" );
-execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag4, NULL FROM procrec WHERE NOT ISNULL(procdiag4) AND procdiag4 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag1, '9', NULL FROM procrec WHERE NOT ISNULL(procdiag1) AND procdiag1 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag2, '9', NULL FROM procrec WHERE NOT ISNULL(procdiag2) AND procdiag2 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag3, '9', NULL FROM procrec WHERE NOT ISNULL(procdiag3) AND procdiag3 > 0;" );
+execSql( "INSERT INTO dxhistory SELECT procpatient, procphysician, id, procdt, procdiag4, '9', NULL FROM procrec WHERE NOT ISNULL(procdiag4) AND procdiag4 > 0;" );
 
 printHeader( "Update Djvu storage paths" );
 execSql( "UPDATE images SET imagefile=REPLACE(imagefile, 'img/store/', 'data/store/');" );
@@ -169,6 +169,7 @@ execSql( "INSERT INTO medications_atomic SELECT * FROM medications_atomic_temp;"
 execSql( "DROP TEMPORARY TABLE medications_atomic_temp;" );
 //	-- Practice records
 execSql( "INSERT INTO practice ( pracname, ein, addr1a, addr2a, citya, statea, zipa, phonea, faxa, addr1b, addr2b, cityb, stateb, zipb, phoneb, faxb, email, cellular, pager, id ) SELECT phypracname, phypracein, phyaddr1a, phyaddr2a, phycitya, phystatea, phyzipa, phyphonea, phyfaxa, phyaddr1b, phyaddr2b, phycityb, phystateb, phyzipb, phyphoneb, phyfaxb, phyemail, phycellular, phypager, id FROM physician;" );
+execSql( "ALTER IGNORE TABLE physician ADD COLUMN phypractice INT UNSIGNED NOT NULL DEFAULT 0 AFTER phytitle;" );
 execSql( "UPDATE physician SET phypractice = id;" );
 //	-- Templates, if they exist
 execSql( "INSERT INTO pnotes_templates SELECT pntname, pntphy, pntS, pntO, pntA, pntP, pntI, pntE, pntR, NOW(), NULL FROM pntemplate;" );
