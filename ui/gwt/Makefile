@@ -24,14 +24,11 @@ THISDIR=ui/gwt
 
 all: interface
 
-interface: maven-deps maven-build
+interface: maven-build
 
 maven-build:
 	rm -Rf src/main/webapp/FreemedInterface 2>&1 > /dev/null
 	mvn gwt:compile war:exploded
-
-maven-deps:
-	( cd lib ; ./install-deps.sh )
 
 install: interface
 	mkdir -p $(INSTDIR)/$(THISDIR)
