@@ -1,0 +1,5 @@
+language: java
+jdk:
+  - oraclejdk6
+  - openjdk6
+script: ( cd ui/gwt ; make all )
