@@ -1,4 +1,6 @@
-= FreeMED
+# FreeMED Electronic Medical Record and Practice Management System
+
+[![Build Status](https://secure.travis-ci.org/freemed/freemed.png)](http://travis-ci.org/freemed/freemed)
 
 ## Installation
 
