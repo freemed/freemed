@@ -108,6 +108,7 @@ a:hover {
 	padding-top: 3px;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright: 10px;
+	-webkit-border-radius: 10px 10px 0 0;
 	background-color: #e8eef7;
 	margin-right: 2px;
 }
@@ -131,6 +132,7 @@ a:hover {
 	padding-top: 3px;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright: 10px;
+	-webkit-border-radius: 10px 10px 0 0;
 	background-color: #93b6d8;
 	margin-right: 2px;
 }
@@ -626,6 +628,7 @@ TABLE.freemed-PatientTag {
 	background-color: #ffffff;
 	-moz-border-radius-topleft: 20px;
 	-moz-border-radius-bottomright: 20px;
+	-webkit-border-radius: 20px 0 0 20px;
 }
 
 .freemed-MessageText {
@@ -730,6 +733,7 @@ TABLE.freemed-PatientTag {
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-topright: 10px;
 	-moz-border-radius-bottomright: 10px;
+	-webkit-border-radius: 10px;
 	}
 
 .accordion-item-unselected {
