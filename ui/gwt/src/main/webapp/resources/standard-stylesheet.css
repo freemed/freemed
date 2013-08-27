@@ -556,6 +556,15 @@ a:hover {
 	display: inline;
 }
 
+TABLE.freemed-PatientTag {
+	border: 1px solid #000000 !important;
+	padding: 0 0 0 5px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	background-color: #ffffff;
+}
+
 .freemed-PatientTag, .freemed-PatientTagRemove {
 	cursor: pointer;
 	cursor: hand;
