@@ -93,6 +93,15 @@ DELIMITER ;
 #----- Define basic configuration values
 
 CALL config_Register (
+	'acl_patient',
+	'1',
+	'Patient-Level ACLs',
+	'ACL',
+	'YesNo',
+	''
+);
+
+CALL config_Register (
 	'remitt_url',
 	'http://localhost:8080/remitt/services/interface?wsdl',
 	'Remitt Service URL',
