@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2013 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ set_error_handler("help_standard_error_handler");
 unset ( $parts ); unset ( $file );
 $parts = explode ( '/', $_SERVER['PATH_INFO'] );
 $ui = $parts[1];
-$locale = $parts[2];
+$locale = !empty($parts[2]) ? $parts[2] : "en_US";
 $path = str_replace ( $parts[0].'/'.$parts[1].'/'.$parts[2], '', $_SERVER['PATH_INFO'] );
 // Strip leading slash if it exists ...
 if ( substr( $path, 0, 1 ) == '/' ) {
@@ -38,8 +38,8 @@ if ( substr( $path, 0, 1 ) == '/' ) {
 
 $fullpath = dirname(__FILE__)."/ui/${ui}/help/${locale}/${path}";
 
-if ( file_exists( $fullpath . ".html" ) ) {
-	$fullpath .= ".html";
+if ( file_exists( $fullpath . "." . $locale . ".html" ) ) {
+	$fullpath .= "." . $locale . ".html";
 }
 
 if ( !file_exists( $fullpath ) ) {
