@@ -517,7 +517,7 @@ class HTTP_Session2
      */
     public static function register($name)
     {
-        session_register($name);
+	$_SESSION[$name] = $GLOBALS[$name];
     }
 
     /**
@@ -530,7 +530,7 @@ class HTTP_Session2
      */
     public static function unregister($name)
     {
-        session_unregister($name);
+        unset($_SESSION[$name]);
     }
 
     /**
