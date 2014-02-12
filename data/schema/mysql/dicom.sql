@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `dicom` (
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' COMMENT 'Status of record',
 	id			SERIAL
 
-	, FOREIGN KEY		( d_patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( d_patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 	, KEY			( d_study_uid )
 	, KEY			( d_series_uid )
 );
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `dicom_image` (
 
 	#	Define keys
 
-	, FOREIGN KEY		( d_patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( d_patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 	, KEY			( d_md5 )
 	, KEY			( d_study_uid )
 	, KEY			( d_series_uid )

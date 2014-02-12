@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `vitals` (
 
 	#	Define keys
 	, KEY				( patient, dateof, provider )
-	, FOREIGN KEY			( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY			( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS vitals_atomic (
@@ -124,8 +124,8 @@ CREATE TABLE IF NOT EXISTS vitals_atomic (
 
 	#	Define keys
 	, KEY				( dateof )
-	, FOREIGN KEY			( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY			( vitalsid ) REFERENCES vitals.id ON DELETE CASCADE
+	, FOREIGN KEY			( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY			( vitalsid ) REFERENCES vitals ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS vitals_Upgrade;

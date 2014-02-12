@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `form_results` (
 	#	Define keys
 
 	KEY			( fr_patient, fr_timestamp ),
-	FOREIGN KEY		( fr_patient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( fr_patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS form_results_Upgrade;

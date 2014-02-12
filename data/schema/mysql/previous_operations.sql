@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `previous_operations` (
 	#	Define keys
 
 	KEY			( opatient, odate ),
-	FOREIGN KEY		( opatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( opatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS previous_operations_Upgrade;

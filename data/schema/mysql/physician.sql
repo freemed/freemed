@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	, KEY			( phylname, phyfname, phymname )
 	, KEY			( physsn )
 	, KEY			( phynpi )
-	, FOREIGN KEY		( phypractice ) REFERENCES practice.id
+	, FOREIGN KEY		( phypractice ) REFERENCES practice ( id )
 );
 
 DROP PROCEDURE IF EXISTS physician_Upgrade;

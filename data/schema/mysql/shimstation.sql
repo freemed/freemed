@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `shimstation` (
 	, id				SERIAL
 
 	#	Define keys
-	, FOREIGN KEY			( facility ) REFERENCES facility.id ON DELETE CASCADE
+	, FOREIGN KEY			( facility ) REFERENCES facility ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS shimstation_Upgrade;

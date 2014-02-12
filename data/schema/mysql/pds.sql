@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `pds` (
 	, contents	LONGBLOB
 	
 	, CONSTRAINT UNIQUE KEY ( patient, module, id )
-	, FOREIGN KEY ( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY ( module ) REFERENCES module.module_class
+	, FOREIGN KEY ( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY ( module ) REFERENCES module ( module_class )
 );
 

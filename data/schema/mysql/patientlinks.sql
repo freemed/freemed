@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS `patientlinks` (
 
 	, KEY			( srcpatient, linktype )
 	, KEY			( destpatient, linktype )
-	, FOREIGN KEY		( srcpatient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( destpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( srcpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( destpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS patientlinks_Upgrade;

@@ -237,15 +237,15 @@ CREATE TABLE IF NOT EXISTS `enotes` (
 	      pnotespepsychmemorystatus INT(10) UNSIGNED DEFAULT 0,          
 	      pnotespepsychmemorycmnt BLOB,       
 	      pnotespepsychfreecmnt BLOB,                                              
-          pnotesbillable BLOB,                                      
-          pnoteshandp BLOB,
-          iso VARCHAR(15) DEFAULT NULL,                             
-          locked INT(10) UNSIGNED DEFAULT NULL,                         
-	  	  id			SERIAL,
+	pnotesbillable	BLOB,                                      
+	pnoteshandp		BLOB,
+	iso			VARCHAR(15) DEFAULT NULL,
+	locked		INT(10) UNSIGNED DEFAULT NULL,
+	id			SERIAL,
 	
-	  #	Define keys
-	  KEY			( pnotespat),
-	  FOREIGN KEY		( pnotespat ) REFERENCES patient.id ON DELETE CASCADE
+	#	Define keys
+	KEY			( pnotespat ),
+	FOREIGN KEY		( pnotespat ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS enotes_Upgrade;

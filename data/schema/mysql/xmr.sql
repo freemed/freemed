@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS `xmr` (
 	, id			SERIAL
 
 	#	Define keys
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( form_id ) REFERENCES xmr_definition.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( form_id ) REFERENCES xmr_definition ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `xmr_element` (
@@ -49,9 +49,9 @@ CREATE TABLE IF NOT EXISTS `xmr_element` (
 	, id				SERIAL
 
 	#	Define keys
-	, FOREIGN KEY			( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY			( patient_form_id ) REFERENCES xmr.id ON DELETE CASCADE
-	, FOREIGN KEY			( atom_id ) REFERENCES xmr_definition_element.id ON DELETE CASCADE
+	, FOREIGN KEY			( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY			( patient_form_id ) REFERENCES xmr ( id ) ON DELETE CASCADE
+	, FOREIGN KEY			( atom_id ) REFERENCES xmr_definition_element ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS xmr_Upgrade;

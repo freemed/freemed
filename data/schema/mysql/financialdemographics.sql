@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `financialdemographics` (
 	#	Define keys
 
 	KEY			( fdpatient, fdtimestamp ),
-	FOREIGN KEY		( fdpatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( fdpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS financialdemographics_Upgrade;

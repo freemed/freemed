@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `clinicregistration` (
 	#	Define keys
 	, KEY				( processed )
 	, KEY				( dateof )
-	, FOREIGN KEY			( user ) REFERENCES user.id
+	, FOREIGN KEY			( user ) REFERENCES user ( id )
 );
 
 DROP PROCEDURE IF EXISTS clinicregistration_Upgrade;

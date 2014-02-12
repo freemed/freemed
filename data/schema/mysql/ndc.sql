@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS ndc_packages (
 	, packsize		CHAR (25) NOT NULL
 	, packtype		CHAR (25) NOT NULL
 
-	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
+	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings ( id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_formulations (
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS ndc_formulations (
 	, unit			CHAR (5)
 	, ingredient_name	CHAR (100) NOT NULL
 
-	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
+	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings ( id )
 );
 
 CREATE TABLE IF NOT EXISTS orangebook_products (
@@ -94,9 +94,9 @@ CREATE TABLE IF NOT EXISTS ndc_applications (
 	, appl_no		CHAR (6) NOT NULL
 	, prod_no		CHAR (3)
 
-	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
-	, FOREIGN KEY		( appl_no ) REFERENCES orangebook_products.nda_number
-	, FOREIGN KEY		( prod_no ) REFERENCES orangebook_products.product_number
+	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings ( id )
+	, FOREIGN KEY		( appl_no ) REFERENCES orangebook_products ( nda_number )
+	, FOREIGN KEY		( prod_no ) REFERENCES orangebook_products ( product_number )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_firms (
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS ndc_routes (
 	, route_code		CHAR (3)
 	, route_name		CHAR (240)
 
-	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
+	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings ( id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_dosage_form (
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS ndc_schedule (
 	  listing_seq_no	BIGINT NOT NULL
 	, schedule		TINYINT NOT NULL
 
-	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
+	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings ( id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_name_lookup (
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS ndc_strength_lookup (
 	, ob_prod_number	CHAR (3) NOT NULL
 	, strength		VARCHAR (100) NOT NULL	
 
-	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings.id
+	, FOREIGN KEY		( listing_seq_no ) REFERENCES ndc_listings ( id )
 	, KEY			( ob_nda_number, ob_prod_number )
 );
 

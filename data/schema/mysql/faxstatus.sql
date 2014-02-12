@@ -34,6 +34,6 @@ CREATE TABLE IF NOT EXISTS `faxstatus` (
 	#	Define keys
 
 	KEY			( fsid, fspatient ),
-	FOREIGN KEY		( fspatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( fspatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 

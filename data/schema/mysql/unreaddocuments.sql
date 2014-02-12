@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `unreaddocuments` (
 	#	Define keys
 
 	, KEY			( urfphysician, urfpatient )
-	, FOREIGN KEY		( urfpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( urfpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS unreaddocuments_Upgrade;

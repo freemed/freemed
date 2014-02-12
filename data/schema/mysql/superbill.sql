@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `superbill` (
 
 	#	Define keys
 	KEY			( dateofservice, reviewed ),
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS superbill_Upgrade;

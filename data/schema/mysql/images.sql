@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `images` (
 	#	Define keys
 
 	KEY			( imagepat, imagetype, imagecat, imagedt ),
-	FOREIGN KEY		( imagepat ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS images_Upgrade;

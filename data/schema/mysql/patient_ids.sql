@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `patient_ids` (
 
 	# Define keys
 
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS patient_ids_Upgrade;

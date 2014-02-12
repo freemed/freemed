@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `apptplanning` (
 
 	#	Define keys
 	KEY			( appatient, apdatetarget ),
-	FOREIGN KEY		( appatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( appatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS apptplanning_Upgrade;

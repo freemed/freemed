@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `form_element` (
 	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 	, PRIMARY KEY		( id )
 
-	, FOREIGN KEY		( fe_id ) REFERENCES form.id ON DELETE CASCADE
+	, FOREIGN KEY		( fe_id ) REFERENCES form ( id ) ON DELETE CASCADE
 	, KEY			( fe_oid_mapping, fe_code )
 );
 

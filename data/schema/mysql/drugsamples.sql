@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS `drugsamples` (
 	, id			SERIAL
 
 	#	Define keys
-	, FOREIGN KEY		( drugsampleid ) REFERENCES drugsampleinv.id ON DELETE CASCADE
-	, FOREIGN KEY		( patientid ) REFERENCES patient.id
+	, FOREIGN KEY		( drugsampleid ) REFERENCES drugsampleinv ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( patientid ) REFERENCES patient ( id )
 );
 
 DROP PROCEDURE IF EXISTS drugsamples_Upgrade;

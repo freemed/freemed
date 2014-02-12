@@ -482,7 +482,7 @@ CREATE TABLE IF NOT EXISTS `patient_prior` (
 	#	Define keys
 
 	, PRIMARY KEY		( id )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
@@ -501,7 +501,7 @@ CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
 	#	Define keys
 
 	, PRIMARY KEY		( id )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
@@ -519,7 +519,7 @@ CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
 	#	Define keys
 
 	, PRIMARY KEY		( id )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `patient_phone_lookup` (
@@ -534,7 +534,7 @@ CREATE TABLE IF NOT EXISTS `patient_phone_lookup` (
 
 	, PRIMARY KEY		( id )
 	, KEY			( phone_number )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `patient_view_history` (

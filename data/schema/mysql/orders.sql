@@ -61,8 +61,8 @@ CREATE TABLE IF NOT EXISTS `orders` (
 
 	#	Define keys
 	, KEY			( patient, dateof, provider )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( provider ) REFERENCES physician.id
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( provider ) REFERENCES physician ( id )
 );
 
 DROP PROCEDURE IF EXISTS orders_Upgrade;

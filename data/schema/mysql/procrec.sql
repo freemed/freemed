@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS `procrec` (
 
 	#	Define keys
 
-	, FOREIGN KEY		( procpatient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( proccpt ) REFERENCES cpt.id
-	, FOREIGN KEY		( procphysician ) REFERENCES physician.id
+	, FOREIGN KEY		( procpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( proccpt ) REFERENCES cpt ( id )
+	, FOREIGN KEY		( procphysician ) REFERENCES physician ( id )
 );
 
 DROP PROCEDURE IF EXISTS procrec_Upgrade;

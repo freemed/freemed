@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `signature` (
 	#	Define keys
 
 	, KEY			( patient, module, oid,module_field )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS signature_Upgrade;

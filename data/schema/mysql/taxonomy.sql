@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS `taxonomy_sub_mapping` (
 	, taxonomy_sub_id		INT UNSIGNED NOT NULL
 	, id				SERIAL
 
-	, FOREIGN KEY			( taxonomy_id ) REFERENCES taxonomy.id ON DELETE CASCADE
-	, FOREIGN KEY			( taxonomy_sub_id ) REFERENCES taxonomy.id ON DELETE CASCADE
+	, FOREIGN KEY			( taxonomy_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
+	, FOREIGN KEY			( taxonomy_sub_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
 ) COMMENT 'Mapping between taxonomy items';
 
 #
@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS `taxonomy_basic_emr` (
 
 	#	Keys
 
-	, FOREIGN KEY			( concept_id ) REFERENCES taxonomy.id ON DELETE CASCADE
-	, FOREIGN KEY			( qualifier_id ) REFERENCES taxonomy.id ON DELETE CASCADE
-	, FOREIGN KEY			( quantifier_id ) REFERENCES taxonomy.id ON DELETE CASCADE
+	, FOREIGN KEY			( concept_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
+	, FOREIGN KEY			( qualifier_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
+	, FOREIGN KEY			( quantifier_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
 ) COMMENT 'Mappings for data points in basic EMR tables';
 

@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `annotations` (
 	#	Define keys
 
 	KEY			( apatient, amodule, aid ),
-	FOREIGN KEY		( apatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( apatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS annotations_Upgrade;

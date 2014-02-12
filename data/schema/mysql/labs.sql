@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `labs` (
 
 	#	Define keys
 	, KEY			( labpatient, labprovider, labtimestamp )
-	, FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `labresults` (
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS `labresults` (
 	#	Define keys
 
 	, KEY			( labpatient, labid )
-	, FOREIGN KEY		( labpatient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( labid ) REFERENCES labs.id ON DELETE CASCADE
+	, FOREIGN KEY		( labpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( labid ) REFERENCES labs ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS labs_Upgrade;

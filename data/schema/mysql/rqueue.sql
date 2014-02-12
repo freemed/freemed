@@ -53,11 +53,11 @@ CREATE TABLE IF NOT EXISTS `rqueueitem` (
 	, id			SERIAL
 
 	, KEY			( processed )
-        , FOREIGN KEY           ( rqueueid ) REFERENCES rqueue.id ON DELETE CASCADE
-        , FOREIGN KEY           ( patientid ) REFERENCES patient.id ON DELETE CASCADE
-        , FOREIGN KEY           ( providerid ) REFERENCES physician.id ON DELETE CASCADE
-        , FOREIGN KEY           ( procid ) REFERENCES procrec.id ON DELETE CASCADE
-        , FOREIGN KEY           ( payerid ) REFERENCES insco.id ON DELETE CASCADE
+        , FOREIGN KEY           ( rqueueid ) REFERENCES rqueue ( id ) ON DELETE CASCADE
+        , FOREIGN KEY           ( patientid ) REFERENCES patient ( id ) ON DELETE CASCADE
+        , FOREIGN KEY           ( providerid ) REFERENCES physician ( id ) ON DELETE CASCADE
+        , FOREIGN KEY           ( procid ) REFERENCES procrec ( id ) ON DELETE CASCADE
+        , FOREIGN KEY           ( payerid ) REFERENCES insco ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS rqueue_Upgrade;

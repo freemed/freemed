@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS `dxhistory` (
 
 	#	Define keys
 
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( procrec ) REFERENCES procrec.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( procrec ) REFERENCES procrec ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS dxhistory_Upgrade;

@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `patletter` (
 	#	Define keys
 
 	KEY			( letterpatient, lettersent, letterfrom, lettereoc ),
-	FOREIGN KEY		( letterpatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( letterpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS patletter_Upgrade;

@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `authorizations` (
 	# Define keys
 
 	KEY			( authpatient, authdtbegin, authdtend ),
-	FOREIGN KEY		( authpatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( authpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS authorizations_Upgrade;

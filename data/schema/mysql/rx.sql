@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `rx` (
 	#	Default key
 
 	, PRIMARY KEY		( id )
-	, FOREIGN KEY		( rxpatient ) REFERENCES patient.id ON DELETE CASCADE
+	, FOREIGN KEY		( rxpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 	, KEY			( rxdrugmultum )
 );
 

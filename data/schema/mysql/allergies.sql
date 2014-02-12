@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `allergies` (
 	#	Define keys
 
 	KEY			( patient, allergies ),
-	FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `allergies_atomic` (
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS `allergies_atomic` (
 
 	, PRIMARY KEY		( id )
 	, KEY			( allergy, reviewed )
-	, FOREIGN KEY		( patient ) REFERENCES patient.id ON DELETE CASCADE
-	, FOREIGN KEY		( aid ) REFERENCES allergies.id ON DELETE CASCADE
+	, FOREIGN KEY		( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, FOREIGN KEY		( aid ) REFERENCES allergies ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS allergies_Upgrade;

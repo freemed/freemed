@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `translation` (
 	#	Define keys
 
 	KEY			( tpatient, tmodule, tid, tlanguage ),
-	FOREIGN KEY		( tpatient ) REFERENCES patient.id ON DELETE CASCADE
+	FOREIGN KEY		( tpatient ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS translation_Upgrade;
