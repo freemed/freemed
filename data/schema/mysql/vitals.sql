@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `vitals` (
-	  dateof			TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	  dateof			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, patient			BIGINT UNSIGNED NOT NULL
 	, provider			BIGINT UNSIGNED NOT NULL
 	, eoc				INT UNSIGNED
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `vitals` (
 );
 
 CREATE TABLE IF NOT EXISTS vitals_atomic (
-	  dateof			TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	  dateof			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, patient			BIGINT UNSIGNED NOT NULL
 	, provider			BIGINT UNSIGNED NOT NULL
 	, vitalsid			INT UNSIGNED NOT NULL

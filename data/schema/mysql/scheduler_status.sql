@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler_status` (
-	csstamp			TIMESTAMP (14) DEFAULT NOW(),
+	csstamp			TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
 	cspatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	csappt			INT UNSIGNED NOT NULL DEFAULT 0,
 	csnote			VARCHAR (250),

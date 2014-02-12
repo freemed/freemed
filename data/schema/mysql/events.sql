@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `events` (
-	  stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	  stamp			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, user			INT UNSIGNED NOT NULL DEFAULT 0
 	, event_action		ENUM ( 'email', 'call' ) NOT NULL DEFAULT 'email'
 	, event_type		VARCHAR(100)

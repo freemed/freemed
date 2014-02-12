@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `form_results` (
 	fr_patient		BIGINT UNSIGNED NOT NULL,
-	fr_timestamp		TIMESTAMP (16) NOT NULL DEFAULT NOW(),
+	fr_timestamp		TIMESTAMP (16) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	fr_template		VARCHAR (50),
 	fr_formname		VARCHAR (50),
 	user			INT UNSIGNED NOT NULL DEFAULT 0,

@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `orders` (
-	  dateof		TIMESTAMP (14) NOT NULL DEFAULT NOW()
+	  dateof		TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, patient		BIGINT UNSIGNED NOT NULL
 	, provider		BIGINT UNSIGNED NOT NULL
 	, eoc			INT UNSIGNED

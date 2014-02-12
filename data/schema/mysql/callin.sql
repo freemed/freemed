@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `callin` (
 	, ciwphone		VARCHAR (16)
 	, cidob			DATE
 	, cicomplaint		TEXT NOT NULL
-	, cidatestamp		TIMESTAMP (16) DEFAULT NOW()
+	, cidatestamp		TIMESTAMP (16) DEFAULT CURRENT_TIMESTAMP
 	, cifacility		INT UNSIGNED NOT NULL
 	, ciphysician		INT UNSIGNED DEFAULT 0
 	, ciisinsured		INT UNSIGNED DEFAULT 0

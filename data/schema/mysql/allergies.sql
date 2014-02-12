@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 CREATE TABLE IF NOT EXISTS `allergies` (
 	allergies		VARCHAR (250),
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	reviewed		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	reviewed		TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
 	id			SERIAL,
@@ -73,7 +73,7 @@ BEGIN
 	#----- Upgrades
 
 	#	Version 0.2.1
-	ALTER IGNORE TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT NOW() AFTER patient;
+	ALTER IGNORE TABLE allergies ADD COLUMN reviewed TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER patient;
 	ALTER IGNORE TABLE allergies ADD COLUMN user INT UNSIGNED NOT NULL DEFAULT 0 AFTER reviewed;
 	ALTER IGNORE TABLE allergies ADD COLUMN active ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active' AFTER user;
 END

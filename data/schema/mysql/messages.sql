@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `messages` (
 	  msgby		INT UNSIGNED
-	, msgtime	TIMESTAMP (14) DEFAULT NOW()
+	, msgtime	TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP
 	, msgfor	INT UNSIGNED
 	, msgrecip	TEXT
 	, msgpatient	BIGINT UNSIGNED

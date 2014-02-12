@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `rqueue` (
-	  insert_stamp		TIMESTAMP (14) DEFAULT NOW()
+	  insert_stamp		TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP
 	, payload		BLOB
 	, processed		TINYINT NOT NULL DEFAULT 0
 	, reference_id		INT UNSIGNED NOT NULL DEFAULT 0

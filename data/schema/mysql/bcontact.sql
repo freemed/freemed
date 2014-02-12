@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `bcontact` (
     bcstate char(3) default NULL,                        
     bczip varchar(10) default NULL,                      
     bcphone varchar(16) default NULL, 
-	stamp	TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	stamp	TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user	INT UNSIGNED,
 	id			SERIAL,
 	#keys

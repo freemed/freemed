@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `drugsamples` (
 	, deliveryform		VARCHAR (50)
 	, amount		INT UNSIGNED NOT NULL DEFAULT 0
 	, instructions		TEXT
-	, stamp			TIMESTAMP NOT NULL DEFAULT NOW()
+	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, locked		INT UNSIGNED NOT NULL DEFAULT 0
 	, user			INT UNSIGNED NOT NULL DEFAULT 0
 	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'

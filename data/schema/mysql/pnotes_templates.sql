@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `pnotes_templates` (
 	pnt_I			TEXT,
 	pnt_E			TEXT,
 	pnt_R			TEXT,
-	pntadded		TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	pntadded		TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	id			SERIAL,
 
 	#	Define keys

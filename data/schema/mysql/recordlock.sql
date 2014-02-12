@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `recordlock` (
-	lockstamp		TIMESTAMP (14) DEFAULT NOW(),
+	lockstamp		TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
 	locksession		VARCHAR (128),
 	lockuser		INT UNSIGNED NOT NULL,
 	locktable		VARCHAR (128),

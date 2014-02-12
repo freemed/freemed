@@ -28,7 +28,7 @@ SOURCE data/schema/mysql/schedulingrules.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler` (
 	  caldateof		DATE
-	, calcreated		TIMESTAMP NOT NULL DEFAULT NOW()
+	, calcreated		TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, calmodified		TIMESTAMP (16)
 	, caltype		ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat'
 	, calhour		INT UNSIGNED

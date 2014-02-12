@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `clearinghouse` (
     chetin varchar(24) default NULL,                     
     chx12gssender varchar(20) default NULL,              
     chx12gsreceiver varchar(20) default NULL,
-	stamp	TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	stamp	TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user	INT UNSIGNED,
 	id			SERIAL,
 	#keys

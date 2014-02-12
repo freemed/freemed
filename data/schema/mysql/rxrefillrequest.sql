@@ -28,7 +28,7 @@ SOURCE data/schema/mysql/systemnotification.sql
 SOURCE data/schema/mysql/workflow_status.sql
 
 CREATE TABLE IF NOT EXISTS `rxrefillrequest` (
-	stamp			TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	stamp			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	provider		BIGINT UNSIGNED NOT NULL DEFAULT 0,

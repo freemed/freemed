@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `reporting_print_log` (
 	report_name			VARCHAR (100) NOT NULL,
 	report_params			TEXT,
 	report_format			VARCHAR (5) NOT NULL,
-	stamp				TIMESTAMP (14) NOT NULL DEFAULT NOW(),
+	stamp				TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user                            INT UNSIGNED,
 	id                              SERIAL,
 	#	Define keys

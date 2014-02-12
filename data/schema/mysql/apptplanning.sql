@@ -22,7 +22,7 @@
 
 CREATE TABLE IF NOT EXISTS `apptplanning` (
 	appatient		BIGINT UNSIGNED NOT NULL,
-	apdatecreated		TIMESTAMP(14) NOT NULL DEFAULT NOW(),
+	apdatecreated		TIMESTAMP(14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	apdatetarget		DATE NOT NULL,
 	appriority		INT NOT NULL DEFAULT 0,
 	apreason		VARCHAR (150),

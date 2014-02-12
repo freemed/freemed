@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `rules` (
-	  rule_created			TIMESTAMP (16) NOT NULL DEFAULT NOW()
+	  rule_created			TIMESTAMP (16) NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, rule_descrip			VARCHAR (150)
 	, rule_prio			INT UNSIGNED
 	, rule_type			VARCHAR (150) NOT NULL DEFAULT 'BILLING'

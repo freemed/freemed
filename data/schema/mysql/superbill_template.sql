@@ -22,7 +22,7 @@
 
 CREATE TABLE IF NOT EXISTS `superbill_template` (
 	st_name			VARCHAR (250) NOT NULL DEFAULT '',
-	st_created		TIMESTAMP (14) DEFAULT NOW(),
+	st_created		TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
 	st_user			INT UNSIGNED NOT NULL DEFAULT 0,
 	st_dx			TEXT,
 	st_px			TEXT,
