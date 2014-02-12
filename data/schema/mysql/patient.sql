@@ -415,7 +415,7 @@ DELIMITER ;
 #----- Address table
 
 CREATE TABLE IF NOT EXISTS `patient_address` (
-	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	  patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
 	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, type			CHAR (2) NOT NULL DEFAULT 'H'
 	, active		BOOL NOT NULL DEFAULT FALSE
@@ -456,7 +456,7 @@ DELIMITER ;
 #----- Prior demographics holding table
 
 CREATE TABLE IF NOT EXISTS `patient_prior` (
-	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	  patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
 	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 	, ptlname		VARCHAR (50) NOT NULL
@@ -486,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `patient_prior` (
 );
 
 CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
-	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	  patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
 	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 	, ptdoc			VARCHAR (150)
@@ -505,7 +505,7 @@ CREATE TABLE IF NOT EXISTS `patient_prior_provider` (
 );
 
 CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
-	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	  patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
 	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 	, last_name		VARCHAR (30)
@@ -523,7 +523,7 @@ CREATE TABLE IF NOT EXISTS `patient_keypad_lookup` (
 );
 
 CREATE TABLE IF NOT EXISTS `patient_phone_lookup` (
-	  patient		BIGINT(20) UNSIGNED NOT NULL DEFAULT 0
+	  patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
 	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 	, type			ENUM ( 'home', 'work', 'mobile', 'other' ) NOT NULL DEFAULT 'home'

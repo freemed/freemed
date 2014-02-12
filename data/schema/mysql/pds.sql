@@ -22,12 +22,12 @@
 
 CREATE TABLE IF NOT EXISTS `pds` (
 	  id		BIGINT NOT NULL
-	, patient	BIGINT NOT NULL
-	, module	VARCHAR (150) NOT NULL
+	, patient	BIGINT UNSIGNED NOT NULL
+	, module	VARCHAR (100) NOT NULL
 	, contents	LONGBLOB
 	
 	, CONSTRAINT UNIQUE KEY ( patient, module, id )
 	, FOREIGN KEY ( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
-	, FOREIGN KEY ( module ) REFERENCES module ( module_class )
+	, FOREIGN KEY ( module ) REFERENCES modules ( module_class )
 );
 

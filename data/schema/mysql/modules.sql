@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `modules` (
 
 	, PRIMARY KEY 			( module_uid )
 	, INDEX				( module_table )
+	, INDEX				( module_class )
 );
 
 #----- Triggers
