@@ -84,17 +84,17 @@ class ScannedDocuments extends EMRModule {
 		parent::__construct();
 	} // end constructor ScannedDocuments
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		list ( $data['imagetype'], $data['imagecat'] ) = explode('/', $data['imagetypecat']);
 		$data['imagereviewed'] = 0;
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function add_post ( $id, &$data ) {
-		$this->uploadFile($id, &$data);
+	protected function add_post ( $id, $data ) {
+		$this->uploadFile($id, $data);
  	}
 
-	protected function uploadFile($id,&$data){
+	protected function uploadFile($id,$data){
 		if($_FILES["imageupload"]["tmp_name"]){
 			$origfilename = $_FILES["imageupload"]["tmp_name"];
 			syslog( LOG_INFO, "originalfilename = $origfilename");
@@ -127,13 +127,13 @@ class ScannedDocuments extends EMRModule {
 		));
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		list ( $data['imagetype'], $data['imagecat'] ) = explode('/', $data['imagetypecat']);
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 	
-	protected function mod_post(&$data){
-		$this->uploadFile($data['id'], &$data);
+	protected function mod_post($data){
+		$this->uploadFile($data['id'], $data);
 	}
 	
 	function additional_move ( $id, $from, $to ) {

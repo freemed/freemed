@@ -257,15 +257,15 @@ class EncounterNotes extends EMRModule {
 	          'pnoteshandp'
 	);
 	
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['pnotesuser'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 	
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['pnotesuser'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 	
-	protected function add_post ( $id, &$data ) {
+	protected function add_post ( $id, $data ) {
 		if($data['pnotesbillable']!=''){
 			$q = "SELECT id,covtype from coverage WHERE covpatient = ".$GLOBALS['sql']->quote( $data['pnotespat'] )." AND covstatus =1 ORDER BY covtype ASC LIMIT 1";
 			$cov= $GLOBALS['sql']->queryRow( $q );

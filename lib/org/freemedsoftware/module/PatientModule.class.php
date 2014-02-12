@@ -111,7 +111,7 @@ class PatientModule extends SupportModule {
 		parent::__construct ( );
 	} // end constructor PatientModule
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
 
 		// Handle DOB
@@ -137,10 +137,10 @@ class PatientModule extends SupportModule {
 		}
 	} // end method add_post
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 	} // end method mod_pre
 
-	protected function mod_post ( &$data ) {
+	protected function mod_post ( $data ) {
 		$m = CreateObject( 'org.freemedsoftware.core.Generator_HL7v2_A08' );
 		$mirth = CreateObject( 'org.freemedsoftware.core.MirthExport' );
 		if ($m) {
@@ -149,7 +149,7 @@ class PatientModule extends SupportModule {
 		}
 	} // end method mod_post
 
-	protected function del_pre ( &$data ) {
+	protected function del_pre ( $data ) {
 	} // end method del_pre
 
 	// Method: GetAddresses

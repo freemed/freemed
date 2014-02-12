@@ -55,12 +55,12 @@ class ClaimTypes extends SupportModule {
 		parent::__construct( );
 	} // end constructor ClaimTypes	
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['clmtpdtadd'] = date('Y-m-d');
 		$data['clmtpdtmod'] = date('Y-m-d');
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['clmtpdtmod'] = date('Y-m-d');
 	}
 	

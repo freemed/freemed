@@ -72,7 +72,7 @@ class SuperBill extends EMRModule {
 
 	// Protected internal methods
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
 		$data['dateofservice'] = $s->ImportDate( $data['dateofservice'] ? $data['dateofservice'] : date('Y-m-d') );	
 
@@ -84,7 +84,7 @@ class SuperBill extends EMRModule {
 		$data['enteredby'] = $user->user_number;
 	} // end add_pre
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
 		$data['dateofservice'] = $s->ImportDate( $data['dateofservice'] ? $data['dateofservice'] : date('Y-m-d') );	
 		if (is_array($data['procs'])) { $data['procs'] = join(',', $data['procs']); }

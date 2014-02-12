@@ -80,11 +80,11 @@ class Letters extends EMRModule {
 		parent::__construct ( );
 	} // end constructor Letters
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 

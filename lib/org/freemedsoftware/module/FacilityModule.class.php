@@ -94,13 +94,13 @@ class FacilityModule extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre( &$data ) {
+	protected function add_pre( $data ) {
 		if ( $data['psrcsz'] ) {
 			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSZ( $data['psrcsz'] );
 		}
 	}
 
-	protected function mod_pre( &$data ) {
+	protected function mod_pre( $data ) {
 		if ( $data['psrcsz'] ) {
 			list( $data['psrcity'], $data['psrstate'], $data['psrzip'] ) = $this->SplitCSZ( $data['psrcsz'] );
 		}

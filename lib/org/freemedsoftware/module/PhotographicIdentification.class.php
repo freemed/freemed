@@ -68,7 +68,7 @@ class PhotographicIdentification extends EMRModule {
 		parent::__construct();
 	} // end constructor PhotographicIdentification
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
@@ -269,7 +269,7 @@ class PhotographicIdentification extends EMRModule {
 		die();
 	} // end method GetPhotoID
 
-	protected function add_post ( $id, &$data ) {
+	protected function add_post ( $id, $data ) {
 		// Using example from http://www.php.net/manual/en/features.file-upload.php
 		// Assume 'file' is the name of the file, as per default
 
@@ -306,7 +306,7 @@ class PhotographicIdentification extends EMRModule {
 		unlink( $filename );
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 

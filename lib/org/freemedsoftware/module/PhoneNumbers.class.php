@@ -51,7 +51,7 @@ class PhoneNumbers extends SupportModule {
 		parent::__construct();
 	} // end constructor PhoneNumbers
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		unset($data['phonestampadd']);
 	}
 

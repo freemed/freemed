@@ -55,11 +55,11 @@ class ChronicProblems extends EMRModule {
 		parent::__construct( );
 	} // end constructor ChronicProblems
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['pdate'] = date('Y-m-d');
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['pdate'] = date('Y-m-d');
 	}
 

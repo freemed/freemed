@@ -59,12 +59,12 @@ class FormTemplates extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre( &$data ) {
+	protected function add_pre( $data ) {
 		unset( $data['f_created'] );
 		$data['f_uuid'] = $this->GenerateUUID( );
 	}
 
-	protected function mod_pre( &$data ) {
+	protected function mod_pre( $data ) {
 		unset( $data['f_created'] );
 		unset( $data['f_uuid'] );
 	}

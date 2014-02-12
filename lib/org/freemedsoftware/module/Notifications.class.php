@@ -67,7 +67,7 @@ class Notifications extends EMRModule {
 		parent::__construct( );
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['noriginal'] = date('Y-m-d');
 		$data['nuser'] = freemed::user_cache()->user_number;

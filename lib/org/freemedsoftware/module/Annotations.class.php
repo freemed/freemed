@@ -63,7 +63,7 @@ class Annotations extends EMRModule {
 		parent::__construct( );
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
  		$data['auser'] = $this_user->user_number;
 	}
 

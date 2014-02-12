@@ -64,7 +64,7 @@ class Translations extends EMRModule {
 		parent::__construct( );
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
  		$data['tuser'] = $this_user->user_number;
 	}
 

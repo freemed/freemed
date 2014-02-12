@@ -64,7 +64,7 @@ class ProviderGroups extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		/*
 		$data['phygroupidmap'] = serialize ( $data['phygroupidmap'] );
 		$data['phygroupidmap'] = join ( ',', $data['phygroupdocs'] );
@@ -72,7 +72,7 @@ class ProviderGroups extends SupportModule {
 		$data['phygroupdtadd'] = date("Y-m-d");
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		/*
 		$data['phygroupidmap'] = serialize ( $data['phygroupidmap'] );
 		$data['phygroupidmap'] = join ( ',', $data['phygroupdocs'] );

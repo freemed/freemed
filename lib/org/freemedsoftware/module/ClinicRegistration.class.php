@@ -61,12 +61,12 @@ class ClinicRegistration extends SupportModule {
 		}
 	} // end constructor Callin
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['facility'] = HTTP_Session2::get( 'facility_id' );
 	} // end method add_pre
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['facility'] = HTTP_Session2::get( 'facility_id' );
 	} // end method mod_pre

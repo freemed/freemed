@@ -103,11 +103,11 @@ class ProcedureModule extends EMRModule {
 		parent::__construct( );
 	} // end constructor 
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end add_pre
 
-	function add_post ( $id, &$data ) {
+	function add_post ( $id, $data ) {
 		// Add to Claimlog
 		$claimlog = CreateObject('org.freemedsoftware.api.ClaimLog');
 		$claimlog->log_event(
@@ -133,13 +133,13 @@ class ProcedureModule extends EMRModule {
 		} // end checking for use auth
 	} // end method add_post
 	
-	protected function mod_pre ( &$data ) {	
+	protected function mod_pre ( $data ) {	
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end method mod_pre
 	
 	
 	
-	protected function mod_post ( &$data ) {
+	protected function mod_post ( $data ) {
 		// Check if authorization changed
 		if ($data['procauth'] != $data['procauthsaved']) {
 			$a = CreateObject('org.freemedsoftware.api.Authorizations');

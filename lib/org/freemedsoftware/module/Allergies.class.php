@@ -71,15 +71,15 @@ class Allergies extends EMRModule {
 		parent::__construct();
 	} // end constructor Allergies
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function add_post( $id, &$data ) { 
+	protected function add_post( $id, $data ) { 
 		return $this->SetAtoms2 ( $data['patient'], $id, $data );
 	}
 	

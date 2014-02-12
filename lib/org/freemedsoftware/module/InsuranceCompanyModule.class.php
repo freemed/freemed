@@ -86,7 +86,7 @@ class InsuranceCompanyModule extends SupportModule {
 		parent::__construct();
 	} // end constructor InsuranceCompanyModule
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$inscodtadd = date('Y-m-d');
 		$inscodtmod = date('Y-m-d');
 		$data['inscoidmap'] = serialize($data['inscoidmap']);
@@ -95,7 +95,7 @@ class InsuranceCompanyModule extends SupportModule {
 		}
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		unset ( $data['inscodtadd'] ); // no add date
 		$inscodtmod = date('Y-m-d');
 		$data['inscoidmap'] = serialize($data['inscoidmap']);

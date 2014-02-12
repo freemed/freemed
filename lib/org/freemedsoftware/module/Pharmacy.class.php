@@ -63,7 +63,7 @@ class Pharmacy extends SupportModule {
 		parent::__construct();
 	} // end constructor Pharmacy
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		// Split city, state zip if it's one field
 		if ($data['phcsz']) {
 			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
@@ -74,7 +74,7 @@ class Pharmacy extends SupportModule {
 		}
 	} // end method add_pre
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		// Split city, state zip if it's one field
 		if ($data['phcsz']) {
 			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {

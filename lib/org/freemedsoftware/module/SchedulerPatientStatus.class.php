@@ -58,7 +58,7 @@ class SchedulerPatientStatus extends EMRModule {
 		parent::__construct( );
 	} // end constructor SchedulerPatientStatus
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		if (!is_object($GLOBALS['this_user'])) { $GLOBALS['this_user'] = CreateObject('org.freemedsoftware.core.User'); }
 		$data['csstamp'] = SQL__NOW;
 		$data['csuser'] = $GLOBALS['this_user']->user_number;

@@ -101,14 +101,14 @@ class Prescription extends EMRModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['rxdtadd'] = date('Y-m-d');
 		$data['rxdtmod'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['locked'] = 0;
 	} // end method add_pre
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['rxdtmod'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end method mod_pre

@@ -63,13 +63,13 @@ class Referrals extends EMRModule {
 		parent::__construct();
 	} // end constructor Referrals
 
-	function add_pre ( &$data ) {
+	function add_pre ( $data ) {
 		$this_user = freemed::user_cache();
 		$data['refentered'] = $this_user->user_number;
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 

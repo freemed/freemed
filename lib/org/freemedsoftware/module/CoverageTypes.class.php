@@ -58,12 +58,12 @@ class CoverageTypes extends SupportModule {
 		parent::__construct ( );
 	} // end constructor CoverageTypes	
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['covtpdtadd'] = date("Y-m-d");
 		$data['covtpdtmod'] = date("Y-m-d");
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['covtpdtmod'] = date("Y-m-d");
 	}
 

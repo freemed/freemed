@@ -72,7 +72,7 @@ class PatientCorrespondence extends EMRModule {
 		parent::__construct ( );
 	} // end constructor PatientCorrespondence
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['letterdt'] = $s->ImportDate( $data['letterdt'] );
@@ -89,7 +89,7 @@ class PatientCorrespondence extends EMRModule {
 		} // end checking for uploaded msworddoc
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['user'] = freemed::user_cache()->user_number;
 		$data['letterdt'] = $s->ImportDate( $data['letterdt'] );

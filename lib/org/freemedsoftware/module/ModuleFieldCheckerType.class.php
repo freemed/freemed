@@ -50,13 +50,13 @@ class ModuleFieldCheckerType extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		if (!ereg("^[[:alpha:]]+$", $data['module'] )) {
 			$data['module'] = '';
 		}
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		if (!ereg("^[[:alpha:]]+$", $data['module'] )) {
 			$data['module'] = '';
 		}

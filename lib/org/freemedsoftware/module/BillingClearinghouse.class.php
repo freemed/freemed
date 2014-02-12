@@ -57,7 +57,7 @@ class BillingClearinghouse extends SupportModule {
 		parent::__construct();
 	} // end constructor Codes
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		unset($data['stamp']);
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end method add_pre

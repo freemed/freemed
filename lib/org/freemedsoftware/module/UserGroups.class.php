@@ -60,12 +60,12 @@ class UserGroups extends SupportModule {
 		parent::__construct();
 	} // end constructor UserGroups
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['usergroupdtadd'] = date('Y-m-d');
 		$data['usergroupdtmod'] = date('Y-m-d');
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['usergroupdtmod'] = date('Y-m-d');
 	}
 

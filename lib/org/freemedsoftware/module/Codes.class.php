@@ -51,10 +51,10 @@ class Codes extends SupportModule {
 		parent::__construct();
 	} // end constructor Codes
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 	} // end method add_pre
 
-	protected function del_pre ( &$data ) {
+	protected function del_pre ( $data ) {
 	} // end method del_pre
 	
 }

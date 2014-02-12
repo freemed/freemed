@@ -51,12 +51,12 @@ class PreviousOperationsModule extends EMRModule {
 		parent::__construct( );
 	} // end constructor PreviousOperationsModule
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['odate'] = CreateObject('org.freemedsoftware.api.Scheduler')->ImportDate( $data['odate'] );
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['odate'] = CreateObject('org.freemedsoftware.api.Scheduler')->ImportDate( $data['odate'] );
 		$data['user'] = freemed::user_cache()->user_number;
 	}

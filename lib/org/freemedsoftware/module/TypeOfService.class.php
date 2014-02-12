@@ -58,11 +58,11 @@ class TypeOfService extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['tosdtadd'] = date('Y-m-d');
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['tosdtmod'] = date('Y-m-d');
 	}
 

@@ -69,13 +69,13 @@ class UnfiledDocuments extends SupportModule {
 		parent::__construct();
 	} // end constructor UnfiledDocuments
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		syslog( LOG_DEBUG, get_class($this)."::add_pre ( ... )" );
 		// Temporarily set filename to something absurd
 		$data['uffilename'] = '-';
 	} // end method add_pre
 
-	protected function add_post ( $id, &$data ) {
+	protected function add_post ( $id, $data ) {
 		// Handle uploads, if they exist
 		syslog( LOG_DEBUG, get_class($this)."::add_post ( $id, ... )" );
 		if ( $_FILES['file']['name'] != '' ) {
@@ -99,7 +99,7 @@ class UnfiledDocuments extends SupportModule {
 		}
 	} // end method add_post
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$id = $data['id'];
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = $this->GetLocalCachedFile( $id );

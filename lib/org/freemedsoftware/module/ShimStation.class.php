@@ -64,7 +64,7 @@ class ShimStation extends SupportModule {
 		parent::__construct ( );
 	} // end constructor PatientModule
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 	} // end method add_pre
 
         public function GetAll ( ) {

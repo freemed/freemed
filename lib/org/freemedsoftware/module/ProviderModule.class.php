@@ -105,12 +105,12 @@ class ProviderModule extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['phychargemap'] = serialize( $data['phychargemap'] );
 		$data['phyidmap'] = serialize( $data['phyidmap'] );
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['phychargemap'] = serialize( $data['phychargemap'] );
 		$data['phyidmap'] = serialize( $data['phyidmap'] );
 	}

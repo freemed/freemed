@@ -96,11 +96,11 @@ class Callin extends SupportModule {
 			$this->archive_check = "(".$this->archive_field." IS NULL OR ".$this->archive_field."=0)";
 	} // end constructor Callin
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['ciuser'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['ciuser'] = freemed::user_cache()->user_number;
 	} // end method mod_pre
 

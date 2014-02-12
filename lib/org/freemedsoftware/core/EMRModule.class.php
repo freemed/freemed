@@ -337,7 +337,7 @@ class EMRModule extends BaseModule {
 		freemed::acl_enforce( 'emr', 'write' );
 
 		$ourdata = $this->prepare( (array) $data );
-		$this->add_pre( &$ourdata );
+		$this->add_pre( $ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$query = $GLOBALS['sql']->insert_query (
 			$this->table_name,
@@ -347,7 +347,7 @@ class EMRModule extends BaseModule {
 		$result = $GLOBALS['sql']->query ( $query );
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
 		$this->moduleFieldCheck(get_class($this),$new_id,$data);
-		$this->add_post( $new_id, &$ourdata );
+		$this->add_post( $new_id, $ourdata );
 
 		return $new_id;
 	} // end public function add
@@ -367,7 +367,7 @@ class EMRModule extends BaseModule {
 		if($result){
 		        $fields= explode(',',$result['fields']);
 			
-			for ( $counter =0; $counter < count($fields); $counter++)
+			for ( $counter = 0; $counter < count($fields); $counter++)
 			{
 				
 				if($data[$fields[$counter]]=="")
@@ -390,8 +390,8 @@ class EMRModule extends BaseModule {
 		
 	} // end function moduleFieldCheck
 	
-	protected function add_pre( &$data ) { }
-	protected function add_post( $id, &$data ) { }
+	protected function add_pre( $data ) { }
+	protected function add_post( $id, $data ) { }
 
 	// Function: del
 	//
@@ -452,7 +452,7 @@ class EMRModule extends BaseModule {
 		}
 
 		$ourdata = $this->prepare( $ourdata );
-		$this->mod_pre( &$ourdata );
+		$this->mod_pre( $ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$result = $GLOBALS['sql']->query (
 			$GLOBALS['sql']->update_query (
@@ -464,7 +464,7 @@ class EMRModule extends BaseModule {
 				$this->date_variables
 			)
 		);
-		$this->mod_post( &$ourdata );
+		$this->mod_post( $ourdata );
 
 		$this->moduleFieldCheck(get_class($this),$data['id'],$data);
 
@@ -474,8 +474,8 @@ class EMRModule extends BaseModule {
 		return $result ? true : false;
 	} // end public function mod
 
-	protected function mod_pre ( &$data ) { }
-	protected function mod_post ( &$data ) { }
+	protected function mod_pre ( $data ) { }
+	protected function mod_post ( $data ) { }
 
 	// Method: lock
 	//
@@ -967,7 +967,7 @@ class EMRModule extends BaseModule {
 	public function RenderTeX ( $TeX, $id, $template = false ) {
 		if (is_array($id)) {
 			foreach ($id AS $k => $v) {
-				$buffer .= $this->RenderTeX ( &$TeX, $v );
+				$buffer .= $this->RenderTeX ( $TeX, $v );
 			}
 			return $buffer;
 		} else {

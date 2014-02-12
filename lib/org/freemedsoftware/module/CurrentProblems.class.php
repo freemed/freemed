@@ -54,11 +54,11 @@ class CurrentProblems extends EMRModule {
 		parent::__construct( );
 	} // end constructor CurrentProblems
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['pdate'] = date('Y-m-d');
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['pdate'] = date('Y-m-d');
 	}
 

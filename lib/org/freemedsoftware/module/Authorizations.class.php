@@ -83,12 +83,12 @@ class Authorizations extends EMRModule {
 		return $d;
 	}
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['authdtadd'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['authdtmod'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	}

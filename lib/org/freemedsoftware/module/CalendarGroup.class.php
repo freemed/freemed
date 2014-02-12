@@ -52,7 +52,7 @@ class CalendarGroup extends SupportModule {
 		parent::__construct();
 	} // end constructor Callin
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 	} // end method add_pre
 	
 	// Method: GetAll

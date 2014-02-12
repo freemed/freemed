@@ -135,7 +135,7 @@ class Vitals extends EMRModule {
 		parent::__construct( );
 	} // end constructor Vitals
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 		if ( $data['dateof'] ) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
@@ -148,7 +148,7 @@ class Vitals extends EMRModule {
 		}
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 		if ( $data['dateof'] ) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );

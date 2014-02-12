@@ -51,7 +51,7 @@ class ProviderCertifications extends SupportModule {
 		parent::__construct( );
 	}
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['degdate'] = date ('Y-m-d');
 	}
 

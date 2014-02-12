@@ -260,11 +260,11 @@ class EncounterNotesTemplate extends SupportModule {
               'pnotestname'     
 	);
 	
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['pnotestuser'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 	
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['pnotestuser'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 	

@@ -69,12 +69,12 @@ class Medications extends EMRModule {
 		parent::__construct( );
 	} // end constructor Medications
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['mdate'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		unset($data['mdate']);
 		$data['user'] = freemed::user_cache()->user_number;
 	}

@@ -72,7 +72,7 @@ class Forms extends EMRModule {
 			if (method_exists($this, 'control_'.$v['type'])) {
 				// Call the appropriate method
 				$widget = call_user_func(
-					array(&$this, 'control_'.$v['type']),
+					array($this, 'control_'.$v['type']),
 					'widget',
 					$v
 				);
@@ -154,7 +154,7 @@ class Forms extends EMRModule {
 			if (method_exists($this, 'control_'.$v['type'])) {
 				// Call the appropriate method
 				$value = call_user_func(
-					array(&$this, 'control_'.$v['type']),
+					array($this, 'control_'.$v['type']),
 					'serialize',
 					$v
 				);
@@ -198,7 +198,7 @@ class Forms extends EMRModule {
 
 				// Call the appropriate method
 				$widget = call_user_func(
-					array(&$this, 'control_'.$v['type']),
+					array($this, 'control_'.$v['type']),
 					'widget',
 					$v
 				);
@@ -252,7 +252,7 @@ class Forms extends EMRModule {
 			if (method_exists($this, 'control_'.$v['type'])) {
 				// Call the appropriate method
 				$value = call_user_func(
-					array(&$this, 'control_'.$v['type']),
+					array($this, 'control_'.$v['type']),
 					'serialize',
 					$v
 				);

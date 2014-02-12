@@ -137,7 +137,7 @@ class ProgressNotes extends EMRModule {
 		}
 	} // end method NoteForDate
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['pnotesdt'] = $s->ImportDate( $data['pnotesdt'] );
         	$data['pnotesdtadd'] = date('Y-m-d');
@@ -145,7 +145,7 @@ class ProgressNotes extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['pnotesdt'] = $s->ImportDate( $data['pnotesdt'] );
 		$data['user'] = freemed::user_cache()->user_number;

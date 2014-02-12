@@ -76,7 +76,7 @@ class DicomModule extends EMRModule {
 		parent::__construct();
 	} // end constructor DicomModule
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
@@ -297,7 +297,7 @@ class DicomModule extends EMRModule {
 		die();
 	} // end method GetDICOM
 
-	protected function add_post ( $id, &$data ) {
+	protected function add_post ( $id, $data ) {
 		// Using example from http://www.php.net/manual/en/features.file-upload.php
 		// Assume 'file' is the name of the file, as per default
 
@@ -334,7 +334,7 @@ class DicomModule extends EMRModule {
 		unlink( $filename );
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 

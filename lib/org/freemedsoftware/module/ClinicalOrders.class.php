@@ -79,7 +79,7 @@ class ClinicalOrders extends EMRModule {
 		parent::__construct( );
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		if ( $data['dateof'] ) {
@@ -93,7 +93,7 @@ class ClinicalOrders extends EMRModule {
 		}
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		if ( $data['dateof'] ) {

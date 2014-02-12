@@ -65,7 +65,7 @@ class DrugSampleInventory extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$user = freemed::user_cache();
 		$data['loguser'] = $user->user_number;
 	} // end method add_pre

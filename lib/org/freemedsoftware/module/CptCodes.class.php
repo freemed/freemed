@@ -68,12 +68,12 @@ class CptCodes extends SupportModule {
 		parent::__construct();
 	} // end constructor CptCodes
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$d['cptstdfee'] = serialize ( $d['cptstdfee'] );
 		$d['cpttos'] = serialize ( $d['cpttos'] );
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$d['cptstdfee'] = serialize ( $d['cptstdfee'] );
 		$d['cpttos'] = serialize ( $d['cpttos'] );
 	}

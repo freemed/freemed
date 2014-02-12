@@ -96,7 +96,7 @@ class PatientCoverages extends EMRModule {
 		parent::__construct ( );
 	} // end function PatientCoverages
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['covstatus'] = "1";
 		$data['covdtadd'] = date('Y-m-d');
@@ -107,7 +107,7 @@ class PatientCoverages extends EMRModule {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$data['covstatus'] = "1";
 		$data['covdtmod'] = date('Y-m-d');

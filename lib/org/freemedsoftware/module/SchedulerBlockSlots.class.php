@@ -52,12 +52,12 @@ class SchedulerBlockSlots extends SupportModule {
 		parent::__construct();
 	} // end constructor Callin
 
-	protected function add_pre ( &$data ) {
+	protected function add_pre ( $data ) {
 		unset($data['stamp']);
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end method add_pre
 
-	protected function mod_pre ( &$data ) {
+	protected function mod_pre ( $data ) {
 		unset($data['stamp']);
 		$data['user'] = freemed::user_cache()->user_number;
 	} // end method add_pre

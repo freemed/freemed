@@ -238,7 +238,7 @@ class SupportModule extends BaseModule {
 		
 		
 		$ourdata = $this->prepare( (array) $data );
-		$this->add_pre( &$ourdata );
+		$this->add_pre( $ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 
 		$query = $GLOBALS['sql']->insert_query (
@@ -249,7 +249,7 @@ class SupportModule extends BaseModule {
 
 		$new_id = $GLOBALS['sql']->lastInsertId( $this->table_name, 'id' );
 		
-		$this->add_post( $new_id, &$ourdata );
+		$this->add_post( $new_id, $ourdata );
 		return $new_id;
 	} // end function add
 
@@ -328,7 +328,7 @@ class SupportModule extends BaseModule {
 
 		$ourdata = $this->prepare( (array) $data );
 
-		$this->mod_pre( &$ourdata );
+		$this->mod_pre( $ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		if ( is_array( $this->variables ) ) {
 			$result = $GLOBALS['sql']->query (
@@ -344,7 +344,7 @@ class SupportModule extends BaseModule {
 		} else {
 			$result = true;
 		}
-		$this->mod_post( &$ourdata );
+		$this->mod_post( $ourdata );
 
 		return $result ? true : false;
 	} // end function mod

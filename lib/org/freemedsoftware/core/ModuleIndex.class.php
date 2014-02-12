@@ -145,6 +145,7 @@ class ModuleIndex {
 			} else {
 				print "[ Indexing $file ]\n";
 				include_once ( $file );
+				print "(loaded)\n";
 			}
 		}
 	} // end protected function ScanFile
@@ -190,7 +191,7 @@ class ModuleIndex {
 		// Get directory modification date
 		clearstatcache();
 		$dir_modified = array_element(lstat($dir_name), 9);
-		//print "DEBUG: dir_modified = $dir_modified<br/>\n";
+		print "DEBUG: dir_modified = $dir_modified<br/>\n";
 
 		// If the cache is older than the directory...
 		if ($cache_modified < $dir_modified) {

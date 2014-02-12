@@ -160,7 +160,7 @@ class PatientReporting extends SupportModule {
 
 		// Handle graphing, or at least non-standard, reports
 		if ( $report['report_type'] != 'standard' ) {
-			return call_user_func_array( array( &$this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query ) );
+			return call_user_func_array( array( $this, 'GenerateReport_'.ucfirst($report['report_type']) ), array( $report, $format, $query ) );
 		}
 
 		switch ( strtolower( $format ) ) {
@@ -289,8 +289,8 @@ class PatientReporting extends SupportModule {
 			foreach ( $res AS $r ) {
 				$data[ $k ]->addPoint( $r[ $primary_key ], $r[ $v ] );
 			}
-			$plot[$k] =& $plotarea->addNew( 'line', array( &$data[ $k ] ) );
-			//$plot[$k] =& $plotarea->addNew( 'Image_Graph_Plot_Smoothed_Area', array( &$data[ $k ] ) );
+			$plot[$k] =& $plotarea->addNew( 'line', array( $data[ $k ] ) );
+			//$plot[$k] =& $plotarea->addNew( 'Image_Graph_Plot_Smoothed_Area', array( $data[ $k ] ) );
 		}
 
 		// Check plot colors
