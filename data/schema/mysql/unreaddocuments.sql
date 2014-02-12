@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `unreaddocuments` (
-	  urfstamp		TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
+	  urfstamp		TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, urfdate		DATE NOT NULL
 	, urffilename		VARCHAR (150) NOT NULL
 	, urftype		VARCHAR (50)

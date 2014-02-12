@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `scheduler_status` (
-	csstamp			TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
+	csstamp			TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	cspatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	csappt			INT UNSIGNED NOT NULL DEFAULT 0,
 	csnote			VARCHAR (250),
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `scheduler_status_delta` (
 	appointment		INT UNSIGNED NOT NULL,
 	st_start		INT UNSIGNED,
 	st_end			INT UNSIGNED,
-	stamp_start		TIMESTAMP (14),
-	stamp_end		TIMESTAMP (14),
+	stamp_start		TIMESTAMP,
+	stamp_end		TIMESTAMP,
 	duration		INT UNSIGNED,
 	id_start		INT UNSIGNED,
 	id_end			INT UNSIGNED,
@@ -132,8 +132,8 @@ CREATE PROCEDURE scheduler_status_record_delta ( IN beginId INT UNSIGNED, IN end
 BEGIN
 	DECLARE b_status INT UNSIGNED;
 	DECLARE e_status INT UNSIGNED;
-	DECLARE b_stamp  TIMESTAMP (14);
-	DECLARE e_stamp  TIMESTAMP (14);
+	DECLARE b_stamp  TIMESTAMP;
+	DECLARE e_stamp  TIMESTAMP;
 	DECLARE pt       BIGINT UNSIGNED;
 	DECLARE appt     BIGINT UNSIGNED;
 

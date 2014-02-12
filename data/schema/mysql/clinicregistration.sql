@@ -23,7 +23,7 @@
 SOURCE data/schema/mysql/systemnotification.sql
 
 CREATE TABLE IF NOT EXISTS `clinicregistration` (
-	  dateof			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
+	  dateof			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, processed			BOOL NOT NULL DEFAULT FALSE
 	, user				INT UNSIGNED NOT NULL DEFAULT 0
 	, processeduser			INT UNSIGNED NOT NULL DEFAULT 0

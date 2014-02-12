@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/_functions.sql
 
 CREATE TABLE IF NOT EXISTS `signature` (
-	  stamp			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
+	  stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, patient		BIGINT UNSIGNED NOT NULL DEFAULT 0
 	, module		VARCHAR (150) NOT NULL
 	, module_field		VARCHAR (150) NOT NULL

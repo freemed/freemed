@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS `patienttag` (
 	tag			VARCHAR (100) NOT NULL,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	user			BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	datecreate		TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
-	dateexpire		TIMESTAMP (14),
+	datecreate		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	dateexpire		TIMESTAMP,
 	id			SERIAL,
 
 	#	Define keys
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `patienttag` (
 
 #	Define aggregation table for set operations
 CREATE TABLE IF NOT EXISTS `patienttaglookup` (
-	lastupdated		TIMESTAMP(14) NOT NULL,
+	lastupdated		TIMESTAMP NOT NULL,
 	patient			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	tags			TEXT,
 	PRIMARY KEY		( patient )

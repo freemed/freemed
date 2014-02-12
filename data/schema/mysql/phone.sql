@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS `phone` (
 	phonetype		VARCHAR (50) NOT NULL,
 	phonecategory		VARCHAR (50) NOT NULL,
 	phonenumber		VARCHAR (16) NOT NULL,
-	phonestampadd		TIMESTAMP (14) NOT NULL,
-	phonestampmod		TIMESTAMP (14) NOT NULL,
+	phonestampadd		TIMESTAMP NOT NULL,
+	phonestampmod		TIMESTAMP NOT NULL,
 	id			SERIAL,
 
 	# Define keys

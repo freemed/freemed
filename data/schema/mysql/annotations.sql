@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/_functions.sql
 
 CREATE TABLE IF NOT EXISTS `annotations` (
-	atimestamp		TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
+	atimestamp		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	apatient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	amodule			VARCHAR (150) NOT NULL,
 	atable			VARCHAR (150) NOT NULL,

@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `labs` (
 	, labcomponentdescrip	VARCHAR (250)
 	, labfillernum		VARCHAR (16)
 	, labplacernum		VARCHAR (16)
-	, labtimestamp		TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
+	, labtimestamp		TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, labresultstatus	CHAR (1)
 	, labnotes		TEXT
 	, orderid		INT UNSIGNED NOT NULL DEFAULT 0 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `labresults` (
 	, labobsranges		VARCHAR (50)
 	, labobsabnormal	CHAR (5)
 	, labobsstatus		CHAR (1)
-	, labobsreported	TIMESTAMP (14)
+	, labobsreported	TIMESTAMP
 	, labobsfiller		VARCHAR (60)
 	, id			SERIAL
 

@@ -22,13 +22,13 @@
 
 CREATE TABLE IF NOT EXISTS `apptplanning` (
 	appatient		BIGINT UNSIGNED NOT NULL,
-	apdatecreated		TIMESTAMP(14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	apdatecreated		TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	apdatetarget		DATE NOT NULL,
 	appriority		INT NOT NULL DEFAULT 0,
 	apreason		VARCHAR (150),
 	apschedulerlink		INT UNSIGNED NOT NULL DEFAULT 0,
 	approvider		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	apnotifiedon		TIMESTAMP (14),
+	apnotifiedon		TIMESTAMP,
 	user			INT UNSIGNED NOT NULL,
 	id			SERIAL,
 

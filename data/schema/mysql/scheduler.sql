@@ -29,7 +29,7 @@ SOURCE data/schema/mysql/schedulingrules.sql
 CREATE TABLE IF NOT EXISTS `scheduler` (
 	  caldateof		DATE
 	, calcreated		TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-	, calmodified		TIMESTAMP (16)
+	, calmodified		TIMESTAMP
 	, caltype		ENUM( 'temp', 'pat', 'block', 'group' ) NOT NULL DEFAULT 'pat'
 	, calhour		INT UNSIGNED
 	, calminute		INT UNSIGNED
@@ -85,8 +85,8 @@ BEGIN
 		ALTER IGNORE TABLE scheduler CHANGE COLUMN calprenote calprenote VARCHAR (250);
 
 		#	Version 0.6.5
-		ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP (16) AFTER caldateof;
-		ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP (16) AFTER calcreated;
+		ALTER IGNORE TABLE scheduler ADD COLUMN calcreated TIMESTAMP AFTER caldateof;
+		ALTER IGNORE TABLE scheduler ADD COLUMN calmodified TIMESTAMP AFTER calcreated;
 
 		#	Version 0.6.6
 		ALTER IGNORE TABLE scheduler ADD COLUMN calappttemplate INT UNSIGNED NOT NULL DEFAULT 0 AFTER calrecurid;

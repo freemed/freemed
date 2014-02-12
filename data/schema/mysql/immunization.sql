@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `immunization` (
-	  dateof		TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP
+	  dateof		TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, patient		BIGINT UNSIGNED NOT NULL
 	, provider		BIGINT UNSIGNED NOT NULL
 	, admin_provider	BIGINT UNSIGNED NOT NULL

@@ -27,7 +27,7 @@ SOURCE data/schema/mysql/workflow_status.sql
 CREATE TABLE IF NOT EXISTS `rx` (
 	  rxphy			INT UNSIGNED NOT NULL
 	, rxpatient		BIGINT (20) UNSIGNED NOT NULL
-	, rxdtadd		TIMESTAMP (14) NOT NULL
+	, rxdtadd		TIMESTAMP NOT NULL
 	, rxdtmod		DATE
 	, rxdtfrom		DATE
 	, rxdrug		VARCHAR (150) NOT NULL

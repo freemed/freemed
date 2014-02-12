@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `dicom` (
-	d_stamp			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of indexing',
+	d_stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of indexing',
 	d_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to patient table',
 	d_study_description	VARCHAR (250) COMMENT 'DICOM study description tag',
 	d_images		TEXT COMMENT 'DICOM image IDs',
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `dicom` (
 );
 
 CREATE TABLE IF NOT EXISTS `dicom_image` (
-	d_stamp			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of indexing',
+	d_stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of indexing',
 	d_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Link to patient table',
 	d_study_description	VARCHAR (250) COMMENT 'DICOM study description tag',
 	d_filename		VARCHAR (250) COMMENT 'Local filename',

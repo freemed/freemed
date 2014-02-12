@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `bservice` (
     bsphone varchar(16) default NULL,                    
     bsetin varchar(24) default NULL,                     
     bstin varchar(24) default NULL,
-	stamp	TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	stamp	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user	INT UNSIGNED, 
 	id			SERIAL,
 	#keys

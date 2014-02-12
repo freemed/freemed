@@ -21,7 +21,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `billkey` (
-	billkeydate		TIMESTAMP (14) DEFAULT CURRENT_TIMESTAMP,
+	billkeydate		TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	billkey			BLOB,
 	bkprocs			TEXT,
 	id			SERIAL

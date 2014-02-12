@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `scheduler_block_slots` (
 	sbdate                      DATE,
 	sbsprovider		    INT UNSIGNED NOT NULL,
 	sbsprovidergroup	    INT UNSIGNED NOT NULL,
-	stamp				TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	stamp				TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user				INT UNSIGNED NOT NULL,
 	id			        SERIAL,
 	#keys

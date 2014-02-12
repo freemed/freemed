@@ -24,7 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 
 CREATE TABLE IF NOT EXISTS `photoid` (
-	p_stamp			TIMESTAMP (14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	p_stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	p_patient		BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	p_description		VARCHAR (250),
 	p_filename		VARCHAR (250),
