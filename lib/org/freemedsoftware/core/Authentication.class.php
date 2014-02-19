@@ -76,18 +76,18 @@ class Authentication {
 		$PHP_SELF = $_SERVER['PHP_SELF'];
  
 		// Check for authdata array
-		if (is_array($_SESSION['authdata'])) {
+		if (is_array(HTTP_Session2::get('authdata'))) {
 			// Check to see if ipaddr is set or not...
 			if (!SESSION_PROTECTION) {
 				return true;
 			} else {
-				if ( !empty($_SESSION['ipaddr']) ) {
-					if ($_SESSION['ipaddr'] == $_SERVER['REMOTE_ADDR']) {
+				if ( !empty(HTTP_Session2::get('ipaddr')) ) {
+					if (HTTP_Session2::get('ipaddr') == $_SERVER['REMOTE_ADDR']) {
 						// We're already authorized
 						return true;
 					} else {
 						// IP address has changed, ERROR
-						unset($_SESSION['ipaddr']);
+						HTTP_Session2::set('ipaddr', null);
 						syslog(LOG_INFO, "Authentication Layer| IP address changed for session");
 						return false;
 					} // end checking ipaddr

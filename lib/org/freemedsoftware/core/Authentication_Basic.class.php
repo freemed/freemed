@@ -67,13 +67,13 @@ class Authentication_Basic {
 		if ($credentials['password'] == $r['userpassword']) {
 			// Set session vars
 			unset($r['userpassword']);
-			$_SESSION['authdata'] = array (
+			HTTP_Session2::set('authdata', array(
 				"username" => $credentials['username'],
 				"user" => $r['id'],
 				"user_record" => $r
-			);
+			));
 			// Set ipaddr for SESSION_PROTECTION
-			$_SESSION['ipaddr'] = $_SERVER['REMOTE_ADDR'];
+			HTTP_Session2::set('ipaddr', $_SERVER['REMOTE_ADDR']);
 	
 			// Authorize
 			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth successful login");}
@@ -82,8 +82,8 @@ class Authentication_Basic {
 			return true;
 		} else { // check password
 			// Failed password check
-			unset ( $_SESSION['authdata'] );
-			unset ( $_SESSION['ipaddr'] );
+			HTTP_Session2::set('authdata', null);
+			HTTP_Session2::set('ipaddr', null);
 			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){ syslog(LOG_INFO,"FreeMED.Authentication_Basic| verify_auth failed login");	}	
 			$log = freemed::log_object();
 			$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Failed login" );
