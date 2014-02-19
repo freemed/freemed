@@ -31,7 +31,7 @@ class Relay {
 		//print "DEBUG: handle_request<br/>\n";
 		// Import query string and anything posted
 		$this->query_string = $_SERVER['PATH_INFO'];
-		$raw = $GLOBALS['HTTP_RAW_POST_DATA'];
+		$raw = file_get_contents('php://input');
 
 		// Deserialize the "raw" data
 		$data = $this->deserialize_request( $raw );
