@@ -121,7 +121,7 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 		)
 	);
 
-	HTTP_Session2::start( 's' );
+	HTTP_Session2::start( );
  
 	HTTP_Session2::setExpire( time() + (60 * 60) ); // set expire to 60 minutes 
 	HTTP_Session2::setIdle( time() + (10 * 60) );   // set idle to 10 minutes
@@ -138,14 +138,16 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 
 	HTTP_Session2::updateIdle();
 
-	HTTP_Session2::register ( 'authdata' );
-	HTTP_Session2::register ( 'current_patient' );
-	HTTP_Session2::register ( 'default_facility' );
-	HTTP_Session2::register ( 'ipaddr' );
-	HTTP_Session2::register ( 'language' );
-	HTTP_Session2::register ( 'page_history' );
-	HTTP_Session2::register ( 'page_history_name' );
-	HTTP_Session2::register ( 'patient_history');
+	if (HTTP_Session2::isNew()) {
+		HTTP_Session2::register ( 'authdata' );
+		HTTP_Session2::register ( 'current_patient' );
+		HTTP_Session2::register ( 'default_facility' );
+		HTTP_Session2::register ( 'ipaddr' );
+		HTTP_Session2::register ( 'language' );
+		HTTP_Session2::register ( 'page_history' );
+		HTTP_Session2::register ( 'page_history_name' );
+		HTTP_Session2::register ( 'patient_history');
+	}
 
 	//----- Gettext and language settings
 	if (isset($_REQUEST['_l'])) {
