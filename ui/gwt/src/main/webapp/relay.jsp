@@ -37,7 +37,7 @@
 <%@page import="org.apache.commons.httpclient.HttpException"%>
 <%!static HttpClient client = new HttpClient();
 
-	static String serverURL = "http://demo.b-mas.com/freemed//relay.php/json/";
+	static String serverURL = "http://www.freemed.info/freemed9/relay.php/json/";
 	
 	synchronized void readServer(HttpServletRequest request,
 			HttpServletResponse response) {
