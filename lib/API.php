@@ -463,13 +463,15 @@ class freemed {
 	//
 	//	$installed - Boolean, whether the module is installed
 	//
-	function module_check ($uid, $minimum_version="0.01") {
+	public static function module_check ($uid, $minimum_version="0.01") {
 		static $_config;
+		static $mi;
 
 		// cache all modules  
 		if (!is_array($_config)) {
+			$mi = CreateObject('org.freemedsoftware.core.ModuleIndex');
 			unset ($_config);
-			$query = ModuleIndex::LoadIndex ( );
+			$query = $mi->LoadIndex ( );
 			foreach ( $query AS $r ) {
 				$_config[$r['module_uid']] = $r['module_version'];
 			} // end of while results
