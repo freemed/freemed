@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `medications` (
 	locked			INT UNSIGNED NOT NULL DEFAULT 0,
 	user			INT UNSIGNED NOT NULL DEFAULT 0,
 	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			BIGINT NOT NULL AUTO_INCREMENT
+	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `medications` (
 );
 
 CREATE TABLE IF NOT EXISTS `medications_atomic` (
-	mid			INT UNSIGNED NOT NULL,
+	mid			BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	mdrug			VARCHAR (150),
 	mdosage			VARCHAR (150),
 	mroute			VARCHAR (150),
