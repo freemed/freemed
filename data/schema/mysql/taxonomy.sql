@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS `taxonomy` (
 );
 
 CREATE TABLE IF NOT EXISTS `taxonomy_sub_mapping` (
-	  taxonomy_id			INT UNSIGNED NOT NULL
-	, taxonomy_sub_id		INT UNSIGNED NOT NULL
+	  taxonomy_id			BIGINT UNSIGNED NOT NULL
+	, taxonomy_sub_id		BIGINT UNSIGNED NOT NULL
 	, id				SERIAL
 
 	, FOREIGN KEY			( taxonomy_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
@@ -68,13 +68,14 @@ CREATE TABLE IF NOT EXISTS `taxonomy_sub_mapping` (
 #	"SELECT pnotessbp FROM pnotes WHERE pnotespat = ${patient} ORDER BY pnotesdt DESC LIMIT 1"
 #
 CREATE TABLE IF NOT EXISTS `taxonomy_basic_emr` (
-	  concept_id			INT UNSIGNED NOT NULL
-	, qualifier_id			INT UNSIGNED NOT NULL
-	, quantifier_id			INT UNSIGNED NOT NULL
+	  concept_id			BIGINT UNSIGNED NOT NULL
+	, qualifier_id			BIGINT UNSIGNED NOT NULL
+	, quantifier_id			BIGINT UNSIGNED NOT NULL
 	, sql_extraction		TEXT
 		COMMENT 'SQL statement resulting in resultset for patient ID'
 
 	#	Keys
+# B Maz ... Is it just me & an extra beer, or aren't all these id (& those in the last table) just mapped duplicates of the same thing, indicating there's somewhere else that needs to be spiffied up?
 
 	, FOREIGN KEY			( concept_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
 	, FOREIGN KEY			( qualifier_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE

@@ -175,3 +175,4 @@ CREATE TRIGGER `modules_delete` AFTER DELETE ON `modules`
 
 DELIMITER ;
 
+SOURCE data/schema/mysql/pds.sql
