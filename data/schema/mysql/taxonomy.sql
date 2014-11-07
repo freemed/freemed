@@ -75,7 +75,6 @@ CREATE TABLE IF NOT EXISTS `taxonomy_basic_emr` (
 		COMMENT 'SQL statement resulting in resultset for patient ID'
 
 	#	Keys
-# B Maz ... Is it just me & an extra beer, or aren't all these id (& those in the last table) just mapped duplicates of the same thing, indicating there's somewhere else that needs to be spiffied up?
 
 	, FOREIGN KEY			( concept_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
 	, FOREIGN KEY			( qualifier_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
