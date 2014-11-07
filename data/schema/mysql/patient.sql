@@ -557,5 +557,5 @@ CALL patient_Upgrade( );
 
 #----- Make sure patient data store definition is loaded
 
-SOURCE data/schema/mysql/modules.sql
+SOURCE data/schema/mysql/pds.sql
 

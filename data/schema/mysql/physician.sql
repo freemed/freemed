@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `physician` (
 	, phyfname		VARCHAR (50) NOT NULL
 	, phymname		VARCHAR (50) NOT NULL
 	, phytitle		VARCHAR (10)
-	, phypractice		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, phypractice		INT UNSIGNED NOT NULL DEFAULT 0
 	, phypracname		VARCHAR (80)
 	, phypracein		VARCHAR (16)
 	, phyaddr1a		VARCHAR (30)

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `enotes` (
           pnotesdt DATE DEFAULT NULL,                               
           pnotesdtadd DATE DEFAULT NULL,                            
           pnotesdtmod DATE DEFAULT NULL,                            
-          pnotespat BIGINT UNSIGNED DEFAULT NULL,                  
+          pnotespat INT(10) UNSIGNED DEFAULT NULL,                  
           pnotesdescrip VARCHAR(100) DEFAULT NULL,  
           pnotestype enum('Encounter Note','Progress Note') DEFAULT NULL,                  
           pnotesdoc INT(10) UNSIGNED DEFAULT NULL,                  

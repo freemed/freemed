@@ -24,6 +24,7 @@ SOURCE data/schema/mysql/patient.sql
 SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/physician.sql
 SOURCE data/schema/mysql/cpt.sql
+SOURCE data/schema/mysql/dxhistory.sql
 
 CREATE TABLE IF NOT EXISTS `procrec` (
 	  procpatient		BIGINT UNSIGNED NOT NULL DEFAULT 0
@@ -436,4 +437,3 @@ CREATE TRIGGER procrec_Update
 
 DELIMITER ;
 
-SOURCE data/schema/mysql/dxhistory.sql

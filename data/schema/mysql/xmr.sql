@@ -26,7 +26,7 @@ SOURCE data/schema/mysql/xmr_definition.sql
 
 CREATE TABLE IF NOT EXISTS `xmr` (
 	  patient		BIGINT UNSIGNED NOT NULL
-	, form_id		BIGINT UNSIGNED NOT NULL
+	, form_id		INT UNSIGNED NOT NULL
 	, stamp			TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, provider		INT UNSIGNED NOT NULL
 	, user			INT UNSIGNED NOT NULL
@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS `xmr` (
 
 CREATE TABLE IF NOT EXISTS `xmr_element` (
 	  patient			BIGINT UNSIGNED NOT NULL
-	, patient_form_id		BIGINT UNSIGNED NOT NULL
-	, atom_id			BIGINT UNSIGNED NOT NULL
+	, patient_form_id		INT UNSIGNED NOT NULL
+	, atom_id			INT UNSIGNED NOT NULL
 	, stamp				TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	, obx_source			ENUM ( 'unknown', 'observed', 'reported', 'provider-reported' ) NOT NULL DEFAULT 'unknown'
 	, user				INT UNSIGNED NOT NULL

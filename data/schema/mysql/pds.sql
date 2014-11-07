@@ -21,12 +21,11 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `pds` (
-	  id		SERIAL
-	, patient	BIGINT UNSIGNED NOT NULL DEFAULT 0
-	, module	VARCHAR (100) NOT NULL DEFAULT 0
+	  id		BIGINT NOT NULL
+	, patient	BIGINT UNSIGNED NOT NULL
+	, module	VARCHAR (100) NOT NULL
 	, contents	LONGBLOB
 	
-	, PRIMARY KEY		( id )
 	, CONSTRAINT UNIQUE KEY ( patient, module, id )
 	, FOREIGN KEY ( patient ) REFERENCES patient ( id ) ON DELETE CASCADE
 	, FOREIGN KEY ( module ) REFERENCES modules ( module_class )

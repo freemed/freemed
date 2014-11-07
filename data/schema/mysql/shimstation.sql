@@ -25,7 +25,7 @@ SOURCE data/schema/mysql/facility.sql
 CREATE TABLE IF NOT EXISTS `shimstation` (
 	  name				VARCHAR (50) NOT NULL
 	, location			VARCHAR (150)
-	, facility			BIGINT UNSIGNED NOT NULL
+	, facility			INT UNSIGNED NOT NULL
 	, username			VARCHAR (50)
 	, password			VARCHAR (50)
 	, service_url			VARCHAR (150)
