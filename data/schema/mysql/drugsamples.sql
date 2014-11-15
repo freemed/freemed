@@ -25,8 +25,8 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/drugsampleinv.sql
 
 CREATE TABLE IF NOT EXISTS `drugsamples` (
-	  drugsampleid		INT UNSIGNED NOT NULL
-	, patientid		INT UNSIGNED NOT NULL
+	  drugsampleid		BIGINT UNSIGNED NOT NULL
+	, patientid		BIGINT UNSIGNED NOT NULL
 	, prescriber		INT UNSIGNED NOT NULL
 	, deliveryform		VARCHAR (50)
 	, amount		INT UNSIGNED NOT NULL DEFAULT 0

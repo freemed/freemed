@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS `taxonomy` (
 );
 
 CREATE TABLE IF NOT EXISTS `taxonomy_sub_mapping` (
-	  taxonomy_id			INT UNSIGNED NOT NULL
-	, taxonomy_sub_id		INT UNSIGNED NOT NULL
+	  taxonomy_id			BIGINT UNSIGNED NOT NULL
+	, taxonomy_sub_id		BIGINT UNSIGNED NOT NULL
 	, id				SERIAL
 
 	, FOREIGN KEY			( taxonomy_id ) REFERENCES taxonomy ( id ) ON DELETE CASCADE
@@ -68,9 +68,9 @@ CREATE TABLE IF NOT EXISTS `taxonomy_sub_mapping` (
 #	"SELECT pnotessbp FROM pnotes WHERE pnotespat = ${patient} ORDER BY pnotesdt DESC LIMIT 1"
 #
 CREATE TABLE IF NOT EXISTS `taxonomy_basic_emr` (
-	  concept_id			INT UNSIGNED NOT NULL
-	, qualifier_id			INT UNSIGNED NOT NULL
-	, quantifier_id			INT UNSIGNED NOT NULL
+	  concept_id			BIGINT UNSIGNED NOT NULL
+	, qualifier_id			BIGINT UNSIGNED NOT NULL
+	, quantifier_id			BIGINT UNSIGNED NOT NULL
 	, sql_extraction		TEXT
 		COMMENT 'SQL statement resulting in resultset for patient ID'
 
