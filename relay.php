@@ -25,6 +25,7 @@
 // Handle public methods for initialization
 if ( ! file_exists( dirname(__FILE__).'/data/cache/healthy' ) ) {
 	define( 'SKIP_SQL_INIT', true );
+	syslog(LOG_WARNING, "data/cache/healthy is not present");
 }
 
 include_once ( 'lib/freemed.php' );
