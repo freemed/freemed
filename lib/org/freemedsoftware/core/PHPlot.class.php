@@ -934,7 +934,7 @@ class PHPlot {
         else {
             // Split the text by its lines, and count them
             $which_text = ereg_replace("\r", "", $which_text);
-            $str = split("\n", $which_text);
+            $str = explode("\n", $which_text);
             $nlines = count($str);
             $spacing = $this->line_spacing * ($nlines - 1);
 
@@ -1460,7 +1460,7 @@ class PHPlot {
             return TRUE;
         }            
 
-        $str = split("\n", $which_title);
+        $str = explode("\n", $which_title);
         $lines = count($str);
         $spacing = $this->line_spacing * ($lines - 1);
 
@@ -1485,7 +1485,7 @@ class PHPlot {
 
         $this->x_title_txt = $which_xtitle;
 
-        $str = split("\n", $which_xtitle);
+        $str = explode("\n", $which_xtitle);
         $lines = count($str);
         $spacing = $this->line_spacing * ($lines - 1);
 
@@ -1512,7 +1512,7 @@ class PHPlot {
 
         $this->y_title_txt = $which_ytitle;
 
-        $str = split("\n", $which_ytitle);
+        $str = explode("\n", $which_ytitle);
         $lines = count($str);
         $spacing = $this->line_spacing * ($lines - 1);
 

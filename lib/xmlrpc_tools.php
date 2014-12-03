@@ -147,7 +147,7 @@ if (!defined('xmlrpcI4')) {
 
 	function xmlrpc_entity_decode($string)
 	{
-		$top = split('&', $string);
+		$top = explode('&', $string);
 		$op  = '';
 		$i   = 0;
 		while($i<sizeof($top))

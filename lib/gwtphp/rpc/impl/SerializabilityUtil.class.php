@@ -158,7 +158,7 @@ class SerializabilityUtil {
 	$encodedSerializedInstanceReference) {
 		//$components = encodedSerializedInstanceReference.split();
 
-		//list($name, $signature) = split(SerializedInstanceReference::SERIALIZED_REFERENCE_SEPARATOR, encodedSerializedInstanceReference);
+		//list($name, $signature) = explode(SerializedInstanceReference::SERIALIZED_REFERENCE_SEPARATOR, encodedSerializedInstanceReference);
 		$components = explode(SERIALIZED_REFERENCE_SEPARATOR, $encodedSerializedInstanceReference);
 		return new AnonymousSerializedInstanceReference(count($components) > 0 ? $components[0] : '', count($components) > 1 ? $components[1] : '');
 

@@ -171,7 +171,7 @@ class Messages {
 			if ( is_array( $message[ 'for' ] ) ) {
 				$msgFor = $message['for'];
 			} else if ( strpos( $message['for'], ',' ) !== false ) {
-				$msgFor = split( ',', $message['for'] );
+				$msgFor = explode( ',', $message['for'] );
 			} else {
 				$msgFor = array( $message['for'] );
 			}

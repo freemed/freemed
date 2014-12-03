@@ -39,7 +39,7 @@ function freemed_basic_auth () {
 		$tmp = ereg_replace(' ', '', $tmp);
 		$tmp = ereg_replace('Basic', '', $tmp);
 		$auth = base64_decode(trim($tmp));
-		list ($user, $pass) = split(':', $auth);
+		list ($user, $pass) = explode(':', $auth);
 	
 		// Check for username/password
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
