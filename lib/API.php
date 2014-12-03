@@ -54,7 +54,7 @@ class freemed {
 	//
 	//	Boolean, depending on whether the resource is allowed or denied.
 	//
-	public function acl ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
+	public static function acl ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
 		static $user;
 		if ( !isset( $user ) ) {
 			$user = freemed::user_cache()->user_number;
@@ -76,7 +76,7 @@ class freemed {
 	//
 	//	Same as <freemed::acl>
 	//
-	public function acl_enforce ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
+	public static function acl_enforce ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
 		$v = freemed::acl( $category, $permission, $axo_group, $axo_item );
 		if ( ! $v && ! $_SERVER['argc'] ) {
 			$user = freemed::user_cache()->user_number;
@@ -111,7 +111,7 @@ class freemed {
 	// See Also:
 	//	<freemed::acl>
 	//
-	public function acl_patient ( $category, $permission, $pid ) {
+	public static function acl_patient ( $category, $permission, $pid ) {
 		if (freemed::config_value('acl_patient')) {
 			// Advanced check for patient ACL as well
 			$r_acl = freemed::acl( $category, $permission );
@@ -144,7 +144,7 @@ class freemed {
 	//
 	//	<freemed::check_access_for_patient>
 	//
-	public function check_access_for_facility ($facility_number) {
+	public static function check_access_for_facility ($facility_number) {
 		// Separate out authdata
 		$authdata = HTTP_Session2::get('authdata', array());
 
@@ -187,7 +187,7 @@ class freemed {
 	//
 	//	<freemed::check_access_for_facility>
 	//
-	public function check_access_for_patient ($patient_number, $_user=0) {
+	public static function check_access_for_patient ($patient_number, $_user=0) {
 		if ($_user == 0) {
 			// Grab authdata
 			$_authdata = HTTP_Session2::get('authdata', array());
@@ -251,7 +251,7 @@ class freemed {
 	//	$value - The value of the configuration key, or NULL if the
 	//	key is not found.
 	//
-	public function config_value ($config_var) {
+	public static function config_value ($config_var) {
 		static $_config;
 	 
  		// Set to cache values
@@ -288,7 +288,7 @@ class freemed {
 	// See Also:
 	//	<freemed::config_value>
 	//
-	public function config_user_value ( $key ) {
+	public static function config_user_value ( $key ) {
 		static $_cache;
 
 		if (!isset($_cache)) {
@@ -312,7 +312,7 @@ class freemed {
 	//	of every standalone FreeMED script when dealing with standard
 	//	session based authentication.
 	//
-	public function connect () {
+	public static function connect () {
 		$a = CreateObject('org.freemedsoftware.core.Authentication', AUTHENTICATION_TYPE);
 
 		$v = $a->VerifyAuthentication();
@@ -339,7 +339,7 @@ class freemed {
 	//
 	//	Array of dates in YYYY-MM-DD
 	//
-	function dates_between ( $start, $end ) {
+	public static function dates_between ( $start, $end ) {
 		$_start = explode('-', $start);
 		$_end   = explode('-', $end);
 		$ts_start = mktime(0, 0, 0, $_start[1], $_start[2], $_start[0]);
@@ -370,7 +370,7 @@ class freemed {
 	//
 	//	$val - Scalar value of the database table field.
 	//
-	function get_link_field($id, $table, $field="id") {
+	public static function get_link_field($id, $table, $field="id") {
 		// Die if no table was passed
 		if (empty($table)) {
 			trigger_error ("freemed::get_link_field: no table provided", E_USER_ERROR);
@@ -398,7 +398,7 @@ class freemed {
 	//	$params - Array of parameters to be passed to the
 	//	associated handlers. None are passed by default.
 	//
-	function handler_breakpoint ( $name, $params = NULL ) {
+	public static function handler_breakpoint ( $name, $params = NULL ) {
 		$handlers = freemed::module_handler($name);
 		if (is_array($handlers)) {
 			foreach ($handlers AS $class => $handler) {
@@ -434,7 +434,7 @@ class freemed {
 	//
 	//	The relative path and file name of the image.
 	//
-	public function image_filename($patient, $record, $type, $data_store = true) {
+	public static function image_filename($patient, $record, $type, $data_store = true) {
 		$m = md5($patient);
 		return ($data_store ? 'data/store/' : '' ).
 			$m[0].$m[1].'/'.
@@ -495,7 +495,7 @@ class freemed {
 	//
 	//	Boolean value, true or false
 	//
-	function module_check_acl ( $module, $permission='' ) {
+	public static function module_check_acl ( $module, $permission='' ) {
 		// Get meta value for acl
 		$m_acl = freemed::module_get_meta ( $module, 'acl' );
 		if (!is_array($m_acl)) {
@@ -538,7 +538,7 @@ class freemed {
 	// See Also:
 	//	<freemed::module_get_meta>
 	//
-	function module_get_value ($module, $key) {
+	public static function module_get_value ($module, $key) {
 		// Get module list object
 		$module_list = freemed::module_cache();
 
@@ -571,7 +571,7 @@ class freemed {
 	// See Also:
 	//	<freemed::module_get_value>
 	//
-	function module_get_meta ($module, $key) {
+	public static function module_get_meta ($module, $key) {
 		$module_list = freemed::module_cache();
 
 		foreach ($module_list AS $v) {
@@ -594,7 +594,7 @@ class freemed {
 	//	$cache - An object (org.freemedsoftware.core.ModuleIndex) containing the
 	//	cached module information.
 	//
-	function module_cache () {
+	public static function module_cache () {
 		static $cache;
 		if (! isset($cache) ) {
 			$cache = $GLOBALS['sql']->queryAll( "SELECT * FROM modules" );
@@ -611,7 +611,7 @@ class freemed {
 	//	$cache - An object (org.freemedsoftware.core.User) containing the
 	//	current user information.
 	//
-	function user_cache ( ) {
+	public static function user_cache ( ) {
 		static $cache;
 		if (! isset($cache) ) {
 			$cache = CreateObject( 'org.freemedsoftware.core.User' );
@@ -633,7 +633,7 @@ class freemed {
 	//	specified handler. These all will be in lowercase, so
 	//	remember to use strtolower().
 	//
-	public function module_handler ( $handler ) {
+	public static function module_handler ( $handler ) {
 		static $_cache;
 
 		if (! isset( $_cache[$handler] ) ) {
@@ -657,7 +657,7 @@ class freemed {
 	//
 	//	$module - MODULE_NAME of the specified module.
 	//
-	function module_lookup ($module) {
+	public static function module_lookup ($module) {
 		// Get module list object
 		$module_list = freemed::module_cache();
 
@@ -683,7 +683,7 @@ class freemed {
 	//
 	//	$version - Version of module to register.
 	//
-	function module_register ( $uid, $version ) {
+	public static function module_register ( $uid, $version ) {
 		// Perform update query
 		$query = $GLOBALS['sql']->query(
 			$GLOBALS['sql']->update_query(
@@ -707,7 +707,7 @@ class freemed {
 	//
 	//	i18n'd associative array
 	//
-	function module_tables ( ) {
+	public static function module_tables ( ) {
 		$cache = freemed::module_cache();
 		foreach ($cache AS $v) {
 			if ($t = $v['module_table']) {
@@ -731,7 +731,7 @@ class freemed {
 	//
 	//	SQL table name
 	//
-	function module_to_table ( $module ) {
+	public static function module_to_table ( $module ) {
 		static $lookup;
 		$cache = freemed::module_cache();
 		if (!$lookup) {
@@ -754,7 +754,7 @@ class freemed {
 	//	$module - Name of module (must be resolved using
 	//	freemed::module_lookup, or by using MODULE_NAME).
 	//
-	function module_version ( $module ) {
+	public static function module_version ( $module ) {
 		static $cache;
 
 		// cache all modules  
@@ -785,7 +785,7 @@ class freemed {
 	//
 	//	Multidimentional hashed array.
 	//
-	function query_to_array ( $query, $single_dimension=false ) {
+	public static function query_to_array ( $query, $single_dimension=false ) {
 		unset ($this_array);
 
 		$result = $GLOBALS['sql']->queryAll($query);
@@ -823,7 +823,7 @@ class freemed {
 	//
 	//	Hash of possible options for race widget
 	//
-	function race_picklist ( ) {
+	public static function race_picklist ( ) {
 		// HL7 v2.3.1 compliant race widget (table 0005)
 		return array (
 			__("unknown race") => '7',
@@ -844,7 +844,7 @@ class freemed {
 	//
 	//	Hash of possible options for religion widget.
 	//
-	function religion_picklist ( ) {
+	public static function religion_picklist ( ) {
 		// HL7 v2.3.1 compliant race widget (table 0006)
 		return array (
 			"---" => '',
@@ -889,7 +889,7 @@ class freemed {
 	//
 	//	Hash of possible options for coverage relationships
 	//
-	function coverage_relationship_picklist ( ) {
+	public static function coverage_relationship_picklist ( ) {
 		// HL7 v2.3.1 compliant race widget (table 0006)
 		return array (
 			"---" => '',
@@ -920,7 +920,7 @@ class freemed {
 	//
 	//	$sanitized - Sanitized filename
 	//
-	function secure_filename ( $filename ) {
+	public static function secure_filename ( $filename ) {
 		// Items to remove
 		$secure_these = array (
 			"\\",
@@ -958,7 +958,7 @@ class freemed {
 	//
 	//	Formatted date/time string
 	//
-	function sql2date ( $date ) {
+	public static function sql2date ( $date ) {
 		if (substr($date, 4, 1) == '-') {
 			// Handle MySQL 4.1+ timestamps
 			$y = substr($date, 0, 4);
@@ -1002,7 +1002,7 @@ class freemed {
 	//
 	//	Name of file if successful.
 	//
-	function store_image ( $patient_id=0, $varname, $type=0, $encoding='cjb2' ) {
+	public static function store_image ( $patient_id=0, $varname, $type=0, $encoding='cjb2' ) {
 		global ${$varname};
 
 		// Check for valid patient id
@@ -1135,7 +1135,7 @@ class freemed {
 	//	Boolean value, whether or not the user has override
 	//	permissions.
 	//
-	function lock_override () {
+	public static function lock_override () {
 		$this_user = freemed::user_cache();
 
 		$a = explode(',', freemed::config_value('lock_override'));
@@ -1154,7 +1154,7 @@ class freemed {
 	//
 	//	org.freemedsoftware.core.Log object
 	//
-	function log_object ( ) {
+	public static function log_object ( ) {
 		static $_cache;
 		if (!isset($_cache)) { $_cache = CreateObject('org.freemedsoftware.core.Log'); }
 		return $_cache;
@@ -1172,7 +1172,7 @@ class freemed {
 	//
 	//	Formatted phone number for display
 	//
-	function phone_display ( $phone ) {
+	public static function phone_display ( $phone ) {
 		if (strlen($phone) < 7) { return __("NONE"); }
 		switch (freemed::config_value('phofmt')) {
 			case "usa":
