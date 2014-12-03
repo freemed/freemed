@@ -84,10 +84,10 @@ class Relay_Json extends Relay {
 	//
 	public function extract_parameters ( $data, $post ) {
 		// First, extract parameters from data
-		if ( is_array( $data['params'] ) ) { return $this->deserialize_parameters( $data['params'] ); }
+		if ( isset( $data['params'] ) && is_array( $data['params'] ) ) { return $this->deserialize_parameters( $data['params'] ); }
 
 		// Use param[] next
-		if ( is_array( $post['param'] ) ) { return $this->deserialize_parameters( $post['param'] ); }
+		if ( isset( $post['param'] ) && is_array( $post['param'] ) ) { return $this->deserialize_parameters( $post['param'] ); }
 
 		// Use param1 ... paramN
 		if ( isset( $post['param0'] ) ) {

@@ -60,6 +60,9 @@ if (ini_get('post_max_size')+0 < 64) {
 //----- Disable useless E_NOTICE error reporting, freaks users out.
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
+//----- Force default timezone setting for PHP 5.4+
+date_default_timezone_set(date_default_timezone_get());
+
 //----- Use our *own* stuff, no one else's stuff
 if (function_exists('set_include_path')) {
 	set_include_path(dirname(dirname(__FILE__)).PATH_SEPARATOR.dirname(__FILE__).'/net/php/pear/');

@@ -39,7 +39,7 @@ class Relay {
 		//syslog(LOG_INFO, "params = ".serialize($p));
 
 		// Figure method
-		$method = $data['method'] ? $data['method'] : $_method;
+		$method = isset($data['method']) ? $data['method'] : $_method;
 
 		// Determine if this is okay to do, based on the namespace
 		if ( substr($method, 0, 27) != 'org.freemedsoftware.public.' ) {
@@ -67,7 +67,7 @@ class Relay {
 	//
 	//
 	protected function extract_parameters ( $data, $post ) {
-		return $data['params'];
+		return isset($data['params']) ? $data['params'] : NULL;
 	} // end method extract_parameters
 
 } // end class Relay
