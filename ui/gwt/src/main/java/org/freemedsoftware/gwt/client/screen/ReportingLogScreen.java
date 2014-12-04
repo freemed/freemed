@@ -53,7 +53,7 @@ public class ReportingLogScreen extends ScreenInterface {
 
 	protected CustomTable printLogTable = new CustomTable();
 
-	protected String module = "ReportinPrintLog";
+	protected String module = "ReportingPrintLog";
 	
 	private static List<ReportingLogScreen> logScreenList=null;
 	//Creates only desired amount of instances if we follow this pattern otherwise we have public constructor as well

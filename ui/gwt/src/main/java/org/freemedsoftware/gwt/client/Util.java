@@ -1874,7 +1874,7 @@ public final class Util {
 		List paramsList = new ArrayList();
 		paramsList.add(paramMap);
 
-		callModuleMethod("ReportinPrintLog", "Add", paramsList,
+		callModuleMethod("ReportingPrintLog", "Add", paramsList,
 				new CustomRequestCallback() {
 					@Override
 					public void onError() {
