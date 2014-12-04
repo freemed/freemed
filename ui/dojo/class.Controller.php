@@ -45,9 +45,9 @@ class Controller {
 		$this->smarty = CreateObject( 'net.php.smarty.Smarty' );
 
 		// Override Smarty defaults for FreeMED
-		$this->smarty->template_dir = dirname(__FILE__)."/view/";
-		$this->smarty->compile_dir = dirname(__FILE__)."/../../data/cache/smarty/templates_c/";
-		$this->smarty->cache_dir = dirname(__FILE__)."/../../data/cache/smarty/cache/";
+		$this->smarty->setTemplateDir(dirname(__FILE__)."/view/");
+		$this->smarty->setCompileDir(dirname(__FILE__)."/../../data/cache/smarty/templates_c/");
+		$this->smarty->setCacheDir)dirname(__FILE__)."/../../data/cache/smarty/cache/");
 
 		// Change delimiters to be something a bit more sane
 		$this->smarty->left_delimiter = '<!--{';

@@ -71,12 +71,12 @@ include_once 'lib/loader.php';
 // Load smarty engine
 unset ( $smarty );
 $smarty = CreateObject('net.php.smarty.Smarty');
-$smarty->template_dir = $base . "/lib/";
+$smarty->setTemplateDir( $base . "/lib/" );
 $compile_dir = $base . "/data/cache/smarty/templates_c/";
-$smarty->compile_dir = $base . "/data/cache/smarty/templates_c/";
+$smarty->setCompileDir( $base . "/data/cache/smarty/templates_c/" );
 `mkdir -p ${compile_dir}; chmod 777 ${compile_dir}`;
 $cache_dir = $base . "/data/cache/smarty/cache/";
-$smarty->cache_dir = $base . "/data/cache/smarty/cache/";
+$smarty->setCacheDir( $base . "/data/cache/smarty/cache/" );
 `mkdir -p ${cache_dir}; chmod 777 ${cache_dir}`;
 $smarty->left_delimiter = '<{';
 $smarty->right_delimiter = '}>';

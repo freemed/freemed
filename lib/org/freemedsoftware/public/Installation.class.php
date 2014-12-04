@@ -145,9 +145,9 @@ class Installation {
 		$smarty = CreateObject( 'net.php.smarty.Smarty' );
 
 		// Override Smarty defaults
-		$smarty->template_dir = PHYSICAL_LOCATION."/lib/";
-		$smarty->compile_dir = PHYSICAL_LOCATION."/data/cache/smarty/templates_c/";
-		$smarty->cache_dir = PHYSICAL_LOCATION."/data/cache/smarty/cache/";
+		$smarty->setTemplateDir( PHYSICAL_LOCATION."/lib/" );
+		$smarty->setCompileDir( PHYSICAL_LOCATION."/data/cache/smarty/templates_c/" );
+		$smarty->setCacheDir( PHYSICAL_LOCATION."/data/cache/smarty/cache/" );
 
 		// Change delimiters to be something a bit more sane
 		$smarty->left_delimiter = '<{';

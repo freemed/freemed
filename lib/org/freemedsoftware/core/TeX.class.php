@@ -105,9 +105,9 @@ class TeX {
 		// Initialize Smarty engine, with caching
 		if (!is_object($this->smarty)) {
 			$this->smarty = CreateObject( 'net.php.smarty.Smarty' );
-			$this->smarty->template_dir = "$basedir/data/tex/";
-			$this->smarty->compile_dir = "$basedir/data/cache/smarty/templates_c/";
-			$this->smarty->cache_dir = "$basedir/data/cache/smarty/cache/";
+			$this->smarty->setTemplateDir("$basedir/data/tex/");
+			$this->smarty->setCompileDir("$basedir/data/cache/smarty/templates_c/");
+			$this->smarty->setCacheDir("$basedir/data/cache/smarty/cache/");
 			$this->smarty->left_delimiter = '{[';
 			$this->smarty->right_delimiter = ']}';
 		}

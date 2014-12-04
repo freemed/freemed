@@ -38,9 +38,9 @@ unset ( $smarty );
 $smarty = CreateObject( 'net.php.smarty.Smarty' );
 
 // Override Smarty defaults for FreeMED
-$smarty->template_dir = dirname(__FILE__)."/ui/${ui}/view/";
-$smarty->compile_dir = dirname(__FILE__)."/data/cache/smarty/templates_c/";
-$smarty->cache_dir = dirname(__FILE__)."/data/cache/smarty/cache/";
+$smarty->setTemplateDir( dirname(__FILE__)."/ui/${ui}/view/" );
+$smarty->setCompileDir( dirname(__FILE__)."/data/cache/smarty/templates_c/" );
+$smarty->setCacheDir( dirname(__FILE__)."/data/cache/smarty/cache/" );
 
 // Change delimiters to be something a bit more sane
 $smarty->left_delimiter = '<!--{';
