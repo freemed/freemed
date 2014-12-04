@@ -1,416 +1,373 @@
 <?php
 /*******************************************************************************
 * Utility to generate font definition files                                    *
-* Version: 1.13                                                                *
-* Date:    2004-12-31                                                          *
+*                                                                              *
+* Version: 1.2                                                                 *
+* Date:    2011-06-18                                                          *
+* Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
 
-function ReadMap($enc)
+require('ttfparser.php');
+
+function Message($txt, $severity='')
 {
-	//Read a map file
-	$file=dirname(__FILE__).'/'.strtolower($enc).'.map';
-	$a=file($file);
-	if(empty($a))
-		die('<B>Error:</B> encoding not found: '.$enc);
-	$cc2gn=array();
-	foreach($a as $l)
+	if(PHP_SAPI=='cli')
 	{
-		if($l{0}=='!')
-		{
-			$e=preg_split('/[ \\t]+/',rtrim($l));
-			$cc=hexdec(substr($e[0],1));
-			$gn=$e[2];
-			$cc2gn[$cc]=$gn;
-		}
+		if($severity)
+			echo "$severity: ";
+		echo "$txt\n";
 	}
-	for($i=0;$i<=255;$i++)
+	else
 	{
-		if(!isset($cc2gn[$i]))
-			$cc2gn[$i]='.notdef';
+		if($severity)
+			echo "<b>$severity</b>: ";
+		echo "$txt<br>";
 	}
-	return $cc2gn;
 }
 
-function ReadAFM($file,&$map)
+function Notice($txt)
 {
-	//Read a font metric file
-	$a=file($file);
+	Message($txt, 'Notice');
+}
+
+function Warning($txt)
+{
+	Message($txt, 'Warning');
+}
+
+function Error($txt)
+{
+	Message($txt, 'Error');
+	exit;
+}
+
+function LoadMap($enc)
+{
+	$file = dirname(__FILE__).'/'.strtolower($enc).'.map';
+	$a = file($file);
 	if(empty($a))
-		die('File not found');
-	$widths=array();
-	$fm=array();
-	$fix=array('Edot'=>'Edotaccent','edot'=>'edotaccent','Idot'=>'Idotaccent','Zdot'=>'Zdotaccent','zdot'=>'zdotaccent',
-		'Odblacute'=>'Ohungarumlaut','odblacute'=>'ohungarumlaut','Udblacute'=>'Uhungarumlaut','udblacute'=>'uhungarumlaut',
-		'Gcedilla'=>'Gcommaaccent','gcedilla'=>'gcommaaccent','Kcedilla'=>'Kcommaaccent','kcedilla'=>'kcommaaccent',
-		'Lcedilla'=>'Lcommaaccent','lcedilla'=>'lcommaaccent','Ncedilla'=>'Ncommaaccent','ncedilla'=>'ncommaaccent',
-		'Rcedilla'=>'Rcommaaccent','rcedilla'=>'rcommaaccent','Scedilla'=>'Scommaaccent','scedilla'=>'scommaaccent',
-		'Tcedilla'=>'Tcommaaccent','tcedilla'=>'tcommaaccent','Dslash'=>'Dcroat','dslash'=>'dcroat','Dmacron'=>'Dcroat','dmacron'=>'dcroat',
-		'combininggraveaccent'=>'gravecomb','combininghookabove'=>'hookabovecomb','combiningtildeaccent'=>'tildecomb',
-		'combiningacuteaccent'=>'acutecomb','combiningdotbelow'=>'dotbelowcomb','dongsign'=>'dong');
-	foreach($a as $l)
+		Error('Encoding not found: '.$enc);
+	$map = array_fill(0, 256, array('uv'=>-1, 'name'=>'.notdef'));
+	foreach($a as $line)
 	{
-		$e=explode(' ',rtrim($l));
+		$e = explode(' ', rtrim($line));
+		$c = hexdec(substr($e[0],1));
+		$uv = hexdec(substr($e[1],2));
+		$name = $e[2];
+		$map[$c] = array('uv'=>$uv, 'name'=>$name);
+	}
+	return $map;
+}
+
+function GetInfoFromTrueType($file, $embed, $map)
+{
+	// Return informations from a TrueType font
+	$ttf = new TTFParser();
+	$ttf->Parse($file);
+	if($embed)
+	{
+		if(!$ttf->Embeddable)
+			Error('Font license does not allow embedding');
+		$info['Data'] = file_get_contents($file);
+		$info['OriginalSize'] = filesize($file);
+	}
+	$k = 1000/$ttf->unitsPerEm;
+	$info['FontName'] = $ttf->postScriptName;
+	$info['Bold'] = $ttf->Bold;
+	$info['ItalicAngle'] = $ttf->italicAngle;
+	$info['IsFixedPitch'] = $ttf->isFixedPitch;
+	$info['Ascender'] = round($k*$ttf->typoAscender);
+	$info['Descender'] = round($k*$ttf->typoDescender);
+	$info['UnderlineThickness'] = round($k*$ttf->underlineThickness);
+	$info['UnderlinePosition'] = round($k*$ttf->underlinePosition);
+	$info['FontBBox'] = array(round($k*$ttf->xMin), round($k*$ttf->yMin), round($k*$ttf->xMax), round($k*$ttf->yMax));
+	$info['CapHeight'] = round($k*$ttf->capHeight);
+	$info['MissingWidth'] = round($k*$ttf->widths[0]);
+	$widths = array_fill(0, 256, $info['MissingWidth']);
+	for($c=0;$c<=255;$c++)
+	{
+		if($map[$c]['name']!='.notdef')
+		{
+			$uv = $map[$c]['uv'];
+			if(isset($ttf->chars[$uv]))
+			{
+				$w = $ttf->widths[$ttf->chars[$uv]];
+				$widths[$c] = round($k*$w);
+			}
+			else
+				Warning('Character '.$map[$c]['name'].' is missing');
+		}
+	}
+	$info['Widths'] = $widths;
+	return $info;
+}
+
+function GetInfoFromType1($file, $embed, $map)
+{
+	// Return informations from a Type1 font
+	if($embed)
+	{
+		$f = fopen($file, 'rb');
+		if(!$f)
+			Error('Can\'t open font file');
+		// Read first segment
+		$a = unpack('Cmarker/Ctype/Vsize', fread($f,6));
+		if($a['marker']!=128)
+			Error('Font file is not a valid binary Type1');
+		$size1 = $a['size'];
+		$data = fread($f, $size1);
+		// Read second segment
+		$a = unpack('Cmarker/Ctype/Vsize', fread($f,6));
+		if($a['marker']!=128)
+			Error('Font file is not a valid binary Type1');
+		$size2 = $a['size'];
+		$data .= fread($f, $size2);
+		fclose($f);
+		$info['Data'] = $data;
+		$info['Size1'] = $size1;
+		$info['Size2'] = $size2;
+	}
+
+	$afm = substr($file, 0, -3).'afm';
+	if(!file_exists($afm))
+		Error('AFM font file not found: '.$afm);
+	$a = file($afm);
+	if(empty($a))
+		Error('AFM file empty or not readable');
+	foreach($a as $line)
+	{
+		$e = explode(' ', rtrim($line));
 		if(count($e)<2)
 			continue;
-		$code=$e[0];
-		$param=$e[1];
-		if($code=='C')
+		$entry = $e[0];
+		if($entry=='C')
 		{
-			//Character metrics
-			$cc=(int)$e[1];
-			$w=$e[4];
-			$gn=$e[7];
-			if(substr($gn,-4)=='20AC')
-				$gn='Euro';
-			if(isset($fix[$gn]))
-			{
-				//Fix incorrect glyph name
-				foreach($map as $c=>$n)
-				{
-					if($n==$fix[$gn])
-						$map[$c]=$gn;
-				}
-			}
-			if(empty($map))
-			{
-				//Symbolic font: use built-in encoding
-				$widths[$cc]=$w;
-			}
-			else
-			{
-				$widths[$gn]=$w;
-				if($gn=='X')
-					$fm['CapXHeight']=$e[13];
-			}
-			if($gn=='.notdef')
-				$fm['MissingWidth']=$w;
+			$w = $e[4];
+			$name = $e[7];
+			$cw[$name] = $w;
 		}
-		elseif($code=='FontName')
-			$fm['FontName']=$param;
-		elseif($code=='Weight')
-			$fm['Weight']=$param;
-		elseif($code=='ItalicAngle')
-			$fm['ItalicAngle']=(double)$param;
-		elseif($code=='Ascender')
-			$fm['Ascender']=(int)$param;
-		elseif($code=='Descender')
-			$fm['Descender']=(int)$param;
-		elseif($code=='UnderlineThickness')
-			$fm['UnderlineThickness']=(int)$param;
-		elseif($code=='UnderlinePosition')
-			$fm['UnderlinePosition']=(int)$param;
-		elseif($code=='IsFixedPitch')
-			$fm['IsFixedPitch']=($param=='true');
-		elseif($code=='FontBBox')
-			$fm['FontBBox']=array($e[1],$e[2],$e[3],$e[4]);
-		elseif($code=='CapHeight')
-			$fm['CapHeight']=(int)$param;
-		elseif($code=='StdVW')
-			$fm['StdVW']=(int)$param;
+		elseif($entry=='FontName')
+			$info['FontName'] = $e[1];
+		elseif($entry=='Weight')
+			$info['Weight'] = $e[1];
+		elseif($entry=='ItalicAngle')
+			$info['ItalicAngle'] = (int)$e[1];
+		elseif($entry=='Ascender')
+			$info['Ascender'] = (int)$e[1];
+		elseif($entry=='Descender')
+			$info['Descender'] = (int)$e[1];
+		elseif($entry=='UnderlineThickness')
+			$info['UnderlineThickness'] = (int)$e[1];
+		elseif($entry=='UnderlinePosition')
+			$info['UnderlinePosition'] = (int)$e[1];
+		elseif($entry=='IsFixedPitch')
+			$info['IsFixedPitch'] = ($e[1]=='true');
+		elseif($entry=='FontBBox')
+			$info['FontBBox'] = array((int)$e[1], (int)$e[2], (int)$e[3], (int)$e[4]);
+		elseif($entry=='CapHeight')
+			$info['CapHeight'] = (int)$e[1];
+		elseif($entry=='StdVW')
+			$info['StdVW'] = (int)$e[1];
 	}
-	if(!isset($fm['FontName']))
-		die('FontName not found');
-	if(!empty($map))
+
+	if(!isset($info['FontName']))
+		Error('FontName missing in AFM file');
+	$info['Bold'] = isset($info['Weight']) && preg_match('/bold|black/i', $info['Weight']);
+	if(isset($cw['.notdef']))
+		$info['MissingWidth'] = $cw['.notdef'];
+	else
+		$info['MissingWidth'] = 0;
+	$widths = array_fill(0, 256, $info['MissingWidth']);
+	for($c=0;$c<=255;$c++)
 	{
-		if(!isset($widths['.notdef']))
-			$widths['.notdef']=600;
-		if(!isset($widths['Delta']) and isset($widths['increment']))
-			$widths['Delta']=$widths['increment'];
-		//Order widths according to map
-		for($i=0;$i<=255;$i++)
+		$name = $map[$c]['name'];
+		if($name!='.notdef')
 		{
-			if(!isset($widths[$map[$i]]))
-			{
-				echo '<B>Warning:</B> character '.$map[$i].' is missing<BR>';
-				$widths[$i]=$widths['.notdef'];
-			}
+			if(isset($cw[$name]))
+				$widths[$c] = $cw[$name];
 			else
-				$widths[$i]=$widths[$map[$i]];
+				Warning('Character '.$name.' is missing');
 		}
 	}
-	$fm['Widths']=$widths;
-	return $fm;
+	$info['Widths'] = $widths;
+	return $info;
 }
 
-function MakeFontDescriptor($fm,$symbolic)
+function MakeFontDescriptor($info)
 {
-	//Ascent
-	$asc=(isset($fm['Ascender']) ? $fm['Ascender'] : 1000);
-	$fd="array('Ascent'=>".$asc;
-	//Descent
-	$desc=(isset($fm['Descender']) ? $fm['Descender'] : -200);
-	$fd.=",'Descent'=>".$desc;
-	//CapHeight
-	if(isset($fm['CapHeight']))
-		$ch=$fm['CapHeight'];
-	elseif(isset($fm['CapXHeight']))
-		$ch=$fm['CapXHeight'];
+	// Ascent
+	$fd = "array('Ascent'=>".$info['Ascender'];
+	// Descent
+	$fd .= ",'Descent'=>".$info['Descender'];
+	// CapHeight
+	if(!empty($info['CapHeight']))
+		$fd .= ",'CapHeight'=>".$info['CapHeight'];
 	else
-		$ch=$asc;
-	$fd.=",'CapHeight'=>".$ch;
-	//Flags
-	$flags=0;
-	if(isset($fm['IsFixedPitch']) and $fm['IsFixedPitch'])
-		$flags+=1<<0;
-	if($symbolic)
-		$flags+=1<<2;
-	if(!$symbolic)
-		$flags+=1<<5;
-	if(isset($fm['ItalicAngle']) and $fm['ItalicAngle']!=0)
-		$flags+=1<<6;
-	$fd.=",'Flags'=>".$flags;
-	//FontBBox
-	if(isset($fm['FontBBox']))
-		$fbb=$fm['FontBBox'];
+		$fd .= ",'CapHeight'=>".$info['Ascender'];
+	// Flags
+	$flags = 0;
+	if($info['IsFixedPitch'])
+		$flags += 1<<0;
+	$flags += 1<<5;
+	if($info['ItalicAngle']!=0)
+		$flags += 1<<6;
+	$fd .= ",'Flags'=>".$flags;
+	// FontBBox
+	$fbb = $info['FontBBox'];
+	$fd .= ",'FontBBox'=>'[".$fbb[0].' '.$fbb[1].' '.$fbb[2].' '.$fbb[3]."]'";
+	// ItalicAngle
+	$fd .= ",'ItalicAngle'=>".$info['ItalicAngle'];
+	// StemV
+	if(isset($info['StdVW']))
+		$stemv = $info['StdVW'];
+	elseif($info['Bold'])
+		$stemv = 120;
 	else
-		$fbb=array(0,$des-100,1000,$asc+100);
-	$fd.=",'FontBBox'=>'[".$fbb[0].' '.$fbb[1].' '.$fbb[2].' '.$fbb[3]."]'";
-	//ItalicAngle
-	$ia=(isset($fm['ItalicAngle']) ? $fm['ItalicAngle'] : 0);
-	$fd.=",'ItalicAngle'=>".$ia;
-	//StemV
-	if(isset($fm['StdVW']))
-		$stemv=$fm['StdVW'];
-	elseif(isset($fm['Weight']) and eregi('(bold|black)',$fm['Weight']))
-		$stemv=120;
-	else
-		$stemv=70;
-	$fd.=",'StemV'=>".$stemv;
-	//MissingWidth
-	if(isset($fm['MissingWidth']))
-		$fd.=",'MissingWidth'=>".$fm['MissingWidth'];
-	$fd.=')';
+		$stemv = 70;
+	$fd .= ",'StemV'=>".$stemv;
+	// MissingWidth
+	$fd .= ",'MissingWidth'=>".$info['MissingWidth'].')';
 	return $fd;
 }
 
-function MakeWidthArray($fm)
+function MakeWidthArray($widths)
 {
-	//Make character width array
-	$s="array(\n\t";
-	$cw=$fm['Widths'];
-	for($i=0;$i<=255;$i++)
+	$s = "array(\n\t";
+	for($c=0;$c<=255;$c++)
 	{
-		if(chr($i)=="'")
-			$s.="'\\''";
-		elseif(chr($i)=="\\")
-			$s.="'\\\\'";
-		elseif($i>=32 and $i<=126)
-			$s.="'".chr($i)."'";
+		if(chr($c)=="'")
+			$s .= "'\\''";
+		elseif(chr($c)=="\\")
+			$s .= "'\\\\'";
+		elseif($c>=32 && $c<=126)
+			$s .= "'".chr($c)."'";
 		else
-			$s.="chr($i)";
-		$s.='=>'.$fm['Widths'][$i];
-		if($i<255)
-			$s.=',';
-		if(($i+1)%22==0)
-			$s.="\n\t";
+			$s .= "chr($c)";
+		$s .= '=>'.$widths[$c];
+		if($c<255)
+			$s .= ',';
+		if(($c+1)%22==0)
+			$s .= "\n\t";
 	}
-	$s.=')';
+	$s .= ')';
 	return $s;
 }
 
 function MakeFontEncoding($map)
 {
-	//Build differences from reference encoding
-	$ref=ReadMap('cp1252');
-	$s='';
-	$last=0;
-	for($i=32;$i<=255;$i++)
+	// Build differences from reference encoding
+	$ref = LoadMap('cp1252');
+	$s = '';
+	$last = 0;
+	for($c=32;$c<=255;$c++)
 	{
-		if($map[$i]!=$ref[$i])
+		if($map[$c]['name']!=$ref[$c]['name'])
 		{
-			if($i!=$last+1)
-				$s.=$i.' ';
-			$last=$i;
-			$s.='/'.$map[$i].' ';
+			if($c!=$last+1)
+				$s .= $c.' ';
+			$last = $c;
+			$s .= '/'.$map[$c]['name'].' ';
 		}
 	}
 	return rtrim($s);
 }
 
-function SaveToFile($file,$s,$mode='t')
+function SaveToFile($file, $s, $mode)
 {
-	$f=fopen($file,'w'.$mode);
+	$f = fopen($file, 'w'.$mode);
 	if(!$f)
-		die('Can\'t write to file '.$file);
-	fwrite($f,$s,strlen($s));
+		Error('Can\'t write to file '.$file);
+	fwrite($f, $s, strlen($s));
 	fclose($f);
 }
 
-function ReadShort($f)
+function MakeDefinitionFile($file, $type, $enc, $embed, $map, $info)
 {
-	$a=unpack('n1n',fread($f,2));
-	return $a['n'];
-}
-
-function ReadLong($f)
-{
-	$a=unpack('N1N',fread($f,4));
-	return $a['N'];
-}
-
-function CheckTTF($file)
-{
-	//Check if font license allows embedding
-	$f=fopen($file,'rb');
-	if(!$f)
-		die('<B>Error:</B> Can\'t open '.$file);
-	//Extract number of tables
-	fseek($f,4,SEEK_CUR);
-	$nb=ReadShort($f);
-	fseek($f,6,SEEK_CUR);
-	//Seek OS/2 table
-	$found=false;
-	for($i=0;$i<$nb;$i++)
+	$s = "<?php\n";
+	$s .= '$type = \''.$type."';\n";
+	$s .= '$name = \''.$info['FontName']."';\n";
+	$s .= '$desc = '.MakeFontDescriptor($info).";\n";
+	$s .= '$up = '.$info['UnderlinePosition'].";\n";
+	$s .= '$ut = '.$info['UnderlineThickness'].";\n";
+	$s .= '$cw = '.MakeWidthArray($info['Widths']).";\n";
+	$s .= '$enc = \''.$enc."';\n";
+	$diff = MakeFontEncoding($map);
+	if($diff)
+		$s .= '$diff = \''.$diff."';\n";
+	if($embed)
 	{
-		if(fread($f,4)=='OS/2')
-		{
-			$found=true;
-			break;
-		}
-		fseek($f,12,SEEK_CUR);
-	}
-	if(!$found)
-	{
-		fclose($f);
-		return;
-	}
-	fseek($f,4,SEEK_CUR);
-	$offset=ReadLong($f);
-	fseek($f,$offset,SEEK_SET);
-	//Extract fsType flags
-	fseek($f,8,SEEK_CUR);
-	$fsType=ReadShort($f);
-	$rl=($fsType & 0x02)!=0;
-	$pp=($fsType & 0x04)!=0;
-	$e=($fsType & 0x08)!=0;
-	fclose($f);
-	if($rl and !$pp and !$e)
-		echo '<B>Warning:</B> font license does not allow embedding';
-}
-
-/*******************************************************************************
-* $fontfile : chemin du fichier TTF (ou chaîne vide si pas d'incorporation)    *
-* $afmfile :  chemin du fichier AFM                                            *
-* $enc :      encodage (ou chaîne vide si la police est symbolique)            *
-* $patch :    patch optionnel pour l'encodage                                  *
-* $type :     type de la police si $fontfile est vide                          *
-*******************************************************************************/
-function MakeFont($fontfile,$afmfile,$enc='cp1252',$patch=array(),$type='TrueType')
-{
-	//Generate a font definition file
-	set_magic_quotes_runtime(0);
-	ini_set('auto_detect_line_endings','1');
-	if($enc)
-	{
-		$map=ReadMap($enc);
-		foreach($patch as $cc=>$gn)
-			$map[$cc]=$gn;
-	}
-	else
-		$map=array();
-	if(!file_exists($afmfile))
-		die('<B>Error:</B> AFM file not found: '.$afmfile);
-	$fm=ReadAFM($afmfile,$map);
-	if($enc)
-		$diff=MakeFontEncoding($map);
-	else
-		$diff='';
-	$fd=MakeFontDescriptor($fm,empty($map));
-	//Find font type
-	if($fontfile)
-	{
-		$ext=strtolower(substr($fontfile,-3));
-		if($ext=='ttf')
-			$type='TrueType';
-		elseif($ext=='pfb')
-			$type='Type1';
-		else
-			die('<B>Error:</B> unrecognized font file extension: '.$ext);
-	}
-	else
-	{
-		if($type!='TrueType' and $type!='Type1')
-			die('<B>Error:</B> incorrect font type: '.$type);
-	}
-	//Start generation
-	$s='<?php'."\n";
-	$s.='$type=\''.$type."';\n";
-	$s.='$name=\''.$fm['FontName']."';\n";
-	$s.='$desc='.$fd.";\n";
-	if(!isset($fm['UnderlinePosition']))
-		$fm['UnderlinePosition']=-100;
-	if(!isset($fm['UnderlineThickness']))
-		$fm['UnderlineThickness']=50;
-	$s.='$up='.$fm['UnderlinePosition'].";\n";
-	$s.='$ut='.$fm['UnderlineThickness'].";\n";
-	$w=MakeWidthArray($fm);
-	$s.='$cw='.$w.";\n";
-	$s.='$enc=\''.$enc."';\n";
-	$s.='$diff=\''.$diff."';\n";
-	$basename=substr(basename($afmfile),0,-4);
-	if($fontfile)
-	{
-		//Embedded font
-		if(!file_exists($fontfile))
-			die('<B>Error:</B> font file not found: '.$fontfile);
-		if($type=='TrueType')
-			CheckTTF($fontfile);
-		$f=fopen($fontfile,'rb');
-		if(!$f)
-			die('<B>Error:</B> Can\'t open '.$fontfile);
-		$file=fread($f,filesize($fontfile));
-		fclose($f);
+		$s .= '$file = \''.$info['File']."';\n";
 		if($type=='Type1')
 		{
-			//Find first two sections and discard third one
-			$header=(ord($file{0})==128);
-			if($header)
-			{
-				//Strip first binary header
-				$file=substr($file,6);
-			}
-			$pos=strpos($file,'eexec');
-			if(!$pos)
-				die('<B>Error:</B> font file does not seem to be valid Type1');
-			$size1=$pos+6;
-			if($header and ord($file{$size1})==128)
-			{
-				//Strip second binary header
-				$file=substr($file,0,$size1).substr($file,$size1+6);
-			}
-			$pos=strpos($file,'00000000');
-			if(!$pos)
-				die('<B>Error:</B> font file does not seem to be valid Type1');
-			$size2=$pos-$size1;
-			$file=substr($file,0,$size1+$size2);
+			$s .= '$size1 = '.$info['Size1'].";\n";
+			$s .= '$size2 = '.$info['Size2'].";\n";
 		}
+		else
+			$s .= '$originalsize = '.$info['OriginalSize'].";\n";
+	}
+	$s .= "?>\n";
+	SaveToFile($file, $s, 't');
+}
+
+function MakeFont($fontfile, $enc='cp1252', $embed=true)
+{
+	// Generate a font definition file
+	if(get_magic_quotes_runtime())
+		@set_magic_quotes_runtime(0);
+	ini_set('auto_detect_line_endings', '1');
+
+	if(!file_exists($fontfile))
+		Error('Font file not found: '.$fontfile);
+	$ext = strtolower(substr($fontfile,-3));
+	if($ext=='ttf' || $ext=='otf')
+		$type = 'TrueType';
+	elseif($ext=='pfb')
+		$type = 'Type1';
+	else
+		Error('Unrecognized font file extension: '.$ext);
+
+	$map = LoadMap($enc);
+
+	if($type=='TrueType')
+		$info = GetInfoFromTrueType($fontfile, $embed, $map);
+	else
+		$info = GetInfoFromType1($fontfile, $embed, $map);
+
+	$basename = substr(basename($fontfile), 0, -4);
+	if($embed)
+	{
 		if(function_exists('gzcompress'))
 		{
-			$cmp=$basename.'.z';
-			SaveToFile($cmp,gzcompress($file),'b');
-			$s.='$file=\''.$cmp."';\n";
-			echo 'Font file compressed ('.$cmp.')<BR>';
+			$file = $basename.'.z';
+			SaveToFile($file, gzcompress($info['Data']), 'b');
+			$info['File'] = $file;
+			Message('Font file compressed: '.$file);
 		}
 		else
 		{
-			$s.='$file=\''.basename($fontfile)."';\n";
-			echo '<B>Notice:</B> font file could not be compressed (zlib extension not available)<BR>';
+			$info['File'] = basename($fontfile);
+			Notice('Font file could not be compressed (zlib extension not available)');
 		}
-		if($type=='Type1')
-		{
-			$s.='$size1='.$size1.";\n";
-			$s.='$size2='.$size2.";\n";
-		}
-		else
-			$s.='$originalsize='.filesize($fontfile).";\n";
 	}
+
+	MakeDefinitionFile($basename.'.php', $type, $enc, $embed, $map, $info);
+	Message('Font definition file generated: '.$basename.'.php');
+}
+
+if(PHP_SAPI=='cli')
+{
+	// Command-line interface
+	if($argc==1)
+		die("Usage: php makefont.php fontfile [enc] [embed]\n");
+	$fontfile = $argv[1];
+	if($argc>=3)
+		$enc = $argv[2];
 	else
-	{
-		//Not embedded font
-		$s.='$file='."'';\n";
-	}
-	$s.="?>\n";
-	SaveToFile($basename.'.php',$s);
-	echo 'Font definition file generated ('.$basename.'.php'.')<BR>';
+		$enc = 'cp1252';
+	if($argc>=4)
+		$embed = ($argv[3]=='true' || $argv[3]=='1');
+	else
+		$embed = true;
+	MakeFont($fontfile, $enc, $embed);
 }
 ?>
