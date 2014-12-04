@@ -4,19 +4,13 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category   pear
  * @package    PEAR
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
+ * @copyright  1997-2009 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @version    CVS: $Id: RunTest.php 313024 2011-07-06 19:51:24Z dufuz $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.3
  */
@@ -42,9 +36,9 @@ putenv("PHP_PEAR_RUNTESTS=1");
  * @package    PEAR
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.2
+ * @copyright  1997-2009 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @version    Release: 1.9.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  */
@@ -56,6 +50,13 @@ class PEAR_RunTest
     var $_php;
     var $tests_count;
     var $xdebug_loaded;
+    /**
+     * Saved value of php executable, used to reset $_php when we
+     * have a test that uses cgi
+     *
+     * @var unknown_type
+     */
+    var $_savephp;
     var $ini_overwrites = array(
         'output_handler=',
         'open_basedir=',
@@ -85,7 +86,13 @@ class PEAR_RunTest
      */
     function PEAR_RunTest($logger = null, $options = array())
     {
-        $this->ini_overwrites[] = 'error_reporting=' . E_ALL;
+        if (!defined('E_DEPRECATED')) {
+            define('E_DEPRECATED', 0);
+        }
+        if (!defined('E_STRICT')) {
+            define('E_STRICT', 0);
+        }
+        $this->ini_overwrites[] = 'error_reporting=' . (E_ALL & ~(E_DEPRECATED | E_STRICT));
         if (is_null($logger)) {
             require_once 'PEAR/Common.php';
             $logger = new PEAR_Common;
@@ -221,15 +228,28 @@ class PEAR_RunTest
         return $settings;
     }
 
+    function _preparePhpBin($php, $file, $ini_settings)
+    {
+        $file = escapeshellarg($file);
+        // This was fixed in php 5.3 and is not needed after that
+        if (OS_WINDOWS && version_compare(PHP_VERSION, '5.3', '<')) {
+            $cmd = '"'.escapeshellarg($php).' '.$ini_settings.' -f ' . $file .'"';
+        } else {
+            $cmd = $php . $ini_settings . ' -f ' . $file;
+        }
+
+        return $cmd;
+    }
+
     function runPHPUnit($file, $ini_settings = '')
     {
         if (!file_exists($file) && file_exists(getcwd() . DIRECTORY_SEPARATOR . $file)) {
             $file = realpath(getcwd() . DIRECTORY_SEPARATOR . $file);
-            break;
         } elseif (file_exists($file)) {
             $file = realpath($file);
         }
-        $cmd = "$this->_php$ini_settings -f $file";
+
+        $cmd = $this->_preparePhpBin($this->_php, $file, $ini_settings);
         if (isset($this->_logger)) {
             $this->_logger->log(2, 'Running command "' . $cmd . '"');
         }
@@ -255,9 +275,14 @@ class PEAR_RunTest
      */
     function run($file, $ini_settings = array(), $test_number = 1)
     {
+        if (isset($this->_savephp)) {
+            $this->_php = $this->_savephp;
+            unset($this->_savephp);
+        }
         if (empty($this->_options['cgi'])) {
             // try to see if php-cgi is in the path
-            if (false !== $this->system_with_timeout('php-cgi -v')) {
+            $res = $this->system_with_timeout('php-cgi -v');
+            if (false !== $res && !(is_array($res) && in_array($res[0], array(-1, 127)))) {
                 $this->_options['cgi'] = 'php-cgi';
             }
         }
@@ -315,6 +340,7 @@ class PEAR_RunTest
                 }
                 return 'SKIPPED';
             }
+            $this->_savephp = $this->_php;
             $this->_php = $this->_options['cgi'];
         }
 
@@ -343,28 +369,57 @@ class PEAR_RunTest
 
         // We've satisfied the preconditions - run the test!
         if (isset($this->_options['coverage']) && $this->xdebug_loaded) {
-            $len_f = 5;
-            if (substr($section_text['FILE'], 0, 5) != '<?php'
-                && substr($section_text['FILE'], 0, 2) == '<?') {
-                $len_f = 2;
+            $xdebug_file = $temp_dir . DIRECTORY_SEPARATOR . $main_file_name . 'xdebug';
+            $text = "\n" . 'function coverage_shutdown() {' .
+                    "\n" . '    $xdebug = var_export(xdebug_get_code_coverage(), true);';
+            if (!function_exists('file_put_contents')) {
+                $text .= "\n" . '    $fh = fopen(\'' . $xdebug_file . '\', "wb");' .
+                        "\n" . '    if ($fh !== false) {' .
+                        "\n" . '        fwrite($fh, $xdebug);' .
+                        "\n" . '        fclose($fh);' .
+                        "\n" . '    }';
+            } else {
+                $text .= "\n" . '    file_put_contents(\'' . $xdebug_file . '\', $xdebug);';
             }
 
-            $text = '<?php' . "\n" . 'xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);' . "\n";
-            $new = substr($section_text['FILE'], $len_f, strlen($section_text['FILE']));
-            $text.= substr($new, 0, strrpos($new, '?>'));
-            $xdebug_file = $temp_dir . DIRECTORY_SEPARATOR . $main_file_name . 'xdebug';
-            $text.= "\n" . 
-                   "\n" . '$xdebug = var_export(xdebug_get_code_coverage(), true);' . 
-                   "\n" . 'file_put_contents(\'' . $xdebug_file . '\', $xdebug);' . 
-                   "\n" . 'xdebug_stop_code_coverage();' . "\n" . '?>';
+            // Workaround for http://pear.php.net/bugs/bug.php?id=17292
+            $lines             = explode("\n", $section_text['FILE']);
+            $numLines          = count($lines);
+            $namespace         = '';
+            $coverage_shutdown = 'coverage_shutdown';
 
-            $this->save_text($temp_file, $text);
+            if (
+                substr($lines[0], 0, 2) == '<?' ||
+                substr($lines[0], 0, 5) == '<?php'
+            ) {
+                unset($lines[0]);
+            }
+
+
+            for ($i = 0; $i < $numLines; $i++) {
+                if (isset($lines[$i]) && substr($lines[$i], 0, 9) == 'namespace') {
+                    $namespace         = substr($lines[$i], 10, -1);
+                    $coverage_shutdown = $namespace . '\\coverage_shutdown';
+                    $namespace         = "namespace " . $namespace . ";\n";
+
+                    unset($lines[$i]);
+                    break;
+                }
+            }
+
+            $text .= "\n    xdebug_stop_code_coverage();" .
+                "\n" . '} // end coverage_shutdown()' .
+                "\n\n" . 'register_shutdown_function("' . $coverage_shutdown . '");';
+            $text .= "\n" . 'xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);' . "\n";
+
+            $this->save_text($temp_file, "<?php\n" . $namespace . $text  . "\n" . implode("\n", $lines));
         } else {
             $this->save_text($temp_file, $section_text['FILE']);
         }
 
         $args = $section_text['ARGS'] ? ' -- '.$section_text['ARGS'] : '';
-        $cmd = "$this->_php$ini_settings \"$temp_file\" $args 2>&1";
+        $cmd = $this->_preparePhpBin($this->_php, $temp_file, $ini_settings);
+        $cmd.= "$args 2>&1";
         if (isset($this->_logger)) {
             $this->_logger->log(2, 'Running command "' . $cmd . '"');
         }
@@ -481,6 +536,7 @@ class PEAR_RunTest
                     $wanted_re = str_replace("%c", ".", $wanted_re);
                     // %f allows two points "-.0.0" but that is the best *simple* expression
                 }
+
     /* DEBUG YOUR REGEX HERE
             var_dump($wanted_re);
             print(str_repeat('=', 80) . "\n");
@@ -511,7 +567,13 @@ class PEAR_RunTest
                     fclose($fp);
                     $section_text['EXPECT'] = file_get_contents($f);
                 }
-                $wanted = preg_replace('/\r\n/', "\n", trim($section_text['EXPECT']));
+
+                if (isset($section_text['EXPECT'])) {
+                    $wanted = preg_replace('/\r\n/', "\n", trim($section_text['EXPECT']));
+                } else {
+                    $wanted = '';
+                }
+
                 // compare and leave on success
                 if (!$returnfail && 0 == strcmp($output, $wanted)) {
                     if (file_exists($temp_file)) {
@@ -724,7 +786,7 @@ $text
     {
         $this->headers = array();
         if (!empty($this->_options['cgi']) &&
-              $this->_php == $this->_options['cgi'] && 
+              $this->_php == $this->_options['cgi'] &&
               preg_match("/^(.*?)(?:\n\n(.*)|\\z)/s", $output, $match)) {
             $output = isset($match[2]) ? trim($match[2]) : '';
             $this->_headers = $this->_processHeaders($match[1]);
@@ -811,6 +873,9 @@ $text
         $env['CONTENT_TYPE']    = '';
         $env['CONTENT_LENGTH']  = '';
         if (!empty($section_text['ENV'])) {
+            if (strpos($section_text['ENV'], '{PWD}') !== false) {
+                $section_text['ENV'] = str_replace('{PWD}', dirname($temp_file), $section_text['ENV']);
+            }
             foreach (explode("\n", trim($section_text['ENV'])) as $e) {
                 $e = explode('=', trim($e), 2);
                 if (!empty($e[0]) && isset($e[1])) {
@@ -891,7 +956,10 @@ $text
         if ($section_text['CLEAN']) {
             // perform test cleanup
             $this->save_text($temp_clean, $section_text['CLEAN']);
-            $this->system_with_timeout("$this->_php $temp_clean");
+            $output = $this->system_with_timeout("$this->_php $temp_clean  2>&1");
+            if (strlen($output[1])) {
+                echo "BORKED --CLEAN-- section! output:\n", $output[1];
+            }
             if (file_exists($temp_clean)) {
                 unlink($temp_clean);
             }

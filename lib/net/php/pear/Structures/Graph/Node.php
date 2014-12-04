@@ -232,7 +232,7 @@ class Structures_Graph_Node {
     * 
     * If the graph is not directed, the reverse arc, connecting $destinationNode to $this is also created.
     *
-    * @param    Structures_Graph Node to connect to
+    * @param    Structures_Graph_Node Node to connect to
     * @access	public
     */
     function connectTo(&$destinationNode) {
@@ -272,6 +272,10 @@ class Structures_Graph_Node {
     * @access	public
     */
     function connectsTo(&$target) {
+        if (version_compare(PHP_VERSION, '5.0.0') >= 0) {
+            return in_array($target, $this->getNeighbours(), true);
+        }
+
         $copy = $target;
         $arcKeys = array_keys($this->_arcs);
         foreach($arcKeys as $key) {
