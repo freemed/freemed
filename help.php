@@ -30,6 +30,13 @@ unset ( $parts ); unset ( $file );
 $parts = explode ( '/', $_SERVER['PATH_INFO'] );
 $ui = $parts[1];
 $locale = !empty($parts[2]) ? $parts[2] : "en_US";
+
+// Check for sanitized parameters
+if (!preg_match("/^[[:alpha:]]+$/", $ui) || !preg_match("/^[[:alpha:]_]+$/", $locale)) {
+	print "Hack attempt.\n";
+	die();
+}
+
 $path = str_replace ( $parts[0].'/'.$parts[1].'/'.$parts[2], '', $_SERVER['PATH_INFO'] );
 // Strip leading slash if it exists ...
 if ( substr( $path, 0, 1 ) == '/' ) {
