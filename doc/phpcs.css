@@ -1,0 +1,23 @@
+table {
+    width: 100%
+}
+th {
+    text-align: left
+}
+th.file {
+    width: 80%;
+    color: green
+}
+th.notes {
+    width: 10%;
+    color: blue
+}
+span {
+    font-weight: bold
+}
+span.error {
+    color: red
+}
+span.warning {
+    color: orange
+}

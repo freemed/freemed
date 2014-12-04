@@ -43,7 +43,20 @@ install:
 	done
 
 clean:
-	# Nothing to do
+	rm -vf phpcs.report.xml phpcs.report.html
 	
 dist-clean:
 	# Nothing to do
+
+phpcs.report.xml:
+	./scripts/phpcs --standard=PHPCompatibility --report=xml \
+		*.php \
+		lib/*.php \
+		lib/org/freemedsoftware/*/*.php \
+		ui/*/*.php \
+		ui/*/*/*.php \
+		> phpcs.report.xml || echo "done"
+
+phpcs.report.html: phpcs.report.xml
+	xsltproc doc/phpcs.xsl phpcs.report.xml > phpcs.report.html
+
