@@ -43,7 +43,7 @@ list ( $_garbage_, $_provider, $_method ) = explode ( '/', $_SERVER['PATH_INFO']
 $_provider = ucfirst( strtolower ( $_provider ) );
 
 // Sanity checking
-if (!ereg("^[[:alpha:]]+$", $_provider )) {
+if (!preg_match("/^[[:alpha:]]+$/", $_provider )) {
 	print "Hack attempt, dying ( '${_provider}' given ).";
 	exit;
 }

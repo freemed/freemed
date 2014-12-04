@@ -33,11 +33,11 @@ if ($_SERVER['argc']) {
 function freemed_basic_auth () {
 	//----- Check for authentication
 	$headers = getallheaders(); $authed = false;
-	if (ereg('Basic', $headers['Authorization'])) {
+	if (preg_match('/Basic/', $headers['Authorization'])) {
 		// Parse headers
 		$tmp = $headers['Authorization'];
-		$tmp = ereg_replace(' ', '', $tmp);
-		$tmp = ereg_replace('Basic', '', $tmp);
+		$tmp = preg_replace('/ /', '', $tmp);
+		$tmp = preg_replace('/Basic/', '', $tmp);
 		$auth = base64_decode(trim($tmp));
 		list ($user, $pass) = explode(':', $auth);
 	

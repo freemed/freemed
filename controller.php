@@ -40,7 +40,7 @@ $layout = ucfirst(strtolower($layout));
 Header( 'Content-Type: text/html; charset=' . $GLOBALS['ISOSET'] );
 
 // Sanity checking
-if (!ereg("^[[:alpha:]]+$", $layout )) {
+if (!preg_match("/^[[:alpha:]]+$/", $layout )) {
 	print "Hack attempt, dying ( '${layout}' given ).";
 	exit;
 }

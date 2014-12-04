@@ -1354,11 +1354,11 @@ class Scheduler {
 	public function ImportDate ( $input ) {
 		$data = $input;
 		switch (true) {
-			case ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $data, $regs):
+			case preg_match("/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/", $data, $regs):
 			return sprintf('%04d-%02d-%02d', $regs[1], $regs[2], $regs[3]);
 			break;
 
-			case ereg("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})", $data, $regs):
+			case preg_match("/([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})/", $data, $regs):
 			if ($regs[3] < 30) {
 				$regs[3] += 2000;
 			} elseif ($regs[3] < 1800) {

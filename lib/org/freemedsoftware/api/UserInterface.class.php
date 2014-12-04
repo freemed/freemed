@@ -293,7 +293,7 @@ class UserInterface {
 		freemed::acl_enforce( 'admin', 'write' );
 		
 		$ourdata = (array) $data;
-		$this->add_pre( &$ourdata );
+		$this->add_pre( $ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		
 		$query = $GLOBALS['sql']->insert_query (
@@ -407,7 +407,7 @@ class UserInterface {
 		$tempVariables = $this->variables;
 		if(!$data['userpassword']) // remove password from variables if no need to change the password
 			unset($tempVariables[1]);
-		$this->mod_pre( &$ourdata );
+		$this->mod_pre( $ourdata );
 		$GLOBALS['sql']->load_data( $ourdata );
 		$result =  $GLOBALS['sql']->query($GLOBALS['sql']->update_query (
 				'user',
@@ -514,30 +514,30 @@ class UserInterface {
 		
 		
 		////////System menu/////////
-		$this->checkSystemMenu(&$userLeftNavigationMenu);
+		$this->checkSystemMenu($userLeftNavigationMenu);
 		////////////////////////////
 		
 		////////Patient menu/////////
-		$this->checkPatientMenu(&$userLeftNavigationMenu);
+		$this->checkPatientMenu($userLeftNavigationMenu);
 		////////////////////////////////
 		
 		
 		////////Documents menu/////////
-		$this->checkDocumentsMenu(&$userLeftNavigationMenu);
+		$this->checkDocumentsMenu($userLeftNavigationMenu);
 		////////////////////////////////
 		
 		
 		////////Billing menu/////////
-		$this->checkBillingMenu(&$userLeftNavigationMenu);
+		$this->checkBillingMenu($userLeftNavigationMenu);
 		////////////////////////////////
 		
 		
 		////////Reporting menu/////////
-		$this->checkReportingMenu(&$userLeftNavigationMenu);
+		$this->checkReportingMenu($userLeftNavigationMenu);
 		////////////////////////////////
 		
 		////////Utilities menu/////////	
-		$this->checkUtilitiesMenu(&$userLeftNavigationMenu);
+		$this->checkUtilitiesMenu($userLeftNavigationMenu);
 		////////////////////////////////
 		
 		

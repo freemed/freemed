@@ -236,7 +236,7 @@ class Djvu {
 		$lines = explode("\n", $raw);
 
 		foreach ($lines as $__garbage => $line) {
-			if (eregi('PAGE #', $line)) {
+			if (preg_match('/PAGE #/i', $line)) {
 				// Split out contents ....
 				$_h1 = explode('#', $line);
 				$_h2 = explode(' ', trim($_h1[1]));

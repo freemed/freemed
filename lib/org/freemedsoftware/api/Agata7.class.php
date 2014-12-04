@@ -222,7 +222,7 @@ class Agata7 {
 			DIE(get_class($this)." :: could not open directory '". FREEMED_DIR . "/data/report/'");
 		}
 		while ($entry = $d->read()) {
-			if (eregi('\.report$', $entry)) {
+			if (preg_match('/\.report$/i', $entry)) {
 				//print "dir entry = $entry\n";
 				$reports[str_replace('.report', '', basename($entry))] = $this->_ReadMetaInformation(basename($entry));
 			} // end checking file name match

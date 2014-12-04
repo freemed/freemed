@@ -43,20 +43,17 @@ function date_in_range ($checkdate, $dtbegin, $dtend) {
     $cur_m   = substr ($checkdate, 5, 2);
     $cur_d   = substr ($checkdate, 8, 2);
 
-    $end = $end_y;
-    $end .= $end_m;
-    $end .= $end_d;
-    $start = $begin_y;
-    $start .= $begin_m;
-    $start .= $begin_d;
-    $current = $cur_y;
-    $current .= $cur_m;
-    $current .= $cur_d;
+    $end = $end_y . $end_m . $end_d;
+    $start = $begin_y . $begin_m . $begin_d;
+    $current = $cur_y . $cur_m . $cur_d;
 
-    if ( ($current >= $begin) AND ($current <= $end) )
+    if ( ($current >= $begin) AND ($current <= $end) ) {
 	return true;
+    }
+
     return false;
 
+    /*
     // check to see if it is before the beginning
     if     ($cur_y<$begin_y) return false;
     elseif ($cur_m<$begin_m) return false;
@@ -69,6 +66,7 @@ function date_in_range ($checkdate, $dtbegin, $dtend) {
 
     // if it isn't before or after, return true
     return true;
+    */
   } // end function date_in_range
 
 // Function: date_in_the_past
@@ -107,7 +105,8 @@ function date_in_the_past ($datestamp) {
     } elseif ($d > $d_c) {
 	return false;
     }
-    else return false;
+
+    return false;
 }
 
 // Function: day_of_the_week
@@ -152,17 +151,18 @@ function day_of_the_week ($this_date="", $short=false) {
 //	Formatted time string.
 //
 function fc_get_time_string ( $hour, $minute ) {
-	if ($minute==0) $minute="00";
+	if ($minute==0) { $minute="00"; }
 
 	// time checking/creation if/else clause
-	if ($hour<12)
+	if ($hour<12) {
 		$_time = $hour.":".$minute." AM";
-	elseif ($hour == 12)
+	} elseif ($hour == 12) {
 		$_time = $hour.":".$minute." PM";
-	else
+	} else {
 		$_time = ($hour-12).":".$minute." PM";
+	}
 	return $_time;
-}
+} // end function fc_get_time_string
 
 // Function: fc_scroll_prev_month
 //
@@ -187,8 +187,8 @@ function fc_scroll_prev_month ($given_date="") {
 	list ($y, $m, $d) = explode ("-", $this_date);
 	$m--;
 	if ($m < 1) { $m = 12; $y--; }
-	if (!checkdate ($m, $d, $y)) {;
-		if ($d > 28) $d = 28; // be safe for February...
+	if (!checkdate ($m, $d, $y)) {
+		if ($d > 28) { $d = 28; } // be safe for February...
 	}
 	return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
 } // end function fc_scroll_prev_month
@@ -233,9 +233,10 @@ function fc_scroll_next_month ($given_date="") {
 function fc_starting_hour () {
 	global $cal_starting_hour;
 
-	if (freemed::config_value("calshr")=="")
+	if (freemed::config_value("calshr")=="") {
 		return $cal_starting_hour;
-	else return freemed::config_value ("calshr");
+	}
+	return freemed::config_value ("calshr");
 } // end function fc_starting_hour
 
 // Function: fc_ending_hour
@@ -249,9 +250,10 @@ function fc_starting_hour () {
 function fc_ending_hour () {
 	global $cal_ending_hour;
 
-	if (freemed::config_value("calehr")=="")
+	if (freemed::config_value("calehr")=="") {
 		return $cal_ending_hour;
-	else return freemed::config_value ("calehr");
+	}
+	return freemed::config_value ("calehr");
 } // end function fc_ending_hour
 
 // Function: fc_generate_interference_map
@@ -306,7 +308,7 @@ function fc_generate_interference_map ($query_part, $this_date,
       // now that we have the patient information, check to see if the
       // spot is filled, if so, append a break before it...
       if (strlen($current_imap["$calhour:$calminute"])>0)
-        $current_imap["$calhour:$calminute"] .= "<BR>";
+        $current_imap["$calhour:$calminute"] .= "<br />";
 
       // check for privacy, then add them into the map...
       if ($privacy) 
@@ -318,11 +320,11 @@ function fc_generate_interference_map ($query_part, $this_date,
       // here define the mapping
       switch ($r["caltype"]) {
        case "pat":  // actual patient
-        $mapping = "<A HREF=\"manage.php?id=".$r["calpatient"].
+        $mapping = "<a href=\"manage.php?id=".$r["calpatient"].
                    "\">$ptname</A> [$ptdob] [$ptid] - $desc";
         break;
        case "temp": // call-in patient
-        $mapping = "<A HREF=\"call-in.php?action=display&id=".
+        $mapping = "<a href=\"call-in.php?action=display&id=".
                    $r["calpatient"]."\">$ptname</A> [$ptdob] - $desc";
         break;
       } // end of switch
@@ -330,12 +332,12 @@ function fc_generate_interference_map ($query_part, $this_date,
 	$mapping = freemedCalendar::event_calendar_print($r[id]);
 
       // map the name
-      $current_imap["$calhour:$calminute"] .= "<FONT SIZE=\"-1\">".
-      	$mapping."</FONT>\n";
+      $current_imap["$calhour:$calminute"] .= "<font size=\"-1\">".
+      	$mapping."</font>\n";
 
       // now, remap the current mapping for italics or whatever to
       // show a continuing appt
-      $mapping = "<I><FONT SIZE=\"-1\">$mapping (con't)</FONT></I>";
+      $mapping = "<i><font size=\"-1\">$mapping (con't)</font></i>";
 
       // now the part that no one wants to do -- mapping to all of
       // the times after the starting time...
@@ -365,7 +367,7 @@ function fc_generate_interference_map ($query_part, $this_date,
 
          for ($m=$cur_minute;$m<$loop_emin;$m+=15) {
           if (strlen($current_imap["$h:$m"])>0)
-           $current_imap["$h:$m"] .= "<BR>";
+           $current_imap["$h:$m"] .= "<br />";
           $current_imap["$h:$m"] .= $mapping;
          } // end for loop
 
@@ -373,7 +375,7 @@ function fc_generate_interference_map ($query_part, $this_date,
 
          for ($m=$cur_minute;$m<60;$m+=15) {
           if (strlen($current_imap["$h:$m"])>0)
-           $current_imap["$h:$m"] .= "<BR>";
+           $current_imap["$h:$m"] .= "<br />";
           $current_imap["$h:$m"] .= $mapping;
          } // end for loop
 
@@ -381,7 +383,7 @@ function fc_generate_interference_map ($query_part, $this_date,
 
          for ($m=0;$m<$loop_emin;$m+=15) {
           if (strlen($current_imap["$h:$m"])>0)
-           $current_imap["$h:$m"] .= "<BR>";
+           $current_imap["$h:$m"] .= "<br />";
           $current_imap["$h:$m"] .= $mapping;
          } // end for loop
 
@@ -392,7 +394,7 @@ function fc_generate_interference_map ($query_part, $this_date,
 
          for ($m=0; $m<60; $m+=15) {
           if (strlen($current_imap["$h:$m"])>0)
-           $current_imap["$h:$m"] .= "<BR>";
+           $current_imap["$h:$m"] .= "<br />";
           $current_imap["$h:$m"] .= $mapping; 
          } // end for loop
 
