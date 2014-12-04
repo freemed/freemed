@@ -125,13 +125,13 @@ class Relay_Json extends Relay {
 	//	Serialized data string
 	//
 	public function serialize_response ( $response ) {
+		/*
 		if (function_exists( 'json_encode' )) {
 			// Try the JSON PECL native function first
 			return json_encode( $response );
-		} else {
-			$json = CreateObject('net.php.pear.Services_JSON');
-			return $json->encode( $response );
-		}
+		} */
+		$json = CreateObject('net.php.pear.Services_JSON');
+		return $json->encode( $response );
 	} // end public function serialize_response
 
 } // end class Relay_Json
