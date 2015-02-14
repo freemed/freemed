@@ -152,7 +152,7 @@ CREATE TRIGGER scheduler_Update
 				CALL patientWorkflowStatusUpdateLookup ( NEW.calpatient, OLD.caldateof );
 			END IF;
 		END IF;
-		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NOW(), 0, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), 'scheduler', NEW.calpatient, 'UPDATE' );
+		INSERT INTO systemnotification ( stamp, nuser, ntext, nmodule, npatient, naction ) VALUES ( NOW(), NEW.user, CONCAT( LPAD( NEW.calhour, 2, '0' ), ':', LPAD( NEW.calminute, 2, '0' ), ' (', NEW.calduration, 'm) - ', NEW.calprenote ), 'scheduler', NEW.calpatient, 'UPDATE' );
 	END;
 //
 
