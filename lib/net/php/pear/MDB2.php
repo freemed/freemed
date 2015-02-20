@@ -284,7 +284,7 @@ class MDB2
         if (is_array($options)) {
             foreach ($options as $option => $value) {
                 $test = $db->setOption($option, $value);
-                if (PEAR::isError($test)) {
+                if ( $test instanceof PEAR_Error ) {
                     return $test;
                 }
             }
@@ -378,14 +378,14 @@ class MDB2
 
         $debug = (!empty($options['debug']));
         $err = MDB2::loadClass($class_name, $debug);
-        if (PEAR::isError($err)) {
+        if ( $err instanceof PEAR_Error ) {
             return $err;
         }
 
         $db = new $class_name();
         $db->setDSN($dsninfo);
         $err = MDB2::setOptions($db, $options);
-        if (PEAR::isError($err)) {
+        if ( $err instanceof PEAR_Error ) {
             return $err;
         }
 
@@ -415,12 +415,12 @@ class MDB2
     static function connect($dsn, $options = false)
     {
         $db = MDB2::factory($dsn, $options);
-        if (PEAR::isError($db)) {
+        if ( $db instanceof PEAR_Error ) {
             return $db;
         }
 
         $err = $db->connect();
-        if (PEAR::isError($err)) {
+        if ( $err instanceof PEAR_Error ) {
             $dsn = $db->getDSN('string', 'xxx');
             $db->disconnect();
             $err->addUserInfo($dsn);
@@ -743,7 +743,7 @@ class MDB2
             return $errorMessages;
         }
 
-        if (PEAR::isError($value)) {
+        if ( $value instanceof PEAR_Error ) {
             $value = $value->getCode();
         }
 
@@ -1420,7 +1420,7 @@ class MDB2_Driver_Common extends PEAR
     ) {
         $userinfo = "[Error message: $userinfo]\n";
         // The error is yet a MDB2 error object
-        if (PEAR::isError($code)) {
+        if ( $code instanceof PEAR_Error ) {
             // because we use the static PEAR::raiseError, our global
             // handler should be used if it is set
             if ((null === $mode) && !empty($this->_default_error_mode)) {
@@ -1747,7 +1747,7 @@ class MDB2_Driver_Common extends PEAR
     function getConnection()
     {
         $result = $this->connect();
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
         return $this->connection;
@@ -1873,7 +1873,7 @@ class MDB2_Driver_Common extends PEAR
             }
 
             $err = MDB2::loadClass($class_name, $this->getOption('debug'));
-            if (PEAR::isError($err)) {
+            if ( $err instanceof PEAR_Error ) {
                 return $err;
             }
 
@@ -1884,7 +1884,7 @@ class MDB2_Driver_Common extends PEAR
                     if ($class_name != $class_name_new) {
                         $class_name = $class_name_new;
                         $err = MDB2::loadClass($class_name, $this->getOption('debug'));
-                        if (PEAR::isError($err)) {
+                        if ( $err instanceof PEAR_Error ) {
                             return $err;
                         }
                     }
@@ -1930,7 +1930,7 @@ class MDB2_Driver_Common extends PEAR
             $method = strtolower($match[2]).$match[3];
             if (!isset($this->modules[$module]) || !is_object($this->modules[$module])) {
                 $result = $this->loadModule($module);
-                if (PEAR::isError($result)) {
+                if ( $result instanceof PEAR_Error ) {
                     return $result;
                 }
             }
@@ -2107,7 +2107,7 @@ class MDB2_Driver_Common extends PEAR
             if ($this->supports('savepoints') && $savepoint) {
                 if ($force_rollback || $this->has_transaction_error) {
                     $result = $this->rollback($savepoint);
-                    if (!PEAR::isError($result)) {
+                    if ( $result instanceof PEAR_Error ) {
                         $result = false;
                         $this->has_transaction_error = false;
                     }
@@ -2128,7 +2128,7 @@ class MDB2_Driver_Common extends PEAR
         if ($this->in_transaction) {
             if ($force_rollback || $this->has_transaction_error) {
                 $result = $this->rollback();
-                if (!PEAR::isError($result)) {
+                if (!( $result instanceof PEAR_Error )) {
                     $result = false;
                 }
             } else {
@@ -2397,12 +2397,12 @@ class MDB2_Driver_Common extends PEAR
         $query = $this->_modifyQuery($query, $is_manip, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if ( $connection instanceof PEAR_Error ) {
             return $connection;
         }
 
         $result = $this->_doQuery($query, $is_manip, $connection, false);
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
 
@@ -2453,7 +2453,7 @@ class MDB2_Driver_Common extends PEAR
         $this->last_query = $query;
         $result = $this->debug($query, 'query', array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (PEAR::isError($result)) {
+            if ( $result instanceof PEAR_Error ) {
                 return $result;
             }
             $query = $result;
@@ -2502,12 +2502,12 @@ class MDB2_Driver_Common extends PEAR
         $query = $this->_modifyQuery($query, true, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if ( $connection instanceof PEAR_Error ) {
             return $connection;
         }
 
         $result = $this->_doQuery($query, true, $connection, $this->database_name);
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
 
@@ -2539,12 +2539,12 @@ class MDB2_Driver_Common extends PEAR
         $query = $this->_modifyQuery($query, false, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if ( $connection instanceof PEAR_Error ) {
             return $connection;
         }
 
         $result = $this->_doQuery($query, false, $connection, $this->database_name);
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
 
@@ -2577,7 +2577,7 @@ class MDB2_Driver_Common extends PEAR
             if ($this->supports('result_introspection')) {
                 $this->loadModule('Reverse', null, true);
                 $tableInfo = $this->reverse->tableInfo($result_resource);
-                if (PEAR::isError($tableInfo)) {
+                if ( $tableInfo instanceof PEAR_Error ) {
                     return $tableInfo;
                 }
                 $types = array();
@@ -2609,7 +2609,7 @@ class MDB2_Driver_Common extends PEAR
             }
             if (!empty($types)) {
                 $err = $result->setResultTypes($types);
-                if (PEAR::isError($err)) {
+                if ( $err instanceof PEAR_Error ) {
                     $result->free();
                     return $err;
                 }
@@ -2710,7 +2710,7 @@ class MDB2_Driver_Common extends PEAR
         }
 
         $col = $this->queryCol($query, $type);
-        if (PEAR::isError($col)) {
+        if ( $col instanceof PEAR_Error ) {
             return $col;
         }
         if (!is_array($col) || count($col) == 0) {
@@ -2825,14 +2825,14 @@ class MDB2_Driver_Common extends PEAR
         }
 
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if ( $connection instanceof PEAR_Error ) {
             return $connection;
         }
 
         $condition = ' WHERE '.implode(' AND ', $condition);
         $query = 'DELETE FROM ' . $this->quoteIdentifier($table, true) . $condition;
         $result = $this->_doQuery($query, true, $connection);
-        if (!PEAR::isError($result)) {
+        if (!( $result instanceof PEAR_Error )) {
             $affected_rows = $this->_affectedRows($connection, $result);
             $insert = '';
             foreach ($values as $key => $value) {
@@ -2841,20 +2841,20 @@ class MDB2_Driver_Common extends PEAR
             $values = implode(', ', $values);
             $query = 'INSERT INTO '. $this->quoteIdentifier($table, true) . "($insert) VALUES ($values)";
             $result = $this->_doQuery($query, true, $connection);
-            if (!PEAR::isError($result)) {
+            if (!( $result instanceof PEAR_Error )) {
                 $affected_rows += $this->_affectedRows($connection, $result);;
             }
         }
 
         if (!$in_transaction) {
-            if (PEAR::isError($result)) {
+            if ( $result instanceof PEAR_Error ) {
                 $this->rollback();
             } else {
                 $result = $this->commit();
             }
         }
 
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
 
@@ -2895,7 +2895,7 @@ class MDB2_Driver_Common extends PEAR
         $this->offset = $this->limit = 0;
         $result = $this->debug($query, __FUNCTION__, array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (PEAR::isError($result)) {
+            if ( $result instanceof PEAR_Error ) {
                 return $result;
             }
             $query = $result;
@@ -2922,7 +2922,7 @@ class MDB2_Driver_Common extends PEAR
             }
 
             $new_pos = $this->_skipDelimitedStrings($query, $position, $p_position);
-            if (PEAR::isError($new_pos)) {
+            if ( $new_pos instanceof PEAR_Error ) {
                 return $new_pos;
             }
             if ($new_pos != $position) {
@@ -3049,7 +3049,7 @@ class MDB2_Driver_Common extends PEAR
     function quote($value, $type = null, $quote = true, $escape_wildcards = false)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
 
@@ -3075,7 +3075,7 @@ class MDB2_Driver_Common extends PEAR
     function getDeclaration($type, $name, $field)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
         return $this->datatype->getDeclaration($type, $name, $field);
@@ -3097,7 +3097,7 @@ class MDB2_Driver_Common extends PEAR
     function compareDefinition($current, $previous)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (PEAR::isError($result)) {
+        if ( $result instanceof PEAR_Error ) {
             return $result;
         }
         return $this->datatype->compareDefinition($current, $previous);
@@ -3434,11 +3434,11 @@ class MDB2_Result_Common extends MDB2_Result
     function setResultTypes($types)
     {
         $load = $this->db->loadModule('Datatype', null, true);
-        if (PEAR::isError($load)) {
+        if ( $load instanceof PEAR_Error ) {
             return $load;
         }
         $types = $this->db->datatype->checkResultTypes($types);
-        if (PEAR::isError($types)) {
+        if ( $types instanceof PEAR_Error ) {
             return $types;
         }
         $this->types = $types;
@@ -3506,7 +3506,7 @@ class MDB2_Result_Common extends MDB2_Result
     {
         $fetchmode = is_numeric($colnum) ? MDB2_FETCHMODE_ORDERED : MDB2_FETCHMODE_ASSOC;
         $row = $this->fetchRow($fetchmode, $rownum);
-        if (!is_array($row) || PEAR::isError($row)) {
+        if (!is_array($row) || ($row instanceof PEAR_Error)) {
             return $row;
         }
         if (!array_key_exists($colnum, $row)) {
@@ -3541,7 +3541,7 @@ class MDB2_Result_Common extends MDB2_Result
                 $column[] = $row[$colnum];
             } while (is_array($row = $this->fetchRow($fetchmode)));
         }
-        if (PEAR::isError($row)) {
+        if ( $row instanceof PEAR_Error ) {
             return $row;
         }
         return $column;
@@ -3578,7 +3578,7 @@ class MDB2_Result_Common extends MDB2_Result
     {
         $all = array();
         $row = $this->fetchRow($fetchmode);
-        if (PEAR::isError($row)) {
+        if ( $row instanceof PEAR_Error ) {
             return $row;
         } elseif (!$row) {
             return $all;
@@ -3701,7 +3701,7 @@ class MDB2_Result_Common extends MDB2_Result
     {
         if (!isset($this->column_names)) {
             $result = $this->_getColumnNames();
-            if (PEAR::isError($result)) {
+            if ( $result instanceof PEAR_Error ) {
                 return $result;
             }
             $this->column_names = $result;
@@ -3969,7 +3969,7 @@ class MDB2_Statement_Common
             $err = $this->bindValue($parameter, $values[$parameter], $types[$key]);
             $this->db->popExpect();
             $this->db->popErrorHandling();
-            if (PEAR::isError($err)) {
+            if ( $err instanceof PEAR_Error ) {
                 if ($err->getCode() == MDB2_ERROR_NOT_FOUND) {
                     //ignore (extra value for missing placeholder)
                     continue;
@@ -4034,7 +4034,7 @@ class MDB2_Statement_Common
         $parameters = array_keys($values);
         foreach ($parameters as $key => $parameter) {
             $err = $this->bindParam($parameter, $values[$parameter], $types[$key]);
-            if (PEAR::isError($err)) {
+            if ( $err instanceof PEAR_Error ) {
                 return $err;
             }
         }
@@ -4067,7 +4067,7 @@ class MDB2_Statement_Common
         $values = (array)$values;
         if (!empty($values)) {
             $err = $this->bindValueArray($values);
-            if (PEAR::isError($err)) {
+            if ( $err instanceof PEAR_Error ) {
                 return $this->db->raiseError(MDB2_ERROR, null, null,
                                             'Binding Values failed with message: ' . $err->getMessage(), __FUNCTION__);
             }
@@ -4106,7 +4106,7 @@ class MDB2_Statement_Common
             } else {
                 $type = !empty($this->types[$parameter]) ? $this->types[$parameter] : null;
                 $value_quoted = $this->db->quote($value, $type);
-                if (PEAR::isError($value_quoted)) {
+                if ( $value_quoted instanceof PEAR_Error ) {
                     return $value_quoted;
                 }
             }
