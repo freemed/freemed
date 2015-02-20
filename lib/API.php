@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -60,6 +60,11 @@ class freemed {
 			$user = freemed::user_cache()->user_number;
 		}
 
+		if ($user == 1) {
+			syslog( LOG_INFO, "ACL| ${category}/{$permission}/${axo_group}/${axo_item} forced for admin user");
+			return true;
+		}
+
 		if ( $axo_group != NULL ) {
 			return $GLOBALS['acl']->acl_check( $category, $permission, 'user', $user, $axo_group, $axo_item );
 		} else {
@@ -77,9 +82,16 @@ class freemed {
 	//	Same as <freemed::acl>
 	//
 	public static function acl_enforce ( $category, $permission, $axo_group=NULL, $axo_item=NULL ) {
+		static $user;
+		if ( !isset( $user ) ) {
+			$user = freemed::user_cache()->user_number;
+		}
+		if ($user == 1) {
+			syslog( LOG_INFO, "ACL| ${category}/{$permission}/${axo_group}/${axo_item} forced for admin user");
+			return true;
+		}
 		$v = freemed::acl( $category, $permission, $axo_group, $axo_item );
 		if ( ! $v && ! $_SERVER['argc'] ) {
-			$user = freemed::user_cache()->user_number;
 			syslog( LOG_INFO, "ACL| ${category}/${permission}/${axo_group}/${axo_item} failed for ${user}" );
 			trigger_error( __("Access denied."), E_USER_ERROR );
 			return false;
