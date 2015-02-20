@@ -45,7 +45,7 @@ if ( ! file_exists ( './scripts/upgrade.php' ) ) {
 
 $a = Console_Getopt::readPHPArgv(); array_shift( $a );
 $g = Console_Getopt::getopt2 ( $a, 'f' );
-if ( PEAR::isError ( $g ) ) {
+if ( $g instanceof PEAR_Error ) {
 	print "Allowed options:\n";
 	print "\t-f\t\tForce non-interactive mode.\n\n";
 	die();

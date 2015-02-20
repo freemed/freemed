@@ -114,7 +114,7 @@ class Messages {
 			"id='".addslashes($message_id)."' AND ".
 			"msgfor='".addslashes($this_user->user_number)."'"
 		);
-		if ( PEAR::isError( $result ) ) { return false; }
+		if ( $result instanceof PEAR_Error ) { return false; }
 		return true;
 	} // end method remove
 

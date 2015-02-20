@@ -106,7 +106,7 @@ class Console_Getopt
     function doGetopt($version, $args, $short_options, $long_options = null, $skip_unknown = false)
     {
         // in case you pass directly readPHPArgv() as the first arg
-        if (PEAR::isError($args)) {
+        if ( $args instanceof PEAR_Error ) {
             return $args;
         }
 
@@ -151,7 +151,7 @@ class Console_Getopt
                                                           $opts,
                                                           $args,
                                                           $skip_unknown);
-                if (PEAR::isError($error)) {
+                if ( $error instanceof PEAR_Error ) {
                     return $error;
                 }
             } elseif ($arg == '-') {
@@ -164,7 +164,7 @@ class Console_Getopt
                                                            $opts,
                                                            $args,
                                                            $skip_unknown);
-                if (PEAR::isError($error)) {
+                if ( $error instanceof PEAR_Error ) {
                     return $error;
                 }
             }

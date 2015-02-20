@@ -78,7 +78,7 @@ class User {
 			$this->local_record = $GLOBALS['__freemed']['cache']['user'][$this->user_number];
 		}
 
-		if (PEAR::isError($this->local_record)) {
+		if ( $this->local_record instanceof PEAR_Error ) {
 			return false;
 		}
 

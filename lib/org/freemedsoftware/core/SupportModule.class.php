@@ -338,7 +338,7 @@ class SupportModule extends BaseModule {
 					array ( "id" => $data['id'] )
 				)
 			);
-			if ( PEAR::isError( $result ) ) {
+			if ( $result instanceof PEAR_Error ) {
 				$result = false;
 			}
 		} else {

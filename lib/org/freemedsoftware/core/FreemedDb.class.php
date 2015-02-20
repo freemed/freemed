@@ -40,7 +40,7 @@ class FreemedDb extends MDB2 {
 		PEAR::setErrorHandling ( PEAR_ERROR_RETURN );
 		$uri = DB_ENGINE . "://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
 		$this->db =& MDB2::factory ( $uri );
-		if ( PEAR::isError ( $this->db ) ) {
+		if ( $this->db instanceof PEAR_Error ) {
 			trigger_error ( $this->db->getMessage(), E_USER_ERROR );
 		}
 
@@ -80,7 +80,7 @@ class FreemedDb extends MDB2 {
 		} else {
 			trigger_error ( "Could not load method $method", E_USER_ERROR );
 		}
-		if ( PEAR::isError( $value ) ) {
+		if ( $value instanceof PEAR_Error ) {
 			syslog( LOG_ERR, "FreemedDb: " . $value->userinfo );
 			return false;
 		}
@@ -190,7 +190,7 @@ class FreemedDb extends MDB2 {
 			( $where ? " WHERE ${where} " : " " ).
 			"ORDER BY `".$this->db->escape($field)."`";
 		$result = $this->db->queryCol( $query );
-		if ( PEAR::isError( $result ) ) { return array ( ); }
+		if ( $result instanceof PEAR_Error ) { return array ( ); }
 		return $result;
 	} // end public function distinct_values
 

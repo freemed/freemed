@@ -152,7 +152,7 @@ class MessagesModule extends EMRModule {
 		$hash = join( ',', $m );
 		$q = "DELETE FROM ".$this->table_name." WHERE FIND_IN_SET( id, ".$GLOBALS['sql']->quote( $hash )." ) AND msgfor = ".$GLOBALS['sql']->quote( freemed::user_cache()->user_number );
 		$res = $GLOBALS['sql']->query( $q );
-		if ( PEAR::isError( $res ) ) { return false; }
+		if ( $res instanceof PEAR_Error ) { return false; }
 		return true;
 	} // end method DeleteMultiple
 
