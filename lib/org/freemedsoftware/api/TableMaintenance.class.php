@@ -144,7 +144,7 @@ class TableMaintenance {
 		if (!file_exists($physical_file)) return false;
 
 		// Create the query
-		$query = "LOAD DATA LOCAL INFILE '".addslashes( $physical_file )."' ".
+		$query = "LOAD DATA INFILE '".addslashes( $physical_file )."' ".
 			"INTO TABLE ".addslashes( $table_name )." ".
 			"FIELDS TERMINATED BY ','";
 

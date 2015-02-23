@@ -47,9 +47,9 @@ case "${ENGINE}" in
 	mysql)
 	cd "${PWD}"
 	if [ "${SKIP_FK}" == "1" ]; then
-		cat "data/schema/${ENGINE}/${TABLE}.sql" | grep -v 'FOREIGN KEY' | mysql --user="${DBUSER}" --password="${DBPASS}" "${DBNAME}"
+		cat "data/schema/${ENGINE}/${TABLE}.sql" | grep -v 'FOREIGN KEY' | mysql --user="${DBUSER}" --password="${DBPASS}" --local-infile "${DBNAME}"
 	else
-		mysql --user="${DBUSER}" --password="${DBPASS}" "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
+		mysql --user="${DBUSER}" --password="${DBPASS}" --local-infile "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
 	fi
 	;;
 

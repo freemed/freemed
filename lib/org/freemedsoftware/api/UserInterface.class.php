@@ -293,7 +293,8 @@ class UserInterface {
 		freemed::acl_enforce( 'admin', 'write' );
 		
 		$ourdata = (array) $data;
-		$this->add_pre( $ourdata );
+		$ourdata = $this->add_pre( $ourdata );
+
 		$GLOBALS['sql']->load_data( $ourdata );
 		
 		$query = $GLOBALS['sql']->insert_query (
@@ -338,6 +339,7 @@ class UserInterface {
 		if ( strlen($data['userpassword']) != 32 ) {
 			$data['userpassword'] = md5( $data['userpassword'] );
 		}
+		return $data;
 	}
 
 	// Method: del
