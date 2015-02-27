@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class UnfiledDocuments extends SupportModule {
 		parent::__construct();
 	} // end constructor UnfiledDocuments
 
-	protected function add_pre ( $data ) {
+	protected function add_pre ( &$data ) {
 		syslog( LOG_DEBUG, get_class($this)."::add_pre ( ... )" );
 		// Temporarily set filename to something absurd
 		$data['uffilename'] = '-';
@@ -99,7 +99,7 @@ class UnfiledDocuments extends SupportModule {
 		}
 	} // end method add_post
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		$id = $data['id'];
 		$rec = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$filename = $this->GetLocalCachedFile( $id );

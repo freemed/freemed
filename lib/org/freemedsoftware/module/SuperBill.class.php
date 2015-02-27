@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class SuperBill extends EMRModule {
 
 	// Protected internal methods
 
-	protected function add_pre ( $data ) {
+	protected function add_pre ( &$data ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
 		$data['dateofservice'] = $s->ImportDate( $data['dateofservice'] ? $data['dateofservice'] : date('Y-m-d') );	
 
@@ -84,7 +84,7 @@ class SuperBill extends EMRModule {
 		$data['enteredby'] = $user->user_number;
 	} // end add_pre
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');
 		$data['dateofservice'] = $s->ImportDate( $data['dateofservice'] ? $data['dateofservice'] : date('Y-m-d') );	
 		if (is_array($data['procs'])) { $data['procs'] = join(',', $data['procs']); }

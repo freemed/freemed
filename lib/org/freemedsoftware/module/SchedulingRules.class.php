@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class SchedulingRules extends SupportModule {
 		parent::__construct();
 	} // end constructor
 
-	protected function add_pre ( $data ) {
+	protected function add_pre ( &$data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		if ( is_array( $data['provider'] ) or is_object( $data['provider'] ) ) {
 			$data['provider'] = join( ',', $data['provider'] );
@@ -72,7 +72,7 @@ class SchedulingRules extends SupportModule {
 		if ( !$data['dateend'] ) { unset( $data['dateend'] ); }
 	}
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		if ( is_array( $data['provider'] ) or is_object( $data['provider'] ) ) {
 			$data['provider'] = join( ',', $data['provider'] );

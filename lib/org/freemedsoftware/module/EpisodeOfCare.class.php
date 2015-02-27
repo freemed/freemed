@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -123,11 +123,11 @@ class EpisodeOfCare extends EMRModule {
 		);
 	} // end method EpisodeOfCare->widget
 
-	protected function add_pre ( $data ) {
+	protected function add_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 	

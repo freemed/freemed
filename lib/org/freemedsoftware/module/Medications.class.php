@@ -5,7 +5,7 @@
  // 	Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -69,12 +69,12 @@ class Medications extends EMRModule {
 		parent::__construct( );
 	} // end constructor Medications
 
-	protected function add_pre ( $data ) {
+	protected function add_pre ( &$data ) {
 		$data['mdate'] = date('Y-m-d');
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		unset($data['mdate']);
 		$data['user'] = freemed::user_cache()->user_number;
 	}
