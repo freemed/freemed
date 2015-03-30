@@ -6,7 +6,7 @@
  //      Alexandru Zbarcea <zbarcea.a@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -182,10 +182,18 @@ class Installation {
 	
 		// Create initial modules table	
 		syslog(LOG_INFO, "CreateDatabase(): modules table creation");
-		$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		if (DB_HOST === "localhost" || DB_HOST === "127.0.0.1") {
+			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		} else {
+			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('modules').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME).' 0 '.escapeshellarg(DB_HOST);
+		}
 	        system ( $command );
 		syslog(LOG_INFO, "CreateDatabase(): user table creation");
-		$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('user').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		if (DB_HOST === "localhost" || DB_HOST === "127.0.0.1") {
+			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('user').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		} else {
+			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('user').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME).' 0 '.escapeshellarg(DB_HOST);
+		}
 	        system ( $command );
 
 		// Check for SQL object
@@ -195,7 +203,11 @@ class Installation {
 		}
 
 		syslog(LOG_INFO, "CreateDatabase(): session table creation");
-		$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('session').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		if (DB_HOST === "localhost" || DB_HOST === "127.0.0.1") {
+			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('session').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+		} else {
+			$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg('session').' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME).' 0 '.escapeshellarg(DB_HOST);
+		}
 	        system ( $command );
 
 		// Load module index, which should cause complete initialization

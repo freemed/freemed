@@ -6,7 +6,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -31,12 +31,20 @@ include_once ( 'lib/freemed.php' );
 LoadObjectDependency( 'net.php.pear.Console_Getopt' );
 
 print "Upgrade from 0.8.x Tool\n";
-print "(c) 2008-2012 FreeMED Software Foundation\n\n";
+print "(c) 2008-2015 FreeMED Software Foundation\n\n";
 
 function getInput ( $mask ) { fscanf(STDIN, "${mask}\n", $x); return $x; }
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
 function printHeader ( $x ) { print "\n\n ----->> ${x} <<-----\n\n"; }
-function loadSchema ( $s ) { print " - Loading schema \"$s\" : "; $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
+function loadSchema ( $s ) {
+	print " - Loading schema \"$s\" : ";
+	if (DB_HOST === '127.0.0.1' || DB_HOST === "localhost") {
+		$c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'";
+	} else {
+		$c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."' 0 '".DB_HOST."'";
+	}
+	print `$c`; print "\n\n";
+}
 
 if ( ! file_exists ( './scripts/upgrade.php' ) ) {
 	print "You must run this from the root directory of your FreeMED install.\n\n";

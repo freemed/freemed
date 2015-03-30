@@ -5,7 +5,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2012 FreeMED Software Foundation
+# Copyright (C) 1999-2015 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,9 +28,16 @@ DBPASS=$4
 DBNAME=$5
 SKIP_FK=$6
 
+OPTS=""
+
 # Get current path so we can be sure to load from proper location
 OLDDIR="$(pwd)"
 PWD="$(dirname "$0")/.."
+
+# Hack to support host
+if [ $# -gt 6 ]; then
+	OPTS="${OPTS} --host=$7 "
+fi
 
 if [ ! -f "${PWD}/controller.php" ]; then
 	echo "ERROR: improper directory"
@@ -47,9 +54,9 @@ case "${ENGINE}" in
 	mysql)
 	cd "${PWD}"
 	if [ "${SKIP_FK}" == "1" ]; then
-		cat "data/schema/${ENGINE}/${TABLE}.sql" | grep -v 'FOREIGN KEY' | mysql --user="${DBUSER}" --password="${DBPASS}" --local-infile "${DBNAME}"
+		cat "data/schema/${ENGINE}/${TABLE}.sql" | grep -v 'FOREIGN KEY' | mysql ${OPTS} --user="${DBUSER}" --password="${DBPASS}" --local-infile "${DBNAME}"
 	else
-		mysql --user="${DBUSER}" --password="${DBPASS}" --local-infile "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
+		mysql ${OPTS} --user="${DBUSER}" --password="${DBPASS}" --local-infile "${DBNAME}" < "data/schema/${ENGINE}/${TABLE}.sql"
 	fi
 	;;
 

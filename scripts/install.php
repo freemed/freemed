@@ -7,7 +7,7 @@
  //      Philipp Meng <pmeng@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
 define ( 'SESSION_DISABLE', true );
 
 print "FreeMED CLI Installation Tool\n";
-print "(c) 2009-2011 FreeMED Software Foundation\n\n";
+print "(c) 2009-2015 FreeMED Software Foundation\n\n";
 
 $nimode = false;
 if ($_SERVER['argc'][0] == '--ni') {
@@ -79,7 +79,14 @@ include_once ( 'lib/freemed.php' );
 
 function execSql  ( $s    ) { print " - Executing \"$s\" : "; $GLOBALS['sql']->query( $s ); print " ... [done]\n"; }
 function printHeader ( $x ) { print "\n\n ----->> ${x} <<-----\n\n"; }
-function loadSchema ( $s ) { $c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'"; print `$c`; print "\n\n"; }
+function loadSchema ( $s ) {
+	if (DB_HOST === '127.0.0.1' || DB_HOST === "localhost") {
+		$c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."'";
+	} else {
+		$c="./scripts/load_schema.sh 'mysql' '${s}' '".DB_USER."' '".DB_PASSWORD."' '".DB_NAME."' 0 '".DB_HOST."'";
+	}
+	print `$c`; print "\n\n";
+}
 
 print "\nPlease type 'yes' if you're *sure* you want to do this : ";
 if ( !$nimode && getInput( '%s' ) != 'yes' ) {

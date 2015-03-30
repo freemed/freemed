@@ -6,7 +6,7 @@
  //      Alexandru Zbarcea <zbarcea.a@gmail.com>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -613,7 +613,11 @@ class SupportModule extends BaseModule {
 		// Check to see if the current version exits
 		$path = dirname(__FILE__).'/../../../../data/schema/mysql/'.$this->table_name.'.sql';
 		if (file_exists( $path )) {
-			$command = '"'.dirname(__FILE__).'/../../../../scripts/load_schema.sh" '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+			if (DB_HOST === "localhost" || DB_HOST === "127.0.0.1") {
+				$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME);
+			} else {
+				$command = dirname(__FILE__).'/../../../../scripts/load_schema.sh '.escapeshellarg('mysql').' '.escapeshellarg($this->table_name).' '.escapeshellarg(DB_USER).' '.( DB_PASSWORD ? escapeshellarg(DB_PASSWORD) : '""' ).' '.escapeshellarg(DB_NAME).' 0 '.escapeshellarg(DB_HOST);
+			}
 			system ( $command );
 			return true;
 		} else {
