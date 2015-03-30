@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2015 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -54,6 +54,13 @@ class BaseModule extends Module {
 	//	$this->print_template = '_template';
 	//
 	var $print_template = '';
+
+	// Variable: record_name
+	//
+	//	Friendly name of the module record. Should be overridden
+	//	in each inheritance.
+	//
+	var $record_name = '';
 
 	// Method: BaseModule constructor
 	public function __construct ( ) {
