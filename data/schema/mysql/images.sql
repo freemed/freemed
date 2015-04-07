@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2012 FreeMED Software Foundation
+# Copyright (C) 1999-2015 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,26 +25,26 @@ SOURCE data/schema/mysql/patient_emr.sql
 SOURCE data/schema/mysql/documents_tc.sql
 
 CREATE TABLE IF NOT EXISTS `images` (
-	imagedt			DATE,
-	imagepat		BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	imagetype		VARCHAR (50),
-	imagecat		VARCHAR (50) DEFAULT '',
-	imagedesc		VARCHAR (150),
-	imageeoc		TEXT,
-	imagefile		VARCHAR (100),
-	imageformat		CHAR (4) NOT NULL DEFAULT 'djvu',
-	imagephy		INT UNSIGNED DEFAULT 0,
-	imagereviewed		INT UNSIGNED DEFAULT 0,
-	imagetext		TEXT,
-	locked			INT UNSIGNED DEFAULT 0,
-	user			INT UNSIGNED NOT NULL DEFAULT 0,
-	active			ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active',
-	id			SERIAL,
+	  imagedt		DATE
+	, imagepat		BIGINT UNSIGNED NOT NULL DEFAULT 0
+	, imagetype		VARCHAR (50)
+	, imagecat		VARCHAR (50) DEFAULT ''
+	, imagedesc		VARCHAR (150)
+	, imageeoc		TEXT
+	, imagefile		VARCHAR (100)
+	, imageformat		CHAR (4) NOT NULL DEFAULT 'djvu'
+	, imagephy		INT UNSIGNED DEFAULT 0
+	, imagereviewed		INT UNSIGNED DEFAULT 0
+	, imagetext		TEXT
+	, locked		INT UNSIGNED DEFAULT 0
+	, user			INT UNSIGNED NOT NULL DEFAULT 0
+	, active		ENUM ( 'active', 'inactive' ) NOT NULL DEFAULT 'active'
+	, id			SERIAL
 
 	#	Define keys
 
-	KEY			( imagepat, imagetype, imagecat, imagedt ),
-	FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
+	, KEY			( imagepat, imagetype, imagecat, imagedt )
+	, FOREIGN KEY		( imagepat ) REFERENCES patient ( id ) ON DELETE CASCADE
 );
 
 DROP PROCEDURE IF EXISTS images_Upgrade;
