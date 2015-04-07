@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2012 FreeMED Software Foundation
+# Copyright (C) 1999-2015 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,67 +43,67 @@ DROP TABLE IF EXISTS multum;
 #----- Table definitions -----
 
 CREATE TABLE IF NOT EXISTS icd_9 (
-	icd_9			VARCHAR (20), 
-	disease_name		VARCHAR (150), 
-	valid			VARCHAR (2)
+	  icd_9			VARCHAR (20)
+	, disease_name		VARCHAR (150)
+	, valid			VARCHAR (2)
 );
 
 CREATE TABLE IF NOT EXISTS multum_combination_drug (
-	drug_id			VARCHAR (12) NOT NULL, 
-	member_drug_id		VARCHAR (12)
+	  drug_id		VARCHAR (12) NOT NULL
+	, member_drug_id	VARCHAR (12)
 
 	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS multum_dose_form (
-	dose_form_code			INT, 
-	dose_form_abbr			VARCHAR (60), 
-	dose_form_description		TEXT
+	  dose_form_code		INT
+	, dose_form_abbr		VARCHAR (60)
+	, dose_form_description		TEXT
 
 	, INDEX ( dose_form_code )
 );
 
 CREATE TABLE IF NOT EXISTS multum_drug_id (
-	drug_id			VARCHAR (12), 
-	drug_name		VARCHAR (250)
+	  drug_id		VARCHAR (12)
+	, drug_name		VARCHAR (250)
 
 	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS multum_product_strength (
-	product_strength_code			INT, 
-	product_strength_description		VARCHAR (250)
+	  product_strength_code			INT
+	, product_strength_description		VARCHAR (250)
 
 	, INDEX ( product_strength_code )
 );
 
 CREATE TABLE IF NOT EXISTS multum_route (
-	route_code			INT NOT NULL, 
-	route_abbr			VARCHAR (60), 
-	route_description		VARCHAR (250)
+	  route_code			INT NOT NULL
+	, route_abbr			VARCHAR (60)
+	, route_description		VARCHAR (250)
 
 	, PRIMARY KEY ( route_code )
 );
 
 CREATE TABLE IF NOT EXISTS multum_units (
-	unit_id			INT NOT NULL, 
-	unit_abbr		VARCHAR (60), 
-	unit_description	VARCHAR (250)
+	  unit_id		INT NOT NULL
+	, unit_abbr		VARCHAR (60)
+	, unit_description	VARCHAR (250)
 
 	, PRIMARY KEY ( unit_id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_active_ingredient (
-	active_ingredient_code			INT NOT NULL, 
-	active_ingredient			VARCHAR (250)
+	  active_ingredient_code		INT NOT NULL
+	, active_ingredient			VARCHAR (250)
 
 	, PRIMARY KEY ( active_ingredient_code )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_active_ingredient_list (
-	main_multum_drug_code			INT, 
-	active_ingredient_code			INT, 
-	ingredient_strength_code		INT
+	  main_multum_drug_code			INT
+	, active_ingredient_code		INT
+	, ingredient_strength_code		INT
 
 	, KEY ( main_multum_drug_code )
 	, KEY ( active_ingredient_code )
@@ -111,27 +111,27 @@ CREATE TABLE IF NOT EXISTS ndc_active_ingredient_list (
 );
 
 CREATE TABLE IF NOT EXISTS ndc_brand_name (
-	brand_code			INT NOT NULL, 
-	brand_description		VARCHAR (250)
+	  brand_code			INT NOT NULL
+	, brand_description		VARCHAR (250)
 
 	, INDEX ( brand_code )
 	, INDEX ( brand_description )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_core_description (
-	ndc_code			VARCHAR (22), 
-	main_multum_drug_code		INT, 
-	brand_code			INT, 
-	otc_status			VARCHAR (2), 
-	inner_package_size		FLOAT, 
-	inner_package_desc_code		INT, 
-	outer_package_size		FLOAT, 
-	obsolete_date			DATE, 
-	source_id			INT, 
-	orange_book_id			INT, 
-	unit_dose_code			VARCHAR (2), 
-	repackaged			VARCHAR (2), 
-	gbo				VARCHAR (2)
+	  ndc_code			VARCHAR (22)
+	, main_multum_drug_code		INT
+	, brand_code			INT
+	, otc_status			VARCHAR (2)
+	, inner_package_size		FLOAT
+	, inner_package_desc_code	INT
+	, outer_package_size		FLOAT
+	, obsolete_date			DATE
+	, source_id			INT
+	, orange_book_id		INT
+	, unit_dose_code		VARCHAR (2)
+	, repackaged			VARCHAR (2)
+	, gbo				VARCHAR (2)
 
 	, INDEX ( brand_code )
 	, INDEX ( main_multum_drug_code )
@@ -139,65 +139,65 @@ CREATE TABLE IF NOT EXISTS ndc_core_description (
 );
 
 CREATE TABLE IF NOT EXISTS ndc_ingredient_strength (
-	ingredient_strength_code		INT, 
-	strength_num_amount			FLOAT, 
-	strength_num_unit			INT, 
-	strength_denom_amount			FLOAT, 
-	strength_denom_unit			INT
+	  ingredient_strength_code		INT
+	, strength_num_amount			FLOAT
+	, strength_num_unit			INT
+	, strength_denom_amount			FLOAT
+	, strength_denom_unit			INT
 
 	, INDEX ( ingredient_strength_code )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_main_multum_drug_code (
-	main_multum_drug_code			INT, 
-	principal_route_code			INT, 
-	dose_form_code				INT, 
-	product_strength_code			INT, 
-	drug_id					VARCHAR (12), 
-	csa_schedule				VARCHAR (2), 
-	j_code					VARCHAR (20), 
-	j_code_description			VARCHAR (100)
+	  main_multum_drug_code			INT
+	, principal_route_code			INT
+	, dose_form_code			INT
+	, product_strength_code			INT
+	, drug_id				VARCHAR (12)
+	, csa_schedule				VARCHAR (2)
+	, j_code				VARCHAR (20)
+	, j_code_description			VARCHAR (100)
 
 	, INDEX ( main_multum_drug_code, dose_form_code, product_strength_code )
 	, INDEX ( drug_id )
 );
 
 CREATE TABLE IF NOT EXISTS ndc_orange_book (
-	orange_book_id				INT, 
-	orange_book_desc_ab			VARCHAR (4), 
-	orange_book_description			VARCHAR (100)
+	  orange_book_id			INT
+	, orange_book_desc_ab			VARCHAR (4)
+	, orange_book_description		VARCHAR (100)
 );
 
 CREATE TABLE IF NOT EXISTS ndc_pregnancy_category (
-	drug_id					VARCHAR (12), 
-	pregnancy_category			VARCHAR (2)
+	  drug_id				VARCHAR (12)
+	, pregnancy_category			VARCHAR (2)
 );
 
 CREATE TABLE IF NOT EXISTS ndc_source (
-	source_id			INT, 
-	source_desc			VARCHAR (240), 
-	address1			VARCHAR (200), 
-	address2			VARCHAR (100), 
-	city				VARCHAR (100), 
-	state				VARCHAR (20), 
-	province			VARCHAR (60), 
-	zip				VARCHAR (20), 
-	country				VARCHAR (100)
+	  source_id			INT, 
+	, source_desc			VARCHAR (240)
+	, address1			VARCHAR (200)
+	, address2			VARCHAR (100)
+	, city				VARCHAR (100)
+	, state				VARCHAR (20)
+	, province			VARCHAR (60)
+	, zip				VARCHAR (20)
+	, country			VARCHAR (100)
 );
 
 #----- Aggregation table definition -----
 
 CREATE TABLE IF NOT EXISTS multum (
-	multum_id			VARCHAR (12) NOT NULL,
-	description			VARCHAR (100) NOT NULL,
-	brand_description		VARCHAR (250),
-	dose_size			TEXT,
-	dose_size_link			TEXT,
-	units				VARCHAR (50),
-	form				VARCHAR (50),
-	brand_id			BIGINT,
-	main_multum_drug_code		BIGINT,
-	id				CHAR (20) NOT NULL
+	  multum_id			VARCHAR (12) NOT NULL
+	, description			VARCHAR (100) NOT NULL
+	, brand_description		VARCHAR (250)
+	, dose_size			TEXT
+	, dose_size_link		TEXT
+	, units				VARCHAR (50)
+	, form				VARCHAR (50)
+	, brand_id			BIGINT
+	, main_multum_drug_code		BIGINT
+	, id				CHAR (20) NOT NULL
 
 	, KEY ( id )
 	, KEY ( description, multum_id )
