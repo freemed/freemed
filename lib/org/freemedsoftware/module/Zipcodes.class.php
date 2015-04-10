@@ -35,6 +35,8 @@ class Zipcodes extends SupportModule {
 
 	var $table_name = "zipcodes";
 
+	var $widget_hash = "##city##, ##state## ##zip##";
+
 	public function __construct () {
 		// __("Zipcodes")
 
