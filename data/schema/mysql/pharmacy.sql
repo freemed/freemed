@@ -4,7 +4,7 @@
 #      Jeff Buchbinder <jeff@freemedsoftware.org>
 #
 # FreeMED Electronic Medical Record and Practice Management System
-# Copyright (C) 1999-2012 FreeMED Software Foundation
+# Copyright (C) 1999-2015 FreeMED Software Foundation
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,21 +21,22 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `pharmacy` (
-	phname			VARCHAR (50) NOT NULL,
-	phaddr1			VARCHAR (150) NOT NULL,
-	phaddr2			VARCHAR (150),
-	phcity			VARCHAR (150) NOT NULL,
-	phstate			CHAR (3) NOT NULL,
-	phzip			VARCHAR (10) NOT NULL,
-	phfax			CHAR (16),
-	phemail			VARCHAR (100),
-	phmethod		VARCHAR (150) NOT NULL,
-	phncpdp			CHAR (20),
-	id			SERIAL,
+	  phname		VARCHAR (50) NOT NULL
+	, phaddr1		VARCHAR (150) NOT NULL
+	, phaddr2		VARCHAR (150)
+	, phcity		VARCHAR (150) NOT NULL
+	, phstate		CHAR (3) NOT NULL
+	, phzip			VARCHAR (10) NOT NULL
+	, phcsz			BIGINT DEFAULT 0
+	, phfax			CHAR (16)
+	, phemail		VARCHAR (100)
+	, phmethod		VARCHAR (150) NOT NULL
+	, phncpdp		CHAR (20)
+	, id			SERIAL
 
 	# Define keys
 
-	KEY			( phname, phcity, phstate )
+	, KEY			( phname, phcity, phstate )
 );
 
 DROP PROCEDURE IF EXISTS pharmacy_Upgrade;
@@ -58,7 +59,12 @@ BEGIN
 		ALTER IGNORE TABLE pharmacy ADD COLUMN phncpdp CHAR (20) AFTER phmethod;
 	END IF;
 
-	CALL FreeMED_Module_UpdateVersion( 'pharmacy', 2 );
+	# Version 3
+	IF @V < 3 THEN
+		ALTER IGNORE TABLE pharmacy ADD COLUMN phcsz BIGINT DEFAULT 0 AFTER phzip;
+	END IF;
+
+	CALL FreeMED_Module_UpdateVersion( 'pharmacy', 3 );
 END
 //
 DELIMITER ;

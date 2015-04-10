@@ -26,7 +26,7 @@ LoadObjectDependency('org.freemedsoftware.core.SupportModule');
 class Pharmacy extends SupportModule {
 
 	var $MODULE_NAME    = "Pharmacy";
-	var $MODULE_VERSION = "0.2";
+	var $MODULE_VERSION = "0.2.1";
 	var $MODULE_FILE    = __FILE__;
 	var $MODULE_UID     = "47941b4e-cf68-431d-881a-79c5c63885e2";
 
@@ -44,6 +44,7 @@ class Pharmacy extends SupportModule {
 		'phcity',
 		'phstate',
 		'phzip',
+		'phcsz',
 		'phfax',
 		'phemail',
 		'phncpdp',
@@ -66,10 +67,11 @@ class Pharmacy extends SupportModule {
 	protected function add_pre ( &$data ) {
 		// Split city, state zip if it's one field
 		if ($data['phcsz']) {
-			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
-				$data['phcity'] = $reg[1];
-				$data['phstate'] = $reg[2];
-				$data['phzip'] = $reg[3];
+			$csz = $GLOBALS['sql']->get_link( 'zipcodes', (int)$data['phcsz'] );
+			if ($data['phzip'] != '') {
+				$data['phcity'] = $csz['city'];
+				$data['phstate'] = $csz['state'];
+				$data['phzip'] = $csz['zip'];
 			}
 		}
 	} // end method add_pre
@@ -77,10 +79,11 @@ class Pharmacy extends SupportModule {
 	protected function mod_pre ( &$data ) {
 		// Split city, state zip if it's one field
 		if ($data['phcsz']) {
-			if (preg_match("/([^,]+), ([A-Z]{2}) (.*)/i", $data['phcsz'], $reg)) {
-				$data['phcity'] = $reg[1];
-				$data['phstate'] = $reg[2];
-				$data['phzip'] = $reg[3];
+			$csz = $GLOBALS['sql']->get_link( 'zipcodes', (int)$data['phcsz'] );
+			if ($data['phzip'] != '') {
+				$data['phcity'] = $csz['city'];
+				$data['phstate'] = $csz['state'];
+				$data['phzip'] = $csz['zip'];
 			}
 		}
 	} // end method mod_pre
