@@ -338,7 +338,7 @@ CREATE TABLE npi (
 	, authorized_official_name_suffix_text VARCHAR (7)
 	, authorized_official_credential_text VARCHAR (200)
 
-	, PRIMARY KEY ( npi )
+	, PRIMARY KEY ( id )
 	, INDEX ( provider_organization_name )
 	, INDEX ( provider_last_name, provider_first_name )
 );
