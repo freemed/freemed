@@ -5,23 +5,23 @@
     Authors:
     Philipp Meng <pmeng@freemedsoftware.org>
 	    
-	    FreeMED Electronic Medical Record and Practice Management System
-	    Copyright (C) 1999-2012 FreeMED Software Foundation
-	    
-	    This program is free software; you can redistribute it and/or modify
-	    it under the terms of the GNU General Public License as published by
-	    the Free Software Foundation; either version 2 of the License, or
-	    (at your option) any later version.
-	    
-	    This program is distributed in the hope that it will be useful,
-	    but WITHOUT ANY WARRANTY; without even the implied warranty of
-	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	    GNU General Public License for more details.
-	    
-	    You should have received a copy of the GNU General Public License
-	    along with this program; if not, write to the Free Software
-	    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-	    -->
+    FreeMED Electronic Medical Record and Practice Management System
+    Copyright (C) 1999-2015 FreeMED Software Foundation
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-->
 	    <SimpleUIBuilder module="ProviderModule">
 		    <Elements>
 			    <Element field="phylname" title="Last Name" type="TEXT" options="52" display="1" />
@@ -32,7 +32,7 @@
 			    <Element field="phyemail" title="E-Mail Address" type="TEXT" options="50" display="1" />
 			    <Element field="phycellular" title="Cell Phone" type="TEXT" options="16" display="1" />
 			    <Element field="phypager" title="Pager" type="TEXT" options="16" display="1" />
-			    <Element field="phyupin" title="UPIN# (Unique Physician Identification Number)" type="TEXT" options="15"/>
+			    <Element field="phyupin" title="PTAN# (Provider Transaction Account Number)" type="TEXT" options="15"/>
 			    <Element field="physsn" title="Social Security Number" type="TEXT" options="15"/>
 			    <Element field="phydegrees" title="Degrees" type="MODULE_MULTIPLE" options="ProviderCertifications"/>
 			    <Element field="physpecialties" title="Specialties" type="MODULE_MULTIPLE" options="ProviderSpecialties" help="Enter here the specialties the Provider has."/>
