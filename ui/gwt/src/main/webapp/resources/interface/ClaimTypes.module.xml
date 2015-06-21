@@ -6,7 +6,7 @@
        Jeff Buchbinder <jeff@freemedsoftware.org>
  
   FreeMED Electronic Medical Record and Practice Management System
-  Copyright (C) 1999-2012 FreeMED Software Foundation
+  Copyright (C) 1999-2015 FreeMED Software Foundation
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  -->
 <SimpleUIBuilder module="ClaimTypes">
 	<Elements>
-		<Element field="claimtpname" title="Claim Type" type="TEXT" options="20" display="1" />
+		<Element field="clmtpname" title="Claim Type Code" type="TEXT" options="5" display="1" />
+		<Element field="clmtpdescrip" title="Description" type="TEXT" options="60" display="1" />
 	</Elements>
 </SimpleUIBuilder>
