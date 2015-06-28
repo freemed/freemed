@@ -21,30 +21,30 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CREATE TABLE IF NOT EXISTS `practice` (
-	pracname		VARCHAR (80) NOT NULL,
-	ein			VARCHAR (16),
-	addr1a			VARCHAR (50),
-	addr2a			VARCHAR (50),
-	citya			VARCHAR (20),
-	statea			VARCHAR (20),
-	zipa			CHAR (10),
-	countrya		VARCHAR (100),
-	phonea			VARCHAR (16),
-	faxa			VARCHAR (16),
-	addr1b			VARCHAR (50),
-	addr2b			VARCHAR (50),
-	cityb			VARCHAR (20),
-	stateb			VARCHAR (20),
-	zipb			CHAR (10),
-	countryb		VARCHAR (100),
-	phoneb			VARCHAR (16),
-	faxb			VARCHAR (16),
-	email			VARCHAR (50),
-	cellular		VARCHAR (16),
-	pager			VARCHAR (16),
-	pracnpi			VARCHAR (32) NOT NULL DEFAULT '',
-	
-	id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+	  pracname		VARCHAR (80) NOT NULL
+	, ein			VARCHAR (16)
+	, addr1a		VARCHAR (50)
+	, addr2a		VARCHAR (50)
+	, citya			VARCHAR (20)
+	, statea		VARCHAR (20)
+	, zipa			CHAR (10)
+	, countrya		VARCHAR (100)
+	, phonea		VARCHAR (16)
+	, faxa			VARCHAR (16)
+	, addr1b		VARCHAR (50)
+	, addr2b		VARCHAR (50)
+	, cityb			VARCHAR (20)
+	, stateb		VARCHAR (20)
+	, zipb			CHAR (10)
+	, countryb		VARCHAR (100)
+	, phoneb		VARCHAR (16)
+	, faxb			VARCHAR (16)
+	, email			VARCHAR (50)
+	, cellular		VARCHAR (16)
+	, pager			VARCHAR (16)
+	, pracnpi		VARCHAR (32) NOT NULL DEFAULT ''
+	, pracarchive		INT(10) UNSIGNED DEFAULT 0
+	, id			BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
 
 	#	Define keys
 	, PRIMARY KEY		( id )
