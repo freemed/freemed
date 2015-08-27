@@ -510,7 +510,7 @@ public class PatientCoverages extends Composite {
 			});
 			hP.add(addCoveragesButton);
 		} else {
-			hP.add(new Label(_("You do not have permission to add authorizations.")));
+			hP.add(new Label(_("You do not have permission to add coverages.")));
 		}
 	}
 
