@@ -146,6 +146,8 @@ public final class Util {
 	 */
 	public static boolean GWT_HOSTED_MODE = false;
 
+	public static boolean ACL_DISABLED = false;
+
 	public static enum ProgramMode {
 		NORMAL, STUBBED, JSONRPC
 	};

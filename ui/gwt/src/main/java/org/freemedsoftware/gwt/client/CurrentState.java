@@ -636,6 +636,10 @@ public class CurrentState {
 	 *            : name of the navigation option
 	 */
 	public static boolean isMenuAllowed(String menuCatagory, String menuOption) {
+		if (Util.ACL_DISABLED) {
+			JsonUtil.debug("isMenuAllowed " + menuCatagory + " " + menuOption + " ACL_DISABLED");
+			return true;
+		}
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			return true;
 		} else if (Util.getProgramMode() == ProgramMode.JSONRPC) {
@@ -661,6 +665,11 @@ public class CurrentState {
 	 * constants Class
 	 */
 	public static boolean isActionAllowed(String module, int action) {
+		if (Util.ACL_DISABLED) {
+			JsonUtil.debug("isActionAllowed " + module + " " + action + " ACL_DISABLED");
+			return true;
+		}
+
 		// if(true) return true; // temporarily blocked permissions
 		if (Util.getProgramMode() == ProgramMode.STUBBED) {
 			return true;
