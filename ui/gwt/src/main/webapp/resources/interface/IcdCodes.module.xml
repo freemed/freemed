@@ -24,11 +24,10 @@
 	    -->
 	    <SimpleUIBuilder module="IcdCodes">
 		    <Elements>
-			    <Element field="icd9code" title="ICD9-Code" type="TEXT" options="6" display="1"/>
-			    <Element field="icd10code" title="ICD10-Code" type="TEXT" options="7" display="1"/>
+			    <Element field="icd9code" title="ICD9 Code" type="TEXT" options="6" display="1"/>
+			    <Element field="icd10code" title="ICD10 Code" type="TEXT" options="7" />
 			    <Element field="icd9descrip" title="ICD9 Descriptor" type="TEXT" options="45" display="1" help="Description of the ICD9 Code."/>
 			    <Element field="icd10descrip" title="ICD10 Descriptor" type="TEXT" options="45" display="1" help="Description of the ICD10 Code."/>
-			    <Element field="icd10descrip" title="ICD10 Descriptor" type="TEXT" options="45" display="1"/>
 			    <Element field="icdmetadesc" title="Meta Description" type="TEXT" options="30"/>
 			    <Element field="icdng" title="icdng????" type="TEXT" options="30"/>
 			    <Element field="icddrg" title="icddrg????" type="TEXT" options="30"/>
