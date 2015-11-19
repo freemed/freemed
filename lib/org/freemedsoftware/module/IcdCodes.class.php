@@ -34,9 +34,9 @@ class IcdCodes extends SupportModule {
 	var $PACKAGE_MINIMUM_VERSION = '0.8.0';
 
 	var $table_name 	 = "icd9";
-	var $record_name	 = "ICD9 Code";
-	var $order_field	 = "icd9code,icdnum";
-	var $widget_hash	 = "##icd9code## ##icd9descrip##";
+	var $record_name	 = "ICD10 Code";
+	var $order_field	 = "icd10code,icdnum";
+	var $widget_hash	 = "##icd10code## ##icd10descrip##";
 	var $archive_field = "icdarchive";
 	var $variables = array (
 		"icd9code",
@@ -53,8 +53,8 @@ class IcdCodes extends SupportModule {
 
 	public function __construct () {
 		$this->list_view = array (
-			__("Code")        => 	"icd9code",
-			__("Description") =>	"icd9descrip"
+			__("Code")        => 	"icd10code",
+			__("Description") =>	"icd10descrip"
 		);
 
 		parent::__construct( );
