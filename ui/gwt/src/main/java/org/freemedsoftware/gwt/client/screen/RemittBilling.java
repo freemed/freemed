@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.screen;
 
 import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -309,8 +310,11 @@ public class RemittBilling extends ScreenInterface {
 					while (iterator.hasNext()) {
 						String key = iterator.next();
 						String value = selectedPatientsWithClaims.get(key);
+						List<String> values = csvToClaimsArray(value);
 						patientsList.add(key);
-						claimsList.add(key);
+						for (String v : values) {
+							claimsList.add(v);
+						}
 					}
 
 					List paramsList = new ArrayList();
@@ -334,6 +338,10 @@ public class RemittBilling extends ScreenInterface {
 		});
 
 		return performBillingVPanel;
+	}
+
+	public List<String> csvToClaimsArray(String csv) {
+		return new ArrayList<String>(Arrays.asList(csv.split(",")));
 	}
 
 	public Widget getBillingStatusUI() {
