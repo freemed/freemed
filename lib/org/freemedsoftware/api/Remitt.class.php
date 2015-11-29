@@ -1222,7 +1222,7 @@ class Remitt {
 		$sc = new SoapClient( $this->getCachedWSDL(), array(
 			  'login' => $this->username
 			, 'password' => $this->password
-			, 'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
+			, 'compression' => SOAP_COMPRESSION_ACCEPT
 			, 'location' => $this->url . "?wsdl"
 		));
 		return $sc;
