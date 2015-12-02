@@ -33,6 +33,7 @@
 			    <Element field="phycellular" title="Cell Phone" type="TEXT" options="16" display="1" />
 			    <Element field="phypager" title="Pager" type="TEXT" options="16" display="1" />
 			    <Element field="phyupin" title="PTAN# (Provider Transaction Account Number)" type="TEXT" options="15"/>
+			    <Element field="phynpi" title="NPI" type="TEXT" options="15"/>
 			    <Element field="physsn" title="Social Security Number" type="TEXT" options="15"/>
 			    <Element field="phydegrees" title="Degrees" type="MODULE_MULTIPLE" options="ProviderCertifications"/>
 			    <Element field="physpecialties" title="Specialties" type="MODULE_MULTIPLE" options="ProviderSpecialties" help="Enter here the specialties the Provider has."/>
