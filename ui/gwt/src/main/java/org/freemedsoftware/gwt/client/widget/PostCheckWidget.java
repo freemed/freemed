@@ -5,7 +5,7 @@
  *      Jeff Buchbinder <jeff@freemedsoftware.org>
  *
  * FreeMED Electronic Medical Record and Practice Management System
- * Copyright (C) 1999-2012 FreeMED Software Foundation
+ * Copyright (C) 1999-2016 FreeMED Software Foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ package org.freemedsoftware.gwt.client.widget;
 
 import static org.freemedsoftware.gwt.client.i18n.I18nUtil._;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -467,9 +468,9 @@ public class PostCheckWidget extends Composite {
 		} catch (Exception e) {
 
 		}
-		if (amount != totalAmount) {
+		if (Math.round(amount * 100) != Math.round(totalAmount * 100)) {
 			Window
-					.alert(_("The total amount entered is not equal to the amounts entered in individual claims"));
+					.alert(_("The total amount entered is not equal to the amounts entered in individual claims") + "(" + amount + " != " + totalAmount + ")");
 		} else {
 			postCheck(procsMaps);
 		}
