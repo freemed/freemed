@@ -195,26 +195,19 @@ class ScannedDocuments extends EMRModule {
 			syslog( LOG_INFO, "PNG" );
 			
 			// passthrough
-			Header( 'Content-type: image/png' );
+			Header( 'Content-type: application/pdf' );
 
-			// tempfiles
-			$temp = tempnam( "/tmp", "convert-" );
-			$tempin = tempnam + ".png";
-			$tempout = tempnam + ".pdf";
+			// Temporary file
+			$tempin  = tempnam( "/tmp", "convert-" );
 
 			// Input
 			file_put_contents( $tempin, $content );
 	
-			// Convert	
-			exec("/usr/bin/convert \"$tempin\" \"$tempout\"");	
-
-			// Output
-			print file_get_contents( $tempout );
+			// Convert / Output
+			passthru( "/usr/bin/convert png:\"$tempin\" pdf:-" );
 
 			// Cleanup
-			unlink( $temp );
 			unlink( $tempin );
-			unlink( $tempout );
 
 			die();
 		}
