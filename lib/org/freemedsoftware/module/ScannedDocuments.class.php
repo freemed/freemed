@@ -161,13 +161,28 @@ class ScannedDocuments extends EMRModule {
 		// Return image ...
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
-		
+
 		if($thumbnail)
 			$pds->ServeFileThumbnail($r[$this->patient_field],get_class($this),$id,"image/jpeg");
 		else
 			$pds->ServeFile($r[$this->patient_field],get_class($this),$id,"image/jpeg");
 
 	} // end method GetDocumentPage
+
+	// Method: GetDocumentPdf
+	//
+	//	Get fax/document as PDF
+	//
+	// Parameters:
+	//
+	//	$id - Record id of document
+	//
+	public function GetDocumentPdf( $id ) {
+		Header( 'Content-type: application/pdf' );
+		$tempfile = print_override ( $id );
+		print file_get_contents( $tempfile );
+		unlink( $tempfile );
+	} // end method GetDocumentPdf
 
 	// Method: NumberOfPages
 	//

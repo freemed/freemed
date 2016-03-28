@@ -13,6 +13,7 @@ PEAR                                   -                             PHP License
 php-gettext                            1.0                           GPL
 phpgacl                                3.3.3                         LGPL
 Smarty                                 2.6.14                        LGPL
+ViewerJS                               0.5.8                         AGPL 3.0
 XMPPHP                                 0.1 RC1                       GPL
 
 Some FreeMED code also contains adapted code from other GPL-licensed projects. Those
