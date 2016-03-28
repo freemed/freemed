@@ -184,35 +184,36 @@ class ScannedDocuments extends EMRModule {
 
 		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
 		$content = $pds->GetFile( $r[$this->patient_field], get_class($this), $id );
-		if (substr($content, 0, 4) == '%PDF') {
-			// passthrough
-			Header( 'Content-type: application/pdf' );
+		Header( 'Content-type: application/pdf' );
+		switch (true) {
+		case substr($content, 0, 4) == '%PDF':
+			// PDF
 			print $content;
-			die();
-		}
-
-		if (substr($content, 1, 3) == 'PNG') {
-			syslog( LOG_INFO, "PNG" );
-			
-			// passthrough
-			Header( 'Content-type: application/pdf' );
-
-			// Temporary file
+			break;
+		case substr($content, 0, 6) == 'GIF87a' || substr($content, 0, 6) == 'GIF89a':
+			// GIF
 			$tempin  = tempnam( "/tmp", "convert-" );
-
-			// Input
 			file_put_contents( $tempin, $content );
-	
-			// Convert / Output
-			passthru( "/usr/bin/convert png:\"$tempin\" pdf:-" );
-
-			// Cleanup
+			passthru( "/usr/bin/convert gif:\"$tempin\" pdf:-" );
 			unlink( $tempin );
-
-			die();
+			break;
+		case substr($content, 0, 4) == "\xFF\xD8\xFF\xE0" && substr($content, 6, 6) == "\x4A\x46\x49\x46\x00\x01":
+			// JPEG
+			$tempin  = tempnam( "/tmp", "convert-" );
+			file_put_contents( $tempin, $content );
+			passthru( "/usr/bin/convert jpg:\"$tempin\" pdf:-" );
+			unlink( $tempin );
+			break;
+		case substr($content, 1, 3) == 'PNG':
+			// PNG
+			$tempin  = tempnam( "/tmp", "convert-" );
+			file_put_contents( $tempin, $content );
+			passthru( "/usr/bin/convert png:\"$tempin\" pdf:-" );
+			unlink( $tempin );
+			break;
 		}
 		
-		print file_get_contents( $content );
+		die();
 	} // end method GetDocumentPdf
 
 	// Method: NumberOfPages
