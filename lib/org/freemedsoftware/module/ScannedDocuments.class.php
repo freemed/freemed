@@ -162,10 +162,12 @@ class ScannedDocuments extends EMRModule {
 		$r = $GLOBALS['sql']->get_link( $this->table_name, $id );
 		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
 
-		if($thumbnail)
+		// GetFile
+		if($thumbnail) {
 			$pds->ServeFileThumbnail($r[$this->patient_field],get_class($this),$id,"image/jpeg");
-		else
+		} else {
 			$pds->ServeFile($r[$this->patient_field],get_class($this),$id,"image/jpeg");
+		}
 
 	} // end method GetDocumentPage
 
@@ -178,10 +180,46 @@ class ScannedDocuments extends EMRModule {
 	//	$id - Record id of document
 	//
 	public function GetDocumentPdf( $id ) {
-		Header( 'Content-type: application/pdf' );
-		$tempfile = print_override ( $id );
-		print file_get_contents( $tempfile );
-		unlink( $tempfile );
+		$r = $GLOBALS['sql']->get_link ( $this->table_name, $id );
+
+		$pds = CreateObject( 'org.freemedsoftware.core.PatientDataStore' );
+		$content = $pds->GetFile( $r[$this->patient_field], get_class($this), $id );
+		if (substr($content, 0, 4) == '%PDF') {
+			// passthrough
+			Header( 'Content-type: application/pdf' );
+			print $content;
+			die();
+		}
+
+		if (substr($content, 1, 3) == 'PNG') {
+			syslog( LOG_INFO, "PNG" );
+			
+			// passthrough
+			Header( 'Content-type: image/png' );
+
+			// tempfiles
+			$temp = tempnam( "/tmp", "convert-" );
+			$tempin = tempnam + ".png";
+			$tempout = tempnam + ".pdf";
+
+			// Input
+			file_put_contents( $tempin, $content );
+	
+			// Convert	
+			exec("/usr/bin/convert \"$tempin\" \"$tempout\"");	
+
+			// Output
+			print file_get_contents( $tempout );
+
+			// Cleanup
+			unlink( $temp );
+			unlink( $tempin );
+			unlink( $tempout );
+
+			die();
+		}
+		
+		print file_get_contents( $content );
 	} // end method GetDocumentPdf
 
 	// Method: NumberOfPages

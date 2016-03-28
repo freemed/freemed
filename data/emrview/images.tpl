@@ -24,5 +24,5 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 -->
 
-<iframe src="resources/viewerjs/#../../../../relay.php/json/org.freemedsoftware.module.ScannedDocuments.GetDocumentPdf?param0=<!--{$id}-->"></iframe>
+<iframe width="800" height="800" src="../../ui/gwt/www/resources/viewerjs/index.html#../../../../../relay.php/json/org.freemedsoftware.module.ScannedDocuments.GetDocumentPdf?param0=<!--{$id}-->"></iframe>
 
