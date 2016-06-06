@@ -170,7 +170,7 @@ class Ledger {
 			"LEFT OUTER JOIN physician pr ON pr.id=p.procphysician ".
 			"WHERE ".
 			( is_array($q) ? join(' AND ', $q) : ' ( 1 > 0 ) ' )." ".
-			"ORDER BY date_of DESC, item";
+			"ORDER BY date_of DESC, item DESC";
 		//print "<hr/>query = \"$query\"<hr/>\n";
 		$result = $GLOBALS['sql']->queryAll ( $query );
 		$return = array ( );
