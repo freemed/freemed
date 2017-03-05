@@ -1,0 +1,63 @@
+<!--
+   - $Id$
+   -
+   - Authors:
+   -      Jeff Buchbinder <jeff@freemedsoftware.org>
+   -
+   - FreeMED Electronic Medical Record and Practice Management System
+   - Copyright (C) 1999-2012 FreeMED Software Foundation
+   -
+   - This program is free software; you can redistribute it and/or modify
+   - it under the terms of the GNU General Public License as published by
+   - the Free Software Foundation; either version 2 of the License, or
+   - (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU General Public License for more details.
+   -
+   - You should have received a copy of the GNU General Public License
+   - along with this program; if not, write to the Free Software
+   - Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+   -->
+  
+<module rename-to="FreemedInterface">
+
+	<!-- Additional namespaces go here -->
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.http.HTTP" />
+	<inherits name="com.google.gwt.json.JSON" />
+	<inherits name="com.google.gwt.xml.XML" />
+	<inherits name="net.auroris.ColorPicker.client" />
+	<inherits name="com.bouwkamp.gwt.user.User" />
+	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name="org.cobogw.gwt.user.User" />
+	<inherits name="com.googlecode.gchart.GChart" />
+	<inherits name="eu.future.earth.gwt.FtrGwtDate" />
+	<inherits name="pl.rmalinowski.gwt2swf.GWT2SWF" />
+	<inherits name="com.google.gwt.widgetideas.GWTCanvas" />
+	<inherits name="com.gc.gwt.wysiwyg.Editor" />
+
+	<!-- Logger settings -->
+	<inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+	<set-property name="log_DivLogger" value="DISABLED" />
+	<set-property name="log_ConsoleLogger" value="ENABLED" />
+	<!--
+    <set-property name="log_FirebugLogger" value="ENABLED" />
+    <set-property name="log_GWTLogger" value="ENABLED" />
+	-->
+
+	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
+
+	<!-- Limit to Firefox for quicker test builds -->
+	<!--
+	<set-property name="user.agent" value="gecko1_8" /> 
+	-->
+	
+	<entry-point class="org.freemedsoftware.gwt.client.FreemedInterface" />
+
+        <stylesheet src="../resources/SortableTable.css" />
+        <stylesheet src="../resources/ScrollTable.css" />
+
+</module>
