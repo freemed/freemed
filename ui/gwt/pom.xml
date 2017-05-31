@@ -58,6 +58,8 @@
 			<groupId>com.bouwkamp.gwt</groupId>
 			<artifactId>bouwkamp-gwt</artifactId>
 			<version>1.3.2</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/com.bouwkamp.gwt.jar</systemPath>
 		</dependency>
 
 		<!-- Local dependencies -->
