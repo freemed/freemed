@@ -1822,6 +1822,7 @@ public class SchedulerWidget extends WidgetInterface implements
 				Calendar calendar = new GregorianCalendar();
 				calendar.set(Calendar.YEAR, Integer.parseInt(date.substring(0,
 						4)));
+				calendar.set(Calendar.DAY_OF_MONTH, 1); // HORRIBLE HACK TO FIX THIS : https://stackoverflow.com/questions/22755523/why-does-calendar-june-set-the-month-to-july
 				calendar.set(Calendar.MONTH, Integer.parseInt(date.substring(5,
 						7)) - 1);
 				calendar.set(Calendar.DATE, Integer.parseInt(date.substring(8,
