@@ -29,14 +29,6 @@ if (!function_exists('mysql_pconnect')) { dl('mysql.so'); }
 
 include_once ( 'lib/freemed.php' );
 
-if (!function_exists('LoadObjectDependency')) {
-	print date('r')." : LoadObjectDependency does not exist\n";
-	die("FAIL\n");
-}
-
-// Show *everything*
-error_reporting(E_ALL ^ E_NOTICE);
-
 // Force recaching of modules
 print date('r')." : Loaded ".__FILE__."\n";
 print date('r')." : Forcing recache of modules ... \n";
