@@ -1005,8 +1005,18 @@ class Ledger {
 			)
 		);
 		$pay_result = $GLOBALS['sql']->query ( $query );
+
+		$query = $GLOBALS['sql']->update_query(
+			'procrec',
+			array (
+				'proccurcovtp' => $source,
+				'proccurcovid' => $coverage,
+				'procbilled'   => '0',
+			), array ( 'id' => $procedure )
+		);
+		$proc_result = $GLOBALS['sql']->query ( $query );
 		                             
-		return (boolean) $pay_result;
+		return ($proc_result and $pay_result);
 	} // end method post_transfer
 	
 	
