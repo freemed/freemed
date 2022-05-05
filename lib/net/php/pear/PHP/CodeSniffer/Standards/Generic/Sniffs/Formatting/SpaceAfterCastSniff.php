@@ -1,34 +1,34 @@
 <?php
 /**
- * Generic_Sniffs_Formatting_SpaceAfterCastSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Generic_Sniffs_Formatting_SpaceAfterCastSniff.
- *
  * Ensures there is a single space after cast tokens.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Generic_Sniffs_Formatting_SpaceAfterCastSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Formatting;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class SpaceAfterCastSniff implements Sniff
 {
+
+    /**
+     * The number of spaces desired after a cast token.
+     *
+     * @var integer
+     */
+    public $spacing = 1;
+
+    /**
+     * Allow newlines instead of spaces.
+     *
+     * @var boolean
+     */
+    public $ignoreNewlines = false;
 
 
     /**
@@ -38,7 +38,7 @@ class Generic_Sniffs_Formatting_SpaceAfterCastSniff implements PHP_CodeSniffer_S
      */
     public function register()
     {
-        return PHP_CodeSniffer_Tokens::$castTokens;
+        return Tokens::$castTokens;
 
     }//end register()
 
@@ -46,30 +46,108 @@ class Generic_Sniffs_Formatting_SpaceAfterCastSniff implements PHP_CodeSniffer_S
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens        = $phpcsFile->getTokens();
+        $this->spacing = (int) $this->spacing;
 
-        if ($tokens[($stackPtr + 1)]['code'] !== T_WHITESPACE) {
-            $error = 'A cast statement must be followed by a single space';
-            $phpcsFile->addError($error, $stackPtr, 'NoSpace');
+        if ($tokens[$stackPtr]['code'] === T_BINARY_CAST
+            && $tokens[$stackPtr]['content'] === 'b'
+        ) {
+            // You can't replace a space after this type of binary casting.
             return;
         }
 
-        if ($tokens[($stackPtr + 1)]['content'] !== ' ') {
-            $error = 'A cast statement must be followed by a single space';
-            $phpcsFile->addError($error, $stackPtr, 'TooMuchSpace');
+        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+        if ($nextNonEmpty === false) {
+            return;
+        }
+
+        if ($this->ignoreNewlines === true
+            && $tokens[$stackPtr]['line'] !== $tokens[$nextNonEmpty]['line']
+        ) {
+            $phpcsFile->recordMetric($stackPtr, 'Spacing after cast statement', 'newline');
+            return;
+        }
+
+        if ($this->spacing === 0 && $nextNonEmpty === ($stackPtr + 1)) {
+            $phpcsFile->recordMetric($stackPtr, 'Spacing after cast statement', 0);
+            return;
+        }
+
+        $nextNonWhitespace = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
+        if ($nextNonEmpty !== $nextNonWhitespace) {
+            $error = 'Expected %s space(s) after cast statement; comment found';
+            $data  = [$this->spacing];
+            $phpcsFile->addError($error, $stackPtr, 'CommentFound', $data);
+
+            if ($tokens[($stackPtr + 1)]['code'] === T_WHITESPACE) {
+                $phpcsFile->recordMetric($stackPtr, 'Spacing after cast statement', $tokens[($stackPtr + 1)]['length']);
+            } else {
+                $phpcsFile->recordMetric($stackPtr, 'Spacing after cast statement', 0);
+            }
+
+            return;
+        }
+
+        $found = 0;
+        if ($tokens[$stackPtr]['line'] !== $tokens[$nextNonEmpty]['line']) {
+            $found = 'newline';
+        } else if ($tokens[($stackPtr + 1)]['code'] === T_WHITESPACE) {
+            $found = $tokens[($stackPtr + 1)]['length'];
+        }
+
+        $phpcsFile->recordMetric($stackPtr, 'Spacing after cast statement', $found);
+
+        if ($found === $this->spacing) {
+            return;
+        }
+
+        $error = 'Expected %s space(s) after cast statement; %s found';
+        $data  = [
+            $this->spacing,
+            $found,
+        ];
+
+        $errorCode = 'TooMuchSpace';
+        if ($this->spacing !== 0) {
+            if ($found === 0) {
+                $errorCode = 'NoSpace';
+            } else if ($found !== 'newline' && $found < $this->spacing) {
+                $errorCode = 'TooLittleSpace';
+            }
+        }
+
+        $fix = $phpcsFile->addFixableError($error, $stackPtr, $errorCode, $data);
+
+        if ($fix === true) {
+            $padding = str_repeat(' ', $this->spacing);
+            if ($found === 0) {
+                $phpcsFile->fixer->addContent($stackPtr, $padding);
+            } else {
+                $phpcsFile->fixer->beginChangeset();
+                $start = ($stackPtr + 1);
+
+                if ($this->spacing > 0) {
+                    $phpcsFile->fixer->replaceToken($start, $padding);
+                    ++$start;
+                }
+
+                for ($i = $start; $i < $nextNonWhitespace; $i++) {
+                    $phpcsFile->fixer->replaceToken($i, '');
+                }
+
+                $phpcsFile->fixer->endChangeset();
+            }
         }
 
     }//end process()
 
 
 }//end class
-
-?>

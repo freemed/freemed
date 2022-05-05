@@ -2,28 +2,17 @@
 /**
  * Warns when function values are returned directly.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer_MySource
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Warns when function values are returned directly.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer_MySource
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class MySource_Sniffs_PHP_ReturnFunctionValueSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\MySource\Sniffs\PHP;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
+class ReturnFunctionValueSniff implements Sniff
 {
 
 
@@ -34,7 +23,7 @@ class MySource_Sniffs_PHP_ReturnFunctionValueSniff implements PHP_CodeSniffer_Sn
      */
     public function register()
     {
-        return array(T_RETURN);
+        return [T_RETURN];
 
     }//end register()
 
@@ -42,13 +31,13 @@ class MySource_Sniffs_PHP_ReturnFunctionValueSniff implements PHP_CodeSniffer_Sn
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -72,5 +61,3 @@ class MySource_Sniffs_PHP_ReturnFunctionValueSniff implements PHP_CodeSniffer_Sn
 
 
 }//end class
-
-?>

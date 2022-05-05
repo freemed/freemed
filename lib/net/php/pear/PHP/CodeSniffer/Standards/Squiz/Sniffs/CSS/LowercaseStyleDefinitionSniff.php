@@ -1,31 +1,18 @@
 <?php
 /**
- * Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff.
- *
  * Ensure that all style definitions are in lowercase.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\CSS;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class LowercaseStyleDefinitionSniff implements Sniff
 {
 
     /**
@@ -33,7 +20,7 @@ class Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff implements PHP_CodeSniffer_
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
 
     /**
@@ -43,7 +30,7 @@ class Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff implements PHP_CodeSniffer_
      */
     public function register()
     {
-        return array(T_OPEN_CURLY_BRACKET);
+        return [T_OPEN_CURLY_BRACKET];
 
     }//end register()
 
@@ -51,13 +38,13 @@ class Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff implements PHP_CodeSniffer_
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens  = $phpcsFile->getTokens();
         $start   = ($stackPtr + 1);
@@ -91,16 +78,20 @@ class Squiz_Sniffs_CSS_LowercaseStyleDefinitionSniff implements PHP_CodeSniffer_
                 $expected = strtolower($tokens[$i]['content']);
                 if ($expected !== $tokens[$i]['content']) {
                     $error = 'Style definitions must be lowercase; expected %s but found %s';
-                    $data  = array(
-                              $expected,
-                              $tokens[$i]['content'],
-                             );
-                    $phpcsFile->addError($error, $i, 'FoundUpper', $data);
+                    $data  = [
+                        $expected,
+                        $tokens[$i]['content'],
+                    ];
+
+                    $fix = $phpcsFile->addFixableError($error, $i, 'FoundUpper', $data);
+                    if ($fix === true) {
+                        $phpcsFile->fixer->replaceToken($i, $expected);
+                    }
                 }
             }
         }//end for
 
     }//end process()
 
+
 }//end class
-?>

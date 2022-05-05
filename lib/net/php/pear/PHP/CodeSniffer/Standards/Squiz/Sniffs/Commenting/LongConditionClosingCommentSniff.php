@@ -1,31 +1,18 @@
 <?php
 /**
- * Squiz_Sniffs_ControlStructures_LongConditionClosingCommentSniff.
+ * Ensures long conditions have a comment at the end.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_ControlStructures_LongConditionClosingCommentSniff.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class LongConditionClosingCommentSniff implements Sniff
 {
 
     /**
@@ -33,33 +20,43 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = [
+        'PHP',
+        'JS',
+    ];
 
     /**
      * The openers that we are interested in.
      *
-     * @var array(int)
+     * @var integer[]
      */
-    private static $_openers = array(
-                                T_SWITCH,
-                                T_IF,
-                                T_FOR,
-                                T_FOREACH,
-                                T_WHILE,
-                                T_TRY,
-                                T_CASE,
-                               );
+    private static $openers = [
+        T_SWITCH,
+        T_IF,
+        T_FOR,
+        T_FOREACH,
+        T_WHILE,
+        T_TRY,
+        T_CASE,
+        T_MATCH,
+    ];
 
     /**
      * The length that a code block must be before
      * requiring a closing comment.
      *
-     * @var int
+     * @var integer
      */
-    protected $lineLimit = 20;
+    public $lineLimit = 20;
+
+    /**
+     * The format the end comment should be in.
+     *
+     * The placeholder %s will be replaced with the type of condition opener.
+     *
+     * @var string
+     */
+    public $commentFormat = '//end %s';
 
 
     /**
@@ -69,7 +66,7 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
      */
     public function register()
     {
-        return array(T_CLOSE_CURLY_BRACKET);
+        return [T_CLOSE_CURLY_BRACKET];
 
     }//end register()
 
@@ -77,13 +74,13 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
-     *                                        stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in the
+     *                                               stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -97,12 +94,12 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
         $endBrace       = $tokens[$stackPtr];
 
         // We are only interested in some code blocks.
-        if (in_array($startCondition['code'], self::$_openers) === false) {
+        if (in_array($startCondition['code'], self::$openers, true) === false) {
             return;
         }
 
         if ($startCondition['code'] === T_IF) {
-            // If this is actually and ELSE IF, skip it as the brace
+            // If this is actually an ELSE IF, skip it as the brace
             // will be checked by the original IF.
             $else = $phpcsFile->findPrevious(T_WHITESPACE, ($tokens[$stackPtr]['scope_condition'] - 1), null, true);
             if ($tokens[$else]['code'] === T_ELSE) {
@@ -127,12 +124,18 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
                         }
                     }
 
+                    if (isset($tokens[$nextToken]['scope_closer']) === false) {
+                        // There isn't going to be anywhere to print the "end if" comment
+                        // because there is no closer.
+                        return;
+                    }
+
                     // The end brace becomes the ELSE's end brace.
                     $stackPtr = $tokens[$nextToken]['scope_closer'];
                     $endBrace = $tokens[$stackPtr];
                 } else {
                     break;
-                }
+                }//end if
             } while (isset($tokens[$nextToken]['scope_closer']) === true);
         }//end if
 
@@ -140,8 +143,10 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
             // TRY statements need to check until the end of all CATCH statements.
             do {
                 $nextToken = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
-                if ($tokens[$nextToken]['code'] === T_CATCH) {
-                    // The end brace becomes the CATCH's end brace.
+                if ($tokens[$nextToken]['code'] === T_CATCH
+                    || $tokens[$nextToken]['code'] === T_FINALLY
+                ) {
+                    // The end brace becomes the CATCH end brace.
                     $stackPtr = $tokens[$nextToken]['scope_closer'];
                     $endBrace = $tokens[$stackPtr];
                 } else {
@@ -150,16 +155,36 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
             } while (isset($tokens[$nextToken]['scope_closer']) === true);
         }
 
+        if ($startCondition['code'] === T_MATCH) {
+            // Move the stackPtr to after the semi-colon/comma if there is one.
+            $nextToken = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
+            if ($nextToken !== false
+                && ($tokens[$nextToken]['code'] === T_SEMICOLON
+                || $tokens[$nextToken]['code'] === T_COMMA)
+            ) {
+                $stackPtr = $nextToken;
+            }
+        }
+
         $lineDifference = ($endBrace['line'] - $startBrace['line']);
 
-        $expected = '//end '.$startCondition['content'];
-        $comment  = $phpcsFile->findNext(array(T_COMMENT), $stackPtr, null, false);
+        $expected = sprintf($this->commentFormat, $startCondition['content']);
+        $comment  = $phpcsFile->findNext([T_COMMENT], $stackPtr, null, false);
 
         if (($comment === false) || ($tokens[$comment]['line'] !== $endBrace['line'])) {
             if ($lineDifference >= $this->lineLimit) {
                 $error = 'End comment for long condition not found; expected "%s"';
-                $data  = array($expected);
-                $phpcsFile->addError($error, $stackPtr, 'Missing', $data);
+                $data  = [$expected];
+                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
+
+                if ($fix === true) {
+                    $next = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
+                    if ($next !== false && $tokens[$next]['line'] === $tokens[$stackPtr]['line']) {
+                        $expected .= $phpcsFile->eolChar;
+                    }
+
+                    $phpcsFile->fixer->addContent($stackPtr, $expected);
+                }
             }
 
             return;
@@ -167,18 +192,23 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
 
         if (($comment - $stackPtr) !== 1) {
             $error = 'Space found before closing comment; expected "%s"';
-            $data  = array($expected);
+            $data  = [$expected];
             $phpcsFile->addError($error, $stackPtr, 'SpacingBefore', $data);
         }
 
         if (trim($tokens[$comment]['content']) !== $expected) {
             $found = trim($tokens[$comment]['content']);
             $error = 'Incorrect closing comment; expected "%s" but found "%s"';
-            $data  = array(
-                      $expected,
-                      $found,
-                     );
-            $phpcsFile->addError($error, $stackPtr, 'Invalid', $data);
+            $data  = [
+                $expected,
+                $found,
+            ];
+
+            $fix = $phpcsFile->addFixableError($error, $stackPtr, 'Invalid', $data);
+            if ($fix === true) {
+                $phpcsFile->fixer->replaceToken($comment, $expected.$phpcsFile->eolChar);
+            }
+
             return;
         }
 
@@ -186,6 +216,3 @@ class Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_Co
 
 
 }//end class
-
-
-?>

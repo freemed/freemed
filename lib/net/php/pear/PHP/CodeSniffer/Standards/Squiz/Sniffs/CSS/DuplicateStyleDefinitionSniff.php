@@ -1,31 +1,18 @@
 <?php
 /**
- * Squiz_Sniffs_CSS_DuplicateStyleDefinitionSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_CSS_DuplicateStyleDefinitionSniff.
- *
  * Check for duplicate style definitions in the same class.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Squiz_Sniffs_CSS_DuplicateStyleDefinitionSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\CSS;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class DuplicateStyleDefinitionSniff implements Sniff
 {
 
     /**
@@ -33,7 +20,7 @@ class Squiz_Sniffs_CSS_DuplicateStyleDefinitionSniff implements PHP_CodeSniffer_
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
 
     /**
@@ -43,7 +30,7 @@ class Squiz_Sniffs_CSS_DuplicateStyleDefinitionSniff implements PHP_CodeSniffer_
      */
     public function register()
     {
-        return array(T_OPEN_CURLY_BRACKET);
+        return [T_OPEN_CURLY_BRACKET];
 
     }//end register()
 
@@ -51,43 +38,51 @@ class Squiz_Sniffs_CSS_DuplicateStyleDefinitionSniff implements PHP_CodeSniffer_
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        // Find the content of each style definition name.
-        $end  = $tokens[$stackPtr]['bracket_closer'];
-        $next = $phpcsFile->findNext(T_STYLE, ($stackPtr + 1), $end);
-        if ($next === false) {
-            // Class definition is empty.
+        if (isset($tokens[$stackPtr]['bracket_closer']) === false) {
+            // Syntax error or live coding, bow out.
             return;
         }
 
-        $styleNames = array();
+        // Find the content of each style definition name.
+        $styleNames = [];
 
-        while ($next !== false) {
+        $next = $stackPtr;
+        $end  = $tokens[$stackPtr]['bracket_closer'];
+
+        do {
+            $next = $phpcsFile->findNext([T_STYLE, T_OPEN_CURLY_BRACKET], ($next + 1), $end);
+            if ($next === false) {
+                // Class definition is empty.
+                break;
+            }
+
+            if ($tokens[$next]['code'] === T_OPEN_CURLY_BRACKET) {
+                $next = $tokens[$next]['bracket_closer'];
+                continue;
+            }
+
             $name = $tokens[$next]['content'];
             if (isset($styleNames[$name]) === true) {
                 $first = $styleNames[$name];
                 $error = 'Duplicate style definition found; first defined on line %s';
-                $data  = array($tokens[$first]['line']);
+                $data  = [$tokens[$first]['line']];
                 $phpcsFile->addError($error, $next, 'Found', $data);
             } else {
                 $styleNames[$name] = $next;
             }
-
-            $next = $phpcsFile->findNext(T_STYLE, ($next + 1), $end);
-        }//end while
+        } while ($next !== false);
 
     }//end process()
 
 
 }//end class
-
-?>

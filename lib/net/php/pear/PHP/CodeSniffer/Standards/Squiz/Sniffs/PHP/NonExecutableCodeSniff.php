@@ -1,34 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_PHP_InnerFunctionsSniff.
+ * Warns about code that can never been executed.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_PHP_NonExecutableCodeSniff.
- *
- * Warns about code that can never been executed. This happens when a function
- * returns before the code, or a break ends execution of a statement etc.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\PHP;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class NonExecutableCodeSniff implements Sniff
 {
 
 
@@ -39,13 +24,14 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(
-                T_BREAK,
-                T_CONTINUE,
-                T_RETURN,
-                T_THROW,
-                T_EXIT,
-               );
+        return [
+            T_BREAK,
+            T_CONTINUE,
+            T_RETURN,
+            T_THROW,
+            T_EXIT,
+            T_GOTO,
+        ];
 
     }//end register()
 
@@ -53,20 +39,20 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
         // If this token is preceded with an "or", it only relates to one line
         // and should be ignored. For example: fopen() or die().
-        $prev = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr - 1), null, true);
-        if ($tokens[$prev]['code'] === T_LOGICAL_OR) {
+        $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+        if ($tokens[$prev]['code'] === T_LOGICAL_OR || $tokens[$prev]['code'] === T_BOOLEAN_OR) {
             return;
         }
 
@@ -75,7 +61,7 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
             if ($tokens[$i]['code'] === T_CLOSE_PARENTHESIS) {
                 $i = $tokens[$i]['parenthesis_opener'];
                 continue;
-            } else if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === true) {
+            } else if (isset(Tokens::$emptyTokens[$tokens[$i]['code']]) === true) {
                 continue;
             }
 
@@ -111,30 +97,34 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
             $owner = $tokens[$stackPtr]['scope_condition'];
             if ($tokens[$owner]['code'] === T_CASE || $tokens[$owner]['code'] === T_DEFAULT) {
                 // This token closes the scope of a CASE or DEFAULT statement
-                // so any code between this token and the next CASE, DEFAULT or
+                // so any code between this statement and the next CASE, DEFAULT or
                 // end of SWITCH token will not be executable.
+                $end  = $phpcsFile->findEndOfStatement($stackPtr);
                 $next = $phpcsFile->findNext(
-                    array(
-                     T_CASE,
-                     T_DEFAULT,
-                     T_CLOSE_CURLY_BRACKET,
-                    ),
-                    ($stackPtr + 1)
+                    [
+                        T_CASE,
+                        T_DEFAULT,
+                        T_CLOSE_CURLY_BRACKET,
+                        T_ENDSWITCH,
+                    ],
+                    ($end + 1)
                 );
 
                 if ($next !== false) {
-                    $end      = $phpcsFile->findNext(array(T_SEMICOLON), ($stackPtr + 1));
                     $lastLine = $tokens[$end]['line'];
                     for ($i = ($stackPtr + 1); $i < $next; $i++) {
-                        if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === true) {
+                        if (isset(Tokens::$emptyTokens[$tokens[$i]['code']]) === true) {
                             continue;
                         }
 
                         $line = $tokens[$i]['line'];
                         if ($line > $lastLine) {
                             $type    = substr($tokens[$stackPtr]['type'], 2);
-                            $warning = 'Code after %s statement cannot be executed';
-                            $data    = array($type);
+                            $warning = 'Code after the %s statement on line %s cannot be executed';
+                            $data    = [
+                                $type,
+                                $tokens[$stackPtr]['line'],
+                            ];
                             $phpcsFile->addWarning($warning, $i, 'Unreachable', $data);
                             $lastLine = $line;
                         }
@@ -143,21 +133,21 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
 
                 // That's all we have to check for these types of statements.
                 return;
-            }
+            }//end if
         }//end if
 
         // This token may be part of an inline condition.
         // If we find a closing parenthesis that belongs to a condition
         // we should ignore this token.
-        $prev = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+        $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($stackPtr - 1), null, true);
         if (isset($tokens[$prev]['parenthesis_owner']) === true) {
             $owner  = $tokens[$prev]['parenthesis_owner'];
-            $ignore = array(
-                       T_IF,
-                       T_ELSE,
-                       T_ELSEIF,
-                      );
-            if (in_array($tokens[$owner]['code'], $ignore) === true) {
+            $ignore = [
+                T_IF     => true,
+                T_ELSE   => true,
+                T_ELSEIF => true,
+            ];
+            if (isset($ignore[$tokens[$owner]['code']]) === true) {
                 return;
             }
         }
@@ -221,12 +211,16 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
                 break;
             }
 
-            if ($tokens[$start]['code'] === T_OPEN_PARENTHESIS) {
+            if (isset($tokens[$start]['parenthesis_closer']) === true
+                && $tokens[$start]['code'] === T_OPEN_PARENTHESIS
+            ) {
                 $start = $tokens[$start]['parenthesis_closer'];
                 continue;
             }
 
-            if ($tokens[$start]['code'] === T_OPEN_CURLY_BRACKET) {
+            if (isset($tokens[$start]['bracket_closer']) === true
+                && $tokens[$start]['code'] === T_OPEN_CURLY_BRACKET
+            ) {
                 $start = $tokens[$start]['bracket_closer'];
                 continue;
             }
@@ -236,20 +230,30 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
             }
         }//end for
 
+        if (isset($tokens[$start]) === false) {
+            return;
+        }
+
         $lastLine = $tokens[$start]['line'];
         for ($i = ($start + 1); $i < $end; $i++) {
-            if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === true
-                || in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$bracketTokens) === true
+            if (isset(Tokens::$emptyTokens[$tokens[$i]['code']]) === true
+                || isset(Tokens::$bracketTokens[$tokens[$i]['code']]) === true
+                || $tokens[$i]['code'] === T_SEMICOLON
             ) {
                 continue;
             }
 
             // Skip whole functions and classes/interfaces because they are not
             // technically executed code, but rather declarations that may be used.
-            if ($tokens[$i]['code'] === T_FUNCTION
-                || $tokens[$i]['code'] === T_CLASS
-                || $tokens[$i]['code'] === T_INTERFACE
+            if (isset(Tokens::$ooScopeTokens[$tokens[$i]['code']]) === true
+                || $tokens[$i]['code'] === T_FUNCTION
+                || $tokens[$i]['code'] === T_CLOSURE
             ) {
+                if (isset($tokens[$i]['scope_closer']) === false) {
+                    // Parse error/Live coding.
+                    return;
+                }
+
                 $i = $tokens[$i]['scope_closer'];
                 continue;
             }
@@ -257,8 +261,11 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
             $line = $tokens[$i]['line'];
             if ($line > $lastLine) {
                 $type    = substr($tokens[$stackPtr]['type'], 2);
-                $warning = 'Code after %s statement cannot be executed';
-                $data    = array($type);
+                $warning = 'Code after the %s statement on line %s cannot be executed';
+                $data    = [
+                    $type,
+                    $tokens[$stackPtr]['line'],
+                ];
                 $phpcsFile->addWarning($warning, $i, 'Unreachable', $data);
                 $lastLine = $line;
             }
@@ -268,5 +275,3 @@ class Squiz_Sniffs_PHP_NonExecutableCodeSniff implements PHP_CodeSniffer_Sniff
 
 
 }//end class
-
-?>

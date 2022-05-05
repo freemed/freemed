@@ -1,22 +1,8 @@
 <?php
 /**
- * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2014 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
  * Detects for-loops that use a function call in the test expression.
  *
- * This rule is based on the PMD rule catalog. Detects for-loops that use a
+ * This rule is based on the PMD rule catalogue. Detects for-loops that use a
  * function call in the test expression.
  *
  * <code>
@@ -32,15 +18,19 @@
  * }
  * </code>
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
+ * @author    Greg Sherwood <gsherwood@squiz.net>
  * @author    Manuel Pichler <mapi@manuel-pichler.de>
  * @copyright 2007-2014 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Generic_Sniffs_CodeAnalysis_ForLoopWithTestFunctionCallSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\CodeAnalysis;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class ForLoopWithTestFunctionCallSniff implements Sniff
 {
 
 
@@ -51,7 +41,7 @@ class Generic_Sniffs_CodeAnalysis_ForLoopWithTestFunctionCallSniff implements PH
      */
     public function register()
     {
-        return array(T_FOR);
+        return [T_FOR];
 
     }//end register()
 
@@ -59,13 +49,13 @@ class Generic_Sniffs_CodeAnalysis_ForLoopWithTestFunctionCallSniff implements PH
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
@@ -96,7 +86,7 @@ class Generic_Sniffs_CodeAnalysis_ForLoopWithTestFunctionCallSniff implements PH
 
             // Find next non empty token, if it is a open curly brace we have a
             // function call.
-            $index = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+            $index = $phpcsFile->findNext(Tokens::$emptyTokens, ($next + 1), null, true);
 
             if ($tokens[$index]['code'] === T_OPEN_PARENTHESIS) {
                 $error = 'Avoid function calls in a FOR loop test part';
@@ -109,5 +99,3 @@ class Generic_Sniffs_CodeAnalysis_ForLoopWithTestFunctionCallSniff implements PH
 
 
 }//end class
-
-?>

@@ -1,33 +1,32 @@
 <?php
 /**
- * Generic_Sniffs_Files_InlineHTMLSniff.
+ * Ensures the whole file is PHP only, with no whitespace or inline HTML.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Generic_Sniffs_Files_InlineHTMLSniff.
- *
- * Ensures the whole file is PHP only, with no whitespace or inline HTML anywhere
- * in the file.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Generic_Sniffs_Files_InlineHTMLSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Files;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class InlineHTMLSniff implements Sniff
 {
+
+    /**
+     * List of supported BOM definitions.
+     *
+     * Use encoding names as keys and hex BOM representations as values.
+     *
+     * @var array
+     */
+    protected $bomDefinitions = [
+        'UTF-8'       => 'efbbbf',
+        'UTF-16 (BE)' => 'feff',
+        'UTF-16 (LE)' => 'fffe',
+    ];
 
 
     /**
@@ -37,7 +36,7 @@ class Generic_Sniffs_Files_InlineHTMLSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_INLINE_HTML];
 
     }//end register()
 
@@ -45,30 +44,36 @@ class Generic_Sniffs_Files_InlineHTMLSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
-     * @return void
+     * @return int|null
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        // Make sure this is the first open tag.
-        $previousOpenTag = $phpcsFile->findPrevious(T_OPEN_TAG, ($stackPtr - 1));
-        if ($previousOpenTag !== false) {
-            return;
+        // Allow a byte-order mark.
+        $tokens = $phpcsFile->getTokens();
+        foreach ($this->bomDefinitions as $bomName => $expectedBomHex) {
+            $bomByteLength = (strlen($expectedBomHex) / 2);
+            $htmlBomHex    = bin2hex(substr($tokens[0]['content'], 0, $bomByteLength));
+            if ($htmlBomHex === $expectedBomHex && strlen($tokens[0]['content']) === $bomByteLength) {
+                return;
+            }
         }
 
-        $inline = $phpcsFile->findNext(T_INLINE_HTML, 0);
-        if ($inline === false) {
+        // Ignore shebang lines.
+        $tokens = $phpcsFile->getTokens();
+        if (substr($tokens[$stackPtr]['content'], 0, 2) === '#!') {
             return;
         }
 
         $error = 'PHP files must only contain PHP code';
-        $phpcsFile->addError($error, $inline, 'Found');
+        $phpcsFile->addError($error, $stackPtr, 'Found');
+
+        return $phpcsFile->numTokens;
 
     }//end process()
 
 
 }//end class
-

@@ -1,31 +1,20 @@
 <?php
 /**
- * Generic_Sniffs_Debug_CSSLintSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Roman Levishchenko <index.0h@gmail.com>
- * @copyright 2013-2014 Roman Levishchenko
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Generic_Sniffs_Debug_CSSLintSniff.
- *
  * Runs csslint on the file.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Roman Levishchenko <index.0h@gmail.com>
  * @copyright 2013-2014 Roman Levishchenko
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Generic_Sniffs_Debug_CSSLintSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Debug;
+
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Common;
+
+class CSSLintSniff implements Sniff
 {
 
     /**
@@ -33,7 +22,7 @@ class Generic_Sniffs_Debug_CSSLintSniff implements PHP_CodeSniffer_Sniff
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
 
     /**
@@ -43,7 +32,7 @@ class Generic_Sniffs_Debug_CSSLintSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_OPEN_TAG];
 
     }//end register()
 
@@ -51,33 +40,32 @@ class Generic_Sniffs_Debug_CSSLintSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        $fileName = $phpcsFile->getFilename();
-
-        $csslintPath = PHP_CodeSniffer::getConfigData('csslint_path');
+        $csslintPath = Config::getExecutablePath('csslint');
         if ($csslintPath === null) {
             return;
         }
 
-        $cmd = $csslintPath.' '.escapeshellarg($fileName);
+        $fileName = $phpcsFile->getFilename();
+
+        $cmd = Common::escapeshellcmd($csslintPath).' '.escapeshellarg($fileName).' 2>&1';
         exec($cmd, $output, $retval);
 
         if (is_array($output) === false) {
             return;
         }
 
-        $tokens = $phpcsFile->getTokens();
-        $count  = count($output);
+        $count = count($output);
 
         for ($i = 0; $i < $count; $i++) {
-            $matches    = array();
+            $matches    = [];
             $numMatches = preg_match(
                 '/(error|warning) at line (\d+)/',
                 $output[$i],
@@ -90,28 +78,19 @@ class Generic_Sniffs_Debug_CSSLintSniff implements PHP_CodeSniffer_Sniff
 
             $line    = (int) $matches[2];
             $message = 'csslint says: '.$output[($i + 1)];
-            // 1-st line is message with error line and error code.
-            // 2-nd error message.
-            // 3-d wrong line in file.
-            // 4-th empty line.
+            // First line is message with error line and error code.
+            // Second is error message.
+            // Third is wrong line in file.
+            // Fourth is empty line.
             $i += 4;
 
-            $lineToken = null;
-            foreach ($tokens as $ptr => $info) {
-                if ($info['line'] === $line) {
-                    $lineToken = $ptr;
-                    break;
-                }
-            }
-
-            if ($lineToken !== null) {
-                $phpcsFile->addWarning($message, $lineToken, 'ExternalTool');
-            }
+            $phpcsFile->addWarningOnLine($message, $line, 'ExternalTool');
         }//end for
+
+        // Ignore the rest of the file.
+        return ($phpcsFile->numTokens + 1);
 
     }//end process()
 
 
 }//end class
-
-?>

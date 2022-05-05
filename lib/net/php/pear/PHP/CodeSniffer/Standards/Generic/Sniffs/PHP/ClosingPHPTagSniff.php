@@ -1,29 +1,18 @@
 <?php
 /**
- * Generic_Sniffs_PHP_ClosingPHPTagSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Stefano Kowalke <blueduck@gmx.net>
- * @copyright 2010-2014 Stefano Kowalke
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
  * Checks that open PHP tags are paired with closing tags.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Stefano Kowalke <blueduck@gmx.net>
  * @copyright 2010-2014 Stefano Kowalke
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Generic_Sniffs_PHP_ClosingPHPTagSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\PHP;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class ClosingPHPTagSniff implements Sniff
 {
 
 
@@ -34,7 +23,10 @@ class Generic_Sniffs_PHP_ClosingPHPTagSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [
+            T_OPEN_TAG,
+            T_OPEN_TAG_WITH_ECHO,
+        ];
 
     }//end register()
 
@@ -42,13 +34,13 @@ class Generic_Sniffs_PHP_ClosingPHPTagSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $closeTag = $phpcsFile->findNext(T_CLOSE_TAG, $stackPtr);
         if ($closeTag === false) {
@@ -60,5 +52,3 @@ class Generic_Sniffs_PHP_ClosingPHPTagSniff implements PHP_CodeSniffer_Sniff
 
 
 }//end class
-
-?>

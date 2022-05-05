@@ -1,32 +1,19 @@
 <?php
 /**
- * Generic_Sniffs_Strings_UnnecessaryStringConcatSniff.
+ * Checks that two strings are not concatenated together; suggests using one string instead.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Generic_Sniffs_Strings_UnnecessaryStringConcatSniff.
- *
- * Checks that two strings are not concatenated together; suggests
- * using one string instead.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Strings;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class UnnecessaryStringConcatSniff implements Sniff
 {
 
     /**
@@ -34,17 +21,27 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = [
+        'PHP',
+        'JS',
+    ];
 
     /**
      * If true, an error will be thrown; otherwise a warning.
      *
-     * @var bool
+     * @var boolean
      */
     public $error = true;
+
+    /**
+     * If true, strings concatenated over multiple lines are allowed.
+     *
+     * Useful if you break strings over multiple lines to work
+     * within a max line length.
+     *
+     * @var boolean
+     */
+    public $allowMultiline = false;
 
 
     /**
@@ -54,10 +51,10 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
      */
     public function register()
     {
-        return array(
-                T_STRING_CONCAT,
-                T_PLUS,
-               );
+        return [
+            T_STRING_CONCAT,
+            T_PLUS,
+        ];
 
     }//end register()
 
@@ -65,13 +62,13 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         // Work out which type of file this is for.
         $tokens = $phpcsFile->getTokens();
@@ -91,9 +88,8 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
             return;
         }
 
-        $stringTokens = PHP_CodeSniffer_Tokens::$stringTokens;
-        if (in_array($tokens[$prev]['code'], $stringTokens) === true
-            && in_array($tokens[$next]['code'], $stringTokens) === true
+        if (isset(Tokens::$stringTokens[$tokens[$prev]['code']]) === true
+            && isset(Tokens::$stringTokens[$tokens[$next]['code']]) === true
         ) {
             if ($tokens[$prev]['content'][0] === $tokens[$next]['content'][0]) {
                 // Before we throw an error for PHP, allow strings to be
@@ -108,18 +104,22 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
                     }
                 }
 
+                if ($this->allowMultiline === true
+                    && $tokens[$prev]['line'] !== $tokens[$next]['line']
+                ) {
+                    return;
+                }
+
                 $error = 'String concat is not required here; use a single string instead';
                 if ($this->error === true) {
                     $phpcsFile->addError($error, $stackPtr, 'Found');
                 } else {
                     $phpcsFile->addWarning($error, $stackPtr, 'Found');
                 }
-            }
-        }
+            }//end if
+        }//end if
 
     }//end process()
 
 
 }//end class
-
-?>

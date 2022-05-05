@@ -1,31 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_Objects_ObjectInstantiationSniff.
+ * Ensures the last member of an object is not followed by a comma.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_Objects_ObjectInstantiationSniff.
- *
- * Ensures objects are assigned to a variable when instantiated.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Objects_ObjectMemberCommaSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Objects;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class ObjectMemberCommaSniff implements Sniff
 {
 
     /**
@@ -33,7 +21,7 @@ class Squiz_Sniffs_Objects_ObjectMemberCommaSniff implements PHP_CodeSniffer_Sni
      *
      * @var array
      */
-    public $supportedTokenizers = array('JS');
+    public $supportedTokenizers = ['JS'];
 
 
     /**
@@ -43,7 +31,7 @@ class Squiz_Sniffs_Objects_ObjectMemberCommaSniff implements PHP_CodeSniffer_Sni
      */
     public function register()
     {
-        return array(T_CLOSE_CURLY_BRACKET);
+        return [T_CLOSE_OBJECT];
 
     }//end register()
 
@@ -51,34 +39,26 @@ class Squiz_Sniffs_Objects_ObjectMemberCommaSniff implements PHP_CodeSniffer_Sni
     /**
      * Process the tokens that this sniff is listening for.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        // Only interested in orphaned braces (which are objects)
-        // and object definitions.
-        if (isset($tokens[$stackPtr]['scope_condition']) === true) {
-            $condition = $tokens[$stackPtr]['scope_condition'];
-            if ($tokens[$condition]['code'] !== T_OBJECT) {
-                return;
-            }
-        }
-
-        $prev = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+        $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($stackPtr - 1), null, true);
         if ($tokens[$prev]['code'] === T_COMMA) {
             $error = 'Last member of object must not be followed by a comma';
-            $phpcsFile->addError($error, $prev, 'Missing');
+            $fix   = $phpcsFile->addFixableError($error, $prev, 'Found');
+            if ($fix === true) {
+                $phpcsFile->fixer->replaceToken($prev, '');
+            }
         }
 
     }//end process()
 
 
 }//end class
-
-?>

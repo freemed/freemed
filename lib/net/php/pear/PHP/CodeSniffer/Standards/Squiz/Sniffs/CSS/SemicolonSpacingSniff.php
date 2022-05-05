@@ -1,31 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_CSS_SemicolonSpacingSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_CSS_SemicolonSpacingSniff.
- *
  * Ensure each style definition has a semi-colon and it is spaced correctly.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Squiz_Sniffs_CSS_SemicolonSpacingSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\CSS;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class SemicolonSpacingSniff implements Sniff
 {
 
     /**
@@ -33,7 +21,7 @@ class Squiz_Sniffs_CSS_SemicolonSpacingSniff implements PHP_CodeSniffer_Sniff
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
 
     /**
@@ -43,7 +31,7 @@ class Squiz_Sniffs_CSS_SemicolonSpacingSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(T_STYLE);
+        return [T_STYLE];
 
     }//end register()
 
@@ -51,31 +39,65 @@ class Squiz_Sniffs_CSS_SemicolonSpacingSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        $semicolon = $phpcsFile->findNext(T_SEMICOLON, ($stackPtr + 1));
-        if ($semicolon === false || $tokens[$semicolon]['line'] !== $tokens[$stackPtr]['line']) {
-            $error = 'Style definitions must end with a semicolon';
-            $phpcsFile->addError($error, $stackPtr, 'NotAtEnd');
+        $nextStatement = $phpcsFile->findNext([T_STYLE, T_CLOSE_CURLY_BRACKET], ($stackPtr + 1));
+        if ($nextStatement === false) {
             return;
         }
 
-        if ($tokens[($semicolon - 1)]['code'] === T_WHITESPACE) {
-            $length  = strlen($tokens[($semicolon - 1)]['content']);
-            $error = 'Expected 0 spaces before semicolon in style definition; %s found';
-            $data  = array($length);
-            $phpcsFile->addError($error, $stackPtr, 'SpaceFound', $data);
+        $ignore = Tokens::$emptyTokens;
+        if ($tokens[$nextStatement]['code'] === T_STYLE) {
+            // Allow for star-prefix hack.
+            $ignore[] = T_MULTIPLY;
+        }
+
+        $endOfThisStatement = $phpcsFile->findPrevious($ignore, ($nextStatement - 1), null, true);
+        if ($tokens[$endOfThisStatement]['code'] !== T_SEMICOLON) {
+            $error = 'Style definitions must end with a semicolon';
+            $phpcsFile->addError($error, $endOfThisStatement, 'NotAtEnd');
+            return;
+        }
+
+        if ($tokens[($endOfThisStatement - 1)]['code'] !== T_WHITESPACE) {
+            return;
+        }
+
+        // There is a semi-colon, so now find the last token in the statement.
+        $prevNonEmpty = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($endOfThisStatement - 1), null, true);
+        $found        = $tokens[($endOfThisStatement - 1)]['length'];
+        if ($tokens[$prevNonEmpty]['line'] !== $tokens[$endOfThisStatement]['line']) {
+            $found = 'newline';
+        }
+
+        $error = 'Expected 0 spaces before semicolon in style definition; %s found';
+        $data  = [$found];
+        $fix   = $phpcsFile->addFixableError($error, $prevNonEmpty, 'SpaceFound', $data);
+        if ($fix === true) {
+            $phpcsFile->fixer->beginChangeset();
+            $phpcsFile->fixer->addContent($prevNonEmpty, ';');
+            $phpcsFile->fixer->replaceToken($endOfThisStatement, '');
+
+            for ($i = ($endOfThisStatement - 1); $i > $prevNonEmpty; $i--) {
+                if ($tokens[$i]['code'] !== T_WHITESPACE) {
+                    break;
+                }
+
+                $phpcsFile->fixer->replaceToken($i, '');
+            }
+
+            $phpcsFile->fixer->endChangeset();
         }
 
     }//end process()
 
+
 }//end class
-?>

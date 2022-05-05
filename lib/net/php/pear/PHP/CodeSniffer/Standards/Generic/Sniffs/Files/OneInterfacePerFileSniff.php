@@ -1,29 +1,18 @@
 <?php
 /**
- * Generic_Sniffs_Files_OneInterfacePerFileSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Andy Grunwald <andygrunwald@gmail.com>
- * @copyright 2010-2014 Andy Grunwald
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
  * Checks that only one interface is declared per file.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Andy Grunwald <andygrunwald@gmail.com>
  * @copyright 2010-2014 Andy Grunwald
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Generic_Sniffs_Files_OneInterfacePerFileSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Files;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class OneInterfacePerFileSniff implements Sniff
 {
 
 
@@ -34,7 +23,7 @@ class Generic_Sniffs_Files_OneInterfacePerFileSniff implements PHP_CodeSniffer_S
      */
     public function register()
     {
-        return array(T_INTERFACE);
+        return [T_INTERFACE];
 
     }//end register()
 
@@ -42,13 +31,13 @@ class Generic_Sniffs_Files_OneInterfacePerFileSniff implements PHP_CodeSniffer_S
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $nextInterface = $phpcsFile->findNext($this->register(), ($stackPtr + 1));
         if ($nextInterface !== false) {
@@ -60,5 +49,3 @@ class Generic_Sniffs_Files_OneInterfacePerFileSniff implements PHP_CodeSniffer_S
 
 
 }//end class
-
-?>

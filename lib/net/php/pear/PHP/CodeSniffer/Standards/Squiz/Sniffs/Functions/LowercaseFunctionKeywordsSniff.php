@@ -1,33 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_Functions_LowercaseFunctionKeywordsSniff.
+ * Ensures all function keywords are lowercase.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_Functions_LowercaseFunctionKeywordsSniff.
- *
- * Ensures all class keywords are lowercase.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Functions_LowercaseFunctionKeywordsSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Functions;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class LowercaseFunctionKeywordsSniff implements Sniff
 {
 
 
@@ -38,13 +24,12 @@ class Squiz_Sniffs_Functions_LowercaseFunctionKeywordsSniff implements PHP_CodeS
      */
     public function register()
     {
-        return array(
-                T_FUNCTION,
-                T_PUBLIC,
-                T_PRIVATE,
-                T_PROTECTED,
-                T_STATIC,
-               );
+        $tokens   = Tokens::$methodPrefixes;
+        $tokens[] = T_FUNCTION;
+        $tokens[] = T_CLOSURE;
+        $tokens[] = T_FN;
+
+        return $tokens;
 
     }//end register()
 
@@ -52,30 +37,33 @@ class Squiz_Sniffs_Functions_LowercaseFunctionKeywordsSniff implements PHP_CodeS
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        $content = $tokens[$stackPtr]['content'];
-        if ($content !== strtolower($content)) {
+        $content   = $tokens[$stackPtr]['content'];
+        $contentLc = strtolower($content);
+        if ($content !== $contentLc) {
             $error = '%s keyword must be lowercase; expected "%s" but found "%s"';
-            $data  = array(
-                      strtoupper($content),
-                      strtolower($content),
-                      $content,
-                     );
-            $phpcsFile->addError($error, $stackPtr, 'FoundUppercase', $data);
+            $data  = [
+                strtoupper($content),
+                $contentLc,
+                $content,
+            ];
+
+            $fix = $phpcsFile->addFixableError($error, $stackPtr, 'FoundUppercase', $data);
+            if ($fix === true) {
+                $phpcsFile->fixer->replaceToken($stackPtr, $contentLc);
+            }
         }
 
     }//end process()
 
 
 }//end class
-
-?>

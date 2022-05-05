@@ -1,31 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_CSS_IndentationSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_CSS_IndentationSniff.
- *
  * Ensures styles are indented 4 spaces.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\CSS;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class IndentationSniff implements Sniff
 {
 
     /**
@@ -33,13 +21,13 @@ class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
     /**
-    * The number of spaces code should be indented.
-    *
-    * @var int
-    */
+     * The number of spaces code should be indented.
+     *
+     * @var integer
+     */
     public $indent = 4;
 
 
@@ -50,7 +38,7 @@ class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_OPEN_TAG];
 
     }//end register()
 
@@ -58,13 +46,13 @@ class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -72,7 +60,9 @@ class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
         $indentLevel  = 0;
         $nestingLevel = 0;
         for ($i = 1; $i < $numTokens; $i++) {
-            if ($tokens[$i]['code'] === T_COMMENT) {
+            if ($tokens[$i]['code'] === T_COMMENT
+                || isset(Tokens::$phpcsCommentTokens[$tokens[$i]['code']]) === true
+            ) {
                 // Don't check the indent of comments.
                 continue;
             }
@@ -80,20 +70,39 @@ class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
             if ($tokens[$i]['code'] === T_OPEN_CURLY_BRACKET) {
                 $indentLevel++;
 
+                if (isset($tokens[$i]['bracket_closer']) === false) {
+                    // Syntax error or live coding.
+                    // Anything after this would receive incorrect fixes, so bow out.
+                    return;
+                }
+
                 // Check for nested class definitions.
-                $found  = $phpcsFile->findNext(
+                $found = $phpcsFile->findNext(
                     T_OPEN_CURLY_BRACKET,
                     ($i + 1),
                     $tokens[$i]['bracket_closer']
                 );
+
                 if ($found !== false) {
                     $nestingLevel = $indentLevel;
                 }
-            } else if ($tokens[($i + 1)]['code'] === T_CLOSE_CURLY_BRACKET) {
-                $indentLevel--;
             }
 
-            if ($tokens[$i]['column'] !== 1) {
+            if (($tokens[$i]['code'] === T_CLOSE_CURLY_BRACKET
+                && $tokens[$i]['line'] !== $tokens[($i - 1)]['line'])
+                || ($tokens[($i + 1)]['code'] === T_CLOSE_CURLY_BRACKET
+                && $tokens[$i]['line'] === $tokens[($i + 1)]['line'])
+            ) {
+                $indentLevel--;
+                if ($indentLevel === 0) {
+                    $nestingLevel = 0;
+                }
+            }
+
+            if ($tokens[$i]['column'] !== 1
+                || $tokens[$i]['code'] === T_OPEN_CURLY_BRACKET
+                || $tokens[$i]['code'] === T_CLOSE_CURLY_BRACKET
+            ) {
                 continue;
             }
 
@@ -111,18 +120,31 @@ class Squiz_Sniffs_CSS_IndentationSniff implements PHP_CodeSniffer_Sniff
             ) {
                 if ($nestingLevel !== $indentLevel) {
                     $error = 'Blank lines are not allowed in class definitions';
-                    $phpcsFile->addError($error, $i, 'BlankLine');
+                    $fix   = $phpcsFile->addFixableError($error, $i, 'BlankLine');
+                    if ($fix === true) {
+                        $phpcsFile->fixer->replaceToken($i, '');
+                    }
                 }
             } else if ($foundIndent !== $expectedIndent) {
                 $error = 'Line indented incorrectly; expected %s spaces, found %s';
-                $data  = array(
-                          $expectedIndent,
-                          $foundIndent,
-                         );
-                $phpcsFile->addError($error, $i, 'Incorrect', $data);
-            }
-        }//end foreach
+                $data  = [
+                    $expectedIndent,
+                    $foundIndent,
+                ];
+
+                $fix = $phpcsFile->addFixableError($error, $i, 'Incorrect', $data);
+                if ($fix === true) {
+                    $indent = str_repeat(' ', $expectedIndent);
+                    if ($foundIndent === 0) {
+                        $phpcsFile->fixer->addContentBefore($i, $indent);
+                    } else {
+                        $phpcsFile->fixer->replaceToken($i, $indent);
+                    }
+                }
+            }//end if
+        }//end for
+
     }//end process()
 
+
 }//end class
-?>

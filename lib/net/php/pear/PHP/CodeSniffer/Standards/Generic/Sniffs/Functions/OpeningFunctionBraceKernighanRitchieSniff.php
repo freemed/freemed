@@ -1,35 +1,34 @@
 <?php
 /**
- * Generic_Sniffs_Functions_OpeningFunctionBraceKernighanRitchieSniff.
+ * Checks that the opening brace of a function is on the same line as the function declaration.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Generic_Sniffs_Functions_OpeningFunctionBraceKernighanRitchieSniff.
- *
- * Checks that the opening brace of a function is on the same line
- * as the function declaration.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Generic_Sniffs_Functions_OpeningFunctionBraceKernighanRitchieSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Functions;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class OpeningFunctionBraceKernighanRitchieSniff implements Sniff
 {
+
+    /**
+     * Should this sniff check function braces?
+     *
+     * @var boolean
+     */
+    public $checkFunctions = true;
+
+    /**
+     * Should this sniff check closure braces?
+     *
+     * @var boolean
+     */
+    public $checkClosures = false;
 
 
     /**
@@ -39,7 +38,10 @@ class Generic_Sniffs_Functions_OpeningFunctionBraceKernighanRitchieSniff impleme
      */
     public function register()
     {
-        return array(T_FUNCTION);
+        return [
+            T_FUNCTION,
+            T_CLOSURE,
+        ];
 
     }//end register()
 
@@ -47,13 +49,13 @@ class Generic_Sniffs_Functions_OpeningFunctionBraceKernighanRitchieSniff impleme
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
-     *                                        stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in the
+     *                                               stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -61,57 +63,122 @@ class Generic_Sniffs_Functions_OpeningFunctionBraceKernighanRitchieSniff impleme
             return;
         }
 
-        $openingBrace = $tokens[$stackPtr]['scope_opener'];
+        if (($tokens[$stackPtr]['code'] === T_FUNCTION
+            && (bool) $this->checkFunctions === false)
+            || ($tokens[$stackPtr]['code'] === T_CLOSURE
+            && (bool) $this->checkClosures === false)
+        ) {
+            return;
+        }
 
-        // The end of the function occurs at the end of the argument list. Its
-        // like this because some people like to break long function declarations
-        // over multiple lines.
-        $functionLine = $tokens[$tokens[$stackPtr]['parenthesis_closer']]['line'];
+        $openingBrace = $tokens[$stackPtr]['scope_opener'];
+        $closeBracket = $tokens[$stackPtr]['parenthesis_closer'];
+        if ($tokens[$stackPtr]['code'] === T_CLOSURE) {
+            $use = $phpcsFile->findNext(T_USE, ($closeBracket + 1), $tokens[$stackPtr]['scope_opener']);
+            if ($use !== false) {
+                $openBracket  = $phpcsFile->findNext(T_OPEN_PARENTHESIS, ($use + 1));
+                $closeBracket = $tokens[$openBracket]['parenthesis_closer'];
+            }
+        }
+
+        // Find the end of the function declaration.
+        $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($openingBrace - 1), $closeBracket, true);
+
+        $functionLine = $tokens[$prev]['line'];
         $braceLine    = $tokens[$openingBrace]['line'];
 
         $lineDifference = ($braceLine - $functionLine);
 
+        $metricType = 'Function';
+        if ($tokens[$stackPtr]['code'] === T_CLOSURE) {
+            $metricType = 'Closure';
+        }
+
         if ($lineDifference > 0) {
+            $phpcsFile->recordMetric($stackPtr, "$metricType opening brace placement", 'new line');
             $error = 'Opening brace should be on the same line as the declaration';
-            $phpcsFile->addError($error, $openingBrace, 'BraceOnNewLine');
+            $fix   = $phpcsFile->addFixableError($error, $openingBrace, 'BraceOnNewLine');
+            if ($fix === true) {
+                $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($openingBrace - 1), $closeBracket, true);
+                $phpcsFile->fixer->beginChangeset();
+                $phpcsFile->fixer->addContent($prev, ' {');
+                $phpcsFile->fixer->replaceToken($openingBrace, '');
+                if ($tokens[($openingBrace + 1)]['code'] === T_WHITESPACE
+                    && $tokens[($openingBrace + 2)]['line'] > $tokens[$openingBrace]['line']
+                ) {
+                    // Brace is followed by a new line, so remove it to ensure we don't
+                    // leave behind a blank line at the top of the block.
+                    $phpcsFile->fixer->replaceToken(($openingBrace + 1), '');
+
+                    if ($tokens[($openingBrace - 1)]['code'] === T_WHITESPACE
+                        && $tokens[($openingBrace - 1)]['line'] === $tokens[$openingBrace]['line']
+                        && $tokens[($openingBrace - 2)]['line'] < $tokens[$openingBrace]['line']
+                    ) {
+                        // Brace is preceded by indent, so remove it to ensure we don't
+                        // leave behind more indent than is required for the first line.
+                        $phpcsFile->fixer->replaceToken(($openingBrace - 1), '');
+                    }
+                }
+
+                $phpcsFile->fixer->endChangeset();
+            }//end if
+        } else {
+            $phpcsFile->recordMetric($stackPtr, "$metricType opening brace placement", 'same line');
+        }//end if
+
+        $ignore   = Tokens::$phpcsCommentTokens;
+        $ignore[] = T_WHITESPACE;
+        $next     = $phpcsFile->findNext($ignore, ($openingBrace + 1), null, true);
+        if ($tokens[$next]['line'] === $tokens[$openingBrace]['line']) {
+            if ($next === $tokens[$stackPtr]['scope_closer']
+                || $tokens[$next]['code'] === T_CLOSE_TAG
+            ) {
+                // Ignore empty functions.
+                return;
+            }
+
+            $error = 'Opening brace must be the last content on the line';
+            $fix   = $phpcsFile->addFixableError($error, $openingBrace, 'ContentAfterBrace');
+            if ($fix === true) {
+                $phpcsFile->fixer->addNewline($openingBrace);
+            }
+        }
+
+        // Only continue checking if the opening brace looks good.
+        if ($lineDifference > 0) {
             return;
         }
 
-        $closeBracket = $tokens[$stackPtr]['parenthesis_closer'];
-        if ($tokens[($closeBracket + 1)]['code'] !== T_WHITESPACE) {
-            $length = 0;
-        } else if ($tokens[($closeBracket + 1)]['content'] === "\t") {
-            $length = '\t';
+        // We are looking for tabs, even if they have been replaced, because
+        // we enforce a space here.
+        if (isset($tokens[($openingBrace - 1)]['orig_content']) === true) {
+            $spacing = $tokens[($openingBrace - 1)]['orig_content'];
         } else {
-            $length = strlen($tokens[($closeBracket + 1)]['content']);
+            $spacing = $tokens[($openingBrace - 1)]['content'];
         }
 
-        if ($length !== 1) {
-            $error = 'Expected 1 space after closing parenthesis; found %s';
-            $data  = array($length);
-            $phpcsFile->addError($error, $closeBracket, 'SpaceAfterBracket', $data);
-            return;
-        }
-
-        $closeBrace = $tokens[$stackPtr]['scope_opener'];
-        if ($tokens[($closeBrace - 1)]['code'] !== T_WHITESPACE) {
+        if ($tokens[($openingBrace - 1)]['code'] !== T_WHITESPACE) {
             $length = 0;
-        } else if ($tokens[($closeBrace - 1)]['content'] === "\t") {
+        } else if ($spacing === "\t") {
             $length = '\t';
         } else {
-            $length = strlen($tokens[($closeBrace - 1)]['content']);
+            $length = strlen($spacing);
         }
 
         if ($length !== 1) {
             $error = 'Expected 1 space before opening brace; found %s';
-            $data  = array($length);
-            $phpcsFile->addError($error, $openingBrace, 'SpaceBeforeBrace', $data);
-            return;
+            $data  = [$length];
+            $fix   = $phpcsFile->addFixableError($error, $closeBracket, 'SpaceBeforeBrace', $data);
+            if ($fix === true) {
+                if ($length === 0 || $length === '\t') {
+                    $phpcsFile->fixer->addContentBefore($openingBrace, ' ');
+                } else {
+                    $phpcsFile->fixer->replaceToken(($openingBrace - 1), ' ');
+                }
+            }
         }
 
     }//end process()
 
 
 }//end class
-
-?>

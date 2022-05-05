@@ -1,34 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_Operators_IncrementDecrementUsageSniff.
+ * Ensures that the ++ operators are used when possible.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_Operators_IncrementDecrementUsageSniff.
- *
- * Tests that the ++ operators are used when possible and not
- * used when it makes the code confusing.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Operators;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class IncrementDecrementUsageSniff implements Sniff
 {
 
 
@@ -39,13 +24,13 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
      */
     public function register()
     {
-        return array(
-                T_EQUAL,
-                T_PLUS_EQUAL,
-                T_MINUS_EQUAL,
-                T_INC,
-                T_DEC,
-               );
+        return [
+            T_EQUAL,
+            T_PLUS_EQUAL,
+            T_MINUS_EQUAL,
+            T_INC,
+            T_DEC,
+        ];
 
     }//end register()
 
@@ -53,13 +38,13 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -75,36 +60,40 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
     /**
      * Checks to ensure increment and decrement operators are not confusing.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    protected function processIncDec(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    protected function processIncDec($phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
         // Work out where the variable is so we know where to
         // start looking for other operators.
-        if ($tokens[($stackPtr - 1)]['code'] === T_VARIABLE) {
+        if ($tokens[($stackPtr - 1)]['code'] === T_VARIABLE
+            || ($tokens[($stackPtr - 1)]['code'] === T_STRING
+            && ($tokens[($stackPtr - 2)]['code'] === T_OBJECT_OPERATOR
+            || $tokens[($stackPtr - 2)]['code'] === T_NULLSAFE_OBJECT_OPERATOR))
+        ) {
             $start = ($stackPtr + 1);
         } else {
             $start = ($stackPtr + 2);
         }
 
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, $start, null, true);
+        $next = $phpcsFile->findNext(Tokens::$emptyTokens, $start, null, true);
         if ($next === false) {
             return;
         }
 
-        if (in_array($tokens[$next]['code'], PHP_CodeSniffer_Tokens::$arithmeticTokens) === true) {
+        if (isset(Tokens::$arithmeticTokens[$tokens[$next]['code']]) === true) {
             $error = 'Increment and decrement operators cannot be used in an arithmetic operation';
             $phpcsFile->addError($error, $stackPtr, 'NotAllowed');
             return;
         }
 
-        $prev = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($start - 3), null, true);
+        $prev = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($start - 3), null, true);
         if ($prev === false) {
             return;
         }
@@ -121,13 +110,13 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
     /**
      * Checks to ensure increment and decrement operators are used.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    protected function processAssignment(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    protected function processAssignment($phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -137,10 +126,10 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
             return;
         }
 
-        $statementEnd = $phpcsFile->findNext(array(T_SEMICOLON, T_CLOSE_PARENTHESIS, T_CLOSE_SQUARE_BRACKET, T_CLOSE_CURLY_BRACKET), $stackPtr);
+        $statementEnd = $phpcsFile->findNext([T_SEMICOLON, T_CLOSE_PARENTHESIS, T_CLOSE_SQUARE_BRACKET, T_CLOSE_CURLY_BRACKET], $stackPtr);
 
         // If there is anything other than variables, numbers, spaces or operators we need to return.
-        $noiseTokens = $phpcsFile->findNext(array(T_LNUMBER, T_VARIABLE, T_WHITESPACE, T_PLUS, T_MINUS, T_OPEN_PARENTHESIS), ($stackPtr + 1), $statementEnd, true);
+        $noiseTokens = $phpcsFile->findNext([T_LNUMBER, T_VARIABLE, T_WHITESPACE, T_PLUS, T_MINUS, T_OPEN_PARENTHESIS], ($stackPtr + 1), $statementEnd, true);
 
         if ($noiseTokens !== false) {
             return;
@@ -179,7 +168,7 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
         $nextNumber     = ($stackPtr + 1);
         $previousNumber = ($stackPtr + 1);
         $numberCount    = 0;
-        while (($nextNumber = $phpcsFile->findNext(array(T_LNUMBER), ($nextNumber + 1), $statementEnd, false)) !== false) {
+        while (($nextNumber = $phpcsFile->findNext([T_LNUMBER], ($nextNumber + 1), $statementEnd, false)) !== false) {
             $previousNumber = $nextNumber;
             $numberCount++;
         }
@@ -191,7 +180,7 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
         $nextNumber = $previousNumber;
         if ($tokens[$nextNumber]['content'] === '1') {
             if ($tokens[$stackPtr]['code'] === T_EQUAL) {
-                $opToken = $phpcsFile->findNext(array(T_PLUS, T_MINUS), ($nextVar + 1), $statementEnd);
+                $opToken = $phpcsFile->findNext([T_PLUS, T_MINUS], ($nextVar + 1), $statementEnd);
                 if ($opToken === false) {
                     // Operator was before the variable, like:
                     // $var = 1 + $var;
@@ -209,11 +198,15 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
             if ($tokens[$stackPtr]['code'] !== T_EQUAL) {
                 $negative = $phpcsFile->findPrevious(T_MINUS, ($nextNumber - 1), $stackPtr);
                 if ($negative !== false) {
-                    $operator = ($operator === '+') ? '-' : '+';
+                    if ($operator === '+') {
+                        $operator = '-';
+                    } else {
+                        $operator = '+';
+                    }
                 }
             }
 
-            $expected = $tokens[$assignedVar]['content'].$operator.$operator;
+            $expected = $operator.$operator.$tokens[$assignedVar]['content'];
             $found    = $phpcsFile->getTokensAsString($assignedVar, ($statementEnd - $assignedVar + 1));
 
             if ($operator === '+') {
@@ -223,12 +216,10 @@ class Squiz_Sniffs_Operators_IncrementDecrementUsageSniff implements PHP_CodeSni
             }
 
             $error .= " operators should be used where possible; found \"$found\" but expected \"$expected\"";
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsFile->addError($error, $stackPtr, 'Found');
         }//end if
 
     }//end processAssignment()
 
 
 }//end class
-
-?>

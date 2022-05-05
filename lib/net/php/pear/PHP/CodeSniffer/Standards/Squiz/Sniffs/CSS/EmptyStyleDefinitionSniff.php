@@ -1,31 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff.
- *
  * Ensure that style definitions are not empty.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\CSS;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class EmptyStyleDefinitionSniff implements Sniff
 {
 
     /**
@@ -33,7 +21,7 @@ class Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff implements PHP_CodeSniffer_Snif
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
 
     /**
@@ -43,7 +31,7 @@ class Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff implements PHP_CodeSniffer_Snif
      */
     public function register()
     {
-        return array(T_STYLE);
+        return [T_STYLE];
 
     }//end register()
 
@@ -51,17 +39,20 @@ class Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff implements PHP_CodeSniffer_Snif
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
-        $next   = $phpcsFile->findNext(array(T_WHITESPACE, T_COLON), ($stackPtr + 1), null, true);
 
+        $ignore   = Tokens::$emptyTokens;
+        $ignore[] = T_COLON;
+
+        $next = $phpcsFile->findNext($ignore, ($stackPtr + 1), null, true);
         if ($next === false || $tokens[$next]['code'] === T_SEMICOLON || $tokens[$next]['line'] !== $tokens[$stackPtr]['line']) {
             $error = 'Style definition is empty';
             $phpcsFile->addError($error, $stackPtr, 'Found');
@@ -69,5 +60,5 @@ class Squiz_Sniffs_CSS_EmptyStyleDefinitionSniff implements PHP_CodeSniffer_Snif
 
     }//end process()
 
+
 }//end class
-?>

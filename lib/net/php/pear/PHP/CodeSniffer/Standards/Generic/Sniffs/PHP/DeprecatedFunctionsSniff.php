@@ -1,35 +1,16 @@
 <?php
 /**
- * Generic_Sniffs_PHP_DeprecatedFunctionsSniff.
+ * Discourages the use of deprecated PHP functions.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Generic_Sniffs_PHP_DeprecatedFunctionsSniff.
- *
- * Discourages the use of deprecated functions that are kept in PHP for
- * compatibility with older versions.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Generic_Sniffs_PHP_DeprecatedFunctionsSniff extends Generic_Sniffs_PHP_ForbiddenFunctionsSniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\PHP;
+
+class DeprecatedFunctionsSniff extends ForbiddenFunctionsSniff
 {
 
     /**
@@ -38,9 +19,9 @@ class Generic_Sniffs_PHP_DeprecatedFunctionsSniff extends Generic_Sniffs_PHP_For
      * The value is NULL if no alternative exists. IE, the
      * function should just not be used.
      *
-     * @var array(string => string|null)
+     * @var array<string, string|null>
      */
-    protected $forbiddenFunctions = array();
+    public $forbiddenFunctions = [];
 
 
     /**
@@ -53,7 +34,7 @@ class Generic_Sniffs_PHP_DeprecatedFunctionsSniff extends Generic_Sniffs_PHP_For
         $functions = get_defined_functions();
 
         foreach ($functions['internal'] as $functionName) {
-            $function = new ReflectionFunction($functionName);
+            $function = new \ReflectionFunction($functionName);
 
             if ($function->isDeprecated() === true) {
                 $this->forbiddenFunctions[$functionName] = null;
@@ -66,17 +47,17 @@ class Generic_Sniffs_PHP_DeprecatedFunctionsSniff extends Generic_Sniffs_PHP_For
     /**
      * Generates the error or warning for this sniff.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the forbidden function
-     *                                        in the token array.
-     * @param string               $function  The name of the forbidden function.
-     * @param string               $pattern   The pattern used for the match.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the forbidden function
+     *                                               in the token array.
+     * @param string                      $function  The name of the forbidden function.
+     * @param string                      $pattern   The pattern used for the match.
      *
      * @return void
      */
     protected function addError($phpcsFile, $stackPtr, $function, $pattern=null)
     {
-        $data  = array($function);
+        $data  = [$function];
         $error = 'Function %s() has been deprecated';
         $type  = 'Deprecated';
 
@@ -90,5 +71,3 @@ class Generic_Sniffs_PHP_DeprecatedFunctionsSniff extends Generic_Sniffs_PHP_For
 
 
 }//end class
-
-?>

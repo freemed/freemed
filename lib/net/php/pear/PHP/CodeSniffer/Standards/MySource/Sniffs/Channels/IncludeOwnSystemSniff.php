@@ -2,28 +2,17 @@
 /**
  * Ensures that a system does not include itself.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer_MySource
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Ensures that a system does not include itself.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer_MySource
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class MySource_Sniffs_Channels_IncludeOwnSystemSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\MySource\Sniffs\Channels;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+
+class IncludeOwnSystemSniff implements Sniff
 {
 
 
@@ -34,7 +23,7 @@ class MySource_Sniffs_Channels_IncludeOwnSystemSniff implements PHP_CodeSniffer_
      */
     public function register()
     {
-        return array(T_DOUBLE_COLON);
+        return [T_DOUBLE_COLON];
 
     }//end register()
 
@@ -42,16 +31,16 @@ class MySource_Sniffs_Channels_IncludeOwnSystemSniff implements PHP_CodeSniffer_
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $fileName = $phpcsFile->getFilename();
-        $matches  = array();
+        $matches  = [];
         if (preg_match('|/systems/(.*)/([^/]+)?actions.inc$|i', $fileName, $matches) === 0) {
             // Not an actions file.
             return;
@@ -78,7 +67,7 @@ class MySource_Sniffs_Channels_IncludeOwnSystemSniff implements PHP_CodeSniffer_
 
         if ($included === strtolower($ownClass)) {
             $error = "You do not need to include \"%s\" from within the system's own actions file";
-            $data  = array($ownClass);
+            $data  = [$ownClass];
             $phpcsFile->addError($error, $stackPtr, 'NotRequired', $data);
         }
 
@@ -88,19 +77,18 @@ class MySource_Sniffs_Channels_IncludeOwnSystemSniff implements PHP_CodeSniffer_
     /**
      * Determines the included class name from given token.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where this token was found.
-     * @param array                $tokens    The array of file tokens.
-     * @param int                  $stackPtr  The position in the tokens array of the
-     *                                        potentially included class.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where this token was found.
+     * @param array                       $tokens    The array of file tokens.
+     * @param int                         $stackPtr  The position in the tokens array of the
+     *                                               potentially included class.
      *
      * @return string
      */
     protected function getIncludedClassFromToken(
-        PHP_CodeSniffer_File $phpcsFile,
+        $phpcsFile,
         array $tokens,
         $stackPtr
     ) {
-        
 
         return false;
 
@@ -108,5 +96,3 @@ class MySource_Sniffs_Channels_IncludeOwnSystemSniff implements PHP_CodeSniffer_
 
 
 }//end class
-
-?>

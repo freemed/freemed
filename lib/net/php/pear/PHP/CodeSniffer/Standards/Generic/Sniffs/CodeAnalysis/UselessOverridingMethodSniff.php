@@ -1,23 +1,9 @@
 <?php
 /**
- * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2014 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
  * Detects unnecessary overridden methods that simply call their parent.
  *
- * This rule is based on the PMD rule catalog. The Useless Overriding Method
- * sniff detects the use of methods that only call their parent classes's method
+ * This rule is based on the PMD rule catalogue. The Useless Overriding Method
+ * sniff detects the use of methods that only call their parent class's method
  * with the same name and arguments. These methods are not required.
  *
  * <code>
@@ -28,15 +14,18 @@
  * }
  * </code>
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Manuel Pichler <mapi@manuel-pichler.de>
  * @copyright 2007-2014 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\CodeAnalysis;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class UselessOverridingMethodSniff implements Sniff
 {
 
 
@@ -47,7 +36,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
      */
     public function register()
     {
-        return array(T_FUNCTION);
+        return [T_FUNCTION];
 
     }//end register()
 
@@ -55,13 +44,13 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
@@ -75,7 +64,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
         $methodName = $phpcsFile->getDeclarationName($stackPtr);
 
         // Get all parameters from method signature.
-        $signature = array();
+        $signature = [];
         foreach ($phpcsFile->getMethodParameters($stackPtr) as $param) {
             $signature[] = $param['name'];
         }
@@ -86,7 +75,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
         for (; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
 
-            if (in_array($code, PHP_CodeSniffer_Tokens::$emptyTokens) === true) {
+            if (isset(Tokens::$emptyTokens[$code]) === true) {
                 continue;
             } else if ($code === T_RETURN) {
                 continue;
@@ -101,7 +90,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
         }
 
         // Find next non empty token index, should be double colon.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsFile->findNext(Tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code.
         if ($next === false || $tokens[$next]['code'] !== T_DOUBLE_COLON) {
@@ -109,7 +98,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
         }
 
         // Find next non empty token index, should be the function name.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsFile->findNext(Tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code or other method.
         if ($next === false || $tokens[$next]['content'] !== $methodName) {
@@ -117,20 +106,14 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
         }
 
         // Find next non empty token index, should be the open parenthesis.
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsFile->findNext(Tokens::$emptyTokens, ($next + 1), null, true);
 
         // Skip for invalid code.
         if ($next === false || $tokens[$next]['code'] !== T_OPEN_PARENTHESIS) {
             return;
         }
 
-        $validParameterTypes = array(
-                                T_VARIABLE,
-                                T_LNUMBER,
-                                T_CONSTANT_ENCAPSED_STRING,
-                               );
-
-        $parameters       = array('');
+        $parameters       = [''];
         $parenthesisCount = 1;
         $count            = count($tokens);
         for (++$next; $next < $count; ++$next) {
@@ -142,7 +125,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
                 --$parenthesisCount;
             } else if ($parenthesisCount === 1 && $code === T_COMMA) {
                 $parameters[] = '';
-            } else if (in_array($code, PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
+            } else if (isset(Tokens::$emptyTokens[$code]) === false) {
                 $parameters[(count($parameters) - 1)] .= $tokens[$next]['content'];
             }
 
@@ -151,7 +134,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
             }
         }//end for
 
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($next + 1), null, true);
+        $next = $phpcsFile->findNext(Tokens::$emptyTokens, ($next + 1), null, true);
         if ($next === false || $tokens[$next]['code'] !== T_SEMICOLON) {
             return;
         }
@@ -160,7 +143,7 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
         for (++$next; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
             // Skip for any other content.
-            if (in_array($code, PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
+            if (isset(Tokens::$emptyTokens[$code]) === false) {
                 return;
             }
         }
@@ -176,5 +159,3 @@ class Generic_Sniffs_CodeAnalysis_UselessOverridingMethodSniff implements PHP_Co
 
 
 }//end class
-
-?>

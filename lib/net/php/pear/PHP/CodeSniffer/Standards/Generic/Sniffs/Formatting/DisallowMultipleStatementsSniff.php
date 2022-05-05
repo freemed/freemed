@@ -1,31 +1,18 @@
 <?php
 /**
- * Generic_Sniffs_Formatting_DisallowMultipleStatementsSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Generic_Sniffs_Formatting_DisallowMultipleStatementsSniff.
- *
  * Ensures each statement is on a line by itself.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Generic_Sniffs_Formatting_DisallowMultipleStatementsSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Formatting;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class DisallowMultipleStatementsSniff implements Sniff
 {
 
 
@@ -36,7 +23,7 @@ class Generic_Sniffs_Formatting_DisallowMultipleStatementsSniff implements PHP_C
      */
     public function register()
     {
-        return array(T_SEMICOLON);
+        return [T_SEMICOLON];
 
     }//end register()
 
@@ -44,45 +31,75 @@ class Generic_Sniffs_Formatting_DisallowMultipleStatementsSniff implements PHP_C
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens  = $phpcsFile->getTokens();
+        $fixable = true;
+        $prev    = $stackPtr;
 
-        $prev = $phpcsFile->findPrevious(T_SEMICOLON, ($stackPtr - 1));
-        if ($prev === false) {
-            return;
-        }
+        do {
+            $prev = $phpcsFile->findPrevious([T_SEMICOLON, T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_PHPCS_IGNORE], ($prev - 1));
+            if ($prev === false
+                || $tokens[$prev]['code'] === T_OPEN_TAG
+                || $tokens[$prev]['code'] === T_OPEN_TAG_WITH_ECHO
+            ) {
+                $phpcsFile->recordMetric($stackPtr, 'Multiple statements on same line', 'no');
+                return;
+            }
+
+            if ($tokens[$prev]['code'] === T_PHPCS_IGNORE) {
+                $fixable = false;
+            }
+        } while ($tokens[$prev]['code'] === T_PHPCS_IGNORE);
 
         // Ignore multiple statements in a FOR condition.
-        if (isset($tokens[$stackPtr]['nested_parenthesis']) === true) {
-            foreach ($tokens[$stackPtr]['nested_parenthesis'] as $bracket) {
-                if (isset($tokens[$bracket]['parenthesis_owner']) === false) {
-                    // Probably a closure sitting inside a function call.
-                    continue;
-                }
+        foreach ([$stackPtr, $prev] as $checkToken) {
+            if (isset($tokens[$checkToken]['nested_parenthesis']) === true) {
+                foreach ($tokens[$checkToken]['nested_parenthesis'] as $bracket) {
+                    if (isset($tokens[$bracket]['parenthesis_owner']) === false) {
+                        // Probably a closure sitting inside a function call.
+                        continue;
+                    }
 
-                $owner = $tokens[$bracket]['parenthesis_owner'];
-                if ($tokens[$owner]['code'] === T_FOR) {
-                    return;
+                    $owner = $tokens[$bracket]['parenthesis_owner'];
+                    if ($tokens[$owner]['code'] === T_FOR) {
+                        return;
+                    }
                 }
             }
         }
 
         if ($tokens[$prev]['line'] === $tokens[$stackPtr]['line']) {
+            $phpcsFile->recordMetric($stackPtr, 'Multiple statements on same line', 'yes');
+
             $error = 'Each PHP statement must be on a line by itself';
-            $phpcsFile->addError($error, $stackPtr, 'SameLine');
-            return;
-        }
+            $code  = 'SameLine';
+            if ($fixable === false) {
+                $phpcsFile->addError($error, $stackPtr, $code);
+                return;
+            }
+
+            $fix = $phpcsFile->addFixableError($error, $stackPtr, $code);
+            if ($fix === true) {
+                $phpcsFile->fixer->beginChangeset();
+                $phpcsFile->fixer->addNewline($prev);
+                if ($tokens[($prev + 1)]['code'] === T_WHITESPACE) {
+                    $phpcsFile->fixer->replaceToken(($prev + 1), '');
+                }
+
+                $phpcsFile->fixer->endChangeset();
+            }
+        } else {
+            $phpcsFile->recordMetric($stackPtr, 'Multiple statements on same line', 'no');
+        }//end if
 
     }//end process()
 
 
 }//end class
-
-?>

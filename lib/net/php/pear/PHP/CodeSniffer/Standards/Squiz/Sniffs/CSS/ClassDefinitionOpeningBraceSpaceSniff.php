@@ -1,32 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_CSS_ClassDefinitionOpeningBraceSpaceSniff.
+ * Ensure a single space before, and a newline after, the class opening brace
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_CSS_ClassDefinitionOpeningBraceSpaceSniff.
- *
- * Ensure there is a single space before the opening brace in a class definition
- * and the content starts on the next line.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_CSS_ClassDefinitionOpeningBraceSpaceSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\CSS;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class ClassDefinitionOpeningBraceSpaceSniff implements Sniff
 {
 
     /**
@@ -34,7 +21,7 @@ class Squiz_Sniffs_CSS_ClassDefinitionOpeningBraceSpaceSniff implements PHP_Code
      *
      * @var array
      */
-    public $supportedTokenizers = array('CSS');
+    public $supportedTokenizers = ['CSS'];
 
 
     /**
@@ -44,7 +31,7 @@ class Squiz_Sniffs_CSS_ClassDefinitionOpeningBraceSpaceSniff implements PHP_Code
      */
     public function register()
     {
-        return array(T_OPEN_CURLY_BRACKET);
+        return [T_OPEN_CURLY_BRACKET];
 
     }//end register()
 
@@ -52,67 +39,138 @@ class Squiz_Sniffs_CSS_ClassDefinitionOpeningBraceSpaceSniff implements PHP_Code
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        $tokens = $phpcsFile->getTokens();
+        $tokens            = $phpcsFile->getTokens();
+        $prevNonWhitespace = $phpcsFile->findPrevious(T_WHITESPACE, ($stackPtr - 1), null, true);
 
-        if ($tokens[($stackPtr - 1)]['code'] !== T_WHITESPACE) {
-            $error = 'Expected 1 space before opening brace of class definition; 0 found';
-            $phpcsFile->addError($error, $stackPtr, 'NoneBefore');
-        } else {
-            $content = $tokens[($stackPtr - 1)]['content'];
-            if ($content !== ' ') {
-                $length = strlen($content);
-                if ($length === 1) {
+        if ($prevNonWhitespace !== false) {
+            $length = 0;
+            if ($tokens[$stackPtr]['line'] !== $tokens[$prevNonWhitespace]['line']) {
+                $length = 'newline';
+            } else if ($tokens[($stackPtr - 1)]['code'] === T_WHITESPACE) {
+                if (strpos($tokens[($stackPtr - 1)]['content'], "\t") !== false) {
                     $length = 'tab';
+                } else {
+                    $length = $tokens[($stackPtr - 1)]['length'];
                 }
-
-                $error = 'Expected 1 space before opening brace of class definition; %s found';
-                $data  = array($length);
-                $phpcsFile->addError($error, $stackPtr, 'Before', $data);
             }
+
+            if ($length === 0) {
+                $error = 'Expected 1 space before opening brace of class definition; 0 found';
+                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'NoneBefore');
+                if ($fix === true) {
+                    $phpcsFile->fixer->addContentBefore($stackPtr, ' ');
+                }
+            } else if ($length !== 1) {
+                $error = 'Expected 1 space before opening brace of class definition; %s found';
+                $data  = [$length];
+                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'Before', $data);
+                if ($fix === true) {
+                    $phpcsFile->fixer->beginChangeset();
+
+                    for ($i = ($stackPtr - 1); $i > $prevNonWhitespace; $i--) {
+                        $phpcsFile->fixer->replaceToken($i, '');
+                    }
+
+                    $phpcsFile->fixer->addContentBefore($stackPtr, ' ');
+                    $phpcsFile->fixer->endChangeset();
+                }
+            }//end if
         }//end if
 
-        $next = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-        if ($next === false) {
+        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+        if ($nextNonEmpty === false) {
             return;
         }
 
-        // Check for nested class definitions.
-        $nested = false;
-        $found  = $phpcsFile->findNext(
-            T_OPEN_CURLY_BRACKET,
-            ($stackPtr + 1),
-            $tokens[$stackPtr]['bracket_closer']
-        );
-        if ($found !== false) {
-            $nested = true;
-        }
+        if ($tokens[$nextNonEmpty]['line'] === $tokens[$stackPtr]['line']) {
+            $error = 'Opening brace should be the last content on the line';
+            $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'ContentBefore');
+            if ($fix === true) {
+                $phpcsFile->fixer->beginChangeset();
+                $phpcsFile->fixer->addNewline($stackPtr);
 
-        $foundLines = ($tokens[$next]['line'] - $tokens[$stackPtr]['line'] - 1);
-        if ($nested === true) {
-            if ($foundLines !== 1) {
-                $error = 'Expected 1 blank line after opening brace of nesting class definition; %s found';
-                $data  = array($foundLines);
-                $phpcsFile->addError($error, $stackPtr, 'AfterNesting', $data);
+                // Remove potentially left over trailing whitespace.
+                if ($tokens[($stackPtr + 1)]['code'] === T_WHITESPACE) {
+                    $phpcsFile->fixer->replaceToken(($stackPtr + 1), '');
+                }
+
+                $phpcsFile->fixer->endChangeset();
             }
         } else {
-            if ($foundLines !== 0) {
-                $error = 'Expected 0 blank lines after opening brace of class definition; %s found';
-                $data  = array($foundLines);
-                $phpcsFile->addError($error, $stackPtr, 'After', $data);
+            if (isset($tokens[$stackPtr]['bracket_closer']) === false) {
+                // Syntax error or live coding, bow out.
+                return;
             }
-        }
+
+            // Check for nested class definitions.
+            $found = $phpcsFile->findNext(
+                T_OPEN_CURLY_BRACKET,
+                ($stackPtr + 1),
+                $tokens[$stackPtr]['bracket_closer']
+            );
+
+            if ($found === false) {
+                // Not nested.
+                return;
+            }
+
+            $lastOnLine = $stackPtr;
+            for ($lastOnLine; $lastOnLine < $tokens[$stackPtr]['bracket_closer']; $lastOnLine++) {
+                if ($tokens[$lastOnLine]['line'] !== $tokens[($lastOnLine + 1)]['line']) {
+                    break;
+                }
+            }
+
+            $nextNonWhiteSpace = $phpcsFile->findNext(T_WHITESPACE, ($lastOnLine + 1), null, true);
+            if ($nextNonWhiteSpace === false) {
+                return;
+            }
+
+            $foundLines = ($tokens[$nextNonWhiteSpace]['line'] - $tokens[$stackPtr]['line'] - 1);
+            if ($foundLines !== 1) {
+                $error = 'Expected 1 blank line after opening brace of nesting class definition; %s found';
+                $data  = [max(0, $foundLines)];
+                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'AfterNesting', $data);
+
+                if ($fix === true) {
+                    $firstOnNextLine = $nextNonWhiteSpace;
+                    while ($tokens[$firstOnNextLine]['column'] !== 1) {
+                        --$firstOnNextLine;
+                    }
+
+                    if ($found < 0) {
+                        // First statement on same line as the opening brace.
+                        $phpcsFile->fixer->addContentBefore($nextNonWhiteSpace, $phpcsFile->eolChar.$phpcsFile->eolChar);
+                    } else if ($found === 0) {
+                        // Next statement on next line, no blank line.
+                        $phpcsFile->fixer->addNewlineBefore($firstOnNextLine);
+                    } else {
+                        // Too many blank lines.
+                        $phpcsFile->fixer->beginChangeset();
+                        for ($i = ($firstOnNextLine - 1); $i > $stackPtr; $i--) {
+                            if ($tokens[$i]['code'] !== T_WHITESPACE) {
+                                break;
+                            }
+
+                            $phpcsFile->fixer->replaceToken($i, '');
+                        }
+
+                        $phpcsFile->fixer->addContentBefore($firstOnNextLine, $phpcsFile->eolChar.$phpcsFile->eolChar);
+                        $phpcsFile->fixer->endChangeset();
+                    }
+                }//end if
+            }//end if
+        }//end if
 
     }//end process()
 
 
 }//end class
-
-?>

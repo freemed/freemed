@@ -1,33 +1,19 @@
 <?php
 /**
- * Squiz_Sniffs_Classes_ValidClassNameSniff.
+ * Ensures classes are in camel caps, and the first letter is capitalised.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * Squiz_Sniffs_Classes_ValidClassNameSniff.
- *
- * Ensures classes are in camel caps, and the first letter is capitalised
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Classes_ValidClassNameSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Classes;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Common;
+
+class ValidClassNameSniff implements Sniff
 {
 
 
@@ -38,10 +24,11 @@ class Squiz_Sniffs_Classes_ValidClassNameSniff implements PHP_CodeSniffer_Sniff
      */
     public function register()
     {
-        return array(
-                T_CLASS,
-                T_INTERFACE,
-               );
+        return [
+            T_CLASS,
+            T_INTERFACE,
+            T_TRAIT,
+        ];
 
     }//end register()
 
@@ -49,19 +36,19 @@ class Squiz_Sniffs_Classes_ValidClassNameSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The current file being processed.
-     * @param int                  $stackPtr  The position of the current token in the
-     *                                        stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The current file being processed.
+     * @param int                         $stackPtr  The position of the current token in the
+     *                                               stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
         if (isset($tokens[$stackPtr]['scope_opener']) === false) {
             $error = 'Possible parse error: %s missing opening or closing brace';
-            $data  = array($tokens[$stackPtr]['content']);
+            $data  = [$tokens[$stackPtr]['content']];
             $phpcsFile->addWarning($error, $stackPtr, 'MissingBrace', $data);
             return;
         }
@@ -72,24 +59,28 @@ class Squiz_Sniffs_Classes_ValidClassNameSniff implements PHP_CodeSniffer_Sniff
         $opener    = $tokens[$stackPtr]['scope_opener'];
         $nameStart = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), $opener, true);
         $nameEnd   = $phpcsFile->findNext(T_WHITESPACE, $nameStart, $opener);
-        $name      = trim($phpcsFile->getTokensAsString($nameStart, ($nameEnd - $nameStart)));
+        if ($nameEnd === false) {
+            $name = $tokens[$nameStart]['content'];
+        } else {
+            $name = trim($phpcsFile->getTokensAsString($nameStart, ($nameEnd - $nameStart)));
+        }
 
-        // Check for camel caps format.
-        $valid = PHP_CodeSniffer::isCamelCaps($name, true, true, false);
+        // Check for PascalCase format.
+        $valid = Common::isCamelCaps($name, true, true, false);
         if ($valid === false) {
             $type  = ucfirst($tokens[$stackPtr]['content']);
-            $error = '%s name "%s" is not in camel caps format';
-            $data  = array(
-                      $type,
-                      $name,
-                     );
+            $error = '%s name "%s" is not in PascalCase format';
+            $data  = [
+                $type,
+                $name,
+            ];
             $phpcsFile->addError($error, $stackPtr, 'NotCamelCaps', $data);
+            $phpcsFile->recordMetric($stackPtr, 'PascalCase class name', 'no');
+        } else {
+            $phpcsFile->recordMetric($stackPtr, 'PascalCase class name', 'yes');
         }
 
     }//end process()
 
 
 }//end class
-
-
-?>

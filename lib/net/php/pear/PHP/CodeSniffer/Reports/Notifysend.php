@@ -2,37 +2,25 @@
 /**
  * Notify-send report for PHP_CodeSniffer.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Christian Weiske <christian.weiske@netresearch.de>
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2012-2014 Christian Weiske
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Notify-send report for PHP_CodeSniffer.
- *
  * Supported configuration parameters:
  * - notifysend_path    - Full path to notify-send cli command
  * - notifysend_timeout - Timeout in milliseconds
  * - notifysend_showok  - Show "ok, all fine" messages (0/1)
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Christian Weiske <christian.weiske@netresearch.de>
  * @author    Greg Sherwood <gsherwood@squiz.net>
  * @copyright 2012-2014 Christian Weiske
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
+
+namespace PHP_CodeSniffer\Reports;
+
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Util\Common;
+
+class Notifysend implements Report
 {
 
     /**
@@ -63,44 +51,31 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
      */
     protected $version = null;
 
-    /**
-     * A record of the last file checked.
-     *
-     * This is used in case we only checked one file and need to print
-     * the name/path of the file. We wont have access to the checked file list
-     * after the run has been completed.
-     *
-     * @var string
-     */
-    private $_lastCheckedFile = '';
-
 
     /**
      * Load configuration data.
-     *
-     * @return void
      */
     public function __construct()
     {
-        $path = PHP_CodeSniffer::getConfigData('notifysend_path');
+        $path = Config::getExecutablePath('notifysend');
         if ($path !== null) {
-            $this->path = $path;
+            $this->path = Common::escapeshellcmd($path);
         }
 
-        $timeout = PHP_CodeSniffer::getConfigData('notifysend_timeout');
+        $timeout = Config::getConfigData('notifysend_timeout');
         if ($timeout !== null) {
             $this->timeout = (int) $timeout;
         }
 
-        $showOk = PHP_CodeSniffer::getConfigData('notifysend_showok');
+        $showOk = Config::getConfigData('notifysend_showok');
         if ($showOk !== null) {
-            $this->showOk = (boolean) $showOk;
+            $this->showOk = (bool) $showOk;
         }
 
         $this->version = str_replace(
             'notify-send ',
             '',
-            exec($this->path . ' --version')
+            exec($this->path.' --version')
         );
 
     }//end __construct()
@@ -113,20 +88,19 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
      * and FALSE if it ignored the file. Returning TRUE indicates that the file and
      * its data should be counted in the grand totals.
      *
-     * @param array   $report      Prepared report data.
-     * @param boolean $showSources Show sources?
-     * @param int     $width       Maximum allowed line width.
+     * @param array                 $report      Prepared report data.
+     * @param \PHP_CodeSniffer\File $phpcsFile   The file being reported on.
+     * @param bool                  $showSources Show sources?
+     * @param int                   $width       Maximum allowed line width.
      *
-     * @return boolean
+     * @return bool
      */
-    public function generateFileReport(
-        $report,
-        $showSources=false,
-        $width=80
-    ) {
-        // We don't need to print anything, but we want this file counted
-        // in the total number of checked files even if it has no errors.
-        $this->_lastCheckedFile = $report['filename'];
+    public function generateFileReport($report, File $phpcsFile, $showSources=false, $width=80)
+    {
+        echo $report['filename'].PHP_EOL;
+
+        // We want this file counted in the total number
+        // of checked files even if it has no errors.
         return true;
 
     }//end generateFileReport()
@@ -135,14 +109,16 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
     /**
      * Generates a summary of errors and warnings for each file processed.
      *
-     * @param string  $cachedData    Any partial report data that was returned from
-     *                               generateFileReport during the run.
-     * @param int     $totalFiles    Total number of files processed during the run.
-     * @param int     $totalErrors   Total number of errors found during the run.
-     * @param int     $totalWarnings Total number of warnings found during the run.
-     * @param boolean $showSources   Show sources?
-     * @param int     $width         Maximum allowed line width.
-     * @param boolean $toScreen      Is the report being printed to screen?
+     * @param string $cachedData    Any partial report data that was returned from
+     *                              generateFileReport during the run.
+     * @param int    $totalFiles    Total number of files processed during the run.
+     * @param int    $totalErrors   Total number of errors found during the run.
+     * @param int    $totalWarnings Total number of warnings found during the run.
+     * @param int    $totalFixable  Total number of problems that can be fixed.
+     * @param bool   $showSources   Show sources?
+     * @param int    $width         Maximum allowed line width.
+     * @param bool   $interactive   Are we running in interactive mode?
+     * @param bool   $toScreen      Is the report being printed to screen?
      *
      * @return void
      */
@@ -151,11 +127,15 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
         $totalFiles,
         $totalErrors,
         $totalWarnings,
+        $totalFixable,
         $showSources=false,
         $width=80,
+        $interactive=false,
         $toScreen=true
     ) {
-        $msg = $this->generateMessage($totalFiles, $totalErrors, $totalWarnings);
+        $checkedFiles = explode(PHP_EOL, trim($cachedData));
+
+        $msg = $this->generateMessage($checkedFiles, $totalErrors, $totalWarnings);
         if ($msg === null) {
             if ($this->showOk === true) {
                 $this->notifyAllFine();
@@ -170,24 +150,26 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
     /**
      * Generate the error message to show to the user.
      *
-     * @param int $totalFiles    Total number of files processed during the run.
-     * @param int $totalErrors   Total number of errors found during the run.
-     * @param int $totalWarnings Total number of warnings found during the run.
+     * @param string[] $checkedFiles  The files checked during the run.
+     * @param int      $totalErrors   Total number of errors found during the run.
+     * @param int      $totalWarnings Total number of warnings found during the run.
      *
      * @return string Error message or NULL if no error/warning found.
      */
-    protected function generateMessage($totalFiles, $totalErrors, $totalWarnings)
+    protected function generateMessage($checkedFiles, $totalErrors, $totalWarnings)
     {
         if ($totalErrors === 0 && $totalWarnings === 0) {
             // Nothing to print.
             return null;
         }
 
+        $totalFiles = count($checkedFiles);
+
         $msg = '';
         if ($totalFiles > 1) {
             $msg .= 'Checked '.$totalFiles.' files'.PHP_EOL;
         } else {
-            $msg .= $this->_lastCheckedFile.PHP_EOL;
+            $msg .= $checkedFiles[0].PHP_EOL;
         }
 
         if ($totalWarnings > 0) {
@@ -244,7 +226,7 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
      */
     protected function getBasicCommand()
     {
-        $cmd  = escapeshellcmd($this->path);
+        $cmd  = $this->path;
         $cmd .= ' --category dev.validate';
         $cmd .= ' -h int:transient:1';
         $cmd .= ' -t '.(int) $this->timeout;
@@ -258,5 +240,3 @@ class PHP_CodeSniffer_Reports_Notifysend implements PHP_CodeSniffer_Report
 
 
 }//end class
-
-?>

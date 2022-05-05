@@ -2,40 +2,19 @@
 /**
  * JUnit report for PHP_CodeSniffer.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Oleg Lobach <oleg@lobach.info>
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
-/**
- * JUnit report for PHP_CodeSniffer.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Oleg Lobach <oleg@lobach.info>
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class PHP_CodeSniffer_Reports_Junit implements PHP_CodeSniffer_Report
+namespace PHP_CodeSniffer\Reports;
+
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Files\File;
+
+class Junit implements Report
 {
-
-    /**
-     * A count of tests that have been performed.
-     *
-     * @var int
-     */
-    private $_tests = 0;
 
 
     /**
@@ -45,29 +24,22 @@ class PHP_CodeSniffer_Reports_Junit implements PHP_CodeSniffer_Report
      * and FALSE if it ignored the file. Returning TRUE indicates that the file and
      * its data should be counted in the grand totals.
      *
-     * @param array   $report      Prepared report data.
-     * @param boolean $showSources Show sources?
-     * @param int     $width       Maximum allowed line width.
+     * @param array                 $report      Prepared report data.
+     * @param \PHP_CodeSniffer\File $phpcsFile   The file being reported on.
+     * @param bool                  $showSources Show sources?
+     * @param int                   $width       Maximum allowed line width.
      *
-     * @return boolean
+     * @return bool
      */
-    public function generateFileReport(
-        $report,
-        $showSources=false,
-        $width=80
-    ) {
-        if (count($report['messages']) === 0) {
-            $this->_tests++;
-        } else {
-            $this->_tests += ($report['errors'] + $report['warnings']);
-        }
-
-        $out = new XMLWriter;
+    public function generateFileReport($report, File $phpcsFile, $showSources=false, $width=80)
+    {
+        $out = new \XMLWriter;
         $out->openMemory();
         $out->setIndent(true);
 
         $out->startElement('testsuite');
         $out->writeAttribute('name', $report['filename']);
+        $out->writeAttribute('errors', 0);
 
         if (count($report['messages']) === 0) {
             $out->writeAttribute('tests', 1);
@@ -88,8 +60,8 @@ class PHP_CodeSniffer_Reports_Junit implements PHP_CodeSniffer_Report
                         $out->writeAttribute('name', $error['source'].' at '.$report['filename']." ($line:$column)");
 
                         $error['type'] = strtolower($error['type']);
-                        if (PHP_CODESNIFFER_ENCODING !== 'utf-8') {
-                            $error['message'] = iconv(PHP_CODESNIFFER_ENCODING, 'utf-8', $error['message']);
+                        if ($phpcsFile->config->encoding !== 'utf-8') {
+                            $error['message'] = iconv($phpcsFile->config->encoding, 'utf-8', $error['message']);
                         }
 
                         $out->startElement('failure');
@@ -113,14 +85,16 @@ class PHP_CodeSniffer_Reports_Junit implements PHP_CodeSniffer_Report
     /**
      * Prints all violations for processed files, in a proprietary XML format.
      *
-     * @param string  $cachedData    Any partial report data that was returned from
-     *                               generateFileReport during the run.
-     * @param int     $totalFiles    Total number of files processed during the run.
-     * @param int     $totalErrors   Total number of errors found during the run.
-     * @param int     $totalWarnings Total number of warnings found during the run.
-     * @param boolean $showSources   Show sources?
-     * @param int     $width         Maximum allowed line width.
-     * @param boolean $toScreen      Is the report being printed to screen?
+     * @param string $cachedData    Any partial report data that was returned from
+     *                              generateFileReport during the run.
+     * @param int    $totalFiles    Total number of files processed during the run.
+     * @param int    $totalErrors   Total number of errors found during the run.
+     * @param int    $totalWarnings Total number of warnings found during the run.
+     * @param int    $totalFixable  Total number of problems that can be fixed.
+     * @param bool   $showSources   Show sources?
+     * @param int    $width         Maximum allowed line width.
+     * @param bool   $interactive   Are we running in interactive mode?
+     * @param bool   $toScreen      Is the report being printed to screen?
      *
      * @return void
      */
@@ -129,13 +103,25 @@ class PHP_CodeSniffer_Reports_Junit implements PHP_CodeSniffer_Report
         $totalFiles,
         $totalErrors,
         $totalWarnings,
+        $totalFixable,
         $showSources=false,
         $width=80,
+        $interactive=false,
         $toScreen=true
     ) {
+        // Figure out the total number of tests.
+        $tests   = 0;
+        $matches = [];
+        preg_match_all('/tests="([0-9]+)"/', $cachedData, $matches);
+        if (isset($matches[1]) === true) {
+            foreach ($matches[1] as $match) {
+                $tests += $match;
+            }
+        }
+
         $failures = ($totalErrors + $totalWarnings);
         echo '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
-        echo '<testsuites name="PHP_CodeSniffer '.PHP_CodeSniffer::VERSION.'" tests="'.$this->_tests.'" failures="'.$failures.'">'.PHP_EOL;
+        echo '<testsuites name="PHP_CodeSniffer '.Config::VERSION.'" errors="0" tests="'.$tests.'" failures="'.$failures.'">'.PHP_EOL;
         echo $cachedData;
         echo '</testsuites>'.PHP_EOL;
 
@@ -143,5 +129,3 @@ class PHP_CodeSniffer_Reports_Junit implements PHP_CodeSniffer_Report
 
 
 }//end class
-
-?>

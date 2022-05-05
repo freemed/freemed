@@ -1,22 +1,8 @@
 <?php
 /**
- * This file is part of the CodeAnalysis addon for PHP_CodeSniffer.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Manuel Pichler <mapi@manuel-pichler.de>
- * @copyright 2007-2014 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
  * Detects incrementer jumbling in for loops.
- * 
- * This rule is based on the PMD rule catalog. The jumbling incrementer sniff
+ *
+ * This rule is based on the PMD rule catalogue. The jumbling incrementer sniff
  * detects the usage of one and the same incrementer into an outer and an inner
  * loop. Even it is intended this is confusing code.
  *
@@ -36,15 +22,17 @@
  * }
  * </code>
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Manuel Pichler <mapi@manuel-pichler.de>
  * @copyright 2007-2014 Manuel Pichler. All rights reserved.
- * @license   http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Generic_Sniffs_CodeAnalysis_JumbledIncrementerSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\CodeAnalysis;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class JumbledIncrementerSniff implements Sniff
 {
 
 
@@ -55,7 +43,7 @@ class Generic_Sniffs_CodeAnalysis_JumbledIncrementerSniff implements PHP_CodeSni
      */
     public function register()
     {
-        return array(T_FOR);
+        return [T_FOR];
 
     }//end register()
 
@@ -63,13 +51,13 @@ class Generic_Sniffs_CodeAnalysis_JumbledIncrementerSniff implements PHP_CodeSni
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
@@ -101,7 +89,7 @@ class Generic_Sniffs_CodeAnalysis_JumbledIncrementerSniff implements PHP_CodeSni
 
             if (count($diff) !== 0) {
                 $error = 'Loop incrementor (%s) jumbling with inner loop';
-                $data  = array(join(', ', $diff));
+                $data  = [join(', ', $diff)];
                 $phpcsFile->addWarning($error, $stackPtr, 'Found', $data);
             }
         }
@@ -114,20 +102,20 @@ class Generic_Sniffs_CodeAnalysis_JumbledIncrementerSniff implements PHP_CodeSni
      *
      * @param array(integer=>array) $tokens Array with all code sniffer tokens.
      * @param array(string=>mixed)  $token  Current for loop token
-     * 
+     *
      * @return string[] List of all found incrementer variables.
      */
     protected function findIncrementers(array $tokens, array $token)
     {
         // Skip invalid statement.
         if (isset($token['parenthesis_opener']) === false) {
-            return array();
+            return [];
         }
 
         $start = ++$token['parenthesis_opener'];
         $end   = --$token['parenthesis_closer'];
 
-        $incrementers = array();
+        $incrementers = [];
         $semicolons   = 0;
         for ($next = $start; $next <= $end; ++$next) {
             $code = $tokens[$next]['code'];
@@ -144,5 +132,3 @@ class Generic_Sniffs_CodeAnalysis_JumbledIncrementerSniff implements PHP_CodeSni
 
 
 }//end class
-
-?>
