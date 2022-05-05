@@ -5,7 +5,7 @@
  //      Jeff Buchbinder <jeff@freemedsoftware.org>
  //
  // FreeMED Electronic Medical Record and Practice Management System
- // Copyright (C) 1999-2012 FreeMED Software Foundation
+ // Copyright (C) 1999-2019 FreeMED Software Foundation
  //
  // This program is free software; you can redistribute it and/or modify
  // it under the terms of the GNU General Public License as published by
@@ -24,14 +24,17 @@
 // Class: org.freemedsoftware.api.Remitt
 //
 //	Communication and document creation class for interfacing with
-//	a REMITT server.
+//	a REMITT server. Calling the constructor with TRUE forces use of
+//  the new REST protocol rather than the older SOAP protocol.
 //
 class Remitt {
 
 	protected $ref; // references hash
 	protected $_cache; // result cache
+	protected $rest;
 
-	public function __construct ( ) {
+	public function __construct ( $rest = false ) {
+		$this->rest = $rest; // retain whether or not this is rest vs soap
 		$this->url = freemed::config_value('remitt_url');
 		$this->username = freemed::config_value('remitt_user'); 
 		$this->password = freemed::config_value('remitt_pass'); 
@@ -49,14 +52,17 @@ class Remitt {
 	//	returning contents. Defaults to false.
 	//
 	public function GetFile ( $type, $filename, $serve = false ) {
-		$sc = $this->getSoapClient( );
-		$params = (object) array(
-			  'category' => $type
-			, 'filename' => $filename
-		);
-		$out = ( $sc->getFile( $params )->return );
-		syslog(LOG_INFO, $sc->__getLastRequest());
-		syslog(LOG_INFO, $sc->__getLastResponse());
+		if ($this->rest) {
+			$rc = $this->getRestClient( printf( '/file/get/%s/%s', urlencode($type), urlencode($filename) ) );
+			$out = $rc->send()->getBody();
+		} else {
+			$sc = $this->getSoapClient( );
+			$params = (object) array(
+				'category' => $type
+				, 'filename' => $filename
+			);
+			$out = ( $sc->getFile( $params )->return );
+		}
 		if ($serve) {
 			switch (true) {
 				case (substr($serve,0,4) == '%PDF'):
@@ -84,13 +90,20 @@ class Remitt {
 	//	Array of files
 	//
 	public function GetFileList ( $type, $criteria, $value ) {
-		$sc = $this->getSoapClient( );
-		$params = (object) array(
-			  'category' => $type
-			, 'criteria' => $criteria
-			, 'value' => $value
-		);
-		$return = (array)( $sc->getFileList( $params )->return );
+		if ($this->rest) {
+			$rc = $this->getRestClient( printf( '/file/list/%s/%s/%s', urlencode($type), urlencode($criteria), urlencode($value) ) );
+			$out = $rc->send()->getBody();
+			$json = CreateObject('net.php.pear.Services_JSON');
+            $return = $json->decode( $out );
+		} else {
+			$sc = $this->getSoapClient( );
+			$params = (object) array(
+				'category' => $type
+				, 'criteria' => $criteria
+				, 'value' => $value
+			);
+			$return = (array)( $sc->getFileList( $params )->return );
+		}
 		if ($return['filename'] != '') {
 			return array($return);
 		}
@@ -107,9 +120,16 @@ class Remitt {
 	//	Version number.
 	//
 	public function GetProtocolVersion ( ) {
-		$sc = $this->getSoapClient( );
-		$params = (object) array( );
-		return ( $sc->getProtocolVersion( $params )->return );
+		if ($this->rest) {
+			$rc = $this->getRestClient( '/version' );
+			$out = $rc->send()->getBody();
+			$json = CreateObject('net.php.pear.Services_JSON');
+            return $json->decode( $out );
+		} else {
+			$sc = $this->getSoapClient( );
+			$params = (object) array( );
+			return ( $sc->getProtocolVersion( $params )->return );
+		}
 	} // end method GetProtocolVersion
 
 	// Method: GetServerStatus
@@ -152,11 +172,19 @@ class Remitt {
 		if (!$this->GetServerStatus()) {
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
-		$sc = $this->getSoapClient( );
-		$params = (object) array(
-			'jobId' => $unique
-		);
-		return ( $sc->getStatus( $params )->return );
+		if ($this->rest) {
+			$rc = $this->getRestClient( printf( '/status/%s', urlencode($unique) ) );
+			$out = $rc->send()->getBody();
+			$json = CreateObject('net.php.pear.Services_JSON');
+			$obj = $json->decode( $out );
+			return $obj['status'];
+		} else {
+			$sc = $this->getSoapClient( );
+			$params = (object) array(
+				'jobId' => $unique
+			);
+			return ( $sc->getStatus( $params )->return );
+		}
 	} // end method GetStatus
 
 	// Method: GetEligibility
@@ -313,11 +341,18 @@ class Remitt {
 	//	Hash of years => number of output files available.
 	//
 	public function ListOutputMonths ( $year ) {
-		$sc = $this->getSoapClient( );
-		$params = (object) array(
-			'targetYear' => (int) $year
-		);
-		$months = $sc->getOutputMonths( $params )->return;
+		if ($this->rest) {
+			$rc = $this->getRestClient( printf( '/file/listgroups/month/%s', urlencode($year) ) );
+			$out = $rc->send()->getBody();
+			$json = CreateObject('net.php.pear.Services_JSON');
+			$months = $json->decode( $out );
+		} else {
+			$sc = $this->getSoapClient( );
+			$params = (object) array(
+				'targetYear' => (int) $year
+			);
+			$months = $sc->getOutputMonths( $params )->return;
+		}
 		return $months;
 	} // end method ListOutputMonths
 			
@@ -330,9 +365,16 @@ class Remitt {
 	//	Hash of years => number of output files available.
 	//
 	public function ListOutputYears ( ) {
-		$sc = $this->getSoapClient( );
-		$params = (object) array( );
-		$years = $sc->getOutputYears( $params )->return;
+		if ($this->rest) {
+			$rc = $this->getRestClient( '/file/listgroups/year' );
+			$out = $rc->send()->getBody();
+			$json = CreateObject('net.php.pear.Services_JSON');
+			$years = $json->decode( $out );
+		} else {
+			$sc = $this->getSoapClient( );
+			$params = (object) array( );
+			$years = $sc->getOutputYears( $params )->return;
+		}
 		return $years;
 	} // end method ListOutputYears
 			
@@ -361,12 +403,7 @@ class Remitt {
 			syslog(LOG_INFO, "api.Remitt.ProcessBill: The REMITT server is not running");
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
-		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
-		syslog(LOG_INFO, "api.Remitt.ProcessBill: before RenderPayerXML");
-		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $billkey_hash['contact'], $billkey_hash['service'], $billkey_hash['clearinghouse']);
-		//syslog(LOG_INFO, "api.Remitt.ProcessBill: ".$xml);
-		$sc = $this->getSoapClient( );
-		$params = /* (object) */ array(
+		$params = (object) array(
 			  'inputPayload' => $xml
 			, 'originalId' => (string) $billkey
 			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
@@ -374,11 +411,20 @@ class Remitt {
 			, 'transportPlugin' => $transportPlugin
 			, 'transportOption' => $transportOption
 		);
-		$ret = $sc->insertPayload( $params );
-		syslog(LOG_INFO, $sc->__getLastRequest());
-		syslog(LOG_INFO, $sc->__getLastResponse());
-		syslog(LOG_INFO, "api.Remitt.ProcessBill: ".print_r($ret, true));
-		return $ret->return;
+		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
+		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $billkey_hash['contact'], $billkey_hash['service'], $billkey_hash['clearinghouse']);
+
+		if ($this->rest) {
+			$json = CreateObject('net.php.pear.Services_JSON');
+			$rc = $this->getRestClient( '/payload/' );
+			$rc->setMethod(HTTP_Request2::METHOD_POST);
+			$rc->setBody($json->encode( $params ));
+			$out = $rc->send()->getBody();
+			return $json->decode( $out );
+		} else {
+			$sc = $this->getSoapClient( );
+			return $sc->insertPayload( $params )->return;
+		}
 	} // end method ProcessBill
 
 	// Method: ProcessStatement
@@ -388,8 +434,6 @@ class Remitt {
 		}
 		// For now, just use the first ones ...
 		$xml = $this->RenderStatementXML($procedures);
-		//print "length of xml = ".strlen($xml)."<br/>\n";
-		$sc = $this->getSoapClient( );
 		$params = (object) array(
 			  'inputPayload' => $xml
 			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
@@ -397,7 +441,19 @@ class Remitt {
 			, 'transportPlugin' => 'org.remitt.plugin.transmission.StoreFile'
 			, 'transportOption' => ''
 		);
-		return $sc->insertPayload( $params )->return;
+
+		//print "length of xml = ".strlen($xml)."<br/>\n";
+		if ($this->rest) {
+			$json = CreateObject('net.php.pear.Services_JSON');
+			$rc = $this->getRestClient( '/payload/' );
+			$rc->setMethod(HTTP_Request2::METHOD_POST);
+			$rc->setBody($json->encode( $params ));
+			$out = $rc->send()->getBody();
+			return $json->decode( $out );
+		} else {
+			$sc = $this->getSoapClient( );
+			return $sc->insertPayload( $params )->return;
+		}
 	} // end method ProcessStatement
 
 	// Method: StoreBillKey
@@ -1238,6 +1294,12 @@ class Remitt {
 		));
 		return $sc;
 	} // end method getSoapClient
+
+	protected function getRestClient( $endpoint ) {
+		$o = CreateObject('net.php.pear.HTTP_Request2',
+			'http://'.urlencode($this->username).':'.urlencode($this->password).'@'.$this->url.'/api'.$endpoint);
+		return $o;
+	}
 
 } // end class Remitt
 
