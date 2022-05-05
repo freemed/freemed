@@ -50,10 +50,10 @@ if (file_exists(dirname(__FILE__).'/settings.php')) {
 }
 
 //----- Make sure we have enough memory without having to edit {php,php4,php5}.ini
-if (ini_get('memory_limit')+0 < 64) {
+if (ini_get('memory_limit') < 64) {
 	@ini_set('memory_limit', '64M');
 }
-if (ini_get('post_max_size')+0 < 64) {
+if (ini_get('post_max_size') < 64) {
 	@ini_set('post_max_size', '64M');
 }
 
@@ -116,13 +116,15 @@ if (!defined('SESSION_DISABLE') and !defined('SKIP_SQL_INIT')) {
 	HTTP_Session2::useCookies(true);
 
 	// using an existing MDB2 connection
+	/*
 	HTTP_Session2::setContainer(
-		  'MDB2'
+		  'DB'
 		, array (
 			  'dsn'   => $GLOBALS['sql']->GetMDB2Object()
 			, 'table' => 'session'
 		)
 	);
+	 */
 
 	HTTP_Session2::start( );
  

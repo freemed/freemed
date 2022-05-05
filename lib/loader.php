@@ -92,7 +92,7 @@ function InstantiateClass( $path, $class_name ) {
 	if ( ! defined('SHM_CACHE') or ! SHM_CACHE ) {
 		//syslog( LOG_DEBUG, "InstantiateClass : not caching {$class_name} for session {$session_id}" );
 		include_once( $path );
-		$x = new ${class_name};
+		$x = new $class_name;
 		return $x;
 	}
 
