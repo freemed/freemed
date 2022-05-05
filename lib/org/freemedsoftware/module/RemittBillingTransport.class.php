@@ -234,6 +234,8 @@ class RemittBillingTransport extends BillingModule {
 		// patients in a quasi-alphabetical order. Any better
 		// suggestions are welcomed.  - Jeff
 		$query = "SELECT DISTINCT(a.procpatient) AS patient_id, COUNT(a.id) AS claim_count, GROUP_CONCAT(a.id) AS claims, CONCAT(b.ptlname, ', ', b.ptfname, ' ', b.ptmname, ' [', b.ptid, ']') AS patient, b.ptdob AS date_of_birth, DATE_FORMAT(b.ptdob, '%m/%d/%Y') AS date_of_birth_mdy FROM procrec a LEFT OUTER JOIN patient b ON a.procpatient=b.id WHERE a.procbalcurrent > '0' AND a.proccurcovtp > 0 AND a.procbilled = '0' GROUP BY a.procpatient ORDER BY b.ptlname,b.ptfname,b.ptmname,b.ptdob";
+		// TEMP HACK:
+		//$query = "SELECT DISTINCT(a.procpatient) AS patient_id, COUNT(a.id) AS claim_count, GROUP_CONCAT(a.id) AS claims, CONCAT(b.ptlname, ', ', b.ptfname, ' ', b.ptmname, ' [', b.ptid, ']') AS patient, b.ptdob AS date_of_birth, DATE_FORMAT(b.ptdob, '%m/%d/%Y') AS date_of_birth_mdy FROM procrec a LEFT OUTER JOIN patient b ON a.procpatient=b.id WHERE a.procbalcurrent > '0' AND a.proccurcovtp > 0 AND a.procbilled = '0' AND a.procdt <= '2015-09-30' GROUP BY a.procpatient ORDER BY b.ptlname,b.ptfname,b.ptmname,b.ptdob";
 
 		$res = $GLOBALS['sql']->queryAll($query);
 
@@ -268,6 +270,8 @@ class RemittBillingTransport extends BillingModule {
 			//"procbillable = '0' AND ".
 			// No patient responsibility bills
 			"proccurcovtp > 0 AND ".
+			// TEMP HACK
+			//"procdt <= '2015-09-30' AND ".
 			// (Not sure) Needs not to be billed already
 			"procbilled = '0' ".
 			// Order by date of procedure
@@ -328,8 +332,11 @@ class RemittBillingTransport extends BillingModule {
 	//	* Number of claims in billkey
 	//
 	public function ProcessClaims ( $patients, $claims, $overrides=NULL, $clearinghouse = 1, $contact = 1, $service = 1 ) {
+		syslog(LOG_INFO, "ProcessClaims for ".count($patients)." patients and ".count($claims)." claims");
 		// Boiler plate for dealing with REMITT
+		syslog(LOG_INFO, "Instantiate Remitt object");
 		$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
+		syslog(LOG_INFO, "Instantiate Remitt object -- after");
 
 		// Create new ClaimLog instance
 		$claimlog = CreateObject ('org.freemedsoftware.api.ClaimLog');
@@ -393,8 +400,10 @@ class RemittBillingTransport extends BillingModule {
 
 			// Get format and target from default
 			list ( $my_format, $my_target, $my_targetopt, $batch_id ) = explode ( '/', $k );
+			$item_result = $remitt->ProcessBill( $this_billkey, $my_format, $my_target, $my_targetopt );
+			syslog(LOG_INFO, "ProcessClaims: result = ".print_r($item_result, true).", billkey = $this_billkey, format = $my_format, target = $my_target");
 			$results[] = array (
-				'result' => "".($remitt->ProcessBill( $this_billkey, $my_format, $my_target, $my_targetopt )),
+				'result' => "".$item_result,
 				'billkey' => "".$this_billkey,
 				'format' => $my_format,
 				'target' => $my_target

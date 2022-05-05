@@ -115,6 +115,11 @@ class PatientDataStore {
 			return false;
 		}
 
+		// If we have a PDF but need a JPEG ...
+		if ( substr($r['contents'], 0, 4) == '%PDF' && $filetype == 'image/jpeg' ) {
+			// Convert
+		}
+
 		Header( "Content-Type: ${filetype}" );
 		header( "Content-Length: " .(string)( strlen( $r['contents'] ) ) );
 		header( "Content-Transfer-Encoding: binary" );
