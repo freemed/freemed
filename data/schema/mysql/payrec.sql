@@ -81,6 +81,13 @@ CREATE TRIGGER payrec_Delete
 CREATE TRIGGER payrec_Insert
 	AFTER INSERT ON payrec
 	FOR EACH ROW BEGIN
+		DECLARE EXIT HANDLER FOR SQLEXCEPTION
+			RESIGNAL;
+		DECLARE EXIT HANDLER FOR SQLWARNING
+			RESIGNAL;
+		DECLARE EXIT HANDLER FOR NOT FOUND
+			RESIGNAL;
+
 		# EMR aggregation
 		INSERT INTO `patient_emr` ( module, patient, oid, stamp, summary, locked, user, status ) VALUES ( 'payrec', NEW.payrecpatient, NEW.id, NOW(), NEW.payrecdescrip, NEW.payreclock, NEW.user, NEW.active );
 

@@ -253,6 +253,13 @@ CREATE TRIGGER procrec_PreInsert
 CREATE TRIGGER procrec_PreUpdate
 	BEFORE UPDATE ON procrec
 	FOR EACH ROW BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        RESIGNAL;
+    DECLARE EXIT HANDLER FOR SQLWARNING
+        RESIGNAL;
+    DECLARE EXIT HANDLER FOR NOT FOUND
+        RESIGNAL; 
+
 		# Set charges and balance
 		#SET NEW.procbalcurrent = NEW.procbalorig;
 		#SET NEW.procbilled = 0;
@@ -401,20 +408,20 @@ CREATE TRIGGER procrec_Update
 		END IF;
 
 		# Update payment record
-		UPDATE payrec SET
-				  payrecdtmod = NOW()
-				, payrecdt = NEW.procdt
-				, payrecsource = NEW.proccurcovtp
-				, payreclink = NEW.proccurcovid
-				, payrectype = 0
-				, payrecnum = ""
-				, payrecamt = NEW.procbalorig
-				, payrecdescrip = NEW.proccomment
-				, payreclock = "unlocked"
-			WHERE
-				    payrecproc = NEW.id
-				AND payreccat = 5
-				AND payrectype = 0;
+		#UPDATE payrec SET
+		#		  payrecdtmod = NOW()
+		#		, payrecdt = NEW.procdt
+		#		, payrecsource = NEW.proccurcovtp
+		#		, payreclink = NEW.proccurcovid
+		#		, payrectype = 0
+		#		, payrecnum = ""
+		#		, payrecamt = NEW.procbalorig
+		#		, payrecdescrip = NEW.proccomment
+		#		, payreclock = "unlocked"
+		#	WHERE
+		#		    payrecproc = NEW.id
+		#		AND payreccat = 5
+		#		AND payrectype = 0;
 
 		# Update ptdiagX fields
 		UPDATE patient SET
