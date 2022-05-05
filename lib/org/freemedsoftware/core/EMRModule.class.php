@@ -241,7 +241,7 @@ class EMRModule extends BaseModule {
 		if (!isset($locked['id_'.$id])) {
 			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id='".addslashes($id)."' AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
-			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'MDB2_Error' ) );
+			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'DB_Error' ) );
 		}
 
 		return $locked['id_'.$id] ? true : false;

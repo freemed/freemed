@@ -21,13 +21,13 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-LoadObjectDependency('net.php.pear.MDB2');
+LoadObjectDependency('net.php.pear.DB');
 
 define ( 'SQL__NOW', 			"~~~~~NOW~~~~~" );
 
 // Class: org.freemedsoftware.core.FreemedDb
 //
-class FreemedDb extends MDB2 {
+class FreemedDb extends DB {
 
 	private $db;
 	private $data;
@@ -39,16 +39,19 @@ class FreemedDb extends MDB2 {
 	protected function init ( $multi_query = false ) {
 		PEAR::setErrorHandling ( PEAR_ERROR_RETURN );
 		$uri = DB_ENGINE . "://". DB_USER .":". DB_PASSWORD ."@". DB_HOST ."/". DB_NAME;
-		$this->db =& MDB2::factory ( $uri );
+		//$this->db =& DB::factory ( DB_ENGINE );
+		$this->db = DB::connect($uri);
 		if ( $this->db instanceof PEAR_Error ) {
 			trigger_error ( $this->db->getMessage(), E_USER_ERROR );
 		}
 
-		$this->db->setFetchMode( MDB2_FETCHMODE_ASSOC );
+		$this->db->setFetchMode( DB_FETCHMODE_ASSOC );
+		/*
 		$this->db->loadModule( 'Extended' );
 		$this->db->loadModule( 'Manager' );
 		$this->db->loadModule( 'Reverse' );
 		$this->db->loadModule( 'Function' );
+		*/
 
 		// Required multi query option for stored procedures
 		$this->db->setOption( 'multi_query', $multi_query );

@@ -40,7 +40,7 @@ $fn = $_SERVER['argv'][1];
 if ($fn == "") {
 	$fl = GetFileList();
 	foreach ($fl AS $k => $v) {
-		print $v->filename . " [" . $v->filesize . " bytes] billkey = " . $v->originalId . "\n";	
+		print $v->filename . " [" . $v->filesize . "] billkey = " . $v->originalId . "\n";	
 	}
 	die();
 }
