@@ -810,7 +810,7 @@ ORDER BY
 			'WHERE FIND_IN_SET(id, \''.$set.'\')';
 		$result = $GLOBALS['sql']->query ( $query );
 		
-		return ! ( $result instanceof MDB2_Error );
+		return ! ( $result instanceof DB_Error );
 	} // end method MarkClaimsAsBilled 
 
 	// Method: procedure_status_list

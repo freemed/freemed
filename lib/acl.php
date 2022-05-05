@@ -23,7 +23,7 @@
 
 // I don't know what this condition could be, but there's always
 // some reason *not* to load this
-if (1 == 1) {
+if (0 == 1) {
 	// Load phpgacl object, etc here....
 	$acl = CreateObject('org.freemedsoftware.acl.gacl', 
 		array (
