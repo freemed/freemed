@@ -55,6 +55,8 @@ class Remitt {
 			, 'filename' => $filename
 		);
 		$out = ( $sc->getFile( $params )->return );
+		syslog(LOG_INFO, $sc->__getLastRequest());
+		syslog(LOG_INFO, $sc->__getLastResponse());
 		if ($serve) {
 			switch (true) {
 				case (substr($serve,0,4) == '%PDF'):
@@ -354,13 +356,17 @@ class Remitt {
 	//	Integer, REMITT internal processing queue number.
 	//
 	public function ProcessBill ( $billkey, $render, $transportPlugin, $transportOption ) {
+		syslog(LOG_INFO, "api.Remitt.ProcessBill: billkey == $billkey");
 		if (!$this->GetServerStatus()) {
+			syslog(LOG_INFO, "api.Remitt.ProcessBill: The REMITT server is not running");
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
 		$billkey_hash = unserialize(freemed::get_link_field($billkey, 'billkey', 'billkey'));
+		syslog(LOG_INFO, "api.Remitt.ProcessBill: before RenderPayerXML");
 		$xml = $this->RenderPayerXML($billkey, $billkey_hash['procedures'], $billkey_hash['contact'], $billkey_hash['service'], $billkey_hash['clearinghouse']);
+		//syslog(LOG_INFO, "api.Remitt.ProcessBill: ".$xml);
 		$sc = $this->getSoapClient( );
-		$params = (object) array(
+		$params = /* (object) */ array(
 			  'inputPayload' => $xml
 			, 'originalId' => (string) $billkey
 			, 'renderPlugin' => 'org.remitt.plugin.render.XsltPlugin'
@@ -368,7 +374,11 @@ class Remitt {
 			, 'transportPlugin' => $transportPlugin
 			, 'transportOption' => $transportOption
 		);
-		return $sc->insertPayload( $params )->return;
+		$ret = $sc->insertPayload( $params );
+		syslog(LOG_INFO, $sc->__getLastRequest());
+		syslog(LOG_INFO, $sc->__getLastResponse());
+		syslog(LOG_INFO, "api.Remitt.ProcessBill: ".print_r($ret, true));
+		return $ret->return;
 	} // end method ProcessBill
 
 	// Method: ProcessStatement
@@ -1224,6 +1234,7 @@ class Remitt {
 			, 'password' => $this->password
 			, 'compression' => SOAP_COMPRESSION_ACCEPT
 			, 'location' => $this->url . "?wsdl"
+			, 'trace' => true
 		));
 		return $sc;
 	} // end method getSoapClient
