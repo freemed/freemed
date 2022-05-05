@@ -9,7 +9,6 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    CVS: $Id: Dependency2.php 313023 2011-07-06 19:17:11Z dufuz $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -31,7 +30,7 @@ require_once 'PEAR/Validate.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.9.4
+ * @version    Release: 1.10.13
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -82,7 +81,7 @@ class PEAR_Dependency2
      * @param array format of PEAR_Registry::parsedPackageName()
      * @param int installation state (one of PEAR_VALIDATE_*)
      */
-    function PEAR_Dependency2(&$config, $installoptions, $package,
+    function __construct(&$config, $installoptions, $package,
                               $state = PEAR_VALIDATE_INSTALLING)
     {
         $this->_config = &$config;
@@ -111,7 +110,7 @@ class PEAR_Dependency2
         $this->_currentPackage = $package;
     }
 
-    function _getExtraString($dep)
+    static function _getExtraString($dep)
     {
         $extra = ' (';
         if (isset($dep['uri'])) {
@@ -338,7 +337,7 @@ class PEAR_Dependency2
         }
 
         $loaded = $this->extension_loaded($dep['name']);
-        $extra  = $this->_getExtraString($dep);
+        $extra  = self::_getExtraString($dep);
         if (isset($dep['exclude'])) {
             if (!is_array($dep['exclude'])) {
                 $dep['exclude'] = array($dep['exclude']);
@@ -487,7 +486,7 @@ class PEAR_Dependency2
         }
 
         $version = $this->phpversion();
-        $extra   = $this->_getExtraString($dep);
+        $extra   = self::_getExtraString($dep);
         if (isset($dep['exclude'])) {
             if (!is_array($dep['exclude'])) {
                 $dep['exclude'] = array($dep['exclude']);
@@ -541,13 +540,13 @@ class PEAR_Dependency2
      */
     function getPEARVersion()
     {
-        return '1.9.4';
+        return '1.10.13';
     }
 
     function validatePearinstallerDependency($dep)
     {
         $pearversion = $this->getPEARVersion();
-        $extra = $this->_getExtraString($dep);
+        $extra = self::_getExtraString($dep);
         if (isset($dep['exclude'])) {
             if (!is_array($dep['exclude'])) {
                 $dep['exclude'] = array($dep['exclude']);
@@ -607,7 +606,7 @@ class PEAR_Dependency2
      * @param boolean whether this is a required dependency
      * @param array a list of downloaded packages to be installed, if any
      * @param boolean if true, then deps on pear.php.net that fail will also check
-     *                against pecl.php.net packages to accomodate extensions that have
+     *                against pecl.php.net packages to accommodate extensions that have
      *                moved to pecl.php.net from pear.php.net
      */
     function validatePackageDependency($dep, $required, $params, $depv1 = false)
@@ -701,7 +700,7 @@ class PEAR_Dependency2
             }
         }
 
-        $extra = $this->_getExtraString($dep);
+        $extra = self::_getExtraString($dep);
         if (isset($dep['exclude']) && !is_array($dep['exclude'])) {
             $dep['exclude'] = array($dep['exclude']);
         }
@@ -894,9 +893,9 @@ class PEAR_Dependency2
             if (!class_exists('PEAR_Downloader_Package')) {
                 require_once 'PEAR/Downloader/Package.php';
             }
-            $dp = &new PEAR_Downloader_Package($dl);
+            $dp = new PEAR_Downloader_Package($dl);
             $dp->setPackageFile($downloaded[$i]);
-            $params[$i] = &$dp;
+            $params[$i] = $dp;
         }
 
         // check cache
@@ -1099,7 +1098,7 @@ class PEAR_Dependency2
             return true;
         }
 
-        $extra = $this->_getExtraString($dep);
+        $extra = self::_getExtraString($dep);
         if (isset($dep['exclude']) && !is_array($dep['exclude'])) {
             $dep['exclude'] = array($dep['exclude']);
         }
@@ -1175,7 +1174,7 @@ class PEAR_Dependency2
                 require_once 'PEAR/Downloader/Package.php';
             }
 
-            $dp = &new PEAR_Downloader_Package($dl);
+            $dp = new PEAR_Downloader_Package($dl);
             if (is_object($pkg)) {
                 $dp->setPackageFile($pkg);
             } else {
@@ -1199,7 +1198,7 @@ class PEAR_Dependency2
                     }
 
                     foreach ($ds as $d) {
-                        $checker = &new PEAR_Dependency2($this->_config, $this->_options,
+                        $checker = new PEAR_Dependency2($this->_config, $this->_options,
                             array('channel' => $channel, 'package' => $package), $this->_state);
                         $dep = $d['dep'];
                         $required = $d['type'] == 'required';
@@ -1233,7 +1232,7 @@ class PEAR_Dependency2
             $dep['optional'] = 'no';
         }
 
-        list($newdep, $type) = $this->normalizeDep($dep);
+        list($newdep, $type) = self::normalizeDep($dep);
         if (!$newdep) {
             return $this->raiseError("Invalid Dependency");
         }
@@ -1247,7 +1246,7 @@ class PEAR_Dependency2
     /**
      * Convert a 1.0 dep into a 2.0 dep
      */
-    function normalizeDep($dep)
+    static function normalizeDep($dep)
     {
         $types = array(
             'pkg' => 'Package',
@@ -1326,7 +1325,7 @@ class PEAR_Dependency2
      * @param  string Operator
      * @return string Sign equivalent
      */
-    function signOperator($operator)
+    static function signOperator($operator)
     {
         switch($operator) {
             case 'lt': return '<';

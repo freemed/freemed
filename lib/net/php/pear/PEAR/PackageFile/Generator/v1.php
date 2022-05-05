@@ -9,7 +9,6 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    CVS: $Id: v1.php 313023 2011-07-06 19:17:11Z dufuz $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +28,7 @@ require_once 'PEAR/PackageFile/v2.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.9.4
+ * @version    Release: 1.10.13
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -39,14 +38,14 @@ class PEAR_PackageFile_Generator_v1
      * @var PEAR_PackageFile_v1
      */
     var $_packagefile;
-    function PEAR_PackageFile_Generator_v1(&$packagefile)
+    function __construct(&$packagefile)
     {
         $this->_packagefile = &$packagefile;
     }
 
     function getPackagerVersion()
     {
-        return '1.9.4';
+        return '1.10.13';
     }
 
     /**
@@ -109,7 +108,7 @@ class PEAR_PackageFile_Generator_v1
         // }}}
         $packagexml = $this->toPackageFile($where, PEAR_VALIDATE_PACKAGING, 'package.xml', true);
         if ($packagexml) {
-            $tar =& new Archive_Tar($dest_package, $compress);
+            $tar = new Archive_Tar($dest_package, $compress);
             $tar->setErrorHandling(PEAR_ERROR_RETURN); // XXX Don't print errors
             // ----- Creates with the package.xml file
             $ok = $tar->createModify(array($packagexml), '', $where);
@@ -168,9 +167,6 @@ class PEAR_PackageFile_Generator_v1
      */
     function _fixXmlEncoding($string)
     {
-        if (version_compare(phpversion(), '5.0.0', 'lt')) {
-            $string = utf8_encode($string);
-        }
         return strtr($string, array(
                                           '&'  => '&amp;',
                                           '>'  => '&gt;',
@@ -200,7 +196,7 @@ class PEAR_PackageFile_Generator_v1
             );
         $ret = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
         $ret .= "<!DOCTYPE package SYSTEM \"http://pear.php.net/dtd/package-1.0\">\n";
-        $ret .= "<package version=\"1.0\" packagerversion=\"1.9.4\">\n" .
+        $ret .= "<package version=\"1.0\" packagerversion=\"1.10.13\">\n" .
 " <name>$pkginfo[package]</name>";
         if (isset($pkginfo['extends'])) {
             $ret .= "\n<extends>$pkginfo[extends]</extends>";
@@ -742,8 +738,10 @@ class PEAR_PackageFile_Generator_v1
                             $php = $this->_processPhpDeps($deps['php']);
                         } else {
                             if (!isset($deps['php'][0])) {
-                                list($key, $blah) = each ($deps['php']); // stupid buggy versions
-                                $deps['php'] = array($blah[0]);
+                                // Buggy versions
+                                $key = key($deps['php']);
+                                $info = current($deps['php']);
+                                $deps['php'] = array($info[0]);
                             }
                             $php = $this->_processDep($deps['php'][0]);
                             if (!$php) {
@@ -891,13 +889,13 @@ class PEAR_PackageFile_Generator_v1
                 }
                 //o <install as=..> tags for <file name=... platform=!... install-as=..>
                 if (isset($package['platform'][$file]) &&
-                      $package['platform'][$file]{0} == '!') {
+                      $package['platform'][$file][0] == '!') {
                     $generic[] = $file;
                     continue;
                 }
                 //o <ignore> tags for <file name=... platform=... install-as=..>
                 if (isset($package['platform'][$file]) &&
-                      $package['platform'][$file]{0} != '!') {
+                      $package['platform'][$file][0] != '!') {
                     $genericIgnore[] = $file;
                     continue;
                 }
@@ -906,7 +904,7 @@ class PEAR_PackageFile_Generator_v1
                 if (isset($package['install-as'][$file])) {
                     continue;
                 }
-                if ($platform{0} != '!') {
+                if ($platform[0] != '!') {
                     //o <ignore> tags for <file name=... platform=...>
                     $genericIgnore[] = $file;
                 }
@@ -915,7 +913,7 @@ class PEAR_PackageFile_Generator_v1
                 $oses = $notplatform = $platform = array();
                 foreach ($package['platform'] as $file => $os) {
                     // get a list of oses
-                    if ($os{0} == '!') {
+                    if ($os[0] == '!') {
                         if (isset($oses[substr($os, 1)])) {
                             continue;
                         }
@@ -961,7 +959,7 @@ class PEAR_PackageFile_Generator_v1
                         //  <file name=... platform=!other platform install-as=..>
                         if (isset($package['platform'][$file]) &&
                               $package['platform'][$file] != "!$os" &&
-                              $package['platform'][$file]{0} == '!') {
+                              $package['platform'][$file][0] == '!') {
                             $release[$releaseNum]['filelist']['install'][] =
                                 array(
                                     'attribs' => array(
@@ -986,7 +984,7 @@ class PEAR_PackageFile_Generator_v1
                         //o <ignore> tags for
                         //  <file name=... platform=other platform install-as=..>
                         if (isset($package['platform'][$file]) &&
-                              $package['platform'][$file]{0} != '!' &&
+                              $package['platform'][$file][0] != '!' &&
                               $package['platform'][$file] != $os) {
                             $release[$releaseNum]['filelist']['ignore'][] =
                                 array(
@@ -1012,7 +1010,7 @@ class PEAR_PackageFile_Generator_v1
                             continue;
                         }
                         //o <ignore> tags for <file name=... platform=other platform>
-                        if ($platform{0} != '!' && $platform != $os) {
+                        if ($platform[0] != '!' && $platform != $os) {
                             $release[$releaseNum]['filelist']['ignore'][] =
                                 array(
                                     'attribs' => array(
@@ -1178,13 +1176,15 @@ class PEAR_PackageFile_Generator_v1
         }
         if (count($min)) {
             // get the highest minimum
-            $min = array_pop($a = array_flip($min));
+            $a = array_flip($min);
+            $min = array_pop($a);
         } else {
             $min = false;
         }
         if (count($max)) {
             // get the lowest maximum
-            $max = array_shift($a = array_flip($max));
+            $a = array_flip($max);
+            $max = array_shift($a);
         } else {
             $max = false;
         }
@@ -1250,13 +1250,15 @@ class PEAR_PackageFile_Generator_v1
             }
             if (count($min)) {
                 // get the highest minimum
-                $min = array_pop($a = array_flip($min));
+                $a = array_flip($min);
+                $min = array_pop($a);
             } else {
                 $min = false;
             }
             if (count($max)) {
                 // get the lowest maximum
-                $max = array_shift($a = array_flip($max));
+                $a = array_flip($max);
+                $max = array_shift($a);
             } else {
                 $max = false;
             }
