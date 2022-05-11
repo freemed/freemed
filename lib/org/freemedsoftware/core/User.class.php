@@ -51,16 +51,19 @@ class User {
 	//
 	function __construct ($param=NULL) {
 		if (defined('SKIP_SQL_INIT')) { return false; }
+		global $__freemed;
 
 		if ($param == NULL) {
 			// Check to see if XML-RPC or session data
 			if (!defined('SESSION_DISABLE')) {
 				$authdata = HTTP_Session2::get( 'authdata' );
 			}
-			if ($authdata['user']) {
+			if (is_array($authdata) && array_key_exists('user', $authdata)) {
 				$this->user_number = $authdata['user']; 
 			} else {
-				$this->user_number = $GLOBALS['__freemed']['basic_auth_id'];
+				if (is_array($__freemed)) {
+					$this->user_number = $__freemed['basic_auth_id'];
+				}
 			}
 		} else {
 			$this->user_number = $param;

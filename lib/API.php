@@ -1659,5 +1659,6 @@ function page_history_list () {
 // PEAR magic appears to depend on it, so we're keeping a check in here
 // for compatibility's sake.
 function get_magic_quotes_runtime() { return false; }
+function define_syslog_variables() { return false; }
 
 ?>

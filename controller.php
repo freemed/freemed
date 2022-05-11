@@ -76,7 +76,7 @@ if ( CallMethod ( 'org.freemedsoftware.public.Login.LoggedIn' ) ) {
 
 //----------------- Functions ----------------------------------------------
 
-function controller_standard_error_handler ($no, $str, $file, $line, $context) {
+function controller_standard_error_handler ($no, $str, $file, $line, $context = '') {
 	switch ($no) {
 		case E_USER_ERROR:
 		die("$file [$line] : $str");

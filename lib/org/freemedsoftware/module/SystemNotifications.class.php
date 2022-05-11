@@ -76,7 +76,7 @@ class SystemNotifications extends SupportModule {
 	//	conversion is performed.
 	//
 	public function GetTimestamp ( ) {
-		$q = "SELECT ".$GLOBALS['sql']->now()." + 0";
+		$q = "SELECT CURRENT_TIMESTAMP() + 0";
 		list ( $x, $y ) = explode( '.', $GLOBALS['sql']->queryOne( $q ));
 		return $x;
 	} // end method GetTimestamp

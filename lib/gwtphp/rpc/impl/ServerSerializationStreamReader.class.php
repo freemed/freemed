@@ -30,7 +30,7 @@ require_once(GWTPHP_DIR.'/rpc/impl/AbstractSerializationStreamReader.class.php')
 //require_once(GWTPHP_DIR.'/lang/TypeSignatures.class.php');
 require_once(GWTPHP_DIR.'/rpc/impl/SerializabilityUtil.class.php');
 
-define(CHAR_UFFFF , "\xEF\xBF\xBF");
+define('CHAR_UFFFF', "\xEF\xBF\xBF");
 
 final class ServerSerializationStreamReader extends AbstractSerializationStreamReader{
 
@@ -303,10 +303,10 @@ final class ServerSerializationStreamReader extends AbstractSerializationStreamR
 		// rememberDecodedObject(instance);
 		$customSerializer = SerializabilityUtil::hasCustomFieldSerializer($instanceClass); // {100%}
 		$instance = $this->instantiate($customSerializer,$instanceClass); // {100%}
-		$this->rememberDecodedObject(&$instance);
+		$this->rememberDecodedObject($instance);
 
 
-		$this->deserializeImpl($customSerializer, $instanceClass, &$instance);
+		$this->deserializeImpl($customSerializer, $instanceClass, $instance);
 
 		return $instance;
 		//$instance = $customSerializer->instantiate($this);
@@ -364,9 +364,9 @@ final class ServerSerializationStreamReader extends AbstractSerializationStreamR
 	{
 		if ($customSerializer != null) {
 			return $this->deserializeWithCustomFieldDeserializer($customSerializer, $instanceClass,
-			&$instance);
+			$instance);
 		} else {
-			return $this->deserializeWithDefaultFieldDeserializer($instanceClass, &$instance);
+			return $this->deserializeWithDefaultFieldDeserializer($instanceClass, $instance);
 		}
 	}
 
@@ -386,7 +386,7 @@ final class ServerSerializationStreamReader extends AbstractSerializationStreamR
 		/*MappedMethod*/
 		$deserialize = $customSerializer->getMethod("deserialize");
 		//SerializationStreamReader.class, instanceClass);
-		$deserialize->invoke(null, $this, &$instance);
+		$deserialize->invoke(null, $this, $instance);
 	}
 	
 	/**

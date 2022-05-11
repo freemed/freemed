@@ -171,9 +171,9 @@ class FreemedDb extends DB {
 	//	Hash of table row.
 	//
 	public function get_link ( $table, $key, $field = 'id' ) {
-		//$query = "SELECT * FROM ".$this->db->escape( $table )." WHERE ".$this->db->escape( $field )." = ".$this->db->quote( $key );
-		$query = "SELECT * FROM ".addslashes($table)." WHERE ".addslashes($field)." = '".addslashes($key)."'";
-		return $this->db->queryRow( $query );
+		//$query = "SELECT * FROM ".$this->db->escapeSimple( $table )." WHERE ".$this->db->escapeSimple( $field )." = ".$this->db->quote( $key );
+		$query = "SELECT * FROM ".addslashes($table)." WHERE ".addslashes($field)." = '".addslashes($key)."' LIMIT 1";
+		return $this->db->getAll( $query );
 	} // end public function get_link
 
 	// Method: distinct_values
@@ -194,9 +194,9 @@ class FreemedDb extends DB {
 	//	Array of distinct values for the selected field
 	//
 	public function distinct_values ( $table, $field, $where = NULL ) {
-		$query = "SELECT DISTINCT `".$this->db->escape($field)."` FROM `".$this->db->escape($table)."` ".
+		$query = "SELECT DISTINCT `".$this->db->escapeSimple($field)."` FROM `".$this->db->escapeSimple($table)."` ".
 			( $where ? " WHERE ${where} " : " " ).
-			"ORDER BY `".$this->db->escape($field)."`";
+			"ORDER BY `".$this->db->escapeSimple($field)."`";
 		$result = $this->db->queryCol( $query );
 		if ( $result instanceof PEAR_Error ) { return array ( ); }
 		return $result;
@@ -222,7 +222,7 @@ class FreemedDb extends DB {
 	public function insert_query ( $table, $values, $date_fields=NULL ) {
 		$in_loop = false;
 		foreach ($values AS $k => $v) {
-			if ( (($k+0) > 0) or empty( $k ) ) {
+			if ( is_int($k) or empty( $k ) ) {
 				$k = $v; $v = $this->data[$k];
 			}
 
@@ -248,15 +248,15 @@ class FreemedDb extends DB {
 
 			// Handle timestamp
 			if ("${v}" == SQL__NOW) {
-				$values_hash .= ( $in_loop ? ", " : " " ).$this->db->now();
+				$values_hash .= ( $in_loop ? ", " : " " )."NOW()";
 			} else {
 				$values_hash .= ( $in_loop ? ", " : " " ).( "${v}" == "" ? "''" : $this->db->quote( is_array($v) ? join(',', $v) : $v ) );
 			}
-			$cols_hash .= ( $in_loop ? ", " : " " )."`".$this->db->escape( $k )."`";
+			$cols_hash .= ( $in_loop ? ", " : " " )."`".$this->db->escapeSimple( $k )."`";
 			$in_loop = true;
 		}
 
-		$query = "INSERT INTO `".$this->db->escape($table)."` ( ${cols_hash} ) VALUES ( ${values_hash} )";
+		$query = "INSERT INTO `".$this->db->escapeSimple($table)."` ( ${cols_hash} ) VALUES ( ${values_hash} )";
 		return $query;
 	} // end public function insert_query 
 
@@ -294,11 +294,11 @@ class FreemedDb extends DB {
 				// Check for bad values
 				if ( $found ) {
 					if ( $v == '' ) {
-						$values_clause[] = "`".$this->db->escape($k)."` = NULL";
+						$values_clause[] = "`".$this->db->escapeSimple($k)."` = NULL";
 						continue;
 					}
 					if ( $v == '0000-00-00' ) {
-						$values_clause[] = "`".$this->db->escape($k)."` = NULL";
+						$values_clause[] = "`".$this->db->escapeSimple($k)."` = NULL";
 						continue;
 					}
 				}
@@ -306,19 +306,19 @@ class FreemedDb extends DB {
 
 			// Handle timestamp
 			if ("${v}" == SQL__NOW) {
-				$values_clause[] = "`".$this->db->escape($k)."` = ".$this->db->now();
+				$values_clause[] = "`".$this->db->escapeSimple($k)."` = NOW()";
 			} else {
 				if ( $v !== '' ) {
-					$values_clause[] = "`".$this->db->escape($k)."` = ".( "${v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
+					$values_clause[] = "`".$this->db->escapeSimple($k)."` = ".( "${v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
 				}
 			}
 		}
 
 		foreach ( $where AS $k => $v ) {
-			$where_clause[] = "`".$this->db->escape( $k )."` = ".$this->db->quote( $v );
+			$where_clause[] = "`".$this->db->escapeSimple( $k )."` = ".$this->db->quote( $v );
 		}
 
-		$query = "UPDATE `".$this->db->escape($table)."` SET ".join(', ', $values_clause)." WHERE ".join(' AND ', $where_clause);
+		$query = "UPDATE `".$this->db->escapeSimple($table)."` SET ".join(', ', $values_clause)." WHERE ".join(' AND ', $where_clause);
 		return $query;
 	} // end public function update_query
 

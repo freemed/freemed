@@ -58,7 +58,7 @@ readfile( $fullpath );
 
 //----------------- Functions ----------------------------------------------
 
-function help_standard_error_handler ($no, $str, $file, $line, $context) {
+function help_standard_error_handler ($no, $str, $file, $line, $context = '') {
 	switch ($no) {
 		case E_USER_ERROR:
 		die('
