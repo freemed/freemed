@@ -104,7 +104,7 @@ class Remitt {
 			);
 			$return = (array)( $sc->getFileList( $params )->return );
 		}
-		if ($return['filename'] != '') {
+		if (array_key_exists('filename', $return) && $return['filename'] != '') {
 			return array($return);
 		}
 		return $return;
