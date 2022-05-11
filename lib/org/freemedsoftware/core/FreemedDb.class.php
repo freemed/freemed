@@ -42,6 +42,7 @@ class FreemedDb extends DB {
 		//$this->db =& DB::factory ( DB_ENGINE );
 		$this->db = DB::connect($uri);
 		if ( $this->db instanceof PEAR_Error ) {
+			print_r($this->db);
 			trigger_error ( $this->db->getMessage(), E_USER_ERROR );
 		}
 
@@ -78,8 +79,8 @@ class FreemedDb extends DB {
 			$value = call_user_func_array ( array ( $this, $method ), $param );
 		} elseif ( method_exists ( $this->db, $method ) ) {
 			$value = call_user_func_array ( array ( $this->db, $method ), $param );
-		} elseif ( method_exists ( $this->db->function, $method ) ) {
-			$value = call_user_func_array ( array ( $this->db->function, $method ), $param );
+		//} elseif ( method_exists ( $this->db->function, $method ) ) {
+		//	$value = call_user_func_array ( array ( $this->db->function, $method ), $param );
 		} else {
 			trigger_error ( "Could not load method $method", E_USER_ERROR );
 		}
@@ -89,6 +90,10 @@ class FreemedDb extends DB {
 		}
 		return $value;
 	} // end method __call
+
+	// MDB2 compatibility functions	
+	public function queryAll( $query ) { return $this->db->getAll($query); }
+	public function queryOne( $query ) { return $this->db->getOne($query); }
 
 	// Method: queryOneStoredProc
 	//
@@ -106,7 +111,7 @@ class FreemedDb extends DB {
 	//
 	public function queryOneStoredProc ( $query ) {
 		$this->init( true );
-		$res = $this->db->queryOne( $query );
+		$res = $this->db->getOne( $query );
 		$this->init( false );
 		return $res;
 	} // end method queryOneStoredProc
@@ -127,7 +132,7 @@ class FreemedDb extends DB {
 	//
 	public function queryAllStoredProc ( $query ) {
 		$this->init( true );
-		$res = $this->db->queryAll( $query );
+		$res = $this->db->getAll( $query );
 		$this->init( false );
 		return $res;
 	} // end method queryAllStoredProc
