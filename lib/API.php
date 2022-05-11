@@ -1655,4 +1655,9 @@ function page_history_list () {
 	return array_reverse($history);
 } // end function page_history_list
 
+// get_magic_quotes_runtime() was removed from older versions, but some
+// PEAR magic appears to depend on it, so we're keeping a check in here
+// for compatibility's sake.
+function get_magic_quotes_runtime() { return false; }
+
 ?>
