@@ -383,3 +383,74 @@ class HasAttributes
     #[ORM\Column(ORM\Column::T_INTEGER)]
     protected $height;
 }
+
+class ReadOnlyProps
+{
+    /**
+     * Short description of the member variable.
+     *
+     * @var array
+     */
+     public readonly array $variableName = array();
+
+    /**
+     * Short description of the member variable.
+     *
+     * @var
+     */
+     readonly protected ?int $variableName = 10;
+
+     private readonly string $variable;
+}
+
+class UnionTypes
+{
+    /**
+     * @var array|boolean
+     */
+    private array|bool $variableName = array();
+}
+
+class IntersectionTypes
+{
+    /**
+     * @var \Iterator|\Countable
+     */
+    private \Iterator&\Countable $variableName;
+}
+
+class StandaloneNullTrueFalseTypes
+{
+    /**
+     * @var null
+     */
+    public null $variableName = null;
+
+    /**
+     * @var true
+     */
+    protected true $variableName = true;
+
+    /**
+     * @var false
+     */
+    private false $variableName = false;
+}
+
+class MoreMissingButSupportedTypes
+{
+    /**
+     * @var parent
+     */
+    public parent $variableName;
+
+    /**
+     * @var self
+     */
+    protected self $variableName;
+
+    /**
+     * @var SomeClass
+     */
+    private namespace\SomeClass $variableName;
+}

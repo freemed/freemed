@@ -4,7 +4,7 @@
  *
  * @author    Greg Sherwood <gsherwood@squiz.net>
  * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
 namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Commenting;
@@ -27,7 +27,7 @@ class BlockCommentSniff implements Sniff
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
@@ -84,6 +84,7 @@ class BlockCommentSniff implements Sniff
                 T_CLASS     => true,
                 T_INTERFACE => true,
                 T_TRAIT     => true,
+                T_ENUM      => true,
                 T_FUNCTION  => true,
                 T_PUBLIC    => true,
                 T_PRIVATE   => true,
@@ -93,6 +94,7 @@ class BlockCommentSniff implements Sniff
                 T_ABSTRACT  => true,
                 T_CONST     => true,
                 T_VAR       => true,
+                T_READONLY  => true,
             ];
             if (isset($ignore[$tokens[$nextToken]['code']]) === true) {
                 return;
