@@ -1,21 +1,30 @@
 <?php
-/** 
- * @version V4.92a 29 Aug 2006 (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
- * Released under both BSD license and Lesser GPL library license. 
- * Whenever there is any discrepancy between the two licenses, 
- * the BSD license will take precedence. 
+/**
+ * PEAR DB Emulation Layer for ADOdb.
  *
- * Set tabs to 4 for best viewing.
- * 
- * PEAR DB Emulation Layer for ADODB.
+ * The following code is modelled on PEAR DB code by Stig Bakken <ssb@fast.no>
+ * and Tomas V.V.Cox <cox@idecnet.com>. Portions (c)1997-2002 The PHP Group.
  *
- * The following code is modelled on PEAR DB code by Stig Bakken <ssb@fast.no>								   |
- * and Tomas V.V.Cox <cox@idecnet.com>.	Portions (c)1997-2002 The PHP Group.
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
  */
 
  /*
  We support:
- 
+
  DB_Common
  ---------
  	query - returns PEAR_Error on error
@@ -27,13 +36,13 @@
 	quote
 	nextID
 	disconnect
-	
+
 	getOne
 	getAssoc
 	getRow
 	getCol
 	getAll
-	
+
  DB_Result
  ---------
  	numRows - returns -1 if not supported
@@ -42,7 +51,7 @@
 	fetchRows - does not support passing of fetchmode
 	free
  */
- 
+
 define('ADODB_PEAR',dirname(__FILE__));
 include_once "PEAR.php";
 include_once ADODB_PEAR."/adodb-errorpear.inc.php";
@@ -51,10 +60,6 @@ include_once ADODB_PEAR."/adodb.inc.php";
 if (!defined('DB_OK')) {
 define("DB_OK",	1);
 define("DB_ERROR",-1);
-
-// autoExecute constants
-define('DB_AUTOQUERY_INSERT', 1);
-define('DB_AUTOQUERY_UPDATE', 2);
 
 /**
  * This is a special constant that tells DB the user hasn't specified
@@ -109,11 +114,11 @@ class DB
 	 * error
 	 */
 
-	function &factory($type)
+	function factory($type)
 	{
 		include_once(ADODB_DIR."/drivers/adodb-$type.inc.php");
-		$obj = &NewADOConnection($type);
-		if (!is_object($obj)) $obj =& new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
+		$obj = NewADOConnection($type);
+		if (!is_object($obj)) $obj = new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
 		return $obj;
 	}
 
@@ -136,7 +141,7 @@ class DB
 	 * @see DB::parseDSN
 	 * @see DB::isError
 	 */
-	function &connect($dsn, $options = false)
+	function connect($dsn, $options = false)
 	{
 		if (is_array($dsn)) {
 			$dsninfo = $dsn;
@@ -157,9 +162,9 @@ class DB
 			 @include_once("adodb-$type.inc.php");
 		}
 
-		@$obj =& NewADOConnection($type);
+		@$obj = NewADOConnection($type);
 		if (!is_object($obj)) {
-			$obj =& new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
+			$obj = new PEAR_Error('Unknown Database Driver: '.$dsninfo['phptype'],-1);
 			return $obj;
 		}
 		if (is_array($options)) {
@@ -183,10 +188,10 @@ class DB
 
 		if (isset($dsninfo['socket'])) $dsninfo['hostspec'] .= ':'.$dsninfo['socket'];
 		else if (isset($dsninfo['port'])) $dsninfo['hostspec'] .= ':'.$dsninfo['port'];
-		
+
 		if($persist) $ok = $obj->PConnect($dsninfo['hostspec'], $dsninfo['username'],$dsninfo['password'],$dsninfo['database']);
 		else  $ok = $obj->Connect($dsninfo['hostspec'], $dsninfo['username'],$dsninfo['password'],$dsninfo['database']);
-		
+
 		if (!$ok) $obj = ADODB_PEAR_Error();
 		return $obj;
 	}
@@ -211,8 +216,8 @@ class DB
 	function isError($value)
 	{
 		if (!is_object($value)) return false;
-		$class = get_class($value);
-		return $class == 'pear_error' || is_subclass_of($value, 'pear_error') || 
+		$class = strtolower(get_class($value));
+		return $class == 'pear_error' || is_subclass_of($value, 'pear_error') ||
 				$class == 'db_error' || is_subclass_of($value, 'db_error');
 	}
 
@@ -338,7 +343,7 @@ class DB
 			$parsed['hostspec'] = urldecode($str);
 		}
 
-		// Get dabase if any
+		// Get database if any
 		// $dsn => database
 		if (!empty($dsn)) {
 			$parsed['database'] = $dsn;
@@ -360,7 +365,7 @@ class DB
 	 */
 	function assertExtension($name)
 	{
-		if (!extension_loaded($name)) {
+		if (function_exists('dl') && !extension_loaded($name)) {
 			$dlext = (strncmp(PHP_OS,'WIN',3) === 0) ? '.dll' : '.so';
 			@dl($name . $dlext);
 		}
@@ -370,5 +375,3 @@ class DB
 		return true;
 	}
 }
-
-?>

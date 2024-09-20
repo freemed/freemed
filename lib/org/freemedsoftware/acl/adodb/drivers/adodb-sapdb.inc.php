@@ -1,28 +1,35 @@
 <?php
-/* 
-V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
-  the BSD license will take precedence. 
-Set tabs to 4 for best viewing.
-  
-  Latest version is available at http://adodb.sourceforge.net
-  
-  SAPDB data driver. Requires ODBC.
-
-*/
+/**
+ * SAPDB data driver
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
 if (!defined('_ADODB_ODBC_LAYER')) {
-	include(ADODB_DIR."/drivers/adodb-odbc.inc.php");
+	include_once(ADODB_DIR."/drivers/adodb-odbc.inc.php");
 }
 if (!defined('ADODB_SAPDB')){
 define('ADODB_SAPDB',1);
 
 class ADODB_SAPDB extends ADODB_odbc {
-	var $databaseType = "sapdb";	
+	var $databaseType = "sapdb";
 	var $concat_operator = '||';
 	var $sysDate = 'DATE';
 	var $sysTimeStamp = 'TIMESTAMP';
@@ -30,13 +37,7 @@ class ADODB_SAPDB extends ADODB_odbc {
 	var $fmtTimeStamp = "'Y-m-d H:i:s'"; /// used by DBTimeStamp as the default timestamp fmt.
 	var $hasInsertId = true;
 	var $_bindInputArray = true;
-	
-	function ADODB_SAPDB()
-	{
-		//if (strncmp(PHP_OS,'WIN',3) === 0) $this->curmode = SQL_CUR_USE_ODBC;
-		$this->ADODB_odbc();
-	}
-	
+
 	function ServerInfo()
 	{
 		$info = ADODB_odbc::ServerInfo();
@@ -46,14 +47,14 @@ class ADODB_SAPDB extends ADODB_odbc {
 		return $info;
 	}
 
-	function MetaPrimaryKeys($table)
+	function MetaPrimaryKeys($table, $owner = false)
 	{
 		$table = $this->Quote(strtoupper($table));
 
 		return $this->GetCol("SELECT columnname FROM COLUMNS WHERE tablename=$table AND mode='KEY' ORDER BY pos");
 	}
-		
- 	function &MetaIndexes ($table, $primary = FALSE)
+
+	function MetaIndexes ($table, $primary = FALSE, $owner = false)
 	{
 		$table = $this->Quote(strtoupper($table));
 
@@ -63,45 +64,45 @@ class ADODB_SAPDB extends ADODB_odbc {
 
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-        	$savem = $this->SetFetchMode(FALSE);
-        }
-        
-        $rs = $this->Execute($sql);
-        if (isset($savem)) {
-        	$this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			$savem = $this->SetFetchMode(FALSE);
+		}
 
-        if (!is_object($rs)) {
-        	return FALSE;
-        }
+		$rs = $this->Execute($sql);
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
+
+		if (!is_object($rs)) {
+			return FALSE;
+		}
 
 		$indexes = array();
 		while ($row = $rs->FetchRow()) {
-            $indexes[$row[0]]['unique'] = $row[1] == 'UNIQUE';
-            $indexes[$row[0]]['columns'][] = $row[2];
-    	}
+			$indexes[$row[0]]['unique'] = $row[1] == 'UNIQUE';
+			$indexes[$row[0]]['columns'][] = $row[2];
+		}
 		if ($primary) {
 			$indexes['SYSPRIMARYKEYINDEX'] = array(
 					'unique' => True,	// by definition
 					'columns' => $this->GetCol("SELECT columnname FROM COLUMNS WHERE tablename=$table AND mode='KEY' ORDER BY pos"),
 				);
 		}
-        return $indexes;
+		return $indexes;
 	}
-	
- 	function &MetaColumns ($table)
+
+	function MetaColumns ($table, $normalize = true)
 	{
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-        	$savem = $this->SetFetchMode(FALSE);
-        }
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+			$savem = $this->SetFetchMode(FALSE);
+		}
 		$table = $this->Quote(strtoupper($table));
-		
+
 		$retarr = array();
 		foreach($this->GetAll("SELECT COLUMNNAME,DATATYPE,LEN,DEC,NULLABLE,MODE,\"DEFAULT\",CASE WHEN \"DEFAULT\" IS NULL THEN 0 ELSE 1 END AS HAS_DEFAULT FROM COLUMNS WHERE tablename=$table ORDER BY pos") as $column)
 		{
@@ -130,55 +131,50 @@ class ADODB_SAPDB extends ADODB_odbc {
 					}
 				}
 			}
-			$retarr[$fld->name] = $fld;	
+			$retarr[$fld->name] = $fld;
 		}
-        if (isset($savem)) {
-        	$this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
 
 		return $retarr;
 	}
-	
-	function MetaColumnNames($table)
+
+	function MetaColumnNames($table, $numIndexes = false, $useattnum = false)
 	{
 		$table = $this->Quote(strtoupper($table));
 
 		return $this->GetCol("SELECT columnname FROM COLUMNS WHERE tablename=$table ORDER BY pos");
 	}
-	
+
 	// unlike it seems, this depends on the db-session and works in a multiuser environment
-	function _insertid($table,$column)
+	protected function _insertID($table = '', $column = '')
 	{
 		return empty($table) ? False : $this->GetOne("SELECT $table.CURRVAL FROM DUAL");
 	}
 
 	/*
 		SelectLimit implementation problems:
-	
-	 	The following will return random 10 rows as order by performed after "WHERE rowno<10"
-	 	which is not ideal...
-		
-	  		select * from table where rowno < 10 order by 1
-	  
-	  	This means that we have to use the adoconnection base class SelectLimit when
-	  	there is an "order by".
-		
+
+		The following will return random 10 rows as order by performed after "WHERE rowno<10"
+		which is not ideal...
+
+			select * from table where rowno < 10 order by 1
+
+		This means that we have to use the adoconnection base class SelectLimit when
+		there is an "order by".
+
 		See http://listserv.sap.com/pipermail/sapdb.general/2002-January/010405.html
 	 */
-	
-};
- 
 
-class  ADORecordSet_sapdb extends ADORecordSet_odbc {	
-	
-	var $databaseType = "sapdb";		
-	
-	function ADORecordSet_sapdb($id,$mode=false)
-	{
-		$this->ADORecordSet_odbc($id,$mode);
-	}
+};
+
+
+class ADORecordSet_sapdb extends ADORecordSet_odbc {
+
+	var $databaseType = "sapdb";
+
 }
 
 } //define
-?>

@@ -1,17 +1,23 @@
 <?php
-
-/* 
-V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
-  the BSD license will take precedence. See License.txt. 
-  Set tabs to 4 for best viewing.
-  
-  Latest version is available at http://adodb.sourceforge.net
-  
-  Library for basic performance monitoring and tuning 
-  
-*/
+/**
+ * Library for basic performance monitoring and tuning
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
 
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
@@ -29,7 +35,7 @@ class perf_mssql extends adodb_perf{
 		  tracer varchar(500) NOT NULL,
 		  timer decimal(16,6) NOT NULL
 		)";
-		
+
 	var $settings = array(
 	'Ratios',
 		'data cache hit ratio' => array('RATIO',
@@ -46,7 +52,7 @@ class perf_mssql extends adodb_perf{
 		"select cntr_value from master.dbo.sysperfinfo where counter_name = 'Page reads/sec'"),
 		'data writes' => array('IO',
 		"select cntr_value from master.dbo.sysperfinfo where counter_name = 'Page writes/sec'"),
-			
+
 	'Data Cache',
 		'data cache size' => array('DATAC',
 		"select cntr_value*8192 from master.dbo.sysperfinfo where counter_name = 'Total Pages' and object_name='SQLServer:Buffer Manager'",
@@ -63,20 +69,20 @@ class perf_mssql extends adodb_perf{
 
 		false
 	);
-	
-	
-	function perf_mssql(&$conn)
+
+
+	function __construct(&$conn)
 	{
 		if ($conn->dataProvider == 'odbc') {
 			$this->sql1 = 'sql1';
 			//$this->explain = false;
 		}
-		$this->conn =& $conn;
+		$this->conn = $conn;
 	}
-	
+
 	function Explain($sql,$partial=false)
 	{
-		
+
 		$save = $this->conn->LogSQL(false);
 		if ($partial) {
 			$sqlq = $this->conn->qstr($sql.'%');
@@ -88,18 +94,18 @@ class perf_mssql extends adodb_perf{
 				}
 			}
 		}
-		
+
 		$s = '<p><b>Explain</b>: '.htmlspecialchars($sql).'</p>';
 		$this->conn->Execute("SET SHOWPLAN_ALL ON;");
 		$sql = str_replace('?',"''",$sql);
 		global $ADODB_FETCH_MODE;
-		
+
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		$rs =& $this->conn->Execute($sql);
+		$rs = $this->conn->Execute($sql);
 		//adodb_printr($rs);
 		$ADODB_FETCH_MODE = $save;
-		if ($rs) {
+		if ($rs && !$rs->EOF) {
 			$rs->MoveNext();
 			$s .= '<table bgcolor=white border=0 cellpadding="1" callspacing=0><tr><td nowrap align=center> Rows<td nowrap align=center> IO<td nowrap align=center> CPU<td align=left> &nbsp; &nbsp; Plan</tr>';
 			while (!$rs->EOF) {
@@ -107,20 +113,20 @@ class perf_mssql extends adodb_perf{
 				$rs->MoveNext();
 			}
 			$s .= '</table>';
-			
+
 			$rs->NextRecordSet();
 		}
-		
+
 		$this->conn->Execute("SET SHOWPLAN_ALL OFF;");
 		$this->conn->LogSQL($save);
 		$s .= $this->Tracer($sql);
 		return $s;
 	}
-	
+
 	function Tables()
 	{
 	global $ADODB_FETCH_MODE;
-	
+
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		//$this->conn->debug=1;
@@ -142,23 +148,21 @@ class perf_mssql extends adodb_perf{
 		$ADODB_FETCH_MODE = $save;
 		return $s.'</table>';
 	}
-	
+
 	function sp_who()
 	{
 		$arr = $this->conn->GetArray('sp_who');
 		return sizeof($arr);
 	}
-	
+
 	function HealthCheck($cli=false)
 	{
-		
+
 		$this->conn->Execute('dbcc traceon(3604)');
 		$html =  adodb_perf::HealthCheck($cli);
 		$this->conn->Execute('dbcc traceoff(3604)');
 		return $html;
 	}
-	
-	
-}
 
-?>
+
+}
