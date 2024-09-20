@@ -91,18 +91,27 @@ class Remitt {
 	//
 	public function GetFileList ( $type, $criteria, $value ) {
 		if ($this->rest) {
+			//syslog(LOG_INFO, "api.Remitt.GetFileList: using REST");
 			$rc = $this->getRestClient( printf( '/file/list/%s/%s/%s', urlencode($type), urlencode($criteria), urlencode($value) ) );
 			$out = $rc->send()->getBody();
 			$json = CreateObject('net.php.pear.Services_JSON');
-            $return = $json->decode( $out );
+			$return = $json->decode( $out );
 		} else {
+			//syslog(LOG_INFO, "api.Remitt.GetFileList: using SOAP");
 			$sc = $this->getSoapClient( );
 			$params = (object) array(
 				'category' => $type
 				, 'criteria' => $criteria
 				, 'value' => $value
 			);
-			$return = (array)( $sc->getFileList( $params )->return );
+			$out = $sc->getFileList( $params );
+			if (!property_exists($out, 'return')) {
+				return array();
+			}
+			$return = (array)( $out->return );
+		}
+		if (count($return) == 0) {
+			return $return;
 		}
 		if (array_key_exists('filename', $return) && $return['filename'] != '') {
 			return array($return);

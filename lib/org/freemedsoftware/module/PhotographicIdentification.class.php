@@ -240,7 +240,7 @@ class PhotographicIdentification extends EMRModule {
 	public function GetPhotoID ( $patient, $force_id = false ) {
 		ob_start();
 		if ( ! $force_id ) {
-			$id = (int) $GLOBALS['sql']->queryOneStoredProc( "CALL photoId_GetLatest ( ".( (int) $patient )." ) " );
+			$id = (int) $GLOBALS['sql']->queryOneStoredProc( "CALL photoid_GetLatest ( ".( (int) $patient )." ) " );
 		} else {
 			$id = (int) $force_id;
 		}

@@ -93,7 +93,7 @@ class WorkListsModule extends BaseModule {
 
 		$q = $GLOBALS['sql']->query("SELECT * FROM schedulerstatustype ORDER BY id");
 		foreach ($q AS $r) {
-			$display_buffer .= "'<option value=\"${r['id']}\">${r['sname']}</option>'+\n";
+			$display_buffer .= "'<option value=\"{$r['id']}\">{$r['sname']}</option>'+\n";
 		}
 		$display_buffer .= "
 			'<option value=\"\">-</option>'+

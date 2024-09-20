@@ -114,7 +114,7 @@ class UnfiledDocuments extends SupportModule {
 
 		if ($data['flip'] == 1) {
 			syslog(LOG_INFO, "flip");
-			$command = "./scripts/flip_djvu.sh \"${filename}\"";
+			$command = "./scripts/flip_djvu.sh \"{$filename}\"";
 			system("$command");
 			$this->UpdateFileFromCachedFile( $id );
 		}

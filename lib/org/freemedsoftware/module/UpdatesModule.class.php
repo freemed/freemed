@@ -74,7 +74,7 @@ class UpdatesModule extends BaseModule {
 
 		// Get date information from the security feed
 		$feed = 'Security';
-		$rss = CreateObject('org.freemedsoftware.core.MagpieRSS', join("\n", file("data/cache/rss.feed.${feed}")));
+		$rss = CreateObject('org.freemedsoftware.core.MagpieRSS', join("\n", file("data/cache/rss.feed.{$feed}")));
 		$newest_timestamp = $rss->items[0]['dc']['date'];
 
 		return array (
@@ -123,7 +123,7 @@ class UpdatesModule extends BaseModule {
 	public function GetFeed ( $feed = 'Security' ) {
 		$myfeed = freemed::secure_filename ( $feed );
 		
-		$rss = CreateObject('org.freemedsoftware.core.MagpieRSS', join("\n", file("data/cache/rss.feed.${myfeed}")));
+		$rss = CreateObject('org.freemedsoftware.core.MagpieRSS', join("\n", file("data/cache/rss.feed.{$myfeed}")));
 		$display_buffer .= "<div class=\"DataHead\">".
 		$return['title'] = $rss->channel['title'];
 		foreach ($rss->items AS $item) {
@@ -184,7 +184,7 @@ class UpdatesModule extends BaseModule {
 	//
 	private function _check_cached_copy ( $feed ) {
 		$hours = 24;
-		$cache_file = "data/cache/rss.feed.${feed}";
+		$cache_file = "data/cache/rss.feed.{$feed}";
 
 		if (!file_exists($cache_file)) { return false; }
 		$s = stat($cache_file);
@@ -221,7 +221,7 @@ class UpdatesModule extends BaseModule {
 		}
 
 		$auth = 'Basic '.base64_encode($username.':'.$password);
-		if (!fputs( $fp, "GET ${url} HTTP/1.0\r\nAuthorization: ${auth}\r\nHost: ${host}\r\n\r\n" )) {
+		if (!fputs( $fp, "GET {$url} HTTP/1.0\r\nAuthorization: {$auth}\r\nHost: {$host}\r\n\r\n" )) {
 			return false;
 		}
 

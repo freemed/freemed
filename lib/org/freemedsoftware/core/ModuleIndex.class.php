@@ -33,6 +33,11 @@ class ModuleIndex {
 	protected $index;
 	private $ttl = '3600'; // 1h TTL
 	private $quiet;
+	private $cache_file;
+	protected $display_hidden;
+	protected $modules_directory;
+	protected $recursive;
+	protected $extension;
 
 	// Method: constructor
 	//
@@ -164,6 +169,7 @@ class ModuleIndex {
 	//
 	protected function IsIndexed ( $file ) {
 		foreach ($this->index AS $m) {
+			if (!array_key_exists('MODULE_FILE', $m)) { continue; }
 			if ($m['MODULE_FILE'] == $m) { return true; }
 		}
 		return false;
@@ -173,24 +179,22 @@ class ModuleIndex {
 	//
 	//	Determine if the current directory is cached properly
 	//
-	// Parameters:
-	//
-	//	$dir_name - Directory name to check
-	//
 	// Returns:
 	//
 	//	Boolean, cached state of directory.
 	//
 	private function IsCached ( ) {
 		// Check for a cache file not existing, if so, it's not cached
-		if (!file_exists($this->cache_file)) { return false; }
+		if ($this->cache_file != NULL) {
+			if (!file_exists($this->cache_file)) { return false; }
+		}
 
 		// Get cached modification time
-		$cache_modified = $GLOBALS['sql']->queryOne('SELECT MAX(stamp) AS cache_modified FROM modules');
+		$cache_modified = $GLOBALS['sql']->queryOne('SELECT MAX(module_stamp) AS cache_modified FROM modules');
 
 		// Get directory modification date
 		clearstatcache();
-		$dir_modified = array_element(lstat($dir_name), 9);
+		$dir_modified = lstat($this->modules_directory)[9];
 		print "DEBUG: dir_modified = $dir_modified<br/>\n";
 
 		// If the cache is older than the directory...

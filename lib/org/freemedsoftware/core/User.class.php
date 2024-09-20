@@ -69,6 +69,11 @@ class User {
 			$this->user_number = $param;
 		}
 
+		if ($this->user_number === NULL) {
+			$this->user_level = 0;
+			return;
+		}
+
 		// Check for cached copy
 		if (!isset($GLOBALS['__freemed']['cache']['user'][$this->user_number])) {
 			// Retrieve copy
@@ -85,6 +90,7 @@ class User {
 			return false;
 		}
 
+		if (array_key_exists('username', $this->local_record)) {
 		$this->user_name    = stripslashes($this->local_record["username"]);
 		$this->user_descrip = stripslashes($this->local_record["userdescrip"]);
 		$this->user_level   = $this->local_record["userlevel"  ];
@@ -92,12 +98,13 @@ class User {
 		$this->perms_fac    = $this->local_record["userfac"    ]; 
 		$this->perms_phy    = $this->local_record["userphy"    ];
 		$this->perms_phygrp = $this->local_record["userphygrp" ];
+		}
 
 		// special root stuff
 		if ($this->user_number == 1) $this->user_level = 9;
 
 		// Map configuration vars
-		$this->manage_config = unserialize($this->local_record['usermanageopt']);
+		$this->manage_config = unserialize(array_key_exists('usermanageopt', $this->local_record) ? $this->local_record['usermanageopt'] : "");
 	} // end constructor
 
 	// Method: getDescription
@@ -380,6 +387,7 @@ class User {
 	//
 	public function setManageConfig ($new_key, $new_val) {
 		// Now, set extra value(s)
+		print "set manage config\n";
 		$this->manage_config["$new_key"] = $new_val;
 
 		// Set part of record
@@ -387,7 +395,7 @@ class User {
 			'user',
 			array(
 				'usermanageopt' => serialize( $this->manage_config )
-			), array ( 'id' => $this->user_number )
+			), array ( 'id' => (int)$this->user_number )
 		);
 		$result = $GLOBALS['sql']->query( $query );
 		return true;

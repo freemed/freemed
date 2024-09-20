@@ -190,9 +190,9 @@ class UserInterface {
 	public function GetEMRConfiguration ( ) {
 		$user_id = $this->user->user_number;
 		
-		$usermodules = module_function( 'ACL', 'GetUserPermissions', array ( $user_id ) );
+		$usermodules = module_function( 'ACL', 'GetUserPermissions', array ( (int)$user_id ) );
 		
-		$this->SetConfigValue('usermodules',$usermodules);
+		$this->SetConfigValue('usermodules', $usermodules);
 		$this->GetUserLeftNavigationMenu();
 		$this->GetUserTheme();
 		if (is_array($this->user->manage_config)) {
@@ -200,7 +200,6 @@ class UserInterface {
 		} else {
 			return array();
 		}
-		
 	} // end method GetEMRConfiguration
 
 	public function GetNewMessages ( ) {
@@ -367,13 +366,13 @@ class UserInterface {
 		if ( $id + 0 == 1 ) { return false; }
 
 		$this->del_pre( $id + 0 );
-		$query = "DELETE FROM user WHERE id = '".addslashes( $id+0 )."'";
+		$query = "DELETE FROM user WHERE id = '".addslashes( (int)$id )."'";
 		$result = $GLOBALS['sql']->query ( $query );
 
 		// delete user ACL object
-		module_function( 'ACL', 'UserDel', $id);
-		module_function( 'ACL', 'DelBlockedACOs', $id);
-		module_function( 'ACL', 'DelAllowedACOs', $id);
+		module_function( 'ACL', 'UserDel', (int)$id);
+		module_function( 'ACL', 'DelBlockedACOs', (int)$id);
+		module_function( 'ACL', 'DelAllowedACOs', (int)$id);
 
 		return true;
 	} // end function del

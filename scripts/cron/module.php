@@ -25,7 +25,7 @@
 ini_set('include_path', dirname(dirname(dirname(__FILE__))).':'.ini_get('include_path'));
 
 // Load MySQL support if this doesn't exist in the CLI version
-if (!function_exists('mysql_pconnect')) { dl('mysql.so'); }
+if (!function_exists('mysqli_connect')) { dl('mysqli.so'); }
 
 include_once ( 'lib/freemed.php' );
 

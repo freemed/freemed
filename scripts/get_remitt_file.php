@@ -43,6 +43,9 @@ if (array_key_exists(1, $_SERVER['argv'])) {
 
 if ($fn == "") {
 	$fl = GetFileList();
+	if (count($fl) == 0) {
+		print "NO FILES FOR THIS YEAR\n";
+	}
 	foreach ($fl AS $k => $v) {
 		print $v->filename . " [" . $v->filesize . "] billkey = " . $v->originalId . "\n";	
 	}

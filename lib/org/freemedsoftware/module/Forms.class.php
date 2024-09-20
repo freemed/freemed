@@ -127,7 +127,7 @@ class Forms extends EMRModule {
 		";
 	} // end method addform_requesttemplate
 
-	function add ( ) {
+	function add ( $data ) {
 		$_REQUEST['formtemplate'] = ereg_replace('[^A-Za-z0-9_]', '', $_REQUEST['formtemplate']);
 		
 		$template = CreateObject('org.freemedsoftware.core.FormTemplate', $_REQUEST['formtemplate']);
@@ -227,7 +227,7 @@ class Forms extends EMRModule {
 		";
 	} // end method modform
 
-	function mod ( ) {
+	function mod ( $data ) {
 		$rec = freemed::get_link_rec($_REQUEST['id'], $this->table_name);
 		
 		$template = CreateObject('org.freemedsoftware.core.FormTemplate', $rec['fr_template']);

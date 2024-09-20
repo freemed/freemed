@@ -21,6 +21,10 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+if (defined('DISABLE_I18N')) {
+	function __($x) { return $x; }
+} else {
+
 include_once ( dirname(__FILE__).'/php-gettext/gettext.inc' );
 include_once ( dirname(__FILE__).'/iso-set.php' );
 
@@ -52,5 +56,7 @@ function get_translation_matrix( $domain ) {
 	$l10n = _get_reader();
 	return $l10n->cache_translations;
 } // end method get_translation_matrix
+
+}
 
 ?>

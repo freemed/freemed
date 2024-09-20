@@ -34,6 +34,7 @@ if (empty($_SERVER['argv'][1])) {
 	$my_locale = $_SERVER['argv'][1];
 }
 
+print "Reading ". dirname(dirname(__FILE__)) . "/locale/" . $my_locale . "/LC_MESSAGES/gwt.mo" . "\n";
 $reader = new FileReader(dirname(dirname(__FILE__)) . "/locale/" . $my_locale . "/LC_MESSAGES/gwt.mo" );
 $streamer = new gettext_reader( $reader );
 $streamer->load_tables();

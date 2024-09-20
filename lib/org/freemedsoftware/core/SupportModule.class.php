@@ -34,6 +34,9 @@ class SupportModule extends BaseModule {
 	// override variables
 	var $CATEGORY_NAME = "Support Data";
 	var $CATEGORY_VERSION = "0.2.1";
+	protected $rpc_field_map;
+	protected $acl;
+	protected $variables;
 
 	// Variable: $this->order_field
 	//
@@ -253,7 +256,7 @@ class SupportModule extends BaseModule {
 		return $new_id;
 	} // end function add
 
-	protected function add_pre ( $data ) { }
+	protected function add_pre ( &$data ) { }
 	protected function add_post ( $id, $data ) { }
 
 	// Method: del
@@ -299,7 +302,7 @@ class SupportModule extends BaseModule {
 		return true;
 	} // end function del
 
-	protected function del_pre ( $id ) { }
+	protected function del_pre ( &$id ) { }
 
 	// Method: mod
 	//
@@ -349,7 +352,7 @@ class SupportModule extends BaseModule {
 		return $result ? true : false;
 	} // end function mod
 
-	protected function mod_pre ( $data ) { }
+	protected function mod_pre ( &$data ) { }
 	protected function mod_post ( $data ) { }
 
 	// Method: GetRecord
@@ -391,13 +394,13 @@ class SupportModule extends BaseModule {
 				if ( $v == $criteria_field ) { $found = true; }
 			}
 			if ( ! $found ) {
-				syslog( LOG_INFO, "GetRecords| invalid value ${criteria_field} attempted for indexing value" );
+				syslog( LOG_INFO, "GetRecords| invalid value {$criteria_field} attempted for indexing value" );
 				return false;
 			}
 		}
 		$condition="";
 		if($criteria_field!=NULL)
-			$condition=" WHERE ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' ";
+			$condition=" WHERE {$criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' ";
 		if($this->archive_field!=""){
 			if($criteria_field!=NULL)
 				$condition=$condition." AND ".$this->archive_field." != 1 ";
@@ -405,7 +408,7 @@ class SupportModule extends BaseModule {
 				$condition=" WHERE ".$this->archive_field." != 1 ";	
 		}
 		
-		$q = "SELECT *,".( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ).$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".$condition." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT ${limit}";
+		$q = "SELECT *,".( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ).$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".$condition." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT {$limit}";
 		//return $q;
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
@@ -426,7 +429,7 @@ class SupportModule extends BaseModule {
 			$j = array();
 			foreach ( $this->table_join AS $k => $v ) {
 				if ( ($k+0) == 0 ) {
-					$j[] = "LEFT OUTER JOIN ${v} ON ".$this->table_name.".${k} = ${v}.id";
+					$j[] = "LEFT OUTER JOIN {$v} ON ".$this->table_name.".{$k} = {$v}.id";
 				}
 			}
 			$join = join(' ', $j);
@@ -621,7 +624,7 @@ class SupportModule extends BaseModule {
 			system ( $command );
 			return true;
 		} else {
-			//syslog(LOG_INFO, get_class($this)." : no definition found for ${path}");
+			//syslog(LOG_INFO, get_class($this)." : no definition found for {$path}");
 			return false;
 		}
 	} // end function create_table

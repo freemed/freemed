@@ -233,7 +233,7 @@ class DicomModule extends EMRModule {
 		syslog( LOG_DEBUG, get_class($this)."| originalfilename = $origfilename");
 		$success = $pds->StoreFile( $patient, get_class( $this ), $id, $origfilename );
 		if ( $success ) {
-			syslog( LOG_INFO, get_class($this)."| found file ${origfilename} ( output = $success )" );
+			syslog( LOG_INFO, get_class($this)."| found file {$origfilename} ( output = $success )" );
 			$x = $params;
 			$x['d_filename'] = $pds->ResolveFilename( $patient, get_class($this), $id );
 			$x['d_md5'] = $md5;
@@ -282,7 +282,7 @@ class DicomModule extends EMRModule {
 		if ( $convert ) {
 			Header( 'Content-type: image/jpeg' );
 			$temp = tempnam( '/tmp', 'dicomView' );
-			system( "dcmj2pnm +oj '${pic}' '${temp}'" );	
+			system( "dcmj2pnm +oj '{$pic}' '{$temp}'" );	
 			Header( 'Content-length: '.(string)( filesize( $temp ) ) );
 			Header( 'Content-disposition: inline; filename="'.mktime().'-dicom.jpg"' );
 			readfile( $temp );
@@ -334,7 +334,7 @@ class DicomModule extends EMRModule {
 		unlink( $filename );
 	}
 
-	protected function mod_pre ( $data ) {
+	protected function mod_pre ( &$data ) {
 		$data['user'] = freemed::user_cache()->user_number;
 	}
 

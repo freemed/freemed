@@ -136,7 +136,10 @@ class MessagesModule extends EMRModule {
 	//
 	public function UnreadMessages ( $ts = false, $all = false ) {
 		$this_user = freemed::user_cache();
-		$q = "SELECT COUNT(*) AS count FROM messages WHERE msgfor=".( $this_user->user_number + 0 )." ".( $all ? "" : " AND msgread=0 " )." AND msgtag='' ".( $ts ? " AND msgtime >= ".( $ts + 0 ) : "" );
+		$user_num = (int)$this_user->user_number;
+		$q = "SELECT COUNT(*) AS count FROM messages WHERE msgfor={$user_num} ".
+			( $all ? "" : " AND msgread=0 " ).
+			" AND msgtag='' ".( $ts ? " AND msgtime >= ".(int)$ts : "" );
 		return $GLOBALS['sql']->queryOne( $q ) + 0;
 	} // end method UnreadMessages
 

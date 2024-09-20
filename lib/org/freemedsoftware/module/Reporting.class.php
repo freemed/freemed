@@ -399,7 +399,7 @@ class Reporting extends SupportModule {
 			Header( rlib_get_content_type( $rlib ) );
 			break;
 		}
-		Header ("Content-Disposition: inline; filename=\"".mktime().".${ext}\"");
+		Header ("Content-Disposition: inline; filename=\"".mktime().".{$ext}\"");
 		rlib_spool( $rlib );
 		rlib_free( $rlib );
 		die();
@@ -516,7 +516,7 @@ class Reporting extends SupportModule {
 		}
 		
 		Header ("Content-Transfer-Encoding:­binary"); 
-		Header ("Content-Disposition: inline; filename=\"" . $param['report_formatting'] . ".${ext}\"");
+		Header ("Content-Disposition: inline; filename=\"" . $param['report_formatting'] . ".{$ext}\"");
 		Header ("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 		Header ("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 		readfile( $output_file );		

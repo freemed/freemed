@@ -94,6 +94,7 @@ class FreemedDb extends DB {
 	// MDB2 compatibility functions	
 	public function queryAll( $query ) { return $this->db->getAll($query); }
 	public function queryOne( $query ) { return $this->db->getOne($query); }
+	public function queryRow( $query ) { return $this->db->getRow($query); }
 
 	// Method: queryOneStoredProc
 	//
@@ -220,6 +221,8 @@ class FreemedDb extends DB {
 	//	INSERT SQL query
 	//
 	public function insert_query ( $table, $values, $date_fields=NULL ) {
+		$values_hash = "";
+		$cols_hash = "";
 		$in_loop = false;
 		foreach ($values AS $k => $v) {
 			if ( is_int($k) or empty( $k ) ) {
@@ -281,7 +284,7 @@ class FreemedDb extends DB {
 	//
 	public function update_query ( $table, $values, $where, $date_fields=NULL ) {
 		foreach ( $values AS $k => $v ) {
-			if ( (($k+0) > 0) or empty( $k ) ) {
+			if ( ((int)$k > 0) or empty( $k ) ) {
 				$k = $v; $v = $this->data[$k];
 			}
 
@@ -305,11 +308,12 @@ class FreemedDb extends DB {
 			}
 
 			// Handle timestamp
-			if ("${v}" == SQL__NOW) {
+			if ("{$v}" == SQL__NOW) {
+				print "timestamp\n";
 				$values_clause[] = "`".$this->db->escapeSimple($k)."` = NOW()";
 			} else {
 				if ( $v !== '' ) {
-					$values_clause[] = "`".$this->db->escapeSimple($k)."` = ".( "${v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
+					$values_clause[] = "`".$this->db->escapeSimple($k)."` = ".( "{$v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
 				}
 			}
 		}

@@ -36,6 +36,8 @@ class BaseModule extends Module {
 	var $MODULE_DESCRIPTION = "NO DESCRIPTION";
 	var $MODULE_VENDOR = "Stock Module";
 
+	protected $acl;
+
 	// Set package versioning information
 	var $PACKAGE_VERSION = VERSION;
 
@@ -67,7 +69,9 @@ class BaseModule extends Module {
 		// Call parent constructor
 		parent::__construct ( );
 		// Load language files, if necessary
-		T_textdomain( strtolower( get_class( $this ) ) );
+		if (!defined('DISABLE_I18N')) {
+			T_textdomain( strtolower( get_class( $this ) ) );
+		}
 		// Push acl information, if there is any
 		if ($this->acl) { $this->_SetMetaInformation('acl', $this->acl); }
 	} // end constructor BaseModule
@@ -130,7 +134,6 @@ class BaseModule extends Module {
 				$GLOBALS['__freemed']['automatic_refresh'] = 10;
 			}
 			return true;
-			break;
 		}
 
 		// Handle render
@@ -323,14 +326,14 @@ class BaseModule extends Module {
 			if (!freemed::module_check($this->MODULE_UID)) {
 				// run internal setup routine
 				$val = $this->_setup();
-				syslog(LOG_INFO, get_class($this)." : _setup returned ${val}");
+				syslog(LOG_INFO, get_class($this)." : _setup returned {$val}");
 			} // end checking to see if installed at all
 
 			// register module
 			syslog(LOG_INFO, get_class($this)." : call module_register"); 
 			freemed::module_register($this->MODULE_UID, $this->MODULE_VERSION);
 
-			syslog(LOG_INFO, get_class($this)." : exiting setup() with ${val}");
+			syslog(LOG_INFO, get_class($this)." : exiting setup() with {$val}");
 			return $val;
 		} // end checking for module
 		syslog(LOG_INFO, get_class($this)." : exiting setup()");

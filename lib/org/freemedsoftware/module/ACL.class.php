@@ -257,25 +257,25 @@ class ACL extends SupportModule {
 	private function acl_object ( ) {
 		static $_obj;
 		if (!isset($_obj)) {
-		LoadObjectDependency ('org.freemedsoftware.acl.gacl');
-		$_obj = CreateObject('org.freemedsoftware.acl.gacl_api',
-			array (
-				// Unfortunately, we duplicate to avoid
-				// security risks from the global array having
-				// database information.
-				'db_type' => 'mysql',
-				'db_host' => DB_HOST,
-				'db_user' => DB_USER,
-				'db_password' => DB_PASSWORD,
-				'db_name' => DB_NAME,
-				'db_table_prefix' => 'acl_',
-				// Caching and security
-				'debug' => false,
-				'caching' => true,
-				'force_cache_expire' => true,
-				'cache_expire_time' => 600
-			)
-		);
+			LoadObjectDependency ('org.freemedsoftware.acl.gacl');
+			$_obj = CreateObject('org.freemedsoftware.acl.gacl_api',
+				array (
+					// Unfortunately, we duplicate to avoid
+					// security risks from the global array having
+					// database information.
+					'db_type' => 'mysql',
+					'db_host' => DB_HOST,
+					'db_user' => DB_USER,
+					'db_password' => DB_PASSWORD,
+					'db_name' => DB_NAME,
+					'db_table_prefix' => 'acl_',
+					// Caching and security
+					'debug' => false,
+					'caching' => true,
+					'force_cache_expire' => true,
+					'cache_expire_time' => 600
+				)
+			);
 		}
 		return $_obj;
 	} // end method acl_object
@@ -348,10 +348,9 @@ class ACL extends SupportModule {
 		$acl = $this->acl_object();
 		$aro_id = $acl->get_object_id('user',$userId,'ARO');
 		$return = $acl->get_object_groups($aro_id);
-		
-	
-	return $return;
+		return $return;
 	}
+
 	// Method: GetUserGroupNames
 	//
 	//	Get list of  user group names(AROs)
@@ -490,27 +489,29 @@ class ACL extends SupportModule {
 	//
 	public function GetUserPermissions($user_id) {
 		$userGroups =  $this->GetUserGroups($user_id);
+		print "GetUserPerms 1\n";
 		$blockedSections = $this->GetBlockedACOs($user_id);
-		
 		$allowedSections = $this->GetAllowedACOs($user_id);
-		foreach($userGroups as  $group){
+		foreach($userGroups AS $group){
 			$groupPermissions = $this->GetGroupPermissions($group);
-			foreach($groupPermissions as  $section=>$values){
-				if($blockedSections[$section])
+			foreach( $groupPermissions AS $section => $values){
+				if($blockedSections[$section]) {
 					$return[$section] = $this->getModulesPermissionsBits($blockedSections[$section],'1');	
-				else
+				} else {
 					$return[$section] = $this->getModulesPermissionsBits($values);
+				}
 			}
 
 		}
 		
 		
-		foreach($allowedSections as  $section=>$values)
-				$return[$section] = $this->getModulesPermissionsBits($values);
-	
+		foreach($allowedSections as  $section=>$values) {
+			$return[$section] = $this->getModulesPermissionsBits($values);
+		}
 		
 		return $return;
 	} // end method GetAllPermissions
+
 	public function getModulesPermissionsBits($sectionValues,$defaultValue='0'){
 		$reverseValue = $defaultValue=='0'?'1':'0';
 		$bit['read']=$defaultValue;

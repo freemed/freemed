@@ -110,7 +110,10 @@ class Pharmacy extends SupportModule {
 	//	* key - Facility table id key
 	//	* value - Text representing Pharmacy record identifying info.
 	//
-	public function picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
+	public function	picklist($criteria = null, $fieldValues = null) {
+		return $this->_picklist( $criteria );
+	}
+	protected function _picklist ( $string, $_limit = 10, $inputlimit = 2 ) {
 		$limit = ($_limit < 10) ? 10 : $_limit;
 		if (strlen($string) < $inputlimit) {
 			syslog(LOG_INFO, "under $inputlimit");
