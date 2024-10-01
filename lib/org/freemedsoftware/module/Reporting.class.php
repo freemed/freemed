@@ -181,7 +181,7 @@ class Reporting extends SupportModule {
 				case 'MessageID':
 				case 'EMRModule':
 				case 'SupportModule':
-				$pass[] = $param[$k]+0;
+				$pass[] = (int)$param[$k];
 				break;
 
 				case 'User':
@@ -190,7 +190,7 @@ class Reporting extends SupportModule {
 				
 				case 'Integer':
 				case 'int':
-				$pass[] = $param[$k]+0;
+				$pass[] = (int)$param[$k];
 				break;
 				
 				default:
