@@ -885,7 +885,7 @@ class EMRModule extends BaseModule {
 	//
 	public function RenderSinglePDF ( $id ) {
 		Header('Content-type: application/x-freemed-print-pdf');
-		Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
+		Header('Content-Disposition: inline; filename="'.time().'.pdf"');
 		$file = $this->RenderToPDF( $id );
 		if (!file_exists($file)) { die ('no file'); }
 		readfile ( $file );

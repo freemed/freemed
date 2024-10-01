@@ -189,7 +189,7 @@ class UpdatesModule extends BaseModule {
 		if (!file_exists($cache_file)) { return false; }
 		$s = stat($cache_file);
 
-		if ( ($s[9]+(3600 * $hours)) >= mktime() ) {
+		if ( ($s[9]+(3600 * $hours)) >= time() ) {
 			return true;
 		}
 

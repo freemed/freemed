@@ -70,7 +70,7 @@ class NcpdpXmlInterface {
 		$h = ' <Header>' . $this->EOL;
 		$h .= '  <To>mailto:SSSDIR.dp@surescripts.com</To>' . $this->EOL;
 		$h .= '  <From>mailto:XXX001.dp@surescripts.com</From>' . $this->EOL;
-		$h .= '  <MessageID>' . md5( mktime() ) . '</MessageID>' . $this->EOL;
+		$h .= '  <MessageID>' . md5( time() ) . '</MessageID>' . $this->EOL;
 		$h .= '  <SentTime>2007-01-24T21:22:29.4Z</SentTime>' . $this->EOL;
 		$h .= '  <Security>' . $this->EOL;
 		$h .= '   <UsernameToken>' . $this->EOL;

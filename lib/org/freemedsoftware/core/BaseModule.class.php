@@ -212,7 +212,7 @@ class BaseModule extends Module {
 
 			Header('Content-Type: application/x-freemed-print-pdf');
 			Header('Content-Length: '.strlen($contents));
-			Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
+			Header('Content-Disposition: inline; filename="'.time().'.pdf"');
 			print $contents;
 			flush();
 			//print "file = $file<br/>\n";

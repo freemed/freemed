@@ -284,13 +284,13 @@ class DicomModule extends EMRModule {
 			$temp = tempnam( '/tmp', 'dicomView' );
 			system( "dcmj2pnm +oj '{$pic}' '{$temp}'" );	
 			Header( 'Content-length: '.(string)( filesize( $temp ) ) );
-			Header( 'Content-disposition: inline; filename="'.mktime().'-dicom.jpg"' );
+			Header( 'Content-disposition: inline; filename="'.time().'-dicom.jpg"' );
 			readfile( $temp );
 			unlink( $temp );
 		} else {
 			Header( 'Content-type: image/dicom' );
 			Header( 'Content-length: '.(string)( filesize( $pic ) ) );
-			Header( 'Content-disposition: inline; filename="'.mktime().'-dicom.dcm"' );
+			Header( 'Content-disposition: inline; filename="'.time().'-dicom.dcm"' );
 			readfile( $pic );
 		}
 

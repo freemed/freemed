@@ -206,7 +206,7 @@ class PatientReporting extends SupportModule {
 
 			case 'xml':
 			$result = $GLOBALS['sql']->queryAllStoredProc( $query );
-			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
+			$xml = new SimpleXMLElement("<Report Timestamp=\"".time()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
 			foreach ($result AS $r ) {
 				$row = $xml->addChild( 'Record' );
 				foreach ( $r AS $column => $value ) {
@@ -350,7 +350,7 @@ class PatientReporting extends SupportModule {
 			Header( rlib_get_content_type( $rlib ) );
 			break;
 		}
-		Header ("Content-Disposition: inline; filename=\"".mktime().".${ext}\"");
+		Header ("Content-Disposition: inline; filename=\"".time().".${ext}\"");
 		rlib_spool( $rlib );
 		rlib_free( $rlib );
 		die();

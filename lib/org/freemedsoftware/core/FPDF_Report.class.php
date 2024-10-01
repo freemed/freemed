@@ -47,7 +47,7 @@ class FPDF_Report extends FPDF {
 	//	$query - SQL query text
 	//
 	public function LoadData( $reportName, $query ) {
-		$q = $GLOBALS['sql']->queryAll( $query );
+		$q = $GLOBALS['sql']->queryAllStoredProc( $query );
 
 		$notset = false;
 		foreach ($q AS $r) {
@@ -148,7 +148,7 @@ class FPDF_Report extends FPDF {
 		if (!isset($this->_cache)) { return false; }
 
 		Header ("Content-type: application/x-pdf");
-		Header ("Content-Disposition: inline; filename=\"".mktime().".pdf\"");
+		Header ("Content-Disposition: inline; filename=\"".time().".pdf\"");
 
 		$this->_timestamp = date( 'r' );
 
