@@ -489,7 +489,6 @@ class ACL extends SupportModule {
 	//
 	public function GetUserPermissions($user_id) {
 		$userGroups =  $this->GetUserGroups($user_id);
-		print "GetUserPerms 1\n";
 		$blockedSections = $this->GetBlockedACOs($user_id);
 		$allowedSections = $this->GetAllowedACOs($user_id);
 		foreach($userGroups AS $group){

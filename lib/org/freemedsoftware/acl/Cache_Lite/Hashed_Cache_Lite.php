@@ -69,7 +69,7 @@ class Hashed_Cache_Lite extends Cache_Lite
 	{
 		if (!@file_exists($dir)) {
 			$dir_parts = preg_split('![\/]+!', $dir, -1, PREG_SPLIT_NO_EMPTY);
-			$new_dir = ($dir{0} == DIR_SEP) ? DIR_SEP : '';
+			$new_dir = ($dir[0] == DIR_SEP) ? DIR_SEP : '';
 			foreach ($dir_parts as $dir_part) {
 				$new_dir .= $dir_part;
 				if (!file_exists($new_dir) && !mkdir($new_dir, 0771)) {

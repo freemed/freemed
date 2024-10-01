@@ -387,7 +387,6 @@ class User {
 	//
 	public function setManageConfig ($new_key, $new_val) {
 		// Now, set extra value(s)
-		print "set manage config\n";
 		$this->manage_config["$new_key"] = $new_val;
 
 		// Set part of record

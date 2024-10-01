@@ -49,6 +49,10 @@
 
 class gacl_api extends gacl {
 
+	function __construct($options = NULL) {
+                return $this->construct($options);
+        }
+
 	/*
 	 *
 	 * Misc helper functions.
@@ -725,7 +729,7 @@ class gacl_api extends gacl {
 		$rows = $rs->GetRows();
 
 		$retarr['aco'] = array();
-		while (list(,$row) = @each($rows)) {
+		foreach ($rows as $_ => $row) {
 			list($section_value, $value, $section, $aco) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section ACO: $aco");
 
@@ -741,7 +745,7 @@ class gacl_api extends gacl {
 		$rows = $rs->GetRows();
 
 		$retarr['aro'] = array();
-		while (list(,$row) = @each($rows)) {
+		foreach ($rows as $_ => $row) {
 			list($section_value, $value, $section, $aro) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section ARO: $aro");
 
@@ -757,7 +761,7 @@ class gacl_api extends gacl {
 		$rows = $rs->GetRows();
 
 		$retarr['axo'] = array();
-		while (list(,$row) = @each($rows)) {
+		foreach ($rows as $_ => $row) {
 			list($section_value, $value, $section, $axo) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section AXO: $axo");
 
