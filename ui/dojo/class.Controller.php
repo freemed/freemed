@@ -47,7 +47,7 @@ class Controller {
 		// Override Smarty defaults for FreeMED
 		$this->smarty->setTemplateDir(dirname(__FILE__)."/view/");
 		$this->smarty->setCompileDir(dirname(__FILE__)."/../../data/cache/smarty/templates_c/");
-		$this->smarty->setCacheDir)dirname(__FILE__)."/../../data/cache/smarty/cache/");
+		$this->smarty->setCacheDir(dirname(__FILE__)."/../../data/cache/smarty/cache/");
 
 		// Change delimiters to be something a bit more sane
 		$this->smarty->left_delimiter = '<!--{';
@@ -106,11 +106,11 @@ class Controller {
 
 	protected function export_date ( $data ) {
 		switch (true) {
-			case ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $data, $regs):
+			case preg_match("/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/", $data, $regs):
 			return sprintf('%d/%d/%04d', $regs[2], $regs[3], $regs[1]);
 			break;
 
-			case ereg("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})", $data, $regs):
+			case preg_match("/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2,4})/", $data, $regs):
 			return $data;
 
 			default: return $data;
@@ -120,11 +120,11 @@ class Controller {
 	protected function import_date ( $varname, $default = NULL ) {
 		$data = $_REQUEST[$varname] ? $_REQUEST[$varname] : $default;
 		switch (true) {
-			case ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $data, $regs):
+			case preg_match("/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/", $data, $regs):
 			return sprintf('%04d-%02d-%02d', $regs[1], $regs[2], $regs[3]);
 			break;
 
-			case ereg("([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})", $data, $regs):
+			case preg_match("/([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2,4})/", $data, $regs):
 			if ($regs[3] < 30) {
 				$regs[3] += 2000;
 			} elseif ($regs[3] < 1800) {

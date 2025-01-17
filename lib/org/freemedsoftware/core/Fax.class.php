@@ -46,7 +46,7 @@ class Fax {
 	//		* recipient
 	//		* comments
 	//
-	function Fax ( $attachment, $_options = NULL ) {
+	public function __construct ( $attachment, $_options = NULL ) {
 		$this->attachment = $attachment;
 
 		if (is_array($_options)) {

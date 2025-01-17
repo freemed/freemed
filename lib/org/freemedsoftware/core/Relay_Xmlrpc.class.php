@@ -287,7 +287,7 @@ class Relay_Xmlrpc extends Relay {
 				{
 					// we have an I4, INT or a DOUBLE
 					// we must check that only 0123456789-.<space> are characters here
-					if (!ereg("^\-?[0123456789 \t\.]+$", $this->_xh['ac']))
+					if (!preg_match("/^\-?[0123456789 \t\.]+$/", $this->_xh['ac']))
 					{
 						// TODO: find a better way of throwing an error
 						// than this!
@@ -335,7 +335,7 @@ class Relay_Xmlrpc extends Relay {
 				$this->_xh['params'][]=$this->_xh['st'];
 				break;
 			case 'METHODNAME':
-				$this->_xh['method']=ereg_replace("^[\n\r\t ]+", '', $this->_xh['ac']);
+				$this->_xh['method']=preg_replace("/^[\n\r\t ]+/", '', $this->_xh['ac']);
 				break;
 			case 'BOOLEAN':
 				// special case here: we translate boolean 1 or 0 into PHP
@@ -362,7 +362,7 @@ class Relay_Xmlrpc extends Relay {
 
 	function xmlrpc_cd($parser, $data)
 	{
-		//if (ereg("^[\n\r \t]+$", $data)) return;
+		//if (preg_match("/^[\n\r \t]+$/", $data)) return;
 		// print "adding [${data}]\n";
 
 		if ($this->_xh['lv']!=3)
@@ -434,7 +434,7 @@ class Relay_Xmlrpc extends Relay {
 	{
 		// return a timet in the localtime, or UTC
 		$t=0;
-		if (ereg("([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})",$idate, $regs))
+		if (preg_match("/([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})/",$idate, $regs))
 		{
 			if ($utc)
 			{

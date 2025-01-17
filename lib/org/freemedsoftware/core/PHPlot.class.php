@@ -70,7 +70,7 @@ class PHPlot {
     var $y_precision = 1;
     var $x_precision = 1;
 
-    var $data_units_text = '';              // Units text for 'data' labels (i.e: '¤', '$', etc.)
+    var $data_units_text = '';              // Units text for 'data' labels (i.e: 'ï¿½', '$', etc.)
 
 // Titles
     var $title_txt = '';
@@ -194,7 +194,7 @@ class PHPlot {
      * \param which_output_file string Filename for output.
      * \param which_input_fule  string Path to a file to be used as background.
      */
-    function PHPlot($which_width=600, $which_height=400, $which_output_file=NULL, $which_input_file=NULL)
+    public function __construct($which_width=600, $which_height=400, $which_output_file=NULL, $which_input_file=NULL)
     {
         /*
          * Please see http://www.php.net/register_shutdown_function

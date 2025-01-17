@@ -60,20 +60,20 @@ require_once 'Net/URL.php';
 /**#@+
  * Constants for HTTP request methods
  */ 
-define('HTTP_REQUEST_METHOD_GET',     'GET',     true);
-define('HTTP_REQUEST_METHOD_HEAD',    'HEAD',    true);
-define('HTTP_REQUEST_METHOD_POST',    'POST',    true);
-define('HTTP_REQUEST_METHOD_PUT',     'PUT',     true);
-define('HTTP_REQUEST_METHOD_DELETE',  'DELETE',  true);
-define('HTTP_REQUEST_METHOD_OPTIONS', 'OPTIONS', true);
-define('HTTP_REQUEST_METHOD_TRACE',   'TRACE',   true);
+define('HTTP_REQUEST_METHOD_GET',     'GET'     );
+define('HTTP_REQUEST_METHOD_HEAD',    'HEAD'    );
+define('HTTP_REQUEST_METHOD_POST',    'POST'    );
+define('HTTP_REQUEST_METHOD_PUT',     'PUT'     );
+define('HTTP_REQUEST_METHOD_DELETE',  'DELETE'  );
+define('HTTP_REQUEST_METHOD_OPTIONS', 'OPTIONS' );
+define('HTTP_REQUEST_METHOD_TRACE',   'TRACE'   );
 /**#@-*/
 
 /**#@+
  * Constants for HTTP protocol versions
  */
-define('HTTP_REQUEST_HTTP_VER_1_0', '1.0', true);
-define('HTTP_REQUEST_HTTP_VER_1_1', '1.1', true);
+define('HTTP_REQUEST_HTTP_VER_1_0', '1.0');
+define('HTTP_REQUEST_HTTP_VER_1_1', '1.1');
 /**#@-*/
 
 if (extension_loaded('mbstring') && (2 & ini_get('mbstring.func_overload'))) {
@@ -385,7 +385,7 @@ class HTTP_Request
     */
     function setURL($url)
     {
-        $this->_url = &new Net_URL($url, $this->_useBrackets);
+        $this->_url = new Net_URL($url, $this->_useBrackets);
 
         if (!empty($this->_url->user) || !empty($this->_url->pass)) {
             $this->setBasicAuth($this->_url->user, $this->_url->pass);
@@ -678,8 +678,8 @@ class HTTP_Request
         }
 
         // magic quotes may fuck up file uploads and chunked response processing
-        $magicQuotes = ini_get('magic_quotes_runtime');
-        ini_set('magic_quotes_runtime', false);
+        //$magicQuotes = ini_get('magic_quotes_runtime');
+        //ini_set('magic_quotes_runtime', false);
 
         // RFC 2068, section 19.7.1: A client MUST NOT send the Keep-Alive 
         // connection token to a proxy server...
@@ -703,7 +703,7 @@ class HTTP_Request
             $err = null;
         } else {
             $this->_notify('connect');
-            $this->_sock =& new Net_Socket();
+            $this->_sock = new Net_Socket();
             $err = $this->_sock->connect($host, $port, null, $this->_timeout, $this->_socketOptions);
         }
         PEAR::isError($err) or $err = $this->_sock->write($this->_buildRequest());
@@ -716,7 +716,7 @@ class HTTP_Request
             $this->_notify('sentRequest');
 
             // Read the response
-            $this->_response = &new HTTP_Response($this->_sock, $this->_listeners);
+            $this->_response = new HTTP_Response($this->_sock, $this->_listeners);
             $err = $this->_response->process(
                 $this->_saveBody && $saveBody,
                 HTTP_REQUEST_METHOD_HEAD != $this->_method
@@ -736,7 +736,7 @@ class HTTP_Request
             }
         }
 
-        ini_set('magic_quotes_runtime', $magicQuotes);
+        //ini_set('magic_quotes_runtime', $magicQuotes);
 
         if (PEAR::isError($err)) {
             return $err;
@@ -761,10 +761,10 @@ class HTTP_Request
 
             // Absolute URL
             if (preg_match('/^https?:\/\//i', $redirect)) {
-                $this->_url = &new Net_URL($redirect);
+                $this->_url = new Net_URL($redirect);
                 $this->addHeader('Host', $this->_generateHostHeader());
             // Absolute path
-            } elseif ($redirect{0} == '/') {
+            } elseif ($redirect[0] == '/') {
                 $this->_url->path = $redirect;
             
             // Relative path

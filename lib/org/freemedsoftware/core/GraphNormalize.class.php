@@ -50,7 +50,7 @@ class GraphNormalize {
 	//		* dashed_grid - (bool) Set to true to have a dashed-style grid
 	//		* interval - Number of divisions in the graph
 	//
-	function GraphNormalize ( $title, $options = NULL ) {
+	public function __construct ( $title, $options = NULL ) {
 		$this->options = $options;
 		$this->interval = $this->options['interval'] ? $this->options['interval'] : 10;
 

@@ -34,7 +34,7 @@ class CSV {
 	//
 	//	Create CSV object
 	//
-	function CSV ( ) { }
+	public function __construct ( ) { }
 
 	// Method: ImportSQLQuery
 	//
@@ -44,7 +44,7 @@ class CSV {
 	//
 	//	$query - SQL query text
 	//
-	function ImportSQLQuery ( $query ) {
+	public function ImportSQLQuery ( $query ) {
 		$q = $GLOBALS['sql']->queryAll($query);
 
 		$notset = false;
@@ -79,7 +79,7 @@ class CSV {
 	//
 	//	Export as CSV and die
 	//
-	function Export ( ) {
+	public function Export ( ) {
 		if (!isset($this->_cache)) { return false; }
 
 		$CRLF = "\r\n";

@@ -78,7 +78,7 @@ class ProcedureModule extends EMRModule {
 		'user'
 	);    
 
-	function ProcedureModule () {
+	public function __construct () {
 		// Set vars for patient management
 		$this->list_view = array (
 			__("Date")    => "procdt",

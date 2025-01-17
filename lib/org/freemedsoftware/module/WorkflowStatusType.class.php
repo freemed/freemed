@@ -59,13 +59,13 @@ class WorkflowStatusType extends SupportModule {
 	} // end constructor
 
 	protected function add_pre ( &$data ) {
-		if (!ereg("^[[:alpha:]]+$", $data['status_module'] )) {
+		if (!preg_match("/^[[:alpha:]]+$/", $data['status_module'] )) {
 			$data['status_module'] = '';
 		}
 	}
 
 	protected function mod_pre ( &$data ) {
-		if (!ereg("^[[:alpha:]]+$", $data['status_module'] )) {
+		if (!preg_match("/^[[:alpha:]]+$/", $data['status_module'] )) {
 			$data['status_module'] = '';
 		}
 	}

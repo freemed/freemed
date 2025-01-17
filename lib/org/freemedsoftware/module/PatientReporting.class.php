@@ -326,7 +326,7 @@ class PatientReporting extends SupportModule {
 			default:	$outformat = 'pdf';	$ext = 'pdf';	break;
 		} // end switch format
 
-		@dl( "rlib.so" );
+		//@dl( "rlib.so" );
 		if ( ! function_exists( 'rlib_init' ) ) {
 			syslog( LOG_ERR, get_class($this)."| rlib PHP extension not found" );
 		}

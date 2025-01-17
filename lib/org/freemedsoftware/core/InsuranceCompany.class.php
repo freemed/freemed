@@ -38,7 +38,7 @@ class InsuranceCompany {
 	//
 	//	$insco - Database table identifier for insurance company.
 	//
-	function InsuranceCompany ($insco = 0) {
+	public function __construct ($insco = 0) {
 		if ($insco==0) return false;    // error checking
 
 		if (!isset($GLOBALS['__freemed']['cache']['insco'][$insco])) {

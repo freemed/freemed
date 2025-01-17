@@ -27,7 +27,7 @@
 		var $fs = '';
 		var $hdrs;
 
-		function xmlrpcresp($val='', $fcode=0, $fstr='')
+		function __constructor($val='', $fcode=0, $fstr='')
 		{
 			if ($fcode!=0)
 			{

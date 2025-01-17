@@ -431,7 +431,7 @@ function GetStringWidth($s)
 	$w=0;
 	$l=strlen($s);
 	for($i=0;$i<$l;$i++)
-		$w+=$cw[$s{$i}];
+		$w+=$cw[$s[$i]];
 	return $w*$this->FontSize/1000;
 }
 
@@ -831,7 +831,7 @@ function Write($h,$txt,$link='')
 	while($i<$nb)
 	{
 		//Get next character
-		$c=$s{$i};
+		$c=$s[$i];
 		if($c=="\n")
 		{
 			//Explicit line break
@@ -914,14 +914,14 @@ function Image($file,$x,$y,$w,$h=0,$type='',$link='')
 		}
 		$type=strtolower($type);
 		$mqr=get_magic_quotes_runtime();
-		set_magic_quotes_runtime(0);
+		//set_magic_quotes_runtime(0);
 		if($type=='jpg' or $type=='jpeg')
 			$info=$this->_parsejpg($file);
 		elseif($type=='png')
 			$info=$this->_parsepng($file);
 		else
 			$this->Error('Unsupported image file type: '.$type);
-		set_magic_quotes_runtime($mqr);
+		//set_magic_quotes_runtime($mqr);
 		$info['i']=count($this->images)+1;
 		$this->images[$file]=$info;
 	}
@@ -1123,7 +1123,7 @@ function _putfonts()
 		$this->_out('endobj');
 	}
 	$mqr=get_magic_quotes_runtime();
-	set_magic_quotes_runtime(0);
+	//set_magic_quotes_runtime(0);
 	foreach($this->FontFiles as $file=>$info)
 	{
 		//Font file embedding
@@ -1146,7 +1146,7 @@ function _putfonts()
 		fclose($f);
 		$this->_out('endobj');
 	}
-	set_magic_quotes_runtime($mqr);
+	//set_magic_quotes_runtime($mqr);
 	foreach($this->fonts as $k=>$font)
 	{
 		//Font objects
@@ -1363,7 +1363,7 @@ function _beginpage($orientation)
 		$orientation=$this->DefOrientation;
 	else
 	{
-		$orientation=strtoupper($orientation{0});
+		$orientation=strtoupper($orientation[0]);
 		if($orientation!=$this->DefOrientation)
 			$this->OrientationChanges[$this->page]=true;
 	}

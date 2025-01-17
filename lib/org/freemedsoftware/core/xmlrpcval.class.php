@@ -27,7 +27,7 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 		var $me = array();
 		var $mytype = 0;
 
-		function xmlrpcval($val = -1, $type = '')
+		public function __construct($val = -1, $type = '')
 		{
 			$this->me = array();
 			$this->mytype = 0;
@@ -125,12 +125,12 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 		function dump($ar)
 		{
 			reset($ar);
-			while(list($key,$val) = each($ar))
+			foreach($ar AS $key => $val)
 			{
 				echo $key.' => '.$val.'<br>';
 				if($key == 'array')
 				{
-					while(list($key2,$val2) = each($val))
+					foreach($val AS $key2 => $val2)
 					{
 						echo '-- ' . $key2.' => ' . $val2 . '<br>';
 					}
@@ -167,7 +167,7 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 						// struct
 						$rs .= '<struct>'."\n";
 						reset($val);
-						while(list($key2, $val2)=each($val))
+						foreach($val AS $key2 => $val2)
 						{
 							$rs .= '<member><name>' . $key2 . '</name>' . "\n" . $this->serializeval($val2) . '</member>' . "\n";
 						}
@@ -232,7 +232,7 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 				unset($p);
 				// Reset struct
 				$this->structreset(); $k = $v = "";
-				while (list($k,$v) = $this->structeach()) {
+				foreach ($this->me['struct'] AS $k => $v) {
 					if (is_object($v)) {
 						$p[$k] = $v->deserialize();
 					} else {
@@ -291,7 +291,7 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 			if(is_array($b))
 			{
 				@reset($b);
-				while(list($id,$cont) = @each($b))
+				foreach($b AS $id => $cont)
 				{
 					$b[$id] = $cont->scalarval();
 				}
@@ -302,12 +302,12 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 			{
 				$t = get_object_vars($b);
 				@reset($t);
-				while(list($id,$cont) = @each($t))
+				foreach($t AS $id => $cont)
 				{
 					$t[$id] = $cont->scalarval();
 				}
 				@reset($t);
-				while(list($id,$cont) = @each($t))
+				foreach($t AS $id => $cont)
 				{
 					eval('$b->'.$id.' = $cont;');
 				}

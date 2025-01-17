@@ -466,7 +466,7 @@ class Parser
         {
         return(pack("C", $this->ptg[$token]));
         }
-    elseif(preg_match("/[A-Z0-9À-Ü\.]+/",$token))
+    elseif(preg_match("/[A-Z0-9ï¿½-ï¿½\.]+/",$token))
         {
         return($this->_convert_function($token,$this->_func_args));
         }
@@ -642,7 +642,7 @@ class Parser
     $col    = 0;
     for($i=0; $i < strlen($col_ref); $i++)
     {
-        $col += (ord($col_ref{$i}) - ord('A') + 1) * pow(26, $expn);
+        $col += (ord($col_ref[$i]) - ord('A') + 1) * pow(26, $expn);
         $expn--;
     }
 
@@ -662,30 +662,30 @@ class Parser
     // eat up white spaces
     if($i < strlen($this->_formula))
         {
-        while($this->_formula{$i} == " ")
+        while($this->_formula[$i] == " ")
             {
             $i++;
             }
         if($i < strlen($this->_formula) - 1)
             {
-            $this->_lookahead = $this->_formula{$i+1};
+            $this->_lookahead = $this->_formula[$i+1];
             }
         $token = "";
         }
     while($i < strlen($this->_formula))
         {
-        $token .= $this->_formula{$i};
+        $token .= $this->_formula[$i];
         if($this->_match($token) != '')
             {
             if($i < strlen($this->_formula) - 1)
                 {
-                $this->_lookahead = $this->_formula{$i+1};
+                $this->_lookahead = $this->_formula[$i+1];
                 }
             $this->_current_char = $i + 1;
             $this->_current_token = $token;
             return(1);
             }
-        $this->_lookahead = $this->_formula{$i+2};
+        $this->_lookahead = $this->_formula[$i+2];
         $i++;
         }
     //adie("Lexical error ".$this->_current_char);
@@ -723,21 +723,21 @@ class Parser
             break;
         default:
 	    // if it's a reference
-            if(eregi("^[A-I]?[A-Z][0-9]+$",$token) and 
-	       !ereg("[0-9]",$this->_lookahead) and 
+            if(preg_match("/^[A-I]?[A-Z][0-9]+$/",$token) and 
+	       !preg_match("/[0-9]/",$this->_lookahead) and 
                ($this->_lookahead != ':') and ($this->_lookahead != '.'))
                 {
                 return($token);
                 }
             // if it's a range (A1:A2)
-            elseif(eregi("^[A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$",$token) and 
-	           !ereg("[0-9]",$this->_lookahead))
+            elseif(preg_match("/^[A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$/",$token) and 
+	           !preg_match("/[0-9]/",$this->_lookahead))
 	        {
 		return($token);
 		}
             // if it's a range (A1..A2)
-            elseif(eregi("^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$",$token) and 
-	           !ereg("[0-9]",$this->_lookahead))
+            elseif(preg_match("/^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$/",$token) and 
+	           !preg_match("/[0-9]/",$this->_lookahead))
 	        {
 		return($token);
 		}
@@ -746,7 +746,7 @@ class Parser
                 return($token);
                 }
             // if it's a function call
-            elseif(eregi("^[A-Z0-9À-Ü\.]+$",$token) and ($this->_lookahead == "("))
+            elseif(preg_match("/^[A-Z0-9ï¿½-ï¿½\.]+$/",$token) and ($this->_lookahead == "("))
 
 	        {
 		return($token);
@@ -765,7 +765,7 @@ class Parser
     {
     $this->_current_char = 0;
     $this->_formula      = $formula;
-    $this->_lookahead    = $formula{1};
+    $this->_lookahead    = $formula[1];
     $this->_advance();
     $this->_parse_tree   = $this->_expression();
     }
@@ -857,15 +857,15 @@ class Parser
         return($result);
         }
     // if it's a reference
-    if (eregi("^[A-I]?[A-Z][0-9]+$",$this->_current_token))
+    if (preg_match("/^[A-I]?[A-Z][0-9]+$/",$this->_current_token))
         {
         $result = $this->_create_tree($this->_current_token, '', '');
         $this->_advance();
         return($result);
         }
     // if it's a range
-    elseif (eregi("^[A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$",$this->_current_token) or 
-            eregi("^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$",$this->_current_token)) 
+    elseif (preg_match("/^[A-I]?[A-Z][0-9]+:[A-I]?[A-Z][0-9]+$/",$this->_current_token) or 
+            preg_match("/^[A-I]?[A-Z][0-9]+\.\.[A-I]?[A-Z][0-9]+$/",$this->_current_token)) 
         {
         $result = $this->_current_token;
         $this->_advance();
@@ -878,7 +878,7 @@ class Parser
         return($result);
         }
     // if it's a function call
-    elseif (eregi("^[A-Z0-9À-Ü\.]+$",$this->_current_token))
+    elseif (preg_match("/^[A-Z0-9ï¿½-ï¿½\.]+$/",$this->_current_token))
         {
         $result = $this->_func();
         return($result);

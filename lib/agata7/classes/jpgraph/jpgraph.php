@@ -3275,7 +3275,7 @@ class Image {
 	    if( $dir==90 )
 		imagestringup($this->img,$this->font_family,$x,$y,$txt,$this->current_color);
 	    else	{
-		if (ereg("\n",$txt)) { 
+		if (preg_match("/\n/",$txt)) { 
 		    $tmp = explode("\n",$txt);
 		    for($i=0; $i<count($tmp); ++$i) {
 			$w1 = $this->GetTextWidth($tmp[$i]);
@@ -4042,7 +4042,7 @@ class RotImage extends Image {
 	parent::Arc($xc,$yc,$w,$h,$s,$e);
     }
 
-    function FilledArc($xc,$yc,$w,$h,$s,$e) {
+    function FilledArc($xc,$yc,$w,$h,$s,$e,$style='') {
 	list($xc,$yc) = $this->Rotate($xc,$yc);
 	parent::FilledArc($xc,$yc,$w,$h,$s,$e);
     }

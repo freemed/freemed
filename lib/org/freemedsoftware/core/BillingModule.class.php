@@ -151,7 +151,7 @@ class BillingModule extends BaseModule {
 		global $display_buffer;
 
 		reset ($GLOBALS);
-		while (list($k,$v)=each($GLOBALS)) global $$k;
+		foreach ($GLOBALS AS $k => $v) { global $$k; }
 
 	   	if (count($processed)<1) 
 		{

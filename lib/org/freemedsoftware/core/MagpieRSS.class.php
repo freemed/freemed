@@ -148,7 +148,7 @@ class MagpieRSS {
 			  and populates object.. 
 	Input:	  String containing the RSS to be parsed
 \*======================================================================*/
-	function MagpieRSS ($source) {
+	public function __construct ($source) {
 		
 		# if PHP xml isn't compiled in, die
 		#
@@ -506,7 +506,7 @@ class MagpieRSS {
 	function show_channel () {
 		echo "channel:<br>";
 		echo "<ul>";
-		while ( list($key, $value) = each( $this->channel ) ) {
+		foreach ( $this->channel AS $key => $value ) {
 			echo "<li> $key: $value";
 		}
 		echo "</ul>";
@@ -515,11 +515,11 @@ class MagpieRSS {
 	function show_item ($item) {
 		echo "item: $item[title]";
 		echo "<ul>";
-		while ( list($key, $value) = each($item) ) {
+		foreach ( $item AS $key => $value ) {
 			if ( is_array($value) ) {
 				echo "<br><b>$key</b>";
 				echo "<ul>";
-				while ( list( $ns_key, $ns_value) = each( $value ) ) {
+				foreach ( $value AS $ns_key => $ns_value ) {
 					echo "<li>$ns_key: $ns_value";
 				}
 				echo "</ul>";

@@ -31,7 +31,7 @@ include_once (dirname(__FILE__).'/../../../xmlrpc_tools.php');
 		var $params = array();
 		var $debug  = False;
 
-		function xmlrpcmsg($meth, $pars=0)
+		public function __construct($meth, $pars=0)
 		{
 			$this->methodname = $meth;
 			if(is_array($pars) && sizeof($pars)>0)
