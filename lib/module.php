@@ -135,15 +135,15 @@ function register_module ($module_name) {
 		'module_uid' => $data['MODULE_UID'],
 		'module_name' => $data['MODULE_NAME'],
 		'module_class' => $data['MODULE_CLASS'],
-		'module_table' => $data['META_INFORMATION']['table_name'],
+		'module_table' => array_key_exists('table_name', $data['META_INFORMATION']) ? $data['META_INFORMATION']['table_name'] : "",
 		'module_version' => $data['MODULE_VERSION'],
-		'module_category' => ( $data['MODULE_CATEGORY'] ? $data['MODULE_CATEGORY'] : 'Unknown' ),
+		'module_category' => ( array_key_exists('MODULE_CATEGORY', $data) && $data['MODULE_CATEGORY'] ? $data['MODULE_CATEGORY'] : 'Unknown' ),
 		'module_path' => $data['MODULE_FILE'],
 		'module_stamp' => $lstat[7],
-		'module_handlers' => is_array($data['META_INFORMATION']['__handler']) ? join(',', array_keys($data['META_INFORMATION']['__handler'])) : '',
-		'module_associations' => is_array($data['META_INFORMATION']['__associations_list']) ? join(',', $data['META_INFORMATION']['__associations_list']) : '',
+		'module_handlers' => array_key_exists('__handler', $data['META_INFORMATION']) && is_array($data['META_INFORMATION']['__handler']) ? join(',', array_keys($data['META_INFORMATION']['__handler'])) : '',
+		'module_associations' => array_key_exists('__associations_list', $data['META_INFORMATION']) && is_array($data['META_INFORMATION']['__associations_list']) ? join(',', $data['META_INFORMATION']['__associations_list']) : '',
 		'module_meta' => serialize($data['META_INFORMATION']),
-		'module_hidden' => $data['MODULE_HIDDEN']
+		'module_hidden' => (int)$data['MODULE_HIDDEN']
 	);
 
 	// Only do this if we are currently caching modules

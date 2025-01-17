@@ -796,7 +796,7 @@ ORDER BY
 
 		foreach ( $procs AS $p ) {
 			if ( ($p+0) + 0 ) {
-				$sanitized[] = $p + 0;
+				$sanitized[] = (int) $p;
 			}
 		}
 		if ( count($sanitized) < 1 ) { return false; }
@@ -810,7 +810,7 @@ ORDER BY
 			'WHERE FIND_IN_SET(id, \''.$set.'\')';
 		$result = $GLOBALS['sql']->query ( $query );
 		
-		return ! ( $result instanceof MDB2_Error );
+		return ! ( $result instanceof DB_Error );
 	} // end method MarkClaimsAsBilled 
 
 	// Method: procedure_status_list
@@ -843,7 +843,7 @@ ORDER BY
 	//	$insco - Payer id
 	//
 	public function RebillByPayer ( $insco ) {
-		$query = "UPDATE procrec p, coverage c SET p.procbilled=0 WHERE p.proccurcovid=c.id AND p.procbalcurrent>0 AND c.covinsco=". ($insco+0);
+		$query = "UPDATE procrec p, coverage c SET p.procbilled=0 WHERE p.proccurcovid=c.id AND p.procbalcurrent>0 AND c.covinsco=". (int)$insco;
 		$result = $GLOBALS['sql']->query( $query );
 		return ( $result ? true : false );
 	} // end method RebillByPayer

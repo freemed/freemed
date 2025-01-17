@@ -30,7 +30,9 @@ require_once(GWTPHP_DIR.'/lang/SimpleClassMapLoader.class.php');
 require_once(GWTPHP_DIR.'/lang/FolderMappedClassLoader.class.php');
 require_once(GWTPHP_DIR.'/lang/ArrayMappedClassLoader.class.php');
 
-define('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES',true);
+if (!defined('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES')) {
+	define('FORCE_CAST_TO_PHP_PRIMITIVE_TYPES',true);
+}
 
 
 // TODO: change to singleton 

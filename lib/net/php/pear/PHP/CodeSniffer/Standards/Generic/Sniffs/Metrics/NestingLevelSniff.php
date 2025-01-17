@@ -2,43 +2,31 @@
 /**
  * Checks the nesting level for methods.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Checks the nesting level for methods.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Johann-Peter Hartmann <hartmann@mayflower.de>
  * @author    Greg Sherwood <gsherwood@squiz.net>
  * @copyright 2007-2014 Mayflower GmbH
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Generic_Sniffs_Metrics_NestingLevelSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Metrics;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class NestingLevelSniff implements Sniff
 {
 
     /**
-     * A nesting level than this value will throw a warning.
+     * A nesting level higher than this value will throw a warning.
      *
-     * @var int
+     * @var integer
      */
     public $nestingLevel = 5;
 
     /**
-     * A nesting level than this value will throw an error.
+     * A nesting level higher than this value will throw an error.
      *
-     * @var int
+     * @var integer
      */
     public $absoluteNestingLevel = 10;
 
@@ -46,11 +34,11 @@ class Generic_Sniffs_Metrics_NestingLevelSniff implements PHP_CodeSniffer_Sniff
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_FUNCTION);
+        return [T_FUNCTION];
 
     }//end register()
 
@@ -58,13 +46,13 @@ class Generic_Sniffs_Metrics_NestingLevelSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -92,17 +80,17 @@ class Generic_Sniffs_Metrics_NestingLevelSniff implements PHP_CodeSniffer_Sniff
 
         if ($nestingLevel > $this->absoluteNestingLevel) {
             $error = 'Function\'s nesting level (%s) exceeds allowed maximum of %s';
-            $data  = array(
-                      $nestingLevel,
-                      $this->absoluteNestingLevel,
-                     );
+            $data  = [
+                $nestingLevel,
+                $this->absoluteNestingLevel,
+            ];
             $phpcsFile->addError($error, $stackPtr, 'MaxExceeded', $data);
         } else if ($nestingLevel > $this->nestingLevel) {
             $warning = 'Function\'s nesting level (%s) exceeds %s; consider refactoring the function';
-            $data    = array(
-                        $nestingLevel,
-                        $this->nestingLevel,
-                       );
+            $data    = [
+                $nestingLevel,
+                $this->nestingLevel,
+            ];
             $phpcsFile->addWarning($warning, $stackPtr, 'TooHigh', $data);
         }
 
@@ -110,5 +98,3 @@ class Generic_Sniffs_Metrics_NestingLevelSniff implements PHP_CodeSniffer_Sniff
 
 
 }//end class
-
-?>

@@ -1,44 +1,35 @@
 <?php
 /**
- * Zend_Sniffs_Debug_CodeAnalyzerSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Holger Kral <holger.kral@zend.com>
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Zend_Sniffs_Debug_CodeAnalyzerSniff.
- *
  * Runs the Zend Code Analyzer (from Zend Studio) on the file.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Holger Kral <holger.kral@zend.com>
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
+ *
+ * @deprecated 3.9.0
  */
-class Zend_Sniffs_Debug_CodeAnalyzerSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Zend\Sniffs\Debug;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Exceptions\RuntimeException;
+use PHP_CodeSniffer\Util\Common;
+
+class CodeAnalyzerSniff implements Sniff
 {
 
 
     /**
      * Returns the token types that this sniff is interested in.
      *
-     * @return int[]
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_OPEN_TAG];
 
     }//end register()
 
@@ -46,53 +37,45 @@ class Zend_Sniffs_Debug_CodeAnalyzerSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
-     * @return void
+     * @return int
+     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException If ZendCodeAnalyzer could not be run.
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        // Because we are analyzing the whole file in one step, execute this method
-        // only on first occurrence of a T_OPEN_TAG.
-        $prevOpenTag = $phpcsFile->findPrevious(T_OPEN_TAG, ($stackPtr - 1));
-        if ($prevOpenTag !== false) {
-            return;
+        $analyzerPath = Config::getExecutablePath('zend_ca');
+        if ($analyzerPath === null) {
+            return $phpcsFile->numTokens;
         }
 
         $fileName = $phpcsFile->getFilename();
 
-        $analyzerPath = PHP_CodeSniffer::getConfigData('zend_ca_path');
-        if (is_null($analyzerPath) === true) {
-            return;
-        }
-
         // In the command, 2>&1 is important because the code analyzer sends its
         // findings to stderr. $output normally contains only stdout, so using 2>&1
         // will pipe even stderr to stdout.
-        $cmd = $analyzerPath.' '.$fileName.' 2>&1';
+        $cmd = Common::escapeshellcmd($analyzerPath).' '.escapeshellarg($fileName).' 2>&1';
 
         // There is the possibility to pass "--ide" as an option to the analyzer.
         // This would result in an output format which would be easier to parse.
-        // The problem here is that no cleartext error messages are returnwd; only
+        // The problem here is that no cleartext error messages are returned; only
         // error-code-labels. So for a start we go for cleartext output.
         $exitCode = exec($cmd, $output, $retval);
 
-        // $exitCode is the last line of $output if no error occures, on error it
-        // is numeric. Try to handle various error conditions and provide useful
-        // error reporting.
+        // Variable $exitCode is the last line of $output if no error occurs, on
+        // error it is numeric. Try to handle various error conditions and
+        // provide useful error reporting.
         if (is_numeric($exitCode) === true && $exitCode > 0) {
             if (is_array($output) === true) {
-                $msg = join('\n', $output);
+                $msg = implode('\n', $output);
             }
 
-            throw new PHP_CodeSniffer_Exception("Failed invoking ZendCodeAnalyzer, exitcode was [$exitCode], retval was [$retval], output was [$msg]");
+            throw new RuntimeException("Failed invoking ZendCodeAnalyzer, exitcode was [$exitCode], retval was [$retval], output was [$msg]");
         }
 
         if (is_array($output) === true) {
-            $tokens = $phpcsFile->getTokens();
-
             foreach ($output as $finding) {
                 // The first two lines of analyzer output contain
                 // something like this:
@@ -104,22 +87,14 @@ class Zend_Sniffs_Debug_CodeAnalyzerSniff implements PHP_CodeSniffer_Sniff
                     continue;
                 }
 
-                // Find the token at the start of the line.
-                $lineToken = null;
-                foreach ($tokens as $ptr => $info) {
-                    if ($info['line'] == $regs[1]) {
-                        $lineToken = $ptr;
-                        break;
-                    }
-                }
+                $phpcsFile->addWarningOnLine(trim($regs[2]), $regs[1], 'ExternalTool');
+            }
+        }
 
-                if ($lineToken !== null) {
-                    $phpcsFile->addWarning(trim($regs[2]), $ptr, 'ExternalTool');
-                }
-            }//end foreach
-        }//end if
+        // Ignore the rest of the file.
+        return $phpcsFile->numTokens;
 
     }//end process()
 
+
 }//end class
-?>

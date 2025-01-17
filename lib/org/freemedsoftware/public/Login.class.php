@@ -101,9 +101,9 @@ class Login {
 			// Find this user in provided facility
 	  		$r2 = $GLOBALS['sql']->queryRow("SELECT id FROM user WHERE username = '".addslashes($username)."' and FIND_IN_SET(".$GLOBALS['sql']->quote($location).",userfac)");
 		
-			// If the user isn't allowed in provied facility
+			// If the user isn't allowed in facility
 			if (!$r2['id']) {
-				syslog(LOG_INFO, "org.freemedsoftware.public.Validate: could not find user '${username}' in facility '$location'");
+				syslog(LOG_INFO, "org.freemedsoftware.public.Validate: could not find user '{$username}' in facility '{$location}'");
 				return "NOT_IN_FACILITY";//Not in this facility
 			}
 		}
@@ -123,15 +123,19 @@ class Login {
 			setcookie("user", $r['id'], time() + 3600, "/");
 			HTTP_Session2::set( 'authdata', $authdata );
 			// Set user facility
-			if($location)
+			if($location) {
 				HTTP_Session2::set( 'facility_id', $location );
+			}
 			$this->SessionPopulate();
 
 			// Set ipaddr for SESSION_PROTECTION
 			HTTP_Session2::set( 'ipaddr', $_SERVER['REMOTE_ADDR'] );
 	
 			// Authorize
-			if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth successful login");}		
+			if (false) {
+				// TODO: FIXME: THIS CRASHES FOR SOME REASON
+				if(((LOGLEVEL<1)||LOG_ERRORS)||(LOG_HIPAA || LOG_LOGIN)){syslog(LOG_INFO,"FreeMED.Authentication_Password| verify_auth successful login");}
+			}
 			//$log = freemed::log_object();
 			//$log->SystemLog( LOG__SECURITY, 'Authentication', get_class($this), "Successfully logged in" );
 			return true;

@@ -2,51 +2,18 @@
 /**
  * A Sniff to enforce the use of IDENTICAL type operators rather than EQUAL operators.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * A Sniff to enforce the use of IDENTICAL type operators rather than EQUAL operators.
- *
- * The use of === true is enforced over implicit true statements,
- * for example:
- *
- * <code>
- * if ($a)
- * {
- *     ...
- * }
- * </code>
- *
- * should be:
- *
- * <code>
- * if ($a === true)
- * {
- *     ...
- * }
- * </code>
- *
- * It also enforces the use of === false over ! operators.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Operators_ComparisonOperatorUsageSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Operators;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class ComparisonOperatorUsageSniff implements Sniff
 {
 
     /**
@@ -54,56 +21,58 @@ class Squiz_Sniffs_Operators_ComparisonOperatorUsageSniff implements PHP_CodeSni
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = [
+        'PHP',
+        'JS',
+    ];
 
     /**
      * A list of valid comparison operators.
      *
      * @var array
      */
-    private static $_validOps = array(
-                                 T_IS_IDENTICAL,
-                                 T_IS_NOT_IDENTICAL,
-                                 T_LESS_THAN,
-                                 T_GREATER_THAN,
-                                 T_IS_GREATER_OR_EQUAL,
-                                 T_IS_SMALLER_OR_EQUAL,
-                                 T_INSTANCEOF,
-                                );
+    private static $validOps = [
+        T_IS_IDENTICAL        => true,
+        T_IS_NOT_IDENTICAL    => true,
+        T_LESS_THAN           => true,
+        T_GREATER_THAN        => true,
+        T_IS_GREATER_OR_EQUAL => true,
+        T_IS_SMALLER_OR_EQUAL => true,
+        T_INSTANCEOF          => true,
+    ];
 
     /**
      * A list of invalid operators with their alternatives.
      *
-     * @var array(int => string)
+     * @var array<string, array<int, string>>
      */
-    private static $_invalidOps = array(
-                                   'PHP' => array(
-                                             T_IS_EQUAL     => '===',
-                                             T_IS_NOT_EQUAL => '!==',
-                                             T_BOOLEAN_NOT  => '=== FALSE',
-                                            ),
-                                   'JS'  => array(
-                                             T_IS_EQUAL     => '===',
-                                             T_IS_NOT_EQUAL => '!==',
-                                            ),
-                                  );
+    private static $invalidOps = [
+        'PHP' => [
+            T_IS_EQUAL     => '===',
+            T_IS_NOT_EQUAL => '!==',
+            T_BOOLEAN_NOT  => '=== FALSE',
+        ],
+        'JS'  => [
+            T_IS_EQUAL     => '===',
+            T_IS_NOT_EQUAL => '!==',
+        ],
+    ];
 
 
     /**
      * Registers the token types that this sniff wishes to listen to.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(
-                T_IF,
-                T_ELSEIF,
-                T_INLINE_THEN,
-               );
+        return [
+            T_IF,
+            T_ELSEIF,
+            T_INLINE_THEN,
+            T_WHILE,
+            T_FOR,
+        ];
 
     }//end register()
 
@@ -111,19 +80,19 @@ class Squiz_Sniffs_Operators_ComparisonOperatorUsageSniff implements PHP_CodeSni
     /**
      * Process the tokens that this sniff is listening for.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where the token
-     *                                        was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where the token
+     *                                               was found.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens    = $phpcsFile->getTokens();
         $tokenizer = $phpcsFile->tokenizerType;
 
         if ($tokens[$stackPtr]['code'] === T_INLINE_THEN) {
-            $end = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+            $end = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($stackPtr - 1), null, true);
             if ($tokens[$end]['code'] !== T_CLOSE_PARENTHESIS) {
                 // This inline IF statement does not have its condition
                 // bracketed, so we need to guess where it starts.
@@ -147,70 +116,120 @@ class Squiz_Sniffs_Operators_ComparisonOperatorUsageSniff implements PHP_CodeSni
                         if (isset($tokens[$i]['scope_closer']) === true) {
                             break;
                         }
-                    }
+                    } else if ($tokens[$i]['code'] === T_OPEN_PARENTHESIS) {
+                        // Stop if this is the start of a pair of
+                        // parentheses that surrounds the inline
+                        // IF statement.
+                        if (isset($tokens[$i]['parenthesis_closer']) === true
+                            && $tokens[$i]['parenthesis_closer'] >= $stackPtr
+                        ) {
+                            break;
+                        }
+                    }//end if
                 }//end for
 
-                $start = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($i + 1), null, true);
+                $start = $phpcsFile->findNext(Tokens::$emptyTokens, ($i + 1), null, true);
             } else {
+                if (isset($tokens[$end]['parenthesis_opener']) === false) {
+                    return;
+                }
+
                 $start = $tokens[$end]['parenthesis_opener'];
+            }//end if
+        } else if ($tokens[$stackPtr]['code'] === T_FOR) {
+            if (isset($tokens[$stackPtr]['parenthesis_opener']) === false) {
+                return;
+            }
+
+            $openingBracket = $tokens[$stackPtr]['parenthesis_opener'];
+            $closingBracket = $tokens[$stackPtr]['parenthesis_closer'];
+
+            $start = $phpcsFile->findNext(T_SEMICOLON, $openingBracket, $closingBracket);
+            $end   = $phpcsFile->findNext(T_SEMICOLON, ($start + 1), $closingBracket);
+            if ($start === false || $end === false) {
+                return;
             }
         } else {
+            if (isset($tokens[$stackPtr]['parenthesis_opener']) === false) {
+                return;
+            }
+
             $start = $tokens[$stackPtr]['parenthesis_opener'];
             $end   = $tokens[$stackPtr]['parenthesis_closer'];
-        }
+        }//end if
 
-        $requiredOps = 0;
-        $foundOps    = 0;
+        $requiredOps   = 0;
+        $foundOps      = 0;
+        $foundBooleans = 0;
+
+        $lastNonEmpty = $start;
 
         for ($i = $start; $i <= $end; $i++) {
             $type = $tokens[$i]['code'];
-            if (in_array($type, array_keys(self::$_invalidOps[$tokenizer])) === true) {
+            if (isset(self::$invalidOps[$tokenizer][$type]) === true) {
                 $error = 'Operator %s prohibited; use %s instead';
-                $data  = array(
-                          $tokens[$i]['content'],
-                          self::$_invalidOps[$tokenizer][$type],
-                         );
+                $data  = [
+                    $tokens[$i]['content'],
+                    self::$invalidOps[$tokenizer][$type],
+                ];
                 $phpcsFile->addError($error, $i, 'NotAllowed', $data);
                 $foundOps++;
-            } else if (in_array($type, self::$_validOps) === true) {
+            } else if (isset(self::$validOps[$type]) === true) {
                 $foundOps++;
             }
 
-            if ($phpcsFile->tokenizerType !== 'JS') {
-                if ($tokens[$i]['code'] === T_BOOLEAN_AND || $tokens[$i]['code'] === T_BOOLEAN_OR) {
-                    $requiredOps++;
+            if ($type === T_OPEN_PARENTHESIS
+                && isset($tokens[$i]['parenthesis_closer']) === true
+                && isset(Tokens::$functionNameTokens[$tokens[$lastNonEmpty]['code']]) === true
+            ) {
+                $i            = $tokens[$i]['parenthesis_closer'];
+                $lastNonEmpty = $i;
+                continue;
+            }
 
-                    // When the instanceof operator is used with another operator
-                    // like ===, you can get more ops than are required.
-                    if ($foundOps > $requiredOps) {
-                        $foundOps = $requiredOps;
-                    }
+            if ($tokens[$i]['code'] === T_TRUE || $tokens[$i]['code'] === T_FALSE) {
+                $foundBooleans++;
+            }
 
-                    // If we get to here and we have not found the right number of
-                    // comparison operators, then we must have had an implicit
-                    // true operation ie. if ($a) instead of the required
-                    // if ($a === true), so let's add an error.
-                    if ($requiredOps !== $foundOps) {
-                        $error = 'Implicit true comparisons prohibited; use === TRUE instead';
-                        $phpcsFile->addError($error, $stackPtr, 'ImplicitTrue');
-                        $foundOps++;
-                    }
+            if ($phpcsFile->tokenizerType !== 'JS'
+                && ($tokens[$i]['code'] === T_BOOLEAN_AND
+                || $tokens[$i]['code'] === T_BOOLEAN_OR)
+            ) {
+                $requiredOps++;
+
+                // When the instanceof operator is used with another operator
+                // like ===, you can get more ops than are required.
+                if ($foundOps > $requiredOps) {
+                    $foundOps = $requiredOps;
                 }
-            }//end if
+
+                // If we get to here and we have not found the right number of
+                // comparison operators, then we must have had an implicit
+                // true operation i.e., if ($a) instead of the required
+                // if ($a === true), so let's add an error.
+                if ($requiredOps !== $foundOps) {
+                    $error = 'Implicit true comparisons prohibited; use === TRUE instead';
+                    $phpcsFile->addError($error, $stackPtr, 'ImplicitTrue');
+                    $foundOps++;
+                }
+            }
+
+            if (isset(Tokens::$emptyTokens[$type]) === false) {
+                $lastNonEmpty = $i;
+            }
         }//end for
 
         $requiredOps++;
 
-        if ($phpcsFile->tokenizerType !== 'JS') {
-            if ($foundOps < $requiredOps) {
-                $error = 'Implicit true comparisons prohibited; use === TRUE instead';
-                $phpcsFile->addError($error, $stackPtr, 'ImplicitTrue');
-            }
+        if ($phpcsFile->tokenizerType !== 'JS'
+            && $foundOps < $requiredOps
+            && ($requiredOps !== $foundBooleans)
+        ) {
+            $error = 'Implicit true comparisons prohibited; use === TRUE instead';
+            $phpcsFile->addError($error, $stackPtr, 'ImplicitTrue');
         }
 
     }//end process()
 
 
 }//end class
-
-?>

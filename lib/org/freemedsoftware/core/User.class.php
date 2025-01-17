@@ -51,19 +51,27 @@ class User {
 	//
 	function __construct ($param=NULL) {
 		if (defined('SKIP_SQL_INIT')) { return false; }
+		global $__freemed;
 
 		if ($param == NULL) {
 			// Check to see if XML-RPC or session data
 			if (!defined('SESSION_DISABLE')) {
 				$authdata = HTTP_Session2::get( 'authdata' );
 			}
-			if ($authdata['user']) {
+			if (is_array($authdata) && array_key_exists('user', $authdata)) {
 				$this->user_number = $authdata['user']; 
 			} else {
-				$this->user_number = $GLOBALS['__freemed']['basic_auth_id'];
+				if (is_array($__freemed)) {
+					$this->user_number = $__freemed['basic_auth_id'];
+				}
 			}
 		} else {
 			$this->user_number = $param;
+		}
+
+		if ($this->user_number === NULL) {
+			$this->user_level = 0;
+			return;
 		}
 
 		// Check for cached copy
@@ -82,6 +90,7 @@ class User {
 			return false;
 		}
 
+		if (array_key_exists('username', $this->local_record)) {
 		$this->user_name    = stripslashes($this->local_record["username"]);
 		$this->user_descrip = stripslashes($this->local_record["userdescrip"]);
 		$this->user_level   = $this->local_record["userlevel"  ];
@@ -89,12 +98,13 @@ class User {
 		$this->perms_fac    = $this->local_record["userfac"    ]; 
 		$this->perms_phy    = $this->local_record["userphy"    ];
 		$this->perms_phygrp = $this->local_record["userphygrp" ];
+		}
 
 		// special root stuff
 		if ($this->user_number == 1) $this->user_level = 9;
 
 		// Map configuration vars
-		$this->manage_config = unserialize($this->local_record['usermanageopt']);
+		$this->manage_config = unserialize(array_key_exists('usermanageopt', $this->local_record) ? $this->local_record['usermanageopt'] : "");
 	} // end constructor
 
 	// Method: getDescription
@@ -384,7 +394,7 @@ class User {
 			'user',
 			array(
 				'usermanageopt' => serialize( $this->manage_config )
-			), array ( 'id' => $this->user_number )
+			), array ( 'id' => (int)$this->user_number )
 		);
 		$result = $GLOBALS['sql']->query( $query );
 		return true;

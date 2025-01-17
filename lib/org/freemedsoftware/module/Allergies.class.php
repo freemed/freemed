@@ -100,9 +100,9 @@ class Allergies extends EMRModule {
 	//	<GetAtoms>
 	//
 	public function GetMostRecent ( $patient ) {
-		$q = "SELECT id FROM ".$this->table_name." WHERE patient = ".$GLOBALS['sql']->escape( $patient )." ORDER BY reviewed DESC LIMIT 1";
+		$q = "SELECT id FROM ".$this->table_name." WHERE patient = ".( (int) $patient )." ORDER BY reviewed DESC LIMIT 1";
 		$aid = $GLOBALS['sql']->queryOne( $q );
-		if ( ($aid + 0) < 1 ) { return array(); }
+		if ( ((int)$aid) < 1 ) { return array(); }
 		return $this->GetAtoms( $aid );
 	} // end method GetMostRecent
 
@@ -119,7 +119,7 @@ class Allergies extends EMRModule {
 	//	Array of hashes
 	//
 	public function GetAtoms( $aid ) {
-		$q = "SELECT * FROM allergies_atomic WHERE aid = ". ( $aid + 0 );
+		$q = "SELECT * FROM allergies_atomic WHERE aid = ". ((int) $aid );
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAtoms
 
@@ -146,8 +146,8 @@ class Allergies extends EMRModule {
 		//$current = $GLOBALS['sql']->queryCol( "SELECT id FROM allergies_atomic WHERE aid = ".$GLOBALS['sql']->quote( $aid ) );
 		foreach ( $as AS $a ) {
 			$a = (array) $a;
-			if ( ( $a['id'] + 0 ) > 0 ) {
-				$newkeys[] = ( $a['id'] + 0 );
+			if ( ( (int)$a['id'] ) > 0 ) {
+				$newkeys[] = ( (int) $a['id'] );
 			}
 		}
 

@@ -1,32 +1,19 @@
 <?php
 /**
- * Generic_Sniffs_Strings_UnnecessaryStringConcatSniff.
+ * Checks that two strings are not concatenated together; suggests using one string instead.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * Generic_Sniffs_Strings_UnnecessaryStringConcatSniff.
- *
- * Checks that two strings are not concatenated together; suggests
- * using one string instead.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Strings;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class UnnecessaryStringConcatSniff implements Sniff
 {
 
     /**
@@ -34,30 +21,40 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = [
+        'PHP',
+        'JS',
+    ];
 
     /**
      * If true, an error will be thrown; otherwise a warning.
      *
-     * @var bool
+     * @var boolean
      */
     public $error = true;
+
+    /**
+     * If true, strings concatenated over multiple lines are allowed.
+     *
+     * Useful if you break strings over multiple lines to work
+     * within a max line length.
+     *
+     * @var boolean
+     */
+    public $allowMultiline = false;
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(
-                T_STRING_CONCAT,
-                T_PLUS,
-               );
+        return [
+            T_STRING_CONCAT,
+            T_PLUS,
+        ];
 
     }//end register()
 
@@ -65,61 +62,68 @@ class Generic_Sniffs_Strings_UnnecessaryStringConcatSniff implements PHP_CodeSni
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        // Work out which type of file this is for.
         $tokens = $phpcsFile->getTokens();
-        if ($tokens[$stackPtr]['code'] === T_STRING_CONCAT) {
-            if ($phpcsFile->tokenizerType === 'JS') {
-                return;
-            }
-        } else {
-            if ($phpcsFile->tokenizerType === 'PHP') {
-                return;
-            }
+
+        if ($tokens[$stackPtr]['code'] === T_STRING_CONCAT && $phpcsFile->tokenizerType === 'JS') {
+            // JS uses T_PLUS for string concatenation, not T_STRING_CONCAT.
+            return;
+        } else if ($tokens[$stackPtr]['code'] === T_PLUS && $phpcsFile->tokenizerType === 'PHP') {
+            // PHP uses T_STRING_CONCAT for string concatenation, not T_PLUS.
+            return;
         }
 
         $prev = $phpcsFile->findPrevious(T_WHITESPACE, ($stackPtr - 1), null, true);
         $next = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
-        if ($prev === false || $next === false) {
+        if ($next === false) {
             return;
         }
 
-        $stringTokens = PHP_CodeSniffer_Tokens::$stringTokens;
-        if (in_array($tokens[$prev]['code'], $stringTokens) === true
-            && in_array($tokens[$next]['code'], $stringTokens) === true
+        if (isset(Tokens::$stringTokens[$tokens[$prev]['code']]) === false
+            || isset(Tokens::$stringTokens[$tokens[$next]['code']]) === false
         ) {
-            if ($tokens[$prev]['content'][0] === $tokens[$next]['content'][0]) {
-                // Before we throw an error for PHP, allow strings to be
-                // combined if they would have < and ? next to each other because
-                // this trick is sometimes required in PHP strings.
-                if ($phpcsFile->tokenizerType === 'PHP') {
-                    $prevChar = substr($tokens[$prev]['content'], -2, 1);
-                    $nextChar = $tokens[$next]['content'][1];
-                    $combined = $prevChar.$nextChar;
-                    if ($combined === '?'.'>' || $combined === '<'.'?') {
-                        return;
-                    }
-                }
+            // Bow out as at least one of the two tokens being concatenated is not a string.
+            return;
+        }
 
-                $error = 'String concat is not required here; use a single string instead';
-                if ($this->error === true) {
-                    $phpcsFile->addError($error, $stackPtr, 'Found');
-                } else {
-                    $phpcsFile->addWarning($error, $stackPtr, 'Found');
-                }
+        if ($tokens[$prev]['content'][0] !== $tokens[$next]['content'][0]) {
+            // Bow out as the two strings are not of the same type.
+            return;
+        }
+
+        // Before we throw an error for PHP, allow strings to be
+        // combined if they would have < and ? next to each other because
+        // this trick is sometimes required in PHP strings.
+        if ($phpcsFile->tokenizerType === 'PHP') {
+            $prevChar = substr($tokens[$prev]['content'], -2, 1);
+            $nextChar = $tokens[$next]['content'][1];
+            $combined = $prevChar.$nextChar;
+            if ($combined === '?'.'>' || $combined === '<'.'?') {
+                return;
             }
+        }
+
+        if ($this->allowMultiline === true
+            && $tokens[$prev]['line'] !== $tokens[$next]['line']
+        ) {
+            return;
+        }
+
+        $error = 'String concat is not required here; use a single string instead';
+        if ($this->error === true) {
+            $phpcsFile->addError($error, $stackPtr, 'Found');
+        } else {
+            $phpcsFile->addWarning($error, $stackPtr, 'Found');
         }
 
     }//end process()
 
 
 }//end class
-
-?>

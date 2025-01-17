@@ -9,7 +9,6 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    CVS: $Id: REST.php 313023 2011-07-06 19:17:11Z dufuz $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -19,6 +18,7 @@
  */
 require_once 'PEAR.php';
 require_once 'PEAR/XMLParser.php';
+require_once 'PEAR/Proxy.php';
 
 /**
  * Intelligently retrieve data, following hyperlinks if necessary, and re-directing
@@ -28,7 +28,7 @@ require_once 'PEAR/XMLParser.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.9.4
+ * @version    Release: 1.10.13
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -37,7 +37,7 @@ class PEAR_REST
     var $config;
     var $_options;
 
-    function PEAR_REST(&$config, $options = array())
+    function __construct(&$config, $options = array())
     {
         $this->config   = &$config;
         $this->_options = $options;
@@ -129,11 +129,13 @@ class PEAR_REST
         }
 
         if (isset($headers['content-type'])) {
-            switch ($headers['content-type']) {
+            $content_type = explode(";", $headers['content-type']);
+            $content_type = $content_type[0];
+            switch ($content_type) {
                 case 'text/xml' :
                 case 'application/xml' :
                 case 'text/plain' :
-                    if ($headers['content-type'] === 'text/plain') {
+                    if ($content_type === 'text/plain') {
                         $check = substr($content, 0, 5);
                         if ($check !== '<?xml') {
                             break;
@@ -170,25 +172,24 @@ class PEAR_REST
 
     function useLocalCache($url, $cacheid = null)
     {
-        if ($cacheid === null) {
-            $cacheidfile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
-                md5($url) . 'rest.cacheid';
-            if (!file_exists($cacheidfile)) {
-                return false;
-            }
-
-            $cacheid = unserialize(implode('', file($cacheidfile)));
+        if (!is_array($cacheid)) {
+            $cacheid = $this->getCacheId($url);
         }
 
         $cachettl = $this->config->get('cache_ttl');
         // If cache is newer than $cachettl seconds, we use the cache!
-        if (time() - $cacheid['age'] < $cachettl) {
+        if (is_array($cacheid) && time() - $cacheid['age'] < $cachettl) {
             return $this->getCache($url);
         }
 
         return false;
     }
 
+    /**
+     * @param string $url
+     *
+     * @return bool|mixed
+     */
     function getCacheId($url)
     {
         $cacheidfile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
@@ -234,6 +235,13 @@ class PEAR_REST
             }
         }
 
+        if (!is_writeable($cache_dir)) {
+            // If writing to the cache dir is not going to work, silently do nothing.
+            // An ugly hack, but retains compat with PEAR 1.9.1 where many commands
+            // work fine as non-root user (w/out write access to default cache dir).
+            return true;
+        }
+
         if ($cacheid === null && $nochange) {
             $cacheid = unserialize(implode('', file($cacheidfile)));
         }
@@ -273,19 +281,24 @@ class PEAR_REST
                 return PEAR::raiseError("Could not write $file.");
             }
         } else { // update file
-            $cachefile_lstat = lstat($file);
-            $cachefile_fp = @fopen($file, 'wb');
+            $cachefile_fp = @fopen($file, 'r+b'); // do not truncate file
             if (!$cachefile_fp) {
                 return PEAR::raiseError("Could not open $file for writing.");
             }
 
-            $cachefile_fstat = fstat($cachefile_fp);
-            if (
-              $cachefile_lstat['mode'] == $cachefile_fstat['mode'] &&
-              $cachefile_lstat['ino']  == $cachefile_fstat['ino'] &&
-              $cachefile_lstat['dev']  == $cachefile_fstat['dev'] &&
-              $cachefile_fstat['nlink'] === 1
-            ) {
+            if (OS_WINDOWS) {
+                $not_symlink     = !is_link($file); // see bug #18834
+            } else {
+                $cachefile_lstat = lstat($file);
+                $cachefile_fstat = fstat($cachefile_fp);
+                $not_symlink     = $cachefile_lstat['mode'] == $cachefile_fstat['mode']
+                                   && $cachefile_lstat['ino']  == $cachefile_fstat['ino']
+                                   && $cachefile_lstat['dev']  == $cachefile_fstat['dev']
+                                   && $cachefile_fstat['nlink'] === 1;
+            }
+
+            if ($not_symlink) {
+                ftruncate($cachefile_fp, 0); // NOW truncate
                 if (fwrite($cachefile_fp, $contents, $len) < $len) {
                     fclose($cachefile_fp);
                     return PEAR::raiseError("Could not write $file.");
@@ -343,26 +356,13 @@ class PEAR_REST
         $path   = isset($info['path']) ? $info['path'] : null;
         $schema = (isset($info['scheme']) && $info['scheme'] == 'https') ? 'https' : 'http';
 
-        $proxy_host = $proxy_port = $proxy_user = $proxy_pass = '';
-        if ($this->config->get('http_proxy')&&
-              $proxy = parse_url($this->config->get('http_proxy'))
-        ) {
-            $proxy_host = isset($proxy['host']) ? $proxy['host'] : null;
-            if ($schema === 'https') {
-                $proxy_host = 'ssl://' . $proxy_host;
-            }
-
-            $proxy_port   = isset($proxy['port']) ? $proxy['port'] : 8080;
-            $proxy_user   = isset($proxy['user']) ? urldecode($proxy['user']) : null;
-            $proxy_pass   = isset($proxy['pass']) ? urldecode($proxy['pass']) : null;
-            $proxy_schema = (isset($proxy['scheme']) && $proxy['scheme'] == 'https') ? 'https' : 'http';
-        }
+        $proxy = new PEAR_Proxy($this->config);
 
         if (empty($port)) {
             $port = (isset($info['scheme']) && $info['scheme'] == 'https')  ? 443 : 80;
         }
 
-        if (isset($proxy['host'])) {
+        if ($proxy->isProxyConfigured() && $schema === 'http') {
             $request = "GET $url HTTP/1.1\r\n";
         } else {
             $request = "GET $path HTTP/1.1\r\n";
@@ -383,7 +383,7 @@ class PEAR_REST
         }
 
         $request .= $ifmodifiedsince .
-            "User-Agent: PEAR/1.9.4/PHP/" . PHP_VERSION . "\r\n";
+            "User-Agent: PEAR/1.10.13/PHP/" . PHP_VERSION . "\r\n";
 
         $username = $this->config->get('username', null, $channel);
         $password = $this->config->get('password', null, $channel);
@@ -393,9 +393,10 @@ class PEAR_REST
             $request .= "Authorization: Basic $tmp\r\n";
         }
 
-        if ($proxy_host != '' && $proxy_user != '') {
+        $proxyAuth = $proxy->getProxyAuth();
+        if ($proxyAuth) {
             $request .= 'Proxy-Authorization: Basic ' .
-                base64_encode($proxy_user . ':' . $proxy_pass) . "\r\n";
+                $proxyAuth . "\r\n";
         }
 
         if ($accept) {
@@ -406,20 +407,10 @@ class PEAR_REST
         $request .= "Connection: close\r\n";
         $request .= "\r\n";
 
-        if ($proxy_host != '') {
-            $fp = @fsockopen($proxy_host, $proxy_port, $errno, $errstr, 15);
-            if (!$fp) {
-                return PEAR::raiseError("Connection to `$proxy_host:$proxy_port' failed: $errstr", -9276);
-            }
-        } else {
-            if ($schema === 'https') {
-                $host = 'ssl://' . $host;
-            }
-
-            $fp = @fsockopen($host, $port, $errno, $errstr);
-            if (!$fp) {
-                return PEAR::raiseError("Connection to `$host:$port' failed: $errstr", $errno);
-            }
+        $secure = ($schema == 'https');
+        $fp = $proxy->openSocket($host, $port, $secure);
+        if (PEAR::isError($fp)) {
+            return $fp;
         }
 
         fwrite($fp, $request);

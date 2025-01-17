@@ -5,7 +5,7 @@
 /**
  * Provides an object interface to a table row
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -38,7 +38,7 @@ require_once 'DB.php';
  * @author     Stig Bakken <stig@php.net>
  * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.14RC1
+ * @version    Release: 1.11.0
  * @link       http://pear.php.net/package/DB
  */
 class DB_storage extends PEAR
@@ -94,7 +94,7 @@ class DB_storage extends PEAR
      * a reference to this object
      *
      */
-    function DB_storage($table, $keycolumn, &$dbh, $validator = null)
+    function __construct($table, $keycolumn, &$dbh, $validator = null)
     {
         $this->PEAR('DB_Error');
         $this->_table = $table;
@@ -336,7 +336,7 @@ class DB_storage extends PEAR
         }
         reset($rowdata);
         $found_keycolumn = false;
-        while (list($key, $value) = each($rowdata)) {
+        foreach ($rowdata as $key => $value) {
             if ($key == $this->_keycolumn) {
                 $found_keycolumn = true;
             }

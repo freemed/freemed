@@ -1,28 +1,52 @@
 <?php
-
 /**
-  V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
-  the BSD license will take precedence.
-	
-  Set tabs to 4 for best viewing.
- 
-*/
+ * Data Dictionary for DB2.
+ *
+ * This file is part of ADOdb, a Database Abstraction Layer library for PHP.
+ *
+ * @package ADOdb
+ * @link https://adodb.org Project's web site and documentation
+ * @link https://github.com/ADOdb/ADOdb Source code and issue tracker
+ *
+ * The ADOdb Library is dual-licensed, released under both the BSD 3-Clause
+ * and the GNU Lesser General Public Licence (LGPL) v2.1 or, at your option,
+ * any later version. This means you can use it in proprietary products.
+ * See the LICENSE.md file distributed with this source code for details.
+ * @license BSD-3-Clause
+ * @license LGPL-2.1-or-later
+ *
+ * @copyright 2000-2013 John Lim
+ * @copyright 2014 Damien Regad, Mark Newnham and the ADOdb community
+ */
+
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
 class ADODB2_db2 extends ADODB_DataDict {
-	
+
 	var $databaseType = 'db2';
 	var $seqField = false;
+	var $dropCol = 'ALTER TABLE %s DROP COLUMN %s';
+
+	public $blobAllowsDefaultValue = true;
+	public $blobAllowsNotNull      = true;
+
 	
  	function ActualType($meta)
 	{
+		$meta = strtoupper($meta);
+		
+		/*
+		* Add support for custom meta types. We do this
+		* first, that allows us to override existing types
+		*/
+		if (isset($this->connection->customMetaTypes[$meta]))
+			return $this->connection->customMetaTypes[$meta]['actual'];
+		
 		switch($meta) {
 		case 'C': return 'VARCHAR';
 		case 'XL': return 'CLOB';
-		case 'X': return 'VARCHAR(3600)'; 
+		case 'X': return 'VARCHAR(3600)';
 
 		case 'C2': return 'VARCHAR'; // up to 32K
 		case 'X2': return 'VARCHAR(3600)'; // up to 32000, but default page size too small
@@ -30,6 +54,7 @@ class ADODB2_db2 extends ADODB_DataDict {
 		case 'B': return 'BLOB';
 
 		case 'D': return 'DATE';
+		case 'TS':
 		case 'T': return 'TIMESTAMP';
 
 		case 'L': return 'SMALLINT';
@@ -45,55 +70,108 @@ class ADODB2_db2 extends ADODB_DataDict {
 			return $meta;
 		}
 	}
-	
+
 	// return string must begin with space
-	function _CreateSuffix($fname,$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint)
-	{	
+	function _CreateSuffix($fname,&$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint,$funsigned)
+	{
 		$suffix = '';
-		if ($fautoinc) return ' GENERATED ALWAYS AS IDENTITY'; # as identity start with 
+		if ($fautoinc) return ' GENERATED ALWAYS AS IDENTITY'; # as identity start with
 		if (strlen($fdefault)) $suffix .= " DEFAULT $fdefault";
 		if ($fnotnull) $suffix .= ' NOT NULL';
 		if ($fconstraint) $suffix .= ' '.$fconstraint;
 		return $suffix;
 	}
 
-	function AlterColumnSQL($tabname, $flds)
+	function alterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
 	{
-		if ($this->debug) ADOConnection::outp("AlterColumnSQL not supported");
-		return array();
+		$tabname = $this->TableName ($tabname);
+		$sql = array();
+		list($lines,$pkey,$idxs) = $this->_GenFields($flds);
+		// genfields can return FALSE at times
+		if ($lines == null) $lines = array();
+		$alter = 'ALTER TABLE ' . $tabname . $this->alterCol . ' ';
+		
+		$dataTypeWords = array('SET','DATA','TYPE');
+		
+		foreach($lines as $v) 
+		{
+			/*
+			 * We must now post-process the line to insert the 'SET DATA TYPE'
+			 * text into the alter statement
+			 */
+			$e = explode(' ',$v);
+			
+			array_splice($e,1,0,$dataTypeWords);
+			
+			$v = implode(' ',$e);
+			
+			$sql[] = $alter . $v;
+		}
+		if (is_array($idxs)) 
+		{
+			foreach($idxs as $idx => $idxdef) {
+				$sql_idxs = $this->CreateIndexSql($idx, $tabname, $idxdef['cols'], $idxdef['opts']);
+				$sql = array_merge($sql, $sql_idxs);
+			}
+
+		}
+		return $sql;
 	}
+
+
 	
-	
-	function DropColumnSQL($tabname, $flds)
-	{
-		if ($this->debug) ADOConnection::outp("DropColumnSQL not supported");
-		return array();
-	}
-	
-	
-	function ChangeTableSQL($tablename, $flds, $tableoptions = false)
+	function dropColumnSql($tabname, $flds, $tableflds='',$tableoptions='')
 	{
 		
+		
+		$tabname = $this->connection->getMetaCasedValue($tabname);
+		$flds    = $this->connection->getMetaCasedValue($flds);
+		
+		if (ADODB_ASSOC_CASE  == ADODB_ASSOC_CASE_NATIVE )
+		{
+			/*
+			 * METACASE_NATIVE
+			 */
+			$tabname = $this->connection->nameQuote . $tabname . $this->connection->nameQuote;
+			$flds    = $this->connection->nameQuote . $flds . $this->connection->nameQuote;
+		}
+		$sql = sprintf($this->dropCol,$tabname,$flds);
+		return (array)$sql;
+
+	}
+    
+
+	function changeTableSQL($tablename, $flds, $tableoptions = false, $dropOldFields=false)
+	{
+
 		/**
 		  Allow basic table changes to DB2 databases
-		  DB2 will fatally reject changes to non character columns 
+		  DB2 will fatally reject changes to non character columns
 
 		*/
-		
+
 		$validTypes = array("CHAR","VARC");
 		$invalidTypes = array("BIGI","BLOB","CLOB","DATE", "DECI","DOUB", "INTE", "REAL","SMAL", "TIME");
 		// check table exists
-		$cols = &$this->MetaColumns($tablename);
-		if ( empty($cols)) { 
-			return $this->CreateTableSQL($tablename, $flds, $tableoptions);
-		}
 		
+		
+		$cols = $this->metaColumns($tablename);
+		if ( empty($cols)) {
+			return $this->createTableSQL($tablename, $flds, $tableoptions);
+		}
+
 		// already exists, alter table instead
 		list($lines,$pkey) = $this->_GenFields($flds);
-		$alter = 'ALTER TABLE ' . $this->TableName($tablename);
+		$alter = 'ALTER TABLE ' . $this->tableName($tablename);
 		$sql = array();
-		
+
 		foreach ( $lines as $id => $v ) {
+			/*
+			 * If the metaCasing was NATIVE the col returned with nameQuotes
+			 * around the field. We need to remove this for the metaColumn
+			 * match
+			 */
+			$id = str_replace($this->connection->nameQuote,'',$id);
 			if ( isset($cols[$id]) && is_object($cols[$id]) ) {
 				/**
 				  If the first field of $v is the fieldname, and
@@ -109,10 +187,10 @@ class ADODB2_db2 extends ADODB_DataDict {
 				for ($i=1;$i<sizeof($vargs);$i++)
 					if ($vargs[$i] != '')
 						break;
-				
+
 				// if $vargs[$i] is one of the following, we are trying to change the
 				// size of the field, if not allowed, simply ignore the request.
-				if (in_array(substr($vargs[$i],0,4),$invalidTypes)) 
+				if (in_array(substr($vargs[$i],0,4),$invalidTypes))
 					continue;
 				// insert the appropriate DB2 syntax
 				if (in_array(substr($vargs[$i],0,4),$validTypes)) {
@@ -127,17 +205,14 @@ class ADODB2_db2 extends ADODB_DataDict {
 						break;
 					array_splice($vargs,$i,2,'');
 				}
-				$v = implode(' ',$vargs);	
+				$v = implode(' ',$vargs);
 				$sql[] = $alter . $this->alterCol . ' ' . $v;
 			} else {
 				$sql[] = $alter . $this->addCol . ' ' . $v;
 			}
 		}
-		
+
 		return $sql;
 	}
-	
+
 }
-
-
-?>

@@ -48,7 +48,7 @@ print $chtml->GetResource ( $path );
 
 //----------------- Functions ----------------------------------------------
 
-function chtml_standard_error_handler ($no, $str, $file, $line, $context) {
+function chtml_standard_error_handler ($no, $str, $file, $line, $context = '') {
 	switch ($no) {
 		case E_USER_ERROR:
 		die('

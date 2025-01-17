@@ -2,39 +2,31 @@
 /**
  * Ensures that eval() is not used to create objects.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer_MySource
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
+ *
+ * @deprecated 3.9.0
  */
 
-/**
- * Ensures that eval() is not used to create objects.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer_MySource
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class MySource_Sniffs_PHP_EvalObjectFactorySniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\MySource\Sniffs\PHP;
+
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Util\Tokens;
+
+class EvalObjectFactorySniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_EVAL);
+        return [T_EVAL];
 
     }//end register()
 
@@ -42,13 +34,13 @@ class MySource_Sniffs_PHP_EvalObjectFactorySniff implements PHP_CodeSniffer_Snif
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -60,11 +52,11 @@ class MySource_Sniffs_PHP_EvalObjectFactorySniff implements PHP_CodeSniffer_Snif
         $openBracket  = $phpcsFile->findNext(T_OPEN_PARENTHESIS, ($stackPtr + 1));
         $closeBracket = $tokens[$openBracket]['parenthesis_closer'];
 
-        $strings = array();
-        $vars    = array();
+        $strings = [];
+        $vars    = [];
 
         for ($i = ($openBracket + 1); $i < $closeBracket; $i++) {
-            if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$stringTokens) === true) {
+            if (isset(Tokens::$stringTokens[$tokens[$i]['code']]) === true) {
                 $strings[$i] = $tokens[$i]['content'];
             } else if ($tokens[$i]['code'] === T_VARIABLE) {
                 $vars[$i] = $tokens[$i]['content'];
@@ -100,7 +92,7 @@ class MySource_Sniffs_PHP_EvalObjectFactorySniff implements PHP_CodeSniffer_Snif
                 // Find all strings on the line.
                 $lineEnd = $phpcsFile->findNext(T_SEMICOLON, ($prev + 1));
                 for ($i = ($prev + 1); $i < $lineEnd; $i++) {
-                    if (in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$stringTokens) === true) {
+                    if (isset(Tokens::$stringTokens[$tokens[$i]['code']]) === true) {
                         $strings[$i] = $tokens[$i]['content'];
                     }
                 }
@@ -109,7 +101,7 @@ class MySource_Sniffs_PHP_EvalObjectFactorySniff implements PHP_CodeSniffer_Snif
 
         foreach ($strings as $string) {
             // If the string has "new" in it, it is not allowed.
-            // We don't bother checking if the word "new" is echo'd
+            // We don't bother checking if the word "new" is printed to screen
             // because that is unlikely to happen. We assume the use
             // of "new" is for object instantiation.
             if (strstr($string, ' new ') !== false) {
@@ -122,5 +114,3 @@ class MySource_Sniffs_PHP_EvalObjectFactorySniff implements PHP_CodeSniffer_Snif
 
 
 }//end class
-
-?>

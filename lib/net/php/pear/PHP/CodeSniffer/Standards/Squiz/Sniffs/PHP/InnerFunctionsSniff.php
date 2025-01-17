@@ -1,44 +1,30 @@
 <?php
 /**
- * Squiz_Sniffs_PHP_InnerFunctionsSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_PHP_InnerFunctionsSniff.
- *
  * Ensures that functions within functions are never used.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Squiz_Sniffs_PHP_InnerFunctionsSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\PHP;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class InnerFunctionsSniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_FUNCTION);
+        return [T_FUNCTION];
 
     }//end register()
 
@@ -46,30 +32,45 @@ class Squiz_Sniffs_PHP_InnerFunctionsSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
-     *                                        stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in the
+     *                                               stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        if ($phpcsFile->hasCondition($stackPtr, T_FUNCTION) === true) {
-            $prev = $phpcsFile->findPrevious(T_WHITESPACE, ($stackPtr - 1), null, true);
-            if ($tokens[$prev]['code'] === T_EQUAL) {
-                // Ignore closures.
-                return;
+        if (isset($tokens[$stackPtr]['conditions']) === false) {
+            return;
+        }
+
+        $conditions         = $tokens[$stackPtr]['conditions'];
+        $reversedConditions = array_reverse($conditions, true);
+
+        $outerFuncToken = null;
+        foreach ($reversedConditions as $condToken => $condition) {
+            if ($condition === T_FUNCTION || $condition === T_CLOSURE) {
+                $outerFuncToken = $condToken;
+                break;
             }
 
-            $error = 'The use of inner functions is forbidden';
-            $phpcsFile->addError($error, $stackPtr, 'NotAllowed');
+            if (array_key_exists($condition, Tokens::$ooScopeTokens) === true) {
+                // Ignore methods in OOP structures defined within functions.
+                return;
+            }
         }
+
+        if ($outerFuncToken === null) {
+            // Not a nested function.
+            return;
+        }
+
+        $error = 'The use of inner functions is forbidden';
+        $phpcsFile->addError($error, $stackPtr, 'NotAllowed');
 
     }//end process()
 
 
 }//end class
-
-?>

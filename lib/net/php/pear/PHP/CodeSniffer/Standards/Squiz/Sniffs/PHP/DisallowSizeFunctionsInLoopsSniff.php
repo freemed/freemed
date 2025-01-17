@@ -1,31 +1,18 @@
 <?php
 /**
- * Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff.
- *
  * Bans the use of size-based functions in loop conditions.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\PHP;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class DisallowSizeFunctionsInLoopsSniff implements Sniff
 {
 
     /**
@@ -33,37 +20,37 @@ class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSnif
      *
      * @var array
      */
-    public $supportedTokenizers = array(
-                                   'PHP',
-                                   'JS',
-                                  );
+    public $supportedTokenizers = [
+        'PHP',
+        'JS',
+    ];
 
     /**
      * An array of functions we don't want in the condition of loops.
      *
-     * @return array
+     * @var array
      */
-    protected $forbiddenFunctions = array(
-                                     'PHP' => array(
-                                               'sizeof',
-                                               'strlen',
-                                               'count',
-                                              ),
-                                     'JS'  => array('length'),
-                                    );
+    protected $forbiddenFunctions = [
+        'PHP' => [
+            'sizeof' => true,
+            'strlen' => true,
+            'count'  => true,
+        ],
+        'JS'  => ['length' => true],
+    ];
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(
-                T_WHILE,
-                T_FOR,
-               );
+        return [
+            T_WHILE,
+            T_FOR,
+        ];
 
     }//end register()
 
@@ -71,13 +58,13 @@ class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSnif
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens       = $phpcsFile->getTokens();
         $tokenizer    = $phpcsFile->tokenizerType;
@@ -94,7 +81,9 @@ class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSnif
         }
 
         for ($i = ($start + 1); $i < $end; $i++) {
-            if ($tokens[$i]['code'] === T_STRING && in_array($tokens[$i]['content'], $this->forbiddenFunctions[$tokenizer])) {
+            if ($tokens[$i]['code'] === T_STRING
+                && isset($this->forbiddenFunctions[$tokenizer][$tokens[$i]['content']]) === true
+            ) {
                 $functionName = $tokens[$i]['content'];
                 if ($tokenizer === 'JS') {
                     // Needs to be in the form object.function to be valid.
@@ -106,7 +95,9 @@ class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSnif
                     $functionName = 'object.'.$functionName;
                 } else {
                     // Make sure it isn't a member var.
-                    if ($tokens[($i - 1)]['code'] === T_OBJECT_OPERATOR) {
+                    if ($tokens[($i - 1)]['code'] === T_OBJECT_OPERATOR
+                        || $tokens[($i - 1)]['code'] === T_NULLSAFE_OBJECT_OPERATOR
+                    ) {
                         continue;
                     }
 
@@ -114,7 +105,7 @@ class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSnif
                 }
 
                 $error = 'The use of %s inside a loop condition is not allowed; assign the return value to a variable and use the variable in the loop condition instead';
-                $data  = array($functionName);
+                $data  = [$functionName];
                 $phpcsFile->addError($error, $i, 'Found', $data);
             }//end if
         }//end for
@@ -123,5 +114,3 @@ class Squiz_Sniffs_PHP_DisallowSizeFunctionsInLoopsSniff implements PHP_CodeSnif
 
 
 }//end class
-
-?>

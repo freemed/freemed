@@ -1,31 +1,23 @@
 <?php
 /**
- * Squiz_Sniffs_Debug_JavaScriptLintSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Squiz_Sniffs_Debug_JavaScriptLintSniff.
- *
  * Runs JavaScript Lint on the file.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
+ *
+ * @deprecated 3.9.0
  */
-class Squiz_Sniffs_Debug_JavaScriptLintSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Debug;
+
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Exceptions\RuntimeException;
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Common;
+
+class JavaScriptLintSniff implements Sniff
 {
 
     /**
@@ -33,17 +25,17 @@ class Squiz_Sniffs_Debug_JavaScriptLintSniff implements PHP_CodeSniffer_Sniff
      *
      * @var array
      */
-    public $supportedTokenizers = array('JS');
+    public $supportedTokenizers = ['JS'];
 
 
     /**
      * Returns the token types that this sniff is interested in.
      *
-     * @return int[]
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_OPEN_TAG];
 
     }//end register()
 
@@ -51,60 +43,49 @@ class Squiz_Sniffs_Debug_JavaScriptLintSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
-     * @return void
+     * @return int
+     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException If Javascript Lint ran into trouble.
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
+        $jslPath = Config::getExecutablePath('jsl');
+        if ($jslPath === null) {
+            return $phpcsFile->numTokens;
+        }
+
         $fileName = $phpcsFile->getFilename();
 
-        $jslPath = PHP_CodeSniffer::getConfigData('jsl_path');
-        if (is_null($jslPath) === true) {
-            return;
-        }
-
-        $cmd = '"'.$jslPath.'" -nologo -nofilelisting -nocontext -nosummary -output-format __LINE__:__ERROR__ -process "'.$fileName.'"';
+        $cmd = '"'.Common::escapeshellcmd($jslPath).'" -nologo -nofilelisting -nocontext -nosummary -output-format __LINE__:__ERROR__ -process '.escapeshellarg($fileName);
         $msg = exec($cmd, $output, $retval);
 
-        // $exitCode is the last line of $output if no error occurs, on error it
-        // is numeric. Try to handle various error conditions and provide useful
-        // error reporting.
+        // Variable $exitCode is the last line of $output if no error occurs, on
+        // error it is numeric. Try to handle various error conditions and
+        // provide useful error reporting.
         if ($retval === 2 || $retval === 4) {
             if (is_array($output) === true) {
-                $msg = join('\n', $output);
+                $msg = implode('\n', $output);
             }
 
-            throw new PHP_CodeSniffer_Exception("Failed invoking JavaScript Lint, retval was [$retval], output was [$msg]");
+            throw new RuntimeException("Failed invoking JavaScript Lint, retval was [$retval], output was [$msg]");
         }
 
-
         if (is_array($output) === true) {
-            $tokens = $phpcsFile->getTokens();
-
             foreach ($output as $finding) {
                 $split   = strpos($finding, ':');
                 $line    = substr($finding, 0, $split);
                 $message = substr($finding, ($split + 1));
+                $phpcsFile->addWarningOnLine(trim($message), $line, 'ExternalTool');
+            }
+        }
 
-                // Find the token at the start of the line.
-                $lineToken = null;
-                foreach ($tokens as $ptr => $info) {
-                    if ($info['line'] == $line) {
-                        $lineToken = $ptr;
-                        break;
-                    }
-                }
-
-                if ($lineToken !== null) {
-                    $phpcsFile->addWarning(trim($message), $ptr, 'ExternalTool');
-                }
-            }//end foreach
-        }//end if
+        // Ignore the rest of the file.
+        return $phpcsFile->numTokens;
 
     }//end process()
 
+
 }//end class
-?>

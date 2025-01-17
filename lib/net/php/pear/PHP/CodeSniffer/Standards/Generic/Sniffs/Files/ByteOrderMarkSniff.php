@@ -1,33 +1,19 @@
 <?php
 /**
- * Generic_Sniffs_Files_ByteOrderMarkSniff.
+ * A simple sniff for detecting a BOM definition that may corrupt application work.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Generic_Sniffs_Files_ByteOrderMarkSniff.
- *
- * A simple sniff for detecting BOMs that may corrupt application work.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Piotr Karas <office@mediaself.pl>
  * @author    Greg Sherwood <gsherwood@squiz.net>
  * @copyright 2010-2014 mediaSELF Sp. z o.o.
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- * @see       http://en.wikipedia.org/wiki/Byte_order_mark
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Generic_Sniffs_Files_ByteOrderMarkSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Files;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class ByteOrderMarkSniff implements Sniff
 {
 
     /**
@@ -37,21 +23,21 @@ class Generic_Sniffs_Files_ByteOrderMarkSniff implements PHP_CodeSniffer_Sniff
      *
      * @var array
      */
-    public $bomDefinitions = array(
-                              'UTF-8'       => 'efbbbf',
-                              'UTF-16 (BE)' => 'feff',
-                              'UTF-16 (LE)' => 'fffe',
-                             );
+    protected $bomDefinitions = [
+        'UTF-8'       => 'efbbbf',
+        'UTF-16 (BE)' => 'feff',
+        'UTF-16 (LE)' => 'fffe',
+    ];
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_INLINE_HTML);
+        return [T_INLINE_HTML];
 
     }//end register()
 
@@ -59,17 +45,17 @@ class Generic_Sniffs_Files_ByteOrderMarkSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
-     * @return void
+     * @return int
      */
-    public function process( PHP_CodeSniffer_File $phpcsFile, $stackPtr )
+    public function process(File $phpcsFile, $stackPtr)
     {
         // The BOM will be the very first token in the file.
         if ($stackPtr !== 0) {
-            return;
+            return $phpcsFile->numTokens;
         }
 
         $tokens = $phpcsFile->getTokens();
@@ -78,16 +64,19 @@ class Generic_Sniffs_Files_ByteOrderMarkSniff implements PHP_CodeSniffer_Sniff
             $bomByteLength = (strlen($expectedBomHex) / 2);
             $htmlBomHex    = bin2hex(substr($tokens[$stackPtr]['content'], 0, $bomByteLength));
             if ($htmlBomHex === $expectedBomHex) {
-                $errorData = array($bomName);
+                $errorData = [$bomName];
                 $error     = 'File contains %s byte order mark, which may corrupt your application';
                 $phpcsFile->addError($error, $stackPtr, 'Found', $errorData);
-                break;
+                $phpcsFile->recordMetric($stackPtr, 'Using byte order mark', 'yes');
+                return $phpcsFile->numTokens;
             }
         }
+
+        $phpcsFile->recordMetric($stackPtr, 'Using byte order mark', 'no');
+
+        return $phpcsFile->numTokens;
 
     }//end process()
 
 
 }//end class
-
-?>

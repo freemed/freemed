@@ -59,7 +59,7 @@ class MultiplePDF {
 		if (count($this->stack) < 1) { return ''; }
 
 		// Create temporary filename
-		$tempfile ='/tmp/'.mktime().'.pdf';
+		$tempfile ='/tmp/'.time().'.pdf';
 
 		// Create command
 		$cmd = "pdfjoin --paper letterpaper --outfile '${tempfile}' ";

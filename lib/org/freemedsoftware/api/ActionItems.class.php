@@ -32,51 +32,51 @@ class ActionItems {
 	public function getActionItems($patient = NULL){
 		/*
 		//intensified Treatment Notes 
-		$intensifiedTreatmentNotes = createObject("org.freemedsoftware.module.IntensifiedTreatmentNotes");
+		$intensifiedTreatmentNotes = CreateObject("org.freemedsoftware.module.IntensifiedTreatmentNotes");
 		$intensifiedTreatmentNotesArr = $intensifiedTreatmentNotes->getActionItems($patient);
 		
 		
 		//Treatment Clinical Notes 
-		$treatmentClinicalNote = createObject("org.freemedsoftware.module.TreatmentClinicalNote");
+		$treatmentClinicalNote = CreateObject("org.freemedsoftware.module.TreatmentClinicalNote");
 		$treatmentClinicalNoteArr = $treatmentClinicalNote->getActionItems($patient);
 
 		//Clinical Assesment Notes 
-		$clinicalAssessmentNotes = createObject("org.freemedsoftware.module.ClinicalAssessmentNotes");
+		$clinicalAssessmentNotes = CreateObject("org.freemedsoftware.module.ClinicalAssessmentNotes");
 		$clinicalAssessmentNotesArr = $clinicalAssessmentNotes->getActionItems($patient);
 		*/
 
 		//Authorizations
-		$authorizations = createObject("org.freemedsoftware.module.Authorizations");
+		$authorizations = CreateObject("org.freemedsoftware.module.Authorizations");
 		$authorizationsArr = $authorizations->getActionItems($patient);
 	
 		//Module Field Checker
-		$moduleFieldChecker = createObject("org.freemedsoftware.module.ModuleFieldChecker");
+		$moduleFieldChecker = CreateObject("org.freemedsoftware.module.ModuleFieldChecker");
 		$moduleFieldCheckerArr = $moduleFieldChecker->getUncompletedItems($patient);
 		
-		return array_merge($intensifiedTreatmentNotesArr,$treatmentClinicalNoteArr,$clinicalAssessmentNotesArr,$authorizationsArr,$moduleFieldCheckerArr);
+		return array_merge(/* $intensifiedTreatmentNotesArr,$treatmentClinicalNoteArr,$clinicalAssessmentNotesArr, */ $authorizationsArr,$moduleFieldCheckerArr);
 	}
 
 	public function getActionItemsCount($patient = NULL){
 		/*
 		//intensified Treatment Notes 
-		$intensifiedTreatmentNotes = createObject("org.freemedsoftware.module.IntensifiedTreatmentNotes");
+		$intensifiedTreatmentNotes = CreateObject("org.freemedsoftware.module.IntensifiedTreatmentNotes");
 		$intensifiedTreatmentNotesCount = $intensifiedTreatmentNotes->getActionItemsCount($patient);
 		
 		//Treatment Clinical Notes 
-		$treatmentClinicalNote = createObject("org.freemedsoftware.module.TreatmentClinicalNote");
+		$treatmentClinicalNote = CreateObject("org.freemedsoftware.module.TreatmentClinicalNote");
 		$treatmentClinicalNoteCount = $treatmentClinicalNote->getActionItemsCount($patient);
 
 		//Clinical Assesment Notes 
-		$clinicalAssessmentNotes = createObject("org.freemedsoftware.module.ClinicalAssessmentNotes");
+		$clinicalAssessmentNotes = CreateObject("org.freemedsoftware.module.ClinicalAssessmentNotes");
 		$clinicalAssessmentNotesCount = $clinicalAssessmentNotes->getActionItemsCount($patient);
 		*/
 
 		//Authorizations 
-		$authorizations = createObject("org.freemedsoftware.module.Authorizations");
+		$authorizations = CreateObject("org.freemedsoftware.module.Authorizations");
 		$authorizationsCount = $authorizations->getActionItemsCount($patient);
 		
 		//Work Flow
-		$moduleFieldChecker = createObject("org.freemedsoftware.module.ModuleFieldChecker");
+		$moduleFieldChecker = CreateObject("org.freemedsoftware.module.ModuleFieldChecker");
 		$moduleFieldCheckerCount = $moduleFieldChecker->getUncompletedItemsCount($patient);
 		
 		return $intensifiedTreatmentNotesCount + $moduleFieldCheckerCount + $treatmentClinicalNoteCount + $authorizationsCount + $clinicalAssessmentNotesCount;

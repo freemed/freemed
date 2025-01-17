@@ -1,47 +1,32 @@
 <?php
 /**
- * Squiz_Sniffs_Strings_DoubleQuoteUsageSniff.
+ * Makes sure that any use of double quotes strings are warranted.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * Squiz_Sniffs_Strings_DoubleQuoteUsageSniff.
- *
- * Makes sure that any use of Double Quotes ("") are warranted.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Strings;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class DoubleQuoteUsageSniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(
-                T_CONSTANT_ENCAPSED_STRING,
-                T_DOUBLE_QUOTED_STRING,
-               );
+        return [
+            T_CONSTANT_ENCAPSED_STRING,
+            T_DOUBLE_QUOTED_STRING,
+        ];
 
     }//end register()
 
@@ -49,37 +34,47 @@ class Squiz_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Snif
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token
-     *                                        in the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
      *
-     * @return void
+     * @return int
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        // We are only interested in the first token in a multi-line string.
-        if ($tokens[$stackPtr]['code'] === $tokens[($stackPtr - 1)]['code']) {
-            return;
+        // If tabs are being converted to spaces by the tokeniser, the
+        // original content should be used instead of the converted content.
+        if (isset($tokens[$stackPtr]['orig_content']) === true) {
+            $workingString = $tokens[$stackPtr]['orig_content'];
+        } else {
+            $workingString = $tokens[$stackPtr]['content'];
         }
 
-        $workingString = $tokens[$stackPtr]['content'];
+        $lastStringToken = $stackPtr;
+
         $i = ($stackPtr + 1);
-        while ($tokens[$i]['code'] === $tokens[$stackPtr]['code']) {
-            $workingString .= $tokens[$i]['content'];
-            $i++;
+        if (isset($tokens[$i]) === true) {
+            while ($i < $phpcsFile->numTokens
+                && $tokens[$i]['code'] === $tokens[$stackPtr]['code']
+            ) {
+                if (isset($tokens[$i]['orig_content']) === true) {
+                    $workingString .= $tokens[$i]['orig_content'];
+                } else {
+                    $workingString .= $tokens[$i]['content'];
+                }
+
+                $lastStringToken = $i;
+                $i++;
+            }
         }
+
+        $skipTo = ($lastStringToken + 1);
 
         // Check if it's a double quoted string.
-        if (strpos($workingString, '"') === false) {
-            return;
-        }
-
-        // Make sure it's not a part of a string started in a previous line.
-        // If it is, then we have already checked it.
-        if ($workingString[0] !== '"') {
-            return;
+        if ($workingString[0] !== '"' || substr($workingString, -1) !== '"') {
+            return $skipTo;
         }
 
         // The use of variables in double quoted strings is not allowed.
@@ -88,49 +83,62 @@ class Squiz_Sniffs_Strings_DoubleQuoteUsageSniff implements PHP_CodeSniffer_Snif
             foreach ($stringTokens as $token) {
                 if (is_array($token) === true && $token[0] === T_VARIABLE) {
                     $error = 'Variable "%s" not allowed in double quoted string; use concatenation instead';
-                    $data  = array($token[1]);
+                    $data  = [$token[1]];
                     $phpcsFile->addError($error, $stackPtr, 'ContainsVar', $data);
                 }
             }
 
-            return;
+            return $skipTo;
         }//end if
 
-        // Work through the following tokens, in case this string is stretched
-        // over multiple Lines.
-        for ($i = ($stackPtr + 1); $i < $phpcsFile->numTokens; $i++) {
-            if ($tokens[$i]['type'] !== 'T_CONSTANT_ENCAPSED_STRING') {
-                break;
-            }
-
-            $workingString .= $tokens[$i]['content'];
-        }
-
-        $allowedChars = array(
-                         '\0',
-                         '\n',
-                         '\r',
-                         '\f',
-                         '\t',
-                         '\v',
-                         '\x',
-                         '\b',
-                         '\'',
-                        );
+        $allowedChars = [
+            '\0',
+            '\1',
+            '\2',
+            '\3',
+            '\4',
+            '\5',
+            '\6',
+            '\7',
+            '\n',
+            '\r',
+            '\f',
+            '\t',
+            '\v',
+            '\x',
+            '\b',
+            '\e',
+            '\u',
+            '\'',
+        ];
 
         foreach ($allowedChars as $testChar) {
             if (strpos($workingString, $testChar) !== false) {
-                return;
+                return $skipTo;
             }
         }
 
         $error = 'String %s does not require double quotes; use single quotes instead';
-        $data  = array($workingString);
-        $phpcsFile->addError($error, $stackPtr, 'NotRequired', $data);
+        $data  = [str_replace(["\r", "\n"], ['\r', '\n'], $workingString)];
+        $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'NotRequired', $data);
+
+        if ($fix === true) {
+            $phpcsFile->fixer->beginChangeset();
+            $innerContent = substr($workingString, 1, -1);
+            $innerContent = str_replace('\"', '"', $innerContent);
+            $innerContent = str_replace('\\$', '$', $innerContent);
+            $phpcsFile->fixer->replaceToken($stackPtr, "'$innerContent'");
+            while ($lastStringToken !== $stackPtr) {
+                $phpcsFile->fixer->replaceToken($lastStringToken, '');
+                $lastStringToken--;
+            }
+
+            $phpcsFile->fixer->endChangeset();
+        }
+
+        return $skipTo;
 
     }//end process()
 
 
 }//end class
-
-?>

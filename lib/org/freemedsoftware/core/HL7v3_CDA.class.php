@@ -181,7 +181,7 @@ class HL7v3_CDA {
 	//	Hash key for identifying a document.
 	//
 	protected function DocumentUUID ( $parent, $id ) {
-		$hash_key = ( $parent ? $parent : 'HL7v3_CDA' ) . '-' . $this->patient . '-' . ( $id ? $id : mktime() );
+		$hash_key = ( $parent ? $parent : 'HL7v3_CDA' ) . '-' . $this->patient . '-' . ( $id ? $id : time() );
 		return md5 ( $hash_key );
 	} // end method DocumentUUID
 

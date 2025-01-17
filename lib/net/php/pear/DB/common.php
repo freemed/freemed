@@ -5,7 +5,7 @@
 /**
  * Contains the DB_common base class
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -42,7 +42,7 @@ require_once 'PEAR.php';
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.14RC1
+ * @version    Release: 1.11.0
  * @link       http://pear.php.net/package/DB
  */
 class DB_common extends PEAR
@@ -145,7 +145,7 @@ class DB_common extends PEAR
      *
      * @return void
      */
-    function DB_common()
+    function __construct()
     {
         $this->PEAR('DB_Error');
     }
@@ -204,7 +204,7 @@ class DB_common extends PEAR
     function __wakeup()
     {
         if ($this->was_connected) {
-            $this->connect($this->dsn, $this->options);
+            $this->connect($this->dsn, $this->options['persistent']);
         }
     }
 
@@ -261,8 +261,8 @@ class DB_common extends PEAR
      */
     function quoteString($string)
     {
-        $string = $this->quote($string);
-        if ($string{0} == "'") {
+        $string = $this->quoteSmart($string);
+        if ($string[0] == "'") {
             return substr($string, 1, -1);
         }
         return $string;
@@ -284,8 +284,7 @@ class DB_common extends PEAR
      */
     function quote($string = null)
     {
-        return ($string === null) ? 'NULL'
-                                  : "'" . str_replace("'", "''", $string) . "'";
+        return $this->quoteSmart($string);
     }
 
     // }}}
@@ -886,6 +885,9 @@ class DB_common extends PEAR
     function autoExecute($table, $fields_values, $mode = DB_AUTOQUERY_INSERT,
                          $where = false)
     {
+        if ($where) {
+            $where = strtr($where, array('?' => '\?', '!' => '\!', '&' => '\&',));
+        }
         $sth = $this->autoPrepare($table, array_keys($fields_values), $mode,
                                   $where);
         if (DB::isError($sth)) {
@@ -1203,7 +1205,8 @@ class DB_common extends PEAR
      */
     function &query($query, $params = array())
     {
-        if (sizeof($params) > 0) {
+        $params = (array)$params;
+        if (count($params)) {
             $sth = $this->prepare($query);
             if (DB::isError($sth)) {
                 return $sth;
@@ -1249,7 +1252,7 @@ class DB_common extends PEAR
             return $query;
         }
         $result = $this->query($query, $params);
-        if (is_a($result, 'DB_result')) {
+        if (is_object($result) && is_a($result, 'DB_result')) {
             $result->setOption('limit_from', $from);
             $result->setOption('limit_count', $count);
         }
@@ -1342,7 +1345,8 @@ class DB_common extends PEAR
             }
         }
         // modifyLimitQuery() would be nice here, but it causes BC issues
-        if (sizeof($params) > 0) {
+        $params = (array)$params;
+        if (count($params)) {
             $sth = $this->prepare($query);
             if (DB::isError($sth)) {
                 return $sth;
@@ -1650,7 +1654,8 @@ class DB_common extends PEAR
             }
         }
 
-        if (sizeof($params) > 0) {
+        $params = (array)$params;
+        if (count($params)) {
             $sth = $this->prepare($query);
 
             if (DB::isError($sth)) {

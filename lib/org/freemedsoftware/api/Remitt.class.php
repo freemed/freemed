@@ -91,20 +91,29 @@ class Remitt {
 	//
 	public function GetFileList ( $type, $criteria, $value ) {
 		if ($this->rest) {
+			//syslog(LOG_INFO, "api.Remitt.GetFileList: using REST");
 			$rc = $this->getRestClient( printf( '/file/list/%s/%s/%s', urlencode($type), urlencode($criteria), urlencode($value) ) );
 			$out = $rc->send()->getBody();
 			$json = CreateObject('net.php.pear.Services_JSON');
-            $return = $json->decode( $out );
+			$return = $json->decode( $out );
 		} else {
+			//syslog(LOG_INFO, "api.Remitt.GetFileList: using SOAP");
 			$sc = $this->getSoapClient( );
 			$params = (object) array(
 				'category' => $type
 				, 'criteria' => $criteria
 				, 'value' => $value
 			);
-			$return = (array)( $sc->getFileList( $params )->return );
+			$out = $sc->getFileList( $params );
+			if (!property_exists($out, 'return')) {
+				return array();
+			}
+			$return = (array)( $out->return );
 		}
-		if ($return['filename'] != '') {
+		if (count($return) == 0) {
+			return $return;
+		}
+		if (array_key_exists('filename', $return) && $return['filename'] != '') {
 			return array($return);
 		}
 		return $return;
@@ -398,7 +407,9 @@ class Remitt {
 	//	Integer, REMITT internal processing queue number.
 	//
 	public function ProcessBill ( $billkey, $render, $transportPlugin, $transportOption ) {
+		syslog(LOG_INFO, "api.Remitt.ProcessBill: billkey == $billkey");
 		if (!$this->GetServerStatus()) {
+			syslog(LOG_INFO, "api.Remitt.ProcessBill: The REMITT server is not running");
 			trigger_error(__("The REMITT server is not running."), E_USER_ERROR);
 		}
 		$params = (object) array(
@@ -1288,6 +1299,7 @@ class Remitt {
 			, 'password' => $this->password
 			, 'compression' => SOAP_COMPRESSION_ACCEPT
 			, 'location' => $this->url . "?wsdl"
+			, 'trace' => true
 		));
 		return $sc;
 	} // end method getSoapClient

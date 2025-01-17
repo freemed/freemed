@@ -1,40 +1,32 @@
 <?php
 /**
- * Generic_Sniffs_Files_LowercasedFilenameSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Andy Grunwald <andygrunwald@gmail.com>
- * @copyright 2010-2014 Andy Grunwald
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
  * Checks that all file names are lowercased.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Andy Grunwald <andygrunwald@gmail.com>
  * @copyright 2010-2014 Andy Grunwald
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
-class Generic_Sniffs_Files_LowercasedFilenameSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Files;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class LowercasedFilenameSniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [
+            T_OPEN_TAG,
+            T_OPEN_TAG_WITH_ECHO,
+        ];
 
     }//end register()
 
@@ -42,35 +34,37 @@ class Generic_Sniffs_Files_LowercasedFilenameSniff implements PHP_CodeSniffer_Sn
     /**
      * Processes this sniff, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
-     * @return void
+     * @return int
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        // We are only interested if this is the first open tag.
-        if ($stackPtr !== 0) {
-            if ($phpcsFile->findPrevious(T_OPEN_TAG, ($stackPtr - 1)) !== false) {
-                return;
-            }
+        $filename = $phpcsFile->getFilename();
+        if ($filename === 'STDIN') {
+            return $phpcsFile->numTokens;
         }
 
-        $fileName          = basename($phpcsFile->getFilename());
-        $lowercaseFileName = strtolower($fileName);
-        if ($fileName !== $lowercaseFileName) {
-            $data  = array(
-                      $fileName,
-                      $lowercaseFileName,
-                     );
+        $filename          = basename($filename);
+        $lowercaseFilename = strtolower($filename);
+        if ($filename !== $lowercaseFilename) {
+            $data  = [
+                $filename,
+                $lowercaseFilename,
+            ];
             $error = 'Filename "%s" doesn\'t match the expected filename "%s"';
             $phpcsFile->addError($error, $stackPtr, 'NotFound', $data);
+            $phpcsFile->recordMetric($stackPtr, 'Lowercase filename', 'no');
+        } else {
+            $phpcsFile->recordMetric($stackPtr, 'Lowercase filename', 'yes');
         }
+
+        // Ignore the rest of the file.
+        return $phpcsFile->numTokens;
 
     }//end process()
 
 
 }//end class
-
-?>

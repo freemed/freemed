@@ -45,7 +45,7 @@ if ($bk == 0) {
 	die();
 }
 
-$remitt = CreateObject( 'org.freemedsoftware.api.Remitt' );
+$remitt = CreateObject( 'org.freemedsoftware.api.Remitt', false );
 $billkey_hash = unserialize(freemed::get_link_field($bk, 'billkey', 'billkey'));
 $xml = $remitt->RenderPayerXML($billkey, $billkey_hash['procedures'], $billkey_hash['contact'], $billkey_hash['service'], $billkey_hash['clearinghouse']);
 

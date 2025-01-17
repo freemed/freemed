@@ -268,7 +268,7 @@ class Agata7 {
 			case 'txt':  $c = 'text/plain'; break;
 			default:     $c = 'application/x-pdf'; $e = 'pdf'; break;
 		}
-		if ($e) { Header('Content-Disposition: inline; filename="'.mktime().'.'.$e.'"'); }
+		if ($e) { Header('Content-Disposition: inline; filename="'.time().'.'.$e.'"'); }
 		if ($c) { Header('Content-type: '.$c); }
 		print $this->report_file;
 		die();

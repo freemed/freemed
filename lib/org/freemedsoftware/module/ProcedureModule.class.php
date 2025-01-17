@@ -178,7 +178,7 @@ class ProcedureModule extends EMRModule {
 	public function GetAuthorizations ( $patid ) {
 		$res = $GLOBALS['sql']->queryAll ("SELECT * FROM authorizations WHERE authpatient='".addslashes($patid)."'");
 		foreach ( $res AS $r ) {
-			$auth["${r['authdtbegin']} - ${r['authdtend']} (${r['authvisitsremain']} / ${r['authvisits']})"] = $r['id'];
+			$auth["{$r['authdtbegin']} - {$r['authdtend']} ({$r['authvisitsremain']} / {$r['authvisits']})"] = $r['id'];
 		} // end foreach
 		return $auth;
 	} // end method GetAuthorizations

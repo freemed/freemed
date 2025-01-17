@@ -187,7 +187,7 @@ class Messages {
 		}
 		
 		// Unique timestamp
-		$unique = mktime();
+		$unique = time();
 
 		// Insert the appropriate record
 		$result = true;

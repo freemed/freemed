@@ -1,44 +1,29 @@
 <?php
 /**
- * Squiz_Sniffs_Files_FileExtensionSniff.
+ * Tests that classes and interfaces are not declared in .php files.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * Squiz_Sniffs_Files_FileExtensionSniff.
- *
- * Tests that classes and interfaces are not declared in .php files
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Files_FileExtensionSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Files;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+
+class FileExtensionSniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_OPEN_TAG];
 
     }//end register()
 
@@ -46,44 +31,38 @@ class Squiz_Sniffs_Files_FileExtensionSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
-     *                                        stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in the
+     *                                               stack passed in $tokens.
      *
-     * @return void
+     * @return int
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
-        $tokens = $phpcsFile->getTokens();
-
-        // Make sure this is the first PHP open tag so we don't process
-        // the same file twice.
-        $prevOpenTag = $phpcsFile->findPrevious(T_OPEN_TAG, ($stackPtr - 1));
-        if ($prevOpenTag !== false) {
-            return;
-        }
-
-        $fileName  = $phpcsFile->getFileName();
+        $tokens    = $phpcsFile->getTokens();
+        $fileName  = $phpcsFile->getFilename();
         $extension = substr($fileName, strrpos($fileName, '.'));
-        $nextClass = $phpcsFile->findNext(array(T_CLASS, T_INTERFACE, T_TRAIT), $stackPtr);
+        $nextClass = $phpcsFile->findNext([T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], $stackPtr);
 
-        if ($extension === '.php') {
-            if ($nextClass !== false) {
+        if ($nextClass !== false) {
+            $phpcsFile->recordMetric($stackPtr, 'File extension for class files', $extension);
+            if ($extension === '.php') {
                 $error = '%s found in ".php" file; use ".inc" extension instead';
-                $data  = array(ucfirst($tokens[$nextClass]['content']));
+                $data  = [ucfirst($tokens[$nextClass]['content'])];
                 $phpcsFile->addError($error, $stackPtr, 'ClassFound', $data);
             }
-        } else if ($extension === '.inc') {
-            if ($nextClass === false) {
+        } else {
+            $phpcsFile->recordMetric($stackPtr, 'File extension for non-class files', $extension);
+            if ($extension === '.inc') {
                 $error = 'No interface or class found in ".inc" file; use ".php" extension instead';
                 $phpcsFile->addError($error, $stackPtr, 'NoClass');
             }
         }
 
+        // Ignore the rest of the file.
+        return $phpcsFile->numTokens;
+
     }//end process()
 
 
 }//end class
-
-
-?>

@@ -162,13 +162,14 @@ class Reporting extends SupportModule {
 		// Sanity checking
 		if (!$report['report_name']) { return false; }
 
+		$pass = array();
+
 		$s = CreateObject('org.freemedsoftware.api.Scheduler');		
 		foreach ($report['params'] AS $k => $v) {
 			if ( !$v['optional'] and !$param[$k] ) {
 				syslog(LOG_INFO, get_class($this)."| parameter $k failed for report $uuid");
 				return false;
 			}
-			
 			
 			switch ($v['type']) {
 				case 'Date':				
@@ -181,7 +182,7 @@ class Reporting extends SupportModule {
 				case 'MessageID':
 				case 'EMRModule':
 				case 'SupportModule':
-				$pass[] = $param[$k]+0;
+				$pass[] = (int)$param[$k];
 				break;
 
 				case 'User':
@@ -190,7 +191,7 @@ class Reporting extends SupportModule {
 				
 				case 'Integer':
 				case 'int':
-				$pass[] = $param[$k]+0;
+				$pass[] = (int)$param[$k];
 				break;
 				
 				default:
@@ -198,9 +199,9 @@ class Reporting extends SupportModule {
 				break;
 			}
 		}
+
 		// Form query
-		$query = "CALL ".$report['report_sp']." ( ". @join( ', ', $pass )." ); ";
-		
+		$query = "CALL ".$report['report_sp']." ( ". join( ', ', $pass )." ); ";
 		//print_r($result); die();
 		
 		// Handle graphing, or at least non-standard, reports
@@ -252,7 +253,7 @@ class Reporting extends SupportModule {
 
 			case 'xml':
 			$result = $GLOBALS['sql']->queryAllStoredProc( $query );
-			$xml = new SimpleXMLElement("<Report Timestamp=\"".mktime()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
+			$xml = new SimpleXMLElement("<Report Timestamp=\"".time()."\" Name=\"".htmlentities( $report['report_name'] )."\"></Report>");
 			foreach ($result AS $r ) {
 				$row = $xml->addChild( 'Record' );
 				foreach ( $r AS $column => $value ) {
@@ -375,7 +376,7 @@ class Reporting extends SupportModule {
 			default:	$outformat = 'pdf';	$ext = 'pdf';	break;
 		} // end switch format
 
-		@dl( "rlib.so" );
+		//@dl( "rlib.so" );
 		if ( ! function_exists( 'rlib_init' ) ) {
 			syslog( LOG_ERR, get_class($this)."| rlib PHP extension not found" );
 		}
@@ -399,7 +400,7 @@ class Reporting extends SupportModule {
 			Header( rlib_get_content_type( $rlib ) );
 			break;
 		}
-		Header ("Content-Disposition: inline; filename=\"".mktime().".${ext}\"");
+		Header ("Content-Disposition: inline; filename=\"".time().".{$ext}\"");
 		rlib_spool( $rlib );
 		rlib_free( $rlib );
 		die();
@@ -479,7 +480,7 @@ class Reporting extends SupportModule {
 			}
 		}
 
-		$reportprefix = $param['report_formatting'] . "." . mktime();
+		$reportprefix = $param['report_formatting'] . "." . time();
 
 		// Wrap and generate
 		$cmd = "java -jar " . PHYSICAL_LOCATION . "/scripts/jasper/JasperWrapper.jar --dburl=" . escapeshellarg( $jdbc_url ) . " --dbuser=" . escapeshellarg( DB_USER) . " --dbpass=" . escapeshellarg( DB_PASSWORD ) . " --ipath=" . escapeshellarg( PHYSICAL_LOCATION . '/data/report/' ) . " --opath=" . escapeshellarg( PHYSICAL_LOCATION . '/data/cache/' ) . " --oprefix=" . escapeshellarg( $reportprefix ) . " --format=" . escapeshellarg( $outformat ) . " --report=" . escapeshellarg( $param['report_formatting'] . ".jrxml" ) . " " . $parameters;
@@ -516,7 +517,7 @@ class Reporting extends SupportModule {
 		}
 		
 		Header ("Content-Transfer-Encoding:­binary"); 
-		Header ("Content-Disposition: inline; filename=\"" . $param['report_formatting'] . ".${ext}\"");
+		Header ("Content-Disposition: inline; filename=\"" . $param['report_formatting'] . ".{$ext}\"");
 		Header ("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 		Header ("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 		readfile( $output_file );		

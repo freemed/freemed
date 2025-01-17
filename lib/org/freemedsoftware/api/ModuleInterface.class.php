@@ -273,7 +273,7 @@ class ModuleInterface {
 		if (count($items) < 2) {
 			// Single render
 			Header ("Content-type: application/x-pdf");
-			Header ("Content-Disposition: inline; filename=\"".mktime().".pdf\"");
+			Header ("Content-Disposition: inline; filename=\"".time().".pdf\"");
 			$thisFile = module_function( $r[0]['module_namespace'], 'RenderToPDF', array( $r[0]['oid'] ) );
 			print file_get_contents( $thisFile );
 			@unlink( $thisFile );
@@ -286,7 +286,7 @@ class ModuleInterface {
 				$f[] = $thisFile;
 			}
 			Header ("Content-type: application/x-pdf");
-			Header ("Content-Disposition: inline; filename=\"".mktime().".pdf\"");
+			Header ("Content-Disposition: inline; filename=\"".time().".pdf\"");
 			print file_get_contents( $comp->Composite() );
 			@unlink( $comp->Composite() );
 			foreach ($f AS $fn) { @unlink( $fn ); }

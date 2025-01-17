@@ -44,20 +44,20 @@ $_provider = ucfirst( strtolower ( $_provider ) );
 
 // Sanity checking
 if (!preg_match("/^[[:alpha:]]+$/", $_provider )) {
-	print "Hack attempt, dying ( '${_provider}' given ).";
+	print "Hack attempt, dying ( '{$_provider}' given ).";
 	exit;
 }
 
-if ( !file_exists( dirname(__FILE__)."/lib/org/freemedsoftware/core/Relay_${_provider}.class.php" ) ) {
-	print "Relay ${_provider} not present.";
+if ( !file_exists( dirname(__FILE__)."/lib/org/freemedsoftware/core/Relay_{$_provider}.class.php" ) ) {
+	print "Relay {$_provider} not present.";
 	exit;
 }
 
 // Otherwise, instantiate
 unset ( $obj );
-syslog(LOG_INFO, "method = ${_method}, provider = ${_provider}");
+syslog(LOG_INFO, "method = {$_method}, provider = {$_provider}");
 //print "DEBUG : creating relay for method ${_method}<br/>\n";
-$obj = CreateObject ( "org.freemedsoftware.core.Relay_${_provider}" );
+$obj = CreateObject ( "org.freemedsoftware.core.Relay_{$_provider}" );
 //print "DEBUG : relay created<br/>\n";
 print $obj->handle_request ( $_method );
 //print "DEBUG: done handling request<br/>\n";

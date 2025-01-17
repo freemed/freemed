@@ -46,7 +46,7 @@ class Relay_Json extends Relay {
 		//syslog(LOG_INFO, "request = $request");
 		if (is_array($request)) {
 			foreach ($request AS $k => $v) {
-				//syslog(LOG_INFO, "deserialize_request [ $k ] = $v");
+				syslog(LOG_INFO, "deserialize_request [ $k ] = $v");
 			}
 		}
 		if (function_exists( 'json_decode' ) && 0==1) {

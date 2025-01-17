@@ -51,6 +51,12 @@ class EMRModule extends BaseModule {
 	public $form_vars;
 	public $table_name;
 	public $date_variables = NULL;
+	protected $variables;
+	protected $summary_vars;
+	protected $summary_query;
+	protected $summary_opts, $summary_options;
+	protected $list_view;
+	protected $base_path;
 
 	// Variable: date_field
 	//
@@ -241,7 +247,7 @@ class EMRModule extends BaseModule {
 		if (!isset($locked['id_'.$id])) {
 			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id='".addslashes($id)."' AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
-			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'MDB2_Error' ) );
+			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'DB_Error' ) );
 		}
 
 		return $locked['id_'.$id] ? true : false;
@@ -390,7 +396,7 @@ class EMRModule extends BaseModule {
 		
 	} // end function moduleFieldCheck
 	
-	protected function add_pre( $data ) { }
+	protected function add_pre( &$data ) { }
 	protected function add_post( $id, $data ) { }
 
 	// Function: del
@@ -474,7 +480,7 @@ class EMRModule extends BaseModule {
 		return $result ? true : false;
 	} // end public function mod
 
-	protected function mod_pre ( $data ) { }
+	protected function mod_pre ( &$data ) { }
 	protected function mod_post ( $data ) { }
 
 	// Method: lock
@@ -703,7 +709,7 @@ class EMRModule extends BaseModule {
 		if (is_array($this->summary_query_link)) {
 			foreach ($this->summary_query_link AS $my_k => $my_v) {
 				// Format: field => table_name
-				$_from[] = "LEFT OUTER JOIN ${my_v} ON ${my_v}.id = ".$this->table_name.'.'.$my_k;
+				$_from[] = "LEFT OUTER JOIN {$my_v} ON {$my_v}.id = ".$this->table_name.'.'.$my_k;
 			}
 			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
 		}
@@ -836,17 +842,17 @@ class EMRModule extends BaseModule {
 
 		$template = $this->table_name;
 		$basedir = PHYSICAL_LOCATION;
-		if (!file_exists("$basedir/data/emrview/${template}.tpl")) {
-			print "$basedir/data/emrview/$template.tpl<br/>\n";
+		if (!file_exists("{$basedir}/data/emrview/{$template}.tpl")) {
+			print "{$basedir}/data/emrview/{$template}.tpl<br/>\n";
 			die("Could not load $template template.");
 		}
 
 		// Initialize Smarty engine, with caching
 		if (!is_object($this->smarty)) {
 			$this->smarty = CreateObject( 'net.php.smarty.Smarty' );
-			$this->smarty->setTemplateDir( "$basedir/data/emrview/" );
-			$this->smarty->setCompileDir( "$basedir/data/cache/smarty/templates_c/" );
-			$this->smarty->setCacheDir( "$basedir/data/cache/smarty/cache/" );
+			$this->smarty->setTemplateDir( "{$basedir}/data/emrview/" );
+			$this->smarty->setCompileDir( "{$basedir}/data/cache/smarty/templates_c/" );
+			$this->smarty->setCacheDir( "{$basedir}/data/cache/smarty/cache/" );
 			$this->smarty->left_delimiter = '<!--{';
 			$this->smarty->right_delimiter = '}-->';
 		}
@@ -879,7 +885,7 @@ class EMRModule extends BaseModule {
 	//
 	public function RenderSinglePDF ( $id ) {
 		Header('Content-type: application/x-freemed-print-pdf');
-		Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
+		Header('Content-Disposition: inline; filename="'.time().'.pdf"');
 		$file = $this->RenderToPDF( $id );
 		if (!file_exists($file)) { die ('no file'); }
 		readfile ( $file );

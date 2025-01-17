@@ -39,7 +39,7 @@ class Generator_HL7v2_A08 implements Generator {
 		$stamp = date('YmdHi');
 		$gender = strtoupper( $pt['ptsex'] );
 		$dob = str_replace( "-", "", $p['ptdob'] );
-		$fullstamp = mktime();
+		$fullstamp = time();
 
 		// TODO
 		$addresstype = "";

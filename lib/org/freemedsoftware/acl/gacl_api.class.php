@@ -49,6 +49,10 @@
 
 class gacl_api extends gacl {
 
+	function __construct($options = NULL) {
+                return $this->construct($options);
+        }
+
 	/*
 	 *
 	 * Misc helper functions.

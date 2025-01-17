@@ -1,35 +1,17 @@
 <?php
 /**
- * Svnblame report for PHP_CodeSniffer.
+ * SVN blame report for PHP_CodeSniffer.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Gabriele Santini <gsantini@sqli.com>
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2009-2014 SQLI <www.sqli.com>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * Svnblame report for PHP_CodeSniffer.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Gabriele Santini <gsantini@sqli.com>
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2009-2014 SQLI <www.sqli.com>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class PHP_CodeSniffer_Reports_Svnblame extends PHP_CodeSniffer_Reports_VersionControl
+namespace PHP_CodeSniffer\Reports;
+
+use PHP_CodeSniffer\Exceptions\DeepExitException;
+
+class Svnblame extends VersionControl
 {
 
     /**
@@ -49,7 +31,7 @@ class PHP_CodeSniffer_Reports_Svnblame extends PHP_CodeSniffer_Reports_VersionCo
      */
     protected function getAuthor($line)
     {
-        $blameParts = array();
+        $blameParts = [];
         preg_match('|\s*([^\s]+)\s+([^\s]+)|', $line, $blameParts);
 
         if (isset($blameParts[2]) === false) {
@@ -67,26 +49,19 @@ class PHP_CodeSniffer_Reports_Svnblame extends PHP_CodeSniffer_Reports_VersionCo
      * @param string $filename File to blame.
      *
      * @return array
+     * @throws \PHP_CodeSniffer\Exceptions\DeepExitException
      */
     protected function getBlameContent($filename)
     {
-        if (PHP_CODESNIFFER_VERBOSITY > 0) {
-            echo 'Getting SVN blame info for '.basename($filename).'... ';
-        }
-
-        $command = 'svn blame "'.$filename.'"';
+        $command = 'svn blame "'.$filename.'" 2>&1';
         $handle  = popen($command, 'r');
         if ($handle === false) {
-            echo 'ERROR: Could not execute "'.$command.'"'.PHP_EOL.PHP_EOL;
-            exit(2);
+            $error = 'ERROR: Could not execute "'.$command.'"'.PHP_EOL.PHP_EOL;
+            throw new DeepExitException($error, 3);
         }
 
         $rawContent = stream_get_contents($handle);
-        fclose($handle);
-
-        if (PHP_CODESNIFFER_VERBOSITY > 0) {
-            echo 'DONE'.PHP_EOL;
-        }
+        pclose($handle);
 
         $blames = explode("\n", $rawContent);
 
@@ -96,5 +71,3 @@ class PHP_CodeSniffer_Reports_Svnblame extends PHP_CodeSniffer_Reports_VersionCo
 
 
 }//end class
-
-?>

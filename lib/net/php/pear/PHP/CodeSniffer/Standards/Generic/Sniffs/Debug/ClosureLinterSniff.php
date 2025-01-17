@@ -1,31 +1,22 @@
 <?php
 /**
- * Generic_Sniffs_Debug_ClosureLinterSniff.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-
-/**
- * Generic_Sniffs_Debug_ClosureLinterSniff.
- *
  * Runs gjslint on the file.
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
+ *
+ * @deprecated 3.9.0
  */
-class Generic_Sniffs_Debug_ClosureLinterSniff implements PHP_CodeSniffer_Sniff
+
+namespace PHP_CodeSniffer\Standards\Generic\Sniffs\Debug;
+
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Common;
+
+class ClosureLinterSniff implements Sniff
 {
 
     /**
@@ -33,33 +24,33 @@ class Generic_Sniffs_Debug_ClosureLinterSniff implements PHP_CodeSniffer_Sniff
      *
      * All other error codes will show warnings.
      *
-     * @var int
+     * @var array
      */
-    public $errorCodes = array();
+    public $errorCodes = [];
 
     /**
      * A list of error codes to ignore.
      *
-     * @var int
+     * @var array
      */
-    public $ignoreCodes = array();
+    public $ignoreCodes = [];
 
     /**
      * A list of tokenizers this sniff supports.
      *
      * @var array
      */
-    public $supportedTokenizers = array('JS');
+    public $supportedTokenizers = ['JS'];
 
 
     /**
      * Returns the token types that this sniff is interested in.
      *
-     * @return int[]
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_OPEN_TAG);
+        return [T_OPEN_TAG];
 
     }//end register()
 
@@ -67,33 +58,32 @@ class Generic_Sniffs_Debug_ClosureLinterSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes the tokens that this sniff is interested in.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file where the token was found.
-     * @param int                  $stackPtr  The position in the stack where
-     *                                        the token was found.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file where the token was found.
+     * @param int                         $stackPtr  The position in the stack where
+     *                                               the token was found.
      *
-     * @return void
-     * @throws PHP_CodeSniffer_Exception If jslint.js could not be run
+     * @return int
+     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException If jslint.js could not be run.
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
+        $lintPath = Config::getExecutablePath('gjslint');
+        if ($lintPath === null) {
+            return $phpcsFile->numTokens;
+        }
+
         $fileName = $phpcsFile->getFilename();
 
-        $lintPath = PHP_CodeSniffer::getConfigData('gjslint_path');
-        if ($lintPath === null) {
-            return;
-        }
-
-        $cmd = "$lintPath --nosummary --notime --unix_mode \"$fileName\"";
-        $msg = exec($cmd, $output, $retval);
+        $lintPath = Common::escapeshellcmd($lintPath);
+        $cmd      = $lintPath.' --nosummary --notime --unix_mode '.escapeshellarg($fileName);
+        exec($cmd, $output, $retval);
 
         if (is_array($output) === false) {
-            return;
+            return $phpcsFile->numTokens;
         }
 
-        $tokens = $phpcsFile->getTokens();
-
         foreach ($output as $finding) {
-            $matches    = array();
+            $matches    = [];
             $numMatches = preg_match('/^(.*):([0-9]+):\(.*?([0-9]+)\)(.*)$/', $finding, $matches);
             if ($numMatches === 0) {
                 continue;
@@ -108,32 +98,22 @@ class Generic_Sniffs_Debug_ClosureLinterSniff implements PHP_CodeSniffer_Sniff
             $line  = (int) $matches[2];
             $error = trim($matches[4]);
 
-            // Find the token at the start of the line.
-            $lineToken = null;
-            foreach ($tokens as $ptr => $info) {
-                if ($info['line'] === $line) {
-                    $lineToken = $ptr;
-                    break;
-                }
-            }
-
-            if ($lineToken !== null) {
-                $message = 'gjslint says: (%s) %s';
-                $data    = array(
-                            $code,
-                            $error,
-                           );
-                if (in_array($code, $this->errorCodes) === true) {
-                    $phpcsFile->addError($message, $lineToken, 'ExternalToolError', $data);
-                } else {
-                    $phpcsFile->addWarning($message, $lineToken, 'ExternalTool', $data);
-                }
+            $message = 'gjslint says: (%s) %s';
+            $data    = [
+                $code,
+                $error,
+            ];
+            if (in_array($code, $this->errorCodes) === true) {
+                $phpcsFile->addErrorOnLine($message, $line, 'ExternalToolError', $data);
+            } else {
+                $phpcsFile->addWarningOnLine($message, $line, 'ExternalTool', $data);
             }
         }//end foreach
+
+        // Ignore the rest of the file.
+        return $phpcsFile->numTokens;
 
     }//end process()
 
 
 }//end class
-
-?>

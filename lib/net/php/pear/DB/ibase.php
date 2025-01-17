@@ -9,7 +9,7 @@
  * While this class works with PHP 4, PHP's InterBase extension is
  * unstable in PHP 4.  Use PHP 5.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -49,7 +49,7 @@ require_once 'DB/common.php';
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.14RC1
+ * @version    Release: 1.11.0
  * @link       http://pear.php.net/package/DB
  * @since      Class became stable in Release 1.7.0
  */
@@ -180,13 +180,13 @@ class DB_ibase extends DB_common
     // {{{ constructor
 
     /**
-     * This constructor calls <kbd>$this->DB_common()</kbd>
+     * This constructor calls <kbd>parent::__construct()</kbd>
      *
      * @return void
      */
-    function DB_ibase()
+    function __construct()
     {
-        $this->DB_common();
+        parent::__construct();
     }
 
     // }}}
@@ -916,6 +916,8 @@ class DB_ibase extends DB_common
             $error_regexps = array(
                 '/generator .* is not defined/'
                     => DB_ERROR_SYNTAX,  // for compat. w ibase_errcode()
+                '/violation of [\w ]+ constraint/i'
+                    => DB_ERROR_CONSTRAINT,
                 '/table.*(not exist|not found|unknown)/i'
                     => DB_ERROR_NOSUCHTABLE,
                 '/table .* already exists/i'
@@ -926,8 +928,6 @@ class DB_ibase extends DB_common
                     => DB_ERROR_NOT_FOUND,
                 '/validation error for column .* value "\*\*\* null/i'
                     => DB_ERROR_CONSTRAINT_NOT_NULL,
-                '/violation of [\w ]+ constraint/i'
-                    => DB_ERROR_CONSTRAINT,
                 '/conversion error from string/i'
                     => DB_ERROR_INVALID_NUMBER,
                 '/no permission for/i'

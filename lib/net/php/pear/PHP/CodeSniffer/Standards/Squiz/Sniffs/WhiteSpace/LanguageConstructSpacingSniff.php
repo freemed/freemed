@@ -1,54 +1,41 @@
 <?php
 /**
- * Squiz_Sniffs_WhiteSpace_LanguageConstructSpacingSniff.
+ * Ensures all language constructs contain a single space between themselves and their content.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
+ *
+ * @deprecated 3.3.0 Use the Generic.WhiteSpace.LanguageConstructSpacing sniff instead.
  */
 
-/**
- * Squiz_Sniffs_WhiteSpace_LanguageConstructSpacingSniff.
- *
- * Ensures all language constructs (without brackets) contain a
- * single space between themselves and their content.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_WhiteSpace_LanguageConstructSpacingSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\WhiteSpace;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util;
+
+class LanguageConstructSpacingSniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(
-                T_ECHO,
-                T_PRINT,
-                T_RETURN,
-                T_INCLUDE,
-                T_INCLUDE_ONCE,
-                T_REQUIRE,
-                T_REQUIRE_ONCE,
-                T_NEW,
-               );
+        return [
+            T_ECHO,
+            T_PRINT,
+            T_RETURN,
+            T_INCLUDE,
+            T_INCLUDE_ONCE,
+            T_REQUIRE,
+            T_REQUIRE_ONCE,
+            T_NEW,
+        ];
 
     }//end register()
 
@@ -56,15 +43,20 @@ class Squiz_Sniffs_WhiteSpace_LanguageConstructSpacingSniff implements PHP_CodeS
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in
-     *                                        the stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in
+     *                                               the stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
+
+        if (isset($tokens[($stackPtr + 1)]) === false) {
+            // Skip if there is no next token.
+            return;
+        }
 
         if ($tokens[($stackPtr + 1)]['code'] === T_SEMICOLON) {
             // No content for this language construct.
@@ -72,25 +64,28 @@ class Squiz_Sniffs_WhiteSpace_LanguageConstructSpacingSniff implements PHP_CodeS
         }
 
         if ($tokens[($stackPtr + 1)]['code'] === T_WHITESPACE) {
-            $content       = $tokens[($stackPtr + 1)]['content'];
-            $contentLength = strlen($content);
-            if ($contentLength !== 1) {
-                $error = 'Language constructs must be followed by a single space; expected 1 space but found %s';
-                $data  = array($contentLength);
-                $phpcsFile->addError($error, $stackPtr, 'IncorrectSingle', $data);
+            $content = $tokens[($stackPtr + 1)]['content'];
+            if ($content !== ' ') {
+                $error = 'Language constructs must be followed by a single space; expected 1 space but found "%s"';
+                $data  = [Util\Common::prepareForOutput($content)];
+                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'IncorrectSingle', $data);
+                if ($fix === true) {
+                    $phpcsFile->fixer->replaceToken(($stackPtr + 1), ' ');
+                }
             }
-        } else {
+        } else if ($tokens[($stackPtr + 1)]['code'] !== T_OPEN_PARENTHESIS) {
             $error = 'Language constructs must be followed by a single space; expected "%s" but found "%s"';
-            $data  = array(
-                      $tokens[$stackPtr]['content'].' '.$tokens[($stackPtr + 1)]['content'],
-                      $tokens[$stackPtr]['content'].$tokens[($stackPtr + 1)]['content'],
-                     );
-            $phpcsFile->addError($error, $stackPtr, 'Incorrect', $data);
-        }
+            $data  = [
+                $tokens[$stackPtr]['content'].' '.$tokens[($stackPtr + 1)]['content'],
+                $tokens[$stackPtr]['content'].$tokens[($stackPtr + 1)]['content'],
+            ];
+            $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'Incorrect', $data);
+            if ($fix === true) {
+                $phpcsFile->fixer->addContent($stackPtr, ' ');
+            }
+        }//end if
 
     }//end process()
 
 
 }//end class
-
-?>

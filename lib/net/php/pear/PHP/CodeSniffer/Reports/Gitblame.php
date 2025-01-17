@@ -1,33 +1,18 @@
 <?php
 /**
- * Gitblame report for PHP_CodeSniffer.
+ * Git blame report for PHP_CodeSniffer.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Ben Selby <benmatselby@gmail.com>
- * @copyright 2009-2014 SQLI <www.sqli.com>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @author    Greg Sherwood <gsherwood@squiz.net>
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * Gitblame report for PHP_CodeSniffer.
- *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Ben Selby <benmatselby@gmail.com>
- * @copyright 2009-2014 SQLI <www.sqli.com>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.2.2
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class PHP_CodeSniffer_Reports_Gitblame extends PHP_CodeSniffer_Reports_VersionControl
+namespace PHP_CodeSniffer\Reports;
+
+use PHP_CodeSniffer\Exceptions\DeepExitException;
+
+class Gitblame extends VersionControl
 {
 
     /**
@@ -47,7 +32,7 @@ class PHP_CodeSniffer_Reports_Gitblame extends PHP_CodeSniffer_Reports_VersionCo
      */
     protected function getAuthor($line)
     {
-        $blameParts = array();
+        $blameParts = [];
         $line       = preg_replace('|\s+|', ' ', $line);
         preg_match(
             '|\(.+[0-9]{4}-[0-9]{2}-[0-9]{2}\s+[0-9]+\)|',
@@ -65,9 +50,9 @@ class PHP_CodeSniffer_Reports_Gitblame extends PHP_CodeSniffer_Reports_VersionCo
             return false;
         }
 
-        $parts = array_slice($parts, 0, (count($parts) - 2));
-
-        return preg_replace('|\(|', '', implode($parts, ' '));
+        $parts  = array_slice($parts, 0, (count($parts) - 2));
+        $author = preg_replace('|\(|', '', implode(' ', $parts));
+        return $author;
 
     }//end getAuthor()
 
@@ -78,47 +63,22 @@ class PHP_CodeSniffer_Reports_Gitblame extends PHP_CodeSniffer_Reports_VersionCo
      * @param string $filename File to blame.
      *
      * @return array
+     * @throws \PHP_CodeSniffer\Exceptions\DeepExitException
      */
     protected function getBlameContent($filename)
     {
         $cwd = getcwd();
 
-        if (PHP_CODESNIFFER_VERBOSITY > 0) {
-            echo 'Getting GIT blame info for '.basename($filename).'... ';
-        }
-
-        $fileParts = explode(DIRECTORY_SEPARATOR, $filename);
-        $found     = false;
-        $location  = '';
-        while (empty($fileParts) === false) {
-            array_pop($fileParts);
-            $location = implode($fileParts, DIRECTORY_SEPARATOR);
-            if (is_dir($location.DIRECTORY_SEPARATOR.'.git') === true) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found === true) {
-            chdir($location);
-        } else {
-            echo 'ERROR: Could not locate .git directory '.PHP_EOL.PHP_EOL;
-            exit(2);
-        }
-
-        $command = 'git blame --date=short "'.$filename.'"';
+        chdir(dirname($filename));
+        $command = 'git blame --date=short "'.basename($filename).'" 2>&1';
         $handle  = popen($command, 'r');
         if ($handle === false) {
-            echo 'ERROR: Could not execute "'.$command.'"'.PHP_EOL.PHP_EOL;
-            exit(2);
+            $error = 'ERROR: Could not execute "'.$command.'"'.PHP_EOL.PHP_EOL;
+            throw new DeepExitException($error, 3);
         }
 
         $rawContent = stream_get_contents($handle);
-        fclose($handle);
-
-        if (PHP_CODESNIFFER_VERBOSITY > 0) {
-            echo 'DONE'.PHP_EOL;
-        }
+        pclose($handle);
 
         $blames = explode("\n", $rawContent);
         chdir($cwd);
@@ -129,5 +89,3 @@ class PHP_CodeSniffer_Reports_Gitblame extends PHP_CodeSniffer_Reports_VersionCo
 
 
 }//end class
-
-?>

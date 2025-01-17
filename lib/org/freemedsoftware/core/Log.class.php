@@ -52,7 +52,7 @@ class Log {
 			'log',
 			array (
 				'logstamp' => SQL__NOW,
-				'loguser' => $this_user->user_number,
+				'loguser' => (int)$this_user->user_number,
 				'logpatient' => 0,
 				'logsystem' => $sys,
 				'logsubsystem' => $subsys,
@@ -87,7 +87,7 @@ class Log {
 			'log',
 			array (
 				'logstamp' => SQL__NOW,
-				'loguser' => $this_user->user_number,
+				'loguser' => (int)$this_user->user_number,
 				'logpatient' => $patient,
 				'logsystem' => $sys,
 				'logsubsystem' => $subsys,

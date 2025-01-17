@@ -25,6 +25,7 @@
 if (!$_SERVER['argc']) { die ("cannot be called via web"); }
 
 ini_set('include_path', dirname(dirname(__FILE__)).':'.ini_get('include_path'));
+
 include_once ( 'lib/freemed.php' );
 
 $cache = freemed::module_cache();
@@ -32,15 +33,21 @@ $cache = freemed::module_cache();
 print "REMITT Filestore Pull Tool\n";
 print "(c) 2015 FreeMED Software Foundation\n\n";
 
-$fn = $_SERVER['argv'][1];
+$fn = "";
+if (array_key_exists(1, $_SERVER['argv'])) {
+	$fn = $_SERVER['argv'][1];
+}
 
 //print " - Submitting billkey $bk : ";
 //print_r( SubmitBillkey($bk, '4010_837p', 'org.remitt.plugin.transport.StoreFile', '') );
 
 if ($fn == "") {
 	$fl = GetFileList();
+	if (count($fl) == 0) {
+		print "NO FILES FOR THIS YEAR\n";
+	}
 	foreach ($fl AS $k => $v) {
-		print $v->filename . " [" . $v->filesize . " bytes] billkey = " . $v->originalId . "\n";	
+		print $v->filename . " [" . $v->filesize . "] billkey = " . $v->originalId . "\n";	
 	}
 	die();
 }
@@ -54,13 +61,13 @@ print "Done.\n";
 //
 
 function GetFileList ( ) {
-	$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
+	$remitt = CreateObject('org.freemedsoftware.api.Remitt', false); //freemed::config_value('remitt_url'));
 
 	return $remitt->getFileList('output', 'year', date('Y'));
 } // end method GetFileList
 
 function GetFile ( $f ) {
-	$remitt = CreateObject('org.freemedsoftware.api.Remitt', freemed::config_value('remitt_url'));
+	$remitt = CreateObject('org.freemedsoftware.api.Remitt', false); // freemed::config_value('remitt_url'));
 
 	return $remitt->GetFile('output', $f);
 } // end method GetFile

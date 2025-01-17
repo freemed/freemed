@@ -1,45 +1,30 @@
 <?php
 /**
- * Squiz_Sniffs_Strings_EchoedStringsSniff.
+ * Makes sure that any strings that are "echoed" are not enclosed in brackets.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-/**
- * Squiz_Sniffs_Strings_EchoedStringsSniff.
- *
- * Makes sure that any strings that are "echoed" are not enclosed in brackets
- * like a function call.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class Squiz_Sniffs_Strings_EchoedStringsSniff implements PHP_CodeSniffer_Sniff
+namespace PHP_CodeSniffer\Standards\Squiz\Sniffs\Strings;
+
+use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
+
+class EchoedStringsSniff implements Sniff
 {
 
 
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
-        return array(T_ECHO);
+        return [T_ECHO];
 
     }//end register()
 
@@ -47,38 +32,57 @@ class Squiz_Sniffs_Strings_EchoedStringsSniff implements PHP_CodeSniffer_Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile The file being scanned.
-     * @param int                  $stackPtr  The position of the current token in the
-     *                                        stack passed in $tokens.
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token in the
+     *                                               stack passed in $tokens.
      *
      * @return void
      */
-    public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        $firstContent = $phpcsFile->findNext(array(T_WHITESPACE), ($stackPtr + 1), null, true);
+        $firstContent = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
         // If the first non-whitespace token is not an opening parenthesis, then we are not concerned.
         if ($tokens[$firstContent]['code'] !== T_OPEN_PARENTHESIS) {
+            $phpcsFile->recordMetric($stackPtr, 'Brackets around echoed strings', 'no');
             return;
         }
 
-        $endOfStatement = $phpcsFile->findNext(array(T_SEMICOLON), $stackPtr, null, false);
+        $end = $phpcsFile->findNext([T_SEMICOLON, T_CLOSE_TAG], $stackPtr, null, false);
 
-        // If the token before the semi-colon is not a closing parenthesis, then we are not concerned.
-        if ($tokens[($endOfStatement - 1)]['code'] !== T_CLOSE_PARENTHESIS) {
+        // If the token before the semicolon is not a closing parenthesis, then we are not concerned.
+        $prev = $phpcsFile->findPrevious(T_WHITESPACE, ($end - 1), null, true);
+        if ($tokens[$prev]['code'] !== T_CLOSE_PARENTHESIS) {
+            $phpcsFile->recordMetric($stackPtr, 'Brackets around echoed strings', 'no');
             return;
         }
 
-        if (($phpcsFile->findNext(PHP_CodeSniffer_Tokens::$operators, $stackPtr, $endOfStatement, false)) === false) {
+        // If the parenthesis don't match, then we are not concerned.
+        if ($tokens[$firstContent]['parenthesis_closer'] !== $prev) {
+            $phpcsFile->recordMetric($stackPtr, 'Brackets around echoed strings', 'no');
+            return;
+        }
+
+        $phpcsFile->recordMetric($stackPtr, 'Brackets around echoed strings', 'yes');
+
+        if (($phpcsFile->findNext(Tokens::$operators, $stackPtr, $end, false)) === false) {
             // There are no arithmetic operators in this.
             $error = 'Echoed strings should not be bracketed';
-            $phpcsFile->addError($error, $stackPtr, 'HasBracket');
+            $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'HasBracket');
+            if ($fix === true) {
+                $phpcsFile->fixer->beginChangeset();
+                $phpcsFile->fixer->replaceToken($firstContent, '');
+                if ($tokens[($firstContent - 1)]['code'] !== T_WHITESPACE) {
+                    $phpcsFile->fixer->addContent(($firstContent - 1), ' ');
+                }
+
+                $phpcsFile->fixer->replaceToken($prev, '');
+                $phpcsFile->fixer->endChangeset();
+            }
         }
 
     }//end process()
 
 
 }//end class
-
-?>

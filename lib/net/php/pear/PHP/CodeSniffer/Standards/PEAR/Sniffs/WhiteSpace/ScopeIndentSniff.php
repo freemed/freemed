@@ -1,48 +1,24 @@
 <?php
 /**
- * PEAR_Sniffs_Whitespace_ScopeIndentSniff.
+ * Checks that control structures are structured and indented correctly.
  *
- * PHP version 5
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @link      http://pear.php.net/package/PHP_CodeSniffer
+ * @copyright 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
+ * @license   https://github.com/PHPCSStandards/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  */
 
-if (class_exists('Generic_Sniffs_WhiteSpace_ScopeIndentSniff', true) === false) {
-    $error = 'Class Generic_Sniffs_WhiteSpace_ScopeIndentSniff not found';
-    throw new PHP_CodeSniffer_Exception($error);
-}
+namespace PHP_CodeSniffer\Standards\PEAR\Sniffs\WhiteSpace;
 
-/**
- * PEAR_Sniffs_Whitespace_ScopeIndentSniff.
- *
- * Checks that control structures are structured correctly, and their content
- * is indented correctly.
- *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
- * @copyright 2006-2014 Squiz Pty Ltd (ABN 77 084 670 600)
- * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
- * @version   Release: 1.5.5
- * @link      http://pear.php.net/package/PHP_CodeSniffer
- */
-class PEAR_Sniffs_WhiteSpace_ScopeIndentSniff extends Generic_Sniffs_WhiteSpace_ScopeIndentSniff
+use PHP_CodeSniffer\Standards\Generic\Sniffs\WhiteSpace\ScopeIndentSniff as GenericScopeIndentSniff;
+
+class ScopeIndentSniff extends GenericScopeIndentSniff
 {
 
     /**
      * Any scope openers that should not cause an indent.
      *
-     * @var array(int)
+     * @var int[]
      */
-    protected $nonIndentingScopes = array(T_SWITCH);
+    protected $nonIndentingScopes = [T_SWITCH];
 
 }//end class
-
-?>

@@ -85,7 +85,7 @@ class CSV {
 		$CRLF = "\r\n";
 
 		Header ("Content-type: application/csv");
-		Header ("Content-Disposition: inline; filename=\"".mktime().".csv\"");
+		Header ("Content-Disposition: inline; filename=\"".time().".csv\"");
 
 		print join(',', $this->_keys).$CRLF;
 

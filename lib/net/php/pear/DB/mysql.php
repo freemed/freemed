@@ -6,7 +6,7 @@
  * The PEAR DB driver for PHP's mysql extension
  * for interacting with MySQL databases
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
  * that is available through the world-wide-web at the following URI:
@@ -41,7 +41,7 @@ require_once 'DB/common.php';
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.14RC1
+ * @version    Release: 1.11.0
  * @link       http://pear.php.net/package/DB
  */
 class DB_mysql extends DB_common
@@ -109,9 +109,12 @@ class DB_mysql extends DB_common
         1136 => DB_ERROR_VALUE_COUNT_ON_ROW,
         1142 => DB_ERROR_ACCESS_VIOLATION,
         1146 => DB_ERROR_NOSUCHTABLE,
+        1205 => DB_ERROR_LOCK_TIMEOUT,
+        1213 => DB_ERROR_DEADLOCK,
         1216 => DB_ERROR_CONSTRAINT,
         1217 => DB_ERROR_CONSTRAINT,
-        1356 => DB_ERROR_DIVZERO,
+        1356 => DB_ERROR_INVALID_VIEW,
+        1365 => DB_ERROR_DIVZERO,
         1451 => DB_ERROR_CONSTRAINT,
         1452 => DB_ERROR_CONSTRAINT,
     );
@@ -162,13 +165,13 @@ class DB_mysql extends DB_common
     // {{{ constructor
 
     /**
-     * This constructor calls <kbd>$this->DB_common()</kbd>
+     * This constructor calls <kbd>parent::__construct()</kbd>
      *
      * @return void
      */
-    function DB_mysql()
+    function __construct()
     {
-        $this->DB_common();
+        parent::__construct();
     }
 
     // }}}
@@ -770,17 +773,6 @@ class DB_mysql extends DB_common
     function quoteIdentifier($str)
     {
         return '`' . str_replace('`', '``', $str) . '`';
-    }
-
-    // }}}
-    // {{{ quote()
-
-    /**
-     * @deprecated  Deprecated in release 1.6.0
-     */
-    function quote($str)
-    {
-        return $this->quoteSmart($str);
     }
 
     // }}}

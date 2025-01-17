@@ -467,13 +467,13 @@ class FormTemplate {
 
 		if ($output) {
 			Header('Content-type: application/x-pdf');
-			Header('Content-Disposition: inline; filename="'.mktime().'.pdf"');
+			Header('Content-Disposition: inline; filename="'.time().'.pdf"');
 			print `${cmd}`;
 			die();
 		}
 
 		// Otherwise, get this as a string
-		$filename = '/tmp/form'.mktime().'.pdf';
+		$filename = '/tmp/form'.time().'.pdf';
 		$fp = fopen($filename, 'w');
 		fputs($fp, `${cmd}`);
 		fclose($fp);
