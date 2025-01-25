@@ -122,9 +122,9 @@ class ModuleInterface {
 	//
 	//	Associative array of values. Key = id, value = display name
 	//
-	public function ModuleSupportPicklistMethod ( $module, $criteria,$fieldValues ) {
-		syslog(LOG_INFO, module_function( $module, 'picklist', array ( $criteria,$fieldValues ) ) );
-		return module_function( $module, 'picklist', array ( $criteria,$fieldValues ) );
+	public function ModuleSupportPicklistMethod ( $module, $criteria, $fieldValues = NULL ) {
+		syslog(LOG_INFO, "module_function( $module, 'picklist', array ( $criteria,$fieldValues ) )" );
+		return module_function( $module, 'picklist', array ( $criteria, $fieldValues ) );
 	} // end method ModuleSupportPicklistMethod
 	
 	// Method: EMRSupportPicklistMethod
@@ -142,7 +142,7 @@ class ModuleInterface {
 	//	Associative array of values. Key = id, value = display name
 	//
 	public function EMRSupportPicklistMethod ( $module, $patient, $criteria ) {
-		syslog(LOG_INFO, module_function( $module, 'picklist', array ( $patient, $criteria ) ) );
+		syslog(LOG_INFO, "module_function( $module, 'picklist', array ( $patient, $criteria ) )" );
 		return module_function( $module, 'picklist', array ( $patient,$criteria ) );
 	} // end method ModuleSupportPicklistMethod
 

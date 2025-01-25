@@ -96,6 +96,7 @@ class FreemedDb extends DB {
 	public function queryOne( $query ) { return $this->db->getOne($query); }
 	public function queryRow( $query ) { return $this->db->getRow($query); }
 	public function queryCol( $query ) { return $this->db->getCol($query); }
+	public function escape  ( $val   ) { return $this->db->escapeSimple($val); }
 
 	// Method: queryOneStoredProc
 	//
