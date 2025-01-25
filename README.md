@@ -34,6 +34,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 * Code is annotated with an author if the primary author is other than ```Jeff Buchbinder <jeff@freemedsoftware.org>```
 * MySQL version 5.0.20+ is required.
 * Since FreeMED involves a fairly hefty codebase, php optimizing tricks, such as the bware_cache module or the Zend Optimizer should be used to minimize load times. [APC](http://apc.communityconnect.com) is also available, as well as the venerable (but largely unmaintained) [Turck MMcache](http://turck-mmcache.sourceforge.net/).
+* Debian/Ubuntu - Needs the following in `/etc/mysql/mysql.conf.d/mysqld.cnf`:
+```
+[mysqld]
+sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+```
 
 ## Troubleshooting
 
