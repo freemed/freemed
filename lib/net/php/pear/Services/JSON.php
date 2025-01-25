@@ -114,6 +114,8 @@ define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
  */
 class Services_JSON
 {
+   protected $use;
+
    /**
     * constructs a new JSON instance
     *
