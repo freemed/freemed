@@ -176,7 +176,7 @@ class FreemedDb extends DB {
 	public function get_link ( $table, $key, $field = 'id' ) {
 		//$query = "SELECT * FROM ".$this->db->escapeSimple( $table )." WHERE ".$this->db->escapeSimple( $field )." = ".$this->db->quote( $key );
 		$query = "SELECT * FROM ".addslashes($table)." WHERE ".addslashes($field)." = '".addslashes($key)."' LIMIT 1";
-		return $this->db->getAll( $query );
+		return $this->db->getAll( $query )[0];
 	} // end public function get_link
 
 	// Method: distinct_values
