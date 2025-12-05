@@ -526,6 +526,8 @@ class Remitt {
 			$procedures = array ( $_procedures );
 		}
 
+		$buffer .= "";
+
 		$buffer .= "<?xml version=\"1.0\"?>\n";
 
 		// Create master document element
@@ -995,6 +997,13 @@ class Remitt {
 		$query = "SELECT payrecamt, payreccat, payrecsource, payreclink, payrecdt FROM payrec WHERE payrecproc='".$procedure."'"; 
 		$pay_result = $GLOBALS['sql']->queryAll($query);
 
+		$pat_pay = 0;
+		$pri_pay = 0;
+		$sec_pay = 0;
+		$tet_pay = 0;
+		$mng_amt = 0;
+		$mng_adj = 0;
+
 		foreach($pay_result AS $r) {
 			$payrecdt     = $r["payrecdt"];
 			$payrecamt    = $r["payrecamt"];
@@ -1238,8 +1247,14 @@ class Remitt {
 	} // end method _addr
 
 	protected function _date ( $name, $sqlvalue ) {
-		list ($y, $m, $d) = explode ('-', $sqlvalue);
-		if (strlen($y) != 4) { $y = '0000'; $m = '00'; $d = '00'; }
+		if ($sqlvalue == "" || strlen($sqlvalue < 10)) {
+			$y = "0000";
+			$m = "00";
+			$d = "00";
+		} else {
+			list ($y, $m, $d) = explode ('-', $sqlvalue);
+			if (strlen($y) != 4) { $y = '0000'; $m = '00'; $d = '00'; }
+		}
 		return $this->_tag($name,
 			$this->_tag('year', $y, true).
 			$this->_tag('month', $m, true).
