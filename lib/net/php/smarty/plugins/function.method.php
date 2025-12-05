@@ -31,7 +31,7 @@ function smarty_function_method ( $params, &$smarty ) {
 			if ( substr( $k, 0, 5 ) == 'param' ) {
 				$key = substr( $k, 5, strlen($k) - 5 );
 				if ( ( $key == '0' ) or ( ($key + 0) > 0 ) ) {
-					$r[$key+0] = $v;
+					$r[(int)$key] = $v;
 				}
 			} // end if substr(param)
 		} // end foreach
