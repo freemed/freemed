@@ -1,0 +1,37 @@
+services:
+  freemed-db:
+    image: mariadb:latest
+    environment:
+      - MARIADB_USER=freemed
+      - MARIADB_ROOT_PASSWORD=freemed
+      - MARIADB_PASSWORD=freemed
+      - MARIADB_DATABASE=freemed
+      - MARIADB_CHARACTER_SET=utf8mb4
+      - MARIADB_COLLATE=utf8mb4_unicode_ci
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./freemeddb.sql:/tmp/freemed.sql
+
+  freemed:
+    image: jbuchbinder/moodle-php-8.3-fpm
+    user: "101:101"
+    environment:
+      - TZ=America/New_York
+      - PHP_MAX_INPUT_VARS=5000
+      - PHP_ENABLE_OPCACHE=1
+    volumes:
+      - ./freemed:/usr/share/freemed
+      - ./php-custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro
+    depends_on:
+      - freemed-db 
+
+  freemed-nginx:
+    image: nginx:alpine
+    ports:
+      - '38080:80'
+    volumes:
+      - ./freemed:/usr/share/freemed
+      - './nginx.conf:/etc/nginx/nginx.conf:ro'
+    depends_on:
+      - freemed 
+
