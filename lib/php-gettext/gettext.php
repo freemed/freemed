@@ -143,6 +143,8 @@ class gettext_reader {
       is_array($this->table_translations))
       return;
 
+    if ($this->STREAM === null) { return; }
+
     /* get original and translations tables */
     if (!is_array($this->table_originals)) {
       $this->STREAM->seekto($this->originals);
