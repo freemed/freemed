@@ -162,9 +162,8 @@ if (!defined('_ADODB_LAYER')) {
 	 * AutoExecute constants
 	 * (moved from adodb-pear.inc.php since they are only used in here)
 	 */
-	define('DB_AUTOQUERY_INSERT', 1);
-	define('DB_AUTOQUERY_UPDATE', 2);
-
+        if (!defined('DB_AUTOQUERY_INSERT')) { define('DB_AUTOQUERY_INSERT', 1); }
+        if (!defined('DB_AUTOQUERY_UPDATE')) { define('DB_AUTOQUERY_UPDATE', 2); }
 
 
 	function ADODB_Setup() {
