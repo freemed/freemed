@@ -123,7 +123,7 @@ class Pharmacy extends SupportModule {
 		$string = trim(addslashes( $string ));
 		
 		$query = "SELECT * FROM pharmacy WHERE phname LIKE '".addslashes($string)."%'".
-			" LIMIT $limit";
+			" LIMIT ".intval($limit);
 			
 		syslog(LOG_INFO, "PICK| $query");
 		$result = $GLOBALS['sql']->queryAll( $query );
