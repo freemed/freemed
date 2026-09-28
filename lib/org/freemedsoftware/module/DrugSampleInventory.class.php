@@ -86,14 +86,20 @@ class DrugSampleInventory extends SupportModule {
 	//
 	public function Deduct ( $id, $count ) {
 		syslog(LOG_INFO, "deduct $amount from record $id");
-		syslog(LOG_INFO, "UPDATE ".$this->table_name." SET ".
-			"amount = amount - ".($count + 0)." ".
-			"WHERE id = '".addslashes($id)."'");
-		$result = $GLOBALS['sql']->query(
-			"UPDATE ".$this->table_name." SET ".
-			"samplecountremain = samplecountremain - ".($count + 0)." ".
-			"WHERE id = '".addslashes($id)."'"
+		// Category B: table_name identifier; Category A: the id value and the
+		// cast count. (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::Deduct| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$query = sprintf('UPDATE %s SET samplecountremain = samplecountremain - %d WHERE id = %s',
+			$table,
+			intval($count),
+			$GLOBALS['sql']->quote($id)
 		);
+		syslog(LOG_INFO, $query);
+		$result = $GLOBALS['sql']->query( $query );
 		return $result;
 	} // end method Deduct
 
