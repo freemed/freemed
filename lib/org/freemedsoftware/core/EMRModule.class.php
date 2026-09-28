@@ -834,19 +834,33 @@ class EMRModule extends BaseModule {
 				return NULL;
 			}
 		}
-		// Category B: table/patient/date identifiers (refused by log, R12).
+		// Category B (2.6b F3): the table and patient column are required - if
+		// either is not a single identifier the statement cannot be built, so it
+		// is refused with a log line and this method's empty answer (R12: a
+		// data-driven refusal is never fatal).
+		//
+		// NOTE (2.6b F3): $date_field is deliberately NOT part of that refusal.
+		// It is optional metadata - modules exist that declare no date column -
+		// so an absent or unusable value drops the ORDER BY term and falls back
+		// to `id DESC`, the fallback R12 names for a data-driven identifier. The
+		// pre-review code bundled all three into one check and refused the whole
+		// query, turning "this module has no date column" into "no record".
 		$table = SqlIdent::name( $this->table_name );
 		$pfield = SqlIdent::name( $this->patient_field );
-		$dfield = SqlIdent::name( $this->date_field );
-		if ( $table === false or $pfield === false or $dfield === false ) {
-			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing invalid identifier '.var_export(array($this->table_name, $this->patient_field, $this->date_field), true) );
+		if ( $table === false or $pfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing invalid table_name/patient_field '.var_export(array($this->table_name, $this->patient_field), true) );
 			return NULL;
 		}
-		// Category A: patient id and the ImportDate()-formatted date.
-		$query = sprintf( 'SELECT * FROM %s WHERE %s = %s %s ORDER BY %s DESC, id DESC',
+		$dfield = $this->date_field ? SqlIdent::name( $this->date_field ) : false;
+		if ( $dfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| no usable date_field, ordering by id '.var_export($this->date_field, true) );
+		}
+		// Category A: the patient id and the validated Y-m-d date. The date
+		// qualifier is only emitted when there is a date column to qualify on.
+		$query = sprintf( 'SELECT * FROM %s WHERE %s = %s%s ORDER BY %s',
 			$table, $pfield, $GLOBALS['sql']->quote( $patient ),
-			( $rDate ? sprintf(' AND %s <= %s ', $dfield, $GLOBALS['sql']->quote( $rDate )) : '' ),
-			$dfield );
+			( ( $dfield and $rDate ) ? sprintf(' AND %s <= %s ', $dfield, $GLOBALS['sql']->quote( $rDate )) : '' ),
+			( $dfield ? sprintf('%s DESC, id DESC', $dfield) : 'id DESC' ) );
 		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
 	} // end method GetRecentRecord
