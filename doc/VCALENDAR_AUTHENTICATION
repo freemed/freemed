@@ -92,9 +92,11 @@ vCalendar Authentication - the GET user/hash credential pair is deprecated
    syslog for "DEPRECATED hash authentication" to find the clients that still
    need migrating, and turn the option off again when the log is quiet.
 
-   There is no LOG__SECURITY constant in PHP; LOG_NOTICE is what the endpoint
-   uses. The switch cannot be turned on by anything in a request - only by
-   editing the config table.
+   This endpoint writes the deprecation notice to syslog at LOG_NOTICE because
+   that is the channel the migration instructions grep; the project's own
+   LOG__SECURITY constant (lib/macros.php:119) records its other auth events on
+   the SystemLog sink, which no operator here is watching. The switch cannot be
+   turned on by anything in a request - only by editing the config table.
 
 
 4. OPERATOR PREREQUISITE - THE schedule/view ACL
