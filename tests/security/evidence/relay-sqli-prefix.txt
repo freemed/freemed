@@ -52,6 +52,14 @@ REDACTION (this file is a redacted transcript — mandatory)
   prefix; non-key JSON values on digest-bearing lines → first 4 chars + …), and
   never echoed unredacted.
 
+  redact-2.1.py is COMMITTED as tests/security/redact-2.1.py (final fix wave,
+  deferred item 6). It lived only in the harness scratch directory when this file
+  was written, so the citation named a filter no reader could find and the
+  transcript was not re-derivable from the repository; the committed copy is
+  byte-identical to the one that produced these rows (it ran as
+  `python3 tests/security/redact-2.1.py < raw > redacted`, and the rule it
+  implements is restated at the top of this section).
+
 =============================================================================
 SITE 1 — org.freemedsoftware.api.UserInterface.GetUsers   (param1 = $usertype)
   lib/org/freemedsoftware/api/UserInterface.class.php:144  (pre-fix)
