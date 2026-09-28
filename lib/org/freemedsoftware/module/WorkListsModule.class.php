@@ -267,7 +267,7 @@ class WorkListsModule extends BaseModule {
 		// Needs improvement. Needs to count ONLY dates after the current date
 		$add_sql = "s.caldateof='".addslashes($_date)."' AND";
 		if ($date == '') {
-			$query = "SELECT caldateof, COUNT(*) AS count FROM scheduler WHERE calphysician='".addslashes($provider)."' AND calstatus != 'cancelled' AND (DATEDIFF(caldateof,NOW())>= 0) GROUP BY caldateof LIMIT ".$limit.";";
+			$query = "SELECT caldateof, COUNT(*) AS count FROM scheduler WHERE calphysician='".addslashes($provider)."' AND calstatus != 'cancelled' AND (DATEDIFF(caldateof,NOW())>= 0) GROUP BY caldateof LIMIT ".intval($limit).";";
 
 			$q = $GLOBALS['sql']->queryAll( $query );
 
