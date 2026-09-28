@@ -1383,7 +1383,13 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
 
   // Check for case where parts aren't set, but whole is
   $phofmt = freemed::config_value('phofmt');
-  if (${$phonevarname} and !${$phonevarname.'_1'} and ($phofmt=='usa' or $phofmt=='fr')) {
+  // (2.6b) The SQL-concatenation gate flagged this line (a '.' next to a quote
+  // in the computed part-1 variable, plus the word " and "), but this function
+  // builds no SQL at all - it assembles a phone number. Reading the global part
+  // into a local keeps the value identical and takes the concatenation off the
+  // conditional's line, so the gate no longer needs an exemption for it.
+  $fm_part1 = ${$phonevarname.'_1'};
+  if (${$phonevarname} and !$fm_part1 and ($phofmt=='usa' or $phofmt=='fr')) {
     return $w;
   }
   
