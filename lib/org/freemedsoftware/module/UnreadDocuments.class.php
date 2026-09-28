@@ -153,7 +153,14 @@ class UnreadDocuments extends SupportModule {
 		$user = freemed::user_cache( );
 		$provider = $user->getPhysician();
 		if (! $provider ) { return array(); }
-		$query = "SELECT u.*,DATE_FORMAT(u.urfdate, '%m/%d/%Y') AS urfdate_mdy, c.description AS category, CONCAT(p.ptfname, ' ', p.ptlname, ' (', p.ptid, ')') AS patient FROM ".$this->table_name." u LEFT OUTER JOIN documents_tc c ON c.id = u.urftype LEFT OUTER JOIN patient p ON p.id=u.urfpatient WHERE urfphysician=".($provider+0)." ORDER BY id DESC";
+		// Category B: table_name identifier; Category A: the provider id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAll| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$query = sprintf("SELECT u.*,DATE_FORMAT(u.urfdate, '%%m/%%d/%%Y') AS urfdate_mdy, c.description AS category, CONCAT(p.ptfname, ' ', p.ptlname, ' (', p.ptid, ')') AS patient FROM %s u LEFT OUTER JOIN documents_tc c ON c.id = u.urftype LEFT OUTER JOIN patient p ON p.id=u.urfpatient WHERE urfphysician=%d ORDER BY id DESC", $table, intval($provider));
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetAll
 
