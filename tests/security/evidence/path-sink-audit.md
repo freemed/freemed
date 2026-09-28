@@ -358,6 +358,17 @@ and consumed at `:209`). The rows above were extended by hand where the code mad
 that pattern apparent, but the audit does not claim to be exhaustive for
 multi-line dataflow.
 
+### 2.6 `relay-gwt.php` — the fifth entrypoint the PATH_INFO allowlist names (row added in the final fix wave)
+
+Not a grep hit (the file itself never names `PATH_INFO`), so it needs its own
+row: `doc/freemed.apache.conf`'s and `docker/nginx.conf`'s PATH_INFO anchoring
+both name five entrypoints — `help|chtml|relay|relay-gwt|controller`.php — and
+this is the one this audit did not previously cover.
+
+| hit | R? | C? | verdict |
+|---|---|---|---|
+| `relay-gwt.php:37-38` | YES | n/a | Not a filesystem sink: it starts the GWT servlet (`CreateObject('org.freemedsoftware.core.AuthenticatedRemoteServiceServlet')` then `$servlet->start()`). **What guards it:** `AuthenticatedRemoteServiceServlet::onAfterRequestDecoded` (`:41-47`) runs `checkAuthenticationPolicy` (`:49`) on the decoded method name, which refuses the whole `org.freemedsoftware.core.` namespace (`:51-53`), always allows the two public namespaces (`:56-61`), and for every other method requires an authenticated session — `CallMethod('org.freemedsoftware.public.Login.LoggedIn') == false` → refuse (`:64-67`), with `syslog` on the refusal. So the non-public surface is **SESSION-guarded**, not anonymous. (The harness's `/relay-gwt.php/probe` row answers 200 with a 186–195-byte body — `deployment-hardening.txt:41`, `:62`, `:128`; that body was **not** inspected for this audit and no claim is made about it here.) It composes no filesystem path from request text. **What it does NOT carry:** this transport never consults `Relay_Allowlist` and never calls `Relay::handle_request` (verified: no `Relay_Allowlist` reference anywhere in `lib/gwtphp/**` or in this entrypoint's chain), so the relay allowlist's control does not bound it — recorded in `doc/SECURITY_FOLLOWUP` §4/§6.5, and NOT proposed for gating here (a code gate on this transport is a design change, not a fix). |
+
 ---
 
 ## 3. Additional sinks found while inspecting (not in the brief's greps)
