@@ -782,3 +782,24 @@ HARNESS RESTORE AND DATABASE
   DATABASE             : no database write was made by this round. Pinned fingerprint, after:
                          entemplate 1|1  payrec 1|3  patient_emr 1|5  user 2|1,2  patient 0  procrec 0
                          vitals 0  modules 135  config 34  - identical to the pinned before-state.
+
+--------------------------------------------------------------------------------
+FINAL FIX WAVE - THE DOJO .htaccess 500 RISK, MEASURED LIVE
+--------------------------------------------------------------------------------
+  subject   : ui/dojo/htdocs/.htaccess carried 2.2-only `order`/`deny` syntax on a
+              world-readable tree. On an Apache 2.4 WITHOUT mod_access_compat that is
+              not a 403 but a 500 raised while the file is read for requests under that
+              directory, because the directive itself is rejected.
+  method    : a second Apache 2.4 with mod_access_compat NOT loaded, mounting this tree.
+  before    : apachectl configtest -> Invalid command 'allow'; a request under
+              /ui/dojo/htdocs/ -> live 500.
+  after     : the file now carries the same module-guarded dual-syntax block as the
+              nine sibling files; same server -> live 200 (configtest Syntax OK).
+  provenance: measured in the final fix wave (commit 27b3c458) and independently
+              reproduced by that wave's final scoped re-review. The review's own verdict
+              file lives in the gitignored review workspace, so it is not cited by path;
+              re-derive the two rows above with the same server setup.
+  tree state: this file and the nine siblings now share the block. The one remaining
+              2.2-only block is the root ./.htaccess's inert `<IfModule mod_php5.c>`,
+              commented out in the same wave (commit 9da35146) - see the row at the top
+              of this file.
