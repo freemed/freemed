@@ -22,7 +22,10 @@ PROVENANCE
   REDACTION            the password is <pw>, the Basic credentials are <b64 ...>, the stored MD5
                        digest is <correct md5> and an impossible digest is <bogus md5>; any other
                        32-hex token is <32-hex digest>. The digest was confirmed to match the
-                       stored userpassword out of band (one SQL row), never by printing it.
+                       stored userpassword out of band, never by printing it: the match was checked
+                       with a direct SQL comparison, which returned a row count of 1 for the account
+                       the row below names (0 for the impossible digest), so each "digest accepted"
+                       claim in this file is backed by a row count and not by a printed credential.
                        No patient data appears in any body: the scheduler table is empty (see the
                        PHI note in section 5).
 
