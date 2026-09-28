@@ -273,11 +273,14 @@ class Ledger {
 	//	Amount in collections, or a testing false value (0)?
 	//
 	function collection_warning ( $pid ) {
+		// Category A (2.6f): procpatient is BIGINT UNSIGNED, so the patient id is
+		// cast in this UNQUOTED context rather than addslashes()ed inside
+		// hand-written quotes.
 		$r = $GLOBALS['sql']->queryRow(
 		       	"SELECT	sum(procbalcurrent) AS outstanding ".
 			"FROM procrec ".
 			"WHERE TO_DAYS(NOW())-TO_DAYS(procdt) > 180 ".
-			"AND procpatient='".addslashes($pid)."'");
+			"AND procpatient=".intval($pid));
 		if ($r['outstanding']) { return bcadd($r['outstanding'],0,2); }
 		return false; // fall through to this
 	} // end method collection_warning
