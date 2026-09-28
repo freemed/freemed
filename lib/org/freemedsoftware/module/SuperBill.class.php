@@ -203,24 +203,17 @@ class SuperBill extends EMRModule {
 	public function printSuperbills ( $patientId, $superbillId, $notes ) {
 
 		$results = array();
-		$query = "SELECT CONCAT(pt.ptlname, ', ', pt.ptfname) AS patientName, pt.ptid AS id, pt.ptdob AS dateOfBirth, pt.ptssn AS socialSecurity ".
-		", CONCAT(p.phylname, ', ', p.phyfname) AS referringPhysician ".
-		"FROM patient pt LEFT OUTER JOIN physician p ON pt.ptrefdoc=p.id ". 
-		"WHERE pt.id = ".$patientId;
+		// Category A: record ids are cast, not interpolated.
+		$query = sprintf("SELECT CONCAT(pt.ptlname, ', ', pt.ptfname) AS patientName, pt.ptid AS id, pt.ptdob AS dateOfBirth, pt.ptssn AS socialSecurity , CONCAT(p.phylname, ', ', p.phyfname) AS referringPhysician FROM patient pt LEFT OUTER JOIN physician p ON pt.ptrefdoc=p.id WHERE pt.id = %d", intval($patientId));
 		$patient = $GLOBALS['sql']->queryAll($query);
-		$results['Patient'] = $patient[0]; 
+		$results['Patient'] = $patient[0];
 
-		$query = "SELECT CONCAT(p.phylname, ', ', p.phyfname) AS todayProvider, s.dateofservice AS appointmentDate ".
-		"FROM superbill s LEFT OUTER JOIN physician p ON s.provider=p.id ".
-		"WHERE s.id = ".$superbillId;
+		$query = sprintf("SELECT CONCAT(p.phylname, ', ', p.phyfname) AS todayProvider, s.dateofservice AS appointmentDate FROM superbill s LEFT OUTER JOIN physician p ON s.provider=p.id WHERE s.id = %d", intval($superbillId));
 		$superbill = $GLOBALS['sql']->queryAll($query);
 		$results['Patient']=array_merge($results['Patient'],$superbill[0]);
 		
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$query = "SELECT i.insconame AS insuranceCompanyName,i.inscophone AS phone, c.covpatinsno AS idNumber, c.covpatgrpno AS groupNumber ".
-		"FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id ".
-		"WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patientId )." AND c.coveffdt <= ".$GLOBALS['sql']->quote( $s->ImportDate( $superbill[0]['appointmentDate'] ) ).
-		" ORDER BY c.covstatus DESC";
+		$query = sprintf("SELECT i.insconame AS insuranceCompanyName,i.inscophone AS phone, c.covpatinsno AS idNumber, c.covpatgrpno AS groupNumber FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id WHERE c.covpatient = %s AND c.coveffdt <= %s ORDER BY c.covstatus DESC", $GLOBALS['sql']->quote( $patientId ), $GLOBALS['sql']->quote( $s->ImportDate( $superbill[0]['appointmentDate'] ) ));
 		$insurances = $GLOBALS['sql']->queryAll($query);
 		foreach ($insurances as $k => $v) {
 			$results["Insurance $k"] = $v;
@@ -274,11 +267,17 @@ class SuperBill extends EMRModule {
 	//	Boolean, success.
 	//
 	public function ProcessSuperbills ( $superbills = 0 ) {
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::ProcessSuperbills| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
 		if ( $superbills == 0 ) {
-			$query = "SELECT * FROM ".$this->table_name." WHERE processed = 0 AND reviewed > 0";
+			$query = sprintf('SELECT * FROM %s WHERE processed = 0 AND reviewed > 0', $table);
 		} else {
 			// Use enumerated superbill ids
-			$query = "SELECT * FROM ".$this->table_name." WHERE FIND_IN_SET( id, ".$GLOBALS['sql']->quote( join( ',', $superbills ) )." )";
+			$query = sprintf('SELECT * FROM %s WHERE FIND_IN_SET( id, %s )', $table, $GLOBALS['sql']->quote( join( ',', $superbills ) ));
 		}
 		$s = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $s AS $bill ) {
