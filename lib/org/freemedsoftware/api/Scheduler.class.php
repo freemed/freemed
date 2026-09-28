@@ -147,10 +147,12 @@ class Scheduler {
 		freemed::acl_enforce( 'scheduling', 'read' );
 		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
 		if ($dateto != NULL) {
-			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
+			// Category A: quote() supplies the surrounding quotes.
+			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
+				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $this->ImportDate($dateto) );
 		} else {
 			// Single date query ....
-			$r_q = "s.caldateof = '".addslashes($this_date)."'";
+			$r_q = "s.caldateof = ".$GLOBALS['sql']->quote( $this_date );
 		}
 		$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''),IF(LENGTH(pa.ptid)>0,CONCAT(' (',pa.ptid,')'),'')) END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
 		return $GLOBALS['sql']->queryAll ( $query );
@@ -191,10 +193,12 @@ class Scheduler {
 
 		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
 		if ($dateto != NULL) {
-			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
+			// Category A: quote() supplies the surrounding quotes.
+			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
+				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $this->ImportDate($dateto) );
 		} else {
 			// Single date query ....
-			$r_q = "s.caldateof = '".addslashes($this_date)."'";
+			$r_q = "s.caldateof = ".$GLOBALS['sql']->quote( $this_date );
 		}
 		
 		$pg = CreateObject( 'org.freemedsoftware.module.ProviderGroups' );
@@ -216,7 +220,11 @@ class Scheduler {
 			}
 			$providersJoin = $providersJoin.' )';
 			
-			$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".$providersJoin." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
+			// Category C: $providersJoin is code-authored and its values were
+			// driver-quoted above (as was $r_q); the placeholder keeps the
+			// fragment out of the statement literal.
+			$query = str_replace('{{providers}}', $providersJoin,
+			"SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) {{providers}} GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC");
 			return $GLOBALS['sql']->queryAll ( $query );
 			
 		}
