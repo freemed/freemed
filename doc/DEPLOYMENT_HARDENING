@@ -115,8 +115,35 @@ Deployment hardening - what the shipped web-server configuration now refuses
    install.php also reads PATH_INFO, but only to strip it out of REQUEST_URI for
    base_uri - it does not route, and it is deliberately not in the list.
 
+   The allowlist is ANCHORED to the request root, and that is load-bearing.
+   Task 4.1 shipped it unanchored on both servers - `/(help|chtml|relay|
+   relay-gwt|controller)\.php/` as a negated Apache RewriteCond on
+   REQUEST_URI, and the same pattern as the first (winning) `map` entry - so it
+   was a substring test: any request whose path contained an allowlisted
+   `name.php/` ANYWHERE escaped the refusal and kept running the real script
+   before it with PATH_INFO, which is exactly the class this section exists to
+   refuse. Measured before the anchor and after it, on both servers:
+
+     /install.php/x/help.php/              200 (123 bytes)   ->  403
+     /install.php/x/relay.php/             200 (123 bytes)   ->  403
+     /index.php/help.php/x                 302                ->  403
+     /index.php/x/chtml.php/y              302                ->  403
+     /vcalendar.php/x/controller.php/      401                ->  403
+     /services/RemittCallback.php/x/help.php/  200 (2257)     ->  403
+
+   The two mechanisms are anchored the same way but not in the same words.
+   Apache matches the rule pattern in per-directory context, so the path it
+   tests is relative to the application root whatever URL prefix the tree is
+   mounted under (within `/freemed`, from a document root, or under any other
+   Alias - all three measured, the last by adding a second Alias to the shipped
+   configuration). nginx has no per-directory context to exploit, so its
+   pattern names the prefix: `~^/(freemed/)?(help|chtml|relay|relay-gwt|
+   controller)\.php/`. An installation served under a different prefix must add
+   that prefix to the `map` entry, the same way it must add its own location
+   block.
+
    Adding an entrypoint means editing two places and this list: the
-   RewriteCond allowlist in doc/freemed.apache.conf and the first `map` entry in
+   RewriteRule pattern in doc/freemed.apache.conf and the first `map` entry in
    docker/nginx.conf. A wrong entry here breaks whatever the entrypoint does
    with the path, so add one only for a script that reads
    $_SERVER['PATH_INFO'] itself.
