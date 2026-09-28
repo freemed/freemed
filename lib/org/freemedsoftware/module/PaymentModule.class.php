@@ -758,17 +758,25 @@ class PaymentModule extends EMRModule {
 
             if ($procid)
             {
-                $pay_query  = "SELECT * FROM payrec
-                              WHERE payrecpatient='".addslashes($patient)."' AND payrecproc='".addslashes($procid)."'
-                              ORDER BY payrecdt,id";
+                // Category A: values are quoted by the driver, which supplies
+                // the quotes (never both).
+                $pay_query  = sprintf("SELECT * FROM payrec
+                              WHERE payrecpatient=%s AND payrecproc=%s
+                              ORDER BY payrecdt,id", $GLOBALS['sql']->quote($patient), $GLOBALS['sql']->quote($procid));
             }
             else
             {
-                $pay_query  = "SELECT * FROM payrec AS a, procrec AS b
-                              WHERE b.procbalcurrent".$this->view_query." AND
+                // Category A/C: $this->view_query is never assigned on this
+                // class (the sibling method below uses a *local* $view_query),
+                // so the fragment contributes the empty string; it is a
+                // code-authored property, not caller data, and the statement is
+                // assembled around it rather than concatenated. The values are
+                // driver-quoted.
+                $pay_query  = sprintf("SELECT * FROM payrec AS a, procrec AS b
+                              WHERE b.procbalcurrent%s AND
                               b.id = a.payrecproc AND
-                              a.payrecpatient='".addslashes($patient)."'
-                              ORDER BY payrecproc,payrecdt,a.id";
+                              a.payrecpatient=%s
+                              ORDER BY payrecproc,payrecdt,a.id", (string) $this->view_query, $GLOBALS['sql']->quote($patient));
             }
             $pay_result = $sql->query ($pay_query);
 
@@ -1382,8 +1390,15 @@ class PaymentModule extends EMRModule {
 	}
 	
 	public function getLastRecord($patient){
-		$query = "SELECT * FROM `".$this->table_name."` ".
-			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ORDER BY id DESC";
+		// Category B: table/patient-field identifiers; Category A: patient id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		if ( $table === false or $pfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::getLastRecord| refusing invalid identifier '.var_export(array($this->table_name, $this->patient_field), true) );
+			return false;
+		}
+		$query = sprintf('SELECT * FROM %s WHERE %s = %s ORDER BY id DESC', $table, $pfield, $GLOBALS['sql']->quote($patient));
 		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
 	}
