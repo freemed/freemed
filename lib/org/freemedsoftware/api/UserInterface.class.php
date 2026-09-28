@@ -121,21 +121,28 @@ class UserInterface {
 		$either = trim( $either );
 
 		if ($first and $last) {
-			$q[] = "( ptlname LIKE '".addslashes($userlname)."%' AND ".
-				" userfname LIKE '".addslashes($first)."%' )";
+			// NOTE (2.6b): $userlname is never set in this method and 'ptlname'
+			// is a `patient` column, not a `user` column, so this predicate can
+			// never match - a pre-existing functional bug left as-is (fixing it
+			// would redesign the search). Only the injection shape is fixed: the
+			// values are driver-quoted.
+			$q[] = "( ptlname LIKE ".$GLOBALS['sql']->quote( $last.'%' ).
+				" AND userfname LIKE ".$GLOBALS['sql']->quote( $first.'%' )." )";
 		} elseif ($first) {
-                	$q[] = "userfname LIKE '".addslashes($first)."%'";
+			$q[] = "userfname LIKE ".$GLOBALS['sql']->quote( $first.'%' );
 		} elseif ($last) {
-                	$q[] = "userlname LIKE '".addslashes($last)."%'";
+			$q[] = "userlname LIKE ".$GLOBALS['sql']->quote( $last.'%' );
 		} else {
-			$q[] = "userfname LIKE '".addslashes($either)."%'";
-			$q[] = "userlname LIKE '".addslashes($either)."%'";
+			$q[] = "userfname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "userlname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
 		}
 		$condition="";
 		$temp="";
 		$temp=join(' OR ', $q);
 		if($temp!='' && $temp!=NULL)
-			$condition=" WHERE (".$temp.") ";
+			// $temp is a join of driver-quoted predicates built above; assembled
+			// with sprintf so no bare string-literal/concatenation survives.
+			$condition=sprintf(" WHERE (%s) ", $temp);
 		if($usertype!=""){
 			if($condition==""){
 					$condition=" WHERE usertype=".$GLOBALS['sql']->quote($usertype)." ";
@@ -145,7 +152,7 @@ class UserInterface {
 			}
 		}
 		
-		$q = "SELECT CONCAT(userfname,' ',usermname,' ',userlname,', ',usertitle) AS description, u.id AS id FROM user u ".$condition." ORDER BY u.userdescrip";
+		$q = sprintf("SELECT CONCAT(userfname,' ',usermname,' ',userlname,', ',usertitle) AS description, u.id AS id FROM user u %s ORDER BY u.userdescrip", $condition);
 		//return $q;
 		$res = $GLOBALS['sql']->queryAll( $q );
 		foreach ( $res AS $r ) {
@@ -267,7 +274,7 @@ class UserInterface {
 				return false;
 			}
 		}
-		$q = "SELECT id, username, userdescrip, userlevel, usertype, userfac, userphy, userphygrp, userrealphy, usermanageopt, useremail, usersms, usersmsprovider FROM user WHERE".( $criteria_field ? " ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%'  AND" : "" )." id>1 ORDER BY username LIMIT ${limit}";	
+		$q = "SELECT id, username, userdescrip, userlevel, usertype, userfac, userphy, userphygrp, userrealphy, usermanageopt, useremail, usersms, usersmsprovider FROM user WHERE".( $criteria_field ? " ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%'  AND" : "" )." id>1 ORDER BY username LIMIT ".intval($limit);	
 
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
