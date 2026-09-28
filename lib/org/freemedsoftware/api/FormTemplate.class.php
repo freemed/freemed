@@ -25,7 +25,45 @@
 //
 //	Use XML templates to fill out information on PDF forms.
 //
+//	Task 2.8, fix round 2 (N2). This class is relay-reachable and it
+//	RE-DISPATCHES, on both axes, from stored template data:
+//
+//	  * ProcessData()'s `object:` branch builds a class out of the template's
+//	    table attribute -- CreateObject('org.freemedsoftware.core.'.$objectname)
+//	    -- and then calls a method named by the template's field attribute,
+//	    $obj->${method}(). Concrete string:
+//	    `org.freemedsoftware.core.<objectname>.<method>`.
+//	  * ProcessData()'s `module:` branch passes the template's module name and
+//	    the method named after `method:` to module_function(). Concrete string:
+//	    `org.freemedsoftware.module.<modulename>.<method>`.
+//	  * ProcessData()'s link:type branch does the same with the template's
+//	    'value' attribute and two fixed literals ('get_field', 'to_text').
+//
+//	Both axes are now gated on the relay's shared decision point
+//	(Relay_Allowlist::refuse(), OUTER scope). The OUTER scope is deliberate and
+//	is the provenance argument, not an oversight: the dispatched names come from
+//	the XML template FILE this object was pointed at
+//	(data/form/templates/<name>.xml), NOT from the request, so refusing them
+//	unconditionally in both stages would be a NEW refusal on a path that ran
+//	before this control existed -- including in the shipped log-only stage. The
+//	inner never-allow scope is reserved for a re-dispatcher whose method name
+//	comes from ITS caller (Multicall); see Relay_Allowlist::refuse(). A
+//	never-allow namespace hit here is therefore LOGGED at LOG_WARNING and not
+//	refused, and the normal allowlist decision (log-only: log and run;
+//	enforcing: INVALID_CALL) still applies.
+//
+//	Reachability, for the record: the relay cannot name this class directly
+//	(nothing in the shipped list is org.freemedsoftware.api.FormTemplate.*), but
+//	the LISTED ModuleInterface.PrintToPrinter / PrintToBrowser / PrintToFax
+//	reach it through <module>::RenderToPDF -> EMRModule::RenderToPDF ->
+//	print_override() -> Forms::print_override() -> CreateObject('...core.FormTemplate')
+//	-> OutputData() -> ProcessElement() -> ProcessData(). A GWT client can also
+//	build a SupportModuleWidget("FormTemplate"). In this checkout NO XML
+//	template ships at all (data/form/templates/ does not exist), so the concrete
+//	strings depend on what a site deploys; the shipped log-only stage is what
+//	measures them.
 LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
+LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist');
 
 class FormTemplate {
 
@@ -306,8 +344,14 @@ class FormTemplate {
 			$objectname = substr($data['table'], -(strlen($data['table'])-7));
 			$params = explode(':', $data['field']);
 			if ($params[0] == 'patient') {
-				$obj = CreateObject('org.freemedsoftware.core.'.$objectname, $this->patient->local_record[$params[1]]);
 				$method = ( $params[2] ? $params[2] : 'to_text' );
+				// N2: the concrete string this dispatch performs, gated on the
+				// relay's shared decision point (outer scope -- see the class
+				// comment for the provenance argument).
+				if ( ! $this->_allowlist_gate ( 'org.freemedsoftware.core.' . $objectname . '.' . $method ) ) {
+					return '';
+				}
+				$obj = CreateObject('org.freemedsoftware.core.'.$objectname, $this->patient->local_record[$params[1]]);
 				$raw = $obj->${method}();
 			} else {
 				syslog(LOG_INFO, get_class($this)."| could not process ${data['table']}, ${data['field']}");
@@ -318,6 +362,11 @@ class FormTemplate {
 			// Deal with method: prefix on data
 			if (substr($data['field'], 0, 7) == 'method:') {
 				$params = explode(':', $data['field']);
+				// N2: the class axis -- module_function() dispatches
+				// `org.freemedsoftware.module.<modulename>.<$params[1]>`.
+				if ( ! $this->_allowlist_gate ( 'org.freemedsoftware.module.' . $modulename . '.' . $params[1] ) ) {
+					return '';
+				}
 				$raw = module_function(
 					$modulename,
 					$params[1],
@@ -416,8 +465,16 @@ class FormTemplate {
 				}
 				if ( strpos($data['value'], ':') !== false ) {
 					$params = explode(':', $data['value']);
+					// N2: the class axis again, with the fixed literal 'get_field'.
+					if ( ! $this->_allowlist_gate ( 'org.freemedsoftware.module.' . $params[0] . '.get_field' ) ) {
+						return '';
+					}
 					return module_function($params[0], 'get_field', array($raw, $params[1]));
 				} else {
+					// N2: and again, with the fixed literal 'to_text'.
+					if ( ! $this->_allowlist_gate ( 'org.freemedsoftware.module.' . $data['value'] . '.to_text' ) ) {
+						return '';
+					}
 					return module_function($data['value'], 'to_text', array($raw));
 				}
 				break;
@@ -535,6 +592,34 @@ class FormTemplate {
 		if ( !is_string( $expr ) or trim( $expr ) == '' ) { return false; }
 		return !preg_match( '/[;`\x00]|--|\/\*|#/', $expr );
 	} // end method _SafeExpression
+
+	// Method: _allowlist_gate
+	//
+	//	N2 (Task 2.8 fix round 2): run one INNER dispatch this class is about
+	//	to perform through the relay's shared decision point, so that the
+	//	allowlist -- which names relay METHOD strings -- sees the concrete
+	//	string the dispatch actually performs and not only the outer method
+	//	that got the request here.
+	//
+	//	The caller passes the concrete string it is about to dispatch; the
+	//	class comment above states where each one comes from and why the scope
+	//	here is the OUTER one (the names come from the template file, not from
+	//	the request).
+	//
+	// Parameters:
+	//
+	//	$concrete - The concrete relay method string about to be dispatched.
+	//
+	// Returns:
+	//
+	//	Boolean. TRUE means the dispatch may proceed, FALSE means it must not
+	//	(and the caller returns an empty value, which is what this class does
+	//	when a data element cannot be processed).
+	private function _allowlist_gate ( $concrete ) {
+		// M1 degradation path: a missing class file must not fatal the request.
+		if ( ! class_exists ( 'Relay_Allowlist' ) ) { return true; }
+		return ! Relay_Allowlist::refuse ( $concrete );
+	} // end method _allowlist_gate
 
 } // end class FormTemplate
 
