@@ -331,15 +331,41 @@ class FormTemplate {
 				$m = new $modulename ();
 
 				// Run SQL query
-				$query = "SELECT *".
-					// Guard the PHP 8.3 count(NULL) TypeError: modules that do not
-					// declare $summary_query leave it NULL (see EMRModule::qualified_query).
-					( ((is_array($m->summary_query) ? count($m->summary_query) : 0) > 0) ? 
-					",".join(",", $m->summary_query)." " : " " ).
-					"FROM ".$m->table_name." ".
-					"WHERE ".$m->patient_field."='".addslashes($this->patient->id)."' ".
-					($m->summary_conditional ? 'AND '.$m->summary_conditional.' ' : '' ).
-					"ORDER BY id DESC LIMIT 1";
+				// Category B+C (2.6b): the module's declared table and patient
+				// column are identifiers, so they go through SqlIdent::name(); a
+				// refusal logs and returns no value rather than splicing the
+				// token. The patient id is driver-quoted instead of
+				// addslashes()ed inside hand-written quotes (Category A), and the
+				// module's code-authored expressions are shape-checked before
+				// they are spliced (see _SafeExpression).
+				$m_table = SqlIdent::name( $m->table_name );
+				$m_pfield = SqlIdent::name( $m->patient_field );
+				if ( $m_table === false or $m_pfield === false ) {
+					syslog( LOG_ERR, get_class($this).'::ProcessData| refusing invalid module identifier '.var_export(array($m->table_name, $m->patient_field), true) );
+					return "";
+				}
+				// Guard the PHP 8.3 count(NULL) TypeError: modules that do not
+				// declare $summary_query leave it NULL (see EMRModule::qualified_query).
+				$m_cols = array();
+				foreach ( ( is_array($m->summary_query) ? $m->summary_query : array() ) AS $m_col ) {
+					if ( $this->_SafeExpression( $m_col ) ) {
+						$m_cols[] = $m_col;
+					} else {
+						syslog( LOG_ERR, get_class($this).'::ProcessData| dropping unsafe summary_query expression '.var_export($m_col, true) );
+					}
+				}
+				$m_cond = '';
+				if ( $m->summary_conditional ) {
+					if ( $this->_SafeExpression( $m->summary_conditional ) ) {
+						$m_cond = 'AND '.$m->summary_conditional.' ';
+					} else {
+						syslog( LOG_ERR, get_class($this).'::ProcessData| dropping unsafe summary_conditional '.var_export($m->summary_conditional, true) );
+					}
+				}
+				$query = sprintf( 'SELECT *%s FROM %s WHERE %s=%s %sORDER BY id DESC LIMIT 1',
+					( $m_cols ? ','.join(',', $m_cols).' ' : ' ' ),
+					$m_table, $m_pfield, $GLOBALS['sql']->quote( $this->patient->id ),
+					$m_cond );
 				$result = $GLOBALS['sql']->query($query);
 				if ($GLOBALS['sql']->num_rows($result) != 1) {
 					syslog(LOG_INFO, get_class($this)."| could not retrieve rows for ${data['table']}, ${data['field']}");
@@ -485,6 +511,30 @@ class FormTemplate {
 		fclose($fp);
 		return $filename;
 	} // end method RenderToPDF
+
+	// Method: _SafeExpression
+	//
+	//	Shape check for the code-authored SQL expressions a module declares for
+	//	the summary query: the entries of `summary_query` (e.g.
+	//	"DATE_FORMAT(dateof, '%m/%d/%Y') AS my_date") and `summary_conditional`
+	//	(e.g. "ptsex = 'm'"). They are source-declared, not request data, and they
+	//	legitimately contain format specifiers and result aliases - which is why
+	//	<SqlIdent::expression()> (an `AS <alias>` tail, no `%`) cannot be used
+	//	here. The check is therefore the negative one: the expression must not be
+	//	able to terminate the statement or open a comment.
+	//
+	// Parameters:
+	//
+	//	$expr - Candidate expression string
+	//
+	// Returns:
+	//
+	//	boolean - true when the value is safe to splice into the statement
+	//
+	private function _SafeExpression ( $expr ) {
+		if ( !is_string( $expr ) or trim( $expr ) == '' ) { return false; }
+		return !preg_match( '/[;`\x00]|--|\/\*|#/', $expr );
+	} // end method _SafeExpression
 
 } // end class FormTemplate
 
