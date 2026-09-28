@@ -90,6 +90,11 @@ class Physician {
 		}
 
 		// If no degrees are given, they are not a medical doctor.
+		// $d is only ever set by the loop above - a physician whose phydegrees
+		// names no degree leaves it unset - and count(null) is a TypeError on
+		// PHP 8, while the is_array($d) reads below warn on the unset variable.
+		// Normalise it once, here, in the same shape as the guard.
+		$d = ((isset($d) and is_array($d)) ? $d : array());
 		if (count($d) < 1) { $dr = false; }
 
 		if ($use_salutation) {
