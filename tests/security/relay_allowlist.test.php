@@ -650,6 +650,75 @@ if (!is_file($enum_file)) {
 	ra_row('N3: the shipped list seeds NONE of the RenderToPDF pairs', $axis_pdf['listed'], 0);
 	ra_row('the enumeration is genuinely larger than the list (the R32 quantitative case)',
 		($axis_all['unlisted'] > count($patterns) * 2), true);
+
+	// -----------------------------------------------------------------
+	// N3, fix round 3: the FOUR published figures in the artifact's header.
+	// Round 2 published "the 8 literals, restricted to classes the shipped list
+	// names : 448 pairs, 385 NOT listed, 63 listed". That figure is WRONG under
+	// its own label: the generator's 'named' accumulator (and its 'own_file'
+	// sibling) sat OUTSIDE the `!$is_pdf` guard, so it counted the 25
+	// RenderToPDF pairs whose class the shipped list names as well -- while the
+	// label, and the comment right above the accumulator, both say the EIGHT
+	// literals. 448 - 25 = 423. The figure was published in three places
+	// (report section FR4, evidence/relay-allowlist.txt, this artifact) and no
+	// test row pinned it, which is why it survived a fix round. The rows below
+	// pin it twice: as the published text, and recomputed from the very rows
+	// the artifact emits. A generator that regressed would now contradict
+	// itself and go red.
+	$enum_src = implode('', file($enum_file));
+	$axis_pub = array();
+	if (preg_match('/all 133 module class files\s+: (\d+) pairs, (\d+) NOT in the shipped list, (\d+) in it/', $enum_src, $m)) {
+		$axis_pub['all'] = array((int) $m[1], (int) $m[2], (int) $m[3]);
+	}
+	if (preg_match('/\+RenderToPDF \([^)]*\): (\d+) pairs, (\d+) NOT in the shipped list, (\d+) in it/', $enum_src, $m)) {
+		$axis_pub['pdf'] = array((int) $m[1], (int) $m[2], (int) $m[3]);
+	}
+	if (preg_match('/the 8 literals, restricted to classes the shipped list names\s*: (\d+) pairs, (\d+) NOT listed, (\d+) listed/', $enum_src, $m)) {
+		$axis_pub['named'] = array((int) $m[1], (int) $m[2], (int) $m[3]);
+	}
+	if (preg_match('/the 8 literals, declared in the module file ITSELF\s*: (\d+) pairs, (\d+) NOT listed, (\d+) listed/', $enum_src, $m)) {
+		$axis_pub['own_file'] = array((int) $m[1], (int) $m[2], (int) $m[3]);
+	}
+	ra_row('N3: the artifact publishes all four class-axis figures', count($axis_pub), 4);
+	if (count($axis_pub) === 4) {
+		ra_row('N3 published: 8 literals, all module classes', $axis_pub['all'], array(866, 803, 63));
+		ra_row('N3 published: +RenderToPDF (the print wrappers, separate definition)', $axis_pub['pdf'], array(37, 37, 0));
+		ra_row('N3 published: 8 literals restricted to classes the list names (corrected in fix round 3)', $axis_pub['named'], array(423, 360, 63));
+		ra_row('N3 published: 8 literals declared in the module file itself', $axis_pub['own_file'], array(7, 6, 1));
+	} else {
+		ra_row('N3: the artifact publishes all four class-axis figures', array_keys($axis_pub), array('all', 'pdf', 'named', 'own_file'));
+	}
+
+	// The same figure, recomputed from the artifact's own rows + the shipped
+	// patterns: "restricted to classes the shipped list names" is a property
+	// of the rows, so it cannot be right in the header and wrong in the rows.
+	$axis_named_classes = array();
+	foreach ($patterns as $p) {
+		if (preg_match('/^org\.freemedsoftware\.module\.([A-Za-z0-9_]+)\./i', $p, $m)) {
+			$axis_named_classes[strtolower($m[1])] = true;
+		}
+	}
+	$axis_named = array('total' => 0, 'unlisted' => 0, 'listed' => 0);
+	$prefix = 'org.freemedsoftware.module.';
+	foreach (file($enum_file) as $line) {
+		if (strpos($line, '#class-axis') !== 0) { continue; }
+		$f = explode("	", rtrim($line, "\n"));
+		if (count($f) !== 4) { continue; }
+		$concrete = $f[1];
+		$literal = substr($concrete, strrpos($concrete, '.') + 1);
+		if ($literal === 'RenderToPDF') { continue; }        // the EIGHT literals only
+		if (strpos($concrete, $prefix) !== 0) { continue; }
+		$class = substr($concrete, strlen($prefix), strrpos($concrete, '.') - strlen($prefix));
+		if (!isset($axis_named_classes[strtolower($class)])) { continue; }
+		$axis_named['total']++;
+		if ($f[2] === 'listed') { $axis_named['listed']++; } else { $axis_named['unlisted']++; }
+	}
+	ra_row('N3 recomputed from the rows: 8 literals restricted to classes the list names',
+		array($axis_named['total'], $axis_named['unlisted'], $axis_named['listed']), array(423, 360, 63));
+	ra_row('N3: the restriction contains every listed 8-literal pair (63, not 0)',
+		($axis_named['listed'] === $axis_all['listed'] and $axis_named['listed'] > 0), true);
+	ra_row('N3: and the corrected figure is NOT the mislabelled one (448 would mean the pdf pairs came back)',
+		($axis_named['total'] !== 448), true);
 }
 
 // ===========================================================================
@@ -773,6 +842,67 @@ ra_row('R36: the correction IS committed (the claim is named and refuted)',
 	(strpos($ui_src, 'THAT CLAIM WAS FALSE') !== false), true);
 ra_row('Multicall calls the shared gate with the INNER scope (so never-allow applies)',
 	(strpos($multicall, 'Relay_Allowlist::refuse ( $inner_method, NULL, true )') !== false), true);
+
+// ===========================================================================
+ra_section('R32 fix round 3 — the PatientInterface re-dispatcher (MoveEmrAttachments)');
+// ===========================================================================
+// Fix round 2 gated all fifteen ModuleInterface dispatch sites but missed this
+// one, which is the SAME shape: a FIXED literal ('additional_move') dispatched
+// against a class that arrives from a database row the CALLER picks by id. The
+// gate is the same mechanism, the same derived string and the same scope.
+$pi_file = dirname(__FILE__) . '/../../lib/org/freemedsoftware/api/PatientInterface.class.php';
+$pi_src = is_file($pi_file) ? file_get_contents($pi_file) : '';
+ra_row('PatientInterface.class.php loads Relay_Allowlist',
+	(strpos($pi_src, "LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist')") !== false), true);
+$pi_mea = ra_slice($pi_src, 'public function MoveEmrAttachments', '// end method MoveEmrAttachments');
+ra_row('MoveEmrAttachments exists in the source', ($pi_mea !== ''), true);
+ra_row('R32: the additional_move dispatch is gated on its CONCRETE string',
+	(strpos($pi_mea, "_allowlist_gate ( \$resolve['class'], 'additional_move' )") !== false), true);
+// Ordering is the whole point: a gate AFTER the dispatch protects nothing, and
+// a gate BEFORE the resolve would not have the class name to gate.
+$pi_pos_gate = strpos($pi_mea, "_allowlist_gate ( \$resolve['class'], 'additional_move' )");
+$pi_pos_mf   = strpos($pi_mea, 'module_function(');
+$pi_pos_res  = strpos($pi_mea, "\$resolve = \$GLOBALS['sql']->queryRow");
+ra_row('R32: resolve < gate < dispatch (order inside the attachments loop)',
+	($pi_pos_res !== false and $pi_pos_gate !== false and $pi_pos_mf !== false
+		and $pi_pos_res < $pi_pos_gate and $pi_pos_gate < $pi_pos_mf), true);
+ra_row('R32: a refused additional_move skips ONLY that attachment and is reported through $success',
+	(strpos(substr($pi_mea, $pi_pos_gate, 200), '$success = false;') !== false
+		and strpos(substr($pi_mea, $pi_pos_gate, 200), 'continue;') !== false), true);
+ra_row('R32: the gate uses the shared decision point (Relay_Allowlist::refuse), inner scope',
+	(strpos($pi_src, 'Relay_Allowlist::refuse ( $concrete, NULL, true )') !== false), true);
+ra_row('R32: the concrete string is built from the module namespace, not guessed',
+	(strpos($pi_src, "'org.freemedsoftware.module.'") !== false), true);
+ra_row('R32: the gate degrades when the class file is missing (M1), like the relay',
+	(strpos($pi_src, "class_exists ( 'Relay_Allowlist' )") !== false), true);
+// The class-wide property the round-2 search asserted and got wrong: this file
+// has exactly ONE module_function() dispatch and it is gated. Deleting the gate
+// fails this row; adding a second, ungated dispatch fails it too. The count is
+// taken over TOKENS, so a mention of module_function() in a comment (this file
+// has two, in the gate's own documentation) cannot make the numbers lie.
+$pi_dispatches = 0;
+$pi_gates      = 0;
+$pi_prev       = NULL;
+foreach (token_get_all($pi_src) as $t) {
+	if (is_array($t)) {
+		if ($t[0] === T_WHITESPACE or $t[0] === T_COMMENT or $t[0] === T_DOC_COMMENT) { continue; }
+		if ($t[0] === T_STRING and strtolower($t[1]) === 'module_function') { $pi_dispatches++; }
+		if ($t[0] === T_STRING and strtolower($t[1]) === '_allowlist_gate' and $pi_prev === T_OBJECT_OPERATOR) { $pi_gates++; }
+		$pi_prev = $t[0];
+	} else {
+		if (trim($t) !== '') { $pi_prev = $t; }
+	}
+}
+ra_row('R32: one module_function() CALL and one gate CALL in the class (comments excluded)',
+	array($pi_dispatches, $pi_gates), array(1, 1));
+// The reachability limit below the gate is a MEASUREMENT (fix round 3): in this
+// tree the dispatch cannot be reached -- `$patient` is an undefined local (so
+// the resolve query is `p.patient = NULL`) and freemed::module_get_meta()
+// returns false for every registered module. The gate is defence in depth, and
+// the source must keep saying so rather than implying the path is live.
+ra_row('R32 fix round 3: the source records the measured reachability limit (both blockers named)',
+	((strpos($pi_src, 'is NOT reachable') !== false)
+		and (strpos($pi_src, 'module_get_meta') !== false)), true);
 
 // ---------------------------------------------------------------------------
 echo "\n";
