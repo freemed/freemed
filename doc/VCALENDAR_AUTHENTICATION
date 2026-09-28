@@ -1,0 +1,157 @@
+$Id$
+
+vCalendar Authentication - the GET user/hash credential pair is deprecated
+
+
+1. SUMMARY
+
+   The vCalendar endpoint (vcalendar.php) used to accept a credential in the
+   query string:
+
+       http://host/vcalendar.php?user=clerk&hash=<md5 of the password>
+
+   That path is DEPRECATED and is now DISABLED BY DEFAULT. A request that
+   supplies `user` and `hash` and no HTTP Basic credential is answered with
+   401 Unauthorized. Nothing else about the endpoint changes: an authenticated
+   client still gets the same text/x-vCalendar body.
+
+   The reason is that the value it compared was not a one-time token. It was
+   compared directly against the stored `user.userpassword` value - an unsalted
+   MD5 digest of the password - so anyone who could read that digest (a
+   database read, a backup, a log, a SQL injection elsewhere) could present it
+   as the `hash` parameter and be authenticated without ever knowing the
+   password. This is pass-the-hash: the digest IS the credential. A value that
+   is being compared to a stored secret cannot also serve as the secret itself.
+
+   The digest is still compared with MD5 for Basic authentication, because
+   moving the password storage format is a separate change. What changed is
+   that the digest is no longer accepted AS the credential, and the comparison
+   is done in PHP with hash_equals() against the row fetched by username
+   rather than in SQL as `userpassword = MD5('<pass>')`.
+
+
+2. WHAT A CLIENT AUTHOR MUST DO
+
+   Clients must migrate to HTTP Basic authentication over TLS:
+
+       https://host/vcalendar.php               (no query credential)
+       Authorization: Basic <base64(user:password)>
+
+   Notes for client implementers:
+
+     * TLS is required, not optional. Basic sends the password itself in a
+       header on every request. Over plain HTTP that is strictly worse than
+       what is being removed, so do not migrate to Basic over http://.
+     * A plain `curl -u user:password https://host/vcalendar.php` works. The
+       endpoint issues the 401 challenge with
+           WWW-Authenticate: Basic realm="<package> v<version> vCalendar"
+       and clients that wait for the challenge (rather than pre-emptively
+       sending the header) will be prompted normally. This was broken on
+       PHP 8 - the challenge died inside the endpoint before it was sent - and
+       is repaired as part of the same change.
+     * The rest of the endpoint's interface is unchanged:
+       `?physician=`, `?type=fromdate`, `?m=`, `?d=`, `?y=` still work, and are
+       still what a client sends to select a calendar. They are now validated
+       as integers, and an impossible date (for example m=13) is refused with
+       400 Bad Request instead of being silently normalised by mktime().
+     * `?physician=<id>` still names a provider, but it is now enforced against
+       the authenticated identity: a caller may read its own provider's
+       calendar, and any other provider's calendar only with the
+       `schedule`/`view` access control grant (see section 4). A caller
+       without it gets 403 Forbidden. Admin account user id 1 is permitted
+       through freemed::acl()'s own admin short-circuit.
+
+
+3. THE TEMPORARY COMPATIBILITY SWITCH
+
+   A site that cannot migrate its calendar clients immediately may turn the
+   deprecated path back on for the duration of the migration. It is an option
+   in the `config` table, so it is set in the FreeMED UI (Administration ->
+   Configuration) or directly:
+
+       INSERT INTO config (c_option, c_value, c_title, c_section, c_type)
+       VALUES ('vcals_legacy_hash', 'off', 'vCalendar legacy GET hash auth',
+               'Scheduler', 'YesNo');
+
+   and then switching `c_value` to a true value ('1', 'on', 'yes' or 'true').
+
+   DEFAULT: OFF. With no `vcals_legacy_hash` row at all - which is the state of
+   every install that has not deliberately created one - the GET user/hash path
+   does nothing and returns 401.
+
+   Every use of the compatibility path is logged at LOG_NOTICE (priority 134),
+   whether or not the credential is accepted:
+
+       vCalendar [get] DEPRECATED hash authentication used (vcals_legacy_hash=on),
+       claimed username = <user>, remote = <ip>
+
+   The username is logged as CLAIMED and deliberately before verification: for
+   a pass-the-hash attempt that is the only audit trail there is. Search the
+   syslog for "DEPRECATED hash authentication" to find the clients that still
+   need migrating, and turn the option off again when the log is quiet.
+
+   There is no LOG__SECURITY constant in PHP; LOG_NOTICE is what the endpoint
+   uses. The switch cannot be turned on by anything in a request - only by
+   editing the config table.
+
+
+4. OPERATOR PREREQUISITE - THE schedule/view ACL
+
+   READ THIS BEFORE UPGRADING IF ANYONE BUT AN ADMINISTRATOR READS
+   PROVIDERS' CALENDARS.
+
+   When `?physician=` names a provider other than the caller's own, the
+   endpoint now requires the same grant the scheduler UI requires:
+
+       freemed::acl('schedule', 'view')
+
+   On a schema where that grant has never been created, the check fails and the
+   request is refused with 403. That is the fail-closed direction, and it is
+   deliberate: an authorization object that cannot be evaluated must never
+   widen access. But it also means the upgrade can REMOVE A CAPABILITY THAT
+   PREVIOUSLY WORKED for a legitimate non-physician scheduler (a front desk or
+   practice-manager account that used to fetch providers' calendars).
+
+   So, as part of the upgrade, a site that needs that capability must grant it:
+   create the `schedule` / `view` ACO and the ARO for the roles that need it
+   (in the FreeMED ACL administration, the same `schedule`/`view` pair the
+   scheduler module itself uses), and verify with the affected role. Non-admin
+   accounts that only ever read their OWN provider's calendar need no grant;
+   they are unaffected. The administrator account (user id 1) needs no grant
+   either - freemed::acl() short-circuits to true for it.
+
+   Also note: the ACL object is loaded on demand by this endpoint because a
+   request that defines SESSION_DISABLE - as this one does - skips the block in
+   lib/freemed.php that normally builds it. If the vendored phpGACL cache
+   directory under /tmp is not writable by the web user, the check cannot be
+   evaluated and the request is refused (403), not permitted. Make sure the web
+   user owns its cache directory, as on a normal install.
+
+
+5. RELEASE NOTE
+
+   Release note - vCalendar authentication
+
+   The vCalendar endpoint no longer accepts a password digest in the query
+   string (`?user=<name>&hash=<md5 of the password>`). It was a
+   pass-the-hash vulnerability: the stored digest of the password was compared
+   directly against the value the client supplied, so anyone who could read the
+   digest could authenticate with it without knowing the password.
+
+   Clients must migrate to HTTP Basic authentication over TLS. A site that
+   cannot migrate immediately can set the `vcals_legacy_hash` option in the
+   `config` table to a true value to restore the old path for the duration of
+   the migration; it is OFF by default and every use is logged. Operators
+   should also grant the `schedule`/`view` ACO to any non-administrator role
+   that needs to read a provider's calendar other than its own, because the
+   provider scoping added by this release requires that grant and otherwise
+   returns 403.
+
+
+6. SEE ALSO
+
+   The endpoint's behaviour in both states is recorded, with the exact probes
+   and their outputs, in tests/security/evidence/vcalendar-auth.txt and
+   tests/security/evidence/vcalendar-provider-scope.txt. The repository has no
+   CHANGELOG or release-notes file; the paragraph in section 5 is the release
+   note text to publish.
