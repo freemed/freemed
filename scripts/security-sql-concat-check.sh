@@ -44,10 +44,10 @@
 #   ./scripts/security-sql-concat-check.sh --self-test  classify the fixtures
 #                                                       in the documented way
 #
-# `make security-check` runs the TREE SCAN of both static gates and not their
-# --self-test modes, so this file's own sensitivity is not proved by it: run
-# `--self-test` explicitly after changing this script (the same is true of
-# scripts/security-path-guard-check.sh).
+# `make security-check` runs the TREE SCAN of both static gates AND their
+# --self-test modes (Makefile:70-74), so this file's own sensitivity is proved
+# by it; run `--self-test` explicitly while editing this script (the same is
+# true of scripts/security-path-guard-check.sh).
 set -u
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || { echo "security-sql-concat-check: cannot cd to repo root"; exit 2; }

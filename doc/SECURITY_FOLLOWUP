@@ -16,7 +16,9 @@ reported findings
    any reference below. None of them is part of that
    mitigation. Each is either out of scope by decision (section 2) or a defect
    that the sweep, its reviews and the verification pass surfaced on the way
-   (sections 3 to 6). Nothing here has been fixed.
+   (sections 3 to 6). Most of it is still unfixed: where an item below is
+   marked CLOSED it was re-read at HEAD, and the mitigation's final fix wave
+   closed a number of them - each such closure names its commit inline.
 
    WHAT SET THIS IS: this is the union of the plan's Task 4.3 list and every
    finding the execution's reviews raised and deliberately did not fix - the
@@ -824,10 +826,11 @@ reported findings
       refuse with a message rather than half-applying.
 
    d) tests/security/repro-relay-sqli.sh:598-599 prints "(4 sites x 3)" as a
-      static literal beside an interpolated counter: the count itself is now
-      "$G_PROBES", so the fixed-label half of ledger item 7 is addressed, but
-      the site/probe arithmetic on the same line is still hard-coded. FIX SHAPE:
-      derive it from the site list, or drop the parenthetical.
+      static literal beside an interpolated counter. Both halves are fixed now:
+      the count reads "$G_PROBES" and the site/probe arithmetic is DERIVED
+      (tests/security/repro-relay-sqli.sh:646-647 prints "$G_PROBES"
+      "$G_PREFLIGHT" "$site_probes" "$G_SITES" "$per_site"), so ledger item 7 is
+      CLOSED at HEAD (final fix wave).
 
    e) Ledger item 21 - the commented-out ACL block at
       core/EMRModule.class.php:787-791 carries no in-code marker. The reason it
@@ -842,8 +845,9 @@ reported findings
    f) Ledger item 27 - the class-axis matrix is committed more than once: the
       "866 pairs / 803 unlisted / 63 listed" line appears in
       tests/security/evidence/relay-callset.txt:25, in
-      tests/security/evidence/relay-allowlist.txt:844 and again at :859, and in
-      doc/RELAY_ALLOWLIST:79 and :86 (re-checked;
+      tests/security/evidence/relay-allowlist.txt:853, :878, :1445, :1447 and
+      :1457, and in doc/RELAY_ALLOWLIST:124 and :131 (all re-checked at HEAD
+      after the final fix wave moved these line numbers;
       data/config/relay-allowlist.php does not carry it). The same measurement
       in three files is a drift surface - the regeneration instruction should
       name one canonical place and the others should point at it.
@@ -887,8 +891,10 @@ reported findings
       labels an unexpected answer - a 500, say - as UNVALIDATED (:302-323).
 
    d) Ledger item 11 - HALF STALE. It says the path-guard gate is "not wired
-      into make security-check or any CI". It IS wired: Makefile:63-65 runs
-      ./scripts/security-path-guard-check.sh immediately after its SQL sibling.
+      into make security-check or any CI". It IS wired: Makefile:70-74 runs each
+      gate TWICE - the tree scan and then its own --self-test - so both gates'
+      sensitivity is proved by `make security-check` at HEAD (the line numbers
+      moved from :63-65 in the final fix wave).
       Still true: it is not wired into CI - the repository has one CI file,
       .travis.yml, whose whole script is `( cd ui/gwt ; make all )` - and
       tests/security/repro-chtml-path.sh:123 hard-codes its rejection matcher
