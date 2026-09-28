@@ -994,7 +994,7 @@ class Remitt {
 		$p = $GLOBALS['sql']->get_link( 'procrec', $procedure );
 
 		// Aadded new tags to use in the patient statement MD 05-03-2008
-		$query = "SELECT payrecamt, payreccat, payrecsource, payreclink, payrecdt FROM payrec WHERE payrecproc='".$procedure."'"; 
+		$query = "SELECT payrecamt, payreccat, payrecsource, payreclink, payrecdt FROM payrec WHERE payrecproc=".intval($procedure);
 		$pay_result = $GLOBALS['sql']->queryAll($query);
 
 		$pat_pay = 0;
