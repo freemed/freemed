@@ -649,7 +649,10 @@ class freemed {
 		static $_cache;
 
 		if (! isset( $_cache[$handler] ) ) {
-			$_cache[$handler] = $GLOBALS['sql']->queryCol( "SELECT LOWER( module_class ) FROM modules WHERE FIND_IN_SET( '".addslashes($handler)."', module_handlers )" );
+			// Category A (2.6f): the handler name is a value, so the driver
+			// quotes it (quote() supplies the surrounding quotes) instead of
+			// addslashes()ing it inside hand-written quotes.
+			$_cache[$handler] = $GLOBALS['sql']->queryCol( "SELECT LOWER( module_class ) FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote($handler).", module_handlers )" );
 		}
 
 		// Return composite
