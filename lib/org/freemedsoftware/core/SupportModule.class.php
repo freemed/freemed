@@ -356,10 +356,15 @@ class SupportModule extends BaseModule {
 		}
 
 		$this->del_pre( $id + 0 );
+		// Category A (2.6f): id is a record key and $id+0 was already the cast
+		// the review judged these sites to be - it is written as intval() in the
+		// UNQUOTED predicate instead of addslashes()ing that number inside
+		// hand-written quotes (addslashes() on a number is not escaping). The
+		// cast stays inline in the concatenation so the static gate can see it.
 		if($this->archive_field=="")
-			$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
+			$query = "DELETE FROM `".$this->table_name."` WHERE id = ".intval( $id );
 		else
-			$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=1 WHERE id = '".addslashes( $id+0 )."'";
+			$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=1 WHERE id = ".intval( $id );
 		$result = $GLOBALS['sql']->query ( $query );
 		return true;
 	} // end function del
@@ -370,7 +375,10 @@ class SupportModule extends BaseModule {
 		}
 
 		$this->del_pre( $id + 0 );
-		$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=0 WHERE id = '".addslashes( $id+0 )."'";
+		// Category A (2.6f): as in del() - the cast the site already relied on,
+		// written as intval() in an unquoted predicate (inline, so the static
+		// gate can see it).
+		$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=0 WHERE id = ".intval( $id );
 		$result = $GLOBALS['sql']->query ( $query );
 		return true;
 	} // end function del
