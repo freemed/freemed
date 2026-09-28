@@ -577,7 +577,13 @@ class EMRModule extends BaseModule {
 	// Method: _setup
 	public function _setup ( ) {
 		if (!$this->create_table()) { return false; }
-		$c = $GLOBALS['sql']->queryOne( "SELECT COUNT(*) FROM ".$this->table_name );
+		// Category B: table identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_setup| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$c = $GLOBALS['sql']->queryOne( sprintf('SELECT COUNT(*) FROM %s', $table) );
 		if ( $c > 0 ) { return false; }
 		return CallMethod('org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup
@@ -629,11 +635,24 @@ class EMRModule extends BaseModule {
 	//
 	public function picklist ( $varname, $patient, $conditions = false ) {
 		// TODO: sanitize conditions or disable entirely ... perhaps select from a list of possibles defined by the module?
-		$query = "SELECT * FROM `".$this->table_name."` WHERE ".
-			"( `".$this->patient_field.
-				"` = '".addslashes($patient)."') ".
-			( $conditions ? " AND ( ".$conditions." ) " : "" ).
-			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" );
+		// Category B: table and patient-field identifiers (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		if ( $table === false or $pfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid table_name/patient_field '.var_export($this->table_name, true).'/'.var_export($this->patient_field, true) );
+			return array();
+		}
+		$order = $this->order_fields ? SqlIdent::columns( $this->order_fields ) : '';
+		if ( $order === false ) {
+			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid order_fields '.var_export($this->order_fields, true) );
+			$order = '';
+		}
+		// NOTE (2.6b): $conditions is a caller-composed raw fragment (see the TODO
+		// above) and no in-tree call site passes it; it is spliced unchanged.
+		$query = sprintf( 'SELECT * FROM %s WHERE ( %s = %s ) %s %s',
+			$table, $pfield, $GLOBALS['sql']->quote( $patient ),
+			( $conditions ? sprintf(' AND ( %s ) ', $conditions) : '' ),
+			( $order ? sprintf('ORDER BY %s', $order) : '' ) );
 		$result = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $result AS $r ) {
 			if (!(strpos($this->widget_hash, "##") === false)) {
@@ -807,10 +826,19 @@ class EMRModule extends BaseModule {
 		} else {
 			$rDate = NULL;
 		}
-		$query = "SELECT * FROM `".$this->table_name."` ".
-			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ".
-			( $rDate ? " AND `".$this->date_field."` <= '".addslashes($rDate)."' " : "" ).
-			"ORDER BY ".$this->date_field." DESC, id DESC";
+		// Category B: table/patient/date identifiers (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		$dfield = SqlIdent::name( $this->date_field );
+		if ( $table === false or $pfield === false or $dfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing invalid identifier '.var_export(array($this->table_name, $this->patient_field, $this->date_field), true) );
+			return NULL;
+		}
+		// Category A: patient id and the ImportDate()-formatted date.
+		$query = sprintf( 'SELECT * FROM %s WHERE %s = %s %s ORDER BY %s DESC, id DESC',
+			$table, $pfield, $GLOBALS['sql']->quote( $patient ),
+			( $rDate ? sprintf(' AND %s <= %s ', $dfield, $GLOBALS['sql']->quote( $rDate )) : '' ),
+			$dfield );
 		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
 	} // end method GetRecentRecord
