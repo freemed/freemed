@@ -81,7 +81,13 @@ class ClinicRegistration extends SupportModule {
 	//
 	public function GetAll () {
 		freemed::acl_enforce( 'emr', 'read' );
-		$q = "SELECT *, CONCAT(lastname, ' ', lastname2) AS fulllastname FROM ".$this->table_name." WHERE processed = FALSE ORDER BY dateof DESC";
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAll| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$q = sprintf("SELECT *, CONCAT(lastname, ' ', lastname2) AS fulllastname FROM %s WHERE processed = FALSE ORDER BY dateof DESC", $table);
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
