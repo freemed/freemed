@@ -23,11 +23,12 @@ Deployment hardening - what the shipped web-server configuration now refuses
        look like a command line to a script that guards on $_SERVER['argc'] /
        $_SERVER['argv'] and mask a request as an empty 200. (CWE-16.)
 
-   None of it changes a documented URL. The only behaviour changes are the three
-   undocumented trailing-path shapes in section 4; every entrypoint, every static
-   asset and every relay call answers exactly as it did before, and the
-   tree-by-tree measurement is in
-   tests/security/evidence/deployment-hardening.txt.
+   None of it changes a documented URL. The behaviour changes are the three
+   undocumented trailing-path shapes in section 4, plus the one served URL that
+   section 8 discloses: files under data/documents/unfiled/ (.djvu uploads)
+   answered 200 at HEAD and are now 403. Every entrypoint, every static asset
+   and every relay call answers exactly as it did before, and the tree-by-tree
+   measurement is in tests/security/evidence/deployment-hardening.txt.
 
 
 2. WHAT SHIPS, AND WHERE IT LANDS
@@ -86,6 +87,20 @@ Deployment hardening - what the shipped web-server configuration now refuses
        yet GET /data/store/no-image.png answered 200 with 60521 bytes, because
        the malformed Deny in the child took that subtree out of the inherited
        denial. All four are rewritten in this change.
+
+     * Five more .htaccess files in the same trees - data/, data/schema/,
+       data/config/, data/documents/unfiled/ and tests/ - carried 2.2-only
+       syntax (`order`/`deny`), which is not merely legacy: on an Apache 2.4
+       vhost that does not load mod_access_compat the file is a configuration
+       error during URI mapping, so the tree answers 500 rather than the 403 the
+       rule means. Measured, not inferred: a probe config loading the same
+       modules minus mod_access_compat rejects all five as they were
+       (`Invalid command 'order'`), and accepts them once they carry the same
+       guarded block as the four above. Fix round 1 converted them, including
+       data/documents/unfiled/ - whose `<Files *.djvu> allow from all` exception
+       is discussed in section 8 - and left the vendored
+       lib/org/freemedsoftware/acl/.htaccess alone (phpGACL is not this tree's
+       file, and its own rule is unchanged).
 
      * AllowOverride. A vhost with `AllowOverride None` ignores every .htaccess
        file in this tree. The shipped file does set `AllowOverride All`, and
@@ -272,11 +287,17 @@ Deployment hardening - what the shipped web-server configuration now refuses
        forbids publishing them can deny /doc/ the same way the four trees above
        are denied.
 
-     * It overrides data/documents/unfiled/.htaccess, which allowed *.djvu
-       uploads to be fetched by URL (measured at HEAD: 200, 60521 bytes on both
-       servers). That path is now 403 with the rest of data/. Nothing in this
-       tree references it as a URL - the document viewer fetches page images
-       through the relay (<relay>/org.freemedsoftware.module.<module>.GetDocumentPage),
+     * It denies data/documents/unfiled/, which used to be an exception inside
+       the denied tree: that directory's .htaccess said `<Files *.djvu> order
+       allow,deny / allow from all`, so unfiled .djvu uploads were fetchable by
+       URL (measured at HEAD: 200, 60521 bytes on both servers). That path is now
+       403 with the rest of data/, and fix round 1 rewrote the .htaccess file to
+       deny as well, so the two layers agree instead of contradicting each other
+       (measured on the .htaccess layer alone, on the Apache docroot harness: a
+       .djvu file in that directory was 200 before the rewrite and 403 after it,
+       with every other path in the tree unchanged). Nothing in this tree
+       references it as a URL - the document viewer fetches page images through
+       the relay (<relay>/org.freemedsoftware.module.<module>.GetDocumentPage),
        not from the filesystem path - and serving PHI by guessable URL is what
        this change exists to stop. A site that needs a different behaviour for
        that directory should state an explicit exception in its server

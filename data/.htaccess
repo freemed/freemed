@@ -1,2 +1,20 @@
-order allow,deny
-deny from all
+# Deny all web access to data/ - SQL schema, caches, uploaded documents and the
+# installer-generated lib/settings.php live under here, and none of it is a URL.
+#
+# This is the SECOND layer. The load-bearing rule is the server configuration
+# (doc/freemed.apache.conf for Apache, docker/nginx.conf for nginx): nginx reads
+# no .htaccess at all, and a vhost with `AllowOverride None` ignores this file.
+#
+# The file used to carry 2.2-only syntax, which is a configuration error during
+# URI mapping on an Apache 2.4 vhost without mod_access_compat (500, not the 403
+# this rule means). Both syntaxes are now present and module-guarded:
+# `Require all denied` needs mod_authz_core (2.4), `Order deny,allow` needs
+# mod_access_compat (2.2, and 2.4 with the compatibility module). The directive
+# set is unchanged - the directory was already denied by the 2.2 half.
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order deny,allow
+	deny from all
+</IfModule>

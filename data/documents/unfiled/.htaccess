@@ -1,4 +1,32 @@
-<Files *.djvu>
-order allow,deny
-allow from all
-</Files>
+# Deny all web access to data/documents/unfiled/.
+#
+# INTENT CHANGE (Task 4.1 fix round 1). This file used to say
+#   <Files *.djvu>
+#   order allow,deny
+#   allow from all
+#   </Files>
+# i.e. it was an exception INSIDE the denied data/ tree: unfiled .djvu uploads
+# were fetchable by URL (measured at HEAD: 200, 60521 bytes on both servers).
+# The server-configuration rule this project now ships denies the whole data/
+# tree, so the exception was already overridden there - this file is brought into
+# line with it rather than left saying the opposite, and it no longer carries the
+# 2.2-only syntax that is a configuration error during URI mapping on an Apache
+# 2.4 vhost without mod_access_compat (500, not the 403 this rule means).
+#
+# Why the denial is right: nothing in this tree builds a URL into this
+# directory - the document viewer fetches pages through the relay
+# (<relay>/org.freemedsoftware.module.<module>.GetDocumentPage), not from the
+# filesystem path - and serving PHI from a guessable URL is the thing this
+# change exists to stop. A site that needs the old behaviour should state an
+# explicit, extension-restricted exception in its server configuration (see
+# doc/DEPLOYMENT_HARDENING section 8), not here.
+#
+# Second layer only: nginx reads no .htaccess, and `AllowOverride None` ignores
+# it. Both syntaxes are present and module-guarded.
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order deny,allow
+	deny from all
+</IfModule>

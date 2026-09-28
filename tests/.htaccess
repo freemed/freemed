@@ -21,5 +21,21 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
-order deny,allow
-deny from all
+# Deny all web access to tests/ - the harnesses, their fixtures and their
+# evidence belong to the shell and to CI, not to a URL.
+#
+# This is the SECOND layer. The load-bearing rule is the server configuration
+# (doc/freemed.apache.conf for Apache, docker/nginx.conf for nginx): nginx reads
+# no .htaccess at all, and a vhost with `AllowOverride None` ignores this file.
+#
+# The rule below replaces 2.2-only syntax, which is a configuration error during
+# URI mapping on an Apache 2.4 vhost without mod_access_compat (500, not the 403
+# it means). Both syntaxes are present and module-guarded. The directive set is
+# unchanged - the directory was already denied by the 2.2 half.
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order deny,allow
+	deny from all
+</IfModule>

@@ -1,3 +1,21 @@
-<Files *>
-deny from all
-</Files>
+# Deny all web access to data/config/ - it holds generated configuration
+# (relay-allowlist.php and friends), which is read by the application, not by a
+# browser.
+#
+# This is the SECOND layer. The load-bearing rule is the server configuration
+# (doc/freemed.apache.conf for Apache, docker/nginx.conf for nginx): nginx reads
+# no .htaccess at all, and a vhost with `AllowOverride None` ignores this file.
+#
+# The file used to wrap its Deny in `<Files *>` with 2.2-only syntax, which is a
+# configuration error during URI mapping on an Apache 2.4 vhost without
+# mod_access_compat (500, not the 403 this rule means) and left the <Files>
+# block's own matching out of the picture. The rule is now at directory level,
+# so it covers every file in the tree - including this file - and both syntaxes
+# are present and module-guarded. The directory was already denied.
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order deny,allow
+	deny from all
+</IfModule>
