@@ -821,12 +821,26 @@ class EMRModule extends BaseModule {
 			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
 		}
 
-		// Form conditional clause, if it exists
+		// Form conditional clause, if it exists.
+		//
+		// Deferred item 14 (final wave): the key is an IDENTIFIER, so it is
+		// validated and backtick-quoted by SqlIdent - it used to be built with
+		// the VALUE escaper (escape()), which is the wrong tool for a name.
+		// R12: a refusal here logs and DROPS the clause, never fataling the
+		// request; if no key validates at all the whole clause is dropped so
+		// the statement cannot gain a dangling "AND ( )".
+		$conditional_clause = NULL;
 		if ( is_array ($conditional) ) {
+			$c = array();
 			foreach ($conditional AS $k => $v) {
-				$c[] = "`".$GLOBALS['sql']->escape($k)."` = ".$GLOBALS['sql']->quote($v);
+				$k_id = SqlIdent::name( $k );
+				if ( $k_id === false ) {
+					syslog( LOG_ERR, get_class($this).'::qualified_query| refusing invalid conditional column '.var_export($k, true) );
+					continue;
+				}
+				$c[] = $k_id." = ".$GLOBALS['sql']->quote($v);
 			}
-			$conditional_clause = join ( ' AND ', $c );
+			if ( $c ) { $conditional_clause = join ( ' AND ', $c ); }
 		}
 
 		// get last $items results
@@ -845,7 +859,7 @@ class EMRModule extends BaseModule {
 			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
 			"WHERE ".$this->patient_field."=".$GLOBALS['sql']->quote($patient)." ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
-			($conditional ? 'AND ( '.$conditional_clause.' ) ' : '' ).
+			($conditional_clause ? 'AND ( '.$conditional_clause.' ) ' : '' ).
 			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC ".
 			( $items ? "LIMIT ".intval($items) : '' );
 
