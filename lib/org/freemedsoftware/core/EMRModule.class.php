@@ -23,6 +23,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('org.freemedsoftware.core.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
 
 // Class: org.freemedsoftware.core.EMRModule
 //
@@ -179,6 +180,10 @@ class EMRModule extends BaseModule {
 	protected $loinc_display;
 
 	public function __construct () {
+		// Enforce the SQL identifier invariant for this module's class-declared
+		// identifiers before anything can build a query from them.
+		$this->_ValidateIdentifiers();
+
 		// Add meta information for patient_field, if it exists
 		if (isset($this->record_name)) {
 			$this->_SetMetaInformation('record_name', $this->record_name);
@@ -205,6 +210,48 @@ class EMRModule extends BaseModule {
 		// Call parent constructor
 		parent::__construct();
 	} // end constructor
+
+	// Method: _ValidateIdentifiers
+	//
+	//	Enforce the SQL identifier invariant (Task 2.6a / ruling R12) for every
+	//	identifier this class declares in source: $table_name, $date_field,
+	//	$order_fields and $summary_order_by.
+	//
+	//	These values come from the module source, never from input or from the
+	//	database, so a failure is a developer error: it is reported loudly with
+	//	trigger_error() and must be caught in development rather than degraded in
+	//	silence. (Values that arrive from a DB row or from configuration are
+	//	handled the other way round — log and refuse; see
+	//	api/PatientInterface.class.php::MoveEmrAttachments.)
+	//
+	//	An undeclared/empty identifier is not a failure: it is simply absent.
+	//
+	// See Also:
+	//	<SqlIdent>
+	//
+	protected function _ValidateIdentifiers ( ) {
+		$shapes = array (
+			'table_name'       => 'name',
+			'date_field'       => 'name',
+			'order_fields'     => 'columns',
+			'summary_order_by' => 'columns',
+		);
+		foreach ( $shapes AS $var => $shape ) {
+			$value = $this->$var;
+			if ( $value === NULL or $value === '' or $value === false ) { continue; }
+			$ok = ( $shape == 'name' ) ? SqlIdent::valid( $value ) : SqlIdent::validColumns( $value );
+			if ( ! $ok ) {
+				trigger_error(
+					get_class($this).'::$'.$var.' = '
+					. var_export($value, true)
+					. ' is not a valid SQL identifier (expected '
+					. ( $shape == 'name' ? 'a name, optionally table-qualified' : 'a names/ASC-DESC list' )
+					. '); fix the module declaration — see lib/org/freemedsoftware/core/SqlIdent.class.php',
+					E_USER_ERROR
+				);
+			}
+		}
+	} // end method _ValidateIdentifiers
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {

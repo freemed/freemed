@@ -1,0 +1,285 @@
+FreeMED SQL-identifier inventory — GENERATED FILE, do not hand-edit.
+
+generator (scratch-only, not in git): python3 identifier-inventory.py <repo-root>
+scanned: lib/**/*.php declarations and $this-> assignments of
+         $table_name, $order_field, $order_fields, $date_field, $archive_field, $patient_field, $summary_order_by, $view_query, $additional_fields
+classified with the SqlIdent grammar in lib/org/freemedsoftware/core/SqlIdent.class.php
+
+COUNTS
+  single-token         213
+  expression-shaped    24
+  clause-fragment      3
+  dynamic              3
+  empty                1
+  TOTAL                244
+
+COUNTS BY PROPERTY (kind: count)
+  $table_name:        single-token=129
+  $order_field:       single-token=22, expression-shaped=13
+  $order_fields:      single-token=4, expression-shaped=5
+  $date_field:        single-token=7
+  $archive_field:     single-token=10, empty=1
+  $patient_field:     single-token=38, dynamic=1
+  $summary_order_by:  single-token=3, expression-shaped=6
+  $view_query:        clause-fragment=3
+  $additional_fields: dynamic=2
+
+Every "single-token" row is accepted by SqlIdent::name(); every
+"expression-shaped" row is accepted by SqlIdent::columns(). "clause-fragment"
+rows are WHERE fragments, not identifiers (they are not validated as names).
+"dynamic" is the one DB-sourced value: it must be validated at point of use
+and refused (not fatal) when it fails (ruling R12).
+
+--- SINGLE-TOKEN (213) ---
+lib/org/freemedsoftware/module/ACL.class.php:36  $table_name = 'acl'
+lib/org/freemedsoftware/module/Allergies.class.php:36  $table_name = 'allergies'
+lib/org/freemedsoftware/module/Allergies.class.php:37  $patient_field = 'patient'
+lib/org/freemedsoftware/module/Allergies.class.php:38  $date_field = 'reviewed'
+lib/org/freemedsoftware/module/AnesthesiologyCalendar.class.php:36  $table_name = "anesth"
+lib/org/freemedsoftware/module/Annotations.class.php:37  $table_name = 'annotations'
+lib/org/freemedsoftware/module/Annotations.class.php:38  $patient_field = 'apatient'
+lib/org/freemedsoftware/module/AppointmentFollowup.class.php:36  $table_name = 'apptplanning'
+lib/org/freemedsoftware/module/AppointmentFollowup.class.php:37  $patient_field = 'appatient'
+lib/org/freemedsoftware/module/AppointmentFollowup.class.php:38  $order_field = 'apdatetarget'
+lib/org/freemedsoftware/module/AppointmentTemplates.class.php:36  $table_name = "appttemplate"
+lib/org/freemedsoftware/module/Authorizations.class.php:37  $table_name = "authorizations"
+lib/org/freemedsoftware/module/Authorizations.class.php:38  $patient_field = "authpatient"
+lib/org/freemedsoftware/module/Bccdc.class.php:36  $table_name = "bccdc"
+lib/org/freemedsoftware/module/BillKey.class.php:36  $table_name = "billkey"
+lib/org/freemedsoftware/module/BillingClearinghouse.class.php:38  $table_name = "clearinghouse"
+lib/org/freemedsoftware/module/BillingContact.class.php:38  $table_name = "bcontact"
+lib/org/freemedsoftware/module/BillingService.class.php:38  $table_name = "bservice"
+lib/org/freemedsoftware/module/BodySite.class.php:36  $table_name = "bodysite"
+lib/org/freemedsoftware/module/CalendarGroup.class.php:36  $table_name = "calgroup"
+lib/org/freemedsoftware/module/CalendarGroupAttendance.class.php:36  $table_name = "calgroupattend"
+lib/org/freemedsoftware/module/Callin.class.php:36  $table_name = "callin"
+lib/org/freemedsoftware/module/Callin.class.php:40  $archive_field = "ciarchive"
+lib/org/freemedsoftware/module/Certifications.class.php:36  $table_name = "certifications"
+lib/org/freemedsoftware/module/Certifications.class.php:38  $patient_field = 'certpatient'
+lib/org/freemedsoftware/module/ChronicProblems.class.php:36  $patient_field = "ppatient"
+lib/org/freemedsoftware/module/ChronicProblems.class.php:40  $date_field = 'id'
+lib/org/freemedsoftware/module/ChronicProblems.class.php:41  $table_name = 'chronic_problems'
+lib/org/freemedsoftware/module/ClaimLogTable.class.php:36  $table_name = "claimlog"
+lib/org/freemedsoftware/module/ClaimTypes.class.php:38  $table_name = "claimtypes"
+lib/org/freemedsoftware/module/ClinicRegistration.class.php:36  $table_name = "clinicregistration"
+lib/org/freemedsoftware/module/ClinicRegistration.class.php:40  $archive_field = "archive"
+lib/org/freemedsoftware/module/ClinicalOrders.class.php:36  $table_name = "orders"
+lib/org/freemedsoftware/module/ClinicalOrders.class.php:37  $patient_field = "patient"
+lib/org/freemedsoftware/module/Codes.class.php:36  $table_name = "codes"
+lib/org/freemedsoftware/module/CoverageTypes.class.php:37  $table_name = "covtypes"
+lib/org/freemedsoftware/module/CptCodes.class.php:36  $table_name = "cpt"
+lib/org/freemedsoftware/module/CptCodes.class.php:37  $order_fields = "cptcode"
+lib/org/freemedsoftware/module/CptCodes.class.php:39  $archive_field = "cptarchive"
+lib/org/freemedsoftware/module/CptModifiers.class.php:36  $table_name = "cptmod"
+lib/org/freemedsoftware/module/CptModifiers.class.php:39  $archive_field = "cptmodarchive"
+lib/org/freemedsoftware/module/CurrentProblems.class.php:36  $patient_field = "ppatient"
+lib/org/freemedsoftware/module/CurrentProblems.class.php:40  $date_field = 'id'
+lib/org/freemedsoftware/module/CurrentProblems.class.php:41  $table_name = 'current_problems'
+lib/org/freemedsoftware/module/DiagnosisFamily.class.php:36  $table_name = "diagfamily"
+lib/org/freemedsoftware/module/DicomModule.class.php:36  $table_name = "dicom"
+lib/org/freemedsoftware/module/DicomModule.class.php:37  $patient_field = "d_patient"
+lib/org/freemedsoftware/module/DocumentCategory.class.php:36  $table_name = "documents_tc"
+lib/org/freemedsoftware/module/DrugForms.class.php:36  $table_name = "drugforms"
+lib/org/freemedsoftware/module/DrugQuantityQualifiers.class.php:36  $table_name = "drugquantityqual"
+lib/org/freemedsoftware/module/DrugQuantityQualifiers.class.php:38  $order_field = 'description'
+lib/org/freemedsoftware/module/DrugSampleInventory.class.php:36  $table_name = "drugsampleinv"
+lib/org/freemedsoftware/module/DrugSamples.class.php:36  $table_name = "drugsamples"
+lib/org/freemedsoftware/module/DrugSamples.class.php:37  $patient_field = "patientid"
+lib/org/freemedsoftware/module/DrugSamples.class.php:38  $order_fields = "stamp"
+lib/org/freemedsoftware/module/EnclosureTypes.class.php:35  $table_name = "enctype"
+lib/org/freemedsoftware/module/EnclosureTypes.class.php:37  $order_field = "enclosure"
+lib/org/freemedsoftware/module/EncounterNotes.class.php:36  $table_name = "enotes"
+lib/org/freemedsoftware/module/EncounterNotesTemplate.class.php:36  $table_name = "entemplate"
+lib/org/freemedsoftware/module/EpisodeOfCare.class.php:37  $table_name = "eoc"
+lib/org/freemedsoftware/module/EpisodeOfCare.class.php:38  $patient_field = "eocpatient"
+lib/org/freemedsoftware/module/Events.class.php:36  $table_name = "events"
+lib/org/freemedsoftware/module/Events.class.php:37  $order_field = "event_time"
+lib/org/freemedsoftware/module/FacilityModule.class.php:37  $table_name = "facility"
+lib/org/freemedsoftware/module/FacilityModule.class.php:41  $archive_field = "psrarchive"
+lib/org/freemedsoftware/module/FaxStatus.class.php:36  $table_name = "faxstatus"
+lib/org/freemedsoftware/module/FinancialDemographics.class.php:37  $table_name = "financialdemographics"
+lib/org/freemedsoftware/module/FinancialDemographics.class.php:38  $patient_field = "fdpatient"
+lib/org/freemedsoftware/module/FormTemplates.class.php:37  $table_name = "form"
+lib/org/freemedsoftware/module/Forms.class.php:37  $table_name = "form_results"
+lib/org/freemedsoftware/module/Forms.class.php:38  $patient_field = "fr_patient"
+lib/org/freemedsoftware/module/GrowthCharts.class.php:36  $table_name = "growthcharts"
+lib/org/freemedsoftware/module/Holiday.class.php:36  $table_name = "holiday"
+lib/org/freemedsoftware/module/IcdCodes.class.php:36  $table_name = "icd9"
+lib/org/freemedsoftware/module/IcdCodes.class.php:40  $archive_field = "icdarchive"
+lib/org/freemedsoftware/module/Immunizations.class.php:36  $table_name = "immunization"
+lib/org/freemedsoftware/module/Immunizations.class.php:37  $patient_field = "patient"
+lib/org/freemedsoftware/module/InsuranceCompanyGroup.class.php:35  $table_name = "inscogroup"
+lib/org/freemedsoftware/module/InsuranceCompanyModule.class.php:37  $table_name = "insco"
+lib/org/freemedsoftware/module/InsuranceCompanyModule.class.php:38  $archive_field = "inscoarchive"
+lib/org/freemedsoftware/module/InsuranceModifiers.class.php:35  $table_name = "insmod"
+lib/org/freemedsoftware/module/InsuranceModifiers.class.php:37  $order_field = "insmoddesc"
+lib/org/freemedsoftware/module/InternalServiceTypes.class.php:35  $table_name = "intservtype"
+lib/org/freemedsoftware/module/InternalServiceTypes.class.php:37  $order_field = "intservtype"
+lib/org/freemedsoftware/module/LabsModule.class.php:37  $table_name = "labs"
+lib/org/freemedsoftware/module/LabsModule.class.php:38  $patient_field = "labpatient"
+lib/org/freemedsoftware/module/Letters.class.php:36  $table_name = "letters"
+lib/org/freemedsoftware/module/Letters.class.php:37  $patient_field = "letterpatient"
+lib/org/freemedsoftware/module/LettersTemplates.class.php:37  $table_name = "letters_templates"
+lib/org/freemedsoftware/module/LettersTemplates.class.php:38  $order_field = "ltname"
+lib/org/freemedsoftware/module/LogModule.class.php:37  $table_name = 'log'
+lib/org/freemedsoftware/module/Loinc.class.php:36  $table_name = "loinc"
+lib/org/freemedsoftware/module/Medications.class.php:36  $table_name = 'medications'
+lib/org/freemedsoftware/module/Medications.class.php:37  $patient_field = 'mpatient'
+lib/org/freemedsoftware/module/Medications.class.php:38  $date_field = 'mdate'
+lib/org/freemedsoftware/module/Medications.class.php:65  $summary_order_by = 'mdate'
+lib/org/freemedsoftware/module/MessagesModule.class.php:36  $table_name = "messages"
+lib/org/freemedsoftware/module/MessagesModule.class.php:37  $patient_field = "msgpatient"
+lib/org/freemedsoftware/module/ModuleFieldChecker.class.php:37  $table_name = "module_field_checker"
+lib/org/freemedsoftware/module/ModuleFieldChecker.class.php:38  $order_field = "stamp"
+lib/org/freemedsoftware/module/ModuleFieldCheckerType.class.php:36  $table_name = "module_field_checker_type"
+lib/org/freemedsoftware/module/MultumDrugLexicon.class.php:36  $table_name = "multum"
+lib/org/freemedsoftware/module/NDCLexicon.class.php:36  $table_name = "ndc"
+lib/org/freemedsoftware/module/NPI.class.php:36  $table_name = "npi"
+lib/org/freemedsoftware/module/Notifications.class.php:36  $table_name = 'notification'
+lib/org/freemedsoftware/module/Notifications.class.php:37  $patient_field = 'npatient'
+lib/org/freemedsoftware/module/Notifications.class.php:38  $order_field = 'ntarget'
+lib/org/freemedsoftware/module/Oids.class.php:36  $table_name = "oids"
+lib/org/freemedsoftware/module/OrdersStock.class.php:35  $table_name = "orders_stock"
+lib/org/freemedsoftware/module/OrdersTemplate.class.php:35  $table_name = "orders_stock"
+lib/org/freemedsoftware/module/PatientCorrespondence.class.php:36  $table_name = "patletter"
+lib/org/freemedsoftware/module/PatientCorrespondence.class.php:37  $patient_field = "letterpatient"
+lib/org/freemedsoftware/module/PatientCoverages.class.php:36  $table_name = "coverage"
+lib/org/freemedsoftware/module/PatientCoverages.class.php:38  $patient_field = "covpatient"
+lib/org/freemedsoftware/module/PatientIds.class.php:36  $table_name = "patient_ids"
+lib/org/freemedsoftware/module/PatientIds.class.php:37  $patient_field = "patient"
+lib/org/freemedsoftware/module/PatientIds.class.php:38  $order_fields = "stamp"
+lib/org/freemedsoftware/module/PatientLink.class.php:37  $table_name = "patientlinks"
+lib/org/freemedsoftware/module/PatientLink.class.php:38  $order_field = "stamp"
+lib/org/freemedsoftware/module/PatientLink.class.php:39  $patient_field = "srcpatient"
+lib/org/freemedsoftware/module/PatientLocation.class.php:36  $table_name = "patientlocation"
+lib/org/freemedsoftware/module/PatientLocation.class.php:37  $patient_field = "patient"
+lib/org/freemedsoftware/module/PatientLocation.class.php:38  $order_fields = "stamp"
+lib/org/freemedsoftware/module/PatientModule.class.php:36  $table_name = "patient"
+lib/org/freemedsoftware/module/PatientModule.class.php:39  $archive_field = "ptarchive"
+lib/org/freemedsoftware/module/PatientReporting.class.php:36  $table_name = "patient_reporting"
+lib/org/freemedsoftware/module/PatientStatus.class.php:36  $table_name = "ptstatus"
+lib/org/freemedsoftware/module/PatientTag.class.php:37  $table_name = "patienttag"
+lib/org/freemedsoftware/module/PaymentModule.class.php:37  $table_name = "payrec"
+lib/org/freemedsoftware/module/PaymentModule.class.php:39  $patient_field = "payrecpatient"
+lib/org/freemedsoftware/module/Pharmacy.class.php:36  $table_name = "pharmacy"
+lib/org/freemedsoftware/module/PhoneNumbers.class.php:36  $table_name = "phone"
+lib/org/freemedsoftware/module/PhotographicIdentification.class.php:37  $table_name = "photoid"
+lib/org/freemedsoftware/module/PhotographicIdentification.class.php:38  $patient_field = "p_patient"
+lib/org/freemedsoftware/module/PlaceOfService.class.php:36  $table_name = "pos"
+lib/org/freemedsoftware/module/Practices.class.php:36  $table_name = "practice"
+lib/org/freemedsoftware/module/Practices.class.php:37  $archive_field = "pracarchive"
+lib/org/freemedsoftware/module/Prescription.class.php:37  $table_name = "rx"
+lib/org/freemedsoftware/module/Prescription.class.php:38  $patient_field = "rxpatient"
+lib/org/freemedsoftware/module/Prescription.class.php:39  $date_field = "rxdtfrom"
+lib/org/freemedsoftware/module/PreviousOperationsModule.class.php:36  $patient_field = "opatient"
+lib/org/freemedsoftware/module/PreviousOperationsModule.class.php:38  $date_field = 'id'
+lib/org/freemedsoftware/module/PreviousOperationsModule.class.php:39  $table_name = 'previous_operations'
+lib/org/freemedsoftware/module/ProcedureModule.class.php:35  $table_name = "procrec"
+lib/org/freemedsoftware/module/ProcedureModule.class.php:37  $patient_field = "procpatient"
+lib/org/freemedsoftware/module/ProgressNotes.class.php:37  $table_name = "pnotes"
+lib/org/freemedsoftware/module/ProgressNotes.class.php:38  $patient_field = "pnotespat"
+lib/org/freemedsoftware/module/ProgressNotes.class.php:40  $date_field = 'pnotesdt'
+lib/org/freemedsoftware/module/ProgressNotesTemplates.class.php:37  $table_name = "pnotes_templates"
+lib/org/freemedsoftware/module/ProgressNotesTemplates.class.php:38  $order_field = "pntname"
+lib/org/freemedsoftware/module/ProviderCertifications.class.php:36  $table_name = "degrees"
+lib/org/freemedsoftware/module/ProviderGroups.class.php:35  $table_name = "phygroup"
+lib/org/freemedsoftware/module/ProviderGroups.class.php:37  $order_field = "phygroupname"
+lib/org/freemedsoftware/module/ProviderModule.class.php:36  $table_name = "physician"
+lib/org/freemedsoftware/module/ProviderModule.class.php:37  $archive_field = "phyarchive"
+lib/org/freemedsoftware/module/ProviderSpecialties.class.php:35  $table_name = "specialties"
+lib/org/freemedsoftware/module/ProviderSpecialties.class.php:37  $order_field = "specname"
+lib/org/freemedsoftware/module/ProviderStatus.class.php:36  $table_name = "phystatus"
+lib/org/freemedsoftware/module/RecordLockModule.class.php:36  $table_name = "recordlock"
+lib/org/freemedsoftware/module/Referrals.class.php:35  $table_name = "referrals"
+lib/org/freemedsoftware/module/Referrals.class.php:36  $patient_field = "refpatient"
+lib/org/freemedsoftware/module/RemittanceQueue.class.php:36  $table_name = "rqueue"
+lib/org/freemedsoftware/module/Reporting.class.php:36  $table_name = "reporting"
+lib/org/freemedsoftware/module/ReportingPrintLog.class.php:35  $table_name = "reporting_print_log"
+lib/org/freemedsoftware/module/RoomEquipment.class.php:35  $table_name = "roomequip"
+lib/org/freemedsoftware/module/RoomModule.class.php:36  $table_name = "room"
+lib/org/freemedsoftware/module/RoomModule.class.php:37  $order_field = 'roomname'
+lib/org/freemedsoftware/module/RouteOfAdministration.class.php:36  $table_name = "routeofadmin"
+lib/org/freemedsoftware/module/Rules.class.php:37  $table_name = "rules"
+lib/org/freemedsoftware/module/RxRefillRequest.class.php:37  $table_name = 'rxrefillrequest'
+lib/org/freemedsoftware/module/RxRefillRequest.class.php:38  $patient_field = 'patient'
+lib/org/freemedsoftware/module/RxRefillRequest.class.php:39  $order_field = 'stamp'
+lib/org/freemedsoftware/module/ScannedDocuments.class.php:37  $table_name = "images"
+lib/org/freemedsoftware/module/ScannedDocuments.class.php:38  $patient_field = "imagepat"
+lib/org/freemedsoftware/module/ScannedDocuments.class.php:74  $summary_order_by = "imagedt"
+lib/org/freemedsoftware/module/SchedulerBlockSlots.class.php:36  $table_name = "scheduler_block_slots"
+lib/org/freemedsoftware/module/SchedulerPatientStatus.class.php:37  $table_name = 'scheduler_status'
+lib/org/freemedsoftware/module/SchedulerPatientStatus.class.php:38  $patient_field = 'cspatient'
+lib/org/freemedsoftware/module/SchedulerStatusType.class.php:36  $table_name = "schedulerstatustype"
+lib/org/freemedsoftware/module/SchedulerTable.class.php:38  $table_name = "scheduler"
+lib/org/freemedsoftware/module/SchedulingRules.class.php:35  $table_name = "schedulingrules"
+lib/org/freemedsoftware/module/SchedulingRules.class.php:37  $order_field = "id"
+lib/org/freemedsoftware/module/ShimStation.class.php:35  $table_name = "shimstation"
+lib/org/freemedsoftware/module/SmsProvider.class.php:36  $table_name = "smsprovider"
+lib/org/freemedsoftware/module/SmsProvider.class.php:37  $order_field = "providername"
+lib/org/freemedsoftware/module/SuperBill.class.php:36  $table_name = "superbill"
+lib/org/freemedsoftware/module/SuperBill.class.php:37  $patient_field = "patient"
+lib/org/freemedsoftware/module/SuperbillTemplate.class.php:35  $table_name = 'superbill_template'
+lib/org/freemedsoftware/module/SuperbillTemplate.class.php:37  $order_field = "id"
+lib/org/freemedsoftware/module/SystemNotifications.class.php:37  $table_name = 'systemnotification'
+lib/org/freemedsoftware/module/SystemNotifications.class.php:38  $order_field = 'stamp'
+lib/org/freemedsoftware/module/Taxonomy.class.php:36  $table_name = "taxonomy"
+lib/org/freemedsoftware/module/Tools.class.php:36  $table_name = "tools"
+lib/org/freemedsoftware/module/Translations.class.php:36  $table_name = 'translation'
+lib/org/freemedsoftware/module/Translations.class.php:37  $patient_field = 'tpatient'
+lib/org/freemedsoftware/module/TypeOfService.class.php:37  $table_name = "tos"
+lib/org/freemedsoftware/module/UnfiledDocuments.class.php:36  $table_name = 'unfileddocuments'
+lib/org/freemedsoftware/module/UnreadDocuments.class.php:35  $table_name = 'unreaddocuments'
+lib/org/freemedsoftware/module/UserGroups.class.php:35  $table_name = "usergroup"
+lib/org/freemedsoftware/module/UserGroups.class.php:37  $order_field = "usergroupname"
+lib/org/freemedsoftware/module/UserPreferences.class.php:36  $table_name = "userpreferences"
+lib/org/freemedsoftware/module/Vitals.class.php:36  $table_name = "vitals"
+lib/org/freemedsoftware/module/Vitals.class.php:37  $patient_field = "patient"
+lib/org/freemedsoftware/module/WorkflowStatus.class.php:37  $table_name = "workflow_status"
+lib/org/freemedsoftware/module/WorkflowStatus.class.php:38  $order_field = "stamp"
+lib/org/freemedsoftware/module/WorkflowStatusType.class.php:36  $table_name = "workflow_status_type"
+lib/org/freemedsoftware/module/Xmr.class.php:37  $table_name = "xmr"
+lib/org/freemedsoftware/module/Xmr.class.php:38  $patient_field = "patient"
+lib/org/freemedsoftware/module/XmrDefinition.class.php:37  $table_name = "xmr_definition"
+lib/org/freemedsoftware/module/Zipcodes.class.php:36  $table_name = "zipcodes"
+lib/org/freemedsoftware/module/i18nLanguages.class.php:36  $table_name = "i18nlanguages"
+lib/org/freemedsoftware/core/EMRModule.class.php:139  $summary_order_by = 'id'
+lib/org/freemedsoftware/core/SupportModule.class.php:49  $order_field = 'id'
+
+--- EXPRESSION-SHAPED (24) ---
+lib/org/freemedsoftware/module/Authorizations.class.php:39  $order_fields = "authdtbegin,authdtend"
+lib/org/freemedsoftware/module/ChronicProblems.class.php:42  $order_fields = 'pdate,problem'
+lib/org/freemedsoftware/module/ClaimTypes.class.php:39  $order_field = "clmtpname,clmtpdescrip"
+lib/org/freemedsoftware/module/CoverageTypes.class.php:38  $order_field = "covtpname,covtpdescrip"
+lib/org/freemedsoftware/module/CurrentProblems.class.php:42  $order_fields = 'pdate,problem'
+lib/org/freemedsoftware/module/DiagnosisFamily.class.php:38  $order_field = "dfname, dfdescrip"
+lib/org/freemedsoftware/module/DicomModule.class.php:67  $summary_order_by = "d_stamp DESC"
+lib/org/freemedsoftware/module/DrugSampleInventory.class.php:38  $order_field = "logdate DESC"
+lib/org/freemedsoftware/module/IcdCodes.class.php:38  $order_field = "icd10code,icdnum"
+lib/org/freemedsoftware/module/Immunizations.class.php:69  $summary_order_by = 'dateof DESC,immunization.id'
+lib/org/freemedsoftware/module/InsuranceCompanyModule.class.php:72  $order_field = 'insconame, inscostate, inscocity'
+lib/org/freemedsoftware/module/PatientTag.class.php:38  $order_field = "datecreate,dateexpire"
+lib/org/freemedsoftware/module/PaymentModule.class.php:105  $summary_order_by = "payrecproc DESC, __actual_id"
+lib/org/freemedsoftware/module/PhotographicIdentification.class.php:59  $summary_order_by = "p_stamp DESC"
+lib/org/freemedsoftware/module/PlaceOfService.class.php:37  $order_field = "posname,posdescrip"
+lib/org/freemedsoftware/module/Practices.class.php:63  $order_field = 'pracname, citya, statea'
+lib/org/freemedsoftware/module/PreviousOperationsModule.class.php:40  $order_fields = 'odate,operation'
+lib/org/freemedsoftware/module/ProgressNotes.class.php:81  $summary_order_by = 'pnotesdt DESC,id'
+lib/org/freemedsoftware/module/ProviderModule.class.php:82  $order_field = 'phylname, phyfname'
+lib/org/freemedsoftware/module/RoomEquipment.class.php:37  $order_field = "reqname,reqdescrip"
+lib/org/freemedsoftware/module/Rules.class.php:39  $order_fields = "rule_type, rule_prio, rule_descrip"
+lib/org/freemedsoftware/module/TypeOfService.class.php:38  $order_field = "tosname,tosdescrip"
+lib/org/freemedsoftware/module/Vitals.class.php:122  $summary_order_by = 'dateof DESC'
+lib/org/freemedsoftware/module/WorkflowStatusType.class.php:37  $order_field = "status_order, status_name"
+
+--- CLAUSE-FRAGMENT (3) ---
+lib/org/freemedsoftware/module/PaymentModule.class.php:1139  $view_query = "procbalcurrent = '0'"
+lib/org/freemedsoftware/module/PaymentModule.class.php:1144  $view_query = "procbalcurrent !='0'"
+lib/org/freemedsoftware/module/PaymentModule.class.php:1153  $view_query = "1 == 1"
+
+--- DYNAMIC (3) ---
+lib/org/freemedsoftware/module/Pharmacy.class.php:60  $additional_fields = array ( "CONCAT(phcity, ', ', phstate) AS citystate" )
+lib/org/freemedsoftware/module/ShimStation.class.php:60  $additional_fields = array ( "psrname AS facility" )
+lib/org/freemedsoftware/api/PatientInterface.class.php:236  $patient_field = freemed::module_get_meta( $resolve['class'], 'patient_field' )
+
+--- EMPTY (1) ---
+lib/org/freemedsoftware/core/SupportModule.class.php:156  $archive_field = ''

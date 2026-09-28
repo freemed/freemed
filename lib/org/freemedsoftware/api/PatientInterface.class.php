@@ -25,6 +25,8 @@
 //
 //	Class to access patient functions.
 //
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
+
 class PatientInterface {
 
 	public function __constructor ( ) { }
@@ -225,11 +227,26 @@ class PatientInterface {
 			// Resolve original id and table
 			$resolve = $GLOBALS['sql']->queryRow( "SELECT m.module_table AS 'table', m.module_class AS 'class', p.oid AS oid FROM patient_emr p LEFT OUTER JOIN modules m ON m.module_table = p.module WHERE p.patient = ".$GLOBALS['sql']->quote( $patient )." AND p.id = " . ( (int) $patientFrom ) );
 
-			// Get patient field from meta data
+			// Get patient field from meta data. Both the field name and the
+			// table name arrive from the module registry (a database row), so
+			// they are NOT trusted code: validate them as identifiers and, on
+			// failure, log and refuse this statement rather than aborting the
+			// request (ruling R12 — a fatal in a clinical EMR caused by a data
+			// value is worse than a skipped attachment move).
 			$patient_field = freemed::module_get_meta( $resolve['class'], 'patient_field' );
+			$table_q        = SqlIdent::name( $resolve['table'] );
+			$field_q        = SqlIdent::name( $patient_field );
+			if ( $table_q === false or $field_q === false ) {
+				syslog( LOG_ERR, get_class($this).'::MoveEmrAttachments| refusing update: '
+					. 'module_table=' . var_export($resolve['table'], true)
+					. ' patient_field=' . var_export($patient_field, true)
+					. ' are not valid SQL identifiers' );
+				$success = false;
+				continue;
+			}
 
 			// Move actual record
-			$result = $GLOBALS['sql']->query( "UPDATE " . $resolve['table'] . " SET ${patient_field} = " . $GLOBALS['sql']->quote( (int) $patientTo ) . " WHERE id = " . $GLOBALS['sql']->quote( (int) $resolve['oid'] ) );
+			$result = $GLOBALS['sql']->query( "UPDATE " . $table_q . " SET " . $field_q . " = " . $GLOBALS['sql']->quote( (int) $patientTo ) . " WHERE id = " . $GLOBALS['sql']->quote( (int) $resolve['oid'] ) );
 			$success &= (boolean) $result;
 
 			// Move any annotations, if they exist

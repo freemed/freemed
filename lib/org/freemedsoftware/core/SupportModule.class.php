@@ -23,6 +23,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('org.freemedsoftware.core.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
 
 // Class: org.freemedsoftware.core.SupportModule
 //
@@ -156,6 +157,10 @@ class SupportModule extends BaseModule {
 
 	// contructor method
 	public function __construct () {
+		// Enforce the SQL identifier invariant for this module's class-declared
+		// identifiers before anything can build a query from them.
+		$this->_ValidateIdentifiers();
+
 		// Store the rpc map in the meta information
 		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		$this->_SetMetaInformation('distinct_fields', $this->distinct_fields);
@@ -167,6 +172,74 @@ class SupportModule extends BaseModule {
 		// Call parent constructor
 		parent::__construct();
 	} // end function SupportModule
+
+	// Method: _ValidateIdentifiers
+	//
+	//	Enforce the SQL identifier invariant (Task 2.6a / ruling R12) for every
+	//	identifier this class declares in source: $table_name, $order_field,
+	//	$archive_field and $additional_fields.
+	//
+	//	These values come from the module source, never from input or from the
+	//	database, so a failure is a developer error: it is reported loudly with
+	//	trigger_error() and must be caught in development rather than degraded in
+	//	silence. (Values that arrive from a DB row or from configuration are
+	//	handled the other way round — log and refuse; see
+	//	api/PatientInterface.class.php::MoveEmrAttachments.)
+	//
+	//	$additional_fields is the one allowlisted raw-SQL case: its members are
+	//	code-authored expressions by design (SqlIdent::expression() checks the
+	//	shape — no statement terminator, no comment, must end in "AS <alias>").
+	//
+	//	An undeclared/empty identifier is not a failure: it is simply absent.
+	//	$order_field defaults to 'id' and $archive_field to ''.
+	//
+	// See Also:
+	//	<SqlIdent>
+	//
+	protected function _ValidateIdentifiers ( ) {
+		$shapes = array (
+			'table_name'    => 'name',
+			'order_field'   => 'columns',
+			'archive_field' => 'name',
+		);
+		foreach ( $shapes AS $var => $shape ) {
+			$value = $this->$var;
+			if ( $value === NULL or $value === '' or $value === false ) { continue; }
+			$ok = ( $shape == 'name' ) ? SqlIdent::valid( $value ) : SqlIdent::validColumns( $value );
+			if ( ! $ok ) {
+				trigger_error(
+					get_class($this).'::$'.$var.' = '
+					. var_export($value, true)
+					. ' is not a valid SQL identifier (expected '
+					. ( $shape == 'name' ? 'a name, optionally table-qualified' : 'a names/ASC-DESC list' )
+					. '); fix the module declaration — see lib/org/freemedsoftware/core/SqlIdent.class.php',
+					E_USER_ERROR
+				);
+			}
+		}
+
+		// Trusted raw expressions (see method comment)
+		if ( $this->additional_fields !== NULL and $this->additional_fields !== false ) {
+			if ( ! is_array( $this->additional_fields ) ) {
+				trigger_error(
+					get_class($this).'::$additional_fields must be an array of code-authored SQL'
+					. ' expressions, got ' . var_export($this->additional_fields, true),
+					E_USER_ERROR
+				);
+			}
+			foreach ( $this->additional_fields AS $expression ) {
+				if ( SqlIdent::expression( $expression ) === false ) {
+					trigger_error(
+						get_class($this).'::$additional_fields contains '
+						. var_export($expression, true)
+						. ' which is not a valid "expression AS alias" fragment;'
+						. ' it is the one allowlisted raw-SQL case and must stay code-authored',
+						E_USER_ERROR
+					);
+				}
+			}
+		}
+	} // end method _ValidateIdentifiers
 
 	// override check_vars method
 	public function check_vars ($nullvar = "") {
@@ -471,22 +544,28 @@ class SupportModule extends BaseModule {
 				$condition=" WHERE ".$this->archive_field." != 1 OR ".$this->archive_field." IS NULL ";	
 		}
 		if($fieldValues!=NULL){
-			$count=0;
-			$fieldsq='';
-			foreach ($fieldValues AS $k => $v) {
-				if($count==0){
-					$fieldsq=$k."= '".$v."' ";
+			// Category C rewrite (Task 2.6a): the field names come from the
+			// caller, so they are validated as identifiers and an invalid one is
+			// refused with a log line rather than spliced into the clause
+			// (ruling R12 — no fatal from a data value); the values are bound
+			// through the driver's quote().
+			$c = array();
+			foreach ((array) $fieldValues AS $k => $v) {
+				$name = SqlIdent::name( $k );
+				if ( $name === false ) {
+					syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid criteria field '.var_export($k, true) );
+					continue;
+				}
+				$c[] = $name." = ".$GLOBALS['sql']->quote( $v );
+			}
+			$fieldsq = join( ' AND ', $c );
+			if ( $fieldsq != '' ) {
+				if($condition==''){
+					$condition=" WHERE ".$fieldsq;
 				}
 				else{
-					$fieldsq=$fieldsq." AND ".$k."= '".$v."' ";
+					$condition=$condition." AND ".$fieldsq;
 				}
-				$count++;				
-			}
-			if($condition==''){
-				$condition=" WHERE ".$fieldsq;	
-			}
-			else{
-				$condition=$condition." AND ".$fieldsq;	
 			}
 		}
 		//return $condition;
