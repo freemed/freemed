@@ -339,18 +339,23 @@ class ProcedureModule extends EMRModule {
 		global $sql;
 		$version = freemed::module_version($this->MODULE_NAME);
 
+		// Category B: the table identifier is validated once and reused
+		// (refused by log, R12 — the maintenance handler then does nothing).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_update| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+
 		// Version 0.3
 		//
 		//	Added medicaid resubmission and reference codes
 		//	Added outside lab charges
 		//
 		if (!version_check($version, '0.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN procmedicaidref VARCHAR(20) AFTER procclmtp');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN procmedicaidresub VARCHAR(20) AFTER procmedicaidref');
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN proclabcharges REAL AFTER procmedicaidresub');
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN procmedicaidref VARCHAR(20) AFTER procclmtp', $table));
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN procmedicaidresub VARCHAR(20) AFTER procmedicaidref', $table));
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN proclabcharges REAL AFTER procmedicaidresub', $table));
 		}
 
 		// Version 0.4
@@ -358,8 +363,7 @@ class ProcedureModule extends EMRModule {
 		//	Added procedure status (procstatus)
 		//
 		if (!version_check($version, '0.4')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN procstatus INT UNSIGNED AFTER proclabcharges');
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN procstatus INT UNSIGNED AFTER proclabcharges', $table));
 		}
 
 		// Version 0.4.1
@@ -367,9 +371,7 @@ class ProcedureModule extends EMRModule {
 		//	procstatus is now a varchar(50)
 		//
 		if (!version_check($version, '0.4.1')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' '.
-				'CHANGE COLUMN procstatus '.
-				'procstatus VARCHAR(50)');
+			$sql->query(sprintf('ALTER TABLE %s CHANGE COLUMN procstatus procstatus VARCHAR(50)', $table));
 		}
 
 		// Version 0.4.2
@@ -377,8 +379,8 @@ class ProcedureModule extends EMRModule {
 		//	add procslidingscale
 		//
 		if (!version_check($version, '0.4.2')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN procslidingscale CHAR(1)');
-			$sql->query('UPDATE '.$this->table_name.' SET procslidingscale=\'\' WHERE id>0');
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN procslidingscale CHAR(1)', $table));
+			$sql->query(sprintf('UPDATE %s SET procslidingscale=%s WHERE id>0', $table, $GLOBALS['sql']->quote('')));
 		}
 
 		// Version 0.4.3
@@ -386,8 +388,8 @@ class ProcedureModule extends EMRModule {
 		//	add proctosoverride
 		//
 		if (!version_check($version, '0.4.3')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proctosoverride INT UNSIGNED AFTER procslidingscale');
-			$sql->query('UPDATE '.$this->table_name.' SET proctosoverride=0 WHERE id>0');
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN proctosoverride INT UNSIGNED AFTER procslidingscale', $table));
+			$sql->query(sprintf('UPDATE %s SET proctosoverride=0 WHERE id>0', $table));
 		}
 
 		// Version 0.5.0
@@ -395,9 +397,9 @@ class ProcedureModule extends EMRModule {
 		//	add proccptmod{2,3}
 		//
 		if (!version_check($version, '0.5.0')) {
-			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proccptmod2 INT UNSIGNED AFTER proccptmod');
-			$sql->query('ALTER TABLE '.$this->table_name.' ADD COLUMN proccptmod3 INT UNSIGNED AFTER proccptmod2');
-			$sql->query('UPDATE '.$this->table_name.' SET proccptmod2=0,proccptmod3=0 WHERE id>0');
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN proccptmod2 INT UNSIGNED AFTER proccptmod', $table));
+			$sql->query(sprintf('ALTER TABLE %s ADD COLUMN proccptmod3 INT UNSIGNED AFTER proccptmod2', $table));
+			$sql->query(sprintf('UPDATE %s SET proccptmod2=0,proccptmod3=0 WHERE id>0', $table));
 		}
 	} // end method _update
 	
@@ -484,8 +486,14 @@ class ProcedureModule extends EMRModule {
 	}
 	
 	public function getPatientProcHistory($patient){
-		$query="SELECT i.icd9code AS icode, i.icd9descrip AS idesc, CONCAT(pr.procdt,' to ',IFNULL(pr.procdtend,'')) AS pdate FROM ".$this->table_name. " pr LEFT OUTER JOIN icd9 i ON i.id=pr.procdiag1 ".
-		" WHERE procpatient=".$GLOBALS['sql']->quote( $patient )." AND procbalcurrent>0 ORDER BY procdt DESC";
+		// Category B: table_name identifier; Category A: the patient id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::getPatientProcHistory| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$query = sprintf("SELECT i.icd9code AS icode, i.icd9descrip AS idesc, CONCAT(pr.procdt,' to ',IFNULL(pr.procdtend,'')) AS pdate FROM %s pr LEFT OUTER JOIN icd9 i ON i.id=pr.procdiag1  WHERE procpatient=%s AND procbalcurrent>0 ORDER BY procdt DESC", $table, $GLOBALS['sql']->quote( $patient ));
 		return $GLOBALS['sql']->queryAll( $query );
 	}
 } // end class ProcedureModule
