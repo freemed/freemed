@@ -208,14 +208,15 @@ class Scheduler {
 
 		$this_date = $datefrom ? $this->_ValidDate($datefrom) : date('Y-m-d');
 		if ( $this_date === false ) {
+			// This method's own empty answer is null (see the tail), not array().
 			syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRangeByProviderGroup| refusing non-Y-m-d date_from '.var_export($datefrom, true) );
-			return array();
+			return null;
 		}
 		if ($dateto != NULL) {
 			$to_date = $this->_ValidDate($dateto);
 			if ( $to_date === false ) {
 				syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRangeByProviderGroup| refusing non-Y-m-d date_to '.var_export($dateto, true) );
-				return array();
+				return null;
 			}
 			// Category A: quote() supplies the surrounding quotes.
 			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
