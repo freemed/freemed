@@ -54,7 +54,32 @@
 #
 set -u
 
-SELF="${BASH_SOURCE[0]}"
+SELF_SRC="${BASH_SOURCE[0]:-}"
+# Resolve the script to an absolute, symlink-free path. `--self-test` re-invokes
+# this file in a child bash, so a bare `$BASH_SOURCE` breaks whenever the script
+# was found through PATH (BASH_SOURCE is then a bare name) or through a symlinked
+# shim: the child's working directory may not hold it. An absolute real path
+# always works.
+resolve_self() {
+  local p="$1"
+  if command -v realpath >/dev/null 2>&1; then
+    realpath -m -- "$p" 2>/dev/null && return 0
+  fi
+  if readlink -f -- "$p" >/dev/null 2>&1; then
+    readlink -f -- "$p" && return 0
+  fi
+  printf '%s' "$p"
+}
+SELF="$SELF_SRC"
+case "$SELF_SRC" in
+  */*) ;;
+  *) SELF="$(command -v -- "$SELF_SRC" 2>/dev/null || printf '%s' "$SELF_SRC")" ;;
+esac
+case "$SELF" in
+  /*) ;;
+  *) SELF="${PWD%/}/$SELF" ;;
+esac
+SELF="$(resolve_self "$SELF")"
 BASE="${BASE:-http://localhost:38081}"
 DOCROOT="${DOCROOT:-/var/www/html}"
 TIMEOUT="${TIMEOUT:-15}"
@@ -468,6 +493,15 @@ PYEOF
 
 case "${1:-}" in
   --self-test|--selftest)
+    # The self-test re-invokes this file in a child bash, so it needs the script
+    # to exist on disk under a usable path. Fail with an explanation instead of a
+    # confusing child-process error.
+    if [ ! -f "$SELF" ]; then
+      printf 'self-test: cannot re-invoke this script: %s is not a readable file.\n' "${SELF:-<no path>}" >&2
+      printf '            The probe set re-runs itself with a different BASE, which needs a real\n' >&2
+      printf '            script path (a piped invocation such as `cat ... | bash` has none).\n' >&2
+      exit 2
+    fi
     selftest
     exit $?
     ;;

