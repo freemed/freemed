@@ -32,12 +32,18 @@ $file = isset ( $parts[1] ) ? $parts[1] : '';
 
 // The page token is a simple name - the Dojo UI asks for "dojo_<locale>" (see
 // ui/dojo/view/org.freemedsoftware.ui.chtmlbrowser.tpl) - so a separator, a
-// dot-segment, a percent-escape, a NUL or a backslash never belongs in it.
-// Reject those here rather than handing them to the filesystem: the forced
-// ".chtml" suffix and the file_exists() check below are confinement, not
-// validation. See tests/security/evidence/path-sink-audit.md (Task 1.3) and
+// dot-segment, a percent-escape, a NUL, a backslash or a newline never belongs
+// in it. Reject those here rather than handing them to the filesystem: the
+// forced ".chtml" suffix and the file_exists() check below are confinement, not
+// validation.
+//
+// The anchor is \z, not $: PCRE's $ also matches immediately BEFORE a final
+// newline, so '/^[A-Za-z0-9._-]+$/' accepts "abc\n" (measured on PHP 8.3) and
+// Apache hands PHP exactly that - a real newline in PATH_INFO - making the
+// validation a no-op for that token class. \z matches only at the true end of
+// the subject. See tests/security/evidence/path-sink-audit.md (Task 1.3) and
 // tests/security/repro-chtml-path.sh, the regression gate for this row.
-if ( ! preg_match ( '/^[A-Za-z0-9._-]+$/', $file ) ) {
+if ( ! preg_match ( '/^[A-Za-z0-9._-]+\z/', $file ) ) {
 	Header ( 'HTTP/1.1 400 Bad Request' );
 	print 'Invalid CHTML page name.';
 	exit;
