@@ -672,7 +672,9 @@ class PatientInterface {
 		}
 
 		$query = "SELECT * FROM patient WHERE ( ".join(' OR ', $q)." ) ".
-			"AND ( ISNULL(ptarchive) OR ptarchive=0 ) LIMIT $limit";
+			// Category A: LIMIT is a relay-reachable write primitive (see
+			// UserInterface::GetRecords); $limit is cast, not interpolated.
+			"AND ( ISNULL(ptarchive) OR ptarchive=0 ) LIMIT ".intval($limit);
 		syslog(LOG_INFO, "PICK| $query");
 		$result = $GLOBALS['sql']->queryAll( $query );
 		if (count($result) < 1) { return array (); }
