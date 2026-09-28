@@ -158,20 +158,39 @@ Deployment hardening - what the shipped web-server configuration now refuses
 
 5. register_argc_argv = Off
 
-   PHP's compiled default for this setting is On, and the php:8.3 images this
-   project's containers run activate no php.ini at all (`php --ini` -> "Loaded
-   Configuration File: (none)"; php.ini-development and php.ini-production are
-   present and inert). With it On, PHP registers $_SERVER['argc'] = 1 and
-   $_SERVER['argv'] = ["physician=1"] for a request that has a query string, so
-   any script that grepped those to detect a command line treated a web request
-   as a CLI call and halted with a masked empty 200. That is what the old
-   vcalendar.php guard did (fixed separately: it tests PHP_SAPI now, which no
-   ini setting can move), and it is the trap for anything that copies the
-   idiom. Measured by mounting this exact docker/php-custom.ini as a conf.d
-   drop-in and asking a web SAPI for /probe.php?physician=1: with no ini
-   mounted, register_argc_argv=On, argc=1, argv=["physician=1"] and the old
-   guard halts; with this file mounted, register_argc_argv=Off (ini_get returns
-   the empty string for that value), argc/argv unset and the old guard runs.
+   PHP's compiled default for this setting is On, so without the line below a
+   request that carries a query string looks like a command line to any script
+   that guards on $_SERVER['argc'] / $_SERVER['argv']: the request halts with an
+   empty 200 instead of running. That masking is what made the old vCalendar CLI
+   guard swallow every query-string request (vcalendar.php now tests PHP_SAPI
+   instead, which no ini setting can move), and it is the trap for anything else
+   that copies the idiom.
+
+   PROVENANCE OF THE MEASUREMENT, stated exactly because the setting is a
+   guarantee only where the file is read. The ini behaviour below was measured
+   on the VERIFICATION image (freemed-verify-php:apache, built FROM php:8.3-
+   apache in this project's throwaway harness, drop-ins read from
+   /usr/local/etc/php/conf.d/), NOT on the image this project's
+   docker/docker-compose.yml ships, which is jbuchbinder/moodle-php-8.3-fpm
+   (Bitnami layout) and which was not available to inspect. What that means for
+   the shipped container, precisely: the drop-in mount
+   (/opt/bitnami/php/etc/conf.d/custom.ini) predates this change and carries
+   settings the deployment has been using (memory_limit, max_input_vars), so the
+   mechanism is in use - but a Bitnami or php.ini-production install normally
+   loads a php.ini that already sets register_argc_argv = Off, so on the shipped
+   image the directive may be the second statement of the same fact rather than
+   the only one. The explicit `Off` is still the right line to ship: wherever
+   the file is read it wins, and it is the half of the pair that is verifiable.
+
+   Measured with this exact docker/php-custom.ini mounted as a conf.d drop-in in
+   that verification image, php 8.3.35, web SAPI (cli-server), request
+   /argv.php?physician=1: with no ini mounted, register_argc_argv=On, argc=1,
+   argv=["physician=1"] and the old guard halts; with this file mounted,
+   register_argc_argv=Off (ini_get returns the empty string for that value),
+   argc/argv unset and the old guard runs. In the same image, with no php.ini at
+   all, `php --ini` reports "Loaded Configuration File: (none)" and
+   php.ini-development / php.ini-production sit unused next to it - that is the
+   image the number comes from.
 
    The setting is effective for the web SAPIs (mod_php, php-fpm, cli-server).
    The CLI SAPI reports it On whatever the ini says (measured with this file
