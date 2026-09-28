@@ -308,3 +308,187 @@ sites not cleared: <none>
 | config | 34 | acl_patient,auto_print_ptrcpt,bypass_comm_err,calbreakhour,calehr,calinterval,calintervalheight,calshow24hourclock,calshr,check_pump_status,clinic_mode,fax_nocover,fed_pov_inc,fed_pov_level,form_autosave,form_autosave_interval,form_review_reminder,max_billable,metric_system,mirth_enable,mirth_endpoint,remitt_cbpass,remitt_cbuser,remitt_elig,remitt_pass,remitt_url,remitt_user,sliding_fee,work_list,xmpp_host,xmpp_notify,xmpp_pass,xmpp_port,xmpp_user |
 +-------------+-----++
 
+
+# =============================================================================
+# FIX ROUND 1 - the C1 inner gate (api/UserInterface.class.php:Multicall)
+# =============================================================================
+#   checkout commit  : 28810521888ccc47c2b713df4cc1baf70b03d3c6 plus the fix-round-1
+#                      working tree. These rows were captured from the working tree
+#                      BEFORE the fix-round-1 commits were made; the commit SHAs are
+#                      named in the task-2.8-report.md "Fix round 1" section.
+#   branch           : security/mitigation-2026-09
+#   served tree      : the harness's rsync copy (sync-code.sh). Phase C prints
+#                      `byte-identical to the checkout: YES` for
+#                      data/config/relay-allowlist.php, and cmp confirms the same for
+#                      lib/org/freemedsoftware/core/Relay.class.php and
+#                      lib/org/freemedsoftware/api/UserInterface.class.php.
+#   server           : http://localhost:38081 (Apache + mod_php, docroot
+#                      /var/www/html) - the container that has the syslog sink.
+#   syslog           : /tmp/freemed-syslog.log. NOTE: when this round started the sink
+#                      was gone (a container restart by another workstream had removed
+#                      both /dev/log and the listener process), so requests produced no
+#                      syslog line at all. It was re-started with the harness's own
+#                      vcal-work/syslog-sink.pl (`docker exec -d ... perl
+#                      /tmp/syslog-sink.pl /tmp/freemed-syslog.log`, then `chmod 777
+#                      /dev/log`), and every syslog line quoted below is from after
+#                      that. Rows measured before the sink was alive are deliberately
+#                      NOT included.
+#   database         : MariaDB 10.11 in freemed-verify-db. The pinned fingerprint was
+#                      taken before Phase A and again after the regression run, and is
+#                      identical:
++-------------+-----+---------------------------+
+| tbl         | n   | ids                       |
+| entemplate  | 1   | 1                         |
+| payrec      | 1   | 3                         |
+| patient_emr | 1   | 5                         |
+| user        | 2   | 1,2                       |
+| patient     | 0   | NULL                      |
+| procrec     | 0   | NULL                      |
+| vitals      | 0   | NULL                      |
+| modules     | 135 | 134 distinct module_class |
+| config      | 34  | NULL                      |
++-------------+-----+---------------------------+
+#                      md5 of both normalised outputs:
+#                      bda8de4952ac9783af0b603fbdf5923e (before, and the same after).
+#                      No config row was created.
+#   session          : the harness's /login-probe.php. No credential appears in this
+#                      section; Login.Validate's relay body is the literal `true`.
+#   probe script     : ra-fix1-probe.sh, scratch only (never committed). It edits ONLY
+#                      the SERVED copy of app/data/config/relay-allowlist.php, and only
+#                      between phases; Phase C restores it from the checkout.
+#   redaction        : no credentials, no 32-hex digests, no PHI. Nothing below is
+#                      hand-edited; each block is the probe's own output.
+#                      `remote=192.168.128.1` is the Docker bridge gateway and is kept,
+#                      as everywhere else in this file.
+#
+# THE BATCH (one request, three inner calls; the UNLISTED one is in the MIDDLE, so a
+# refusal that aborted the batch would also lose the call AFTER it):
+#   POST /relay.php/json/org.freemedsoftware.api.UserInterface.Multicall
+#   param0=[{"method":"...UserInterface.GetUsers","parameters":["Ada"]},
+#           {"method":"...UserInterface.GetUserType","parameters":[]},
+#           {"method":"...UserInterface.GetCurrentUsername","parameters":[]}]
+#   ...UserInterface.Multicall IS listed (1 shipped entry); ...GetUsers and
+#   ...GetCurrentUsername are listed; ...GetUserType is NOT (0 shipped entries).
+#
+# =============================================================================
+# PHASE A - SHIPPED state (enforce = false, LOG-ONLY): the inner call still RUNS
+# =============================================================================
+== Phase A: SHIPPED state (enforce = false, LOG-ONLY) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served data file : app/data/config/relay-allowlist.php
+   served enforce   : 'enforce' => false,
+
+-- A1 login (login-probe establishes the session) --
+  Login.Validate()=true
+  Login.LoggedIn()=true
+  ASSERTED: Login.LoggedIn()=true
+
+-- A2 the DIRECT unlisted call is the baseline (log-only: runs) --
+  UserInterface.GetUserType (UNLISTED, direct) EXECUTES            ASSERTED
+      body: "super" [http=200]
+      syslog: 2026-09-28 20:49:14 <132>Sep 28 20:49:14 freemed[254]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+
+-- A3 THE C1 PROOF, log-only: Multicall batch [listed, UNLISTED, listed] --
+  inner slot 0 (LISTED GetUsers) still runs                        ASSERTED
+      body: [[["Ada  Admin, ","1"]],"super","Administrator"] [http=200]
+  inner slot 1 (UNLISTED GetUserType) RUNS in log-only             ASSERTED
+      body: [[["Ada  Admin, ","1"]],"super","Administrator"] [http=200]
+  inner slot 2 (LISTED GetCurrentUsername) still runs              ASSERTED
+      body: [[["Ada  Admin, ","1"]],"super","Administrator"] [http=200]
+      allowlist entries matching ...UserInterface.GetUserType: 0
+      allowlist entries matching ...UserInterface.Multicall:    1
+      syslog: 2026-09-28 20:49:14 <132>Sep 28 20:49:14 freemed[250]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+      inner-miss log lines naming GetUserType in this request: 1
+
+-- A4 LISTED public.*, NO cookie: the login bypass is unchanged --
+  public.Login.GetLanguages, no cookie, returns the languages      ASSERTED
+      body: [["Deutsch","de_DE"],["English","en_US"],["Spanish (Mexico)","es_MX"],["Francais","fr_FR"],["Polski","pl_PL"]] [http=200]
+      syslog: 2026-09-28 20:49:14 <134>Sep 28 20:49:14 freemed[251]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+
+residual mismatches in this phase: 0
+
+# =============================================================================
+# PHASE B - ENFORCING (enforce = true): THE C1 BYPASS IS DEAD
+# =============================================================================
+#   Read `the UNLISTED inner call is DEAD: no 'super' anywhere` together with the
+#   review's proof from the enforcing state:
+#       === ENFORCING: unlisted+session (expect INVALID_CALL) ===
+#       INVALID_CALL
+#       === ENFORCING: Multicall -> unlisted inner method ===
+#       ["super"]
+#   The same shape now answers
+#       [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"]
+#   i.e. the unlisted inner method is refused and the refusal is PER CALL: the listed
+#   call BEFORE it and the listed call AFTER it both still dispatch. The OUTER method
+#   (Multicall) is listed, so the only `Relay: method` line the request produces is the
+#   INNER gate speaking, in the enforcing wording.
+== Phase B: ENFORCING state (enforce = true) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served enforce   : 'enforce' => true,
+   php sees         : true patterns=323
+
+-- B1 the login flow itself (this call is listed) --
+  ASSERTED: login-probe still authenticates under enforcement
+
+-- B2 the DIRECT unlisted call is now REFUSED (the baseline) --
+  UserInterface.GetUserType (UNLISTED, direct) -> INVALID_CALL     ASSERTED
+      body: INVALID_CALL [http=200]
+      syslog: 2026-09-28 20:49:19 <132>Sep 28 20:49:19 freemed[535]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+
+-- B3 THE C1 PROOF, ENFORCING: Multicall batch [listed, UNLISTED, listed] --
+  the UNLISTED inner call is DEAD: no 'super' anywhere             ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  inner slot 1 is refused with INVALID_CALL in its own slot        ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  inner slot 0 (LISTED) still returns its rows (per-call)          ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  inner slot 2 (after the refusal) STILL runs (batch not aborted)  ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+      syslog: 2026-09-28 20:49:19 <132>Sep 28 20:49:19 freemed[536]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      inner-miss log lines naming GetUserType in this request: 1
+      (the OUTER Multicall is listed, so it produces no miss line of its own:
+       every 'Relay: method' line above is the INNER gate speaking.)
+
+residual mismatches in this phase: 0
+
+# =============================================================================
+# PHASE C - the served tree restored
+# =============================================================================
+== Phase C: restore the served data file from the checkout ==
+   served enforce   : 'enforce' => false,
+   pattern entries  : 323
+   byte-identical to the checkout: YES
+
+residual mismatches in this phase: 0
+
+# =============================================================================
+# WHAT THIS SECTION PROVES, AND WHAT IT DOES NOT
+# =============================================================================
+#   Proves (measured, both states, real HTTP, a real session, in the Apache stack the
+#   allowlist runs in):
+#     * in the enforcing state the Multicall re-dispatch of an UNLISTED method is
+#       refused with INVALID_CALL placed in that slot, no 'super' is returned, and the
+#       neighbouring LISTED inner calls still dispatch - before AND after the refusal
+#       (per-call, not batch-wide);
+#     * in the shipped log-only state the same inner call still executes and is logged
+#       with the identical miss line and the log-only wording, so the log-only stage
+#       measures the INNER call set as well as the outer one;
+#     * the outer relay check is unchanged (the direct unlisted call is the baseline in
+#       both states), the login flow still authenticates in both states, and a listed
+#       public.* call still works with no cookie;
+#     * the served tree is byte-identical to the checkout afterwards.
+#   Does NOT prove:
+#     * anything about a real compiled GWT client (there is none in this checkout); the
+#       batch above is probe-shaped, not client-shaped - the gap named in this file's
+#       header still stands;
+#     * that the eight ModuleInterface re-dispatch wrappers are gated. They are NOT
+#       gated in this round: each dispatches a FIXED literal method
+#       ('add'|'del'|'GetRecord'|'GetRecords'|'mod'|'picklist'|'RenderHtmlView'|
+#       'to_text') against a CALLER-CHOSEN module class - a re-dispatch on the CLASS
+#       axis rather than the method-name axis. It is disclosed with a measurement, a
+#       verdict and a recommended follow-up in the task-2.8-report.md "Fix round 1"
+#       section (129 of the 146 (module, literal) pairs that exist are NOT in the
+#       shipped list). Gating it changes enforcement behaviour on an axis no ruling
+#       covers, so it is reported rather than made silently here.
+#     * the XML-RPC provider or the JSON-body transport (unchanged from the original
+#       evidence: the check is in the shared handle_request()).
