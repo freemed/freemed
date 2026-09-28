@@ -21,6 +21,8 @@
  // along with this program; if not, write to the Free Software
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist');
+
 class Relay {
 
 	protected $query_string; // from URL
@@ -47,6 +49,30 @@ class Relay {
 				syslog( LOG_INFO, "Access attempt for '${method}' denied due to user not being logged in" );
 				return 'INVALID_SESSION';
 				trigger_error( "Access attempt for '${method}' denied due to user not being logged in", E_USER_ERROR );
+			}
+		}
+
+		// Deny-by-default at the relay (Task 2.8). CallMethod() instantiates ANY
+		// registered class and calls ANY public method with request-supplied
+		// arguments, and this check runs for EVERY method -- including the
+		// org.freemedsoftware.public.* namespace that skips the guard above -- so
+		// the *next* quoting omission is not remotely reachable just because the
+		// caller has a session. The call set lives in
+		// data/config/relay-allowlist.php (Relay_Allowlist, doc/RELAY_ALLOWLIST).
+		//
+		// A miss is ALWAYS logged, with the method and the remote address, so an
+		// operator can act on it. Whether it is REFUSED depends on the site's
+		// rollout stage: shipped default is enforce = false, which logs and lets
+		// the call run (the call set was never exercised by a real client in this
+		// tree), and enforce = true answers INVALID_CALL.
+		if ( ! Relay_Allowlist::allowed ( $method ) ) {
+			$relay_miss_enforce = Relay_Allowlist::enforce();
+			$relay_miss_method = is_string($method) ? $method : '(non-string)';
+			$relay_miss_remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-';
+			$relay_miss_stage  = $relay_miss_enforce ? 'refused (INVALID_CALL)' : 'LOG-ONLY, call still executed';
+			syslog( LOG_WARNING, "Relay: method '{$relay_miss_method}' is not in the relay allowlist (remote={$relay_miss_remote}, {$relay_miss_stage})" );
+			if ( $relay_miss_enforce ) {
+				return 'INVALID_CALL';
 			}
 		}
 

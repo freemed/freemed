@@ -1,0 +1,163 @@
+$Id$
+
+Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
+
+
+1. SUMMARY
+
+   relay.php used to dispatch ANY method of ANY registered class, with arguments
+   taken from the request. Its only gate was "is someone logged in": the method
+   string went into lib/loader.php's CallMethod(), which resolves the namespace to
+   a file, instantiates the class and calls the method. So every quoting omission
+   anywhere in the tree was remotely reachable by anyone holding a session, and
+   nothing in the request distinguished a method the client actually calls from a
+   method that merely happens to exist.
+
+   The relay now consults an allowlist of relay method strings before it
+   dispatches (Relay::handle_request(), after the LoggedIn guard, so both
+   providers - Json and Xmlrpc - inherit it). A method that is not named in the
+   list is a MISS. The list lives in data/config/relay-allowlist.php; the matcher
+   is lib/org/freemedsoftware/core/Relay_Allowlist.class.php.
+
+   The check runs for EVERY method, including the org.freemedsoftware.public.*
+   namespace. That namespace still skips the login guard (relay.php's only
+   validation is the provider name, and the login flow runs before there is a
+   session), but it no longer skips this.
+
+   THIS CONTROL SHIPS IN LOG-ONLY MODE. 'enforce' => false. A MISS IS LOGGED AT
+   LOG_WARNING AND THE CALL STILL EXECUTES. See section 2 - the reason is not
+   timidity, it is that the call set in the list has never been exercised by a
+   real client in this tree, and enforcing a call set no real client has used is
+   how a security control becomes a production outage.
+
+   This is NOT an authorization check. It answers "is this method part of the
+   relay's call set", not "may this user call it". Per-method access control
+   remains each module's job, and nothing here changes it.
+
+
+2. WHY THE DEFAULT IS LOG-ONLY, AND WHAT IT COSTS
+
+   The list was built from the best enumeration this tree can produce, and the
+   enumeration is committed with per-pattern provenance as
+   tests/security/evidence/relay-callset.txt. It is not the same thing as a real
+   client smoke pass: there is no compiled GWT client in this checkout, so no
+   browser session has ever exercised this call set. The tiers, in descending
+   order of confidence:
+
+     * live-probe - methods this mitigation has already driven against a running
+       server (the four fixed SQL-injection sites' methods, plus the batch-B /
+       batch-C / 2.6f probe sets). Real, measured, client-shaped calls.
+     * gwtphpmap - lib/org/freemedsoftware/gwt/**/*.gwtphpmap.inc.php, the
+       shipped GWT service map's client-to-relay table. The strongest
+       machine-readable evidence of what the compiled client asks for.
+     * public-namespace - the public/* call sites in the client and the
+       templates, plus the remaining public methods of those same classes,
+       because relay.php's login-guard exemption means a missing entry breaks the
+       install or login flow itself.
+     * source-mine - literals resolved out of the client and UI trees, kept only
+       where the class file exists and the method is public. This is the tier
+       most likely to be incomplete for a real session.
+
+   With 'enforce' => false all of that is a measurement rather than a bet: an
+   entry this enumeration missed is logged and runs, and the log is the list of
+   what to add before turning enforcement on.
+
+
+3. THE SWITCH, AND HOW TO TURN ENFORCEMENT ON
+
+   data/config/relay-allowlist.php, 'enforce':
+
+       false   LOG-ONLY. A miss is logged at LOG_WARNING with the method, the
+               remote address and whether it was refused; the call executes.
+               This is the shipped value.
+       true    ENFORCING. A miss is logged the same way and answered with
+               INVALID_CALL, and the method does not run.
+
+   Procedure - do not skip to step 4:
+
+     1. Deploy with 'enforce' => false (as shipped).
+     2. Verify by hand that the control is live: a method NOT in the list must
+        log. Any session, any unlisted method, e.g.
+            POST /relay.php/json/org.freemedsoftware.api.UserInterface.getRel
+        prints to syslog
+            Relay: method '...' is not in the relay allowlist
+            (remote=<ip>, LOG-ONLY, call still executed)
+        If nothing is logged, the control is not running and step 4 would be
+        theatre. (Set the test up the other way round if the site is already
+        enforcing: the line then says "refused (INVALID_CALL)" and the body is
+        the string INVALID_CALL.)
+     3. Use the system normally on the real compiled client - every screen,
+        report, print, export and the installer - for long enough to cover this
+        site's workflows, and watch for misses:
+            grep "Relay: method" /var/log/syslog
+        Add each method named there to 'patterns'. Copy the string from the log
+        line; matching is case-insensitive for the method name, so its case does
+        not have to match the class's spelling.
+     4. When the log is quiet, set 'enforce' => true.
+
+   IMPORTANT - A CONFIG EDIT IS NOT INSTANT. PHP caches the data file through
+   OPcache: with the default opcache.revalidate_freq = 2 a worker can still serve
+   the previous value for a couple of seconds after the file changes. Give it a
+   moment, or reload PHP, before believing that the running server agrees with
+   the file you just edited. (Measured on the verification stack: the change was
+   reflected after ~1s.)
+
+   IMPORTANT - A MISSING DATA FILE DOES NOT ENFORCE. If
+   data/config/relay-allowlist.php is unreadable, the relay logs a warning and
+   falls back to log-only rather than refusing every call. That is the
+   outage-safe direction for a control whose default is log-only, but it means
+   that once a site enforces, the file belongs in version control and in the
+   backup.
+
+   KEEP THE LIST HONEST. If a call is refused that should have been allowed, add
+   a pattern. Do not remove the check, and do not widen a pattern to the whole
+   tree. A pattern broader than org.freemedsoftware.<namespace>.<Class> - a bare
+   `*`, or org.freemedsoftware.* - is REJECTED at load with a LOG_WARNING and
+   does not take effect, and so is a `*` anywhere but the end of a pattern
+   (that is a wildcard the matcher does not implement; honouring it literally
+   would leave the operator believing a rule was in force that matches nothing).
+
+   EXTENDING IT: `patterns` is a list of exact relay method strings, or the same
+   with a trailing `*` to match any method name with that prefix
+   ('org.freemedsoftware.module.SomeModule.*'). Matching is literal - the dots
+   are dots, not regular-expression wildcards - and case-insensitive, mirroring
+   PHP's own method dispatch, so a client that writes `Picklist` for a class that
+   declares `picklist` is not refused. The shipped seed uses no `*` patterns: it
+   is 317 resolved method strings.
+
+   DEPLOYMENTS THAT ADD THEIR OWN MODULES should add that module's methods to
+   this file in the same commit as the module. The controlled extension point is
+   this file; the alternative is patching Relay.class.php, which is what the data
+   file exists to avoid.
+
+
+4. RELEASE NOTE
+
+   Release note - relay call-set allowlist
+
+   The JSON and XML-RPC relays no longer dispatch arbitrary methods. relay.php
+   would call any method of any registered class with request-supplied
+   arguments, gated only on being logged in, so a quoting mistake anywhere in the
+   tree was remotely reachable. The relay now checks the requested method against
+   an allowlist (data/config/relay-allowlist.php) before dispatching.
+
+   The control ships in log-only mode: a method that is not in the list is
+   logged at LOG_WARNING and still runs, so this release cannot break a working
+   UI. Operators who want the control enforced should run the enable procedure in
+   section 3 - the log-only period is what produces the list of methods to add.
+   No configuration is required to keep the previous behaviour, and no
+   database change is involved: the list is a file in the installation.
+
+
+5. SEE ALSO
+
+   Both enforcement states are recorded, with the exact commands, the syslog
+   lines they produced and the response bodies, in
+   tests/security/evidence/relay-allowlist.txt. The call set and the provenance
+   of every pattern in it is tests/security/evidence/relay-callset.txt, generated
+   by tests/security/relay-callset-enum.php. The matcher's behaviour is pinned by
+   tests/security/relay_allowlist.test.php, which runs in php:8.3-cli with no
+   database and no network.
+
+   The repository has no CHANGELOG or release-notes file; the paragraph in
+   section 4 is the release note text to publish.
