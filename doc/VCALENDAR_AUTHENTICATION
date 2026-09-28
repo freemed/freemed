@@ -79,7 +79,9 @@ vCalendar Authentication - the GET user/hash credential pair is deprecated
    every install that has not deliberately created one - the GET user/hash path
    does nothing and returns 401.
 
-   Every use of the compatibility path is logged at LOG_NOTICE (priority 134),
+   Every use of the compatibility path is logged at LOG_NOTICE (syslog priority
+   133 on this stack; 134, which appears on the LOG_INFO lines in the same
+   logs, is LOG_INFO),
    whether or not the credential is accepted:
 
        vCalendar [get] DEPRECATED hash authentication used (vcals_legacy_hash=on),
