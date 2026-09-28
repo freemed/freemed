@@ -1232,9 +1232,12 @@ residual mismatches in this phase: 0
 #     module_class='ScannedDocuments' INSERTs successfully (measured, PHASE E0.1);
 #     the `modules_insert` trigger skips its section insert because the seeded
 #     `acl_aco_sections` row for that value already exists (id 100), so nothing
-#     collides. The 1062 the round-3 text quoted is what the LOWER-CASE variant
-#     `'scanneddocuments'` produces against the case-insensitive unique key
-#     `acl_value_aco_sections`. With the class nameable, the successful dispatch is
+#     collides. (Corrected again in fix round 4: the 1062 the round-3 report quoted
+#     does NOT reproduce in either spelling -- the lower-case `'scanneddocuments'`
+#     ALSO inserts on this stack (measured, same rollback: 136 rows while open, 135
+#     after). What produced that 1062 is not established by this round; what IS
+#     established is that no constraint stops a `modules` row naming this class, and
+#     that is why the dispatch below can be driven.) With the class nameable, the successful dispatch is
 #     driven: the class loads, a PUBLIC `additional_move` is found and invoked, and
 #     the record is written -- so the R32 A/B now has the positive control it lacked,
 #     and both of the round-3 legs (class-not-found / no such method) are replaced by
@@ -1586,11 +1589,23 @@ residual mismatches in this phase: 0
 #       does not define, so no patient row can be inserted for the write to be legal.
 #     * one `patient_emr` row: patient=7777, module='zzprobe_r4', oid=3, id=7777
 #       (the id the request picks). Inserted with FOREIGN_KEY_CHECKS=0 for the same
-#       reason.
+#       reason: a `patient` row cannot be inserted on this stack at all -- the
+#       `patient` table's trigger calls STRING_TO_PHONE, which this schema does not
+#       define (`ERROR 1305 (42000): FUNCTION freemed.STRING_TO_PHONE does not exist`,
+#       measured), so the probe's write target is a table it owns rather than a
+#       clinical row.
 #     * the two PROBE-HARNESS EDITS (patch-probe-pi-r4.sh: the undefined `$patient`
 #       -> `$patientFrom`, and freemed::module_get_meta(...) -> the probe's own
 #       column name), applied IDENTICALLY to the round-4 file and to the round-3
 #       file, so each A/B differs only by the gate's presence or position.
+#
+#   NOTE ON THE FIX ROUND 3 BLOCK ABOVE: that block's PHASE A2/B/C transcript is the
+#   round-3 file's own run, and its line numbers (PatientInterface.class.php 365 and
+#   286) belong to THAT tree, exactly as its commit-provenance note says. The gate
+#   moved three lines down when it was placed before the writes, so the dispatch line
+#   in this tree is 380 and the gate CALL is 367; the same call, the same class axis
+#   and the same two stages are re-measured in this section, which supersedes those
+#   two line numbers (and nothing else about that block).
 #
 # -- E0.1 the modules table ACCEPTS a second row naming ScannedDocuments --
 #      inserted_exact_case modules rows = 1
@@ -1600,8 +1615,19 @@ residual mismatches in this phase: 0
 #   nothing). No 1062. The `modules_insert` trigger skips its own `acl_aco_sections`
 #   insert because the seeded row for value 'ScannedDocuments' already exists (id
 #   100, and its read/write/modify/delete/lock ACO rows are seeded too), so nothing
-#   collides. The round-3 report's 1062 named the LOWER-CASE variant, which is what
-#   the case-insensitive unique key `acl_value_aco_sections` rejects.
+#   collides.
+#   THE LOWER-CASE VARIANT DOES NOT REPRODUCE THE ROUND-3 1062 EITHER (measured with
+#   the same rollback, module_class='scanneddocuments':
+#      lower_case rows=136              <- inserted; ROLLBACK left modules at 135
+#      acl_aco_sections LIKE 'scanneddocuments' -> 0 rows
+#   `SELECT id,value FROM acl_aco_sections WHERE value LIKE 'scanneddocuments'`
+#   returns nothing, because the trigger never tries to insert a section for a class
+#   it can match case-insensitively -- the same skip as above.) So the round-3
+#   report's `ERROR 1062 ... for key 'acl_value_aco_sections'` is NOT reproduced
+#   here, in either spelling, and this round does not claim to explain it: what it
+#   measured is that nothing stops a `modules` row that names this class. That
+#   correction matters because the round-3 reason was used to declare the positive
+#   control impossible.
 #
 # -- E0.2 the probe state, built --
 #      the two probe edits, changed lines: 2 (expect 2)
