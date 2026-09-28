@@ -160,11 +160,27 @@ class ProviderModule extends SupportModule {
 			$c[] = "LOWER(".$this->widget_hash.") LIKE LOWER('%".$GLOBALS['sql']->escape( $criteria )."%')";
 		}
 
-		$query = "SELECT * FROM ".$this->table_name.
-			" ".$this->FormJoinClause()." ".
-			( is_array($c) ? " WHERE  ( ".join(' OR ',$c)." ) " : "" ).
-			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
-			" LIMIT 20";
+		// Category B: table and ORDER BY identifiers (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::internalPicklist| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$order = $this->order_field ? SqlIdent::columns( $this->order_field ) : '';
+		if ( $order === false ) {
+			syslog( LOG_ERR, get_class($this).'::internalPicklist| refusing invalid order_field '.var_export($this->order_field, true) );
+			$order = '';
+		}
+
+		// Category C: the predicates in $c were quoted where they were composed
+		// (escape() inside its own quotes) and the identifiers above are
+		// validated, so this assembly carries no data.
+		$query = sprintf('SELECT * FROM %s %s %s %s LIMIT 20',
+			$table,
+			$this->FormJoinClause(),
+			( is_array($c) ? sprintf(' WHERE  ( %s ) ', join(' OR ', $c)) : '' ),
+			( $order ? sprintf(' ORDER BY %s', $order) : '' )
+		);
 		//syslog(LOG_INFO, $query);
 		$result = $GLOBALS['sql']->queryAll($query);
 		if (!count($result)) { return array(); }
