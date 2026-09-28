@@ -84,7 +84,14 @@ class Referrals extends EMRModule {
 	//	Array of hashes.
 	//
 	public function GetAllActiveByPatient ( $patient ) {
-		$q = "SELECT r.id AS id, CONCAT(p.phyfname, IF(LENGTH(p.phymname)>0, CONCAT(' ', p.phymname, ' '), ' '), p.phylname) AS provider, r.refdirection AS direction, r.refstamp AS stamp, DATE_FORMAT(r.refstamp, '%m/%d/%Y') AS stamp_mdy FROM ".$this->table_name." r LEFT OUTER JOIN physician p ON IF(r.refdirection='inbound',r.refprovorig,r.refprovdest)=p.id WHERE r.refpatient=".($patient+0)." AND r.refstatus=0";
+		// Category B: table_name identifier; Category A: the patient id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAllActiveByPatient| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$q = sprintf("SELECT r.id AS id, CONCAT(p.phyfname, IF(LENGTH(p.phymname)>0, CONCAT(' ', p.phymname, ' '), ' '), p.phylname) AS provider, r.refdirection AS direction, r.refstamp AS stamp, DATE_FORMAT(r.refstamp, '%%m/%%d/%%Y') AS stamp_mdy FROM %s r LEFT OUTER JOIN physician p ON IF(r.refdirection='inbound',r.refprovorig,r.refprovdest)=p.id WHERE r.refpatient=%d AND r.refstatus=0", $table, intval($patient));
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAllActiveByPatient
 
