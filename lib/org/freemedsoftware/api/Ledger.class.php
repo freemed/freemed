@@ -1125,7 +1125,12 @@ class Ledger {
 	//	Boolean, successful
 	//
 	public function WriteoffItems ( $a ) {
-		$query = "SELECT pr.id AS procedure_id FROM payrec AS p LEFT OUTER JOIN procrec pr ON p.payrecproc=pr.id WHERE FIND_IN_SET(p.id, '".addslashes(join(',', $a))."') AND p.payrecproc = pr.id";
+		// Category A (2.6b F6c): the id list is cast element-wise and then
+		// quoted by the driver - FIND_IN_SET() takes a string list, so quote()
+		// supplies the quotes (the batch-B CalendarGroup IN () fix is the same
+		// shape). It was addslashes()ed inside hand-written quotes.
+		$query = sprintf( "SELECT pr.id AS procedure_id FROM payrec AS p LEFT OUTER JOIN procrec pr ON p.payrecproc=pr.id WHERE FIND_IN_SET(p.id, %s) AND p.payrecproc = pr.id",
+			$GLOBALS['sql']->quote( join(',', array_map('intval', (array) $a)) ) );
 		$res = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $res AS $r ) {
 			$items[$r['procedure_id']] = $r['procedure_id'];
