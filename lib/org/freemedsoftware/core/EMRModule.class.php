@@ -771,7 +771,7 @@ class EMRModule extends BaseModule {
 
 		// get last $items results
 		$query = "SELECT *".
-			( (count($this->summary_query)>0) ? 
+			( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
 			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
@@ -871,7 +871,7 @@ class EMRModule extends BaseModule {
 			// If this is an EMR module with additional
 			// fields, import them
 			$query = "SELECT *".
-				( (count($this->summary_query)>0) ? 
+				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
 				"WHERE id='".addslashes($id)."'";
@@ -970,7 +970,7 @@ class EMRModule extends BaseModule {
 				// If this is an EMR module with additional
 				// fields, import them
 				$query = "SELECT *".
-					( (count($this->summary_query)>0) ? 
+					( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 					",".join(",", $this->summary_query)." " : " " ).
 					"FROM ".$this->table_name." ".
 					"WHERE id='".addslashes($record)."'";
@@ -1038,7 +1038,7 @@ class EMRModule extends BaseModule {
 			}
 
 			$query = "SELECT *".
-				( (count($this->summary_query)>0) ? 
+				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
 				"WHERE id='".addslashes($record)."'";
