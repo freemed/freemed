@@ -101,14 +101,14 @@ class Physician {
 			return ( $dr ? 'Dr. ' : '' ).
 			$this->phyfname . " " . $this->phymname .
 			( (!empty($this->phymname)) ? " " : "" ) . $this->phylname.
-			( (!$dr and is_array($d)) ? ', '.join(', ', $d) : '' );
+			( (!$dr and !empty($d)) ? ', '.join(', ', $d) : '' );
 		}
 
 		return $this->phyfname . " " .
 		( (!empty($this->phymname)) ? substr($this->phymname, 0, 1).". " : "" ) . 
 		$this->phylname .
 		// handle degrees
-		( is_array($d) ? ', '.join(', ', $d) : '' );
+		( !empty($d) ? ', '.join(', ', $d) : '' );
 	} // end method fullName
 
 	// Method: to_text
