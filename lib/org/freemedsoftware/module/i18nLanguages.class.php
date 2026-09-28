@@ -55,7 +55,15 @@ class i18nLanguages extends SupportModule {
 	//	* language
 	//
 	public function GetAll ( ) {
-		$q = "SELECT abbrev, language FROM ".$this->table_name;
+		// Category B: table_name is a schema identifier this class declares; it
+		// is validated here and refused with a log line (R12) instead of being
+		// spliced raw.
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAll| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$q = sprintf('SELECT abbrev, language FROM %s', $table);
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
