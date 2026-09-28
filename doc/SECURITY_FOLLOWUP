@@ -314,6 +314,13 @@ reported findings
       branch arm carries a pre-existing FATAL two lines below this one, for a
       `tag` criterion that matches no rows - recorded as 3.5 x), so a reader who
       lands on :190 is two lines above it.
+      CLOSED at HEAD (883644e5): the final fix wave quoted the value -
+      api/Ledger.class.php:190 now composes `$patient_ids[] = "p.procpatient =
+      ".$GLOBALS['sql']->quote($obj[$i]['patient_record']);` - so the splice is
+      no longer a raw concatenation. The gate blind spot this item records is
+      NOT changed by that closure: the line still matches none of the gate's
+      keyword filters, so a clean `make security-check` remains no proof of
+      closure for it.
 
    r) lib/org/freemedsoftware/core/EMRModule.class.php:827 - qualified_query()'s
       conditional clause builds an IDENTIFIER from the value escaper:
@@ -321,6 +328,13 @@ reported findings
       not escape a backtick. Latent (relay parameters arrive as scalars and no
       in-tree caller passes the third argument today), but it is missing from
       the batch's own residual list.
+      CLOSED at HEAD (2a023824): the conditional columns are now built with
+      `SqlIdent::name($k)` (core/EMRModule.class.php:836, the value escaper is
+      gone), and a key the identifier validator refuses is logged
+      (`syslog(LOG_ERR, ...)`, :838) and DROPPED (`continue`, :839) rather than
+      emitted; :843 and :862 additionally drop the whole `AND ( ... )`
+      fragment when no key validates, so no dangling clause is left behind.
+      The :827 this item cites is now the rationale comment for that edit.
 
    s) lib/org/freemedsoftware/api/Scheduler.class.php:1131 reads $found, which
       the loop above only assigns at :1122 - an empty result set leaves it
@@ -337,7 +351,13 @@ reported findings
       is not behaviour-preserving, so it was left in place with the NOTE, by
       instruction. The 2.6e whitelist at :1181-1183 does fail closed. Ledger
       item 22 asks for that whitelist to be recorded in the committed evidence
-      rather than only in the code comment it lives in today.
+      rather than only in the code comment it lives in today. THAT ASK IS
+      CLOSED at HEAD (5759ba1c): the final fix wave recorded it in the tracked
+      evidence, tests/security/evidence/sweep-notes.md:394-426 (section 11,
+      "Value-shape guards this evidence records from the code"), with the
+      assembled `$view_query` block, its three literals plus the empty fragment,
+      and its fail-closed rationale. The `$view_unpaid` typo this entry
+      describes was left in place, by instruction.
 
 
    3.4 Residuals of this batch's own edits (ledger items 15-20, added in fix
@@ -436,6 +456,11 @@ reported findings
       on php:8.3-cli). A caller-visible null->[] type shift. Introduced by this
       batch (2.6f). STALE REFERENCE: the ledger's path for this class
       (`api/PatientCoverages.class.php`) is wrong; it lives in module/.
+      CLOSED at HEAD (1f6f3575): the method now initialises `$res = array();`
+      before the query (module/PatientCoverages.class.php:156), so the no-rows
+      path and the refusal at :146 both answer array() and the null->[] type
+      shift is gone. The :155 this entry cites as the success-path assignment is
+      now the last line of the rationale comment above that initialisation.
 
 
    3.5 Items the final fix wave recorded (ledger items 34 and 35, the sanitizer
@@ -458,6 +483,15 @@ reported findings
       INVALID_CALL. That makes it the real first stop for the `*.report` calls
       ledger item 18 discusses - whoever takes item 18 should fix this line first,
       or the report path cannot be exercised at all.
+      COUNT RECORDED here (the durable form of a correction that otherwise
+      lived only in the gitignored workspace): SEVEN `*.report` definitions ship
+      in this tree, all tracked, all under data/report/ - billed_contacts,
+      duplicate_patient, outstanding_patient_amount, patient_account_activity,
+      patient_statement, provider_patient_list and upcoming_notifications -
+      `find . -name '*.report'` and `git ls-files '*.report'` each return 7 at
+      HEAD. A report's note that no `*.report` definitions ship was wrong on
+      that count; the parse error above, not an empty report set, is why the
+      `*.report` calls stop here.
 
    v) freemed::module_get_meta() returns FALSE FOR EVERY MODULE.
       lib/API.php:586-597 matches `strtolower($v['MODULE_CLASS'])` against the
@@ -627,6 +661,16 @@ reported findings
        image's module set minus that module under MINOR-6).
        lib/org/freemedsoftware/acl/.htaccess is deliberately left 2.2-only as
        vendored phpGACL (R34/R14).
+       CLOSED at HEAD (27b3c458): the final fix wave gave the file the same
+       module-guarded dual-syntax block its nine siblings carry, so the
+       world-readable Dojo tree no longer carries 500-risk syntax. Re-read at
+       HEAD, ui/dojo/htdocs/.htaccess:18-24 is `<IfModule mod_authz_core.c>
+       Require all granted </IfModule>` followed by `<IfModule
+       !mod_authz_core.c> order allow,deny / allow from all </IfModule>`, and
+       the file's own comment at :10-17 records the class and states that the
+       intent (allow everything in this directory) is unchanged. "Deferred by
+       ruling R35 to the final fix pass" above, and this entry's "is still
+       2.2-only" opening, are both superseded at HEAD by that commit.
 
    5.2 The repository-root ./.htaccess guards its `DirectoryIndex index.php`
        with <IfModule mod_php5.c>, which is inert on every supported PHP (the
@@ -641,6 +685,15 @@ reported findings
        which is false under the Dojo file. The distinction worth keeping: the
        Dojo file is the one that is ALSO world-readable, because nothing above
        it denies; the root file is merely an inert guard.
+       CLOSED at HEAD (9da35146): the final fix wave commented the block out
+       rather than modernising it, with the measurement recorded in the file.
+       Re-read at HEAD, ./.htaccess:27-39 states that the `<IfModule
+       mod_php5.c>` test never matched on this harness (PHP 8.3.35 / Apache
+       2.4.68 - a probe directory answering 200 under `mod_php5.c` and 403 under
+       `mod_php.c`) and why a `DirectoryIndex` here would REPLACE the server's
+       list rather than add to it, and :41-43 is the commented-out block. The
+       file therefore no longer reads as a live control, and "Deferred with 5.1
+       by R35" above is superseded by that commit.
 
    5.3 doc/freemed.apache.conf has two <Directory "/usr/share/freemed">
        sections (:22-30, the base allow-all + AcceptPathInfo On + AllowOverride
@@ -650,7 +703,23 @@ reported findings
        earlier rule set, direction fail-open; the shipped config has exactly one
        such duplicate path. RECORDED, NOT RE-MEASURED here - this consolidation
        did not test Apache's merge semantics for a duplicated <Directory> path,
-       so treat the direction as unverified until someone does.
+       so treat the direction as unverified until someone does. MEASURED
+       NEGATIVE (final-review-A item 25): the fail-open direction does NOT
+       reproduce. Apache merges same-path <Directory> sections - later
+       directives of the same name win, and an ABSENT directive does not unset
+       the earlier one - and the second block contains only `RewriteEngine` /
+       `RewriteRule`. The config's own measured-after rows falsify the
+       direction: the no-regression list at doc/DEPLOYMENT_HARDENING:293-294
+       records `/help.php/ui/en_US/page` -> 401 and `/chtml.php/main` -> 200,
+       and both require the FIRST block's `AcceptPathInfo On` and
+       `AllowOverride All` to still be in effect after the second block runs.
+       The item was adjudicated CLOSED-AS-INFORMATIONAL on that basis, so a
+       maintainer should read this as a falsified fear rather than a live
+       fail-open - though a single measured row on a served config would settle
+       it past the argument, and no one has produced one. STALE REFERENCE
+       CORRECTED at HEAD: the second block is doc/freemed.apache.conf:178-187,
+       not the :213-222 this entry cites (the file shrank when its matrices were
+       replaced by pointers to the evidence file).
 
    5.4 Two .htaccess-layer behaviours could not be measured in this
        environment at all: a real Apache 2.2 (the old syntax half) and a real
@@ -658,7 +727,19 @@ reported findings
        measured for 5.1 is config-test level plus the two repo-mounted servers
        that ship the image's module set minus that one module. Anything built on
        the .htaccess layer in future should say which of the two halves it
-       actually exercised.
+       actually exercised. SUPERSEDED FOR ONE ROW at HEAD: the final fix wave
+       DID measure the 5.1 class live. A second Apache inside the harness,
+       loading the same module set minus mod_access_compat (21 modules, 0
+       access_compat symlinks) with `AllowOverride All`, served both generations
+       of the Dojo file: the OLD content fails to parse (AH00526, `Invalid
+       command 'allow'`) and a live GET answers 500, while the NEW content
+       parses Syntax OK and the same GET answers 200. The live pair is recorded
+       in the commit message of 27b3c458 - the commit that closed 5.1 - and the
+       class is stated in the file's own comment (ui/dojo/htdocs/.htaccess:10-17)
+       and in doc/DEPLOYMENT_HARDENING section 8 (:330-340); no committed
+       evidence transcript carries the pair, which is why it is cited to that
+       commit here. A real Apache 2.2 and the old-syntax half remain
+       unmeasured.
 
    5.5 doc/DEPLOYMENT_HARDENING:128 opens its PATH_INFO scope with "Anything
        else with a `.php/<path>` is 403". The ledger's item 26 records that
@@ -717,7 +798,12 @@ reported findings
        redaction, deferred to the final fix pass. Honest limit: the digest is
        already in this branch's history, so redacting the working tree does not
        remove it, it is a throwaway harness credential, and the advisory must
-       not quote it.
+       not quote it. CLOSED at HEAD (5759ba1c): the redaction landed in the
+       final fix wave, and tests/security/evidence/sweep-notes.md:377 - the
+       sentence this entry is about - now reads `[REDACTED]`, with the dated
+       redaction note at :379-386. The history limit stated just above is
+       unchanged: git history still carries the digest, it is the working tree
+       that no longer does.
 
    6.5 Further disclosed limits worth carrying:
        * the FormTemplate gates Task 2.8 round 2 added are SOURCE-LEVEL only -
@@ -755,7 +841,13 @@ reported findings
          rather than "the script said";
        * the redaction filter and capture scripts live only in the harness
          scratch directory, so the committed pre-fix transcripts are not
-         re-derivable from the repository alone.
+         re-derivable from the repository alone. CLOSED at HEAD (ea49a6d1) for
+         the FILTER half: it is now tracked as tests/security/redact-2.1.py
+         (`git ls-files` hit) and cited at
+         tests/security/evidence/relay-sqli-prefix.txt:55-62, which states the
+         committed copy is byte-identical to the one that produced those rows.
+         The capture scripts' half is unchanged, so the transcripts themselves
+         are still not re-derivable from the repository.
 
    6.6 Evidence-truth defects carried whole (ledger items 1, 4, 5, 7, 21 and 27;
        added in fix round 1)
@@ -840,7 +932,14 @@ reported findings
       round 1: no "evidence for Task 2.8" string exists anywhere in the tracked
       tree (`grep -rn` over the checkout returns nothing where the report says
       the comment is). FIX SHAPE: put the marker in the tracked evidence, or
-      drop the report's claim.
+      drop the report's claim. CLOSED at HEAD (1b85ef44): the final fix wave
+      took the first shape and put the marker in the tracked evidence -
+      tests/security/evidence/relay-allowlist.txt:1793 is the section header
+      "RECORDED HERE BECAUSE THIS FILE IS TRACKED EVIDENCE (ledger item 21,
+      final fix wave)", :1795-1798 names the path, and :1800-1804 quote the
+      commented-out ACL block and record that it is deliberately left as is -
+      so the report's claim now has the durable home this item asked for. No
+      in-code marker was added.
 
    f) Ledger item 27 - the class-axis matrix is committed more than once: the
       "866 pairs / 803 unlisted / 63 listed" line appears in
