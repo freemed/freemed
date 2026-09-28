@@ -350,7 +350,13 @@ class UnfiledDocuments extends SupportModule {
 	//	Array of hashes.
 	//
 	public function GetAll ( ) {
-		$query = "SELECT *,DATE_FORMAT(uffdate, '%m/%d/%Y') AS uffdate_mdy FROM ".$this->table_name." ORDER BY id DESC";
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAll| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$query = sprintf("SELECT *,DATE_FORMAT(uffdate, '%%m/%%d/%%Y') AS uffdate_mdy FROM %s ORDER BY id DESC", $table);
 		return $GLOBALS['sql']->queryAll( $query );
 	} // end method GetAll
 
@@ -404,7 +410,13 @@ class UnfiledDocuments extends SupportModule {
 		}
 	
 		// Decide if we have any "unfiled documents" in the system
-		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::notify| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$query = sprintf('SELECT COUNT(*) AS unfiled FROM %s', $table);
 		$unfiled = $GLOBALS['sql']->queryOne( $query );
 		if ($unfiled > 0) {
 			return array (
@@ -447,7 +459,13 @@ class UnfiledDocuments extends SupportModule {
 		}
 	
 		// Decide if we have any "unfiled documents" in the system
-		$query = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
+		// Category B: table_name identifier (see notify()).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::menu_notify| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$query = sprintf('SELECT COUNT(*) AS unfiled FROM %s', $table);
 		$unfiled = $GLOBALS['sql']->queryOne( $query );
 		if ($unfiled > 0) {
 			return array (
@@ -470,7 +488,13 @@ class UnfiledDocuments extends SupportModule {
 	//	Current number of unfiled documents in the system.
 	//
 	public function GetCount ( ) {
-		$q = "SELECT COUNT(*) AS unfiled FROM ".$this->table_name;
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetCount| refusing invalid table_name '.var_export($this->table_name, true) );
+			return 0;
+		}
+		$q = sprintf('SELECT COUNT(*) AS unfiled FROM %s', $table);
 		$r = $GLOBALS['sql']->queryOne( $q );
 		return $r;
 	} // end method GetCount
