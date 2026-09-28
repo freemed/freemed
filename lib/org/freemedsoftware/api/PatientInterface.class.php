@@ -506,7 +506,7 @@ class PatientInterface {
 			. ", p.ptbilltype "
 			. ", p.ptbudg "
 			. " FROM patient p "
-			. " WHERE p.id = " . $patient;
+			. " WHERE p.id = " . intval( $id );
 		syslog(LOG_INFO, $q);
 		$return = $GLOBALS['sql']->queryRow( $q );
 		$pt_info['ptinfo'] = array($return);
