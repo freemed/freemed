@@ -26,10 +26,74 @@
 //	Class to access patient functions.
 //
 LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
+LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist');
 
 class PatientInterface {
 
 	public function __constructor ( ) { }
+
+	// Method: _allowlist_gate
+	//
+	//	Resolve the concrete relay method string that a module_function()
+	//	dispatch in this class is about to perform and run it through the
+	//	relay's shared decision point.
+	//
+	//	Same mechanism and same scope as ModuleInterface::_allowlist_gate
+	//	(Task 2.8 fix round 2, R32): module_function($module, $literal)
+	//	performs `org.freemedsoftware.module.<$module>.<$literal>`, which is
+	//	exactly the relay method string that would reach the same method, so
+	//	the string the gate sees IS the string the relay would have seen. The
+	//	inner scope (third argument TRUE) is the scope the pre-2.8 code used
+	//	for re-dispatched calls; it is inert in practice here (no `module.*`
+	//	string can be inside the shipped never-allow namespace
+	//	'org.freemedsoftware.core.'), but the class name is caller-chosen, so
+	//	it is the honest scope.
+	//
+	//	Reachability (measured, fix round 3): the ONE dispatch this gate
+	//	covers is MoveEmrAttachments' additional_move call. In this tree that
+	//	dispatch is NOT reachable, for two pre-existing reasons that are
+	//	independent of the gate and are recorded for the follow-on work
+	//	(Task 4.3), not fixed here:
+	//	  1. `$patient` in MoveEmrAttachments is an undefined local, so the
+	//	     resolve query is `... WHERE p.patient = NULL` and never matches a
+	//	     row (quote(NULL) is 'NULL'; `x = NULL` is never TRUE). $resolve is
+	//	     empty, SqlIdent::name() refuses the statement and the loop
+	//	     `continue`s BEFORE the dispatch. Measured, shipped data:
+	//	     syslog 'PatientInterface::MoveEmrAttachments| refusing update:
+	//	     module_table=NULL patient_field=NULL are not valid SQL identifiers'.
+	//	  2. Even with a matching row, freemed::module_get_meta($class,
+	//	     'patient_field') returns false for every registered module (it
+	//	     reads $row['MODULE_CLASS'] / $row['META_INFORMATION'], and
+	//	     module_cache() rows carry neither), so the SqlIdent refusal fires
+	//	     for the same reason.
+	//	The gate is therefore defence in depth: it is what this dispatch needs
+	//	the day either blocker is repaired, and it is inert (it cannot refuse
+	//	anything that reaches it today) until then. Its both-stage behaviour
+	//	once reached is proved by ablation in
+	//	tests/security/evidence/relay-allowlist.txt.
+	//
+	// Parameters:
+	//
+	//	$module - The module class name, as the resolve query supplied it.
+	//
+	//	$method - The literal method name this class dispatches.
+	//
+	// Returns:
+	//
+	//	Boolean. TRUE means the dispatch may proceed, FALSE means it must be
+	//	refused (and the caller must not dispatch).
+	private function _allowlist_gate ( $module, $method ) {
+		// class_exists() is the M1 degradation path: a missing class file must
+		// not fatal the request.
+		if ( ! class_exists ( 'Relay_Allowlist' ) ) { return true; }
+		// A non-string argument cannot dispatch anyway; building the string
+		// this way keeps that from emitting a PHP conversion warning, and the
+		// resulting string is never listed, so enforcement refuses it.
+		$concrete = 'org.freemedsoftware.module.'
+			. ( is_string ( $module ) ? $module : '' ) . '.'
+			. ( is_string ( $method ) ? $method : '' );
+		return ! Relay_Allowlist::refuse ( $concrete, NULL, true );
+	} // end method _allowlist_gate
 
 	// Method: CheckForDuplicatePatient
 	//
@@ -283,6 +347,21 @@ class PatientInterface {
 			$success &= (boolean) $result;
 
 			// Anything additional
+			// (Task 2.8 fix round 3, R32): the resolved module class is a
+			// database value, but the CALLER chooses which `patient_emr` rows
+			// by id, so it is the same CLASS axis the print wrappers were gated
+			// for -- the literal 'additional_move' is fixed here and the class
+			// is not. Gate the CONCRETE string before the dispatch; a refusal
+			// skips ONLY this attachment's additional_move and is reported
+			// through $success, the way the SqlIdent refusal above refuses one
+			// statement instead of aborting the request (a fatal in a clinical
+			// EMR caused by a data value is worse than a skipped
+			// additional_move). In the shipped log-only stage the gate returns
+			// TRUE on a miss (the miss is logged), so behaviour is unchanged.
+			if ( ! $this->_allowlist_gate ( $resolve['class'], 'additional_move' ) ) {
+				$success = false;
+				continue;
+			}
 			module_function(
 				  $resolve['class']
 				, 'additional_move'
