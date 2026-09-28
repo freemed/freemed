@@ -98,6 +98,18 @@ the constructor.
 
 ### 1.3 Hostile shapes — measured before and after
 
+> **Fix round 1 (post-review).** The token class is now anchored at the true end
+> of the subject — `preg_match('/^[A-Za-z0-9._-]+\z/', $file)` — because PCRE
+> `$` also matches immediately BEFORE a final newline. The predicate quoted
+> further down this section accepted `"abc\n"`, and Apache handed PHP exactly
+> that: `GET /chtml.php/abc%0A` was answered `200 Help index abc\n not present.`
+> (nginx strips the byte upstream, so it was Apache-only in delivery). The gate
+> now carries 9 hostile rows — both newline tokens added, with their own verdict
+> rule — plus a `--self-test`, and it refuses to report PASS without a measured
+> legitimate-page control. The run summaries, the token table and the predicate
+> listing below are the previous round's 7-row measurements; treat them as the
+> pre-fix baseline, with the current measured output in `task-1.3-report.md` §6.
+
 `tests/security/repro-chtml-path.sh` (new, this task) is the executable form of
 the requirement. Pre-change run against Apache:
 
