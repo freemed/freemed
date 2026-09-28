@@ -447,3 +447,89 @@ acl_check('schedule','view','user',3) = false
    vcal-fix1/acceptance-3.2.txt (=Off) and vcal-fix1/acceptance-3.2-ON.txt (=On).
    vcalendar-auth.txt section 6.2 has the six-probe version of the same comparison plus the
    argv-guard control that shows what the old idiom did on that layout.
+
+
+===============================================================================
+2026-09-28 — FINAL FIX WAVE, PART 1: the auth lookup re-measured (review I-2)
+===============================================================================
+
+WHAT CHANGED. `vcalendar.php`'s own auth lookup was the last pre-authentication
+`addslashes()`-inside-hand-written-quotes splice on the branch (review I-2,
+commit 153abfbd). Both sites now use the driver's quote() with the hand-written
+quotes removed:
+
+  freemed_basic_auth()   was  "WHERE username='".addslashes($user)."'"
+                         now  "WHERE username=".$GLOBALS['sql']->quote($user)
+  freemed_get_auth()     was  "WHERE username='".addslashes($__user)."'"
+                         now  "WHERE username=".$GLOBALS['sql']->quote($__user)
+
+MEASUREMENT. Harness Apache/2.4.68, PHP 8.3.35, :38081, docroot = a copy of the
+checkout at 16cf6602 with Part 1's changes applied (153abfbd is the vcalendar one;
+the other eight touch unrelated files, none of them on this endpoint's path). The
+drivers are the committed vcal-work/transcript.sh (PHASE=post) and
+vcal-fix1/acceptance-3.2.sh, run unchanged, with their own redaction rules (<pw>,
+<b64 ...>, <correct md5>, <bogus md5>).
+
+  The eleven Task 3.2 acceptance cases, re-measured in one run:
+
+     basic-clerk-physician-1        403   text/html          33 bytes
+     basic-admin-physician-1        200   text/x-vCalendar   220 bytes
+     basic-admin-no-param           200   text/x-vCalendar   220 bytes
+     basic-admin-physician-2        200   text/html         1611 bytes
+     phys-self-physician-1          200   text/x-vCalendar   220 bytes
+     phys-self-no-param             200   text/x-vCalendar   220 bytes
+     phys-other-physician-2         403   text/html          33 bytes
+     clerk-physician-array-shaped   403   text/html          33 bytes
+     clerk-physician-numeric-junk   403   text/html          33 bytes
+     phys-wrong-password            401   text/html          15 bytes
+     anonymous-physician-1          401   text/html           0 bytes
+
+  All eleven - status AND byte count - are IDENTICAL to the rows recorded above:
+  the two sets were compared programmatically case by case and diff to zero
+  differences. The refusals still answer the status they answered before, and the
+  provider refusal is still carried on the wire as a 403 rather than degraded to
+  a 200.
+
+  The Task 3.1 rows re-measured in the same run:
+
+     anonymous                     401   WWW-Authenticate: Basic realm="FreeMED v0.8.8 vCalendar"
+     GET-hash, correct digest      401   (the legacy hash path is OFF by default)
+     GET-hash, bogus digest        401
+     Basic admin, correct password 200
+     Basic admin, wrong password   401
+     Basic clerk, correct password 200
+     curl -u admin                 200
+
+  The seeded physician-shaped account (vcphys) is the row that exercises the new
+  lookup most: it authenticates as itself (200) and is refused another provider
+  (403), so the quoted `username = ...` lookup resolves the row and its
+  userrealphy is what the provider scope is built from.
+
+  syslog in the same run (throwaway sink; harness artifact, does not ship):
+
+     vCalendar [get] provider 1 refused for user 2
+     vCalendar [get] provider 2 refused for user 3
+     ACL| schedule/view// forced for admin user
+
+DB STATE. The run used the verification seed (practice 1, physician 1, the
+physician-shaped account id 3) and removed it again; the pinned fingerprint was
+checked before and after and is unchanged. Per this file's own redaction rule the
+fingerprint's md5 is stated in the wave's report, not here. `user` went 2 rows ->
+3 -> 2.
+
+FALSIFICATION — why quote() and not addslashes(). Both forms were built from the
+same hostile username and run against the live DB under both sql_mode settings:
+
+  NO_BACKSLASH_ESCAPES OFF
+     sql_mode  STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,...
+     OLD  SELECT id FROM user WHERE username='\' OR 1=1-- '     rows=0
+     NEW  SELECT id FROM user WHERE username='\' OR 1=1-- '     rows=0
+  NO_BACKSLASH_ESCAPES ON
+     sql_mode  NO_BACKSLASH_ESCAPES,STRICT_TRANS_TABLES,...
+     OLD  SELECT id FROM user WHERE username='\' OR 1=1-- '     rows=2
+     NEW  SELECT id FROM user WHERE username=''' OR 1=1-- '     rows=0
+
+  On the left the injected OR is live SQL and the WHERE clause is defeated; on the
+  right the value stays a literal, because the driver's escape is mode-aware and
+  doubles the quote where addslashes() only prefixes a backslash. This is the
+  failure mode I-2 names, reproduced, and then closed.

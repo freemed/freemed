@@ -1220,3 +1220,36 @@ body(no calendar marker matched, excerpt as received):
    asks for it; it is evidence that no gross difference exists, not evidence of the constant-time
    property, which is an inspection result (hash_equals is documented constant-time for equal
    lengths).
+
+
+===============================================================================
+2026-09-28 — FINAL FIX WAVE, PART 1: the Task 3.1 rows re-measured (review I-2)
+===============================================================================
+
+The auth lookup this file's sections 1-6 measure was the last pre-authentication
+`addslashes()`-inside-hand-written-quotes splice on the branch. Both sites in
+`vcalendar.php` now use the driver's quote() with the hand-written quotes removed
+(commit 153abfbd); the full re-measurement, including the eleven Task 3.2
+acceptance cases and the falsification that shows the old form's WHERE clause
+defeated under NO_BACKSLASH_ESCAPES, is recorded in
+tests/security/evidence/vcalendar-provider-scope.txt under the same dated
+heading, so it is not restated here.
+
+  The rows THIS file owns, re-measured in that run (driver: the committed
+  vcal-work/transcript.sh, PHASE=post, unmodified):
+
+     anonymous                     401   WWW-Authenticate: Basic realm="FreeMED v0.8.8 vCalendar"
+     GET-hash, correct digest      401
+     GET-hash, bogus digest        401
+     GET-hash, no hash             401
+     Basic admin, correct password 200
+     Basic admin, wrong password   401
+     Basic clerk, correct password 200
+     curl -u admin                 200
+     anonymous ?physician=1        401   WWW-Authenticate: Basic realm="FreeMED v0.8.8 vCalendar"
+     clerk ?physician=1            403
+
+  The challenge is unchanged, character for character, and the legacy GET-hash
+  path is still refused (401) with the option absent, exactly as section 1
+  recorded it. The seeded verification rows were removed again and the pinned
+  fingerprint was re-checked unchanged.
