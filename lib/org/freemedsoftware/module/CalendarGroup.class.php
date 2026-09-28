@@ -87,7 +87,10 @@ class CalendarGroup extends SupportModule {
 		$groupResult = $GLOBALS['sql']->queryRow( $q );
 		if($groupResult){
 			$members = $groupResult['groupmembers'];
-			$q2 = "select CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') AS patient from patient pa where pa.id in (".$members.")";
+			// Category A: the member list is a record field, so every element is
+			// cast to an integer before it reaches the IN () list.
+			$member_ids = join(',', array_map('intval', explode(',', (string) $members)));
+			$q2 = sprintf("select CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') AS patient from patient pa where pa.id in (%s)", $member_ids);
 			$membersResult = $GLOBALS['sql']->queryAll( $q2 );
 			$allMembers="";
 			
