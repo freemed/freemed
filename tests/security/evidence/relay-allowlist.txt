@@ -1087,6 +1087,21 @@ residual mismatches in this phase: 0
 #                                               probe harness in PHASE A2/B/C. The
 #                                               two blockers are recorded for Task
 #                                               4.3, not fixed in this round.
+#                                               (fix round 4) PLACEMENT: the gate
+#                                               CALL is BEFORE THE FIRST WRITE in
+#                                               the loop -- resolve (read) 329,
+#                                               gate 367, module-table UPDATE 373,
+#                                               annotations UPDATE 377,
+#                                               module_function 380 -- so a
+#                                               refusal is ATOMIC: nothing of that
+#                                               attachment is written. Round 3 had
+#                                               it after both UPDATEs, so a refused
+#                                               call had already moved the record.
+#                                               Both orders are measured on the
+#                                               same call, same stage, same probe
+#                                               edits, in "FIX ROUND 4 - the
+#                                               positive control and the placement"
+#                                               (PHASE E3 vs the E5 ablation).
 #  18  api/Agata7.class.php:156                 CLASS axis under STORED REPORT DATA --
 #      module_function($detail, 'widget', $k)   BUT NOT A DEPLOYMENT ARTEFACT. $detail
 #                                               comes from $v['value'] of a report
@@ -1509,3 +1524,156 @@ residual mismatches in this phase: 0
 #   and edits only the SERVED config, which it restores to the checkout's copy. Its
 #   digest is stated in the round-4 report, which is where the earlier rounds kept
 #   it too: this file's redaction rule forbids 32-hex runs here.
+
+# =============================================================================
+# FIX ROUND 4 - the positive control for the R32 gate, and its PLACEMENT
+# -----------------------------------------------------------------------------
+#   TWO findings from the round-3 re-review, closed by measurement here:
+#
+#   (1) THE POSITIVE CONTROL. Round 3 reported that a SUCCESSFUL `additional_move`
+#       dispatch cannot be demonstrated, "because the only public class implementing
+#       it cannot be named (`modules` rejects a duplicate `module_class`)". That is
+#       not a limit: a `modules` row naming module_class='ScannedDocuments' INSERTs
+#       (see E0.1), and PHASE E drives the successful dispatch through it. The
+#       round-3 A/B's two legs both DIED (LEG U on class-not-found, LEG L because
+#       PatientTag has no additional_move), so its observable was only the gate's
+#       decision. The legs below end in real outcomes on a real class.
+#
+#   (2) THE PLACEMENT. The gate sat AFTER the two UPDATEs, so a refusal under
+#       enforcement left the attachment already moved - a partial application. It is
+#       now BEFORE the first write, which is possible because the class it gates
+#       comes from the resolve query, which only READS. The ablation (E5) serves the
+#       round-3 file with the SAME probe edits and measures the difference.
+#
+#   Everything below is a measurement on this stack (Apache :38081, MariaDB
+#   127.0.0.1:33306, branch security/mitigation-2026-09, served tree ./app rsynced
+#   from the checkout, then edited only in the served copy). The scratch driver is
+#   ra-fix4-probe.sh (never committed); its phase output is quoted verbatim.
+#
+#   THE PROBE STATE, and why it is what it is:
+#     * one `modules` row: module_class='ScannedDocuments' (the re-reviewer's
+#       finding), module_table='zzprobe_r4', module_path pointing at the REAL class
+#       file. There are now two rows naming that class, which is itself the point.
+#     * one table `zzprobe_r4` with one row: THE WRITE OBSERVABLE. The method's write
+#       is `UPDATE <module_table> SET <patient_field> = $patientTo WHERE id = <oid>`,
+#       and both names come from the registry row and the probe edit -- so the probe
+#       points them at a table of its own and reads the column back. No foreign key,
+#       no real record, nothing to restore, and the column is the only thing that
+#       changes. This replaces round 3's `payrec` observable, which cannot work on
+#       this seed: `payrec.payrecpatient` has a FOREIGN KEY to `patient`, and this
+#       stack's `patient` table has a trigger calling STRING_TO_PHONE, a function it
+#       does not define, so no patient row can be inserted for the write to be legal.
+#     * one `patient_emr` row: patient=7777, module='zzprobe_r4', oid=3, id=7777
+#       (the id the request picks). Inserted with FOREIGN_KEY_CHECKS=0 for the same
+#       reason.
+#     * the two PROBE-HARNESS EDITS (patch-probe-pi-r4.sh: the undefined `$patient`
+#       -> `$patientFrom`, and freemed::module_get_meta(...) -> the probe's own
+#       column name), applied IDENTICALLY to the round-4 file and to the round-3
+#       file, so each A/B differs only by the gate's presence or position.
+#
+# -- E0.1 the modules table ACCEPTS a second row naming ScannedDocuments --
+#      inserted_exact_case modules rows = 1
+#      modules rows while open       = 136
+#      modules rows after ROLLBACK   = 135
+#   Exact case, inside a transaction that was ROLLED BACK (so the measurement leaves
+#   nothing). No 1062. The `modules_insert` trigger skips its own `acl_aco_sections`
+#   insert because the seeded row for value 'ScannedDocuments' already exists (id
+#   100, and its read/write/modify/delete/lock ACO rows are seeded too), so nothing
+#   collides. The round-3 report's 1062 named the LOWER-CASE variant, which is what
+#   the case-insensitive unique key `acl_value_aco_sections` rejects.
+#
+# -- E0.2 the probe state, built --
+#      the two probe edits, changed lines: 2 (expect 2)
+#      modules: zzprobe_r4 ScannedDocuments
+#      patient_emr: 7777 zzprobe_r4 3 7777
+#      zzprobe_r4.probe_moved=0
+#      annotations rows matching the annotations UPDATE = 0
+#      26:class ScannedDocuments extends EMRModule {
+#      139:    function additional_move ( $id, $from, $to ) {
+#                      return true;
+#      the served list names NO additional_move pair at all: 0
+#
+# -- E1 POSITIVE CONTROL, log-only, the pair LISTED in the served copy --
+#      served-list entries for the pair now: 1
+#        E1 the dispatch RUNS (no fatal, no refusal) and the method's own value comes back  ASSERTED
+#        body: 1 [http=200]
+#        E1 ...and it is not refused                                        ASSERTED
+#        E1 ...and it is not the class-not-found fatal                       ASSERTED
+#      syslog: 0 "Relay: method" line(s) since the mark
+#      zzprobe_r4.probe_moved=8888          <- THE RECORD WAS MOVED: the hook ran
+#   This is the positive control the round-3 A/B did not have. The dispatch reaches
+#   module.ScannedDocuments.additional_move, the class loads and the method is found
+#   and invoked -- a missing class or method is a FATAL at this site, not a quiet
+#   skip, and the body carries neither. The body is the INT 1 rather than `true`
+#   because the method's own `$success &= (boolean) $result` turns its boolean into
+#   an int before returning; additional_move's return value is discarded by the
+#   caller, so the observable for "the dispatch succeeded" is the combination
+#   measured here: no fatal, no miss line, and the write performed.
+#
+# -- E2 log-only, the pair DELISTED: the log-only stage MEASURES the inner hop --
+#        E2 the unlisted pair STILL RUNS in log-only (the dispatch happens)  ASSERTED
+#        body: 1 [http=200]
+#      syslog: 2026-09-28 22:11:47 <132> ... Relay: method
+#              'org.freemedsoftware.module.ScannedDocuments.additional_move' is not in
+#              the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+#      zzprobe_r4.probe_moved=8888
+#   => the shipped stage names the INNER hop in the same log an operator greps, which
+#      is the two-stage rollout's whole point, and still runs it.
+#
+# -- E3 ENFORCING, the pair DELISTED: refused, and NOTHING WAS WRITTEN --
+#      the observable BEFORE the refused call:
+#        zzprobe_r4.probe_moved=0
+#        E3 the unlisted pair is REFUSED (reported through $success)         ASSERTED
+#        body: false [http=200]
+#        E3 ...and the dispatch did NOT happen                               ASSERTED
+#      syslog: 2026-09-28 22:11:50 <132> ... Relay: method
+#              'org.freemedsoftware.module.ScannedDocuments.additional_move' is not in
+#              the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+#      the observable AFTER the refused call (the placement claim):
+#        zzprobe_r4.probe_moved=0        <- THE WRITE DID NOT HAPPEN
+#   => with the gate before the first write, the refusal is ATOMIC for that
+#      attachment. (Round 3's order would have written it; E5 shows that.)
+#
+# -- E4 ENFORCING, the pair LISTED: still dispatched (not a blanket refusal) --
+#        E4 the listed pair is dispatched under enforcement (the method's own value comes back)  ASSERTED
+#        body: 1 [http=200]
+#      syslog: 0 "Relay: method" line(s) since the mark
+#      zzprobe_r4.probe_moved=8888
+#
+# -- E5 ABLATION: the ROUND-3 file (gate AFTER the UPDATEs), same probe edits, same stage --
+#      the ablated file is 4efd6bbb + the SAME two probe edits: YES
+#      ...and it differs from the round-4 probe file by the gate block only: 32 changed line(s)
+#      the ablated file's statement order (gate = _allowlist_gate):
+#        342:  $result = $GLOBALS['sql']->query( "UPDATE " . $table_q . ...
+#        346:  $result = $GLOBALS['sql']->query( "UPDATE annotations SET apatient = " ...
+#        361:  if ( ! $this->_allowlist_gate ( $resolve['class'], 'additional_move' ) ) {
+#      the gate in the ablated file sits BEFORE the first write: 0 (expect 0)
+#        E5 the unlisted pair is refused here too (same decision, same stage) ASSERTED
+#        body: false [http=200]
+#        E5 ...and no dispatch happened                                        ASSERTED
+#      syslog: 2026-09-28 22:11:55 <132> ... refused (INVALID_CALL)
+#      the observable AFTER the refused call:
+#        zzprobe_r4.probe_moved=8888    <- THE ABLATED ORDER WROTE IT FIRST
+#   => same call, same class, same stage, same two probe edits, same list state: the
+#      ONLY difference is where the gate sits. With round 3's order the refusal lands
+#      after the writes; with round 4's it lands before every one of them. So the
+#      placement finding is closed, not merely documented, and the statement order in
+#      the shipped file is the reason.
+#
+#   `residual mismatches in this phase: 0`
+#   PHASE F then restored every piece of state and proved it:
+#      probe modules rows left = 0 / probe patient_emr left = 0 / probe tables left = 0
+#      tables in freemed = 217
+#      served enforce   : 'enforce' => false,      pattern entries  : 323
+#      cmp: data/config/relay-allowlist.php, api/PatientInterface.class.php,
+#           core/Relay.class.php, core/Relay_Allowlist.class.php,
+#           api/UserInterface.class.php, api/ModuleInterface.class.php,
+#           api/FormTemplate.class.php -- IDENTICAL x7
+#      fingerprint (after): entemplate 1/1, payrec 1/3, patient_emr 1/5, user 2/1,2,
+#           patient 0/NULL, procrec 0/NULL, vitals 0/NULL, modules 135/134,
+#           config 34/NULL
+#   The fingerprint is IDENTICAL, field for field, to the pre-flight baseline taken
+#   before any probe ran (verified by `diff`; the digest is in the round-4 report,
+#   because this file's redaction rule forbids 32-hex runs here). The two extra
+#   `patient` rows the earlier `payrec` design would have needed are NOT part of the
+#   final state: `patient` is 0 rows, as it was, and the probe's own table is dropped.

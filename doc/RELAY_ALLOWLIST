@@ -305,6 +305,17 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
        removed - is back, now as a documented 'never_allow' entry in the data
        file. Next to it, calls in that namespace on the OUTER path are logged and
        not refused, so no outer call that worked before is refused now.
+     * api/PatientInterface.class.php::MoveEmrAttachments gates the module hook it
+       dispatches (`additional_move`) on the class the caller's chosen record
+       resolves to, and it does so BEFORE THE FIRST WRITE of the loop. A refusal
+       under enforcement is therefore ATOMIC for that attachment: nothing is
+       written, no annotation is moved and the hook does not run, and the refusal
+       is reported through the method's own return value. This matters because the
+       gate sat after those writes in an earlier revision of this change, which
+       would have left a refused call with the record already moved. In the
+       shipped log-only stage nothing changes: the miss is logged and the call
+       runs, so the stage measures which (module class, literal) pairs a site
+       actually uses before anyone enforces them.
 
 
 5. SEE ALSO

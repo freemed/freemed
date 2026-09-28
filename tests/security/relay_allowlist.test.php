@@ -42,6 +42,12 @@
 //     ModuleInterface.class.php and FormTemplate.class.php, so the check being
 //     unwired (or Multicall's inner gate, or one of the class-axis gates, being
 //     removed) fails here.
+//   * The R32 PLACEMENT rows read api/PatientInterface.class.php's
+//     MoveEmrAttachments and assert that the gate CALL precedes the FIRST write of
+//     the loop, so the earlier revision -- which gated after the two UPDATEs and
+//     therefore left a refused call with the record already moved -- fails here.
+//     (The served-copy ablation that measures the same ordering live is in
+//     tests/security/evidence/relay-allowlist.txt, "FIX ROUND 4".)
 //   * The R36 rows pin the reinstated `core` never-allow rule (refused in BOTH
 //     stages for an inner call, logged-and-not-refused on the outer path, and
 //     the policy in the data file), and two of them keep the round-1 "dead
@@ -866,7 +872,18 @@ $pi_pos_res  = strpos($pi_mea, "\$resolve = \$GLOBALS['sql']->queryRow");
 ra_row('R32: resolve < gate < dispatch (order inside the attachments loop)',
 	($pi_pos_res !== false and $pi_pos_gate !== false and $pi_pos_mf !== false
 		and $pi_pos_res < $pi_pos_gate and $pi_pos_gate < $pi_pos_mf), true);
-ra_row('R32: a refused additional_move skips ONLY that attachment and is reported through $success',
+// Fix round 4: the gate must sit BEFORE EVERY WRITE. Placed after the two
+// UPDATEs (fix round 3) a refusal under enforcement left the record already
+// moved -- a partial application -- which is what the move corrects. The class
+// the gate needs comes from the resolve query, which only READS, so nothing had
+// to be written first.
+$pi_pos_upd1 = strpos($pi_mea, '"UPDATE " . $table_q');
+$pi_pos_upd2 = strpos($pi_mea, '"UPDATE annotations');
+ra_row('R32 fix round 4: the gate CALL precedes the FIRST write (the module table UPDATE)',
+	($pi_pos_gate !== false and $pi_pos_upd1 !== false and $pi_pos_gate < $pi_pos_upd1), true);
+ra_row('R32 fix round 4: ...and the annotations UPDATE, so a refusal writes NOTHING',
+	($pi_pos_gate !== false and $pi_pos_upd2 !== false and $pi_pos_gate < $pi_pos_upd2), true);
+ra_row('R32: a refused additional_move skips this attachment entirely (nothing is written) and is reported through $success',
 	(strpos(substr($pi_mea, $pi_pos_gate, 200), '$success = false;') !== false
 		and strpos(substr($pi_mea, $pi_pos_gate, 200), 'continue;') !== false), true);
 ra_row('R32: the gate uses the shared decision point (Relay_Allowlist::refuse), inner scope',

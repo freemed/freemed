@@ -70,7 +70,15 @@ class PatientInterface {
 	//	the day either blocker is repaired, and it is inert (it cannot refuse
 	//	anything that reaches it today) until then. Its both-stage behaviour
 	//	once reached is proved by ablation in
-	//	tests/security/evidence/relay-allowlist.txt.
+	//	tests/security/evidence/relay-allowlist.txt, and its decision is pinned
+	//	at runtime by the hermetic suite (Reflection, fix round 4).
+	//
+	//	Placement (fix round 4): the call site is BEFORE the first write in
+	//	the loop, because the class name it gates comes from the resolve
+	//	query, which only reads. That makes a refusal atomic -- nothing of
+	//	this attachment is written when the hook is refused. It was placed
+	//	after the two UPDATEs in fix round 3, which left a refused call with
+	//	the record already moved; the move is why the residue is gone.
 	//
 	// Parameters:
 	//
@@ -338,6 +346,29 @@ class PatientInterface {
 				continue;
 			}
 
+			// Anything additional
+			// (Task 2.8, R32): the resolved module class is a database value,
+			// but the CALLER chooses which `patient_emr` rows by id, so it is
+			// the same CLASS axis the print wrappers were gated for -- the
+			// literal 'additional_move' is fixed here and the class is not.
+			// Gate the CONCRETE string BEFORE EVERY WRITE, so that a refusal
+			// is ATOMIC with respect to this attachment: the record is not
+			// moved, no annotation is moved and no hook runs, and the refusal
+			// is reported through $success the way the SqlIdent refusal above
+			// refuses one statement instead of aborting the request (a fatal
+			// in a clinical EMR caused by a data value is worse than a skipped
+			// attachment move). Fix round 3 placed this gate after both
+			// UPDATEs, so a refused call had already moved the record -- a
+			// partial application; fix round 4 moved it here, and the class it
+			// needs comes from the resolve query above, which only READS, so
+			// nothing had to be written first. In the shipped log-only stage
+			// the gate returns TRUE on a miss (the miss is logged), so shipped
+			// behaviour is unchanged.
+			if ( ! $this->_allowlist_gate ( $resolve['class'], 'additional_move' ) ) {
+				$success = false;
+				continue;
+			}
+
 			// Move actual record
 			$result = $GLOBALS['sql']->query( "UPDATE " . $table_q . " SET " . $field_q . " = " . $GLOBALS['sql']->quote( (int) $patientTo ) . " WHERE id = " . $GLOBALS['sql']->quote( (int) $resolve['oid'] ) );
 			$success &= (boolean) $result;
@@ -346,22 +377,6 @@ class PatientInterface {
 			$result = $GLOBALS['sql']->query( "UPDATE annotations SET apatient = " . $GLOBALS['sql']->quote( (int) $patientTo ) . " WHERE apatient = " . $GLOBALS['sql']->quote( (int) $patientFrom ) . " AND atable = " . $GLOBALS['sql']->quote( $resolve['table'] ) . " AND aid = " . $GLOBALS['sql']->quote( (int) $resolve['oid'] ) );
 			$success &= (boolean) $result;
 
-			// Anything additional
-			// (Task 2.8 fix round 3, R32): the resolved module class is a
-			// database value, but the CALLER chooses which `patient_emr` rows
-			// by id, so it is the same CLASS axis the print wrappers were gated
-			// for -- the literal 'additional_move' is fixed here and the class
-			// is not. Gate the CONCRETE string before the dispatch; a refusal
-			// skips ONLY this attachment's additional_move and is reported
-			// through $success, the way the SqlIdent refusal above refuses one
-			// statement instead of aborting the request (a fatal in a clinical
-			// EMR caused by a data value is worse than a skipped
-			// additional_move). In the shipped log-only stage the gate returns
-			// TRUE on a miss (the miss is logged), so behaviour is unchanged.
-			if ( ! $this->_allowlist_gate ( $resolve['class'], 'additional_move' ) ) {
-				$success = false;
-				continue;
-			}
 			module_function(
 				  $resolve['class']
 				, 'additional_move'
