@@ -14,6 +14,13 @@
 # Regenerate (and shrink) this file with the same command that produced it:
 #   <the gate's grep chain> | sed 's/:\([^:]*\)$//'   # path:line: only
 #
+# 2026-09-28, sweep batch A (task 2.6b part 1): the 34 entries for
+# lib/org/freemedsoftware/api/** and lib/org/freemedsoftware/core/** were
+# removed here after the lines behind them were fixed (driver quote()/
+# intval() for values, SqlIdent::name()/columns() for identifiers, and
+# sprintf-assembled clause fragments). The application entries that remain
+# belong to module/** (batch B), lib/API.php and the gacl ACL library.
+#
 # ---- vendored / third-party libraries (5): not swept, false positives ----
 ./lib/agata7/classes/fpdf151/fpdf.php:912:
 ./lib/agata7/classes/pclzip/pclzip.lib.php:4992:
@@ -27,7 +34,7 @@
 ./tests/security/sql_ident.test.php:123:
 ./tests/security/sql_ident.test.php:184:
 
-# ---- APPLICATION HITS (156): task 2.6b drives this section to zero ----
+# ---- APPLICATION HITS (122): task 2.6b drives this section to zero ----
 ./lib/API.php:1386:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:1052:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:1134:
@@ -96,40 +103,6 @@
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:758:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:775:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:781:
-./lib/org/freemedsoftware/api/ClaimLog.class.php:773:
-./lib/org/freemedsoftware/api/ClaimLog.class.php:810:
-./lib/org/freemedsoftware/api/FormTemplateList.class.php:44:
-./lib/org/freemedsoftware/api/Ledger.class.php:1301:
-./lib/org/freemedsoftware/api/Ledger.class.php:1324:
-./lib/org/freemedsoftware/api/ModuleSearch.class.php:37:
-./lib/org/freemedsoftware/api/PatientInterface.class.php:509:
-./lib/org/freemedsoftware/api/Scheduler.class.php:219:
-./lib/org/freemedsoftware/api/UserInterface.class.php:138:
-./lib/org/freemedsoftware/api/UserInterface.class.php:148:
-./lib/org/freemedsoftware/core/BillingModule.class.php:187:
-./lib/org/freemedsoftware/core/BillingModule.class.php:224:
-./lib/org/freemedsoftware/core/BillingModule.class.php:95:
-./lib/org/freemedsoftware/core/EMRModule.class.php:580:
-./lib/org/freemedsoftware/core/EMRModule.class.php:632:
-./lib/org/freemedsoftware/core/EMRModule.class.php:635:
-./lib/org/freemedsoftware/core/EMRModule.class.php:810:
-./lib/org/freemedsoftware/core/ExternalPlugin.class.php:142:
-./lib/org/freemedsoftware/core/FPDF.class.php:894:
-./lib/org/freemedsoftware/core/FreemedDb.class.php:200:
-./lib/org/freemedsoftware/core/FreemedDb.class.php:264:
-./lib/org/freemedsoftware/core/FreemedDb.class.php:327:
-./lib/org/freemedsoftware/core/SupportModule.class.php:479:
-./lib/org/freemedsoftware/core/SupportModule.class.php:481:
-./lib/org/freemedsoftware/core/SupportModule.class.php:484:
-./lib/org/freemedsoftware/core/SupportModule.class.php:542:
-./lib/org/freemedsoftware/core/SupportModule.class.php:544:
-./lib/org/freemedsoftware/core/SupportModule.class.php:564:
-./lib/org/freemedsoftware/core/SupportModule.class.php:567:
-./lib/org/freemedsoftware/core/SupportModule.class.php:572:
-./lib/org/freemedsoftware/core/SupportModule.class.php:677:
-./lib/org/freemedsoftware/core/class.IIGAlert.php:78:
-./lib/org/freemedsoftware/core/class.IIGAlert.php:82:
-./lib/org/freemedsoftware/core/vCalendar.class.php:52:
 ./lib/org/freemedsoftware/module/AnesthesiologyCalendar.class.php:77:
 ./lib/org/freemedsoftware/module/AppointmentTemplates.class.php:166:
 ./lib/org/freemedsoftware/module/Authorizations.class.php:159:
