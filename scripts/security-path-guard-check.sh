@@ -123,8 +123,10 @@ check1_report() {   # prints a report when either condition fails
 #     code is a gate operators suppress, so the narrowing was preferred to
 #     documenting the false positive — and it is checked in --self-test from both
 #     sides (a server-derived key must pass, a request-carrying key must be
-#     reported). A $_SERVER index that is not a quoted literal is not provably
-#     server-derived and is reported.
+#     reported). An UNQUOTED index ($_SERVER[$k]) is not provably server-derived
+#     and is reported; a CONCATENATED index ($_SERVER['LITERAL' . $input]) is
+#     classified by its leading quoted literal instead, which is weaker - see
+#     the concatenated-index bullet in KNOWN LIMITS below.
 #     basename() is deliberately NOT part of that rule: it discards the
 #     directory part whatever the input is, so it cannot walk anywhere.
 #
@@ -158,6 +160,29 @@ check1_report() {   # prints a report when either condition fails
 #     excluded even though its PATH_INFO suffix is client-influenced, because
 #     excluding it is what the ruling asks for and because the alternative
 #     re-opens the benign-shape false positive above.
+#   * a CONCATENATED $_SERVER index is classified by its LEADING quoted literal,
+#     which the awk key extraction takes and then stops at. So a server-derived
+#     prefix hides a request-carrying tail, and this shape is NOT reported
+#     (measured against this file's own path_guard_scan, not inferred):
+#	readfile(realpath($_SERVER['DOCUMENT_ROOT' . $_GET['x']]));
+#     `DOCUMENT_ROOT` is the leading literal, so the key extraction puts it on
+#     the R33 server-derived list and the realpath( on the same line is then
+#     treated as resolution and stops the rule. The UNQUOTED form
+#     ($_SERVER[$k]) and a literal request-carrying key (PATH_INFO /
+#     QUERY_STRING / REQUEST_URI / HTTP_*) ARE reported; the
+#     concatenated-with-a-server-derived-prefix form is the residual, and it is
+#     stated here rather than claimed closed (M-1);
+#   * the resolver name is matched with a `[^A-Za-z0-9_]` boundary, and `>` and
+#     `:` both satisfy that class, so a METHOD or STATIC call whose name merely
+#     ENDS in help_resolve_path is treated as the resolver and the line is not
+#     reported (measured against path_guard_scan):
+#	readfile($obj->help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+#	readfile(Foo::help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+#     both pass. Contrived today: the helper is a global function with exactly one
+#     caller (help.php:39), and the boundary is left as-is rather than narrowed,
+#     because the narrowing would also have to exclude the `>` of `=>` and no
+#     shape in this tree would measure that direction (M-2; the RESOLVER_CALL
+#     boundary and the awk strip at the top of this block share the class).
 # ---------------------------------------------------------------------------
 path_guard_scan() {   # $@ = files to scan
 	[ "$#" -gt 0 ] || return 0
@@ -175,8 +200,11 @@ path_guard_scan() {   # $@ = files to scan
 	       # which no request can set. That exclusion is the R33 narrowing: it is
 	       # what lets the benign realpath($_SERVER['DOCUMENT_ROOT'] .
 	       # basename($_GET['f'])) shape through while PATH_INFO, QUERY_STRING and
-	       # REQUEST_URI stay in. A $_SERVER index that is not a quoted literal
-	       # is not provably server-derived, so it is reported (fail closed).
+	       # REQUEST_URI stay in. An UNQUOTED index ($_SERVER[$k]) is not provably
+	       # server-derived, so it is reported (fail closed); a CONCATENATED index
+	       # is classified by its LEADING quoted literal instead, so a
+	       # server-derived prefix hides a request-carrying tail - that is NOT
+	       # fail-closed and is stated in KNOWN LIMITS above path_guard_scan().
 	       function realpath_head_is_request_input(text,   rest, sg, after, key) {
 	         rest = text
 	         while (match(rest, /realpath[[:space:]]*[(][[:space:]]*/)) {
@@ -222,7 +250,16 @@ path_guard_scan() {   # $@ = files to scan
 #   * the R33 narrowing     -> server_docroot and server_scriptfile must PASS
 #     (MINOR-5)                (server-derived keys are not request input), so
 #                              reverting the narrowing to "any $_SERVER" turns
-#                              them red as false positives.
+#                              them red as false positives;
+#   * check 1's TWO HALVES  -> in rows1, help1_nosink (`<?php echo 42;`) must
+#     (C-3, final fix wave)    FAIL, which pins check1_no_resolver: before this
+#                              row, all three check-1 fixtures carried a raw sink
+#                              and were classified by check1_raw_sink, so
+#                              neutralising check1_no_resolver (the "help.php
+#                              must route through the resolver" half) left the
+#                              self-test GREEN. help1_raw must FAIL, which pins
+#                              check1_raw_sink, and help1_resolved must PASS, so
+#                              neither half can be removed silently.
 # The expected row COUNTS are asserted too, so deleting a row fails the self-test
 # rather than shrinking it silently.
 # ---------------------------------------------------------------------------
@@ -255,8 +292,9 @@ selftest() {
 		"help1_resolved|<?php readfile(help_resolve_path(\$_SERVER['PATH_INFO'], dirname(__FILE__)));|PASS"
 		"help1_misnamed|<?php readfile(my_help_resolve_path(\$_SERVER['PATH_INFO']));|FAIL"
 		"help1_raw|<?php readfile(\$_SERVER['PATH_INFO']);|FAIL"
+		"help1_nosink|<?php echo 42;|FAIL"
 	)
-	expected1=3
+	expected1=4
 	echo "security-path-guard-check --self-test"
 	bad=0
 	n=0
@@ -312,7 +350,7 @@ selftest() {
 		echo "security-path-guard-check: self-test FAILED ($bad of $n scan and $bad1 of $n1 check-1 fixtures misclassified)"
 		return 1
 	fi
-	echo "security-path-guard-check: self-test PASSED ($n of $n scan and $n1 of $n1 check-1 fixtures: arity, word boundary, nesting, the resolution-call rule and the anchored check 1)"
+	echo "security-path-guard-check: self-test PASSED ($n of $n scan and $n1 of $n1 check-1 fixtures: arity, word boundary, nesting, the resolution-call rule, and both halves of check 1)"
 	return 0
 }
 
