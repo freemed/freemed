@@ -133,7 +133,21 @@ class PatientCoverages extends EMRModule {
 	//
 	public function GetCoverages ( $patient, $asof = NULL ) {
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$q = "SELECT CONCAT( '[', c.covrel, '] ', i.insconame, ' / ', c.coveffdt ) AS k, c.id AS v FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient ). ( $asof != NULL ? " AND c.coveffdt <= ".$GLOBALS['sql']->quote( $s->ImportDate( $asof ) ) : '' )." ORDER BY c.covstatus DESC";
+		// Category A + F4 (2.6f): $asof is an optional date qualifier; when it is
+		// supplied it is validated as Y-m-d and an unparseable value refuses the
+		// query (logged, empty answer) rather than being quoted as a bare 0 -
+		// quote(false) compares equal to MySQL's zero-date, so the coverage list
+		// would have been filtered by a date nobody asked for.
+		$asof_sql = '';
+		if ( $asof != NULL ) {
+			$asof_date = $s->ImportDate( $asof );
+			if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $asof_date ) ) {
+				syslog( LOG_ERR, get_class($this).'::GetCoverages| refusing non-Y-m-d asof '.var_export($asof, true) );
+				return array();
+			}
+			$asof_sql = " AND c.coveffdt <= ".$GLOBALS['sql']->quote( $asof_date );
+		}
+		$q = "SELECT CONCAT( '[', c.covrel, '] ', i.insconame, ' / ', c.coveffdt ) AS k, c.id AS v FROM coverage c LEFT OUTER JOIN insco i ON c.covinsco = i.id WHERE c.covpatient = ".$GLOBALS['sql']->quote( $patient ). $asof_sql." ORDER BY c.covstatus DESC";
 		$r = $GLOBALS['sql']->queryAll( $q );
 		foreach ( $r AS $row ) {
 			$res[] = array ( $row['k'], $row['v'] );
