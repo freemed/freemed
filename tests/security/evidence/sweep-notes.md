@@ -190,12 +190,20 @@ docker compose -p freemed-verify exec -T web-apache php tests/security/module_sm
   > tests/security/evidence/module-smoke-after.json
 ```
 
-Fix round 1 re-ran exactly that command against the current `HEAD` (`997d98d9`,
-after Task 2.6f) and the output was **byte-identical** to the committed
-`module-smoke-after.json` (`8f46fb07…` on both; `cmp` exit 0, `exit=0` from
-`docker compose exec`, stderr `module smoke: OK=6 EXC=22 SKIP=108 other=0
-(registry rows=135)`). So the artifact committed in `3e6e790f` is still the output
-of this harness at this `HEAD`, and the fix-round commit does not change it.
+Fix round 1 re-ran exactly that command **in the fix round's working tree**, not
+against the frozen `997d98d9` commit: `997d98d9` (after Task 2.6f) was `HEAD` at
+the time - it is the parent of this round's own first commit, measured with
+`git rev-list --count 997d98d9..f74923e7` = 1 - while the round's edits were still
+uncommitted; the same round then committed `f74923e7` (this file and the two seed
+artifacts) and `57ec9cc3` (`EMRModule`'s identifier change). The output was
+**byte-identical** to the committed `module-smoke-after.json` (`8f46fb07…` on
+both; `cmp` exit 0, `exit=0` from `docker compose exec`, stderr
+`module smoke: OK=6 EXC=22 SKIP=108 other=0 (registry rows=135)`). So the artifact
+committed in `3e6e790f` is still the output of this harness for the tree this
+round measured. **The staging itself is RECORDED, NOT RE-DERIVABLE:** no run logs
+are committed, so a reader cannot reconstruct which file contents the served copy
+held when the command ran; the round that made the run states it was the working
+tree, and `doc/SECURITY_FOLLOWUP` §6.6 b) carries the same limit.
 
 **What this record does and does not establish.** It establishes: the bytes in the
 tree are this harness's stdout for the command above; the harness revision that
@@ -366,10 +374,56 @@ methods touched by task 2.6e, with the reason measured on this stack:
 | `EMRModule::locked()` | `:295` → `:299` | **PASS** | real query, real row: the relay body is `true` for a seeded row with `locked > 0`, `false` for a non-existent id (negative control), and hostile input collapses to the same numeric prefix. Asserted on bodies. |
 | `EMRModule::RenderHtmlView()` | `:946` → `:973` | **INCONCLUSIVE** | the relay answers 200 with a **0-byte** body for benign and hostile input alike, because the method dies at its own Smarty initialisation (`Undefined property: Vitals::$smarty`; that read is at `EMRModule.class.php:994` on the tree this table's line numbers are quoted from, `997d98d9` — `:1018` after the fix round's own edit, `:967` when the report was written) before it prints — a pre-existing condition, identical before and after the change. A 0-byte body carries no evidence either way. |
 | `PaymentModule::GetLedger()` | `:1181` → `:1206` | **INCONCLUSIVE** | the method fatals before any SQL runs (`Call to a member function queryAll() on null`, undefined local `$sql`); and on MariaDB the assembled statement is invalid in **every** branch anyway (`1 == 1`, and the misspelled columns `c.cptname`, `c.cptnameint`, `pr.procdtbileld`). Nothing about it can be positively exercised through the relay. |
-| `EMRModule::locked()` with a hostile id, `RenderHtmlView()` with a hostile id | — | **PASS for the payload itself** | neither body ever contained the seeded MD5 digest `a3fab73d4603441e5a7acd86a4b03f15`, the token `userpassword`, or MySQL error text. |
+| `EMRModule::locked()` with a hostile id, `RenderHtmlView()` with a hostile id | — | **PASS for the payload itself** | neither body ever contained the seeded MD5 digest `[REDACTED]`, the token `userpassword`, or MySQL error text. |
+
+**Redaction note, 2026-09-28 (final fix wave).** The row above used to print the
+harness `admin` account's password MD5 digest verbatim. It was the only
+credential-equivalent string in the whole `79efd68d..HEAD` diff (review R27, and
+`doc/SECURITY_ADVISORY` §7.C item 8 gates publication on removing it), and it is
+now `[REDACTED]`: the sentence's meaning - *neither hostile payload's body carried
+the seeded digest, the token or MySQL error text* - is unchanged, and the digest
+itself is recoverable by nobody from this file. That replacement is the only edit
+this file took for R27.
 
 The two INCONCLUSIVE rows are the reason the emitted statements had to be captured
 (section 8), and the reason the notes state the pass criterion as "0 new `EXC`"
 rather than "the queries were proven equivalent". The measures that *are*
 reproducible from the tree today are the relay bodies and
 `tests/security/repro-relay-sqli.sh`, not the statement captures.
+
+## 11. Value-shape guards this evidence records from the code (ledger item 22)
+
+Recorded here in the final fix wave because it lived only in the sweep's own
+gitignored report (`.superpowers/`) and in code comments, with no tracked evidence
+entry.
+
+`module/PaymentModule.class.php`'s `GetLedger()` assembles its view predicate from a
+LOCAL `$view_query`, and the sweep's fix round left exactly one point of assembly at
+`:1181-1183` (the block the round's reports cite as `:1178-1183`; its rationale
+comment is `:1177-1180`):
+
+```php
+$view_query = '';
+switch ($type) {
+    case 'closed':    $view_query = "procbalcurrent = '0'";  break;
+    case 'nonclosed': $view_query = "procbalcurrent !='0'";  break;
+    case 'unpaid':    $view_unpaid = "procbalcurrent >'0'";  break;   // <- pre-existing typo, see :1163-1169
+    case 'all':
+    default:          $view_query = "1 == 1";                break;
+}
+if (!in_array($view_query, array(
+    "procbalcurrent = '0'", "procbalcurrent !='0'", "1 == 1", ''
+), true)) { $view_query = ''; }
+```
+
+The whitelist mirrors the switch LITERALLY - the three assigned literals plus the
+empty fragment the `unpaid` branch leaves in place, because that branch's assignment
+writes the mistyped `$view_unpaid` (a pre-existing functional bug, recorded at
+`:1163-1169`, NOT repaired here because repairing it would change which rows come
+back). It fails CLOSED to `''`, so a later edit that routed caller data into the
+fragment would be dropped rather than spliced into the statement below it. The three
+literals are also carried by the generated
+`tests/security/evidence/identifier-inventory.txt` (`$view_query: clause-fragment=3`),
+whose `SqlIdent` cross-check runs in `tests/security/sql_ident.test.php`; the
+statement itself is one of the INCONCLUSIVE relay methods in section 10 above.
+
