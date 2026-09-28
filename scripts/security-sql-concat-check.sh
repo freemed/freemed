@@ -11,10 +11,21 @@
 # gate, not the sophistication. Anything it flags is either a real bug or a line
 # that should be rewritten with $GLOBALS['sql']->quote() / SqlIdent::name().
 #
-# After the 2.6b sweep the allowlist must hold ONLY the vendored library paths
-# (which the grep below already excludes) and the single documented raw
-# expression case, core/SupportModule.class.php::$additional_fields. An
-# application-file entry is a review red flag, not a fix.
+# After the 2.6b sweep (batches A, B, C) no entry in the allowlist covers
+# FreeMED's own code: the only entries left are the vendored libraries the grep
+# below does not exclude (lib/agata7/**), the security tests, and the
+# third-party phpGACL ACL library, which the sweep does not rewrite. An entry
+# for api/**, core/**, module/** or a root script would be a review red flag,
+# not a fix.
+#
+# The documented raw-expression case is core/SupportModule.class.php's
+# $additional_fields: code-authored SQL with a result alias by design, checked
+# at construction by SqlIdent::expression() and spliced into a sprintf-assembled
+# statement. Earlier revisions of this header named the line it sat on
+# (SupportModule.class.php:484) as the one case the allowlist MUST hold; that is
+# no longer true - the rewrite of the surrounding statement stopped tripping
+# this heuristic while the raw splice (validated as above) remains, so the entry
+# was removed as stale and the posture is unchanged.
 set -u
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || { echo "security-sql-concat-check: cannot cd to repo root"; exit 2; }
