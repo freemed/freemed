@@ -465,7 +465,11 @@ class EMRModule extends BaseModule {
 		}
 
 		$this->del_pre( $id );
-		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id )."'";
+		// Category A (2.6f): the record id is an integer key, so it is cast
+		// (id=<int>) rather than addslashes()ed inside hand-written quotes - the
+		// shape the static gate excludes. Same rows: MySQL compares id=5 and
+		// id='5' alike (see RenderHtmlView/locked()).
+		$query = "DELETE FROM `".$this->table_name."` WHERE id = ".intval( $id );
 		$result = $GLOBALS['sql']->query( $query );
 		return $result ? true : false;
 	} // end public function del
@@ -1053,11 +1057,13 @@ class EMRModule extends BaseModule {
 			if ($this->patient_field) {
 				// If this is an EMR module with additional
 				// fields, import them
+				// Category A (2.6f): the record id is an integer key; cast it
+				// rather than splicing it inside quotes with addslashes().
 				$query = "SELECT *".
 					( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 					",".join(",", $this->summary_query)." " : " " ).
 					"FROM ".$this->table_name." ".
-					"WHERE id='".addslashes($record)."'";
+					"WHERE id=".intval($record);
 				$rec = $GLOBALS['sql']->queryRow($query);
 			} else {
 				$rec = $GLOBALS['sql']->get_link( $t, $record );
@@ -1121,11 +1127,20 @@ class EMRModule extends BaseModule {
 				$my_template = $this->print_template;
 			}
 
+			// Category A (2.6f): the record id is an integer key; cast it rather
+			// than splicing it inside quotes with addslashes().
+			//
+			// NOTE (2.6f): $record is undefined in this method - the parameter is
+			// $id (pre-existing; addslashes($record) warned here too). It is left
+			// as-is deliberately: intval(NULL) is 0, which reproduces the old
+			// `id=''` predicate (MySQL coerces '' to 0 as well), while switching
+			// to $id would silently start fetching a record this method has never
+			// fetched. Routed as a functional bug, not fixed under a security task.
 			$query = "SELECT *".
 				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
-				"WHERE id='".addslashes($record)."'";
+				"WHERE id=".intval($record);
 			$rec = $GLOBALS['sql']->queryRow($query);
 
 			// Handle templating elsewhere
