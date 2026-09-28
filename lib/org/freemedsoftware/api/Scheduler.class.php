@@ -1077,20 +1077,31 @@ class Scheduler {
 			$starting_time = freemed::config_value("calshr");
 		}
 		//$b_criteria;
+		// Category A (2.6f): calfacility and calphysician are INT UNSIGNED
+		// (data/schema/mysql/scheduler.sql), so the criteria are cast in unquoted
+		// predicates instead of addslashes()ed inside hand-written quotes.
 		if ($_criteria['location']) {
-			$b_criteria[] = "calfacility = '".addslashes($_criteria['location'])."'";
+			$b_criteria[] = "calfacility = ".intval($_criteria['location']);
 		}
 		if ($_criteria['provider']) {
-			$b_criteria[] = "calphysician = '".addslashes($_criteria['provider'])."'";
+			$b_criteria[] = "calphysician = ".intval($_criteria['provider']);
 		}
 
 		// After we have gotten all of the prospective days, run
 		// some maps to see what we have
 		foreach ($c_days AS $this_day) {
+			// Category A + F4 (2.6f): caldateof is a DATE, so the candidate day is
+			// validated as Y-m-d and an unusable one is SKIPPED (logged) rather
+			// than quoted - quote(false) is a bare 0, i.e. MySQL's zero-date.
+			// Skipping cannot widen the search: a candidate with no valid date has
+			// no appointments to fit into, which is exactly what the old
+			// caldateof = '<false>' predicate answered.
+			$this_day_sql = $this->_ValidDate( $this_day );
+			if ( $this_day_sql === false ) { continue; }
 			//if($b_criteria)
 				$m_criteria = array_merge(
 					$b_criteria,
-					array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'")
+					array("caldateof = ".$GLOBALS['sql']->quote( $this_day_sql ), "calstatus != 'cancelled'")
 				);
 			//else	
 			//	$m_criteria = array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'");
