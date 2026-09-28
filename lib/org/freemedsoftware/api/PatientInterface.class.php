@@ -49,13 +49,29 @@ class PatientInterface {
 	//	False if there are no matches, the patient id if there are.
 	//
 	public function CheckForDuplicatePatient ( $criteria ) {
-		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		// Category A + F4 (2.6f): the date of birth is one of the criteria, so it
+		// is validated as Y-m-d (ImportDate() plus a shape check) and the query is
+		// refused with a log line rather than quoting ImportDate()'s boolean
+		// false - quote(false) is a bare 0, which compares equal to MySQL's
+		// zero-date ('0000-00-00'), i.e. a row this search never asked for.
+		// Refused rather than dropped: dropping the date would widen a duplicate
+		// match to name-only and invent duplicates.
+		$dob = NULL;
+		if ( $criteria['ptdob'] ) {
+			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+			$parsed = $s->ImportDate( $criteria['ptdob'] );
+			if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $parsed ) ) {
+				syslog( LOG_ERR, get_class($this).'::CheckForDuplicatePatient| refusing non-Y-m-d ptdob '.var_export($criteria['ptdob'], true) );
+				return false; // this method's empty answer ("no matches")
+			}
+			$dob = $parsed;
+		}
 		$q = "SELECT * FROM patient p WHERE ".
 			"ptlname=".$GLOBALS['sql']->quote( $criteria['ptlname'] )." AND ".
 			"ptfname=".$GLOBALS['sql']->quote( $criteria['ptfname'] )." AND ".
 			( $criteria['ptmname'] ? "ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND " : "" ).
 			( $criteria['ptsuffix'] ? "ptsuffix=".$GLOBALS['sql']->quote( $criteria['ptsuffix'] )." AND " : "" ).
-			( $criteria['ptdob'] ? "ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND " : "" ).
+			( $dob !== NULL ? "ptdob=".$GLOBALS['sql']->quote( $dob )." AND " : "" ).
 			"ptarchive=0";
 		$res = $GLOBALS['sql']->queryAll( $q );
 		if ( count ( $res ) > 0 ) {
@@ -81,13 +97,26 @@ class PatientInterface {
 	//	array of hashes.
 	//
 	public function GetDuplicatePatients ( $criteria ) {
-		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		// Category A + F4 (2.6f): as CheckForDuplicatePatient - the date of birth
+		// is validated as Y-m-d and an unparseable value refuses the query
+		// (logged, empty answer) instead of being quoted as a bare 0 that would
+		// match a zero-date row.
+		$dob = NULL;
+		if ( $criteria['ptdob'] ) {
+			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+			$parsed = $s->ImportDate( $criteria['ptdob'] );
+			if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $parsed ) ) {
+				syslog( LOG_ERR, get_class($this).'::GetDuplicatePatients| refusing non-Y-m-d ptdob '.var_export($criteria['ptdob'], true) );
+				return array(); // this method's empty answer
+			}
+			$dob = $parsed;
+		}
 		$q = "SELECT * FROM patient p WHERE ".
 			"ptlname=".$GLOBALS['sql']->quote( $criteria['ptlname'] )." AND ".
 			"ptfname=".$GLOBALS['sql']->quote( $criteria['ptfname'] )." AND ".
 			( $criteria['ptmname'] ? "ptmname=".$GLOBALS['sql']->quote( $criteria['ptmname'] )." AND " : "" ).
 			( $criteria['ptsuffix'] ? "ptsuffix=".$GLOBALS['sql']->quote( $criteria['ptsuffix'] )." AND " : "" ).
-			( $criteria['ptdob'] ? "ptdob=".$GLOBALS['sql']->quote( $s->ImportDate($criteria['ptdob']) )." AND " : "" ).
+			( $dob !== NULL ? "ptdob=".$GLOBALS['sql']->quote( $dob )." AND " : "" ).
 			"ptarchive=0";
 		$res = $GLOBALS['sql']->queryAll( $q );
 		foreach( $res AS $r) {
