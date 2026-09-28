@@ -83,6 +83,20 @@
 #   2  inconclusive - FREEMED_TEST_PW empty, no md5 implementation, no response,
 #      or accepted/rejected responses are indistinguishable
 #
+# NO --self-test, and why that is not a gap in this file: the plan mandated a
+# --self-test only for the traversal probe (Task 0.1 / ruling R7). This script's
+# sensitivity is instead STRUCTURAL and is re-exercised on every run: it fires
+# the accepted-digest request AND a negative control whose digest cannot match,
+# and reports CLEAN only when the digest request was explicitly rejected and the
+# control differed. A response that changes only because the digest changed is
+# reported EXPLOITED even with no calendar body, and an indistinguishable pair is
+# INCONCLUSIVE (exit 2) - so the 0-byte-200 false-clean class is designed out
+# rather than asserted away. The committed transcript that shows both the 401
+# rows and the pre-fix accepted rows is
+# tests/security/evidence/vcalendar-auth.txt (and the task-3.1 provider-scope
+# transcript beside it). A reader looking for a --self-test here should read
+# those runs instead: there is none to run.
+#
 # Only `set -u` is used; a failed curl must not abort the run.
 set -u
 
