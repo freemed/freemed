@@ -21,6 +21,14 @@
 # sprintf-assembled clause fragments). The application entries that remain
 # belong to module/** (batch B), lib/API.php and the gacl ACL library.
 #
+# 2026-09-28, sweep batch B (task 2.6b part 2): all 54 entries for
+# lib/org/freemedsoftware/module/** were removed here after the lines behind
+# them were fixed the same way (quote() for values, intval() for ids,
+# SqlIdent::name()/columns() for declared table/column identifiers with a
+# log-and-refuse on refusal, str_replace placeholders where a statement
+# contains DATE_FORMAT specifiers that sprintf would consume). The entries
+# that remain belong to lib/API.php and the gacl ACL library (batch C).
+#
 # ---- vendored / third-party libraries (5): not swept, false positives ----
 ./lib/agata7/classes/fpdf151/fpdf.php:912:
 ./lib/agata7/classes/pclzip/pclzip.lib.php:4992:
@@ -34,7 +42,7 @@
 ./tests/security/sql_ident.test.php:123:
 ./tests/security/sql_ident.test.php:184:
 
-# ---- APPLICATION HITS (122): task 2.6b drives this section to zero ----
+# ---- APPLICATION HITS (68): task 2.6b drives this section to zero ----
 ./lib/API.php:1386:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:1052:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:1134:
@@ -103,57 +111,3 @@
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:758:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:775:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:781:
-./lib/org/freemedsoftware/module/AnesthesiologyCalendar.class.php:77:
-./lib/org/freemedsoftware/module/AppointmentTemplates.class.php:166:
-./lib/org/freemedsoftware/module/Authorizations.class.php:159:
-./lib/org/freemedsoftware/module/CalendarGroup.class.php:90:
-./lib/org/freemedsoftware/module/Callin.class.php:120:
-./lib/org/freemedsoftware/module/Callin.class.php:140:
-./lib/org/freemedsoftware/module/Callin.class.php:142:
-./lib/org/freemedsoftware/module/Callin.class.php:152:
-./lib/org/freemedsoftware/module/Callin.class.php:169:
-./lib/org/freemedsoftware/module/Callin.class.php:186:
-./lib/org/freemedsoftware/module/Callin.class.php:188:
-./lib/org/freemedsoftware/module/ChronicProblems.class.php:68:
-./lib/org/freemedsoftware/module/ClaimLogTable.class.php:56:
-./lib/org/freemedsoftware/module/ClinicRegistration.class.php:84:
-./lib/org/freemedsoftware/module/CurrentProblems.class.php:67:
-./lib/org/freemedsoftware/module/DrugSampleInventory.class.php:89:
-./lib/org/freemedsoftware/module/DrugSampleInventory.class.php:93:
-./lib/org/freemedsoftware/module/EpisodeOfCare.class.php:116:
-./lib/org/freemedsoftware/module/FacilityModule.class.php:118:
-./lib/org/freemedsoftware/module/Forms.class.php:360:
-./lib/org/freemedsoftware/module/InsuranceCompanyModule.class.php:182:
-./lib/org/freemedsoftware/module/InsuranceCompanyModule.class.php:194:
-./lib/org/freemedsoftware/module/ModuleFieldCheckerType.class.php:66:
-./lib/org/freemedsoftware/module/Notifications.class.php:88:
-./lib/org/freemedsoftware/module/PaymentModule.class.php:1385:
-./lib/org/freemedsoftware/module/PaymentModule.class.php:768:
-./lib/org/freemedsoftware/module/PhoneNumbers.class.php:105:
-./lib/org/freemedsoftware/module/PhoneNumbers.class.php:77:
-./lib/org/freemedsoftware/module/Prescription.class.php:130:
-./lib/org/freemedsoftware/module/PreviousOperationsModule.class.php:66:
-./lib/org/freemedsoftware/module/ProcedureModule.class.php:381:
-./lib/org/freemedsoftware/module/ProcedureModule.class.php:390:
-./lib/org/freemedsoftware/module/ProcedureModule.class.php:400:
-./lib/org/freemedsoftware/module/ProcedureModule.class.php:487:
-./lib/org/freemedsoftware/module/ProgressNotes.class.php:129:
-./lib/org/freemedsoftware/module/ProviderModule.class.php:163:
-./lib/org/freemedsoftware/module/Referrals.class.php:87:
-./lib/org/freemedsoftware/module/ScannedDocuments.class.php:303:
-./lib/org/freemedsoftware/module/SchedulerTable.class.php:72:
-./lib/org/freemedsoftware/module/SchedulerTable.class.php:79:
-./lib/org/freemedsoftware/module/SchedulerTable.class.php:80:
-./lib/org/freemedsoftware/module/SchedulerTable.class.php:88:
-./lib/org/freemedsoftware/module/SuperBill.class.php:209:
-./lib/org/freemedsoftware/module/SuperBill.class.php:215:
-./lib/org/freemedsoftware/module/SuperBill.class.php:278:
-./lib/org/freemedsoftware/module/UnfiledDocuments.class.php:353:
-./lib/org/freemedsoftware/module/UnfiledDocuments.class.php:407:
-./lib/org/freemedsoftware/module/UnfiledDocuments.class.php:450:
-./lib/org/freemedsoftware/module/UnfiledDocuments.class.php:473:
-./lib/org/freemedsoftware/module/UnreadDocuments.class.php:156:
-./lib/org/freemedsoftware/module/UserPreferences.class.php:54:
-./lib/org/freemedsoftware/module/UserPreferences.class.php:78:
-./lib/org/freemedsoftware/module/Zipcodes.class.php:119:
-./lib/org/freemedsoftware/module/i18nLanguages.class.php:58:
