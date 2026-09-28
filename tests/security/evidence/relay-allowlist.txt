@@ -843,8 +843,18 @@ residual mismatches in this phase: 0
 #     8 literals (add, del, GetRecord, GetRecords, mod, picklist, RenderHtmlView,
 #       to_text), all 133 module class files      : 866 pairs, 803 NOT listed, 63 listed
 #     +RenderToPDF (the print wrappers' literal)  :  37 pairs,  37 NOT listed,  0 listed
-#     8 literals, restricted to classes the SHIPPED LIST names : 448 / 385 NOT / 63
+#     8 literals, restricted to classes the SHIPPED LIST names : 423 / 360 NOT / 63
 #     8 literals, literal declared in the module file ITSELF    :   7 /   6 NOT /  1
+#
+#   (fix round 3, N3) The "restricted to classes the SHIPPED LIST names" row
+#   was published as 448 / 385 / 63. That figure was WRONG under its own label:
+#   the generator's 'named' accumulator (and its 'own_file' sibling) sat outside
+#   the `!$is_pdf` guard, so it also counted the 25 RenderToPDF pairs whose
+#   class the shipped list names -- while the label says the EIGHT literals.
+#   448 - 25 = 423, which is what the generator now prints and what round 1 had
+#   measured. Corrected in three places (this file, the report's FR4 table,
+#   evidence/relay-callset.txt) and pinned by test rows that read the figure
+#   back AND recompute it from the enumeration's own rows.
 #
 #   The round-1 report stated "146 (module class, literal) pairs exist and 129 of
 #   them are not in the shipped list". NEITHER NUMBER REPRODUCES. 146 implies 17
@@ -947,23 +957,71 @@ residual mismatches in this phase: 0
 #                                               0 patterns" was an over-simplification.
 #   9  module/Forms.class.php:345               CLASS axis under template data:
 #      module_function($data['options'],       module_function($options, 'widget').
-#      'widget')                                Fixed literal, data-driven class,
-#                                               reached only from FormTemplate
-#                                               control rendering. Documented;
-#                                               ROUTED to the follow-on list
-#                                               (Task 4.3) rather than gated here,
-#                                               because gating it would newly refuse
-#                                               template rendering.
+#      'widget')                                Fixed literal, data-driven class.
+#      (fix round 3) ROUTE AND REACHABILITY
+#                                               CORRECTED. Round 2 called this
+#                                               "reached only from FormTemplate
+#                                               control rendering" and its
+#                                               re-review named RenderHtmlView as
+#                                               the entry. The FOUR real callers
+#                                               are Forms::addform/add/modform/mod
+#                                               (Forms.class.php:72/75, 154/157,
+#                                               194/201, 252/255) via
+#                                               call_user_func(array($this,
+#                                               'control_'.$v['type']));
+#                                               EMRModule::RenderHtmlView renders a
+#                                               Smarty template and contains no
+#                                               control_* call and no dynamic
+#                                               dispatch, so it does NOT reach this
+#                                               line. MEASURED, both stages (PHASE
+#                                               A3/B4): every entry hop EXECUTES in
+#                                               the shipped log-only stage (miss
+#                                               logged) and is REFUSED
+#                                               (INVALID_CALL) under enforcement;
+#                                               and even in log-only the inner line
+#                                               is NOT reached in this checkout --
+#                                               Forms::add/addform die on
+#                                               ereg_replace() (removed in PHP 7)
+#                                               and Forms::mod dies on the removed
+#                                               freemed::get_link_rec(), while
+#                                               modform needs a form_results row AND
+#                                               a control template file, neither of
+#                                               which ships. Verdict: needs no gate
+#                                               -- under enforcement it is
+#                                               unreachable by construction -- but
+#                                               it is exactly what an OUTER-scope
+#                                               gate is for the day an entry point
+#                                               is repaired (that is why #3 was
+#                                               gated with the OUTER scope).
+#                                               ROUTED to Task 4.3.
 #  10  core/BaseModule.class.php:203,237        CLASS axis from the REQUEST:
 #      module_function($parts[0],               $parts = explode('|',
 #      '_RenderToPDF')                          $_REQUEST['attachment']). Fixed
-#                                               literal '_RenderToPDF'. Reachable
-#                                               via the module_loader web UI
-#                                               (_print is not a listed relay
-#                                               method), so NOT relay-reachable
-#                                               today; if a deployment ever lists
-#                                               _print, this is the gate it needs.
-#                                               Documented; ROUTED to Task 4.3.
+#                                               literal '_RenderToPDF'. (fix round
+#                                               3) CLAIM CORRECTED: round 2 said
+#                                               "not relay-reachable today". That
+#                                               is FALSE in the stage the product
+#                                               SHIPS in. The outer hop IS
+#                                               relay-dispatchable -- `module.
+#                                               <AnyClass>._print` has 0 shipped
+#                                               entries, which is exactly what
+#                                               makes it dispatchable while
+#                                               enforce = false: MEASURED (PHASE
+#                                               A2) log-only logs the miss and RUNS
+#                                               _print (it died on the missing TeX
+#                                               template), and (PHASE B3)
+#                                               enforcement answers INVALID_CALL
+#                                               BEFORE _print runs. So under
+#                                               enforcement the inner dispatch is
+#                                               unreachable by construction (the
+#                                               only hop that reaches _print is
+#                                               refused) and no gate is needed for
+#                                               that stage; in log-only the inner
+#                                               class name is the same tier as the
+#                                               ~840 unlisted pairs. If a
+#                                               deployment EVER lists _print, this
+#                                               is the gate it needs. ROUTED to
+#                                               Task 4.3.
 #  11  core/EMRModule.class.php:610 and         FIXED literal + FIXED class
 #      core/SupportModule.class.php:764         (TableMaintenance.ImportStockData).
 #      CallMethod('...ImportStockData', ...)    NOT a re-dispatcher.
@@ -991,18 +1049,80 @@ residual mismatches in this phase: 0
 #                                               Outside the control's scope, and no
 #                                               relay method reaches them with a
 #                                               caller-supplied name.
+#  17  api/PatientInterface.class.php:286       GATED HERE (fix round 3, R32). THE
+#      module_function($resolve['class'],       SAME CLASS AXIS as #2: the literal
+#      'additional_move')                       'additional_move' is fixed and the
+#                                               class arrives from the `modules`
+#                                               row that the caller's chosen
+#                                               patient_emr id resolves to, so
+#                                               listing the OUTER method cannot
+#                                               constrain it. _allowlist_gate(
+#                                               $resolve['class'],'additional_move')
+#                                               -> refuse($concrete, NULL, true).
+#                                               ABSENT from round 2's table (round
+#                                               1's F7 table carried it as row 6);
+#                                               that omission is what fix round 3
+#                                               corrects.
+#      (reached? MEASURED)                       NOT REACHED in this tree, for TWO
+#                                               pre-existing reasons that are
+#                                               independent of the gate: (i)
+#                                               MoveEmrAttachments reads an
+#                                               UNDEFINED LOCAL `$patient`, so its
+#                                               resolve query is
+#                                               `p.patient = NULL` and never
+#                                               matches; (ii) even with a matching
+#                                               row, freemed::module_get_meta()
+#                                               returns false for every registered
+#                                               module (it reads $row['MODULE_CLASS']
+#                                               / $row['META_INFORMATION']; the
+#                                               registry rows carry neither). Either
+#                                               one sends the loop down the
+#                                               pre-existing SqlIdent refusal path
+#                                               and `continue`s BEFORE the dispatch.
+#                                               PHASE A1 measures that on the
+#                                               unmodified product code; the gate's
+#                                               behaviour once the dispatch IS
+#                                               reached is measured live in both
+#                                               stages, plus an ABLATION, by the
+#                                               probe harness in PHASE A2/B/C. The
+#                                               two blockers are recorded for Task
+#                                               4.3, not fixed in this round.
+#  18  api/Agata7.class.php:156                 CLASS axis under STORED REPORT DATA:
+#      module_function($detail, 'widget', $k)   $detail comes from $v['value'] of a
+#                                               report DEFINITION
+#                                               (data/report/<name>.report, read via
+#                                               getReport()) -- one class over from
+#                                               #9, same shape. org.freemedsoftware.
+#                                               api.Agata7.* has 0 shipped entries,
+#                                               so the outer hop is REFUSED under
+#                                               enforcement and dispatchable in the
+#                                               shipped log-only stage -- the same
+#                                               tier as #9. NOT drivable on this
+#                                               stack: no *.report definition ships
+#                                               (data/report/ holds .jrxml only) and
+#                                               setReportPath() builds the path from
+#                                               the caller's report NAME, so the
+#                                               definition is a deployment artefact.
+#                                               Verdict: needs an OUTER-scope gate
+#                                               if it becomes reachable; ROUTED to
+#                                               Task 4.3. Round 2's table omitted it.
 #
-#   CONCLUSION of the search: the three relay-reachable re-dispatchers are #1, #2
-#   and #3, and all three are gated through Relay_Allowlist::refuse() on both axes.
-#   #4, #8, #9, #10 and #5 are name-to-dispatch shapes that are NOT gated, each for
-#   a stated reason (#4/#5/#8/#9: the name comes from stored data or a registry, not
-#   from the request; #10: not relay-reachable today). #9 and #10 are the two that
-#   WOULD need a gate if they became relay-reachable, and they are listed for the
-#   follow-on work (Task 4.3). This replaces round 1's sentence "No undisclosed
-#   instance remains" and its row-2 justification "so the reachable METHOD set is
-#   those eight literals - closed by construction": that justification does not
-#   hold, because a fixed-literal hop lands on a method that re-opens to a
-#   data-named method.
+#   CONCLUSION of the search (fix round 3: 18 rows, not 16): the four
+#   relay-reachable re-dispatchers are #1, #2, #17 and #3, and all four are gated
+#   through Relay_Allowlist::refuse() on both axes. #4, #5, #8, #9, #10 and #18 are
+#   name-to-dispatch shapes that are NOT gated, each for a stated reason: #4/#5/#8/
+#   #9/#18 take their name from stored data or a registry rather than from the
+#   request, and #10's inner name is only reachable in the log-only stage (its
+#   outer hop is unlisted, so enforcement refuses it before _print runs). #9, #10
+#   and #18 are the three that WOULD need an OUTER-scope gate the day any of their
+#   entry points becomes listable/reachable, and they are listed for the follow-on
+#   work (Task 4.3). This replaces round 1's sentence "No undisclosed instance
+#   remains" and its row-2 justification "so the reachable METHOD set is those
+#   eight literals - closed by construction": that justification does not hold,
+#   because a fixed-literal hop lands on a method that re-opens to a data-named
+#   method. Round 2's own table replaced those, but it dropped #17 (which round 1
+#   HAD), omitted #18 entirely, and stated #9/#10's reachability wrongly; fix round
+#   3 corrects all four of those and measures what it states (PHASE A/B/C below).
 
 # -----------------------------------------------------------------------------
 # WHAT THIS SECTION DOES NOT PROVE
@@ -1019,3 +1139,221 @@ residual mismatches in this phase: 0
 #     probe-shaped, exactly like the client-shaped gap named in this file's header.
 #   * the XML-RPC provider (the check is in the shared handle_request(); the JSON
 #     provider is what was probed).
+#   * (fix round 3) that a SUCCESSFUL `additional_move` dispatch happens. The only
+#     module class in this tree with a PUBLIC additional_move is
+#     module.ScannedDocuments (MessagesModule and EMRModule declare it protected),
+#     and the probe's registry row cannot name it: the modules table rejects a
+#     second row with that module_class (measured: `ERROR 1062 ... Duplicate entry
+#     'ScannedDocuments' for key 'acl_value_aco_sections'`, and the lower-case
+#     variant too). The LISTED leg therefore shares its class with the unlisted leg
+#     and the observable is the gate's DECISION, exactly the shape the round-2 R32
+#     proof used -- the same family of limit as "cannot show a successful
+#     RenderToPDF dispatch on a resolvable class".
+#   * (fix round 3) that the INNER hops of search rows #9 (Forms::control_module),
+#     #10 (BaseModule::_print) and #18 (Agata7::CreateForm) execute. What is
+#     measured is where each chain STOPS on this stack, not where it would land.
+
+# -----------------------------------------------------------------------------
+# FIX ROUND 3 - the PatientInterface dispatch site (R32), the two reachability
+#              corrections (N2), and the corrected class-axis figure (N3)
+# -----------------------------------------------------------------------------
+#   Everything below is a MEASUREMENT on this stack (Apache :38081, MariaDB
+#   127.0.0.1:33306, branch security/mitigation-2026-09, served tree ./app synced
+#   from the checkout). The scratch driver is ra-fix3-probe.sh (never committed);
+#   its phase output is quoted verbatim. "syslog:" lines are real lines from the
+#   container's syslog sink.
+#
+#   Commit provenance: the tree measured is the content of the fix-round-3 commit
+#   series -- base 49551849 plus the four round-3 commits on this branch (the
+#   report's fix-round-3 section lists them). The served copy was re-synced from
+#   the checkout before each phase and `cmp`-verified against it in PHASE D, so no
+#   row below describes a tree other than the committed one. The single exception
+#   is stated per row: PHASE A2/B/C run the PROBE-HARNESS file (the product file
+#   plus the two edits listed under "PROBE-HARNESS EDITS"), which is scratch and is
+#   never committed.
+#
+#   THE PROBE-HARNESS EDITS (PHASE A2). Search row #17's dispatch is NOT reachable
+#   in the shipped tree (PHASE A1 measures that), so the gate cannot be exercised
+#   through it without giving the harness a reachable dispatch. The served copy of
+#   PatientInterface.class.php got TWO labelled edits -- applied to the ROUND-3
+#   file AND to the PRE-ROUND-3 file, so the A/B differs only by the gate:
+#     (i)  the resolve query's `$patient` (an undefined local)  ->  `$patientFrom`
+#     (ii) freemed::module_get_meta( $resolve['class'], 'patient_field' )
+#          (always false)                                      ->  'payrecpatient'
+#   `changed lines: 2 (expect 2)`. The GATE ITSELF is byte-identical to the
+#   committed file wherever it runs: the ablation file is the pre-round-3 file with
+#   the same two edits and differs from the round-3 probe file by the gate block
+#   only (79 changed lines, all of them the gate + its comment).
+#   The probe also owns TWO TEMPORARY database rows (a `modules` row whose
+#   module_table/module_class the probe points at the class under test, and a
+#   `patient_emr` row whose id the request picks) plus ONE list entry in the SERVED
+#   copy of data/config/relay-allowlist.php (the shipped list names no
+#   *.additional_move pair at all). Everything is removed again in PHASE D.
+#
+# PHASE A1 - SHIPPED CODE, SHIPPED DATA, SHIPPED STAGE: the dispatch is not
+#            reached, and the reason is a measurement
+#   `served PatientInterface == the checkout : YES`
+#   `shipped-list entries matching '*.additional_move' : 0`
+#   Call: MoveEmrAttachments(5, 1, [5])   (the shipped patient_emr row id=5)
+#     A1 the call answers the method's own false                  ASSERTED
+#         body: false [http=200]
+#     A1 it is NOT refused by the relay (the outer method is listed)  ASSERTED
+#     syslog: PatientInterface::MoveEmrAttachments| refusing update:
+#             module_table=NULL patient_field=NULL are not valid SQL identifiers
+#     syslog: 0 "Relay: method" line(s) since the mark
+#   The refusal is the PRE-EXISTING SqlIdent guard and it fires BEFORE the gate, so
+#   the loop `continue`s and the gate never runs -- 0 gate lines, no dispatch. The
+#   two blockers (undefined `$patient`; module_get_meta() always false) are the same
+#   ones recorded in table row #17.
+#
+# PHASE A2 - PROBE HARNESS, SHIPPED STAGE (log-only): the gate's two decisions
+#   `the temporary registry row: payrec  ZZProbeUnlisted`, `patient_emr: 7777 payrec 987654321 7777`
+#   `the probe-only list entry: 'org.freemedsoftware.module.PatientTag.additional_move',`
+#     A2.1 LEG U, unlisted class, LOG-ONLY
+#         A2.1 the unlisted pair EXECUTES in log-only (the dispatch is attempted) ASSERTED
+#     syslog: Relay: method 'org.freemedsoftware.module.ZZProbeUnlisted.additional_move'
+#             is not in the relay allowlist (remote=..., LOG-ONLY, call still executed)
+#     the dispatch the response names (the class is the caller-chosen one):
+#       module_function('ZZProbeUnlisted', 'additional_move', Array)
+#         #0 .../api/PatientInterface.class.php(365): module_function('ZZProbeUnlisted', ...)
+#         #1 .../loader.php(68): PatientInterface->MoveEmrAttachments(7777, 1, Array)
+#     A2.2 LEG L, the SAME call, the pair LISTED by the probe entry, LOG-ONLY
+#         A2.2 the listed pair EXECUTES (the dispatch is attempted)  ASSERTED
+#         module_function('PatientTag', 'additional_move', Array)
+#     syslog: 0 "Relay: method" line(s) -- listing the pair removes the miss line.
+#
+# PHASE B - PROBE HARNESS, ENFORCING (enforce = true)
+#     B1 LEG U (unlisted): `the registry row names the UNLISTED class again`
+#        (shipped-list entries for it: 0)
+#         B1 the unlisted pair is NOT dispatched (no class-not-found fatal) ASSERTED
+#         B1 ...and the answer is not INVALID_CALL (the refusal is per attachment) ASSERTED
+#         B1 the method reports the refusal through its own return value ASSERTED
+#             body: false [http=200]
+#     syslog: Relay: method 'org.freemedsoftware.module.ZZProbeUnlisted.additional_move'
+#             is not in the relay allowlist (remote=..., refused (INVALID_CALL))
+#     B2 LEG L (listed, same call): `shipped-list entries: 1`
+#         B2 the listed pair is still dispatched (not a blanket refusal) ASSERTED
+#         module_function('PatientTag', 'additional_move', Array)
+#     syslog: 0 "Relay: method" lines
+#     => the gate refuses the UNLISTED class and allows the LISTED one, on the same
+#        call, in the enforcing stage; in the log-only stage both were logged and run.
+#
+# PHASE C - ABLATION: the PRE-round-3 PatientInterface (49551849) with the SAME two
+#           probe edits, still enforcing. The ABLATED file is the only difference.
+#   `served PatientInterface has the gate: 0 _allowlist_gate call site(s) (expect 0)`
+#   `the ablation file is the pre-round-3 tree with the SAME two probe edits: YES`
+#     C1 LEG U (unlisted class): the dispatch HAPPENS again => the gate is the cause
+#         C1 the unlisted pair is dispatched again (class-not-found fatal is back) ASSERTED
+#         C1 ...and is NOT refused (the gate is what refused it in B1) ASSERTED
+#       module_function('ZZProbeUnlisted', 'additional_move', Array)
+#         #0 .../api/PatientInterface.class.php(286): module_function('ZZProbeUnlisted', ...)
+#     (line 286 is the pre-round-3 dispatch line; no gate line was written at all,
+#      because without the gate nothing calls refuse())
+#     C2 (control) LEG L (listed): still dispatched, not refused  -- ASSERTED
+#     C3 (control) the R36 never-allow refusal still fires (it lives in
+#        Relay_Allowlist, not in this file):
+#         syslog: Relay: method 'org.freemedsoftware.core.User.GetName' is in a
+#                 NEVER-ALLOW namespace 'org.freemedsoftware.core.' ...
+#   => serving the pre-round-3 file restores the dispatch under enforcement. The gate
+#      is the cause of B1; it is not a blanket refusal (B2/C2), and it does not
+#      displace R36 (C3).
+#
+# PHASE A2/A3 + B3/B4 - the two reachability claims that round 2 got WRONG (N2)
+#   #10 BaseModule::_print (the OUTER hop is `org.freemedsoftware.module.<Class>._print`)
+#     LOG-ONLY  (A2, print_method=probe-none):
+#         A2 the unlisted outer hop EXECUTES in log-only (_print runs) ASSERTED
+#         body: .../data/tex/.tex<br/> Could not load  TeX template. [http=200]
+#       syslog: Relay: method 'org.freemedsoftware.module.PatientTag._print' is not in
+#               the relay allowlist (remote=..., LOG-ONLY, call still executed)
+#     ENFORCING (B3):
+#         B3 the unlisted outer hop -> INVALID_CALL                        ASSERTED
+#         B3 ...and _print did NOT run (no TeX template output)             ASSERTED
+#       syslog: ... 'org.freemedsoftware.module.PatientTag._print' ... refused (INVALID_CALL)
+#     => _print IS relay-dispatchable in the stage the product ships in, and refusing
+#        the only hop that reaches it is what makes its inner `module_function(
+#        $parts[0], '_RenderToPDF')` unreachable BY CONSTRUCTION under enforcement. In
+#        this stack _print dies on the missing TeX template BEFORE the attachment-driven
+#        inner dispatch, so the inner name never runs here at all.
+#   #9 Forms::control_module (the real callers: Forms::addform/add/modform/mod)
+#     `The four real callers of control_module: Forms.class.php 72/75, 154/157,
+#      194/201, 252/255 -- call_user_func(array($this,'control_'.$v['type']))`
+#     LOG-ONLY (A3):
+#         A3a ModuleModifyMethod('Forms') -> module_function('Forms','mod')
+#             body: Fatal error: Uncaught Error: Call to undefined method
+#                   freemed::get_link_rec() in .../module/Forms.class.php:231
+#            syslog: 'org.freemedsoftware.module.Forms.mod' ... LOG-ONLY, call still executed
+#         A3b module.Forms.add directly
+#             body: Fatal error: Uncaught Error: Call to undefined function
+#                   ereg_replace() in .../module/Forms.class.php:131
+#            syslog: 'org.freemedsoftware.module.Forms.add' ... LOG-ONLY, call still executed
+#         A3c ModuleRenderHtmlMethod('Forms',1) -- the route the round-2 re-review named
+#             body: /var/www/html/data/emrview/form_results.tpl<br/> Could not load
+#                   form_results template. [http=200]
+#            syslog: 'org.freemedsoftware.module.Forms.RenderHtmlView' ... LOG-ONLY, ...
+#     ENFORCING (B4): all three -> INVALID_CALL, and none of the three bodies appears
+#         B4a ... Forms::mod did not run / B4b ... Forms::add did not run /
+#         B4c ... RenderHtmlView did not run                            ASSERTED
+#     => the outer hops all dispatch in the shipped stage, but the INNER
+#        module_function($data['options'],'widget') line is not reached even there:
+#        add/addform die on ereg_replace() (removed in PHP 7), mod dies on the removed
+#        freemed::get_link_rec(), modform needs a form_results row and a template FILE
+#        (data/form/ does not exist). RenderHtmlView -- the route round 2 named -- runs
+#        and fails on the missing data/emrview template, and its body contains no
+#        control_* call and no dynamic dispatch, so it never reaches control_module.
+#        Under enforcement every entry hop is refused => unreachable by construction.
+#
+# PHASE D - RESTORE (served tree + database)
+#   `0`            (temporary rows left after DELETE: 0)
+#   `served enforce   : 'enforce' => false,`
+#   `pattern entries  : 323`
+#   cmp ... IDENTICAL x7 (data/config/relay-allowlist.php,
+#     api/PatientInterface.class.php, core/Relay.class.php,
+#     core/Relay_Allowlist.class.php, api/UserInterface.class.php,
+#     api/ModuleInterface.class.php, api/FormTemplate.class.php)
+#   -- database fingerprint (after) --     [VERBATIM, tab-separated]
+#       entemplate      1       1
+#       payrec  1       3
+#       patient_emr     1       5
+#       user    2       1,2
+#       patient 0       NULL
+#       procrec 0       NULL
+#       vitals  0       NULL
+#       modules 135     134
+#       config  34      NULL
+#   `database fingerprint md5 BEFORE (...): eda1b343b1027332fbd269c0c3171863`
+#   `fingerprint md5 AFTER : eda1b343b1027332fbd269c0c3171863`
+#   All five phases reported `residual mismatches in this phase: 0`.
+#   NOTE the fingerprint is a fingerprint of COUNTS and ids, so it pins the temporary
+#   rows' removal; it is not a row-level hash of the whole database.
+
+# -----------------------------------------------------------------------------
+# FIX ROUND 3 (N3) - the corrected class-axis figure, and what now pins it
+# -----------------------------------------------------------------------------
+#   `the 8 literals, restricted to classes the shipped list names` was published as
+#   448 / 385 / 63 in three places (the report's FR4 table, this file line 846, and
+#   evidence/relay-callset.txt line 27). It was WRONG under its own label: the
+#   generator's 'named' accumulator (and its 'own_file' sibling) sat outside the
+#   `!$is_pdf` guard, so it also counted the 25 RenderToPDF pairs whose class the
+#   shipped list names, while the label -- and the comment directly above the
+#   accumulator -- both say the EIGHT literals. 448 - 25 = 423.
+#
+#   Regenerated with the corrected generator:
+#     $ php tests/security/relay-callset-enum.php c6c4f306 security/mitigation-2026-09 \
+#         tests/security/evidence/relay-accesslog.txt > /tmp/enum-r3.txt
+#     relay-callset-enum: class axis (8 literals): 866 pairs, 803 not in the shipped list, 63 in it
+#     relay-callset-enum: 323 relay method strings (575 raw strings before resolution)
+#     #     all 133 module class files          : 866 pairs, 803 NOT in the shipped list, 63 in it
+#     #   +RenderToPDF (...): 37 pairs, 37 NOT in the shipped list, 0 in it
+#     #   the 8 literals, restricted to classes the shipped list names : 423 pairs, 360 NOT listed, 63 listed
+#     #   the 8 literals, declared in the module file ITSELF           : 7 pairs, 6 NOT listed, 1 listed
+#     $ diff tests/security/evidence/relay-callset.txt /tmp/enum-r3.txt
+#     27c27
+#     < ... 448 pairs, 385 NOT listed, 63 listed
+#     ---
+#     > ... 423 pairs, 360 NOT listed, 63 listed
+#   => the ONLY change the regeneration makes is the one corrected figure;
+#      903 '#class-axis' rows, 866/803/63, 37/37/0 and 7/6/1 are untouched.
+#   The corrected value is now pinned by test rows that (a) read the artifact's four
+#   published figures back and (b) RECOMPUTE the 'named' restriction from the
+#   artifact's own rows plus the shipped patterns, so a header that disagrees with
+#   the rows it emits goes red.
