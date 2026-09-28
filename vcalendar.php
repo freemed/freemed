@@ -81,8 +81,13 @@ function freemed_basic_auth () {
 		}
 
 		// Fetch the account by username and compare the digest in PHP.
+		// Category A + D2 (final wave, review I-2): the username is an
+		// attacker-controlled, PRE-AUTHENTICATION value, so the driver
+		// quotes it - quote() supplies the surrounding quotes and is
+		// NO_BACKSLASH_ESCAPES-safe, unlike addslashes() inside
+		// hand-written quotes.
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
-			"WHERE username='".addslashes($user)."'";
+			"WHERE username=".$GLOBALS['sql']->quote($user);
 		$r = $GLOBALS['sql']->queryRow( $query );
 
 		if (is_array($r) and !empty($r['id']) and
@@ -134,7 +139,7 @@ function freemed_legacy_hash_enabled () {
 //
 //	The claimed username is recorded because that is the only audit trail a
 //	pass-the-hash attempt leaves; it is NOT yet authenticated at this point and
-//	the log says so. (PHP has no LOG__SECURITY constant - LOG_NOTICE is used.)
+//	the log says so. This endpoint writes the deprecation notice to syslog at LOG_NOTICE because that is the channel the migration instructions grep; the project's own LOG__SECURITY constant (lib/macros.php:119) records its other auth events on the SystemLog sink, which no operator here is watching.
 function freemed_get_auth ( ) {
 	global $sql;
 
@@ -147,8 +152,11 @@ function freemed_get_auth ( ) {
 		"(vcals_legacy_hash=on), claimed username = ".$__user.
 		", remote = ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-'));
 
+	// Category A + D2 (final wave, review I-2): the deprecated GET path's
+	// username is request-controlled too, so it is quoted by the driver
+	// with the hand-written quotes removed (never both).
 	$query = "SELECT username, userpassword, userrealphy, id FROM user ".
-		"WHERE username='".addslashes($__user)."'";
+		"WHERE username=".$GLOBALS['sql']->quote($__user);
 	$r = $sql->queryRow( $query );
 	if (is_array($r) and !empty($r['id']) and
 			hash_equals(strtolower((string) $r['userpassword']), strtolower($__hash))) {
