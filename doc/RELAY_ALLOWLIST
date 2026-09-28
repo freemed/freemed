@@ -24,6 +24,18 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    validation is the provider name, and the login flow runs before there is a
    session), but it no longer skips this.
 
+   The check runs for INVERSIONS of the relay too. A relay method that
+   re-dispatches a method named by its own caller is the same door with a second
+   handle: the outer method string is checked once, and the inner one would never
+   meet the allowlist. org.freemedsoftware.api.UserInterface.Multicall is that
+   shape (it is a listed method - a real client calls it - and it dispatches an
+   array of {method, parameters} itself), so it now gates every inner call
+   through the SAME decision point the relay uses
+   (Relay_Allowlist::refuse()). In the log-only stage an inner miss is logged and
+   still runs; under enforcement it is answered with INVALID_CALL in its own slot
+   and the rest of the batch still runs. Any other re-dispatcher carrying a
+   caller-supplied method name belongs on that same entry point.
+
    THIS CONTROL SHIPS IN LOG-ONLY MODE. 'enforce' => false. A MISS IS LOGGED AT
    LOG_WARNING AND THE CALL STILL EXECUTES. See section 2 - the reason is not
    timidity, it is that the call set in the list has never been exercised by a
@@ -102,35 +114,68 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
         not have to match the class's spelling.
      4. When the log is quiet, set 'enforce' => true.
 
-   IMPORTANT - A CONFIG EDIT IS NOT INSTANT. PHP caches the data file through
-   OPcache: with the default opcache.revalidate_freq = 2 a worker can still serve
-   the previous value for a couple of seconds after the file changes. Give it a
-   moment, or reload PHP, before believing that the running server agrees with
-   the file you just edited. (Measured on the verification stack: the change was
-   reflected after ~1s.)
+   IMPORTANT - A CONFIG EDIT IS NOT INSTANT, AND THE LAG IS PER WORKER. PHP
+   caches the data file through OPcache: with the default opcache.revalidate_freq
+   = 2 a worker can still serve the previous value for a couple of seconds after
+   the file changes, and TWO WORKERS CAN DISAGREE about which value is current.
+   So a SINGLE PROBE IS NOT EVIDENCE, in either direction - it is how both a
+   false "the control is broken" and a false PASS were produced while this
+   control was being verified. Reload PHP (or wait past opcache.revalidate_freq
+   on every worker) and probe MORE THAN ONCE before believing that the running
+   server agrees with the file you just edited, and before trusting either
+   answer.
 
-   IMPORTANT - A MISSING DATA FILE DOES NOT ENFORCE. If
-   data/config/relay-allowlist.php is unreadable, the relay logs a warning and
-   falls back to log-only rather than refusing every call. That is the
-   outage-safe direction for a control whose default is log-only, but it means
-   that once a site enforces, the file belongs in version control and in the
-   backup.
+   IMPORTANT - A MISSING OR UNPARSEABLE DATA FILE DOES NOT ENFORCE. If
+   data/config/relay-allowlist.php is unreadable, or does not return an array,
+   or cannot be parsed at all (a typo while hand-editing `patterns` - the editing
+   this document instructs - raises a ParseError that `@include` does not
+   suppress), the relay logs a warning and falls back to log-only rather than
+   refusing every call. A parse failure is logged at LOG_ERR because it is a
+   deployment mistake, not an expected state. That is the outage-safe direction
+   for a control whose default is log-only, but it means that once a site
+   enforces, the file belongs in version control and in the backup.
+
+   THE MISS LINE CARRIES THE METHOD, THE REMOTE ADDRESS AND THE STAGE - AND
+   NOTHING ELSE. There is no user and no site identifier in it. On a
+   reverse-proxied host every client looks like the proxy, and on a multi-tenant
+   host one syslog cannot say whose miss it was: if that distinction matters for
+   your deployment, carry it in the log transport (a per-site syslog tag) or
+   record the forwarding header at the proxy, rather than expecting it in this
+   line.
 
    KEEP THE LIST HONEST. If a call is refused that should have been allowed, add
    a pattern. Do not remove the check, and do not widen a pattern to the whole
-   tree. A pattern broader than org.freemedsoftware.<namespace>.<Class> - a bare
-   `*`, or org.freemedsoftware.* - is REJECTED at load with a LOG_WARNING and
-   does not take effect, and so is a `*` anywhere but the end of a pattern
-   (that is a wildcard the matcher does not implement; honouring it literally
-   would leave the operator believing a rule was in force that matches nothing).
+   tree. A trailing `*` is supported and is a real widening; it can be written at
+   three widths, and the widest one is honoured:
+
+       org.freemedsoftware.module.SomeModule.*       a CLASS
+           - every method of that one class
+       org.freemedsoftware.module.SomeModule.Get*    a PREFIX
+           - every method name beginning `Get`
+       org.freemedsoftware.module.*                  a NAMESPACE
+           - EVERY method of EVERY class under that namespace
+
+   The NAMESPACE form is ACCEPTED - it is the brief's own example of a `*`
+   pattern and it is narrower than a whole-tree rule - but it is NEVER ACCEPTED
+   IN SILENCE: the load logs it at LOG_WARNING and names how many method
+   declarations it covers, because a wildcard accepted with no log line cannot be
+   told apart from the control being switched off. A pattern BROADER than those -
+   a bare `*`, org.freemedsoftware.*, org.freemedsoftware, or a bare namespace
+   with no trailing `*` such as org.freemedsoftware.api - is REJECTED at load
+   with a LOG_WARNING and does not take effect, as is a `*` anywhere but the end
+   of a pattern (a wildcard the matcher does not implement; honouring it
+   literally would leave the operator believing a rule was in force that matches
+   nothing), and as is an exact pattern that is not exactly
+   org.freemedsoftware.<ns>.<Class>.<Method> (a deeper spelling names no relay
+   method and would match nothing).
 
    EXTENDING IT: `patterns` is a list of exact relay method strings, or the same
-   with a trailing `*` to match any method name with that prefix
-   ('org.freemedsoftware.module.SomeModule.*'). Matching is literal - the dots
+   with a trailing `*` to match any method string with that prefix
+   ('org.freemedsoftware.module.SomeModule.*'). The shipped seed uses no `*`
+   patterns: it is 323 resolved method strings. Matching is literal - the dots
    are dots, not regular-expression wildcards - and case-insensitive, mirroring
    PHP's own method dispatch, so a client that writes `Picklist` for a class that
-   declares `picklist` is not refused. The shipped seed uses no `*` patterns: it
-   is 323 resolved method strings.
+   declares `picklist` is not refused.
 
    DEPLOYMENTS THAT ADD THEIR OWN MODULES should add that module's methods to
    this file in the same commit as the module. The controlled extension point is

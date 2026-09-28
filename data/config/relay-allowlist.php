@@ -59,26 +59,51 @@
 //	   case-insensitive for the method name, so its case does not have to be
 //	   right).
 //
-//	   A config edit is NOT instant: PHP caches this file through OPcache, so
-//	   with the default opcache.revalidate_freq = 2 a worker can serve the
-//	   previous value for a moment. Give it a moment, or reload PHP, before
-//	   believing the running server agrees with the file. (Measured on the
-//	   verification stack: the change was reflected after ~1s.)
+//	   A config edit is NOT instant, and the lag is PER WORKER: PHP caches this
+//	   file through OPcache, so with the default opcache.revalidate_freq = 2 a
+//	   worker can still serve the previous value for a moment - and two workers
+//	   CAN DISAGREE, so ONE probe is not evidence. Reload PHP (or wait past
+//	   opcache.revalidate_freq on every worker) and probe MORE THAN ONCE, before
+//	   believing the running server agrees with the file you just edited.
+//	   (Measured on the verification stack: a single-worker probe produced a
+//	   false failure AND a false pass before the reload-per-edit remedy below
+//	   was applied.)
 //
 //	3. When the log is quiet, set 'enforce' => true. Keep this file in version
 //	   control from then on: a missing file disables enforcement (fail-open,
-//	   logged) rather than refusing every call.
+//	   logged) rather than refusing every call, and so does a file that cannot be
+//	   parsed (a hand-editing typo here is caught and reported, not fatal).
 //
 //	If a call is refused that should have been allowed, the fix is to add a
 //	pattern - never to remove the check, and never to widen a pattern to the
-//	whole tree. Patterns broader than org.freemedsoftware.<ns>.<Class> (a bare
-//	`*`, or org.freemedsoftware.*) are REJECTED at load with a LOG_WARNING and do
-//	not take effect, as is a `*` anywhere but the end of a pattern (a wildcard
-//	the matcher does not implement); see Relay_Allowlist::is_too_broad().
+//	whole tree.
 //
-//	`*` at the END of a pattern matches any method name with that prefix, e.g.
-//	'org.freemedsoftware.module.SomeModule.*'. It is supported and tested; it is
-//	not used in the seed below, where every entry is a resolved method string.
+//	A trailing `*` on a pattern matches any method string with that prefix, and
+//	it can be written at three widths:
+//
+//	    org.freemedsoftware.module.SomeModule.*     a CLASS    - every method of
+//	                                                 that one class
+//	    org.freemedsoftware.module.SomeModule.Get*   a PREFIX  - every method name
+//	                                                 beginning `Get`
+//	    org.freemedsoftware.module.*                 a NAMESPACE - EVERY method of
+//	                                                 EVERY class under it
+//
+//	The NAMESPACE form is ACCEPTED, and it is the widest thing this control
+//	honours: it grants every method of every class under that namespace. It is
+//	never accepted in SILENCE - Relay_Allowlist logs it at LOG_WARNING and names
+//	how many method declarations it covers, because a wildcard accepted with no
+//	log line cannot be told apart from the control being off. Prefer the CLASS
+//	form. The seed below uses no `*` at all: every entry is a resolved method
+//	string.
+//
+//	Patterns BROADER than the above are REJECTED at load with a LOG_WARNING and do
+//	not take effect: a bare `*`, org.freemedsoftware.*, org.freemedsoftware, and a
+//	bare namespace with no trailing `*` such as org.freemedsoftware.api. So is a
+//	`*` anywhere but the end (a wildcard the matcher does not implement), and so is
+//	an exact pattern that is not exactly org.freemedsoftware.<ns>.<Class>.<Method>
+//	(a deeper spelling names no relay method and would match nothing); see
+//	Relay_Allowlist::is_too_broad(). tests/security/relay_allowlist.test.php pins
+//	each of these boundaries.
 //
 //	See doc/RELAY_ALLOWLIST for the operator notes and the release note.
 //
