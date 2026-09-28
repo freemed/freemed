@@ -477,3 +477,308 @@ DATABASE
   no database write was made by this task. Pinned fingerprint, before and after:
   entemplate 1|1   payrec 1|3   patient_emr 1|5   user 2|1,2   patient 0   procrec 0   vitals 0
   modules 135   config 34.
+
+================================================================================
+FIX ROUND 1 (Task 4.1 review findings 1, 2, 4, 5, 6)
+================================================================================
+
+PROVENANCE
+  checkout / branch : /home/jbuchbinder/Code/projects/freemed   security/mitigation-2026-09
+  commit            : 2391b979 (measurement base for this section; the fix-round changes are the
+                      working-tree changes committed immediately after this file)
+  servers           : :38083 Apache/2.4.68 + mod_php 8.3.35, /freemed -> /usr/share/freemed, mounting
+                            the SHIPPED doc/freemed.apache.conf read-only
+                      :38084 nginx/1.31.6 + php-fpm 8.3.35, same layout, mounting the SHIPPED
+                            docker/nginx.conf read-only
+                      :38081 Apache/2.4.68, docroot /var/www/html, the copy harness (AllowOverride
+                            All, no server-level deny) - used for the .htaccess-layer measurements,
+                            which is the only place that layer can be seen on its own
+                      :38082 nginx, docroot /usr/share/freemed, the copy harness
+  served tree       : ./app, an rsync copy of the checkout, exactly as the previous round left it;
+                      the five .htaccess files under ./app were replaced for one measurement and
+                      restored (sha256 -c below).
+  probes            : scratch only, never committed: probe-4.1-anchor.sh (status matrix),
+                      htaccess-24-no-compat-check.sh (config parse without mod_access_compat),
+                      htaccess-runtime-check.sh (.htaccess layer alone on :38081),
+                      gate-scratch-4.1/{ab-fix1.py,mutate-fix1.sh} (gate A/B and mutations)
+  server restart    : the two repo-mounted servers mount the SHIPPED config FILES, and writing a new
+                      inode over a single-file bind mount does not reach the container's view: after
+                      each config edit the container was restarted (docker restart
+                      freemed-verify-apache-repo / freemed-verify-nginx-repo), and the change was
+                      confirmed inside the container before any measurement (`tail` of the mounted
+                      file). Without the restart the measurements silently test the OLD config -
+                      observed once, which is why it is recorded here.
+  REDACTION         : unchanged from PHASE A - no credentials, no PHI, no 32-hex digest. Where a body
+                      could carry the installer's credentials the row records status and byte count
+                      only. Digests are abbreviated to 16 hex; they are config-file digests.
+
+--------------------------------------------------------------------------------
+F1 - the PATH_INFO allowlist is now ANCHORED to the request root
+--------------------------------------------------------------------------------
+
+F1.1 BEFORE (commit 2391b979 = the unanchored allowlist, both shipped configs, measured live)
+  :38083 apache /freemed/install.php/x/help.php/              200 (123 bytes)
+  :38083 apache /freemed/install.php/x/relay.php/             200 (123 bytes)
+  :38083 apache /index.php/help.php/x                         302 (0 bytes)
+  :38083 apache /index.php/x/chtml.php/y                      302 (0 bytes)
+  :38083 apache /vcalendar.php/x/controller.php/              401 (0 bytes)
+  :38083 apache /services/RemittCallback.php/x/help.php/      200 (2257 bytes)
+  :38084 nginx  /freemed/install.php/x/help.php/              200 (123 bytes)
+  :38084 nginx  /freemed/install.php/x/relay.php/             200 (123 bytes)
+  :38084 nginx  /index.php/help.php/x                         302 (0 bytes)
+  :38084 nginx  /index.php/x/chtml.php/y                      302 (0 bytes)
+  :38084 nginx  /vcalendar.php/x/controller.php/              401 (0 bytes)
+  :38084 nginx  /services/RemittCallback.php/x/help.php/      500 (596 bytes, php-fpm error: the
+                                                              script RAN - the path was never refused)
+  (three distinct end states - executed, redirected, and gated - all three of them the shape the
+   rule exists to refuse: the reviewer's finding reproduced on both shipped configs.)
+
+F1.2 AFTER (working tree, same servers, same probe; transcript logs/4.1a-after-fix1-*.txt)
+  :38083 apache  every row in F1.1                                     403 (317 bytes)
+  :38084 nginx   every row in F1.1                                     403 (153 bytes)
+
+F1.3 no regression half, AFTER, both shipped configs (same run)
+  apache /freemed/help.php/ui/en_US/probe                      401 (24 bytes)   its own auth gate
+  apache /freemed/chtml.php/main                               200 (28 bytes)
+  apache /freemed/relay.php/json/<method>                      200 (5 bytes)
+  apache /freemed/relay-gwt.php/probe                          200 (195 bytes)
+  apache /freemed/controller.php/<ui>/<page>                   200 (222 bytes)
+  apache /freemed/index.php                                    302               unchanged
+  apache /freemed/services/RemittCallback.php?wsdl              200 (3452 bytes)  unchanged
+  apache /freemed/ui/dojo/htdocs/dojo/dojo.js                   200 (150954 bytes) static asset
+  nginx  the same nine rows: 401 / 200 / 200 / 200 / 200 / 302 / 200 / 200  (identical)
+  and the previously disclosed behaviour changes hold: /install.php/<p>, /index.php/<p>,
+  /vcalendar.php/<p>, /services/RemittCallback.php/<p> are 403 on both servers.
+
+F1.4 the four deny trees, AFTER, both shipped configs (must still be 403 after the rewrite change)
+  /lib/API.php                      403 both
+  /lib/settings.php                 403 both
+  /data/schema/mysql/patient.sql    403 both
+  /tests/security/repro-relay-sqli.sh  403 both
+  /scripts/security-sql-concat-check.sh 403 both
+  /data/store/no-image.png          403 both
+  /data/config/relay-allowlist.php  403 both
+  /data/config/... and /data/documents/unfiled/no-image.png 403 both
+  /help.php/../scripts/security-sql-concat-check.sh  403 both
+  /lib%2FAPI.php                    404 apache (AllowEncodedSlashes off, unchanged), 403 nginx
+  and the new-shape siblings: /freemed/install.php/x//help.php/, /freemed/./install.php/x/help.php/,
+  /freemed/install.php/x/help.php/../x  -> 403 both;  /freemed/INSTALL.PHP/x/HELP.PHP/ -> 404 both
+  (no .PHP file exists in the tree - `find . -name '*.PHP'` is empty - so the case-varied shape is a
+   404 and not an execution; the lowercase-script shapes are 403).
+
+F1.5 the mechanism, quoted from the server's own rewrite trace (LogLevel rewrite:trace5,
+     :38083, request GET /freemed/install.php/x/help.php/)
+  [perdir /usr/share/freemed/] strip per-dir prefix: /usr/share/freemed/install.php/x/help.php/
+                               -> install.php/x/help.php/
+  [perdir /usr/share/freemed/] applying pattern
+                               '^(?!(help|chtml|relay|relay-gwt|controller)\.php/).*\.php/'
+                               to uri 'install.php/x/help.php/'
+  [perdir /usr/share/freemed/] forcing responsecode 403 for /usr/share/freemed/install.php
+  => the pattern is matched against the path RELATIVE TO THE APPLICATION ROOT, which is what makes it
+     anchored on any mount prefix. The nginx equivalent anchors in its own words
+     (`~^/(freemed/)?(help|chtml|relay|relay-gwt|controller)\.php/`).
+
+F1.6 the same rule under a SECOND Alias (control for the prefix question)
+  `Alias /emr /usr/share/freemed` added to :38083, apachectl -k graceful, then:
+    /emr/help.php/ui/en_US/probe          401        /emr/install.php/extra           403
+    /emr/chtml.php/main                   200        /emr/install.php/x/help.php/     403
+    /emr/relay.php/json/x                 200        /emr/index.php                   302
+    /emr/controller.php/<ui>/<page>       200        /emr/lib/API.php                 403
+  the alias file was then removed and the same URLs re-measured (/emr/* -> 404, /freemed/* unchanged
+  at 401/403), i.e. the control is attributable.
+  => the per-directory pattern needs no prefix named, which is why it was chosen over the review's
+     literal Apache suggestion `!^/(freemed)?/(help|...)\\.php/` (that form's own `(freemed)?/`
+     cannot match REQUEST_URI `/help.php/...`, i.e. the document-root layout).
+
+F1.7 ATTEMPTED A/B OF THE ALTERNATIVE FORM - INCONCLUSIVE, RECORDED AS SUCH
+  Reason: on this harness a SECOND `<Directory "...">` section for the same directory, in a separate
+  conf-enabled file, does not contribute rules to the merged per-directory configuration. Measured
+  with a marker rule (scratch file anchor-candidate-*.conf, docker cp into the container, graceful):
+    <Directory "/usr/share/freemed">  RewriteRule ^help\.php/marker$ - [R=418,L]
+    GET /freemed/help.php/marker  ->  401   (the marker never fired; the trace applies ONLY the
+                                             shipped rule, then "pass through")
+  and the reviewer's form installed the same way on :38083 and on :38081 changed nothing at all
+  (transcript logs/4.1a-candidate-ab2.txt and logs/4.1a-candidate-docroot.txt: with the file present
+  and `grep -c REQUEST_URI` = 3 inside the container, /help.php, /chtml.php, /relay.php,
+  /install.php/extra all answered exactly as without it). One earlier attempt of the same experiment
+  on :38081 DID show 403s for the legitimate entrypoints; that observation is not reproducible with
+  the file verified in place, so it is recorded here as unexplained and is NOT used as evidence for
+  the choice. The choice rests on F1.5 and F1.6, not on a measured rejection of the alternative.
+  Note for the final review, because it outlives this task: mod_rewrite rules from a second
+  `<Directory>` section for the same path did not merge here (Apache 2.4.68). The shipped rule lives
+  in exactly one section, as it did before this round, so nothing in this change depends on the
+  behaviour - but an operator who adds their own `<Directory>` block with RewriteRules over the same
+  tree should verify that both rule sets are live.
+
+--------------------------------------------------------------------------------
+F2 - the runtime ini's provenance, corrected (no new behaviour claimed)
+--------------------------------------------------------------------------------
+
+  What was wrong: docker/php-custom.ini and doc/DEPLOYMENT_HARDENING section 5 both attributed the
+  "no php.ini is loaded at all" measurement to "the php:8.3 images this tree is served from / this
+  project's containers run". The project's container is not a php:8.3 image.
+
+  Measured in the repository tree (facts, not inference):
+    docker/docker-compose.yml:16   image: jbuchbinder/moodle-php-8.3-fpm
+    docker/docker-compose.yml:24   ./php-custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro
+  Measured in the VERIFICATION image (the image the numbers actually came from):
+    docker run --rm --entrypoint sh freemed-verify-php:apache -c 'php --ini | head -3'
+      Configuration File (php.ini) Path: /usr/local/etc/php
+      Loaded Configuration File:         (none)
+      Scan for additional .ini files in: /usr/local/etc/php/conf.d
+    grep -n '^register_argc_argv' /usr/local/etc/php/php.ini-production   -> 690:register_argc_argv = Off
+    grep -n '^register_argc_argv' /usr/local/etc/php/php.ini-development  -> 688:register_argc_argv = Off
+  What the two files now say: the measurement is attributed to freemed-verify-php:apache
+  (php:8.3-apache-derived, /usr/local/etc/php/conf.d); the shipped Bitnami-layout image was NOT
+  inspected; a Bitnami / php.ini-production install normally loads a php.ini that already sets
+  register_argc_argv = Off, so there the directive may be restating the effective default rather than
+  establishing it. The directive itself is unchanged (an explicit Off wins wherever the file is read),
+  and no php.ini was executed to change the claim - the change is a provenance correction only.
+
+--------------------------------------------------------------------------------
+F4/MINOR-4 - check 1's resolver grep is now anchored
+--------------------------------------------------------------------------------
+  before: grep -qE 'help_resolve_path *\('                       (and the mirrored grep -vE)
+  after : RESOLVER_CALL='(^|[^A-Za-z0-9_])help_resolve_path[[:space:]]*[('   shared by both greps
+  mutation (scratch copy of the gate, un-anchored again):
+    -> help1_misnamed  expect FAIL  *** MISSED (must be flagged) ***
+    -> self-test FAILED (0 of 17 scan and 1 of 3 check-1 fixtures misclassified), exit 1
+
+--------------------------------------------------------------------------------
+F5/MINOR-5 (controller ruling R33) - the resolution-call rule narrowed
+--------------------------------------------------------------------------------
+  A/B of the three generations over 21 shapes (scratch: gate-scratch-4.1/ab-fix1.py; PRE = 5492ff41,
+  4.1 = 2391b979 = the gate Task 4.1 shipped, FIX1 = the working-tree rule). The review's 14-shape
+  matrix reproduces exactly in the PRE/4.1 columns; the seven added rows are the R33 cases.
+
+  shape                     PRE     4.1     FIX1    expected now
+  raw_input                 FLAG    FLAG    FLAG    FLAG
+  post_sink                 FLAG    FLAG    FLAG    FLAG
+  helper_and_raw            FLAG    FLAG    FLAG    FLAG
+  resolver_one_arg          pass    FLAG    FLAG    FLAG
+  misnamed_one_arg          pass    FLAG    FLAG    FLAG
+  misnamed_two_arg          FLAG    FLAG    FLAG    FLAG
+  resolver_two_args         FLAG    pass    pass    pass
+  resolver_nested           FLAG    pass    pass    pass
+  realpath_raw              pass    FLAG    FLAG    FLAG
+  basename_raw              pass    pass    pass    pass
+  const_realpath            pass    pass    pass    pass
+  comma_in_one_arg          pass    pass    pass    pass
+  docroot_realpath          pass    FLAG    pass    pass        <- the review's false positive, gone
+  scriptfile_realpath       pass    FLAG    pass    pass        <- second server-derived key
+  pathinfo_realpath         pass    FLAG    FLAG    FLAG
+  querystring_realpath      pass    FLAG    FLAG    FLAG
+  requesturi_realpath       pass    FLAG    FLAG    FLAG
+  server_varindex_realpath  pass    FLAG    FLAG    FLAG        <- $_SERVER[$k]: fail closed
+  httpheader_realpath       pass    FLAG    FLAG    FLAG        <- HTTP_* is request data
+  server_spaced_realpath    pass    FLAG    FLAG    FLAG
+  require_raw               FLAG    FLAG    FLAG    FLAG
+  (all 21 rows match the intended column; the run is reproducible with `python3 ab-fix1.py`.)
+
+  keys, judged and stated (ruling R33 asked for the judgement):
+    KEPT as request input : $_GET $_POST $_REQUEST $_FILES $_COOKIE; $_SERVER[PATH_INFO],
+                            QUERY_STRING, REQUEST_URI (a client writes all three), any other
+                            $_SERVER key not on the excluded list (fail closed), and HTTP_* keys
+                            except HTTP_HOST.
+    EXCLUDED as server-derived (configuration / script identity): DOCUMENT_ROOT, PHP_SELF,
+                            SCRIPT_FILENAME, SCRIPT_NAME, SCRIPT_URI, DOCUMENT_URI, SERVER_NAME,
+                            SERVER_ADDR, SERVER_PORT, SERVER_PROTOCOL, SERVER_SOFTWARE,
+                            SERVER_SIGNATURE, REQUEST_METHOD, GATEWAY_INTERFACE, REMOTE_ADDR,
+                            REMOTE_HOST, REMOTE_PORT, HTTPS, REDIRECT_STATUS, HTTP_HOST.
+    Judgement calls: REQUEST_URI appears in both of the ruling's lists - it is kept, because the
+    client writes it. PHP_SELF is excluded as the ruling asks, even though its PATH_INFO suffix can
+    carry request data, because the alternative re-opens the benign-shape false positive the ruling
+    exists to close; that is a documented limit, not a silent one. HTTP_HOST is the excluded key a
+    client does set; the rest of HTTP_* is kept. Concatenation shapes
+    (realpath('/x/' . $_GET['f'])) remain uncovered, as they were - documented in the gate itself.
+
+  self-test: 20 fixtures, 2 groups - 17 scan fixtures + 3 check-1 fixtures - all classified as
+  documented, exit 0:
+    security-path-guard-check: self-test PASSED (17 of 17 scan and 3 of 3 check-1 fixtures: arity,
+      word boundary, nesting, the resolution-call rule and the anchored check 1)
+
+  mutations (each on a scratch copy; `bash mutate-fix1.sh`, transcript gate-scratch-4.1/mutate-fix1.out)
+    unmutated copy                     exit 0   PASSED 17/17 + 3/3
+    check 1 un-anchored (MINOR-4)      exit 1   help1_misnamed MISSED
+    R33 exclusion list deleted         exit 1   server_pathinfo/querystring/requesturi/httpheader MISSED
+    R33 widened (any $_SERVER)         exit 1   server_docroot, server_scriptfile FALSE POSITIVE
+    awk word-boundary anchor dropped   exit 1   misnamed_two_arg MISSED
+    arity (comma) requirement dropped  exit 1   resolver_one_arg MISSED + two_args/nested FALSE POSITIVE
+    one scan row deleted               exit 1   "ran 16 scan fixtures, expected 17"
+    one check-1 row deleted            exit 1   "ran 2 check-1 fixtures, expected 3"
+
+  tree scan: `make security-check` -> security-sql-concat-check: clean + security-path-guard-check:
+  clean (both exit 0); `bash -n` clean on both gate scripts and on all 14 other scripts/ tests/
+  security/ scripts; `php -l` clean on help.php and the nine other top-level .php files (no PHP file
+  was modified by this round).
+
+--------------------------------------------------------------------------------
+F6/MINOR-6 - the five sibling .htaccess files are now dual-syntax (ruling R34)
+--------------------------------------------------------------------------------
+  files converted: data/.htaccess, data/schema/.htaccess, data/config/.htaccess,
+  data/documents/unfiled/.htaccess, tests/.htaccess
+  left alone, with reason: lib/org/freemedsoftware/acl/.htaccess - vendored phpGACL tree, out of scope
+  (R14); `deny from all` there is effective as written.
+
+  F6.1 does the file PARSE on a 2.4 without mod_access_compat? (that is the 500-shaped failure mode)
+  method: a probe config inside the harness Apache container loading the SAME module set minus
+  access_compat (21 LoadModule lines, access_compat count 0), with the file Included into a
+  <Directory>, then `apache2 -t -f`:
+    old  data_.htaccess                    ERROR: AH00526: Syntax error on line 1: Invalid command 'order'
+    old  data_schema_.htaccess             ERROR: AH00526: Syntax error on line 1: Invalid command 'order'
+    old  data_config_.htaccess             ERROR: AH00526: Syntax error on line 2: Invalid command 'deny'
+    old  data_documents_unfiled_.htaccess  ERROR: AH00526: Syntax error on line 2: Invalid command 'order'
+    old  tests_.htaccess                   ERROR: AH00526: Syntax error on line 24: Invalid command 'order'
+    new  all five                          Syntax OK
+  so the review's "500, not 403" premise is reproduced for the old content and closed for the new.
+
+  F6.2 what the layer ANSWERS, on the one server where it is visible alone
+  (:38081, docroot ./app, AllowOverride All, no server-level deny; ./app files swapped for the
+  measurement and restored - sha256 -c OK for all five):
+    path                                          HEAD files        fix-round files
+    /data/documents/unfiled/zz-fix1-probe.djvu    200               403      <- the only change
+    /data/documents/unfiled/no-image.png          403               403
+    /data/README                                  403               403
+    /data/store/no-image.png                      403               403
+    /data/schema/mysql/patient.sql                403               403
+    /data/config/relay-allowlist.php              403               403
+    /tests/security/repro-relay-sqli.sh           403               403
+    /scripts/security-sql-concat-check.sh         403               403
+    /ui/dojo/htdocs/dojo/dojo.js                  200               200      <- static UI untouched
+    /help.php/ui/en_US/probe                      401               401
+  The .djvu change is the file's intent change, disclosed in section 8 of the doc and in the file's
+  own comment: that directory's .htaccess was an allow-exception inside the denied data/ tree, and
+  the server rule this project ships already overrode it - the file is now brought into line rather
+  than left contradicting it. No .djvu file exists in the repository tree (`find . -name '*.djvu'` is
+  empty), so the measurement uses a planted probe file, which was removed with the harness restore.
+
+  F6.3 the metric the ruling asked to keep: the pre-existing ineffective `deny from *` shape
+  grep -rn 'deny from \*|allow from \*' --include='.htaccess' .   ->  four hits, ALL of them the
+  explanatory comments in the four rewritten files (/scripts, /scripts/fax_import, /lib/perl,
+  /data/store); no rule text anywhere in the non-vendored tree matches that shape.
+  Two other shapes were found and are NOT changed in this round (both listed for the final review):
+    * ui/dojo/htdocs/.htaccess is still 2.2-only (`allow from all` / `order allow,deny`) - the same
+      config-error class as F6.1, on the tree section 8 documents as deliberately world-readable. It
+      is outside R34's five files, so it was left as found.
+    * ./.htaccess guards its DirectoryIndex with `<IfModule mod_php5.c>`; on Apache 2.4 the module is
+      `php_module` (mod_php.c), so that block is inert here (measured: apachectl -M lists php_module,
+      not mod_php5). Harmless - the shipped server config sets DirectoryIndex itself - but dead.
+
+--------------------------------------------------------------------------------
+HARNESS RESTORE AND DATABASE
+--------------------------------------------------------------------------------
+  harness config files : not modified this round. sha256 before == after for
+                         Dockerfile.php, apache-freemed.conf, nginx.conf, docker-compose.yml
+                         (see harness-restore.sha256 in the scratch logs).
+  ./app .htaccess files: replaced for F6.2 and restored; sha256sum -c prints OK for all five.
+  containers           : the two repo-mounted servers were restarted (not recreated) to pick up the
+                         edited config files; the two copy-harness servers were reloaded only.
+                         Temporary conf files added inside containers for the probes were removed
+                         and `apachectl configtest` re-run after removal: Syntax OK.
+  installed Apache copy: `make -C doc install DESTDIR=<scratch>` landed etc/apache2/conf.d/freemed.conf
+                         byte-identical to doc/freemed.apache.conf (diff: identical), and a container
+                         mounting THAT installed copy answers `apachectl configtest` -> Syntax OK.
+  nginx                : `nginx -t` in :38084 -> syntax is ok / test is successful (after the edit).
+  DATABASE             : no database write was made by this round. Pinned fingerprint, after:
+                         entemplate 1|1  payrec 1|3  patient_emr 1|5  user 2|1,2  patient 0  procrec 0
+                         vitals 0  modules 135  config 34  - identical to the pinned before-state.
