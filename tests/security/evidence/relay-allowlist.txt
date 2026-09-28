@@ -1698,7 +1698,7 @@ residual mismatches in this phase: 0
 #   `patient` rows the earlier `payrec` design would have needed are NOT part of the
 #   final state: `patient` is 0 rows, as it was, and the probe's own table is dropped.
 
-# -- THE HERMETIC PIN FOR BOTH ROUNT-4 FINDINGS (tests/security/relay_allowlist.test.php) --
+# -- THE HERMETIC PIN FOR BOTH ROUND-4 FINDINGS (tests/security/relay_allowlist.test.php) --
 #   The served-copy rows above are not the only pin. The suite that runs with no
 #   database and no network now carries:
 #     * 2 rows that assert the gate CALL precedes the FIRST write and the
