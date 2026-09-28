@@ -1464,9 +1464,13 @@ function fm_get_active_coverage ($ptid=0) {
 	if ($ptid == 0) return 0;
 
 	// Form and perform query
+	// Category A (2.6f): covpatient is BIGINT UNSIGNED and covstatus INT UNSIGNED
+	// (data/schema/mysql/coverage.sql:29,35), so both are cast in unquoted
+	// predicates instead of addslashes()/a constant being spliced inside
+	// hand-written quotes.
 	$query = "SELECT id FROM coverage WHERE ".
-		"covpatient='".addslashes($ptid)."' ".
-		"AND covstatus='".ACTIVE."'";
+		"covpatient=".intval($ptid)." ".
+		"AND covstatus=".intval(ACTIVE);
 	$ins_id = $GLOBALS['sql']->queryAll( $query );
 
 	// If nothing was returned, return 0
@@ -1484,10 +1488,13 @@ function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
 	if ($ptid == 0) return 0;
 	
 	// default coveragetype is primary	
+	// Category A (2.6f): covpatient/covstatus/covtype are all numeric columns
+	// (BIGINT/INT UNSIGNED), so the id and the coverage type are cast in unquoted
+	// predicates instead of addslashes()ed inside hand-written quotes.
 	$query = "SELECT id FROM coverage WHERE ".
-		"covpatient='".addslashes($ptid)."' AND ".
-		"covstatus='".ACTIVE."' AND ".
-		"covtype='".addslashes($coveragetype)."'";
+		"covpatient=".intval($ptid)." AND ".
+		"covstatus=".intval(ACTIVE)." AND ".
+		"covtype=".intval($coveragetype);
 	$result = $GLOBALS['sql']->queryOne( $query );
 
 	// Return the id
