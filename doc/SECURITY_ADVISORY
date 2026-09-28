@@ -13,7 +13,13 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    owner works through to publish; section 7.D lists every placeholder.
 
    Scope of this advisory: the three defects below, on branch
-   security/mitigation-2026-09 (base 79efd68d, HEAD 49551849). Everything the
+   security/mitigation-2026-09 (base 79efd68d; HEAD 49551849). The HEAD value is
+   **the branch head AT THE TIME OF WRITING**, not the merge head: the fix wave
+   that finished this document landed after it, so read it as frozen provenance
+   and re-derive the reviewed revision with `git rev-parse HEAD` before
+   publishing (checklist 7.C item 7). doc/SECURITY_FOLLOWUP:12 carries the same
+   convention for its own pin, so the two documents do not disagree about a
+   commit they were each written at. Everything the
    execution found but did not fix is in doc/SECURITY_FOLLOWUP and is NOT
    disclosed here - it is a backlog, not a vulnerability report.
 
@@ -269,15 +275,16 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    Relay_Xmlrpc) and Route/CallMethod in lib/loader.php:47-70 resolves any
    registered class, instantiates it and calls any public method with
    request-supplied arguments. Relay.class.php:45-51 gates on
-   org.freemedsoftware.public.Login.LoggedIn and nothing else; only ~20 of the
-   431 PHP files under lib/org/freemedsoftware call acl_enforce anywhere
-   (grep -rl acl_enforce: 18 files). Every
+   org.freemedsoftware.public.Login.LoggedIn and nothing else; only 18 of the 431
+   PHP files under lib/org/freemedsoftware call acl_enforce anywhere
+   (grep -rl acl_enforce: 18 files, of 431 under that root). Every
    unparameterized query in that surface was therefore reachable by any
    authenticated user. The four reported sites concatenated request data into
    SQL:
      api/UserInterface.class.php:144   $condition .= " AND usertype='".$usertype."' ";
      api/ModuleSearch.class.php:35     "module_associations='".$moduleType."' and "
-     module/EncounterNotesTemplate.class.php (WHERE pnotesttype='".$type."'")
+     module/EncounterNotesTemplate.class.php:275
+                                       (WHERE pnotesttype='".$type."'")
      api/Remitt.class.php:997          payrecproc='".$procedure."'
    (line numbers are pre-fix as recorded in the plan's verification table).
 
@@ -396,6 +403,17 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    deny-by-default against data/config/relay-allowlist.php (4.1), and a static
    gate (make security-check) now fails the build when a raw concatenation is
    reintroduced into an application file.
+
+   THE ONE PLACE THE IDIOM IS A WRITE PRIMITIVE, and the complete set of them: a
+   `LIMIT` whose value is spliced rather than cast is not a read defect - MySQL
+   accepts `INTO OUTFILE` in that position - so the sweep closed it at ALL THREE
+   instances in the tree, not two: api/UserInterface::GetRecords,
+   api/PatientInterface::picklist and
+   module/WorkListsModule::GenerateWorkList. The third is an ALLOWLISTED relay
+   method (data/config/relay-allowlist.php), so enforcement alone would not have
+   covered it, and the static gate cannot see it (an unrelated addslashes() on
+   the same line excuses the splice). It was found by the final whole-branch
+   review and is fixed in the same release as the other two.
 
    3.3 FINDING 3 - vcalendar.php pass-the-hash and cross-provider access
        (CWE-287 / CWE-836 / CWE-639), CVSS 3.1
@@ -652,7 +670,13 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    add/del/GetRecord/GetRecords/mod/picklist/RenderHtmlView/to_text and the print
    wrappers' RenderToPDF - gate the concrete org.freemedsoftware.module.<Class>.
    <literal> string they are about to dispatch, because a per-method list cannot
-   constrain a class the caller names. Measured exposure on that axis: 866
+   constrain a class the caller names. TWO FURTHER class-axis re-dispatchers of
+   the same shape are NOT gated by this release - Forms::control_module
+   (module/Forms.class.php:336-351) and BaseModule::_print
+   (core/BaseModule.class.php:196-208, :230-241) - so "the two re-dispatch axes"
+   above means the two this release gated, not every class-axis path in the tree;
+   both are recorded with a fix shape in doc/SECURITY_FOLLOWUP sections 4.1/4.2.
+   Measured exposure on that axis: 866
    (class, literal) pairs exist over the 133 module class files and 803 of them
    are NOT in the shipped list, so enforcing will refuse a wrapper call naming a
    module class the list does not name - by design, and that is what the
@@ -715,42 +739,43 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    /etc/apache2/conf.d/freemed.conf) and docker/nginx.conf, with the .htaccess
    files as a second layer that nginx does not read at all.
 
-   MEASURED AT HEAD, BEFORE THE RULES - this is why the rules are not a nicety:
-     Apache /lib/API.php                     200, 0 bytes (EXECUTED)
-     Apache /lib/settings.php                200, 0 bytes (EXECUTED)
-     Apache /scripts/*.sh                    200, 3107/8563 bytes (SOURCE)
-     nginx  the same trees plus
-            /data/schema/mysql/patient.sql  200 as SOURCE,
-            tests/security/... 200 as SOURCE,
-            /lib%2FAPI.php EXECUTED
-     both   /data/store/no-image.png         200, 60521 bytes
-            (a malformed `<Files *> deny from *` in that directory's .htaccess
-             took the subtree OUT of the parent data/ denial)
-     both   data/documents/unfiled/*.djvu    200, 60521 bytes
-   AFTER: every one of those is 403 on both servers - the one exception is
-   Apache's /lib%2FAPI.php, which stays 404 (AllowEncodedSlashes off, so the
-   path is never split; nginx refuses the same request with 403) - as is
-   /help.php/../scripts/... . lib/settings.php was reachable and executed on both
-   servers (the source was not disclosed by mod_php/php-fpm), which is an
-   unauthenticated entrypoint to the file that holds the database credentials -
-   now 403 everywhere.
-   NOTE for the honest reading: this is not an independent vulnerability report
-   about lib/settings.php - it is the same release's hardening, and any layout
-   where the PHP handler does not cover the path (a static server, a proxy serving
-   .php as text) discloses the credentials to whoever asks. These rules are the
-   belt; fix your handler configuration if you still get the source.
+   THE MEASURED ROWS ARE NOT REPEATED HERE. Every before/after row for these
+   rules is in tests/security/evidence/deployment-hardening.txt, which is the one
+   copy of the matrix: PHASE A is the unhardened state, PHASE B the state with
+   the rules installed, PHASE E the PATH_INFO consumers and the four shapes the
+   scope rule changes, and PHASE F1 the anchoring matrix. The operator-facing
+   prose is doc/DEPLOYMENT_HARDENING (sections 1-3, 4 and 6), and the two
+   configuration files' own comments point at the same file. What an operator
+   needs from this section is what changed, which is:
+     * lib/, data/, tests/ and scripts/ are no longer web-readable on either
+       server. Before the rules, every file in them was readable - executed where
+       the PHP handler covered the path, served as source where it did not - and
+       lib/settings.php (the installer's DB credential file) was reachable and
+       executed; a malformed `<Files *> deny from *` in one directory's
+       .htaccess had taken that subtree out of its parent's denial, and
+       data/documents/unfiled/*.djvu answered 200 by URL. Now 403 (404 for
+       Apache's /lib%2FAPI.php - see below).
+     * PATH_INFO is scoped: AcceptPathInfo stays On for the install root because
+       five entrypoints route on the trailing path (help.php, chtml.php,
+       relay.php, relay-gwt.php, controller.php), and every OTHER script
+       addressed with a trailing path is refused with 403.
+   AFTER these rules every row in the evidence file is 403 on both servers - the
+   one exception is Apache's /lib%2FAPI.php, which stays 404
+   (AllowEncodedSlashes off, so the path is never split; nginx refuses the same
+   request with 403) - as is /help.php/../scripts/... . The rules are the belt:
+   any layout where the PHP handler does not cover the path (a static server, a
+   proxy serving .php as text) discloses lib/settings.php to whoever asks, so
+   fix the handler configuration too.
 
-   PATH_INFO is scoped: AcceptPathInfo stays On for the install root because five
-   entrypoints route on the trailing path (help.php, chtml.php, relay.php,
-   relay-gwt.php, controller.php), and any OTHER script addressed with a trailing
-   path is refused with 403. MEASURED BEHAVIOUR CHANGE, three shapes, both
-   servers, before -> after: /install.php/<path> 200 -> 403, /index.php/<path>
-   302 -> 403, /vcalendar.php/<path> 401 -> 403, /services/RemittCallback.php/
-   <path> 200 -> 403. None of them reads PATH_INFO and the plain URLs are
-   unchanged (/services/RemittCallback.php?wsdl is still 200, verified).
+   MEASURED BEHAVIOUR CHANGE, four shapes, both servers (the status pairs are
+   PHASE E of the evidence file): /install.php/<path> 200 -> 403, /index.php/
+   <path> 302 -> 403, /vcalendar.php/<path> 401 -> 403,
+   /services/RemittCallback.php/<path> 200 -> 403. None of them reads PATH_INFO
+   and the plain URLs are unchanged (/services/RemittCallback.php?wsdl is still
+   200, verified).
    The allowlist is ANCHORED to the request root - an earlier revision of the rule
    was an unanchored substring test, so /install.php/x/help.php/ ran the installer
-   instead of being refused (measured 200 before, 403 after). A site serving the
+   instead of being refused (200 before, 403 after; PHASE F1). A site serving the
    tree under a different prefix must add that prefix to the nginx map entry the
    same way it must add its own location block; the Apache rule matches in
    per-directory context and is prefix-independent (measured in docroot,
@@ -954,7 +979,11 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      Product:                     FreeMED (electronic medical record system);
                                   distribution package name "freemed"
      Version(s) affected:         all releases prior to <RELEASE-VERSION>; the
-                                  defects were reproduced against the 0.9.x line
+                                  defects were reproduced against the development
+                                  tree the fix is cut from, whose own version
+                                  strings disagree (section 1) - which RELEASED
+                                  line is affected is an owner call, not a
+                                  measurement made here.
      Version fixed:               <RELEASE-VERSION> (<RELEASE-DATE>)
      Vulnerability type:          Path traversal (CWE-22); the same endpoint
                                   served its content without authentication
@@ -995,7 +1024,10 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
                                   deployment that preserves dot segments in
                                   PATH_INFO; measured impact on modern
                                   front-ends AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N
-                                  = 5.3 (anonymous access to help content).
+                                  = 5.3 (anonymous access to help content), which
+                                  applies only if a site treats its own help text
+                                  as non-public - where it does not, the measured
+                                  impact on those layouts is nil (3.1).
                                   Qualifier: deployment-dependent reachability;
                                   see Impact above.
      Discovery credit:            kta1kri
@@ -1011,7 +1043,11 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      Product:                     FreeMED (electronic medical record system);
                                   distribution package name "freemed"
      Version(s) affected:         all releases prior to <RELEASE-VERSION>; the
-                                  defects were reproduced against the 0.9.x line
+                                  defects were reproduced against the development
+                                  tree the fix is cut from, whose own version
+                                  strings disagree (section 1) - which RELEASED
+                                  line is affected is an owner call, not a
+                                  measurement made here.
      Version fixed:               <RELEASE-VERSION> (<RELEASE-DATE>)
      Vulnerability type:          SQL injection (CWE-89)
      Root cause:                  Four relay-reachable methods concatenated
@@ -1038,7 +1074,17 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
                                   reachable surface is every public method of
                                   every registered class, the same class of
                                   defect existed in write paths too (fixed in the
-                                  same release, not proven live).
+                                  same release, not proven live). The one place
+                                  where that idiom is a write primitive rather
+                                  than a read - a `LIMIT` whose value is spliced,
+                                  which MySQL accepts `INTO OUTFILE` in - had
+                                  THREE instances, not two:
+                                  api/UserInterface::GetRecords,
+                                  api/PatientInterface::picklist and
+                                  module/WorkListsModule::GenerateWorkList (an
+                                  ALLOWLISTED relay method, so enforcement alone
+                                  would not have covered it). All three are cast
+                                  in the same release; 3.2 gives the mechanism.
      Affected component:          relay.php and the relay-reachable API/module
                                   surface, remediated by parameterizing every
                                   application-owned concatenation (the four
@@ -1081,7 +1127,11 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      Product:                     FreeMED (electronic medical record system);
                                   distribution package name "freemed"
      Version(s) affected:         all releases prior to <RELEASE-VERSION>; the
-                                  defects were reproduced against the 0.9.x line
+                                  defects were reproduced against the development
+                                  tree the fix is cut from, whose own version
+                                  strings disagree (section 1) - which RELEASED
+                                  line is affected is an owner call, not a
+                                  measurement made here.
      Version fixed:               <RELEASE-VERSION> (<RELEASE-DATE>)
      Vulnerability type:          Use of a password hash instead of the password
                                   for authentication, i.e. pass-the-hash
@@ -1227,9 +1277,12 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      Subject: action required - FreeMED security update <RELEASE-VERSION>
 
      A security update for your FreeMED system is available. It fixes three
-     defects that could let an attacker read data from your system without
-     authorisation. There is no evidence that anyone has used them against you,
-     and no action on the database is required to install the update.
+     defects in the way the system decides who may read data. To be exact about
+     what was measured: two of the three need a logged-in account to use at all
+     (the calendar one additionally needs a stored fingerprint of a password),
+     and the third let help text be fetched with no login. There is no evidence
+     that anyone has used them against you, and no action on the database is
+     required to install the update.
 
      What to do:
        * Install FreeMED <RELEASE-VERSION> on the server, or ask whoever
