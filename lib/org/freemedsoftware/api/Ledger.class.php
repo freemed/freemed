@@ -1298,7 +1298,7 @@ class Ledger {
 			$this_procedure = $procedure_object->get_procedure( );
 			$covid=$this_procedure['proccurcovid'];
 			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covcopay AS copay, c.covtype AS type from coverage c ".
-			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covcopay >0 AND c.id=".$covid;			
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covcopay >0 AND c.id=".intval($covid);			
 		}
 		
 		$result = $GLOBALS['sql']->queryRow($query);
@@ -1321,7 +1321,7 @@ class Ledger {
 			$this_procedure = $procedure_object->get_procedure( );
 			$covid=$this_procedure['proccurcovid'];
 			$query="SELECT c.id AS Id, i.insconame AS cov_ins, c.covdeduct AS deduct, c.covtype AS type from coverage c ".
-			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covdeduct >0 AND c.id=".$covid;
+			"LEFT OUTER JOIN insco i ON c.covinsco = i.id where c.covdeduct >0 AND c.id=".intval($covid);
 		}
 		$result = $GLOBALS['sql']->queryRow($query);
 		if($result!=NULL){
