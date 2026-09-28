@@ -187,7 +187,7 @@ class Ledger {
 				$tag_object = CreateObject('org.freemedsoftware.module.PatientTag');
 				$obj = $tag_object->SimpleTagSearch($v);
 				for($i = 0; $i < count($obj); $i++){
-					$patient_ids[] = "p.procpatient = '".$obj[$i]['patient_record']."'";
+					$patient_ids[] = "p.procpatient = ".$GLOBALS['sql']->quote($obj[$i]['patient_record']);
 				}
 				$condition = join(' OR ', $patient_ids);
 				if($condition != "") {
