@@ -540,8 +540,21 @@ class Scheduler {
 	//	information
 	//
 	public function FindDateAppointments ( $date, $provider = -1 ) {
+		// Category A + F4 (2.6f): the date is the criterion, validated as Y-m-d;
+		// an unparseable value refuses the query (logged, this method's empty
+		// answer) instead of being quoted - quote(false) is a bare 0, which
+		// compares equal to MySQL's zero-date.
+		//
+		// NOTE (2.6f): the provider branch below calls prepare(), which does not
+		// exist anywhere in the tree (measured: no 'function prepare' outside the
+		// PEAR/ADODB/CodeSniffer bundles), so that branch has always fataled
+		// before any SQL was built. It is left exactly as-is on purpose - casting
+		// it would silently activate a path that has never run - and is routed as
+		// a functional finding rather than repaired under a security task.
+		$this_date = $this->_ValidDate( $date );
+		if ( $this_date === false ) { return array(); }
 		$query = "SELECT * FROM scheduler WHERE ".
-			"(caldateof = '".addslashes( $this->ImportDate( $date ) )."' ".
+			"(caldateof = ".$GLOBALS['sql']->quote( $this_date )." ".
 			"AND calstatus != 'cancelled' ".
 			( $provider != -1 ? 
 				"AND calphysician = '".prepare($provider)."'" :
