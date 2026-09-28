@@ -364,8 +364,13 @@ reported findings
       by the raw property - `"ORDER BY ".$this->date_field." DESC, id DESC"` at
       :766 of `git show 79efd68d:lib/org/freemedsoftware/core/EMRModule.class.php`
       - so an unusable date_field produced a broken statement, not a silent wrong
-      answer. The validated fallback arrives in this branch's 8bdc649f (2.6b)
-      and 2.6f, so §7's tally of branch-introduced items in this file was one
+      answer. The fallback is this branch's, in three measured commits:
+      `4c242a81` ("make an absent date_field drop the ORDER BY term in
+      GetRecentRecord", the 2.6b / review-F3 change), `8bdc649f` ("validate
+      identifiers and clause fragments in EMRModule queries", which wraps the
+      field in SqlIdent::name) and `65799158` ("stop logging LOG_ERR for a
+      module that declares no date_field", which is what leaves the fallback
+      silent). So §7's tally of branch-introduced items in this file was one
       short and now names this item too. Read at source; not exercised live here
       (it needs a module declaring an unusable date_field).
 
