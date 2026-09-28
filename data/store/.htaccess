@@ -1,3 +1,24 @@
-<Files *>
-deny from *
-</Files>
+# Deny all web access to this directory.
+#
+# The previous content was `<Files *> deny from * </Files>`, which matches no
+# client - see scripts/.htaccess for the full note on why. Measured at HEAD, the
+# effect here was worse than a rule that does nothing: the PARENT
+# data/.htaccess denies the whole data/ tree (`order allow,deny` / `deny from
+# all`, measured: /data/README and /data/documents/unfiled/no-image.png are 403),
+# yet GET /data/store/no-image.png answered 200 with 60521 bytes on Apache - the
+# malformed Deny in this file took the subtree out of the inherited denial. On
+# nginx, which reads no .htaccess, the directory was open outright.
+# data/config/.htaccess and data/schema/.htaccess spell it `deny from all` and
+# did deny (403).
+#
+# Both access-control syntaxes are present and module-guarded so the file loads
+# on Apache 2.2 and 2.4 alike: `Require all denied` needs mod_authz_core (2.4),
+# `Order deny,allow` needs mod_access_compat (2.2, and 2.4 with the
+# compatibility module).
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order deny,allow
+	deny from all
+</IfModule>
