@@ -26,8 +26,18 @@
 # them were fixed the same way (quote() for values, intval() for ids,
 # SqlIdent::name()/columns() for declared table/column identifiers with a
 # log-and-refuse on refusal, str_replace placeholders where a statement
-# contains DATE_FORMAT specifiers that sprintf would consume). The entries
-# that remain belong to lib/API.php and the gacl ACL library (batch C).
+# contains DATE_FORMAT specifiers that sprintf would consume).
+#
+# 2026-09-28, sweep batch C (task 2.6b part 3, the final batch): the last
+# application entry, ./lib/API.php:1386, was removed. That line is
+# fm_phone_assemble(), which builds no SQL at all - the gate matched a '.'
+# next to a quote in a computed variable-variable plus the word " and " on
+# the same line. It was rewritten as a no-op (the part read into a local) so
+# no exemption is needed; see the comment beside it. Nothing in this file
+# refers to swept application code any more. The remaining entries are the
+# vendored libraries (5), the security tests (4) and the third-party phpGACL
+# ACL library (67), which the 2.6b sweep does not rewrite - see the section
+# headings below.
 #
 # ---- vendored / third-party libraries (5): not swept, false positives ----
 ./lib/agata7/classes/fpdf151/fpdf.php:912:
@@ -42,8 +52,9 @@
 ./tests/security/sql_ident.test.php:123:
 ./tests/security/sql_ident.test.php:184:
 
-# ---- APPLICATION HITS (68): task 2.6b drives this section to zero ----
-./lib/API.php:1386:
+# ---- THIRD-PARTY APPLICATION LIBRARY (67): phpGACL, not swept by 2.6b ----
+# (batch C removed the last entry that belonged to FreeMED's own code,
+#  ./lib/API.php:1386: - see the header note above)
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:1052:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:1134:
 ./lib/org/freemedsoftware/acl/gacl_api.class.php:113:
