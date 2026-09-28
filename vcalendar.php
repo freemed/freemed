@@ -25,11 +25,22 @@
 define ('SESSION_DISABLE', true);
 include_once ("lib/freemed.php");
 
-// $_SERVER['argc'] only exists in the CLI SAPI. Reading it unguarded emitted an
-// E_WARNING into the response body on every web request, and that output is
-// fatal to the 401/403 challenges below ("Cannot modify header information -
-// headers already sent"). Read it defensively.
-if (isset($_SERVER['argc']) and $_SERVER['argc']) {
+// This is a WEB entrypoint: gate on the SAPI, not on $_SERVER['argc'].
+//
+// argc/argv are also populated for web requests whenever register_argc_argv is
+// On - PHP's compiled default, which is what applies to an image with no active
+// php.ini (the stock php:8.3-apache image ships php.ini-development and
+// php.ini-production inert). So an `if ($_SERVER['argc'])` test fires this
+// guard for ANY request carrying a query string, and lib/freemed.php's
+// error_reporting(E_ERROR|E_WARNING|E_PARSE) then swallows the E_USER_ERROR, so
+// the request ends as an empty 200 with no status and no body. Reading argc
+// unguarded has the opposite problem on a web request: the E_WARNING lands in
+// the response body, and that output is fatal to the 401/403 challenges below
+// ("Cannot modify header information - headers already sent").
+//
+// PHP_SAPI is a constant of the SAPI itself, so this test cannot be moved by an
+// ini setting: the same guard holds on every layout.
+if (PHP_SAPI === 'cli') {
 	trigger_error('Cannot be called from the command line.', E_USER_ERROR);
 }
 
