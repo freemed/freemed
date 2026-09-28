@@ -48,6 +48,12 @@
 //     therefore left a refused call with the record already moved -- fails here.
 //     (The served-copy ablation that measures the same ordering live is in
 //     tests/security/evidence/relay-allowlist.txt, "FIX ROUND 4".)
+//   * The R32 RUNTIME rows call the real private _allowlist_gate through
+//     Reflection, on an instance of the real class, and assert its decision in
+//     BOTH enforcement states (the stage is injected through Relay_Allowlist's own
+//     private $config -- the slot the relay reads -- and restored at the end of the
+//     section). So deleting the gate, or changing what it consults, fails HERE, and
+//     not only in the served-copy A/B in tests/security/evidence/.
 //   * The R36 rows pin the reinstated `core` never-allow rule (refused in BOTH
 //     stages for an inner call, logged-and-not-refused on the outer path, and
 //     the policy in the data file), and two of them keep the round-1 "dead
@@ -920,6 +926,85 @@ ra_row('R32: one module_function() CALL and one gate CALL in the class (comments
 ra_row('R32 fix round 3: the source records the measured reachability limit (both blockers named)',
 	((strpos($pi_src, 'is NOT reachable') !== false)
 		and (strpos($pi_src, 'module_get_meta') !== false)), true);
+
+// ===========================================================================
+ra_section('R32 fix round 4 — the gate DECIDES at runtime (Reflection), not only in source shape');
+// ===========================================================================
+// The dispatch this gate covers is dead code in this tree (the two product
+// defects recorded above), so until fix round 4 the gate's RUNTIME behaviour
+// lived only in the served-copy A/B in tests/security/evidence/relay-allowlist.txt.
+// These rows call the REAL private _allowlist_gate on an instance of the REAL
+// class and assert its decision, so deleting the gate -- or changing what it
+// consults -- fails THIS suite and not only the served copy.
+//
+// Nothing in the product is modified to make this possible: the enforcement
+// state is injected through Relay_Allowlist's own private $config, which is
+// exactly the slot the relay reads when it calls enforce() with no argument.
+// The shipped value is restored at the end of the section, so the rows after it
+// (there are none) and a re-run in the same process see the data file again.
+if (!function_exists('LoadObjectDependency')) {
+	// The class file's own loader call at file scope. This suite must not need
+	// the framework or a database, and require_once below is what the loader
+	// would have done, so the stub is deliberately inert.
+	function LoadObjectDependency ( $dependency ) { return true; }
+}
+require_once dirname(__FILE__) . '/../../lib/org/freemedsoftware/api/PatientInterface.class.php';
+
+$pi_rc      = new ReflectionClass('PatientInterface');
+$pi_obj     = $pi_rc->newInstanceWithoutConstructor();
+$pi_cfgprop = new ReflectionProperty('Relay_Allowlist', 'config');
+$pi_cfgprop->setAccessible(true);
+$pi_shipped = Relay_Allowlist::load();   // the shipped data file, as the relay reads it
+$pi_gate_have = $pi_rc->hasMethod('_allowlist_gate');
+$pi_gate_call = NULL;
+if ($pi_gate_have) {
+	$pi_gate_call = $pi_rc->getMethod('_allowlist_gate');
+	$pi_gate_call->setAccessible(true);
+}
+$pi_decide = function ( $class, $method ) use ( $pi_gate_have, $pi_gate_call, $pi_obj ) {
+	return $pi_gate_have ? $pi_gate_call->invoke ( $pi_obj, $class, $method ) : NULL;
+};
+
+ra_row('R32 fix round 4: the private _allowlist_gate exists (Reflection)',
+	$pi_gate_have, true);
+// The shipped stage: enforce = false. A miss is logged and the call STILL RUNS,
+// so the gate says yes -- which is why the shipped stage is behaviourally
+// unchanged, and what makes the control deployable at all.
+$pi_cfgprop->setValue(NULL, $pi_shipped);
+ra_row('R32 fix round 4: log-only, an UNLISTED pair is ALLOWED (call still executes)',
+	$pi_decide('PatientTag', 'additional_move'), true);
+// Enforcing, nothing listed: the refusal a caller gets.
+$pi_cfgprop->setValue(NULL, array_merge($pi_shipped, array('enforce' => true)));
+ra_row('R32 fix round 4: enforcing, the SAME unlisted pair is REFUSED',
+	$pi_decide('PatientTag', 'additional_move'), false);
+ra_row('R32 fix round 4: enforcing, the gate refuses on the CONCRETE string (the class axis, not the literal)',
+	array($pi_decide('PatientTag', 'additional_move'), $pi_decide('ScannedDocuments', 'additional_move')),
+	array(false, false));
+// Enforcing with the shipped list: the decision follows the LIST. A pair the
+// shipped patterns name through the same namespace is allowed; a pair they do
+// not name is refused. That is the property the served-copy A/B measured, now
+// measured inside the suite.
+$pi_cfgprop->setValue(NULL, array_merge($pi_shipped, array('enforce' => true)));
+ra_row('R32 fix round 4: enforcing, a module pair the SHIPPED list names is allowed through the gate',
+	$pi_decide('i18nLanguages', 'GetRecords'), true);
+ra_row('R32 fix round 4: enforcing, a module pair it does NOT name is refused through the same gate',
+	$pi_decide('PatientTag', 'GetRecords'), false);
+// Enforcing with the probe pair added to the shipped list: the SAME call is now
+// allowed and a different class is still refused -- so the gate consults the
+// allowlist rather than a hardcoded rule, and it is not a blanket refusal.
+$pi_cfgprop->setValue(NULL, array_merge($pi_shipped, array(
+	'enforce'  => true,
+	'patterns' => array_merge($pi_shipped['patterns'], array('org.freemedsoftware.module.PatientTag.additional_move')),
+)));
+ra_row('R32 fix round 4: enforcing, the pair LISTED is allowed (not a blanket refusal)',
+	$pi_decide('PatientTag', 'additional_move'), true);
+ra_row('R32 fix round 4: ...and a DIFFERENT class on the same call is still refused',
+	$pi_decide('ScannedDocuments', 'additional_move'), false);
+// Restore the shipped state and prove it: the next call re-reads the data file.
+$pi_cfgprop->setValue(NULL, NULL);
+ra_row('R32 fix round 4: the injected stage is restored (the shipped file decides again)',
+	array(Relay_Allowlist::enforce(), count(Relay_Allowlist::config()['patterns'])),
+	array(false, count($pi_shipped['patterns'])));
 
 // ---------------------------------------------------------------------------
 echo "\n";
