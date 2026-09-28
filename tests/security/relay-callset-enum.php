@@ -567,13 +567,23 @@ foreach ($axis_classes as $class => $file) {
             $AXIS['all']['pdf_total']++;
             if ($listed) { $AXIS['all']['pdf_listed']++; } else { $AXIS['all']['pdf_unlisted']++; }
         }
-        if (isset($axis_named_classes[strtolower($class)])) {
-            $AXIS['named']['total']++;
-            if ($listed) { $AXIS['named']['listed']++; } else { $AXIS['named']['unlisted']++; }
-        }
-        if (isset($own_lc[strtolower($literal)])) {
-            $AXIS['own_file']['total']++;
-            if ($listed) { $AXIS['own_file']['listed']++; } else { $AXIS['own_file']['unlisted']++; }
+        // (fix round 3, N3) The two restrictions below are defined over the
+        // EIGHT literals -- that is what their labels say -- so the RenderToPDF
+        // pair is NOT counted into them. Until round 3 these two increments sat
+        // OUTSIDE the `!$is_pdf` guard above, so the "restricted to classes the
+        // shipped list names" row printed 448/385/63: the correct 423/360/63
+        // plus the 25 RenderToPDF pairs whose class the shipped list names.
+        // The mislabelled figure was published in three places and pinned by no
+        // test row; the suite pins the corrected value now.
+        if (!$is_pdf) {
+            if (isset($axis_named_classes[strtolower($class)])) {
+                $AXIS['named']['total']++;
+                if ($listed) { $AXIS['named']['listed']++; } else { $AXIS['named']['unlisted']++; }
+            }
+            if (isset($own_lc[strtolower($literal)])) {
+                $AXIS['own_file']['total']++;
+                if ($listed) { $AXIS['own_file']['listed']++; } else { $AXIS['own_file']['unlisted']++; }
+            }
         }
     }
 }

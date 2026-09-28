@@ -24,7 +24,7 @@
 #   8 literals (add, del, GetRecord, GetRecords, mod, picklist, RenderHtmlView, to_text),
 #     all 133 module class files          : 866 pairs, 803 NOT in the shipped list, 63 in it
 #   +RenderToPDF (PrintToFax/PrintToPrinter/PrintToBrowser): 37 pairs, 37 NOT in the shipped list, 0 in it
-#   the 8 literals, restricted to classes the shipped list names : 448 pairs, 385 NOT listed, 63 listed
+#   the 8 literals, restricted to classes the shipped list names : 423 pairs, 360 NOT listed, 63 listed
 #   the 8 literals, declared in the module file ITSELF           : 7 pairs, 6 NOT listed, 1 listed
 #
 # These strings are EVIDENCE OF EXPOSURE, NOT a seed. The shipped list does NOT
