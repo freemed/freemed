@@ -125,10 +125,16 @@ class UserInterface {
 		$either = trim( $either );
 
 		if ($first and $last) {
-			// NOTE (2.6b): $userlname is never set in this method and 'ptlname'
-			// is a `patient` column, not a `user` column, so this predicate can
-			// never match - a pre-existing functional bug left as-is (fixing it
-			// would redesign the search). Only the injection shape is fixed: the
+			// NOTE (2.6b, review F2): this branch is a pre-existing functional bug
+			// and is left as-is - fixing it would redesign the search. `ptlname`
+			// is a `patient` column while the statement below selects from
+			// `user` (aliased u), so MySQL rejects the query outright
+			// (measured: ERROR 1054 (42S22) Unknown column 'ptlname' in 'WHERE');
+			// the branch therefore fails hard, it does not "match nothing".
+			// The pattern used to come from an undefined $userlname (i.e. LIKE
+			// '%') and now comes from $last, the value this branch is guarded on
+			// (if ($first and $last)) - that changes only the pattern on a column
+			// that does not exist. Only the injection shape is fixed here: the
 			// values are driver-quoted.
 			$q[] = "( ptlname LIKE ".$GLOBALS['sql']->quote( $last.'%' ).
 				" AND userfname LIKE ".$GLOBALS['sql']->quote( $first.'%' )." )";
