@@ -43,8 +43,11 @@
 #   No credentials, no 32-hex digests, no PHI. The single edit to captured
 #   output is `username = admin` -> `username = <user>` in one syslog line.
 #   `remote=192.168.128.1` is the Docker bridge gateway and is kept: the remote
-#   address is the part of the log line an operator acts on. (The one 32-hex run
-#   in this file is the checkout commit above.)
+#   address is the part of the log line an operator acts on. The only long hex runs
+#   in this file are the two checkout commits named in its own headers
+#   (2a55da8fb0fe974660f32b6073d941a276e4b5cf and
+#   28810521888ccc47c2b713df4cc1baf70b03d3c6); no 32-hex value appears anywhere,
+#   and the database comparison is stated as a clean `diff`, not as a digest.
 #
 # WHAT IS *NOT* PROVEN BY THIS FILE
 #   The compiled-GWT click-through smoke pass. There is no compiled client in
@@ -348,8 +351,10 @@ sites not cleared: <none>
 | modules     | 135 | 134 distinct module_class |
 | config      | 34  | NULL                      |
 +-------------+-----+---------------------------+
-#                      md5 of both normalised outputs:
-#                      bda8de4952ac9783af0b603fbdf5923e (before, and the same after).
+#                      `diff` between the normalised before and after outputs: NO
+#                      OUTPUT (the two are identical line for line; the comparison is
+#                      recorded in the report rather than as a digest here, so that
+#                      this file keeps the rule above: no 32-hex run appears in it).
 #                      No config row was created.
 #   session          : the harness's /login-probe.php. No credential appears in this
 #                      section; Login.Validate's relay body is the literal `true`.
