@@ -40,14 +40,20 @@
 #                      with RELAY_COOKIE_JAR / BASE / TIMEOUT.
 #
 # REDACTION
-#   No credentials, no 32-hex digests, no PHI. The single edit to captured
+#   No credentials, no 32-hex PASSWORD DIGEST, no PHI. The single edit to captured
 #   output is `username = admin` -> `username = <user>` in one syslog line.
 #   `remote=192.168.128.1` is the Docker bridge gateway and is kept: the remote
 #   address is the part of the log line an operator acts on. The only long hex runs
 #   in this file are the two checkout commits named in its own headers
 #   (2a55da8fb0fe974660f32b6073d941a276e4b5cf and
-#   28810521888ccc47c2b713df4cc1baf70b03d3c6); no 32-hex value appears anywhere,
-#   and the database comparison is stated as a clean `diff`, not as a digest.
+#   28810521888ccc47c2b713df4cc1baf70b03d3c6), plus ONE 32-hex value that is not a
+#   credential and not a digest of anything secret: the Phase-C database-fingerprint
+#   md5 `eda1b343b1027332fbd269c0c3171863`, which is a fingerprint of COUNTS and
+#   row ids (not of row content) and is quoted in full inside that block below.
+#   (This sentence used to read "no 32-hex value appears anywhere" - false as
+#   written, because of that fingerprint; corrected in the final fix wave, item
+#   2.10(a), and no other line was changed for it.) The database comparison itself
+#   is stated as a clean `diff`, not as a digest standing in for it.
 #
 # WHAT IS *NOT* PROVEN BY THIS FILE
 #   The compiled-GWT click-through smoke pass. There is no compiled client in
@@ -354,7 +360,10 @@ sites not cleared: <none>
 #                      `diff` between the normalised before and after outputs: NO
 #                      OUTPUT (the two are identical line for line; the comparison is
 #                      recorded in the report rather than as a digest here, so that
-#                      this file keeps the rule above: no 32-hex run appears in it).
+#                      THIS SECTION keeps the rule above: no 32-hex run appears in it.
+#                      The file does contain one 32-hex value, the DB-fingerprint md5
+#                      recorded in the FIX ROUND 3 block - named in the REDACTION
+#                      header at the top, which is where that exception is stated).
 #                      No config row was created.
 #   session          : the harness's /login-probe.php. No credential appears in this
 #                      section; Login.Validate's relay body is the literal `true`.
@@ -1547,7 +1556,8 @@ residual mismatches in this phase: 0
 #   field for field (verified by `diff`, not asserted) -- this phase creates no row
 #   and edits only the SERVED config, which it restores to the checkout's copy. Its
 #   digest is stated in the round-4 report, which is where the earlier rounds kept
-#   it too: this file's redaction rule forbids 32-hex runs here.
+#   it too: this section carries no 32-hex run at all (the REDACTION header at the
+#   top names the file's one 32-hex value, which is in the FIX ROUND 3 block).
 
 # =============================================================================
 # FIX ROUND 4 - the positive control for the R32 gate, and its PLACEMENT
@@ -1612,10 +1622,22 @@ residual mismatches in this phase: 0
 #      modules rows while open       = 136
 #      modules rows after ROLLBACK   = 135
 #   Exact case, inside a transaction that was ROLLED BACK (so the measurement leaves
-#   nothing). No 1062. The `modules_insert` trigger skips its own `acl_aco_sections`
-#   insert because the seeded row for value 'ScannedDocuments' already exists (id
-#   100, and its read/write/modify/delete/lock ACO rows are seeded too), so nothing
-#   collides.
+#   nothing). No 1062. The `modules_insert` trigger's own section insert finds NO
+#   conflicting value: `data/schema/mysql/acl.sql:219` does carry a
+#   `(100,'ScannedDocuments',91,'Scanned Document',0)` seed row for
+#   `acl_aco_sections`, but that row is NOT in the live table. Measured read-only at
+#   this harness: `acl_aco_sections` has 145 rows, `MAX(id)` 157, zero rows whose
+#   `value` starts with 'scanned' in any case, and no row with the exact value
+#   'ScannedDocuments'; `acl_aco` has 725 rows and zero whose `section_value` starts
+#   with 'scanned'. So the trigger takes its `section_exists = 0` branch and CREATES
+#   a fresh section row plus its five `acl_aco` rows (the round-4 re-review measured
+#   that fresh row as id 162); the ids it allocates come from
+#   `acl_aco_sections_seq`, whose counter is 161 - ahead of the table's `MAX(id)` 157
+#   - so the new row's id is not the seeded 100. No ACO rows were seeded.
+#   (Corrected in the final fix wave, item 2.10(b): the previous sentence said the
+#   trigger SKIPPED its insert because a seeded row already existed, which is not
+#   what the trigger does here. The conclusion the block rests on - the INSERT
+#   succeeds and there is no 1062 - is unchanged.)
 #   THE LOWER-CASE VARIANT DOES NOT REPRODUCE THE ROUND-3 1062 EITHER (measured with
 #   the same rollback, module_class='scanneddocuments':
 #      lower_case rows=136              <- inserted; ROLLBACK left modules at 135
@@ -1699,6 +1721,14 @@ residual mismatches in this phase: 0
 #        body: false [http=200]
 #        E5 ...and no dispatch happened                                        ASSERTED
 #      syslog: 2026-09-28 22:11:55 <132> ... refused (INVALID_CALL)
+#      the observable BEFORE the refused call:
+#        zzprobe_r4.probe_moved=0       <- the driver resets it at the head of EVERY
+#                                          leg (`obs_reset` -> `UPDATE <probe> SET
+#                                          probe_moved=0 WHERE id=3`, ra-fix4-probe.sh
+#                                          :113, scratch-only), so this leg did not
+#                                          inherit E4's 8888; quoted from the same run
+#                                          as E3's identically-shaped before-line
+#                                          (item 2.10(d), added in the final fix wave)
 #      the observable AFTER the refused call:
 #        zzprobe_r4.probe_moved=8888    <- THE ABLATED ORDER WROTE IT FIRST
 #   => same call, same class, same stage, same two probe edits, same list state: the
@@ -1721,9 +1751,25 @@ residual mismatches in this phase: 0
 #           config 34/NULL
 #   The fingerprint is IDENTICAL, field for field, to the pre-flight baseline taken
 #   before any probe ran (verified by `diff`; the digest is in the round-4 report,
-#   because this file's redaction rule forbids 32-hex runs here). The two extra
+#   because this section carries no 32-hex run at all - the REDACTION header at the
+#   top names the file's one 32-hex value, in the FIX ROUND 3 block). The two extra
 #   `patient` rows the earlier `payrec` design would have needed are NOT part of the
 #   final state: `patient` is 0 rows, as it was, and the probe's own table is dropped.
+#
+#   SCOPE LIMIT OF THAT FINGERPRINT (item 2.10(c), added in the final fix wave).
+#   "Every piece of state" is true OF THE NINE TABLES THE FINGERPRINT IS COMPUTED
+#   OVER (entemplate, payrec, patient_emr, user, patient, procrec, vitals, modules,
+#   config). It is NOT a statement about the ACL tables, and it cannot be: the
+#   `modules_insert` trigger writes `acl_aco_sections` and `acl_aco` (plus both
+#   `*_seq` counters) on every probe INSERT, and `modules_delete` removes section
+#   rows BY VALUE - so a probe that deletes its own `modules` row also removes any
+#   pre-existing section for that class. Measured now, read-only, at this harness:
+#   row-level ACL state is clean (`acl_aco_sections` 145 rows, `acl_aco` 725 rows,
+#   zero rows whose value/section_value starts with 'scanned' in either) but the
+#   counters have moved (`acl_aco_sections_seq` id 161 against a table `MAX(id)` of
+#   157; `acl_aco_seq` id 769). So the word "every" must be read as scoped, and a
+#   probe that INSERTs a `modules` row should re-read the ACL tables in its
+#   baseline. Harness state only: no product, exposure or verdict consequence.
 
 # -- THE HERMETIC PIN FOR BOTH ROUND-4 FINDINGS (tests/security/relay_allowlist.test.php) --
 #   The served-copy rows above are not the only pin. The suite that runs with no
@@ -1742,3 +1788,33 @@ residual mismatches in this phase: 0
 #     * the ROUND-3 file served in its place (gate after both UPDATEs, everything
 #       else identical) -> `2 FAILED of 191`, exit 1, and the two are exactly the
 #       placement rows -- so they pin the POSITION and not something else.
+
+# =============================================================================
+# RECORDED HERE BECAUSE THIS FILE IS TRACKED EVIDENCE (ledger item 21, final fix wave)
+# =============================================================================
+#   `lib/org/freemedsoftware/core/EMRModule.class.php`'s `GetList()` carries a
+#   COMMENTED-OUT ACL check at `:787-791` (the method opens at `:786`), re-read at
+#   this HEAD (`doc/SECURITY_FOLLOWUP` §6.6 e) writes the same path as
+#   `core/EMRModule.class.php:787-791`):
+#
+#       // ACL
+#       //if (!$this->acl_access ( 'view', $patient ) ) {
+#       //  syslog(LOG_INFO, "ACL: Access denied for $patient (...)"); 
+#       //  return false;
+#       //}
+#
+#   It is deliberately left in that state - NOT re-enabled - and it is recorded
+#   HERE because the Task 2.8 report's deviations list cited it as "recorded in code
+#   as evidence" while no such marker string exists anywhere in the tracked tree
+#   (`grep -rn` over the checkout returns nothing, and that report lives in the
+#   gitignored .superpowers/ tree), so the claim needed a durable home. Its use is
+#   exactly what the report says it is: an in-tree demonstration that a module
+#   method reachable through the relay has NO authorization check on it, i.e. the
+#   relay's session gate (`Login.LoggedIn`, Relay::handle_request) is an
+#   AUTHENTICATION boundary and not an AUTHORIZATION one - which is why the
+#   allowlist control belongs at the relay (see doc/RELAY_ALLOWLIST and
+#   doc/SECURITY_FOLLOWUP's "RELAY AND DISPATCH SURFACE STILL UNGATED").
+#
+#   Nothing above this line is changed by this note: it is a comment block added to
+#   a file whose every measured row was produced by the probes described in its own
+#   headers.
