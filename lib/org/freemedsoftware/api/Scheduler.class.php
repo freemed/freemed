@@ -578,8 +578,11 @@ class Scheduler {
 	//	information.
 	//
 	public function FindGroupAppointments ( $group_id ) {
+		// Category A (2.6f): calgroupid is INT UNSIGNED, so the group id is cast
+		// in an unquoted predicate rather than addslashes()ed inside
+		// hand-written quotes.
 		$query = "SELECT * FROM scheduler WHERE ( ".
-			"calgroupid = '".addslashes($group_id)."' ".
+			"calgroupid = ".intval($group_id)." ".
 			"AND calstatus != 'cancelled' ".
 			" ) ".
 			"ORDER BY caldateof, calhour, calminute";
@@ -600,8 +603,9 @@ class Scheduler {
 	//	Dates Only
 	//
 	public function FindGroupAppointmentsDates ( $group_id ) {
+		// Category A (2.6f): as FindGroupAppointments - a cast group id.
 		$query = "SELECT id,calphysician,caldateof FROM scheduler WHERE ( ".
-			"calgroupid = '".addslashes($group_id)."' ".
+			"calgroupid = ".intval($group_id)." ".
 			"AND calstatus != 'cancelled' ".
 			" ) ".
 			"ORDER BY caldateof, calhour, calminute";
