@@ -37,12 +37,56 @@
 //	without patching code (see that file, and doc/RELAY_ALLOWLIST).
 //
 //	ONE DECISION, ONE LOG LINE: refuse() is the single entry point for the
-//	decision, and it is what Relay::handle_request() calls for the OUTER method
-//	string. It is also what every relay-reachable re-dispatcher calls before an
-//	INNER dispatch it performs itself -- api/UserInterface.class.php's
-//	Multicall() is the one that exists in this tree. A check that ran only in
-//	Relay::handle_request() ran once, on the outer method string, so an
-//	allowlisted re-dispatcher could reach the whole tree around it.
+//	decision. Relay::handle_request() calls it for the OUTER method string, and
+//	every relay-reachable re-dispatcher calls it for each INNER method it is
+//	about to dispatch. A check that ran only in Relay::handle_request() ran
+//	once, on the outer method string, so an allowlisted re-dispatcher could
+//	reach the whole tree around it.
+//
+//	TWO AXES, ONE GATE (fix round 2, R32). A re-dispatcher can name a method
+//	on either of two axes, and the allowlist has to see both:
+//	  * the METHOD axis - the method string itself is caller-supplied
+//	    (api/UserInterface.class.php:Multicall()). The concrete string is
+//	    whatever the caller wrote.
+//	  * the CLASS axis - the method name is a FIXED literal and the CLASS is
+//	    caller-chosen (api/ModuleInterface.class.php's ModuleAddMethod(),
+//	    ModuleDeleteMethod(), ModuleGetRecordMethod(), ModuleGetRecordsMethod(),
+//	    ModuleModifyMethod(), ModuleSupportPicklistMethod(),
+//	    EMRSupportPicklistMethod(), ModuleRenderHtmlMethod(), ModuleToTextMethod()
+//	    and the print wrappers PrintToFax/PrintToPrinter/PrintToBrowser, which
+//	    dispatch the literal 'RenderToPDF'). Those wrappers call
+//	    module_function($module, '<literal>'): the dispatch is
+//	    `org.freemedsoftware.module.<$module>.<literal>`, and a per-method list
+//	    that names the WRAPPER method cannot constrain a class the caller
+//	    chooses. Fix round 2 resolves that concrete string inside each wrapper
+//	    and runs it through this same gate.
+//	  * api/FormTemplate.class.php:ProcessData() is the third relay-reachable
+//	    re-dispatcher; its names come from the XML template FILE it was
+//	    pointed at (data/form/templates/<name>.xml), not from the request, and
+//	    it is gated the same way. See doc/RELAY_ALLOWLIST section 1a.
+//
+//	NEVER-ALLOW NAMESPACES (fix round 2, R36). A namespace prefix in the data
+//	file's 'never_allow' list is refused regardless of 'patterns', in BOTH
+//	stages, when it is reached as an INNER call by a re-dispatcher that
+//	re-dispatches a CALLER-SUPPLIED method name. This is not a new rule: the
+//	pre-2.8 Multicall() carried
+//	`substr($v['method'],0,25) == 'org.freemedsoftware.core.'` -- 25
+//	characters against a 25-character literal, so it FIRED -- and removed every
+//	inner call in the `core` namespace in both stages. Fix round 1 removed it
+//	as dead code; that premise was FALSE (see api/UserInterface.class.php) and
+//	its removal weakened the shipped log-only default, because an inner
+//	`org.freemedsoftware.core.*` call then proceeded where pre-2.8 code refused
+//	it. The rule is reinstated here, in the data file, so a deployment can see
+//	it and change it.
+//	The OUTER path is deliberately ASYMMETRIC: an outer call in a never-allow
+//	namespace is LOGGED LOUDLY AND NOT REFUSED, because the outer behaviour of
+//	shipped code is what it was before this control existed and this round must
+//	not change it. (Two `core.*` entries are themselves in 'patterns' --
+//	core.User.getName and core.User.setPassword -- because they are real outer
+//	calls; the inner rule refuses them as INNER calls exactly as pre-2.8 code
+//	did, and any new inner path that is not a caller-supplied name -- e.g.
+//	FormTemplate::ProcessData -- is gated with the OUTER scope instead, so the
+//	log-only stage cannot start refusing something it served before.)
 //
 //	Matching rules:
 //	*	A pattern is either an exact relay method string
@@ -117,6 +161,19 @@ class Relay_Allowlist {
 	//	Patterns refused at load as too broad (see the class comment).
 	private static $rejected = array();
 
+	// Member: $never_allow_rejected
+	//	'never_allow' entries refused at load as malformed or too broad (see
+	//	normalize()). Kept separate from $rejected: the two lists come from
+	//	different keys and a widening in one is not a widening in the other.
+	private static $never_allow_rejected = array();
+
+	// Member: $never_allow_log
+	//	Messages the last never-allow decisions emitted to syslog, oldest
+	//	first. Testable for the same reason $warnings is (a CLI process has no
+	//	syslogd). Deliberately NOT $warnings: $warnings describes the last
+	//	LOAD, and a decision must not overwrite the load's own diagnostics.
+	private static $never_allow_log = array();
+
 	// Member: $warnings
 	//	Messages the last load()/normalize() emitted to syslog. Kept so the
 	//	hermetic test can assert on a warning's TEXT (syslog() is not capturable
@@ -146,7 +203,7 @@ class Relay_Allowlist {
 	// Method: config
 	//
 	//	The effective configuration: array ( 'enforce' => bool, 'patterns' =>
-	//	array ).
+	//	array, 'never_allow' => array ).
 	//
 	// Parameters:
 	//
@@ -211,16 +268,29 @@ class Relay_Allowlist {
 	//
 	//	Relay::handle_request() calls this for the OUTER method string, and every
 	//	relay-reachable re-dispatcher calls it for each INNER method it is about
-	//	to dispatch itself (api/UserInterface.class.php:Multicall()). Sharing the
-	//	entry point is the point: an inner call then gets the same allowlist, the
-	//	same STAGE behaviour and the same log line as an outer one, so the
-	//	log-only stage measures the inner call set too and enforcement closes it.
+	//	to dispatch itself (api/UserInterface.class.php:Multicall(), the
+	//	api/ModuleInterface.class.php wrappers' class axis, and
+	//	api/FormTemplate.class.php:ProcessData()). Sharing the entry point is the
+	//	point: an inner call then gets the same allowlist, the same STAGE
+	//	behaviour and the same log line as an outer one, so the log-only stage
+	//	measures the inner call set too and enforcement closes it.
 	//
 	// Parameters:
 	//
 	//	$method - The relay method string, as it arrived.
 	//
 	//	$config - (optional) As config().
+	//
+	//	$inner - (optional) TRUE when the caller is a re-dispatcher and the
+	//		method name came from ITS caller (the request). It widens the
+	//		decision by exactly one rule: a never-allow namespace is then
+	//		refused in BOTH stages, which is what the pre-2.8 Multicall()
+	//		guard did and what this round reinstates. It is FALSE for the
+	//		outer relay path AND for a re-dispatcher whose names do not come
+	//		from the request (FormTemplate::ProcessData, whose names come from
+	//		the template file): those get the never-allow line in the log and
+	//		the normal rule in the decision, so the shipped log-only stage
+	//		cannot start refusing a call it served before this round.
 	//
 	// Returns:
 	//
@@ -229,11 +299,124 @@ class Relay_Allowlist {
 	//	it is a miss and the site is in the shipped log-only stage (in which case
 	//	the miss has just been logged, which is how an operator discovers a
 	//	pattern that is needed).
-	public static function refuse ( $method, $config = NULL ) {
+	public static function refuse ( $method, $config = NULL, $inner = false ) {
+		$prefix = self::never_allowed ( $method, $config );
+		if ( $prefix !== NULL ) {
+			self::log_never_allow ( $method, $prefix, $inner );
+			if ( $inner ) { return true; }
+		}
 		if ( self::allowed ( $method, $config ) ) { return false; }
 		self::log_miss ( $method, $config );
 		return self::enforce ( $config );
 	} // end method refuse
+
+	// Method: never_allowed
+	//
+	//	Is $method inside a NEVER-ALLOW namespace (the 'never_allow' list in the
+	//	data file)? These are namespace PREFIXES ending in '.', matched
+	//	case-insensitively, and they beat 'patterns' when refuse() is called with
+	//	$inner = true.
+	//
+	// Parameters:
+	//
+	//	$method - The relay method string.
+	//
+	//	$config - (optional) As config().
+	//
+	// Returns:
+	//
+	//	String - the matching prefix, or NULL when none matched. FALSE for a
+	//	non-string/empty $method (a JSON body can put an array in `method`).
+	public static function never_allowed ( $method, $config = NULL ) {
+		if ( ! is_string ( $method ) or $method === '' ) { return NULL; }
+		$c = self::config ( $config );
+		$list = isset ( $c['never_allow'] ) && is_array ( $c['never_allow'] ) ? $c['never_allow'] : array();
+		foreach ( $list as $prefix ) {
+			if ( ! is_string ( $prefix ) or $prefix === '' ) { continue; }
+			if ( strncasecmp ( $method, $prefix, strlen ( $prefix ) ) === 0 ) { return $prefix; }
+		}
+		return NULL;
+	} // end method never_allowed
+
+	// Method: never_allow_patterns
+	//
+	//	The effective never-allow namespaces, as loaded.
+	//
+	// Returns:
+	//
+	//	Array of strings.
+	public static function never_allow_patterns ( $config = NULL ) {
+		$c = self::config ( $config );
+		return isset ( $c['never_allow'] ) && is_array ( $c['never_allow'] ) ? $c['never_allow'] : array();
+	} // end method never_allow_patterns
+
+	// Method: never_allow_rejected
+	//
+	//	'never_allow' entries the last normalize() refused (malformed, or so
+	//	broad that they would refuse every inner call -- see normalize()).
+	//
+	// Returns:
+	//
+	//	Array of strings.
+	public static function never_allow_rejected ( ) {
+		return self::$never_allow_rejected;
+	} // end method never_allow_rejected
+
+	// Method: never_allow_log
+	//
+	//	The never-allow lines the last decisions emitted. Exposed so a test can
+	//	assert on the TEXT of the asymmetry (inner refused / outer logged only);
+	//	the relay never reads it.
+	//
+	// Returns:
+	//
+	//	Array of strings.
+	public static function never_allow_log ( ) {
+		return self::$never_allow_log;
+	} // end method never_allow_log
+
+	// Method: reset_never_allow_log
+	//
+	//	Forget the never-allow lines recorded so far. The test suite uses this
+	//	so a row can assert on the lines ITS OWN call produced.
+	public static function reset_never_allow_log ( ) {
+		self::$never_allow_log = array();
+	} // end method reset_never_allow_log
+
+	// Method: log_never_allow
+	//
+	//	Record and log a never-allow hit. Two texts, because the two scopes do
+	//	different things and an operator has to be able to tell them apart in a
+	//	`grep`: the INNER text says the call was refused and says why the rule
+	//	exists (a caller-supplied method name), the OUTER text says the call is
+	//	NOT refused and says why not. LOG_ERR for the inner refusal (it is the
+	//	pre-2.8 refusal this round reinstates, and it fires even for a method
+	//	the operator's 'patterns' contains), LOG_WARNING for the outer line
+	//	(the same priority the miss line uses).
+	//
+	// Parameters:
+	//
+	//	$method - The relay method string, as it arrived.
+	//
+	//	$prefix - The never-allow prefix that matched.
+	//
+	//	$inner - Whether the caller asked for the inner scope.
+	private static function log_never_allow ( $method, $prefix, $inner ) {
+		$m = is_string($method) ? $method : '(non-string)';
+		$remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-';
+		if ( $inner ) {
+			$line = "Relay: method '{$m}' is in a NEVER-ALLOW namespace '{$prefix}'; an INNER call with a "
+				. "CALLER-SUPPLIED method name is REFUSED REGARDLESS OF 'patterns', in BOTH stages (remote={$remote})";
+			self::$never_allow_log[] = $line;
+			syslog( LOG_ERR, $line );
+		} else {
+			$line = "Relay: method '{$m}' is in a NEVER-ALLOW namespace '{$prefix}'; this is NOT a "
+				. "caller-supplied inner call, so it is LOGGED AND NOT REFUSED HERE (the normal allowlist "
+				. "decision still applies; remote={$remote})";
+			self::$never_allow_log[] = $line;
+			syslog( LOG_WARNING, $line );
+		}
+	} // end method log_never_allow
 
 	// Method: log_miss
 	//
@@ -439,8 +622,9 @@ class Relay_Allowlist {
 	//	Array ( 'enforce' => bool, 'patterns' => array ).
 	private static function normalize ( $raw ) {
 		self::$rejected = array();
+		self::$never_allow_rejected = array();
 		self::$warnings = array();
-		$out = array( 'enforce' => false, 'patterns' => array() );
+		$out = array( 'enforce' => false, 'patterns' => array(), 'never_allow' => array() );
 		if ( ! is_array ( $raw ) ) {
 			self::warn( 'Relay allowlist: configuration is not an array; treating it as EMPTY (log-only, nothing allowed)' );
 			return $out;
@@ -464,6 +648,27 @@ class Relay_Allowlist {
 				self::warn( "Relay allowlist: pattern '{$pattern}' is a NAMESPACE-LEVEL WILDCARD and grants EVERY method of every class under '{$namespace}' (at least {$covered} method declarations in the class files there); it is HONOURED" );
 			}
 			$out['patterns'][] = $pattern;
+		}
+		// R36: the never-allow namespaces. Same posture as a pattern -- data,
+		// validated rather than silently repaired -- but the failure direction
+		// is the opposite one, so the validation is too: a bad ENTRY is dropped
+		// (a never-allow that could not be parsed must not start refusing
+		// calls), while an entry that is too BROAD is dropped as well, because
+		// 'org.freemedsoftware.' would refuse every inner call in the tree --
+		// the control switched off by way of being switched all the way on.
+		$never = isset ( $raw['never_allow'] ) && is_array ( $raw['never_allow'] ) ? $raw['never_allow'] : array();
+		foreach ( $never as $prefix ) {
+			if ( ! is_string ( $prefix ) or trim ( $prefix ) === '' ) {
+				self::warn( 'Relay allowlist: ignoring a non-string/empty never_allow entry' );
+				continue;
+			}
+			$prefix = trim ( $prefix );
+			if ( substr ( $prefix, -1 ) !== '.' or substr_count ( $prefix, '.' ) < 3 ) {
+				self::$never_allow_rejected[] = $prefix;
+				self::warn( "Relay allowlist: never_allow entry '{$prefix}' is malformed or too broad (it must be a namespace prefix ending in '.', e.g. 'org.freemedsoftware.core.'); it was REJECTED and is not honoured" );
+				continue;
+			}
+			$out['never_allow'][] = $prefix;
 		}
 		return $out;
 	} // end method normalize

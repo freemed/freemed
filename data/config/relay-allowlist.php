@@ -105,6 +105,51 @@
 //	Relay_Allowlist::is_too_broad(). tests/security/relay_allowlist.test.php pins
 //	each of these boundaries.
 //
+// ============================== NEVER-ALLOW =================================
+//
+//	'never_allow' is a list of NAMESPACE PREFIXES that are refused EVEN IF a
+//	'patterns' entry names them, in BOTH stages, when they are reached as an
+//	INNER call by a re-dispatcher that re-dispatches a CALLER-SUPPLIED method
+//	name (api/UserInterface.class.php:Multicall()). The shipped seed is
+//	'org.freemedsoftware.core.'.
+//
+//	Why it exists: Multicall() used to refuse every inner call in the `core`
+//	namespace outright -- `substr($v['method'],0,25) == 'org.freemedsoftware.core.'`
+//	is a 25-character literal compared with 25 characters, so it FIRED, in the
+//	shipped log-only stage as well. That is the pre-2.8 behaviour; a widening of
+//	the allowlist must not quietly undo it, because `core` classes are the
+//	internals the relay exists to keep off the wire, and only two of them
+//	(core.User.getName, core.User.setPassword) are real outer calls.
+//
+//	The OUTER path is ASYMMETRIC on purpose: an OUTER call in a never-allow
+//	namespace is logged at LOG_WARNING AND NOT REFUSED, so the shipped outer
+//	behaviour is exactly what it was before this control existed. Only the inner,
+//	caller-supplied-method-name path refuses. A re-dispatcher whose names do NOT
+//	come from the request (api/FormTemplate.class.php:ProcessData(), whose names
+//	come from the template file it was pointed at) is gated with the outer scope
+//	for the same reason: the log-only stage must not start refusing a call it
+//	served before.
+//
+//	An entry must be a namespace prefix ending in '.' with at least three dots.
+//	A malformed or broader entry (e.g. 'org.freemedsoftware.', which would
+//	refuse EVERY inner call) is REJECTED at load with a LOG_WARNING and is not
+//	honoured; see Relay_Allowlist::never_allow_rejected().
+//
+// ============================== THE CLASS AXIS ==============================
+//
+//	The wrappers in api/ModuleInterface.class.php dispatch a FIXED method name
+//	('add', 'del', 'GetRecord', 'GetRecords', 'mod', 'picklist',
+//	'RenderHtmlView', 'to_text', 'RenderToPDF') against a CALLER-CHOSEN module
+//	class, i.e. `org.freemedsoftware.module.<Class>.<literal>`. A list that
+//	names the WRAPPER method cannot constrain a class the caller chooses, so
+//	those wrappers resolve the concrete string and gate it with this same list.
+//	Consequence for an operator: a wrapper call naming a module class whose
+//	literal is NOT below is REFUSED once 'enforce' => true. The exposure is
+//	large (see tests/security/evidence/relay-callset.txt, section "class axis"),
+//	which is why the shipped seed does NOT try to seed it: the log-only stage is
+//	what measures it. Do not add patterns from this axis until the log has told
+//	you which ones your site's workflows actually use.
+//
 //	See doc/RELAY_ALLOWLIST for the operator notes and the release note.
 //
 // ================================ THE SEED =================================
@@ -138,6 +183,16 @@ return array (
 	// 'enforce' - see HOW TO TURN ENFORCEMENT ON above.
 	// ---------------------------------------------------------------------
 	'enforce' => false,
+
+	// ---------------------------------------------------------------------
+	// 'never_allow' - namespace prefixes refused in BOTH stages as INNER calls
+	// with a caller-supplied method name, even if 'patterns' names them. See
+	// the NEVER-ALLOW section above. This is the pre-2.8 Multicall() `core`
+	// refusal, reinstated as data (Task 2.8 fix round 2, R36).
+	// ---------------------------------------------------------------------
+	'never_allow' => array (
+		'org.freemedsoftware.core.',
+	),
 
 	// ---------------------------------------------------------------------
 	// 'patterns' - exact relay method strings, and `*` suffix patterns.

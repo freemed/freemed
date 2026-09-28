@@ -186,21 +186,50 @@ class UserInterface {
 	//	here never met it, so before this gate an allowlisted Multicall was a
 	//	standing bypass of the whole control -- any registered class, any public
 	//	method, any arguments. Every inner call is now gated with the SAME shared
-	//	entry point the relay uses (Relay_Allowlist::refuse()), so the stage
-	//	behaviour and the miss log line are identical to an outer call's: in
-	//	log-only a miss is logged and the call still runs (that is how an operator
-	//	discovers a pattern that is needed), and in enforce it is refused.
+	//	entry point the relay uses (Relay_Allowlist::refuse(), INNER scope:
+	//	refuse($inner_method, NULL, TRUE)), so the stage behaviour and the miss
+	//	log line are identical to an outer call's: in log-only a miss is logged
+	//	and the call still runs (that is how an operator discovers a pattern that
+	//	is needed), and in enforce it is refused. The INNER scope adds exactly one
+	//	rule to the outer one -- the data file's never-allow namespaces, refused
+	//	in both stages (see the R36 correction below).
 	//
 	//	The refusal is PER CALL. A refused inner call puts INVALID_CALL in its own
 	//	slot -- the same signal the outer refusal answers with -- and the rest of
 	//	the batch still runs, so one refused entry cannot abort a batch the client
 	//	legitimately sent.
 	//
-	//	This replaces a guard that could never fire:
-	//	`substr($v['method'],0,25) == 'org.freemedsoftware.core.'` compared 25
-	//	characters against a 24-character literal, so it was dead code and a
-	//	second, contradictory rule next to the allowlist. It is removed rather
-	//	than repaired.
+	//	FIX ROUND 2 (R36) -- CORRECTION. Fix round 1 replaced this guard with the
+	//	allowlist as "dead code":
+	//	    if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) {
+	//	        syslog( LOG_ERR, "Invalid method called ${v['method']}" );
+	//	        return false;
+	//	    }
+	//	and claimed it "compared 25 characters against a 24-character literal".
+	//	THAT CLAIM WAS FALSE. The literal 'org.freemedsoftware.core.' is 25
+	//	characters ($ printf '%s' 'org.freemedsoftware.core.' | wc -c  ->  25), so
+	//	the comparison could and DID match, and the guard refused every inner call
+	//	in the `core` namespace outright -- in BOTH stages, including the shipped
+	//	log-only one. Removing it therefore CHANGED shipped behaviour: an inner
+	//	`org.freemedsoftware.core.*` call proceeded where the pre-2.8 code had
+	//	refused it.
+	//
+	//	Fix round 2 reinstates the refusal as a deliberate, documented policy in
+	//	the DATA FILE -- data/config/relay-allowlist.php 'never_allow' =>
+	//	array ( 'org.freemedsoftware.core.' ) -- driven by
+	//	Relay_Allowlist::refuse($inner_method, NULL, TRUE). A never-allow namespace
+	//	is refused in BOTH stages for an inner call whose method name comes from
+	//	the caller, which is exactly this guard's scope, so the shipped behaviour
+	//	is back at parity with pre-2.8 and no new outage risk is created: the
+	//	pre-2.8 code refused these calls too.
+	//
+	//	One deliberate deviation from the old shape: the refusal is PER SLOT
+	//	(INVALID_CALL in the entry's own slot, the batch continues) rather than the
+	//	old `return false`, which aborted the whole batch. That is the C1 decision
+	//	above and it is strictly less disruptive; the old guard's own
+	//	`syslog(LOG_ERR, "Invalid method called ...")` line is gone, and
+	//	Relay_Allowlist::log_never_allow() writes a louder, structured one at the
+	//	same priority instead.
 	//
 	// Parameters:
 	//
@@ -218,7 +247,7 @@ class UserInterface {
 		foreach ( $calls AS $k => $v ) {
 			$v = (array) $v;
 			$inner_method = isset ( $v['method'] ) ? $v['method'] : NULL;
-			if ( class_exists ( 'Relay_Allowlist' ) and Relay_Allowlist::refuse ( $inner_method ) ) {
+			if ( class_exists ( 'Relay_Allowlist' ) and Relay_Allowlist::refuse ( $inner_method, NULL, true ) ) {
 				$output[ $k ] = 'INVALID_CALL';
 				continue;
 			}
