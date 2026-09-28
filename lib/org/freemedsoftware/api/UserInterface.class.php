@@ -106,7 +106,11 @@ class UserInterface {
 	//	Array of arrays containing ( user description, id ).
 	//
 	public function GetUsers ( $param = '',$usertype='' ) {
-		$criteria = addslashes( $param );
+		// Category A (2.6b): the tokeniser input is not a query value, and every
+		// predicate built from it below is driver-quoted where it is composed
+		// (quote()). addslashes() here only double-escaped the value - a search
+		// for O'Brien was looking for the literal O\'Brien - so it is gone.
+		$criteria = (string) $param;
 		if (!(strpos($criteria, ',') === false)) {
 			list ($last, $first) = explode( ',', $criteria);
 		} else {
