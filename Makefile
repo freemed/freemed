@@ -60,9 +60,18 @@ phpcs.report.xml:
 # Task 2.7 — static regression gates for the security mitigation
 # (identifier/quoting gate + help-path confinement gate). Static only: the
 # DB-backed functional gate is tests/security/module_smoke.php (Task 2.6c).
+#
+# Each gate runs TWICE: its tree scan (the regression net) and its --self-test
+# (the fixtures that pin the classification contract the scan implements). The
+# --self-test was added in the final fix wave (review C-4, finding that a later
+# edit loosening a pattern to silence a false positive would be caught by
+# nothing) but was wired into no target; it is wired here, so a loosened pattern
+# now fails `make security-check` instead of passing silently.
 security-check: scripts/security-sql-concat-check.sh scripts/security-path-guard-check.sh
 	./scripts/security-sql-concat-check.sh
+	./scripts/security-sql-concat-check.sh --self-test
 	./scripts/security-path-guard-check.sh
+	./scripts/security-path-guard-check.sh --self-test
 
 phpcs.report.html: phpcs.report.xml
 	xsltproc doc/phpcs.xsl phpcs.report.xml > phpcs.report.html
