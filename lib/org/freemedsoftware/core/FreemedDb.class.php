@@ -22,6 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('net.php.pear.DB');
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
 
 define ( 'SQL__NOW', 			"~~~~~NOW~~~~~" );
 
@@ -197,9 +198,20 @@ class FreemedDb extends DB {
 	//	Array of distinct values for the selected field
 	//
 	public function distinct_values ( $table, $field, $where = NULL ) {
-		$query = "SELECT DISTINCT `".$this->db->escapeSimple($field)."` FROM `".$this->db->escapeSimple($table)."` ".
-			( $where ? " WHERE ${where} " : " " ).
-			"ORDER BY `".$this->db->escapeSimple($field)."`";
+		// Category B: table/field identifiers (escapeSimple() is not an
+		// identifier quoter); a refusal is logged, never fatal (R12).
+		$table_id = SqlIdent::name( $table );
+		$field_id = SqlIdent::name( $field );
+		if ( $table_id === false or $field_id === false ) {
+			syslog( LOG_ERR, 'FreemedDb::distinct_values| refusing invalid identifier '.var_export(array($table, $field), true) );
+			return array();
+		}
+		// NOTE (2.6b): $where stays a caller-composed fragment; no in-tree caller
+		// passes it (SupportModule::distinct calls this with two arguments).
+		$query = sprintf( 'SELECT DISTINCT %s FROM %s %s ORDER BY %s',
+			$field_id, $table_id,
+			( $where ? sprintf(' WHERE %s ', $where) : ' ' ),
+			$field_id );
 		$result = $this->db->queryCol( $query );
 		if ( $result instanceof PEAR_Error ) { return array ( ); }
 		return $result;
@@ -223,6 +235,12 @@ class FreemedDb extends DB {
 	//	INSERT SQL query
 	//
 	public function insert_query ( $table, $values, $date_fields=NULL ) {
+		// Category B: table identifier (refused by log, R12).
+		$table_id = SqlIdent::name( $table );
+		if ( $table_id === false ) {
+			syslog( LOG_ERR, 'FreemedDb::insert_query| refusing invalid table name '.var_export($table, true) );
+			return false;
+		}
 		$values_hash = "";
 		$cols_hash = "";
 		$in_loop = false;
@@ -257,11 +275,17 @@ class FreemedDb extends DB {
 			} else {
 				$values_hash .= ( $in_loop ? ", " : " " ).( "${v}" == "" ? "''" : $this->db->quote( is_array($v) ? join(',', $v) : $v ) );
 			}
-			$cols_hash .= ( $in_loop ? ", " : " " )."`".$this->db->escapeSimple( $k )."`";
+			// Category B: the column name is an identifier, not a value.
+			$col = SqlIdent::name( $k );
+			if ( $col === false ) {
+				syslog( LOG_ERR, 'FreemedDb::insert_query| refusing invalid column name '.var_export($k, true) );
+				return false;
+			}
+			$cols_hash .= ( $in_loop ? ", " : " " ).$col;
 			$in_loop = true;
 		}
 
-		$query = "INSERT INTO `".$this->db->escapeSimple($table)."` ( ${cols_hash} ) VALUES ( ${values_hash} )";
+		$query = sprintf( 'INSERT INTO %s ( %s ) VALUES ( %s )', $table_id, $cols_hash, $values_hash );
 		return $query;
 	} // end public function insert_query 
 
@@ -285,9 +309,22 @@ class FreemedDb extends DB {
 	//	UPDATE SQL query
 	//
 	public function update_query ( $table, $values, $where, $date_fields=NULL ) {
+		// Category B: table identifier (refused by log, R12).
+		$table_id = SqlIdent::name( $table );
+		if ( $table_id === false ) {
+			syslog( LOG_ERR, 'FreemedDb::update_query| refusing invalid table name '.var_export($table, true) );
+			return false;
+		}
 		foreach ( $values AS $k => $v ) {
 			if ( ((int)$k > 0) or empty( $k ) ) {
 				$k = $v; $v = $this->data[$k];
+			}
+
+			// Category B: the column name is an identifier, not a value.
+			$col = SqlIdent::name( $k );
+			if ( $col === false ) {
+				syslog( LOG_ERR, 'FreemedDb::update_query| refusing invalid column name '.var_export($k, true) );
+				return false;
 			}
 
 			// Check for date_fields
@@ -299,11 +336,11 @@ class FreemedDb extends DB {
 				// Check for bad values
 				if ( $found ) {
 					if ( $v == '' ) {
-						$values_clause[] = "`".$this->db->escapeSimple($k)."` = NULL";
+						$values_clause[] = $col." = NULL";
 						continue;
 					}
 					if ( $v == '0000-00-00' ) {
-						$values_clause[] = "`".$this->db->escapeSimple($k)."` = NULL";
+						$values_clause[] = $col." = NULL";
 						continue;
 					}
 				}
@@ -312,19 +349,25 @@ class FreemedDb extends DB {
 			// Handle timestamp
 			if ("{$v}" == SQL__NOW) {
 				print "timestamp\n";
-				$values_clause[] = "`".$this->db->escapeSimple($k)."` = NOW()";
+				$values_clause[] = $col." = NOW()";
 			} else {
 				if ( $v !== '' ) {
-					$values_clause[] = "`".$this->db->escapeSimple($k)."` = ".( "{$v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
+					$values_clause[] = $col." = ".( "{$v}" == "" ? "''" : $this->db->quote( is_array( $v ) ? join(',', $v) : $v ) );
 				}
 			}
 		}
 
 		foreach ( $where AS $k => $v ) {
-			$where_clause[] = "`".$this->db->escapeSimple( $k )."` = ".$this->db->quote( $v );
+			// Category B: the WHERE key is an identifier, not a value.
+			$wcol = SqlIdent::name( $k );
+			if ( $wcol === false ) {
+				syslog( LOG_ERR, 'FreemedDb::update_query| refusing invalid where column '.var_export($k, true) );
+				return false;
+			}
+			$where_clause[] = sprintf('%s = %s', $wcol, $this->db->quote( $v ));
 		}
 
-		$query = "UPDATE `".$this->db->escapeSimple($table)."` SET ".join(', ', $values_clause)." WHERE ".join(' AND ', $where_clause);
+		$query = sprintf( 'UPDATE %s SET %s WHERE %s', $table_id, join(', ', $values_clause), join(' AND ', $where_clause) );
 		return $query;
 	} // end public function update_query
 
