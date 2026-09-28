@@ -43,9 +43,21 @@ sinks='(readfile|file_get_contents|file_put_contents|fopen|include|include_once|
 top=()
 while IFS= read -r f; do top+=("$f"); done < <(find . -maxdepth 1 -name '*.php' | sort)
 
+# Confinement is tested, not assumed from line shape: help_resolve_path()
+# (lib/help-path.php — the resolver check 1 mandates) and realpath()/basename()
+# are removed from the line first, and whatever request input is left over
+# still counts as raw. So a legitimate one-line refactor
+#	readfile(help_resolve_path($_SERVER['PATH_INFO']));
+# passes (the only input on the line went through the resolver), while the
+# pre-fix readfile($_SERVER['PATH_INFO']); still fails, and so does a line that
+# mixes a resolver call with unconfined input, e.g.
+#	readfile($_GET['f'] . help_resolve_path($_SERVER['PATH_INFO']));
 hits=$(grep -nE "$sinks" "${top[@]}" 2>/dev/null \
       | grep -E '\$_GET|\$_POST|\$_REQUEST|\$_FILES|\$_COOKIE|\$_SERVER' \
-      | grep -vE 'realpath[[:space:]]*\(|basename[[:space:]]*\(' || true)
+      | awk '{ confined = $0;
+               gsub(/help_resolve_path[[:space:]]*[(][^()]*[)]/, "", confined);
+               if ($0 ~ /realpath[[:space:]]*[(]|basename[[:space:]]*[(]/) next;
+               if (confined ~ /\$_(GET|POST|REQUEST|FILES|COOKIE|SERVER)/) print }' || true)
 if [ -n "$hits" ]; then
 	echo "PATH GUARD FAIL: request input reaches a filesystem sink without confinement:"
 	echo "$hits"
