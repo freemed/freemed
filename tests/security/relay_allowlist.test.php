@@ -6,8 +6,12 @@
 // reachable through relay.php. This suite pins the matcher, the two enforcement
 // states, the too-broad guard, the load-time fail-open branches (including the
 // corrupt data file), the shared decision point that a relay re-dispatcher must
-// use for its inner calls, and the correspondence between the shipped data file
-// and the committed enumeration.
+// use for its inner calls on BOTH axes (the caller-supplied method string of
+// Multicall, the caller-chosen class of the ModuleInterface wrappers), the
+// never-allow namespace rule that the inner scope reinstates (R36), the
+// FormTemplate re-dispatcher's gates (N2), the measured class-axis exposure in
+// the committed enumeration (N3/R32), and the correspondence between the
+// shipped data file and that enumeration.
 //
 // Hermetic: no database, no network, no server, no fixtures (the load() rows
 // write their own throwaway data files under the system temp directory and
@@ -34,8 +38,18 @@
 //     BOTH directions and compare their sizes, so a pattern added to the list
 //     without evidence - or a measured live call dropped from the list, or a
 //     wildcard slipped in - fails here.
-//   * The wiring rows read Relay.class.php and UserInterface.class.php, so the
-//     check being unwired (or Multicall's inner gate being removed) fails here.
+//   * The wiring rows read Relay.class.php, UserInterface.class.php,
+//     ModuleInterface.class.php and FormTemplate.class.php, so the check being
+//     unwired (or Multicall's inner gate, or one of the class-axis gates, being
+//     removed) fails here.
+//   * The R36 rows pin the reinstated `core` never-allow rule (refused in BOTH
+//     stages for an inner call, logged-and-not-refused on the outer path, and
+//     the policy in the data file), and two of them keep the round-1 "dead
+//     code" claim from coming back into the source.
+//   * The class-axis rows parse the '#class-axis' section of the committed
+//     enumeration and pin the measured exposure (866 pairs, 803 unlisted for
+//     the eight module_function literals). They fail if that section is
+//     removed or if the measurement drifts without being re-taken.
 
 $class_file = dirname(__FILE__) . '/../../lib/org/freemedsoftware/core/Relay_Allowlist.class.php';
 if (file_exists($class_file)) { require_once $class_file; }
@@ -211,6 +225,112 @@ foreach (array('org.freemedsoftware.api.UserInterface.GetUsers', 'org.freemedsof
 ra_row('refuse() is exactly (!allowed() and enforce()), in both stages', $ra_shared, true);
 
 // ===========================================================================
+ra_section('R36 — never-allow namespaces: INNER refused in BOTH stages, OUTER logged only');
+// The round-2 never-allow surface may be absent (a tree that predates fix round 2).
+// If it is, the rows below cannot run and the FAILING row says so, in the same place,
+// instead of taking the whole suite down with an undefined-method fatal.
+if ( ! method_exists ( 'Relay_Allowlist', 'never_allowed' )
+		or ! method_exists ( 'Relay_Allowlist', 'never_allow_patterns' )
+		or ! method_exists ( 'Relay_Allowlist', 'never_allow_rejected' )
+		or ! method_exists ( 'Relay_Allowlist', 'never_allow_log' )
+		or ! method_exists ( 'Relay_Allowlist', 'reset_never_allow_log' ) ) {
+	ra_row('R36 surface: Relay_Allowlist implements never_allowed()/never_allow_patterns()/never_allow_rejected()/never_allow_log()/reset_never_allow_log()', false, true);
+} else {
+	// ===========================================================================
+	// Fix round 2. The pre-2.8 Multicall guard refused every inner call in the
+	// `core` namespace outright:
+	//     if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) { ... return false; }
+	// The literal is 25 characters, so the comparison MATCHED -- the guard was live,
+	// not dead code, and round 1 removed it. This section pins the reinstated rule:
+	// the policy lives in the data file ('never_allow'), it beats 'patterns' for an
+	// inner call with a caller-supplied method name, and the OUTER path is
+	// asymmetric on purpose (logged, never refused, so shipped outer behaviour is
+	// unchanged).
+	$NEVER = array('enforce' => false, 'patterns' => $P, 'never_allow' => array('org.freemedsoftware.core.'));
+	$NEVER_E = array('enforce' => true,  'patterns' => $P, 'never_allow' => array('org.freemedsoftware.core.'));
+
+	ra_row('never_allowed(core.*) names the matching prefix',
+		Relay_Allowlist::never_allowed('org.freemedsoftware.core.User.SetPassword', $NEVER), 'org.freemedsoftware.core.');
+	ra_row('never_allowed is case-insensitive (PHP dispatches method names that way)',
+		Relay_Allowlist::never_allowed('ORG.FREEMEDSOFTWARE.Core.User.setPassword', $NEVER), 'org.freemedsoftware.core.');
+	ra_row('never_allowed(other namespace) is NULL', Relay_Allowlist::never_allowed('org.freemedsoftware.module.Vitals.add', $NEVER), NULL);
+	ra_row('never_allowed(prefix itself, no method) still matches', Relay_Allowlist::never_allowed('org.freemedsoftware.core.', $NEVER), 'org.freemedsoftware.core.');
+	ra_row('never_allowed(NULL) is NULL', Relay_Allowlist::never_allowed(NULL, $NEVER), NULL);
+	ra_row('never_allowed(array) is NULL (a JSON body can put an array in `method`)',
+		Relay_Allowlist::never_allowed(array('org.freemedsoftware.core.User.SetPassword'), $NEVER), NULL);
+	ra_row('a config with NO never_allow key (every pre-round-2 fixture) never fires',
+		Relay_Allowlist::never_allowed('org.freemedsoftware.core.User.SetPassword', $C), NULL);
+
+	// INNER scope: refused in BOTH stages -- the parity rule. This is the row that
+	// fails if the reinstated refusal is put behind enforce().
+	ra_row('R36 inner: a core.* call is REFUSED in the LOG-ONLY stage (pre-2.8 parity)',
+		Relay_Allowlist::refuse('org.freemedsoftware.core.User.SetPassword', $NEVER, true), true);
+	ra_row('R36 inner: and refused under enforcement', Relay_Allowlist::refuse('org.freemedsoftware.core.User.SetPassword', $NEVER_E, true), true);
+	// even when 'patterns' names it -- the never-allow rule beats the list.
+	$NEVER_LISTED = array('enforce' => false, 'patterns' => array('org.freemedsoftware.core.User.setPassword'), 'never_allow' => array('org.freemedsoftware.core.'));
+	ra_row('R36 inner: it beats a LISTED pattern (never-allow wins)', Relay_Allowlist::refuse('org.freemedsoftware.core.User.setPassword', $NEVER_LISTED, true), true);
+	// and the inner scope adds NOTHING else: an ordinary unlisted method is still
+	// only logged in log-only, or the log-only stage would stop measuring.
+	ra_row('R36 inner scope adds nothing else: an ordinary unlisted miss is still logged-and-run in log-only',
+		Relay_Allowlist::refuse('org.freemedsoftware.module.Vitals.GetRecentRecord', $NEVER, true), false);
+	ra_row('R36 inner scope adds nothing else: an ordinary unlisted miss is still refused under enforcement',
+		Relay_Allowlist::refuse('org.freemedsoftware.module.Vitals.GetRecentRecord', $NEVER_E, true), true);
+
+	// OUTER scope: logged but NOT refused, in BOTH stages.
+	ra_row('R36 outer: a core.* call in log-only is NOT refused (logged only)',
+		Relay_Allowlist::refuse('org.freemedsoftware.core.User.SetPassword', $NEVER), false);
+	ra_row('R36 outer: and NOT refused by the never-allow rule under enforcement either (a LISTED core.* method still proceeds)',
+		Relay_Allowlist::refuse('org.freemedsoftware.core.User.setPassword', array('enforce' => true, 'patterns' => array('org.freemedsoftware.core.User.setPassword'), 'never_allow' => array('org.freemedsoftware.core.'))), false);
+	ra_row('R36 outer: a LISTED core.* method still proceeds (core.User.getName is a real outer call)',
+		Relay_Allowlist::refuse('org.freemedsoftware.core.User.GetName', array('enforce' => false, 'patterns' => array('org.freemedsoftware.core.User.getName'), 'never_allow' => array('org.freemedsoftware.core.'))), false);
+	ra_row('the default (no third argument) IS the outer scope', Relay_Allowlist::refuse('org.freemedsoftware.core.User.SetPassword', $NEVER), false);
+
+	// The log lines are the operator's only signal, so their TEXT is pinned.
+	Relay_Allowlist::config($NEVER);
+	Relay_Allowlist::reset_never_allow_log();
+	Relay_Allowlist::refuse('org.freemedsoftware.core.User.SetPassword', $NEVER, true);
+	$ra_nal = Relay_Allowlist::never_allow_log();
+	ra_row('R36: the INNER refusal records exactly one line', count($ra_nal), 1);
+	ra_row('R36: the INNER line names the namespace AND says it is refused in both stages',
+		(count($ra_nal) === 1 and strpos($ra_nal[0], "NEVER-ALLOW namespace 'org.freemedsoftware.core.'") !== false
+			and strpos($ra_nal[0], 'REFUSED REGARDLESS') !== false and strpos($ra_nal[0], 'BOTH stages') !== false), true);
+	Relay_Allowlist::reset_never_allow_log();
+	Relay_Allowlist::refuse('org.freemedsoftware.core.User.SetPassword', $NEVER);
+	$ra_nal = Relay_Allowlist::never_allow_log();
+	ra_row('R36: the OUTER line says it is logged and NOT refused', count($ra_nal), 1);
+	ra_row('R36: the OUTER line states the asymmetry',
+		(count($ra_nal) === 1 and strpos($ra_nal[0], 'LOGGED AND NOT REFUSED HERE') !== false), true);
+
+	// normalize() validates the entries: malformed or too broad ones are dropped
+	// (a never-allow that cannot be parsed must not start refusing calls, and
+	// 'org.freemedsoftware.' would refuse EVERY inner call).
+	$NEVER_BAD = array('enforce' => true, 'patterns' => $P, 'never_allow' => array(
+		'org.freemedsoftware.core.', 'org.freemedsoftware.', 'org.freemedsoftware.core', '', array('x'),
+	));
+	$ra_nb = Relay_Allowlist::config($NEVER_BAD);
+	ra_row('R36: only the well-formed never_allow entry is honoured', $ra_nb['never_allow'], array('org.freemedsoftware.core.'));
+	ra_row('R36: the rejected never_allow entries are reported',
+		Relay_Allowlist::never_allow_rejected(), array('org.freemedsoftware.', 'org.freemedsoftware.core'));
+	ra_row('R36: every REJECTED entry is logged with its reason',
+		(count(array_filter(Relay_Allowlist::warnings(), function ($w) { return strpos($w, 'never_allow') !== false and strpos($w, 'REJECTED') !== false; })) === 2), true);
+	ra_row('R36: a non-string/empty never_allow entry is warned about and dropped (both spellings)',
+		(count(array_filter(Relay_Allowlist::warnings(), function ($w) { return strpos($w, 'non-string/empty never_allow') !== false; })) === 2), true);
+	ra_row('R36: a too-broad never_allow does NOT refuse an inner call that IS listed',
+		Relay_Allowlist::refuse('org.freemedsoftware.api.UserInterface.GetUsers', array('enforce' => true, 'patterns' => $P, 'never_allow' => array('org.freemedsoftware.')), true), false);
+
+	// A data file that carries the key loads through the real load() path.
+	file_put_contents($ra_tmp . '/never.php', "<?php\nreturn array('enforce' => false, 'patterns' => array('org.freemedsoftware.api.UserInterface.GetUsers'), 'never_allow' => array('org.freemedsoftware.core.'));\n");
+	$ra_r = Relay_Allowlist::load($ra_tmp . '/never.php');
+	ra_row('R36: load() reads never_allow', $ra_r['never_allow'], array('org.freemedsoftware.core.'));
+	// and a file that omits the key (the shape of every install upgrading into this
+	// round) yields an EMPTY list, i.e. no refusal -- the fail-open direction.
+	file_put_contents($ra_tmp . '/nokey.php', "<?php\nreturn array('enforce' => false, 'patterns' => array('org.freemedsoftware.api.UserInterface.GetUsers'));\n");
+	ra_row('R36: load() of a file with no never_allow yields an empty list',
+		Relay_Allowlist::load($ra_tmp . '/nokey.php')['never_allow'], array());
+
+} // end R36 section
+
+// ===========================================================================
 ra_section('over-broad patterns are rejected, not honoured');
 // ===========================================================================
 ra_row('is_too_broad("*")',                    Relay_Allowlist::is_too_broad('*'), true);
@@ -344,6 +464,22 @@ ra_row('shipped pattern list is non-empty', count($patterns) > 0, true);
 // "the file was not truncated before the guard ran" floor.
 ra_row('shipped pattern count is not a truncated file (>= 300)', count($patterns) >= 300, true);
 
+// R36: the never-allow policy lives in the DATA FILE, so a deployment can see
+// and change it, and the shipped seed is the pre-2.8 Multicall() refusal.
+// (method_exists guard: on a tree that predates fix round 2 the class has no
+// never-allow surface at all, and that must be a FAILING row, not a fatal.)
+ra_row('shipped never_allow is the pre-2.8 `core` namespace',
+	(array_key_exists('never_allow', $shipped) && is_array($shipped['never_allow']) && $shipped['never_allow'] === array('org.freemedsoftware.core.')), true);
+if (method_exists('Relay_Allowlist', 'never_allowed')) {
+	ra_row('shipped never_allow is honoured through the real loader',
+		Relay_Allowlist::never_allowed('org.freemedsoftware.core.User.SetPassword', $shipped), 'org.freemedsoftware.core.');
+	ra_row('shipped never_allow does not catch a module method',
+		Relay_Allowlist::never_allowed('org.freemedsoftware.module.Vitals.GetRecentRecord', $shipped), NULL);
+} else {
+	ra_row('shipped never_allow is honoured through the real loader (NO SURFACE: this tree predates fix round 2)', false, true);
+	ra_row('shipped never_allow does not catch a module method (NO SURFACE: this tree predates fix round 2)', false, true);
+}
+
 $too_broad_shipped = array();
 foreach ($patterns as $p) { if (Relay_Allowlist::is_too_broad($p)) { $too_broad_shipped[] = $p; } }
 ra_row('no shipped pattern is too broad', $too_broad_shipped, array());
@@ -462,6 +598,123 @@ if (!is_file($enum_file)) {
 } // end enumeration cross-check
 
 // ===========================================================================
+ra_section('R32/R36 — the CLASS AXIS measured in the enumeration (fix round 2)');
+// ===========================================================================
+// The fixed-literal wrappers in api/ModuleInterface.class.php dispatch
+// `org.freemedsoftware.module.<Class>.<literal>` against a CALLER-CHOSEN class,
+// so a per-method allowlist cannot constrain them. relay-callset-enum.php
+// enumerates every such pair (module class file x literal, inheritance walked)
+// and classifies it against the SHIPPED list with the real matcher. Those pairs
+// are EVIDENCE OF EXPOSURE, not a seed, so they are emitted as '#class-axis'
+// lines and the drift guard above (which reads the tab-delimited rows and
+// compares against the shipped list in both directions) is untouched by them.
+//
+// N3: this is the corrected measurement. The report stated "146 pairs, 129
+// unlisted"; that does not reproduce under its own stated definition. The
+// measured figures are pinned below, together with the restriction each uses.
+$CLASS_AXIS_LITERALS = array('add', 'del', 'GetRecord', 'GetRecords', 'mod', 'picklist', 'RenderHtmlView', 'to_text');
+$axis_all = array('total' => 0, 'unlisted' => 0, 'listed' => 0);
+$axis_pdf = array('total' => 0, 'unlisted' => 0, 'listed' => 0);
+$axis_badshape = array();
+$axis_other_literal = array();
+if (!is_file($enum_file)) {
+	ra_row('the enumeration carries the class-axis section', false, true);
+} else {
+	foreach (file($enum_file) as $line) {
+		if (strpos($line, '#class-axis') !== 0) { continue; }
+		$f = explode("	", rtrim($line, "\n"));
+		if (count($f) !== 4) { $axis_badshape[] = rtrim($line, "\n"); continue; }
+		$concrete = $f[1];
+		$verdict = $f[2];
+		if (!preg_match('/^org\.freemedsoftware\.module\.[A-Za-z0-9_]+\.[A-Za-z0-9_]+$/', $concrete)) { $axis_badshape[] = $concrete; }
+		$literal = substr($concrete, strrpos($concrete, '.') + 1);
+		if ($literal !== 'RenderToPDF' and !in_array($literal, $CLASS_AXIS_LITERALS, true)) { $axis_other_literal[] = $concrete; }
+		if ($literal === 'RenderToPDF') {
+			$axis_pdf['total']++;
+			if ($verdict === 'listed') { $axis_pdf['listed']++; } else { $axis_pdf['unlisted']++; }
+		} else {
+			$axis_all['total']++;
+			if ($verdict === 'listed') { $axis_all['listed']++; } else { $axis_all['unlisted']++; }
+		}
+	}
+	ra_row('every class-axis row is org.freemedsoftware.module.<Class>.<literal>', $axis_badshape, array());
+	ra_row('every class-axis row names one of the nine wrapper literals', $axis_other_literal, array());
+	// The N3 measurement, pinned. Definition: all 133 module class files,
+	// inheritance walked, public methods only, classified against the shipped
+	// 323 patterns with the real matcher.
+	ra_row('N3: 8 literals, all module classes — total pairs', $axis_all['total'], 866);
+	ra_row('N3: 8 literals — NOT in the shipped list (the exposure)', $axis_all['unlisted'], 803);
+	ra_row('N3: 8 literals — in the shipped list', $axis_all['listed'], 63);
+	ra_row('N3: listed + unlisted === total', ($axis_all['listed'] + $axis_all['unlisted'] === $axis_all['total']), true);
+	ra_row('N3: the print wrappers Literal RenderToPDF pairs (separate definition)', $axis_pdf['total'], 37);
+	ra_row('N3: the shipped list seeds NONE of the RenderToPDF pairs', $axis_pdf['listed'], 0);
+	ra_row('the enumeration is genuinely larger than the list (the R32 quantitative case)',
+		($axis_all['unlisted'] > count($patterns) * 2), true);
+}
+
+// ===========================================================================
+ra_section('R32 — the class axis is GATED (api/ModuleInterface.class.php)');
+// ===========================================================================
+$mi_file = dirname(__FILE__) . '/../../lib/org/freemedsoftware/api/ModuleInterface.class.php';
+$mi_src = is_file($mi_file) ? file_get_contents($mi_file) : '';
+ra_row('ModuleInterface.class.php loads Relay_Allowlist',
+	(strpos($mi_src, "LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist')") !== false), true);
+// Every wrapper resolves the CONCRETE string it dispatches. The wrappers and
+// the literal each of them fixes are enumerated here, so deleting one gate
+// fails a named row.
+$mi_wrappers = array(
+	"ModuleAddMethod ( \$module, \$data )"           => 'add',
+	"ModuleDeleteMethod ( \$module, \$id )"          => 'del',
+	"ModuleGetRecordMethod ( \$module, \$id )"       => 'GetRecord',
+	"ModuleGetRecordsMethod ( \$module, \$count"     => 'GetRecords',
+	"ModuleModifyMethod ( \$module, \$data )"        => 'mod',
+	"ModuleSupportPicklistMethod ( \$module"         => 'picklist',
+	"EMRSupportPicklistMethod ( \$module"            => 'picklist',
+	"ModuleRenderHtmlMethod( \$module, \$id )"       => 'RenderHtmlView',
+	"ModuleToTextMethod ( \$module, \$id )"          => 'to_text',
+);
+$mi_gated = array();
+$mi_ungated = array();
+foreach ($mi_wrappers as $sig => $literal) {
+	$body = ra_slice($mi_src, 'public function ' . $sig, '} // end method');
+	if ($body === '' or strpos($body, "_allowlist_gate ( \$module, '" . $literal . "' )") === false) { $mi_ungated[] = $literal; }
+	else { $mi_gated[] = $literal; }
+}
+ra_row('every fixed-literal module wrapper gates its concrete string', $mi_ungated, array());
+ra_row('...all nine of them', count($mi_gated), 9);
+ra_row('the print wrappers gate RenderToPDF too (PrintToFax/PrintToPrinter/PrintToBrowser)',
+	count(array_filter(explode("_allowlist_gate ( ", $mi_src), function ($chunk) { return strpos(substr($chunk, 0, 40), "'RenderToPDF' )") !== false; })) > 0, true);
+ra_row('the concrete string is built from the module namespace, not guessed',
+	(strpos($mi_src, "'org.freemedsoftware.module.'") !== false), true);
+ra_row('the gate uses the shared decision point (Relay_Allowlist::refuse), inner scope',
+	(strpos($mi_src, 'Relay_Allowlist::refuse ( $concrete, NULL, true )') !== false), true);
+ra_row('a refused wrapper answers INVALID_CALL (the same signal the relay returns)',
+	(strpos($mi_src, "return 'INVALID_CALL';") !== false), true);
+ra_row('the gate degrades when the class file is missing (M1), like the relay',
+	(strpos($mi_src, "class_exists ( 'Relay_Allowlist' )") !== false), true);
+
+// ===========================================================================
+ra_section('N2 — the FormTemplate re-dispatcher is gated on BOTH axes');
+// ===========================================================================
+$ft_file = dirname(__FILE__) . '/../../lib/org/freemedsoftware/api/FormTemplate.class.php';
+$ft_src = is_file($ft_file) ? file_get_contents($ft_file) : '';
+ra_row('FormTemplate.class.php loads Relay_Allowlist',
+	(strpos($ft_src, "LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist')") !== false), true);
+$ft_pd = ra_slice($ft_src, 'function ProcessData ( $data )', '// end method ProcessData');
+ra_row('ProcessData exists in the source', ($ft_pd !== ''), true);
+ra_row('N2: the object: axis is gated on the concrete core.* string',
+	(strpos($ft_pd, "'org.freemedsoftware.core.' . \$objectname . '.' . \$method") !== false), true);
+ra_row('N2: the module: axis is gated on the concrete module.* string',
+	(strpos($ft_pd, "'org.freemedsoftware.module.' . \$modulename . '.' . \$params[1]") !== false), true);
+ra_row('N2: the link: axis is gated too (get_field / to_text)',
+	((strpos($ft_pd, "'org.freemedsoftware.module.' . \$params[0] . '.get_field'") !== false)
+		and (strpos($ft_pd, "'org.freemedsoftware.module.' . \$data['value'] . '.to_text'") !== false)), true);
+ra_row('N2: it uses the SAME decision point (the outer scope, by design)',
+	(strpos($ft_src, 'Relay_Allowlist::refuse ( $concrete )') !== false), true);
+ra_row('N2: the gate degrades when the class file is missing (M1)',
+	(strpos($ft_src, "class_exists ( 'Relay_Allowlist' )") !== false), true);
+
+// ===========================================================================
 ra_section('relay wiring (source level — the HTTP proof is in evidence/)');
 // ===========================================================================
 $relay_file = dirname(__FILE__) . '/../../lib/org/freemedsoftware/core/Relay.class.php';
@@ -469,9 +722,12 @@ $relay_src = is_file($relay_file) ? file_get_contents($relay_file) : '';
 ra_row('Relay.class.php loads Relay_Allowlist',
 	(strpos($relay_src, "LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist')") !== false), true);
 // Fix round 1: the relay consults the SAME decision point a re-dispatcher must
-// use (refuse()), and does not build its own copy of the rule.
+// use (refuse()), and does not build its own copy of the rule. Fix round 2: the
+// row matches the CALL TEXT, not the bare name, because the comment above the
+// call also names refuse() -- a bare substring made the row pass on a tree whose
+// relay had been unwired.
 ra_row('Relay::handle_request consults the allowlist through refuse() only',
-	(strpos($relay_src, 'Relay_Allowlist::refuse') !== false
+	(strpos($relay_src, 'Relay_Allowlist::refuse ( $method )') !== false
 		and strpos($relay_src, 'Relay_Allowlist::allowed') === false), true);
 ra_row('and it returns INVALID_CALL on refusal',
 	(strpos($relay_src, "return 'INVALID_CALL';") !== false), true);
@@ -482,7 +738,7 @@ ra_row('Relay.class.php degrades when Relay_Allowlist is missing (M1)',
 // never-logged-in caller is still told INVALID_SESSION) and BEFORE the
 // call_user_func_array dispatch (or it would be pointless).
 $pos_guard = strpos($relay_src, 'Login.LoggedIn');
-$pos_check = strpos($relay_src, 'Relay_Allowlist::refuse');
+$pos_check = strpos($relay_src, 'Relay_Allowlist::refuse ( $method )');
 $pos_dispatch = strpos($relay_src, "call_user_func_array ( 'CallMethod'");
 ra_row('guard < check < dispatch (order in handle_request)',
 	($pos_guard !== false and $pos_check !== false and $pos_dispatch !== false
@@ -503,8 +759,20 @@ ra_row('a refused inner call puts INVALID_CALL in ITS OWN slot',
 	(strpos($multicall, "'INVALID_CALL'") !== false), true);
 ra_row('the refusal is PER CALL (continue; the batch is not aborted)',
 	(strpos($multicall, 'continue;') !== false), true);
-ra_row('the dead 25/24 `core` guard is gone',
+ra_row('the raw 25/24 `core` guard is gone from Multicall (its POLICY is in never_allow now)',
 	(strpos($multicall, "substr(\$v['method'], 0, 25)") === false), true);
+// Fix round 2 (R36): round 1 labelled that row "the dead 25/24 `core` guard"
+// and claimed the comparison could never match. The literal
+// 'org.freemedsoftware.core.' is 25 characters, so the guard FIRED — it was
+// live, not dead. The two rows below keep the correction committed: the false
+// claim cannot come back into this file, and the premise is asserted directly.
+ra_row('R36: the removed guard\'s literal IS 25 characters, so the comparison matched', strlen('org.freemedsoftware.core.'), 25);
+ra_row('R36: the false "dead code" claim is not committed anywhere in this file',
+	(strpos($ui_src, 'was dead code') === false), true);
+ra_row('R36: the correction IS committed (the claim is named and refuted)',
+	(strpos($ui_src, 'THAT CLAIM WAS FALSE') !== false), true);
+ra_row('Multicall calls the shared gate with the INNER scope (so never-allow applies)',
+	(strpos($multicall, 'Relay_Allowlist::refuse ( $inner_method, NULL, true )') !== false), true);
 
 // ---------------------------------------------------------------------------
 echo "\n";

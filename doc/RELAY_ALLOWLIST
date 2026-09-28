@@ -27,14 +27,88 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    The check runs for INVERSIONS of the relay too. A relay method that
    re-dispatches a method named by its own caller is the same door with a second
    handle: the outer method string is checked once, and the inner one would never
-   meet the allowlist. org.freemedsoftware.api.UserInterface.Multicall is that
-   shape (it is a listed method - a real client calls it - and it dispatches an
-   array of {method, parameters} itself), so it now gates every inner call
-   through the SAME decision point the relay uses
-   (Relay_Allowlist::refuse()). In the log-only stage an inner miss is logged and
-   still runs; under enforcement it is answered with INVALID_CALL in its own slot
-   and the rest of the batch still runs. Any other re-dispatcher carrying a
-   caller-supplied method name belongs on that same entry point.
+   meet the allowlist. There are three relay-reachable re-dispatchers in this
+   tree, and they name their inner call on TWO different axes:
+
+     * the METHOD axis - the method string itself is caller-supplied.
+       org.freemedsoftware.api.UserInterface.Multicall is that shape (it is a
+       listed method - a real client calls it - and it dispatches an array of
+       {method, parameters} itself), so it now gates every inner call through the
+       SAME decision point the relay uses (Relay_Allowlist::refuse(), with the
+       INNER scope). In the log-only stage an inner miss is logged and still
+       runs; under enforcement it is answered with INVALID_CALL in its own slot
+       and the rest of the batch still runs.
+
+     * the CLASS axis - the method name is a FIXED literal and the CLASS is
+       caller-chosen. The wrappers in api/ModuleInterface.class.php
+       (ModuleAddMethod, ModuleDeleteMethod, ModuleGetRecordMethod,
+       ModuleGetRecordsMethod, ModuleModifyMethod, ModuleSupportPicklistMethod,
+       EMRSupportPicklistMethod, ModuleRenderHtmlMethod, ModuleToTextMethod)
+       dispatch one of eight fixed literals against the module class the caller
+       passes, and the print wrappers (PrintToFax, PrintToPrinter, PrintToBrowser)
+       dispatch the fixed literal RenderToPDF against the module class named by
+       the patient_emr row they were pointed at. Listing the WRAPPER method
+       therefore cannot constrain the class, so each wrapper resolves the
+       concrete string it is about to dispatch -
+       org.freemedsoftware.module.<Class>.<literal> - and gates THAT. See
+       section 1a.
+
+       api/FormTemplate.class.php:ProcessData is the third re-dispatcher: its
+       names come from the XML template file it was pointed at, not from the
+       request, and both of its axes (a core.* object method and a module.*
+       method) are gated the same way.
+
+   ANY OTHER re-dispatcher carrying a caller-supplied method name or a
+   caller-chosen class belongs on that same entry point.
+
+
+1a. THE CLASS AXIS, AND THE NEVER-ALLOW LIST
+
+   The class axis is worth stating in full, because it is the axis a per-method
+   allowlist cannot see:
+
+     POST /relay.php/json/org.freemedsoftware.api.ModuleInterface.ModuleAddMethod
+     param0=<ANY module class>   param1=<data>
+
+   ModuleAddMethod is listed (a real client calls it) and it dispatches the fixed
+   literal 'add' against the class in param0. Before fix round 2 that reached
+   EVERY module class in the tree, including classes no pattern names. Each
+   wrapper now gates org.freemedsoftware.module.<Class>.<literal>.
+
+   WHAT THAT MEANS FOR ENABLING ENFORCEMENT. The measured exposure is large: over
+   the 133 module class files, 866 (class, literal) pairs exist for the eight
+   literals and 803 of them are NOT in the shipped list (903 / 840 if you count
+   the print wrappers' RenderToPDF). So a wrapper call naming a module class
+   whose literal is not in 'patterns' is REFUSED once 'enforce' => true - that is
+   the point of the gate, and it is why the seed deliberately does NOT enumerate
+   this axis. Run the log-only stage (section 3) and let the miss log tell you
+   which of those pairs your site's workflows actually use; add those, not the
+   866. The full enumeration, with each pair's verdict, is the served section
+   "class axis" of tests/security/evidence/relay-callset.txt.
+
+   NEVER-ALLOW NAMESPACES. 'never_allow' in the data file is a list of namespace
+   prefixes that are refused EVEN IF 'patterns' names them, in BOTH stages, when
+   they arrive as an INNER call with a caller-supplied method name. The shipped
+   seed is 'org.freemedsoftware.core.'. This is not a new rule: the pre-2.8
+   Multicall() carried
+
+       if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) { ... return false; }
+
+   and the literal 'org.freemedsoftware.core.' is 25 characters, so the
+   comparison MATCHED and the guard refused every inner call in the `core`
+   namespace outright - in both stages. Fix round 1 removed it as "dead code"
+   (a false claim); fix round 2 reinstates it as data. Restoring it is what puts
+   the shipped log-only stage back at parity with pre-2.8: without it, an inner
+   core.* call proceeded where the old code refused it.
+
+   THE OUTER PATH IS ASYMMETRIC ON PURPOSE. An OUTER call in a never-allow
+   namespace is logged (LOG_WARNING) and NOT refused, so shipped outer behaviour
+   is exactly what it was before this control existed. (Two core.* methods are
+   genuinely reachable as outer calls and are in 'patterns': core.User.getName
+   and core.User.setPassword.) Only the inner, caller-supplied-name path refuses.
+   For the same reason, FormTemplate::ProcessData - whose names come from the
+   template FILE, not the request - is gated with the OUTER scope: the log-only
+   stage must never start refusing a call it served before the control existed.
 
    THIS CONTROL SHIPS IN LOG-ONLY MODE. 'enforce' => false. A MISS IS LOGGED AT
    LOG_WARNING AND THE CALL STILL EXECUTES. See section 2 - the reason is not
@@ -91,6 +165,24 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
                This is the shipped value.
        true    ENFORCING. A miss is logged the same way and answered with
                INVALID_CALL, and the method does not run.
+
+   ...and 'never_allow', which is a SEPARATE list and is NOT governed by
+   'enforce':
+
+       A namespace prefix in 'never_allow' is refused in BOTH stages when it
+       arrives as an INNER call with a caller-supplied method name, even if
+       'patterns' names it. The shipped seed is 'org.freemedsoftware.core.',
+       which is the pre-2.8 Multicall() refusal (section 1a). On the OUTER path
+       the same namespace is logged at LOG_WARNING and NOT refused, so shipped
+       outer behaviour is unchanged. Two lines, two `grep`s:
+
+           Relay: method '...' is not in the relay allowlist (remote=..., ...)
+           Relay: method '...' is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; ...
+
+       Removing a never-allow entry is a WIDENING of the call set and belongs in
+       the same review as removing a check; an entry that is malformed or so
+       broad it would refuse every inner call (e.g. 'org.freemedsoftware.') is
+       REJECTED at load with a LOG_WARNING and is not honoured.
 
    Procedure - do not skip to step 4:
 
@@ -199,6 +291,20 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    section 3 - the log-only period is what produces the list of methods to add.
    No configuration is required to keep the previous behaviour, and no
    database change is involved: the list is a file in the installation.
+
+   Two changes in this release are worth a line of their own, because they
+   change what the control covers rather than only where it runs:
+
+     * The fixed-literal wrappers in api/ModuleInterface.class.php (add, del,
+       GetRecord, GetRecords, mod, picklist, RenderHtmlView, to_text, and the
+       print wrappers' RenderToPDF) used to reach ANY module class the caller
+       named. They now gate the concrete method string they dispatch, so
+       enforcement covers the class a caller chooses and not only the method.
+     * The inner-call refusal of the `core` namespace - which Multicall() carried
+       before this control existed and which an earlier revision of this change
+       removed - is back, now as a documented 'never_allow' entry in the data
+       file. Next to it, calls in that namespace on the OUTER path are logged and
+       not refused, so no outer call that worked before is refused now.
 
 
 5. SEE ALSO
