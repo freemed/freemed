@@ -46,10 +46,13 @@ A useful report tells us:
 
 ## Supported versions
 
-Only the **most recent release** is supported (TODO: name the supported line and
-the branch it is released from, e.g. `<SUPPORTED-LINE>` on `<RELEASE-BRANCH>`).
-Security fixes are not backported to older releases or to unreleased snapshots of
-older lines.
+No release has shipped yet, so today the supported version is the tip of the
+release branch `<RELEASE-BRANCH>`, and reports against that tip are welcome.
+From the first release onward, only the **most recent release** of the supported
+line (`<SUPPORTED-LINE>`, released from `<RELEASE-BRANCH>`) is supported. (TODO:
+name the supported line, the branch releases come from, and the first release
+version.) Security fixes are not backported to older releases or to unreleased
+snapshots of older lines.
 
 The defects fixed by the current release are described in
 `doc/SECURITY_ADVISORY`. Defects that are known and deliberately **out of scope**

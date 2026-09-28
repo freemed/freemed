@@ -38,7 +38,8 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    DB_PASSWORD in the clear and therefore reaches every record in the system. The
    endpoint also served help content to callers with no session at all. Measured
    on modern front-ends (Apache 2.4.68, nginx 1.31.6), the traversal does NOT
-   reach PHP: both servers normalise dot segments before PATH_INFO is built. This
+   reach PHP: both servers consume the dot segments before PATH_INFO is built,
+   so no traversing path reaches the vulnerable concatenation. This
    is a real code defect with deployment-dependent reachability, not a
    demonstrated anonymous file read - see 3.1 for what was and was not measured.
    Fixed in <RELEASE-VERSION>.
@@ -86,9 +87,18 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      same, %2e%2e%2f form                          -> 404               no
      (re-tested with AllowEncodedSlashes On and
       AcceptPathInfo On: still 404)
-   nginx 1.31.6 + php-fpm 8.3.35                   all forms -> 400      no
-   Apache < 2.4.49, and any proxy/FastCGI layout
-     that preserves dot segments in PATH_INFO      not measurable here   YES
+   nginx 1.31.6 + php-fpm 8.3.35                   ..  -> 400            no
+     (/help.php/gwt/en_US/../../../../etc/passwd)  (dot segments consumed
+                                                    before PHP ran)
+     same, ..%2f form                              -> 200, no token      no
+     same, %2e%2e%2f form                          -> 200, no token      no
+     (PATH_INFO is empty - fastcgi_split_path_info no longer matched -
+      so no traversing path reaches the concatenation, and no payload
+      returned contents; see 3.1)
+   Apache < 2.4.49 (an inference from public
+     behaviour, NOT measured here), and any
+     proxy/FastCGI layout that preserves dot
+     segments in PATH_INFO                         not measurable here   YES
                                                    (code-level)
 
    In EVERY layout above the pre-fix endpoint served help content anonymously:
@@ -231,8 +241,9 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    lib/settings.php, and scope unchanged because the file read stays inside the
    web user's own authority. The severity is DEPLOYMENT-DEPENDENT, and that
    qualifier belongs in the record: on the two modern front-ends measured here
-   the reachability is zero, and what remains demonstrated on them is the
-   anonymous serve of help HTML, i.e.
+   the traversal does not reproduce at all - it is reachable where dot
+   segments survive to PATH_INFO, which neither of them does - and what
+   remains demonstrated on them is the anonymous serve of help HTML, i.e.
 
        AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N = 5.3   (Medium)
 
@@ -258,8 +269,9 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    Relay_Xmlrpc) and Route/CallMethod in lib/loader.php:47-70 resolves any
    registered class, instantiates it and calls any public method with
    request-supplied arguments. Relay.class.php:45-51 gates on
-   org.freemedsoftware.public.Login.LoggedIn and nothing else; only ~20 classes of
-   the ~130 under lib/org/freemedsoftware call acl_enforce anywhere. Every
+   org.freemedsoftware.public.Login.LoggedIn and nothing else; only ~20 of the
+   431 PHP files under lib/org/freemedsoftware call acl_enforce anywhere
+   (grep -rl acl_enforce: 18 files). Every
    unparameterized query in that surface was therefore reachable by any
    authenticated user. The four reported sites concatenated request data into
    SQL:
@@ -368,7 +380,9 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    ASSUMED from the reachable surface rather than proven - only read impact was
    demonstrated live. We are not adopting S:C: the relay, the modules and the
    database are one security authority in this application, nothing measured
-   crossed a scope boundary, and S:C would inflate the same facts to 9.8.
+   crossed a scope boundary, and S:C would inflate the same facts to 9.9
+   (AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H). 9.8 is not that vector either - it
+   is the S:U/PR:N full-CIA score, which is not the same facts.
    Recommendation for the CVE record: 6.5 for the proven issue if the record is
    scoped to the four sites, or 8.8 with the class-level scope written into the
    description - the owner should pick one and keep the description and the score
@@ -459,6 +473,9 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      Basic auth, admin, correct password:
        HTTP 200, Content-Type: text/x-vCalendar;charset=UTF-8, 222 bytes
        BEGIN:VCALENDAR / VERSION:1.0 / PRODID:Val Q. Verifier / TZ:-07 / END:VCALENDAR
+       (222 bytes is the vcalendar-auth.txt section-2 round, where PRODID
+        still carried a trailing ", "; after 12622abe removed that
+        artefact the same request measures 220 bytes - see 3.3.)
 
    MEASURED EVIDENCE - the compatibility switch (vcalendar-auth.txt section 3):
      config row absent (the default)   -> 401, 0 bytes
@@ -486,6 +503,10 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
        admin        ?physician=1    HTTP 200  text/x-vCalendar, 220 bytes
        physician    ?physician=1 (self) HTTP 200; ?physician=2 (other) HTTP 403
        ?physician[]=1 and ?physician=1abc    HTTP 403 (no shape bypass)
+       (220 bytes here is the fix-round-1 measurement in
+        vcalendar-provider-scope.txt section 5, taken after 12622abe removed
+        PRODID's trailing ", "; 2.3's 222-byte row for the same request is
+        the earlier vcalendar-auth.txt section-2 round.)
        the ACL the branch consults was verified, not assumed:
          acl_check('schedule','view','user',1) = false, …user 2 = false,
          …user 3 = false - it is true for the admin account only through
@@ -657,9 +678,20 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    clients that still need migrating; turn the row off when the log is quiet.
    Nothing in a request can enable it.
 
+   TO ENABLE IT - the row above is OFF, and this is the only way on: set that
+   row's c_value to a true value ('1', 'on', 'yes' or 'true'), which is the
+   value the endpoint's own config read accepts (case-insensitively, trimmed).
+   The security cost of enabling it is the whole of finding 3, for as long as
+   it is set: any caller holding a user's stored MD5 digest authenticates as
+   that user without the password, and the digest travels in the request URL,
+   so it lands in access logs. Treat it as a TEMPORARY migration window and
+   close it: set c_value back to 'off' (or delete the row) as soon as the log
+   is quiet. A site that never creates the row is already in the safe state.
+
    MANDATORY OPERATOR STEP: migrate calendar clients to HTTP Basic over TLS
-   before upgrading (they get 401 otherwise), or set the row above for the
-   migration window.
+   before upgrading (they get 401 otherwise), or set that row's c_value to a
+   true value ('1', 'on', 'yes' or 'true') for the migration window and close
+   it again afterwards.
 
    MANDATORY OPERATOR STEP - and this one can remove a capability that works
    today: ?physician=<other provider> now requires the schedule/view access
@@ -695,7 +727,9 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
             (a malformed `<Files *> deny from *` in that directory's .htaccess
              took the subtree OUT of the parent data/ denial)
      both   data/documents/unfiled/*.djvu    200, 60521 bytes
-   AFTER: every one of those is 403 on both servers, including /lib%2FAPI.php and
+   AFTER: every one of those is 403 on both servers - the one exception is
+   Apache's /lib%2FAPI.php, which stays 404 (AllowEncodedSlashes off, so the
+   path is never split; nginx refuses the same request with 403) - as is
    /help.php/../scripts/... . lib/settings.php was reachable and executed on both
    servers (the source was not disclosed by mod_php/php-fpm), which is an
    unauthenticated entrypoint to the file that holds the database credentials -
@@ -776,7 +810,8 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
         deny location, into its own config) and the corrected .htaccess files.
      2. Add register_argc_argv = Off to your php.ini if you run your own.
      3. Migrate vCalendar clients from ?user=&hash= to Basic over TLS, or set
-        vcals_legacy_hash for the migration window.
+        vcals_legacy_hash to a true value for the migration window (4.2 gives
+        the exact value, the cost of enabling it, and the closing step).
      4. Grant the schedule/view ACO and AROs to any non-admin role that reads
         providers' calendars other than its own.
      5. After a normal use period, complete the relay allowlist's
@@ -808,14 +843,18 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
             either run from the install root or count its own depth.
 
        (ii) THE TRAVERSAL DOES NOT REPRODUCE ON MODERN FRONT-ENDS. Measured
-            2026-09-28: Apache 2.4.68 answers 400 for `..` and `%2e%2e` and 404
-            for `..%2f`; nginx 1.31.6 answers 400 for all forms; re-tested with
-            AllowEncodedSlashes On and AcceptPathInfo On, still 404. Both servers
-            normalise dot segments before PHP builds PATH_INFO, so the path never
-            reaches the vulnerable concatenation there. The code is
-            unconditionally unsafe and IS exploitable on a front-end that
-            preserves dot segments (Apache < 2.4.49, some proxy/FastCGI
-            layouts), but "confirmed dynamically" describes a PoC confirmed in
+            2026-09-28: Apache 2.4.68 answers 400 for the raw `..` form and 404
+            for the single-encoded forms (`%2e%2e%2f`, `..%2f`); nginx 1.31.6
+            answers 400 for the raw form too, and on those single-encoded forms
+            it reaches PHP with an EMPTY page token (200; no payload returned
+            contents); re-tested with AllowEncodedSlashes On and AcceptPathInfo
+            On, still 404. Both servers consume the dot segments before PHP
+            builds PATH_INFO, so a traversing path never reaches the vulnerable
+            concatenation there. The code is unconditionally unsafe and IS
+            exploitable on a front-end that preserves dot segments - an Apache
+            older than 2.4.49 (an inference from public behaviour, NOT tested
+            here) or some proxy/FastCGI layout - but "confirmed dynamically"
+            describes a PoC confirmed in
             isolation - replicating the logic - not end to end on a running
             deployment. The advisory reports it that way (3.1).
 
@@ -936,11 +975,16 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
                                   in the system). MEASURED REACHABILITY, stated
                                   because it is part of the finding: the
                                   traversal does NOT reproduce on Apache 2.4.68
-                                  or nginx 1.31.6 (400/404 - both normalise dot
+                                  or nginx 1.31.6 (400 for the raw `..` form on
+                                  both; 404 for the encoded forms on Apache;
+                                  nginx answers those 200 with an empty page
+                                  token and no contents - both consume the dot
                                   segments before PATH_INFO is built), so it is
                                   exploitable on front-ends that preserve dot
-                                  segments (Apache < 2.4.49, some proxy/FastCGI
-                                  layouts). Independently of reachability, the
+                                  segments (an Apache older than 2.4.49 - an
+                                  inference from public behaviour, not measured
+                                  here - or some proxy/FastCGI layout).
+                                  Independently of reachability, the
                                   pre-fix endpoint served help content to
                                   callers with no session (200, 5818 bytes,
                                   measured with and without a session).
@@ -1014,6 +1058,15 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
                                   session - unauthenticated and bogus-session
                                   calls answer INVALID_SESSION before the method
                                   runs, so PR:L and not PR:N.
+                                  Recommended record score: 6.5 - the score for
+                                  the impact that was proven live, with the
+                                  record scoped to the four sites. The 8.8
+                                  applies only if the assigner accepts the
+                                  I:H/A:H assumption drawn from the write-path
+                                  instances (fixed in the release, never
+                                  exercised live); whichever is used, the scope
+                                  and the assumption go in the description so
+                                  the text and the score agree.
      Discovery credit:            kta1kri
      References:                  <RELEASE-ANNOUNCEMENT-URL>; fix commits
                                   c7e17354, c71a74c8, 04248424, 606bbd11,
@@ -1141,8 +1194,10 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
      OPERATOR STEPS THAT ARE NOT AUTOMATIC - please carry them in your advisory
      text:
        * vCalendar clients using ?user=&hash= must move to HTTP Basic over TLS,
-         or the site must set the vcals_legacy_hash config option (off by
-         default, every use logged) for the migration window.
+         or the site must set the vcals_legacy_hash config option to a true
+         value ('1', 'on', 'yes' or 'true') for the migration window - it is
+         off by default, every use is logged, and it must be turned back off
+         when the log is quiet.
        * Sites where a non-administrator role reads providers' calendars other
          than its own must create the schedule/view access-control grant, or
          that capability is refused with 403 after the upgrade.
@@ -1218,12 +1273,15 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
           the documented install root, 4 x ".." reaches lib/settings.php and 7+
           reaches an absolute path.
        2. The traversal does not reproduce on modern front-ends: Apache 2.4.68
-          returns 400 for ".."/"%2e%2e" and 404 for "..%2f"; nginx 1.31.6
-          returns 400 for every form; re-tested with AllowEncodedSlashes On and
-          AcceptPathInfo On, still 404. Both normalise dot segments before PHP
-          builds PATH_INFO. The code is unsafe as you wrote, and exploitable on
-          a front-end that preserves dot segments (Apache < 2.4.49, some
-          proxy/FastCGI layouts) - but your "dynamically confirmed" step was
+          returns 400 for the raw ".." form and 404 for the single-encoded
+          forms; nginx 1.31.6 returns 400 for the raw form too, and answers
+          those single-encoded forms 200 with an empty page token (no
+          contents); re-tested with AllowEncodedSlashes On and AcceptPathInfo
+          On, still 404. Both consume the dot segments before PHP builds
+          PATH_INFO. The code is unsafe as you wrote, and exploitable on a
+          front-end that preserves dot segments (an Apache older than 2.4.49
+          per public behaviour - we did not test one - or some proxy/FastCGI
+          layouts) - but your "dynamically confirmed" step was
           confirmed in isolation, by replicating the logic, rather than end to
           end. The advisory says exactly that.
        3. The relay entry point in the report does not execute: POST
@@ -1322,7 +1380,8 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
          grep -n '<[A-Z]' SECURITY.md doc/SECURITY_ADVISORY
      The only other angle-bracket tokens in the two files are quoted response
      elements from the evidence (<patpay>, <payhistory>), code identifiers
-     (<Class>, <literal>, <Directory>), the request values the findings concern
+     (<Class>, <literal>, <Directory>), quoted web-server configuration syntax
+     (<Files *>, in 4.3 and 4.5), the request values the findings concern
      (<user>, <name>, <path>, <page>, <locale>, <ip>) and the redaction marker
      <digest> in 3.2 - none of which is a placeholder to fill. The shipped
      defaults - the log-only relay allowlist and the off-by-default
