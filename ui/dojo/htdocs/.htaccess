@@ -1,2 +1,24 @@
-allow from all
-order allow,deny
+# Allow web access to ui/dojo/htdocs/ - this is the Dojo/UI static asset tree
+# (dojo/, formfaces/, images/, stylesheet.css, ...), which the application
+# serves by URL on purpose. It is deliberately world-readable.
+#
+# This is the SECOND layer and it only repeats what the server configuration
+# already does (doc/freemed.apache.conf for Apache, docker/nginx.conf for
+# nginx): nginx reads no .htaccess at all, and a vhost with `AllowOverride
+# None` ignores this file.
+#
+# The file used to carry 2.2-only syntax (`allow from all` / `order allow,deny`),
+# which is a configuration error during URI mapping on an Apache 2.4 vhost
+# without mod_access_compat (500, not the allow this rule means). Both syntaxes
+# are now present and module-guarded, exactly as the nine sibling .htaccess
+# files in this tree were converted (data/, data/schema/, data/config/,
+# data/documents/unfiled/, scripts/, tests/, ...). The INTENT is unchanged -
+# allow everything in this directory, which the 2.2 half already did and the
+# 2.4 half now also expresses.
+<IfModule mod_authz_core.c>
+	Require all granted
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order allow,deny
+	allow from all
+</IfModule>
