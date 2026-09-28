@@ -351,12 +351,14 @@ class Ledger {
 	function queue_for_rebill ( $proc, $type, $disallow = NULL ) {
 		// If passing to a patient, handle disallowments
 		if (($type == 0) and $disallow) {
-			$query = "UPDATE procrec ".
-				"SET procbilled = '0', ".
-				"proccurcovtp = '".addslashes($type)."', ".
-				"procbalcurrent = procbalcurrent - ".
-				( $disallow + 0 )." ".
-				"WHERE id = '".addslashes($proc)."'";
+			// Category A (2.6b F6c): the coverage type is a code and the
+			// procedure id is a record id - both are quoted/cast where the
+			// statement is composed, rather than addslashes()ed inside
+			// hand-written quotes.
+			$query = sprintf( "UPDATE procrec SET procbilled = '0', proccurcovtp = %s, procbalcurrent = procbalcurrent - %d WHERE id = %d",
+				$GLOBALS['sql']->quote( $type ),
+				intval( $disallow ),
+				intval( $proc ) );
 		} else {
 			$query = $GLOBALS['sql']->update_query(
 				'procrec',
@@ -372,9 +374,11 @@ class Ledger {
 
 		// Adjust internal proccurcovid
 		if ($type > 0) {
-			$query = "SELECT proccov".($type + 0)." AS ".
-				"coverage FROM procrec WHERE ".
-				"id = '".addslashes($proc)."'";
+			// Category A (2.6b F6c): the coverage column selector and the record
+			// id are both cast; no addslashes() value sits inside quotes here
+			// either (same method, same statement family as above).
+			$query = sprintf( 'SELECT proccov%d AS coverage FROM procrec WHERE id = %d',
+				intval( $type ), intval( $proc ) );
 			$result = $GLOBALS['sql']->queryRow($query);
 			$coverage=$result['coverage'];
 			extract( $result );
