@@ -97,8 +97,10 @@
 # query and the payload did not leak" from "the method never ran": at pre-fix
 # state all four methods return rows here and the injected call leaks; on a
 # deployment whose `modules`/`entemplate`/`payrec` rows do not exist the
-# reachability call returns no rows, which is printed as an explicit weakness of
-# that site's negative (the dispatch evidence is then the non-empty body alone).
+# reachability call returns no rows, which is printed as `>>> WEAKER THAN
+# MEASURED` and COUNTED: such a site is NOT listed as cleared, and the run exits
+# 2 (deferred item 1 / finding C-2 - before the final fix wave the warning
+# incremented nothing, so the site was still filed as cleared and still exited 0).
 # The verify stack's rows (recorded in the sibling task 2.2-2.5 report) are:
 # modules.module_associations='billing' -> 'Demo Payments Module',
 # entemplate id 1 'Demo Progress Template'/'Progress Note',
@@ -106,11 +108,26 @@
 #
 # Exit codes:
 #   0  every site was measured: session authenticated, all calls dispatched, each
-#      control asserted and benign, no payload leaked
+#      reachability assertion and each control asserted and matched, no payload
+#      leaked
 #   1  EXPLOITED - a digest, an unexpected row, or MySQL error text came back
 #   2  inconclusive - no session supplied, session not authenticated, a method did
 #      not dispatch, a single bare digest came back (withheld), a control did not
-#      behave, PHP fatal or 5xx, or a request got no response
+#      behave, a reachability assertion printed WEAKER THAN MEASURED (the site is
+#      listed as NOT CLEARED), PHP fatal or 5xx, or a request got no response
+#
+# NO --self-test, and why that is not a gap in this file: the plan mandated a
+# --self-test only for the traversal probe (Task 0.1 / ruling R7). This script's
+# sensitivity is instead COMMITTED as evidence: the same script run against the
+# pre-fix tree prints EXPLOITED with the injected UNION payload, and the run
+# against the fixed tree prints a clean negative - both in
+# tests/security/evidence/relay-sqli-prefix.txt. The fail-closed exits are what
+# keep a negative from being vacuous (no session / not authenticated -> 2, a
+# 0-byte 200 -> 2 because the method did not dispatch, exactly one bare 32-hex
+# string -> 2 with the bytes withheld), and the per-site verdict logic counts a
+# reachability assertion that did not hold as WEAKER THAN MEASURED so the site is
+# not cleared. A reader looking for a --self-test here should read that
+# transcript instead: there is none to run.
 #
 # Only `set -u` is used: every request must be attempted even when an earlier
 # curl fails.
@@ -236,6 +253,9 @@ G_EXPLOIT=0
 G_INCONCLUSIVE=0
 G_HOLD=0     # subset of G_INCONCLUSIVE: single bare digest, bytes withheld
 G_EMPTY=0    # subset of G_INCONCLUSIVE: HTTP 200 with a 0-byte body (no dispatch)
+G_WEAK=0     # reachability/control assertions that printed WEAKER THAN MEASURED
+G_SITES=0    # site_begin() calls (used to derive the progress line, not to label it)
+G_PREFLIGHT=0 # fire()s before the first site - the session preflight only
 
 # Per-response state set by fire():
 #   R_CODE   HTTP status, "000" when there was no response at all
@@ -376,14 +396,18 @@ fire() {
 
 SITES_EXPLOITED=()
 SITES_INCONCLUSIVE=()
+SITES_WEAK=()
 SITES_CLEAN=()
 S_E0=0
 S_I0=0
+S_W0=0
 
 site_begin() {
   printf '\n== site: %s ==\n' "$1"
   S_E0="$G_EXPLOIT"
   S_I0="$G_INCONCLUSIVE"
+  S_W0="$G_WEAK"
+  G_SITES=$((G_SITES + 1))
 }
 
 # assert exact body of the previous (clean) response
@@ -403,7 +427,12 @@ assert_body() { # <desc> <expected-exact-body>
   fi
 }
 
-# assert a substring in the previous (clean) response body
+# assert a substring in the previous (clean) response body.
+# A MISS here is not a pass and not a second kind of "no evidence": it is the
+# per-site reachability/control assertion failing, which makes this site's
+# negative WEAKER THAN MEASURED. It bumps G_WEAK so site_end() and the exit code
+# see it - before the final fix wave it printed the warning and incremented
+# nothing, so the site was still filed in SITES_CLEAN and still passed.
 assert_has() { # <desc> <needle>
   if [ "$R_CLASS" != "clean" ]; then
     printf '    note: assertion skipped - its call was %s (%s)\n' "$R_CLASS" "$R_REASON"
@@ -415,6 +444,7 @@ assert_has() { # <desc> <needle>
     printf '    >>> WEAKER THAN MEASURED: %s does not contain %s\n' "$1" "$2"
     printf '    (this deployment does not hold the row the reachability call asks for, so the\n'
     printf '     negative for this site rests on the dispatch evidence alone)\n'
+    G_WEAK=$((G_WEAK + 1))
   fi
 }
 
@@ -447,15 +477,22 @@ reach_note() { # <desc>
 }
 
 site_end() { # <site-label>
-  local name="$1" se si
+  local name="$1" se si sw
   se=$((G_EXPLOIT - S_E0))
   si=$((G_INCONCLUSIVE - S_I0))
+  sw=$((G_WEAK - S_W0))
   if [ "$se" -gt 0 ]; then
     printf '\n    >>> SITE VERDICT [%s]: EXPLOITED - %s of 3 response(s) carried a leak marker\n' "$name" "$se"
     SITES_EXPLOITED=("${SITES_EXPLOITED[@]}" "$name")
   elif [ "$si" -gt 0 ]; then
     printf '\n    >>> SITE VERDICT [%s]: INCONCLUSIVE - %s of 3 response(s) produced no usable evidence, so this site is NOT cleared\n' "$name" "$si"
     SITES_INCONCLUSIVE=("${SITES_INCONCLUSIVE[@]}" "$name")
+  elif [ "$sw" -gt 0 ]; then
+    # Deferred item 1 / finding C-2: a site whose reachability assertion printed
+    # WEAKER THAN MEASURED is NOT a measured negative, so it is not "cleared"
+    # and it does not pass the exit code.
+    printf '\n    >>> SITE VERDICT [%s]: NOT CLEARED - WEAKER THAN MEASURED: no exploit and no leak marker, but %s reachability assertion(s) did not hold, so this site negative is NOT a measured one\n' "$name" "$sw"
+    SITES_WEAK=("${SITES_WEAK[@]}" "$name")
   else
     printf '\n    >>> SITE VERDICT [%s]: NO EXPLOIT OBSERVED for this method - all 3 calls dispatched, the control answered as modelled and the injected call returned no digest, no unexpected row and no MySQL error text\n' "$name"
     SITES_CLEAN=("${SITES_CLEAN[@]}" "$name")
@@ -486,6 +523,10 @@ if [ "$R_CLASS" != "clean" ] || [ "$R_BODY" != "true" ]; then
   printf '    be meaningless. Obtain a fresh session (see the header) and re-run.\n'
   exit 2
 fi
+# Everything fired so far is the session preflight (one fire); site_begin() below
+# records the first site. Kept as a counter so the closing progress line can be
+# derived rather than labelled (deferred item 7).
+G_PREFLIGHT="$G_PROBES"
 
 # ---------------------------------------------------------------------------
 # 2. Site: UserInterface::GetUsers  (param1 = $usertype, concatenated raw)
@@ -595,19 +636,31 @@ site_end "$M_REMITT"
 # ---------------------------------------------------------------------------
 # 6. Verdict.
 # ---------------------------------------------------------------------------
-printf '\n%s probe(s) sent (4 sites x 3), %s vulnerable response(s), %s inconclusive (%s withheld single digest, %s did not dispatch)\n' \
-  "$G_PROBES" "$G_EXPLOIT" "$G_INCONCLUSIVE" "$G_HOLD" "$G_EMPTY"
+# The probe/site arithmetic is DERIVED from the counters, not a label: G_SITES is
+# the site_begin() count, G_PREFLIGHT is the fire() count at the first site, and
+# the per-site figure is the remainder divided by the site count. The previous
+# revision printed a fixed "(4 sites x 3)" beside the live counter - 12 where
+# G_PROBES said 13, because the preflight is also a fire (deferred item 7).
+site_probes=$((G_PROBES - G_PREFLIGHT))
+if [ "$G_SITES" -gt 0 ]; then per_site=$((site_probes / G_SITES)); else per_site=0; fi
+printf '\n%s probe(s) sent (%s session preflight + %s across %s site(s) x %s), %s vulnerable response(s), %s inconclusive (%s withheld single digest, %s did not dispatch), %s weaker than measured\n' \
+  "$G_PROBES" "$G_PREFLIGHT" "$site_probes" "$G_SITES" "$per_site" \
+  "$G_EXPLOIT" "$G_INCONCLUSIVE" "$G_HOLD" "$G_EMPTY" "$G_WEAK"
 printf 'sites cleared: %s\n' "${SITES_CLEAN[*]:-<none>}"
-printf 'sites not cleared: %s\n' "${SITES_INCONCLUSIVE[*]:-<none>}"
+printf 'sites not cleared (no usable evidence): %s\n' "${SITES_INCONCLUSIVE[*]:-<none>}"
+printf 'sites not cleared (weaker than measured): %s\n' "${SITES_WEAK[*]:-<none>}"
 
 if [ "$G_EXPLOIT" -gt 0 ]; then
   printf '>>> RESULT: EXPLOITED - %s relay response(s) leaked a digest, row data or error text (sites: %s)\n' \
     "$G_EXPLOIT" "${SITES_EXPLOITED[*]}"
   exit 1
 fi
-if [ "$G_INCONCLUSIVE" -gt 0 ]; then
-  printf '>>> RESULT: INCONCLUSIVE - %s request(s) produced no usable evidence, so nothing was proven\n' "$G_INCONCLUSIVE"
-  printf '    Sites NOT cleared: %s\n' "${SITES_INCONCLUSIVE[*]}"
+if [ "$G_INCONCLUSIVE" -gt 0 ] || [ "$G_WEAK" -gt 0 ]; then
+  printf '>>> RESULT: INCONCLUSIVE - %s request(s) produced no usable evidence and %s reachability\n' \
+    "$G_INCONCLUSIVE" "$G_WEAK"
+  printf '    assertion(s) did not hold, so nothing was proven\n'
+  printf '    Sites NOT cleared (no usable evidence): %s\n' "${SITES_INCONCLUSIVE[*]:-<none>}"
+  printf '    Sites NOT cleared (weaker than measured): %s\n' "${SITES_WEAK[*]:-<none>}"
   printf '    Sites with a measured negative: %s\n' "${SITES_CLEAN[*]:-<none>}"
   exit 2
 fi
@@ -615,10 +668,10 @@ printf '>>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)\n'
 printf '    What WAS measured: the supplied session answered Login.LoggedIn() == "true"; all\n'
 printf '    %s probe(s) answered with a non-empty body, so every method dispatched (a 0-byte\n' "$G_PROBES"
 printf '    body is counted INCONCLUSIVE, never clean); each site reachability call returned\n'
-printf '    the rows the query can find; each benign control was asserted against its\n'
-printf '    expected answer and matched (UserInterface.GetUsers -> null,\n'
-printf '    ModuleSearch.picklist -> null, EncounterNotesTemplate.getTemplates -> [],\n'
-printf '    Remitt.RenderStatementXML -> no payment rendered); and each injected call\n'
+printf '    the rows the query can find and each benign control was asserted against its\n'
+printf '    expected answer and matched (a reachability or control assertion that did NOT\n'
+printf '    hold is counted as WEAKER THAN MEASURED and would have made this exit 2, with the\n'
+printf '    site listed as not cleared); and each injected call\n'
 printf '    returned no digest, no unexpected row and no MySQL error text.\n'
 printf '    What was NOT measured: nothing here is evidence about an unauthenticated caller\n'
 printf '    (this script always sends the session you supplied), nothing about a deployment\n'
