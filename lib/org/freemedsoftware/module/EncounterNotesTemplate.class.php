@@ -272,7 +272,7 @@ class EncounterNotesTemplate extends SupportModule {
 		if($type==NULL)
 			$query="SELECT id,pnotestname AS tempname, pnotestuser AS tempuser,pnotesttype AS notetype FROM entemplate";
 		else
-			$query="SELECT id,pnotestname AS tempname, pnotestuser AS tempuser,pnotesttype AS notetype FROM entemplate WHERE pnotesttype='".$type."'";
+			$query="SELECT id,pnotestname AS tempname, pnotestuser AS tempuser,pnotesttype AS notetype FROM entemplate WHERE pnotesttype=".$GLOBALS['sql']->quote($type);
 		return  $GLOBALS['sql']->queryAll ( $query );
 	}
 	public function getTemplateInfo($tid){
