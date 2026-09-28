@@ -167,19 +167,73 @@ if (!freemed_get_auth()) {
 }
 
 // Intelligently decide which physician to use
-$__phy = ( ($_REQUEST['physician'] > 0) ?
-		$_REQUEST['physician'] :
-		$GLOBALS['__freemed']['basic_auth_phy'] );
+//
+// `physician` is a request parameter, so it is only honoured as an integer and,
+// for a caller that is not already that provider, only with the scheduler view
+// ACL (the same gate SchedulerTable uses). A non-admin account cannot name
+// another provider's calendar; its own provider record comes from the identity
+// the request actually authenticated as, not from the request.
+$__phy = (int) $GLOBALS['__freemed']['basic_auth_phy'];
+
+if ((int) (isset($_REQUEST['physician']) ? $_REQUEST['physician'] : 0) > 0) {
+	$__requested = (int) $_REQUEST['physician'];
+	if ($__requested !== $__phy) {
+		// $GLOBALS['acl'] is built by lib/freemed.php only inside its session
+		// block, which a SESSION_DISABLE request like this one skips, so the
+		// object has to be loaded on demand here. It is loaded at request
+		// scope (an include inside a function would bind $acl to that
+		// function), and a request that cannot obtain or use it is DENIED:
+		// an unavailable authorization object must never widen access.
+		if (!isset($GLOBALS['acl']) or !is_object($GLOBALS['acl'])) {
+			try {
+				include_once(dirname(__FILE__)."/lib/acl.php");
+			} catch (Throwable $e) {
+				syslog(LOG_WARNING, "vCalendar [get] ACL unavailable: ".
+					$e->getMessage());
+			}
+		}
+		$__allowed = false;
+		try {
+			if (isset($GLOBALS['acl']) and is_object($GLOBALS['acl'])) {
+				// Suppressed: this call builds the user cache, whose
+				// constructor reads an unset $authdata under SESSION_DISABLE
+				// and warns. The warning is printed into the response body and
+				// would then block the 403 below ("headers already sent"); the
+				// decision itself is logged explicitly further down.
+				$__allowed = (bool) @freemed::acl('schedule', 'view');
+			}
+		} catch (Throwable $e) {
+			syslog(LOG_WARNING, "vCalendar [get] schedule/view ACL check ".
+				"errored (".$e->getMessage()."), denying");
+			$__allowed = false;
+		}
+		if (! $__allowed) {
+			syslog(LOG_NOTICE, "vCalendar [get] provider ".$__requested.
+				" refused for user ".$GLOBALS['__freemed']['basic_auth_id']);
+			Header("HTTP/1.0 403 Forbidden");
+			die("Not authorized for that provider.");
+		}
+	}
+	$__phy = $__requested;
+}
 
 // Figure out name, etc
-switch ($_REQUEST['type']) {
+$__type = isset($_REQUEST['type']) ? (string) $_REQUEST['type'] : '';
+switch ($__type) {
 	case 'fromdate':
 	if ($__phy > 0) {
 		// Assume that it's for a physician
-		$ts = mktime (0,0,0, $_REQUEST['m'], $_REQUEST['d'], $_REQUEST['y']);
+		$__m = (int) (isset($_REQUEST['m']) ? $_REQUEST['m'] : 0);
+		$__d = (int) (isset($_REQUEST['d']) ? $_REQUEST['d'] : 0);
+		$__y = (int) (isset($_REQUEST['y']) ? $_REQUEST['y'] : 0);
+		if (!checkdate($__m, $__d, $__y)) {
+			Header("HTTP/1.0 400 Bad Request");
+			die('Invalid date.');
+		}
+		$ts = mktime (0, 0, 0, $__m, $__d, $__y);
 		$physician = CreateObject('org.freemedsoftware.core.Physician', $__phy);
 		$name = $physician->fullName();
-		$criteria = "calphysician='".addslashes($__phy)."' AND ".
+		$criteria = "calphysician='".intval($__phy)."' AND ".
 			"caldateof >= '".addslashes(date("Y-m-d", $ts))."'";
 		$stamp = date("Ymd", $ts) . '.' . $__phy;
 	} else {
@@ -192,7 +246,7 @@ switch ($_REQUEST['type']) {
 		// Assume that it's for a physician
 		$physician = CreateObject('org.freemedsoftware.core.Physician', $__phy);
 		$name = $physician->fullName();
-		$criteria = "calphysician='".addslashes($__phy)."' AND ".
+		$criteria = "calphysician='".intval($__phy)."' AND ".
 			"caldateof >= '".addslashes(date("Y-m-d"))."'";
 		$stamp = date("Ymd") . '.' . $__phy;
 	} else {
