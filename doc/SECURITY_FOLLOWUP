@@ -10,17 +10,43 @@ reported findings
    unauthenticated help.php file read, the authenticated relay SQL-injection
    cluster, and the vcalendar pass-the-hash path) on branch
    security/mitigation-2026-09 at HEAD f0aeba53. None of them is part of that
-   mitigation. Each is either out of scope by decision (section 2) or a
-   pre-existing defect that the sweep, its reviews and the verification pass
-   surfaced on the way (sections 3 to 6). Nothing here has been fixed. Every
-   file:line reference was re-read at f0aeba53 while this list was consolidated,
-   and every claim that could be measured without a database was measured on
-   php:8.3-cli; references the plan or the execution ledger carried that have
-   since drifted are corrected here, and each correction is stated inline. Where
-   a claim rests on a single measurement, or on a review's assertion that this
-   consolidation did not re-measure, the line says so. The advisory for the
-   mitigation itself is a separate delivery (Task 4.2): nothing here duplicates
-   it, and nothing here has been sent outside this repository.
+   mitigation. Each is either out of scope by decision (section 2) or a defect
+   that the sweep, its reviews and the verification pass surfaced on the way
+   (sections 3 to 6). Nothing here has been fixed.
+
+   WHAT SET THIS IS: this is the union of the plan's Task 4.3 list and every
+   finding the execution's reviews raised and deliberately did not fix - the
+   execution ledger's consolidated deferred-findings list, all 33 items. Every
+   one of the 33 has an entry below, or is named below as closed/not-a-defect
+   with the reason. It is NOT a selection: nothing was dropped for being
+   uninteresting, and the ledger item map is printed here so that a reader can
+   check that claim:
+
+     1 -> 6.6 a)   2 -> 6.5   3 -> 6.4   4 -> 6.6 b)   5 -> 6.6 c)
+     6 -> 6.5      7 -> 6.6 d)  8 -> 6.7 a)  9 -> 6.7 b)  10 -> 6.7 c)
+    11 -> 6.7 d)  12 -> 6.7 e)  13 -> 3.3 q    14 -> 3.3 r    15 -> 3.4 a)
+    16 -> 3.4 b)  17 -> 3.4 c)  18 -> 3.4 d)  19 -> 3.4 e)  20 -> 3.4 f)
+    21 -> 6.6 e)  22 -> 3.3 t   23 -> 5.1      24 -> 5.2      25 -> 5.3
+    26 -> 5.5     27 -> 6.6 f)  28 -> 5.4      29 -> 6.5      30 -> 4.1/4.2
+    31 -> 6.5     32 -> 6.2/6.5  33 -> 4.3/6.5
+
+   The ledger is gitignored (.superpowers/), so it is destroyed with the
+   execution workspace; this file is its durable home and is why the union is
+   carried whole rather than summarised. The items this fix round added beyond
+   the plan's own list are 3.4, 5.5, 6.6 and 6.7, together with the notes
+   explaining which ledger items are closed or do not reproduce; the plan's own
+   items keep the letters they already had.
+
+   Every file:line reference was re-read at f0aeba53 while this list was
+   consolidated, and every claim that could be measured without a database was
+   measured on php:8.3-cli; references the plan or the execution ledger carried
+   that have since drifted are corrected here, and each correction is stated
+   inline. Counts were re-measured in fix round 1 and the ones that moved say so
+   (2.1, 2.4, 3.4 d)). Where a claim rests on a single measurement, or on a
+   review's assertion that this consolidation did not re-measure, the line says
+   so. The advisory for the mitigation itself is a separate delivery (Task 4.2):
+   nothing here duplicates it, and nothing here has been sent outside this
+   repository.
 
 
 2. OUT OF SCOPE BY DECISION
@@ -30,14 +56,20 @@ reported findings
 
    2.1 Credential storage: unsalted MD5 -> password_hash() / PASSWORD_BCRYPT
        (CWE-916). Every stored credential is an unsalted MD5 digest, and the
-       digest is compared in six places: User.class.php:354 and :446
-       (set/change), Authentication_Password.class.php:34,
-       Authentication_Basic.class.php:35, public/Login.class.php:116
-       (md5($password) == $row), public/Installation.class.php:105,
-       api/UserInterface.class.php:413 and :548, and vcalendar.php:89. The
-       mitigation only removed the comparison from SQL in vcalendar.php (it now
-       fetches by username and compares in PHP with hash_equals()) and left the
-       format alone; the format is why the pass-the-hash item exists at all, and
+       digest is produced or compared at nine sites in seven files - five writes
+       (User.class.php:354 and :446, public/Installation.class.php:105,
+       api/UserInterface.class.php:413 and :548) and four comparison-side sites
+       (Authentication_Password.class.php:34 and
+       Authentication_Basic.class.php:35, which build the digest they compare
+       with, public/Login.class.php:116 as md5($password) == $row, and
+       vcalendar.php:89). That split is what the migration has to work against:
+       the writes are what a rehash must change, the comparisons are what a
+       dual-format window must accept. COUNT CORRECTED in fix round 1 - the
+       first consolidation said "six places" over a list of nine sites and did
+       not say which were writes. The mitigation only removed the comparison
+       from SQL in vcalendar.php (it now fetches by username and compares in PHP
+       with hash_equals()) and left the format alone; the format is why the
+       pass-the-hash item exists at all, and
        Authentication_Password.class.php:34 still accepts a client-supplied
        `_hash` in place of a password. Changing the storage format is a
        migration - rehash on next successful login, a dual-format acceptance
@@ -60,18 +92,37 @@ reported findings
        entries are third-party phpGACL lines, and the .htaccess inside that
        directory is deliberately left 2.2-only for the same reason.
 
-   2.4 The legacy lib/agata7/ surface (73 of the gate's 165 originally
-       allowlisted lines: bundled fpdf151, pclzip and nusoap). Vendored
-       third-party code, out of scope by the plan's non-goals; its entries sit
-       in the allowlist's VENDORED section rather than in the application set
-       the sweep had to zero.
+   2.4 The legacy lib/agata7/ surface: FIVE of the SQL-concatenation gate's 165
+       original hits, out of the 73 non-application hits it carried - the
+       bundled fpdf151, pclzip and nusoap (fpdf.php:912, pclzip.lib.php:4992,
+       nusoap.php:4050, :4126 and :5535, the same five the allowlist's VENDORED
+       section holds today). Vendored third-party code, out of scope by the
+       plan's non-goals; its entries sit in that section rather than in the
+       application set the sweep had to zero.
+
+       COUNT CORRECTED in fix round 1. The ledger's ruling R14 recorded this as
+       "73 of the gate's 165 originally allowlisted lines", mislabelling the
+       whole non-application remainder as lib/agata7. Replayed here by running
+       the gate's own grep chain (scripts/security-sql-concat-check.sh:38-42)
+       over the seed commit 4d6e7e8b: 165 hits in total, of which 92 are
+       application hits (module/ 54, core/ 24, api/ 10, tests/security/ 4) and
+       73 are non-application (lib/org/freemedsoftware/acl/ 67 phpGACL,
+       lib/agata7/ 5 - the five above - and lib/API.php:1386, 1). The 67 + 5 + 1
+       IS the 73; only the 5 is agata7. Composition of the 165, so the next
+       reader cannot repeat R14's step: 165 = 92 application + 73
+       non-application, and the 76 entries the allowlist holds at HEAD are
+       exactly the 5 agata7 + 4 tests + 67 phpGACL (2.3); the other 89 original
+       hits - the 88 application lines (92 less the 4 test fixtures) and
+       lib/API.php:1386 - were rewritten rather than allowlisted.
 
 
-3. PRE-EXISTING FUNCTIONAL DEFECTS THE SWEEP AND ITS REVIEWS SURFACED
+3. DEFECTS THE SWEEP AND ITS REVIEWS SURFACED
 
-   All are pre-existing; none was introduced by the mitigation. "Live" means an
-   in-tree caller or a shipped file reaches it. "Latent" means it is reachable
-   in principle but nothing in the tree currently gets there.
+   In 3.1 to 3.3 all are pre-existing; none was introduced by the mitigation.
+   3.4 carries the ledger's residuals of this batch's own edits, where that is
+   not always true - each item there says which it is. "Live" means an in-tree
+   caller or a shipped file reaches it. "Latent" means it is reachable in
+   principle but nothing in the tree currently gets there.
 
    3.1 The eight the plan listed
 
@@ -219,14 +270,20 @@ reported findings
       place. CORRECTION: the plan's `:73-74` is stale.
 
    o) vcalendar.php:164 - freemed_get_auth() (:138) ends with a `return false;`
-      after an if/else whose branches both return (:160 and :162). Unreachable
-      statement, cosmetic only; the legacy GET path leaves with the D4 window.
+      after an if/else whose branches both return (:157 is `return true;` and
+      :162 is `return false;`; :160 is the basic_auth_id reset, not a return).
+      Unreachable statement, cosmetic only; the legacy GET path leaves with the
+      D4 window. LINE CORRECTED in fix round 1 - the first consolidation cited
+      :160, an assignment.
 
-   3.3 Other items the execution ledger carries
+   3.3 Other items the execution ledger carries (items 13, 14 and 22 of its
+       deferred list)
 
    These come from the sweep's own review notes - the deferred minors the
-   reviews ledgered rather than chased. Each is verified at source; an owner may
-   rank them differently.
+   reviews ledgered rather than chased. They are not the whole of the ledger's
+   list and are not meant to read as such: everything else on it is carried in
+   3.4, 5.5, 6.6 and 6.7, and the item-by-item map is printed in section 1.
+   Each is verified at source; an owner may rank them differently.
 
    p) each() sites, all removed-in-PHP-8 fatalities (measured: `Call to
       undefined function each()`), none on a path the mitigation touched but all
@@ -266,7 +323,84 @@ reported findings
       anyway (queryAll() is called on an undefined local $sql, MariaDB rejects
       '1 == 1', and three SELECT columns do not exist), and repairing the typo
       is not behaviour-preserving, so it was left in place with the NOTE, by
-      instruction. The 2.6e whitelist at :1181-1183 does fail closed.
+      instruction. The 2.6e whitelist at :1181-1183 does fail closed. Ledger
+      item 22 asks for that whitelist to be recorded in the committed evidence
+      rather than only in the code comment it lives in today.
+
+
+   3.4 Residuals of this batch's own edits (ledger items 15-20, added in fix
+       round 1)
+
+   These six are the ledger's code residuals in files the sweep touched. Unlike
+   3.1-3.3 they are not all pre-existing: (d), (e) and (f) are consequences of
+   this branch's own rewrites, (a) and (c) are pre-existing behaviour the
+   rewrites sit next to, and (b) is pre-existing throughout. Each item says
+   which it is at the point where it matters. The line numbers added here were
+   re-read at the branch head this round ran against (2cc7654f); as section 1
+   says of every reference in this file, re-read them against HEAD before
+   acting.
+
+   a) lib/org/freemedsoftware/core/EMRModule.class.php:914 - GetRecentRecord()
+      takes $dfield = $this->date_field ? SqlIdent::name(...) : false, so a
+      NON-EMPTY but invalid $date_field falls back to `id DESC` SILENTLY: no log
+      line, no refusal, and the caller gets the newest record by id instead of
+      by date. The sibling refusals are loud - an invalid
+      table_name/patient_field logs LOG_ERR and returns NULL (:904-907), and a
+      non-Y-m-d recent_date logs at :888 - and R12 permits the same
+      developer-error signal for a class-declared identifier, in that branch
+      only. Pre-existing shape, but the surrounding method is this batch's. Read
+      at source; not exercised live here (it needs a module declaring an
+      unusable date_field).
+
+   b) Pre-existing `escape()`-inside-quotes value sites that the SQL-concat gate
+      cannot see (see 6.7 b)): core/SupportModule.class.php:484, a
+      `LIKE '".$GLOBALS['sql']->escape($criteria)."%'` predicate, and
+      api/PatientInterface.class.php:319 and :355-439, the same
+      `LIKE '%...'` shape repeated through the patient-search builders. None of
+      them is a known defect - escape() is the established escaper for a value
+      inside quotes, which is why the gate's keyword filter excludes them - but
+      they are on the list because the gate cannot see them at all, so a clean
+      `make security-check` is not evidence about them. RE-READ in fix round 1:
+      the ledger's `PatientInterface:319` is right at HEAD - it is the
+      patient_keypad_lookup predicate, the first of these sites, and the others
+      sit at :355-439.
+
+   c) api/PatientInterface.class.php:257 - the resolve query inside
+      MoveEmrAttachments (:251) interpolates
+      `... WHERE p.patient = ".$GLOBALS['sql']->quote( $patient )`, where
+      $patient is an UNDEFINED local: the method's parameters are $patientFrom,
+      $patientTo and $attachments, and none of them is $patient. quote(NULL) is
+      'NULL', and a NULL comparison is never true, so $resolve is empty and the
+      R12-refused path is unexercised in situ. Pre-existing; deliberately
+      unchanged. Ledger item 17's own line (`:228`) does not hold at HEAD - the
+      line has moved, and this is where it is now.
+
+   d) The F4 Y-m-d pre-check is copy-pasted, not shared. RE-COUNTED in fix round
+      1: 12 sites in 10 files at HEAD - SuperBill.class.php:124-125,
+      PatientReporting.class.php:154, PatientCoverages.class.php:144,
+      Tools.class.php:151, Reporting.class.php:182, WorkflowStatus.class.php:89,
+      Ledger.class.php:52, Scheduler.class.php:1436, PatientInterface.class.php:
+      63 and :108, EMRModule.class.php:885 (the ledger recorded nine when it
+      wrote the item). A shared static validator is the maintainable form; the
+      copies are not textually identical because the LOG_ERR message shapes
+      differ between `Ledger::` and `Class::Method::`.
+
+   e) api/Ledger.class.php:439 - queue_for_rebill() (:422) now composes the
+      disallowment with number_format( (float) $disallow, 2, '.', '' ), so a
+      money amount is ROUNDED to 2dp: measured on php:8.3-cli, 3.5 -> `3.50`,
+      -3.5 -> `-3.50`, 12.345 -> `12.35`, where the pre-sweep `($d + 0)` kept
+      whatever it was given. Acceptable for a REAL column - the sweep's intval()
+      truncated the cents, which was worse - but the change is documented only
+      in the code NOTE at :430-433, in no committed doc. Introduced by this
+      batch (2.6f).
+
+   f) module/PatientCoverages.class.php::GetCoverages (:134) returns array()
+      from its refusal (:146) while its success path returns $res (:155), and
+      $res is only assigned inside the loop over the result set - so an empty
+      result set returns NULL with `Warning: Undefined variable $res` (measured
+      on php:8.3-cli). A caller-visible null->[] type shift. Introduced by this
+      batch (2.6f). STALE REFERENCE: the ledger's path for this class
+      (`api/PatientCoverages.class.php`) is wrong; it lives in module/.
 
 
 4. RELAY AND DISPATCH SURFACE STILL UNGATED
@@ -280,7 +414,11 @@ reported findings
        is taken from caller-supplied form data. The outer gate cannot see it,
        because the method name it dispatches ('widget') is fixed and the
        variable is the class. Same shape as the class axis Task 2.8 round 2
-       gated at the ModuleInterface wrappers; this one is not gated.
+       gated at the ModuleInterface wrappers; this one is not gated. FIX SHAPE:
+       the same class-axis check, applied at the point the class is actually
+       resolved - module_function() - validating $data['options'] against the
+       shipped 323-pattern call set and refusing an unlisted class (log-only
+       while the shipped list stays unenforced).
 
    4.2 core/BaseModule.class.php:196-208 and :230-241 - _print() composes
        module_function($parts[0], '_RenderToPDF', array($parts[1])) from
@@ -290,7 +428,10 @@ reported findings
        exist at HEAD - it was deleted in 3ad7d431 (2006-10-03, an ancestor of
        this branch), and this consolidation found no in-tree caller of _print()
        at all. The branch is therefore latent in the shipped tree, and becomes
-       live the moment anything dispatches _print.
+       live the moment anything dispatches _print. FIX SHAPE: the same single
+       class-axis check at module_function(), which is where both this and 4.1
+       converge - one change covers both axes, which is the reason to take them
+       together rather than file by file.
 
    4.3 lib/org/freemedsoftware/core/Relay_Json.class.php:87 and :90 call
        deserialize_parameters(), a method defined nowhere in the tree. That is
@@ -310,8 +451,21 @@ reported findings
        (the server-config deny does not run first). Deferred by ruling R35 to
        the final fix pass, because the failure needs a non-default Apache build;
        the fix is the same module-guarded dual-syntax block Task 4.1 applied to
-       the five sibling files (data/, data/schema/, data/config/,
-       data/documents/unfiled/, tests/). Measured at config level only: without
+       its sibling files. COUNT CORRECTED in fix round 1: NINE .htaccess files
+       carry that block at HEAD (every tracked .htaccess was read for it, and
+       `Require all denied` appears in nine): the five the 4.1 fix round gave
+       the block to (data/, data/schema/, data/config/,
+       data/documents/unfiled/, tests/ - ab3afb85) plus four from
+       the original 4.1 commit (data/store/, scripts/, scripts/fax_import/,
+       lib/perl/ - 98c20e0f; the wording this list used to carry mirrored that
+       fix round's commit subject). The block's shape, from
+       data/store/.htaccess:
+
+         <IfModule mod_authz_core.c>      Require all denied    </IfModule>
+         <IfModule !mod_authz_core.c>     order deny,allow
+                                          deny from all         </IfModule>
+
+       Measured at config level only: without
        mod_access_compat `apache2 -t` rejects the old form with `Invalid command
        'order'` and accepts the new ones (a review confirmed this against the
        image's module set minus that module under MINOR-6).
@@ -322,8 +476,15 @@ reported findings
        with <IfModule mod_php5.c>, which is inert on every supported PHP (the
        module is php_module / php7_module / php8_module), so the directive never
        takes effect - an ineffective guard of the same class as the `deny from
-       *` files Task 4.1 replaced. Deferred with 5.1 by R35. It is the only file
-       in the tree whose .htaccess carries no deny rule at all.
+       *` files Task 4.1 replaced. Deferred with 5.1 by R35. It carries no deny
+       rule at all, and `grep -l` over the tree's .htaccess files shows it is
+       not alone in that: ui/dojo/htdocs/.htaccess (5.1) is `allow from all` /
+       `order allow,deny`, which grants access and never denies it either. CLAIM
+       CORRECTED in fix round 1 - the first consolidation called the root file
+       "the only file in the tree whose .htaccess carries no deny rule at all",
+       which is false under the Dojo file. The distinction worth keeping: the
+       Dojo file is the one that is ALSO world-readable, because nothing above
+       it denies; the root file is merely an inert guard.
 
    5.3 doc/freemed.apache.conf has two <Directory "/usr/share/freemed">
        sections (:22-30, the base allow-all + AcceptPathInfo On + AllowOverride
@@ -342,6 +503,21 @@ reported findings
        that ship the image's module set minus that one module. Anything built on
        the .htaccess layer in future should say which of the two halves it
        actually exercised.
+
+   5.5 doc/DEPLOYMENT_HARDENING:128 opens its PATH_INFO scope with "Anything
+       else with a `.php/<path>` is 403". The ledger's item 26 records that
+       opener as unqualified. RE-READ at HEAD: it is qualified twice below it -
+       the install.php exception at :130-131 and the three measured behaviour
+       changes at :166-171 - so it no longer claims a rule it does not state,
+       and nothing here is a required wording fix. What is worth carrying from
+       the item is the direction of the rule: the three scripts that stopped
+       being reachable with a PATH_INFO (install.php, vcalendar.php and
+       services/RemittCallback.php) never read PATH_INFO, so the rule is a
+       fail-closed scope decision, not a fix to those three, and the section's
+       own instruction at :160-164 is to add an entrypoint to the allowlist only
+       when it reads $_SERVER['PATH_INFO'] itself - editing two places and that
+       list. Whether the opener holds end-to-end needs a served request (see
+       5.4); fix round 1 did not run one.
 
 
 6. EVIDENCE-QUALITY AND HARNESS RESIDUALS CARRIED FORWARD
@@ -409,6 +585,135 @@ reported findings
          scratch directory, so the committed pre-fix transcripts are not
          re-derivable from the repository alone.
 
+   6.6 Evidence-truth defects carried whole (ledger items 1, 4, 5, 7, 21 and 27;
+       added in fix round 1)
+
+   Same family as 6.3 and 6.4 - a committed artifact or a report says something
+   the run did not measure. All are small repairs; two of them were re-measured
+   in fix round 1 and did not reproduce as the ledger wrote them, which is said
+   at the item.
+
+   a) tests/security/repro-relay-sqli.sh lists a site as cleared while its own
+      output says the control was not asserted. site_end() (:455-462) has only
+      three outcomes (EXPLOITED / INCONCLUSIVE / CLEAN) and a site with no
+      exploit and no inconclusive marker goes into SITES_CLEAN, printed as
+      "sites cleared" (:600); the CLEAN verdict text at :460 claims "all 3 calls
+      dispatched, the control answered as modelled". But assert_has() (:415)
+      prints ">>> WEAKER THAN MEASURED" and returns 0 WITHOUT incrementing
+      G_INCONCLUSIVE, so a site whose control assertion failed still reports the
+      control as having matched. FIX SHAPE: count the failed control assertion
+      as inconclusive for that site, or stop claiming the control matched.
+      Ledger item 1 (Task 0.1 round-2 re-review, Minor); re-read at source in
+      fix round 1, this is the code at HEAD.
+
+   b) tests/security/evidence/sweep-notes.md - three provenance claims, of which
+      one stands (re-measured in fix round 1):
+      * the RenderHtmlView row (:367) quotes the splice as `:946 -> :973` - this
+        is CORRECT: `:946` is the addslashes() splice in the pre-6e566dc4 tree
+        and `:973` is the intval() line at 997d98d9, the tree that row names.
+        The ledger's item 4 says the splice is `:969`; at 997d98d9 `:969` is the
+        FROM line of the same query, so that sub-claim does not reproduce.
+      * `module-smoke-after.json`'s bytes are the SAME git blob object at
+        3e6e790f, at f74923e7 and at HEAD (sha256 8f46fb07..., the value the
+        file itself records), so naming 3e6e790f at :178 as the commit that
+        wrote them is right; f74923e7 added the provenance record without
+        changing the file.
+      * the sub-claim that stands is :193-198, which stages the Task 2.6e fix
+        round's re-run as having been made "against the current HEAD
+        (`997d98d9`)" when it was made against the uncommitted tree. Not
+        re-derivable from the repository - no run logs are committed - so it
+        stays on the list as RECORDED, NOT VERIFIED here.
+
+   c) tests/security/evidence/seed-verify.sql:148-149 - `UPDATE patient_emr SET
+      id = 5 WHERE module = 'payrec' AND oid = 3 AND id <> 5` assumes the
+      fresh-seed state. If any other patient_emr row already holds id 5 the
+      renumbering collides on the primary key and the file fails halfway
+      through. The comment above it (:115-117) argues this away only for a fresh
+      reduced seed. FIX SHAPE: a guarded renumber, or assert the state first and
+      refuse with a message rather than half-applying.
+
+   d) tests/security/repro-relay-sqli.sh:598-599 prints "(4 sites x 3)" as a
+      static literal beside an interpolated counter: the count itself is now
+      "$G_PROBES", so the fixed-label half of ledger item 7 is addressed, but
+      the site/probe arithmetic on the same line is still hard-coded. FIX SHAPE:
+      derive it from the site list, or drop the parenthetical.
+
+   e) Ledger item 21 - the commented-out ACL block at
+      core/EMRModule.class.php:787-791 carries no in-code marker. The reason it
+      is still commented out ("task 2.6f deliberately left it as evidence for
+      this task") exists only in the Task 2.8 report's own deviations list, and
+      that report lives in the gitignored .superpowers/ tree. Re-measured in fix
+      round 1: no "evidence for Task 2.8" string exists anywhere in the tracked
+      tree (`grep -rn` over the checkout returns nothing where the report says
+      the comment is). FIX SHAPE: put the marker in the tracked evidence, or
+      drop the report's claim.
+
+   f) Ledger item 27 - the class-axis matrix is committed more than once: the
+      "866 pairs / 803 unlisted / 63 listed" line appears in
+      tests/security/evidence/relay-callset.txt:25, in
+      tests/security/evidence/relay-allowlist.txt:844 and again at :859, and in
+      doc/RELAY_ALLOWLIST:79 and :86 (re-checked;
+      data/config/relay-allowlist.php does not carry it). The same measurement
+      in three files is a drift surface - the regeneration instruction should
+      name one canonical place and the others should point at it.
+
+   6.7 Gate and tooling precision (ledger items 8-12; added in fix round 1)
+
+   The gates are the regression net, and a gate that cries wolf gets suppressed,
+   so these are worth clearing before the net is trusted more widely. Re-checked
+   at source where that was cheap; the rest are the reviews' notes, carried with
+   the artifact that holds them and marked as not re-derived here.
+
+   a) Ledger item 8 - the SQL-concat gate's header no longer documents a live
+      allowlist entry. Re-checked at HEAD: scripts/security-sql-concat-check.sh
+      names SupportModule.class.php:484 only to record that its allowlist entry
+      was removed as stale, and no SupportModule or PatientInterface entry
+      remains in scripts/security-sql-concat-allowlist.txt (`grep` returns
+      nothing). CLOSED at HEAD - not a follow-on defect any more; recorded here
+      so the ledger item is not silently dropped.
+
+   b) Ledger item 9 - the gate is heuristic by construction
+      (scripts/security-sql-concat-check.sh:38-42: same line, dot-adjacency and
+      keyword filters), so a plain `"... $id"` interpolation with no adjacent
+      quote-dot and none of the keywords is invisible to it, and so is a value
+      spliced after a validated identifier helper (3.3 q's Ledger.class.php:190
+      matches none of the filters). Re-measured here as a side effect of the
+      2.4 replay at 4d6e7e8b. The consequence to carry: the sweep could not be
+      gate-driven, and a clean gate is not proof of closure for a splice outside
+      its filters.
+
+   c) Ledger item 10 - six path-guard/tooling nuances, none measured in fix
+      round 1 (each needs a served request or a purpose-built fixture):
+      scripts/security-path-guard-check.sh's check-1 grep has an ->/:: boundary
+      nuance; `$_SERVER['DOCUMENT_ROOT' . $_GET['x']]` passes although the
+      file's own note says a non-literal index is reported; a DOCROOT that is
+      set but has no `doc/` subdirectory ends the run at exit 2 exactly like no
+      DOCROOT at all (tests/security/repro-chtml-path.sh:226-237, :356-364), so
+      "I set DOCROOT" is not evidence of a measured control; a bare /chtml.php
+      still answers 400 (documented); the NORMALISED (nginx) rows still count
+      toward a PASS, which is asymmetric with the control rule (the counter is
+      folded into the summary at :340); and the newline rule's third branch
+      labels an unexpected answer - a 500, say - as UNVALIDATED (:302-323).
+
+   d) Ledger item 11 - HALF STALE. It says the path-guard gate is "not wired
+      into make security-check or any CI". It IS wired: Makefile:63-65 runs
+      ./scripts/security-path-guard-check.sh immediately after its SQL sibling.
+      Still true: it is not wired into CI - the repository has one CI file,
+      .travis.yml, whose whole script is `( cd ui/gwt ; make all )` - and
+      tests/security/repro-chtml-path.sh:123 hard-codes its rejection matcher
+      (REJECT_RE='Invalid CHTML page name\.'), so a reworded server message
+      turns that check into a silent no-op.
+
+   e) Ledger item 12 - tests/security/evidence/path-sink-audit.md has no verdict
+      line for relay-gwt.php (re-measured: `grep -c relay-gwt` returns 0) even
+      though relay-gwt.php is one of the five allowlisted PATH_INFO entrypoints;
+      the audit covers chtml.php, help.php, relay.php, controller.php and
+      install.php instead. The second half of the item does not reproduce: the
+      `$path`/GetResource argument surface IS discussed (:32, :91, :242). FIX
+      SHAPE: add the relay-gwt.php row (the re-review's own check found no
+      PATH_INFO and no file sink in it) so the audit's table covers every
+      entrypoint the deployment allowlists.
+
 
 7. HOW TO PICK THIS UP
 
@@ -425,6 +730,11 @@ reported findings
    change to what callers may pass and needs the callers' agreement first; the
    PHP 8.3 fatals (3.1 a-f, 3.3 p) are mostly deletions and bounded guards and
    can be taken together; the config and .htaccess residuals (5) are
-   independent of both and the cheapest. Nothing in this file authorises a
+   independent of both and the cheapest. The ledger-union items this fix round
+   added sort the same way: 3.4 d-f are the only defects in this file that this
+   branch introduced and are the smallest code repairs; 6.6 (evidence truth) and
+   6.7 (gate precision) are text and script edits with no code surface and can
+   go first; 3.4 a-c and 5.5 need a decision about the callers before any edit.
+   Nothing in this file authorises a
    change to code, tests, configuration or .htaccess on its own, and every
    reference here should be re-read against HEAD before it is acted on.
