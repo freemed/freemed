@@ -820,11 +820,19 @@ class EMRModule extends BaseModule {
 	//	Associative array (hash) of record
 	//
 	public function GetRecentRecord ( $patient, $recent_date = NULL ) {
+		// Category A (2.6b F4): the date is validated as Y-m-d before it reaches
+		// a predicate. ImportDate() answers false for input it cannot parse, and
+		// quote(false) emits a bare 0 - which compares equal to MySQL's
+		// zero-date ('0000-00-00'), so a bad date would match a row the old
+		// hand-quoted literal could not. Same rule as Scheduler::_ValidDate().
+		$rDate = NULL;
 		if ( $recent_date ) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 			$rDate = $s->ImportDate( $recent_date );
-		} else {
-			$rDate = NULL;
+			if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $rDate ) ) {
+				syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing non-Y-m-d recent_date '.var_export($recent_date, true) );
+				return NULL;
+			}
 		}
 		// Category B: table/patient/date identifiers (refused by log, R12).
 		$table = SqlIdent::name( $this->table_name );
