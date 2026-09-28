@@ -74,11 +74,18 @@
 #   2a55da8f...", i.e. the commit whose data file its 323 rows seeded. Its five
 #   inputs are named in its own header; the fourth, the stack's access log, is
 #   captured in tests/security/evidence/relay-accesslog.txt.
-#   Reproducibility, measured twice:
-#       php tests/security/relay-callset-enum.php <sha> <branch> \
+#   Reproducibility, measured:
+#       php tests/security/relay-callset-enum.php <head-sha> <branch> \
 #           tests/security/evidence/relay-accesslog.txt > /tmp/regen.txt
-#       diff -q /tmp/regen.txt tests/security/evidence/relay-callset.txt
-#       => identical (deterministic from the committed inputs)
+#       diff <(grep -v '^# Generated at commit\|^# Branch:' /tmp/regen.txt) \
+#            <(grep -v '^# Generated at commit\|^# Branch:' relay-callset.txt)
+#       => no output: all 323 rows and their per-pattern provenance are reproduced
+#          exactly from the committed inputs.
+#   The ONLY line that moves is "# Generated at commit", which is self-referential:
+#   it names the commit whose tree the generator ran against, so it changes the
+#   moment HEAD moves past that commit. Regenerating this file AT commit 2a55da8f
+#   (the commit its data file seeded) is byte-identical including that line; at
+#   any later commit, that line and only that line differs.
 #   The access log is read as a COMMITTED CAPTURE (a file passed in), never from
 #   the container, so the artifact does not drift with the container's log.
 #
