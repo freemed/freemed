@@ -835,17 +835,22 @@ class EMRModule extends BaseModule {
 	//
 	public function GetRecentRecord ( $patient, $recent_date = NULL ) {
 		// Category A (2.6b F4): the date is validated as Y-m-d before it reaches
-		// a predicate. ImportDate() answers false for input it cannot parse, and
-		// quote(false) emits a bare 0 - which compares equal to MySQL's
-		// zero-date ('0000-00-00'), so a bad date would match a row the old
-		// hand-quoted literal could not. Same rule as Scheduler::_ValidDate().
+		// a predicate, because the driver's quote(false) emits a bare 0 - which
+		// compares equal to MySQL's zero-date ('0000-00-00'). A value that is not
+		// Y-m-d (ImportDate() answers false for anything it cannot parse) drops
+		// the date qualifier with a log line instead of being quoted. This site's
+		// ternary already dropped the predicate for false, so every
+		// currently-working case behaves exactly as before; the zero-date hazard
+		// F4 describes is live in Scheduler, where the date is the primary
+		// criterion (measured - see the batch-C report).
 		$rDate = NULL;
 		if ( $recent_date ) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-			$rDate = $s->ImportDate( $recent_date );
-			if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $rDate ) ) {
-				syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing non-Y-m-d recent_date '.var_export($recent_date, true) );
-				return NULL;
+			$parsed = $s->ImportDate( $recent_date );
+			if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $parsed ) ) {
+				$rDate = $parsed;
+			} else {
+				syslog( LOG_ERR, get_class($this).'::GetRecentRecord| ignoring non-Y-m-d recent_date '.var_export($recent_date, true) );
 			}
 		}
 		// Category B (2.6b F3): the table and patient column are required - if
