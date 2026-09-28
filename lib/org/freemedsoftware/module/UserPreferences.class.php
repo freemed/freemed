@@ -51,7 +51,14 @@ class UserPreferences extends SupportModule {
 	//
 	public function GetAll( ) {
 		$u = freemed::user_cache();
-		$q = "SELECT * FROM ".$this->table_name." WHERE NOT ISNULL(u_title) ORDER BY u_title";
+		// Category B: table_name is a schema identifier this class declares
+		// (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAll| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$q = sprintf('SELECT * FROM %s WHERE NOT ISNULL(u_title) ORDER BY u_title', $table);
 		$res = $GLOBALS['sql']->queryAll( $q );
 		$result = array ( );
 		foreach ( $res AS $r ) {
@@ -75,7 +82,13 @@ class UserPreferences extends SupportModule {
 	//	Array of configuration sections.
 	//
 	public function GetConfigSections ( ) {
-		$q = "SELECT DISTINCT( u_section ) AS s FROM ".$this->table_name." WHERE NOT ISNULL( u_section ) ORDER BY s";
+		// Category B: table_name identifier (see GetAll).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetConfigSections| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$q = sprintf('SELECT DISTINCT( u_section ) AS s FROM %s WHERE NOT ISNULL( u_section ) ORDER BY s', $table);
 		return $GLOBALS['sql']->queryCol( $q );
 	} // end method GetConfigSections
 
