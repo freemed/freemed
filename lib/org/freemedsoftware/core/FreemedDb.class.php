@@ -175,8 +175,18 @@ class FreemedDb extends DB {
 	//	Hash of table row.
 	//
 	public function get_link ( $table, $key, $field = 'id' ) {
-		//$query = "SELECT * FROM ".$this->db->escapeSimple( $table )." WHERE ".$this->db->escapeSimple( $field )." = ".$this->db->quote( $key );
-		$query = "SELECT * FROM ".addslashes($table)." WHERE ".addslashes($field)." = '".addslashes($key)."' LIMIT 1";
+		// Category B+A (2.6b F1): escapeSimple()/addslashes() escape *values*;
+		// neither quotes an identifier. The table and field names are validated
+		// and emitted by SqlIdent (a refusal is logged, never fatal - R12), and
+		// the key is handed to the driver's quote(), which supplies the quotes.
+		$table_id = SqlIdent::name( $table );
+		$field_id = SqlIdent::name( $field );
+		if ( $table_id === false or $field_id === false ) {
+			syslog( LOG_ERR, 'FreemedDb::get_link| refusing invalid identifier '.var_export(array($table, $field), true) );
+			return NULL;
+		}
+		$query = sprintf( 'SELECT * FROM %s WHERE %s = %s LIMIT 1',
+			$table_id, $field_id, $this->db->quote( $key ) );
 		return $this->db->getAll( $query )[0];
 	} // end public function get_link
 
