@@ -489,12 +489,16 @@ class SupportModule extends BaseModule {
 		
 		// Category B: table and ORDER BY identifiers. The constructor has already
 		// enforced their shape; name()/columns() re-check and refuse by log (R12).
+		// (2.6b F7) the ORDER BY guard is the truthiness guard the sibling methods
+		// (picklist here, EMRModule::picklist) use: an empty/NULL order_field means
+		// "no ORDER BY", not a refused identifier - the old `!= 'id'` guard sent it
+		// to columns() and logged a bogus refusal on every call.
 		$table = SqlIdent::name( $this->table_name );
 		if ( $table === false ) {
 			syslog( LOG_ERR, get_class($this).'::GetRecords| refusing invalid table_name '.var_export($this->table_name, true) );
 			return false;
 		}
-		$order = ( $this->order_field != 'id' ) ? SqlIdent::columns( $this->order_field ) : '';
+		$order = ( $this->order_field and $this->order_field != 'id' ) ? SqlIdent::columns( $this->order_field ) : '';
 		if ( $order === false ) {
 			syslog( LOG_ERR, get_class($this).'::GetRecords| refusing invalid order_field '.var_export($this->order_field, true) );
 			$order = '';
