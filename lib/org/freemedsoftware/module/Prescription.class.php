@@ -127,9 +127,16 @@ class Prescription extends EMRModule {
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
-		$query = "SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->date_field." DESC";
+		// Category B: table/patient/date identifiers; Category A: patient id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		$dfield = SqlIdent::name( $this->date_field );
+		if ( $table === false or $pfield === false or $dfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::recent_text| refusing invalid identifier '.var_export(array($this->table_name, $this->patient_field, $this->date_field), true) );
+			return '';
+		}
+		$query = sprintf('SELECT * FROM %s WHERE %s = %s ORDER BY %s DESC', $table, $pfield, $GLOBALS['sql']->quote($patient), $dfield);
 		$res = $GLOBALS['sql']->queryAll($query);
 		foreach ( $res AS $r ) {
 			$m[] = trim($r['rxdrug'].' '.$r['rxdosage'].' '.$r['rxroute']);
