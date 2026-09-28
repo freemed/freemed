@@ -138,10 +138,10 @@ class UserInterface {
 			$condition=" WHERE (".$temp.") ";
 		if($usertype!=""){
 			if($condition==""){
-					$condition=" WHERE usertype='".$temp."' ";
+					$condition=" WHERE usertype=".$GLOBALS['sql']->quote($usertype)." ";
 			}
 			else{
-				$condition=$condition." AND usertype='".$usertype."' ";
+				$condition=$condition." AND usertype=".$GLOBALS['sql']->quote($usertype)." ";
 			}
 		}
 		
