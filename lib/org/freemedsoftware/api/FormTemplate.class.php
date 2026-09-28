@@ -25,6 +25,8 @@
 //
 //	Use XML templates to fill out information on PDF forms.
 //
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
+
 class FormTemplate {
 
 	var $data;
@@ -156,9 +158,11 @@ class FormTemplate {
 
 		// Cache all data elements
 		unset($this->elements);
-		$query = "SELECT fr_name AS k, fr_value AS v ".
-			"FROM form_record ".
-			"WHERE fr_id = '".addslashes($id)."'";
+		// Category A (2.6b): fr_id is the form_results record id (INT UNSIGNED in
+		// data/schema/mysql/form_record.sql), so it is cast instead of
+		// addslashes()ed inside hand-written quotes.
+		$query = sprintf( 'SELECT fr_name AS k, fr_value AS v FROM form_record WHERE fr_id = %d',
+			intval( $id ) );
 		$result = $GLOBALS['sql']->queryAll ( $query );
 		foreach ( $result AS $r ) {
 			$this->elements[stripslashes($r['k'])] = stripslashes($r['v']);
