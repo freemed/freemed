@@ -114,7 +114,19 @@ class SuperBill extends EMRModule {
 		$query = "SELECT s.id AS id, DATE_FORMAT(s.dateofservice, '%m/%d/%Y') AS dateofservice_mdy, s.dateofservice AS dateofservice, CONCAT(pt.ptlname, ', ', pt.ptfname, ' (', pt.ptid, ')') AS patient_name, CONCAT(pr.phylname, ', ', pr.phyfname) AS provider_name, pr.id AS provider_id, pt.id AS patient_id, s.reviewed AS reviewed, s.procs AS procs, SUBSTR_COUNT(s.procs, ',')+1 AS procs_count FROM superbill s LEFT OUTER JOIN patient pt ON pt.id=s.patient LEFT OUTER JOIN physician pr ON s.provider=pr.id ";
 		$where = false;
 		if ( $dtbegin != NULL ) {
-			$query .= "WHERE s.dateofservice>=".$GLOBALS['sql']->quote( $s->ImportDate( $dtbegin ) )." AND s.dateofservice <=".$GLOBALS['sql']->quote( $s->ImportDate( $dtend ) );
+			// Category A + F4 (2.6f): these two dates ARE the criterion, so they
+			// are validated as Y-m-d and the query is refused (logged, this
+			// method's empty answer) rather than quoting ImportDate()'s boolean
+			// false - quote(false) is a bare 0, which compares equal to MySQL's
+			// zero-date ('0000-00-00').
+			$begin_date = $s->ImportDate( $dtbegin );
+			$end_date = $s->ImportDate( $dtend );
+			if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $begin_date )
+					or !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $end_date ) ) {
+				syslog( LOG_ERR, get_class($this).'::GetForDates| refusing non-Y-m-d dates '.var_export(array($dtbegin, $dtend), true) );
+				return array();
+			}
+			$query .= "WHERE s.dateofservice>=".$GLOBALS['sql']->quote( $begin_date )." AND s.dateofservice <=".$GLOBALS['sql']->quote( $end_date );
 			$where = true;
 		}
 		if ( $handled !== NULL ) {
