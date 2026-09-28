@@ -27,6 +27,35 @@ class Ledger {
 	// STUB constructor
 	public function __constructor ( ) { }
 
+	// Method: _validYmdDate
+	//
+	//	ImportDate() with a Y-m-d shape check (Task 2.6f, the F4 rule):
+	//	ImportDate() answers boolean false for input it cannot parse, and the
+	//	driver's quote(false) emits a bare 0 - which MySQL compares equal to its
+	//	zero-date ('0000-00-00'), so an unparseable date could match a row that
+	//	the old hand-quoted literal could not. Only a real Y-m-d value is
+	//	returned; anything else is false and the caller refuses the query
+	//	(logged) rather than emitting a predicate with a wrong value in it.
+	//	Same contract and log text as Scheduler::_ValidDate (batch C, F4).
+	//
+	// Parameters:
+	//
+	//	$input - Date string in any format ImportDate() accepts
+	//
+	// Returns:
+	//
+	//	'Y-m-d' string, or boolean false
+	//
+	protected function _validYmdDate ( $input ) {
+		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
+		$date = $s->ImportDate( $input );
+		if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $date ) ) {
+			syslog( LOG_ERR, get_class($this).'| refusing non-Y-m-d date '.var_export($input, true) );
+			return false;
+		}
+		return $date;
+	} // end method _validYmdDate
+
 	// Method: AgingReportQualified
 	//
 	//	Provide an "aging summary" (with number of claims and
@@ -47,7 +76,6 @@ class Ledger {
 	//
 	public function AgingReportQualified ( $criteria ) {
 		freemed::acl_enforce( 'financial', 'read' );
-		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		foreach ($criteria AS $k => $v) {
 			//print "criteria key = $k, value = $v<hr/>\n";
 			switch ($k) {
@@ -62,57 +90,97 @@ class Ledger {
 					$lower='120'; $upper='10000';
 					break;
 				} // end inner aging switch
+				// Category A (2.6f): both operands sit in an UNQUOTED numeric
+				// context (an age in days), so they are cast rather than
+				// escaped - addslashes() on a number was never escaping.
 				if ($upper) $q[] =
-				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".addslashes( $lower ).") AND ".
-				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".addslashes( $upper ).")";
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) >= ".intval( $lower ).") AND ".
+				"(TO_DAYS(NOW()) - TO_DAYS(pa.payrecdt) <= ".intval( $upper ).")";
 				break; // end aging case
 
 				case 'billed':
-				if ($v == '0' or $v == '1') { $q[] = "p.procbilled = '".addslashes($v)."'"; }
+				// Category A (2.6f): procbilled is a numeric flag.
+				if ($v == '0' or $v == '1') { $q[] = "p.procbilled = ".intval($v); }
 				break; // end billed case
 
 				case 'date':
-				if ($v) $q[] = "pa.payrecdt = '".addslashes($s->ImportDate( $v ))."'";
+				// Category A + F4 (2.6f): a date *criterion* - validated as
+				// Y-m-d and refused (log + this method's empty answer) rather
+				// than quoted, because quote(false) is a bare 0 which matches
+				// MySQL's zero-date. Refused rather than dropped: dropping the
+				// criterion would silently return a wider financial report.
+				if ($v) {
+					$dtv = $this->_validYmdDate( $v );
+					if ( $dtv === false ) { return array(); }
+					$q[] = "pa.payrecdt = ".$GLOBALS['sql']->quote( $dtv );
+				}
 				break; // end date
 
 				case 'date_of':
-				if ($v) $q[] = "p.procdt = '".addslashes($s->ImportDate( $v ))."'";
+				// Category A + F4 (2.6f): a date criterion, as above.
+				if ($v) {
+					$dtv = $this->_validYmdDate( $v );
+					if ( $dtv === false ) { return array(); }
+					$q[] = "p.procdt = ".$GLOBALS['sql']->quote( $dtv );
+				}
 				break; // end procedure date
 
 				case 'procedure':
-				if ($v) $q[] = "p.id = '".addslashes($v)."'";
+				// Category A (2.6f): record ids, cast (numeric columns).
+				if ($v) $q[] = "p.id = ".intval($v);
 				break; // end procedure case
 
 				case 'provider':
-				if ($v) $q[] = "pr.id = '".addslashes($v)."'";
+				// Category A (2.6f): provider id, cast.
+				if ($v) $q[] = "pr.id = ".intval($v);
 				break; // end provider case
 
 				case 'facility':
-				if ($v) $q[] = "p.procpos = '".addslashes($v)."'";
+				// Category A (2.6f): facility id, cast.
+				if ($v) $q[] = "p.procpos = ".intval($v);
 				break; // end facility case
 				
 				case 'patient':
-				if ($v) $q[] = "pt.id = '".addslashes($v)."'";
+				// Category A (2.6f): patient id, cast.
+				if ($v) $q[] = "pt.id = ".intval($v);
 				break; // end patient case
 
 				case 'first_name':
-				if ($v) $q[] = "pt.ptfname LIKE '%".addslashes($v)."%'";
+				// Category A (2.6f): a value, so the driver quotes it (with
+				// the wildcards inside the quoted literal).
+				if ($v) $q[] = "pt.ptfname LIKE ".$GLOBALS['sql']->quote('%'.$v.'%');
 				break; // end first name
 
 				case 'last_name':
-				if ($v) $q[] = "pt.ptlname LIKE '%".addslashes($v)."%'";
+				// Category A (2.6f): as above.
+				if ($v) $q[] = "pt.ptlname LIKE ".$GLOBALS['sql']->quote('%'.$v.'%');
 				break; // end last name
 
 				case 'type':
-				if ($v) $q[] = "pa.payreccat = '".addslashes($v)."'";
+				// Category A (2.6f): payreccat is a numeric category.
+				if ($v) $q[] = "pa.payreccat = ".intval($v);
 				break;
 				
 				case 'date_from':
-				if ($v) $q[] = "pa.payrecdtadd >= '".addslashes($v)."'";
+				// Category A + F4 (2.6f): a date criterion, so it is validated
+				// as Y-m-d (via ImportDate) and refused with a log on failure
+				// instead of being quoted - pre-sweep an unparseable value was
+				// compared as '' (i.e. the zero-date), which is exactly the
+				// hazard F4 names.
+				if ($v) {
+					$dtv = $this->_validYmdDate( $v );
+					if ( $dtv === false ) { return array(); }
+					$q[] = "pa.payrecdtadd >= ".$GLOBALS['sql']->quote( $dtv );
+				}
 				break;
 				
 				case 'date_to':
-				if ($v) $q[] = "pa.payrecdtadd <= '".addslashes($v)."'";
+				// Category A + F4 (2.6f): as above.
+				if ($v) {
+					$dtv = $this->_validYmdDate( $v );
+					if ( $dtv === false ) { return array(); }
+					$q[] = "pa.payrecdtadd <= ".$GLOBALS['sql']->quote( $dtv );
+				}
 				break;
 				
 				case 'tag':
@@ -149,20 +217,20 @@ class Ledger {
 			"DATE_FORMAT(pa.payrecdt, '%m/%d/%Y') AS payment_date_mdy, ".
 			"pa.payreccat AS item_type_id, ".
 			"CASE pa.payreccat ".
-				"WHEN 0 THEN '".addslashes(__("Payment"))."' ".
-				"WHEN 1 THEN '".addslashes(__("Adjustment"))."' ".
-				"WHEN 2 THEN '".addslashes(__("Refund"))."' ".
-				"WHEN 3 THEN '".addslashes(__("Denial"))."' ".
-				"WHEN 4 THEN '".addslashes(__("Rebill"))."' ".
-				"WHEN 5 THEN '".addslashes(__("Charge"))."' ".
-				"WHEN 6 THEN '".addslashes(__("Transfer"))."' ".
-				"WHEN 7 THEN '".addslashes(__("Withholding"))."' ".
-				"WHEN 8 THEN '".addslashes(__("Deductable"))."' ".
-				"WHEN 9 THEN '".addslashes(__("Fee Adjustment"))."' ".
-				"WHEN 10 THEN '".addslashes(__("Billed"))."' ".
-				"WHEN 11 THEN '".addslashes(__("Copayment"))."' ".
-				"WHEN 12 THEN '".addslashes(__("Writeoff"))."' ".
-				"ELSE '".__("Unknown")."' END AS item_type, ".
+				"WHEN 0 THEN ".$GLOBALS['sql']->quote(__("Payment"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 1 THEN ".$GLOBALS['sql']->quote(__("Adjustment"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 2 THEN ".$GLOBALS['sql']->quote(__("Refund"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 3 THEN ".$GLOBALS['sql']->quote(__("Denial"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 4 THEN ".$GLOBALS['sql']->quote(__("Rebill"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 5 THEN ".$GLOBALS['sql']->quote(__("Charge"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 6 THEN ".$GLOBALS['sql']->quote(__("Transfer"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 7 THEN ".$GLOBALS['sql']->quote(__("Withholding"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 8 THEN ".$GLOBALS['sql']->quote(__("Deductable"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 9 THEN ".$GLOBALS['sql']->quote(__("Fee Adjustment"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 10 THEN ".$GLOBALS['sql']->quote(__("Billed"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 11 THEN ".$GLOBALS['sql']->quote(__("Copayment"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"WHEN 12 THEN ".$GLOBALS['sql']->quote(__("Writeoff"))." ". // 2.6f: label quoted by the driver, not addslashes()ed inside hand-written quotes
+				"ELSE ".$GLOBALS['sql']->quote(__("Unknown"))." END AS item_type, ". // 2.6f: same class as the labels above
 			"pa.id AS item ".
 			"FROM procrec p ".
 			"LEFT OUTER JOIN payrec pa ON pa.payrecproc=p.id ".
