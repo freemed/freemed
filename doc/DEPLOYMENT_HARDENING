@@ -1,0 +1,237 @@
+$Id$
+
+Deployment hardening - what the shipped web-server configuration now refuses
+
+
+1. SUMMARY
+
+   Three things about a FreeMED deployment are now enforced by the shipped
+   configuration rather than left to the application:
+
+     * The trees lib/, data/, tests/ and scripts/ are not web-readable. A
+       request for any file in them is 403 on Apache and on nginx, whatever the
+       PHP handler would have done with it. (CWE-548 / CWE-219.)
+
+     * PATH_INFO is scoped. AcceptPathInfo stays On for the install root, because
+       five entrypoints route on the trailing path, but every OTHER script that
+       is addressed with a trailing path is refused with 403, so a file sink can
+       only be reached through an entrypoint that is supposed to read
+       PATH_INFO. (CWE-22 sibling - the class the 0.9.x help.php/chtml.php
+       findings came from.)
+
+     * register_argc_argv is Off in the runtime ini, so a query string can never
+       look like a command line to a script that guards on $_SERVER['argc'] /
+       $_SERVER['argv'] and mask a request as an empty 200. (CWE-16.)
+
+   None of it changes a documented URL. The only behaviour changes are the three
+   undocumented trailing-path shapes in section 4; every entrypoint, every static
+   asset and every relay call answers exactly as it did before, and the
+   tree-by-tree measurement is in
+   tests/security/evidence/deployment-hardening.txt.
+
+
+2. WHAT SHIPS, AND WHERE IT LANDS
+
+     doc/freemed.apache.conf     installed by doc/Makefile as
+                                 /etc/apache2/conf.d/freemed.conf
+     docker/nginx.conf           the container's /etc/nginx/nginx.conf
+     docker/php-custom.ini       mounted as a PHP conf.d drop-in by
+                                 docker/docker-compose.yml
+     the .htaccess files         installed by each subdirectory's Makefile
+                                 (data, lib, scripts); they are the second
+                                 layer, not the load-bearing one
+
+   An operator on the packaged layout has nothing to do: doc/Makefile installs
+   the Apache file and the .htaccess files, and the file aliases the application
+   at /freemed exactly as before. An operator who serves the tree from their own
+   vhost must copy the four <Directory> blocks (Apache) or the deny location
+   (nginx) into it; nothing here depends on the distro default vhost.
+
+   Note on the doc/ names, because it is the kind of thing that gets "fixed"
+   wrongly: doc/Makefile's rule is `cp -rvf [A-Z]*`, a glob that keys on the
+   FIRST CHARACTER only, so an uppercase-named file ships whatever its extension
+   is (`VCALENDAR_AUTHENTICATION.md` would be installed exactly as
+   `VCALENDAR_AUTHENTICATION` is - measured, see the transcript). What the rule
+   does exclude is a lowercase name. These operator notes are uppercase and
+   extensionless to match the rest of the directory, not to satisfy the glob;
+   doc/freemed.apache.conf is lowercase and is installed by its own explicit
+   `cp` line further down that Makefile.
+
+
+3. WHY THE RULE LIVES IN THE SERVER CONFIGURATION, NOT IN .htaccess
+
+   Four measured reasons, all of them from this tree at HEAD:
+
+     * nginx reads no .htaccess at all, so on that layout the shipped
+       per-directory rules do not exist. Measured there: data/schema/mysql/
+       patient.sql (14559 bytes), tests/security/repro-relay-sqli.sh (30256
+       bytes), tests/security/evidence/relay-allowlist.txt (23672 bytes) and
+       scripts/security-sql-concat-check.sh (3107 bytes) all served as SOURCE,
+       HTTP 200; lib/org/freemedsoftware/acl/.htaccess and
+       data/store/.htaccess served as source; lib/API.php and lib/settings.php
+       executed (200, empty body).
+
+     * lib/ has no .htaccess to begin with. The repository has none and
+       lib/Makefile installs only *.php plus the subdirectories, so the
+       installed layout has none either: GET /lib/API.php was 200 (mod_php
+       executed it) and GET /lib/perl/Config/IniFiles.pm was 200 with 70159
+       bytes of Perl source.
+
+     * The .htaccess files that existed were partly defeating each other. Four
+       of them contained `<Files *> deny from * </Files>`, and `*` is not the
+       `all` keyword a Deny takes - it matches no client, so the rule allowed
+       everything it was meant to deny (GET /scripts/*.sh returned the script's
+       source, 200). In data/store/ it did worse than nothing: the parent
+       data/.htaccess denies the whole data/ tree (measured: /data/README 403),
+       yet GET /data/store/no-image.png answered 200 with 60521 bytes, because
+       the malformed Deny in the child took that subtree out of the inherited
+       denial. All four are rewritten in this change.
+
+     * AllowOverride. A vhost with `AllowOverride None` ignores every .htaccess
+       file in this tree. The shipped file does set `AllowOverride All`, and
+       with it the corrected .htaccess files do deny on their own (measured: with
+       the server-configuration rule removed again, the rewritten scripts/
+       .htaccess alone answers 403 for /scripts/*.sh) - but the rule must not
+       depend on an operator leaving that setting in place, and the
+       server-configuration rule does not.
+
+
+4. THE PATH_INFO SCOPE
+
+   AcceptPathInfo is On for the install root (the packaged file has set that
+   since 0.9.x). These are the entrypoints that actually route on the trailing
+   path, and they are the only ones that may have one:
+
+     help.php         /help.php/<ui>/<locale>/<page>
+     chtml.php        /chtml.php/<archive>
+     relay.php        /relay.php/<provider>/<method>       (the UI transport)
+     relay-gwt.php    /relay-gwt.php/<service>             (the GWT transport)
+     controller.php   /controller.php/<ui>/<page>          (the Dojo UI: the
+                      login redirect and the mainframe URL are built this way,
+                      ui/dojo/load.php and ui/dojo/view/*.login.tpl)
+
+   Anything else with a `.php/<path>` is 403 (Apache: a mod_rewrite [F] inside
+   the install-root <Directory>; nginx: a `map` consulted by the PHP location).
+   install.php also reads PATH_INFO, but only to strip it out of REQUEST_URI for
+   base_uri - it does not route, and it is deliberately not in the list.
+
+   Adding an entrypoint means editing two places and this list: the
+   RewriteCond allowlist in doc/freemed.apache.conf and the first `map` entry in
+   docker/nginx.conf. A wrong entry here breaks whatever the entrypoint does
+   with the path, so add one only for a script that reads
+   $_SERVER['PATH_INFO'] itself.
+
+   This is a behaviour change for exactly three shapes, measured before and
+   after: /install.php/<path> was 200 ("FreeMED is already installed!") and is
+   now 403; /vcalendar.php/<path> was 401, now 403; and
+   /services/RemittCallback.php/<path> was 200, now 403. None of the three reads
+   PATH_INFO, the plain URLs are unaffected, and the form that does matter -
+   /services/RemittCallback.php?wsdl - is unchanged (200, verified).
+
+
+5. register_argc_argv = Off
+
+   PHP's compiled default for this setting is On, and the php:8.3 images this
+   project's containers run activate no php.ini at all (`php --ini` -> "Loaded
+   Configuration File: (none)"; php.ini-development and php.ini-production are
+   present and inert). With it On, PHP registers $_SERVER['argc'] = 1 and
+   $_SERVER['argv'] = ["physician=1"] for a request that has a query string, so
+   any script that grepped those to detect a command line treated a web request
+   as a CLI call and halted with a masked empty 200. That is what the old
+   vcalendar.php guard did (fixed separately: it tests PHP_SAPI now, which no
+   ini setting can move), and it is the trap for anything that copies the
+   idiom. Measured by mounting this exact docker/php-custom.ini as a conf.d
+   drop-in and asking a web SAPI for /probe.php?physician=1: with no ini
+   mounted, register_argc_argv=On, argc=1, argv=["physician=1"] and the old
+   guard halts; with this file mounted, register_argc_argv=Off (ini_get returns
+   the empty string for that value), argc/argv unset and the old guard runs.
+
+   The setting is effective for the web SAPIs (mod_php, php-fpm, cli-server).
+   The CLI SAPI reports it On whatever the ini says (measured with this file
+   loaded: SAPI=cli, register_argc_argv='1', $argv set), so a command-line
+   script must not use this setting as a CLI detector - test PHP_SAPI.
+
+   A site that runs its own php.ini should add the same line to it; the
+   docker/php-custom.ini file only covers the container deployment.
+
+
+6. lib/settings.php - THE MEASUREMENT AND THE VERDICT
+
+   lib/settings.php is generated by install.php and, in the classic install,
+   lives under the document root. It defines DB_HOST, DB_NAME, DB_USER and
+   DB_PASSWORD in the clear. Requested directly at HEAD:
+
+     Apache 2.4 + mod_php:  GET /lib/settings.php -> 200, body 0 bytes
+     nginx + php-fpm:       GET /lib/settings.php -> 200, body 0 bytes
+
+   The source was NOT disclosed: the file is 1459 bytes and contains the
+   DB_PASSWORD assignment, so a 0-byte body is the script executing and printing
+   nothing, not the text. The finding is therefore bounded but real: an
+   unauthenticated entrypoint existed to a file that must never be one, and the
+   application, not the server, was the only thing standing between it and the
+   credentials. Any layout where the PHP handler does not cover the path - a
+   static file server, a proxy that serves .php as text, a vhost with the
+   handler removed, a php-fpm pool with a narrower security.limit_extensions, a
+   backup or a directory listing that exports it - returns the credentials to
+   whoever asks (the chtml.php/help.php PATH_INFO class of bug is the same shape
+   and was demonstrated in this project). This is why the deny rule is a
+   server-configuration rule and not a note in the install guide.
+
+   After this change the request is 403 on both servers, and so is every other
+   file in lib/ and data/. If a site still gets the source of this file over
+   HTTP, that is a server misconfiguration to fix before anything else - the
+   .htaccess and <Directory> rules here are the belt, not the braces.
+
+
+7. HOW TO VERIFY ON YOUR OWN SERVER
+
+   Every request below must be refused (403) - adjust the prefix to your layout
+   (the packaged one is /freemed):
+
+     curl -sI https://host/freemed/lib/API.php
+     curl -sI https://host/freemed/lib/settings.php
+     curl -sI https://host/freemed/data/schema/mysql/patient.sql
+     curl -sI https://host/freemed/tests/security/repro-relay-sqli.sh
+     curl -sI https://host/freemed/scripts/security-sql-concat-check.sh
+     curl -sI 'https://host/freemed/lib%2FAPI.php'        # nginx decodes the %2F
+     curl -sI 'https://host/freemed/help.php/../scripts/security-sql-concat-check.sh'
+
+   And these must still work (this is the no-regression half):
+
+     curl -sI  https://host/freemed/index.php                                  # 302
+     curl -sI  https://host/freemed/help.php/ui/en_US/page                     # 401 (its own login gate)
+     curl -sI  https://host/freemed/chtml.php/main                             # 200
+     curl -s   'https://host/freemed/relay.php/json/org.freemedsoftware.public.Login.LoggedIn'  # 200
+     curl -sI  https://host/freemed/services/RemittCallback.php?wsdl           # 200
+
+   With Apache, `apachectl configtest` must say Syntax OK after installing
+   doc/freemed.apache.conf, and the file needs mod_rewrite (guarded by
+   <IfModule>, so a server without it still starts - the four deny blocks do not
+   depend on it). With nginx, `nginx -t` before reloading.
+
+
+8. WHAT THIS DOES NOT DO
+
+     * It does not stop PHP from including these files. lib/, data/ and the rest
+       are read by include/require/readfile from an entrypoint; that is
+       unchanged and intended. The rule is about URLs.
+
+     * It does not cover ui/dojo/htdocs/, which is deliberately world-readable
+       static UI (its own .htaccess allows everything), nor the rest of the
+       application tree.
+
+     * It does not remove doc/ from the web. The operator notes - this file,
+       doc/VCALENDAR_AUTHENTICATION, doc/RELAY_ALLOWLIST and the rest - are
+       still served as text; they contain no credentials. A site whose policy
+       forbids publishing them can deny /doc/ the same way the four trees above
+       are denied.
+
+     * It overrides data/documents/unfiled/.htaccess, which allowed *.djvu
+       uploads to be fetched by URL (measured at HEAD: 200, 60521 bytes on both
+       servers). That path is now 403 with the rest of data/. Nothing in this
+       tree references it as a URL - the document viewer fetches page images
+       through the relay (<relay>/org.freemedsoftware.module.<module>.GetDocumentPage),
+       not from the filesystem path - and serving PHI by guessable URL is what
+       this change exists to stop. A site that needs a different behaviour for
+       that directory should state an explicit exception in its server
+       configuration (and restrict it by extension), not rely on the .htaccess.
