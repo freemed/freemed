@@ -891,7 +891,7 @@ function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
 		{
 			$pos = strrpos($file,'.');
 			if(!$pos)
-				$this->Error('Image file has no extension and no type was specified: '.$file);
+				$this->Error("Image file has no extension and no type was specified: $file");
 			$type = substr($file,$pos+1);
 		}
 		$type = strtolower($type);
