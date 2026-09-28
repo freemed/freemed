@@ -426,9 +426,17 @@ class Ledger {
 			// procedure id is a record id - both are quoted/cast where the
 			// statement is composed, rather than addslashes()ed inside
 			// hand-written quotes.
-			$query = sprintf( "UPDATE procrec SET procbilled = '0', proccurcovtp = %s, procbalcurrent = procbalcurrent - %d WHERE id = %d",
+			//
+			// NOTE (2.6f): $disallow is a MONEY amount. The sweep's intval()
+			// TRUNCATED THE CENTS (3.50 -> 3) where the pre-sweep ($disallow + 0)
+			// kept them, so this repairs a regression the sweep introduced.
+			// number_format((float) ..., 2, '.', '') is locale-independent and
+			// emits a plain numeric literal (never scientific notation), so the
+			// amount stays a number in this arithmetic context - a quoted string
+			// would additionally depend on MySQL's implicit cast.
+			$query = sprintf( "UPDATE procrec SET procbilled = '0', proccurcovtp = %s, procbalcurrent = procbalcurrent - %s WHERE id = %d",
 				$GLOBALS['sql']->quote( $type ),
-				intval( $disallow ),
+				number_format( (float) $disallow, 2, '.', '' ),
 				intval( $proc ) );
 		} else {
 			$query = $GLOBALS['sql']->update_query(
