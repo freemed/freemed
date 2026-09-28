@@ -1087,25 +1087,58 @@ residual mismatches in this phase: 0
 #                                               probe harness in PHASE A2/B/C. The
 #                                               two blockers are recorded for Task
 #                                               4.3, not fixed in this round.
-#  18  api/Agata7.class.php:156                 CLASS axis under STORED REPORT DATA:
-#      module_function($detail, 'widget', $k)   $detail comes from $v['value'] of a
-#                                               report DEFINITION
+#  18  api/Agata7.class.php:156                 CLASS axis under STORED REPORT DATA --
+#      module_function($detail, 'widget', $k)   BUT NOT A DEPLOYMENT ARTEFACT. $detail
+#                                               comes from $v['value'] of a report
+#                                               DEFINITION that SHIPS
 #                                               (data/report/<name>.report, read via
-#                                               getReport()) -- one class over from
-#                                               #9, same shape. org.freemedsoftware.
-#                                               api.Agata7.* has 0 shipped entries,
-#                                               so the outer hop is REFUSED under
-#                                               enforcement and dispatchable in the
-#                                               shipped log-only stage -- the same
-#                                               tier as #9. NOT drivable on this
-#                                               stack: no *.report definition ships
-#                                               (data/report/ holds .jrxml only) and
-#                                               setReportPath() builds the path from
-#                                               the caller's report NAME, so the
-#                                               definition is a deployment artefact.
-#                                               Verdict: needs an OUTER-scope gate
-#                                               if it becomes reachable; ROUTED to
-#                                               Task 4.3. Round 2's table omitted it.
+#                                               getReport()); setReportPath() is called
+#                                               with $report, the CALLER's own argument,
+#                                               so a caller naming a shipped report needs
+#                                               nothing deployed. org.freemedsoftware.
+#                                               api.Agata7.* has 0 shipped entries, so the
+#                                               outer hop is REFUSED under enforcement and
+#                                               dispatchable in the shipped log-only stage
+#                                               -- the same tier as #9.
+#                                               (fix round 4, N2) THE REASON BELOW IS
+#                                               CORRECTED, THE VERDICT IS KEPT. Round 3
+#                                               said "no *.report definition ships
+#                                               (data/report/ holds .jrxml only)". That is
+#                                               FALSE: 7 *.report definitions ship, and
+#                                               TWO of them -- billed_contacts and
+#                                               provider_patient_list, each line 26 --
+#                                               carry <value>Provider:module:
+#                                               providermodule</value>, which selects
+#                                               ($type,$detail) = ('module',
+#                                               'providermodule') and arms exactly this
+#                                               dispatch. The MEASURED first stop is
+#                                               EARLIER than this row said and is a PHP 8
+#                                               PARSE ERROR: freemed::quickform_i18n(
+#                                               &$form) at api/Agata7.class.php:127 is a
+#                                               call-time pass-by-reference, so the class
+#                                               cannot be loaded at all (php -l fails, and
+#                                               a live relay attempt answers
+#                                               `Parse error: syntax error, unexpected
+#                                               token "&" ... on line 127`). The parse
+#                                               error is also why the 0-entry half is
+#                                               stated where it was measured: under
+#                                               enforcement the outer hop is refused
+#                                               before the inner dispatch BY
+#                                               CONSTRUCTION, exactly as for #9/#10.
+#                                               THIS FILE IS APPLICATION CODE. The plan's
+#                                               R14 non-goal covers the VENDORED
+#                                               lib/agata7/** tree (bundled fpdf / pclzip
+#                                               / nusoap), NOT
+#                                               lib/org/freemedsoftware/api/Agata7.class.php,
+#                                               which is in this sweep's api/ scope; so
+#                                               this row could not have been omitted on
+#                                               non-goal grounds, and the verdict below
+#                                               does not rest on any non-goal.
+#                                               Verdict (KEPT, and better supported than
+#                                               before): needs an OUTER-scope gate the day
+#                                               the parse error is repaired; ROUTED to
+#                                               Task 4.3. Round 2's table omitted it. The
+#                                               measurement is "FIX ROUND 4 (N2)" below.
 #
 #   CONCLUSION of the search (fix round 3: 18 rows, not 16): the four
 #   relay-reachable re-dispatchers are #1, #2, #17 and #3, and all four are gated
@@ -1123,6 +1156,15 @@ residual mismatches in this phase: 0
 #   method. Round 2's own table replaced those, but it dropped #17 (which round 1
 #   HAD), omitted #18 entirely, and stated #9/#10's reachability wrongly; fix round
 #   3 corrects all four of those and measures what it states (PHASE A/B/C below).
+#
+#   (fix round 4) ROW #18'S REASON WAS STILL WRONG AND IS NOW MEASURED. Its verdict
+#   is KEPT (0 shipped entries for org.freemedsoftware.api.Agata7.*, so the inner hop
+#   is refused before dispatch under enforcement -- the same tier as #9/#10, and now
+#   measured in BOTH stages), but the reason it gave was false: 7 *.report
+#   definitions ship, two of them arm exactly this dispatch, and $report is the
+#   CALLER's own argument -- so this is not a "deployment artefact", and the real
+#   first stop is a PHP 8 parse error at api/Agata7.class.php:127. The measurement is
+#   in "FIX ROUND 4 (N2)" below; no other row's verdict is touched by it.
 
 # -----------------------------------------------------------------------------
 # WHAT THIS SECTION DOES NOT PROVE
@@ -1139,7 +1181,7 @@ residual mismatches in this phase: 0
 #     probe-shaped, exactly like the client-shaped gap named in this file's header.
 #   * the XML-RPC provider (the check is in the shared handle_request(); the JSON
 #     provider is what was probed).
-#   * (fix round 3) that a SUCCESSFUL `additional_move` dispatch happens. The only
+#   * (fix round 3) that a SUCCESSFUL `additional_move` dispatch happens. ~~The only
 #     module class in this tree with a PUBLIC additional_move is
 #     module.ScannedDocuments (MessagesModule and EMRModule declare it protected),
 #     and the probe's registry row cannot name it: the modules table rejects a
@@ -1148,7 +1190,19 @@ residual mismatches in this phase: 0
 #     variant too). The LISTED leg therefore shares its class with the unlisted leg
 #     and the observable is the gate's DECISION, exactly the shape the round-2 R32
 #     proof used -- the same family of limit as "cannot show a successful
-#     RenderToPDF dispatch on a resolvable class".
+#     RenderToPDF dispatch on a resolvable class".~~
+#     **(fix round 4) CORRECTED -- IT IS DRIVABLE, AND "FIX ROUND 4" BELOW DRIVES
+#     IT.** The claim above is struck: a `modules` row naming
+#     module_class='ScannedDocuments' INSERTs successfully (measured, PHASE E0.1);
+#     the `modules_insert` trigger skips its section insert because the seeded
+#     `acl_aco_sections` row for that value already exists (id 100), so nothing
+#     collides. The 1062 the round-3 text quoted is what the LOWER-CASE variant
+#     `'scanneddocuments'` produces against the case-insensitive unique key
+#     `acl_value_aco_sections`. With the class nameable, the successful dispatch is
+#     driven: the class loads, a PUBLIC `additional_move` is found and invoked, and
+#     the record is written -- so the R32 A/B now has the positive control it lacked,
+#     and both of the round-3 legs (class-not-found / no such method) are replaced by
+#     measured outcomes on a real class.
 #   * (fix round 3) that the INNER hops of search rows #9 (Forms::control_module),
 #     #10 (BaseModule::_print) and #18 (Agata7::CreateForm) execute. What is
 #     measured is where each chain STOPS on this stack, not where it would land.
@@ -1357,3 +1411,101 @@ residual mismatches in this phase: 0
 #   published figures back and (b) RECOMPUTE the 'named' restriction from the
 #   artifact's own rows plus the shipped patterns, so a header that disagrees with
 #   the rows it emits goes red.
+
+# =============================================================================
+# FIX ROUND 4 (N2) - row #18's corrected reason, measured
+# -----------------------------------------------------------------------------
+#   The round-3 re-review is right: row #18's stated reason was false in the tree
+#   that is committed and served. It said
+#
+#     "NOT drivable on this stack: no *.report definition ships (data/report/ holds
+#      .jrxml only) and setReportPath() builds the path from the caller's report
+#      NAME, so the definition is a deployment artefact."
+#
+#   Both clauses are wrong. The VERDICT is unchanged (0 shipped entries for the
+#   outer hop => under enforcement the inner hop is unreachable BY CONSTRUCTION, so
+#   no gate is required for that stage; the gate it would need the day it becomes
+#   reachable is an OUTER-scope one), and it is better supported by the measurement
+#   below than by the reason it replaced. Everything quoted is a measurement on this
+#   stack (Apache :38081, MariaDB 127.0.0.1:33306, branch
+#   security/mitigation-2026-09, served tree ./app rsynced from the checkout); the
+#   scratch driver is ra-fix4-probe.sh (never committed), its phases are quoted
+#   verbatim, and no credential appears in it.
+#
+#   `served tree      : /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/app (rsync of the checkout)`
+#   `shipped-list entries matching 'org.freemedsoftware.api.Agata7' : 0`
+#   `served PatientInterface == the checkout : YES`
+#
+# -- A18.0 the definitions SHIP (the round-3 row said none does) --
+#      tracked files in data/report          : 25
+#      ...of which *.report                  : 7
+#         data/report/billed_contacts.report
+#         data/report/duplicate_patient.report
+#         data/report/outstanding_patient_amount.report
+#         data/report/patient_account_activity.report
+#         data/report/patient_statement.report
+#         data/report/provider_patient_list.report
+#         data/report/upcoming_notifications.report
+#      ...and *.jrxml                        : 18
+#      the SERVED copy: 25 files, 7 *.report
+#   `git ls-files data/report | grep -c '\.report$'` = 7, and all seven are in the
+#   served copy as well. The "no *.report ships" clause is refuted from the tree.
+#
+# -- A18.1 the two definitions that ARM exactly this dispatch --
+#      data/report/billed_contacts.report:26:            <value>Provider:module:providermodule</value>
+#      data/report/provider_patient_list.report:26:      <value>Provider:module:providermodule</value>
+#   CreateForm walks $report['Report']['Parameters'][k]['value'] and splits it at
+#   ':' into ($type,$detail) = ('module','providermodule'), then dispatches
+#   module_function($detail, 'widget', $k) at Agata7.class.php:156 -- so a caller who
+#   names a SHIPPED report reaches the module_function() hop with a definition from
+#   this checkout. setReportPath() is called as
+#   `$this->api->setReportPath( FREEMED_DIR . '/data/report/'.$report.'.report' )`
+#   with $report = CreateForm's OWN argument, so nothing has to be deployed: the
+#   "deployment artefact" clause is refuted too.
+#
+# -- A18.2 the MEASURED first stop: a PHP 8 parse error at class load --
+#      $ php -l lib/org/freemedsoftware/api/Agata7.class.php
+#      Parse error: syntax error, unexpected token "&" in lib/org/freemedsoftware/api/Agata7.class.php on line 127
+#      Errors parsing lib/org/freemedsoftware/api/Agata7.class.php
+#      line 127 is: freemed::quickform_i18n(&$form);
+#   Call-time pass-by-reference was removed in PHP 5.4, so the class cannot be loaded
+#   at all: every Agata7 method is dead in this tree, and the relay attempt stops
+#   EARLIER than the row said.
+#
+# -- A18.3 LIVE, log-only (the stage the product ships in): the 0-entry outer hop RUNS --
+#      body: <br /> <b>Parse error</b>:  syntax error, unexpected token &quot;&amp;&quot;
+#            in <b>/var/www/html/lib/org/freemedsoftware/api/Agata7.class.php</b> on line <b>127</b><br /> [http=200]
+#      syslog: 2026-09-28 22:13:06 <132> ... Relay: method
+#              'org.freemedsoftware.api.Agata7.CreateForm' is not in the relay
+#              allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+#
+# -- A18.4 LIVE, enforcing: the same outer hop is REFUSED, the parse error never happens --
+#      body: INVALID_CALL [http=200]
+#      syslog: 2026-09-28 22:13:15 <132> ... Relay: method
+#              'org.freemedsoftware.api.Agata7.CreateForm' is not in the relay
+#              allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+#   => both stages are measured for this row now (the re-review's item (iii)); in the
+#      shipped stage the chain stops at the parse error, and under enforcement it
+#      stops one step earlier, at the relay, before the inner module_function() hop.
+#      The served config was restored to the shipped value at the end of the phase
+#      (`settle` reports LOG-ONLY again) and the fingerprint is unchanged.
+#
+# -- WHY THE ROUTING REASON DOES NOT DEPEND ON THE R14 NON-GOAL --
+#   The plan's R14 non-goal vendored `lib/agata7/**` (5 allowlist entries: the
+#   bundled fpdf / pclzip / nusoap trees). `lib/org/freemedsoftware/api/Agata7.class.php`
+#   is FreeMED's OWN application file, inside this sweep's `api/` scope -- the same
+#   directory as api/UserInterface.class.php, api/ModuleInterface.class.php and
+#   api/PatientInterface.class.php, all of which the sweep does cover. So row #18
+#   could not have been left out on non-goal grounds; it is routed to Task 4.3
+#   because the gate it would need is the OUTER scope, not because of any non-goal.
+#   The honest, actionable form of the row is: THE DEFINITIONS SHIP, so the day the
+#   parse error at :127 is repaired this becomes drivable in the log-only stage from
+#   a shipped definition whose $detail a caller can select among; the enforcing stage
+#   stays closed by the 0-entry outer hop.
+#
+#   `residual mismatches in this phase: 0`
+#   The database fingerprint was taken before and after the phase and is IDENTICAL,
+#   field for field (verified by `diff`, not asserted) -- this phase creates no row
+#   and edits only the SERVED config, which it restores to the checkout's copy. Its
+#   digest is stated in the round-4 report, which is where the earlier rounds kept
+#   it too: this file's redaction rule forbids 32-hex runs here.
