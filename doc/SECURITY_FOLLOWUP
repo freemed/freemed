@@ -1,0 +1,430 @@
+$Id$
+
+Security follow-on backlog - defects and gaps found while fixing the three
+reported findings
+
+
+1. WHAT THIS IS AND WHAT IT IS NOT
+
+   Every item below was found while fixing the three reported findings (the
+   unauthenticated help.php file read, the authenticated relay SQL-injection
+   cluster, and the vcalendar pass-the-hash path) on branch
+   security/mitigation-2026-09 at HEAD f0aeba53. None of them is part of that
+   mitigation. Each is either out of scope by decision (section 2) or a
+   pre-existing defect that the sweep, its reviews and the verification pass
+   surfaced on the way (sections 3 to 6). Nothing here has been fixed. Every
+   file:line reference was re-read at f0aeba53 while this list was consolidated,
+   and every claim that could be measured without a database was measured on
+   php:8.3-cli; references the plan or the execution ledger carried that have
+   since drifted are corrected here, and each correction is stated inline. Where
+   a claim rests on a single measurement, or on a review's assertion that this
+   consolidation did not re-measure, the line says so. The advisory for the
+   mitigation itself is a separate delivery (Task 4.2): nothing here duplicates
+   it, and nothing here has been sent outside this repository.
+
+
+2. OUT OF SCOPE BY DECISION
+
+   These are not defects the mitigation skipped. They are changes of a different
+   shape and size, each of which needs its own reviewed plan.
+
+   2.1 Credential storage: unsalted MD5 -> password_hash() / PASSWORD_BCRYPT
+       (CWE-916). Every stored credential is an unsalted MD5 digest, and the
+       digest is compared in six places: User.class.php:354 and :446
+       (set/change), Authentication_Password.class.php:34,
+       Authentication_Basic.class.php:35, public/Login.class.php:116
+       (md5($password) == $row), public/Installation.class.php:105,
+       api/UserInterface.class.php:413 and :548, and vcalendar.php:89. The
+       mitigation only removed the comparison from SQL in vcalendar.php (it now
+       fetches by username and compares in PHP with hash_equals()) and left the
+       format alone; the format is why the pass-the-hash item exists at all, and
+       Authentication_Password.class.php:34 still accepts a client-supplied
+       `_hash` in place of a password. Changing the storage format is a
+       migration - rehash on next successful login, a dual-format acceptance
+       window, the GWT login, and a decision about accounts that never log in
+       again - not a patch.
+
+   2.2 Library-wide prepared statements. The mitigation parameterized by the
+       established idiom on the reachable and in-scope surface (->quote() for
+       values, intval()/casts for numeric ids, a validated-identifier helper for
+       schema and column names; the plan counted 252 pre-existing ->quote( sites
+       setting the precedent, and the sweep added more). Moving the whole
+       library to prepared statements is a rewrite
+       with its own regression surface, and the identifier half of the problem
+       cannot be bound at all - it still needs a validator.
+
+   2.3 The vendored phpGACL/adodb copies under
+       lib/org/freemedsoftware/acl/ (notably acl/adodb/). Their string
+       concatenation is library-internal and upstream-maintained: note it, do
+       not fork it. 67 of the concatenation gate's 76 remaining allowlist
+       entries are third-party phpGACL lines, and the .htaccess inside that
+       directory is deliberately left 2.2-only for the same reason.
+
+   2.4 The legacy lib/agata7/ surface (73 of the gate's 165 originally
+       allowlisted lines: bundled fpdf151, pclzip and nusoap). Vendored
+       third-party code, out of scope by the plan's non-goals; its entries sit
+       in the allowlist's VENDORED section rather than in the application set
+       the sweep had to zero.
+
+
+3. PRE-EXISTING FUNCTIONAL DEFECTS THE SWEEP AND ITS REVIEWS SURFACED
+
+   All are pre-existing; none was introduced by the mitigation. "Live" means an
+   in-tree caller or a shipped file reaches it. "Latent" means it is reachable
+   in principle but nothing in the tree currently gets there.
+
+   3.1 The eight the plan listed
+
+   a) lib/org/freemedsoftware/core/SupportModule.class.php:557
+      FormJoinClause()'s `if ( ($k+0) == 0 )` treats every module-declared join
+      key as an integer. With a string key PHP 8 raises `TypeError: Unsupported
+      operand types: string + int` (measured). Two modules declare one -
+      module/UserGroups.class.php:57 and module/ShimStation.class.php:59 - and
+      the committed smoke baseline records that exact TypeError as UserGroups'
+      own EXC entry, so this is LIVE for them: the 2.6b-validated JOIN path can
+      never run on those two modules, and it could only be measured with a
+      numeric key.
+
+   b) lib/org/freemedsoftware/api/FormTemplate.class.php:419
+      ProcessData() (:339-530) calls $GLOBALS['sql']->num_rows($result).
+      FreemedDb (lib/org/freemedsoftware/core/FreemedDb.class.php) implements no
+      num_rows() and reaches no __call, so the call is `Error: Call to
+      undefined method` - after the statement has been built and executed.
+      Latent on the shipped tree: no XML template ships, so that path cannot be
+      driven live (a limit Task 2.8 round 2 discloses about its own gating).
+
+   c) lib/org/freemedsoftware/api/Scheduler.class.php:1462
+      ImportDate()'s (:1455) `m/d/Y` case reads
+      preg_match("/([0-9]{1,2})/([0-9]{1,2})/([0-9]{2,4})/", ...) - the `/`
+      delimiters are unescaped, so PCRE takes the second `/` as the closing
+      delimiter and `(` as a modifier: `Warning: preg_match(): Unknown modifier
+      '('`, and the case never matches (measured: preg_match returns false).
+      This is why the F4 date validation refuses that format instead of letting
+      it become a zero date. CORRECTION: the plan attributed this method to
+      vcalendar.php; it is defined in api/Scheduler.class.php and reached from
+      EMRModule.class.php:884.
+
+   d) lib/org/freemedsoftware/module/PaymentModule.class.php:750-753
+      ledger() walks $GLOBALS with reset()/each(); each() was removed in PHP 8
+      (measured: `Error: Call to undefined function each()`), so the method
+      fatals on its first statement and everything after it in the method is
+      unreachable. Dead code with no caller - a deletion candidate, not a patch.
+
+   e) lib/org/freemedsoftware/module/Callin.class.php:159-163
+      GetAllWithInsurance() guards on $criteria['cifname'] (:159) but composes
+      `ci.cilname like <$criteria['cilname']>` (:163) - the wrong column AND the
+      wrong value, so a cifname criterion is silently ignored. Behaviour is
+      deliberately unchanged (fixing it changes results). CORRECTION: the plan's
+      `:142` is stale; the sweep shifted this block.
+
+   f) lib/org/freemedsoftware/core/Relay_Json.class.php:58
+      deserialize_request() calls urldecode($request) where $request may be an
+      array: `TypeError: urldecode(): Argument #1 ($string) must be of type
+      string, array given` (measured). Latent, and deliberately left alone:
+      the JSON-body path already fatals earlier at :87/:90, and repairing this
+      would re-open that transport mid-verification (ruling R11). See 4.3.
+
+   g) lib/org/freemedsoftware/core/class.IIGAlert.php:49
+      Parse error (measured: php -l reports `syntax error, unexpected string
+      content ""` at :49, the "$row['pc_eventDate']" interpolation), plus the
+      removed mysql_* API at :31, :46, :47, :79 and :83 - and no caller. The
+      cleanest resolution is deletion, not a patch.
+
+   h) lib/org/freemedsoftware/module/PaymentModule.class.php:779
+      splices `(string) $this->view_query` into a statement. Nothing in the tree
+      assigns that property (the sibling method uses a *local* $view_query with
+      an explicit whitelist at :1149-1183), so it contributes the empty string
+      and warns on the undefined property - but it becomes a live raw splice the
+      moment a caller assigns it. CORRECTION: the plan's `:768` is stale. It
+      also sits inside the dead ledger() of (d), so at HEAD it cannot execute
+      either.
+
+   3.2 Found later, in the sweep's reviews and the vcalendar work
+
+   i) lib/API.php:938-961 - freemed::secure_filename() is a NO-OP. Its search
+      strings are built as "\$".$secure_var, i.e. the literal sequences `$\`,
+      `$.`, `$/` and `$|`, instead of the four characters the comment claims to
+      remove, so str_replace never strips `../` or a separator (measured:
+      secure_filename('../../etc/passwd') returns its input unchanged). Two
+      sinks trust it:
+
+        * module/UpdatesModule.class.php:124 (GetFeed()) composes
+          data/cache/rss.feed.<feed> from the relay-supplied $feed. The read is
+          real through an authenticated relay call, but the content is not
+          reflected into the response, and its confinement today is accidental
+          (the `$`-prefixed component cannot exist as a directory).
+        * core/BaseModule.class.php:165-166 - the
+          $_REQUEST['print_template'] override check and use (not measured).
+          The plan calls this sink `BaseModule::print_template`; the containing
+          method is _print() (:121-313).
+
+      Four further callers inherit the no-op: module/UnfiledDocuments.class.php
+      :170, module/UnreadDocuments.class.php:246,
+      module/ScannedDocuments.class.php:124-125 and lib/API.php:1085. NOT fixed
+      here, because the fix changes which file names callers may use. Found by
+      Task 1.3; recorded in tests/security/evidence/path-sink-audit.md.
+
+   j) controller.php:48 - strtolower(${layout}) parses `${layout}` as "the
+      variable named by the CONSTANT layout", which on PHP 8 is `Uncaught
+      Error: Undefined constant "layout"` (measured: php -r
+      'strtolower(${layout});', and the live /controller.php/Dojo/default in
+      path-sink-audit.md). Every request whose layout passes the alpha check at
+      :43 fatals there, before either include_once (:54/:68); a bare
+      /controller.php still answers 200 "Hack attempt, dying", because :43
+      rejects the empty layout first. Pre-existing, and on no path the
+      mitigation touched.
+
+   k) lib/org/freemedsoftware/core/Physician.class.php:83-88 - fullName() hands
+      the degrees ROW ARRAY to strpos(): `TypeError: strpos(): Argument #1
+      ($haystack) must be of type string, array given` (measured). $e is set at
+      :81 from get_link('degrees', ...), so ANY provider who has degrees breaks
+      this method - app-wide across its callers, and it is exactly the blocker
+      for demonstrating a populated vCalendar body on the path Tasks 3.1/3.2
+      secured. The bounded count() guard and the !empty($d) refinement this
+      mitigation added live in the same method (:97-98, :104, :111) and do not
+      address it.
+
+   l) lib/org/freemedsoftware/core/vCalendar.class.php:58 - generate() uses
+      $buffer .= before $buffer is initialised, so PHP 8 emits `Warning:
+      Undefined variable $buffer` (measured) on the first concatenation and
+      prints it INTO the payload when display_errors is on; production's
+      display_errors=Off is the only reason the body is clean. A malformed body
+      is a functional defect, not a leak. CORRECTION: the plan's `:61` is stale;
+      the first uninitialised use is :58 (the PRODID line the plan pointed at is
+      :61).
+
+   m) freemed::acl() is unusable outside a session-enabled request.
+      lib/API.php:57-75 dereferences $GLOBALS['acl']->acl_check(...), and
+      $GLOBALS['acl'] is only built by lib/acl.php:28, which lib/freemed.php
+      includes at :185 - inside the session block guarded at :113 by
+      !defined('SESSION_DISABLE'). A SESSION_DISABLE entrypoint (vcalendar.php,
+      and any future Basic-auth endpoint) therefore gets a null ACL, and
+      acl_check() on null is a fatal. Task 3.2 works around it (loads the ACL on
+      demand, DENIES when it is unusable - correct fail-closed behaviour), but
+      the consequence stands: an authorised non-physician scheduler also gets
+      403 on a deployment whose ACO/ARO grant rows are not seeded. The
+      structural fix - an ACL that does not depend on a session - belongs in its
+      own change.
+
+   n) vcalendar.php:85 (Basic auth) and :151 (the deprecated GET-hash path,
+      reached only with vcals_legacy_hash on) splice the authenticating username
+      with addslashes($user) inside hand-written quotes, for an
+      attacker-controlled, PRE-AUTHENTICATION value. It is safe on this
+      deployment only because the server's sql_mode lacks NO_BACKSLASH_ESCAPES
+      and FreemedDb issues no SET sql_mode / SET NAMES: with that mode set, a
+      crafted username reaches a UNION SELECT row whose digest the attacker
+      chooses, which resolves to an id / userrealphy of their choosing - admin
+      to any provider's calendar. It is the exact idiom the sweep's brief
+      prescribed (->quote() here), so it was routed rather than re-fixed in
+      place. CORRECTION: the plan's `:73-74` is stale.
+
+   o) vcalendar.php:164 - freemed_get_auth() (:138) ends with a `return false;`
+      after an if/else whose branches both return (:160 and :162). Unreachable
+      statement, cosmetic only; the legacy GET path leaves with the D4 window.
+
+   3.3 Other items the execution ledger carries
+
+   These come from the sweep's own review notes - the deferred minors the
+   reviews ledgered rather than chased. Each is verified at source; an owner may
+   rank them differently.
+
+   p) each() sites, all removed-in-PHP-8 fatalities (measured: `Call to
+      undefined function each()`), none on a path the mitigation touched but all
+      gating any future task that exercises XML-RPC, payment import or the ACL
+      cache: lib/xmlrpc_tools.php:538,
+      lib/org/freemedsoftware/core/Relay_Xmlrpc.class.php:511,
+      lib/org/freemedsoftware/acl/Cache_Lite/Lite.php:369 and :493, and
+      module/PaymentModule.class.php:753 (which is item (d) above). The
+      Cache_Lite pair sits under the vendored phpGACL cache, so ANY path that
+      exercises ACL caching can fatal - note the overlap with 2.3.
+
+   q) lib/org/freemedsoftware/api/Ledger.class.php:190 -
+      AgingReportQualified()'s `tag` case composes
+      `p.procpatient = '<value>'` from a PatientTag lookup result. The value is
+      DB-derived and the line is pre-existing, and Task 2.6f disclosed rather
+      than changed it - but the SQL-concatenation gate provably cannot see the
+      line (it matches none of the gate's keyword filters), so "make
+      security-check is clean" is not proof of closure for it.
+
+   r) lib/org/freemedsoftware/core/EMRModule.class.php:827 - qualified_query()'s
+      conditional clause builds an IDENTIFIER from the value escaper:
+      "`".$GLOBALS['sql']->escape($k)."` = ". escape() is escapeSimple and does
+      not escape a backtick. Latent (relay parameters arrive as scalars and no
+      in-tree caller passes the third argument today), but it is missing from
+      the batch's own residual list.
+
+   s) lib/org/freemedsoftware/api/Scheduler.class.php:1131 reads $found, which
+      the loop above only assigns at :1122 - an empty result set leaves it
+      undefined. The F4 refusal the sweep added newly reaches this, so an
+      undefined-variable warning is now reachable where it was not before
+      (routed, not fixed).
+
+   t) lib/org/freemedsoftware/module/PaymentModule.class.php:1169 -
+      GetLedger()'s `unpaid` branch sets $view_unpaid where the fragment the
+      statement interpolates is $view_query, leaving that branch's SQL malformed
+      (in-code NOTEs at :1147 and :1163). The method is dead in every branch
+      anyway (queryAll() is called on an undefined local $sql, MariaDB rejects
+      '1 == 1', and three SELECT columns do not exist), and repairing the typo
+      is not behaviour-preserving, so it was left in place with the NOTE, by
+      instruction. The 2.6e whitelist at :1181-1183 does fail closed.
+
+
+4. RELAY AND DISPATCH SURFACE STILL UNGATED
+
+   Task 2.8 made the relay deny-by-default (a 323-pattern call set, shipped
+   log-only) and gated two re-dispatch axes after two fix rounds. Three things
+   on the same surface are routed, not closed:
+
+   4.1 module/Forms.class.php:336-351 - control_module('widget', $data) calls
+       module_function($data['options'], 'widget', ...) at :345-349: the CLASS
+       is taken from caller-supplied form data. The outer gate cannot see it,
+       because the method name it dispatches ('widget') is fixed and the
+       variable is the class. Same shape as the class axis Task 2.8 round 2
+       gated at the ModuleInterface wrappers; this one is not gated.
+
+   4.2 core/BaseModule.class.php:196-208 and :230-241 - _print() composes
+       module_function($parts[0], '_RenderToPDF', array($parts[1])) from
+       $_REQUEST['attachment'] (exploded on '|'): again a caller-chosen CLASS
+       with a fixed literal method. The 2.8 round recorded this as "reachable
+       only via module_loader.php today"; CORRECTION: module_loader.php does not
+       exist at HEAD - it was deleted in 3ad7d431 (2006-10-03, an ancestor of
+       this branch), and this consolidation found no in-tree caller of _print()
+       at all. The branch is therefore latent in the shipped tree, and becomes
+       live the moment anything dispatches _print.
+
+   4.3 lib/org/freemedsoftware/core/Relay_Json.class.php:87 and :90 call
+       deserialize_parameters(), a method defined nowhere in the tree. That is
+       item (f)-adjacent and deliberately left alone (ruling R11): it is a real
+       functional bug - the JSON-body relay transport does not work at all - but
+       fixing it would have re-opened that transport while the mitigation was
+       still being verified. It should be fixed together with the allowlist's
+       coverage of the JSON path, not before.
+
+
+5. WEB AND CONFIGURATION RESIDUALS
+
+   5.1 ui/dojo/htdocs/.htaccess is still 2.2-only (`allow from all` / `order
+       allow,deny`). On an Apache 2.4 without mod_access_compat that is a
+       configuration error during URI mapping - a 500-shaped failure on the
+       world-readable Dojo tree, not the 403 the shipped server rule promises
+       (the server-config deny does not run first). Deferred by ruling R35 to
+       the final fix pass, because the failure needs a non-default Apache build;
+       the fix is the same module-guarded dual-syntax block Task 4.1 applied to
+       the five sibling files (data/, data/schema/, data/config/,
+       data/documents/unfiled/, tests/). Measured at config level only: without
+       mod_access_compat `apache2 -t` rejects the old form with `Invalid command
+       'order'` and accepts the new ones (a review confirmed this against the
+       image's module set minus that module under MINOR-6).
+       lib/org/freemedsoftware/acl/.htaccess is deliberately left 2.2-only as
+       vendored phpGACL (R34/R14).
+
+   5.2 The repository-root ./.htaccess guards its `DirectoryIndex index.php`
+       with <IfModule mod_php5.c>, which is inert on every supported PHP (the
+       module is php_module / php7_module / php8_module), so the directive never
+       takes effect - an ineffective guard of the same class as the `deny from
+       *` files Task 4.1 replaced. Deferred with 5.1 by R35. It is the only file
+       in the tree whose .htaccess carries no deny rule at all.
+
+   5.3 doc/freemed.apache.conf has two <Directory "/usr/share/freemed">
+       sections (:22-30, the base allow-all + AcceptPathInfo On + AllowOverride
+       All block, and :213-222, the mod_rewrite PATH_INFO refusal). The
+       execution ledger records, from the Task 4.1 re-review, that a
+       later-loaded block for the same path REPLACES rather than merges the
+       earlier rule set, direction fail-open; the shipped config has exactly one
+       such duplicate path. RECORDED, NOT RE-MEASURED here - this consolidation
+       did not test Apache's merge semantics for a duplicated <Directory> path,
+       so treat the direction as unverified until someone does.
+
+   5.4 Two .htaccess-layer behaviours could not be measured in this
+       environment at all: a real Apache 2.2 (the old syntax half) and a real
+       Apache 2.4 with mod_access_compat absent serving requests. Everything
+       measured for 5.1 is config-test level plus the two repo-mounted servers
+       that ship the image's module set minus that one module. Anything built on
+       the .htaccess layer in future should say which of the two halves it
+       actually exercised.
+
+
+6. EVIDENCE-QUALITY AND HARNESS RESIDUALS CARRIED FORWARD
+
+   6.1 The module-smoke functional gate cannot see a valid-but-wrong query that
+       returns 0 rows. The committed baseline is 136 entries - OK 6, EXC 22,
+       SKIP 108 (tests/security/evidence/module-smoke-before.json) - and the
+       108 SKIPs come from the reduced seed: the harness's empty tables make a
+       correct query and a wrong-but-valid query indistinguishable. After Task
+       2.6d the query builder really runs for 18 more modules (a broken query
+       now surfaces as `EXC: GetList() returned DB_Error`), so the residual is
+       narrower than it was - but "0 deltas" is not proof that a batch's SQL is
+       equivalent, only that the observables did not move.
+
+   6.2 The relay allowlist ships log-only (enforce = false in
+       data/config/relay-allowlist.php). Its 323-pattern call set was enumerated
+       from source, from this work's own live probes and from a retained access
+       log (tests/security/evidence/relay-callset.txt, generated at c6c4f306),
+       but it was never exercised by a real client session: there is no compiled
+       GWT client in the tree (`find ui/gwt -name '*.js'` returns only the
+       vendored viewerjs/mugshot resources). Enforcement is therefore proven
+       CORRECT but not proven SAFE for any given site; turning it on is a
+       disclosed operator step with a miss-collection pass, documented in
+       data/config/relay-allowlist.php and doc/RELAY_ALLOWLIST.
+
+   6.3 The harness database seed fingerprint is pinned in
+       tests/security/evidence/seed-fingerprint.md (with its companion
+       seed-verify.sql) and MUST be re-verified before any future smoke delta is
+       trusted. It exists because the database really did drift during this
+       work: a seed cleanup cascaded a payrec row away through payrec_ibfk_1,
+       which produced a spurious one-row smoke delta, and byte-identity was only
+       restored after a manual row restore - patient_emr's companion id is 5
+       where the baseline was recorded against 3. The fingerprint covers a
+       listed set of tables only; `log` is declared unpinnable, and the smoke
+       DOES observe row counts, so a re-seed can move an entry on its own.
+
+   6.4 Evidence hygiene (R27): tests/security/evidence/sweep-notes.md:369, a
+       committed artifact this mitigation authored, still prints the harness
+       admin account's literal MD5 digest - the pass-the-hash payload Task 3.1
+       removed - against the plan's own no-digest rule for evidence. One-line
+       redaction, deferred to the final fix pass. Honest limit: the digest is
+       already in this branch's history, so redacting the working tree does not
+       remove it, it is a throwaway harness credential, and the advisory must
+       not quote it.
+
+   6.5 Further disclosed limits worth carrying:
+       * the FormTemplate gates Task 2.8 round 2 added are SOURCE-LEVEL only -
+         no XML template ships, so that path cannot be driven live (that round
+         names it as its own weakest cell);
+       * two transports inherit the allowlist check by construction only: the
+         JSON-body path (unusable at HEAD - see 4.3) and Relay_Xmlrpc;
+       * the class-axis pairs are emitted as `#class-axis` evidence lines rather
+         than allowlist seed rows, so the axis is measured (866 pairs / 803
+         unlisted / 63 listed under the N3 definition) but not pinned by the
+         shipped list;
+       * two inputs to the call-set enumeration have known upstream defects:
+         SuperbillTemplate.gwtphpmap.inc.php's className/mappedBy/filename
+         mismatch, and EncounterNotesTemplate.GetList naming no inheritable
+         method;
+       * the pre-fix relay transcript's two weakest rows are hand-transcribed
+         (the 0.1 marker heuristic misses ModuleSearch::picklist entirely and
+         degrades Remitt to INCONCLUSIVE), so the advisory must quote the rows
+         rather than "the script said";
+       * the redaction filter and capture scripts live only in the harness
+         scratch directory, so the committed pre-fix transcripts are not
+         re-derivable from the repository alone.
+
+
+7. HOW TO PICK THIS UP
+
+   Read tests/security/evidence/ first - seed-fingerprint.md before re-running
+   any smoke measurement, then sweep-notes.md, path-sink-audit.md,
+   relay-callset.txt, relay-allowlist.txt, deployment-hardening.txt and the two
+   redacted pre-fix transcripts - alongside the two operator notes this
+   mitigation shipped (doc/DEPLOYMENT_HARDENING, doc/RELAY_ALLOWLIST) and
+   doc/VCALENDAR_AUTHENTICATION for the one behaviour change clients must know
+   about. Then write ONE PLAN PER GROUP rather than one giant change: the
+   credential-storage migration (2.1) and the ACL-without-a-session change (3.2
+   m) each touch every caller of a shared interface and need their own gates;
+   the sanitizer and value-splice family (3.2 i, 3.2 n, 3.3 q) is a correctness
+   change to what callers may pass and needs the callers' agreement first; the
+   PHP 8.3 fatals (3.1 a-f, 3.3 p) are mostly deletions and bounded guards and
+   can be taken together; the config and .htaccess residuals (5) are
+   independent of both and the cheapest. Nothing in this file authorises a
+   change to code, tests, configuration or .htaccess on its own, and every
+   reference here should be re-read against HEAD before it is acted on.
