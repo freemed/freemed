@@ -45,16 +45,22 @@ class ClaimLogTable extends SupportModule {
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
 
+		// Category B: the table identifier is validated once and reused
+		// (refused by log, R12 — the maintenance handler then does nothing).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_update| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+
 		// Version 0.7.1
 		//
 		//	Add ability to track events by payment record (clpayrec)
 		//
 		if (!version_check($version, '0.7.1')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN clpayrec INT UNSIGNED AFTER clprocedure');
+			$GLOBALS['sql']->query(sprintf('ALTER TABLE %s ADD COLUMN clpayrec INT UNSIGNED AFTER clprocedure', $table));
 			// Set to 0 by default (not associated with any payrec)
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
-				'SET clpayrec=\'0\'');
+			$GLOBALS['sql']->query(sprintf('UPDATE %s SET clpayrec=%s', $table, $GLOBALS['sql']->quote('0')));
 		}
 
 		// Version 0.7.2
