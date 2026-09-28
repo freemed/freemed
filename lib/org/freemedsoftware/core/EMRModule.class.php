@@ -292,7 +292,11 @@ class EMRModule extends BaseModule {
 		if (empty($this->table_name)) { return false; }
 
 		if (!isset($locked['id_'.$id])) {
-			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id='".addslashes($id)."' AND (locked > 0)";
+			// Category A (2.6e): the record id is an integer key, so it is cast
+			// rather than quoted - addslashes() inside quotes was the one shape
+			// the static gate excludes, and quoting a numeric column is not
+			// escaping. Same rows: MySQL compares id=<int> and id='<int>' alike.
+			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id=".intval($id)." AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
 			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'DB_Error' ) );
 		}
@@ -943,7 +947,10 @@ class EMRModule extends BaseModule {
 				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
-				"WHERE id='".addslashes($id)."'";
+				// Category A (2.6e): the record id is an integer key; cast it
+				// (id=<int>) instead of splicing it inside quotes with
+				// addslashes(), which is the shape the static gate excludes.
+				"WHERE id=".intval($id);
 			$rec = $GLOBALS['sql']->queryRow($query);
 		} else {
 			$rec = $GLOBALS['sql']->get_link( $t, $id );

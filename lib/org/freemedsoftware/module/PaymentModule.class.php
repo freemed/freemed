@@ -1141,6 +1141,12 @@ class PaymentModule extends EMRModule {
 	//	an array of hashes.
 	//
 	public function GetLedger ( $patient, $type ) {
+		// Category A (2.6e): the fragment spliced into the statement below is the
+		// empty string or one of the code-authored literals the switch assigns.
+		// Initialising it keeps the assembly deterministic - the 'unpaid' branch
+		// writes the mistyped $view_unpaid (see the note there), so that case has
+		// always spliced a predicate-less, malformed statement.
+		$view_query = '';
 		switch ($type) {
 			case 'closed':
 			// see paid procedures when closed is selected
@@ -1154,6 +1160,12 @@ class PaymentModule extends EMRModule {
 
 			case 'unpaid':
   			// we use this when being called from the unpaid procs report
+			// NOTE (2.6e): this branch writes the mistyped $view_unpaid. That is a
+			// pre-existing functional bug, not a sweep artefact - measured on the
+			// verify stack it has always assembled "( procpatient = <id> AND   )"
+			// and answered a DB_Error. Repairing the typo would change which rows
+			// come back (an error today, rows then), so it is recorded for the
+			// Task 4.3 follow-on list and the SQL semantics are left alone here.
 			$view_unpaid = "procbalcurrent >'0'";
 			break; // end unpaid
 
@@ -1161,6 +1173,14 @@ class PaymentModule extends EMRModule {
 			$view_query = "1 == 1";
 			break; // end all
 		} // end switch for view_query
+
+		// Category A (2.6e): one point of assembly. Nothing reaches the SQL text
+		// unless it is exactly one of the literals the switch above sets, so a
+		// later edit cannot route caller data in here unnoticed. Fails closed to
+		// the empty fragment - the one the 'unpaid' case emits.
+		if (!in_array($view_query, array(
+			"procbalcurrent = '0'", "procbalcurrent !='0'", "1 == 1", ''
+		), true)) { $view_query = ''; }
 
 		$query = "SELECT ".
 				"pr.id AS id, ".
@@ -1178,7 +1198,12 @@ class PaymentModule extends EMRModule {
 				"LEFT OUTER JOIN cpt c ON pr.proccpt=c.id ". 
 				"LEFT OUTER JOIN cptmod cm ON pr.proccptmod=cm.id ". 
 			"WHERE ".
-				"( procpatient = '".addslashes($patient)."' AND  ${view_query} ) ".
+				// Category A (2.6e): procpatient is BIGINT UNSIGNED
+				// (data/schema/mysql/procrec.sql:29), so the patient id is cast to
+				// an integer instead of being quoted and no caller value can reach
+				// the statement. MySQL compares a quoted numeric string and the
+				// same integer identically for this column, so no row set moves.
+				"( procpatient = ".intval($patient)." AND  ".$view_query." ) ".
 			"ORDER BY procdt,id";
 		$result = $sql->queryAll ($query);
 
