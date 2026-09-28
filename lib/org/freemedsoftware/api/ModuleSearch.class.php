@@ -32,7 +32,7 @@ class ModuleSearch {
 	public function picklist ( $keyword,$moduleType=NULL ) {
 		$q = "";
 		if($moduleType)
-			$q = "module_associations='".$moduleType."' and ";
+			$q = "module_associations=".$GLOBALS['sql']->quote($moduleType)." and ";
 		$q = $q."module_name LIKE '" . $GLOBALS['sql']->escape( $keyword ) . "%'";
  		$query = "SELECT module_name,module_class FROM modules WHERE " . $q;
 		syslog(LOG_INFO, "PICK| $query");
