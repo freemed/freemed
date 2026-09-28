@@ -12,6 +12,16 @@ PROVENANCE
                        lib/freemed.php's error_reporting(E_ERROR|E_WARNING|E_PARSE) masks the
                        E_USER_ERROR, so the endpoint answers an empty 200 and nothing can be
                        measured. Stated here because every row below depends on it.
+                       FIX ROUND 1 (R23): the rows below — captured before the fix — did depend
+                       on this. They no longer do, and any future run must not be read against
+                       this caveat: commit f0d53619 replaces the argv guard with
+                       `if (PHP_SAPI === 'cli')`, which no ini setting can move. Re-measured at
+                       HEAD under BOTH settings, with Apache gracefully restarted between them,
+                       with identical results: anonymous 401/0 bytes, ?user=clerk&hash=<correct md5>
+                       401/0 bytes, clerk ?physician=1 403/33 bytes, ?type=fromdate&m=13&d=45&y=2026
+                       400/13 bytes. Under register_argc_argv=On an unmodified copy of this file
+                       (the argv guard) answered an empty 200 to every one of those query-string
+                       requests. See section 6 for the full run.
   display_errors       On (harness php-overrides.ini). Warnings therefore appear inside the
                        response bodies in this harness. A production install with
                        display_errors=Off receives the same payload without the warning line —
@@ -19,6 +29,18 @@ PROVENANCE
   measurement          ./transcript.sh, one curl per case; the request URL, the Basic
                        Authorization header and curl's `user` option are all fed in through a
                        0600 curl config file, so no credential ever appears in argv.
+  syslog capture       every "--- syslog lines for this request" block below is read from a
+                       THROWAWAY Perl SOCK_DGRAM listener this harness starts on /dev/log
+                       (vcal-work/syslog-sink.pl, appending to /tmp/freemed-syslog.log, with
+                       `chmod 777 /dev/log` so www-data can write the socket). The php:8.3-apache
+                       image ships no syslog daemon and no /dev/log, so without that sink every
+                       syslog() call in FreeMED is silently discarded. The syslog CALLS are
+                       product code; the SINK is a harness artifact and does not ship.
+                       FIX ROUND 1 (Minor-2): this line is the disclosure the review asked for.
+                       The driver is also polled for ALL new sink lines; the original poll
+                       filtered on the string "vcalendar", which is why the
+                       "ACL| schedule/view// forced for admin user" line (it does not contain
+                       that string) was missing from the provider-scope rows.
   REDACTION            the password is <pw>, the Basic credentials are <b64 ...>, the stored MD5
                        digest is <correct md5> and an impossible digest is <bogus md5>; any other
                        32-hex token is <32-hex digest>. The digest was confirmed to match the
@@ -539,6 +561,12 @@ distinct classes) was checked before the seed and again after the teardown:
    challenge; the Basic branch authenticates and answers text/x-vCalendar.
 
 ######## PHASE=post BASE=http://localhost:38081 commit=62af8f2b ########
+   FIX ROUND 1 (Minor-7): header and title disagree, and the header is the precise one. The
+   section above is titled "574ac616 + 7a60d3ab applied", but the tree actually SERVED for this
+   run was commit 62af8f2b — the HEAD at the time, which carries task 3.2's provider scoping on
+   top of this task's two commits. Read this transcript as "the 3.1 fix measured on a tree that
+   also contains 3.2", not as a 3.1-only tree. The post-fix rows below are therefore identical
+   for the 3.1 and 3.2 questions by construction, not by coincidence.
 
 ===== CASE anonymous
 --- request (redacted)  : http://localhost:38081/vcalendar.php  auth=none
@@ -832,7 +860,7 @@ distinct classes) was checked before the seed and again after the teardown:
 --- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=physbad:vcphys
 --- curl config (redacted):
       url = "http://localhost:38081/vcalendar.php?physician=1"
-      header = "Authorization: Basic dmNwaHlzOndyb25nLXBhc3N3b3JkLXh5eg=="
+      header = "Authorization: Basic <b64 vcphys:wrong>"
 --- HTTP status         : 401
 --- Content-Type        : text/html; charset=UTF-8
 --- Content-Disposition : 
@@ -1084,3 +1112,111 @@ body(no calendar marker matched, excerpt as received):
        "strpos(): Argument #1 ($haystack) must be of type string, array given". The seeded
        provider deliberately has no degree reference, which is why the envelope above is emitted.
        Recorded for a follow-up; the authorised bounded guard did not extend to it.
+
+6. FIX ROUND 1 — the SAPI guard (R23), the layout-independence proof, the timing measurement
+
+   Commits f0d53619 (SAPI guard), 12622abe (!empty($d) refinement), 6d264546 (the doc/ note).
+   Every row in sections 1-5 above is UNCHANGED: it is the historical capture, and it is accurate
+   for the tree that was served at the time. Everything below was measured after f0d53619 and
+   12622abe, with the served copy re-synced and verified byte-identical (md5sum) to the checkout.
+
+6.1 CLI entrypoint — still refused, and now by a test no ini setting can move
+
+   $ docker exec freemed-verify-apache php /var/www/html/vcalendar.php
+   (no output)
+   exit=255
+
+   Control: the same file with the guard's condition disabled (harness-only copy in the container,
+   /tmp/vcalendar-noguard.php; nothing in the checkout was touched):
+
+   $ docker exec -w /var/www/html freemed-verify-apache php /tmp/vcalendar-noguard.php
+   PHP Fatal error:  Uncaught Error: Call to undefined function getallheaders() in /tmp/vcalendar-noguard.php:68
+   Stack trace:
+   #0 /tmp/vcalendar-noguard.php(174): freemed_basic_auth()
+   #1 {main}
+     thrown in /tmp/vcalendar-noguard.php on line 68
+   exit=255
+
+   Reading: the guarded run halts at the guard, before ANY web-only code is reached; with the
+   guard disabled the same run gets past it and dies on getallheaders(), which does not exist in
+   the CLI SAPI. So "the CLI invocation hits the guard" is observed by the halt (255) and by that
+   differential — NOT by printed text. The guard's E_USER_ERROR message is suppressed by
+   lib/freemed.php:61's error_reporting(E_ERROR|E_WARNING|E_PARSE) in BOTH the old and the new
+   idiom; measured directly, so nobody has to take it on trust:
+
+   $ docker exec freemed-verify-apache php -r 'error_reporting(E_ERROR|E_WARNING|E_PARSE); ini_set("display_errors","1"); trigger_error("MASKED-E_USER_ERROR", E_USER_ERROR); echo "REACHED CODE AFTER THE GUARD\n";'
+   (no output)
+   exit=255
+
+   That mask is a property of this codebase's error configuration, not of this change — it is the
+   same mask that turned the guard's web misfire into a silent empty 200.
+
+6.2 Layout independence — register_argc_argv On and Off, Apache gracefully restarted between
+
+   The setting is /usr/local/etc/php/conf.d/zz-freemed-verify.ini:13, edited IN PLACE with sed
+   (not appended twice) and re-read after each change; `apache2ctl -k graceful` between runs. The
+   image still has no active php.ini:
+   $ docker exec freemed-verify-apache ls /usr/local/etc/php/php.ini
+   ls: cannot access '/usr/local/etc/php/php.ini': No such file or directory
+
+   vcalendar.php as fixed (SAPI guard), the six probes of vcal-fix1/probe-layout.sh:
+
+     request                                        register_argc_argv=On     =Off
+     /vcalendar.php                        anon     401 / 0 bytes             401 / 0 bytes
+     ?user=clerk&hash=<correct md5>        anon     401 / 0 bytes             401 / 0 bytes
+     ?physician=1                          clerk    403 / 33 bytes            403 / 33 bytes
+     ?type=fromdate&m=13&d=45&y=2026       admin    400 / 13 bytes            400 / 13 bytes
+     ?physician=1                          admin    200 / text/x-vCalendar     200 / text/x-vCalendar
+     (no query string)                     admin    200 / text/x-vCalendar     200 / text/x-vCalendar
+
+   Identical in both states, and identical to the section-2 post-fix rows. That is the whole point
+   of R23: the fix no longer depends on an ini setting.
+
+   Control — vcalendar-oldguard.php (this same file at the previous round's state, i.e.
+   `if (isset($_SERVER['argc']) and $_SERVER['argc'])`), with register_argc_argv=On:
+
+     request                                        argv-guard copy, =On
+     /vcalendar.php                        anon     401 / 0 bytes
+     ?user=clerk&hash=<correct md5>        anon     200 / 0 bytes   <-- empty 200, no status, no body
+     ?physician=1                          clerk    200 / 0 bytes   <-- idem
+     ?type=fromdate&m=13&d=45&y=2026       admin    200 / 0 bytes   <-- idem
+     ?physician=1                          admin    200 / 0 bytes   <-- idem
+     (no query string)                     admin    200 / 220 bytes text/x-vCalendar (reaches the endpoint)
+
+   The finding from the review is therefore reproduced end to end, not merely restated: with the
+   argv guard, EVERY query-string request is answered by an empty 200 with no status and no body,
+   while the request without a query string (argc 0) reaches the endpoint normally. On that
+   layout neither the vulnerability nor the 401/403/400 above is observable, and
+   ?physician=/?type=fromdate clients cannot use the endpoint at all.
+
+6.3 The credential-comparison timing measurement (Minor-4 — the brief's Verification line)
+
+   Driver vcal-fix1/timing.sh: 50 sequential requests per branch, same endpoint, same account,
+   differing only in whether the supplied password is the correct one. Raw per-request times are
+   in vcal-fix1/timing-raw/{correct,wrong}.txt.
+
+     branch A: correct password (hash_equals matches -> 200)   50/50 responses 200
+     branch B: wrong password   (hash_equals fails   -> 401)   50/50 responses 401
+
+     correct password                   n=50  min=0.001541  median=0.002053  mean=0.002101  max=0.004688
+     wrong password                     n=50  min=0.001292  median=0.001667  mean=0.001654  max=0.002023
+
+     median(correct)=0.002053  median(wrong)=0.001667  |diff|=0.000386 s
+
+   Reading, stated so nobody over-reads it: the branches are NOT the same amount of work. The
+   correct credential proceeds into the calendar render - object construction, queries, the
+   vCalendar body - while a rejected one returns at the 401. The 0.39 ms difference measures the
+   successful branch's downstream work, so it cannot be read as a comparison cost, and this
+   measurement is nowhere near precise enough to resolve one: %{time_total} is a whole round trip
+   over loopback through Apache and the FreeMED bootstrap (settings.php, lib/freemed.php, the DB
+   connection), ~ms, while a hash_equals() over two 32-character ASCII strings is ~ns.
+
+   The property the brief is asking about is constant-time BY CONSTRUCTION, and that is where it
+   holds, exactly as the reviewer wrote: both branches execute exactly ONE hash_equals() over two
+   32-character strings - the stored MD5 hex digest and md5($pass) - so the compared lengths are
+   equal on every request, including a wrong password, and there is no early-exit inside the
+   comparison that a rejected credential can take. That replaced the previous SQL
+   `userpassword = MD5('<pass>')` comparison. The measurement above was taken because the brief
+   asks for it; it is evidence that no gross difference exists, not evidence of the constant-time
+   property, which is an inspection result (hash_equals is documented constant-time for equal
+   lengths).

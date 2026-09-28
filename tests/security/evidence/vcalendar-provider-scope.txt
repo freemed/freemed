@@ -5,6 +5,20 @@ PROVENANCE
   pre-fix base         8938de83
   fix commit           62af8f2b  SECURITY: scope the vCalendar provider to the authenticated caller (CWE-639)
   server / harness     Apache/2.4.68 (Debian), PHP 8.3.35, http://localhost:38081
+  register_argc_argv   Off (container php ini). FIX ROUND 1 (R23): the rows below were captured
+                       under that setting, but they no longer depend on it — commit f0d53619
+                       replaces the script's argv CLI guard with `if (PHP_SAPI === 'cli')`, which
+                       no ini setting can move. Re-measured under BOTH settings with identical
+                       results (section 5).
+  syslog capture       harness-only, and the disclosure Minor-2 asked for: every syslog block
+                       below is read from a THROWAWAY Perl SOCK_DGRAM listener on /dev/log
+                       (vcal-work/syslog-sink.pl -> /tmp/freemed-syslog.log, with /dev/log
+                       chmod 777). The php:8.3-apache image ships no syslog daemon and no
+                       /dev/log, so without that sink every syslog() call in FreeMED is silently
+                       discarded. The syslog CALLS are product code; the SINK is not, and does
+                       not ship. Full description in vcalendar-auth.txt PROVENANCE.
+                       FIX ROUND 1: the driver is now polled for ALL new sink lines rather than
+                       only those containing "vcalendar" — see the note under the ?physician=2 row.
   accounts             admin  (user id 1, super, userrealphy 1) — user_number 1, so freemed::acl()
                               force-returns true for it
                        clerk  (user id 2, misc,  userrealphy 0)
@@ -163,6 +177,14 @@ distinct classes) was checked before the seed and again after the teardown:
     END:VCALENDAR
 
 --- syslog lines for this request:
+    (empty — and correctly so)
+      FIX ROUND 1 (Minor-1) CLARIFICATION: this request asks for physician 1, which IS admin's
+      own provider (basic_auth_phy = 1). The scoping branch in vcalendar.php is therefore not
+      entered at all — the code compares $__requested (1) with $__phy (1), finds them equal, and
+      never calls freemed::acl(). Re-captured with the sink polled for ALL new lines, not just
+      those containing "vcalendar": still zero lines. The
+      "ACL| schedule/view// forced for admin user" line belongs to the ?physician=2 row below,
+      not to this one, and this row is not evidence of an ACL permit.
 
 ===== CASE anonymous-physician-1
 --- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=none
@@ -214,6 +236,17 @@ distinct classes) was checked before the seed and again after the teardown:
     END:VCALENDAR
 
 --- syslog lines for this request:
+    (empty in the original capture — here is the line it should have carried)
+      FIX ROUND 1 (Minor-1) ADDITION, NOT from the same run as the rows around it: captured
+      2026-09-28 18:55:36 at commit 6d264546, with the same seed and the same request
+      (?physician=2, Basic admin), driver vcal-fix1/acceptance-3.2.sh, which polls the sink for
+      ALL new lines instead of only those containing "vcalendar":
+    2026-09-28 18:55:36 <134>Sep 28 18:55:36 freemed[10462]: ACL| schedule/view// forced for admin user
+      This is the only line that distinguishes "permitted by an ACL grant" from "permitted by
+      the admin short-circuit", which is section 3's point: gacl::acl_check('schedule','view',
+      'user',1) is FALSE for admin too (section 3.2), so the permit for physician 2 comes from the
+      `$user == 1` short circuit in freemed::acl() (lib/API.php:63), not from a grant. Priority
+      134 = LOG_INFO. Reproduced independently by the reviewer (5 occurrences in the sink).
 
 ===== CASE phys-self-physician-1
 --- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=physbasic:vcphys
@@ -279,7 +312,7 @@ distinct classes) was checked before the seed and again after the teardown:
 --- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=physbad:vcphys
 --- curl config (redacted):
       url = "http://localhost:38081/vcalendar.php?physician=1"
-      header = "Authorization: Basic dmNwaHlzOndyb25nLXBhc3N3b3JkLXh5eg=="
+      header = "Authorization: Basic <b64 vcphys:wrong>"
 --- HTTP status         : 401
 --- Content-Type        : text/html; charset=UTF-8
 --- Content-Disposition : 
@@ -339,3 +372,78 @@ acl_check('schedule','view','user',3) = false
      that www-data could not write. That is a harness artifact of the throwaway stack, not a
      product defect: chowning that directory to www-data made acl_check() work (section 3.2) and
      the endpoint's error path already treats such a failure as "deny", never as "allow".
+
+5. FIX ROUND 1 — the four acceptance cases re-measured at HEAD, under the SAPI guard
+
+   Fix-round-1 commits: f0d53619 (SAPI guard), 12622abe (!empty($d) refinement), 6d264546 (doc/).
+   Driver: vcal-fix1/acceptance-3.2.sh, which polls the sink for ALL new lines rather than only
+   those containing "vcalendar" (see PROVENANCE, and the note under the ?physician=2 row above).
+   Same seed as sections 1-4 (practice 1, physician 1, user 3 vcphys), torn down afterwards, and
+   the pinned fingerprint re-verified identical before and after.
+
+   ONE REAL CHANGE versus section 2, and it is the point of 12622abe: PRODID now reads
+   "Val Q. Verifier" (220 bytes) where section 2 recorded "Val Q. Verifier, " (222 bytes). That
+   trailing ", " was the app-wide artefact in Physician::fullName()'s default return path, not a
+   vCalendar one; it is gone. Everything else in these rows is unchanged from section 2.
+
+   Captured 2026-09-28 18:55:29-18:55:43, register_argc_argv=Off:
+
+   CASE basic-clerk-physician-1        ?physician=1  clerk
+     HTTP 403  text/html  33 bytes   "Not authorized for that provider."
+     syslog: vCalendar [get] provider 1 refused for user 2            (<133> LOG_NOTICE)
+
+   CASE basic-admin-physician-1        ?physician=1  admin
+     HTTP 200  text/x-vCalendar;charset=UTF-8  220 bytes
+     BEGIN:VCALENDAR / VERSION:1.0 / PRODID:Val Q. Verifier / TZ:-07 / END:VCALENDAR
+     syslog: (none — see the clarification on this row in section 2: physician 1 IS admin's own
+             provider, so the ACL is never consulted)
+
+   CASE basic-admin-no-param           (no query)    admin
+     HTTP 200  text/x-vCalendar;charset=UTF-8  220 bytes   PRODID:Val Q. Verifier
+     syslog: (none)
+
+   CASE basic-admin-physician-2        ?physician=2  admin
+     HTTP 200  text/html  1611 bytes (physician 2 does not exist -> warnings, permit path reached)
+     syslog: ACL| schedule/view// forced for admin user                (<134> LOG_INFO)
+
+   CASE phys-self-physician-1          ?physician=1  vcphys
+     HTTP 200  text/x-vCalendar;charset=UTF-8  220 bytes   PRODID:Val Q. Verifier
+     syslog: (none)
+
+   CASE phys-self-no-param             (no query)    vcphys
+     HTTP 200  text/x-vCalendar;charset=UTF-8  220 bytes   PRODID:Val Q. Verifier
+     syslog: (none)
+
+   CASE phys-other-physician-2         ?physician=2  vcphys
+     HTTP 403  text/html  33 bytes   "Not authorized for that provider."
+     syslog: vCalendar [get] provider 2 refused for user 3            (<133> LOG_NOTICE)
+
+   CASE clerk-physician-array-shaped   ?physician[]=1  clerk
+     HTTP 403  text/html  33 bytes   "Not authorized for that provider."   (no bypass)
+     syslog: vCalendar [get] provider 1 refused for user 2
+
+   CASE clerk-physician-numeric-junk   ?physician=1abc  clerk
+     HTTP 403  text/html  33 bytes   "Not authorized for that provider."   (no bypass)
+     syslog: vCalendar [get] provider 1 refused for user 2
+
+   CASE phys-wrong-password            ?physician=1  vcphys + wrong password
+     HTTP 401  text/html  15 bytes   "Not authorized."
+     syslog: (none)
+
+   CASE anonymous-physician-1          ?physician=1  no credentials
+     HTTP 401  text/html  0 bytes
+     syslog: (none)
+
+   The four acceptance cases of the 3.2 brief map to basic-clerk-physician-1 (403),
+   basic-admin-physician-1 + basic-admin-no-param (200 with the calendar), phys-self-physician-1
+   + phys-self-no-param (200 for self) and phys-other-physician-2 (403 for another provider).
+   The two shape attacks (array-shaped and numeric-junk) are re-confirmed to produce no bypass,
+   and the 403 status is still carried on the wire rather than degraded to a 200.
+
+   The same eleven requests were re-run unchanged with register_argc_argv=On, Apache gracefully
+   restarted in between, and produced the same statuses and the same byte counts. Mechanically
+   compared: the two runs' status / Content-Type / byte-count / PRODID / syslog-message lines
+   (53 lines, timestamps and PIDs normalised) diff to ZERO differences. Raw captures:
+   vcal-fix1/acceptance-3.2.txt (=Off) and vcal-fix1/acceptance-3.2-ON.txt (=On).
+   vcalendar-auth.txt section 6.2 has the six-probe version of the same comparison plus the
+   argv-guard control that shows what the old idiom did on that layout.
