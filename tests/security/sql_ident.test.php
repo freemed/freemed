@@ -155,7 +155,7 @@ foreach (array('ptst' => 'active', 'p.ptlname' => 'zeta') as $in => $want) {
 }
 
 // ===========================================================================
-echo "\n-- columns(): accepted (the 18 expression-shaped literals in the tree) --\n";
+echo "\n-- columns(): accepted (the 9 expression-shaped literals this section drives; the whole inventory is cross-checked below) --\n";
 // ===========================================================================
 $accept_columns = array(
 	'pdate,problem'                      => '`pdate`, `problem`',

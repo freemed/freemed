@@ -59,9 +59,14 @@
 //     the policy in the data file), and two of them keep the round-1 "dead
 //     code" claim from coming back into the source.
 //   * The class-axis rows parse the '#class-axis' section of the committed
-//     enumeration and pin the measured exposure (866 pairs, 803 unlisted for
-//     the eight module_function literals). They fail if that section is
-//     removed or if the measurement drifts without being re-taken.
+//     enumeration and pin the THREE measurements that section carries, not one:
+//     the eight module_function literals (866 pairs, 803 unlisted, 63 listed),
+//     the print wrappers' +RenderToPDF pairs as a separate definition
+//     (37 / 37 unlisted / 0 listed) and the eight literals restricted to the
+//     classes the shipped list names (423 / 360 unlisted / 63). They fail if
+//     that section is removed or if any of the three drifts without being
+//     re-taken. (Earlier revisions of this header quoted only the first of the
+//     three, which read as if it were the section's whole measurement.)
 
 $class_file = dirname(__FILE__) . '/../../lib/org/freemedsoftware/core/Relay_Allowlist.class.php';
 if (file_exists($class_file)) { require_once $class_file; }
