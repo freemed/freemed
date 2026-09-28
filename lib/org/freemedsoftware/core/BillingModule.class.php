@@ -22,6 +22,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('org.freemedsoftware.core.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
 
 class BillingModule extends BaseModule {
 
@@ -38,9 +39,47 @@ class BillingModule extends BaseModule {
 
 	// contructor method
 	public function __construct ( ) {
+		// Enforce the SQL identifier invariant (Task 2.6b / ruling R12) for the
+		// identifiers this class declares. It descends from BaseModule, so
+		// neither SupportModule::_ValidateIdentifiers() nor EMRModule's covers
+		// it, and $table_name/$order_field are set by child modules.
+		$this->_ValidateIdentifiers();
+
 		// call parent constructor
 		parent::__construct ();
 	} // end function BillingModule
+
+	// Method: _ValidateIdentifiers
+	//
+	//	Class-declared $table_name/$order_field come from module source, never
+	//	from input or from the database, so a failure is a developer error
+	//	reported loudly with trigger_error() (the same invariant the other base
+	//	classes enforce; see lib/org/freemedsoftware/core/SqlIdent.class.php).
+	//
+	//	An undeclared/empty identifier is not a failure: it is simply absent.
+	//
+	protected function _ValidateIdentifiers ( ) {
+		if ( $this->table_name !== NULL and $this->table_name !== '' and $this->table_name !== false ) {
+			if ( !SqlIdent::valid( $this->table_name ) ) {
+				trigger_error(
+					get_class($this).'::$table_name = '.var_export($this->table_name, true)
+					. ' is not a valid SQL identifier (expected a name, optionally table-qualified);'
+					. ' fix the module declaration',
+					E_USER_ERROR
+				);
+			}
+		}
+		if ( $this->order_field !== NULL and $this->order_field !== '' and $this->order_field !== false ) {
+			if ( !SqlIdent::validColumns( $this->order_field ) ) {
+				trigger_error(
+					get_class($this).'::$order_field = '.var_export($this->order_field, true)
+					. ' is not a valid SQL identifier list (expected names/ASC-DESC);'
+					. ' fix the module declaration',
+					E_USER_ERROR
+				);
+			}
+		}
+	} // end method _ValidateIdentifiers
 
 	// all reporting data must stipped of junk
 	// and all upper cased
@@ -92,7 +131,7 @@ class BillingModule extends BaseModule {
 		{
 			if ($i != 0)
 				$where .= " OR ";
-			$where .= "proccurcovtp='".$covs[$i]."'";
+			$where .= "proccurcovtp=".$GLOBALS['sql']->quote($covs[$i]);
 
 		}
 		$where .= ")";
@@ -127,10 +166,10 @@ class BillingModule extends BaseModule {
 		}
 
 		$query = "SELECT * FROM procrec ".
-			"WHERE (proccurcovtp = '$covtype' AND ".
-			"proccurcovid = '$covid' AND ".
+			"WHERE (proccurcovtp = ".$GLOBALS['sql']->quote($covtype)." AND ".
+			"proccurcovid = ".$GLOBALS['sql']->quote($covid)." AND ".
 			"procbalcurrent > '0' AND ".
-			"procpatient = '$covpatient' AND ".
+			"procpatient = ".$GLOBALS['sql']->quote($covpatient)." AND ".
 //			"procbillable = '0' AND ".
 			"procbilled = '0') ".
 			"ORDER BY procpos,procphysician,procrefdoc,proceoc,procclmtp,procauth,proccov1,proccov2,procdt";
@@ -184,7 +223,7 @@ class BillingModule extends BaseModule {
 				//$display_buffer .= "proc $prc for patient $pat<br/>";
        				// start of insert loop for billed legder entries
        				$query = "SELECT procbalcurrent,proccurcovid,proccurcovtp FROM procrec";
-				$query .= " WHERE id='".$prc."'";
+				$query .= " WHERE id=".intval($prc);
 	       			$result = $sql->query($query);
        				if (!$result) {
 	       				$display_buffer .= "Mark failed getting procrecs<br/>";
@@ -221,7 +260,7 @@ class BillingModule extends BaseModule {
 				}
 
        				$query = "UPDATE procrec SET procbilled = '1',procdtbilled = '".addslashes($cur_date)."'".
-						 " WHERE id = '".$prc."'";
+						 " WHERE id = ".intval($prc);
 				//$display_buffer .= "procrec update query $query<BR>";
        				$proc_result = $sql->query ($query);
        				if ($result) { 
