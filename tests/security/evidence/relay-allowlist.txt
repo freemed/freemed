@@ -5,12 +5,13 @@
 # hand-written except this header.
 #
 # COMMIT / SERVER / CONFIG EACH ROW CAME FROM
-#   checkout commit  : 49c11bc6aff178eea302ea22e31286e65c5737ac
+#   checkout commit  : 2a55da8fb0fe974660f32b6073d941a276e4b5cf
 #   branch           : security/mitigation-2026-09
 #   served tree      : the harness's rsync copy of that checkout (sync-code.sh),
 #                      which is what the web server serves. The served data file
 #                      was byte-identical to the checkout's before Phase A and
-#                      again after Phase C (Phase C prints the cmp result).
+#                      again after Phase C (Phase C prints the cmp result, and the
+#                      pattern count it prints is 323 - the shipped count).
 #   server           : http://localhost:38081 (Apache + mod_php, docroot
 #                      /var/www/html). The fpm/nginx stack on :38082 was not used
 #                      for these rows: only the Apache container has the syslog
@@ -24,8 +25,8 @@
 #                      priority of the relay's own pre-existing
 #                      "method = ..., provider = Json" line.
 #   database         : MariaDB 10.11 in freemed-verify-db, the reduced Phase 0.3
-#                      seed. The pinned fingerprint is at the end, unchanged from
-#                      the pre-flight baseline.
+#                      seed. The pinned fingerprint is at the end and is unchanged
+#                      from the pre-flight baseline.
 #   session          : obtained with the harness's /login-probe.php
 #                      (curl -s -c /tmp/fm.jar ...), which calls the public
 #                      Login.Validate/LoggedIn through CallMethod. No credential
@@ -42,7 +43,8 @@
 #   No credentials, no 32-hex digests, no PHI. The single edit to captured
 #   output is `username = admin` -> `username = <user>` in one syslog line.
 #   `remote=192.168.128.1` is the Docker bridge gateway and is kept: the remote
-#   address is the part of the log line an operator acts on.
+#   address is the part of the log line an operator acts on. (The one 32-hex run
+#   in this file is the checkout commit above.)
 #
 # WHAT IS *NOT* PROVEN BY THIS FILE
 #   The compiled-GWT click-through smoke pass. There is no compiled client in
@@ -52,31 +54,33 @@
 #   doc/RELAY_ALLOWLIST.
 #
 # =============================================================================
-# NOTE - the enumeration artifact and the commit it names
-# =============================================================================
-#   tests/security/evidence/relay-callset.txt says "Generated at commit
-#   49c11bc6aff178eea302ea22e31286e65c5737ac": that is the commit whose data file
-#   it seeded, and the commit every probe below ran against. Re-running the
-#   generator at the stage-1 commit 1ae0e45f yields BYTE-IDENTICAL rows and
-#   provenance - the only difference in the whole file is the "# Generated at
-#   commit" line itself, because the mechanism commit touched no mined tree
-#   (ui/gwt/src/main/java, ui/dojo, data/emrview, the templates, the root request
-#   scripts). Measured:
-#       php tests/security/relay-callset-enum.php <head> <branch> | diff - \
-#           <(grep -v '^# Generated at commit\|^# Branch:' relay-callset.txt)
-#       => no differences outside those two lines
-#
-# =============================================================================
-# PREREQUISITE NOTE - a config edit is not instant
+# PREREQUISITE - a config edit is not instant, and the lag is PER WORKER
 # =============================================================================
 #   OPcache is enabled in both containers with validate_timestamps=On and
-#   revalidate_freq=2 (the php.ini-production default), so for a moment after
-#   editing 'enforce' a worker can still serve the OLD config. The probe
-#   MEASURES convergence (the "running PHP reflects it after Ns" lines) rather
-#   than assuming it, and asserts nothing it has not observed. The enable
-#   procedure in the data file repeats this: give the change a moment, or reload
-#   PHP. Without it, reading the file's mtime and believing the running server
-#   agrees is how a rollout gets misread.
+#   revalidate_freq=2 (the php.ini-production default), so after editing
+#   'enforce' a worker can still serve the OLD config for a moment. Two Apache
+#   children can disagree: the first draft of this script alternated between a
+#   worker that had revalidated and one that had not, and produced a false "the
+#   control is not working" plus a false PASS on a row that should have been
+#   refused. So Phase B reloads PHP (apache2ctl graceful -> new workers with an
+#   empty OPcache) after each edit, which is exactly the "or reload PHP" remedy
+#   the operator documentation gives, and every phase still MEASURES convergence
+#   (the "running PHP reflects it after Ns" lines) rather than assuming it.
+#
+# =============================================================================
+# NOTE - the enumeration artifacts
+# =============================================================================
+#   tests/security/evidence/relay-callset.txt says "Generated at commit
+#   2a55da8f...", i.e. the commit whose data file its 323 rows seeded. Its five
+#   inputs are named in its own header; the fourth, the stack's access log, is
+#   captured in tests/security/evidence/relay-accesslog.txt.
+#   Reproducibility, measured twice:
+#       php tests/security/relay-callset-enum.php <sha> <branch> \
+#           tests/security/evidence/relay-accesslog.txt > /tmp/regen.txt
+#       diff -q /tmp/regen.txt tests/security/evidence/relay-callset.txt
+#       => identical (deterministic from the committed inputs)
+#   The access log is read as a COMMITTED CAPTURE (a file passed in), never from
+#   the container, so the artifact does not drift with the container's log.
 #
 # =============================================================================
 # PHASE A - the SHIPPED state: enforce = false (LOG-ONLY)
@@ -97,41 +101,41 @@
 -- A2 LISTED, with session: the 2.2-2.5 method must still answer --
   UserInterface.GetUsers(param0=Ada) returns its rows            ASSERTED
       body: [["Ada  Admin, ","1"]] [http=200]
-      syslog: 2026-09-28 19:14:22 <134>Sep 28 19:14:22 freemed[12771]: method = org.freemedsoftware.api.UserInterface.GetUsers, provider = Json
+      syslog: 2026-09-28 19:25:32 <134>Sep 28 19:25:32 freemed[12767]: method = org.freemedsoftware.api.UserInterface.GetUsers, provider = Json
 
 -- A3 UNLISTED, with session: log-only means it STILL RUNS --
   UserInterface.getRel (UNLISTED) is NOT refused: it executes    ASSERTED
       body: {"---":"","Catholic":"0","Jewish":"1","Eastern Orthodox":"2","Baptist":"3","Methodist":"4","Lutheran":"5","Presbyterian":"6","United Church of God":"7","Episcopalian":"8","Adventist":"9","Assembly of God":"10","Brethren":"11","Christian Scientist":"12","Church of Christ":"13","Church of God":"14","D
       allowlist entries matching UserInterface.getRel: 0
-      syslog: 2026-09-28 19:14:22 <134>Sep 28 19:14:22 freemed[12767]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
-      syslog: 2026-09-28 19:14:22 <132>Sep 28 19:14:22 freemed[12767]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+      syslog: 2026-09-28 19:25:32 <134>Sep 28 19:25:32 freemed[12768]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
+      syslog: 2026-09-28 19:25:32 <132>Sep 28 19:25:32 freemed[12768]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
   module.Vitals.GetList (UNLISTED) is NOT refused either         ASSERTED
       body: <br /> <b>Fatal error</b>:  Uncaught Error: Maximum call stack size of 8339456 bytes (zend.max_allowed_stack_size - zend.reserved_stack_size) reached. Infinite recursion? in /var/www/html/lib/net/php/pear/Services/JSON.php:241 Stack trace: #0 [internal function]: Services_JSON-&gt;encode('DB Error: 
       log-only changes nothing at all: this call still produces its pre-existing
       serializer fatal (a DB_Error reaching Services_JSON::encode), exactly as before.
       allowlist entries matching module.Vitals.GetList: 0
-      syslog: 2026-09-28 19:14:22 <134>Sep 28 19:14:22 freemed[12768]: method = org.freemedsoftware.module.Vitals.GetList, provider = Json
-      syslog: 2026-09-28 19:14:22 <132>Sep 28 19:14:22 freemed[12768]: Relay: method 'org.freemedsoftware.module.Vitals.GetList' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[13231]: method = org.freemedsoftware.module.Vitals.GetList, provider = Json
+      syslog: 2026-09-28 19:25:33 <132>Sep 28 19:25:33 freemed[13231]: Relay: method 'org.freemedsoftware.module.Vitals.GetList' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
 
 -- A4 UNLISTED public.*, no cookie: log-only, so the login-guard exemption still applies --
   public.Login.NotARealMethod (UNLISTED) is NOT refused by the allowlist ASSERTED
       body: <br /> <b>Fatal error</b>:  Uncaught TypeError: call_user_func_array(): Argument #1 ($callback) must be a valid callback, class Login does not have a method &quot;NotARealMethod&quot; in /var/www/html/lib/loader.php:66 Stack trace: #0 /var/www/html/lib/org/freemedsoftware/core/Relay.class.php(81): C
       NOT INVALID_SESSION either => the public.* login exemption is unchanged.
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[13231]: method = org.freemedsoftware.public.Login.NotARealMethod, provider = Json
-      syslog: 2026-09-28 19:14:23 <132>Sep 28 19:14:23 freemed[13231]: Relay: method 'org.freemedsoftware.public.Login.NotARealMethod' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12769]: method = org.freemedsoftware.public.Login.NotARealMethod, provider = Json
+      syslog: 2026-09-28 19:25:33 <132>Sep 28 19:25:33 freemed[12769]: Relay: method 'org.freemedsoftware.public.Login.NotARealMethod' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
 
 -- A5 LISTED public.*, NO cookie: the login bypass is unchanged --
   public.Login.GetLanguages, no cookie, returns the languages    ASSERTED
       body: [["Deutsch","de_DE"],["English","en_US"],["Spanish (Mexico)","es_MX"],["Francais","fr_FR"],["Polski","pl_PL"]] [http=200]
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[12769]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12770]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
 
 -- A6 LISTED public.*, NO cookie: the login POST itself (password not printed) --
   public.Login.Validate, no cookie, authenticates                ASSERTED
       body: true [http=200]
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[12770]: method = org.freemedsoftware.public.Login.Validate, provider = Json
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[12770]: username = <user>
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[12770]: SessionPopulate called
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[12770]: SessionPopulate called, proceeding
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: method = org.freemedsoftware.public.Login.Validate, provider = Json
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: username = <user>
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: SessionPopulate called
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: SessionPopulate called, proceeding
 
 residual mismatches in this phase: 0
 PHASE_A_EXIT=0
@@ -141,8 +145,10 @@ PHASE_A_EXIT=0
 # =============================================================================
 == Phase B: ENFORCING state (enforce = true) ==
    server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+      reloading PHP (apache2ctl graceful): a per-worker OPcache is why the file's
+      mtime alone is not enough — this is the remedy doc/RELAY_ALLOWLIST gives operators.
    served enforce   : 'enforce' => true,
-   php sees         : true patterns=317
+   php sees         : true patterns=323
 
 -- B0 convergence: a config edit is not instant (OPcache revalidate_freq) --
       enforce=true           running PHP reflects it after 1s (observed: refused (INVALID_CALL))
@@ -153,25 +159,25 @@ PHASE_A_EXIT=0
 -- B2 LISTED, with session: still answers (not a blanket refusal) --
   UserInterface.GetUsers(param0=Ada) STILL returns its rows      ASSERTED
       body: [["Ada  Admin, ","1"]] [http=200]
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[12768]: method = org.freemedsoftware.api.UserInterface.GetUsers, provider = Json
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14348]: method = org.freemedsoftware.api.UserInterface.GetUsers, provider = Json
 
 -- B3 UNLISTED, with session: INVALID_CALL, and a log line --
   UserInterface.getRel (UNLISTED) is REFUSED                     ASSERTED
       body: INVALID_CALL [http=200]
-      syslog: 2026-09-28 19:14:23 <134>Sep 28 19:14:23 freemed[13231]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
-      syslog: 2026-09-28 19:14:23 <132>Sep 28 19:14:23 freemed[13231]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14349]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
+      syslog: 2026-09-28 19:25:36 <132>Sep 28 19:25:36 freemed[14349]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
   module.Vitals.GetList (UNLISTED) is REFUSED                    ASSERTED
       body: INVALID_CALL [http=200]
-      syslog: 2026-09-28 19:14:24 <134>Sep 28 19:14:24 freemed[12769]: method = org.freemedsoftware.module.Vitals.GetList, provider = Json
-      syslog: 2026-09-28 19:14:24 <132>Sep 28 19:14:24 freemed[12769]: Relay: method 'org.freemedsoftware.module.Vitals.GetList' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14350]: method = org.freemedsoftware.module.Vitals.GetList, provider = Json
+      syslog: 2026-09-28 19:25:36 <132>Sep 28 19:25:36 freemed[14350]: Relay: method 'org.freemedsoftware.module.Vitals.GetList' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
       note the improvement: the pre-existing serializer fatal this call produced in
       log-only mode (A3) is replaced by a clean refusal. Strictly less surface.
 
 -- B4 UNLISTED public.*, no cookie: INVALID_CALL (the check is NOT skipped for public.*) --
   public.Login.NotARealMethod (UNLISTED) is REFUSED              ASSERTED
       body: INVALID_CALL [http=200]
-      syslog: 2026-09-28 19:14:24 <134>Sep 28 19:14:24 freemed[12770]: method = org.freemedsoftware.public.Login.NotARealMethod, provider = Json
-      syslog: 2026-09-28 19:14:24 <132>Sep 28 19:14:24 freemed[12770]: Relay: method 'org.freemedsoftware.public.Login.NotARealMethod' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14346]: method = org.freemedsoftware.public.Login.NotARealMethod, provider = Json
+      syslog: 2026-09-28 19:25:36 <132>Sep 28 19:25:36 freemed[14346]: Relay: method 'org.freemedsoftware.public.Login.NotARealMethod' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
 
 -- B5 SERVED-LIST EDIT: delist public.Login.GetLanguages, then call it with no cookie --
       Every public.* method of the shipped classes is in the shipped list by design, so the
@@ -181,17 +187,17 @@ PHASE_A_EXIT=0
       enforce=true+delist    running PHP reflects it after 1s (observed: refused (INVALID_CALL))
   public.Login.GetLanguages, DELISTED, enforcing, no cookie -> REFUSED ASSERTED
       body: INVALID_CALL [http=200]
-      syslog: 2026-09-28 19:14:24 <134>Sep 28 19:14:24 freemed[12771]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
-      syslog: 2026-09-28 19:14:24 <132>Sep 28 19:14:24 freemed[12771]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
-      syslog: 2026-09-28 19:14:24 <134>Sep 28 19:14:24 freemed[12767]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
-      syslog: 2026-09-28 19:14:24 <132>Sep 28 19:14:24 freemed[12767]: Relay: method 'org.freemedsoftware.public.Login.GetLanguages' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      syslog: 2026-09-28 19:25:38 <134>Sep 28 19:25:38 freemed[14443]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
+      syslog: 2026-09-28 19:25:38 <132>Sep 28 19:25:38 freemed[14443]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      syslog: 2026-09-28 19:25:39 <134>Sep 28 19:25:39 freemed[14444]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+      syslog: 2026-09-28 19:25:39 <132>Sep 28 19:25:39 freemed[14444]: Relay: method 'org.freemedsoftware.public.Login.GetLanguages' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
 
    ...the SAME delisted call with the check back in log-only mode:
       enforce=false          running PHP reflects it after 1s (observed: LOG-ONLY, call still executed)
   public.Login.GetLanguages, DELISTED, log-only, no cookie -> RUNS and logs ASSERTED
       body: [["Deutsch","de_DE"],["English","en_US"],["Spanish (Mexico)","es_MX"],["Francais","fr_FR"],["Polski","pl_PL"]] [http=200]
-      syslog: 2026-09-28 19:14:24 <134>Sep 28 19:14:24 freemed[13231]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
-      syslog: 2026-09-28 19:14:24 <132>Sep 28 19:14:24 freemed[13231]: Relay: method 'org.freemedsoftware.public.Login.GetLanguages' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+      syslog: 2026-09-28 19:25:41 <134>Sep 28 19:25:41 freemed[14479]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+      syslog: 2026-09-28 19:25:41 <132>Sep 28 19:25:41 freemed[14479]: Relay: method 'org.freemedsoftware.public.Login.GetLanguages' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
 
 residual mismatches in this phase: 0
 PHASE_B_EXIT=0
@@ -201,7 +207,7 @@ PHASE_B_EXIT=0
 # =============================================================================
 == Phase C: restore the served data file from the checkout ==
    served enforce   : 'enforce' => false,
-   pattern entries  : 317
+   pattern entries  : 323
    byte-identical to the checkout: YES
 
 residual mismatches in this phase: 0

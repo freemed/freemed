@@ -47,6 +47,13 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
      * live-probe - methods this mitigation has already driven against a running
        server (the four fixed SQL-injection sites' methods, plus the batch-B /
        batch-C / 2.6f probe sets). Real, measured, client-shaped calls.
+     * access-log - methods the stack's Apache access log shows being requested.
+       The brief warned that compiled JS may call methods which never appear in
+       source, and this is the source that catches exactly that: it is how
+       PaymentModule.GetLedger (34 requests), Vitals.RenderHtmlView (19) and
+       Vitals.locked (21) were found. Still probe traffic, not a client session -
+       the capture and its time window are in
+       tests/security/evidence/relay-accesslog.txt.
      * gwtphpmap - lib/org/freemedsoftware/gwt/**/*.gwtphpmap.inc.php, the
        shipped GWT service map's client-to-relay table. The strongest
        machine-readable evidence of what the compiled client asks for.
@@ -123,7 +130,7 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    are dots, not regular-expression wildcards - and case-insensitive, mirroring
    PHP's own method dispatch, so a client that writes `Picklist` for a class that
    declares `picklist` is not refused. The shipped seed uses no `*` patterns: it
-   is 317 resolved method strings.
+   is 323 resolved method strings.
 
    DEPLOYMENTS THAT ADD THEIR OWN MODULES should add that module's methods to
    this file in the same commit as the module. The controlled extension point is
@@ -155,8 +162,10 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    lines they produced and the response bodies, in
    tests/security/evidence/relay-allowlist.txt. The call set and the provenance
    of every pattern in it is tests/security/evidence/relay-callset.txt, generated
-   by tests/security/relay-callset-enum.php. The matcher's behaviour is pinned by
-   tests/security/relay_allowlist.test.php, which runs in php:8.3-cli with no
+   by tests/security/relay-callset-enum.php from five inputs, one of which - the
+   stack's access log - is captured in
+   tests/security/evidence/relay-accesslog.txt. The matcher's behaviour is pinned
+   by tests/security/relay_allowlist.test.php, which runs in php:8.3-cli with no
    database and no network.
 
    The repository has no CHANGELOG or release-notes file; the paragraph in

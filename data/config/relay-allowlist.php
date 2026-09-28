@@ -55,18 +55,26 @@
 //	2. Collect the misses from syslog:
 //	       grep "Relay: method" /var/log/syslog
 //	   Each line names one method this list does not cover. Add it below
-//	   (copy the string from the log line exactly; matching is case-insensitive,
-//	   so the method-name case does not have to be right).
+//	   (copy the string from the log line exactly; matching is
+//	   case-insensitive for the method name, so its case does not have to be
+//	   right).
 //
-//	3. When the log is quiet, set 'enforce' => true and reload. Keep this file
-//	   in version control from then on: a missing file disables enforcement
-//	   (fail-open, logged) rather than refusing every call.
+//	   A config edit is NOT instant: PHP caches this file through OPcache, so
+//	   with the default opcache.revalidate_freq = 2 a worker can serve the
+//	   previous value for a moment. Give it a moment, or reload PHP, before
+//	   believing the running server agrees with the file. (Measured on the
+//	   verification stack: the change was reflected after ~1s.)
+//
+//	3. When the log is quiet, set 'enforce' => true. Keep this file in version
+//	   control from then on: a missing file disables enforcement (fail-open,
+//	   logged) rather than refusing every call.
 //
 //	If a call is refused that should have been allowed, the fix is to add a
 //	pattern - never to remove the check, and never to widen a pattern to the
 //	whole tree. Patterns broader than org.freemedsoftware.<ns>.<Class> (a bare
 //	`*`, or org.freemedsoftware.*) are REJECTED at load with a LOG_WARNING and do
-//	not take effect; see Relay_Allowlist::is_too_broad().
+//	not take effect, as is a `*` anywhere but the end of a pattern (a wildcard
+//	the matcher does not implement); see Relay_Allowlist::is_too_broad().
 //
 //	`*` at the END of a pattern matches any method name with that prefix, e.g.
 //	'org.freemedsoftware.module.SomeModule.*'. It is supported and tested; it is
@@ -76,8 +84,11 @@
 //
 // ================================ THE SEED =================================
 //
-//	Every pattern below appears in tests/security/evidence/relay-callset.txt at
-//	commit 49c11bc6aff178eea302ea22e31286e65c5737ac, with its source.
+//	Every pattern below appears in tests/security/evidence/relay-callset.txt, with
+//	its source. That enumeration was generated against the tree at commit
+//	2a55da8f from five inputs (its header names them): the measured probe sets,
+//	the stack's Apache access log, the shipped GWT service map, the public
+//	namespace's call sites, and the resolved client/UI source literals.
 //	tests/security/relay_allowlist.test.php enforces that correspondence, so this
 //	list cannot drift away from its evidence.
 //
@@ -86,15 +97,15 @@
 //		org.freemedsoftware.api.Scheduler.GetDailyAppointmentRange
 //		org.freemedsoftware.module.PatientTag.GetTemplate
 //		org.freemedsoftware.module.RemittBillingTransport.GetReport
-//	The shipped GWT service map emits these, but no public PHP method of that
-//	name exists, so dispatch fails exactly as it does today. They are listed so
-//	that flipping enforcement cannot turn "fails the same way" into "refused".
+//	The shipped GWT service map emits these; none names a public PHP method, so
+//	dispatch fails exactly as it does today. They are listed so that flipping
+//	enforcement cannot turn "fails the same way" into "refused".
 //
-//	One measured string is deliberately NOT here:
-//	org.freemedsoftware.module.EncounterNotesTemplate.GetList - measured live to
-//	fail dispatch with a TypeError because the class does not define it and does
-//	not inherit it. Refusing it (INVALID_CALL) is strictly better than the
-//	TypeError it produces today.
+//	Two measured strings are deliberately NOT here, because they name no method
+//	of their class or any parent and refusing them is strictly better than what
+//	they do today (a TypeError out of call_user_func_array):
+//		org.freemedsoftware.module.EncounterNotesTemplate.GetList
+//		org.freemedsoftware.public.Login.NotARealMethod
 
 return array (
 
@@ -105,13 +116,12 @@ return array (
 
 	// ---------------------------------------------------------------------
 	// 'patterns' - exact relay method strings, and `*` suffix patterns.
+	//   live-probe 50 | access-log 9 | gwtphpmap 112 | public-namespace 6 | source-mine 146
 	// ---------------------------------------------------------------------
 	'patterns' => array (
 
-		// ---- live-probe (50): methods this mitigation already exercised ----------------------
-		// against the running server on the harness stack: 2.2-2.5 repro-relay-sqli.sh, and the
-		// batch-B / batch-C / 2.6f probe scripts. This is the only client-shaped smoke pass
-		// this environment could produce.
+		// ---- live-probe (50): methods this mitigation has exercised against the ----------
+		// running server. The 2.2-2.5 repro plus the batch-B / batch-C / 2.6f probe sets.
 		'org.freemedsoftware.api.Ledger.collection_warning',
 		'org.freemedsoftware.api.Ledger.queue_for_rebill',
 		'org.freemedsoftware.api.Ledger.WriteoffItems',
@@ -162,6 +172,22 @@ return array (
 		'org.freemedsoftware.module.WorkflowStatus.StatusMapForDate',
 		'org.freemedsoftware.module.Zipcodes.CityStateZipPicklist',
 		'org.freemedsoftware.public.Login.LoggedIn',
+
+		// ---- access-log (9): methods the stack's Apache access log shows being ----------
+		// requested, which is the source ruling R26.2(c) asked for. The access log keeps
+		// the method in the request line, so it can name a call the source trees and the
+		// curated live-probe list both missed - it is how PaymentModule.GetLedger (34
+		// requests), Vitals.locked (21) and Vitals.RenderHtmlView (19) were found. See
+		// tests/security/evidence/relay-accesslog.txt for the capture and its cutoff.
+		'org.freemedsoftware.api.UserInterface.GetRecords',
+		'org.freemedsoftware.module.Callin.GetAllWithInsurance',
+		'org.freemedsoftware.module.EncounterNotesTemplate.getTemplateInfo',
+		'org.freemedsoftware.module.i18nLanguages.del',
+		'org.freemedsoftware.module.i18nLanguages.picklist',
+		'org.freemedsoftware.module.PaymentModule.GetLedger',
+		'org.freemedsoftware.module.UpdatesModule.GetFeed',
+		'org.freemedsoftware.module.Vitals.locked',
+		'org.freemedsoftware.module.Vitals.RenderHtmlView',
 
 		// ---- gwtphpmap (112): the shipped GWT service map's client->relay table ------------
 		// lib/org/freemedsoftware/gwt/**/*.gwtphpmap.inc.php, `mappedBy` + `mappedName`.
@@ -289,7 +315,7 @@ return array (
 		'org.freemedsoftware.public.Installation.CreateSettings',
 		'org.freemedsoftware.public.Installation.SetHealthyStatus',
 
-		// ---- source-mine (149): literals resolved out of the client/UI trees ---------------
+		// ---- source-mine (146): literals resolved out of the client/UI trees ---------------
 		// (ui/gwt/src/main/java, ui/dojo, the smarty templates, the root request scripts),
 		// kept only where the class file exists and the method is public (inherited methods
 		// included). This is the tier most likely to be INCOMPLETE for a real session.
@@ -315,7 +341,6 @@ return array (
 		'org.freemedsoftware.api.UserInterface.add',
 		'org.freemedsoftware.api.UserInterface.GetCurrentProvider',
 		'org.freemedsoftware.api.UserInterface.GetEMRConfiguration',
-		'org.freemedsoftware.api.UserInterface.GetRecords',
 		'org.freemedsoftware.api.UserInterface.Multicall',
 		'org.freemedsoftware.core.User.getName',
 		'org.freemedsoftware.core.User.setPassword',
@@ -341,7 +366,6 @@ return array (
 		'org.freemedsoftware.module.CalendarGroupAttendance.add',
 		'org.freemedsoftware.module.Callin.add',
 		'org.freemedsoftware.module.Callin.del',
-		'org.freemedsoftware.module.Callin.GetAllWithInsurance',
 		'org.freemedsoftware.module.Callin.GetRecord',
 		'org.freemedsoftware.module.Callin.mod',
 		'org.freemedsoftware.module.Certifications.getCertifications',
@@ -359,7 +383,6 @@ return array (
 		'org.freemedsoftware.module.EncounterNotes.getEncountersList',
 		'org.freemedsoftware.module.EncounterNotes.mod',
 		'org.freemedsoftware.module.EncounterNotesTemplate.add',
-		'org.freemedsoftware.module.EncounterNotesTemplate.getTemplateInfo',
 		'org.freemedsoftware.module.EncounterNotesTemplate.mod',
 		'org.freemedsoftware.module.EpisodeOfCare.add',
 		'org.freemedsoftware.module.EpisodeOfCare.del',

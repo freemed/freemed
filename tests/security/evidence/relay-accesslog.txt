@@ -1,0 +1,119 @@
+# tests/security/evidence/relay-accesslog.txt
+#
+# Task 2.8 - the harness's ACCESS LOG as a call-set source (ruling R26.2(c)).
+#
+# The brief's step 1 said to mine the Phase 0.3 stack's access log for relay calls
+# while clicking through the UI, and warned that compiled JS may call methods that
+# never appear in source. The log DOES retain them: the method is in the request
+# line, so nothing else is needed to recover it.
+#
+#   192.168.128.1 - - [28/Sep/2026:15:20:20 +0000] "POST /relay.php/json HTTP/1.1" 200 949 "-" "curl/8.18.0"
+#   192.168.128.1 - - [28/Sep/2026:15:20:20 +0000] "POST /relay.php/xmlrpc HTTP/1.1" 200 1470 "-" "curl/8.18.0"
+#   192.168.128.1 - - [28/Sep/2026:15:21:49 +0000] "POST /relay.php/json HTTP/1.1" 200 949 "-" "curl/8.18.0"
+#
+# CAPTURE
+#   source  : the Apache container's stdout. This image symlinks
+#             /var/log/apache2/access.log -> /dev/stdout, so there is no on-disk
+#             access log; the same lines arrive through `docker logs`.
+#   command : docker logs --since 24h --until 2026-09-28T19:12:29Z \
+#               freemed-verify-apache 2>&1 \
+#               | grep -E 'POST /relay\.php'
+#   commit  : 2a55da8fb0fe974660f32b6073d941a276e4b5cf
+#   window  : 2026-09-28 15:22:21 -> 19:12:29 (UTC), the whole of the preceding
+#             probe rounds: 2.1, 2.2-2.5, batch B, batch C, 2.6e/2.6f and 3.1/3.2.
+#             876 relay.php requests, 61 distinct method strings.
+#
+# WHY THE WINDOW ENDS AT 19:12:29
+#   Task 2.8's own probes start at 19:12:30 (its first relay request is
+#   org.freemedsoftware.module.Vitals.GetList). Including them would make this
+#   source circular - the methods the probe uses to demonstrate 'an unlisted call
+#   is refused' would be counted as measured traffic and land in the allowlist they
+#   are supposed to be missing from. The cutoff is verified, not assumed: of the
+#   six methods only task 2.8's probes issued, NONE appears in this capture
+#   (Login.NotARealMethod, UserInterface.getRel, UserInterface.GetUserType,
+#   Vitals.GetList, Vitals.GetRecord, Vitals.GetAtoms - all 0 occurrences).
+#
+# WHAT THIS IS NOT
+#   Client traffic. Every request here is a probe driven by this mitigation's own
+#   scripts (user-agent curl/8.18.0), not a human clicking the compiled client -
+#   which, per the report, does not exist in this checkout. It is stronger evidence
+#   than static analysis and weaker than a real session. It is also not an ordered
+#   history, and the counts mix the hostile probe rounds with the benign controls;
+#   nothing here is evidence that a method answered correctly.
+#
+#   Note the shape of what it DID add. PaymentModule.GetLedger (34 requests),
+#   Vitals.locked (21) and Vitals.RenderHtmlView (19) were requested over HTTP by
+#   earlier rounds and appear in neither the GWT service map nor the source-mine
+#   tier - which is exactly the failure mode the brief's step 1 warns about. Two
+#   strings it names are NOT relay-callable and are recorded as such in
+#   relay-callset.txt: EncounterNotesTemplate.GetList (no such method on the class
+#   or its parents) and a truncated line whose method field is unqualified.
+#
+# REDACTION
+#   The only client address is the Docker bridge gateway (192.168.128.1). No relay
+#   call here carries a query string (the transport puts the method in PATH_INFO
+#   and the arguments in the POST body). No credentials, no digests, no PHI.
+#
+# COLUMNS: <request-count>\t<provider>\t<relay method string as received>
+#
+164	json	org.freemedsoftware.api.UserInterface.GetUsers
+99	json	org.freemedsoftware.api.Remitt.RenderStatementXML
+97	json	org.freemedsoftware.module.EncounterNotesTemplate.getTemplates
+94	json	org.freemedsoftware.api.ModuleSearch.picklist
+34	json	org.freemedsoftware.module.PaymentModule.GetLedger
+34	json	org.freemedsoftware.public.Login.LoggedIn
+21	json	org.freemedsoftware.module.Vitals.locked
+19	json	org.freemedsoftware.module.Allergies.picklist
+19	json	org.freemedsoftware.module.Vitals.RenderHtmlView
+16	json	org.freemedsoftware.module.i18nLanguages.GetRecord
+13	json	org.freemedsoftware.api.Scheduler.GetDailyAppointmentsRange
+12	json	org.freemedsoftware.api.Ledger.queue_for_rebill
+11	json	org.freemedsoftware.module.PhoneNumbers.GetTypeNumber
+10	json	org.freemedsoftware.api.PatientInterface.picklist
+10	json	org.freemedsoftware.module.ProviderModule.internalPicklist
+10	json	org.freemedsoftware.module.i18nLanguages.GetRecords
+9	json	org.freemedsoftware.module.Allergies.GetRecentRecord
+9	json	org.freemedsoftware.module.UpdatesModule.GetFeed
+8	json	org.freemedsoftware.api.Scheduler.date_add
+8	json	org.freemedsoftware.module.EncounterNotesTemplate.GetList
+8	json	org.freemedsoftware.module.PatientCoverages.GetCoverages
+8	json	org.freemedsoftware.module.ProgressNotes.NoteForDate
+7	json	org.freemedsoftware.module.Authorizations.getActionItems
+7	json	org.freemedsoftware.module.Callin.GetDetailedRecord
+7	json	org.freemedsoftware.module.ModuleFieldCheckerType.getModuleInfo
+7	json	org.freemedsoftware.module.PaymentModule.getLastRecord
+7	json	org.freemedsoftware.module.Referrals.GetAllActiveByPatient
+7	json	org.freemedsoftware.module.ScannedDocuments.GetPatientAllRecords
+6	json	org.freemedsoftware.api.Ledger.WriteoffItems
+6	json	org.freemedsoftware.api.Scheduler.FindDateAppointments
+6	json	org.freemedsoftware.api.Scheduler.GetDailyAppointmentScheduler
+6	json	org.freemedsoftware.module.Allergies.GetList
+6	json	org.freemedsoftware.module.PhoneNumbers.GetRecentNumber
+6	json	org.freemedsoftware.module.ProcedureModule.getPatientProcHistory
+6	json	org.freemedsoftware.module.SuperBill.GetForDates
+6	json	org.freemedsoftware.module.WorkflowStatus.StatusMapForDate
+5	json	org.freemedsoftware.api.UserInterface.GetRecords
+5	json	org.freemedsoftware.module.Zipcodes.CityStateZipPicklist
+4	json	org.freemedsoftware.api.Ledger.collection_warning
+4	json	org.freemedsoftware.api.Scheduler.FindGroupAppointments
+4	json	org.freemedsoftware.module.i18nLanguages.GetAll
+3	json	org.freemedsoftware.module.CalendarGroup.GetDetailedRecord
+3	json	org.freemedsoftware.module.Callin.GetAll
+3	json	org.freemedsoftware.module.EpisodeOfCare.getAllValues
+3	json	org.freemedsoftware.module.FacilityModule.GetAll
+3	json	org.freemedsoftware.module.SuperBill.GetSuperbill
+3	json	org.freemedsoftware.module.UnfiledDocuments.GetAll
+3	json	org.freemedsoftware.module.UnfiledDocuments.GetCount
+3	json	org.freemedsoftware.module.UnreadDocuments.GetAll
+3	json	org.freemedsoftware.module.UserGroups.GetRecords
+3	json	org.freemedsoftware.module.UserPreferences.GetAll
+3	json	org.freemedsoftware.module.UserPreferences.GetConfigSections
+3	json	org.freemedsoftware.module.Vitals.GetRecentRecord
+2	json	org.freemedsoftware.api.Scheduler.FindGroupAppointmentsDates
+2	json	org.freemedsoftware.module.Callin.GetDetailedRecordWithIntake
+2	json	org.freemedsoftware.module.ClinicRegistration.GetAll
+2	json	org.freemedsoftware.module.i18nLanguages.del
+1	json	EncounterNotesTemplate.getTemplates
+1	json	org.freemedsoftware.module.Callin.GetAllWithInsurance
+1	json	org.freemedsoftware.module.EncounterNotesTemplate.getTemplateInfo
+1	json	org.freemedsoftware.module.i18nLanguages.picklist
