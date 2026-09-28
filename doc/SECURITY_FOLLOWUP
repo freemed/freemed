@@ -342,13 +342,12 @@ reported findings
        round 1)
 
    These six are the ledger's code residuals in files the sweep touched. Unlike
-   3.1-3.3 they are not all pre-existing: (d), (e) and (f) are consequences of
-   this branch's own rewrites, (a) and (c) are pre-existing behaviour the
-   rewrites sit next to, and (b) is pre-existing throughout. Each item says
-   which it is at the point where it matters. The line numbers added here were
-   re-read at the branch head this round ran against (2cc7654f); as section 1
-   says of every reference in this file, re-read them against HEAD before
-   acting.
+   3.1-3.3 they are not all pre-existing: (a), (d), (e) and (f) are consequences
+   of this branch's own rewrites, (c) is pre-existing behaviour the rewrites sit
+   next to, and (b) is pre-existing throughout. Each item says which it is at the
+   point where it matters. The line numbers added here were re-read at the branch
+   head this round ran against (2cc7654f); as section 1 says of every reference
+   in this file, re-read them against HEAD before acting.
 
    a) lib/org/freemedsoftware/core/EMRModule.class.php:928 - GetRecentRecord()
       (:885) takes $dfield = $this->date_field ? SqlIdent::name(...) : false, so
