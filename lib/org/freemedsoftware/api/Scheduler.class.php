@@ -285,8 +285,14 @@ class Scheduler {
 	//	* resource_type ( pat, temp, block )
 	//
 	public function GetDailyAppointmentScheduler( $dt, $provider = 0 ) {
-		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $s->ImportDate( $dt ) ).", ".$GLOBALS['sql']->quote( freemed::config_value('calshr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calehr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calinterval') ).", ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
+		// Category A + F4 (2.6f): the date IS the criterion here, so it is
+		// validated as Y-m-d and the call is refused (logged, this method's empty
+		// answer) rather than passing quote(ImportDate(false)) - a bare 0 - to
+		// the stored procedure, whose own date predicate would then compare
+		// against MySQL's zero-date.
+		$this_date = $this->_ValidDate( $dt );
+		if ( $this_date === false ) { return array(); }
+		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $this_date ).", ".$GLOBALS['sql']->quote( freemed::config_value('calshr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calehr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calinterval') ).", ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
 		return $GLOBALS['sql']->queryAllStoredProc( $q );
 	} // end method GetDailyAppointmentScheduler
 
