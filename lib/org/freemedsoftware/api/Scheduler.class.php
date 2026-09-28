@@ -145,11 +145,26 @@ class Scheduler {
 	//
 	public function GetDailyAppointmentsRange ( $datefrom = NULL, $dateto = NULL, $provider = 0 ) {
 		freemed::acl_enforce( 'scheduling', 'read' );
-		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
+		// Category A (2.6b F4): the dates are validated as Y-m-d before they
+		// reach any predicate. ImportDate() answers boolean false for input it
+		// cannot parse, and the driver's quote(false) emits a bare 0 - which
+		// compares equal to MySQL's zero-date ('0000-00-00'), so a bad date used
+		// to match rows a literal could not. A date that is not Y-m-d refuses the
+		// query (logged) instead of being quoted.
+		$this_date = $datefrom ? $this->_ValidDate($datefrom) : date('Y-m-d');
+		if ( $this_date === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRange| refusing non-Y-m-d date_from '.var_export($datefrom, true) );
+			return array();
+		}
 		if ($dateto != NULL) {
+			$to_date = $this->_ValidDate($dateto);
+			if ( $to_date === false ) {
+				syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRange| refusing non-Y-m-d date_to '.var_export($dateto, true) );
+				return array();
+			}
 			// Category A: quote() supplies the surrounding quotes.
 			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
-				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $this->ImportDate($dateto) );
+				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $to_date );
 		} else {
 			// Single date query ....
 			$r_q = "s.caldateof = ".$GLOBALS['sql']->quote( $this_date );
@@ -191,11 +206,20 @@ class Scheduler {
 	public function GetDailyAppointmentsRangeByProviderGroup ( $datefrom = NULL, $dateto = NULL, $providerGroup = 0 ) {
 		freemed::acl_enforce( 'scheduling', 'read' );
 
-		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
+		$this_date = $datefrom ? $this->_ValidDate($datefrom) : date('Y-m-d');
+		if ( $this_date === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRangeByProviderGroup| refusing non-Y-m-d date_from '.var_export($datefrom, true) );
+			return array();
+		}
 		if ($dateto != NULL) {
+			$to_date = $this->_ValidDate($dateto);
+			if ( $to_date === false ) {
+				syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRangeByProviderGroup| refusing non-Y-m-d date_to '.var_export($dateto, true) );
+				return array();
+			}
 			// Category A: quote() supplies the surrounding quotes.
 			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
-				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $this->ImportDate($dateto) );
+				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $to_date );
 		} else {
 			// Single date query ....
 			$r_q = "s.caldateof = ".$GLOBALS['sql']->quote( $this_date );
@@ -1346,6 +1370,33 @@ class Scheduler {
 		}
 		return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
 	} // end function scroll_next_month
+
+	// Method: _ValidDate
+	//
+	//	ImportDate() with a shape check (Task 2.6b, review finding F4).
+	//	ImportDate() returns boolean false for input it cannot parse, and the
+	//	driver's quote(false) emits a bare 0 - which compares equal to MySQL's
+	//	zero-date ('0000-00-00'), so a bad date could match a row that the old
+	//	hand-quoted literal could not. Only a real Y-m-d value is returned;
+	//	anything else is false and the caller refuses the query (logged) rather
+	//	than emitting a predicate with a wrong value in it.
+	//
+	// Parameters:
+	//
+	//	$input - Date string in any format ImportDate() accepts
+	//
+	// Returns:
+	//
+	//	'Y-m-d' string, or boolean false
+	//
+	protected function _ValidDate ( $input ) {
+		$date = $this->ImportDate( $input );
+		if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $date ) ) {
+			syslog( LOG_ERR, get_class($this).'| refusing non-Y-m-d date '.var_export($input, true) );
+			return false;
+		}
+		return $date;
+	} // end method _ValidDate
 
 	// Method: ImportDate
 	//
