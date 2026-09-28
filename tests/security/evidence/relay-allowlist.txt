@@ -927,10 +927,30 @@ residual mismatches in this phase: 0
 #                                               In this install module_handler
 #                                               ('Tickler') matches 0 rows, so the
 #                                               path is inert on the harness.
-#   6  api/UserInterface.class.php:238,353,     FIXED literals on FIXED classes
-#      363,369,374,418-510 (ACL calls)          (module_function('ACL', 'X')):
-#                                               neither axis is caller-named.
-#                                               NOT a re-dispatcher.
+#   6  api/UserInterface.class.php -- 19       FIXED literal on a FIXED class:
+#      module_function('ACL', X) call sites:    module_function('ACL', X), 'ACL' a
+#      267, 382, 392, 398, 403, 447, 448, 449,  literal and X a literal, so NEITHER
+#      503, 505, 512, 515, 520, 528, 529, 531,  axis is caller-named. NOT a
+#      536, 537, 539.                           re-dispatcher. (fix round 4) THIS
+#      THE SAME SHAPE, 13 MORE SITES IN 7        LABEL SAYS WHAT IT IS A COUNT OF:
+#      OTHER FILES:                              the shape is "fixed literal on a
+#        core/User.class.php:278 'annotations'   fixed class", of which the tree has
+#        module/ACL.class.php:124 'patientacl'   32 real call sites -- the 19 ACL
+#        module/Prescription.class.php:122        ones above, plus the 13 listed. The
+#          'pharmacymaintenance'                 round-2 label named ONLY the ACL
+#        module/ProcedureModule.class.php:       calls, which understated the count.
+#          290 'FacilityModule'                  The 19 line numbers are corrected
+#          296 'CptMaintenance'                  here too: round 2's list (238, 353,
+#          302/308/314 'CptModifiersMaintenance' 363, 369, 374, 418-510) was 29
+#          330 'TypeOfServiceMaintenance'        lines stale, shifted by the R36
+#        module/ScannedDocuments.class.php:295   commit's own comment edits above
+#          'faxcontacts'                         them -- each old number +29 is the
+#        module/WorkListsModule.class.php:292    real one. The inventory is a TOKEN
+#          'schedulerpatientstatus'              scan (comments and strings cannot
+#        public/Login.class.php:190              inflate it), and none of the 32 is
+#          'facilitymodule'                      a re-dispatcher: neither the class
+#        public/Login.class.php:207              nor the method comes from the
+#          'i18nlanguages'                       request.
 #   7  module/Reporting.class.php:219 and       METHOD name is data-driven but the
 #      module/PatientReporting.class.php:173    CLASS is $this and the name is
 #      'GenerateReport_'.ucfirst(type)          constrained to the
