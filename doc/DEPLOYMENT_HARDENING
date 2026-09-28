@@ -23,12 +23,14 @@ Deployment hardening - what the shipped web-server configuration now refuses
        look like a command line to a script that guards on $_SERVER['argc'] /
        $_SERVER['argv'] and mask a request as an empty 200. (CWE-16.)
 
-   None of it changes a documented URL. The behaviour changes are the three
+   None of it changes a documented URL. The behaviour changes are the four
    undocumented trailing-path shapes in section 4, plus the one served URL that
    section 8 discloses: files under data/documents/unfiled/ (.djvu uploads)
    answered 200 at HEAD and are now 403. Every entrypoint, every static asset
    and every relay call answers exactly as it did before, and the tree-by-tree
-   measurement is in tests/security/evidence/deployment-hardening.txt.
+   measurement is in tests/security/evidence/deployment-hardening.txt - the one
+   copy of every measured row this release quotes (the configuration comments
+   and the advisory point at it rather than restating rows).
 
 
 2. WHAT SHIPS, AND WHERE IT LANDS
@@ -38,9 +40,24 @@ Deployment hardening - what the shipped web-server configuration now refuses
      docker/nginx.conf           the container's /etc/nginx/nginx.conf
      docker/php-custom.ini       mounted as a PHP conf.d drop-in by
                                  docker/docker-compose.yml
-     the .htaccess files         installed by each subdirectory's Makefile
-                                 (data, lib, scripts); they are the second
-                                 layer, not the load-bearing one
+     the .htaccess files         installed by the Makefiles that carry them -
+                                 root Makefile:36 (`cp -vf .htaccess *.php
+                                 *.html`), data/Makefile:34 (`cp -vf .ht* *.php`)
+                                 and scripts/Makefile:30 (`cp -vrf .ht* *`); they
+                                 are the second layer, not the load-bearing one
+
+   WHICH DIRECTORY SHIPS WHICH .htaccess, measured at HEAD - the list above is
+   deliberately not "every subdirectory has one", because two of them do not:
+   data/ and scripts/ carry theirs with a `.ht*` glob (data/Makefile:34,
+   scripts/Makefile:30, and data/'s recursive copy of its subdirectories is how
+   data/schema/, data/config/, data/store/ and data/documents/unfiled/ get
+   theirs); the root file comes from the top-level Makefile (:36); tests/ has NO
+   Makefile at all AND is not in the top-level Makefile's SUBDIR list
+   (`data doc lib locale scripts ui`, :28), so tests/.htaccess exists only in a
+   source checkout, never in the packaged install; and lib/ ships NO .htaccess -
+   lib/Makefile copies only `*.php` plus its subdirectories, which is how the
+   vendored lib/perl/.htaccess arrives. Section 3 says the same thing from the
+   server side, and it is why the rules there do not depend on this layer.
 
    An operator on the packaged layout has nothing to do: doc/Makefile installs
    the Apache file and the .htaccess files, and the file aliases the application
@@ -61,7 +78,11 @@ Deployment hardening - what the shipped web-server configuration now refuses
 
 3. WHY THE RULE LIVES IN THE SERVER CONFIGURATION, NOT IN .htaccess
 
-   Four measured reasons, all of them from this tree at HEAD:
+   Four measured reasons, all of them from this tree at HEAD (every row quoted
+   below is from tests/security/evidence/deployment-hardening.txt, PHASE A
+   unhardened / PHASE B with the rules installed - the one copy of the measured
+   matrix; the two configuration files and section 4 point at that file rather
+   than restating it):
 
      * nginx reads no .htaccess at all, so on that layout the shipped
        per-directory rules do not exist. Measured there: data/schema/mysql/
@@ -137,14 +158,18 @@ Deployment hardening - what the shipped web-server configuration now refuses
    was a substring test: any request whose path contained an allowlisted
    `name.php/` ANYWHERE escaped the refusal and kept running the real script
    before it with PATH_INFO, which is exactly the class this section exists to
-   refuse. Measured before the anchor and after it, on both servers:
+   refuse.
 
-     /install.php/x/help.php/              200 (123 bytes)   ->  403
-     /install.php/x/relay.php/             200 (123 bytes)   ->  403
-     /index.php/help.php/x                 302                ->  403
-     /index.php/x/chtml.php/y              302                ->  403
-     /vcalendar.php/x/controller.php/      401                ->  403
-     /services/RemittCallback.php/x/help.php/  200 (2257)     ->  403
+   THE MEASURED ROWS ARE NOT REPEATED HERE. Every matrix this document quotes -
+   the per-tree before/after set, the anchoring set, and the three behaviour
+   changes below - is measured in exactly one place:
+   tests/security/evidence/deployment-hardening.txt, PHASE A (the unhardened
+   state), PHASE B (with the shipped rules installed), PHASE E (the PATH_INFO
+   consumers, and the four shapes the scope rule changes) and PHASE F1 (the
+   anchoring matrix, before and after, on both layouts and both servers,
+   including the /install.php/x/help.php/ shape). The comments in
+   doc/freemed.apache.conf and docker/nginx.conf point at the same file rather
+   than restating rows, so a re-measurement has one copy to update.
 
    The two mechanisms are anchored the same way but not in the same words.
    Apache matches the rule pattern in per-directory context, so the path it
@@ -163,12 +188,14 @@ Deployment hardening - what the shipped web-server configuration now refuses
    with the path, so add one only for a script that reads
    $_SERVER['PATH_INFO'] itself.
 
-   This is a behaviour change for exactly three shapes, measured before and
-   after: /install.php/<path> was 200 ("FreeMED is already installed!") and is
-   now 403; /vcalendar.php/<path> was 401, now 403; and
-   /services/RemittCallback.php/<path> was 200, now 403. None of the three reads
+   This is a behaviour change for exactly four shapes: /install.php/<path> was
+   200 ("FreeMED is already installed!") and is now 403; /index.php/<path> was
+   302, now 403; /vcalendar.php/<path> was 401, now 403; and
+   /services/RemittCallback.php/<path> was 200, now 403. None of the four reads
    PATH_INFO, the plain URLs are unaffected, and the form that does matter -
-   /services/RemittCallback.php?wsdl - is unchanged (200, verified).
+   /services/RemittCallback.php?wsdl - is unchanged (200, verified). PHASE E of
+   the evidence file above holds the measured status pair for each of the four,
+   on both servers.
 
 
 5. register_argc_argv = Off
@@ -246,15 +273,18 @@ Deployment hardening - what the shipped web-server configuration now refuses
 
 7. HOW TO VERIFY ON YOUR OWN SERVER
 
-   Every request below must be refused (403) - adjust the prefix to your layout
-   (the packaged one is /freemed):
+   Every request below must be refused - 403 on both servers, with one exact
+   exception: the `%2F` row is 404 on Apache (`AllowEncodedSlashes off`, so the
+   path is never split into a path and an encoded slash) and 403 on nginx,
+   which does decode the `%2F`. Read a correct 404 on that row as a PASS, and
+   adjust the prefix to your layout (the packaged one is /freemed):
 
      curl -sI https://host/freemed/lib/API.php
      curl -sI https://host/freemed/lib/settings.php
      curl -sI https://host/freemed/data/schema/mysql/patient.sql
      curl -sI https://host/freemed/tests/security/repro-relay-sqli.sh
      curl -sI https://host/freemed/scripts/security-sql-concat-check.sh
-     curl -sI 'https://host/freemed/lib%2FAPI.php'        # nginx decodes the %2F
+     curl -sI 'https://host/freemed/lib%2FAPI.php'        # nginx 403; Apache 404
      curl -sI 'https://host/freemed/help.php/../scripts/security-sql-concat-check.sh'
 
    And these must still work (this is the no-regression half):
@@ -265,10 +295,30 @@ Deployment hardening - what the shipped web-server configuration now refuses
      curl -s   'https://host/freemed/relay.php/json/org.freemedsoftware.public.Login.LoggedIn'  # 200
      curl -sI  https://host/freemed/services/RemittCallback.php?wsdl           # 200
 
+   ONE ASYMMETRY IN THAT LIST IS DELIBERATE, so that the 401 and the 200 are not
+   read as the same result: chtml.php/main answers 200 to an ANONYMOUS client -
+   the endpoint performs no session check at all - while
+   help.php/ui/en_US/page answers 401 because help.php gates on
+   org.freemedsoftware.public.Login.LoggedIn before any filesystem access
+   (help.php:31-34). Both serve doc/-adjacent help text, and requiring a session
+   on one and not the other is a scope decision, not an oversight: the
+   arbitrary-file-read fix is help.php's, and chtml.php was left able to serve an
+   unauthenticated "about" flow (its own confinement is the \z-anchored page
+   token plus the forced .chtml suffix and the file_exists() check,
+   chtml.php:46-57). A site whose policy treats its own help content as
+   non-public should deny chtml.php the same way section 8 describes denying
+   doc/.
+
    With Apache, `apachectl configtest` must say Syntax OK after installing
-   doc/freemed.apache.conf, and the file needs mod_rewrite (guarded by
-   <IfModule>, so a server without it still starts - the four deny blocks do not
-   depend on it). With nginx, `nginx -t` before reloading.
+   doc/freemed.apache.conf, and the file needs mod_rewrite. THE CONSEQUENCE OF A
+   SERVER WITHOUT mod_rewrite IS FAIL-OPEN AND BELONGS HERE: the mod_rewrite rule
+   is wrapped in <IfModule> so the server still starts, but with the module
+   absent the PATH_INFO scope is OFF ENTIRELY - every /<script>.php/<path>
+   answers exactly as it did before, while the four deny trees survive, because
+   those are <Directory> rules and need nothing. This is the one shape where the
+   two servers genuinely diverge: nginx's `map` needs no module, so the nginx
+   layout has no equivalent gap. Load mod_rewrite (or reproduce the rule another
+   way) before relying on section 4. With nginx, `nginx -t` before reloading.
 
 
 8. WHAT THIS DOES NOT DO
@@ -278,14 +328,29 @@ Deployment hardening - what the shipped web-server configuration now refuses
        unchanged and intended. The rule is about URLs.
 
      * It does not cover ui/dojo/htdocs/, which is deliberately world-readable
-       static UI (its own .htaccess allows everything), nor the rest of the
-       application tree.
+       static UI, nor the rest of the application tree. That file was the one
+       remaining 2.2-only .htaccess in the tree (`order allow,deny` / `allow
+       from all`), and on an Apache 2.4 vhost that does not load
+       mod_access_compat a 2.2-only directive is a configuration error during
+       URI mapping - so the world-readable Dojo tree answered 500 rather than
+       being served, the same failure class section 3 documents for five sibling
+       files (and not the 403 the server-configuration deny promises, which does
+       not run first). This release gives it the same module-guarded
+       dual-syntax block as the nine siblings, so the tree is served on either
+       syntax; it remains world-readable by design.
 
      * It does not remove doc/ from the web. The operator notes - this file,
        doc/VCALENDAR_AUTHENTICATION, doc/RELAY_ALLOWLIST and the rest - are
        still served as text; they contain no credentials. A site whose policy
        forbids publishing them can deny /doc/ the same way the four trees above
        are denied.
+
+     * It does not change chtml.php's anonymity, and the two help endpoints are
+       not symmetric: help.php now requires a session before it reads anything,
+       while chtml.php still serves its compiled archives to an anonymous caller
+       (both are in section 7's no-regression list, one as 401 and one as 200).
+       That is deliberate - see section 7 - and a site that treats its own help
+       content as non-public should deny chtml.php as well.
 
      * It denies data/documents/unfiled/, which used to be an exception inside
        the denied tree: that directory's .htaccess said `<Files *.djvu> order
