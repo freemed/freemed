@@ -216,11 +216,25 @@ class FreemedDb extends DB {
 			syslog( LOG_ERR, 'FreemedDb::distinct_values| refusing invalid identifier '.var_export(array($table, $field), true) );
 			return array();
 		}
-		// NOTE (2.6b): $where stays a caller-composed fragment; no in-tree caller
-		// passes it (SupportModule::distinct calls this with two arguments).
+		// Category C (2.6b): $where is a caller-composed WHERE fragment and no
+		// in-tree caller passes it (SupportModule::distinct calls this with two
+		// arguments). A DB layer cannot quote predicates it did not compose, so
+		// the fragment is shape-checked here instead: anything that could
+		// terminate the statement (`;`), open a comment (`--`, `/*`, `#`) or
+		// re-quote an identifier (backtick) is refused with a log line and no
+		// query is sent. Refused rather than dropped: dropping a filter would
+		// return every row's distinct values instead of the filtered set.
+		$where_sql = ' ';
+		if ( $where !== NULL and trim( (string) $where ) != '' ) {
+			if ( !is_string( $where ) or preg_match( '/[;`\x00]|--|\/\*|#/', $where ) ) {
+				syslog( LOG_ERR, 'FreemedDb::distinct_values| refusing unsafe where fragment '.var_export($where, true) );
+				return array();
+			}
+			$where_sql = sprintf(' WHERE %s ', $where);
+		}
 		$query = sprintf( 'SELECT DISTINCT %s FROM %s %s ORDER BY %s',
 			$field_id, $table_id,
-			( $where ? sprintf(' WHERE %s ', $where) : ' ' ),
+			$where_sql,
 			$field_id );
 		$result = $this->db->queryCol( $query );
 		if ( $result instanceof PEAR_Error ) { return array ( ); }
