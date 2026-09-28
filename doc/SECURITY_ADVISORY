@@ -405,15 +405,27 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
    reintroduced into an application file.
 
    THE ONE PLACE THE IDIOM IS A WRITE PRIMITIVE, and the complete set of them: a
-   `LIMIT` whose value is spliced rather than cast is not a read defect - MySQL
-   accepts `INTO OUTFILE` in that position - so the sweep closed it at ALL THREE
-   instances in the tree, not two: api/UserInterface::GetRecords,
+   `LIMIT` whose value is spliced rather than cast is not a read defect - the
+   server does accept `INTO OUTFILE` in that position - so the sweep closed it
+   at ALL THREE instances in the tree, not two: api/UserInterface::GetRecords,
    api/PatientInterface::picklist and
    module/WorkListsModule::GenerateWorkList. The third is an ALLOWLISTED relay
    method (data/config/relay-allowlist.php), so enforcement alone would not have
    covered it, and the static gate cannot see it (an unrelated addslashes() on
    the same line excuses the splice). It was found by the final whole-branch
    review and is fixed in the same release as the other two.
+
+   MEASURED, so this is not read as a demonstrated file write. What was measured
+   is that the injected string REACHES the statement - that is the finding - and
+   that the write primitive did NOT execute on this deployment. On the shipped
+   server (mariadb:10.11.19-MariaDB, secure_file_priv NULL) the POSITION is
+   accepted: `SELECT 1 LIMIT 1 INTO OUTFILE '<path>'` writes its row when run
+   with the FILE privilege. The application's own connection is refused:
+   `<db>@%`, the user every relay call runs as, holds USAGE plus `<db>.*` and no
+   FILE privilege, so the same statement answers `Access denied; you need (at
+   least one of) the FILE privilege(s) for this operation`. No file was written.
+   The claim this release stands on is therefore the reach of the injected
+   string, not a demonstrated write.
 
    3.3 FINDING 3 - vcalendar.php pass-the-hash and cross-provider access
        (CWE-287 / CWE-836 / CWE-639), CVSS 3.1
@@ -1077,14 +1089,19 @@ STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
                                   same release, not proven live). The one place
                                   where that idiom is a write primitive rather
                                   than a read - a `LIMIT` whose value is spliced,
-                                  which MySQL accepts `INTO OUTFILE` in - had
-                                  THREE instances, not two:
+                                  a position the server does accept `INTO
+                                  OUTFILE` in - had THREE instances, not two:
                                   api/UserInterface::GetRecords,
                                   api/PatientInterface::picklist and
                                   module/WorkListsModule::GenerateWorkList (an
                                   ALLOWLISTED relay method, so enforcement alone
                                   would not have covered it). All three are cast
                                   in the same release; 3.2 gives the mechanism.
+                                  MEASURED, not proven live: the injected value
+                                  reaches the statement and the write did NOT
+                                  execute, because the relay's DB user holds no
+                                  FILE privilege, which the server requires for
+                                  `INTO OUTFILE` (3.2 has the run).
      Affected component:          relay.php and the relay-reachable API/module
                                   surface, remediated by parameterizing every
                                   application-owned concatenation (the four
