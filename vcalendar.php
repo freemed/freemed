@@ -25,29 +25,57 @@
 define ('SESSION_DISABLE', true);
 include_once ("lib/freemed.php");
 
-if ($_SERVER['argc']) {
+// $_SERVER['argc'] only exists in the CLI SAPI. Reading it unguarded emitted an
+// E_WARNING into the response body on every web request, and that output is
+// fatal to the 401/403 challenges below ("Cannot modify header information -
+// headers already sent"). Read it defensively.
+if (isset($_SERVER['argc']) and $_SERVER['argc']) {
 	trigger_error('Cannot be called from the command line.', E_USER_ERROR);
 }
 
 //----- Define freemed authorization
+//
+// Function: freemed_basic_auth
+//
+//	HTTP Basic authentication for this endpoint.
+//
+//	Returns true and populates $GLOBALS['__freemed']['basic_auth_id'] and
+//	$GLOBALS['__freemed']['basic_auth_phy'] (the authenticated account's own
+//	provider record, 0 when the account is not a provider) when the supplied
+//	credential is correct. Returns false, with both globals cleared, when it is
+//	not - and with no Authorization header at all it issues the 401 challenge
+//	and stops, which is what makes a plain `curl -u` client work.
+//
+//	The stored credential is an unsalted MD5 digest of the password (moving the
+//	storage format is out of scope here), so the password is still hashed with
+//	MD5 before it is compared - but the comparison now happens in PHP against
+//	the row fetched by username, using hash_equals(), instead of in SQL via
+//	`userpassword = MD5('<pass>')`. That removes the timing side channel on the
+//	comparison and keeps the credential out of a query string.
 function freemed_basic_auth () {
 	//----- Check for authentication
-	$headers = getallheaders(); $authed = false;
-	if (preg_match('/Basic/', $headers['Authorization'])) {
+	$headers = getallheaders();
+	$authorization = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+	$authed = false;
+	if (preg_match('/Basic/', $authorization)) {
 		// Parse headers
-		$tmp = $headers['Authorization'];
+		$tmp = $authorization;
 		$tmp = preg_replace('/ /', '', $tmp);
 		$tmp = preg_replace('/Basic/', '', $tmp);
 		$auth = base64_decode(trim($tmp));
-		list ($user, $pass) = explode(':', $auth);
-	
-		// Check for username/password
+		if (strpos($auth, ':') !== false) {
+			list ($user, $pass) = explode(':', $auth, 2);
+		} else {
+			$user = ''; $pass = '';
+		}
+
+		// Fetch the account by username and compare the digest in PHP.
 		$query = "SELECT username, userpassword, userrealphy, id FROM user ".
-			"WHERE username='".addslashes($user)."' AND ".
-			"userpassword=MD5('".addslashes($pass)."')";
+			"WHERE username='".addslashes($user)."'";
 		$r = $GLOBALS['sql']->queryRow( $query );
 
-		if ($r['id']) {
+		if (is_array($r) and !empty($r['id']) and
+				hash_equals(strtolower((string) $r['userpassword']), md5((string) $pass))) {
 			$authed = true;
 			$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
 			$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
@@ -59,28 +87,65 @@ function freemed_basic_auth () {
 		}
 	} else {
 		// Otherwise return fault for no authorization
-		Header("WWW-Authenticate: Basic realm=\"".prepare(PACKAGENAME." v".VERSION." vCalendar")."\"");
+		Header("WWW-Authenticate: Basic realm=\"".PACKAGENAME." v".VERSION." vCalendar\"");
 		Header("HTTP/1.0 401 Unauthorized");
 		die();
 	}
 	return $authed;
 } // function freemed_basic_auth
 
+// Function: freemed_legacy_hash_enabled
+//
+//	Compatibility gate for the deprecated GET `user`+`hash` credential path.
+//
+//	That path compared a request-supplied value directly against the stored
+//	userpassword column - an unsalted MD5 digest - so anyone who could read the
+//	digest (a database read, a backup, a log) could authenticate without ever
+//	knowing the password: pass-the-hash. The path is therefore OFF by default
+//	and only a site that explicitly sets the `vcals_legacy_hash` option in the
+//	config table to a true value gets it back for the duration of a client
+//	migration. Off is the default and there is no way to turn it on by request.
+//
+//	(freemed::config_value() has no isset() guard on its cache, so the read is
+//	suppressed: the common "option not set" case must not emit a warning into
+//	the response.)
+function freemed_legacy_hash_enabled () {
+	$v = @freemed::config_value('vcals_legacy_hash');
+	if ($v === false or $v === null) { return false; }
+	return in_array(strtolower(trim((string) $v)), array('1', 'on', 'yes', 'true'), true);
+} // end function freemed_legacy_hash_enabled
+
+// Function: freemed_get_auth
+//
+//	DEPRECATED. The GET `user`+`hash` credential path, kept only behind
+//	freemed_legacy_hash_enabled(). Returns false, and does nothing at all,
+//	unless a site has opted in; every use of the path is logged.
+//
+//	The claimed username is recorded because that is the only audit trail a
+//	pass-the-hash attempt leaves; it is NOT yet authenticated at this point and
+//	the log says so. (PHP has no LOG__SECURITY constant - LOG_NOTICE is used.)
 function freemed_get_auth ( ) {
 	global $sql;
-	syslog(LOG_INFO, "vCalendar [get] username = ".$_GET['user']);
+
+	if (!freemed_legacy_hash_enabled()) { return false; }
+
+	$__user = isset($_GET['user']) ? (string) $_GET['user'] : '';
+	$__hash = isset($_GET['hash']) ? (string) $_GET['hash'] : '';
+
+	syslog(LOG_NOTICE, "vCalendar [get] DEPRECATED hash authentication used ".
+		"(vcals_legacy_hash=on), claimed username = ".$__user.
+		", remote = ".(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-'));
+
 	$query = "SELECT username, userpassword, userrealphy, id FROM user ".
-		"WHERE username='".addslashes($_GET['user'])."' AND ".
-		"userpassword='".addslashes($_GET['hash'])."'";
+		"WHERE username='".addslashes($__user)."'";
 	$r = $sql->queryRow( $query );
-	if ($r['id']) {
-		$authed = true;
+	if (is_array($r) and !empty($r['id']) and
+			hash_equals(strtolower((string) $r['userpassword']), strtolower($__hash))) {
 		$GLOBALS['__freemed']['basic_auth_id'] = $r['id'];
 		$GLOBALS['__freemed']['basic_auth_phy'] = $r['userrealphy'];
 		return true;
 	} else {
 		// Clear basic auth id
-		$authed = false;
 		$GLOBALS['__freemed']['basic_auth_id'] = 0;
 		$GLOBALS['__freemed']['basic_auth_phy'] = 0;
 		return false;
@@ -89,8 +154,14 @@ function freemed_get_auth ( ) {
 } // end function freemed_get_auth
 
 // Check for GET, then basic authentication
+//
+// The GET-hash path is dead unless vcals_legacy_hash is on (see above), so the
+// only live credential is HTTP Basic. A rejected credential gets an explicit
+// 401 - not a 200 with a complaint in the body, which is what die() alone
+// produced before.
 if (!freemed_get_auth()) {
 	if (!freemed_basic_auth()) {
+		Header("HTTP/1.0 401 Unauthorized");
 		die("Not authorized.");
 	}
 }
