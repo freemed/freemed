@@ -1154,12 +1154,13 @@ residual mismatches in this phase: 0
 #                                               cannot be loaded at all (php -l fails, and
 #                                               a live relay attempt answers
 #                                               `Parse error: syntax error, unexpected
-#                                               token "&" ... on line 127`). The parse
-#                                               error is also why the 0-entry half is
-#                                               stated where it was measured: under
+#                                               token "&" ... on line 127`). The
+#                                               0-entry half is MEASURED IN BOTH
+#                                               STAGES (A18.3/A18.4 below): under
 #                                               enforcement the outer hop is refused
 #                                               before the inner dispatch BY
-#                                               CONSTRUCTION, exactly as for #9/#10.
+#                                               CONSTRUCTION, exactly as for #9/#10,
+#                                               and the parse error is never reached.
 #                                               THIS FILE IS APPLICATION CODE. The plan's
 #                                               R14 non-goal covers the VENDORED
 #                                               lib/agata7/** tree (bundled fpdf / pclzip
