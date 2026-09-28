@@ -360,9 +360,16 @@ class Scheduler {
 	//
 	public function date_add ( $starting, $interval ) {
 		if ($interval < 1) { return $starting; }
-		$q = $GLOBALS['sql']->queryOne("SELECT DATE_ADD('".
-			addslashes($this->ImportDate( $starting ))."', INTERVAL ".
-			($interval+0)." DAY) AS mydate");
+		// Category A + F4 (2.6f): the date is validated as Y-m-d and the query is
+		// refused (logged, false) rather than quoting ImportDate()'s boolean
+		// false - the driver's quote(false) is a bare 0, a date no caller asked
+		// for, and the old hand-written literal turned it into '' (the zero-date)
+		// instead. The quotes come from quote(); addslashes() inside them was the
+		// one shape the static gate excludes. The interval is a plain cast.
+		$this_date = $this->_ValidDate( $starting );
+		if ( $this_date === false ) { return false; }
+		$q = $GLOBALS['sql']->queryOne( sprintf( 'SELECT DATE_ADD(%s, INTERVAL %d DAY) AS mydate',
+			$GLOBALS['sql']->quote( $this_date ), intval( $interval ) ) );
 		return $q;
 	} // end method date_add
 
