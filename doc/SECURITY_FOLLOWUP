@@ -308,7 +308,10 @@ reported findings
       DB-derived and the line is pre-existing, and Task 2.6f disclosed rather
       than changed it - but the SQL-concatenation gate provably cannot see the
       line (it matches none of the gate's keyword filters), so "make
-      security-check is clean" is not proof of closure for it.
+      security-check is clean" is not proof of closure for it. NOTE: the same
+      branch arm carries a pre-existing FATAL two lines below this one, for a
+      `tag` criterion that matches no rows - recorded as 3.5 x), so a reader who
+      lands on :190 is two lines above it.
 
    r) lib/org/freemedsoftware/core/EMRModule.class.php:827 - qualified_query()'s
       conditional clause builds an IDENTIFIER from the value escaper:
@@ -347,40 +350,58 @@ reported findings
    says of every reference in this file, re-read them against HEAD before
    acting.
 
-   a) lib/org/freemedsoftware/core/EMRModule.class.php:914 - GetRecentRecord()
-      takes $dfield = $this->date_field ? SqlIdent::name(...) : false, so a
-      NON-EMPTY but invalid $date_field falls back to `id DESC` SILENTLY: no log
-      line, no refusal, and the caller gets the newest record by id instead of
-      by date. The sibling refusals are loud - an invalid
-      table_name/patient_field logs LOG_ERR and returns NULL (:904-907), and a
-      non-Y-m-d recent_date logs at :888 - and R12 permits the same
+   a) lib/org/freemedsoftware/core/EMRModule.class.php:928 - GetRecentRecord()
+      (:885) takes $dfield = $this->date_field ? SqlIdent::name(...) : false, so
+      a NON-EMPTY but invalid $date_field falls back to `id DESC` SILENTLY: no
+      log line, no refusal, and the caller gets the newest record by id instead
+      of by date. The sibling refusals are loud - an invalid
+      table_name/patient_field logs LOG_ERR and returns NULL (:918-921), and a
+      non-Y-m-d recent_date logs at :902 - and R12 permits the same
       developer-error signal for a class-declared identifier, in that branch
-      only. Pre-existing shape, but the surrounding method is this batch's. Read
-      at source; not exercised live here (it needs a module declaring an
-      unusable date_field).
+      only. CLASSIFICATION CORRECTED (this item used to read "Pre-existing
+      shape"): the silent `id DESC` fallback is behaviour THIS BRANCH introduced.
+      At the branch base 79efd68d the same method validated nothing and ordered
+      by the raw property - `"ORDER BY ".$this->date_field." DESC, id DESC"` at
+      :766 of `git show 79efd68d:lib/org/freemedsoftware/core/EMRModule.class.php`
+      - so an unusable date_field produced a broken statement, not a silent wrong
+      answer. The validated fallback arrives in this branch's 8bdc649f (2.6b)
+      and 2.6f, so §7's tally of branch-introduced items in this file was one
+      short and now names this item too. Read at source; not exercised live here
+      (it needs a module declaring an unusable date_field).
 
    b) Pre-existing `escape()`-inside-quotes value sites that the SQL-concat gate
       cannot see (see 6.7 b)): core/SupportModule.class.php:484, a
       `LIKE '".$GLOBALS['sql']->escape($criteria)."%'` predicate, and
-      api/PatientInterface.class.php:319 and :355-439, the same
-      `LIKE '%...'` shape repeated through the patient-search builders. None of
+      api/PatientInterface.class.php - :299 (`EmrModules()`, the same
+      `LIKE '%".$GLOBALS['sql']->escape($part)."%'` shape), :413 (the
+      patient_keypad_lookup predicate in `NumericSearch()`), and the
+      patient-search builder sites spanning :449-533. None of
       them is a known defect - escape() is the established escaper for a value
       inside quotes, which is why the gate's keyword filter excludes them - but
       they are on the list because the gate cannot see them at all, so a clean
-      `make security-check` is not evidence about them. RE-READ in fix round 1:
-      the ledger's `PatientInterface:319` is right at HEAD - it is the
-      patient_keypad_lookup predicate, the first of these sites, and the others
-      sit at :355-439.
+      `make security-check` is not evidence about them. RE-DERIVED at HEAD
+      (1b85ef44) with
+          grep -n "->escape(" lib/org/freemedsoftware/api/PatientInterface.class.php
+      which lists those sites: the ledger's `PatientInterface:319` is the
+      patient_keypad_lookup predicate and is `:413` now (it was `:319` at the
+      d2ec460b pin), and the builders' span `:355-439` is `:449-533` - both
+      moved by another workstream's later commits, not by this diff. The
+      enumeration now also names the `:299` `EmrModules()` site, which is the
+      same shape and was missing from it.
 
-   c) api/PatientInterface.class.php:257 - the resolve query inside
-      MoveEmrAttachments (:251) interpolates
+   c) api/PatientInterface.class.php:329 - the resolve query inside
+      MoveEmrAttachments (:323) interpolates
       `... WHERE p.patient = ".$GLOBALS['sql']->quote( $patient )`, where
       $patient is an UNDEFINED local: the method's parameters are $patientFrom,
       $patientTo and $attachments, and none of them is $patient. quote(NULL) is
       'NULL', and a NULL comparison is never true, so $resolve is empty and the
       R12-refused path is unexercised in situ. Pre-existing; deliberately
-      unchanged. Ledger item 17's own line (`:228`) does not hold at HEAD - the
-      line has moved, and this is where it is now.
+      unchanged. LINE REFERENCES RE-DERIVED at HEAD (1b85ef44, `grep -n` over
+      lib/org/freemedsoftware/api/PatientInterface.class.php): the method is
+      declared at :323 and the resolve query sits at :329; at the d2ec460b pin
+      they were :251 and :257, and another workstream's later commits moved
+      them. Ledger item 17's own line (`:228`) does not hold either - the line
+      has moved, and this is where it is now.
 
    d) The F4 Y-m-d pre-check is copy-pasted, not shared. RE-COUNTED in fix round
       1: 12 sites in 10 files at HEAD - SuperBill.class.php:124-125,
@@ -411,13 +432,15 @@ reported findings
       (`api/PatientCoverages.class.php`) is wrong; it lives in module/.
 
 
-   3.5 Items the final fix wave recorded (ledger items 34 and 35, and the
-       sanitizer family's config dependence)
+   3.5 Items the final fix wave recorded (ledger items 34 and 35, the sanitizer
+       family's config dependence, and one fatal its code work measured)
 
    These post-date the 33-item map in section 1 - they were raised by the final
    whole-branch review, which is why section 1 now says the map is not the whole
    scope. The first two are PHP 8.3 fatals or dead code on a shipped path; the
-   third is the config dependence of a residual class. None is fixed here.
+   third is the config dependence of a residual class; the fourth is a fatal the
+   final fix wave's code work measured and could not write here itself. None is
+   fixed here.
 
    u) lib/org/freemedsoftware/api/Agata7.class.php:127 - CreateForm() calls
       freemed::quickform_i18n(&$form) with CALL-TIME PASS-BY-REFERENCE, which PHP
@@ -480,6 +503,34 @@ reported findings
       which is a correctness change to what callers may pass. Read this line
       before changing a deployment's `sql_mode`: the mitigation does not survive
       that change.
+
+   x) api/Ledger.class.php:192 - AgingReportQualified()'s `tag` case FATALS
+      when the tag search returns no rows. `$patient_ids` is assigned only
+      inside the loop over that result (the `$patient_ids[] = ...` at :190), so
+      an empty result leaves it undefined, and
+
+          $condition = join(' OR ', $patient_ids);      <- :192
+
+      then raises `Warning: Undefined variable $patient_ids` and, uncaught, a
+      `TypeError` - a fatal. Measured on php:8.3-cli by running those exact
+      lines with the no-rows shape ($obj = array()):
+      `Fatal error: Uncaught TypeError: join(): Argument #1 ($array) must be of
+      type array, string given`. The triggering condition is an ordinary one: a
+      `tag` criterion whose PatientTag::SimpleTagSearch()
+      (module/PatientTag.class.php:205, returning SearchEngine()'s
+      `queryAll()` result at :278-280) matches no row. 3.3 q)'s own quote() fix
+      (883644e5, ledger item 13) is the line directly above at :190 and does not
+      change this; a reader who looks up :190 lands two lines above the fatal.
+
+      PRE-EXISTING, not introduced by this branch: the identical
+      `join(' OR ', $patient_ids)` sits at :124 of the merge-base tree
+      (`git show 79efd68d:lib/org/freemedsoftware/api/Ledger.class.php`), and
+      the only thing this branch changed in that branch arm is the :190 splice
+      (the raw value concatenation became quote()). Recorded, not fixed: the fix
+      is a behaviour decision for the caller (answer the empty result instead of
+      fataling), so it belongs with the same group as 3.4 a-c. Found and
+      disclosed by the final fix wave's code work, which had no mandate to edit
+      this file.
 
 
 4. RELAY AND DISPATCH SURFACE STILL UNGATED
@@ -666,6 +717,19 @@ reported findings
        * the FormTemplate gates Task 2.8 round 2 added are SOURCE-LEVEL only -
          no XML template ships, so that path cannot be driven live (that round
          names it as its own weakest cell);
+       * ledger item 29's SECOND clause, which this bullet used to drop: the
+         print wrappers' class axis "was never exercised live because the seeded
+         `patient_emr.module='payrec'` does not resolve as a module class". The
+         data mismatch is real and measured at HEAD - patient_emr holds exactly
+         one row (`id 5, module='payrec', oid 3`) and the join the wrappers use
+         (`m.module_table = p.module`) yields `module_class` NULL, because no
+         `modules` row carries `module_table` or `module_class` `payrec`. The
+         INFERENCE drawn from it does not hold: the Task 2.8 round-2 re-review
+         got all three print wrappers to answer live on a RESOLVABLE class name
+         (`org.freemedsoftware.module.payrec.RenderToPDF` /
+         `…module..RenderToPDF` -> INVALID_CALL), so the "never exercised live"
+         half is understated rather than true. That dispatch is the re-review's
+         record, not re-measured here;
        * two transports inherit the allowlist check by construction only: the
          JSON-body path (unusable at HEAD - see 4.3) and Relay_Xmlrpc; a THIRD
          relay transport - relay-gwt.php's GWT servlet - does not consult the
@@ -695,36 +759,57 @@ reported findings
    in fix round 1 and did not reproduce as the ledger wrote them, which is said
    at the item.
 
-   a) tests/security/repro-relay-sqli.sh lists a site as cleared while its own
-      output says the control was not asserted. site_end() (:455-462) has only
-      three outcomes (EXPLOITED / INCONCLUSIVE / CLEAN) and a site with no
-      exploit and no inconclusive marker goes into SITES_CLEAN, printed as
-      "sites cleared" (:600); the CLEAN verdict text at :460 claims "all 3 calls
-      dispatched, the control answered as modelled". But assert_has() (:415)
-      prints ">>> WEAKER THAN MEASURED" and returns 0 WITHOUT incrementing
-      G_INCONCLUSIVE, so a site whose control assertion failed still reports the
-      control as having matched. FIX SHAPE: count the failed control assertion
-      as inconclusive for that site, or stop claiming the control matched.
-      Ledger item 1 (Task 0.1 round-2 re-review, Minor); re-read at source in
-      fix round 1, this is the code at HEAD.
+   a) tests/security/repro-relay-sqli.sh used to file a site as cleared while its
+      own output said the control was not asserted. CLOSED at HEAD (1b85ef44) by
+      the final fix wave (`dd9a268d`, ledger item 1): site_end() (:479, closing
+      at :500) now has FOUR outcomes, not three - EXPLOITED (:485), INCONCLUSIVE
+      (:488), NOT CLEARED / WEAKER THAN MEASURED (:494, filing the site in
+      SITES_WEAK) and the clean branch (:497, filing it in SITES_CLEAN) - and
+      assert_has() (:436) now bumps G_WEAK on a failed assertion, which site_end()
+      and the exit code (:658) both read. A site whose control assertion failed
+      is therefore no longer printed under "sites cleared" (:649) and no longer
+      passes, and the clean verdict text at :497 - "all 3 calls dispatched, the
+      control answered as modelled" - is true by construction, because that
+      branch is reached only when no weak assertion fired. LINE REFERENCES
+      CORRECTED at HEAD: this item used to cite site_end() as `:455-462` and the
+      CLEAN text as `:460`, which were the pre-fix body lines of a function then
+      declared at :449 and closing at :463. Ledger item 1 (Task 0.1 round-2
+      re-review, Minor); the closure was re-read at source here.
 
    b) tests/security/evidence/sweep-notes.md - three provenance claims, of which
-      one stands (re-measured in fix round 1):
-      * the RenderHtmlView row (:367) quotes the splice as `:946 -> :973` - this
-        is CORRECT: `:946` is the addslashes() splice in the pre-6e566dc4 tree
-        and `:973` is the intval() line at 997d98d9, the tree that row names.
+      two hold at HEAD and the third was corrected in the artefact itself
+      (re-read at 1b85ef44):
+      * the RenderHtmlView row (:375, cited here as :367 before this re-read)
+        quotes the splice as `:946 -> :973` - this is CORRECT: `:946` is the
+        addslashes() splice in the pre-6e566dc4 tree (`git show
+        6e566dc4^:lib/org/freemedsoftware/core/EMRModule.class.php | sed -n
+        946p` -> `"WHERE id='".addslashes($id)."'"`) and `:973` is the intval()
+        line at 997d98d9 (`"WHERE id=".intval($id)`), the tree that row names.
         The ledger's item 4 says the splice is `:969`; at 997d98d9 `:969` is the
-        FROM line of the same query, so that sub-claim does not reproduce.
+        FROM line of the same query (`"FROM ".$this->table_name`), so that
+        sub-claim does not reproduce.
       * `module-smoke-after.json`'s bytes are the SAME git blob object at
-        3e6e790f, at f74923e7 and at HEAD (sha256 8f46fb07..., the value the
-        file itself records), so naming 3e6e790f at :178 as the commit that
-        wrote them is right; f74923e7 added the provenance record without
-        changing the file.
-      * the sub-claim that stands is :193-198, which stages the Task 2.6e fix
-        round's re-run as having been made "against the current HEAD
-        (`997d98d9`)" when it was made against the uncommitted tree. Not
-        re-derivable from the repository - no run logs are committed - so it
-        stays on the list as RECORDED, NOT VERIFIED here.
+        3e6e790f, at f74923e7 and at HEAD, so naming 3e6e790f at :178 as the
+        commit that wrote them is right; f74923e7 added the provenance record
+        without changing the file. ATTRIBUTION CORRECTED here: this bullet used
+        to carry the digest as a parenthetical "the value the file itself
+        records", which is wrong - it is not that JSON artifact that records it
+        (`grep -c 8f46fb07 tests/security/evidence/module-smoke-after.json`
+        returns 0) but sweep-notes.md itself, in the sha256sum command's output
+        at :80-81 and the provenance table at :181-182, quoted in shorthand at
+        :199 and :358. The sha256 is right: `sha256sum
+        tests/security/evidence/module-smoke-after.json` returns `8f46fb07…`,
+        identical to the before-file's.
+      * the third sub-claim (:193-198) is CORRECTED at HEAD rather than
+        standing: that text used to stage the Task 2.6e fix round's re-run as
+        having been made "against the current HEAD (`997d98d9`)" when it was
+        made against the uncommitted tree. The final fix wave (`5759ba1c`)
+        rewrote it to say the run was made in the fix round's working tree whose
+        HEAD that commit was, and labelled the staging RECORDED, NOT
+        RE-DERIVABLE. The limit this document cared about is unchanged - no run
+        logs are committed, so the staging is not re-derivable from the repo -
+        so this is a closed wording defect with its limit kept, not a claim that
+        has become provable.
 
    c) tests/security/evidence/seed-verify.sql:148-149 - `UPDATE patient_emr SET
       id = 5 WHERE module = 'payrec' AND oid = 3 AND id <> 5` assumes the
@@ -806,15 +891,29 @@ reported findings
       (REJECT_RE='Invalid CHTML page name\.'), so a reworded server message
       turns that check into a silent no-op.
 
-   e) Ledger item 12 - tests/security/evidence/path-sink-audit.md has no verdict
-      line for relay-gwt.php (re-measured: `grep -c relay-gwt` returns 0) even
-      though relay-gwt.php is one of the five allowlisted PATH_INFO entrypoints;
-      the audit covers chtml.php, help.php, relay.php, controller.php and
-      install.php instead. The second half of the item does not reproduce: the
-      `$path`/GetResource argument surface IS discussed (:32, :91, :242). FIX
-      SHAPE: add the relay-gwt.php row (the re-review's own check found no
-      PATH_INFO and no file sink in it) so the audit's table covers every
-      entrypoint the deployment allowlists.
+   e) Ledger item 12 - three clauses, each re-read at HEAD (1b85ef44):
+      * FIRST CLAUSE (the audit carried no verdict line for relay-gwt.php even
+        though it is one of the five allowlisted PATH_INFO entrypoints, and
+        covered chtml.php, help.php, relay.php, controller.php and install.php
+        instead): CLOSED by the final fix wave (`918c885b`), which added the
+        audit's section 2.6 - `### 2.6 relay-gwt.php - the fifth entrypoint the
+        PATH_INFO allowlist names` at :361, with the sink-table row at :370.
+        `grep -c relay-gwt tests/security/evidence/path-sink-audit.md` now
+        returns 3, not 0.
+      * SECOND CLAUSE (the `$path`/GetResource argument surface omitted): does
+        not reproduce - that surface IS discussed, at :32, :91 and :242.
+      * THIRD CLAUSE (the token class also accepts a bare `..`, disclosed as
+        inert and unreachable): REPRODUCES, and is recorded here so it is on
+        this list too. Measured at HEAD: chtml.php:46's class is
+        `^[A-Za-z0-9._-]+\z` and on php:8.3-cli it ACCEPTS `..` (and `.`) while
+        rejecting `../` and `..%2f`. The disclosure stands with it: no
+        separator can be admitted, so the composed path is `doc/...chtml`, and
+        `/chtml.php/..` is normalised to `/` by both servers (a 302 to the index
+        redirect; PHP never runs). The audit already states all of this at
+        :178-184, including that the sibling resolver rejects any token
+        containing `..` (lib/help-path.php:38, which at HEAD is the `preg_match`
+        on :38 plus its `strpos($page, '..')` test on the same line) - so it is
+        a known residual, not a gap in the record.
 
 
 7. HOW TO PICK THIS UP
@@ -833,8 +932,9 @@ reported findings
    PHP 8.3 fatals (3.1 a-f, 3.3 p) are mostly deletions and bounded guards and
    can be taken together; the config and .htaccess residuals (5) are
    independent of both and the cheapest. The ledger-union items this fix round
-   added sort the same way: 3.4 d-f are the only defects in this file that this
-   branch introduced and are the smallest code repairs; 6.6 (evidence truth) and
+   added sort the same way: 3.4 a) and d-f are the defects in that section that
+   this branch introduced - the earlier tally here named only d-f, which was one
+   short - and d-f are the smallest code repairs; 6.6 (evidence truth) and
    6.7 (gate precision) are text and script edits with no code surface and can
    go first; 3.4 a-c and 5.5 need a decision about the callers before any edit.
    Nothing in this file authorises a
