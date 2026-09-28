@@ -67,25 +67,27 @@ class SchedulerTable extends SupportModule {
 			}
 
 			// Figure out appointments for today
-			$day_count = $GLOBALS['sql']->queryOne(
-				"SELECT COUNT(*) AS day_count FROM scheduler WHERE ".
-				"caldateof='".$begin_date."' AND ".
-				"calphysician='".$GLOBALS['this_user']->getPhysician()."'"
-			);
+			// Category A: the date values are quoted by the driver (the date
+			// itself is code-authored date('Y-m-d'); the physician id is a
+			// record value).
+			$day_count = $GLOBALS['sql']->queryOne( sprintf(
+				'SELECT COUNT(*) AS day_count FROM scheduler WHERE caldateof = %s AND calphysician = %s',
+				$GLOBALS['sql']->quote( $begin_date ),
+				$GLOBALS['sql']->quote( $GLOBALS['this_user']->getPhysician() )
+			) );
 
 			// Figure out appointments for this week
-			$week_count = $GLOBALS['sql']->queryOne(
-				"SELECT COUNT(*) AS week_count FROM scheduler WHERE ".
-				"caldateof >= '".$begin_date."' AND ".
-				"caldateof <= '".$end_date."' AND ".
-				"calphysician='".$GLOBALS['this_user']->getPhysician()."'"
-			);
+			$week_count = $GLOBALS['sql']->queryOne( sprintf(
+				'SELECT COUNT(*) AS week_count FROM scheduler WHERE caldateof >= %s AND caldateof <= %s AND calphysician = %s',
+				$GLOBALS['sql']->quote( $begin_date ),
+				$GLOBALS['sql']->quote( $end_date ),
+				$GLOBALS['sql']->quote( $GLOBALS['this_user']->getPhysician() )
+			) );
 
 			return array (
 				__("Patient Scheduler"),
 				sprintf(__("You have %s%d appointment(s) today%s and %s%d appointment(s) this week%s."), "<a href=\"physician_day_view.php?physician=".urlencode($GLOBALS['this_user']->getPhysician())."\">",  $day_count, "</a>", "<a href=\"physician_week_view.php?physician=".urlencode($GLOBALS['this_user']->getPhysician())."\">", $week_count, "</a>"),
 				"img/calendar_icon.png"
-				//"You have <a href=\"physician_day_view.php\">".$day_count." appointent(s) today</a> and <a href=\"physician_week_view.php\">".$week_count." appointment(s) this week</a>."
 				//"You have <a href=\"physician_day_view.php\">15 appointent(s) today</a> and <a href=\"physician_week_view.php\">47 appointment(s) this week</a>."
 			);
 		} else {
