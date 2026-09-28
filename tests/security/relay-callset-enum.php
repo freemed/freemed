@@ -82,6 +82,11 @@ $ROOT = dirname(dirname(dirname(__FILE__)));
 $LIB = $ROOT . '/lib';
 $FS = $ROOT . '/lib/org/freemedsoftware';
 
+// The REAL matcher, so the class-axis classification below cannot drift from
+// what the relay itself decides. Relay_Allowlist.class.php is self-contained
+// (no file-scope dependencies), so a plain require is enough here.
+require_once $FS . '/core/Relay_Allowlist.class.php';
+
 $rows = array();   // strtolower(method) => array( 'method' => display, 'source' => ..., 'evidence' => array(...) )
 $SOURCE_RANK = array('live-probe' => 3, 'access-log' => 3, 'gwtphpmap' => 2, 'public-namespace' => 2, 'source-mine' => 1);
 
@@ -485,8 +490,94 @@ if ($accesslog_file !== NULL and is_file($accesslog_file)) {
 }
 
 // ---------------------------------------------------------------------------
-// output
+// F. class axis (fix round 2, R32/R36) — the concrete strings the fixed-literal
+//    wrappers in lib/org/freemedsoftware/api/ModuleInterface.class.php can
+//    dispatch against a CALLER-CHOSEN module class.
+//
+//    The wrappers call module_function($module, '<literal>') with the literal
+//    fixed in the source ('add', 'del', 'GetRecord', 'GetRecords', 'mod',
+//    'picklist', 'RenderHtmlView', 'to_text') and the print wrappers call it
+//    with 'RenderToPDF'. module_function() resolves $module to
+//    lib/<...>/module/<Class>.class.php and instantiates it, so the dispatch IS
+//    the relay method string `org.freemedsoftware.module.<Class>.<literal>` —
+//    which is what the allowlist has to be able to name. A per-method list that
+//    names the WRAPPER cannot constrain the class.
+//
+//    The pairs are enumerated over every module class file, with inheritance
+//    walked (a literal counts for a class when the class OR AN ANCESTOR
+//    declares it public — that is what call_user_func reaches), and they are
+//    classified against the SHIPPED data file with the real matcher. Definition
+//    matters, so the four counts are reported separately below.
+//
+//    These strings are EVIDENCE OF EXPOSURE, not a seed: the shipped list does
+//    NOT contain them (that is the point of R32 — the gate refuses what the
+//    enumeration never evidenced). They are emitted as '#class-axis' lines so
+//    that the shipped-list drift check (which reads the tab-delimited rows)
+//    keeps comparing the list against the tiers it was actually seeded from.
 // ---------------------------------------------------------------------------
+$CLASS_AXIS_LITERALS = array('add', 'del', 'GetRecord', 'GetRecords', 'mod', 'picklist', 'RenderHtmlView', 'to_text');
+$CLASS_AXIS_LITERAL_PDF = 'RenderToPDF';
+
+$shipped_data_file = $ROOT . '/data/config/relay-allowlist.php';
+$shipped_data = is_file($shipped_data_file) ? include $shipped_data_file : NULL;
+$class_axis_config = array(
+    'enforce' => false,
+    'patterns' => (is_array($shipped_data) && isset($shipped_data['patterns']) && is_array($shipped_data['patterns']))
+        ? $shipped_data['patterns'] : array(),
+);
+
+$AXIS = array(                     // restriction => counts
+    'all'      => array('total' => 0, 'unlisted' => 0, 'listed' => 0, 'pdf_total' => 0, 'pdf_unlisted' => 0, 'pdf_listed' => 0),
+    'named'    => array('total' => 0, 'unlisted' => 0, 'listed' => 0),
+    'own_file' => array('total' => 0, 'unlisted' => 0, 'listed' => 0),
+);
+$axis_rows = array();              // concrete => array('listed' => bool, 'evidence' => string)
+$axis_named_classes = array();
+foreach ($class_axis_config['patterns'] as $p) {
+    if (preg_match('/^org\.freemedsoftware\.module\.([A-Za-z0-9_]+)\./i', $p, $m)) {
+        $axis_named_classes[strtolower($m[1])] = true;
+    }
+}
+$axis_classes = array();
+foreach (glob($FS . '/module/*.class.php') as $f) { $axis_classes[basename($f, '.class.php')] = $f; }
+ksort($axis_classes);
+foreach ($axis_classes as $class => $file) {
+    $ns = 'org.freemedsoftware.module.' . $class;
+    $deep = public_methods_of($ns);           // inherited included: what call_user_func reaches
+    $own  = public_methods_in_file($file);    // declared in this file only
+    $deep_lc = array(); foreach ($deep as $m) { $deep_lc[strtolower($m)] = $m; }
+    $own_lc  = array(); foreach ($own as $m)  { $own_lc[strtolower($m)]  = $m; }
+    foreach (array_merge($CLASS_AXIS_LITERALS, array($CLASS_AXIS_LITERAL_PDF)) as $literal) {
+        if (!isset($deep_lc[strtolower($literal)])) { continue; }
+        $concrete = $ns . '.' . $literal;
+        $listed = Relay_Allowlist::allowed($concrete, $class_axis_config);
+        $is_pdf = ($literal === $CLASS_AXIS_LITERAL_PDF);
+        $axis_rows[$concrete] = array(
+            'listed' => $listed,
+            'evidence' => 'ModuleInterface wrapper: ' . $class . ' + literal \'' . $literal . '\'',
+        );
+        // the headline (8 module_function literals) ...
+        if (!$is_pdf) {
+            $AXIS['all']['total']++;
+            if ($listed) { $AXIS['all']['listed']++; } else { $AXIS['all']['unlisted']++; }
+        }
+        // ... and the print wrappers' literal, kept separately so the two
+        // definitions cannot be confused for one another.
+        if ($is_pdf) {
+            $AXIS['all']['pdf_total']++;
+            if ($listed) { $AXIS['all']['pdf_listed']++; } else { $AXIS['all']['pdf_unlisted']++; }
+        }
+        if (isset($axis_named_classes[strtolower($class)])) {
+            $AXIS['named']['total']++;
+            if ($listed) { $AXIS['named']['listed']++; } else { $AXIS['named']['unlisted']++; }
+        }
+        if (isset($own_lc[strtolower($literal)])) {
+            $AXIS['own_file']['total']++;
+            if ($listed) { $AXIS['own_file']['listed']++; } else { $AXIS['own_file']['unlisted']++; }
+        }
+    }
+}
+
 // Provenance: the commit this enumeration was generated at. `git` is not
 // necessarily present in the php:8.3-cli image, so the caller passes it in
 // (or it is read from the environment); this is evidence, so it is never
@@ -510,6 +601,31 @@ echo "#   source = live-probe | access-log | gwtphpmap | public-namespace | sour
 echo "#   (rank, when a method is reachable from several sources: live-probe =\n";
 echo "#    access-log > gwtphpmap = public-namespace > source-mine; the weaker\n";
 echo "#    evidences are kept in the third column.)\n";
+echo "#\n";
+echo "# CLASS AXIS (fix round 2, R32) - the fixed-literal wrappers in\n";
+echo "# lib/org/freemedsoftware/api/ModuleInterface.class.php dispatch\n";
+echo "#   org.freemedsoftware.module.<Class>.<literal>\n";
+echo "# against a CALLER-CHOSEN class, so listing the WRAPPER method cannot constrain\n";
+echo "# the class. Measured over every lib/<...>/module/*.class.php module class file,\n";
+echo "# inheritance walked (a literal counts when the class OR AN ANCESTOR declares it\n";
+echo "# public - what call_user_func reaches), classified against the SHIPPED list with\n";
+echo "# the real matcher (Relay_Allowlist::allowed):\n";
+echo "#   8 literals (add, del, GetRecord, GetRecords, mod, picklist, RenderHtmlView, to_text),\n";
+echo "#     all 133 module class files          : " . $AXIS['all']['total'] . " pairs, "
+    . $AXIS['all']['unlisted'] . " NOT in the shipped list, " . $AXIS['all']['listed'] . " in it\n";
+echo "#   +RenderToPDF (PrintToFax/PrintToPrinter/PrintToBrowser): " . $AXIS['all']['pdf_total']
+    . " pairs, " . $AXIS['all']['pdf_unlisted'] . " NOT in the shipped list, " . $AXIS['all']['pdf_listed'] . " in it\n";
+echo "#   the 8 literals, restricted to classes the shipped list names : " . $AXIS['named']['total']
+    . " pairs, " . $AXIS['named']['unlisted'] . " NOT listed, " . $AXIS['named']['listed'] . " listed\n";
+echo "#   the 8 literals, declared in the module file ITSELF           : " . $AXIS['own_file']['total']
+    . " pairs, " . $AXIS['own_file']['unlisted'] . " NOT listed, " . $AXIS['own_file']['listed'] . " listed\n";
+echo "#\n";
+echo "# These strings are EVIDENCE OF EXPOSURE, NOT a seed. The shipped list does NOT\n";
+echo "# contain them - that is the point of R32: the gate refuses what the enumeration\n";
+echo "# never evidenced, and the log-only stage is what measures which ones a site\n";
+echo "# actually needs. Every pair is emitted below as a '#class-axis' line, so the\n";
+echo "# shipped-list drift check (which reads the tab-delimited rows) keeps comparing\n";
+echo "# the list against the tiers it was actually seeded from.\n";
 echo "#\n";
 echo "# WHAT THIS IS NOT: there is no compiled GWT client in this checkout, so the\n";
 echo "# compiled-JS call set and the click-through UI smoke pass could not be\n";
@@ -567,7 +683,19 @@ foreach ($keys as $k) {
     echo $r['method'] . "\t" . $r['source'] . "\t" . $ev . "\n";
 }
 
+// The class-axis pairs (section F). Emitted as '#class-axis' comment lines so
+// that the shipped-list drift check in tests/security/relay_allowlist.test.php
+// keeps comparing the data file against the SEED tiers only.
+echo "#\n";
+echo "# ---- class axis (R32): the " . count($axis_rows) . " concrete strings the fixed-literal wrappers\n";
+echo "# ---- can dispatch, against the shipped list. 'listed' = named in the shipped data file.\n";
+foreach ($axis_rows as $concrete => $row) {
+    echo "#class-axis\t" . $concrete . "\t" . ($row['listed'] ? 'listed' : 'unlisted') . "\t" . $row['evidence'] . "\n";
+}
+
 if (count($rows) === 0) { fwrite(STDERR, "relay-callset-enum: EMPTY enumeration\n"); exit(1); }
 if (count($live_unresolved)) { fwrite(STDERR, "relay-callset-enum: live-probe method(s) did not resolve: " . implode(', ', $live_unresolved) . "\n"); exit(1); }
+fwrite(STDERR, "relay-callset-enum: class axis (8 literals): " . $AXIS['all']['total'] . " pairs, "
+    . $AXIS['all']['unlisted'] . " not in the shipped list, " . $AXIS['all']['listed'] . " in it\n");
 fwrite(STDERR, "relay-callset-enum: " . count($rows) . " relay method strings (" . $raw_total . " raw strings before resolution)\n");
 exit(0);
