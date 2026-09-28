@@ -5,11 +5,13 @@
 # entry of the form "./path/to/File.php:123:" allows exactly that one hit.
 #
 # Seeded with the CURRENT hits at Task 2.7 time (ruling R2) so the gate is green
-# while the sweep has not happened yet. After Task 2.6b the APPLICATION section
-# below must be empty except for the documented raw-expression case; an
-# application entry is a review red flag, not a fix. Vendored/third-party and
-# test entries may stay: those trees are not swept and the tests contain
-# deliberately hostile SQL shapes.
+# while the sweep has not happened yet. The application entry this header used to
+# describe ("the APPLICATION section must be empty except for the documented
+# raw-expression case") is gone: as of batch C there is NO application entry left
+# at all -- the sections below are VENDORED (5), tests (4) and THIRD-PARTY phpGACL
+# (67), and an entry naming api/**, core/**, module/** or a root script would be a
+# review red flag, not a fix. The vendored, test and phpGACL entries may stay:
+# those trees are not swept.
 #
 # Regenerate (and shrink) this file with the same command that produced it:
 #   <the gate's grep chain> | sed 's/:\([^:]*\)$//'   # path:line: only
@@ -46,7 +48,15 @@
 ./lib/agata7/classes/util/nusoap.php:4126:
 ./lib/agata7/classes/util/nusoap.php:5535:
 
-# ---- tests (4): the security tests contain deliberately hostile SQL shapes ----
+# ---- tests (4): three SQL fixtures and one filesystem line ----
+# ./tests/security/sql_ident.test.php:122, :123, :184 are deliberately hostile
+# SQL shapes: the validator's own danger proof (a token spliced naively into
+# `ORDER BY`/`SELECT`) and its execution rows.
+# ./tests/security/help_path.test.php:219 builds NO SQL at all - it is
+# `is_file( $c . '/ui/gwt/help/en_US/main.en_US.html' )`, a filesystem lookup,
+# and it trips this gate only because the path literal contains the word " and "
+# (the keyword filter). Kept rather than rewritten so the four entries are not
+# read as four hostile-SQL exemptions.
 ./tests/security/help_path.test.php:219:
 ./tests/security/sql_ident.test.php:122:
 ./tests/security/sql_ident.test.php:123:
