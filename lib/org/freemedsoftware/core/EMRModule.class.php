@@ -807,16 +807,24 @@ class EMRModule extends BaseModule {
 		}
 
 		// get last $items results
+		//
+		// Category A (2.6f): the patient id is a *value*, so the driver quotes it
+		// (quote() supplies the surrounding quotes) - it was addslashes()ed inside
+		// hand-written quotes, the one shape the static gate excludes. The row
+		// limit sits in an UNQUOTED numeric context, so it is cast rather than
+		// escaped, exactly as the same class of splice was fixed at
+		// UserInterface.class.php:270 in this sweep. Both are reachable from the
+		// public GetList($patient, $items) above.
 		$query = "SELECT *".
 			( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
 			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			"WHERE ".$this->patient_field."=".$GLOBALS['sql']->quote($patient)." ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
 			($conditional ? 'AND ( '.$conditional_clause.' ) ' : '' ).
 			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC ".
-			( $items ? "LIMIT ".addslashes($items) : '' );
+			( $items ? "LIMIT ".intval($items) : '' );
 
 		// Return full hash
 		return $GLOBALS['sql']->queryAll( $query );
