@@ -9,7 +9,11 @@ reported findings
    Every item below was found while fixing the three reported findings (the
    unauthenticated help.php file read, the authenticated relay SQL-injection
    cluster, and the vcalendar pass-the-hash path) on branch
-   security/mitigation-2026-09 at HEAD f0aeba53. None of them is part of that
+   security/mitigation-2026-09 at HEAD f0aeba53 - **the branch head AT THE TIME
+   OF WRITING**, not the merge head (doc/SECURITY_ADVISORY:16 states the same
+   convention for its own pin, so the two documents do not disagree about a
+   commit). Re-derive the current head with `git rev-parse HEAD` before acting on
+   any reference below. None of them is part of that
    mitigation. Each is either out of scope by decision (section 2) or a defect
    that the sweep, its reviews and the verification pass surfaced on the way
    (sections 3 to 6). Nothing here has been fixed.
@@ -33,9 +37,12 @@ reported findings
    The ledger is gitignored (.superpowers/), so it is destroyed with the
    execution workspace; this file is its durable home and is why the union is
    carried whole rather than summarised. The items this fix round added beyond
-   the plan's own list are 3.4, 5.5, 6.6 and 6.7, together with the notes
+   the plan's own list are 3.4, 3.5, 5.5, 6.6 and 6.7, together with the notes
    explaining which ledger items are closed or do not reproduce; the plan's own
-   items keep the letters they already had.
+   items keep the letters they already had. Section 3.5 carries the two items the
+   final whole-branch review raised that the 33-item map above could not contain
+   (its items 34 and 35) plus the sanitizer family's config dependence, so items
+   1-33 are not the file's whole scope.
 
    Every file:line reference was re-read at f0aeba53 while this list was
    consolidated, and every claim that could be measured without a database was
@@ -390,9 +397,10 @@ reported findings
       money amount is ROUNDED to 2dp: measured on php:8.3-cli, 3.5 -> `3.50`,
       -3.5 -> `-3.50`, 12.345 -> `12.35`, where the pre-sweep `($d + 0)` kept
       whatever it was given. Acceptable for a REAL column - the sweep's intval()
-      truncated the cents, which was worse - but the change is documented only
-      in the code NOTE at :430-433, in no committed doc. Introduced by this
-      batch (2.6f).
+      truncated the cents, which was worse, so this REPAIRS a regression rather
+      than introducing one - and it is recorded here rather than only in the code
+      NOTE at :430-433: this item is the durable record that ledger item 19 asked
+      for. Introduced by this batch (2.6f).
 
    f) module/PatientCoverages.class.php::GetCoverages (:134) returns array()
       from its refusal (:146) while its success path returns $res (:155), and
@@ -403,11 +411,83 @@ reported findings
       (`api/PatientCoverages.class.php`) is wrong; it lives in module/.
 
 
+   3.5 Items the final fix wave recorded (ledger items 34 and 35, and the
+       sanitizer family's config dependence)
+
+   These post-date the 33-item map in section 1 - they were raised by the final
+   whole-branch review, which is why section 1 now says the map is not the whole
+   scope. The first two are PHP 8.3 fatals or dead code on a shipped path; the
+   third is the config dependence of a residual class. None is fixed here.
+
+   u) lib/org/freemedsoftware/api/Agata7.class.php:127 - CreateForm() calls
+      freemed::quickform_i18n(&$form) with CALL-TIME PASS-BY-REFERENCE, which PHP
+      5.3 deprecated and PHP 8 removed, so the FILE IS A PARSE ERROR and every
+      method in it is unreachable. Measured: `php -l` on the file. It is live in
+      both relay stages, because Agata7 is the reports surface: under the shipped
+      'enforce' => false the body is the Parse error, and under enforcement the
+      method names are ALLOWLISTED, so the answer is the Parse error rather than
+      INVALID_CALL. That makes it the real first stop for the `*.report` calls
+      ledger item 18 discusses - whoever takes item 18 should fix this line first,
+      or the report path cannot be exercised at all.
+
+   v) freemed::module_get_meta() returns FALSE FOR EVERY MODULE.
+      lib/API.php:586-597 matches `strtolower($v['MODULE_CLASS'])` against the
+      requested class and returns `$v['META_INFORMATION'][$key]`, reading
+      freemed::module_cache()'s `SELECT * FROM modules` (lib/API.php:610). The
+      table declares NEITHER key: the columns are `module_class`
+      (data/schema/mysql/modules.sql:26) and `module_meta` (:35), and the driver
+      returns the declared names. So the match never fires and the function
+      returns false for every module, for two independent reasons (the case and
+      the name).
+
+      Consequence, and the reason this belongs in the durable record: the
+      class-axis gate this branch added to
+      api/PatientInterface.class.php::MoveEmrAttachments (fix round 3; moved
+      before the first write in round 4) reads
+      `freemed::module_get_meta($resolve['class'], 'patient_field')` at :337, so
+      its `$field_q = SqlIdent::name(...)` is ALWAYS false and the gate always
+      refuses. The dispatch it guards therefore cannot run in this tree. That is
+      measured, not inferred: the function's only in-tree caller is that one line
+      (`grep -rn module_get_meta` finds lib/API.php's definition and
+      PatientInterface.class.php:337), and the suite pins the same reading at
+      tests/security/relay_allowlist.test.php:925-930. The other blocker on that
+      path is 3.4 c). (The Multicall inner gate is NOT affected - it consults
+      Relay_Allowlist directly, api/UserInterface.class.php:250.) As a code fix
+      this needs a real database to decide product-versus-harness - returning
+      false for every module may be a product bug older than this branch, or the
+      intended answer for an empty registry - so it is recorded, not changed.
+
+   w) The `addslashes`-inside-quotes VALUE family is CONFIG-DEPENDENT - ledger
+      item 16's other half, B-6 of the final review. Measured at HEAD over
+      lib/org/freemedsoftware/{api,core,module}:
+      `grep -rnE "'\"\.addslashes\(|addslashes\([^)]*\)\.\"'"` returns 140 hits
+      in 40 files (PaymentModule's non-ledger paths, ClaimLog, Messages,
+      TableMaintenance, Authorizations, Coverage, RecordLock, User, the HL7
+      handlers, Parser_HL7v2, SlidingFeeScale, Patient, LabsModule,
+      SchedulerPatientStatus, RemittBillingTransport, WorkListsModule, Rules and
+      others). Every one of them is safe ONLY while the database server runs with
+      a `sql_mode` that does NOT contain NO_BACKSLASH_ESCAPES, and the server is
+      what decides: this branch pins nothing (`docker/php-custom.ini` sets
+      memory/upload/register_argc_argv only, and FreemedDb issues no `SET
+      sql_mode` / `SET NAMES`), and the plan makes the same point where it rules
+      on this idiom (api/UserInterface.class.php:124-132). With that mode set, a
+      backslash-escaped quote stops being a quote and every one of these sites
+      becomes a string-escape defect. It is a DECLARED residual class rather than
+      an oversight - the sweep's brief says of one of its members "not injectable
+      today ... do not chase" - and the SQL-concatenation gate cannot see any of
+      it (the sanitizer token sits inside the literal, so the line is excused).
+      The fix is an item-by-item `quote()`-normalisation of the reachable subset,
+      which is a correctness change to what callers may pass. Read this line
+      before changing a deployment's `sql_mode`: the mitigation does not survive
+      that change.
+
+
 4. RELAY AND DISPATCH SURFACE STILL UNGATED
 
    Task 2.8 made the relay deny-by-default (a 323-pattern call set, shipped
-   log-only) and gated two re-dispatch axes after two fix rounds. Three things
-   on the same surface are routed, not closed:
+   log-only) and gated two re-dispatch axes after two fix rounds. Four things
+   on the same surface are routed, not closed (the first three are dispatch
+   shapes, the fourth is a transport the control does not reach):
 
    4.1 module/Forms.class.php:336-351 - control_module('widget', $data) calls
        module_function($data['options'], 'widget', ...) at :345-349: the CLASS
@@ -440,6 +520,25 @@ reported findings
        fixing it would have re-opened that transport while the mitigation was
        still being verified. It should be fixed together with the allowlist's
        coverage of the JSON path, not before.
+
+   4.4 relay-gwt.php - a THIRD relay transport, session-guarded but NOT
+       allowlisted, and no document said so. Measured: relay-gwt.php:37-38
+       starts AuthenticatedRemoteServiceServlet, whose only guard is
+       CallMethod('org.freemedsoftware.public.Login.LoggedIn') at
+       lib/org/freemedsoftware/core/AuthenticatedRemoteServiceServlet.class.php:64;
+       it never consults Relay_Allowlist and never calls Relay::handle_request().
+       The allowlist is relay.php's control, inherited by that file's two
+       providers - Json and Xmlrpc - by construction (relay.php instantiates
+       Relay_<provider> and calls handle_request on it), so this third transport
+       is the relay-shaped door the control does not cover. It matters for how
+       the allowlist's own evidence is read: the gwtphpmap tier (112 of the 323
+       patterns) is mined from the shipped GWT service map, i.e. those are calls
+       that arrive on THIS transport. No regression - relay-gwt.php is unchanged
+       in this release - and FIX SHAPE is not proposed here: gating a second
+       transport is a design change (it needs its own miss logging and its own
+       rollout stage), which is why it is disclosed rather than gated.
+       doc/RELAY_ALLOWLIST section 1 now states the boundary; doc/SECURITY_ADVISORY
+       describes only the relay.php control and makes no claim about this one.
 
 
 5. WEB AND CONFIGURATION RESIDUALS
@@ -568,7 +667,10 @@ reported findings
          no XML template ships, so that path cannot be driven live (that round
          names it as its own weakest cell);
        * two transports inherit the allowlist check by construction only: the
-         JSON-body path (unusable at HEAD - see 4.3) and Relay_Xmlrpc;
+         JSON-body path (unusable at HEAD - see 4.3) and Relay_Xmlrpc; a THIRD
+         relay transport - relay-gwt.php's GWT servlet - does not consult the
+         allowlist at all (it is session-guarded only; see 4.4), and the
+         allowlist's largest evidence tier is about the calls that arrive on it;
        * the class-axis pairs are emitted as `#class-axis` evidence lines rather
          than allowlist seed rows, so the axis is measured (866 pairs / 803
          unlisted / 63 listed under the N3 definition) but not pinned by the
