@@ -531,10 +531,30 @@ class SupportModule extends BaseModule {
 		// Create join clause if there is one
 		$join = '';
 		if (is_array($this->table_join)) {
+			// Category B (2.6b): every token in the clause is an identifier -
+			// the joined table ($v), the local key column ($k) and this class's
+			// own table name - so each is emitted by SqlIdent::name(). A refusal
+			// is logged and that term is dropped rather than spliced (R12: a
+			// data-driven refusal is never fatal). The clause only adds columns
+			// to the base table's row set (LEFT OUTER JOIN), and no term
+			// references another term's alias, so dropping one cannot change
+			// which rows the statements that use it return.
+			$table_id = SqlIdent::name( $this->table_name );
+			if ( $table_id === false ) {
+				syslog( LOG_ERR, get_class($this).'::FormJoinClause| refusing invalid table_name '.var_export($this->table_name, true) );
+				return '';
+			}
 			$j = array();
 			foreach ( $this->table_join AS $k => $v ) {
 				if ( ($k+0) == 0 ) {
-					$j[] = "LEFT OUTER JOIN {$v} ON ".$this->table_name.".{$k} = {$v}.id";
+					$key_id = SqlIdent::name( $k );
+					$join_id = SqlIdent::name( $v );
+					if ( $key_id === false or $join_id === false ) {
+						syslog( LOG_ERR, get_class($this).'::FormJoinClause| dropping invalid join identifier '.var_export(array($k, $v), true) );
+						continue;
+					}
+					$j[] = sprintf('LEFT OUTER JOIN %s ON %s.%s = %s.id',
+						$join_id, $table_id, $key_id, $join_id);
 				}
 			}
 			$join = join(' ', $j);
