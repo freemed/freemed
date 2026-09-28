@@ -663,9 +663,14 @@ class EMRModule extends BaseModule {
 		// refused with a log line and no rows, rather than spliced. Refused
 		// rather than dropped: $conditions is the caller's filter, so dropping it
 		// would widen the result set instead of preserving it.
+		//
+		// The non-string refusal (2.6f) is the one its declared sibling carries
+		// (FreemedDb::distinct_values' $where): an array/object reaching the
+		// (string) cast below would be built into the statement as "Array"
+		// instead of being refused, so the two checks are now identical.
 		$conditions_sql = '';
 		if ( $conditions ) {
-			if ( preg_match( '/[;`\x00]|--|\/\*|#/', (string) $conditions ) ) {
+			if ( !is_string( $conditions ) or preg_match( '/[;`\x00]|--|\/\*|#/', $conditions ) ) {
 				syslog( LOG_ERR, get_class($this).'::picklist| refusing unsafe conditions fragment '.var_export($conditions, true) );
 				return array();
 			}
