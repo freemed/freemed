@@ -291,12 +291,26 @@ class EMRModule extends BaseModule {
 		// If there is no table_name, we can skip this altogether
 		if (empty($this->table_name)) { return false; }
 
+		// Category B (2.6e fix round 1): the table identifier is validated and
+		// backtick-quoted like the ones its siblings in this class pass through
+		// SqlIdent (_setup, picklist, GetRecentRecord). A table name cannot be
+		// "logged and dropped" the way an optional clause fragment can - a FROM
+		// clause with no table is unbuildable - so an invalid declaration
+		// refuses the query, which is what the siblings do. For a valid
+		// declaration the emitted statement is unchanged: a quoted identifier
+		// is the same identifier.
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::locked| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+
 		if (!isset($locked['id_'.$id])) {
 			// Category A (2.6e): the record id is an integer key, so it is cast
 			// rather than quoted - addslashes() inside quotes was the one shape
 			// the static gate excludes, and quoting a numeric column is not
 			// escaping. Same rows: MySQL compares id=<int> and id='<int>' alike.
-			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id=".intval($id)." AND (locked > 0)";
+			$query = "SELECT COUNT(*) AS lock_count FROM ".$table." WHERE id=".intval($id)." AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
 			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'DB_Error' ) );
 		}
@@ -961,12 +975,22 @@ class EMRModule extends BaseModule {
 
 		// Actual renderer for formatting array
 		if ($this->patient_field) {
+			// Category B (2.6e fix round 1): table identifier, validated and
+			// backtick-quoted like the siblings in this class that already call
+			// SqlIdent (_setup, picklist, GetRecentRecord). A refusal here cannot
+			// fall back to dropping the token - the FROM clause needs a table -
+			// so an invalid declaration refuses the render instead.
+			$table = SqlIdent::name( $this->table_name );
+			if ( $table === false ) {
+				syslog( LOG_ERR, get_class($this).'::RenderHtmlView| refusing invalid table_name '.var_export($this->table_name, true) );
+				return false;
+			}
 			// If this is an EMR module with additional
 			// fields, import them
 			$query = "SELECT *".
 				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
-				"FROM ".$this->table_name." ".
+				"FROM ".$table." ".
 				// Category A (2.6e): the record id is an integer key; cast it
 				// (id=<int>) instead of splicing it inside quotes with
 				// addslashes(), which is the shape the static gate excludes.
