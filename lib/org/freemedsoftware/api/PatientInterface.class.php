@@ -636,7 +636,11 @@ class PatientInterface {
 			return false;
 		}
 
-		$criteria = addslashes( $string );
+		// Category A (2.6b): the tokeniser input is not a query value - every
+		// predicate below is driver-quoted where it is composed (quote()). The
+		// addslashes() that used to sit here double-escaped the value, so a
+		// search for O'Brien looked for the literal O\'Brien.
+		$criteria = (string) $string;
 		if (!(strpos($criteria, ',') === false)) {
 			list ($last, $first) = explode( ',', $criteria);
 		} else {
@@ -650,31 +654,36 @@ class PatientInterface {
 		$first = trim( $first );
 		$either = trim( $either );
 
+		// Category A (2.6b): each predicate is driver-quoted where it is
+		// composed - quote() supplies the surrounding quotes, so the hand-written
+		// ones are gone (never both) and the pattern text is unchanged.
 		if ($first and $last) {
-			$q[] = "ptfname LIKE '".addslashes($either)."%'";
-			$q[] = "ptlname LIKE '".addslashes($either)."%'";
-			$q[] = "( ptlname LIKE '".addslashes($last)."%' AND ".
-				" ptfname LIKE '".addslashes($first)."%' )";
+			$q[] = "ptfname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "ptlname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "( ptlname LIKE ".$GLOBALS['sql']->quote( $last.'%' )." AND ".
+				" ptfname LIKE ".$GLOBALS['sql']->quote( $first.'%' )." )";
 		} elseif ($first) {
-			$q[] = "ptfname LIKE '".addslashes($either)."%'";
-			$q[] = "ptlname LIKE '".addslashes($either)."%'";
-                	$q[] = "ptfname LIKE '".addslashes($first)."%'";
-                	$q[] = "ptid LIKE '%".addslashes($first)."%'";
+			$q[] = "ptfname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "ptlname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+                	$q[] = "ptfname LIKE ".$GLOBALS['sql']->quote( $first.'%' );
+                	$q[] = "ptid LIKE ".$GLOBALS['sql']->quote( '%'.$first.'%' );
 		} elseif ($last) {
-			$q[] = "ptfname LIKE '".addslashes($either)."%'";
-			$q[] = "ptlname LIKE '".addslashes($either)."%'";
-                	$q[] = "ptlname LIKE '".addslashes($last)."%'";
-                	$q[] = "ptid LIKE '%".addslashes($last)."%'";
+			$q[] = "ptfname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "ptlname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+                	$q[] = "ptlname LIKE ".$GLOBALS['sql']->quote( $last.'%' );
+                	$q[] = "ptid LIKE ".$GLOBALS['sql']->quote( '%'.$last.'%' );
 		} else {
-			$q[] = "ptfname LIKE '".addslashes($either)."%'";
-			$q[] = "ptlname LIKE '".addslashes($either)."%'";
-			$q[] = "ptid LIKE '%".addslashes($either)."%'";
+			$q[] = "ptfname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "ptlname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "ptid LIKE ".$GLOBALS['sql']->quote( '%'.$either.'%' );
 		}
 
-		$query = "SELECT * FROM patient WHERE ( ".join(' OR ', $q)." ) ".
-			// Category A: LIMIT is a relay-reachable write primitive (see
-			// UserInterface::GetRecords); $limit is cast, not interpolated.
-			"AND ( ISNULL(ptarchive) OR ptarchive=0 ) LIMIT ".intval($limit);
+		// Category C: $q is a join of driver-quoted predicates built just above,
+		// so the assembly carries no data; the LIMIT is cast (Category A - see
+		// UserInterface::GetRecords for the relay-reachable write primitive).
+		$query = sprintf(
+			'SELECT * FROM patient WHERE ( %s ) AND ( ISNULL(ptarchive) OR ptarchive=0 ) LIMIT %d',
+			join(' OR ', $q), intval($limit) );
 		syslog(LOG_INFO, "PICK| $query");
 		$result = $GLOBALS['sql']->queryAll( $query );
 		if (count($result) < 1) { return array (); }
