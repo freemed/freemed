@@ -24,11 +24,29 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    validation is the provider name, and the login flow runs before there is a
    session), but it no longer skips this.
 
+   THE CONTROL IS relay.php's, AND ONE TRANSPORT DOES NOT INHERIT IT. The check
+   lives in Relay::handle_request(), and relay.php's two providers - Json and
+   Xmlrpc - reach their methods through it by construction (relay.php
+   instantiates Relay_<provider> and calls handle_request() on it). relay-gwt.php
+   is a THIRD transport that does not: it starts
+   AuthenticatedRemoteServiceServlet (relay-gwt.php:37-38), whose only guard is a
+   session check - CallMethod('org.freemedsoftware.public.Login.LoggedIn') at
+   lib/org/freemedsoftware/core/AuthenticatedRemoteServiceServlet.class.php:64 -
+   and it never consults Relay_Allowlist and never calls Relay::handle_request().
+   Its calls are therefore SESSION-guarded but NOT allowlisted. That matters when
+   reading this document's own numbers: the largest tier of the call set (112 of
+   the 323 patterns, the gwtphpmap tier) is evidence mined from the shipped GWT
+   service map, i.e. it is about calls that arrive on the transport this control
+   does not cover. Extending the control to that transport is a design change and
+   is NOT part of this one; it is recorded as an ungated surface in
+   doc/SECURITY_FOLLOWUP section 4.4.
+
    The check runs for INVERSIONS of the relay too. A relay method that
    re-dispatches a method named by its own caller is the same door with a second
    handle: the outer method string is checked once, and the inner one would never
-   meet the allowlist. There are three relay-reachable re-dispatchers in this
-   tree, and they name their inner call on TWO different axes:
+   meet the allowlist. There are FIVE relay-reachable re-dispatchers in this
+   tree, and they name their inner call on TWO different axes. THREE of the five
+   are gated by this change:
 
      * the METHOD axis - the method string itself is caller-supplied.
        org.freemedsoftware.api.UserInterface.Multicall is that shape (it is a
@@ -53,10 +71,29 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
        org.freemedsoftware.module.<Class>.<literal> - and gates THAT. See
        section 1a.
 
-       api/FormTemplate.class.php:ProcessData is the third re-dispatcher: its
-       names come from the XML template file it was pointed at, not from the
+       api/FormTemplate.class.php:ProcessData is the third GATED re-dispatcher:
+       its names come from the XML template file it was pointed at, not from the
        request, and both of its axes (a core.* object method and a module.*
        method) are gated the same way.
+
+   The other TWO re-dispatchers of this shape are NOT gated by this change. They
+   are routed, not fixed, and they are named here so that this section is not
+   read as a complete enumeration of what is closed:
+
+     * module/Forms.class.php:336-351 - control_module() takes the CLASS from
+       caller-supplied form data: its 'widget' branch calls
+       module_function($data['options'], 'widget', ...) at :345-349. The method
+       name it dispatches is the fixed literal 'widget' and the variable is the
+       class, so the outer check cannot see the inner call - the same shape as
+       the class axis section 1a describes.
+     * core/BaseModule.class.php:196-208 and :230-241 - _print() composes
+       module_function($parts[0], '_RenderToPDF', array($parts[1])) from
+       $_REQUEST['attachment'] (exploded on '|'): again a caller-chosen CLASS
+       with a fixed literal method.
+
+   Both are documented, with a fix shape, in doc/SECURITY_FOLLOWUP sections 4.1
+   and 4.2. They are taken together rather than file by file because both
+   converge on module_function(): one class-axis check there covers both.
 
    ANY OTHER re-dispatcher carrying a caller-supplied method name or a
    caller-chosen class belongs on that same entry point.
@@ -74,6 +111,14 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    literal 'add' against the class in param0. Before fix round 2 that reached
    EVERY module class in the tree, including classes no pattern names. Each
    wrapper now gates org.freemedsoftware.module.<Class>.<literal>.
+
+   TWO MORE class-axis re-dispatchers are on this surface and are NOT gated by
+   this change: module/Forms.class.php:336-351 control_module and
+   core/BaseModule.class.php:196-208/:230-241 _print (section 1 lists all five
+   with their shapes). They converge on module_function(), so the fix shape
+   doc/SECURITY_FOLLOWUP sections 4.1/4.2 give is one check there rather than
+   file by file. Until that lands, "the class axis is gated" means the three
+   gated re-dispatchers, not every class-axis path in the tree.
 
    WHAT THAT MEANS FOR ENABLING ENFORCEMENT. The measured exposure is large: over
    the 133 module class files, 866 (class, literal) pairs exist for the eight
@@ -292,7 +337,7 @@ Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
    No configuration is required to keep the previous behaviour, and no
    database change is involved: the list is a file in the installation.
 
-   Two changes in this release are worth a line of their own, because they
+   Three changes in this release are worth a line of their own, because they
    change what the control covers rather than only where it runs:
 
      * The fixed-literal wrappers in api/ModuleInterface.class.php (add, del,
