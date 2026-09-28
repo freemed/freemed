@@ -891,10 +891,13 @@ class EMRModule extends BaseModule {
 			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing invalid table_name/patient_field '.var_export(array($this->table_name, $this->patient_field), true) );
 			return NULL;
 		}
+		// Category B (2.6f): $date_field is optional metadata and some modules
+		// legitimately declare none (Vitals, Immunizations), so this is the same
+		// SILENT truthiness guard the sibling ORDER BY handling uses - it used to
+		// log LOG_ERR on every call for those modules, which is noise for a
+		// normal declaration, not a refusal. The fallback (`id DESC`) is in the
+		// statement below.
 		$dfield = $this->date_field ? SqlIdent::name( $this->date_field ) : false;
-		if ( $dfield === false ) {
-			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| no usable date_field, ordering by id '.var_export($this->date_field, true) );
-		}
 		// Category A: the patient id and the validated Y-m-d date. The date
 		// qualifier is only emitted when there is a date column to qualify on.
 		$query = sprintf( 'SELECT * FROM %s WHERE %s = %s%s ORDER BY %s',
