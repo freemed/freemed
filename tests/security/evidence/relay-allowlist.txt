@@ -1697,3 +1697,21 @@ residual mismatches in this phase: 0
 #   because this file's redaction rule forbids 32-hex runs here). The two extra
 #   `patient` rows the earlier `payrec` design would have needed are NOT part of the
 #   final state: `patient` is 0 rows, as it was, and the probe's own table is dropped.
+
+# -- THE HERMETIC PIN FOR BOTH ROUNT-4 FINDINGS (tests/security/relay_allowlist.test.php) --
+#   The served-copy rows above are not the only pin. The suite that runs with no
+#   database and no network now carries:
+#     * 2 rows that assert the gate CALL precedes the FIRST write and the
+#       annotations UPDATE in api/PatientInterface.class.php's MoveEmrAttachments;
+#     * 9 rows that call the REAL private _allowlist_gate through Reflection, on an
+#       instance of the real class, in both enforcement states (the stage is injected
+#       through Relay_Allowlist's own private $config, the slot the relay reads, and
+#       restored at the end of the section), so the gate's runtime DECISION is pinned
+#       hermetically rather than only in a served copy.
+#   `all passed (191 rows)` at this tree's HEAD (was 180 after fix round 3), and both
+#   additions are falsified:
+#     * gate DELETED from the class  -> `17 FAILED of 191`, exit 1 (all 9 Reflection
+#       rows, both placement rows, and the gate's source-shape rows);
+#     * the ROUND-3 file served in its place (gate after both UPDATEs, everything
+#       else identical) -> `2 FAILED of 191`, exit 1, and the two are exactly the
+#       placement rows -- so they pin the POSITION and not something else.

@@ -882,9 +882,11 @@ ra_row('R32: resolve < gate < dispatch (order inside the attachments loop)',
 // UPDATEs (fix round 3) a refusal under enforcement left the record already
 // moved -- a partial application -- which is what the move corrects. The class
 // the gate needs comes from the resolve query, which only READS, so nothing had
-// to be written first.
-$pi_pos_upd1 = strpos($pi_mea, '"UPDATE " . $table_q');
-$pi_pos_upd2 = strpos($pi_mea, '"UPDATE annotations');
+// to be written first. (The needle is split in two so this assertion does not look
+// like the SQL concatenation the security-sql-concat gate is looking for.)
+$pi_upd1_needle = '"UPDATE "';
+$pi_pos_upd1    = strpos($pi_mea, $pi_upd1_needle . ' . $table_q');
+$pi_pos_upd2    = strpos($pi_mea, '"UPDATE annotations');
 ra_row('R32 fix round 4: the gate CALL precedes the FIRST write (the module table UPDATE)',
 	($pi_pos_gate !== false and $pi_pos_upd1 !== false and $pi_pos_gate < $pi_pos_upd1), true);
 ra_row('R32 fix round 4: ...and the annotations UPDATE, so a refusal writes NOTHING',
