@@ -328,7 +328,9 @@ class FormTemplate {
 
 				// Run SQL query
 				$query = "SELECT *".
-					( (count($m->summary_query)>0) ? 
+					// Guard the PHP 8.3 count(NULL) TypeError: modules that do not
+					// declare $summary_query leave it NULL (see EMRModule::qualified_query).
+					( ((is_array($m->summary_query) ? count($m->summary_query) : 0) > 0) ? 
 					",".join(",", $m->summary_query)." " : " " ).
 					"FROM ".$m->table_name." ".
 					"WHERE ".$m->patient_field."='".addslashes($this->patient->id)."' ".
