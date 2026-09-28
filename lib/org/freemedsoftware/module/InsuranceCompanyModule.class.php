@@ -107,14 +107,21 @@ class InsuranceCompanyModule extends SupportModule {
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
 
+		// Category B: the table identifier is validated once and reused
+		// (refused by log, R12 — the maintenance handler then does nothing).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_update| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+
 		// Version 0.3
 		//
 		//	Move phyidmap to be mapped in insco table (inscoidmap)
 		//
 		if (!version_check ( $version, '0.3' )) {
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscoidmap TEXT AFTER inscomod'
+				sprintf('ALTER TABLE %s ADD COLUMN inscoidmap TEXT AFTER inscomod', $table)
 			);
 		}
 
@@ -124,20 +131,16 @@ class InsuranceCompanyModule extends SupportModule {
 		//
 		if (!version_check ( $version, '0.3.4.1' )) {
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap', $table)
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat', $table)
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget', $table)
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformatE'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformatE', $table)
 			);
 		}
 
@@ -153,20 +156,16 @@ class InsuranceCompanyModule extends SupportModule {
 			);
 			// Make changes
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodefformat VARCHAR(50) AFTER inscoidmap', $table)
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodeftarget VARCHAR(50) AFTER inscodefformat', $table)
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodefformate VARCHAR(50) AFTER inscodeftarget', $table)
 			);
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate'
+				sprintf('ALTER TABLE %s ADD COLUMN inscodeftargete VARCHAR(50) AFTER inscodefformate', $table)
 			);
 		}
 
@@ -176,10 +175,9 @@ class InsuranceCompanyModule extends SupportModule {
 		//
 		if (!version_check ( $version, '0.4' )) {
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscox12id VARCHAR(32) AFTER inscoidmap'
+				sprintf('ALTER TABLE %s ADD COLUMN inscox12id VARCHAR(32) AFTER inscoidmap', $table)
 			);
-			$GLOBALS['sql']->query( 'UPDATE '.$this->table_name.' SET inscox12id=\'\' WHERE id>0');
+			$GLOBALS['sql']->query( sprintf('UPDATE %s SET inscox12id=%s WHERE id>0', $table, $GLOBALS['sql']->quote('')) );
 		}
 
 		// Version 0.4.1
@@ -188,10 +186,9 @@ class InsuranceCompanyModule extends SupportModule {
 		//
 		if (!version_check ( $version, '0.4.1' )) {
 			$GLOBALS['sql']->query(
-				'ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN inscodefoutput ENUM(\'electronic\', \'paper\') AFTER inscox12id'
+				sprintf("ALTER TABLE %s ADD COLUMN inscodefoutput ENUM('electronic', 'paper') AFTER inscox12id", $table)
 			);
-			$GLOBALS['sql']->query( 'UPDATE '.$this->table_name.' SET inscodefoutput=\'electronic\' WHERE id>0');
+			$GLOBALS['sql']->query( sprintf('UPDATE %s SET inscodefoutput=%s WHERE id>0', $table, $GLOBALS['sql']->quote('electronic')) );
 		}
 
 	} // end method _update
