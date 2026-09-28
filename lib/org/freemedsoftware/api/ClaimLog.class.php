@@ -770,7 +770,7 @@ ORDER BY
 		// Perform update to procedure table
 		$query = 'UPDATE procrec SET '.
 			'procbilled = \'1\' '.
-			'WHERE FIND_IN_SET(id, \''.$set.'\')';
+			'WHERE FIND_IN_SET(id, '.$GLOBALS['sql']->quote($set).')';
 		//print "query = $query<br/>\n";
 		$result = $GLOBALS['sql']->query ( $query );
 
@@ -807,7 +807,7 @@ ORDER BY
 		// Perform update to procedure table
 		$query = 'UPDATE procrec SET '.
 			'procbilled = 1 '.
-			'WHERE FIND_IN_SET(id, \''.$set.'\')';
+			'WHERE FIND_IN_SET(id, '.$GLOBALS['sql']->quote($set).')';
 		$result = $GLOBALS['sql']->query ( $query );
 		
 		return ! ( $result instanceof DB_Error );
