@@ -1,0 +1,479 @@
+# tests/security/evidence/deployment-hardening.txt
+#
+# Task 4.1 - deployment hardening: the lib/data/tests/scripts deny rules, the PATH_INFO scope and
+# the runtime ini, measured live on both servers and on both shipped layouts.
+#
+# PROVENANCE
+#   checkout / branch : /home/jbuchbinder/Code/projects/freemed   security/mitigation-2026-09
+#   commit            : 5492ff41 (measurement base; the config/doc/gate changes below are the
+#                       working-tree changes, committed immediately after this file)
+#   servers           : :38081 Apache/2.4.68 + mod_php 8.3.35, docroot /var/www/html (copy harness)
+#                       :38082 nginx/1.31.6 + php-fpm 8.3.35, docroot /usr/share/freemed (copy harness)
+#                       :38083 Apache, /freemed -> /usr/share/freemed, mounting the SHIPPED
+#                             doc/freemed.apache.conf read-only (not a copy: the shipped text)
+#                       :38084 nginx, same layout, mounting the SHIPPED docker/nginx.conf read-only
+#   served tree       : ./app, an rsync copy of the checkout (sync-code.sh). For PHASE A that copy's
+#                       four rewritten .htaccess files were replaced by their HEAD versions AND the two
+#                       harness config copies were restored to the pre-task bytes, so PHASE A is HEAD
+#                       behaviour; PHASE B is the same tree with the shipped rules installed.
+#   client            : curl 8.18.0
+#   probe             : probe-4.1-rescue.sh - scratch only, never committed; it runs no application
+#                       code and writes nothing into the repository.
+#   REDACTION         : no credentials, no PHI and no password digest appears below. Where a body could
+#                       carry the installer's credentials (lib/settings.php) the row records status,
+#                       byte count and a source-vs-executed classification instead of the body. Digests
+#                       are abbreviated to 16 hex; they are config-file digests, not credentials, and
+#                       the full values stay in the scratch harness.
+
+PHASE A - HEAD behaviour, before the rules (the 'was' side of every claim)
+  apache      /lib/API.php                                               status=200 bytes=0
+  apache      /lib/freemed.php                                           status=200 bytes=0
+  apache      /lib/settings.php                                          status=200 bytes=0
+  apache      /data/schema/mysql/patient.sql                             status=403 bytes=317  body=<deny page>
+  apache      /tests/security/repro-relay-sqli.sh                        status=403 bytes=317  body=<deny page>
+  apache      /tests/security/evidence/relay-allowlist.txt               status=403 bytes=317  body=<deny page>
+  apache      /scripts/security-sql-concat-check.sh                      status=200 bytes=3107
+  apache      /scripts/security-path-guard-check.sh                      status=200 bytes=8563
+  apache      /services/RemittCallback.php                               status=200 bytes=2192
+  apache      /help.php/ui/en_US/probe                                   status=401 bytes=24  body=Authentication required.
+  apache      /chtml.php/main                                            status=200 bytes=28  body=Help index main not present.
+  apache      /relay.php/json/org.freemedsoftware.public.Login.LoggedIn  status=200 bytes=5  body=false
+  apache      /relay-gwt.php/probe                                       status=200 bytes=186
+  apache      /controller.php/Dojo/org.freemedsoftware.ui.login          status=200 bytes=212
+  apache      /index.php                                                 status=302 bytes=0
+  apache      /index.php/extra                                           status=302 bytes=0
+  apache      /vcalendar.php/extra                                       status=401 bytes=0
+  apache      /install.php/extra                                         status=200 bytes=118  body=<br /><b>Fatal error</b>:  FreeMED is already installed! in <b>/var/www/html/ins
+  apache      /services/RemittCallback.php/extra                         status=200 bytes=2192
+
+  -- the nginx layout, same phase: nothing denied anything there --
+  nginx       /lib/API.php                                               status=200 bytes=0
+  nginx       /lib/freemed.php                                           status=200 bytes=0
+  nginx       /lib/settings.php                                          status=200 bytes=0
+  nginx       /data/schema/mysql/patient.sql                             status=200 bytes=14559
+  nginx       /tests/security/repro-relay-sqli.sh                        status=200 bytes=30256
+  nginx       /tests/security/evidence/relay-allowlist.txt               status=200 bytes=23672
+  nginx       /scripts/security-sql-concat-check.sh                      status=200 bytes=3107
+  nginx       /scripts/security-path-guard-check.sh                      status=200 bytes=8563
+  nginx       /services/RemittCallback.php                               status=500 bytes=596
+  nginx       /help.php/ui/en_US/probe                                   status=401 bytes=24  body=Authentication required.
+  nginx       /chtml.php/main                                            status=200 bytes=28  body=Help index main not present.
+  nginx       /relay.php/json/org.freemedsoftware.public.Login.LoggedIn  status=200 bytes=5  body=false
+  nginx       /relay-gwt.php/probe                                       status=200 bytes=191
+  nginx       /controller.php/Dojo/org.freemedsoftware.ui.login          status=200 bytes=222
+  nginx       /index.php                                                 status=302 bytes=0
+  nginx       /index.php/extra                                           status=302 bytes=0
+  nginx       /vcalendar.php/extra                                       status=401 bytes=0
+  nginx       /install.php/extra                                         status=200 bytes=123
+  nginx       /services/RemittCallback.php/extra                         status=500 bytes=596
+  -- (the /freemed alias pair :38083/:38084 mounts the WORKING TREE, so its PHASE-A rows are PHASE-B
+  --  rows; see the note in the task report.)
+
+PHASE B - with the shipped rules installed, same URLs
+  apache      /lib/API.php                                               status=403 bytes=317  body=<deny page>
+  apache      /lib/freemed.php                                           status=403 bytes=317  body=<deny page>
+  apache      /lib/settings.php                                          status=403 bytes=317
+  apache      /data/schema/mysql/patient.sql                             status=403 bytes=317  body=<deny page>
+  apache      /tests/security/repro-relay-sqli.sh                        status=403 bytes=317  body=<deny page>
+  apache      /tests/security/evidence/relay-allowlist.txt               status=403 bytes=317  body=<deny page>
+  apache      /scripts/security-sql-concat-check.sh                      status=403 bytes=317  body=<deny page>
+  apache      /scripts/security-path-guard-check.sh                      status=403 bytes=317  body=<deny page>
+  apache      /services/RemittCallback.php                               status=200 bytes=2192
+  apache      /help.php/ui/en_US/probe                                   status=401 bytes=24  body=Authentication required.
+  apache      /chtml.php/main                                            status=200 bytes=28  body=Help index main not present.
+  apache      /relay.php/json/org.freemedsoftware.public.Login.LoggedIn  status=200 bytes=5  body=false
+  apache      /relay-gwt.php/probe                                       status=200 bytes=186
+  apache      /controller.php/Dojo/org.freemedsoftware.ui.login          status=200 bytes=212
+  apache      /index.php                                                 status=302 bytes=0
+  apache      /index.php/extra                                           status=403 bytes=317  body=<deny page>
+  apache      /vcalendar.php/extra                                       status=403 bytes=317  body=<deny page>
+  apache      /install.php/extra                                         status=403 bytes=317  body=<deny page>
+  apache      /services/RemittCallback.php/extra                         status=403 bytes=317  body=<deny page>
+
+  -- nginx layout --
+  nginx       /lib/API.php                                               status=403 bytes=153  body=<deny page>
+  nginx       /lib/freemed.php                                           status=403 bytes=153  body=<deny page>
+  nginx       /lib/settings.php                                          status=403 bytes=153
+  nginx       /data/schema/mysql/patient.sql                             status=403 bytes=153  body=<deny page>
+  nginx       /tests/security/repro-relay-sqli.sh                        status=403 bytes=153  body=<deny page>
+  nginx       /tests/security/evidence/relay-allowlist.txt               status=403 bytes=153  body=<deny page>
+  nginx       /scripts/security-sql-concat-check.sh                      status=403 bytes=153  body=<deny page>
+  nginx       /scripts/security-path-guard-check.sh                      status=403 bytes=153  body=<deny page>
+  nginx       /services/RemittCallback.php                               status=500 bytes=596
+  nginx       /help.php/ui/en_US/probe                                   status=401 bytes=24  body=Authentication required.
+  nginx       /chtml.php/main                                            status=200 bytes=28  body=Help index main not present.
+  nginx       /relay.php/json/org.freemedsoftware.public.Login.LoggedIn  status=200 bytes=5  body=false
+  nginx       /relay-gwt.php/probe                                       status=200 bytes=191
+  nginx       /controller.php/Dojo/org.freemedsoftware.ui.login          status=200 bytes=222
+  nginx       /index.php                                                 status=302 bytes=0
+  nginx       /index.php/extra                                           status=403 bytes=153  body=<deny page>
+  nginx       /vcalendar.php/extra                                       status=403 bytes=153  body=<deny page>
+  nginx       /install.php/extra                                         status=403 bytes=153  body=<deny page>
+  nginx       /services/RemittCallback.php/extra                         status=403 bytes=153  body=<deny page>
+
+  -- packaged /freemed layout: doc/freemed.apache.conf and docker/nginx.conf mounted from the
+  -- repository, so these are the shipped files themselves --
+  apache-repo /freemed/lib/API.php                                       status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/lib/freemed.php                                   status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/lib/settings.php                                  status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/data/schema/mysql/patient.sql                     status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/tests/security/repro-relay-sqli.sh                status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/tests/security/evidence/relay-allowlist.txt       status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/scripts/security-sql-concat-check.sh              status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/scripts/security-path-guard-check.sh              status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/services/RemittCallback.php                       status=200 bytes=2257
+  apache-repo /freemed/help.php/ui/en_US/probe                           status=401 bytes=24  body=Authentication required.
+  apache-repo /freemed/chtml.php/main                                    status=200 bytes=28  body=Help index main not present.
+  apache-repo /freemed/relay.php/json/org.freemedsoftware.public.Login.LoggedIn status=200 bytes=5  body=false
+  apache-repo /freemed/relay-gwt.php/probe                               status=200 bytes=195
+  apache-repo /freemed/controller.php/Dojo/org.freemedsoftware.ui.login  status=200 bytes=222
+  apache-repo /freemed/index.php                                         status=302 bytes=0
+  apache-repo /freemed/index.php/extra                                   status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/vcalendar.php/extra                               status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/install.php/extra                                 status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/services/RemittCallback.php/extra                 status=403 bytes=317  body=<deny page>
+
+  nginx-repo  /freemed/lib/API.php                                       status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/lib/freemed.php                                   status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/lib/settings.php                                  status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/data/schema/mysql/patient.sql                     status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/tests/security/repro-relay-sqli.sh                status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/tests/security/evidence/relay-allowlist.txt       status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/scripts/security-sql-concat-check.sh              status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/scripts/security-path-guard-check.sh              status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/services/RemittCallback.php                       status=500 bytes=596
+  nginx-repo  /freemed/help.php/ui/en_US/probe                           status=401 bytes=24  body=Authentication required.
+  nginx-repo  /freemed/chtml.php/main                                    status=200 bytes=28  body=Help index main not present.
+  nginx-repo  /freemed/relay.php/json/org.freemedsoftware.public.Login.LoggedIn status=200 bytes=5  body=false
+  nginx-repo  /freemed/relay-gwt.php/probe                               status=200 bytes=191
+  nginx-repo  /freemed/controller.php/Dojo/org.freemedsoftware.ui.login  status=200 bytes=222
+  nginx-repo  /freemed/index.php                                         status=302 bytes=0
+  nginx-repo  /freemed/index.php/extra                                   status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/vcalendar.php/extra                               status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/install.php/extra                                 status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/services/RemittCallback.php/extra                 status=403 bytes=153  body=<deny page>
+
+  -- no-regression rows measured in the same window (the same result on all four servers) --
+    /services/RemittCallback.php?wsdl              200 3452 bytes
+    /ui/dojo/htdocs/dojo/dojo.js                   200 150954 bytes
+    /ui/dojo/htdocs/images/brushed.gif             200 3233 bytes
+    /doc/DEPLOYMENT_HARDENING                      200 11722 bytes
+    /doc/RELAY_ALLOWLIST                           200 9368 bytes
+    /services/RemittCallback.php?wsdl              200 3452 bytes
+    /ui/dojo/htdocs/dojo/dojo.js                   200 150954 bytes
+    /ui/dojo/htdocs/images/brushed.gif             200 3233 bytes
+    /doc/DEPLOYMENT_HARDENING                      200 11722 bytes
+    /doc/RELAY_ALLOWLIST                           200 9368 bytes
+    /services/RemittCallback.php?wsdl              200 3452 bytes
+    /ui/dojo/htdocs/dojo/dojo.js                   200 150954 bytes
+    /ui/dojo/htdocs/images/brushed.gif             200 3233 bytes
+    /doc/DEPLOYMENT_HARDENING                      200 11722 bytes
+    /doc/RELAY_ALLOWLIST                           200 9368 bytes
+    /services/RemittCallback.php?wsdl              200 3452 bytes
+    /ui/dojo/htdocs/dojo/dojo.js                   200 150954 bytes
+    /ui/dojo/htdocs/images/brushed.gif             200 3233 bytes
+    /doc/DEPLOYMENT_HARDENING                      200 11722 bytes
+    /doc/RELAY_ALLOWLIST                           200 9368 bytes
+
+  -- the .htaccess-overridden paths, now denied --
+    /data/store/no-image.png                       403 317 bytes
+    /data/documents/unfiled/zz41probe.djvu         403 317 bytes
+    /lib/perl/Config/IniFiles.pm                   403 317 bytes
+    /scripts/fax_import/djvudigital                403 317 bytes
+    /data/store/no-image.png                       403 153 bytes
+    /data/documents/unfiled/zz41probe.djvu         403 153 bytes
+    /lib/perl/Config/IniFiles.pm                   403 153 bytes
+    /scripts/fax_import/djvudigital                403 153 bytes
+    /data/store/no-image.png                       403 317 bytes
+    /data/documents/unfiled/zz41probe.djvu         403 317 bytes
+    /lib/perl/Config/IniFiles.pm                   403 317 bytes
+    /scripts/fax_import/djvudigital                403 317 bytes
+    /data/store/no-image.png                       403 153 bytes
+    /data/documents/unfiled/zz41probe.djvu         403 153 bytes
+    /lib/perl/Config/IniFiles.pm                   403 153 bytes
+    /scripts/fax_import/djvudigital                403 153 bytes
+
+PHASE C - lib/settings.php (the independent finding), measured on its own
+  Apache, HEAD : GET /lib/settings.php -> status=200 bytes=0
+  nginx,  HEAD : GET /lib/settings.php -> status=200 bytes=0
+  classify     : the file on disk is 1459 bytes and defines DB_PASSWORD; a 200 with a 0-byte body is the
+                 PHP handler EXECUTING it and printing nothing, NOT the source. So: reachable and
+                 executed on both servers, source not disclosed there - an unauthenticated entrypoint to
+                 a file that must never be one, and a credential disclosure on any layout where the PHP
+                 handler does not cover the path. Verdict and the list of such layouts:
+                 doc/DEPLOYMENT_HARDENING section 6.
+  after        : GET /lib/settings.php -> status=403 on all four servers (PHASE B).
+  note         : lib/settings.php is generated by install.php and is not in the repository; the served
+                 copy is the harness's, outside the git tree.
+
+PHASE D - the .htaccess rule that opened a directory its parent had closed
+  apache      /data/documents/unfiled/zz41probe.djvu     status=200 bytes=60521   (HEAD, copy harness)
+  nginx       /data/documents/unfiled/zz41probe.djvu     status=200 bytes=60521   (HEAD, copy harness)
+  apache      /data/README                              status=403 bytes=317     (the parent data/.htaccess alone)
+  apache      /data/documents/unfiled/no-image.png      status=403 bytes=317     (documents/unfiled/.htaccess allows *.djvu only)
+  reading      : the parent data/.htaccess denies the whole data/ tree (/data/README 403), yet the
+                 data/store/ subtree answered 200 because of the malformed Deny in its own .htaccess.
+                 The documents/unfiled allow for *.djvu is a deliberate behaviour change under the new
+                 rule: no file in the tree references that path as a URL (the document viewer fetches
+                 page images through the relay, org.freemedsoftware.module.<module>.GetDocumentPage),
+                 and it is recorded as a concern in the task report.
+
+PHASE E - PATH_INFO consumers, and the three shapes the scope rule changes
+  HEAD:  apache      /help.php/../../lib/API.php                                status=400 bytes=344
+  HEAD:  apache      /help.php/../../../lib/settings.php                        status=400 bytes=344
+  HEAD:  apache      /help.php/../scripts/security-sql-concat-check.sh          status=200 bytes=3107
+  HEAD:  nginx       /help.php/../../lib/API.php                                status=400 bytes=157
+  HEAD:  nginx       /help.php/../../../lib/settings.php                        status=400 bytes=157
+  HEAD:  nginx       /help.php/../scripts/security-sql-concat-check.sh          status=200 bytes=3107
+  HEAD:  apache-repo /freemed/help.php/../../lib/API.php                        status=404 bytes=314
+  HEAD:  apache-repo /freemed/help.php/../../../lib/settings.php                status=400 bytes=344
+  HEAD:  apache-repo /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=317  body=<deny page>
+  HEAD:  nginx-repo  /freemed/help.php/../../lib/API.php                        status=403 bytes=153  body=<deny page>
+  HEAD:  nginx-repo  /freemed/help.php/../../../lib/settings.php                status=400 bytes=157
+  HEAD:  nginx-repo  /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=153  body=<deny page>
+  after: apache-repo /freemed/services/RemittCallback.php                       status=200 bytes=2257
+  after: apache-repo /freemed/help.php/ui/en_US/probe                           status=401 bytes=24  body=Authentication required.
+  after: apache-repo /freemed/chtml.php/main                                    status=200 bytes=28  body=Help index main not present.
+  after: apache-repo /freemed/relay.php/json/org.freemedsoftware.public.Login.LoggedIn status=200 bytes=5  body=false
+  after: apache-repo /freemed/relay-gwt.php/probe                               status=200 bytes=195
+  after: apache-repo /freemed/controller.php/Dojo/org.freemedsoftware.ui.login  status=200 bytes=222
+  after: apache-repo /freemed/index.php                                         status=302 bytes=0
+  after: apache-repo /freemed/index.php/extra                                   status=403 bytes=317  body=<deny page>
+  after: apache-repo /freemed/vcalendar.php/extra                               status=403 bytes=317  body=<deny page>
+  after: apache-repo /freemed/install.php/extra                                 status=403 bytes=317  body=<deny page>
+  after: apache-repo /freemed/services/RemittCallback.php/extra                 status=403 bytes=317  body=<deny page>
+  consumers verified in the source: help.php:38, chtml.php:30, relay.php:42, controller.php:37,
+  ui/dojo/class.Controller.php:38. ui/dojo/load.php:24 redirects to
+  controller.php/<UI>/org.freemedsoftware.ui.login and ui/dojo/view/org.freemedsoftware.ui.login.tpl:56
+  builds the mainframe URL the same way - so controller.php is a real consumer and belongs on the
+  allowlist. relay-gwt.php routes through the GWT servlet. install.php:49 reads PATH_INFO only to strip
+  it out of REQUEST_URI for base_uri and is deliberately NOT on the allowlist.
+
+PHASE F - normalisation / canonicalisation variants
+  HEAD:  apache      /help.php/../../lib/API.php                                status=400 bytes=344
+  HEAD:  apache      /help.php/../../../lib/settings.php                        status=400 bytes=344
+  HEAD:  apache      /help.php/../scripts/security-sql-concat-check.sh          status=200 bytes=3107
+  HEAD:  apache      //lib/API.php                                              status=200 bytes=0
+  HEAD:  apache      /./lib/API.php                                             status=200 bytes=0
+  HEAD:  apache      /lib%2FAPI.php                                             status=404 bytes=314
+  HEAD:  apache      /lib/API.php%00.txt                                        status=404 bytes=314
+  HEAD:  nginx       /help.php/../../lib/API.php                                status=400 bytes=157
+  HEAD:  nginx       /help.php/../../../lib/settings.php                        status=400 bytes=157
+  HEAD:  nginx       /help.php/../scripts/security-sql-concat-check.sh          status=200 bytes=3107
+  HEAD:  nginx       //lib/API.php                                              status=200 bytes=0
+  HEAD:  nginx       /./lib/API.php                                             status=200 bytes=0
+  HEAD:  nginx       /lib%2FAPI.php                                             status=200 bytes=0
+  HEAD:  nginx       /lib/API.php%00.txt                                        status=400 bytes=157
+  HEAD:  apache-repo /freemed/help.php/../../lib/API.php                        status=404 bytes=314
+  HEAD:  apache-repo /freemed/help.php/../../../lib/settings.php                status=400 bytes=344
+  HEAD:  apache-repo /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=317  body=<deny page>
+  HEAD:  apache-repo /freemed//lib/API.php                                      status=403 bytes=317  body=<deny page>
+  HEAD:  apache-repo /freemed/./lib/API.php                                     status=403 bytes=317  body=<deny page>
+  HEAD:  apache-repo /freemed/lib%2FAPI.php                                     status=404 bytes=314
+  HEAD:  apache-repo /freemed/lib/API.php%00.txt                                status=404 bytes=314
+  HEAD:  nginx-repo  /freemed/help.php/../../lib/API.php                        status=403 bytes=153  body=<deny page>
+  HEAD:  nginx-repo  /freemed/help.php/../../../lib/settings.php                status=400 bytes=157
+  HEAD:  nginx-repo  /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=153  body=<deny page>
+  HEAD:  nginx-repo  /freemed//lib/API.php                                      status=403 bytes=153  body=<deny page>
+  HEAD:  nginx-repo  /freemed/./lib/API.php                                     status=403 bytes=153  body=<deny page>
+  HEAD:  nginx-repo  /freemed/lib%2FAPI.php                                     status=403 bytes=153  body=<deny page>
+  HEAD:  nginx-repo  /freemed/lib/API.php%00.txt                                status=400 bytes=157
+  after: apache      /help.php/../../lib/API.php                                status=400 bytes=344
+  after: apache      /help.php/../../../lib/settings.php                        status=400 bytes=344
+  after: apache      /help.php/../scripts/security-sql-concat-check.sh          status=403 bytes=317  body=<deny page>
+  after: apache      //lib/API.php                                              status=403 bytes=317  body=<deny page>
+  after: apache      /./lib/API.php                                             status=403 bytes=317  body=<deny page>
+  after: apache      /lib%2FAPI.php                                             status=404 bytes=314
+  after: apache      /lib/API.php%00.txt                                        status=404 bytes=314
+  after: nginx       /help.php/../../lib/API.php                                status=400 bytes=157
+  after: nginx       /help.php/../../../lib/settings.php                        status=400 bytes=157
+  after: nginx       /help.php/../scripts/security-sql-concat-check.sh          status=403 bytes=153  body=<deny page>
+  after: nginx       //lib/API.php                                              status=403 bytes=153  body=<deny page>
+  after: nginx       /./lib/API.php                                             status=403 bytes=153  body=<deny page>
+  after: nginx       /lib%2FAPI.php                                             status=403 bytes=153  body=<deny page>
+  after: nginx       /lib/API.php%00.txt                                        status=400 bytes=157
+  after: apache-repo /freemed/help.php/../../lib/API.php                        status=404 bytes=314
+  after: apache-repo /freemed/help.php/../../../lib/settings.php                status=400 bytes=344
+  after: apache-repo /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=317  body=<deny page>
+  after: apache-repo /freemed//lib/API.php                                      status=403 bytes=317  body=<deny page>
+  after: apache-repo /freemed/./lib/API.php                                     status=403 bytes=317  body=<deny page>
+  after: apache-repo /freemed/lib%2FAPI.php                                     status=404 bytes=314
+  after: apache-repo /freemed/lib/API.php%00.txt                                status=404 bytes=314
+  after: nginx-repo  /freemed/help.php/../../lib/API.php                        status=403 bytes=153  body=<deny page>
+  after: nginx-repo  /freemed/help.php/../../../lib/settings.php                status=400 bytes=157
+  after: nginx-repo  /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=153  body=<deny page>
+  after: nginx-repo  /freemed//lib/API.php                                      status=403 bytes=153  body=<deny page>
+  after: nginx-repo  /freemed/./lib/API.php                                     status=403 bytes=153  body=<deny page>
+  after: nginx-repo  /freemed/lib%2FAPI.php                                     status=403 bytes=153  body=<deny page>
+  after: nginx-repo  /freemed/lib/API.php%00.txt                                status=400 bytes=157
+  -- shipped-config pair, after --
+  apache-repo /freemed/help.php/../../lib/API.php                        status=404 bytes=314
+  apache-repo /freemed/help.php/../../../lib/settings.php                status=400 bytes=344
+  apache-repo /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=317  body=<deny page>
+  apache-repo /freemed//lib/API.php                                      status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/./lib/API.php                                     status=403 bytes=317  body=<deny page>
+  apache-repo /freemed/lib%2FAPI.php                                     status=404 bytes=314
+  apache-repo /freemed/lib/API.php%00.txt                                status=404 bytes=314
+  nginx-repo  /freemed/help.php/../../lib/API.php                        status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/help.php/../../../lib/settings.php                status=400 bytes=157
+  nginx-repo  /freemed/help.php/../scripts/security-sql-concat-check.sh  status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed//lib/API.php                                      status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/./lib/API.php                                     status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/lib%2FAPI.php                                     status=403 bytes=153  body=<deny page>
+  nginx-repo  /freemed/lib/API.php%00.txt                                status=400 bytes=157
+  the rows that stay 400/404 are the server rejecting the URI outright (a dot segment above the root,
+  a NUL); the nginx %2F row is the one that EXECUTED lib/API.php at HEAD (200, 0 bytes) and is now 403.
+
+PHASE G - the path-guard gate: A/B against HEAD, its self-test, and mutation coverage
+  ### Task 4.1 rescue — path-guard gate A/B and self-test coverage
+  ### date: 2026-09-28T20:37:27Z
+  ### repo: /home/jbuchbinder/Code/projects/freemed @ 5492ff41 (security/mitigation-2026-09)
+  ### scratch tree (NOT the repo): /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1
+  /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1/help.php
+  /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1/probe_misnamed.php
+  /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1/probe_onearg.php
+  /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1/probe_raw.php
+  /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1/probe_realpath.php
+  /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/logs/../gate-scratch-4.1/probe_twoarg.php
+
+  ### RUN 1 — the gate as it stands at HEAD (5492ff41)
+  PATH GUARD FAIL: request input reaches a filesystem sink without confinement:
+  ./probe_raw.php:1:<?php readfile($_GET["f"]);
+  ./probe_twoarg.php:1:<?php readfile(help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+  security-path-guard-check: FAILED
+  exit=1
+    ^ expected HERE (the three 2.6d weaknesses): probe_raw flagged;
+      probe_twoarg WRONGLY flagged; probe_onearg, probe_misnamed and
+      probe_realpath wrongly NOT flagged.
+
+  ### RUN 2 — the Task 4.1 gate, same fixtures
+  PATH GUARD FAIL: request input reaches a filesystem sink without confinement,
+  or through a help_resolve_path() call that cannot run (it requires BOTH
+  arguments, path and base_dir - see the note above path_guard_scan()):
+  ./probe_misnamed.php:1:<?php readfile(my_help_resolve_path($_SERVER['PATH_INFO']));
+  ./probe_onearg.php:1:<?php readfile(help_resolve_path($_SERVER['PATH_INFO']));
+  ./probe_raw.php:1:<?php readfile($_GET["f"]);
+  ./probe_realpath.php:1:<?php readfile(realpath($_GET["f"]));
+  security-path-guard-check: FAILED
+  exit=1
+    ^ expected: probe_raw, probe_realpath, probe_misnamed and probe_onearg
+      flagged; probe_twoarg NOT flagged.
+
+  ### RUN 3 — the gate's own fixtures (--self-test)
+  security-path-guard-check --self-test
+    raw_input        expect FAIL  flagged       <?php readfile($_GET['f']);
+    raw_pathinfo     expect FAIL  flagged       <?php readfile($_SERVER['PATH_INFO']);
+    realpath_raw     expect FAIL  flagged       <?php readfile(realpath($_GET['f']));
+    misnamed_one_arg expect FAIL  flagged       <?php readfile(my_help_resolve_path($_SERVER['PATH_INFO']));
+    misnamed_two_arg expect FAIL  flagged       <?php readfile(my_help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+    helper_and_raw   expect FAIL  flagged       <?php readfile($_GET['f'] . help_resolve_path($_SERVER['PATH_INFO']));
+    resolver_one_arg expect FAIL  flagged       <?php readfile(help_resolve_path($_SERVER['PATH_INFO']));
+    resolver_two_args expect PASS  not flagged   <?php readfile(help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+    resolver_nested  expect PASS  not flagged   <?php readfile(help_resolve_path(sprintf('%s', $_SERVER['PATH_INFO']), dirname(__FILE__)));
+    basename_raw     expect PASS  not flagged   <?php readfile(basename($_GET['f']));
+  security-path-guard-check: self-test PASSED (10 of 10 fixtures: arity, word boundary, nesting and the resolution-call rule)
+  exit=0
+
+  ### RUN 4 — mutation coverage: break ONE fix at a time, self-test must exit non-zero
+    A-unanchored-resolver: exit=1  (revert the word-boundary anchor to HEAD's unanchored substring match)
+          misnamed_two_arg expect FAIL  *** MISSED (must be flagged) ***  <?php readfile(my_help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+        security-path-guard-check: self-test FAILED (1 of 10 fixtures misclassified)
+    B-old-nested-arity: exit=1  (revert the resolver match to HEAD's [^()]* (no nesting, no arity))
+          resolver_one_arg expect FAIL  *** MISSED (must be flagged) ***  <?php readfile(help_resolve_path($_SERVER['PATH_INFO']));
+          resolver_two_args expect PASS  *** FALSE POSITIVE ***  <?php readfile(help_resolve_path($_SERVER['PATH_INFO'], dirname(__FILE__)));
+          resolver_nested  expect PASS  *** FALSE POSITIVE ***  <?php readfile(help_resolve_path(sprintf('%s', $_SERVER['PATH_INFO']), dirname(__FILE__)));
+        security-path-guard-check: self-test FAILED (3 of 10 fixtures misclassified)
+    C-no-resolution-rule: exit=1  (delete the raw-superglobal-into-realpath() rule)
+          realpath_raw     expect FAIL  *** MISSED (must be flagged) ***  <?php readfile(realpath($_GET['f']));
+        security-path-guard-check: self-test FAILED (1 of 10 fixtures misclassified)
+    D-row-deleted: exit=1  (delete the resolver_two_args row)
+        security-path-guard-check: self-test FAILED (ran 9 fixtures, expected 10 - a row was removed)
+    ^ every case above must show exit=1 (a self-test that passes with a fix
+      reverted would be worse than none).
+
+  ### RUN 5 — the restored gate, --self-test again (sanity)
+  security-path-guard-check: self-test PASSED (10 of 10 fixtures: arity, word boundary, nesting and the resolution-call rule)
+  exit=0
+
+PHASE H - register_argc_argv: the SHIPPED docker/php-custom.ini, mounted as a conf.d drop-in
+
+server   : throwaway container from the same image (freemed-verify-php:apache), WEB SAPI = cli-server,
+           php 8.3.35. The CLI line below is the control for "the setting does not apply to the CLI SAPI".
+probe    : /argv.php prints PHP_SAPI, ini_get(register_argc_argv), $_SERVER['argc']/['argv'], then runs
+           the OLD vcalendar.php CLI-guard idiom (argc==1 and argv[0] contains '=').
+command  : docker run --rm -p 127.0.0.1:3809X:8080 -v <scratch>/ini-ab/probe:/probe:ro \
+             [-v <repo>/docker/php-custom.ini:/usr/local/etc/php/conf.d/zz-custom.ini:ro] \
+             <freemed-verify-php:apache> php -S 0.0.0.0:8080 -t /probe   ;  curl .../argv.php?physician=1
+
+-- (i) NO php.ini mounted (PHP compiled default) --
+   /argv.php                 -> SAPI=cli-server register_argc_argv='1' argc=0 argv=[] | OLD GUARD: proceeds
+   /argv.php?physician=1     -> SAPI=cli-server register_argc_argv='1' argc=1 argv=["physician=1"]
+                                OLD GUARD: halt (looks like a CLI call)      <-- the trap, reproduced
+
+-- (ii) the repo's docker/php-custom.ini mounted --
+   php --ini                 -> Loaded Configuration File: (none)
+                                Additional .ini files parsed: ... /usr/local/etc/php/conf.d/zz-custom.ini
+   /argv.php                 -> SAPI=cli-server register_argc_argv='' argc=UNSET argv=UNSET | OLD GUARD: proceeds
+   /argv.php?physician=1     -> SAPI=cli-server register_argc_argv='' argc=UNSET argv=UNSET | OLD GUARD: proceeds
+                                (ini_get() returns the empty string for this directive's Off value; the
+                                 behavioural proof is argc/argv UNSET and the guard running)
+
+-- (iii) the same file read by the CLI SAPI (the setting does not take there) --
+   SAPI=cli register_argc_argv='1' $argv=["Standard input code"]      <-- not usable as a CLI detector
+
+-- (iv) directive validity matrix, one value per container, web SAPI, ?physician=1 --
+   = On  -> register_argc_argv='1' argc=1 argv=["physician=1"]   (guard halts)
+   = Off -> register_argc_argv=''  argc=UNSET argv=UNSET         (guard runs)
+   = 0   -> register_argc_argv='0' argc=UNSET argv=UNSET         (guard runs)
+   = 1   -> register_argc_argv='1' argc=1 argv=["physician=1"]   (guard halts)
+           => the directive is valid and effective in an ini file for a web SAPI; Off and 0 agree.
+
+PHASE I - config acceptance, and the install proof for the two doc/ files
+
+1. both access-control syntaxes accepted, unguarded, in <Directory> context
+   file    : <scratch>/logs/41-syntax.conf  ("Require all denied" for /var/www/html/lib, and
+             "order deny,allow / deny from all" for /var/www/html/data)
+   command : docker run --rm -v <scratch>/logs/41-syntax.conf:/etc/apache2/conf-enabled/zz-41-syntax.conf:ro \
+               --entrypoint apachectl <freemed-verify-php:apache> configtest
+   output  : Syntax OK   (exit 0)
+
+2. both syntaxes accepted, unguarded, in .htaccess context
+   a scratch directory under the served root carrying BOTH directives in one .htaccess:
+     GET /zz41-syntax/f.txt -> 403     (a .htaccess syntax error would have produced 500)
+   the directory was removed again:   GET /zz41-syntax/f.txt -> 404
+
+3. the four rewritten .htaccess files are the ones that ship
+   data/Makefile    : cp -vrf <subdir> $(INSTDIR)/data  +  cp -vf .ht* *.php   -> data/store/.htaccess ships
+   lib/Makefile     : cp -vrf <subdir> ... (perl is a SUBDIR) -> lib/perl/.htaccess ships; lib/ itself
+                      ships NO .htaccess (only *.php plus the subdirectories are copied)
+   scripts/Makefile : cp -vrf .ht* *   -> scripts/.htaccess and scripts/fax_import/.htaccess ship
+
+4. doc/Makefile install, into a scratch DESTDIR (never the repository tree)
+   command : make -C doc install DESTDIR=<scratch>/logs/docmake INSTDIR=<scratch>/logs/docmake/usr/share/freemed
+   landed  : usr/share/freemed/doc/DEPLOYMENT_HARDENING     <-- the file docker/php-custom.ini references
+             usr/share/freemed/doc/VCALENDAR_AUTHENTICATION
+             etc/apache2/conf.d/freemed.conf                <-- the hardened Apache config, as installed
+   also    : [A-Z]* also matched CDA.xsl, Makefile, README.smarty-gettext, LICENSE.loinc, ... i.e. it keys
+             on the FIRST CHARACTER, not the extension - VCALENDAR_AUTHENTICATION.md would ship too. The
+             lowercase freemed.apache.conf is not matched by [A-Z]*; the explicit line after it installs
+             that one. (This is the measured basis of the N2 doc correction.)
+
+HARNESS RESTORE
+  apache-freemed.conf  as found (left installed by the interrupted run)  sha256 9ff4f019dad07da9...
+                       restored to                                       sha256 cb3c7d79f28d4e74...
+  nginx.conf           as found (left installed by the interrupted run)  sha256 2bea0d466c08c008...
+                       restored to                                       sha256 51677c8f588b80a3...
+  the restored values ARE the digests the task recorded as its before-state (logs/config-harness-before.sha256),
+  so the harness's own config copies are back at the pre-task bytes.
+  post-restore sanity (pristine copy-harness config + the working-tree .htaccess in the served copy):
+    :38081 /lib/API.php -> 200 (executed again, as at HEAD)
+    :38081 /scripts/security-sql-concat-check.sh -> 403  <-- with the server-config rule back out, so
+         the rewritten scripts/.htaccess is measured on its own
+    :38081 /help.php/ui/en_US/probe -> 401
+    :38083/:38084 keep mounting the repository files, so they continue to serve the shipped config
+    (they were reloaded; they hold no copy that could be left dirty)
+
+DATABASE
+  no database write was made by this task. Pinned fingerprint, before and after:
+  entemplate 1|1   payrec 1|3   patient_emr 1|5   user 2|1,2   patient 0   procrec 0   vitals 0
+  modules 135   config 34.
