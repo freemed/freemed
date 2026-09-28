@@ -647,11 +647,25 @@ class EMRModule extends BaseModule {
 			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid order_fields '.var_export($this->order_fields, true) );
 			$order = '';
 		}
-		// NOTE (2.6b): $conditions is a caller-composed raw fragment (see the TODO
-		// above) and no in-tree call site passes it; it is spliced unchanged.
+		// Category C (2.6b): $conditions is a caller-composed WHERE fragment (see
+		// the TODO above) and no in-tree call site passes it. This method cannot
+		// quote predicates it did not compose, so the fragment is shape-checked
+		// here instead: anything that could terminate the statement (`;`), open a
+		// comment (`--`, `/*`, `#`) or re-quote an identifier (backtick) is
+		// refused with a log line and no rows, rather than spliced. Refused
+		// rather than dropped: $conditions is the caller's filter, so dropping it
+		// would widen the result set instead of preserving it.
+		$conditions_sql = '';
+		if ( $conditions ) {
+			if ( preg_match( '/[;`\x00]|--|\/\*|#/', (string) $conditions ) ) {
+				syslog( LOG_ERR, get_class($this).'::picklist| refusing unsafe conditions fragment '.var_export($conditions, true) );
+				return array();
+			}
+			$conditions_sql = sprintf(' AND ( %s ) ', $conditions);
+		}
 		$query = sprintf( 'SELECT * FROM %s WHERE ( %s = %s ) %s %s',
 			$table, $pfield, $GLOBALS['sql']->quote( $patient ),
-			( $conditions ? sprintf(' AND ( %s ) ', $conditions) : '' ),
+			$conditions_sql,
 			( $order ? sprintf('ORDER BY %s', $order) : '' ) );
 		$result = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $result AS $r ) {
