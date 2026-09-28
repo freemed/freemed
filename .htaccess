@@ -21,10 +21,23 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 #	Since sometimes Apache isn't properly configured to view the
-#	proper PHP script, we do this instead, but only if PHP5 is
+#	proper PHP script, we used to do this instead, but only if PHP5 is
 #	installed and working properly.
 #
-
-<IfModule mod_php5.c>
-	DirectoryIndex index.php
-</IfModule>
+#	Deferred item 24 (final wave, CWE-16 hygiene): the test used to name
+#	`mod_php5.c`, a module that only exists on PHP 5.x. On PHP 7/8 the Apache
+#	module registers as `mod_php.c` (`php_module`), so the block never matched
+#	and never ran. Measured on this harness (PHP 8.3.35 / Apache 2.4.68): a
+#	probe directory whose .htaccess wrapped `Require all denied` in
+#	`<IfModule mod_php5.c>` answered HTTP 200 - the block was not evaluated -
+#	while the same probe with `<IfModule mod_php.c>` answered 403.
+#
+#	The block is therefore inert and is now commented out so it does not read
+#	as a live control. The directory index is set by the server configuration
+#	(doc/freemed.apache.conf:9 - `DirectoryIndex index.php index.html ...`),
+#	which is where an operator should look; a DirectoryIndex directive here
+#	would REPLACE that list for the whole tree rather than add to it.
+#
+#<IfModule mod_php.c>
+#	DirectoryIndex index.php
+#</IfModule>
