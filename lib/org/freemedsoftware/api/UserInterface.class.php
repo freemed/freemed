@@ -25,6 +25,12 @@
 //
 //	User manipulation routines.
 //
+//	Task 2.8, fix round 1: Multicall() re-dispatches relay methods, so this file
+//	needs the allowlist the relay consults. LoadObjectDependency at file scope is
+//	the repo convention (154 files) and Relay.class.php loads the same class for
+//	the outer check, so this is a no-op in the relay request path.
+LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist');
+
 class UserInterface {
 
 	protected $user;
@@ -175,6 +181,27 @@ class UserInterface {
 	//
 	//	Utility method to perform multiple pipelined calls.
 	//
+	//	Task 2.8, fix round 1 (C1). The relay's allowlist check runs ONCE, on the
+	//	OUTER method string, in Relay::handle_request(); an inner method named
+	//	here never met it, so before this gate an allowlisted Multicall was a
+	//	standing bypass of the whole control -- any registered class, any public
+	//	method, any arguments. Every inner call is now gated with the SAME shared
+	//	entry point the relay uses (Relay_Allowlist::refuse()), so the stage
+	//	behaviour and the miss log line are identical to an outer call's: in
+	//	log-only a miss is logged and the call still runs (that is how an operator
+	//	discovers a pattern that is needed), and in enforce it is refused.
+	//
+	//	The refusal is PER CALL. A refused inner call puts INVALID_CALL in its own
+	//	slot -- the same signal the outer refusal answers with -- and the rest of
+	//	the batch still runs, so one refused entry cannot abort a batch the client
+	//	legitimately sent.
+	//
+	//	This replaces a guard that could never fire:
+	//	`substr($v['method'],0,25) == 'org.freemedsoftware.core.'` compared 25
+	//	characters against a 24-character literal, so it was dead code and a
+	//	second, contradictory rule next to the allowlist. It is removed rather
+	//	than repaired.
+	//
 	// Parameters:
 	//
 	//	$calls - Array of hashes containing:
@@ -190,14 +217,15 @@ class UserInterface {
 		$output = array( );
 		foreach ( $calls AS $k => $v ) {
 			$v = (array) $v;
-			if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) {
-				syslog( LOG_ERR, "Invalid method called ${v['method']}" );
-				return false;
+			$inner_method = isset ( $v['method'] ) ? $v['method'] : NULL;
+			if ( class_exists ( 'Relay_Allowlist' ) and Relay_Allowlist::refuse ( $inner_method ) ) {
+				$output[ $k ] = 'INVALID_CALL';
+				continue;
 			}
-			if ( is_array( $v['parameters'] ) ) {
-				$output[ $k ] = @call_user_func_array ( 'CallMethod', array_merge ( array ( $v['method'] ), $v['parameters'] ) );
+			if ( isset ( $v['parameters'] ) and is_array ( $v['parameters'] ) ) {
+				$output[ $k ] = @call_user_func_array ( 'CallMethod', array_merge ( array ( $inner_method ), $v['parameters'] ) );
 			} else {
-				$output[ $k ] = @CallMethod( $v['method'] );
+				$output[ $k ] = @CallMethod( $inner_method );
 			}
 		}
 		return $output;

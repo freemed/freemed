@@ -23,6 +23,19 @@
 
 LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist');
 
+// Task 2.8, fix round 1 (M1). LoadObjectDependency() only includes a file when it
+// exists, so a packaging mistake that drops Relay_Allowlist.class.php would make
+// the FIRST relay request fatal with 'Class "Relay_Allowlist" not found' -- an
+// outage path inside the control that exists to prevent outages. The class file is
+// in version control (the risk is packaged deployment only), but a missing file
+// must degrade instead of taking the relay down: it is logged LOUDLY here, and the
+// request then behaves exactly as it did before this control existed (the same
+// posture as the data file's documented fail-open). The convention itself --
+// LoadObjectDependency at file scope -- is unchanged; 154 files use it.
+if ( ! class_exists ( 'Relay_Allowlist' ) ) {
+	syslog( LOG_CRIT, 'Relay: Relay_Allowlist is not available (lib/org/freemedsoftware/core/Relay_Allowlist.class.php is missing from this installation); the relay allowlist is NOT enforcing' );
+}
+
 class Relay {
 
 	protected $query_string; // from URL
@@ -60,20 +73,22 @@ class Relay {
 		// caller has a session. The call set lives in
 		// data/config/relay-allowlist.php (Relay_Allowlist, doc/RELAY_ALLOWLIST).
 		//
-		// A miss is ALWAYS logged, with the method and the remote address, so an
-		// operator can act on it. Whether it is REFUSED depends on the site's
-		// rollout stage: shipped default is enforce = false, which logs and lets
-		// the call run (the call set was never exercised by a real client in this
-		// tree), and enforce = true answers INVALID_CALL.
-		if ( ! Relay_Allowlist::allowed ( $method ) ) {
-			$relay_miss_enforce = Relay_Allowlist::enforce();
-			$relay_miss_method = is_string($method) ? $method : '(non-string)';
-			$relay_miss_remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-';
-			$relay_miss_stage  = $relay_miss_enforce ? 'refused (INVALID_CALL)' : 'LOG-ONLY, call still executed';
-			syslog( LOG_WARNING, "Relay: method '{$relay_miss_method}' is not in the relay allowlist (remote={$relay_miss_remote}, {$relay_miss_stage})" );
-			if ( $relay_miss_enforce ) {
-				return 'INVALID_CALL';
-			}
+		// The decision and the miss log line both live in
+		// Relay_Allowlist::refuse(), which is ALSO what a relay-reachable
+		// re-dispatcher calls before an inner dispatch of its own (fix round 1,
+		// C1: api/UserInterface.class.php:Multicall()). One entry point, so an
+		// inner call gets the same allowlist, the same stage and the same log
+		// line as an outer one. A miss is ALWAYS logged, with the method and the
+		// remote address, so an operator can act on it; whether it is REFUSED
+		// depends on the site's rollout stage -- the shipped default is
+		// enforce = false, which logs and lets the call run, and enforce = true
+		// answers INVALID_CALL.
+		//
+		// class_exists() is the M1 degradation path: when the class file is
+		// missing from the installation the request proceeds unchecked rather
+		// than fataling, exactly as it did before this control existed.
+		if ( class_exists ( 'Relay_Allowlist' ) && Relay_Allowlist::refuse ( $method ) ) {
+			return 'INVALID_CALL';
 		}
 
 		// TODO: call appropriate method:

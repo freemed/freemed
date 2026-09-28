@@ -36,10 +36,46 @@
 //	data/config/relay-allowlist.php, so a deployment can extend its call set
 //	without patching code (see that file, and doc/RELAY_ALLOWLIST).
 //
+//	ONE DECISION, ONE LOG LINE: refuse() is the single entry point for the
+//	decision, and it is what Relay::handle_request() calls for the OUTER method
+//	string. It is also what every relay-reachable re-dispatcher calls before an
+//	INNER dispatch it performs itself -- api/UserInterface.class.php's
+//	Multicall() is the one that exists in this tree. A check that ran only in
+//	Relay::handle_request() ran once, on the outer method string, so an
+//	allowlisted re-dispatcher could reach the whole tree around it.
+//
 //	Matching rules:
 //	*	A pattern is either an exact relay method string
-//		`org.freemedsoftware.<namespace>.<Class>.<Method>` or the same with a
-//		trailing `*`, which matches any method name with that prefix.
+//		`org.freemedsoftware.<namespace>.<Class>.<Method>`, or a prefix ending
+//		in `*` which matches any method string with that prefix.
+//	*	A trailing `*` can cut a pattern at three shapes, and the widest of them
+//		is the namespace-level wildcard:
+//			org.freemedsoftware.module.SomeModule.*       a CLASS
+//				- every method of that one class
+//			org.freemedsoftware.module.SomeModule.Get*    a PREFIX
+//				- every method name beginning `Get`
+//			org.freemedsoftware.module.*                  a NAMESPACE
+//				- EVERY method of EVERY class under that namespace
+//		A BARE NAMESPACE-LEVEL WILDCARD IS ACCEPTED -- it is narrower than a
+//		whole-tree rule and the brief names `org.freemedsoftware.module.*` as
+//		its example of a `*` pattern -- but it is a real widening and it is
+//		NEVER ACCEPTED IN SILENCE: normalize() logs it at LOG_WARNING, naming
+//		the namespace and how many method declarations it covers, because an
+//		accepted wildcard with no log line is indistinguishable from the
+//		control being switched off. The SHIPPED seed uses no `*` at all.
+//	*	A pattern broader still -- a bare `*`, `org.freemedsoftware.*`,
+//		`org.freemedsoftware`, `org.freemedsoftware.api` -- expresses no call
+//		set: it is the control switched off in a way a reader would not notice.
+//		It is REJECTED at load, with a LOG_WARNING, and is not honoured.
+//		Rejected patterns are visible to callers via rejected_patterns() and are
+//		pinned by tests/security/relay_allowlist.test.php.
+//	*	An EXACT pattern must have exactly four dots (the relay method string
+//		above), and a trailing `*` may cut at four (a Class- or method-name
+//		prefix) or at three (the namespace-level form). A deeper spelling names
+//		no relay method and a shallower one is the control off; both are
+//		rejected rather than left silently inert (see is_too_broad()).
+//	*	A `*` pattern matches a NON-EMPTY tail: `X.*` matches `X.something`,
+//		never the bare prefix `X.`, which names no method and cannot dispatch.
 //	*	Matching is case-insensitive. That is deliberate and it does not widen
 //		what is reachable: PHP dispatches method names case-insensitively, so
 //		`org.freemedsoftware.core.User.GetName` and `.getName` are the same call
@@ -50,14 +86,17 @@
 //		a case-insensitive match can only avoid refusing a call the server would
 //		have served.
 //	*	Matching is literal, never a regex: the dots in a pattern are dots.
-//	*	A pattern that is broader than `org.freemedsoftware.<ns>.<Class>` (a bare
-//		`*`, or `org.freemedsoftware.*`) expresses no call set — it defeats the
-//		control — so it is REJECTED at load, with a LOG_WARNING, and is not
-//		honoured. Rejected patterns are visible to callers via rejected_patterns()
-//		and are pinned by tests/security/relay_allowlist.test.php.
+//
+//	A MISSING OR CORRUPT DATA FILE FAILS OPEN AND LOUDLY: enforcement is off,
+//	the relay behaves exactly as it did before this control existed, and the
+//	operator gets a loud log line. That covers an unreadable file, a file that
+//	does not return an array, AND a file that cannot be parsed at all (a typo
+//	while hand-editing `patterns` -- the editing the operator notes instruct --
+//	raises a ParseError which `@include` does not suppress and which would
+//	otherwise take the relay down). See load().
 //
 //	What it is not: an authorization check. It answers "is this method part of
-//	the relay's call set", not "may this user call it" — per-method ACLs remain
+//	the relay's call set", not "may this user call it" -- per-method ACLs remain
 //	each module's job.
 
 class Relay_Allowlist {
@@ -77,6 +116,13 @@ class Relay_Allowlist {
 	// Member: $rejected
 	//	Patterns refused at load as too broad (see the class comment).
 	private static $rejected = array();
+
+	// Member: $warnings
+	//	Messages the last load()/normalize() emitted to syslog. Kept so the
+	//	hermetic test can assert on a warning's TEXT (syslog() is not capturable
+	//	from a CLI process with no syslogd) instead of on an unobservable side
+	//	effect.
+	private static $warnings = array();
 
 	// Method: config_file
 	//
@@ -153,10 +199,65 @@ class Relay_Allowlist {
 		if ( ! is_string ( $method ) or $method === '' ) { return false; }
 		$c = self::config( $config );
 		foreach ( $c['patterns'] as $pattern ) {
-			if ( self::pattern_matches( $pattern, $method ) ) { return true; }
+			if ( self::pattern_matches ( $pattern, $method ) ) { return true; }
 		}
 		return false;
 	} // end method allowed
+
+	// Method: refuse
+	//
+	//	The relay's deny-by-default decision for ONE method string, and the only
+	//	place the miss log line is written.
+	//
+	//	Relay::handle_request() calls this for the OUTER method string, and every
+	//	relay-reachable re-dispatcher calls it for each INNER method it is about
+	//	to dispatch itself (api/UserInterface.class.php:Multicall()). Sharing the
+	//	entry point is the point: an inner call then gets the same allowlist, the
+	//	same STAGE behaviour and the same log line as an outer one, so the
+	//	log-only stage measures the inner call set too and enforcement closes it.
+	//
+	// Parameters:
+	//
+	//	$method - The relay method string, as it arrived.
+	//
+	//	$config - (optional) As config().
+	//
+	// Returns:
+	//
+	//	Boolean. TRUE means the caller must REFUSE the call and answer
+	//	INVALID_CALL. FALSE means the call may proceed: either it is listed, or
+	//	it is a miss and the site is in the shipped log-only stage (in which case
+	//	the miss has just been logged, which is how an operator discovers a
+	//	pattern that is needed).
+	public static function refuse ( $method, $config = NULL ) {
+		if ( self::allowed ( $method, $config ) ) { return false; }
+		self::log_miss ( $method, $config );
+		return self::enforce ( $config );
+	} // end method refuse
+
+	// Method: log_miss
+	//
+	//	Record a miss. The format lives here rather than at each call site so the
+	//	outer relay check and an inner re-dispatched call are indistinguishable to
+	//	the operator's `grep "Relay: method"` (doc/RELAY_ALLOWLIST step 3): a
+	//	miss that is not greppable is a miss the operator never adds.
+	//
+	//	The identity the line carries is the method, the remote address and the
+	//	stage -- not a user or a site. On a reverse-proxied or multi-tenant host
+	//	that is a limit worth knowing; see doc/RELAY_ALLOWLIST.
+	//
+	// Parameters:
+	//
+	//	$method - The relay method string, as it arrived.
+	//
+	//	$config - (optional) As config().
+	private static function log_miss ( $method, $config = NULL ) {
+		$enforce = self::enforce( $config );
+		$m = is_string($method) ? $method : '(non-string)';
+		$remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-';
+		$stage  = $enforce ? 'refused (INVALID_CALL)' : 'LOG-ONLY, call still executed';
+		syslog( LOG_WARNING, "Relay: method '{$m}' is not in the relay allowlist (remote={$remote}, {$stage})" );
+	} // end method log_miss
 
 	// Method: rejected_patterns
 	//
@@ -169,6 +270,18 @@ class Relay_Allowlist {
 		return self::$rejected;
 	} // end method rejected_patterns
 
+	// Method: warnings
+	//
+	//	The messages the last load()/normalize() emitted. Exposed so a test can
+	//	assert on a warning's text; the relay never reads it.
+	//
+	// Returns:
+	//
+	//	Array of strings.
+	public static function warnings ( ) {
+		return self::$warnings;
+	} // end method warnings
+
 	// Method: pattern_matches
 	//
 	//	Literal (non-regex), case-insensitive match of one pattern against a
@@ -176,34 +289,102 @@ class Relay_Allowlist {
 	//
 	// Parameters:
 	//
-	//	$pattern - Exact method string, or an exact prefix ending in `*`.
+	//	$pattern - Exact method string, or a prefix ending in `*`.
 	//
 	//	$method - The relay method string.
 	//
 	// Returns:
 	//
-	//	Boolean.
+	//	Boolean. A `*` pattern requires a NON-EMPTY tail: `X.*` matches
+	//	`X.something`, never the bare prefix `X.`.
 	public static function pattern_matches ( $pattern, $method ) {
 		if ( ! is_string ( $pattern ) or $pattern === '' ) { return false; }
 		if ( ! is_string ( $method ) or $method === '' ) { return false; }
 		if ( substr ( $pattern, -1 ) === '*' ) {
 			$prefix = substr ( $pattern, 0, -1 );
 			if ( $prefix === '' ) { return false; }
+			// The tail must be non-empty. `X.*` means "any method under X", and
+			// `X.` itself names no method, so matching it would hand an operator
+			// an unpredictable matcher edge for no reachable call.
+			if ( strlen ( $method ) <= strlen ( $prefix ) ) { return false; }
 			return strncasecmp ( $method, $prefix, strlen ( $prefix ) ) === 0;
 		}
 		return strcasecmp ( $pattern, $method ) === 0;
 	} // end method pattern_matches
 
+	// Method: is_namespace_wildcard
+	//
+	//	Is $pattern a trailing-`*` pattern that ends at the NAMESPACE, i.e.
+	//	`org.freemedsoftware.<ns>.*`? That is the widest shape this control
+	//	accepts, and the one whose acceptance normalize() reports.
+	//
+	// Parameters:
+	//
+	//	$pattern - Candidate pattern.
+	//
+	// Returns:
+	//
+	//	Boolean.
+	public static function is_namespace_wildcard ( $pattern ) {
+		if ( ! is_string ( $pattern ) or substr ( $pattern, -1 ) !== '*' ) { return false; }
+		return substr_count ( $pattern, '.' ) === 3;
+	} // end method is_namespace_wildcard
+
+	// Method: namespace_method_count
+	//
+	//	How many method declarations sit under a namespace, as a bounded source
+	//	scan of lib/<namespace>/*.class.php. This is the number the load-time
+	//	wildcard warning names so an operator can see the size of what they just
+	//	switched on. It is a LOWER BOUND: it counts declarations in the files
+	//	present, not inherited methods, and it deliberately does not include or
+	//	reflect-load the classes (the relay must not load a namespace to count
+	//	it).
+	//
+	// Parameters:
+	//
+	//	$namespace - e.g. 'org.freemedsoftware.api' (no trailing dot).
+	//
+	// Returns:
+	//
+	//	Integer.
+	private static function namespace_method_count ( $namespace ) {
+		if ( defined ( 'PHYSICAL_LOCATION' ) ) {
+			$root = PHYSICAL_LOCATION;
+		} else {
+			$root = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+		}
+		$dir = $root . '/lib/' . str_replace ( '.', '/', $namespace );
+		if ( ! is_dir ( $dir ) ) { return 0; }
+		$files = glob ( $dir . '/*.class.php' );
+		if ( ! is_array ( $files ) ) { return 0; }
+		$count = 0;
+		foreach ( $files as $f ) {
+			$src = @file_get_contents ( $f );
+			if ( $src === false ) { continue; }
+			$count += (int) preg_match_all ( '/^\s*(?:public\s+)?function\s+[A-Za-z_]/m', $src );
+		}
+		return $count;
+	} // end method namespace_method_count
+
 	// Method: is_too_broad
 	//
-	//	A pattern expresses a call set only if it names at least
-	//	`org.freemedsoftware.<namespace>.<Class>` (optionally with a trailing `*`).
-	//	Anything broader — `*`, `org.freemedsoftware.*`, `org.freemedsoftware`,
-	//	`org.freemedsoftware.api` — is not a call set, it is the control switched
-	//	off in a way a reader would not notice. A `*` anywhere but the end is
-	//	rejected too: it is a wildcard the matcher does not implement, so
-	//	honouring the pattern literally would leave an operator believing a rule
-	//	was in force when it matches nothing.
+	//	Does $pattern fail to express a relay call set?
+	//
+	//	A relay method string is exactly
+	//	`org.freemedsoftware.<namespace>.<Class>.<Method>` -- four dots -- so:
+	//	*	a pattern with NO trailing `*` must have exactly four dots;
+	//	*	a pattern WITH a trailing `*` may cut at four (a Class- or
+	//		method-name prefix, e.g. `...UserInterface.*` or `...UserInterface.Get*`)
+	//		or at three (the namespace-level form `org.freemedsoftware.<ns>.*`,
+	//		which is ACCEPTED -- see the class comment -- and reported by
+	//		normalize()).
+	//	Fewer dots than that is the control switched off (`*`,
+	//	`org.freemedsoftware.*`, `org.freemedsoftware`, `org.freemedsoftware.api`);
+	//	more dots names no relay method at all, so the pattern would match
+	//	nothing. Both are rejected here rather than left silently inert.
+	//	A `*` anywhere but the end is rejected too: it is a wildcard the matcher
+	//	does not implement, so honouring the pattern literally would leave an
+	//	operator believing a rule was in force when it matches nothing.
 	//
 	// Parameters:
 	//
@@ -215,20 +396,39 @@ class Relay_Allowlist {
 	public static function is_too_broad ( $pattern ) {
 		if ( ! is_string ( $pattern ) ) { return true; }
 		$p = $pattern;
-		if ( substr ( $p, -1 ) === '*' ) { $p = substr ( $p, 0, -1 ); }
+		$wildcard = false;
+		if ( substr ( $p, -1 ) === '*' ) { $wildcard = true; $p = substr ( $p, 0, -1 ); }
 		if ( $p === '' ) { return true; }
 		if ( ! preg_match ( '/^[A-Za-z0-9_.]+$/', $p ) ) { return true; }
-		// org.freemedsoftware.<ns>.<Class> or deeper: at least three dots in the
-		// prefix once a trailing `*` is removed.
-		if ( substr_count ( $p, '.' ) < 3 ) { return true; }
-		return false;
+		$dots = substr_count ( $p, '.' );
+		if ( $dots < 3 ) { return true; }
+		if ( $wildcard ) { return ( $dots > 4 ); }
+		return ( $dots !== 4 );
 	} // end method is_too_broad
+
+	// Method: warn
+	//
+	//	Record a diagnostic message and put it in syslog. Recording as well as
+	//	logging is what makes the load-time warnings testable without a syslog
+	//	sink.
+	//
+	// Parameters:
+	//
+	//	$message - Free text.
+	//
+	//	$priority - (optional) A syslog priority. Defaults to LOG_WARNING.
+	private static function warn ( $message, $priority = LOG_WARNING ) {
+		self::$warnings[] = $message;
+		syslog( $priority, $message );
+	} // end method warn
 
 	// Method: normalize
 	//
 	//	Validate a raw configuration array. Too-broad patterns are dropped with a
-	//	LOG_WARNING and recorded in rejected_patterns(); everything else is kept
-	//	verbatim (the list is data, not a place to silently repair typos).
+	//	LOG_WARNING and recorded in rejected_patterns(); an accepted
+	//	namespace-level wildcard is reported PROMINENTLY (see the class comment);
+	//	everything else is kept verbatim (the list is data, not a place to
+	//	silently repair typos).
 	//
 	// Parameters:
 	//
@@ -239,23 +439,29 @@ class Relay_Allowlist {
 	//	Array ( 'enforce' => bool, 'patterns' => array ).
 	private static function normalize ( $raw ) {
 		self::$rejected = array();
+		self::$warnings = array();
 		$out = array( 'enforce' => false, 'patterns' => array() );
 		if ( ! is_array ( $raw ) ) {
-			syslog( LOG_WARNING, 'Relay allowlist: configuration is not an array; treating it as EMPTY (log-only, nothing allowed)' );
+			self::warn( 'Relay allowlist: configuration is not an array; treating it as EMPTY (log-only, nothing allowed)' );
 			return $out;
 		}
 		$out['enforce'] = isset ( $raw['enforce'] ) ? (bool) $raw['enforce'] : false;
 		$patterns = isset ( $raw['patterns'] ) && is_array ( $raw['patterns'] ) ? $raw['patterns'] : array();
 		foreach ( $patterns as $pattern ) {
 			if ( ! is_string ( $pattern ) or trim ( $pattern ) === '' ) {
-				syslog( LOG_WARNING, 'Relay allowlist: ignoring a non-string/empty pattern entry' );
+				self::warn( 'Relay allowlist: ignoring a non-string/empty pattern entry' );
 				continue;
 			}
 			$pattern = trim ( $pattern );
 			if ( self::is_too_broad ( $pattern ) ) {
 				self::$rejected[] = $pattern;
-				syslog( LOG_WARNING, "Relay allowlist: pattern '{$pattern}' is too broad to express a call set; it was REJECTED and is not honoured" );
+				self::warn( "Relay allowlist: pattern '{$pattern}' is too broad to express a call set; it was REJECTED and is not honoured" );
 				continue;
+			}
+			if ( self::is_namespace_wildcard ( $pattern ) ) {
+				$namespace = substr ( $pattern, 0, -2 );
+				$covered = self::namespace_method_count ( $namespace );
+				self::warn( "Relay allowlist: pattern '{$pattern}' is a NAMESPACE-LEVEL WILDCARD and grants EVERY method of every class under '{$namespace}' (at least {$covered} method declarations in the class files there); it is HONOURED" );
 			}
 			$out['patterns'][] = $pattern;
 		}
@@ -264,25 +470,46 @@ class Relay_Allowlist {
 
 	// Method: load
 	//
-	//	Read the data file. A missing or unreadable file FAILS OPEN and LOUDLY:
-	//	enforcement is off, the relay behaves exactly as it did before this
-	//	control existed, and the operator gets a LOG_WARNING. That is the
-	//	outage-safe direction for a control whose shipped default is log-only —
-	//	but it is also why the file must stay in version control once a site sets
-	//	enforce = true.
+	//	Read the data file. A MISSING, UNREADABLE, NON-ARRAY or UNPARSEABLE file
+	//	FAILS OPEN and LOUDLY: enforcement is off, the relay behaves exactly as
+	//	it did before this control existed, and the operator gets a log line.
+	//
+	//	The unparseable case is not a theoretical one: the operator notes instruct
+	//	hand-editing `patterns`, and a typo there (a trailing comma, an unclosed
+	//	bracket) raises a ParseError. `@include` suppresses warnings, not Errors,
+	//	so without the catch below such a typo takes the relay down -- the exact
+	//	outcome this log-only-by-default design exists to prevent. It is caught
+	//	and treated as "the list is unavailable", at LOG_ERR because it is a
+	//	deployment mistake rather than an expected state.
+	//
+	//	That is the outage-safe direction for a control whose shipped default is
+	//	log-only -- but it is also why the file must stay in version control once
+	//	a site sets enforce = true.
+	//
+	// Parameters:
+	//
+	//	$file - (optional) Path to read instead of the installation's data file.
+	//		The test suite uses this to exercise the fail-open branches; the relay
+	//		never passes it.
 	//
 	// Returns:
 	//
 	//	Array ( 'enforce' => bool, 'patterns' => array ).
-	private static function load ( ) {
-		$file = self::config_file( );
+	public static function load ( $file = NULL ) {
+		if ( $file === NULL ) { $file = self::config_file( ); }
+		self::$warnings = array();
 		if ( ! is_file ( $file ) ) {
-			syslog( LOG_WARNING, 'Relay allowlist: data file ' . $file . ' is missing; the relay allowlist is NOT enforcing (log-only)' );
+			self::warn( 'Relay allowlist: data file ' . $file . ' is missing; the relay allowlist is NOT enforcing (log-only)' );
 			return array( 'enforce' => false, 'patterns' => array() );
 		}
-		$c = @include $file;
+		try {
+			$c = @include $file;
+		} catch ( \Throwable $e ) {
+			self::warn( 'Relay allowlist: data file ' . $file . ' is CORRUPT (' . $e->getMessage() . '); the relay allowlist is NOT enforcing (log-only); repair the file' , LOG_ERR );
+			return array( 'enforce' => false, 'patterns' => array() );
+		}
 		if ( ! is_array ( $c ) ) {
-			syslog( LOG_WARNING, 'Relay allowlist: data file ' . $file . ' did not return an array; the relay allowlist is NOT enforcing (log-only)' );
+			self::warn( 'Relay allowlist: data file ' . $file . ' did not return an array; the relay allowlist is NOT enforcing (log-only)' );
 			return array( 'enforce' => false, 'patterns' => array() );
 		}
 		return self::normalize( $c );
